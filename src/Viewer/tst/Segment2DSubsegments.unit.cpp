@@ -13,19 +13,19 @@ using namespace Viewer;
 class TestSegment2DSubsegments : public testing::Test {
 
 protected:
-	virtual void SetUp() {
-		
-	};
+  virtual void SetUp() {
+    
+  };
 
 };
 
 TEST_F( TestSegment2DSubsegments, Segment2DTest1 ) {
-	SCOPED_TRACE( "Begin Test: Segment 2D - subsegments creation." );
-	
-	shared_ptr< CPoint2D > aStartPoint = make_shared< CPoint2D >( 0, 0 );
+  SCOPED_TRACE( "Begin Test: Segment 2D - subsegments creation." );
+  
+  shared_ptr< CPoint2D > aStartPoint = make_shared< CPoint2D >( 0, 0 );
   shared_ptr< CPoint2D > aEndPoint = make_shared< CPoint2D >( 10, 10 );
-	
-	CViewSegment2D aSegment = CViewSegment2D( aStartPoint, aEndPoint );
+  
+  CViewSegment2D aSegment = CViewSegment2D( aStartPoint, aEndPoint );
 
   shared_ptr< vector< shared_ptr< CViewSegment2D > > > aSubSegments = aSegment.subSegments( 4 );
 

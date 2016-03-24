@@ -15,11 +15,11 @@ class TestWovenCell1 : public testing::Test
 {
 
 private:
-	shared_ptr< CWovenCell > m_Cell;
+  shared_ptr< CWovenCell > m_Cell;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     // create material
     double Tmat = 0.08;
     double Rfmat = 0.9;
@@ -35,25 +35,25 @@ protected:
     shared_ptr< CWovenCellDescription > aCell = 
       make_shared< CWovenCellDescription >( diameter, spacing );
 
-		m_Cell = make_shared< CWovenCell >( aMaterial, aCell );
-	};
+    m_Cell = make_shared< CWovenCell >( aMaterial, aCell );
+  };
 
 public:
-	shared_ptr< CWovenCell > GetCell() { return m_Cell; };
+  shared_ptr< CWovenCell > GetCell() { return m_Cell; };
 
 };
 
 TEST_F( TestWovenCell1, TestWoven1 ) {
-	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 0, Phi = 0)." );
-	
-	shared_ptr< CWovenCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 0, Phi = 0)." );
+  
+  shared_ptr< CWovenCell > aCell = GetCell();
 
   double Theta = 0; // deg
   double Phi = 0; // deg
   Side aSide = Side::Front;
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
-	
+  
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   EXPECT_NEAR( 0.444444444, Tdir_dir, 1e-6 );
   
@@ -69,16 +69,16 @@ TEST_F( TestWovenCell1, TestWoven1 ) {
 }
 
 TEST_F( TestWovenCell1, TestWoven2 ) {
-	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 45, Phi = 0)." );
-	
-	shared_ptr< CWovenCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 45, Phi = 0)." );
+  
+  shared_ptr< CWovenCell > aCell = GetCell();
 
   double Theta = 45; // deg
   double Phi = 0; // deg
   Side aSide = Side::Front;
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
-	
+  
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   EXPECT_NEAR( 0.352396986, Tdir_dir, 1e-6 );
   
@@ -94,16 +94,16 @@ TEST_F( TestWovenCell1, TestWoven2 ) {
 }
 
 TEST_F( TestWovenCell1, TestWoven3 ) {
-	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 78, Phi = 45)." );
-	
-	shared_ptr< CWovenCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 78, Phi = 45)." );
+  
+  shared_ptr< CWovenCell > aCell = GetCell();
 
   double Theta = 78; // deg
   double Phi = 45; // deg
   Side aSide = Side::Front;
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
-	
+  
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   EXPECT_NEAR( 0.0, Tdir_dir, 1e-6 );
   
@@ -119,16 +119,16 @@ TEST_F( TestWovenCell1, TestWoven3 ) {
 }
 
 TEST_F( TestWovenCell1, TestWoven4 ) {
-	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 54, Phi = 270)." );
-	
-	shared_ptr< CWovenCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 54, Phi = 270)." );
+  
+  shared_ptr< CWovenCell > aCell = GetCell();
 
   double Theta = 54; // deg
   double Phi = 270; // deg
   Side aSide = Side::Front;
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
-	
+  
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   EXPECT_NEAR( 0.100838024, Tdir_dir, 1e-6 );
   

@@ -27,7 +27,7 @@ namespace Viewer {
     m_y = y;
 
     if ( x != 0 ) {
-		  m_Theta = atan( y / x );
+      m_Theta = atan( y / x );
     } else if ( x == 0 && y > 0 ) {
       m_Theta = M_PI_2;
     } else if ( x == 0 && y < 0 ) {
@@ -37,7 +37,7 @@ namespace Viewer {
     }
 
     if ( sin( m_Theta ) != 0 ) {
-		  m_Radius = y / sin( m_Theta );
+      m_Radius = y / sin( m_Theta );
     } else if ( cos( m_Theta ) != 0 ) {
       m_Radius = x / cos( m_Theta );
     } else {

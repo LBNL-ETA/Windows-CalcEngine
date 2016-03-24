@@ -32,7 +32,7 @@ namespace Tarcog {
     double subNu1 = 1 - 1708 / ( t_Ra * cos( t_Tilt ) );
     subNu1 = pos( subNu1 );
     double subNu2 = 1 - ( 1708 * pow( sin( 1.8 * t_Tilt ), 1.6 ) ) / (t_Ra * cos( t_Tilt ) );
-		double subNu3 = pow( t_Ra * cos( t_Tilt ) / 5830, 1/3.0 ) - 1;
+    double subNu3 = pow( t_Ra * cos( t_Tilt ) / 5830, 1/3.0 ) - 1;
     subNu3 = pos( subNu3 );
     double gnu = 1 + 1.44 * subNu1 * subNu2 + subNu3; // equation 42
 

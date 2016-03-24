@@ -93,7 +93,7 @@ namespace Tarcog {
         if( RaL <= RaCrit) {
           Gnui = 0.56 * pow( RaL * sin( tiltRadians ), 0.25 );
         } else {
-				  Gnui = 0.13 * pow( RaL, 1/3.0 ) - pow( RaCrit, 1/3.0 ) + 0.56 * pow( RaCrit * sin( tiltRadians ), 0.25 );
+          Gnui = 0.13 * pow( RaL, 1/3.0 ) - pow( RaCrit, 1/3.0 ) + 0.56 * pow( RaCrit * sin( tiltRadians ), 0.25 );
         }
       } else if( ( 90.0 < m_Tilt ) && ( m_Tilt <= 179.0 ) ) {
         Gnui = 0.56 * pow( RaL * sin( tiltRadians ), 0.25 );

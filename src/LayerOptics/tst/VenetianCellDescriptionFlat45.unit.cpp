@@ -15,11 +15,11 @@ using namespace FenestrationCommon;
 class TestVenetianCellDescriptionFlat45 : public testing::Test {
 
 private:
-	shared_ptr< CVenetianCellDescription > m_Cell;
+  shared_ptr< CVenetianCellDescription > m_Cell;
   size_t m_NumOfSlats;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     // make cell geometry
     double slatWidth = 0.020; // m
     double slatSpacing = 0.010; // m
@@ -29,18 +29,18 @@ protected:
 
     m_Cell = make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, m_NumOfSlats );
-	};
+  };
 
 public:
-	shared_ptr< CVenetianCellDescription > GetCell() { return m_Cell; };
+  shared_ptr< CVenetianCellDescription > GetCell() { return m_Cell; };
   const size_t numOfSlats() { return m_NumOfSlats; };
 
 };
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian1 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - View Factors." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - View Factors." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   const size_t size = aCell->numberOfSegments();
 
@@ -64,9 +64,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian1 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian2 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (0, 0)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (0, 0)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 0, 0 );
 
@@ -77,9 +77,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian2 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian3 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (45, 90)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (45, 90)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 45, 90 );
 
@@ -90,9 +90,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian3 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian4 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (76.5, 90)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (76.5, 90)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 76.5, 90 );
 
@@ -103,9 +103,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian4 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian5 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (76.5, 45)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (76.5, 45)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 76.5, 45 );
 
@@ -116,9 +116,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian5 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian6 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 90)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 90)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 54, 90 );
 
@@ -129,9 +129,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian6 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian7 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 60)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 60)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 54, 60 );
 
@@ -142,9 +142,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian7 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian8 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 90)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 90)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 36, 90 );
 
@@ -155,9 +155,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian8 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian9 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 30)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 30)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 54, 30 );
 
@@ -168,9 +168,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian9 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian10 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 60)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 60)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 36, 60 );
 
@@ -181,9 +181,9 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian10 ) {
 }
 
 TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian11 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 30)." );
-	
-	shared_ptr< CVenetianCellDescription > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 30)." );
+  
+  shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 36, 30 );
 

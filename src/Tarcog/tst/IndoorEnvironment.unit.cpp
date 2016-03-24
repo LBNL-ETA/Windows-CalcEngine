@@ -20,8 +20,8 @@ private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -73,25 +73,25 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	shared_ptr< CTarIndoorEnvironment > GetIndoors() { return m_Indoor; };
+  shared_ptr< CTarIndoorEnvironment > GetIndoors() { return m_Indoor; };
 
 };
 
 TEST_F( TestIndoorEnvironment, IndoorRadiosity )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Indoors -> Radiosity" );
-	  
-	  shared_ptr< CTarIndoorEnvironment > aIndoor = nullptr;
-	  
-	  aIndoor = GetIndoors();
+    SCOPED_TRACE( "Begin Test: Indoors -> Radiosity" );
+    
+    shared_ptr< CTarIndoorEnvironment > aIndoor = nullptr;
+    
+    aIndoor = GetIndoors();
     ASSERT_TRUE( aIndoor != nullptr );
 
     double radiosity = aIndoor->getEnvironmentRadiosity();
-	  EXPECT_NEAR( 424.458749869075, radiosity, 1e-6 );
+    EXPECT_NEAR( 424.458749869075, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }
@@ -100,11 +100,11 @@ TEST_F( TestIndoorEnvironment, IndoorRadiosity )
 TEST_F( TestIndoorEnvironment, IndoorConvection )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Indoors -> Convection" );
-	  
-	  shared_ptr< CTarIndoorEnvironment > aIndoor = nullptr;
-	  
-	  aIndoor = GetIndoors();
+    SCOPED_TRACE( "Begin Test: Indoors -> Convection" );
+    
+    shared_ptr< CTarIndoorEnvironment > aIndoor = nullptr;
+    
+    aIndoor = GetIndoors();
     ASSERT_TRUE( aIndoor != nullptr );
 
     double convectionFlow = aIndoor->getConvectionConductionFlow();

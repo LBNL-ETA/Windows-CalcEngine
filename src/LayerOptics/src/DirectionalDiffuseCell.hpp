@@ -27,7 +27,7 @@ namespace LayerOptics {
       std::shared_ptr< const CBeamDirection > t_IncomingDirection,
       std::shared_ptr< const CBeamDirection > t_OutgoingDirection ) = 0;
 
-	  virtual double R_dir_dif( const FenestrationCommon::Side t_Side, 
+    virtual double R_dir_dif( const FenestrationCommon::Side t_Side, 
       std::shared_ptr< const CBeamDirection > t_IncomingDirection,
       std::shared_ptr< const CBeamDirection > t_OutgoingDirection ) = 0;
 

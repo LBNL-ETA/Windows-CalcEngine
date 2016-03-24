@@ -11,11 +11,11 @@ class TestSolidLayer : public testing::Test
 {
 
 private:
-	shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
+  shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     try {
       shared_ptr< CTarSurface > surface1 = std::make_shared< CTarSurface > ();
       ASSERT_TRUE( surface1 != nullptr );
@@ -30,26 +30,26 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	shared_ptr< CTarIGUSolidLayer > GetLayer() { return m_SolidLayer; };
+  shared_ptr< CTarIGUSolidLayer > GetLayer() { return m_SolidLayer; };
 
 };
 
 TEST_F( TestSolidLayer, Test1 )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Test Solid Layer - Conduction heat flow" );
-	  
-	  shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
-	  
-	  aLayer = GetLayer();
+    SCOPED_TRACE( "Begin Test: Test Solid Layer - Conduction heat flow" );
+    
+    shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
+    
+    aLayer = GetLayer();
     ASSERT_TRUE( aLayer != nullptr );
     
     double conductionHeatFlow = aLayer->getConvectionConductionFlow();
 
-	  EXPECT_NEAR( 5000, conductionHeatFlow, 1e-6 );
+    EXPECT_NEAR( 5000, conductionHeatFlow, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }

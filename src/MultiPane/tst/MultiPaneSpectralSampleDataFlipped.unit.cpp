@@ -14,11 +14,11 @@ class TestMultiPaneMeasuredSampleDataFlipped : public testing::Test
 {
 
 private:
-	shared_ptr< CMultiPaneSampleData > m_MultiPane;
+  shared_ptr< CMultiPaneSampleData > m_MultiPane;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
 
     shared_ptr< CSpectralSampleData > sampleMeasurements1 = make_shared< CSpectralSampleData >();
     sampleMeasurements1->addRecord( 0.330, 0.0857, 0.0560, 0.2646 );
@@ -59,17 +59,17 @@ protected:
     m_MultiPane = make_shared< CMultiPaneSampleData >();
     m_MultiPane->addSample( sampleMeasurements1 );
     m_MultiPane->addSample( sampleMeasurements2 );
-	};
+  };
 
 public:
-	shared_ptr< CMultiPaneSampleData > getMultiPane() { return m_MultiPane; };
+  shared_ptr< CMultiPaneSampleData > getMultiPane() { return m_MultiPane; };
 
 };
 
 TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneResultsFlipped )
 {
-	SCOPED_TRACE( "Begin Test: Test simple double pane calculations - Flipped (T, Rf, Rb and equivalent absorptances)." );
-	
+  SCOPED_TRACE( "Begin Test: Test simple double pane calculations - Flipped (T, Rf, Rb and equivalent absorptances)." );
+  
   shared_ptr< CMultiPaneSampleData > multiPane = getMultiPane();
 
   vector< double > correctT;
@@ -198,8 +198,8 @@ TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneResultsFlipped )
 
 TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneAbsorptancesFlipped )
 {
-	SCOPED_TRACE( "Begin Test: Test layer absroptances - Flipped." );
-	
+  SCOPED_TRACE( "Begin Test: Test layer absroptances - Flipped." );
+  
   shared_ptr< CMultiPaneSampleData > multiPane = getMultiPane();
 
   vector< double > correctAbs;

@@ -29,8 +29,8 @@ private:
   shared_ptr< CTarIGUSolidLayer > m_Layer3;
 
 protected:
-	virtual void SetUp()
-	{    
+  virtual void SetUp()
+  {    
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -89,27 +89,27 @@ protected:
       // gap layers
 
       // Create coefficients for Air
-		  shared_ptr< CIntCoeff > AirCon = make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
-		  shared_ptr< CIntCoeff > AirCp = make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
-		  shared_ptr< CIntCoeff > AirVisc = make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
+      shared_ptr< CIntCoeff > AirCon = make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
+      shared_ptr< CIntCoeff > AirCp = make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
+      shared_ptr< CIntCoeff > AirVisc = make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
 
-		  shared_ptr< CGasData > AirData = make_shared< CGasData >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
+      shared_ptr< CGasData > AirData = make_shared< CGasData >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
 
-		  // Create coefficients for Argon
-		  shared_ptr< CIntCoeff > ArgonCon = make_shared< CIntCoeff >( 2.2848e-03, 5.1486e-05, 0.0 );
-		  shared_ptr< CIntCoeff > ArgonCp = make_shared< CIntCoeff >( 5.21929e+02, 0.0, 0.0 );
-		  shared_ptr< CIntCoeff > ArgonVisc = make_shared< CIntCoeff >( 3.3786e-06, 6.4514e-08, 0.0 );
+      // Create coefficients for Argon
+      shared_ptr< CIntCoeff > ArgonCon = make_shared< CIntCoeff >( 2.2848e-03, 5.1486e-05, 0.0 );
+      shared_ptr< CIntCoeff > ArgonCp = make_shared< CIntCoeff >( 5.21929e+02, 0.0, 0.0 );
+      shared_ptr< CIntCoeff > ArgonVisc = make_shared< CIntCoeff >( 3.3786e-06, 6.4514e-08, 0.0 );
 
-		  shared_ptr< CGasData > ArgonData = make_shared< CGasData >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
+      shared_ptr< CGasData > ArgonData = make_shared< CGasData >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
 
-		  shared_ptr< CGasItem > Air = make_shared< CGasItem >( 0.1, AirData );
-		  shared_ptr< CGasItem > Argon = make_shared< CGasItem >( 0.9, ArgonData );
+      shared_ptr< CGasItem > Air = make_shared< CGasItem >( 0.1, AirData );
+      shared_ptr< CGasItem > Argon = make_shared< CGasItem >( 0.9, ArgonData );
 
-		  // Create gas mixture
-		  shared_ptr< CGas > Gas1 = make_shared< CGas >();
+      // Create gas mixture
+      shared_ptr< CGas > Gas1 = make_shared< CGas >();
 
-		  Gas1->addGasItem( Air );
-		  Gas1->addGasItem( Argon );
+      Gas1->addGasItem( Air );
+      Gas1->addGasItem( Argon );
 
       shared_ptr< CGas > Gas2 = std::make_shared< CGas >();
       ( *Gas2 ) = ( *Gas1 );
@@ -144,10 +144,10 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	//shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  //shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CTarIGUSolidLayer > GetLayer1() { return m_Layer1; };
   shared_ptr< CTarIGUSolidLayer > GetLayer2() { return m_Layer2; };
   shared_ptr< CTarIGUSolidLayer > GetLayer3() { return m_Layer3; };
@@ -157,13 +157,13 @@ public:
 TEST_F( TestInBetweenShadeAirArgon, Test1 )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: InBetween Shade - Air(10%)/Argon(90%)" );
-	  
+    SCOPED_TRACE( "Begin Test: InBetween Shade - Air(10%)/Argon(90%)" );
+    
     shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
 
     shared_ptr< CTarSurface > aSurface = nullptr;
-	  
-	  aLayer = GetLayer1();
+    
+    aLayer = GetLayer1();
     ASSERT_TRUE( aLayer != nullptr );
     aSurface = aLayer->getSurface( SurfacePosition::Front );
 

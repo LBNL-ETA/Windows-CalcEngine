@@ -147,7 +147,7 @@ namespace SpectralAveraging {
     shared_ptr< CSpectralSample > aSample = nullptr;
 
     vector < shared_ptr< CSpectralSampleAngle > >::iterator it;
-	
+  
     it = find_if( m_SpectralProperties.begin(), m_SpectralProperties.end(), 
       [ &t_Angle ]( shared_ptr< CSpectralSampleAngle > obj ) { return fabs( obj->angle() - t_Angle ) < 1e-6; } );
 

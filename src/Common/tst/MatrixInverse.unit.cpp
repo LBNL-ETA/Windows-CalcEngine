@@ -10,17 +10,17 @@ using namespace FenestrationCommon;
 class TestMatrixInverse : public testing::Test {
 
 protected:
-	virtual void SetUp() {
-	};
+  virtual void SetUp() {
+  };
 
 };
 
 TEST_F( TestMatrixInverse, Test1 ) {
-	SCOPED_TRACE( "Begin Test: Test inverse matrix (3 x 3)." );
+  SCOPED_TRACE( "Begin Test: Test inverse matrix (3 x 3)." );
 
   const size_t n = 3;
 
-	CSquareMatrix A = CSquareMatrix( n );
+  CSquareMatrix A = CSquareMatrix( n );
 
   A[ 0 ] = { 3.12, 8.56, 4.19 };
   A[ 1 ] = { 6.87, 4.39, 7.11 };
@@ -45,11 +45,11 @@ TEST_F( TestMatrixInverse, Test1 ) {
 }
 
 TEST_F( TestMatrixInverse, Test2 ) {
-	SCOPED_TRACE( "Begin Test: Test inverse matrix (4 x 4)." );
+  SCOPED_TRACE( "Begin Test: Test inverse matrix (4 x 4)." );
 
   const size_t n = 4;
 
-	CSquareMatrix A = CSquareMatrix( n );
+  CSquareMatrix A = CSquareMatrix( n );
 
   A[ 0 ] = { 2.59, 1.48, 9.54, 4.16 };
   A[ 1 ] = { 9.45, 7.25, 6.58, 4.95 };

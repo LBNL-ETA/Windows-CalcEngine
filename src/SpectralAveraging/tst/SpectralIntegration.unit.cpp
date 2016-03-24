@@ -12,49 +12,49 @@ class TestSpectralIntegration : public testing::Test
 {
 
 private:
-	shared_ptr< CSpectralProperties > m_SpectralProperty;
+  shared_ptr< CSpectralProperties > m_SpectralProperty;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     m_SpectralProperty = make_shared< CSpectralProperties >();
 
-    m_SpectralProperty->addProperty( 0.500,	0.5511 );
-    m_SpectralProperty->addProperty( 0.505,	0.5519 );
-    m_SpectralProperty->addProperty( 0.510,	0.5523 );
-    m_SpectralProperty->addProperty( 0.515,	0.5529 );
-    m_SpectralProperty->addProperty( 0.520,	0.5543 );
-    m_SpectralProperty->addProperty( 0.525,	0.5552 );
-    m_SpectralProperty->addProperty( 0.530,	0.5579 );
-    m_SpectralProperty->addProperty( 0.535,	0.5626 );
-    m_SpectralProperty->addProperty( 0.540,	0.5699 );
-    m_SpectralProperty->addProperty( 0.545,	0.5789 );
-    m_SpectralProperty->addProperty( 0.550,	0.5884 );
-    m_SpectralProperty->addProperty( 0.555,	0.5949 );
-    m_SpectralProperty->addProperty( 0.560,	0.5971 );
-    m_SpectralProperty->addProperty( 0.565,	0.5946 );
-    m_SpectralProperty->addProperty( 0.570,	0.5885 );
-    m_SpectralProperty->addProperty( 0.575,	0.5784 );
-    m_SpectralProperty->addProperty( 0.580,	0.5666 );
-    m_SpectralProperty->addProperty( 0.585,	0.5547 );
-    m_SpectralProperty->addProperty( 0.590,	0.5457 );
-    m_SpectralProperty->addProperty( 0.595,	0.5425 );
-    m_SpectralProperty->addProperty( 0.600,	0.5435 );
+    m_SpectralProperty->addProperty( 0.500,  0.5511 );
+    m_SpectralProperty->addProperty( 0.505,  0.5519 );
+    m_SpectralProperty->addProperty( 0.510,  0.5523 );
+    m_SpectralProperty->addProperty( 0.515,  0.5529 );
+    m_SpectralProperty->addProperty( 0.520,  0.5543 );
+    m_SpectralProperty->addProperty( 0.525,  0.5552 );
+    m_SpectralProperty->addProperty( 0.530,  0.5579 );
+    m_SpectralProperty->addProperty( 0.535,  0.5626 );
+    m_SpectralProperty->addProperty( 0.540,  0.5699 );
+    m_SpectralProperty->addProperty( 0.545,  0.5789 );
+    m_SpectralProperty->addProperty( 0.550,  0.5884 );
+    m_SpectralProperty->addProperty( 0.555,  0.5949 );
+    m_SpectralProperty->addProperty( 0.560,  0.5971 );
+    m_SpectralProperty->addProperty( 0.565,  0.5946 );
+    m_SpectralProperty->addProperty( 0.570,  0.5885 );
+    m_SpectralProperty->addProperty( 0.575,  0.5784 );
+    m_SpectralProperty->addProperty( 0.580,  0.5666 );
+    m_SpectralProperty->addProperty( 0.585,  0.5547 );
+    m_SpectralProperty->addProperty( 0.590,  0.5457 );
+    m_SpectralProperty->addProperty( 0.595,  0.5425 );
+    m_SpectralProperty->addProperty( 0.600,  0.5435 );
 
-	};
+  };
 
 public:
-	shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
+  shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
 
 };
 
 TEST_F( TestSpectralIntegration, TestRectangular )
 {
-	SCOPED_TRACE( "Begin Test: Test rectangular integration over the specturm of data." );
-	
-	shared_ptr< CSpectralProperties > aIntegratedProperties = nullptr;
-	
-	shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  SCOPED_TRACE( "Begin Test: Test rectangular integration over the specturm of data." );
+  
+  shared_ptr< CSpectralProperties > aIntegratedProperties = nullptr;
+  
+  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
 
   aIntegratedProperties = aSpectralProperties->integrate( IntegrationType::Rectangular );
 
@@ -97,11 +97,11 @@ TEST_F( TestSpectralIntegration, TestRectangular )
 
 TEST_F( TestSpectralIntegration, TestTrapezoidal )
 {
-	SCOPED_TRACE( "Begin Test: Test trapezoidal integration over the specturm of data." );
-	
-	shared_ptr< CSpectralProperties > aIntegratedProperties = nullptr;
-	
-	shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  SCOPED_TRACE( "Begin Test: Test trapezoidal integration over the specturm of data." );
+  
+  shared_ptr< CSpectralProperties > aIntegratedProperties = nullptr;
+  
+  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
 
   aIntegratedProperties = aSpectralProperties->integrate( IntegrationType::Trapezoidal );
 

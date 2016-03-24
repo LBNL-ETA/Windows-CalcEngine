@@ -31,7 +31,7 @@ private:
   shared_ptr< CEquivalentBSDFLayer > m_EquivalentBSDFLayer;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
   
   // Create lambda matrix
   vector< CBSDFDefinition > aDefinitions;
@@ -305,16 +305,16 @@ protected:
   m_EquivalentBSDFLayer = make_shared< CEquivalentBSDFLayer >( aLayer1 );
   m_EquivalentBSDFLayer->addLayer( aLayer2 );
     
-	};
+  };
 
 public:
-	shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_EquivalentBSDFLayer; };
+  shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_EquivalentBSDFLayer; };
 
 };
 
 TEST_F( TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF ) {
-	SCOPED_TRACE( "Begin Test: Equivalent layer NFRC=102 - NFRC=102." );
-	
+  SCOPED_TRACE( "Begin Test: Equivalent layer NFRC=102 - NFRC=102." );
+  
   shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
   // Transmittance Front side

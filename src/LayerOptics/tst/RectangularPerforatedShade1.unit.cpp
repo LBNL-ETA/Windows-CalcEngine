@@ -18,11 +18,11 @@ class TestRectangularPerforatedShade1 : public testing::Test
 {
 
 private:
-	shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     // create material
     double Tmat = 0.0;
     double Rfmat = 0.7;
@@ -43,22 +43,22 @@ protected:
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-		shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+    shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
     
     m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
-	};
+  };
 
 public:
-	shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
 TEST_F( TestRectangularPerforatedShade1, TestSolarProperties )
 {
-	SCOPED_TRACE( "Begin Test: Rectangular perforated cell - Solar properties." );
-	
-	shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
+  SCOPED_TRACE( "Begin Test: Rectangular perforated cell - Solar properties." );
+  
+  shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 

@@ -16,10 +16,10 @@ using namespace FenestrationCommon;
 class TestDoubleRangeMaterialSolarRadiation: public testing::Test {
 
 private:
-	shared_ptr< CMaterial > m_Material;
+  shared_ptr< CMaterial > m_Material;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
 
     shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
     
@@ -164,22 +164,22 @@ protected:
     shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
-		m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, aSolarRadiation );
-	};
+    m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, aSolarRadiation );
+  };
 
 public:
-	shared_ptr< CMaterial > getMaterial() { return m_Material; };
+  shared_ptr< CMaterial > getMaterial() { return m_Material; };
 
 };
 
 TEST_F( TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties ) {
-	SCOPED_TRACE( "Begin Test: Phi angles creation." );
-	
-	shared_ptr< CMaterial > aMaterial = getMaterial();
-	
+  SCOPED_TRACE( "Begin Test: Phi angles creation." );
+  
+  shared_ptr< CMaterial > aMaterial = getMaterial();
+  
   double T = aMaterial->getProperty( Property::T, Side::Front );
 
-	// Test for solar range first
+  // Test for solar range first
   EXPECT_NEAR( 0.1, T, 1e-6 );
 
   double R = aMaterial->getProperty( Property::R, Side::Front );

@@ -19,8 +19,8 @@ private:
   shared_ptr< CGeometry2DBeam > m_Enclosures2DBeam;
 
 protected:
-	virtual void SetUp() {
-	  m_Enclosures2DBeam = make_shared< CGeometry2DBeam >();
+  virtual void SetUp() {
+    m_Enclosures2DBeam = make_shared< CGeometry2DBeam >();
 
     //////////////////////////////////////////////////////////////////////
     ///  Enclosure 1
@@ -30,22 +30,22 @@ protected:
     // Segment 1
     shared_ptr< CPoint2D > aStartPoint1 = make_shared< CPoint2D >( 3, 2 );
     shared_ptr< CPoint2D > aEndPoint1 = make_shared< CPoint2D >( 5, 5 );
-	
-	  shared_ptr< CViewSegment2D > aSegment1 = make_shared< CViewSegment2D >( aStartPoint1, aEndPoint1 );
+  
+    shared_ptr< CViewSegment2D > aSegment1 = make_shared< CViewSegment2D >( aStartPoint1, aEndPoint1 );
     aEnclosure1->appendSegment( aSegment1 );
 
     // Segment 2
     shared_ptr< CPoint2D > aStartPoint2 = make_shared< CPoint2D >( 5, 5 );
     shared_ptr< CPoint2D > aEndPoint2 = make_shared< CPoint2D >( 8, 4 );
-	
-	  shared_ptr< CViewSegment2D > aSegment2 = make_shared< CViewSegment2D >( aStartPoint2, aEndPoint2 );
+  
+    shared_ptr< CViewSegment2D > aSegment2 = make_shared< CViewSegment2D >( aStartPoint2, aEndPoint2 );
     aEnclosure1->appendSegment( aSegment2 );
 
     // Segment 3
     shared_ptr< CPoint2D > aStartPoint3 = make_shared< CPoint2D >( 8, 4 );
     shared_ptr< CPoint2D > aEndPoint3 = make_shared< CPoint2D >( 9, 9 );
-	
-	  shared_ptr< CViewSegment2D > aSegment3 = make_shared< CViewSegment2D >( aStartPoint3, aEndPoint3 );
+  
+    shared_ptr< CViewSegment2D > aSegment3 = make_shared< CViewSegment2D >( aStartPoint3, aEndPoint3 );
     aEnclosure1->appendSegment( aSegment3 );
 
     m_Enclosures2DBeam->appendGeometry2D( aEnclosure1 );
@@ -58,28 +58,28 @@ protected:
     // Segment 4
     shared_ptr< CPoint2D > aStartPoint4 = make_shared< CPoint2D >( 3, 10 );
     shared_ptr< CPoint2D > aEndPoint4 = make_shared< CPoint2D >( 7, 11 );
-	
-	  shared_ptr< CViewSegment2D > aSegment4 = make_shared< CViewSegment2D >( aStartPoint4, aEndPoint4 );
+  
+    shared_ptr< CViewSegment2D > aSegment4 = make_shared< CViewSegment2D >( aStartPoint4, aEndPoint4 );
     aEnclosure2->appendSegment( aSegment4 );
 
     // Segment 5
     shared_ptr< CPoint2D > aStartPoint5 = make_shared< CPoint2D >( 7, 11 );
     shared_ptr< CPoint2D > aEndPoint5 = make_shared< CPoint2D >( 6, 14 );
-	
-	  shared_ptr< CViewSegment2D > aSegment5 = make_shared< CViewSegment2D >( aStartPoint5, aEndPoint5 );
+  
+    shared_ptr< CViewSegment2D > aSegment5 = make_shared< CViewSegment2D >( aStartPoint5, aEndPoint5 );
     aEnclosure2->appendSegment( aSegment5 );
 
     // Segment 6
     shared_ptr< CPoint2D > aStartPoint6 = make_shared< CPoint2D >( 6, 14 );
     shared_ptr< CPoint2D > aEndPoint6 = make_shared< CPoint2D >( 12, 16 );
-	
-	  shared_ptr< CViewSegment2D > aSegment6 = make_shared< CViewSegment2D >( aStartPoint6, aEndPoint6 );
+  
+    shared_ptr< CViewSegment2D > aSegment6 = make_shared< CViewSegment2D >( aStartPoint6, aEndPoint6 );
     aEnclosure2->appendSegment( aSegment6 );
 
     m_Enclosures2DBeam->appendGeometry2D( aEnclosure2 );
 
 
-	};
+  };
 
 public:
   shared_ptr< CGeometry2DBeam > getEnclosure() { return m_Enclosures2DBeam; };
@@ -87,7 +87,7 @@ public:
 };
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
-	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (45 deg)." );
+  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (45 deg)." );
 
   shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
   double profileAngle = 45;
@@ -112,14 +112,14 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
   double viewFactor = 0.375;
   double percentHit = 1;
   BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF1 );
+  correctResults.push_back( aVF1 );
 
   enclosureIndex = 0;
   segmentIndex = 0;
   viewFactor = 0.125;
   percentHit = 1;
   BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF2 );
+  correctResults.push_back( aVF2 );
 
   for( size_t i = 0; i < correctResults.size(); ++i ) {
     EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
@@ -131,7 +131,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
-	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (0 deg)." );
+  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (0 deg)." );
 
   shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
   double profileAngle = 0;
@@ -156,14 +156,14 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
   double viewFactor = 0.5;
   double percentHit = 0.8;
   BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF1 );
+  correctResults.push_back( aVF1 );
 
   enclosureIndex = 0;
   segmentIndex = 0;
   viewFactor = 0.375;
   percentHit = 1;
   BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF2 );
+  correctResults.push_back( aVF2 );
 
   for( size_t i = 0; i < correctResults.size(); ++i ) {
     EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
@@ -175,7 +175,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
-	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (-45 deg)." );
+  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (-45 deg)." );
 
   shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
   double profileAngle = -45;
@@ -200,21 +200,21 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
   double viewFactor = 0.125;
   double percentHit = 0.16666666666666666;
   BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF1 );
+  correctResults.push_back( aVF1 );
 
   enclosureIndex = 0;
   segmentIndex = 1;
   viewFactor = 0.25;
   percentHit = 1;
   BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF2 );
+  correctResults.push_back( aVF2 );
 
   enclosureIndex = 0;
   segmentIndex = 0;
   viewFactor = 0.625;
   percentHit = 1;
   BeamViewFactor aVF3 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF3 );
+  correctResults.push_back( aVF3 );
 
   for( size_t i = 0; i < correctResults.size(); ++i ) {
     EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
@@ -226,7 +226,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam4 ) {
-	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (45 deg)." );
+  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (45 deg)." );
 
   shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
   double profileAngle = 45;
@@ -246,7 +246,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam4 ) {
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
-	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (0 deg)." );
+  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (0 deg)." );
 
   shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
   double profileAngle = 0;
@@ -271,21 +271,21 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
   double viewFactor = 2.0 / 7.0;
   double percentHit = 1;
   BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF1 );
+  correctResults.push_back( aVF1 );
 
   enclosureIndex = 1;
   segmentIndex = 1;
   viewFactor = 3.0 / 7.0;
   percentHit = 1;
   BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF2 );
+  correctResults.push_back( aVF2 );
 
   enclosureIndex = 1;
   segmentIndex = 0;
   viewFactor = 1.0 / 7.0;
   percentHit = 1;
   BeamViewFactor aVF3 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF3 );
+  correctResults.push_back( aVF3 );
 
   for( size_t i = 0; i < correctResults.size(); ++i ) {
     EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
@@ -297,7 +297,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam6 ) {
-	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (-45 deg)." );
+  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (-45 deg)." );
 
   shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
   double profileAngle = -45;
@@ -322,14 +322,14 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam6 ) {
   double viewFactor = 0.8;
   double percentHit = 1;
   BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF1 );
+  correctResults.push_back( aVF1 );
 
   enclosureIndex = 1;
   segmentIndex = 1;
   viewFactor = 0.2;
   percentHit = 1;
   BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-	correctResults.push_back( aVF2 );
+  correctResults.push_back( aVF2 );
 
   for( size_t i = 0; i < correctResults.size(); ++i ) {
     EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );

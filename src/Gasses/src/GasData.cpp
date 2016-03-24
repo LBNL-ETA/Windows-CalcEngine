@@ -15,9 +15,9 @@ namespace Gasses
     // m_gasName = "Air";
     // m_molWeight = 28.97;
     // m_specificHeatRatio = 1.4;
-		// m_coeffCon = make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
-		// m_coeffCp = make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
-		// m_coeffVisc = make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
+    // m_coeffCon = make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
+    // m_coeffCp = make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
+    // m_coeffVisc = make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
 
   };
 
@@ -28,7 +28,7 @@ namespace Gasses
     shared_ptr< CIntCoeff const > t_Cp, 
     shared_ptr< CIntCoeff const > t_Con, 
     shared_ptr< CIntCoeff const > t_Visc ) : 
-		m_gasName( t_Name ), m_molWeight( t_Wght ), m_specificHeatRatio( t_SpecHeatRatio ),
+    m_gasName( t_Name ), m_molWeight( t_Wght ), m_specificHeatRatio( t_SpecHeatRatio ),
     m_coeffCp( t_Cp ), m_coeffCon( t_Con ), m_coeffVisc( t_Visc )
   {
 

@@ -22,8 +22,8 @@ private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-	virtual void SetUp()
-	{    
+  virtual void SetUp()
+  {    
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -89,10 +89,10 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CTarIGUSolidLayer > GetSolidLayer1() { return m_SolidLayer1; };
   shared_ptr< CTarIGUSolidLayer > GetSolidLayer2() { return m_SolidLayer2; };
 
@@ -101,13 +101,13 @@ public:
 TEST_F( TestDoubleClear, Test1 )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
-	  
-	  shared_ptr< CTarcogSystem > aSystem = nullptr;
+    SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
+    
+    shared_ptr< CTarcogSystem > aSystem = nullptr;
     shared_ptr< CTarIGUSolidLayer > aLayer1 = nullptr;
     shared_ptr< CTarIGUSolidLayer > aLayer2 = nullptr;
-	  
-	  aSystem = GetSystem();
+    
+    aSystem = GetSystem();
     ASSERT_TRUE( aSystem != nullptr );
     aSystem->solve();
 

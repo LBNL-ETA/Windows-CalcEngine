@@ -10,17 +10,17 @@ using namespace FenestrationCommon;
 class TestMatrixMultiplication : public testing::Test {
 
 protected:
-	virtual void SetUp() {
-	};
+  virtual void SetUp() {
+  };
 
 };
 
 TEST_F( TestMatrixMultiplication, Test1 ) {
-	SCOPED_TRACE( "Begin Test: Test matrix multiplication (3 x 3)." );
+  SCOPED_TRACE( "Begin Test: Test matrix multiplication (3 x 3)." );
 
   const size_t n = 3;
 
-	CSquareMatrix A = CSquareMatrix( n );
+  CSquareMatrix A = CSquareMatrix( n );
 
   A[ 0 ] = { 4, 3, 9 };
   A[ 1 ] = { 8, 8, 4 };
@@ -51,11 +51,11 @@ TEST_F( TestMatrixMultiplication, Test1 ) {
 }
 
 TEST_F( TestMatrixMultiplication, Test2 ) {
-	SCOPED_TRACE( "Begin Test: Test matrix and vector multiplication (3 x 3) and (1 x 3)." );
+  SCOPED_TRACE( "Begin Test: Test matrix and vector multiplication (3 x 3) and (1 x 3)." );
 
   const size_t n = 3;
 
-	CSquareMatrix A = CSquareMatrix( n );
+  CSquareMatrix A = CSquareMatrix( n );
 
   A[ 0 ] = { 4, 3, 9 };
   A[ 1 ] = { 8, 8, 4 };
@@ -76,11 +76,11 @@ TEST_F( TestMatrixMultiplication, Test2 ) {
 }
 
 TEST_F( TestMatrixMultiplication, Test3 ) {
-	SCOPED_TRACE( "Begin Test: Test matrix and vector multiplication (3 x 3) and (1 x 3)." );
+  SCOPED_TRACE( "Begin Test: Test matrix and vector multiplication (3 x 3) and (1 x 3)." );
 
   const size_t n = 3;
 
-	CSquareMatrix A = CSquareMatrix( n );
+  CSquareMatrix A = CSquareMatrix( n );
 
   A[ 0 ] = { 4, 3, 9 };
   A[ 1 ] = { 8, 8, 4 };

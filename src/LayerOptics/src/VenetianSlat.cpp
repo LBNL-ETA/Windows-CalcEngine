@@ -69,12 +69,12 @@ namespace LayerOptics {
       double alpha = radians( m_SlatTiltAngle );
 
       if( m_CurvatureRadius > 0 ) {
-			  theta1 = degrees( M_PI / 2 + alpha - theta / 2 );
-			  theta2 = degrees( M_PI / 2 + alpha + theta / 2 );
-		  } else {
-			  theta1 = degrees( -M_PI / 2 + alpha + theta / 2 );
-			  theta2 = degrees( -M_PI / 2 + alpha - theta / 2 );
-		  }
+        theta1 = degrees( M_PI / 2 + alpha - theta / 2 );
+        theta2 = degrees( M_PI / 2 + alpha + theta / 2 );
+      } else {
+        theta1 = degrees( -M_PI / 2 + alpha + theta / 2 );
+        theta2 = degrees( -M_PI / 2 + alpha - theta / 2 );
+      }
 
       double dTheta = ( theta2 - theta1 ) / m_NumOfSlatSegments;
       double startTheta = 0;

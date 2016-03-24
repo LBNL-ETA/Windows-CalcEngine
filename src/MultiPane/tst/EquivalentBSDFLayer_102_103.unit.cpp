@@ -27,10 +27,10 @@ using namespace MultiPane;
 class EquivalentBSDFLayer_102_103 : public testing::Test {
 
 private:
-	shared_ptr< CEquivalentBSDFLayerMultiWL > m_Layer;
+  shared_ptr< CEquivalentBSDFLayerMultiWL > m_Layer;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
     
     // Full ASTM E891-87 Table 1 (Solar radiation)
@@ -430,20 +430,20 @@ protected:
     m_Layer = make_shared< CEquivalentBSDFLayerMultiWL >( commonWavelengths, aSolarRadiation, Layer_102 );
     m_Layer->addLayer( Layer_103 );
 
-	};
+  };
 
 public:
-	shared_ptr< CEquivalentBSDFLayerMultiWL > getLayer() { return m_Layer; };
+  shared_ptr< CEquivalentBSDFLayerMultiWL > getLayer() { return m_Layer; };
 
 };
 
 TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
-	SCOPED_TRACE( "Begin Test: Specular layer - BSDF." );
+  SCOPED_TRACE( "Begin Test: Specular layer - BSDF." );
 
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
-	
-	shared_ptr< CEquivalentBSDFLayerMultiWL > aLayer = getLayer();
+  
+  shared_ptr< CEquivalentBSDFLayerMultiWL > aLayer = getLayer();
 
   shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
 

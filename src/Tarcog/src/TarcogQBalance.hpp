@@ -6,7 +6,7 @@
 
 namespace FenestrationCommon {
 
-	class CSquareMatrix;
+  class CSquareMatrix;
   class CLinearSolver;
 
 }

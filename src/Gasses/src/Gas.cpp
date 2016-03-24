@@ -12,46 +12,45 @@ namespace Gasses
 
   CGas::CGas() : m_SimpleProperties( make_shared< GasProperties > () ), m_Properties( make_shared< GasProperties > () ) {
     // create default gas to be Air
-		shared_ptr< CGasItem > Air = make_shared< CGasItem >();
+    shared_ptr< CGasItem > Air = make_shared< CGasItem >();
     m_GasItem.push_back( Air );
     m_DefaultGas = true;
   };
 
-	void CGas::addGasItem( shared_ptr< CGasItem > t_GasItem )
-	{
+  void CGas::addGasItem( shared_ptr< CGasItem > t_GasItem ) {
     // Need to remove default since user wants to create their own gasses
     if ( m_DefaultGas ) {
       m_GasItem.clear();
       m_DefaultGas = false;
     }
-		m_GasItem.push_back( t_GasItem );
-	};
+    m_GasItem.push_back( t_GasItem );
+  };
 
-	double CGas::totalPercent()
-	{
-		double totalPercent = 0;
+  double CGas::totalPercent()
+  {
+    double totalPercent = 0;
 
     vector< shared_ptr< CGasItem > >::const_iterator it;
     for( it = m_GasItem.begin(); it<m_GasItem.end(); ++it ) {
       totalPercent += (*it)->getFraction();
     }
 
-		return totalPercent;
-	};
+    return totalPercent;
+  };
 
-	void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
+  void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
     vector< shared_ptr< CGasItem > >::const_iterator it;
     for( it = m_GasItem.begin(); it<m_GasItem.end(); ++it ) {
       (*it)->setTemperature( t_Temperature );
       (*it)->setPressure( t_Pressure );
     }
-	};
+  };
 
-	shared_ptr< GasProperties > CGas::getSimpleGasProperties()
-	{
-		vector< shared_ptr< CGasItem > >::iterator it;
+  shared_ptr< GasProperties > CGas::getSimpleGasProperties()
+  {
+    vector< shared_ptr< CGasItem > >::iterator it;
 
-		for ( it = m_GasItem.begin(); it != m_GasItem.end(); ++it ) {
+    for ( it = m_GasItem.begin(); it != m_GasItem.end(); ++it ) {
       if ( it == m_GasItem.begin() ) {
         *m_SimpleProperties = *(( *it )->getFractionalGasProperties());
       } else {
@@ -59,15 +58,15 @@ namespace Gasses
       }
     }
 
-		return m_SimpleProperties;
-	};
+    return m_SimpleProperties;
+  };
 
   shared_ptr< GasProperties > CGas::getGasProperties()
-	{
+  {
     shared_ptr< GasProperties > simpleProperties = getSimpleGasProperties();
 
     // coefficients for intermediate calculations
-		vector< vector< double > > miItem;
+    vector< vector< double > > miItem;
     vector< vector< double > > lambdaPrimItem;
     vector< vector< double > > lambdaSecondItem;
 
@@ -147,7 +146,7 @@ namespace Gasses
 
     return m_Properties;
 
-	};
+  };
 
   // This implements equation 63 (ISO 15099)
   double CGas::viscTwoGasses( shared_ptr< GasProperties > t_Gas1Properties,
@@ -256,14 +255,14 @@ namespace Gasses
 
   };
 
-	CGas& CGas::operator=( const CGas& t_Gas )
-	{
+  CGas& CGas::operator=( const CGas& t_Gas )
+  {
     m_GasItem = t_Gas.m_GasItem;
     m_SimpleProperties = t_Gas.m_SimpleProperties;
     m_Properties = t_Gas.m_Properties;
     m_DefaultGas = t_Gas.m_DefaultGas;
 
-		return *this;
-	};
+    return *this;
+  };
 
 };

@@ -12,26 +12,26 @@ class TestPhiLimits2 : public testing::Test
 {
 
 private:
-	shared_ptr< CPhiLimits > m_PhiLimits;
+  shared_ptr< CPhiLimits > m_PhiLimits;
 
 protected:
-	virtual void SetUp()
-	{
-		m_PhiLimits = make_shared< CPhiLimits >( 1 );
-	};
+  virtual void SetUp()
+  {
+    m_PhiLimits = make_shared< CPhiLimits >( 1 );
+  };
 
 public:
-	shared_ptr< CPhiLimits > GetLimits() { return m_PhiLimits; };
+  shared_ptr< CPhiLimits > GetLimits() { return m_PhiLimits; };
 
 };
 
 TEST_F( TestPhiLimits2, TestBSDFRingCreation )
 {
-	SCOPED_TRACE( "Begin Test: BSDF Phi limits creation." );
-	
-	shared_ptr< CPhiLimits > aLimits = GetLimits();
-	
-	vector< double > results = *(aLimits->getPhiLimits());
+  SCOPED_TRACE( "Begin Test: BSDF Phi limits creation." );
+  
+  shared_ptr< CPhiLimits > aLimits = GetLimits();
+  
+  vector< double > results = *(aLimits->getPhiLimits());
 
   vector< double > correctResults = { 0, 360 };
   EXPECT_EQ( results.size(), correctResults.size() );

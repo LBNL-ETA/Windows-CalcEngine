@@ -14,24 +14,24 @@ class TestBSDFQuarterBasis : public testing::Test
 {
 
 private:
-	shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
+  shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     m_BSDFHemisphere = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
-	};
+  };
 
 public:
-	shared_ptr< CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) 
+  shared_ptr< CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) 
     { return m_BSDFHemisphere->getDirections( t_Side ); };
 
 };
 
 TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis )
 {
-	SCOPED_TRACE( "Begin Test: Phi angles for patches." );
-	
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+  SCOPED_TRACE( "Begin Test: Phi angles for patches." );
+  
+  CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
 
   vector< double > correctResults = { 180, \
                                       0, 45, 90, 135, 180, 225, 270, 315, \
@@ -55,9 +55,9 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis )
 
 TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas )
 {
-	SCOPED_TRACE( "Begin Test: Theta angles for patches." );
-	
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+  SCOPED_TRACE( "Begin Test: Theta angles for patches." );
+  
+  CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
 
   vector< double > correctResults = { 0, \
                                       18, 18, 18, 18, 18, 18, 18, 18, \
@@ -81,9 +81,9 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas )
 
 TEST_F( TestBSDFQuarterBasis, TestQuarterBasisLambdas )
 {
-	SCOPED_TRACE( "Begin Test: Theta angles for patches." );
-	
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+  SCOPED_TRACE( "Begin Test: Theta angles for patches." );
+  
+  CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
 
   vector< double > correctResults = \
   { 0.076880244, \

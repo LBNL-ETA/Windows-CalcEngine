@@ -11,20 +11,20 @@ namespace Gasses
   class CGasData;
   struct GasProperties;
 
-	class CGas
-	{
-	public:
+  class CGas
+  {
+  public:
     CGas();
-		void addGasItem( std::shared_ptr< CGasItem > t_GasItem );
-		double totalPercent();
-		std::shared_ptr< GasProperties > getSimpleGasProperties();
+    void addGasItem( std::shared_ptr< CGasItem > t_GasItem );
+    double totalPercent();
+    std::shared_ptr< GasProperties > getSimpleGasProperties();
     std::shared_ptr< GasProperties > getGasProperties();
-		void setTemperatureAndPressure( double t_Temperature, double t_Pressure );
+    void setTemperatureAndPressure( double t_Temperature, double t_Pressure );
 
-		CGas& operator=( const CGas& t_Gas );
+    CGas& operator=( const CGas& t_Gas );
 
-	private:
-		void molecularWeight();
+  private:
+    void molecularWeight();
 
     double viscTwoGasses(std::shared_ptr< GasProperties > t_Gas1Properties,
       std::shared_ptr< GasProperties > t_Gas2Properties);
@@ -40,12 +40,12 @@ namespace Gasses
     double lambdaSecondDenomTwoGasses(std::shared_ptr< CGasItem > t_GasItem1,
       std::shared_ptr< CGasItem > t_GasItem2);
 
-		std::vector< std::shared_ptr< CGasItem > > m_GasItem;
+    std::vector< std::shared_ptr< CGasItem > > m_GasItem;
     std::shared_ptr< GasProperties > m_SimpleProperties;
     std::shared_ptr< GasProperties > m_Properties;
 
     bool m_DefaultGas;
-	};
+  };
 
 };
 

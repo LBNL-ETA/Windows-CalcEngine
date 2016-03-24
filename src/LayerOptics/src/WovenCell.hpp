@@ -24,7 +24,7 @@ namespace LayerOptics {
     CWovenCell( std::shared_ptr< CMaterial > t_MaterialProperties, 
         std::shared_ptr< CWovenCellDescription > t_Cell );
 
-		double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
     double T_dir_dif( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
     double R_dir_dif( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
 

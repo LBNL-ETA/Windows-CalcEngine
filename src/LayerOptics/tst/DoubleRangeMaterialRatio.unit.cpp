@@ -14,10 +14,10 @@ using namespace FenestrationCommon;
 class TestDoubleRangeMaterialRatio : public testing::Test {
 
 private:
-	shared_ptr< CMaterial > m_Material;
+  shared_ptr< CMaterial > m_Material;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     // Solar range material
     double Tmat = 0.1;
     double Rfmat = 0.7;
@@ -38,22 +38,22 @@ protected:
 
     double ratio = 0.49;
 
-		m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
-	};
+    m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
+  };
 
 public:
-	shared_ptr< CMaterial > getMaterial() { return m_Material; };
+  shared_ptr< CMaterial > getMaterial() { return m_Material; };
 
 };
 
 TEST_F( TestDoubleRangeMaterialRatio, TestMaterialProperties ) {
-	SCOPED_TRACE( "Begin Test: Phi angles creation." );
-	
-	shared_ptr< CMaterial > aMaterial = getMaterial();
-	
+  SCOPED_TRACE( "Begin Test: Phi angles creation." );
+  
+  shared_ptr< CMaterial > aMaterial = getMaterial();
+  
   double T = aMaterial->getProperty( Property::T, Side::Front );
 
-	// Test for solar range first
+  // Test for solar range first
   EXPECT_NEAR( 0.1, T, 1e-6 );
 
   double R = aMaterial->getProperty( Property::R, Side::Front );

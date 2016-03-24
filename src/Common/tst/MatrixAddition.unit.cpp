@@ -10,16 +10,16 @@ using namespace FenestrationCommon;
 class TestMatrixAddition : public testing::Test {
 
 protected:
-	virtual void SetUp() {
-	};
+  virtual void SetUp() {
+  };
 
 
 };
 
 TEST_F( TestMatrixAddition, Test1 ) {
-	SCOPED_TRACE( "Begin Test: Test matrix addition operation." );
+  SCOPED_TRACE( "Begin Test: Test matrix addition operation." );
 
-	CSquareMatrix A = CSquareMatrix( 2 );
+  CSquareMatrix A = CSquareMatrix( 2 );
   CSquareMatrix B = CSquareMatrix( 2 );
 
   A[0][0] = 1;
@@ -34,7 +34,7 @@ TEST_F( TestMatrixAddition, Test1 ) {
 
   shared_ptr< CSquareMatrix > C = A.add( B );
 
-	EXPECT_NEAR( 3, ( *C )[ 0 ][ 0 ], 1e-6 );
+  EXPECT_NEAR( 3, ( *C )[ 0 ][ 0 ], 1e-6 );
   EXPECT_NEAR( 5, ( *C )[ 0 ][ 1 ], 1e-6 );
   EXPECT_NEAR( 7, ( *C )[ 1 ][ 0 ], 1e-6 );
   EXPECT_NEAR( 9, ( *C )[ 1 ][ 1 ], 1e-6 );
@@ -42,9 +42,9 @@ TEST_F( TestMatrixAddition, Test1 ) {
 }
 
 TEST_F( TestMatrixAddition, Test2 ) {
-	SCOPED_TRACE( "Begin Test: Test matrix subtraction operation." );
+  SCOPED_TRACE( "Begin Test: Test matrix subtraction operation." );
 
-	CSquareMatrix A = CSquareMatrix( 2 );
+  CSquareMatrix A = CSquareMatrix( 2 );
   CSquareMatrix B = CSquareMatrix( 2 );
 
   A[0][0] = 1;
@@ -59,7 +59,7 @@ TEST_F( TestMatrixAddition, Test2 ) {
 
   shared_ptr< CSquareMatrix > C = A.sub( B );
 
-	EXPECT_NEAR( -1, ( *C )[ 0 ][ 0 ], 1e-6 );
+  EXPECT_NEAR( -1, ( *C )[ 0 ][ 0 ], 1e-6 );
   EXPECT_NEAR( -1, ( *C )[ 0 ][ 1 ], 1e-6 );
   EXPECT_NEAR( -1, ( *C )[ 1 ][ 0 ], 1e-6 );
   EXPECT_NEAR( -1, ( *C )[ 1 ][ 1 ], 1e-6 );

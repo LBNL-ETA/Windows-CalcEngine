@@ -31,7 +31,7 @@ private:
   shared_ptr< CBSDFDoubleLayer > m_DoubleLayer;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
   
   // Create lambda matrix
   vector< CBSDFDefinition > aDefinitions;
@@ -304,16 +304,16 @@ protected:
 
   m_DoubleLayer = make_shared< CBSDFDoubleLayer >( aLayer1, aLayer2 );
     
-	};
+  };
 
 public:
-	shared_ptr< CBSDFDoubleLayer > getDoubleLayer() { return m_DoubleLayer; };
+  shared_ptr< CBSDFDoubleLayer > getDoubleLayer() { return m_DoubleLayer; };
 
 };
 
 TEST_F( TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF ) {
-	SCOPED_TRACE( "Begin Test: Double Layer BSDF." );
-	
+  SCOPED_TRACE( "Begin Test: Double Layer BSDF." );
+  
   shared_ptr< CBSDFResults > aLayer = getDoubleLayer()->value();
 
   shared_ptr< CSquareMatrix > T = aLayer->Tau( Side::Front );

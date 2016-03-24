@@ -32,7 +32,7 @@ private:
   shared_ptr< CEquivalentBSDFLayer > m_EquivalentBSDFLayer;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
   
   // Create lambda matrix
   vector< CBSDFDefinition > aDefinitions;
@@ -316,7 +316,7 @@ protected:
   shared_ptr< CCircularCellDescription > perfCellDescription = 
     make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-	shared_ptr< CPerforatedCell > perfCell = make_shared< CPerforatedCell >( perfMaterial, perfCellDescription );
+  shared_ptr< CPerforatedCell > perfCell = make_shared< CPerforatedCell >( perfMaterial, perfCellDescription );
     
   shared_ptr< CUniformDiffuseBSDFLayer > aShade = make_shared< CUniformDiffuseBSDFLayer >( perfCell, aBSDF );
 
@@ -328,16 +328,16 @@ protected:
   m_EquivalentBSDFLayer->addLayer( aLayer2 );
   m_EquivalentBSDFLayer->addLayer( aLayer3 );
     
-	};
+  };
 
 public:
-	shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_EquivalentBSDFLayer; };
+  shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_EquivalentBSDFLayer; };
 
 };
 
 TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
-	SCOPED_TRACE( "Begin Test: Equivalent layer NFRC=102 - Perforated - NFRC=102." );
-	
+  SCOPED_TRACE( "Begin Test: Equivalent layer NFRC=102 - Perforated - NFRC=102." );
+  
   shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
   // Transmittance Front side

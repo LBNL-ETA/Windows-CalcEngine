@@ -6,11 +6,11 @@
 
 namespace FenestrationCommon {
 
-	class CSquareMatrix {
+  class CSquareMatrix {
   public:
     explicit CSquareMatrix( size_t const aSize );
     size_t getSize() const;
-	  void setZeros();
+    void setZeros();
     // All diagonal items are one and all non diagonal are zero
     void setIdentity();
     // set diagonal values from vector
@@ -27,14 +27,14 @@ namespace FenestrationCommon {
     // inverse matrix
     std::shared_ptr< CSquareMatrix > inverse();
 
-	private:
+  private:
     // LU decomposition of current matrix
     std::shared_ptr< CSquareMatrix > LU();
 
-	  size_t m_Size;
-	  std::vector< std::vector < double > > m_Matrix;
+    size_t m_Size;
+    std::vector< std::vector < double > > m_Matrix;
 
-	};
+  };
 }
 
 

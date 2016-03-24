@@ -6,12 +6,12 @@
 using namespace std;
 
 namespace FenestrationCommon {
-	CSquareMatrix::CSquareMatrix( const size_t aSize ) {
-		m_Size = aSize;
+  CSquareMatrix::CSquareMatrix( const size_t aSize ) {
+    m_Size = aSize;
     m_Matrix.resize( m_Size );
-		for( int i = 0; i < m_Size; ++i )
-			m_Matrix[ i ].resize( m_Size );
-	};
+    for( int i = 0; i < m_Size; ++i )
+      m_Matrix[ i ].resize( m_Size );
+  };
 
   size_t CSquareMatrix::getSize() const {
     return m_Size;
@@ -151,21 +151,21 @@ namespace FenestrationCommon {
       fill( d.begin(), d.end(), 0 );
       fill( y.begin(), y.end(), 0 );
       d[ m ] = 1;
-  	  for( int i = 0; i <= size; ++i ) { 
+      for( int i = 0; i <= size; ++i ) { 
         double x = 0;
-  	    for( int j = 0; j <= i - 1; ++j ) {
+        for( int j = 0; j <= i - 1; ++j ) {
           x = x + ( *aLU )[ i ][ j ] * y[ j ];
         }
-   	    y[ i ] = ( d[ i ] - x );
-  	  }
+         y[ i ] = ( d[ i ] - x );
+      }
   
-  	  for( int i = size; i >= 0; --i ) { 
+      for( int i = size; i >= 0; --i ) { 
         double x = 0.0;
-  	    for( int j = i + 1; j <= size; ++j ) { 
+        for( int j = i + 1; j <= size; ++j ) { 
           x = x + ( *aLU )[ i ][ j ] * ( *inverse )[ j ][ m ];
         }
-   	    ( *inverse )[ i ][ m ] = ( y[ i ] - x ) / ( *aLU )[ i ][ i ];
-  	  }
+         ( *inverse )[ i ][ m ] = ( y[ i ] - x ) / ( *aLU )[ i ][ i ];
+      }
     }
 
     return inverse;
@@ -176,13 +176,13 @@ namespace FenestrationCommon {
     D->copyFrom( *this );
 
     for( size_t k = 0; k <= m_Size - 2; ++k ) {
-	    for( size_t j = k + 1; j <= m_Size - 1; ++j) {
-	      double x = ( *D )[ j ][ k ] / ( *D )[ k ][ k ];
-	      for( size_t i = k; i <= m_Size - 1; ++i ) {  
-	        ( *D )[ j ][ i ] = ( *D )[ j ][ i ] - x * ( *D )[ k ][ i ];
+      for( size_t j = k + 1; j <= m_Size - 1; ++j) {
+        double x = ( *D )[ j ][ k ] / ( *D )[ k ][ k ];
+        for( size_t i = k; i <= m_Size - 1; ++i ) {  
+          ( *D )[ j ][ i ] = ( *D )[ j ][ i ] - x * ( *D )[ k ][ i ];
         }
-	      ( *D )[ j ][ k ] = x;
-	    }
+        ( *D )[ j ][ k ] = x;
+      }
     }
 
     return D;

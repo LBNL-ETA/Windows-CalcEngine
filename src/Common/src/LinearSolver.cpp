@@ -78,30 +78,30 @@ namespace FenestrationCommon {
         ( *m_MatrixA )[ i ][ j ] = sum;
         double dum = (*vv)[i] * fabs( sum );
         if ( dum >= aamax ) {
-					imax = i;
-					aamax = dum;
-				}
+          imax = i;
+          aamax = dum;
+        }
       }
 
       if ( j != imax ) {
-				for ( int k = 0; k < size; ++k ) {
+        for ( int k = 0; k < size; ++k ) {
           double dum = ( *m_MatrixA )[ imax ][ k ];
           ( *m_MatrixA )[ imax ][ k ] = ( *m_MatrixA )[ j ][ k ];
-					( *m_MatrixA )[ j ][ k ] = dum;
-				} // k
-				d = -d;
-				(*vv)[ imax ] = (*vv)[ j ];
-			}
-			(*index)[ j ] = imax;
-			if ( ( *m_MatrixA )[ j][ j ] == 0.0 ) {
+          ( *m_MatrixA )[ j ][ k ] = dum;
+        } // k
+        d = -d;
+        (*vv)[ imax ] = (*vv)[ j ];
+      }
+      (*index)[ j ] = imax;
+      if ( ( *m_MatrixA )[ j][ j ] == 0.0 ) {
         ( *m_MatrixA )[ j ][ j ] = TINY;
       }
-			if ( j != ( size - 1 ) ) {
-				double dum = 1.0 / ( *m_MatrixA )[ j ][ j ];
-				for ( int i = j + 1; i < size; ++i ) {
+      if ( j != ( size - 1 ) ) {
+        double dum = 1.0 / ( *m_MatrixA )[ j ][ j ];
+        for ( int i = j + 1; i < size; ++i ) {
           ( *m_MatrixA )[ i ][ j ] = ( *m_MatrixA )[ i ][ j ] * dum;
-				} // i
-			}
+        } // i
+      }
 
     }
 
@@ -125,27 +125,27 @@ namespace FenestrationCommon {
     int size = int( m_MatrixA->getSize() );
 
     int ii = -1;
-		for ( int i = 0; i < size; ++i ) {
-			size_t ll = ( *index )[ i ];
-			double sum = ( *m_VectorB )[ ll ];
-			( *m_VectorB )[ ll ] = ( *m_VectorB )[ i ];
-			if ( ii != -1 ) {
-				for ( int j = ii; j <= i - 1; ++j ) {
+    for ( int i = 0; i < size; ++i ) {
+      size_t ll = ( *index )[ i ];
+      double sum = ( *m_VectorB )[ ll ];
+      ( *m_VectorB )[ ll ] = ( *m_VectorB )[ i ];
+      if ( ii != -1 ) {
+        for ( int j = ii; j <= i - 1; ++j ) {
           sum -= ( *m_MatrixA )[ i ][ j ] * ( *m_VectorB )[ j ];
-				} // j
-			} else if ( sum != 0.0 ) {
-				ii = int( i );
-			}
+        } // j
+      } else if ( sum != 0.0 ) {
+        ii = int( i );
+      }
       ( *m_VectorB )[ i ] = sum;
-		} // i
+    } // i
 
-		for ( int i = ( size - 1 ); i >= 0; --i ) {
-			double sum = ( *m_VectorB )[ i ];
-			for ( int j = i + 1; j < size; ++j ) {
-				sum -= ( *m_MatrixA )[ i ][ j ] * ( *m_VectorB )[ j ];
-			} // j
+    for ( int i = ( size - 1 ); i >= 0; --i ) {
+      double sum = ( *m_VectorB )[ i ];
+      for ( int j = i + 1; j < size; ++j ) {
+        sum -= ( *m_MatrixA )[ i ][ j ] * ( *m_VectorB )[ j ];
+      } // j
       ( *m_VectorB )[ i ] = sum / ( *m_MatrixA )[ i ][ i ];
-		} // i
+    } // i
 
     return m_VectorB;
 

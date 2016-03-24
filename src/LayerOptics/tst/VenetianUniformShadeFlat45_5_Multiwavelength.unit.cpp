@@ -18,10 +18,10 @@ using namespace SpectralAveraging;
 class TestVenetianUniformShadeFlat45_5_Multiwavelength : public testing::Test {
 
 private:
-	shared_ptr< CUniformDiffuseBSDFLayer > m_Layer;
+  shared_ptr< CUniformDiffuseBSDFLayer > m_Layer;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     // Solar range material
     double Tmat = 0.1;
     double Rfmat = 0.7;
@@ -58,21 +58,21 @@ protected:
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-		shared_ptr< CVenetianCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
+    shared_ptr< CVenetianCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
     m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
-	};
+  };
 
 public:
-	shared_ptr< CUniformDiffuseBSDFLayer > getLayer() { return m_Layer; };
+  shared_ptr< CUniformDiffuseBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
 TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavelength ) {
-	SCOPED_TRACE( "Begin Test: Venetian layer (multi range) - BSDF." );
-	
-	shared_ptr< CUniformDiffuseBSDFLayer > aLayer = getLayer();
+  SCOPED_TRACE( "Begin Test: Venetian layer (multi range) - BSDF." );
+  
+  shared_ptr< CUniformDiffuseBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
 

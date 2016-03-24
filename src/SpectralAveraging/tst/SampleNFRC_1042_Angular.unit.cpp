@@ -21,7 +21,7 @@ private:
   shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
     
     // Full ASTM E891-87 Table 1
@@ -648,7 +648,7 @@ protected:
 
     m_Sample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
-	};
+  };
 
 public:
   shared_ptr< CSpectralSample > getSample() { return m_Sample; };

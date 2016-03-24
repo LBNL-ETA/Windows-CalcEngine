@@ -15,10 +15,10 @@ using namespace FenestrationCommon;
 class TestVenetianCellCurved55_2 : public testing::Test {
 
 private:
-	shared_ptr< CVenetianCell > m_Cell;
+  shared_ptr< CVenetianCell > m_Cell;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     // create material
     double Tmat = 0.1;
     double Rfmat = 0.3;
@@ -41,17 +41,17 @@ protected:
 
     m_Cell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
-	};
+  };
 
 public:
-	shared_ptr< CVenetianCell > GetCell() { return m_Cell; };
+  shared_ptr< CVenetianCell > GetCell() { return m_Cell; };
 
 };
 
 TEST_F( TestVenetianCellCurved55_2, TestVenetian1 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Curved, -55 degrees slats - diffuse-diffuse)." );
-	
-	shared_ptr< CVenetianCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Curved, -55 degrees slats - diffuse-diffuse)." );
+  
+  shared_ptr< CVenetianCell > aCell = GetCell();
 
   // Front side
   Side aSide = Side::Front;
@@ -72,9 +72,9 @@ TEST_F( TestVenetianCellCurved55_2, TestVenetian1 ) {
 }
 
 TEST_F( TestVenetianCellCurved55_2, TestVenetian2 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Curved, -55 degrees slats - direct-diffuse)." );
-	
-	shared_ptr< CVenetianCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Curved, -55 degrees slats - direct-diffuse)." );
+  
+  shared_ptr< CVenetianCell > aCell = GetCell();
 
   // Front side
   Side aSide = Side::Front;

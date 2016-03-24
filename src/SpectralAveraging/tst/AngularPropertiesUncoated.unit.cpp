@@ -13,24 +13,24 @@ using namespace FenestrationCommon;
 class TestAngularPropertiesUncoated : public testing::Test {
 
 protected:
-	virtual void SetUp() {
-	};
+  virtual void SetUp() {
+  };
 
 };
 
 TEST_F( TestAngularPropertiesUncoated, Test1 ) {
-	SCOPED_TRACE( "Begin Test: Uncoated properties - various angles." );
+  SCOPED_TRACE( "Begin Test: Uncoated properties - various angles." );
 
   double aThickness = 0.005715; // m
   double lambda = 0.8e-6; // m
   double T0 = 0.722;
   double R0 = 0.066;
   double angle = 0;
-	
-	CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
-	shared_ptr< CAngularProperties > aProperties = 
+  
+  CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
+  shared_ptr< CAngularProperties > aProperties = 
     aAngularFactory.getAngularProperties( SpecularLayerSurfaceType::Uncoated );
-	
+  
   EXPECT_NEAR( 0.722, aProperties->transmittance( angle, lambda ), 1e-6 );
   EXPECT_NEAR( 0.066, aProperties->reflectance( angle, lambda ), 1e-6 );
 
@@ -49,18 +49,18 @@ TEST_F( TestAngularPropertiesUncoated, Test1 ) {
 }
 
 TEST_F( TestAngularPropertiesUncoated, Test2 ) {
-	SCOPED_TRACE( "Begin Test: Uncoated properties - zero normal transmittance." );
+  SCOPED_TRACE( "Begin Test: Uncoated properties - zero normal transmittance." );
 
   double aThickness = 0.005715; // m
   double lambda = 0.8e-6; // m
   double T0 = 0.0;
   double R0 = 0.047;
   double angle = 0;
-	
-	CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
-	shared_ptr< CAngularProperties > aProperties = 
+  
+  CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
+  shared_ptr< CAngularProperties > aProperties = 
     aAngularFactory.getAngularProperties( SpecularLayerSurfaceType::Uncoated );
-	
+  
   EXPECT_NEAR( 0.0, aProperties->transmittance( angle, lambda ), 1e-6 );
   EXPECT_NEAR( 0.047, aProperties->reflectance( angle, lambda ), 1e-6 );
 

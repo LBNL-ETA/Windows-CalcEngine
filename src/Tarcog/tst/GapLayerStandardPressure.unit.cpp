@@ -13,12 +13,12 @@ class TestGapLayerStandardPressure : public testing::Test
 {
 
 private:
-	std::shared_ptr< CTarIGUGapLayer > m_GapLayer;
+  std::shared_ptr< CTarIGUGapLayer > m_GapLayer;
   std::shared_ptr< CTarIGU > m_IGU;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     try {
       // Gap layer construct is made in a way that it is not possible to create gap alone. In order to test gap, entire
       // IGU has to be created. Example is taken as part of double clear air run from WINDOW 7 version of TARCOG
@@ -61,27 +61,27 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	std::shared_ptr< CTarIGUGapLayer > GetLayer() { return m_GapLayer; };
+  std::shared_ptr< CTarIGUGapLayer > GetLayer() { return m_GapLayer; };
 
 };
 
 TEST_F( TestGapLayerStandardPressure, ConvectionHeatFlow )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Test Gap Layer - Convection heat flow [Pa = 101325 Pa]" );
-	  
-	  std::shared_ptr< CTarIGUGapLayer > aLayer = nullptr;
-	  
-	  aLayer = GetLayer();
+    SCOPED_TRACE( "Begin Test: Test Gap Layer - Convection heat flow [Pa = 101325 Pa]" );
+    
+    std::shared_ptr< CTarIGUGapLayer > aLayer = nullptr;
+    
+    aLayer = GetLayer();
 
     ASSERT_TRUE( aLayer != nullptr );
 
     double convectionHeatFlow = aLayer->getConvectionConductionFlow();
 
-	  EXPECT_NEAR( 27.673789062350764, convectionHeatFlow, 1e-6 );
+    EXPECT_NEAR( 27.673789062350764, convectionHeatFlow, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }

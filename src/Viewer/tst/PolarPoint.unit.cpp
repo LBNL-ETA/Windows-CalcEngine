@@ -12,18 +12,18 @@ class TestPolarPoint : public testing::Test
 {
 
 protected:
-	virtual void SetUp() {
-		
-	};
+  virtual void SetUp() {
+    
+  };
 
 };
 
 TEST_F( TestPolarPoint, PolarPointTest1 ) {
-	SCOPED_TRACE( "Begin Test: Polar point conversions (1)." );
-	
-	CPolarPoint2D aPoint = CPolarPoint2D( 90, 1 );
-	
-	double x = aPoint.x();
+  SCOPED_TRACE( "Begin Test: Polar point conversions (1)." );
+  
+  CPolarPoint2D aPoint = CPolarPoint2D( 90, 1 );
+  
+  double x = aPoint.x();
   double y = aPoint.y();
 
   EXPECT_NEAR( 0, x, 1e-6 );
@@ -60,11 +60,11 @@ TEST_F( TestPolarPoint, PolarPointTest1 ) {
 }
 
 TEST_F( TestPolarPoint, PolarPointTest2 ) {
-	SCOPED_TRACE( "Begin Test: Polar point conversions (2)." );
-	
-	CPolarPoint2D aPoint = CPolarPoint2D( 259, 1.58 );
-	
-	double x = aPoint.x();
+  SCOPED_TRACE( "Begin Test: Polar point conversions (2)." );
+  
+  CPolarPoint2D aPoint = CPolarPoint2D( 259, 1.58 );
+  
+  double x = aPoint.x();
   double y = aPoint.y();
 
   EXPECT_NEAR( -0.301478213, x, 1e-6 );
@@ -73,11 +73,11 @@ TEST_F( TestPolarPoint, PolarPointTest2 ) {
 }
 
 TEST_F( TestPolarPoint, PolarPointTest3 ) {
-	SCOPED_TRACE( "Begin Test: Polar point conversions (3)." );
-	
-	CPolarPoint2D aPoint = CPolarPoint2D( 43, 0.76 );
-	
-	double x = aPoint.x();
+  SCOPED_TRACE( "Begin Test: Polar point conversions (3)." );
+  
+  CPolarPoint2D aPoint = CPolarPoint2D( 43, 0.76 );
+  
+  double x = aPoint.x();
   double y = aPoint.y();
 
   EXPECT_NEAR( 0.555828813, x, 1e-6 );

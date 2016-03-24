@@ -15,10 +15,10 @@ using namespace FenestrationCommon;
 class TestVenetianCellFlat0_1 : public testing::Test {
 
 private:
-	shared_ptr< CVenetianCell > m_Cell;
+  shared_ptr< CVenetianCell > m_Cell;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     // create material
     double Tmat = 0.9;
     double Rfmat = 0.0;
@@ -42,17 +42,17 @@ protected:
 
     m_Cell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
-	};
+  };
 
 public:
-	shared_ptr< CVenetianCell > GetCell() { return m_Cell; };
+  shared_ptr< CVenetianCell > GetCell() { return m_Cell; };
 
 };
 
 TEST_F( TestVenetianCellFlat0_1, TestVenetian1 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 0 degrees slats) - directional-diffuse." );
-	
-	shared_ptr< CVenetianCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 0 degrees slats) - directional-diffuse." );
+  
+  shared_ptr< CVenetianCell > aCell = GetCell();
 
   // Front side
   Side aSide = Side::Front;

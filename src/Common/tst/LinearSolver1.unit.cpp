@@ -11,28 +11,28 @@ using namespace FenestrationCommon;
 class TestLinearSolver1 : public testing::Test {
 
 private:
-	shared_ptr< CLinearSolver > m_Solver;
+  shared_ptr< CLinearSolver > m_Solver;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     m_Solver = std::make_shared< CLinearSolver >();
     ASSERT_TRUE( m_Solver != nullptr );
-	};
+  };
 
 public:
-	std::shared_ptr< CLinearSolver > GetSolver() { return m_Solver; };
+  std::shared_ptr< CLinearSolver > GetSolver() { return m_Solver; };
 
 };
 
 TEST_F( TestLinearSolver1, Test1 ) {
   try {
-	  SCOPED_TRACE( "Begin Test: Test Linear Solver (1) - Solving simple matrix." );
+    SCOPED_TRACE( "Begin Test: Test Linear Solver (1) - Solving simple matrix." );
 
-	  std::shared_ptr< CLinearSolver > aSolver = nullptr;
+    std::shared_ptr< CLinearSolver > aSolver = nullptr;
     std::shared_ptr< std::vector< double > > aSolution = nullptr;
 
     int size = 3;
-	  shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( size );
+    shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( size );
     ASSERT_TRUE( aMatrix != nullptr );
 
     (*aMatrix)[0][0] = 2;
@@ -52,14 +52,14 @@ TEST_F( TestLinearSolver1, Test1 ) {
     aVector->push_back( 1 );
     aVector->push_back( 3 );
     aVector->push_back( 5 );
-	  
-	  aSolver = GetSolver();
+    
+    aSolver = GetSolver();
     ASSERT_TRUE( aSolver != nullptr );
     
     aSolution = aSolver->solveSystem( aMatrix, aVector );
     ASSERT_TRUE( aSolution != nullptr );
 
-	  EXPECT_NEAR( 3.0/10.0, (*aSolution)[0], 1e-6 );
+    EXPECT_NEAR( 3.0/10.0, (*aSolution)[0], 1e-6 );
     EXPECT_NEAR( 2.0/5.0, (*aSolution)[1], 1e-6 );
     EXPECT_NEAR( 0.0, (*aSolution)[2], 1e-6 );
   } catch( exception &e ) {
@@ -70,13 +70,13 @@ TEST_F( TestLinearSolver1, Test1 ) {
 
 TEST_F( TestLinearSolver1, Test2 ) {
   try {
-	  SCOPED_TRACE( "Begin Test: Test Linear Solver (2) - Solving simple matrix." );
+    SCOPED_TRACE( "Begin Test: Test Linear Solver (2) - Solving simple matrix." );
 
-	  std::shared_ptr< CLinearSolver > aSolver = nullptr;
+    std::shared_ptr< CLinearSolver > aSolver = nullptr;
     std::shared_ptr< std::vector< double > > aSolution = nullptr;
 
     int size = 4;
-	  shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( size );
+    shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( size );
     ASSERT_TRUE( aMatrix != nullptr );
 
     // This set-up is from fortran tarcog example
@@ -100,14 +100,14 @@ TEST_F( TestLinearSolver1, Test2 ) {
     aVector->push_back( -73.4793240441777 );
     aVector->push_back( -67.9134111109072 );
     aVector->push_back( -1070.27145340963 );
-	  
-	  aSolver = GetSolver();
+    
+    aSolver = GetSolver();
     ASSERT_TRUE( aSolver != nullptr );
     
     aSolution = aSolver->solveSystem( aMatrix, aVector );
     ASSERT_TRUE( aSolution != nullptr );
 
-	  EXPECT_NEAR( 303.040745958961, (*aSolution)[0], 1e-6 );
+    EXPECT_NEAR( 303.040745958961, (*aSolution)[0], 1e-6 );
     EXPECT_NEAR( 461.535282796979, (*aSolution)[1], 1e-6 );
     EXPECT_NEAR( 451.057584815066, (*aSolution)[2], 1e-6 );
     EXPECT_NEAR( 303.040507073603, (*aSolution)[3], 1e-6 );

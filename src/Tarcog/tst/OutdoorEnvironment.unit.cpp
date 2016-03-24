@@ -16,12 +16,12 @@ class TestOutdoorEnvironment : public testing::Test
 {
 
 private:
-	shared_ptr< CTarOutdoorEnvironment > Outdoor;
+  shared_ptr< CTarOutdoorEnvironment > Outdoor;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     try {
     /////////////////////////////////////////////////////////
     // Outdoor
@@ -73,21 +73,21 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	std::shared_ptr< CTarOutdoorEnvironment > GetOutdoors() { return Outdoor; };
+  std::shared_ptr< CTarOutdoorEnvironment > GetOutdoors() { return Outdoor; };
 
 };
 
 TEST_F( TestOutdoorEnvironment, CalculateH_AllSpecified )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = All Specified" );
-	  
-	  std::shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
-	  
-	  aOutdoor = GetOutdoors();
+    SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = All Specified" );
+    
+    std::shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
+    
+    aOutdoor = GetOutdoors();
     ASSERT_TRUE( aOutdoor != nullptr );
 
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -95,7 +95,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_AllSpecified )
 
     double radiosity = aOutdoor->getEnvironmentRadiosity();
 
-	  EXPECT_NEAR( 380.278401885, radiosity, 1e-6 );
+    EXPECT_NEAR( 380.278401885, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }
@@ -105,11 +105,11 @@ TEST_F( TestOutdoorEnvironment, CalculateH_AllSpecified )
 TEST_F( TestOutdoorEnvironment, CalculateH_TSkySpecified )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = TSky Specified" );
-	  
-	  std::shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
-	  
-	  aOutdoor = GetOutdoors();
+    SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = TSky Specified" );
+    
+    std::shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
+    
+    aOutdoor = GetOutdoors();
     ASSERT_TRUE( aOutdoor != nullptr );
 
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -117,7 +117,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_TSkySpecified )
 
     double radiosity = aOutdoor->getEnvironmentRadiosity();
 
-	  EXPECT_NEAR( 380.278401885, radiosity, 1e-6 );
+    EXPECT_NEAR( 380.278401885, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }
@@ -127,11 +127,11 @@ TEST_F( TestOutdoorEnvironment, CalculateH_TSkySpecified )
 TEST_F( TestOutdoorEnvironment, CalculateH_Swinbank )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = Swinbank" );
-	  
-	  shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
-	  
-	  aOutdoor = GetOutdoors();
+    SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = Swinbank" );
+    
+    shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
+    
+    aOutdoor = GetOutdoors();
     ASSERT_TRUE( aOutdoor != nullptr );
 
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -139,7 +139,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_Swinbank )
 
     double radiosity = aOutdoor->getEnvironmentRadiosity();
 
-	  EXPECT_NEAR( 423.17235, radiosity, 1e-6 );
+    EXPECT_NEAR( 423.17235, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }
@@ -149,11 +149,11 @@ TEST_F( TestOutdoorEnvironment, CalculateH_Swinbank )
 TEST_F( TestOutdoorEnvironment, HPrescribed_AllSpecified )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = All Specified" );
-	  
-	  shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
-	  
-	  aOutdoor = GetOutdoors();
+    SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = All Specified" );
+    
+    shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
+    
+    aOutdoor = GetOutdoors();
     ASSERT_TRUE( aOutdoor != nullptr );
 
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
@@ -161,7 +161,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_AllSpecified )
 
     double radiosity = aOutdoor->getEnvironmentRadiosity();
 
-	  EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
+    EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }
@@ -171,11 +171,11 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_AllSpecified )
 TEST_F( TestOutdoorEnvironment, HPrescribed_TSkySpecified )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = TSky Specified" );
-	  
-	  shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
-	  
-	  aOutdoor = GetOutdoors();
+    SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = TSky Specified" );
+    
+    shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
+    
+    aOutdoor = GetOutdoors();
     ASSERT_TRUE( aOutdoor != nullptr );
 
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
@@ -183,7 +183,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_TSkySpecified )
 
     double radiosity = aOutdoor->getEnvironmentRadiosity();
 
-	  EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
+    EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }
@@ -193,11 +193,11 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_TSkySpecified )
 TEST_F( TestOutdoorEnvironment, HPrescribed_Swinbank )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = Swinbank" );
-	  
-	  shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
-	  
-	  aOutdoor = GetOutdoors();
+    SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = Swinbank" );
+    
+    shared_ptr< CTarOutdoorEnvironment > aOutdoor = nullptr;
+    
+    aOutdoor = GetOutdoors();
     ASSERT_TRUE( aOutdoor != nullptr );
 
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
@@ -205,7 +205,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_Swinbank )
 
     double radiosity = aOutdoor->getEnvironmentRadiosity();
 
-	  EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
+    EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;
   }

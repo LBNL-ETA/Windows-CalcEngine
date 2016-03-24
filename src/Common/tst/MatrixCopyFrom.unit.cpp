@@ -10,16 +10,16 @@ using namespace FenestrationCommon;
 class TestMatrixCopyFrom : public testing::Test {
 
 protected:
-	virtual void SetUp() {
-	};
+  virtual void SetUp() {
+  };
 
 
 };
 
 TEST_F( TestMatrixCopyFrom, Test1 ) {
-	SCOPED_TRACE( "Begin Test: Test matrix addition operation." );
+  SCOPED_TRACE( "Begin Test: Test matrix addition operation." );
 
-	CSquareMatrix A = CSquareMatrix( 2 );
+  CSquareMatrix A = CSquareMatrix( 2 );
   CSquareMatrix B = CSquareMatrix( 2 );
 
   A[0][0] = 1;
@@ -34,7 +34,7 @@ TEST_F( TestMatrixCopyFrom, Test1 ) {
 
   A.copyFrom( B );
 
-	EXPECT_NEAR( 2, A[0][0], 1e-6 );
+  EXPECT_NEAR( 2, A[0][0], 1e-6 );
   EXPECT_NEAR( 3, A[0][1], 1e-6 );
   EXPECT_NEAR( 4, A[1][0], 1e-6 );
   EXPECT_NEAR( 5, A[1][1], 1e-6 );

@@ -12,11 +12,11 @@ class TestSpectralInterpolation : public testing::Test
 {
 
 private:
-	shared_ptr< CSpectralProperties > m_SpectralProperty;
+  shared_ptr< CSpectralProperties > m_SpectralProperty;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     m_SpectralProperty = make_shared< CSpectralProperties >();
 
     // part of ASTM E891-87 Table 1
@@ -32,20 +32,20 @@ protected:
     m_SpectralProperty->addProperty( 0.49, 1005.1 );
     m_SpectralProperty->addProperty( 0.50, 1026.7 );
 
-	};
+  };
 
 public:
-	shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
+  shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
 
 };
 
 TEST_F( TestSpectralInterpolation, TestInterpolation )
 {
-	SCOPED_TRACE( "Begin Test: Test interpolation over the range of data." );
-	
-	shared_ptr< CSpectralProperties > aInterpolatedProperties = nullptr;
-	
-	shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  SCOPED_TRACE( "Begin Test: Test interpolation over the range of data." );
+  
+  shared_ptr< CSpectralProperties > aInterpolatedProperties = nullptr;
+  
+  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
 
   shared_ptr< vector< double > > wavelengths = make_shared< vector< double > >();
   wavelengths->push_back( 0.400 );

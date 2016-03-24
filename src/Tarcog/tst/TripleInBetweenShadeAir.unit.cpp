@@ -25,8 +25,8 @@ private:
   shared_ptr< CTarIGUSolidLayer > m_Layer3;
 
 protected:
-	virtual void SetUp()
-	{    
+  virtual void SetUp()
+  {    
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -110,10 +110,10 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	//shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  //shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CTarIGUSolidLayer > GetLayer1() { return m_Layer1; };
   shared_ptr< CTarIGUSolidLayer > GetLayer2() { return m_Layer2; };
   shared_ptr< CTarIGUSolidLayer > GetLayer3() { return m_Layer3; };
@@ -123,13 +123,13 @@ public:
 TEST_F( TestInBetweenShadeAir, Test1 )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: InBetween Shade - Air" );
-	  
+    SCOPED_TRACE( "Begin Test: InBetween Shade - Air" );
+    
     shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
 
     shared_ptr< CTarSurface > aSurface = nullptr;
-	  
-	  aLayer = GetLayer1();
+    
+    aLayer = GetLayer1();
     ASSERT_TRUE( aLayer != nullptr );
     aSurface = aLayer->getSurface( SurfacePosition::Front );
 

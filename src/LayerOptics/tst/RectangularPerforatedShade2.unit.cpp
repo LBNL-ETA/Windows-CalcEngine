@@ -17,10 +17,10 @@ using namespace FenestrationCommon;
 class TestRectangularPerforatedShade2 : public testing::Test {
 
 private:
-	shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     // make material
     double Tmat = 0.1;
     double Rfmat = 0.5;
@@ -41,22 +41,22 @@ protected:
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-		shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+    shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
     
     m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
-	};
+  };
 
 public:
-	shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
 TEST_F( TestRectangularPerforatedShade2, TestSolarProperties )
 {
-	SCOPED_TRACE( "Begin Test: Rectangular perforated cell - Solar properties." );
-	
-	shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
+  SCOPED_TRACE( "Begin Test: Rectangular perforated cell - Solar properties." );
+  
+  shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 

@@ -15,12 +15,12 @@ class TestCircularPerforatedCell : public testing::Test
 {
 
 private:
-	shared_ptr< CCircularCellDescription > m_DescriptionCell;
+  shared_ptr< CCircularCellDescription > m_DescriptionCell;
   shared_ptr< CPerforatedCell > m_PerforatedCell;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     // create material
     double Tmat = 0.1;
     double Rfmat = 0.7;
@@ -37,20 +37,20 @@ protected:
     double radius = 5; // mm
     m_DescriptionCell = make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-		m_PerforatedCell = make_shared< CPerforatedCell >( aMaterial, m_DescriptionCell );
-	};
+    m_PerforatedCell = make_shared< CPerforatedCell >( aMaterial, m_DescriptionCell );
+  };
 
 public:
-	shared_ptr< CPerforatedCell > GetCell() { return m_PerforatedCell; };
+  shared_ptr< CPerforatedCell > GetCell() { return m_PerforatedCell; };
   shared_ptr< CCircularCellDescription > GetDescription() { return m_DescriptionCell; };
 
 };
 
 TEST_F( TestCircularPerforatedCell, TestCircular1 )
 {
-	SCOPED_TRACE( "Begin Test: Circular perforated cell (Theta = 0, Phi = 0)." );
-	
-	shared_ptr< CPerforatedCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Circular perforated cell (Theta = 0, Phi = 0)." );
+  
+  shared_ptr< CPerforatedCell > aCell = GetCell();
   shared_ptr< CBaseCellDescription > aCellDescription = GetDescription();
 
   double Theta = 0; // deg
@@ -59,7 +59,7 @@ TEST_F( TestCircularPerforatedCell, TestCircular1 )
   Side aBackSide = Side::Back;
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
-	
+  
   double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, aDirection );
   EXPECT_NEAR( 0.785398163, Tdir_dir, 1e-6 );
   
@@ -76,9 +76,9 @@ TEST_F( TestCircularPerforatedCell, TestCircular1 )
 
 TEST_F( TestCircularPerforatedCell, TestCircular2 )
 {
-	SCOPED_TRACE( "Begin Test: Rectangular perforated cell (Theta = 45, Phi = 0)." );
-	
-	shared_ptr< CPerforatedCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Rectangular perforated cell (Theta = 45, Phi = 0)." );
+  
+  shared_ptr< CPerforatedCell > aCell = GetCell();
   shared_ptr< CBaseCellDescription > aCellDescription = GetDescription();
 
   double Theta = 45; // deg
@@ -87,7 +87,7 @@ TEST_F( TestCircularPerforatedCell, TestCircular2 )
   Side aBackSide = Side::Back;
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
-	
+  
   double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, aDirection );
   EXPECT_NEAR( 0.706858347, Tdir_dir, 1e-6 );
   
@@ -104,9 +104,9 @@ TEST_F( TestCircularPerforatedCell, TestCircular2 )
 
 TEST_F( TestCircularPerforatedCell, TestCircular3 )
 {
-	SCOPED_TRACE( "Begin Test: Rectangular perforated cell (Theta = 78, Phi = 45)." );
-	
-	shared_ptr< CPerforatedCell > aCell = GetCell();
+  SCOPED_TRACE( "Begin Test: Rectangular perforated cell (Theta = 78, Phi = 45)." );
+  
+  shared_ptr< CPerforatedCell > aCell = GetCell();
   shared_ptr< CBaseCellDescription > aCellDescription = GetDescription();
 
   double Theta = 78; // deg
@@ -115,7 +115,7 @@ TEST_F( TestCircularPerforatedCell, TestCircular3 )
   Side aBackSide = Side::Back;
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
-	
+  
   double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, aDirection );
   EXPECT_NEAR( 0.415897379, Tdir_dir, 1e-6 );
   

@@ -12,11 +12,11 @@ class TestSpectralMultiplication : public testing::Test
 {
 
 private:
-	shared_ptr< CSpectralProperties > m_SpectralProperty;
+  shared_ptr< CSpectralProperties > m_SpectralProperty;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     m_SpectralProperty = make_shared< CSpectralProperties >();
 
     shared_ptr< CSpectralProperties > astmSolarRadiation = make_shared< CSpectralProperties >();
@@ -57,18 +57,18 @@ protected:
     m_SpectralProperty = layerTransmittances->mMult( astmSolarRadiation );
 
 
-	};
+  };
 
 public:
-	shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
+  shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
 
 };
 
 TEST_F( TestSpectralMultiplication, TestMultiplication )
 {
-	SCOPED_TRACE( "Begin Test: Test multiplication over the range of data." );
-	
-	shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  SCOPED_TRACE( "Begin Test: Test multiplication over the range of data." );
+  
+  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
 
   vector< double > correctResults;
   correctResults.push_back( 711.29776 );

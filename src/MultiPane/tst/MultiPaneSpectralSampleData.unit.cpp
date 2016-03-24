@@ -13,10 +13,10 @@ class TestMultiPaneMeasuredSampleData : public testing::Test
 {
 
 private:
-	shared_ptr< CMultiPaneSampleData > m_MultiPane;
+  shared_ptr< CMultiPaneSampleData > m_MultiPane;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
 
     // This test (example) shows how to get multilayer sample data from two measurements. Results are calculated
     // at each wavelength
@@ -58,17 +58,17 @@ protected:
     m_MultiPane = make_shared< CMultiPaneSampleData >();
     m_MultiPane->addSample( sampleMeasurements1 );
     m_MultiPane->addSample( sampleMeasurements2 );
-	};
+  };
 
 public:
-	shared_ptr< CMultiPaneSampleData > getMultiPane() { return m_MultiPane; };
+  shared_ptr< CMultiPaneSampleData > getMultiPane() { return m_MultiPane; };
 
 };
 
 TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
 {
-	SCOPED_TRACE( "Begin Test: Test simple double pane calculations (T, Rf, Rb and equivalent absorptances)." );
-	
+  SCOPED_TRACE( "Begin Test: Test simple double pane calculations (T, Rf, Rb and equivalent absorptances)." );
+  
   shared_ptr< CMultiPaneSampleData > multiPane = getMultiPane();
 
   vector< double > correctT;
@@ -197,8 +197,8 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
 
 TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneAbsorptances )
 {
-	SCOPED_TRACE( "Begin Test: Test layer absroptances." );
-	
+  SCOPED_TRACE( "Begin Test: Test layer absroptances." );
+  
   shared_ptr< CMultiPaneSampleData > multiPane = getMultiPane();
 
   vector< double > correctAbs;

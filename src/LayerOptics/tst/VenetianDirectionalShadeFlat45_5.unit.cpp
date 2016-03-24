@@ -17,10 +17,10 @@ using namespace FenestrationCommon;
 class TestVenetianDirectionalShadeFlat45_5 : public testing::Test {
 
 private:
-	shared_ptr< CDirectionalDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CDirectionalDiffuseBSDFLayer > m_Shade;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     // create material
     double Tmat = 0.2;
     double Rfmat = 0.6;
@@ -47,17 +47,17 @@ protected:
 
     m_Shade = make_shared< CDirectionalDiffuseBSDFLayer >( aCell, aBSDF );
 
-	};
+  };
 
 public:
-	shared_ptr< CDirectionalDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CDirectionalDiffuseBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
 TEST_F( TestVenetianDirectionalShadeFlat45_5, TestVenetian1 ) {
-	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - single band properties." );
-	
-	shared_ptr< CDirectionalDiffuseBSDFLayer > aShade = GetShade();
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - single band properties." );
+  
+  shared_ptr< CDirectionalDiffuseBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 

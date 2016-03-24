@@ -18,7 +18,7 @@ private:
   shared_ptr< CInterReflectance > m_InterReflectance;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
   
   // Create lambda matrix
   vector< CBSDFDefinition > aDefinitions;
@@ -55,16 +55,16 @@ protected:
 
   m_InterReflectance = make_shared< CInterReflectance >( aLambdas, Rb, Rf );
     
-	};
+  };
 
 public:
-	shared_ptr< CInterReflectance > getInterReflectance() { return m_InterReflectance; };
+  shared_ptr< CInterReflectance > getInterReflectance() { return m_InterReflectance; };
 
 };
 
 TEST_F( TestInterReflectanceBSDF, TestBSDFInterreflectance ) {
-	SCOPED_TRACE( "Begin Test: Simple BSDF interreflectance." );
-	
+  SCOPED_TRACE( "Begin Test: Simple BSDF interreflectance." );
+  
   shared_ptr< CInterReflectance > interRefl = getInterReflectance();
 
   shared_ptr< CSquareMatrix > results = interRefl->value();

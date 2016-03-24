@@ -16,13 +16,13 @@ class TestGapLayerInBetweenVentilation : public testing::Test
 {
 
 private:
-	shared_ptr< CTarIGUGapLayer > m_GapLayer1;
+  shared_ptr< CTarIGUGapLayer > m_GapLayer1;
   shared_ptr< CTarIGUGapLayer > m_GapLayer2;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     try {
 
       /////////////////////////////////////////////////////////
@@ -103,10 +103,10 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
-	shared_ptr< CTarIGUGapLayer > GetGap1() { return m_GapLayer1; };
+  shared_ptr< CTarIGUGapLayer > GetGap1() { return m_GapLayer1; };
   shared_ptr< CTarIGUGapLayer > GetGap2() { return m_GapLayer2; };
 
 };
@@ -114,13 +114,13 @@ public:
 TEST_F( TestGapLayerInBetweenVentilation, VentilationFlow )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Test Ventilated Gap Layer - Intial Airflow" );
-	  
-	  shared_ptr< CTarIGUGapLayer > aLayer = nullptr;
+    SCOPED_TRACE( "Begin Test: Test Ventilated Gap Layer - Intial Airflow" );
+    
+    shared_ptr< CTarIGUGapLayer > aLayer = nullptr;
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-	  
-	  aLayer = GetGap1();
+    
+    aLayer = GetGap1();
     ASSERT_TRUE( aLayer != nullptr );
     double gainEnergy = aLayer->getGainFlow();    
     EXPECT_NEAR( 32.414571203538848, gainEnergy, 1e-4 );
@@ -128,7 +128,7 @@ TEST_F( TestGapLayerInBetweenVentilation, VentilationFlow )
     aLayer = GetGap2();
     ASSERT_TRUE( aLayer != nullptr );
     gainEnergy = aLayer->getGainFlow();
-	  EXPECT_NEAR( -32.414571203538848, gainEnergy, 1e-4 );
+    EXPECT_NEAR( -32.414571203538848, gainEnergy, 1e-4 );
 
 
   } catch( exception &e ) {

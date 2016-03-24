@@ -21,7 +21,7 @@ private:
   shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
     
     // Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
@@ -844,7 +844,7 @@ protected:
 
     m_Sample->setWavelengths( WavelengthSet::Custom, aWavelengths );
 
-	};
+  };
 
 public:
   shared_ptr< CSpectralSample > getSample() { return m_Sample; };

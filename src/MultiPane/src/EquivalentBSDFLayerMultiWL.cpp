@@ -209,7 +209,7 @@ namespace MultiPane {
     aTotalRBack.resize( matrixSize );
 
     for( size_t i = 0; i < matrixSize; ++i ) {
-			aTotalTFront[ i ].resize( matrixSize );
+      aTotalTFront[ i ].resize( matrixSize );
       aTotalTBack[ i ].resize( matrixSize );
       aTotalRFront[ i ].resize( matrixSize );
       aTotalRBack[ i ].resize( matrixSize );

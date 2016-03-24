@@ -19,8 +19,8 @@ private:
   shared_ptr< CMultiPaneSpectralSample > m_MultiPane;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     shared_ptr< CSpectralProperties > solarRadiation = make_shared< CSpectralProperties >();
     solarRadiation->addProperty( 0.50, 1026.70 );
     solarRadiation->addProperty( 0.51, 1066.70 );
@@ -110,20 +110,20 @@ protected:
     multiSample->addSample( sampleMeasurements2 );
 
     m_MultiPane = make_shared< CMultiPaneSpectralSample >( multiSample, solarRadiation );
-	};
+  };
 
 public:
-	shared_ptr< CMultiPaneSpectralSample > getMultiPane() { return m_MultiPane; };
+  shared_ptr< CMultiPaneSpectralSample > getMultiPane() { return m_MultiPane; };
 
 };
 
 TEST_F( TestMultiPaneSampleFlipped, TestDoublePaneProperties )
 {
-	SCOPED_TRACE( "Begin Test: Test double pane solar absorptances." );
+  SCOPED_TRACE( "Begin Test: Test double pane solar absorptances." );
 
   double lowLambda = 0.5;
   double highLambda = 0.7;
-	
+  
   shared_ptr< CMultiPaneSpectralSample > multiPane = getMultiPane();
 
   double transmittance = multiPane->getProperty( lowLambda, highLambda, Property::T, Side::Front );
@@ -146,11 +146,11 @@ TEST_F( TestMultiPaneSampleFlipped, TestDoublePaneProperties )
 
 TEST_F( TestMultiPaneSampleFlipped, TestDoublePaneLayerAbsorptances )
 {
-	SCOPED_TRACE( "Begin Test: Double pane layer absroptances." );
+  SCOPED_TRACE( "Begin Test: Double pane layer absroptances." );
 
   double lowLambda = 0.5;
   double highLambda = 0.7;
-	
+  
   shared_ptr< CMultiPaneSpectralSample > multiPane = getMultiPane();
 
   double abs1 = multiPane->getLayerAbsorptance( lowLambda, highLambda, 1 );

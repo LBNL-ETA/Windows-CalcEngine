@@ -23,10 +23,10 @@ using namespace SpectralAveraging;
 class TestSpecularLayerMultiWavelength_102 : public testing::Test {
 
 private:
-	shared_ptr< CSpecularBSDFLayer > m_Layer;
+  shared_ptr< CSpecularBSDFLayer > m_Layer;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
     
     // Full ASTM E891-87 Table 1
@@ -62,17 +62,17 @@ protected:
 
     m_Layer = make_shared< CSpecularBSDFLayer >( aCell, aBSDF );
 
-	};
+  };
 
 public:
-	shared_ptr< CSpecularBSDFLayer > getLayer() { return m_Layer; };
+  shared_ptr< CSpecularBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
 TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
-	SCOPED_TRACE( "Begin Test: Specular layer - BSDF." );
-	
-	shared_ptr< CSpecularBSDFLayer > aLayer = getLayer();
+  SCOPED_TRACE( "Begin Test: Specular layer - BSDF." );
+  
+  shared_ptr< CSpecularBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
 

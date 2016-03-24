@@ -23,8 +23,8 @@ private:
   shared_ptr< CTarIGUSolidLayer > m_solidLayer2;
 
 protected:
-	virtual void SetUp()
-	{
+  virtual void SetUp()
+  {
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -78,7 +78,7 @@ protected:
       cout << e.what() << endl;
       throw e;
     }
-	};
+  };
 
 public:
   shared_ptr< CTarIGUSolidLayer > getLayer1() { return m_solidLayer1; }
@@ -89,7 +89,7 @@ public:
 TEST_F( TestTemperatureInitialGuess, Test1 )
 {
   try {
-	  SCOPED_TRACE( "Begin Test: Initial temperature and IR guess" );
+    SCOPED_TRACE( "Begin Test: Initial temperature and IR guess" );
 
     shared_ptr< CTarSurface > aSurface = getLayer1()->getSurface( SurfacePosition::Front );
     ASSERT_TRUE( aSurface != nullptr );

@@ -34,7 +34,7 @@ private:
   shared_ptr< CBSDFDoubleLayer > m_DoubleLayer;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
   
   // Create lambda matrix
   vector< CBSDFDefinition > aDefinitions;
@@ -318,7 +318,7 @@ protected:
   shared_ptr< CCircularCellDescription > perfCellDescription = 
     make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-	shared_ptr< CPerforatedCell > perfCell = make_shared< CPerforatedCell >( perfMaterial, perfCellDescription );
+  shared_ptr< CPerforatedCell > perfCell = make_shared< CPerforatedCell >( perfMaterial, perfCellDescription );
     
   shared_ptr< CUniformDiffuseBSDFLayer > aShade = make_shared< CUniformDiffuseBSDFLayer >( perfCell, aBSDF );
 
@@ -327,16 +327,16 @@ protected:
 
   m_DoubleLayer = make_shared< CBSDFDoubleLayer >( aLayer1, aLayer2 );
     
-	};
+  };
 
 public:
-	shared_ptr< CBSDFDoubleLayer > getDoubleLayer() { return m_DoubleLayer; };
+  shared_ptr< CBSDFDoubleLayer > getDoubleLayer() { return m_DoubleLayer; };
 
 };
 
 TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
-	SCOPED_TRACE( "Begin Test: Double Layer BSDF." );
-	
+  SCOPED_TRACE( "Begin Test: Double Layer BSDF." );
+  
   shared_ptr< CBSDFResults > aLayer = getDoubleLayer()->value();
 
   // Front transmittance

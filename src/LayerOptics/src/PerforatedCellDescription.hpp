@@ -24,7 +24,7 @@ namespace LayerOptics {
 
   private:
     double visibleAhole( std::shared_ptr< const CBeamDirection > t_Direction ) const;
-		double visibleAcell( std::shared_ptr< const CBeamDirection > t_Direction ) const;
+    double visibleAcell( std::shared_ptr< const CBeamDirection > t_Direction ) const;
     double m_Radius;
   };
 
@@ -37,7 +37,7 @@ namespace LayerOptics {
 
   private:
     double TransmittanceV( std::shared_ptr< const CBeamDirection > t_Direction ) const;
-		double TransmittanceH( std::shared_ptr< const CBeamDirection > t_Direction ) const;
+    double TransmittanceH( std::shared_ptr< const CBeamDirection > t_Direction ) const;
 
     double m_XHole;
     double m_YHole;

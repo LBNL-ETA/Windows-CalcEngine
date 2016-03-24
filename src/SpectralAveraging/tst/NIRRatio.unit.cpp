@@ -11,10 +11,10 @@ using namespace SpectralAveraging;
 class TestNIRRatio : public testing::Test {
 
 private:
-	shared_ptr< CNIRRatio > m_NIRRatio;
+  shared_ptr< CNIRRatio > m_NIRRatio;
 
 protected:
-	virtual void SetUp() {
+  virtual void SetUp() {
     shared_ptr< CSpectralProperties > solarRadiation = make_shared< CSpectralProperties >();
     
     // Full ASTM E891-87 Table 1
@@ -145,17 +145,17 @@ protected:
 
     m_NIRRatio = make_shared< CNIRRatio >( solarRadiation, lowLambda, highLambda );
 
-	};
+  };
 
 public:
-	shared_ptr< CNIRRatio > getNIRRatio() { return m_NIRRatio; };
+  shared_ptr< CNIRRatio > getNIRRatio() { return m_NIRRatio; };
 
 };
 
 TEST_F( TestNIRRatio, TestRatio ) {
-	SCOPED_TRACE( "Begin Test: Test calculation of ratio." );
-	
-	shared_ptr< CNIRRatio > aNIRRatio = getNIRRatio();
+  SCOPED_TRACE( "Begin Test: Test calculation of ratio." );
+  
+  shared_ptr< CNIRRatio > aNIRRatio = getNIRRatio();
 
   double ratio = aNIRRatio->ratio();
 
