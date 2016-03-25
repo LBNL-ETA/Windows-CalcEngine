@@ -1,6 +1,6 @@
 #include <memory>
 #include <stdexcept>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "GasData.hpp"
 #include "GasItem.hpp"

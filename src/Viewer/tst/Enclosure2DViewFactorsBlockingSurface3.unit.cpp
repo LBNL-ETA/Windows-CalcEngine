@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include <memory>
 
@@ -56,16 +56,16 @@ TEST_F( TestEnclosure2DViewFactorsBlockingSurface3, Enclosure2DViewFactors ) {
   
   shared_ptr< CSquareMatrix > viewFactors = aEnclosure->viewFactors();
 
-  EXPECT_NEAR( 0.000000000, ( *viewFactors )[0][0], 1e-6 );
-  EXPECT_NEAR( 0.140312424, ( *viewFactors )[0][1], 1e-6 );
-  EXPECT_NEAR( 0.000000000, ( *viewFactors )[0][2], 1e-6 );
+  EXPECT_NEAR( 0.000000000, ( *viewFactors )[ 0 ][ 0 ], 1e-6 );
+  EXPECT_NEAR( 0.140312424, ( *viewFactors )[ 0 ][ 1 ], 1e-6 );
+  EXPECT_NEAR( 0.000000000, ( *viewFactors )[ 0 ][ 2 ], 1e-6 );
 
-  EXPECT_NEAR( 0.140312424, ( *viewFactors )[1][0], 1e-6 );
-  EXPECT_NEAR( 0.000000000, ( *viewFactors )[1][1], 1e-6 );
-  EXPECT_NEAR( 0.493845247, ( *viewFactors )[1][2], 1e-6 );
+  EXPECT_NEAR( 0.140312424, ( *viewFactors )[ 1 ][ 0 ], 1e-6 );
+  EXPECT_NEAR( 0.000000000, ( *viewFactors )[ 1 ][ 1 ], 1e-6 );
+  EXPECT_NEAR( 0.493845247, ( *viewFactors )[ 1 ][ 2 ], 1e-6 );
 
-  EXPECT_NEAR( 0.000000000, ( *viewFactors )[2][0], 1e-6 );
-  EXPECT_NEAR( 0.823075412, ( *viewFactors )[2][1], 1e-6 );
-  EXPECT_NEAR( 0.000000000, ( *viewFactors )[2][2], 1e-6 );
+  EXPECT_NEAR( 0.000000000, ( *viewFactors )[ 2 ][ 0 ], 1e-6 );
+  EXPECT_NEAR( 0.823075412, ( *viewFactors )[ 2 ][ 1 ], 1e-6 );
+  EXPECT_NEAR( 0.000000000, ( *viewFactors )[ 2 ][ 2 ], 1e-6 );
 
 }

@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include <memory>
 #include <vector>
@@ -42,10 +42,10 @@ TEST_F( TestSegment2DSubsegments, Segment2DTest1 ) {
     double yStart = aSubSegment->startPoint()->y();
     double yEnd = aSubSegment->endPoint()->y();
 
-    EXPECT_NEAR( correctStartX[i], xStart, 1e-6 );
-    EXPECT_NEAR( correctEndX[i], xEnd, 1e-6 );
-    EXPECT_NEAR( correctStartY[i], yStart, 1e-6 );
-    EXPECT_NEAR( correctEndY[i], yEnd, 1e-6 );
+    EXPECT_NEAR( correctStartX[ i ], xStart, 1e-6 );
+    EXPECT_NEAR( correctEndX[ i ], xEnd, 1e-6 );
+    EXPECT_NEAR( correctStartY[ i ], yStart, 1e-6 );
+    EXPECT_NEAR( correctEndY[ i ], yEnd, 1e-6 );
 
     ++i;
   }

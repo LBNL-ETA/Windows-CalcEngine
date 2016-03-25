@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "TarSurface.hpp"
 #include "TarIGUSolidLayer.hpp"

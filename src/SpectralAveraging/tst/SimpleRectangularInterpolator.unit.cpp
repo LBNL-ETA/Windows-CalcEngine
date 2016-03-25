@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "IntegratorStrategy.hpp"
 

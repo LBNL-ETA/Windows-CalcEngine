@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "EquivalentBSDFLayer.hpp"
 #include "SquareMatrix.hpp"

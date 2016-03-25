@@ -141,8 +141,8 @@ namespace Viewer {
   ////////////////////////////////////////////////////////////////////////////////////////
 
   CDirect2DRaysResult::CDirect2DRaysResult( const double t_ProfileAngle, double const t_DirectToDirect, 
-      shared_ptr< vector < BeamViewFactor > > t_BeamViewFactors ) : m_ProfileAngle( t_ProfileAngle ),
-      m_DirectToDirect( t_DirectToDirect), m_ViewFactors( t_BeamViewFactors ) {
+      shared_ptr< vector < BeamViewFactor > > t_BeamViewFactors ) : m_ViewFactors( t_BeamViewFactors ),
+      m_DirectToDirect( t_DirectToDirect), m_ProfileAngle( t_ProfileAngle ) {
      
   };
 

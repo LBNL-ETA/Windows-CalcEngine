@@ -9,7 +9,7 @@ namespace FenestrationCommon {
   CSquareMatrix::CSquareMatrix( const size_t aSize ) {
     m_Size = aSize;
     m_Matrix.resize( m_Size );
-    for( int i = 0; i < m_Size; ++i )
+    for( size_t i = 0; i < m_Size; ++i )
       m_Matrix[ i ].resize( m_Size );
   };
 
@@ -18,8 +18,8 @@ namespace FenestrationCommon {
   };
 
   void CSquareMatrix::setZeros() {
-    for( int i = 0; i < m_Size; ++i ) {
-      for( int j = 0; j < m_Size; ++j ) {
+    for( size_t i = 0; i < m_Size; ++i ) {
+      for( size_t j = 0; j < m_Size; ++j ) {
         m_Matrix[ i ][ j ] = 0;
       }
     }
@@ -27,7 +27,7 @@ namespace FenestrationCommon {
 
   void CSquareMatrix::setIdentity() {
     setZeros();
-    for( int i = 0; i < m_Size; ++i ) {
+    for( size_t i = 0; i < m_Size; ++i ) {
       m_Matrix[ i ][ i ] = 1;
     }
   };
@@ -37,7 +37,7 @@ namespace FenestrationCommon {
       throw runtime_error("Supplied vector size mismatch matrix size");
     }
     setZeros();
-    for( int i = 0; i < m_Size; ++i ) {
+    for( size_t i = 0; i < m_Size; ++i ) {
       m_Matrix[ i ][ i ] = ( *t_Values )[ i ];
     }
   };

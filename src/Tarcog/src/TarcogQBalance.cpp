@@ -33,7 +33,7 @@ namespace Tarcog {
     vector< shared_ptr< CTarIGUSolidLayer > >::iterator it;
     int positionCounter = 0;
     m_MatrixA->setZeros();
-    for( int i = 0; i < m_VectorB->size(); ++i ) {
+    for( size_t i = 0; i < m_VectorB->size(); ++i ) {
       ( *m_VectorB )[ i ] = 0;
     }
     for ( it = aSolidLayers.begin(); it != aSolidLayers.end(); ++it ) {

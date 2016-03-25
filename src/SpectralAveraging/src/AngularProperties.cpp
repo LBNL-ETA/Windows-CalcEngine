@@ -227,8 +227,8 @@ namespace SpectralAveraging {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   CAngularPropertiesFactory::CAngularPropertiesFactory( const double t_Transmittance0, const double t_Reflectance0, const double t_Thickness,
-    const double t_SolarTransmittance ) : m_Transmittance0( t_Transmittance0 ), m_Reflectance0( t_Reflectance0 ), 
-    m_Thickness( t_Thickness ), m_SolarTransmittance0( t_SolarTransmittance ) {
+    const double t_SolarTransmittance ) : m_Thickness( t_Thickness ), m_Transmittance0( t_Transmittance0 ), m_Reflectance0( t_Reflectance0 ),
+    m_SolarTransmittance0( t_SolarTransmittance ) {
     
   };
 

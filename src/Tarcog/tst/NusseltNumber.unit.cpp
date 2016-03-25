@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "NusseltNumber.hpp"
 

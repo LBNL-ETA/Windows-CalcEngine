@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include <memory>
 
@@ -107,8 +107,10 @@ TEST_F( TestEnclosure2DBeam2, Enclosure2DBeam1 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_EQ( 0, aEnclosure->directToDirect( profileAngle, aSide ) );
+  
+  size_t correctSize = 2;
 
-  EXPECT_EQ( 2, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;
@@ -150,8 +152,10 @@ TEST_F( TestEnclosure2DBeam2, Enclosure2DBeam2 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_EQ( 0, aEnclosure->directToDirect( profileAngle, aSide ) );
+  
+  size_t correctSize = 2;
 
-  EXPECT_EQ( 2, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;
@@ -191,8 +195,10 @@ TEST_F( TestEnclosure2DBeam2, Enclosure2DBeam3 ) {
   Side aSide = Side::Front;
 
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+  
+  size_t correctSize = 1;
 
-  EXPECT_EQ( 1, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;

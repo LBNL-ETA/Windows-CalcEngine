@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "SpecularBSDFLayer.hpp"
 #include "EquivalentBSDFLayerMultiWL.hpp"
@@ -494,12 +494,12 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 3.2840237941038732 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aT )[ i ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -551,12 +551,12 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 5.8360388964627061 );
   correctResults.push_back( 5.8360388964627061 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aRb )[ i ][ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -608,12 +608,12 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.12908268835474454 );
   correctResults.push_back( 0.12908268835474454 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsF )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -665,12 +665,12 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.096750297279805345 );
   correctResults.push_back( 0.096750297279805345 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsF )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -722,12 +722,12 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.049114157398955513 );
   correctResults.push_back( 0.049114157398955513 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsB )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -779,12 +779,12 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.21055922925726483 );
   correctResults.push_back( 0.21055922925726483 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsB )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 

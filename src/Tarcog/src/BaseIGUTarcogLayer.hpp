@@ -15,7 +15,7 @@ namespace Tarcog {
     double getThickness() const;
 
   protected:
-    virtual double layerTemperature() const;
+    virtual double layerTemperature();
 
     double m_Thickness;
   //private:

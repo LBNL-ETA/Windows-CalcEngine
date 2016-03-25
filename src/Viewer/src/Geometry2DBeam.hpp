@@ -43,7 +43,7 @@ namespace Viewer {
     // Checks if segments intersects with the beam
     void checkSegment( std::shared_ptr< const CViewSegment2D > t_Segment );
 
-    double CDirect2DBeam::Side() const;
+    double Side() const;
 
     // Check if passed segment is part of the beam
     std::shared_ptr< const CViewSegment2D > getClosestCommonSegment( 

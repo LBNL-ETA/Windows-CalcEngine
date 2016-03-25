@@ -1,6 +1,6 @@
 #include <memory>
 #include <algorithm>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"

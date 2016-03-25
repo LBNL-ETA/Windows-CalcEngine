@@ -8,8 +8,8 @@ namespace LayerOptics {
     
   };
 
-  double CBaseCellDescription::R_dir_dir( const FenestrationCommon::Side t_Side, 
-    std::shared_ptr< const CBeamDirection > t_Direction ) {
+  double CBaseCellDescription::R_dir_dir( const FenestrationCommon::Side,
+    std::shared_ptr< const CBeamDirection > ) {
     return 0; 
   };
 

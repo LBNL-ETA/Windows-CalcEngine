@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
@@ -98,7 +98,7 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
 
   EXPECT_EQ( calculatedResults.size(), correctT.size() );
 
-  for( int i = 0; i < calculatedResults.size(); ++i ) {
+  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
     EXPECT_NEAR( correctT[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -128,7 +128,7 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
   
   EXPECT_EQ( calculatedResults.size(), correctRf.size() );
   
-  for( int i = 0; i < calculatedResults.size(); ++i ) {
+  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
     EXPECT_NEAR( correctRf[ i ], calculatedResults[ i ], 1e-6 );
   }
   
@@ -158,7 +158,7 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
   
   EXPECT_EQ( calculatedResults.size(), correctRb.size() );
   
-  for( int i = 0; i < calculatedResults.size(); ++i ) {
+  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
     EXPECT_NEAR( correctRb[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -188,7 +188,7 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
   
   EXPECT_EQ( calculatedResults.size(), correctAbs.size() );
   
-  for( int i = 0; i < calculatedResults.size(); ++i ) {
+  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
     EXPECT_NEAR( correctAbs[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -228,7 +228,7 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneAbsorptances )
 
   EXPECT_EQ( calculatedResults.size(), correctAbs.size() );
 
-  for( int i = 0; i < calculatedResults.size(); ++i ) {
+  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
     EXPECT_NEAR( correctAbs[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -258,7 +258,7 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneAbsorptances )
 
   EXPECT_EQ( calculatedResults.size(), correctAbs.size() );
 
-  for( int i = 0; i < calculatedResults.size(); ++i ) {
+  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
     EXPECT_NEAR( correctAbs[ i ], calculatedResults[ i ], 1e-6 );
   }
 }

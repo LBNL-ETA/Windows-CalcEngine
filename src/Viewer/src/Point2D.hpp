@@ -13,8 +13,8 @@ namespace Viewer {
   class CPoint2D {
   public:
     CPoint2D( const double x, const double y );
-    const double x() const;
-    const double y() const;
+    double x() const;
+    double y() const;
     bool sameCoordinates( const CPoint2D& t_Point ) const;
 
     double dotProduct( std::shared_ptr< const CPoint2D > t_Point ) const;

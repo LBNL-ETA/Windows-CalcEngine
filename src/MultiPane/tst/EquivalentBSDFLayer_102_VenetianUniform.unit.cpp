@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "SpecularBSDFLayer.hpp"
 #include "EquivalentBSDFLayerMultiWL.hpp"
@@ -397,12 +397,12 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.021744088022030279 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aT )[ i ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -454,12 +454,12 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.112105656453928950 );
   correctResults.push_back( 0.100137049090846430 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aRb )[ i ][ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -511,12 +511,12 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.14102825198461047 );
   correctResults.push_back( 0.14023211620646203 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsF )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -568,12 +568,12 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.141586444237114920 );
   correctResults.push_back( 0.143719192294422230 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsF )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -625,12 +625,12 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.034435221221298232 );
   correctResults.push_back( 0.040141600509065060 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsB )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -682,12 +682,12 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.359123985748703520 );
   correctResults.push_back( 0.350476732924345500 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsB )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 

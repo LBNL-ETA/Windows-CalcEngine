@@ -1,6 +1,6 @@
 #include <memory>
 #include <algorithm>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "SpectralProperties.hpp"
 #include "IntegratorStrategy.hpp"
@@ -106,7 +106,7 @@ TEST_F( TestSpectralInterpolation, TestInterpolation )
 
   EXPECT_EQ( calculatedResults.size(), correctResults.size() );
 
-  for( int i = 0; i < calculatedResults.size(); ++i ) {
+  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 

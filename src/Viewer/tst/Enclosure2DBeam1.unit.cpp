@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include <memory>
 
@@ -101,8 +101,10 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_EQ( 0.5, aEnclosure->directToDirect( profileAngle, aSide ) );
+  
+  size_t correctSize = 2;
 
-  EXPECT_EQ( 2, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;
@@ -145,8 +147,10 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_EQ( 0.125, aEnclosure->directToDirect( profileAngle, aSide ) );
+  
+  size_t correctSize = 2;
 
-  EXPECT_EQ( 2, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;
@@ -189,8 +193,10 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
+  
+  size_t correctSize = 3;
 
-  EXPECT_EQ( 3, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;
@@ -240,8 +246,10 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam4 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_EQ( 1, aEnclosure->directToDirect( profileAngle, aSide ) );
+  
+  size_t correctSize = 0;
 
-  EXPECT_EQ( 0, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
 }
 
@@ -260,8 +268,10 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_NEAR( 1.0 / 7.0, aEnclosure->directToDirect( profileAngle, aSide ), 1e-6 );
+  
+  size_t correctSize = 3;
 
-  EXPECT_EQ( 3, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;
@@ -311,8 +321,10 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam6 ) {
   shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
   EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
+  
+  size_t correctSize = 2;
 
-  EXPECT_EQ( 2, aViewFactors->size() );
+  EXPECT_EQ( correctSize, aViewFactors->size() );
 
   // Create correct results
   vector< BeamViewFactor > correctResults;

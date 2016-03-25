@@ -21,8 +21,7 @@ namespace LayerOptics {
   //  CVenetianBase
   ////////////////////////////////////////////////////////////////////////////////////////////
   CVenetianBase::CVenetianBase( shared_ptr< CMaterial > t_MaterialProperties, shared_ptr< CVenetianCellDescription > t_Cell ) :
-    CUniformDiffuseCell( t_MaterialProperties, t_Cell ), CDirectionalDiffuseCell( t_MaterialProperties, t_Cell ),
-    CBaseCell( t_MaterialProperties, t_Cell ) {
+    CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ), CDirectionalDiffuseCell( t_MaterialProperties, t_Cell ) {
   
   }
 
@@ -41,8 +40,8 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   CVenetianSlatEnergies::CVenetianSlatEnergies( shared_ptr< const CBeamDirection > t_BeamDirection,
     shared_ptr< vector< SegmentIrradiance > > t_SlatIrradiances,
-    shared_ptr< vector < double > > t_SlatRadiances ) : m_CalcDirection( t_BeamDirection ), 
-    m_SlatIrradiances( t_SlatIrradiances ), m_SlatRadiances( t_SlatRadiances ) {
+    shared_ptr< vector < double > > t_SlatRadiances ) : m_SlatIrradiances( t_SlatIrradiances ),
+    m_SlatRadiances( t_SlatRadiances ), m_CalcDirection( t_BeamDirection ) {
      
   };
 
@@ -259,8 +258,7 @@ namespace LayerOptics {
     return aIrradiances;
   };
 
-  shared_ptr< vector < double > > CVenetianCellEnergy::slatRadiances( 
-    shared_ptr< const CBeamDirection > t_IncomingDirection, 
+  shared_ptr< vector < double > > CVenetianCellEnergy::slatRadiances(
     shared_ptr< vector< SegmentIrradiance > > t_Irradiances ) {
     size_t numSlats = t_Irradiances->size();
     shared_ptr< vector < double > > aRadiances = make_shared< vector < double > >( 2 * numSlats - 2 );
@@ -375,7 +373,7 @@ namespace LayerOptics {
     if( m_CurrentSlatEnergies == nullptr ) {
       
       shared_ptr< vector< SegmentIrradiance > > aIrradiances = slatIrradiances( t_Direction );
-      shared_ptr< vector < double > > aRadiances = slatRadiances( t_Direction, aIrradiances );
+      shared_ptr< vector < double > > aRadiances = slatRadiances( aIrradiances );
 
       m_CurrentSlatEnergies = m_SlatEnergyResults.append( t_Direction, aIrradiances, aRadiances ); 
     }
@@ -484,7 +482,7 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   CVenetianCell::CVenetianCell( shared_ptr< CMaterial > t_Material, 
     shared_ptr< CVenetianCellDescription > t_Cell ) : 
-    CVenetianBase( t_Material, t_Cell ), CBaseCell( t_Material, t_Cell ), m_Energy( t_Material, t_Cell ) {
+    CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ), m_Energy( t_Material, t_Cell ) {
 
     assert( t_Cell != nullptr );
     assert( t_Material != nullptr );

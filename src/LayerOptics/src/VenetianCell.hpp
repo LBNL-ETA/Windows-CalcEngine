@@ -119,7 +119,6 @@ namespace LayerOptics {
 
     // Radiances for given incoming direction
     std::shared_ptr< std::vector < double > > slatRadiances( 
-      std::shared_ptr< const CBeamDirection > t_IncomingDirection,
       std::shared_ptr< std::vector< SegmentIrradiance > > t_Irradiances );
     
     // Creates diffuse to diffuse vector. Right hand side of the equation

@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "SpecularBSDFLayer.hpp"
 #include "EquivalentBSDFLayerMultiWL.hpp"
@@ -397,12 +397,12 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   correctResults.push_back( 0.018942773900363963 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aT )[ i ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -454,12 +454,12 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   correctResults.push_back( 0.22326328196079573 );
   correctResults.push_back( 0.22326328196079573 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aRb )[ i ][ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -511,12 +511,12 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   correctResults.push_back( 0.14744578590437141 );
   correctResults.push_back( 0.14744578590437141 );
   
-  for( int i = 0; i < size; ++i ) {    
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsF )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -568,12 +568,12 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   correctResults.push_back( 0.11070393973458328 );
   correctResults.push_back( 0.11070393973458328 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsF )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -625,12 +625,12 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   correctResults.push_back( 0.0049584695704260979 );
   correctResults.push_back( 0.0049584695704260979 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsB )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -682,12 +682,12 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   correctResults.push_back( 0.20343367811595450 );
   correctResults.push_back( 0.20343367811595450 );
   
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aAbsB )[ i ] );
   }
   
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 

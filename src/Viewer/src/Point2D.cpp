@@ -15,11 +15,11 @@ namespace Viewer {
   
   }
 
-  const double CPoint2D::x() const {
+  double CPoint2D::x() const {
     return m_x;
   }
 
-  const double CPoint2D::y() const {
+  double CPoint2D::y() const {
     return m_y;
   }
 

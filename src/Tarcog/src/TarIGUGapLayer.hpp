@@ -15,8 +15,7 @@ namespace Tarcog {
   double const ReferenceTemperature = 273.15;
 
   class CTarIGUGapLayer :
-    public CBaseIGUTarcogLayer, public CGasLayer
-  {
+    public CBaseIGUTarcogLayer, public CGasLayer {
   public:
     CTarIGUGapLayer( double t_Thickness, double t_Pressure );
     CTarIGUGapLayer( double t_Thickness, double t_Pressure, std::shared_ptr< Gasses::CGas > t_Gas );
