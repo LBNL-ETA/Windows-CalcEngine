@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "DirectionalDiffuseBSDFLayer.hpp"
 #include "VenetianCell.hpp"
@@ -116,12 +116,12 @@ TEST_F( TestVenetianDirectionalShadeFlat45_5, TestVenetian1 ) {
   correctResults.push_back( 0.017310537462612144 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aT )[ i ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
   }
 
@@ -173,12 +173,12 @@ TEST_F( TestVenetianDirectionalShadeFlat45_5, TestVenetian1 ) {
   correctResults.push_back( 0.180142928161266060 );
   correctResults.push_back( 0.128611259539473550 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( ( *aRf )[ i ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 

@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "PerforatedCell.hpp"
@@ -118,12 +118,12 @@ TEST_F( TestCircularPerforatedShade2, TestSolarProperties )
   correctResults.push_back( 0.063662 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -172,12 +172,12 @@ TEST_F( TestCircularPerforatedShade2, TestSolarProperties )
   correctResults.push_back( 0.063662 );
 
   calculatedResults.clear();
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[ 0 ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -228,12 +228,12 @@ TEST_F( TestCircularPerforatedShade2, TestSolarProperties )
   correctResults.push_back( 0.254648 );
 
   calculatedResults.clear();
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[ 0 ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -284,12 +284,12 @@ TEST_F( TestCircularPerforatedShade2, TestSolarProperties )
   correctResults.push_back( 0.254648 );
 
   calculatedResults.clear();
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRb)[ 0 ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 

@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "SpecularBSDFLayer.hpp"
 #include "SpectralSample.hpp"
@@ -75,8 +75,10 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   shared_ptr< CSpecularBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
+  
+  size_t correctSize = 5;
 
-  EXPECT_EQ( 5, aResults->size() );
+  EXPECT_EQ( correctSize, aResults->size() );
 
   ///////////////////////////////////////////////////////////////////////
   //  Wavelength number 1
@@ -131,12 +133,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 0.002528 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -188,12 +190,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 3.654452 );
   correctResults.push_back( 3.654452 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -251,12 +253,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 0.004252 );
   correctResults.push_back( 0.004252 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -308,12 +310,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 3.654449 );
   correctResults.push_back( 3.654449 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -371,12 +373,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 0.017391 );
   correctResults.push_back( 0.017391 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -428,12 +430,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 3.654404 );
   correctResults.push_back( 3.654404 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -491,12 +493,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 0.09914  );
   correctResults.push_back( 0.09914  );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -548,12 +550,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 3.653868 );
   correctResults.push_back( 3.653868 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -611,12 +613,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 0.379491 );
   correctResults.push_back( 0.379491 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -668,12 +670,12 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   correctResults.push_back( 3.65192  );
   correctResults.push_back( 3.65192  );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 

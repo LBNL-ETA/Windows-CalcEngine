@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "SpecularBSDFLayer.hpp"
 #include "SpectralSample.hpp"
@@ -455,12 +455,12 @@ TEST_F( TestSpecularLayer_102, TestSpecular1 ) {
   correctResults.push_back( 16.978250544025638 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-6 );
   }
 
@@ -616,12 +616,12 @@ TEST_F( TestSpecularLayer_102, TestSpecular1 ) {
   correctResults.push_back( 34.322921163935874 );
   correctResults.push_back( 34.322921163935874 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-6 );
   }
 

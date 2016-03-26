@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "WovenCell.hpp"
@@ -70,8 +70,10 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   shared_ptr< CUniformDiffuseBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
+  
+  size_t correctSize = 4;
 
-  EXPECT_EQ( 4, aResults->size() );
+  EXPECT_EQ( correctSize, aResults->size() );
 
   ///////////////////////////////////////////////////////////////////////
   //  Wavelength number 1
@@ -126,12 +128,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0.00000 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -183,12 +185,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0 );
   correctResults.push_back( 0 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -246,12 +248,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0.043898  );
   correctResults.push_back( 0.033284  );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -303,12 +305,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0.210750 );
   correctResults.push_back( 0.221364 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -366,12 +368,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0.0947343 );
   correctResults.push_back( 0.0871753 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -423,12 +425,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0.159914 );
   correctResults.push_back( 0.167473 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -486,12 +488,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0.043898  );
   correctResults.push_back( 0.033284  );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -543,12 +545,12 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   correctResults.push_back( 0.210750 );
   correctResults.push_back( 0.221364 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 

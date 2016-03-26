@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "VenetianCell.hpp"
@@ -75,8 +75,10 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   shared_ptr< CUniformDiffuseBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
+  
+  size_t correctSize = 4;
 
-  EXPECT_EQ( 4, aResults->size() );
+  EXPECT_EQ( correctSize, aResults->size() );
 
   ///////////////////////////////////////////////////////////////////////
   //  Wavelength number 1
@@ -131,12 +133,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back(  0.000000 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -188,12 +190,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back( 0 );
   correctResults.push_back( 0 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -251,12 +253,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back(  0.024517 );
   correctResults.push_back(  0.027554 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -308,12 +310,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back( 0.216240 );
   correctResults.push_back( 0.211083 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -371,12 +373,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back(  0.042638 );
   correctResults.push_back(  0.046481 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -428,12 +430,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back( 0.189304 );
   correctResults.push_back( 0.184339 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -491,12 +493,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back(  0.024517 );
   correctResults.push_back(  0.027554 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -548,12 +550,12 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   correctResults.push_back( 0.216240 );
   correctResults.push_back( 0.211083 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 

@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include <memory>
 
@@ -39,7 +39,9 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis )
                                       0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, \
                                       0, 45, 90, 135, 180, 225, 270, 315 };
 
-  EXPECT_EQ( 41, aDirections.size() );
+	size_t correctSize = 41;
+	
+  EXPECT_EQ( correctSize, aDirections.size() );
 
   vector< double > phiAngles;
   vector< shared_ptr< CBSDFPatch > >::iterator it;
@@ -65,7 +67,9 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas )
                                       54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, \
                                       76.5, 76.5, 76.5, 76.5, 76.5, 76.5, 76.5, 76.5 };
 
-  EXPECT_EQ( 41, aDirections.size() );
+	size_t correctSize = 41;
+  
+  EXPECT_EQ( correctSize, aDirections.size() );
 
   vector< double > thetaAngles;
   vector< shared_ptr< CBSDFPatch > >::iterator it;
@@ -92,7 +96,9 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisLambdas )
     0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.07694091, 0.07694091, 0.07694091, 0.07694091, \
     0.080938176, 0.080938176, 0.080938176, 0.080938176, 0.080938176, 0.080938176, 0.080938176, 0.080938176 };
 
-  EXPECT_EQ( 41, aDirections.size() );
+	size_t correctSize = 41;
+ 
+  EXPECT_EQ( correctSize, aDirections.size() );
 
   vector< double > lambdaValues;
   vector< shared_ptr< CBSDFPatch > >::iterator it;

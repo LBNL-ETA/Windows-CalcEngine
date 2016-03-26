@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "PerforatedCell.hpp"
@@ -72,8 +72,10 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   shared_ptr< CUniformDiffuseBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
+  
+  size_t correctSize = 4;
 
-  EXPECT_EQ( 4, aResults->size() );
+  EXPECT_EQ( correctSize, aResults->size() );
 
   ///////////////////////////////////////////////////////////////////////
   //  Wavelength number 1
@@ -128,12 +130,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0.000000 );
 
   vector< double > calculatedResults;
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -185,12 +187,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0 );
   correctResults.push_back( 0 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -248,12 +250,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0.001248 );
   correctResults.push_back( 0.001248 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -305,12 +307,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0.253400 );
   correctResults.push_back( 0.253400 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -368,12 +370,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0.063662 );
   correctResults.push_back( 0.063662 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -425,12 +427,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0.190986 );
   correctResults.push_back( 0.190986 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -488,12 +490,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0.001248 );
   correctResults.push_back( 0.001248 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aT)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 
@@ -545,12 +547,12 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   correctResults.push_back( 0.253400 );
   correctResults.push_back( 0.253400 );
 
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     calculatedResults.push_back( (*aRf)[i][i] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( int i = 0; i < size; ++i ) {
+  for( size_t i = 0; i < size; ++i ) {
     EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
   }
 

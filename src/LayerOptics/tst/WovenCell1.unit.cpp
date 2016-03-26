@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "WovenCell.hpp"
 #include "WovenCellDescription.hpp"

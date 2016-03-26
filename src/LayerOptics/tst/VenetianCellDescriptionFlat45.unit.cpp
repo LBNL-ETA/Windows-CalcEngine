@@ -1,5 +1,5 @@
 #include <memory>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include "VenetianCellDescription.hpp"
 #include "Geometry2DBeam.hpp"
@@ -33,7 +33,7 @@ protected:
 
 public:
   shared_ptr< CVenetianCellDescription > GetCell() { return m_Cell; };
-  const size_t numOfSlats() { return m_NumOfSlats; };
+  size_t numOfSlats() { return m_NumOfSlats; };
 
 };
 
