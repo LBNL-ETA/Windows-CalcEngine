@@ -37,6 +37,7 @@ namespace LayerOptics {
     virtual std::shared_ptr< std::vector< double > > R_dir_dir_band( const FenestrationCommon::Side t_Side, 
       std::shared_ptr< const CBeamDirection > t_Direction );
 
+    std::shared_ptr< std::vector< double > > getBandWavelengths() const;
     int getBandIndex( const double t_Wavelength );
     size_t getBandSize() const;
 

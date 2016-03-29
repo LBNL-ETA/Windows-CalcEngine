@@ -14,10 +14,12 @@ using namespace std;
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
+// Example (test case) of sample that calculates angular properties of single layer sample
+
 class TestSampleNFRC_103_Angular : public testing::Test {
 
 private:
-  shared_ptr< CSpectralSample > m_Sample;
+  shared_ptr< CAngularSpectralSample > m_Sample;
 
 protected:
   virtual void SetUp() {
@@ -260,26 +262,26 @@ protected:
     aMeasurements->addRecord( 2.450, 0.7570, 0.0640, 0.0640 );
     aMeasurements->addRecord( 2.500, 0.7500, 0.0630, 0.0630 );
 
-    m_Sample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+    shared_ptr< CSpectralSample > aSample = 
+      make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+
+    double thickness = 5.715e-3; // [m]
+    SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+
+    m_Sample = make_shared< CAngularSpectralSample >( aSample, thickness, layerType );
 
   };
 
 public:
-  shared_ptr< CSpectralSample > getSample() { return m_Sample; };
+  shared_ptr< CAngularSpectralSample > getSample() { return m_Sample; };
 
 };
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties0degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 0;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -301,15 +303,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties0degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties10degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 10;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -331,15 +327,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties10degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties20degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 20;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -361,15 +351,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties20degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties30degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 30;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -391,15 +375,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties30degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties40degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 40;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -421,15 +399,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties40degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties50degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 50;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -451,15 +423,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties50degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties60degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 60;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -481,15 +447,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties60degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties70degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 70;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -511,15 +471,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties70degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties80degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 80;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
@@ -541,15 +495,9 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties80degrees ) {
 
 TEST_F( TestSampleNFRC_103_Angular, TestProperties90degrees ) {
 
-  double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
-
   double angle = 90;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
-
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
   // SOLAR RANGE
   double lowLambda = 0.3;
