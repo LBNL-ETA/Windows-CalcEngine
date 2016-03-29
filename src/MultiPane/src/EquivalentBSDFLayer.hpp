@@ -68,6 +68,7 @@ namespace MultiPane {
     std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Rb;
   };
 
+  // Class for equivalent BSDF layer for single material properties (or single wavelength)
   class CEquivalentBSDFLayer {
   public:
     CEquivalentBSDFLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );

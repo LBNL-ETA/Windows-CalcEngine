@@ -11,7 +11,7 @@ namespace SpectralAveraging {
 
 namespace MultiPane {
 
-  // Holds multiple spectral data samples. It also calculates multipane properties (Transmittance,
+  // Contain multiple spectral data samples. It also calculates multipane properties (Transmittance,
   // Front reflectance and back reflectance)
   class CMultiPaneSampleData : public SpectralAveraging::CSpectralSampleData {
   public:

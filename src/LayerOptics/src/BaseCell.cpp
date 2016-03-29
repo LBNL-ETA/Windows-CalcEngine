@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "BaseCell.hpp"
 #include "BaseCellDescription.hpp"
 #include "FenestrationCommon.hpp"
@@ -44,6 +46,11 @@ namespace LayerOptics {
       aResults->push_back( value );
     }
     return aResults;
+  };
+
+  shared_ptr< vector< double > > CBaseCell::getBandWavelengths() const {
+    assert( m_Material != nullptr );
+    return m_Material->getBandWavelengths();
   };
 
   int CBaseCell::getBandIndex( const double t_Wavelength ) {

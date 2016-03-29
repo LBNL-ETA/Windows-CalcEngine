@@ -45,7 +45,7 @@ namespace MultiPane {
     }
   };
 
-  shared_ptr< CSpectralProperties > CMultiPaneSampleData::getLayerAbsorptances( size_t const Index ) {\
+  shared_ptr< CSpectralProperties > CMultiPaneSampleData::getLayerAbsorptances( size_t const Index ) {
     calculateProperties();
     if( ( Index - 1 ) > m_LayerAbsorptances.size() ) {
       throw runtime_error("Index out of range. ");

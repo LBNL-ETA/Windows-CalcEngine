@@ -9,8 +9,7 @@ using namespace std;
 using namespace SpectralAveraging;
 using namespace MultiPane;
 
-class TestMultiPaneMeasuredSampleData : public testing::Test
-{
+class TestMultiPaneMeasuredSampleData : public testing::Test {
 
 private:
   shared_ptr< CMultiPaneSampleData > m_MultiPane;
