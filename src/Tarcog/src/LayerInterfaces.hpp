@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace Gasses {
+namespace Gases {
   class CGas;
 }
 
@@ -80,7 +80,7 @@ namespace Tarcog {
     CGasLayer( double const t_Pressure );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirDirection );
-    CGasLayer( double const t_Pressure, std::shared_ptr< Gasses::CGas > t_Gas );
+    CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
 
   protected:
     void initializeStateVariables();
@@ -94,7 +94,7 @@ namespace Tarcog {
     AirHorizontalDirection m_AirHorizontalDirection;
     ForcedVentilation m_ForcedVentilation;
 
-    std::shared_ptr< Gasses::CGas > m_Gas;
+    std::shared_ptr< Gases::CGas > m_Gas;
 
   private:
     void onCreate();

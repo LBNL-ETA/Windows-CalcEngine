@@ -13,7 +13,7 @@
 #include "Gas.hpp"
 
 using namespace std;
-using namespace Gasses;
+using namespace Gases;
 
 namespace Tarcog {
 
@@ -22,7 +22,7 @@ namespace Tarcog {
   CTarIGUGapLayer::CTarIGUGapLayer( double t_Thickness, double t_Pressure ) : 
     CBaseIGUTarcogLayer( t_Thickness ), 
     CGasLayer( t_Pressure ), m_inTemperature( 0 ), m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ) {
-    m_ReferenceGas = make_shared< Gasses::CGas >();
+    m_ReferenceGas = make_shared< Gases::CGas >();
     m_ReferenceGas->setTemperatureAndPressure( ReferenceTemperature, m_Pressure );
   }
 
@@ -30,7 +30,7 @@ namespace Tarcog {
     CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ), 
     m_inTemperature ( 0 ), m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ) {
     assert( m_Gas != nullptr );
-    m_ReferenceGas = make_shared< Gasses::CGas >();
+    m_ReferenceGas = make_shared< Gases::CGas >();
     (*m_ReferenceGas) = (*m_Gas);
     m_ReferenceGas->setTemperatureAndPressure( ReferenceTemperature, m_Pressure );
   }

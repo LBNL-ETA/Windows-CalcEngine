@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace Gasses
+namespace Gases
 {
   CGasData::CGasData() : m_gasName ( "Air" ), m_molWeight( 28.97 ), m_specificHeatRatio( 1.4 ),
                          m_coeffCp( make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 ) ),

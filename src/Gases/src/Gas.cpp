@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace Gasses
+namespace Gases
 {
 
   CGas::CGas() : m_SimpleProperties( make_shared< GasProperties > () ), m_Properties( make_shared< GasProperties > () ) {
@@ -18,7 +18,7 @@ namespace Gasses
   };
 
   void CGas::addGasItem( shared_ptr< CGasItem > t_GasItem ) {
-    // Need to remove default since user wants to create their own gasses
+    // Need to remove default since user wants to create their own Gases
     if ( m_DefaultGas ) {
       m_GasItem.clear();
       m_DefaultGas = false;
@@ -84,9 +84,9 @@ namespace Gasses
     for ( primaryIt = m_GasItem.begin(); primaryIt != m_GasItem.end(); ++primaryIt ) {
       for ( secondaryIt = m_GasItem.begin(); secondaryIt != m_GasItem.end(); ++secondaryIt ) {
         if ( ( *primaryIt ) != ( *secondaryIt ) ) {
-          miItem[counter].push_back( viscDenomTwoGasses( ( *primaryIt ), (*secondaryIt) ) );
-          lambdaPrimItem[counter].push_back( lambdaPrimDenomTwoGasses( ( *primaryIt ), (*secondaryIt) ) );
-          lambdaSecondItem[counter].push_back( lambdaSecondDenomTwoGasses( ( *primaryIt ), (*secondaryIt) ) );
+          miItem[counter].push_back( viscDenomTwoGases( ( *primaryIt ), (*secondaryIt) ) );
+          lambdaPrimItem[counter].push_back( lambdaPrimDenomTwoGases( ( *primaryIt ), (*secondaryIt) ) );
+          lambdaSecondItem[counter].push_back( lambdaSecondDenomTwoGases( ( *primaryIt ), (*secondaryIt) ) );
         }
         else
         {
@@ -149,14 +149,14 @@ namespace Gasses
   };
 
   // This implements equation 63 (ISO 15099)
-  double CGas::viscTwoGasses( shared_ptr< GasProperties > t_Gas1Properties,
+  double CGas::viscTwoGases( shared_ptr< GasProperties > t_Gas1Properties,
       shared_ptr< GasProperties > t_Gas2Properties ) {
     
     if ( ( t_Gas1Properties->m_Viscosity == 0 ) || ( t_Gas2Properties->m_Viscosity == 0 ) ) {
-      throw runtime_error( "Viscosity of the gas component in gasses is equal to zero." );
+      throw runtime_error( "Viscosity of the gas component in Gases is equal to zero." );
     }
     if ( ( t_Gas1Properties->m_MolecularWeight == 0 ) || ( t_Gas2Properties->m_MolecularWeight == 0 ) ) {
-      throw runtime_error( "Molecular weight of the gas component in gasses is equal to zero." );
+      throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
     }
 
     double uFraction = t_Gas1Properties->m_Viscosity / t_Gas2Properties->m_Viscosity;
@@ -173,10 +173,10 @@ namespace Gasses
   };
 
   // Implementation of sum items in denominator of equation 62 (ISO15099)
-  double CGas::viscDenomTwoGasses( shared_ptr< CGasItem > t_GasItem1,
+  double CGas::viscDenomTwoGases( shared_ptr< CGasItem > t_GasItem1,
       shared_ptr< CGasItem > t_GasItem2 ) {
 
-    double phiValue = viscTwoGasses( t_GasItem1->getGasProperties(), t_GasItem2->getGasProperties() );
+    double phiValue = viscTwoGases( t_GasItem1->getGasProperties(), t_GasItem2->getGasProperties() );
     if ( ( t_GasItem1->getFraction() == 0 ) || ( t_GasItem2->getFraction() == 0 ) ) {
       throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
     }
@@ -186,14 +186,14 @@ namespace Gasses
   };
 
   // This implements equation 66 (ISO 15099)
-  double CGas::lambdaPrimTwoGasses( shared_ptr< GasProperties > t_Gas1Properties,
+  double CGas::lambdaPrimTwoGases( shared_ptr< GasProperties > t_Gas1Properties,
       shared_ptr< GasProperties > t_Gas2Properties ) {
 
     if ( ( t_Gas1Properties->m_MolecularWeight == 0 ) || ( t_Gas2Properties->m_MolecularWeight == 0 ) ) {
-      throw runtime_error( "Molecular weight of the gas component in gasses is equal to zero." );
+      throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
     }
 
-    double item1 = lambdaSecondTwoGasses( t_Gas1Properties, t_Gas2Properties );
+    double item1 = lambdaSecondTwoGases( t_Gas1Properties, t_Gas2Properties );
     double item2 = 1 + 2.41 * ( ( t_Gas1Properties->m_MolecularWeight - t_Gas2Properties->m_MolecularWeight ) *
       ( t_Gas1Properties->m_MolecularWeight - 0.142 * t_Gas2Properties->m_MolecularWeight ) / 
       pow(( t_Gas1Properties->m_MolecularWeight + t_Gas2Properties->m_MolecularWeight ), 2) );
@@ -203,15 +203,15 @@ namespace Gasses
   };
 
   // This implements equation 68 (ISO 15099)
-  double CGas::lambdaSecondTwoGasses( shared_ptr< GasProperties > t_Gas1Properties,
+  double CGas::lambdaSecondTwoGases( shared_ptr< GasProperties > t_Gas1Properties,
       shared_ptr< GasProperties > t_Gas2Properties ) {
 
     if ( ( t_Gas1Properties->getLambdaPrim() == 0 ) || ( t_Gas2Properties->getLambdaPrim() == 0 ) ) {
-      throw runtime_error( "Primary thermal conductivity (lambda prim) of the gas component in gasses is equal to zero." );
+      throw runtime_error( "Primary thermal conductivity (lambda prim) of the gas component in Gases is equal to zero." );
     }
 
     if ( ( t_Gas1Properties->m_MolecularWeight == 0 ) || ( t_Gas2Properties->m_MolecularWeight == 0 ) ) {
-      throw runtime_error( "Molecular weight of the gas component in gasses is equal to zero." );
+      throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
     }
 
     double tFraction = t_Gas1Properties->getLambdaPrim() / t_Gas2Properties->getLambdaPrim();
@@ -228,10 +228,10 @@ namespace Gasses
   };
 
   // Implementation of sum items in denominator of equation 65 (ISO15099)
-  double CGas::lambdaPrimDenomTwoGasses( shared_ptr< CGasItem > t_GasItem1,
+  double CGas::lambdaPrimDenomTwoGases( shared_ptr< CGasItem > t_GasItem1,
       shared_ptr< CGasItem > t_GasItem2 ) {
 
-    double phiValue = lambdaPrimTwoGasses( t_GasItem1->getGasProperties(), t_GasItem2->getGasProperties() );
+    double phiValue = lambdaPrimTwoGases( t_GasItem1->getGasProperties(), t_GasItem2->getGasProperties() );
 
     if ( ( t_GasItem1->getFraction() == 0 ) || ( t_GasItem2->getFraction() == 0 ) ) {
       throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
@@ -242,10 +242,10 @@ namespace Gasses
   };
 
   // Implementation of sum items in denominator of equation 67 (ISO15099)
-  double CGas::lambdaSecondDenomTwoGasses( shared_ptr< CGasItem > t_GasItem1,
+  double CGas::lambdaSecondDenomTwoGases( shared_ptr< CGasItem > t_GasItem1,
       shared_ptr< CGasItem > t_GasItem2 ) {
 
-    double phiValue = lambdaSecondTwoGasses( t_GasItem1->getGasProperties(), t_GasItem2->getGasProperties() );
+    double phiValue = lambdaSecondTwoGases( t_GasItem1->getGasProperties(), t_GasItem2->getGasProperties() );
 
     if ( ( t_GasItem1->getFraction() == 0 ) || ( t_GasItem2->getFraction() == 0 ) ) {
       throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );

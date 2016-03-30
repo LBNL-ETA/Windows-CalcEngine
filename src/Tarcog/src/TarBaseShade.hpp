@@ -5,7 +5,7 @@
 
 #include "TarIGUSolidLayer.hpp"
 
-namespace Gasses{
+namespace Gases{
   class CGas;
 }
 

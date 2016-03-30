@@ -6,10 +6,8 @@ set( target_name Tarcog )
 # include_directories( include )
 
 # make sure to connect to header files of common variables
-# include_directories( ${CMAKE_SOURCE_DIR}/Common/src )
-# include_directories( ${CMAKE_SOURCE_DIR}/Gasses/src )
 include_directories( ../Common/src )
-include_directories( ../Gasses/src )
+include_directories( ../Gases/src )
 
 # collect all source files and add them to the SOURCES list
 file( GLOB SOURCES_CPP "src/*.cpp" )
@@ -21,7 +19,7 @@ LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP} )
 add_library( ${target_name} STATIC ${SOURCES} )
 
 target_link_libraries( ${target_name} ${LINK_TO_Common} )
-target_link_libraries( ${target_name} ${LINK_TO_Gasses} )
+target_link_libraries( ${target_name} ${LINK_TO_Gases} )
 
 if( BUILD_TESTING )
   include_directories( src src )

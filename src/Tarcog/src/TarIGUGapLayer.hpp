@@ -6,7 +6,7 @@
 #include "LayerInterfaces.hpp"
 #include "Gas.hpp"
 
-namespace Gasses {
+namespace Gases {
   class CGas;
 }
 
@@ -18,7 +18,7 @@ namespace Tarcog {
     public CBaseIGUTarcogLayer, public CGasLayer {
   public:
     CTarIGUGapLayer( double t_Thickness, double t_Pressure );
-    CTarIGUGapLayer( double t_Thickness, double t_Pressure, std::shared_ptr< Gasses::CGas > t_Gas );
+    CTarIGUGapLayer( double t_Thickness, double t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
 
     void connectToBackSide( std::shared_ptr< CBaseTarcogLayer > t_Layer );
 
@@ -60,7 +60,7 @@ namespace Tarcog {
     double m_Zin;
     double m_Zout;
 
-    std::shared_ptr< Gasses::CGas > m_ReferenceGas;
+    std::shared_ptr< Gases::CGas > m_ReferenceGas;
   };
  
 }

@@ -16,7 +16,7 @@
 #include "TarSurface.hpp"
 
 using namespace std;
-using namespace Gasses;
+using namespace Gases;
 using namespace Tarcog;
 
 class TestInBetweenShadeAirArgon : public testing::Test

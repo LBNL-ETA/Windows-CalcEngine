@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-namespace Gasses
+namespace Gases
 {
 
   class CGasData;
