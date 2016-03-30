@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-set( target_name Gasses )
+set( target_name Gases )
 
 # first include header files of this project itself
 

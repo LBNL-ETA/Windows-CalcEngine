@@ -10,7 +10,7 @@
 #include "GasProperties.hpp"
 
 using namespace std;
-using namespace Gasses;
+using namespace Gases;
 
 namespace Tarcog {
 

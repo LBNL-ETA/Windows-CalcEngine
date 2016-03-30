@@ -6,7 +6,7 @@
 #include "GasItem.hpp"
 #include "GasProperties.hpp"
 
-using namespace Gasses;
+using namespace Gases;
 
 class TestGasPropertiesQuadrupleGas : public testing::Test
 {

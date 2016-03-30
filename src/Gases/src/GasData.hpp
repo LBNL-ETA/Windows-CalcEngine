@@ -6,7 +6,7 @@
 
 #include "GasProperties.hpp"
 
-namespace Gasses
+namespace Gases
 {
 
   class CIntCoeff;

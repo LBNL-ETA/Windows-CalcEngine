@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-namespace Gasses
+namespace Gases
 {
 
   class CGasItem;
@@ -26,18 +26,18 @@ namespace Gasses
   private:
     void molecularWeight();
 
-    double viscTwoGasses(std::shared_ptr< GasProperties > t_Gas1Properties,
+    double viscTwoGases(std::shared_ptr< GasProperties > t_Gas1Properties,
       std::shared_ptr< GasProperties > t_Gas2Properties);
-    double viscDenomTwoGasses(std::shared_ptr< CGasItem > t_GasItem1,
+    double viscDenomTwoGases(std::shared_ptr< CGasItem > t_GasItem1,
       std::shared_ptr< CGasItem > t_GasItem2);
 
-    double lambdaPrimTwoGasses(std::shared_ptr< GasProperties > t_Gas1Properties,
+    double lambdaPrimTwoGases(std::shared_ptr< GasProperties > t_Gas1Properties,
       std::shared_ptr< GasProperties > t_Gas2Properties);
-     double lambdaSecondTwoGasses(std::shared_ptr< GasProperties > t_Gas1Properties,
+     double lambdaSecondTwoGases(std::shared_ptr< GasProperties > t_Gas1Properties,
       std::shared_ptr< GasProperties > t_Gas2Properties);
-    double lambdaPrimDenomTwoGasses(std::shared_ptr< CGasItem > t_GasItem1,
+    double lambdaPrimDenomTwoGases(std::shared_ptr< CGasItem > t_GasItem1,
       std::shared_ptr< CGasItem > t_GasItem2);
-    double lambdaSecondDenomTwoGasses(std::shared_ptr< CGasItem > t_GasItem1,
+    double lambdaSecondDenomTwoGases(std::shared_ptr< CGasItem > t_GasItem1,
       std::shared_ptr< CGasItem > t_GasItem2);
 
     std::vector< std::shared_ptr< CGasItem > > m_GasItem;

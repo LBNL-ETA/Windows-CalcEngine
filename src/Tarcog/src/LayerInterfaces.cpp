@@ -7,7 +7,7 @@
 #include "Gas.hpp"
 
 using namespace std;
-using namespace Gasses;
+using namespace Gases;
 
 namespace Tarcog{
 
@@ -188,7 +188,7 @@ namespace Tarcog{
 
     // new gas will be created only if not passed from constructor.
     if( m_Gas == nullptr ) {
-      m_Gas = make_shared< Gasses::CGas >();
+      m_Gas = make_shared< Gases::CGas >();
     }
     m_ForcedVentilation = ForcedVentilation();
   }

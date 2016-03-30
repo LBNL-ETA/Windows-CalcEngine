@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace Gasses {
+namespace Gases {
   
   CGasItem::CGasItem() : m_Fraction( 1.0 ), m_GasData( make_shared< CGasData >() ) {
     // 100% Air is default item

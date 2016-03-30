@@ -1,7 +1,7 @@
 #ifndef GASPROPERTIES_H
 #define GASPROPERTIES_H
 
-namespace Gasses
+namespace Gases
 {
 
   enum class CoeffType { cCond, cVisc, cCp };
