@@ -2,50 +2,47 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 
 using namespace std;
-using namespace SpectralAveraging;
+using namespace FenestrationCommon;
 
-class TestSpectralInterpolation : public testing::Test
-{
+class TestSeriesInterpolation : public testing::Test {
 
 private:
-  shared_ptr< CSpectralProperties > m_SpectralProperty;
+  shared_ptr< CSeries > m_Series;
 
 protected:
-  virtual void SetUp()
-  {
-    m_SpectralProperty = make_shared< CSpectralProperties >();
+  virtual void SetUp() {
+    m_Series = make_shared< CSeries >();
 
     // part of ASTM E891-87 Table 1
-    m_SpectralProperty->addProperty( 0.40, 556 );
-    m_SpectralProperty->addProperty( 0.41, 656.3 );
-    m_SpectralProperty->addProperty( 0.42, 690.8 );
-    m_SpectralProperty->addProperty( 0.43, 641.9 );
-    m_SpectralProperty->addProperty( 0.44, 798.5 );
-    m_SpectralProperty->addProperty( 0.45, 956.6 );
-    m_SpectralProperty->addProperty( 0.46, 990 );
-    m_SpectralProperty->addProperty( 0.47, 998 );
-    m_SpectralProperty->addProperty( 0.48, 1046.1 );
-    m_SpectralProperty->addProperty( 0.49, 1005.1 );
-    m_SpectralProperty->addProperty( 0.50, 1026.7 );
+    m_Series->addProperty( 0.40, 556 );
+    m_Series->addProperty( 0.41, 656.3 );
+    m_Series->addProperty( 0.42, 690.8 );
+    m_Series->addProperty( 0.43, 641.9 );
+    m_Series->addProperty( 0.44, 798.5 );
+    m_Series->addProperty( 0.45, 956.6 );
+    m_Series->addProperty( 0.46, 990 );
+    m_Series->addProperty( 0.47, 998 );
+    m_Series->addProperty( 0.48, 1046.1 );
+    m_Series->addProperty( 0.49, 1005.1 );
+    m_Series->addProperty( 0.50, 1026.7 );
 
   };
 
 public:
-  shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
+  shared_ptr< CSeries > getProperty() { return m_Series; };
 
 };
 
-TEST_F( TestSpectralInterpolation, TestInterpolation )
-{
+TEST_F( TestSeriesInterpolation, TestInterpolation ) {
   SCOPED_TRACE( "Begin Test: Test interpolation over the range of data." );
   
-  shared_ptr< CSpectralProperties > aInterpolatedProperties = nullptr;
+  shared_ptr< CSeries > aInterpolatedProperties = nullptr;
   
-  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  shared_ptr< CSeries > aSpectralProperties = getProperty();
 
   shared_ptr< vector< double > > wavelengths = make_shared< vector< double > >();
   wavelengths->push_back( 0.400 );
@@ -98,7 +95,7 @@ TEST_F( TestSpectralInterpolation, TestInterpolation )
   // correctResults.push_back( 1026.700 );
 
   vector< double > calculatedResults;
-  vector< shared_ptr < CSpectralProperty > >::const_iterator it;
+  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
   for( it = aInterpolatedProperties->begin(); it != aInterpolatedProperties->end(); ++it )
   {
     calculatedResults.push_back( (*it)->value() );

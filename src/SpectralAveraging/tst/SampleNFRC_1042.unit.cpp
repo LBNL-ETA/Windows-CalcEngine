@@ -4,7 +4,7 @@
 
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -19,7 +19,7 @@ private:
 
 protected:
   virtual void SetUp() {
-    shared_ptr< CSpectralProperties > solarRadiation = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries > solarRadiation = make_shared< CSeries >();
     
     // Full ASTM E891-87 Table 1
     solarRadiation->addProperty( 0.3000, 0.0    );

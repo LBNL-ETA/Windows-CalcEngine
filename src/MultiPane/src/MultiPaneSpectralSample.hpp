@@ -6,10 +6,15 @@
 
 #include "SpectralSample.hpp"
 
+namespace FenestrationCommon {
+
+  class CSeries;
+
+}
+
 namespace SpectralAveraging {
 
-  class CSpectralSampleData;
-  class CSpectralProperties;
+  class CSpectralSampleData;  
   //class CSample;
 }
 
@@ -20,7 +25,7 @@ namespace MultiPane {
   class CMultiPaneSpectralSample : public SpectralAveraging::CSpectralSample {
   public:
     CMultiPaneSpectralSample( std::shared_ptr< SpectralAveraging::CSpectralSampleData > t_SampleData,
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_SourceData );
+      std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     double getLayerAbsorbedEnergy( double const minLambda, double const maxLambda, size_t const Index );
     double getLayerAbsorptance( double const minLambda, double const maxLambda, size_t const Index );
@@ -28,9 +33,9 @@ namespace MultiPane {
   private:
     void reset();
     void calculateProperties();
-    void integrateAndAppendAbsorptances( std::shared_ptr< SpectralAveraging::CSpectralProperties > t_Absorptances );
+    void integrateAndAppendAbsorptances( std::shared_ptr< FenestrationCommon::CSeries > t_Absorptances );
 
-    std::vector< std::shared_ptr< SpectralAveraging::CSpectralProperties > > m_AbsorbedLayersSource;
+    std::vector< std::shared_ptr< FenestrationCommon::CSeries > > m_AbsorbedLayersSource;
   
   };
 

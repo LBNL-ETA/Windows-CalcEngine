@@ -2,59 +2,56 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 
 using namespace std;
-using namespace SpectralAveraging;
+using namespace FenestrationCommon;
 
-class TestSpectralIntegration : public testing::Test
-{
+class TestSeriesIntegration : public testing::Test {
 
 private:
-  shared_ptr< CSpectralProperties > m_SpectralProperty;
+  shared_ptr< CSeries > m_Series;
 
 protected:
-  virtual void SetUp()
-  {
-    m_SpectralProperty = make_shared< CSpectralProperties >();
+  virtual void SetUp() {
+    m_Series = make_shared< CSeries >();
 
-    m_SpectralProperty->addProperty( 0.500,  0.5511 );
-    m_SpectralProperty->addProperty( 0.505,  0.5519 );
-    m_SpectralProperty->addProperty( 0.510,  0.5523 );
-    m_SpectralProperty->addProperty( 0.515,  0.5529 );
-    m_SpectralProperty->addProperty( 0.520,  0.5543 );
-    m_SpectralProperty->addProperty( 0.525,  0.5552 );
-    m_SpectralProperty->addProperty( 0.530,  0.5579 );
-    m_SpectralProperty->addProperty( 0.535,  0.5626 );
-    m_SpectralProperty->addProperty( 0.540,  0.5699 );
-    m_SpectralProperty->addProperty( 0.545,  0.5789 );
-    m_SpectralProperty->addProperty( 0.550,  0.5884 );
-    m_SpectralProperty->addProperty( 0.555,  0.5949 );
-    m_SpectralProperty->addProperty( 0.560,  0.5971 );
-    m_SpectralProperty->addProperty( 0.565,  0.5946 );
-    m_SpectralProperty->addProperty( 0.570,  0.5885 );
-    m_SpectralProperty->addProperty( 0.575,  0.5784 );
-    m_SpectralProperty->addProperty( 0.580,  0.5666 );
-    m_SpectralProperty->addProperty( 0.585,  0.5547 );
-    m_SpectralProperty->addProperty( 0.590,  0.5457 );
-    m_SpectralProperty->addProperty( 0.595,  0.5425 );
-    m_SpectralProperty->addProperty( 0.600,  0.5435 );
+    m_Series->addProperty( 0.500,  0.5511 );
+    m_Series->addProperty( 0.505,  0.5519 );
+    m_Series->addProperty( 0.510,  0.5523 );
+    m_Series->addProperty( 0.515,  0.5529 );
+    m_Series->addProperty( 0.520,  0.5543 );
+    m_Series->addProperty( 0.525,  0.5552 );
+    m_Series->addProperty( 0.530,  0.5579 );
+    m_Series->addProperty( 0.535,  0.5626 );
+    m_Series->addProperty( 0.540,  0.5699 );
+    m_Series->addProperty( 0.545,  0.5789 );
+    m_Series->addProperty( 0.550,  0.5884 );
+    m_Series->addProperty( 0.555,  0.5949 );
+    m_Series->addProperty( 0.560,  0.5971 );
+    m_Series->addProperty( 0.565,  0.5946 );
+    m_Series->addProperty( 0.570,  0.5885 );
+    m_Series->addProperty( 0.575,  0.5784 );
+    m_Series->addProperty( 0.580,  0.5666 );
+    m_Series->addProperty( 0.585,  0.5547 );
+    m_Series->addProperty( 0.590,  0.5457 );
+    m_Series->addProperty( 0.595,  0.5425 );
+    m_Series->addProperty( 0.600,  0.5435 );
 
   };
 
 public:
-  shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
+  shared_ptr< CSeries > getProperty() { return m_Series; };
 
 };
 
-TEST_F( TestSpectralIntegration, TestRectangular )
-{
+TEST_F( TestSeriesIntegration, TestRectangular ) {
   SCOPED_TRACE( "Begin Test: Test rectangular integration over the specturm of data." );
   
-  shared_ptr< CSpectralProperties > aIntegratedProperties = nullptr;
+  shared_ptr< CSeries > aIntegratedProperties = nullptr;
   
-  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  shared_ptr< CSeries > aSpectralProperties = getProperty();
 
   aIntegratedProperties = aSpectralProperties->integrate( IntegrationType::Rectangular );
 
@@ -81,7 +78,7 @@ TEST_F( TestSpectralIntegration, TestRectangular )
   correctResults.push_back( 0.0027125 );
 
   vector< double > calculatedResults;
-  vector< shared_ptr < CSpectralProperty > >::const_iterator it;
+  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
   for( it = aIntegratedProperties->begin(); it != aIntegratedProperties->end(); ++it )
   {
     calculatedResults.push_back( (*it)->value() );
@@ -95,13 +92,12 @@ TEST_F( TestSpectralIntegration, TestRectangular )
 
 }
 
-TEST_F( TestSpectralIntegration, TestTrapezoidal )
-{
+TEST_F( TestSeriesIntegration, TestTrapezoidal ) {
   SCOPED_TRACE( "Begin Test: Test trapezoidal integration over the specturm of data." );
   
-  shared_ptr< CSpectralProperties > aIntegratedProperties = nullptr;
+  shared_ptr< CSeries > aIntegratedProperties = nullptr;
   
-  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  shared_ptr< CSeries > aSpectralProperties = getProperty();
 
   aIntegratedProperties = aSpectralProperties->integrate( IntegrationType::Trapezoidal );
 
@@ -128,7 +124,7 @@ TEST_F( TestSpectralIntegration, TestTrapezoidal )
   correctResults.push_back( 0.00271500 );
 
   vector< double > calculatedResults;
-  vector< shared_ptr < CSpectralProperty > >::const_iterator it;
+  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
   for( it = aIntegratedProperties->begin(); it != aIntegratedProperties->end(); ++it )
   {
     calculatedResults.push_back( (*it)->value() );

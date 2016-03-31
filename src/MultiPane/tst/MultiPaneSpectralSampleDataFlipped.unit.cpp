@@ -4,9 +4,10 @@
 // #include "MultiPaneSpectralSample.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiPane;
 
@@ -91,8 +92,8 @@ TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneResultsFlipped )
 
   vector< double > calculatedResults;
 
-  vector< shared_ptr < CSpectralProperty > >::const_iterator it;
-  shared_ptr< CSpectralProperties > transmittances = multiPane->properties( SampleData::T );
+  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
+  shared_ptr< CSeries > transmittances = multiPane->properties( SampleData::T );
   for( it = transmittances->begin(); it != transmittances->end(); ++it ) {
     calculatedResults.push_back( (*it)->value() );
   }
@@ -122,7 +123,7 @@ TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneResultsFlipped )
   correctRf.push_back( 0.303333016 );
   correctRf.push_back( 0.302600323 );
   
-  shared_ptr< CSpectralProperties > Rf = multiPane->properties( SampleData::Rf );
+  shared_ptr< CSeries > Rf = multiPane->properties( SampleData::Rf );
   for( it = Rf->begin(); it != Rf->end(); ++it ) {
     calculatedResults.push_back( (*it)->value() );
   }
@@ -152,7 +153,7 @@ TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneResultsFlipped )
   correctRb.push_back( 0.279513243 );
   correctRb.push_back( 0.290533612 );
   
-  shared_ptr< CSpectralProperties > Rb = multiPane->properties( SampleData::Rb );
+  shared_ptr< CSeries > Rb = multiPane->properties( SampleData::Rb );
   for( it = Rb->begin(); it != Rb->end(); ++it ) {
     calculatedResults.push_back( (*it)->value() );
   }
@@ -182,7 +183,7 @@ TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneResultsFlipped )
   correctAbs.push_back( 0.212922487 );
   correctAbs.push_back( 0.193691434 );
   
-  shared_ptr< CSpectralProperties > Abs = multiPane->properties( SampleData::AbsF );
+  shared_ptr< CSeries > Abs = multiPane->properties( SampleData::AbsF );
   for( it = Abs->begin(); it != Abs->end(); ++it ) {
     calculatedResults.push_back( (*it)->value() );
   }
@@ -221,8 +222,8 @@ TEST_F( TestMultiPaneMeasuredSampleDataFlipped, TestDoublePaneAbsorptancesFlippe
 
   vector< double > calculatedResults;
 
-  vector< shared_ptr < CSpectralProperty > >::const_iterator it;
-  shared_ptr< CSpectralProperties > abs = multiPane->getLayerAbsorptances( 1 );
+  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
+  shared_ptr< CSeries > abs = multiPane->getLayerAbsorptances( 1 );
   for( it = abs->begin(); it != abs->end(); ++it ) {
     calculatedResults.push_back( (*it)->value() );
   }

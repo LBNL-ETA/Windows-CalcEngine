@@ -7,7 +7,7 @@
 #include "EquivalentBSDFLayer.hpp"
 #include "BaseBSDFLayerMultiWL.hpp"
 #include "SpecularBSDFLayer.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
@@ -16,12 +16,11 @@
 using namespace std;
 using namespace FenestrationCommon;
 using namespace LayerOptics;
-using namespace SpectralAveraging;
 
 namespace MultiPane {
 
   CEquivalentBSDFLayerMultiWL::CEquivalentBSDFLayerMultiWL( shared_ptr< vector< double > > t_CommonWavelengths,
-    shared_ptr< CSpectralProperties > t_SolarRadiation, shared_ptr< CBaseBSDFLayerMultiWL > t_Layer ) : 
+    shared_ptr< CSeries > t_SolarRadiation, shared_ptr< CBaseBSDFLayerMultiWL > t_Layer ) : 
     m_SolarRadiation( t_SolarRadiation ), m_CombinedLayerWavelengths( t_CommonWavelengths ), m_Calculated( false ) {
     if( t_Layer == nullptr ) {
       throw runtime_error("Equivalent BSDF Layer must contain valid layer.");
@@ -183,21 +182,21 @@ namespace MultiPane {
       ( *m_AbsB )[ i ] = make_shared< vector< double > >( matrixSize );
     }
 
-    shared_ptr< CSpectralProperties > iTotalSolar = m_SolarRadiation->integrate( IntegrationType::Trapezoidal );
+    shared_ptr< CSeries > iTotalSolar = m_SolarRadiation->integrate( IntegrationType::Trapezoidal );
     double incomingSolar = iTotalSolar->sum( minLambda, maxLambda );
 
-    shared_ptr< CSpectralProperties > interpolatedSolar = m_SolarRadiation->interpolate( m_CombinedLayerWavelengths );
+    shared_ptr< CSeries > interpolatedSolar = m_SolarRadiation->interpolate( m_CombinedLayerWavelengths );
 
     size_t size = m_CombinedLayerWavelengths->size();
 
     // Total matrices for every property
-    vector< vector< shared_ptr< CSpectralProperties > > > aTotalTFront;
-    vector< vector< shared_ptr< CSpectralProperties > > > aTotalTBack;
-    vector< vector< shared_ptr< CSpectralProperties > > > aTotalRFront;
-    vector< vector< shared_ptr< CSpectralProperties > > > aTotalRBack;
+    vector< vector< shared_ptr< CSeries > > > aTotalTFront;
+    vector< vector< shared_ptr< CSeries > > > aTotalTBack;
+    vector< vector< shared_ptr< CSeries > > > aTotalRFront;
+    vector< vector< shared_ptr< CSeries > > > aTotalRBack;
 
-    vector< vector< shared_ptr< CSpectralProperties > > > aTotalAf = vector< vector< shared_ptr< CSpectralProperties > > >( numberOfLayers );
-    vector< vector< shared_ptr< CSpectralProperties > > > aTotalAb = vector< vector< shared_ptr< CSpectralProperties > > >( numberOfLayers );
+    vector< vector< shared_ptr< CSeries > > > aTotalAf = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
+    vector< vector< shared_ptr< CSeries > > > aTotalAb = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
     for( size_t i = 0; i < numberOfLayers; ++i ) {
       aTotalAf[ i ].resize( matrixSize );
       aTotalAb[ i ].resize( matrixSize );
@@ -224,8 +223,8 @@ namespace MultiPane {
       for( size_t j = 0; j < matrixSize; ++j ) {
         for( size_t k = 0; k < numberOfLayers; ++k ) {
           if( i == 0 ) {
-            aTotalAf[ k ][ j ] = make_shared< CSpectralProperties >();
-            aTotalAb[ k ][ j ] = make_shared< CSpectralProperties >();
+            aTotalAf[ k ][ j ] = make_shared< CSeries >();
+            aTotalAb[ k ][ j ] = make_shared< CSeries >();
           }
           aTotalAf[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, Side::Front ) )[ j ] );
           aTotalAb[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, Side::Back ) )[ j ] );
@@ -233,10 +232,10 @@ namespace MultiPane {
         
         for( size_t k = 0; k < matrixSize; ++k ) {
           if( i == 0 ) {
-            aTotalTFront[ j ][ k ] = make_shared< CSpectralProperties >();
-            aTotalTBack[ j ][ k ] = make_shared< CSpectralProperties >();
-            aTotalRFront[ j ][ k ] = make_shared< CSpectralProperties >();
-            aTotalRBack[ j ][ k ] = make_shared< CSpectralProperties >();
+            aTotalTFront[ j ][ k ] = make_shared< CSeries >();
+            aTotalTBack[ j ][ k ] = make_shared< CSeries >();
+            aTotalRFront[ j ][ k ] = make_shared< CSeries >();
+            aTotalRBack[ j ][ k ] = make_shared< CSeries >();
           }
           
           aTotalTFront[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( Side::Front ) )[ j ][ k ] );

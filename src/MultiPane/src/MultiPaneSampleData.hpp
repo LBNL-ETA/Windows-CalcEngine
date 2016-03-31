@@ -3,9 +3,9 @@
 
 #include "MeasuredSampleData.hpp"
 
-namespace SpectralAveraging {
+namespace FenestrationCommon {
 
-  class CSpectralProperties;
+  class CSeries;
 
 }
 
@@ -18,7 +18,7 @@ namespace MultiPane {
     CMultiPaneSampleData();
 
     void addSample( std::shared_ptr< CSpectralSampleData > t_Sample );
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > getLayerAbsorptances( size_t const Index );
+    std::shared_ptr< FenestrationCommon::CSeries > getLayerAbsorptances( size_t const Index );
     std::shared_ptr< std::vector< double > > getWavelengths();
     size_t numberOfLayers() const;
 
@@ -29,7 +29,7 @@ namespace MultiPane {
     void calculateEquivalentProperties();
 
     std::vector< std::shared_ptr< CSpectralSampleData > > m_MeasuredSamples;
-    std::vector< std::shared_ptr< SpectralAveraging::CSpectralProperties > > m_LayerAbsorptances;
+    std::vector< std::shared_ptr< FenestrationCommon::CSeries > > m_LayerAbsorptances;
 
   };
 

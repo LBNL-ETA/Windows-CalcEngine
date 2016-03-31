@@ -4,7 +4,7 @@
 #include "SpecularBSDFLayer.hpp"
 #include "EquivalentBSDFLayerMultiWL.hpp"
 #include "SpectralSample.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
 #include "SpecularCellDescription.hpp"
@@ -33,7 +33,7 @@ private:
 
 protected:
   virtual void SetUp() {
-    shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
     
     // Full ASTM E891-87 Table 1 (Solar radiation)
     aSolarRadiation->addProperty( 0.3000, 0.0    );

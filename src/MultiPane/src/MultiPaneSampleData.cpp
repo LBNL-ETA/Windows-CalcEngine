@@ -4,12 +4,13 @@
 #include <assert.h>
 
 #include "MultiPaneSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "EquivalentLayer.hpp"
 #include "AbsorptancesMultiPane.hpp"
 #include "CommonWavelengths.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 
 namespace MultiPane {
@@ -45,7 +46,7 @@ namespace MultiPane {
     }
   };
 
-  shared_ptr< CSpectralProperties > CMultiPaneSampleData::getLayerAbsorptances( size_t const Index ) {
+  shared_ptr< CSeries > CMultiPaneSampleData::getLayerAbsorptances( size_t const Index ) {
     calculateProperties();
     if( ( Index - 1 ) > m_LayerAbsorptances.size() ) {
       throw runtime_error("Index out of range. ");
@@ -69,9 +70,9 @@ namespace MultiPane {
 
     assert( m_MeasuredSamples.size() != 0 );
 
-    shared_ptr< CSpectralProperties > T = m_MeasuredSamples[0]->properties( SampleData::T );
-    shared_ptr< CSpectralProperties > Rf = m_MeasuredSamples[0]->properties( SampleData::Rf );
-    shared_ptr< CSpectralProperties > Rb = m_MeasuredSamples[0]->properties( SampleData::Rb );
+    shared_ptr< CSeries > T = m_MeasuredSamples[0]->properties( SampleData::T );
+    shared_ptr< CSeries > Rf = m_MeasuredSamples[0]->properties( SampleData::Rf );
+    shared_ptr< CSeries > Rb = m_MeasuredSamples[0]->properties( SampleData::Rb );
     CEquivalentLayer aEqivalentLayer( T, Rf, Rb );
     CAbsorptancesMultiPane aAbsorptances( T, Rf, Rb );
 

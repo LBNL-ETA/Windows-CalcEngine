@@ -9,6 +9,7 @@
 namespace FenestrationCommon {
 
   class CSquareMatrix;
+  class CSeries;
   enum class Side;
 
 }
@@ -16,12 +17,6 @@ namespace FenestrationCommon {
 namespace LayerOptics {
 
   class CBaseBSDFLayerMultiWL;
-
-}
-
-namespace SpectralAveraging {
-
-  class CSpectralProperties;
 
 }
 
@@ -33,7 +28,7 @@ namespace MultiPane {
   class CEquivalentBSDFLayerMultiWL {
   public:
     CEquivalentBSDFLayerMultiWL( std::shared_ptr< std::vector< double > > t_CommonWavelengths, 
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_SolarRadiation, 
+      std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation, 
       std::shared_ptr< LayerOptics::CBaseBSDFLayerMultiWL > t_Layer );
 
     void addLayer( std::shared_ptr< LayerOptics::CBaseBSDFLayerMultiWL > t_Layer );
@@ -62,7 +57,7 @@ namespace MultiPane {
     std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_AbsB;
 
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > m_SolarRadiation;
+    std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
 
     std::shared_ptr< std::vector< double > > m_CombinedLayerWavelengths;
     bool m_Calculated;

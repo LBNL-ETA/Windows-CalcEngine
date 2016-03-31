@@ -3,7 +3,7 @@
 
 using namespace std;
 
-namespace SpectralAveraging {
+namespace FenestrationCommon {
 
   double IIntegratorStrategy::dX( double const x1, double const x2 ) const {
     return x2- x1;
@@ -23,10 +23,10 @@ namespace SpectralAveraging {
   shared_ptr< IIntegratorStrategy > CIntegratorFactory::getIntegrator( IntegrationType t_IntegratorType ) {
     shared_ptr< IIntegratorStrategy > aStrategy = nullptr;
     switch ( t_IntegratorType ) {
-    case SpectralAveraging::IntegrationType::Rectangular:
+    case IntegrationType::Rectangular:
       aStrategy = make_shared< CIntegratorRectangular >();
       break;
-    case SpectralAveraging::IntegrationType::Trapezoidal:
+    case IntegrationType::Trapezoidal:
       aStrategy = make_shared< CIntegratorTrapezoidal >();
       break;
     default:

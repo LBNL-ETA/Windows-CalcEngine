@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace SpectralAveraging {
+namespace FenestrationCommon {
 
   enum class IntegrationType { Rectangular, Trapezoidal };
 

@@ -9,6 +9,7 @@ namespace FenestrationCommon {
   enum class Side;
   enum class Property;
   enum class SpecularMaterialType;
+  class CSeries;
   // enum class WavelengthRange;
 
 }
@@ -18,7 +19,6 @@ namespace SpectralAveraging {
   // enum class SampleProperty;
   class CSpectralSample;
   class CAngularSpectralSample;
-  class CSpectralProperties;
 
 }
 
@@ -114,7 +114,7 @@ namespace LayerOptics {
     // ratio is calculated based on provided solar radiation values
     CMaterialDualBand( std::shared_ptr< CMaterialSingleBand > t_PartialRange,
       std::shared_ptr< CMaterialSingleBand > t_SolarRange, 
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_SolarRadiation );
+      std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation );
 
     double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;

@@ -3,7 +3,7 @@
 
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -16,7 +16,7 @@ namespace SpectralAveraging {
   ////  CSample
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSample::CSample( shared_ptr< CSpectralProperties > t_SourceData ) : m_SourceData( t_SourceData ),
+  CSample::CSample( shared_ptr< CSeries > t_SourceData ) : m_SourceData( t_SourceData ),
     m_WavelengthSet( WavelengthSet::Data ), m_IntegrationType( IntegrationType::Trapezoidal ),
     m_StateCalculated( false ) {
     m_DetectorData = nullptr;
@@ -24,12 +24,12 @@ namespace SpectralAveraging {
     reset();
   };
 
-  shared_ptr< CSpectralProperties > CSample::getSourceData() {
+  shared_ptr< CSeries > CSample::getSourceData() {
     calculateState(); // must interpolate data to same wavelengths
     return m_SourceData; 
   };
 
-  void CSample::setDetectorData( const shared_ptr< CSpectralProperties > t_DetectorData ) {
+  void CSample::setDetectorData( const shared_ptr< CSeries > t_DetectorData ) {
     m_DetectorData = t_DetectorData;
     reset();
   };
@@ -53,7 +53,7 @@ namespace SpectralAveraging {
       if( m_SourceData == nullptr ) {
         throw runtime_error("Cannot extract wavelenghts from source. Source is empty.");
       }
-      m_Wavelengths = m_SourceData->getWavelengths();
+      m_Wavelengths = m_SourceData->getXArray();
       break;
     case WavelengthSet::Data:
       m_Wavelengths = getWavelengthsFromSample();
@@ -151,10 +151,10 @@ namespace SpectralAveraging {
     return Property;
   };
 
-  shared_ptr< CSpectralProperties > CSample::getEnergyProperties( const Property t_Property, const Side t_Side ) {
+  shared_ptr< CSeries > CSample::getEnergyProperties( const Property t_Property, const Side t_Side ) {
     calculateState();
 
-    shared_ptr< CSpectralProperties > aProperty = nullptr;
+    shared_ptr< CSeries > aProperty = nullptr;
     switch ( t_Property ) {
     case Property::T:
       aProperty = m_TransmittedSource;
@@ -223,7 +223,7 @@ namespace SpectralAveraging {
       m_IncomingSource = m_SourceData->interpolate( m_Wavelengths );
 
       if( m_DetectorData != nullptr ) {
-        shared_ptr< CSpectralProperties > interpolatedDetector = m_DetectorData->interpolate( m_Wavelengths );
+        shared_ptr< CSeries > interpolatedDetector = m_DetectorData->interpolate( m_Wavelengths );
         m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
       }
 
@@ -244,16 +244,16 @@ namespace SpectralAveraging {
   ////  CSpectralSample
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSpectralSample::CSpectralSample( shared_ptr< CSpectralSampleData > t_SampleData, shared_ptr< CSpectralProperties > t_SourceData ) : 
+  CSpectralSample::CSpectralSample( shared_ptr< CSpectralSampleData > t_SampleData, shared_ptr< CSeries > t_SourceData ) : 
     CSample( t_SourceData ), m_SampleData( t_SampleData) {
     if( t_SampleData == nullptr ) {
       throw runtime_error("Sample must have measured data.");
     }
     setWavelengths( m_WavelengthSet );
-    shared_ptr< CSpectralProperties > m_Transmittance = nullptr;
-    shared_ptr< CSpectralProperties > m_RefFront = nullptr;
-    shared_ptr< CSpectralProperties > m_RefBack = nullptr;
-    shared_ptr< CSpectralProperties > m_Abs = nullptr;
+    shared_ptr< CSeries > m_Transmittance = nullptr;
+    shared_ptr< CSeries > m_RefFront = nullptr;
+    shared_ptr< CSeries > m_RefBack = nullptr;
+    shared_ptr< CSeries > m_Abs = nullptr;
   };
 
   shared_ptr< CSpectralSampleData > CSpectralSample::getMeasuredData() {
@@ -265,9 +265,9 @@ namespace SpectralAveraging {
     return m_SampleData->getWavelengths();
   };
 
-  shared_ptr< CSpectralProperties > CSpectralSample::getWavelengthsProperty( const Property t_Property, const Side t_Side ) {
+  shared_ptr< CSeries > CSpectralSample::getWavelengthsProperty( const Property t_Property, const Side t_Side ) {
     calculateState();
-    shared_ptr< CSpectralProperties > aProperty = nullptr;
+    shared_ptr< CSeries > aProperty = nullptr;
     switch( t_Property ) {
       case Property::T:
         aProperty = m_Transmittance;
