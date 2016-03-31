@@ -2,24 +2,22 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 
 using namespace std;
-using namespace SpectralAveraging;
+using namespace FenestrationCommon;
 
-class TestSpectralMultiplication : public testing::Test
-{
+class TestSeriesMultiplication : public testing::Test {
 
 private:
-  shared_ptr< CSpectralProperties > m_SpectralProperty;
+  shared_ptr< CSeries > m_Series;
 
 protected:
-  virtual void SetUp()
-  {
-    m_SpectralProperty = make_shared< CSpectralProperties >();
+  virtual void SetUp() {
+    m_Series = make_shared< CSeries >();
 
-    shared_ptr< CSpectralProperties > astmSolarRadiation = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries > astmSolarRadiation = make_shared< CSeries >();
     
     // part of ASTM E891-87 Table 1
     astmSolarRadiation->addProperty( 0.50, 1026.7 );
@@ -37,7 +35,7 @@ protected:
     astmSolarRadiation->addProperty( 0.69, 859.2  );
     astmSolarRadiation->addProperty( 0.71, 1002.4 );
 
-    shared_ptr< CSpectralProperties > layerTransmittances = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries > layerTransmittances = make_shared< CSeries >();
 
     layerTransmittances->addProperty( 0.500, 0.6928 );
     layerTransmittances->addProperty( 0.510, 0.7004 );
@@ -54,21 +52,21 @@ protected:
     layerTransmittances->addProperty( 0.690, 0.6492 );
     layerTransmittances->addProperty( 0.710, 0.6231 );
 
-    m_SpectralProperty = layerTransmittances->mMult( astmSolarRadiation );
+    m_Series = layerTransmittances->mMult( astmSolarRadiation );
 
 
   };
 
 public:
-  shared_ptr< CSpectralProperties > getProperty() { return m_SpectralProperty; };
+  shared_ptr< CSeries > getProperty() { return m_Series; };
 
 };
 
-TEST_F( TestSpectralMultiplication, TestMultiplication )
+TEST_F( TestSeriesMultiplication, TestMultiplication )
 {
   SCOPED_TRACE( "Begin Test: Test multiplication over the range of data." );
   
-  shared_ptr< CSpectralProperties > aSpectralProperties = getProperty();
+  shared_ptr< CSeries > aSpectralProperties = getProperty();
 
   vector< double > correctResults;
   correctResults.push_back( 711.29776 );
@@ -87,7 +85,7 @@ TEST_F( TestSpectralMultiplication, TestMultiplication )
   correctResults.push_back( 624.59544 );
 
   vector< double > calculatedResults;
-  vector< shared_ptr < CSpectralProperty > >::const_iterator it;
+  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
   for( it = aSpectralProperties->begin(); it != aSpectralProperties->end(); ++it ) {
     calculatedResults.push_back( (*it)->value() );
   }

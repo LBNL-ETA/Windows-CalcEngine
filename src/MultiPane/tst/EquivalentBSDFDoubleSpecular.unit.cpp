@@ -3,7 +3,7 @@
 
 #include "EquivalentBSDFLayer.hpp"
 #include "BSDFDirections.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
 #include "SpecularLayer.hpp"
@@ -45,7 +45,7 @@ protected:
 
   shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( aDefinitions );
 
-  shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
+  shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
     
   // Full ASTM E891-87 Table 1
   aSolarRadiation->addProperty( 0.3000, 0.0    );

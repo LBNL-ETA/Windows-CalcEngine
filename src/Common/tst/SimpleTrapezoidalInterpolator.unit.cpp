@@ -4,7 +4,7 @@
 #include "IntegratorStrategy.hpp"
 
 using namespace std;
-using namespace SpectralAveraging;
+using namespace FenestrationCommon;
 
 class TestSimpleTrapezoidalIntegration : public testing::Test
 {

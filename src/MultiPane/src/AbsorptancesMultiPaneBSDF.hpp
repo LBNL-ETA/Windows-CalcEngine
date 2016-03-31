@@ -8,6 +8,7 @@ namespace FenestrationCommon {
 
   class CSquareMatrix;
   enum class Side;
+  class CSeries;
 
 }
 
@@ -17,19 +18,13 @@ namespace LayerOptics {
 
 }
 
-namespace SpectralAveraging {
-
-  class CSpectralProperties;
-
-}
-
 namespace MultiPane {
 
   // Calculate BSDF absorptances of multipane layer.
   class CAbsorptancesMultiPaneBSDF {
   public:
     CAbsorptancesMultiPaneBSDF( FenestrationCommon::Side t_Side ,std::shared_ptr< std::vector< double > > t_CommonWavelengths, 
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_SolarRadiation, 
+      std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation, 
       std::shared_ptr< LayerOptics::CBaseBSDFLayerMultiWL > t_Layer );
 
     void addLayer( std::shared_ptr< LayerOptics::CBaseBSDFLayerMultiWL > t_Layer );
@@ -57,7 +52,7 @@ namespace MultiPane {
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
     std::shared_ptr< const std::vector< double > > m_LambdaVector;
 
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > m_SolarRadiation;
+    std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
 
     // Layer by layer coefficients for each wavelength (layer, wavelength, direction)
     std::vector< std::shared_ptr< std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > > > m_TausF;

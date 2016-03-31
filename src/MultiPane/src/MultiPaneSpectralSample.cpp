@@ -5,15 +5,16 @@
 #include "MultiPaneSpectralSample.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;
+using namespace FenestrationCommon;
 
 namespace MultiPane {
 
   CMultiPaneSpectralSample::CMultiPaneSpectralSample( shared_ptr< CSpectralSampleData > t_SampleData, 
-    shared_ptr< CSpectralProperties > t_SourceData ) : CSpectralSample( t_SampleData, t_SourceData ) {
+    shared_ptr< CSeries > t_SourceData ) : CSpectralSample( t_SampleData, t_SourceData ) {
 
   };
 
@@ -43,13 +44,13 @@ namespace MultiPane {
         shared_ptr< CMultiPaneSampleData > aSample = dynamic_pointer_cast< CMultiPaneSampleData >( m_SampleData );
         size_t numOfLayers = aSample->numberOfLayers();
         for( size_t i = 0; i < numOfLayers; ++i ) {
-          shared_ptr< CSpectralProperties > layerAbsorbed = aSample->getLayerAbsorptances( i+1 );
+          shared_ptr< CSeries > layerAbsorbed = aSample->getLayerAbsorptances( i+1 );
           integrateAndAppendAbsorptances( layerAbsorbed );
         }
       } else {
         // Perspective is always from front side when using in multipane. Flipping flag should be used
         // when putting layer in IGU
-        shared_ptr< CSpectralProperties > layerAbsorbed = m_SampleData->properties( SampleData::AbsF );
+        shared_ptr< CSeries > layerAbsorbed = m_SampleData->properties( SampleData::AbsF );
         integrateAndAppendAbsorptances( layerAbsorbed );
       }
 
@@ -57,7 +58,7 @@ namespace MultiPane {
     }
   };
 
-  void CMultiPaneSpectralSample::integrateAndAppendAbsorptances( shared_ptr< CSpectralProperties > t_Absorptances ) {
+  void CMultiPaneSpectralSample::integrateAndAppendAbsorptances( shared_ptr< CSeries > t_Absorptances ) {
     if( m_WavelengthSet != WavelengthSet::Data ) {
         t_Absorptances = t_Absorptances->interpolate( m_Wavelengths );
       }

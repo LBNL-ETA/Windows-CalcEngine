@@ -5,7 +5,7 @@
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
 #include "AngularSpectralSample.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 #include "SpecularLayer.hpp"
 #include "FenestrationCommon.hpp"
@@ -22,7 +22,7 @@ private:
 
 protected:
   virtual void SetUp() {
-    shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
     
     // Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
     aSolarRadiation->addProperty( 0.3000,   0.0341 );
@@ -642,7 +642,7 @@ protected:
     aWavelengths->push_back( 0.780 );
 
     // Full ASTM E308 1931 Y.dsp table (PHOTOPIC detector)
-    shared_ptr< CSpectralProperties > detectorData = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries > detectorData = make_shared< CSeries >();
     detectorData->addProperty( 0.380, 0.0000 );
     detectorData->addProperty( 0.385, 0.0001 );
     detectorData->addProperty( 0.390, 0.0001 );

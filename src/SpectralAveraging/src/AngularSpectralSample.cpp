@@ -5,7 +5,7 @@
 
 #include "AngularSpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "SpectralSample.hpp"
 #include "AngularProperties.hpp"
 #include "SpecularLayer.hpp"
@@ -44,16 +44,16 @@ namespace SpectralAveraging {
     shared_ptr< CSpectralSampleData > aMeasuredData = t_SpectralSample->getMeasuredData();
 
     if( m_Angle != 0 ) {
-      shared_ptr< CSpectralProperties > aSourceData = t_SpectralSample->getSourceData();
+      shared_ptr< CSeries > aSourceData = t_SpectralSample->getSourceData();
 
       shared_ptr< vector< double > > aWavelengths = aMeasuredData->getWavelengths();
-      shared_ptr< CSpectralProperties > aT = aMeasuredData->properties( SampleData::T );
+      shared_ptr< CSeries > aT = aMeasuredData->properties( SampleData::T );
       assert( aT->size() == aWavelengths->size() );
 
-      shared_ptr< CSpectralProperties > aRf = aMeasuredData->properties( SampleData::Rf );
+      shared_ptr< CSeries > aRf = aMeasuredData->properties( SampleData::Rf );
       assert( aRf->size() == aWavelengths->size() );
 
-      shared_ptr< CSpectralProperties > aRb = aMeasuredData->properties( SampleData::Rb );
+      shared_ptr< CSeries > aRb = aMeasuredData->properties( SampleData::Rb );
       assert( aRb->size() == aWavelengths->size() );
 
       double lowLambda = 0.3;
@@ -122,17 +122,18 @@ namespace SpectralAveraging {
     return aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
   };
 
-  shared_ptr< vector< double > > CAngularSpectralSample::getWavelengthsProperty( double const minLambda, double const maxLambda, 
+  shared_ptr< vector< double > > CAngularSpectralSample::getWavelengthsProperty( 
+    double const minLambda, double const maxLambda, 
     const Property t_Property, const Side t_Side, const double t_Angle ) {
 
     shared_ptr< CSpectralSample > aSample = findSpectralSample( t_Angle );
 
-    shared_ptr< CSpectralProperties > aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
+    shared_ptr< CSeries > aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
 
     shared_ptr< vector< double > > aValues = make_shared< vector< double > >();
 
-    for( shared_ptr< CSpectralProperty > aProperty : *aProperties ) {
-      if( aProperty->wavelength() >= minLambda && aProperty->wavelength() <= maxLambda ) {
+    for( shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
+      if( aProperty->x() >= minLambda && aProperty->x() <= maxLambda ) {
         aValues->push_back( aProperty->value() );
       }
     }
@@ -160,7 +161,8 @@ namespace SpectralAveraging {
 
       aSample = make_shared< CSpectralSample >( aAngularData->properties(), m_SpectralSampleZero->getSourceData() );
       aSample->assignDetectorAndWavelengths( m_SpectralSampleZero );
-      shared_ptr< CSpectralSampleAngle > aSpectralSampleAngle = make_shared< CSpectralSampleAngle >( aSample, t_Angle );
+      shared_ptr< CSpectralSampleAngle > aSpectralSampleAngle = 
+        make_shared< CSpectralSampleAngle >( aSample, t_Angle );
       m_SpectralProperties.push_back( aSpectralSampleAngle );
     }
 

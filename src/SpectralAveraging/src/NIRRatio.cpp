@@ -1,5 +1,5 @@
 #include "NIRRatio.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 #include "WavelengthRange.hpp"
 #include "FenestrationCommon.hpp"
@@ -9,8 +9,8 @@ using namespace FenestrationCommon;
 
 namespace SpectralAveraging {
 
-  CNIRRatio::CNIRRatio( shared_ptr< const CSpectralProperties > t_SolarRadiation, const double lowLambda, const double highLambda ) {
-    shared_ptr< CSpectralProperties > integratedSolar = t_SolarRadiation->integrate( IntegrationType::Trapezoidal );
+  CNIRRatio::CNIRRatio( shared_ptr< const CSeries > t_SolarRadiation, const double lowLambda, const double highLambda ) {
+    shared_ptr< CSeries > integratedSolar = t_SolarRadiation->integrate( IntegrationType::Trapezoidal );
     CWavelengthRangeFactory aWLFactory;
     shared_ptr< const CWavelengthRange > aSolarRange = aWLFactory.getWavelengthRange( WavelengthRange::Solar );
     

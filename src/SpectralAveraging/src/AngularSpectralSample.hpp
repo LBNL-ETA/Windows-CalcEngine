@@ -15,7 +15,6 @@ namespace FenestrationCommon {
 namespace SpectralAveraging {
 
   class CSpectralSampleData;
-  class CSpectralProperties;
   class CSpectralSample;
   // enum class SampleProperty;
   

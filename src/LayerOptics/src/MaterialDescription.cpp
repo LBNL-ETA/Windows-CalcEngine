@@ -176,7 +176,7 @@ namespace LayerOptics {
 
   CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterialSingleBand > t_PartialRange,
     shared_ptr< CMaterialSingleBand > t_SolarRange, 
-    shared_ptr< CSpectralProperties > t_SolarRadiation ) : CMaterial( 0.3, 2.5 ),
+    shared_ptr< CSeries > t_SolarRadiation ) : CMaterial( 0.3, 2.5 ),
     m_MaterialFullRange( t_SolarRange ) {
     checkIfMaterialWithingSolarRange( t_PartialRange );
     createUVRange();

@@ -3,9 +3,10 @@
 #include <gtest/gtest.h>
 
 #include "NIRRatio.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 
 class TestNIRRatio : public testing::Test {
@@ -15,7 +16,7 @@ private:
 
 protected:
   virtual void SetUp() {
-    shared_ptr< CSpectralProperties > solarRadiation = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries > solarRadiation = make_shared< CSeries >();
     
     // Full ASTM E891-87 Table 1
     solarRadiation->addProperty( 0.3000, 0.0    );

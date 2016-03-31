@@ -3,7 +3,7 @@
 
 #include "MultiPaneSpecular.hpp"
 #include "SpectralSample.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
 #include "SpecularCellDescription.hpp"
@@ -21,7 +21,7 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiPane;
 
-// Example on how to create multilayer BSDF from specular layers only
+// Example/test case on multlayer specular
 
 class EquivalentSpecularLayer_102_103 : public testing::Test {
 
@@ -30,7 +30,7 @@ private:
 
 protected:
   virtual void SetUp() {
-    shared_ptr< CSpectralProperties >  aSolarRadiation = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
     
     // Full ASTM E891-87 Table 1 (Solar radiation)
     aSolarRadiation->addProperty( 0.3000, 0.0    );
@@ -385,13 +385,6 @@ protected:
     aMeasurements_103->addRecord( 2.450, 0.7570, 0.0640, 0.0640 );
     aMeasurements_103->addRecord( 2.500, 0.7500, 0.0630, 0.0630 );
 
-    // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
-    CCommonWavelengths aCommonWL;
-    aCommonWL.addWavelength( aMeasurements_102->getWavelengths() );
-    aCommonWL.addWavelength( aMeasurements_103->getWavelengths() );
-
-    shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
-
     // Sample 102
     shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
 
@@ -416,6 +409,14 @@ protected:
     shared_ptr< CSpecularCellDescription > aCellDescription_103 = make_shared< CSpecularCellDescription >();
     
     shared_ptr< CSpecularCell > aCell_103 = make_shared< CSpecularCell >( aMaterial_103, aCellDescription_103 );
+
+    // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
+    CCommonWavelengths aCommonWL;
+    aCommonWL.addWavelength( aCell_102->getBandWavelengths() );
+    aCommonWL.addWavelength( aCell_103->getBandWavelengths() );
+
+    // Finds combination of two wavelength sets without going outside of wavelenght range for any of spectral samples.
+    shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
     
     m_Layer = make_shared< CMultiPaneSpecular >( commonWavelengths, aSolarRadiation, aCell_102 );
     m_Layer->addLayer( aCell_103 );
@@ -684,5 +685,67 @@ TEST_F( EquivalentSpecularLayer_102_103, TestAngle90 ) {
 
   double Abs2 = aLayer->Abs( 2, angle, minLambda, maxLambda );
   EXPECT_NEAR( 0, Abs2, 1e-6 );
+
+}
+
+TEST_F( EquivalentSpecularLayer_102_103, TestAngleHemispherical10 ) {
+  SCOPED_TRACE( "Begin Test: Hemispherical to hemispherical with ten integration points." );
+
+  const double minLambda = 0.3;
+  const double maxLambda = 2.5;
+  shared_ptr< vector< double > > aAngles = make_shared< vector< double > >();
+
+  *aAngles = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
+  
+  shared_ptr< CMultiPaneSpecular > aLayer = getLayer();
+
+  double Tfhem = aLayer->getHemisphericalProperty( Side::Front, Property::T, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.55256216101095457, Tfhem, 1e-6 );
+
+  double Tbhem = aLayer->getHemisphericalProperty( Side::Back, Property::T, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.55256216101095457, Tbhem, 1e-6 );
+
+  double Rfhem = aLayer->getHemisphericalProperty( Side::Front, Property::R, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.20154919359225856, Rfhem, 1e-6 );
+
+  double Rbhem = aLayer->getHemisphericalProperty( Side::Back, Property::R, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.18760169405134167, Rbhem, 1e-6 );
+
+  double Abs1 = aLayer->AbsHemispherical( 1, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.10889040913346858, Abs1, 1e-6 );
+
+  double Abs2 = aLayer->AbsHemispherical( 2, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.12682364187155989, Abs2, 1e-6 );
+
+}
+
+TEST_F( EquivalentSpecularLayer_102_103, TestAngleHemispherical19 ) {
+  SCOPED_TRACE( "Begin Test: Hemispherical to hemispherical with nineteen integration points." );
+
+  const double minLambda = 0.3;
+  const double maxLambda = 2.5;
+  shared_ptr< vector< double > > aAngles = make_shared< vector< double > >();
+
+  *aAngles = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90 };
+  
+  shared_ptr< CMultiPaneSpecular > aLayer = getLayer();
+
+  double Tfhem = aLayer->getHemisphericalProperty( Side::Front, Property::T, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.55493570125786351, Tfhem, 1e-6 );
+
+  double Tbhem = aLayer->getHemisphericalProperty( Side::Back, Property::T, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.55493570125786351, Tbhem, 1e-6 );
+
+  double Rfhem = aLayer->getHemisphericalProperty( Side::Front, Property::R, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.20564032415202421, Rfhem, 1e-6 );
+
+  double Rbhem = aLayer->getHemisphericalProperty( Side::Back, Property::R, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.19161090008117540, Rbhem, 1e-6 );
+
+  double Abs1 = aLayer->AbsHemispherical( 1, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.10955413074963188, Abs1, 1e-6 );
+
+  double Abs2 = aLayer->AbsHemispherical( 2, aAngles, minLambda, maxLambda );
+  EXPECT_NEAR( 0.12733007563220630, Abs2, 1e-6 );
 
 }

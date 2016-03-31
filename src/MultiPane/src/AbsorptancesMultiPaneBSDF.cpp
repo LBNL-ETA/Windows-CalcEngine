@@ -4,7 +4,7 @@
 #include "BaseBSDFLayerMultiWL.hpp"
 #include "SpecularBSDFLayer.hpp"
 #include "BSDFResults.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "SquareMatrix.hpp"
 #include "FenestrationCommon.hpp"
 #include "IntegratorStrategy.hpp"
@@ -12,13 +12,12 @@
 using namespace std;
 using namespace LayerOptics;
 using namespace FenestrationCommon;
-using namespace SpectralAveraging;
 
 namespace MultiPane {
 
   CAbsorptancesMultiPaneBSDF::CAbsorptancesMultiPaneBSDF( Side t_Side, 
     shared_ptr< vector< double > > t_CommonWavelengths,
-    shared_ptr< CSpectralProperties > t_SolarRadiation, 
+    shared_ptr< CSeries > t_SolarRadiation, 
     shared_ptr< CBaseBSDFLayerMultiWL > t_Layer ) : 
     m_CommonWavelengths( t_CommonWavelengths ), m_StateCalculated( false ), m_Side( t_Side ),
     m_NumOfLayers( 0 ){
@@ -265,7 +264,7 @@ namespace MultiPane {
     // calculation of solar absorptances
     for( size_t i = 0; i < matrixSize; ++i ) {
       for( size_t j = 0; j < m_NumOfLayers; ++j ) {
-        shared_ptr< CSpectralProperties > curSpectralProperties = make_shared< CSpectralProperties >();
+        shared_ptr< CSeries > curSpectralProperties = make_shared< CSeries >();
         for( size_t k = 0; k < m_CommonWavelengths->size(); ++k ) {
           double IminusIncoming = 0;
           double IminusOutgoing = 0;
@@ -291,8 +290,8 @@ namespace MultiPane {
           
         }
     
-        shared_ptr< CSpectralProperties > absorbedIrradiance = curSpectralProperties->mMult( m_SolarRadiation );
-        shared_ptr< CSpectralProperties > integratedAbsorbed = absorbedIrradiance->integrate( IntegrationType::Trapezoidal );
+        shared_ptr< CSeries > absorbedIrradiance = curSpectralProperties->mMult( m_SolarRadiation );
+        shared_ptr< CSeries > integratedAbsorbed = absorbedIrradiance->integrate( IntegrationType::Trapezoidal );
         double value = integratedAbsorbed->sum( minLambda, maxLambda );
         //if( value < 0 ) {
         //  value = 0; // Near zero values can actually produce slightly negative values

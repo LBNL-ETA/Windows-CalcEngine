@@ -2,9 +2,10 @@
 #include <assert.h>
 
 #include "MeasuredSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 
 namespace SpectralAveraging {
 
@@ -13,11 +14,11 @@ namespace SpectralAveraging {
   ////////////////////////////////////////////////////////////////////////////
 
   CSpectralSampleData::CSpectralSampleData() {
-    m_Transmittances = make_shared< CSpectralProperties >();
-    m_ReflectancesFront = make_shared< CSpectralProperties >();
-    m_ReflectancesBack = make_shared< CSpectralProperties >();
-    m_AbsorptancesFront = make_shared< CSpectralProperties >();
-    m_AbsorptancesBack = make_shared< CSpectralProperties >();
+    m_Transmittances = make_shared< CSeries >();
+    m_ReflectancesFront = make_shared< CSeries >();
+    m_ReflectancesBack = make_shared< CSeries >();
+    m_AbsorptancesFront = make_shared< CSeries >();
+    m_AbsorptancesBack = make_shared< CSeries >();
     m_Flipped = false;
     m_absCalculated = false;
   }
@@ -30,9 +31,9 @@ namespace SpectralAveraging {
     reset();
   }
 
-  shared_ptr< CSpectralProperties > CSpectralSampleData::properties( SampleData t_Property ) {
+  shared_ptr< CSeries > CSpectralSampleData::properties( SampleData t_Property ) {
     calculateProperties();
-    shared_ptr< CSpectralProperties > aProperties = nullptr;
+    shared_ptr< CSeries > aProperties = nullptr;
     switch ( t_Property ) {
     case SampleData::T:
       aProperties = m_Transmittances;
@@ -57,7 +58,7 @@ namespace SpectralAveraging {
   };
 
   shared_ptr< vector< double > > CSpectralSampleData::getWavelengths() {
-    return m_Transmittances->getWavelengths();
+    return m_Transmittances->getXArray();
   };
 
   // Interpolate current sample data to new wavelengths set
@@ -83,8 +84,8 @@ namespace SpectralAveraging {
 
   void CSpectralSampleData::calculateProperties() {
     if( !m_absCalculated ) {
-      shared_ptr< CSpectralProperties > reflectancesFront = nullptr;
-      shared_ptr< CSpectralProperties > reflectancesBack = nullptr;
+      shared_ptr< CSeries > reflectancesFront = nullptr;
+      shared_ptr< CSeries > reflectancesBack = nullptr;
       if( m_Flipped ) {
         reflectancesFront = m_ReflectancesBack;
         reflectancesBack = m_ReflectancesFront;
@@ -99,7 +100,7 @@ namespace SpectralAveraging {
       size_t size = m_Transmittances->size();
 
       for( size_t i = 0; i < size; ++i ) {
-        double wv = (*m_Transmittances)[i]->wavelength();
+        double wv = (*m_Transmittances)[i]->x();
         double value = 1 - (*m_Transmittances)[i]->value() - (*reflectancesFront)[i]->value();
         m_AbsorptancesFront->addProperty( wv, value );
         value = 1 - (*m_Transmittances)[i]->value() - (*reflectancesBack)[i]->value();

@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 
-namespace SpectralAveraging {
+namespace FenestrationCommon {
 
-  class CSpectralProperties;
+  class CSeries;
 }
 
 namespace MultiPane {
@@ -14,44 +14,44 @@ namespace MultiPane {
   // Spectral properties of glazing system made up of layers with defined or measured spectral properties.
   class CEquivalentLayer {
   public:
-    CEquivalentLayer( std::shared_ptr< SpectralAveraging::CSpectralProperties > t_T, 
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_Rf, 
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_Rb );
+    CEquivalentLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
+      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
+      std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
 
-    void addLayer( std::shared_ptr< SpectralAveraging::CSpectralProperties > t_T, 
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_Rf, 
-      std::shared_ptr< SpectralAveraging::CSpectralProperties > t_Rb );
+    void addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
+      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
+      std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
 
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > T() const;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > Rf() const;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > Rb() const;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > AbsF();
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > AbsB();
+    std::shared_ptr< FenestrationCommon::CSeries > T() const;
+    std::shared_ptr< FenestrationCommon::CSeries > Rf() const;
+    std::shared_ptr< FenestrationCommon::CSeries > Rb() const;
+    std::shared_ptr< FenestrationCommon::CSeries > AbsF();
+    std::shared_ptr< FenestrationCommon::CSeries > AbsB();
 
   private:
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > transmittanceTot( 
-      SpectralAveraging::CSpectralProperties& t_T1, 
-      SpectralAveraging::CSpectralProperties& t_T2, 
-      SpectralAveraging::CSpectralProperties& t_Rb1, 
-      SpectralAveraging::CSpectralProperties& t_Rf2 );
+    std::shared_ptr< FenestrationCommon::CSeries > transmittanceTot( 
+      FenestrationCommon::CSeries& t_T1, 
+      FenestrationCommon::CSeries& t_T2, 
+      FenestrationCommon::CSeries& t_Rb1, 
+      FenestrationCommon::CSeries& t_Rf2 );
 
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > ReflectanceFrontTot( 
-      SpectralAveraging::CSpectralProperties& t_T1, 
-      SpectralAveraging::CSpectralProperties& t_Rf1, 
-      SpectralAveraging::CSpectralProperties& t_Rb1, 
-      SpectralAveraging::CSpectralProperties& t_Rf2 );
+    std::shared_ptr< FenestrationCommon::CSeries > ReflectanceFrontTot( 
+      FenestrationCommon::CSeries& t_T1, 
+      FenestrationCommon::CSeries& t_Rf1, 
+      FenestrationCommon::CSeries& t_Rb1, 
+      FenestrationCommon::CSeries& t_Rf2 );
 
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > ReflectanceBackTot( 
-      SpectralAveraging::CSpectralProperties& t_T2, 
-      SpectralAveraging::CSpectralProperties& t_Rb2, 
-      SpectralAveraging::CSpectralProperties& t_Rb1, 
-      SpectralAveraging::CSpectralProperties& t_Rf2 );
+    std::shared_ptr< FenestrationCommon::CSeries > ReflectanceBackTot( 
+      FenestrationCommon::CSeries& t_T2, 
+      FenestrationCommon::CSeries& t_Rb2, 
+      FenestrationCommon::CSeries& t_Rb1, 
+      FenestrationCommon::CSeries& t_Rf2 );
 
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > m_T;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > m_Rf;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > m_Rb;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > m_AbsF;
-    std::shared_ptr< SpectralAveraging::CSpectralProperties > m_AbsB;
+    std::shared_ptr< FenestrationCommon::CSeries > m_T;
+    std::shared_ptr< FenestrationCommon::CSeries > m_Rf;
+    std::shared_ptr< FenestrationCommon::CSeries > m_Rb;
+    std::shared_ptr< FenestrationCommon::CSeries > m_AbsF;
+    std::shared_ptr< FenestrationCommon::CSeries > m_AbsB;
   
   };
 

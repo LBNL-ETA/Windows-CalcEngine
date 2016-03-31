@@ -4,7 +4,7 @@
 #include "MultiPaneSpectralSample.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SpectralProperties.hpp"
+#include "Series.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -21,7 +21,7 @@ private:
 protected:
   virtual void SetUp()
   {
-    shared_ptr< CSpectralProperties > solarRadiation = make_shared< CSpectralProperties >();
+    shared_ptr< CSeries > solarRadiation = make_shared< CSeries >();
     solarRadiation->addProperty( 0.50, 1026.70 );
     solarRadiation->addProperty( 0.51, 1066.70 );
     solarRadiation->addProperty( 0.52, 1011.50 );
