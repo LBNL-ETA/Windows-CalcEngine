@@ -39,7 +39,7 @@ namespace Viewer {
   // point positioning.
   class PointsProfile2DCompare {
   public:
-    PointsProfile2DCompare( const double t_ProfileAngle );
+    explicit PointsProfile2DCompare( const double t_ProfileAngle );
 
     bool operator() ( std::shared_ptr< const CPoint2D > t_Point1, 
       std::shared_ptr< const CPoint2D > t_Point2 );

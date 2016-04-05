@@ -153,9 +153,9 @@ namespace LayerOptics {
     m_OutgoingDirections = make_shared< CBSDFDirections >( aDefinitions, BSDFHemisphere::Outgoing );
   }
 
-  CBSDFHemisphere::CBSDFHemisphere( vector< CBSDFDefinition >& t_Definitions ) {
-    m_IncomingDirections = make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Incoming );
-    m_OutgoingDirections = make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Outgoing ); 
+  CBSDFHemisphere::CBSDFHemisphere( vector< CBSDFDefinition >& t_Definitions ) : 
+    m_IncomingDirections( make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Incoming ) ),
+    m_OutgoingDirections( make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Outgoing ) ) {
   };
 
   shared_ptr< CBSDFDirections > CBSDFHemisphere::getDirections( const BSDFHemisphere t_Side ) const {

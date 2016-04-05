@@ -12,16 +12,14 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestIndoorEnvironment : public testing::Test
-{
+class TestIndoorEnvironment : public testing::Test {
 
 private:
   shared_ptr< CTarIndoorEnvironment > m_Indoor;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -71,7 +69,7 @@ protected:
       ASSERT_TRUE( m_TarcogSystem != nullptr );
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -80,8 +78,7 @@ public:
 
 };
 
-TEST_F( TestIndoorEnvironment, IndoorRadiosity )
-{
+TEST_F( TestIndoorEnvironment, IndoorRadiosity ) {
   try {
     SCOPED_TRACE( "Begin Test: Indoors -> Radiosity" );
     
@@ -97,8 +94,7 @@ TEST_F( TestIndoorEnvironment, IndoorRadiosity )
   }
 }
 
-TEST_F( TestIndoorEnvironment, IndoorConvection )
-{
+TEST_F( TestIndoorEnvironment, IndoorConvection ) {
   try {
     SCOPED_TRACE( "Begin Test: Indoors -> Convection" );
     

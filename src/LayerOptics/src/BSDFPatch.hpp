@@ -22,7 +22,7 @@ namespace LayerOptics {
 
   class CCentralAngleLimits : public CAngleLimits {
   public:
-    CCentralAngleLimits( const double t_High );
+    explicit CCentralAngleLimits( const double t_High );
     double average() const;
   };
 

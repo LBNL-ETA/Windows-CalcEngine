@@ -12,16 +12,14 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestSingleClear : public testing::Test
-{
+class TestSingleClear : public testing::Test {
 
 private:
   shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp()
-  {    
+  virtual void SetUp() {    
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -75,7 +73,7 @@ protected:
 
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -85,8 +83,7 @@ public:
 
 };
 
-TEST_F( TestSingleClear, Test1 )
-{
+TEST_F( TestSingleClear, Test1 ) {
   try {
     SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
     

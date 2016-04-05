@@ -8,7 +8,7 @@ namespace LayerOptics {
 
   class CBSDFPhiAngles {
   public:
-    CBSDFPhiAngles( const size_t t_NumOfPhis );
+    explicit CBSDFPhiAngles( const size_t t_NumOfPhis );
 
     std::shared_ptr< std::vector< double > > phiAngles() const;
 

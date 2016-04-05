@@ -13,14 +13,11 @@ namespace SpectralAveraging {
   ////     CSpectralSampleData
   ////////////////////////////////////////////////////////////////////////////
 
-  CSpectralSampleData::CSpectralSampleData() {
-    m_Transmittances = make_shared< CSeries >();
-    m_ReflectancesFront = make_shared< CSeries >();
-    m_ReflectancesBack = make_shared< CSeries >();
-    m_AbsorptancesFront = make_shared< CSeries >();
-    m_AbsorptancesBack = make_shared< CSeries >();
-    m_Flipped = false;
-    m_absCalculated = false;
+  CSpectralSampleData::CSpectralSampleData() : 
+    m_Transmittances( make_shared< CSeries >() ), m_ReflectancesFront( make_shared< CSeries >() ),
+    m_ReflectancesBack( make_shared< CSeries >() ), m_AbsorptancesFront( make_shared< CSeries >()), 
+    m_AbsorptancesBack( make_shared< CSeries >() ), m_Flipped( false ), m_absCalculated( false ) {
+
   }
 
   void CSpectralSampleData::addRecord( double t_Wavelength, double t_Transmittance, double t_ReflectanceFront, 

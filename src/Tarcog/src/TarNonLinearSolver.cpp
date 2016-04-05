@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CTarNonLinearSolver::CTarNonLinearSolver( shared_ptr< CTarIGU > const t_IGU ) : m_IGU( t_IGU )  {
+  CTarNonLinearSolver::CTarNonLinearSolver( shared_ptr< CTarIGU > t_IGU ) : m_IGU( t_IGU )  {
     assert( t_IGU != nullptr );
     m_LinearSolver = make_shared< CLinearSolver >();
     assert( m_LinearSolver != nullptr );

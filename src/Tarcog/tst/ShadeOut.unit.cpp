@@ -14,8 +14,7 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestShadeOut : public testing::Test
-{
+class TestShadeOut : public testing::Test {
 
 private:
   shared_ptr< CTarIGUSolidLayer > m_SolidLayer1;
@@ -23,8 +22,7 @@ private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -109,7 +107,7 @@ protected:
 
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -120,8 +118,7 @@ public:
 
 };
 
-TEST_F( TestShadeOut, Test1 )
-{
+TEST_F( TestShadeOut, Test1 ) {
   try {
     SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
     

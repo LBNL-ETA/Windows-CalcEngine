@@ -48,7 +48,7 @@ namespace FenestrationCommon {
   //  CSeries
   /////////////////////////////////////////////////////
 
-  CSeries::CSeries() {};
+  CSeries::CSeries() { };
 
   void CSeries::addProperty( double t_x, double t_Value ) {
     shared_ptr< CSeriesPoint > aProperty = make_shared< CSeriesPoint >( t_x, t_Value );
@@ -276,13 +276,13 @@ namespace FenestrationCommon {
     return m_Series[Index];
   };
 
-  shared_ptr< CSeries > CSeries::operator=( CSeries& t_Properties ) {
-    clear();
-    for( shared_ptr< ISeriesPoint > spectralProperty : t_Properties ) {
-      addProperty( spectralProperty->x(), spectralProperty->value() );
-    }
-    return shared_from_this();
-  };
+  // CSeries& CSeries::operator=( CSeries& t_Properties ) {
+  //   clear();
+  //   for( shared_ptr< ISeriesPoint > spectralProperty : t_Properties ) {
+  //     addProperty( spectralProperty->x(), spectralProperty->value() );
+  //   }
+  //   return *this;
+  // };
 
   void CSeries::clear() {
     m_Series.clear();

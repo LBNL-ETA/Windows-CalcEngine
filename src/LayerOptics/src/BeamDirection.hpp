@@ -22,8 +22,8 @@ namespace LayerOptics {
     double Azimuth() const;
 
   private:
-    const double m_Theta;
-    const double m_Phi;
+    double m_Theta;
+    double m_Phi;
     double m_ProfileAngle;
   };
 

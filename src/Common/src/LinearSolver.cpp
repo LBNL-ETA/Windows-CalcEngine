@@ -10,10 +10,8 @@ using namespace std;
 
 namespace FenestrationCommon {
 
-  CLinearSolver::CLinearSolver()
-  {
-    m_MatrixA = nullptr;
-    m_VectorB = nullptr;
+  CLinearSolver::CLinearSolver() : m_MatrixA( nullptr ), m_VectorB( nullptr ) {
+  
   }
 
   void CLinearSolver::assignMatrixA( shared_ptr< CSquareMatrix > t_MatrixA ) {

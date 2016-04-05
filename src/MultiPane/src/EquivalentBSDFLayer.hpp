@@ -71,7 +71,7 @@ namespace MultiPane {
   // Class for equivalent BSDF layer for single material properties (or single wavelength)
   class CEquivalentBSDFLayer {
   public:
-    CEquivalentBSDFLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );
+    explicit CEquivalentBSDFLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );
     void addLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( FenestrationCommon::Side t_Side );

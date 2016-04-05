@@ -12,8 +12,7 @@
 using namespace std;
 using namespace Tarcog;
 
-class TestGapLayerInBetweenVentilation : public testing::Test
-{
+class TestGapLayerInBetweenVentilation : public testing::Test {
 
 private:
   shared_ptr< CTarIGUGapLayer > m_GapLayer1;
@@ -21,8 +20,7 @@ private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
 
       /////////////////////////////////////////////////////////
@@ -101,7 +99,7 @@ protected:
 
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -111,8 +109,7 @@ public:
 
 };
 
-TEST_F( TestGapLayerInBetweenVentilation, VentilationFlow )
-{
+TEST_F( TestGapLayerInBetweenVentilation, VentilationFlow ) {
   try {
     SCOPED_TRACE( "Begin Test: Test Ventilated Gap Layer - Intial Airflow" );
     

@@ -58,7 +58,7 @@ namespace Tarcog {
     virtual double getRadiationFlow() final;
     virtual double getConvectionConductionFlow() final;
     virtual std::shared_ptr< CTarSurface > getSurface( SurfacePosition const t_Position ) const final;
-    virtual void setSurface( std::shared_ptr< CTarSurface > const t_Surface, SurfacePosition const t_Position ) final;
+    virtual void setSurface( std::shared_ptr< CTarSurface > t_Surface, SurfacePosition const t_Position ) final;
   protected:
     virtual void calculateLayerState() final;
     virtual void calculateRadiationState() = 0;
@@ -77,7 +77,7 @@ namespace Tarcog {
   class CGasLayer : public virtual CLayerState {
   public:
     CGasLayer();
-    CGasLayer( double const t_Pressure );
+    explicit CGasLayer( double const t_Pressure );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );

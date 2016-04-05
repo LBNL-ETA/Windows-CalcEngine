@@ -8,7 +8,7 @@ namespace LayerOptics {
 
   class CPhiLimits {
   public:
-    CPhiLimits( const size_t t_NumOfPhis );
+    explicit CPhiLimits( const size_t t_NumOfPhis );
   
     std::shared_ptr< std::vector< double > > getPhiLimits() const;
   

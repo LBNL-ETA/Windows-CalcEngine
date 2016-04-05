@@ -20,9 +20,8 @@ namespace Tarcog {
   class CBaseTarcogLayer;
 
   CTarIGUGapLayer::CTarIGUGapLayer( double t_Thickness, double t_Pressure ) : 
-    CBaseIGUTarcogLayer( t_Thickness ), 
-    CGasLayer( t_Pressure ), m_inTemperature( 0 ), m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ) {
-    m_ReferenceGas = make_shared< Gases::CGas >();
+    CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure ), m_inTemperature( 0 ), 
+    m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ), m_ReferenceGas( make_shared< Gases::CGas >() ) {    
     m_ReferenceGas->setTemperatureAndPressure( ReferenceTemperature, m_Pressure );
   }
 

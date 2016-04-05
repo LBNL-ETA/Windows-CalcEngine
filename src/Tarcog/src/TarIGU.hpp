@@ -31,7 +31,7 @@ namespace Tarcog {
     std::shared_ptr< CBaseTarcogLayer > getLastLayer() const;
 
     std::shared_ptr< std::vector< double > > getState();
-    void setState( std::shared_ptr< std::vector< double > > const t_State );
+    void setState( std::shared_ptr< std::vector< double > > t_State );
 
     double getTilt() const;
     double getWidth( ) const;

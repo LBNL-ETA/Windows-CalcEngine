@@ -34,8 +34,11 @@ namespace LayerOptics {
     return m_ProfileAngle;
   };
 
-  CBeamDirection& CBeamDirection::operator=( const CBeamDirection& ) {
-   return *this;
+  CBeamDirection& CBeamDirection::operator=( const CBeamDirection& t_SphericalPoint ) {
+    m_Theta = t_SphericalPoint.m_Theta;
+    m_Phi = t_SphericalPoint.m_Phi;
+    m_ProfileAngle = t_SphericalPoint.m_ProfileAngle;
+    return *this;
   };
 
   double CBeamDirection::Altitude() const {

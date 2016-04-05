@@ -8,7 +8,7 @@ namespace LayerOptics {
   
   class CThetaLimits {
   public:
-    CThetaLimits( const std::vector< double >& t_ThetaAngles );
+    explicit CThetaLimits( const std::vector< double >& t_ThetaAngles );
   
     std::shared_ptr< std::vector< double > > getThetaLimits() const;
   

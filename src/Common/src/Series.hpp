@@ -80,7 +80,8 @@ namespace FenestrationCommon {
     std::vector< std::shared_ptr< CSeriesPoint > >::const_iterator end() const;
     size_t size() const;
     std::shared_ptr< const CSeriesPoint > operator[]( size_t Index ) const;
-    std::shared_ptr< CSeries > operator=( CSeries& t_Properties );
+    // std::shared_ptr< CSeries > operator=( CSeries& t_Properties );
+    // CSeries& operator=( CSeries& t_Properties );
 
     void clear();
 

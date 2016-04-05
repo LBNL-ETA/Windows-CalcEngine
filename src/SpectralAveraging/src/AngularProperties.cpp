@@ -61,8 +61,6 @@ namespace SpectralAveraging {
     CAngularProperties::checkStateProperties( t_Angle, t_Wavelength );
 
     if( m_StateAngle != t_Angle || m_StateWavelength != t_Wavelength ) {
-      double k = 0;
-      double alpha = 0;
       double aAngle = radians( t_Angle );
       double aCosPhi = cos( aAngle );
       double n = ( 1 + sqrt( m_Rho0 ) ) / ( 1 - sqrt( m_Rho0 ) );
@@ -70,6 +68,8 @@ namespace SpectralAveraging {
       double a = 0;
       
       if( m_Transmittance0 > 0 ) {
+        double k = 0;
+        double alpha = 0;
         k = - t_Wavelength / ( 4 * M_PI * m_Thickness ) * log( ( m_Reflectance0 - m_Rho0 ) / ( m_Transmittance0 * m_Rho0 ) );
         alpha = 2 * M_PI * k / t_Wavelength;
         a = exp( -2 * alpha * m_Thickness / aCosPhiPrim );

@@ -9,8 +9,8 @@ using namespace std;
 
 namespace LayerOptics {
 
-  CBSDFPhiAngles::CBSDFPhiAngles( const size_t t_NumOfPhis ) {
-    m_PhiAngles = make_shared< vector< double > >();
+  CBSDFPhiAngles::CBSDFPhiAngles( const size_t t_NumOfPhis ) : 
+    m_PhiAngles( make_shared< vector< double > >() ) {
     createPhis( t_NumOfPhis );
   }
 

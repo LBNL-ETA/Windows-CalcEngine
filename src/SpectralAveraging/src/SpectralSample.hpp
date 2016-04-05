@@ -26,7 +26,7 @@ namespace SpectralAveraging {
   // Concrete sample data are handled in inherited classes and tha will depend on type of the sample data
   class CSample {
   public:
-    CSample( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+    explicit CSample( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // Assigns detector and wavelengths from other sample. 
     void assignDetectorAndWavelengths( std::shared_ptr< CSample > t_Sample );
@@ -36,7 +36,7 @@ namespace SpectralAveraging {
     std::shared_ptr< FenestrationCommon::CSeries > getSourceData();
 
     // Setting detector spectral properties for the sample
-    void setDetectorData( const std::shared_ptr< FenestrationCommon::CSeries > t_DetectorData );
+    void setDetectorData( std::shared_ptr< FenestrationCommon::CSeries > t_DetectorData );
 
     // Integrate sample property over the certain spectrum range
     double getProperty( const double minLambda, const double maxLambda, 

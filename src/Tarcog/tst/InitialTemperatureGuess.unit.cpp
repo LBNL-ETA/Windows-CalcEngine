@@ -13,8 +13,7 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestTemperatureInitialGuess : public testing::Test
-{
+class TestTemperatureInitialGuess : public testing::Test {
 
 private:
   shared_ptr< CTarIGU > m_TarcogIGU;
@@ -23,8 +22,7 @@ private:
   shared_ptr< CTarIGUSolidLayer > m_solidLayer2;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -76,7 +74,7 @@ protected:
       ASSERT_TRUE( m_TarcogSystem != nullptr );
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 

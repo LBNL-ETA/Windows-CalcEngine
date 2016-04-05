@@ -9,16 +9,14 @@
 using namespace std;
 using namespace Tarcog;
 
-class TestGapLayerStandardPressure : public testing::Test
-{
+class TestGapLayerStandardPressure : public testing::Test {
 
 private:
   std::shared_ptr< CTarIGUGapLayer > m_GapLayer;
   std::shared_ptr< CTarIGU > m_IGU;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
       // Gap layer construct is made in a way that it is not possible to create gap alone. In order to test gap, entire
       // IGU has to be created. Example is taken as part of double clear air run from WINDOW 7 version of TARCOG
@@ -59,7 +57,7 @@ protected:
       m_IGU->addLayer( solidLayer2 );
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 

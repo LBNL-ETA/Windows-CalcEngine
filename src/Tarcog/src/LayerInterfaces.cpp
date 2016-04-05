@@ -125,7 +125,7 @@ namespace Tarcog{
     return aSurface;
   }
 
-  void CLayerHeatFlow::setSurface( shared_ptr< CTarSurface > const t_Surface, 
+  void CLayerHeatFlow::setSurface( shared_ptr< CTarSurface > t_Surface, 
     SurfacePosition const t_Position ) {
     switch ( t_Position )
     {
