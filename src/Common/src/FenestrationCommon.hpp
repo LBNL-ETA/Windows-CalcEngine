@@ -6,25 +6,20 @@ namespace FenestrationCommon {
   template< typename T >
   class Enum {
   public:
-     class Iterator
-     {
+     class Iterator {
      public:
-        Iterator( int value ) :
-           m_value( value )
-        { }
+        explicit Iterator( int value ) :
+           m_value( value ) { }
   
-        T operator*( void ) const
-        {
+        T operator*( void ) const {
            return ( T )m_value;
         }
   
-        void operator++( void )
-        {
+        void operator++( void ) {
            ++m_value;
         }
   
-        bool operator!=( Iterator rhs )
-        {
+        bool operator!=( Iterator rhs ) {
            return m_value != rhs.m_value;
         }
   

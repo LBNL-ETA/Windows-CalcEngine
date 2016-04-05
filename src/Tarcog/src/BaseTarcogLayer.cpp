@@ -8,9 +8,9 @@ using namespace std;
 
 namespace Tarcog {
 
-  CBaseTarcogLayer::CBaseTarcogLayer() : CLayerGeometry(), CLayerHeatFlow() {
-    m_PreviousLayer = nullptr;
-    m_NextLayer = nullptr;
+  CBaseTarcogLayer::CBaseTarcogLayer() : CLayerGeometry(), CLayerHeatFlow(), 
+    m_PreviousLayer( nullptr ), m_NextLayer( nullptr ) {
+  
   }
 
   shared_ptr< CBaseTarcogLayer > CBaseTarcogLayer::getPreviousLayer() const {

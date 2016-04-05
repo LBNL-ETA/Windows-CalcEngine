@@ -38,7 +38,7 @@ namespace Viewer {
   // Keeps information about single beam and segments that are intersected with it
   class CDirect2DBeam {
   public:
-    CDirect2DBeam( std::shared_ptr< const CViewSegment2D > t_Beam );
+    explicit CDirect2DBeam( std::shared_ptr< const CViewSegment2D > t_Beam );
 
     // Checks if segments intersects with the beam
     void checkSegment( std::shared_ptr< const CViewSegment2D > t_Segment );
@@ -144,7 +144,7 @@ namespace Viewer {
   // Keeps information about group of direct rays entering or exiting the enclosure
   class CDirect2DRays {
   public:
-    CDirect2DRays( const FenestrationCommon::Side t_Side );
+    explicit CDirect2DRays( const FenestrationCommon::Side t_Side );
 
     void appendGeometry2D( std::shared_ptr< const CGeometry2D > t_Geometry2D );
 

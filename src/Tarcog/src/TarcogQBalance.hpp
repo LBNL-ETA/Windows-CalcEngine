@@ -19,13 +19,13 @@ namespace Tarcog {
 
   class CTarcogQBalance {
   public:
-    explicit CTarcogQBalance( std::shared_ptr< CTarIGU > const t_IGU );
+    explicit CTarcogQBalance( std::shared_ptr< CTarIGU > t_IGU );
 
     std::shared_ptr< std::vector< double > > calcBalanceMatrix();
   private:
-    void buildCell( std::shared_ptr< CBaseTarcogLayer > const t_Previous, 
-      std::shared_ptr< CBaseTarcogLayer > const t_Current, 
-      std::shared_ptr< CBaseTarcogLayer > const t_Next, int const t_Index );
+    void buildCell( std::shared_ptr< CBaseTarcogLayer > t_Previous, 
+      std::shared_ptr< CBaseTarcogLayer > t_Current, 
+      std::shared_ptr< CBaseTarcogLayer > t_Next, const int t_Index );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > m_MatrixA;
     std::shared_ptr< std::vector< double > > m_VectorB;

@@ -13,8 +13,7 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestDoubleClear : public testing::Test
-{
+class TestDoubleClear : public testing::Test {
 
 private:
   shared_ptr< CTarIGUSolidLayer > m_SolidLayer1;
@@ -87,7 +86,7 @@ protected:
 
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 

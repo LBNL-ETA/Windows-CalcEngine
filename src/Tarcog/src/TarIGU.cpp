@@ -102,7 +102,7 @@ namespace Tarcog {
     return aState;
   };
 
-  void CTarIGU::setState( shared_ptr< vector< double > > const t_State ) {
+  void CTarIGU::setState( shared_ptr< vector< double > > t_State ) {
     assert( (t_State->size() / 4) == m_SolidLayers.size() );
     for( size_t i = 0; i < m_SolidLayers.size(); ++i ) {
       double Tf = (*t_State)[ 4*i ];

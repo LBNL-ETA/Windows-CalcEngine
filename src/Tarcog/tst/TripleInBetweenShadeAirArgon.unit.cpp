@@ -19,8 +19,7 @@ using namespace std;
 using namespace Gases;
 using namespace Tarcog;
 
-class TestInBetweenShadeAirArgon : public testing::Test
-{
+class TestInBetweenShadeAirArgon : public testing::Test {
 
 private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
@@ -29,8 +28,7 @@ private:
   shared_ptr< CTarIGUSolidLayer > m_Layer3;
 
 protected:
-  virtual void SetUp()
-  {    
+  virtual void SetUp() {    
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -142,7 +140,7 @@ protected:
 
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -154,8 +152,7 @@ public:
 
 };
 
-TEST_F( TestInBetweenShadeAirArgon, Test1 )
-{
+TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
   try {
     SCOPED_TRACE( "Begin Test: InBetween Shade - Air(10%)/Argon(90%)" );
     

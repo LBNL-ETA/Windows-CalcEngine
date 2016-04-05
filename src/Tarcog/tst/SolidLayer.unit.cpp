@@ -7,15 +7,13 @@
 using namespace std;
 using namespace Tarcog;
 
-class TestSolidLayer : public testing::Test
-{
+class TestSolidLayer : public testing::Test {
 
 private:
   shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
       shared_ptr< CTarSurface > surface1 = std::make_shared< CTarSurface > ();
       ASSERT_TRUE( surface1 != nullptr );
@@ -28,7 +26,7 @@ protected:
       ASSERT_TRUE( m_SolidLayer != nullptr );
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -37,8 +35,7 @@ public:
 
 };
 
-TEST_F( TestSolidLayer, Test1 )
-{
+TEST_F( TestSolidLayer, Test1 ) {
   try {
     SCOPED_TRACE( "Begin Test: Test Solid Layer - Conduction heat flow" );
     

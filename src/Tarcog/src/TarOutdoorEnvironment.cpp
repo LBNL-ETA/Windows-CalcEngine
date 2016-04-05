@@ -107,7 +107,6 @@ namespace Tarcog {
       }
       default: {
         throw runtime_error( "Incorrect definition for convection model (Outdoor environment)." );
-        break;
       }
     }
   };

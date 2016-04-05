@@ -162,8 +162,9 @@ namespace Viewer {
   // CDirect2DRayResults
   ////////////////////////////////////////////////////////////////////////////////////////
 
-  CDirect2DRaysResults::CDirect2DRaysResults() {
-    m_Results = make_shared< vector < shared_ptr< CDirect2DRaysResult > > >();  
+  CDirect2DRaysResults::CDirect2DRaysResults() : 
+    m_Results( make_shared< vector < shared_ptr< CDirect2DRaysResult > > >() ) {
+      
   };
 
   shared_ptr< CDirect2DRaysResult > CDirect2DRaysResults::getResult( const double t_ProfileAngle ) {
@@ -171,7 +172,8 @@ namespace Viewer {
 
     vector < shared_ptr< CDirect2DRaysResult > >::iterator it;
     it = find_if( m_Results->begin(), m_Results->end(), 
-      [ &t_ProfileAngle ]( shared_ptr< CDirect2DRaysResult > obj ) { return fabs( obj->profileAngle() - t_ProfileAngle ) < 1e-6; } );
+      [ &t_ProfileAngle ]( shared_ptr< CDirect2DRaysResult > obj ) 
+        { return fabs( obj->profileAngle() - t_ProfileAngle ) < 1e-6; } );
 
     if( it != m_Results->end() ) {
       Result = *it;

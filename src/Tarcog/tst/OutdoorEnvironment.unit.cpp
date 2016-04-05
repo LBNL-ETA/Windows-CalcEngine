@@ -12,16 +12,14 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestOutdoorEnvironment : public testing::Test
-{
+class TestOutdoorEnvironment : public testing::Test {
 
 private:
   shared_ptr< CTarOutdoorEnvironment > Outdoor;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
     /////////////////////////////////////////////////////////
     // Outdoor
@@ -71,7 +69,7 @@ protected:
     ASSERT_TRUE( m_TarcogSystem != nullptr );
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -80,8 +78,7 @@ public:
 
 };
 
-TEST_F( TestOutdoorEnvironment, CalculateH_AllSpecified )
-{
+TEST_F( TestOutdoorEnvironment, CalculateH_AllSpecified ) {
   try {
     SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = All Specified" );
     
@@ -102,8 +99,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_AllSpecified )
 
 }
 
-TEST_F( TestOutdoorEnvironment, CalculateH_TSkySpecified )
-{
+TEST_F( TestOutdoorEnvironment, CalculateH_TSkySpecified ) {
   try {
     SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = TSky Specified" );
     
@@ -124,8 +120,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_TSkySpecified )
 
 }
 
-TEST_F( TestOutdoorEnvironment, CalculateH_Swinbank )
-{
+TEST_F( TestOutdoorEnvironment, CalculateH_Swinbank ) {
   try {
     SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = Swinbank" );
     
@@ -146,8 +141,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_Swinbank )
 
 }
 
-TEST_F( TestOutdoorEnvironment, HPrescribed_AllSpecified )
-{
+TEST_F( TestOutdoorEnvironment, HPrescribed_AllSpecified ) {
   try {
     SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = All Specified" );
     
@@ -168,8 +162,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_AllSpecified )
 
 }
 
-TEST_F( TestOutdoorEnvironment, HPrescribed_TSkySpecified )
-{
+TEST_F( TestOutdoorEnvironment, HPrescribed_TSkySpecified ) {
   try {
     SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = TSky Specified" );
     
@@ -190,8 +183,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_TSkySpecified )
 
 }
 
-TEST_F( TestOutdoorEnvironment, HPrescribed_Swinbank )
-{
+TEST_F( TestOutdoorEnvironment, HPrescribed_Swinbank ) {
   try {
     SCOPED_TRACE( "Begin Test: Outdoors -> H model = HPrescribed; Sky Model = Swinbank" );
     

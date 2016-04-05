@@ -12,9 +12,8 @@ using namespace std;
 namespace FenestrationCommon {
 
   // Performs hemispherical 2D integration
-  CHemispherical2DIntegrator::CHemispherical2DIntegrator( shared_ptr< CSeries > t_Series, const IntegrationType t_IntegrationType ) {
-    // vector< double > xValues;
-    vector< double > sinCosAngle;
+  CHemispherical2DIntegrator::CHemispherical2DIntegrator( shared_ptr< CSeries > t_Series, 
+    const IntegrationType t_IntegrationType ) {
     CSeries aResultValues = CSeries();
     for( size_t i = 0; i < t_Series->size(); ++i ) {
       double angle = radians( ( *t_Series )[ i ]->x() );

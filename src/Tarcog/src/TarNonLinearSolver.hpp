@@ -17,7 +17,7 @@ namespace Tarcog {
 
   class CTarNonLinearSolver {
   public:
-    explicit CTarNonLinearSolver( std::shared_ptr< CTarIGU > const t_IGU );
+    explicit CTarNonLinearSolver( std::shared_ptr< CTarIGU > t_IGU );
 
     void solve();
 

@@ -13,9 +13,8 @@ using namespace FenestrationCommon;
 
 namespace Viewer {
 
-  CGeometry2D::CGeometry2D() : m_ViewFactorsCalculated( false ) {
-    m_Segments = make_shared< vector< shared_ptr< CViewSegment2D > > >();
-    m_ViewFactors = nullptr;
+  CGeometry2D::CGeometry2D() : m_ViewFactorsCalculated( false ),
+    m_Segments( make_shared< vector< shared_ptr< CViewSegment2D > > >() ), m_ViewFactors( nullptr ) {
   }
 
   void CGeometry2D::appendSegment( shared_ptr< CViewSegment2D > t_Segment ) {

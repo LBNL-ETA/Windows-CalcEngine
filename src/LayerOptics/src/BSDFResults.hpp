@@ -18,7 +18,7 @@ namespace LayerOptics {
   // Layer results from BSDF directions.
   class CBSDFResults {
   public:
-    CBSDFResults( std::shared_ptr< const CBSDFDirections > t_Directions );
+    explicit CBSDFResults( std::shared_ptr< const CBSDFDirections > t_Directions );
 
     // Transmittance matrices for front and back sides
     std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( FenestrationCommon::Side t_Side ) const;

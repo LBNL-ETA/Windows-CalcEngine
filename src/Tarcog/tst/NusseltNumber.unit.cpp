@@ -9,20 +9,18 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestNusseltNumber : public testing::Test
-{
+class TestNusseltNumber : public testing::Test {
 
 private:
   std::shared_ptr< CNusseltNumber > m_NusseltNumber;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     try {
       m_NusseltNumber = make_shared< CNusseltNumber > ();
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -31,8 +29,7 @@ public:
 
 };
 
-TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test1 )
-{
+TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test1 ) {
   try {
     SCOPED_TRACE( "Begin Test: Nusselt number (Test 1) - different angles" );
     
@@ -68,8 +65,7 @@ TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test1 )
 
 }
 
-TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test2 )
-{
+TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test2 ) {
   try {
     SCOPED_TRACE( "Begin Test: Nusselt number (Test 2) - different angles" );
     
@@ -105,8 +101,7 @@ TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test2 )
 
 }
 
-TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test3 )
-{
+TEST_F( TestNusseltNumber, NusseltNumberDifferentAngles_Test3 ) {
   try {
     SCOPED_TRACE( "Begin Test: Nusselt number (Test 3) - different angles" );
     

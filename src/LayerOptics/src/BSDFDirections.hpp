@@ -50,9 +50,9 @@ namespace LayerOptics {
   class CBSDFHemisphere {
   public:
     // Construction for pre-defined basis
-    CBSDFHemisphere( const BSDFBasis t_Basis );
+    explicit CBSDFHemisphere( const BSDFBasis t_Basis );
     // Construction for custom basis
-    CBSDFHemisphere( std::vector< CBSDFDefinition >& t_Definitions );
+    explicit CBSDFHemisphere( std::vector< CBSDFDefinition >& t_Definitions );
     std::shared_ptr< CBSDFDirections > getDirections( const BSDFHemisphere t_Side ) const;
 
   private:

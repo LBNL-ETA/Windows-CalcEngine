@@ -18,12 +18,11 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
 
   CVenetianCellDescription::CVenetianCellDescription( const double t_SlatWidth, const double t_SlatSpacing, 
-    const double t_SlatTiltAngle, const double t_CurvatureRadius, const size_t t_NumOfSlatSegments ) {
-    m_Top = make_shared< CVenetianSlat >( t_SlatWidth, t_SlatSpacing, t_SlatTiltAngle, t_CurvatureRadius, 
-      t_NumOfSlatSegments, SegmentsDirection::Positive );
-
-    m_Bottom = make_shared< CVenetianSlat >( t_SlatWidth, 0, t_SlatTiltAngle, t_CurvatureRadius, 
-      t_NumOfSlatSegments, SegmentsDirection::Negative );
+    const double t_SlatTiltAngle, const double t_CurvatureRadius, const size_t t_NumOfSlatSegments ) :
+    m_Top( make_shared< CVenetianSlat >( t_SlatWidth, t_SlatSpacing, t_SlatTiltAngle, t_CurvatureRadius, 
+      t_NumOfSlatSegments, SegmentsDirection::Positive ) ),
+    m_Bottom( make_shared< CVenetianSlat >( t_SlatWidth, 0, t_SlatTiltAngle, t_CurvatureRadius, 
+      t_NumOfSlatSegments, SegmentsDirection::Negative ) ) {
 
     shared_ptr< CViewSegment2D > exteriorSegment = 
       make_shared< CViewSegment2D >( m_Bottom->geometry()->lastPoint(), m_Top->geometry()->firstPoint() );

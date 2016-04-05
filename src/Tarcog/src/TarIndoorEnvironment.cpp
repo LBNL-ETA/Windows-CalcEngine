@@ -63,7 +63,6 @@ namespace Tarcog {
       }
       default: {
         throw runtime_error( "Incorrect definition for convection model (Indoor environment)." );
-        break;
       }
     }
   };

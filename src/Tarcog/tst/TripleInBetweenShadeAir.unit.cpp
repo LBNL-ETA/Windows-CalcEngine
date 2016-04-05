@@ -15,8 +15,7 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestInBetweenShadeAir : public testing::Test
-{
+class TestInBetweenShadeAir : public testing::Test {
 
 private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
@@ -25,8 +24,7 @@ private:
   shared_ptr< CTarIGUSolidLayer > m_Layer3;
 
 protected:
-  virtual void SetUp()
-  {    
+  virtual void SetUp() {    
     try {
       /////////////////////////////////////////////////////////
       // Outdoor
@@ -108,7 +106,7 @@ protected:
 
     } catch( exception &e ) {
       cout << e.what() << endl;
-      throw e;
+      throw &e;
     }
   };
 
@@ -120,8 +118,7 @@ public:
 
 };
 
-TEST_F( TestInBetweenShadeAir, Test1 )
-{
+TEST_F( TestInBetweenShadeAir, Test1 ) {
   try {
     SCOPED_TRACE( "Begin Test: InBetween Shade - Air" );
     
