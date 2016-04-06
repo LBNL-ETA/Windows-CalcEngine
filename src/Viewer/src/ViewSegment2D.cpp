@@ -11,7 +11,7 @@ namespace Viewer {
 
   CViewSegment2D::CViewSegment2D( std::shared_ptr< const CPoint2D > t_StartPoint, 
     std::shared_ptr< const CPoint2D > t_EndPoint ) : CSegment2D( t_StartPoint, t_EndPoint ),
-    m_NormalCalculated( false ), m_Normal( nullptr ) {
+    m_Normal( nullptr ), m_NormalCalculated( false ) {
   };
 
   shared_ptr< const CViewSegment2D > CViewSegment2D::getNormal() {

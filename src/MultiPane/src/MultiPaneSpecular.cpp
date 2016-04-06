@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <stdexcept>
+#include <math.h>
 
 #include "MultiPaneSpecular.hpp"
 #include "AbsorptancesMultiPane.hpp"

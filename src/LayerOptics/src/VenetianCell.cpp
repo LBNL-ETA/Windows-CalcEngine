@@ -100,8 +100,8 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CVenetianCellEnergy
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CVenetianCellEnergy::CVenetianCellEnergy() : m_Cell( nullptr ), m_Energy( nullptr),
-    m_Tf( 0 ), m_Tb( 0 ), m_Rf( 0 ), m_Rb( 0 ) {
+  CVenetianCellEnergy::CVenetianCellEnergy() : m_Cell( nullptr ),
+    m_Tf( 0 ), m_Tb( 0 ), m_Rf( 0 ), m_Rb( 0 ), m_Energy( nullptr) {
 
   };
 
