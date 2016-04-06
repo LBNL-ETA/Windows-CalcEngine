@@ -23,6 +23,13 @@ target_link_libraries( ${target_name} ${LINK_TO_Common} )
 target_link_libraries( ${target_name} ${LINK_TO_Viewer} )
 target_link_libraries( ${target_name} ${LINK_TO_SpectralAveraging} )
 
+# Install will be used by master projects to get information on destination of library files
+install(TARGETS ${target_name}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
 if( BUILD_TESTING )
   include_directories( src src )
 	file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" tst/*.cpp )

@@ -16,6 +16,13 @@ LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP} )
 # Generates the static library from the SOURCES
 add_library( ${target_name} STATIC ${SOURCES} )
 
+# Install will be used by master projects to get information on destination of library files
+install(TARGETS ${target_name}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
 if( BUILD_TESTING )
   include_directories( src src )
 	file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" tst/*.cpp )
