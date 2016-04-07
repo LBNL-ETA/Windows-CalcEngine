@@ -18,7 +18,7 @@ using namespace SpectralAveraging;
 class TestVenetianDirectionalShadeFlat45_5_Multiwavelength : public testing::Test {
 
 private:
-  shared_ptr< CDirectionalDiffuseBSDFLayer > m_Layer;
+  shared_ptr< CBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
@@ -28,7 +28,7 @@ protected:
     double Rbmat = 0.7;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aSolarRangeMaterial = 
+    shared_ptr< CMaterial > aSolarRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // Visible range
@@ -37,12 +37,12 @@ protected:
     Rbmat = 0.6;
     minLambda = 0.38;
     maxLambda = 0.78;
-    shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial = 
+    shared_ptr< CMaterial > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     double ratio = 0.49;
 
-    shared_ptr< CMaterialDualBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
     // make cell geometry
@@ -52,27 +52,27 @@ protected:
     double curvatureRadius = 0;
     size_t numOfSlatSegments = 5;
 
-    shared_ptr< CVenetianCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CVenetianCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
+    shared_ptr< CDirectionalDiffuseCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
     m_Layer = make_shared< CDirectionalDiffuseBSDFLayer >( aCell, aBSDF );
 
   };
 
 public:
-  shared_ptr< CDirectionalDiffuseBSDFLayer > getLayer() { return m_Layer; };
+  shared_ptr< CBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
 TEST_F( TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWavelength ) {
   SCOPED_TRACE( "Begin Test: Venetian layer (multi range) - BSDF." );
   
-  shared_ptr< CDirectionalDiffuseBSDFLayer > aLayer = getLayer();
+  shared_ptr< CBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
   

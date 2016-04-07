@@ -166,16 +166,16 @@ namespace LayerOptics {
   ////   CMaterialDualBand
   ////////////////////////////////////////////////////////////////////////////////////
 
-  CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterialSingleBand > t_PartialRange,
-    shared_ptr< CMaterialSingleBand > t_SolarRange, const double t_Ratio ) : CMaterial( 0.3, 2.5 ),
+  CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterial > t_PartialRange,
+    shared_ptr< CMaterial > t_SolarRange, const double t_Ratio ) : CMaterial( 0.3, 2.5 ),
     m_MaterialFullRange( t_SolarRange ) {
     checkIfMaterialWithingSolarRange( t_PartialRange );
     createUVRange();
     createNIRRange( t_PartialRange, t_SolarRange, t_Ratio );
   };
 
-  CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterialSingleBand > t_PartialRange,
-    shared_ptr< CMaterialSingleBand > t_SolarRange, 
+  CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterial > t_PartialRange,
+    shared_ptr< CMaterial > t_SolarRange, 
     shared_ptr< CSeries > t_SolarRadiation ) : CMaterial( 0.3, 2.5 ),
     m_MaterialFullRange( t_SolarRange ) {
     checkIfMaterialWithingSolarRange( t_PartialRange );
@@ -211,7 +211,7 @@ namespace LayerOptics {
     return aWavelengths;
   };
 
-  void CMaterialDualBand::checkIfMaterialWithingSolarRange( shared_ptr< CMaterialSingleBand > t_Material ) const {
+  void CMaterialDualBand::checkIfMaterialWithingSolarRange( shared_ptr< CMaterial > t_Material ) const {
     double lowLambda = t_Material->getMinLambda();
     double highLambda = t_Material->getMaxLambda();
     if( lowLambda < 0.32 || highLambda < 0.32 || lowLambda > 2.5 || highLambda > 2.5 ) {
@@ -229,8 +229,8 @@ namespace LayerOptics {
   };
 
   void CMaterialDualBand::createNIRRange( 
-    shared_ptr< CMaterialSingleBand > t_PartialRange,
-    shared_ptr< CMaterialSingleBand > t_SolarRange, const double t_Fraction ) {
+    shared_ptr< CMaterial > t_PartialRange,
+    shared_ptr< CMaterial > t_SolarRange, const double t_Fraction ) {
     double Tf_nir = getModifiedProperty( t_PartialRange->getProperty( Property::T, Side::Front ), 
       t_SolarRange->getProperty( Property::T, Side::Front ), t_Fraction );
     double Tb_nir = getModifiedProperty( t_PartialRange->getProperty( Property::T, Side::Back ), 

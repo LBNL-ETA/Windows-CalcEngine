@@ -1,11 +1,11 @@
 #ifndef WOVENCELLDESCRIPTION_H
 #define WOVENCELLDESCRIPTION_H
 
-#include "BaseCellDescription.hpp"
+#include "CellDescription.hpp"
 
 namespace LayerOptics {
 
-  class CWovenCellDescription : public CBaseCellDescription {
+  class CWovenCellDescription : public CCellDescription {
   public:
     CWovenCellDescription( const double t_Diameter, const double t_Spacing );
 

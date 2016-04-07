@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 class TestRectangularPerforatedShade2 : public testing::Test {
 
 private:
-  shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
   virtual void SetUp() {
@@ -27,7 +27,7 @@ protected:
     double Rbmat = 0.6;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // make cell geometry
@@ -36,19 +36,19 @@ protected:
     double thickness = 7; // mm
     double xHole = 5; // mm
     double yHole = 8; // mm
-    shared_ptr< CRectangularCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CRectangularCellDescription >( x, y, thickness, xHole, yHole );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
     
     m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
   };
 
 public:
-  shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
@@ -56,7 +56,7 @@ TEST_F( TestRectangularPerforatedShade2, TestSolarProperties )
 {
   SCOPED_TRACE( "Begin Test: Rectangular perforated cell - Solar properties." );
   
-  shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
+  shared_ptr< CBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 

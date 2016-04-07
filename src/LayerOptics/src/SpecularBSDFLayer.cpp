@@ -15,7 +15,7 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
 
   CSpecularBSDFLayer::CSpecularBSDFLayer( shared_ptr< CSpecularCell > t_Cell, 
-    shared_ptr< CBSDFHemisphere > t_Hemisphere ) : CBaseBSDFLayerMultiWL( t_Cell, t_Hemisphere ) {
+    shared_ptr< CBSDFHemisphere > t_Hemisphere ) : CBSDFLayer( t_Cell, t_Hemisphere ) {
 
   };
 

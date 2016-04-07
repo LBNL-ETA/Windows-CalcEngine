@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "AbsorptancesMultiPaneBSDF.hpp"
-#include "BaseBSDFLayerMultiWL.hpp"
+#include "BSDFLayer.hpp"
 #include "SpecularBSDFLayer.hpp"
 #include "BSDFResults.hpp"
 #include "Series.hpp"
@@ -18,7 +18,7 @@ namespace MultiPane {
   CAbsorptancesMultiPaneBSDF::CAbsorptancesMultiPaneBSDF( Side t_Side, 
     shared_ptr< vector< double > > t_CommonWavelengths,
     shared_ptr< CSeries > t_SolarRadiation, 
-    shared_ptr< CBaseBSDFLayerMultiWL > t_Layer ) : 
+    shared_ptr< CBSDFLayer > t_Layer ) : 
     m_CommonWavelengths( t_CommonWavelengths ), m_StateCalculated( false ), m_Side( t_Side ),
     m_NumOfLayers( 0 ){
 
@@ -32,7 +32,7 @@ namespace MultiPane {
     addLayer( t_Layer );
   };
 
-  void CAbsorptancesMultiPaneBSDF::addLayer( shared_ptr< CBaseBSDFLayerMultiWL > t_Layer ) {
+  void CAbsorptancesMultiPaneBSDF::addLayer( shared_ptr< CBSDFLayer > t_Layer ) {
     m_StateCalculated = false;
     m_NumOfLayers++;
     shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;

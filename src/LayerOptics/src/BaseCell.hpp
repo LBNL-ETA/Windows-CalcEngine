@@ -13,7 +13,7 @@ namespace FenestrationCommon {
 namespace LayerOptics {
 
   class CMaterial;
-  class CBaseCellDescription;
+  class CCellDescription;
   class CBeamDirection;
   
   // Handles optical layer "cell". Base behavior is to calculate specular (direct-direct) component of a light
@@ -21,7 +21,7 @@ namespace LayerOptics {
   class CBaseCell {
   public:
     CBaseCell( std::shared_ptr< CMaterial > t_Material,
-      std::shared_ptr< CBaseCellDescription > t_CellDescription );
+      std::shared_ptr< CCellDescription > t_CellDescription );
 
     // Direct to direct component of transmitted ray
     virtual double T_dir_dir( const FenestrationCommon::Side t_Side, 
@@ -43,7 +43,7 @@ namespace LayerOptics {
 
   protected:
     std::shared_ptr< CMaterial > m_Material;
-    std::shared_ptr< CBaseCellDescription > m_CellDescription;
+    std::shared_ptr< CCellDescription > m_CellDescription;
 
   };
 }

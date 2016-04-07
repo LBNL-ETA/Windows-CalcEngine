@@ -14,7 +14,7 @@ namespace FenestrationCommon {
 
 namespace LayerOptics {
 
-  class CBaseBSDFLayerMultiWL;
+  class CBSDFLayer;
 
 }
 
@@ -25,9 +25,9 @@ namespace MultiPane {
   public:
     CAbsorptancesMultiPaneBSDF( FenestrationCommon::Side t_Side ,std::shared_ptr< std::vector< double > > t_CommonWavelengths, 
       std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation, 
-      std::shared_ptr< LayerOptics::CBaseBSDFLayerMultiWL > t_Layer );
+      std::shared_ptr< LayerOptics::CBSDFLayer > t_Layer );
 
-    void addLayer( std::shared_ptr< LayerOptics::CBaseBSDFLayerMultiWL > t_Layer );
+    void addLayer( std::shared_ptr< LayerOptics::CBSDFLayer > t_Layer );
 
     std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, const size_t Index );
 

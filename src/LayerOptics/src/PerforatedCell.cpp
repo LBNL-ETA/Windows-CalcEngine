@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "PerforatedCell.hpp"
-#include "PerforatedCellDescription.hpp"
+#include "CellDescription.hpp"
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BeamDirection.hpp"
@@ -18,7 +18,7 @@ namespace LayerOptics {
   //  CPerforatedCell
   ////////////////////////////////////////////////////////////////////////////////////////////
   CPerforatedCell::CPerforatedCell( shared_ptr< CMaterial > t_MaterialProperties, 
-    shared_ptr< CPerforatedCellDescription > t_Cell ) : 
+    shared_ptr< CCellDescription > t_Cell ) : 
     CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
     
   };

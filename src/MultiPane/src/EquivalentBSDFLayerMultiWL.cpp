@@ -5,7 +5,7 @@
 
 #include "EquivalentBSDFLayerMultiWL.hpp"
 #include "EquivalentBSDFLayer.hpp"
-#include "BaseBSDFLayerMultiWL.hpp"
+#include "BSDFLayer.hpp"
 #include "SpecularBSDFLayer.hpp"
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
@@ -20,7 +20,7 @@ using namespace LayerOptics;
 namespace MultiPane {
 
   CEquivalentBSDFLayerMultiWL::CEquivalentBSDFLayerMultiWL( shared_ptr< vector< double > > t_CommonWavelengths,
-    shared_ptr< CSeries > t_SolarRadiation, shared_ptr< CBaseBSDFLayerMultiWL > t_Layer ) : 
+    shared_ptr< CSeries > t_SolarRadiation, shared_ptr< CBSDFLayer > t_Layer ) : 
     m_SolarRadiation( t_SolarRadiation ), m_CombinedLayerWavelengths( t_CommonWavelengths ), m_Calculated( false ) {
     if( t_Layer == nullptr ) {
       throw runtime_error("Equivalent BSDF Layer must contain valid layer.");
@@ -65,7 +65,7 @@ namespace MultiPane {
 
   };
 
-  void CEquivalentBSDFLayerMultiWL::addLayer( shared_ptr< CBaseBSDFLayerMultiWL > t_Layer ) {
+  void CEquivalentBSDFLayerMultiWL::addLayer( shared_ptr< CBSDFLayer > t_Layer ) {
 
     shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
 

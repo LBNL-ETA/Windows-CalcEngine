@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "BaseCellDescription.hpp"
+#include "CellDescription.hpp"
 
 namespace Viewer {
 
@@ -25,7 +25,7 @@ namespace LayerOptics {
 
   class CVenetianSlat;
 
-  class CVenetianCellDescription : public CBaseCellDescription {
+  class CVenetianCellDescription : public CCellDescription {
   public:
     CVenetianCellDescription( const double t_SlatWidth, const double t_SlatSpacing, const double t_SlatTiltAngle,
       const double t_CurvatureRadius, const size_t t_NumOfSlatSegments );

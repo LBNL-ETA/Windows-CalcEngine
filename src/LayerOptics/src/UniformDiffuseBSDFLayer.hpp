@@ -3,14 +3,14 @@
 
 #include <memory>
 
-#include "BaseBSDFLayerMultiWL.hpp"
+#include "BSDFLayer.hpp"
 
 namespace LayerOptics {
 
   class CUniformDiffuseCell;
 
   // All outgoing directions are uniformly distributed in all directions
-  class CUniformDiffuseBSDFLayer : public CBaseBSDFLayerMultiWL {
+  class CUniformDiffuseBSDFLayer : public CBSDFLayer {
   public:
     CUniformDiffuseBSDFLayer( std::shared_ptr< CUniformDiffuseCell > t_Cell, 
       std::shared_ptr< CBSDFHemisphere > t_Hemisphere );

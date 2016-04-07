@@ -15,6 +15,7 @@ using namespace FenestrationCommon;
 class TestVenetianCellFlatMinus45_1 : public testing::Test {
 
 private:
+  // shared_ptr< CVenetianCell > m_Cell;
   shared_ptr< CVenetianCell > m_Cell;
 
 protected:
@@ -27,7 +28,6 @@ protected:
     double maxLambda = 2.5;
     shared_ptr< CMaterialSingleBand > aMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
-    
     
     // make cell geometry
     double slatWidth = 0.010; // m

@@ -14,14 +14,14 @@ namespace FenestrationCommon {
 
 namespace LayerOptics {
 
-  class CBaseCellDescription;
+  class CCellDescription;
   class CBeamDirection;
   class CMaterial;
 
   class CDirectionalDiffuseCell : public virtual CBaseCell {
   public:
     CDirectionalDiffuseCell( std::shared_ptr< CMaterial > t_MaterialProperties,
-      std::shared_ptr< CBaseCellDescription > t_Cell );
+      std::shared_ptr< CCellDescription > t_Cell );
 
     virtual double T_dir_dif( const FenestrationCommon::Side t_Side, 
       std::shared_ptr< const CBeamDirection > t_IncomingDirection,

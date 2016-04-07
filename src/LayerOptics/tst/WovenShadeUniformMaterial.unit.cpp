@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 class TestWovenShadeUniformMaterial : public testing::Test {
 
 private:
-  shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
   virtual void SetUp() {
@@ -33,27 +33,26 @@ protected:
     // make cell geometry
     double diameter = 6.35; // mm
     double spacing = 19.05; // mm
-    shared_ptr< CWovenCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CWovenCellDescription >( diameter, spacing );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CWovenCell > aCell = make_shared< CWovenCell >( aMaterial, aCellDescription );
+    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CWovenCell >( aMaterial, aCellDescription );
     
     m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
   };
 
 public:
-  shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
-TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties )
-{
+TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
   SCOPED_TRACE( "Begin Test: Woven shade uniform material." );
   
-  shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
+  shared_ptr< CBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 

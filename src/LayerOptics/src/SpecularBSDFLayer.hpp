@@ -4,14 +4,14 @@
 #include <memory>
 #include <vector>
 
-#include "BaseBSDFLayerMultiWL.hpp"
+#include "BSDFLayer.hpp"
 
 namespace LayerOptics {
 
   class CSpecularCell;
 
   // BSDF creation for specular layers.
-  class CSpecularBSDFLayer : public CBaseBSDFLayerMultiWL {
+  class CSpecularBSDFLayer : public CBSDFLayer {
   public:
     CSpecularBSDFLayer( std::shared_ptr< CSpecularCell > t_Cell, 
       std::shared_ptr< CBSDFHemisphere > t_Hemisphere );

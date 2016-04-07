@@ -17,7 +17,7 @@ namespace LayerOptics {
 
   CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer( shared_ptr< CDirectionalDiffuseCell > t_Cell, 
     shared_ptr< CBSDFHemisphere > t_Hemisphere ) :
-    CBaseBSDFLayerMultiWL( t_Cell, t_Hemisphere ) {
+    CBSDFLayer( t_Cell, t_Hemisphere ) {
     
   };
 
