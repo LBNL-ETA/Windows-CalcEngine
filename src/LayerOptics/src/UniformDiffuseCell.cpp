@@ -2,7 +2,7 @@
 
 #include "UniformDiffuseCell.hpp"
 #include "MaterialDescription.hpp"
-#include "BaseCellDescription.hpp"
+#include "CellDescription.hpp"
 #include "BeamDirection.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -12,7 +12,7 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
   
   CUniformDiffuseCell::CUniformDiffuseCell( shared_ptr< CMaterial > t_MaterialProperties, 
-    shared_ptr< CBaseCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
+    shared_ptr< CCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
 
   };
 

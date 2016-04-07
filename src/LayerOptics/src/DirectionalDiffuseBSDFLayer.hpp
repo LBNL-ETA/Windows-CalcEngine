@@ -3,14 +3,14 @@
 
 #include <memory>
 
-#include "BaseBSDFLayerMultiWL.hpp"
+#include "BSDFLayer.hpp"
 
 namespace LayerOptics {
 
   class CDirectionalDiffuseCell;
 
   // All outgoing directions are calculated
-  class CDirectionalDiffuseBSDFLayer : public CBaseBSDFLayerMultiWL {
+  class CDirectionalDiffuseBSDFLayer : public CBSDFLayer {
   public:
     CDirectionalDiffuseBSDFLayer( std::shared_ptr< CDirectionalDiffuseCell > t_Cell, 
       std::shared_ptr< CBSDFHemisphere > t_Hemisphere );

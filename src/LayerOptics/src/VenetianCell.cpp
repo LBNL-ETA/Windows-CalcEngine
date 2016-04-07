@@ -20,8 +20,10 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CVenetianBase
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CVenetianBase::CVenetianBase( shared_ptr< CMaterial > t_MaterialProperties, shared_ptr< CVenetianCellDescription > t_Cell ) :
-    CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ), CDirectionalDiffuseCell( t_MaterialProperties, t_Cell ) {
+  CVenetianBase::CVenetianBase( shared_ptr< CMaterial > t_MaterialProperties, 
+    shared_ptr< CCellDescription > t_Cell ) :
+    CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ), 
+    CDirectionalDiffuseCell( t_MaterialProperties, t_Cell ) {
   
   }
 
@@ -481,8 +483,9 @@ namespace LayerOptics {
   //  CVenetianCell
   ////////////////////////////////////////////////////////////////////////////////////////////
   CVenetianCell::CVenetianCell( shared_ptr< CMaterial > t_Material, 
-    shared_ptr< CVenetianCellDescription > t_Cell ) : 
-    CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ), m_Energy( t_Material, t_Cell ) {
+    shared_ptr< CCellDescription > t_Cell ) : 
+    CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ), 
+    m_Energy( t_Material, getCellAsVenetian() ) {
 
     assert( t_Cell != nullptr );
     assert( t_Material != nullptr );
@@ -493,7 +496,7 @@ namespace LayerOptics {
     size_t size = t_Material->getBandSize();
     for( size_t i = 0; i < size; ++i ) {
       CVenetianEnergy aEnergy = 
-        CVenetianEnergy( aMat[ i ].Tf, aMat[ i ].Tb, aMat[ i ].Rf, aMat[ i ].Rb, t_Cell );
+        CVenetianEnergy( aMat[ i ].Tf, aMat[ i ].Tb, aMat[ i ].Rf, aMat[ i ].Rb, getCellAsVenetian() );
       m_EnergiesBand.push_back( aEnergy );
     }
 

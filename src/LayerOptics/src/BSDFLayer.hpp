@@ -18,9 +18,9 @@ namespace LayerOptics {
   class CBeamDirection;
 
   // Base class for handling BSDF Layer
-  class CBaseBSDFLayerMultiWL {
+  class CBSDFLayer {
   public:
-    CBaseBSDFLayerMultiWL( std::shared_ptr< CBaseCell > t_Cell, std::shared_ptr< CBSDFHemisphere > t_Directions );
+    CBSDFLayer( std::shared_ptr< CBaseCell > t_Cell, std::shared_ptr< CBSDFHemisphere > t_Directions );
 
     // BSDF results for the enire spectrum range of the material in the cell
     std::shared_ptr< CBSDFResults > getResults();
@@ -43,7 +43,7 @@ namespace LayerOptics {
       const size_t t_DirectionIndex ) = 0;
 
     // BSDF layer is not calculated by default because it is time consuming process and in some cases this call
-    // is not necessary. However, refactoring is needed since there is no reason to create CBaseBSDFLayerMultiWL if
+    // is not necessary. However, refactoring is needed since there is no reason to create CBSDFLayer if
     // it will not be calculated
     void calculate();
     void calculate_wv();

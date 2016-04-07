@@ -14,8 +14,7 @@ using namespace std;
 using namespace LayerOptics;
 using namespace FenestrationCommon;
 
-class TestCircularPerforatedShade1 : public testing::Test
-{
+class TestCircularPerforatedShade1 : public testing::Test {
 
 private:
   shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
@@ -28,7 +27,7 @@ protected:
     double Rbmat = 0.66;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // make cell geometry
@@ -36,12 +35,12 @@ protected:
     double y = 38.1; // mm
     double thickness = 5; // mm
     double radius = 8.35; // mm
-    shared_ptr< CCircularCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
     
     m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 

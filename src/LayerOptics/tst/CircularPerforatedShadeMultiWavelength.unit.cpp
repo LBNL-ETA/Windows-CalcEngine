@@ -28,7 +28,7 @@ protected:
     double Rbmat = 0.7;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aSolarRangeMaterial = 
+    shared_ptr< CMaterial > aSolarRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // Visible range
@@ -37,12 +37,12 @@ protected:
     Rbmat = 0.6;
     minLambda = 0.38;
     maxLambda = 0.78;
-    shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial = 
+    shared_ptr< CMaterial > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     double ratio = 0.49;
 
-    shared_ptr< CMaterialDualBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
     // make cell geometry
@@ -50,12 +50,12 @@ protected:
     double y = 38.1; // mm
     double thickness = 5; // mm
     double radius = 8.35; // mm
-    shared_ptr< CCircularCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
 
     m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 

@@ -16,9 +16,9 @@ namespace LayerOptics {
   // Base class for cell description. It is used to describe direct-direct component of the cell without
   // using any of the materials.
 
-  class CBaseCellDescription {
+  class CCellDescription {
   public:
-    CBaseCellDescription();
+    CCellDescription();
 
     virtual double T_dir_dir( const FenestrationCommon::Side t_Side, 
       std::shared_ptr< const CBeamDirection > t_Direction ) = 0;

@@ -2,7 +2,9 @@
 #include <gtest/gtest.h>
 
 #include "UniformDiffuseBSDFLayer.hpp"
+#include "UniformDiffuseCell.hpp"
 #include "WovenCell.hpp"
+#include "CellDescription.hpp"
 #include "WovenCellDescription.hpp"
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
@@ -18,7 +20,7 @@ using namespace SpectralAveraging;
 class TestWovenShadeMultiWavelength : public testing::Test {
 
 private:
-  shared_ptr< CUniformDiffuseBSDFLayer > m_Layer;
+  shared_ptr< CBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
@@ -28,7 +30,7 @@ protected:
     double Rbmat = 0.7;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aSolarRangeMaterial = 
+    shared_ptr< CMaterial > aSolarRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // Visible range
@@ -37,37 +39,37 @@ protected:
     Rbmat = 0.6;
     minLambda = 0.38;
     maxLambda = 0.78;
-    shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial = 
+    shared_ptr< CMaterial > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     double ratio = 0.49;
 
-    shared_ptr< CMaterialDualBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
     // make cell geometry
     double diameter = 6.35; // mm
     double spacing = 19.05; // mm
-    shared_ptr< CWovenCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CWovenCellDescription >( diameter, spacing );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CWovenCell > aCell = make_shared< CWovenCell >( aMaterial, aCellDescription );
+    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CWovenCell >( aMaterial, aCellDescription );
 
     m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
   };
 
 public:
-  shared_ptr< CUniformDiffuseBSDFLayer > getLayer() { return m_Layer; };
+  shared_ptr< CBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
 TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
   SCOPED_TRACE( "Begin Test: Perforated layer (multi range) - BSDF." );
   
-  shared_ptr< CUniformDiffuseBSDFLayer > aLayer = getLayer();
+  shared_ptr< CBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
   

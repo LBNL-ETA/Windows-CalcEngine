@@ -1,7 +1,7 @@
 #ifndef SPECULARCELLDESCRIPTION_H
 #define SPECULARCELLDESCRIPTION_H
 
-#include "BaseCellDescription.hpp"
+#include "CellDescription.hpp"
 
 namespace FenestrationCommon {
 
@@ -12,7 +12,7 @@ namespace FenestrationCommon {
 
 namespace LayerOptics {
 
-  class CSpecularCellDescription : public CBaseCellDescription {
+  class CSpecularCellDescription : public CCellDescription {
   public:
     CSpecularCellDescription();
     

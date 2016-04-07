@@ -1,11 +1,11 @@
 #ifndef PERFORATEDCELLDESCRIPTION_H
 #define PERFORATEDCELLDESCRIPTION_H
 
-#include "BaseCellDescription.hpp"
+#include "CellDescription.hpp"
 
 namespace LayerOptics {
   
-  class CPerforatedCellDescription : public CBaseCellDescription {
+  class CPerforatedCellDescription : public CCellDescription {
   public:
     CPerforatedCellDescription( const double t_x, const double t_y, const double t_Thickness );
 

@@ -2,7 +2,7 @@
 #include <math.h>
 #include <assert.h>
 
-#include "BaseBSDFLayerMultiWL.hpp"
+#include "BSDFLayer.hpp"
 #include "BaseCell.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFResults.hpp"
@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
 
-  CBaseBSDFLayerMultiWL::CBaseBSDFLayerMultiWL( shared_ptr< CBaseCell > t_Cell, 
+  CBSDFLayer::CBSDFLayer( shared_ptr< CBaseCell > t_Cell, 
     shared_ptr< CBSDFHemisphere > t_Hemisphere ) : 
     m_Calculated( false ), m_CalculatedWV( false ) {
     m_Cell = t_Cell;
@@ -35,7 +35,7 @@ namespace LayerOptics {
     }
   }
 
-  shared_ptr< CBSDFResults > CBaseBSDFLayerMultiWL::getResults() {
+  shared_ptr< CBSDFResults > CBSDFLayer::getResults() {
     if( !m_Calculated ) {
       calculate();
       m_Calculated = true;
@@ -43,7 +43,7 @@ namespace LayerOptics {
     return m_Results;
   };
 
-  shared_ptr< vector< shared_ptr< CBSDFResults > > > CBaseBSDFLayerMultiWL::getWavelengthResults() {
+  shared_ptr< vector< shared_ptr< CBSDFResults > > > CBSDFLayer::getWavelengthResults() {
     if( !m_CalculatedWV ) {
       calculate_wv();
       m_CalculatedWV = true;
@@ -51,11 +51,11 @@ namespace LayerOptics {
     return m_WVResults;
   };
 
-  int CBaseBSDFLayerMultiWL::getBandIndex( const double t_Wavelength ) {
+  int CBSDFLayer::getBandIndex( const double t_Wavelength ) {
     return m_Cell->getBandIndex( t_Wavelength ) ;
   };
 
-  void CBaseBSDFLayerMultiWL::calc_dir_dir() {
+  void CBSDFLayer::calc_dir_dir() {
     for( Side t_Side : Enum< Side >() ) {
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
       size_t size = aDirections->size();
@@ -76,7 +76,7 @@ namespace LayerOptics {
     }
   };
 
-  void CBaseBSDFLayerMultiWL::calc_dir_dir_wv() {
+  void CBSDFLayer::calc_dir_dir_wv() {
     for( Side aSide : Enum< Side >() ) {
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
       size_t size = aDirections->size();
@@ -107,7 +107,7 @@ namespace LayerOptics {
     }
   };
 
-  void CBaseBSDFLayerMultiWL::calc_dir_dif() {
+  void CBSDFLayer::calc_dir_dif() {
     for( Side aSide : Enum< Side >() ) {
 
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
@@ -122,7 +122,7 @@ namespace LayerOptics {
     }
   }
 
-  void CBaseBSDFLayerMultiWL::calc_dir_dif_wv() {
+  void CBSDFLayer::calc_dir_dif_wv() {
     for( Side aSide : Enum< Side >() ) {
 
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
@@ -135,12 +135,12 @@ namespace LayerOptics {
     }
   };
 
-  void CBaseBSDFLayerMultiWL::calculate() {
+  void CBSDFLayer::calculate() {
     calc_dir_dir();
     calc_dir_dif();
   };
 
-  void CBaseBSDFLayerMultiWL::calculate_wv() {
+  void CBSDFLayer::calculate_wv() {
     calc_dir_dir_wv();
     calc_dir_dif_wv();
   };

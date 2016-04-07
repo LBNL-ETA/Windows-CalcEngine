@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 class TestVenetianUniformShadeCurvedMinus55_0 : public testing::Test {
 
 private:
-  shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
   virtual void SetUp() {
@@ -27,7 +27,7 @@ protected:
     double Rbmat = 0.5;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
     
     
@@ -38,11 +38,11 @@ protected:
     double curvatureRadius = 0.123967;
     size_t numOfSlatSegments = 2;
 
-    shared_ptr< CVenetianCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
-    shared_ptr< CVenetianCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
+    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
@@ -51,14 +51,14 @@ protected:
   };
 
 public:
-  shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
 TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
   SCOPED_TRACE( "Begin Test: Venetian shade (Curved, -55 degrees slats)." );
   
-  shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
+  shared_ptr< CBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 

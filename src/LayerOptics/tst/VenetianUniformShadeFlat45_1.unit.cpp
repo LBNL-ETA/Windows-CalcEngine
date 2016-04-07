@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 class TestVenetianUniformShadeFlat45_1 : public testing::Test {
 
 private:
-  shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
   virtual void SetUp() {
@@ -27,7 +27,7 @@ protected:
     double Rbmat = 0.7;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
         
     // make cell geometry
@@ -37,11 +37,11 @@ protected:
     double curvatureRadius = 0;
     size_t numOfSlatSegments = 1;
 
-    shared_ptr< CVenetianCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
-    shared_ptr< CVenetianCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
+    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
@@ -50,14 +50,14 @@ protected:
   };
 
 public:
-  shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
 TEST_F( TestVenetianUniformShadeFlat45_1, TestVenetian1 ) {
   SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - solar properties." );
   
-  shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
+  shared_ptr< CBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 

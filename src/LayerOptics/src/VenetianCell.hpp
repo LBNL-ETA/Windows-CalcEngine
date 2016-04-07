@@ -22,13 +22,14 @@ namespace Viewer {
 
 namespace LayerOptics {
 
+  class CCellDescription;
   class CVenetianCellDescription;
   class CBeamDirection;
 
   class CVenetianBase : public CUniformDiffuseCell, public CDirectionalDiffuseCell {
   public:
     CVenetianBase( std::shared_ptr< CMaterial > t_MaterialProperties,
-      std::shared_ptr< CVenetianCellDescription > t_Cell );
+      std::shared_ptr< CCellDescription > t_Cell );
 
   protected:
     std::shared_ptr< CVenetianCellDescription > getCellAsVenetian() const;
@@ -177,7 +178,7 @@ namespace LayerOptics {
   class CVenetianCell : public CVenetianBase {
   public:
     CVenetianCell( std::shared_ptr< CMaterial > t_MaterialProperties, 
-        std::shared_ptr< CVenetianCellDescription > t_Cell );
+        std::shared_ptr< CCellDescription > t_Cell );
 
     double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
     std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 

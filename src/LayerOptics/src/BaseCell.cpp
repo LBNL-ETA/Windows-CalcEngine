@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "BaseCell.hpp"
-#include "BaseCellDescription.hpp"
+#include "CellDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "MaterialDescription.hpp"
 
@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
 
   CBaseCell::CBaseCell( shared_ptr< CMaterial > t_Material, 
-    shared_ptr< CBaseCellDescription > t_CellDescription ) {
+    shared_ptr< CCellDescription > t_CellDescription ) {
     m_Material = t_Material;
     m_CellDescription = t_CellDescription;
   };
