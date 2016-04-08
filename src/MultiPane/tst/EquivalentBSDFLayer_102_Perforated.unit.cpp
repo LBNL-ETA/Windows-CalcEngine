@@ -1,15 +1,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "SpecularBSDFLayer.hpp"
-#include "EquivalentBSDFLayerMultiWL.hpp"
+#include "EquivalentBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
-#include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
-#include "SpecularCellDescription.hpp"
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "PerforatedCell.hpp"
 #include "PerforatedCellDescription.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
@@ -17,6 +12,8 @@
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -24,12 +21,12 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiPane;
 
-// Example on how to create multilayer BSDF from specular layers only
+// Example on how to create multilayer BSDF with combination of specular and perforated layer
 
 class EquivalentBSDFLayer_102_Perforated : public testing::Test {
 
 private:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > m_Layer;
+  shared_ptr< CEquivalentBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
@@ -275,6 +272,8 @@ protected:
 
     shared_ptr< vector< double > > commonWavelengths = aMeasurements_102->getWavelengths();
 
+    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+
     // Sample 102
     shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
 
@@ -282,16 +281,12 @@ protected:
     SpecularMaterialType aType = SpecularMaterialType::Monolithic;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSample > aMaterial_102 = 
+    shared_ptr< CMaterial > aMaterial_102 = 
       make_shared< CMaterialSample >( aSample_102, thickness, aType, minLambda, maxLambda );
 
-    shared_ptr< CSpecularCellDescription > aCellDescription_102 = make_shared< CSpecularCellDescription >();
-
-    shared_ptr< CSpecularCell > aCell_102 = make_shared< CSpecularCell >( aMaterial_102, aCellDescription_102 );
-
-    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
-
-    shared_ptr< CSpecularBSDFLayer > Layer_102 = make_shared< CSpecularBSDFLayer >( aCell_102, aBSDF );
+    // specular layer NFRC=102
+    CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial_102, aBSDF );
+    shared_ptr< CBSDFLayer > Layer_102 = aMaker102.getLayer();
 
     // Setting circular perforated shade with double range material
     // Solar range material
@@ -300,7 +295,7 @@ protected:
     double Rbmat = 0.7;
     minLambda = 0.3;
     maxLambda = 2.5;
-    shared_ptr< CMaterialSingleBand > aSolarRangeMaterial = 
+    shared_ptr< CMaterial > aSolarRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // Visible range
@@ -309,12 +304,12 @@ protected:
     Rbmat = 0.6;
     minLambda = 0.38;
     maxLambda = 0.78;
-    shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial = 
+    shared_ptr< CMaterial > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     double ratio = 0.49;
 
-    shared_ptr< CMaterialDualBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterialPerforated = 
       make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
     // make cell geometry
@@ -322,21 +317,21 @@ protected:
     double y = 19.05; // mm
     thickness = 5; // mm
     double radius = 3.175; // mm
-    shared_ptr< CCircularCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-    shared_ptr< CPerforatedCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+    // get shading BSDF layer
+    CBSDFLayerMaker aMakerPerforated = CBSDFLayerMaker( aMaterialPerforated, aBSDF, aCellDescription );
+    shared_ptr< CBSDFLayer > Layer_Perforated = aMakerPerforated.getLayer();
 
-    shared_ptr< CUniformDiffuseBSDFLayer > Layer_Perforated = 
-      make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
-
-    m_Layer = make_shared< CEquivalentBSDFLayerMultiWL >( commonWavelengths, aSolarRadiation, Layer_102 );
+    // Equivalent multilayer
+    m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
     m_Layer->addLayer( Layer_Perforated );
 
   };
 
 public:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > getLayer() { return m_Layer; };
+  shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
@@ -346,7 +341,7 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
   
-  shared_ptr< CEquivalentBSDFLayerMultiWL > aLayer = getLayer();
+  shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
   shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
 

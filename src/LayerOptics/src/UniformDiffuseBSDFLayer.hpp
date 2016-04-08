@@ -13,7 +13,7 @@ namespace LayerOptics {
   class CUniformDiffuseBSDFLayer : public CBSDFLayer {
   public:
     CUniformDiffuseBSDFLayer( std::shared_ptr< CUniformDiffuseCell > t_Cell, 
-      std::shared_ptr< CBSDFHemisphere > t_Hemisphere );
+      std::shared_ptr< const CBSDFHemisphere > t_Hemisphere );
 
   protected:
     std::shared_ptr< CUniformDiffuseCell > cellAsUniformDiffuse() const;

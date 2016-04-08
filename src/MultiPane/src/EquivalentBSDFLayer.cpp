@@ -1,8 +1,17 @@
+#include <algorithm>
+#include <iterator>
 #include <assert.h>
+#include <stdexcept>
 
+
+#include "EquivalentBSDFLayer.hpp"
+#include "EquivalentBSDFLayerSingleBand.hpp"
+#include "BSDFLayer.hpp"
+#include "SpecularBSDFLayer.hpp"
+#include "Series.hpp"
+#include "IntegratorStrategy.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
-#include "EquivalentBSDFLayer.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -10,220 +19,275 @@ using namespace FenestrationCommon;
 using namespace LayerOptics;
 
 namespace MultiPane {
- 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  CInterReflectance
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CInterReflectance::CInterReflectance( shared_ptr< const CSquareMatrix > t_Lambda, 
-    shared_ptr< const CSquareMatrix > t_Rb,
-    shared_ptr< const CSquareMatrix > t_Rf ) {
-    size_t size = t_Lambda->getSize();
-    shared_ptr< CSquareMatrix > lRb = t_Lambda->mult( *t_Rb );
-    shared_ptr< CSquareMatrix > lRf = t_Lambda->mult( *t_Rf );
-    m_InterRefl = lRb->mult( *lRf );
-    shared_ptr< CSquareMatrix > I = make_shared< CSquareMatrix >( size );
-    I->setIdentity();
-    m_InterRefl = I->sub( *m_InterRefl );
-    m_InterRefl = m_InterRefl->inverse();
+  CEquivalentBSDFLayer::CEquivalentBSDFLayer( shared_ptr< vector< double > > t_CommonWavelengths,
+    shared_ptr< CSeries > t_SolarRadiation, shared_ptr< CBSDFLayer > t_Layer ) : 
+    m_SolarRadiation( t_SolarRadiation ), m_CombinedLayerWavelengths( t_CommonWavelengths ), m_Calculated( false ) {
+    if( t_Layer == nullptr ) {
+      throw runtime_error("Equivalent BSDF Layer must contain valid layer.");
+    }
+
+    m_TauF = nullptr;
+    m_TauB = nullptr;
+    m_RhoF = nullptr;
+    m_RhoB = nullptr;    
+    m_AbsF = nullptr;
+    m_AbsB = nullptr;
+
+    m_LayersWL = make_shared< vector< shared_ptr< CEquivalentBSDFLayerSingleBand > > >();
+
+    // m_TauF_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
+    // m_TauB_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
+    // m_RhoF_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
+    // m_RhoB_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
+
+    // Lambda matrix from spectral results. Same lambda is valid for any wavelength
+    m_Lambda = t_Layer->getResults()->lambdaMatrix();
+
+    shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
+
+    aResults = t_Layer->getWavelengthResults();
+    size_t size = m_CombinedLayerWavelengths->size();
+    for( size_t i = 0; i < size; ++i ) {
+      double curWL = ( *m_CombinedLayerWavelengths )[ i ];
+      int index = t_Layer->getBandIndex( curWL );
+      assert( index > -1 );
+
+      shared_ptr< CBSDFResults > currentLayer = ( *aResults )[ size_t( index ) ];
+      shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer = make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
+
+      m_LayersWL->push_back( aEquivalentLayer );
+      
+      // m_TauF_WL->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Front ) );
+      // m_TauB_WL->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Back ) );
+      // m_RhoF_WL->push_back( ( *aResults )[ size_t( index ) ]->Rho( Side::Front ) );
+      // m_RhoB_WL->push_back( ( *aResults )[ size_t( index ) ]->Rho( Side::Back ) );
+    }
+
   };
 
-  shared_ptr< CSquareMatrix > CInterReflectance::value() const {
-    return m_InterRefl;
+  void CEquivalentBSDFLayer::addLayer( shared_ptr< CBSDFLayer > t_Layer ) {
+
+    shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
+
+    // m_AbsF.addLayer( t_Layer );
+    // m_AbsB.addLayer( t_Layer );
+
+    aResults = t_Layer->getWavelengthResults();
+    size_t size = m_CombinedLayerWavelengths->size();
+    for( size_t i = 0; i < size; ++i ) {
+      double curWL = ( *m_CombinedLayerWavelengths )[ i ];
+      int index = t_Layer->getBandIndex( curWL );
+      assert( index > -1 );
+      shared_ptr< CBSDFResults > currentLayer = ( *aResults )[ size_t( index ) ];
+      shared_ptr< CEquivalentBSDFLayerSingleBand > currentEqLayer = ( *m_LayersWL )[ i ];
+      currentEqLayer->addLayer( currentLayer );
+      // shared_ptr< CSquareMatrix > Tf2 = ( *aResults )[ size_t( index ) ]->Tau( Side::Front );
+      // shared_ptr< CSquareMatrix > Tb2 = ( *aResults )[ size_t( index ) ]->Tau( Side::Back );
+      // shared_ptr< CSquareMatrix > Rf2 = ( *aResults )[ size_t( index ) ]->Rho( Side::Front );
+      // shared_ptr< CSquareMatrix > Rb2 = ( *aResults )[ size_t( index ) ]->Rho( Side::Back );
+    
+      // shared_ptr< CSquareMatrix > aTauF = totTransmittance( ( *m_TauF_WL )[ i ], Tf2, ( *m_RhoB_WL )[ i ], Rf2 );
+      // shared_ptr< CSquareMatrix > aTauB = totTransmittance( Tf2, ( *m_TauB_WL )[ i ], Rf2, ( *m_RhoB_WL )[ i ] );
+      // shared_ptr< CSquareMatrix > aRhoF = totReflectance( ( *m_TauF_WL )[ i ], ( *m_TauB_WL )[ i ], 
+      //   ( *m_RhoF_WL )[ i ], ( *m_RhoB_WL )[ i ], Rf2 );
+      // shared_ptr< CSquareMatrix > aRhoB = totReflectance( Tb2, Tf2, Rb2, Rf2, ( *m_RhoB_WL )[ i ] );
+      // 
+      // ( *m_TauF_WL )[ i ] = aTauF;
+      // ( *m_TauB_WL )[ i ] = aTauB;
+      // ( *m_RhoF_WL )[ i ] = aRhoF;
+      // ( *m_RhoB_WL )[ i ] = aRhoB;
+    }
+
   };
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  CBSDFDoubleLayer
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( const double minLambda, const double maxLambda, Side t_Side ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
 
-  CBSDFDoubleLayer::CBSDFDoubleLayer( shared_ptr< CBSDFResults > t_FrontLayer, shared_ptr< CBSDFResults > t_BackLayer ) {
-    shared_ptr< const CSquareMatrix > aLambda = t_FrontLayer->lambdaMatrix();
-    CInterReflectance InterRefl1 = CInterReflectance( aLambda, t_FrontLayer->Rho( Side::Back ), 
-      t_BackLayer->Rho( Side::Front ) );
+    shared_ptr< CSquareMatrix > aMatrix = nullptr;
 
-    CInterReflectance InterRefl2 = CInterReflectance( aLambda, t_BackLayer->Rho( Side::Front ), 
-      t_FrontLayer->Rho( Side::Back ) );
-
-    m_Tf = equivalentT( t_BackLayer->Tau( Side::Front ), InterRefl1.value(), aLambda, t_FrontLayer->Tau( Side::Front ) );
-    m_Tb = equivalentT( t_FrontLayer->Tau( Side::Back ), InterRefl2.value(), aLambda, t_BackLayer->Tau( Side::Back ) );
-    m_Rf = equivalentR( t_FrontLayer->Rho( Side::Front ), t_FrontLayer->Tau( Side::Front ), t_FrontLayer->Tau( Side::Back ),
-      t_BackLayer->Rho( Side::Front ), InterRefl2.value(), aLambda );
-    m_Rb = equivalentR( t_BackLayer->Rho( Side::Back ), t_BackLayer->Tau( Side::Back ), t_BackLayer->Tau( Side::Front ),
-      t_FrontLayer->Rho( Side::Back ), InterRefl1.value(), aLambda );
-
-    m_Results = make_shared< CBSDFResults >( t_FrontLayer->getDirections() );
-    m_Results->setResultMatrices( m_Tf, m_Rf, Side::Front );
-    m_Results->setResultMatrices( m_Tb, m_Rb, Side::Back );
-
-  };
-
-  shared_ptr< CBSDFResults > CBSDFDoubleLayer::value() {
-    return m_Results; 
-  };
-
-  shared_ptr< CSquareMatrix > CBSDFDoubleLayer::equivalentT( shared_ptr< const CSquareMatrix > t_Tf2, 
-    shared_ptr< const CSquareMatrix > t_InterRefl, shared_ptr< const CSquareMatrix > t_Lambda,
-    shared_ptr< const CSquareMatrix > t_Tf1 ) {
-    shared_ptr< CSquareMatrix > TinterRefl = t_Tf2->mult( *t_InterRefl );
-    shared_ptr< CSquareMatrix > lambdaTf1 = t_Lambda->mult( *t_Tf1 );
-    shared_ptr< CSquareMatrix > aResult = TinterRefl->mult( *lambdaTf1 );
-    return aResult;
-  };
-
-  shared_ptr< CSquareMatrix > CBSDFDoubleLayer::equivalentR( shared_ptr< const CSquareMatrix > t_Rf1,
-    shared_ptr< const CSquareMatrix > t_Tf1, shared_ptr< const CSquareMatrix > t_Tb1, 
-    shared_ptr< const CSquareMatrix > t_Rf2, shared_ptr< const CSquareMatrix > t_InterRefl, 
-    shared_ptr< const CSquareMatrix > t_Lambda ) {
-    shared_ptr< CSquareMatrix > TinterRefl = t_Tb1->mult( *t_InterRefl );
-    shared_ptr< CSquareMatrix > lambdaRf2 = t_Lambda->mult( *t_Rf2 );
-    shared_ptr< CSquareMatrix > lambdaTf1 = t_Lambda->mult( *t_Tf1 );
-    TinterRefl = TinterRefl->mult( *lambdaRf2 );
-    TinterRefl = TinterRefl->mult( *lambdaTf1 );
-    shared_ptr< CSquareMatrix > aResult = t_Rf1->add( *TinterRefl );
-    return aResult;
-  };
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  CEquivalentBSDFLayer
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  CEquivalentBSDFLayer::CEquivalentBSDFLayer( shared_ptr< CBSDFResults > t_Layer ) : m_PropertiesCalculated( false ) {
-    m_EquivalentLayer = make_shared< CBSDFResults >( t_Layer->getDirections() );
-    m_Af = make_shared< vector< shared_ptr< vector< double > > > >();
-    m_Ab = make_shared< vector< shared_ptr< vector< double > > > >();
-    m_Layers.push_back( t_Layer );
-    m_Lambda = t_Layer->lambdaMatrix();
-  }
-
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( Side t_Side ) {
-    calcEquivalentProperties();
-    return m_EquivalentLayer->Tau( t_Side );
-  };
-
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( Side t_Side ) {
-    calcEquivalentProperties();
-    return m_EquivalentLayer->Rho( t_Side );
-  };
-
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::getLayerAbsorptances( const size_t Index, 
-    Side t_Side ) {
-    calcEquivalentProperties();
-    shared_ptr< vector< double > > Abs = nullptr;
     switch( t_Side ) {
-    case Side::Front:
-      Abs = ( *m_Af )[ Index - 1 ];
-      break;
-    case Side::Back:
-      Abs = ( *m_Ab )[ Index - 1 ];
-      break;
-    default:
-      assert("Incorrect side selection.");
-      break;
-    }
+      case Side::Front:
+        aMatrix = m_TauF;
+        break;
+      case Side::Back:
+        aMatrix = m_TauB;
+        break;
+      default:
+        assert("Incorrect side selection.");
+        break;
+      }
 
-    return Abs;
+    return aMatrix;
   };
 
-  size_t CEquivalentBSDFLayer::getNumberOfLayers() const {
-    return m_Layers.size();
+  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( const double minLambda, 
+    const double maxLambda, Side t_Side ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+
+    shared_ptr< CSquareMatrix > aMatrix = nullptr;
+
+    switch( t_Side ) {
+      case Side::Front:
+        aMatrix = m_RhoF;
+        break;
+      case Side::Back:
+        aMatrix = m_RhoB;
+        break;
+      default:
+        assert("Incorrect side selection.");
+        break;
+      }
+
+    return aMatrix;
   };
 
-  void CEquivalentBSDFLayer::addLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer ) {
-    m_Layers.push_back( t_Layer );
-    m_PropertiesCalculated = false;
-    m_Af->clear();
-    m_Ab->clear();
+  shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
+    const Side t_Side, const size_t Index ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+    shared_ptr< vector< double > > aAbs = nullptr;
+    switch( t_Side ) {
+      case Side::Front:
+        aAbs = ( *m_AbsF )[ Index - 1 ];
+        break;
+      case Side::Back:
+        aAbs = ( *m_AbsB )[ Index - 1 ];
+        break;
+      default:
+        assert("Incorrect side selection.");
+        break;
+      }
+    return aAbs;
   };
 
-  void CEquivalentBSDFLayer::calcEquivalentProperties() {
-    if( m_PropertiesCalculated ) {
-      return;
-    }
-    size_t size = m_Layers.size();
-    m_EquivalentLayer = m_Layers[ 0 ];
-    m_Forward.push_back( m_EquivalentLayer );
-    for( size_t i = 1; i < size; ++i ) {
-      m_EquivalentLayer = CBSDFDoubleLayer( m_EquivalentLayer, m_Layers[ i ] ).value();
-      m_Forward.push_back( m_EquivalentLayer );
-    }
-    m_Backward.push_back( m_EquivalentLayer );
-
-    shared_ptr< CBSDFResults > bLayer = m_Layers[ size - 1 ];
-    for( size_t i = size - 1; i > 1; --i ) {
-      bLayer = CBSDFDoubleLayer( m_Layers[ i - 1 ], bLayer ).value();
-      m_Backward.push_back( bLayer );
-    }
-    m_Backward.push_back( m_Layers[ size - 1 ] );
-
+  void CEquivalentBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
     size_t matrixSize = m_Lambda->getSize();
-    shared_ptr< vector< double > > zeros = make_shared< vector< double > >( matrixSize );
-    // Check if need to fill with zeros
+    m_TauF = make_shared< CSquareMatrix >( matrixSize );
+    m_TauB = make_shared< CSquareMatrix >( matrixSize );
+    m_RhoF = make_shared< CSquareMatrix >( matrixSize );
+    m_RhoB = make_shared< CSquareMatrix >( matrixSize );
 
-    shared_ptr< vector< double > > Ap1f = nullptr;
-    shared_ptr< vector< double > > Ap2f = nullptr;
-    shared_ptr< vector< double > > Ap1b = nullptr;
-    shared_ptr< vector< double > > Ap2b = nullptr;
+    size_t numberOfLayers = ( *m_LayersWL )[ 0 ]->getNumberOfLayers();
 
-    for( size_t i = 0; i < size; i++ ) {
-      if( i == size - 1 ) {
-        Ap2f = zeros;
-        Ap1b = m_Layers[ i ]->Abs( Side::Back );
-      } else {
-        shared_ptr< CBSDFResults > Layer1 = m_Backward[ i + 1 ];
-        shared_ptr< CBSDFResults > Layer2 = m_Forward[ i ];
-        shared_ptr< CInterReflectance > InterRefl2 = 
-          make_shared< CInterReflectance >( m_Lambda, Layer1->Rho( Side::Front ), Layer2->Rho( Side::Back ) );
-        shared_ptr< vector< double > > Ab = m_Layers[ i ]->Abs( Side::Back );
-        Ap2f = absTerm2( Ab, InterRefl2->value(), m_Backward[ i + 1]->Rho( Side::Front ), 
-          m_Forward[ i ]->Tau( Side::Front) );
-        Ap1b = absTerm1( Ab, InterRefl2->value(), m_Backward[ i + 1 ]->Tau( Side::Back ) );
-      }
+    m_AbsF = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
+    m_AbsB = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
 
-      if( i == 0 ) {
-        Ap1f = m_Layers[ i ]->Abs( Side::Front );
-        Ap2b = zeros;
-      } else {
-        shared_ptr< CBSDFResults > Layer1 = m_Forward[ i - 1 ];
-        shared_ptr< CBSDFResults > Layer2 = m_Backward[ i ];
-        shared_ptr< CInterReflectance > InterRefl1 = 
-          make_shared< CInterReflectance >( m_Lambda, Layer1->Rho( Side::Back ), Layer2->Rho( Side::Front ) );
-        shared_ptr< vector< double > > Af = m_Layers[ i ]->Abs( Side::Front );
-        Ap1f = absTerm1( Af, InterRefl1->value(), m_Forward[ i - 1]->Tau( Side::Front ) );
-        Ap2b = absTerm2( Af, InterRefl1->value(), m_Forward[ i - 1 ]->Rho( Side::Back) , 
-          m_Backward[ i ]->Tau( Side::Back ) );
-      }
-
-      shared_ptr< vector< double > > AfTotal = make_shared< vector< double > >();
-      shared_ptr< vector< double > > AbTotal = make_shared< vector< double > >();
-      for( size_t i = 0; i < matrixSize; ++i ) {
-        AfTotal->push_back( ( *Ap1f )[ i ] + ( *Ap2f )[ i ] );
-        AbTotal->push_back( ( *Ap1b )[ i ] + ( *Ap2b )[ i ] );
-      }
-
-      m_Af->push_back( AfTotal );
-      m_Ab->push_back( AbTotal );
-
+    for( size_t i = 0; i < numberOfLayers; ++i ) {
+      ( *m_AbsF )[ i ] = make_shared< vector< double > >( matrixSize );
+      ( *m_AbsB )[ i ] = make_shared< vector< double > >( matrixSize );
     }
-    m_PropertiesCalculated = true;
-  };
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::absTerm1( shared_ptr< vector< double > > t_Alpha,
-    shared_ptr< CSquareMatrix > t_InterRefl, shared_ptr< CSquareMatrix > t_T ) {
-    shared_ptr< vector< double > > part1 = t_InterRefl->multVxM( *t_Alpha );
-    shared_ptr< CSquareMatrix > part2 = m_Lambda->mult( *t_T );
-    part1 = part2->multVxM( *part1 );
-    return part1;
-  };
+    shared_ptr< CSeries > iTotalSolar = m_SolarRadiation->integrate( IntegrationType::Trapezoidal );
+    double incomingSolar = iTotalSolar->sum( minLambda, maxLambda );
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::absTerm2( shared_ptr< vector< double > > t_Alpha,
-    shared_ptr< CSquareMatrix > t_InterRefl, shared_ptr< CSquareMatrix > t_R,
-    shared_ptr< CSquareMatrix > t_T ) {
-    shared_ptr< vector< double > > part1 = t_InterRefl->multVxM( *t_Alpha );
-    shared_ptr< CSquareMatrix > part2 = m_Lambda->mult( *t_R );
-    shared_ptr< CSquareMatrix > part3 = m_Lambda->mult( *t_T );
-    part1 = part2->multVxM( *part1 );
-    part1 = part3->multVxM( *part1 );
-    return part1;
+    shared_ptr< CSeries > interpolatedSolar = m_SolarRadiation->interpolate( m_CombinedLayerWavelengths );
+
+    size_t size = m_CombinedLayerWavelengths->size();
+
+    // Total matrices for every property
+    vector< vector< shared_ptr< CSeries > > > aTotalTFront;
+    vector< vector< shared_ptr< CSeries > > > aTotalTBack;
+    vector< vector< shared_ptr< CSeries > > > aTotalRFront;
+    vector< vector< shared_ptr< CSeries > > > aTotalRBack;
+
+    vector< vector< shared_ptr< CSeries > > > aTotalAf = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
+    vector< vector< shared_ptr< CSeries > > > aTotalAb = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
+    for( size_t i = 0; i < numberOfLayers; ++i ) {
+      aTotalAf[ i ].resize( matrixSize );
+      aTotalAb[ i ].resize( matrixSize );
+    }
+
+    aTotalTFront.resize( matrixSize );
+    aTotalTBack.resize( matrixSize );
+    aTotalRFront.resize( matrixSize );
+    aTotalRBack.resize( matrixSize );
+
+    for( size_t i = 0; i < matrixSize; ++i ) {
+      aTotalTFront[ i ].resize( matrixSize );
+      aTotalTBack[ i ].resize( matrixSize );
+      aTotalRFront[ i ].resize( matrixSize );
+      aTotalRBack[ i ].resize( matrixSize );
+    }
+
+    // Calculate total transmitted solar per matrix and perform integration
+    for( size_t i = 0; i < size; ++i ) {
+      // First need to select correct side
+      double curWL = ( *m_CombinedLayerWavelengths )[ i ];
+      shared_ptr< CEquivalentBSDFLayerSingleBand > curLayer = ( *m_LayersWL )[ i ];
+
+      for( size_t j = 0; j < matrixSize; ++j ) {
+        for( size_t k = 0; k < numberOfLayers; ++k ) {
+          if( i == 0 ) {
+            aTotalAf[ k ][ j ] = make_shared< CSeries >();
+            aTotalAb[ k ][ j ] = make_shared< CSeries >();
+          }
+          aTotalAf[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, Side::Front ) )[ j ] );
+          aTotalAb[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, Side::Back ) )[ j ] );
+        }
+        
+        for( size_t k = 0; k < matrixSize; ++k ) {
+          if( i == 0 ) {
+            aTotalTFront[ j ][ k ] = make_shared< CSeries >();
+            aTotalTBack[ j ][ k ] = make_shared< CSeries >();
+            aTotalRFront[ j ][ k ] = make_shared< CSeries >();
+            aTotalRBack[ j ][ k ] = make_shared< CSeries >();
+          }
+          
+          aTotalTFront[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( Side::Front ) )[ j ][ k ] );
+          aTotalTBack[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( Side::Back ) )[ j ][ k ] );
+          aTotalRFront[ j ][ k ]->addProperty( curWL, ( *curLayer->Rho( Side::Front ) )[ j ][ k ] );
+          aTotalRBack[ j ][ k ]->addProperty( curWL, ( *curLayer->Rho( Side::Back ) )[ j ][ k ] );
+        }
+      }
+    }
+
+    for( size_t j = 0; j < matrixSize; ++j ) {
+      for( size_t k = 0; k < numberOfLayers; ++k ) {
+          aTotalAf[ k ][ j ] = aTotalAf[ k ][ j ]->mMult( interpolatedSolar );
+          aTotalAf[ k ][ j ] = aTotalAf[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
+          ( *( *m_AbsF )[ k ] )[ j ] = aTotalAf[ k ][ j ]->sum( minLambda, maxLambda );
+          ( *( *m_AbsF )[ k ] )[ j ] = ( *( *m_AbsF )[ k ] )[ j ] / incomingSolar;
+
+          aTotalAb[ k ][ j ] = aTotalAb[ k ][ j ]->mMult( interpolatedSolar );
+          aTotalAb[ k ][ j ] = aTotalAb[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
+          ( *( *m_AbsB )[ k ] )[ j ] = aTotalAb[ k ][ j ]->sum( minLambda, maxLambda );
+          ( *( *m_AbsB )[ k ] )[ j ] = ( *( *m_AbsB )[ k ] )[ j ] / incomingSolar;
+        }
+      for( size_t k = 0; k < matrixSize; ++k ) {
+        // Front transmittance
+        aTotalTFront[ j ][ k ] = aTotalTFront[ j ][ k ]->mMult( interpolatedSolar );
+        aTotalTFront[ j ][ k ] = aTotalTFront[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
+        ( *m_TauF )[ j ][ k ] = aTotalTFront[ j ][ k ]->sum( minLambda, maxLambda );
+        ( *m_TauF )[ j ][ k ] = ( *m_TauF )[ j ][ k ] / incomingSolar;
+
+        // Back transmittance
+        aTotalTBack[ j ][ k ] = aTotalTBack[ j ][ k ]->mMult( interpolatedSolar );
+        aTotalTBack[ j ][ k ] = aTotalTBack[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
+        ( *m_TauB )[ j ][ k ] = aTotalTBack[ j ][ k ]->sum( minLambda, maxLambda );
+        ( *m_TauB )[ j ][ k ] = ( *m_TauB )[ j ][ k ] / incomingSolar;
+
+        // Front reflectance
+        aTotalRFront[ j ][ k ] = aTotalRFront[ j ][ k ]->mMult( interpolatedSolar );
+        aTotalRFront[ j ][ k ] = aTotalRFront[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
+        ( *m_RhoF )[ j ][ k ] = aTotalRFront[ j ][ k ]->sum( minLambda, maxLambda );
+        ( *m_RhoF )[ j ][ k ] = ( *m_RhoF )[ j ][ k ] / incomingSolar;
+
+        // Back reflectance
+        aTotalRBack[ j ][ k ] = aTotalRBack[ j ][ k ]->mMult( interpolatedSolar );
+        aTotalRBack[ j ][ k ] = aTotalRBack[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
+        ( *m_RhoB )[ j ][ k ] = aTotalRBack[ j ][ k ]->sum( minLambda, maxLambda );
+        ( *m_RhoB )[ j ][ k ] = ( *m_RhoB )[ j ][ k ] / incomingSolar;
+      }
+    }
+
+    m_Calculated = true;
+
   };
 
 }

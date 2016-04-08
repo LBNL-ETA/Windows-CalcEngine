@@ -22,6 +22,7 @@ using namespace SpectralAveraging;
 using namespace MultiPane;
 
 // Example/test case on multlayer specular
+// Difference from BSDF layer is that properties can be calculated at any custom angle
 
 class EquivalentSpecularLayer_102_103 : public testing::Test {
 

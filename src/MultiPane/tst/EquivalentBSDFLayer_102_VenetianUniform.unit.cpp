@@ -1,16 +1,11 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "SpecularBSDFLayer.hpp"
-#include "EquivalentBSDFLayerMultiWL.hpp"
+#include "EquivalentBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
-#include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "SpecularCellDescription.hpp"
 #include "VenetianCellDescription.hpp"
-#include "VenetianCell.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
 #include "MaterialDescription.hpp"
@@ -18,6 +13,8 @@
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -25,12 +22,12 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiPane;
 
-// Example on how to create multilayer BSDF from specular and shading layer
+// Example on how to create multilayer BSDF from specular and venetian layers
 
 class EquivalentBSDFLayer_102_VenetianUniform : public testing::Test {
 
 private:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > m_Layer;
+  shared_ptr< CEquivalentBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
@@ -276,6 +273,8 @@ protected:
 
     shared_ptr< vector< double > > commonWavelengths = aMeasurements_102->getWavelengths();
 
+    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+
     // Sample 102
     shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
 
@@ -283,22 +282,18 @@ protected:
     double maxLambda = 2.5;
     double thickness = 3.048e-3; // [m]
     SpecularMaterialType aType = SpecularMaterialType::Monolithic;
-    shared_ptr< CMaterialSample > aMaterial_102 = 
+    shared_ptr< CMaterial > aMaterial_102 = 
       make_shared< CMaterialSample >( aSample_102, thickness, aType, minLambda, maxLambda );
 
-    shared_ptr< CSpecularCellDescription > aCellDescription_102 = make_shared< CSpecularCellDescription >();
-
-    shared_ptr< CSpecularCell > aCell_102 = make_shared< CSpecularCell >( aMaterial_102, aCellDescription_102 );
-
-    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
-
-    shared_ptr< CSpecularBSDFLayer > Layer_102 = make_shared< CSpecularBSDFLayer >( aCell_102, aBSDF );
+    // specular layer NFRC=102
+    CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial_102, aBSDF );
+    shared_ptr< CBSDFLayer > Layer_102 = aMaker102.getLayer();
     
     // Venetian blind
     double Tmat = 0.1;
     double Rfmat = 0.7;
     double Rbmat = 0.7;
-    shared_ptr< CMaterialSingleBand > aSolarRangeMaterial = 
+    shared_ptr< CMaterial > aSolarRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // Visible range
@@ -307,12 +302,12 @@ protected:
     Rbmat = 0.6;
     minLambda = 0.38;
     maxLambda = 0.78;
-    shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial = 
+    shared_ptr< CMaterial > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     double ratio = 0.49;
 
-    shared_ptr< CMaterialDualBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterialVenetian = 
       make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
     // make cell geometry
@@ -322,21 +317,21 @@ protected:
     double curvatureRadius = 0;
     size_t numOfSlatSegments = 5;
 
-    shared_ptr< CVenetianCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
-    shared_ptr< CVenetianCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
+    // get shading BSDF layer
+    CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( aMaterialVenetian, aBSDF, aCellDescription );
+    shared_ptr< CBSDFLayer > Layer_Venetian = aMakerVenetian.getLayer();
 
-    shared_ptr< CUniformDiffuseBSDFLayer > aVenetian = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
-
-    m_Layer = make_shared< CEquivalentBSDFLayerMultiWL >( commonWavelengths, aSolarRadiation, Layer_102 );
-    m_Layer->addLayer( aVenetian );
+    m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
+    m_Layer->addLayer( Layer_Venetian );
 
   };
 
 public:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > getLayer() { return m_Layer; };
+  shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
@@ -346,7 +341,7 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
   
-  shared_ptr< CEquivalentBSDFLayerMultiWL > aLayer = getLayer();
+  shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
   shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
 

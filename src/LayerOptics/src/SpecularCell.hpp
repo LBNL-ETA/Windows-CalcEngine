@@ -16,14 +16,15 @@ namespace LayerOptics {
 
   class CMaterialSample;
   class CSpecularCellDescription;
+  class CCellDescription;
   class CBeamDirection;
 
   // Calculates spectral properties of specular layer over the given wavelength range and it also calculates
   // spectral properties over given wavelengths
   class CSpecularCell : public CBaseCell {
   public:
-    CSpecularCell( std::shared_ptr< CMaterialSample > t_MaterialProperties,
-      std::shared_ptr< CSpecularCellDescription > t_Cell );
+    CSpecularCell( std::shared_ptr< CMaterial > t_MaterialProperties,
+      std::shared_ptr< CCellDescription > t_Cell );
     
     // Transmittance averaged over entire wavelength spectrum
     double T_dir_dir( const FenestrationCommon::Side t_Side,

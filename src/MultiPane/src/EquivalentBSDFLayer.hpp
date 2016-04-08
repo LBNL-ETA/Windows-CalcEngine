@@ -1,112 +1,67 @@
-#ifndef EQUIVALENTBSDFLAYER_H
-#define EQUIVALENTBSDFLAYER_H
+#ifndef EQUIVALENTBSDFLAYERMULTIWL_H
+#define EQUIVALENTBSDFLAYERMULTIWL_H
 
 #include <memory>
 #include <vector>
 
+#include "AbsorptancesMultiPaneBSDF.hpp"
+
 namespace FenestrationCommon {
 
   class CSquareMatrix;
+  class CSeries;
   enum class Side;
 
 }
 
 namespace LayerOptics {
 
-  class CBSDFResults;
+  class CBSDFLayer;
 
 }
 
 namespace MultiPane {
 
-  // Class to handle interreflectance calculations
-  class CInterReflectance {
-  public:
-    CInterReflectance( std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Lambda,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rb,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf );
+  class CEquivalentBSDFLayerSingleBand;
 
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > value() const;
-
-  private:
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_InterRefl;
-
-  };
-
-  // Class to calculate equivalent BSDF transmittance and reflectances. This will be used by
-  // multilayer routines to calculate properties for any number of layers.
-  class CBSDFDoubleLayer {
-  public:
-    CBSDFDoubleLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_FrontLayer, 
-      std::shared_ptr< LayerOptics::CBSDFResults > t_BackLayer );
-
-    std::shared_ptr< LayerOptics::CBSDFResults > value();
-
-    // std::shared_ptr< FenestrationCommon::CSquareMatrix > T( FenestrationCommon::Side t_Side );
-    // std::shared_ptr< FenestrationCommon::CSquareMatrix > R( FenestrationCommon::Side t_Side );
-
-  private:
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > equivalentT( 
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf2, 
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Lambda,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf1 );
-
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > equivalentR( 
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf1,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf1,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tb1,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf2,      
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Lambda );
-
-    std::shared_ptr< LayerOptics::CBSDFResults > m_Results;
-
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Tf;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Tb;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Rf;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Rb;
-  };
-
-  // Class for equivalent BSDF layer for single material properties (or single wavelength)
+  // Calculates equivalent BSDF matrices for transmittances and reflectances
   class CEquivalentBSDFLayer {
   public:
-    explicit CEquivalentBSDFLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );
-    void addLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );
+    CEquivalentBSDFLayer( std::shared_ptr< std::vector< double > > t_CommonWavelengths, 
+      std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation, 
+      std::shared_ptr< LayerOptics::CBSDFLayer > t_Layer );
 
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( FenestrationCommon::Side t_Side );
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( FenestrationCommon::Side t_Side );
+    void addLayer( std::shared_ptr< LayerOptics::CBSDFLayer > t_Layer );
 
-    std::shared_ptr< std::vector< double > > getLayerAbsorptances( const size_t Index, 
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const double minLambda, const double maxLambda, 
       FenestrationCommon::Side t_Side );
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const double minLambda, const double maxLambda, 
+      FenestrationCommon::Side t_Side );
+    std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, 
+      const FenestrationCommon::Side t_Side, const size_t Index );
 
-    size_t getNumberOfLayers() const;
-  
   private:
-    void calcEquivalentProperties();
 
-    std::shared_ptr< std::vector< double > > absTerm1( std::shared_ptr< std::vector< double > > t_Alpha,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_T );
+    void calculate( const double minLambda, const double maxLambda );
 
-    std::shared_ptr< std::vector< double > > absTerm2( std::shared_ptr< std::vector< double > > t_Alpha,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_R,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_T );
+    // Vector of layer results over each wavelength
+    std::shared_ptr< std::vector< std::shared_ptr< CEquivalentBSDFLayerSingleBand > > > m_LayersWL;
 
-    std::shared_ptr< LayerOptics::CBSDFResults > m_EquivalentLayer;
-    std::vector< std::shared_ptr< LayerOptics::CBSDFResults > > m_Layers;
-  
-    // Forward and backward layers are used for calculation of equivalent absorptances
-    std::vector< std::shared_ptr< LayerOptics::CBSDFResults > > m_Forward;
-    std::vector< std::shared_ptr< LayerOptics::CBSDFResults > > m_Backward;
-  
-    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_Af;
-    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_Ab;
+    // Matrices for the entire system
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_TauF;
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_TauB;
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_RhoF;
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_RhoB;
 
-    bool m_PropertiesCalculated;
-    
+    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_AbsF;
+    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_AbsB;
+
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
+    std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
+
+    std::shared_ptr< std::vector< double > > m_CombinedLayerWavelengths;
+    bool m_Calculated;
+
   };
 
 }

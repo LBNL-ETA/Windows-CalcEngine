@@ -1,16 +1,12 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "SpecularBSDFLayer.hpp"
-#include "EquivalentBSDFLayerMultiWL.hpp"
+#include "EquivalentBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
 #include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "SpecularCellDescription.hpp"
 #include "VenetianCellDescription.hpp"
-#include "VenetianCell.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
 #include "MaterialDescription.hpp"
@@ -18,6 +14,8 @@
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -32,15 +30,10 @@ using namespace MultiPane;
 class EquivalentBSDFLayer_102_VenetianUniformMultiWL : public testing::Test {
 
 private:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > m_Layer;
+  shared_ptr< CEquivalentBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
-    
-    ///////////////////////////////////////
-    // BSDF basis will be quarter basis
-    ///////////////////////////////////////
-    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
     ///////////////////////////////////////
     // Make solar radiation spectral data
@@ -287,6 +280,11 @@ protected:
     aMeasurements_102->addRecord( 2.450, 0.8260, 0.0690, 0.0690 );
     aMeasurements_102->addRecord( 2.500, 0.8220, 0.0680, 0.0680 );
 
+    //////////////////////////////////
+    // BSDF Basis definition
+    //////////////////////////////////
+    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+
     // Create Sample 102 by applying measurements and solar radiation. Sample represents only
     // material transmittances and reflectances over certain wavelength data. Default behavior is
     // to use wavelenght set from measurements. It is however possible to define custom wavelength
@@ -303,20 +301,12 @@ protected:
     double maxLambda = 2.5;
     double thickness = 3.048e-3; // [m]
     SpecularMaterialType aType = SpecularMaterialType::Monolithic;
-    shared_ptr< CMaterialSample > aMaterial_102 = 
+    shared_ptr< CMaterial > aMaterial_102 = 
       make_shared< CMaterialSample >( aSample_102, thickness, aType, minLambda, maxLambda );
 
-    // Cell description is used to define cell geometry. In case of specular layer, there is no any geometry
-    // to be defined and therefore, simple object will be used
-    shared_ptr< CSpecularCellDescription > aCellDescription_102 = make_shared< CSpecularCellDescription >();
-
-    // Final two steps are used to define specular cell and BSDF layer. Specular cell at this moment can
-    // calulate transmittances and reflectances at any angle
-    shared_ptr< CSpecularCell > aCell_102 = make_shared< CSpecularCell >( aMaterial_102, aCellDescription_102 );
-
-    // Finally, specular BSDF layer is formed and it can calculate BSDF properties (transmittance, reflectance
-    // and absorptance) for this individual layer over intergrated range or at individual wavelengths
-    shared_ptr< CSpecularBSDFLayer > Layer_102 = make_shared< CSpecularBSDFLayer >( aCell_102, aBSDF );
+    // specular layer NFRC=102
+    CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial_102, aBSDF );
+    shared_ptr< CBSDFLayer > Layer_102 = aMaker102.getLayer();
     
     ///////////////////////////////////////
     // Venetian blind
@@ -389,7 +379,7 @@ protected:
     maxLambda = 2.5;
     thickness = 1.5e-3; // [m]
     aType = SpecularMaterialType::Monolithic;
-    shared_ptr< CMaterialSample > aMaterial_Venetian = 
+    shared_ptr< CMaterial > aMaterial_Venetian = 
       make_shared< CMaterialSample >( aSample_Venetian, thickness, aType, minLambda, maxLambda );
 
     // make cell geometry
@@ -399,24 +389,24 @@ protected:
     double curvatureRadius = 0;
     size_t numOfSlatSegments = 5;
 
-    shared_ptr< CVenetianCellDescription > aCellDescription = 
+    shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
-    shared_ptr< CVenetianCell > aCell = make_shared< CVenetianCell >( aMaterial_Venetian, aCellDescription );
-
-    shared_ptr< CUniformDiffuseBSDFLayer > aVenetian = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
+    // get shading BSDF layer
+    CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( aMaterial_Venetian, aBSDF, aCellDescription );
+    shared_ptr< CBSDFLayer > aVenetian = aMakerVenetian.getLayer();
 
     // All integration will be performed over wavelengths that are specified in NFRC=102
     shared_ptr< vector< double > > commonWavelengths = aMeasurements_102->getWavelengths();
 
-    m_Layer = make_shared< CEquivalentBSDFLayerMultiWL >( commonWavelengths, aSolarRadiation, Layer_102 );
+    m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
     m_Layer->addLayer( aVenetian );
 
   };
 
 public:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > getLayer() { return m_Layer; };
+  shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
@@ -426,7 +416,7 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniformMultiWL, TestBSDF1 ) {
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
   
-  shared_ptr< CEquivalentBSDFLayerMultiWL > aLayer = getLayer();
+  shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
   shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
 

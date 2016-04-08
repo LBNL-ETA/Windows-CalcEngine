@@ -1,11 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "SpecularBSDFLayer.hpp"
-#include "EquivalentBSDFLayerMultiWL.hpp"
+#include "EquivalentBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
-#include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
 #include "SpecularCellDescription.hpp"
 #include "CommonWavelengths.hpp"
@@ -15,6 +13,8 @@
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -27,7 +27,7 @@ using namespace MultiPane;
 class EquivalentBSDFLayer_102_103 : public testing::Test {
 
 private:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > m_Layer;
+  shared_ptr< CEquivalentBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
@@ -396,44 +396,42 @@ protected:
     aMeasurements_102->interpolate( commonWavelengths );
     aMeasurements_103->interpolate( commonWavelengths );
 
-    // Sample 102
+    // Create BSDF
+    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+
+    // Material Sample 102
     shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
 
     double thickness = 3.048e-3; // [m]
     SpecularMaterialType aType = SpecularMaterialType::Monolithic;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSample > aMaterial_102 = 
+    shared_ptr< CMaterial > aMaterial_102 = 
       make_shared< CMaterialSample >( aSample_102, thickness, aType, minLambda, maxLambda );
 
-    shared_ptr< CSpecularCellDescription > aCellDescription_102 = make_shared< CSpecularCellDescription >();
-
-    shared_ptr< CSpecularCell > aCell_102 = make_shared< CSpecularCell >( aMaterial_102, aCellDescription_102 );
-
-    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
-
-    shared_ptr< CSpecularBSDFLayer > Layer_102 = make_shared< CSpecularBSDFLayer >( aCell_102, aBSDF );
+    // specular layer NFRC=102
+    CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial_102, aBSDF );
+    shared_ptr< CBSDFLayer > Layer_102 = aMaker102.getLayer();
 
     // Sample 103
     shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103, aSolarRadiation );
     
     thickness = 5.715e-3; // [m]
-    shared_ptr< CMaterialSample > aMaterial_103 = 
+    shared_ptr< CMaterial > aMaterial_103 = 
       make_shared< CMaterialSample >( aSample_103, thickness, aType, minLambda, maxLambda );
     
-    shared_ptr< CSpecularCellDescription > aCellDescription_103 = make_shared< CSpecularCellDescription >();
-    
-    shared_ptr< CSpecularCell > aCell_103 = make_shared< CSpecularCell >( aMaterial_103, aCellDescription_103 );
-    
-    shared_ptr< CSpecularBSDFLayer > Layer_103 = make_shared< CSpecularBSDFLayer >( aCell_103, aBSDF );
+    // specular layer NFRC=103
+    CBSDFLayerMaker aMaker103 = CBSDFLayerMaker( aMaterial_103, aBSDF );
+    shared_ptr< CBSDFLayer > Layer_103 = aMaker103.getLayer();
 
-    m_Layer = make_shared< CEquivalentBSDFLayerMultiWL >( commonWavelengths, aSolarRadiation, Layer_102 );
+    // Equivalent BSDF layer
+    m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
     m_Layer->addLayer( Layer_103 );
 
   };
 
 public:
-  shared_ptr< CEquivalentBSDFLayerMultiWL > getLayer() { return m_Layer; };
+  shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
@@ -443,7 +441,7 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
   
-  shared_ptr< CEquivalentBSDFLayerMultiWL > aLayer = getLayer();
+  shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
   shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
 

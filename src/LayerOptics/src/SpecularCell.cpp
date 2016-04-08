@@ -13,8 +13,8 @@ using namespace SpectralAveraging;
 
 namespace LayerOptics {
 
-  CSpecularCell::CSpecularCell( shared_ptr< CMaterialSample > t_MaterialProperties,
-    shared_ptr< CSpecularCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
+  CSpecularCell::CSpecularCell( shared_ptr< CMaterial > t_MaterialProperties,
+    shared_ptr< CCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
 
   };
 

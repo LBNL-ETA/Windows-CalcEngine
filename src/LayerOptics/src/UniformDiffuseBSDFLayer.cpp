@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
 
   CUniformDiffuseBSDFLayer::CUniformDiffuseBSDFLayer( shared_ptr< CUniformDiffuseCell > t_Cell, 
-    shared_ptr< CBSDFHemisphere > t_Hemisphere ) :
+    shared_ptr< const CBSDFHemisphere > t_Hemisphere ) :
     CBSDFLayer( t_Cell, t_Hemisphere ) {
     
   };

@@ -1,14 +1,14 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "PerforatedCell.hpp"
 #include "PerforatedCellDescription.hpp"
 #include "MaterialDescription.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFResults.hpp"
 #include "FenestrationCommon.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 class TestCircularPerforatedShade2 : public testing::Test {
 
 private:
-  shared_ptr< CUniformDiffuseBSDFLayer > m_Shade;
+  shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
   virtual void SetUp() {
@@ -40,22 +40,21 @@ protected:
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
-    
-    m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
+    // make layer
+    CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
+    m_Shade = aMaker.getLayer();
 
   };
 
 public:
-  shared_ptr< CUniformDiffuseBSDFLayer > GetShade() { return m_Shade; };
+  shared_ptr< CBSDFLayer > GetShade() { return m_Shade; };
 
 };
 
-TEST_F( TestCircularPerforatedShade2, TestSolarProperties )
-{
+TEST_F( TestCircularPerforatedShade2, TestSolarProperties ) {
   SCOPED_TRACE( "Begin Test: Circular perforated cell - Solar properties." );
   
-  shared_ptr< CUniformDiffuseBSDFLayer > aShade = GetShade();
+  shared_ptr< CBSDFLayer > aShade = GetShade();
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
