@@ -1,7 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentBSDFLayer.hpp"
+#include "EquivalentBSDFLayerSingleBand.hpp"
 #include "BSDFDirections.hpp"
 #include "Series.hpp"
 #include "SpectralSample.hpp"
@@ -9,15 +9,12 @@
 #include "SpecularLayer.hpp"
 #include "MaterialDescription.hpp"
 #include "SpecularLayer.hpp"
-#include "SpecularCellDescription.hpp"
-#include "SpecularCell.hpp"
-#include "SpecularBSDFLayer.hpp"
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "PerforatedCell.hpp"
 #include "PerforatedCellDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFResults.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -46,6 +43,7 @@ protected:
   aDefinitions.push_back( CBSDFDefinition(   75, 1  ) );
   aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
 
+  // Create BSDF out of previous definitions
   shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( aDefinitions );
 
   shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
@@ -293,21 +291,19 @@ protected:
   SpecularMaterialType aType = SpecularMaterialType::Monolithic;
   double minLambda = 0.3;
   double maxLambda = 2.5;
-  shared_ptr< CMaterialSample > aMaterial = 
+  shared_ptr< CMaterial > aMaterial = 
     make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
-  shared_ptr< CSpecularCellDescription > aCellDescription = make_shared< CSpecularCellDescription >();
-
-  shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( aMaterial, aCellDescription );
-
-  shared_ptr< CSpecularBSDFLayer > aLayer102 = make_shared< CSpecularBSDFLayer >( aCell, aBSDF );
+  // specular layer NFRC=102
+  CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial, aBSDF );
+  shared_ptr< CBSDFLayer > aLayer102 = aMaker102.getLayer();
 
   // Perforated cell
   // create material
   double Tmat = 0.2;
   double Rfmat = 0.75;
   double Rbmat = 0.66;
-  shared_ptr< CMaterialSingleBand > perfMaterial = 
+  shared_ptr< CMaterial > perfMaterial = 
     make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
   // make cell geometry
@@ -315,12 +311,12 @@ protected:
   double y = 38.1; // mm
   thickness = 5; // mm
   double radius = 8.35; // mm
-  shared_ptr< CCircularCellDescription > perfCellDescription = 
+  shared_ptr< CCellDescription > perfCellDescription = 
     make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-  shared_ptr< CPerforatedCell > perfCell = make_shared< CPerforatedCell >( perfMaterial, perfCellDescription );
-    
-  shared_ptr< CUniformDiffuseBSDFLayer > aShade = make_shared< CUniformDiffuseBSDFLayer >( perfCell, aBSDF );
+  // get shading BSDF layer
+  CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( perfMaterial, aBSDF, perfCellDescription );
+  shared_ptr< CBSDFLayer > aShade = aMakerVenetian.getLayer();
 
   shared_ptr< CBSDFResults > aLayer1 = aLayer102->getResults();
   shared_ptr< CBSDFResults > aLayer2 = aShade->getResults();

@@ -1,14 +1,14 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "PerforatedCell.hpp"
 #include "PerforatedCellDescription.hpp"
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -18,7 +18,7 @@ using namespace SpectralAveraging;
 class TestCircularPerforatedShadeMultiWavelength : public testing::Test {
 
 private:
-  shared_ptr< CUniformDiffuseBSDFLayer > m_Layer;
+  shared_ptr< CBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
@@ -55,21 +55,21 @@ protected:
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
-
-    m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
+    // make layer
+    CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
+    m_Layer = aMaker.getLayer();
 
   };
 
 public:
-  shared_ptr< CUniformDiffuseBSDFLayer > getLayer() { return m_Layer; };
+  shared_ptr< CBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
 TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWavelength ) {
   SCOPED_TRACE( "Begin Test: Perforated layer (multi range) - BSDF." );
   
-  shared_ptr< CUniformDiffuseBSDFLayer > aLayer = getLayer();
+  shared_ptr< CBSDFLayer > aLayer = getLayer();
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
   

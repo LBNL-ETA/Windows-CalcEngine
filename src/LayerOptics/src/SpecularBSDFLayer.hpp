@@ -14,7 +14,7 @@ namespace LayerOptics {
   class CSpecularBSDFLayer : public CBSDFLayer {
   public:
     CSpecularBSDFLayer( std::shared_ptr< CSpecularCell > t_Cell, 
-      std::shared_ptr< CBSDFHemisphere > t_Hemisphere );
+      std::shared_ptr< const CBSDFHemisphere > t_Hemisphere );
 
   protected:
     std::shared_ptr< CSpecularCell > cellAsSpecular() const;

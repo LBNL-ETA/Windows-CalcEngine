@@ -18,7 +18,7 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
 
   CBSDFLayer::CBSDFLayer( shared_ptr< CBaseCell > t_Cell, 
-    shared_ptr< CBSDFHemisphere > t_Hemisphere ) : 
+    shared_ptr< const CBSDFHemisphere > t_Hemisphere ) : 
     m_Calculated( false ), m_CalculatedWV( false ) {
     m_Cell = t_Cell;
     m_BSDFHemisphere = t_Hemisphere;

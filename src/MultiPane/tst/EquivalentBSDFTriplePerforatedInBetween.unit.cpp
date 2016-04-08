@@ -1,7 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentBSDFLayer.hpp"
+#include "EquivalentBSDFLayerSingleBand.hpp"
 #include "BSDFDirections.hpp"
 #include "Series.hpp"
 #include "SpectralSample.hpp"
@@ -29,7 +29,7 @@ using namespace MultiPane;
 class TestEquivalentBSDFTriplePerforatedInBetween : public testing::Test {
 
 private:
-  shared_ptr< CEquivalentBSDFLayer > m_EquivalentBSDFLayer;
+  shared_ptr< CEquivalentBSDFLayerSingleBand > m_EquivalentBSDFLayer;
 
 protected:
   virtual void SetUp() {
@@ -324,21 +324,21 @@ protected:
   shared_ptr< CBSDFResults > aLayer2 = aShade->getResults();
   shared_ptr< CBSDFResults > aLayer3 = aLayer102->getResults();
 
-  m_EquivalentBSDFLayer = make_shared< CEquivalentBSDFLayer >( aLayer1 );
+  m_EquivalentBSDFLayer = make_shared< CEquivalentBSDFLayerSingleBand >( aLayer1 );
   m_EquivalentBSDFLayer->addLayer( aLayer2 );
   m_EquivalentBSDFLayer->addLayer( aLayer3 );
     
   };
 
 public:
-  shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_EquivalentBSDFLayer; };
+  shared_ptr< CEquivalentBSDFLayerSingleBand > getLayer() { return m_EquivalentBSDFLayer; };
 
 };
 
 TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   SCOPED_TRACE( "Begin Test: Equivalent layer NFRC=102 - Perforated - NFRC=102." );
   
-  shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
+  shared_ptr< CEquivalentBSDFLayerSingleBand > aLayer = getLayer();
 
   // Transmittance Front side
   shared_ptr< CSquareMatrix > Tf = aLayer->Tau( Side::Front );

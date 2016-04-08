@@ -1,9 +1,6 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "UniformDiffuseCell.hpp"
-#include "WovenCell.hpp"
 #include "CellDescription.hpp"
 #include "WovenCellDescription.hpp"
 #include "MaterialDescription.hpp"
@@ -11,6 +8,8 @@
 #include "BSDFDirections.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -53,11 +52,12 @@ protected:
     shared_ptr< CCellDescription > aCellDescription = 
       make_shared< CWovenCellDescription >( diameter, spacing );
 
+    // create BSDF
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CWovenCell >( aMaterial, aCellDescription );
-
-    m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
+    // make layer
+    CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
+    m_Layer = aMaker.getLayer();
 
   };
 

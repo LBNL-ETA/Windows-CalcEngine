@@ -20,7 +20,7 @@ namespace LayerOptics {
   // Base class for handling BSDF Layer
   class CBSDFLayer {
   public:
-    CBSDFLayer( std::shared_ptr< CBaseCell > t_Cell, std::shared_ptr< CBSDFHemisphere > t_Directions );
+    CBSDFLayer( std::shared_ptr< CBaseCell > t_Cell, std::shared_ptr< const CBSDFHemisphere > t_Directions );
 
     // BSDF results for the enire spectrum range of the material in the cell
     std::shared_ptr< CBSDFResults > getResults();
@@ -48,7 +48,7 @@ namespace LayerOptics {
     void calculate();
     void calculate_wv();
 
-    std::shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
+    std::shared_ptr< const CBSDFHemisphere > m_BSDFHemisphere;
     std::shared_ptr< CBaseCell > m_Cell;
     std::shared_ptr< CBSDFResults > m_Results;
     // Results over each wavelength

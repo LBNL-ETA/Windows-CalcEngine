@@ -16,7 +16,7 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
 
   CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer( shared_ptr< CDirectionalDiffuseCell > t_Cell, 
-    shared_ptr< CBSDFHemisphere > t_Hemisphere ) :
+    shared_ptr< const CBSDFHemisphere > t_Hemisphere ) :
     CBSDFLayer( t_Cell, t_Hemisphere ) {
     
   };

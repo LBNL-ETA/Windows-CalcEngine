@@ -1,10 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "SpecularBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
-#include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
 #include "SpecularCellDescription.hpp"
 #include "MeasuredSampleData.hpp"
@@ -13,6 +11,8 @@
 #include "BSDFDirections.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -22,7 +22,7 @@ using namespace SpectralAveraging;
 class TestSpecularLayer_103 : public testing::Test {
 
 private:
-  shared_ptr< CSpecularBSDFLayer > m_Layer;
+  shared_ptr< CBSDFLayer > m_Layer;
 
 protected:
   virtual void SetUp() {
@@ -271,28 +271,27 @@ protected:
     SpecularMaterialType aType = SpecularMaterialType::Monolithic;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialSample > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
-    shared_ptr< CSpecularCellDescription > aCellDescription = make_shared< CSpecularCellDescription >();
-
-    shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( aMaterial, aCellDescription );
-
+    // Define BSDF
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
 
-    m_Layer = make_shared< CSpecularBSDFLayer >( aCell, aBSDF );
+    // make layer
+    CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
+    m_Layer = aMaker.getLayer();
 
   };
 
 public:
-  shared_ptr< CSpecularBSDFLayer > getLayer() { return m_Layer; };
+  shared_ptr< CBSDFLayer > getLayer() { return m_Layer; };
 
 };
 
 TEST_F( TestSpecularLayer_103, TestSpecular1 ) {
   SCOPED_TRACE( "Begin Test: Specular layer - BSDF." );
   
-  shared_ptr< CSpecularBSDFLayer > aLayer = getLayer();
+  shared_ptr< CBSDFLayer > aLayer = getLayer();
 
   shared_ptr< CBSDFResults > aResults = aLayer->getResults();
 

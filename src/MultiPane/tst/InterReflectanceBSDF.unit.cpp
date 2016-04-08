@@ -1,7 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentBSDFLayer.hpp"
+#include "EquivalentBSDFLayerSingleBand.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFDirections.hpp"
 

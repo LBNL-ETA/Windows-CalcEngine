@@ -1,14 +1,14 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "VenetianCell.hpp"
 #include "VenetianCellDescription.hpp"
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -56,11 +56,12 @@ protected:
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
+    // create BSDF
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    shared_ptr< CUniformDiffuseCell > aCell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
-
-    m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
+    // make layer
+    CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
+    m_Layer = aMaker.getLayer();
 
   };
 
