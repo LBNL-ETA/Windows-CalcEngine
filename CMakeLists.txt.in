@@ -7,13 +7,13 @@ ExternalProject_Add(GTestExternal
     GIT_TAG "release-1.7.0"
     
     UPDATE_COMMAND ""
-  	PATCH_COMMAND ""
+    PATCH_COMMAND ""
   	
-  	SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-src"
-  	BINARY_DIR "${CMAKE_BINARY_DIR}/googletest-build"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/googletest-build"
   	
-  	CONFIGURE_COMMAND ""
-  	BUILD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
     TEST_COMMAND ""
     INSTALL_COMMAND ""
 )
