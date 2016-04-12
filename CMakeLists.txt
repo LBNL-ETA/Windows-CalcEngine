@@ -29,9 +29,8 @@ if( BUILD_TESTING )
 	# Now simply link your own targets against gtest, gmock,
 	# etc. as appropriate
   		
-    # include_directories( third_party/gtest/include )
     include_directories( ${CMAKE_BINARY_DIR}/googletest-src/include )
-    # add_subdirectory( third_party/gtest )
 endif ()
 
 add_subdirectory( src )
+config_compiler_and_linker()
