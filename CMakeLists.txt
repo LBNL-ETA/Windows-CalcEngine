@@ -10,7 +10,7 @@ include( cmake/CompilerFlags.cmake )
 
 if( BUILD_TESTING )
 	# include(CMakeLists-GTest.txt)
-	configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+	configure_file(CMakeLists.txt.in ${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt)
 	execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
   		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
 	execute_process(COMMAND ${CMAKE_COMMAND} --build .
