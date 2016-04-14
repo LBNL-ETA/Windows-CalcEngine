@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 2.8.11 )
 
-project( WindowsCalculationEngine )
+set( target_name WindowsCalculationEngine )
+
+project( ${target_name} )
 
 include( cmake/ProjectMacros.cmake )
 include( cmake/internal_utils.cmake )
@@ -11,8 +13,10 @@ get_directory_property(hasParent PARENT_DIRECTORY)
 
 if(hasParent)
 	set( BUILD_TESTING OFF )
+	set( SINGLE_PROJECT ON )
 else()
 	option( BUILD_TESTING "Build testing targets" ON )
+	option( SINGLE_PROJECT "Build windows library as single project" OFF )
 endif()
 
 if( BUILD_TESTING )
@@ -39,5 +43,82 @@ if( BUILD_TESTING )
     include_directories( ${CMAKE_BINARY_DIR}/googletest-src/include )
 endif ()
 
-add_subdirectory( src )
+# foreach( _variableName ${SOURCES})
+#   message( STATUS "${_variableName}" )
+# endforeach()
+
+if( NOT ${SINGLE_PROJECT} )
+  add_subdirectory( src )
+else()
+  file( GLOB SOURCES_CPP "src/Common/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/Common/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
+  file( GLOB SOURCES_CPP "src/Gases/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/Gases/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
+  file( GLOB SOURCES_CPP "src/Tarcog/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/Tarcog/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
+  file( GLOB SOURCES_CPP "src/SpectralAveraging/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/SpectralAveraging/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
+  file( GLOB SOURCES_CPP "src/Viewer/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/Viewer/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
+  file( GLOB SOURCES_CPP "src/LayerOptics/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/LayerOptics/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
+  file( GLOB SOURCES_CPP "src/MultiPane/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/MultiPane/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
+  add_library( ${target_name} STATIC ${SOURCES} )
+  
+  if( BUILD_TESTING )
+  	include_directories( src/Common/src )
+  	include_directories( src/Gases/src )
+  	include_directories( src/Tarcog/src )  	
+  	include_directories( src/SpectralAveraging/src )
+  	include_directories( src/Viewer/src )
+  	include_directories( src/LayerOptics/src )
+  	include_directories( src/MultiPane/src )
+  	
+  	file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Common/tst/*.cpp" )
+    LIST( APPEND test_src ${all_test_src} )
+    
+    file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Gases/tst/*.cpp" )
+    LIST( REMOVE_ITEM all_test_src "src/Gases/tst/main.cpp")
+    LIST( APPEND test_src ${all_test_src} )
+    
+    file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Tarcog/tst/*.cpp" )
+    LIST( REMOVE_ITEM all_test_src "src/Tarcog/tst/main.cpp")
+    LIST( APPEND test_src ${all_test_src} )
+    
+    file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/SpectralAveraging/tst/*.cpp" )
+    LIST( REMOVE_ITEM all_test_src "src/SpectralAveraging/tst/main.cpp")
+    LIST( APPEND test_src ${all_test_src} )
+    
+    file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Viewer/tst/*.cpp" )
+    LIST( REMOVE_ITEM all_test_src "src/Viewer/tst/main.cpp")
+    LIST( APPEND test_src ${all_test_src} )
+    
+    file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/LayerOptics/tst/*.cpp" )
+    LIST( REMOVE_ITEM all_test_src "src/LayerOptics/tst/main.cpp")
+    LIST( APPEND test_src ${all_test_src} )
+    
+    file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/MultiPane/tst/*.cpp" )
+    LIST( REMOVE_ITEM all_test_src "src/MultiPane/tst/main.cpp")
+    LIST( APPEND test_src ${all_test_src} )
+    
+    CREATE_TEST_TARGETS( ${target_name} "${test_src}" "" )
+  endif()
+  
+endif()
+
 config_compiler_and_linker()
