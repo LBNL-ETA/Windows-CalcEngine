@@ -2,11 +2,18 @@ cmake_minimum_required( VERSION 2.8.11 )
 
 project( WindowsCalculationEngine )
 
-option( BUILD_TESTING "Build testing targets" ON )
-
 include( cmake/ProjectMacros.cmake )
 include( cmake/internal_utils.cmake )
 include( cmake/CompilerFlags.cmake )
+
+# google test will not be created by this project if this is not main project. Main project is expected to handle google test.
+get_directory_property(hasParent PARENT_DIRECTORY)
+
+if(hasParent)
+	set( BUILD_TESTING OFF )
+else()
+	option( BUILD_TESTING "Build testing targets" ON )
+endif()
 
 if( BUILD_TESTING )
 	# include(CMakeLists-GTest.txt)
