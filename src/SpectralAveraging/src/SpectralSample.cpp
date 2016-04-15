@@ -108,7 +108,7 @@ namespace SpectralAveraging {
 
   double CSample::getProperty( const double minLambda, const double maxLambda, const Property t_Property, const Side t_Side ) {
     calculateState();
-    double Property = 0;
+    double Prop = 0;
     double incomingEnergy = m_IncomingSource->sum( minLambda, maxLambda );
     double propertyEnergy = 0;
     switch ( t_Property ) {
@@ -146,9 +146,9 @@ namespace SpectralAveraging {
       break;
     }
 
-    Property = propertyEnergy / incomingEnergy;
+    Prop = propertyEnergy / incomingEnergy;
 
-    return Property;
+    return Prop;
   };
 
   shared_ptr< CSeries > CSample::getEnergyProperties( const Property t_Property, const Side t_Side ) {
