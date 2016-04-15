@@ -52,11 +52,11 @@ namespace SpectralAveraging {
       break;
     }
     return aProperties;
-  };
+  }
 
   shared_ptr< vector< double > > CSpectralSampleData::getWavelengths() {
     return m_Transmittances->getXArray();
-  };
+  }
 
   // Interpolate current sample data to new wavelengths set
   void CSpectralSampleData::interpolate( shared_ptr< vector< double > > t_Wavelengths ) {
@@ -65,15 +65,15 @@ namespace SpectralAveraging {
     m_ReflectancesBack = m_ReflectancesBack->interpolate( t_Wavelengths );
     m_AbsorptancesFront = m_AbsorptancesFront->interpolate( t_Wavelengths );
     m_AbsorptancesBack = m_AbsorptancesBack->interpolate( t_Wavelengths );
-  };
+  }
 
   bool CSpectralSampleData::Flipped() const {
     return m_Flipped;
-  };
+  }
 
   void CSpectralSampleData::Filpped( bool const t_Flipped ) {
     m_Flipped = t_Flipped;
-  };
+  }
 
   void CSpectralSampleData::reset() {
     m_absCalculated = false;
@@ -106,6 +106,6 @@ namespace SpectralAveraging {
       m_absCalculated = true;
     }
     
-  };
+  }
   
 }

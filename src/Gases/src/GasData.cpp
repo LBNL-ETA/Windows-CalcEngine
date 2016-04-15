@@ -19,7 +19,7 @@ namespace Gases
     // m_coeffCp = make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
     // m_coeffVisc = make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
 
-  };
+  }
 
   CGasData::CGasData(
     string const &t_Name, 
@@ -32,7 +32,7 @@ namespace Gases
     m_coeffCp( t_Cp ), m_coeffCon( t_Con ), m_coeffVisc( t_Visc )
   {
 
-  };
+  }
 
   CGasData& CGasData::operator=( const CGasData& t_GasData ) {
     this->m_gasName = t_GasData.m_gasName;
@@ -43,7 +43,7 @@ namespace Gases
     this->m_coeffVisc = t_GasData.m_coeffVisc;
 
     return *this;
-  };
+  }
 
   double CGasData::GetPropertyValue( CoeffType t_Type, double t_Temperature ) const
   {
@@ -66,11 +66,11 @@ namespace Gases
     }
 
     return value;
-  };
+  }
 
   double CGasData::GetMolecularWeight() const
   {
     return m_molWeight;
-  };
+  }
 
 };

@@ -88,7 +88,7 @@ protected:
       cout << e.what() << endl;
       throw &e;
     }
-  };
+  }
 
 public:
   shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };

@@ -33,14 +33,14 @@ namespace Tarcog {
       aError = max( aError, fabs( ( *t_Solution )[ i ] - ( *m_IGUState )[ i ] ));
     }
     return aError;
-  };
+  }
 
   void CTarNonLinearSolver::estimateNewState( shared_ptr< vector< double > > t_Solution ) {
     assert(t_Solution->size() == m_IGUState->size() );
     for( size_t i = 0; i < m_IGUState->size(); ++i ) {
       ( *m_IGUState )[ i ] = m_RelaxParam * ( *t_Solution )[ i ] + ( 1 - m_RelaxParam ) * ( *m_IGUState )[ i ];
     }
-  };
+  }
 
   void CTarNonLinearSolver::solve() {
     shared_ptr< vector< double > > aSolution = nullptr;
@@ -59,6 +59,6 @@ namespace Tarcog {
       m_IGU->setState( m_IGUState );
 
     }
-  };
+  }
 
 }

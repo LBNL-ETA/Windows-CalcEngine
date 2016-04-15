@@ -79,7 +79,7 @@ protected:
     m_Enclosures2DBeam->appendGeometry2D( aEnclosure2 );
 
 
-  };
+  }
 
 public:
   shared_ptr< CGeometry2DBeam > getEnclosure() { return m_Enclosures2DBeam; };

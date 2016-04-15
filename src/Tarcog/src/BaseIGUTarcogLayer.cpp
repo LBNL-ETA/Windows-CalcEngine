@@ -10,10 +10,10 @@ namespace Tarcog {
 
   double CBaseIGUTarcogLayer::layerTemperature() {
     return ( m_FrontSurface->getTemperature() + m_BackSurface->getTemperature() ) / 2;
-  };
+  }
 
   double CBaseIGUTarcogLayer::getThickness () const {
     return m_Thickness;
-  };
+  }
 
 }

@@ -59,7 +59,7 @@ protected:
       cout << e.what() << endl;
       throw &e;
     }
-  };
+  }
 
 public:
   std::shared_ptr< CTarIGUGapLayer > GetLayer() { return m_GapLayer; };

@@ -12,7 +12,7 @@ namespace Viewer {
   CViewSegment2D::CViewSegment2D( std::shared_ptr< const CPoint2D > t_StartPoint, 
     std::shared_ptr< const CPoint2D > t_EndPoint ) : CSegment2D( t_StartPoint, t_EndPoint ),
     m_Normal( nullptr ), m_NormalCalculated( false ) {
-  };
+  }
 
   shared_ptr< const CViewSegment2D > CViewSegment2D::getNormal() {
     if( !m_NormalCalculated ) {
@@ -39,7 +39,7 @@ namespace Viewer {
     }
 
     return vFCoeff;
-  };
+  }
 
   Shadowing CViewSegment2D::selfShadowing( std::shared_ptr< const CViewSegment2D > t_Segment ) const {
     Shadowing totalShadowing = Shadowing::Partial;
@@ -54,7 +54,7 @@ namespace Viewer {
 
     return totalShadowing;
 
-  };
+  }
 
   Shadowing CViewSegment2D::isInSelfShadow( shared_ptr< const CViewSegment2D > t_Segment ) const {
     int numOfInvisibles = 0;
@@ -77,7 +77,7 @@ namespace Viewer {
     }
 
     return Shadowing( numOfInvisibles );
-  };
+  }
 
   shared_ptr< vector < shared_ptr< CViewSegment2D > > > CViewSegment2D::subSegments( const size_t numSegments ) const {
     if( numSegments == 0 ) {
@@ -98,7 +98,7 @@ namespace Viewer {
     }
 
     return subSegments;
-  };
+  }
 
   shared_ptr< CViewSegment2D > CViewSegment2D::translate( const double t_x, const double t_y ){
     shared_ptr<CSegment2D > aSegment = CSegment2D::translate( t_x, t_y );
@@ -120,7 +120,7 @@ namespace Viewer {
     }
 
     return aPosition;
-  };
+  }
 
   void CViewSegment2D::calculateNormal() {
     assert( length() > 0 );

@@ -11,7 +11,7 @@ class TestMatrixInverse : public testing::Test {
 
 protected:
   virtual void SetUp() {
-  };
+  }
 
 };
 

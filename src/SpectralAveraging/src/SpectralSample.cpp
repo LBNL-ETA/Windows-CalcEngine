@@ -22,23 +22,23 @@ namespace SpectralAveraging {
     m_DetectorData = nullptr;
     m_Wavelengths = nullptr;
     reset();
-  };
+  }
 
   shared_ptr< CSeries > CSample::getSourceData() {
     calculateState(); // must interpolate data to same wavelengths
     return m_SourceData; 
-  };
+  }
 
   void CSample::setDetectorData( shared_ptr< CSeries > t_DetectorData ) {
     m_DetectorData = t_DetectorData;
     reset();
-  };
+  }
 
   void CSample::assignDetectorAndWavelengths( shared_ptr< CSample > t_Sample ) {
     m_DetectorData = t_Sample->m_DetectorData;
     m_Wavelengths = t_Sample->m_Wavelengths;
     m_WavelengthSet = t_Sample->m_WavelengthSet;
-  };
+  }
 
   void CSample::setWavelengths( WavelengthSet t_WavelengthSet, shared_ptr< vector< double > > t_Wavelenghts ) {
     m_WavelengthSet = t_WavelengthSet;
@@ -63,7 +63,7 @@ namespace SpectralAveraging {
       break;
     }
     reset();
-  };
+  }
 
   double CSample::getEnergy( const double minLambda, const double maxLambda, const Property t_Property, const Side t_Side ) {
     calculateState();
@@ -104,7 +104,7 @@ namespace SpectralAveraging {
     }
 
     return Energy;
-  };
+  }
 
   double CSample::getProperty( const double minLambda, const double maxLambda, const Property t_Property, const Side t_Side ) {
     calculateState();
@@ -149,7 +149,7 @@ namespace SpectralAveraging {
     Prop = propertyEnergy / incomingEnergy;
 
     return Prop;
-  };
+  }
 
   shared_ptr< CSeries > CSample::getEnergyProperties( const Property t_Property, const Side t_Side ) {
     calculateState();
@@ -191,11 +191,11 @@ namespace SpectralAveraging {
     }
 
     return aProperty;
-  };
+  }
 
   size_t CSample::getBandSize() const {
     return m_Wavelengths->size();
-  };
+  }
 
   void CSample::reset() {
     m_StateCalculated = false;
@@ -254,16 +254,16 @@ namespace SpectralAveraging {
     shared_ptr< CSeries > m_RefFront = nullptr;
     shared_ptr< CSeries > m_RefBack = nullptr;
     shared_ptr< CSeries > m_Abs = nullptr;
-  };
+  }
 
   shared_ptr< CSpectralSampleData > CSpectralSample::getMeasuredData() {
     calculateState(); // Interpolation is needed before returning the data
     return m_SampleData; 
-  };
+  }
 
   std::shared_ptr< std::vector< double > > CSpectralSample::getWavelengthsFromSample() {
     return m_SampleData->getWavelengths();
-  };
+  }
 
   shared_ptr< CSeries > CSpectralSample::getWavelengthsProperty( const Property t_Property, const Side t_Side ) {
     calculateState();
@@ -304,7 +304,7 @@ namespace SpectralAveraging {
     }
 
     return aProperty;
-  };
+  }
 
   void CSpectralSample::calculateProperties() {
 

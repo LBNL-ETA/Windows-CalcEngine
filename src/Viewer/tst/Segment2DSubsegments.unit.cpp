@@ -15,7 +15,7 @@ class TestSegment2DSubsegments : public testing::Test {
 protected:
   virtual void SetUp() {
     
-  };
+  }
 
 };
 

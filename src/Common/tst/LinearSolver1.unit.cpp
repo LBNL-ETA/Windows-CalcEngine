@@ -17,7 +17,7 @@ protected:
   virtual void SetUp() {
     m_Solver = std::make_shared< CLinearSolver >();
     ASSERT_TRUE( m_Solver != nullptr );
-  };
+  }
 
 public:
   std::shared_ptr< CLinearSolver > GetSolver() { return m_Solver; };

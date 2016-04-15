@@ -18,7 +18,7 @@ protected:
   virtual void SetUp() {
     vector< double > thetaAngles = { 0, 13, 26, 39, 52, 65, 80.75 };
     m_Thetas = make_shared< CThetaLimits >( thetaAngles );
-  };
+  }
 
 public:
   shared_ptr< CThetaLimits > GetLimits() { return m_Thetas; };

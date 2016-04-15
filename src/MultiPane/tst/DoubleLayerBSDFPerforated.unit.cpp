@@ -323,7 +323,7 @@ protected:
 
   m_DoubleLayer = make_shared< CBSDFDoubleLayer >( aLayer1, aLayer2 );
     
-  };
+  }
 
 public:
   shared_ptr< CBSDFDoubleLayer > getDoubleLayer() { return m_DoubleLayer; };

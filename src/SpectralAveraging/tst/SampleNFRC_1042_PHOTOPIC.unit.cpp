@@ -1226,7 +1226,7 @@ protected:
     m_Sample->setDetectorData( detectorData );
 
     m_Sample->setWavelengths( WavelengthSet::Custom, aWavelengths );
-  };
+  }
 
 public:
   shared_ptr< CSpectralSample > getSample() { return m_Sample; };

@@ -11,7 +11,7 @@ class TestMatrixAddition : public testing::Test {
 
 protected:
   virtual void SetUp() {
-  };
+  }
 
 
 };

@@ -68,10 +68,10 @@ namespace LayerOptics {
       m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
     }
 
-  };
+  }
 
   shared_ptr< CBSDFLayer > CBSDFLayerMaker::getLayer() const {
     return m_Layer; 
-  };
+  }
 
 }

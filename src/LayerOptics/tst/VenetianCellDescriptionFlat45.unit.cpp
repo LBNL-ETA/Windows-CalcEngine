@@ -29,7 +29,7 @@ protected:
 
     m_Cell = make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, m_NumOfSlats );
-  };
+  }
 
 public:
   shared_ptr< CVenetianCellDescription > GetCell() { return m_Cell; };

@@ -667,7 +667,7 @@ protected:
     CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
     m_Layer = aMaker.getLayer();
 
-  };
+  }
 
 public:
   shared_ptr< CBSDFLayer > getLayer() { return m_Layer; };

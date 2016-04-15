@@ -26,11 +26,11 @@ namespace MultiPane {
     I->setIdentity();
     m_InterRefl = I->sub( *m_InterRefl );
     m_InterRefl = m_InterRefl->inverse();
-  };
+  }
 
   shared_ptr< CSquareMatrix > CInterReflectance::value() const {
     return m_InterRefl;
-  };
+  }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  CBSDFDoubleLayer
@@ -55,11 +55,11 @@ namespace MultiPane {
     m_Results->setResultMatrices( m_Tf, m_Rf, Side::Front );
     m_Results->setResultMatrices( m_Tb, m_Rb, Side::Back );
 
-  };
+  }
 
   shared_ptr< CBSDFResults > CBSDFDoubleLayer::value() {
     return m_Results; 
-  };
+  }
 
   shared_ptr< CSquareMatrix > CBSDFDoubleLayer::equivalentT( shared_ptr< const CSquareMatrix > t_Tf2, 
     shared_ptr< const CSquareMatrix > t_InterRefl, shared_ptr< const CSquareMatrix > t_Lambda,
@@ -68,7 +68,7 @@ namespace MultiPane {
     shared_ptr< CSquareMatrix > lambdaTf1 = t_Lambda->mult( *t_Tf1 );
     shared_ptr< CSquareMatrix > aResult = TinterRefl->mult( *lambdaTf1 );
     return aResult;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CBSDFDoubleLayer::equivalentR( shared_ptr< const CSquareMatrix > t_Rf1,
     shared_ptr< const CSquareMatrix > t_Tf1, shared_ptr< const CSquareMatrix > t_Tb1, 
@@ -81,7 +81,7 @@ namespace MultiPane {
     TinterRefl = TinterRefl->mult( *lambdaTf1 );
     shared_ptr< CSquareMatrix > aResult = t_Rf1->add( *TinterRefl );
     return aResult;
-  };
+  }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  CEquivalentBSDFLayerSingleBand
@@ -98,12 +98,12 @@ namespace MultiPane {
   shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Tau( Side t_Side ) {
     calcEquivalentProperties();
     return m_EquivalentLayer->Tau( t_Side );
-  };
+  }
 
   shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Rho( Side t_Side ) {
     calcEquivalentProperties();
     return m_EquivalentLayer->Rho( t_Side );
-  };
+  }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::getLayerAbsorptances( const size_t Index, 
     Side t_Side ) {
@@ -122,18 +122,18 @@ namespace MultiPane {
     }
 
     return Abs;
-  };
+  }
 
   size_t CEquivalentBSDFLayerSingleBand::getNumberOfLayers() const {
     return m_Layers.size();
-  };
+  }
 
   void CEquivalentBSDFLayerSingleBand::addLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer ) {
     m_Layers.push_back( t_Layer );
     m_PropertiesCalculated = false;
     m_Af->clear();
     m_Ab->clear();
-  };
+  }
 
   void CEquivalentBSDFLayerSingleBand::calcEquivalentProperties() {
     if( m_PropertiesCalculated ) {
@@ -205,7 +205,7 @@ namespace MultiPane {
 
     }
     m_PropertiesCalculated = true;
-  };
+  }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::absTerm1( shared_ptr< vector< double > > t_Alpha,
     shared_ptr< CSquareMatrix > t_InterRefl, shared_ptr< CSquareMatrix > t_T ) {
@@ -213,7 +213,7 @@ namespace MultiPane {
     shared_ptr< CSquareMatrix > part2 = m_Lambda->mult( *t_T );
     part1 = part2->multVxM( *part1 );
     return part1;
-  };
+  }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::absTerm2( shared_ptr< vector< double > > t_Alpha,
     shared_ptr< CSquareMatrix > t_InterRefl, shared_ptr< CSquareMatrix > t_R,
@@ -224,6 +224,6 @@ namespace MultiPane {
     part1 = part2->multVxM( *part1 );
     part1 = part3->multVxM( *part1 );
     return part1;
-  };
+  }
 
 }

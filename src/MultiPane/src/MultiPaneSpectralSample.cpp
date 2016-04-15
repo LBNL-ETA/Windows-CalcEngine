@@ -16,7 +16,7 @@ namespace MultiPane {
   CMultiPaneSpectralSample::CMultiPaneSpectralSample( shared_ptr< CSpectralSampleData > t_SampleData, 
     shared_ptr< CSeries > t_SourceData ) : CSpectralSample( t_SampleData, t_SourceData ) {
 
-  };
+  }
 
   double CMultiPaneSpectralSample::getLayerAbsorbedEnergy( double const minLambda, double const maxLambda, 
     size_t const Index ) {
@@ -27,7 +27,7 @@ namespace MultiPane {
     }
     aEnergy = m_AbsorbedLayersSource[ Index - 1 ]->sum( minLambda, maxLambda );
     return aEnergy;
-  };
+  }
 
   double CMultiPaneSpectralSample::getLayerAbsorptance( double const minLambda, double const maxLambda, 
     size_t const Index ) {
@@ -35,7 +35,7 @@ namespace MultiPane {
    double absorbedEnergy = getLayerAbsorbedEnergy( minLambda, maxLambda, Index );
    double incomingEnergy = m_IncomingSource->sum( minLambda, maxLambda );
    return absorbedEnergy / incomingEnergy;
-  };
+  }
 
   void CMultiPaneSpectralSample::calculateProperties() {
     if( !m_StateCalculated ) {
@@ -56,7 +56,7 @@ namespace MultiPane {
 
       m_StateCalculated = true;
     }
-  };
+  }
 
   void CMultiPaneSpectralSample::integrateAndAppendAbsorptances( shared_ptr< CSeries > t_Absorptances ) {
     if( m_WavelengthSet != WavelengthSet::Data ) {
@@ -65,7 +65,7 @@ namespace MultiPane {
       t_Absorptances = t_Absorptances->mMult( m_IncomingSource );
       t_Absorptances = t_Absorptances->integrate( m_IntegrationType );
       m_AbsorbedLayersSource.push_back( t_Absorptances );
-  };
+  }
 
   void CMultiPaneSpectralSample::reset() {
     CSpectralSample::reset();

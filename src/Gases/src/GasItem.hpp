@@ -36,6 +36,6 @@ namespace Gases
     std::shared_ptr< CGasData const > m_GasData;
   };
 
-};
+}
 
 #endif

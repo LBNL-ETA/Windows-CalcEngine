@@ -17,7 +17,7 @@ protected:
   {
     CIntegratorFactory aFactory = CIntegratorFactory();
     m_Integrator = aFactory.getIntegrator( IntegrationType::Trapezoidal );
-  };
+  }
 
 public:
   shared_ptr< IIntegratorStrategy > getIntegrator() { return m_Integrator; };

@@ -22,31 +22,31 @@ namespace LayerOptics {
     m_CurvatureRadius( t_CurvatureRadius ), m_NumOfSlatSegments( t_NumOfSegments ), m_Direction( t_Direction ) {
     m_Geometry = make_shared< CGeometry2D >();
     buildSlat();
-  };
+  }
 
   shared_ptr< CGeometry2D > CVenetianSlat::geometry() const {
     return m_Geometry;
-  };
+  }
 
   double CVenetianSlat::slatWidth() const {
     return m_SlatWidth;    
-  };
+  }
 
   double CVenetianSlat::slatSpacing() const {
     return m_SlatSpacing; 
-  };
+  }
 
   double CVenetianSlat::slatTiltAngle() const {
     return m_SlatTiltAngle;    
-  };
+  }
 
   double CVenetianSlat::curvatureRadius() const {
     return m_CurvatureRadius;    
-  };
+  }
 
   size_t CVenetianSlat::numberOfSegments() const {
     return m_NumOfSlatSegments;
-  };
+  }
 
   void CVenetianSlat::buildSlat() {
     if( m_SlatTiltAngle >= 90 ) {

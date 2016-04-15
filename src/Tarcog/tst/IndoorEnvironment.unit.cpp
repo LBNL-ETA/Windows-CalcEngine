@@ -71,7 +71,7 @@ protected:
       cout << e.what() << endl;
       throw &e;
     }
-  };
+  }
 
 public:
   shared_ptr< CTarIndoorEnvironment > GetIndoors() { return m_Indoor; };

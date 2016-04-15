@@ -101,7 +101,7 @@ protected:
       cout << e.what() << endl;
       throw &e;
     }
-  };
+  }
 
 public:
   shared_ptr< CTarIGUGapLayer > GetGap1() { return m_GapLayer1; };

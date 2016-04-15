@@ -11,11 +11,11 @@ namespace FenestrationCommon {
     m_Matrix.resize( m_Size );
     for( size_t i = 0; i < m_Size; ++i )
       m_Matrix[ i ].resize( m_Size );
-  };
+  }
 
   size_t CSquareMatrix::getSize() const {
     return m_Size;
-  };
+  }
 
   void CSquareMatrix::setZeros() {
     for( size_t i = 0; i < m_Size; ++i ) {
@@ -23,14 +23,14 @@ namespace FenestrationCommon {
         m_Matrix[ i ][ j ] = 0;
       }
     }
-  };
+  }
 
   void CSquareMatrix::setIdentity() {
     setZeros();
     for( size_t i = 0; i < m_Size; ++i ) {
       m_Matrix[ i ][ i ] = 1;
     }
-  };
+  }
 
   void CSquareMatrix::setDiagonal( shared_ptr< const vector< double > > t_Values ) {
     if( t_Values->size() != m_Size ) {
@@ -40,7 +40,7 @@ namespace FenestrationCommon {
     for( size_t i = 0; i < m_Size; ++i ) {
       m_Matrix[ i ][ i ] = ( *t_Values )[ i ];
     }
-  };
+  }
 
   vector< double >& CSquareMatrix::operator[]( const size_t index ) {
     assert( index < m_Size );
@@ -60,7 +60,7 @@ namespace FenestrationCommon {
     }
 
     return aMatrix;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CSquareMatrix::sub( const CSquareMatrix& t_Matrix ) const {
     if( m_Size != t_Matrix.m_Size ) {
@@ -75,7 +75,7 @@ namespace FenestrationCommon {
     }
 
     return aMatrix;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CSquareMatrix::mult( const CSquareMatrix& t_Matrix ) const {
     if( m_Size != t_Matrix.m_Size ) {
@@ -93,7 +93,7 @@ namespace FenestrationCommon {
 
     return aMatrix;
 
-  };
+  }
 
   shared_ptr< vector< double > > CSquareMatrix::multMxV( const vector< double >& t_Vector ) {
     if( m_Size != t_Vector.size() ) {
@@ -109,7 +109,7 @@ namespace FenestrationCommon {
     }
 
     return aResult;
-  };
+  }
 
   shared_ptr< vector< double > > CSquareMatrix::multVxM( const vector< double >& t_Vector ) {
     if( m_Size != t_Vector.size() ) {
@@ -125,7 +125,7 @@ namespace FenestrationCommon {
     }
 
     return aResult;
-  };
+  }
 
   void CSquareMatrix::copyFrom( const CSquareMatrix& t_Matrix ) {
     if( m_Size != t_Matrix.m_Size ) {
@@ -134,7 +134,7 @@ namespace FenestrationCommon {
     for( size_t i = 0; i < m_Size; ++i ) {
       m_Matrix[ i ] = t_Matrix.m_Matrix[ i ];
     }
-  };
+  }
 
   shared_ptr< CSquareMatrix > CSquareMatrix::inverse() {
     // return LU decomposed matrix of current matrix
@@ -169,7 +169,7 @@ namespace FenestrationCommon {
     }
 
     return inverse;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CSquareMatrix::LU() {
     shared_ptr< CSquareMatrix > D = make_shared< CSquareMatrix >( m_Size );
@@ -186,6 +186,6 @@ namespace FenestrationCommon {
     }
 
     return D;
-  };
+  }
 
 }

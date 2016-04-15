@@ -17,7 +17,7 @@ namespace LayerOptics {
   CPerforatedCellDescription::CPerforatedCellDescription( const double t_x, const double t_y, 
     const double t_Thickness ) : m_x( t_x ), m_y( t_y ), m_Thickness( t_Thickness ) {
   
-  };
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // CCircularCellDescription
@@ -26,12 +26,12 @@ namespace LayerOptics {
   CCircularCellDescription::CCircularCellDescription( const double t_x, const double t_y, const double t_Thickness, 
       const double t_Radius ) : CPerforatedCellDescription( t_x, t_y, t_Thickness ), m_Radius( t_Radius ) {
     
-  };
+  }
 
   double CCircularCellDescription::T_dir_dir( const FenestrationCommon::Side, 
     shared_ptr< const CBeamDirection > t_Direction ) {
     return visibleAhole( t_Direction ) / visibleAcell( t_Direction );
-  };
+  }
 
   double CCircularCellDescription::visibleAhole( shared_ptr< const CBeamDirection > t_Direction ) const {
     double AngleLimit( 0 );
@@ -54,12 +54,12 @@ namespace LayerOptics {
     }
 
     return aHole;  
-  };
+  }
 
   double CCircularCellDescription::visibleAcell( shared_ptr< const CBeamDirection > t_Direction ) const {
     double aTheta = radians( t_Direction->theta() );
     return ( m_x * m_y ) * cos( aTheta );
-  };
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // CRectangularCellDescription
@@ -69,12 +69,12 @@ namespace LayerOptics {
     const double t_XHole, const double t_YHole ) : CPerforatedCellDescription( t_x, t_y, t_Thickness ), 
     m_XHole( t_XHole ), m_YHole( t_YHole ) {
     
-  };
+  }
 
   double CRectangularCellDescription::T_dir_dir( const FenestrationCommon::Side, 
     std::shared_ptr< const CBeamDirection > t_Direction ) {
     return TransmittanceH( t_Direction ) * TransmittanceV( t_Direction );
-  };
+  }
 
   double CRectangularCellDescription::TransmittanceV( shared_ptr< const CBeamDirection > t_Direction ) const {
     double Psi( 0 );
@@ -95,7 +95,7 @@ namespace LayerOptics {
       if (Transmittance < 0) Transmittance = 0;
       return Transmittance;
     }  
-  };
+  }
 
   double CRectangularCellDescription::TransmittanceH( shared_ptr< const CBeamDirection > t_Direction ) const {
     double Eta( 0 );
@@ -118,6 +118,6 @@ namespace LayerOptics {
       if ( Transmittance < 0 ) Transmittance = 0;
       return Transmittance;
     }  
-  };
+  }
 
 }

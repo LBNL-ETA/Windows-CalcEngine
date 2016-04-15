@@ -14,15 +14,15 @@ namespace FenestrationCommon {
   CWavelengthRange::CWavelengthRange( const double minLambda, const double maxLambda ) : 
     m_MinLambda( minLambda ), m_MaxLambda( maxLambda ) {
     
-  };
+  }
 
   double CWavelengthRange::minLambda() const {
     return m_MinLambda;
-  };
+  }
   
   double CWavelengthRange::maxLambda() const {
     return m_MaxLambda;
-  };
+  }
 
   /////////////////////////////////////////////////////////////////////////////////////////////
   ////   CWavelengthRangeFactory
@@ -30,7 +30,7 @@ namespace FenestrationCommon {
 
   CWavelengthRangeFactory::CWavelengthRangeFactory() {
     
-  };
+  }
 
   shared_ptr< const CWavelengthRange > CWavelengthRangeFactory::getWavelengthRange( const WavelengthRange t_Range ) {
     shared_ptr< const CWavelengthRange > aRange = nullptr;
@@ -50,6 +50,6 @@ namespace FenestrationCommon {
     }
 
     return aRange;
-  };
+  }
 
 }

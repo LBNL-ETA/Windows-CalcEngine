@@ -33,6 +33,7 @@ namespace Tarcog {
 
     void initializeStartValues();
   };
+
 }
 
 #endif

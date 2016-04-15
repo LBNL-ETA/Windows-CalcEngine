@@ -18,10 +18,10 @@ namespace SpectralAveraging {
     
     double totVisible = integratedSolar->sum( lowLambda, highLambda );
     m_Ratio = totVisible / totSolar;
-  };
+  }
 
   double CNIRRatio::ratio() const {
     return m_Ratio;
-  };
+  }
 
 }

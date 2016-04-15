@@ -40,7 +40,7 @@ protected:
     Gas->addGasItem( Air );
     Gas->addGasItem( Argon );
 
-  };
+  }
 
 public:
   std::shared_ptr< CGas > GetGas() { return Gas; };

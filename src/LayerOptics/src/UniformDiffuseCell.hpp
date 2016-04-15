@@ -46,6 +46,7 @@ namespace LayerOptics {
       const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
     
   };
+
 }
 
 #endif

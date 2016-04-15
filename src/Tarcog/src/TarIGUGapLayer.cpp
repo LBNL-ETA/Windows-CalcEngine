@@ -37,7 +37,7 @@ namespace Tarcog {
   void CTarIGUGapLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
     m_BackSurface = t_Layer->getSurface( SurfacePosition::Front );
-  };
+  }
 
   void CTarIGUGapLayer::initializeStateVariables() {
     CGasLayer::initializeStateVariables();
@@ -56,7 +56,7 @@ namespace Tarcog {
       convectiveH();
       ventilatedFlow();
     }
-  };
+  }
 
   void CTarIGUGapLayer::checkNextLayer() {
     if( m_NextLayer != nullptr ) {
@@ -64,14 +64,14 @@ namespace Tarcog {
         dynamic_pointer_cast< CTarIGUShadeLayer >( m_NextLayer )->getGainFlow();
       }
     }
-  };
+  }
 
   double CTarIGUGapLayer::layerTemperature() {
     assert( m_Height != 0 );
     double cHeight = characteristicHeight();
     double avTemp = averageTemperature();
     return avTemp - ( cHeight / m_Height ) * ( m_outTemperature - m_inTemperature );
-  };
+  }
 
   double CTarIGUGapLayer::calculateRayleighNumber() {
     using ConstantsData::GRAVITYCONSTANT;
@@ -86,14 +86,14 @@ namespace Tarcog {
       ( tGapTemperature * aProperties->m_Viscosity * aProperties->m_ThermalConductivity );
 
     return Ra;
-  };
+  }
 
   double CTarIGUGapLayer::aspectRatio() {
     if( m_Thickness == 0 ) {
       throw runtime_error( "Gap thickness is set to zero." );
     }
     return m_Height / m_Thickness;
-  };
+  }
 
   double CTarIGUGapLayer::convectiveH() {
     double tGapTemperature = layerTemperature();
@@ -108,13 +108,13 @@ namespace Tarcog {
     }
 
     return m_ConductiveConvectiveCoeff;
-  };
+  }
 
   void CTarIGUGapLayer::ventilatedFlow() {
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
     m_LayerGainFlow = aProperties->m_Density * aProperties->m_SpecificHeat * m_AirSpeed * m_Thickness *
       m_Width * ( m_inTemperature - m_outTemperature );
-  };
+  }
 
   double CTarIGUGapLayer::getGasTemperature() {
     return layerTemperature();
@@ -126,7 +126,7 @@ namespace Tarcog {
       aveTemp = ( m_FrontSurface->getTemperature() + m_BackSurface->getTemperature() ) / 2;
     }
     return aveTemp;
-  };
+  }
 
   double CTarIGUGapLayer::characteristicHeight() {
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
@@ -137,27 +137,27 @@ namespace Tarcog {
         ( 4 * m_ConductiveConvectiveCoeff );
     }
     return cHeight;
-  };
+  }
 
   double CTarIGUGapLayer::bernoullyPressureTerm() {
     shared_ptr< GasProperties > aGasProperties = m_Gas->getGasProperties();
     return 0.5 * aGasProperties->m_Density;
-  };
+  }
 
   double CTarIGUGapLayer::hagenPressureTerm() {
     shared_ptr< GasProperties > aGasProperties = m_Gas->getGasProperties();
     return 12 * aGasProperties->m_Viscosity * m_Height / pow( m_Thickness, 2 );
-  };
+  }
 
   double CTarIGUGapLayer::pressureLossTerm() {
     shared_ptr< GasProperties > aGasProperties = m_Gas->getGasProperties();
     return 0.5 * aGasProperties->m_Density * ( m_Zin + m_Zout );
-  };
+  }
 
   double CTarIGUGapLayer::betaCoeff() {
     calculateLayerState();
     return exp( -m_Height / characteristicHeight() );
-  };
+  }
 
   void CTarIGUGapLayer::setFlowGeometry( double const t_Atop, double const t_Abot, AirVerticalDirection const &t_Direction ) {
     m_AirVerticalDirection = t_Direction;
@@ -208,12 +208,12 @@ namespace Tarcog {
     }
 
     resetCalculated();
-  };
+  }
 
   void CTarIGUGapLayer::setFlowSpeed( double const t_speed ) {
     m_AirSpeed = t_speed;
     resetCalculated();
-  };
+  }
 
   double CTarIGUGapLayer::getAirflowReferencePoint( double const t_GapTemperature ) {
     using ConstantsData::GRAVITYCONSTANT;
@@ -224,7 +224,7 @@ namespace Tarcog {
     double temperatureMultiplier = fabs( gapTemperature - t_GapTemperature ) / ( gapTemperature * t_GapTemperature );
     return aProperties->m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height * 
       fabs(cos(tiltAngle)) * temperatureMultiplier;
-  };
+  }
 
   double CTarIGUGapLayer::calcImpedance( double const t_A ) {
    double impedance = 0;
@@ -242,6 +242,6 @@ namespace Tarcog {
     if ( m_inTemperature < m_outTemperature ) {
       m_LayerGainFlow = -m_LayerGainFlow;
     }
-  };
+  }
 
 };

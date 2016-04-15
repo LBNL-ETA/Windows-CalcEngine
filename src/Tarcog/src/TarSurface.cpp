@@ -24,23 +24,23 @@ namespace Tarcog {
 
   double CTarSurface::getTemperature() const {
     return m_Temperature;
-  };
+  }
 
   void CTarSurface::setTemperature( double const t_Temperature ) {
     m_Temperature = t_Temperature;
-  };
+  }
 
   double CTarSurface::getEmissivity() const {
     return m_Emissivity;
-  };
+  }
 
   double CTarSurface::getReflectance() const {
     return m_Reflectance;
-  };
+  }
 
   double CTarSurface::getTransmittance() const {
     return m_Transmittance;
-  };
+  }
 
   void CTarSurface::initialize() {
     if ( m_Emissivity + m_Transmittance > 1 ) {
@@ -50,27 +50,27 @@ namespace Tarcog {
     }
     m_Temperature = 273.15;
     m_J = 0;
-  };
+  }
 
   void CTarSurface::intializeStart( double const t_Temperature ) {
     using ConstantsData::STEFANBOLTZMANN;
 
     m_Temperature = t_Temperature;
     m_J = STEFANBOLTZMANN * pow( m_Temperature, 4 );
-  };
+  }
 
   double CTarSurface::J() const {
     return m_J;
-  };
+  }
 
   void CTarSurface::setJ( double const t_J ) {
     m_J = t_J;
-  };
+  }
 
   double CTarSurface::emissivePowerTerm() const {
     using ConstantsData::STEFANBOLTZMANN;
 
     return STEFANBOLTZMANN * m_Emissivity * pow( m_Temperature, 3 );
-  };
+  }
   
 }

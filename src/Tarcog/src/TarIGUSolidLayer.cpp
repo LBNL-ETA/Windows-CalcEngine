@@ -25,7 +25,7 @@ namespace Tarcog {
   void CTarIGUSolidLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
     t_Layer->setSurface( m_BackSurface, SurfacePosition::Front );
-  };
+  }
 
   void CTarIGUSolidLayer::calculateConvectionConductionState() {
     if ( m_Thickness == 0 ) {
@@ -33,7 +33,7 @@ namespace Tarcog {
     }
 
     m_ConductiveConvectiveCoeff = m_Conductivity / m_Thickness;
-  };
+  }
 
   void CTarIGUSolidLayer::setLayerState(double const t_Tf, double const t_Tb, double const t_Jf, double const t_Jb ) {
     setSurfaceState( t_Tf, t_Jf, SurfacePosition::Front );
@@ -44,7 +44,7 @@ namespace Tarcog {
     if( m_PreviousLayer != nullptr ) {
       m_PreviousLayer->resetCalculated();
     }
-  };
+  }
 
   void CTarIGUSolidLayer::setSurfaceState( double const t_Temperature, double const t_J, SurfacePosition const t_Position ) {
     switch ( t_Position )
@@ -65,20 +65,20 @@ namespace Tarcog {
     }
 
     resetCalculated();
-  };
+  }
 
   void CTarIGUSolidLayer::setSolarRadiation( double const t_SolarRadiation ) {
     m_LayerGainFlow = t_SolarRadiation * m_SolarAbsorptance;
     resetCalculated();
-  };
+  }
 
   void CTarIGUSolidLayer::setSolarAbsorptance( double const t_SolarAbsorptance ) {
     m_SolarAbsorptance = t_SolarAbsorptance;
     resetCalculated();
-  };
+  }
 
   void CTarIGUSolidLayer::initializeStateVariables() {
     // Initialization of intermediate calculation variables goes here
-  };
+  }
 
 }

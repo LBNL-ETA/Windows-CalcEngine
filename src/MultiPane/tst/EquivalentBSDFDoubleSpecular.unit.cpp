@@ -305,7 +305,7 @@ protected:
   m_EquivalentBSDFLayer = make_shared< CEquivalentBSDFLayerSingleBand >( aLayer1 );
   m_EquivalentBSDFLayer->addLayer( aLayer2 );
     
-  };
+  }
 
 public:
   shared_ptr< CEquivalentBSDFLayerSingleBand > getLayer() { return m_EquivalentBSDFLayer; };

@@ -23,7 +23,7 @@ namespace LayerOptics {
     shared_ptr< CCellDescription > t_Cell ) : 
     CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
     
-  };
+  }
 
   shared_ptr< CWovenCellDescription > CWovenBase::getCellAsWoven() const {
     if( dynamic_pointer_cast< CWovenCellDescription >( m_CellDescription ) == NULL ) {
@@ -34,7 +34,7 @@ namespace LayerOptics {
       dynamic_pointer_cast< CWovenCellDescription >( m_CellDescription );
 
     return aCell;
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CWovenCell
@@ -43,27 +43,27 @@ namespace LayerOptics {
     shared_ptr< CCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ),
     CWovenBase( t_MaterialProperties, t_Cell ) {
 
-  };
+  }
 
   double CWovenCell::T_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     return m_CellDescription->T_dir_dir( t_Side, t_Direction );
-  };
+  }
 
   double CWovenCell::T_dir_dif( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     double T_material = CWovenBase::T_dir_dif( t_Side, t_Direction );
     double Tsct = Tscatter_single( t_Side, t_Direction );
     return T_material + Tsct;
-  };
+  }
 
   double CWovenCell::R_dir_dif( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     double R_material = CWovenBase::R_dir_dif( t_Side, t_Direction );
     double Tsct = Tscatter_single( t_Side, t_Direction );
     return R_material - Tsct;
-  };
+  }
 
   shared_ptr< vector< double > > CWovenCell::T_dir_dir_band( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     return CWovenBase::T_dir_dir_band( t_Side, t_Direction );
-  };
+  }
 
   shared_ptr< vector< double > > CWovenCell::T_dir_dif_band( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     shared_ptr< vector< double > > T_material = CWovenBase::T_dir_dif_band( t_Side, t_Direction );
@@ -73,7 +73,7 @@ namespace LayerOptics {
       ( *T_material )[ i ] = ( *T_material )[ i ] + ( *Tsct )[ i ];
     }
     return T_material;
-  };
+  }
 
   shared_ptr< vector< double > > CWovenCell::R_dir_dif_band( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     shared_ptr< vector< double > > R_material = CWovenBase::R_dir_dif_band( t_Side, t_Direction );
@@ -83,14 +83,14 @@ namespace LayerOptics {
       ( *R_material )[ i ] = ( *R_material )[ i ] - ( *Tsct )[ i ];
     }
     return R_material;
-  };
+  }
 
   double CWovenCell::Tscatter_single( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     // Get matterial property from the opposite side of woven thread
     Side aScatterSide = oppositeSide( t_Side );
     double RScatter_mat = m_Material->getProperty( Property::R, aScatterSide );
     return Tscatter( t_Direction, RScatter_mat );
-  };
+  }
 
   shared_ptr< vector< double > > CWovenCell::Tscatter_range( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     Side aScatterSide = oppositeSide( t_Side );
@@ -101,7 +101,7 @@ namespace LayerOptics {
       aTsct->push_back( aTscatter );
     }
     return aTsct;
-  };
+  }
 
   double CWovenCell::Tscatter( shared_ptr< const CBeamDirection > t_Direction, const double Rmat ) {
     double Tsct = 0;
@@ -135,6 +135,6 @@ namespace LayerOptics {
     }
 
     return Tsct;
-  };
+  }
 
 }

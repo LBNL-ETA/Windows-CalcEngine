@@ -21,7 +21,7 @@ namespace LayerOptics {
   RMaterialProperties::RMaterialProperties( const double aTf, const double aTb, 
     const double aRf, const double aRb ) : Tf( aTf ), Tb( aTb ), Rf( aRf ), Rb( aRb ) {
 
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////   CMaterial
@@ -30,16 +30,16 @@ namespace LayerOptics {
   CMaterial::CMaterial( const double minLambda, const double maxLambda ) : 
     m_MinLambda( minLambda ), m_MaxLambda( maxLambda ), m_WavelengthsCalculated( false ) {
   
-  };
+  }
 
   double CMaterial::getPropertyAtAngle( const Property t_Property, const Side t_Side, const double ) const {
     return getProperty( t_Property, t_Side ); // Default behavior is no angular dependence
-  };
+  }
 
   shared_ptr< vector< double > > CMaterial::getBandPropertiesAtAngle( const Property t_Property, 
     const Side t_Side, const double  ) const {
     return getBandProperties( t_Property, t_Side );  // Default beahvior is no angular dependence
-  };
+  }
 
   shared_ptr< vector< RMaterialProperties > > CMaterial::getBandProperties() {
     shared_ptr< vector< RMaterialProperties > > aProperties = make_shared< vector< RMaterialProperties > >();
@@ -57,18 +57,18 @@ namespace LayerOptics {
     }
 
     return aProperties;
-  };
+  }
 
   shared_ptr< vector< double > > CMaterial::getBandWavelengths() {
     if( !m_WavelengthsCalculated )  {
       m_Wavelengths = calculateBandWavelengths();
     }
     return m_Wavelengths;
-  };
+  }
 
   size_t CMaterial::getBandSize() {
    return getBandWavelengths()->size();
-  };
+  }
 
   int CMaterial::getBandIndex( const double t_Wavelength ) {
     int aIndex = -1;
@@ -79,11 +79,11 @@ namespace LayerOptics {
       }
     }
     return aIndex;
-  };
+  }
 
   double CMaterial::getMinLambda() const {
     return m_MinLambda;
-  };
+  }
 
   double CMaterial::getMaxLambda() const {
     return m_MaxLambda;
@@ -96,7 +96,7 @@ namespace LayerOptics {
     const double minLambda, const double maxLambda ) : CMaterial( minLambda, maxLambda ), 
     m_Tf( t_Tf ), m_Tb( t_Tb ), m_Rf( t_Rf ), m_Rb( t_Rb ) {
   
-  };
+  }
 
   double CMaterialSingleBand::getProperty( Property t_Property, Side t_Side ) const {
     double aProperty = 0;
@@ -115,20 +115,20 @@ namespace LayerOptics {
       break;
     }
     return aProperty;
-  };
+  }
 
   shared_ptr< vector< double > > CMaterialSingleBand::getBandProperties( 
     const Property t_Property, const Side t_Side ) const {
     shared_ptr< vector< double > > aResult = make_shared< vector< double > >();
     aResult->push_back( getProperty( t_Property, t_Side ) );
     return aResult;
-  };
+  }
 
   shared_ptr< vector< double > > CMaterialSingleBand::calculateBandWavelengths() {
     shared_ptr< vector< double > > aWavelengths = make_shared< vector< double > >();
     aWavelengths->push_back( m_MinLambda );
     return aWavelengths;
-  };
+  }
 
   double CMaterialSingleBand::T( Side t_Side ) const {
     double T = 0;
@@ -172,7 +172,7 @@ namespace LayerOptics {
     checkIfMaterialWithingSolarRange( t_PartialRange );
     createUVRange();
     createNIRRange( t_PartialRange, t_SolarRange, t_Ratio );
-  };
+  }
 
   CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterial > t_PartialRange,
     shared_ptr< CMaterial > t_SolarRange, 
@@ -184,11 +184,11 @@ namespace LayerOptics {
     double highLambda = t_PartialRange->getMaxLambda();
     CNIRRatio nirRatio = CNIRRatio( t_SolarRadiation, lowLambda, highLambda );
     createNIRRange( t_PartialRange, t_SolarRange, nirRatio.ratio() );
-  };
+  }
 
   double CMaterialDualBand::getProperty( Property t_Property, Side t_Side ) const {
     return m_MaterialFullRange->getProperty( t_Property, t_Side );
-  };
+  }
 
   shared_ptr< vector< double > > CMaterialDualBand::getBandProperties( const Property t_Property, 
     const Side t_Side ) const {
@@ -199,7 +199,7 @@ namespace LayerOptics {
       aResults->push_back( value );
     }
     return aResults;
-  };
+  }
 
   shared_ptr< vector< double > > CMaterialDualBand::calculateBandWavelengths() {
     shared_ptr< vector< double > > aWavelengths = make_shared< vector< double > >();
@@ -209,7 +209,7 @@ namespace LayerOptics {
     }
 
     return aWavelengths;
-  };
+  }
 
   void CMaterialDualBand::checkIfMaterialWithingSolarRange( shared_ptr< CMaterial > t_Material ) const {
     double lowLambda = t_Material->getMinLambda();
@@ -217,7 +217,7 @@ namespace LayerOptics {
     if( lowLambda < 0.32 || highLambda < 0.32 || lowLambda > 2.5 || highLambda > 2.5 ) {
       throw runtime_error("Material properties out of range. Wavelength range must be between 0.32 and 2.5 microns.");
     }
-  };
+  }
 
   void CMaterialDualBand::createUVRange() {
     double T = 0;
@@ -226,7 +226,7 @@ namespace LayerOptics {
     double maxLambda = 0.32;
     shared_ptr< CMaterial > aUVMaterial = make_shared< CMaterialSingleBand >( T, T, R, R, minLambda, maxLambda );
     m_Materials.push_back( aUVMaterial );
-  };
+  }
 
   void CMaterialDualBand::createNIRRange( 
     shared_ptr< CMaterial > t_PartialRange,
@@ -255,13 +255,13 @@ namespace LayerOptics {
     shared_ptr< CMaterialSingleBand > aMaterial = 
       make_shared< CMaterialSingleBand >( Tf_nir, Tb_nir, Rf_nir, Rb_nir, maxRangeLambda, 2.5 );
     m_Materials.push_back( aMaterial );
-  };
+  }
 
   double CMaterialDualBand::getModifiedProperty( const double t_Range, 
     const double t_Solar, const double t_Fraction ) const {
     assert( t_Fraction != 1 );
     return ( t_Solar - t_Fraction * t_Range ) / ( 1 - t_Fraction );
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////   CMaterialSample
@@ -278,31 +278,31 @@ namespace LayerOptics {
 
     m_AngularSample = make_shared< CAngularSpectralSample >( t_SpectralSample, t_Thickness, t_Type );
     
-  };
+  }
 
   double CMaterialSample::getPropertyAtAngle( const Property t_Property, 
     const Side t_Side, const double t_Angle ) const {
     assert( m_AngularSample );
     return m_AngularSample->getProperty( m_MinLambda, m_MaxLambda, t_Property, t_Side, t_Angle );
-  };
+  }
 
   double CMaterialSample::getProperty( const Property t_Property, const Side t_Side ) const {
     return getPropertyAtAngle( t_Property, t_Side, 0 );
-  };
+  }
 
   shared_ptr< vector< double > > CMaterialSample::getBandPropertiesAtAngle( const Property t_Property, 
     const Side t_Side, const double t_Angle ) const {
     assert( m_AngularSample );
     return m_AngularSample->getWavelengthsProperty( m_MinLambda, m_MaxLambda, t_Property, t_Side, t_Angle );
-  };
+  }
 
   shared_ptr< vector< double > > CMaterialSample::getBandProperties( const Property t_Property, 
     const Side t_Side ) const {
     return getBandPropertiesAtAngle( t_Property, t_Side, 0 );
-  };
+  }
 
   shared_ptr< vector< double > > CMaterialSample::calculateBandWavelengths() {
     return m_AngularSample->getBandWavelengths(); 
-  };
+  }
 
 }

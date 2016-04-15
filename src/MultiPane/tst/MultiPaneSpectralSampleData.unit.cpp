@@ -58,7 +58,7 @@ protected:
     m_MultiPane = make_shared< CMultiPaneSampleData >();
     m_MultiPane->addSample( sampleMeasurements1 );
     m_MultiPane->addSample( sampleMeasurements2 );
-  };
+  }
 
 public:
   shared_ptr< CMultiPaneSampleData > getMultiPane() { return m_MultiPane; };

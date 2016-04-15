@@ -19,7 +19,7 @@ protected:
   {
     // default will be Air
     Gas = std::make_shared< CGas >();
-  };
+  }
 
 public:
   std::shared_ptr< CGas > GetGas() { return Gas; };

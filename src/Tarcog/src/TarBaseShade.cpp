@@ -19,11 +19,11 @@ namespace Tarcog {
       double const t_Aright, double const t_Afront ) :
       m_Atop( t_Atop ), m_Abot( t_Abot ), m_Aleft( t_Aleft ), m_Aright( t_Aright), m_Afront( t_Afront )  {
     initialize();
-  };
+  }
 
   CShadeOpenings::CShadeOpenings( ) : m_Atop( 0 ), m_Abot( 0 ), m_Aleft( 0 ), m_Aright( 0 ), m_Afront( 0 )  {
     initialize();
-  };
+  }
 
   void CShadeOpenings::initialize() {
     if( m_Atop == 0 ) {
@@ -33,30 +33,30 @@ namespace Tarcog {
     if( m_Abot == 0 ) {
       m_Abot = OPENING_TOLERANCE;
     }
-  };
+  }
 
   double CShadeOpenings::openingMultiplier() {
     return ( m_Aleft + m_Aright + m_Afront ) / ( m_Abot + m_Atop );
-  };
+  }
 
   double CShadeOpenings::Aeq_bot() {
     return m_Abot + 0.5 * m_Atop * openingMultiplier();
-  };
+  }
 
   double CShadeOpenings::Aeq_top() {
     return m_Atop + 0.5 * m_Abot * openingMultiplier();
-  };
+  }
 
   CTarIGUShadeLayer::CTarIGUShadeLayer( double const t_Thickness, double const t_Conductivity, 
     shared_ptr< CShadeOpenings > t_ShadeOpenings,
       shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface ) : 
     CTarIGUSolidLayer( t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface ), m_ShadeOpenings( t_ShadeOpenings ) {
-  };
+  }
 
   CTarIGUShadeLayer::CTarIGUShadeLayer( double t_Thickness, double t_Conductivity ) : 
     CTarIGUSolidLayer( t_Thickness, t_Conductivity), m_ShadeOpenings( make_shared< CShadeOpenings >() ) {
   
-  };
+  }
 
   void CTarIGUShadeLayer::calculateConvectionConductionState() {
     CTarIGUSolidLayer::calculateConvectionConductionState();
@@ -79,7 +79,7 @@ namespace Tarcog {
       dynamic_pointer_cast< CTarEnvironment >( m_NextLayer ) != NULL ) {
       calcEdgeShadeFlow( dynamic_pointer_cast< CTarEnvironment >( m_NextLayer ), dynamic_pointer_cast< CTarIGUGapLayer >( m_PreviousLayer ) );
     }
-  };
+  }
 
   void CTarIGUShadeLayer::calcInBetweenShadeFlow( shared_ptr< CTarIGUGapLayer > t_Gap1, 
     shared_ptr< CTarIGUGapLayer > t_Gap2 ) {
@@ -163,7 +163,7 @@ namespace Tarcog {
     t_Gap1->smoothEnergy( qv1, qv2 );
     t_Gap2->smoothEnergy( qv1, qv2 );
 
-  };
+  }
 
   void CTarIGUShadeLayer::calcEdgeShadeFlow( shared_ptr< CTarEnvironment > t_Environment, 
     shared_ptr< CTarIGUGapLayer > t_Gap ) {
@@ -214,6 +214,6 @@ namespace Tarcog {
       }
     }
 
-  };
+  }
 
 }

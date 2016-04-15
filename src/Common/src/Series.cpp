@@ -32,17 +32,17 @@ namespace FenestrationCommon {
 
   void CSeriesPoint::value( double const t_Value ) {
     m_Value = t_Value; 
-  };
+  }
 
   CSeriesPoint& CSeriesPoint::operator=( const CSeriesPoint& t_Property ) {
     m_x = t_Property.m_x;
     m_Value = t_Property.m_Value;
     return *this;
-  };
+  }
 
   bool CSeriesPoint::operator<( const CSeriesPoint& t_Point ) {
     return m_x < t_Point.m_x;
-  };
+  }
 
   /////////////////////////////////////////////////////
   //  CSeries
@@ -58,7 +58,7 @@ namespace FenestrationCommon {
   void CSeries::insertToBeginning( double t_x, double t_Value ) {
     shared_ptr< CSeriesPoint > aProperty = make_shared< CSeriesPoint >( t_x, t_Value );
     m_Series.insert( m_Series.begin(), aProperty );
-  };
+  }
 
   void CSeries::setConstantValues( shared_ptr< vector< double > > t_Wavelengths, double const t_Value ) {
     m_Series.clear();
@@ -66,7 +66,7 @@ namespace FenestrationCommon {
     for( it = t_Wavelengths->begin(); it < t_Wavelengths->end(); ++it ) {
       addProperty( ( *it ), t_Value );
     }
-  };
+  }
 
   shared_ptr< CSeries > CSeries::integrate( IntegrationType t_IntegrationType ) const {
     
@@ -89,7 +89,7 @@ namespace FenestrationCommon {
 
     return newProperties;
 
-  };
+  }
 
   shared_ptr< ISeriesPoint > CSeries::findLower( double const t_Wavelength ) const {
     shared_ptr< ISeriesPoint > currentProperty = nullptr;
@@ -103,7 +103,7 @@ namespace FenestrationCommon {
     }
 
     return currentProperty;
-  };
+  }
   
   shared_ptr< ISeriesPoint > CSeries::findUpper( double const t_Wavelength ) const {
     shared_ptr< ISeriesPoint > currentProperty = nullptr;
@@ -117,7 +117,7 @@ namespace FenestrationCommon {
     }
 
     return currentProperty;
-  };
+  }
 
   double CSeries::interpolate( shared_ptr< const ISeriesPoint > t_Lower, 
     shared_ptr< const ISeriesPoint > t_Upper, double const t_Wavelength ) const {
@@ -134,7 +134,7 @@ namespace FenestrationCommon {
     }
 
     return vx;
-  };
+  }
 
   shared_ptr< CSeries > CSeries::interpolate( 
     shared_ptr< vector< double > > t_Wavelengths ) const {
@@ -162,7 +162,7 @@ namespace FenestrationCommon {
     }
 
     return newProperties;
-  };
+  }
 
   shared_ptr< CSeries > CSeries::mMult( 
     shared_ptr< const CSeries > t_Series ) const {
@@ -185,7 +185,7 @@ namespace FenestrationCommon {
     }
 
     return newProperties;
-  };
+  }
 
   shared_ptr< CSeries > CSeries::mSub( 
     shared_ptr< const CSeries > t_Series ) const {
@@ -207,7 +207,7 @@ namespace FenestrationCommon {
     }
 
     return newProperties;
-  };
+  }
 
   shared_ptr< CSeries > CSeries::mAdd( 
     shared_ptr< const CSeries > t_Series ) const {
@@ -229,7 +229,7 @@ namespace FenestrationCommon {
     }
 
     return newProperties;
-  };
+  }
 
   shared_ptr< vector< double > > CSeries::getXArray() const {
     shared_ptr< vector< double > > aArray = make_shared< vector< double > >();
@@ -238,7 +238,7 @@ namespace FenestrationCommon {
     }
 
     return aArray;
-  };
+  }
 
   double CSeries::sum( double const minLambda, double const maxLambda ) const {
     double const TOLERANCE = 1e-6; // introduced because of rounding error
@@ -250,7 +250,7 @@ namespace FenestrationCommon {
       }
     }
     return total;
-  };
+  }
 
   void CSeries::sort() {
     std::sort( m_Series.begin(), m_Series.end(), SeriesCompare() );
@@ -258,15 +258,15 @@ namespace FenestrationCommon {
 
   vector< shared_ptr< CSeriesPoint > >::const_iterator CSeries::begin() const {
     return m_Series.cbegin();
-  };
+  }
 
   vector< shared_ptr< CSeriesPoint > >::const_iterator CSeries::end() const {
     return m_Series.cend();
-  };
+  }
 
   size_t CSeries::size() const {
     return m_Series.size();
-  };
+  }
 
   shared_ptr< const CSeriesPoint > CSeries::operator[]( size_t Index ) const {
   //CSeriesPoint CSeries::operator[]( int Index ) const {
@@ -274,7 +274,7 @@ namespace FenestrationCommon {
       throw runtime_error("Index out of range");
     }
     return m_Series[Index];
-  };
+  }
 
   // CSeries& CSeries::operator=( CSeries& t_Properties ) {
   //   clear();
@@ -286,10 +286,10 @@ namespace FenestrationCommon {
 
   void CSeries::clear() {
     m_Series.clear();
-  };
+  }
 
   bool CSeries::SeriesCompare::operator()( shared_ptr< const CSeriesPoint > l, shared_ptr< const CSeriesPoint > r) {
     return l->x() < r->x();
-  };
+  }
 
 }

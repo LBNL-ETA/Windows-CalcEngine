@@ -41,7 +41,7 @@ protected:
 
     m_Cell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
-  };
+  }
 
 public:
   shared_ptr< CVenetianCell > GetCell() { return m_Cell; };

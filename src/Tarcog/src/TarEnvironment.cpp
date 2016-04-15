@@ -23,7 +23,7 @@ namespace Tarcog {
 
   CTarEnvironment::~CTarEnvironment() {
     tearDownConnections();
-  };
+  }
 
   double CTarEnvironment::getGasTemperature() {
     return m_AirTemperature;
@@ -32,40 +32,40 @@ namespace Tarcog {
   void CTarEnvironment::setHCoeffModel( BoundaryConditionsCoeffModel const t_BCModel ) {
     m_HCoefficientModel = t_BCModel;
     resetCalculated();
-  };
+  }
 
   void CTarEnvironment::setForcedVentilation( ForcedVentilation const &t_ForcedVentilation ) {
     m_ForcedVentilation = t_ForcedVentilation;
     resetCalculated();
-  };
+  }
 
   void CTarEnvironment::setPrescribedConvection( double const t_HInput ) {
     m_HInput = t_HInput;
     resetCalculated();
-  };
+  }
 
   void CTarEnvironment::setInfraredRadiation( double const t_InfraRed ) {
     m_InfraredRadiation = t_InfraRed;
     resetCalculated();
-  };
+  }
 
   void CTarEnvironment::setEmissivity( double const t_Emissivity ) {
     m_Emissivity = t_Emissivity;
     resetCalculated();
-  };
+  }
 
   double CTarEnvironment::getAirTemperature() const {
     return m_AirTemperature;
-  };
+  }
 
   double CTarEnvironment::getEnvironmentRadiosity() {
     calculateLayerState();
     return m_EnvironmentRadiosity;
-  };
+  }
 
   void CTarEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > ) {
     //
-  };
+  }
 
   void CTarEnvironment::initializeStateVariables() {
     CGasLayer::initializeStateVariables();

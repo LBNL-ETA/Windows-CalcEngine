@@ -42,7 +42,7 @@ protected:
     shared_ptr< CViewSegment2D > aSegment3 = make_shared< CViewSegment2D >( aStartPoint3, aEndPoint3 );
     m_Enclosure2D->appendSegment( aSegment3 );
 
-  };
+  }
 
 public:
   shared_ptr< CGeometry2D > getEnclosure() { return m_Enclosure2D; };

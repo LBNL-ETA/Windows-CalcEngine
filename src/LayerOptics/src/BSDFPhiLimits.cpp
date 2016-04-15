@@ -18,7 +18,7 @@ namespace LayerOptics {
 
   shared_ptr< vector< double > > CPhiLimits::getPhiLimits() const {
     return m_PhiLimits;
-  };
+  }
 
   void CPhiLimits::createLimits( const vector< double >& t_PhiAngles ) {
     double deltaPhi = 360.0 / t_PhiAngles.size();
@@ -31,5 +31,5 @@ namespace LayerOptics {
       m_PhiLimits->push_back( currentLimit );
       currentLimit = currentLimit + deltaPhi;
     }
-  };
+  }
 }

@@ -39,7 +39,7 @@ protected:
     m_Series->addProperty( 0.595,  0.5425 );
     m_Series->addProperty( 0.600,  0.5435 );
 
-  };
+  }
 
 public:
   shared_ptr< CSeries > getProperty() { return m_Series; };

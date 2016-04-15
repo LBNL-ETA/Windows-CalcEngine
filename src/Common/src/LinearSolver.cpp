@@ -16,11 +16,11 @@ namespace FenestrationCommon {
 
   void CLinearSolver::assignMatrixA( shared_ptr< CSquareMatrix > t_MatrixA ) {
     m_MatrixA = t_MatrixA;
-  };
+  }
 
   void CLinearSolver::assignVectorB( shared_ptr< vector< double > > t_VectorB ) {
     m_VectorB = t_VectorB;
-  };
+  }
 
   shared_ptr< vector< double > > CLinearSolver::checkSingularity() {
     size_t size = m_MatrixA->getSize();
@@ -41,7 +41,7 @@ namespace FenestrationCommon {
     }
 
     return vv;
-  };
+  }
 
   shared_ptr< vector< size_t > > CLinearSolver::makeUpperTriangular() {
     double TINY = 1e-20;
@@ -104,7 +104,7 @@ namespace FenestrationCommon {
     }
 
     return index;
-  };
+  }
 
   shared_ptr< vector< double > > CLinearSolver::solveSystem(
     shared_ptr< CSquareMatrix > t_MatrixA, 
@@ -147,6 +147,6 @@ namespace FenestrationCommon {
 
     return m_VectorB;
 
-  };
+  }
 
 }

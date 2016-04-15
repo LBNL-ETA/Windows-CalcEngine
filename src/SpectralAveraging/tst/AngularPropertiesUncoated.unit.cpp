@@ -14,7 +14,7 @@ class TestAngularPropertiesUncoated : public testing::Test {
 
 protected:
   virtual void SetUp() {
-  };
+  }
 
 };
 

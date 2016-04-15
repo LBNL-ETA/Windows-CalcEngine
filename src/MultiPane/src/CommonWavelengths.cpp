@@ -9,11 +9,11 @@ using namespace std;
 namespace MultiPane {
 
   CCommonWavelengths::CCommonWavelengths() {
-  };
+  }
 
   void CCommonWavelengths::addWavelength( std::shared_ptr< std::vector< double > > t_wv ) {
     m_Wavelengths.push_back( t_wv );
-  };
+  }
 
   shared_ptr< vector< double > > CCommonWavelengths::getCombinedWavelengths( const Combine t_Combination ) {
     shared_ptr< vector< double > > aCombined = nullptr;
@@ -29,7 +29,7 @@ namespace MultiPane {
     assert( aCombined != nullptr );
 
     return aCombined;
-  };
+  }
 
   shared_ptr< vector< double > > CCommonWavelengths::combineWavelegths( shared_ptr< vector< double > > t_wv1,
     shared_ptr< vector< double > > t_wv2, const Combine t_Combination ) {
@@ -66,6 +66,6 @@ namespace MultiPane {
     }
 
     return combinedWavelengths;
-  };
+  }
 
 }

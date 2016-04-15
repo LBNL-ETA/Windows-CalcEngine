@@ -20,13 +20,13 @@ namespace LayerOptics {
     shared_ptr< const CBSDFHemisphere > t_Hemisphere ) :
     CBSDFLayer( t_Cell, t_Hemisphere ) {
     
-  };
+  }
 
   shared_ptr< CUniformDiffuseCell > CUniformDiffuseBSDFLayer::cellAsUniformDiffuse() const {
     shared_ptr< CUniformDiffuseCell > aCell = dynamic_pointer_cast< CUniformDiffuseCell >( m_Cell );
     assert( aCell != nullptr );
     return aCell;
-  };
+  }
 
   void CUniformDiffuseBSDFLayer::calcDiffuseDistribution( const Side aSide, 
     shared_ptr< const CBeamDirection > t_Direction,
@@ -50,7 +50,7 @@ namespace LayerOptics {
       ( *Rho )[ j ][ t_DirectionIndex ] += Ref / M_PI;
     }
 
-  };
+  }
 
   void CUniformDiffuseBSDFLayer::calcDiffuseDistribution_wv( const Side aSide, 
     shared_ptr< const CBeamDirection > t_Direction,
@@ -79,6 +79,6 @@ namespace LayerOptics {
       }
     }
 
-  };
+  }
 
 }

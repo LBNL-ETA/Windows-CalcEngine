@@ -153,7 +153,7 @@ namespace Tarcog{
   CGasLayer::CGasLayer() : CLayerState(), m_Pressure( 0 ), m_AirSpeed( 0 ), 
     m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
     onCreate();
-  };
+  }
 
   CGasLayer::CGasLayer( double const t_Pressure ) : m_Pressure( t_Pressure ), m_AirSpeed( 0 ),
     m_AirVerticalDirection( AirVerticalDirection::None ),
@@ -165,19 +165,19 @@ namespace Tarcog{
     m_Pressure( t_Pressure ), m_AirSpeed( t_AirSpeed ), 
     m_AirVerticalDirection( t_AirVerticalDirection ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
     onCreate();
-  };
+  }
 
   CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirHorizontalDirection ) : CLayerState(),
     m_Pressure( t_Pressure ), m_AirSpeed( t_AirSpeed ), 
     m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( t_AirHorizontalDirection ) {
     onCreate();
-  };
+  }
 
   CGasLayer::CGasLayer( double const t_Pressure, shared_ptr< CGas > t_Gas ) : CLayerState(), m_Pressure( t_Pressure ), m_AirSpeed( 0 ), 
     m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
     m_Gas = t_Gas;
     onCreate();
-  };
+  }
 
   void CGasLayer::initializeStateVariables() {
     assert( m_Gas != nullptr );

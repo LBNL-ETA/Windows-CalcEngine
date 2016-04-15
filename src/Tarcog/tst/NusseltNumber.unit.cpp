@@ -22,7 +22,7 @@ protected:
       cout << e.what() << endl;
       throw &e;
     }
-  };
+  }
 
 public:
   std::shared_ptr< CNusseltNumber > GetNusselt() { return m_NusseltNumber; };

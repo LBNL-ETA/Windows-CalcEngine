@@ -19,7 +19,7 @@ namespace SpectralAveraging {
   CAngularProperties::CAngularProperties( const double t_TransmittanceZero, const double t_ReflectanceZero ) : 
     m_Transmittance0( t_TransmittanceZero ), m_Reflectance0( t_ReflectanceZero ), 
     m_Transmittance( -1 ), m_Reflectance( -1 ), m_StateAngle( -1 ), m_StateWavelength( -1 ) {
-  };
+  }
 
   double CAngularProperties::cosAngle( const double t_Angle ) {
     double aAngle = radians( t_Angle );
@@ -45,17 +45,17 @@ namespace SpectralAveraging {
     m_Beta = m_Transmittance0 * m_Transmittance0 - m_Reflectance0 * m_Reflectance0 + 2 * m_Reflectance0 + 1;
     m_Rho0 = ( m_Beta - sqrt( m_Beta * m_Beta - 4 * ( 2 - m_Reflectance0) * m_Reflectance0 ) ) / ( 2 * ( 2 - m_Reflectance0 ) );
     
-  };
+  }
 
   double CAngularPropertiesUncoated::transmittance( const double t_Angle, const double t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Transmittance;
-  };
+  }
 
   double CAngularPropertiesUncoated::reflectance( const double t_Angle, const double t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Reflectance;
-  };
+  }
 
   void CAngularPropertiesUncoated::checkStateProperties( const double t_Angle, const double t_Wavelength ) {
     CAngularProperties::checkStateProperties( t_Angle, t_Wavelength );
@@ -103,17 +103,17 @@ namespace SpectralAveraging {
     const double t_SolarTransmittance ) : CAngularProperties( t_Transmittance, t_Reflectance ), 
     m_SolTransmittance0( t_SolarTransmittance ) {
     
-  };
+  }
   
   double CAngularPropertiesCoated::transmittance( const double t_Angle, const double t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Transmittance;
-  };
+  }
 
   double CAngularPropertiesCoated::reflectance( const double t_Angle, const double t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Reflectance;
-  };
+  }
 
   void CAngularPropertiesCoated::checkStateProperties( const double t_Angle, const double ) {
     CAngularProperties::checkStateProperties( t_Angle, 0 ); // Wavelength is not provided for coated glass
@@ -168,11 +168,11 @@ namespace SpectralAveraging {
   Coefficients::Coefficients( const double t_C0, const double t_C1, const double t_C2, const double t_C3,
       const double t_C4 ) : C0( t_C0 ), C1( t_C1 ), C2( t_C2 ), C3( t_C3 ), C4( t_C4 ) {
   
-  };
+  }
 
   double Coefficients::inerpolation( const double t_Value ) {
     return C0 + C1 * t_Value + C2 * pow( t_Value, 2 ) + C3 * pow( t_Value, 3 ) + C4 * pow( t_Value, 4 );
-  };
+  }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //  CCoatingCoefficients
@@ -180,7 +180,7 @@ namespace SpectralAveraging {
 
   CCoatingCoefficients::CCoatingCoefficients() {
   
-  };
+  }
 
   shared_ptr< Coefficients > CCoatingCoefficients::getCoefficients( const CoatingProperty t_Property, const CoatingType t_Type ) {
     shared_ptr< Coefficients > aCoefficients = nullptr;
@@ -220,7 +220,7 @@ namespace SpectralAveraging {
 
     return aCoefficients;
 
-  };
+  }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //  CAngularPropertiesFactory
@@ -230,7 +230,7 @@ namespace SpectralAveraging {
     const double t_SolarTransmittance ) : m_Thickness( t_Thickness ), m_Transmittance0( t_Transmittance0 ), m_Reflectance0( t_Reflectance0 ),
     m_SolarTransmittance0( t_SolarTransmittance ) {
     
-  };
+  }
 
   shared_ptr< CAngularProperties > CAngularPropertiesFactory::getAngularProperties( const SpecularLayerSurfaceType t_SurfaceType ) {
     shared_ptr< CAngularProperties > aProperties = nullptr;
@@ -247,6 +247,6 @@ namespace SpectralAveraging {
     }
     assert( aProperties != nullptr );
     return aProperties;
-  };
+  }
 
 }

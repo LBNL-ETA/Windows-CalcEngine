@@ -41,7 +41,7 @@ namespace Tarcog {
       ++positionCounter;
     }
     return m_LinearSolver->solveSystem( m_MatrixA, m_VectorB );
-  };
+  }
 
   void CTarcogQBalance::buildCell( shared_ptr< CBaseTarcogLayer > t_Previous, 
     shared_ptr< CBaseTarcogLayer > t_Current, shared_ptr< CBaseTarcogLayer > t_Next, const int t_Index ) {
@@ -128,6 +128,6 @@ namespace Tarcog {
     }
 
     
-  };
+  }
 
 }

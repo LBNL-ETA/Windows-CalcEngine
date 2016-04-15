@@ -34,7 +34,7 @@ protected:
 
     m_Integrator = make_shared< CHemispherical2DIntegrator >( aSeries, IntegrationType::Trapezoidal );
 
-  };
+  }
 
 public:
   shared_ptr< CHemispherical2DIntegrator > getIntegrator() { return m_Integrator; };

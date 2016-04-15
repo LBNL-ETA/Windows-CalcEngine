@@ -165,7 +165,7 @@ protected:
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, aSolarRadiation );
-  };
+  }
 
 public:
   shared_ptr< CMaterial > getMaterial() { return m_Material; };

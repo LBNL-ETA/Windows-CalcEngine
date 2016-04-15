@@ -422,7 +422,7 @@ protected:
     m_Layer = make_shared< CMultiPaneSpecular >( commonWavelengths, aSolarRadiation, aCell_102 );
     m_Layer->addLayer( aCell_103 );
 
-  };
+  }
 
 public:
   shared_ptr< CMultiPaneSpecular > getLayer() { return m_Layer; };

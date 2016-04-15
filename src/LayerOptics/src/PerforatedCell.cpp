@@ -21,6 +21,6 @@ namespace LayerOptics {
     shared_ptr< CCellDescription > t_Cell ) : 
     CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
     
-  };
+  }
 
 }

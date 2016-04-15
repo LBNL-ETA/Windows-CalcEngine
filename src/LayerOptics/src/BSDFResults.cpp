@@ -27,11 +27,11 @@ namespace LayerOptics {
     m_VTauHemB = make_shared< vector< double > >( m_DimMatrices );
     m_VRhoHemF = make_shared< vector< double > >( m_DimMatrices );
     m_VRhoHemB = make_shared< vector< double > >( m_DimMatrices );
-  };
+  }
 
   shared_ptr< const CBSDFDirections > CBSDFResults::getDirections() const {
     return m_Directions; 
-  };
+  }
 
   double CBSDFResults::TauDiff( Side t_Side ) const {
     double Tdiff = 0;
@@ -47,7 +47,7 @@ namespace LayerOptics {
       break;
     }
     return Tdiff;
-  };
+  }
 
   double CBSDFResults::RhoDiff( Side t_Side ) const {
     double Rdiff = 0;
@@ -63,7 +63,7 @@ namespace LayerOptics {
       break;
     }
     return Rdiff;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CBSDFResults::Tau( Side t_Side ) const {
     shared_ptr< CSquareMatrix > Tau = nullptr;
@@ -79,7 +79,7 @@ namespace LayerOptics {
       break;
     }
     return Tau;  
-  };
+  }
 
   shared_ptr< CSquareMatrix > CBSDFResults::Rho( Side t_Side ) const {
     shared_ptr< CSquareMatrix > Rho = nullptr;
@@ -95,7 +95,7 @@ namespace LayerOptics {
       break;
     }
     return Rho;  
-  };
+  }
 
   void CBSDFResults::setResultMatrices( shared_ptr< CSquareMatrix > t_Tau, shared_ptr< CSquareMatrix > t_Rho, Side t_Side ) {
     //m_HemisphericalCalculated = false;
@@ -112,7 +112,7 @@ namespace LayerOptics {
       assert("Incorrect selection of side.");
       break;
     }
-  };
+  }
 
   shared_ptr< vector< double > > CBSDFResults::TauHem( Side t_Side ) {
     calcHemispherical();
@@ -129,7 +129,7 @@ namespace LayerOptics {
       break;
     }
     return TauHem;
-  };
+  }
 
   shared_ptr< vector< double > > CBSDFResults::RhoHem( Side t_Side ) {
     calcHemispherical();
@@ -146,7 +146,7 @@ namespace LayerOptics {
       break;
     }
     return RhoHem;
-  };
+  }
 
   shared_ptr< vector< double > > CBSDFResults::Abs( Side t_Side ) {
     calcHemispherical();
@@ -163,15 +163,15 @@ namespace LayerOptics {
       break;
     }
     return Abs;  
-  };
+  }
 
   shared_ptr< const vector< double > > CBSDFResults::lambdaVector() const {
     return m_Directions->lambdaVector();
-  };
+  }
 
   shared_ptr< const CSquareMatrix > CBSDFResults::lambdaMatrix() const {
     return m_Directions->lambdaMatrix(); 
-  };
+  }
 
   double CBSDFResults::integrate( shared_ptr< CSquareMatrix > t_Matrix ) const {
     double sum = 0;
@@ -181,7 +181,7 @@ namespace LayerOptics {
       }
     }
     return sum / M_PI;
-  };
+  }
 
   void CBSDFResults::calcHemispherical() {
     if( !m_HemisphericalCalculated ) {

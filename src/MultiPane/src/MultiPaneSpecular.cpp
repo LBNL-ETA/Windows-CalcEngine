@@ -25,15 +25,15 @@ namespace MultiPane {
     shared_ptr< CAbsorptancesMultiPane > t_Abs, const double t_Angle ) :
     m_Layer( t_Layer ), m_Abs( t_Abs ), m_Angle( t_Angle ) {
     
-  };
+  }
 
   double CEquivalentLayerAngle::angle() const {
     return m_Angle;
-  };
+  }
 
   shared_ptr< CEquivalentLayer > CEquivalentLayerAngle::layer() const {
     return m_Layer;
-  };
+  }
 
   shared_ptr< CSeries > CEquivalentLayerAngle::getProperties( const Side t_Side, const Property t_Property ) {
     shared_ptr< CSeries > aProperty = nullptr;
@@ -76,11 +76,11 @@ namespace MultiPane {
     }
     assert( aProperty != nullptr );
     return aProperty;
-  };
+  }
 
   shared_ptr< CSeries > CEquivalentLayerAngle::Abs( size_t const Index ) {
     return m_Abs->Abs( Index );
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CMultiPaneSpecular
@@ -90,11 +90,11 @@ namespace MultiPane {
     shared_ptr< CSpecularCell > t_Layer ) : m_CommonWavelengths( t_CommonWavelength ), m_SolarRadiation( t_SolarRadiation ) {
     m_SolarRadiation = m_SolarRadiation->interpolate( m_CommonWavelengths );
     addLayer( t_Layer );
-  };
+  }
 
   void CMultiPaneSpecular::addLayer( shared_ptr< CSpecularCell > t_Layer ) {
     m_Layers.push_back( t_Layer );
-  };
+  }
 
   double CMultiPaneSpecular::getProperty( const Side t_Side, const Property t_Property, const double t_Angle,
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
@@ -111,7 +111,7 @@ namespace MultiPane {
     assert( totalSolar > 0 );
 
     return totalProperty / totalSolar;
-  };
+  }
 
   double CMultiPaneSpecular::getHemisphericalProperty( const Side t_Side, const Property t_Property, 
     shared_ptr< const vector< double > > t_Angles, 
@@ -125,7 +125,7 @@ namespace MultiPane {
     }
     CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator( aAngularProperties, t_IntegrationType );
     return aIntegrator.value();
-  };
+  }
 
   double CMultiPaneSpecular::Abs( size_t const Index, const double t_Angle, 
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
@@ -140,7 +140,7 @@ namespace MultiPane {
     assert( totalSolar > 0 );
 
     return totalProperty / totalSolar;
-  };
+  }
 
   double CMultiPaneSpecular::AbsHemispherical( size_t const Index, shared_ptr< const vector< double > > t_Angles, 
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
@@ -154,7 +154,7 @@ namespace MultiPane {
 
     CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator( aAngularProperties, t_IntegrationType );
     return aIntegrator.value();
-  };
+  }
 
   shared_ptr< CEquivalentLayerAngle > CMultiPaneSpecular::getAngular( const double t_Angle ) {
     shared_ptr< CEquivalentLayerAngle > aAngularProperties = nullptr;
@@ -170,7 +170,7 @@ namespace MultiPane {
     }
 
     return aAngularProperties;
-  };
+  }
 
   shared_ptr< CEquivalentLayerAngle > CMultiPaneSpecular::createNewAngular( const double t_Angle ) {
     // Create direction for specular. It is irrelevant what is Phi angle and it is chosen to be zero in this case
@@ -212,7 +212,7 @@ namespace MultiPane {
 
     return newLayer;
 
-  };
+  }
 
 
 }

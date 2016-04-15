@@ -648,7 +648,7 @@ protected:
 
     m_Sample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
-  };
+  }
 
 public:
   shared_ptr< CSpectralSample > getSample() { return m_Sample; };

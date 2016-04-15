@@ -85,31 +85,31 @@ namespace LayerOptics {
       ( *m_LambdaMatrix )[ i ][ i ] = m_Patches[ i ]->lambda();
     }
 
-  };
+  }
 
   size_t CBSDFDirections::size() const {
     return m_Patches.size(); 
-  };
+  }
 
   shared_ptr< const CBSDFPatch > CBSDFDirections::operator[]( const size_t Index ) const {
     return m_Patches[ Index ] ;
-  };
+  }
 
   vector< shared_ptr< CBSDFPatch > >::iterator CBSDFDirections::begin() {
     return m_Patches.begin();
-  };
+  }
 
   vector< shared_ptr< CBSDFPatch > >::iterator CBSDFDirections::end() {
     return  m_Patches.end();
-  };
+  }
 
   shared_ptr< vector< double > > CBSDFDirections::lambdaVector() const {
     return m_LambdaVector;
-  };
+  }
 
   std::shared_ptr< FenestrationCommon::CSquareMatrix > CBSDFDirections::lambdaMatrix() const {
     return m_LambdaMatrix;
-  };
+  }
 
   /////////////////////////////////////////////////////////////////
   ///  CBSDFHemisphere
@@ -156,7 +156,7 @@ namespace LayerOptics {
   CBSDFHemisphere::CBSDFHemisphere( vector< CBSDFDefinition >& t_Definitions ) : 
     m_IncomingDirections( make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Incoming ) ),
     m_OutgoingDirections( make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Outgoing ) ) {
-  };
+  }
 
   shared_ptr< CBSDFDirections > CBSDFHemisphere::getDirections( const BSDFHemisphere t_Side ) const {
     shared_ptr< CBSDFDirections > aDirections = nullptr;
@@ -172,6 +172,6 @@ namespace LayerOptics {
       break;
     }
     return aDirections;  
-  };
+  }
 
 }

@@ -15,7 +15,7 @@ class TestAngularPropertiesCoated : public testing::Test
 
 protected:
   virtual void SetUp() {
-  };
+  }
 
 };
 

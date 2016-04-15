@@ -46,7 +46,7 @@ namespace LayerOptics {
     assert( m_Bottom != nullptr );
     // Two additional segments are for interior and exterior openess
     return 2 + m_Top->numberOfSegments() + m_Bottom->numberOfSegments();
-  };
+  }
 
   double CVenetianCellDescription::segmentLength( const size_t Index ) const {
     shared_ptr< vector< shared_ptr< CViewSegment2D > > > aSegments =  m_Geometry->segments();
@@ -55,7 +55,7 @@ namespace LayerOptics {
     }
     shared_ptr< CViewSegment2D > aSegment = ( *aSegments )[ Index ];
     return aSegment->length(); 
-  };
+  }
 
   shared_ptr< CVenetianCellDescription > CVenetianCellDescription::makeBackwardCell() const {
     double slatWidth = m_Top->slatWidth();
@@ -68,22 +68,22 @@ namespace LayerOptics {
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, m_NumOfSlatSegments );
 
     return aBackwardCell;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CVenetianCellDescription::viewFactors() {
     return m_Geometry->viewFactors();
-  };
+  }
 
   shared_ptr< vector < BeamViewFactor > > CVenetianCellDescription::beamViewFactors( 
     const double t_ProfileAngle, const Side t_Side ) {
     assert( m_BeamGeometry != nullptr );
     return m_BeamGeometry->beamViewFactors( -t_ProfileAngle, t_Side );
-  };
+  }
 
   double CVenetianCellDescription::T_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     assert( m_BeamGeometry != nullptr );
     double aProfileAngle = t_Direction->profileAngle();
     return m_BeamGeometry->directToDirect( -aProfileAngle, t_Side );
-  };
+  }
 
 }

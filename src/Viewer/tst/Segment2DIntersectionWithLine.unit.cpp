@@ -14,7 +14,7 @@ class TestSegment2DIntersectionWithLine : public testing::Test {
 protected:
   virtual void SetUp() {
     
-  };
+  }
 
 };
 

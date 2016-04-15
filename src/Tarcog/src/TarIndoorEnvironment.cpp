@@ -29,19 +29,19 @@ namespace Tarcog {
 
   void CTarIndoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
     t_IGULayer->connectToBackSide( shared_from_this() );
-  };
+  }
 
   void CTarIndoorEnvironment::setRoomRadiationTemperature( double const t_RadiationTemperature ) {
     m_RoomRadiationTemperature = t_RadiationTemperature;
     resetCalculated();
-  };
+  }
 
   void CTarIndoorEnvironment::calculateRadiationState() {
     using ConstantsData::STEFANBOLTZMANN;
 
     CTarEnvironment::calculateRadiationState();
     m_EnvironmentRadiosity = STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
-  };
+  }
 
   void CTarIndoorEnvironment::calculateConvectionConductionState() {
     CTarEnvironment::calculateConvectionConductionState();
@@ -65,7 +65,7 @@ namespace Tarcog {
         throw runtime_error( "Incorrect definition for convection model (Indoor environment)." );
       }
     }
-  };
+  }
 
   void CTarIndoorEnvironment::calculateHc() {
     if( m_AirSpeed > 0 ) {
@@ -101,5 +101,5 @@ namespace Tarcog {
       }
       m_ConductiveConvectiveCoeff = Gnui * aProperties->m_ThermalConductivity / m_Height;
     }
-  };
+  }
 }

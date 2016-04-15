@@ -14,7 +14,7 @@ namespace LayerOptics {
 
   shared_ptr< vector< double > > CThetaLimits::getThetaLimits() const {
     return m_ThetaLimits;
-  };
+  }
 
   void CThetaLimits::createLimits( const vector< double >& t_ThetaAngles ) {
     vector< double >::const_reverse_iterator it;
@@ -31,5 +31,5 @@ namespace LayerOptics {
       m_ThetaLimits->insert( m_ThetaLimits->begin(), limit );
       previousAngle = limit;
     }
-  };
+  }
 }

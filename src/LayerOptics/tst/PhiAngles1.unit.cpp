@@ -18,7 +18,7 @@ protected:
   virtual void SetUp()
   {
     m_BasisRing = make_shared< CBSDFPhiAngles >( 8 );
-  };
+  }
 
 public:
   shared_ptr< CBSDFPhiAngles > GetRing() { return m_BasisRing; };

@@ -51,7 +51,7 @@ namespace Tarcog {
       aNode->connectToFrontSide( t_Node );
       t_Node->connectToBackSide( aNode );
     }
-  };
+  }
 
   void CLayerNodes::addToBack( shared_ptr< CLayerNode > t_Node ) {
     shared_ptr< CLayerNode > aNode = m_Layers.front();
@@ -60,13 +60,13 @@ namespace Tarcog {
       aNode->connectToBackSide( t_Node );
       t_Node->connectToFrontSide( aNode );
     }
-  };
+  }
 
   void CLayerNodes::tearDownConnections() {
     for( shared_ptr< CLayerNode > layer : m_Layers  ) {
       layer->tearDownConnections();
     }
-  };
+  }
 
   list< shared_ptr< CLayerNode > >::iterator CLayerNodes::iterator() {
     return m_Layers.begin();
@@ -79,14 +79,14 @@ namespace Tarcog {
   CThermalNode::CThermalNode( shared_ptr< CBaseTarcogLayer > t_HeatFlowLayer ) :
     m_HeatFlowLayer( t_HeatFlowLayer ) {
 
-  };
+  }
 
   shared_ptr< CBaseTarcogLayer > CThermalNode::getHeatFlowLayer() const {
     return m_HeatFlowLayer;
-  };
+  }
 
   void CThermalNode::setHeatFlowLayer( shared_ptr< CBaseTarcogLayer > const t_Layer ) {
     m_HeatFlowLayer = t_Layer;
-  };
+  }
 
 }

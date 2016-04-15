@@ -270,7 +270,7 @@ protected:
 
     m_Sample = make_shared< CAngularSpectralSample >( aSample, thickness, layerType );
 
-  };
+  }
 
 public:
   shared_ptr< CAngularSpectralSample > getSample() { return m_Sample; };

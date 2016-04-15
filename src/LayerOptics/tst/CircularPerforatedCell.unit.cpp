@@ -38,7 +38,7 @@ protected:
     m_DescriptionCell = make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
     m_PerforatedCell = make_shared< CPerforatedCell >( aMaterial, m_DescriptionCell );
-  };
+  }
 
 public:
   shared_ptr< CPerforatedCell > GetCell() { return m_PerforatedCell; };

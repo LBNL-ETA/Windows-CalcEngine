@@ -14,7 +14,7 @@ class TestSegment2D : public testing::Test {
 protected:
   virtual void SetUp() {
     
-  };
+  }
 
 };
 

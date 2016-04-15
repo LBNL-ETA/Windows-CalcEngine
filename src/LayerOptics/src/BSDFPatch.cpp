@@ -38,7 +38,7 @@ namespace LayerOptics {
   /////////////////////////////////////////////////////////////////
   CCentralAngleLimits::CCentralAngleLimits( const double t_High ) : CAngleLimits( 0, t_High ) {
      
-  };
+  }
 
   double CCentralAngleLimits::average() const {
     return m_Low;
@@ -56,11 +56,11 @@ namespace LayerOptics {
 
   shared_ptr< CBeamDirection > CBSDFPatch::centerPoint() const {
     return make_shared< CBeamDirection >( m_Theta->average(), m_Phi->average() );
-  };
+  }
 
   double CBSDFPatch::lambda() const {
     return m_Lambda;
-  };
+  }
 
   void CBSDFPatch::calculateLambda() {
     double thetaLow = m_Theta->low() * M_PI / 180;

@@ -41,7 +41,7 @@ namespace LayerOptics {
       m_Calculated = true;
     }
     return m_Results;
-  };
+  }
 
   shared_ptr< vector< shared_ptr< CBSDFResults > > > CBSDFLayer::getWavelengthResults() {
     if( !m_CalculatedWV ) {
@@ -49,11 +49,11 @@ namespace LayerOptics {
       m_CalculatedWV = true;
     }
     return m_WVResults;
-  };
+  }
 
   int CBSDFLayer::getBandIndex( const double t_Wavelength ) {
     return m_Cell->getBandIndex( t_Wavelength ) ;
-  };
+  }
 
   void CBSDFLayer::calc_dir_dir() {
     for( Side t_Side : Enum< Side >() ) {
@@ -74,7 +74,7 @@ namespace LayerOptics {
       }
       m_Results->setResultMatrices( Tau, Rho, t_Side );
     }
-  };
+  }
 
   void CBSDFLayer::calc_dir_dir_wv() {
     for( Side aSide : Enum< Side >() ) {
@@ -105,7 +105,7 @@ namespace LayerOptics {
         }
       }
     }
-  };
+  }
 
   void CBSDFLayer::calc_dir_dif() {
     for( Side aSide : Enum< Side >() ) {
@@ -133,16 +133,16 @@ namespace LayerOptics {
         calcDiffuseDistribution_wv( aSide, aDirection, i );
       }
     }
-  };
+  }
 
   void CBSDFLayer::calculate() {
     calc_dir_dir();
     calc_dir_dif();
-  };
+  }
 
   void CBSDFLayer::calculate_wv() {
     calc_dir_dir_wv();
     calc_dir_dif_wv();
-  };
+  }
 
 }

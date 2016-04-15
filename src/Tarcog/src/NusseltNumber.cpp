@@ -14,11 +14,11 @@ namespace Tarcog {
 
   double CNusseltNumberStrategy::pos( double const t_Value ) {
     return ( t_Value + fabs( t_Value ) ) / 2;
-  };
+  }
 
   double CNusseltNumberStrategy::calculate( double const, double const, double const ) {
     return 0;
-  };
+  }
 
   double CNusseltNumber0To60::calculate( double const t_Tilt, double const t_Ra, double const ) {
     try {
@@ -37,7 +37,7 @@ namespace Tarcog {
     double gnu = 1 + 1.44 * subNu1 * subNu2 + subNu3; // equation 42
 
     return gnu;
-  };
+  }
 
   double CNusseltNumber60::calculate( double const, double const t_Ra, double const t_Asp ) {
     double G = 0.5 / pow( 1 + pow( t_Ra / 3160, 20.6 ), 0.1);  // equation 47
@@ -46,7 +46,7 @@ namespace Tarcog {
     double gnu = max( Nu1, Nu2 );  // equation 44
 
     return gnu;
-  };
+  }
 
   double CNusseltNumber60To90::calculate( double const t_Tilt, double const t_Ra, double const t_Asp ) {
     shared_ptr< CNusseltNumber60 > nusselt60 = make_shared<  CNusseltNumber60  >();
@@ -58,7 +58,7 @@ namespace Tarcog {
     double gnu = ( ( Nu90 - Nu60 ) / ( 90.0 - 60.0 ) ) * ( t_Tilt * 180 / M_PI - 60.0 ) + Nu60;
 
     return gnu;
-  };
+  }
 
   double CNusseltNumber90::calculate( double const, double const t_Ra, double const t_Asp ) {
     double Nu1 = 0;
@@ -73,7 +73,7 @@ namespace Tarcog {
     double gnu = max(Nu1, Nu2);  // equation 48
 
     return gnu;
-  };
+  }
 
   double CNusseltNumber90to180::calculate( double const t_Tilt, double const t_Ra, double const t_Asp ) {
     shared_ptr< CNusseltNumber90 > nusselt90 = make_shared<  CNusseltNumber90  >();
@@ -81,7 +81,7 @@ namespace Tarcog {
     double gnu = 1 + ( Nu90 - 1 ) * sin( t_Tilt );  // equation 53
 
     return gnu;
-  };
+  }
 
   double CNusseltNumber::calculate( double const t_Tilt, double const t_Ra, double const t_Asp ) {
     double tiltRadians = t_Tilt * M_PI / 180;
@@ -102,6 +102,6 @@ namespace Tarcog {
     }
 
     return nusseltNumber->calculate( tiltRadians, t_Ra, t_Asp );
-  };
+  }
 
 }

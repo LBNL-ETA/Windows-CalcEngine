@@ -33,18 +33,18 @@ namespace MultiPane {
 
   size_t CMultiPaneSampleData::numberOfLayers() const {
     return m_MeasuredSamples.size(); 
-  };
+  }
 
   void CMultiPaneSampleData::addSample( shared_ptr< CSpectralSampleData > t_Sample ) {
     m_MeasuredSamples.push_back( t_Sample );
-  };
+  }
 
   void CMultiPaneSampleData::calculateProperties() {
     if( !m_absCalculated ) {
       calculateEquivalentProperties();
       m_absCalculated = true;
     }
-  };
+  }
 
   shared_ptr< CSeries > CMultiPaneSampleData::getLayerAbsorptances( size_t const Index ) {
     calculateProperties();
@@ -52,7 +52,7 @@ namespace MultiPane {
       throw runtime_error("Index out of range. ");
     }
     return m_LayerAbsorptances[ Index - 1 ];
-  };
+  }
 
   // Interpolate current sample data to new wavelengths set
   void CMultiPaneSampleData::interpolate( shared_ptr< vector< double > > t_Wavelengths ) {
@@ -62,7 +62,7 @@ namespace MultiPane {
     }
 
     CSpectralSampleData::interpolate( t_Wavelengths );
-  };
+  }
 
   void CMultiPaneSampleData::calculateEquivalentProperties() {
     shared_ptr< vector< double > > wavelengths =  getWavelengths();
@@ -96,6 +96,6 @@ namespace MultiPane {
       m_LayerAbsorptances.push_back( aAbsorptances.Abs( i ) );
     }
 
-  };
+  }
 
 }

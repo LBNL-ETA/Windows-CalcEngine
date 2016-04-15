@@ -19,7 +19,7 @@ private:
 protected:
   virtual void SetUp() {
     m_BSDFHemisphere = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
-  };
+  }
 
 public:
   shared_ptr< CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) 

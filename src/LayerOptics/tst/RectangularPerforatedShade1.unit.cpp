@@ -46,7 +46,7 @@ protected:
     
     m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
-  };
+  }
 
 public:
   shared_ptr< CBSDFLayer > GetShade() { return m_Shade; };

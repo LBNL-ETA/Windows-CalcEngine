@@ -39,7 +39,7 @@ protected:
     double ratio = 0.49;
 
     m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
-  };
+  }
 
 public:
   shared_ptr< CMaterial > getMaterial() { return m_Material; };

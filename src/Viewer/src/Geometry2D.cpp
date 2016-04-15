@@ -27,7 +27,7 @@ namespace Viewer {
       m_Segments->push_back( aSegment );
     }
     m_ViewFactorsCalculated = false;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CGeometry2D::viewFactors() {
     checkViewFactors();
@@ -35,7 +35,7 @@ namespace Viewer {
     assert( m_ViewFactors != nullptr );
 
     return m_ViewFactors;
-  };
+  }
 
   shared_ptr< CGeometry2D > CGeometry2D::Translate( const double t_x, const double t_y ) {
     shared_ptr< CGeometry2D > aEnclosure = make_shared< CGeometry2D >();
@@ -47,15 +47,15 @@ namespace Viewer {
     }
 
     return aEnclosure;
-  };
+  }
 
   shared_ptr< const CPoint2D > CGeometry2D::firstPoint() const {
     return m_Segments->front()->startPoint();
-  };
+  }
 
   shared_ptr< const CPoint2D > CGeometry2D::lastPoint() const {
     return m_Segments->back()->endPoint();
-  };
+  }
 
   shared_ptr< const CPoint2D > CGeometry2D::entryPoint() const {
     double xStart = m_Segments->front()->centerPoint()->x();
@@ -77,7 +77,7 @@ namespace Viewer {
     }
 
     return aPoint;
-  };
+  }
 
   shared_ptr< const CPoint2D > CGeometry2D::exitPoint() const {
     double xStart = m_Segments->front()->centerPoint()->x();
@@ -99,11 +99,11 @@ namespace Viewer {
     }
 
     return aPoint;
-  };
+  }
 
   shared_ptr< vector< shared_ptr< CViewSegment2D > > > CGeometry2D::segments() const {
     return m_Segments;
-  };
+  }
 
   bool CGeometry2D::pointInSegmentsView( shared_ptr< const CViewSegment2D > t_Segment1, 
       shared_ptr< const CViewSegment2D > t_Segment2, shared_ptr< const CPoint2D > t_Point ) const {
@@ -137,7 +137,7 @@ namespace Viewer {
     }
 
     return inSide;
-  };
+  }
 
   bool CGeometry2D::thirdSurfaceShadowing( shared_ptr< const CViewSegment2D > t_Segment1, 
       shared_ptr< const CViewSegment2D > t_Segment2 ) const {
@@ -170,7 +170,7 @@ namespace Viewer {
     }
     
     return intersection;
-  };
+  }
 
   // bool CGeometry2D::thirdSurfaceShadowing( shared_ptr< const CViewSegment2D > t_Segment1, 
   //     shared_ptr< const CViewSegment2D > t_Segment2 ) const {
@@ -228,7 +228,7 @@ namespace Viewer {
     }
       
     return intersection;
-  };
+  }
 
   double CGeometry2D::viewFactorCoeff( shared_ptr< const CViewSegment2D > t_Segment1,
       shared_ptr< const CViewSegment2D > t_Segment2 ) const {
@@ -255,7 +255,7 @@ namespace Viewer {
     }
 
     return subViewCoeff;
-  };
+  }
 
   double CGeometry2D::intersectionWithYAxis( const double tanPhi, std::shared_ptr< const CPoint2D > t_Point ) const {
     assert( t_Point != nullptr );
@@ -269,7 +269,7 @@ namespace Viewer {
     }
 
     return y;
-  };
+  }
 
   void CGeometry2D::checkViewFactors() {
     if( !m_ViewFactorsCalculated ) {
@@ -300,6 +300,6 @@ namespace Viewer {
 
       m_ViewFactorsCalculated = true;
     }
-  };
+  }
 
 }

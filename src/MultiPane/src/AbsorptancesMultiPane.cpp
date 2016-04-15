@@ -12,7 +12,7 @@ namespace MultiPane {
     m_T.push_back( t_T );
     m_Rf.push_back( t_Rf );
     m_Rb.push_back( t_Rb );
-  };
+  }
 
   void CAbsorptancesMultiPane::addLayer( shared_ptr< const CSeries > t_T, 
       shared_ptr< const CSeries > t_Rf, 
@@ -21,7 +21,7 @@ namespace MultiPane {
     m_Rf.push_back( t_Rf );
     m_Rb.push_back( t_Rb );
     m_StateCalculated = false;
-  };
+  }
 
   shared_ptr< CSeries > CAbsorptancesMultiPane::Abs( size_t const Index ) {
     calculateState();
@@ -30,12 +30,12 @@ namespace MultiPane {
       aAbs = m_Abs[ Index ];
     }
     return aAbs;
-  };
+  }
 
   size_t CAbsorptancesMultiPane::numOfLayers() {
     calculateState();
     return m_Abs.size();    
-  };
+  }
 
   void CAbsorptancesMultiPane::calculateState() {
     if( !m_StateCalculated ) {
@@ -108,7 +108,7 @@ namespace MultiPane {
     }
 
     return rCoeffs;
-  };
+  }
 
   shared_ptr< CSeries > CAbsorptancesMultiPane::tCoeffs( 
       shared_ptr< const CSeries > t_T,
@@ -125,6 +125,6 @@ namespace MultiPane {
     }
 
     return tCoeffs;
-  };
+  }
 
 }

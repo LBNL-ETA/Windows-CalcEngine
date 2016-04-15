@@ -55,7 +55,7 @@ protected:
 
   m_InterReflectance = make_shared< CInterReflectance >( aLambdas, Rb, Rf );
     
-  };
+  }
 
 public:
   shared_ptr< CInterReflectance > getInterReflectance() { return m_InterReflectance; };

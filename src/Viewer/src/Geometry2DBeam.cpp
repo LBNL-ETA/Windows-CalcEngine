@@ -22,12 +22,12 @@ namespace Viewer {
     const size_t t_SegmentIndex, const double t_Value, const double t_PercentHit ) : enclosureIndex( t_Geometry2DIndex ), 
     segmentIndex( t_SegmentIndex ), value( t_Value ), percentHit( t_PercentHit ) {
     
-  };
+  }
 
   bool BeamViewFactor::operator==( const BeamViewFactor& t_BVF ) {
     return ( t_BVF.enclosureIndex == this->enclosureIndex ) && 
            ( t_BVF.segmentIndex == this->segmentIndex );  
-  };
+  }
 
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ namespace Viewer {
       throw runtime_error("Direct beam must have correct beam assigned.");
     }
     m_Segments = make_shared< vector< shared_ptr< const CViewSegment2D > > >();
-  };
+  }
 
   // Check if segment intersects with the beam
   void CDirect2DBeam::checkSegment( shared_ptr< const CViewSegment2D > t_Segment ) {
@@ -46,7 +46,7 @@ namespace Viewer {
     if( aStatus != IntersectionStatus::No ) {
       m_Segments->push_back( t_Segment );
     }
-  };
+  }
 
   double CDirect2DBeam::Side() const {
     assert( m_Beam != nullptr );
@@ -69,12 +69,12 @@ namespace Viewer {
     }
 
     return aSegment;
-  };
+  }
 
   double CDirect2DBeam::cosAngle( shared_ptr< const CViewSegment2D > t_Segment ) {
     assert( m_Beam != nullptr );
     return m_Beam->dotProduct( t_Segment ) / m_Beam->length();
-  };
+  }
 
   bool CDirect2DBeam::isSegmentIn( shared_ptr< const CViewSegment2D > t_Segment ) const {
     bool isIn = false;
@@ -85,7 +85,7 @@ namespace Viewer {
       }
     }
     return isIn;
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // CDirect2DRay
@@ -99,7 +99,7 @@ namespace Viewer {
     if( t_Beam2 == nullptr ) {
       throw runtime_error("Beam number two of the ray is not correctly created.");
     }
-  };
+  }
 
   CDirect2DRay::CDirect2DRay( shared_ptr< CViewSegment2D > t_Ray1, 
     shared_ptr< CViewSegment2D > t_Ray2 ) {
@@ -111,30 +111,30 @@ namespace Viewer {
     }
     m_Beam1 = make_shared< CDirect2DBeam >( t_Ray1 );
     m_Beam2 = make_shared< CDirect2DBeam >( t_Ray2 );
-  };
+  }
 
   double CDirect2DRay::rayNormalHeight() const {
     assert( m_Beam1 != nullptr );
     assert( m_Beam2 != nullptr );
     return m_Beam1->Side() - m_Beam2->Side();
-  };
+  }
 
   void CDirect2DRay::checkSegment( shared_ptr< const CViewSegment2D > t_Segment ) {
     assert( m_Beam1 != nullptr );
     assert( m_Beam2 != nullptr );
     m_Beam1->checkSegment( t_Segment );
     m_Beam2->checkSegment( t_Segment );
-  };
+  }
 
   // Return segment hit by the ray
   shared_ptr< const CViewSegment2D > CDirect2DRay::closestSegmentHit() const {
     return m_Beam1->getClosestCommonSegment( m_Beam2 );
-  };
+  }
 
   double CDirect2DRay::cosAngle( shared_ptr< const CViewSegment2D > t_Segment ) {
     assert( m_Beam1 != nullptr );
     return m_Beam1->cosAngle( t_Segment );
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // CDirect2DRayResult
@@ -144,19 +144,19 @@ namespace Viewer {
       shared_ptr< vector < BeamViewFactor > > t_BeamViewFactors ) : m_ViewFactors( t_BeamViewFactors ),
       m_DirectToDirect( t_DirectToDirect), m_ProfileAngle( t_ProfileAngle ) {
      
-  };
+  }
 
   shared_ptr< vector < BeamViewFactor > > CDirect2DRaysResult::beamViewFactors() const {
     return m_ViewFactors; 
-  };
+  }
 
    double CDirect2DRaysResult::directToDirect() const {
     return m_DirectToDirect; 
-   };
+   }
 
    double CDirect2DRaysResult::profileAngle() const {
     return m_ProfileAngle; 
-   };
+   }
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // CDirect2DRayResults
@@ -165,7 +165,7 @@ namespace Viewer {
   CDirect2DRaysResults::CDirect2DRaysResults() : 
     m_Results( make_shared< vector < shared_ptr< CDirect2DRaysResult > > >() ) {
       
-  };
+  }
 
   shared_ptr< CDirect2DRaysResult > CDirect2DRaysResults::getResult( const double t_ProfileAngle ) {
     shared_ptr< CDirect2DRaysResult > Result = nullptr;
@@ -180,18 +180,18 @@ namespace Viewer {
     }
 
     return Result;
-  };
+  }
 
   std::shared_ptr< CDirect2DRaysResult > CDirect2DRaysResults::append( const double t_ProfileAngle, const double t_DirectToDirect,
     std::shared_ptr< std::vector < BeamViewFactor > > t_BeamViewFactor ) {
     shared_ptr< CDirect2DRaysResult > aResult = make_shared< CDirect2DRaysResult >( t_ProfileAngle, t_DirectToDirect, t_BeamViewFactor );
     m_Results->push_back( aResult );
     return aResult;
-  };
+  }
 
   void CDirect2DRaysResults::clear() {
     m_Results->clear();
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // CDirect2DRays
@@ -201,24 +201,24 @@ namespace Viewer {
     m_LowerRay = nullptr;
     m_UpperRay = nullptr;
     m_CurrentResult = nullptr;
-  };
+  }
 
   void CDirect2DRays::appendGeometry2D( shared_ptr< const CGeometry2D > t_Geometry2D ) {
     m_Geometries2D.push_back( t_Geometry2D );
     m_Results.clear();
-  };
+  }
 
   shared_ptr< vector < BeamViewFactor > > CDirect2DRays::beamViewFactors( const double t_ProfileAngle ) {
     calculateAllProperties( t_ProfileAngle );
     assert( m_CurrentResult != nullptr );
     return m_CurrentResult->beamViewFactors();
-  };
+  }
 
   double CDirect2DRays::directToDirect( const double t_ProfileAngle ) {
     calculateAllProperties( t_ProfileAngle );
     assert( m_CurrentResult != nullptr );
     return m_CurrentResult->directToDirect();
-  };
+  }
 
   void CDirect2DRays::calculateAllProperties( const double t_ProfileAngle ) {
     if( m_CurrentResult != nullptr && m_CurrentResult->profileAngle() != t_ProfileAngle ) {
@@ -229,7 +229,7 @@ namespace Viewer {
       findInBetweenRays( t_ProfileAngle );
       calculateBeamProperties( t_ProfileAngle );
     }
-  };
+  }
 
   void CDirect2DRays::findRayBoundaries( const double t_ProfileAngle ) {
     shared_ptr< CViewSegment2D > entryRay = nullptr;
@@ -262,7 +262,7 @@ namespace Viewer {
         }
       }
     }
-  };
+  }
 
   void CDirect2DRays::findInBetweenRays( const double t_ProfileAngle ) {
     
@@ -403,7 +403,7 @@ namespace Viewer {
   double CGeometry2DBeam::directToDirect( const double t_ProfileAngle, const Side t_Side ) {
     CDirect2DRays* aRay = getRay( t_Side );
     return aRay->directToDirect( t_ProfileAngle );
-  };
+  }
 
   CDirect2DRays* CGeometry2DBeam::getRay( const Side t_Side ) {
     CDirect2DRays* aRay = nullptr;
@@ -419,6 +419,6 @@ namespace Viewer {
       break;
     }
     return aRay;
-  };
+  }
 
 }

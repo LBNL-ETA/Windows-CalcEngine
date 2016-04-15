@@ -26,15 +26,15 @@ namespace SpectralAveraging {
 
     m_AngularData = make_shared< CSpectralSampleData >();
     calculateAngularProperties( t_SpectralSample, t_Type );
-  };
+  }
 
   double CAngularSpectralProperties::angle() const {
     return m_Angle;
-  };
+  }
 
   shared_ptr< CSpectralSampleData > CAngularSpectralProperties::properties() const {
     return m_AngularData;
-  };
+  }
 
   void CAngularSpectralProperties::calculateAngularProperties( shared_ptr< CSpectralSample > t_SpectralSample, 
     const SpecularMaterialType t_Type ) {
@@ -86,7 +86,7 @@ namespace SpectralAveraging {
       m_AngularData = aMeasuredData;
     }
     
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   //// CSpectralSampleAngle
@@ -95,15 +95,15 @@ namespace SpectralAveraging {
   CSpectralSampleAngle::CSpectralSampleAngle( shared_ptr< CSpectralSample > t_Sample, const double t_Angle ) :
     m_Sample( t_Sample ), m_Angle( t_Angle ) {
     
-  };
+  }
 
   double CSpectralSampleAngle::angle() const {
     return m_Angle;  
-  };
+  }
   
   shared_ptr< CSpectralSample > CSpectralSampleAngle::sample() const {
     return m_Sample; 
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   //// CAngularSpectralSample
@@ -113,14 +113,14 @@ namespace SpectralAveraging {
     const double t_Thickness, const FenestrationCommon::SpecularMaterialType t_Type ) :
     m_SpectralSampleZero( t_SpectralSample ), m_Thickness( t_Thickness ), m_Type( t_Type ) {
     
-  };
+  }
 
   double CAngularSpectralSample::getProperty( double const minLambda, double const maxLambda, 
     const Property t_Property, const Side t_Side, const double t_Angle ) {
     shared_ptr< CSpectralSample > aSample = findSpectralSample( t_Angle );
     
     return aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
-  };
+  }
 
   shared_ptr< vector< double > > CAngularSpectralSample::getWavelengthsProperty( 
     double const minLambda, double const maxLambda, 
@@ -139,11 +139,11 @@ namespace SpectralAveraging {
     }
     
     return aValues;
-  };
+  }
 
   shared_ptr< vector< double > > CAngularSpectralSample::getBandWavelengths() const {
     return m_SpectralSampleZero->getWavelengthsFromSample();
-  };
+  }
 
   shared_ptr< CSpectralSample > CAngularSpectralSample::findSpectralSample( const double t_Angle ) {
     shared_ptr< CSpectralSample > aSample = nullptr;
@@ -167,6 +167,6 @@ namespace SpectralAveraging {
     }
 
     return aSample;
-  };
+  }
 
 }

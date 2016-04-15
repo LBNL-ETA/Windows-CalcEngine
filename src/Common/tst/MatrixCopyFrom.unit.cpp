@@ -11,7 +11,7 @@ class TestMatrixCopyFrom : public testing::Test {
 
 protected:
   virtual void SetUp() {
-  };
+  }
 
 
 };

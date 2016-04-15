@@ -328,7 +328,7 @@ protected:
     m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
     m_Layer->addLayer( Layer_Perforated );
 
-  };
+  }
 
 public:
   shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_Layer; };

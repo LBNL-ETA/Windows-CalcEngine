@@ -16,13 +16,13 @@ namespace LayerOptics {
 
   shared_ptr< vector< double > > CBSDFPhiAngles::phiAngles() const {
     return m_PhiAngles;
-  };
+  }
 
   void CBSDFPhiAngles::createPhis( const size_t t_NumOfPhis ) {
     const double phiDelta = 360.0 / t_NumOfPhis;
     for( size_t i = 0; i < t_NumOfPhis; ++i ) {
       m_PhiAngles->push_back( i * phiDelta );
     }
-  };
+  }
 
 }

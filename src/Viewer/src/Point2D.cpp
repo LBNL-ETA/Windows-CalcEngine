@@ -26,11 +26,11 @@ namespace Viewer {
    bool CPoint2D::sameCoordinates( const CPoint2D& t_Point ) const {
     return ( fabs( t_Point.x() - m_x ) < ViewerConstants::DISTANCE_TOLERANCE ) && 
       ( fabs( t_Point.y() - m_y ) < ViewerConstants::DISTANCE_TOLERANCE );
-   };
+   }
 
   double CPoint2D::dotProduct( std::shared_ptr< const CPoint2D > t_Point ) const {
     return m_x * t_Point->x() + m_y * t_Point->y(); 
-  };
+  }
 
   bool CPoint2D::isLeft( std::shared_ptr< const CPoint2D > t_Point ) const {
     return m_x < t_Point->x();
@@ -39,7 +39,7 @@ namespace Viewer {
   shared_ptr< CPoint2D > CPoint2D::translate( const double t_x, const double t_y ) {
     shared_ptr< CPoint2D > aPoint = make_shared< CPoint2D >( m_x + t_x, m_y + t_y );
     return aPoint;
-  };
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // PointsCompare
@@ -47,7 +47,7 @@ namespace Viewer {
 
   PointsProfile2DCompare::PointsProfile2DCompare( const double t_ProfileAngle ) : m_ProfileAngle( t_ProfileAngle ) {
     
-  };
+  }
 
   bool PointsProfile2DCompare::operator() ( shared_ptr< const CPoint2D > t_Point1, 
       shared_ptr< const CPoint2D > t_Point2 ) {
@@ -64,6 +64,6 @@ namespace Viewer {
     }
     return isHigher;
     
-  };
+  }
 
 }

@@ -18,14 +18,14 @@ namespace Gases {
   CGasItem::CGasItem( double t_Fraction, shared_ptr< CGasData const > t_GasData ) :
     m_Fraction( t_Fraction ), m_GasData( t_GasData ) {
     initialize();
-  };
+  }
 
   void CGasItem::initialize() {
     m_Temperature = DefaultTemperature;
     m_Pressure = DefaultPressure;
     m_FractionalGasProperties = make_shared< GasProperties > ();
     m_GasProperties = make_shared< GasProperties > ();
-  };
+  }
 
   CGasItem& CGasItem::operator=(const CGasItem& t_GasItem) {
     this->m_Fraction = t_GasItem.m_Fraction;
@@ -36,26 +36,26 @@ namespace Gases {
     this->m_GasProperties = t_GasItem.m_GasProperties;
 
     return *this;
-  };
+  }
 
   double CGasItem::getFraction() {
     return m_Fraction;
-  };
+  }
 
   void CGasItem::resetCalculatedProperties() {
     m_GasProperties->m_PropertiesCalculated = false;
     m_FractionalGasProperties->m_PropertiesCalculated = false;
-  };
+  }
 
   void CGasItem::setTemperature( double t_Temperature ) {
     m_Temperature = t_Temperature;
     resetCalculatedProperties();
-  };
+  }
 
   void CGasItem::setPressure( double t_Pressure ) {
     m_Pressure = t_Pressure;
     resetCalculatedProperties();
-  };
+  }
 
   shared_ptr< GasProperties > CGasItem::getGasProperties() {
     using ConstantsData::UNIVERSALGASCONSTANT;

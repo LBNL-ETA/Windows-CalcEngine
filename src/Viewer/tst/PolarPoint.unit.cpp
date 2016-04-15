@@ -14,7 +14,7 @@ class TestPolarPoint : public testing::Test
 protected:
   virtual void SetUp() {
     
-  };
+  }
 
 };
 

@@ -12,7 +12,7 @@ class WavelengthRangeTest : public testing::Test {
 
 protected:
   virtual void SetUp() {
-  };
+  }
 
 
 };

@@ -110,7 +110,7 @@ protected:
     multiSample->addSample( sampleMeasurements2 );
 
     m_MultiPane = make_shared< CMultiPaneSpectralSample >( multiSample, solarRadiation );
-  };
+  }
 
 public:
   shared_ptr< CMultiPaneSpectralSample > getMultiPane() { return m_MultiPane; };

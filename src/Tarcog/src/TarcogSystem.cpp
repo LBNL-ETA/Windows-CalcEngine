@@ -51,24 +51,24 @@ namespace Tarcog {
     initializeStartValues();
 
     m_NonLinearSolver = make_shared< CTarNonLinearSolver >( m_IGU );
-  };
+  }
 
   shared_ptr< CTarEnvironment > CTarcogSystem::getIndoor() const {
     return m_Indoor;
-  };
+  }
 
   shared_ptr< CTarEnvironment > CTarcogSystem::getOutdoor() const {
     return m_Outdoor;
-  };
+  }
 
   vector< shared_ptr < CBaseIGUTarcogLayer > > CTarcogSystem::getLayers() const {
     return m_IGU->getLayers();
-  };
+  }
 
   void CTarcogSystem::solve() {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->solve();
-  };
+  }
 
   void CTarcogSystem::initializeStartValues() {
     const double startX = 0.001;
@@ -93,6 +93,6 @@ namespace Tarcog {
       aSurface = layer->getSurface( SurfacePosition::Back );
       aSurface->intializeStart( curTemp );
     }
-  };
+  }
 
 }

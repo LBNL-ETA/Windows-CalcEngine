@@ -15,7 +15,7 @@ class TestBeamDirection : public testing::Test
 protected:
   virtual void SetUp() {
     
-  };
+  }
 
 };
 

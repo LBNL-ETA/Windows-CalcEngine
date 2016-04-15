@@ -14,15 +14,15 @@ namespace LayerOptics {
     shared_ptr< CCellDescription > t_CellDescription ) {
     m_Material = t_Material;
     m_CellDescription = t_CellDescription;
-  };
+  }
 
   double CBaseCell::T_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     return m_CellDescription->T_dir_dir( t_Side, t_Direction );
-  };
+  }
 
   double CBaseCell::R_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
     return m_CellDescription->R_dir_dir( t_Side, t_Direction );
-  };
+  }
 
   shared_ptr< vector< double > > CBaseCell::T_dir_dir_band( const Side t_Side, 
     shared_ptr< const CBeamDirection > t_Direction ) {
@@ -34,7 +34,7 @@ namespace LayerOptics {
       aResults->push_back( value );
     }
     return aResults;
-  };
+  }
 
   shared_ptr< vector< double > > CBaseCell::R_dir_dir_band( const Side t_Side, 
     shared_ptr< const CBeamDirection > t_Direction ) {
@@ -46,19 +46,19 @@ namespace LayerOptics {
       aResults->push_back( value );
     }
     return aResults;
-  };
+  }
 
   shared_ptr< vector< double > > CBaseCell::getBandWavelengths() const {
     assert( m_Material != nullptr );
     return m_Material->getBandWavelengths();
-  };
+  }
 
   int CBaseCell::getBandIndex( const double t_Wavelength ) {
     return m_Material->getBandIndex( t_Wavelength );
-  };
+  }
 
   size_t CBaseCell::getBandSize() const {
     return m_Material->getBandSize();
-  };
+  }
 
 }

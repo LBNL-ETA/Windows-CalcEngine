@@ -146,7 +146,7 @@ protected:
 
     m_NIRRatio = make_shared< CNIRRatio >( solarRadiation, lowLambda, highLambda );
 
-  };
+  }
 
 public:
   shared_ptr< CNIRRatio > getNIRRatio() { return m_NIRRatio; };

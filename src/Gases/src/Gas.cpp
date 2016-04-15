@@ -15,7 +15,7 @@ namespace Gases
     shared_ptr< CGasItem > Air = make_shared< CGasItem >();
     m_GasItem.push_back( Air );
     m_DefaultGas = true;
-  };
+  }
 
   void CGas::addGasItem( shared_ptr< CGasItem > t_GasItem ) {
     // Need to remove default since user wants to create their own Gases
@@ -24,7 +24,7 @@ namespace Gases
       m_DefaultGas = false;
     }
     m_GasItem.push_back( t_GasItem );
-  };
+  }
 
   double CGas::totalPercent()
   {
@@ -36,7 +36,7 @@ namespace Gases
     }
 
     return totalPercent;
-  };
+  }
 
   void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
     vector< shared_ptr< CGasItem > >::const_iterator it;
@@ -44,7 +44,7 @@ namespace Gases
       (*it)->setTemperature( t_Temperature );
       (*it)->setPressure( t_Pressure );
     }
-  };
+  }
 
   shared_ptr< GasProperties > CGas::getSimpleGasProperties()
   {
@@ -59,7 +59,7 @@ namespace Gases
     }
 
     return m_SimpleProperties;
-  };
+  }
 
   shared_ptr< GasProperties > CGas::getGasProperties()
   {
@@ -134,7 +134,7 @@ namespace Gases
 
       cpMix += itGasProperties->m_SpecificHeat * (*it)->getFraction() * itGasProperties->m_MolecularWeight;
       ++counter;
-    };
+    }
 
     m_Properties->m_ThermalConductivity = lambdaPrimMix + lambdaSecondMix;
     m_Properties->m_Viscosity = miMix;
@@ -146,7 +146,7 @@ namespace Gases
 
     return m_Properties;
 
-  };
+  }
 
   // This implements equation 63 (ISO 15099)
   double CGas::viscTwoGases( shared_ptr< GasProperties > t_Gas1Properties,
@@ -170,7 +170,7 @@ namespace Gases
 
     return nominator / denominator;
 
-  };
+  }
 
   // Implementation of sum items in denominator of equation 62 (ISO15099)
   double CGas::viscDenomTwoGases( shared_ptr< CGasItem > t_GasItem1,
@@ -183,7 +183,7 @@ namespace Gases
 
     return ( t_GasItem2->getFraction() / t_GasItem1->getFraction() ) * phiValue;
 
-  };
+  }
 
   // This implements equation 66 (ISO 15099)
   double CGas::lambdaPrimTwoGases( shared_ptr< GasProperties > t_Gas1Properties,
@@ -200,7 +200,7 @@ namespace Gases
 
     return item1 * item2;
 
-  };
+  }
 
   // This implements equation 68 (ISO 15099)
   double CGas::lambdaSecondTwoGases( shared_ptr< GasProperties > t_Gas1Properties,
@@ -225,7 +225,7 @@ namespace Gases
 
     return nominator / denominator;
 
-  };
+  }
 
   // Implementation of sum items in denominator of equation 65 (ISO15099)
   double CGas::lambdaPrimDenomTwoGases( shared_ptr< CGasItem > t_GasItem1,
@@ -239,7 +239,7 @@ namespace Gases
 
     return (t_GasItem2->getFraction() / t_GasItem1->getFraction()) * phiValue;
 
-  };
+  }
 
   // Implementation of sum items in denominator of equation 67 (ISO15099)
   double CGas::lambdaSecondDenomTwoGases( shared_ptr< CGasItem > t_GasItem1,
@@ -253,7 +253,7 @@ namespace Gases
 
     return ( t_GasItem2->getFraction() / t_GasItem1->getFraction() ) * phiValue;
 
-  };
+  }
 
   CGas& CGas::operator=( const CGas& t_Gas )
   {
@@ -263,6 +263,6 @@ namespace Gases
     m_DefaultGas = t_Gas.m_DefaultGas;
 
     return *this;
-  };
+  }
 
 };

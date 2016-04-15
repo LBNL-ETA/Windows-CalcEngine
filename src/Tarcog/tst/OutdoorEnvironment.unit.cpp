@@ -71,7 +71,7 @@ protected:
       cout << e.what() << endl;
       throw &e;
     }
-  };
+  }
 
 public:
   std::shared_ptr< CTarOutdoorEnvironment > GetOutdoors() { return Outdoor; };

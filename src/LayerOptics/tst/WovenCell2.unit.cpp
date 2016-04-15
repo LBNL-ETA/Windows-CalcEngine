@@ -35,7 +35,7 @@ protected:
       make_shared< CWovenCellDescription >( diameter, spacing );
 
     m_Cell = make_shared< CWovenCell >( aMaterial, aCell );
-  };
+  }
 
 public:
   shared_ptr< CWovenCell > GetCell() { return m_Cell; };

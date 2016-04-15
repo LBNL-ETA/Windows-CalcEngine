@@ -30,7 +30,7 @@ namespace MultiPane {
     m_Lambda = t_Layer->getResults()->lambdaMatrix();
 
     addLayer( t_Layer );
-  };
+  }
 
   void CAbsorptancesMultiPaneBSDF::addLayer( shared_ptr< CBSDFLayer > t_Layer ) {
     m_StateCalculated = false;
@@ -63,7 +63,7 @@ namespace MultiPane {
     m_TausB.push_back( aTausB );
     m_RhosF.push_back( aRhosF );
     m_RhosB.push_back( aRhosB );
-  };
+  }
 
   shared_ptr< vector< double > > CAbsorptancesMultiPaneBSDF::Abs( const double minLambda, const double maxLambda, 
     const size_t Index ) {
@@ -80,7 +80,7 @@ namespace MultiPane {
 
     return m_Abs[ aLayerIndex ];
 
-  };
+  }
 
   shared_ptr< vector< double > > CAbsorptancesMultiPaneBSDF::multVectors( 
     shared_ptr< const vector< double > > t_vec1, 
@@ -94,7 +94,7 @@ namespace MultiPane {
       Result->push_back( value );
     }
     return Result;
-  };
+  }
 
   shared_ptr< vector< double > > CAbsorptancesMultiPaneBSDF::divVectors( 
     shared_ptr< const vector< double > > t_vec1, 
@@ -108,7 +108,7 @@ namespace MultiPane {
       Result->push_back( value );
     }
     return Result;
-  };
+  }
 
   shared_ptr< vector< double > > CAbsorptancesMultiPaneBSDF::addVectors( 
     shared_ptr< const vector< double > > t_vec1, 
@@ -122,7 +122,7 @@ namespace MultiPane {
       Result->push_back( value );
     }
     return Result;
-  };
+  }
 
   void CAbsorptancesMultiPaneBSDF::calculateState( const double minLambda, const double maxLambda ) {
     size_t numOfWavelengths = m_CommonWavelengths->size();
@@ -303,7 +303,7 @@ namespace MultiPane {
     
     m_StateCalculated = true;
 
-  };
+  }
 
   shared_ptr< CSquareMatrix > CAbsorptancesMultiPaneBSDF::getDenomForRTCoeff( shared_ptr< CSquareMatrix > t_Reflectance,
     shared_ptr< CSquareMatrix > t_PreviousR ) {
@@ -315,7 +315,7 @@ namespace MultiPane {
     Denominator = Denominator->sub( *lambdaRF );
     Denominator = Denominator->inverse();
     return Denominator;
-  };
+  }
 
   size_t CAbsorptancesMultiPaneBSDF::layerIndex( const size_t Index ) const {
     size_t aLayerIndex = 0;
@@ -331,6 +331,6 @@ namespace MultiPane {
       break;
     }
     return aLayerIndex;
-  };
+  }
 
 }

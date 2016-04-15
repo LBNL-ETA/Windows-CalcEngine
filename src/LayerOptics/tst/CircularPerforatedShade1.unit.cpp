@@ -44,7 +44,7 @@ protected:
     CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
     m_Shade = aMaker.getLayer();
 
-  };
+  }
 
 public:
   shared_ptr< CBSDFLayer > GetShade() { return m_Shade; };

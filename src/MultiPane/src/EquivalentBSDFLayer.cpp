@@ -64,7 +64,7 @@ namespace MultiPane {
       // m_RhoB_WL->push_back( ( *aResults )[ size_t( index ) ]->Rho( Side::Back ) );
     }
 
-  };
+  }
 
   void CEquivalentBSDFLayer::addLayer( shared_ptr< CBSDFLayer > t_Layer ) {
 
@@ -99,7 +99,7 @@ namespace MultiPane {
       // ( *m_RhoB_WL )[ i ] = aRhoB;
     }
 
-  };
+  }
 
   shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( const double minLambda, const double maxLambda, Side t_Side ) {
     if( !m_Calculated ) {
@@ -121,7 +121,7 @@ namespace MultiPane {
       }
 
     return aMatrix;
-  };
+  }
 
   shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( const double minLambda, 
     const double maxLambda, Side t_Side ) {
@@ -144,7 +144,7 @@ namespace MultiPane {
       }
 
     return aMatrix;
-  };
+  }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t Index ) {
@@ -164,7 +164,7 @@ namespace MultiPane {
         break;
       }
     return aAbs;
-  };
+  }
 
   void CEquivalentBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
     size_t matrixSize = m_Lambda->getSize();
@@ -288,6 +288,6 @@ namespace MultiPane {
 
     m_Calculated = true;
 
-  };
+  }
 
 }

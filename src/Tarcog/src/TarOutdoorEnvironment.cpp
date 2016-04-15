@@ -56,36 +56,36 @@ namespace Tarcog {
     assert( m_FrontSurface != nullptr );
     m_FrontSurface->setJ( m_EnvironmentRadiosity );
 
-  };
+  }
 
   void CTarOutdoorEnvironment::setSkyModel( SkyModel const t_SkyModel ) {
     m_SkyModel = t_SkyModel;
     resetCalculated();
-  };
+  }
 
   void CTarOutdoorEnvironment::setDirectSolarRadiation( double const t_SolarRadiation ) {
     m_DirectSolarRadiation = t_SolarRadiation;
     resetCalculated();
-  };
+  }
 
   void CTarOutdoorEnvironment::setSkyTemperature( double const t_SkyTemperature ) {
     m_Tsky = t_SkyTemperature;
     resetCalculated();
-  };
+  }
 
   void CTarOutdoorEnvironment::setFractionOfClearSky( double const t_FractionOfClearSky ) {
     m_FractionOfClearSky = t_FractionOfClearSky;
     resetCalculated();
-  };
+  }
 
   double CTarOutdoorEnvironment::getDirectSolarRadiation() const {
     return m_DirectSolarRadiation;
-  };
+  }
 
   void CTarOutdoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
     this->connectToBackSide( t_IGULayer );
     m_BackSurface = t_IGULayer->getSurface( SurfacePosition::Front );
-  };
+  }
 
   void CTarOutdoorEnvironment::calculateConvectionConductionState() {
     switch ( m_HCoefficientModel )
@@ -109,10 +109,10 @@ namespace Tarcog {
         throw runtime_error( "Incorrect definition for convection model (Outdoor environment)." );
       }
     }
-  };
+  }
 
   void CTarOutdoorEnvironment::calculateHc() {
     m_ConductiveConvectiveCoeff = 4 + 4 * m_AirSpeed;
-  };
+  }
 
 }

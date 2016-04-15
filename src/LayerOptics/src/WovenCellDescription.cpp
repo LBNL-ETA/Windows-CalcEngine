@@ -33,15 +33,15 @@ namespace LayerOptics {
   double CWovenCellDescription::gamma() const {
     assert( m_Spacing > 0 );
     return m_Diameter / m_Spacing;
-  };
+  }
 
   double CWovenCellDescription::cutOffAngle() const {
     return acos( gamma() );
-  };
+  }
 
   double CWovenCellDescription::T_dir_dir( const Side, shared_ptr< const CBeamDirection > t_Direction ) {
     return Tx( t_Direction ) * Ty( t_Direction );
-  };
+  }
 
   double CWovenCellDescription::Tx( shared_ptr< const CBeamDirection > t_Direction ) {
     double aTx = 0;
@@ -58,7 +58,7 @@ namespace LayerOptics {
       aTx = 1 - this->gamma() / cos( aAzimuth );
     }
     return aTx;
-  };
+  }
 
   double CWovenCellDescription::Ty( shared_ptr< const CBeamDirection > t_Direction ) {
     double aTy = 0;
@@ -70,6 +70,6 @@ namespace LayerOptics {
     }
 
     return aTy;
-  };
+  }
 
 }

@@ -15,14 +15,14 @@ using namespace std;
 namespace Tarcog {
   CTarIGU::CTarIGU( double t_Width, double t_Height, double t_Tilt ) : 
     m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ) {
-  };
+  }
 
   CTarIGU::~CTarIGU() {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers )
     {
       layer->tearDownConnections();
     }
-  };
+  }
 
   void CTarIGU::addLayer( shared_ptr< CBaseIGUTarcogLayer > t_Layer ) {
 
@@ -50,39 +50,39 @@ namespace Tarcog {
     t_Layer->setTilt( m_Tilt );
     t_Layer->setWidth( m_Width );
     t_Layer->setHeight( m_Height );
-  };
+  }
 
   void CTarIGU::setTilt( double const t_Tilt ) {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers ) {
       layer->setTilt( t_Tilt );
     }
-  };
+  }
 
   void CTarIGU::setWidth( double const t_Width ) {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers ) {
       layer->setWidth( t_Width );
     }
-  };
+  }
 
   void CTarIGU::setHeight( double const t_Height ) {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers ) {
       layer->setHeight( t_Height );
     }
-  };
+  }
 
   void CTarIGU::setSolarRadiation( double const t_SolarRadiation ) {
     for( shared_ptr< CTarIGUSolidLayer > layer : m_SolidLayers ) {
       layer->setSolarRadiation( t_SolarRadiation );
     }
-  };
+  }
 
   shared_ptr< CBaseTarcogLayer > CTarIGU::getFirstLayer() const {
     return m_Layers.front();
-  };
+  }
 
   shared_ptr< CBaseTarcogLayer > CTarIGU::getLastLayer() const {
     return m_Layers.back();
-  };
+  }
 
   shared_ptr< vector< double > > CTarIGU::getState() {
     shared_ptr< vector< double > > aState = make_shared< vector< double > >();
@@ -100,7 +100,7 @@ namespace Tarcog {
     }
 
     return aState;
-  };
+  }
 
   void CTarIGU::setState( shared_ptr< vector< double > > t_State ) {
     assert( (t_State->size() / 4) == m_SolidLayers.size() );
@@ -111,7 +111,7 @@ namespace Tarcog {
       double Tb = (*t_State)[ 4*i + 3 ];
       m_SolidLayers[ i ]->setLayerState( Tf, Tb, Jf, Jb );
     }
-  };
+  }
   
   double CTarIGU::getThickness() const {
     double totalWidth = 0;
@@ -121,30 +121,30 @@ namespace Tarcog {
     }
 
     return totalWidth;
-  };
+  }
 
   double CTarIGU::getTilt() const {
     return m_Tilt;
-  };
+  }
 
   double CTarIGU::getWidth( ) const {
     return m_Width;
-  };
+  }
 
   double CTarIGU::getHeight( ) const {
     return m_Height;
-  };
+  }
 
   int CTarIGU::getNumOfLayers() const {
     return int( m_SolidLayers.size() );
-  };
+  }
 
   vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() {
     return m_SolidLayers;
-  };
+  }
 
   vector< shared_ptr< CBaseIGUTarcogLayer > > CTarIGU::getLayers() {
     return m_Layers;
-  };
+  }
 
 }

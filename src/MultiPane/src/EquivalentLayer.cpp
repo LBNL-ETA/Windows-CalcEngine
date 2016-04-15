@@ -12,7 +12,7 @@ namespace MultiPane {
       std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rb  ) : m_T( t_T ), m_Rf( t_Rf ), m_Rb( t_Rb ) {
      
-  };
+  }
 
   void CEquivalentLayer::addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
@@ -26,19 +26,19 @@ namespace MultiPane {
     m_Rf = tRfTot;
     m_Rb = tRbTot;
 
-  };
+  }
 
   shared_ptr< CSeries > CEquivalentLayer::T() const {
     return m_T; 
-  };
+  }
 
   shared_ptr< CSeries > CEquivalentLayer::Rf() const {
     return m_Rf;
-  };
+  }
 
   shared_ptr< CSeries > CEquivalentLayer::Rb() const {
     return m_Rb; 
-  };
+  }
 
   shared_ptr< CSeries > CEquivalentLayer::AbsF() {
     size_t size = m_T->size();
@@ -49,7 +49,7 @@ namespace MultiPane {
       m_AbsF->addProperty( wl, value );
     }
     return m_AbsF;
-  };
+  }
 
   shared_ptr< CSeries > CEquivalentLayer::AbsB() {
     size_t size = m_T->size();
@@ -60,7 +60,7 @@ namespace MultiPane {
       m_AbsB->addProperty( wl, value );
     }
     return m_AbsB;
-  };
+  }
 
 
   // Calculates total transmittance of equivalent layer over the entire spectrum. It expects that all properties are the same size.
@@ -79,7 +79,7 @@ namespace MultiPane {
     }
 
     return aSpectralProperties;
-  };
+  }
 
   // Calculates total front reflectance of equvalent layer over the entire spectrum. Properties must be same size
   shared_ptr< CSeries > CEquivalentLayer::ReflectanceFrontTot( CSeries& t_T1, CSeries& t_Rf1, 
@@ -98,7 +98,7 @@ namespace MultiPane {
     }
 
     return aSpectralProperties;
-  };
+  }
 
   // Calculates total back reflectance of equvalent layer over the entire spectrum. Properties must be same size
   shared_ptr< CSeries > CEquivalentLayer::ReflectanceBackTot( CSeries& t_T2, CSeries& t_Rb2, 
@@ -117,6 +117,6 @@ namespace MultiPane {
     }
 
     return aSpectralProperties;
-  };
+  }
 
 }

@@ -10,6 +10,6 @@ namespace LayerOptics {
   CDirectionalDiffuseCell::CDirectionalDiffuseCell( std::shared_ptr< CMaterial > t_MaterialProperties,
     std::shared_ptr< CCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
 
-  };
+  }
 
 }

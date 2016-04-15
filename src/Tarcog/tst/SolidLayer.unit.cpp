@@ -28,7 +28,7 @@ protected:
       cout << e.what() << endl;
       throw &e;
     }
-  };
+  }
 
 public:
   shared_ptr< CTarIGUSolidLayer > GetLayer() { return m_SolidLayer; };

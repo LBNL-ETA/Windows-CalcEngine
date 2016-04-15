@@ -57,7 +57,7 @@ protected:
     Gas->addGasItem( Argon );
     Gas->addGasItem( Krypton );
     Gas->addGasItem( Xenon );
-  };
+  }
 
 public:
   std::shared_ptr< CGas > GetGas() { return Gas; };

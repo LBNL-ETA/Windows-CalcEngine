@@ -28,10 +28,10 @@ namespace FenestrationCommon {
 
     shared_ptr< CSeries > integrated = aResultValues.integrate( t_IntegrationType );
     m_Value = 2 * integrated->sum();
-  };
+  }
 
   double CHemispherical2DIntegrator::value() const {
     return m_Value;
-  };
+  }
 
 }

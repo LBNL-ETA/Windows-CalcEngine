@@ -14,7 +14,7 @@ class TestSegment2DSelfShadowing : public testing::Test {
 protected:
   virtual void SetUp() {
     
-  };
+  }
 
 };
 

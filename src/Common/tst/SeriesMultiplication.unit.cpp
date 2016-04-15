@@ -55,7 +55,7 @@ protected:
     m_Series = layerTransmittances->mMult( astmSolarRadiation );
 
 
-  };
+  }
 
 public:
   shared_ptr< CSeries > getProperty() { return m_Series; };

@@ -47,7 +47,7 @@ namespace Viewer {
     }
 
     return aInt;
-  };
+  }
 
   IntersectionStatus CSegment2D::intersectionWithLine( std::shared_ptr< const CSegment2D > t_Segment ) const {
     IntersectionStatus status = IntersectionStatus::No;
@@ -68,14 +68,14 @@ namespace Viewer {
     }
 
     return status;
-  };
+  }
 
   double CSegment2D::dotProduct( std::shared_ptr< const CSegment2D > t_Segment ) const {
     shared_ptr< CPoint2D > p1 = intensity();
     shared_ptr< CPoint2D > p2 = t_Segment->intensity();
 
     return p1->dotProduct(p2);
-  };
+  }
 
   // Translates segment for given coordinates
   shared_ptr< CSegment2D > CSegment2D::translate( const double t_x, const double t_y ) {
@@ -83,7 +83,7 @@ namespace Viewer {
     shared_ptr< CPoint2D > endPoint = make_shared< CPoint2D >( m_EndPoint->x() + t_x, m_EndPoint->y() + t_y );
     shared_ptr< CSegment2D > aSegment = make_shared< CSegment2D >( startPoint, endPoint );
     return aSegment;
-  };
+  }
 
   void CSegment2D::calculateLength() {
     double deltaX = m_EndPoint->x() - m_StartPoint->x();
@@ -153,7 +153,7 @@ namespace Viewer {
     //}
 
     return intersectionPoint;
-  };
+  }
 
   bool CSegment2D::isInRectangleRange( shared_ptr< const CPoint2D > t_Point ) const {
     // Should return in range only if point is not exactly on the line's point
@@ -187,7 +187,7 @@ namespace Viewer {
     }
 
     return inXRange && inYRange;
-  };
+  }
 
   double CSegment2D::coeffA() const {
     return m_StartPoint->y() - m_EndPoint->y();
@@ -206,6 +206,6 @@ namespace Viewer {
     double y = m_EndPoint->y() - m_StartPoint->y();
     shared_ptr< CPoint2D > aPoint = make_shared< CPoint2D >( x, y );
     return aPoint;
-  };
+  }
 
 }
