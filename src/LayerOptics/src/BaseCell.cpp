@@ -10,10 +10,13 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
 
+  CBaseCell::CBaseCell() : m_Material( nullptr ), m_CellDescription( nullptr ) {
+  
+  }
+
   CBaseCell::CBaseCell( shared_ptr< CMaterial > t_Material, 
-    shared_ptr< CCellDescription > t_CellDescription ) {
-    m_Material = t_Material;
-    m_CellDescription = t_CellDescription;
+    shared_ptr< CCellDescription > t_CellDescription ) : 
+    m_Material( t_Material ), m_CellDescription( t_CellDescription ) {
   }
 
   double CBaseCell::T_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {

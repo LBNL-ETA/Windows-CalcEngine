@@ -98,8 +98,8 @@ namespace LayerOptics {
           // }
           shared_ptr< CBSDFResults > aResults = ( *m_WVResults )[ j ];
           assert( aResults != nullptr );
-          shared_ptr< CSquareMatrix > Tau = aResults->Tau( aSide );
-          shared_ptr< CSquareMatrix > Rho = aResults->Rho( aSide );
+          Tau = aResults->Tau( aSide );
+          Rho = aResults->Rho( aSide );
           ( *Tau )[ i ][ i ] += ( *aTau )[ j ] / Lambda;
           ( *Rho )[ i ][ i ] += ( *aRho )[ j ] / Lambda;
         }

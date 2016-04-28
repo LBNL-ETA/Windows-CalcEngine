@@ -23,7 +23,7 @@ namespace Tarcog {
   double CNusseltNumber0To60::calculate( double const t_Tilt, double const t_Ra, double const ) {
     try {
       if ( t_Ra > 1e5 ) {
-        runtime_error("Rayleigh number out of range in Nusselt num. calc. for gaps (angle between 0 and 60 deg).");
+        throw runtime_error("Rayleigh number out of range in Nusselt num. calc. for gaps (angle between 0 and 60 deg).");
       }
     } catch( exception &e ) {
       cout << e.what() << endl;
