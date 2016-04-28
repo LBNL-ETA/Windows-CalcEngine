@@ -250,10 +250,11 @@ namespace SpectralAveraging {
       throw runtime_error("Sample must have measured data.");
     }
     setWavelengths( m_WavelengthSet );
-    shared_ptr< CSeries > m_Transmittance = nullptr;
-    shared_ptr< CSeries > m_RefFront = nullptr;
-    shared_ptr< CSeries > m_RefBack = nullptr;
-    shared_ptr< CSeries > m_Abs = nullptr;
+    m_Transmittance = nullptr;
+    m_RefFront = nullptr;
+    m_RefBack = nullptr;
+    m_AbsFront = nullptr;
+	m_AbsBack = nullptr;
   }
 
   shared_ptr< CSpectralSampleData > CSpectralSample::getMeasuredData() {

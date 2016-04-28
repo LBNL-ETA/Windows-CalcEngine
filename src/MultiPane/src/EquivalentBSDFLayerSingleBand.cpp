@@ -195,9 +195,9 @@ namespace MultiPane {
 
       shared_ptr< vector< double > > AfTotal = make_shared< vector< double > >();
       shared_ptr< vector< double > > AbTotal = make_shared< vector< double > >();
-      for( size_t i = 0; i < matrixSize; ++i ) {
-        AfTotal->push_back( ( *Ap1f )[ i ] + ( *Ap2f )[ i ] );
-        AbTotal->push_back( ( *Ap1b )[ i ] + ( *Ap2b )[ i ] );
+      for( size_t j = 0; j < matrixSize; ++j ) {
+        AfTotal->push_back( ( *Ap1f )[ j ] + ( *Ap2f )[ j ] );
+        AbTotal->push_back( ( *Ap1b )[ j ] + ( *Ap2b )[ j ] );
       }
 
       m_Af->push_back( AfTotal );

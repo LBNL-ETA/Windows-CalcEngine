@@ -20,6 +20,7 @@ namespace LayerOptics {
   // beam. Inherit from this class when want to create new shading type.
   class CBaseCell {
   public:
+    CBaseCell();
     CBaseCell( std::shared_ptr< CMaterial > t_Material,
       std::shared_ptr< CCellDescription > t_CellDescription );
 

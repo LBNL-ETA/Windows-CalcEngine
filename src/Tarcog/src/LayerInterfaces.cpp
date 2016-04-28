@@ -38,9 +38,14 @@ namespace Tarcog{
   //      CLayerGeometry
   //////////////////////////////////////////////////////////////////////////
 
-  CLayerGeometry::CLayerGeometry() : CLayerState(), m_Width( DEFAULT_WINDOW_WIDTH ), m_Height( DEFAULT_WINDOW_HEIGHT ),
-    m_Tilt( DEFAULT_TILT ) {
-  
+  // CLayerGeometry::CLayerGeometry() : CLayerState(), m_Width( DEFAULT_WINDOW_WIDTH ), m_Height( DEFAULT_WINDOW_HEIGHT ),
+  //   m_Tilt( DEFAULT_TILT ) {
+  // 
+  // }
+
+  CLayerGeometry::CLayerGeometry() : m_Width(DEFAULT_WINDOW_WIDTH), m_Height(DEFAULT_WINDOW_HEIGHT),
+	  m_Tilt(DEFAULT_TILT) {
+
   }
 
   void CLayerGeometry::setWidth( double const t_Width ) {
@@ -62,9 +67,14 @@ namespace Tarcog{
   //      CLayerHeatFlow
   //////////////////////////////////////////////////////////////////////////
 
-  CLayerHeatFlow::CLayerHeatFlow() : CLayerState(), m_FrontSurface( nullptr ), m_BackSurface( nullptr ), 
-    m_ConductiveConvectiveCoeff( 0 ), m_RadiationFlow( 0 ), m_LayerGainFlow( 0 ) {
-  
+  // CLayerHeatFlow::CLayerHeatFlow() : CLayerState(), m_FrontSurface( nullptr ), m_BackSurface( nullptr ), 
+  //   m_ConductiveConvectiveCoeff( 0 ), m_RadiationFlow( 0 ), m_LayerGainFlow( 0 ) {
+  // 
+  // }
+
+  CLayerHeatFlow::CLayerHeatFlow() : m_FrontSurface(nullptr), m_BackSurface(nullptr),
+	  m_ConductiveConvectiveCoeff(0), m_RadiationFlow(0), m_LayerGainFlow(0) {
+
   }
 
   CLayerHeatFlow::CLayerHeatFlow( shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface ) :
@@ -150,9 +160,14 @@ namespace Tarcog{
   //      CLayerHeatFlow
   //////////////////////////////////////////////////////////////////////////
 
-  CGasLayer::CGasLayer() : CLayerState(), m_Pressure( 0 ), m_AirSpeed( 0 ), 
-    m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
-    onCreate();
+  // CGasLayer::CGasLayer() : CLayerState(), m_Pressure( 0 ), m_AirSpeed( 0 ), 
+  //   m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
+  //   onCreate();
+  // }
+
+  CGasLayer::CGasLayer() : m_Pressure(0), m_AirSpeed(0),
+    m_AirVerticalDirection(AirVerticalDirection::None), m_AirHorizontalDirection(AirHorizontalDirection::None) {
+	onCreate();
   }
 
   CGasLayer::CGasLayer( double const t_Pressure ) : m_Pressure( t_Pressure ), m_AirSpeed( 0 ),
@@ -161,20 +176,38 @@ namespace Tarcog{
     onCreate();
   }
 
-  CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirVerticalDirection ) : CLayerState(),
-    m_Pressure( t_Pressure ), m_AirSpeed( t_AirSpeed ), 
-    m_AirVerticalDirection( t_AirVerticalDirection ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
+  // CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirVerticalDirection ) : CLayerState(),
+  //   m_Pressure( t_Pressure ), m_AirSpeed( t_AirSpeed ), 
+  //   m_AirVerticalDirection( t_AirVerticalDirection ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
+  //   onCreate();
+  // }
+
+  CGasLayer::CGasLayer(double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirVerticalDirection) :
+    m_Pressure(t_Pressure), m_AirSpeed(t_AirSpeed),
+	  m_AirVerticalDirection(t_AirVerticalDirection), m_AirHorizontalDirection(AirHorizontalDirection::None) {
+	  onCreate();
+  }
+
+  // CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirHorizontalDirection ) : CLayerState(),
+  //   m_Pressure( t_Pressure ), m_AirSpeed( t_AirSpeed ), 
+  //   m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( t_AirHorizontalDirection ) {
+  //   onCreate();
+  // }
+
+  CGasLayer::CGasLayer(double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirHorizontalDirection) :
+    m_Pressure(t_Pressure), m_AirSpeed(t_AirSpeed),
+    m_AirVerticalDirection(AirVerticalDirection::None), m_AirHorizontalDirection(t_AirHorizontalDirection) {
     onCreate();
   }
 
-  CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirHorizontalDirection ) : CLayerState(),
-    m_Pressure( t_Pressure ), m_AirSpeed( t_AirSpeed ), 
-    m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( t_AirHorizontalDirection ) {
-    onCreate();
-  }
+  // CGasLayer::CGasLayer( double const t_Pressure, shared_ptr< CGas > t_Gas ) : CLayerState(), m_Pressure( t_Pressure ), m_AirSpeed( 0 ), 
+  //   m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
+  //   m_Gas = t_Gas;
+  //   onCreate();
+  // }
 
-  CGasLayer::CGasLayer( double const t_Pressure, shared_ptr< CGas > t_Gas ) : CLayerState(), m_Pressure( t_Pressure ), m_AirSpeed( 0 ), 
-    m_AirVerticalDirection( AirVerticalDirection::None ), m_AirHorizontalDirection( AirHorizontalDirection::None ) {
+  CGasLayer::CGasLayer(double const t_Pressure, shared_ptr< CGas > t_Gas) : m_Pressure(t_Pressure), m_AirSpeed(0),
+    m_AirVerticalDirection(AirVerticalDirection::None), m_AirHorizontalDirection(AirHorizontalDirection::None) {
     m_Gas = t_Gas;
     onCreate();
   }
