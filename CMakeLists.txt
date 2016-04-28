@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 2.8.11 )
 
-set( target_name WindowsCalculationEngine )
+set( target_name Windows-CalcEngine )
 
 project( ${target_name} )
 

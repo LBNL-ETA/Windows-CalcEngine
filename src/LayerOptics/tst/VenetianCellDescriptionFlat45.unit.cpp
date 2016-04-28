@@ -16,7 +16,7 @@ class TestVenetianCellDescriptionFlat45 : public testing::Test {
 
 private:
   shared_ptr< CVenetianCellDescription > m_Cell;
-  size_t m_NumOfSlats;
+  // size_t m_NumOfSlats;
 
 protected:
   virtual void SetUp() {
@@ -25,15 +25,15 @@ protected:
     double slatSpacing = 0.010; // m
     double slatTiltAngle = 45;
     double curvatureRadius = 0;
-    size_t m_NumOfSlats = 2;
+    size_t aNumOfSlats = 2;
 
     m_Cell = make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
-      curvatureRadius, m_NumOfSlats );
+      curvatureRadius, aNumOfSlats );
   }
 
 public:
   shared_ptr< CVenetianCellDescription > GetCell() { return m_Cell; };
-  size_t numOfSlats() { return m_NumOfSlats; };
+  // size_t numOfSlats() { return m_NumOfSlats; };
 
 };
 
