@@ -17,4 +17,4 @@ script:
   - cd build
   - cmake ..
   - make
-  - ./unit_tests
+  - src/Common/FenestrationCommon_tests
