@@ -51,8 +51,7 @@ TEST_F( TestLinearSolver1, Test1 ) {
     ASSERT_TRUE( aVector != nullptr );
     aVector->push_back( 1 );
     aVector->push_back( 3 );
-    //aVector->push_back( 5 );
-    aVector->push_back( 6 );
+    aVector->push_back( 5 );
     
     aSolver = GetSolver();
     ASSERT_TRUE( aSolver != nullptr );
