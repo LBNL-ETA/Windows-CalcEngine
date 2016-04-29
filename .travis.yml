@@ -1,0 +1,12 @@
+language: 
+  - cpp
+  
+install:
+  - sudo pip install cpp-coveralls
+  
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - ./unit_tests
