@@ -1,5 +1,5 @@
-#ifndef EQUIVALENTLAYER_H
-#define EQUIVALENTLAYER_H
+#ifndef EQUIVALENTLAYERSINGLECOMPONENT_H
+#define EQUIVALENTLAYERSINGLECOMPONENT_H
 
 #include <memory>
 #include <vector>
@@ -12,9 +12,11 @@ namespace FenestrationCommon {
 namespace MultiPane {
 
   // Spectral properties of glazing system made up of layers with defined or measured spectral properties.
-  class CEquivalentLayer {
+  // Single component means that ray will propagate through IGU in single state (as perfect beam or prefectly diffuse)
+  // Scattering from beam to diffuse component will be implemented in separate class
+  class CEquivalentLayerSingleComponent {
   public:
-    CEquivalentLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
+    CEquivalentLayerSingleComponent( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
 

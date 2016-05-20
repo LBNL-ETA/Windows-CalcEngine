@@ -6,7 +6,7 @@
 #include "MultiPaneSpecular.hpp"
 #include "AbsorptancesMultiPane.hpp"
 #include "SpecularCell.hpp"
-#include "EquivalentLayer.hpp"
+#include "EquivalentLayerSingleComponent.hpp"
 #include "Series.hpp"
 #include "BeamDirection.hpp"
 #include "FenestrationCommon.hpp"
@@ -19,23 +19,23 @@ using namespace LayerOptics;
 namespace MultiPane {
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  //  CEquivalentLayerAngle
+  //  CEquivalentLayerSingleComponentAngle
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CEquivalentLayerAngle::CEquivalentLayerAngle( shared_ptr< CEquivalentLayer > t_Layer, 
+  CEquivalentLayerSingleComponentAngle::CEquivalentLayerSingleComponentAngle( shared_ptr< CEquivalentLayerSingleComponent > t_Layer, 
     shared_ptr< CAbsorptancesMultiPane > t_Abs, const double t_Angle ) :
     m_Layer( t_Layer ), m_Abs( t_Abs ), m_Angle( t_Angle ) {
     
   }
 
-  double CEquivalentLayerAngle::angle() const {
+  double CEquivalentLayerSingleComponentAngle::angle() const {
     return m_Angle;
   }
 
-  shared_ptr< CEquivalentLayer > CEquivalentLayerAngle::layer() const {
+  shared_ptr< CEquivalentLayerSingleComponent > CEquivalentLayerSingleComponentAngle::layer() const {
     return m_Layer;
   }
 
-  shared_ptr< CSeries > CEquivalentLayerAngle::getProperties( const Side t_Side, const Property t_Property ) {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponentAngle::getProperties( const Side t_Side, const Property t_Property ) {
     shared_ptr< CSeries > aProperty = nullptr;
     switch( t_Side ) {
     case Side::Front:
@@ -78,7 +78,7 @@ namespace MultiPane {
     return aProperty;
   }
 
-  shared_ptr< CSeries > CEquivalentLayerAngle::Abs( size_t const Index ) {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponentAngle::Abs( size_t const Index ) {
     return m_Abs->Abs( Index );
   }
 
@@ -99,7 +99,7 @@ namespace MultiPane {
   double CMultiPaneSpecular::getProperty( const Side t_Side, const Property t_Property, const double t_Angle,
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
 
-    shared_ptr< CEquivalentLayerAngle > aAngularProperties = getAngular( t_Angle );
+    shared_ptr< CEquivalentLayerSingleComponentAngle > aAngularProperties = getAngular( t_Angle );
 
     shared_ptr< CSeries > aProperties = aAngularProperties->getProperties( t_Side, t_Property );
 
@@ -129,7 +129,7 @@ namespace MultiPane {
 
   double CMultiPaneSpecular::Abs( size_t const Index, const double t_Angle, 
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
-    shared_ptr< CEquivalentLayerAngle > aAngularProperties = getAngular( t_Angle );
+    shared_ptr< CEquivalentLayerSingleComponentAngle > aAngularProperties = getAngular( t_Angle );
     shared_ptr< CSeries > aProperties = aAngularProperties->Abs( Index - 1 );
 
     aProperties = aProperties->mMult( m_SolarRadiation )->integrate( t_IntegrationType );
@@ -156,12 +156,12 @@ namespace MultiPane {
     return aIntegrator.value();
   }
 
-  shared_ptr< CEquivalentLayerAngle > CMultiPaneSpecular::getAngular( const double t_Angle ) {
-    shared_ptr< CEquivalentLayerAngle > aAngularProperties = nullptr;
+  shared_ptr< CEquivalentLayerSingleComponentAngle > CMultiPaneSpecular::getAngular( const double t_Angle ) {
+    shared_ptr< CEquivalentLayerSingleComponentAngle > aAngularProperties = nullptr;
 
-    vector< shared_ptr< CEquivalentLayerAngle > >::iterator it;
+    vector< shared_ptr< CEquivalentLayerSingleComponentAngle > >::iterator it;
     it = find_if( m_EquivalentAngle.begin(), m_EquivalentAngle.end(), 
-      [ &t_Angle ]( shared_ptr< CEquivalentLayerAngle > obj ) { return fabs( obj->angle() - t_Angle ) < 1e-6; } );
+      [ &t_Angle ]( shared_ptr< CEquivalentLayerSingleComponentAngle > obj ) { return fabs( obj->angle() - t_Angle ) < 1e-6; } );
     
     if( it != m_EquivalentAngle.end() ) {
       aAngularProperties = ( *it );
@@ -172,10 +172,10 @@ namespace MultiPane {
     return aAngularProperties;
   }
 
-  shared_ptr< CEquivalentLayerAngle > CMultiPaneSpecular::createNewAngular( const double t_Angle ) {
+  shared_ptr< CEquivalentLayerSingleComponentAngle > CMultiPaneSpecular::createNewAngular( const double t_Angle ) {
     // Create direction for specular. It is irrelevant what is Phi angle and it is chosen to be zero in this case
     shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( t_Angle, 0 );
-    shared_ptr< CEquivalentLayer > aEqLayer = nullptr;
+    shared_ptr< CEquivalentLayerSingleComponent > aEqLayer = nullptr;
     shared_ptr< CAbsorptancesMultiPane > aAbs = nullptr;
     for( size_t i = 0; i < m_Layers.size(); ++i ) {
       shared_ptr< vector< double > > wl = m_Layers[ i ]->getBandWavelengths();
@@ -194,7 +194,7 @@ namespace MultiPane {
       Rf = Rf->interpolate( m_CommonWavelengths );
       Rb = Rb->interpolate( m_CommonWavelengths );
       if( i == 0 ) {
-        aEqLayer = make_shared< CEquivalentLayer >( T, Rf, Rb );
+        aEqLayer = make_shared< CEquivalentLayerSingleComponent >( T, Rf, Rb );
         aAbs = make_shared< CAbsorptancesMultiPane >( T, Rf, Rb );
       } else {
         assert( aEqLayer != nullptr );
@@ -206,7 +206,7 @@ namespace MultiPane {
     assert( aEqLayer != nullptr );
     assert( aAbs != nullptr );
 
-    shared_ptr< CEquivalentLayerAngle > newLayer = make_shared< CEquivalentLayerAngle >( aEqLayer, aAbs, t_Angle );
+    shared_ptr< CEquivalentLayerSingleComponentAngle > newLayer = make_shared< CEquivalentLayerSingleComponentAngle >( aEqLayer, aAbs, t_Angle );
 
     m_EquivalentAngle.push_back( newLayer );
 

@@ -1,0 +1,10 @@
+#ifndef MULTILAYERSINGLECOMPONENT_H
+#define MULTILAYERSINGLECOMPONENT_H
+
+namespace MultiPane {
+
+
+
+}
+
+#endif

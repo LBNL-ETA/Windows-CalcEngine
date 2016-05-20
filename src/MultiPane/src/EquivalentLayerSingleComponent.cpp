@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "EquivalentLayer.hpp"
+#include "EquivalentLayerSingleComponent.hpp"
 #include "Series.hpp"
 
 using namespace FenestrationCommon;
@@ -8,13 +8,13 @@ using namespace std;
 
 namespace MultiPane {
 
-  CEquivalentLayer::CEquivalentLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
+  CEquivalentLayerSingleComponent::CEquivalentLayerSingleComponent( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rb  ) : m_T( t_T ), m_Rf( t_Rf ), m_Rb( t_Rb ) {
      
   }
 
-  void CEquivalentLayer::addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
+  void CEquivalentLayerSingleComponent::addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
       std::shared_ptr< FenestrationCommon::CSeries > t_Rb ) {
     
@@ -28,19 +28,19 @@ namespace MultiPane {
 
   }
 
-  shared_ptr< CSeries > CEquivalentLayer::T() const {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::T() const {
     return m_T; 
   }
 
-  shared_ptr< CSeries > CEquivalentLayer::Rf() const {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::Rf() const {
     return m_Rf;
   }
 
-  shared_ptr< CSeries > CEquivalentLayer::Rb() const {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::Rb() const {
     return m_Rb; 
   }
 
-  shared_ptr< CSeries > CEquivalentLayer::AbsF() {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::AbsF() {
     size_t size = m_T->size();
     m_AbsF = make_shared< CSeries >();
     for( size_t i = 0; i < size; ++i ) {
@@ -51,7 +51,7 @@ namespace MultiPane {
     return m_AbsF;
   }
 
-  shared_ptr< CSeries > CEquivalentLayer::AbsB() {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::AbsB() {
     size_t size = m_T->size();
     m_AbsB = make_shared< CSeries >();
     for( size_t i = 0; i < size; ++i ) {
@@ -62,9 +62,8 @@ namespace MultiPane {
     return m_AbsB;
   }
 
-
   // Calculates total transmittance of equivalent layer over the entire spectrum. It expects that all properties are the same size.
-  shared_ptr< CSeries > CEquivalentLayer::transmittanceTot( CSeries& t_T1, 
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::transmittanceTot( CSeries& t_T1, 
     CSeries& t_T2, CSeries& t_Rb1, CSeries& t_Rf2 ) {
     assert( t_T1.size() == t_T2.size() );
     assert( t_T1.size() == t_Rb1.size() );
@@ -82,7 +81,7 @@ namespace MultiPane {
   }
 
   // Calculates total front reflectance of equvalent layer over the entire spectrum. Properties must be same size
-  shared_ptr< CSeries > CEquivalentLayer::ReflectanceFrontTot( CSeries& t_T1, CSeries& t_Rf1, 
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::ReflectanceFrontTot( CSeries& t_T1, CSeries& t_Rf1, 
     CSeries& t_Rb1, CSeries& t_Rf2 ) {
     assert( t_T1.size() == t_Rf1.size() );
     assert( t_T1.size() == t_Rb1.size() );
@@ -101,7 +100,7 @@ namespace MultiPane {
   }
 
   // Calculates total back reflectance of equvalent layer over the entire spectrum. Properties must be same size
-  shared_ptr< CSeries > CEquivalentLayer::ReflectanceBackTot( CSeries& t_T2, CSeries& t_Rb2, 
+  shared_ptr< CSeries > CEquivalentLayerSingleComponent::ReflectanceBackTot( CSeries& t_T2, CSeries& t_Rb2, 
     CSeries& t_Rb1, CSeries& t_Rf2 ) {
     assert( t_T2.size() == t_Rb2.size() );
     assert( t_T2.size() == t_Rb1.size() );
