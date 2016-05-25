@@ -2,59 +2,47 @@
 #define EQUIVALENTLAYERSINGLECOMPONENT_H
 
 #include <memory>
-#include <vector>
 
-namespace FenestrationCommon {
+#include "FenestrationCommon.hpp"
 
-  class CSeries;
+namespace LayerOptics {
+
+  class CLayerSingleComponent;
+
 }
 
 namespace MultiPane {
 
-  // Spectral properties of glazing system made up of layers with defined or measured spectral properties.
-  // Single component means that ray will propagate through IGU in single state (as perfect beam or prefectly diffuse)
-  // Scattering from beam to diffuse component will be implemented in separate class
+  // Class to calculate double layer transmittance and reflectances only
   class CEquivalentLayerSingleComponent {
   public:
-    CEquivalentLayerSingleComponent( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
+    CEquivalentLayerSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
+    CEquivalentLayerSingleComponent( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer );
 
-    void addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
+    // Adding layer to front or back side of the IGU composition
+    void addLayer( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb, 
+      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    std::shared_ptr< FenestrationCommon::CSeries > T() const;
-    std::shared_ptr< FenestrationCommon::CSeries > Rf() const;
-    std::shared_ptr< FenestrationCommon::CSeries > Rb() const;
-    std::shared_ptr< FenestrationCommon::CSeries > AbsF();
-    std::shared_ptr< FenestrationCommon::CSeries > AbsB();
+    void addLayer( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer,
+      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+
+    double getProperty( const FenestrationCommon::Property t_Property, 
+      const FenestrationCommon::Side t_Side ) const;
+
+    std::shared_ptr< LayerOptics::CLayerSingleComponent > getLayer() const;
 
   private:
-    std::shared_ptr< FenestrationCommon::CSeries > transmittanceTot( 
-      FenestrationCommon::CSeries& t_T1, 
-      FenestrationCommon::CSeries& t_T2, 
-      FenestrationCommon::CSeries& t_Rb1, 
-      FenestrationCommon::CSeries& t_Rf2 );
+    double interreflectance( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer1, 
+      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2 ) const;
 
-    std::shared_ptr< FenestrationCommon::CSeries > ReflectanceFrontTot( 
-      FenestrationCommon::CSeries& t_T1, 
-      FenestrationCommon::CSeries& t_Rf1, 
-      FenestrationCommon::CSeries& t_Rb1, 
-      FenestrationCommon::CSeries& t_Rf2 );
+    double T( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer1, 
+      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, FenestrationCommon::Side t_Side ) const;
 
-    std::shared_ptr< FenestrationCommon::CSeries > ReflectanceBackTot( 
-      FenestrationCommon::CSeries& t_T2, 
-      FenestrationCommon::CSeries& t_Rb2, 
-      FenestrationCommon::CSeries& t_Rb1, 
-      FenestrationCommon::CSeries& t_Rf2 );
+    double R( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer1, 
+      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, FenestrationCommon::Side t_Side ) const;
 
-    std::shared_ptr< FenestrationCommon::CSeries > m_T;
-    std::shared_ptr< FenestrationCommon::CSeries > m_Rf;
-    std::shared_ptr< FenestrationCommon::CSeries > m_Rb;
-    std::shared_ptr< FenestrationCommon::CSeries > m_AbsF;
-    std::shared_ptr< FenestrationCommon::CSeries > m_AbsB;
-  
+    std::shared_ptr< LayerOptics::CLayerSingleComponent > m_EquivalentLayer;
+
   };
 
 }

@@ -5,7 +5,7 @@
 
 #include "MultiPaneSampleData.hpp"
 #include "Series.hpp"
-#include "EquivalentLayerSingleComponent.hpp"
+#include "EquivalentLayerSingleComponentMW.hpp"
 #include "AbsorptancesMultiPane.hpp"
 #include "CommonWavelengths.hpp"
 
@@ -73,7 +73,7 @@ namespace MultiPane {
     shared_ptr< CSeries > T = m_MeasuredSamples[0]->properties( SampleData::T );
     shared_ptr< CSeries > Rf = m_MeasuredSamples[0]->properties( SampleData::Rf );
     shared_ptr< CSeries > Rb = m_MeasuredSamples[0]->properties( SampleData::Rb );
-    CEquivalentLayerSingleComponent aEqivalentLayer( T, Rf, Rb );
+    CEquivalentLayerSingleComponentMW aEqivalentLayer( T, Rf, Rb );
     CAbsorptancesMultiPane aAbsorptances( T, Rf, Rb );
 
     vector< shared_ptr< CSpectralSampleData > >::iterator it;
