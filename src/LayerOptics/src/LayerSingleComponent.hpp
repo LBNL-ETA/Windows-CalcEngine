@@ -24,9 +24,11 @@ namespace LayerOptics {
   // will not change state (from beam to diffuse) during propagation through the layer
   class CLayerSingleComponent {
   public:
-    CLayerSingleComponent( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb );
+    CLayerSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
 
     double getProperty( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
+
+    std::shared_ptr< Surface > getSurface( const FenestrationCommon::Side t_Side ) const;
 
   private:
     std::shared_ptr< Surface > m_Front;

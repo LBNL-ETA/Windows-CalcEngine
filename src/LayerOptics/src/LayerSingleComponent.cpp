@@ -42,13 +42,19 @@ namespace LayerOptics {
 // CLayerSingleComponent
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CLayerSingleComponent::CLayerSingleComponent( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb ) :
+  CLayerSingleComponent::CLayerSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb ) :
     m_Front( nullptr ), m_Back( nullptr ) {
     m_Front = make_shared< Surface >( t_Tf, t_Rf );
     m_Back = make_shared< Surface >( t_Tb, t_Rb );
   }
 
   double CLayerSingleComponent::getProperty( const Property t_Property, const Side t_Side ) const {
+    shared_ptr< Surface > aSurface = getSurface( t_Side );
+    assert( aSurface != nullptr );
+    return aSurface->getProperty( t_Property );
+  }
+
+  shared_ptr< Surface > CLayerSingleComponent::getSurface( const Side t_Side ) const {
     shared_ptr< Surface > aSurface = nullptr;
     switch( t_Side ) {
     case Side::Front:
@@ -61,8 +67,7 @@ namespace LayerOptics {
       assert("Impossible selection of surface.");
       break;
     }
-    assert( aSurface != nullptr );
-    return aSurface->getProperty( t_Property );
+    return aSurface;
   }
 
 }

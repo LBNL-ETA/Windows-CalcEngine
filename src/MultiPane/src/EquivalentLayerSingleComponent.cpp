@@ -1,121 +1,104 @@
 #include <assert.h>
 
 #include "EquivalentLayerSingleComponent.hpp"
-#include "Series.hpp"
+#include "LayerSingleComponent.hpp"
 
-using namespace FenestrationCommon;
 using namespace std;
+using namespace LayerOptics;
+using namespace FenestrationCommon;
 
 namespace MultiPane {
 
-  CEquivalentLayerSingleComponent::CEquivalentLayerSingleComponent( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb  ) : m_T( t_T ), m_Rf( t_Rf ), m_Rb( t_Rb ) {
-     
+  CEquivalentLayerSingleComponent::CEquivalentLayerSingleComponent( const double t_Tf, const double t_Rf, 
+    const double t_Tb, const double t_Rb ) {
+    m_EquivalentLayer = make_shared< CLayerSingleComponent >( t_Tf, t_Rf, t_Tb, t_Rb );
   }
 
-  void CEquivalentLayerSingleComponent::addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb ) {
+  CEquivalentLayerSingleComponent::CEquivalentLayerSingleComponent( 
+    shared_ptr< const CLayerSingleComponent > t_Layer ) {
     
-    shared_ptr< CSeries > tTot = transmittanceTot( *m_T, *t_T, *m_Rb, *t_Rf );
-    shared_ptr< CSeries > tRfTot = ReflectanceFrontTot( *m_T, *m_Rf, *m_Rb, *t_Rf );
-    shared_ptr< CSeries > tRbTot = ReflectanceBackTot( *t_T, *t_Rb, *m_Rb, *t_Rf );
+    const double Tf = t_Layer->getProperty( Property::T, Side::Front );
+    const double Rf = t_Layer->getProperty( Property::R, Side::Front );
+    const double Tb = t_Layer->getProperty( Property::T, Side::Back );
+    const double Rb = t_Layer->getProperty( Property::R, Side::Back );
 
-    m_T = tTot;
-    m_Rf = tRfTot;
-    m_Rb = tRbTot;
-
+    m_EquivalentLayer = make_shared< CLayerSingleComponent >( Tf, Rf, Tb, Rb );
   }
 
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::T() const {
-    return m_T; 
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::Rf() const {
-    return m_Rf;
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::Rb() const {
-    return m_Rb; 
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::AbsF() {
-    size_t size = m_T->size();
-    m_AbsF = make_shared< CSeries >();
-    for( size_t i = 0; i < size; ++i ) {
-      double wl = ( *m_T )[ i ]->x();
-      double value = 1 - ( *m_T )[ i ]->value() - ( *m_Rf )[ i ]->value();
-      m_AbsF->addProperty( wl, value );
-    }
-    return m_AbsF;
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::AbsB() {
-    size_t size = m_T->size();
-    m_AbsB = make_shared< CSeries >();
-    for( size_t i = 0; i < size; ++i ) {
-      double wl = ( *m_T )[ i ]->x();
-      double value = 1 - ( *m_T )[ i ]->value() - ( *m_Rb )[ i ]->value();
-      m_AbsB->addProperty( wl, value );
-    }
-    return m_AbsB;
-  }
-
-  // Calculates total transmittance of equivalent layer over the entire spectrum. It expects that all properties are the same size.
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::transmittanceTot( CSeries& t_T1, 
-    CSeries& t_T2, CSeries& t_Rb1, CSeries& t_Rf2 ) {
-    assert( t_T1.size() == t_T2.size() );
-    assert( t_T1.size() == t_Rb1.size() );
-    assert( t_T1.size() == t_Rf2.size() );
-
-    shared_ptr< CSeries > aSpectralProperties = make_shared< CSeries >();
-
-    for ( size_t i = 0; i < t_T1.size(); ++i ) {
-      double tTot = t_T1[i]->value() * t_T2[i]->value() / ( 1 - t_Rb1[i]->value() * t_Rf2[i]->value() );
-      double wv = t_T1[i]->x();
-      aSpectralProperties->addProperty( wv, tTot );
+  void CEquivalentLayerSingleComponent::addLayer( const double t_Tf, const double t_Rf, const double t_Tb, 
+    const double t_Rb, const Side t_Side ) {
+    shared_ptr< CLayerSingleComponent > firstLayer = nullptr;
+    shared_ptr< CLayerSingleComponent > secondLayer = nullptr;
+    switch( t_Side ) {
+    case Side::Front:
+      firstLayer = make_shared< CLayerSingleComponent >( t_Tf, t_Rf, t_Tb, t_Rb );
+      secondLayer = m_EquivalentLayer;
+      break;
+    case Side::Back:
+      firstLayer = m_EquivalentLayer;
+      secondLayer = make_shared< CLayerSingleComponent >( t_Tf, t_Rf, t_Tb, t_Rb );
+      break;
+    default:
+      assert("Error in selection of side in double layer calculations.");
+      break;
     }
 
-    return aSpectralProperties;
+    double Tf = T( firstLayer, secondLayer, Side::Front );
+    double Tb = T( firstLayer, secondLayer, Side::Back );
+    double Rf = R( firstLayer, secondLayer, Side::Front );
+    double Rb = R( firstLayer, secondLayer, Side::Back );
+    m_EquivalentLayer = make_shared< CLayerSingleComponent >( Tf, Rf, Tb, Rb );
   }
 
-  // Calculates total front reflectance of equvalent layer over the entire spectrum. Properties must be same size
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::ReflectanceFrontTot( CSeries& t_T1, CSeries& t_Rf1, 
-    CSeries& t_Rb1, CSeries& t_Rf2 ) {
-    assert( t_T1.size() == t_Rf1.size() );
-    assert( t_T1.size() == t_Rb1.size() );
-    assert( t_T1.size() == t_Rf2.size() );
+  void CEquivalentLayerSingleComponent::addLayer( shared_ptr< const CLayerSingleComponent > t_Layer, 
+    const Side t_Side ) {
+    const double Tf = t_Layer->getProperty( Property::T, Side::Front );
+    const double Rf = t_Layer->getProperty( Property::R, Side::Front );
+    const double Tb = t_Layer->getProperty( Property::T, Side::Back );
+    const double Rb = t_Layer->getProperty( Property::R, Side::Back );
+    addLayer( Tf, Rf, Tb, Rb, t_Side );
+  };
 
-    shared_ptr< CSeries > aSpectralProperties = make_shared< CSeries >();
-
-    for ( size_t i = 0; i < t_T1.size(); ++i ) {
-      double tRfTot = t_Rf1[i]->value() + t_T1[i]->value() * t_T1[i]->value() * t_Rf2[i]->value()
-        / ( 1 - t_Rb1[i]->value() * t_Rf2[i]->value() );
-      double wv = t_T1[i]->x();
-      aSpectralProperties->addProperty( wv, tRfTot );
-    }
-
-    return aSpectralProperties;
+  double CEquivalentLayerSingleComponent::getProperty( const Property t_Property, const Side t_Side ) const {
+    return m_EquivalentLayer->getProperty( t_Property, t_Side );
   }
 
-  // Calculates total back reflectance of equvalent layer over the entire spectrum. Properties must be same size
-  shared_ptr< CSeries > CEquivalentLayerSingleComponent::ReflectanceBackTot( CSeries& t_T2, CSeries& t_Rb2, 
-    CSeries& t_Rb1, CSeries& t_Rf2 ) {
-    assert( t_T2.size() == t_Rb2.size() );
-    assert( t_T2.size() == t_Rb1.size() );
-    assert( t_T2.size() == t_Rf2.size() );
+  shared_ptr< CLayerSingleComponent > CEquivalentLayerSingleComponent::getLayer() const {
+    return m_EquivalentLayer; 
+  }
 
-    shared_ptr< CSeries > aSpectralProperties = make_shared< CSeries >();
+  double CEquivalentLayerSingleComponent::interreflectance( shared_ptr< const CLayerSingleComponent > t_Layer1, 
+    shared_ptr< const CLayerSingleComponent > t_Layer2 ) const {
+    return 1 / ( 1 - t_Layer1->getProperty( Property::R, Side::Back ) * t_Layer2->getProperty( Property::R, Side::Front ) );
+  }
 
-    for ( size_t i = 0; i < t_T2.size(); ++i ) {
-      double tRbTot = t_Rb2[i]->value() + t_T2[i]->value() * t_T2[i]->value() * t_Rb1[i]->value()
-        / ( 1 - t_Rb1[i]->value() * t_Rf2[i]->value() );
-      double wv = t_T2[i]->x();
-      aSpectralProperties->addProperty( wv, tRbTot );
+  double CEquivalentLayerSingleComponent::T( shared_ptr< const CLayerSingleComponent > t_Layer1, 
+    shared_ptr< const CLayerSingleComponent > t_Layer2, Side t_Side ) const {
+    return t_Layer1->getProperty( Property::T, t_Side ) * t_Layer2->getProperty( Property::T, t_Side ) * 
+      interreflectance( t_Layer1, t_Layer2 );
+  }
+
+  double CEquivalentLayerSingleComponent::R( shared_ptr< const CLayerSingleComponent > t_Layer1, 
+    shared_ptr< const CLayerSingleComponent > t_Layer2, Side t_Side ) const {
+    shared_ptr< const CLayerSingleComponent > firstLayer = nullptr;
+    shared_ptr< const CLayerSingleComponent > secondLayer = nullptr;
+    switch( t_Side ) {
+    case Side::Front:
+      firstLayer = t_Layer1;
+      secondLayer = t_Layer2;
+      break;
+    case Side::Back:
+      firstLayer = t_Layer2;
+      secondLayer = t_Layer1;
+      break;
+    default:
+      assert("Impossible selection of side in double layer calculations.");
+      break;
     }
-
-    return aSpectralProperties;
+    Side opposite = oppositeSide( t_Side );
+    return firstLayer->getProperty( Property::R, t_Side ) + firstLayer->getProperty( Property::T, t_Side ) * 
+      firstLayer->getProperty( Property::T, opposite ) * 
+      secondLayer->getProperty( Property::R, t_Side ) * interreflectance( t_Layer1, t_Layer2 );
   }
 
 }
