@@ -27,19 +27,7 @@ namespace MultiPane {
       throw runtime_error("Equivalent BSDF Layer must contain valid layer.");
     }
 
-    m_TauF = nullptr;
-    m_TauB = nullptr;
-    m_RhoF = nullptr;
-    m_RhoB = nullptr;    
-    m_AbsF = nullptr;
-    m_AbsB = nullptr;
-
     m_LayersWL = make_shared< vector< shared_ptr< CEquivalentBSDFLayerSingleBand > > >();
-
-    // m_TauF_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
-    // m_TauB_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
-    // m_RhoF_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
-    // m_RhoB_WL = make_shared< vector< shared_ptr< CSquareMatrix > > >();
 
     // Lambda matrix from spectral results. Same lambda is valid for any wavelength
     m_Lambda = t_Layer->getResults()->lambdaMatrix();
@@ -57,11 +45,7 @@ namespace MultiPane {
       shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer = make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
 
       m_LayersWL->push_back( aEquivalentLayer );
-      
-      // m_TauF_WL->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Front ) );
-      // m_TauB_WL->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Back ) );
-      // m_RhoF_WL->push_back( ( *aResults )[ size_t( index ) ]->Rho( Side::Front ) );
-      // m_RhoB_WL->push_back( ( *aResults )[ size_t( index ) ]->Rho( Side::Back ) );
+
     }
 
   }
@@ -69,9 +53,6 @@ namespace MultiPane {
   void CEquivalentBSDFLayer::addLayer( shared_ptr< CBSDFLayer > t_Layer ) {
 
     shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
-
-    // m_AbsF.addLayer( t_Layer );
-    // m_AbsB.addLayer( t_Layer );
 
     aResults = t_Layer->getWavelengthResults();
     size_t size = m_CombinedLayerWavelengths->size();
@@ -91,21 +72,7 @@ namespace MultiPane {
       calculate( minLambda, maxLambda );
     }
 
-    shared_ptr< CSquareMatrix > aMatrix = nullptr;
-
-    switch( t_Side ) {
-      case Side::Front:
-        aMatrix = m_TauF;
-        break;
-      case Side::Back:
-        aMatrix = m_TauB;
-        break;
-      default:
-        assert("Incorrect side selection.");
-        break;
-      }
-
-    return aMatrix;
+    return m_Tau.at( t_Side );
   }
 
   shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( const double minLambda, 
@@ -114,21 +81,7 @@ namespace MultiPane {
       calculate( minLambda, maxLambda );
     }
 
-    shared_ptr< CSquareMatrix > aMatrix = nullptr;
-
-    switch( t_Side ) {
-      case Side::Front:
-        aMatrix = m_RhoF;
-        break;
-      case Side::Back:
-        aMatrix = m_RhoB;
-        break;
-      default:
-        assert("Incorrect side selection.");
-        break;
-      }
-
-    return aMatrix;
+    return m_Rho.at( t_Side );
   }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
@@ -136,36 +89,25 @@ namespace MultiPane {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
-    shared_ptr< vector< double > > aAbs = nullptr;
-    switch( t_Side ) {
-      case Side::Front:
-        aAbs = ( *m_AbsF )[ Index - 1 ];
-        break;
-      case Side::Back:
-        aAbs = ( *m_AbsB )[ Index - 1 ];
-        break;
-      default:
-        assert("Incorrect side selection.");
-        break;
-      }
-    return aAbs;
+    return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
   }
 
   void CEquivalentBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
     size_t matrixSize = m_Lambda->getSize();
-    m_TauF = make_shared< CSquareMatrix >( matrixSize );
-    m_TauB = make_shared< CSquareMatrix >( matrixSize );
-    m_RhoF = make_shared< CSquareMatrix >( matrixSize );
-    m_RhoB = make_shared< CSquareMatrix >( matrixSize );
+    m_Tau[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
+    m_Tau[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
+    m_Rho[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
+    m_Rho[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
 
     size_t numberOfLayers = ( *m_LayersWL )[ 0 ]->getNumberOfLayers();
 
-    m_AbsF = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
-    m_AbsB = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
+    m_Abs[ Side::Front ] = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
+    m_Abs[ Side::Back ] = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
 
     for( size_t i = 0; i < numberOfLayers; ++i ) {
-      ( *m_AbsF )[ i ] = make_shared< vector< double > >( matrixSize );
-      ( *m_AbsB )[ i ] = make_shared< vector< double > >( matrixSize );
+      for(Side t_Side : Enum< Side >()) {
+        ( *m_Abs.at( t_Side ) )[ i ] = make_shared< vector< double > >( matrixSize );
+      }
     }
 
     shared_ptr< CSeries > iTotalSolar = m_SolarRadiation->integrate( IntegrationType::Trapezoidal );
@@ -176,28 +118,29 @@ namespace MultiPane {
     size_t size = m_CombinedLayerWavelengths->size();
 
     // Total matrices for every property
-    vector< vector< shared_ptr< CSeries > > > aTotalTFront;
-    vector< vector< shared_ptr< CSeries > > > aTotalTBack;
-    vector< vector< shared_ptr< CSeries > > > aTotalRFront;
-    vector< vector< shared_ptr< CSeries > > > aTotalRBack;
+    map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalT;
+    map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalR;
 
-    vector< vector< shared_ptr< CSeries > > > aTotalAf = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
-    vector< vector< shared_ptr< CSeries > > > aTotalAb = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
+    map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalA;
+    for(Side t_Side : Enum< Side >()) {
+      aTotalA[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
+    }
     for( size_t i = 0; i < numberOfLayers; ++i ) {
-      aTotalAf[ i ].resize( matrixSize );
-      aTotalAb[ i ].resize( matrixSize );
+      for(Side t_Side : Enum< Side >()) {
+        aTotalA.at( t_Side )[ i ].resize( matrixSize );
+      }
     }
 
-    aTotalTFront.resize( matrixSize );
-    aTotalTBack.resize( matrixSize );
-    aTotalRFront.resize( matrixSize );
-    aTotalRBack.resize( matrixSize );
+    for(Side t_Side : Enum< Side >()) {
+      aTotalT[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( matrixSize );
+      aTotalR[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( matrixSize );
+    }
 
     for( size_t i = 0; i < matrixSize; ++i ) {
-      aTotalTFront[ i ].resize( matrixSize );
-      aTotalTBack[ i ].resize( matrixSize );
-      aTotalRFront[ i ].resize( matrixSize );
-      aTotalRBack[ i ].resize( matrixSize );
+      for(Side t_Side : Enum< Side >()) {
+        aTotalT.at( t_Side )[ i ].resize( matrixSize );
+        aTotalR.at( t_Side )[ i ].resize( matrixSize );
+      }
     }
 
     // Calculate total transmitted solar per matrix and perform integration
@@ -209,65 +152,55 @@ namespace MultiPane {
       for( size_t j = 0; j < matrixSize; ++j ) {
         for( size_t k = 0; k < numberOfLayers; ++k ) {
           if( i == 0 ) {
-            aTotalAf[ k ][ j ] = make_shared< CSeries >();
-            aTotalAb[ k ][ j ] = make_shared< CSeries >();
+            for(Side t_Side : Enum< Side >()) {
+              aTotalA.at( t_Side )[ k ][ j ] = make_shared< CSeries >();
+            }
           }
-          aTotalAf[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, Side::Front ) )[ j ] );
-          aTotalAb[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, Side::Back ) )[ j ] );
+          for(Side t_Side : Enum< Side >()) {
+            aTotalA.at( t_Side )[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, t_Side) )[ j ] );
+          }
         }
         
         for( size_t k = 0; k < matrixSize; ++k ) {
           if( i == 0 ) {
-            aTotalTFront[ j ][ k ] = make_shared< CSeries >();
-            aTotalTBack[ j ][ k ] = make_shared< CSeries >();
-            aTotalRFront[ j ][ k ] = make_shared< CSeries >();
-            aTotalRBack[ j ][ k ] = make_shared< CSeries >();
+            for(Side t_Side : Enum< Side >()) {
+              aTotalT.at( t_Side )[ j ][ k ] = make_shared< CSeries >();
+              aTotalR.at( t_Side )[ j ][ k ] = make_shared< CSeries >();
+            }
           }
           
-          aTotalTFront[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( Side::Front ) )[ j ][ k ] );
-          aTotalTBack[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( Side::Back ) )[ j ][ k ] );
-          aTotalRFront[ j ][ k ]->addProperty( curWL, ( *curLayer->Rho( Side::Front ) )[ j ][ k ] );
-          aTotalRBack[ j ][ k ]->addProperty( curWL, ( *curLayer->Rho( Side::Back ) )[ j ][ k ] );
+          for(Side t_Side : Enum< Side >()) {
+            aTotalT.at( t_Side )[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( t_Side ) )[ j ][ k ] );
+            aTotalR.at( t_Side )[ j ][ k ]->addProperty( curWL, ( *curLayer->Rho( t_Side ) )[ j ][ k ] );
+          }
         }
       }
     }
 
     for( size_t j = 0; j < matrixSize; ++j ) {
       for( size_t k = 0; k < numberOfLayers; ++k ) {
-          aTotalAf[ k ][ j ] = aTotalAf[ k ][ j ]->mMult( interpolatedSolar );
-          aTotalAf[ k ][ j ] = aTotalAf[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
-          ( *( *m_AbsF )[ k ] )[ j ] = aTotalAf[ k ][ j ]->sum( minLambda, maxLambda );
-          ( *( *m_AbsF )[ k ] )[ j ] = ( *( *m_AbsF )[ k ] )[ j ] / incomingSolar;
-
-          aTotalAb[ k ][ j ] = aTotalAb[ k ][ j ]->mMult( interpolatedSolar );
-          aTotalAb[ k ][ j ] = aTotalAb[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
-          ( *( *m_AbsB )[ k ] )[ j ] = aTotalAb[ k ][ j ]->sum( minLambda, maxLambda );
-          ( *( *m_AbsB )[ k ] )[ j ] = ( *( *m_AbsB )[ k ] )[ j ] / incomingSolar;
+        for(Side t_Side : Enum< Side >()) {
+          aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->mMult( interpolatedSolar );
+          aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
+          ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = aTotalA.at( t_Side )[ k ][ j ]->sum( minLambda, maxLambda );
+          ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] / incomingSolar;
         }
+      }
       for( size_t k = 0; k < matrixSize; ++k ) {
-        // Front transmittance
-        aTotalTFront[ j ][ k ] = aTotalTFront[ j ][ k ]->mMult( interpolatedSolar );
-        aTotalTFront[ j ][ k ] = aTotalTFront[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-        ( *m_TauF )[ j ][ k ] = aTotalTFront[ j ][ k ]->sum( minLambda, maxLambda );
-        ( *m_TauF )[ j ][ k ] = ( *m_TauF )[ j ][ k ] / incomingSolar;
+        // Transmittance
+        for(Side t_Side : Enum< Side >()) {
+          // Transmittance
+          aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->mMult( interpolatedSolar );
+          aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
+          ( *m_Tau.at( t_Side ) )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
+          ( *m_Tau.at( t_Side ) )[ j ][ k ] = ( *m_Tau.at( t_Side ) )[ j ][ k ] / incomingSolar;
 
-        // Back transmittance
-        aTotalTBack[ j ][ k ] = aTotalTBack[ j ][ k ]->mMult( interpolatedSolar );
-        aTotalTBack[ j ][ k ] = aTotalTBack[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-        ( *m_TauB )[ j ][ k ] = aTotalTBack[ j ][ k ]->sum( minLambda, maxLambda );
-        ( *m_TauB )[ j ][ k ] = ( *m_TauB )[ j ][ k ] / incomingSolar;
-
-        // Front reflectance
-        aTotalRFront[ j ][ k ] = aTotalRFront[ j ][ k ]->mMult( interpolatedSolar );
-        aTotalRFront[ j ][ k ] = aTotalRFront[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-        ( *m_RhoF )[ j ][ k ] = aTotalRFront[ j ][ k ]->sum( minLambda, maxLambda );
-        ( *m_RhoF )[ j ][ k ] = ( *m_RhoF )[ j ][ k ] / incomingSolar;
-
-        // Back reflectance
-        aTotalRBack[ j ][ k ] = aTotalRBack[ j ][ k ]->mMult( interpolatedSolar );
-        aTotalRBack[ j ][ k ] = aTotalRBack[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-        ( *m_RhoB )[ j ][ k ] = aTotalRBack[ j ][ k ]->sum( minLambda, maxLambda );
-        ( *m_RhoB )[ j ][ k ] = ( *m_RhoB )[ j ][ k ] / incomingSolar;
+          // Reflectance
+          aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->mMult( interpolatedSolar );
+          aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
+          ( *m_Rho.at( t_Side ) )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
+          ( *m_Rho.at( t_Side ) )[ j ][ k ] = ( *m_Rho.at( t_Side ) )[ j ][ k ] / incomingSolar;
+        }
       }
     }
 

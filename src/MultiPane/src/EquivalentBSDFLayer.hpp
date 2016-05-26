@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 #include "AbsorptancesMultiPaneBSDF.hpp"
 
@@ -48,13 +49,10 @@ namespace MultiPane {
     std::shared_ptr< std::vector< std::shared_ptr< CEquivalentBSDFLayerSingleBand > > > m_LayersWL;
 
     // Matrices for the entire system
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_TauF;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_TauB;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_RhoF;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_RhoB;
+    std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Tau;
+    std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Rho;
 
-    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_AbsF;
-    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_AbsB;
+    std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > > m_Abs;
 
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
     std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
