@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 namespace FenestrationCommon {
 
@@ -24,13 +25,23 @@ namespace SpectralAveraging {
 
 namespace LayerOptics {
 
+  struct Surface {
+  public:
+    Surface( const double t_T, const double t_R );
+    double getProperty( const FenestrationCommon::Property t_Property );
+
+  private:
+    std::map< FenestrationCommon::Property, double > m_Property;
+  };
+
   struct RMaterialProperties {
   public:
     RMaterialProperties( const double aTf, const double aTb, const double aRf, const double aRb );
-    double Tf;
-    double Tb;
-    double Rf;
-    double Rb;
+    double getProperty( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
+
+  private:
+    std::map< FenestrationCommon::Side, std::shared_ptr< Surface > > m_Surface;
+
   };
 
   // Base class for any material definition. It reprsents material properties over the certain range.

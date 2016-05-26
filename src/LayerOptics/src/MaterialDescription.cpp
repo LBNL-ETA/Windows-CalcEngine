@@ -14,13 +14,37 @@ using namespace SpectralAveraging;
 
 namespace LayerOptics {
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Surface
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  Surface::Surface( const double t_T, const double t_R ) {
+    if( t_T + t_R > 1 ) {
+      throw runtime_error("Sum of transmittance and reflectance is greater than one.");
+    }
+    m_Property[ Property::T ] = t_T;
+    m_Property[ Property::R ] = t_R;
+    m_Property[ Property::Abs ] = 1 - t_T - t_R;
+  }
+
+  double Surface::getProperty( const Property t_Property ) {
+    return m_Property.at( t_Property );
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////
   ////   RMaterialProperties
   ////////////////////////////////////////////////////////////////////////////////////
 
   RMaterialProperties::RMaterialProperties( const double aTf, const double aTb, 
-    const double aRf, const double aRb ) : Tf( aTf ), Tb( aTb ), Rf( aRf ), Rb( aRb ) {
+    const double aRf, const double aRb ) {
 
+    m_Surface[ Side::Front ] = make_shared< Surface >( aTf, aRf );
+    m_Surface[ Side::Back ] = make_shared< Surface >( aTb, aRb );
+
+  }
+
+  double RMaterialProperties::getProperty( const Property t_Property, const Side t_Side ) const {
+    return m_Surface.at( t_Side )->getProperty( t_Property );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////

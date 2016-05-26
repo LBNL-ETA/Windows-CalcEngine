@@ -89,13 +89,6 @@ namespace LayerOptics {
         shared_ptr< CSquareMatrix > Rho = nullptr;
         size_t numWV = aTau->size();
         for( size_t j = 0; j < numWV; ++j ) {
-          // shared_ptr< CBSDFResults > aResults = nullptr;
-          // if( ( i == 0 ) && ( aSide == Side::Front ) ) {
-          //   aResults = make_shared< CBSDFResults >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
-          //   m_WVResults->push_back( aResults );
-          // } else {
-          //   aResults = ( *m_WVResults )[ j ];
-          // }
           shared_ptr< CBSDFResults > aResults = ( *m_WVResults )[ j ];
           assert( aResults != nullptr );
           Tau = aResults->Tau( aSide );

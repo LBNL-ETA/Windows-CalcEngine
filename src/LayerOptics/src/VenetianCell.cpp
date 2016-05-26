@@ -502,8 +502,13 @@ namespace LayerOptics {
 
     size_t size = t_Material->getBandSize();
     for( size_t i = 0; i < size; ++i ) {
+      double Tf = aMat[ i ].getProperty( Property::T, Side::Front );
+      double Tb = aMat[ i ].getProperty( Property::T, Side::Back );
+      double Rf = aMat[ i ].getProperty( Property::R, Side::Front );
+      double Rb = aMat[ i ].getProperty( Property::R, Side::Back );
+
       CVenetianEnergy aEnergy = 
-        CVenetianEnergy( aMat[ i ].Tf, aMat[ i ].Tb, aMat[ i ].Rf, aMat[ i ].Rb, getCellAsVenetian() );
+        CVenetianEnergy( Tf, Tb, Rf, Rb, getCellAsVenetian() );
       m_EnergiesBand.push_back( aEnergy );
     }
 

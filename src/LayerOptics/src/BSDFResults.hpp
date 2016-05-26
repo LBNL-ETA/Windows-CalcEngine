@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 namespace FenestrationCommon {
 
@@ -21,9 +22,9 @@ namespace LayerOptics {
     explicit CBSDFResults( std::shared_ptr< const CBSDFDirections > t_Directions );
 
     // Transmittance matrices for front and back sides
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( FenestrationCommon::Side t_Side ) const;
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const FenestrationCommon::Side t_Side ) const;
     // Reflectance matrices for front and back sides
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( FenestrationCommon::Side t_Side ) const;
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const FenestrationCommon::Side t_Side ) const;
 
     void setResultMatrices( std::shared_ptr< FenestrationCommon::CSquareMatrix > t_Tau,
       std::shared_ptr< FenestrationCommon::CSquareMatrix > t_Rho, FenestrationCommon::Side t_Side );
@@ -36,10 +37,10 @@ namespace LayerOptics {
     std::shared_ptr< const CBSDFDirections > getDirections() const;
 
     // Diffuse transmittance for front and back sides
-    double TauDiff( FenestrationCommon::Side t_Side ) const;
+    double TauDiff( const FenestrationCommon::Side t_Side ) const;
 
     // Diffuse reflectance for front and back sides
-    double RhoDiff( FenestrationCommon::Side t_Side ) const;
+    double RhoDiff( const FenestrationCommon::Side t_Side ) const;
 
     // Lambda values for the layer.
     std::shared_ptr< const std::vector< double > > lambdaVector() const;
@@ -53,18 +54,13 @@ namespace LayerOptics {
     // Hemispherical integration over m_Directions
     double integrate( std::shared_ptr< FenestrationCommon::CSquareMatrix > t_Matrix ) const;
 
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_TauF;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_TauB;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_RhoF;
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_RhoB;
+    std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Tau;
+    std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Rho;
 
-    std::shared_ptr< std::vector< double > > m_VTauHemF;
-    std::shared_ptr< std::vector< double > > m_VTauHemB;
-    std::shared_ptr< std::vector< double > > m_VRhoHemF;
-    std::shared_ptr< std::vector< double > > m_VRhoHemB;
+    std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_VTauHem;
+    std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_VRhoHem;
 
-    std::shared_ptr< std::vector< double > > m_AbsF;
-    std::shared_ptr< std::vector< double > > m_AbsB;
+    std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_Abs;
 
     void calcHemispherical();
     bool m_HemisphericalCalculated;
