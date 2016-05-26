@@ -82,21 +82,6 @@ namespace MultiPane {
       shared_ptr< CBSDFResults > currentLayer = ( *aResults )[ size_t( index ) ];
       shared_ptr< CEquivalentBSDFLayerSingleBand > currentEqLayer = ( *m_LayersWL )[ i ];
       currentEqLayer->addLayer( currentLayer );
-      // shared_ptr< CSquareMatrix > Tf2 = ( *aResults )[ size_t( index ) ]->Tau( Side::Front );
-      // shared_ptr< CSquareMatrix > Tb2 = ( *aResults )[ size_t( index ) ]->Tau( Side::Back );
-      // shared_ptr< CSquareMatrix > Rf2 = ( *aResults )[ size_t( index ) ]->Rho( Side::Front );
-      // shared_ptr< CSquareMatrix > Rb2 = ( *aResults )[ size_t( index ) ]->Rho( Side::Back );
-    
-      // shared_ptr< CSquareMatrix > aTauF = totTransmittance( ( *m_TauF_WL )[ i ], Tf2, ( *m_RhoB_WL )[ i ], Rf2 );
-      // shared_ptr< CSquareMatrix > aTauB = totTransmittance( Tf2, ( *m_TauB_WL )[ i ], Rf2, ( *m_RhoB_WL )[ i ] );
-      // shared_ptr< CSquareMatrix > aRhoF = totReflectance( ( *m_TauF_WL )[ i ], ( *m_TauB_WL )[ i ], 
-      //   ( *m_RhoF_WL )[ i ], ( *m_RhoB_WL )[ i ], Rf2 );
-      // shared_ptr< CSquareMatrix > aRhoB = totReflectance( Tb2, Tf2, Rb2, Rf2, ( *m_RhoB_WL )[ i ] );
-      // 
-      // ( *m_TauF_WL )[ i ] = aTauF;
-      // ( *m_TauB_WL )[ i ] = aTauB;
-      // ( *m_RhoF_WL )[ i ] = aRhoF;
-      // ( *m_RhoB_WL )[ i ] = aRhoB;
     }
 
   }

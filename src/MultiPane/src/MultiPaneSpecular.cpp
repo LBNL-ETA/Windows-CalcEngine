@@ -36,46 +36,7 @@ namespace MultiPane {
   }
 
   shared_ptr< CSeries > CEquivalentLayerSingleComponentMWAngle::getProperties( const Side t_Side, const Property t_Property ) {
-    shared_ptr< CSeries > aProperty = nullptr;
-    switch( t_Side ) {
-    case Side::Front:
-      switch (t_Property) {
-      case Property::T:
-        aProperty = m_Layer->T();
-        break;
-      case Property::R:
-        aProperty = m_Layer->Rf();
-        break;
-      case Property::Abs:
-        aProperty = m_Layer->AbsF();
-        break;
-      default:
-        assert("Incorrect property selection.");
-        break;
-      }
-      break;
-    case Side::Back:
-      switch (t_Property) {
-      case Property::T:
-        aProperty = m_Layer->T();
-        break;
-      case Property::R:
-        aProperty = m_Layer->Rb();
-        break;
-      case Property::Abs:
-        aProperty = m_Layer->AbsB();
-        break;
-      default:
-        assert("Incorrect property selection.");
-        break;
-      }
-      break;
-    default:
-      throw runtime_error("Incorrect selection of side.");
-      break;
-    }
-    assert( aProperty != nullptr );
-    return aProperty;
+    return m_Layer->getProperties( t_Property, t_Side );
   }
 
   shared_ptr< CSeries > CEquivalentLayerSingleComponentMWAngle::Abs( size_t const Index ) {
@@ -194,19 +155,20 @@ namespace MultiPane {
       Rf = Rf->interpolate( m_CommonWavelengths );
       Rb = Rb->interpolate( m_CommonWavelengths );
       if( i == 0 ) {
-        aEqLayer = make_shared< CEquivalentLayerSingleComponentMW >( T, Rf, Rb );
+        aEqLayer = make_shared< CEquivalentLayerSingleComponentMW >( T, T, Rf, Rb );
         aAbs = make_shared< CAbsorptancesMultiPane >( T, Rf, Rb );
       } else {
         assert( aEqLayer != nullptr );
         assert( aAbs != nullptr );
-        aEqLayer->addLayer( T, Rf, Rb );
+        aEqLayer->addLayer( T, T, Rf, Rb );
         aAbs->addLayer( T, Rf, Rb );
       }
     }
     assert( aEqLayer != nullptr );
     assert( aAbs != nullptr );
 
-    shared_ptr< CEquivalentLayerSingleComponentMWAngle > newLayer = make_shared< CEquivalentLayerSingleComponentMWAngle >( aEqLayer, aAbs, t_Angle );
+    shared_ptr< CEquivalentLayerSingleComponentMWAngle > newLayer = make_shared< CEquivalentLayerSingleComponentMWAngle >( aEqLayer, 
+      aAbs, t_Angle );
 
     m_EquivalentAngle.push_back( newLayer );
 

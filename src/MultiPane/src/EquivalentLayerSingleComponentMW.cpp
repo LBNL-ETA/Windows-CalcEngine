@@ -2,120 +2,105 @@
 
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "Series.hpp"
+#include "FenestrationCommon.hpp"
+#include "EquivalentLayerSingleComponent.hpp"
 
 using namespace FenestrationCommon;
 using namespace std;
 
 namespace MultiPane {
 
-  CEquivalentLayerSingleComponentMW::CEquivalentLayerSingleComponentMW( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb  ) : m_T( t_T ), m_Rf( t_Rf ), m_Rb( t_Rb ) {
-     
+  ///////////////////////////////////////////////////////////////////////////
+  ///   CSurfaceSeries
+  ///////////////////////////////////////////////////////////////////////////
+
+  CSurfaceSeries::CSurfaceSeries( shared_ptr< CSeries > t_T, shared_ptr< CSeries > t_R ) {
+    m_Properties[ Property::T ] = t_T;
+    m_Properties[ Property::R ] = t_R;
+    size_t size = t_T->size();
+    shared_ptr< CSeries > aAbs = make_shared< CSeries >();
+    for( size_t i = 0; i < size; ++i ) {
+      double wl = ( *t_T )[ i ]->x();
+      double value = 1 - ( *t_T )[ i ]->value() - ( *t_R )[ i ]->value();
+      if( value > 1 || value < 0 ) {
+        throw runtime_error("Absorptance value for provided series is out of range.");
+      }
+      aAbs->addProperty( wl, value );
+    }
+    m_Properties[ Property::Abs ] = aAbs;
   }
 
-  void CEquivalentLayerSingleComponentMW::addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb ) {
+  shared_ptr< CSeries > CSurfaceSeries::getProperties( const Property t_Property ) const {
+    return m_Properties.at( t_Property );
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  ///   CLayerSeries
+  ///////////////////////////////////////////////////////////////////////////
+
+  CLayerSeries::CLayerSeries( shared_ptr< CSeries > t_Tf, shared_ptr< CSeries > t_Rf, shared_ptr< CSeries > t_Tb, 
+    shared_ptr< CSeries > t_Rb ) {
+    m_Surfaces[ Side::Front ] = make_shared< CSurfaceSeries >( t_Tf, t_Rf );
+    m_Surfaces[ Side::Back ] = make_shared< CSurfaceSeries >( t_Tb, t_Rb );
+  }
+
+  shared_ptr< CSeries > CLayerSeries::getProperties( const Side t_Side, const Property t_Property ) const {
+    return m_Surfaces.at( t_Side )->getProperties( t_Property );
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  ///   CEquivalentLayerSingleComponentMW
+  ///////////////////////////////////////////////////////////////////////////
+
+  CEquivalentLayerSingleComponentMW::CEquivalentLayerSingleComponentMW( shared_ptr< CSeries > t_Tf, shared_ptr< CSeries > t_Tb, 
+    shared_ptr< CSeries > t_Rf, shared_ptr< CSeries > t_Rb  ) {
+    m_Layer = make_shared< CLayerSeries >( t_Tf, t_Rf, t_Tb, t_Rb );
+
+    size_t size = t_Tf->size();
+    for(size_t i = 0; i < size; ++i) {
+      shared_ptr< CEquivalentLayerSingleComponent > aLayer = make_shared< CEquivalentLayerSingleComponent >( ( *t_Tf )[i]->value(),
+        ( *t_Rf )[i]->value(), ( *t_Tb )[i]->value(), ( *t_Rb )[i]->value() );
+      m_EqLayerBySeries.push_back( aLayer );
+    }
+  }
+
+  void CEquivalentLayerSingleComponentMW::addLayer( shared_ptr< CSeries > t_Tf, shared_ptr< CSeries > t_Tb, 
+    shared_ptr< CSeries > t_Rf, shared_ptr< CSeries > t_Rb ) {
+
+    size_t size = t_Tf->size();
+
+    for( size_t i = 0; i < size; ++i ) {
+      shared_ptr< CEquivalentLayerSingleComponent > aLayer = m_EqLayerBySeries[ i ];
+      aLayer->addLayer( ( *t_Tf )[i]->value(), ( *t_Rf )[i]->value(), ( *t_Tb )[i]->value(), ( *t_Rb )[i]->value() );
+    }
+
+    shared_ptr< CSeries > tTotf = make_shared< CSeries >();
+    shared_ptr< CSeries > tTotb = make_shared< CSeries >();
+    shared_ptr< CSeries > tRfTot = make_shared< CSeries >();
+    shared_ptr< CSeries > tRbTot = make_shared< CSeries >();
+
+    for( size_t i = 0; i < size; ++i ) {
+      double wl = ( *t_Tf )[ i ]->x();
+      
+      double Tf = m_EqLayerBySeries[ i ]->getProperty( Property::T, Side::Front );
+      tTotf->addProperty( wl, Tf );
+
+      double Rf = m_EqLayerBySeries[ i ]->getProperty( Property::R, Side::Front );
+      tRfTot->addProperty( wl, Rf );
+
+      double Tb = m_EqLayerBySeries[ i ]->getProperty( Property::T, Side::Back );
+      tTotb->addProperty( wl, Tb );
+
+      double Rb = m_EqLayerBySeries[ i ]->getProperty( Property::R, Side::Back );
+      tRbTot->addProperty( wl, Rb );
+    }
     
-    shared_ptr< CSeries > tTot = transmittanceTot( *m_T, *t_T, *m_Rb, *t_Rf );
-    shared_ptr< CSeries > tRfTot = ReflectanceFrontTot( *m_T, *m_Rf, *m_Rb, *t_Rf );
-    shared_ptr< CSeries > tRbTot = ReflectanceBackTot( *t_T, *t_Rb, *m_Rb, *t_Rf );
-
-    m_T = tTot;
-    m_Rf = tRfTot;
-    m_Rb = tRbTot;
+    m_Layer = make_shared< CLayerSeries >( tTotf, tRfTot, tTotb, tRbTot );
 
   }
 
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::T() const {
-    return m_T; 
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::Rf() const {
-    return m_Rf;
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::Rb() const {
-    return m_Rb; 
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::AbsF() {
-    size_t size = m_T->size();
-    m_AbsF = make_shared< CSeries >();
-    for( size_t i = 0; i < size; ++i ) {
-      double wl = ( *m_T )[ i ]->x();
-      double value = 1 - ( *m_T )[ i ]->value() - ( *m_Rf )[ i ]->value();
-      m_AbsF->addProperty( wl, value );
-    }
-    return m_AbsF;
-  }
-
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::AbsB() {
-    size_t size = m_T->size();
-    m_AbsB = make_shared< CSeries >();
-    for( size_t i = 0; i < size; ++i ) {
-      double wl = ( *m_T )[ i ]->x();
-      double value = 1 - ( *m_T )[ i ]->value() - ( *m_Rb )[ i ]->value();
-      m_AbsB->addProperty( wl, value );
-    }
-    return m_AbsB;
-  }
-
-  // Calculates total transmittance of equivalent layer over the entire spectrum. It expects that all properties are the same size.
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::transmittanceTot( CSeries& t_T1, 
-    CSeries& t_T2, CSeries& t_Rb1, CSeries& t_Rf2 ) {
-    assert( t_T1.size() == t_T2.size() );
-    assert( t_T1.size() == t_Rb1.size() );
-    assert( t_T1.size() == t_Rf2.size() );
-
-    shared_ptr< CSeries > aSpectralProperties = make_shared< CSeries >();
-
-    for ( size_t i = 0; i < t_T1.size(); ++i ) {
-      double tTot = t_T1[i]->value() * t_T2[i]->value() / ( 1 - t_Rb1[i]->value() * t_Rf2[i]->value() );
-      double wv = t_T1[i]->x();
-      aSpectralProperties->addProperty( wv, tTot );
-    }
-
-    return aSpectralProperties;
-  }
-
-  // Calculates total front reflectance of equvalent layer over the entire spectrum. Properties must be same size
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::ReflectanceFrontTot( CSeries& t_T1, CSeries& t_Rf1, 
-    CSeries& t_Rb1, CSeries& t_Rf2 ) {
-    assert( t_T1.size() == t_Rf1.size() );
-    assert( t_T1.size() == t_Rb1.size() );
-    assert( t_T1.size() == t_Rf2.size() );
-
-    shared_ptr< CSeries > aSpectralProperties = make_shared< CSeries >();
-
-    for ( size_t i = 0; i < t_T1.size(); ++i ) {
-      double tRfTot = t_Rf1[i]->value() + t_T1[i]->value() * t_T1[i]->value() * t_Rf2[i]->value()
-        / ( 1 - t_Rb1[i]->value() * t_Rf2[i]->value() );
-      double wv = t_T1[i]->x();
-      aSpectralProperties->addProperty( wv, tRfTot );
-    }
-
-    return aSpectralProperties;
-  }
-
-  // Calculates total back reflectance of equvalent layer over the entire spectrum. Properties must be same size
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::ReflectanceBackTot( CSeries& t_T2, CSeries& t_Rb2, 
-    CSeries& t_Rb1, CSeries& t_Rf2 ) {
-    assert( t_T2.size() == t_Rb2.size() );
-    assert( t_T2.size() == t_Rb1.size() );
-    assert( t_T2.size() == t_Rf2.size() );
-
-    shared_ptr< CSeries > aSpectralProperties = make_shared< CSeries >();
-
-    for ( size_t i = 0; i < t_T2.size(); ++i ) {
-      double tRbTot = t_Rb2[i]->value() + t_T2[i]->value() * t_T2[i]->value() * t_Rb1[i]->value()
-        / ( 1 - t_Rb1[i]->value() * t_Rf2[i]->value() );
-      double wv = t_T2[i]->x();
-      aSpectralProperties->addProperty( wv, tRbTot );
-    }
-
-    return aSpectralProperties;
+  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::getProperties( const Property t_Property, const Side t_Side ) const {
+    return m_Layer->getProperties( t_Side, t_Property );
   }
 
 }
