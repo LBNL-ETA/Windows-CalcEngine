@@ -50,10 +50,6 @@ namespace MultiPane {
     // Results of interreflectances are calculated for beam incoming from inside and outside
     std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::Side >, 
       std::shared_ptr< std::vector< double > > > m_IEnergy;
-    // std::vector< double > m_IForward_f; // Forward flow front side of the layers
-    // std::vector< double > m_IForward_b; // Forward flow back side of the layers
-    // std::vector< double > m_IBackward_f; // Backward flow front side of the layers
-    // std::vector< double > m_IBackward_b; // Backward flow back side of the layers
 
     bool m_StateCalculated;
 

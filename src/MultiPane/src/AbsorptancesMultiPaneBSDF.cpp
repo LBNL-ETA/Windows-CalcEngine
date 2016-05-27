@@ -192,8 +192,6 @@ namespace MultiPane {
     }
 
     // For every layer-wavelength set there is a set of incoming/outgoing directions
-    // vector< vector< shared_ptr< vector< double > > > > Iminus( m_NumOfLayers );
-    // vector< vector< shared_ptr< vector< double > > > > Iplus( m_NumOfLayers );
     vector< vector< shared_ptr< CSquareMatrix > > > IminusM( m_NumOfLayers );
     vector< vector< shared_ptr< CSquareMatrix > > > IplusM( m_NumOfLayers );
 
@@ -205,13 +203,6 @@ namespace MultiPane {
     // This is true for every incoming wavelength
     shared_ptr< CSquareMatrix > Iincoming = make_shared< CSquareMatrix >( matrixSize );
     Iincoming->setIdentity();
-
-    // Incoming radiances normalized to one. No need to do for multiple wavelengths since it is 
-    // identical for any wavelength
-    // Iincoming = make_shared< CSquareMatrix >();
-    // for( size_t i = 0; i < matrixSize; ++i ) {
-    //   Iincoming->push_back( 1 );
-    // }
 
     // calculation irradiances (normalized to 1)
     for( size_t i = 0; i < m_NumOfLayers; ++i ) {
@@ -293,9 +284,6 @@ namespace MultiPane {
         shared_ptr< CSeries > absorbedIrradiance = curSpectralProperties->mMult( m_SolarRadiation );
         shared_ptr< CSeries > integratedAbsorbed = absorbedIrradiance->integrate( IntegrationType::Trapezoidal );
         double value = integratedAbsorbed->sum( minLambda, maxLambda );
-        //if( value < 0 ) {
-        //  value = 0; // Near zero values can actually produce slightly negative values
-        //}
         value = value / totalSolar;
         ( *m_Abs[ j ] )[ i ] = value;
       }
