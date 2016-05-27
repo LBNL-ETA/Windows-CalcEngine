@@ -33,7 +33,6 @@ namespace FenestrationCommon {
 
   enum class Side { Front, Back };
 
-  // template< typename T >
   class EnumSide : public Enum< Side > {
 	
   };
@@ -45,16 +44,6 @@ namespace FenestrationCommon {
   inline EnumSide::Iterator end( EnumSide ) {
     return typename EnumSide::Iterator( ( ( int )Side::Back ) + 1 );
   }
-  
-  // template< typename T >
-  // typename EnumSide< T >::Iterator begin( EnumSide< T > ) {
-  //   return typename EnumSide< T >::Iterator( ( int )T::Front );
-  // }
-  // 
-  // template< typename T >
-  // typename EnumSide< T >::Iterator end( EnumSide< T > ) {
-  //   return typename EnumSide< T >::Iterator( ( ( int )T::Back ) + 1 );
-  // }
   
   // Property enumerator
 
@@ -72,16 +61,6 @@ namespace FenestrationCommon {
   inline EnumProperty::Iterator end( EnumProperty ) {
     return EnumProperty::Iterator( ( ( int )Property::Abs ) + 1 );
   }
-  
-  // template< typename T >
-  // typename EnumProperty< T >::Iterator begin( EnumProperty< T > ) {
-  //   return typename EnumProperty< T >::Iterator( ( int )T::T );
-  // }
-  // 
-  // template< typename T >
-  // typename EnumProperty<T>::Iterator end( EnumProperty< T > ) {
-  //   return typename EnumProperty< T >::Iterator( ( ( int )T::Abs ) + 1 );
-  // }
 
   inline Side oppositeSide( const Side t_Side ) {
     Side aSide = Side::Front;

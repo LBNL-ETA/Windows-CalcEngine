@@ -42,9 +42,6 @@ namespace MultiPane {
 
     std::shared_ptr< LayerOptics::CBSDFResults > value();
 
-    // std::shared_ptr< FenestrationCommon::CSquareMatrix > T( FenestrationCommon::Side t_Side );
-    // std::shared_ptr< FenestrationCommon::CSquareMatrix > R( FenestrationCommon::Side t_Side );
-
   private:
     std::shared_ptr< FenestrationCommon::CSquareMatrix > equivalentT( 
       std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf2, 
@@ -56,7 +53,7 @@ namespace MultiPane {
       std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf1,
       std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf1,
       std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tb1,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf2,      
+      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf2,
       std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_InterRefl,
       std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Lambda );
 
