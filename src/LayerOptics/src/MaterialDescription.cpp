@@ -117,28 +117,13 @@ namespace LayerOptics {
   ////   CMaterialSingleBand
   ////////////////////////////////////////////////////////////////////////////////////
   CMaterialSingleBand::CMaterialSingleBand( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb,
-    const double minLambda, const double maxLambda ) : CMaterial( minLambda, maxLambda ), 
-    m_Tf( t_Tf ), m_Tb( t_Tb ), m_Rf( t_Rf ), m_Rb( t_Rb ) {
-  
+    const double minLambda, const double maxLambda ) : CMaterial( minLambda, maxLambda ) {
+	  m_Property[ Side::Front ] = make_shared< Surface >( t_Tf, t_Rf );
+	  m_Property[ Side::Back ] = make_shared< Surface >( t_Tb, t_Rb );
   }
 
   double CMaterialSingleBand::getProperty( Property t_Property, Side t_Side ) const {
-    double aProperty = 0;
-    switch ( t_Property ) {
-    case Property::T:
-      aProperty = T( t_Side );
-      break;
-    case Property::R:
-      aProperty = R( t_Side );
-      break;
-    case Property::Abs:
-      aProperty = 1 - T( t_Side ) - R( t_Side );
-      break;
-    default:
-      assert("Incorrect selection of material property.");
-      break;
-    }
-    return aProperty;
+	return m_Property.at( t_Side )->getProperty( t_Property );
   }
 
   shared_ptr< vector< double > > CMaterialSingleBand::getBandProperties( 
@@ -154,37 +139,37 @@ namespace LayerOptics {
     return aWavelengths;
   }
 
-  double CMaterialSingleBand::T( Side t_Side ) const {
-    double T = 0;
-    switch( t_Side ) {
-    case Side::Front:
-      T = m_Tf;
-      break;
-    case Side::Back:
-      T = m_Tb;
-      break;
-    default:
-      assert("Incorrect material side selection");
-      break;
-    }
-    return T;
-  }
-
-  double CMaterialSingleBand::R( Side t_Side ) const {
-    double R = 0;
-    switch( t_Side ) {
-    case Side::Front:
-      R = m_Rf;
-      break;
-    case Side::Back:
-      R = m_Rb;
-      break;
-    default:
-      assert("Incorrect material side selection");
-      break;
-    }
-    return R;
-  }
+  //double CMaterialSingleBand::T( Side t_Side ) const {
+  //  double T = 0;
+  //  switch( t_Side ) {
+  //  case Side::Front:
+  //    T = m_Tf;
+  //    break;
+  //  case Side::Back:
+  //    T = m_Tb;
+  //    break;
+  //  default:
+  //    assert("Incorrect material side selection");
+  //    break;
+  //  }
+  //  return T;
+  //}
+  //
+  //double CMaterialSingleBand::R( Side t_Side ) const {
+  //  double R = 0;
+  //  switch( t_Side ) {
+  //  case Side::Front:
+  //    R = m_Rf;
+  //    break;
+  //  case Side::Back:
+  //    R = m_Rb;
+  //    break;
+  //  default:
+  //    assert("Incorrect material side selection");
+  //    break;
+  //  }
+  //  return R;
+  //}
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////   CMaterialDualBand

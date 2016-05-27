@@ -102,14 +102,15 @@ namespace LayerOptics {
     
   private:
     std::shared_ptr< std::vector< double > > calculateBandWavelengths();
-    double T( FenestrationCommon::Side t_Side ) const;
-    double R( FenestrationCommon::Side t_Side ) const;
+    // double T( FenestrationCommon::Side t_Side ) const;
+    // double R( FenestrationCommon::Side t_Side ) const;
 
   protected:
-    double m_Tf;
-    double m_Tb;
-    double m_Rf;
-    double m_Rb;
+	  std::map< FenestrationCommon::Side, std::shared_ptr< Surface > > m_Property;
+    // double m_Tf;
+    // double m_Tb;
+    // double m_Rf;
+    // double m_Rb;
   };
 
   // Material that for given solar and partial range (visible, uv) will calculate equivalent optical
