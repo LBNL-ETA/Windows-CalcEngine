@@ -20,7 +20,7 @@ using namespace std;
 
 namespace LayerOptics {
   
-  CBSDFLayerMaker::CBSDFLayerMaker( shared_ptr< CMaterial > t_Material,
+  CBSDFLayerMaker::CBSDFLayerMaker( shared_ptr< CMaterialBand > t_Material,
     shared_ptr< const CBSDFHemisphere > t_BSDF, shared_ptr< CCellDescription > t_Description, 
     const DistributionMethod t_Method ) {
 

@@ -56,7 +56,7 @@ namespace LayerOptics {
   }
 
   void CBSDFLayer::calc_dir_dir() {
-    for( Side t_Side : Enum< Side >() ) {
+    for( Side t_Side : EnumSide() ) {
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
       size_t size = aDirections->size();
       shared_ptr< CSquareMatrix > Tau = make_shared< CSquareMatrix >( size );
@@ -68,8 +68,7 @@ namespace LayerOptics {
         double aTau = m_Cell->T_dir_dir( t_Side, aDirection );
         double aRho = m_Cell->R_dir_dir( t_Side, aDirection );
 
-        aTau = aTau / Lambda;
-        ( *Tau )[ i ][ i ] += aTau;
+        ( *Tau )[ i ][ i ] += aTau / Lambda;
         ( *Rho )[ i ][ i ] += aRho / Lambda;
       }
       m_Results->setResultMatrices( Tau, Rho, t_Side );
@@ -77,7 +76,7 @@ namespace LayerOptics {
   }
 
   void CBSDFLayer::calc_dir_dir_wv() {
-    for( Side aSide : Enum< Side >() ) {
+    for( Side aSide : EnumSide() ) {
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
       size_t size = aDirections->size();
       for( size_t i = 0; i < size; ++i ) {
@@ -101,7 +100,7 @@ namespace LayerOptics {
   }
 
   void CBSDFLayer::calc_dir_dif() {
-    for( Side aSide : Enum< Side >() ) {
+    for( Side aSide : EnumSide() ) {
 
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
 
@@ -116,7 +115,7 @@ namespace LayerOptics {
   }
 
   void CBSDFLayer::calc_dir_dif_wv() {
-    for( Side aSide : Enum< Side >() ) {
+    for( Side aSide : EnumSide() ) {
 
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
 

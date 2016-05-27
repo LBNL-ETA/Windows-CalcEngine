@@ -17,7 +17,7 @@ namespace LayerOptics {
 
   class CPerforatedCell : public CUniformDiffuseCell {
   public:
-    CPerforatedCell( std::shared_ptr< CMaterial > t_MaterialProperties, 
+    CPerforatedCell( std::shared_ptr< CMaterialBand > t_MaterialProperties, 
         std::shared_ptr< CCellDescription > t_Cell );
 
   // protected:

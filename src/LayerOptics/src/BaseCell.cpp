@@ -14,7 +14,7 @@ namespace LayerOptics {
   
   }
 
-  CBaseCell::CBaseCell( shared_ptr< CMaterial > t_Material, 
+  CBaseCell::CBaseCell( shared_ptr< CMaterialBand > t_Material, 
     shared_ptr< CCellDescription > t_CellDescription ) : 
     m_Material( t_Material ), m_CellDescription( t_CellDescription ) {
   }

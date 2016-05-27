@@ -18,9 +18,9 @@ namespace LayerOptics {
     m_Directions = t_Directions;
     m_DimMatrices = m_Directions->size();
 
-    for( Side t_Side : Enum< Side >() ) {
-      m_Tau[ t_Side ] = make_shared< CSquareMatrix >(m_DimMatrices);
-      m_Rho[ t_Side ] = make_shared< CSquareMatrix >(m_DimMatrices);
+    for( Side t_Side : EnumSide() ) {
+      m_Tau[ t_Side ] = make_shared< CSquareMatrix >( m_DimMatrices );
+      m_Rho[ t_Side ] = make_shared< CSquareMatrix >( m_DimMatrices );
       m_VTauHem[ t_Side ] = make_shared< vector< double > >( m_DimMatrices );
       m_VRhoHem[ t_Side ] = make_shared< vector< double > >( m_DimMatrices );
     }
@@ -87,7 +87,7 @@ namespace LayerOptics {
 
   void CBSDFResults::calcHemispherical() {
     if( !m_HemisphericalCalculated ) {
-      for( Side t_Side : Enum< Side >() ) {
+      for( Side t_Side : EnumSide() ) {
         m_VTauHem[ t_Side ] = m_Tau.at( t_Side )->multVxM( *m_Directions->lambdaVector() );
         m_VRhoHem[ t_Side ] = m_Rho.at( t_Side )->multVxM( *m_Directions->lambdaVector() );
         m_Abs[ t_Side ] = make_shared< vector< double > >();
@@ -95,7 +95,7 @@ namespace LayerOptics {
 
       size_t size = m_VTauHem[ Side::Front ]->size();
       for( size_t i = 0; i < size; ++i ) {
-        for( Side t_Side : Enum< Side >() ) {
+        for( Side t_Side : EnumSide() ) {
           m_Abs.at( t_Side )->push_back( 1 - ( *m_VTauHem.at( t_Side ) )[ i ] - ( *m_VRhoHem.at( t_Side ) )[ i ] );
         }
       }

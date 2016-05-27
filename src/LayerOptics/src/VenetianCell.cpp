@@ -27,7 +27,7 @@ namespace LayerOptics {
   // 
   // }
 
-  CVenetianBase::CVenetianBase(shared_ptr< CMaterial > t_MaterialProperties,
+  CVenetianBase::CVenetianBase(shared_ptr< CMaterialBand > t_MaterialProperties,
     shared_ptr< CCellDescription > t_Cell) :
     CUniformDiffuseCell(t_MaterialProperties, t_Cell),
     CDirectionalDiffuseCell(t_MaterialProperties, t_Cell) {
@@ -447,7 +447,7 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CVenetianEnergy
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CVenetianEnergy::CVenetianEnergy( shared_ptr< CMaterial > t_Material, shared_ptr< CVenetianCellDescription > t_Cell ) {
+  CVenetianEnergy::CVenetianEnergy( shared_ptr< CMaterialBand > t_Material, shared_ptr< CVenetianCellDescription > t_Cell ) {
     double Tf = t_Material->getProperty( Property::T, Side::Front );
     double Tb = t_Material->getProperty( Property::T, Side::Back );
     double Rf = t_Material->getProperty( Property::R, Side::Front );
@@ -489,7 +489,7 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CVenetianCell
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CVenetianCell::CVenetianCell( shared_ptr< CMaterial > t_Material, 
+  CVenetianCell::CVenetianCell( shared_ptr< CMaterialBand > t_Material, 
     shared_ptr< CCellDescription > t_Cell ) : 
     CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ), 
     m_Energy( t_Material, getCellAsVenetian() ) {

@@ -105,7 +105,7 @@ namespace MultiPane {
     m_Abs[ Side::Back ] = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
 
     for( size_t i = 0; i < numberOfLayers; ++i ) {
-      for(Side t_Side : Enum< Side >()) {
+      for(Side t_Side : EnumSide()) {
         ( *m_Abs.at( t_Side ) )[ i ] = make_shared< vector< double > >( matrixSize );
       }
     }
@@ -122,22 +122,22 @@ namespace MultiPane {
     map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalR;
 
     map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalA;
-    for(Side t_Side : Enum< Side >()) {
+    for(Side t_Side : EnumSide()) {
       aTotalA[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
     }
     for( size_t i = 0; i < numberOfLayers; ++i ) {
-      for(Side t_Side : Enum< Side >()) {
+      for(Side t_Side : EnumSide()) {
         aTotalA.at( t_Side )[ i ].resize( matrixSize );
       }
     }
 
-    for(Side t_Side : Enum< Side >()) {
+    for(Side t_Side : EnumSide()) {
       aTotalT[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( matrixSize );
       aTotalR[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( matrixSize );
     }
 
     for( size_t i = 0; i < matrixSize; ++i ) {
-      for(Side t_Side : Enum< Side >()) {
+      for(Side t_Side : EnumSide()) {
         aTotalT.at( t_Side )[ i ].resize( matrixSize );
         aTotalR.at( t_Side )[ i ].resize( matrixSize );
       }
@@ -152,24 +152,24 @@ namespace MultiPane {
       for( size_t j = 0; j < matrixSize; ++j ) {
         for( size_t k = 0; k < numberOfLayers; ++k ) {
           if( i == 0 ) {
-            for(Side t_Side : Enum< Side >()) {
+            for(Side t_Side : EnumSide()) {
               aTotalA.at( t_Side )[ k ][ j ] = make_shared< CSeries >();
             }
           }
-          for(Side t_Side : Enum< Side >()) {
+          for(Side t_Side : EnumSide()) {
             aTotalA.at( t_Side )[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, t_Side) )[ j ] );
           }
         }
         
         for( size_t k = 0; k < matrixSize; ++k ) {
           if( i == 0 ) {
-            for(Side t_Side : Enum< Side >()) {
+            for(Side t_Side : EnumSide()) {
               aTotalT.at( t_Side )[ j ][ k ] = make_shared< CSeries >();
               aTotalR.at( t_Side )[ j ][ k ] = make_shared< CSeries >();
             }
           }
           
-          for(Side t_Side : Enum< Side >()) {
+          for(Side t_Side : EnumSide()) {
             aTotalT.at( t_Side )[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( t_Side ) )[ j ][ k ] );
             aTotalR.at( t_Side )[ j ][ k ]->addProperty( curWL, ( *curLayer->Rho( t_Side ) )[ j ][ k ] );
           }
@@ -179,16 +179,17 @@ namespace MultiPane {
 
     for( size_t j = 0; j < matrixSize; ++j ) {
       for( size_t k = 0; k < numberOfLayers; ++k ) {
-        for(Side t_Side : Enum< Side >()) {
+        for(Side t_Side : EnumSide()) {
           aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->mMult( interpolatedSolar );
           aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
           ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = aTotalA.at( t_Side )[ k ][ j ]->sum( minLambda, maxLambda );
           ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] / incomingSolar;
         }
       }
+
       for( size_t k = 0; k < matrixSize; ++k ) {
         // Transmittance
-        for(Side t_Side : Enum< Side >()) {
+        for(Side t_Side : EnumSide()) {
           // Transmittance
           aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->mMult( interpolatedSolar );
           aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );

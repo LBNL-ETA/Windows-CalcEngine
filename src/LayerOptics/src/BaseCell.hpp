@@ -12,7 +12,7 @@ namespace FenestrationCommon {
 
 namespace LayerOptics {
 
-  class CMaterial;
+  class CMaterialBand;
   class CCellDescription;
   class CBeamDirection;
   
@@ -21,7 +21,7 @@ namespace LayerOptics {
   class CBaseCell {
   public:
     CBaseCell();
-    CBaseCell( std::shared_ptr< CMaterial > t_Material,
+    CBaseCell( std::shared_ptr< CMaterialBand > t_Material,
       std::shared_ptr< CCellDescription > t_CellDescription );
 
     // Direct to direct component of transmitted ray
@@ -43,7 +43,7 @@ namespace LayerOptics {
     size_t getBandSize() const;
 
   protected:
-    std::shared_ptr< CMaterial > m_Material;
+    std::shared_ptr< CMaterialBand > m_Material;
     std::shared_ptr< CCellDescription > m_CellDescription;
 
   };

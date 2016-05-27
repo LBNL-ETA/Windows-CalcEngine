@@ -28,19 +28,60 @@ namespace FenestrationCommon {
      };
   
   };
-  
-  template< typename T >
-  typename Enum< T >::Iterator begin( Enum< T > ) {
-     return typename Enum< T >::Iterator( ( int )T::Front );
-  }
-  
-  template< typename T >
-  typename Enum<T>::Iterator end( Enum< T > ) {
-     return typename Enum< T >::Iterator( ( ( int )T::Back) + 1 );
-  }
-  
+
+  // Side enumerator
+
   enum class Side { Front, Back };
+
+  // template< typename T >
+  class EnumSide : public Enum< Side > {
+	
+  };
+
+  inline EnumSide::Iterator begin( EnumSide ) {
+    return EnumSide::Iterator( ( int )Side::Front );
+  }
+  
+  inline EnumSide::Iterator end( EnumSide ) {
+    return typename EnumSide::Iterator( ( ( int )Side::Back ) + 1 );
+  }
+  
+  // template< typename T >
+  // typename EnumSide< T >::Iterator begin( EnumSide< T > ) {
+  //   return typename EnumSide< T >::Iterator( ( int )T::Front );
+  // }
+  // 
+  // template< typename T >
+  // typename EnumSide< T >::Iterator end( EnumSide< T > ) {
+  //   return typename EnumSide< T >::Iterator( ( ( int )T::Back ) + 1 );
+  // }
+  
+  // Property enumerator
+
   enum class Property { T, R, Abs };
+
+  // template< typename T >
+  class EnumProperty : public Enum< Property > {
+	
+  };
+
+  inline EnumProperty::Iterator begin( EnumProperty ) {
+    return EnumProperty::Iterator( ( int )Property::T );
+  }
+  
+  inline EnumProperty::Iterator end( EnumProperty ) {
+    return EnumProperty::Iterator( ( ( int )Property::Abs ) + 1 );
+  }
+  
+  // template< typename T >
+  // typename EnumProperty< T >::Iterator begin( EnumProperty< T > ) {
+  //   return typename EnumProperty< T >::Iterator( ( int )T::T );
+  // }
+  // 
+  // template< typename T >
+  // typename EnumProperty<T>::Iterator end( EnumProperty< T > ) {
+  //   return typename EnumProperty< T >::Iterator( ( ( int )T::Abs ) + 1 );
+  // }
 
   inline Side oppositeSide( const Side t_Side ) {
     Side aSide = Side::Front;
