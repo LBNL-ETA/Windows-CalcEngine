@@ -13,7 +13,7 @@ namespace LayerOptics {
 
   class CWovenBase : public CUniformDiffuseCell {
   public:
-    CWovenBase( std::shared_ptr< CMaterial > t_MaterialProperties, 
+    CWovenBase( std::shared_ptr< CMaterialBand > t_MaterialProperties, 
       std::shared_ptr< CCellDescription > t_Cell );
     
   protected:
@@ -22,7 +22,7 @@ namespace LayerOptics {
 
   class CWovenCell : public CWovenBase {
   public:
-    CWovenCell( std::shared_ptr< CMaterial > t_MaterialProperties, 
+    CWovenCell( std::shared_ptr< CMaterialBand > t_MaterialProperties, 
         std::shared_ptr< CCellDescription > t_Cell );
 
     double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );

@@ -291,7 +291,7 @@ protected:
   SpecularMaterialType aType = SpecularMaterialType::Monolithic;
   double minLambda = 0.3;
   double maxLambda = 2.5;
-  shared_ptr< CMaterial > aMaterial = 
+  shared_ptr< CMaterialBand > aMaterial = 
     make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
   // specular layer NFRC=102
@@ -303,7 +303,7 @@ protected:
   double Tmat = 0.2;
   double Rfmat = 0.75;
   double Rbmat = 0.66;
-  shared_ptr< CMaterial > perfMaterial = 
+  shared_ptr< CMaterialBand > perfMaterial = 
     make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
   // make cell geometry

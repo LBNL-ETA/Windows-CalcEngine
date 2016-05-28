@@ -28,7 +28,7 @@ protected:
     double Rbmat = 0.7;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterial > aSolarRangeMaterial = 
+    shared_ptr< CMaterialBand > aSolarRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // Visible range
@@ -37,12 +37,12 @@ protected:
     Rbmat = 0.6;
     minLambda = 0.38;
     maxLambda = 0.78;
-    shared_ptr< CMaterial > aVisibleRangeMaterial = 
+    shared_ptr< CMaterialBand > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     double ratio = 0.49;
 
-    shared_ptr< CMaterial > aMaterial = 
+    shared_ptr< CMaterialBand > aMaterial = 
       make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
     // make cell geometry

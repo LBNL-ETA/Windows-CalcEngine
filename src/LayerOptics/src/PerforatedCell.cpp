@@ -17,7 +17,7 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CPerforatedCell
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CPerforatedCell::CPerforatedCell( shared_ptr< CMaterial > t_MaterialProperties, 
+  CPerforatedCell::CPerforatedCell( shared_ptr< CMaterialBand > t_MaterialProperties, 
     shared_ptr< CCellDescription > t_Cell ) : 
     CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
     

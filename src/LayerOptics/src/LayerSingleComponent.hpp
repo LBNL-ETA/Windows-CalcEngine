@@ -2,6 +2,7 @@
 #define LAYERSINGLECOMPONENT_H
 
 #include <memory>
+#include <map>
 
 namespace FenestrationCommon {
 
@@ -12,13 +13,7 @@ namespace FenestrationCommon {
 
 namespace LayerOptics {
 
-  struct Surface {
-    Surface( const double t_T, const double t_R );
-    double getProperty( const FenestrationCommon::Property t_Property );
-    const double T;
-    const double R;
-    const double A;
-  };
+  struct Surface;
 
   // class to be used for description of single component of the light. By single component it is assumed that light 
   // will not change state (from beam to diffuse) during propagation through the layer
@@ -31,8 +26,8 @@ namespace LayerOptics {
     std::shared_ptr< Surface > getSurface( const FenestrationCommon::Side t_Side ) const;
 
   private:
-    std::shared_ptr< Surface > m_Front;
-    std::shared_ptr< Surface > m_Back;
+    std::map< FenestrationCommon::Side, std::shared_ptr< Surface > > m_Surface;
+
   };
 
 }

@@ -14,7 +14,7 @@ using namespace FenestrationCommon;
 class TestDoubleRangeMaterialRatio : public testing::Test {
 
 private:
-  shared_ptr< CMaterial > m_Material;
+  shared_ptr< CMaterialBand > m_Material;
 
 protected:
   virtual void SetUp() {
@@ -42,14 +42,14 @@ protected:
   }
 
 public:
-  shared_ptr< CMaterial > getMaterial() { return m_Material; };
+  shared_ptr< CMaterialBand > getMaterial() { return m_Material; };
 
 };
 
 TEST_F( TestDoubleRangeMaterialRatio, TestMaterialProperties ) {
   SCOPED_TRACE( "Begin Test: Phi angles creation." );
   
-  shared_ptr< CMaterial > aMaterial = getMaterial();
+  shared_ptr< CMaterialBand > aMaterial = getMaterial();
   
   double T = aMaterial->getProperty( Property::T, Side::Front );
 

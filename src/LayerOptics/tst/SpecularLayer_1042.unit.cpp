@@ -657,7 +657,7 @@ protected:
     SpecularMaterialType aType = SpecularMaterialType::Coated;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterial > aMaterial = 
+    shared_ptr< CMaterialBand > aMaterial = 
       make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
     // create BSDF

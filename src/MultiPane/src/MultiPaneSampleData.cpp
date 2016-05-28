@@ -8,6 +8,7 @@
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "AbsorptancesMultiPane.hpp"
 #include "CommonWavelengths.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -73,22 +74,22 @@ namespace MultiPane {
     shared_ptr< CSeries > T = m_MeasuredSamples[0]->properties( SampleData::T );
     shared_ptr< CSeries > Rf = m_MeasuredSamples[0]->properties( SampleData::Rf );
     shared_ptr< CSeries > Rb = m_MeasuredSamples[0]->properties( SampleData::Rb );
-    CEquivalentLayerSingleComponentMW aEqivalentLayer( T, Rf, Rb );
+    CEquivalentLayerSingleComponentMW aEqivalentLayer( T, T, Rf, Rb );
     CAbsorptancesMultiPane aAbsorptances( T, Rf, Rb );
 
     vector< shared_ptr< CSpectralSampleData > >::iterator it;
     for( it = next( m_MeasuredSamples.begin() ); it < m_MeasuredSamples.end(); ++it) {
-      aEqivalentLayer.addLayer( ( *it )->properties( SampleData::T ),
+      aEqivalentLayer.addLayer( ( *it )->properties( SampleData::T ), ( *it )->properties( SampleData::T ),
         ( *it )->properties( SampleData::Rf ), ( *it )->properties( SampleData::Rb ) );
       aAbsorptances.addLayer( ( *it )->properties( SampleData::T ),
         ( *it )->properties( SampleData::Rf ), ( *it )->properties( SampleData::Rb ) );
     }
 
-    m_Transmittances = aEqivalentLayer.T();
-    m_ReflectancesFront = aEqivalentLayer.Rf();
-    m_ReflectancesBack = aEqivalentLayer.Rb();
-    m_AbsorptancesFront = aEqivalentLayer.AbsF();
-    m_AbsorptancesBack = aEqivalentLayer.AbsB();
+    m_Transmittances = aEqivalentLayer.getProperties( Property::T, Side::Front );
+    m_ReflectancesFront = aEqivalentLayer.getProperties( Property::R, Side::Front );
+    m_ReflectancesBack = aEqivalentLayer.getProperties( Property::R, Side::Back );
+    m_AbsorptancesFront = aEqivalentLayer.getProperties( Property::Abs, Side::Front );
+    m_AbsorptancesBack = aEqivalentLayer.getProperties( Property::Abs, Side::Back );
 
     m_LayerAbsorptances.clear();
     size_t size = aAbsorptances.numOfLayers();

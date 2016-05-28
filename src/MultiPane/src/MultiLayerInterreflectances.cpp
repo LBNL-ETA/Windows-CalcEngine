@@ -40,46 +40,7 @@ namespace MultiPane {
   double CInterreflectances::getEnergyToSurface( const size_t Index, const Side t_Side, const Side t_EnergySide ) {
     calculateEnergies();
     return ( *IEnergy( t_Side, t_EnergySide ) )[ Index - 1 ];
-    // return ( *m_IEnergy[ std::make_pair( t_Side, t_EnergySide ) ] )[ Index - 1 ];
   }
-
-  // double CInterreflectances::getEnergyToSurface( const size_t Index, const Side t_Side, const Side t_EnergySide ) {
-  //   calculateEnergies();
-  //   double Result = -1;
-  //   switch ( t_Side ) {
-  //   case Side::Front:
-  //     switch( t_EnergySide ) {
-  //     case Side::Front:
-  //       Result = m_IForward_f[ Index - 1 ];
-  //       break;
-  //     case Side::Back:
-  //       Result = m_IBackward_f[ Index - 1 ];
-  //       break;
-  //     default:
-  //       assert("Incorrect flow selection.");
-  //       break;
-  //     }
-  //     break;
-  //   case Side::Back:
-  //     switch( t_EnergySide ) {
-  //     case Side::Front:
-  //       Result = m_IForward_b[ Index - 1 ];
-  //       break;
-  //     case Side::Back:
-  //       Result = m_IBackward_b[ Index - 1 ];
-  //       break;
-  //     default:
-  //       assert("Incorrect flow selection.");
-  //       break;
-  //     }
-  //     break;
-  //   default:
-  //     assert("Incorrect side selection.");
-  //     break;
-  //   }
-  //   assert( Result != -1 );
-  //   return Result;
-  // }
 
   double CInterreflectances::getLayerAbsorptance( const size_t Index, const Side t_Side ) {
     double frontAbs = m_Layers[ Index - 1 ]->getProperty( Property::Abs, Side::Front ) * getEnergyToSurface( Index, Side::Front, t_Side );
@@ -106,18 +67,10 @@ namespace MultiPane {
         if( i != m_Layers.size() ) {
           IEnergy( Side::Front, Side::Front )->push_back( Tf * iReflectance );
           IEnergy( Side::Front, Side::Back )->push_back( Tb * Rb * iReflectance );
-          // m_IEnergy[ std::make_pair( Side::Front, Side::Front ) ].push_back( Tf * iReflectance );
-          // m_IEnergy[ std::make_pair( Side::Front, Side::Back ) ].push_back( Tb * Rb * iReflectance );
-          // m_IForward_f.push_back( Tf * iReflectance );
-          // m_IBackward_f.push_back( Tb * Rb * iReflectance );
         }
         if( i != 0 ) {
           IEnergy( Side::Back, Side::Front )->push_back( Tf * Rf * iReflectance );
           IEnergy( Side::Back, Side::Back )->push_back( Tb * iReflectance );
-          // m_IEnergy[ std::make_pair( Side::Back, Side::Front ) ].push_back( Tf * Rf * iReflectance );
-          // m_IEnergy[ std::make_pair( Side::Back, Side::Back ) ].push_back( Tb * iReflectance );
-          // m_IForward_b.push_back( Tf * Rf * iReflectance );
-          // m_IBackward_b.push_back( Tb * iReflectance );
         }
       }
 
