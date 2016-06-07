@@ -13,7 +13,7 @@ namespace FenestrationCommon {
 
 namespace LayerOptics {
 
-  struct Surface;
+  class CSurface;
 
   // class to be used for description of single component of the light. By single component it is assumed that light 
   // will not change state (from beam to diffuse) during propagation through the layer
@@ -23,10 +23,10 @@ namespace LayerOptics {
 
     double getProperty( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
 
-    std::shared_ptr< Surface > getSurface( const FenestrationCommon::Side t_Side ) const;
+    std::shared_ptr< CSurface > getSurface( const FenestrationCommon::Side t_Side ) const;
 
   private:
-    std::map< FenestrationCommon::Side, std::shared_ptr< Surface > > m_Surface;
+    std::map< FenestrationCommon::Side, std::shared_ptr< CSurface > > m_Surface;
 
   };
 

@@ -25,14 +25,7 @@ namespace SpectralAveraging {
 
 namespace LayerOptics {
 
-  struct Surface {
-  public:
-    Surface( const double t_T, const double t_R );
-    double getProperty( const FenestrationCommon::Property t_Property );
-
-  private:
-    std::map< FenestrationCommon::Property, double > m_Property;
-  };
+  class CSurface;
 
   struct RMaterialProperties {
   public:
@@ -40,7 +33,7 @@ namespace LayerOptics {
     double getProperty( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
 
   private:
-    std::map< FenestrationCommon::Side, std::shared_ptr< Surface > > m_Surface;
+    std::map< FenestrationCommon::Side, std::shared_ptr< CSurface > > m_Surface;
 
   };
 
@@ -104,7 +97,7 @@ namespace LayerOptics {
     std::shared_ptr< std::vector< double > > calculateBandWavelengths();
 
   protected:
-	std::map< FenestrationCommon::Side, std::shared_ptr< Surface > > m_Property;
+	std::map< FenestrationCommon::Side, std::shared_ptr< CSurface > > m_Property;
 
   };
 

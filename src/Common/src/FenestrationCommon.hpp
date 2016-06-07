@@ -49,7 +49,6 @@ namespace FenestrationCommon {
 
   enum class Property { T, R, Abs };
 
-  // template< typename T >
   class EnumProperty : public Enum< Property > {
 	
   };
@@ -71,6 +70,23 @@ namespace FenestrationCommon {
   }
 
   enum class WavelengthRange { Solar, Visible, IR };
+
+  // Short version of enum class Property is necessary because in optical routines it is quite often the case
+  // when calculations are performed only over transmittance and reflectance. It is also often the case when
+  // Transmittance and Reflectance have different structure from absorptances.
+  enum class PropertySimple { T, R };
+
+  class EnumPropertySimple : public Enum< PropertySimple > {
+	
+  };
+
+  inline EnumPropertySimple::Iterator begin( EnumPropertySimple ) {
+    return EnumPropertySimple::Iterator( ( int )PropertySimple::T );
+  }
+  
+  inline EnumPropertySimple::Iterator end( EnumPropertySimple ) {
+    return EnumPropertySimple::Iterator( ( ( int )PropertySimple::R ) + 1 );
+  }
   
 }
 

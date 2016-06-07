@@ -10,17 +10,18 @@ using namespace LayerOptics;
 
 namespace MultiPane {
 
-  CInterreflectances::CInterreflectances( const double t_Tf, const double t_Rf, const double t_Tb, 
+  CInterreflectancesSingleComponent::CInterreflectancesSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, 
     const double t_Rb ) : m_StateCalculated( false ) {
-    m_IEnergy[ std::make_pair( Side::Front, Side::Front ) ] = make_shared< vector< double > >();
-    m_IEnergy[ std::make_pair( Side::Front, Side::Back ) ] = make_shared< vector< double > >();
-    m_IEnergy[ std::make_pair( Side::Back, Side::Front ) ] = make_shared< vector< double > >();
-    m_IEnergy[ std::make_pair( Side::Back, Side::Back ) ] = make_shared< vector< double > >();
+	for( Side t_Side : EnumSide() ) {
+	  for( Side t_EnergySide : EnumSide()) {
+	    m_IEnergy[ std::make_pair( t_Side, t_EnergySide ) ] = make_shared< vector< double > >();
+	  }
+	}
 
     addLayer( t_Tf, t_Rf, t_Tb, t_Rb );
   }
 
-  void CInterreflectances::addLayer( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb, 
+  void CInterreflectancesSingleComponent::addLayer( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb, 
     const Side t_Side ) {
     shared_ptr< CLayerSingleComponent > aLayer = make_shared< CLayerSingleComponent >( t_Tf, t_Rf, t_Tb, t_Rb );
     switch( t_Side ) {
@@ -37,18 +38,18 @@ namespace MultiPane {
     m_StateCalculated = false;
   }
 
-  double CInterreflectances::getEnergyToSurface( const size_t Index, const Side t_Side, const Side t_EnergySide ) {
+  double CInterreflectancesSingleComponent::getEnergyToSurface( const size_t Index, const Side t_Side, const Side t_EnergySide ) {
     calculateEnergies();
     return ( *IEnergy( t_Side, t_EnergySide ) )[ Index - 1 ];
   }
 
-  double CInterreflectances::getLayerAbsorptance( const size_t Index, const Side t_Side ) {
+  double CInterreflectancesSingleComponent::getLayerAbsorptance( const size_t Index, const Side t_Side ) {
     double frontAbs = m_Layers[ Index - 1 ]->getProperty( Property::Abs, Side::Front ) * getEnergyToSurface( Index, Side::Front, t_Side );
     double backAbs = m_Layers[ Index - 1 ]->getProperty( Property::Abs, Side::Back ) * getEnergyToSurface( Index, Side::Back, t_Side );
     return frontAbs + backAbs;
   }
 
-  void CInterreflectances::calculateEnergies() {
+  void CInterreflectancesSingleComponent::calculateEnergies() {
     if( !m_StateCalculated ) {
       calculateForwardLayers();
       calculateBackwardLayers();
@@ -78,7 +79,7 @@ namespace MultiPane {
     }
   }
 
-  void CInterreflectances::calculateForwardLayers() {
+  void CInterreflectancesSingleComponent::calculateForwardLayers() {
     // Insert exterior environment properties
     shared_ptr< CLayerSingleComponent > aLayer = make_shared< CLayerSingleComponent >( 1, 0, 1, 0 );
     m_ForwardLayers.push_back( aLayer );
@@ -94,7 +95,7 @@ namespace MultiPane {
     }
   }
 
-  void CInterreflectances::calculateBackwardLayers() {
+  void CInterreflectancesSingleComponent::calculateBackwardLayers() {
     // Insert interior environment properties
     shared_ptr< CLayerSingleComponent > aLayer = make_shared< CLayerSingleComponent >( 1, 0, 1, 0 );
     m_BackwardLayers.push_back( aLayer );
@@ -111,7 +112,7 @@ namespace MultiPane {
     }
   }
 
-  shared_ptr< vector< double > > CInterreflectances::IEnergy( const Side t_Side, const Side t_EnergyFlow ) {
+  shared_ptr< vector< double > > CInterreflectancesSingleComponent::IEnergy( const Side t_Side, const Side t_EnergyFlow ) {
     return m_IEnergy[ std::make_pair( t_Side, t_EnergyFlow ) ];
   }
 
