@@ -54,7 +54,6 @@ namespace MultiPane {
 
   // Spectral properties of glazing system made up of layers with defined or measured spectral properties.
   // Single component means that ray will propagate through IGU in single state (as perfect beam or prefectly diffuse)
-  // Scattering from beam to diffuse component will be implemented in separate class
   class CEquivalentLayerSingleComponentMW {
   public:
     CEquivalentLayerSingleComponentMW( std::shared_ptr< FenestrationCommon::CSeries > t_Tf, 

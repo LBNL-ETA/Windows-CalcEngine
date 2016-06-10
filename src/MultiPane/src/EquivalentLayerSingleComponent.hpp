@@ -13,7 +13,7 @@ namespace LayerOptics {
 
 namespace MultiPane {
 
-  // Class to calculate double layer transmittance and reflectances only
+  // Class to calculate equivalent layer transmittance and reflectances only.
   class CEquivalentLayerSingleComponent {
   public:
     CEquivalentLayerSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
