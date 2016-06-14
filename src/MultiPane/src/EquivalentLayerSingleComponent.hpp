@@ -36,10 +36,12 @@ namespace MultiPane {
       std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2 ) const;
 
     double T( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer1, 
-      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, FenestrationCommon::Side t_Side ) const;
+      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, 
+      FenestrationCommon::Side t_Side ) const;
 
     double R( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer1, 
-      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, FenestrationCommon::Side t_Side ) const;
+      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, 
+      FenestrationCommon::Side t_Side ) const;
 
     std::shared_ptr< LayerOptics::CLayerSingleComponent > m_EquivalentLayer;
 

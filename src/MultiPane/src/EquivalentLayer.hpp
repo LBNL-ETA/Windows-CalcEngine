@@ -16,6 +16,8 @@ namespace LayerOptics {
 
 namespace MultiPane {
 
+  class CEquivalentLayerSingleComponent;
+
   struct SimpleResults {
     SimpleResults() : T( 0 ), R( 0 ) { };
     double T;
@@ -42,13 +44,17 @@ namespace MultiPane {
       const LayerOptics::Scattering t_Scattering ) const;
 
   private:
-    void calcEquivalentProperties( std::shared_ptr< LayerOptics::CLayer > t_First, std::shared_ptr< LayerOptics::CLayer > t_Second );
+    void calcEquivalentProperties( std::shared_ptr< LayerOptics::CLayer > t_First, 
+      std::shared_ptr< LayerOptics::CLayer > t_Second );
 
     // Find interreflectance value for given scattering
     double getInterreflectance( 
       std::shared_ptr< const LayerOptics::CScatteringSurface > t_First, 
       std::shared_ptr< const LayerOptics::CScatteringSurface > t_Second, 
       const LayerOptics::Scattering t_Scattering );
+
+    // Add diffuse and direct components from scattering layer properties
+    void addLayerComponents( std::shared_ptr< LayerOptics::CLayer > t_Layer, const FenestrationCommon::Side t_Side );
 
     std::shared_ptr< SimpleResults > calcDirectDiffuseTransAndRefl( 
       std::shared_ptr< const LayerOptics::CScatteringSurface > f1, 
@@ -57,6 +63,10 @@ namespace MultiPane {
       std::shared_ptr< const LayerOptics::CScatteringSurface > b2 );
 
     std::shared_ptr< LayerOptics::CLayer > m_Layer;
+    
+    // Layers for beam and diffuse components
+    std::shared_ptr< CEquivalentLayerSingleComponent > m_DiffuseLayer;
+    std::shared_ptr< CEquivalentLayerSingleComponent > m_BeamLayer;
 
   };
 

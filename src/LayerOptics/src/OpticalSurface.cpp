@@ -35,8 +35,8 @@ namespace LayerOptics {
     m_PropertySimple[ make_pair( PropertySimple::R, Scattering::DirectDirect ) ] = R_dir_dir;
     m_PropertySimple[ make_pair( PropertySimple::T, Scattering::DirectDiffuse ) ] = T_dir_dif;
     m_PropertySimple[ make_pair( PropertySimple::R, Scattering::DirectDiffuse ) ] = R_dir_dif;
-    m_PropertySimple[ make_pair( PropertySimple::T, Scattering::DiffuseDiffuse ) ] = T_dir_dif;
-    m_PropertySimple[ make_pair( PropertySimple::R, Scattering::DiffuseDiffuse ) ] = R_dir_dif;
+    m_PropertySimple[ make_pair( PropertySimple::T, Scattering::DiffuseDiffuse ) ] = T_dif_dif;
+    m_PropertySimple[ make_pair( PropertySimple::R, Scattering::DiffuseDiffuse ) ] = R_dif_dif;
 
     m_Absorptance[ ScatteringSimple::Direct ] = 1 - T_dir_dir - T_dir_dif - R_dir_dir - R_dir_dif;
     m_Absorptance[ ScatteringSimple::Diffuse ] = 1 - T_dif_dif - R_dif_dif;
