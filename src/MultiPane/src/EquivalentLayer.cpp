@@ -4,6 +4,7 @@
 #include "EquivalentLayerSingleComponent.hpp"
 #include "OpticalSurface.hpp"
 #include "OpticalLayer.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -44,6 +45,7 @@ namespace MultiPane {
     double Rf = t_Layer->getProperty( PropertySimple::R, Side::Front, Scattering::DirectDirect );
     double Tb = t_Layer->getProperty( PropertySimple::T, Side::Back, Scattering::DirectDirect );
     double Rb = t_Layer->getProperty( PropertySimple::R, Side::Back, Scattering::DirectDirect );
+    
     m_BeamLayer = make_shared< CEquivalentLayerSingleComponent >( Tf, Rf, Tb, Rb );
 
     Tf = t_Layer->getProperty( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse );

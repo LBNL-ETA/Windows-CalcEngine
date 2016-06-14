@@ -10,7 +10,6 @@ namespace LayerOptics {
 
   class CLayer;
   class CScatteringSurface;
-  enum class Scattering;
 
 }
 
@@ -41,7 +40,7 @@ namespace MultiPane {
     void addLayer( std::shared_ptr< LayerOptics::CLayer > t_Layer, const FenestrationCommon::Side t_Side );
 
     double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, const FenestrationCommon::Side t_Side,
-      const LayerOptics::Scattering t_Scattering ) const;
+      const FenestrationCommon::Scattering t_Scattering ) const;
 
   private:
     void calcEquivalentProperties( std::shared_ptr< LayerOptics::CLayer > t_First, 
@@ -51,7 +50,7 @@ namespace MultiPane {
     double getInterreflectance( 
       std::shared_ptr< const LayerOptics::CScatteringSurface > t_First, 
       std::shared_ptr< const LayerOptics::CScatteringSurface > t_Second, 
-      const LayerOptics::Scattering t_Scattering );
+      const FenestrationCommon::Scattering t_Scattering );
 
     // Add diffuse and direct components from scattering layer properties
     void addLayerComponents( std::shared_ptr< LayerOptics::CLayer > t_Layer, const FenestrationCommon::Side t_Side );

@@ -2,9 +2,11 @@
 #include <gtest/gtest.h>
 
 #include "OpticalSurface.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace LayerOptics;
+using namespace FenestrationCommon;
 
 // Simple scattering surface tests
 class TestScatteringSurface : public testing::Test {

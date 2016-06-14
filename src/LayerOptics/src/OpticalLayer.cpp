@@ -5,7 +5,6 @@
 #include "FenestrationCommon.hpp"
 
 using namespace std;
-
 using namespace FenestrationCommon;
 
 namespace LayerOptics {

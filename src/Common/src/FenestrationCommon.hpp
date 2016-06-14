@@ -87,6 +87,9 @@ namespace FenestrationCommon {
   inline EnumPropertySimple::Iterator end( EnumPropertySimple ) {
     return EnumPropertySimple::Iterator( ( ( int )PropertySimple::R ) + 1 );
   }
+
+  enum class Scattering { DirectDirect, DirectDiffuse, DiffuseDiffuse };
+  enum class ScatteringSimple { Direct, Diffuse };
   
 }
 
