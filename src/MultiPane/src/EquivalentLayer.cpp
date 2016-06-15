@@ -35,11 +35,11 @@ namespace MultiPane {
       Tb_dir_dir, Rb_dir_dir );
   }
 
-  CEquivalentLayer::CEquivalentLayer( shared_ptr< CLayer > t_Layer ) {
+  CEquivalentLayer::CEquivalentLayer( shared_ptr< const CLayer > t_Layer ) {
     if( t_Layer == nullptr ) {
       throw runtime_error("Layer must be provided.");
     }
-    m_Layer = t_Layer;
+    m_Layer = make_shared< CLayer >( t_Layer );
 
     double Tf = t_Layer->getProperty( PropertySimple::T, Side::Front, Scattering::DirectDirect );
     double Rf = t_Layer->getProperty( PropertySimple::R, Side::Front, Scattering::DirectDirect );
@@ -71,7 +71,7 @@ namespace MultiPane {
     addLayer( aLayer, t_Side );
   }
 
-  void CEquivalentLayer::addLayer( shared_ptr< CLayer > t_Layer, const Side t_Side ) {
+  void CEquivalentLayer::addLayer( shared_ptr< const CLayer > t_Layer, const Side t_Side ) {
     addLayerComponents( t_Layer, t_Side );
     switch( t_Side ) {
     case Side::Front:
@@ -92,8 +92,8 @@ namespace MultiPane {
     return aSurface->getPropertySimple( t_Property, t_Scattering );
   }
 
-  void CEquivalentLayer::calcEquivalentProperties( shared_ptr< CLayer > t_First, 
-    shared_ptr< CLayer > t_Second ) {
+  void CEquivalentLayer::calcEquivalentProperties( shared_ptr< const CLayer > t_First, 
+    shared_ptr< const CLayer > t_Second ) {
     // Direct to diffuse componet calculation
     shared_ptr< const CScatteringSurface > f1 = t_First->getSurface( Side::Front );
     shared_ptr< const CScatteringSurface > b1 = t_First->getSurface( Side::Back );
@@ -189,7 +189,7 @@ namespace MultiPane {
     return aResult;
   }
 
-  void CEquivalentLayer::addLayerComponents( shared_ptr< CLayer > t_Layer, const Side t_Side ) {
+  void CEquivalentLayer::addLayerComponents( shared_ptr< const CLayer > t_Layer, const Side t_Side ) {
     double Tf = t_Layer->getProperty( PropertySimple::T, Side::Front, Scattering::DirectDirect );
     double Rf = t_Layer->getProperty( PropertySimple::R, Side::Front, Scattering::DirectDirect );
     double Tb = t_Layer->getProperty( PropertySimple::T, Side::Back, Scattering::DirectDirect );

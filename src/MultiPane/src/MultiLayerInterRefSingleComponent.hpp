@@ -1,5 +1,5 @@
-#ifndef MULTILAYERINTERREFLECTANCES_H
-#define MULTILAYERINTERREFLECTANCES_H
+#ifndef MULTILAYERINTERREFLECTANCESSINGLECOMPONENT_H
+#define MULTILAYERINTERREFLECTANCESSINGLECOMPONENT_H
 
 #include <vector>
 #include <memory>
@@ -15,15 +15,33 @@ namespace LayerOptics {
 
 namespace MultiPane {
 
-  enum class EnergyFlow { Forward, Backward };
-
-  // Calculates incoming energies to every surface of the layers in IGU considering only single component (direct or diffuse)
-  class CInterreflectancesSingleComponent {
+  class CSurfaceEnergy {
   public:
-    CInterreflectancesSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
+    CSurfaceEnergy();
+    
+    void addEnergy( const FenestrationCommon::Side t_Side, 
+      const FenestrationCommon::Side t_EnergySide, const double t_Value );
+
+    double IEnergy( const size_t Index, 
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::Side t_EnergyFlow );
+
+  private:
+    std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::Side >,
+      std::shared_ptr< std::vector< double > > > m_IEnergy;
+  };
+
+  // Calculates incoming energies to every surface of the layers in IGU considering only 
+  // single component (direct or diffuse)
+  class CInterRefSingleComponent {
+  public:
+    CInterRefSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
+    CInterRefSingleComponent( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer );
 
     // Adding layer to the back or front side of the IGU composition
     void addLayer( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb, 
+      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+
+    void addLayer( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
     // Retrieves value of energy to the surface of given layer. Incoming energy can be outside or inside
@@ -33,12 +51,10 @@ namespace MultiPane {
     double getLayerAbsorptance( const size_t Index, const FenestrationCommon::Side t_Side );
 
   private:
+    void initialize( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
     void calculateEnergies();
     void calculateForwardLayers();
     void calculateBackwardLayers();
-
-    std::shared_ptr< std::vector< double > > IEnergy( const FenestrationCommon::Side t_Side,
-      const FenestrationCommon::Side t_EnergyFlow );
 
     std::vector< std::shared_ptr< LayerOptics::CLayerSingleComponent > > m_Layers;
 
@@ -61,8 +77,7 @@ namespace MultiPane {
     std::vector< std::shared_ptr< LayerOptics::CLayerSingleComponent > > m_BackwardLayers;
 
     // Results of interreflectances are calculated for beam incoming from inside and outside
-    std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::Side >, 
-      std::shared_ptr< std::vector< double > > > m_IEnergy;
+    std::shared_ptr< CSurfaceEnergy > m_IEnergy;
 
     bool m_StateCalculated;
 

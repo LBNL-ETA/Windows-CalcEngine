@@ -1,7 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiLayerInterreflectances.hpp"
+#include "MultiLayerInterRefSingleComponent.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -14,25 +14,25 @@ class TestMultilayerInterreflectances_1 : public testing::Test {
 
 private:
   // Additional layer added to the back side
-  shared_ptr< CInterreflectancesSingleComponent > m_Interref;
+  shared_ptr< CInterRefSingleComponent > m_Interref;
 
 protected:
   virtual void SetUp() {
-    m_Interref = make_shared< CInterreflectancesSingleComponent >( 0.46, 0.52, 0.64, 0.22 );
+    m_Interref = make_shared< CInterRefSingleComponent >( 0.46, 0.52, 0.64, 0.22 );
     m_Interref->addLayer( 0.56, 0.34, 0.49, 0.39 );
     m_Interref->addLayer( 0.12, 0.47, 0.33, 0.63 );
   
   }
 
 public:
-  shared_ptr< CInterreflectancesSingleComponent > getInt() { return m_Interref; };
+  shared_ptr< CInterRefSingleComponent > getInt() { return m_Interref; };
 
 };
 
 TEST_F( TestMultilayerInterreflectances_1, TestForwardFlow ) {
   SCOPED_TRACE( "Begin Test: Double pane equivalent layer properties (additonal layer on back side)." );
   
-  shared_ptr< CInterreflectancesSingleComponent > eqLayer = getInt();
+  shared_ptr< CInterRefSingleComponent > eqLayer = getInt();
 
   Side aFlow = Side::Front; // Flow of the energy
 
@@ -59,7 +59,7 @@ TEST_F( TestMultilayerInterreflectances_1, TestForwardFlow ) {
 TEST_F( TestMultilayerInterreflectances_1, TestBackwardFlow ) {
   SCOPED_TRACE( "Begin Test: Double pane equivalent layer properties (additonal layer on back side)." );
   
-  shared_ptr< CInterreflectancesSingleComponent > eqLayer = getInt();
+  shared_ptr< CInterRefSingleComponent > eqLayer = getInt();
 
   Side aFlow = Side::Back; // Flow of the energy
 
