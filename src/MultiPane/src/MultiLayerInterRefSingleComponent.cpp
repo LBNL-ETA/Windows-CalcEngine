@@ -77,6 +77,11 @@ namespace MultiPane {
     return m_IEnergy->IEnergy( Index, t_Side, t_EnergySide );
   }
 
+  shared_ptr< CSurfaceEnergy > CInterRefSingleComponent::getSurfaceEnergy() {
+    calculateEnergies();
+    return m_IEnergy;
+  }
+
   double CInterRefSingleComponent::getLayerAbsorptance( const size_t Index, const Side t_Side ) {
     double frontAbs = m_Layers[ Index - 1 ]->getProperty( Property::Abs, Side::Front ) * getEnergyToSurface( Index, Side::Front, t_Side );
     double backAbs = m_Layers[ Index - 1 ]->getProperty( Property::Abs, Side::Back ) * getEnergyToSurface( Index, Side::Back, t_Side );
@@ -95,7 +100,6 @@ namespace MultiPane {
       calculateForwardLayers();
       calculateBackwardLayers();
 
-      // Front side calculations
       for( size_t i = 0; i <= m_Layers.size(); ++i ) {
         shared_ptr< CLayerSingleComponent > aForwardLayer = m_ForwardLayers[ i ];
         shared_ptr< CLayerSingleComponent > aBackwardLayer = m_BackwardLayers[ i ];
@@ -110,6 +114,7 @@ namespace MultiPane {
           m_IEnergy->addEnergy( Side::Front, Side::Front, Tf * iReflectance );
           m_IEnergy->addEnergy( Side::Front, Side::Back, Tb * Rb * iReflectance );
         }
+
         if( i != 0 ) {
           m_IEnergy->addEnergy( Side::Back, Side::Front, Tf * Rf * iReflectance );
           m_IEnergy->addEnergy( Side::Back, Side::Back, Tb * iReflectance );

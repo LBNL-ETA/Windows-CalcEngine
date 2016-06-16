@@ -89,6 +89,19 @@ namespace FenestrationCommon {
   }
 
   enum class Scattering { DirectDirect, DirectDiffuse, DiffuseDiffuse };
+
+  class EnumScattering : public Enum< Scattering > {
+
+  };
+
+  inline EnumScattering::Iterator begin( EnumScattering ) {
+    return EnumScattering::Iterator( ( int ) Scattering::DirectDirect );
+  }
+
+  inline EnumScattering::Iterator end( EnumScattering ) {
+    return EnumScattering::Iterator( ( ( int ) Scattering::DiffuseDiffuse ) + 1 );
+  }
+
   enum class ScatteringSimple { Direct, Diffuse };
   
 }

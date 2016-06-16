@@ -63,10 +63,17 @@ namespace MultiPane {
     const double Tf_dif_dif, const double Rf_dif_dif, 
     const double Tb_dif_dif, const double Rb_dif_dif, 
     const Side t_Side ) {
+    
     shared_ptr< CScatteringSurface > aFrontSurface = 
-      make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, Tf_dir_dif, Rf_dir_dif, Tf_dif_dif, Rf_dif_dif );
-    shared_ptr< CScatteringSurface > 
-      aBackSurface = make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir, Tb_dir_dif, Rb_dir_dif, Tb_dif_dif, Rb_dif_dif );
+      make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, 
+                                         Tf_dir_dif, Rf_dir_dif, 
+                                         Tf_dif_dif, Rf_dif_dif );
+    
+    shared_ptr< CScatteringSurface > aBackSurface = 
+      make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir, 
+                                         Tb_dir_dif, Rb_dir_dif, 
+                                         Tb_dif_dif, Rb_dif_dif );
+    
     shared_ptr< CLayer > aLayer = make_shared< CLayer >( aFrontSurface, aBackSurface );
     addLayer( aLayer, t_Side );
   }
@@ -90,6 +97,10 @@ namespace MultiPane {
     const Scattering t_Scattering ) const {
     shared_ptr< CScatteringSurface > aSurface = m_Layer->getSurface( t_Side );
     return aSurface->getPropertySimple( t_Property, t_Scattering );
+  }
+
+  shared_ptr< CLayer > CEquivalentLayer::getLayer() const {
+    return m_Layer;
   }
 
   void CEquivalentLayer::calcEquivalentProperties( shared_ptr< const CLayer > t_First, 

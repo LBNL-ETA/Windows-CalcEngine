@@ -26,21 +26,31 @@ namespace MultiPane {
   // Calculates Transmittance and reflectance of multi layer IGU with direct and diffuse properties
   class CEquivalentLayer {
   public:
-    CEquivalentLayer( const double Tf_dir_dir, const double Rf_dir_dir, const double Tb_dir_dir, const double Rb_dir_dir, 
-      const double Tf_dir_dif, const double Rf_dir_dif, const double Tb_dir_dif, const double Rb_dir_dif, 
-      const double Tf_dif_dif, const double Rf_dif_dif, const double Tb_dif_dif, const double Rb_dif_dif );
+    CEquivalentLayer( const double Tf_dir_dir, const double Rf_dir_dir, 
+      const double Tb_dir_dir, const double Rb_dir_dir, 
+      const double Tf_dir_dif, const double Rf_dir_dif, 
+      const double Tb_dir_dif, const double Rb_dir_dif, 
+      const double Tf_dif_dif, const double Rf_dif_dif, 
+      const double Tb_dif_dif, const double Rb_dif_dif );
 
     CEquivalentLayer( std::shared_ptr< const LayerOptics::CLayer > t_Layer );
 
-    void addLayer( const double Tf_dir_dir, const double Rf_dir_dir, const double Tb_dir_dir, const double Rb_dir_dir, 
-      const double Tf_dir_dif, const double Rf_dir_dif, const double Tb_dir_dif, const double Rb_dir_dif, 
-      const double Tf_dif_dif, const double Rf_dif_dif, const double Tb_dif_dif, const double Rb_dif_dif,
+    void addLayer( const double Tf_dir_dir, const double Rf_dir_dir, 
+      const double Tb_dir_dir, const double Rb_dir_dir, 
+      const double Tf_dir_dif, const double Rf_dir_dif, 
+      const double Tb_dir_dif, const double Rb_dir_dif, 
+      const double Tf_dif_dif, const double Rf_dif_dif, 
+      const double Tb_dif_dif, const double Rb_dif_dif,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    void addLayer( std::shared_ptr< const LayerOptics::CLayer > t_Layer, const FenestrationCommon::Side t_Side );
+    void addLayer( std::shared_ptr< const LayerOptics::CLayer > t_Layer, 
+      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, const FenestrationCommon::Side t_Side,
+    double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, 
+      const FenestrationCommon::Side t_Side,
       const FenestrationCommon::Scattering t_Scattering ) const;
+
+    std::shared_ptr< LayerOptics::CLayer > getLayer() const;
 
   private:
     void calcEquivalentProperties( std::shared_ptr< const LayerOptics::CLayer > t_First, 

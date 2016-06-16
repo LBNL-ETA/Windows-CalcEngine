@@ -48,6 +48,8 @@ namespace MultiPane {
     double getEnergyToSurface( const size_t Index, const FenestrationCommon::Side t_SurfaceSide, 
       const FenestrationCommon::Side t_EnergySide );
 
+    std::shared_ptr< CSurfaceEnergy > getSurfaceEnergy();
+
     double getLayerAbsorptance( const size_t Index, const FenestrationCommon::Side t_Side );
 
   private:
