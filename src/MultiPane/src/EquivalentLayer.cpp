@@ -41,17 +41,17 @@ namespace MultiPane {
     }
     m_Layer = make_shared< CLayer >( t_Layer );
 
-    double Tf = t_Layer->getProperty( PropertySimple::T, Side::Front, Scattering::DirectDirect );
-    double Rf = t_Layer->getProperty( PropertySimple::R, Side::Front, Scattering::DirectDirect );
-    double Tb = t_Layer->getProperty( PropertySimple::T, Side::Back, Scattering::DirectDirect );
-    double Rb = t_Layer->getProperty( PropertySimple::R, Side::Back, Scattering::DirectDirect );
+    double Tf = t_Layer->getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect );
+    double Rf = t_Layer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect );
+    double Tb = t_Layer->getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect );
+    double Rb = t_Layer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DirectDirect );
     
     m_BeamLayer = make_shared< CEquivalentLayerSingleComponent >( Tf, Rf, Tb, Rb );
 
-    Tf = t_Layer->getProperty( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse );
-    Rf = t_Layer->getProperty( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
-    Tb = t_Layer->getProperty( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse );
-    Rb = t_Layer->getProperty( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
+    Tf = t_Layer->getPropertySimple( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse );
+    Rf = t_Layer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
+    Tb = t_Layer->getPropertySimple( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse );
+    Rb = t_Layer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
 
     m_DiffuseLayer = make_shared< CEquivalentLayerSingleComponent >( Tf, Rf, Tb, Rb );
   }
@@ -201,16 +201,16 @@ namespace MultiPane {
   }
 
   void CEquivalentLayer::addLayerComponents( shared_ptr< const CLayer > t_Layer, const Side t_Side ) {
-    double Tf = t_Layer->getProperty( PropertySimple::T, Side::Front, Scattering::DirectDirect );
-    double Rf = t_Layer->getProperty( PropertySimple::R, Side::Front, Scattering::DirectDirect );
-    double Tb = t_Layer->getProperty( PropertySimple::T, Side::Back, Scattering::DirectDirect );
-    double Rb = t_Layer->getProperty( PropertySimple::R, Side::Back, Scattering::DirectDirect );
+    double Tf = t_Layer->getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect );
+    double Rf = t_Layer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect );
+    double Tb = t_Layer->getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect );
+    double Rb = t_Layer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DirectDirect );
     m_BeamLayer->addLayer( Tf, Rf, Tb, Rb, t_Side );
 
-    Tf = t_Layer->getProperty( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse );
-    Rf = t_Layer->getProperty( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
-    Tb = t_Layer->getProperty( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse );
-    Rb = t_Layer->getProperty( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
+    Tf = t_Layer->getPropertySimple( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse );
+    Rf = t_Layer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
+    Tb = t_Layer->getPropertySimple( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse );
+    Rb = t_Layer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
     m_DiffuseLayer->addLayer( Tf, Rf, Tb, Rb, t_Side );
   }
 

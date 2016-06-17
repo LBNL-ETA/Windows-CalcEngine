@@ -24,28 +24,44 @@ namespace LayerOptics {
   }
 
   CLayer::CLayer( std::shared_ptr< const CLayer > t_Layer ) {
-    shared_ptr< CScatteringSurface > aFront = t_Layer->getSurface( Side::Front );
-    shared_ptr< CScatteringSurface > aBack = t_Layer->getSurface( Side::Back );
+    m_Surface[ Side::Front ] = t_Layer->getSurface( Side::Front );
+    m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Back );
+  }
 
-    m_Surface[ Side::Front ] = aFront;
-    m_Surface[ Side::Back ] = aBack;
-
+  CLayer::CLayer(
+    const double Tf_dir_dir, const double Rf_dir_dir,
+    const double Tb_dir_dir, const double Rb_dir_dir,
+    const double Tf_dir_dif, const double Rf_dir_dif,
+    const double Tb_dir_dif, const double Rb_dir_dif,
+    const double Tf_dif_dif, const double Rf_dif_dif,
+    const double Tb_dif_dif, const double Rb_dif_dif ) {
+    m_Surface[ Side::Front ] = make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, 
+                                                                  Tf_dir_dif, Rf_dir_dif, 
+                                                                  Tf_dif_dif, Rf_dif_dif );
+    m_Surface[ Side::Back ] = make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir,
+                                                                 Tb_dir_dif, Rb_dir_dif,
+                                                                 Tb_dif_dif, Rb_dif_dif );
   }
 
   shared_ptr< CScatteringSurface > CLayer::getSurface( const Side t_Side ) const {
     return m_Surface.at( t_Side );
   }
 
-  double CLayer::getProperty( const PropertySimple t_Property, const Side t_Side, const Scattering t_Scattering ) const {
+  double CLayer::getPropertySimple( const PropertySimple t_Property, const Side t_Side, const Scattering t_Scattering ) const {
     shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
     return aSurface->getPropertySimple( t_Property, t_Scattering );
   }
 
+  double CLayer::getAbsorptance( const Side t_Side, const ScatteringSimple t_Scattering ) const {
+    shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
+    return aSurface->getAbsorptance( t_Scattering );
+  }
+
   shared_ptr< CLayerSingleComponent > CLayer::getLayer( const Scattering t_Scattering ) const {
-    double Tf = getProperty( PropertySimple::T, Side::Front, t_Scattering );
-    double Rf = getProperty( PropertySimple::R, Side::Front, t_Scattering );
-    double Tb = getProperty( PropertySimple::T, Side::Back, t_Scattering );
-    double Rb = getProperty( PropertySimple::R, Side::Back, t_Scattering );
+    double Tf = getPropertySimple( PropertySimple::T, Side::Front, t_Scattering );
+    double Rf = getPropertySimple( PropertySimple::R, Side::Front, t_Scattering );
+    double Tb = getPropertySimple( PropertySimple::T, Side::Back, t_Scattering );
+    double Rb = getPropertySimple( PropertySimple::R, Side::Back, t_Scattering );
     shared_ptr< CLayerSingleComponent > aLayer = make_shared< CLayerSingleComponent >( Tf, Rf, Tb, Rb );
     return aLayer;
   }

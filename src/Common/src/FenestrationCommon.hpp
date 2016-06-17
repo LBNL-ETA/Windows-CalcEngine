@@ -29,7 +29,9 @@ namespace FenestrationCommon {
   
   };
 
-  // Side enumerator
+  //////////////////////////////////////////////////////////////////////////
+  // Side
+  //////////////////////////////////////////////////////////////////////////
 
   enum class Side { Front, Back };
 
@@ -45,7 +47,9 @@ namespace FenestrationCommon {
     return typename EnumSide::Iterator( ( ( int )Side::Back ) + 1 );
   }
   
-  // Property enumerator
+  //////////////////////////////////////////////////////////////////////////
+  // Property
+  //////////////////////////////////////////////////////////////////////////
 
   enum class Property { T, R, Abs };
 
@@ -70,6 +74,10 @@ namespace FenestrationCommon {
   }
 
   enum class WavelengthRange { Solar, Visible, IR };
+
+  //////////////////////////////////////////////////////////////////////////
+  // PropertySimple
+  //////////////////////////////////////////////////////////////////////////
 
   // Short version of enum class Property is necessary because in optical routines it is quite often the case
   // when calculations are performed only over transmittance and reflectance. It is also often the case when
@@ -102,7 +110,61 @@ namespace FenestrationCommon {
     return EnumScattering::Iterator( ( ( int ) Scattering::DiffuseDiffuse ) + 1 );
   }
 
+  //////////////////////////////////////////////////////////////////////////
+  // ScatteringSimple
+  //////////////////////////////////////////////////////////////////////////
+
   enum class ScatteringSimple { Direct, Diffuse };
+
+  class EnumScatteringSimple : public Enum< ScatteringSimple > {
+
+  };
+
+  inline EnumScatteringSimple::Iterator begin( EnumScatteringSimple ) {
+    return EnumScatteringSimple::Iterator( ( int ) ScatteringSimple::Direct );
+  }
+
+  inline EnumScatteringSimple::Iterator end( EnumScatteringSimple ) {
+    return EnumScatteringSimple::Iterator( ( ( int ) ScatteringSimple::Diffuse ) + 1 );
+  }
+  
+  //////////////////////////////////////////////////////////////////////////
+  // EnergyFlow
+  //////////////////////////////////////////////////////////////////////////
+
+  enum class EnergyFlow { Forward, Backward };
+
+  class EnumEnergyFlow : public Enum< EnergyFlow > {
+
+  };
+
+  inline EnumEnergyFlow::Iterator begin( EnumEnergyFlow ) {
+    return EnumEnergyFlow::Iterator( ( int ) EnergyFlow::Forward );
+  }
+
+  inline EnumEnergyFlow::Iterator end( EnumEnergyFlow ) {
+    return EnumEnergyFlow::Iterator( ( ( int ) EnergyFlow::Backward ) + 1 );
+  }
+
+  inline EnergyFlow getFlowFromSide( const Side t_Side ) {
+    EnergyFlow aResult = EnergyFlow::Forward;
+    if( t_Side == Side::Back ) {
+      aResult = EnergyFlow::Backward;
+    }
+
+    return aResult;
+
+  }
+
+  inline Side getSideFromFlow( const EnergyFlow t_EnergyFlow ) {
+    Side aResult = Side::Front;
+    if( t_EnergyFlow == EnergyFlow::Backward ) {
+      aResult = Side::Back;
+    }
+
+    return aResult;
+
+  }
   
 }
 

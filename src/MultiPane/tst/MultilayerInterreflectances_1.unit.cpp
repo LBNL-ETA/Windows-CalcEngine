@@ -34,7 +34,7 @@ TEST_F( TestMultilayerInterreflectances_1, TestForwardFlow ) {
   
   shared_ptr< CInterRefSingleComponent > eqLayer = getInt();
 
-  Side aFlow = Side::Front; // Flow of the energy
+  EnergyFlow aFlow = EnergyFlow::Forward; // Flow of the energy
 
   double If1 = eqLayer->getEnergyToSurface( 1, Side::Front, aFlow );
   EXPECT_NEAR( 1.0, If1, 1e-6 );
@@ -61,7 +61,7 @@ TEST_F( TestMultilayerInterreflectances_1, TestBackwardFlow ) {
   
   shared_ptr< CInterRefSingleComponent > eqLayer = getInt();
 
-  Side aFlow = Side::Back; // Flow of the energy
+  EnergyFlow aFlow = EnergyFlow::Backward; // Flow of the energy
 
   double If1 = eqLayer->getEnergyToSurface( 1, Side::Front, aFlow );
   EXPECT_NEAR( 0.0, If1, 1e-6 );

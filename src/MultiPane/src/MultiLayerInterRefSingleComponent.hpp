@@ -20,13 +20,13 @@ namespace MultiPane {
     CSurfaceEnergy();
     
     void addEnergy( const FenestrationCommon::Side t_Side, 
-      const FenestrationCommon::Side t_EnergySide, const double t_Value );
+      const FenestrationCommon::EnergyFlow t_EnergyFlow, const double t_Value );
 
     double IEnergy( const size_t Index, 
-      const FenestrationCommon::Side t_Side, const FenestrationCommon::Side t_EnergyFlow );
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::EnergyFlow t_EnergyFlow );
 
   private:
-    std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::Side >,
+    std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::EnergyFlow >,
       std::shared_ptr< std::vector< double > > > m_IEnergy;
   };
 
@@ -46,7 +46,7 @@ namespace MultiPane {
 
     // Retrieves value of energy to the surface of given layer. Incoming energy can be outside or inside
     double getEnergyToSurface( const size_t Index, const FenestrationCommon::Side t_SurfaceSide, 
-      const FenestrationCommon::Side t_EnergySide );
+      const FenestrationCommon::EnergyFlow t_EnergyFlow );
 
     std::shared_ptr< CSurfaceEnergy > getSurfaceEnergy();
 

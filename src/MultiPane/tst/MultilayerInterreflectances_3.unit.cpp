@@ -52,7 +52,7 @@ TEST_F( TestMultilayerInterreflectances_3, TestForwardFlowFrontSide ) {
   
   shared_ptr< CInterRef > eqLayer = getInt();
 
-  Side aFlow = Side::Front;
+  EnergyFlow aFlow = EnergyFlow::Forward;
   Side aSide = Side::Front;
 
   // Direct-Direct
@@ -95,7 +95,7 @@ TEST_F( TestMultilayerInterreflectances_3, TestForwardFlowBackSide ) {
 
   shared_ptr< CInterRef > eqLayer = getInt();
 
-  Side aFlow = Side::Front;
+  EnergyFlow aFlow = EnergyFlow::Forward;
   Side aSide = Side::Back;
 
   // Direct-Direct
@@ -138,7 +138,7 @@ TEST_F( TestMultilayerInterreflectances_3, TestBackwardFlowFrontSide ) {
 
   shared_ptr< CInterRef > eqLayer = getInt();
 
-  Side aFlow = Side::Back;
+  EnergyFlow aFlow = EnergyFlow::Backward;
   Side aSide = Side::Front;
 
   // Direct-Direct
@@ -181,7 +181,7 @@ TEST_F( TestMultilayerInterreflectances_3, TestBackwardFlowBackSide ) {
 
   shared_ptr< CInterRef > eqLayer = getInt();
 
-  Side aFlow = Side::Back;
+  EnergyFlow aFlow = EnergyFlow::Backward;
   Side aSide = Side::Back;
 
   // Direct-Direct
@@ -216,5 +216,67 @@ TEST_F( TestMultilayerInterreflectances_3, TestBackwardFlowBackSide ) {
 
   If3 = eqLayer->getEnergyToSurface( 3, aSide, aFlow, aScattering );
   EXPECT_NEAR( 0, If3, 1e-6 );
+
+}
+
+TEST_F( TestMultilayerInterreflectances_3, TestFrontSideAbsorptances ) {
+  SCOPED_TRACE( "Begin Test: Triple pane layer by layer absroptances (Front Side)." );
+
+  shared_ptr< CInterRef > eqLayer = getInt();
+
+  Side aSide = Side::Front;
+
+  // Direct
+  ScatteringSimple aScattering = ScatteringSimple::Direct;
+  double Af1_dir = eqLayer->getAbsorptance( 1, aSide, aScattering );
+  EXPECT_NEAR( 0.362217125, Af1_dir, 1e-6 );
+
+  double Af2_dir = eqLayer->getAbsorptance( 2, aSide, aScattering );
+  EXPECT_NEAR( 0.08499287, Af2_dir, 1e-6 );
+
+  double Af3_dir = eqLayer->getAbsorptance( 3, aSide, aScattering );
+  EXPECT_NEAR( 0.009237846, Af3_dir, 1e-6 );
+
+  // Diffuse
+  aScattering = ScatteringSimple::Diffuse;
+  double Af1_dif = eqLayer->getAbsorptance( 1, aSide, aScattering );
+  EXPECT_NEAR( 0.057730707, Af1_dif, 1e-6 );
+
+  double Af2_dif = eqLayer->getAbsorptance( 2, aSide, aScattering );
+  EXPECT_NEAR( 0.074691415, Af2_dif, 1e-6 );
+
+  double Af3_dif = eqLayer->getAbsorptance( 3, aSide, aScattering );
+  EXPECT_NEAR( 0.00729561, Af3_dif, 1e-6 );
+
+}
+
+TEST_F( TestMultilayerInterreflectances_3, TestBackSideAbsorptances ) {
+  SCOPED_TRACE( "Begin Test: Triple pane layer by layer absroptances (Back Side)." );
+
+  shared_ptr< CInterRef > eqLayer = getInt();
+
+  Side aSide = Side::Back;
+
+  // Direct
+  ScatteringSimple aScattering = ScatteringSimple::Direct;
+  double Ab1_dir = eqLayer->getAbsorptance( 1, aSide, aScattering );
+  EXPECT_NEAR( 0.048602329, Ab1_dir, 1e-6 );
+
+  double Ab2_dir = eqLayer->getAbsorptance( 2, aSide, aScattering );
+  EXPECT_NEAR( 0.1073958, Ab2_dir, 1e-6 );
+
+  double Ab3_dir = eqLayer->getAbsorptance( 3, aSide, aScattering );
+  EXPECT_NEAR( 0.05557544, Ab3_dir, 1e-6 );
+
+  // Diffuse
+  aScattering = ScatteringSimple::Diffuse;
+  double Ab1_dif = eqLayer->getAbsorptance( 1, aSide, aScattering );
+  EXPECT_NEAR( 0.062171287, Ab1_dif, 1e-6 );
+
+  double Ab2_dif = eqLayer->getAbsorptance( 2, aSide, aScattering );
+  EXPECT_NEAR( 0.110389379, Ab2_dif, 1e-6 );
+
+  double Ab3_dif = eqLayer->getAbsorptance( 3, aSide, aScattering );
+  EXPECT_NEAR( 0.147634489, Ab3_dif, 1e-6 );
 
 }

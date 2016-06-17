@@ -15,17 +15,17 @@ namespace MultiPane {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   CSurfaceEnergy::CSurfaceEnergy() {
     for( Side t_Side : EnumSide() ) {
-      for( Side t_EnergySide : EnumSide() ) {
-        m_IEnergy[ make_pair( t_Side, t_EnergySide ) ] = make_shared< vector< double > >();
+      for( EnergyFlow t_EnergyFlow : EnumEnergyFlow() ) {
+        m_IEnergy[ make_pair( t_Side, t_EnergyFlow ) ] = make_shared< vector< double > >();
       }
     }
   }
 
-  void CSurfaceEnergy::addEnergy( const Side t_Side, const Side t_EnergySide, const double t_Value ) {
+  void CSurfaceEnergy::addEnergy( const Side t_Side, const EnergyFlow t_EnergySide, const double t_Value ) {
     m_IEnergy.at( make_pair( t_Side, t_EnergySide ) )->push_back( t_Value );
   }
 
-  double CSurfaceEnergy::IEnergy( const size_t Index, const Side t_Side, const Side t_EnergyFlow ) {
+  double CSurfaceEnergy::IEnergy( const size_t Index, const Side t_Side, const EnergyFlow t_EnergyFlow ) {
     return ( *m_IEnergy[ std::make_pair( t_Side, t_EnergyFlow ) ] )[ Index - 1 ];
   }
 
@@ -72,9 +72,10 @@ namespace MultiPane {
     addLayer( Tf, Rf, Tb, Rb, t_Side );
   }
 
-  double CInterRefSingleComponent::getEnergyToSurface( const size_t Index, const Side t_Side, const Side t_EnergySide ) {
+  double CInterRefSingleComponent::getEnergyToSurface( const size_t Index, const Side t_Side, 
+    const EnergyFlow t_EnergyFlow ) {
     calculateEnergies();
-    return m_IEnergy->IEnergy( Index, t_Side, t_EnergySide );
+    return m_IEnergy->IEnergy( Index, t_Side, t_EnergyFlow );
   }
 
   shared_ptr< CSurfaceEnergy > CInterRefSingleComponent::getSurfaceEnergy() {
@@ -83,9 +84,18 @@ namespace MultiPane {
   }
 
   double CInterRefSingleComponent::getLayerAbsorptance( const size_t Index, const Side t_Side ) {
-    double frontAbs = m_Layers[ Index - 1 ]->getProperty( Property::Abs, Side::Front ) * getEnergyToSurface( Index, Side::Front, t_Side );
-    double backAbs = m_Layers[ Index - 1 ]->getProperty( Property::Abs, Side::Back ) * getEnergyToSurface( Index, Side::Back, t_Side );
-    return frontAbs + backAbs;
+    // In this context side means energy flow, so we need to convert side into
+    // correct energy flow
+    EnergyFlow aFlow = getFlowFromSide( t_Side );
+
+    // Even if energy flow comes from one side, it still hits both sides of the layer and
+    // this loop calculates energy absorbed at each side
+    double absTot = 0;
+    for( Side aSide : EnumSide() ) {
+      absTot += m_Layers[ Index - 1 ]->getProperty( Property::Abs, aSide ) *
+        getEnergyToSurface( Index, aSide, aFlow );
+    }
+    return absTot;
   }
 
   void CInterRefSingleComponent::initialize( const double t_Tf, const double t_Rf,
@@ -111,13 +121,13 @@ namespace MultiPane {
         double iReflectance = 1 / ( 1 - Rf * Rb );
 
         if( i != m_Layers.size() ) {
-          m_IEnergy->addEnergy( Side::Front, Side::Front, Tf * iReflectance );
-          m_IEnergy->addEnergy( Side::Front, Side::Back, Tb * Rb * iReflectance );
+          m_IEnergy->addEnergy( Side::Front, EnergyFlow::Forward, Tf * iReflectance );
+          m_IEnergy->addEnergy( Side::Front, EnergyFlow::Backward, Tb * Rb * iReflectance );
         }
 
         if( i != 0 ) {
-          m_IEnergy->addEnergy( Side::Back, Side::Front, Tf * Rf * iReflectance );
-          m_IEnergy->addEnergy( Side::Back, Side::Back, Tb * iReflectance );
+          m_IEnergy->addEnergy( Side::Back, EnergyFlow::Forward, Tf * Rf * iReflectance );
+          m_IEnergy->addEnergy( Side::Back, EnergyFlow::Backward, Tb * iReflectance );
         }
       }
 

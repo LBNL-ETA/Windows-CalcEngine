@@ -9,6 +9,7 @@ namespace FenestrationCommon {
   enum class Side;
   enum class PropertySimple;
   enum class Scattering;
+  enum class ScatteringSimple;
 
 }
 
@@ -22,11 +23,21 @@ namespace LayerOptics {
   public:
     CLayer( std::shared_ptr< CScatteringSurface > t_Front, std::shared_ptr< CScatteringSurface > t_Back );
     CLayer( std::shared_ptr< const CLayer > t_Layer );
+    CLayer(
+      const double Tf_dir_dir, const double Rf_dir_dir,
+      const double Tb_dir_dir, const double Rb_dir_dir,
+      const double Tf_dir_dif, const double Rf_dir_dif,
+      const double Tb_dir_dif, const double Rb_dir_dif,
+      const double Tf_dif_dif, const double Rf_dif_dif,
+      const double Tb_dif_dif, const double Rb_dif_dif );
 
     std::shared_ptr< CScatteringSurface > getSurface( const FenestrationCommon::Side t_Side ) const;
 
-    double getProperty( const FenestrationCommon::PropertySimple t_Property, 
+    double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, 
       const FenestrationCommon::Side t_Side, const FenestrationCommon::Scattering t_Scattering ) const;
+
+    double getAbsorptance( const FenestrationCommon::Side t_Side, 
+      const FenestrationCommon::ScatteringSimple t_Scattering ) const;
 
     std::shared_ptr< CLayerSingleComponent > getLayer( const FenestrationCommon::Scattering t_Scattering ) const;
 

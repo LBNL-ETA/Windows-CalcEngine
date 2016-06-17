@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdexcept>
 
 #include "MultiLayerInterRef.hpp"
 #include "OpticalLayer.hpp"
@@ -13,7 +14,7 @@ using namespace LayerOptics;
 
 namespace MultiPane {
 
-  CInterRef::CInterRef( shared_ptr< CLayer > t_Layer ) : m_StateCalculated( false ) {
+  CInterRef::CInterRef( shared_ptr< const CLayer > t_Layer ) : m_StateCalculated( false ) {
     m_Layers.push_back( t_Layer );
     for( Scattering aScattering : EnumScattering() ) {
       m_Energy[ aScattering ] = make_shared< CSurfaceEnergy >();
@@ -25,9 +26,14 @@ namespace MultiPane {
     m_DirectComponent = make_shared< CInterRefSingleComponent >( aLayer );
     aLayer = t_Layer->getLayer( Scattering::DiffuseDiffuse );
     m_DiffuseComponent = make_shared< CInterRefSingleComponent >( aLayer );
+
+    for( Side aSide : EnumSide() ) {
+      m_Abs[ make_pair( aSide, ScatteringSimple::Diffuse ) ] = make_shared< vector< double > >();
+      m_Abs[ make_pair( aSide, ScatteringSimple::Direct ) ] = make_shared< vector< double > >();
+    }
   }
 
-  void CInterRef::addLayer( shared_ptr< CLayer > t_Layer, const Side t_Side ) {
+  void CInterRef::addLayer( shared_ptr< const CLayer > t_Layer, const Side t_Side ) {
     switch( t_Side ) {
     case Side::Front:
       m_Layers.insert( m_Layers.begin(), t_Layer );
@@ -49,11 +55,25 @@ namespace MultiPane {
     m_StateCalculated = false;
   }
 
+  double CInterRef::getAbsorptance( const size_t Index, Side t_Side, ScatteringSimple t_Scattering ) {
+    calculateEnergies();
+    shared_ptr< vector< double > > aVector = m_Abs.at( make_pair( t_Side, t_Scattering ) );
+    size_t vecSize = aVector->size();
+    if( vecSize < Index ) {
+      throw range_error("Requested layer index is out of range.");
+    }
+    return ( *aVector )[ Index - 1 ];
+  }
+
   double CInterRef::getEnergyToSurface( const size_t Index, const Side t_SurfaceSide,
-    const Side t_EnergySide, const Scattering t_Scattering ) {
+    const EnergyFlow t_EnergyFlow, const Scattering t_Scattering ) {
     calculateEnergies();
     shared_ptr< CSurfaceEnergy > aEnergy = m_Energy.at( t_Scattering );
-    return aEnergy->IEnergy( Index, t_SurfaceSide, t_EnergySide );
+    return aEnergy->IEnergy( Index, t_SurfaceSide, t_EnergyFlow );
+  }
+
+  size_t CInterRef::size() const {
+    return m_Layers.size();
   }
 
   void CInterRef::calculateEnergies() {
@@ -64,6 +84,8 @@ namespace MultiPane {
       m_Energy[ Scattering::DirectDirect ] = m_DirectComponent->getSurfaceEnergy();
       m_Energy[ Scattering::DiffuseDiffuse ] = m_DiffuseComponent->getSurfaceEnergy();
       m_Energy[ Scattering::DirectDiffuse ] = calcDirectToDiffuseComponent();
+
+      calculateAbsroptances();
 
     }
   }
@@ -77,7 +99,7 @@ namespace MultiPane {
     shared_ptr< CLayer > exterior = make_shared< CLayer >( aFront, aBack );
     aLayers->push_back( exterior );
 
-    shared_ptr< CLayer > aLayer = m_Layers[ 0 ];
+    shared_ptr< const CLayer > aLayer = m_Layers[ 0 ];
     aLayers->push_back( aLayer );
     CEquivalentLayer aEqLayer = CEquivalentLayer( aLayer );
     for( size_t i = 1; i < m_Layers.size(); ++i ) {
@@ -95,12 +117,12 @@ namespace MultiPane {
     // Insert interior environment
     shared_ptr< CScatteringSurface > aFront = make_shared< CScatteringSurface >( 1, 0, 0, 0, 1, 0 );
     shared_ptr< CScatteringSurface > aBack = make_shared< CScatteringSurface >( 1, 0, 0, 0, 1, 0 );
-    shared_ptr< CLayer > exterior = make_shared< CLayer >( aFront, aBack );
+    shared_ptr< const CLayer > exterior = make_shared< CLayer >( aFront, aBack );
     aLayers->push_back( exterior );
 
     size_t size = m_Layers.size() - 1;
     // Last layer just in
-    shared_ptr< CLayer > aLayer = m_Layers[ size ];
+    shared_ptr< const CLayer > aLayer = m_Layers[ size ];
     aLayers->insert( aLayers->begin(), aLayer );
     CEquivalentLayer aEqLayer = CEquivalentLayer( aLayer );
     for( size_t i = size; i > 0; --i ) {
@@ -115,22 +137,23 @@ namespace MultiPane {
     //Sum of previous two components. Total diffuse energy that gets off the surfaces.
     shared_ptr< CSurfaceEnergy > diffSum = make_shared< CSurfaceEnergy >();
 
-    for( Side aEnergyFlow : EnumSide() ) {
+    for( EnergyFlow aEnergyFlow : EnumEnergyFlow() ) {
       for( size_t i = 1; i <= m_Layers.size(); ++i ) { // Layer indexing goes from one
         for( Side aSide : EnumSide() ) {
           Side oppSide = oppositeSide( aSide );
           // Calculate diffuse energy from direct exterior/interior beam
           double beamEnergy = 0;
 
-          shared_ptr< CLayer > curLayer = ( *m_StackedLayers.at( oppSide ) )[ i ];
+          shared_ptr< const CLayer > curLayer = ( *m_StackedLayers.at( oppSide ) )[ i ];
 
-          if( aSide != aEnergyFlow ) {
-            beamEnergy = curLayer->getProperty( PropertySimple::T, oppSide, Scattering::DirectDiffuse );
+          if( ( aSide == Side::Front && aEnergyFlow == EnergyFlow::Backward ) || 
+              ( aSide == Side::Back && aEnergyFlow == EnergyFlow::Forward ) ) {
+            beamEnergy = curLayer->getPropertySimple( PropertySimple::T, oppSide, Scattering::DirectDiffuse );
           }
 
           // Energy that gets converted to diffuse from beam that comes from interreflections in 
           // the gap or interior/exterior environments
-          double R = curLayer->getProperty( PropertySimple::R, aSide, Scattering::DirectDiffuse );
+          double R = curLayer->getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse );
           double intEnergy = R * m_Energy.at( Scattering::DirectDirect )->IEnergy( i, aSide, aEnergyFlow );
           diffSum->addEnergy( aSide, aEnergyFlow, beamEnergy + intEnergy );
         }
@@ -150,12 +173,12 @@ namespace MultiPane {
     shared_ptr< CSurfaceEnergy > aScatter = make_shared< CSurfaceEnergy >();
     
     // Calculate total energy scatterred from beam to diffuse
-    for( Side aEnergyFlow : EnumSide() ) {
+    for( EnergyFlow aEnergyFlow : EnumEnergyFlow() ) {
       // In this case numbering goes through gas environments (gaps, interior and exterior)
       // becase we want to keep interreflectance calculations together
       for( size_t i = 0; i <= m_Layers.size(); ++i ) {
-        shared_ptr< CLayer > fwdLayer = ( *m_StackedLayers.at( Side::Front ) )[ i ];
-        shared_ptr< CLayer > bkwLayer = ( *m_StackedLayers.at( Side::Back ) )[ i + 1 ];
+        shared_ptr< const CLayer > fwdLayer = ( *m_StackedLayers.at( Side::Front ) )[ i ];
+        shared_ptr< const CLayer > bkwLayer = ( *m_StackedLayers.at( Side::Back ) )[ i + 1 ];
         double Ib = 0;
         if( i != 0 ) {
           Ib = diffSum->IEnergy( i, Side::Back, aEnergyFlow );
@@ -164,10 +187,10 @@ namespace MultiPane {
         if( i != m_Layers.size() ) {
           If = diffSum->IEnergy( i + 1, Side::Front, aEnergyFlow );
         }
-        double Rf_bkw = bkwLayer->getProperty( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
-        double Rb_fwd = fwdLayer->getProperty( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
+        double Rf_bkw = bkwLayer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
+        double Rb_fwd = fwdLayer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
         double interRef = 1 / ( 1 - Rf_bkw * Rb_fwd );
-        double Rb_bkw = bkwLayer->getProperty( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
+        double Rb_bkw = bkwLayer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
         double Ib_tot = ( Ib * Rf_bkw + If ) * interRef;
         double If_tot = ( Ib + Rb_fwd * If ) * interRef;
         if( i != 0 ) {
@@ -180,6 +203,27 @@ namespace MultiPane {
     }
 
     return aScatter;
+  }
+
+  void CInterRef::calculateAbsroptances() {
+    for( size_t i = 0; i < m_Layers.size(); ++i ) {
+      for( EnergyFlow aEnergyFlow : EnumEnergyFlow() ) {
+        double EnergyDirect = 0;
+        double EnergyDiffuse = 0;
+        for( Side aSide : EnumSide() ) {
+          double Adir = m_Layers[ i ]->getAbsorptance( aSide, ScatteringSimple::Direct );
+          EnergyDirect += Adir * m_Energy[ Scattering::DirectDirect ]->IEnergy( i + 1, aSide, aEnergyFlow );
+          double Adif = m_Layers[ i ]->getAbsorptance( aSide, ScatteringSimple::Diffuse );
+          EnergyDirect += Adif * m_Energy[ Scattering::DirectDiffuse ]->IEnergy( i + 1, aSide, aEnergyFlow );
+          EnergyDiffuse += Adif * m_Energy[ Scattering::DiffuseDiffuse ]->IEnergy( i + 1, aSide, aEnergyFlow );
+        }
+        // Note that front and back absorptances are actually reffereing to forward and backward
+        // energy flows. That is why we need this conversion.
+        Side flowSide = getSideFromFlow( aEnergyFlow );
+        m_Abs.at( make_pair( flowSide, ScatteringSimple::Direct ) )->push_back( EnergyDirect );
+        m_Abs.at( make_pair( flowSide, ScatteringSimple::Diffuse ) )->push_back( EnergyDiffuse );
+      }
+    }
   }
 
 }

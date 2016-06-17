@@ -9,7 +9,9 @@ using namespace FenestrationCommon;
 
 namespace MultiPane {
 
-  CMultiLayerSingleComponent::CMultiLayerSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb ) {
+  CMultiLayerSingleComponent::CMultiLayerSingleComponent( 
+    const double t_Tf, const double t_Rf, 
+    const double t_Tb, const double t_Rb ) {
     m_Inter = make_shared< CInterRefSingleComponent >( t_Tf, t_Rf, t_Tb, t_Rb );
     m_Equivalent = make_shared< CEquivalentLayerSingleComponent >( t_Tf, t_Rf, t_Tb, t_Rb );
   }
