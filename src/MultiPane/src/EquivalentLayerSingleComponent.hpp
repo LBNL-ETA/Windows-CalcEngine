@@ -13,7 +13,7 @@ namespace LayerOptics {
 
 namespace MultiPane {
 
-  // Class to calculate double layer transmittance and reflectances only
+  // Class to calculate equivalent layer transmittance and reflectances only.
   class CEquivalentLayerSingleComponent {
   public:
     CEquivalentLayerSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
@@ -36,10 +36,12 @@ namespace MultiPane {
       std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2 ) const;
 
     double T( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer1, 
-      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, FenestrationCommon::Side t_Side ) const;
+      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, 
+      FenestrationCommon::Side t_Side ) const;
 
     double R( std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer1, 
-      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, FenestrationCommon::Side t_Side ) const;
+      std::shared_ptr< const LayerOptics::CLayerSingleComponent > t_Layer2, 
+      FenestrationCommon::Side t_Side ) const;
 
     std::shared_ptr< LayerOptics::CLayerSingleComponent > m_EquivalentLayer;
 

@@ -8,7 +8,7 @@
 namespace MultiPane {
 
   class CEquivalentLayerSingleComponent;
-  class CInterreflectances;
+  class CInterRefSingleComponent;
 
   // Class to calculate multilayer optical properties for single component (direct or diffuse)
   class CMultiLayerSingleComponent {
@@ -26,7 +26,7 @@ namespace MultiPane {
     double getLayerAbsorptance( const size_t Index, const FenestrationCommon::Side t_Side );
 
   private:
-    std::shared_ptr< CInterreflectances > m_Inter;
+    std::shared_ptr< CInterRefSingleComponent > m_Inter;
     std::shared_ptr< CEquivalentLayerSingleComponent > m_Equivalent;
 
   };

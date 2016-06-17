@@ -7,29 +7,13 @@
 #include "SpectralSample.hpp"
 #include "AngularSpectralSample.hpp"
 #include "NIRRatio.hpp"
+#include "OpticalSurface.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 
 namespace LayerOptics {
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Surface
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  Surface::Surface( const double t_T, const double t_R ) {
-    if( t_T + t_R > 1 ) {
-      throw runtime_error("Sum of transmittance and reflectance is greater than one.");
-    }
-    m_Property[ Property::T ] = t_T;
-    m_Property[ Property::R ] = t_R;
-    m_Property[ Property::Abs ] = 1 - t_T - t_R;
-  }
-
-  double Surface::getProperty( const Property t_Property ) {
-    return m_Property.at( t_Property );
-  }
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////   RMaterialProperties
@@ -38,8 +22,8 @@ namespace LayerOptics {
   RMaterialProperties::RMaterialProperties( const double aTf, const double aTb, 
     const double aRf, const double aRb ) {
 
-    m_Surface[ Side::Front ] = make_shared< Surface >( aTf, aRf );
-    m_Surface[ Side::Back ] = make_shared< Surface >( aTb, aRb );
+    m_Surface[ Side::Front ] = make_shared< CSurface >( aTf, aRf );
+    m_Surface[ Side::Back ] = make_shared< CSurface >( aTb, aRb );
 
   }
 
@@ -118,8 +102,8 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////
   CMaterialSingleBand::CMaterialSingleBand( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb,
     const double minLambda, const double maxLambda ) : CMaterialBand( minLambda, maxLambda ) {
-	m_Property[ Side::Front ] = make_shared< Surface >( t_Tf, t_Rf );
-	m_Property[ Side::Back ] = make_shared< Surface >( t_Tb, t_Rb );
+	  m_Property[ Side::Front ] = make_shared< CSurface >( t_Tf, t_Rf );
+	  m_Property[ Side::Back ] = make_shared< CSurface >( t_Tb, t_Rb );
   }
 
   double CMaterialSingleBand::getProperty( Property t_Property, Side t_Side ) const {
