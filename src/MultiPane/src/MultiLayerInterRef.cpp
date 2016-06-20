@@ -190,7 +190,6 @@ namespace MultiPane {
         double Rf_bkw = bkwLayer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
         double Rb_fwd = fwdLayer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
         double interRef = 1 / ( 1 - Rf_bkw * Rb_fwd );
-        double Rb_bkw = bkwLayer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
         double Ib_tot = ( Ib * Rf_bkw + If ) * interRef;
         double If_tot = ( Ib + Rb_fwd * If ) * interRef;
         if( i != 0 ) {
