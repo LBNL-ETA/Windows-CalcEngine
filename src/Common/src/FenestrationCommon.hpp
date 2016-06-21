@@ -44,7 +44,7 @@ namespace FenestrationCommon {
   }
   
   inline EnumSide::Iterator end( EnumSide ) {
-    return typename EnumSide::Iterator( ( ( int )Side::Back ) + 1 );
+    return EnumSide::Iterator( ( ( int )Side::Back ) + 1 );
   }
   
   //////////////////////////////////////////////////////////////////////////
