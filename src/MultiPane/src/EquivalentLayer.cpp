@@ -110,8 +110,8 @@ namespace MultiPane {
     shared_ptr< const CScatteringSurface > b1 = t_First->getSurface( Side::Back );
     shared_ptr< const CScatteringSurface > f2 = t_Second->getSurface( Side::Front );
     shared_ptr< const CScatteringSurface > b2 = t_Second->getSurface( Side::Back );
-    shared_ptr< SimpleResults > frontSide = calcDirectDiffuseTransAndRefl( f1, b1, f2, b2 );
-    shared_ptr< SimpleResults > backSide = calcDirectDiffuseTransAndRefl( b2, f2, b1, f1 );
+    shared_ptr< SimpleResults > frontSide = calcDirectDiffuseTransAndRefl( f1, b1, f2 );
+    shared_ptr< SimpleResults > backSide = calcDirectDiffuseTransAndRefl( b2, f2, b1 );
 
     double Tf_dir_dif = frontSide->T;
     double Rf_dir_dif = frontSide->R;
@@ -151,8 +151,7 @@ namespace MultiPane {
   shared_ptr< SimpleResults > CEquivalentLayer::calcDirectDiffuseTransAndRefl( 
     shared_ptr< const CScatteringSurface > f1,
     shared_ptr< const CScatteringSurface > b1,
-    shared_ptr< const CScatteringSurface > f2,
-    shared_ptr< const CScatteringSurface > b2 ) {
+    shared_ptr< const CScatteringSurface > f2 ) {
     
     shared_ptr< SimpleResults > aResult = make_shared< SimpleResults >();
 

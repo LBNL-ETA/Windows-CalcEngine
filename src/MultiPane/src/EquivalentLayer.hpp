@@ -68,8 +68,7 @@ namespace MultiPane {
     std::shared_ptr< SimpleResults > calcDirectDiffuseTransAndRefl( 
       std::shared_ptr< const LayerOptics::CScatteringSurface > f1, 
       std::shared_ptr< const LayerOptics::CScatteringSurface > b1, 
-      std::shared_ptr< const LayerOptics::CScatteringSurface > f2, 
-      std::shared_ptr< const LayerOptics::CScatteringSurface > b2 );
+      std::shared_ptr< const LayerOptics::CScatteringSurface > f2 );
 
     std::shared_ptr< LayerOptics::CLayer > m_Layer;
     
