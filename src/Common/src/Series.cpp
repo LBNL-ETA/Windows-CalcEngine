@@ -48,7 +48,7 @@ namespace FenestrationCommon {
   //  CSeries
   /////////////////////////////////////////////////////
 
-  CSeries::CSeries() { };
+  CSeries::CSeries() { }
 
   void CSeries::addProperty( double t_x, double t_Value ) {
     shared_ptr< CSeriesPoint > aProperty = make_shared< CSeriesPoint >( t_x, t_Value );

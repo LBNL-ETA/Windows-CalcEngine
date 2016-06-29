@@ -47,6 +47,6 @@ namespace Gases
     bool m_DefaultGas;
   };
 
-};
+}
 
 #endif

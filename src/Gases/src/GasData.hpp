@@ -35,6 +35,6 @@ namespace Gases
       std::shared_ptr< CIntCoeff const > m_coeffVisc;
   };
 
-};
+}
 
 #endif

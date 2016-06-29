@@ -57,7 +57,7 @@ namespace MultiPane {
     const double Tb = t_Layer->getProperty( Property::T, Side::Back );
     const double Rb = t_Layer->getProperty( Property::R, Side::Back );
     addLayer( Tf, Rf, Tb, Rb, t_Side );
-  };
+  }
 
   double CEquivalentLayerSingleComponent::getProperty( const Property t_Property, const Side t_Side ) const {
     return m_EquivalentLayer->getProperty( t_Property, t_Side );

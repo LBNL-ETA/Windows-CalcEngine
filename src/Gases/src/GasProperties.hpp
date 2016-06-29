@@ -39,6 +39,6 @@ namespace Gases
     bool m_PropertiesCalculated;
   };
 
-};
+}
 
 #endif

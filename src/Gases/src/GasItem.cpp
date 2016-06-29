@@ -92,4 +92,4 @@ namespace Gases {
     return m_FractionalGasProperties;
   }
 
-};
+}

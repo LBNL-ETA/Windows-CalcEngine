@@ -73,4 +73,4 @@ namespace Gases
     return m_molWeight;
   }
 
-};
+}

@@ -265,4 +265,4 @@ namespace Gases
     return *this;
   }
 
-};
+}
