@@ -24,9 +24,43 @@ namespace Tarcog {
     m_FrontSurface->setTemperature( t_AirTemperature );
   }
 
-  void CTarOutdoorEnvironment::calculateRadiationState() {
+  // void CTarOutdoorEnvironment::calculateRadiationState() {
+  //   double aEmissivity = 0;
+  //   switch ( m_SkyModel ) {
+  //   case AllSpecified:
+  //     aEmissivity = m_Emissivity * pow( m_Tsky, 4 ) / pow( m_AirTemperature, 4 );
+  //     break;
+  //   case TSkySpecified:
+  //     aEmissivity = pow( m_Tsky, 4 ) / pow( m_AirTemperature, 4 );
+  //     break;
+  //   case Swinbank:
+  //     aEmissivity = 5.31e-13 * pow( m_AirTemperature, 6 ) / ( STEFANBOLTZMANN * pow( m_AirTemperature, 4 ) );
+  //     break;
+  //   default:
+  //     throw runtime_error( "Incorrect sky model specified." );
+  //     break;
+  //   }
+  // 
+  //   double radiationTemperature = 0;
+  //   if ( m_HCoefficientModel == HPrescribed ) {
+  //     radiationTemperature = m_AirTemperature;
+  //   }
+  //   else {
+  //     double fSky = ( 1 + cos( m_Tilt * M_PI / 180 ) ) / 2;
+  //     double fGround = 1 - fSky;
+  //     double eZero = fGround + ( 1 - m_FractionOfClearSky ) * fSky + fSky * m_FractionOfClearSky * aEmissivity;
+  //     radiationTemperature = m_AirTemperature * pow( eZero, 0.25 );
+  //   }
+  // 
+  //   m_EnvironmentRadiosity = STEFANBOLTZMANN * pow( radiationTemperature, 4 );
+  //   assert( m_FrontSurface != nullptr );
+  //   m_FrontSurface->setJ( m_EnvironmentRadiosity );
+  // 
+  // }
+
+  double CTarOutdoorEnvironment::calculateIRFromVariables() {
     double aEmissivity = 0;
-    switch ( m_SkyModel ) {
+    switch( m_SkyModel ) {
     case AllSpecified:
       aEmissivity = m_Emissivity * pow( m_Tsky, 4 ) / pow( m_AirTemperature, 4 );
       break;
@@ -42,20 +76,21 @@ namespace Tarcog {
     }
 
     double radiationTemperature = 0;
-    if ( m_HCoefficientModel == HPrescribed ) {
+    if( m_HCoefficientModel == HPrescribed ) {
       radiationTemperature = m_AirTemperature;
-    }
-    else {
+    } else {
       double fSky = ( 1 + cos( m_Tilt * M_PI / 180 ) ) / 2;
       double fGround = 1 - fSky;
       double eZero = fGround + ( 1 - m_FractionOfClearSky ) * fSky + fSky * m_FractionOfClearSky * aEmissivity;
       radiationTemperature = m_AirTemperature * pow( eZero, 0.25 );
     }
 
-    m_EnvironmentRadiosity = STEFANBOLTZMANN * pow( radiationTemperature, 4 );
-    assert( m_FrontSurface != nullptr );
-    m_FrontSurface->setJ( m_EnvironmentRadiosity );
+    return STEFANBOLTZMANN * pow( radiationTemperature, 4 );
+  }
 
+  void CTarOutdoorEnvironment::storeRadiationAtSurface() {
+    assert( m_FrontSurface != nullptr );
+    m_FrontSurface->setJ( m_InfraredRadiation );
   }
 
   void CTarOutdoorEnvironment::setSkyModel( SkyModel const t_SkyModel ) {
@@ -88,8 +123,7 @@ namespace Tarcog {
   }
 
   void CTarOutdoorEnvironment::calculateConvectionConductionState() {
-    switch ( m_HCoefficientModel )
-    {
+    switch ( m_HCoefficientModel ) {
       case Tarcog::CalculateH: {
         calculateHc();
         break;

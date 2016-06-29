@@ -21,8 +21,7 @@ private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp()
-  {    
+  virtual void SetUp() {    
     try {
       /////////////////////////////////////////////////////////
       // Outdoor

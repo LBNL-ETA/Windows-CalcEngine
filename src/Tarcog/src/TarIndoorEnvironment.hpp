@@ -18,7 +18,9 @@ namespace Tarcog {
     void setRoomRadiationTemperature( double const t_RadiationTemperature );
 
   private:
-    void calculateRadiationState();
+    // void calculateRadiationState();
+    double calculateIRFromVariables();
+    void storeRadiationAtSurface();
     void calculateConvectionConductionState();
     void calculateHc();
 

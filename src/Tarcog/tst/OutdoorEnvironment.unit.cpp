@@ -90,7 +90,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_AllSpecified ) {
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
     aOutdoor->setSkyModel( SkyModel::AllSpecified );
 
-    double radiosity = aOutdoor->getEnvironmentRadiosity();
+    double radiosity = aOutdoor->getIRRadiation();
 
     EXPECT_NEAR( 380.278401885, radiosity, 1e-6 );
   } catch( exception &e ) {
@@ -111,7 +111,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_TSkySpecified ) {
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
     aOutdoor->setSkyModel( SkyModel::TSkySpecified );
 
-    double radiosity = aOutdoor->getEnvironmentRadiosity();
+    double radiosity = aOutdoor->getIRRadiation();
 
     EXPECT_NEAR( 380.278401885, radiosity, 1e-6 );
   } catch( exception &e ) {
@@ -132,7 +132,7 @@ TEST_F( TestOutdoorEnvironment, CalculateH_Swinbank ) {
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
     aOutdoor->setSkyModel( SkyModel::Swinbank );
 
-    double radiosity = aOutdoor->getEnvironmentRadiosity();
+    double radiosity = aOutdoor->getIRRadiation();
 
     EXPECT_NEAR( 423.17235, radiosity, 1e-6 );
   } catch( exception &e ) {
@@ -153,7 +153,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_AllSpecified ) {
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
     aOutdoor->setSkyModel( SkyModel::AllSpecified );
 
-    double radiosity = aOutdoor->getEnvironmentRadiosity();
+    double radiosity = aOutdoor->getIRRadiation();
 
     EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
   } catch( exception &e ) {
@@ -174,7 +174,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_TSkySpecified ) {
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
     aOutdoor->setSkyModel( SkyModel::TSkySpecified );
 
-    double radiosity = aOutdoor->getEnvironmentRadiosity();
+    double radiosity = aOutdoor->getIRRadiation();
 
     EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
   } catch( exception &e ) {
@@ -195,7 +195,7 @@ TEST_F( TestOutdoorEnvironment, HPrescribed_Swinbank ) {
     aOutdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
     aOutdoor->setSkyModel( SkyModel::Swinbank );
 
-    double radiosity = aOutdoor->getEnvironmentRadiosity();
+    double radiosity = aOutdoor->getIRRadiation();
 
     EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
   } catch( exception &e ) {

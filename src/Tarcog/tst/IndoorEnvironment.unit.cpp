@@ -87,7 +87,7 @@ TEST_F( TestIndoorEnvironment, IndoorRadiosity ) {
     aIndoor = GetIndoors();
     ASSERT_TRUE( aIndoor != nullptr );
 
-    double radiosity = aIndoor->getEnvironmentRadiosity();
+    double radiosity = aIndoor->getIRRadiation();
     EXPECT_NEAR( 424.458749869075, radiosity, 1e-6 );
   } catch( exception &e ) {
     cout << e.what() << endl;

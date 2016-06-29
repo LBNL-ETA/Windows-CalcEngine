@@ -7,10 +7,7 @@ namespace Tarcog {
 
   enum SkyModel { AllSpecified, TSkySpecified, Swinbank };
 
-  class CTarOutdoorEnvironment :
-
-    public CTarEnvironment
-  {
+  class CTarOutdoorEnvironment : public CTarEnvironment {
   public:
     CTarOutdoorEnvironment( double t_Temperature, double t_Pressure, double t_AirSpeed, 
       AirHorizontalDirection t_AirDirection );
@@ -25,7 +22,8 @@ namespace Tarcog {
     void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 
   private:
-    void calculateRadiationState();
+    double calculateIRFromVariables();
+    void storeRadiationAtSurface();
     void calculateConvectionConductionState();
 
     void calculateHc();

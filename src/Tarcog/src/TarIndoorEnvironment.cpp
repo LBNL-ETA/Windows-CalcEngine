@@ -21,9 +21,9 @@ namespace Tarcog {
     using ConstantsData::STEFANBOLTZMANN;
 
     m_RoomRadiationTemperature = t_AirTemperature; // Radiation temperature is by default air
-    double roomRadiosity = STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
+    // double roomRadiosity = STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
     m_BackSurface = make_shared< CTarSurface >( m_Emissivity, 0 );
-    m_BackSurface->setJ( roomRadiosity );
+    // m_BackSurface->setJ( roomRadiosity );
     m_BackSurface->setTemperature( t_AirTemperature );
   }
 
@@ -36,11 +36,21 @@ namespace Tarcog {
     resetCalculated();
   }
 
-  void CTarIndoorEnvironment::calculateRadiationState() {
-    using ConstantsData::STEFANBOLTZMANN;
+  // void CTarIndoorEnvironment::calculateRadiationState() {
+  //   using ConstantsData::STEFANBOLTZMANN;
+  // 
+  //   CTarEnvironment::calculateRadiationState();
+  //   m_EnvironmentRadiosity = STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
+  // }
 
-    CTarEnvironment::calculateRadiationState();
-    m_EnvironmentRadiosity = STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
+  double CTarIndoorEnvironment::calculateIRFromVariables() {
+    using ConstantsData::STEFANBOLTZMANN;
+    return STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
+  }
+
+  void CTarIndoorEnvironment::storeRadiationAtSurface() {
+    assert( m_BackSurface != nullptr );
+    m_BackSurface->setJ( m_InfraredRadiation );
   }
 
   void CTarIndoorEnvironment::calculateConvectionConductionState() {
