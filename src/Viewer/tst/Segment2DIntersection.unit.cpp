@@ -33,7 +33,7 @@ TEST_F( TestSegment2DIntersection, Segment2DTest1 ) {
 
   bool isInt = aSegment1->intersectionWithSegment( aSegment2 );
 
-  EXPECT_EQ( false, isInt );
+  EXPECT_FALSE( isInt );
 
 }
 
@@ -52,7 +52,7 @@ TEST_F( TestSegment2DIntersection, Segment2DTest2 ) {
 
   bool isInt = aSegment1->intersectionWithSegment( aSegment2 );
 
-  EXPECT_EQ( false, isInt );
+  EXPECT_FALSE( isInt );
 
 }
 
@@ -71,7 +71,7 @@ TEST_F( TestSegment2DIntersection, Segment2DTest3 ) {
 
   bool isInt = aSegment1->intersectionWithSegment( aSegment2 );
 
-  EXPECT_EQ( false, isInt );
+  EXPECT_FALSE( isInt );
 
 }
 
@@ -90,7 +90,7 @@ TEST_F( TestSegment2DIntersection, Segment2DTest4 ) {
 
   bool isInt = aSegment1->intersectionWithSegment( aSegment2 );
 
-  EXPECT_EQ( false, isInt );
+  EXPECT_FALSE( isInt );
 
 }
 
@@ -109,7 +109,7 @@ TEST_F( TestSegment2DIntersection, Segment2DTest5 ) {
 
   bool isInt = aSegment1->intersectionWithSegment( aSegment2 );
 
-  EXPECT_EQ( false, isInt );
+  EXPECT_FALSE( isInt );
 
 }
 
@@ -128,6 +128,6 @@ TEST_F( TestSegment2DIntersection, Segment2DTest6 ) {
 
   bool isInt = aSegment1->intersectionWithSegment( aSegment2 );
 
-  EXPECT_EQ( false, isInt );
+  EXPECT_FALSE( isInt );
 
 }

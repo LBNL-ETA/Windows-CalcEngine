@@ -29,15 +29,6 @@ TEST_F( TestSegment2D, Segment2DTest1 ) {
   double length = aSegment.length();
 
   EXPECT_NEAR( 10, length, 1e-6 );
-
-  // shared_ptr< CSegment2D > aNormal = aSegment.getNormal();
-  // shared_ptr< const CPoint2D > aNormalPoint = aNormal->endPoint();
-  // double x = aNormalPoint->x();
-  // double y = aNormalPoint->y();
-  // 
-  // EXPECT_NEAR( 0, x, 1e-6 );
-  // EXPECT_NEAR( -1, y, 1e-6 );
-
 }
 
 TEST_F( TestSegment2D, Segment2DTest2 ) {
@@ -51,13 +42,4 @@ TEST_F( TestSegment2D, Segment2DTest2 ) {
   double length = aSegment.length();
 
   EXPECT_NEAR( 14.14213562, length, 1e-6 );
-
-  // shared_ptr< CSegment2D > aNormal = aSegment.getNormal();
-  // shared_ptr< const CPoint2D > aNormalPoint = aNormal->endPoint();
-  // double x = aNormalPoint->x();
-  // double y = aNormalPoint->y();
-  // 
-  // EXPECT_NEAR( 0.707106781, x, 1e-6 );
-  // EXPECT_NEAR( -0.707106781, y, 1e-6 );
-
 }
