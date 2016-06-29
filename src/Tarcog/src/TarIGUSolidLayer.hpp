@@ -35,8 +35,8 @@ namespace Tarcog {
     void setSurfaceState( double const t_Temperature, double const t_J, FenestrationCommon::Side const t_Position );
     void initializeStateVariables();
 
-    double m_SolarAbsorptance;
     double m_Conductivity;
+    double m_SolarAbsorptance;
   };
 
 }

@@ -45,12 +45,12 @@ namespace Tarcog {
 
     double m_DirectSolarRadiation;
     double m_AirTemperature; // environment temperature [K]
-    double m_InfraredRadiation; // Infrared radiation from environemnt [W/m2]
-    bool m_IRCalculatedOutside; // Keep info if IR radiation is provided (calculated) outside
     double m_Emissivity; // Emissivity from the environment
-    BoundaryConditionsCoeffModel m_HCoefficientModel; // Model used to calculate BC coefficient
+    double m_InfraredRadiation; // Infrared radiation from environemnt [W/m2]
     double m_HInput; // Input convection coefficient which type depends on selected BC model [W/m2*K]
+    BoundaryConditionsCoeffModel m_HCoefficientModel; // Model used to calculate BC coefficient
     double m_Hr; // Radiative surface heat transfer coefficient [W/m2*K]
+    bool m_IRCalculatedOutside; // Keep info if IR radiation is provided (calculated) outside
 
     // double m_EnvironmentRadiosity; // Radiation from the environment
 

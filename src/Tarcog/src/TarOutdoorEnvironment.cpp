@@ -21,7 +21,7 @@ namespace Tarcog {
     const double t_AirSpeed, const double t_DirectSolarRadiation, const AirHorizontalDirection t_AirDirection, 
     const double t_SkyTemperature, const SkyModel t_Model, const double t_FractionClearSky ) : 
     CTarEnvironment( t_AirTemperature, t_Pressure, t_AirSpeed, t_AirDirection ), m_Tsky( t_SkyTemperature ), 
-    m_FractionOfClearSky( DEFAULT_FRACTION_OF_CLEAR_SKY ), m_SkyModel( t_Model ) {
+    m_FractionOfClearSky( t_FractionClearSky ), m_SkyModel( t_Model ) {
     m_FrontSurface = make_shared< CTarSurface >();
     m_FrontSurface->setTemperature( t_AirTemperature );
     m_DirectSolarRadiation = t_DirectSolarRadiation;

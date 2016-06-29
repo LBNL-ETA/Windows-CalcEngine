@@ -11,8 +11,8 @@ namespace Tarcog {
   CTarEnvironment::CTarEnvironment( double t_AirTemperature, double t_Pressure, double t_AirSpeed, 
     AirHorizontalDirection t_AirDirection ) : CGasLayer( t_Pressure, t_AirSpeed, t_AirDirection ),
     m_DirectSolarRadiation( 0 ), m_AirTemperature( t_AirTemperature ), m_Emissivity( DEFAULT_ENV_EMISSIVITY ),
-    m_HInput( 0 ), m_InfraredRadiation( 0 ), m_IRCalculatedOutside( false ),
-    m_HCoefficientModel( BoundaryConditionsCoeffModel::CalculateH  ) {
+    m_InfraredRadiation( 0 ), m_HInput( 0 ), m_HCoefficientModel( BoundaryConditionsCoeffModel::CalculateH  ),
+	m_IRCalculatedOutside( false ) {
     m_ForcedVentilation = ForcedVentilation(); // Creates forced ventilation with zero values
   }
 

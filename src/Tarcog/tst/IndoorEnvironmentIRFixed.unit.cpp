@@ -41,7 +41,6 @@ protected:
     /////////////////////////////////////////////////////////
 
     double roomTemperature = 294.15;
-    double roomAirSpeed = 0;
     double IRRadiation = 321;
 
     m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );

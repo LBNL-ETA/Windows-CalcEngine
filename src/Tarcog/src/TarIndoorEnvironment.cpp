@@ -17,7 +17,6 @@ namespace Tarcog {
   // Keep airspeed to zero and airdirection to default windward
   CTarIndoorEnvironment::CTarIndoorEnvironment( const double t_AirTemperature, const double t_Pressure ) : 
     CTarEnvironment( t_AirTemperature, t_Pressure, 0, AirHorizontalDirection::Windward ) { 
-    using ConstantsData::STEFANBOLTZMANN;
 
     m_RoomRadiationTemperature = t_AirTemperature; // Radiation temperature is by default air
     // double roomRadiosity = STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
