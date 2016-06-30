@@ -10,7 +10,7 @@ namespace Tarcog {
 
   CTarEnvironment::CTarEnvironment( double t_AirTemperature, double t_Pressure, double t_AirSpeed, 
     AirHorizontalDirection t_AirDirection ) : CGasLayer( t_Pressure, t_AirSpeed, t_AirDirection ),
-    m_AirTemperature( t_AirTemperature ), m_Emissivity( DEFAULT_ENV_EMISSIVITY ),
+    m_DirectSolarRadiation( 0 ), m_AirTemperature( t_AirTemperature ), m_Emissivity( DEFAULT_ENV_EMISSIVITY ),
     m_HInput( 0 ), m_InfraredRadiation( 0 ), m_IRCalculatedOutside( false ),
     m_HCoefficientModel( BoundaryConditionsCoeffModel::CalculateH  )
   {
@@ -25,12 +25,13 @@ namespace Tarcog {
     return m_AirTemperature;
   }
 
-  void CTarEnvironment::setHCoeffModel( BoundaryConditionsCoeffModel const t_BCModel ) {
+  void CTarEnvironment::setHCoeffModel( const BoundaryConditionsCoeffModel t_BCModel, const double t_HCoeff ) {
     m_HCoefficientModel = t_BCModel;
+    m_HInput = t_HCoeff;
     resetCalculated();
   }
 
-  void CTarEnvironment::setForcedVentilation( ForcedVentilation const &t_ForcedVentilation ) {
+  void CTarEnvironment::setForcedVentilation( const ForcedVentilation &t_ForcedVentilation ) {
     m_ForcedVentilation = t_ForcedVentilation;
     resetCalculated();
   }
@@ -58,6 +59,10 @@ namespace Tarcog {
   double CTarEnvironment::getIRRadiation() {
     calculateLayerState();
     return m_InfraredRadiation;
+  }
+
+  double CTarEnvironment::getDirectSolarRadiation() const {
+    return m_DirectSolarRadiation;
   }
 
   void CTarEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > ) {

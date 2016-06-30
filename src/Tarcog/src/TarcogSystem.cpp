@@ -17,8 +17,8 @@ using namespace std;
 namespace Tarcog {
 
   CTarcogSystem::CTarcogSystem( shared_ptr< CTarIGU > t_IGU,
-                   shared_ptr< CTarIndoorEnvironment > t_Indoor,
-                   shared_ptr< CTarOutdoorEnvironment > t_Outdoor ) :
+                   shared_ptr< CTarEnvironment > t_Indoor,
+                   shared_ptr< CTarEnvironment > t_Outdoor ) :
                    m_IGU( t_IGU ), m_Indoor( t_Indoor ), m_Outdoor( t_Outdoor ) {
 
     if( t_IGU == nullptr ) {

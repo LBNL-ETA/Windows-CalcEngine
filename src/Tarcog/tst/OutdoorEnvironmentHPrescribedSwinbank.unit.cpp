@@ -12,7 +12,7 @@
 using namespace Tarcog;
 using namespace std;
 
-class TestOutdoorEnvironmentIRFixed : public testing::Test {
+class TestOutdoorEnvironmentHPrescribedSwingbank : public testing::Test {
 
 private:
   shared_ptr< CTarEnvironment > Outdoor;
@@ -20,22 +20,20 @@ private:
 
 protected:
   virtual void SetUp() {
-    try {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
     double airTemperature = 300; // Kelvins
-    double tSky = airTemperature;
     double pressure = 101325; // Pascals
     double airSpeed = 5.5; // meters per second
     AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
+    double tSky = 270; // Kelvins
     double solarRadiation = 0;
-    double IRRadiation = 370; // [ W/m2 ]
 
     Outdoor = make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
-      airDirection, tSky, SkyModel::AllSpecified );
+      airDirection, tSky, SkyModel::Swinbank );
     ASSERT_TRUE( Outdoor != nullptr );
-    Outdoor->setInfraredRadiation( IRRadiation );
+    Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
 
     /////////////////////////////////////////////////////////
     // Indoor
@@ -68,10 +66,6 @@ protected:
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
-    } catch( exception &e ) {
-      cout << e.what() << endl;
-      throw &e;
-    }
   }
 
 public:
@@ -79,17 +73,16 @@ public:
 
 };
 
-TEST_F( TestOutdoorEnvironmentIRFixed, CalculateIRFixed ) {
+TEST_F( TestOutdoorEnvironmentHPrescribedSwingbank, HPrescribed_Swinbank ) {
+  SCOPED_TRACE( "Begin Test: Outdoors -> H model = Prescribed; Sky Model = Swinbank" );
+  
+  std::shared_ptr< CTarEnvironment > aOutdoor = nullptr;
+  
+  aOutdoor = GetOutdoors();
+  ASSERT_TRUE( aOutdoor != nullptr );
 
-    SCOPED_TRACE( "Begin Test: Outdoors -> Infrared radiation fixed (user input)." );
-    
-    shared_ptr< CTarEnvironment > aOutdoor = nullptr;
-    
-    aOutdoor = GetOutdoors();
-    ASSERT_TRUE( aOutdoor != nullptr );
-
-    double radiosity = aOutdoor->getIRRadiation();
-
-    EXPECT_NEAR( 370, radiosity, 1e-6 );
+  double radiosity = aOutdoor->getIRRadiation();
+  
+  EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
 
 }

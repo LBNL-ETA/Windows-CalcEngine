@@ -15,7 +15,7 @@ using namespace std;
 class TestIndoorEnvironmentIRFixed : public testing::Test {
 
 private:
-  shared_ptr< CTarIndoorEnvironment > m_Indoor;
+  shared_ptr< CTarEnvironment > m_Indoor;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
@@ -28,13 +28,13 @@ protected:
     double airSpeed = 5.5; // meters per second
     AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
     double tSky = 270; // Kelvins
+    double solarRadiation = 0;
 
-    shared_ptr< CTarOutdoorEnvironment > Outdoor = 
-      make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, airDirection );
+    shared_ptr< CTarEnvironment > Outdoor = 
+      make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+        airDirection, tSky, SkyModel::AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
-    Outdoor->setSkyTemperature( tSky );
     Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
-    Outdoor->setSkyModel( SkyModel::AllSpecified );
 
     /////////////////////////////////////////////////////////
     // Indoor
@@ -71,14 +71,14 @@ protected:
   }
 
 public:
-  shared_ptr< CTarIndoorEnvironment > GetIndoors() { return m_Indoor; };
+  shared_ptr< CTarEnvironment > GetIndoors() { return m_Indoor; };
 
 };
 
 TEST_F( TestIndoorEnvironmentIRFixed, IndoorRadiosity ) {
   SCOPED_TRACE( "Begin Test: Indoors -> Fixed radiosity (user input)." );
   
-  shared_ptr< CTarIndoorEnvironment > aIndoor = nullptr;
+  shared_ptr< CTarEnvironment > aIndoor = nullptr;
   
   aIndoor = GetIndoors();
   ASSERT_TRUE( aIndoor != nullptr );

@@ -3,15 +3,14 @@
 #define TARINDOORENVIRONMENT_H
 
 #include "TarEnvironment.hpp"
-#include "LayerInterfaces.hpp"
+//#include "LayerInterfaces.hpp"
 
 namespace Tarcog {
 
-  class CTarIndoorEnvironment :
-    public CTarEnvironment
-  {
+  class CTarIndoorEnvironment : public CTarEnvironment {
   public:
-    CTarIndoorEnvironment( double t_AirTemperature, double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection );
+    CTarIndoorEnvironment( const double t_AirTemperature, const double t_Pressure, const double t_AirSpeed, 
+      const AirHorizontalDirection t_AirDirection );
 
     void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 

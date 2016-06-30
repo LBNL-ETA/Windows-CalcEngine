@@ -16,8 +16,8 @@ namespace Tarcog {
   class CTarcogSystem {
   public:
     CTarcogSystem( std::shared_ptr< CTarIGU > t_IGU,
-                   std::shared_ptr< CTarIndoorEnvironment > t_Indoor,
-                   std::shared_ptr< CTarOutdoorEnvironment > t_Outdoor );
+                   std::shared_ptr< CTarEnvironment > t_Indoor,
+                   std::shared_ptr< CTarEnvironment > t_Outdoor );
 
     std::shared_ptr< CTarEnvironment > getIndoor() const;
     std::shared_ptr< CTarEnvironment > getOutdoor() const;
