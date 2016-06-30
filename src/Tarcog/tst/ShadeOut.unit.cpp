@@ -32,13 +32,13 @@ protected:
       double airSpeed = 5.5; // meters per second
       AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
       double tSky = 255.15; // Kelvins
+      double solarRadiation = 0;
 
       shared_ptr< CTarOutdoorEnvironment > Outdoor = 
-        make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, airDirection );
+        make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+          airDirection, tSky, SkyModel::AllSpecified );
       ASSERT_TRUE( Outdoor != nullptr );
-      Outdoor->setSkyTemperature( tSky );
       Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
-      Outdoor->setSkyModel( SkyModel::AllSpecified );
 
       /////////////////////////////////////////////////////////
       // Indoor

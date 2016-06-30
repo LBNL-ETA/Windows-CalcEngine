@@ -21,13 +21,15 @@ namespace Tarcog {
 
     ~CTarEnvironment();
 
-    void setHCoeffModel( BoundaryConditionsCoeffModel const t_BCModel );
-    void setForcedVentilation( ForcedVentilation const &t_ForcedVentilation );
+    void setHCoeffModel( const BoundaryConditionsCoeffModel t_BCModel, const double t_HCoeff = 0 );
+    void setForcedVentilation( const ForcedVentilation &t_ForcedVentilation );
     void setPrescribedConvection( double const t_HInput );
     void setInfraredRadiation( double const t_InfraRed );
     void setEmissivity( double const t_Emissivity );
 
     double getAirTemperature() const;
+
+    double getDirectSolarRadiation() const;
 
     double getIRRadiation();
     
@@ -40,6 +42,7 @@ namespace Tarcog {
     // Interior and exterior environemnts use different surfaces for radiation
     virtual void storeRadiationAtSurface() = 0;
 
+    double m_DirectSolarRadiation;
     double m_AirTemperature; // environment temperature [K]
     double m_InfraredRadiation; // Infrared radiation from environemnt [W/m2]
     bool m_IRCalculatedOutside; // Keep info if IR radiation is provided (calculated) outside

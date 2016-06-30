@@ -1,6 +1,7 @@
 #ifndef TAROUTDOORENVIRONEMENT_H
 #define TAROUTDOORENVIRONEMENT_H
 
+#include "TarcogConstants.hpp"
 #include "TarEnvironment.hpp"
 
 namespace Tarcog {
@@ -9,15 +10,14 @@ namespace Tarcog {
 
   class CTarOutdoorEnvironment : public CTarEnvironment {
   public:
-    CTarOutdoorEnvironment( double t_Temperature, double t_Pressure, double t_AirSpeed, 
-      AirHorizontalDirection t_AirDirection );
+    CTarOutdoorEnvironment( const double t_Temperature, const double t_Pressure, const double t_AirSpeed, 
+      const double t_DirectSolarRadiation, const AirHorizontalDirection t_AirDirection, const double t_SkyTemperature, 
+      const SkyModel t_Model, const double t_FractClearSky = TarcogConstants::DEFAULT_FRACTION_OF_CLEAR_SKY );
 
-    void setSkyModel( SkyModel const t_SkyModel );
-    void setDirectSolarRadiation( double const t_SolarRadiation );
-    void setSkyTemperature( double const t_SkyTemperature );
-    void setFractionOfClearSky( double const t_FractionOfClearSky );
-
-    double getDirectSolarRadiation() const;
+    // void setSkyModel( SkyModel const t_SkyModel );
+    // void setDirectSolarRadiation( double const t_SolarRadiation );
+    // void setSkyTemperature( double const t_SkyTemperature );
+    // void setFractionOfClearSky( double const t_FractionOfClearSky );
 
     void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 
@@ -28,7 +28,6 @@ namespace Tarcog {
 
     void calculateHc();
 
-    double m_DirectSolarRadiation;
     double m_Tsky;
     double m_FractionOfClearSky;
     SkyModel m_SkyModel;

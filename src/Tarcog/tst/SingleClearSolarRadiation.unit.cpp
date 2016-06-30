@@ -31,13 +31,11 @@ protected:
       double tSky = 270; // Kelvins
       double solarRadiation = 1000;
 
-      shared_ptr< CTarOutdoorEnvironment > Outdoor = 
-        make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, airDirection );
+      shared_ptr< CTarEnvironment > Outdoor = 
+        make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+          airDirection, tSky, SkyModel::AllSpecified );
       ASSERT_TRUE( Outdoor != nullptr );
-      Outdoor->setSkyTemperature( tSky );
       Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
-      Outdoor->setSkyModel( SkyModel::AllSpecified );
-      Outdoor->setDirectSolarRadiation( solarRadiation );
 
       /////////////////////////////////////////////////////////
       // Indoor
@@ -46,7 +44,7 @@ protected:
       double roomTemperature = 294.15;
       double roomAirSpeed = 0;
 
-      shared_ptr< CTarIndoorEnvironment > Indoor = 
+      shared_ptr< CTarEnvironment > Indoor = 
         make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure, roomAirSpeed, airDirection );
       ASSERT_TRUE( Indoor != nullptr );
 
