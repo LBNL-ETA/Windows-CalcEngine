@@ -9,11 +9,15 @@ namespace Tarcog {
   class CTarSurface;
   enum class SurfacePosition;
 
-  class CTarIGUSolidLayer :
-    public CBaseIGUTarcogLayer {
+  class CTarIGUSolidLayer : public CBaseIGUTarcogLayer {
   public:
     CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
-      std::shared_ptr< CTarSurface > t_FrontSurface = nullptr, std::shared_ptr< CTarSurface > t_BackSurface=nullptr );
+      std::shared_ptr< CTarSurface > t_FrontSurface = nullptr, 
+      std::shared_ptr< CTarSurface > t_BackSurface = nullptr );
+
+    CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
+      double const t_FrontEmissivity, double const t_FrontIRTransmittance,
+      double const t_BackEmissivity, double const t_BackIRTransmittance );
 
     void connectToBackSide( std::shared_ptr< CBaseTarcogLayer > t_Layer );
 

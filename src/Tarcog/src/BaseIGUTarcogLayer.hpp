@@ -6,6 +6,7 @@
 
 namespace Tarcog {
 
+  enum class SurfacePosition;
   class CTarSurface;
 
   class CBaseIGUTarcogLayer : public CBaseTarcogLayer {
@@ -13,6 +14,8 @@ namespace Tarcog {
     explicit CBaseIGUTarcogLayer( double const t_Thickness );
 
     double getThickness() const;
+    double getTemperature( const SurfacePosition t_Position ) const;
+    double J( const SurfacePosition t_Position ) const;
 
   protected:
     virtual double layerTemperature();

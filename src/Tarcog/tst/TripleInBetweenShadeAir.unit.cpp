@@ -117,51 +117,57 @@ public:
 };
 
 TEST_F( TestInBetweenShadeAir, Test1 ) {
-  try {
-    SCOPED_TRACE( "Begin Test: InBetween Shade - Air" );
-    
-    shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
+  SCOPED_TRACE( "Begin Test: InBetween Shade - Air" );
+  
+  shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
 
-    shared_ptr< CTarSurface > aSurface = nullptr;
-    
-    aLayer = GetLayer1();
-    ASSERT_TRUE( aLayer != nullptr );
-    aSurface = aLayer->getSurface( SurfacePosition::Front );
+  shared_ptr< CTarSurface > aSurface = nullptr;
+  
+  aLayer = GetLayer1();
+  ASSERT_TRUE( aLayer != nullptr );
+  SurfacePosition aPosition = SurfacePosition::Front;
+  double temp = aLayer->getTemperature( aPosition );
+  double J = aLayer->J( aPosition );
 
-    EXPECT_NEAR( 257.90894598978144, aSurface->getTemperature(), 1e-6 );
-    EXPECT_NEAR( 249.16661938338754, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 257.90894598978144, temp, 1e-6 );
+  EXPECT_NEAR( 249.16661938338754, J, 1e-6 );
 
-    aSurface = aLayer->getSurface( SurfacePosition::Back );
+  aPosition = SurfacePosition::Back;
+  temp = aLayer->getTemperature( aPosition );
+  J = aLayer->J( aPosition );
 
-    EXPECT_NEAR( 258.36960655371689, aSurface->getTemperature(), 1e-6 );
-    EXPECT_NEAR( 260.32061280963615, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 258.36960655371689, temp, 1e-6 );
+  EXPECT_NEAR( 260.32061280963615, J, 1e-6 );
 
-    aLayer = GetLayer2();
-    ASSERT_TRUE( aLayer != nullptr );
-    aSurface = aLayer->getSurface( SurfacePosition::Front );
+  aLayer = GetLayer2();
+  ASSERT_TRUE( aLayer != nullptr );
+  aPosition = SurfacePosition::Front;
+  temp = aLayer->getTemperature( aPosition );
+  J = aLayer->J( aPosition );
 
-    EXPECT_NEAR( 271.53865884320373, aSurface->getTemperature(), 1e-6 );
-    EXPECT_NEAR( 300.57156128981001, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 271.53865884320373, temp, 1e-6 );
+  EXPECT_NEAR( 300.57156128981001, J, 1e-6 );
 
-    aSurface = aLayer->getSurface( SurfacePosition::Back );
+  aPosition = SurfacePosition::Back;
+  temp = aLayer->getTemperature( aPosition );
+  J = aLayer->J( aPosition );
 
-    EXPECT_NEAR( 271.54221847389209, aSurface->getTemperature(), 1e-6 );
-    EXPECT_NEAR( 316.33554457280860, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 271.54221847389209, temp, 1e-6 );
+  EXPECT_NEAR( 316.33554457280860, J, 1e-6 );
 
-    aLayer = GetLayer3();
-    ASSERT_TRUE( aLayer != nullptr );
-    aSurface = aLayer->getSurface( SurfacePosition::Front );
+  aLayer = GetLayer3();
+  ASSERT_TRUE( aLayer != nullptr );
+  aPosition = SurfacePosition::Front;
+  temp = aLayer->getTemperature( aPosition );
+  J = aLayer->J( aPosition );
 
-    EXPECT_NEAR( 283.61528464773824, aSurface->getTemperature(), 1e-6 );
-    EXPECT_NEAR( 358.76065129183996, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 283.61528464773824, temp, 1e-6 );
+  EXPECT_NEAR( 358.76065129183996, J, 1e-6 );
 
-    aSurface = aLayer->getSurface( SurfacePosition::Back );
+  aPosition = SurfacePosition::Back;
+  temp = aLayer->getTemperature( aPosition );
+  J = aLayer->J( aPosition );
 
-    EXPECT_NEAR( 284.07594521167317, aSurface->getTemperature(), 1e-6 );
-    EXPECT_NEAR( 378.99551190053882, aSurface->J(), 1e-6 );
-
-  } catch( exception &e ) {
-    cout << e.what() << endl;
-  }
-
+  EXPECT_NEAR( 284.07594521167317, temp, 1e-6 );
+  EXPECT_NEAR( 378.99551190053882, J, 1e-6 );
 }

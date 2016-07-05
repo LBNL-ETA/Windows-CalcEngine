@@ -11,15 +11,22 @@ namespace Tarcog {
 
   CTarIGUSolidLayer::CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
     shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface )
-    : CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ) {
+    : CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
     if ( t_FrontSurface != nullptr && t_BackSurface != nullptr ) {
       m_FrontSurface = t_FrontSurface;
       m_BackSurface = t_BackSurface;
     } else {
       m_FrontSurface = make_shared< CTarSurface >();
       m_BackSurface = make_shared< CTarSurface >();
-      m_SolarAbsorptance = 0;
     }
+  }
+
+  CTarIGUSolidLayer::CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
+    double const t_FrontEmissivity, double const t_FrontIRTransmittance,
+    double const t_BackEmissivity, double const t_BackIRTransmittance ) : CBaseIGUTarcogLayer( t_Thickness ),
+    m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
+    m_FrontSurface = make_shared< CTarSurface >( t_FrontEmissivity, t_FrontIRTransmittance );
+    m_BackSurface = make_shared< CTarSurface >( t_BackEmissivity, t_BackIRTransmittance );
   }
 
   void CTarIGUSolidLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
