@@ -6,7 +6,6 @@
 
 namespace Tarcog {
 
-  enum class SurfacePosition {Front, Back};
   class CBaseTarcogLayer;
 
   class CTarSurface

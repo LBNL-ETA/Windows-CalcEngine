@@ -5,11 +5,13 @@
 #include "TarSurface.hpp"
 #include "TarcogConstants.hpp"
 #include "Gas.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 using namespace Gases;
 
-namespace Tarcog{
+namespace Tarcog {
 
   using namespace TarcogConstants;
 
@@ -38,11 +40,6 @@ namespace Tarcog{
   //      CLayerGeometry
   //////////////////////////////////////////////////////////////////////////
 
-  // CLayerGeometry::CLayerGeometry() : CLayerState(), m_Width( DEFAULT_WINDOW_WIDTH ), m_Height( DEFAULT_WINDOW_HEIGHT ),
-  //   m_Tilt( DEFAULT_TILT ) {
-  // 
-  // }
-
   CLayerGeometry::CLayerGeometry() : m_Width(DEFAULT_WINDOW_WIDTH), m_Height(DEFAULT_WINDOW_HEIGHT),
 	  m_Tilt(DEFAULT_TILT) {
 
@@ -66,11 +63,6 @@ namespace Tarcog{
   //////////////////////////////////////////////////////////////////////////
   //      CLayerHeatFlow
   //////////////////////////////////////////////////////////////////////////
-
-  // CLayerHeatFlow::CLayerHeatFlow() : CLayerState(), m_FrontSurface( nullptr ), m_BackSurface( nullptr ), 
-  //   m_ConductiveConvectiveCoeff( 0 ), m_RadiationFlow( 0 ), m_LayerGainFlow( 0 ) {
-  // 
-  // }
 
   CLayerHeatFlow::CLayerHeatFlow() : m_FrontSurface(nullptr), m_BackSurface(nullptr),
 	  m_ConductiveConvectiveCoeff(0), m_RadiationFlow(0), m_LayerGainFlow(0) {
@@ -117,14 +109,14 @@ namespace Tarcog{
     setCalculated();
   }
 
-  shared_ptr< CTarSurface > CLayerHeatFlow::getSurface( SurfacePosition const t_Position ) const {
+  shared_ptr< CTarSurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
      shared_ptr< CTarSurface > aSurface = nullptr;
     switch ( t_Position )
     {
-    case SurfacePosition::Front:
+    case Side::Front:
       aSurface = m_FrontSurface;
       break;
-    case SurfacePosition::Back:
+    case Side::Back:
       aSurface = m_BackSurface;
       break;
     default:
@@ -136,14 +128,14 @@ namespace Tarcog{
   }
 
   void CLayerHeatFlow::setSurface( shared_ptr< CTarSurface > t_Surface, 
-    SurfacePosition const t_Position ) {
+    Side const t_Position ) {
     switch ( t_Position )
     {
-    case SurfacePosition::Front:
+    case Side::Front:
       assert( t_Surface != nullptr );
       m_FrontSurface = t_Surface;
       break;
-    case SurfacePosition::Back:
+    case Side::Back:
       assert( t_Surface != nullptr );
       m_BackSurface = t_Surface;
       break;

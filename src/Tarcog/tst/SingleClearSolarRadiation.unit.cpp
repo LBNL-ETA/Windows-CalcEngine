@@ -8,9 +8,11 @@
 #include "TarIGU.hpp"
 #include "TarcogSystem.hpp"
 #include "TarSurface.hpp"
+#include "FenestrationCommon.hpp"
 
-using namespace Tarcog;
 using namespace std;
+using namespace Tarcog;
+using namespace FenestrationCommon;
 
 class TestSingleClearSolar : public testing::Test {
 
@@ -97,14 +99,14 @@ TEST_F( TestSingleClearSolar, Test1 ) {
 
   ASSERT_TRUE( aLayer != nullptr );
 
-  SurfacePosition aPosition = SurfacePosition::Front;
+  Side aPosition = Side::Front;
   double Temperature = aLayer->getTemperature( aPosition );
   double Radiosity = aLayer->J( aPosition );
 
   EXPECT_NEAR( 299.627742, Temperature, 1e-5 );
   EXPECT_NEAR( 444.699763, Radiosity, 1e-5 );
 
-  aPosition = SurfacePosition::Back;
+  aPosition = Side::Back;
   Temperature = aLayer->getTemperature( aPosition );
   Radiosity = aLayer->J( aPosition );
 

@@ -4,9 +4,14 @@
 #include <memory>
 #include "BaseTarcogLayer.hpp"
 
+namespace FenestrationCommon {
+
+  enum class Side;
+
+}
+
 namespace Tarcog {
 
-  enum class SurfacePosition;
   class CTarSurface;
 
   class CBaseIGUTarcogLayer : public CBaseTarcogLayer {
@@ -14,15 +19,13 @@ namespace Tarcog {
     explicit CBaseIGUTarcogLayer( double const t_Thickness );
 
     double getThickness() const;
-    double getTemperature( const SurfacePosition t_Position ) const;
-    double J( const SurfacePosition t_Position ) const;
+    double getTemperature( const FenestrationCommon::Side t_Position ) const;
+    double J( const FenestrationCommon::Side t_Position ) const;
 
   protected:
     virtual double layerTemperature();
 
     double m_Thickness;
-  //private:
-  //  void initialize();
   };
 
 }

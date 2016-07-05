@@ -14,10 +14,12 @@
 #include "TarIGU.hpp"
 #include "TarcogSystem.hpp"
 #include "TarSurface.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace Gases;
 using namespace Tarcog;
+using namespace FenestrationCommon;
 
 class TestInBetweenShadeAirArgon : public testing::Test {
 
@@ -161,36 +163,36 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
     
     aLayer = GetLayer1();
     ASSERT_TRUE( aLayer != nullptr );
-    aSurface = aLayer->getSurface( SurfacePosition::Front );
+    aSurface = aLayer->getSurface( Side::Front );
 
     EXPECT_NEAR( 257.70807679264135, aSurface->getTemperature(), 1e-6 );
     EXPECT_NEAR( 248.51092039068794, aSurface->J(), 1e-6 );
 
-    aSurface = aLayer->getSurface( SurfacePosition::Back );
+    aSurface = aLayer->getSurface( Side::Back );
 
     EXPECT_NEAR( 258.13514288283039, aSurface->getTemperature(), 1e-6 );
     EXPECT_NEAR( 259.76088456656476, aSurface->J(), 1e-6 );
 
     aLayer = GetLayer2();
     ASSERT_TRUE( aLayer != nullptr );
-    aSurface = aLayer->getSurface( SurfacePosition::Front );
+    aSurface = aLayer->getSurface( Side::Front );
 
     EXPECT_NEAR( 271.90484753651458, aSurface->getTemperature(), 1e-6 );
     EXPECT_NEAR( 301.88152030138281, aSurface->J(), 1e-6 );
 
-    aSurface = aLayer->getSurface( SurfacePosition::Back );
+    aSurface = aLayer->getSurface( Side::Back );
 
     EXPECT_NEAR( 271.90828841323201, aSurface->getTemperature(), 1e-6 );
     EXPECT_NEAR( 318.34444233867350, aSurface->J(), 1e-6 );
 
     aLayer = GetLayer3();
     ASSERT_TRUE( aLayer != nullptr );
-    aSurface = aLayer->getSurface( SurfacePosition::Front );
+    aSurface = aLayer->getSurface( Side::Front );
 
     EXPECT_NEAR( 284.41487117900050, aSurface->getTemperature(), 1e-6 );
     EXPECT_NEAR( 362.57178896039937, aSurface->J(), 1e-6 );
 
-    aSurface = aLayer->getSurface( SurfacePosition::Back );
+    aSurface = aLayer->getSurface( Side::Back );
 
     EXPECT_NEAR( 284.84193726918704, aSurface->getTemperature(), 1e-6 );
     EXPECT_NEAR( 382.35430412032650, aSurface->J(), 1e-6 );

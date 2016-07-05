@@ -9,9 +9,11 @@
 #include "TarIGU.hpp"
 #include "TarcogSystem.hpp"
 #include "TarSurface.hpp"
+#include "FenestrationCommon.hpp"
 
-using namespace Tarcog;
 using namespace std;
+using namespace Tarcog;
+using namespace FenestrationCommon;
 
 class TestDoubleClear : public testing::Test {
 
@@ -112,7 +114,7 @@ TEST_F( TestDoubleClear, Test1 )
 
     ASSERT_TRUE( aLayer1 != nullptr );
 
-    shared_ptr< CTarSurface > aSurface = aLayer1->getSurface( SurfacePosition::Front );
+    shared_ptr< CTarSurface > aSurface = aLayer1->getSurface( Side::Front );
     ASSERT_TRUE( aSurface != nullptr );
 
     double Temperature = aSurface->getTemperature();
@@ -121,7 +123,7 @@ TEST_F( TestDoubleClear, Test1 )
     EXPECT_NEAR( 258.756688, Temperature, 1e-5 );
     EXPECT_NEAR( 251.950834, Radiosity, 1e-5 );
 
-    aSurface = aLayer1->getSurface( SurfacePosition::Back );
+    aSurface = aLayer1->getSurface( Side::Back );
     ASSERT_TRUE( aSurface != nullptr );
 
     Temperature = aSurface->getTemperature();

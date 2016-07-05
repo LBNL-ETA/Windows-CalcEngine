@@ -9,8 +9,10 @@
 #include "TarIGUSolidLayer.hpp"
 #include "TarIGUGapLayer.hpp"
 #include "TarSurface.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 
 namespace Tarcog {
   CTarIGU::CTarIGU( double t_Width, double t_Height, double t_Tilt ) : 
@@ -89,11 +91,11 @@ namespace Tarcog {
     shared_ptr< CTarSurface > aSurface = nullptr;
 
     for( shared_ptr< CTarIGUSolidLayer > layer : m_SolidLayers ) {
-      aSurface = layer->getSurface( SurfacePosition::Front );
+      aSurface = layer->getSurface( Side::Front );
       assert( aSurface != nullptr );
       aState->push_back( aSurface->getTemperature() );
       aState->push_back( aSurface->J() );
-      aSurface = layer->getSurface( SurfacePosition::Back );
+      aSurface = layer->getSurface( Side::Back );
       assert( aSurface != nullptr );
       aState->push_back( aSurface->J() );
       aState->push_back( aSurface->getTemperature() );

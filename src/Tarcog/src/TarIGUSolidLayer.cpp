@@ -4,8 +4,10 @@
 #include "TarIGUSolidLayer.hpp"
 #include "BaseTarcogLayer.hpp"
 #include "TarSurface.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 
 namespace Tarcog {
 
@@ -31,7 +33,7 @@ namespace Tarcog {
 
   void CTarIGUSolidLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
-    t_Layer->setSurface( m_BackSurface, SurfacePosition::Front );
+    t_Layer->setSurface( m_BackSurface, Side::Front );
   }
 
   void CTarIGUSolidLayer::calculateConvectionConductionState() {
@@ -43,8 +45,8 @@ namespace Tarcog {
   }
 
   void CTarIGUSolidLayer::setLayerState(double const t_Tf, double const t_Tb, double const t_Jf, double const t_Jb ) {
-    setSurfaceState( t_Tf, t_Jf, SurfacePosition::Front );
-    setSurfaceState( t_Tb, t_Jb, SurfacePosition::Back );
+    setSurfaceState( t_Tf, t_Jf, Side::Front );
+    setSurfaceState( t_Tb, t_Jb, Side::Back );
     if ( m_NextLayer != nullptr ) {
       m_NextLayer->resetCalculated();
     }
@@ -53,21 +55,21 @@ namespace Tarcog {
     }
   }
 
-  void CTarIGUSolidLayer::setSurfaceState( double const t_Temperature, double const t_J, SurfacePosition const t_Position ) {
+  void CTarIGUSolidLayer::setSurfaceState( double const t_Temperature, double const t_J, Side const t_Position ) {
     switch ( t_Position )
     {
-    case SurfacePosition::Front:
+    case Side::Front:
       assert( m_FrontSurface != nullptr );
       m_FrontSurface->setTemperature( t_Temperature );
       m_FrontSurface->setJ( t_J );
       break;
-    case SurfacePosition::Back:
+    case Side::Back:
       assert( m_BackSurface != nullptr );
       m_BackSurface->setTemperature( t_Temperature );
       m_BackSurface->setJ( t_J );
       break;
     default:
-      assert( t_Position == SurfacePosition::Front || t_Position == SurfacePosition::Back );
+      assert( t_Position == Side::Front || t_Position == Side::Back );
       break;
     }
 

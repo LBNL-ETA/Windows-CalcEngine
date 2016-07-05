@@ -11,8 +11,10 @@
 #include "TarIndoorEnvironment.hpp"
 #include "TarSurface.hpp"
 #include "TarNonLinearSolver.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
+using namespace FenestrationCommon;
 
 namespace Tarcog {
 
@@ -82,7 +84,7 @@ namespace Tarcog {
 
     shared_ptr< CBaseIGUTarcogLayer > aLayer = aLayers.front();
     double currentXPosition = startX;
-    shared_ptr< CTarSurface > aSurface = aLayer->getSurface( SurfacePosition::Front );
+    shared_ptr< CTarSurface > aSurface = aLayer->getSurface( Side::Front );
     double curTemp = tOut + currentXPosition * deltaTemp;
 
     aSurface->intializeStart( curTemp );
@@ -90,7 +92,7 @@ namespace Tarcog {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : aLayers ) {
       currentXPosition += layer->getThickness();
       curTemp = tOut + currentXPosition * deltaTemp;
-      aSurface = layer->getSurface( SurfacePosition::Back );
+      aSurface = layer->getSurface( Side::Back );
       aSurface->intializeStart( curTemp );
     }
   }

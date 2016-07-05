@@ -3,6 +3,10 @@
 
 #include <memory>
 
+namespace FenestrationCommon {
+  enum class Side;
+}
+
 namespace Gases {
   class CGas;
 }
@@ -10,7 +14,6 @@ namespace Gases {
 namespace Tarcog {
 
   class CTarSurface;
-  enum class SurfacePosition;
 
   struct ForcedVentilation {
     ForcedVentilation() : Speed( 0 ), Temperature( 0 ) {};
@@ -57,8 +60,9 @@ namespace Tarcog {
     virtual double getConductionConvectionCoefficient() final;
     virtual double getRadiationFlow() final;
     virtual double getConvectionConductionFlow() final;
-    virtual std::shared_ptr< CTarSurface > getSurface( SurfacePosition const t_Position ) const final;
-    virtual void setSurface( std::shared_ptr< CTarSurface > t_Surface, SurfacePosition const t_Position ) final;
+    virtual std::shared_ptr< CTarSurface > getSurface( FenestrationCommon::Side const t_Position ) const final;
+    virtual void setSurface( std::shared_ptr< CTarSurface > t_Surface, 
+      FenestrationCommon::Side const t_Position ) final;
   protected:
     virtual void calculateLayerState() final;
     virtual void calculateRadiationState() = 0;

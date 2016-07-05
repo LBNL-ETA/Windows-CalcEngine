@@ -11,9 +11,11 @@
 #include "Constants.hpp"
 #include "NusseltNumber.hpp"
 #include "Gas.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace Gases;
+using namespace FenestrationCommon;
 
 namespace Tarcog {
 
@@ -36,7 +38,7 @@ namespace Tarcog {
 
   void CTarIGUGapLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
-    m_BackSurface = t_Layer->getSurface( SurfacePosition::Front );
+    m_BackSurface = t_Layer->getSurface( Side::Front );
   }
 
   void CTarIGUGapLayer::initializeStateVariables() {

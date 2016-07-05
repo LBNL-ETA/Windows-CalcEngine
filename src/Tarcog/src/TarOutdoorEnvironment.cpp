@@ -7,9 +7,11 @@
 #include "TarSurface.hpp"
 #include "TarcogConstants.hpp"
 #include "TarOutdoorEnvironment.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace ConstantsData;
+using namespace FenestrationCommon;
 
 namespace Tarcog {
 
@@ -82,7 +84,7 @@ namespace Tarcog {
 
   void CTarOutdoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
     this->connectToBackSide( t_IGULayer );
-    m_BackSurface = t_IGULayer->getSurface( SurfacePosition::Front );
+    m_BackSurface = t_IGULayer->getSurface( Side::Front );
   }
 
   void CTarOutdoorEnvironment::calculateConvectionConductionState() {

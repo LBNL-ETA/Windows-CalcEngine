@@ -9,9 +9,11 @@
 #include "TarIGUGapLayer.hpp"
 #include "TarIGU.hpp"
 #include "TarcogSystem.hpp"
+#include "FenestrationCommon.hpp"
 
-using namespace Tarcog;
 using namespace std;
+using namespace Tarcog;
+using namespace FenestrationCommon;
 
 class TestTemperatureInitialGuess : public testing::Test {
 
@@ -91,28 +93,28 @@ TEST_F( TestTemperatureInitialGuess, Test1 )
   try {
     SCOPED_TRACE( "Begin Test: Initial temperature and IR guess" );
 
-    shared_ptr< CTarSurface > aSurface = getLayer1()->getSurface( SurfacePosition::Front );
+    shared_ptr< CTarSurface > aSurface = getLayer1()->getSurface( Side::Front );
     ASSERT_TRUE( aSurface != nullptr );
     double temperature = aSurface->getTemperature();
     double J = aSurface->J();
     EXPECT_NEAR( 256.282733081615, temperature, 1e-6 );
     EXPECT_NEAR( 244.589307222020, J, 1e-6 );
 
-    aSurface = getLayer1()->getSurface( SurfacePosition::Back );
+    aSurface = getLayer1()->getSurface( Side::Back );
     ASSERT_TRUE( aSurface != nullptr );
     temperature = aSurface->getTemperature();
     J = aSurface->J();
     EXPECT_NEAR( 262.756302643044, temperature, 1e-6 );
     EXPECT_NEAR( 270.254322031419, J, 1e-6 );
 
-    aSurface = getLayer2()->getSurface( SurfacePosition::Front );
+    aSurface = getLayer2()->getSurface( Side::Front );
     ASSERT_TRUE( aSurface != nullptr );
     temperature = aSurface->getTemperature();
     J = aSurface->J();
     EXPECT_NEAR( 276.349099622422, temperature, 1e-6 );
     EXPECT_NEAR( 330.668096601357, J, 1e-6 );
 
-    aSurface = getLayer2()->getSurface( SurfacePosition::Back );
+    aSurface = getLayer2()->getSurface( Side::Back );
     ASSERT_TRUE( aSurface != nullptr );
     temperature = aSurface->getTemperature();
     J = aSurface->J();

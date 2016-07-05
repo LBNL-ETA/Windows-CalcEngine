@@ -1,6 +1,9 @@
 #include <memory>
 #include "BaseIGUTarcogLayer.hpp"
 #include "TarSurface.hpp"
+#include "FenestrationCommon.hpp"
+
+using namespace FenestrationCommon;
 
 namespace Tarcog {
 
@@ -16,11 +19,11 @@ namespace Tarcog {
     return m_Thickness;
   }
 
-  double CBaseIGUTarcogLayer::getTemperature( const SurfacePosition t_Position ) const {
+  double CBaseIGUTarcogLayer::getTemperature( const Side t_Position ) const {
     return getSurface( t_Position )->getTemperature();
   }
 
-  double CBaseIGUTarcogLayer::J( const SurfacePosition t_Position ) const {
+  double CBaseIGUTarcogLayer::J( const Side t_Position ) const {
     return getSurface( t_Position )->J();
   }
 

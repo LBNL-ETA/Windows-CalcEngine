@@ -4,10 +4,13 @@
 #include <memory>
 #include "BaseIGUTarcogLayer.hpp"
 
+namespace FenestrationCommon {
+  enum class Side;
+}
+
 namespace Tarcog {
 
   class CTarSurface;
-  enum class SurfacePosition;
 
   class CTarIGUSolidLayer : public CBaseIGUTarcogLayer {
   public:
@@ -29,7 +32,7 @@ namespace Tarcog {
     virtual void calculateConvectionConductionState();
 
   private:
-    void setSurfaceState( double const t_Temperature, double const t_J, SurfacePosition const t_Position );
+    void setSurfaceState( double const t_Temperature, double const t_J, FenestrationCommon::Side const t_Position );
     void initializeStateVariables();
 
     double m_SolarAbsorptance;

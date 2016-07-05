@@ -5,10 +5,13 @@
 
 #include <memory>
 
+namespace FenestrationCommon {
+  enum class Side;
+}
+
 namespace Tarcog {
 
   class CTarSurface;
-  enum class SurfacePosition;
 
   class CBaseTarcogLayer : public CLayerGeometry, public CLayerHeatFlow,
     public std::enable_shared_from_this< CBaseTarcogLayer > {

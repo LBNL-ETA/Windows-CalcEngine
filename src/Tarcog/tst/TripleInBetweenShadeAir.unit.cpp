@@ -11,9 +11,11 @@
 #include "TarIGU.hpp"
 #include "TarcogSystem.hpp"
 #include "TarSurface.hpp"
+#include "FenestrationCommon.hpp"
 
-using namespace Tarcog;
 using namespace std;
+using namespace Tarcog;
+using namespace FenestrationCommon;
 
 class TestInBetweenShadeAir : public testing::Test {
 
@@ -125,14 +127,14 @@ TEST_F( TestInBetweenShadeAir, Test1 ) {
   
   aLayer = GetLayer1();
   ASSERT_TRUE( aLayer != nullptr );
-  SurfacePosition aPosition = SurfacePosition::Front;
+  Side aPosition = Side::Front;
   double temp = aLayer->getTemperature( aPosition );
   double J = aLayer->J( aPosition );
 
   EXPECT_NEAR( 257.90894598978144, temp, 1e-6 );
   EXPECT_NEAR( 249.16661938338754, J, 1e-6 );
 
-  aPosition = SurfacePosition::Back;
+  aPosition = Side::Back;
   temp = aLayer->getTemperature( aPosition );
   J = aLayer->J( aPosition );
 
@@ -141,14 +143,14 @@ TEST_F( TestInBetweenShadeAir, Test1 ) {
 
   aLayer = GetLayer2();
   ASSERT_TRUE( aLayer != nullptr );
-  aPosition = SurfacePosition::Front;
+  aPosition = Side::Front;
   temp = aLayer->getTemperature( aPosition );
   J = aLayer->J( aPosition );
 
   EXPECT_NEAR( 271.53865884320373, temp, 1e-6 );
   EXPECT_NEAR( 300.57156128981001, J, 1e-6 );
 
-  aPosition = SurfacePosition::Back;
+  aPosition = Side::Back;
   temp = aLayer->getTemperature( aPosition );
   J = aLayer->J( aPosition );
 
@@ -157,14 +159,14 @@ TEST_F( TestInBetweenShadeAir, Test1 ) {
 
   aLayer = GetLayer3();
   ASSERT_TRUE( aLayer != nullptr );
-  aPosition = SurfacePosition::Front;
+  aPosition = Side::Front;
   temp = aLayer->getTemperature( aPosition );
   J = aLayer->J( aPosition );
 
   EXPECT_NEAR( 283.61528464773824, temp, 1e-6 );
   EXPECT_NEAR( 358.76065129183996, J, 1e-6 );
 
-  aPosition = SurfacePosition::Back;
+  aPosition = Side::Back;
   temp = aLayer->getTemperature( aPosition );
   J = aLayer->J( aPosition );
 

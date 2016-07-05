@@ -11,6 +11,7 @@
 #include "TarEnvironment.hpp"
 #include "TarSurface.hpp"
 #include "LinearSolver.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -54,10 +55,10 @@ namespace Tarcog {
     double hgl = t_Current->getConductionConvectionCoefficient();
     double hgap_prev = t_Previous->getConductionConvectionCoefficient();
     double hgap_next = t_Next->getConductionConvectionCoefficient();
-    shared_ptr< CTarSurface > frontSurface = t_Current->getSurface( SurfacePosition::Front );
+    shared_ptr< CTarSurface > frontSurface = t_Current->getSurface( Side::Front );
     assert( frontSurface != nullptr );
     double emissPowerFront = frontSurface->emissivePowerTerm();
-    shared_ptr< CTarSurface > backSurface = t_Current->getSurface( SurfacePosition::Back );
+    shared_ptr< CTarSurface > backSurface = t_Current->getSurface( Side::Back );
     assert( backSurface != nullptr );
     double emissPowerBack = backSurface->emissivePowerTerm();
     double qv_prev = t_Previous->getGainFlow();
