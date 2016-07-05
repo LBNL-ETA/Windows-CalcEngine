@@ -42,10 +42,8 @@ protected:
       /////////////////////////////////////////////////////////
 
       double roomTemperature = 294.15;
-      double roomAirSpeed = 0;
 
-      shared_ptr< CTarEnvironment > Indoor = 
-        make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure, roomAirSpeed, airDirection );
+      shared_ptr< CTarEnvironment > Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
       ASSERT_TRUE( Indoor != nullptr );
 
       /////////////////////////////////////////////////////////

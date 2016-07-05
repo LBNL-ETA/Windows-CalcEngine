@@ -9,8 +9,7 @@ namespace Tarcog {
 
   class CTarIndoorEnvironment : public CTarEnvironment {
   public:
-    CTarIndoorEnvironment( const double t_AirTemperature, const double t_Pressure, const double t_AirSpeed, 
-      const AirHorizontalDirection t_AirDirection );
+    CTarIndoorEnvironment( const double t_AirTemperature, const double t_Pressure );
 
     void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 

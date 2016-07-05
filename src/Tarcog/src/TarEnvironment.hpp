@@ -17,7 +17,8 @@ namespace Tarcog {
 
   class CTarEnvironment : public CBaseTarcogLayer, public CGasLayer {
   public:
-    CTarEnvironment( double t_AirTemperature, double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection );
+    CTarEnvironment( double t_AirTemperature, double t_Pressure, double t_AirSpeed, 
+      AirHorizontalDirection t_AirDirection );
 
     ~CTarEnvironment();
 

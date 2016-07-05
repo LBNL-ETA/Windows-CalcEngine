@@ -44,7 +44,7 @@ protected:
       double roomTemperature = 294.15;
       double roomAirSpeed = 0;
 
-      m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure, roomAirSpeed, airDirection );
+      m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
       ASSERT_TRUE( m_Indoor != nullptr );
 
       /////////////////////////////////////////////////////////
@@ -53,7 +53,8 @@ protected:
       double solidLayerThickness = 0.003048; // [m]
       double solidLayerConductance = 100;
 
-      shared_ptr< CTarIGUSolidLayer > aSolidLayer = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+      shared_ptr< CTarIGUSolidLayer > aSolidLayer = 
+        make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
       ASSERT_TRUE( aSolidLayer != nullptr );
 
       double windowWidth = 1;

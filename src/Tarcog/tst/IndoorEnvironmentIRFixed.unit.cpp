@@ -44,7 +44,7 @@ protected:
     double roomAirSpeed = 0;
     double IRRadiation = 321;
 
-    m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure, roomAirSpeed, airDirection );
+    m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( m_Indoor != nullptr );
     m_Indoor->setInfraredRadiation( IRRadiation );
 
