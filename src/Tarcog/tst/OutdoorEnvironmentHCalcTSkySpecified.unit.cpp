@@ -80,7 +80,8 @@ TEST_F( TestOutdoorEnvironmentHCalcTSkySpecified, CalculateH_TSkySpecified ) {
   ASSERT_TRUE( aOutdoor != nullptr );
 
   double radiosity = aOutdoor->getIRRadiation();
-
   EXPECT_NEAR( 380.278401885, radiosity, 1e-6 );
 
+  double hc = aOutdoor->getHc();
+  EXPECT_NEAR( 26, hc, 1e-6 );
 }

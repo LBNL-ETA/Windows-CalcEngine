@@ -21,6 +21,7 @@ namespace Tarcog {
     void storeRadiationAtSurface();
     void calculateConvectionConductionState();
     void calculateHc();
+    double getHr();
 
     double m_RoomRadiationTemperature;
   };

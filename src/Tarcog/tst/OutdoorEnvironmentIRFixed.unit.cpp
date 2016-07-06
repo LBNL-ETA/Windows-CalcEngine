@@ -20,7 +20,6 @@ private:
 
 protected:
   virtual void SetUp() {
-    try {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
@@ -66,14 +65,10 @@ protected:
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
-    } catch( exception &e ) {
-      cout << e.what() << endl;
-      throw &e;
-    }
   }
 
 public:
-  std::shared_ptr< CTarEnvironment > GetOutdoors() { return Outdoor; };
+  shared_ptr< CTarEnvironment > GetOutdoors() { return Outdoor; };
 
 };
 
@@ -87,7 +82,9 @@ TEST_F( TestOutdoorEnvironmentIRFixed, CalculateIRFixed ) {
     ASSERT_TRUE( aOutdoor != nullptr );
 
     double radiosity = aOutdoor->getIRRadiation();
-
     EXPECT_NEAR( 370, radiosity, 1e-6 );
+
+    double hc = aOutdoor->getHc();
+    EXPECT_NEAR( 26, hc, 1e-6 );
 
 }

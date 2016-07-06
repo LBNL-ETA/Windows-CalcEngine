@@ -11,13 +11,9 @@ namespace Tarcog {
   class CTarOutdoorEnvironment : public CTarEnvironment {
   public:
     CTarOutdoorEnvironment( const double t_Temperature, const double t_Pressure, const double t_AirSpeed, 
-      const double t_DirectSolarRadiation, const AirHorizontalDirection t_AirDirection, const double t_SkyTemperature, 
-      const SkyModel t_Model, const double t_FractClearSky = TarcogConstants::DEFAULT_FRACTION_OF_CLEAR_SKY );
-
-    // void setSkyModel( SkyModel const t_SkyModel );
-    // void setDirectSolarRadiation( double const t_SolarRadiation );
-    // void setSkyTemperature( double const t_SkyTemperature );
-    // void setFractionOfClearSky( double const t_FractionOfClearSky );
+      const double t_DirectSolarRadiation, const AirHorizontalDirection t_AirDirection, 
+      const double t_SkyTemperature, const SkyModel t_Model, 
+      const double t_FractClearSky = TarcogConstants::DEFAULT_FRACTION_OF_CLEAR_SKY );
 
     void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 
@@ -27,6 +23,7 @@ namespace Tarcog {
     void calculateConvectionConductionState();
 
     void calculateHc();
+    double getHr();
 
     double m_Tsky;
     double m_FractionOfClearSky;

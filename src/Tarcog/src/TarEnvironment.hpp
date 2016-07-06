@@ -29,10 +29,9 @@ namespace Tarcog {
     void setEmissivity( double const t_Emissivity );
 
     double getAirTemperature() const;
-
     double getDirectSolarRadiation() const;
-
     double getIRRadiation();
+    double getHc();
     
     virtual void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 
@@ -42,6 +41,7 @@ namespace Tarcog {
     virtual double calculateIRFromVariables() = 0;
     // Interior and exterior environemnts use different surfaces for radiation
     virtual void storeRadiationAtSurface() = 0;
+    virtual double getHr() = 0;
 
     double m_DirectSolarRadiation;
     double m_AirTemperature; // environment temperature [K]
@@ -49,10 +49,7 @@ namespace Tarcog {
     double m_InfraredRadiation; // Infrared radiation from environemnt [W/m2]
     double m_HInput; // Input convection coefficient which type depends on selected BC model [W/m2*K]
     BoundaryConditionsCoeffModel m_HCoefficientModel; // Model used to calculate BC coefficient
-    double m_Hr; // Radiative surface heat transfer coefficient [W/m2*K]
     bool m_IRCalculatedOutside; // Keep info if IR radiation is provided (calculated) outside
-
-    // double m_EnvironmentRadiosity; // Radiation from the environment
 
   private:
     double getGasTemperature();

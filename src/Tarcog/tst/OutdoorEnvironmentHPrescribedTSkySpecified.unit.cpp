@@ -29,11 +29,12 @@ protected:
     AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
     double tSky = 270; // Kelvins
     double solarRadiation = 0;
+    double hcout = 2.5;
 
     Outdoor = make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
       airDirection, tSky, SkyModel::TSkySpecified );
     ASSERT_TRUE( Outdoor != nullptr );
-    Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed );
+    Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed, hcout );
 
     /////////////////////////////////////////////////////////
     // Indoor
@@ -80,7 +81,9 @@ TEST_F( TestOutdoorEnvironmentHPrescribedTSkySpecified, CalculateH_TSkySpecified
   ASSERT_TRUE( aOutdoor != nullptr );
 
   double radiosity = aOutdoor->getIRRadiation();
-
   EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
+
+  double hc = aOutdoor->getHc();
+  EXPECT_NEAR( 2.5, hc, 1e-6 );
 
 }

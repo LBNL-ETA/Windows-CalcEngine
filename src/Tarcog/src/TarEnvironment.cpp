@@ -60,6 +60,11 @@ namespace Tarcog {
     return m_InfraredRadiation;
   }
 
+  double CTarEnvironment::getHc()
+  {
+    return getConductionConvectionCoefficient();
+  }
+
   double CTarEnvironment::getDirectSolarRadiation() const {
     return m_DirectSolarRadiation;
   }

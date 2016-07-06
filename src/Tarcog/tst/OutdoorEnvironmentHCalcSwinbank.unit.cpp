@@ -80,7 +80,9 @@ TEST_F( TestOutdoorEnvironmentHCalcSwingbank, CalculateH_Swinbank ) {
   ASSERT_TRUE( aOutdoor != nullptr );
 
   double radiosity = aOutdoor->getIRRadiation();
-  
   EXPECT_NEAR( 423.17235, radiosity, 1e-6 );
+
+  double hc = aOutdoor->getHc();
+  EXPECT_NEAR( 26, hc, 1e-6 );
 
 }

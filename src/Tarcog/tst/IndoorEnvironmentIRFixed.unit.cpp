@@ -41,7 +41,9 @@ protected:
     /////////////////////////////////////////////////////////
 
     double roomTemperature = 294.15;
-    double IRRadiation = 321;
+    // I just have picked up solution from WINDOW 7.4 run. There is no other way of
+    // getting the results since current version of WINDOW does not support IR input.
+    double IRRadiation = 424.458750;
 
     m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( m_Indoor != nullptr );
@@ -66,6 +68,7 @@ protected:
     // System
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, m_Indoor, Outdoor );
+    m_TarcogSystem->solve();
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }
 
@@ -83,5 +86,29 @@ TEST_F( TestIndoorEnvironmentIRFixed, IndoorRadiosity ) {
   ASSERT_TRUE( aIndoor != nullptr );
 
   double radiosity = aIndoor->getIRRadiation();
-  EXPECT_NEAR( 321, radiosity, 1e-6 );
+  EXPECT_NEAR( 424.458750, radiosity, 1e-6 );
+}
+
+TEST_F( TestIndoorEnvironmentIRFixed, IndoorConvection ) {
+  SCOPED_TRACE( "Begin Test: Indoors -> Convection Flow (user input)." );
+
+  shared_ptr< CTarEnvironment > aIndoor = nullptr;
+
+  aIndoor = GetIndoors();
+  ASSERT_TRUE( aIndoor != nullptr );
+
+  double convectionFlow = aIndoor->getConvectionConductionFlow();
+  EXPECT_NEAR( -5.826845, convectionFlow, 1e-6 );
+}
+
+TEST_F( TestIndoorEnvironmentIRFixed, IndoorHc ) {
+  SCOPED_TRACE( "Begin Test: Indoors -> Convection Coefficient (user input)." );
+
+  shared_ptr< CTarEnvironment > aIndoor = nullptr;
+
+  aIndoor = GetIndoors();
+  ASSERT_TRUE( aIndoor != nullptr );
+
+  double hc = aIndoor->getHc();
+  EXPECT_NEAR( 1.913874, hc, 1e-6 );
 }
