@@ -17,6 +17,8 @@ namespace Tarcog {
 
     void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 
+    double getAirTemperature();
+
   private:
     double calculateIRFromVariables();
     void storeRadiationAtSurface();

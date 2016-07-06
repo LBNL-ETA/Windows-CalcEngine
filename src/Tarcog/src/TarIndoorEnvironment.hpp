@@ -15,6 +15,8 @@ namespace Tarcog {
 
     void setRoomRadiationTemperature( double const t_RadiationTemperature );
 
+    double getAirTemperature();
+
   private:
     // void calculateRadiationState();
     double calculateIRFromVariables();

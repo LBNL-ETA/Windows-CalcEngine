@@ -17,8 +17,7 @@ namespace Tarcog {
 
   class CTarEnvironment : public CBaseTarcogLayer, public CGasLayer {
   public:
-    CTarEnvironment( double t_AirTemperature, double t_Pressure, double t_AirSpeed, 
-      AirHorizontalDirection t_AirDirection );
+    CTarEnvironment( double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection );
 
     ~CTarEnvironment();
 
@@ -28,7 +27,6 @@ namespace Tarcog {
     void setInfraredRadiation( double const t_InfraRed );
     void setEmissivity( double const t_Emissivity );
 
-    double getAirTemperature() const;
     double getDirectSolarRadiation() const;
     double getIRRadiation();
     double getHc();
@@ -44,15 +42,11 @@ namespace Tarcog {
     virtual double getHr() = 0;
 
     double m_DirectSolarRadiation;
-    double m_AirTemperature; // environment temperature [K]
     double m_Emissivity; // Emissivity from the environment
     double m_InfraredRadiation; // Infrared radiation from environemnt [W/m2]
     double m_HInput; // Input convection coefficient which type depends on selected BC model [W/m2*K]
     BoundaryConditionsCoeffModel m_HCoefficientModel; // Model used to calculate BC coefficient
     bool m_IRCalculatedOutside; // Keep info if IR radiation is provided (calculated) outside
-
-  private:
-    double getGasTemperature();
     
   };
 

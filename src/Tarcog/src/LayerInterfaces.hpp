@@ -86,11 +86,10 @@ namespace Tarcog {
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
 
+    virtual double getAirTemperature() = 0;
+
   protected:
     void initializeStateVariables();
-
-    // Gas temperature will not always be same for every layer. It depends on type of the layer as well as potential air movement
-    virtual double getGasTemperature() = 0;
 
     double m_Pressure;
     double m_AirSpeed;
