@@ -63,6 +63,7 @@ protected:
     // System
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem->solve();
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }
 
@@ -74,7 +75,7 @@ public:
 TEST_F( TestOutdoorEnvironmentHCalcSwingbank, CalculateH_Swinbank ) {
   SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = Swinbank" );
   
-  std::shared_ptr< CTarEnvironment > aOutdoor = nullptr;
+  shared_ptr< CTarEnvironment > aOutdoor = nullptr;
   
   aOutdoor = GetOutdoors();
   ASSERT_TRUE( aOutdoor != nullptr );
@@ -85,4 +86,12 @@ TEST_F( TestOutdoorEnvironmentHCalcSwingbank, CalculateH_Swinbank ) {
   double hc = aOutdoor->getHc();
   EXPECT_NEAR( 26, hc, 1e-6 );
 
+  double outIR = aOutdoor->getRadiationFlow();
+  EXPECT_NEAR( 20.7751423, outIR, 1e-6 );
+
+  double outConvection = aOutdoor->getConvectionConductionFlow();
+  EXPECT_NEAR( -48.607583, outConvection, 1e-6 );
+
+  double totalHeatFlow = aOutdoor->getHeatFlow();
+  EXPECT_NEAR( -27.83244071, totalHeatFlow, 1e-6 );
 }

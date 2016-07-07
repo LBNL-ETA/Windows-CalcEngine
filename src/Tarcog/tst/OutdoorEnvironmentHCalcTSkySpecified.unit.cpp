@@ -38,7 +38,6 @@ protected:
     /////////////////////////////////////////////////////////
     // Indoor
     /////////////////////////////////////////////////////////
-
     double roomTemperature = 294.15;
 
     shared_ptr< CTarEnvironment > Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
@@ -63,6 +62,7 @@ protected:
     // System
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem->solve();
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }
 
@@ -74,7 +74,7 @@ public:
 TEST_F( TestOutdoorEnvironmentHCalcTSkySpecified, CalculateH_TSkySpecified ) {
   SCOPED_TRACE( "Begin Test: Outdoors -> H model = Calculate; Sky Model = TSky specified" );
   
-  std::shared_ptr< CTarEnvironment > aOutdoor = nullptr;
+  shared_ptr< CTarEnvironment > aOutdoor = nullptr;
   
   aOutdoor = GetOutdoors();
   ASSERT_TRUE( aOutdoor != nullptr );
@@ -84,4 +84,13 @@ TEST_F( TestOutdoorEnvironmentHCalcTSkySpecified, CalculateH_TSkySpecified ) {
 
   double hc = aOutdoor->getHc();
   EXPECT_NEAR( 26, hc, 1e-6 );
+
+  double outIR = aOutdoor->getRadiationFlow();
+  EXPECT_NEAR( 52.1067777, outIR, 1e-6 );
+
+  double outConvection = aOutdoor->getConvectionConductionFlow();
+  EXPECT_NEAR( -72.92573417, outConvection, 1e-6 );
+
+  double totalHeatFlow = aOutdoor->getHeatFlow();
+  EXPECT_NEAR( -20.81895645, totalHeatFlow, 1e-6 );
 }

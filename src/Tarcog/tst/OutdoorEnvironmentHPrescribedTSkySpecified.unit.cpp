@@ -74,7 +74,7 @@ public:
 TEST_F( TestOutdoorEnvironmentHPrescribedTSkySpecified, CalculateH_TSkySpecified ) {
   SCOPED_TRACE( "Begin Test: Outdoors -> H model = Prescribed; Sky Model = TSky specified" );
   
-  std::shared_ptr< CTarEnvironment > aOutdoor = nullptr;
+  shared_ptr< CTarEnvironment > aOutdoor = nullptr;
   
   aOutdoor = GetOutdoors();
   ASSERT_TRUE( aOutdoor != nullptr );

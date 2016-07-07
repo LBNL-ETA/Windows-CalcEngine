@@ -74,7 +74,7 @@ public:
 TEST_F( TestOutdoorEnvironmentHPrescribedSwingbank, HPrescribed_Swinbank ) {
   SCOPED_TRACE( "Begin Test: Outdoors -> H model = Prescribed; Sky Model = Swinbank" );
   
-  std::shared_ptr< CTarEnvironment > aOutdoor = nullptr;
+  shared_ptr< CTarEnvironment > aOutdoor = nullptr;
   
   aOutdoor = GetOutdoors();
   ASSERT_TRUE( aOutdoor != nullptr );
