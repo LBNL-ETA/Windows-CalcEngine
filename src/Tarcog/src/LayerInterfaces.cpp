@@ -206,7 +206,7 @@ namespace Tarcog {
 
   void CGasLayer::initializeStateVariables() {
     assert( m_Gas != nullptr );
-    m_Gas->setTemperatureAndPressure( getAirTemperature(), m_Pressure );
+    m_Gas->setTemperatureAndPressure( getGasTemperature(), m_Pressure );
   }
 
   void CGasLayer::onCreate() {

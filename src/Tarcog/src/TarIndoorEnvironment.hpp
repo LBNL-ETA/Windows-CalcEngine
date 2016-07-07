@@ -13,12 +13,10 @@ namespace Tarcog {
 
     void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 
-    void setRoomRadiationTemperature( double const t_RadiationTemperature );
-
-    double getAirTemperature();
+    void setRoomRadiationTemperature( double const t_RadiationTemperature );    
 
   private:
-    // void calculateRadiationState();
+    double getGasTemperature();
     double calculateIRFromVariables();
     void storeRadiationAtSurface();
     void calculateConvectionConductionState();

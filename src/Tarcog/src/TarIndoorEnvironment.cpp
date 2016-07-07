@@ -19,9 +19,7 @@ namespace Tarcog {
     CTarEnvironment( t_Pressure, 0, AirHorizontalDirection::Windward ) { 
 
     m_RoomRadiationTemperature = t_AirTemperature; // Radiation temperature is by default air
-    // double roomRadiosity = STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
     m_BackSurface = make_shared< CTarSurface >( m_Emissivity, 0 );
-    // m_BackSurface->setJ( roomRadiosity );
     m_BackSurface->setTemperature( t_AirTemperature );
   }
 
@@ -34,7 +32,7 @@ namespace Tarcog {
     resetCalculated();
   }
 
-  double CTarIndoorEnvironment::getAirTemperature() {
+  double CTarIndoorEnvironment::getGasTemperature() {
     assert( m_BackSurface != nullptr );
     return m_BackSurface->getTemperature();
   }
@@ -82,8 +80,8 @@ namespace Tarcog {
       assert( m_BackSurface != nullptr );
 
       double tiltRadians = m_Tilt * M_PI / 180;
-      double tMean = getAirTemperature() + 0.25 * ( m_FrontSurface->getTemperature() - getAirTemperature() );
-      double deltaTemp = fabs( m_FrontSurface->getTemperature() - getAirTemperature() );
+      double tMean = getGasTemperature() + 0.25 * ( m_FrontSurface->getTemperature() - getGasTemperature() );
+      double deltaTemp = fabs( m_FrontSurface->getTemperature() - getGasTemperature() );
       m_Gas->setTemperatureAndPressure( tMean, m_Pressure );
       shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
       double gr = GRAVITYCONSTANT * pow( m_Height, 3 ) * deltaTemp * pow( aProperties->m_Density, 2 ) /
@@ -108,6 +106,6 @@ namespace Tarcog {
     }
   }
   double CTarIndoorEnvironment::getHr() {
-    return getRadiationFlow() / ( getAirTemperature() - m_FrontSurface->getTemperature() );
+    return getRadiationFlow() / ( getGasTemperature() - m_FrontSurface->getTemperature() );
   }
 }

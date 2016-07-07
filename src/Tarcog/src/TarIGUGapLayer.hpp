@@ -47,7 +47,7 @@ namespace Tarcog {
     double convectiveH();
     void ventilatedFlow();
 
-    double getAirTemperature();
+    double getGasTemperature();
 
     double characteristicHeight();
 

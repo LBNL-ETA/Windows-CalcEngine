@@ -75,8 +75,8 @@ namespace Tarcog {
   void CTarcogSystem::initializeStartValues() {
     const double startX = 0.001;
     double thickness = m_IGU->getThickness() + startX + 0.01;
-    double tOut = m_Outdoor->getAirTemperature();
-    double tInd = m_Indoor->getAirTemperature();
+    double tOut = m_Outdoor->getGasTemperature();
+    double tInd = m_Indoor->getGasTemperature();
     
     double deltaTemp = ( tInd - tOut ) / thickness;
 

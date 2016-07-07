@@ -118,7 +118,7 @@ namespace Tarcog {
       m_Width * ( m_inTemperature - m_outTemperature );
   }
 
-  double CTarIGUGapLayer::getAirTemperature() {
+  double CTarIGUGapLayer::getGasTemperature() {
     return layerTemperature();
   }
 

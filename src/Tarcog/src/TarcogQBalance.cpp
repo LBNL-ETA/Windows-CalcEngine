@@ -100,7 +100,7 @@ namespace Tarcog {
 
     } else {
       double environmentRadiosity = dynamic_pointer_cast< CTarEnvironment >( t_Previous )->getIRRadiation();
-      double airTemperature = dynamic_pointer_cast< CTarEnvironment >( t_Previous )->getAirTemperature();
+      double airTemperature = dynamic_pointer_cast< CTarEnvironment >( t_Previous )->getGasTemperature();
 
       ( *m_VectorB )[ sP ] = ( *m_VectorB )[ sP ] + environmentRadiosity + hgap_prev * airTemperature;
       ( *m_VectorB )[ sP + 1 ] = ( *m_VectorB )[ sP + 1 ] - frontSurface->getReflectance() * environmentRadiosity;
@@ -121,7 +121,7 @@ namespace Tarcog {
 
     } else {
       double environmentRadiosity = dynamic_pointer_cast< CTarEnvironment >( t_Next )->getIRRadiation();
-      double airTemperature = dynamic_pointer_cast< CTarEnvironment >( t_Next )->getAirTemperature();
+      double airTemperature = dynamic_pointer_cast< CTarEnvironment >( t_Next )->getGasTemperature();
 
       ( *m_VectorB )[ sP + 1 ] = ( *m_VectorB )[ sP + 1 ] - backSurface->getTransmittance() * environmentRadiosity;
       ( *m_VectorB )[ sP + 2 ] = ( *m_VectorB )[ sP + 2 ] - backSurface->getReflectance() * environmentRadiosity;

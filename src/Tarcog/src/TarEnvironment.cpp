@@ -57,6 +57,10 @@ namespace Tarcog {
     return getConductionConvectionCoefficient();
   }
 
+  double CTarEnvironment::getAirTemperature() {
+    return getGasTemperature();
+  }
+
   double CTarEnvironment::getDirectSolarRadiation() const {
     return m_DirectSolarRadiation;
   }

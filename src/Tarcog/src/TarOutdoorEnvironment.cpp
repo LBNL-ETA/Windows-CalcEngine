@@ -67,7 +67,7 @@ namespace Tarcog {
     m_BackSurface = t_IGULayer->getSurface( Side::Front );
   }
 
-  double CTarOutdoorEnvironment::getAirTemperature() {
+  double CTarOutdoorEnvironment::getGasTemperature() {
     assert( m_FrontSurface != nullptr );
     return m_FrontSurface->getTemperature();
   }

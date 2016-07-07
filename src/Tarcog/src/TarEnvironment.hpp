@@ -30,6 +30,8 @@ namespace Tarcog {
     double getDirectSolarRadiation() const;
     double getIRRadiation();
     double getHc();
+
+    double getAirTemperature();
     
     virtual void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
 

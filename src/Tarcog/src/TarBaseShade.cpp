@@ -175,7 +175,7 @@ namespace Tarcog {
     int iterationStep = 0;
     while( !converged ) {
       double tempGap = t_Gap->layerTemperature();
-      double tempEnvironment = t_Environment->getAirTemperature();
+      double tempEnvironment = t_Environment->getGasTemperature();
       double TavGap = t_Gap->averageTemperature();
       if( tempGap > tempEnvironment ) {
         t_Gap->setFlowGeometry( m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top(), AirVerticalDirection::Up );
