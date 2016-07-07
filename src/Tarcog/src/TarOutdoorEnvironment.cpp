@@ -57,11 +57,6 @@ namespace Tarcog {
     return STEFANBOLTZMANN * pow( radiationTemperature, 4 );
   }
 
-  void CTarOutdoorEnvironment::storeRadiationAtSurface() {
-    assert( m_FrontSurface != nullptr );
-    m_FrontSurface->setJ( m_InfraredRadiation );
-  }
-
   void CTarOutdoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
     this->connectToBackSide( t_IGULayer );
     m_BackSurface = t_IGULayer->getSurface( Side::Front );
@@ -101,6 +96,16 @@ namespace Tarcog {
 
   double CTarOutdoorEnvironment::getHr() {
     return getRadiationFlow() / ( m_BackSurface->getTemperature() - m_FrontSurface->getTemperature() );
+  }
+
+  void CTarOutdoorEnvironment::setIRFromEnvironment( const double t_IR ) {
+    assert( m_FrontSurface != nullptr );
+    m_FrontSurface->setJ( t_IR );
+  }
+
+  double CTarOutdoorEnvironment::getIRFromEnvironment() const {
+    assert( m_FrontSurface != nullptr );
+    return m_FrontSurface->J();
   }
 
 }

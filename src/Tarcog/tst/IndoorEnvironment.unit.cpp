@@ -82,7 +82,7 @@ TEST_F( TestIndoorEnvironment, IndoorRadiosity ) {
   aIndoor = GetIndoors();
   ASSERT_TRUE( aIndoor != nullptr );
 
-  double radiosity = aIndoor->getIRRadiation();
+  double radiosity = aIndoor->getEnvironmentIR();
   EXPECT_NEAR( 424.458749869075, radiosity, 1e-6 );
 }
 

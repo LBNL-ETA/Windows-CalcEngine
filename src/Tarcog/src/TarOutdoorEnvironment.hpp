@@ -20,11 +20,13 @@ namespace Tarcog {
   private:
     double getGasTemperature();
     double calculateIRFromVariables();
-    void storeRadiationAtSurface();
     void calculateConvectionConductionState();
 
     void calculateHc();
     double getHr();
+
+    void setIRFromEnvironment( const double t_IR );
+    double getIRFromEnvironment() const;
 
     double m_Tsky;
     double m_FractionOfClearSky;

@@ -42,11 +42,6 @@ namespace Tarcog {
     return STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
   }
 
-  void CTarIndoorEnvironment::storeRadiationAtSurface() {
-    assert( m_BackSurface != nullptr );
-    m_BackSurface->setJ( m_InfraredRadiation );
-  }
-
   void CTarIndoorEnvironment::calculateConvectionConductionState() {
     CTarEnvironment::calculateConvectionConductionState();
     switch( m_HCoefficientModel ) {
@@ -107,5 +102,15 @@ namespace Tarcog {
   }
   double CTarIndoorEnvironment::getHr() {
     return getRadiationFlow() / ( getGasTemperature() - m_FrontSurface->getTemperature() );
+  }
+
+  void CTarIndoorEnvironment::setIRFromEnvironment( const double t_IR ) {
+    assert( m_BackSurface != nullptr );
+    m_BackSurface->setJ( t_IR );
+  }
+
+  double CTarIndoorEnvironment::getIRFromEnvironment() const {
+    assert( m_BackSurface != nullptr );
+    return m_BackSurface->J();
   }
 }

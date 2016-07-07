@@ -34,7 +34,7 @@ protected:
     Outdoor = make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
       airDirection, tSky, SkyModel::AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
-    Outdoor->setInfraredRadiation( IRRadiation );
+    Outdoor->setEnvironmentIR( IRRadiation );
 
     /////////////////////////////////////////////////////////
     // Indoor
@@ -81,7 +81,7 @@ TEST_F( TestOutdoorEnvironmentIRFixed, CalculateIRFixed ) {
     aOutdoor = GetOutdoors();
     ASSERT_TRUE( aOutdoor != nullptr );
 
-    double radiosity = aOutdoor->getIRRadiation();
+    double radiosity = aOutdoor->getEnvironmentIR();
     EXPECT_NEAR( 370, radiosity, 1e-6 );
 
     double hc = aOutdoor->getHc();

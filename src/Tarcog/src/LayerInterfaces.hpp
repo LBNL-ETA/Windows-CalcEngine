@@ -17,7 +17,8 @@ namespace Tarcog {
 
   struct ForcedVentilation {
     ForcedVentilation() : Speed( 0 ), Temperature( 0 ) {};
-    ForcedVentilation( double t_Speed, double t_Temperature ) : Speed( t_Speed ), Temperature( t_Temperature ) {};
+    ForcedVentilation( double t_Speed, double t_Temperature ) : 
+      Speed( t_Speed ), Temperature( t_Temperature ) {};
     double Speed;
     double Temperature;
   };
@@ -71,7 +72,6 @@ namespace Tarcog {
     std::shared_ptr< CTarSurface > m_FrontSurface;
     std::shared_ptr< CTarSurface > m_BackSurface;
     double m_ConductiveConvectiveCoeff;
-    double m_RadiationFlow;
     double m_LayerGainFlow;
   };
 

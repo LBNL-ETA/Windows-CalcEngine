@@ -47,7 +47,7 @@ protected:
 
     m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( m_Indoor != nullptr );
-    m_Indoor->setInfraredRadiation( IRRadiation );
+    m_Indoor->setEnvironmentIR( IRRadiation );
 
     /////////////////////////////////////////////////////////
     // IGU
@@ -85,7 +85,7 @@ TEST_F( TestIndoorEnvironmentIRFixed, IndoorRadiosity ) {
   aIndoor = GetIndoors();
   ASSERT_TRUE( aIndoor != nullptr );
 
-  double radiosity = aIndoor->getIRRadiation();
+  double radiosity = aIndoor->getEnvironmentIR();
   EXPECT_NEAR( 424.458750, radiosity, 1e-6 );
 }
 

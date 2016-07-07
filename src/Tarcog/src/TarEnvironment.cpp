@@ -11,7 +11,7 @@ namespace Tarcog {
   CTarEnvironment::CTarEnvironment( double t_Pressure, double t_AirSpeed, 
     AirHorizontalDirection t_AirDirection ) : CGasLayer( t_Pressure, t_AirSpeed, t_AirDirection ),
     m_DirectSolarRadiation( 0 ), m_Emissivity( DEFAULT_ENV_EMISSIVITY ),
-    m_InfraredRadiation( 0 ), m_HInput( 0 ), m_HCoefficientModel( BoundaryConditionsCoeffModel::CalculateH  ),
+    m_HInput( 0 ), m_HCoefficientModel( BoundaryConditionsCoeffModel::CalculateH  ),
 	m_IRCalculatedOutside( false ) {
     m_ForcedVentilation = ForcedVentilation(); // Creates forced ventilation with zero values
   }
@@ -36,8 +36,8 @@ namespace Tarcog {
     resetCalculated();
   }
 
-  void CTarEnvironment::setInfraredRadiation( double const t_InfraRed ) {
-    m_InfraredRadiation = t_InfraRed;
+  void CTarEnvironment::setEnvironmentIR( double const t_InfraRed ) {
+    setIRFromEnvironment( t_InfraRed );
     m_IRCalculatedOutside = true;
     resetCalculated();
   }
@@ -47,9 +47,9 @@ namespace Tarcog {
     resetCalculated();
   }
 
-  double CTarEnvironment::getIRRadiation() {
+  double CTarEnvironment::getEnvironmentIR() {
     calculateLayerState();
-    return m_InfraredRadiation;
+    return getIRFromEnvironment();
   }
 
   double CTarEnvironment::getHc()
@@ -77,7 +77,7 @@ namespace Tarcog {
     // In case of environments, there is no need to calculate radiation
     // if radiation is provided from outside calculations
     if( !m_IRCalculatedOutside ) {
-      m_InfraredRadiation = calculateIRFromVariables();
+      setIRFromEnvironment( calculateIRFromVariables() );
     }
   }
 

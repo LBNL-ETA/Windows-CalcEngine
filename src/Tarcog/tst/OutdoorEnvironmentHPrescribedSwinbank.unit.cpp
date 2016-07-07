@@ -29,19 +29,17 @@ protected:
     AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
     double tSky = 270; // Kelvins
     double solarRadiation = 0;
-    double hcout = 2.5;
+    double hout = 20;
 
     Outdoor = make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
       airDirection, tSky, SkyModel::Swinbank );
     ASSERT_TRUE( Outdoor != nullptr );
-    Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed, hcout );
+    Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed, hout );
 
     /////////////////////////////////////////////////////////
     // Indoor
     /////////////////////////////////////////////////////////
-
     double roomTemperature = 294.15;
-
     shared_ptr< CTarEnvironment > Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
@@ -64,6 +62,7 @@ protected:
     // System
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem->solve();
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }
 
@@ -80,10 +79,19 @@ TEST_F( TestOutdoorEnvironmentHPrescribedSwingbank, HPrescribed_Swinbank ) {
   aOutdoor = GetOutdoors();
   ASSERT_TRUE( aOutdoor != nullptr );
 
-  double radiosity = aOutdoor->getIRRadiation();
+  double radiosity = aOutdoor->getEnvironmentIR();
   EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
 
   double hc = aOutdoor->getHc();
-  EXPECT_NEAR( 2.5, hc, 1e-6 );
+  EXPECT_NEAR( 14.895501825717741, hc, 1e-6 );
+
+  double outIR = aOutdoor->getRadiationFlow();
+  EXPECT_NEAR( -7.7776575806398682, outIR, 1e-6 );
+
+  double outConvection = aOutdoor->getConvectionConductionFlow();
+  EXPECT_NEAR( -22.696082697398253, outConvection, 1e-6 );
+
+  double totalHeatFlow = aOutdoor->getHeatFlow();
+  EXPECT_NEAR( -30.473740278, totalHeatFlow, 1e-6 );
 
 }
