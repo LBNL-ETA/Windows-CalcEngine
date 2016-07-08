@@ -67,6 +67,10 @@ namespace Tarcog {
     return m_IGU->getLayers();
   }
 
+  vector< shared_ptr< CTarIGUSolidLayer > > CTarcogSystem::getSolidLayers() {
+    return m_IGU->getSolidLayers();
+  }
+
   void CTarcogSystem::solve() {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->solve();
