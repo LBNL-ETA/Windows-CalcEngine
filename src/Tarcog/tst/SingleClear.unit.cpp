@@ -17,8 +17,7 @@ using namespace FenestrationCommon;
 class TestSingleClear : public testing::Test {
 
 private:
-  shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CBaseIGUTarcogLayer > m_SolidLayer;
 
 protected:
   virtual void SetUp() {    
@@ -64,27 +63,21 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
-    ASSERT_TRUE( m_TarcogSystem != nullptr );
+    shared_ptr< CTarcogSystem >  aTarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    ASSERT_TRUE( aTarcogSystem != nullptr );
 
-    m_TarcogSystem->solve();
+    aTarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
-  shared_ptr< CTarIGUSolidLayer > GetSolidLayer() { return m_SolidLayer; };
+  shared_ptr< CBaseIGUTarcogLayer > GetSolidLayer() { return m_SolidLayer; };
 
 };
 
 TEST_F( TestSingleClear, Test1 ) {
   SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
-  
-  shared_ptr< CTarcogSystem > aSystem = nullptr;
-  shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
-  
-  aSystem = GetSystem();
-  ASSERT_TRUE( aSystem != nullptr );
-  aSystem->solve();
+
+  shared_ptr< CBaseIGUTarcogLayer > aLayer = nullptr;
 
   aLayer = GetSolidLayer();
 
