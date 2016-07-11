@@ -58,7 +58,7 @@ namespace Tarcog {
 
       m_IGU->setState( m_IGUState );
       
-      if( m_Iterations > 1000 && m_RelaxParam == 0.1 ) {
+      if( m_Iterations > 200 && m_RelaxParam == 0.1 ) {
         throw runtime_error("Failed to converge in tarcog.");
       }
 
