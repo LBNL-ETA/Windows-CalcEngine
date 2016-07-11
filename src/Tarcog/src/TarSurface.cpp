@@ -52,11 +52,16 @@ namespace Tarcog {
     m_J = 0;
   }
 
-  void CTarSurface::intializeStart( double const t_Temperature ) {
+  void CTarSurface::initializeStart( double const t_Temperature ) {
     using ConstantsData::STEFANBOLTZMANN;
 
     m_Temperature = t_Temperature;
     m_J = STEFANBOLTZMANN * pow( m_Temperature, 4 );
+  }
+
+  void CTarSurface::initializeStart( const double t_Temperature, const double t_Radiation ) {
+    m_Temperature = t_Temperature;
+    m_J = t_Radiation;
   }
 
   double CTarSurface::J() const {

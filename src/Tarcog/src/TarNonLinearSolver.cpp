@@ -21,8 +21,6 @@ namespace Tarcog {
     assert( m_LinearSolver != nullptr );
     m_QBalance = make_shared< CTarcogQBalance >( m_IGU );
     assert( m_QBalance != nullptr );
-    m_IGUState = m_IGU->getState();
-    assert( m_IGUState != nullptr );
   }
 
   double CTarNonLinearSolver::calculateTolerance( shared_ptr< vector< double > > t_Solution ) {
@@ -45,7 +43,13 @@ namespace Tarcog {
     m_Tolerance = t_Tolerance;
   }
 
+  size_t CTarNonLinearSolver::getNumOfIterations() const {
+    return m_Iterations;
+  }
+
   void CTarNonLinearSolver::solve() {
+    m_IGUState = m_IGU->getState();
+    assert( m_IGUState != nullptr );
     shared_ptr< vector< double > > aSolution = nullptr;
     double achievedTolerance = 1;
 

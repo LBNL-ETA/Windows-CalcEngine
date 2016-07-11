@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <stdexcept>
+#include <iostream>
 
 #include "TarIGU.hpp"
 #include "BaseIGUTarcogLayer.hpp"
@@ -139,6 +140,22 @@ namespace Tarcog {
 
   int CTarIGU::getNumOfLayers() const {
     return int( m_SolidLayers.size() );
+  }
+
+  void CTarIGU::setInitialGuess( shared_ptr< vector< double > > t_Guess ) {
+    if( 2 * m_SolidLayers.size() != t_Guess->size() ) {
+      cout << "Number of temperatures in initial guess cannot fit number of layers."
+        "Program will use initial guess instead" << endl;
+    } else {
+      size_t Index = 0;
+      for( shared_ptr< CTarIGUSolidLayer > aLayer : m_SolidLayers ) {
+        for( Side aSide : EnumSide() ) {
+          shared_ptr< CTarSurface > aSurface = aLayer->getSurface( aSide );
+          aSurface->initializeStart( ( *t_Guess )[ Index ] );
+          ++Index;
+        }
+      }
+    }
   }
 
   vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() {

@@ -19,9 +19,8 @@ using namespace FenestrationCommon;
 namespace Tarcog {
 
   CTarcogSystem::CTarcogSystem( shared_ptr< CTarIGU > t_IGU,
-                   shared_ptr< CTarEnvironment > t_Indoor,
-                   shared_ptr< CTarEnvironment > t_Outdoor ) :
-                   m_IGU( t_IGU ), m_Indoor( t_Indoor ), m_Outdoor( t_Outdoor ) {
+    shared_ptr< CTarEnvironment > t_Indoor, shared_ptr< CTarEnvironment > t_Outdoor ) :
+    m_IGU( t_IGU ), m_Indoor( t_Indoor ), m_Outdoor( t_Outdoor ) {
 
     if( t_IGU == nullptr ) {
       throw runtime_error( "IGU has not been assigned to the system. Null value passed." );
@@ -76,6 +75,11 @@ namespace Tarcog {
     m_NonLinearSolver->setTolerance( t_Tolerance );
   }
 
+  size_t CTarcogSystem::getNumberOfIterations() const {
+    assert( m_NonLinearSolver != nullptr );
+    return m_NonLinearSolver->getNumOfIterations();
+  }
+
   void CTarcogSystem::solve() {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->solve();
@@ -96,14 +100,18 @@ namespace Tarcog {
     shared_ptr< CTarSurface > aSurface = aLayer->getSurface( Side::Front );
     double curTemp = tOut + currentXPosition * deltaTemp;
 
-    aSurface->intializeStart( curTemp );
+    aSurface->initializeStart( curTemp );
 
     for( shared_ptr< CBaseIGUTarcogLayer > layer : aLayers ) {
       currentXPosition += layer->getThickness();
       curTemp = tOut + currentXPosition * deltaTemp;
       aSurface = layer->getSurface( Side::Back );
-      aSurface->intializeStart( curTemp );
+      aSurface->initializeStart( curTemp );
     }
+  }
+
+  void CTarcogSystem::setInitialGuess( shared_ptr< vector< double > > t_Temperatures ) {
+    m_IGU->setInitialGuess( t_Temperatures );
   }
 
 }

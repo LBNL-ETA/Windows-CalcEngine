@@ -22,6 +22,9 @@ namespace Tarcog {
     // sets tolerance for solution
     void setTolerance( const double t_Tolerance );
 
+    // returns number of iterations for current solution.
+    size_t getNumOfIterations() const;
+
     void solve();
 
   private:

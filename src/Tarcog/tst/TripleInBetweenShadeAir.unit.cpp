@@ -27,87 +27,81 @@ private:
 
 protected:
   virtual void SetUp() {    
-    try {
-      /////////////////////////////////////////////////////////
-      // Outdoor
-      /////////////////////////////////////////////////////////
-      double airTemperature = 255.15; // Kelvins
-      double pressure = 101325; // Pascals
-      double airSpeed = 5.5; // meters per second
-      AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-      double tSky = 255.15; // Kelvins
-      double solarRadiation = 0;
+    /////////////////////////////////////////////////////////
+    // Outdoor
+    /////////////////////////////////////////////////////////
+    double airTemperature = 255.15; // Kelvins
+    double pressure = 101325; // Pascals
+    double airSpeed = 5.5; // meters per second
+    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
+    double tSky = 255.15; // Kelvins
+    double solarRadiation = 0;
 
-      shared_ptr< CTarEnvironment > Outdoor = 
-        make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
-          airDirection, tSky, SkyModel::AllSpecified );
-      ASSERT_TRUE( Outdoor != nullptr );
-      Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
+    shared_ptr< CTarEnvironment > Outdoor = 
+      make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+        airDirection, tSky, SkyModel::AllSpecified );
+    ASSERT_TRUE( Outdoor != nullptr );
+    Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
 
-      /////////////////////////////////////////////////////////
-      // Indoor
-      /////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////
+    // Indoor
+    /////////////////////////////////////////////////////////
 
-      double roomTemperature = 295.15;
+    double roomTemperature = 295.15;
 
-      shared_ptr< CTarEnvironment > Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
-      ASSERT_TRUE( Indoor != nullptr );
+    shared_ptr< CTarEnvironment > Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
+    ASSERT_TRUE( Indoor != nullptr );
 
-      /////////////////////////////////////////////////////////
-      // IGU
-      /////////////////////////////////////////////////////////
-      double solidLayerThickness = 0.005715; // [m]
-      double solidLayerConductance = 1;
+    /////////////////////////////////////////////////////////
+    // IGU
+    /////////////////////////////////////////////////////////
+    double solidLayerThickness = 0.005715; // [m]
+    double solidLayerConductance = 1;
 
-      m_Layer1 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-      ASSERT_TRUE( m_Layer1 != nullptr );
+    m_Layer1 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    ASSERT_TRUE( m_Layer1 != nullptr );
 
-      m_Layer3 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-      ASSERT_TRUE( m_Layer3 != nullptr );
+    m_Layer3 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    ASSERT_TRUE( m_Layer3 != nullptr );
 
-      double shadeLayerThickness = 0.01;
-      double shadeLayerConductance = 160;
-      double Atop = 0.1;
-      double Abot = 0.1;
-      double Aleft = 0.1;
-      double Aright = 0.1;
-      double Afront = 0.2;
+    double shadeLayerThickness = 0.01;
+    double shadeLayerConductance = 160;
+    double Atop = 0.1;
+    double Abot = 0.1;
+    double Aleft = 0.1;
+    double Aright = 0.1;
+    double Afront = 0.2;
 
-      m_Layer2 = make_shared< CTarIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
-        make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
+    m_Layer2 = make_shared< CTarIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
+      make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
 
-      ASSERT_TRUE( m_Layer2 != nullptr );
+    ASSERT_TRUE( m_Layer2 != nullptr );
 
-      double gapThickness = 0.0127;
-      double gapPressure = 101325;
-      shared_ptr< CTarIGUGapLayer > GapLayer1 = std::make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
-      ASSERT_TRUE( GapLayer1 != nullptr );
+    double gapThickness = 0.0127;
+    double gapPressure = 101325;
+    shared_ptr< CTarIGUGapLayer > GapLayer1 = std::make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
+    ASSERT_TRUE( GapLayer1 != nullptr );
 
-      shared_ptr< CTarIGUGapLayer > GapLayer2 = std::make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
-      ASSERT_TRUE( GapLayer2 != nullptr );
+    shared_ptr< CTarIGUGapLayer > GapLayer2 = std::make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
+    ASSERT_TRUE( GapLayer2 != nullptr );
 
-      double windowWidth = 1;
-      double windowHeight = 1;
-      shared_ptr< CTarIGU > aIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
-      ASSERT_TRUE( aIGU != nullptr );
-      aIGU->addLayer( m_Layer1 );
-      aIGU->addLayer( GapLayer1 );
-      aIGU->addLayer( m_Layer2 );
-      aIGU->addLayer( GapLayer2 );
-      aIGU->addLayer( m_Layer3 );
+    double windowWidth = 1;
+    double windowHeight = 1;
+    shared_ptr< CTarIGU > aIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
+    ASSERT_TRUE( aIGU != nullptr );
+    aIGU->addLayer( m_Layer1 );
+    aIGU->addLayer( GapLayer1 );
+    aIGU->addLayer( m_Layer2 );
+    aIGU->addLayer( GapLayer2 );
+    aIGU->addLayer( m_Layer3 );
 
-      /////////////////////////////////////////////////////////
-      // System
-      /////////////////////////////////////////////////////////
-      m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
-      ASSERT_TRUE( m_TarcogSystem != nullptr );
+    /////////////////////////////////////////////////////////
+    // System
+    /////////////////////////////////////////////////////////
+    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    ASSERT_TRUE( m_TarcogSystem != nullptr );
 
-      m_TarcogSystem->solve();
-
-    } catch( exception &e ) {
-      cout << e.what() << endl;
-      throw &e;
-    }
+    m_TarcogSystem->solve();
   }
 
 public:

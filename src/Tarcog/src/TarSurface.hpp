@@ -22,7 +22,8 @@ namespace Tarcog {
     double J() const;
     void setJ( double const t_J );
     double emissivePowerTerm() const;
-    void intializeStart( double const t_Temperature );
+    void initializeStart( double const t_Temperature );
+    void initializeStart( const double t_Temperature, const double t_Radiation );
 
   private:
     void initialize();

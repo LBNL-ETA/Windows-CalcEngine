@@ -27,6 +27,10 @@ namespace Tarcog {
 
     // Set solution tolerance
     void setTolerance( const double t_Tolerance );
+    // Returns number of iterations
+    size_t getNumberOfIterations() const;
+    // Set intial guess for solution.
+    void setInitialGuess( std::shared_ptr< std::vector< double > > t_Temperatures );
 
     void solve();
 
@@ -35,7 +39,6 @@ namespace Tarcog {
     std::shared_ptr< CTarEnvironment > m_Indoor;
     std::shared_ptr< CTarEnvironment > m_Outdoor;
     std::shared_ptr< CTarNonLinearSolver > m_NonLinearSolver;
-
     void initializeStartValues();
   };
 

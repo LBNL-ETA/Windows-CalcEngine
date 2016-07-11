@@ -15,11 +15,10 @@ using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-class TestDoubleClear : public testing::Test {
+// Example of double clear window with inital guess for solution
+class TestDoubleClearWithInitialGuess : public testing::Test {
 
 private:
-  // shared_ptr< CBaseIGUTarcogLayer > m_SolidLayer1;
-  // shared_ptr< CBaseIGUTarcogLayer > m_SolidLayer2;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
@@ -73,13 +72,21 @@ protected:
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer1 );
     aIGU->addLayer( m_GapLayer );
-    aIGU->addLayer( aSolidLayer2 );
+    aIGU->addLayer( aSolidLayer2 );    
 
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
+
+    // set up initial guess. It was taken to be close to solution.
+    shared_ptr< vector < double > > aTemperatures = make_shared< vector< double > >();
+    aTemperatures->push_back( 258.75 );
+    aTemperatures->push_back( 259.36 );
+    aTemperatures->push_back( 279.18 );
+    aTemperatures->push_back( 279.78 );
+    m_TarcogSystem->setInitialGuess( aTemperatures );
 
     m_TarcogSystem->solve();
   }
@@ -89,7 +96,7 @@ public:
 
 };
 
-TEST_F( TestDoubleClear, Test1 ) {
+TEST_F( TestDoubleClearWithInitialGuess, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Clear - Surface temperatures" );
   
   shared_ptr< CTarcogSystem > aSystem = nullptr;
@@ -138,5 +145,5 @@ TEST_F( TestDoubleClear, Test1 ) {
   EXPECT_NEAR( 359.731700, Radiosity, 1e-5 );
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 30, numOfIter );
+  EXPECT_EQ( 15, numOfIter );
 }
