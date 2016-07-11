@@ -12,9 +12,9 @@ namespace Tarcog {
   }
 
   namespace IterationConstants {
-    const double RELAXATION_PARAMETER_MAX = 0.8;
+    const double RELAXATION_PARAMETER_MAX = 0.65;
     const double RELAXATION_PARAMETER_MIN = 0.1;
-    const double RELAXATION_PARAMETER_STEP = 0.1;
+    const double RELAXATION_PARAMETER_STEP = 0.05;
     const double CONVERGENCE_TOLERANCE = 1e-6;
     const size_t NUMBER_OF_STEPS = 200;
     const double RELAXATION_PARAMETER_AIRFLOW = 0.9;
