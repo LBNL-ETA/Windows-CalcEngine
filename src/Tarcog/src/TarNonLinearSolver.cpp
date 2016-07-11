@@ -3,8 +3,8 @@
 #include <algorithm>
 
 #include "TarNonLinearSolver.hpp"
-#include "TarcogConstants.hpp"
 #include "LinearSolver.hpp"
+#include "TarcogConstants.hpp"
 #include "TarcogQBalance.hpp"
 #include "TarIGU.hpp"
 
@@ -13,7 +13,9 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CTarNonLinearSolver::CTarNonLinearSolver( shared_ptr< CTarIGU > t_IGU ) : m_IGU( t_IGU )  {
+  CTarNonLinearSolver::CTarNonLinearSolver( shared_ptr< CTarIGU > t_IGU ) : 
+    m_IGU( t_IGU ), m_Tolerance( IterationConstants::CONVERGENCE_TOLERANCE ), m_Iterations( 0 ),
+    m_RelaxParam( IterationConstants::RELAXATION_PARAMETER_MAX ){
     assert( t_IGU != nullptr );
     m_LinearSolver = make_shared< CLinearSolver >();
     assert( m_LinearSolver != nullptr );
@@ -21,9 +23,6 @@ namespace Tarcog {
     assert( m_QBalance != nullptr );
     m_IGUState = m_IGU->getState();
     assert( m_IGUState != nullptr );
-    m_RelaxParam = IterationConstants::RELAXATION_PARAMETER_MAX;
-    m_Tolerance = IterationConstants::CONVERGENCE_TOLERANCE;
-    m_Iterations = 0;
   }
 
   double CTarNonLinearSolver::calculateTolerance( shared_ptr< vector< double > > t_Solution ) {
@@ -42,12 +41,15 @@ namespace Tarcog {
     }
   }
 
+  void CTarNonLinearSolver::setTolerance( const double t_Tolerance ) {
+    m_Tolerance = t_Tolerance;
+  }
+
   void CTarNonLinearSolver::solve() {
     shared_ptr< vector< double > > aSolution = nullptr;
     double achievedTolerance = 1;
 
     m_Iterations = 0;
-    const size_t maxIterations = 200;
 
     while ( achievedTolerance > m_Tolerance ) {
       ++m_Iterations;
@@ -60,13 +62,14 @@ namespace Tarcog {
 
       m_IGU->setState( m_IGUState );
       
-      if( m_Iterations > maxIterations && m_RelaxParam == 0.1 ) {
+      if( m_Iterations > IterationConstants::NUMBER_OF_STEPS && 
+        m_RelaxParam == IterationConstants::RELAXATION_PARAMETER_MIN ) {
         throw runtime_error("Failed to converge in tarcog.");
       }
 
-      if( m_Iterations > maxIterations ) {
+      if( m_Iterations > IterationConstants::NUMBER_OF_STEPS ) {
         m_Iterations = 0;
-        m_RelaxParam -= 0.1;
+        m_RelaxParam -= IterationConstants::RELAXATION_PARAMETER_STEP;
       }
 
     }

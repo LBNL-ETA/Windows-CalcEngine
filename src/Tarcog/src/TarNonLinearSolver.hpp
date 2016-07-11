@@ -19,6 +19,9 @@ namespace Tarcog {
   public:
     explicit CTarNonLinearSolver( std::shared_ptr< CTarIGU > t_IGU );
 
+    // sets tolerance for solution
+    void setTolerance( const double t_Tolerance );
+
     void solve();
 
   private:
@@ -29,9 +32,9 @@ namespace Tarcog {
     std::shared_ptr< FenestrationCommon::CLinearSolver > m_LinearSolver;
     std::shared_ptr< CTarcogQBalance > m_QBalance;
     std::shared_ptr< std::vector< double > > m_IGUState;
-    double m_RelaxParam;
     double m_Tolerance;
     size_t m_Iterations;
+    double m_RelaxParam;
   };
 
 }

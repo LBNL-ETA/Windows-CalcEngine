@@ -71,6 +71,11 @@ namespace Tarcog {
     return m_IGU->getSolidLayers();
   }
 
+  void CTarcogSystem::setTolerance( const double t_Tolerance ) {
+    assert( m_NonLinearSolver != nullptr );
+    m_NonLinearSolver->setTolerance( t_Tolerance );
+  }
+
   void CTarcogSystem::solve() {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->solve();

@@ -25,6 +25,9 @@ namespace Tarcog {
     std::vector< std::shared_ptr < CBaseIGUTarcogLayer > > getLayers() const;
     std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers();
 
+    // Set solution tolerance
+    void setTolerance( const double t_Tolerance );
+
     void solve();
 
   private:
