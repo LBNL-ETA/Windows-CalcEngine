@@ -105,7 +105,7 @@ protected:
   }
 
 public:
-  //shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CTarIGUSolidLayer > GetLayer1() { return m_Layer1; };
   shared_ptr< CTarIGUSolidLayer > GetLayer2() { return m_Layer2; };
   shared_ptr< CTarIGUSolidLayer > GetLayer3() { return m_Layer3; };
@@ -166,4 +166,7 @@ TEST_F( TestInBetweenShadeAir, Test1 ) {
 
   EXPECT_NEAR( 284.07594521167317, temp, 1e-6 );
   EXPECT_NEAR( 378.99551190053882, J, 1e-6 );
+
+  size_t numOfIter = GetSystem()->getNumberOfIterations();
+  EXPECT_EQ( 20, numOfIter );
 }

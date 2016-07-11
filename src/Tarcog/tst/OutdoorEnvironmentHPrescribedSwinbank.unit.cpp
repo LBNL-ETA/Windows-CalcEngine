@@ -80,18 +80,18 @@ TEST_F( TestOutdoorEnvironmentHPrescribedSwingbank, HPrescribed_Swinbank ) {
   ASSERT_TRUE( aOutdoor != nullptr );
 
   double radiosity = aOutdoor->getEnvironmentIR();
-  EXPECT_NEAR( 459.2457, radiosity, 1e-6 );
+  EXPECT_NEAR( 459.2457, radiosity, 1e-5 );
 
   double hc = aOutdoor->getHc();
-  EXPECT_NEAR( 14.895501825717741, hc, 1e-6 );
+  EXPECT_NEAR( 14.895502, hc, 1e-5 );
 
   double outIR = aOutdoor->getRadiationFlow();
-  EXPECT_NEAR( -7.7776575806398682, outIR, 1e-6 );
+  EXPECT_NEAR( -7.777658, outIR, 1e-5 );
 
   double outConvection = aOutdoor->getConvectionConductionFlow();
-  EXPECT_NEAR( -22.696082697398253, outConvection, 1e-6 );
+  EXPECT_NEAR( -22.696083, outConvection, 1e-5 );
 
   double totalHeatFlow = aOutdoor->getHeatFlow();
-  EXPECT_NEAR( -30.473740278, totalHeatFlow, 1e-6 );
+  EXPECT_NEAR( -30.473740, totalHeatFlow, 1e-5 );
 
 }

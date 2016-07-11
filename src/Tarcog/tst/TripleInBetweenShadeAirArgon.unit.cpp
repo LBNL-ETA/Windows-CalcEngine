@@ -141,7 +141,7 @@ protected:
   }
 
 public:
-  //shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CBaseIGUTarcogLayer > GetLayer1() { return m_Layer1; };
   shared_ptr< CBaseIGUTarcogLayer > GetLayer2() { return m_Layer2; };
   shared_ptr< CBaseIGUTarcogLayer > GetLayer3() { return m_Layer3; };
@@ -190,4 +190,7 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
 
   EXPECT_NEAR( 284.84193726918704, aSurface->getTemperature(), 1e-6 );
   EXPECT_NEAR( 382.35430412032650, aSurface->J(), 1e-6 );
+
+  size_t numOfIter = GetSystem()->getNumberOfIterations();
+  EXPECT_EQ( 21, numOfIter );
 }

@@ -145,5 +145,5 @@ TEST_F( TestDoubleClearWithInitialGuess, Test1 ) {
   EXPECT_NEAR( 359.731700, Radiosity, 1e-5 );
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 15, numOfIter );
+  EXPECT_EQ( 17, numOfIter );
 }
