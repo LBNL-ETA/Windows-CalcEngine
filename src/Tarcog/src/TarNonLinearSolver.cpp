@@ -45,7 +45,9 @@ namespace Tarcog {
   void CTarNonLinearSolver::solve() {
     shared_ptr< vector< double > > aSolution = nullptr;
     double achievedTolerance = 1;
+
     m_Iterations = 0;
+    const size_t maxIterations = 200;
 
     while ( achievedTolerance > m_Tolerance ) {
       ++m_Iterations;
@@ -58,11 +60,11 @@ namespace Tarcog {
 
       m_IGU->setState( m_IGUState );
       
-      if( m_Iterations > 200 && m_RelaxParam == 0.1 ) {
+      if( m_Iterations > maxIterations && m_RelaxParam == 0.1 ) {
         throw runtime_error("Failed to converge in tarcog.");
       }
 
-      if( m_Iterations > 1000 ) {
+      if( m_Iterations > maxIterations ) {
         m_Iterations = 0;
         m_RelaxParam -= 0.1;
       }

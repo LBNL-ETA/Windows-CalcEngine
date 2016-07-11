@@ -31,7 +31,7 @@ namespace Tarcog {
     std::shared_ptr< std::vector< double > > m_IGUState;
     double m_RelaxParam;
     double m_Tolerance;
-    int m_Iterations;
+    size_t m_Iterations;
   };
 
 }
