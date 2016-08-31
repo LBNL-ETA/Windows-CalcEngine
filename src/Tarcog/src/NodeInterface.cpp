@@ -44,6 +44,8 @@ namespace Tarcog {
 
   CLayerNodes::CLayerNodes() {}
 
+  CLayerNodes::~CLayerNodes() {}
+
   void CLayerNodes::addToFront( shared_ptr< CLayerNode > t_Node ) {
     shared_ptr< CLayerNode > aNode = m_Layers.front();
     m_Layers.push_front( t_Node );

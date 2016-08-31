@@ -36,6 +36,10 @@ namespace Tarcog {
     t_Layer->setSurface( m_BackSurface, Side::Front );
   }
 
+  double CTarIGUSolidLayer::getConductivity() const {
+    return m_Conductivity;
+  }
+
   void CTarIGUSolidLayer::calculateConvectionConductionState() {
     if ( m_Thickness == 0 ) {
       throw runtime_error( "Solid layer thickness is set to zero." );

@@ -24,6 +24,8 @@ namespace Tarcog {
 
     void connectToBackSide( std::shared_ptr< CBaseTarcogLayer > t_Layer );
 
+    double getConductivity() const;
+
     void setLayerState( double const t_Tf, double const t_Tb, double const t_Jf, double const t_Jb );
     void setSolarRadiation( double const t_SolarRadiation );
     void setSolarAbsorptance( double const t_SolarAbsorptance );

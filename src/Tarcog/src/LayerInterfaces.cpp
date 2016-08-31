@@ -149,12 +149,12 @@ namespace Tarcog {
 
 
   //////////////////////////////////////////////////////////////////////////
-  //      CLayerHeatFlow
+  //      CGasLayer
   //////////////////////////////////////////////////////////////////////////
 
   CGasLayer::CGasLayer() : m_Pressure(0), m_AirSpeed(0),
     m_AirVerticalDirection(AirVerticalDirection::None), m_AirHorizontalDirection(AirHorizontalDirection::None) {
-	onCreate();
+	  onCreate();
   }
 
   CGasLayer::CGasLayer( double const t_Pressure ) : m_Pressure( t_Pressure ), m_AirSpeed( 0 ),
