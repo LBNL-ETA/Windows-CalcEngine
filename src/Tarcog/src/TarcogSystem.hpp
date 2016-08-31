@@ -23,7 +23,15 @@ namespace Tarcog {
     std::shared_ptr< CTarEnvironment > getIndoor() const;
     std::shared_ptr< CTarEnvironment > getOutdoor() const;
     std::vector< std::shared_ptr < CBaseIGUTarcogLayer > > getLayers() const;
-    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers();
+    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers() const;
+
+    std::vector< double > getSurfaceTemperatures() const;
+    std::vector< double > getSurfaceRadiosities() const;
+
+    double getHeatFlow() const;
+
+    // If interior layer have openings, this will return heat flow from airflow
+    double getInteriorVentilationFlow() const;
 
     // Set solution tolerance
     void setTolerance( const double t_Tolerance );

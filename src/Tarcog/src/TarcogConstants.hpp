@@ -18,6 +18,8 @@ namespace Tarcog {
     const double CONVERGENCE_TOLERANCE = 1e-6;
     const size_t NUMBER_OF_STEPS = 200;
     const double RELAXATION_PARAMETER_AIRFLOW = 0.9;
+    const double RELAXATION_PARAMETER_AIRFLOW_MIN = 0.1;
+    const double RELAXATION_PARAMETER_AIRFLOW_STEP = 0.1;
     const double CONVERGENCE_TOLERANCE_AIRFLOW = 1e-6;
   }
 

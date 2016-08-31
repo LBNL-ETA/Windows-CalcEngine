@@ -38,7 +38,7 @@ namespace Tarcog {
 
   void CTarIGUGapLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
-    m_BackSurface = t_Layer->getSurface( Side::Front );
+    m_Surface.at( Side::Back ) = t_Layer->getSurface( Side::Front );
   }
 
   void CTarIGUGapLayer::initializeStateVariables() {
@@ -51,9 +51,6 @@ namespace Tarcog {
       if ( m_Thickness == 0 ) {
         throw runtime_error( "Solid layer thickness is set to zero." );
       }
-
-      assert( m_BackSurface != nullptr );
-      assert( m_FrontSurface != nullptr );
 
       convectiveH();
       ventilatedFlow();
@@ -79,7 +76,7 @@ namespace Tarcog {
     using ConstantsData::GRAVITYCONSTANT;
 
     double tGapTemperature = layerTemperature();
-    double deltaTemp = fabs( m_BackSurface->getTemperature() - m_FrontSurface->getTemperature() );
+    double deltaTemp = fabs( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() );
 
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
 
@@ -124,8 +121,8 @@ namespace Tarcog {
 
   double CTarIGUGapLayer::averageTemperature() {
     double aveTemp = 0;
-    if( m_FrontSurface != nullptr && m_BackSurface != nullptr ) {
-      aveTemp = ( m_FrontSurface->getTemperature() + m_BackSurface->getTemperature() ) / 2;
+    if( m_Surface.at( Side::Front ) != nullptr && m_Surface.at( Side::Back ) != nullptr ) {
+      aveTemp = ( m_Surface.at( Side::Front )->getTemperature() + m_Surface.at( Side::Back )->getTemperature() ) / 2;
     }
     return aveTemp;
   }

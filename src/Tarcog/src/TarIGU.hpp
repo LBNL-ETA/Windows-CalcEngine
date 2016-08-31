@@ -18,8 +18,8 @@ namespace Tarcog {
 
     void addLayer( std::shared_ptr< CBaseIGUTarcogLayer > t_Layer );
 
-    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers();
-    std::vector< std::shared_ptr< CBaseIGUTarcogLayer > > getLayers();
+    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers() const;
+    std::vector< std::shared_ptr< CBaseIGUTarcogLayer > > getLayers() const;
 
     void setTilt( double const t_Tilt );
     void setWidth( double const t_Width );
@@ -39,6 +39,9 @@ namespace Tarcog {
     double getThickness() const;
 
     int getNumOfLayers() const;
+
+    // Returns interior ventilation flow
+    double getInteriorVentilationFlow() const;
 
     void setInitialGuess( std::shared_ptr< std::vector< double > > t_Temperatures );
 

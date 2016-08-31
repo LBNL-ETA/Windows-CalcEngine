@@ -17,7 +17,7 @@ using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-class TestInBetweenShadeAir : public testing::Test {
+class TestDoubleClearIndoorShadeAir : public testing::Test {
 
 private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
@@ -58,21 +58,20 @@ protected:
     shared_ptr< CTarIGUSolidLayer > aLayer1 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( aLayer1 != nullptr );
 
-    shared_ptr< CTarIGUSolidLayer > aLayer3 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    ASSERT_TRUE( aLayer3 != nullptr );
+    shared_ptr< CTarIGUSolidLayer > aLayer2 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
 
     double shadeLayerThickness = 0.01;
     double shadeLayerConductance = 160;
-    double Atop = 0.1;
-    double Abot = 0.1;
-    double Aleft = 0.1;
-    double Aright = 0.1;
+    double dtop = 0.1;
+    double dbot = 0.1;
+    double dleft = 0.1;
+    double dright = 0.1;
     double Afront = 0.2;
 
-    shared_ptr< CTarIGUSolidLayer > aLayer2 = make_shared< CTarIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
-      make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
+    shared_ptr< CTarIGUSolidLayer > aLayer3 = make_shared< CTarIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
+      make_shared< CShadeOpenings >( dtop, dbot, dleft, dright, Afront ) );
 
-    ASSERT_TRUE( aLayer2 != nullptr );
+    ASSERT_TRUE( aLayer3 != nullptr );
 
     double gapThickness = 0.0127;
     double gapPressure = 101325;
@@ -106,27 +105,25 @@ public:
 
 };
 
-TEST_F( TestInBetweenShadeAir, Test1 ) {
-  SCOPED_TRACE( "Begin Test: InBetween Shade - Air" );
-
-  shared_ptr< CTarcogSystem > aSystem = GetSystem();
+TEST_F( TestDoubleClearIndoorShadeAir, Test1 ) {
+  SCOPED_TRACE( "Begin Test: Indoor Shade - Air" );
   
+  shared_ptr< CTarcogSystem > aSystem = GetSystem();
+
   vector< double > temperature = aSystem->getSurfaceTemperatures();
   vector< double > radiosity = aSystem->getSurfaceRadiosities();
 
-  vector< double > correctTemp = { 257.90894598978144, 258.36960655371689, 271.53865884320373, 
-    271.54221847389209, 283.61528464773824, 284.07594521167317 };
-  vector< double > correctJ = { 249.16661938338754, 260.32061280963615, 300.57156128981001, 
-    316.33554457280860, 358.76065129183996, 378.99551190053882 };
+  vector< double > correctTemp = { 258.2265788, 258.7403799, 276.1996405, 276.7134416, 288.1162677, 288.1193825 };
+  vector< double > correctJ = { 250.2066021, 264.5687123, 319.49179, 340.4531177, 382.6512706, 397.0346045 };
 
   EXPECT_EQ( correctTemp.size(), temperature.size() );
   EXPECT_EQ( correctJ.size(), radiosity.size() );
-  
+
   for( size_t i = 0; i < temperature.size(); ++i ) {
     EXPECT_NEAR( correctTemp[ i ], temperature[ i ], 1e-6 );
     EXPECT_NEAR( correctJ[ i ], radiosity[ i ], 1e-6 );
   }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 20, numOfIter );
+  EXPECT_EQ( 5, numOfIter );
 }

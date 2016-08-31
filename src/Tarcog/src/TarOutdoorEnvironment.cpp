@@ -22,8 +22,8 @@ namespace Tarcog {
     const double t_SkyTemperature, const SkyModel t_Model, const double t_FractionClearSky ) : 
     CTarEnvironment( t_Pressure, t_AirSpeed, t_AirDirection ), m_Tsky( t_SkyTemperature ), 
     m_FractionOfClearSky( t_FractionClearSky ), m_SkyModel( t_Model ) {
-    m_FrontSurface = make_shared< CTarSurface >();
-    m_FrontSurface->setTemperature( t_AirTemperature );
+    m_Surface[ Side::Front ] = make_shared< CTarSurface >();
+    m_Surface.at( Side::Front )->setTemperature( t_AirTemperature );
     m_DirectSolarRadiation = t_DirectSolarRadiation;
   }
 
@@ -59,12 +59,12 @@ namespace Tarcog {
 
   void CTarOutdoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
     this->connectToBackSide( t_IGULayer );
-    m_BackSurface = t_IGULayer->getSurface( Side::Front );
+    m_Surface[ Side::Back ] = t_IGULayer->getSurface( Side::Front );
   }
 
   double CTarOutdoorEnvironment::getGasTemperature() {
-    assert( m_FrontSurface != nullptr );
-    return m_FrontSurface->getTemperature();
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    return m_Surface.at( Side::Front )->getTemperature();
   }
 
   void CTarOutdoorEnvironment::calculateConvectionConductionState() {
@@ -74,8 +74,6 @@ namespace Tarcog {
         break;
       }
       case Tarcog::HPrescribed: {
-        assert( m_BackSurface != nullptr );
-        assert( m_FrontSurface != nullptr );
         double hr = getHr();
         m_ConductiveConvectiveCoeff = m_HInput - hr;
         break;
@@ -95,17 +93,19 @@ namespace Tarcog {
   }
 
   double CTarOutdoorEnvironment::getHr() {
-    return getRadiationFlow() / ( m_BackSurface->getTemperature() - m_FrontSurface->getTemperature() );
+    assert( m_Surface.at( Side::Back ) != nullptr );
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    return getRadiationFlow() / ( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() );
   }
 
   void CTarOutdoorEnvironment::setIRFromEnvironment( const double t_IR ) {
-    assert( m_FrontSurface != nullptr );
-    m_FrontSurface->setJ( t_IR );
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    m_Surface.at( Side::Front )->setJ( t_IR );
   }
 
   double CTarOutdoorEnvironment::getIRFromEnvironment() const {
-    assert( m_FrontSurface != nullptr );
-    return m_FrontSurface->J();
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    return m_Surface.at( Side::Front )->J();
   }
 
 }

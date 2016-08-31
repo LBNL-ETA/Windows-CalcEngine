@@ -2,6 +2,7 @@
 #define LAYERINTERFACES_H
 
 #include <memory>
+#include <map>
 
 namespace FenestrationCommon {
   enum class Side;
@@ -69,8 +70,7 @@ namespace Tarcog {
     virtual void calculateRadiationState() = 0;
     virtual void calculateConvectionConductionState() = 0;
 
-    std::shared_ptr< CTarSurface > m_FrontSurface;
-    std::shared_ptr< CTarSurface > m_BackSurface;
+    std::map< FenestrationCommon::Side, std::shared_ptr< CTarSurface > > m_Surface;
     double m_ConductiveConvectiveCoeff;
     double m_LayerGainFlow;
   };

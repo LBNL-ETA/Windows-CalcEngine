@@ -15,9 +15,13 @@ namespace Tarcog {
 
   double const OPENING_TOLERANCE = 1e-6;
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  // CShadeOpenings
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
   CShadeOpenings::CShadeOpenings( double const t_Atop, double const t_Abot, double const t_Aleft, 
       double const t_Aright, double const t_Afront ) :
-      m_Atop( t_Atop ), m_Abot( t_Abot ), m_Aleft( t_Aleft ), m_Aright( t_Aright), m_Afront( t_Afront )  {
+      m_Atop( t_Atop ), m_Abot( t_Abot ), m_Aleft( t_Aleft ), m_Aright( t_Aright), m_Afront( t_Afront ) {
     initialize();
   }
 
@@ -47,6 +51,10 @@ namespace Tarcog {
     return m_Atop + 0.5 * m_Abot * openingMultiplier();
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  // CTarIGUShadeLayer
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
   CTarIGUShadeLayer::CTarIGUShadeLayer( double const t_Thickness, double const t_Conductivity, 
     shared_ptr< CShadeOpenings > t_ShadeOpenings,
       shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface ) : 
@@ -64,7 +72,6 @@ namespace Tarcog {
     assert( m_PreviousLayer != nullptr );
     
     // This must be set here or gap will be constantly calling this routine back throughout nextLayer property.
-    // This should be removed once nextLayer/previousLayer mechanism is recoded
     setCalculated();
 
     if ( dynamic_pointer_cast< CTarIGUGapLayer >( m_PreviousLayer ) != NULL && 
@@ -173,8 +180,8 @@ namespace Tarcog {
     double RelaxationParameter = RELAXATION_PARAMETER_AIRFLOW;
     bool converged = false;
     int iterationStep = 0;
+    double tempGap = t_Gap->layerTemperature();
     while( !converged ) {
-      double tempGap = t_Gap->layerTemperature();
       double tempEnvironment = t_Environment->getGasTemperature();
       double TavGap = t_Gap->averageTemperature();
       if( tempGap > tempEnvironment ) {
@@ -194,23 +201,29 @@ namespace Tarcog {
 
       TgapOut = alpha * TavGap + beta * tempEnvironment;
 
-      TgapOut = RelaxationParameter * TgapOut + ( 1 - RelaxationParameter ) * TgapOutOld;
-
       AirVerticalDirection gapDirection = AirVerticalDirection::None;
-      if( tempGap > tempEnvironment ) {
+      if( TgapOut > tempEnvironment ) {
         gapDirection = AirVerticalDirection::Up;
+        t_Gap->setFlowTemperatures( TgapOut, tempEnvironment, gapDirection );
       } else {
         gapDirection = AirVerticalDirection::Down;
+        t_Gap->setFlowTemperatures( tempEnvironment, TgapOut, gapDirection );
       }
+
+      tempGap = t_Gap->layerTemperature();
+
+      TgapOut = RelaxationParameter * tempGap + ( 1 - RelaxationParameter ) * TgapOutOld;
 
       converged = fabs( TgapOut - TgapOutOld ) < CONVERGENCE_TOLERANCE_AIRFLOW;
 
-      t_Gap->setFlowTemperatures( TgapOut, tempEnvironment, gapDirection );
-
       ++ iterationStep;
       if( iterationStep > NUMBER_OF_STEPS ) {
-        converged = true;
-        throw runtime_error( "Airflow iterations fail to converge. Maximum number of iteration steps reached." );
+        RelaxationParameter -= RELAXATION_PARAMETER_AIRFLOW_STEP;
+        iterationStep = 0;
+        if( RelaxationParameter == RELAXATION_PARAMETER_AIRFLOW_MIN ) {
+          converged = true;
+          throw runtime_error( "Airflow iterations fail to converge. Maximum number of iteration steps reached." );
+        }
       }
     }
 

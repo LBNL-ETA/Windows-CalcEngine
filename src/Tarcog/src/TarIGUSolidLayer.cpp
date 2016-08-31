@@ -15,11 +15,11 @@ namespace Tarcog {
     shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface )
     : CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
     if ( t_FrontSurface != nullptr && t_BackSurface != nullptr ) {
-      m_FrontSurface = t_FrontSurface;
-      m_BackSurface = t_BackSurface;
+      m_Surface[ Side::Front ] = t_FrontSurface;
+      m_Surface[ Side::Back ] = t_BackSurface;
     } else {
-      m_FrontSurface = make_shared< CTarSurface >();
-      m_BackSurface = make_shared< CTarSurface >();
+      m_Surface[ Side::Front ] = make_shared< CTarSurface >();
+      m_Surface[ Side::Back ] = make_shared< CTarSurface >();
     }
   }
 
@@ -27,13 +27,13 @@ namespace Tarcog {
     double const t_FrontEmissivity, double const t_FrontIRTransmittance,
     double const t_BackEmissivity, double const t_BackIRTransmittance ) : CBaseIGUTarcogLayer( t_Thickness ),
     m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
-    m_FrontSurface = make_shared< CTarSurface >( t_FrontEmissivity, t_FrontIRTransmittance );
-    m_BackSurface = make_shared< CTarSurface >( t_BackEmissivity, t_BackIRTransmittance );
+    m_Surface[ Side::Front ] = make_shared< CTarSurface >( t_FrontEmissivity, t_FrontIRTransmittance );
+    m_Surface[ Side::Back ] = make_shared< CTarSurface >( t_BackEmissivity, t_BackIRTransmittance );
   }
 
   void CTarIGUSolidLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
-    t_Layer->setSurface( m_BackSurface, Side::Front );
+    t_Layer->setSurface( m_Surface[ Side::Back ], Side::Front );
   }
 
   double CTarIGUSolidLayer::getConductivity() const {
@@ -60,22 +60,9 @@ namespace Tarcog {
   }
 
   void CTarIGUSolidLayer::setSurfaceState( double const t_Temperature, double const t_J, Side const t_Position ) {
-    switch ( t_Position )
-    {
-    case Side::Front:
-      assert( m_FrontSurface != nullptr );
-      m_FrontSurface->setTemperature( t_Temperature );
-      m_FrontSurface->setJ( t_J );
-      break;
-    case Side::Back:
-      assert( m_BackSurface != nullptr );
-      m_BackSurface->setTemperature( t_Temperature );
-      m_BackSurface->setJ( t_J );
-      break;
-    default:
-      assert( t_Position == Side::Front || t_Position == Side::Back );
-      break;
-    }
+    shared_ptr< CTarSurface > aSurface = m_Surface.at( t_Position );
+    aSurface->setTemperature( t_Temperature );
+    aSurface->setJ( t_J );
 
     resetCalculated();
   }

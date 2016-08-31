@@ -6,6 +6,7 @@
 #include "TarcogSystem.hpp"
 #include "BaseTarcogLayer.hpp"
 #include "BaseIGUTarcogLayer.hpp"
+#include "TarIGUSolidLayer.hpp"
 #include "TarIGU.hpp"
 #include "TarOutdoorEnvironment.hpp"
 #include "TarIndoorEnvironment.hpp"
@@ -66,8 +67,39 @@ namespace Tarcog {
     return m_IGU->getLayers();
   }
 
-  vector< shared_ptr< CTarIGUSolidLayer > > CTarcogSystem::getSolidLayers() {
+  vector< shared_ptr< CTarIGUSolidLayer > > CTarcogSystem::getSolidLayers() const {
     return m_IGU->getSolidLayers();
+  }
+
+  vector<double> CTarcogSystem::getSurfaceTemperatures() const {
+    vector< double > temperatures;
+    vector< shared_ptr< CTarIGUSolidLayer > > aSolidLayers = getSolidLayers();
+    for( shared_ptr< CTarIGUSolidLayer > aLayer : aSolidLayers ) {
+      for( Side aSide : EnumSide() ) {
+        temperatures.push_back( aLayer->getTemperature( aSide ) );
+      }
+    }
+    return temperatures;
+  }
+
+  std::vector<double> CTarcogSystem::getSurfaceRadiosities() const {
+    vector< double > radiosities;
+    vector< shared_ptr< CTarIGUSolidLayer > > aSolidLayers = getSolidLayers();
+    for( shared_ptr< CTarIGUSolidLayer > aLayer : aSolidLayers ) {
+      for( Side aSide : EnumSide() ) {
+        radiosities.push_back( aLayer->J( aSide ) );
+      }
+    }
+    return radiosities;
+  }
+
+  double CTarcogSystem::getHeatFlow() const {
+    assert( m_Indoor != nullptr );
+    return m_Indoor->getHeatFlow();
+  }
+
+  double CTarcogSystem::getInteriorVentilationFlow() const {
+    return m_IGU->getInteriorVentilationFlow();
   }
 
   void CTarcogSystem::setTolerance( const double t_Tolerance ) {

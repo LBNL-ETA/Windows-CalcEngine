@@ -142,6 +142,12 @@ namespace Tarcog {
     return int( m_SolidLayers.size() );
   }
 
+  double CTarIGU::getInteriorVentilationFlow() const {
+    size_t size = m_Layers.size();
+    // needs to get gas layer on indoor side
+    return m_Layers[ size - 2 ]->getGainFlow();
+  }
+
   void CTarIGU::setInitialGuess( shared_ptr< vector< double > > t_Guess ) {
     if( 2 * m_SolidLayers.size() != t_Guess->size() ) {
       cout << "Number of temperatures in initial guess cannot fit number of layers."
@@ -158,11 +164,11 @@ namespace Tarcog {
     }
   }
 
-  vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() {
+  vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() const {
     return m_SolidLayers;
   }
 
-  vector< shared_ptr< CBaseIGUTarcogLayer > > CTarIGU::getLayers() {
+  vector< shared_ptr< CBaseIGUTarcogLayer > > CTarIGU::getLayers() const {
     return m_Layers;
   }
 

@@ -64,15 +64,15 @@ namespace Tarcog {
   //      CLayerHeatFlow
   //////////////////////////////////////////////////////////////////////////
 
-  CLayerHeatFlow::CLayerHeatFlow() : m_FrontSurface(nullptr), m_BackSurface(nullptr),
-	  m_ConductiveConvectiveCoeff(0), m_LayerGainFlow(0) {
-
+  CLayerHeatFlow::CLayerHeatFlow() : m_ConductiveConvectiveCoeff(0), m_LayerGainFlow(0) {
+    m_Surface[ Side::Front ] = nullptr;
+    m_Surface[ Side::Back ] = nullptr;
   }
 
   CLayerHeatFlow::CLayerHeatFlow( shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface ) :
-    m_FrontSurface( t_FrontSurface ), m_BackSurface( t_BackSurface ),
     m_ConductiveConvectiveCoeff( 0 ), m_LayerGainFlow( 0 ) {
-  
+    m_Surface[ Side::Front ] = t_FrontSurface;
+    m_Surface[ Side::Back ] = t_BackSurface;
   }
 
   double CLayerHeatFlow::getHeatFlow() {
@@ -91,16 +91,16 @@ namespace Tarcog {
 
   double CLayerHeatFlow::getRadiationFlow() {
     calculateRadiationState();
-    assert( m_FrontSurface != nullptr );
-    assert( m_BackSurface != nullptr );
-    return m_BackSurface->J() - m_FrontSurface->J();
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    assert( m_Surface.at( Side::Back ) != nullptr );
+    return m_Surface.at( Side::Back )->J() - m_Surface.at( Side::Front )->J();
   }
 
   double CLayerHeatFlow::getConvectionConductionFlow() {
     calculateLayerState();
-    assert( m_FrontSurface != nullptr );
-    assert( m_BackSurface != nullptr );
-    return ( m_BackSurface->getTemperature() - m_FrontSurface->getTemperature() ) * m_ConductiveConvectiveCoeff;
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    assert( m_Surface.at( Side::Back ) != nullptr );
+    return ( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() ) * m_ConductiveConvectiveCoeff;
   }
 
   void CLayerHeatFlow::calculateLayerState() {
@@ -112,38 +112,12 @@ namespace Tarcog {
   }
 
   shared_ptr< CTarSurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
-     shared_ptr< CTarSurface > aSurface = nullptr;
-    switch ( t_Position ) {
-    case Side::Front:
-      aSurface = m_FrontSurface;
-      break;
-    case Side::Back:
-      aSurface = m_BackSurface;
-      break;
-    default:
-      throw runtime_error("Surface position incorrectly assigned.");
-      break;
-    }
-
-    return aSurface;
+    return m_Surface.at( t_Position );
   }
 
   void CLayerHeatFlow::setSurface( shared_ptr< CTarSurface > t_Surface, 
     Side const t_Position ) {
-    switch ( t_Position ) {
-    case Side::Front:
-      assert( t_Surface != nullptr );
-      m_FrontSurface = t_Surface;
-      break;
-    case Side::Back:
-      assert( t_Surface != nullptr );
-      m_BackSurface = t_Surface;
-      break;
-    default:
-      throw runtime_error("Surface position incorrectly assigned.");
-      break;
-    }
-
+    m_Surface[ t_Position ] = t_Surface;
     resetCalculated();
   }
 

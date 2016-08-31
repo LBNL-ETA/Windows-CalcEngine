@@ -8,9 +8,11 @@
 #include "Constants.hpp"
 #include "TarSurface.hpp"
 #include "GasProperties.hpp"
+#include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace Gases;
+using namespace FenestrationCommon;
 
 namespace Tarcog {
 
@@ -19,8 +21,8 @@ namespace Tarcog {
     CTarEnvironment( t_Pressure, 0, AirHorizontalDirection::Windward ) { 
 
     m_RoomRadiationTemperature = t_AirTemperature; // Radiation temperature is by default air
-    m_BackSurface = make_shared< CTarSurface >( m_Emissivity, 0 );
-    m_BackSurface->setTemperature( t_AirTemperature );
+    m_Surface[ Side::Back ] = make_shared< CTarSurface >( m_Emissivity, 0 );
+    m_Surface.at( Side::Back )->setTemperature( t_AirTemperature );
   }
 
   void CTarIndoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
@@ -33,8 +35,8 @@ namespace Tarcog {
   }
 
   double CTarIndoorEnvironment::getGasTemperature() {
-    assert( m_BackSurface != nullptr );
-    return m_BackSurface->getTemperature();
+    assert( m_Surface.at( Side::Back ) != nullptr );
+    return m_Surface.at( Side::Back )->getTemperature();
   }
 
   double CTarIndoorEnvironment::calculateIRFromVariables() {
@@ -50,7 +52,6 @@ namespace Tarcog {
         break;
       }
       case Tarcog::HPrescribed: {
-        assert( m_FrontSurface == nullptr );
         double hr = getHr();
         m_ConductiveConvectiveCoeff = m_HInput - hr;
         break;
@@ -71,12 +72,12 @@ namespace Tarcog {
     } else {
       using ConstantsData::GRAVITYCONSTANT;
 
-      assert( m_FrontSurface != nullptr );
-      assert( m_BackSurface != nullptr );
+      assert( m_Surface.at( Side::Front ) != nullptr );
+      assert( m_Surface.at( Side::Back ) != nullptr );
 
       double tiltRadians = m_Tilt * M_PI / 180;
-      double tMean = getGasTemperature() + 0.25 * ( m_FrontSurface->getTemperature() - getGasTemperature() );
-      double deltaTemp = fabs( m_FrontSurface->getTemperature() - getGasTemperature() );
+      double tMean = getGasTemperature() + 0.25 * ( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
+      double deltaTemp = fabs( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
       m_Gas->setTemperatureAndPressure( tMean, m_Pressure );
       shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
       double gr = GRAVITYCONSTANT * pow( m_Height, 3 ) * deltaTemp * pow( aProperties->m_Density, 2 ) /
@@ -100,17 +101,19 @@ namespace Tarcog {
       m_ConductiveConvectiveCoeff = Gnui * aProperties->m_ThermalConductivity / m_Height;
     }
   }
+
   double CTarIndoorEnvironment::getHr() {
-    return getRadiationFlow() / ( getGasTemperature() - m_FrontSurface->getTemperature() );
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    return getRadiationFlow() / ( getGasTemperature() - m_Surface.at( Side::Front )->getTemperature() );
   }
 
   void CTarIndoorEnvironment::setIRFromEnvironment( const double t_IR ) {
-    assert( m_BackSurface != nullptr );
-    m_BackSurface->setJ( t_IR );
+    assert( m_Surface.at( Side::Back ) != nullptr );
+    m_Surface.at( Side::Back )->setJ( t_IR );
   }
 
   double CTarIndoorEnvironment::getIRFromEnvironment() const {
-    assert( m_BackSurface != nullptr );
-    return m_BackSurface->J();
+    assert( m_Surface.at( Side::Back ) != nullptr );
+    return m_Surface.at( Side::Back )->J();
   }
 }
