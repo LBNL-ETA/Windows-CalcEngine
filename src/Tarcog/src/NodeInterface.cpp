@@ -30,11 +30,11 @@ namespace Tarcog {
     return m_PreviousNode;
   }
 
-  void CLayerNode::connectToBackSide( shared_ptr< CLayerNode > t_Node ) {
+  void CLayerNode::connectToBackSide( const shared_ptr< CLayerNode >& t_Node ) {
     m_PreviousNode = t_Node->m_NextNode;
   }
 
-  void CLayerNode::connectToFrontSide( shared_ptr< CLayerNode > t_Node ) {
+  void CLayerNode::connectToFrontSide( const shared_ptr< CLayerNode >& t_Node ) {
     m_NextNode = t_Node->m_PreviousNode;
   }
 
@@ -46,7 +46,7 @@ namespace Tarcog {
 
   CLayerNodes::~CLayerNodes() {}
 
-  void CLayerNodes::addToFront( shared_ptr< CLayerNode > t_Node ) {
+  void CLayerNodes::addToFront( const shared_ptr< CLayerNode >& t_Node ) {
     shared_ptr< CLayerNode > aNode = m_Layers.front();
     m_Layers.push_front( t_Node );
     if( aNode != nullptr ) {
@@ -55,7 +55,7 @@ namespace Tarcog {
     }
   }
 
-  void CLayerNodes::addToBack( shared_ptr< CLayerNode > t_Node ) {
+  void CLayerNodes::addToBack( const shared_ptr< CLayerNode >& t_Node ) {
     shared_ptr< CLayerNode > aNode = m_Layers.front();
     m_Layers.push_back( t_Node );
     if( aNode != nullptr ) {
@@ -78,7 +78,7 @@ namespace Tarcog {
   //      CThermalNode
   //////////////////////////////////////////////////////////////////////////
 
-  CThermalNode::CThermalNode( shared_ptr< CBaseTarcogLayer > t_HeatFlowLayer ) :
+  CThermalNode::CThermalNode( const shared_ptr< CBaseTarcogLayer >& t_HeatFlowLayer ) :
     m_HeatFlowLayer( t_HeatFlowLayer ) {
 
   }
@@ -87,7 +87,7 @@ namespace Tarcog {
     return m_HeatFlowLayer;
   }
 
-  void CThermalNode::setHeatFlowLayer( shared_ptr< CBaseTarcogLayer > const t_Layer ) {
+  void CThermalNode::setHeatFlowLayer( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
     m_HeatFlowLayer = t_Layer;
   }
 

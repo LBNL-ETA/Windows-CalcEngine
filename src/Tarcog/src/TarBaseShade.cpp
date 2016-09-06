@@ -56,9 +56,11 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   CTarIGUShadeLayer::CTarIGUShadeLayer( double const t_Thickness, double const t_Conductivity, 
-    shared_ptr< CShadeOpenings > t_ShadeOpenings,
-      shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface ) : 
-    CTarIGUSolidLayer( t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface ), m_ShadeOpenings( t_ShadeOpenings ) {
+    const shared_ptr< CShadeOpenings >& t_ShadeOpenings,
+    const shared_ptr< CTarSurface >& t_FrontSurface, 
+    const shared_ptr< CTarSurface >& t_BackSurface ) : 
+    CTarIGUSolidLayer( t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface ), 
+    m_ShadeOpenings( t_ShadeOpenings ) {
   }
 
   CTarIGUShadeLayer::CTarIGUShadeLayer( double t_Thickness, double t_Conductivity ) : 
@@ -88,8 +90,8 @@ namespace Tarcog {
     }
   }
 
-  void CTarIGUShadeLayer::calcInBetweenShadeFlow( shared_ptr< CTarIGUGapLayer > t_Gap1, 
-    shared_ptr< CTarIGUGapLayer > t_Gap2 ) {
+  void CTarIGUShadeLayer::calcInBetweenShadeFlow( const shared_ptr< CTarIGUGapLayer >& t_Gap1, 
+    const shared_ptr< CTarIGUGapLayer >& t_Gap2 ) {
     using namespace IterationConstants;
 
     double Tup = t_Gap1->layerTemperature();
@@ -172,8 +174,8 @@ namespace Tarcog {
 
   }
 
-  void CTarIGUShadeLayer::calcEdgeShadeFlow( shared_ptr< CTarEnvironment > t_Environment, 
-    shared_ptr< CTarIGUGapLayer > t_Gap ) {
+  void CTarIGUShadeLayer::calcEdgeShadeFlow( const shared_ptr< CTarEnvironment >& t_Environment, 
+    const shared_ptr< CTarIGUGapLayer >& t_Gap ) {
     using namespace IterationConstants;
 
     double TgapOut = t_Gap->layerTemperature();

@@ -69,7 +69,8 @@ namespace Tarcog {
     m_Surface[ Side::Back ] = nullptr;
   }
 
-  CLayerHeatFlow::CLayerHeatFlow( shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface ) :
+  CLayerHeatFlow::CLayerHeatFlow( const shared_ptr< CTarSurface >& t_FrontSurface, 
+    const shared_ptr< CTarSurface >& t_BackSurface ) :
     m_ConductiveConvectiveCoeff( 0 ), m_LayerGainFlow( 0 ) {
     m_Surface[ Side::Front ] = t_FrontSurface;
     m_Surface[ Side::Back ] = t_BackSurface;

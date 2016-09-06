@@ -20,7 +20,7 @@ namespace Tarcog {
     CTarIGUGapLayer( double t_Thickness, double t_Pressure );
     CTarIGUGapLayer( double t_Thickness, double t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
 
-    void connectToBackSide( std::shared_ptr< CBaseTarcogLayer > t_Layer );
+    void connectToBackSide( const std::shared_ptr< CBaseTarcogLayer >& t_Layer );
 
     virtual double layerTemperature();
 

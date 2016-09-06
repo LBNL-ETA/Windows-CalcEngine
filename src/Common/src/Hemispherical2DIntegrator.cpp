@@ -12,7 +12,7 @@ using namespace std;
 namespace FenestrationCommon {
 
   // Performs hemispherical 2D integration
-  CHemispherical2DIntegrator::CHemispherical2DIntegrator( shared_ptr< CSeries > t_Series, 
+  CHemispherical2DIntegrator::CHemispherical2DIntegrator( const shared_ptr< CSeries >& t_Series, 
     const IntegrationType t_IntegrationType ) {
     CSeries aResultValues = CSeries();
     for( size_t i = 0; i < t_Series->size(); ++i ) {

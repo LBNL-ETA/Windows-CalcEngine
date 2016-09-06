@@ -47,25 +47,23 @@ namespace FenestrationCommon {
 
     std::shared_ptr< CSeries > integrate( IntegrationType t_IntegrationType ) const;
     std::shared_ptr< CSeries > 
-      interpolate( std::shared_ptr< std::vector< double > > t_x ) const;
+      interpolate( const std::shared_ptr< std::vector< double > >& t_x ) const;
 
     // Multiplication of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.
     // If two spectral properites do not have same wavelength range, then interpolation function should be called.
-    std::shared_ptr< CSeries > 
-      mMult( std::shared_ptr< const CSeries > t_Series ) const;
+    std::shared_ptr< CSeries > mMult( const std::shared_ptr< const CSeries >& t_Series ) const;
     
     // Substraction of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.
     // If two spectral properites do not have same wavelength range, then interpolation function should be called.
-    std::shared_ptr< CSeries > 
-      mSub( std::shared_ptr< const CSeries > t_Series ) const;
+    std::shared_ptr< CSeries > mSub( const std::shared_ptr< const CSeries >& t_Series ) const;
     
     // Addition of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.
     // If two spectral properites do not have same wavelength range, then interpolation function should be called.
     std::shared_ptr< CSeries > 
-      mAdd( std::shared_ptr< const CSeries > t_Series ) const;
+      mAdd( const std::shared_ptr< const CSeries >& t_Series ) const;
     
     // Return wavelenght values for spectral properties.
     std::shared_ptr< std::vector< double > > getXArray() const;
@@ -80,14 +78,13 @@ namespace FenestrationCommon {
     std::vector< std::shared_ptr< CSeriesPoint > >::const_iterator end() const;
     size_t size() const;
     std::shared_ptr< const CSeriesPoint > operator[]( size_t Index ) const;
-    // std::shared_ptr< CSeries > operator=( CSeries& t_Properties );
-    // CSeries& operator=( CSeries& t_Properties );
 
     void clear();
 
   private:
     struct SeriesCompare {
-      bool operator()( std::shared_ptr< const CSeriesPoint > l, std::shared_ptr< const CSeriesPoint > r);
+      bool operator()( const std::shared_ptr< const CSeriesPoint >& l,
+        const std::shared_ptr< CSeriesPoint >& r ) const;
     };
     std::shared_ptr< ISeriesPoint > findLower( double const t_x ) const;
     std::shared_ptr< ISeriesPoint > findUpper( double const t_x ) const;

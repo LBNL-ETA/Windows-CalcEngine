@@ -15,7 +15,7 @@ namespace Gases {
     initialize();
   }
 
-  CGasItem::CGasItem( double t_Fraction, shared_ptr< CGasData const > t_GasData ) :
+  CGasItem::CGasItem( double t_Fraction, const shared_ptr< const CGasData >& t_GasData ) :
     m_Fraction( t_Fraction ), m_GasData( t_GasData ) {
     initialize();
   }
@@ -38,7 +38,7 @@ namespace Gases {
     return *this;
   }
 
-  double CGasItem::getFraction() {
+  double CGasItem::getFraction() const {
     return m_Fraction;
   }
 

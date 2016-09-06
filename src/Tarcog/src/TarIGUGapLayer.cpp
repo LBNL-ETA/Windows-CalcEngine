@@ -36,7 +36,7 @@ namespace Tarcog {
     m_ReferenceGas->setTemperatureAndPressure( ReferenceTemperature, m_Pressure );
   }
 
-  void CTarIGUGapLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
+  void CTarIGUGapLayer::connectToBackSide( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
     m_Surface.at( Side::Back ) = t_Layer->getSurface( Side::Front );
   }

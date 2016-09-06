@@ -9,13 +9,11 @@ namespace Gases
   ///////////////////////////////////////////////////////////////////////////////////////////
   ///  IntCoeff
   ///////////////////////////////////////////////////////////////////////////////////////////
-  CIntCoeff::CIntCoeff( double t_A, double t_B, double t_C ) : m_A( t_A ), m_B( t_B ), m_C( t_C )
-  {
+  CIntCoeff::CIntCoeff( double t_A, double t_B, double t_C ) : m_A( t_A ), m_B( t_B ), m_C( t_C ) {
 
   }
 
-  double CIntCoeff::interpolationValue( double t_Temperature ) const
-  {
+  double CIntCoeff::interpolationValue( double t_Temperature ) const {
     return m_A + m_B * t_Temperature + m_C * pow( t_Temperature, 2 );
   }
 
@@ -41,12 +39,13 @@ namespace Gases
     return  *this;
   }
 
-  double GasProperties::getLambdaPrim() {
+  double GasProperties::getLambdaPrim() const {
     using ConstantsData::UNIVERSALGASCONSTANT;
 
     return 15.0 / 4.0 * UNIVERSALGASCONSTANT / m_MolecularWeight * m_Viscosity;
   }
-  double GasProperties::getLambdaSecond() {
+
+  double GasProperties::getLambdaSecond() const {
     return m_ThermalConductivity - getLambdaPrim();
   }
   

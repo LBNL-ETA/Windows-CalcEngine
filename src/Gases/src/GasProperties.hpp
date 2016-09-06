@@ -23,8 +23,8 @@ namespace Gases
       m_MolecularWeight( 0.0 ), m_Alpha( 0.0 ), m_PrandlNumber( 0.0 ), m_PropertiesCalculated( false )
     { };
 
-    double getLambdaPrim();
-    double getLambdaSecond();
+    double getLambdaPrim() const;
+    double getLambdaSecond() const;
     GasProperties& operator+( const GasProperties& t_A );
     GasProperties& operator+=( const GasProperties& t_A );
 

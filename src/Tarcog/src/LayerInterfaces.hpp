@@ -56,7 +56,8 @@ namespace Tarcog {
   class CLayerHeatFlow : public virtual CLayerState {
   public:
     CLayerHeatFlow();
-    CLayerHeatFlow( std::shared_ptr< CTarSurface > t_FrontSurface, std::shared_ptr< CTarSurface > t_BackSurface );
+    CLayerHeatFlow( const std::shared_ptr< CTarSurface >& t_FrontSurface, 
+      const std::shared_ptr< CTarSurface >& t_BackSurface );
     virtual double getHeatFlow() final;
     virtual double getGainFlow() final;
     virtual double getConductionConvectionCoefficient() final;

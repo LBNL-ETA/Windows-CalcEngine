@@ -137,7 +137,7 @@ namespace FenestrationCommon {
   }
 
   shared_ptr< CSeries > CSeries::interpolate( 
-    shared_ptr< vector< double > > t_Wavelengths ) const {
+    const shared_ptr< vector< double > >& t_Wavelengths ) const {
     shared_ptr< CSeries > newProperties = make_shared< CSeries >();
 
     if( size() != 0 ) {
@@ -165,7 +165,7 @@ namespace FenestrationCommon {
   }
 
   shared_ptr< CSeries > CSeries::mMult( 
-    shared_ptr< const CSeries > t_Series ) const {
+    const shared_ptr< const CSeries >& t_Series ) const {
     shared_ptr< CSeries > newProperties = make_shared< CSeries >();
 
     const double WAVELENGTHTOLERANCE = 1e-10;
@@ -188,7 +188,7 @@ namespace FenestrationCommon {
   }
 
   shared_ptr< CSeries > CSeries::mSub( 
-    shared_ptr< const CSeries > t_Series ) const {
+    const shared_ptr< const CSeries >& t_Series ) const {
      const double WAVELENGTHTOLERANCE = 1e-10;
 
     shared_ptr< CSeries > newProperties = make_shared< CSeries >();
@@ -210,7 +210,7 @@ namespace FenestrationCommon {
   }
 
   shared_ptr< CSeries > CSeries::mAdd( 
-    shared_ptr< const CSeries > t_Series ) const {
+    const shared_ptr< const CSeries >& t_Series ) const {
      const double WAVELENGTHTOLERANCE = 1e-10;
 
     shared_ptr< CSeries > newProperties = make_shared< CSeries >();
@@ -288,7 +288,8 @@ namespace FenestrationCommon {
     m_Series.clear();
   }
 
-  bool CSeries::SeriesCompare::operator()( shared_ptr< const CSeriesPoint > l, shared_ptr< const CSeriesPoint > r) {
+  bool CSeries::SeriesCompare::operator()( const std::shared_ptr< const CSeriesPoint >& l, 
+    const std::shared_ptr< CSeriesPoint >& r ) const {
     return l->x() < r->x();
   }
 

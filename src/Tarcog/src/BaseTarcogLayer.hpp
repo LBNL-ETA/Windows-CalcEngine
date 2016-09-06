@@ -21,7 +21,7 @@ namespace Tarcog {
     std::shared_ptr< CBaseTarcogLayer > getPreviousLayer() const;
     std::shared_ptr< CBaseTarcogLayer > getNextLayer() const;
 
-    virtual void connectToBackSide( std::shared_ptr< CBaseTarcogLayer > t_Layer );
+    virtual void connectToBackSide( const std::shared_ptr< CBaseTarcogLayer >& t_Layer );
 
     void tearDownConnections();
 

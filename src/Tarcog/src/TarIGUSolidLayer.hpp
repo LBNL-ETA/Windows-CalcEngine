@@ -22,7 +22,7 @@ namespace Tarcog {
       double const t_FrontEmissivity, double const t_FrontIRTransmittance,
       double const t_BackEmissivity, double const t_BackIRTransmittance );
 
-    void connectToBackSide( std::shared_ptr< CBaseTarcogLayer > t_Layer );
+    void connectToBackSide( const std::shared_ptr< CBaseTarcogLayer >& t_Layer );
 
     double getConductivity() const;
 

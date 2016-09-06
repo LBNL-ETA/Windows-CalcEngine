@@ -31,7 +31,7 @@ namespace Tarcog {
     m_Surface[ Side::Back ] = make_shared< CTarSurface >( t_BackEmissivity, t_BackIRTransmittance );
   }
 
-  void CTarIGUSolidLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
+  void CTarIGUSolidLayer::connectToBackSide( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
     t_Layer->setSurface( m_Surface[ Side::Back ], Side::Front );
   }

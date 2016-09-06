@@ -14,11 +14,11 @@ namespace FenestrationCommon {
   
   }
 
-  void CLinearSolver::assignMatrixA( shared_ptr< CSquareMatrix > t_MatrixA ) {
+  void CLinearSolver::assignMatrixA( const shared_ptr< CSquareMatrix >& t_MatrixA ) {
     m_MatrixA = t_MatrixA;
   }
 
-  void CLinearSolver::assignVectorB( shared_ptr< vector< double > > t_VectorB ) {
+  void CLinearSolver::assignVectorB( const shared_ptr< vector< double > >& t_VectorB ) {
     m_VectorB = t_VectorB;
   }
 
@@ -107,8 +107,8 @@ namespace FenestrationCommon {
   }
 
   shared_ptr< vector< double > > CLinearSolver::solveSystem(
-    shared_ptr< CSquareMatrix > t_MatrixA, 
-    shared_ptr< vector< double > > t_VectorB ) {
+    const shared_ptr< CSquareMatrix >& t_MatrixA, 
+    const shared_ptr< vector< double > >& t_VectorB ) {
 
     if ( t_MatrixA->getSize() != t_VectorB->size() ) {
       runtime_error( "Matrix and vector for system of linear equations are not same size." );

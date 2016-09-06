@@ -32,7 +32,7 @@ namespace FenestrationCommon {
     }
   }
 
-  void CSquareMatrix::setDiagonal( shared_ptr< const vector< double > > t_Values ) {
+  void CSquareMatrix::setDiagonal( const shared_ptr< const vector< double > >& t_Values ) {
     if( t_Values->size() != m_Size ) {
       throw runtime_error("Supplied vector size mismatch matrix size");
     }

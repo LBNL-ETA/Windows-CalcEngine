@@ -14,7 +14,7 @@ namespace FenestrationCommon {
     // All diagonal items are one and all non diagonal are zero
     void setIdentity();
     // set diagonal values from vector
-    void setDiagonal( std::shared_ptr< const std::vector< double > > t_Values );
+    void setDiagonal( const std::shared_ptr< const std::vector< double > >& t_Values );
     std::vector< double >& operator[]( const size_t index );
     std::shared_ptr< CSquareMatrix > add( const CSquareMatrix& t_Matrix ) const;
     std::shared_ptr< CSquareMatrix > sub( const CSquareMatrix& t_Matrix ) const;

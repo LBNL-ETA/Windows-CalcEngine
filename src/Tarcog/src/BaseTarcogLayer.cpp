@@ -26,7 +26,7 @@ namespace Tarcog {
     m_NextLayer = nullptr;
   }
 
-  void CBaseTarcogLayer::connectToBackSide( shared_ptr< CBaseTarcogLayer > t_Layer ) {
+  void CBaseTarcogLayer::connectToBackSide( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
     m_NextLayer = t_Layer;
     t_Layer->m_PreviousLayer = shared_from_this();
   }
