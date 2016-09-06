@@ -57,7 +57,7 @@ namespace Tarcog {
     return STEFANBOLTZMANN * pow( radiationTemperature, 4 );
   }
 
-  void CTarOutdoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
+  void CTarOutdoorEnvironment::connectToIGULayer( const shared_ptr< CBaseTarcogLayer >& t_IGULayer ) {
     this->connectToBackSide( t_IGULayer );
     m_Surface[ Side::Back ] = t_IGULayer->getSurface( Side::Front );
   }

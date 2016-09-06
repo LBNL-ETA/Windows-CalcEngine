@@ -148,7 +148,7 @@ namespace Tarcog {
     return m_Layers[ size - 2 ]->getGainFlow();
   }
 
-  void CTarIGU::setInitialGuess( shared_ptr< vector< double > > t_Guess ) {
+  void CTarIGU::setInitialGuess( const shared_ptr< vector< double > >& t_Guess ) {
     if( 2 * m_SolidLayers.size() != t_Guess->size() ) {
       cout << "Number of temperatures in initial guess cannot fit number of layers."
         "Program will use initial guess instead" << endl;

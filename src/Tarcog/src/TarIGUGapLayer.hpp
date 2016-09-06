@@ -18,14 +18,15 @@ namespace Tarcog {
     public CBaseIGUTarcogLayer, public CGasLayer {
   public:
     CTarIGUGapLayer( double t_Thickness, double t_Pressure );
-    CTarIGUGapLayer( double t_Thickness, double t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
+    CTarIGUGapLayer( double t_Thickness, double t_Pressure, const std::shared_ptr< Gases::CGas >& t_Gas );
 
     void connectToBackSide( const std::shared_ptr< CBaseTarcogLayer >& t_Layer );
 
     virtual double layerTemperature();
 
     void setFlowGeometry( double const t_Atop, double const t_Abot, AirVerticalDirection const &t_Direction );
-    void setFlowTemperatures( double const t_topTemp, double const t_botTemp, AirVerticalDirection const &t_Direction );
+    void setFlowTemperatures( double const t_topTemp, double const t_botTemp, 
+      AirVerticalDirection const &t_Direction );
     void setFlowSpeed( double const t_speed );
 
     double getAirflowReferencePoint( double const t_GapTemperature );

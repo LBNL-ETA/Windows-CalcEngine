@@ -17,7 +17,7 @@ namespace Tarcog {
 
   class CTarNonLinearSolver {
   public:
-    explicit CTarNonLinearSolver( std::shared_ptr< CTarIGU > t_IGU );
+    explicit CTarNonLinearSolver( const std::shared_ptr< CTarIGU >& t_IGU );
 
     // sets tolerance for solution
     void setTolerance( const double t_Tolerance );
@@ -28,8 +28,8 @@ namespace Tarcog {
     void solve();
 
   private:
-    double calculateTolerance( std::shared_ptr< std::vector< double > > t_Solution );
-    void estimateNewState( std::shared_ptr< std::vector< double > > t_Solution );
+    double calculateTolerance( const std::vector< double >& t_Solution );
+    void estimateNewState( const std::vector< double >& t_Solution );
 
     std::shared_ptr< CTarIGU > m_IGU;
     std::shared_ptr< FenestrationCommon::CLinearSolver > m_LinearSolver;

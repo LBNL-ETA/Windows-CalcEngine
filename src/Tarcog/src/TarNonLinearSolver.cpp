@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CTarNonLinearSolver::CTarNonLinearSolver( shared_ptr< CTarIGU > t_IGU ) : 
+  CTarNonLinearSolver::CTarNonLinearSolver( const shared_ptr< CTarIGU >& t_IGU ) : 
     m_IGU( t_IGU ), m_Tolerance( IterationConstants::CONVERGENCE_TOLERANCE ), m_Iterations( 0 ),
     m_RelaxParam( IterationConstants::RELAXATION_PARAMETER_MAX ){
     assert( t_IGU != nullptr );
@@ -23,19 +23,19 @@ namespace Tarcog {
     assert( m_QBalance != nullptr );
   }
 
-  double CTarNonLinearSolver::calculateTolerance( shared_ptr< vector< double > > t_Solution ) {
+  double CTarNonLinearSolver::calculateTolerance( const vector< double >& t_Solution ) {
     assert(t_Solution->size() == m_IGUState->size() );
-    double aError = fabs( ( *t_Solution )[ 0 ] - ( *m_IGUState )[ 0 ] );
+    double aError = fabs( t_Solution[ 0 ] - ( *m_IGUState )[ 0 ] );
     for( size_t i = 1; i < m_IGUState->size(); ++i ) {
-      aError = max( aError, fabs( ( *t_Solution )[ i ] - ( *m_IGUState )[ i ] ));
+      aError = max( aError, fabs( t_Solution[ i ] - ( *m_IGUState )[ i ] ));
     }
     return aError;
   }
 
-  void CTarNonLinearSolver::estimateNewState( shared_ptr< vector< double > > t_Solution ) {
+  void CTarNonLinearSolver::estimateNewState( const vector< double >& t_Solution ) {
     assert(t_Solution->size() == m_IGUState->size() );
     for( size_t i = 0; i < m_IGUState->size(); ++i ) {
-      ( *m_IGUState )[ i ] = m_RelaxParam * ( *t_Solution )[ i ] + ( 1 - m_RelaxParam ) * ( *m_IGUState )[ i ];
+      ( *m_IGUState )[ i ] = m_RelaxParam * t_Solution[ i ] + ( 1 - m_RelaxParam ) * ( *m_IGUState )[ i ];
     }
   }
 
@@ -60,9 +60,9 @@ namespace Tarcog {
       aSolution = m_QBalance->calcBalanceMatrix();
       assert( aSolution != nullptr );
 
-      achievedTolerance = calculateTolerance( aSolution );
+      achievedTolerance = calculateTolerance( *aSolution );
 
-      estimateNewState( aSolution );
+      estimateNewState( *aSolution );
 
       m_IGU->setState( m_IGUState );
       

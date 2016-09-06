@@ -142,7 +142,7 @@ namespace Tarcog {
     }
   }
 
-  void CTarcogSystem::setInitialGuess( shared_ptr< vector< double > > t_Temperatures ) {
+  void CTarcogSystem::setInitialGuess( const shared_ptr< vector< double > >& t_Temperatures ) {
     m_IGU->setInitialGuess( t_Temperatures );
   }
 

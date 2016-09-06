@@ -33,7 +33,7 @@ namespace Tarcog {
 
     double getAirTemperature();
     
-    virtual void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
+    virtual void connectToIGULayer( const std::shared_ptr< CBaseTarcogLayer >& t_IGULayer );
 
   protected:
     void initializeStateVariables();

@@ -65,7 +65,7 @@ namespace Tarcog {
     return m_DirectSolarRadiation;
   }
 
-  void CTarEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > ) {
+  void CTarEnvironment::connectToIGULayer( const shared_ptr< CBaseTarcogLayer >& ) {
     //
   }
 

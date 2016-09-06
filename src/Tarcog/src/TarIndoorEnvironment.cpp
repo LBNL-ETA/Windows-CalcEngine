@@ -25,7 +25,7 @@ namespace Tarcog {
     m_Surface.at( Side::Back )->setTemperature( t_AirTemperature );
   }
 
-  void CTarIndoorEnvironment::connectToIGULayer( shared_ptr< CBaseTarcogLayer > t_IGULayer ) {
+  void CTarIndoorEnvironment::connectToIGULayer( const shared_ptr< CBaseTarcogLayer >& t_IGULayer ) {
     t_IGULayer->connectToBackSide( shared_from_this() );
   }
 

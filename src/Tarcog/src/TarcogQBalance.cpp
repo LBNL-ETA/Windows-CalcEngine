@@ -18,7 +18,7 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CTarcogQBalance::CTarcogQBalance( shared_ptr< CTarIGU > t_IGU ) : m_IGU( t_IGU ) {
+  CTarcogQBalance::CTarcogQBalance( const shared_ptr< CTarIGU >& t_IGU ) : m_IGU( t_IGU ) {
     m_MatrixA = make_shared< CSquareMatrix >( 4 * m_IGU->getNumOfLayers() );
     assert( m_MatrixA != nullptr );
     m_VectorB = make_shared< vector< double > >();
@@ -44,8 +44,9 @@ namespace Tarcog {
     return m_LinearSolver->solveSystem( m_MatrixA, m_VectorB );
   }
 
-  void CTarcogQBalance::buildCell( shared_ptr< CBaseTarcogLayer > t_Previous, 
-    shared_ptr< CBaseTarcogLayer > t_Current, shared_ptr< CBaseTarcogLayer > t_Next, const int t_Index ) {
+  void CTarcogQBalance::buildCell( const shared_ptr< CBaseTarcogLayer >& t_Previous, 
+    const shared_ptr< CBaseTarcogLayer >& t_Current, 
+    const shared_ptr< CBaseTarcogLayer >& t_Next, const int t_Index ) {
     // Routine is used to build matrix "cell" around solid layer.
 
     // first determine cell size

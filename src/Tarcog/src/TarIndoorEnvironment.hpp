@@ -11,7 +11,7 @@ namespace Tarcog {
   public:
     CTarIndoorEnvironment( const double t_AirTemperature, const double t_Pressure );
 
-    void connectToIGULayer( std::shared_ptr< CBaseTarcogLayer > t_IGULayer );
+    void connectToIGULayer( const std::shared_ptr< CBaseTarcogLayer >& t_IGULayer );
 
     void setRoomRadiationTemperature( double const t_RadiationTemperature );    
 

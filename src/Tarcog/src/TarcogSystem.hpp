@@ -38,7 +38,7 @@ namespace Tarcog {
     // Returns number of iterations
     size_t getNumberOfIterations() const;
     // Set intial guess for solution.
-    void setInitialGuess( std::shared_ptr< std::vector< double > > t_Temperatures );
+    void setInitialGuess( const std::shared_ptr< std::vector< double > >& t_Temperatures );
 
     void solve();
 

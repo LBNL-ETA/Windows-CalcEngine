@@ -43,7 +43,7 @@ namespace Tarcog {
     // Returns interior ventilation flow
     double getInteriorVentilationFlow() const;
 
-    void setInitialGuess( std::shared_ptr< std::vector< double > > t_Temperatures );
+    void setInitialGuess( const std::shared_ptr< std::vector< double > >& t_Temperatures );
 
   private:
     std::vector< std::shared_ptr< CTarIGUSolidLayer > > m_SolidLayers;
