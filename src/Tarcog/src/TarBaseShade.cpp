@@ -96,7 +96,7 @@ namespace Tarcog {
     double Tdown = t_Gap2->layerTemperature();
     double RelaxationParameter = RELAXATION_PARAMETER_AIRFLOW;
     bool converged = false;
-    int iterationStep = 0;
+    size_t iterationStep = 0;
 
     while( !converged ) {
       double tempGap1 = t_Gap1->layerTemperature();
@@ -179,7 +179,7 @@ namespace Tarcog {
     double TgapOut = t_Gap->layerTemperature();
     double RelaxationParameter = RELAXATION_PARAMETER_AIRFLOW;
     bool converged = false;
-    int iterationStep = 0;
+    size_t iterationStep = 0;
     double tempGap = t_Gap->layerTemperature();
     while( !converged ) {
       double tempEnvironment = t_Environment->getGasTemperature();
