@@ -31,14 +31,14 @@ namespace LayerOptics {
   // properties at each wavelength. In case of some other material type, that will be properties for each of material
   // ranges
   shared_ptr< vector< double > > CSpecularCell::T_dir_dir_band( const Side t_Side, 
-    shared_ptr< const CBeamDirection > t_Direction ) {
-    return m_Material->getBandPropertiesAtAngle( Property::T, t_Side, t_Direction->theta() );
+    const CBeamDirection& t_Direction ) {
+    return m_Material->getBandPropertiesAtAngle( Property::T, t_Side, t_Direction.theta() );
   }
 
   // Reflectance of specular material over entire material range
   shared_ptr< vector< double > > CSpecularCell::R_dir_dir_band( const Side t_Side, 
-    shared_ptr< const CBeamDirection > t_Direction ) {
-    return m_Material->getBandPropertiesAtAngle( Property::R, t_Side, t_Direction->theta() );
+    const CBeamDirection& t_Direction ) {
+    return m_Material->getBandPropertiesAtAngle( Property::R, t_Side, t_Direction.theta() );
   }
 
   shared_ptr< CSpecularCellDescription > CSpecularCell::getCellAsSpecular() const {

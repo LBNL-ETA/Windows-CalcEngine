@@ -7,6 +7,7 @@
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFDirections.hpp"
+#include "BeamDirection.hpp"
 #include "BSDFPatch.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -28,7 +29,7 @@ namespace LayerOptics {
   }
 
   void CDirectionalDiffuseBSDFLayer::calcDiffuseDistribution( const Side aSide, 
-    shared_ptr< const CBeamDirection > t_Direction,
+    const CBeamDirection& t_Direction,
     const size_t t_DirectionIndex ) {
 
     shared_ptr< CDirectionalDiffuseCell > aCell = cellAsDirectionalDiffuse();
@@ -42,7 +43,7 @@ namespace LayerOptics {
 
     for( size_t j = 0; j < size; ++j ) {
 
-      shared_ptr< const CBeamDirection > jDirection = ( *jDirections )[ j ]->centerPoint();
+      const CBeamDirection jDirection = *( *jDirections )[ j ]->centerPoint();
 
       double aTau = aCell->T_dir_dif( aSide, t_Direction, jDirection );
       double Ref = aCell->R_dir_dif( aSide, t_Direction, jDirection );
@@ -56,7 +57,7 @@ namespace LayerOptics {
   }
 
   void CDirectionalDiffuseBSDFLayer::calcDiffuseDistribution_wv( const Side aSide, 
-    shared_ptr< const CBeamDirection > t_Direction,
+    const CBeamDirection& t_Direction,
     const size_t t_DirectionIndex ) {
 
     shared_ptr< CDirectionalDiffuseCell > aCell = cellAsDirectionalDiffuse();
@@ -67,7 +68,7 @@ namespace LayerOptics {
 
     for( size_t i = 0; i < size; ++i ) {
 
-      shared_ptr< const CBeamDirection > iDirection = ( *iDirections )[ i ]->centerPoint();
+      const CBeamDirection iDirection = *( *iDirections )[ i ]->centerPoint();
 
       shared_ptr< vector< double > > aTau = aCell->T_dir_dif_band( aSide, t_Direction, iDirection );
       shared_ptr< vector< double > > Ref = aCell->R_dir_dif_band( aSide, t_Direction, iDirection );

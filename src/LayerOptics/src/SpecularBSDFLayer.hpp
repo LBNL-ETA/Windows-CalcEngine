@@ -19,10 +19,10 @@ namespace LayerOptics {
   protected:
     std::shared_ptr< CSpecularCell > cellAsSpecular() const;
     void calcDiffuseDistribution( const FenestrationCommon::Side aSide, 
-      std::shared_ptr< const CBeamDirection > t_Direction,
+      const CBeamDirection& t_Direction,
       const size_t t_DirectionIndex );
     void calcDiffuseDistribution_wv( const FenestrationCommon::Side aSide, 
-      std::shared_ptr< const CBeamDirection > t_Direction,
+      const CBeamDirection& t_Direction,
       const size_t t_DirectionIndex );
 
   

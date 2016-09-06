@@ -24,7 +24,7 @@ namespace Tarcog {
   }
 
   double CTarNonLinearSolver::calculateTolerance( const vector< double >& t_Solution ) {
-    assert(t_Solution->size() == m_IGUState->size() );
+    assert(t_Solution.size() == m_IGUState->size() );
     double aError = fabs( t_Solution[ 0 ] - ( *m_IGUState )[ 0 ] );
     for( size_t i = 1; i < m_IGUState->size(); ++i ) {
       aError = max( aError, fabs( t_Solution[ i ] - ( *m_IGUState )[ i ] ));
@@ -33,7 +33,7 @@ namespace Tarcog {
   }
 
   void CTarNonLinearSolver::estimateNewState( const vector< double >& t_Solution ) {
-    assert(t_Solution->size() == m_IGUState->size() );
+    assert(t_Solution.size() == m_IGUState->size() );
     for( size_t i = 0; i < m_IGUState->size(); ++i ) {
       ( *m_IGUState )[ i ] = m_RelaxParam * t_Solution[ i ] + ( 1 - m_RelaxParam ) * ( *m_IGUState )[ i ];
     }

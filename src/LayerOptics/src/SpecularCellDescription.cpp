@@ -14,7 +14,7 @@ namespace LayerOptics {
    return 0;
   }
 
-  double CSpecularCellDescription::Rspecular( const Side, const shared_ptr< const CBeamDirection >& ) {
+  double CSpecularCellDescription::Rspecular( const Side, const CBeamDirection& ) {
    return 0;
   }
 

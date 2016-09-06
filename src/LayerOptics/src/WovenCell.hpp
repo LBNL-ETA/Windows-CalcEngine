@@ -26,24 +26,24 @@ namespace LayerOptics {
         std::shared_ptr< CCellDescription > t_Cell );
 
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
-    double T_dir_dif( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
-    double R_dir_dif( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+    double R_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction );
+      const CBeamDirection& t_Direction );
     std::shared_ptr< std::vector< double > > T_dir_dif_band( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction );
+      const CBeamDirection& t_Direction );
     std::shared_ptr< std::vector< double > > R_dir_dif_band( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction );
+      const CBeamDirection& t_Direction );
 
   private:
     double Tscatter_single( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction );
+      const CBeamDirection& t_Direction );
     std::shared_ptr< std::vector< double > > Tscatter_range( const FenestrationCommon::Side t_Side,
-      std::shared_ptr< const CBeamDirection > t_Direction );
+      const CBeamDirection& t_Direction );
 
     // Calculates scattered part of reflection from woven
-    double Tscatter( std::shared_ptr< const CBeamDirection > t_Direction, const double Rmat );
+    double Tscatter( const CBeamDirection& t_Direction, const double Rmat );
 
   };
 

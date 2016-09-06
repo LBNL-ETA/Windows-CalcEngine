@@ -52,12 +52,12 @@ TEST_F( TestWovenCell3, TestWoven1 ) {
   Side aFrontSide = Side::Front;
   Side aBackSide = Side::Back;
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
+  CBeamDirection aDirection = CBeamDirection( Theta, Phi );
   
-  double Tdir_dir = aCell->T_dir_dir( aFrontSide, *aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aFrontSide, aDirection );
   EXPECT_NEAR( 0.444444444, Tdir_dir, 1e-6 );
 
-  Tdir_dir = aCell->T_dir_dir( aBackSide, *aDirection );
+  Tdir_dir = aCell->T_dir_dir( aBackSide, aDirection );
   EXPECT_NEAR( 0.444444444, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aFrontSide, aDirection );
@@ -84,12 +84,12 @@ TEST_F( TestWovenCell3, TestWoven2 ) {
   Side aFrontSide = Side::Front;
   Side aBackSide = Side::Back;
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
+  CBeamDirection aDirection = CBeamDirection( Theta, Phi );
   
-  double Tdir_dir = aCell->T_dir_dir( aFrontSide, *aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aFrontSide, aDirection );
   EXPECT_NEAR( 0.352396986, Tdir_dir, 1e-6 );
 
-  Tdir_dir = aCell->T_dir_dir( aBackSide, *aDirection );
+  Tdir_dir = aCell->T_dir_dir( aBackSide, aDirection );
   EXPECT_NEAR( 0.352396986, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aFrontSide, aDirection );
@@ -116,12 +116,12 @@ TEST_F( TestWovenCell3, TestWoven3 ) {
   Side aFrontSide = Side::Front;
   Side aBackSide = Side::Back;
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
+  CBeamDirection aDirection = CBeamDirection( Theta, Phi );
   
-  double Tdir_dir = aCell->T_dir_dir( aFrontSide, *aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aFrontSide, aDirection );
   EXPECT_NEAR( 0.0, Tdir_dir, 1e-6 );
 
-  Tdir_dir = aCell->T_dir_dir( aBackSide, *aDirection );
+  Tdir_dir = aCell->T_dir_dir( aBackSide, aDirection );
   EXPECT_NEAR( 0.0, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aFrontSide, aDirection );

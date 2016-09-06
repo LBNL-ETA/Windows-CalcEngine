@@ -18,7 +18,7 @@ namespace LayerOptics {
     
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
     double Rspecular( const FenestrationCommon::Side t_Side, 
-      const std::shared_ptr< const CBeamDirection >& t_Direction );
+      const CBeamDirection& t_Direction );
 
   };
 

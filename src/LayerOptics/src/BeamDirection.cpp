@@ -9,6 +9,10 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
 
+  CBeamDirection::CBeamDirection() : m_Theta( 0 ), m_Phi( 0 ) {
+    updateProfileAngle( m_Theta, m_Phi );
+  }
+
   CBeamDirection::CBeamDirection( const double t_Theta, const double t_Phi ) : 
     m_Theta( t_Theta ), m_Phi( t_Phi ) {
     if( t_Theta < 0 ) {
@@ -18,8 +22,7 @@ namespace LayerOptics {
       throw runtime_error("Theta angle cannot be more than 90 degrees.");
     }
 
-    m_ProfileAngle = -atan( sin( radians( m_Phi ) ) * tan( radians( m_Theta ) ) );
-    m_ProfileAngle = degrees( m_ProfileAngle );
+    updateProfileAngle( m_Theta, m_Phi );
   }
 
   double CBeamDirection::theta() const {
@@ -41,6 +44,16 @@ namespace LayerOptics {
     return *this;
   }
 
+  bool CBeamDirection::operator==( const CBeamDirection & t_SphericalPoint ) const {
+    return ( m_Theta == t_SphericalPoint.m_Theta ) &&
+      ( m_Phi == t_SphericalPoint.m_Phi ) && 
+      ( m_ProfileAngle == t_SphericalPoint.m_ProfileAngle );
+  }
+
+  bool CBeamDirection::operator!=( const CBeamDirection & t_SphericalPoint ) const {
+    return !( *this == t_SphericalPoint );
+  }
+
   double CBeamDirection::Altitude() const {
     double aTheta = radians( m_Theta );
     double aPhi = radians( m_Phi );
@@ -59,6 +72,11 @@ namespace LayerOptics {
       aAzimuth = -aAzimuth;
     }
     return aAzimuth;  
+  }
+
+  void CBeamDirection::updateProfileAngle( const double t_Theta, const double t_Phi ) {
+    m_ProfileAngle = -atan( sin( radians( t_Phi ) ) * tan( radians( t_Theta ) ) );
+    m_ProfileAngle = degrees( m_ProfileAngle );
   }
 
 }

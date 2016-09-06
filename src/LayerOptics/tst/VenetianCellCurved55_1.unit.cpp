@@ -85,9 +85,9 @@ TEST_F( TestVenetianCellCurved55_1, TestVenetian2 ) {
   double outTheta = 15;
   double outPhi = 0;
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
+  CBeamDirection aDirection = CBeamDirection( Theta, Phi );
 
-  double Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
   double Rdir_dif = aCell->R_dir_dif( aSide, aDirection );
 
@@ -95,7 +95,7 @@ TEST_F( TestVenetianCellCurved55_1, TestVenetian2 ) {
   EXPECT_NEAR( 0.19839281076530671, Tdir_dif, 1e-6 );
   EXPECT_NEAR( 0.51950846145958018, Rdir_dif, 1e-6 );
 
-  shared_ptr< CBeamDirection > outDirection = make_shared< CBeamDirection >( outTheta, outPhi );
+  CBeamDirection outDirection = CBeamDirection( outTheta, outPhi );
   
   Tdir_dif = aCell->T_dir_dif( aSide, aDirection, outDirection );
   Rdir_dif = aCell->R_dir_dif( aSide, aDirection, outDirection );
@@ -105,7 +105,7 @@ TEST_F( TestVenetianCellCurved55_1, TestVenetian2 ) {
 
   // Back side
   aSide = Side::Back;
-  Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
+  Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
   Rdir_dif = aCell->R_dir_dif( aSide, aDirection );
 

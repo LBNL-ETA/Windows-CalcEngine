@@ -29,7 +29,7 @@ namespace LayerOptics {
   }
 
   void CUniformDiffuseBSDFLayer::calcDiffuseDistribution( const Side aSide, 
-    shared_ptr< const CBeamDirection > t_Direction,
+    const CBeamDirection& t_Direction,
     const size_t t_DirectionIndex ) {
 
     shared_ptr< CUniformDiffuseCell > aCell = cellAsUniformDiffuse();
@@ -53,7 +53,7 @@ namespace LayerOptics {
   }
 
   void CUniformDiffuseBSDFLayer::calcDiffuseDistribution_wv( const Side aSide, 
-    shared_ptr< const CBeamDirection > t_Direction,
+    const CBeamDirection& t_Direction,
     const size_t t_DirectionIndex ) {
 
     shared_ptr< CUniformDiffuseCell > aCell = cellAsUniformDiffuse();

@@ -62,11 +62,11 @@ namespace LayerOptics {
       shared_ptr< CSquareMatrix > Tau = make_shared< CSquareMatrix >( size );
       shared_ptr< CSquareMatrix > Rho = make_shared< CSquareMatrix >( size );
       for( size_t i = 0; i < size; ++i ) {
-        shared_ptr< const CBeamDirection > aDirection = ( *aDirections )[ i ]->centerPoint();
+        const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
         double Lambda = ( *aDirections )[ i ]->lambda();
         
-        double aTau = m_Cell->T_dir_dir( t_Side, *aDirection );
-        double aRho = m_Cell->R_dir_dir( t_Side, *aDirection );
+        double aTau = m_Cell->T_dir_dir( t_Side, aDirection );
+        double aRho = m_Cell->R_dir_dir( t_Side, aDirection );
 
         ( *Tau )[ i ][ i ] += aTau / Lambda;
         ( *Rho )[ i ][ i ] += aRho / Lambda;
@@ -80,7 +80,7 @@ namespace LayerOptics {
       shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
       size_t size = aDirections->size();
       for( size_t i = 0; i < size; ++i ) {
-        shared_ptr< const CBeamDirection > aDirection = ( *aDirections )[ i ]->centerPoint();
+        const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
         shared_ptr< vector< double > > aTau = m_Cell->T_dir_dir_band( aSide, aDirection );
         shared_ptr< vector< double > > aRho = m_Cell->R_dir_dir_band( aSide, aDirection );
         double Lambda = ( *aDirections )[ i ]->lambda();
@@ -107,7 +107,7 @@ namespace LayerOptics {
       size_t size = aDirections->size();
       for( size_t i = 0; i < size; ++i ) {
 
-        shared_ptr< const CBeamDirection > aDirection = ( *aDirections )[ i ]->centerPoint();
+        const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
         
         calcDiffuseDistribution( aSide, aDirection, i );
       }
@@ -121,7 +121,7 @@ namespace LayerOptics {
 
       size_t size = aDirections->size();
       for( size_t i = 0; i < size; ++i ) {
-        shared_ptr< const CBeamDirection > aDirection = ( *aDirections )[ i ]->centerPoint();
+        const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
         calcDiffuseDistribution_wv( aSide, aDirection, i );
       }
     }

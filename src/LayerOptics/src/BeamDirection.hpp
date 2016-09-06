@@ -10,6 +10,7 @@ namespace LayerOptics {
   // Phi are 0 to 360 degrees and limits of Theta are 0 to 90 degrees
   class CBeamDirection {
   public:
+    CBeamDirection( );
     CBeamDirection( const double t_Theta, const double t_Phi );
 
     double theta() const;
@@ -17,11 +18,14 @@ namespace LayerOptics {
     double profileAngle() const;
 
     CBeamDirection& operator=( const CBeamDirection& t_SphericalPoint );
+    bool operator==( const CBeamDirection& t_SphericalPoint ) const;
+    bool operator!=( const CBeamDirection& t_SphericalPoint ) const;
 
     double Altitude() const;
     double Azimuth() const;
 
   private:
+    void updateProfileAngle( const double t_Theta, const double t_Phi );
     double m_Theta;
     double m_Phi;
     double m_ProfileAngle;

@@ -135,7 +135,7 @@ namespace MultiPane {
 
   shared_ptr< CEquivalentLayerSingleComponentMWAngle > CMultiPaneSpecular::createNewAngular( const double t_Angle ) {
     // Create direction for specular. It is irrelevant what is Phi angle and it is chosen to be zero in this case
-    shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( t_Angle, 0 );
+    CBeamDirection aDirection = CBeamDirection( t_Angle, 0 );
     shared_ptr< CEquivalentLayerSingleComponentMW > aEqLayer = nullptr;
     shared_ptr< CAbsorptancesMultiPane > aAbs = nullptr;
     for( size_t i = 0; i < m_Layers.size(); ++i ) {

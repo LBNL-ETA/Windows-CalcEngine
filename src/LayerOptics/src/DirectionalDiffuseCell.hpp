@@ -24,20 +24,19 @@ namespace LayerOptics {
       std::shared_ptr< CCellDescription > t_Cell );
 
     virtual double T_dir_dif( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_IncomingDirection,
-      std::shared_ptr< const CBeamDirection > t_OutgoingDirection ) = 0;
+      const CBeamDirection& t_IncomingDirection, const CBeamDirection& t_OutgoingDirection ) = 0;
 
     virtual double R_dir_dif( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_IncomingDirection,
-      std::shared_ptr< const CBeamDirection > t_OutgoingDirection ) = 0;
+      const CBeamDirection& t_IncomingDirection,
+      const CBeamDirection& t_OutgoingDirection ) = 0;
 
     virtual std::shared_ptr< std::vector< double > > T_dir_dif_band( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_IncomingDirection,
-      std::shared_ptr< const CBeamDirection > t_OutgoingDirection ) = 0;
+      const CBeamDirection& t_IncomingDirection,
+      const CBeamDirection& t_OutgoingDirection ) = 0;
 
     virtual std::shared_ptr< std::vector< double > > R_dir_dif_band( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_IncomingDirection,
-      std::shared_ptr< const CBeamDirection > t_OutgoingDirection ) = 0;
+      const CBeamDirection& t_IncomingDirection,
+      const CBeamDirection& t_OutgoingDirection ) = 0;
 
   };
 

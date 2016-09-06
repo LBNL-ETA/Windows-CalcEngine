@@ -58,11 +58,11 @@ TEST_F( TestVenetianCellFlat0_2, TestVenetian1 ) {
   Side aSide = Side::Front;
   double Theta = 18;
   double Phi = 45;
-  shared_ptr< CBeamDirection > incomingDirection = make_shared< CBeamDirection >( Theta, Phi );
+  CBeamDirection incomingDirection = CBeamDirection( Theta, Phi );
 
   Theta = 18;
   Phi = 90;
-  shared_ptr< CBeamDirection > outgoingDirection = make_shared< CBeamDirection >( Theta, Phi );
+  CBeamDirection outgoingDirection = CBeamDirection( Theta, Phi );
 
   double Tdir_dif = aCell->T_dir_dif( aSide, incomingDirection, outgoingDirection );
   double Rdir_dif = aCell->R_dir_dif( aSide, incomingDirection, outgoingDirection );

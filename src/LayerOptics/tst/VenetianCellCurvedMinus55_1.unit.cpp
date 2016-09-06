@@ -81,9 +81,9 @@ TEST_F( TestVenetianCellCurvedMinus55_1, TestVenetian2 ) {
   double Theta = 0;
   double Phi = 0;
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
+  CBeamDirection aDirection = CBeamDirection( Theta, Phi );
 
-  double Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
   double Rdir_dif = aCell->R_dir_dif( aSide, aDirection );
 
@@ -93,7 +93,7 @@ TEST_F( TestVenetianCellCurvedMinus55_1, TestVenetian2 ) {
 
   // Back side
   aSide = Side::Back;
-  Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
+  Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
   Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
   Rdir_dif = aCell->R_dir_dif( aSide, aDirection );
 

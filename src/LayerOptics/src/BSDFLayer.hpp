@@ -35,11 +35,11 @@ namespace LayerOptics {
     // It can for example be uniform or directional. In case of specular layers there will be no any diffuse
     // distribution
     virtual void calcDiffuseDistribution( const FenestrationCommon::Side aSide, 
-      std::shared_ptr< const CBeamDirection > t_Direction,
+      const CBeamDirection& t_Direction,
       const size_t t_DirectionIndex ) = 0;
 
     virtual void calcDiffuseDistribution_wv( const FenestrationCommon::Side aSide,
-      std::shared_ptr< const CBeamDirection > t_Direction,
+      const CBeamDirection& t_Direction,
       const size_t t_DirectionIndex ) = 0;
 
     // BSDF layer is not calculated by default because it is time consuming process and in some cases this call
