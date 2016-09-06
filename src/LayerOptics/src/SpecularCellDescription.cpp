@@ -10,11 +10,11 @@ namespace LayerOptics {
     
   }
 
-  double CSpecularCellDescription::T_dir_dir( const Side, shared_ptr< const CBeamDirection > ) {
+  double CSpecularCellDescription::T_dir_dir( const Side, const CBeamDirection& ) {
    return 0;
   }
 
-  double CSpecularCellDescription::Rspecular( const Side, shared_ptr< const CBeamDirection > ) {
+  double CSpecularCellDescription::Rspecular( const Side, const shared_ptr< const CBeamDirection >& ) {
    return 0;
   }
 

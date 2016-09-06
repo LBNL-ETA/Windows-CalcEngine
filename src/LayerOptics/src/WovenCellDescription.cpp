@@ -39,14 +39,14 @@ namespace LayerOptics {
     return acos( gamma() );
   }
 
-  double CWovenCellDescription::T_dir_dir( const Side, shared_ptr< const CBeamDirection > t_Direction ) {
+  double CWovenCellDescription::T_dir_dir( const Side, const CBeamDirection& t_Direction ) {
     return Tx( t_Direction ) * Ty( t_Direction );
   }
 
-  double CWovenCellDescription::Tx( shared_ptr< const CBeamDirection > t_Direction ) {
+  double CWovenCellDescription::Tx( const CBeamDirection& t_Direction ) {
     double aTx = 0;
     double cutOffAngle = this->cutOffAngle();
-    double aAzimuth = t_Direction->Azimuth();
+    double aAzimuth = t_Direction.Azimuth();
     if( aAzimuth > M_PI_2 ) {
       aAzimuth = M_PI - aAzimuth;
     }
@@ -60,10 +60,10 @@ namespace LayerOptics {
     return aTx;
   }
 
-  double CWovenCellDescription::Ty( shared_ptr< const CBeamDirection > t_Direction ) {
+  double CWovenCellDescription::Ty( const CBeamDirection& t_Direction ) {
     double aTy = 0;
     double cutOffAngle = this->cutOffAngle();
-    double aAltitude = t_Direction->Altitude();
+    double aAltitude = t_Direction.Altitude();
     double aPrim = fabs( atan( tan( aAltitude ) / cos( aAltitude ) ) );
     if( aPrim < cutOffAngle ) {
       aTy = 1 - this->gamma() / cos( aPrim );

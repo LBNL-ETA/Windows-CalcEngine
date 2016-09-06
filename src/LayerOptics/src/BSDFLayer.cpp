@@ -65,8 +65,8 @@ namespace LayerOptics {
         shared_ptr< const CBeamDirection > aDirection = ( *aDirections )[ i ]->centerPoint();
         double Lambda = ( *aDirections )[ i ]->lambda();
         
-        double aTau = m_Cell->T_dir_dir( t_Side, aDirection );
-        double aRho = m_Cell->R_dir_dir( t_Side, aDirection );
+        double aTau = m_Cell->T_dir_dir( t_Side, *aDirection );
+        double aRho = m_Cell->R_dir_dir( t_Side, *aDirection );
 
         ( *Tau )[ i ][ i ] += aTau / Lambda;
         ( *Rho )[ i ][ i ] += aRho / Lambda;

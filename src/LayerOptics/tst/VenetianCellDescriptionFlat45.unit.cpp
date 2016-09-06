@@ -68,7 +68,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian2 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 0, 0 );
+  CBeamDirection aDirection = CBeamDirection( 0, 0 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -81,7 +81,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian3 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 45, 90 );
+  CBeamDirection aDirection = CBeamDirection( 45, 90 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -94,7 +94,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian4 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 76.5, 90 );
+  CBeamDirection aDirection = CBeamDirection( 76.5, 90 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -107,7 +107,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian5 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 76.5, 45 );
+  CBeamDirection aDirection = CBeamDirection( 76.5, 45 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -120,7 +120,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian6 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 54, 90 );
+  CBeamDirection aDirection = CBeamDirection( 54, 90 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -133,7 +133,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian7 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 54, 60 );
+  CBeamDirection aDirection = CBeamDirection( 54, 60 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -146,7 +146,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian8 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 36, 90 );
+  CBeamDirection aDirection = CBeamDirection( 36, 90 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -159,7 +159,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian9 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 54, 30 );
+  CBeamDirection aDirection = CBeamDirection( 54, 30 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -172,7 +172,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian10 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 36, 60 );
+  CBeamDirection aDirection = CBeamDirection( 36, 60 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 
@@ -185,7 +185,7 @@ TEST_F( TestVenetianCellDescriptionFlat45, TestVenetian11 ) {
   
   shared_ptr< CVenetianCellDescription > aCell = GetCell();
 
-  shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( 36, 30 );
+  CBeamDirection aDirection = CBeamDirection( 36, 30 );
 
   double Tdir_dir = aCell->T_dir_dir( Side::Front, aDirection );
 

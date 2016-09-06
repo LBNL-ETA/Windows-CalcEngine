@@ -65,7 +65,8 @@ namespace LayerOptics {
     size_t m_NumOfSlatSegments = m_Top->numberOfSegments();
 
     shared_ptr< CVenetianCellDescription > aBackwardCell = 
-      make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, m_NumOfSlatSegments );
+      make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
+        curvatureRadius, m_NumOfSlatSegments );
 
     return aBackwardCell;
   }
@@ -80,9 +81,9 @@ namespace LayerOptics {
     return m_BeamGeometry->beamViewFactors( -t_ProfileAngle, t_Side );
   }
 
-  double CVenetianCellDescription::T_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
+  double CVenetianCellDescription::T_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {
     assert( m_BeamGeometry != nullptr );
-    double aProfileAngle = t_Direction->profileAngle();
+    double aProfileAngle = t_Direction.profileAngle();
     return m_BeamGeometry->directToDirect( -aProfileAngle, t_Side );
   }
 

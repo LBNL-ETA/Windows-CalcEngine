@@ -20,11 +20,9 @@ namespace LayerOptics {
   public:
     CCellDescription();
 
-    virtual double T_dir_dir( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction ) = 0;
+    virtual double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction ) = 0;
 
-    virtual double R_dir_dir( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction );
+    virtual double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
   };
 }

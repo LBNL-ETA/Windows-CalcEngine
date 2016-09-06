@@ -91,7 +91,7 @@ namespace LayerOptics {
     CVenetianCellEnergy( std::shared_ptr< CVenetianCellDescription > t_Cell,
       const double Tf, const double Tb, const double Rf, const double Rb );
 
-    double T_dir_dir( std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const CBeamDirection& t_Direction );
     double T_dir_dif( std::shared_ptr< const CBeamDirection > t_Direction );
     double R_dir_dif( std::shared_ptr< const CBeamDirection > t_Direction );
 
@@ -180,7 +180,7 @@ namespace LayerOptics {
     CVenetianCell( std::shared_ptr< CMaterialBand > t_MaterialProperties, 
         std::shared_ptr< CCellDescription > t_Cell );
 
-    double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
     std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 
       std::shared_ptr< const CBeamDirection > t_Direction );
     

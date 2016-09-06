@@ -27,12 +27,10 @@ namespace LayerOptics {
       std::shared_ptr< CCellDescription > t_Cell );
     
     // Transmittance averaged over entire wavelength spectrum
-    double T_dir_dir( const FenestrationCommon::Side t_Side,
-      std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     // Reflectance averaged over entire wavelength spectrum
-    double R_dir_dir( const FenestrationCommon::Side t_Side,
-      std::shared_ptr< const CBeamDirection > t_Direction );
+    double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     // Transmittance of specular material for enire wavelength spectrum
     std::shared_ptr< std::vector< double > > T_dir_dir_band( 

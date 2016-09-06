@@ -43,7 +43,7 @@ namespace LayerOptics {
       beamViewFactors( const double t_ProfileAngle, const FenestrationCommon::Side t_Side );
 
     // Direct to direct component of the ray
-    double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
   private:
     // Top and bottom slats of venetian cell

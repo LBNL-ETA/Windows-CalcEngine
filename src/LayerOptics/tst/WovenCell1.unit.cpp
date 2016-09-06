@@ -54,7 +54,7 @@ TEST_F( TestWovenCell1, TestWoven1 ) {
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
   
-  double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
   EXPECT_NEAR( 0.444444444, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
@@ -79,7 +79,7 @@ TEST_F( TestWovenCell1, TestWoven2 ) {
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
   
-  double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
   EXPECT_NEAR( 0.352396986, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
@@ -104,7 +104,7 @@ TEST_F( TestWovenCell1, TestWoven3 ) {
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
   
-  double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
   EXPECT_NEAR( 0.0, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
@@ -129,7 +129,7 @@ TEST_F( TestWovenCell1, TestWoven4 ) {
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
   
-  double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
+  double Tdir_dir = aCell->T_dir_dir( aSide, *aDirection );
   EXPECT_NEAR( 0.100838024, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );

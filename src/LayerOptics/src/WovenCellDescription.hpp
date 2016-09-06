@@ -11,11 +11,11 @@ namespace LayerOptics {
 
     double gamma() const;
 
-    double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
   private:
-    double Tx( std::shared_ptr< const CBeamDirection > t_Direction );
-    double Ty( std::shared_ptr< const CBeamDirection > t_Direction );
+    double Tx( const CBeamDirection& t_Direction );
+    double Ty( const CBeamDirection& t_Direction );
 
     double diameter() const;
     double spacing() const;

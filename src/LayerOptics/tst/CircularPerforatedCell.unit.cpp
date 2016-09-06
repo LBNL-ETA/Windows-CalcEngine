@@ -60,7 +60,7 @@ TEST_F( TestCircularPerforatedCell, TestCircular1 )
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
   
-  double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, aDirection );
+  double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, *aDirection );
   EXPECT_NEAR( 0.785398163, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aFrontSide, aDirection );
@@ -88,7 +88,7 @@ TEST_F( TestCircularPerforatedCell, TestCircular2 )
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
   
-  double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, aDirection );
+  double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, *aDirection );
   EXPECT_NEAR( 0.706858347, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aFrontSide, aDirection );
@@ -116,7 +116,7 @@ TEST_F( TestCircularPerforatedCell, TestCircular3 )
 
   shared_ptr< CBeamDirection > aDirection = make_shared< CBeamDirection >( Theta, Phi );
   
-  double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, aDirection );
+  double Tdir_dir = aCellDescription->T_dir_dir( aFrontSide, *aDirection );
   EXPECT_NEAR( 0.415897379, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aFrontSide, aDirection );

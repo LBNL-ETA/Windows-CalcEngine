@@ -20,11 +20,11 @@ namespace LayerOptics {
     CCircularCellDescription( const double t_x, const double t_y, const double t_Thickness, 
       const double t_Radius );
 
-    double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
   private:
-    double visibleAhole( std::shared_ptr< const CBeamDirection > t_Direction ) const;
-    double visibleAcell( std::shared_ptr< const CBeamDirection > t_Direction ) const;
+    double visibleAhole( const CBeamDirection& t_Direction ) const;
+    double visibleAcell( const CBeamDirection& t_Direction ) const;
     double m_Radius;
   };
 
@@ -33,11 +33,11 @@ namespace LayerOptics {
     CRectangularCellDescription( const double t_x, const double t_y, const double t_Thickness, 
       const double t_XHole, const double t_YHole );
 
-    double T_dir_dir( const FenestrationCommon::Side t_Side, std::shared_ptr< const CBeamDirection > t_Direction );
+    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
   private:
-    double TransmittanceV( std::shared_ptr< const CBeamDirection > t_Direction ) const;
-    double TransmittanceH( std::shared_ptr< const CBeamDirection > t_Direction ) const;
+    double TransmittanceV( const CBeamDirection& t_Direction ) const;
+    double TransmittanceH( const CBeamDirection& t_Direction ) const;
 
     double m_XHole;
     double m_YHole;

@@ -21,16 +21,14 @@ namespace LayerOptics {
   class CBaseCell {
   public:
     CBaseCell();
-    CBaseCell( std::shared_ptr< CMaterialBand > t_Material,
-      std::shared_ptr< CCellDescription > t_CellDescription );
+    CBaseCell( const std::shared_ptr< CMaterialBand >& t_Material,
+      const std::shared_ptr< CCellDescription >& t_CellDescription );
 
     // Direct to direct component of transmitted ray
-    virtual double T_dir_dir( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction );
+    virtual double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     // Specularly reflected ray
-    virtual double R_dir_dir( const FenestrationCommon::Side t_Side, 
-      std::shared_ptr< const CBeamDirection > t_Direction );
+    virtual double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     virtual std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 
       std::shared_ptr< const CBeamDirection > t_Direction );

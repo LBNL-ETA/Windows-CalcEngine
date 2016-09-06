@@ -18,13 +18,13 @@ namespace LayerOptics {
 
   }
 
-  double CSpecularCell::T_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
+  double CSpecularCell::T_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {
     // Specular glass transmittance is same for front and back sides
-    return m_Material->getPropertyAtAngle( Property::T, t_Side, t_Direction->theta() );
+    return m_Material->getPropertyAtAngle( Property::T, t_Side, t_Direction.theta() );
   }
 
-  double CSpecularCell::R_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
-    return m_Material->getPropertyAtAngle( Property::R, t_Side, t_Direction->theta() );
+  double CSpecularCell::R_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {
+    return m_Material->getPropertyAtAngle( Property::R, t_Side, t_Direction.theta() );
   }
 
   // Transmittance of specular material for each of material range. In case of sample measured material, that are

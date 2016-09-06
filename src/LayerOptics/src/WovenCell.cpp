@@ -45,7 +45,7 @@ namespace LayerOptics {
 
   }
 
-  double CWovenCell::T_dir_dir( const Side t_Side, shared_ptr< const CBeamDirection > t_Direction ) {
+  double CWovenCell::T_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {
     return m_CellDescription->T_dir_dir( t_Side, t_Direction );
   }
 
