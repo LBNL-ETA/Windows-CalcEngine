@@ -127,24 +127,24 @@ namespace LayerOptics {
   ////   CMaterialDualBand
   ////////////////////////////////////////////////////////////////////////////////////
 
-  CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterialBand > t_PartialRange,
-    shared_ptr< CMaterialBand > t_SolarRange, const double t_Ratio ) : CMaterialBand( 0.3, 2.5 ),
+  CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterialBand >& t_PartialRange,
+    const shared_ptr< CMaterialBand >& t_SolarRange, const double t_Ratio ) : CMaterialBand( 0.3, 2.5 ),
     m_MaterialFullRange( t_SolarRange ) {
-    checkIfMaterialWithingSolarRange( t_PartialRange );
+    checkIfMaterialWithingSolarRange( *t_PartialRange );
     createUVRange();
-    createNIRRange( t_PartialRange, t_SolarRange, t_Ratio );
+    createNIRRange( t_PartialRange, *t_SolarRange, t_Ratio );
   }
 
-  CMaterialDualBand::CMaterialDualBand( shared_ptr< CMaterialBand > t_PartialRange,
-    shared_ptr< CMaterialBand > t_SolarRange, 
-    shared_ptr< CSeries > t_SolarRadiation ) : CMaterialBand( 0.3, 2.5 ),
+  CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterialBand >& t_PartialRange,
+    const shared_ptr< CMaterialBand >& t_SolarRange, 
+    const shared_ptr< CSeries >& t_SolarRadiation ) : CMaterialBand( 0.3, 2.5 ),
     m_MaterialFullRange( t_SolarRange ) {
-    checkIfMaterialWithingSolarRange( t_PartialRange );
+    checkIfMaterialWithingSolarRange( *t_PartialRange );
     createUVRange();
     double lowLambda = t_PartialRange->getMinLambda();
     double highLambda = t_PartialRange->getMaxLambda();
     CNIRRatio nirRatio = CNIRRatio( t_SolarRadiation, lowLambda, highLambda );
-    createNIRRange( t_PartialRange, t_SolarRange, nirRatio.ratio() );
+    createNIRRange( t_PartialRange, *t_SolarRange, nirRatio.ratio() );
   }
 
   double CMaterialDualBand::getProperty( Property t_Property, Side t_Side ) const {
@@ -172,9 +172,9 @@ namespace LayerOptics {
     return aWavelengths;
   }
 
-  void CMaterialDualBand::checkIfMaterialWithingSolarRange( shared_ptr< CMaterialBand > t_Material ) const {
-    double lowLambda = t_Material->getMinLambda();
-    double highLambda = t_Material->getMaxLambda();
+  void CMaterialDualBand::checkIfMaterialWithingSolarRange( const CMaterialBand& t_Material ) const {
+    double lowLambda = t_Material.getMinLambda();
+    double highLambda = t_Material.getMaxLambda();
     if( lowLambda < 0.32 || highLambda < 0.32 || lowLambda > 2.5 || highLambda > 2.5 ) {
       throw runtime_error("Material properties out of range. Wavelength range must be between 0.32 and 2.5 microns.");
     }
@@ -189,18 +189,17 @@ namespace LayerOptics {
     m_Materials.push_back( aUVMaterial );
   }
 
-  void CMaterialDualBand::createNIRRange( 
-    shared_ptr< CMaterialBand > t_PartialRange,
-    shared_ptr< CMaterialBand > t_SolarRange, const double t_Fraction ) {
+  void CMaterialDualBand::createNIRRange( const std::shared_ptr< CMaterialBand >&  t_PartialRange,
+    const CMaterialBand& t_SolarRange, const double t_Fraction ) {
     double Tf_nir = getModifiedProperty( t_PartialRange->getProperty( Property::T, Side::Front ), 
-      t_SolarRange->getProperty( Property::T, Side::Front ), t_Fraction );
+      t_SolarRange.getProperty( Property::T, Side::Front ), t_Fraction );
     double Tb_nir = getModifiedProperty( t_PartialRange->getProperty( Property::T, Side::Back ), 
-      t_SolarRange->getProperty( Property::T, Side::Back ), t_Fraction );
+      t_SolarRange.getProperty( Property::T, Side::Back ), t_Fraction );
 
     double Rf_nir = getModifiedProperty( t_PartialRange->getProperty( Property::R, Side::Front ), 
-      t_SolarRange->getProperty( Property::R, Side::Front ), t_Fraction );
+      t_SolarRange.getProperty( Property::R, Side::Front ), t_Fraction );
     double Rb_nir = getModifiedProperty( t_PartialRange->getProperty( Property::R, Side::Back ), 
-      t_SolarRange->getProperty( Property::R, Side::Back ), t_Fraction );
+      t_SolarRange.getProperty( Property::R, Side::Back ), t_Fraction );
 
     double minRangeLambda = t_PartialRange->getMinLambda();
 
@@ -228,7 +227,7 @@ namespace LayerOptics {
   ////   CMaterialSample
   ////////////////////////////////////////////////////////////////////////////////////
 
-  CMaterialSample::CMaterialSample( shared_ptr< CSpectralSample > t_SpectralSample, 
+  CMaterialSample::CMaterialSample( const shared_ptr< CSpectralSample >& t_SpectralSample, 
     const double t_Thickness, const SpecularMaterialType t_Type, 
     const double minLambda, const double maxLambda ) : 
     CMaterialBand( minLambda, maxLambda ) {

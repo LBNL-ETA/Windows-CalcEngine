@@ -28,7 +28,8 @@ namespace LayerOptics {
 
   class CBSDFPatch {
   public:
-    CBSDFPatch( std::shared_ptr< CAngleLimits > t_Theta, std::shared_ptr< CAngleLimits > t_Phi );
+    CBSDFPatch( const std::shared_ptr< CAngleLimits >& t_Theta, 
+      const std::shared_ptr< CAngleLimits >& t_Phi );
     std::shared_ptr< CBeamDirection > centerPoint() const;
     double lambda() const;
 

@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
 
-  CBSDFResults::CBSDFResults( shared_ptr< const CBSDFDirections > t_Directions ) :
+  CBSDFResults::CBSDFResults( const shared_ptr< const CBSDFDirections >& t_Directions ) :
     m_HemisphericalCalculated( false ) {
     m_Directions = t_Directions;
     m_DimMatrices = m_Directions->size();
@@ -31,11 +31,11 @@ namespace LayerOptics {
   }
 
   double CBSDFResults::TauDiff( const Side t_Side ) const {
-    return integrate( Tau( t_Side ) );
+    return integrate( *Tau( t_Side ) );
   }
 
   double CBSDFResults::RhoDiff( const Side t_Side ) const {
-    return integrate( Rho( t_Side ) );
+    return integrate( *Rho( t_Side ) );
   }
 
   shared_ptr< CSquareMatrix > CBSDFResults::Tau( const Side t_Side ) const {
@@ -46,8 +46,8 @@ namespace LayerOptics {
     return m_Rho.at( t_Side );  
   }
 
-  void CBSDFResults::setResultMatrices( shared_ptr< CSquareMatrix > t_Tau, shared_ptr< CSquareMatrix > t_Rho, 
-    Side t_Side ) {
+  void CBSDFResults::setResultMatrices( const shared_ptr< CSquareMatrix >& t_Tau, 
+    const shared_ptr< CSquareMatrix >& t_Rho, Side t_Side ) {
     m_Tau[ t_Side ] = t_Tau;
     m_Rho[ t_Side ] = t_Rho;
   }
@@ -75,11 +75,11 @@ namespace LayerOptics {
     return m_Directions->lambdaMatrix(); 
   }
 
-  double CBSDFResults::integrate( shared_ptr< CSquareMatrix > t_Matrix ) const {
+  double CBSDFResults::integrate( CSquareMatrix& t_Matrix ) const {
     double sum = 0;
     for( size_t i = 0; i < m_DimMatrices; ++i ) {
       for( size_t j = 0; j < m_DimMatrices; ++j ) {
-        sum += ( *t_Matrix )[ i ][ j ] * ( *m_Directions )[ i ]->lambda() * ( *m_Directions )[ j ]->lambda();
+        sum += t_Matrix[ i ][ j ] * ( *m_Directions )[ i ]->lambda() * ( *m_Directions )[ j ]->lambda();
       }
     }
     return sum / M_PI;

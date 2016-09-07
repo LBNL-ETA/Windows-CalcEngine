@@ -11,8 +11,8 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
   
-  CUniformDiffuseCell::CUniformDiffuseCell( shared_ptr< CMaterialBand > t_MaterialProperties, 
-    shared_ptr< CCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
+  CUniformDiffuseCell::CUniformDiffuseCell( const shared_ptr< CMaterialBand >& t_MaterialProperties, 
+    const shared_ptr< CCellDescription >& t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
 
   }
 

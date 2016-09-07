@@ -44,7 +44,7 @@ namespace FenestrationCommon {
 
   vector< double >& CSquareMatrix::operator[]( const size_t index ) {
     assert( index < m_Size );
-    return m_Matrix[index];
+    return m_Matrix[ index ];
   }
 
   shared_ptr< CSquareMatrix > CSquareMatrix::add( const CSquareMatrix& t_Matrix ) const {

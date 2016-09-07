@@ -13,8 +13,8 @@ namespace LayerOptics {
   // BSDF creation for specular layers.
   class CSpecularBSDFLayer : public CBSDFLayer {
   public:
-    CSpecularBSDFLayer( std::shared_ptr< CSpecularCell > t_Cell, 
-      std::shared_ptr< const CBSDFHemisphere > t_Hemisphere );
+    CSpecularBSDFLayer( const std::shared_ptr< CSpecularCell >& t_Cell, 
+      const std::shared_ptr< const CBSDFHemisphere >& t_Hemisphere );
 
   protected:
     std::shared_ptr< CSpecularCell > cellAsSpecular() const;

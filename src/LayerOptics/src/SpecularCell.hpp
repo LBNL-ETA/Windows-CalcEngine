@@ -23,8 +23,8 @@ namespace LayerOptics {
   // spectral properties over given wavelengths
   class CSpecularCell : public CBaseCell {
   public:
-    CSpecularCell( std::shared_ptr< CMaterialBand > t_MaterialProperties,
-      std::shared_ptr< CCellDescription > t_Cell );
+    CSpecularCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties,
+      const std::shared_ptr< CCellDescription >& t_Cell );
     
     // Transmittance averaged over entire wavelength spectrum
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );

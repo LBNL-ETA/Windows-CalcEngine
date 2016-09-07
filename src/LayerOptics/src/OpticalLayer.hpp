@@ -21,8 +21,9 @@ namespace LayerOptics {
   // Handles general case layer when properties can be direct, diffuse or combination between these two.
   class CLayer {
   public:
-    CLayer( std::shared_ptr< CScatteringSurface > t_Front, std::shared_ptr< CScatteringSurface > t_Back );
-    CLayer( std::shared_ptr< const CLayer > t_Layer );
+    CLayer( const std::shared_ptr< CScatteringSurface >& t_Front, 
+      const std::shared_ptr< CScatteringSurface >& t_Back );
+    CLayer( const std::shared_ptr< const CLayer >& t_Layer );
     CLayer(
       const double Tf_dir_dir, const double Rf_dir_dir,
       const double Tb_dir_dir, const double Rb_dir_dir,

@@ -22,8 +22,8 @@ namespace LayerOptics {
   // Ray that hits uniformly diffusing cell material will distribute equally in every direction
   class CUniformDiffuseCell : public virtual CBaseCell {
   public:
-    CUniformDiffuseCell( std::shared_ptr< CMaterialBand > t_MaterialProperties,
-      std::shared_ptr< CCellDescription > t_Cell );
+    CUniformDiffuseCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties,
+      const std::shared_ptr< CCellDescription >& t_Cell );
 
     // Direct to diffuse components
     virtual double T_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );

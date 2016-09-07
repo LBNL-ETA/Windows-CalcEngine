@@ -21,8 +21,8 @@ namespace LayerOptics {
   //  CVenetianBase
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  CVenetianBase::CVenetianBase(shared_ptr< CMaterialBand > t_MaterialProperties,
-    shared_ptr< CCellDescription > t_Cell) :
+  CVenetianBase::CVenetianBase( const shared_ptr< CMaterialBand >& t_MaterialProperties,
+    const shared_ptr< CCellDescription >& t_Cell ) :
     CUniformDiffuseCell(t_MaterialProperties, t_Cell),
     CDirectionalDiffuseCell(t_MaterialProperties, t_Cell) {
   
@@ -42,8 +42,8 @@ namespace LayerOptics {
   //  CVenetianSlatEnergies
   ////////////////////////////////////////////////////////////////////////////////////////////
   CVenetianSlatEnergies::CVenetianSlatEnergies( const CBeamDirection& t_BeamDirection,
-    shared_ptr< vector< SegmentIrradiance > > t_SlatIrradiances,
-    shared_ptr< vector < double > > t_SlatRadiances ) : m_SlatIrradiances( t_SlatIrradiances ),
+    const shared_ptr< vector< SegmentIrradiance > >& t_SlatIrradiances,
+    const shared_ptr< vector < double > >& t_SlatRadiances ) : m_SlatIrradiances( t_SlatIrradiances ),
     m_SlatRadiances( t_SlatRadiances ), m_CalcDirection( make_shared< CBeamDirection >() ) {
     *m_CalcDirection = t_BeamDirection;
   }
@@ -93,8 +93,8 @@ namespace LayerOptics {
   }
 
   shared_ptr< CVenetianSlatEnergies > CVenetianSlatEnergyResults::append( const CBeamDirection& t_BeamDirection,
-    shared_ptr< vector< SegmentIrradiance > > t_SlatIrradiances,
-    shared_ptr< vector < double > > t_SlatRadiances ) {
+    const shared_ptr< vector< SegmentIrradiance > >& t_SlatIrradiances,
+    const shared_ptr< vector < double > >& t_SlatRadiances ) {
     shared_ptr< CVenetianSlatEnergies > aEnergy = make_shared< CVenetianSlatEnergies >( t_BeamDirection, t_SlatIrradiances, t_SlatRadiances );
     m_Energies.push_back( aEnergy );
     return aEnergy;
@@ -108,8 +108,7 @@ namespace LayerOptics {
 
   }
 
-
-  CVenetianCellEnergy::CVenetianCellEnergy( shared_ptr< CVenetianCellDescription > t_Cell,
+  CVenetianCellEnergy::CVenetianCellEnergy( const shared_ptr< CVenetianCellDescription >& t_Cell,
     const double Tf, const double Tb, const double Rf, const double Rb ) : 
     m_Cell( t_Cell ), m_Tf( Tf ), m_Tb( Tb ), m_Rf( Rf ), m_Rb( Rb ) {
     createSlatsMapping();
@@ -443,16 +442,17 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CVenetianEnergy
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CVenetianEnergy::CVenetianEnergy( shared_ptr< CMaterialBand > t_Material, shared_ptr< CVenetianCellDescription > t_Cell ) {
-    double Tf = t_Material->getProperty( Property::T, Side::Front );
-    double Tb = t_Material->getProperty( Property::T, Side::Back );
-    double Rf = t_Material->getProperty( Property::R, Side::Front );
-    double Rb = t_Material->getProperty( Property::R, Side::Back );
+  CVenetianEnergy::CVenetianEnergy( const CMaterialBand& t_Material, 
+    const std::shared_ptr< CVenetianCellDescription >& t_Cell ) {
+    double Tf = t_Material.getProperty( Property::T, Side::Front );
+    double Tb = t_Material.getProperty( Property::T, Side::Back );
+    double Rf = t_Material.getProperty( Property::R, Side::Front );
+    double Rb = t_Material.getProperty( Property::R, Side::Back );
     createForwardAndBackward( Tf, Tb, Rf, Rb, t_Cell );
   }
 
   CVenetianEnergy::CVenetianEnergy( const double Tf, const double Tb, const double Rf, const double Rb, 
-    shared_ptr< CVenetianCellDescription > t_Cell ) {
+    const std::shared_ptr< CVenetianCellDescription >& t_Cell ) {
     createForwardAndBackward( Tf, Tb, Rf, Rb, t_Cell );
   }
 
@@ -474,7 +474,7 @@ namespace LayerOptics {
   }
 
   void CVenetianEnergy::createForwardAndBackward( const double Tf, const double Tb, const double Rf, const double Rb, 
-    shared_ptr< CVenetianCellDescription > t_Cell ) {
+    const std::shared_ptr< CVenetianCellDescription >& t_Cell ) {
     assert( t_Cell != nullptr );
     m_Forward = make_shared< CVenetianCellEnergy >( t_Cell, Tf, Tb, Rf, Rb );
     
@@ -485,10 +485,10 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CVenetianCell
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CVenetianCell::CVenetianCell( shared_ptr< CMaterialBand > t_Material, 
-    shared_ptr< CCellDescription > t_Cell ) : 
+  CVenetianCell::CVenetianCell( const shared_ptr< CMaterialBand >& t_Material, 
+    const shared_ptr< CCellDescription >& t_Cell ) : 
     CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ), 
-    m_Energy( t_Material, getCellAsVenetian() ) {
+    m_Energy( *t_Material, getCellAsVenetian() ) {
 
     assert( t_Cell != nullptr );
     assert( t_Material != nullptr );
@@ -503,8 +503,7 @@ namespace LayerOptics {
       double Rf = aMat[ i ].getProperty( Property::R, Side::Front );
       double Rb = aMat[ i ].getProperty( Property::R, Side::Back );
 
-      CVenetianEnergy aEnergy = 
-        CVenetianEnergy( Tf, Tb, Rf, Rb, getCellAsVenetian() );
+      CVenetianEnergy aEnergy = CVenetianEnergy( Tf, Tb, Rf, Rb, getCellAsVenetian() );
       m_EnergiesBand.push_back( aEnergy );
     }
 

@@ -14,8 +14,8 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
 
-  CSpecularBSDFLayer::CSpecularBSDFLayer( shared_ptr< CSpecularCell > t_Cell, 
-    shared_ptr< const CBSDFHemisphere > t_Hemisphere ) : CBSDFLayer( t_Cell, t_Hemisphere ) {
+  CSpecularBSDFLayer::CSpecularBSDFLayer( const shared_ptr< CSpecularCell >& t_Cell, 
+    const shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) : CBSDFLayer( t_Cell, t_Hemisphere ) {
 
   }
 
@@ -27,11 +27,11 @@ namespace LayerOptics {
   }
 
   void CSpecularBSDFLayer::calcDiffuseDistribution( const Side , const CBeamDirection& , const size_t ) {
-    // No diffuse calculations are necessary for specular layer. To avoid this, further refactoring is needed 
+    // No diffuse calculations are necessary for specular layer. 
   }
 
   void CSpecularBSDFLayer::calcDiffuseDistribution_wv( const Side , const CBeamDirection& , const size_t ) {
-    // No diffuse calculations are necessary for specular layer. To avoid this, further refactoring is needed 
+    // No diffuse calculations are necessary for specular layer.
   }
 
 }

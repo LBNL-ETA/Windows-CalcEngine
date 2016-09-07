@@ -17,16 +17,19 @@ namespace LayerOptics {
   class CBSDFResults;
   class CBeamDirection;
 
+  typedef std::vector< std::shared_ptr< CBSDFResults > > BSDF_Results;
+
   // Base class for handling BSDF Layer
   class CBSDFLayer {
   public:
-    CBSDFLayer( std::shared_ptr< CBaseCell > t_Cell, std::shared_ptr< const CBSDFHemisphere > t_Directions );
+    CBSDFLayer( const std::shared_ptr< CBaseCell >& t_Cell, 
+      const std::shared_ptr< const CBSDFHemisphere >& t_Directions );
 
     // BSDF results for the enire spectrum range of the material in the cell
     std::shared_ptr< CBSDFResults > getResults();
 
     // BSDF results for each wavelenght given in specular cell
-    std::shared_ptr< std::vector< std::shared_ptr< CBSDFResults > > > getWavelengthResults();
+    std::shared_ptr< BSDF_Results > getWavelengthResults();
 
     int getBandIndex( const double t_Wavelength );
 
@@ -52,7 +55,7 @@ namespace LayerOptics {
     std::shared_ptr< CBaseCell > m_Cell;
     std::shared_ptr< CBSDFResults > m_Results;
     // Results over each wavelength
-    std::shared_ptr< std::vector< std::shared_ptr< CBSDFResults > > > m_WVResults;
+    std::shared_ptr< BSDF_Results > m_WVResults;
 
   private:
     void calc_dir_dir();

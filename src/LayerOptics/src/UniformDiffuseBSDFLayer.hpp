@@ -12,8 +12,8 @@ namespace LayerOptics {
   // All outgoing directions are uniformly distributed in all directions
   class CUniformDiffuseBSDFLayer : public CBSDFLayer {
   public:
-    CUniformDiffuseBSDFLayer( std::shared_ptr< CUniformDiffuseCell > t_Cell, 
-      std::shared_ptr< const CBSDFHemisphere > t_Hemisphere );
+    CUniformDiffuseBSDFLayer( const std::shared_ptr< CUniformDiffuseCell >& t_Cell, 
+      const std::shared_ptr< const CBSDFHemisphere >& t_Hemisphere );
 
   protected:
     std::shared_ptr< CUniformDiffuseCell > cellAsUniformDiffuse() const;

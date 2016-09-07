@@ -108,13 +108,13 @@ namespace LayerOptics {
   public:
     // ratio is calculated outside of the class and can be provided here.
     // TODO: Need to confirm with the team if we actually need this approach (ratio should be calculated and not quessed)
-    CMaterialDualBand( std::shared_ptr< CMaterialBand > t_PartialRange,
-      std::shared_ptr< CMaterialBand > t_SolarRange, const double t_Ratio );
+    CMaterialDualBand( const std::shared_ptr< CMaterialBand >& t_PartialRange,
+      const std::shared_ptr< CMaterialBand >& t_SolarRange, const double t_Ratio );
     
     // ratio is calculated based on provided solar radiation values
-    CMaterialDualBand( std::shared_ptr< CMaterialBand > t_PartialRange,
-      std::shared_ptr< CMaterialBand > t_SolarRange, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation );
+    CMaterialDualBand( const std::shared_ptr< CMaterialBand >& t_PartialRange,
+      const std::shared_ptr< CMaterialBand >& t_SolarRange, 
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation );
 
     double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;
@@ -125,12 +125,12 @@ namespace LayerOptics {
   private:
     std::shared_ptr< std::vector< double > > calculateBandWavelengths();
     // Checks if material is within valid range. Otherwise, algorithm is not valid.
-    void checkIfMaterialWithingSolarRange( std::shared_ptr< CMaterialBand > t_Material ) const;
+    void checkIfMaterialWithingSolarRange( const CMaterialBand& t_Material ) const;
     void createUVRange();
 
     // Creates after UV range and stores data into m_Materials
-    void createNIRRange( std::shared_ptr< CMaterialBand > t_PartialRange,
-      std::shared_ptr< CMaterialBand > t_SolarRange, const double t_Fraction );
+    void createNIRRange( const std::shared_ptr< CMaterialBand >& t_PartialRange, 
+      const CMaterialBand& t_SolarRange, const double t_Fraction );
 
     // Same equation is valid for every property
     double getModifiedProperty( const double t_Range, const double t_Solar, const double t_Fraction ) const;
@@ -146,7 +146,7 @@ namespace LayerOptics {
   // uncoated algorithms
   class CMaterialSample : public CMaterialBand {
   public:
-    CMaterialSample( std::shared_ptr< SpectralAveraging::CSpectralSample > t_SpectralSample, 
+    CMaterialSample( const std::shared_ptr< SpectralAveraging::CSpectralSample >& t_SpectralSample, 
       const double t_Thickness, const FenestrationCommon::SpecularMaterialType t_Type,
       const double minLambda, const double maxLambda );
 

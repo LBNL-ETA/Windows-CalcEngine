@@ -17,8 +17,8 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
 
-  CBSDFLayer::CBSDFLayer( shared_ptr< CBaseCell > t_Cell, 
-    shared_ptr< const CBSDFHemisphere > t_Hemisphere ) : 
+  CBSDFLayer::CBSDFLayer( const shared_ptr< CBaseCell >& t_Cell, 
+    const shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) : 
     m_Calculated( false ), m_CalculatedWV( false ) {
     m_Cell = t_Cell;
     m_BSDFHemisphere = t_Hemisphere;
@@ -43,7 +43,7 @@ namespace LayerOptics {
     return m_Results;
   }
 
-  shared_ptr< vector< shared_ptr< CBSDFResults > > > CBSDFLayer::getWavelengthResults() {
+  shared_ptr< BSDF_Results > CBSDFLayer::getWavelengthResults() {
     if( !m_CalculatedWV ) {
       calculate_wv();
       m_CalculatedWV = true;
@@ -57,13 +57,13 @@ namespace LayerOptics {
 
   void CBSDFLayer::calc_dir_dir() {
     for( Side t_Side : EnumSide() ) {
-      shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
-      size_t size = aDirections->size();
+      CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
+      size_t size = aDirections.size();
       shared_ptr< CSquareMatrix > Tau = make_shared< CSquareMatrix >( size );
       shared_ptr< CSquareMatrix > Rho = make_shared< CSquareMatrix >( size );
       for( size_t i = 0; i < size; ++i ) {
-        const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
-        double Lambda = ( *aDirections )[ i ]->lambda();
+        const CBeamDirection aDirection = *aDirections[ i ]->centerPoint();
+        double Lambda = aDirections[ i ]->lambda();
         
         double aTau = m_Cell->T_dir_dir( t_Side, aDirection );
         double aRho = m_Cell->R_dir_dir( t_Side, aDirection );
@@ -88,10 +88,10 @@ namespace LayerOptics {
         shared_ptr< CSquareMatrix > Rho = nullptr;
         size_t numWV = aTau->size();
         for( size_t j = 0; j < numWV; ++j ) {
-          shared_ptr< CBSDFResults > aResults = ( *m_WVResults )[ j ];
+          CBSDFResults aResults = *( *m_WVResults )[ j ];
           assert( aResults != nullptr );
-          Tau = aResults->Tau( aSide );
-          Rho = aResults->Rho( aSide );
+          Tau = aResults.Tau( aSide );
+          Rho = aResults.Rho( aSide );
           ( *Tau )[ i ][ i ] += ( *aTau )[ j ] / Lambda;
           ( *Rho )[ i ][ i ] += ( *aRho )[ j ] / Lambda;
         }
@@ -102,13 +102,11 @@ namespace LayerOptics {
   void CBSDFLayer::calc_dir_dif() {
     for( Side aSide : EnumSide() ) {
 
-      shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
+      CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
 
-      size_t size = aDirections->size();
+      size_t size = aDirections.size();
       for( size_t i = 0; i < size; ++i ) {
-
-        const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
-        
+        const CBeamDirection aDirection = *aDirections[ i ]->centerPoint();
         calcDiffuseDistribution( aSide, aDirection, i );
       }
     }
@@ -117,11 +115,11 @@ namespace LayerOptics {
   void CBSDFLayer::calc_dir_dif_wv() {
     for( Side aSide : EnumSide() ) {
 
-      shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
+      CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
 
-      size_t size = aDirections->size();
+      size_t size = aDirections.size();
       for( size_t i = 0; i < size; ++i ) {
-        const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
+        const CBeamDirection aDirection = *aDirections[ i ]->centerPoint();
         calcDiffuseDistribution_wv( aSide, aDirection, i );
       }
     }

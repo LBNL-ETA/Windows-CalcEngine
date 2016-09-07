@@ -28,8 +28,8 @@ namespace LayerOptics {
 
   class CVenetianBase : public CUniformDiffuseCell, public CDirectionalDiffuseCell {
   public:
-    CVenetianBase( std::shared_ptr< CMaterialBand > t_MaterialProperties,
-      std::shared_ptr< CCellDescription > t_Cell );
+    CVenetianBase( const std::shared_ptr< CMaterialBand >& t_MaterialProperties,
+      const std::shared_ptr< CCellDescription >& t_Cell );
 
   protected:
     std::shared_ptr< CVenetianCellDescription > getCellAsVenetian() const;
@@ -53,8 +53,8 @@ namespace LayerOptics {
   class CVenetianSlatEnergies {
   public:
     CVenetianSlatEnergies( const CBeamDirection& t_BeamDirection,
-      std::shared_ptr< std::vector< SegmentIrradiance > > t_SlatIrradiances,
-      std::shared_ptr< std::vector < double > > t_SlatRadiances );
+      const std::shared_ptr< std::vector< SegmentIrradiance > >& t_SlatIrradiances,
+      const std::shared_ptr< std::vector < double > >& t_SlatRadiances );
     
     SegmentIrradiance& irradiances( const size_t index ) const;
     double radiances( const size_t index ) const;
@@ -77,8 +77,8 @@ namespace LayerOptics {
       const CBeamDirection& t_BeamDirection ) const;
 
     std::shared_ptr< CVenetianSlatEnergies > append( const CBeamDirection& t_BeamDirection,
-      std::shared_ptr< std::vector< SegmentIrradiance > > t_SlatIrradiances,
-      std::shared_ptr< std::vector < double > > t_SlatRadiances );
+      const std::shared_ptr< std::vector< SegmentIrradiance > >& t_SlatIrradiances,
+      const std::shared_ptr< std::vector < double > >& t_SlatRadiances );
 
   private:
     std::vector< std::shared_ptr < CVenetianSlatEnergies > > m_Energies;
@@ -88,7 +88,7 @@ namespace LayerOptics {
   class CVenetianCellEnergy {
   public:
     CVenetianCellEnergy();
-    CVenetianCellEnergy( std::shared_ptr< CVenetianCellDescription > t_Cell,
+    CVenetianCellEnergy( const std::shared_ptr< CVenetianCellDescription >& t_Cell,
       const double Tf, const double Tb, const double Rf, const double Rb );
 
     double T_dir_dir( const CBeamDirection& t_Direction );
@@ -159,17 +159,16 @@ namespace LayerOptics {
 
   class CVenetianEnergy {
   public:
-    CVenetianEnergy( std::shared_ptr< CMaterialBand > t_Material, 
-      std::shared_ptr< CVenetianCellDescription > t_Cell );
+    CVenetianEnergy( const CMaterialBand& t_Material, const std::shared_ptr< CVenetianCellDescription >& t_Cell );
     CVenetianEnergy( const double Tf, const double Tb, const double Rf, const double Rb, 
-      std::shared_ptr< CVenetianCellDescription > t_Cell );
+      const std::shared_ptr< CVenetianCellDescription >& t_Cell );
 
     std::shared_ptr< CVenetianCellEnergy > getCell( const FenestrationCommon::Side t_Side ) const;
 
   private:
     // construction of forward and backward cells from both constructors have identical part of the code
     void createForwardAndBackward( const double Tf, const double Tb, const double Rf, const double Rb, 
-      std::shared_ptr< CVenetianCellDescription > t_Cell );
+      const std::shared_ptr< CVenetianCellDescription >& t_Cell );
     std::shared_ptr< CVenetianCellEnergy > m_Forward;
     std::shared_ptr< CVenetianCellEnergy > m_Backward;
   
@@ -177,8 +176,8 @@ namespace LayerOptics {
 
   class CVenetianCell : public CVenetianBase {
   public:
-    CVenetianCell( std::shared_ptr< CMaterialBand > t_MaterialProperties, 
-        std::shared_ptr< CCellDescription > t_Cell );
+    CVenetianCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties, 
+        const std::shared_ptr< CCellDescription >& t_Cell );
 
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
     std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 

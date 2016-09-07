@@ -7,13 +7,8 @@ using namespace std;
 
 namespace LayerOptics {
 
-  // CDirectionalDiffuseCell::CDirectionalDiffuseCell( std::shared_ptr< CMaterial > t_MaterialProperties,
-  //   std::shared_ptr< CCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
-  // 
-  // }
-
-  CDirectionalDiffuseCell::CDirectionalDiffuseCell(std::shared_ptr< CMaterialBand > ,
-    std::shared_ptr< CCellDescription > ) {
+  CDirectionalDiffuseCell::CDirectionalDiffuseCell( const shared_ptr< CMaterialBand >& ,
+    const shared_ptr< CCellDescription >& ) {
 
   }
 

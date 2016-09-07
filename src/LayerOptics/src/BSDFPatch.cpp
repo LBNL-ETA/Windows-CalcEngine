@@ -48,7 +48,7 @@ namespace LayerOptics {
   ///  CBSDFPatch
   /////////////////////////////////////////////////////////////////
 
-  CBSDFPatch::CBSDFPatch( shared_ptr< CAngleLimits > t_Theta, shared_ptr< CAngleLimits > t_Phi ) {
+  CBSDFPatch::CBSDFPatch( const shared_ptr< CAngleLimits >& t_Theta, const shared_ptr< CAngleLimits >& t_Phi ) {
     m_Phi = t_Phi;
     m_Theta = t_Theta;
     calculateLambda();

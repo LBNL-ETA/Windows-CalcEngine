@@ -11,7 +11,8 @@ using namespace FenestrationCommon;
 
 namespace LayerOptics {
 
-  CLayer::CLayer( shared_ptr< CScatteringSurface > t_Front, shared_ptr< CScatteringSurface > t_Back ) {
+  CLayer::CLayer( const shared_ptr< CScatteringSurface >& t_Front, 
+    const shared_ptr< CScatteringSurface >& t_Back ) {
     if( t_Front == nullptr ) {
       throw runtime_error("Front surface must be created.");
     }
@@ -23,7 +24,7 @@ namespace LayerOptics {
     m_Surface[ Side::Back ] = t_Back;
   }
 
-  CLayer::CLayer( std::shared_ptr< const CLayer > t_Layer ) {
+  CLayer::CLayer( const shared_ptr< const CLayer >& t_Layer ) {
     m_Surface[ Side::Front ] = t_Layer->getSurface( Side::Front );
     m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Back );
   }

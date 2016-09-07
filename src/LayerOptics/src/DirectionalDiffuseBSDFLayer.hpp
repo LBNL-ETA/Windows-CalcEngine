@@ -12,8 +12,8 @@ namespace LayerOptics {
   // All outgoing directions are calculated
   class CDirectionalDiffuseBSDFLayer : public CBSDFLayer {
   public:
-    CDirectionalDiffuseBSDFLayer( std::shared_ptr< CDirectionalDiffuseCell > t_Cell, 
-      std::shared_ptr< const CBSDFHemisphere > t_Hemisphere );
+    CDirectionalDiffuseBSDFLayer( const std::shared_ptr< CDirectionalDiffuseCell >& t_Cell, 
+      const std::shared_ptr< const CBSDFHemisphere >& t_Hemisphere );
 
   protected:
     std::shared_ptr< CDirectionalDiffuseCell > cellAsDirectionalDiffuse() const;

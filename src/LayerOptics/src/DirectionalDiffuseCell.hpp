@@ -20,8 +20,8 @@ namespace LayerOptics {
 
   class CDirectionalDiffuseCell : public virtual CBaseCell {
   public:
-    CDirectionalDiffuseCell( std::shared_ptr< CMaterialBand > t_MaterialProperties,
-      std::shared_ptr< CCellDescription > t_Cell );
+    CDirectionalDiffuseCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties,
+      const std::shared_ptr< CCellDescription >& t_Cell );
 
     virtual double T_dir_dif( const FenestrationCommon::Side t_Side, 
       const CBeamDirection& t_IncomingDirection, const CBeamDirection& t_OutgoingDirection ) = 0;

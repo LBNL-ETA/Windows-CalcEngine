@@ -19,8 +19,8 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CWovenBase
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CWovenBase::CWovenBase( shared_ptr< CMaterialBand > t_MaterialProperties, 
-    shared_ptr< CCellDescription > t_Cell ) : 
+  CWovenBase::CWovenBase( const shared_ptr< CMaterialBand >& t_MaterialProperties, 
+    const shared_ptr< CCellDescription >& t_Cell ) : 
     CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
     
   }
@@ -39,8 +39,8 @@ namespace LayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CWovenCell
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CWovenCell::CWovenCell( shared_ptr< CMaterialBand > t_MaterialProperties, 
-    shared_ptr< CCellDescription > t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ),
+  CWovenCell::CWovenCell( const shared_ptr< CMaterialBand >& t_MaterialProperties, 
+    const shared_ptr< CCellDescription >& t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ),
     CWovenBase( t_MaterialProperties, t_Cell ) {
 
   }
