@@ -44,27 +44,27 @@ TEST_F( TestSeriesInterpolation, TestInterpolation ) {
   
   shared_ptr< CSeries > aSpectralProperties = getProperty();
 
-  shared_ptr< vector< double > > wavelengths = make_shared< vector< double > >();
-  wavelengths->push_back( 0.400 );
-  wavelengths->push_back( 0.405 );
-  wavelengths->push_back( 0.410 );
-  wavelengths->push_back( 0.415 );
-  wavelengths->push_back( 0.420 );
-  wavelengths->push_back( 0.425 );
-  wavelengths->push_back( 0.430 );
-  wavelengths->push_back( 0.435 );
-  wavelengths->push_back( 0.440 );
-  wavelengths->push_back( 0.445 );
-  wavelengths->push_back( 0.450 );
-  wavelengths->push_back( 0.455 );
-  wavelengths->push_back( 0.460 );
-  wavelengths->push_back( 0.465 );
-  wavelengths->push_back( 0.470 );
-  wavelengths->push_back( 0.475 );
-  wavelengths->push_back( 0.480 );
-  wavelengths->push_back( 0.485 );
-  wavelengths->push_back( 0.490 );
-  wavelengths->push_back( 0.495 );
+  vector< double > wavelengths;// = make_shared< vector< double > >();
+  wavelengths.push_back( 0.400 );
+  wavelengths.push_back( 0.405 );
+  wavelengths.push_back( 0.410 );
+  wavelengths.push_back( 0.415 );
+  wavelengths.push_back( 0.420 );
+  wavelengths.push_back( 0.425 );
+  wavelengths.push_back( 0.430 );
+  wavelengths.push_back( 0.435 );
+  wavelengths.push_back( 0.440 );
+  wavelengths.push_back( 0.445 );
+  wavelengths.push_back( 0.450 );
+  wavelengths.push_back( 0.455 );
+  wavelengths.push_back( 0.460 );
+  wavelengths.push_back( 0.465 );
+  wavelengths.push_back( 0.470 );
+  wavelengths.push_back( 0.475 );
+  wavelengths.push_back( 0.480 );
+  wavelengths.push_back( 0.485 );
+  wavelengths.push_back( 0.490 );
+  wavelengths.push_back( 0.495 );
   //wavelengths->push_back( 0.500 );
 
 
