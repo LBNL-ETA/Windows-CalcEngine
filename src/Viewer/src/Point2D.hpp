@@ -17,10 +17,10 @@ namespace Viewer {
     double y() const;
     bool sameCoordinates( const CPoint2D& t_Point ) const;
 
-    double dotProduct( std::shared_ptr< const CPoint2D > t_Point ) const;
+    double dotProduct( const CPoint2D& t_Point ) const;
 
     // True if current point is left from passed point (t_Point)
-    bool isLeft( std::shared_ptr< const CPoint2D > t_Point ) const;
+    bool isLeft(const CPoint2D& t_Point ) const;
 
     // Translates point for given coordinates
     std::shared_ptr< CPoint2D > translate( const double t_x, const double t_y );
@@ -41,8 +41,8 @@ namespace Viewer {
   public:
     explicit PointsProfile2DCompare( const double t_ProfileAngle );
 
-    bool operator() ( std::shared_ptr< const CPoint2D > t_Point1, 
-      std::shared_ptr< const CPoint2D > t_Point2 );
+    bool operator() ( const std::shared_ptr< const CPoint2D >& t_Point1, 
+      const std::shared_ptr< const CPoint2D >& t_Point2 );
 
   private:
     double m_ProfileAngle;

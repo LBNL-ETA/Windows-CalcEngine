@@ -72,9 +72,9 @@ namespace Viewer {
 
   double CSegment2D::dotProduct( std::shared_ptr< const CSegment2D > t_Segment ) const {
     shared_ptr< CPoint2D > p1 = intensity();
-    shared_ptr< CPoint2D > p2 = t_Segment->intensity();
+    CPoint2D p2 = *t_Segment->intensity();
 
-    return p1->dotProduct(p2);
+    return p1->dotProduct( p2 );
   }
 
   // Translates segment for given coordinates

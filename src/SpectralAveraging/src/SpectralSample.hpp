@@ -26,17 +26,17 @@ namespace SpectralAveraging {
   // Concrete sample data are handled in inherited classes and tha will depend on type of the sample data
   class CSample {
   public:
-    explicit CSample( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+    explicit CSample( const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
 
     // Assigns detector and wavelengths from other sample. 
-    void assignDetectorAndWavelengths( std::shared_ptr< CSample > t_Sample );
+    void assignDetectorAndWavelengths( const std::shared_ptr< CSample >& t_Sample );
 
     // Gets source data. In case wavelengths are referenced to detector or custom wavelength set, it will perform interpolation
     // according to desired settings.
     std::shared_ptr< FenestrationCommon::CSeries > getSourceData();
 
     // Setting detector spectral properties for the sample
-    void setDetectorData( std::shared_ptr< FenestrationCommon::CSeries > t_DetectorData );
+    void setDetectorData( const std::shared_ptr< FenestrationCommon::CSeries >& t_DetectorData );
 
     // Integrate sample property over the certain spectrum range
     double getProperty( const double minLambda, const double maxLambda, 
@@ -49,7 +49,7 @@ namespace SpectralAveraging {
     // Defining the source of wavelengths to be used with the sample. Wavelengths can be used from measured sample,
     // detector data or can be custom provided.
     void setWavelengths( WavelengthSet t_WavelengthSet, 
-      std::shared_ptr< std::vector< double > > t_Wavelenghts = nullptr );
+      const std::shared_ptr< std::vector< double > >& t_Wavelenghts = nullptr );
 
     // For given incoming source and detector data, calculates energy (Transmitted, Reflected or Absorbed) for given
     // spectrum range.
@@ -87,8 +87,8 @@ namespace SpectralAveraging {
 
   class CSpectralSample : public CSample {
   public:
-    CSpectralSample( std::shared_ptr< CSpectralSampleData > t_SampleData, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+    CSpectralSample( const std::shared_ptr< CSpectralSampleData >& t_SampleData, 
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
 
     // Before retreiving measured data from sample, function will do all necessary interpolations to desired wavelengths.
     std::shared_ptr< CSpectralSampleData > getMeasuredData();

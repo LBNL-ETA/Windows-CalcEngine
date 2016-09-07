@@ -16,7 +16,7 @@ namespace SpectralAveraging {
   ////  CSample
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSample::CSample( shared_ptr< CSeries > t_SourceData ) : m_SourceData( t_SourceData ),
+  CSample::CSample( const shared_ptr< CSeries >& t_SourceData ) : m_SourceData( t_SourceData ),
     m_WavelengthSet( WavelengthSet::Data ), m_IntegrationType( IntegrationType::Trapezoidal ),
     m_StateCalculated( false ) {
     m_DetectorData = nullptr;
@@ -29,18 +29,19 @@ namespace SpectralAveraging {
     return m_SourceData; 
   }
 
-  void CSample::setDetectorData( shared_ptr< CSeries > t_DetectorData ) {
+  void CSample::setDetectorData( const shared_ptr< CSeries >& t_DetectorData ) {
     m_DetectorData = t_DetectorData;
     reset();
   }
 
-  void CSample::assignDetectorAndWavelengths( shared_ptr< CSample > t_Sample ) {
+  void CSample::assignDetectorAndWavelengths( const shared_ptr< CSample >& t_Sample ) {
     m_DetectorData = t_Sample->m_DetectorData;
     m_Wavelengths = t_Sample->m_Wavelengths;
     m_WavelengthSet = t_Sample->m_WavelengthSet;
   }
 
-  void CSample::setWavelengths( WavelengthSet t_WavelengthSet, shared_ptr< vector< double > > t_Wavelenghts ) {
+  void CSample::setWavelengths( WavelengthSet t_WavelengthSet, 
+    const shared_ptr< vector< double > >& t_Wavelenghts ) {
     m_WavelengthSet = t_WavelengthSet;
     switch ( t_WavelengthSet ) {
     case WavelengthSet::Custom:
@@ -244,7 +245,8 @@ namespace SpectralAveraging {
   ////  CSpectralSample
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSpectralSample::CSpectralSample( shared_ptr< CSpectralSampleData > t_SampleData, shared_ptr< CSeries > t_SourceData ) : 
+  CSpectralSample::CSpectralSample( const shared_ptr< CSpectralSampleData >& t_SampleData, 
+    const shared_ptr< CSeries >& t_SourceData ) : 
     CSample( t_SourceData ), m_SampleData( t_SampleData) {
     if( t_SampleData == nullptr ) {
       throw runtime_error("Sample must have measured data.");

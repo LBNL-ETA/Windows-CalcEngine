@@ -17,12 +17,12 @@ namespace Viewer {
     m_ViewFactors( nullptr ), m_ViewFactorsCalculated( false ) {
   }
 
-  void CGeometry2D::appendSegment( shared_ptr< CViewSegment2D > t_Segment ) {
+  void CGeometry2D::appendSegment( const shared_ptr< CViewSegment2D >& t_Segment ) {
     m_Segments->push_back( t_Segment );
     m_ViewFactorsCalculated = false;
   }
 
-  void CGeometry2D::appendGeometry2D( std::shared_ptr< CGeometry2D > t_Geometry2D ) {
+  void CGeometry2D::appendGeometry2D( const shared_ptr< CGeometry2D >& t_Geometry2D ) {
     for( shared_ptr< CViewSegment2D > aSegment : ( *t_Geometry2D->m_Segments ) ) {
       m_Segments->push_back( aSegment );
     }
@@ -105,8 +105,8 @@ namespace Viewer {
     return m_Segments;
   }
 
-  bool CGeometry2D::pointInSegmentsView( shared_ptr< const CViewSegment2D > t_Segment1, 
-      shared_ptr< const CViewSegment2D > t_Segment2, shared_ptr< const CPoint2D > t_Point ) const {
+  bool CGeometry2D::pointInSegmentsView( const shared_ptr< const CViewSegment2D >& t_Segment1, 
+    const shared_ptr< const CViewSegment2D >& t_Segment2, const shared_ptr< const CPoint2D >& t_Point ) const {
 
     // Forming polygon
     vector< shared_ptr< const CViewSegment2D > > aPolygon;
@@ -139,8 +139,8 @@ namespace Viewer {
     return inSide;
   }
 
-  bool CGeometry2D::thirdSurfaceShadowing( shared_ptr< const CViewSegment2D > t_Segment1, 
-      shared_ptr< const CViewSegment2D > t_Segment2 ) const {
+  bool CGeometry2D::thirdSurfaceShadowing( const shared_ptr< const CViewSegment2D >& t_Segment1, 
+    const shared_ptr< const CViewSegment2D >& t_Segment2 ) const {
     bool intersection = false;
   
     // Form cross segments
@@ -172,47 +172,8 @@ namespace Viewer {
     return intersection;
   }
 
-  // bool CGeometry2D::thirdSurfaceShadowing( shared_ptr< const CViewSegment2D > t_Segment1, 
-  //     shared_ptr< const CViewSegment2D > t_Segment2 ) const {
-  //   bool intersection = false;
-  //   const size_t numDiv = 5;
-  //   vector< shared_ptr< CViewSegment2D > > intSegments;
-  // 
-  //   double dx1 = ( t_Segment1->endPoint()->x() - t_Segment1->startPoint()->x() ) / numDiv;
-  //   double dy1 = ( t_Segment1->endPoint()->y() - t_Segment1->startPoint()->y() ) / numDiv;
-  //   double dx2 = ( t_Segment2->startPoint()->x() - t_Segment2->endPoint()->x() ) / numDiv;
-  //   double dy2 = ( t_Segment2->startPoint()->y() - t_Segment2->endPoint()->y() ) / numDiv;
-  // 
-  //   for( size_t i = 0; i <= numDiv; ++i ) {
-  //     shared_ptr< CPoint2D > startPoint = 
-  //       make_shared< CPoint2D >( t_Segment1->startPoint()->x() + dx1 * i, t_Segment1->startPoint()->y() + dy1 * i);
-  //     shared_ptr< CPoint2D > endPoint = 
-  //       make_shared< CPoint2D >( t_Segment2->endPoint()->x() + dx2 * i, t_Segment2->endPoint()->y() + dy2 * i);
-  // 
-  //     shared_ptr< CViewSegment2D > aSubSeg = 
-  //       make_shared< CViewSegment2D >( startPoint, endPoint );
-  // 
-  //     intSegments.push_back( aSubSeg );
-  //   }
-  // 
-  //   for( shared_ptr< CViewSegment2D > aSegment : *m_Segments ) {
-  //     if( aSegment != t_Segment1 && aSegment != t_Segment2 ) {
-  //       for( shared_ptr< CViewSegment2D > iSegment : intSegments ) {
-  //         intersection = intersection || iSegment->intersectionWithSegment( aSegment );
-  //         //intersection = intersection || pointInSegmentsView( t_Segment1, t_Segment2, aSegment->startPoint() );
-  //         //intersection = intersection || pointInSegmentsView( t_Segment1, t_Segment2, aSegment->endPoint() );
-  //         if( intersection ) {
-  //           return intersection; // No need to waste time of further checking. Return true.
-  //         }
-  //       }
-  //     }
-  //   }
-  //   
-  //   return intersection;
-  // };
-
-  bool CGeometry2D::thirdSurfaceShadowingSimple( shared_ptr< const CViewSegment2D > t_Segment1, 
-      shared_ptr< const CViewSegment2D > t_Segment2 ) const {
+  bool CGeometry2D::thirdSurfaceShadowingSimple( const shared_ptr< const CViewSegment2D >& t_Segment1, 
+    const shared_ptr< const CViewSegment2D >& t_Segment2 ) const {
     bool intersection = false;
 
     shared_ptr< CViewSegment2D > centerLine = 
@@ -230,8 +191,8 @@ namespace Viewer {
     return intersection;
   }
 
-  double CGeometry2D::viewFactorCoeff( shared_ptr< const CViewSegment2D > t_Segment1,
-      shared_ptr< const CViewSegment2D > t_Segment2 ) const {
+  double CGeometry2D::viewFactorCoeff( const shared_ptr< const CViewSegment2D >& t_Segment1,
+    const shared_ptr< const CViewSegment2D >& t_Segment2 ) const {
     double subViewCoeff = 0;
 
     shared_ptr< vector < shared_ptr < CViewSegment2D > > > subSeg1 = 
@@ -257,15 +218,14 @@ namespace Viewer {
     return subViewCoeff;
   }
 
-  double CGeometry2D::intersectionWithYAxis( const double tanPhi, std::shared_ptr< const CPoint2D > t_Point ) const {
-    assert( t_Point != nullptr );
+  double CGeometry2D::intersectionWithYAxis( const double tanPhi, const CPoint2D& t_Point ) const {
     double y = 0;
     if( tanPhi != 0 ) {
-      double x1 = t_Point->y() / tanPhi;
-      double x = x1 + t_Point->x();
+      double x1 = t_Point.y() / tanPhi;
+      double x = x1 + t_Point.x();
       y = tanPhi * x;
     } else {
-      y = t_Point->y();
+      y = t_Point.y();
     }
 
     return y;

@@ -28,12 +28,12 @@ namespace Viewer {
       ( fabs( t_Point.y() - m_y ) < ViewerConstants::DISTANCE_TOLERANCE );
    }
 
-  double CPoint2D::dotProduct( std::shared_ptr< const CPoint2D > t_Point ) const {
-    return m_x * t_Point->x() + m_y * t_Point->y(); 
+  double CPoint2D::dotProduct( const CPoint2D& t_Point ) const {
+    return m_x * t_Point.x() + m_y * t_Point.y(); 
   }
 
-  bool CPoint2D::isLeft( std::shared_ptr< const CPoint2D > t_Point ) const {
-    return m_x < t_Point->x();
+  bool CPoint2D::isLeft( const CPoint2D& t_Point ) const {
+    return m_x < t_Point.x();
   }
 
   shared_ptr< CPoint2D > CPoint2D::translate( const double t_x, const double t_y ) {
@@ -49,8 +49,8 @@ namespace Viewer {
     
   }
 
-  bool PointsProfile2DCompare::operator() ( shared_ptr< const CPoint2D > t_Point1, 
-      shared_ptr< const CPoint2D > t_Point2 ) {
+  bool PointsProfile2DCompare::operator() ( const shared_ptr< const CPoint2D >& t_Point1, 
+    const shared_ptr< const CPoint2D >& t_Point2 ) {
     bool isHigher = false;
     if( m_ProfileAngle != 0 ) {
       const double tanPhi = tan( radians( m_ProfileAngle ) );

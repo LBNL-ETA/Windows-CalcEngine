@@ -20,7 +20,7 @@ namespace SpectralAveraging {
   //// CAngularSpectralProperties
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CAngularSpectralProperties::CAngularSpectralProperties( shared_ptr< CSpectralSample > t_SpectralSample, 
+  CAngularSpectralProperties::CAngularSpectralProperties( const shared_ptr< CSpectralSample >& t_SpectralSample, 
     const double t_Angle, const SpecularMaterialType t_Type, const double t_Thickness ) : 
     m_Angle( t_Angle ), m_Thickness( t_Thickness ) {
 
@@ -36,7 +36,7 @@ namespace SpectralAveraging {
     return m_AngularData;
   }
 
-  void CAngularSpectralProperties::calculateAngularProperties( shared_ptr< CSpectralSample > t_SpectralSample, 
+  void CAngularSpectralProperties::calculateAngularProperties( const shared_ptr< CSpectralSample >& t_SpectralSample, 
     const SpecularMaterialType t_Type ) {
 
     assert( t_SpectralSample != nullptr );
@@ -92,7 +92,7 @@ namespace SpectralAveraging {
   //// CSpectralSampleAngle
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CSpectralSampleAngle::CSpectralSampleAngle( shared_ptr< CSpectralSample > t_Sample, const double t_Angle ) :
+  CSpectralSampleAngle::CSpectralSampleAngle( const shared_ptr< CSpectralSample >& t_Sample, const double t_Angle ) :
     m_Sample( t_Sample ), m_Angle( t_Angle ) {
     
   }
@@ -109,7 +109,7 @@ namespace SpectralAveraging {
   //// CAngularSpectralSample
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CAngularSpectralSample::CAngularSpectralSample( shared_ptr< CSpectralSample > t_SpectralSample, 
+  CAngularSpectralSample::CAngularSpectralSample( const shared_ptr< CSpectralSample >& t_SpectralSample, 
     const double t_Thickness, const FenestrationCommon::SpecularMaterialType t_Type ) :
     m_SpectralSampleZero( t_SpectralSample ), m_Thickness( t_Thickness ), m_Type( t_Type ) {
     
