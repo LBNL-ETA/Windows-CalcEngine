@@ -62,13 +62,13 @@ namespace LayerOptics {
 
     shared_ptr< CDirectionalDiffuseCell > aCell = cellAsDirectionalDiffuse();
 
-    shared_ptr< CBSDFDirections > iDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Outgoing );
+    CBSDFDirections iDirections = *m_BSDFHemisphere->getDirections( BSDFHemisphere::Outgoing );
 
-    size_t size = iDirections->size();
+    size_t size = iDirections.size();
 
     for( size_t i = 0; i < size; ++i ) {
 
-      const CBeamDirection iDirection = *( *iDirections )[ i ]->centerPoint();
+      const CBeamDirection iDirection = *iDirections[ i ]->centerPoint();
 
       shared_ptr< vector< double > > aTau = aCell->T_dir_dif_band( aSide, t_Direction, iDirection );
       shared_ptr< vector< double > > Ref = aCell->R_dir_dif_band( aSide, t_Direction, iDirection );

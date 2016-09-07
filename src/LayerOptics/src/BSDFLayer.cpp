@@ -89,7 +89,6 @@ namespace LayerOptics {
         size_t numWV = aTau->size();
         for( size_t j = 0; j < numWV; ++j ) {
           CBSDFResults aResults = *( *m_WVResults )[ j ];
-          assert( aResults != nullptr );
           Tau = aResults.Tau( aSide );
           Rho = aResults.Rho( aSide );
           ( *Tau )[ i ][ i ] += ( *aTau )[ j ] / Lambda;

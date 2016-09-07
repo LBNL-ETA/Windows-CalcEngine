@@ -20,34 +20,38 @@ namespace LayerOptics {
 
 namespace MultiPane {
 
+  typedef std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > SquareMatrices;
+
   // Calculate BSDF absorptances of multipane layer.
   class CAbsorptancesMultiPaneBSDF {
   public:
-    CAbsorptancesMultiPaneBSDF( FenestrationCommon::Side t_Side ,std::shared_ptr< std::vector< double > > t_CommonWavelengths, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation, 
-      std::shared_ptr< LayerOptics::CBSDFLayer > t_Layer );
+    CAbsorptancesMultiPaneBSDF( FenestrationCommon::Side t_Side, 
+      const std::shared_ptr< std::vector< double > >& t_CommonWavelengths, 
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation, 
+      const std::shared_ptr< LayerOptics::CBSDFLayer >& t_Layer );
 
-    void addLayer( std::shared_ptr< LayerOptics::CBSDFLayer > t_Layer );
+    void addLayer( LayerOptics::CBSDFLayer& t_Layer );
 
-    std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, const size_t Index );
+    std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, 
+      const size_t Index );
 
   private:
     void calculateState( const double minLambda, const double maxLambda );
 
     // Denominator term for t and r coefficients (absorptance calculations)
     std::shared_ptr< FenestrationCommon::CSquareMatrix > getDenomForRTCoeff( 
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_Reflectance,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_PreviousR );
+      const FenestrationCommon::CSquareMatrix& t_Reflectance,
+      const FenestrationCommon::CSquareMatrix& t_PreviousR );
 
     // Returns correct layer index. Depends if object is used to calculate forward or backward properties
     size_t layerIndex( const size_t Index ) const;
 
-    std::shared_ptr< std::vector< double > > multVectors( std::shared_ptr< const std::vector< double > > t_vec1, 
-      std::shared_ptr< const std::vector< double > > t_vec2 );
-    std::shared_ptr< std::vector< double > > divVectors( std::shared_ptr< const std::vector< double > > t_vec1, 
-      std::shared_ptr< const std::vector< double > > t_vec2 );
-    std::shared_ptr< std::vector< double > > addVectors( std::shared_ptr< const std::vector< double > > t_vec1, 
-      std::shared_ptr< const std::vector< double > > t_vec2 );
+    std::shared_ptr< std::vector< double > > multVectors( const std::vector< double >& t_vec1, 
+      const std::vector< double >& t_vec2 );
+    std::shared_ptr< std::vector< double > > divVectors( const std::vector< double >& t_vec1, 
+      const std::vector< double >& t_vec2 );
+    std::shared_ptr< std::vector< double > > addVectors( const std::vector< double >& t_vec1, 
+      const std::vector< double >& t_vec2 );
 
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
     std::shared_ptr< const std::vector< double > > m_LambdaVector;
@@ -55,13 +59,13 @@ namespace MultiPane {
     std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
 
     // Layer by layer coefficients for each wavelength (layer, wavelength, direction)
-    std::vector< std::shared_ptr< std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > > > m_TausF;
-    std::vector< std::shared_ptr< std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > > > m_TausB;
-    std::vector< std::shared_ptr< std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > > > m_RhosF;
-    std::vector< std::shared_ptr< std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > > > m_RhosB;
+    std::vector< std::shared_ptr< SquareMatrices > > m_TausF;
+    std::vector< std::shared_ptr< SquareMatrices > > m_TausB;
+    std::vector< std::shared_ptr< SquareMatrices > > m_RhosF;
+    std::vector< std::shared_ptr< SquareMatrices > > m_RhosB;
 
-    std::vector< std::shared_ptr< std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > > > m_rCoeffs;
-    std::vector< std::shared_ptr< std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > > > m_tCoeffs;
+    std::vector< std::shared_ptr< SquareMatrices > > m_rCoeffs;
+    std::vector< std::shared_ptr< SquareMatrices > > m_tCoeffs;
 
     // Absorptances for each direction
     std::vector< std::shared_ptr< std::vector< double > > > m_Abs;

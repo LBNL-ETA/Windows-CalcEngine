@@ -15,13 +15,13 @@ namespace MultiPane {
   // Calculate absorptances of multiplane layers for simple case (single incident angle)
   class CAbsorptancesMultiPane {
   public:
-    CAbsorptancesMultiPane( std::shared_ptr< const FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< const FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< const FenestrationCommon::CSeries > t_Rb );
+    CAbsorptancesMultiPane( const std::shared_ptr< const FenestrationCommon::CSeries >& t_T, 
+      const std::shared_ptr< const FenestrationCommon::CSeries >& t_Rf, 
+      const std::shared_ptr< const FenestrationCommon::CSeries >& t_Rb );
 
-    void addLayer( std::shared_ptr< const FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< const FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< const FenestrationCommon::CSeries > t_Rb );
+    void addLayer( const std::shared_ptr< const FenestrationCommon::CSeries >& t_T, 
+      const std::shared_ptr< const FenestrationCommon::CSeries >& t_Rf, 
+      const std::shared_ptr< const FenestrationCommon::CSeries >& t_Rb );
 
     std::shared_ptr< FenestrationCommon::CSeries > Abs( size_t const Index );
     size_t numOfLayers();
@@ -30,15 +30,15 @@ namespace MultiPane {
     void calculateState();
 
     std::shared_ptr< FenestrationCommon::CSeries > rCoeffs( 
-      std::shared_ptr< const FenestrationCommon::CSeries > t_T, 
-      std::shared_ptr< const FenestrationCommon::CSeries > t_Rf,
-      std::shared_ptr< const FenestrationCommon::CSeries > t_Rb,
-      std::shared_ptr< const FenestrationCommon::CSeries > t_RCoeffs );
+      const FenestrationCommon::CSeries& t_T, 
+      const FenestrationCommon::CSeries& t_Rf,
+      const FenestrationCommon::CSeries& t_Rb,
+      const FenestrationCommon::CSeries& t_RCoeffs );
 
     std::shared_ptr< FenestrationCommon::CSeries > tCoeffs( 
-      std::shared_ptr< const FenestrationCommon::CSeries > t_T,
-      std::shared_ptr< const FenestrationCommon::CSeries > t_Rb,
-      std::shared_ptr< const FenestrationCommon::CSeries > t_RCoeffs );
+      const FenestrationCommon::CSeries& t_T,
+      const FenestrationCommon::CSeries& t_Rb,
+      const FenestrationCommon::CSeries& t_RCoeffs );
 
     std::vector < std::shared_ptr< const FenestrationCommon::CSeries > > m_T;
     std::vector < std::shared_ptr< const FenestrationCommon::CSeries > > m_Rf;

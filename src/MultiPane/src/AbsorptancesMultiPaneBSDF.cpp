@@ -16,9 +16,9 @@ using namespace FenestrationCommon;
 namespace MultiPane {
 
   CAbsorptancesMultiPaneBSDF::CAbsorptancesMultiPaneBSDF( Side t_Side, 
-    shared_ptr< vector< double > > t_CommonWavelengths,
-    shared_ptr< CSeries > t_SolarRadiation, 
-    shared_ptr< CBSDFLayer > t_Layer ) : 
+    const shared_ptr< vector< double > >& t_CommonWavelengths,
+    const shared_ptr< CSeries >& t_SolarRadiation, 
+    const shared_ptr< CBSDFLayer >& t_Layer ) : 
     m_CommonWavelengths( t_CommonWavelengths ), m_StateCalculated( false ), m_Side( t_Side ),
     m_NumOfLayers( 0 ){
 
@@ -29,10 +29,10 @@ namespace MultiPane {
     m_LambdaVector = t_Layer->getResults()->lambdaVector();
     m_Lambda = t_Layer->getResults()->lambdaMatrix();
 
-    addLayer( t_Layer );
+    addLayer( *t_Layer );
   }
 
-  void CAbsorptancesMultiPaneBSDF::addLayer( shared_ptr< CBSDFLayer > t_Layer ) {
+  void CAbsorptancesMultiPaneBSDF::addLayer( CBSDFLayer& t_Layer ) {
     m_StateCalculated = false;
     m_NumOfLayers++;
     shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
@@ -46,12 +46,12 @@ namespace MultiPane {
     shared_ptr< vector< shared_ptr< CSquareMatrix > > > aRhosB = 
       make_shared< vector< shared_ptr< CSquareMatrix > > >();
     
-    aResults = t_Layer->getWavelengthResults();
+    aResults = t_Layer.getWavelengthResults();
     size_t size = m_CommonWavelengths->size();
     // loop through each wavelenght
     for( size_t i = 0; i < size; ++i ) {
       double curWL = ( *m_CommonWavelengths )[ i ];
-      int index = t_Layer->getBandIndex( curWL );
+      int index = t_Layer.getBandIndex( curWL );
       assert( index > -1 );
       aTausF->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Front ) );
       aTausB->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Back ) );
@@ -83,42 +83,42 @@ namespace MultiPane {
   }
 
   shared_ptr< vector< double > > CAbsorptancesMultiPaneBSDF::multVectors( 
-    shared_ptr< const vector< double > > t_vec1, 
-    shared_ptr< const vector< double > > t_vec2 ) {
-    if( t_vec1->size() != t_vec2->size() ) {
+    const vector< double >& t_vec1, 
+    const vector< double >& t_vec2 ) {
+    if( t_vec1.size() != t_vec2.size() ) {
       throw runtime_error("Vectors are not same size.");
     }
     shared_ptr< vector< double > > Result = make_shared< vector< double > >();
-    for( size_t i = 0; i < t_vec1->size(); ++i ) {
-      double value = ( *t_vec1 )[ i ] * ( *t_vec2 )[ i ];
+    for( size_t i = 0; i < t_vec1.size(); ++i ) {
+      double value = t_vec1 [ i ] * t_vec2[ i ];
       Result->push_back( value );
     }
     return Result;
   }
 
   shared_ptr< vector< double > > CAbsorptancesMultiPaneBSDF::divVectors( 
-    shared_ptr< const vector< double > > t_vec1, 
-    shared_ptr< const vector< double > > t_vec2 ) {
-    if( t_vec1->size() != t_vec2->size() ) {
+    const vector< double >& t_vec1, 
+    const vector< double >& t_vec2 ) {
+    if( t_vec1.size() != t_vec2.size() ) {
       throw runtime_error("Vectors are not same size.");
     }
     shared_ptr< vector< double > > Result = make_shared< vector< double > >();
-    for( size_t i = 0; i < t_vec1->size(); ++i ) {
-      double value = ( *t_vec1 )[ i ] / ( *t_vec2 )[ i ];
+    for( size_t i = 0; i < t_vec1.size(); ++i ) {
+      double value = t_vec1[ i ] / t_vec2[ i ];
       Result->push_back( value );
     }
     return Result;
   }
 
   shared_ptr< vector< double > > CAbsorptancesMultiPaneBSDF::addVectors( 
-    shared_ptr< const vector< double > > t_vec1, 
-    shared_ptr< const vector< double > > t_vec2 ) {
-    if( t_vec1->size() != t_vec2->size() ) {
+    const vector< double >& t_vec1, 
+    const vector< double >& t_vec2 ) {
+    if( t_vec1.size() != t_vec2.size() ) {
       throw runtime_error("Vectors are not same size.");
     }
     shared_ptr< vector< double > > Result = make_shared< vector< double > >();
-    for( size_t i = 0; i < t_vec1->size(); ++i ) {
-      double value = ( *t_vec1 )[ i ] + ( *t_vec2 )[ i ];
+    for( size_t i = 0; i < t_vec1.size(); ++i ) {
+      double value = t_vec1[ i ] + t_vec2[ i ];
       Result->push_back( value );
     }
     return Result;
@@ -132,13 +132,13 @@ namespace MultiPane {
     for( size_t i = m_NumOfLayers; i-- > 0; ) {
 
       // r and t for current layer (number of wavelengths)
-      shared_ptr< vector< shared_ptr< CSquareMatrix > > > r = make_shared< vector< shared_ptr< CSquareMatrix > > >();
-      shared_ptr< vector< shared_ptr< CSquareMatrix > > > t = make_shared< vector< shared_ptr< CSquareMatrix > > >();
+      shared_ptr< SquareMatrices > r = make_shared< vector< shared_ptr< CSquareMatrix > > >();
+      shared_ptr< SquareMatrices > t = make_shared< vector< shared_ptr< CSquareMatrix > > >();
 
-      shared_ptr< vector< shared_ptr< CSquareMatrix > > > vTauF = nullptr;
-      shared_ptr< vector< shared_ptr< CSquareMatrix > > > vTauB = nullptr;
-      shared_ptr< vector< shared_ptr< CSquareMatrix > > > vRhoF = nullptr;
-      shared_ptr< vector< shared_ptr< CSquareMatrix > > > vRhoB = nullptr;
+      shared_ptr< SquareMatrices > vTauF = nullptr;
+      shared_ptr< SquareMatrices > vTauB = nullptr;
+      shared_ptr< SquareMatrices > vRhoF = nullptr;
+      shared_ptr< SquareMatrices > vRhoB = nullptr;
 
       size_t aLayerIndex = layerIndex( i );
 
@@ -172,7 +172,7 @@ namespace MultiPane {
         if( i != m_NumOfLayers - 1 ) {
           shared_ptr< CSquareMatrix > prevR = ( *m_rCoeffs[ i ] )[ j ];
           shared_ptr< CSquareMatrix > lambdaTauF = m_Lambda->mult( *aTauF );
-          shared_ptr< CSquareMatrix > Denominator = getDenomForRTCoeff( aRhoB, prevR );
+          shared_ptr< CSquareMatrix > Denominator = getDenomForRTCoeff( *aRhoB, *prevR );
           shared_ptr< CSquareMatrix > rsecF = lambdaTauF->mult( *lambdaTauF );
           rsecF = rsecF->mult( *prevR );
           rsecF = rsecF->mult( *Denominator );
@@ -192,8 +192,8 @@ namespace MultiPane {
     }
 
     // For every layer-wavelength set there is a set of incoming/outgoing directions
-    vector< vector< shared_ptr< CSquareMatrix > > > IminusM( m_NumOfLayers );
-    vector< vector< shared_ptr< CSquareMatrix > > > IplusM( m_NumOfLayers );
+    vector< SquareMatrices > IminusM( m_NumOfLayers );
+    vector< SquareMatrices > IplusM( m_NumOfLayers );
 
     for( size_t i = 0; i < m_NumOfLayers; ++i ) {
       IminusM[ i ].resize( numOfWavelengths );
@@ -293,13 +293,14 @@ namespace MultiPane {
 
   }
 
-  shared_ptr< CSquareMatrix > CAbsorptancesMultiPaneBSDF::getDenomForRTCoeff( shared_ptr< CSquareMatrix > t_Reflectance,
-    shared_ptr< CSquareMatrix > t_PreviousR ) {
-    size_t matrixSize = t_Reflectance->getSize();
+  shared_ptr< CSquareMatrix > CAbsorptancesMultiPaneBSDF::getDenomForRTCoeff( 
+    const CSquareMatrix& t_Reflectance,
+    const CSquareMatrix& t_PreviousR ) {
+    size_t matrixSize = t_Reflectance.getSize();
     shared_ptr< CSquareMatrix > Denominator = make_shared< CSquareMatrix >( matrixSize );
     Denominator->setIdentity();
-    shared_ptr< CSquareMatrix > lambdaRF = m_Lambda->mult( *t_Reflectance );
-    lambdaRF = lambdaRF->mult( *t_PreviousR );
+    shared_ptr< CSquareMatrix > lambdaRF = m_Lambda->mult( t_Reflectance );
+    lambdaRF = lambdaRF->mult( t_PreviousR );
     Denominator = Denominator->sub( *lambdaRF );
     Denominator = Denominator->inverse();
     return Denominator;

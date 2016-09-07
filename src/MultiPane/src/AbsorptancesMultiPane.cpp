@@ -6,17 +6,17 @@ using namespace FenestrationCommon;
 
 namespace MultiPane {
 
-  CAbsorptancesMultiPane::CAbsorptancesMultiPane( shared_ptr< const CSeries > t_T, 
-      shared_ptr< const CSeries > t_Rf, 
-      shared_ptr< const CSeries > t_Rb ) : m_StateCalculated( false ) {
+  CAbsorptancesMultiPane::CAbsorptancesMultiPane( const shared_ptr< const CSeries >& t_T, 
+      const shared_ptr< const CSeries >& t_Rf, 
+      const shared_ptr< const CSeries >& t_Rb ) : m_StateCalculated( false ) {
     m_T.push_back( t_T );
     m_Rf.push_back( t_Rf );
     m_Rb.push_back( t_Rb );
   }
 
-  void CAbsorptancesMultiPane::addLayer( shared_ptr< const CSeries > t_T, 
-      shared_ptr< const CSeries > t_Rf, 
-      shared_ptr< const CSeries > t_Rb ) {
+  void CAbsorptancesMultiPane::addLayer( const shared_ptr< const CSeries >& t_T, 
+      const shared_ptr< const CSeries >& t_Rf, 
+      const shared_ptr< const CSeries >& t_Rb ) {
     m_T.push_back( t_T );
     m_Rf.push_back( t_Rf );
     m_Rb.push_back( t_Rb );
@@ -52,8 +52,8 @@ namespace MultiPane {
       
       // layers loop
       for( int i = int( size ) - 1; i >= 0; --i ) {
-        t = tCoeffs( m_T[i], m_Rb[i], r );
-        r = rCoeffs( m_T[i], m_Rf[i], m_Rb[i], r );
+        t = tCoeffs( *m_T[i], *m_Rb[i], *r );
+        r = rCoeffs( *m_T[i], *m_Rf[i], *m_Rb[i], *r );
 
         m_rCoeffs.insert( m_rCoeffs.begin(), r );
         m_tCoeffs.insert( m_tCoeffs.begin(), t );
@@ -92,18 +92,18 @@ namespace MultiPane {
   }
 
   shared_ptr< CSeries > CAbsorptancesMultiPane::rCoeffs( 
-      shared_ptr< const CSeries > t_T, 
-      shared_ptr< const CSeries > t_Rf,
-      shared_ptr< const CSeries > t_Rb,
-      shared_ptr< const CSeries > t_RCoeffs ) {
+      const CSeries& t_T, 
+      const CSeries& t_Rf,
+      const CSeries& t_Rb,
+      const CSeries& t_RCoeffs ) {
     
     shared_ptr< CSeries > rCoeffs = make_shared< CSeries >();
-    size_t size = t_T->size();
+    size_t size = t_T.size();
      
     for( size_t i = 0; i < size; ++i ) {
-      double wl = (*t_T)[i]->x();
-      double rValue = ( *t_Rf )[ i ]->value() + ( *t_T )[ i ]->value() * ( *t_T )[ i ]->value() * ( *t_RCoeffs )[i]->value() / 
-        ( 1 - (*t_Rb)[i]->value() * ( *t_RCoeffs )[i]->value() );
+      double wl = t_T[i]->x();
+      double rValue = t_Rf[ i ]->value() + t_T[ i ]->value() * t_T[ i ]->value() * t_RCoeffs[i]->value() / 
+        ( 1 - t_Rb[i]->value() * t_RCoeffs[i]->value() );
       rCoeffs->addProperty( wl, rValue );
     }
 
@@ -111,16 +111,16 @@ namespace MultiPane {
   }
 
   shared_ptr< CSeries > CAbsorptancesMultiPane::tCoeffs( 
-      shared_ptr< const CSeries > t_T,
-      shared_ptr< const CSeries > t_Rb,
-      shared_ptr< const CSeries > t_RCoeffs ) {
+      const CSeries& t_T,
+      const CSeries& t_Rb,
+      const CSeries& t_RCoeffs ) {
     
     shared_ptr< CSeries > tCoeffs = make_shared< CSeries >();
-    size_t size = t_T->size();
+    size_t size = t_T.size();
      
     for( size_t i = 0; i < size; ++i ) {
-      double wl = (*t_T)[i]->x();
-      double tValue = ( *t_T )[ i ]->value() / ( 1 - (*t_Rb)[i]->value() * ( *t_RCoeffs )[i]->value() );
+      double wl = t_T[i]->x();
+      double tValue = t_T[ i ]->value() / ( 1 - t_Rb[i]->value() * t_RCoeffs[i]->value() );
       tCoeffs->addProperty( wl, tValue );
     }
 
