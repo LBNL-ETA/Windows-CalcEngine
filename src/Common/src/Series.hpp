@@ -46,8 +46,7 @@ namespace FenestrationCommon {
     void setConstantValues( std::shared_ptr< std::vector< double > > t_x, double const t_Value );
 
     std::shared_ptr< CSeries > integrate( IntegrationType t_IntegrationType ) const;
-    std::shared_ptr< CSeries > 
-      interpolate( const std::shared_ptr< std::vector< double > >& t_x ) const;
+    std::shared_ptr< CSeries > interpolate( const std::vector< double >& t_x ) const;
 
     // Multiplication of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.

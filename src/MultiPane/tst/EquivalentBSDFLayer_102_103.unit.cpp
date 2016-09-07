@@ -391,10 +391,10 @@ protected:
     aCommonWL.addWavelength( aMeasurements_102->getWavelengths() );
     aCommonWL.addWavelength( aMeasurements_103->getWavelengths() );
 
-    shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+    shared_ptr < vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
-    aMeasurements_102->interpolate( commonWavelengths );
-    aMeasurements_103->interpolate( commonWavelengths );
+    aMeasurements_102->interpolate( *commonWavelengths );
+    aMeasurements_103->interpolate( *commonWavelengths );
 
     // Create BSDF
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );

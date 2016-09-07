@@ -24,7 +24,8 @@ namespace MultiPane {
   // Keeps series of data related to one surface
   class CSurfaceSeries {
   public:
-    CSurfaceSeries( std::shared_ptr< FenestrationCommon::CSeries > t_T, std::shared_ptr< FenestrationCommon::CSeries > t_R );
+    CSurfaceSeries( const std::shared_ptr< FenestrationCommon::CSeries >& t_T, 
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_R );
 
     std::shared_ptr< FenestrationCommon::CSeries > getProperties( const FenestrationCommon::Property t_Property ) const;
 
@@ -38,8 +39,10 @@ namespace MultiPane {
 
   class CLayerSeries {
   public:
-    CLayerSeries( std::shared_ptr< FenestrationCommon::CSeries > t_Tf, std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Tb, std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
+    CLayerSeries( const std::shared_ptr< FenestrationCommon::CSeries >& t_Tf, 
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Rf,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Tb,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Rb );
 
     std::shared_ptr< FenestrationCommon::CSeries > getProperties( const FenestrationCommon::Side t_Side, 
       const FenestrationCommon::Property t_Property ) const;
@@ -56,15 +59,15 @@ namespace MultiPane {
   // Single component means that ray will propagate through IGU in single state (as perfect beam or prefectly diffuse)
   class CEquivalentLayerSingleComponentMW {
   public:
-    CEquivalentLayerSingleComponentMW( std::shared_ptr< FenestrationCommon::CSeries > t_Tf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Tb,
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
+    CEquivalentLayerSingleComponentMW( const std::shared_ptr< FenestrationCommon::CSeries >& t_Tf, 
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Tb,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Rf,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Rb );
 
-    void addLayer( std::shared_ptr< FenestrationCommon::CSeries > t_Tf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Tb,
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rf, 
-      std::shared_ptr< FenestrationCommon::CSeries > t_Rb );
+    void addLayer( const std::shared_ptr< FenestrationCommon::CSeries >& t_Tf,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Tb,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Rf,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_Rb );
 
     std::shared_ptr< FenestrationCommon::CSeries > getProperties( const FenestrationCommon::Property, 
       const FenestrationCommon::Side ) const;

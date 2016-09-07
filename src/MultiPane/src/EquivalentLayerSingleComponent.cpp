@@ -15,12 +15,12 @@ namespace MultiPane {
   }
 
   CEquivalentLayerSingleComponent::CEquivalentLayerSingleComponent( 
-    shared_ptr< const CLayerSingleComponent > t_Layer ) {
+    const CLayerSingleComponent& t_Layer ) {
     
-    const double Tf = t_Layer->getProperty( Property::T, Side::Front );
-    const double Rf = t_Layer->getProperty( Property::R, Side::Front );
-    const double Tb = t_Layer->getProperty( Property::T, Side::Back );
-    const double Rb = t_Layer->getProperty( Property::R, Side::Back );
+    const double Tf = t_Layer.getProperty( Property::T, Side::Front );
+    const double Rf = t_Layer.getProperty( Property::R, Side::Front );
+    const double Tb = t_Layer.getProperty( Property::T, Side::Back );
+    const double Rb = t_Layer.getProperty( Property::R, Side::Back );
 
     m_EquivalentLayer = make_shared< CLayerSingleComponent >( Tf, Rf, Tb, Rb );
   }
@@ -43,19 +43,19 @@ namespace MultiPane {
       break;
     }
 
-    double Tf = T( firstLayer, secondLayer, Side::Front );
-    double Tb = T( firstLayer, secondLayer, Side::Back );
-    double Rf = R( firstLayer, secondLayer, Side::Front );
-    double Rb = R( firstLayer, secondLayer, Side::Back );
+    double Tf = T( *firstLayer, *secondLayer, Side::Front );
+    double Tb = T( *firstLayer, *secondLayer, Side::Back );
+    double Rf = R( *firstLayer, *secondLayer, Side::Front );
+    double Rb = R( *firstLayer, *secondLayer, Side::Back );
     m_EquivalentLayer = make_shared< CLayerSingleComponent >( Tf, Rf, Tb, Rb );
   }
 
-  void CEquivalentLayerSingleComponent::addLayer( shared_ptr< const CLayerSingleComponent > t_Layer, 
+  void CEquivalentLayerSingleComponent::addLayer( const CLayerSingleComponent& t_Layer, 
     const Side t_Side ) {
-    const double Tf = t_Layer->getProperty( Property::T, Side::Front );
-    const double Rf = t_Layer->getProperty( Property::R, Side::Front );
-    const double Tb = t_Layer->getProperty( Property::T, Side::Back );
-    const double Rb = t_Layer->getProperty( Property::R, Side::Back );
+    const double Tf = t_Layer.getProperty( Property::T, Side::Front );
+    const double Rf = t_Layer.getProperty( Property::R, Side::Front );
+    const double Tb = t_Layer.getProperty( Property::T, Side::Back );
+    const double Rb = t_Layer.getProperty( Property::R, Side::Back );
     addLayer( Tf, Rf, Tb, Rb, t_Side );
   }
 
@@ -67,29 +67,29 @@ namespace MultiPane {
     return m_EquivalentLayer; 
   }
 
-  double CEquivalentLayerSingleComponent::interreflectance( shared_ptr< const CLayerSingleComponent > t_Layer1, 
-    shared_ptr< const CLayerSingleComponent > t_Layer2 ) const {
-    return 1 / ( 1 - t_Layer1->getProperty( Property::R, Side::Back ) * t_Layer2->getProperty( Property::R, Side::Front ) );
+  double CEquivalentLayerSingleComponent::interreflectance( const CLayerSingleComponent& t_Layer1, 
+    const CLayerSingleComponent& t_Layer2 ) const {
+    return 1 / ( 1 - t_Layer1.getProperty( Property::R, Side::Back ) * t_Layer2.getProperty( Property::R, Side::Front ) );
   }
 
-  double CEquivalentLayerSingleComponent::T( shared_ptr< const CLayerSingleComponent > t_Layer1, 
-    shared_ptr< const CLayerSingleComponent > t_Layer2, Side t_Side ) const {
-    return t_Layer1->getProperty( Property::T, t_Side ) * t_Layer2->getProperty( Property::T, t_Side ) * 
+  double CEquivalentLayerSingleComponent::T( const CLayerSingleComponent& t_Layer1, 
+    const CLayerSingleComponent& t_Layer2, Side t_Side ) const {
+    return t_Layer1.getProperty( Property::T, t_Side ) * t_Layer2.getProperty( Property::T, t_Side ) * 
       interreflectance( t_Layer1, t_Layer2 );
   }
 
-  double CEquivalentLayerSingleComponent::R( shared_ptr< const CLayerSingleComponent > t_Layer1, 
-    shared_ptr< const CLayerSingleComponent > t_Layer2, Side t_Side ) const {
-    shared_ptr< const CLayerSingleComponent > firstLayer = nullptr;
-    shared_ptr< const CLayerSingleComponent > secondLayer = nullptr;
+  double CEquivalentLayerSingleComponent::R( const CLayerSingleComponent& t_Layer1, 
+    const CLayerSingleComponent& t_Layer2, Side t_Side ) const {
+    const CLayerSingleComponent *firstLayer = nullptr;
+    const CLayerSingleComponent *secondLayer = nullptr;
     switch( t_Side ) {
     case Side::Front:
-      firstLayer = t_Layer1;
-      secondLayer = t_Layer2;
+      firstLayer = &t_Layer1;
+      secondLayer = &t_Layer2;
       break;
     case Side::Back:
-      firstLayer = t_Layer2;
-      secondLayer = t_Layer1;
+      firstLayer = &t_Layer2;
+      secondLayer = &t_Layer1;
       break;
     default:
       assert("Impossible selection of side in double layer calculations.");

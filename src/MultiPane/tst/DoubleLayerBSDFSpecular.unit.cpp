@@ -296,8 +296,8 @@ protected:
     CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial, aBSDF );
     shared_ptr< CBSDFLayer > aLayer102 = aMaker102.getLayer();
     
-    shared_ptr< CBSDFResults > aLayer1 = aLayer102->getResults();
-    shared_ptr< CBSDFResults > aLayer2 = aLayer102->getResults();
+    CBSDFResults aLayer1 = *aLayer102->getResults();
+    CBSDFResults aLayer2 = *aLayer102->getResults();
     
     m_DoubleLayer = make_shared< CBSDFDoubleLayer >( aLayer1, aLayer2 );
     

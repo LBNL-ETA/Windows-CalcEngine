@@ -53,7 +53,7 @@ protected:
   ( *Rf )[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
   ( *Rf )[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
 
-  m_InterReflectance = make_shared< CInterReflectance >( aLambdas, Rb, Rf );
+  m_InterReflectance = make_shared< CInterReflectance >( *aLambdas, *Rb, *Rf );
     
   }
 

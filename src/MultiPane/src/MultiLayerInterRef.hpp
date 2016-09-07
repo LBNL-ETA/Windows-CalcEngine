@@ -29,9 +29,9 @@ namespace MultiPane {
   
   class CInterRef {
   public:
-    CInterRef( std::shared_ptr< const LayerOptics::CLayer > t_Layer );
+    CInterRef( const std::shared_ptr< const LayerOptics::CLayer >& t_Layer );
 
-    void addLayer( std::shared_ptr< const LayerOptics::CLayer > t_Layer, 
+    void addLayer( const std::shared_ptr< const LayerOptics::CLayer >& t_Layer, 
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
     double getAbsorptance( const size_t Index, FenestrationCommon::Side t_Side,

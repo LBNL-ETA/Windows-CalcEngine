@@ -220,10 +220,10 @@ namespace SpectralAveraging {
       if( m_SourceData == nullptr ) {
         throw runtime_error("Source data are not set.");
       }
-      m_IncomingSource = m_SourceData->interpolate( m_Wavelengths );
+      m_IncomingSource = m_SourceData->interpolate( *m_Wavelengths );
 
       if( m_DetectorData != nullptr ) {
-        shared_ptr< CSeries > interpolatedDetector = m_DetectorData->interpolate( m_Wavelengths );
+        shared_ptr< CSeries > interpolatedDetector = m_DetectorData->interpolate( *m_Wavelengths );
         m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
       }
 
@@ -317,11 +317,11 @@ namespace SpectralAveraging {
       m_AbsFront = m_SampleData->properties( SampleData::AbsF );
       m_AbsBack = m_SampleData->properties( SampleData::AbsB );
     } else {
-      m_Transmittance = m_SampleData->properties( SampleData::T )->interpolate( m_Wavelengths );
-      m_RefFront = m_SampleData->properties( SampleData::Rf )->interpolate( m_Wavelengths );
-      m_RefBack = m_SampleData->properties( SampleData::Rb )->interpolate( m_Wavelengths );
-      m_AbsFront = m_SampleData->properties( SampleData::AbsF )->interpolate( m_Wavelengths );
-      m_AbsBack = m_SampleData->properties( SampleData::AbsB )->interpolate( m_Wavelengths );
+      m_Transmittance = m_SampleData->properties( SampleData::T )->interpolate( *m_Wavelengths );
+      m_RefFront = m_SampleData->properties( SampleData::Rf )->interpolate( *m_Wavelengths );
+      m_RefBack = m_SampleData->properties( SampleData::Rb )->interpolate( *m_Wavelengths );
+      m_AbsFront = m_SampleData->properties( SampleData::AbsF )->interpolate( *m_Wavelengths );
+      m_AbsBack = m_SampleData->properties( SampleData::AbsB )->interpolate( *m_Wavelengths );
     }
 
     assert( m_IncomingSource != nullptr );

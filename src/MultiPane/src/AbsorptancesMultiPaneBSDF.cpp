@@ -22,7 +22,7 @@ namespace MultiPane {
     m_CommonWavelengths( t_CommonWavelengths ), m_StateCalculated( false ), m_Side( t_Side ),
     m_NumOfLayers( 0 ){
 
-    m_SolarRadiation = t_SolarRadiation->interpolate( m_CommonWavelengths );
+    m_SolarRadiation = t_SolarRadiation->interpolate( *m_CommonWavelengths );
     
     // Lambda matrix from spectral results. Same lambda is valid for any wavelength
     // shared_ptr< const vector< double > > aLambdas = t_Layer->getResults()->lambdas();

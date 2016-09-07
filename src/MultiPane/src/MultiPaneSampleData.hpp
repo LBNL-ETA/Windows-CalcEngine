@@ -17,7 +17,7 @@ namespace MultiPane {
   public:
     CMultiPaneSampleData();
 
-    void addSample( std::shared_ptr< CSpectralSampleData > t_Sample );
+    void addSample( const std::shared_ptr< CSpectralSampleData >& t_Sample );
     std::shared_ptr< FenestrationCommon::CSeries > getLayerAbsorptances( size_t const Index );
     std::shared_ptr< std::vector< double > > getWavelengths();
     size_t numberOfLayers() const;
@@ -25,7 +25,7 @@ namespace MultiPane {
   private:
     void calculateProperties();
 
-    void interpolate( std::shared_ptr< std::vector< double > > t_Wavelengths );
+    void interpolate( const std::vector< double >& t_Wavelengths );
     void calculateEquivalentProperties();
 
     std::vector< std::shared_ptr< CSpectralSampleData > > m_MeasuredSamples;

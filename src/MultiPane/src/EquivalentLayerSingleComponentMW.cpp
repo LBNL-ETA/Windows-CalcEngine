@@ -14,7 +14,7 @@ namespace MultiPane {
   ///   CSurfaceSeries
   ///////////////////////////////////////////////////////////////////////////
 
-  CSurfaceSeries::CSurfaceSeries( shared_ptr< CSeries > t_T, shared_ptr< CSeries > t_R ) {
+  CSurfaceSeries::CSurfaceSeries( const shared_ptr< CSeries >& t_T, const shared_ptr< CSeries >& t_R ) {
     m_Properties[ Property::T ] = t_T;
     m_Properties[ Property::R ] = t_R;
     size_t size = t_T->size();
@@ -38,8 +38,8 @@ namespace MultiPane {
   ///   CLayerSeries
   ///////////////////////////////////////////////////////////////////////////
 
-  CLayerSeries::CLayerSeries( shared_ptr< CSeries > t_Tf, shared_ptr< CSeries > t_Rf, shared_ptr< CSeries > t_Tb, 
-    shared_ptr< CSeries > t_Rb ) {
+  CLayerSeries::CLayerSeries( const shared_ptr< CSeries >& t_Tf, const shared_ptr< CSeries >& t_Rf,
+    const shared_ptr< CSeries >& t_Tb, const shared_ptr< CSeries >& t_Rb ) {
     m_Surfaces[ Side::Front ] = make_shared< CSurfaceSeries >( t_Tf, t_Rf );
     m_Surfaces[ Side::Back ] = make_shared< CSurfaceSeries >( t_Tb, t_Rb );
   }
@@ -52,20 +52,21 @@ namespace MultiPane {
   ///   CEquivalentLayerSingleComponentMW
   ///////////////////////////////////////////////////////////////////////////
 
-  CEquivalentLayerSingleComponentMW::CEquivalentLayerSingleComponentMW( shared_ptr< CSeries > t_Tf, shared_ptr< CSeries > t_Tb, 
-    shared_ptr< CSeries > t_Rf, shared_ptr< CSeries > t_Rb  ) {
+  CEquivalentLayerSingleComponentMW::CEquivalentLayerSingleComponentMW( const shared_ptr< CSeries >& t_Tf,
+    const shared_ptr< CSeries >& t_Tb, const shared_ptr< CSeries >& t_Rf, const shared_ptr< CSeries >& t_Rb  ) {
     m_Layer = make_shared< CLayerSeries >( t_Tf, t_Rf, t_Tb, t_Rb );
 
     size_t size = t_Tf->size();
     for(size_t i = 0; i < size; ++i) {
-      shared_ptr< CEquivalentLayerSingleComponent > aLayer = make_shared< CEquivalentLayerSingleComponent >( ( *t_Tf )[i]->value(),
-        ( *t_Rf )[i]->value(), ( *t_Tb )[i]->value(), ( *t_Rb )[i]->value() );
+      shared_ptr< CEquivalentLayerSingleComponent > aLayer = 
+        make_shared< CEquivalentLayerSingleComponent >( ( *t_Tf )[i]->value(), ( *t_Rf )[i]->value(), 
+          ( *t_Tb )[i]->value(), ( *t_Rb )[i]->value() );
       m_EqLayerBySeries.push_back( aLayer );
     }
   }
 
-  void CEquivalentLayerSingleComponentMW::addLayer( shared_ptr< CSeries > t_Tf, shared_ptr< CSeries > t_Tb, 
-    shared_ptr< CSeries > t_Rf, shared_ptr< CSeries > t_Rb ) {
+  void CEquivalentLayerSingleComponentMW::addLayer( const shared_ptr< CSeries >& t_Tf, 
+    const shared_ptr< CSeries >& t_Tb, const shared_ptr< CSeries >& t_Rf, const shared_ptr< CSeries >& t_Rb ) {
 
     size_t size = t_Tf->size();
 
@@ -99,7 +100,8 @@ namespace MultiPane {
 
   }
 
-  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::getProperties( const Property t_Property, const Side t_Side ) const {
+  shared_ptr< CSeries > CEquivalentLayerSingleComponentMW::getProperties( const Property t_Property, 
+    const Side t_Side ) const {
     return m_Layer->getProperties( t_Side, t_Property );
   }
 

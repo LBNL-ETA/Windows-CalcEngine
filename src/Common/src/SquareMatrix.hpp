@@ -20,9 +20,9 @@ namespace FenestrationCommon {
     std::shared_ptr< CSquareMatrix > sub( const CSquareMatrix& t_Matrix ) const;
     std::shared_ptr< CSquareMatrix > mult( const CSquareMatrix& t_Matrix ) const;
     // Matrix multiplication with vector
-    std::shared_ptr< std::vector< double > > multMxV( const std::vector< double >& t_Vector );
+    std::shared_ptr< std::vector< double > > multMxV( const std::vector< double >& t_Vector ) const;
     // Matrix multiplication with vector
-    std::shared_ptr< std::vector< double > > multVxM( const std::vector< double >& t_Vector );
+    std::shared_ptr< std::vector< double > > multVxM( const std::vector< double >& t_Vector ) const;
     void copyFrom( const CSquareMatrix& t_Matrix );
     // inverse matrix
     std::shared_ptr< CSquareMatrix > inverse();

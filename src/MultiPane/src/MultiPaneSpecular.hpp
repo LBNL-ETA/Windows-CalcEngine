@@ -27,8 +27,8 @@ namespace MultiPane {
 
   class CEquivalentLayerSingleComponentMWAngle {
   public:
-    CEquivalentLayerSingleComponentMWAngle( std::shared_ptr< CEquivalentLayerSingleComponentMW > t_Layer,
-      std::shared_ptr< CAbsorptancesMultiPane > t_Abs, const double t_Angle );
+    CEquivalentLayerSingleComponentMWAngle( const std::shared_ptr< CEquivalentLayerSingleComponentMW >& t_Layer,
+      const std::shared_ptr< CAbsorptancesMultiPane >& t_Abs, const double t_Angle );
     double angle() const;
     std::shared_ptr< CEquivalentLayerSingleComponentMW > layer() const;
     std::shared_ptr< FenestrationCommon::CSeries > getProperties( 
@@ -43,11 +43,11 @@ namespace MultiPane {
   // Handles equivalent properties of multipane glass consists only of specular layers
   class CMultiPaneSpecular {
   public:
-    CMultiPaneSpecular( std::shared_ptr< std::vector< double > > t_CommonWavelength,
-      std::shared_ptr< FenestrationCommon::CSeries > t_SolarRadiation,
-      std::shared_ptr< LayerOptics::CSpecularCell > t_Layer );
+    CMultiPaneSpecular( const std::shared_ptr< std::vector< double > >& t_CommonWavelength,
+      const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation,
+      const std::shared_ptr< LayerOptics::CSpecularCell >& t_Layer );
 
-    void addLayer( std::shared_ptr< LayerOptics::CSpecularCell > t_Layer );
+    void addLayer( const std::shared_ptr< LayerOptics::CSpecularCell >& t_Layer );
 
     double getProperty( const FenestrationCommon::Side t_Side, const FenestrationCommon::Property t_Property, 
       const double t_Angle, const double minLambda, const double maxLambda, 
@@ -55,7 +55,7 @@ namespace MultiPane {
 
     double getHemisphericalProperty( const FenestrationCommon::Side t_Side, 
       const FenestrationCommon::Property t_Property, 
-      std::shared_ptr< const std::vector< double > > t_Angles,
+      const std::shared_ptr< const std::vector< double > >& t_Angles,
       const double minLambda, const double maxLambda, 
       const FenestrationCommon::IntegrationType t_IntegrationType = FenestrationCommon::IntegrationType::Trapezoidal );
 
@@ -64,7 +64,7 @@ namespace MultiPane {
       const FenestrationCommon::IntegrationType t_IntegrationType = FenestrationCommon::IntegrationType::Trapezoidal );
 
     // Hemispherical absorptances of each layer. Integration is performed over t_Angles.
-    double AbsHemispherical( size_t const Index, std::shared_ptr< const std::vector< double > > t_Angles, 
+    double AbsHemispherical( size_t const Index, const std::shared_ptr< const std::vector< double > >& t_Angles, 
       const double minLambda, const double maxLambda,
       const FenestrationCommon::IntegrationType t_IntegrationType = FenestrationCommon::IntegrationType::Trapezoidal );
 

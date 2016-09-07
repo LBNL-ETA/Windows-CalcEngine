@@ -30,7 +30,7 @@ namespace MultiPane {
     initialize( aLayer );
   }
 
-  CMultiLayer::CMultiLayer( shared_ptr< const CLayer > t_Layer ) {
+  CMultiLayer::CMultiLayer( const shared_ptr< const CLayer >& t_Layer ) {
     initialize( t_Layer );
   }
 
@@ -43,7 +43,7 @@ namespace MultiPane {
     const double t_Tb_dif_dif, const double t_Rb_dif_dif,
     const Side t_Side ) {
 
-    shared_ptr< const CLayer > aLayer = make_shared< CLayer >(
+    shared_ptr< CLayer > aLayer = make_shared< CLayer >(
       t_Tf_dir_dir, t_Rf_dir_dir, t_Tb_dir_dir, t_Rb_dir_dir,
       t_Tf_dir_dif, t_Rf_dir_dif, t_Tb_dir_dif, t_Rb_dir_dif,
       t_Tf_dif_dif, t_Rf_dif_dif, t_Tb_dif_dif, t_Rb_dif_dif );
@@ -51,8 +51,8 @@ namespace MultiPane {
     addLayer( aLayer, t_Side );
   }
 
-  void CMultiLayer::addLayer( shared_ptr< const CLayer > t_Layer, const Side t_Side ) {
-    m_Layer->addLayer( t_Layer, t_Side );
+  void CMultiLayer::addLayer( const shared_ptr< CLayer >& t_Layer, const Side t_Side ) {
+    m_Layer->addLayer( *t_Layer, t_Side );
     m_InterRef->addLayer( t_Layer, t_Side );
   }
 
@@ -76,7 +76,7 @@ namespace MultiPane {
     return aAbs;
   }
 
-  void CMultiLayer::initialize( shared_ptr< const CLayer > t_Layer ) {
+  void CMultiLayer::initialize( const shared_ptr< const CLayer >& t_Layer ) {
     m_Layer = make_shared< CEquivalentLayer >( t_Layer );
     m_InterRef = make_shared< CInterRef >( t_Layer );
   }

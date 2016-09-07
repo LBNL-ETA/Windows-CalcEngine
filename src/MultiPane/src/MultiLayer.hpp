@@ -30,7 +30,7 @@ namespace MultiPane {
       const double t_Tf_dif_dif, const double t_Rf_dif_dif, 
       const double t_Tb_dif_dif, const double t_Rb_dif_dif );
 
-    CMultiLayer( std::shared_ptr< const LayerOptics::CLayer > t_Layer );
+    CMultiLayer( const std::shared_ptr< const LayerOptics::CLayer >& t_Layer );
 
     void addLayer( 
       const double t_Tf_dir_dir, const double t_Rf_dir_dir, 
@@ -41,7 +41,7 @@ namespace MultiPane {
       const double t_Tb_dif_dif, const double t_Rb_dif_dif,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    void addLayer( std::shared_ptr< const LayerOptics::CLayer > t_Layer, 
+    void addLayer( const std::shared_ptr< LayerOptics::CLayer >& t_Layer, 
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
     double getPropertySimple( const FenestrationCommon::PropertySimple t_Property,
@@ -54,7 +54,7 @@ namespace MultiPane {
     double getAbsorptance( FenestrationCommon::Side t_Side, FenestrationCommon::ScatteringSimple t_Scattering );
 
   private:
-    void initialize( std::shared_ptr< const LayerOptics::CLayer > t_Layer );
+    void initialize( const std::shared_ptr< const LayerOptics::CLayer >& t_Layer );
 
     std::shared_ptr< CInterRef > m_InterRef;
     std::shared_ptr< CEquivalentLayer > m_Layer;

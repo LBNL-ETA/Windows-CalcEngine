@@ -22,9 +22,9 @@ namespace MultiPane {
   // Class to handle interreflectance calculations
   class CInterReflectance {
   public:
-    CInterReflectance( std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Lambda,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rb,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf );
+    CInterReflectance( const FenestrationCommon::CSquareMatrix& t_Lambda,
+      const FenestrationCommon::CSquareMatrix& t_Rb,
+      const FenestrationCommon::CSquareMatrix& t_Rf );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > value() const;
 
@@ -37,25 +37,25 @@ namespace MultiPane {
   // multilayer routines to calculate properties for any number of layers.
   class CBSDFDoubleLayer {
   public:
-    CBSDFDoubleLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_FrontLayer, 
-      std::shared_ptr< LayerOptics::CBSDFResults > t_BackLayer );
+    CBSDFDoubleLayer( const LayerOptics::CBSDFResults& t_FrontLayer, 
+      const LayerOptics::CBSDFResults& t_BackLayer );
 
     std::shared_ptr< LayerOptics::CBSDFResults > value();
 
   private:
     std::shared_ptr< FenestrationCommon::CSquareMatrix > equivalentT( 
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf2, 
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Lambda,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf1 );
+      const FenestrationCommon::CSquareMatrix& t_Tf2, 
+      const FenestrationCommon::CSquareMatrix& t_InterRefl,
+      const FenestrationCommon::CSquareMatrix& t_Lambda,
+      const FenestrationCommon::CSquareMatrix& t_Tf1 );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > equivalentR( 
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf1,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tf1,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Tb1,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Rf2,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< const FenestrationCommon::CSquareMatrix > t_Lambda );
+      const FenestrationCommon::CSquareMatrix& t_Rf1,
+      const FenestrationCommon::CSquareMatrix& t_Tf1,
+      const FenestrationCommon::CSquareMatrix& t_Tb1,
+      const FenestrationCommon::CSquareMatrix& t_Rf2,
+      const FenestrationCommon::CSquareMatrix& t_InterRefl,
+      const FenestrationCommon::CSquareMatrix& t_Lambda );
 
     std::shared_ptr< LayerOptics::CBSDFResults > m_Results;
 
@@ -68,8 +68,8 @@ namespace MultiPane {
   // Class for equivalent BSDF layer for single material properties (or single wavelength)
   class CEquivalentBSDFLayerSingleBand {
   public:
-    explicit CEquivalentBSDFLayerSingleBand( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );
-    void addLayer( std::shared_ptr< LayerOptics::CBSDFResults > t_Layer );
+    explicit CEquivalentBSDFLayerSingleBand( const std::shared_ptr< LayerOptics::CBSDFResults >& t_Layer );
+    void addLayer( const std::shared_ptr< LayerOptics::CBSDFResults >& t_Layer );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( FenestrationCommon::Side t_Side );
     std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( FenestrationCommon::Side t_Side );
@@ -82,14 +82,14 @@ namespace MultiPane {
   private:
     void calcEquivalentProperties();
 
-    std::shared_ptr< std::vector< double > > absTerm1( std::shared_ptr< std::vector< double > > t_Alpha,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_T );
+    std::shared_ptr< std::vector< double > > absTerm1( const std::vector< double >& t_Alpha,
+      const FenestrationCommon::CSquareMatrix& t_InterRefl,
+      const FenestrationCommon::CSquareMatrix& t_T );
 
-    std::shared_ptr< std::vector< double > > absTerm2( std::shared_ptr< std::vector< double > > t_Alpha,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_InterRefl,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_R,
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > t_T );
+    std::shared_ptr< std::vector< double > > absTerm2( const std::vector< double >& t_Alpha,
+      const FenestrationCommon::CSquareMatrix& t_InterRefl,
+      const FenestrationCommon::CSquareMatrix& t_R,
+      const FenestrationCommon::CSquareMatrix& t_T );
 
     std::shared_ptr< LayerOptics::CBSDFResults > m_EquivalentLayer;
     std::vector< std::shared_ptr< LayerOptics::CBSDFResults > > m_Layers;

@@ -14,7 +14,7 @@ using namespace LayerOptics;
 
 namespace MultiPane {
 
-  CInterRef::CInterRef( shared_ptr< const CLayer > t_Layer ) : m_StateCalculated( false ) {
+  CInterRef::CInterRef( const shared_ptr< const CLayer >& t_Layer ) : m_StateCalculated( false ) {
     m_Layers.push_back( t_Layer );
     for( Scattering aScattering : EnumScattering() ) {
       m_Energy[ aScattering ] = make_shared< CSurfaceEnergy >();
@@ -33,7 +33,7 @@ namespace MultiPane {
     }
   }
 
-  void CInterRef::addLayer( shared_ptr< const CLayer > t_Layer, const Side t_Side ) {
+  void CInterRef::addLayer( const shared_ptr< const CLayer >& t_Layer, const Side t_Side ) {
     switch( t_Side ) {
     case Side::Front:
       m_Layers.insert( m_Layers.begin(), t_Layer );

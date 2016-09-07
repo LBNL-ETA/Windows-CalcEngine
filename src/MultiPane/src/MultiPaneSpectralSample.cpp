@@ -13,8 +13,8 @@ using namespace FenestrationCommon;
 
 namespace MultiPane {
 
-  CMultiPaneSpectralSample::CMultiPaneSpectralSample( shared_ptr< CSpectralSampleData > t_SampleData, 
-    shared_ptr< CSeries > t_SourceData ) : CSpectralSample( t_SampleData, t_SourceData ) {
+  CMultiPaneSpectralSample::CMultiPaneSpectralSample( const shared_ptr< CSpectralSampleData >& t_SampleData, 
+    const shared_ptr< CSeries >& t_SourceData ) : CSpectralSample( t_SampleData, t_SourceData ) {
 
   }
 
@@ -58,13 +58,14 @@ namespace MultiPane {
     }
   }
 
-  void CMultiPaneSpectralSample::integrateAndAppendAbsorptances( shared_ptr< CSeries > t_Absorptances ) {
+  void CMultiPaneSpectralSample::integrateAndAppendAbsorptances( const shared_ptr< CSeries >& t_Absorptances ) {
+    shared_ptr< CSeries > aAbs = t_Absorptances;
     if( m_WavelengthSet != WavelengthSet::Data ) {
-        t_Absorptances = t_Absorptances->interpolate( m_Wavelengths );
-      }
-      t_Absorptances = t_Absorptances->mMult( m_IncomingSource );
-      t_Absorptances = t_Absorptances->integrate( m_IntegrationType );
-      m_AbsorbedLayersSource.push_back( t_Absorptances );
+      aAbs = aAbs->interpolate( *m_Wavelengths );
+    }
+    aAbs = aAbs->mMult( m_IncomingSource );
+    aAbs = aAbs->integrate( m_IntegrationType );
+    m_AbsorbedLayersSource.push_back( aAbs );
   }
 
   void CMultiPaneSpectralSample::reset() {

@@ -36,7 +36,7 @@ namespace MultiPane {
     return m_MeasuredSamples.size(); 
   }
 
-  void CMultiPaneSampleData::addSample( shared_ptr< CSpectralSampleData > t_Sample ) {
+  void CMultiPaneSampleData::addSample( const shared_ptr< CSpectralSampleData >& t_Sample ) {
     m_MeasuredSamples.push_back( t_Sample );
   }
 
@@ -56,7 +56,7 @@ namespace MultiPane {
   }
 
   // Interpolate current sample data to new wavelengths set
-  void CMultiPaneSampleData::interpolate( shared_ptr< vector< double > > t_Wavelengths ) {
+  void CMultiPaneSampleData::interpolate( const vector< double >& t_Wavelengths ) {
     vector< shared_ptr< CSpectralSampleData > >::iterator it;
     for( it = m_MeasuredSamples.begin(); it < m_MeasuredSamples.end(); ++it) {
       ( *it )->interpolate( t_Wavelengths );
@@ -67,7 +67,7 @@ namespace MultiPane {
 
   void CMultiPaneSampleData::calculateEquivalentProperties() {
     shared_ptr< vector< double > > wavelengths =  getWavelengths();
-    interpolate( wavelengths );
+    interpolate( *wavelengths );
 
     assert( m_MeasuredSamples.size() != 0 );
 

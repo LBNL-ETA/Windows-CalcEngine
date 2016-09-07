@@ -318,8 +318,8 @@ protected:
   CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( perfMaterial, aBSDF, perfCellDescription );
   shared_ptr< CBSDFLayer > aShade = aMakerVenetian.getLayer();
 
-  shared_ptr< CBSDFResults > aLayer1 = aLayer102->getResults();
-  shared_ptr< CBSDFResults > aLayer2 = aShade->getResults();
+  CBSDFResults aLayer1 = *aLayer102->getResults();
+  CBSDFResults aLayer2 = *aShade->getResults();
 
   m_DoubleLayer = make_shared< CBSDFDoubleLayer >( aLayer1, aLayer2 );
     

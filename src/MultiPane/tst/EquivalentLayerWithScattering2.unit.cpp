@@ -24,15 +24,15 @@ protected:
   virtual void SetUp() {
     shared_ptr< CScatteringSurface > f1 = make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
     shared_ptr< CScatteringSurface > b1 = make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
-    shared_ptr< CLayer > aLayer1 = make_shared< CLayer >( f1, b1 );
+    CLayer aLayer1 = CLayer( f1, b1 );
     
     shared_ptr< CScatteringSurface > f2 = make_shared< CScatteringSurface >( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
     shared_ptr< CScatteringSurface > b2 = make_shared< CScatteringSurface >( 0.15, 0.0, 0.38, 0.19, 0.49, 0.39 );
-    shared_ptr< CLayer > aLayer2 = make_shared< CLayer >( f2, b2 );
+    CLayer aLayer2 = CLayer( f2, b2 );
 
     shared_ptr< CScatteringSurface > f3 = make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
     shared_ptr< CScatteringSurface > b3 = make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
-    shared_ptr< CLayer > aLayer3 = make_shared< CLayer >( f3, b3 );
+    CLayer aLayer3 = CLayer( f3, b3 );
     
     m_EqLayerFront = make_shared< CEquivalentLayer >( aLayer1 );
     m_EqLayerFront->addLayer( aLayer2, Side::Back );

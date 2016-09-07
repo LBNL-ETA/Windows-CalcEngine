@@ -38,7 +38,7 @@ namespace MultiPane {
     initialize( t_Tf, t_Rf, t_Tb, t_Rb );
   }
 
-  CInterRefSingleComponent::CInterRefSingleComponent( shared_ptr< const CLayerSingleComponent > t_Layer ) : 
+  CInterRefSingleComponent::CInterRefSingleComponent( const shared_ptr< const CLayerSingleComponent >& t_Layer ) : 
     m_StateCalculated( false ) {
     double Tf = t_Layer->getProperty( Property::T, Side::Front );
     double Rf = t_Layer->getProperty( Property::R, Side::Front );
@@ -143,9 +143,9 @@ namespace MultiPane {
     // First layer just in. No calculation is needed
     aLayer = m_Layers[ 0 ];
     m_ForwardLayers.push_back( aLayer );
-    CEquivalentLayerSingleComponent aEqLayer = CEquivalentLayerSingleComponent( aLayer );
+    CEquivalentLayerSingleComponent aEqLayer = CEquivalentLayerSingleComponent( *aLayer );
     for( size_t i = 1; i < m_Layers.size(); ++i ) {
-      aEqLayer.addLayer( m_Layers[ i ] );
+      aEqLayer.addLayer( *m_Layers[ i ] );
       aLayer = aEqLayer.getLayer();
       m_ForwardLayers.push_back( aLayer );
     }
@@ -160,9 +160,9 @@ namespace MultiPane {
     // Last layer just in. No calculation is needed
     aLayer = m_Layers[ size ];
     m_BackwardLayers.insert( m_BackwardLayers.begin(), aLayer );
-    CEquivalentLayerSingleComponent aEqLayer = CEquivalentLayerSingleComponent( aLayer );
+    CEquivalentLayerSingleComponent aEqLayer = CEquivalentLayerSingleComponent( *aLayer );
     for( size_t i = size ; i > 0; --i ) {
-      aEqLayer.addLayer( m_Layers[ i - 1 ], Side::Front );
+      aEqLayer.addLayer( *m_Layers[ i - 1 ], Side::Front );
       aLayer = aEqLayer.getLayer();
       m_BackwardLayers.insert( m_BackwardLayers.begin(), aLayer );
     }

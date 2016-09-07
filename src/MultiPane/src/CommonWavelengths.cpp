@@ -22,7 +22,7 @@ namespace MultiPane {
       if( it == m_Wavelengths.begin() ) {
         aCombined = *it;
       } else {
-        aCombined = combineWavelegths( aCombined, *it, t_Combination );
+        aCombined = combineWavelegths( *aCombined, *( *it ), t_Combination );
       }
     }
 
@@ -31,8 +31,8 @@ namespace MultiPane {
     return aCombined;
   }
 
-  shared_ptr< vector< double > > CCommonWavelengths::combineWavelegths( shared_ptr< vector< double > > t_wv1,
-    shared_ptr< vector< double > > t_wv2, const Combine t_Combination ) {
+  shared_ptr< vector< double > > CCommonWavelengths::combineWavelegths( const vector< double >& t_wv1,
+    const vector< double >& t_wv2, const Combine t_Combination ) {
     assert( t_wv1 != nullptr );
     assert( t_wv2 != nullptr );
 
@@ -40,17 +40,17 @@ namespace MultiPane {
     shared_ptr< vector< double > > unionWavelengths = make_shared< vector< double > >();
     shared_ptr< vector< double > > combinedWavelengths = make_shared< vector< double > >();
 
-    set_union( t_wv1->begin(), t_wv1->end(), t_wv2->begin(), t_wv2->end(), 
+    set_union( t_wv1.begin(), t_wv1.end(), t_wv2.begin(), t_wv2.end(), 
       back_inserter( *unionWavelengths ) );
 
     if( t_Combination == Combine::Interpolate ) {
       // Remove extrapolated data. It is incorrect to have extrapolated wavelengths from one sample
-      double min1 = *min_element( t_wv1->begin(), t_wv1->end() );
-      double min2 = *min_element( t_wv2->begin(), t_wv2->end() );
+      double min1 = *min_element( t_wv1.begin(), t_wv1.end() );
+      double min2 = *min_element( t_wv2.begin(), t_wv2.end() );
       double minWV = max( min1, min2 );
 
-      double max1 = *max_element( t_wv1->begin(), t_wv1->end() );
-      double max2 = *max_element( t_wv2->begin(), t_wv2->end() );
+      double max1 = *max_element( t_wv1.begin(), t_wv1.end() );
+      double max2 = *max_element( t_wv2.begin(), t_wv2.end() );
       double maxWV = min( max1, max2 );
 
       for( vector< double >::iterator it = unionWavelengths->begin(); 

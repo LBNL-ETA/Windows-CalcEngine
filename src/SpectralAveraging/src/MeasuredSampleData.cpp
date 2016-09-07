@@ -59,7 +59,7 @@ namespace SpectralAveraging {
   }
 
   // Interpolate current sample data to new wavelengths set
-  void CSpectralSampleData::interpolate( shared_ptr< vector< double > > t_Wavelengths ) {
+  void CSpectralSampleData::interpolate( const vector< double >& t_Wavelengths ) {
     m_Transmittances = m_Transmittances->interpolate( t_Wavelengths );
     m_ReflectancesFront = m_ReflectancesFront->interpolate( t_Wavelengths );
     m_ReflectancesBack = m_ReflectancesBack->interpolate( t_Wavelengths );

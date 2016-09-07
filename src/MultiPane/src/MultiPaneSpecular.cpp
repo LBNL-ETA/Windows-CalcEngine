@@ -21,8 +21,9 @@ namespace MultiPane {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CEquivalentLayerSingleComponentMWAngle
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CEquivalentLayerSingleComponentMWAngle::CEquivalentLayerSingleComponentMWAngle( shared_ptr< CEquivalentLayerSingleComponentMW > t_Layer, 
-    shared_ptr< CAbsorptancesMultiPane > t_Abs, const double t_Angle ) :
+  CEquivalentLayerSingleComponentMWAngle::CEquivalentLayerSingleComponentMWAngle( 
+    const shared_ptr< CEquivalentLayerSingleComponentMW >& t_Layer, 
+    const shared_ptr< CAbsorptancesMultiPane >& t_Abs, const double t_Angle ) :
     m_Layer( t_Layer ), m_Abs( t_Abs ), m_Angle( t_Angle ) {
     
   }
@@ -46,14 +47,14 @@ namespace MultiPane {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CMultiPaneSpecular
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CMultiPaneSpecular::CMultiPaneSpecular( shared_ptr< vector< double > > t_CommonWavelength,
-    shared_ptr< CSeries > t_SolarRadiation,
-    shared_ptr< CSpecularCell > t_Layer ) : m_CommonWavelengths( t_CommonWavelength ), m_SolarRadiation( t_SolarRadiation ) {
-    m_SolarRadiation = m_SolarRadiation->interpolate( m_CommonWavelengths );
+  CMultiPaneSpecular::CMultiPaneSpecular( const shared_ptr< vector< double > >& t_CommonWavelength,
+    const shared_ptr< CSeries >& t_SolarRadiation, const shared_ptr< CSpecularCell >& t_Layer ) : 
+    m_CommonWavelengths( t_CommonWavelength ), m_SolarRadiation( t_SolarRadiation ) {
+    m_SolarRadiation = m_SolarRadiation->interpolate( *m_CommonWavelengths );
     addLayer( t_Layer );
   }
 
-  void CMultiPaneSpecular::addLayer( shared_ptr< CSpecularCell > t_Layer ) {
+  void CMultiPaneSpecular::addLayer( const shared_ptr< CSpecularCell >& t_Layer ) {
     m_Layers.push_back( t_Layer );
   }
 
@@ -75,7 +76,7 @@ namespace MultiPane {
   }
 
   double CMultiPaneSpecular::getHemisphericalProperty( const Side t_Side, const Property t_Property, 
-    shared_ptr< const vector< double > > t_Angles, 
+    const shared_ptr< const vector< double > >& t_Angles, 
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
     size_t size = t_Angles->size();
     shared_ptr< CSeries > aAngularProperties = make_shared< CSeries >();
@@ -103,8 +104,9 @@ namespace MultiPane {
     return totalProperty / totalSolar;
   }
 
-  double CMultiPaneSpecular::AbsHemispherical( size_t const Index, shared_ptr< const vector< double > > t_Angles, 
-    const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
+  double CMultiPaneSpecular::AbsHemispherical( size_t const Index, 
+    const shared_ptr< const vector< double > >& t_Angles, const double minLambda, const double maxLambda, 
+    const IntegrationType t_IntegrationType ) {
     size_t size = t_Angles->size();
     shared_ptr< CSeries > aAngularProperties = make_shared< CSeries >();
     for( size_t i = 0; i < size; ++i ) {
@@ -151,9 +153,9 @@ namespace MultiPane {
         Rf->addProperty( ( *wl )[ j ], ( *Rfv )[ j ] );
         Rb->addProperty( ( *wl )[ j ], ( *Rbv )[ j ] );
       }
-      T = T->interpolate( m_CommonWavelengths );
-      Rf = Rf->interpolate( m_CommonWavelengths );
-      Rb = Rb->interpolate( m_CommonWavelengths );
+      T = T->interpolate( *m_CommonWavelengths );
+      Rf = Rf->interpolate( *m_CommonWavelengths );
+      Rb = Rb->interpolate( *m_CommonWavelengths );
       if( i == 0 ) {
         aEqLayer = make_shared< CEquivalentLayerSingleComponentMW >( T, T, Rf, Rb );
         aAbs = make_shared< CAbsorptancesMultiPane >( T, Rf, Rb );

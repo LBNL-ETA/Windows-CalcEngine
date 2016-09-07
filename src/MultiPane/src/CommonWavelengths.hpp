@@ -27,8 +27,8 @@ namespace MultiPane {
 
   private:
     // Combine two wavelengths into one by applyting correct strategy
-    std::shared_ptr< std::vector< double > > combineWavelegths( std::shared_ptr< std::vector< double > > t_wv1,
-      std::shared_ptr< std::vector< double > > t_wv2, const Combine t_Combination );
+    std::shared_ptr< std::vector< double > > combineWavelegths( const std::vector< double >& t_wv1,
+      const std::vector< double >& t_wv2, const Combine t_Combination );
 
     std::vector< std::shared_ptr< std::vector< double > > > m_Wavelengths;
   };

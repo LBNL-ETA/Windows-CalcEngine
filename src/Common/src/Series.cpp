@@ -137,7 +137,7 @@ namespace FenestrationCommon {
   }
 
   shared_ptr< CSeries > CSeries::interpolate( 
-    const shared_ptr< vector< double > >& t_Wavelengths ) const {
+    const vector< double >& t_Wavelengths ) const {
     shared_ptr< CSeries > newProperties = make_shared< CSeries >();
 
     if( size() != 0 ) {
@@ -145,7 +145,7 @@ namespace FenestrationCommon {
       shared_ptr< ISeriesPoint > lower = nullptr;
       shared_ptr< ISeriesPoint > upper = nullptr;
 
-      for( double wavelength : *t_Wavelengths ) {
+      for( double wavelength : t_Wavelengths ) {
         lower = findLower( wavelength );
         upper = findUpper( wavelength );
 
