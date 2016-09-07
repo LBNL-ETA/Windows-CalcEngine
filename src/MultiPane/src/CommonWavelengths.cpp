@@ -33,8 +33,6 @@ namespace MultiPane {
 
   shared_ptr< vector< double > > CCommonWavelengths::combineWavelegths( const vector< double >& t_wv1,
     const vector< double >& t_wv2, const Combine t_Combination ) {
-    assert( t_wv1 != nullptr );
-    assert( t_wv2 != nullptr );
 
     // Set union of two wavelengths without repeating common data
     shared_ptr< vector< double > > unionWavelengths = make_shared< vector< double > >();
