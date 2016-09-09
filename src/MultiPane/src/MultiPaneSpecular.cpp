@@ -124,7 +124,10 @@ namespace MultiPane {
 
     vector< shared_ptr< CEquivalentLayerSingleComponentMWAngle > >::iterator it;
     it = find_if( m_EquivalentAngle.begin(), m_EquivalentAngle.end(), 
-      [ &t_Angle ]( shared_ptr< CEquivalentLayerSingleComponentMWAngle > obj ) { return fabs( obj->angle() - t_Angle ) < 1e-6; } );
+      [ &t_Angle ]( const shared_ptr< CEquivalentLayerSingleComponentMWAngle >& obj ) 
+      { 
+        return fabs( obj->angle() - t_Angle ) < 1e-6; 
+      } );
     
     if( it != m_EquivalentAngle.end() ) {
       aAngularProperties = ( *it );

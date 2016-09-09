@@ -151,15 +151,18 @@ namespace SpectralAveraging {
     vector < shared_ptr< CSpectralSampleAngle > >::iterator it;
   
     it = find_if( m_SpectralProperties.begin(), m_SpectralProperties.end(), 
-      [ &t_Angle ]( shared_ptr< CSpectralSampleAngle > obj ) { return fabs( obj->angle() - t_Angle ) < 1e-6; } );
+      [ &t_Angle ]( const shared_ptr< CSpectralSampleAngle >& obj ) 
+      { 
+        return fabs( obj->angle() - t_Angle ) < 1e-6; 
+      } );
 
     if( it != m_SpectralProperties.end() ) {
       aSample = ( *it )->sample();
     } else {
-      shared_ptr< CAngularSpectralProperties > aAngularData = 
-        make_shared< CAngularSpectralProperties >( m_SpectralSampleZero, t_Angle, m_Type, m_Thickness );
+      CAngularSpectralProperties aAngularData = 
+        CAngularSpectralProperties( m_SpectralSampleZero, t_Angle, m_Type, m_Thickness );
 
-      aSample = make_shared< CSpectralSample >( aAngularData->properties(), m_SpectralSampleZero->getSourceData() );
+      aSample = make_shared< CSpectralSample >( aAngularData.properties(), m_SpectralSampleZero->getSourceData() );
       aSample->assignDetectorAndWavelengths( m_SpectralSampleZero );
       shared_ptr< CSpectralSampleAngle > aSpectralSampleAngle = 
         make_shared< CSpectralSampleAngle >( aSample, t_Angle );

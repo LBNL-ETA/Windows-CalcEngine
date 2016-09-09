@@ -82,7 +82,10 @@ namespace LayerOptics {
     
     vector < shared_ptr< CVenetianSlatEnergies > >::const_iterator it;
     it = find_if( m_Energies.begin(), m_Energies.end(), 
-      [ &t_BeamDirection ]( shared_ptr< CVenetianSlatEnergies > obj ) { return *(obj->direction()) == t_BeamDirection; } );
+      [ &t_BeamDirection ]( const shared_ptr< CVenetianSlatEnergies >& obj ) 
+      { 
+        return *(obj->direction()) == t_BeamDirection; 
+      } );
 
     if( it != m_Energies.end() ) {
       Energies = *it;
