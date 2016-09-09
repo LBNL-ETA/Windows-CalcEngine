@@ -32,13 +32,13 @@ namespace FenestrationCommon {
     }
   }
 
-  void CSquareMatrix::setDiagonal( const shared_ptr< const vector< double > >& t_Values ) {
-    if( t_Values->size() != m_Size ) {
+  void CSquareMatrix::setDiagonal( const vector< double >& t_Values ) {
+    if( t_Values.size() != m_Size ) {
       throw runtime_error("Supplied vector size mismatch matrix size");
     }
     setZeros();
     for( size_t i = 0; i < m_Size; ++i ) {
-      m_Matrix[ i ][ i ] = ( *t_Values )[ i ];
+      m_Matrix[ i ][ i ] = t_Values[ i ];
     }
   }
 
