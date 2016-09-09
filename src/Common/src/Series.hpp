@@ -43,7 +43,7 @@ namespace FenestrationCommon {
     void insertToBeginning( double t_x, double t_Value );
 
     // Create wavelength array with identical values over entire wavelength spectrum
-    void setConstantValues( std::shared_ptr< std::vector< double > > t_x, double const t_Value );
+    void setConstantValues( const std::vector< double >& t_x, double const t_Value );
 
     std::shared_ptr< CSeries > integrate( IntegrationType t_IntegrationType ) const;
     std::shared_ptr< CSeries > interpolate( const std::vector< double >& t_x ) const;
@@ -81,10 +81,6 @@ namespace FenestrationCommon {
     void clear();
 
   private:
-    struct SeriesCompare {
-      bool operator()( const std::shared_ptr< const CSeriesPoint >& l,
-        const std::shared_ptr< CSeriesPoint >& r ) const;
-    };
     std::shared_ptr< ISeriesPoint > findLower( double const t_x ) const;
     std::shared_ptr< ISeriesPoint > findUpper( double const t_x ) const;
     double interpolate( std::shared_ptr< const ISeriesPoint > t_Lower, 

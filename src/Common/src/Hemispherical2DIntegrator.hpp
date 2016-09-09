@@ -13,8 +13,7 @@ namespace FenestrationCommon {
   // value
   class CHemispherical2DIntegrator {
   public:
-    CHemispherical2DIntegrator( const std::shared_ptr< CSeries >& t_AngularProperties, 
-      const IntegrationType t_IntegrationType );
+    CHemispherical2DIntegrator( const CSeries& t_AngularProperties, const IntegrationType t_IntegrationType );
 
     double value() const;
 

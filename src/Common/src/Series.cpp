@@ -60,10 +60,9 @@ namespace FenestrationCommon {
     m_Series.insert( m_Series.begin(), aProperty );
   }
 
-  void CSeries::setConstantValues( shared_ptr< vector< double > > t_Wavelengths, double const t_Value ) {
+  void CSeries::setConstantValues( const vector< double >& t_Wavelengths, double const t_Value ) {
     m_Series.clear();
-    vector< double >::iterator it;
-    for( it = t_Wavelengths->begin(); it < t_Wavelengths->end(); ++it ) {
+    for( auto it = t_Wavelengths.begin(); it < t_Wavelengths.end(); ++it ) {
       addProperty( ( *it ), t_Value );
     }
   }
@@ -253,7 +252,11 @@ namespace FenestrationCommon {
   }
 
   void CSeries::sort() {
-    std::sort( m_Series.begin(), m_Series.end(), SeriesCompare() );
+    std::sort( m_Series.begin(), m_Series.end(), 
+      []( const shared_ptr< const CSeriesPoint >& l, const shared_ptr< const CSeriesPoint >& r ) -> bool
+      {
+        return l->x() < r->x();
+      });
   }
 
   vector< shared_ptr< CSeriesPoint > >::const_iterator CSeries::begin() const {
@@ -276,21 +279,8 @@ namespace FenestrationCommon {
     return m_Series[Index];
   }
 
-  // CSeries& CSeries::operator=( CSeries& t_Properties ) {
-  //   clear();
-  //   for( shared_ptr< ISeriesPoint > spectralProperty : t_Properties ) {
-  //     addProperty( spectralProperty->x(), spectralProperty->value() );
-  //   }
-  //   return *this;
-  // };
-
   void CSeries::clear() {
     m_Series.clear();
-  }
-
-  bool CSeries::SeriesCompare::operator()( const std::shared_ptr< const CSeriesPoint >& l, 
-    const std::shared_ptr< CSeriesPoint >& r ) const {
-    return l->x() < r->x();
   }
 
 }

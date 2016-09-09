@@ -85,7 +85,7 @@ namespace MultiPane {
       double aProperty = getProperty( t_Side, t_Property, angle, minLambda, maxLambda, t_IntegrationType );
       aAngularProperties->addProperty( angle, aProperty );
     }
-    CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator( aAngularProperties, t_IntegrationType );
+    CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator( *aAngularProperties, t_IntegrationType );
     return aIntegrator.value();
   }
 
@@ -115,7 +115,7 @@ namespace MultiPane {
       aAngularProperties->addProperty( angle, aAbs );
     }
 
-    CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator( aAngularProperties, t_IntegrationType );
+    CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator( *aAngularProperties, t_IntegrationType );
     return aIntegrator.value();
   }
 
@@ -144,17 +144,17 @@ namespace MultiPane {
     shared_ptr< CEquivalentLayerSingleComponentMW > aEqLayer = nullptr;
     shared_ptr< CAbsorptancesMultiPane > aAbs = nullptr;
     for( size_t i = 0; i < m_Layers.size(); ++i ) {
-      shared_ptr< vector< double > > wl = m_Layers[ i ]->getBandWavelengths();
-      shared_ptr< vector< double > > Tv = m_Layers[ i ]->T_dir_dir_band( Side::Front, aDirection );
-      shared_ptr< vector< double > > Rfv = m_Layers[ i ]->R_dir_dir_band( Side::Front, aDirection );
-      shared_ptr< vector< double > > Rbv = m_Layers[ i ]->R_dir_dir_band( Side::Back, aDirection );
+      vector< double > wl = *m_Layers[ i ]->getBandWavelengths();
+      vector< double > Tv = *m_Layers[ i ]->T_dir_dir_band( Side::Front, aDirection );
+      vector< double > Rfv = *m_Layers[ i ]->R_dir_dir_band( Side::Front, aDirection );
+      vector< double > Rbv = *m_Layers[ i ]->R_dir_dir_band( Side::Back, aDirection );
       shared_ptr< CSeries > T = make_shared< CSeries >();
       shared_ptr< CSeries > Rf = make_shared< CSeries >();
       shared_ptr< CSeries > Rb = make_shared< CSeries >();
-      for( size_t j = 0; j < wl->size(); ++j ) {
-        T->addProperty( ( *wl )[ j ], ( *Tv )[ j ] );
-        Rf->addProperty( ( *wl )[ j ], ( *Rfv )[ j ] );
-        Rb->addProperty( ( *wl )[ j ], ( *Rbv )[ j ] );
+      for( size_t j = 0; j < wl.size(); ++j ) {
+        T->addProperty( wl[ j ], Tv[ j ] );
+        Rf->addProperty( wl[ j ], Rfv[ j ] );
+        Rb->addProperty( wl[ j ], Rbv[ j ] );
       }
       T = T->interpolate( *m_CommonWavelengths );
       Rf = Rf->interpolate( *m_CommonWavelengths );

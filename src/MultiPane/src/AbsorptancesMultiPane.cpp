@@ -44,7 +44,7 @@ namespace MultiPane {
       // Calculate r and t coefficients
       shared_ptr< CSeries > r = make_shared< CSeries >();
       shared_ptr< CSeries > t = make_shared< CSeries >();
-      shared_ptr< vector< double > > wv = m_T[size-1]->getXArray();
+      vector< double > wv = *m_T[size-1]->getXArray();
       r->setConstantValues( wv, 0 );
       t->setConstantValues( wv, 0 );
       m_rCoeffs.clear();

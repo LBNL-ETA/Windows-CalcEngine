@@ -23,10 +23,10 @@ namespace Viewer {
     return m_y;
   }
 
-   bool CPoint2D::sameCoordinates( const CPoint2D& t_Point ) const {
+  bool CPoint2D::sameCoordinates( const CPoint2D& t_Point ) const {
     return ( fabs( t_Point.x() - m_x ) < ViewerConstants::DISTANCE_TOLERANCE ) && 
       ( fabs( t_Point.y() - m_y ) < ViewerConstants::DISTANCE_TOLERANCE );
-   }
+  }
 
   double CPoint2D::dotProduct( const CPoint2D& t_Point ) const {
     return m_x * t_Point.x() + m_y * t_Point.y(); 

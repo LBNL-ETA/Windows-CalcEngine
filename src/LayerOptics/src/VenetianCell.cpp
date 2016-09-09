@@ -144,7 +144,7 @@ namespace LayerOptics {
     calculateSlatEnergiesFromBeam( t_IncomingDirection );
     assert( m_CurrentSlatEnergies != nullptr );
 
-    shared_ptr< vector< BeamSegmentView > > BVF = beamVector( t_OutgoingDirection, Side::Back );
+    vector< BeamSegmentView > BVF = *beamVector( t_OutgoingDirection, Side::Back );
 
     double aResult = 0;
     assert( BVF->size() == m_CurrentSlatEnergies->size() );
@@ -152,7 +152,7 @@ namespace LayerOptics {
     // Counting starts from one because this should exclude beam to beam energy.
     // double totalSegmentsLength = 0;
     for( size_t i = 1; i < m_CurrentSlatEnergies->size(); ++i ) {
-      aResult += m_CurrentSlatEnergies->radiances( i ) * ( *BVF )[ i ].percentViewed * ( *BVF )[ i ].viewFactor / 
+      aResult += m_CurrentSlatEnergies->radiances( i ) * BVF[ i ].percentViewed * BVF[ i ].viewFactor / 
         m_Cell->segmentLength( i );
     }
 
@@ -171,14 +171,14 @@ namespace LayerOptics {
     calculateSlatEnergiesFromBeam( t_IncomingDirection );
     assert( m_CurrentSlatEnergies != nullptr );
 
-    shared_ptr< vector< BeamSegmentView > > BVF = beamVector( t_OutgoingDirection, Side::Front );
+    vector< BeamSegmentView > BVF = *beamVector( t_OutgoingDirection, Side::Front );
 
     double aResult = 0;
 
     assert( BVF->size() == m_CurrentSlatEnergies->size() );
 
     for( size_t i = 1; i < m_CurrentSlatEnergies->size(); ++i ) {
-      aResult += m_CurrentSlatEnergies->radiances( i ) * ( *BVF )[ i ].percentViewed * ( *BVF )[ i ].viewFactor / 
+      aResult += m_CurrentSlatEnergies->radiances( i ) * BVF[ i ].percentViewed * BVF[ i ].viewFactor / 
         m_Cell->segmentLength( i );
     }
 

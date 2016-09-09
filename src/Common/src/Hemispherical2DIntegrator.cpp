@@ -12,12 +12,12 @@ using namespace std;
 namespace FenestrationCommon {
 
   // Performs hemispherical 2D integration
-  CHemispherical2DIntegrator::CHemispherical2DIntegrator( const shared_ptr< CSeries >& t_Series, 
+  CHemispherical2DIntegrator::CHemispherical2DIntegrator( const CSeries& t_Series, 
     const IntegrationType t_IntegrationType ) {
     CSeries aResultValues = CSeries();
-    for( size_t i = 0; i < t_Series->size(); ++i ) {
-      double angle = radians( ( *t_Series )[ i ]->x() );
-      double value = ( *t_Series )[ i ]->value();
+    for( size_t i = 0; i < t_Series.size(); ++i ) {
+      double angle = radians( t_Series[ i ]->x() );
+      double value = t_Series[ i ]->value();
 
       double sinCos = sin( angle ) * cos( angle );
 

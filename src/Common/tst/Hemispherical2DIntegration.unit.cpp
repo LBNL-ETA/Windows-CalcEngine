@@ -32,7 +32,7 @@ protected:
     aSeries->addProperty( 80, 0.185 );
     aSeries->addProperty( 90, 0.000 );
 
-    m_Integrator = make_shared< CHemispherical2DIntegrator >( aSeries, IntegrationType::Trapezoidal );
+    m_Integrator = make_shared< CHemispherical2DIntegrator >( *aSeries, IntegrationType::Trapezoidal );
 
   }
 
