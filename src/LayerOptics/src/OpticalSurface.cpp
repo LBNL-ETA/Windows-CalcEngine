@@ -42,8 +42,14 @@ namespace LayerOptics {
     m_Absorptance[ ScatteringSimple::Diffuse ] = 1 - T_dif_dif - R_dif_dif;
   }
 
-  double CScatteringSurface::getPropertySimple( const PropertySimple t_Property, const Scattering t_Scattering ) const {
+  double CScatteringSurface::getPropertySimple( const PropertySimple t_Property, 
+    const Scattering t_Scattering ) const {
     return m_PropertySimple.at( make_pair( t_Property, t_Scattering ) );
+  }
+
+  void CScatteringSurface::setPropertySimple( const PropertySimple t_Property, 
+    const Scattering t_Scattering, const double value ) {
+    m_PropertySimple[ make_pair( t_Property, t_Scattering ) ] = value;
   }
 
   double CScatteringSurface::getAbsorptance( const ScatteringSimple t_Scattering ) const {

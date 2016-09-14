@@ -53,6 +53,12 @@ namespace LayerOptics {
     return aSurface->getPropertySimple( t_Property, t_Scattering );
   }
 
+  void CLayer::setPropertySimple( const PropertySimple t_Property, const Side t_Side, 
+    const Scattering t_Scattering, const double value ) const {
+    shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
+    return aSurface->setPropertySimple( t_Property, t_Scattering, value );
+  }
+
   double CLayer::getAbsorptance( const Side t_Side, const ScatteringSimple t_Scattering ) const {
     shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
     return aSurface->getAbsorptance( t_Scattering );

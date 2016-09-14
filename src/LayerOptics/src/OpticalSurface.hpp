@@ -33,6 +33,9 @@ namespace LayerOptics {
     double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, 
       const FenestrationCommon::Scattering t_Scattering ) const;
 
+    void setPropertySimple( const FenestrationCommon::PropertySimple t_Property,
+      const FenestrationCommon::Scattering t_Scattering, const double value );
+
     // In this case absroptance is different property from transmittance and reflectance
     double getAbsorptance( const FenestrationCommon::ScatteringSimple t_Scattering ) const;
 
