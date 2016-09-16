@@ -16,6 +16,7 @@ IF ( CMAKE_COMPILER_IS_GNUCXX OR "x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xClang" )
     ADD_CXX_DEFINITIONS("-ffor-scope")
     ADD_CXX_DEFINITIONS("-Wall -Wextra") # Turn on warnings
     ADD_CXX_DEFINITIONS("-Wno-unknown-pragmas")
+    ADD_CXX_DEFINITIONS("-fPIC")
     if( CMAKE_COMPILER_IS_GNUCXX ) # g++
       ADD_CXX_DEFINITIONS("-Wno-unused-but-set-parameter -Wno-unused-but-set-variable") # Suppress unused-but-set warnings until more serious ones are addressed
       ADD_CXX_DEFINITIONS("-Wno-maybe-uninitialized")
