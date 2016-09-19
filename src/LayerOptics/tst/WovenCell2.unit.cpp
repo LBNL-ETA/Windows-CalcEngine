@@ -31,7 +31,7 @@ protected:
     // make cell geometry
     double diameter = 6.35; // mm
     double spacing = 19.05; // mm
-    shared_ptr< CWovenCellDescription > aCell = 
+    shared_ptr< CCellDescription > aCell = 
       make_shared< CWovenCellDescription >( diameter, spacing );
 
     m_Cell = make_shared< CWovenCell >( aMaterial, aCell );

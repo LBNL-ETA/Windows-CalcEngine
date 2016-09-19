@@ -1,8 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WovenCell.hpp"
-#include "WovenCellDescription.hpp"
+#include "UniformDiffuseCell.hpp"
+#include "PerfectDiffuseCellDescription.hpp"
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BeamDirection.hpp"
@@ -11,42 +11,40 @@ using namespace std;
 using namespace LayerOptics;
 using namespace FenestrationCommon;
 
-class TestWovenCell1 : public testing::Test
+class TestPerfectDiffuseCell2 : public testing::Test
 {
 
 private:
-  shared_ptr< CWovenCell > m_Cell;
+  shared_ptr< CUniformDiffuseCell > m_Cell;
 
 protected:
   virtual void SetUp()
   {
     // create material
-    double Tmat = 0.08;
-    double Rfmat = 0.9;
-    double Rbmat = 0.9;
+    double Tmat = 0.24;
+    double Rfmat = 0.55;
+    double Rbmat = 0.55;
     double minLambda = 0.3;
     double maxLambda = 2.5;
     shared_ptr< CMaterialSingleBand > aMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // make cell geometry
-    double diameter = 6.35; // mm
-    double spacing = 19.05; // mm
     shared_ptr< CCellDescription > aCell = 
-      make_shared< CWovenCellDescription >( diameter, spacing );
+      make_shared< CPerfectDiffuseCellDescription >();
 
-    m_Cell = make_shared< CWovenCell >( aMaterial, aCell );
+    m_Cell = make_shared< CUniformDiffuseCell >( aMaterial, aCell );
   }
 
 public:
-  shared_ptr< CWovenCell > GetCell() { return m_Cell; };
+  shared_ptr< CUniformDiffuseCell > GetCell() { return m_Cell; };
 
 };
 
-TEST_F( TestWovenCell1, TestWoven1 ) {
-  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 0, Phi = 0)." );
+TEST_F( TestPerfectDiffuseCell2, TestPerfectDiffuse1 ) {
+  SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 0, Phi = 0)." );
   
-  shared_ptr< CWovenCell > aCell = GetCell();
+  shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
   double Theta = 0; // deg
   double Phi = 0; // deg
@@ -55,23 +53,23 @@ TEST_F( TestWovenCell1, TestWoven1 ) {
   CBeamDirection aDirection = CBeamDirection( Theta, Phi );
   
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
-  EXPECT_NEAR( 0.444444444, Tdir_dir, 1e-6 );
+  EXPECT_NEAR( 0.00000000, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.06560392, Tdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.24000000, Tdir_dif, 1e-6 );
 
   double Rfdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.478840524, Rfdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rfdir_dif, 1e-6 );
 
   double Rbdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.478840524, Rbdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rbdir_dif, 1e-6 );
 
 }
 
-TEST_F( TestWovenCell1, TestWoven2 ) {
-  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 45, Phi = 0)." );
+TEST_F( TestPerfectDiffuseCell2, TestPerfectDiffuse2 ) {
+  SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 45, Phi = 0)." );
   
-  shared_ptr< CWovenCell > aCell = GetCell();
+  shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
   double Theta = 45; // deg
   double Phi = 0; // deg
@@ -80,23 +78,23 @@ TEST_F( TestWovenCell1, TestWoven2 ) {
   CBeamDirection aDirection = CBeamDirection( Theta, Phi );
   
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
-  EXPECT_NEAR( 0.352396986, Tdir_dir, 1e-6 );
+  EXPECT_NEAR( 0.00000000, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.074469339, Tdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.24000000, Tdir_dif, 1e-6 );
 
   double Rfdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.560181615, Rfdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rfdir_dif, 1e-6 );
 
   double Rbdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.560181615, Rbdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rbdir_dif, 1e-6 );
 
 }
 
-TEST_F( TestWovenCell1, TestWoven3 ) {
-  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 78, Phi = 45)." );
+TEST_F( TestPerfectDiffuseCell2, TestPerfectDiffuse3 ) {
+  SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 78, Phi = 45)." );
   
-  shared_ptr< CWovenCell > aCell = GetCell();
+  shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
   double Theta = 78; // deg
   double Phi = 45; // deg
@@ -105,23 +103,23 @@ TEST_F( TestWovenCell1, TestWoven3 ) {
   CBeamDirection aDirection = CBeamDirection( Theta, Phi );
   
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
-  EXPECT_NEAR( 0.0, Tdir_dir, 1e-6 );
+  EXPECT_NEAR( 0.00000000, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.183361355, Tdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.24000000, Tdir_dif, 1e-6 );
 
   double Rfdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.796638645, Rfdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rfdir_dif, 1e-6 );
 
   double Rbdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.796638645, Rbdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rbdir_dif, 1e-6 );
 
 }
 
-TEST_F( TestWovenCell1, TestWoven4 ) {
-  SCOPED_TRACE( "Begin Test: Woven cell (Theta = 54, Phi = 270)." );
+TEST_F( TestPerfectDiffuseCell2, TestPerfectDiffuse4 ) {
+  SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 54, Phi = 270)." );
   
-  shared_ptr< CWovenCell > aCell = GetCell();
+  shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
   double Theta = 54; // deg
   double Phi = 270; // deg
@@ -130,15 +128,15 @@ TEST_F( TestWovenCell1, TestWoven4 ) {
   CBeamDirection aDirection = CBeamDirection( Theta, Phi );
   
   double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
-  EXPECT_NEAR( 0.100838024, Tdir_dir, 1e-6 );
+  EXPECT_NEAR( 0.00000000, Tdir_dir, 1e-6 );
   
   double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.130587497, Tdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.24000000, Tdir_dif, 1e-6 );
 
   double Rfdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.7505912396, Rfdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rfdir_dif, 1e-6 );
 
   double Rbdir_dif = aCell->R_dir_dif( aSide, aDirection );
-  EXPECT_NEAR( 0.7505912396, Rbdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.55000000, Rbdir_dif, 1e-6 );
 
 }

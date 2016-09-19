@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 namespace LayerOptics {
 
   CWovenCellDescription::CWovenCellDescription( const double t_Diameter, const double t_Spacing ) :
-  m_Diameter( t_Diameter ), m_Spacing( t_Spacing ) {
+  CCellDescription(), m_Diameter( t_Diameter ), m_Spacing( t_Spacing ) {
     if( m_Diameter <= 0 ) {
       throw runtime_error("Woven shade diameter must be greater than zero.");
     }
