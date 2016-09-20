@@ -55,6 +55,10 @@ namespace LayerOptics {
     return m_Cell->getBandIndex( t_Wavelength ) ;
   }
 
+  shared_ptr< vector< double > > CBSDFLayer::getBandWavelengths() const {
+    return m_Cell->getBandWavelengths();
+  }
+
   void CBSDFLayer::calc_dir_dir() {
     for( Side t_Side : EnumSide() ) {
       CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );

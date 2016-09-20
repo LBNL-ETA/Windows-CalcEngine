@@ -33,6 +33,8 @@ namespace LayerOptics {
 
     int getBandIndex( const double t_Wavelength );
 
+    std::shared_ptr< std::vector< double > > getBandWavelengths() const;
+
   protected:
     // Diffuse calculation distribution will be calculated here. It will depend on base classes.
     // It can for example be uniform or directional. In case of specular layers there will be no any diffuse

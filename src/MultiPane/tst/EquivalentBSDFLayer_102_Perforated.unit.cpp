@@ -270,8 +270,6 @@ protected:
     aMeasurements_102->addRecord( 2.450, 0.8260, 0.0690, 0.0690 );
     aMeasurements_102->addRecord( 2.500, 0.8220, 0.0680, 0.0680 );
 
-    shared_ptr< vector< double > > commonWavelengths = aMeasurements_102->getWavelengths();
-
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
     // Sample 102
@@ -323,6 +321,9 @@ protected:
     // get shading BSDF layer
     CBSDFLayerMaker aMakerPerforated = CBSDFLayerMaker( aMaterialPerforated, aBSDF, aCellDescription );
     shared_ptr< CBSDFLayer > Layer_Perforated = aMakerPerforated.getLayer();
+
+    // shared_ptr< vector< double > > commonWavelengths = aMaterial_102->getBandWavelengths();
+    shared_ptr< vector< double > > commonWavelengths = Layer_102->getBandWavelengths();
 
     // Equivalent multilayer
     m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
