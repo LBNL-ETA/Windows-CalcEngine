@@ -118,6 +118,15 @@ namespace LayerOptics {
   CBSDFHemisphere::CBSDFHemisphere( const BSDFBasis t_Basis ) {
     vector< CBSDFDefinition > aDefinitions;
     switch ( t_Basis ) {
+    case BSDFBasis::Small:
+      aDefinitions.push_back( CBSDFDefinition( 0, 1 ) );
+      aDefinitions.push_back( CBSDFDefinition( 13, 1 ) );
+      aDefinitions.push_back( CBSDFDefinition( 26, 1 ) );
+      aDefinitions.push_back( CBSDFDefinition( 39, 1 ) );
+      aDefinitions.push_back( CBSDFDefinition( 52, 2 ) );
+      aDefinitions.push_back( CBSDFDefinition( 65, 1 ) );
+      aDefinitions.push_back( CBSDFDefinition( 80.75, 1 ) );
+      break;
     case BSDFBasis::Quarter:
       aDefinitions.push_back( CBSDFDefinition(    0, 1  ) );
       aDefinitions.push_back( CBSDFDefinition(   18, 8  ) );

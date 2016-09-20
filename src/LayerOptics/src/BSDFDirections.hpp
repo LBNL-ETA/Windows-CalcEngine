@@ -45,7 +45,7 @@ namespace LayerOptics {
   
   };
 
-  enum class BSDFBasis { Quarter, Half, Full };
+  enum class BSDFBasis { Small, Quarter, Half, Full };
 
   class CBSDFHemisphere {
   public:
