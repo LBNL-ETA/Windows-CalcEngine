@@ -386,16 +386,6 @@ protected:
     aMeasurements_103->addRecord( 2.450, 0.7570, 0.0640, 0.0640 );
     aMeasurements_103->addRecord( 2.500, 0.7500, 0.0630, 0.0630 );
 
-    // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
-    CCommonWavelengths aCommonWL;
-    aCommonWL.addWavelength( aMeasurements_102->getWavelengths() );
-    aCommonWL.addWavelength( aMeasurements_103->getWavelengths() );
-
-    shared_ptr < vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
-
-    aMeasurements_102->interpolate( *commonWavelengths );
-    aMeasurements_103->interpolate( *commonWavelengths );
-
     // Create BSDF
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
@@ -423,6 +413,13 @@ protected:
     // specular layer NFRC=103
     CBSDFLayerMaker aMaker103 = CBSDFLayerMaker( aMaterial_103, aBSDF );
     shared_ptr< CBSDFLayer > Layer_103 = aMaker103.getLayer();
+
+    // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
+    CCommonWavelengths aCommonWL;
+    aCommonWL.addWavelength( Layer_102->getBandWavelengths() );
+    aCommonWL.addWavelength( Layer_103->getBandWavelengths() );
+
+    shared_ptr < vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
     // Equivalent BSDF layer
     m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
