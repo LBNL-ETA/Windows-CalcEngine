@@ -8,7 +8,7 @@ namespace LayerOptics {
   
   }
 
-  double CPerfectDiffuseCellDescription::T_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {
+  double CPerfectDiffuseCellDescription::T_dir_dir( const Side, const CBeamDirection& ) {
     return 0;
   }
 
