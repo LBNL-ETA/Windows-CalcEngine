@@ -67,6 +67,21 @@ namespace LayerOptics {
     return m_Abs.at( t_Side );  
   }
 
+  double CBSDFResults::TauHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
+    size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
+    return ( *TauHem( t_Side ) )[ index ];
+  }
+
+  double CBSDFResults::RhoHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
+    size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
+    return ( *RhoHem( t_Side ) )[ index ];
+  }
+
+  double CBSDFResults::Abs( const Side t_Side, const double t_Theta, const double t_Phi ) {
+    size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
+    return ( *Abs( t_Side ) )[ index ];
+  }
+
   shared_ptr< const vector< double > > CBSDFResults::lambdaVector() const {
     return m_Directions->lambdaVector();
   }

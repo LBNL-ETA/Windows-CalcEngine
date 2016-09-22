@@ -71,6 +71,12 @@ TEST_F( TestVenetianDirectionalShadeFlat0_1, TestVenetian1 ) {
   double RfDiff = aResults->RhoDiff( Side::Front );
   EXPECT_NEAR( 0.28386835793952669, RfDiff, 1e-6 );
 
+  double theta = 23;
+  double phi = 198;
+
+  double tauHem = aResults->TauHem( Side::Front, theta, phi );
+  EXPECT_NEAR( 0.42987405997685452, tauHem, 1e-6 );
+
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
 
   // Test only diagonal of transmittance matrix

@@ -54,6 +54,10 @@ namespace LayerOptics {
     return !( *this == t_SphericalPoint );
   }
 
+  double CBeamDirection::distance( const double t_Theta, const double t_Phi ) const {
+    return abs( m_Theta - t_Theta ) + abs( m_Phi - t_Phi );
+  }
+
   double CBeamDirection::Altitude() const {
     double aTheta = radians( m_Theta );
     double aPhi = radians( m_Phi );
@@ -71,7 +75,7 @@ namespace LayerOptics {
     if( cos( aPhi ) < 0 ) {
       aAzimuth = -aAzimuth;
     }
-    return aAzimuth;  
+    return aAzimuth;
   }
 
   void CBeamDirection::updateProfileAngle( const double t_Theta, const double t_Phi ) {

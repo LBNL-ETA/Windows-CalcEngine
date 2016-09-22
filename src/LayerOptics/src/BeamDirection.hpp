@@ -21,6 +21,8 @@ namespace LayerOptics {
     bool operator==( const CBeamDirection& t_SphericalPoint ) const;
     bool operator!=( const CBeamDirection& t_SphericalPoint ) const;
 
+    double distance( const double t_Theta, const double t_Phi ) const;
+
     double Altitude() const;
     double Azimuth() const;
 

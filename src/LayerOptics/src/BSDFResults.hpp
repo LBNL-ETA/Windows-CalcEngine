@@ -29,10 +29,15 @@ namespace LayerOptics {
     void setResultMatrices( const std::shared_ptr< FenestrationCommon::CSquareMatrix >& t_Tau,
       const std::shared_ptr< FenestrationCommon::CSquareMatrix >& t_Rho, FenestrationCommon::Side t_Side );
 
-    std::shared_ptr< std::vector< double > > TauHem( FenestrationCommon::Side t_Side );
-    std::shared_ptr< std::vector< double > > RhoHem( FenestrationCommon::Side t_Side );
+    // Directional hemispherical results for every direction in BSDF definition
+    std::shared_ptr< std::vector< double > > TauHem( const FenestrationCommon::Side t_Side );
+    std::shared_ptr< std::vector< double > > RhoHem( const FenestrationCommon::Side t_Side );
+    std::shared_ptr< std::vector< double > > Abs( const FenestrationCommon::Side t_Side );
 
-    std::shared_ptr< std::vector< double > > Abs( FenestrationCommon::Side t_Side );
+    // Directional hemispherical results for given Theta and Phi direction
+    double TauHem( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double RhoHem( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double Abs( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
 
     std::shared_ptr< const CBSDFDirections > getDirections() const;
 

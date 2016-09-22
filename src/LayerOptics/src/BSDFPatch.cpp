@@ -62,6 +62,10 @@ namespace LayerOptics {
     return m_Lambda;
   }
 
+  double CBSDFPatch::distance( const double t_Theta, const double t_Phi ) {
+    return centerPoint()->distance( t_Theta, t_Phi );
+  }
+
   void CBSDFPatch::calculateLambda() {
     double thetaLow = m_Theta->low() * M_PI / 180;
     double thetaHight = m_Theta->high() * M_PI / 180;

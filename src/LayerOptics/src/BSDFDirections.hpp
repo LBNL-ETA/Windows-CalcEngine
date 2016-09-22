@@ -13,6 +13,7 @@ namespace FenestrationCommon {
 namespace LayerOptics {
 
   class CBSDFPatch;
+  class CBeamDirection;
 
   class CBSDFDefinition {
   public:
@@ -37,6 +38,9 @@ namespace LayerOptics {
 
     std::shared_ptr< std::vector< double > > lambdaVector() const;
     std::shared_ptr< FenestrationCommon::CSquareMatrix > lambdaMatrix() const;
+
+    // returns index of element that is closest to given Theta and Phi angles
+    size_t getNearestBeamIndex( const double t_Theta, const double t_Phi ) const;
 
   private:
     std::vector< std::shared_ptr< CBSDFPatch > > m_Patches;

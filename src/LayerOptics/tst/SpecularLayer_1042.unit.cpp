@@ -687,6 +687,12 @@ TEST_F( TestSpecularLayer_1042, TestSpecular1 ) {
   double RfDiff = aResults->RhoDiff( Side::Front );
   EXPECT_NEAR( 0.40022097989006811, RfDiff, 1e-6 );
 
+  double theta = 37;
+  double phi = 59;
+
+  double tauHem = aResults->TauHem( Side::Front, theta, phi );
+  EXPECT_NEAR( 0.43341798206625309, tauHem, 1e-6 );
+
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
 
   // Test only diagonal of transmittance matrix

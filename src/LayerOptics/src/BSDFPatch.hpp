@@ -32,6 +32,7 @@ namespace LayerOptics {
       const std::shared_ptr< CAngleLimits >& t_Phi );
     std::shared_ptr< CBeamDirection > centerPoint() const;
     double lambda() const;
+    double distance( const double t_Theta, const double t_Phi );
 
   private:
     void calculateLambda();

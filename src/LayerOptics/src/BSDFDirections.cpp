@@ -1,7 +1,9 @@
 #include <assert.h>
+#include <algorithm>
 
 #include "BSDFDirections.hpp"
 #include "BSDFPatch.hpp"
+#include "BeamDirection.hpp"
 #include "BSDFThetaLimits.hpp"
 #include "BSDFPhiAngles.hpp"
 #include "BSDFPhiLimits.hpp"
@@ -107,8 +109,19 @@ namespace LayerOptics {
     return m_LambdaVector;
   }
 
-  std::shared_ptr< FenestrationCommon::CSquareMatrix > CBSDFDirections::lambdaMatrix() const {
+  shared_ptr< FenestrationCommon::CSquareMatrix > CBSDFDirections::lambdaMatrix() const {
     return m_LambdaMatrix;
+  }
+
+  size_t CBSDFDirections::getNearestBeamIndex( const double t_Theta, const double t_Phi ) const {
+    auto it = std::min_element( m_Patches.begin(), m_Patches.end(),
+      [ & ]( const shared_ptr< CBSDFPatch >& a, const shared_ptr< CBSDFPatch >& b )
+      {
+        return a->distance( t_Theta, t_Phi ) < b->distance( t_Theta, t_Phi );
+      } );
+
+    size_t index = std::distance( m_Patches.begin(), it );
+    return index;
   }
 
   /////////////////////////////////////////////////////////////////
