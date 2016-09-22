@@ -18,6 +18,7 @@ namespace FenestrationCommon {
 namespace LayerOptics {
 
   class CBSDFLayer;
+  class CBSDFResults;
 
 }
 
@@ -34,12 +35,29 @@ namespace MultiPane {
 
     void addLayer( const std::shared_ptr< LayerOptics::CBSDFLayer >& t_Layer );
 
+    // Whole matrix results
     std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const double minLambda, const double maxLambda, 
       FenestrationCommon::Side t_Side );
     std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const double minLambda, const double maxLambda, 
       FenestrationCommon::Side t_Side );
+
+    // Vector of layer by layer absorptances for each incoming direction
     std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side, const size_t Index );
+
+    // Hemispherical results
+    std::shared_ptr< std::vector< double > > TauHem( const double minLambda, const double maxLambda, 
+      const FenestrationCommon::Side t_Side );
+    std::shared_ptr< std::vector< double > > RhoHem( const double minLambda, const double maxLambda, 
+      const FenestrationCommon::Side t_Side );
+
+    // Directional hemispherical results for given Theta and Phi direction
+    double TauHem( const double minLambda, const double maxLambda, 
+      const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double RhoHem( const double minLambda, const double maxLambda, 
+      const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double Abs( const double minLambda, const double maxLambda, 
+      const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
 
   private:
 
@@ -48,11 +66,10 @@ namespace MultiPane {
     // Vector of layer results over each wavelength
     std::shared_ptr< std::vector< std::shared_ptr< CEquivalentBSDFLayerSingleBand > > > m_LayersWL;
 
-    // Matrices for the entire system
-    std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Tau;
-    std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Rho;
 
     std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > > m_Abs;
+
+    std::shared_ptr< LayerOptics::CBSDFResults > m_Results;
 
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
     std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;

@@ -10,6 +10,12 @@ namespace FenestrationCommon {
 
 }
 
+namespace MultiPane {
+
+  class CEquivalentBSDFLayer;
+
+}
+
 namespace LayerOptics {
 
   class CBaseCell;
@@ -22,6 +28,7 @@ namespace LayerOptics {
   // Base class for handling BSDF Layer
   class CBSDFLayer {
   public:
+    friend class MultiPane::CEquivalentBSDFLayer;
     CBSDFLayer( const std::shared_ptr< CBaseCell >& t_Cell, 
       const std::shared_ptr< const CBSDFHemisphere >& t_Directions );
 

@@ -12,6 +12,7 @@
 #include "IntegratorStrategy.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFDirections.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -42,11 +43,14 @@ namespace MultiPane {
       assert( index > -1 );
 
       shared_ptr< CBSDFResults > currentLayer = ( *aResults )[ size_t( index ) ];
-      shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer = make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
+      shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer = 
+        make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
 
       m_LayersWL->push_back( aEquivalentLayer );
 
     }
+
+    m_Results = make_shared< CBSDFResults >( t_Layer->m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
 
   }
 
@@ -67,12 +71,13 @@ namespace MultiPane {
 
   }
 
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( const double minLambda, const double maxLambda, Side t_Side ) {
+  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( const double minLambda, 
+    const double maxLambda, Side t_Side ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
 
-    return m_Tau.at( t_Side );
+    return m_Results->Tau( t_Side );
   }
 
   shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( const double minLambda, 
@@ -81,7 +86,7 @@ namespace MultiPane {
       calculate( minLambda, maxLambda );
     }
 
-    return m_Rho.at( t_Side );
+    return m_Results->Rho( t_Side );
   }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
@@ -92,12 +97,50 @@ namespace MultiPane {
     return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
   }
 
+  shared_ptr< vector< double > > CEquivalentBSDFLayer::TauHem( const double minLambda, const double maxLambda, 
+    const Side t_Side ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+    return m_Results->TauHem( t_Side );
+  }
+
+  shared_ptr< vector< double > > CEquivalentBSDFLayer::RhoHem( const double minLambda, const double maxLambda, 
+    const Side t_Side ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+    return m_Results->RhoHem( t_Side );
+  }
+
+  double CEquivalentBSDFLayer::TauHem( const double minLambda, const double maxLambda, 
+    const Side t_Side, const double t_Theta, const double t_Phi ) {
+    auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
+    return ( *TauHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
+  }
+
+  double CEquivalentBSDFLayer::RhoHem( const double minLambda, const double maxLambda, 
+    const Side t_Side, const double t_Theta, const double t_Phi ) {
+    auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
+    return ( *RhoHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
+  }
+
+  double CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
+    const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
+    auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
+    return ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
+  }
+
   void CEquivalentBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
     size_t matrixSize = m_Lambda->getSize();
-    m_Tau[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
-    m_Tau[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
-    m_Rho[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
-    m_Rho[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
+
+    map< Side, shared_ptr< CSquareMatrix > > aTau;
+    map< Side, shared_ptr< CSquareMatrix > > aRho;
+
+    aTau[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
+    aTau[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
+    aRho[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
+    aRho[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
 
     size_t numberOfLayers = ( *m_LayersWL )[ 0 ]->getNumberOfLayers();
 
@@ -193,16 +236,20 @@ namespace MultiPane {
           // Transmittance
           aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->mMult( interpolatedSolar );
           aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-          ( *m_Tau.at( t_Side ) )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
-          ( *m_Tau.at( t_Side ) )[ j ][ k ] = ( *m_Tau.at( t_Side ) )[ j ][ k ] / incomingSolar;
+          ( *aTau.at( t_Side ) )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
+          ( *aTau.at( t_Side ) )[ j ][ k ] = ( *aTau.at( t_Side ) )[ j ][ k ] / incomingSolar;
 
           // Reflectance
           aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->mMult( interpolatedSolar );
           aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-          ( *m_Rho.at( t_Side ) )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
-          ( *m_Rho.at( t_Side ) )[ j ][ k ] = ( *m_Rho.at( t_Side ) )[ j ][ k ] / incomingSolar;
+          ( *aRho.at( t_Side ) )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
+          ( *aRho.at( t_Side ) )[ j ][ k ] = ( *aRho.at( t_Side ) )[ j ][ k ] / incomingSolar;
         }
       }
+    }
+
+    for( Side t_Side : EnumSide() ) {
+      m_Results->setResultMatrices( aTau.at( t_Side ), aRho.at( t_Side ), t_Side );
     }
 
     m_Calculated = true;
