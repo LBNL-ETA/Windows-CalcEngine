@@ -192,5 +192,5 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
   EXPECT_NEAR( 382.35430412032650, aSurface->J(), 1e-6 );
 
   size_t numOfIter = GetSystem()->getNumberOfIterations();
-  EXPECT_EQ( 21, numOfIter );
+  EXPECT_EQ( 21, int( numOfIter ) );
 }
