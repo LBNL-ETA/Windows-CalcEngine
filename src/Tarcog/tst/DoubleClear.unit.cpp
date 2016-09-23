@@ -138,5 +138,5 @@ TEST_F( TestDoubleClear, Test1 ) {
   EXPECT_NEAR( 359.731700, Radiosity, 1e-5 );
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 20, numOfIter );
+  EXPECT_EQ( 20, int( numOfIter ) );
 }

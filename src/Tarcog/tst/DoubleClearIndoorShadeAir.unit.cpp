@@ -125,7 +125,7 @@ TEST_F( TestDoubleClearIndoorShadeAir, Test1 ) {
   }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 5, numOfIter );
+  EXPECT_EQ( 5, int( numOfIter ) );
 
   double ventilatedFlow = aSystem->getInteriorVentilationFlow();
   EXPECT_NEAR( 40.066869, ventilatedFlow, 1e-6 );

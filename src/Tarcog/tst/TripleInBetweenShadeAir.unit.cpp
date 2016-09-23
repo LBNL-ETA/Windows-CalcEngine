@@ -128,5 +128,5 @@ TEST_F( TestInBetweenShadeAir, Test1 ) {
   }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 20, numOfIter );
+  EXPECT_EQ( 20, int( numOfIter ) );
 }

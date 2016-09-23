@@ -37,7 +37,7 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex1 ) {
 
 	size_t beamIndex = aDirections.getNearestBeamIndex( theta, phi );
 	
-  EXPECT_EQ( 7, beamIndex );
+  EXPECT_EQ( 7, int( beamIndex ) );
 
 }
 
@@ -51,7 +51,7 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex2 ) {
 
   size_t beamIndex = aDirections.getNearestBeamIndex( theta, phi );
 
-  EXPECT_EQ( 37, beamIndex );
+  EXPECT_EQ( 37, int( beamIndex ) );
 
 }
 
@@ -65,6 +65,6 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex3 ) {
 
   size_t beamIndex = aDirections.getNearestBeamIndex( theta, phi );
 
-  EXPECT_EQ( 23, beamIndex );
+  EXPECT_EQ( 23, int( beamIndex ) );
 
 }
