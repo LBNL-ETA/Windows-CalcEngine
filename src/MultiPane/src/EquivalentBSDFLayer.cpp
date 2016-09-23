@@ -1,5 +1,9 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <algorithm>
 #include <iterator>
+#include <functional>
+#include <numeric>
 #include <assert.h>
 #include <stdexcept>
 
@@ -51,6 +55,10 @@ namespace MultiPane {
     }
 
     m_Results = make_shared< CBSDFResults >( t_Layer->m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
+
+    for( Side aSide : EnumSide() ) {
+      m_AbsHem[ aSide ] = make_shared< vector< double > >();
+    }
 
   }
 
@@ -129,6 +137,30 @@ namespace MultiPane {
     const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
     return ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
+  }
+
+  double CEquivalentBSDFLayer::TauDiff( const double minLambda, const double maxLambda, 
+    const Side t_Side ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+    return m_Results->TauDiff( t_Side );
+  }
+
+  double CEquivalentBSDFLayer::RhoDiff( const double minLambda, const double maxLambda, 
+    const Side t_Side ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+    return m_Results->RhoDiff( t_Side );
+  }
+
+  double CEquivalentBSDFLayer::AbsDiff( const double minLambda, const double maxLambda, 
+    const Side t_Side, const size_t t_LayerIndex ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+    return ( *m_AbsHem[ t_Side ] )[ t_LayerIndex - 1 ];
   }
 
   void CEquivalentBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
@@ -252,8 +284,26 @@ namespace MultiPane {
       m_Results->setResultMatrices( aTau.at( t_Side ), aRho.at( t_Side ), t_Side );
     }
 
+    // calculate hemispherical absorptances
+    for( Side aSide : EnumSide() ) {
+      calcHemisphericalAbs( aSide );
+    }
+
     m_Calculated = true;
 
+  }
+
+  void CEquivalentBSDFLayer::calcHemisphericalAbs( const Side t_Side ) {
+    size_t numOfLayers = m_Abs[ t_Side ]->size();
+    vector< double > aLambdas = *m_Results->getDirections()->lambdaVector();
+    for( auto layNum = 0; layNum < numOfLayers; ++layNum ) {
+      vector< double > aAbs = *( *m_Abs[ t_Side ] )[ layNum ];
+      assert( aAbs.size() == aLambdas.size() );
+      vector< double > mult( aLambdas.size() );
+      std::transform( aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), std::multiplies< double >() );
+      double sum = accumulate( mult.begin(), mult.end(), 0.0 ) / M_PI;
+      m_AbsHem[ t_Side ]->push_back( sum );
+    }
   }
 
 }

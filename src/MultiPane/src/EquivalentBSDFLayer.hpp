@@ -45,7 +45,7 @@ namespace MultiPane {
     std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side, const size_t Index );
 
-    // Hemispherical results
+    // Hemispherical results for every direction
     std::shared_ptr< std::vector< double > > TauHem( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side );
     std::shared_ptr< std::vector< double > > RhoHem( const double minLambda, const double maxLambda, 
@@ -59,15 +59,25 @@ namespace MultiPane {
     double Abs( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
 
+    // Diffuse to diffuse properties
+    double TauDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
+    double RhoDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
+    double AbsDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
+      const size_t t_LayerIndex );
+
   private:
 
     void calculate( const double minLambda, const double maxLambda );
+
+    void calcHemisphericalAbs( const FenestrationCommon::Side t_Side );
 
     // Vector of layer results over each wavelength
     std::shared_ptr< std::vector< std::shared_ptr< CEquivalentBSDFLayerSingleBand > > > m_LayersWL;
 
 
     std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > > m_Abs;
+    // Hemispherical absorptances for every layer
+    std::map < FenestrationCommon::Side, std::shared_ptr< std::vector < double > > > m_AbsHem;
 
     std::shared_ptr< LayerOptics::CBSDFResults > m_Results;
 

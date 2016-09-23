@@ -13,6 +13,7 @@ namespace LayerOptics {
     double low() const;
     double high() const;
     double delta() const;
+    bool isInLimits( const double t_Angle ) const;
     virtual double average() const;
 
   protected:
@@ -32,7 +33,7 @@ namespace LayerOptics {
       const std::shared_ptr< CAngleLimits >& t_Phi );
     std::shared_ptr< CBeamDirection > centerPoint() const;
     double lambda() const;
-    double distance( const double t_Theta, const double t_Phi );
+    bool isInPatch( const double t_Theta, const double t_Phi );
 
   private:
     void calculateLambda();

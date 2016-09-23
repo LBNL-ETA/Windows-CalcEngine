@@ -114,10 +114,10 @@ namespace LayerOptics {
   }
 
   size_t CBSDFDirections::getNearestBeamIndex( const double t_Theta, const double t_Phi ) const {
-    auto it = std::min_element( m_Patches.begin(), m_Patches.end(),
-      [ & ]( const shared_ptr< CBSDFPatch >& a, const shared_ptr< CBSDFPatch >& b )
+    auto it = std::find_if( m_Patches.begin(), m_Patches.end(),
+      [ & ]( const shared_ptr< CBSDFPatch >& a )
       {
-        return a->distance( t_Theta, t_Phi ) < b->distance( t_Theta, t_Phi );
+        return a->isInPatch( t_Theta, t_Phi );
       } );
 
     size_t index = std::distance( m_Patches.begin(), it );
@@ -136,7 +136,7 @@ namespace LayerOptics {
       aDefinitions.push_back( CBSDFDefinition( 13, 1 ) );
       aDefinitions.push_back( CBSDFDefinition( 26, 1 ) );
       aDefinitions.push_back( CBSDFDefinition( 39, 1 ) );
-      aDefinitions.push_back( CBSDFDefinition( 52, 2 ) );
+      aDefinitions.push_back( CBSDFDefinition( 52, 1 ) );
       aDefinitions.push_back( CBSDFDefinition( 65, 1 ) );
       aDefinitions.push_back( CBSDFDefinition( 80.75, 1 ) );
       break;

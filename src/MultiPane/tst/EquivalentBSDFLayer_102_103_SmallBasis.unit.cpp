@@ -440,6 +440,48 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
+  double tauDiff = aLayer->TauDiff( minLambda, maxLambda, Side::Front );
+  EXPECT_NEAR( 0.54859517102148248, tauDiff, 1e-6 );
+
+  double rhoDiff = aLayer->RhoDiff( minLambda, maxLambda, Side::Front );
+  EXPECT_NEAR( 0.21340640916470646, rhoDiff, 1e-6 );
+
+  double absDiff1 = aLayer->AbsDiff( minLambda, maxLambda, Side::Front, 1 );
+  EXPECT_NEAR( 0.10966015145104416, absDiff1, 1e-6 );
+
+  double absDiff2 = aLayer->AbsDiff( minLambda, maxLambda, Side::Front, 2 );
+  EXPECT_NEAR( 0.12617289824574851, absDiff2, 1e-6 );
+
+  double theta = 0;
+  double phi = 0;
+
+  double tauHem = aLayer->TauHem( minLambda, maxLambda, Side::Front, theta, phi );
+  EXPECT_NEAR( 0.65088957749570964, tauHem, 1e-6 );
+
+  double rhoHem = aLayer->RhoHem( minLambda, maxLambda, Side::Front, theta, phi );
+  EXPECT_NEAR( 0.12452879168101164, rhoHem, 1e-6 );
+
+  double abs1 = aLayer->Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  EXPECT_NEAR( 0.095834343748182116, abs1, 1e-6 );
+
+  double abs2 = aLayer->Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  EXPECT_NEAR( 0.12658191695807844, abs2, 1e-6 );
+
+  theta = 45;
+  phi = 78;
+
+  tauHem = aLayer->TauHem( minLambda, maxLambda, Side::Front, theta, phi );
+  EXPECT_NEAR( 0.62489021097897446, tauHem, 1e-6 );
+
+  rhoHem = aLayer->RhoHem( minLambda, maxLambda, Side::Front, theta, phi );
+  EXPECT_NEAR( 0.13398365976546198, rhoHem, 1e-6 );
+
+  abs1 = aLayer->Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  EXPECT_NEAR( 0.10472678949555157, abs1, 1e-6 );
+
+  abs2 = aLayer->Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  EXPECT_NEAR( 0.13423396964299397, abs2, 1e-6 );
+
   shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
 
   // Front transmittance matrix
@@ -450,8 +492,7 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   correctResults.push_back( 2.0949315104989110 );
   correctResults.push_back( 1.1530190959734119 );
   correctResults.push_back( 0.9039854110596405 );
-  correctResults.push_back( 1.6964907643464353 );
-  correctResults.push_back( 1.6964907643464353 );
+  correctResults.push_back( 0.8482453821732177 );
   correctResults.push_back( 0.8704674021539925 );
   correctResults.push_back( 0.5266470392080515 );
 
@@ -475,8 +516,7 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   correctResults.push_back( 0.3752512814067827 );
   correctResults.push_back( 0.2102150503725127 );
   correctResults.push_back( 0.1802554931672072 );
-  correctResults.push_back( 0.4549114640960842 );
-  correctResults.push_back( 0.4549114640960842 );
+  correctResults.push_back( 0.2274557320480421 );
   correctResults.push_back( 0.4746144799314945 );
   correctResults.push_back( 1.8714705739305144 );
   
@@ -499,7 +539,6 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   correctResults.push_back( 0.09680657622200863 );
   correctResults.push_back( 0.09974534468498698 );
   correctResults.push_back( 0.10472678949555157 );
-  correctResults.push_back( 0.11194996154054089 );
   correctResults.push_back( 0.11194996154054089 );
   correctResults.push_back( 0.12168667660699012 );
   correctResults.push_back( 0.12669900332020634 );
@@ -524,7 +563,6 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   correctResults.push_back( 0.13046361350689409 );
   correctResults.push_back( 0.13423396964299397 );
   correctResults.push_back( 0.13598732500086685 );
-  correctResults.push_back( 0.13598732500086685 );
   correctResults.push_back( 0.12741591618981113 );
   correctResults.push_back( 0.07614352846733891 );
   
@@ -548,7 +586,6 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   correctResults.push_back( 0.065546253068435562 );
   correctResults.push_back( 0.067249255379550385 );
   correctResults.push_back( 0.067944004575986455 );
-  correctResults.push_back( 0.067944004575986455 );
   correctResults.push_back( 0.063744947353572542 );
   correctResults.push_back( 0.039133310401528641 );
 
@@ -571,7 +608,6 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   correctResults.push_back( 0.16834400389923435 );
   correctResults.push_back( 0.17311581093382766 );
   correctResults.push_back( 0.18109150092403950 );
-  correctResults.push_back( 0.19226899659306185 );
   correctResults.push_back( 0.19226899659306185 );
   correctResults.push_back( 0.20590658291865963 );
   correctResults.push_back( 0.20017048054698627 );

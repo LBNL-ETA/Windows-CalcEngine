@@ -440,22 +440,32 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   
   shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
-  shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
+  double tauDiff = aLayer->TauDiff( minLambda, maxLambda, Side::Front );
+  EXPECT_NEAR( 0.54118882780050315, tauDiff, 1e-6 );
+
+  double rhoDiff = aLayer->RhoDiff( minLambda, maxLambda, Side::Front );
+  EXPECT_NEAR( 0.22081776140806300, rhoDiff, 1e-6 );
+
+  double absDiff1 = aLayer->AbsDiff( minLambda, maxLambda, Side::Front, 1 );
+  EXPECT_NEAR( 0.11037471225054787, absDiff1, 1e-6 );
+
+  double absDiff2 = aLayer->AbsDiff( minLambda, maxLambda, Side::Front, 2 );
+  EXPECT_NEAR( 0.12545332842386742, absDiff2, 1e-6 );
 
   double theta = 0;
   double phi = 0;
 
   double tauHem = aLayer->TauHem( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.64711072843699180, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.65088957749570964, tauHem, 1e-6 );
 
   double rhoHem = aLayer->RhoHem( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.12450849371485757, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.12452879168101168, rhoHem, 1e-6 );
 
   double abs1 = aLayer->Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.097701458609918190, abs1, 1e-6 );
+  EXPECT_NEAR( 0.095834343748182116, abs1, 1e-6 );
 
   double abs2 = aLayer->Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.12851394912121408, abs2, 1e-6 );
+  EXPECT_NEAR( 0.12658191695807847, abs2, 1e-6 );
 
   theta = 45;
   phi = 78;
@@ -471,6 +481,8 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
 
   abs2 = aLayer->Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
   EXPECT_NEAR( 0.13338348033754771, abs2, 1e-6 );
+
+  shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
 
   // Front transmittance matrix
   size_t size = aT->getSize();

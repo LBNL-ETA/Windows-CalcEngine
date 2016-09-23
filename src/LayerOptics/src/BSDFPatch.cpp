@@ -29,6 +29,10 @@ namespace LayerOptics {
     return m_High - m_Low;
   }
 
+  bool CAngleLimits::isInLimits( const double t_Angle ) const {
+    return ( t_Angle >= m_Low ) && ( t_Angle <= m_High );
+  }
+
   double CAngleLimits::average() const {
     return ( m_Low + m_High ) / 2;
   }
@@ -62,8 +66,8 @@ namespace LayerOptics {
     return m_Lambda;
   }
 
-  double CBSDFPatch::distance( const double t_Theta, const double t_Phi ) {
-    return centerPoint()->distance( t_Theta, t_Phi );
+  bool CBSDFPatch::isInPatch( const double t_Theta, const double t_Phi ) {
+    return m_Theta->isInLimits( t_Theta ) && m_Phi->isInLimits( t_Phi );
   }
 
   void CBSDFPatch::calculateLambda() {

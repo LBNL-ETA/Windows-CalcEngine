@@ -87,7 +87,7 @@ namespace LayerOptics {
   }
 
   shared_ptr< const CSquareMatrix > CBSDFResults::lambdaMatrix() const {
-    return m_Directions->lambdaMatrix(); 
+    return m_Directions->lambdaMatrix();
   }
 
   double CBSDFResults::integrate( CSquareMatrix& t_Matrix ) const {
