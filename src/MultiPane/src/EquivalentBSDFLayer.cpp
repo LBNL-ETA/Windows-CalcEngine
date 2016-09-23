@@ -296,7 +296,7 @@ namespace MultiPane {
   void CEquivalentBSDFLayer::calcHemisphericalAbs( const Side t_Side ) {
     size_t numOfLayers = m_Abs[ t_Side ]->size();
     vector< double > aLambdas = *m_Results->getDirections()->lambdaVector();
-    for( auto layNum = 0; layNum < numOfLayers; ++layNum ) {
+    for( size_t layNum = 0; layNum < numOfLayers; ++layNum ) {
       vector< double > aAbs = *( *m_Abs[ t_Side ] )[ layNum ];
       assert( aAbs.size() == aLambdas.size() );
       vector< double > mult( aLambdas.size() );

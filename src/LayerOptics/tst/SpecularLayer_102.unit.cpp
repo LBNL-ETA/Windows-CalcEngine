@@ -305,7 +305,7 @@ TEST_F( TestSpecularLayer_102, TestSpecular1 ) {
   double phi = 58;
 
   double tauHem = aResults->TauHem( Side::Front, theta, phi );
-  EXPECT_NEAR( 0.81755256795076836, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.82700480785360742, tauHem, 1e-6 );
 
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
 
