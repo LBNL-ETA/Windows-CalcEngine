@@ -97,6 +97,24 @@ namespace MultiPane {
     return m_Results->Rho( t_Side );
   }
 
+  double CEquivalentBSDFLayer::TauDirDir( const double minLambda, const double maxLambda, Side t_Side, 
+    const double t_Theta, const double t_Phi ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+
+    return m_Results->TauDirDir( t_Side, t_Theta, t_Phi );
+  }
+
+  double CEquivalentBSDFLayer::RhoDirDir( const double minLambda, const double maxLambda, 
+    Side t_Side, const double t_Theta, const double t_Phi ) {
+    if( !m_Calculated ) {
+      calculate( minLambda, maxLambda );
+    }
+
+    return m_Results->RhoDirDir( t_Side, t_Theta, t_Phi );
+  }
+
   shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t Index ) {
     if( !m_Calculated ) {
@@ -105,32 +123,32 @@ namespace MultiPane {
     return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
   }
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::TauHem( const double minLambda, const double maxLambda, 
+  shared_ptr< vector< double > > CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
     const Side t_Side ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
-    return m_Results->TauHem( t_Side );
+    return m_Results->TauDirHem( t_Side );
   }
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::RhoHem( const double minLambda, const double maxLambda, 
+  shared_ptr< vector< double > > CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
     const Side t_Side ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
-    return m_Results->RhoHem( t_Side );
+    return m_Results->RhoDirHem( t_Side );
   }
 
-  double CEquivalentBSDFLayer::TauHem( const double minLambda, const double maxLambda, 
+  double CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
     const Side t_Side, const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *TauHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
+    return ( *TauDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
   }
 
-  double CEquivalentBSDFLayer::RhoHem( const double minLambda, const double maxLambda, 
+  double CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
     const Side t_Side, const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *RhoHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
+    return ( *RhoDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
   }
 
   double CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
@@ -139,20 +157,20 @@ namespace MultiPane {
     return ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
   }
 
-  double CEquivalentBSDFLayer::TauDiff( const double minLambda, const double maxLambda, 
+  double CEquivalentBSDFLayer::TauDiffDiff( const double minLambda, const double maxLambda, 
     const Side t_Side ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
-    return m_Results->TauDiff( t_Side );
+    return m_Results->TauDiffDiff( t_Side );
   }
 
-  double CEquivalentBSDFLayer::RhoDiff( const double minLambda, const double maxLambda, 
+  double CEquivalentBSDFLayer::RhoDiffDiff( const double minLambda, const double maxLambda, 
     const Side t_Side ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
-    return m_Results->RhoDiff( t_Side );
+    return m_Results->RhoDiffDiff( t_Side );
   }
 
   double CEquivalentBSDFLayer::AbsDiff( const double minLambda, const double maxLambda, 

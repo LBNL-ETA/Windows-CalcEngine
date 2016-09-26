@@ -57,13 +57,13 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
-  double tauDiff = aResults->TauDiff( Side::Front );
+  double tauDiff = aResults->TauDiffDiff( Side::Front );
   EXPECT_NEAR( 0.467578877, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiff( Side::Front );
+  double RfDiff = aResults->RhoDiffDiff( Side::Front );
   EXPECT_NEAR( 0.496269069, RfDiff, 1e-6 );
 
-  double RbDiff = aResults->RhoDiff( Side::Back );
+  double RbDiff = aResults->RhoDiffDiff( Side::Back );
   EXPECT_NEAR( 0.496269069, RbDiff, 1e-6 );
 
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );

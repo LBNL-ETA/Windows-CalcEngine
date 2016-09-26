@@ -63,10 +63,10 @@ TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
-  double tauDiff = aResults->TauDiff( Side::Front );
+  double tauDiff = aResults->TauDiffDiff( Side::Front );
   EXPECT_NEAR( 0.232141, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiff( Side::Front );
+  double RfDiff = aResults->RhoDiffDiff( Side::Front );
   EXPECT_NEAR( 0.301555, RfDiff, 1e-6 );
 
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );

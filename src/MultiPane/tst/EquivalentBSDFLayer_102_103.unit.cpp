@@ -440,10 +440,10 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   
   shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
 
-  double tauDiff = aLayer->TauDiff( minLambda, maxLambda, Side::Front );
+  double tauDiff = aLayer->TauDiffDiff( minLambda, maxLambda, Side::Front );
   EXPECT_NEAR( 0.54118882780050315, tauDiff, 1e-6 );
 
-  double rhoDiff = aLayer->RhoDiff( minLambda, maxLambda, Side::Front );
+  double rhoDiff = aLayer->RhoDiffDiff( minLambda, maxLambda, Side::Front );
   EXPECT_NEAR( 0.22081776140806300, rhoDiff, 1e-6 );
 
   double absDiff1 = aLayer->AbsDiff( minLambda, maxLambda, Side::Front, 1 );
@@ -455,11 +455,17 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   double theta = 0;
   double phi = 0;
 
-  double tauHem = aLayer->TauHem( minLambda, maxLambda, Side::Front, theta, phi );
+  double tauHem = aLayer->TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.65088957749570964, tauHem, 1e-6 );
 
-  double rhoHem = aLayer->RhoHem( minLambda, maxLambda, Side::Front, theta, phi );
+  double tauDir = aLayer->TauDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  EXPECT_NEAR( 0.65088957749570964, tauDir, 1e-6 );
+
+  double rhoHem = aLayer->RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.12452879168101168, rhoHem, 1e-6 );
+
+  double rhoDir = aLayer->RhoDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  EXPECT_NEAR( 0.12452879168101168, rhoDir, 1e-6 );
 
   double abs1 = aLayer->Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
   EXPECT_NEAR( 0.095834343748182116, abs1, 1e-6 );
@@ -470,10 +476,10 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   theta = 45;
   phi = 78;
 
-  tauHem = aLayer->TauHem( minLambda, maxLambda, Side::Front, theta, phi );
+  tauHem = aLayer->TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.63033162466524628, tauHem, 1e-6 );
 
-  rhoHem = aLayer->RhoHem( minLambda, maxLambda, Side::Front, theta, phi );
+  rhoHem = aLayer->RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.13073080988995073, rhoHem, 1e-6 );
 
   abs1 = aLayer->Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );

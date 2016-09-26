@@ -297,17 +297,20 @@ TEST_F( TestSpecularLayer_103, TestSpecular1 ) {
 
   shared_ptr< CBSDFResults > aResults = aLayer->getResults();
 
-  double tauDiff = aResults->TauDiff( Side::Front );
+  double tauDiff = aResults->TauDiffDiff( Side::Front );
   EXPECT_NEAR( 0.68823803381618487, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiff( Side::Front );
+  double RfDiff = aResults->RhoDiffDiff( Side::Front );
   EXPECT_NEAR( 0.13803530512699569, RfDiff, 1e-6 );
 
   double theta = 23;
   double phi = 198;
 
-  double tauHem = aResults->TauHem( Side::Front, theta, phi );
+  double tauHem = aResults->TauDirHem( Side::Front, theta, phi );
   EXPECT_NEAR( 0.76691124365416619, tauHem, 1e-6 );
+
+  double tauDir = aResults->TauDirDir( Side::Front, theta, phi );
+  EXPECT_NEAR( 0.76691124365416619, tauDir, 1e-6 );
 
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
 

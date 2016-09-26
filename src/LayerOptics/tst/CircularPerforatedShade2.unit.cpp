@@ -58,13 +58,13 @@ TEST_F( TestCircularPerforatedShade2, TestSolarProperties ) {
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
-  double tauDiff = aResults->TauDiff( Side::Front );
+  double tauDiff = aResults->TauDiffDiff( Side::Front );
   EXPECT_NEAR( 0.2, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiff( Side::Front );
+  double RfDiff = aResults->RhoDiffDiff( Side::Front );
   EXPECT_NEAR( 0.8, RfDiff, 1e-6 );
 
-  double RbDiff = aResults->RhoDiff( Side::Back );
+  double RbDiff = aResults->RhoDiffDiff( Side::Back );
   EXPECT_NEAR( 0.8, RbDiff, 1e-6 );
 
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );

@@ -30,11 +30,11 @@ namespace LayerOptics {
     return m_Directions; 
   }
 
-  double CBSDFResults::TauDiff( const Side t_Side ) const {
+  double CBSDFResults::TauDiffDiff( const Side t_Side ) const {
     return integrate( *Tau( t_Side ) );
   }
 
-  double CBSDFResults::RhoDiff( const Side t_Side ) const {
+  double CBSDFResults::RhoDiffDiff( const Side t_Side ) const {
     return integrate( *Rho( t_Side ) );
   }
 
@@ -52,12 +52,28 @@ namespace LayerOptics {
     m_Rho[ t_Side ] = t_Rho;
   }
 
-  shared_ptr< vector< double > > CBSDFResults::TauHem( Side t_Side ) {
+  double CBSDFResults::TauDirDir( const FenestrationCommon::Side t_Side, 
+    const double t_Theta, const double t_Phi ) {
+    size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
+    double lambda = ( *m_Directions->lambdaVector() )[ index ];
+    double tau = ( *Tau( t_Side ) )[ index ][ index ];
+    return tau * lambda;
+  }
+
+  double CBSDFResults::RhoDirDir( const FenestrationCommon::Side t_Side,
+    const double t_Theta, const double t_Phi ) {
+    size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
+    double lambda = ( *m_Directions->lambdaVector() )[ index ];
+    double rho = ( *Rho( t_Side ) )[ index ][ index ];
+    return rho * lambda;
+  }
+
+  shared_ptr< vector< double > > CBSDFResults::TauDirHem( Side t_Side ) {
     calcHemispherical();
     return m_VTauHem.at( t_Side );
   }
 
-  shared_ptr< vector< double > > CBSDFResults::RhoHem( Side t_Side ) {
+  shared_ptr< vector< double > > CBSDFResults::RhoDirHem( Side t_Side ) {
     calcHemispherical();
     return m_VRhoHem.at( t_Side );
   }
@@ -67,14 +83,14 @@ namespace LayerOptics {
     return m_Abs.at( t_Side );  
   }
 
-  double CBSDFResults::TauHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
+  double CBSDFResults::TauDirHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *TauHem( t_Side ) )[ index ];
+    return ( *TauDirHem( t_Side ) )[ index ];
   }
 
-  double CBSDFResults::RhoHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
+  double CBSDFResults::RhoDirHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *RhoHem( t_Side ) )[ index ];
+    return ( *RhoDirHem( t_Side ) )[ index ];
   }
 
   double CBSDFResults::Abs( const Side t_Side, const double t_Theta, const double t_Phi ) {

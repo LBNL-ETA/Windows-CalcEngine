@@ -29,23 +29,27 @@ namespace LayerOptics {
     void setResultMatrices( const std::shared_ptr< FenestrationCommon::CSquareMatrix >& t_Tau,
       const std::shared_ptr< FenestrationCommon::CSquareMatrix >& t_Rho, FenestrationCommon::Side t_Side );
 
+    // Direct-direct components
+    double TauDirDir( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double RhoDirDir( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+
     // Directional hemispherical results for every direction in BSDF definition
-    std::shared_ptr< std::vector< double > > TauHem( const FenestrationCommon::Side t_Side );
-    std::shared_ptr< std::vector< double > > RhoHem( const FenestrationCommon::Side t_Side );
+    std::shared_ptr< std::vector< double > > TauDirHem( const FenestrationCommon::Side t_Side );
+    std::shared_ptr< std::vector< double > > RhoDirHem( const FenestrationCommon::Side t_Side );
     std::shared_ptr< std::vector< double > > Abs( const FenestrationCommon::Side t_Side );
 
     // Directional hemispherical results for given Theta and Phi direction
-    double TauHem( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
-    double RhoHem( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double TauDirHem( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double RhoDirHem( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
     double Abs( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
 
     std::shared_ptr< const CBSDFDirections > getDirections() const;
 
     // Diffuse transmittance for front and back sides
-    double TauDiff( const FenestrationCommon::Side t_Side ) const;
+    double TauDiffDiff( const FenestrationCommon::Side t_Side ) const;
 
     // Diffuse reflectance for front and back sides
-    double RhoDiff( const FenestrationCommon::Side t_Side ) const;
+    double RhoDiffDiff( const FenestrationCommon::Side t_Side ) const;
 
     // Lambda values for the layer.
     std::shared_ptr< const std::vector< double > > lambdaVector() const;

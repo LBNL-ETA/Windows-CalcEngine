@@ -65,16 +65,16 @@ TEST_F( TestVenetianDirectionalShadeFlat0_1, TestVenetian1 ) {
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
-  double tauDiff = aResults->TauDiff( Side::Front );
+  double tauDiff = aResults->TauDiffDiff( Side::Front );
   EXPECT_NEAR( 0.44649813630049223, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiff( Side::Front );
+  double RfDiff = aResults->RhoDiffDiff( Side::Front );
   EXPECT_NEAR( 0.28386835793952669, RfDiff, 1e-6 );
 
   double theta = 23;
   double phi = 198;
 
-  double tauHem = aResults->TauHem( Side::Front, theta, phi );
+  double tauHem = aResults->TauDirHem( Side::Front, theta, phi );
   EXPECT_NEAR( 0.42987405997685452, tauHem, 1e-6 );
 
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
