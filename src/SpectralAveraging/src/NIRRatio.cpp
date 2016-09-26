@@ -11,10 +11,9 @@ namespace SpectralAveraging {
 
   CNIRRatio::CNIRRatio( shared_ptr< const CSeries > t_SolarRadiation, const double lowLambda, const double highLambda ) {
     shared_ptr< CSeries > integratedSolar = t_SolarRadiation->integrate( IntegrationType::Trapezoidal );
-    CWavelengthRangeFactory aWLFactory;
-    shared_ptr< const CWavelengthRange > aSolarRange = aWLFactory.getWavelengthRange( WavelengthRange::Solar );
+    CWavelengthRange aSolarRange = CWavelengthRange( WavelengthRange::Solar );
     
-    double totSolar = integratedSolar->sum( aSolarRange->minLambda(), aSolarRange->maxLambda() );
+    double totSolar = integratedSolar->sum( aSolarRange.minLambda(), aSolarRange.maxLambda() );
     
     double totVisible = integratedSolar->sum( lowLambda, highLambda );
     m_Ratio = totVisible / totSolar;

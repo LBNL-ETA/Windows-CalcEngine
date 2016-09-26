@@ -13,6 +13,7 @@
 #include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
+#include "WavelengthRange.hpp"
 
 using namespace std;
 using namespace LayerOptics;
@@ -269,8 +270,9 @@ protected:
 
     double thickness = 3.048e-3; // [m]
     SpecularMaterialType aType = SpecularMaterialType::Monolithic;
-    double minLambda = 0.3;
-    double maxLambda = 2.5;
+    CWavelengthRange aRange = CWavelengthRange( WavelengthRange::Solar );
+    double minLambda = aRange.minLambda();
+    double maxLambda = aRange.maxLambda();
     shared_ptr< CMaterialBand > aMaterial = 
       make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
