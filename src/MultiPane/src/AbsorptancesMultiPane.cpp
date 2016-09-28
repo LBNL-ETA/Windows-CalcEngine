@@ -70,8 +70,8 @@ namespace MultiPane {
       Iminus.push_back( Im );
 
       for( size_t i = 0; i < size; ++i ) {
-        Ip = m_rCoeffs[ i ]->mMult( Im );
-        Im = m_tCoeffs[ i ]->mMult( Im );
+        Ip = m_rCoeffs[ i ]->mMult( *Im );
+        Im = m_tCoeffs[ i ]->mMult( *Im );
         Iplus.push_back( Ip );
         Iminus.push_back( Im );
       }

@@ -51,7 +51,7 @@ namespace FenestrationCommon {
     // Multiplication of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.
     // If two spectral properites do not have same wavelength range, then interpolation function should be called.
-    std::shared_ptr< CSeries > mMult( const std::shared_ptr< const CSeries >& t_Series ) const;
+    std::shared_ptr< CSeries > mMult( const CSeries& t_Series ) const;
     
     // Substraction of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.

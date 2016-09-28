@@ -12,15 +12,13 @@ using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 using namespace MultiPane;
 
-class TestMultiPaneSampleFlipped : public testing::Test
-{
+class TestMultiPaneSampleFlipped : public testing::Test {
 
 private:
   shared_ptr< CMultiPaneSpectralSample > m_MultiPane;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     shared_ptr< CSeries > solarRadiation = make_shared< CSeries >();
     solarRadiation->addProperty( 0.50, 1026.70 );
     solarRadiation->addProperty( 0.51, 1066.70 );
@@ -124,21 +122,21 @@ TEST_F( TestMultiPaneSampleFlipped, TestDoublePaneProperties )
   double lowLambda = 0.5;
   double highLambda = 0.7;
   
-  shared_ptr< CMultiPaneSpectralSample > multiPane = getMultiPane();
+  CMultiPaneSpectralSample multiPane = *getMultiPane();
 
-  double transmittance = multiPane->getProperty( lowLambda, highLambda, Property::T, Side::Front );
+  double transmittance = multiPane.getProperty( lowLambda, highLambda, Property::T, Side::Front );
 
   EXPECT_NEAR( 0.618340, transmittance, 1e-6 );
 
-  double frontReflectance = multiPane->getProperty( lowLambda, highLambda, Property::R, Side::Front );
+  double frontReflectance = multiPane.getProperty( lowLambda, highLambda, Property::R, Side::Front );
 
   EXPECT_NEAR( 0.181564, frontReflectance, 1e-6 );
 
-  double backReflectance = multiPane->getProperty( lowLambda, highLambda, Property::R, Side::Back );
+  double backReflectance = multiPane.getProperty( lowLambda, highLambda, Property::R, Side::Back );
 
   EXPECT_NEAR( 0.229538, backReflectance, 1e-6 );
 
-  double totalAbsorptance = multiPane->getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
+  double totalAbsorptance = multiPane.getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
 
   EXPECT_NEAR( 0.200096, totalAbsorptance, 1e-6 );
 
@@ -151,12 +149,12 @@ TEST_F( TestMultiPaneSampleFlipped, TestDoublePaneLayerAbsorptances )
   double lowLambda = 0.5;
   double highLambda = 0.7;
   
-  shared_ptr< CMultiPaneSpectralSample > multiPane = getMultiPane();
+  CMultiPaneSpectralSample multiPane = *getMultiPane();
 
-  double abs1 = multiPane->getLayerAbsorptance( lowLambda, highLambda, 1 );
+  double abs1 = multiPane.getLayerAbsorptance( lowLambda, highLambda, 1 );
   EXPECT_NEAR( 0.159710, abs1, 1e-6 );
 
-  double abs2 = multiPane->getLayerAbsorptance( lowLambda, highLambda, 2 );
+  double abs2 = multiPane.getLayerAbsorptance( lowLambda, highLambda, 2 );
   EXPECT_NEAR( 0.040386, abs2, 1e-6 );
 
 }

@@ -33,15 +33,15 @@ private:
 
 protected:
   virtual void SetUp() {
-  
+
   // Create lambda matrix
   vector< CBSDFDefinition > aDefinitions;
-  aDefinitions.push_back( CBSDFDefinition(    0, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   15, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   30, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   45, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   60, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   75, 1  ) );
+  aDefinitions.push_back( CBSDFDefinition( 0, 1 ) );
+  aDefinitions.push_back( CBSDFDefinition( 15, 1 ) );
+  aDefinitions.push_back( CBSDFDefinition( 30, 1 ) );
+  aDefinitions.push_back( CBSDFDefinition( 45, 1 ) );
+  aDefinitions.push_back( CBSDFDefinition( 60, 1 ) );
+  aDefinitions.push_back( CBSDFDefinition( 75, 1 ) );
   aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
 
   shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( aDefinitions );
@@ -338,11 +338,11 @@ public:
 TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   SCOPED_TRACE( "Begin Test: Equivalent layer NFRC=102 - Perforated - NFRC=102." );
   
-  shared_ptr< CEquivalentBSDFLayerSingleBand > aLayer = getLayer();
+  CEquivalentBSDFLayerSingleBand aLayer = *getLayer();
 
   // Transmittance Front side
-  shared_ptr< CSquareMatrix > Tf = aLayer->Tau( Side::Front );
-  size_t matrixSize = Tf->getSize();
+  CSquareMatrix Tf = *aLayer.Tau( Side::Front );
+  size_t matrixSize = Tf.getSize();
 
   // Test matrix
   size_t size = 7;
@@ -360,12 +360,12 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
 
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Tf )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Tf[ i ][ j ], 1e-6 );
     }
   }
 
   // Transmittance Back side
-  shared_ptr< CSquareMatrix > Tb = aLayer->Tau( Side::Back );
+  CSquareMatrix Tb = *aLayer.Tau( Side::Back );
 
   EXPECT_EQ( size, matrixSize );
 
@@ -379,13 +379,13 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
 
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Tb )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Tb[ i ][ j ], 1e-6 );
     }
   }
   
   // Reflectance Front side
-  shared_ptr< CSquareMatrix > Rf = aLayer->Rho( Side::Front );
-  matrixSize = Rf->getSize();
+  CSquareMatrix Rf = *aLayer.Rho( Side::Front );
+  matrixSize = Rf.getSize();
   
   EXPECT_EQ( size, matrixSize );
   
@@ -399,13 +399,13 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Rf )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Rf[ i ][ j ], 1e-6 );
     }
   }
 
   // Reflectance Back side
-  shared_ptr< CSquareMatrix > Rb = aLayer->Rho( Side::Back );
-  matrixSize = Rb->getSize();
+  CSquareMatrix Rb = *aLayer.Rho( Side::Back );
+  matrixSize = Rb.getSize();
   
   EXPECT_EQ( size, matrixSize );
   
@@ -419,50 +419,50 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Rb )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Rb[ i ][ j ], 1e-6 );
     }
   }
 
-  shared_ptr< vector< double > > A = aLayer->getLayerAbsorptances( 1, Side::Front );
+  vector< double > A = *aLayer.getLayerAbsorptances( 1, Side::Front );
   vector< double > correctAbs = { 0.14491971, 0.14746616, 0.1523858,  0.15909124, 0.16462775, 0.15497232, 0.09646037 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 1, Side::Back );
+  A = *aLayer.getLayerAbsorptances( 1, Side::Back );
   correctAbs = { 0.03637407, 0.03538488, 0.03443428, 0.03269092, 0.02777523, 0.01372161, 0.00363157 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 2, Side::Front );
+  A = *aLayer.getLayerAbsorptances( 2, Side::Front );
   correctAbs = { 0.03901251, 0.03987245, 0.0406922,  0.04141485, 0.04110882, 0.03205742, 0.00848434 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 2, Side::Back );
+  A = *aLayer.getLayerAbsorptances( 2, Side::Back );
   correctAbs = { 0.09677338, 0.09922121, 0.10155411, 0.10342485, 0.10229603, 0.08283503, 0.02192318 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 3, Side::Front );
+  A = *aLayer.getLayerAbsorptances( 3, Side::Front );
   correctAbs = { 0.03638587, 0.035405, 0.03446196, 0.03271799, 0.02778434, 0.01382314, 0.00365844 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 3, Side::Back );
+  A = *aLayer.getLayerAbsorptances( 3, Side::Back );
   correctAbs = { 0.13800596, 0.14037602, 0.14512686, 0.15169655, 0.15731107, 0.14898255, 0.09483209 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
 

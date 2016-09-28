@@ -170,28 +170,28 @@ namespace MultiPane {
         Ap2f = zeros;
         Ap1b = m_Layers[ i ]->Abs( Side::Back );
       } else {
-        shared_ptr< CBSDFResults > Layer1 = m_Backward[ i + 1 ];
-        shared_ptr< CBSDFResults > Layer2 = m_Forward[ i ];
-        shared_ptr< CInterReflectance > InterRefl2 = 
-          make_shared< CInterReflectance >( *m_Lambda, *Layer1->Rho( Side::Front ), *Layer2->Rho( Side::Back ) );
-        shared_ptr< vector< double > > Ab = m_Layers[ i ]->Abs( Side::Back );
-        Ap2f = absTerm2( *Ab, *InterRefl2->value(), *m_Backward[ i + 1]->Rho( Side::Front ), 
-          *m_Forward[ i ]->Tau( Side::Front) );
-        Ap1b = absTerm1( *Ab, *InterRefl2->value(), *m_Backward[ i + 1 ]->Tau( Side::Back ) );
+        // shared_ptr< CBSDFResults > Layer1 = m_Backward[ i + 1 ];
+        // shared_ptr< CBSDFResults > Layer2 = m_Forward[ i ];
+        CBSDFResults& Layer1 = *m_Backward[ i + 1 ];
+        CBSDFResults& Layer2 = *m_Forward[ i ];
+        CInterReflectance InterRefl2 = 
+          CInterReflectance( *m_Lambda, *Layer1.Rho( Side::Front ), *Layer2.Rho( Side::Back ) );
+        vector< double >& Ab = *m_Layers[ i ]->Abs( Side::Back );
+        Ap2f = absTerm2( Ab, *InterRefl2.value(), *Layer1.Rho( Side::Front ), *Layer2.Tau( Side::Front) );
+        Ap1b = absTerm1( Ab, *InterRefl2.value(), *Layer1.Tau( Side::Back ) );
       }
 
       if( i == 0 ) {
         Ap1f = m_Layers[ i ]->Abs( Side::Front );
         Ap2b = zeros;
       } else {
-        shared_ptr< CBSDFResults > Layer1 = m_Forward[ i - 1 ];
-        shared_ptr< CBSDFResults > Layer2 = m_Backward[ i ];
-        shared_ptr< CInterReflectance > InterRefl1 = 
-          make_shared< CInterReflectance >( *m_Lambda, *Layer1->Rho( Side::Back ), *Layer2->Rho( Side::Front ) );
-        shared_ptr< vector< double > > Af = m_Layers[ i ]->Abs( Side::Front );
-        Ap1f = absTerm1( *Af, *InterRefl1->value(), *m_Forward[ i - 1]->Tau( Side::Front ) );
-        Ap2b = absTerm2( *Af, *InterRefl1->value(), *m_Forward[ i - 1 ]->Rho( Side::Back) , 
-          *m_Backward[ i ]->Tau( Side::Back ) );
+        CBSDFResults& Layer1 = *m_Forward[ i - 1 ];
+        CBSDFResults& Layer2 = *m_Backward[ i ];
+        CInterReflectance InterRefl1 = 
+          CInterReflectance( *m_Lambda, *Layer1.Rho( Side::Back ), *Layer2.Rho( Side::Front ) );
+        vector< double >& Af = *m_Layers[ i ]->Abs( Side::Front );
+        Ap1f = absTerm1( Af, *InterRefl1.value(), *Layer1.Tau( Side::Front ) );
+        Ap2b = absTerm2( Af, *InterRefl1.value(), *Layer1.Rho( Side::Back), *Layer2.Tau( Side::Back ) );
       }
 
       shared_ptr< vector< double > > AfTotal = make_shared< vector< double > >();
@@ -210,17 +210,17 @@ namespace MultiPane {
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::absTerm1( const vector< double >& t_Alpha,
     const CSquareMatrix& t_InterRefl, const CSquareMatrix& t_T ) {
-    shared_ptr< vector< double > > part1 = t_InterRefl.multVxM( t_Alpha );
-    CSquareMatrix part2 = *m_Lambda->mult( t_T );
+    shared_ptr< vector< double > >& part1 = t_InterRefl.multVxM( t_Alpha );
+    CSquareMatrix& part2 = *m_Lambda->mult( t_T );
     part1 = part2.multVxM( *part1 );
     return part1;
   }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::absTerm2( const vector< double >& t_Alpha,
     const CSquareMatrix& t_InterRefl, const CSquareMatrix& t_R, const CSquareMatrix& t_T ) {
-    shared_ptr< vector< double > > part1 = t_InterRefl.multVxM( t_Alpha );
-    CSquareMatrix part2 = *m_Lambda->mult( t_R );
-    CSquareMatrix part3 = *m_Lambda->mult( t_T );
+    shared_ptr< vector< double > >& part1 = t_InterRefl.multVxM( t_Alpha );
+    CSquareMatrix& part2 = *m_Lambda->mult( t_R );
+    CSquareMatrix& part3 = *m_Lambda->mult( t_T );
     part1 = part2.multVxM( *part1 );
     part1 = part3.multVxM( *part1 );
     return part1;

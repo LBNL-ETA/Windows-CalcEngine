@@ -438,60 +438,60 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
   
-  shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
+  CEquivalentBSDFLayer aLayer = *getLayer();
 
-  double tauDiff = aLayer->TauDiffDiff( minLambda, maxLambda, Side::Front );
+  double tauDiff = aLayer.TauDiffDiff( minLambda, maxLambda, Side::Front );
   EXPECT_NEAR( 0.54118882780050315, tauDiff, 1e-6 );
 
-  double rhoDiff = aLayer->RhoDiffDiff( minLambda, maxLambda, Side::Front );
+  double rhoDiff = aLayer.RhoDiffDiff( minLambda, maxLambda, Side::Front );
   EXPECT_NEAR( 0.22081776140806300, rhoDiff, 1e-6 );
 
-  double absDiff1 = aLayer->AbsDiff( minLambda, maxLambda, Side::Front, 1 );
+  double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
   EXPECT_NEAR( 0.11037471225054787, absDiff1, 1e-6 );
 
-  double absDiff2 = aLayer->AbsDiff( minLambda, maxLambda, Side::Front, 2 );
+  double absDiff2 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 2 );
   EXPECT_NEAR( 0.12545332842386742, absDiff2, 1e-6 );
 
   double theta = 0;
   double phi = 0;
 
-  double tauHem = aLayer->TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  double tauHem = aLayer.TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.65088957749570964, tauHem, 1e-6 );
 
-  double tauDir = aLayer->TauDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  double tauDir = aLayer.TauDirDir( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.65088957749570964, tauDir, 1e-6 );
 
-  double rhoHem = aLayer->RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  double rhoHem = aLayer.RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.12452879168101168, rhoHem, 1e-6 );
 
-  double rhoDir = aLayer->RhoDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  double rhoDir = aLayer.RhoDirDir( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.12452879168101168, rhoDir, 1e-6 );
 
-  double abs1 = aLayer->Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
   EXPECT_NEAR( 0.095834343748182116, abs1, 1e-6 );
 
-  double abs2 = aLayer->Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  double abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
   EXPECT_NEAR( 0.12658191695807847, abs2, 1e-6 );
 
   theta = 45;
   phi = 78;
 
-  tauHem = aLayer->TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  tauHem = aLayer.TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.63033162466524628, tauHem, 1e-6 );
 
-  rhoHem = aLayer->RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  rhoHem = aLayer.RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
   EXPECT_NEAR( 0.13073080988995073, rhoHem, 1e-6 );
 
-  abs1 = aLayer->Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
   EXPECT_NEAR( 0.10338871499023722, abs1, 1e-6 );
 
-  abs2 = aLayer->Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
   EXPECT_NEAR( 0.13338348033754771, abs2, 1e-6 );
 
-  shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
+  CSquareMatrix aT = *aLayer.Tau( minLambda, maxLambda, Side::Front );
 
   // Front transmittance matrix
-  size_t size = aT->getSize();
+  size_t size = aT.getSize();
 
   vector< double > correctResults;
   correctResults.push_back( 8.4662787218131488 );
@@ -536,21 +536,15 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 3.2840237941038732 );
   correctResults.push_back( 3.2840237941038732 );
 
-  vector< double > calculatedResults;
+  EXPECT_EQ( correctResults.size(), aT.getSize() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aT )[ i ][ i ] );
-  }
-
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aT[ i ][ i ], 1e-6 );
   }
 
   // Back Reflectance matrix
-  shared_ptr< CSquareMatrix > aRb = aLayer->Rho( minLambda, maxLambda, Side::Back );
+  CSquareMatrix aRb = *aLayer.Rho( minLambda, maxLambda, Side::Back );
   
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 1.5144439270363752 );
   correctResults.push_back( 1.6300965125912041 );
@@ -594,20 +588,15 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 5.8360388964627061 );
   correctResults.push_back( 5.8360388964627061 );
   
+  EXPECT_EQ( correctResults.size(), aRb.getSize() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aRb )[ i ][ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
   }
 
   // Front absorptance layer 1
-  shared_ptr< vector< double > > aAbsF = aLayer->Abs( minLambda, maxLambda, Side::Front, 1 );
+  vector< double > aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 1 );
 
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.09583434374818212 );
   correctResults.push_back( 0.09770145860991819 );
@@ -651,20 +640,15 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.12908268835474454 );
   correctResults.push_back( 0.12908268835474454 );
   
+  EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsF )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
   }
 
   // Front absorptance layer 2
-  aAbsF = aLayer->Abs( minLambda, maxLambda, Side::Front, 2 );
+  aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 2 );
 
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.126581916958078470 );
   correctResults.push_back( 0.128513949121214080 );
@@ -708,20 +692,15 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.096750297279805345 );
   correctResults.push_back( 0.096750297279805345 );
   
+  EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsF )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
   }
 
   // Back absorptance layer 1
-  shared_ptr< vector< double > > aAbsB = aLayer->Abs( minLambda, maxLambda, Side::Back, 1 );
+  vector< double > aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 1 );
   
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.063757437087811633 );
   correctResults.push_back( 0.064650767200785567 );
@@ -765,20 +744,15 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.049114157398955513 );
   correctResults.push_back( 0.049114157398955513 );
   
+  EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsB )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
   }
 
   // Back absorptance layer 2
-  aAbsB = aLayer->Abs( minLambda, maxLambda, Side::Back, 2 );
+  aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 2 );
   
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.16675679602228191 );
   correctResults.push_back( 0.16980137237918796 );
@@ -822,13 +796,9 @@ TEST_F( EquivalentBSDFLayer_102_103, TestSpecular1 ) {
   correctResults.push_back( 0.21055922925726483 );
   correctResults.push_back( 0.21055922925726483 );
   
+  EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsB )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
   }
 
 }

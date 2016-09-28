@@ -39,24 +39,24 @@ public:
 TEST_F( TestDoubleLayerSingleComponent, TestPropertiesBackSide ) {
   SCOPED_TRACE( "Begin Test: Double pane equivalent layer properties (additonal layer on back side)." );
   
-  shared_ptr< CEquivalentLayerSingleComponent > doubleLayer = getDoubleBack();
+  CEquivalentLayerSingleComponent doubleLayer = *getDoubleBack();
 
-  double Tf = doubleLayer->getProperty( Property::T, Side::Front );
+  double Tf = doubleLayer.getProperty( Property::T, Side::Front );
   EXPECT_NEAR( 0.278426286, Tf, 1e-6 );
 
-  double Rf = doubleLayer->getProperty( Property::R, Side::Front );
+  double Rf = doubleLayer.getProperty( Property::R, Side::Front );
   EXPECT_NEAR( 0.6281885, Rf, 1e-6 );
 
-  double Af = doubleLayer->getProperty( Property::Abs, Side::Front );
+  double Af = doubleLayer.getProperty( Property::Abs, Side::Front );
   EXPECT_NEAR( 0.093385214, Af, 1e-6 );
 
-  double Tb = doubleLayer->getProperty( Property::T, Side::Back );
+  double Tb = doubleLayer.getProperty( Property::T, Side::Back );
   EXPECT_NEAR( 0.33895374, Tb, 1e-6 );
 
-  double Rb = doubleLayer->getProperty( Property::R, Side::Back );
+  double Rb = doubleLayer.getProperty( Property::R, Side::Back );
   EXPECT_NEAR( 0.455248595, Rb, 1e-6 );
 
-  double Ab = doubleLayer->getProperty( Property::Abs, Side::Back );
+  double Ab = doubleLayer.getProperty( Property::Abs, Side::Back );
   EXPECT_NEAR( 0.205797665, Ab, 1e-6 );
 
 }
@@ -64,24 +64,24 @@ TEST_F( TestDoubleLayerSingleComponent, TestPropertiesBackSide ) {
 TEST_F( TestDoubleLayerSingleComponent, TestPropertiesFrontSide ) {
   SCOPED_TRACE( "Begin Test: Double pane equivalent layer properties (additonal layer on front side)." );
   
-  shared_ptr< CEquivalentLayerSingleComponent > doubleLayer = getDoubleFront();
+  CEquivalentLayerSingleComponent doubleLayer = *getDoubleFront();
 
-  double Tf = doubleLayer->getProperty( Property::T, Side::Front );
+  double Tf = doubleLayer.getProperty( Property::T, Side::Front );
   EXPECT_NEAR( 0.323130958, Tf, 1e-6 );
 
-  double Rf = doubleLayer->getProperty( Property::R, Side::Front );
+  double Rf = doubleLayer.getProperty( Property::R, Side::Front );
   EXPECT_NEAR( 0.518986453, Rf, 1e-6 );
 
-  double Af = doubleLayer->getProperty( Property::Abs, Side::Front );
+  double Af = doubleLayer.getProperty( Property::Abs, Side::Front );
   EXPECT_NEAR( 0.157882589, Af, 1e-6 );
 
-  double Tb = doubleLayer->getProperty( Property::T, Side::Back );
+  double Tb = doubleLayer.getProperty( Property::T, Side::Back );
   EXPECT_NEAR( 0.393376819, Tb, 1e-6 );
 
-  double Rb = doubleLayer->getProperty( Property::R, Side::Back );
+  double Rb = doubleLayer.getProperty( Property::R, Side::Back );
   EXPECT_NEAR( 0.364024084, Rb, 1e-6 );
 
-  double Ab = doubleLayer->getProperty( Property::Abs, Side::Back );
+  double Ab = doubleLayer.getProperty( Property::Abs, Side::Back );
   EXPECT_NEAR( 0.242599097, Ab, 1e-6 );
 
 }

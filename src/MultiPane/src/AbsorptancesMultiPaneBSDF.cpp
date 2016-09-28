@@ -281,7 +281,7 @@ namespace MultiPane {
           
         }
     
-        shared_ptr< CSeries > absorbedIrradiance = curSpectralProperties->mMult( m_SolarRadiation );
+        shared_ptr< CSeries > absorbedIrradiance = curSpectralProperties->mMult( *m_SolarRadiation );
         shared_ptr< CSeries > integratedAbsorbed = absorbedIrradiance->integrate( IntegrationType::Trapezoidal );
         double value = integratedAbsorbed->sum( minLambda, maxLambda );
         value = value / totalSolar;

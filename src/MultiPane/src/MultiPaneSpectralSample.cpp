@@ -63,7 +63,7 @@ namespace MultiPane {
     if( m_WavelengthSet != WavelengthSet::Data ) {
       aAbs = aAbs->interpolate( *m_Wavelengths );
     }
-    aAbs = aAbs->mMult( m_IncomingSource );
+    aAbs = aAbs->mMult( *m_IncomingSource );
     aAbs = aAbs->integrate( m_IntegrationType );
     m_AbsorbedLayersSource.push_back( aAbs );
   }

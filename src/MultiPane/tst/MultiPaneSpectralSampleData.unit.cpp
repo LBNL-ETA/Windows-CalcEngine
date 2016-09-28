@@ -65,11 +65,10 @@ public:
 
 };
 
-TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
-{
+TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults ) {
   SCOPED_TRACE( "Begin Test: Test simple double pane calculations (T, Rf, Rb and equivalent absorptances)." );
   
-  shared_ptr< CMultiPaneSampleData > multiPane = getMultiPane();
+  CMultiPaneSampleData multiPane = *getMultiPane();
 
   vector< double > correctT;
   correctT.push_back( 0.013877236 );
@@ -88,21 +87,13 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
   correctT.push_back( 0.484681565 );
   correctT.push_back( 0.504161785 );
 
-  vector< double > calculatedResults;
+  CSeries transmittances = *multiPane.properties( SampleData::T );
 
-  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
-  shared_ptr< CSeries > transmittances = multiPane->properties( SampleData::T );
-  for( it = transmittances->begin(); it != transmittances->end(); ++it ) {
-    calculatedResults.push_back( (*it)->value() );
+  EXPECT_EQ( transmittances.size(), correctT.size() );
+
+  for( size_t i = 0; i < transmittances.size(); ++i ) {
+    EXPECT_NEAR( correctT[ i ], transmittances[ i ]->value(), 1e-6 );
   }
-
-  EXPECT_EQ( calculatedResults.size(), correctT.size() );
-
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctT[ i ], calculatedResults[ i ], 1e-6 );
-  }
-
-  calculatedResults.clear();
   
   vector< double > correctRf;
   correctRf.push_back( 0.056334485 );
@@ -121,18 +112,13 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
   correctRf.push_back( 0.280581895 );
   correctRf.push_back( 0.292024544 );
   
-  shared_ptr< CSeries > Rf = multiPane->properties( SampleData::Rf );
-  for( it = Rf->begin(); it != Rf->end(); ++it ) {
-    calculatedResults.push_back( (*it)->value() );
+  CSeries Rf = *multiPane.properties( SampleData::Rf );
+  
+  EXPECT_EQ( Rf.size(), correctRf.size() );
+  
+  for( size_t i = 0; i < Rf.size(); ++i ) {
+    EXPECT_NEAR( correctRf[ i ], Rf[ i ]->value(), 1e-6 );
   }
-  
-  EXPECT_EQ( calculatedResults.size(), correctRf.size() );
-  
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctRf[ i ], calculatedResults[ i ], 1e-6 );
-  }
-  
-  calculatedResults.clear();
   
   vector< double > correctRb;
   correctRb.push_back( 0.053855387 );
@@ -151,18 +137,13 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
   correctRb.push_back( 0.297477857 );
   correctRb.push_back( 0.299026161 );
   
-  shared_ptr< CSeries > Rb = multiPane->properties( SampleData::Rb );
-  for( it = Rb->begin(); it != Rb->end(); ++it ) {
-    calculatedResults.push_back( (*it)->value() );
-  }
+  CSeries Rb = *multiPane.properties( SampleData::Rb );
   
-  EXPECT_EQ( calculatedResults.size(), correctRb.size() );
+  EXPECT_EQ( Rb.size(), correctRb.size() );
   
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctRb[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < Rb.size(); ++i ) {
+    EXPECT_NEAR( correctRb[ i ], Rb[ i ]->value(), 1e-6 );
   }
-
-  calculatedResults.clear();
   
   vector< double > correctAbs;
   correctAbs.push_back( 0.929788279 );
@@ -181,25 +162,21 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneResults )
   correctAbs.push_back( 0.234736540 );
   correctAbs.push_back( 0.203813671 );
   
-  shared_ptr< CSeries > Abs = multiPane->properties( SampleData::AbsF );
-  for( it = Abs->begin(); it != Abs->end(); ++it ) {
-    calculatedResults.push_back( (*it)->value() );
-  }
+  CSeries Abs = *multiPane.properties( SampleData::AbsF );
   
-  EXPECT_EQ( calculatedResults.size(), correctAbs.size() );
+  EXPECT_EQ( Abs.size(), correctAbs.size() );
   
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctAbs[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < Abs.size(); ++i ) {
+    EXPECT_NEAR( correctAbs[ i ], Abs[ i ]->value(), 1e-6 );
   }
 
 
 }
 
-TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneAbsorptances )
-{
+TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneAbsorptances ) {
   SCOPED_TRACE( "Begin Test: Test layer absroptances." );
   
-  shared_ptr< CMultiPaneSampleData > multiPane = getMultiPane();
+  CMultiPaneSampleData multiPane = *getMultiPane();
 
   vector< double > correctAbs;
   correctAbs.push_back( 0.860835761 );
@@ -218,18 +195,12 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneAbsorptances )
   correctAbs.push_back( 0.207375484 );
   correctAbs.push_back( 0.179613906 );
 
-  vector< double > calculatedResults;
+  CSeries abs = *multiPane.getLayerAbsorptances( 1 );
+  
+  EXPECT_EQ( abs.size(), correctAbs.size() );
 
-  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
-  shared_ptr< CSeries > abs = multiPane->getLayerAbsorptances( 1 );
-  for( it = abs->begin(); it != abs->end(); ++it ) {
-    calculatedResults.push_back( (*it)->value() );
-  }
-
-  EXPECT_EQ( calculatedResults.size(), correctAbs.size() );
-
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctAbs[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < abs.size(); ++i ) {
+    EXPECT_NEAR( correctAbs[ i ], abs[ i ]->value(), 1e-6 );
   }
 
   correctAbs.clear();
@@ -249,16 +220,11 @@ TEST_F( TestMultiPaneMeasuredSampleData, TestDoublePaneAbsorptances )
   correctAbs.push_back( 0.027361056 );
   correctAbs.push_back( 0.024199766 );
 
-  calculatedResults.clear();
+  abs = *multiPane.getLayerAbsorptances( 2 );
 
-  abs = multiPane->getLayerAbsorptances( 2 );
-  for( it = abs->begin(); it != abs->end(); ++it ) {
-    calculatedResults.push_back( (*it)->value() );
-  }
+  EXPECT_EQ( abs.size(), correctAbs.size() );
 
-  EXPECT_EQ( calculatedResults.size(), correctAbs.size() );
-
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctAbs[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < abs.size(); ++i ) {
+    EXPECT_NEAR( correctAbs[ i ], abs[ i ]->value(), 1e-6 );
   }
 }

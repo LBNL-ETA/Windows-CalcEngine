@@ -121,21 +121,21 @@ TEST_F( TestMultiPaneSample, TestDoublePaneProperties ) {
   double lowLambda = 0.5;
   double highLambda = 0.7;
   
-  shared_ptr< CMultiPaneSpectralSample > multiPane = getMultiPane();
+  CMultiPaneSpectralSample multiPane = *getMultiPane();
 
-  double transmittance = multiPane->getProperty( lowLambda, highLambda, Property::T, Side::Front );
+  double transmittance = multiPane.getProperty( lowLambda, highLambda, Property::T, Side::Front );
 
   EXPECT_NEAR( 0.61554250346372419, transmittance, 1e-6 );
 
-  double frontReflectance = multiPane->getProperty( lowLambda, highLambda, Property::R, Side::Front );
+  double frontReflectance = multiPane.getProperty( lowLambda, highLambda, Property::R, Side::Front );
 
   EXPECT_NEAR( 0.23788439621681498, frontReflectance, 1e-6 );
 
-  double backReflectance = multiPane->getProperty( lowLambda, highLambda, Property::R, Side::Back );
+  double backReflectance = multiPane.getProperty( lowLambda, highLambda, Property::R, Side::Back );
 
   EXPECT_NEAR( 0.18584805843370852, backReflectance, 1e-6 );
 
-  double totalAbsorptance = multiPane->getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
+  double totalAbsorptance = multiPane.getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
 
   EXPECT_NEAR( 0.14657310031946091, totalAbsorptance, 1e-6 );
 
@@ -147,12 +147,12 @@ TEST_F( TestMultiPaneSample, TestDoublePaneLayerAbsorptances ) {
   double lowLambda = 0.5;
   double highLambda = 0.7;
   
-  shared_ptr< CMultiPaneSpectralSample > multiPane = getMultiPane();
+  CMultiPaneSpectralSample multiPane = *getMultiPane();
 
-  double abs1 = multiPane->getLayerAbsorptance( lowLambda, highLambda, 1 );
+  double abs1 = multiPane.getLayerAbsorptance( lowLambda, highLambda, 1 );
   EXPECT_NEAR( 0.106356, abs1, 1e-6 );
 
-  double abs2 = multiPane->getLayerAbsorptance( lowLambda, highLambda, 2 );
+  double abs2 = multiPane.getLayerAbsorptance( lowLambda, highLambda, 2 );
   EXPECT_NEAR( 0.040217, abs2, 1e-6 );
 
 }

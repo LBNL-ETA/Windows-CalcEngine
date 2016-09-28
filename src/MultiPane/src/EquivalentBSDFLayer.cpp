@@ -273,7 +273,7 @@ namespace MultiPane {
     for( size_t j = 0; j < matrixSize; ++j ) {
       for( size_t k = 0; k < numberOfLayers; ++k ) {
         for(Side t_Side : EnumSide()) {
-          aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->mMult( interpolatedSolar );
+          aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->mMult( *interpolatedSolar );
           aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
           ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = aTotalA.at( t_Side )[ k ][ j ]->sum( minLambda, maxLambda );
           ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] / incomingSolar;
@@ -284,13 +284,13 @@ namespace MultiPane {
         // Transmittance
         for(Side t_Side : EnumSide()) {
           // Transmittance
-          aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->mMult( interpolatedSolar );
+          aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->mMult( *interpolatedSolar );
           aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
           ( *aTau.at( t_Side ) )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
           ( *aTau.at( t_Side ) )[ j ][ k ] = ( *aTau.at( t_Side ) )[ j ][ k ] / incomingSolar;
 
           // Reflectance
-          aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->mMult( interpolatedSolar );
+          aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->mMult( *interpolatedSolar );
           aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
           ( *aRho.at( t_Side ) )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
           ( *aRho.at( t_Side ) )[ j ][ k ] = ( *aRho.at( t_Side ) )[ j ][ k ] / incomingSolar;

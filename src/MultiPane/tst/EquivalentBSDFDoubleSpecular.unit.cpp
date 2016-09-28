@@ -318,8 +318,8 @@ TEST_F( TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF ) {
   shared_ptr< CEquivalentBSDFLayerSingleBand > aLayer = getLayer();
 
   // Transmittance Front side
-  shared_ptr< CSquareMatrix > Tf = aLayer->Tau( Side::Front );
-  size_t matrixSize = Tf->getSize();
+  CSquareMatrix Tf = *aLayer->Tau( Side::Front );
+  size_t matrixSize = Tf.getSize();
 
   // Test matrix
   size_t size = 7;
@@ -337,12 +337,12 @@ TEST_F( TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF ) {
 
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Tf )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Tf[ i ][ j ], 1e-6 );
     }
   }
 
   // Transmittance Back side
-  shared_ptr< CSquareMatrix > Tb = aLayer->Tau( Side::Back );
+  CSquareMatrix Tb = *aLayer->Tau( Side::Back );
 
   EXPECT_EQ( size, matrixSize );
 
@@ -356,13 +356,13 @@ TEST_F( TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF ) {
 
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Tb )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Tb[ i ][ j ], 1e-6 );
     }
   }
   
   // Reflectance Front side
-  shared_ptr< CSquareMatrix > Rf = aLayer->Rho( Side::Front );
-  matrixSize = Rf->getSize();
+  CSquareMatrix Rf = *aLayer->Rho( Side::Front );
+  matrixSize = Rf.getSize();
   
   EXPECT_EQ( size, matrixSize );
   
@@ -376,13 +376,13 @@ TEST_F( TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF ) {
   
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Rf )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Rf[ i ][ j ], 1e-6 );
     }
   }
 
   // Reflectance Back side
-  shared_ptr< CSquareMatrix > Rb = aLayer->Rho( Side::Back );
-  matrixSize = Rb->getSize();
+  CSquareMatrix Rb = *aLayer->Rho( Side::Back );
+  matrixSize = Rb.getSize();
   
   EXPECT_EQ( size, matrixSize );
   
@@ -396,36 +396,36 @@ TEST_F( TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF ) {
   
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *Rb )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], Rb[ i ][ j ], 1e-6 );
     }
   }
 
-  shared_ptr< vector< double > > A = aLayer->getLayerAbsorptances( 1, Side::Front );
+  vector< double > A = *aLayer->getLayerAbsorptances( 1, Side::Front );
   vector< double > correctAbs = { 0.09710127, 0.09842101, 0.10243759, 0.10939515, 0.12006037, 0.13316094, 0.10745388 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 1, Side::Back );
+  A = *aLayer->getLayerAbsorptances( 1, Side::Back );
   correctAbs = { 0.07651907, 0.07744642, 0.08001281, 0.0831037, 0.08263442, 0.06695159, 0.02979634 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 2, Side::Front );
+  A = *aLayer->getLayerAbsorptances( 2, Side::Front );
   correctAbs = { 0.07661983, 0.07754706, 0.08011342, 0.08320488, 0.08273374, 0.0670302, 0.02982354 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
-  A = aLayer->getLayerAbsorptances( 2, Side::Back );
+  A = *aLayer->getLayerAbsorptances( 2, Side::Back );
   correctAbs = { 0.09699785, 0.09831765, 0.10233405, 0.1092904,  0.11995538, 0.13306917, 0.10740026 };
 
   for( size_t i = 0; i < size; i++ ) {
-    EXPECT_NEAR( correctAbs[ i ], ( *A )[ i ], 1e-6 );
+    EXPECT_NEAR( correctAbs[ i ], A[ i ], 1e-6 );
   }
 
 }

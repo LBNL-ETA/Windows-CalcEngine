@@ -224,7 +224,7 @@ namespace SpectralAveraging {
       m_IncomingSource = m_SourceData->interpolate( *m_Wavelengths );
 
       if( m_DetectorData != nullptr ) {
-        shared_ptr< CSeries > interpolatedDetector = m_DetectorData->interpolate( *m_Wavelengths );
+        CSeries& interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
         m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
       }
 
@@ -329,11 +329,11 @@ namespace SpectralAveraging {
     assert( m_IncomingSource != nullptr );
 
     // Calculation of energy balances
-    m_TransmittedSource = m_Transmittance->mMult( m_IncomingSource );
-    m_ReflectedFrontSource = m_RefFront->mMult( m_IncomingSource );
-    m_ReflectedBackSource = m_RefBack->mMult( m_IncomingSource );
-    m_AbsorbedFrontSource = m_AbsFront->mMult( m_IncomingSource );
-    m_AbsorbedBackSource = m_AbsBack->mMult( m_IncomingSource );
+    m_TransmittedSource = m_Transmittance->mMult( *m_IncomingSource );
+    m_ReflectedFrontSource = m_RefFront->mMult( *m_IncomingSource );
+    m_ReflectedBackSource = m_RefBack->mMult( *m_IncomingSource );
+    m_AbsorbedFrontSource = m_AbsFront->mMult( *m_IncomingSource );
+    m_AbsorbedBackSource = m_AbsBack->mMult( *m_IncomingSource );
   }
 
 }

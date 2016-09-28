@@ -341,12 +341,12 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
   
-  shared_ptr< CEquivalentBSDFLayer > aLayer = getLayer();
+  CEquivalentBSDFLayer aLayer = *getLayer();
 
-  shared_ptr< CSquareMatrix > aT = aLayer->Tau( minLambda, maxLambda, Side::Front );
+  CSquareMatrix aT = *aLayer.Tau( minLambda, maxLambda, Side::Front );
 
   // Front transmittance matrix
-  size_t size = aT->getSize();
+  size_t size = aT.getSize();
 
   vector< double > correctResults;
   correctResults.push_back( 0.680638707956936480 );
@@ -391,21 +391,15 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.020105416912167356 );
   correctResults.push_back( 0.021744088022030279 );
 
-  vector< double > calculatedResults;
+  EXPECT_EQ( correctResults.size(), aT.getSize() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aT )[ i ][ i ] );
-  }
-
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aT[ i ][ i ], 1e-6 );
   }
 
   // Back Reflectance matrix
-  shared_ptr< CSquareMatrix > aRb = aLayer->Rho( minLambda, maxLambda, Side::Back );
+  CSquareMatrix aRb = *aLayer.Rho( minLambda, maxLambda, Side::Back );
   
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.145009123713137210 );
   correctResults.push_back( 0.145263852805402970 );
@@ -449,20 +443,15 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.112105656453928950 );
   correctResults.push_back( 0.100137049090846430 );
   
+  EXPECT_EQ( correctResults.size(), aRb.getSize() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aRb )[ i ][ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
   }
 
   // Front absorptance layer 1
-  shared_ptr< vector< double > > aAbsF = aLayer->Abs( minLambda, maxLambda, Side::Front, 1 );
+  vector< double > aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 1 );
 
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.12977679309761683 );
   correctResults.push_back( 0.13143416433711685 );
@@ -506,20 +495,15 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.14102825198461047 );
   correctResults.push_back( 0.14023211620646203 );
   
+  EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsF )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
   }
 
   // Front absorptance layer 2
-  aAbsF = aLayer->Abs( minLambda, maxLambda, Side::Front, 2 );
+  aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 2 );
 
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.256302640020746990 );
   correctResults.push_back( 0.255708596024271150 );
@@ -563,20 +547,15 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.141586444237114920 );
   correctResults.push_back( 0.143719192294422230 );
   
+  EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsF )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
   }
 
   // Back absorptance layer 1
-  shared_ptr< vector< double > > aAbsB = aLayer->Abs( minLambda, maxLambda, Side::Back, 1 );
+  vector< double > aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 1 );
   
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.026680060589392058 );
   correctResults.push_back( 0.026782633067008239 );
@@ -620,20 +599,15 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.034435221221298232 );
   correctResults.push_back( 0.040141600509065060 );
   
+  EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsB )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
   }
 
   // Back absorptance layer 2
-  aAbsB = aLayer->Abs( minLambda, maxLambda, Side::Back, 2 );
+  aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 2 );
   
   correctResults.clear();
-  calculatedResults.clear();
   
   correctResults.push_back( 0.299730715178883670 );
   correctResults.push_back( 0.299732987030252310 );
@@ -677,13 +651,9 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   correctResults.push_back( 0.359123985748703520 );
   correctResults.push_back( 0.350476732924345500 );
   
+  EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aAbsB )[ i ] );
-  }
-  
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
   }
 
 }

@@ -31,29 +31,29 @@ protected:
   aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
 
   CBSDFDirections aDirections = CBSDFDirections( aDefinitions, BSDFHemisphere::Incoming );
-  shared_ptr< CSquareMatrix > aLambdas = aDirections.lambdaMatrix();
+  CSquareMatrix aLambdas = *aDirections.lambdaMatrix();
 
   size_t size = 7;
 
-  shared_ptr< CSquareMatrix > Rb = make_shared< CSquareMatrix >( size );
-  ( *Rb )[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
-  ( *Rb )[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
-  ( *Rb )[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
-  ( *Rb )[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
-  ( *Rb )[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
-  ( *Rb )[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
-  ( *Rb )[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
+  CSquareMatrix Rb = CSquareMatrix( size );
+  Rb[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
+  Rb[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
+  Rb[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
+  Rb[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
+  Rb[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
+  Rb[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
+  Rb[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
 
-  shared_ptr< CSquareMatrix > Rf = make_shared< CSquareMatrix >( size );
-  ( *Rf )[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
-  ( *Rf )[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
-  ( *Rf )[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
-  ( *Rf )[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
-  ( *Rf )[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
-  ( *Rf )[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
-  ( *Rf )[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
+  CSquareMatrix Rf = CSquareMatrix( size );
+  Rf[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
+  Rf[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
+  Rf[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
+  Rf[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
+  Rf[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
+  Rf[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
+  Rf[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
 
-  m_InterReflectance = make_shared< CInterReflectance >( *aLambdas, *Rb, *Rf );
+  m_InterReflectance = make_shared< CInterReflectance >( aLambdas, Rb, Rf );
     
   }
 
@@ -65,11 +65,11 @@ public:
 TEST_F( TestInterReflectanceBSDF, TestBSDFInterreflectance ) {
   SCOPED_TRACE( "Begin Test: Simple BSDF interreflectance." );
   
-  shared_ptr< CInterReflectance > interRefl = getInterReflectance();
+  CInterReflectance interRefl = *getInterReflectance();
 
-  shared_ptr< CSquareMatrix > results = interRefl->value();
+  CSquareMatrix results = *interRefl.value();
 
-  size_t matrixSize = results->getSize();
+  size_t matrixSize = results.getSize();
 
   // Test matrix
   size_t size = 7;
@@ -87,7 +87,7 @@ TEST_F( TestInterReflectanceBSDF, TestBSDFInterreflectance ) {
 
   for( size_t i = 0; i < size; ++i ) {
     for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], ( *results )[ i ][ j ], 1e-6 );
+      EXPECT_NEAR( correctResults[ i ][ j ], results[ i ][ j ], 1e-6 );
     }
   }
 

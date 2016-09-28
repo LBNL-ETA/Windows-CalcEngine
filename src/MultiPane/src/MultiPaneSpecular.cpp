@@ -61,13 +61,13 @@ namespace MultiPane {
   double CMultiPaneSpecular::getProperty( const Side t_Side, const Property t_Property, const double t_Angle,
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
 
-    shared_ptr< CEquivalentLayerSingleComponentMWAngle > aAngularProperties = getAngular( t_Angle );
+    CEquivalentLayerSingleComponentMWAngle& aAngularProperties = *getAngular( t_Angle );
 
-    shared_ptr< CSeries > aProperties = aAngularProperties->getProperties( t_Side, t_Property );
+    CSeries& aProperties = *aAngularProperties.getProperties( t_Side, t_Property );
 
-    aProperties = aProperties->mMult( m_SolarRadiation )->integrate( t_IntegrationType );
+    aProperties = *aProperties.mMult( *m_SolarRadiation )->integrate( t_IntegrationType );
 
-    double totalProperty = aProperties->sum( minLambda, maxLambda );
+    double totalProperty = aProperties.sum( minLambda, maxLambda );
     double totalSolar = m_SolarRadiation->integrate( t_IntegrationType )->sum( minLambda, maxLambda );
 
     assert( totalSolar > 0 );
@@ -91,12 +91,12 @@ namespace MultiPane {
 
   double CMultiPaneSpecular::Abs( size_t const Index, const double t_Angle, 
     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
-    shared_ptr< CEquivalentLayerSingleComponentMWAngle > aAngularProperties = getAngular( t_Angle );
-    shared_ptr< CSeries > aProperties = aAngularProperties->Abs( Index - 1 );
+    CEquivalentLayerSingleComponentMWAngle& aAngularProperties = *getAngular( t_Angle );
+    CSeries& aProperties = *aAngularProperties.Abs( Index - 1 );
 
-    aProperties = aProperties->mMult( m_SolarRadiation )->integrate( t_IntegrationType );
+    aProperties = *aProperties.mMult( *m_SolarRadiation )->integrate( t_IntegrationType );
 
-    double totalProperty = aProperties->sum( minLambda, maxLambda );
+    double totalProperty = aProperties.sum( minLambda, maxLambda );
     double totalSolar = m_SolarRadiation->integrate( t_IntegrationType )->sum( minLambda, maxLambda );
 
     assert( totalSolar > 0 );
