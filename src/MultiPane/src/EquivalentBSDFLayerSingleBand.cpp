@@ -210,17 +210,17 @@ namespace MultiPane {
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::absTerm1( const vector< double >& t_Alpha,
     const CSquareMatrix& t_InterRefl, const CSquareMatrix& t_T ) {
-    shared_ptr< vector< double > >& part1 = t_InterRefl.multVxM( t_Alpha );
-    CSquareMatrix& part2 = *m_Lambda->mult( t_T );
+    shared_ptr< vector< double > > part1 = t_InterRefl.multVxM( t_Alpha );
+    CSquareMatrix part2 = *m_Lambda->mult( t_T );
     part1 = part2.multVxM( *part1 );
     return part1;
   }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::absTerm2( const vector< double >& t_Alpha,
     const CSquareMatrix& t_InterRefl, const CSquareMatrix& t_R, const CSquareMatrix& t_T ) {
-    shared_ptr< vector< double > >& part1 = t_InterRefl.multVxM( t_Alpha );
-    CSquareMatrix& part2 = *m_Lambda->mult( t_R );
-    CSquareMatrix& part3 = *m_Lambda->mult( t_T );
+    shared_ptr< vector< double > > part1 = t_InterRefl.multVxM( t_Alpha );
+    CSquareMatrix part2 = *m_Lambda->mult( t_R );
+    CSquareMatrix part3 = *m_Lambda->mult( t_T );
     part1 = part2.multVxM( *part1 );
     part1 = part3.multVxM( *part1 );
     return part1;
