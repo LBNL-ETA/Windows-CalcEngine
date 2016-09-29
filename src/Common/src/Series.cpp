@@ -207,17 +207,16 @@ namespace FenestrationCommon {
     return newProperties;
   }
 
-  shared_ptr< CSeries > CSeries::mAdd( 
-    const shared_ptr< const CSeries >& t_Series ) const {
+  shared_ptr< CSeries > CSeries::mAdd( const CSeries& t_Series ) const {
      const double WAVELENGTHTOLERANCE = 1e-10;
 
     shared_ptr< CSeries > newProperties = make_shared< CSeries >();
-    size_t minSize = min( m_Series.size(), t_Series->m_Series.size() );
+    size_t minSize = min( m_Series.size(), t_Series.m_Series.size() );
 
     for( size_t i = 0; i < minSize; ++i ) {
-      double value = m_Series[i]->value() + t_Series->m_Series[i]->value();
+      double value = m_Series[i]->value() + t_Series.m_Series[i]->value();
       double wv = m_Series[i]->x();
-      double testWv = t_Series->m_Series[i]->x();
+      double testWv = t_Series.m_Series[i]->x();
 
       if( fabs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
         throw runtime_error("Wavelengths of two vectors are not the same. Cannot preform multiplication.");

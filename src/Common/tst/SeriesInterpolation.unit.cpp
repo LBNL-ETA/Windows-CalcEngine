@@ -40,11 +40,9 @@ public:
 TEST_F( TestSeriesInterpolation, TestInterpolation ) {
   SCOPED_TRACE( "Begin Test: Test interpolation over the range of data." );
   
-  shared_ptr< CSeries > aInterpolatedProperties = nullptr;
-  
-  shared_ptr< CSeries > aSpectralProperties = getProperty();
+  CSeries& aSpectralProperties = *getProperty();
 
-  vector< double > wavelengths;// = make_shared< vector< double > >();
+  vector< double > wavelengths;
   wavelengths.push_back( 0.400 );
   wavelengths.push_back( 0.405 );
   wavelengths.push_back( 0.410 );
@@ -65,11 +63,8 @@ TEST_F( TestSeriesInterpolation, TestInterpolation ) {
   wavelengths.push_back( 0.485 );
   wavelengths.push_back( 0.490 );
   wavelengths.push_back( 0.495 );
-  //wavelengths->push_back( 0.500 );
 
-
-
-  aInterpolatedProperties = aSpectralProperties->interpolate( wavelengths );
+  shared_ptr< CSeries > aInterpolatedProperties = aSpectralProperties.interpolate( wavelengths );
 
   vector< double > correctResults;
   correctResults.push_back( 556.000 );
@@ -92,19 +87,11 @@ TEST_F( TestSeriesInterpolation, TestInterpolation ) {
   correctResults.push_back( 1025.600 );
   correctResults.push_back( 1005.100 );
   correctResults.push_back( 1015.900 );
-  // correctResults.push_back( 1026.700 );
 
-  vector< double > calculatedResults;
-  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
-  for( it = aInterpolatedProperties->begin(); it != aInterpolatedProperties->end(); ++it )
-  {
-    calculatedResults.push_back( (*it)->value() );
-  }
+  EXPECT_EQ( aInterpolatedProperties->size(), correctResults.size() );
 
-  EXPECT_EQ( calculatedResults.size(), correctResults.size() );
-
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < aInterpolatedProperties->size(); ++i ) {
+    EXPECT_NEAR( correctResults[ i ], ( *aInterpolatedProperties )[ i ]->value(), 1e-6 );
   }
 
 }

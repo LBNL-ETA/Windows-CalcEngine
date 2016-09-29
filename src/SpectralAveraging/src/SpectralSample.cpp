@@ -224,7 +224,7 @@ namespace SpectralAveraging {
       m_IncomingSource = m_SourceData->interpolate( *m_Wavelengths );
 
       if( m_DetectorData != nullptr ) {
-        CSeries& interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
+        CSeries interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
         m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
       }
 

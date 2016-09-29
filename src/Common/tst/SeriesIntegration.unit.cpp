@@ -49,11 +49,9 @@ public:
 TEST_F( TestSeriesIntegration, TestRectangular ) {
   SCOPED_TRACE( "Begin Test: Test rectangular integration over the specturm of data." );
   
-  shared_ptr< CSeries > aIntegratedProperties = nullptr;
-  
-  shared_ptr< CSeries > aSpectralProperties = getProperty();
+  CSeries& aSpectralProperties = *getProperty();
 
-  aIntegratedProperties = aSpectralProperties->integrate( IntegrationType::Rectangular );
+  shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Rectangular );
 
   vector< double > correctResults;
   correctResults.push_back( 0.0027555 );
@@ -77,17 +75,10 @@ TEST_F( TestSeriesIntegration, TestRectangular ) {
   correctResults.push_back( 0.0027285 );
   correctResults.push_back( 0.0027125 );
 
-  vector< double > calculatedResults;
-  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
-  for( it = aIntegratedProperties->begin(); it != aIntegratedProperties->end(); ++it )
-  {
-    calculatedResults.push_back( (*it)->value() );
-  }
+  EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
 
-  EXPECT_EQ( calculatedResults.size(), correctResults.size() );
-
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < aIntegratedProperties->size(); ++i ) {
+    EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ]->value(), 1e-6 );
   }
 
 }
@@ -95,11 +86,9 @@ TEST_F( TestSeriesIntegration, TestRectangular ) {
 TEST_F( TestSeriesIntegration, TestTrapezoidal ) {
   SCOPED_TRACE( "Begin Test: Test trapezoidal integration over the specturm of data." );
   
-  shared_ptr< CSeries > aIntegratedProperties = nullptr;
-  
-  shared_ptr< CSeries > aSpectralProperties = getProperty();
+  CSeries& aSpectralProperties = *getProperty();
 
-  aIntegratedProperties = aSpectralProperties->integrate( IntegrationType::Trapezoidal );
+  shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Trapezoidal );
 
   vector< double > correctResults;
   correctResults.push_back( 0.00275750 );
@@ -123,17 +112,10 @@ TEST_F( TestSeriesIntegration, TestTrapezoidal ) {
   correctResults.push_back( 0.00272050 );
   correctResults.push_back( 0.00271500 );
 
-  vector< double > calculatedResults;
-  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
-  for( it = aIntegratedProperties->begin(); it != aIntegratedProperties->end(); ++it )
-  {
-    calculatedResults.push_back( (*it)->value() );
-  }
+  EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
 
-  EXPECT_EQ( calculatedResults.size(), correctResults.size() );
-
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < aIntegratedProperties->size(); ++i ) {
+    EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ]->value(), 1e-6 );
   }
 
 }

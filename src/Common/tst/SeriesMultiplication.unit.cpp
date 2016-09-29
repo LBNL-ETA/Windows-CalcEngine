@@ -66,7 +66,7 @@ TEST_F( TestSeriesMultiplication, TestMultiplication )
 {
   SCOPED_TRACE( "Begin Test: Test multiplication over the range of data." );
   
-  shared_ptr< CSeries > aSpectralProperties = getProperty();
+  CSeries& aSpectralProperties = *getProperty();
 
   vector< double > correctResults;
   correctResults.push_back( 711.29776 );
@@ -84,16 +84,10 @@ TEST_F( TestSeriesMultiplication, TestMultiplication )
   correctResults.push_back( 557.79264 );
   correctResults.push_back( 624.59544 );
 
-  vector< double > calculatedResults;
-  vector< shared_ptr < CSeriesPoint > >::const_iterator it;
-  for( it = aSpectralProperties->begin(); it != aSpectralProperties->end(); ++it ) {
-    calculatedResults.push_back( (*it)->value() );
-  }
+  EXPECT_EQ( aSpectralProperties.size(), correctResults.size() );
 
-  EXPECT_EQ( calculatedResults.size(), correctResults.size() );
-
-  for( size_t i = 0; i < calculatedResults.size(); ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-6 );
+  for( size_t i = 0; i < aSpectralProperties.size(); ++i ) {
+    EXPECT_NEAR( correctResults[ i ], aSpectralProperties[ i ]->value(), 1e-6 );
   }
 
 }

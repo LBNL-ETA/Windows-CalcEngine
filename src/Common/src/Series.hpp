@@ -61,8 +61,7 @@ namespace FenestrationCommon {
     // Addition of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.
     // If two spectral properites do not have same wavelength range, then interpolation function should be called.
-    std::shared_ptr< CSeries > 
-      mAdd( const std::shared_ptr< const CSeries >& t_Series ) const;
+    std::shared_ptr< CSeries > mAdd( const CSeries& t_Series ) const;
     
     // Return wavelenght values for spectral properties.
     std::shared_ptr< std::vector< double > > getXArray() const;

@@ -28,9 +28,7 @@ TEST_F( TestSimpleRectangularIntegration, TestRectangular )
 {
   SCOPED_TRACE( "Begin Test: Test rectangular integrator" );
   
-  shared_ptr< IIntegratorStrategy > aIntegrator = nullptr;
-  
-  aIntegrator = getIntegrator();
+  shared_ptr< IIntegratorStrategy > aIntegrator = getIntegrator();
 
   double value = aIntegrator->integrate( 1, 2, 10, 11 );
 
