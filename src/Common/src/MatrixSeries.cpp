@@ -32,7 +32,7 @@ namespace FenestrationCommon {
 
   void CMatrixSeries::addProperties( const double t_Wavelength, CSquareMatrix& t_Matrix ) {
     for( size_t i = 0; i < m_Matrix.size(); ++i ) {
-      assert( m_Matrix.size() != t_Matrix.getSize() );
+      assert( m_Matrix.size() == t_Matrix.getSize() );
       for( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
         m_Matrix[ i ][ j ]->addProperty( t_Wavelength, t_Matrix[ i ][ j ] );
       }
