@@ -8,7 +8,6 @@
 #include <stdexcept>
 #include <thread>
 
-
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "BSDFLayer.hpp"
@@ -196,14 +195,12 @@ namespace MultiPane {
 
     shared_ptr< CSeries > interpolatedSolar = m_SolarRadiation->interpolate( *m_CombinedLayerWavelengths );
 
+    // Create matrix of series for multiwavelength calculations
     map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > > aTot;
     map< Side, shared_ptr< CMatrixSeries > > aTotalA;
 
     for(Side t_Side : EnumSide()) {
       aTotalA[ t_Side ] = make_shared< CMatrixSeries >( numberOfLayers, matrixSize );
-    }
-
-    for(Side t_Side : EnumSide()) {
       for( PropertySimple t_Property : EnumPropertySimple() ) {
         aTot[ make_pair( t_Side, t_Property ) ] = make_shared< CMatrixSeries >( matrixSize, matrixSize );
       }
@@ -211,31 +208,30 @@ namespace MultiPane {
 
     // Calculate total transmitted solar per matrix and perform integration over each wavelength
     size_t WLsize = m_CombinedLayerWavelengths->size();
-    // unsigned concurentThreadsSupported = thread::hardware_concurrency();
-    // 
-    // size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
-    // numOfThreads = 1;
-    // size_t step = WLsize / numOfThreads;
-    // vector< shared_ptr< thread > > aThreads = vector< shared_ptr< thread > >( numOfThreads );
-    // 
-    // size_t startNum = 0;
-    // size_t endNum = step;
-    // 
-    // for( size_t i = 0; i < numOfThreads; ++i ) {
-    //   if( i == numOfThreads - 1 ) {
-    //     endNum = WLsize;
-    //   }
-    //   aThreads[ i ] = make_shared< thread >( &CEquivalentBSDFLayer::calcWlProp, *this,
-    //     aTotalA, aTot, numberOfLayers, matrixSize, startNum, endNum );
-    //   startNum += step;
-    //   endNum += step;
-    // }
-    // 
-    // for( size_t i = 0; i < numOfThreads; ++i ) {
-    //   aThreads[ i ]->join();
-    // }
     
-    calcWlProp( aTotalA, aTot, numberOfLayers, matrixSize, 0, WLsize );
+    size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
+    size_t step = WLsize / numOfThreads;
+    vector< shared_ptr< thread > > aThreads = vector< shared_ptr< thread > >( numOfThreads );
+    
+    size_t startNum = 0;
+    size_t endNum = step;
+    
+    for( size_t i = 0; i < numOfThreads; ++i ) {
+      if( i == numOfThreads - 1 ) {
+        endNum = WLsize;
+      }
+      aThreads[ i ] = make_shared< thread >( &CEquivalentBSDFLayer::triggerLayerAbsCalculations, *this,
+        numberOfLayers, startNum, endNum );
+      startNum += step;
+      endNum += step;
+    }
+    
+    for( size_t i = 0; i < numOfThreads; ++i ) {
+      aThreads[ i ]->join();
+    }
+    
+    
+    calculateWavelengthProperties( aTotalA, aTot, numberOfLayers, matrixSize, 0, WLsize );
 
     for( Side t_Side : EnumSide() ) {
       aTotalA.at( t_Side )->mMult( *interpolatedSolar );
@@ -247,11 +243,9 @@ namespace MultiPane {
         aResults[ make_pair( t_Side, t_Proprerty ) ] =
           aTot.at( make_pair( t_Side, t_Proprerty ) )->getSquaredMatrixSums( minLambda, maxLambda, 1 / incomingSolar );
       }
-    }
 
-    // Update results matrices
-    for( Side t_Side : EnumSide() ) {
-      m_Results->setResultMatrices( aResults.at( make_pair( t_Side, PropertySimple::T ) ), 
+      // Update result matrices
+      m_Results->setResultMatrices( aResults.at( make_pair( t_Side, PropertySimple::T ) ),
         aResults.at( make_pair( t_Side, PropertySimple::R ) ), t_Side );
     }
 
@@ -264,29 +258,33 @@ namespace MultiPane {
 
   }
 
-  void CEquivalentBSDFLayer::calcWlProp(
+  void CEquivalentBSDFLayer::triggerLayerAbsCalculations( const size_t t_NumOfLayers, 
+    const size_t t_Start, const size_t t_End ) {
+    for( size_t i = t_Start; i < t_End; ++i ) {
+      CEquivalentBSDFLayerSingleBand& curLayer = *( *m_LayersWL )[ i ];
+      for( size_t k = 0; k < t_NumOfLayers; ++k ) {
+        curLayer.getLayerAbsorptances( k + 1, Side::Front );
+      }
+    }
+  }
+
+  void CEquivalentBSDFLayer::calculateWavelengthProperties(
     map< Side, shared_ptr< CMatrixSeries > > t_TotA, 
     map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > > t_Tot, 
     const size_t t_NumOfLayers, const size_t t_MatrixSize,
     const size_t t_Start, const size_t t_End ) {
     for( size_t i = t_Start; i < t_End; ++i ) {
-      // First need to select correct side
+      
       double curWL = ( *m_CombinedLayerWavelengths )[ i ];
       CEquivalentBSDFLayerSingleBand& curLayer = *( *m_LayersWL )[ i ];
 
-      for( size_t j = 0; j < t_MatrixSize; ++j ) {          
-        for( Side t_Side : EnumSide() ) {
-          for( size_t k = 0; k < t_NumOfLayers; ++k ) {
-            t_TotA.at( t_Side )->addProperty( k, j, curWL,
-              ( *curLayer.getLayerAbsorptances( k + 1, t_Side ) )[ j ] );
-          }
-          for( size_t k = 0; k < t_MatrixSize; ++k ) {
-            for( PropertySimple t_Property : EnumPropertySimple() ) {
-              shared_ptr< CSquareMatrix > curPropertyMatrix = curLayer.getProperty( t_Side, t_Property );
-              t_Tot.at( make_pair( t_Side, t_Property ) )->addProperty( j, k, curWL,
-                ( *curPropertyMatrix )[ j ][ k ] );
-            }
-          }
+      for( Side t_Side : EnumSide() ) {
+        for( size_t k = 0; k < t_NumOfLayers; ++k ) {
+          t_TotA.at( t_Side )->addProperties( k, curWL, *curLayer.getLayerAbsorptances( k + 1, t_Side ) );
+        }
+        for( PropertySimple t_Property : EnumPropertySimple() ) {
+          shared_ptr< CSquareMatrix > curPropertyMatrix = curLayer.getProperty( t_Side, t_Property );
+          t_Tot.at( make_pair( t_Side, t_Property ) )->addProperties( curWL, *curPropertyMatrix );
         }
       }
     }

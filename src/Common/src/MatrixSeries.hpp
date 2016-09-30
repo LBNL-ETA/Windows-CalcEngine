@@ -16,6 +16,9 @@ namespace FenestrationCommon {
 
     // add property at specific series position
     void addProperty( const size_t i, const size_t j, const double t_Wavelength, const double t_Value );
+    void addProperties( const size_t i, const double t_Wavelength, 
+      const std::vector< double >& t_Values );
+    void addProperties( const double t_Wavelength, CSquareMatrix& t_Matrix );
 
     // Multiply all series in matrix with provided one
     void mMult( const CSeries& t_Series );

@@ -83,9 +83,9 @@ namespace MultiPane {
       m_Abs.clear();
       size = Iminus.size();
       for( size_t i = 0; i < size - 1; ++i ) {
-        shared_ptr< CSeries > Iincoming = Iminus[ i ]->mSub( Iplus[ i ] );
-        shared_ptr< CSeries > Ioutgoing = Iminus[ i+1 ]->mSub( Iplus[ i+1 ] );
-        shared_ptr< CSeries > layerAbs = Iincoming->mSub( Ioutgoing );
+        shared_ptr< CSeries > Iincoming = Iminus[ i ]->mSub( *Iplus[ i ] );
+        shared_ptr< CSeries > Ioutgoing = Iminus[ i+1 ]->mSub( *Iplus[ i+1 ] );
+        shared_ptr< CSeries > layerAbs = Iincoming->mSub( *Ioutgoing );
         m_Abs.push_back( layerAbs );
       }
     }

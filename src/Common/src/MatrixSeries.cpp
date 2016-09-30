@@ -11,8 +11,9 @@ namespace FenestrationCommon {
   CMatrixSeries::CMatrixSeries( const size_t t_Size1, const size_t t_Size2 ) {
     m_Matrix = vector< vector< shared_ptr< CSeries > > >( t_Size1 );
     for( size_t i = 0; i < t_Size1; ++i ) {
+      m_Matrix[ i ].resize( t_Size2 );
       for( size_t j = 0; j < t_Size2; ++j ) {
-        m_Matrix[ i ].push_back( make_shared< CSeries >() );
+        m_Matrix[ i ][ j ] = make_shared< CSeries >();
       }
     }
   }
@@ -20,6 +21,22 @@ namespace FenestrationCommon {
   void CMatrixSeries::addProperty( const size_t i, const size_t j, 
     const double t_Wavelength, const double t_Value ) {
     m_Matrix[ i ][ j ]->addProperty( t_Wavelength, t_Value );
+  }
+
+  void CMatrixSeries::addProperties( const size_t i, const double t_Wavelength, 
+    const vector< double >& t_Values ) {
+    for( auto j = 0; j < t_Values.size(); ++j ) {
+      m_Matrix[ i ][ j ]->addProperty( t_Wavelength, t_Values[ j ] );
+    }
+  }
+
+  void CMatrixSeries::addProperties( const double t_Wavelength, CSquareMatrix& t_Matrix ) {
+    for( size_t i = 0; i < m_Matrix.size(); ++i ) {
+      assert( m_Matrix.size() != t_Matrix.getSize() );
+      for( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
+        m_Matrix[ i ][ j ]->addProperty( t_Wavelength, t_Matrix[ i ][ j ] );
+      }
+    }
   }
 
   void CMatrixSeries::mMult( const CSeries & t_Series ) {

@@ -90,8 +90,9 @@ namespace MultiPane {
   CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand( const shared_ptr< CBSDFResults >& t_Layer ) : 
     m_PropertiesCalculated( false ) {
     m_EquivalentLayer = make_shared< CBSDFResults >( t_Layer->getDirections() );
-    m_Af = make_shared< vector< shared_ptr< vector< double > > > >();
-    m_Ab = make_shared< vector< shared_ptr< vector< double > > > >();
+    for( Side aSide : EnumSide() ) {
+      m_A[ aSide ] = make_shared< vector< shared_ptr< vector< double > > > >();
+    }
     m_Layers.push_back( t_Layer );
     m_Lambda = t_Layer->lambdaMatrix();
   }
@@ -126,20 +127,7 @@ namespace MultiPane {
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::getLayerAbsorptances( const size_t Index, 
     Side t_Side ) {
     calcEquivalentProperties();
-    shared_ptr< vector< double > > Abs = nullptr;
-    switch( t_Side ) {
-    case Side::Front:
-      Abs = ( *m_Af )[ Index - 1 ];
-      break;
-    case Side::Back:
-      Abs = ( *m_Ab )[ Index - 1 ];
-      break;
-    default:
-      assert("Incorrect side selection.");
-      break;
-    }
-
-    return Abs;
+    return ( *m_A.at( t_Side ) )[ Index - 1 ];
   }
 
   size_t CEquivalentBSDFLayerSingleBand::getNumberOfLayers() const {
@@ -149,14 +137,17 @@ namespace MultiPane {
   void CEquivalentBSDFLayerSingleBand::addLayer( const std::shared_ptr< LayerOptics::CBSDFResults >& t_Layer ) {
     m_Layers.push_back( t_Layer );
     m_PropertiesCalculated = false;
-    m_Af->clear();
-    m_Ab->clear();
+    for( Side aSide : EnumSide() ) {
+      m_A.at( aSide )->clear();
+    }
   }
 
   void CEquivalentBSDFLayerSingleBand::calcEquivalentProperties() {
     if( m_PropertiesCalculated ) {
       return;
     }
+    // Absorptance calculations need to observe every layer in isolation. For that purpose
+    // code bellow will create m_Forward and m_Backward layers
     size_t size = m_Layers.size();
     m_EquivalentLayer = m_Layers[ 0 ];
     m_Forward.push_back( m_EquivalentLayer );
@@ -175,7 +166,6 @@ namespace MultiPane {
 
     size_t matrixSize = m_Lambda->getSize();
     shared_ptr< vector< double > > zeros = make_shared< vector< double > >( matrixSize );
-    // Check if need to fill with zeros
 
     shared_ptr< vector< double > > Ap1f = nullptr;
     shared_ptr< vector< double > > Ap2f = nullptr;
@@ -187,15 +177,13 @@ namespace MultiPane {
         Ap2f = zeros;
         Ap1b = m_Layers[ i ]->Abs( Side::Back );
       } else {
-        // shared_ptr< CBSDFResults > Layer1 = m_Backward[ i + 1 ];
-        // shared_ptr< CBSDFResults > Layer2 = m_Forward[ i ];
         CBSDFResults& Layer1 = *m_Backward[ i + 1 ];
         CBSDFResults& Layer2 = *m_Forward[ i ];
         CInterReflectance InterRefl2 = 
           CInterReflectance( *m_Lambda, *Layer1.Rho( Side::Front ), *Layer2.Rho( Side::Back ) );
         vector< double >& Ab = *m_Layers[ i ]->Abs( Side::Back );
-        Ap2f = absTerm2( Ab, *InterRefl2.value(), *Layer1.Rho( Side::Front ), *Layer2.Tau( Side::Front) );
         Ap1b = absTerm1( Ab, *InterRefl2.value(), *Layer1.Tau( Side::Back ) );
+        Ap2f = absTerm2( Ab, *InterRefl2.value(), *Layer1.Rho( Side::Front ), *Layer2.Tau( Side::Front) );        
       }
 
       if( i == 0 ) {
@@ -211,15 +199,18 @@ namespace MultiPane {
         Ap2b = absTerm2( Af, *InterRefl1.value(), *Layer1.Rho( Side::Back), *Layer2.Tau( Side::Back ) );
       }
 
-      shared_ptr< vector< double > > AfTotal = make_shared< vector< double > >();
-      shared_ptr< vector< double > > AbTotal = make_shared< vector< double > >();
+      map< Side, shared_ptr< vector< double > > > aTotal;
+      for( Side aSide : EnumSide() ) {
+        aTotal[ aSide ] = make_shared< vector< double > >();
+      }
       for( size_t j = 0; j < matrixSize; ++j ) {
-        AfTotal->push_back( ( *Ap1f )[ j ] + ( *Ap2f )[ j ] );
-        AbTotal->push_back( ( *Ap1b )[ j ] + ( *Ap2b )[ j ] );
+        aTotal.at( Side::Front )->push_back( ( *Ap1f )[ j ] + ( *Ap2f )[ j ] );
+        aTotal.at( Side::Back )->push_back( ( *Ap1b )[ j ] + ( *Ap2b )[ j ] );
       }
 
-      m_Af->push_back( AfTotal );
-      m_Ab->push_back( AbTotal );
+      for( Side aSide : EnumSide() ) {
+        m_A.at( aSide )->push_back( aTotal.at( aSide ) );
+      }
 
     }
     m_PropertiesCalculated = true;

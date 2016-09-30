@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 namespace FenestrationCommon {
 
@@ -19,6 +20,9 @@ namespace LayerOptics {
 }
 
 namespace MultiPane {
+
+  // Matrix will store absorptances for each layer at every direction
+  typedef std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > Abs_Matrix;
 
   // Class to handle interreflectance calculations
   class CInterReflectance {
@@ -102,8 +106,9 @@ namespace MultiPane {
     std::vector< std::shared_ptr< LayerOptics::CBSDFResults > > m_Forward;
     std::vector< std::shared_ptr< LayerOptics::CBSDFResults > > m_Backward;
   
-    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_Af;
-    std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > m_Ab;
+    // Abs_Matrix m_Af;
+    // Abs_Matrix m_Ab;
+    std::map< FenestrationCommon::Side, Abs_Matrix > m_A;
 
     bool m_PropertiesCalculated;
     

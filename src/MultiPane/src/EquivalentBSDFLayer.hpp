@@ -1,6 +1,10 @@
 #ifndef EQUIVALENTBSDFLAYERMULTIWL_H
 #define EQUIVALENTBSDFLAYERMULTIWL_H
 
+#ifdef MSVC
+#pragma warning(disable : 4503)
+#endif
+
 #include <memory>
 #include <vector>
 #include <map>
@@ -76,8 +80,10 @@ namespace MultiPane {
 
     void calculate( const double minLambda, const double maxLambda );
 
+    void triggerLayerAbsCalculations( const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End );
+
     // Wavelength layer per layer calculations
-    void calcWlProp( std::map< FenestrationCommon::Side, 
+    void calculateWavelengthProperties( std::map< FenestrationCommon::Side, 
       std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_TotA, 
       std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_Tot,
       const size_t t_NumOfLayers, const size_t t_MatrixSize,

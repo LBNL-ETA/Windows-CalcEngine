@@ -39,7 +39,7 @@ namespace FenestrationCommon {
   // class CSeries {
   public:
     CSeries();
-    void addProperty( double t_x, double t_Value );
+    void addProperty( const double t_x, const double t_Value );
     void insertToBeginning( double t_x, double t_Value );
 
     // Create wavelength array with identical values over entire wavelength spectrum
@@ -56,7 +56,7 @@ namespace FenestrationCommon {
     // Substraction of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.
     // If two spectral properites do not have same wavelength range, then interpolation function should be called.
-    std::shared_ptr< CSeries > mSub( const std::shared_ptr< const CSeries >& t_Series ) const;
+    std::shared_ptr< CSeries > mSub( const CSeries& t_Series ) const;
     
     // Addition of values in spectral properties that have same wavelength. Function will work only
     // if two spectral properties have identical wavelengths. Otherwise runtime error will be thrown.
