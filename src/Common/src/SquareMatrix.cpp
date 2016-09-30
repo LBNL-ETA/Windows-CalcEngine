@@ -84,7 +84,7 @@ namespace FenestrationCommon {
     }
 
     shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( m_Size );
-    
+
     for( size_t i = 0; i < m_Size; ++i ) {
       for( size_t j = 0; j < t_Matrix.m_Size; ++j ) {
         for( size_t k = 0; k < m_Size; ++k ) {
@@ -99,7 +99,8 @@ namespace FenestrationCommon {
 
   shared_ptr< vector< double > > CSquareMatrix::multMxV( const vector< double >& t_Vector ) const {
     if( m_Size != t_Vector.size() ) {
-      throw runtime_error("Matrix and vector does not have same number of rows and columns. It is not possible to perform multiplication.");
+      throw runtime_error("Matrix and vector does not have same number of rows and columns."
+        " It is not possible to perform multiplication.");
     }
 
     shared_ptr< vector< double > > aResult = make_shared< vector< double > >( m_Size );

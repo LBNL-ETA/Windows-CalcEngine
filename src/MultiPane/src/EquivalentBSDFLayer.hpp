@@ -10,8 +10,10 @@
 namespace FenestrationCommon {
 
   class CSquareMatrix;
+  class CMatrixSeries;
   class CSeries;
   enum class Side;
+  enum class PropertySimple;
 
 }
 
@@ -73,6 +75,13 @@ namespace MultiPane {
   private:
 
     void calculate( const double minLambda, const double maxLambda );
+
+    // Wavelength layer per layer calculations
+    void calcWlProp( std::map< FenestrationCommon::Side, 
+      std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_TotA, 
+      std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_Tot,
+      const size_t t_NumOfLayers, const size_t t_MatrixSize,
+      const size_t t_Start, const size_t t_End );
 
     void calcHemisphericalAbs( const FenestrationCommon::Side t_Side );
 

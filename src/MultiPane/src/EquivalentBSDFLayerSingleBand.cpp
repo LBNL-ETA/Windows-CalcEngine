@@ -96,14 +96,31 @@ namespace MultiPane {
     m_Lambda = t_Layer->lambdaMatrix();
   }
 
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Tau( Side t_Side ) {
+  shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Tau( const Side t_Side ) {
     calcEquivalentProperties();
     return m_EquivalentLayer->Tau( t_Side );
   }
 
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Rho( Side t_Side ) {
+  shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Rho( const Side t_Side ) {
     calcEquivalentProperties();
     return m_EquivalentLayer->Rho( t_Side );
+  }
+
+  shared_ptr< CSquareMatrix> CEquivalentBSDFLayerSingleBand::getProperty( const Side t_Side, const 
+    PropertySimple t_Property ) {
+    shared_ptr< CSquareMatrix > aMatrix = nullptr;
+    switch( t_Property ) {
+    case PropertySimple::T:
+      aMatrix = Tau( t_Side );
+      break;
+    case PropertySimple::R:
+      aMatrix = Rho( t_Side );
+      break;
+    default:
+      assert("Incorrect selection of layer property.");
+      break;
+    }
+    return aMatrix;
   }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::getLayerAbsorptances( const size_t Index, 

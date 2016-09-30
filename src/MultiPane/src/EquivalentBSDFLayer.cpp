@@ -6,6 +6,7 @@
 #include <numeric>
 #include <assert.h>
 #include <stdexcept>
+#include <thread>
 
 
 #include "EquivalentBSDFLayer.hpp"
@@ -16,6 +17,7 @@
 #include "IntegratorStrategy.hpp"
 #include "BSDFResults.hpp"
 #include "SquareMatrix.hpp"
+#include "MatrixSeries.hpp"
 #include "BSDFDirections.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -183,123 +185,74 @@ namespace MultiPane {
 
   void CEquivalentBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
     size_t matrixSize = m_Lambda->getSize();
-
-    map< Side, shared_ptr< CSquareMatrix > > aTau;
-    map< Side, shared_ptr< CSquareMatrix > > aRho;
-
-    aTau[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
-    aTau[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
-    aRho[ Side::Front ] = make_shared< CSquareMatrix >( matrixSize );
-    aRho[ Side::Back ] = make_shared< CSquareMatrix >( matrixSize );
-
     size_t numberOfLayers = ( *m_LayersWL )[ 0 ]->getNumberOfLayers();
 
-    m_Abs[ Side::Front ] = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
-    m_Abs[ Side::Back ] = make_shared< vector< shared_ptr< vector< double > > > >( numberOfLayers );
+    // Produce local results matrices for each side and property
+    map < pair< Side, PropertySimple >, shared_ptr< CSquareMatrix > > aResults;
 
-    for( size_t i = 0; i < numberOfLayers; ++i ) {
-      for(Side t_Side : EnumSide()) {
-        ( *m_Abs.at( t_Side ) )[ i ] = make_shared< vector< double > >( matrixSize );
-      }
-    }
-
+    // Getting total solar energy and solar series interpolated over common wavelengths
     shared_ptr< CSeries > iTotalSolar = m_SolarRadiation->integrate( IntegrationType::Trapezoidal );
     double incomingSolar = iTotalSolar->sum( minLambda, maxLambda );
 
     shared_ptr< CSeries > interpolatedSolar = m_SolarRadiation->interpolate( *m_CombinedLayerWavelengths );
 
-    size_t size = m_CombinedLayerWavelengths->size();
+    map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > > aTot;
+    map< Side, shared_ptr< CMatrixSeries > > aTotalA;
 
-    // Total matrices for every property
-    map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalT;
-    map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalR;
-
-    map< Side, vector< vector< shared_ptr< CSeries > > > > aTotalA;
     for(Side t_Side : EnumSide()) {
-      aTotalA[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( numberOfLayers );
-    }
-    for( size_t i = 0; i < numberOfLayers; ++i ) {
-      for(Side t_Side : EnumSide()) {
-        aTotalA.at( t_Side )[ i ].resize( matrixSize );
-      }
+      aTotalA[ t_Side ] = make_shared< CMatrixSeries >( numberOfLayers, matrixSize );
     }
 
     for(Side t_Side : EnumSide()) {
-      aTotalT[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( matrixSize );
-      aTotalR[ t_Side ] = vector< vector< shared_ptr< CSeries > > >( matrixSize );
-    }
-
-    for( size_t i = 0; i < matrixSize; ++i ) {
-      for(Side t_Side : EnumSide()) {
-        aTotalT.at( t_Side )[ i ].resize( matrixSize );
-        aTotalR.at( t_Side )[ i ].resize( matrixSize );
+      for( PropertySimple t_Property : EnumPropertySimple() ) {
+        aTot[ make_pair( t_Side, t_Property ) ] = make_shared< CMatrixSeries >( matrixSize, matrixSize );
       }
     }
 
-    // Calculate total transmitted solar per matrix and perform integration
-    for( size_t i = 0; i < size; ++i ) {
-      // First need to select correct side
-      double curWL = ( *m_CombinedLayerWavelengths )[ i ];
-      shared_ptr< CEquivalentBSDFLayerSingleBand > curLayer = ( *m_LayersWL )[ i ];
-
-      for( size_t j = 0; j < matrixSize; ++j ) {
-        for( size_t k = 0; k < numberOfLayers; ++k ) {
-          if( i == 0 ) {
-            for(Side t_Side : EnumSide()) {
-              aTotalA.at( t_Side )[ k ][ j ] = make_shared< CSeries >();
-            }
-          }
-          for(Side t_Side : EnumSide()) {
-            aTotalA.at( t_Side )[ k ][ j ]->addProperty( curWL, ( *curLayer->getLayerAbsorptances( k + 1, t_Side) )[ j ] );
-          }
-        }
-        
-        for( size_t k = 0; k < matrixSize; ++k ) {
-          if( i == 0 ) {
-            for(Side t_Side : EnumSide()) {
-              aTotalT.at( t_Side )[ j ][ k ] = make_shared< CSeries >();
-              aTotalR.at( t_Side )[ j ][ k ] = make_shared< CSeries >();
-            }
-          }
-          
-          for(Side t_Side : EnumSide()) {
-            aTotalT.at( t_Side )[ j ][ k ]->addProperty( curWL, ( *curLayer->Tau( t_Side ) )[ j ][ k ] );
-            aTotalR.at( t_Side )[ j ][ k ]->addProperty( curWL, ( *curLayer->Rho( t_Side ) )[ j ][ k ] );
-          }
-        }
-      }
-    }
-
-    for( size_t j = 0; j < matrixSize; ++j ) {
-      for( size_t k = 0; k < numberOfLayers; ++k ) {
-        for(Side t_Side : EnumSide()) {
-          aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->mMult( *interpolatedSolar );
-          aTotalA.at( t_Side )[ k ][ j ] = aTotalA.at( t_Side )[ k ][ j ]->integrate( IntegrationType::Trapezoidal );
-          ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = aTotalA.at( t_Side )[ k ][ j ]->sum( minLambda, maxLambda );
-          ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] = ( *( *m_Abs.at( t_Side ) )[ k ] )[ j ] / incomingSolar;
-        }
-      }
-
-      for( size_t k = 0; k < matrixSize; ++k ) {
-        // Transmittance
-        for(Side t_Side : EnumSide()) {
-          // Transmittance
-          aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->mMult( *interpolatedSolar );
-          aTotalT.at( t_Side )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-          ( *aTau.at( t_Side ) )[ j ][ k ] = aTotalT.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
-          ( *aTau.at( t_Side ) )[ j ][ k ] = ( *aTau.at( t_Side ) )[ j ][ k ] / incomingSolar;
-
-          // Reflectance
-          aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->mMult( *interpolatedSolar );
-          aTotalR.at( t_Side )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->integrate( IntegrationType::Trapezoidal );
-          ( *aRho.at( t_Side ) )[ j ][ k ] = aTotalR.at( t_Side )[ j ][ k ]->sum( minLambda, maxLambda );
-          ( *aRho.at( t_Side ) )[ j ][ k ] = ( *aRho.at( t_Side ) )[ j ][ k ] / incomingSolar;
-        }
-      }
-    }
+    // Calculate total transmitted solar per matrix and perform integration over each wavelength
+    size_t WLsize = m_CombinedLayerWavelengths->size();
+    // unsigned concurentThreadsSupported = thread::hardware_concurrency();
+    // 
+    // size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
+    // numOfThreads = 1;
+    // size_t step = WLsize / numOfThreads;
+    // vector< shared_ptr< thread > > aThreads = vector< shared_ptr< thread > >( numOfThreads );
+    // 
+    // size_t startNum = 0;
+    // size_t endNum = step;
+    // 
+    // for( size_t i = 0; i < numOfThreads; ++i ) {
+    //   if( i == numOfThreads - 1 ) {
+    //     endNum = WLsize;
+    //   }
+    //   aThreads[ i ] = make_shared< thread >( &CEquivalentBSDFLayer::calcWlProp, *this,
+    //     aTotalA, aTot, numberOfLayers, matrixSize, startNum, endNum );
+    //   startNum += step;
+    //   endNum += step;
+    // }
+    // 
+    // for( size_t i = 0; i < numOfThreads; ++i ) {
+    //   aThreads[ i ]->join();
+    // }
+    
+    calcWlProp( aTotalA, aTot, numberOfLayers, matrixSize, 0, WLsize );
 
     for( Side t_Side : EnumSide() ) {
-      m_Results->setResultMatrices( aTau.at( t_Side ), aRho.at( t_Side ), t_Side );
+      aTotalA.at( t_Side )->mMult( *interpolatedSolar );
+      aTotalA.at( t_Side )->integrate( IntegrationType::Trapezoidal );
+      m_Abs[ t_Side ] = aTotalA.at( t_Side )->getSums( minLambda, maxLambda, 1 / incomingSolar );
+      for( PropertySimple t_Proprerty : EnumPropertySimple() ) {
+        aTot.at( make_pair( t_Side, t_Proprerty ) )->mMult( *interpolatedSolar );
+        aTot.at( make_pair( t_Side, t_Proprerty ) )->integrate( IntegrationType::Trapezoidal );
+        aResults[ make_pair( t_Side, t_Proprerty ) ] =
+          aTot.at( make_pair( t_Side, t_Proprerty ) )->getSquaredMatrixSums( minLambda, maxLambda, 1 / incomingSolar );
+      }
+    }
+
+    // Update results matrices
+    for( Side t_Side : EnumSide() ) {
+      m_Results->setResultMatrices( aResults.at( make_pair( t_Side, PropertySimple::T ) ), 
+        aResults.at( make_pair( t_Side, PropertySimple::R ) ), t_Side );
     }
 
     // calculate hemispherical absorptances
@@ -309,6 +262,34 @@ namespace MultiPane {
 
     m_Calculated = true;
 
+  }
+
+  void CEquivalentBSDFLayer::calcWlProp(
+    map< Side, shared_ptr< CMatrixSeries > > t_TotA, 
+    map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > > t_Tot, 
+    const size_t t_NumOfLayers, const size_t t_MatrixSize,
+    const size_t t_Start, const size_t t_End ) {
+    for( size_t i = t_Start; i < t_End; ++i ) {
+      // First need to select correct side
+      double curWL = ( *m_CombinedLayerWavelengths )[ i ];
+      CEquivalentBSDFLayerSingleBand& curLayer = *( *m_LayersWL )[ i ];
+
+      for( size_t j = 0; j < t_MatrixSize; ++j ) {          
+        for( Side t_Side : EnumSide() ) {
+          for( size_t k = 0; k < t_NumOfLayers; ++k ) {
+            t_TotA.at( t_Side )->addProperty( k, j, curWL,
+              ( *curLayer.getLayerAbsorptances( k + 1, t_Side ) )[ j ] );
+          }
+          for( size_t k = 0; k < t_MatrixSize; ++k ) {
+            for( PropertySimple t_Property : EnumPropertySimple() ) {
+              shared_ptr< CSquareMatrix > curPropertyMatrix = curLayer.getProperty( t_Side, t_Property );
+              t_Tot.at( make_pair( t_Side, t_Property ) )->addProperty( j, k, curWL,
+                ( *curPropertyMatrix )[ j ][ k ] );
+            }
+          }
+        }
+      }
+    }
   }
 
   void CEquivalentBSDFLayer::calcHemisphericalAbs( const Side t_Side ) {

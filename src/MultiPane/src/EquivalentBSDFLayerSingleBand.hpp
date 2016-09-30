@@ -8,6 +8,7 @@ namespace FenestrationCommon {
 
   class CSquareMatrix;
   enum class Side;
+  enum class PropertySimple;
 
 }
 
@@ -71,8 +72,11 @@ namespace MultiPane {
     explicit CEquivalentBSDFLayerSingleBand( const std::shared_ptr< LayerOptics::CBSDFResults >& t_Layer );
     void addLayer( const std::shared_ptr< LayerOptics::CBSDFResults >& t_Layer );
 
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( FenestrationCommon::Side t_Side );
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( FenestrationCommon::Side t_Side );
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const FenestrationCommon::Side t_Side );
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const FenestrationCommon::Side t_Side );
+
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > getProperty( const FenestrationCommon::Side t_Side,
+      const FenestrationCommon::PropertySimple t_Property );
 
     std::shared_ptr< std::vector< double > > getLayerAbsorptances( const size_t Index, 
       FenestrationCommon::Side t_Side );
