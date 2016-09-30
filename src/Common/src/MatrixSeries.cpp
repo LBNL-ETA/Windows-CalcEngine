@@ -25,7 +25,7 @@ namespace FenestrationCommon {
 
   void CMatrixSeries::addProperties( const size_t i, const double t_Wavelength, 
     const vector< double >& t_Values ) {
-    for( auto j = 0; j < t_Values.size(); ++j ) {
+    for( size_t j = 0; j < t_Values.size(); ++j ) {
       m_Matrix[ i ][ j ]->addProperty( t_Wavelength, t_Values[ j ] );
     }
   }

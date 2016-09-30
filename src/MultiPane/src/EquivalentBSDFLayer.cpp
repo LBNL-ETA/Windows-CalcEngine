@@ -6,7 +6,6 @@
 #include <numeric>
 #include <assert.h>
 #include <stdexcept>
-#include <thread>
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
@@ -209,26 +208,28 @@ namespace MultiPane {
     // Calculate total transmitted solar per matrix and perform integration over each wavelength
     size_t WLsize = m_CombinedLayerWavelengths->size();
     
-    size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
-    size_t step = WLsize / numOfThreads;
-    vector< shared_ptr< thread > > aThreads = vector< shared_ptr< thread > >( numOfThreads );
-    
-    size_t startNum = 0;
-    size_t endNum = step;
-    
-    for( size_t i = 0; i < numOfThreads; ++i ) {
-      if( i == numOfThreads - 1 ) {
-        endNum = WLsize;
-      }
-      aThreads[ i ] = make_shared< thread >( &CEquivalentBSDFLayer::triggerLayerAbsCalculations, *this,
-        numberOfLayers, startNum, endNum );
-      startNum += step;
-      endNum += step;
-    }
-    
-    for( size_t i = 0; i < numOfThreads; ++i ) {
-      aThreads[ i ]->join();
-    }
+    // This is for multithread calculations. Results were correct and it was some decent improvement.
+    // However, this would require more testing on linux machine (it does not work on Travis)
+    // size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
+    // size_t step = WLsize / numOfThreads;
+    // vector< shared_ptr< thread > > aThreads = vector< shared_ptr< thread > >( numOfThreads );
+    // 
+    // size_t startNum = 0;
+    // size_t endNum = step;
+    // 
+    // for( size_t i = 0; i < numOfThreads; ++i ) {
+    //   if( i == numOfThreads - 1 ) {
+    //     endNum = WLsize;
+    //   }
+    //   aThreads[ i ] = make_shared< thread >( &CEquivalentBSDFLayer::triggerLayerAbsCalculations, *this,
+    //     numberOfLayers, startNum, endNum );
+    //   startNum += step;
+    //   endNum += step;
+    // }
+    // 
+    // for( size_t i = 0; i < numOfThreads; ++i ) {
+    //   aThreads[ i ]->join();
+    // }
     
     
     calculateWavelengthProperties( aTotalA, aTot, numberOfLayers, matrixSize, 0, WLsize );
