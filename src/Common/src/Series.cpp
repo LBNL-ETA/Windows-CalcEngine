@@ -241,7 +241,12 @@ namespace FenestrationCommon {
     double total = 0;
     for( shared_ptr< ISeriesPoint > aPoint : m_Series ) {
       double wavelength = aPoint->x();
-      if( ( wavelength >= ( minLambda - TOLERANCE ) && wavelength < maxLambda ) || ( minLambda == 0 && maxLambda == 0 ) ) {
+      // Last point must be excluded because of ranges. Each wavelength represent range from wavelength one
+      // to wavelength two. Summing value of the last wavelength in array would be wrong because it would
+      // include one additional range after the end of spectrum. For example, summing all the data from 0.38 to
+      // 0.78 would include visible range. However, including 0.78 in sum would add extra value from 0.78 to 0.79.
+      if( ( wavelength >= ( minLambda - TOLERANCE ) && ( wavelength < ( maxLambda - TOLERANCE ) ) || 
+        ( minLambda == 0 && maxLambda == 0 ) ) ) {
         total += aPoint->value();
       }
     }

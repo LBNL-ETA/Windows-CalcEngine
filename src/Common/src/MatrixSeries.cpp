@@ -8,11 +8,12 @@ using namespace std;
 
 namespace FenestrationCommon {
 
-  CMatrixSeries::CMatrixSeries( const size_t t_Size1, const size_t t_Size2 ) {
-    m_Matrix = vector< vector< shared_ptr< CSeries > > >( t_Size1 );
-    for( size_t i = 0; i < t_Size1; ++i ) {
-      m_Matrix[ i ].resize( t_Size2 );
-      for( size_t j = 0; j < t_Size2; ++j ) {
+  CMatrixSeries::CMatrixSeries( const size_t t_Size1, const size_t t_Size2 ) :
+    m_Size1( t_Size1 ), m_Size2( t_Size2 ) {
+    m_Matrix = vector< vector< shared_ptr< CSeries > > >( m_Size1 );
+    for( size_t i = 0; i < m_Size1; ++i ) {
+      m_Matrix[ i ].resize( m_Size2 );
+      for( size_t j = 0; j < m_Size2; ++j ) {
         m_Matrix[ i ][ j ] = make_shared< CSeries >();
       }
     }
@@ -48,6 +49,10 @@ namespace FenestrationCommon {
     }
   }
 
+  vector< shared_ptr < CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
+    return m_Matrix[ index ];
+  }
+
   void CMatrixSeries::integrate( const IntegrationType t_Integration ) {
     for( size_t i = 0; i < m_Matrix.size(); ++i ) {
       for( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
@@ -81,6 +86,14 @@ namespace FenestrationCommon {
       }
     }
     return Res;
+  }
+
+  size_t CMatrixSeries::size1() const {
+    return m_Size1;
+  }
+
+  size_t CMatrixSeries::size2() const {
+    return m_Size2;
   }
 
 }

@@ -23,6 +23,8 @@ namespace FenestrationCommon {
     // Multiply all series in matrix with provided one
     void mMult( const CSeries& t_Series );
 
+    std::vector< std::shared_ptr < CSeries > >& operator[]( const size_t index );
+
     void integrate( const IntegrationType t_Integration );
 
     std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > 
@@ -30,8 +32,13 @@ namespace FenestrationCommon {
 
     std::shared_ptr< CSquareMatrix > getSquaredMatrixSums( const double minLambda, const double maxLambda, const double t_ScaleValue );
 
+    size_t size1() const;
+    size_t size2() const;
+
   private:
     std::vector< std::vector< std::shared_ptr< CSeries > > > m_Matrix;
+    size_t m_Size1;
+    size_t m_Size2;
   };
   
 }
