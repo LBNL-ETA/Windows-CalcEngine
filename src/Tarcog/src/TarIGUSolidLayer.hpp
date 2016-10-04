@@ -30,6 +30,10 @@ namespace Tarcog {
     void setSolarRadiation( double const t_SolarRadiation );
     void setSolarAbsorptance( double const t_SolarAbsorptance );
 
+    // Variables for deflection calculations
+    void setYoungsModulus( const double t_Modulus );
+    void setPoisonRatio( const double t_Ratio );
+
   protected:
     virtual void calculateConvectionConductionState();
 
@@ -38,8 +42,15 @@ namespace Tarcog {
       FenestrationCommon::Side const t_Position );
     void initializeStateVariables();
 
+    // calculates mean deflection of the surfaces
+    double LdMean( const double t_P, const double t_D ) const;
+
     double m_Conductivity;
     double m_SolarAbsorptance;
+
+    // Deflection coefficient
+    double m_YoungsModulus;
+    double m_PoisonRatio;
   };
 
 }

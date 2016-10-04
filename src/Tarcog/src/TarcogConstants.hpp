@@ -23,6 +23,11 @@ namespace Tarcog {
     const double CONVERGENCE_TOLERANCE_AIRFLOW = 1e-6;
   }
 
+  namespace DeflectionConstants {
+    const double YOUNGSMODULUS = 7.2e10;
+    const double POISONRATIO = 0.22; // This constant is for glass
+  }
+
 }
 
 

@@ -13,12 +13,11 @@ using namespace std;
 namespace Tarcog {
 
   CTarSurface::CTarSurface(double t_Emissivity, double t_Transmittance):
-    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance )
-  {
+    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance ), m_Deflection( 0 ) {
     initialize();
   }
 
-  CTarSurface::CTarSurface() : m_Emissivity( 0.84 ), m_Transmittance( 0 ) {
+  CTarSurface::CTarSurface() : m_Emissivity( 0.84 ), m_Transmittance( 0 ), m_Deflection( 0 ) {
     initialize();
   }
 
@@ -62,6 +61,14 @@ namespace Tarcog {
   void CTarSurface::initializeStart( const double t_Temperature, const double t_Radiation ) {
     m_Temperature = t_Temperature;
     m_J = t_Radiation;
+  }
+
+  void CTarSurface::applyDeflection( const double t_Deflection ) {
+    m_Deflection = t_Deflection;
+  }
+
+  double CTarSurface::getDeflection() const {
+    return m_Deflection;
   }
 
   double CTarSurface::J() const {

@@ -17,12 +17,12 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
   CTarIGU::CTarIGU( double t_Width, double t_Height, double t_Tilt ) : 
-    m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ) {
+    m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ), 
+    m_CalculateDeflection( false ), m_Tini( 0 ), m_Pini( 0 ) {
   }
 
   CTarIGU::~CTarIGU() {
-    for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers )
-    {
+    for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers ) {
       layer->tearDownConnections();
     }
   }
@@ -40,14 +40,16 @@ namespace Tarcog {
       }
     } else {
       shared_ptr< CBaseIGUTarcogLayer > lastLayer = m_Layers.back();
-      if ( dynamic_pointer_cast< CTarIGUSolidLayer > ( t_Layer ) != dynamic_pointer_cast< CTarIGUSolidLayer > ( lastLayer ) ) {
+      if ( dynamic_pointer_cast< CTarIGUSolidLayer > ( t_Layer ) != 
+        dynamic_pointer_cast< CTarIGUSolidLayer > ( lastLayer ) ) {
         if( dynamic_pointer_cast< CTarIGUSolidLayer > ( t_Layer ) != NULL ) {
           m_SolidLayers.push_back( dynamic_pointer_cast< CTarIGUSolidLayer > ( t_Layer ) );
         }
         m_Layers.push_back(t_Layer);
         lastLayer->connectToBackSide(t_Layer);
       } else {
-        throw runtime_error( "Two adjecent layers in IGU cannot be of same type. IGU must be constructed of array of solid and gap layers." );
+        throw runtime_error( "Two adjecent layers in IGU cannot be of same type. "
+          "IGU must be constructed of array of solid and gap layers." );
       }
     }
     t_Layer->setTilt( m_Tilt );
@@ -164,6 +166,14 @@ namespace Tarcog {
     }
   }
 
+  void CTarIGU::setDeflectionProperties( const double t_Tini, const double t_Pini ) {
+    m_Tini = t_Tini;
+    m_Pini = t_Pini;
+    for( shared_ptr< CBaseIGUTarcogLayer > aLayer : m_Layers ) {
+      aLayer->setDeflectionProperties( t_Tini, t_Pini );
+    }
+  }
+
   vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() const {
     return m_SolidLayers;
   }
@@ -171,5 +181,9 @@ namespace Tarcog {
   vector< shared_ptr< CBaseIGUTarcogLayer > > CTarIGU::getLayers() const {
     return m_Layers;
   }
+
+  // vector< shared_ptr< CTarIGUGapLayer > > CTarIGU::getGapLayers() const {
+  //   return m_GapLayers;
+  // }
 
 }

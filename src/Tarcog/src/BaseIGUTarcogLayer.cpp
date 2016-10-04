@@ -7,7 +7,8 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CBaseIGUTarcogLayer::CBaseIGUTarcogLayer( double const t_Thickness ) : m_Thickness( t_Thickness ) {
+  CBaseIGUTarcogLayer::CBaseIGUTarcogLayer( double const t_Thickness ) : m_Thickness( t_Thickness ),
+  m_CalcDeflection( false ) {
     
   }
 
@@ -25,6 +26,10 @@ namespace Tarcog {
 
   double CBaseIGUTarcogLayer::J( const Side t_Position ) const {
     return getSurface( t_Position )->J();
+  }
+
+  void CBaseIGUTarcogLayer::setDeflectionProperties( const double, const double ) {
+    m_CalcDeflection = true;
   }
 
 }

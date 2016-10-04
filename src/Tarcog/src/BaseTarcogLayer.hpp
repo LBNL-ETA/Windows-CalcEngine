@@ -13,6 +13,10 @@ namespace Tarcog {
 
   class CTarSurface;
 
+  // Base description for any tarcog layer. This includes interior and exterior environments as well.
+  // It must contain base definition of 2D geometry (Width and Height) and definition of heat flow
+  // that is divided in three categories (convection, conduction and radiation). Every layer can
+  // contain only Conduction + Radiation or Convection + Radiation.
   class CBaseTarcogLayer : public CLayerGeometry, public CLayerHeatFlow,
     public std::enable_shared_from_this< CBaseTarcogLayer > {
   public:

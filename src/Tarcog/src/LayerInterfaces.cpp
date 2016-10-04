@@ -158,6 +158,10 @@ namespace Tarcog {
     onCreate();
   }
 
+  double CGasLayer::getPressure() {
+    return m_Pressure;
+  }
+
   void CGasLayer::initializeStateVariables() {
     assert( m_Gas != nullptr );
     m_Gas->setTemperatureAndPressure( getGasTemperature(), m_Pressure );

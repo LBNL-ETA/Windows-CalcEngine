@@ -6,6 +6,7 @@
 #include <numeric>
 #include <assert.h>
 #include <stdexcept>
+#include <thread>
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
@@ -208,8 +209,8 @@ namespace MultiPane {
     // Calculate total transmitted solar per matrix and perform integration over each wavelength
     size_t WLsize = m_CombinedLayerWavelengths->size();
     
-    // This is for multithread calculations. Results were correct and it was some decent improvement.
-    // However, this would require more testing on linux machine (it does not work on Travis)
+    // // This is for multithread calculations. Results were correct and it was some decent improvement.
+    // // However, this would require more testing on linux machine (it does not work on Travis)
     // size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
     // size_t step = WLsize / numOfThreads;
     // vector< shared_ptr< thread > > aThreads = vector< shared_ptr< thread > >( numOfThreads );

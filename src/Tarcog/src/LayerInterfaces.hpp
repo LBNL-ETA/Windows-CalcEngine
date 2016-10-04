@@ -87,6 +87,8 @@ namespace Tarcog {
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
 
+    virtual double getPressure();
+
     virtual double getGasTemperature() = 0;
 
   protected:

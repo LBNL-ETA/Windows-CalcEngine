@@ -9,11 +9,12 @@ namespace Tarcog {
   class CBaseTarcogLayer;
   class CBaseIGUTarcogLayer;
   class CTarIGUSolidLayer;
+  class CTarIGUGapLayer;
   class CTarSurface;
 
   class CTarIGU {
   public:
-    CTarIGU( double t_Width, double t_Height, double t_Tilt = 90);
+    CTarIGU( double t_Width, double t_Height, double t_Tilt = 90 );
     ~CTarIGU();
 
     void addLayer( std::shared_ptr< CBaseIGUTarcogLayer > t_Layer );
@@ -40,10 +41,11 @@ namespace Tarcog {
 
     int getNumOfLayers() const;
 
-    // Returns interior ventilation flow
     double getInteriorVentilationFlow() const;
 
     void setInitialGuess( const std::shared_ptr< std::vector< double > >& t_Temperatures );
+
+    void setDeflectionProperties( const double t_Tini, const double t_Pini );
 
   private:
     std::vector< std::shared_ptr< CTarIGUSolidLayer > > m_SolidLayers;
@@ -52,6 +54,11 @@ namespace Tarcog {
     double m_Width; // meters
     double m_Height; // meters
     double m_Tilt; // degrees
+
+    // Deflection variables
+    bool m_CalculateDeflection;
+    double m_Tini;
+    double m_Pini;
   };
 
 }

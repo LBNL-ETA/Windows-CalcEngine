@@ -4,10 +4,7 @@
 #include <memory>
 
 #include "BaseTarcogLayer.hpp"
-#include "LayerInterfaces.hpp"
 #include "Gas.hpp"
-
-#include "LayerInterfaces.hpp"
 
 namespace Tarcog {
 

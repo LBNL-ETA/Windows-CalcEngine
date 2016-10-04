@@ -6,10 +6,7 @@
 
 namespace Tarcog {
 
-  class CBaseTarcogLayer;
-
-  class CTarSurface
-  {
+  class CTarSurface {
   public:
     CTarSurface();
     CTarSurface( double t_Emissivity, double t_Transmittance );
@@ -25,6 +22,10 @@ namespace Tarcog {
     void initializeStart( double const t_Temperature );
     void initializeStart( const double t_Temperature, const double t_Radiation );
 
+    //  Applies deflection to current surface
+    void applyDeflection( const double t_Deflection );
+    double getDeflection() const;
+
   private:
     void initialize();
 
@@ -33,6 +34,10 @@ namespace Tarcog {
     double m_Transmittance;
     double m_Temperature;
     double m_J;
+
+    // Value for deflection. Positive deflection is surface curved towards left side and 
+    // negative deflection vice-versa.
+    double m_Deflection;
   };
 
 }

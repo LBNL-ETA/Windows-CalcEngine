@@ -96,7 +96,8 @@ namespace Tarcog {
 
   double CTarIGUGapLayer::convectiveH() {
     double tGapTemperature = layerTemperature();
-    m_Gas->setTemperatureAndPressure( tGapTemperature, m_Pressure );
+    // m_Gas->setTemperatureAndPressure( tGapTemperature, m_Pressure );
+    m_Gas->setTemperatureAndPressure( tGapTemperature, getPressure() );
     double Ra = calculateRayleighNumber();
     double Asp = aspectRatio();
     shared_ptr< CNusseltNumber > nusseltNumber = make_shared< CNusseltNumber > ();
@@ -158,7 +159,8 @@ namespace Tarcog {
     return exp( -m_Height / characteristicHeight() );
   }
 
-  void CTarIGUGapLayer::setFlowGeometry( double const t_Atop, double const t_Abot, AirVerticalDirection const &t_Direction ) {
+  void CTarIGUGapLayer::setFlowGeometry( double const t_Atop, double const t_Abot, 
+    AirVerticalDirection const &t_Direction ) {
     m_AirVerticalDirection = t_Direction;
     double Ain = 0;
     double Aout = 0;
@@ -241,6 +243,26 @@ namespace Tarcog {
     if ( m_inTemperature < m_outTemperature ) {
       m_LayerGainFlow = -m_LayerGainFlow;
     }
+  }
+
+  void CTarIGUGapLayer::setDeflectionProperties( const double t_Tini, const double t_Pini ) {
+    CBaseIGUTarcogLayer::setDeflectionProperties( t_Tini, t_Pini );
+    m_Tini = t_Tini;
+    m_Pini = t_Pini;
+  }
+
+  double CTarIGUGapLayer::getPressure() {
+    double aResult = m_Pressure;
+
+    // Pressure that will be calculated with deflection
+    if( m_CalcDeflection ) {
+      double Vini = m_Width * m_Height * m_Thickness;
+      double modThickness = m_Thickness + m_Surface[ Side::Front ]->getDeflection() -
+        m_Surface[ Side::Back ]->getDeflection();
+      double Vgap = m_Width * m_Height * modThickness;
+      aResult = m_Pini * Vini * layerTemperature() / ( m_Tini * Vgap );
+    }
+    return aResult;
   }
 
 }

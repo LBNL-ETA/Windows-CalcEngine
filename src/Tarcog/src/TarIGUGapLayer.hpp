@@ -3,7 +3,6 @@
 
 #include <memory>
 #include "BaseIGUTarcogLayer.hpp"
-#include "LayerInterfaces.hpp"
 #include "Gas.hpp"
 
 namespace Gases {
@@ -38,6 +37,9 @@ namespace Tarcog {
     double averageTemperature();
     void smoothEnergy( double const qv1, double const qv2 );
 
+    void setDeflectionProperties( const double t_Tini, const double t_Pini );
+    double getPressure();
+
   protected:
     void initializeStateVariables();
 
@@ -62,6 +64,9 @@ namespace Tarcog {
     double m_Zout;
 
     std::shared_ptr< Gases::CGas > m_ReferenceGas;
+
+    double m_Tini;
+    double m_Pini;
   };
  
 }
