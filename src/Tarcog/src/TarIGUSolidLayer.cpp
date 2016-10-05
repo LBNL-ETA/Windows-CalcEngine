@@ -59,10 +59,8 @@ namespace Tarcog {
       // it probaby does not matter what solver is used.
       const double RelaxationParamter = 0.005;
 
-      double P1 = dynamic_pointer_cast< CGasLayer >( m_NextLayer )->getPressure();
-      double P2 = dynamic_pointer_cast< CGasLayer >( m_PreviousLayer )->getPressure();
-      double Dp = P1 - P2;
-      double D = m_YoungsModulus * pow( m_Thickness, 3 ) / ( 12 * ( 1 - pow( m_PoisonRatio, 2 ) ) );
+      double Dp = pressureDifference();
+      double D = flexuralRigidity();
       double Ld = m_Surface[ Side::Front ]->getDeflection();
       Ld += LdMean( Dp, D ) * RelaxationParamter;
       m_Surface[ Side::Front ]->applyDeflection( Ld );
@@ -123,6 +121,16 @@ namespace Tarcog {
     }
     totalSum = coeff1 * totalSum;
     return totalSum;
+  }
+
+  double CTarIGUSolidLayer::flexuralRigidity() const {
+    return m_YoungsModulus * pow( m_Thickness, 3 ) / ( 12 * ( 1 - pow( m_PoisonRatio, 2 ) ) );
+  }
+
+  double CTarIGUSolidLayer::pressureDifference() const {
+    double P1 = dynamic_pointer_cast< CGasLayer >( m_NextLayer )->getPressure();
+    double P2 = dynamic_pointer_cast< CGasLayer >( m_PreviousLayer )->getPressure();
+    return P1 - P2;
   }
 
 }

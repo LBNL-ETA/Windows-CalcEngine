@@ -42,13 +42,15 @@ namespace Tarcog {
       FenestrationCommon::Side const t_Position );
     void initializeStateVariables();
 
-    // calculates mean deflection of the surfaces
-    double LdMean( const double t_P, const double t_D ) const;
-
     double m_Conductivity;
     double m_SolarAbsorptance;
 
-    // Deflection coefficient
+    // Deflection properties
+    // calculates mean deflection of the surfaces
+    double LdMean( const double t_P, const double t_D ) const;
+    double flexuralRigidity() const;
+    double pressureDifference() const;
+
     double m_YoungsModulus;
     double m_PoisonRatio;
   };

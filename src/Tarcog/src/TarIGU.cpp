@@ -45,6 +45,9 @@ namespace Tarcog {
         if( dynamic_pointer_cast< CTarIGUSolidLayer > ( t_Layer ) != NULL ) {
           m_SolidLayers.push_back( dynamic_pointer_cast< CTarIGUSolidLayer > ( t_Layer ) );
         }
+        // if( dynamic_pointer_cast< CTarIGUGapLayer > ( t_Layer ) ) {
+        //   m_GapLayers.push_back( dynamic_pointer_cast< CTarIGUGapLayer > ( t_Layer ) );
+        // }
         m_Layers.push_back(t_Layer);
         lastLayer->connectToBackSide(t_Layer);
       } else {
@@ -90,6 +93,7 @@ namespace Tarcog {
   }
 
   shared_ptr< vector< double > > CTarIGU::getState() {
+
     shared_ptr< vector< double > > aState = make_shared< vector< double > >();
     shared_ptr< CTarSurface > aSurface = nullptr;
 
@@ -169,6 +173,7 @@ namespace Tarcog {
   void CTarIGU::setDeflectionProperties( const double t_Tini, const double t_Pini ) {
     m_Tini = t_Tini;
     m_Pini = t_Pini;
+    m_CalculateDeflection = true;
     for( shared_ptr< CBaseIGUTarcogLayer > aLayer : m_Layers ) {
       aLayer->setDeflectionProperties( t_Tini, t_Pini );
     }

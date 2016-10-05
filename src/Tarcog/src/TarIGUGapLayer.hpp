@@ -65,6 +65,8 @@ namespace Tarcog {
 
     std::shared_ptr< Gases::CGas > m_ReferenceGas;
 
+    // Windows is produced under given temperature and pressure.
+    // That is used for deflection calculations.
     double m_Tini;
     double m_Pini;
   };
