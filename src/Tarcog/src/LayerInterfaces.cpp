@@ -175,7 +175,7 @@ namespace Tarcog {
     onCreate();
   }
 
-  CGasLayer::CGasLayer( const CGasLayer & t_Layer ) {
+  CGasLayer::CGasLayer( const CGasLayer & t_Layer ) : CLayerState( t_Layer ) {
     m_Pressure = t_Layer.m_Pressure;
     m_AirSpeed = t_Layer.m_AirSpeed;
     m_AirVerticalDirection = t_Layer.m_AirVerticalDirection;

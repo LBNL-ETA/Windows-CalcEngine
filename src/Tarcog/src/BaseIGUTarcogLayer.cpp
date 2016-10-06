@@ -13,7 +13,7 @@ namespace Tarcog {
   }
 
   CBaseIGUTarcogLayer::CBaseIGUTarcogLayer( const CBaseIGUTarcogLayer& t_Layer ) : 
-    CBaseTarcogLayer( t_Layer ) {
+    CLayerState( t_Layer ), CBaseTarcogLayer( t_Layer ) {
     m_Thickness = t_Layer.m_Thickness;
   }
 

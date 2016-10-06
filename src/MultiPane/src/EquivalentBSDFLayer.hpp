@@ -86,8 +86,7 @@ namespace MultiPane {
     void calculateWavelengthProperties( std::map< FenestrationCommon::Side, 
       std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_TotA, 
       std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_Tot,
-      const size_t t_NumOfLayers, const size_t t_MatrixSize,
-      const size_t t_Start, const size_t t_End );
+      const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End );
 
     void calcHemisphericalAbs( const FenestrationCommon::Side t_Side );
 

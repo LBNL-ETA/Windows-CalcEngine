@@ -36,7 +36,7 @@ namespace Tarcog {
   }
 
   CTarIGUSolidLayer::CTarIGUSolidLayer( const CTarIGUSolidLayer& t_Layer ) : 
-    CBaseIGUTarcogLayer( t_Layer ) {
+		CLayerState( t_Layer ), CBaseIGUTarcogLayer( t_Layer ) {
     m_Conductivity = t_Layer.m_Conductivity;
     m_SolarAbsorptance = t_Layer.m_SolarAbsorptance;
     m_Surface = t_Layer.m_Surface;

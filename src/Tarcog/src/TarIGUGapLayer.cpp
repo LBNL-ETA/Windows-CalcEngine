@@ -37,7 +37,7 @@ namespace Tarcog {
   }
 
   CTarIGUGapLayer::CTarIGUGapLayer( const CTarIGUGapLayer& t_Layer ) : 
-    CBaseIGUTarcogLayer( t_Layer ), CGasLayer( t_Layer ) {
+    CLayerState( t_Layer ), CBaseIGUTarcogLayer( t_Layer ), CGasLayer( t_Layer ) {
     m_inTemperature = t_Layer.m_inTemperature;
     m_outTemperature = t_Layer.m_outTemperature;
     m_Zin = t_Layer.m_Zin;

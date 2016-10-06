@@ -233,7 +233,7 @@ namespace MultiPane {
     // }
     
     
-    calculateWavelengthProperties( aTotalA, aTot, numberOfLayers, matrixSize, 0, WLsize );
+    calculateWavelengthProperties( aTotalA, aTot, numberOfLayers, 0, WLsize );
 
     for( Side t_Side : EnumSide() ) {
       aTotalA.at( t_Side )->mMult( *interpolatedSolar );
@@ -270,11 +270,10 @@ namespace MultiPane {
     }
   }
 
-  void CEquivalentBSDFLayer::calculateWavelengthProperties(
+void CEquivalentBSDFLayer::calculateWavelengthProperties(
     map< Side, shared_ptr< CMatrixSeries > > t_TotA, 
     map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > > t_Tot, 
-    const size_t t_NumOfLayers, const size_t t_MatrixSize,
-    const size_t t_Start, const size_t t_End ) {
+    const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End ) {
     for( size_t i = t_Start; i < t_End; ++i ) {
       
       double curWL = ( *m_CombinedLayerWavelengths )[ i ];
