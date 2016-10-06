@@ -253,7 +253,7 @@ namespace Tarcog {
     }
   }
 
-  void CTarIGU::checkForLayerUpgrades( shared_ptr< CBaseIGUTarcogLayer >& t_Layer ) {
+  void CTarIGU::checkForLayerUpgrades( const shared_ptr< CBaseIGUTarcogLayer > t_Layer ) {
     if( dynamic_pointer_cast< CTarIGUShadeLayer >( t_Layer ) != NULL ) {
       if( dynamic_pointer_cast< CTarIGUGapLayer >( t_Layer->getPreviousLayer() ) != NULL ) {
         shared_ptr< CTarIGUVentilatedGapLayer > newLayer =

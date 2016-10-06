@@ -15,7 +15,7 @@ namespace Tarcog {
   
   class CTarIGUVentilatedGapLayer : public CTarIGUGapLayer {
   public:
-    CTarIGUVentilatedGapLayer( std::shared_ptr< CTarIGUGapLayer >& t_Layer );
+    CTarIGUVentilatedGapLayer( const std::shared_ptr< CTarIGUGapLayer >& t_Layer );
     CTarIGUVentilatedGapLayer( const CTarIGUVentilatedGapLayer& t_Layer );
 
     virtual double layerTemperature();

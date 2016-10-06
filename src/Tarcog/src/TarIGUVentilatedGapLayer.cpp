@@ -11,7 +11,7 @@ using namespace Gases;
 
 namespace Tarcog {
 
-  CTarIGUVentilatedGapLayer::CTarIGUVentilatedGapLayer( shared_ptr< CTarIGUGapLayer >& t_Layer ) :
+  CTarIGUVentilatedGapLayer::CTarIGUVentilatedGapLayer( const shared_ptr< CTarIGUGapLayer >& t_Layer ) :
     CTarIGUGapLayer( *t_Layer ), m_inTemperature( 0 ), m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ), 
     m_ReferenceGas( make_shared< CGas >() ), m_Layer( t_Layer ) {
     ( *m_ReferenceGas ) = ( *m_Gas );

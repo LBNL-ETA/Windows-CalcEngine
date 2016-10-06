@@ -55,7 +55,7 @@ namespace Tarcog {
       const std::shared_ptr< CBaseIGUTarcogLayer >& t_Replacement );
 
     // Check if layer needs to be decorated with another object
-    void checkForLayerUpgrades( std::shared_ptr< CBaseIGUTarcogLayer >& t_Layer );
+    void checkForLayerUpgrades( const std::shared_ptr< CBaseIGUTarcogLayer > t_Layer );
 
     std::vector< std::shared_ptr< CBaseIGUTarcogLayer > > m_Layers;
 
