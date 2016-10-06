@@ -41,8 +41,4 @@ namespace Tarcog {
     
   }
 
-  void CBaseTarcogLayer::calculateConvectionConductionState() {
-
-  }
-
 }

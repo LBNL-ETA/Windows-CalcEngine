@@ -32,7 +32,6 @@ namespace Tarcog {
 
   protected:
     virtual void calculateRadiationState();
-    virtual void calculateConvectionConductionState();
 
     std::shared_ptr< CBaseTarcogLayer > m_PreviousLayer;
     std::shared_ptr< CBaseTarcogLayer > m_NextLayer;

@@ -45,7 +45,7 @@ namespace Tarcog {
   }
 
   void CTarIndoorEnvironment::calculateConvectionConductionState() {
-    CTarEnvironment::calculateConvectionConductionState();
+    // CTarEnvironment::calculateConvectionConductionState();
     switch( m_HCoefficientModel ) {
       case Tarcog::CalculateH: {
         calculateHc();
