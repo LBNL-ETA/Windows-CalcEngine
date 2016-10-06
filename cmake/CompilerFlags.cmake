@@ -32,3 +32,12 @@ IF ( CMAKE_COMPILER_IS_GNUCXX OR "x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xClang" )
   
   ADD_CXX_DEBUG_DEFINITIONS("-ggdb") # Produces debugging information specifically for gdb
 ENDIF ()
+
+macro( warning_level_update )
+  foreach (flag_var
+    CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+    CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    # Replaces /W3 with /W4 in defaults.
+    string(REPLACE "/W3" "-W4" ${flag_var} "${${flag_var}}")
+  endforeach()
+endmacro()

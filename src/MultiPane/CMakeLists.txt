@@ -36,3 +36,5 @@ if( BUILD_TESTING )
 	set( test_src ${all_test_src} )
 	CREATE_TEST_TARGETS( ${target_name} "${test_src}" "" )
 endif ()
+
+warning_level_update()

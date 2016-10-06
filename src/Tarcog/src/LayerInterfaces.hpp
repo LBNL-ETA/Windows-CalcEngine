@@ -86,7 +86,7 @@ namespace Tarcog {
   class CGasLayer : public virtual CLayerState {
   public:
     CGasLayer();
-    explicit CGasLayer( double const t_Pressure );
+    CGasLayer( double const t_Pressure );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );

@@ -49,8 +49,7 @@ namespace Tarcog {
 
   }
 
-  CLayerGeometry::CLayerGeometry( const CLayerGeometry& t_Layer ) : 
-    CLayerState( t_Layer ) {
+  CLayerGeometry::CLayerGeometry( const CLayerGeometry& t_Layer ) {
     m_Height = t_Layer.m_Height;
     m_Width = t_Layer.m_Width;
     m_Tilt = t_Layer.m_Tilt;
@@ -80,7 +79,7 @@ namespace Tarcog {
     m_Surface[ Side::Back ] = nullptr;
   }
 
-  CLayerHeatFlow::CLayerHeatFlow( const CLayerHeatFlow& t_Layer ) : CLayerState( t_Layer ) {
+  CLayerHeatFlow::CLayerHeatFlow( const CLayerHeatFlow& t_Layer ) {
     m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
     m_LayerGainFlow = t_Layer.m_LayerGainFlow;
     m_Surface = t_Layer.m_Surface;
@@ -175,7 +174,7 @@ namespace Tarcog {
     onCreate();
   }
 
-  CGasLayer::CGasLayer( const CGasLayer & t_Layer ) : CLayerState( t_Layer ) {
+  CGasLayer::CGasLayer( const CGasLayer & t_Layer ) {
     m_Pressure = t_Layer.m_Pressure;
     m_AirSpeed = t_Layer.m_AirSpeed;
     m_AirVerticalDirection = t_Layer.m_AirVerticalDirection;

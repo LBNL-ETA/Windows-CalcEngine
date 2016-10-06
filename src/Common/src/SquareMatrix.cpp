@@ -116,7 +116,8 @@ namespace FenestrationCommon {
 
   shared_ptr< vector< double > > CSquareMatrix::multVxM( const vector< double >& t_Vector ) const {
     if( m_Size != t_Vector.size() ) {
-      throw runtime_error("Matrix and vector does not have same number of rows and columns. It is not possible to perform multiplication.");
+      throw runtime_error("Matrix and vector do not have same number of rows and columns."
+                          " It is not possible to perform multiplication.");
     }
 
     shared_ptr< vector< double > > aResult = make_shared< vector< double > >( m_Size );
