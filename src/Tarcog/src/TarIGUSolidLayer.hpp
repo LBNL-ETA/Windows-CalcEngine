@@ -22,6 +22,8 @@ namespace Tarcog {
       double const t_FrontEmissivity, double const t_FrontIRTransmittance,
       double const t_BackEmissivity, double const t_BackIRTransmittance );
 
+    CTarIGUSolidLayer( const CTarIGUSolidLayer& t_Layer );
+
     void connectToBackSide( const std::shared_ptr< CBaseTarcogLayer >& t_Layer );
 
     double getConductivity() const;
@@ -29,10 +31,6 @@ namespace Tarcog {
     void setLayerState( double const t_Tf, double const t_Tb, double const t_Jf, double const t_Jb );
     void setSolarRadiation( double const t_SolarRadiation );
     void setSolarAbsorptance( double const t_SolarAbsorptance );
-
-    // Variables for deflection calculations
-    void setYoungsModulus( const double t_Modulus );
-    void setPoisonRatio( const double t_Ratio );
 
   protected:
     virtual void calculateConvectionConductionState();
@@ -45,14 +43,6 @@ namespace Tarcog {
     double m_Conductivity;
     double m_SolarAbsorptance;
 
-    // Deflection properties
-    // calculates mean deflection of the surfaces
-    double LdMean( const double t_P, const double t_D ) const;
-    double flexuralRigidity() const;
-    double pressureDifference() const;
-
-    double m_YoungsModulus;
-    double m_PoisonRatio;
   };
 
 }

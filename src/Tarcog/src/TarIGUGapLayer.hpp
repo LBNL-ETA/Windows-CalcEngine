@@ -18,6 +18,7 @@ namespace Tarcog {
   public:
     CTarIGUGapLayer( double t_Thickness, double t_Pressure );
     CTarIGUGapLayer( double t_Thickness, double t_Pressure, const std::shared_ptr< Gases::CGas >& t_Gas );
+    CTarIGUGapLayer( const CTarIGUGapLayer& t_Layer );
 
     void connectToBackSide( const std::shared_ptr< CBaseTarcogLayer >& t_Layer );
 
@@ -37,8 +38,7 @@ namespace Tarcog {
     double averageTemperature();
     void smoothEnergy( double const qv1, double const qv2 );
 
-    void setDeflectionProperties( const double t_Tini, const double t_Pini );
-    double getPressure();
+    virtual double getPressure();
 
   protected:
     void initializeStateVariables();
@@ -65,10 +65,6 @@ namespace Tarcog {
 
     std::shared_ptr< Gases::CGas > m_ReferenceGas;
 
-    // Windows is produced under given temperature and pressure.
-    // That is used for deflection calculations.
-    double m_Tini;
-    double m_Pini;
   };
  
 }

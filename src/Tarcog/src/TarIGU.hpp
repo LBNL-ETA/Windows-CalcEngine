@@ -19,7 +19,8 @@ namespace Tarcog {
 
     void addLayer( std::shared_ptr< CBaseIGUTarcogLayer > t_Layer );
 
-    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers() const;
+    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers();
+    std::vector< std::shared_ptr< CTarIGUGapLayer > > getGapLayers();
     std::vector< std::shared_ptr< CBaseIGUTarcogLayer > > getLayers() const;
 
     void setTilt( double const t_Tilt );
@@ -39,7 +40,7 @@ namespace Tarcog {
     double getHeight( ) const;
     double getThickness() const;
 
-    int getNumOfLayers() const;
+    size_t getNumOfLayers() const;
 
     double getInteriorVentilationFlow() const;
 
@@ -48,17 +49,16 @@ namespace Tarcog {
     void setDeflectionProperties( const double t_Tini, const double t_Pini );
 
   private:
-    std::vector< std::shared_ptr< CTarIGUSolidLayer > > m_SolidLayers;
+    // Replces layer in existing construction and keeps correct connections in linked list
+    void replaceLayer( std::shared_ptr< CBaseIGUTarcogLayer > t_Original, 
+      std::shared_ptr< CBaseIGUTarcogLayer > t_Replacement );
+
     std::vector< std::shared_ptr< CBaseIGUTarcogLayer > > m_Layers;
 
     double m_Width; // meters
     double m_Height; // meters
     double m_Tilt; // degrees
 
-    // Deflection variables
-    bool m_CalculateDeflection;
-    double m_Tini;
-    double m_Pini;
   };
 
 }

@@ -7,9 +7,14 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CBaseIGUTarcogLayer::CBaseIGUTarcogLayer( double const t_Thickness ) : m_Thickness( t_Thickness ),
-  m_CalcDeflection( false ) {
+  CBaseIGUTarcogLayer::CBaseIGUTarcogLayer( double const t_Thickness ) : 
+    m_Thickness( t_Thickness ) {
     
+  }
+
+  CBaseIGUTarcogLayer::CBaseIGUTarcogLayer( const CBaseIGUTarcogLayer& t_Layer ) : 
+    CBaseTarcogLayer( t_Layer ){
+    m_Thickness = t_Layer.m_Thickness;
   }
 
   double CBaseIGUTarcogLayer::layerTemperature() {
@@ -26,10 +31,6 @@ namespace Tarcog {
 
   double CBaseIGUTarcogLayer::J( const Side t_Position ) const {
     return getSurface( t_Position )->J();
-  }
-
-  void CBaseIGUTarcogLayer::setDeflectionProperties( const double, const double ) {
-    m_CalcDeflection = true;
   }
 
 }

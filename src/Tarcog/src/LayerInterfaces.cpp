@@ -23,6 +23,10 @@ namespace Tarcog {
   
   }
 
+  CLayerState::CLayerState( const CLayerState& t_State ) {
+    m_StateCalculated = t_State.m_StateCalculated;
+  }
+
   void CLayerState::resetCalculated() {
     m_StateCalculated = false;
     initializeStateVariables();
@@ -40,9 +44,15 @@ namespace Tarcog {
   //      CLayerGeometry
   //////////////////////////////////////////////////////////////////////////
 
-  CLayerGeometry::CLayerGeometry() : m_Width(DEFAULT_WINDOW_WIDTH), m_Height(DEFAULT_WINDOW_HEIGHT),
-	  m_Tilt(DEFAULT_TILT) {
+  CLayerGeometry::CLayerGeometry() : m_Width( DEFAULT_WINDOW_WIDTH ), m_Height( DEFAULT_WINDOW_HEIGHT ),
+	  m_Tilt( DEFAULT_TILT ) {
 
+  }
+
+  CLayerGeometry::CLayerGeometry( const CLayerGeometry& t_Layer ) {
+    m_Height = t_Layer.m_Height;
+    m_Width = t_Layer.m_Width;
+    m_Tilt = t_Layer.m_Tilt;
   }
 
   void CLayerGeometry::setWidth( double const t_Width ) {
@@ -67,6 +77,12 @@ namespace Tarcog {
   CLayerHeatFlow::CLayerHeatFlow() : m_ConductiveConvectiveCoeff(0), m_LayerGainFlow(0) {
     m_Surface[ Side::Front ] = nullptr;
     m_Surface[ Side::Back ] = nullptr;
+  }
+
+  CLayerHeatFlow::CLayerHeatFlow( const CLayerHeatFlow& t_Layer ) {
+    m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
+    m_LayerGainFlow = t_Layer.m_LayerGainFlow;
+    m_Surface = t_Layer.m_Surface;
   }
 
   CLayerHeatFlow::CLayerHeatFlow( const shared_ptr< CTarSurface >& t_FrontSurface, 
@@ -156,6 +172,15 @@ namespace Tarcog {
     m_AirVerticalDirection(AirVerticalDirection::None), m_AirHorizontalDirection(AirHorizontalDirection::None) {
     m_Gas = t_Gas;
     onCreate();
+  }
+
+  CGasLayer::CGasLayer( const CGasLayer & t_Layer ) {
+    m_Pressure = t_Layer.m_Pressure;
+    m_AirSpeed = t_Layer.m_AirSpeed;
+    m_AirVerticalDirection = t_Layer.m_AirVerticalDirection;
+    m_AirHorizontalDirection = t_Layer.m_AirHorizontalDirection;
+    m_ForcedVentilation = t_Layer.m_ForcedVentilation;
+    m_Gas = t_Layer.m_Gas;
   }
 
   double CGasLayer::getPressure() {

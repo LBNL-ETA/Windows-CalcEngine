@@ -63,9 +63,9 @@ namespace Tarcog {
     return m_Outdoor;
   }
 
-  vector< shared_ptr < CBaseIGUTarcogLayer > > CTarcogSystem::getLayers() const {
-    return m_IGU->getLayers();
-  }
+  // vector< shared_ptr < CBaseIGUTarcogLayer > > CTarcogSystem::getLayers() const {
+  //   return m_IGU->getLayers();
+  // }
 
   vector< shared_ptr< CTarIGUSolidLayer > > CTarcogSystem::getSolidLayers() const {
     return m_IGU->getSolidLayers();

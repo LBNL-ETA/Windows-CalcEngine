@@ -36,6 +36,14 @@ namespace Tarcog {
     m_ReferenceGas->setTemperatureAndPressure( ReferenceTemperature, m_Pressure );
   }
 
+  CTarIGUGapLayer::CTarIGUGapLayer( const CTarIGUGapLayer& t_Layer ) : 
+    CBaseIGUTarcogLayer( t_Layer ), CGasLayer( t_Layer ) {
+    m_inTemperature = t_Layer.m_inTemperature;
+    m_outTemperature = t_Layer.m_outTemperature;
+    m_Zin = t_Layer.m_Zin;
+    m_Zout = t_Layer.m_Zout;
+  }
+
   void CTarIGUGapLayer::connectToBackSide( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
     m_Surface.at( Side::Back ) = t_Layer->getSurface( Side::Front );
@@ -245,24 +253,8 @@ namespace Tarcog {
     }
   }
 
-  void CTarIGUGapLayer::setDeflectionProperties( const double t_Tini, const double t_Pini ) {
-    CBaseIGUTarcogLayer::setDeflectionProperties( t_Tini, t_Pini );
-    m_Tini = t_Tini;
-    m_Pini = t_Pini;
-  }
-
   double CTarIGUGapLayer::getPressure() {
-    double aResult = m_Pressure;
-
-    // Pressure that will be calculated with deflection
-    if( m_CalcDeflection ) {
-      double Vini = m_Width * m_Height * m_Thickness;
-      double modThickness = m_Thickness + m_Surface[ Side::Front ]->getDeflection() -
-        m_Surface[ Side::Back ]->getDeflection();
-      double Vgap = m_Width * m_Height * modThickness;
-      aResult = m_Pini * Vini * layerTemperature() / ( m_Tini * Vgap );
-    }
-    return aResult;
+    return m_Pressure;
   }
 
 }

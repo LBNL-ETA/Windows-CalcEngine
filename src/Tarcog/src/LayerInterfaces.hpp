@@ -29,6 +29,7 @@ namespace Tarcog {
   class CLayerState {
   public:
     CLayerState();
+    CLayerState( const CLayerState & t_State );
     virtual void resetCalculated() final; // to reset state to non-calculated
     virtual void setCalculated() final; // calculations are up to date and set state to valid state
     virtual bool isCalculated() final; // check if state have valid results
@@ -43,6 +44,8 @@ namespace Tarcog {
   class CLayerGeometry : public virtual CLayerState {
   public:
     CLayerGeometry();
+    CLayerGeometry( const CLayerGeometry& t_Layer );
+
     virtual void setWidth( double const t_Width ) final;
     virtual void setHeight( double const t_Height ) final;
     virtual void setTilt( double const t_Tilt ) final;
@@ -56,6 +59,7 @@ namespace Tarcog {
   class CLayerHeatFlow : public virtual CLayerState {
   public:
     CLayerHeatFlow();
+    CLayerHeatFlow( const CLayerHeatFlow& t_Layer );
     CLayerHeatFlow( const std::shared_ptr< CTarSurface >& t_FrontSurface, 
       const std::shared_ptr< CTarSurface >& t_BackSurface );
     virtual double getHeatFlow() final;
@@ -86,6 +90,7 @@ namespace Tarcog {
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
+    CGasLayer( const CGasLayer& t_Layer );
 
     virtual double getPressure();
 

@@ -13,6 +13,12 @@ namespace Tarcog {
   
   }
 
+  CBaseTarcogLayer::CBaseTarcogLayer( const CBaseTarcogLayer& t_Layer ) : 
+    CLayerGeometry( t_Layer ), CLayerHeatFlow( t_Layer ) {
+    m_PreviousLayer = t_Layer.m_PreviousLayer;
+    m_NextLayer = t_Layer.m_NextLayer;
+  }
+
   shared_ptr< CBaseTarcogLayer > CBaseTarcogLayer::getPreviousLayer() const {
     return m_PreviousLayer;
   }

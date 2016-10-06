@@ -17,8 +17,7 @@ namespace Tarcog {
 
   CTarIGUSolidLayer::CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
     shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface )
-    : CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ),
-    m_YoungsModulus( DeflectionConstants::YOUNGSMODULUS ), m_PoisonRatio( DeflectionConstants::POISONRATIO ) {
+    : CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
     if ( t_FrontSurface != nullptr && t_BackSurface != nullptr ) {
       m_Surface[ Side::Front ] = t_FrontSurface;
       m_Surface[ Side::Back ] = t_BackSurface;
@@ -31,10 +30,16 @@ namespace Tarcog {
   CTarIGUSolidLayer::CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
     double const t_FrontEmissivity, double const t_FrontIRTransmittance,
     double const t_BackEmissivity, double const t_BackIRTransmittance ) : CBaseIGUTarcogLayer( t_Thickness ),
-    m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ),
-    m_YoungsModulus( DeflectionConstants::YOUNGSMODULUS ), m_PoisonRatio( DeflectionConstants::POISONRATIO ) {
+    m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
     m_Surface[ Side::Front ] = make_shared< CTarSurface >( t_FrontEmissivity, t_FrontIRTransmittance );
     m_Surface[ Side::Back ] = make_shared< CTarSurface >( t_BackEmissivity, t_BackIRTransmittance );
+  }
+
+  CTarIGUSolidLayer::CTarIGUSolidLayer( const CTarIGUSolidLayer& t_Layer ) : 
+    CBaseIGUTarcogLayer( t_Layer ) {
+    m_Conductivity = t_Layer.m_Conductivity;
+    m_SolarAbsorptance = t_Layer.m_SolarAbsorptance;
+    m_Surface = t_Layer.m_Surface;
   }
 
   void CTarIGUSolidLayer::connectToBackSide( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
@@ -53,19 +58,6 @@ namespace Tarcog {
 
     m_ConductiveConvectiveCoeff = m_Conductivity / m_Thickness;
 
-    if( m_CalcDeflection ) {
-      // Relaxation parameter is low because that will make possible solution to converge.
-      // Instability in rest of equation is great if using higher relaxation parameter and 
-      // it probaby does not matter what solver is used.
-      const double RelaxationParamter = 0.005;
-
-      double Dp = pressureDifference();
-      double D = flexuralRigidity();
-      double Ld = m_Surface[ Side::Front ]->getDeflection();
-      Ld += LdMean( Dp, D ) * RelaxationParamter;
-      m_Surface[ Side::Front ]->applyDeflection( Ld );
-      m_Surface[ Side::Back ]->applyDeflection( Ld );
-    }
   }
 
   void CTarIGUSolidLayer::setLayerState( double const t_Tf, double const t_Tb, 
@@ -98,39 +90,8 @@ namespace Tarcog {
     resetCalculated();
   }
 
-  void CTarIGUSolidLayer::setYoungsModulus( const double t_Modulus ) {
-    m_YoungsModulus = t_Modulus;
-  }
-
-  void CTarIGUSolidLayer::setPoisonRatio( const double t_Ratio ) {
-    m_PoisonRatio = t_Ratio;
-  }
-
   void CTarIGUSolidLayer::initializeStateVariables() {
     // Initialization of intermediate calculation variables goes here
-  }
-
-  double CTarIGUSolidLayer::LdMean( const double t_P, const double t_D ) const {
-    double coeff1 = 16 * t_P / ( pow( M_PI, 6 ) * t_D );
-    double totalSum = 0;
-    for( size_t m = 1; m <= 5; m += 2 ) {
-      for( size_t n = 1; n <= 5; n += 2 ) {
-        double coeff2 = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2), 2 );
-        totalSum += 4 / coeff2;
-      }
-    }
-    totalSum = coeff1 * totalSum;
-    return totalSum;
-  }
-
-  double CTarIGUSolidLayer::flexuralRigidity() const {
-    return m_YoungsModulus * pow( m_Thickness, 3 ) / ( 12 * ( 1 - pow( m_PoisonRatio, 2 ) ) );
-  }
-
-  double CTarIGUSolidLayer::pressureDifference() const {
-    double P1 = dynamic_pointer_cast< CGasLayer >( m_NextLayer )->getPressure();
-    double P2 = dynamic_pointer_cast< CGasLayer >( m_PreviousLayer )->getPressure();
-    return P1 - P2;
   }
 
 }
