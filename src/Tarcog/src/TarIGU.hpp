@@ -47,6 +47,7 @@ namespace Tarcog {
     void setInitialGuess( const std::shared_ptr< std::vector< double > >& t_Temperatures );
 
     void setDeflectionProperties( const double t_Tini, const double t_Pini );
+    void setDeflectionProperties( const std::vector< double >& t_MeasuredDeflections );
 
   private:
     // Replces layer in existing construction and keeps correct connections in linked list

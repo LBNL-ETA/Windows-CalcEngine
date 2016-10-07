@@ -184,11 +184,56 @@ namespace Tarcog {
       } else {
         aDeflectionLayer = dynamic_pointer_cast< CTarIGUSolidLayerDeflection >( aLayer );
       }
-      replaceLayer( aLayer, make_shared< CTarIGUDeflectionTempAndPressure >( aDeflectionLayer, Lmean, Lmax ) );
+      replaceLayer( aLayer, make_shared< CTarIGUDeflectionTempAndPressure >( aDeflectionLayer, Lmax, Lmean ) );
     }
     for( shared_ptr< CTarIGUGapLayer >& aLayer : getGapLayers() ) {
       replaceLayer( aLayer, make_shared< CTarIGUGapLayerDeflection >( aLayer, t_Tini, t_Pini ) );
     }
+  }
+
+  void CTarIGU::setDeflectionProperties( const vector< double >& t_MeasuredDeflections ) {
+    if( t_MeasuredDeflections.size() != getNumOfLayers() - 1 ) {
+      throw runtime_error("Number of measured deflection values must be equal to number of gaps.");
+    }
+
+    double nominator = 0;
+    for( size_t i = 0; i < t_MeasuredDeflections.size(); ++i ) {
+      double SumL = 0;
+      for( size_t j = i; j < t_MeasuredDeflections.size(); ++j ) {
+        SumL += getGapLayers()[ j ]->getThickness() - t_MeasuredDeflections[ j ];
+      }
+      CTarIGUSolidLayerDeflection aDefLayer = CTarIGUSolidLayerDeflection( getSolidLayers()[ i ] );
+      nominator += SumL * aDefLayer.flexuralRigidity();
+    }
+
+    double denominator = 0;
+    for( size_t i = 0; i < getSolidLayers().size(); ++i ) {
+      CTarIGUSolidLayerDeflection aDefLayer = CTarIGUSolidLayerDeflection( getSolidLayers()[ i ] );
+      denominator += aDefLayer.flexuralRigidity();
+    }
+
+    // First need to calculate new deflections before applying them. Applying them right away will
+    // cause that next gap width calculation will already have included one surface deflected
+    double LDefNMax = nominator / denominator;
+    double deflectionRatio = Ldmean() / Ldmax();
+
+    vector< double > LDefMax; 
+    LDefMax.push_back( LDefNMax );
+    for( size_t i = getNumOfLayers() - 1; i > 0; --i ) {
+      LDefNMax = t_MeasuredDeflections[ i - 1 ] - getGapLayers()[ i - 1 ]->getThickness() + LDefNMax;
+      LDefMax.insert( LDefMax.begin(), LDefNMax );
+    }
+
+    for( size_t i = 0; i < getNumOfLayers(); ++i ) {
+      LDefNMax = LDefMax[ i ];
+      double LDefNMean = deflectionRatio * LDefNMax;
+      shared_ptr< CTarIGUSolidLayer > aLayer = getSolidLayers()[ i ];
+      shared_ptr< CTarIGUSolidLayerDeflection > aDefLayer = 
+        make_shared< CTarIGUSolidLayerDeflection >( aLayer );      
+      aDefLayer = make_shared< CTarIGUDeflectionMeasuread >( aDefLayer, LDefNMean, LDefNMax );
+      replaceLayer( aLayer, aDefLayer );
+    }
+
   }
 
   void CTarIGU::replaceLayer( shared_ptr< CBaseIGUTarcogLayer > t_Original, 
@@ -208,8 +253,8 @@ namespace Tarcog {
     double totalSum = 0;
     for( size_t m = 1; m <= 5; m += 2 ) {
       for( size_t n = 1; n <= 5; n += 2 ) {
-        double nomin = sin( m * M_PI / 2 ) * sin( n * M_PI / 2 );
-        double denom = m * n * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+        double nomin = 4;
+        double denom = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
         totalSum += nomin / denom;
       }
     }
@@ -221,8 +266,8 @@ namespace Tarcog {
     double totalSum = 0;
     for( size_t m = 1; m <= 5; m += 2 ) {
       for( size_t n = 1; n <= 5; n += 2 ) {
-        double nomin = 4;
-        double denom = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+        double nomin = sin( m * M_PI / 2 ) * sin( n * M_PI / 2 );
+        double denom = m * n * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
         totalSum += nomin / denom;
       }
     }

@@ -16,13 +16,13 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( shared_ptr< CTarIGUSolidLayer >& t_SolidLayer ) :
-    CTarIGUSolidLayer( *t_SolidLayer ), // m_SolidLayer( t_SolidLayer ), 
+    CTarIGUSolidLayer( *t_SolidLayer ),
     m_YoungsModulus( DeflectionConstants::YOUNGSMODULUS ), m_PoisonRatio( DeflectionConstants::POISONRATIO ) {
   }
 
   CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( shared_ptr< CTarIGUSolidLayer >& t_SolidLayer,
     const double t_YoungsModulus, const double t_PoisonRatio ) : 
-    CTarIGUSolidLayer( *t_SolidLayer ), // m_SolidLayer( t_SolidLayer ), 
+    CTarIGUSolidLayer( *t_SolidLayer ),
     m_YoungsModulus( t_YoungsModulus ), m_PoisonRatio( t_PoisonRatio ) {
   }
 
@@ -82,6 +82,17 @@ namespace Tarcog {
 
   double CTarIGUDeflectionTempAndPressure::LdMax( const double t_P, const double t_D ) const {
     return m_MaxCoeff * t_P / t_D;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //    CTarIGUDeflectionTempAndPressure
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  CTarIGUDeflectionMeasuread::CTarIGUDeflectionMeasuread( shared_ptr< CTarIGUSolidLayerDeflection >& t_Layer, 
+    const double t_MeanDeflection, const double t_MaxDeflection ) : 
+    CTarIGUSolidLayerDeflection( *t_Layer ) {
+    for( Side aSide : EnumSide() ) {
+      m_Surface[ aSide ]->applyDeflection( t_MeanDeflection, t_MaxDeflection );
+    }
   }
 
 }

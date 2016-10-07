@@ -8,7 +8,7 @@ using namespace FenestrationCommon;
 namespace Tarcog {
 
   CTarIGUGapLayerDeflection::CTarIGUGapLayerDeflection( shared_ptr< CTarIGUGapLayer > t_GapLayer,
-    const double t_Tini, const double t_Pini ) : CTarIGUGapLayer( *t_GapLayer ), //m_GapLayer( t_GapLayer ), 
+    const double t_Tini, const double t_Pini ) : CTarIGUGapLayer( *t_GapLayer ),
     m_Tini( t_Tini ), m_Pini( t_Pini ) {
 
   }
