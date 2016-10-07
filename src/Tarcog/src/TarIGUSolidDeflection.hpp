@@ -17,7 +17,7 @@ namespace Tarcog {
     virtual void calculateConvectionConductionState();
 
   private:
-    std::shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
+    // std::shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
 
     double LdMean( const double t_P, const double t_D ) const;
     double LdMax( const double t_P, const double t_D ) const;
@@ -26,6 +26,12 @@ namespace Tarcog {
 
     double m_YoungsModulus;
     double m_PoisonRatio;
+
+    // deflection coefficients that will be calculated once per layer.
+    // No need to calculate them mulitple times.
+    void calcCoeffs();
+    double m_MaxCoeff;
+    double m_MeanCoeff;
   };
 
 }

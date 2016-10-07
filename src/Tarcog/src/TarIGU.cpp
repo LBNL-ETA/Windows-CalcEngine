@@ -108,7 +108,6 @@ namespace Tarcog {
   void CTarIGU::setState( shared_ptr< vector< double > > t_State ) {
     size_t i = 0;
     for( shared_ptr< CTarIGUSolidLayer >& aLayer : getSolidLayers() ) {
-    // for( size_t i = 0; i < getNumOfLayers(); ++i ) {
       double Tf = (*t_State)[ 4*i ];
       double Jf = (*t_State)[ 4*i + 1 ];
       double Jb = (*t_State)[ 4*i + 2 ];
@@ -141,7 +140,7 @@ namespace Tarcog {
   }
 
   size_t CTarIGU::getNumOfLayers() const {
-    return (m_Layers.size() + 1) / 2;
+    return ( m_Layers.size() + 1 ) / 2;
   }
 
   double CTarIGU::getInteriorVentilationFlow() const {
@@ -174,7 +173,7 @@ namespace Tarcog {
       // deflection layer. If that is not done then layer must be decorated with defalut deflection
       // properties
       if( dynamic_pointer_cast< CTarIGUSolidLayerDeflection >( aLayer ) == NULL ) {
-        replaceLayer( aLayer, make_shared< CTarIGUSolidLayerDeflection >(aLayer) );
+        replaceLayer( aLayer, make_shared< CTarIGUSolidLayerDeflection >( aLayer ) );
       }
     }
     for( shared_ptr< CTarIGUGapLayer >& aLayer : getGapLayers() ) {

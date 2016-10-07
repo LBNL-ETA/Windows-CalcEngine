@@ -11,16 +11,16 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
   CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( shared_ptr< CTarIGUSolidLayer >& t_SolidLayer ) :
-    CTarIGUSolidLayer( *t_SolidLayer ), m_SolidLayer( t_SolidLayer ), 
+    CTarIGUSolidLayer( *t_SolidLayer ), // m_SolidLayer( t_SolidLayer ), 
     m_YoungsModulus( DeflectionConstants::YOUNGSMODULUS ), m_PoisonRatio( DeflectionConstants::POISONRATIO ) {
-
+    calcCoeffs();
   }
 
   CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( shared_ptr< CTarIGUSolidLayer >& t_SolidLayer,
     const double t_YoungsModulus, const double t_PoisonRatio ) : 
-    CTarIGUSolidLayer( *t_SolidLayer ), m_SolidLayer( t_SolidLayer ), m_YoungsModulus( t_YoungsModulus ),
-    m_PoisonRatio( t_PoisonRatio ) {
-
+    CTarIGUSolidLayer( *t_SolidLayer ), // m_SolidLayer( t_SolidLayer ), 
+    m_YoungsModulus( t_YoungsModulus ), m_PoisonRatio( t_PoisonRatio ) {
+    calcCoeffs();
   }
 
   void CTarIGUSolidLayerDeflection::calculateConvectionConductionState() {
@@ -36,35 +36,17 @@ namespace Tarcog {
     Ld += LdMean( Dp, D ) * RelaxationParamter;
     double Ldmax = m_Surface[ Side::Front ]->getMaxDeflection();
     Ldmax += LdMax( Dp, D ) * RelaxationParamter;
-    m_Surface[ Side::Front ]->applyDeflection( Ld, Ldmax );
-    m_Surface[ Side::Back ]->applyDeflection( Ld, Ldmax );
+    for( Side aSide : EnumSide() ) {
+      m_Surface[ aSide ]->applyDeflection( Ld, Ldmax );
+    }
   }
 
   double CTarIGUSolidLayerDeflection::LdMean( const double t_P, const double t_D ) const {
-    double coeff = 16 * t_P / ( pow( M_PI, 6 ) * t_D );
-    double totalSum = 0;
-    for( size_t m = 1; m <= 5; m += 2 ) {
-      for( size_t n = 1; n <= 5; n += 2 ) {
-        double denom = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
-        totalSum += 4 / denom;
-      }
-    }
-    totalSum = coeff * totalSum;
-    return totalSum;
+    return m_MeanCoeff * t_P / t_D;
   }
 
   double CTarIGUSolidLayerDeflection::LdMax( const double t_P, const double t_D ) const {
-    double coeff = 16 * t_P / ( pow( M_PI, 6 ) * t_D );
-    double totalSum = 0;
-    for( size_t m = 1; m <= 5; m += 2 ) {
-      for( size_t n = 1; n <= 5; n += 2 ) {
-        double nomin = sin( m * M_PI / 2 ) * sin( n * M_PI / 2 );
-        double denom = m * n * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
-        totalSum += nomin / denom;
-      }
-    }
-    totalSum = coeff * totalSum;
-    return totalSum;
+    return m_MaxCoeff * t_P / t_D;
   }
 
   double CTarIGUSolidLayerDeflection::flexuralRigidity() const {
@@ -75,6 +57,24 @@ namespace Tarcog {
     double P1 = dynamic_pointer_cast< CGasLayer >( m_NextLayer )->getPressure();
     double P2 = dynamic_pointer_cast< CGasLayer >( m_PreviousLayer )->getPressure();
     return P1 - P2;
+  }
+
+  void CTarIGUSolidLayerDeflection::calcCoeffs() {
+    double coeff = 16 / ( pow( M_PI, 6 ) );
+    double totalSumMean = 0;
+    double totalSumMax = 0;
+    for( size_t m = 1; m <= 5; m += 2 ) {
+      for( size_t n = 1; n <= 5; n += 2 ) {
+        double nomin = sin( m * M_PI / 2 ) * sin( n * M_PI / 2 );
+        double denom = m * n * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+        totalSumMax += nomin / denom;
+        nomin = 4;
+        denom = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+        totalSumMean += nomin / denom;
+      }
+    }
+    m_MaxCoeff = coeff * totalSumMax;
+    m_MeanCoeff = coeff * totalSumMean;
   }
 
 }
