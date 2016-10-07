@@ -23,8 +23,9 @@ namespace Tarcog {
     void initializeStart( const double t_Temperature, const double t_Radiation );
 
     //  Applies deflection to current surface
-    void applyDeflection( const double t_Deflection );
-    double getDeflection() const;
+    void applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection );
+    double getMeanDeflection() const;
+    double getMaxDeflection() const;
 
   private:
     void initialize();
@@ -37,7 +38,8 @@ namespace Tarcog {
 
     // Value for deflection. Positive deflection is surface curved towards left side and 
     // negative deflection vice-versa.
-    double m_Deflection;
+    double m_MeanDeflection;
+    double m_MaxDeflection;
   };
 
 }

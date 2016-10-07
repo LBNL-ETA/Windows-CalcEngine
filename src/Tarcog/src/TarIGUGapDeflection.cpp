@@ -15,8 +15,7 @@ namespace Tarcog {
 
   double CTarIGUGapLayerDeflection::getPressure() {
     double Vini = m_Width * m_Height * m_Thickness;
-    double modThickness = m_Thickness + m_Surface[ Side::Front ]->getDeflection() -
-      m_Surface[ Side::Back ]->getDeflection();
+    double modThickness = getThickness();
     double Vgap = m_Width * m_Height * modThickness;
     return m_Pini * Vini * layerTemperature() / ( m_Tini * Vgap );
   }

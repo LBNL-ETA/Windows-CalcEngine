@@ -9,13 +9,14 @@
 #include "TarIGU.hpp"
 #include "TarcogSystem.hpp"
 #include "TarSurface.hpp"
+#include "TarIGUSolidDeflection.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-class TestDoubleClearDeflection : public testing::Test {
+class DoubleClearDeflectionTPTest1 : public testing::Test {
 
 private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
@@ -55,8 +56,13 @@ protected:
     double solidLayerThickness2 = 0.005715;
     double solidLayerConductance = 1;
 
-    shared_ptr< CBaseIGUTarcogLayer > aSolidLayer1 = 
+    shared_ptr< CTarIGUSolidLayer > aSolidLayer1 =
       make_shared< CTarIGUSolidLayer > ( solidLayerThickness1, solidLayerConductance );
+
+    // Introducing non default deflection properties
+    double youngsModulus = 8.1e10;
+    double poisonRatio = 0.16;
+    aSolidLayer1 = make_shared< CTarIGUSolidLayerDeflection >( aSolidLayer1, youngsModulus, poisonRatio );
 
     shared_ptr< CBaseIGUTarcogLayer > aSolidLayer2 = 
       make_shared< CTarIGUSolidLayer > ( solidLayerThickness2, solidLayerConductance );
@@ -93,7 +99,7 @@ public:
 
 };
 
-TEST_F( TestDoubleClearDeflection, Test1 ) {
+TEST_F( DoubleClearDeflectionTPTest1, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Clear - Calculated Deflection" );
   
   shared_ptr< CTarcogSystem > aSystem = nullptr;
@@ -109,22 +115,26 @@ TEST_F( TestDoubleClearDeflection, Test1 ) {
 
   double Temperature = aSurface->getTemperature();
   double Radiosity = aSurface->J();
-  double Deflection = aSurface->getDeflection();
+  double MeanDeflection = aSurface->getMeanDeflection();
+  double MaxDeflection = aSurface->getMaxDeflection();
 
-  EXPECT_NEAR( 258.762557, Temperature, 1e-5 );
-  EXPECT_NEAR( 251.970206, Radiosity, 1e-5 );
-  EXPECT_NEAR( -0.0013028, Deflection, 1e-5 );
+  EXPECT_NEAR( 258.811500, Temperature, 1e-5 );
+  EXPECT_NEAR( 252.131797, Radiosity, 1e-5 );
+  EXPECT_NEAR( -0.0012879, MeanDeflection, 1e-5 );
+  EXPECT_NEAR( -0.0030742, MaxDeflection, 1e-5 );
 
   aSurface = aLayers[ 0 ]->getSurface( Side::Back );
   ASSERT_TRUE( aSurface != nullptr );
 
   Temperature = aSurface->getTemperature();
   Radiosity = aSurface->J();
-  Deflection = aSurface->getDeflection();
+  MeanDeflection = aSurface->getMeanDeflection();
+  MaxDeflection = aSurface->getMaxDeflection();
 
-  EXPECT_NEAR( 259.084435, Temperature, 1e-5 );
-  EXPECT_NEAR( 267.715730, Radiosity, 1e-5 );
-  EXPECT_NEAR( -0.0013028, Deflection, 1e-5 );
+  EXPECT_NEAR( 259.137749, Temperature, 1e-5 );
+  EXPECT_NEAR( 267.765290, Radiosity, 1e-5 );
+  EXPECT_NEAR( -0.0012879, MeanDeflection, 1e-5 );
+  EXPECT_NEAR( -0.0030742, MaxDeflection, 1e-5 );
 
   // Second layer
   aSurface = aLayers[ 1 ]->getSurface( Side::Front );
@@ -132,23 +142,27 @@ TEST_F( TestDoubleClearDeflection, Test1 ) {
 
   Temperature = aSurface->getTemperature();
   Radiosity = aSurface->J();
-  Deflection = aSurface->getDeflection();
+  MeanDeflection = aSurface->getMeanDeflection();
+  MaxDeflection = aSurface->getMaxDeflection();
 
-  EXPECT_NEAR( 279.155258, Temperature, 1e-5 );
-  EXPECT_NEAR( 332.050718, Radiosity, 1e-5 );
-  EXPECT_NEAR( 0.00012286, Deflection, 1e-5 );
+  EXPECT_NEAR( 278.961419, Temperature, 1e-5 );
+  EXPECT_NEAR( 331.256183, Radiosity, 1e-5 );
+  EXPECT_NEAR( 0.00014072, MeanDeflection, 1e-5 );
+  EXPECT_NEAR( 0.00033590, MaxDeflection, 1e-5 );
 
   aSurface = aLayers[ 1 ]->getSurface( Side::Back );
   ASSERT_TRUE( aSurface != nullptr );
 
   Temperature = aSurface->getTemperature();
   Radiosity = aSurface->J();
-  Deflection = aSurface->getDeflection();
+  MeanDeflection = aSurface->getMeanDeflection();
+  MaxDeflection = aSurface->getMaxDeflection();
 
-  EXPECT_NEAR( 279.758779, Temperature, 1e-5 );
-  EXPECT_NEAR( 359.638814, Radiosity, 1e-5 );
-  EXPECT_NEAR( 0.00012286, Deflection, 1e-5 );
+  EXPECT_NEAR( 279.573136, Temperature, 1e-5 );
+  EXPECT_NEAR( 358.865247, Radiosity, 1e-5 );
+  EXPECT_NEAR( 0.00014072, MeanDeflection, 1e-5 );
+  EXPECT_NEAR( 0.00033590, MaxDeflection, 1e-5 );
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 24, int( numOfIter ) );
+  EXPECT_EQ( 28, int( numOfIter ) );
 }

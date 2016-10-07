@@ -20,6 +20,7 @@ namespace Tarcog {
     std::shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
 
     double LdMean( const double t_P, const double t_D ) const;
+    double LdMax( const double t_P, const double t_D ) const;
     double flexuralRigidity() const;
     double pressureDifference() const;
 

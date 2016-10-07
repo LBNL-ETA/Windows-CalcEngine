@@ -36,8 +36,8 @@ namespace Tarcog {
       ( *m_VectorB )[ i ] = 0;
     }
     for ( it = aSolidLayers.begin(); it != aSolidLayers.end(); ++it ) {
-      shared_ptr< CBaseTarcogLayer > aPreviousLayer = (*it)->getPreviousLayer();
-      shared_ptr< CBaseTarcogLayer > aNextLayer = (*it)->getNextLayer();
+      shared_ptr< CBaseTarcogLayer > aPreviousLayer = ( *it )->getPreviousLayer();
+      shared_ptr< CBaseTarcogLayer > aNextLayer = ( *it )->getNextLayer();
       buildCell( aPreviousLayer, ( *it ), aNextLayer, positionCounter );
       ++positionCounter;
     }

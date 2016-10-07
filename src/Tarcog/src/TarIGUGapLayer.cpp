@@ -56,8 +56,8 @@ namespace Tarcog {
   void CTarIGUGapLayer::calculateConvectionConductionState() {
     checkNextLayer();
     if( !isCalculated() ) {
-      if ( m_Thickness == 0 ) {
-        throw runtime_error( "Solid layer thickness is set to zero." );
+      if ( getThickness() == 0 ) {
+        throw runtime_error( "Layer thickness is set to zero." );
       }
 
       convectiveH();
@@ -84,11 +84,12 @@ namespace Tarcog {
     using ConstantsData::GRAVITYCONSTANT;
 
     double tGapTemperature = layerTemperature();
-    double deltaTemp = fabs( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() );
+    double deltaTemp = fabs( m_Surface.at( Side::Back )->getTemperature() - 
+      m_Surface.at( Side::Front )->getTemperature() );
 
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
 
-    double Ra = GRAVITYCONSTANT * pow( m_Thickness, 3 ) * deltaTemp * 
+    double Ra = GRAVITYCONSTANT * pow( getThickness(), 3 ) * deltaTemp * 
       aProperties->m_SpecificHeat * pow( aProperties->m_Density, 2 ) / 
       ( tGapTemperature * aProperties->m_Viscosity * aProperties->m_ThermalConductivity );
 
@@ -96,10 +97,10 @@ namespace Tarcog {
   }
 
   double CTarIGUGapLayer::aspectRatio() {
-    if( m_Thickness == 0 ) {
+    if( getThickness() == 0 ) {
       throw runtime_error( "Gap thickness is set to zero." );
     }
-    return m_Height / m_Thickness;
+    return m_Height / getThickness();
   }
 
   double CTarIGUGapLayer::convectiveH() {
@@ -110,7 +111,8 @@ namespace Tarcog {
     double Asp = aspectRatio();
     shared_ptr< CNusseltNumber > nusseltNumber = make_shared< CNusseltNumber > ();
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
-    m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp) * aProperties->m_ThermalConductivity / m_Thickness;
+    m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp) * 
+      aProperties->m_ThermalConductivity / getThickness();
     if( m_AirSpeed != 0 ) {
       m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirSpeed;
     }
@@ -120,7 +122,7 @@ namespace Tarcog {
 
   void CTarIGUGapLayer::ventilatedFlow() {
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
-    m_LayerGainFlow = aProperties->m_Density * aProperties->m_SpecificHeat * m_AirSpeed * m_Thickness *
+    m_LayerGainFlow = aProperties->m_Density * aProperties->m_SpecificHeat * m_AirSpeed * getThickness() *
       m_Width * ( m_inTemperature - m_outTemperature );
   }
 
@@ -131,7 +133,8 @@ namespace Tarcog {
   double CTarIGUGapLayer::averageTemperature() {
     double aveTemp = 0;
     if( m_Surface.at( Side::Front ) != nullptr && m_Surface.at( Side::Back ) != nullptr ) {
-      aveTemp = ( m_Surface.at( Side::Front )->getTemperature() + m_Surface.at( Side::Back )->getTemperature() ) / 2;
+      aveTemp = ( m_Surface.at( Side::Front )->getTemperature() + 
+        m_Surface.at( Side::Back )->getTemperature() ) / 2;
     }
     return aveTemp;
   }
@@ -141,7 +144,7 @@ namespace Tarcog {
     double cHeight = 0;
     // Characteristic height can only be calculated after initialization is performed
     if( m_ConductiveConvectiveCoeff != 0 ) {
-      cHeight = aProperties->m_Density * aProperties->m_SpecificHeat * m_Thickness * m_AirSpeed / 
+      cHeight = aProperties->m_Density * aProperties->m_SpecificHeat * getThickness() * m_AirSpeed / 
         ( 4 * m_ConductiveConvectiveCoeff );
     }
     return cHeight;
@@ -154,7 +157,7 @@ namespace Tarcog {
 
   double CTarIGUGapLayer::hagenPressureTerm() {
     shared_ptr< GasProperties > aGasProperties = m_Gas->getGasProperties();
-    return 12 * aGasProperties->m_Viscosity * m_Height / pow( m_Thickness, 2 );
+    return 12 * aGasProperties->m_Viscosity * m_Height / pow( getThickness(), 2 );
   }
 
   double CTarIGUGapLayer::pressureLossTerm() {
@@ -230,7 +233,8 @@ namespace Tarcog {
     double tiltAngle = M_PI / 180 * ( m_Tilt - 90 );
     double gapTemperature = layerTemperature();
     shared_ptr< GasProperties > aProperties = m_ReferenceGas->getGasProperties();
-    double temperatureMultiplier = fabs( gapTemperature - t_GapTemperature ) / ( gapTemperature * t_GapTemperature );
+    double temperatureMultiplier = fabs( gapTemperature - t_GapTemperature ) / 
+      ( gapTemperature * t_GapTemperature );
     return aProperties->m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height * 
       fabs(cos(tiltAngle)) * temperatureMultiplier;
   }
@@ -239,7 +243,7 @@ namespace Tarcog {
    double impedance = 0;
 
    if( t_A != 0 ) {
-    impedance = pow( m_Width * m_Thickness / ( 0.6 * t_A ) - 1, 2 );
+    impedance = pow( m_Width * getThickness() / ( 0.6 * t_A ) - 1, 2 );
    }
 
    return impedance;

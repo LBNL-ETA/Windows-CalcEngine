@@ -168,8 +168,10 @@ namespace Tarcog {
     onCreate();
   }
 
-  CGasLayer::CGasLayer(double const t_Pressure, shared_ptr< CGas > t_Gas) : m_Pressure(t_Pressure), m_AirSpeed(0),
-    m_AirVerticalDirection(AirVerticalDirection::None), m_AirHorizontalDirection(AirHorizontalDirection::None) {
+  CGasLayer::CGasLayer(double const t_Pressure, shared_ptr< CGas > t_Gas) : 
+    m_Pressure(t_Pressure), m_AirSpeed(0),
+    m_AirVerticalDirection(AirVerticalDirection::None), 
+    m_AirHorizontalDirection(AirHorizontalDirection::None) {
     m_Gas = t_Gas;
     onCreate();
   }
