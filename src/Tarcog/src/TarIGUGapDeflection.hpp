@@ -15,7 +15,7 @@ namespace Tarcog {
     double getPressure();
 
   private:
-    std::shared_ptr< CTarIGUGapLayer > m_GapLayer;
+    // std::shared_ptr< CTarIGUGapLayer > m_GapLayer;
 
     // Windows is produced under given temperature and pressure.
     // That is used for deflection calculations.

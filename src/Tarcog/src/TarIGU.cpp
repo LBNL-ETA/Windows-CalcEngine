@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -168,13 +170,21 @@ namespace Tarcog {
   void CTarIGU::setDeflectionProperties( const double t_Tini, const double t_Pini ) {
     // Simply decorating layers in a list with new behavior
     vector< shared_ptr< CTarIGUSolidLayer > > aVector = getSolidLayers();
+    // deflection properties of the IGU
+    double Lmean = Ldmean();
+    double Lmax = Ldmax();
+
     for( shared_ptr< CTarIGUSolidLayer >& aLayer : getSolidLayers() ) {
-      // Deflection could aslo be decorated outside in which case program already have a layer as
+      // Deflection could aslo be decorated (created) outside in which case program already have a layer as
       // deflection layer. If that is not done then layer must be decorated with defalut deflection
       // properties
+      shared_ptr< CTarIGUSolidLayerDeflection > aDeflectionLayer = nullptr;
       if( dynamic_pointer_cast< CTarIGUSolidLayerDeflection >( aLayer ) == NULL ) {
-        replaceLayer( aLayer, make_shared< CTarIGUSolidLayerDeflection >( aLayer ) );
+        aDeflectionLayer = make_shared< CTarIGUSolidLayerDeflection >( aLayer );        
+      } else {
+        aDeflectionLayer = dynamic_pointer_cast< CTarIGUSolidLayerDeflection >( aLayer );
       }
+      replaceLayer( aLayer, make_shared< CTarIGUDeflectionTempAndPressure >( aDeflectionLayer, Lmean, Lmax ) );
     }
     for( shared_ptr< CTarIGUGapLayer >& aLayer : getGapLayers() ) {
       replaceLayer( aLayer, make_shared< CTarIGUGapLayerDeflection >( aLayer, t_Tini, t_Pini ) );
@@ -191,6 +201,32 @@ namespace Tarcog {
     if ( index < m_Layers.size() - 1 ) {
       t_Replacement->connectToBackSide( m_Layers[ index + 1 ] );
     }
+  }
+
+  double CTarIGU::Ldmean() const {
+    double coeff = 16 / ( pow( M_PI, 6 ) );
+    double totalSum = 0;
+    for( size_t m = 1; m <= 5; m += 2 ) {
+      for( size_t n = 1; n <= 5; n += 2 ) {
+        double nomin = sin( m * M_PI / 2 ) * sin( n * M_PI / 2 );
+        double denom = m * n * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+        totalSum += nomin / denom;
+      }
+    }
+    return coeff * totalSum;
+  }
+
+  double CTarIGU::Ldmax() const {
+    double coeff = 16 / ( pow( M_PI, 6 ) );
+    double totalSum = 0;
+    for( size_t m = 1; m <= 5; m += 2 ) {
+      for( size_t n = 1; n <= 5; n += 2 ) {
+        double nomin = 4;
+        double denom = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+        totalSum += nomin / denom;
+      }
+    }
+    return coeff * totalSum;
   }
 
   vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() {

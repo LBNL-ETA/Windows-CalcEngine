@@ -59,6 +59,10 @@ namespace Tarcog {
     double m_Height; // meters
     double m_Tilt; // degrees
 
+    // Routines to calculate deflection coefficients
+    double Ldmean() const;
+    double Ldmax() const;
+
   };
 
 }
