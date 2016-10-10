@@ -9,6 +9,7 @@ namespace Tarcog {
   class CTarIGU;
   class CBaseIGUTarcogLayer;
   class CTarIGUSolidLayer;
+  class CTarIGUGapLayer;
   class CTarEnvironment;
   class CTarIndoorEnvironment;
   class CTarOutdoorEnvironment;
@@ -24,6 +25,7 @@ namespace Tarcog {
     std::shared_ptr< CTarEnvironment > getOutdoor() const;
     // std::vector< std::shared_ptr < CBaseIGUTarcogLayer > > getLayers() const;
     std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers() const;
+    std::vector< std::shared_ptr< CTarIGUGapLayer > > getGapLayers();
 
     std::vector< double > getSurfaceTemperatures() const;
     std::vector< double > getSurfaceRadiosities() const;

@@ -74,6 +74,7 @@ namespace Tarcog {
     virtual void calculateLayerState() final;
     virtual void calculateRadiationState() = 0;
     virtual void calculateConvectionConductionState() = 0;
+    bool areSurfacesInitalized() const;
 
     std::map< FenestrationCommon::Side, std::shared_ptr< CTarSurface > > m_Surface;
     double m_ConductiveConvectiveCoeff;

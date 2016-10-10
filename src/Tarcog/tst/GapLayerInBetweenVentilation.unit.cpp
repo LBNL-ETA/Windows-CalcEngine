@@ -6,6 +6,7 @@
 #include "TarIGUSolidLayer.hpp"
 #include "TarBaseShade.hpp"
 #include "TarIGUGapLayer.hpp"
+#include "TarIGUVentilatedGapLayer.hpp"
 #include "TarIGU.hpp"
 #include "TarcogSystem.hpp"
 
@@ -15,8 +16,6 @@ using namespace Tarcog;
 class TestGapLayerInBetweenVentilation : public testing::Test {
 
 private:
-  shared_ptr< CTarIGUGapLayer > m_GapLayer1;
-  shared_ptr< CTarIGUGapLayer > m_GapLayer2;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
@@ -72,10 +71,12 @@ protected:
 
     double gapThickness = 0.0127;
     double gapPressure = 101325;
-    m_GapLayer1 = make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
+    shared_ptr< CBaseIGUTarcogLayer > m_GapLayer1 = 
+      make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( m_GapLayer1 != nullptr );
 
-    m_GapLayer2 = make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
+    shared_ptr< CBaseIGUTarcogLayer > m_GapLayer2 = 
+      make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( m_GapLayer2 != nullptr );
 
     double windowWidth = 1;
@@ -96,8 +97,8 @@ protected:
   }
 
 public:
-  shared_ptr< CTarIGUGapLayer > GetGap1() { return m_GapLayer1; };
-  shared_ptr< CTarIGUGapLayer > GetGap2() { return m_GapLayer2; };
+  shared_ptr< CBaseIGUTarcogLayer > GetGap1() { return m_TarcogSystem->getGapLayers()[ 0 ]; };
+  shared_ptr< CBaseIGUTarcogLayer > GetGap2() { return m_TarcogSystem->getGapLayers()[ 1 ]; };
 
 };
 
@@ -105,12 +106,12 @@ TEST_F( TestGapLayerInBetweenVentilation, VentilationFlow ) {
   try {
     SCOPED_TRACE( "Begin Test: Test Ventilated Gap Layer - Intial Airflow" );
     
-    shared_ptr< CTarIGUGapLayer > aLayer = GetGap1();
+    shared_ptr< CBaseIGUTarcogLayer > aLayer = GetGap1();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
     
     ASSERT_TRUE( aLayer != nullptr );
-    double gainEnergy = aLayer->getGainFlow();    
+    double gainEnergy = aLayer->getGainFlow();
     EXPECT_NEAR( 32.414571203538848, gainEnergy, 1e-4 );
 
     aLayer = GetGap2();

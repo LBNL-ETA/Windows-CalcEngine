@@ -12,7 +12,7 @@ namespace Gases{
 namespace Tarcog {
 
   class CTarSurface;
-  class CTarIGUGapLayer;
+  class CTarIGUVentilatedGapLayer;
   class CTarEnvironment;
 
   class CShadeOpenings {
@@ -43,15 +43,18 @@ namespace Tarcog {
       const std::shared_ptr< CTarSurface >& t_FrontSurface = nullptr, 
       const std::shared_ptr< CTarSurface >& t_BackSurface = nullptr);
 
+    CTarIGUShadeLayer( std::shared_ptr< CTarIGUSolidLayer >& t_Layer,
+      std::shared_ptr< CShadeOpenings >& t_ShadeOpenings );
+
     CTarIGUShadeLayer( double t_Thickness, double t_Conductivity );
 
   private:
     void calculateConvectionConductionState();
 
-    void calcInBetweenShadeFlow( const std::shared_ptr< CTarIGUGapLayer >& t_Gap1, 
-      const std::shared_ptr< CTarIGUGapLayer >& t_Gap2 );
-    void calcEdgeShadeFlow( const std::shared_ptr< CTarEnvironment >& t_Environment, 
-      const std::shared_ptr< CTarIGUGapLayer >& t_Gap );
+    void calcInBetweenShadeFlow( std::shared_ptr< CTarIGUVentilatedGapLayer > t_Gap1, 
+      std::shared_ptr< CTarIGUVentilatedGapLayer > t_Gap2 );
+    void calcEdgeShadeFlow( std::shared_ptr< CTarEnvironment > t_Environment, 
+      std::shared_ptr< CTarIGUVentilatedGapLayer > t_Gap );
 
     std::shared_ptr< CShadeOpenings > m_ShadeOpenings;
   };

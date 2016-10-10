@@ -14,6 +14,8 @@
 #include "TarSurface.hpp"
 #include "TarIGUSolidDeflection.hpp"
 #include "TarIGUGapDeflection.hpp"
+#include "TarIGUVentilatedGapLayer.hpp"
+#include "TarBaseShade.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -44,13 +46,16 @@ namespace Tarcog {
       shared_ptr< CBaseIGUTarcogLayer > lastLayer = m_Layers.back();
       if ( dynamic_pointer_cast< CTarIGUSolidLayer > ( t_Layer ) != 
         dynamic_pointer_cast< CTarIGUSolidLayer > ( lastLayer ) ) {
-        m_Layers.push_back(t_Layer);
-        lastLayer->connectToBackSide(t_Layer);
+        m_Layers.push_back( t_Layer );
+        lastLayer->connectToBackSide( t_Layer );
       } else {
         throw runtime_error( "Two adjecent layers in IGU cannot be of same type. "
           "IGU must be constructed of array of solid and gap layers." );
       }
     }
+
+    checkForLayerUpgrades( t_Layer );
+
     t_Layer->setTilt( m_Tilt );
     t_Layer->setWidth( m_Width );
     t_Layer->setHeight( m_Height );
@@ -236,8 +241,8 @@ namespace Tarcog {
 
   }
 
-  void CTarIGU::replaceLayer( shared_ptr< CBaseIGUTarcogLayer > t_Original, 
-    shared_ptr< CBaseIGUTarcogLayer > t_Replacement ) {
+  void CTarIGU::replaceLayer( const shared_ptr< CBaseIGUTarcogLayer >& t_Original, 
+    const shared_ptr< CBaseIGUTarcogLayer >& t_Replacement ) {
     size_t index = find( m_Layers.begin(), m_Layers.end(), t_Original ) - m_Layers.begin();
     m_Layers[ index ] = t_Replacement;
     if (index > 0) {
@@ -245,6 +250,23 @@ namespace Tarcog {
     }
     if ( index < m_Layers.size() - 1 ) {
       t_Replacement->connectToBackSide( m_Layers[ index + 1 ] );
+    }
+  }
+
+  void CTarIGU::checkForLayerUpgrades( shared_ptr< CBaseIGUTarcogLayer >& t_Layer ) {
+    if( dynamic_pointer_cast< CTarIGUShadeLayer >( t_Layer ) != NULL ) {
+      if( dynamic_pointer_cast< CTarIGUGapLayer >( t_Layer->getPreviousLayer() ) != NULL ) {
+        shared_ptr< CTarIGUVentilatedGapLayer > newLayer =
+          make_shared< CTarIGUVentilatedGapLayer >( dynamic_pointer_cast< CTarIGUGapLayer > ( t_Layer->getPreviousLayer() ) );
+        replaceLayer( dynamic_pointer_cast< CTarIGUGapLayer > ( t_Layer->getPreviousLayer() ), newLayer );
+      }
+    }
+    if( dynamic_pointer_cast< CTarIGUGapLayer >( t_Layer ) != NULL ) {
+      if( dynamic_pointer_cast< CTarIGUShadeLayer >( t_Layer->getPreviousLayer() ) != NULL ) {
+        shared_ptr< CTarIGUVentilatedGapLayer > newLayer =
+          make_shared< CTarIGUVentilatedGapLayer >( dynamic_pointer_cast< CTarIGUGapLayer > ( t_Layer ) );
+        replaceLayer( dynamic_pointer_cast< CTarIGUGapLayer > ( t_Layer ), newLayer );
+      }
     }
   }
 

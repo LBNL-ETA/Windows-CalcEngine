@@ -13,10 +13,10 @@ namespace Gases
   const double DefaultPressure = 101325;
   const double DefaultTemperature = 273.15;
 
-  class CGasItem
-  {
+  class CGasItem {
   public:
     CGasItem();
+    CGasItem( const CGasItem& t_GasItem );
     CGasItem( double aFraction, const std::shared_ptr< const CGasData >& t_GasData );
     CGasItem& operator=( const CGasItem& t_GasItem );
     void setTemperature( double t_Temperature );

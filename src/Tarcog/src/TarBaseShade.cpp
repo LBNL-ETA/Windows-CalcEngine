@@ -8,6 +8,7 @@
 #include "TarEnvironment.hpp"
 #include "Gas.hpp"
 #include "TarcogConstants.hpp"
+#include "TarIGUVentilatedGapLayer.hpp"
 
 using namespace std;
 
@@ -63,6 +64,11 @@ namespace Tarcog {
     m_ShadeOpenings( t_ShadeOpenings ) {
   }
 
+  CTarIGUShadeLayer::CTarIGUShadeLayer( shared_ptr< CTarIGUSolidLayer >& t_Layer, 
+    shared_ptr< CShadeOpenings >& t_ShadeOpenings ) : CTarIGUSolidLayer( *t_Layer ) {
+    m_ShadeOpenings = t_ShadeOpenings;
+  }
+
   CTarIGUShadeLayer::CTarIGUShadeLayer( double t_Thickness, double t_Conductivity ) : 
     CTarIGUSolidLayer( t_Thickness, t_Conductivity), m_ShadeOpenings( make_shared< CShadeOpenings >() ) {
   
@@ -78,20 +84,21 @@ namespace Tarcog {
 
     if ( dynamic_pointer_cast< CTarIGUGapLayer >( m_PreviousLayer ) != NULL && 
       dynamic_pointer_cast< CTarIGUGapLayer >( m_NextLayer ) != NULL ) {
-      calcInBetweenShadeFlow( dynamic_pointer_cast< CTarIGUGapLayer >( m_PreviousLayer ), 
-        dynamic_pointer_cast< CTarIGUGapLayer >( m_NextLayer ) );
+      calcInBetweenShadeFlow( dynamic_pointer_cast< CTarIGUVentilatedGapLayer >( m_PreviousLayer ),
+        dynamic_pointer_cast< CTarIGUVentilatedGapLayer >( m_NextLayer ) );
     } else if ( dynamic_pointer_cast< CTarEnvironment >( m_PreviousLayer ) != NULL && 
-      dynamic_pointer_cast< CTarIGUGapLayer >( m_NextLayer ) != NULL ) {
+      dynamic_pointer_cast< CTarIGUVentilatedGapLayer >( m_NextLayer ) != NULL ) {
       calcEdgeShadeFlow( dynamic_pointer_cast< CTarEnvironment >( m_PreviousLayer ), 
-        dynamic_pointer_cast< CTarIGUGapLayer >( m_NextLayer ) );
-    } else if ( dynamic_pointer_cast< CTarIGUGapLayer >( m_PreviousLayer ) != NULL && 
+        dynamic_pointer_cast< CTarIGUVentilatedGapLayer >( m_NextLayer ) );
+    } else if ( dynamic_pointer_cast< CTarIGUVentilatedGapLayer >( m_PreviousLayer ) != NULL &&
       dynamic_pointer_cast< CTarEnvironment >( m_NextLayer ) != NULL ) {
-      calcEdgeShadeFlow( dynamic_pointer_cast< CTarEnvironment >( m_NextLayer ), dynamic_pointer_cast< CTarIGUGapLayer >( m_PreviousLayer ) );
+      calcEdgeShadeFlow( dynamic_pointer_cast< CTarEnvironment >( m_NextLayer ), 
+        dynamic_pointer_cast< CTarIGUVentilatedGapLayer >( m_PreviousLayer ) );
     }
   }
 
-  void CTarIGUShadeLayer::calcInBetweenShadeFlow( const shared_ptr< CTarIGUGapLayer >& t_Gap1, 
-    const shared_ptr< CTarIGUGapLayer >& t_Gap2 ) {
+  void CTarIGUShadeLayer::calcInBetweenShadeFlow( shared_ptr< CTarIGUVentilatedGapLayer > t_Gap1,
+    shared_ptr< CTarIGUVentilatedGapLayer > t_Gap2 ) {
     using namespace IterationConstants;
 
     double Tup = t_Gap1->layerTemperature();
@@ -169,19 +176,20 @@ namespace Tarcog {
 
     double qv1 = t_Gap1->getGainFlow();
     double qv2 = t_Gap2->getGainFlow();
-    t_Gap1->smoothEnergy( qv1, qv2 );
-    t_Gap2->smoothEnergy( qv1, qv2 );
+    t_Gap1->smoothEnergyGain( qv1, qv2 );
+    t_Gap2->smoothEnergyGain( qv1, qv2 );
 
   }
 
-  void CTarIGUShadeLayer::calcEdgeShadeFlow( const shared_ptr< CTarEnvironment >& t_Environment, 
-    const shared_ptr< CTarIGUGapLayer >& t_Gap ) {
+  void CTarIGUShadeLayer::calcEdgeShadeFlow( shared_ptr< CTarEnvironment > t_Environment, 
+    shared_ptr< CTarIGUVentilatedGapLayer > t_Gap ) {
     using namespace IterationConstants;
 
     double TgapOut = t_Gap->layerTemperature();
     double RelaxationParameter = RELAXATION_PARAMETER_AIRFLOW;
     bool converged = false;
     size_t iterationStep = 0;
+
     double tempGap = t_Gap->layerTemperature();
     while( !converged ) {
       double tempEnvironment = t_Environment->getGasTemperature();
@@ -224,7 +232,8 @@ namespace Tarcog {
         iterationStep = 0;
         if( RelaxationParameter == RELAXATION_PARAMETER_AIRFLOW_MIN ) {
           converged = true;
-          throw runtime_error( "Airflow iterations fail to converge. Maximum number of iteration steps reached." );
+          throw runtime_error( "Airflow iterations fail to converge. "
+            "Maximum number of iteration steps reached." );
         }
       }
     }

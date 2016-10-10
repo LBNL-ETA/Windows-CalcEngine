@@ -54,6 +54,19 @@ namespace Gases
     return *this;
   }
 
+  GasProperties & GasProperties::operator=( const GasProperties & t_A ) {
+    m_ThermalConductivity = t_A.m_ThermalConductivity;
+    m_Viscosity = t_A.m_Viscosity;
+    m_SpecificHeat = t_A.m_SpecificHeat;
+    m_Density = t_A.m_Density;
+    m_MolecularWeight = t_A.m_MolecularWeight;
+    m_Alpha = t_A.m_Alpha;
+    m_PrandlNumber = t_A.m_PrandlNumber;
+    m_PropertiesCalculated = t_A.m_PropertiesCalculated;
+
+    return *this;
+  }
+
   void GasProperties::calculateAlphaAndPrandl(){
     m_Alpha = m_ThermalConductivity / ( m_SpecificHeat * m_Density );
     m_PrandlNumber = m_Viscosity / m_Density / m_Alpha;

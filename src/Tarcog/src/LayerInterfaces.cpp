@@ -128,6 +128,10 @@ namespace Tarcog {
     setCalculated();
   }
 
+  bool CLayerHeatFlow::areSurfacesInitalized() const {
+    return ( m_Surface.at( Side::Front ) != nullptr && m_Surface.at( Side::Back ) != nullptr );
+  }
+
   shared_ptr< CTarSurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
     return m_Surface.at( t_Position );
   }

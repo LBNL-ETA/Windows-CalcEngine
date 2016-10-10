@@ -17,6 +17,18 @@ namespace Gases
     m_DefaultGas = true;
   }
 
+  CGas::CGas( const CGas& t_Gas ) {
+    m_GasItem.clear();
+    for( shared_ptr< CGasItem > item : t_Gas.m_GasItem ) {
+      shared_ptr< CGasItem > aItem = make_shared< CGasItem >( *item );
+      m_GasItem.push_back( aItem );
+    }
+    m_GasItem = t_Gas.m_GasItem;
+    m_SimpleProperties = t_Gas.m_SimpleProperties;
+    m_Properties = t_Gas.m_Properties;
+    m_DefaultGas = t_Gas.m_DefaultGas;
+  }
+
   void CGas::addGasItem( const shared_ptr< CGasItem >& t_GasItem ) {
     // Need to remove default since user wants to create their own Gases
     if ( m_DefaultGas ) {
@@ -41,8 +53,8 @@ namespace Gases
   void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
     vector< shared_ptr< CGasItem > >::const_iterator it;
     for( it = m_GasItem.begin(); it<m_GasItem.end(); ++it ) {
-      (*it)->setTemperature( t_Temperature );
-      (*it)->setPressure( t_Pressure );
+      ( *it )->setTemperature( t_Temperature );
+      ( *it )->setPressure( t_Pressure );
     }
   }
 
@@ -252,7 +264,11 @@ namespace Gases
   }
 
   CGas& CGas::operator=( const CGas& t_Gas ) {
-    m_GasItem = t_Gas.m_GasItem;
+    m_GasItem.clear();
+    for( shared_ptr< CGasItem > item : t_Gas.m_GasItem ) {
+      shared_ptr< CGasItem > aItem = make_shared< CGasItem >( *item );
+      m_GasItem.push_back( aItem );
+    }
     m_SimpleProperties = t_Gas.m_SimpleProperties;
     m_Properties = t_Gas.m_Properties;
     m_DefaultGas = t_Gas.m_DefaultGas;

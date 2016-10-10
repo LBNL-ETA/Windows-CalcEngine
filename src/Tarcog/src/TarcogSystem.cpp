@@ -71,6 +71,10 @@ namespace Tarcog {
     return m_IGU->getSolidLayers();
   }
 
+  vector< shared_ptr< CTarIGUGapLayer > > CTarcogSystem::getGapLayers() {
+    return m_IGU->getGapLayers();
+  }
+
   vector<double> CTarcogSystem::getSurfaceTemperatures() const {
     vector< double > temperatures;
     vector< shared_ptr< CTarIGUSolidLayer > > aSolidLayers = getSolidLayers();

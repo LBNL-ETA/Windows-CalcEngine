@@ -11,10 +11,10 @@ namespace Gases
   class CGasData;
   struct GasProperties;
 
-  class CGas
-  {
+  class CGas {
   public:
     CGas();
+    CGas( const CGas& t_Gas );
     void addGasItem( const std::shared_ptr< CGasItem >& t_GasItem );
     double totalPercent();
     std::shared_ptr< GasProperties > getSimpleGasProperties();

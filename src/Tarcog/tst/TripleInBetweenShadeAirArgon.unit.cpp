@@ -25,9 +25,9 @@ class TestInBetweenShadeAirArgon : public testing::Test {
 
 private:
   shared_ptr< CTarcogSystem > m_TarcogSystem;
-  shared_ptr< CBaseIGUTarcogLayer > m_Layer1;
-  shared_ptr< CBaseIGUTarcogLayer > m_Layer2;
-  shared_ptr< CBaseIGUTarcogLayer > m_Layer3;
+  // shared_ptr< CBaseIGUTarcogLayer > m_Layer1;
+  // shared_ptr< CBaseIGUTarcogLayer > m_Layer2;
+  // shared_ptr< CBaseIGUTarcogLayer > m_Layer3;
 
 protected:
   virtual void SetUp() {    
@@ -64,11 +64,13 @@ protected:
     double solidLayerThickness = 0.005715; // [m]
     double solidLayerConductance = 1;
 
-    m_Layer1 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    ASSERT_TRUE( m_Layer1 != nullptr );
+    shared_ptr< CBaseIGUTarcogLayer > aLayer1 = 
+      make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    ASSERT_TRUE( aLayer1 != nullptr );
 
-    m_Layer3 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    ASSERT_TRUE( m_Layer3 != nullptr );
+    shared_ptr< CBaseIGUTarcogLayer > aLayer3 = 
+      make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    ASSERT_TRUE( aLayer3 != nullptr );
 
     double shadeLayerThickness = 0.01;
     double shadeLayerConductance = 160;
@@ -78,10 +80,10 @@ protected:
     double Aright = 0.1;
     double Afront = 0.2;
 
-    m_Layer2 = make_shared< CTarIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
-      make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
+    shared_ptr< CBaseIGUTarcogLayer > aLayer2 = make_shared< CTarIGUShadeLayer >( shadeLayerThickness, 
+      shadeLayerConductance, make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
 
-    ASSERT_TRUE( m_Layer2 != nullptr );
+    ASSERT_TRUE( aLayer2 != nullptr );
 
     // gap layers
 
@@ -125,11 +127,11 @@ protected:
     double windowHeight = 1;
     shared_ptr< CTarIGU > aIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
-    aIGU->addLayer( m_Layer1 );
+    aIGU->addLayer( aLayer1 );
     aIGU->addLayer( GapLayer1 );
-    aIGU->addLayer( m_Layer2 );
+    aIGU->addLayer( aLayer2 );
     aIGU->addLayer( GapLayer2 );
-    aIGU->addLayer( m_Layer3 );
+    aIGU->addLayer( aLayer3 );
 
     /////////////////////////////////////////////////////////
     // System
@@ -142,9 +144,9 @@ protected:
 
 public:
   shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
-  shared_ptr< CBaseIGUTarcogLayer > GetLayer1() { return m_Layer1; };
-  shared_ptr< CBaseIGUTarcogLayer > GetLayer2() { return m_Layer2; };
-  shared_ptr< CBaseIGUTarcogLayer > GetLayer3() { return m_Layer3; };
+  shared_ptr< CBaseIGUTarcogLayer > GetLayer1() { return m_TarcogSystem->getSolidLayers()[ 0 ]; };
+  shared_ptr< CBaseIGUTarcogLayer > GetLayer2() { return m_TarcogSystem->getSolidLayers()[ 1 ]; };
+  shared_ptr< CBaseIGUTarcogLayer > GetLayer3() { return m_TarcogSystem->getSolidLayers()[ 2 ]; };
 
 };
 
@@ -159,37 +161,37 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
   ASSERT_TRUE( aLayer != nullptr );
   aSurface = aLayer->getSurface( Side::Front );
 
-  EXPECT_NEAR( 257.70807679264135, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 248.51092039068794, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 257.70858602501283, aSurface->getTemperature(), 1e-6 );
+  EXPECT_NEAR( 248.51258065870940, aSurface->J(), 1e-6 );
 
   aSurface = aLayer->getSurface( Side::Back );
 
-  EXPECT_NEAR( 258.13514288283039, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 259.76088456656476, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 258.13573727149321, aSurface->getTemperature(), 1e-6 );
+  EXPECT_NEAR( 259.76235979463536, aSurface->J(), 1e-6 );
 
   aLayer = GetLayer2();
   ASSERT_TRUE( aLayer != nullptr );
   aSurface = aLayer->getSurface( Side::Front );
 
-  EXPECT_NEAR( 271.90484753651458, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 301.88152030138281, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 271.90401485639518, aSurface->getTemperature(), 1e-6 );
+  EXPECT_NEAR( 301.87856774037959, aSurface->J(), 1e-6 );
 
   aSurface = aLayer->getSurface( Side::Back );
 
-  EXPECT_NEAR( 271.90828841323201, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 318.34444233867350, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 271.90745499217974, aSurface->getTemperature(), 1e-6 );
+  EXPECT_NEAR( 318.33970629247358, aSurface->J(), 1e-6 );
 
   aLayer = GetLayer3();
   ASSERT_TRUE( aLayer != nullptr );
   aSurface = aLayer->getSurface( Side::Front );
 
-  EXPECT_NEAR( 284.41487117900050, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 362.57178896039937, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 284.41284098002097, aSurface->getTemperature(), 1e-6 );
+  EXPECT_NEAR( 362.56213463202778, aSurface->J(), 1e-6 );
 
   aSurface = aLayer->getSurface( Side::Back );
 
-  EXPECT_NEAR( 284.84193726918704, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 382.35430412032650, aSurface->J(), 1e-6 );
+  EXPECT_NEAR( 284.83999222650090, aSurface->getTemperature(), 1e-6 );
+  EXPECT_NEAR( 382.34574241337458, aSurface->J(), 1e-6 );
 
   size_t numOfIter = GetSystem()->getNumberOfIterations();
   EXPECT_EQ( 21, int( numOfIter ) );

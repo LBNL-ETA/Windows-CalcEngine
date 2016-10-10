@@ -15,6 +15,17 @@ namespace Gases {
     initialize();
   }
 
+  CGasItem::CGasItem( const CGasItem & t_GasItem ) {
+    m_Fraction = t_GasItem.m_Fraction;
+    m_Pressure = t_GasItem.m_Pressure;
+    m_Temperature = t_GasItem.m_Temperature;
+    m_GasData = t_GasItem.m_GasData;
+    m_FractionalGasProperties = make_shared< GasProperties >();
+    m_GasProperties = make_shared< GasProperties >();
+    ( *m_FractionalGasProperties ) = ( *t_GasItem.m_FractionalGasProperties );
+    ( *m_GasProperties ) = ( *t_GasItem.m_GasProperties );
+  }
+
   CGasItem::CGasItem( double t_Fraction, const shared_ptr< const CGasData >& t_GasData ) :
     m_Fraction( t_Fraction ), m_GasData( t_GasData ) {
     initialize();
@@ -28,12 +39,12 @@ namespace Gases {
   }
 
   CGasItem& CGasItem::operator=(const CGasItem& t_GasItem) {
-    this->m_Fraction = t_GasItem.m_Fraction;
-    this->m_Pressure = t_GasItem.m_Pressure;
-    this->m_Temperature = t_GasItem.m_Temperature;
-    this->m_GasData = t_GasItem.m_GasData;
-    this->m_FractionalGasProperties = t_GasItem.m_FractionalGasProperties;
-    this->m_GasProperties = t_GasItem.m_GasProperties;
+    m_Fraction = t_GasItem.m_Fraction;
+    m_Pressure = t_GasItem.m_Pressure;
+    m_Temperature = t_GasItem.m_Temperature;
+    m_GasData = t_GasItem.m_GasData;
+    ( *m_FractionalGasProperties ) = ( *t_GasItem.m_FractionalGasProperties );
+    ( *m_GasProperties ) = ( *t_GasItem.m_GasProperties );
 
     return *this;
   }

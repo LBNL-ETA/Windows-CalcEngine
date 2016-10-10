@@ -51,8 +51,11 @@ namespace Tarcog {
 
   private:
     // Replces layer in existing construction and keeps correct connections in linked list
-    void replaceLayer( std::shared_ptr< CBaseIGUTarcogLayer > t_Original, 
-      std::shared_ptr< CBaseIGUTarcogLayer > t_Replacement );
+    void replaceLayer( const std::shared_ptr< CBaseIGUTarcogLayer >& t_Original, 
+      const std::shared_ptr< CBaseIGUTarcogLayer >& t_Replacement );
+
+    // Check if layer needs to be decorated with another object
+    void checkForLayerUpgrades( std::shared_ptr< CBaseIGUTarcogLayer >& t_Layer );
 
     std::vector< std::shared_ptr< CBaseIGUTarcogLayer > > m_Layers;
 

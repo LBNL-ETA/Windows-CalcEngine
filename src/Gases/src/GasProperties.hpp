@@ -27,6 +27,7 @@ namespace Gases
     double getLambdaSecond() const;
     GasProperties& operator+( const GasProperties& t_A );
     GasProperties& operator+=( const GasProperties& t_A );
+    GasProperties& operator=( const GasProperties& t_A );
 
     void calculateAlphaAndPrandl();
     double m_ThermalConductivity;
