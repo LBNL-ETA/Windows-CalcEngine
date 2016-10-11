@@ -164,5 +164,5 @@ TEST_F( DoubleClearDeflectionTPTest1, Test1 ) {
   EXPECT_NEAR( 0.00033590, MaxDeflection, 1e-5 );
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 28, int( numOfIter ) );
+  EXPECT_EQ( 27, int( numOfIter ) );
 }

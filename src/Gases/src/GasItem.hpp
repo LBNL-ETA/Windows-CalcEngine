@@ -26,6 +26,8 @@ namespace Gases
     std::shared_ptr< GasProperties > getGasProperties();
 
   private:
+    void fillStandardPressureProperites();
+    void flllVacuumPressureProperties();
     void initialize();
     void resetCalculatedProperties();
     double m_Temperature; // unit in Kelvins

@@ -4,6 +4,7 @@
 #include "GasData.hpp"
 #include "GasItem.hpp"
 #include "GasProperties.hpp"
+#include "GasSetting.hpp"
 
 using namespace std;
 
@@ -51,30 +52,34 @@ namespace Gases
   }
 
   void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
+    m_Pressure = t_Pressure;
     vector< shared_ptr< CGasItem > >::const_iterator it;
-    for( it = m_GasItem.begin(); it<m_GasItem.end(); ++it ) {
+    for( it = m_GasItem.begin(); it < m_GasItem.end(); ++it ) {
       ( *it )->setTemperature( t_Temperature );
       ( *it )->setPressure( t_Pressure );
     }
   }
 
-  shared_ptr< GasProperties > CGas::getSimpleGasProperties()
-  {
+  shared_ptr< GasProperties > CGas::getSimpleGasProperties() {
     vector< shared_ptr< CGasItem > >::iterator it;
-
-    for ( it = m_GasItem.begin(); it != m_GasItem.end(); ++it ) {
-      if ( it == m_GasItem.begin() ) {
-        *m_SimpleProperties = *(( *it )->getFractionalGasProperties());
-      } else {
-        *m_SimpleProperties += *(( *it )->getFractionalGasProperties());
-      }
+    *m_SimpleProperties = *( ( m_GasItem )[ 0 ]->getFractionalGasProperties() );
+    for ( it = std::next( m_GasItem.begin() ); it != m_GasItem.end(); ++it ) {
+      *m_SimpleProperties += *( ( *it )->getFractionalGasProperties() );
     }
 
     return m_SimpleProperties;
   }
 
-  shared_ptr< GasProperties > CGas::getGasProperties()
-  {
+  shared_ptr< GasProperties > CGas::getGasProperties() {
+    CGasSettings aSettings = CGasSettings::instance();
+    if( aSettings.getVacuumPressure() < m_Pressure ) {
+      return getStandardPressureGasProperties();
+    } else {
+      return getVacuumPressureGasProperties();
+    }
+  }
+
+  shared_ptr< GasProperties > CGas::getStandardPressureGasProperties() {
     shared_ptr< GasProperties > simpleProperties = getSimpleGasProperties();
 
     // coefficients for intermediate calculations
@@ -92,18 +97,17 @@ namespace Gases
     // first to calculate denominator properties for gas mixtures
     vector< shared_ptr< CGasItem > >::iterator primaryIt;
     vector< shared_ptr< CGasItem > >::iterator secondaryIt;
-    
-    for ( primaryIt = m_GasItem.begin(); primaryIt != m_GasItem.end(); ++primaryIt ) {
-      for ( secondaryIt = m_GasItem.begin(); secondaryIt != m_GasItem.end(); ++secondaryIt ) {
-        if ( *primaryIt != *secondaryIt ) {
-          miItem[counter].push_back( viscDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
-          lambdaPrimItem[counter].push_back( lambdaPrimDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
-          lambdaSecondItem[counter].push_back( lambdaSecondDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
-        }
-        else {
-          miItem[counter].push_back( 0 );
-          lambdaPrimItem[counter].push_back( 0 );
-          lambdaSecondItem[counter].push_back( 0 );
+
+    for( primaryIt = m_GasItem.begin(); primaryIt != m_GasItem.end(); ++primaryIt ) {
+      for( secondaryIt = m_GasItem.begin(); secondaryIt != m_GasItem.end(); ++secondaryIt ) {
+        if( *primaryIt != *secondaryIt ) {
+          miItem[ counter ].push_back( viscDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
+          lambdaPrimItem[ counter ].push_back( lambdaPrimDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
+          lambdaSecondItem[ counter ].push_back( lambdaSecondDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
+        } else {
+          miItem[ counter ].push_back( 0 );
+          lambdaPrimItem[ counter ].push_back( 0 );
+          lambdaSecondItem[ counter ].push_back( 0 );
         }
       }
       counter++;
@@ -116,34 +120,34 @@ namespace Gases
 
     counter = 0;
     vector< shared_ptr< CGasItem > >::iterator it;
-    for ( it = m_GasItem.begin(); it != m_GasItem.end(); ++it ) {
+    for( it = m_GasItem.begin(); it != m_GasItem.end(); ++it ) {
       double sumMix = 1;
-      shared_ptr< GasProperties > itGasProperties = (*it)->getGasProperties();
+      shared_ptr< GasProperties > itGasProperties = ( *it )->getGasProperties();
 
       double lambdaPrim( itGasProperties->getLambdaPrim() );
       double lambdaSecond( itGasProperties->getLambdaSecond() );
 
       for( size_t i = 0; i < gasSize; ++i ) {
-        sumMix += miItem[counter][i];
+        sumMix += miItem[ counter ][ i ];
       }
 
       miMix += itGasProperties->m_Viscosity / sumMix;
 
       sumMix = 1;
       for( size_t i = 0; i < gasSize; ++i ) {
-        sumMix += lambdaPrimItem[counter][i];
+        sumMix += lambdaPrimItem[ counter ][ i ];
       }
 
       lambdaPrimMix += lambdaPrim / sumMix;
 
       sumMix = 1;
       for( size_t i = 0; i < gasSize; ++i ) {
-        sumMix += lambdaSecondItem[counter][i];
+        sumMix += lambdaSecondItem[ counter ][ i ];
       }
 
       lambdaSecondMix += lambdaSecond / sumMix;
 
-      cpMix += itGasProperties->m_SpecificHeat * (*it)->getFraction() * itGasProperties->m_MolecularWeight;
+      cpMix += itGasProperties->m_SpecificHeat * ( *it )->getFraction() * itGasProperties->m_MolecularWeight;
       ++counter;
     }
 
@@ -154,9 +158,11 @@ namespace Gases
     m_Properties->m_MolecularWeight = simpleProperties->m_MolecularWeight;
     m_Properties->calculateAlphaAndPrandl();
 
-
     return m_Properties;
+  }
 
+  shared_ptr< GasProperties > CGas::getVacuumPressureGasProperties() {
+    return getSimpleGasProperties();
   }
 
   // This implements equation 63 (ISO 15099)

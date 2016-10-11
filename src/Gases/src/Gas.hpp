@@ -25,6 +25,9 @@ namespace Gases
 
   private:
 
+    std::shared_ptr< GasProperties > getStandardPressureGasProperties();
+    std::shared_ptr< GasProperties > getVacuumPressureGasProperties();
+
     double viscTwoGases( const GasProperties& t_Gas1Properties, const GasProperties& t_Gas2Properties ) const;
     double viscDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 );
 
@@ -39,6 +42,7 @@ namespace Gases
     std::shared_ptr< GasProperties > m_Properties;
 
     bool m_DefaultGas;
+    double m_Pressure;
   };
 
 }

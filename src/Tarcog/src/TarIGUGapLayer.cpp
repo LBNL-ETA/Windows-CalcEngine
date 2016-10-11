@@ -56,9 +56,7 @@ namespace Tarcog {
 
   void CTarIGUGapLayer::checkNextLayer() {
     if( m_NextLayer != nullptr ) {
-      if( dynamic_pointer_cast< CTarIGUShadeLayer >( m_NextLayer ) != NULL ) {
-        dynamic_pointer_cast< CTarIGUShadeLayer >( m_NextLayer )->getGainFlow();
-      }
+      m_NextLayer->getGainFlow();
     }
   }
 
@@ -91,7 +89,6 @@ namespace Tarcog {
 
   double CTarIGUGapLayer::convectiveH() {
     double tGapTemperature = layerTemperature();
-    // m_Gas->setTemperatureAndPressure( tGapTemperature, m_Pressure );
     m_Gas->setTemperatureAndPressure( tGapTemperature, getPressure() );
     double Ra = calculateRayleighNumber();
     double Asp = aspectRatio();

@@ -15,8 +15,7 @@ private:
   std::shared_ptr< CGas > Gas;
 
 protected:
-  virtual void SetUp()
-  {
+  virtual void SetUp() {
     // default will be Air
     Gas = std::make_shared< CGas >();
   }
@@ -26,8 +25,7 @@ public:
 
 };
 
-TEST_F( TestGasPropertiesSingleGas, TestSimpleProperties )
-{
+TEST_F( TestGasPropertiesSingleGas, TestSimpleProperties ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air) simple properties - Temperature = 300 [K], Pressure = 101325 [Pa]" );
   
   std::shared_ptr< GasProperties > aProperties;
@@ -48,8 +46,7 @@ TEST_F( TestGasPropertiesSingleGas, TestSimpleProperties )
 
 }
 
-TEST_F( TestGasPropertiesSingleGas, TestSimplePropertiesRepeat )
-{
+TEST_F( TestGasPropertiesSingleGas, TestSimplePropertiesRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air) simple properties - Temperature = 300 [K], Pressure = 101325 [Pa] (Repeatability)" );
   
   std::shared_ptr< GasProperties > aProperties;
@@ -92,8 +89,7 @@ TEST_F( TestGasPropertiesSingleGas, TestRealProperties )
 
 }
 
-TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesRepeat )
-{
+TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air) real properties - Temperature = 300 [K], Pressure = 101325 [Pa] (Repeatability)" );
   
   std::shared_ptr< GasProperties > aProperties;
@@ -114,8 +110,7 @@ TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesRepeat )
 
 }
 
-TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesLowPressure )
-{
+TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesLowPressure ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air) real properties - Temperature = 300 [K], Pressure = 90,000 [Pa]" );
   
   std::shared_ptr< GasProperties > aProperties;
@@ -136,8 +131,7 @@ TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesLowPressure )
 
 }
 
-TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesLowPressureRepeat )
-{
+TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesLowPressureRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air) real properties - Temperature = 300 [K], Pressure = 90,000 [Pa] (Repeatability)" );
   
   std::shared_ptr< GasProperties > aProperties;
@@ -158,8 +152,7 @@ TEST_F( TestGasPropertiesSingleGas, TestRealPropertiesLowPressureRepeat )
 
 }
 
-TEST_F( TestGasPropertiesSingleGas, TotalPercents )
-{
+TEST_F( TestGasPropertiesSingleGas, TotalPercents ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air) - Total percents." );
 
   std::shared_ptr< CGas > aGas;

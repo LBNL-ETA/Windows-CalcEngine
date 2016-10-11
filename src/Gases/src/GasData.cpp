@@ -5,19 +5,11 @@
 
 using namespace std;
 
-namespace Gases
-{
+namespace Gases {
   CGasData::CGasData() : m_gasName ( "Air" ), m_molWeight( 28.97 ), m_specificHeatRatio( 1.4 ),
                          m_coeffCp( make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 ) ),
                          m_coeffCon( make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 ) ),
                          m_coeffVisc( make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 ) ) {
-    // Create default Air
-    // m_gasName = "Air";
-    // m_molWeight = 28.97;
-    // m_specificHeatRatio = 1.4;
-    // m_coeffCon = make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
-    // m_coeffCp = make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
-    // m_coeffVisc = make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
 
   }
 
@@ -45,12 +37,10 @@ namespace Gases
     return *this;
   }
 
-  double CGasData::GetPropertyValue( CoeffType t_Type, double t_Temperature ) const
-  {
+  double CGasData::GetPropertyValue( CoeffType t_Type, double t_Temperature ) const {
     double value = 0;
 
-    switch ( t_Type )
-    {
+    switch ( t_Type ) {
     case CoeffType::cCond:
         value = m_coeffCon->interpolationValue( t_Temperature );
         break;
@@ -68,8 +58,11 @@ namespace Gases
     return value;
   }
 
-  double CGasData::GetMolecularWeight() const
-  {
+  double CGasData::getSpecificHeatRatio() const {
+    return m_specificHeatRatio;
+  }
+
+  double CGasData::GetMolecularWeight() const {
     return m_molWeight;
   }
 

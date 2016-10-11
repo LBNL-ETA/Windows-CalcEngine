@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <memory>
 #include <stdexcept>
 
@@ -5,6 +7,7 @@
 #include "GasItem.hpp"
 #include "GasData.hpp"
 #include "GasProperties.hpp"
+#include "GasSetting.hpp"
 
 using namespace std;
 
@@ -29,6 +32,36 @@ namespace Gases {
   CGasItem::CGasItem( double t_Fraction, const shared_ptr< const CGasData >& t_GasData ) :
     m_Fraction( t_Fraction ), m_GasData( t_GasData ) {
     initialize();
+  }
+
+  void CGasItem::fillStandardPressureProperites() {
+    using ConstantsData::UNIVERSALGASCONSTANT;
+    m_GasProperties->m_ThermalConductivity = m_GasData->GetPropertyValue( CoeffType::cCond, m_Temperature );
+    m_GasProperties->m_Viscosity = m_GasData->GetPropertyValue( CoeffType::cVisc, m_Temperature );
+    m_GasProperties->m_SpecificHeat = m_GasData->GetPropertyValue( CoeffType::cCp, m_Temperature );
+    m_GasProperties->m_MolecularWeight = m_GasData->GetMolecularWeight();
+    m_GasProperties->m_Density = m_Pressure * m_GasProperties->m_MolecularWeight / 
+      ( UNIVERSALGASCONSTANT * m_Temperature );
+    m_GasProperties->calculateAlphaAndPrandl();
+  }
+
+  void CGasItem::flllVacuumPressureProperties() {
+    using ConstantsData::UNIVERSALGASCONSTANT;
+    const double alpha1 = 0.79;
+    const double alpha2 = 0.79;
+    const double alpha = alpha1 * alpha2 / ( alpha2 + alpha1 * ( 1 - alpha2 ) );
+    const double specificHeatRatio = m_GasData->getSpecificHeatRatio();
+    if( specificHeatRatio == 1 ) {
+      throw runtime_error("Specific heat ratio of a gas cannot be equal to one.");
+    }
+    const double mWght = m_GasData->GetMolecularWeight();
+    double B = alpha * ( specificHeatRatio + 1 ) / ( specificHeatRatio - 1 );
+    B *= sqrt( UNIVERSALGASCONSTANT / ( 8 * M_PI * mWght * m_Temperature ) );
+    m_GasProperties->m_ThermalConductivity = B * m_Pressure;
+    m_GasProperties->m_Viscosity = 0;
+    m_GasProperties->m_SpecificHeat = 0;
+    m_GasProperties->m_MolecularWeight = mWght;
+    m_GasProperties->m_Density = 0;
   }
 
   void CGasItem::initialize() {
@@ -69,15 +102,15 @@ namespace Gases {
   }
 
   shared_ptr< GasProperties > CGasItem::getGasProperties() {
-    using ConstantsData::UNIVERSALGASCONSTANT;
 
     if ( !m_GasProperties->m_PropertiesCalculated ) {
-      m_GasProperties->m_ThermalConductivity = m_GasData->GetPropertyValue( CoeffType::cCond, m_Temperature );
-      m_GasProperties->m_Viscosity = m_GasData->GetPropertyValue( CoeffType::cVisc, m_Temperature );
-      m_GasProperties->m_SpecificHeat = m_GasData->GetPropertyValue( CoeffType::cCp, m_Temperature );
-      m_GasProperties->m_MolecularWeight = m_GasData->GetMolecularWeight();
-      m_GasProperties->m_Density = m_Pressure * m_GasProperties->m_MolecularWeight / ( UNIVERSALGASCONSTANT * m_Temperature );
-      m_GasProperties->calculateAlphaAndPrandl();
+      CGasSettings aSettings = CGasSettings::instance();
+
+      if( m_Pressure > aSettings.getVacuumPressure() ) {
+        fillStandardPressureProperites();
+      } else {
+        flllVacuumPressureProperties();
+      }
       m_GasProperties->m_PropertiesCalculated = true;
     }
 
