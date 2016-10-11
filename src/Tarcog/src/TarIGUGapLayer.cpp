@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdexcept>
 #include <assert.h>
 #include <iostream>
