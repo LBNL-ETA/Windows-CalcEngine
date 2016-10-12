@@ -74,9 +74,12 @@ namespace Tarcog {
 
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
 
-    double Ra = GRAVITYCONSTANT * pow( getThickness(), 3 ) * deltaTemp * 
-      aProperties->m_SpecificHeat * pow( aProperties->m_Density, 2 ) / 
-      ( tGapTemperature * aProperties->m_Viscosity * aProperties->m_ThermalConductivity );
+    double Ra = 0;
+    if( aProperties->m_Viscosity != 0 ) { // if viscosity is zero then it is vacuum
+      Ra = GRAVITYCONSTANT * pow( getThickness(), 3 ) * deltaTemp *
+        aProperties->m_SpecificHeat * pow( aProperties->m_Density, 2 ) /
+        ( tGapTemperature * aProperties->m_Viscosity * aProperties->m_ThermalConductivity );
+    }
 
     return Ra;
   }
@@ -95,8 +98,12 @@ namespace Tarcog {
     double Asp = aspectRatio();
     shared_ptr< CNusseltNumber > nusseltNumber = make_shared< CNusseltNumber > ();
     shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
-    m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp) * 
-      aProperties->m_ThermalConductivity / getThickness();
+    if( aProperties->m_Viscosity != 0 ) {
+      m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp ) *
+        aProperties->m_ThermalConductivity / getThickness();
+    } else { // vacuum state
+      m_ConductiveConvectiveCoeff = aProperties->m_ThermalConductivity;
+    }
     if( m_AirSpeed != 0 ) {
       m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirSpeed;
     }
