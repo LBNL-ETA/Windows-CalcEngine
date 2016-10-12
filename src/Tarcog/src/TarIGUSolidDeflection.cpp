@@ -16,8 +16,8 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( const CTarIGUSolidLayer& t_SolidLayer ) :
-    CTarIGUSolidLayer( t_SolidLayer ),
-    m_YoungsModulus( DeflectionConstants::YOUNGSMODULUS ), m_PoisonRatio( DeflectionConstants::POISONRATIO ) {
+    CTarIGUSolidLayer( t_SolidLayer ), m_YoungsModulus( DeflectionConstants::YOUNGSMODULUS ), 
+    m_PoisonRatio( DeflectionConstants::POISONRATIO ) {
   }
 
   CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( const CTarIGUSolidLayer& t_SolidLayer,

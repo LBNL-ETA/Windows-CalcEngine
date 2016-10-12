@@ -23,6 +23,8 @@ namespace Tarcog {
     double getTemperature( const FenestrationCommon::Side t_Position ) const;
     double J( const FenestrationCommon::Side t_Position ) const;
 
+    double getConductivity();
+
   protected:
     virtual double layerTemperature();
 

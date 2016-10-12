@@ -35,4 +35,8 @@ namespace Tarcog {
     return getSurface( t_Position )->J();
   }
 
+  double CBaseIGUTarcogLayer::getConductivity() {
+    return getConductionConvectionCoefficient() * m_Thickness;
+  }
+
 }
