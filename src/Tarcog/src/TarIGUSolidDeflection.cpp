@@ -15,14 +15,14 @@ namespace Tarcog {
   //    CTarIGUSolidLayerDeflection
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( shared_ptr< CTarIGUSolidLayer >& t_SolidLayer ) :
-    CTarIGUSolidLayer( *t_SolidLayer ),
+  CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( const CTarIGUSolidLayer& t_SolidLayer ) :
+    CTarIGUSolidLayer( t_SolidLayer ),
     m_YoungsModulus( DeflectionConstants::YOUNGSMODULUS ), m_PoisonRatio( DeflectionConstants::POISONRATIO ) {
   }
 
-  CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( shared_ptr< CTarIGUSolidLayer >& t_SolidLayer,
+  CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( const CTarIGUSolidLayer& t_SolidLayer,
     const double t_YoungsModulus, const double t_PoisonRatio ) : 
-    CTarIGUSolidLayer( *t_SolidLayer ),
+    CTarIGUSolidLayer( t_SolidLayer ),
     m_YoungsModulus( t_YoungsModulus ), m_PoisonRatio( t_PoisonRatio ) {
   }
 
@@ -32,8 +32,8 @@ namespace Tarcog {
     m_PoisonRatio = t_Layer.m_PoisonRatio;
   }
 
-  void CTarIGUSolidLayerDeflection::calculateConvectionConductionState() {
-    CTarIGUSolidLayer::calculateConvectionConductionState();
+  void CTarIGUSolidLayerDeflection::calculateConvectionOrConductionFlow() {
+    CTarIGUSolidLayer::calculateConvectionOrConductionFlow();
     
   }
 
@@ -58,8 +58,8 @@ namespace Tarcog {
     
   }
 
-  void CTarIGUDeflectionTempAndPressure::calculateConvectionConductionState() {
-    CTarIGUSolidLayerDeflection::calculateConvectionConductionState();
+  void CTarIGUDeflectionTempAndPressure::calculateConvectionOrConductionFlow() {
+    CTarIGUSolidLayerDeflection::calculateConvectionOrConductionFlow();
     // Relaxation parameter is low because that will make possible solution to converge.
     // Instability in rest of equation is great if using higher relaxation parameter and 
     // it probaby does not matter what solver is used.

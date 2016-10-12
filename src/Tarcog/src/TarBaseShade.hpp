@@ -49,7 +49,7 @@ namespace Tarcog {
     CTarIGUShadeLayer( double t_Thickness, double t_Conductivity );
 
   private:
-    void calculateConvectionConductionState();
+    void calculateConvectionOrConductionFlow();
 
     void calcInBetweenShadeFlow( std::shared_ptr< CTarIGUVentilatedGapLayer > t_Gap1, 
       std::shared_ptr< CTarIGUVentilatedGapLayer > t_Gap2 );

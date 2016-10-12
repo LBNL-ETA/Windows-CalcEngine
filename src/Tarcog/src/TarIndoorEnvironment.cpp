@@ -44,8 +44,8 @@ namespace Tarcog {
     return STEFANBOLTZMANN * m_Emissivity * pow( m_RoomRadiationTemperature, 4 );
   }
 
-  void CTarIndoorEnvironment::calculateConvectionConductionState() {
-    // CTarEnvironment::calculateConvectionConductionState();
+  void CTarIndoorEnvironment::calculateConvectionOrConductionFlow() {
+    // CTarEnvironment::calculateConvectionOrConductionFlow();
     switch( m_HCoefficientModel ) {
       case Tarcog::CalculateH: {
         calculateHc();

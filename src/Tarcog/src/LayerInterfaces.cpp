@@ -97,33 +97,34 @@ namespace Tarcog {
   }
 
   double CLayerHeatFlow::getGainFlow() {
-    calculateLayerState();
+    calculateLayerHeatFlow();
     return m_LayerGainFlow;
   }
 
   double CLayerHeatFlow::getConductionConvectionCoefficient() {
-    calculateLayerState();
+    calculateLayerHeatFlow();
     return m_ConductiveConvectiveCoeff;
   }
 
   double CLayerHeatFlow::getRadiationFlow() {
-    calculateRadiationState();
+    calculateRadiationFlow();
     assert( m_Surface.at( Side::Front ) != nullptr );
     assert( m_Surface.at( Side::Back ) != nullptr );
     return m_Surface.at( Side::Back )->J() - m_Surface.at( Side::Front )->J();
   }
 
   double CLayerHeatFlow::getConvectionConductionFlow() {
-    calculateLayerState();
+    calculateLayerHeatFlow();
     assert( m_Surface.at( Side::Front ) != nullptr );
     assert( m_Surface.at( Side::Back ) != nullptr );
-    return ( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() ) * m_ConductiveConvectiveCoeff;
+    return ( m_Surface.at( Side::Back )->getTemperature() - 
+      m_Surface.at( Side::Front )->getTemperature() ) * m_ConductiveConvectiveCoeff;
   }
 
-  void CLayerHeatFlow::calculateLayerState() {
+  void CLayerHeatFlow::calculateLayerHeatFlow() {
     if( !isCalculated() ) {
-      calculateRadiationState();
-      calculateConvectionConductionState();
+      calculateRadiationFlow();
+      calculateConvectionOrConductionFlow();
     }
     setCalculated();
   }
@@ -148,7 +149,8 @@ namespace Tarcog {
   //////////////////////////////////////////////////////////////////////////
 
   CGasLayer::CGasLayer() : m_Pressure(0), m_AirSpeed(0),
-    m_AirVerticalDirection(AirVerticalDirection::None), m_AirHorizontalDirection(AirHorizontalDirection::None) {
+    m_AirVerticalDirection(AirVerticalDirection::None), 
+    m_AirHorizontalDirection(AirHorizontalDirection::None) {
 	  onCreate();
   }
 
@@ -158,21 +160,21 @@ namespace Tarcog {
     onCreate();
   }
 
-  CGasLayer::CGasLayer(double const t_Pressure, double const t_AirSpeed, 
-    AirVerticalDirection const t_AirVerticalDirection) :
-    m_Pressure(t_Pressure), m_AirSpeed(t_AirSpeed),
-	  m_AirVerticalDirection(t_AirVerticalDirection), m_AirHorizontalDirection(AirHorizontalDirection::None) {
+  CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, 
+    AirVerticalDirection const t_AirVerticalDirection ) : m_Pressure( t_Pressure ), 
+    m_AirSpeed(t_AirSpeed), m_AirVerticalDirection( t_AirVerticalDirection), 
+    m_AirHorizontalDirection(AirHorizontalDirection::None) {
 	  onCreate();
   }
 
-  CGasLayer::CGasLayer(double const t_Pressure, double const t_AirSpeed, 
-    AirHorizontalDirection const t_AirHorizontalDirection) :
-    m_Pressure(t_Pressure), m_AirSpeed(t_AirSpeed), m_AirVerticalDirection(AirVerticalDirection::None), 
+  CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, 
+    AirHorizontalDirection const t_AirHorizontalDirection ) : m_Pressure(t_Pressure), 
+    m_AirSpeed(t_AirSpeed), m_AirVerticalDirection(AirVerticalDirection::None), 
     m_AirHorizontalDirection(t_AirHorizontalDirection) {
     onCreate();
   }
 
-  CGasLayer::CGasLayer(double const t_Pressure, shared_ptr< CGas > t_Gas) : 
+  CGasLayer::CGasLayer(double const t_Pressure, shared_ptr< CGas > t_Gas) :
     m_Pressure(t_Pressure), m_AirSpeed(0),
     m_AirVerticalDirection(AirVerticalDirection::None), 
     m_AirHorizontalDirection(AirHorizontalDirection::None) {
@@ -180,7 +182,7 @@ namespace Tarcog {
     onCreate();
   }
 
-  CGasLayer::CGasLayer( const CGasLayer & t_Layer ) {
+  CGasLayer::CGasLayer( const CGasLayer& t_Layer ) {
     m_Pressure = t_Layer.m_Pressure;
     m_AirSpeed = t_Layer.m_AirSpeed;
     m_AirVerticalDirection = t_Layer.m_AirVerticalDirection;

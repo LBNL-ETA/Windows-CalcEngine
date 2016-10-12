@@ -37,7 +37,7 @@ namespace Tarcog {
     t_Layer->m_PreviousLayer = shared_from_this();
   }
 
-  void CBaseTarcogLayer::calculateRadiationState() {
+  void CBaseTarcogLayer::calculateRadiationFlow() {
     
   }
 

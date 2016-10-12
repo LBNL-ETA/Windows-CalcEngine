@@ -33,7 +33,7 @@ namespace Tarcog {
     void setSolarAbsorptance( double const t_SolarAbsorptance );
 
   protected:
-    virtual void calculateConvectionConductionState();
+    virtual void calculateConvectionOrConductionFlow();
 
   private:
     void setSurfaceState( double const t_Temperature, double const t_J, 

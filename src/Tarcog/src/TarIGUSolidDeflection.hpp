@@ -12,8 +12,8 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////
   class CTarIGUSolidLayerDeflection : public CTarIGUSolidLayer {
   public:
-    CTarIGUSolidLayerDeflection( std::shared_ptr< CTarIGUSolidLayer >& t_SolidLayer );
-    CTarIGUSolidLayerDeflection( std::shared_ptr< CTarIGUSolidLayer >& t_SolidLayer,
+    CTarIGUSolidLayerDeflection( const CTarIGUSolidLayer& t_SolidLayer );
+    CTarIGUSolidLayerDeflection( const CTarIGUSolidLayer& t_SolidLayer,
       const double t_YoungsModulus, const double t_PoisonRatio );
 
     CTarIGUSolidLayerDeflection( const CTarIGUSolidLayerDeflection& t_Layer );
@@ -21,7 +21,7 @@ namespace Tarcog {
     double flexuralRigidity() const;
 
   protected:
-    virtual void calculateConvectionConductionState();
+    virtual void calculateConvectionOrConductionFlow();
     double pressureDifference() const;
 
   private:
@@ -38,7 +38,7 @@ namespace Tarcog {
       const double t_MaxDeflectionCoeff, const double t_MinDeflectionCoeff );
 
   protected:
-    virtual void calculateConvectionConductionState();
+    virtual void calculateConvectionOrConductionFlow();
 
   private:
     double LdMean( const double t_P, const double t_D ) const;

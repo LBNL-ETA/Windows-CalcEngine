@@ -48,7 +48,7 @@ namespace Tarcog {
   }
 
   double CTarEnvironment::getEnvironmentIR() {
-    calculateLayerState();
+    calculateLayerHeatFlow();
     return getIRFromEnvironment();
   }
 
@@ -73,7 +73,7 @@ namespace Tarcog {
     CGasLayer::initializeStateVariables();
   }
 
-  void CTarEnvironment::calculateRadiationState() {
+  void CTarEnvironment::calculateRadiationFlow() {
     // In case of environments, there is no need to calculate radiation
     // if radiation is provided from outside calculations
     if( !m_IRCalculatedOutside ) {

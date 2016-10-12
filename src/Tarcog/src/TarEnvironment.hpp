@@ -34,7 +34,7 @@ namespace Tarcog {
 
   protected:
     void initializeStateVariables();
-    void calculateRadiationState();
+    void calculateRadiationFlow();
     virtual double calculateIRFromVariables() = 0;
     virtual double getHr() = 0;
     virtual void setIRFromEnvironment( const double t_IR ) = 0;

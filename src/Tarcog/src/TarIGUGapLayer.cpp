@@ -21,12 +21,12 @@ namespace Tarcog {
   class CBaseTarcogLayer;
 
   CTarIGUGapLayer::CTarIGUGapLayer( double t_Thickness, double t_Pressure ) : 
-    CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure ) {    
+    CLayerState(), CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure ) {    
     
   }
 
   CTarIGUGapLayer::CTarIGUGapLayer( double t_Thickness, double t_Pressure, const shared_ptr< CGas >& t_Gas ) : 
-    CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
+    CLayerState(), CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
     assert( m_Gas != nullptr );
   }
 
@@ -44,7 +44,7 @@ namespace Tarcog {
     CGasLayer::initializeStateVariables();
   }
 
-  void CTarIGUGapLayer::calculateConvectionConductionState() {
+  void CTarIGUGapLayer::calculateConvectionOrConductionFlow() {
     checkNextLayer();
     if( !isCalculated() ) {
       if ( getThickness() == 0 ) {

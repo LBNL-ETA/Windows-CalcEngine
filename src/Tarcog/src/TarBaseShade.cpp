@@ -74,8 +74,8 @@ namespace Tarcog {
   
   }
 
-  void CTarIGUShadeLayer::calculateConvectionConductionState() {
-    CTarIGUSolidLayer::calculateConvectionConductionState();
+  void CTarIGUShadeLayer::calculateConvectionOrConductionFlow() {
+    CTarIGUSolidLayer::calculateConvectionOrConductionFlow();
     assert( m_NextLayer != nullptr );
     assert( m_PreviousLayer != nullptr );
     

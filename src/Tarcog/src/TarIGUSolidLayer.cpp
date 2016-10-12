@@ -17,7 +17,8 @@ namespace Tarcog {
 
   CTarIGUSolidLayer::CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
     shared_ptr< CTarSurface > t_FrontSurface, shared_ptr< CTarSurface > t_BackSurface )
-    : CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
+    : CLayerState(), CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ), 
+    m_SolarAbsorptance( 0 ) {
     if ( t_FrontSurface != nullptr && t_BackSurface != nullptr ) {
       m_Surface[ Side::Front ] = t_FrontSurface;
       m_Surface[ Side::Back ] = t_BackSurface;
@@ -29,8 +30,8 @@ namespace Tarcog {
 
   CTarIGUSolidLayer::CTarIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
     double const t_FrontEmissivity, double const t_FrontIRTransmittance,
-    double const t_BackEmissivity, double const t_BackIRTransmittance ) : CBaseIGUTarcogLayer( t_Thickness ),
-    m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
+    double const t_BackEmissivity, double const t_BackIRTransmittance ) : CLayerState(), 
+    CBaseIGUTarcogLayer( t_Thickness ), m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
     m_Surface[ Side::Front ] = make_shared< CTarSurface >( t_FrontEmissivity, t_FrontIRTransmittance );
     m_Surface[ Side::Back ] = make_shared< CTarSurface >( t_BackEmissivity, t_BackIRTransmittance );
   }
@@ -51,7 +52,7 @@ namespace Tarcog {
     return m_Conductivity;
   }
 
-  void CTarIGUSolidLayer::calculateConvectionConductionState() {
+  void CTarIGUSolidLayer::calculateConvectionOrConductionFlow() {
     if ( m_Thickness == 0 ) {
       throw runtime_error( "Solid layer thickness is set to zero." );
     }

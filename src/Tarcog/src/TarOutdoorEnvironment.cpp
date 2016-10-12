@@ -67,7 +67,7 @@ namespace Tarcog {
     return m_Surface.at( Side::Front )->getTemperature();
   }
 
-  void CTarOutdoorEnvironment::calculateConvectionConductionState() {
+  void CTarOutdoorEnvironment::calculateConvectionOrConductionFlow() {
     switch ( m_HCoefficientModel ) {
       case Tarcog::CalculateH: {
         calculateHc();

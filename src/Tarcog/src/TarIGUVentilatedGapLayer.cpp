@@ -118,7 +118,7 @@ namespace Tarcog {
   }
 
   double CTarIGUVentilatedGapLayer::betaCoeff() {
-    calculateLayerState();
+    calculateLayerHeatFlow();
     return exp( -m_Height / characteristicHeight() );
   }
 
@@ -130,8 +130,8 @@ namespace Tarcog {
     }
   }
 
-  void CTarIGUVentilatedGapLayer::calculateConvectionConductionState() {    
-    CTarIGUGapLayer::calculateConvectionConductionState();
+  void CTarIGUVentilatedGapLayer::calculateConvectionOrConductionFlow() {    
+    CTarIGUGapLayer::calculateConvectionOrConductionFlow();
     if( !isCalculated() ) {      
       ventilatedFlow();
     }

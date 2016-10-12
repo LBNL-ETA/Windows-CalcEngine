@@ -185,7 +185,7 @@ namespace Tarcog {
       // properties
       shared_ptr< CTarIGUSolidLayerDeflection > aDeflectionLayer = nullptr;
       if( dynamic_pointer_cast< CTarIGUSolidLayerDeflection >( aLayer ) == NULL ) {
-        aDeflectionLayer = make_shared< CTarIGUSolidLayerDeflection >( aLayer );        
+        aDeflectionLayer = make_shared< CTarIGUSolidLayerDeflection >( *aLayer );        
       } else {
         aDeflectionLayer = dynamic_pointer_cast< CTarIGUSolidLayerDeflection >( aLayer );
       }
@@ -207,13 +207,13 @@ namespace Tarcog {
       for( size_t j = i; j < t_MeasuredDeflections.size(); ++j ) {
         SumL += getGapLayers()[ j ]->getThickness() - t_MeasuredDeflections[ j ];
       }
-      CTarIGUSolidLayerDeflection aDefLayer = CTarIGUSolidLayerDeflection( getSolidLayers()[ i ] );
+      CTarIGUSolidLayerDeflection aDefLayer = CTarIGUSolidLayerDeflection( *getSolidLayers()[ i ] );
       nominator += SumL * aDefLayer.flexuralRigidity();
     }
 
     double denominator = 0;
     for( size_t i = 0; i < getSolidLayers().size(); ++i ) {
-      CTarIGUSolidLayerDeflection aDefLayer = CTarIGUSolidLayerDeflection( getSolidLayers()[ i ] );
+      CTarIGUSolidLayerDeflection aDefLayer = CTarIGUSolidLayerDeflection( *getSolidLayers()[ i ] );
       denominator += aDefLayer.flexuralRigidity();
     }
 
@@ -234,7 +234,7 @@ namespace Tarcog {
       double LDefNMean = deflectionRatio * LDefNMax;
       shared_ptr< CTarIGUSolidLayer > aLayer = getSolidLayers()[ i ];
       shared_ptr< CTarIGUSolidLayerDeflection > aDefLayer = 
-        make_shared< CTarIGUSolidLayerDeflection >( aLayer );      
+        make_shared< CTarIGUSolidLayerDeflection >( *aLayer );      
       aDefLayer = make_shared< CTarIGUDeflectionMeasuread >( aDefLayer, LDefNMean, LDefNMax );
       replaceLayer( aLayer, aDefLayer );
     }

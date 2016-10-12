@@ -70,10 +70,11 @@ namespace Tarcog {
     virtual std::shared_ptr< CTarSurface > getSurface( FenestrationCommon::Side const t_Position ) const final;
     virtual void setSurface( std::shared_ptr< CTarSurface > t_Surface, 
       FenestrationCommon::Side const t_Position ) final;
+
   protected:
-    virtual void calculateLayerState() final;
-    virtual void calculateRadiationState() = 0;
-    virtual void calculateConvectionConductionState() = 0;
+    virtual void calculateLayerHeatFlow() final;
+    virtual void calculateRadiationFlow() = 0;
+    virtual void calculateConvectionOrConductionFlow() = 0;
     bool areSurfacesInitalized() const;
 
     std::map< FenestrationCommon::Side, std::shared_ptr< CTarSurface > > m_Surface;

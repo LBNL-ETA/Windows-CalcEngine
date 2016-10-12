@@ -35,7 +35,7 @@ namespace Tarcog {
     void smoothEnergyGain( double const qv1, double const qv2 );
 
   private:
-    virtual void calculateConvectionConductionState();
+    virtual void calculateConvectionOrConductionFlow();
     double characteristicHeight();
     double calcImpedance( double const t_A );
     void ventilatedFlow();

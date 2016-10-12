@@ -62,7 +62,7 @@ protected:
     // Introducing non default deflection properties
     double youngsModulus = 8.1e10;
     double poisonRatio = 0.16;
-    aSolidLayer1 = make_shared< CTarIGUSolidLayerDeflection >( aSolidLayer1, youngsModulus, poisonRatio );
+    aSolidLayer1 = make_shared< CTarIGUSolidLayerDeflection >( *aSolidLayer1, youngsModulus, poisonRatio );
 
     shared_ptr< CBaseIGUTarcogLayer > aSolidLayer2 = 
       make_shared< CTarIGUSolidLayer > ( solidLayerThickness2, solidLayerConductance );

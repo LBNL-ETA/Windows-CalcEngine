@@ -20,7 +20,7 @@ namespace Tarcog {
   private:
     double getGasTemperature();
     double calculateIRFromVariables();
-    void calculateConvectionConductionState();
+    void calculateConvectionOrConductionFlow();
 
     void calculateHc();
     double getHr();

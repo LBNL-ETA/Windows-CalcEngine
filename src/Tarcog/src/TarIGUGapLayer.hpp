@@ -30,7 +30,7 @@ namespace Tarcog {
 
   protected:
     void initializeStateVariables();
-    virtual void calculateConvectionConductionState();
+    virtual void calculateConvectionOrConductionFlow();
 
   private:
     double calculateRayleighNumber();
