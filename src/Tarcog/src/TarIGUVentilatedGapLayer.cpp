@@ -12,14 +12,14 @@ using namespace Gases;
 namespace Tarcog {
 
   CTarIGUVentilatedGapLayer::CTarIGUVentilatedGapLayer( const shared_ptr< CTarIGUGapLayer >& t_Layer ) :
-    CTarIGUGapLayer( *t_Layer ), m_inTemperature( 0 ), m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ), 
-    m_ReferenceGas( make_shared< CGas >() ), m_Layer( t_Layer ) {
+    CTarIGUGapLayer( *t_Layer ), m_Layer( t_Layer ), m_ReferenceGas( make_shared< CGas >() ),
+	m_inTemperature( 0 ), m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ) {
     ( *m_ReferenceGas ) = ( *m_Gas );
     m_ReferenceGas->setTemperatureAndPressure( ReferenceTemperature, m_Pressure );
   }
 
   CTarIGUVentilatedGapLayer::CTarIGUVentilatedGapLayer( const CTarIGUVentilatedGapLayer & t_Layer ) :
-    CTarIGUGapLayer( t_Layer ) {
+    CLayerState( t_Layer ), CTarIGUGapLayer( t_Layer ) {
     m_inTemperature = t_Layer.m_inTemperature;
     m_outTemperature = t_Layer.m_outTemperature;
     m_Zin = t_Layer.m_Zin;

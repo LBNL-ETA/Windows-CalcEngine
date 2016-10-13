@@ -41,12 +41,13 @@ namespace Tarcog {
     void ventilatedFlow();
 
     std::shared_ptr< CTarIGUGapLayer > m_Layer;
+    std::shared_ptr< Gases::CGas > m_ReferenceGas;
+
     double m_inTemperature;
     double m_outTemperature;
     double m_Zin;
     double m_Zout;
 
-    std::shared_ptr< Gases::CGas > m_ReferenceGas;
   };
   
 }
