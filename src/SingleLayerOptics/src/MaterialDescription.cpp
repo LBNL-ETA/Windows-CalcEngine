@@ -46,7 +46,7 @@ namespace SingleLayerOptics {
     m_MaxLambda = aRange.maxLambda();
   }
 
-  void CMaterial::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+  void CMaterial::setSourceData( shared_ptr< CSeries > ) {
     // Default material will not have detector data
   }
 
@@ -125,7 +125,7 @@ namespace SingleLayerOptics {
     const WavelengthRange t_Range ) : CMaterial( t_Range ) {
     m_Property[ Side::Front ] = make_shared< CSurface >( t_Tf, t_Rf );
     m_Property[ Side::Back ] = make_shared< CSurface >( t_Tb, t_Rb );
-  };
+  }
 
   double CMaterialSingleBand::getProperty( Property t_Property, Side t_Side ) const {
 	return m_Property.at( t_Side )->getProperty( t_Property );
@@ -183,7 +183,7 @@ namespace SingleLayerOptics {
     double highLambda = m_MaterialPartialRange->getMaxLambda();
     CNIRRatio nirRatio = CNIRRatio( t_SourceData, lowLambda, highLambda );
     createNIRRange( m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio() );
-  };
+  }
 
   double CMaterialDualBand::getProperty( Property t_Property, Side t_Side ) const {
     return m_MaterialFullRange->getProperty( t_Property, t_Side );

@@ -574,9 +574,6 @@ public:
 
 TEST_F( HemisphericalEnergy_102_103_SmallBasis, TestSpecular1 ) {
   SCOPED_TRACE( "Begin Test: Hemispherical energy." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
   
   CHemisphericalEnergy aEnergy = *getEnergy();
 

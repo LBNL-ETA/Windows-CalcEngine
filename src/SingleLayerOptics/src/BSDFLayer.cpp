@@ -20,7 +20,7 @@ namespace SingleLayerOptics {
 
   CBSDFLayer::CBSDFLayer( const shared_ptr< CBaseCell >& t_Cell, 
     const shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) : 
-    m_Calculated( false ), m_CalculatedWV( false ), m_Cell( t_Cell ), m_BSDFHemisphere( t_Hemisphere ) {
+    m_BSDFHemisphere( t_Hemisphere ), m_Cell( t_Cell ), m_Calculated( false ), m_CalculatedWV( false ) {
     m_BSDFHemisphere = t_Hemisphere;
 
     // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
