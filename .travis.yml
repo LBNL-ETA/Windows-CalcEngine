@@ -19,8 +19,8 @@ script:
   - make
   - src/Common/FenestrationCommon_tests
   - src/Gases/Gases_tests
-  - src/LayerOptics/LayerOptics_tests
-  - src/MultiPane/MultiPane_tests
+  - src/SingleLayerOptics/SingleLayerOptics_tests
+  - src/MultiLayerOptics/MultiLayerOptics_tests
   - src/SpectralAveraging/SpectralAveraging_tests
   - src/Tarcog/Tarcog_tests
   - src/Viewer/Viewer_tests

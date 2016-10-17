@@ -12,7 +12,7 @@ set( LINK_TO_SpectralAveraging SpectralAveraging )
 add_subdirectory( Viewer )
 set( LINK_TO_Viewer Viewer )
 
-add_subdirectory( LayerOptics )
-set( LINK_TO_LayerOptics LayerOptics )
+add_subdirectory( SingleLayerOptics )
+set( LINK_TO_SingleLayerOptics SingleLayerOptics )
 
-add_subdirectory( MultiPane )
+add_subdirectory( MultiLayerOptics )
