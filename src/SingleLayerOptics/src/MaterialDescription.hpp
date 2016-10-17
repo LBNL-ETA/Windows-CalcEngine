@@ -150,7 +150,9 @@ namespace SingleLayerOptics {
     void createNIRRange( const std::shared_ptr< CMaterial >& t_PartialRange, 
       const CMaterial& t_SolarRange, const double t_Fraction );
 
-    // Same equation is valid for every property
+    // Properties over the rest of range will depend on partial range as well.
+    // We do want to keep correct properties of partial range, but will want to update
+    // properties for other partial ranges that are not provided by the user.
     double getModifiedProperty( const double t_Range, const double t_Solar, const double t_Fraction ) const;
 
     std::shared_ptr< CMaterial > m_MaterialFullRange;
