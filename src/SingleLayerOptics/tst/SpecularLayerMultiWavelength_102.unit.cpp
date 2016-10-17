@@ -46,7 +46,7 @@ protected:
     shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
     double thickness = 3.048e-3; // [m]
-    SpecularMaterialType aType = SpecularMaterialType::Monolithic;
+    MaterialType aType = MaterialType::Monolithic;
     // WavelengthRange aRange = WavelengthRange::Solar;
     double minLambda = 0.3;
     double maxLambda = 2.5;

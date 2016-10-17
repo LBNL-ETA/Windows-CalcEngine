@@ -9,9 +9,9 @@ namespace FenestrationCommon {
 
   enum class Side;
   enum class Property;
-  enum class SpecularMaterialType;
-  class CSeries;
-  // enum class WavelengthRange;
+  enum class MaterialType;
+  enum class WavelengthRange;
+  class CSeries;  
 
 }
 
@@ -37,11 +37,17 @@ namespace SingleLayerOptics {
 
   };
 
-  // Base class for any material definition. It reprsents material properties over the certain wavelength range.
-  // It also supports angular dependency of material properties.
-  class CMaterialBand {
+  //////////////////////////////////////////////////////////////////////////////////////////
+  ///   CMaterial
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+  // Base virtual class for any material definition. It reprsents material properties over 
+  // the certain wavelength range.
+  // It also defines interface for angular dependency of material properties.
+  class CMaterial {
   public:
-    CMaterialBand( const double minLambda, const double maxLambda );
+    CMaterial( const double minLambda, const double maxLambda );
+    CMaterial( const FenestrationCommon::WavelengthRange t_Range );
 
     // Get certain material property over the entire range
     virtual double getProperty( const FenestrationCommon::Property t_Property, 
@@ -80,12 +86,18 @@ namespace SingleLayerOptics {
 
   };
 
+  //////////////////////////////////////////////////////////////////////////////////////////
+  ///   CMaterialSingleBand
+  //////////////////////////////////////////////////////////////////////////////////////////
+
   // Simple material with no angular dependence on reflection or transmittance. This is mainly used 
   // for shading device materials
-  class CMaterialSingleBand : public CMaterialBand {
+  class CMaterialSingleBand : public CMaterial {
   public:
     CMaterialSingleBand( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb, 
       const double minLambda, const double maxLambda );
+    CMaterialSingleBand( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb, 
+      const FenestrationCommon::WavelengthRange t_Range );
 
     double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;
@@ -101,54 +113,68 @@ namespace SingleLayerOptics {
 
   };
 
+  //////////////////////////////////////////////////////////////////////////////////////////
+  ///   CMaterialDualBand
+  //////////////////////////////////////////////////////////////////////////////////////////
+
   // Material that for given solar and partial range (visible, uv) will calculate equivalent optical
   // properties for the entire range
-  class CMaterialDualBand : public CMaterialBand {
+  class CMaterialDualBand : public CMaterial {
   
   public:
     // ratio is calculated outside of the class and can be provided here.
-    // TODO: Need to confirm with the team if we actually need this approach (ratio should be calculated and not quessed)
-    CMaterialDualBand( const std::shared_ptr< CMaterialBand >& t_PartialRange,
-      const std::shared_ptr< CMaterialBand >& t_SolarRange, const double t_Ratio );
+    // TODO: Need to confirm with the team if we actually need this approach 
+    // (ratio should be calculated and not quessed)
+    CMaterialDualBand( const std::shared_ptr< CMaterial >& t_PartialRange,
+      const std::shared_ptr< CMaterial >& t_SolarRange, const double t_Ratio );
     
     // ratio is calculated based on provided solar radiation values
-    CMaterialDualBand( const std::shared_ptr< CMaterialBand >& t_PartialRange,
-      const std::shared_ptr< CMaterialBand >& t_SolarRange, 
+    CMaterialDualBand( const std::shared_ptr< CMaterial >& t_PartialRange,
+      const std::shared_ptr< CMaterial >& t_SolarRange, 
       const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation );
 
     double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;
 
     std::shared_ptr< std::vector< double > > 
-      getBandProperties( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
+      getBandProperties( const FenestrationCommon::Property t_Property, 
+      const FenestrationCommon::Side t_Side ) const;
 
   private:
     std::shared_ptr< std::vector< double > > calculateBandWavelengths();
     // Checks if material is within valid range. Otherwise, algorithm is not valid.
-    void checkIfMaterialWithingSolarRange( const CMaterialBand& t_Material ) const;
+    void checkIfMaterialWithingSolarRange( const CMaterial& t_Material ) const;
     void createUVRange();
 
     // Creates after UV range and stores data into m_Materials
-    void createNIRRange( const std::shared_ptr< CMaterialBand >& t_PartialRange, 
-      const CMaterialBand& t_SolarRange, const double t_Fraction );
+    void createNIRRange( const std::shared_ptr< CMaterial >& t_PartialRange, 
+      const CMaterial& t_SolarRange, const double t_Fraction );
 
     // Same equation is valid for every property
     double getModifiedProperty( const double t_Range, const double t_Solar, const double t_Fraction ) const;
 
-    std::shared_ptr< CMaterialBand > m_MaterialFullRange;
+    std::shared_ptr< CMaterial > m_MaterialFullRange;
     
-    std::vector< std::shared_ptr< CMaterialBand > > m_Materials;
+    std::vector< std::shared_ptr< CMaterial > > m_Materials;
   
   };
+
+  //////////////////////////////////////////////////////////////////////////////////////////
+  ///   CMaterialSample
+  //////////////////////////////////////////////////////////////////////////////////////////
 
   // Material that contains data measured over the range of wavelengths. It also provides material properties
   // at certain angle. Assumes that material properties at certain angle can be calculated by using coated and
   // uncoated algorithms
-  class CMaterialSample : public CMaterialBand {
+  class CMaterialSample : public CMaterial {
   public:
     CMaterialSample( const std::shared_ptr< SpectralAveraging::CSpectralSample >& t_SpectralSample, 
-      const double t_Thickness, const FenestrationCommon::SpecularMaterialType t_Type,
+      const double t_Thickness, const FenestrationCommon::MaterialType t_Type,
       const double minLambda, const double maxLambda );
+
+    CMaterialSample( const std::shared_ptr< SpectralAveraging::CSpectralSample >& t_SpectralSample,
+      const double t_Thickness, const FenestrationCommon::MaterialType t_Type,
+      const FenestrationCommon::WavelengthRange t_Range );
 
     // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb that is 
     // measured at certain wavelengths.

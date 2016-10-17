@@ -6,7 +6,7 @@
 namespace FenestrationCommon {
 
   enum class Side;
-  enum class SpecularMaterialType;
+  enum class MaterialType;
 
 }
 

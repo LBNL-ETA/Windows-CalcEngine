@@ -12,7 +12,7 @@ namespace FenestrationCommon {
 
 namespace SingleLayerOptics {
 
-  class CMaterialBand;
+  class CMaterial;
   class CCellDescription;
   class CBeamDirection;
   
@@ -21,7 +21,7 @@ namespace SingleLayerOptics {
   class CBaseCell {
   public:
     CBaseCell();
-    CBaseCell( const std::shared_ptr< CMaterialBand >& t_Material,
+    CBaseCell( const std::shared_ptr< CMaterial >& t_Material,
       const std::shared_ptr< CCellDescription >& t_CellDescription );
 
     // Direct to direct component of transmitted ray
@@ -41,7 +41,7 @@ namespace SingleLayerOptics {
     size_t getBandSize() const;
 
   protected:
-    std::shared_ptr< CMaterialBand > m_Material;
+    std::shared_ptr< CMaterial > m_Material;
     std::shared_ptr< CCellDescription > m_CellDescription;
 
   };

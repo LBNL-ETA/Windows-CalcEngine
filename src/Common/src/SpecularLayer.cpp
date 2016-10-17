@@ -3,32 +3,32 @@
 
 namespace FenestrationCommon {
 
-  SpecularLayerSurfaceType coatingType( const SpecularMaterialType t_LayerType ) {
-    SpecularLayerSurfaceType aType = SpecularLayerSurfaceType::None;
+  SurfaceType coatingType( const MaterialType t_LayerType ) {
+    SurfaceType aType = SurfaceType::None;
     switch ( t_LayerType ) {
-    case SpecularMaterialType::Monolithic:
-      aType = SpecularLayerSurfaceType::Uncoated;
+    case MaterialType::Monolithic:
+      aType = SurfaceType::Uncoated;
       break;
-    case SpecularMaterialType::Coated:
-      aType = SpecularLayerSurfaceType::Coated;
+    case MaterialType::Coated:
+      aType = SurfaceType::Coated;
       break;
-    case SpecularMaterialType::Film:
-      aType = SpecularLayerSurfaceType::Coated;
+    case MaterialType::Film:
+      aType = SurfaceType::Coated;
       break;
-    case SpecularMaterialType::AppliedFilm:
-      aType = SpecularLayerSurfaceType::Coated;
+    case MaterialType::AppliedFilm:
+      aType = SurfaceType::Coated;
       break;
-    case SpecularMaterialType::Laminate:
-      aType = SpecularLayerSurfaceType::Coated;
+    case MaterialType::Laminate:
+      aType = SurfaceType::Coated;
       break;
-    case SpecularMaterialType::Interlayer:
-      aType = SpecularLayerSurfaceType::Uncoated;
+    case MaterialType::Interlayer:
+      aType = SurfaceType::Uncoated;
       break;
-    case SpecularMaterialType::Electrochromic:
-      aType = SpecularLayerSurfaceType::Coated;
+    case MaterialType::Electrochromic:
+      aType = SurfaceType::Coated;
       break;
-    case SpecularMaterialType::Thermochromic:
-      aType = SpecularLayerSurfaceType::Coated;
+    case MaterialType::Thermochromic:
+      aType = SurfaceType::Coated;
       break;
     default:
       assert("Incorrect selection of layer type.");

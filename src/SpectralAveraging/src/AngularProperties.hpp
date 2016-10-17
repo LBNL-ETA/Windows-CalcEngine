@@ -5,7 +5,7 @@
 
 namespace FenestrationCommon {
 
-  enum class SpecularLayerSurfaceType;
+  enum class SurfaceType;
 
 }
 
@@ -95,7 +95,7 @@ namespace SpectralAveraging {
       const double t_Thickness = 0, const double t_SolarTransmittance = 0 );
 
     std::shared_ptr< CAngularProperties > 
-      getAngularProperties( const FenestrationCommon::SpecularLayerSurfaceType t_SurfaceType );
+      getAngularProperties( const FenestrationCommon::SurfaceType t_SurfaceType );
 
   private:
     double m_Thickness;

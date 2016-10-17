@@ -23,7 +23,7 @@ namespace SingleLayerOptics {
   // spectral properties over given wavelengths
   class CSpecularCell : public CBaseCell {
   public:
-    CSpecularCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties,
+    CSpecularCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
       const std::shared_ptr< CCellDescription >& t_Cell );
     
     // Transmittance averaged over entire wavelength spectrum

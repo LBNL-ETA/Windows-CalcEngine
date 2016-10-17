@@ -32,24 +32,30 @@ namespace SingleLayerOptics {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
-  ////   CMaterialBand
+  ////   CMaterial
   ////////////////////////////////////////////////////////////////////////////////////
 
-  CMaterialBand::CMaterialBand( const double minLambda, const double maxLambda ) : 
+  CMaterial::CMaterial( const double minLambda, const double maxLambda ) : 
     m_MinLambda( minLambda ), m_MaxLambda( maxLambda ), m_WavelengthsCalculated( false ) {
   
   }
 
-  double CMaterialBand::getPropertyAtAngle( const Property t_Property, const Side t_Side, const double ) const {
+  CMaterial::CMaterial( const WavelengthRange t_Range ) : m_WavelengthsCalculated( false ) {
+    CWavelengthRange aRange = CWavelengthRange( t_Range );
+    m_MinLambda = aRange.minLambda();
+    m_MaxLambda = aRange.maxLambda();
+  };
+
+  double CMaterial::getPropertyAtAngle( const Property t_Property, const Side t_Side, const double ) const {
     return getProperty( t_Property, t_Side ); // Default behavior is no angular dependence
   }
 
-  shared_ptr< vector< double > > CMaterialBand::getBandPropertiesAtAngle( const Property t_Property, 
+  shared_ptr< vector< double > > CMaterial::getBandPropertiesAtAngle( const Property t_Property, 
     const Side t_Side, const double  ) const {
     return getBandProperties( t_Property, t_Side );  // Default beahvior is no angular dependence
   }
 
-  shared_ptr< vector< RMaterialProperties > > CMaterialBand::getBandProperties() {
+  shared_ptr< vector< RMaterialProperties > > CMaterial::getBandProperties() {
     shared_ptr< vector< RMaterialProperties > > aProperties = make_shared< vector< RMaterialProperties > >();
 
     shared_ptr< vector< double > > Tf = getBandProperties( Property::T, Side::Front );
@@ -67,18 +73,18 @@ namespace SingleLayerOptics {
     return aProperties;
   }
 
-  shared_ptr< vector< double > > CMaterialBand::getBandWavelengths() {
+  shared_ptr< vector< double > > CMaterial::getBandWavelengths() {
     if( !m_WavelengthsCalculated )  {
       m_Wavelengths = calculateBandWavelengths();
     }
     return m_Wavelengths;
   }
 
-  size_t CMaterialBand::getBandSize() {
+  size_t CMaterial::getBandSize() {
    return getBandWavelengths()->size();
   }
 
-  int CMaterialBand::getBandIndex( const double t_Wavelength ) {
+  int CMaterial::getBandIndex( const double t_Wavelength ) {
     int aIndex = -1;
     size_t size = getBandSize();
     for( size_t i = 0; i < size; ++i ) {
@@ -89,22 +95,30 @@ namespace SingleLayerOptics {
     return aIndex;
   }
 
-  double CMaterialBand::getMinLambda() const {
+  double CMaterial::getMinLambda() const {
     return m_MinLambda;
   }
 
-  double CMaterialBand::getMaxLambda() const {
+  double CMaterial::getMaxLambda() const {
     return m_MaxLambda;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////   CMaterialSingleBand
   ////////////////////////////////////////////////////////////////////////////////////
-  CMaterialSingleBand::CMaterialSingleBand( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb,
-    const double minLambda, const double maxLambda ) : CMaterialBand( minLambda, maxLambda ) {
+  CMaterialSingleBand::CMaterialSingleBand( const double t_Tf, const double t_Tb, 
+    const double t_Rf, const double t_Rb,
+    const double minLambda, const double maxLambda ) : CMaterial( minLambda, maxLambda ) {
 	  m_Property[ Side::Front ] = make_shared< CSurface >( t_Tf, t_Rf );
 	  m_Property[ Side::Back ] = make_shared< CSurface >( t_Tb, t_Rb );
   }
+
+  CMaterialSingleBand::CMaterialSingleBand( const double t_Tf, const double t_Tb, 
+    const double t_Rf, const double t_Rb,
+    const WavelengthRange t_Range ) : CMaterial( t_Range ) {
+    m_Property[ Side::Front ] = make_shared< CSurface >( t_Tf, t_Rf );
+    m_Property[ Side::Back ] = make_shared< CSurface >( t_Tb, t_Rb );
+  };
 
   double CMaterialSingleBand::getProperty( Property t_Property, Side t_Side ) const {
 	return m_Property.at( t_Side )->getProperty( t_Property );
@@ -127,17 +141,17 @@ namespace SingleLayerOptics {
   ////   CMaterialDualBand
   ////////////////////////////////////////////////////////////////////////////////////
 
-  CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterialBand >& t_PartialRange,
-    const shared_ptr< CMaterialBand >& t_SolarRange, const double t_Ratio ) : CMaterialBand( 0.3, 2.5 ),
+  CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
+    const shared_ptr< CMaterial >& t_SolarRange, const double t_Ratio ) : CMaterial( 0.3, 2.5 ),
     m_MaterialFullRange( t_SolarRange ) {
     checkIfMaterialWithingSolarRange( *t_PartialRange );
     createUVRange();
     createNIRRange( t_PartialRange, *t_SolarRange, t_Ratio );
   }
 
-  CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterialBand >& t_PartialRange,
-    const shared_ptr< CMaterialBand >& t_SolarRange, 
-    const shared_ptr< CSeries >& t_SolarRadiation ) : CMaterialBand( 0.3, 2.5 ),
+  CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
+    const shared_ptr< CMaterial >& t_SolarRange, 
+    const shared_ptr< CSeries >& t_SolarRadiation ) : CMaterial( 0.3, 2.5 ),
     m_MaterialFullRange( t_SolarRange ) {
     checkIfMaterialWithingSolarRange( *t_PartialRange );
     createUVRange();
@@ -172,7 +186,7 @@ namespace SingleLayerOptics {
     return aWavelengths;
   }
 
-  void CMaterialDualBand::checkIfMaterialWithingSolarRange( const CMaterialBand& t_Material ) const {
+  void CMaterialDualBand::checkIfMaterialWithingSolarRange( const CMaterial& t_Material ) const {
     double lowLambda = t_Material.getMinLambda();
     double highLambda = t_Material.getMaxLambda();
     if( lowLambda < 0.32 || highLambda < 0.32 || lowLambda > 2.5 || highLambda > 2.5 ) {
@@ -185,12 +199,12 @@ namespace SingleLayerOptics {
     double R = 0;
     double minLambda = 0.3;
     double maxLambda = 0.32;
-    shared_ptr< CMaterialBand > aUVMaterial = make_shared< CMaterialSingleBand >( T, T, R, R, minLambda, maxLambda );
+    shared_ptr< CMaterial > aUVMaterial = make_shared< CMaterialSingleBand >( T, T, R, R, minLambda, maxLambda );
     m_Materials.push_back( aUVMaterial );
   }
 
-  void CMaterialDualBand::createNIRRange( const std::shared_ptr< CMaterialBand >&  t_PartialRange,
-    const CMaterialBand& t_SolarRange, const double t_Fraction ) {
+  void CMaterialDualBand::createNIRRange( const std::shared_ptr< CMaterial >&  t_PartialRange,
+    const CMaterial& t_SolarRange, const double t_Fraction ) {
     double Tf_nir = getModifiedProperty( t_PartialRange->getProperty( Property::T, Side::Front ), 
       t_SolarRange.getProperty( Property::T, Side::Front ), t_Fraction );
     double Tb_nir = getModifiedProperty( t_PartialRange->getProperty( Property::T, Side::Back ), 
@@ -228,9 +242,9 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////
 
   CMaterialSample::CMaterialSample( const shared_ptr< CSpectralSample >& t_SpectralSample, 
-    const double t_Thickness, const SpecularMaterialType t_Type, 
+    const double t_Thickness, const MaterialType t_Type, 
     const double minLambda, const double maxLambda ) : 
-    CMaterialBand( minLambda, maxLambda ) {
+    CMaterial( minLambda, maxLambda ) {
 
     if( t_SpectralSample == nullptr ) {
       throw runtime_error("Cannot create specular material from non-existing sample.");
@@ -238,6 +252,18 @@ namespace SingleLayerOptics {
 
     m_AngularSample = make_shared< CAngularSpectralSample >( t_SpectralSample, t_Thickness, t_Type );
     
+  }
+
+  CMaterialSample::CMaterialSample( const shared_ptr< CSpectralSample >& t_SpectralSample,
+    const double t_Thickness, const MaterialType t_Type,
+    const WavelengthRange t_Range ) : CMaterial( t_Range ) {
+
+    if ( t_SpectralSample == nullptr ) {
+      throw runtime_error( "Cannot create specular material from non-existing sample." );
+    }
+
+    m_AngularSample = make_shared< CAngularSpectralSample >( t_SpectralSample, t_Thickness, t_Type );
+
   }
 
   double CMaterialSample::getPropertyAtAngle( const Property t_Property, 

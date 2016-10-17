@@ -21,7 +21,7 @@ namespace SpectralAveraging {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   CAngularSpectralProperties::CAngularSpectralProperties( const shared_ptr< CSpectralSample >& t_SpectralSample, 
-    const double t_Angle, const SpecularMaterialType t_Type, const double t_Thickness ) : 
+    const double t_Angle, const MaterialType t_Type, const double t_Thickness ) : 
     m_Angle( t_Angle ), m_Thickness( t_Thickness ) {
 
     m_AngularData = make_shared< CSpectralSampleData >();
@@ -37,7 +37,7 @@ namespace SpectralAveraging {
   }
 
   void CAngularSpectralProperties::calculateAngularProperties( const shared_ptr< CSpectralSample >& t_SpectralSample, 
-    const SpecularMaterialType t_Type ) {
+    const MaterialType t_Type ) {
 
     assert( t_SpectralSample != nullptr );
 
@@ -68,7 +68,7 @@ namespace SpectralAveraging {
         double Rf = ( *aRf )[ i ]->value();
         double Rb = ( *aRb )[ i ]->value();
 
-        SpecularLayerSurfaceType aSurfaceType = coatingType( t_Type );
+        SurfaceType aSurfaceType = coatingType( t_Type );
 
         CAngularPropertiesFactory aFrontFactory = CAngularPropertiesFactory( T, Rf, m_Thickness, aTSolNorm );
         CAngularPropertiesFactory aBackFactory = CAngularPropertiesFactory( T, Rb, m_Thickness, aTSolNorm );
@@ -110,7 +110,7 @@ namespace SpectralAveraging {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   CAngularSpectralSample::CAngularSpectralSample( const shared_ptr< CSpectralSample >& t_SpectralSample, 
-    const double t_Thickness, const FenestrationCommon::SpecularMaterialType t_Type ) :
+    const double t_Thickness, const FenestrationCommon::MaterialType t_Type ) :
     m_SpectralSampleZero( t_SpectralSample ), m_Thickness( t_Thickness ), m_Type( t_Type ) {
     
   }

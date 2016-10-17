@@ -27,7 +27,7 @@ protected:
     double Rbmat = 0.5;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialBand > aMaterial = 
+    shared_ptr< CMaterial > aMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
     
     

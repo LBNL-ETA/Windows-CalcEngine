@@ -16,11 +16,11 @@ namespace SingleLayerOptics {
 
   class CCellDescription;
   class CBeamDirection;
-  class CMaterialBand;
+  class CMaterial;
 
   class CDirectionalDiffuseCell : public virtual CBaseCell {
   public:
-    CDirectionalDiffuseCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties,
+    CDirectionalDiffuseCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
       const std::shared_ptr< CCellDescription >& t_Cell );
 
     virtual double T_dir_dif( const FenestrationCommon::Side t_Side, 

@@ -232,13 +232,13 @@ namespace SpectralAveraging {
     
   }
 
-  shared_ptr< CAngularProperties > CAngularPropertiesFactory::getAngularProperties( const SpecularLayerSurfaceType t_SurfaceType ) {
+  shared_ptr< CAngularProperties > CAngularPropertiesFactory::getAngularProperties( const SurfaceType t_SurfaceType ) {
     shared_ptr< CAngularProperties > aProperties = nullptr;
     switch( t_SurfaceType ) {
-    case SpecularLayerSurfaceType::Coated:
+    case SurfaceType::Coated:
       aProperties = make_shared< CAngularPropertiesCoated >( m_Transmittance0, m_Reflectance0, m_SolarTransmittance0 );
       break;
-    case SpecularLayerSurfaceType::Uncoated:
+    case SurfaceType::Uncoated:
       aProperties = make_shared< CAngularPropertiesUncoated >( m_Thickness, m_Transmittance0, m_Reflectance0 );
       break;
     default:

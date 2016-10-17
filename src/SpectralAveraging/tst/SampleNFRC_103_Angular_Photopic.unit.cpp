@@ -854,7 +854,7 @@ public:
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties0degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 0;
 
@@ -881,7 +881,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties0degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties10degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 10;
 
@@ -908,7 +908,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties10degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties20degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 20;
 
@@ -935,7 +935,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties20degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties30degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 30;
 
@@ -962,7 +962,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties30degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties40degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 40;
 
@@ -989,7 +989,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties40degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties50degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 50;
 
@@ -1016,7 +1016,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties50degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties60degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 60;
 
@@ -1043,7 +1043,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties60degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties70degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 70;
 
@@ -1070,7 +1070,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties70degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties80degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 80;
 
@@ -1097,7 +1097,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties80degrees ) {
 TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties90degrees ) {
 
   double thickness = 5.715e-3; // [m]
-  SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+  MaterialType layerType = MaterialType::Monolithic;
 
   double angle = 90;
 

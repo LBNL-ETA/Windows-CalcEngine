@@ -661,7 +661,7 @@ TEST_F( TestSampleNFRC_1042_Angular, TestSampleProperties ) {
 
   double thickness = 3.18e-3; // [m]
 
-  SpecularMaterialType layerType = SpecularMaterialType::Coated;
+  MaterialType layerType = MaterialType::Coated;
 
   double angle = 70;
 

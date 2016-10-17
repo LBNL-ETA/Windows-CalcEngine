@@ -300,8 +300,8 @@ protected:
     double minLambda = 0.3;
     double maxLambda = 2.5;
     double thickness = 3.048e-3; // [m]
-    SpecularMaterialType aType = SpecularMaterialType::Monolithic;
-    shared_ptr< CMaterialBand > aMaterial_102 = 
+    MaterialType aType = MaterialType::Monolithic;
+    shared_ptr< CMaterial > aMaterial_102 = 
       make_shared< CMaterialSample >( aSample_102, thickness, aType, minLambda, maxLambda );
 
     // specular layer NFRC=102
@@ -378,8 +378,8 @@ protected:
     minLambda = 0.3;
     maxLambda = 2.5;
     thickness = 1.5e-3; // [m]
-    aType = SpecularMaterialType::Monolithic;
-    shared_ptr< CMaterialBand > aMaterial_Venetian = 
+    aType = MaterialType::Monolithic;
+    shared_ptr< CMaterial > aMaterial_Venetian = 
       make_shared< CMaterialSample >( aSample_Venetian, thickness, aType, minLambda, maxLambda );
 
     // make cell geometry

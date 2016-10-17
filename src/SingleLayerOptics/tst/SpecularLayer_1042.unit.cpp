@@ -655,12 +655,8 @@ protected:
     shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
     double thickness = 3.18e-3; // [m]
-    SpecularMaterialType aType = SpecularMaterialType::Coated;
-    CWavelengthRange aRange = CWavelengthRange( WavelengthRange::Solar );
-    double minLambda = aRange.minLambda();
-    double maxLambda = aRange.maxLambda();
-    shared_ptr< CMaterialBand > aMaterial = 
-      make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
+    shared_ptr< CMaterial > aMaterial = 
+      make_shared< CMaterialSample >( aSample, thickness, MaterialType::Coated, WavelengthRange::Solar );
 
     // create BSDF
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
@@ -684,19 +680,19 @@ TEST_F( TestSpecularLayer_1042, TestSpecular1 ) {
   shared_ptr< CBSDFResults > aResults = aLayer->getResults();
 
   double tauDiff = aResults->TauDiffDiff( Side::Front );
-  EXPECT_NEAR( 0.39502928850200281, tauDiff, 1e-6 );
+  EXPECT_NEAR( 0.3950293, tauDiff, 1e-6 );
 
   double RfDiff = aResults->RhoDiffDiff( Side::Front );
-  EXPECT_NEAR( 0.40022097989006811, RfDiff, 1e-6 );
+  EXPECT_NEAR( 0.4002210, RfDiff, 1e-6 );
 
   double theta = 37;
   double phi = 59;
 
   double tauHem = aResults->TauDirHem( Side::Front, theta, phi );
-  EXPECT_NEAR( 0.43341798206625309, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.4334180, tauHem, 1e-6 );
 
   double tauDir = aResults->TauDirDir( Side::Front, theta, phi );
-  EXPECT_NEAR( 0.43341798206625309, tauDir, 1e-6 );
+  EXPECT_NEAR( 0.4334180, tauDir, 1e-6 );
 
   shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
 

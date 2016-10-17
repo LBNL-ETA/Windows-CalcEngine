@@ -19,7 +19,7 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CWovenBase
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CWovenBase::CWovenBase( const shared_ptr< CMaterialBand >& t_MaterialProperties, 
+  CWovenBase::CWovenBase( const shared_ptr< CMaterial >& t_MaterialProperties, 
     const shared_ptr< CCellDescription >& t_Cell ) : 
     CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
     
@@ -39,7 +39,7 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CWovenCell
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CWovenCell::CWovenCell( const shared_ptr< CMaterialBand >& t_MaterialProperties, 
+  CWovenCell::CWovenCell( const shared_ptr< CMaterial >& t_MaterialProperties, 
     const shared_ptr< CCellDescription >& t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ),
     CWovenBase( t_MaterialProperties, t_Cell ) {
 

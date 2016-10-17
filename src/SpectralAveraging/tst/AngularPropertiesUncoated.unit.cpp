@@ -29,7 +29,7 @@ TEST_F( TestAngularPropertiesUncoated, Test1 ) {
   
   CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
   shared_ptr< CAngularProperties > aProperties = 
-    aAngularFactory.getAngularProperties( SpecularLayerSurfaceType::Uncoated );
+    aAngularFactory.getAngularProperties( SurfaceType::Uncoated );
   
   EXPECT_NEAR( 0.722, aProperties->transmittance( angle, lambda ), 1e-6 );
   EXPECT_NEAR( 0.066, aProperties->reflectance( angle, lambda ), 1e-6 );
@@ -59,7 +59,7 @@ TEST_F( TestAngularPropertiesUncoated, Test2 ) {
   
   CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
   shared_ptr< CAngularProperties > aProperties = 
-    aAngularFactory.getAngularProperties( SpecularLayerSurfaceType::Uncoated );
+    aAngularFactory.getAngularProperties( SurfaceType::Uncoated );
   
   EXPECT_NEAR( 0.0, aProperties->transmittance( angle, lambda ), 1e-6 );
   EXPECT_NEAR( 0.047, aProperties->reflectance( angle, lambda ), 1e-6 );

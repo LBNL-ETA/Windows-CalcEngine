@@ -393,10 +393,10 @@ protected:
     shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
 
     double thickness = 3.048e-3; // [m]
-    SpecularMaterialType aType = SpecularMaterialType::Monolithic;
+    MaterialType aType = MaterialType::Monolithic;
     double minLambda = 0.3;
     double maxLambda = 2.5;
-    shared_ptr< CMaterialBand > aMaterial_102 = 
+    shared_ptr< CMaterial > aMaterial_102 = 
       make_shared< CMaterialSample >( aSample_102, thickness, aType, minLambda, maxLambda );
 
     // specular layer NFRC=102
@@ -407,7 +407,7 @@ protected:
     shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103, aSolarRadiation );
     
     thickness = 5.715e-3; // [m]
-    shared_ptr< CMaterialBand > aMaterial_103 = 
+    shared_ptr< CMaterial > aMaterial_103 = 
       make_shared< CMaterialSample >( aSample_103, thickness, aType, minLambda, maxLambda );
     
     // specular layer NFRC=103

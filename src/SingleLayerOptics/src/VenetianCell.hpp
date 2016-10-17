@@ -28,7 +28,7 @@ namespace SingleLayerOptics {
 
   class CVenetianBase : public CUniformDiffuseCell, public CDirectionalDiffuseCell {
   public:
-    CVenetianBase( const std::shared_ptr< CMaterialBand >& t_MaterialProperties,
+    CVenetianBase( const std::shared_ptr< CMaterial >& t_MaterialProperties,
       const std::shared_ptr< CCellDescription >& t_Cell );
 
   protected:
@@ -159,7 +159,7 @@ namespace SingleLayerOptics {
 
   class CVenetianEnergy {
   public:
-    CVenetianEnergy( const CMaterialBand& t_Material, const std::shared_ptr< CVenetianCellDescription >& t_Cell );
+    CVenetianEnergy( const CMaterial& t_Material, const std::shared_ptr< CVenetianCellDescription >& t_Cell );
     CVenetianEnergy( const double Tf, const double Tb, const double Rf, const double Rb, 
       const std::shared_ptr< CVenetianCellDescription >& t_Cell );
 
@@ -176,7 +176,7 @@ namespace SingleLayerOptics {
 
   class CVenetianCell : public CVenetianBase {
   public:
-    CVenetianCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties, 
+    CVenetianCell( const std::shared_ptr< CMaterial >& t_MaterialProperties, 
         const std::shared_ptr< CCellDescription >& t_Cell );
 
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );

@@ -17,7 +17,7 @@ namespace SingleLayerOptics {
 
   class CPerforatedCell : public CUniformDiffuseCell {
   public:
-    CPerforatedCell( const std::shared_ptr< CMaterialBand >& t_MaterialProperties, 
+    CPerforatedCell( const std::shared_ptr< CMaterial >& t_MaterialProperties, 
         const std::shared_ptr< CCellDescription >& t_Cell );
 
   };

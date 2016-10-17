@@ -271,18 +271,17 @@ protected:
     aMeasurements_102->addRecord( 2.450, 0.8260, 0.0690, 0.0690 );
     aMeasurements_102->addRecord( 2.500, 0.8220, 0.0680, 0.0680 );
 
-    shared_ptr< vector< double > > commonWavelengths = aMeasurements_102->getWavelengths();
-
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
     // Sample 102
-    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
+    shared_ptr< CSpectralSample > aSample_102 = 
+      make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
 
     double minLambda = 0.3;
     double maxLambda = 2.5;
     double thickness = 3.048e-3; // [m]
-    SpecularMaterialType aType = SpecularMaterialType::Monolithic;
-    shared_ptr< CMaterialBand > aMaterial_102 = 
+    MaterialType aType = MaterialType::Monolithic;
+    shared_ptr< CMaterial > aMaterial_102 = 
       make_shared< CMaterialSample >( aSample_102, thickness, aType, minLambda, maxLambda );
 
     // specular layer NFRC=102
@@ -293,7 +292,7 @@ protected:
     double Tmat = 0.1;
     double Rfmat = 0.7;
     double Rbmat = 0.7;
-    shared_ptr< CMaterialBand > aSolarRangeMaterial = 
+    shared_ptr< CMaterial > aSolarRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // Visible range
@@ -302,12 +301,12 @@ protected:
     Rbmat = 0.6;
     minLambda = 0.38;
     maxLambda = 0.78;
-    shared_ptr< CMaterialBand > aVisibleRangeMaterial = 
+    shared_ptr< CMaterial > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     double ratio = 0.49;
 
-    shared_ptr< CMaterialBand > aMaterialVenetian = 
+    shared_ptr< CMaterial > aMaterialVenetian = 
       make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
     // make cell geometry
@@ -324,6 +323,8 @@ protected:
     // get shading BSDF layer
     CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( aMaterialVenetian, aBSDF, aCellDescription );
     shared_ptr< CBSDFLayer > Layer_Venetian = aMakerVenetian.getLayer();
+
+    shared_ptr< vector< double > > commonWavelengths = Layer_102->getBandWavelengths();
 
     m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
     m_Layer->addLayer( Layer_Venetian );

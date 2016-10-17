@@ -266,7 +266,7 @@ protected:
       make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
     double thickness = 5.715e-3; // [m]
-    SpecularMaterialType layerType = SpecularMaterialType::Monolithic;
+    MaterialType layerType = MaterialType::Monolithic;
 
     m_Sample = make_shared< CAngularSpectralSample >( aSample, thickness, layerType );
 

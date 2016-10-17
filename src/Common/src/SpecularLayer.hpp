@@ -3,12 +3,12 @@
 
 namespace FenestrationCommon {
 
-  enum class SpecularLayerSurfaceType { None, Coated, Uncoated };
+  enum class SurfaceType { None, Coated, Uncoated };
 
-  enum class SpecularMaterialType { None, Monolithic, Coated, Film, AppliedFilm, Laminate, Interlayer, 
+  enum class MaterialType { None, Monolithic, Coated, Film, AppliedFilm, Laminate, Interlayer, 
     Electrochromic, Thermochromic };
 
-  SpecularLayerSurfaceType coatingType( const SpecularMaterialType t_LayerType );
+  SurfaceType coatingType( const MaterialType t_LayerType );
 
 }
 
