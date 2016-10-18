@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 #include "UniformDiffuseCell.hpp"
 #include "DirectionalDiffuseCell.hpp"
@@ -159,6 +160,7 @@ namespace SingleLayerOptics {
 
   class CVenetianEnergy {
   public:
+    CVenetianEnergy();
     CVenetianEnergy( const CMaterial& t_Material, const std::shared_ptr< CVenetianCellDescription >& t_Cell );
     CVenetianEnergy( const double Tf, const double Tb, const double Rf, const double Rb, 
       const std::shared_ptr< CVenetianCellDescription >& t_Cell );
@@ -169,8 +171,8 @@ namespace SingleLayerOptics {
     // construction of forward and backward cells from both constructors have identical part of the code
     void createForwardAndBackward( const double Tf, const double Tb, const double Rf, const double Rb, 
       const std::shared_ptr< CVenetianCellDescription >& t_Cell );
-    std::shared_ptr< CVenetianCellEnergy > m_Forward;
-    std::shared_ptr< CVenetianCellEnergy > m_Backward;
+
+    std::map< FenestrationCommon::Side, std::shared_ptr< CVenetianCellEnergy > > m_CellEnergy;
   
   };
 
@@ -178,6 +180,8 @@ namespace SingleLayerOptics {
   public:
     CVenetianCell( const std::shared_ptr< CMaterial >& t_MaterialProperties, 
         const std::shared_ptr< CCellDescription >& t_Cell );
+
+    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
     std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 
@@ -217,6 +221,7 @@ namespace SingleLayerOptics {
     double R_dif_dif( const FenestrationCommon::Side t_Side );
 
   private:
+    void generateVenetianEnergy();
     // Energy calculations for whole band
     CVenetianEnergy m_Energy;
 

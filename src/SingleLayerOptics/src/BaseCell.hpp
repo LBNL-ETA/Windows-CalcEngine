@@ -7,6 +7,7 @@
 namespace FenestrationCommon {
 
   enum class Side;
+  class CSeries;
 
 }
 
@@ -23,6 +24,8 @@ namespace SingleLayerOptics {
     CBaseCell();
     CBaseCell( const std::shared_ptr< CMaterial >& t_Material,
       const std::shared_ptr< CCellDescription >& t_CellDescription );
+
+    virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // Direct to direct component of transmitted ray
     virtual double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );

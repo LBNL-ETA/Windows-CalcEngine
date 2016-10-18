@@ -49,6 +49,8 @@ namespace SingleLayerOptics {
     CMaterial( const double minLambda, const double maxLambda );
     CMaterial( const FenestrationCommon::WavelengthRange t_Range );
 
+    virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+
     // Get certain material property over the entire range
     virtual double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const = 0;
@@ -133,6 +135,11 @@ namespace SingleLayerOptics {
       const std::shared_ptr< CMaterial >& t_SolarRange, 
       const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation );
 
+    CMaterialDualBand( const std::shared_ptr< CMaterial >& t_PartialRange,
+      const std::shared_ptr< CMaterial >& t_SolarRange );
+
+    virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+
     double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;
 
@@ -156,6 +163,7 @@ namespace SingleLayerOptics {
     double getModifiedProperty( const double t_Range, const double t_Solar, const double t_Fraction ) const;
 
     std::shared_ptr< CMaterial > m_MaterialFullRange;
+    std::shared_ptr< CMaterial > m_MaterialPartialRange;
     
     std::vector< std::shared_ptr< CMaterial > > m_Materials;
   
@@ -177,6 +185,8 @@ namespace SingleLayerOptics {
     CMaterialSample( const std::shared_ptr< SpectralAveraging::CSpectralSample >& t_SpectralSample,
       const double t_Thickness, const FenestrationCommon::MaterialType t_Type,
       const FenestrationCommon::WavelengthRange t_Range );
+
+    virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb that is 
     // measured at certain wavelengths.

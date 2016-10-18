@@ -33,6 +33,8 @@ namespace MultiLayerOptics {
       throw runtime_error("Equivalent BSDF Layer must contain valid layer.");
     }
 
+    t_Layer->setSourceData( m_SolarRadiation );
+
     m_LayersWL = make_shared< vector< shared_ptr< CEquivalentBSDFLayerSingleBand > > >();
 
     // Lambda matrix from spectral results. Same lambda is valid for any wavelength
@@ -64,6 +66,8 @@ namespace MultiLayerOptics {
   }
 
   void CEquivalentBSDFLayer::addLayer( const shared_ptr< CBSDFLayer >& t_Layer ) {
+
+    t_Layer->setSourceData( m_SolarRadiation );
 
     shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
 

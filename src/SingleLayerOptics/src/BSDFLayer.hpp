@@ -7,6 +7,7 @@
 namespace FenestrationCommon {
 
   enum class Side;
+  class CSeries;
 
 }
 
@@ -31,6 +32,8 @@ namespace SingleLayerOptics {
     friend class MultiLayerOptics::CEquivalentBSDFLayer;
     CBSDFLayer( const std::shared_ptr< CBaseCell >& t_Cell, 
       const std::shared_ptr< const CBSDFHemisphere >& t_Directions );
+
+    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // BSDF results for the enire spectrum range of the material in the cell
     std::shared_ptr< CBSDFResults > getResults();
@@ -69,6 +72,7 @@ namespace SingleLayerOptics {
   private:
     void calc_dir_dir();
     void calc_dir_dif();
+    void fillWLResultsFromMaterialCell();
     // Keeps state of the object. Calculations are not done by defult (in constructor) becuase they are extensive.
     bool m_Calculated;
 

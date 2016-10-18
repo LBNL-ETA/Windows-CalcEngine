@@ -9,6 +9,7 @@ namespace FenestrationCommon {
   enum class MaterialType;
   enum class Side;
   enum class Property;
+  class CSeries;
 
 }
 
@@ -53,6 +54,8 @@ namespace SpectralAveraging {
   public:
     CAngularSpectralSample( const std::shared_ptr< CSpectralSample >& t_SpectralSample, const double t_Thickness,
       const FenestrationCommon::MaterialType t_Type );
+
+    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // Get averaged property over the wavelength
     double getProperty( double const minLambda, double const maxLambda, 

@@ -27,6 +27,7 @@ namespace SpectralAveraging {
   class CSample {
   public:
     explicit CSample( const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
+    CSample();
 
     // Assigns detector and wavelengths from other sample. 
     void assignDetectorAndWavelengths( const std::shared_ptr< CSample >& t_Sample );
@@ -34,6 +35,7 @@ namespace SpectralAveraging {
     // Gets source data. In case wavelengths are referenced to detector or custom wavelength set, it will perform interpolation
     // according to desired settings.
     std::shared_ptr< FenestrationCommon::CSeries > getSourceData();
+    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // Setting detector spectral properties for the sample
     void setDetectorData( const std::shared_ptr< FenestrationCommon::CSeries >& t_DetectorData );
@@ -89,6 +91,7 @@ namespace SpectralAveraging {
   public:
     CSpectralSample( const std::shared_ptr< CSpectralSampleData >& t_SampleData, 
       const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
+    CSpectralSample( const std::shared_ptr< CSpectralSampleData >& t_SampleData );
 
     // Before retreiving measured data from sample, function will do all necessary interpolations to desired wavelengths.
     std::shared_ptr< CSpectralSampleData > getMeasuredData();

@@ -442,6 +442,11 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //  CVenetianEnergy
   ////////////////////////////////////////////////////////////////////////////////////////////
+  CVenetianEnergy::CVenetianEnergy() {
+    m_CellEnergy[ Side::Front ] = nullptr;
+    m_CellEnergy[ Side::Back ] = nullptr;
+  }
+
   CVenetianEnergy::CVenetianEnergy( const CMaterial& t_Material, 
     const std::shared_ptr< CVenetianCellDescription >& t_Cell ) {
     double Tf = t_Material.getProperty( Property::T, Side::Front );
@@ -457,29 +462,16 @@ namespace SingleLayerOptics {
   }
 
   shared_ptr< CVenetianCellEnergy > CVenetianEnergy::getCell( const Side t_Side ) const {
-    shared_ptr< CVenetianCellEnergy > aCell = nullptr;
-    switch( t_Side ) {
-    case Side::Front:
-      aCell = m_Forward;
-      break;
-    case Side::Back:
-      aCell = m_Backward;
-      break;
-    default:
-      throw runtime_error("Incorrect selection of venetian side.");
-      break;
-    }
-
-    return aCell;
+    return m_CellEnergy.at( t_Side );
   }
 
   void CVenetianEnergy::createForwardAndBackward( const double Tf, const double Tb, const double Rf, const double Rb, 
     const std::shared_ptr< CVenetianCellDescription >& t_Cell ) {
     assert( t_Cell != nullptr );
-    m_Forward = make_shared< CVenetianCellEnergy >( t_Cell, Tf, Tb, Rf, Rb );
+    m_CellEnergy[ Side::Front ] = make_shared< CVenetianCellEnergy >( t_Cell, Tf, Tb, Rf, Rb );
     
     shared_ptr< CVenetianCellDescription > aBackwardCell = t_Cell->makeBackwardCell();
-    m_Backward = make_shared< CVenetianCellEnergy >( aBackwardCell, Tf, Tb, Rf, Rb );
+    m_CellEnergy[ Side::Back ] = make_shared< CVenetianCellEnergy >( aBackwardCell, Tf, Tb, Rf, Rb );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -487,26 +479,38 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
   CVenetianCell::CVenetianCell( const shared_ptr< CMaterial >& t_Material, 
     const shared_ptr< CCellDescription >& t_Cell ) : 
-    CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ), 
-    m_Energy( *t_Material, getCellAsVenetian() ) {
+    CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ) {
 
     assert( t_Cell != nullptr );
     assert( t_Material != nullptr );
 
+    generateVenetianEnergy();
+
+  }
+
+  void CVenetianCell::generateVenetianEnergy() {
+    m_Energy = CVenetianEnergy( *m_Material, getCellAsVenetian() );
     // Create energy states for entire material band
-    vector< RMaterialProperties > aMat = *t_Material->getBandProperties();
+    m_EnergiesBand.clear();
+    vector< RMaterialProperties > aMat = *m_Material->getBandProperties();
 
-    size_t size = t_Material->getBandSize();
-    for( size_t i = 0; i < size; ++i ) {
-      double Tf = aMat[ i ].getProperty( Property::T, Side::Front );
-      double Tb = aMat[ i ].getProperty( Property::T, Side::Back );
-      double Rf = aMat[ i ].getProperty( Property::R, Side::Front );
-      double Rb = aMat[ i ].getProperty( Property::R, Side::Back );
+    if( aMat.size() > 0 ) {
+      size_t size = m_Material->getBandSize();
+      for( size_t i = 0; i < size; ++i ) {
+        double Tf = aMat[ i ].getProperty( Property::T, Side::Front );
+        double Tb = aMat[ i ].getProperty( Property::T, Side::Back );
+        double Rf = aMat[ i ].getProperty( Property::R, Side::Front );
+        double Rb = aMat[ i ].getProperty( Property::R, Side::Back );
 
-      CVenetianEnergy aEnergy = CVenetianEnergy( Tf, Tb, Rf, Rb, getCellAsVenetian() );
-      m_EnergiesBand.push_back( aEnergy );
+        CVenetianEnergy aEnergy = CVenetianEnergy( Tf, Tb, Rf, Rb, getCellAsVenetian() );
+        m_EnergiesBand.push_back( aEnergy );
+      }
     }
+  }
 
+  void CVenetianCell::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    CBaseCell::setSourceData( t_SourceData );
+    generateVenetianEnergy();
   }
 
   double CVenetianCell::T_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {

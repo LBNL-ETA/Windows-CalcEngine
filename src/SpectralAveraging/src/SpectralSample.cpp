@@ -24,10 +24,22 @@ namespace SpectralAveraging {
     reset();
   }
 
+  CSample::CSample() : m_SourceData( nullptr ), m_WavelengthSet( WavelengthSet::Data ), 
+    m_IntegrationType( IntegrationType::Trapezoidal ), m_StateCalculated( false ) {
+    m_DetectorData = nullptr;
+    m_Wavelengths = nullptr;
+    reset();
+  }
+
   shared_ptr< CSeries > CSample::getSourceData() {
     calculateState(); // must interpolate data to same wavelengths
     return m_SourceData; 
   }
+
+  void CSample::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    m_SourceData = t_SourceData;
+    reset();
+  };
 
   void CSample::setDetectorData( const shared_ptr< CSeries >& t_DetectorData ) {
     m_DetectorData = t_DetectorData;
@@ -110,45 +122,49 @@ namespace SpectralAveraging {
   double CSample::getProperty( const double minLambda, const double maxLambda, const Property t_Property, const Side t_Side ) {
     calculateState();
     double Prop = 0;
-    double incomingEnergy = m_IncomingSource->sum( minLambda, maxLambda );
-    double propertyEnergy = 0;
-    switch ( t_Property ) {
-    case Property::T:
-      propertyEnergy = m_TransmittedSource->sum( minLambda, maxLambda );
-      break;
-    case Property::R:
-      switch ( t_Side ) {
-      case Side::Front:
-        propertyEnergy = m_ReflectedFrontSource->sum( minLambda, maxLambda );
+    double incomingEnergy = 0;
+    // Incoming energy can be calculated only if user has defined incoming source.
+    // Otherwise just assume zero property.
+    if( m_IncomingSource != nullptr ) {
+      incomingEnergy = m_IncomingSource->sum( minLambda, maxLambda );
+      double propertyEnergy = 0;
+      switch( t_Property ) {
+      case Property::T:
+        propertyEnergy = m_TransmittedSource->sum( minLambda, maxLambda );
         break;
-      case Side::Back:
-        propertyEnergy = m_ReflectedBackSource->sum( minLambda, maxLambda );
+      case Property::R:
+        switch( t_Side ) {
+        case Side::Front:
+          propertyEnergy = m_ReflectedFrontSource->sum( minLambda, maxLambda );
+          break;
+        case Side::Back:
+          propertyEnergy = m_ReflectedBackSource->sum( minLambda, maxLambda );
+          break;
+        default:
+          assert( "Incorrect selection of sample side." );
+          break;
+        }
+        break;
+      case Property::Abs:
+        switch( t_Side ) {
+        case Side::Front:
+          propertyEnergy = m_AbsorbedFrontSource->sum( minLambda, maxLambda );
+          break;
+        case Side::Back:
+          propertyEnergy = m_AbsorbedBackSource->sum( minLambda, maxLambda );
+          break;
+        default:
+          assert( "Incorrect selection of sample side." );
+          break;
+        }
         break;
       default:
-        assert("Incorrect selection of sample side.");
+        throw runtime_error( "Incorrect selection of sample property." );
         break;
       }
-      break;
-    case Property::Abs:
-      switch ( t_Side ) {
-      case Side::Front:
-        propertyEnergy = m_AbsorbedFrontSource->sum( minLambda, maxLambda );
-        break;
-      case Side::Back:
-        propertyEnergy = m_AbsorbedBackSource->sum( minLambda, maxLambda );
-        break;
-      default:
-        assert("Incorrect selection of sample side.");
-        break;
-      }
-      break;
-    default:
-      throw runtime_error("Incorrect selection of sample property.");
-      break;
+
+      Prop = propertyEnergy / incomingEnergy;
     }
-
-    Prop = propertyEnergy / incomingEnergy;
-
     return Prop;
   }
 
@@ -215,29 +231,32 @@ namespace SpectralAveraging {
         assert( m_Wavelengths != nullptr );
       }
       if( m_Wavelengths == nullptr ) {
-        throw runtime_error("Wavelength range is not set. Properties cannot be calculated without given wavelenght set.");
+        throw runtime_error( "Wavelength range is not set. Properties cannot be calculated without given wavelenght set." );
       }
 
-      if( m_SourceData == nullptr ) {
-        throw runtime_error("Source data are not set.");
+      if( m_SourceData != nullptr ) {
+        // throw runtime_error( "Source data are not set." );
+        //}
+
+        m_IncomingSource = m_SourceData->interpolate( *m_Wavelengths );
+
+
+        if( m_DetectorData != nullptr ) {
+          CSeries interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
+          m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
+        }
+
+        calculateProperties();
+
+        m_IncomingSource = m_IncomingSource->integrate( m_IntegrationType );
+        m_TransmittedSource = m_TransmittedSource->integrate( m_IntegrationType );
+        m_ReflectedFrontSource = m_ReflectedFrontSource->integrate( m_IntegrationType );
+        m_ReflectedBackSource = m_ReflectedBackSource->integrate( m_IntegrationType );
+        m_AbsorbedFrontSource = m_AbsorbedFrontSource->integrate( m_IntegrationType );
+        m_AbsorbedBackSource = m_AbsorbedBackSource->integrate( m_IntegrationType );
+
+        m_StateCalculated = true;
       }
-      m_IncomingSource = m_SourceData->interpolate( *m_Wavelengths );
-
-      if( m_DetectorData != nullptr ) {
-        CSeries interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
-        m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
-      }
-
-      calculateProperties();
-
-      m_IncomingSource = m_IncomingSource->integrate( m_IntegrationType );
-      m_TransmittedSource = m_TransmittedSource->integrate( m_IntegrationType );
-      m_ReflectedFrontSource = m_ReflectedFrontSource->integrate( m_IntegrationType );
-      m_ReflectedBackSource = m_ReflectedBackSource->integrate( m_IntegrationType );
-      m_AbsorbedFrontSource = m_AbsorbedFrontSource->integrate( m_IntegrationType );
-      m_AbsorbedBackSource = m_AbsorbedBackSource->integrate( m_IntegrationType );
-
-      m_StateCalculated = true;
     }
   }
 
@@ -256,7 +275,20 @@ namespace SpectralAveraging {
     m_RefFront = nullptr;
     m_RefBack = nullptr;
     m_AbsFront = nullptr;
-	m_AbsBack = nullptr;
+	  m_AbsBack = nullptr;
+  }
+
+  CSpectralSample::CSpectralSample( const shared_ptr< CSpectralSampleData >& t_SampleData ) :
+    CSample(), m_SampleData( t_SampleData ) {
+    if ( t_SampleData == nullptr ) {
+      throw runtime_error( "Sample must have measured data." );
+    }
+    setWavelengths( m_WavelengthSet );
+    m_Transmittance = nullptr;
+    m_RefFront = nullptr;
+    m_RefBack = nullptr;
+    m_AbsFront = nullptr;
+    m_AbsBack = nullptr;
   }
 
   shared_ptr< CSpectralSampleData > CSpectralSample::getMeasuredData() {

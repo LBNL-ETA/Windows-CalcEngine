@@ -283,7 +283,7 @@ protected:
 
     shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
 
-    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
+    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
 
     double thickness = 3.048e-3; // [m]
     shared_ptr< CMaterial > aMaterial_102 = 
@@ -306,10 +306,10 @@ protected:
     shared_ptr< CMaterial > aVisibleRangeMaterial = 
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
 
-    double ratio = 0.49;
+    // double ratio = 0.49;
 
     shared_ptr< CMaterial > aMaterialPerforated = 
-      make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
+      make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
 
     // make cell geometry
     double x = 19.05; // mm
@@ -345,58 +345,58 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   CEquivalentBSDFLayer aLayer = *getLayer();
 
   double tauDiff = aLayer.TauDiffDiff( minLambda, maxLambda, Side::Front );
-  EXPECT_NEAR( 0.10703929787454081, tauDiff, 1e-6 );
+  EXPECT_NEAR( 0.1063500, tauDiff, 1e-6 );
 
   double rhoDiff = aLayer.RhoDiffDiff( minLambda, maxLambda, Side::Front );
-  EXPECT_NEAR( 0.56984840964023076, rhoDiff, 1e-6 );
+  EXPECT_NEAR( 0.5703955, rhoDiff, 1e-6 );
 
   double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
-  EXPECT_NEAR( 0.15939639022875493, absDiff1, 1e-6 );
+  EXPECT_NEAR( 0.1595164, absDiff1, 1e-6 );
 
   double absDiff2 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 2 );
-  EXPECT_NEAR( 0.16155053213944373, absDiff2, 1e-6 );
+  EXPECT_NEAR( 0.1615728, absDiff2, 1e-6 );
 
   double theta = 0;
   double phi = 0;
 
   double tauHem = aLayer.TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.16263602579909062, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.1619052, tauHem, 1e-6 );
 
   double tauDir = aLayer.TauDirDir( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.074875339156466117, tauDir, 1e-6 );
+  EXPECT_NEAR( 0.0748575, tauDir, 1e-6 );
 
   double rhoHem = aLayer.RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.51288155416991754, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.5134613, rhoHem, 1e-6 );
 
   double rhoDir = aLayer.RhoDirDir( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.086658200458558793, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.0866742, rhoDir, 1e-6 );
 
   double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.15266584973209629, abs1, 1e-6 );
+  EXPECT_NEAR( 0.1527933, abs1, 1e-6 );
 
   double abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.16965120018187760, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1696748, abs2, 1e-6 );
 
   theta = 45;
   phi = 78;
 
   tauHem = aLayer.TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.12470217121672110, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.1239460, tauHem, 1e-6 );
 
   tauDir = aLayer.TauDirDir( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.032957480650686502, tauDir, 1e-6 );
+  EXPECT_NEAR( 0.0329390, tauDir, 1e-6 );
 
   rhoHem = aLayer.RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.53487375450048180, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.5354738, rhoHem, 1e-6 );
 
   rhoDir = aLayer.RhoDirDir( minLambda, maxLambda, Side::Front, theta, phi );
-  EXPECT_NEAR( 0.091523663995601648, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.0915399, rhoDir, 1e-6 );
 
   abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.16182043685806130, abs1, 1e-6 );
+  EXPECT_NEAR( 0.1619522, abs1, 1e-6 );
 
   abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.17643826730771772, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1764627, abs2, 1e-6 );
 
   CSquareMatrix aT = *aLayer.Tau( minLambda, maxLambda, Side::Front );
 
@@ -404,47 +404,47 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   size_t size = aT.getSize();
 
   vector< double > correctResults;
-  correctResults.push_back( 0.973921710542538950 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.785628499637827880 );
-  correctResults.push_back( 0.428347946760848140 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848310 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.428347946760848310 );
-  correctResults.push_back( 0.428347946760848200 );
-  correctResults.push_back( 0.029383823419397073 );
-  correctResults.push_back( 0.029383823419397073 );
-  correctResults.push_back( 0.029383823419397073 );
-  correctResults.push_back( 0.029383823419397076 );
-  correctResults.push_back( 0.029383823419397076 );
-  correctResults.push_back( 0.029383823419397076 );
-  correctResults.push_back( 0.029383823419397076 );
-  correctResults.push_back( 0.029383823419397076 );
-  correctResults.push_back( 0.029383823419397076 );
-  correctResults.push_back( 0.029383823419397083 );
-  correctResults.push_back( 0.029383823419397083 );
-  correctResults.push_back( 0.029383823419397083 );
-  correctResults.push_back( 0.018942773900363963 );
-  correctResults.push_back( 0.018942773900363960 );
-  correctResults.push_back( 0.018942773900363960 );
-  correctResults.push_back( 0.018942773900363963 );
-  correctResults.push_back( 0.018942773900363963 );
-  correctResults.push_back( 0.018942773900363963 );
-  correctResults.push_back( 0.018942773900363963 );
-  correctResults.push_back( 0.018942773900363963 );
+  correctResults.push_back( 0.973690205548513490 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.785391770476540850 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.428107513510513350 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.029147056442274891 );
+  correctResults.push_back( 0.018794977675071475 );
+  correctResults.push_back( 0.018794977675071475 );
+  correctResults.push_back( 0.018794977675071475 );
+  correctResults.push_back( 0.018794977675071475 );
+  correctResults.push_back( 0.018794977675071475 );
+  correctResults.push_back( 0.018794977675071475 );
+  correctResults.push_back( 0.018794977675071475 );
+  correctResults.push_back( 0.018794977675071475 );
 
   EXPECT_EQ( correctResults.size(), aT.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -456,47 +456,47 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.21164951326309939 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21354498542624659 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.21658310709858217 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
-  correctResults.push_back( 0.22326328196079573 );
+  correctResults.push_back( 0.21190787064540886 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21381058993245247 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.21685764259086368 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
+  correctResults.push_back( 0.22355023727552928 );
   
   EXPECT_EQ( correctResults.size(), aRb.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -508,47 +508,47 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
 
   correctResults.clear();
   
-  correctResults.push_back( 0.15266584973209629 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.15573964559759987 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16182043685806130 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.16817375034496801 );
-  correctResults.push_back( 0.14744578590437141 );
-  correctResults.push_back( 0.14744578590437141 );
-  correctResults.push_back( 0.14744578590437141 );
-  correctResults.push_back( 0.14744578590437141 );
-  correctResults.push_back( 0.14744578590437141 );
-  correctResults.push_back( 0.14744578590437141 );
-  correctResults.push_back( 0.14744578590437141 );
-  correctResults.push_back( 0.14744578590437141 );
+  correctResults.push_back( 0.15279332457211262 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.15586972860833670 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16195217141408391 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.16830288659050252 );
+  correctResults.push_back( 0.14752614735016453 );
+  correctResults.push_back( 0.14752614735016453 );
+  correctResults.push_back( 0.14752614735016453 );
+  correctResults.push_back( 0.14752614735016453 );
+  correctResults.push_back( 0.14752614735016453 );
+  correctResults.push_back( 0.14752614735016453 );
+  correctResults.push_back( 0.14752614735016453 );
+  correctResults.push_back( 0.14752614735016453 );
   
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -560,47 +560,47 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
 
   correctResults.clear();
   
-  correctResults.push_back( 0.16965120018187760 );
-  correctResults.push_back( 0.17339810728740962 );
-  correctResults.push_back( 0.17339810728740962 );
-  correctResults.push_back( 0.17339810728740962 );
-  correctResults.push_back( 0.17339810728740965 );
-  correctResults.push_back( 0.17339810728740965 );
-  correctResults.push_back( 0.17339810728740965 );
-  correctResults.push_back( 0.17339810728740965 );
-  correctResults.push_back( 0.17339810728740965 );
-  correctResults.push_back( 0.17643826730771764 );
-  correctResults.push_back( 0.17643826730771764 );
-  correctResults.push_back( 0.17643826730771764 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17643826730771772 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.17432486689014232 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.17432486689014232 );
-  correctResults.push_back( 0.17432486689014232 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.17432486689014232 );
-  correctResults.push_back( 0.17432486689014237 );
-  correctResults.push_back( 0.11070393973458328 );
-  correctResults.push_back( 0.11070393973458328 );
-  correctResults.push_back( 0.11070393973458328 );
-  correctResults.push_back( 0.11070393973458328 );
-  correctResults.push_back( 0.11070393973458328 );
-  correctResults.push_back( 0.11070393973458328 );
-  correctResults.push_back( 0.11070393973458328 );
-  correctResults.push_back( 0.11070393973458328 );
+  correctResults.push_back( 0.16967476787077485 );
+  correctResults.push_back( 0.17342216546987113 );
+  correctResults.push_back( 0.17342216546987113 );
+  correctResults.push_back( 0.17342216546987116 );
+  correctResults.push_back( 0.17342216546987116 );
+  correctResults.push_back( 0.17342216546987116 );
+  correctResults.push_back( 0.17342216546987116 );
+  correctResults.push_back( 0.17342216546987116 );
+  correctResults.push_back( 0.17342216546987116 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17646265577042369 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737461 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737461 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.17434881317737466 );
+  correctResults.push_back( 0.11071889341880466 );
+  correctResults.push_back( 0.11071889341880466 );
+  correctResults.push_back( 0.11071889341880466 );
+  correctResults.push_back( 0.11071889341880468 );
+  correctResults.push_back( 0.11071889341880466 );
+  correctResults.push_back( 0.11071889341880466 );
+  correctResults.push_back( 0.11071889341880468 );
+  correctResults.push_back( 0.11071889341880468 );
   
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -612,51 +612,51 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.0129495915477145180 );
-  correctResults.push_back( 0.0110304160343826040 );
-  correctResults.push_back( 0.0110304160343826040 );
-  correctResults.push_back( 0.0110304160343826040 );
-  correctResults.push_back( 0.0110304160343826060 );
-  correctResults.push_back( 0.0110304160343826060 );
-  correctResults.push_back( 0.0110304160343826040 );
-  correctResults.push_back( 0.0110304160343826040 );
-  correctResults.push_back( 0.0110304160343826040 );
-  correctResults.push_back( 0.0086632463569432851 );
-  correctResults.push_back( 0.0086632463569432851 );
-  correctResults.push_back( 0.0086632463569432851 );
-  correctResults.push_back( 0.0086632463569432851 );
-  correctResults.push_back( 0.0086632463569432851 );
-  correctResults.push_back( 0.0086632463569432869 );
-  correctResults.push_back( 0.0086632463569432869 );
-  correctResults.push_back( 0.0086632463569432869 );
-  correctResults.push_back( 0.0086632463569432869 );
-  correctResults.push_back( 0.0086632463569432869 );
-  correctResults.push_back( 0.0086632463569432869 );
-  correctResults.push_back( 0.0086632463569432903 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
-  correctResults.push_back( 0.0049584695704260979 );
+  correctResults.push_back( 0.0128042767120028940 );
+  correctResults.push_back( 0.0108812889619819970 );
+  correctResults.push_back( 0.0108812889619819950 );
+  correctResults.push_back( 0.0108812889619819950 );
+  correctResults.push_back( 0.0108812889619819970 );
+  correctResults.push_back( 0.0108812889619819970 );
+  correctResults.push_back( 0.0108812889619819970 );
+  correctResults.push_back( 0.0108812889619819970 );
+  correctResults.push_back( 0.0108812889619819950 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0085094151944131412 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
+  correctResults.push_back( 0.0047981817861313426 );
   
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );    
   }
 
   // Back absorptance layer 2
@@ -664,47 +664,47 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.18701217494304534 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19123947653513235 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.19647439064669148 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
-  correctResults.push_back( 0.20343367811595450 );
+  correctResults.push_back( 0.18698593111387821 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19121254358929551 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.19644660737657524 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
+  correctResults.push_back( 0.20340472745929269 );
   
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {

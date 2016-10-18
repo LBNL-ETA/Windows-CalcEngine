@@ -19,20 +19,18 @@ namespace SingleLayerOptics {
 
   CBSDFLayer::CBSDFLayer( const shared_ptr< CBaseCell >& t_Cell, 
     const shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) : 
-    m_Calculated( false ), m_CalculatedWV( false ) {
-    m_Cell = t_Cell;
+    m_Calculated( false ), m_CalculatedWV( false ), m_Cell( t_Cell ), m_BSDFHemisphere( t_Hemisphere ) {
     m_BSDFHemisphere = t_Hemisphere;
 
     // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
     // This is not necessary before axisymmetry is introduced
     m_Results = make_shared< CBSDFResults >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
-    m_WVResults = make_shared< vector< shared_ptr< CBSDFResults > > >();
-    size_t size = t_Cell->getBandSize();
-    for( size_t i = 0; i < size; ++i ) {
-      shared_ptr< CBSDFResults > aResults = 
-        make_shared< CBSDFResults >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
-      m_WVResults->push_back( aResults );
-    }
+    fillWLResultsFromMaterialCell();
+  }
+
+  void CBSDFLayer::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    m_Cell->setSourceData( t_SourceData );
+    fillWLResultsFromMaterialCell();
   }
 
   shared_ptr< CBSDFResults > CBSDFLayer::getResults() {
@@ -125,6 +123,16 @@ namespace SingleLayerOptics {
         const CBeamDirection aDirection = *aDirections[ i ]->centerPoint();
         calcDiffuseDistribution_wv( aSide, aDirection, i );
       }
+    }
+  }
+
+  void CBSDFLayer::fillWLResultsFromMaterialCell() {
+    m_WVResults = make_shared< vector< shared_ptr< CBSDFResults > > >();
+    size_t size = m_Cell->getBandSize();
+    for ( size_t i = 0; i < size; ++i ) {
+      shared_ptr< CBSDFResults > aResults =
+        make_shared< CBSDFResults >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
+      m_WVResults->push_back( aResults );
     }
   }
 

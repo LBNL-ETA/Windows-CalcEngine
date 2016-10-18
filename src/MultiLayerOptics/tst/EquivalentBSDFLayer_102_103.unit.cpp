@@ -404,8 +404,8 @@ protected:
     shared_ptr< CSpectralSampleData > aMeasurements_103 = loadSampleData_NFRC_103();
 
     // Create samples from measurements and solar radiation
-    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
-    shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103, aSolarRadiation );
+    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
+    shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
 
     // Create material from samples
     double thickness = 3.048e-3; // [m]

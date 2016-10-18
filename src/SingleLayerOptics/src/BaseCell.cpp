@@ -19,6 +19,10 @@ namespace SingleLayerOptics {
     m_Material( t_Material ), m_CellDescription( t_CellDescription ) {
   }
 
+  void CBaseCell::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    m_Material->setSourceData( t_SourceData );
+  }
+
   double CBaseCell::T_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {
     return m_CellDescription->T_dir_dir( t_Side, t_Direction );
   }

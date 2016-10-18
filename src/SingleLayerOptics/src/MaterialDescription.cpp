@@ -46,6 +46,10 @@ namespace SingleLayerOptics {
     m_MaxLambda = aRange.maxLambda();
   };
 
+  void CMaterial::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    // Default material will not have detector data
+  };
+
   double CMaterial::getPropertyAtAngle( const Property t_Property, const Side t_Side, const double ) const {
     return getProperty( t_Property, t_Side ); // Default behavior is no angular dependence
   }
@@ -63,11 +67,13 @@ namespace SingleLayerOptics {
     shared_ptr< vector< double > > Rf = getBandProperties( Property::R, Side::Front );
     shared_ptr< vector< double > > Rb = getBandProperties( Property::R, Side::Back );
 
-    size_t size = getBandSize();
-    for( size_t i = 0; i < size; ++i ) {
-      RMaterialProperties aMaterial = 
-        RMaterialProperties( ( *Tf )[ i ], ( *Tb )[ i ], ( *Rf )[ i ], ( *Rb )[ i ] );
-      aProperties->push_back( aMaterial );
+    if( Tf != nullptr ) {
+      size_t size = getBandSize();
+      for( size_t i = 0; i < size; ++i ) {
+        RMaterialProperties aMaterial =
+          RMaterialProperties( ( *Tf )[ i ], ( *Tb )[ i ], ( *Rf )[ i ], ( *Rb )[ i ] );
+        aProperties->push_back( aMaterial );
+      }
     }
 
     return aProperties;
@@ -143,7 +149,7 @@ namespace SingleLayerOptics {
 
   CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
     const shared_ptr< CMaterial >& t_SolarRange, const double t_Ratio ) : CMaterial( 0.3, 2.5 ),
-    m_MaterialFullRange( t_SolarRange ) {
+    m_MaterialFullRange( t_SolarRange ), m_MaterialPartialRange( t_PartialRange ) {
     checkIfMaterialWithingSolarRange( *t_PartialRange );
     createUVRange();
     createNIRRange( t_PartialRange, *t_SolarRange, t_Ratio );
@@ -152,14 +158,31 @@ namespace SingleLayerOptics {
   CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
     const shared_ptr< CMaterial >& t_SolarRange, 
     const shared_ptr< CSeries >& t_SolarRadiation ) : CMaterial( 0.3, 2.5 ),
-    m_MaterialFullRange( t_SolarRange ) {
-    checkIfMaterialWithingSolarRange( *t_PartialRange );
+    m_MaterialFullRange( t_SolarRange ), m_MaterialPartialRange( t_PartialRange ) {
+    checkIfMaterialWithingSolarRange( *m_MaterialPartialRange );
     createUVRange();
-    double lowLambda = t_PartialRange->getMinLambda();
-    double highLambda = t_PartialRange->getMaxLambda();
+    double lowLambda = m_MaterialPartialRange->getMinLambda();
+    double highLambda = m_MaterialPartialRange->getMaxLambda();
     CNIRRatio nirRatio = CNIRRatio( t_SolarRadiation, lowLambda, highLambda );
-    createNIRRange( t_PartialRange, *t_SolarRange, nirRatio.ratio() );
+    createNIRRange( m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio() );
   }
+
+  CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
+    const shared_ptr< CMaterial >& t_SolarRange ) : CMaterial( 0.3, 2.5 ), 
+    m_MaterialFullRange( t_SolarRange ), m_MaterialPartialRange( t_PartialRange ) {
+    // Nothing else can be calculated here since solar radiation is still missing
+  }
+
+  void CMaterialDualBand::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    m_MaterialFullRange->setSourceData( t_SourceData );
+    m_MaterialPartialRange->setSourceData( t_SourceData );
+    checkIfMaterialWithingSolarRange( *m_MaterialPartialRange );
+    createUVRange();
+    double lowLambda = m_MaterialPartialRange->getMinLambda();
+    double highLambda = m_MaterialPartialRange->getMaxLambda();
+    CNIRRatio nirRatio = CNIRRatio( t_SourceData, lowLambda, highLambda );
+    createNIRRange( m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio() );
+  };
 
   double CMaterialDualBand::getProperty( Property t_Property, Side t_Side ) const {
     return m_MaterialFullRange->getProperty( t_Property, t_Side );
@@ -264,6 +287,10 @@ namespace SingleLayerOptics {
 
     m_AngularSample = make_shared< CAngularSpectralSample >( t_SpectralSample, t_Thickness, t_Type );
 
+  }
+
+  void CMaterialSample::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    m_AngularSample->setSourceData( t_SourceData );
   }
 
   double CMaterialSample::getPropertyAtAngle( const Property t_Property, 

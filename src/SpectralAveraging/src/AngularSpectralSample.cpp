@@ -115,10 +115,23 @@ namespace SpectralAveraging {
     
   }
 
+  void CAngularSpectralSample::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    m_SpectralSampleZero->setSourceData( t_SourceData );
+    m_SpectralProperties.clear();
+  }
+
   double CAngularSpectralSample::getProperty( double const minLambda, double const maxLambda, 
     const Property t_Property, const Side t_Side, const double t_Angle ) {
     shared_ptr< CSpectralSample > aSample = findSpectralSample( t_Angle );
-    
+
+    // Source data cannot be assigned and therefore property cannot be calculated.
+    // Just return zero.
+    // double aProperty = 0;
+    // if( aSample->getSourceData() != nullptr ) {
+    //   aProperty = aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
+    // }
+    // 
+    // return aProperty;
     return aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
   }
 
@@ -130,12 +143,18 @@ namespace SpectralAveraging {
 
     shared_ptr< CSeries > aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
 
-    shared_ptr< vector< double > > aValues = make_shared< vector< double > >();
+    shared_ptr< vector< double > > aValues = nullptr;
 
-    for( shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
-      if( aProperty->x() >= minLambda && aProperty->x() <= maxLambda ) {
-        aValues->push_back( aProperty->value() );
+    if( aProperties != nullptr ) {
+
+      aValues = make_shared< vector< double > >();
+
+      for( shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
+        if( aProperty->x() >= minLambda && aProperty->x() <= maxLambda ) {
+          aValues->push_back( aProperty->value() );
+        }
       }
+
     }
     
     return aValues;
