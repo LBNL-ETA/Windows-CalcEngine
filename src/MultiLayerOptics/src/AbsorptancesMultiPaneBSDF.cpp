@@ -53,10 +53,10 @@ namespace MultiLayerOptics {
       double curWL = ( *m_CommonWavelengths )[ i ];
       int index = t_Layer.getBandIndex( curWL );
       assert( index > -1 );
-      aTausF->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Front ) );
-      aTausB->push_back( ( *aResults )[ size_t( index ) ]->Tau( Side::Back ) );
-      aRhosF->push_back( ( *aResults )[ size_t( index ) ]->Rho( Side::Front ) );
-      aRhosB->push_back( ( *aResults )[ size_t( index ) ]->Rho( Side::Back ) );
+      aTausF->push_back( ( *aResults )[ size_t( index ) ]->getMatrix( Side::Front, PropertySimple::T ) );
+      aTausB->push_back( ( *aResults )[ size_t( index ) ]->getMatrix( Side::Back, PropertySimple::T ) );
+      aRhosF->push_back( ( *aResults )[ size_t( index ) ]->getMatrix( Side::Front, PropertySimple::R ) );
+      aRhosB->push_back( ( *aResults )[ size_t( index ) ]->getMatrix( Side::Back, PropertySimple::R ) );
     }
 
     m_TausF.push_back( aTausF );

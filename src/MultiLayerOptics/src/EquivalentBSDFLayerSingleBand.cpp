@@ -38,18 +38,26 @@ namespace MultiLayerOptics {
 
   CBSDFDoubleLayer::CBSDFDoubleLayer( const CBSDFResults& t_FrontLayer, const CBSDFResults& t_BackLayer ) {
     const CSquareMatrix aLambda = *t_FrontLayer.lambdaMatrix();
-    CInterReflectance InterRefl1 = CInterReflectance( aLambda, *t_FrontLayer.Rho( Side::Back ), 
-      *t_BackLayer.Rho( Side::Front ) );
+    CInterReflectance InterRefl1 = CInterReflectance( aLambda, 
+      *t_FrontLayer.getMatrix( Side::Back, PropertySimple::R ), 
+      *t_BackLayer.getMatrix( Side::Front, PropertySimple::R ) );
 
-    CInterReflectance InterRefl2 = CInterReflectance( aLambda, *t_BackLayer.Rho( Side::Front ), 
-      *t_FrontLayer.Rho( Side::Back ) );
+    CInterReflectance InterRefl2 = CInterReflectance( aLambda, 
+      *t_BackLayer.getMatrix( Side::Front, PropertySimple::R ), 
+      *t_FrontLayer.getMatrix( Side::Back, PropertySimple::R ) );
 
-    m_Tf = equivalentT( *t_BackLayer.Tau( Side::Front ), *InterRefl1.value(), aLambda, *t_FrontLayer.Tau( Side::Front ) );
-    m_Tb = equivalentT( *t_FrontLayer.Tau( Side::Back ), *InterRefl2.value(), aLambda, *t_BackLayer.Tau( Side::Back ) );
-    m_Rf = equivalentR( *t_FrontLayer.Rho( Side::Front ), *t_FrontLayer.Tau( Side::Front ), *t_FrontLayer.Tau( Side::Back ),
-      *t_BackLayer.Rho( Side::Front ), *InterRefl2.value(), aLambda );
-    m_Rb = equivalentR( *t_BackLayer.Rho( Side::Back ), *t_BackLayer.Tau( Side::Back ), *t_BackLayer.Tau( Side::Front ),
-      *t_FrontLayer.Rho( Side::Back ), *InterRefl1.value(), aLambda );
+    m_Tf = equivalentT( *t_BackLayer.getMatrix( Side::Front, PropertySimple::T ), *InterRefl1.value(), 
+      aLambda, *t_FrontLayer.getMatrix( Side::Front, PropertySimple::T ) );
+    m_Tb = equivalentT( *t_FrontLayer.getMatrix( Side::Back, PropertySimple::T ), *InterRefl2.value(), 
+      aLambda, *t_BackLayer.getMatrix( Side::Back, PropertySimple::T ) );
+    m_Rf = equivalentR( *t_FrontLayer.getMatrix( Side::Front, PropertySimple::R ), 
+      *t_FrontLayer.getMatrix( Side::Front, PropertySimple::T ), 
+      *t_FrontLayer.getMatrix( Side::Back, PropertySimple::T ),
+      *t_BackLayer.getMatrix( Side::Front, PropertySimple::R ), *InterRefl2.value(), aLambda );
+    m_Rb = equivalentR( *t_BackLayer.getMatrix( Side::Back, PropertySimple::R ), 
+      *t_BackLayer.getMatrix( Side::Back, PropertySimple::T ), 
+      *t_BackLayer.getMatrix( Side::Front, PropertySimple::T ),
+      *t_FrontLayer.getMatrix( Side::Back, PropertySimple::R ), *InterRefl1.value(), aLambda );
 
     m_Results = make_shared< CBSDFResults >( t_FrontLayer.getDirections() );
     m_Results->setResultMatrices( m_Tf, m_Rf, Side::Front );
@@ -97,31 +105,15 @@ namespace MultiLayerOptics {
     m_Lambda = t_Layer->lambdaMatrix();
   }
 
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Tau( const Side t_Side ) {
+  shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::getMatrix( const Side t_Side, 
+    const PropertySimple t_Property ) {
     calcEquivalentProperties();
-    return m_EquivalentLayer->Tau( t_Side );
-  }
-
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::Rho( const Side t_Side ) {
-    calcEquivalentProperties();
-    return m_EquivalentLayer->Rho( t_Side );
+    return m_EquivalentLayer->getMatrix( t_Side, t_Property );
   }
 
   shared_ptr< CSquareMatrix> CEquivalentBSDFLayerSingleBand::getProperty( const Side t_Side, const 
     PropertySimple t_Property ) {
-    shared_ptr< CSquareMatrix > aMatrix = nullptr;
-    switch( t_Property ) {
-    case PropertySimple::T:
-      aMatrix = Tau( t_Side );
-      break;
-    case PropertySimple::R:
-      aMatrix = Rho( t_Side );
-      break;
-    default:
-      assert("Incorrect selection of layer property.");
-      break;
-    }
-    return aMatrix;
+    return getMatrix( t_Side, t_Property );
   }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayerSingleBand::getLayerAbsorptances( const size_t Index, 
@@ -134,7 +126,7 @@ namespace MultiLayerOptics {
     return m_Layers.size();
   }
 
-  void CEquivalentBSDFLayerSingleBand::addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFResults >& t_Layer ) {
+  void CEquivalentBSDFLayerSingleBand::addLayer( const std::shared_ptr< CBSDFResults >& t_Layer ) {
     m_Layers.push_back( t_Layer );
     m_PropertiesCalculated = false;
     for( Side aSide : EnumSide() ) {
@@ -180,10 +172,12 @@ namespace MultiLayerOptics {
         CBSDFResults& Layer1 = *m_Backward[ i + 1 ];
         CBSDFResults& Layer2 = *m_Forward[ i ];
         CInterReflectance InterRefl2 = 
-          CInterReflectance( *m_Lambda, *Layer1.Rho( Side::Front ), *Layer2.Rho( Side::Back ) );
+          CInterReflectance( *m_Lambda, *Layer1.getMatrix( Side::Front, PropertySimple::R ), 
+            *Layer2.getMatrix( Side::Back, PropertySimple::R ) );
         vector< double >& Ab = *m_Layers[ i ]->Abs( Side::Back );
-        Ap1b = absTerm1( Ab, *InterRefl2.value(), *Layer1.Tau( Side::Back ) );
-        Ap2f = absTerm2( Ab, *InterRefl2.value(), *Layer1.Rho( Side::Front ), *Layer2.Tau( Side::Front) );        
+        Ap1b = absTerm1( Ab, *InterRefl2.value(), *Layer1.getMatrix( Side::Back, PropertySimple::T ) );
+        Ap2f = absTerm2( Ab, *InterRefl2.value(), *Layer1.getMatrix( Side::Front, PropertySimple::R ), 
+          *Layer2.getMatrix( Side::Front, PropertySimple::T ) );        
       }
 
       if( i == 0 ) {
@@ -193,10 +187,12 @@ namespace MultiLayerOptics {
         CBSDFResults& Layer1 = *m_Forward[ i - 1 ];
         CBSDFResults& Layer2 = *m_Backward[ i ];
         CInterReflectance InterRefl1 = 
-          CInterReflectance( *m_Lambda, *Layer1.Rho( Side::Back ), *Layer2.Rho( Side::Front ) );
+          CInterReflectance( *m_Lambda, *Layer1.getMatrix( Side::Back, PropertySimple::R ), 
+            *Layer2.getMatrix( Side::Front, PropertySimple::R ) );
         vector< double >& Af = *m_Layers[ i ]->Abs( Side::Front );
-        Ap1f = absTerm1( Af, *InterRefl1.value(), *Layer1.Tau( Side::Front ) );
-        Ap2b = absTerm2( Af, *InterRefl1.value(), *Layer1.Rho( Side::Back), *Layer2.Tau( Side::Back ) );
+        Ap1f = absTerm1( Af, *InterRefl1.value(), *Layer1.getMatrix( Side::Front, PropertySimple::T ) );
+        Ap2b = absTerm2( Af, *InterRefl1.value(), *Layer1.getMatrix( Side::Back, PropertySimple::R ), 
+          *Layer2.getMatrix( Side::Back, PropertySimple::T ) );
       }
 
       map< Side, shared_ptr< vector< double > > > aTotal;

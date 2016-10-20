@@ -1,10 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiPaneSpecular.hpp"
+#include "EquivalentBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
-#include "SpecularCell.hpp"
 #include "SpecularLayer.hpp"
 #include "SpecularCellDescription.hpp"
 #include "CommonWavelengths.hpp"
@@ -14,6 +13,9 @@
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
+#include "BSDFLayer.hpp"
+#include "BSDFLayerMaker.hpp"
+#include "HemisphericalEnergy.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;
@@ -21,16 +23,14 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-// Example/test case on multlayer specular
-// Difference from BSDF layer is that properties can be calculated at any custom angle
+// Example on how to calculate hemispherical energy distribution from IGU
 
-class EquivalentSpecularLayer_102_103 : public testing::Test {
+class HemisphericalEnergy_102_103_SmallBasis : public testing::Test {
 
 private:
-  shared_ptr< CMultiPaneSpecular > m_Layer;
+  shared_ptr< CHemisphericalEnergy > m_Energy;
 
   shared_ptr< CSeries > loadSolarRadiationFile() {
-
     shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
 
     // Full ASTM E891-87 Table 1 (Solar radiation)
@@ -159,6 +159,133 @@ private:
     return aSolarRadiation;
   }
 
+  shared_ptr< CSeries > loadSkyRadiationFile() {
+    shared_ptr< CSeries >  aSkyRadiation = make_shared< CSeries >();
+
+    aSkyRadiation->addProperty( 0.305, 6.1   );
+    aSkyRadiation->addProperty( 0.310, 26.7  );
+    aSkyRadiation->addProperty( 0.315, 66.7  );
+    aSkyRadiation->addProperty( 0.320, 109.8 );
+    aSkyRadiation->addProperty( 0.325, 145.8 );
+    aSkyRadiation->addProperty( 0.330, 242.9 );
+    aSkyRadiation->addProperty( 0.335, 234.5 );
+    aSkyRadiation->addProperty( 0.340, 255.9 );
+    aSkyRadiation->addProperty( 0.345, 252.2 );
+    aSkyRadiation->addProperty( 0.350, 271.7 );
+    aSkyRadiation->addProperty( 0.360, 279.8 );
+    aSkyRadiation->addProperty( 0.370, 342.2 );
+    aSkyRadiation->addProperty( 0.380, 350.1 );
+    aSkyRadiation->addProperty( 0.390, 339   );
+    aSkyRadiation->addProperty( 0.400, 457.1 );
+    aSkyRadiation->addProperty( 0.410, 501.9 );
+    aSkyRadiation->addProperty( 0.420, 493.2 );
+    aSkyRadiation->addProperty( 0.430, 430   );
+    aSkyRadiation->addProperty( 0.440, 503.5 );
+    aSkyRadiation->addProperty( 0.450, 569.4 );
+    aSkyRadiation->addProperty( 0.460, 609.6 );
+    aSkyRadiation->addProperty( 0.470, 583   );
+    aSkyRadiation->addProperty( 0.480, 582.2 );
+    aSkyRadiation->addProperty( 0.490, 534.1 );
+    aSkyRadiation->addProperty( 0.500, 522   );
+    aSkyRadiation->addProperty( 0.510, 519.8 );
+    aSkyRadiation->addProperty( 0.520, 473.4 );
+    aSkyRadiation->addProperty( 0.530, 487.5 );
+    aSkyRadiation->addProperty( 0.540, 468.3 );
+    aSkyRadiation->addProperty( 0.550, 459.3 );
+    aSkyRadiation->addProperty( 0.570, 414.1 );
+    aSkyRadiation->addProperty( 0.590, 371.2 );
+    aSkyRadiation->addProperty( 0.610, 396.5 );
+    aSkyRadiation->addProperty( 0.630, 372   );
+    aSkyRadiation->addProperty( 0.650, 358.2 );
+    aSkyRadiation->addProperty( 0.670, 346.1 );
+    aSkyRadiation->addProperty( 0.690, 270.8 );
+    aSkyRadiation->addProperty( 0.710, 314.3 );
+    aSkyRadiation->addProperty( 0.718, 193.4 );
+    aSkyRadiation->addProperty( 0.724, 200.4 );
+    aSkyRadiation->addProperty( 0.740, 240.2 );
+    aSkyRadiation->addProperty( 0.753, 237.6 );
+    aSkyRadiation->addProperty( 0.758, 233.3 );
+    aSkyRadiation->addProperty( 0.763, 118.3 );
+    aSkyRadiation->addProperty( 0.768, 200   );
+    aSkyRadiation->addProperty( 0.780, 222.2 );
+    aSkyRadiation->addProperty( 0.800, 208.2 );
+    aSkyRadiation->addProperty( 0.816, 137.2 );
+    aSkyRadiation->addProperty( 0.824, 124.8 );
+    aSkyRadiation->addProperty( 0.832, 150.9 );
+    aSkyRadiation->addProperty( 0.840, 160.1 );
+    aSkyRadiation->addProperty( 0.860, 163.7 );
+    aSkyRadiation->addProperty( 0.880, 154.9 );
+    aSkyRadiation->addProperty( 0.905, 118.1 );
+    aSkyRadiation->addProperty( 0.915, 102.3 );
+    aSkyRadiation->addProperty( 0.925, 103.9 );
+    aSkyRadiation->addProperty( 0.930, 55.5  );
+    aSkyRadiation->addProperty( 0.937, 34.1  );
+    aSkyRadiation->addProperty( 0.948, 42.2  );
+    aSkyRadiation->addProperty( 0.965, 75.6  );
+    aSkyRadiation->addProperty( 0.980, 96.7  );
+    aSkyRadiation->addProperty( 0.994, 116.7 );
+    aSkyRadiation->addProperty( 1.040, 107.6 );
+    aSkyRadiation->addProperty( 1.070, 97.8  );
+    aSkyRadiation->addProperty( 1.100, 46.4  );
+    aSkyRadiation->addProperty( 1.120, 10.8  );
+    aSkyRadiation->addProperty( 1.130, 19.6  );
+    aSkyRadiation->addProperty( 1.137, 13.5  );
+    aSkyRadiation->addProperty( 1.161, 37.1  );
+    aSkyRadiation->addProperty( 1.180, 53.2  );
+    aSkyRadiation->addProperty( 1.200, 48.4  );
+    aSkyRadiation->addProperty( 1.235, 56.9  );
+    aSkyRadiation->addProperty( 1.290, 47.4  );
+    aSkyRadiation->addProperty( 1.320, 26.8  );
+    aSkyRadiation->addProperty( 1.350, 2.4   );
+    aSkyRadiation->addProperty( 1.395, 0.2   );
+    aSkyRadiation->addProperty( 1.443, 4.1   );
+    aSkyRadiation->addProperty( 1.463, 8.1   );
+    aSkyRadiation->addProperty( 1.477, 8.2   );
+    aSkyRadiation->addProperty( 1.497, 15    );
+    aSkyRadiation->addProperty( 1.520, 22.9  );
+    aSkyRadiation->addProperty( 1.539, 25.4  );
+    aSkyRadiation->addProperty( 1.558, 25.7  );
+    aSkyRadiation->addProperty( 1.578, 22.3  );
+    aSkyRadiation->addProperty( 1.592, 20.1  );
+    aSkyRadiation->addProperty( 1.610, 18.2  );
+    aSkyRadiation->addProperty( 1.630, 19.8  );
+    aSkyRadiation->addProperty( 1.646, 18.9  );
+    aSkyRadiation->addProperty( 1.678, 17.7  );
+    aSkyRadiation->addProperty( 1.740, 13.3  );
+    aSkyRadiation->addProperty( 1.800, 2.1   );
+    aSkyRadiation->addProperty( 1.860, 0.2   );
+    aSkyRadiation->addProperty( 1.920, 0.1   );
+    aSkyRadiation->addProperty( 1.960, 1.5   );
+    aSkyRadiation->addProperty( 1.985, 6.2   );
+    aSkyRadiation->addProperty( 2.005, 1.8   );
+    aSkyRadiation->addProperty( 2.035, 7     );
+    aSkyRadiation->addProperty( 2.065, 4.1   );
+    aSkyRadiation->addProperty( 2.100, 6.4   );
+    aSkyRadiation->addProperty( 2.148, 6     );
+    aSkyRadiation->addProperty( 2.198, 5.1   );
+    aSkyRadiation->addProperty( 2.270, 5.2   );
+    aSkyRadiation->addProperty( 2.360, 4.4   );
+    aSkyRadiation->addProperty( 2.450, 1.4   );
+    aSkyRadiation->addProperty( 2.494, 1.5   );
+    aSkyRadiation->addProperty( 2.537, 0.2   );
+    aSkyRadiation->addProperty( 2.941, 0.4   );
+    aSkyRadiation->addProperty( 2.973, 0.6   );
+    aSkyRadiation->addProperty( 3.005, 0.5   );
+    aSkyRadiation->addProperty( 3.056, 0.2   );
+    aSkyRadiation->addProperty( 3.132, 0.4   );
+    aSkyRadiation->addProperty( 3.156, 1.4   );
+    aSkyRadiation->addProperty( 3.204, 0.1   );
+    aSkyRadiation->addProperty( 3.245, 0.2   );
+    aSkyRadiation->addProperty( 3.317, 1.1   );
+    aSkyRadiation->addProperty( 3.344, 0.2   );
+    aSkyRadiation->addProperty( 3.450, 1.1   );
+    aSkyRadiation->addProperty( 3.573, 0.9   );
+    aSkyRadiation->addProperty( 3.765, 0.8   );
+    aSkyRadiation->addProperty( 4.045, 0.6   );
+
+    return aSkyRadiation;
+  }
+  
   shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
     shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
 
@@ -397,366 +524,228 @@ private:
 
 protected:
   virtual void SetUp() {
-    shared_ptr< CSeries >  aSolarRadiation = loadSolarRadiationFile();
+    
+    shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
+    shared_ptr< CSeries > aSkyRadiation = loadSkyRadiationFile();
 
     shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
     shared_ptr< CSpectralSampleData > aMeasurements_103 = loadSampleData_NFRC_103();
 
     shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
+    shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
+
+    // Definition of sky and sun energy distribution
+    shared_ptr< vector< double > > solarMatrix = make_shared< vector< double > >();
+    shared_ptr< vector< double > > skyMatrix = make_shared< vector< double > >();
+
+    // BSDF in this example is size of seven
+    *solarMatrix = { 0, 0, 789, 0, 0, 0, 0 };
+    *skyMatrix = { 26.7, 109.8, 252.2, 193.4, 66.7, 22.9, 8.1 };
 
     double thickness = 3.048e-3; // [m]
-    shared_ptr< CMaterialSample > aMaterial_102 = make_shared< CMaterialSample >( aSample_102, 
+    shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample_102, 
       thickness, MaterialType::Monolithic, WavelengthRange::Solar );
-
-    // shared_ptr< CSpecularCellDescription > aCellDescription_102 = make_shared< CSpecularCellDescription >();
-    shared_ptr< CSpecularCell > aCell_102 = make_shared< CSpecularCell >( aMaterial_102 );
-
-    shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
-    
     thickness = 5.715e-3; // [m]
-    shared_ptr< CMaterialSample > aMaterial_103 = make_shared< CMaterialSample >( aSample_103, 
+    shared_ptr< CMaterial > aMaterial_103 = make_shared< CMaterialSample >( aSample_103, 
       thickness, MaterialType::Monolithic, WavelengthRange::Solar );
-    
-    // shared_ptr< CSpecularCellDescription > aCellDescription_103 = make_shared< CSpecularCellDescription >();
-    
-    shared_ptr< CSpecularCell > aCell_103 = make_shared< CSpecularCell >( aMaterial_103 );
+
+    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Small );
+    shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+    shared_ptr< CBSDFLayer > Layer_103 = CBSDFLayerMaker( aMaterial_103, aBSDF ).getLayer();
 
     // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
     CCommonWavelengths aCommonWL;
-    aCommonWL.addWavelength( aCell_102->getBandWavelengths() );
-    aCommonWL.addWavelength( aCell_103->getBandWavelengths() );
+    aCommonWL.addWavelength( Layer_102->getBandWavelengths() );
+    aCommonWL.addWavelength( Layer_103->getBandWavelengths() );
 
-    // Finds combination of two wavelength sets without going outside of wavelenght range for any of spectral samples.
     shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
-    
-    m_Layer = make_shared< CMultiPaneSpecular >( commonWavelengths, aSolarRadiation, aCell_102 );
-    m_Layer->addLayer( aCell_103 );
+
+    // Hemispherical energy
+    m_Energy = make_shared< CHemisphericalEnergy >( commonWavelengths, aSolarRadiation, solarMatrix,
+      aSkyRadiation, skyMatrix, Layer_102 );
+    m_Energy->addLayer( Layer_103 );
 
   }
 
 public:
-  shared_ptr< CMultiPaneSpecular > getLayer() { return m_Layer; };
+  shared_ptr< CHemisphericalEnergy > getEnergy() { return m_Energy; };
 
 };
 
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle0 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 0 deg." );
+TEST_F( HemisphericalEnergy_102_103_SmallBasis, TestSpecular1 ) {
+  SCOPED_TRACE( "Begin Test: Hemispherical energy." );
 
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
-  const double angle = 0;
   
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.65230205286826037, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12479902776636984, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.11668348220268998, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.096042310898170405, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12685660846719965, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle10 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 10 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 10;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.65120835620363415, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12470689247907361, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.11655371916284864, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.096618407235493114, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12746634408179885, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle20 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 20 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 20;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.64751806671867440, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12489838684275215, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.11660336773443981, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.098354340958477934, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12922920548009562, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle30 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 30 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 30;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.63972185027772543, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12711434211979922, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.11846025537743926, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.10127416696834185, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.13188964063413330, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle40 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 40 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 40;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.62415746857992227, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.13562252131149963, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12609651562627408, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.10542718735920054, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.13479282274937771, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle50 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 50 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 50;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.59250393302388293, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.16019751863508175, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.14857608587826943, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.11091849816937351, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.13638005017166166, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle60 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 60 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 60;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.52700738355329890, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.22193075739374207, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.20547728739801585, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.11791975306119040, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.13314210599176837, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle70 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 70 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 70;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.39704764366132467, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.35887428072908673, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.33279817614050600, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12600044978532798, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.11807762582426075, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle80 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 80 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 80;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.18476387225635726, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.60689021339883631, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.57045534006477172, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12792157257219708, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0.080424341772609279, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngle90 ) {
-  SCOPED_TRACE( "Begin Test: Specular MultiLayerOptics layer - angle = 90 deg." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  const double angle = 90;
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double T = aLayer.getProperty( Side::Front, Property::T, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0, T, 1e-6 );
-
-  double Rf = aLayer.getProperty( Side::Front, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 1, Rf, 1e-6 );
-
-  double Rb = aLayer.getProperty( Side::Back, Property::R, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 1, Rb, 1e-6 );
-
-  double Abs1 = aLayer.Abs( 1, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.Abs( 2, angle, minLambda, maxLambda );
-  EXPECT_NEAR( 0, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngleHemispherical10 ) {
-  SCOPED_TRACE( "Begin Test: Hemispherical to hemispherical with ten integration points." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  shared_ptr< vector< double > > aAngles = make_shared< vector< double > >();
-
-  *aAngles = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double Tfhem = aLayer.getHemisphericalProperty( Side::Front, Property::T, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.55256216101095457, Tfhem, 1e-6 );
-
-  double Tbhem = aLayer.getHemisphericalProperty( Side::Back, Property::T, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.55256216101095457, Tbhem, 1e-6 );
-
-  double Rfhem = aLayer.getHemisphericalProperty( Side::Front, Property::R, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.20154919359225856, Rfhem, 1e-6 );
-
-  double Rbhem = aLayer.getHemisphericalProperty( Side::Back, Property::R, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.18760169405134167, Rbhem, 1e-6 );
-
-  double Abs1 = aLayer.AbsHemispherical( 1, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.10889040913346858, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.AbsHemispherical( 2, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12682364187155989, Abs2, 1e-6 );
-
-}
-
-TEST_F( EquivalentSpecularLayer_102_103, TestAngleHemispherical19 ) {
-  SCOPED_TRACE( "Begin Test: Hemispherical to hemispherical with nineteen integration points." );
-
-  const double minLambda = 0.3;
-  const double maxLambda = 2.5;
-  shared_ptr< vector< double > > aAngles = make_shared< vector< double > >();
-
-  *aAngles = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90 };
-  
-  CMultiPaneSpecular aLayer = *getLayer();
-
-  double Tfhem = aLayer.getHemisphericalProperty( Side::Front, Property::T, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.55493570125786351, Tfhem, 1e-6 );
-
-  double Tbhem = aLayer.getHemisphericalProperty( Side::Back, Property::T, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.55493570125786351, Tbhem, 1e-6 );
-
-  double Rfhem = aLayer.getHemisphericalProperty( Side::Front, Property::R, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.20564032415202421, Rfhem, 1e-6 );
-
-  double Rbhem = aLayer.getHemisphericalProperty( Side::Back, Property::R, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.19161090008117540, Rbhem, 1e-6 );
-
-  double Abs1 = aLayer.AbsHemispherical( 1, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.10955413074963188, Abs1, 1e-6 );
-
-  double Abs2 = aLayer.AbsHemispherical( 2, aAngles, minLambda, maxLambda );
-  EXPECT_NEAR( 0.12733007563220630, Abs2, 1e-6 );
+  CHemisphericalEnergy aEnergy = *getEnergy();
+
+  vector< double > transmittedEnergy = *aEnergy.get( PropertySimple::T, Energy::Solar );
+  vector< double > correctResults = { 0, 0, 506.6214261, 0, 0, 0, 0 };
+
+  ASSERT_EQ( correctResults.size(), transmittedEnergy.size() );
+  for( size_t i = 0; i < correctResults.size(); ++i ) {
+    ASSERT_NEAR( correctResults[ i ], transmittedEnergy[ i ], 1e-6 );
+  }
+
+  // double rhoDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::R );
+  // EXPECT_NEAR( 0.21340640916470646, rhoDiff, 1e-6 );
+  // 
+  // double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
+  // EXPECT_NEAR( 0.10966015145104416, absDiff1, 1e-6 );
+  // 
+  // double absDiff2 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 2 );
+  // EXPECT_NEAR( 0.12617289824574851, absDiff2, 1e-6 );
+  // 
+  // double theta = 0;
+  // double phi = 0;
+  // 
+  // double tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
+  // EXPECT_NEAR( 0.65088957749570964, tauHem, 1e-6 );
+  // 
+  // double tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
+  // EXPECT_NEAR( 0.65088957749570964, tauDir, 1e-6 );
+  // 
+  // double rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
+  // EXPECT_NEAR( 0.12452879168101164, rhoHem, 1e-6 );
+  // 
+  // double rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
+  // EXPECT_NEAR( 0.12452879168101164, rhoDir, 1e-6 );
+  // 
+  // double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  // EXPECT_NEAR( 0.095834343748182116, abs1, 1e-6 );
+  // 
+  // double abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  // EXPECT_NEAR( 0.12658191695807844, abs2, 1e-6 );
+  // 
+  // theta = 45;
+  // phi = 78;
+  // 
+  // tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
+  // EXPECT_NEAR( 0.62489021097897446, tauHem, 1e-6 );
+  // 
+  // tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
+  // EXPECT_NEAR( 0.62489021097897446, tauHem, 1e-6 );
+  // 
+  // rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
+  // EXPECT_NEAR( 0.13398365976546198, rhoHem, 1e-6 );
+  // 
+  // rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
+  // EXPECT_NEAR( 0.13398365976546198, rhoDir, 1e-6 );
+  // 
+  // abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  // EXPECT_NEAR( 0.10472678949555157, abs1, 1e-6 );
+  // 
+  // abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  // EXPECT_NEAR( 0.13423396964299397, abs2, 1e-6 );
+  // 
+  // CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+  // 
+  // // Front transmittance matrix
+  // size_t size = aT.getSize();
+  // 
+  // vector< double > correctResults;
+  // correctResults.push_back( 16.167390638702905 );
+  // correctResults.push_back( 2.0949315104989110 );
+  // correctResults.push_back( 1.1530190959734119 );
+  // correctResults.push_back( 0.9039854110596405 );
+  // correctResults.push_back( 0.8482453821732177 );
+  // correctResults.push_back( 0.8704674021539925 );
+  // correctResults.push_back( 0.5266470392080515 );
+  // 
+  // EXPECT_EQ( correctResults.size(), aT.getSize() );
+  // for( size_t i = 0; i < size; ++i ) {
+  //   EXPECT_NEAR( correctResults[ i ], aT[ i ][ i ], 1e-6 );
+  // }
+  // 
+  // // Back Reflectance matrix
+  // CSquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+  // 
+  // correctResults.clear();
+  // 
+  // correctResults.push_back( 2.8920151784897405 );
+  // correctResults.push_back( 0.3752512814067827 );
+  // correctResults.push_back( 0.2102150503725127 );
+  // correctResults.push_back( 0.1802554931672072 );
+  // correctResults.push_back( 0.2274557320480421 );
+  // correctResults.push_back( 0.4746144799314945 );
+  // correctResults.push_back( 1.8714705739305144 );
+  // 
+  // EXPECT_EQ( correctResults.size(), aRb.getSize() );
+  // for( size_t i = 0; i < size; ++i ) {
+  //   EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
+  // }
+  // 
+  // // Front absorptance layer 1
+  // vector< double > aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 1 );
+  // 
+  // correctResults.clear();
+  // 
+  // correctResults.push_back( 0.09583434374818212 );
+  // correctResults.push_back( 0.09680657622200863 );
+  // correctResults.push_back( 0.09974534468498698 );
+  // correctResults.push_back( 0.10472678949555157 );
+  // correctResults.push_back( 0.11194996154054089 );
+  // correctResults.push_back( 0.12168667660699012 );
+  // correctResults.push_back( 0.12669900332020634 );
+  // 
+  // EXPECT_EQ( correctResults.size(), aAbsF.size() );
+  // for( size_t i = 0; i < size; ++i ) {
+  //   EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
+  // }
+  // 
+  // // Front absorptance layer 2
+  // aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 2 );
+  // 
+  // correctResults.clear();
+  // 
+  // correctResults.push_back( 0.12658191695807844 );
+  // correctResults.push_back( 0.12760409168436390 );
+  // correctResults.push_back( 0.13046361350689409 );
+  // correctResults.push_back( 0.13423396964299397 );
+  // correctResults.push_back( 0.13598732500086685 );
+  // correctResults.push_back( 0.12741591618981113 );
+  // correctResults.push_back( 0.07614352846733891 );
+  // 
+  // EXPECT_EQ( correctResults.size(), aAbsF.size() );
+  // for( size_t i = 0; i < size; ++i ) {
+  //   EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
+  // }
+  // 
+  // // Back absorptance layer 1
+  // vector< double > aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 1 );
+  // 
+  // correctResults.clear();
+  // 
+  // correctResults.push_back( 0.063757437087811619 );
+  // correctResults.push_back( 0.064230721506237695 );
+  // correctResults.push_back( 0.065546253068435562 );
+  // correctResults.push_back( 0.067249255379550385 );
+  // correctResults.push_back( 0.067944004575986455 );
+  // correctResults.push_back( 0.063744947353572542 );
+  // correctResults.push_back( 0.039133310401528641 );
+  // 
+  // EXPECT_EQ( correctResults.size(), aAbsB.size() );
+  // for( size_t i = 0; i < size; ++i ) {
+  //   EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
+  // }
+  // 
+  // // Back absorptance layer 2
+  // aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 2 );
+  // 
+  // correctResults.clear();
+  // 
+  // correctResults.push_back( 0.16675679602228188 );
+  // correctResults.push_back( 0.16834400389923435 );
+  // correctResults.push_back( 0.17311581093382766 );
+  // correctResults.push_back( 0.18109150092403950 );
+  // correctResults.push_back( 0.19226899659306185 );
+  // correctResults.push_back( 0.20590658291865963 );
+  // correctResults.push_back( 0.20017048054698627 );
+  // 
+  // EXPECT_EQ( correctResults.size(), aAbsB.size() );
+  // for( size_t i = 0; i < size; ++i ) {
+  //   EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
+  // }
 
 }

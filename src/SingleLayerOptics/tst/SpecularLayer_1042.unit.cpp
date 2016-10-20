@@ -679,22 +679,22 @@ TEST_F( TestSpecularLayer_1042, TestSpecular1 ) {
 
   shared_ptr< CBSDFResults > aResults = aLayer->getResults();
 
-  double tauDiff = aResults->TauDiffDiff( Side::Front );
+  double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.3950293, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiffDiff( Side::Front );
+  double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
   EXPECT_NEAR( 0.4002210, RfDiff, 1e-6 );
 
   double theta = 37;
   double phi = 59;
 
-  double tauHem = aResults->TauDirHem( Side::Front, theta, phi );
+  double tauHem = aResults->DirHem( Side::Front, PropertySimple::T, theta, phi );
   EXPECT_NEAR( 0.4334180, tauHem, 1e-6 );
 
-  double tauDir = aResults->TauDirDir( Side::Front, theta, phi );
+  double tauDir = aResults->DirDir( Side::Front, PropertySimple::T, theta, phi );
   EXPECT_NEAR( 0.4334180, tauDir, 1e-6 );
 
-  shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
+  shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
   // Test only diagonal of transmittance matrix
   size_t size = aT->getSize();
@@ -857,7 +857,7 @@ TEST_F( TestSpecularLayer_1042, TestSpecular1 ) {
   }
 
   // Back reflectance
-  shared_ptr< CSquareMatrix > aRb = aResults->Rho( Side::Back );
+  shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
 
   correctResults.clear();
   calculatedResults.clear();

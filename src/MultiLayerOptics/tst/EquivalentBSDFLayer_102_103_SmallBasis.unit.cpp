@@ -402,8 +402,8 @@ protected:
     shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
     shared_ptr< CSpectralSampleData > aMeasurements_103 = loadSampleData_NFRC_103();
 
-    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
-    shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103, aSolarRadiation );
+    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
+    shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
 
     double thickness = 3.048e-3; // [m]
     shared_ptr< CMaterial > aMaterial_102 = 
@@ -442,10 +442,10 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   CEquivalentBSDFLayer aLayer = *getLayer();
 
-  double tauDiff = aLayer.TauDiffDiff( minLambda, maxLambda, Side::Front );
+  double tauDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.54859517102148248, tauDiff, 1e-6 );
 
-  double rhoDiff = aLayer.RhoDiffDiff( minLambda, maxLambda, Side::Front );
+  double rhoDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::R );
   EXPECT_NEAR( 0.21340640916470646, rhoDiff, 1e-6 );
 
   double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
@@ -457,16 +457,16 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   double theta = 0;
   double phi = 0;
 
-  double tauHem = aLayer.TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  double tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
   EXPECT_NEAR( 0.65088957749570964, tauHem, 1e-6 );
 
-  double tauDir = aLayer.TauDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  double tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
   EXPECT_NEAR( 0.65088957749570964, tauDir, 1e-6 );
 
-  double rhoHem = aLayer.RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  double rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
   EXPECT_NEAR( 0.12452879168101164, rhoHem, 1e-6 );
 
-  double rhoDir = aLayer.RhoDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  double rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
   EXPECT_NEAR( 0.12452879168101164, rhoDir, 1e-6 );
 
   double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
@@ -478,16 +478,16 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   theta = 45;
   phi = 78;
 
-  tauHem = aLayer.TauDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
   EXPECT_NEAR( 0.62489021097897446, tauHem, 1e-6 );
 
-  tauDir = aLayer.TauDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
   EXPECT_NEAR( 0.62489021097897446, tauHem, 1e-6 );
 
-  rhoHem = aLayer.RhoDirHem( minLambda, maxLambda, Side::Front, theta, phi );
+  rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
   EXPECT_NEAR( 0.13398365976546198, rhoHem, 1e-6 );
 
-  rhoDir = aLayer.RhoDirDir( minLambda, maxLambda, Side::Front, theta, phi );
+  rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
   EXPECT_NEAR( 0.13398365976546198, rhoDir, 1e-6 );
 
   abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
@@ -496,7 +496,7 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
   EXPECT_NEAR( 0.13423396964299397, abs2, 1e-6 );
 
-  CSquareMatrix aT = *aLayer.Tau( minLambda, maxLambda, Side::Front );
+  CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
   // Front transmittance matrix
   size_t size = aT.getSize();
@@ -516,7 +516,7 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   }
 
   // Back Reflectance matrix
-  CSquareMatrix aRb = *aLayer.Rho( minLambda, maxLambda, Side::Back );
+  CSquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
   
   correctResults.clear();
   

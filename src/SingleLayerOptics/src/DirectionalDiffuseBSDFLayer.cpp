@@ -34,8 +34,8 @@ namespace SingleLayerOptics {
 
     shared_ptr< CDirectionalDiffuseCell > aCell = cellAsDirectionalDiffuse();
     
-    shared_ptr< CSquareMatrix > Tau = m_Results->Tau( aSide );
-    shared_ptr< CSquareMatrix > Rho = m_Results->Rho( aSide );
+    shared_ptr< CSquareMatrix > Tau = m_Results->getMatrix( aSide, PropertySimple::T );
+    shared_ptr< CSquareMatrix > Rho = m_Results->getMatrix( aSide, PropertySimple::R );
 
     shared_ptr< CBSDFDirections > jDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Outgoing );
 
@@ -46,12 +46,10 @@ namespace SingleLayerOptics {
       const CBeamDirection jDirection = *( *jDirections )[ j ]->centerPoint();
 
       double aTau = aCell->T_dir_dif( aSide, t_Direction, jDirection );
-      double Ref = aCell->R_dir_dif( aSide, t_Direction, jDirection );
+      double aRho = aCell->R_dir_dif( aSide, t_Direction, jDirection );
 
-      //( *Tau )[ t_DirectionIndex ][ j ] += aTau / M_PI;
-      //( *Rho )[ t_DirectionIndex ][ j ] += Ref / M_PI;
       ( *Tau )[ j ][ t_DirectionIndex ] += aTau / M_PI;
-      ( *Rho )[ j ][ t_DirectionIndex ] += Ref / M_PI;
+      ( *Rho )[ j ][ t_DirectionIndex ] += aRho / M_PI;
     }
 
   }
@@ -78,10 +76,8 @@ namespace SingleLayerOptics {
         shared_ptr< CBSDFResults > aResults = nullptr;
         aResults = ( *m_WVResults )[ j ];
         assert( aResults != nullptr );
-        shared_ptr< CSquareMatrix > Tau = aResults->Tau( aSide );
-        shared_ptr< CSquareMatrix > Rho = aResults->Rho( aSide );
-        //( *Tau )[ t_DirectionIndex ][ i ] += ( *aTau )[ j ] / M_PI;
-        //( *Rho )[ t_DirectionIndex ][ i ] += ( *Ref )[ j ] / M_PI;
+        shared_ptr< CSquareMatrix > Tau = aResults->getMatrix( aSide, PropertySimple::T );
+        shared_ptr< CSquareMatrix > Rho = aResults->getMatrix( aSide, PropertySimple::R );
         ( *Tau )[ i ][ t_DirectionIndex ] += ( *aTau )[ j ] / M_PI;
         ( *Rho )[ i ][ t_DirectionIndex ] += ( *Ref )[ j ] / M_PI;
       }

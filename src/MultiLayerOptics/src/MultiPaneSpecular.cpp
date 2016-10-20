@@ -55,6 +55,7 @@ namespace MultiLayerOptics {
   }
 
   void CMultiPaneSpecular::addLayer( const shared_ptr< CSpecularCell >& t_Layer ) {
+    t_Layer->setSourceData( m_SolarRadiation );
     m_Layers.push_back( t_Layer );
   }
 

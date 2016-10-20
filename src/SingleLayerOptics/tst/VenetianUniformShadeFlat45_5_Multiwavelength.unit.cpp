@@ -85,7 +85,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   //  Wavelength number 1
   ///////////////////////////////////////////////////////////////////////
 
-  shared_ptr< CSquareMatrix > aT = ( *aResults )[ 0 ]->Tau( Side::Front );
+  shared_ptr< CSquareMatrix > aT = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::T );
 
   // Test only diagonal of transmittance matrix
   size_t size = aT->getSize();
@@ -144,7 +144,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   }
 
   // Front reflectance
-  shared_ptr< CSquareMatrix > aRf = ( *aResults )[ 0 ]->Rho( Side::Front );
+  shared_ptr< CSquareMatrix > aRf = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::R );
 
   correctResults.clear();
   calculatedResults.clear();
@@ -204,7 +204,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   //  Wavelength number 2
   ///////////////////////////////////////////////////////////////////////
 
-  aT = ( *aResults )[ 1 ]->Tau( Side::Front );
+  aT = ( *aResults )[ 1 ]->getMatrix( Side::Front, PropertySimple::T );
 
   // Test only diagonal of transmittance matrix
   size = aT->getSize();
@@ -264,7 +264,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   }
 
   // Front reflectance
-  aRf = ( *aResults )[ 1 ]->Rho( Side::Front );
+  aRf = ( *aResults )[ 1 ]->getMatrix( Side::Front, PropertySimple::R );
 
   correctResults.clear();
   calculatedResults.clear();
@@ -324,7 +324,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   //  Wavelength number 3
   ///////////////////////////////////////////////////////////////////////
 
-  aT = ( *aResults )[ 2 ]->Tau( Side::Front );
+  aT = ( *aResults )[ 2 ]->getMatrix( Side::Front, PropertySimple::T );
 
   // Test only diagonal of transmittance matrix
   size = aT->getSize();
@@ -384,7 +384,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   }
 
   // Front reflectance
-  aRf = ( *aResults )[ 2 ]->Rho( Side::Front );
+  aRf = ( *aResults )[ 2 ]->getMatrix( Side::Front, PropertySimple::R );
 
   correctResults.clear();
   calculatedResults.clear();
@@ -444,7 +444,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   //  Wavelength number 4
   ///////////////////////////////////////////////////////////////////////
 
-  aT = ( *aResults )[ 3 ]->Tau( Side::Front );
+  aT = ( *aResults )[ 3 ]->getMatrix( Side::Front, PropertySimple::T );
 
   // Test only diagonal of transmittance matrix
   size = aT->getSize();
@@ -504,7 +504,7 @@ TEST_F( TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavel
   }
 
   // Front reflectance
-  aRf = ( *aResults )[ 3 ]->Rho( Side::Front );
+  aRf = ( *aResults )[ 3 ]->getMatrix( Side::Front, PropertySimple::R );
 
   correctResults.clear();
   calculatedResults.clear();

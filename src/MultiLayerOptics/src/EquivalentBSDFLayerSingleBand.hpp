@@ -76,8 +76,8 @@ namespace MultiLayerOptics {
     explicit CEquivalentBSDFLayerSingleBand( const std::shared_ptr< SingleLayerOptics::CBSDFResults >& t_Layer );
     void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFResults >& t_Layer );
 
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const FenestrationCommon::Side t_Side );
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const FenestrationCommon::Side t_Side );
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const FenestrationCommon::Side t_Side,
+    const FenestrationCommon::PropertySimple t_Property );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > getProperty( const FenestrationCommon::Side t_Side,
       const FenestrationCommon::PropertySimple t_Property );

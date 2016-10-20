@@ -84,41 +84,59 @@ namespace MultiLayerOptics {
 
   }
 
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( const double minLambda, 
-    const double maxLambda, Side t_Side ) {
+  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::getMatrix( const double minLambda, const double maxLambda,
+    const Side t_Side, const PropertySimple t_Property ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
 
-    return m_Results->Tau( t_Side );
+    return m_Results->getMatrix( t_Side, t_Property );
   }
 
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( const double minLambda, 
-    const double maxLambda, Side t_Side ) {
+  // shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( const double minLambda, 
+  //   const double maxLambda, Side t_Side ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  // 
+  //   return m_Results->Tau( t_Side );
+  // }
+  // 
+  // shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( const double minLambda, 
+  //   const double maxLambda, Side t_Side ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  // 
+  //   return m_Results->Rho( t_Side );
+  // }
+
+  double CEquivalentBSDFLayer::DirDir( const double minLambda, const double maxLambda,
+    const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
 
-    return m_Results->Rho( t_Side );
+    return m_Results->DirDir( t_Side, t_Property, t_Theta, t_Phi );
   }
 
-  double CEquivalentBSDFLayer::TauDirDir( const double minLambda, const double maxLambda, Side t_Side, 
-    const double t_Theta, const double t_Phi ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-
-    return m_Results->TauDirDir( t_Side, t_Theta, t_Phi );
-  }
-
-  double CEquivalentBSDFLayer::RhoDirDir( const double minLambda, const double maxLambda, 
-    Side t_Side, const double t_Theta, const double t_Phi ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-
-    return m_Results->RhoDirDir( t_Side, t_Theta, t_Phi );
-  }
+  // double CEquivalentBSDFLayer::TauDirDir( const double minLambda, const double maxLambda, Side t_Side, 
+  //   const double t_Theta, const double t_Phi ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  // 
+  //   return m_Results->TauDirDir( t_Side, t_Theta, t_Phi );
+  // }
+  // 
+  // double CEquivalentBSDFLayer::RhoDirDir( const double minLambda, const double maxLambda, 
+  //   Side t_Side, const double t_Theta, const double t_Phi ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  // 
+  //   return m_Results->RhoDirDir( t_Side, t_Theta, t_Phi );
+  // }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t Index ) {
@@ -128,33 +146,48 @@ namespace MultiLayerOptics {
     return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
   }
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
-    const Side t_Side ) {
+  shared_ptr< vector< double > > CEquivalentBSDFLayer::DirHem( const double minLambda, const double maxLambda,
+    const Side t_Side, const PropertySimple t_Property ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
-    return m_Results->TauDirHem( t_Side );
+    return m_Results->DirHem( t_Side, t_Property );
   }
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
-    const Side t_Side ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-    return m_Results->RhoDirHem( t_Side );
-  }
+  // shared_ptr< vector< double > > CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
+  //   const Side t_Side ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  //   return m_Results->TauDirHem( t_Side );
+  // }
+  // 
+  // shared_ptr< vector< double > > CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
+  //   const Side t_Side ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  //   return m_Results->RhoDirHem( t_Side );
+  // }
 
-  double CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
-    const Side t_Side, const double t_Theta, const double t_Phi ) {
+  double CEquivalentBSDFLayer::DirHem( const double minLambda, const double maxLambda,
+    const Side t_Side, const PropertySimple t_Property,
+    const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *TauDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
+    return ( *DirHem( minLambda, maxLambda, t_Side, t_Property ) )[ aIndex ];
   }
 
-  double CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
-    const Side t_Side, const double t_Theta, const double t_Phi ) {
-    auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *RhoDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
-  }
+  // double CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
+  //   const Side t_Side, const double t_Theta, const double t_Phi ) {
+  //   auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
+  //   return ( *TauDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
+  // }
+  // 
+  // double CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
+  //   const Side t_Side, const double t_Theta, const double t_Phi ) {
+  //   auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
+  //   return ( *RhoDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
+  // }
 
   double CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
@@ -162,21 +195,29 @@ namespace MultiLayerOptics {
     return ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
   }
 
-  double CEquivalentBSDFLayer::TauDiffDiff( const double minLambda, const double maxLambda, 
-    const Side t_Side ) {
+  double CEquivalentBSDFLayer::DiffDiff( const double minLambda, const double maxLambda,
+    const Side t_Side, const PropertySimple t_Property ) {
     if( !m_Calculated ) {
       calculate( minLambda, maxLambda );
     }
-    return m_Results->TauDiffDiff( t_Side );
+    return m_Results->DiffDiff( t_Side, t_Property );
   }
 
-  double CEquivalentBSDFLayer::RhoDiffDiff( const double minLambda, const double maxLambda, 
-    const Side t_Side ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-    return m_Results->RhoDiffDiff( t_Side );
-  }
+  // double CEquivalentBSDFLayer::TauDiffDiff( const double minLambda, const double maxLambda, 
+  //   const Side t_Side ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  //   return m_Results->TauDiffDiff( t_Side );
+  // }
+  // 
+  // double CEquivalentBSDFLayer::RhoDiffDiff( const double minLambda, const double maxLambda, 
+  //   const Side t_Side ) {
+  //   if( !m_Calculated ) {
+  //     calculate( minLambda, maxLambda );
+  //   }
+  //   return m_Results->RhoDiffDiff( t_Side );
+  // }
 
   double CEquivalentBSDFLayer::AbsDiff( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t t_LayerIndex ) {
@@ -302,7 +343,7 @@ void CEquivalentBSDFLayer::calculateWavelengthProperties(
       vector< double > aAbs = *( *m_Abs[ t_Side ] )[ layNum ];
       assert( aAbs.size() == aLambdas.size() );
       vector< double > mult( aLambdas.size() );
-      std::transform( aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), std::multiplies< double >() );
+      transform( aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), std::multiplies< double >() );
       double sum = accumulate( mult.begin(), mult.end(), 0.0 ) / M_PI;
       m_AbsHem[ t_Side ]->push_back( sum );
     }

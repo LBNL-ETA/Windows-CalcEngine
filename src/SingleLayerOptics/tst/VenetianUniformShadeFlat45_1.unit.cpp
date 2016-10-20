@@ -62,13 +62,13 @@ TEST_F( TestVenetianUniformShadeFlat45_1, TestVenetian1 ) {
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
-  double tauDiff = aResults->TauDiffDiff( Side::Front );
+  double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.47624006362615717, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiffDiff( Side::Front );
+  double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
   EXPECT_NEAR( 0.33488359240717491, RfDiff, 1e-6 );
 
-  shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
+  shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
   // Test only diagonal of transmittance matrix
   size_t size = aT->getSize();
@@ -127,7 +127,7 @@ TEST_F( TestVenetianUniformShadeFlat45_1, TestVenetian1 ) {
   }
 
   // Front reflectance
-  shared_ptr< CSquareMatrix > aRf = aResults->Rho( Side::Front );
+  shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 
   correctResults.clear();
   calculatedResults.clear();
@@ -184,7 +184,7 @@ TEST_F( TestVenetianUniformShadeFlat45_1, TestVenetian1 ) {
   }
 
   // Back transmittance
-  shared_ptr< CSquareMatrix > aTb = aResults->Tau( Side::Back );
+  shared_ptr< CSquareMatrix > aTb = aResults->getMatrix( Side::Back, PropertySimple::T );
 
   correctResults.clear();
   calculatedResults.clear();
@@ -241,7 +241,7 @@ TEST_F( TestVenetianUniformShadeFlat45_1, TestVenetian1 ) {
   }
 
   // Back reflectance
-  shared_ptr< CSquareMatrix > aRb = aResults->Rho( Side::Back );
+  shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
 
   correctResults.clear();
   calculatedResults.clear();

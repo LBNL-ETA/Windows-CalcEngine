@@ -341,7 +341,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   CEquivalentBSDFLayerSingleBand aLayer = *getLayer();
 
   // Transmittance Front side
-  CSquareMatrix Tf = *aLayer.Tau( Side::Front );
+  CSquareMatrix Tf = *aLayer.getMatrix( Side::Front, PropertySimple::T );
   size_t matrixSize = Tf.getSize();
 
   // Test matrix
@@ -365,7 +365,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   }
 
   // Transmittance Back side
-  CSquareMatrix Tb = *aLayer.Tau( Side::Back );
+  CSquareMatrix Tb = *aLayer.getMatrix( Side::Back, PropertySimple::T );
 
   EXPECT_EQ( size, matrixSize );
 
@@ -384,7 +384,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   }
   
   // Reflectance Front side
-  CSquareMatrix Rf = *aLayer.Rho( Side::Front );
+  CSquareMatrix Rf = *aLayer.getMatrix( Side::Front, PropertySimple::R );
   matrixSize = Rf.getSize();
   
   EXPECT_EQ( size, matrixSize );
@@ -404,7 +404,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
   }
 
   // Reflectance Back side
-  CSquareMatrix Rb = *aLayer.Rho( Side::Back );
+  CSquareMatrix Rb = *aLayer.getMatrix( Side::Back, PropertySimple::R );
   matrixSize = Rb.getSize();
   
   EXPECT_EQ( size, matrixSize );

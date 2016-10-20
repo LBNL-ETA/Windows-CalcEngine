@@ -57,16 +57,16 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
-  double tauDiff = aResults->TauDiffDiff( Side::Front );
+  double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.467578877, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiffDiff( Side::Front );
+  double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
   EXPECT_NEAR( 0.496269069, RfDiff, 1e-6 );
 
-  double RbDiff = aResults->RhoDiffDiff( Side::Back );
+  double RbDiff = aResults->DiffDiff( Side::Back, PropertySimple::R );
   EXPECT_NEAR( 0.496269069, RbDiff, 1e-6 );
 
-  shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
+  shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
   size_t size = aT->getSize();
 
@@ -179,7 +179,7 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
   }
 
   // Test first row for reflectance matrix
-  shared_ptr< CSquareMatrix > aRf = aResults->Rho( Side::Front );
+  shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 
   correctResults.clear();
   correctResults.push_back( 0.128103 );
@@ -235,7 +235,7 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
   }
 
   // Test first row for reflectance matrix
-  shared_ptr< CSquareMatrix > aRb = aResults->Rho( Side::Back );
+  shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
 
   correctResults.clear();
   correctResults.push_back( 0.128103 );

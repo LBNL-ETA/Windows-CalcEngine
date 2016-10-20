@@ -39,7 +39,7 @@ namespace SpectralAveraging {
   void CSample::setSourceData( shared_ptr< CSeries > t_SourceData ) {
     m_SourceData = t_SourceData;
     reset();
-  };
+  }
 
   void CSample::setDetectorData( const shared_ptr< CSeries >& t_DetectorData ) {
     m_DetectorData = t_DetectorData;

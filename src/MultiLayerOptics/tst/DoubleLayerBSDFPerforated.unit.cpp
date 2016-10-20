@@ -336,7 +336,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
   shared_ptr< CBSDFResults > aLayer = getDoubleLayer()->value();
 
   // Front transmittance
-  shared_ptr< CSquareMatrix > Tf = aLayer->Tau( Side::Front );
+  shared_ptr< CSquareMatrix > Tf = aLayer->getMatrix( Side::Front, PropertySimple::T );
   size_t matrixSize = Tf->getSize();
 
   // Test matrix
@@ -360,7 +360,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
   }
 
   // Front reflectance
-  shared_ptr< CSquareMatrix > Rf = aLayer->Rho( Side::Front );
+  shared_ptr< CSquareMatrix > Rf = aLayer->getMatrix( Side::Front, PropertySimple::R );
   matrixSize = Rf->getSize();
 
   EXPECT_EQ( size, matrixSize );
@@ -380,7 +380,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
   }
 
   // Back Transmittance
-  shared_ptr< CSquareMatrix > Tb = aLayer->Tau( Side::Back );
+  shared_ptr< CSquareMatrix > Tb = aLayer->getMatrix( Side::Back, PropertySimple::T );
   matrixSize = Tb->getSize();
   
   EXPECT_EQ( size, matrixSize );
@@ -400,7 +400,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
   }
 
   // Back Reflectance
-  shared_ptr< CSquareMatrix > Rb = aLayer->Rho( Side::Back );
+  shared_ptr< CSquareMatrix > Rb = aLayer->getMatrix( Side::Back, PropertySimple::R );
   matrixSize = Rb->getSize();
   
   EXPECT_EQ( size, matrixSize );

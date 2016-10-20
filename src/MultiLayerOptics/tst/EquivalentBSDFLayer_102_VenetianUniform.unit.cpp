@@ -347,7 +347,7 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   
   CEquivalentBSDFLayer aLayer = *getLayer();
 
-  CSquareMatrix aT = *aLayer.Tau( minLambda, maxLambda, Side::Front );
+  CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
   // Front transmittance matrix
   size_t size = aT.getSize();
@@ -401,7 +401,7 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniform, TestBSDF1 ) {
   }
 
   // Back Reflectance matrix
-  CSquareMatrix aRb = *aLayer.Rho( minLambda, maxLambda, Side::Back );
+  CSquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
   
   correctResults.clear();
   

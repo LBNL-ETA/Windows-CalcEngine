@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <assert.h>
+#include <map>
 
 #include "BSDFLayer.hpp"
 #include "BaseCell.hpp"
@@ -91,8 +92,8 @@ namespace SingleLayerOptics {
         size_t numWV = aTau->size();
         for( size_t j = 0; j < numWV; ++j ) {
           CBSDFResults aResults = *( *m_WVResults )[ j ];
-          Tau = aResults.Tau( aSide );
-          Rho = aResults.Rho( aSide );
+          Tau = aResults.getMatrix( aSide, PropertySimple::T );
+          Rho = aResults.getMatrix( aSide, PropertySimple::R );
           ( *Tau )[ i ][ i ] += ( *aTau )[ j ] / Lambda;
           ( *Rho )[ i ][ i ] += ( *aRho )[ j ] / Lambda;
         }

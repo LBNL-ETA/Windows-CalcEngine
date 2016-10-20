@@ -25,6 +25,8 @@ namespace SingleLayerOptics {
   public:
     CSpecularCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
       const std::shared_ptr< CCellDescription >& t_Cell );
+
+    CSpecularCell( const std::shared_ptr< CMaterial >& t_MaterialProperties );
     
     // Transmittance averaged over entire wavelength spectrum
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );

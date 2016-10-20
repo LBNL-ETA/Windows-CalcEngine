@@ -44,11 +44,11 @@ namespace SingleLayerOptics {
     CWavelengthRange aRange = CWavelengthRange( t_Range );
     m_MinLambda = aRange.minLambda();
     m_MaxLambda = aRange.maxLambda();
-  };
+  }
 
   void CMaterial::setSourceData( shared_ptr< CSeries > t_SourceData ) {
     // Default material will not have detector data
-  };
+  }
 
   double CMaterial::getPropertyAtAngle( const Property t_Property, const Side t_Side, const double ) const {
     return getProperty( t_Property, t_Side ); // Default behavior is no angular dependence
@@ -67,6 +67,7 @@ namespace SingleLayerOptics {
     shared_ptr< vector< double > > Rf = getBandProperties( Property::R, Side::Front );
     shared_ptr< vector< double > > Rb = getBandProperties( Property::R, Side::Back );
 
+    // It is necessary to skip calculations if solar properties are not assigned yet
     if( Tf != nullptr ) {
       size_t size = getBandSize();
       for( size_t i = 0; i < size; ++i ) {

@@ -313,7 +313,7 @@ TEST_F( TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF ) {
   
   shared_ptr< CBSDFResults > aLayer = getDoubleLayer()->value();
 
-  shared_ptr< CSquareMatrix > T = aLayer->Tau( Side::Front );
+  shared_ptr< CSquareMatrix > T = aLayer->getMatrix( Side::Front, PropertySimple::T );
   size_t matrixSize = T->getSize();
 
   // Test matrix
@@ -336,7 +336,7 @@ TEST_F( TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF ) {
     }
   }
 
-  shared_ptr< CSquareMatrix > R = aLayer->Rho( Side::Front );
+  shared_ptr< CSquareMatrix > R = aLayer->getMatrix( Side::Front, PropertySimple::R );
   matrixSize = R->getSize();
 
   EXPECT_EQ( size, matrixSize );

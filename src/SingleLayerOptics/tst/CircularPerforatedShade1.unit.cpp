@@ -59,16 +59,16 @@ TEST_F( TestCircularPerforatedShade1, TestSolarProperties )
 
   shared_ptr< CBSDFResults > aResults = aShade->getResults();
 
-  double tauDiff = aResults->TauDiffDiff( Side::Front );
+  double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.32084455059221467, tauDiff, 1e-6 );
 
-  double RfDiff = aResults->RhoDiffDiff( Side::Front );
+  double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
   EXPECT_NEAR( 0.63670823381979202, RfDiff, 1e-6 );
 
-  double RbDiff = aResults->RhoDiffDiff( Side::Back );
+  double RbDiff = aResults->DiffDiff( Side::Back, PropertySimple::R );
   EXPECT_NEAR( 0.56030324576141499, RbDiff, 1e-6 );
 
-  shared_ptr< CSquareMatrix > aT = aResults->Tau( Side::Front );
+  shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
   size_t size = aT->getSize();
 
@@ -118,12 +118,12 @@ TEST_F( TestCircularPerforatedShade1, TestSolarProperties )
 
   vector< double > calculatedResults;
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aT)[i][i] );
+    calculatedResults.push_back( ( *aT )[ i ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
+    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
   }
 
   // Test first row
@@ -172,17 +172,16 @@ TEST_F( TestCircularPerforatedShade1, TestSolarProperties )
 
   calculatedResults.clear();
   for( size_t i = 0; i < size; ++i ) {
-    //cout << (*aT)[ 0 ][ i ] << endl;
-    calculatedResults.push_back( (*aT)[ 0 ][ i ] );
+    calculatedResults.push_back( ( *aT )[ 0 ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
+    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
   }
 
   // Test first row for reflectance matrix
-  shared_ptr< CSquareMatrix > aRf = aResults->Rho( Side::Front );
+  shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 
   correctResults.clear();
   correctResults.push_back( 0.177733 );
@@ -238,7 +237,7 @@ TEST_F( TestCircularPerforatedShade1, TestSolarProperties )
   }
 
   // Test first row for reflectance matrix
-  shared_ptr< CSquareMatrix > aRb = aResults->Rho( Side::Back );
+  shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
 
   correctResults.clear();
   correctResults.push_back( 0.156405 );
@@ -285,12 +284,12 @@ TEST_F( TestCircularPerforatedShade1, TestSolarProperties )
 
   calculatedResults.clear();
   for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aRb)[ 0 ][ i ] );
+    calculatedResults.push_back( ( *aRb )[ 0 ][ i ] );
   }
 
   EXPECT_EQ( correctResults.size(), calculatedResults.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
+    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
   }
 
 }

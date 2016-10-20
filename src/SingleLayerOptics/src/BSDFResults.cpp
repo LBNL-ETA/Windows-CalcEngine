@@ -19,10 +19,10 @@ namespace SingleLayerOptics {
     m_DimMatrices = m_Directions->size();
 
     for( Side t_Side : EnumSide() ) {
-      m_Tau[ t_Side ] = make_shared< CSquareMatrix >( m_DimMatrices );
-      m_Rho[ t_Side ] = make_shared< CSquareMatrix >( m_DimMatrices );
-      m_VTauHem[ t_Side ] = make_shared< vector< double > >( m_DimMatrices );
-      m_VRhoHem[ t_Side ] = make_shared< vector< double > >( m_DimMatrices );
+      for( PropertySimple t_Property : EnumPropertySimple() ) {
+        m_Matrix[ make_pair( t_Side, t_Property ) ] = make_shared< CSquareMatrix >( m_DimMatrices );
+        m_Hem[ make_pair( t_Side, t_Property ) ] = make_shared< vector< double > >( m_DimMatrices );
+      }
     }
   }
 
@@ -30,52 +30,34 @@ namespace SingleLayerOptics {
     return m_Directions; 
   }
 
-  double CBSDFResults::TauDiffDiff( const Side t_Side ) const {
-    return integrate( *Tau( t_Side ) );
+  double CBSDFResults::DiffDiff( const FenestrationCommon::Side t_Side,
+    const FenestrationCommon::PropertySimple t_Property ) const {
+    return integrate( *getMatrix( t_Side, t_Property ) );
   }
 
-  double CBSDFResults::RhoDiffDiff( const Side t_Side ) const {
-    return integrate( *Rho( t_Side ) );
-  }
-
-  shared_ptr< CSquareMatrix > CBSDFResults::Tau( const Side t_Side ) const {
-    return m_Tau.at( t_Side ); 
-  }
-
-  shared_ptr< CSquareMatrix > CBSDFResults::Rho( const Side t_Side ) const {
-    return m_Rho.at( t_Side );  
+  shared_ptr< CSquareMatrix > CBSDFResults::getMatrix( const Side t_Side, 
+    const PropertySimple t_Property ) const {
+    return m_Matrix.at( make_pair( t_Side, t_Property ) );
   }
 
   void CBSDFResults::setResultMatrices( const shared_ptr< CSquareMatrix >& t_Tau, 
     const shared_ptr< CSquareMatrix >& t_Rho, Side t_Side ) {
-    m_Tau[ t_Side ] = t_Tau;
-    m_Rho[ t_Side ] = t_Rho;
+    m_Matrix[ make_pair( t_Side, PropertySimple::T ) ] = t_Tau;
+    m_Matrix[ make_pair( t_Side, PropertySimple::R ) ] = t_Rho;
   }
 
-  double CBSDFResults::TauDirDir( const FenestrationCommon::Side t_Side, 
+  double CBSDFResults::DirDir( const Side t_Side, const PropertySimple t_Property,
     const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
     double lambda = ( *m_Directions->lambdaVector() )[ index ];
-    double tau = ( *Tau( t_Side ) )[ index ][ index ];
+    double tau = ( *getMatrix( t_Side, t_Property ) )[ index ][ index ];
     return tau * lambda;
   }
 
-  double CBSDFResults::RhoDirDir( const FenestrationCommon::Side t_Side,
-    const double t_Theta, const double t_Phi ) {
-    size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
-    double lambda = ( *m_Directions->lambdaVector() )[ index ];
-    double rho = ( *Rho( t_Side ) )[ index ][ index ];
-    return rho * lambda;
-  }
-
-  shared_ptr< vector< double > > CBSDFResults::TauDirHem( Side t_Side ) {
+  shared_ptr< vector< double > > CBSDFResults::DirHem( const FenestrationCommon::Side t_Side,
+    const FenestrationCommon::PropertySimple t_Property ) {
     calcHemispherical();
-    return m_VTauHem.at( t_Side );
-  }
-
-  shared_ptr< vector< double > > CBSDFResults::RhoDirHem( Side t_Side ) {
-    calcHemispherical();
-    return m_VRhoHem.at( t_Side );
+    return m_Hem.at( make_pair( t_Side, t_Property ) );
   }
 
   shared_ptr< vector< double > > CBSDFResults::Abs( Side t_Side ) {
@@ -83,14 +65,10 @@ namespace SingleLayerOptics {
     return m_Abs.at( t_Side );  
   }
 
-  double CBSDFResults::TauDirHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
+  double CBSDFResults::DirHem( const Side t_Side, const PropertySimple t_Property,
+    const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *TauDirHem( t_Side ) )[ index ];
-  }
-
-  double CBSDFResults::RhoDirHem( const Side t_Side, const double t_Theta, const double t_Phi ) {
-    size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *RhoDirHem( t_Side ) )[ index ];
+    return ( *DirHem( t_Side, t_Property ) )[ index ];
   }
 
   double CBSDFResults::Abs( const Side t_Side, const double t_Theta, const double t_Phi ) {
@@ -119,15 +97,18 @@ namespace SingleLayerOptics {
   void CBSDFResults::calcHemispherical() {
     if( !m_HemisphericalCalculated ) {
       for( Side t_Side : EnumSide() ) {
-        m_VTauHem[ t_Side ] = m_Tau.at( t_Side )->multVxM( *m_Directions->lambdaVector() );
-        m_VRhoHem[ t_Side ] = m_Rho.at( t_Side )->multVxM( *m_Directions->lambdaVector() );
+        for( PropertySimple t_Property : EnumPropertySimple() ) {
+          m_Hem[ make_pair( t_Side, t_Property ) ] = 
+            m_Matrix.at( make_pair( t_Side, t_Property ) )->multVxM( *m_Directions->lambdaVector() );
+        }
         m_Abs[ t_Side ] = make_shared< vector< double > >();
       }
 
-      size_t size = m_VTauHem[ Side::Front ]->size();
+      size_t size = m_Hem[ make_pair( Side::Front, PropertySimple::T ) ]->size();
       for( size_t i = 0; i < size; ++i ) {
         for( Side t_Side : EnumSide() ) {
-          m_Abs.at( t_Side )->push_back( 1 - ( *m_VTauHem.at( t_Side ) )[ i ] - ( *m_VRhoHem.at( t_Side ) )[ i ] );
+          m_Abs.at( t_Side )->push_back( 1 - ( *m_Hem.at( make_pair( t_Side, PropertySimple::T ) ) )[ i ] 
+            - ( *m_Hem.at( make_pair( t_Side, PropertySimple::R ) ) )[ i ] );
         }
       }
       m_HemisphericalCalculated = true;

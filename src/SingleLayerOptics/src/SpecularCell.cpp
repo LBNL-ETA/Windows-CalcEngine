@@ -18,6 +18,11 @@ namespace SingleLayerOptics {
 
   }
 
+  CSpecularCell::CSpecularCell( const shared_ptr< CMaterial >& t_MaterialProperties ) :
+    CBaseCell( t_MaterialProperties, make_shared< CSpecularCellDescription >() ) {
+
+  }
+
   double CSpecularCell::T_dir_dir( const Side t_Side, const CBeamDirection& t_Direction ) {
     // Specular glass transmittance is same for front and back sides
     return m_Material->getPropertyAtAngle( Property::T, t_Side, t_Direction.theta() );

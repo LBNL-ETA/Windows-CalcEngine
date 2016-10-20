@@ -1,10 +1,6 @@
 #ifndef EQUIVALENTBSDFLAYERMULTIWL_H
 #define EQUIVALENTBSDFLAYERMULTIWL_H
 
-#ifdef MSVC
-#pragma warning(disable : 4503)
-#endif
-
 #include <memory>
 #include <vector>
 #include <map>
@@ -42,37 +38,52 @@ namespace MultiLayerOptics {
     void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
 
     // Whole matrix results
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const double minLambda, const double maxLambda, 
-      FenestrationCommon::Side t_Side );
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const double minLambda, const double maxLambda, 
-      FenestrationCommon::Side t_Side );
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const double minLambda, const double maxLambda,
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
+    // std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const double minLambda, const double maxLambda, 
+    //   FenestrationCommon::Side t_Side );
+    // std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const double minLambda, const double maxLambda, 
+    //   FenestrationCommon::Side t_Side );
 
-    double TauDirDir( const double minLambda, const double maxLambda, FenestrationCommon::Side t_Side,
-      const double t_Theta, const double t_Phi );
-    double RhoDirDir( const double minLambda, const double maxLambda, FenestrationCommon::Side t_Side,
-      const double t_Theta, const double t_Phi );
+    double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
+      const FenestrationCommon::PropertySimple t_Property, const double t_Theta, const double t_Phi );
+
+    // double TauDirDir( const double minLambda, const double maxLambda, FenestrationCommon::Side t_Side,
+    //   const double t_Theta, const double t_Phi );
+    // double RhoDirDir( const double minLambda, const double maxLambda, FenestrationCommon::Side t_Side,
+    //   const double t_Theta, const double t_Phi );
 
     // Vector of layer by layer absorptances for each incoming direction
     std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side, const size_t Index );
 
     // Hemispherical results for every direction
-    std::shared_ptr< std::vector< double > > TauDirHem( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Side t_Side );
-    std::shared_ptr< std::vector< double > > RhoDirHem( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Side t_Side );
+    std::shared_ptr< std::vector< double > > DirHem( const double minLambda, const double maxLambda,
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
+
+    // std::shared_ptr< std::vector< double > > TauDirHem( const double minLambda, const double maxLambda, 
+    //   const FenestrationCommon::Side t_Side );
+    // std::shared_ptr< std::vector< double > > RhoDirHem( const double minLambda, const double maxLambda, 
+    //   const FenestrationCommon::Side t_Side );
 
     // Directional hemispherical results for given Theta and Phi direction
-    double TauDirHem( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
-    double RhoDirHem( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double DirHem( const double minLambda, const double maxLambda,
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property, 
+      const double t_Theta, const double t_Phi );
+
+    // double TauDirHem( const double minLambda, const double maxLambda, 
+    //   const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    // double RhoDirHem( const double minLambda, const double maxLambda, 
+    //   const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
     double Abs( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
 
     // Diffuse to diffuse properties
-    double TauDiffDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
-    double RhoDiffDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
+    double DiffDiff( const double minLambda, const double maxLambda, 
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
+
+    // double TauDiffDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
+    // double RhoDiffDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
     double AbsDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
       const size_t t_LayerIndex );
 
