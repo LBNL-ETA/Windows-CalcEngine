@@ -34,7 +34,7 @@ namespace MultiLayerOptics {
 
   shared_ptr< vector< double > > CHemisphericalEnergy::get( const PropertySimple t_Property,
     const Energy t_Energy ) {
-    return m_Energy.at( t_Energy ).Transmitted();
+    return m_Energy.at( t_Energy ).getVector( t_Property );
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////
@@ -59,11 +59,12 @@ namespace MultiLayerOptics {
     m_Layer->addLayer( t_Layer );
   }
 
-  shared_ptr< vector< double > > CHemisphericalEnergy::CSingleEnergy::Transmitted() {
+  shared_ptr< vector< double > > CHemisphericalEnergy::CSingleEnergy::getVector(
+    const PropertySimple t_Property ) {
     shared_ptr< vector< double > > mult = make_shared< vector< double > >( m_Distribution->size() );
-    shared_ptr< vector< double > > tauHem = m_Layer->DirHem( 0.3, 2.5, Side::Front, PropertySimple::T );
-    std::transform( tauHem->begin(), tauHem->end(), m_Distribution->begin(), mult->begin(), 
-      std::multiplies< double >() );
+    shared_ptr< vector< double > > tauHem = m_Layer->DirHem( 0.3, 2.5, Side::Front, t_Property );
+    transform( tauHem->begin(), tauHem->end(), m_Distribution->begin(), mult->begin(), 
+      multiplies< double >() );
     return mult;
   }
 

@@ -53,7 +53,8 @@ namespace MultiLayerOptics {
 
       void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
 
-      std::shared_ptr< std::vector< double > > Transmitted();
+      std::shared_ptr< std::vector< double > > getVector( 
+        const FenestrationCommon::PropertySimple t_Property );
 
     private:
       std::shared_ptr< CEquivalentBSDFLayer > m_Layer;
