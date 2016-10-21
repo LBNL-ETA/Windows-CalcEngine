@@ -44,7 +44,7 @@ namespace MultiLayerOptics {
       // Calculate r and t coefficients
       shared_ptr< CSeries > r = make_shared< CSeries >();
       shared_ptr< CSeries > t = make_shared< CSeries >();
-      vector< double > wv = *m_T[size-1]->getXArray();
+      vector< double > wv = *m_T[ size - 1 ]->getXArray();
       r->setConstantValues( wv, 0 );
       t->setConstantValues( wv, 0 );
       m_rCoeffs.clear();
@@ -52,8 +52,8 @@ namespace MultiLayerOptics {
       
       // layers loop
       for( int i = int( size ) - 1; i >= 0; --i ) {
-        t = tCoeffs( *m_T[i], *m_Rb[i], *r );
-        r = rCoeffs( *m_T[i], *m_Rf[i], *m_Rb[i], *r );
+        t = tCoeffs( *m_T[ i ], *m_Rb[ i ], *r );
+        r = rCoeffs( *m_T[ i ], *m_Rf[ i ], *m_Rb[ i ], *r );
 
         m_rCoeffs.insert( m_rCoeffs.begin(), r );
         m_tCoeffs.insert( m_tCoeffs.begin(), t );
@@ -84,7 +84,7 @@ namespace MultiLayerOptics {
       size = Iminus.size();
       for( size_t i = 0; i < size - 1; ++i ) {
         shared_ptr< CSeries > Iincoming = Iminus[ i ]->mSub( *Iplus[ i ] );
-        shared_ptr< CSeries > Ioutgoing = Iminus[ i+1 ]->mSub( *Iplus[ i+1 ] );
+        shared_ptr< CSeries > Ioutgoing = Iminus[ i + 1 ]->mSub( *Iplus[ i + 1 ] );
         shared_ptr< CSeries > layerAbs = Iincoming->mSub( *Ioutgoing );
         m_Abs.push_back( layerAbs );
       }

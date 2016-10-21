@@ -320,7 +320,7 @@ protected:
     double curvatureRadius = 0;
     size_t numOfSlatSegments = 5;
 
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 

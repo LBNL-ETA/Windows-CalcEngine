@@ -16,7 +16,7 @@ namespace SingleLayerOptics {
 
   class CMaterialSample;
   class CSpecularCellDescription;
-  class CCellDescription;
+  class ICellDescription;
   class CBeamDirection;
 
   // Calculates spectral properties of specular layer over the given wavelength range and it also calculates
@@ -24,7 +24,7 @@ namespace SingleLayerOptics {
   class CSpecularCell : public CBaseCell {
   public:
     CSpecularCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
-      const std::shared_ptr< CCellDescription >& t_Cell );
+      const std::shared_ptr< ICellDescription >& t_Cell );
 
     CSpecularCell( const std::shared_ptr< CMaterial >& t_MaterialProperties );
     

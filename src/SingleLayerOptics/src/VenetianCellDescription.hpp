@@ -25,7 +25,7 @@ namespace SingleLayerOptics {
 
   class CVenetianSlat;
 
-  class CVenetianCellDescription : public CCellDescription {
+  class CVenetianCellDescription : public ICellDescription {
   public:
     CVenetianCellDescription( const double t_SlatWidth, const double t_SlatSpacing, const double t_SlatTiltAngle,
       const double t_CurvatureRadius, const size_t t_NumOfSlatSegments );
@@ -44,6 +44,7 @@ namespace SingleLayerOptics {
 
     // Direct to direct component of the ray
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+    double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
   private:
     // Top and bottom slats of venetian cell

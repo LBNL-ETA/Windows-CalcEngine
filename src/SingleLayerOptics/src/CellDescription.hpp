@@ -13,16 +13,13 @@ namespace SingleLayerOptics {
 
   class CBeamDirection;
 
-  // Base class for cell description. It is used to describe direct-direct component of the cell without
-  // using any of the materials.
-
-  class CCellDescription {
+  // Base interface for cell description.
+  class ICellDescription {
   public:
-    CCellDescription();
+    ICellDescription() {};
 
     virtual double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction ) = 0;
-
-    virtual double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+    virtual double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction ) = 0;
 
   };
 }

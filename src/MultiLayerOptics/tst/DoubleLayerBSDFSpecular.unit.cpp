@@ -10,7 +10,7 @@
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
 
@@ -296,8 +296,8 @@ protected:
     CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial, aBSDF );
     shared_ptr< CBSDFLayer > aLayer102 = aMaker102.getLayer();
     
-    CBSDFResults aLayer1 = *aLayer102->getResults();
-    CBSDFResults aLayer2 = *aLayer102->getResults();
+    CBSDFIntegrator aLayer1 = *aLayer102->getResults();
+    CBSDFIntegrator aLayer2 = *aLayer102->getResults();
     
     m_DoubleLayer = make_shared< CBSDFDoubleLayer >( aLayer1, aLayer2 );
     
@@ -311,7 +311,7 @@ public:
 TEST_F( TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF ) {
   SCOPED_TRACE( "Begin Test: Double Layer BSDF." );
   
-  shared_ptr< CBSDFResults > aLayer = getDoubleLayer()->value();
+  shared_ptr< CBSDFIntegrator > aLayer = getDoubleLayer()->value();
 
   shared_ptr< CSquareMatrix > T = aLayer->getMatrix( Side::Front, PropertySimple::T );
   size_t matrixSize = T->getSize();

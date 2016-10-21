@@ -27,7 +27,7 @@ namespace Tarcog {
   }
 
   CTarIGUSolidLayerDeflection::CTarIGUSolidLayerDeflection( 
-    const CTarIGUSolidLayerDeflection & t_Layer ) : CLayerState( t_Layer ),
+    const CTarIGUSolidLayerDeflection & t_Layer ) : CState( t_Layer ),
     CTarIGUSolidLayer( t_Layer ) {
     m_YoungsModulus = t_Layer.m_YoungsModulus;
     m_PoisonRatio = t_Layer.m_PoisonRatio;

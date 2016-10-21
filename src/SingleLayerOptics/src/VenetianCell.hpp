@@ -23,32 +23,25 @@ namespace Viewer {
 
 namespace SingleLayerOptics {
 
-  class CCellDescription;
+  class ICellDescription;
   class CVenetianCellDescription;
   class CBeamDirection;
 
   class CVenetianBase : public CUniformDiffuseCell, public CDirectionalDiffuseCell {
   public:
     CVenetianBase( const std::shared_ptr< CMaterial >& t_MaterialProperties,
-      const std::shared_ptr< CCellDescription >& t_Cell );
+      const std::shared_ptr< ICellDescription >& t_Cell );
 
   protected:
     std::shared_ptr< CVenetianCellDescription > getCellAsVenetian() const;
   };
 
+  // Simple structure to hold backward and forward irradiances
   struct SegmentIrradiance {
   public:
     SegmentIrradiance() : E_f( 0 ), E_b( 0 ) {};
     double E_f;
     double E_b;
-  };
-
-  // Keeps information about beam view factor and percentage view
-  struct BeamSegmentView {
-  public:
-    BeamSegmentView() : viewFactor( 0 ), percentViewed( 0 ) { };
-    double viewFactor;
-    double percentViewed;
   };
 
   class CVenetianSlatEnergies {
@@ -68,21 +61,6 @@ namespace SingleLayerOptics {
     std::shared_ptr< std::vector < double > > m_SlatRadiances;
     // Direction for which energies are calculated
     std::shared_ptr< CBeamDirection > m_CalcDirection;
-  };
-
-  class CVenetianSlatEnergyResults {
-  public:
-    CVenetianSlatEnergyResults();
-
-    std::shared_ptr < CVenetianSlatEnergies > getEnergies( 
-      const CBeamDirection& t_BeamDirection ) const;
-
-    std::shared_ptr< CVenetianSlatEnergies > append( const CBeamDirection& t_BeamDirection,
-      const std::shared_ptr< std::vector< SegmentIrradiance > >& t_SlatIrradiances,
-      const std::shared_ptr< std::vector < double > >& t_SlatRadiances );
-
-  private:
-    std::vector< std::shared_ptr < CVenetianSlatEnergies > > m_Energies;
   };
 
   // Keeping intermediate results for backward and forward directions.
@@ -105,6 +83,30 @@ namespace SingleLayerOptics {
     double R_dif_dif();
 
   private:
+
+    // Keeps information about beam view factor and percentage view
+    struct BeamSegmentView {
+    public:
+      BeamSegmentView() : viewFactor( 0 ), percentViewed( 0 ) { };
+      double viewFactor;
+      double percentViewed;
+    };
+
+    class CSlatEnergyResults {
+    public:
+      CSlatEnergyResults();
+
+      std::shared_ptr < CVenetianSlatEnergies > getEnergies(
+        const CBeamDirection& t_BeamDirection ) const;
+
+      std::shared_ptr< CVenetianSlatEnergies > append( const CBeamDirection& t_BeamDirection,
+        const std::shared_ptr< std::vector< SegmentIrradiance > >& t_SlatIrradiances,
+        const std::shared_ptr< std::vector < double > >& t_SlatRadiances );
+
+    private:
+      std::vector< std::shared_ptr < CVenetianSlatEnergies > > m_Energies;
+    };
+
     // Create mapping from view factors matrix to front and back slats (fills b and f vectors of this class)
     void createSlatsMapping();
 
@@ -127,7 +129,7 @@ namespace SingleLayerOptics {
     std::shared_ptr< std::vector < double > > diffuseVector();
 
     // Create beam to diffuse vector. Right hand side of the equation
-    std::shared_ptr< std::vector< BeamSegmentView > > 
+    std::shared_ptr< std::vector< CVenetianCellEnergy::BeamSegmentView > >
       beamVector( const CBeamDirection& t_Direction, const FenestrationCommon::Side t_Side );
 
     std::shared_ptr< CVenetianCellDescription > m_Cell;
@@ -149,13 +151,8 @@ namespace SingleLayerOptics {
     // Once radiances and irradiances are calculated for certain direction, results are stored here.
     // That reduces necessity to recalculate results multiple times for same direction.
     // Note that direction is always incoming direction.
-    CVenetianSlatEnergyResults m_SlatEnergyResults;
+    CSlatEnergyResults m_SlatEnergyResults;
 
-    // // Keep slat energies for certain beam incoming directions
-    // std::vector< SegmentIrradiance > m_SlatIrradiances;
-    // std::vector < double > m_SlatRadiances;
-    // // Direction for which energies are calculated
-    // const CBeamDirection& m_CalcDirection;
   };
 
   class CVenetianEnergy {
@@ -179,7 +176,7 @@ namespace SingleLayerOptics {
   class CVenetianCell : public CVenetianBase {
   public:
     CVenetianCell( const std::shared_ptr< CMaterial >& t_MaterialProperties, 
-        const std::shared_ptr< CCellDescription >& t_Cell );
+        const std::shared_ptr< ICellDescription >& t_Cell );
 
     void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 

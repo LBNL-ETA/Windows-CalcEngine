@@ -3,7 +3,7 @@
 #include "AbsorptancesMultiPaneBSDF.hpp"
 #include "BSDFLayer.hpp"
 #include "SpecularBSDFLayer.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "Series.hpp"
 #include "SquareMatrix.hpp"
 #include "FenestrationCommon.hpp"
@@ -35,7 +35,7 @@ namespace MultiLayerOptics {
   void CAbsorptancesMultiPaneBSDF::addLayer( CBSDFLayer& t_Layer ) {
     m_StateCalculated = false;
     m_NumOfLayers++;
-    shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
+    shared_ptr< vector< shared_ptr < CBSDFIntegrator > > > aResults = nullptr;
 
     shared_ptr< vector< shared_ptr< CSquareMatrix > > > aTausF = 
       make_shared< vector< shared_ptr< CSquareMatrix > > >();

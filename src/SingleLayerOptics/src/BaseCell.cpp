@@ -15,7 +15,7 @@ namespace SingleLayerOptics {
   }
 
   CBaseCell::CBaseCell( const shared_ptr< CMaterial >& t_Material, 
-    const shared_ptr< CCellDescription >& t_CellDescription ) : 
+    const shared_ptr< ICellDescription >& t_CellDescription ) : 
     m_Material( t_Material ), m_CellDescription( t_CellDescription ) {
   }
 

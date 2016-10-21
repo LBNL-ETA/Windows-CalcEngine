@@ -1,5 +1,5 @@
-#ifndef BSDFLAYER_H
-#define BSDFLAYER_H
+#ifndef BSDFINTEGRATOR_H
+#define BSDFINTEGRATOR_H
 
 #include <memory>
 #include <vector>
@@ -21,9 +21,9 @@ namespace SingleLayerOptics {
   typedef std::shared_ptr< FenestrationCommon::CSquareMatrix > p_SquareMatrix;
 
   // Layer results from BSDF directions.
-  class CBSDFResults {
+  class CBSDFIntegrator {
   public:
-    explicit CBSDFResults( const std::shared_ptr< const CBSDFDirections >& t_Directions );
+    explicit CBSDFIntegrator( const std::shared_ptr< const CBSDFDirections >& t_Directions );
 
     // Result matrices
     std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const FenestrationCommon::Side t_Side,
@@ -64,13 +64,7 @@ namespace SingleLayerOptics {
     double integrate( FenestrationCommon::CSquareMatrix& t_Matrix ) const;
 
     std::map< pair_Side_PropertySimple, p_SquareMatrix > m_Matrix;
-    //std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Tau;
-    //std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CSquareMatrix > > m_Rho;
-
     std::map< pair_Side_PropertySimple, std::shared_ptr< std::vector< double > > > m_Hem;
-    // std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_VTauHem;
-    // std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_VRhoHem;
-
     std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_Abs;
 
     void calcHemispherical();

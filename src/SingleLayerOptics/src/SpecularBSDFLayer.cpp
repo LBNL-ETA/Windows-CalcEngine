@@ -4,7 +4,7 @@
 #include "SpecularCell.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFPatch.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "FenestrationCommon.hpp"
 #include "BeamDirection.hpp"
 #include "SquareMatrix.hpp"

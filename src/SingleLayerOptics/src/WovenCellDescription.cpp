@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics {
 
   CWovenCellDescription::CWovenCellDescription( const double t_Diameter, const double t_Spacing ) :
-  CCellDescription(), m_Diameter( t_Diameter ), m_Spacing( t_Spacing ) {
+  ICellDescription(), m_Diameter( t_Diameter ), m_Spacing( t_Spacing ) {
     if( m_Diameter <= 0 ) {
       throw runtime_error("Woven shade diameter must be greater than zero.");
     }
@@ -41,6 +41,10 @@ namespace SingleLayerOptics {
 
   double CWovenCellDescription::T_dir_dir( const Side, const CBeamDirection& t_Direction ) {
     return Tx( t_Direction ) * Ty( t_Direction );
+  }
+
+  double CWovenCellDescription::R_dir_dir( const Side, const CBeamDirection& ) {
+    return 0;
   }
 
   double CWovenCellDescription::Tx( const CBeamDirection& t_Direction ) {

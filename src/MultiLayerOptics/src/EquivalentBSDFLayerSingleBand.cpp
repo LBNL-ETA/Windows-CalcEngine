@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "FenestrationCommon.hpp"
@@ -36,7 +36,7 @@ namespace MultiLayerOptics {
 //  CBSDFDoubleLayer
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CBSDFDoubleLayer::CBSDFDoubleLayer( const CBSDFResults& t_FrontLayer, const CBSDFResults& t_BackLayer ) {
+  CBSDFDoubleLayer::CBSDFDoubleLayer( const CBSDFIntegrator& t_FrontLayer, const CBSDFIntegrator& t_BackLayer ) {
     const CSquareMatrix aLambda = *t_FrontLayer.lambdaMatrix();
     CInterReflectance InterRefl1 = CInterReflectance( aLambda, 
       *t_FrontLayer.getMatrix( Side::Back, PropertySimple::R ), 
@@ -59,13 +59,13 @@ namespace MultiLayerOptics {
       *t_BackLayer.getMatrix( Side::Front, PropertySimple::T ),
       *t_FrontLayer.getMatrix( Side::Back, PropertySimple::R ), *InterRefl1.value(), aLambda );
 
-    m_Results = make_shared< CBSDFResults >( t_FrontLayer.getDirections() );
+    m_Results = make_shared< CBSDFIntegrator >( t_FrontLayer.getDirections() );
     m_Results->setResultMatrices( m_Tf, m_Rf, Side::Front );
     m_Results->setResultMatrices( m_Tb, m_Rb, Side::Back );
 
   }
 
-  shared_ptr< CBSDFResults > CBSDFDoubleLayer::value() {
+  shared_ptr< CBSDFIntegrator > CBSDFDoubleLayer::value() {
     return m_Results; 
   }
 
@@ -95,9 +95,9 @@ namespace MultiLayerOptics {
 //  CEquivalentBSDFLayerSingleBand
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand( const shared_ptr< CBSDFResults >& t_Layer ) : 
+  CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand( const shared_ptr< CBSDFIntegrator >& t_Layer ) : 
     m_PropertiesCalculated( false ) {
-    m_EquivalentLayer = make_shared< CBSDFResults >( t_Layer->getDirections() );
+    m_EquivalentLayer = make_shared< CBSDFIntegrator >( t_Layer->getDirections() );
     for( Side aSide : EnumSide() ) {
       m_A[ aSide ] = make_shared< vector< shared_ptr< vector< double > > > >();
     }
@@ -126,7 +126,7 @@ namespace MultiLayerOptics {
     return m_Layers.size();
   }
 
-  void CEquivalentBSDFLayerSingleBand::addLayer( const std::shared_ptr< CBSDFResults >& t_Layer ) {
+  void CEquivalentBSDFLayerSingleBand::addLayer( const std::shared_ptr< CBSDFIntegrator >& t_Layer ) {
     m_Layers.push_back( t_Layer );
     m_PropertiesCalculated = false;
     for( Side aSide : EnumSide() ) {
@@ -149,7 +149,7 @@ namespace MultiLayerOptics {
     }
     m_Backward.push_back( m_EquivalentLayer );
 
-    shared_ptr< CBSDFResults > bLayer = m_Layers[ size - 1 ];
+    shared_ptr< CBSDFIntegrator > bLayer = m_Layers[ size - 1 ];
     for( size_t i = size - 1; i > 1; --i ) {
       bLayer = CBSDFDoubleLayer( *m_Layers[ i - 1 ], *bLayer ).value();
       m_Backward.push_back( bLayer );
@@ -169,8 +169,8 @@ namespace MultiLayerOptics {
         Ap2f = zeros;
         Ap1b = m_Layers[ i ]->Abs( Side::Back );
       } else {
-        CBSDFResults& Layer1 = *m_Backward[ i + 1 ];
-        CBSDFResults& Layer2 = *m_Forward[ i ];
+        CBSDFIntegrator& Layer1 = *m_Backward[ i + 1 ];
+        CBSDFIntegrator& Layer2 = *m_Forward[ i ];
         CInterReflectance InterRefl2 = 
           CInterReflectance( *m_Lambda, *Layer1.getMatrix( Side::Front, PropertySimple::R ), 
             *Layer2.getMatrix( Side::Back, PropertySimple::R ) );
@@ -184,8 +184,8 @@ namespace MultiLayerOptics {
         Ap1f = m_Layers[ i ]->Abs( Side::Front );
         Ap2b = zeros;
       } else {
-        CBSDFResults& Layer1 = *m_Forward[ i - 1 ];
-        CBSDFResults& Layer2 = *m_Backward[ i ];
+        CBSDFIntegrator& Layer1 = *m_Forward[ i - 1 ];
+        CBSDFIntegrator& Layer2 = *m_Backward[ i ];
         CInterReflectance InterRefl1 = 
           CInterReflectance( *m_Lambda, *Layer1.getMatrix( Side::Back, PropertySimple::R ), 
             *Layer2.getMatrix( Side::Front, PropertySimple::R ) );

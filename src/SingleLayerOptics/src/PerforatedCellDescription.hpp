@@ -5,9 +5,11 @@
 
 namespace SingleLayerOptics {
   
-  class CPerforatedCellDescription : public CCellDescription {
+  class CPerforatedCellDescription : public ICellDescription {
   public:
     CPerforatedCellDescription( const double t_x, const double t_y, const double t_Thickness );
+
+    double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
   protected:
     double m_x;

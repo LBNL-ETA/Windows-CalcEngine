@@ -8,7 +8,7 @@
 #include "MaterialDescription.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -33,7 +33,7 @@ protected:
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // make cell
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CPerfectDiffuseCellDescription >();
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
@@ -54,7 +54,7 @@ TEST_F( TestPerfectDiffuseShade1, TestSolarProperties ) {
   
   shared_ptr< CBSDFLayer > aShade = GetShade();
 
-  shared_ptr< CBSDFResults > aResults = aShade->getResults();
+  shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
   double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.000000000, tauDiff, 1e-6 );

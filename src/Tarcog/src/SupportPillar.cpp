@@ -19,7 +19,7 @@ namespace Tarcog {
   }
 
   CSupportPillar::CSupportPillar( const CSupportPillar& t_Pillar ) : 
-    CLayerState( t_Pillar ), CTarIGUGapLayer( t_Pillar ) {
+    CState( t_Pillar ), CTarIGUGapLayer( t_Pillar ) {
 
   }
 
@@ -40,7 +40,7 @@ namespace Tarcog {
   }
 
   CCircularPillar::CCircularPillar( const CCircularPillar& t_Pillar ) : 
-    CLayerState( t_Pillar ), CSupportPillar( t_Pillar ) {
+    CState( t_Pillar ), CSupportPillar( t_Pillar ) {
 
   }
 

@@ -4,7 +4,7 @@
 
 #include "DirectionalDiffuseBSDFLayer.hpp"
 #include "DirectionalDiffuseCell.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFDirections.hpp"
 #include "BeamDirection.hpp"
@@ -73,7 +73,7 @@ namespace SingleLayerOptics {
 
       size_t numWV = aTau->size();
       for( size_t j = 0; j < numWV; ++j ) {
-        shared_ptr< CBSDFResults > aResults = nullptr;
+        shared_ptr< CBSDFIntegrator > aResults = nullptr;
         aResults = ( *m_WVResults )[ j ];
         assert( aResults != nullptr );
         shared_ptr< CSquareMatrix > Tau = aResults->getMatrix( aSide, PropertySimple::T );

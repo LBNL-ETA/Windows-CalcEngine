@@ -7,7 +7,7 @@
 #include "MaterialDescription.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -37,7 +37,7 @@ protected:
     double thickness = 0.6; // mm
     double xHole = 3.175; // mm
     double yHole = 6.35; // mm
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CRectangularCellDescription >( x, y, thickness, xHole, yHole );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
@@ -58,7 +58,7 @@ TEST_F( TestRectangularPerforatedShade1, TestSolarProperties ) {
   
   shared_ptr< CBSDFLayer > aShade = GetShade();
 
-  shared_ptr< CBSDFResults > aResults = aShade->getResults();
+  shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
   double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.041876313, tauDiff, 1e-6 );

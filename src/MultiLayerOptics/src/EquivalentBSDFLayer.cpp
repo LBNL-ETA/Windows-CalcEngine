@@ -6,7 +6,7 @@
 #include <numeric>
 #include <assert.h>
 #include <stdexcept>
-#include <thread>
+//#include <thread>
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
@@ -14,7 +14,7 @@
 #include "SpecularBSDFLayer.hpp"
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "MatrixSeries.hpp"
 #include "BSDFDirections.hpp"
@@ -40,7 +40,7 @@ namespace MultiLayerOptics {
     // Lambda matrix from spectral results. Same lambda is valid for any wavelength
     m_Lambda = t_Layer->getResults()->lambdaMatrix();
 
-    shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
+    shared_ptr< vector< shared_ptr < CBSDFIntegrator > > > aResults = nullptr;
 
     aResults = t_Layer->getWavelengthResults();
     size_t size = m_CombinedLayerWavelengths->size();
@@ -49,7 +49,7 @@ namespace MultiLayerOptics {
       int index = t_Layer->getBandIndex( curWL );
       assert( index > -1 );
 
-      shared_ptr< CBSDFResults > currentLayer = ( *aResults )[ size_t( index ) ];
+      shared_ptr< CBSDFIntegrator > currentLayer = ( *aResults )[ size_t( index ) ];
       shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer = 
         make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
 
@@ -57,7 +57,7 @@ namespace MultiLayerOptics {
 
     }
 
-    m_Results = make_shared< CBSDFResults >( t_Layer->m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
+    m_Results = make_shared< CBSDFIntegrator >( t_Layer->m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
 
     for( Side aSide : EnumSide() ) {
       m_AbsHem[ aSide ] = make_shared< vector< double > >();
@@ -69,7 +69,7 @@ namespace MultiLayerOptics {
 
     t_Layer->setSourceData( m_SolarRadiation );
 
-    shared_ptr< vector< shared_ptr < CBSDFResults > > > aResults = nullptr;
+    shared_ptr< vector< shared_ptr < CBSDFIntegrator > > > aResults = nullptr;
 
     aResults = t_Layer->getWavelengthResults();
     size_t size = m_CombinedLayerWavelengths->size();
@@ -77,7 +77,7 @@ namespace MultiLayerOptics {
       double curWL = ( *m_CombinedLayerWavelengths )[ i ];
       int index = t_Layer->getBandIndex( curWL );
       assert( index > -1 );
-      shared_ptr< CBSDFResults > currentLayer = ( *aResults )[ size_t( index ) ];
+      shared_ptr< CBSDFIntegrator > currentLayer = ( *aResults )[ size_t( index ) ];
       shared_ptr< CEquivalentBSDFLayerSingleBand > currentEqLayer = ( *m_LayersWL )[ i ];
       currentEqLayer->addLayer( currentLayer );
     }
@@ -93,24 +93,6 @@ namespace MultiLayerOptics {
     return m_Results->getMatrix( t_Side, t_Property );
   }
 
-  // shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Tau( const double minLambda, 
-  //   const double maxLambda, Side t_Side ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  // 
-  //   return m_Results->Tau( t_Side );
-  // }
-  // 
-  // shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::Rho( const double minLambda, 
-  //   const double maxLambda, Side t_Side ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  // 
-  //   return m_Results->Rho( t_Side );
-  // }
-
   double CEquivalentBSDFLayer::DirDir( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi ) {
     if( !m_Calculated ) {
@@ -119,24 +101,6 @@ namespace MultiLayerOptics {
 
     return m_Results->DirDir( t_Side, t_Property, t_Theta, t_Phi );
   }
-
-  // double CEquivalentBSDFLayer::TauDirDir( const double minLambda, const double maxLambda, Side t_Side, 
-  //   const double t_Theta, const double t_Phi ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  // 
-  //   return m_Results->TauDirDir( t_Side, t_Theta, t_Phi );
-  // }
-  // 
-  // double CEquivalentBSDFLayer::RhoDirDir( const double minLambda, const double maxLambda, 
-  //   Side t_Side, const double t_Theta, const double t_Phi ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  // 
-  //   return m_Results->RhoDirDir( t_Side, t_Theta, t_Phi );
-  // }
 
   shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t Index ) {
@@ -154,40 +118,12 @@ namespace MultiLayerOptics {
     return m_Results->DirHem( t_Side, t_Property );
   }
 
-  // shared_ptr< vector< double > > CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
-  //   const Side t_Side ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  //   return m_Results->TauDirHem( t_Side );
-  // }
-  // 
-  // shared_ptr< vector< double > > CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
-  //   const Side t_Side ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  //   return m_Results->RhoDirHem( t_Side );
-  // }
-
   double CEquivalentBSDFLayer::DirHem( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property,
     const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
     return ( *DirHem( minLambda, maxLambda, t_Side, t_Property ) )[ aIndex ];
   }
-
-  // double CEquivalentBSDFLayer::TauDirHem( const double minLambda, const double maxLambda, 
-  //   const Side t_Side, const double t_Theta, const double t_Phi ) {
-  //   auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-  //   return ( *TauDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
-  // }
-  // 
-  // double CEquivalentBSDFLayer::RhoDirHem( const double minLambda, const double maxLambda, 
-  //   const Side t_Side, const double t_Theta, const double t_Phi ) {
-  //   auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-  //   return ( *RhoDirHem( minLambda, maxLambda, t_Side ) )[ aIndex ];
-  // }
 
   double CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
@@ -202,22 +138,6 @@ namespace MultiLayerOptics {
     }
     return m_Results->DiffDiff( t_Side, t_Property );
   }
-
-  // double CEquivalentBSDFLayer::TauDiffDiff( const double minLambda, const double maxLambda, 
-  //   const Side t_Side ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  //   return m_Results->TauDiffDiff( t_Side );
-  // }
-  // 
-  // double CEquivalentBSDFLayer::RhoDiffDiff( const double minLambda, const double maxLambda, 
-  //   const Side t_Side ) {
-  //   if( !m_Calculated ) {
-  //     calculate( minLambda, maxLambda );
-  //   }
-  //   return m_Results->RhoDiffDiff( t_Side );
-  // }
 
   double CEquivalentBSDFLayer::AbsDiff( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t t_LayerIndex ) {
@@ -343,7 +263,7 @@ void CEquivalentBSDFLayer::calculateWavelengthProperties(
       vector< double > aAbs = *( *m_Abs[ t_Side ] )[ layNum ];
       assert( aAbs.size() == aLambdas.size() );
       vector< double > mult( aLambdas.size() );
-      transform( aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), std::multiplies< double >() );
+      transform( aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), multiplies< double >() );
       double sum = accumulate( mult.begin(), mult.end(), 0.0 ) / M_PI;
       m_AbsHem[ t_Side ]->push_back( sum );
     }

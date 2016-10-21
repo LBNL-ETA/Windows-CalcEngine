@@ -15,7 +15,7 @@ namespace FenestrationCommon {
 
 namespace SingleLayerOptics {
 
-  class CBSDFResults;
+  class CBSDFIntegrator;
 
 }
 
@@ -42,10 +42,10 @@ namespace MultiLayerOptics {
   // multilayer routines to calculate properties for any number of layers.
   class CBSDFDoubleLayer {
   public:
-    CBSDFDoubleLayer( const SingleLayerOptics::CBSDFResults& t_FrontLayer, 
-      const SingleLayerOptics::CBSDFResults& t_BackLayer );
+    CBSDFDoubleLayer( const SingleLayerOptics::CBSDFIntegrator& t_FrontLayer, 
+      const SingleLayerOptics::CBSDFIntegrator& t_BackLayer );
 
-    std::shared_ptr< SingleLayerOptics::CBSDFResults > value();
+    std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > value();
 
   private:
     std::shared_ptr< FenestrationCommon::CSquareMatrix > equivalentT( 
@@ -62,7 +62,7 @@ namespace MultiLayerOptics {
       const FenestrationCommon::CSquareMatrix& t_InterRefl,
       const FenestrationCommon::CSquareMatrix& t_Lambda );
 
-    std::shared_ptr< SingleLayerOptics::CBSDFResults > m_Results;
+    std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > m_Results;
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Tf;
     std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Tb;
@@ -73,8 +73,8 @@ namespace MultiLayerOptics {
   // Class for equivalent BSDF layer for single material properties (or single wavelength)
   class CEquivalentBSDFLayerSingleBand {
   public:
-    explicit CEquivalentBSDFLayerSingleBand( const std::shared_ptr< SingleLayerOptics::CBSDFResults >& t_Layer );
-    void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFResults >& t_Layer );
+    explicit CEquivalentBSDFLayerSingleBand( const std::shared_ptr< SingleLayerOptics::CBSDFIntegrator >& t_Layer );
+    void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFIntegrator >& t_Layer );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const FenestrationCommon::Side t_Side,
     const FenestrationCommon::PropertySimple t_Property );
@@ -99,12 +99,12 @@ namespace MultiLayerOptics {
       const FenestrationCommon::CSquareMatrix& t_R,
       const FenestrationCommon::CSquareMatrix& t_T );
 
-    std::shared_ptr< SingleLayerOptics::CBSDFResults > m_EquivalentLayer;
-    std::vector< std::shared_ptr< SingleLayerOptics::CBSDFResults > > m_Layers;
+    std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > m_EquivalentLayer;
+    std::vector< std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > > m_Layers;
   
     // Forward and backward layers are used for calculation of equivalent absorptances
-    std::vector< std::shared_ptr< SingleLayerOptics::CBSDFResults > > m_Forward;
-    std::vector< std::shared_ptr< SingleLayerOptics::CBSDFResults > > m_Backward;
+    std::vector< std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > > m_Forward;
+    std::vector< std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > > m_Backward;
   
     // Abs_Matrix m_Af;
     // Abs_Matrix m_Ab;

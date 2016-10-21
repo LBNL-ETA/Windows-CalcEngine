@@ -6,7 +6,7 @@
 #include "BSDFLayer.hpp"
 #include "BaseCell.hpp"
 #include "BSDFDirections.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "MaterialDescription.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFPatch.hpp"
@@ -25,7 +25,7 @@ namespace SingleLayerOptics {
 
     // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
     // This is not necessary before axisymmetry is introduced
-    m_Results = make_shared< CBSDFResults >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
+    m_Results = make_shared< CBSDFIntegrator >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
     fillWLResultsFromMaterialCell();
   }
 
@@ -34,7 +34,7 @@ namespace SingleLayerOptics {
     fillWLResultsFromMaterialCell();
   }
 
-  shared_ptr< CBSDFResults > CBSDFLayer::getResults() {
+  shared_ptr< CBSDFIntegrator > CBSDFLayer::getResults() {
     if( !m_Calculated ) {
       calculate();
       m_Calculated = true;
@@ -91,7 +91,7 @@ namespace SingleLayerOptics {
         shared_ptr< CSquareMatrix > Rho = nullptr;
         size_t numWV = aTau->size();
         for( size_t j = 0; j < numWV; ++j ) {
-          CBSDFResults aResults = *( *m_WVResults )[ j ];
+          CBSDFIntegrator aResults = *( *m_WVResults )[ j ];
           Tau = aResults.getMatrix( aSide, PropertySimple::T );
           Rho = aResults.getMatrix( aSide, PropertySimple::R );
           ( *Tau )[ i ][ i ] += ( *aTau )[ j ] / Lambda;
@@ -128,11 +128,11 @@ namespace SingleLayerOptics {
   }
 
   void CBSDFLayer::fillWLResultsFromMaterialCell() {
-    m_WVResults = make_shared< vector< shared_ptr< CBSDFResults > > >();
+    m_WVResults = make_shared< vector< shared_ptr< CBSDFIntegrator > > >();
     size_t size = m_Cell->getBandSize();
     for ( size_t i = 0; i < size; ++i ) {
-      shared_ptr< CBSDFResults > aResults =
-        make_shared< CBSDFResults >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
+      shared_ptr< CBSDFIntegrator > aResults =
+        make_shared< CBSDFIntegrator >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
       m_WVResults->push_back( aResults );
     }
   }

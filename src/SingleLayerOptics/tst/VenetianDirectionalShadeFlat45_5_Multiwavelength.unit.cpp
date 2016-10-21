@@ -5,7 +5,7 @@
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -52,7 +52,7 @@ protected:
     double curvatureRadius = 0;
     size_t numOfSlatSegments = 5;
 
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
@@ -78,7 +78,7 @@ TEST_F( TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiW
   
   shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-  shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
+  shared_ptr< vector< shared_ptr< CBSDFIntegrator > > > aResults = aLayer->getWavelengthResults();
   
   size_t correctSize = 4;
 

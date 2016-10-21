@@ -2,7 +2,7 @@
 #include <math.h>
 #include <assert.h>
 
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFPatch.hpp"
 #include "SquareMatrix.hpp"
@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics {
 
-  CBSDFResults::CBSDFResults( const shared_ptr< const CBSDFDirections >& t_Directions ) :
+  CBSDFIntegrator::CBSDFIntegrator( const shared_ptr< const CBSDFDirections >& t_Directions ) :
     m_HemisphericalCalculated( false ) {
     m_Directions = t_Directions;
     m_DimMatrices = m_Directions->size();
@@ -26,27 +26,27 @@ namespace SingleLayerOptics {
     }
   }
 
-  shared_ptr< const CBSDFDirections > CBSDFResults::getDirections() const {
+  shared_ptr< const CBSDFDirections > CBSDFIntegrator::getDirections() const {
     return m_Directions; 
   }
 
-  double CBSDFResults::DiffDiff( const FenestrationCommon::Side t_Side,
+  double CBSDFIntegrator::DiffDiff( const FenestrationCommon::Side t_Side,
     const FenestrationCommon::PropertySimple t_Property ) const {
     return integrate( *getMatrix( t_Side, t_Property ) );
   }
 
-  shared_ptr< CSquareMatrix > CBSDFResults::getMatrix( const Side t_Side, 
+  shared_ptr< CSquareMatrix > CBSDFIntegrator::getMatrix( const Side t_Side, 
     const PropertySimple t_Property ) const {
     return m_Matrix.at( make_pair( t_Side, t_Property ) );
   }
 
-  void CBSDFResults::setResultMatrices( const shared_ptr< CSquareMatrix >& t_Tau, 
+  void CBSDFIntegrator::setResultMatrices( const shared_ptr< CSquareMatrix >& t_Tau, 
     const shared_ptr< CSquareMatrix >& t_Rho, Side t_Side ) {
     m_Matrix[ make_pair( t_Side, PropertySimple::T ) ] = t_Tau;
     m_Matrix[ make_pair( t_Side, PropertySimple::R ) ] = t_Rho;
   }
 
-  double CBSDFResults::DirDir( const Side t_Side, const PropertySimple t_Property,
+  double CBSDFIntegrator::DirDir( const Side t_Side, const PropertySimple t_Property,
     const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
     double lambda = ( *m_Directions->lambdaVector() )[ index ];
@@ -54,37 +54,37 @@ namespace SingleLayerOptics {
     return tau * lambda;
   }
 
-  shared_ptr< vector< double > > CBSDFResults::DirHem( const FenestrationCommon::Side t_Side,
+  shared_ptr< vector< double > > CBSDFIntegrator::DirHem( const FenestrationCommon::Side t_Side,
     const FenestrationCommon::PropertySimple t_Property ) {
     calcHemispherical();
     return m_Hem.at( make_pair( t_Side, t_Property ) );
   }
 
-  shared_ptr< vector< double > > CBSDFResults::Abs( Side t_Side ) {
+  shared_ptr< vector< double > > CBSDFIntegrator::Abs( Side t_Side ) {
     calcHemispherical();
     return m_Abs.at( t_Side );  
   }
 
-  double CBSDFResults::DirHem( const Side t_Side, const PropertySimple t_Property,
+  double CBSDFIntegrator::DirHem( const Side t_Side, const PropertySimple t_Property,
     const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
     return ( *DirHem( t_Side, t_Property ) )[ index ];
   }
 
-  double CBSDFResults::Abs( const Side t_Side, const double t_Theta, const double t_Phi ) {
+  double CBSDFIntegrator::Abs( const Side t_Side, const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
     return ( *Abs( t_Side ) )[ index ];
   }
 
-  shared_ptr< const vector< double > > CBSDFResults::lambdaVector() const {
+  shared_ptr< const vector< double > > CBSDFIntegrator::lambdaVector() const {
     return m_Directions->lambdaVector();
   }
 
-  shared_ptr< const CSquareMatrix > CBSDFResults::lambdaMatrix() const {
+  shared_ptr< const CSquareMatrix > CBSDFIntegrator::lambdaMatrix() const {
     return m_Directions->lambdaMatrix();
   }
 
-  double CBSDFResults::integrate( CSquareMatrix& t_Matrix ) const {
+  double CBSDFIntegrator::integrate( CSquareMatrix& t_Matrix ) const {
     double sum = 0;
     for( size_t i = 0; i < m_DimMatrices; ++i ) {
       for( size_t j = 0; j < m_DimMatrices; ++j ) {
@@ -94,7 +94,7 @@ namespace SingleLayerOptics {
     return sum / M_PI;
   }
 
-  void CBSDFResults::calcHemispherical() {
+  void CBSDFIntegrator::calcHemispherical() {
     if( !m_HemisphericalCalculated ) {
       for( Side t_Side : EnumSide() ) {
         for( PropertySimple t_Property : EnumPropertySimple() ) {

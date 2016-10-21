@@ -22,7 +22,7 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   CVenetianBase::CVenetianBase( const shared_ptr< CMaterial >& t_MaterialProperties,
-    const shared_ptr< CCellDescription >& t_Cell ) :
+    const shared_ptr< ICellDescription >& t_Cell ) :
     CUniformDiffuseCell(t_MaterialProperties, t_Cell),
     CDirectionalDiffuseCell(t_MaterialProperties, t_Cell) {
   
@@ -71,13 +71,13 @@ namespace SingleLayerOptics {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  //  CVenetianSlatEnergyResults
+  //  CSlatEnergyResults
   ////////////////////////////////////////////////////////////////////////////////////////////
-  CVenetianSlatEnergyResults::CVenetianSlatEnergyResults() {
+  CVenetianCellEnergy::CSlatEnergyResults::CSlatEnergyResults() {
     
   }
 
-  shared_ptr < CVenetianSlatEnergies > CVenetianSlatEnergyResults::getEnergies( const CBeamDirection& t_BeamDirection ) const {
+  shared_ptr < CVenetianSlatEnergies > CVenetianCellEnergy::CSlatEnergyResults::getEnergies( const CBeamDirection& t_BeamDirection ) const {
     shared_ptr < CVenetianSlatEnergies > Energies = nullptr;
     
     vector < shared_ptr< CVenetianSlatEnergies > >::const_iterator it;
@@ -95,7 +95,8 @@ namespace SingleLayerOptics {
 
   }
 
-  shared_ptr< CVenetianSlatEnergies > CVenetianSlatEnergyResults::append( const CBeamDirection& t_BeamDirection,
+  shared_ptr< CVenetianSlatEnergies > CVenetianCellEnergy::CSlatEnergyResults::append( 
+    const CBeamDirection& t_BeamDirection,
     const shared_ptr< vector< SegmentIrradiance > >& t_SlatIrradiances,
     const shared_ptr< vector < double > >& t_SlatRadiances ) {
     shared_ptr< CVenetianSlatEnergies > aEnergy = make_shared< CVenetianSlatEnergies >( t_BeamDirection, t_SlatIrradiances, t_SlatRadiances );
@@ -396,7 +397,7 @@ namespace SingleLayerOptics {
     return B;
   }
 
-  shared_ptr< vector< BeamSegmentView > > CVenetianCellEnergy::beamVector( 
+  shared_ptr< vector< CVenetianCellEnergy::BeamSegmentView > > CVenetianCellEnergy::beamVector(
     const CBeamDirection& t_Direction, const Side t_Side ) {    
     size_t numSeg = int( m_Cell->numberOfSegments() / 2 );
 
@@ -478,7 +479,7 @@ namespace SingleLayerOptics {
   //  CVenetianCell
   ////////////////////////////////////////////////////////////////////////////////////////////
   CVenetianCell::CVenetianCell( const shared_ptr< CMaterial >& t_Material, 
-    const shared_ptr< CCellDescription >& t_Cell ) : 
+    const shared_ptr< ICellDescription >& t_Cell ) : 
     CBaseCell( t_Material, t_Cell ), CVenetianBase( t_Material, t_Cell ) {
 
     assert( t_Cell != nullptr );

@@ -14,7 +14,7 @@
 #include "SpecularBSDFLayer.hpp"
 #include "FenestrationCommon.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -299,8 +299,8 @@ protected:
 
   shared_ptr< CSpecularBSDFLayer > aLayer102 = make_shared< CSpecularBSDFLayer >( aCell, aBSDF );
 
-  shared_ptr< CBSDFResults > aLayer1 = aLayer102->getResults();
-  shared_ptr< CBSDFResults > aLayer2 = aLayer102->getResults();
+  shared_ptr< CBSDFIntegrator > aLayer1 = aLayer102->getResults();
+  shared_ptr< CBSDFIntegrator > aLayer2 = aLayer102->getResults();
 
   m_EquivalentBSDFLayer = make_shared< CEquivalentBSDFLayerSingleBand >( aLayer1 );
   m_EquivalentBSDFLayer->addLayer( aLayer2 );

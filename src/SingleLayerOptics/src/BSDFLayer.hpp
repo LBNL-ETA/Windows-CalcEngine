@@ -21,10 +21,10 @@ namespace SingleLayerOptics {
 
   class CBaseCell;
   class CBSDFHemisphere;
-  class CBSDFResults;
+  class CBSDFIntegrator;
   class CBeamDirection;
 
-  typedef std::vector< std::shared_ptr< CBSDFResults > > BSDF_Results;
+  typedef std::vector< std::shared_ptr< CBSDFIntegrator > > BSDF_Results;
 
   // Base class for handling BSDF Layer
   class CBSDFLayer {
@@ -36,7 +36,7 @@ namespace SingleLayerOptics {
     void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // BSDF results for the enire spectrum range of the material in the cell
-    std::shared_ptr< CBSDFResults > getResults();
+    std::shared_ptr< CBSDFIntegrator > getResults();
 
     // BSDF results for each wavelenght given in specular cell
     std::shared_ptr< BSDF_Results > getWavelengthResults();
@@ -65,7 +65,7 @@ namespace SingleLayerOptics {
 
     std::shared_ptr< const CBSDFHemisphere > m_BSDFHemisphere;
     std::shared_ptr< CBaseCell > m_Cell;
-    std::shared_ptr< CBSDFResults > m_Results;
+    std::shared_ptr< CBSDFIntegrator > m_Results;
     // Results over each wavelength
     std::shared_ptr< BSDF_Results > m_WVResults;
 

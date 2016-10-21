@@ -4,12 +4,18 @@
 #include <memory>
 #include <map>
 
+#include "State.hpp"
+
 namespace FenestrationCommon {
+
   enum class Side;
+
 }
 
 namespace Gases {
+
   class CGas;
+
 }
 
 namespace Tarcog {
@@ -24,24 +30,7 @@ namespace Tarcog {
     double Temperature;
   };
 
-  // class CLayerState is used to keep validity of object state. In case of thermal layers this class is used to keep information if state 
-  // already have valid results with current input parameters
-  class CLayerState {
-  public:
-    CLayerState();
-    CLayerState( const CLayerState & t_State );
-    virtual void resetCalculated() final; // to reset state to non-calculated
-    virtual void setCalculated() final; // calculations are up to date and set state to valid state
-    virtual bool isCalculated() final; // check if state have valid results
-
-  protected:
-    virtual void initializeStateVariables() = 0; // some intermediate state variables need to pick up new input parameters.
-
-  private:
-    bool m_StateCalculated;
-  };
-
-  class CLayerGeometry : public virtual CLayerState {
+  class CLayerGeometry : public virtual FenestrationCommon::CState {
   public:
     CLayerGeometry();
     CLayerGeometry( const CLayerGeometry& t_Layer );
@@ -56,7 +45,7 @@ namespace Tarcog {
     double m_Tilt;
   };
 
-  class CLayerHeatFlow : public virtual CLayerState {
+  class CLayerHeatFlow : public virtual FenestrationCommon::CState {
   public:
     CLayerHeatFlow();
     CLayerHeatFlow( const CLayerHeatFlow& t_Layer );
@@ -85,7 +74,7 @@ namespace Tarcog {
   enum class AirVerticalDirection { None, Up, Down };
   enum class AirHorizontalDirection { None, Leeward, Windward };
 
-  class CGasLayer : public virtual CLayerState {
+  class CGasLayer : public virtual FenestrationCommon::CState {
   public:
     CGasLayer();
     CGasLayer( double const t_Pressure );

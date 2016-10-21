@@ -5,7 +5,7 @@
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -63,7 +63,7 @@ TEST_F( TestVenetianDirectionalShadeFlat0_1, TestVenetian1 ) {
   
   shared_ptr< CBSDFLayer > aShade = GetShade();
 
-  shared_ptr< CBSDFResults > aResults = aShade->getResults();
+  shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
   double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.44649813630049223, tauDiff, 1e-6 );

@@ -21,17 +21,17 @@ namespace Tarcog {
   class CBaseTarcogLayer;
 
   CTarIGUGapLayer::CTarIGUGapLayer( double t_Thickness, double t_Pressure ) : 
-    CLayerState(), CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure ) {    
+    CState(), CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure ) {    
     
   }
 
   CTarIGUGapLayer::CTarIGUGapLayer( double t_Thickness, double t_Pressure, const shared_ptr< CGas >& t_Gas ) : 
-    CLayerState(), CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
+    CState(), CBaseIGUTarcogLayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
     assert( m_Gas != nullptr );
   }
 
   CTarIGUGapLayer::CTarIGUGapLayer( const CTarIGUGapLayer& t_Layer ) : 
-    CLayerState( t_Layer ), CBaseIGUTarcogLayer( t_Layer ), CGasLayer( t_Layer ) {
+    CState( t_Layer ), CBaseIGUTarcogLayer( t_Layer ), CGasLayer( t_Layer ) {
     
   }
 

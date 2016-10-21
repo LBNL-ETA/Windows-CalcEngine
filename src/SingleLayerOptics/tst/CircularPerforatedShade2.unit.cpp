@@ -5,7 +5,7 @@
 #include "MaterialDescription.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -35,7 +35,7 @@ protected:
     double y = 38.1; // mm
     double thickness = 5; // mm
     double radius = 0; // mm
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
@@ -56,7 +56,7 @@ TEST_F( TestCircularPerforatedShade2, TestSolarProperties ) {
   
   shared_ptr< CBSDFLayer > aShade = GetShade();
 
-  shared_ptr< CBSDFResults > aResults = aShade->getResults();
+  shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
   double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.2, tauDiff, 1e-6 );

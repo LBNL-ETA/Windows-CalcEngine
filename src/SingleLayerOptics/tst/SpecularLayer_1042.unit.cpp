@@ -10,7 +10,7 @@
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -677,7 +677,7 @@ TEST_F( TestSpecularLayer_1042, TestSpecular1 ) {
   
   shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-  shared_ptr< CBSDFResults > aResults = aLayer->getResults();
+  shared_ptr< CBSDFIntegrator > aResults = aLayer->getResults();
 
   double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.3950293, tauDiff, 1e-6 );

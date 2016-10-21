@@ -4,7 +4,7 @@
 
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "UniformDiffuseCell.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFPatch.hpp"
@@ -65,7 +65,7 @@ namespace SingleLayerOptics {
     for( size_t i = 0; i < size; ++i ) {
       size_t numWV = aTau->size();
       for( size_t j = 0; j < numWV; ++j ) {
-        shared_ptr< CBSDFResults > aResults = nullptr;
+        shared_ptr< CBSDFIntegrator > aResults = nullptr;
         aResults = ( *m_WVResults )[ j ];
         assert( aResults != nullptr );
         shared_ptr< CSquareMatrix > Tau = aResults->getMatrix( aSide, PropertySimple::T );

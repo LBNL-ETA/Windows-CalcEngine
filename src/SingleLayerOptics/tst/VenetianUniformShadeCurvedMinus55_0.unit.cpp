@@ -5,7 +5,7 @@
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -38,7 +38,7 @@ protected:
     double curvatureRadius = 0.123967;
     size_t numOfSlatSegments = 2;
 
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle, 
       curvatureRadius, numOfSlatSegments );
 
@@ -61,7 +61,7 @@ TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
   
   shared_ptr< CBSDFLayer > aShade = GetShade();
 
-  shared_ptr< CBSDFResults > aResults = aShade->getResults();
+  shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
   double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.232141, tauDiff, 1e-6 );

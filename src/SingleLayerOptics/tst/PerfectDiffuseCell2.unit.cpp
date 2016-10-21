@@ -30,7 +30,7 @@ protected:
       make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
     // make cell geometry
-    shared_ptr< CCellDescription > aCell = 
+    shared_ptr< ICellDescription > aCell = 
       make_shared< CPerfectDiffuseCellDescription >();
 
     m_Cell = make_shared< CUniformDiffuseCell >( aMaterial, aCell );

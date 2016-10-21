@@ -6,7 +6,7 @@
 namespace SingleLayerOptics {
 
   enum class DistributionMethod { UniformDiffuse, DirectionalDiffuse };
-  class CCellDescription;
+  class ICellDescription;
   class CMaterial;
   class CBSDFHemisphere;
   class CBSDFLayer;
@@ -16,7 +16,7 @@ namespace SingleLayerOptics {
   public:
     CBSDFLayerMaker( const std::shared_ptr< CMaterial >& t_Material, 
       const std::shared_ptr< const CBSDFHemisphere >& t_BSDF, 
-      std::shared_ptr< CCellDescription > t_Description = nullptr,
+      std::shared_ptr< ICellDescription > t_Description = nullptr,
       const DistributionMethod t_Method = DistributionMethod::UniformDiffuse );
 
     std::shared_ptr< CBSDFLayer > getLayer() const;

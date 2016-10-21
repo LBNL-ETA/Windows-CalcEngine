@@ -5,7 +5,7 @@
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -50,7 +50,7 @@ protected:
     double y = 38.1; // mm
     double thickness = 5; // mm
     double radius = 8.35; // mm
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
     shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
@@ -71,7 +71,7 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
   
   shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-  shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
+  shared_ptr< vector< shared_ptr< CBSDFIntegrator > > > aResults = aLayer->getWavelengthResults();
   
   size_t correctSize = 4;
 

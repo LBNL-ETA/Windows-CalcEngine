@@ -316,7 +316,7 @@ protected:
     double y = 19.05; // mm
     thickness = 5; // mm
     double radius = 3.175; // mm
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
     // Perforated layer is created here

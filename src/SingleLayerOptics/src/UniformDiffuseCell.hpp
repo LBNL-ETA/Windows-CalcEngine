@@ -15,7 +15,7 @@ namespace FenestrationCommon {
 
 namespace SingleLayerOptics {
 
-  class CCellDescription;
+  class ICellDescription;
   class CBeamDirection;
   class CMaterial;
 
@@ -23,7 +23,7 @@ namespace SingleLayerOptics {
   class CUniformDiffuseCell : public virtual CBaseCell {
   public:
     CUniformDiffuseCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
-      const std::shared_ptr< CCellDescription >& t_Cell );
+      const std::shared_ptr< ICellDescription >& t_Cell );
 
     // Direct to diffuse components
     virtual double T_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );

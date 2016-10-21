@@ -87,4 +87,8 @@ namespace SingleLayerOptics {
     return m_BeamGeometry->directToDirect( -aProfileAngle, t_Side );
   }
 
+  double CVenetianCellDescription::R_dir_dir( const Side, const CBeamDirection& ) {
+    return 0;
+  }
+
 }

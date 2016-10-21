@@ -12,7 +12,7 @@
 #include "PerforatedCellDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
 
@@ -311,15 +311,15 @@ protected:
   double y = 38.1; // mm
   thickness = 5; // mm
   double radius = 8.35; // mm
-  shared_ptr< CCellDescription > perfCellDescription = 
+  shared_ptr< ICellDescription > perfCellDescription = 
     make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
   // get shading BSDF layer
   CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( perfMaterial, aBSDF, perfCellDescription );
   shared_ptr< CBSDFLayer > aShade = aMakerVenetian.getLayer();
 
-  CBSDFResults aLayer1 = *aLayer102->getResults();
-  CBSDFResults aLayer2 = *aShade->getResults();
+  CBSDFIntegrator aLayer1 = *aLayer102->getResults();
+  CBSDFIntegrator aLayer2 = *aShade->getResults();
 
   m_DoubleLayer = make_shared< CBSDFDoubleLayer >( aLayer1, aLayer2 );
     
@@ -333,7 +333,7 @@ public:
 TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
   SCOPED_TRACE( "Begin Test: Double Layer BSDF." );
   
-  shared_ptr< CBSDFResults > aLayer = getDoubleLayer()->value();
+  shared_ptr< CBSDFIntegrator > aLayer = getDoubleLayer()->value();
 
   // Front transmittance
   shared_ptr< CSquareMatrix > Tf = aLayer->getMatrix( Side::Front, PropertySimple::T );

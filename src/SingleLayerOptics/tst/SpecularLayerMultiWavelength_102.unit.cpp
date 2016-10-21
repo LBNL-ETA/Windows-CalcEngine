@@ -8,7 +8,7 @@
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFDirections.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -71,7 +71,7 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
   
   shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-  shared_ptr< vector< shared_ptr< CBSDFResults > > > aResults = aLayer->getWavelengthResults();
+  shared_ptr< vector< shared_ptr< CBSDFIntegrator > > > aResults = aLayer->getWavelengthResults();
   
   size_t correctSize = 5;
 

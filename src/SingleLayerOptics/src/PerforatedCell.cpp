@@ -18,7 +18,7 @@ namespace SingleLayerOptics {
   //  CPerforatedCell
   ////////////////////////////////////////////////////////////////////////////////////////////
   CPerforatedCell::CPerforatedCell( const shared_ptr< CMaterial >& t_MaterialProperties, 
-    const shared_ptr< CCellDescription >& t_Cell ) : 
+    const shared_ptr< ICellDescription >& t_Cell ) : 
     CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
     
   }

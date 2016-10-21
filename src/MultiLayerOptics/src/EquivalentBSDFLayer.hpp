@@ -20,7 +20,7 @@ namespace FenestrationCommon {
 namespace SingleLayerOptics {
 
   class CBSDFLayer;
-  class CBSDFResults;
+  class CBSDFIntegrator;
 
 }
 
@@ -40,18 +40,9 @@ namespace MultiLayerOptics {
     // Whole matrix results
     std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const double minLambda, const double maxLambda,
       const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
-    // std::shared_ptr< FenestrationCommon::CSquareMatrix > Tau( const double minLambda, const double maxLambda, 
-    //   FenestrationCommon::Side t_Side );
-    // std::shared_ptr< FenestrationCommon::CSquareMatrix > Rho( const double minLambda, const double maxLambda, 
-    //   FenestrationCommon::Side t_Side );
 
     double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
       const FenestrationCommon::PropertySimple t_Property, const double t_Theta, const double t_Phi );
-
-    // double TauDirDir( const double minLambda, const double maxLambda, FenestrationCommon::Side t_Side,
-    //   const double t_Theta, const double t_Phi );
-    // double RhoDirDir( const double minLambda, const double maxLambda, FenestrationCommon::Side t_Side,
-    //   const double t_Theta, const double t_Phi );
 
     // Vector of layer by layer absorptances for each incoming direction
     std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, 
@@ -61,20 +52,11 @@ namespace MultiLayerOptics {
     std::shared_ptr< std::vector< double > > DirHem( const double minLambda, const double maxLambda,
       const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
 
-    // std::shared_ptr< std::vector< double > > TauDirHem( const double minLambda, const double maxLambda, 
-    //   const FenestrationCommon::Side t_Side );
-    // std::shared_ptr< std::vector< double > > RhoDirHem( const double minLambda, const double maxLambda, 
-    //   const FenestrationCommon::Side t_Side );
-
     // Directional hemispherical results for given Theta and Phi direction
     double DirHem( const double minLambda, const double maxLambda,
       const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property, 
       const double t_Theta, const double t_Phi );
 
-    // double TauDirHem( const double minLambda, const double maxLambda, 
-    //   const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
-    // double RhoDirHem( const double minLambda, const double maxLambda, 
-    //   const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
     double Abs( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
 
@@ -82,8 +64,6 @@ namespace MultiLayerOptics {
     double DiffDiff( const double minLambda, const double maxLambda, 
       const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
 
-    // double TauDiffDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
-    // double RhoDiffDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side );
     double AbsDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
       const size_t t_LayerIndex );
 
@@ -98,7 +78,7 @@ namespace MultiLayerOptics {
       std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_TotA, 
       std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_Tot,
       const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End );
-
+    
     void calcHemisphericalAbs( const FenestrationCommon::Side t_Side );
 
     // Vector of layer results over each wavelength
@@ -109,7 +89,7 @@ namespace MultiLayerOptics {
     // Hemispherical absorptances for every layer
     std::map < FenestrationCommon::Side, std::shared_ptr< std::vector < double > > > m_AbsHem;
 
-    std::shared_ptr< SingleLayerOptics::CBSDFResults > m_Results;
+    std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > m_Results;
 
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
     std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;

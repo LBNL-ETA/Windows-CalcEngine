@@ -5,7 +5,7 @@
 #include "MaterialDescription.hpp"
 #include "BSDFDirections.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 #include "FenestrationCommon.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
@@ -33,7 +33,7 @@ protected:
     // make cell geometry
     double diameter = 6.35; // mm
     double spacing = 19.05; // mm
-    shared_ptr< CCellDescription > aCellDescription = 
+    shared_ptr< ICellDescription > aCellDescription = 
       make_shared< CWovenCellDescription >( diameter, spacing );
 
     // create BSDF
@@ -55,7 +55,7 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
   
   shared_ptr< CBSDFLayer > aShade = GetShade();
 
-  shared_ptr< CBSDFResults > aResults = aShade->getResults();
+  shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
   double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
   EXPECT_NEAR( 0.467578877, tauDiff, 1e-6 );

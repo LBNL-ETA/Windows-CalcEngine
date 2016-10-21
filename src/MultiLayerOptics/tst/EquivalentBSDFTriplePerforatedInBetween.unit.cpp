@@ -17,7 +17,7 @@
 #include "PerforatedCellDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "SquareMatrix.hpp"
-#include "BSDFResults.hpp"
+#include "BSDFIntegrator.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -320,9 +320,9 @@ protected:
     
   shared_ptr< CUniformDiffuseBSDFLayer > aShade = make_shared< CUniformDiffuseBSDFLayer >( perfCell, aBSDF );
 
-  shared_ptr< CBSDFResults > aLayer1 = aLayer102->getResults();
-  shared_ptr< CBSDFResults > aLayer2 = aShade->getResults();
-  shared_ptr< CBSDFResults > aLayer3 = aLayer102->getResults();
+  shared_ptr< CBSDFIntegrator > aLayer1 = aLayer102->getResults();
+  shared_ptr< CBSDFIntegrator > aLayer2 = aShade->getResults();
+  shared_ptr< CBSDFIntegrator > aLayer3 = aLayer102->getResults();
 
   m_EquivalentBSDFLayer = make_shared< CEquivalentBSDFLayerSingleBand >( aLayer1 );
   m_EquivalentBSDFLayer->addLayer( aLayer2 );
