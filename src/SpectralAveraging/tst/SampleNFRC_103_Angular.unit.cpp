@@ -7,7 +7,7 @@
 #include "AngularSpectralSample.hpp"
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;

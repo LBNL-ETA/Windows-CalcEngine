@@ -5,7 +5,7 @@
 
 #include "AngularProperties.hpp"
 #include "MathFunctions.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 
 using namespace FenestrationCommon;
 using namespace std;

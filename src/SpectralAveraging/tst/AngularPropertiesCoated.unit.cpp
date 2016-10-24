@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "AngularProperties.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;

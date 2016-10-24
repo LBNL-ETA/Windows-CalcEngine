@@ -8,7 +8,7 @@
 #include "Series.hpp"
 #include "SpectralSample.hpp"
 #include "AngularProperties.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -68,7 +68,7 @@ namespace SpectralAveraging {
         double Rf = ( *aRf )[ i ]->value();
         double Rb = ( *aRb )[ i ]->value();
 
-        SurfaceType aSurfaceType = coatingType( t_Type );
+        SurfaceType aSurfaceType = coatingType.at( t_Type );
 
         CAngularPropertiesFactory aFrontFactory = CAngularPropertiesFactory( T, Rf, m_Thickness, aTSolNorm );
         CAngularPropertiesFactory aBackFactory = CAngularPropertiesFactory( T, Rb, m_Thickness, aTSolNorm );

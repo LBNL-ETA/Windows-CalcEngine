@@ -6,7 +6,7 @@
 #include "Series.hpp"
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 #include "MaterialDescription.hpp"
 #include "FenestrationCommon.hpp"
 #include "SquareMatrix.hpp"

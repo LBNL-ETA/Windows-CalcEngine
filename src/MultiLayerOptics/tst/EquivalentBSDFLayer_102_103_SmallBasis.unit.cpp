@@ -4,7 +4,7 @@
 #include "EquivalentBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 #include "SpecularCellDescription.hpp"
 #include "CommonWavelengths.hpp"
 #include "MultiPaneSampleData.hpp"

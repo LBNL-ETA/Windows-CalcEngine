@@ -5,7 +5,7 @@
 #include "SpectralSample.hpp"
 #include "Series.hpp"
 #include "SpecularCell.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 #include "VenetianCellDescription.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"

@@ -3,7 +3,7 @@
 
 #include "SpectralSample.hpp"
 #include "Series.hpp"
-#include "SpecularLayer.hpp"
+#include "SurfaceCoating.hpp"
 #include "SpecularCellDescription.hpp"
 #include "MeasuredSampleData.hpp"
 #include "MaterialDescription.hpp"
