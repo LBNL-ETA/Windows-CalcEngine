@@ -21,17 +21,20 @@ namespace SingleLayerOptics {
   CBSDFLayer::CBSDFLayer( const shared_ptr< CBaseCell >& t_Cell, 
     const shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) : 
     m_BSDFHemisphere( t_Hemisphere ), m_Cell( t_Cell ), m_Calculated( false ), m_CalculatedWV( false ) {
-    m_BSDFHemisphere = t_Hemisphere;
 
     // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
     // This is not necessary before axisymmetry is introduced
     m_Results = make_shared< CBSDFIntegrator >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
-    fillWLResultsFromMaterialCell();
   }
 
   void CBSDFLayer::setSourceData( shared_ptr< CSeries > t_SourceData ) {
     m_Cell->setSourceData( t_SourceData );
-    fillWLResultsFromMaterialCell();
+    m_Calculated = false;
+    m_CalculatedWV = false;
+  }
+
+  shared_ptr< const CBSDFDirections > CBSDFLayer::getDirections( const BSDFHemisphere t_Side ) const {
+    return m_BSDFHemisphere->getDirections( t_Side );
   }
 
   shared_ptr< CBSDFIntegrator > CBSDFLayer::getResults() {
@@ -80,7 +83,8 @@ namespace SingleLayerOptics {
 
   void CBSDFLayer::calc_dir_dir_wv() {
     for( Side aSide : EnumSide() ) {
-      shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
+      shared_ptr< const CBSDFDirections > aDirections = 
+        m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
       size_t size = aDirections->size();
       for( size_t i = 0; i < size; ++i ) {
         const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
@@ -138,11 +142,13 @@ namespace SingleLayerOptics {
   }
 
   void CBSDFLayer::calculate() {
+    fillWLResultsFromMaterialCell();
     calc_dir_dir();
     calc_dir_dif();
   }
 
   void CBSDFLayer::calculate_wv() {
+    fillWLResultsFromMaterialCell();
     calc_dir_dir_wv();
     calc_dir_dif_wv();
   }

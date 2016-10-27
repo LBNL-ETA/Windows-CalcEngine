@@ -171,7 +171,11 @@ namespace SingleLayerOptics {
   CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
     const shared_ptr< CMaterial >& t_SolarRange ) : CMaterial( 0.3, 2.5 ), 
     m_MaterialFullRange( t_SolarRange ), m_MaterialPartialRange( t_PartialRange ) {
-    // Nothing else can be calculated here since solar radiation is still missing
+    checkIfMaterialWithingSolarRange( *m_MaterialPartialRange );
+    createUVRange();
+    // Use default value till solar radiation is passed
+    double nirRatio = 0.49;
+    createNIRRange( m_MaterialPartialRange, *m_MaterialFullRange, nirRatio );
   }
 
   void CMaterialDualBand::setSourceData( shared_ptr< CSeries > t_SourceData ) {

@@ -22,7 +22,7 @@ protected:
   }
 
 public:
-  shared_ptr< CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) 
+  shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) 
     { return m_BSDFHemisphere->getDirections( t_Side ); };
 
 };
@@ -30,7 +30,7 @@ public:
 TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex1 ) {
   SCOPED_TRACE( "Begin Test: Find closest index 1." );
   
-  CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+  const CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
 
   double theta = 15;
   double phi = 270;

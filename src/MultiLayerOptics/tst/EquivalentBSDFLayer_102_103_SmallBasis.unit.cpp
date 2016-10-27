@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "EquivalentBSDFLayer.hpp"
+#include "MultiBSDFLayer.hpp"
 #include "SpectralSample.hpp"
 #include "Series.hpp"
 #include "SurfaceCoating.hpp"
@@ -28,135 +29,6 @@ class EquivalentBSDFLayer_102_103_SmallBasis : public testing::Test {
 
 private:
   shared_ptr< CEquivalentBSDFLayer > m_Layer;
-
-  shared_ptr< CSeries > loadSolarRadiationFile() {
-    shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
-
-    // Full ASTM E891-87 Table 1 (Solar radiation)
-    aSolarRadiation->addProperty( 0.3000, 0.0 );
-    aSolarRadiation->addProperty( 0.3050, 3.4 );
-    aSolarRadiation->addProperty( 0.3100, 15.6 );
-    aSolarRadiation->addProperty( 0.3150, 41.1 );
-    aSolarRadiation->addProperty( 0.3200, 71.2 );
-    aSolarRadiation->addProperty( 0.3250, 100.2 );
-    aSolarRadiation->addProperty( 0.3300, 152.4 );
-    aSolarRadiation->addProperty( 0.3350, 155.6 );
-    aSolarRadiation->addProperty( 0.3400, 179.4 );
-    aSolarRadiation->addProperty( 0.3450, 186.7 );
-    aSolarRadiation->addProperty( 0.3500, 212.0 );
-    aSolarRadiation->addProperty( 0.3600, 240.5 );
-    aSolarRadiation->addProperty( 0.3700, 324.0 );
-    aSolarRadiation->addProperty( 0.3800, 362.4 );
-    aSolarRadiation->addProperty( 0.3900, 381.7 );
-    aSolarRadiation->addProperty( 0.4000, 556.0 );
-    aSolarRadiation->addProperty( 0.4100, 656.3 );
-    aSolarRadiation->addProperty( 0.4200, 690.8 );
-    aSolarRadiation->addProperty( 0.4300, 641.9 );
-    aSolarRadiation->addProperty( 0.4400, 798.5 );
-    aSolarRadiation->addProperty( 0.4500, 956.6 );
-    aSolarRadiation->addProperty( 0.4600, 990.0 );
-    aSolarRadiation->addProperty( 0.4700, 998.0 );
-    aSolarRadiation->addProperty( 0.4800, 1046.1 );
-    aSolarRadiation->addProperty( 0.4900, 1005.1 );
-    aSolarRadiation->addProperty( 0.5000, 1026.7 );
-    aSolarRadiation->addProperty( 0.5100, 1066.7 );
-    aSolarRadiation->addProperty( 0.5200, 1011.5 );
-    aSolarRadiation->addProperty( 0.5300, 1084.9 );
-    aSolarRadiation->addProperty( 0.5400, 1082.4 );
-    aSolarRadiation->addProperty( 0.5500, 1102.2 );
-    aSolarRadiation->addProperty( 0.5700, 1087.4 );
-    aSolarRadiation->addProperty( 0.5900, 1024.3 );
-    aSolarRadiation->addProperty( 0.6100, 1088.8 );
-    aSolarRadiation->addProperty( 0.6300, 1062.1 );
-    aSolarRadiation->addProperty( 0.6500, 1061.7 );
-    aSolarRadiation->addProperty( 0.6700, 1046.2 );
-    aSolarRadiation->addProperty( 0.6900, 859.2 );
-    aSolarRadiation->addProperty( 0.7100, 1002.4 );
-    aSolarRadiation->addProperty( 0.7180, 816.9 );
-    aSolarRadiation->addProperty( 0.7244, 842.8 );
-    aSolarRadiation->addProperty( 0.7400, 971.0 );
-    aSolarRadiation->addProperty( 0.7525, 956.3 );
-    aSolarRadiation->addProperty( 0.7575, 942.2 );
-    aSolarRadiation->addProperty( 0.7625, 524.8 );
-    aSolarRadiation->addProperty( 0.7675, 830.7 );
-    aSolarRadiation->addProperty( 0.7800, 908.9 );
-    aSolarRadiation->addProperty( 0.8000, 873.4 );
-    aSolarRadiation->addProperty( 0.8160, 712.0 );
-    aSolarRadiation->addProperty( 0.8237, 660.2 );
-    aSolarRadiation->addProperty( 0.8315, 765.5 );
-    aSolarRadiation->addProperty( 0.8400, 799.8 );
-    aSolarRadiation->addProperty( 0.8600, 815.2 );
-    aSolarRadiation->addProperty( 0.8800, 778.3 );
-    aSolarRadiation->addProperty( 0.9050, 630.4 );
-    aSolarRadiation->addProperty( 0.9150, 565.2 );
-    aSolarRadiation->addProperty( 0.9250, 586.4 );
-    aSolarRadiation->addProperty( 0.9300, 348.1 );
-    aSolarRadiation->addProperty( 0.9370, 224.2 );
-    aSolarRadiation->addProperty( 0.9480, 271.4 );
-    aSolarRadiation->addProperty( 0.9650, 451.2 );
-    aSolarRadiation->addProperty( 0.9800, 549.7 );
-    aSolarRadiation->addProperty( 0.9935, 630.1 );
-    aSolarRadiation->addProperty( 1.0400, 582.9 );
-    aSolarRadiation->addProperty( 1.0700, 539.7 );
-    aSolarRadiation->addProperty( 1.1000, 366.2 );
-    aSolarRadiation->addProperty( 1.1200, 98.1 );
-    aSolarRadiation->addProperty( 1.1300, 169.5 );
-    aSolarRadiation->addProperty( 1.1370, 118.7 );
-    aSolarRadiation->addProperty( 1.1610, 301.9 );
-    aSolarRadiation->addProperty( 1.1800, 406.8 );
-    aSolarRadiation->addProperty( 1.2000, 375.2 );
-    aSolarRadiation->addProperty( 1.2350, 423.6 );
-    aSolarRadiation->addProperty( 1.2900, 365.7 );
-    aSolarRadiation->addProperty( 1.3200, 223.4 );
-    aSolarRadiation->addProperty( 1.3500, 30.1 );
-    aSolarRadiation->addProperty( 1.3950, 1.4 );
-    aSolarRadiation->addProperty( 1.4425, 51.6 );
-    aSolarRadiation->addProperty( 1.4625, 97.0 );
-    aSolarRadiation->addProperty( 1.4770, 97.3 );
-    aSolarRadiation->addProperty( 1.4970, 167.1 );
-    aSolarRadiation->addProperty( 1.5200, 239.3 );
-    aSolarRadiation->addProperty( 1.5390, 248.8 );
-    aSolarRadiation->addProperty( 1.5580, 249.3 );
-    aSolarRadiation->addProperty( 1.5780, 222.3 );
-    aSolarRadiation->addProperty( 1.5920, 227.3 );
-    aSolarRadiation->addProperty( 1.6100, 210.5 );
-    aSolarRadiation->addProperty( 1.6300, 224.7 );
-    aSolarRadiation->addProperty( 1.6460, 215.9 );
-    aSolarRadiation->addProperty( 1.6780, 202.8 );
-    aSolarRadiation->addProperty( 1.7400, 158.2 );
-    aSolarRadiation->addProperty( 1.8000, 28.6 );
-    aSolarRadiation->addProperty( 1.8600, 1.8 );
-    aSolarRadiation->addProperty( 1.9200, 1.1 );
-    aSolarRadiation->addProperty( 1.9600, 19.7 );
-    aSolarRadiation->addProperty( 1.9850, 84.9 );
-    aSolarRadiation->addProperty( 2.0050, 25.0 );
-    aSolarRadiation->addProperty( 2.0350, 92.5 );
-    aSolarRadiation->addProperty( 2.0650, 56.3 );
-    aSolarRadiation->addProperty( 2.1000, 82.7 );
-    aSolarRadiation->addProperty( 2.1480, 76.2 );
-    aSolarRadiation->addProperty( 2.1980, 66.4 );
-    aSolarRadiation->addProperty( 2.2700, 65.0 );
-    aSolarRadiation->addProperty( 2.3600, 57.6 );
-    aSolarRadiation->addProperty( 2.4500, 19.8 );
-    aSolarRadiation->addProperty( 2.4940, 17.0 );
-    aSolarRadiation->addProperty( 2.5370, 3.0 );
-    aSolarRadiation->addProperty( 2.9410, 4.0 );
-    aSolarRadiation->addProperty( 2.9730, 7.0 );
-    aSolarRadiation->addProperty( 3.0050, 6.0 );
-    aSolarRadiation->addProperty( 3.0560, 3.0 );
-    aSolarRadiation->addProperty( 3.1320, 5.0 );
-    aSolarRadiation->addProperty( 3.1560, 18.0 );
-    aSolarRadiation->addProperty( 3.2040, 1.2 );
-    aSolarRadiation->addProperty( 3.2450, 3.0 );
-    aSolarRadiation->addProperty( 3.3170, 12.0 );
-    aSolarRadiation->addProperty( 3.3440, 3.0 );
-    aSolarRadiation->addProperty( 3.4500, 12.2 );
-    aSolarRadiation->addProperty( 3.5730, 11.0 );
-    aSolarRadiation->addProperty( 3.7650, 9.0 );
-    aSolarRadiation->addProperty( 4.0450, 6.9 );
-
-    return aSolarRadiation;
-  }
 
   shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
     shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
@@ -396,8 +268,6 @@ private:
 
 protected:
   virtual void SetUp() {
-    
-    shared_ptr< CSeries >  aSolarRadiation = loadSolarRadiationFile();
 
     shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
     shared_ptr< CSpectralSampleData > aMeasurements_103 = loadSampleData_NFRC_103();
@@ -424,12 +294,141 @@ protected:
     shared_ptr < vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
     // Equivalent BSDF layer
-    m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, aSolarRadiation, Layer_102 );
+    m_Layer = make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );
     m_Layer->addLayer( Layer_103 );
 
   }
 
 public:
+  shared_ptr< CSeries > loadSolarRadiationFile() {
+    shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
+
+    // Full ASTM E891-87 Table 1 (Solar radiation)
+    aSolarRadiation->addProperty( 0.3000, 0.0 );
+    aSolarRadiation->addProperty( 0.3050, 3.4 );
+    aSolarRadiation->addProperty( 0.3100, 15.6 );
+    aSolarRadiation->addProperty( 0.3150, 41.1 );
+    aSolarRadiation->addProperty( 0.3200, 71.2 );
+    aSolarRadiation->addProperty( 0.3250, 100.2 );
+    aSolarRadiation->addProperty( 0.3300, 152.4 );
+    aSolarRadiation->addProperty( 0.3350, 155.6 );
+    aSolarRadiation->addProperty( 0.3400, 179.4 );
+    aSolarRadiation->addProperty( 0.3450, 186.7 );
+    aSolarRadiation->addProperty( 0.3500, 212.0 );
+    aSolarRadiation->addProperty( 0.3600, 240.5 );
+    aSolarRadiation->addProperty( 0.3700, 324.0 );
+    aSolarRadiation->addProperty( 0.3800, 362.4 );
+    aSolarRadiation->addProperty( 0.3900, 381.7 );
+    aSolarRadiation->addProperty( 0.4000, 556.0 );
+    aSolarRadiation->addProperty( 0.4100, 656.3 );
+    aSolarRadiation->addProperty( 0.4200, 690.8 );
+    aSolarRadiation->addProperty( 0.4300, 641.9 );
+    aSolarRadiation->addProperty( 0.4400, 798.5 );
+    aSolarRadiation->addProperty( 0.4500, 956.6 );
+    aSolarRadiation->addProperty( 0.4600, 990.0 );
+    aSolarRadiation->addProperty( 0.4700, 998.0 );
+    aSolarRadiation->addProperty( 0.4800, 1046.1 );
+    aSolarRadiation->addProperty( 0.4900, 1005.1 );
+    aSolarRadiation->addProperty( 0.5000, 1026.7 );
+    aSolarRadiation->addProperty( 0.5100, 1066.7 );
+    aSolarRadiation->addProperty( 0.5200, 1011.5 );
+    aSolarRadiation->addProperty( 0.5300, 1084.9 );
+    aSolarRadiation->addProperty( 0.5400, 1082.4 );
+    aSolarRadiation->addProperty( 0.5500, 1102.2 );
+    aSolarRadiation->addProperty( 0.5700, 1087.4 );
+    aSolarRadiation->addProperty( 0.5900, 1024.3 );
+    aSolarRadiation->addProperty( 0.6100, 1088.8 );
+    aSolarRadiation->addProperty( 0.6300, 1062.1 );
+    aSolarRadiation->addProperty( 0.6500, 1061.7 );
+    aSolarRadiation->addProperty( 0.6700, 1046.2 );
+    aSolarRadiation->addProperty( 0.6900, 859.2 );
+    aSolarRadiation->addProperty( 0.7100, 1002.4 );
+    aSolarRadiation->addProperty( 0.7180, 816.9 );
+    aSolarRadiation->addProperty( 0.7244, 842.8 );
+    aSolarRadiation->addProperty( 0.7400, 971.0 );
+    aSolarRadiation->addProperty( 0.7525, 956.3 );
+    aSolarRadiation->addProperty( 0.7575, 942.2 );
+    aSolarRadiation->addProperty( 0.7625, 524.8 );
+    aSolarRadiation->addProperty( 0.7675, 830.7 );
+    aSolarRadiation->addProperty( 0.7800, 908.9 );
+    aSolarRadiation->addProperty( 0.8000, 873.4 );
+    aSolarRadiation->addProperty( 0.8160, 712.0 );
+    aSolarRadiation->addProperty( 0.8237, 660.2 );
+    aSolarRadiation->addProperty( 0.8315, 765.5 );
+    aSolarRadiation->addProperty( 0.8400, 799.8 );
+    aSolarRadiation->addProperty( 0.8600, 815.2 );
+    aSolarRadiation->addProperty( 0.8800, 778.3 );
+    aSolarRadiation->addProperty( 0.9050, 630.4 );
+    aSolarRadiation->addProperty( 0.9150, 565.2 );
+    aSolarRadiation->addProperty( 0.9250, 586.4 );
+    aSolarRadiation->addProperty( 0.9300, 348.1 );
+    aSolarRadiation->addProperty( 0.9370, 224.2 );
+    aSolarRadiation->addProperty( 0.9480, 271.4 );
+    aSolarRadiation->addProperty( 0.9650, 451.2 );
+    aSolarRadiation->addProperty( 0.9800, 549.7 );
+    aSolarRadiation->addProperty( 0.9935, 630.1 );
+    aSolarRadiation->addProperty( 1.0400, 582.9 );
+    aSolarRadiation->addProperty( 1.0700, 539.7 );
+    aSolarRadiation->addProperty( 1.1000, 366.2 );
+    aSolarRadiation->addProperty( 1.1200, 98.1 );
+    aSolarRadiation->addProperty( 1.1300, 169.5 );
+    aSolarRadiation->addProperty( 1.1370, 118.7 );
+    aSolarRadiation->addProperty( 1.1610, 301.9 );
+    aSolarRadiation->addProperty( 1.1800, 406.8 );
+    aSolarRadiation->addProperty( 1.2000, 375.2 );
+    aSolarRadiation->addProperty( 1.2350, 423.6 );
+    aSolarRadiation->addProperty( 1.2900, 365.7 );
+    aSolarRadiation->addProperty( 1.3200, 223.4 );
+    aSolarRadiation->addProperty( 1.3500, 30.1 );
+    aSolarRadiation->addProperty( 1.3950, 1.4 );
+    aSolarRadiation->addProperty( 1.4425, 51.6 );
+    aSolarRadiation->addProperty( 1.4625, 97.0 );
+    aSolarRadiation->addProperty( 1.4770, 97.3 );
+    aSolarRadiation->addProperty( 1.4970, 167.1 );
+    aSolarRadiation->addProperty( 1.5200, 239.3 );
+    aSolarRadiation->addProperty( 1.5390, 248.8 );
+    aSolarRadiation->addProperty( 1.5580, 249.3 );
+    aSolarRadiation->addProperty( 1.5780, 222.3 );
+    aSolarRadiation->addProperty( 1.5920, 227.3 );
+    aSolarRadiation->addProperty( 1.6100, 210.5 );
+    aSolarRadiation->addProperty( 1.6300, 224.7 );
+    aSolarRadiation->addProperty( 1.6460, 215.9 );
+    aSolarRadiation->addProperty( 1.6780, 202.8 );
+    aSolarRadiation->addProperty( 1.7400, 158.2 );
+    aSolarRadiation->addProperty( 1.8000, 28.6 );
+    aSolarRadiation->addProperty( 1.8600, 1.8 );
+    aSolarRadiation->addProperty( 1.9200, 1.1 );
+    aSolarRadiation->addProperty( 1.9600, 19.7 );
+    aSolarRadiation->addProperty( 1.9850, 84.9 );
+    aSolarRadiation->addProperty( 2.0050, 25.0 );
+    aSolarRadiation->addProperty( 2.0350, 92.5 );
+    aSolarRadiation->addProperty( 2.0650, 56.3 );
+    aSolarRadiation->addProperty( 2.1000, 82.7 );
+    aSolarRadiation->addProperty( 2.1480, 76.2 );
+    aSolarRadiation->addProperty( 2.1980, 66.4 );
+    aSolarRadiation->addProperty( 2.2700, 65.0 );
+    aSolarRadiation->addProperty( 2.3600, 57.6 );
+    aSolarRadiation->addProperty( 2.4500, 19.8 );
+    aSolarRadiation->addProperty( 2.4940, 17.0 );
+    aSolarRadiation->addProperty( 2.5370, 3.0 );
+    aSolarRadiation->addProperty( 2.9410, 4.0 );
+    aSolarRadiation->addProperty( 2.9730, 7.0 );
+    aSolarRadiation->addProperty( 3.0050, 6.0 );
+    aSolarRadiation->addProperty( 3.0560, 3.0 );
+    aSolarRadiation->addProperty( 3.1320, 5.0 );
+    aSolarRadiation->addProperty( 3.1560, 18.0 );
+    aSolarRadiation->addProperty( 3.2040, 1.2 );
+    aSolarRadiation->addProperty( 3.2450, 3.0 );
+    aSolarRadiation->addProperty( 3.3170, 12.0 );
+    aSolarRadiation->addProperty( 3.3440, 3.0 );
+    aSolarRadiation->addProperty( 3.4500, 12.2 );
+    aSolarRadiation->addProperty( 3.5730, 11.0 );
+    aSolarRadiation->addProperty( 3.7650, 9.0 );
+    aSolarRadiation->addProperty( 4.0450, 6.9 );
+
+    return aSolarRadiation;
+  }
+
   shared_ptr< CEquivalentBSDFLayer > getLayer() { return m_Layer; };
 
 };
@@ -440,61 +439,64 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   const double minLambda = 0.3;
   const double maxLambda = 2.5;
   
-  CEquivalentBSDFLayer aLayer = *getLayer();
+  shared_ptr< CEquivalentBSDFLayer > aEqLayer = getLayer();
+
+  shared_ptr< CSeries >  aSolarRadiation = loadSolarRadiationFile();
+  CMultiBSDFLayer aLayer = CMultiBSDFLayer( aEqLayer, aSolarRadiation );
 
   double tauDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::T );
-  EXPECT_NEAR( 0.54859517102148248, tauDiff, 1e-6 );
+  EXPECT_NEAR( 0.5485952, tauDiff, 1e-6 );
 
   double rhoDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::R );
-  EXPECT_NEAR( 0.21340640916470646, rhoDiff, 1e-6 );
+  EXPECT_NEAR( 0.2134064, rhoDiff, 1e-6 );
 
   double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
-  EXPECT_NEAR( 0.10966015145104416, absDiff1, 1e-6 );
+  EXPECT_NEAR( 0.1096602, absDiff1, 1e-6 );
 
   double absDiff2 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 2 );
-  EXPECT_NEAR( 0.12617289824574851, absDiff2, 1e-6 );
+  EXPECT_NEAR( 0.1261729, absDiff2, 1e-6 );
 
   double theta = 0;
   double phi = 0;
 
   double tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.65088957749570964, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.6508896, tauHem, 1e-6 );
 
   double tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.65088957749570964, tauDir, 1e-6 );
+  EXPECT_NEAR( 0.6508896, tauDir, 1e-6 );
 
   double rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.12452879168101164, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.1245288, rhoHem, 1e-6 );
 
   double rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.12452879168101164, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.1245288, rhoDir, 1e-6 );
 
   double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.095834343748182116, abs1, 1e-6 );
+  EXPECT_NEAR( 0.0958343, abs1, 1e-6 );
 
   double abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.12658191695807844, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1265819, abs2, 1e-6 );
 
   theta = 45;
   phi = 78;
 
   tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.62489021097897446, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.6248902, tauHem, 1e-6 );
 
   tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.62489021097897446, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.6248902, tauHem, 1e-6 );
 
   rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.13398365976546198, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.1339837, rhoHem, 1e-6 );
 
   rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.13398365976546198, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.1339837, rhoDir, 1e-6 );
 
   abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.10472678949555157, abs1, 1e-6 );
+  EXPECT_NEAR( 0.1047268, abs1, 1e-6 );
 
   abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.13423396964299397, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1342340, abs2, 1e-6 );
 
   CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
@@ -502,13 +504,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   size_t size = aT.getSize();
 
   vector< double > correctResults;
-  correctResults.push_back( 16.167390638702905 );
-  correctResults.push_back( 2.0949315104989110 );
-  correctResults.push_back( 1.1530190959734119 );
-  correctResults.push_back( 0.9039854110596405 );
-  correctResults.push_back( 0.8482453821732177 );
-  correctResults.push_back( 0.8704674021539925 );
-  correctResults.push_back( 0.5266470392080515 );
+  correctResults.push_back( 16.1673906 );
+  correctResults.push_back( 2.09493151 );
+  correctResults.push_back( 1.15301910 );
+  correctResults.push_back( 0.90398541 );
+  correctResults.push_back( 0.84824538 );
+  correctResults.push_back( 0.87046740 );
+  correctResults.push_back( 0.52664704 );
 
   EXPECT_EQ( correctResults.size(), aT.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -520,13 +522,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 2.8920151784897405 );
-  correctResults.push_back( 0.3752512814067827 );
-  correctResults.push_back( 0.2102150503725127 );
-  correctResults.push_back( 0.1802554931672072 );
-  correctResults.push_back( 0.2274557320480421 );
-  correctResults.push_back( 0.4746144799314945 );
-  correctResults.push_back( 1.8714705739305144 );
+  correctResults.push_back( 2.8920152 );
+  correctResults.push_back( 0.3752513 );
+  correctResults.push_back( 0.2102151 );
+  correctResults.push_back( 0.1802555 );
+  correctResults.push_back( 0.2274557 );
+  correctResults.push_back( 0.4746145 );
+  correctResults.push_back( 1.8714706 );
   
   EXPECT_EQ( correctResults.size(), aRb.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -538,13 +540,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
 
   correctResults.clear();
   
-  correctResults.push_back( 0.09583434374818212 );
-  correctResults.push_back( 0.09680657622200863 );
-  correctResults.push_back( 0.09974534468498698 );
-  correctResults.push_back( 0.10472678949555157 );
-  correctResults.push_back( 0.11194996154054089 );
-  correctResults.push_back( 0.12168667660699012 );
-  correctResults.push_back( 0.12669900332020634 );
+  correctResults.push_back( 0.0958343 );
+  correctResults.push_back( 0.0968066 );
+  correctResults.push_back( 0.0997453 );
+  correctResults.push_back( 0.1047268 );
+  correctResults.push_back( 0.1119500 );
+  correctResults.push_back( 0.1216867 );
+  correctResults.push_back( 0.1266990 );
   
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -556,13 +558,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
 
   correctResults.clear();
   
-  correctResults.push_back( 0.12658191695807844 );
-  correctResults.push_back( 0.12760409168436390 );
-  correctResults.push_back( 0.13046361350689409 );
-  correctResults.push_back( 0.13423396964299397 );
-  correctResults.push_back( 0.13598732500086685 );
-  correctResults.push_back( 0.12741591618981113 );
-  correctResults.push_back( 0.07614352846733891 );
+  correctResults.push_back( 0.1265819 );
+  correctResults.push_back( 0.1276040 );
+  correctResults.push_back( 0.1304636 );
+  correctResults.push_back( 0.1342340 );
+  correctResults.push_back( 0.1359873 );
+  correctResults.push_back( 0.1274159 );
+  correctResults.push_back( 0.0761435 );
   
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -574,13 +576,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.063757437087811619 );
-  correctResults.push_back( 0.064230721506237695 );
-  correctResults.push_back( 0.065546253068435562 );
-  correctResults.push_back( 0.067249255379550385 );
-  correctResults.push_back( 0.067944004575986455 );
-  correctResults.push_back( 0.063744947353572542 );
-  correctResults.push_back( 0.039133310401528641 );
+  correctResults.push_back( 0.0637574 );
+  correctResults.push_back( 0.0642307 );
+  correctResults.push_back( 0.0655463 );
+  correctResults.push_back( 0.0672493 );
+  correctResults.push_back( 0.0679440 );
+  correctResults.push_back( 0.0637449 );
+  correctResults.push_back( 0.0391333 );
   
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -592,13 +594,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.16675679602228188 );
-  correctResults.push_back( 0.16834400389923435 );
-  correctResults.push_back( 0.17311581093382766 );
-  correctResults.push_back( 0.18109150092403950 );
-  correctResults.push_back( 0.19226899659306185 );
-  correctResults.push_back( 0.20590658291865963 );
-  correctResults.push_back( 0.20017048054698627 );
+  correctResults.push_back( 0.1667568 );
+  correctResults.push_back( 0.1683440 );
+  correctResults.push_back( 0.1731158 );
+  correctResults.push_back( 0.1810915 );
+  correctResults.push_back( 0.1922690 );
+  correctResults.push_back( 0.2059066 );
+  correctResults.push_back( 0.2001705 );
   
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {

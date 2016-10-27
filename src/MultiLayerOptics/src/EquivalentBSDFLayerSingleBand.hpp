@@ -77,7 +77,7 @@ namespace MultiLayerOptics {
     void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFIntegrator >& t_Layer );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const FenestrationCommon::Side t_Side,
-    const FenestrationCommon::PropertySimple t_Property );
+      const FenestrationCommon::PropertySimple t_Property );
 
     std::shared_ptr< FenestrationCommon::CSquareMatrix > getProperty( const FenestrationCommon::Side t_Side,
       const FenestrationCommon::PropertySimple t_Property );

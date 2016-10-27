@@ -21,6 +21,8 @@ namespace SingleLayerOptics {
 
   class CBSDFLayer;
   class CBSDFIntegrator;
+  enum class BSDFHemisphere;
+  class CBSDFDirections;
 
 }
 
@@ -32,67 +34,48 @@ namespace MultiLayerOptics {
   class CEquivalentBSDFLayer {
   public:
     CEquivalentBSDFLayer( const std::shared_ptr< std::vector< double > >& t_CommonWavelengths, 
-      const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation, 
       const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
 
     void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
+    std::shared_ptr< const SingleLayerOptics::CBSDFDirections > getDirections( const SingleLayerOptics::BSDFHemisphere t_Side ) const;
+    std::shared_ptr< std::vector< double > > getCommonWavelengths() const;
 
-    // Whole matrix results
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const double minLambda, const double maxLambda,
-      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
+    // Absorptance wavelength by wavelength matrices
+    std::shared_ptr< FenestrationCommon::CMatrixSeries > getTotalA( const FenestrationCommon::Side t_Side );
 
-    double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
-      const FenestrationCommon::PropertySimple t_Property, const double t_Theta, const double t_Phi );
+    // Transmittance and reflectance wavelength by wavelength matrices
+    std::shared_ptr< FenestrationCommon::CMatrixSeries > getTotal( const FenestrationCommon::Side t_Side, 
+      const FenestrationCommon::PropertySimple t_Property );
 
-    // Vector of layer by layer absorptances for each incoming direction
-    std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Side t_Side, const size_t Index );
-
-    // Hemispherical results for every direction
-    std::shared_ptr< std::vector< double > > DirHem( const double minLambda, const double maxLambda,
-      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
-
-    // Directional hemispherical results for given Theta and Phi direction
-    double DirHem( const double minLambda, const double maxLambda,
-      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property, 
-      const double t_Theta, const double t_Phi );
-
-    double Abs( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
-
-    // Diffuse to diffuse properties
-    double DiffDiff( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
-
-    double AbsDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
-      const size_t t_LayerIndex );
+    void setSolarRadiation( const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation );
 
   private:
 
-    void calculate( const double minLambda, const double maxLambda );
+    void calculate();
 
     void triggerLayerAbsCalculations( const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End );
 
     // Wavelength layer per layer calculations
     void calculateWavelengthProperties( std::map< FenestrationCommon::Side, 
-      std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_TotA, 
-      std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > > t_Tot,
+      std::shared_ptr< FenestrationCommon::CMatrixSeries > >& t_TotA, 
+      std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > >& t_Tot,
       const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End );
-    
-    void calcHemisphericalAbs( const FenestrationCommon::Side t_Side );
+
+    void updateWavelengthLayers( const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
 
     // Vector of layer results over each wavelength
     std::shared_ptr< std::vector< std::shared_ptr< CEquivalentBSDFLayerSingleBand > > > m_LayersWL;
 
+    // Layers that are added to the equivalent layer
+    std::vector< std::shared_ptr< SingleLayerOptics::CBSDFLayer > > m_Layer;
+    
+    // Total absoprtance coefficients for every wavelength (does not include source data)
+    std::map< FenestrationCommon::Side, std::shared_ptr< FenestrationCommon::CMatrixSeries > > m_TotA;
 
-    std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > > m_Abs;
-    // Hemispherical absorptances for every layer
-    std::map < FenestrationCommon::Side, std::shared_ptr< std::vector < double > > > m_AbsHem;
-
-    std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > m_Results;
+    // Total Transmittance and Reflectance values for every wavelength (does not include source data)
+    std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > > m_Tot;
 
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
-    std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
 
     std::shared_ptr< std::vector< double > > m_CombinedLayerWavelengths;
     bool m_Calculated;

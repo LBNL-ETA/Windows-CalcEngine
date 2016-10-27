@@ -180,7 +180,7 @@ namespace SingleLayerOptics {
     m_OutgoingDirections( make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Outgoing ) ) {
   }
 
-  shared_ptr< CBSDFDirections > CBSDFHemisphere::getDirections( const BSDFHemisphere t_Side ) const {
+  shared_ptr< const CBSDFDirections > CBSDFHemisphere::getDirections( const BSDFHemisphere t_Side ) const {
     shared_ptr< CBSDFDirections > aDirections = nullptr;
     switch ( t_Side ) {
     case BSDFHemisphere::Incoming:

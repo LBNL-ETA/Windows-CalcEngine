@@ -37,7 +37,8 @@ namespace SingleLayerOptics {
     shared_ptr< CSquareMatrix > Tau = m_Results->getMatrix( aSide, PropertySimple::T );
     shared_ptr< CSquareMatrix > Rho = m_Results->getMatrix( aSide, PropertySimple::R );
 
-    shared_ptr< CBSDFDirections > jDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Outgoing );
+    shared_ptr< const CBSDFDirections > jDirections = 
+      m_BSDFHemisphere->getDirections( BSDFHemisphere::Outgoing );
 
     size_t size = jDirections->size();
 

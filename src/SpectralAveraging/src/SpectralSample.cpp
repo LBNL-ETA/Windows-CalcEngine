@@ -234,9 +234,9 @@ namespace SpectralAveraging {
         throw runtime_error( "Wavelength range is not set. Properties cannot be calculated without given wavelenght set." );
       }
 
+      // In case source data are set then apply solar radiation to the calculations.
+      // Otherwise, just use measured data.
       if( m_SourceData != nullptr ) {
-        // throw runtime_error( "Source data are not set." );
-        //}
 
         m_IncomingSource = m_SourceData->interpolate( *m_Wavelengths );
 
@@ -366,6 +366,24 @@ namespace SpectralAveraging {
     m_ReflectedBackSource = m_RefBack->mMult( *m_IncomingSource );
     m_AbsorbedFrontSource = m_AbsFront->mMult( *m_IncomingSource );
     m_AbsorbedBackSource = m_AbsBack->mMult( *m_IncomingSource );
+  }
+
+  void CSpectralSample::calculateState() {
+    CSample::calculateState();
+    if( m_SourceData == nullptr ) {
+      // TODO: Make sure that interpolation is necessary here.
+      // It slows down program for quite a bit
+
+      //m_SampleData->interpolate( *m_Wavelengths );
+
+      m_Transmittance = m_SampleData->properties( SampleData::T );
+      m_RefFront = m_SampleData->properties( SampleData::Rf );
+      m_RefBack = m_SampleData->properties( SampleData::Rb );
+      m_AbsFront = m_SampleData->properties( SampleData::AbsF );
+      m_AbsBack = m_SampleData->properties( SampleData::AbsB );
+
+      m_StateCalculated = true;
+    }
   }
 
 }

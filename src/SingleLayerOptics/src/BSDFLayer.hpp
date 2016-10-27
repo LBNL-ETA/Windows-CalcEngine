@@ -19,17 +19,19 @@ namespace MultiLayerOptics {
 
 namespace SingleLayerOptics {
 
-  class CBaseCell;
+  enum class BSDFHemisphere;
   class CBSDFHemisphere;
+  class CBaseCell;
   class CBSDFIntegrator;
   class CBeamDirection;
+  class CBSDFDirections;
 
   typedef std::vector< std::shared_ptr< CBSDFIntegrator > > BSDF_Results;
 
   // Base class for handling BSDF Layer
   class CBSDFLayer {
   public:
-    friend class MultiLayerOptics::CEquivalentBSDFLayer;
+    // friend class MultiLayerOptics::CEquivalentBSDFLayer;
     CBSDFLayer( const std::shared_ptr< CBaseCell >& t_Cell, 
       const std::shared_ptr< const CBSDFHemisphere >& t_Directions );
 
@@ -37,6 +39,8 @@ namespace SingleLayerOptics {
 
     // BSDF results for the enire spectrum range of the material in the cell
     std::shared_ptr< CBSDFIntegrator > getResults();
+
+    std::shared_ptr< const CBSDFDirections > getDirections( const BSDFHemisphere t_Side ) const;
 
     // BSDF results for each wavelenght given in specular cell
     std::shared_ptr< BSDF_Results > getWavelengthResults();
@@ -73,7 +77,8 @@ namespace SingleLayerOptics {
     void calc_dir_dir();
     void calc_dir_dif();
     void fillWLResultsFromMaterialCell();
-    // Keeps state of the object. Calculations are not done by defult (in constructor) becuase they are extensive.
+    // Keeps state of the object. Calculations are not done by defult (in constructor)
+    // becuase they are time consuming.
     bool m_Calculated;
 
     // Calculation of results over each wavelength

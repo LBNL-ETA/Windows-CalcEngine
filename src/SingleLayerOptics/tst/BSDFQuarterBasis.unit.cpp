@@ -22,13 +22,12 @@ protected:
   }
 
 public:
-  shared_ptr< CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) 
+  shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) 
     { return m_BSDFHemisphere->getDirections( t_Side ); };
 
 };
 
-TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis )
-{
+TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis ) {
   SCOPED_TRACE( "Begin Test: Phi angles for patches." );
   
   CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
@@ -44,9 +43,8 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis )
   EXPECT_EQ( correctSize, aDirections.size() );
 
   vector< double > phiAngles;
-  vector< shared_ptr< CBSDFPatch > >::iterator it;
-  for( it = aDirections.begin(); it < aDirections.end(); ++it ) {
-    phiAngles.push_back( ( *it )->centerPoint()->phi() );
+  for( shared_ptr< const CBSDFPatch > aPatch : aDirections ) {
+    phiAngles.push_back( aPatch->centerPoint()->phi() );
   }
 
   for( size_t i = 0; i < phiAngles.size(); ++i ) {

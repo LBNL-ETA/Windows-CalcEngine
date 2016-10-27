@@ -123,15 +123,6 @@ namespace SpectralAveraging {
   double CAngularSpectralSample::getProperty( double const minLambda, double const maxLambda, 
     const Property t_Property, const Side t_Side, const double t_Angle ) {
     shared_ptr< CSpectralSample > aSample = findSpectralSample( t_Angle );
-
-    // Source data cannot be assigned and therefore property cannot be calculated.
-    // Just return zero.
-    // double aProperty = 0;
-    // if( aSample->getSourceData() != nullptr ) {
-    //   aProperty = aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
-    // }
-    // 
-    // return aProperty;
     return aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
   }
 
@@ -167,7 +158,7 @@ namespace SpectralAveraging {
   shared_ptr< CSpectralSample > CAngularSpectralSample::findSpectralSample( const double t_Angle ) {
     shared_ptr< CSpectralSample > aSample = nullptr;
 
-    vector < shared_ptr< CSpectralSampleAngle > >::iterator it;
+    vector< shared_ptr< CSpectralSampleAngle > >::iterator it;
   
     it = find_if( m_SpectralProperties.begin(), m_SpectralProperties.end(), 
       [ &t_Angle ]( const shared_ptr< CSpectralSampleAngle >& obj ) 

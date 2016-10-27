@@ -40,7 +40,8 @@ namespace SingleLayerOptics {
     double aTau = aCell->T_dir_dif( aSide, t_Direction );
     double Ref = aCell->R_dir_dif( aSide, t_Direction );
 
-    shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
+    shared_ptr< const CBSDFDirections > aDirections = 
+      m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
     size_t size = aDirections->size();
 
     for( size_t j = 0; j < size; ++j ) {
@@ -59,7 +60,8 @@ namespace SingleLayerOptics {
     shared_ptr< vector< double > > aTau = aCell->T_dir_dif_band( aSide, t_Direction );
     shared_ptr< vector< double > > Ref = aCell->R_dir_dif_band( aSide, t_Direction );
 
-    shared_ptr< CBSDFDirections > aDirections = m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
+    shared_ptr< const CBSDFDirections > aDirections = 
+      m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
     size_t size = aDirections->size();
 
     for( size_t i = 0; i < size; ++i ) {

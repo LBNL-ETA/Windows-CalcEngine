@@ -52,8 +52,8 @@ namespace SpectralAveraging {
 
   class CAngularSpectralSample {
   public:
-    CAngularSpectralSample( const std::shared_ptr< CSpectralSample >& t_SpectralSample, const double t_Thickness,
-      const FenestrationCommon::MaterialType t_Type );
+    CAngularSpectralSample( const std::shared_ptr< CSpectralSample >& t_SpectralSample, 
+      const double t_Thickness, const FenestrationCommon::MaterialType t_Type );
 
     void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 

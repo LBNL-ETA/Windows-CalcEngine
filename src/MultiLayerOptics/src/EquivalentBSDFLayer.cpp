@@ -27,147 +27,74 @@ using namespace SingleLayerOptics;
 namespace MultiLayerOptics {
 
   CEquivalentBSDFLayer::CEquivalentBSDFLayer( const shared_ptr< vector< double > >& t_CommonWavelengths,
-    const shared_ptr< CSeries >& t_SolarRadiation, const shared_ptr< CBSDFLayer >& t_Layer ) : 
-    m_SolarRadiation( t_SolarRadiation ), m_CombinedLayerWavelengths( t_CommonWavelengths ), m_Calculated( false ) {
+    const shared_ptr< CBSDFLayer >& t_Layer ) : 
+    m_CombinedLayerWavelengths( t_CommonWavelengths ), 
+    m_Calculated( false ) {
     if( t_Layer == nullptr ) {
       throw runtime_error("Equivalent BSDF Layer must contain valid layer.");
     }
 
-    t_Layer->setSourceData( m_SolarRadiation );
-
+    // Create layers for each wavelength
     m_LayersWL = make_shared< vector< shared_ptr< CEquivalentBSDFLayerSingleBand > > >();
 
     // Lambda matrix from spectral results. Same lambda is valid for any wavelength
     m_Lambda = t_Layer->getResults()->lambdaMatrix();
 
-    shared_ptr< vector< shared_ptr < CBSDFIntegrator > > > aResults = nullptr;
-
-    aResults = t_Layer->getWavelengthResults();
-    size_t size = m_CombinedLayerWavelengths->size();
-    for( size_t i = 0; i < size; ++i ) {
-      double curWL = ( *m_CombinedLayerWavelengths )[ i ];
-      int index = t_Layer->getBandIndex( curWL );
-      assert( index > -1 );
-
-      shared_ptr< CBSDFIntegrator > currentLayer = ( *aResults )[ size_t( index ) ];
-      shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer = 
-        make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
-
-      m_LayersWL->push_back( aEquivalentLayer );
-
-    }
-
-    m_Results = make_shared< CBSDFIntegrator >( t_Layer->m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
-
-    for( Side aSide : EnumSide() ) {
-      m_AbsHem[ aSide ] = make_shared< vector< double > >();
-    }
+    addLayer( t_Layer );
 
   }
 
   void CEquivalentBSDFLayer::addLayer( const shared_ptr< CBSDFLayer >& t_Layer ) {
 
-    t_Layer->setSourceData( m_SolarRadiation );
+    // t_Layer->setSourceData( m_SolarRadiation );
 
-    shared_ptr< vector< shared_ptr < CBSDFIntegrator > > > aResults = nullptr;
+    m_Layer.push_back( t_Layer );
 
-    aResults = t_Layer->getWavelengthResults();
-    size_t size = m_CombinedLayerWavelengths->size();
-    for( size_t i = 0; i < size; ++i ) {
-      double curWL = ( *m_CombinedLayerWavelengths )[ i ];
-      int index = t_Layer->getBandIndex( curWL );
-      assert( index > -1 );
-      shared_ptr< CBSDFIntegrator > currentLayer = ( *aResults )[ size_t( index ) ];
-      shared_ptr< CEquivalentBSDFLayerSingleBand > currentEqLayer = ( *m_LayersWL )[ i ];
-      currentEqLayer->addLayer( currentLayer );
-    }
+    updateWavelengthLayers( t_Layer );
 
   }
 
-  shared_ptr< CSquareMatrix > CEquivalentBSDFLayer::getMatrix( const double minLambda, const double maxLambda,
+  shared_ptr< const CBSDFDirections > CEquivalentBSDFLayer::getDirections( const BSDFHemisphere t_Side ) const {
+    return m_Layer[ 0 ]->getDirections( t_Side );
+  }
+
+  shared_ptr< vector< double > > CEquivalentBSDFLayer::getCommonWavelengths() const {
+    return m_CombinedLayerWavelengths;
+  }
+
+  shared_ptr< CMatrixSeries > CEquivalentBSDFLayer::getTotalA( const Side t_Side ) {
+    if( !m_Calculated ) {
+      calculate();
+    }
+    return m_TotA.at( t_Side );
+  }
+
+  shared_ptr< CMatrixSeries > CEquivalentBSDFLayer::getTotal( 
     const Side t_Side, const PropertySimple t_Property ) {
     if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
+      calculate();
     }
-
-    return m_Results->getMatrix( t_Side, t_Property );
+    return m_Tot.at( make_pair( t_Side, t_Property ) );
   }
 
-  double CEquivalentBSDFLayer::DirDir( const double minLambda, const double maxLambda,
-    const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
+  void CEquivalentBSDFLayer::setSolarRadiation( const shared_ptr< CSeries >& t_SolarRadiation ) {
+    // Need to recreate wavelenght by wavelength layers
+    m_LayersWL->clear();
+    for( shared_ptr< CBSDFLayer > aLayer : m_Layer ) {
+      aLayer->setSourceData( t_SolarRadiation );
+      updateWavelengthLayers( aLayer );
     }
-
-    return m_Results->DirDir( t_Side, t_Property, t_Theta, t_Phi );
+    m_Calculated = false;
   }
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
-    const Side t_Side, const size_t Index ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-    return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
-  }
-
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::DirHem( const double minLambda, const double maxLambda,
-    const Side t_Side, const PropertySimple t_Property ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-    return m_Results->DirHem( t_Side, t_Property );
-  }
-
-  double CEquivalentBSDFLayer::DirHem( const double minLambda, const double maxLambda,
-    const Side t_Side, const PropertySimple t_Property,
-    const double t_Theta, const double t_Phi ) {
-    auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *DirHem( minLambda, maxLambda, t_Side, t_Property ) )[ aIndex ];
-  }
-
-  double CEquivalentBSDFLayer::Abs( const double minLambda, const double maxLambda, 
-    const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
-    auto aIndex = m_Results->getDirections()->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
-  }
-
-  double CEquivalentBSDFLayer::DiffDiff( const double minLambda, const double maxLambda,
-    const Side t_Side, const PropertySimple t_Property ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-    return m_Results->DiffDiff( t_Side, t_Property );
-  }
-
-  double CEquivalentBSDFLayer::AbsDiff( const double minLambda, const double maxLambda, 
-    const Side t_Side, const size_t t_LayerIndex ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
-    return ( *m_AbsHem[ t_Side ] )[ t_LayerIndex - 1 ];
-  }
-
-  void CEquivalentBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
+  void CEquivalentBSDFLayer::calculate() {
     size_t matrixSize = m_Lambda->getSize();
     size_t numberOfLayers = ( *m_LayersWL )[ 0 ]->getNumberOfLayers();
 
-    // Produce local results matrices for each side and property
-    map < pair< Side, PropertySimple >, shared_ptr< CSquareMatrix > > aResults;
-
-    // Getting total solar energy and solar series interpolated over common wavelengths
-    shared_ptr< CSeries > iTotalSolar = m_SolarRadiation->integrate( IntegrationType::Trapezoidal );
-    double incomingSolar = iTotalSolar->sum( minLambda, maxLambda );
-
-    shared_ptr< CSeries > interpolatedSolar = m_SolarRadiation->interpolate( *m_CombinedLayerWavelengths );
-
-    // Create matrix of series for multiwavelength calculations
-    map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > > aTot;
-    map< Side, shared_ptr< CMatrixSeries > > aTotalA;
-
-    for(Side t_Side : EnumSide()) {
-      aTotalA[ t_Side ] = make_shared< CMatrixSeries >( numberOfLayers, matrixSize );
-      for( PropertySimple t_Property : EnumPropertySimple() ) {
-        aTot[ make_pair( t_Side, t_Property ) ] = make_shared< CMatrixSeries >( matrixSize, matrixSize );
+    for(Side aSide : EnumSide()) {
+      m_TotA[ aSide ] = make_shared< CMatrixSeries >( numberOfLayers, matrixSize );
+      for( PropertySimple aProperty : EnumPropertySimple() ) {
+        m_Tot[ make_pair( aSide, aProperty ) ] = make_shared< CMatrixSeries >( matrixSize, matrixSize );
       }
     }
 
@@ -198,28 +125,7 @@ namespace MultiLayerOptics {
     // }
     
     
-    calculateWavelengthProperties( aTotalA, aTot, numberOfLayers, 0, WLsize );
-
-    for( Side t_Side : EnumSide() ) {
-      aTotalA.at( t_Side )->mMult( *interpolatedSolar );
-      aTotalA.at( t_Side )->integrate( IntegrationType::Trapezoidal );
-      m_Abs[ t_Side ] = aTotalA.at( t_Side )->getSums( minLambda, maxLambda, 1 / incomingSolar );
-      for( PropertySimple t_Proprerty : EnumPropertySimple() ) {
-        aTot.at( make_pair( t_Side, t_Proprerty ) )->mMult( *interpolatedSolar );
-        aTot.at( make_pair( t_Side, t_Proprerty ) )->integrate( IntegrationType::Trapezoidal );
-        aResults[ make_pair( t_Side, t_Proprerty ) ] =
-          aTot.at( make_pair( t_Side, t_Proprerty ) )->getSquaredMatrixSums( minLambda, maxLambda, 1 / incomingSolar );
-      }
-
-      // Update result matrices
-      m_Results->setResultMatrices( aResults.at( make_pair( t_Side, PropertySimple::T ) ),
-        aResults.at( make_pair( t_Side, PropertySimple::R ) ), t_Side );
-    }
-
-    // calculate hemispherical absorptances
-    for( Side aSide : EnumSide() ) {
-      calcHemisphericalAbs( aSide );
-    }
+    calculateWavelengthProperties( m_TotA, m_Tot, numberOfLayers, 0, WLsize );
 
     m_Calculated = true;
 
@@ -236,37 +142,50 @@ namespace MultiLayerOptics {
   }
 
 void CEquivalentBSDFLayer::calculateWavelengthProperties(
-    map< Side, shared_ptr< CMatrixSeries > > t_TotA, 
-    map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > > t_Tot, 
+    map< Side, shared_ptr< CMatrixSeries > >& t_TotA, 
+    map< pair< Side, PropertySimple >, shared_ptr< CMatrixSeries > >& t_Tot, 
     const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End ) {
     for( size_t i = t_Start; i < t_End; ++i ) {
       
       double curWL = ( *m_CombinedLayerWavelengths )[ i ];
       CEquivalentBSDFLayerSingleBand& curLayer = *( *m_LayersWL )[ i ];
 
-      for( Side t_Side : EnumSide() ) {
+      for( Side aSide : EnumSide() ) {
         for( size_t k = 0; k < t_NumOfLayers; ++k ) {
-          t_TotA.at( t_Side )->addProperties( k, curWL, *curLayer.getLayerAbsorptances( k + 1, t_Side ) );
+          t_TotA.at( aSide )->addProperties( k, curWL, *curLayer.getLayerAbsorptances( k + 1, aSide ) );
         }
-        for( PropertySimple t_Property : EnumPropertySimple() ) {
-          shared_ptr< CSquareMatrix > curPropertyMatrix = curLayer.getProperty( t_Side, t_Property );
-          t_Tot.at( make_pair( t_Side, t_Property ) )->addProperties( curWL, *curPropertyMatrix );
+        for( PropertySimple aProperty : EnumPropertySimple() ) {
+          shared_ptr< CSquareMatrix > curPropertyMatrix = curLayer.getProperty( aSide, aProperty );
+          t_Tot.at( make_pair( aSide, aProperty ) )->addProperties( curWL, *curPropertyMatrix );
         }
       }
     }
   }
 
-  void CEquivalentBSDFLayer::calcHemisphericalAbs( const Side t_Side ) {
-    size_t numOfLayers = m_Abs[ t_Side ]->size();
-    vector< double > aLambdas = *m_Results->getDirections()->lambdaVector();
-    for( size_t layNum = 0; layNum < numOfLayers; ++layNum ) {
-      vector< double > aAbs = *( *m_Abs[ t_Side ] )[ layNum ];
-      assert( aAbs.size() == aLambdas.size() );
-      vector< double > mult( aLambdas.size() );
-      transform( aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), multiplies< double >() );
-      double sum = accumulate( mult.begin(), mult.end(), 0.0 ) / M_PI;
-      m_AbsHem[ t_Side ]->push_back( sum );
+void CEquivalentBSDFLayer::updateWavelengthLayers( 
+  const shared_ptr< CBSDFLayer >& t_Layer ) {
+  shared_ptr< vector< shared_ptr < CBSDFIntegrator > > > aResults = nullptr;
+
+  aResults = t_Layer->getWavelengthResults();
+  size_t size = m_CombinedLayerWavelengths->size();
+  for( size_t i = 0; i < size; ++i ) {
+    double curWL = ( *m_CombinedLayerWavelengths )[ i ];
+    int index = t_Layer->getBandIndex( curWL );
+    assert( index > -1 );
+
+    shared_ptr< CBSDFIntegrator > currentLayer = ( *aResults )[ size_t( index ) ];
+
+    if( m_LayersWL->size() <= i ) {
+      shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer =
+        make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
+
+      m_LayersWL->push_back( aEquivalentLayer );
+    } else {
+      shared_ptr< CEquivalentBSDFLayerSingleBand > currentEqLayer = ( *m_LayersWL )[ i ];
+      currentEqLayer->addLayer( currentLayer );
     }
+
   }
+}
 
 }

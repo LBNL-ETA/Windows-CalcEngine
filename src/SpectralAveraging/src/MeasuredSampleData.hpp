@@ -19,7 +19,8 @@ namespace SpectralAveraging {
   public:
     CSpectralSampleData();
 
-    void addRecord( double t_Wavelength, double t_Transmittance, double t_ReflectanceFront, double t_ReflectanceBack );
+    void addRecord( double t_Wavelength, double t_Transmittance, double t_ReflectanceFront, 
+      double t_ReflectanceBack );
     std::shared_ptr< FenestrationCommon::CSeries > properties( SampleData t_Property );
     virtual std::shared_ptr< std::vector< double > > getWavelengths();
     void interpolate( const std::vector< double >& t_Wavelengths );
