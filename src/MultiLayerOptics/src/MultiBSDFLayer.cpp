@@ -23,7 +23,7 @@ namespace MultiLayerOptics {
     const p_Series& t_SolarRadiation, const p_VectorSeries& t_IncomingSpectra ) : 
     m_Layer( t_Layer ), m_SolarRadiationInit( t_SolarRadiation ),
     m_Results( make_shared< CBSDFIntegrator >( t_Layer->getDirections( BSDFHemisphere::Incoming ) ) ), 
-    m_Calculated( false ), m_IncomingSolar( 0 ) {
+    m_Calculated( false ) {
 
     for( Side aSide : EnumSide() ) {
       m_AbsHem[ aSide ] = make_shared< vector< double > >();

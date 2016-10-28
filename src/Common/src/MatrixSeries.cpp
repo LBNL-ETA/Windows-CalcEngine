@@ -87,12 +87,9 @@ namespace FenestrationCommon {
     return Result;
   }
 
-  shared_ptr<CSquareMatrix> CMatrixSeries::getSquaredMatrixSums( 
+  shared_ptr< CSquareMatrix > CMatrixSeries::getSquaredMatrixSums( 
     const double minLambda, const double maxLambda, const vector< double >& t_ScaleValue ) {
     assert( m_Matrix.size() == m_Matrix[ 0 ].size() );
-    if( m_Matrix.size() != t_ScaleValue.size() ) {
-      throw runtime_error( "Size of vector for scaling must be same as size of the matrix." );
-    }
     shared_ptr< CSquareMatrix > Res = make_shared< CSquareMatrix >( m_Matrix.size() );
     for( size_t i = 0; i < m_Matrix.size(); ++i ) {
       for( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
