@@ -349,58 +349,58 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   CMultiBSDFLayer aLayer = CMultiBSDFLayer( aEqLayer, aSolarRadiation );
 
   double tauDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::T );
-  EXPECT_NEAR( 0.0234032, tauDiff, 1e-6 );
+  EXPECT_NEAR( 0.0234539, tauDiff, 1e-6 );
 
   double rhoDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::R );
-  EXPECT_NEAR( 0.6460801, rhoDiff, 1e-6 );
+  EXPECT_NEAR( 0.6474821, rhoDiff, 1e-6 );
 
   double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
-  EXPECT_NEAR( 0.1632577, absDiff1, 1e-6 );
+  EXPECT_NEAR( 0.1636120, absDiff1, 1e-6 );
 
   double absDiff2 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 2 );
-  EXPECT_NEAR( 0.1650937, absDiff2, 1e-6 );
+  EXPECT_NEAR( 0.1654520, absDiff2, 1e-6 );
 
   double theta = 0;
   double phi = 0;
 
   double tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.0757867, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.0759512, tauHem, 1e-6 );
 
   double tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.0726877, tauDir, 1e-6 );
+  EXPECT_NEAR( 0.0728454, tauDir, 1e-6 );
 
   double rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.5934598, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.5947476, rhoHem, 1e-6 );
 
   double rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.0820366, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.0822146, rhoDir, 1e-6 );
 
   double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.1564786, abs1, 1e-6 );
+  EXPECT_NEAR( 0.1568181, abs1, 1e-6 );
 
   double abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.1721096, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1724831, abs2, 1e-6 );
 
   theta = 45;
   phi = 78;
 
   tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.0291541, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.0292174, tauHem, 1e-6 );
 
   tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.0266765, tauDir, 1e-6 );
+  EXPECT_NEAR( 0.0267344, tauDir, 1e-6 );
 
   rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.6223190, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.6236694, rhoHem, 1e-6 );
 
   rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.2112655, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.2117240, rhoDir, 1e-6 );
 
   abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.1670210, abs1, 1e-6 );
+  EXPECT_NEAR( 0.1673834, abs1, 1e-6 );
 
   abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.1793405, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1797297, abs2, 1e-6 );
 
   CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
@@ -408,13 +408,13 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
   size_t size = aT.getSize();
 
   vector< double > correctResults;
-  correctResults.push_back( 1.8054826 );
-  correctResults.push_back( 0.1933439 );
-  correctResults.push_back( 0.0813966 );
-  correctResults.push_back( 0.0385910 );
-  correctResults.push_back( 0.0006163 );
-  correctResults.push_back( 0.0005496 );
-  correctResults.push_back( 0.0002838 );
+  correctResults.push_back( 1.80940064 );
+  correctResults.push_back( 0.193763453 );
+  correctResults.push_back( 0.0815732527 );
+  correctResults.push_back( 0.0386747421 );
+  correctResults.push_back( 0.000617628813 );
+  correctResults.push_back( 0.000550776082 );
+  correctResults.push_back( 0.000283894713 );
 
   EXPECT_EQ( correctResults.size(), aT.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -426,17 +426,17 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
 
   correctResults.clear();
 
-  correctResults.push_back( 0.2454578 );
-  correctResults.push_back( 0.2365589 );
-  correctResults.push_back( 0.2401889 );
-  correctResults.push_back( 0.2455170 );
-  correctResults.push_back( 0.2534068 );
-  correctResults.push_back( 0.2534068 );
-  correctResults.push_back( 0.2534068 );
+  correctResults.push_back( 0.245990461 );
+  correctResults.push_back( 0.237072299 );
+  correctResults.push_back( 0.240710132 );
+  correctResults.push_back( 0.246049796 );
+  correctResults.push_back( 0.25395669 );
+  correctResults.push_back( 0.25395669 );
+  correctResults.push_back( 0.25395669 );
 
   EXPECT_EQ( correctResults.size(), aRb.getSize() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );    
   }
 
   // Front absorptance layer 1
@@ -444,17 +444,17 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
 
   correctResults.clear();
 
-  correctResults.push_back( 0.1564786 );
-  correctResults.push_back( 0.1584370 );
-  correctResults.push_back( 0.1620573 );
-  correctResults.push_back( 0.1670210 );
-  correctResults.push_back( 0.1719854 );
-  correctResults.push_back( 0.1690869 );
-  correctResults.push_back( 0.1338333 );
+  correctResults.push_back( 0.156818133 );
+  correctResults.push_back( 0.158780815 );
+  correctResults.push_back( 0.16240897 );
+  correctResults.push_back( 0.167383447 );
+  correctResults.push_back( 0.1723586 );
+  correctResults.push_back( 0.169453832 );
+  correctResults.push_back( 0.134123768 );
 
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );    
   }
 
   // Front absorptance layer 2
@@ -462,13 +462,13 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
 
   correctResults.clear();
 
-  correctResults.push_back( 0.1721096 );
-  correctResults.push_back( 0.1749047 );
-  correctResults.push_back( 0.1774390 );
-  correctResults.push_back( 0.1793405 );
-  correctResults.push_back( 0.1786675 );
-  correctResults.push_back( 0.1593394 );
-  correctResults.push_back( 0.0821427 );
+  correctResults.push_back( 0.172483115 );
+  correctResults.push_back( 0.175284228 );
+  correctResults.push_back( 0.177824072 );
+  correctResults.push_back( 0.179729717 );
+  correctResults.push_back( 0.179055202 );
+  correctResults.push_back( 0.159685153 );
+  correctResults.push_back( 0.0823209807 );
 
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -480,13 +480,13 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
 
   correctResults.clear();
 
-  correctResults.push_back( 0.0086844 );
-  correctResults.push_back( 0.0072253 );
-  correctResults.push_back( 0.0056603 );
-  correctResults.push_back( 0.0035934 );
-  correctResults.push_back( 0.0002511 );
-  correctResults.push_back( 0.0002511 );
-  correctResults.push_back( 0.0002511 );
+  correctResults.push_back( 0.00870323918 );
+  correctResults.push_back( 0.00724093412 );
+  correctResults.push_back( 0.00567253777 );
+  correctResults.push_back( 0.00360124711 );
+  correctResults.push_back( 0.000251639361 );
+  correctResults.push_back( 0.000251639361 );
+  correctResults.push_back( 0.000251639361 );
 
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -498,13 +498,13 @@ TEST_F( EquivalentBSDFLayer_102_Perforated, Test102Perofrated1 ) {
 
   correctResults.clear();
 
-  correctResults.push_back( 0.1835673 );
-  correctResults.push_back( 0.1865081 );
-  correctResults.push_back( 0.1897807 );
-  correctResults.push_back( 0.1938917 );
-  correctResults.push_back( 0.1996389 );
-  correctResults.push_back( 0.1996389 );
-  correctResults.push_back( 0.1996389 );
+  correctResults.push_back( 0.183965605 );
+  correctResults.push_back( 0.186912832 );
+  correctResults.push_back( 0.190192536 );
+  correctResults.push_back( 0.194312499 );
+  correctResults.push_back( 0.200072125 );
+  correctResults.push_back( 0.200072125 );
+  correctResults.push_back( 0.200072125 );
 
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {

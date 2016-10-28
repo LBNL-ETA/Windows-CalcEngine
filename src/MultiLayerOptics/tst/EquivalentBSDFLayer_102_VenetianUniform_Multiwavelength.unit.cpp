@@ -428,13 +428,13 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniformMultiWL, TestBSDF1 ) {
   size_t size = aT.getSize();
 
   vector< double > correctResults;
-  correctResults.push_back( 20.666015 );
-  correctResults.push_back( 2.6825886 );
-  correctResults.push_back( 1.4856801 );
-  correctResults.push_back( 1.1820281 );
-  correctResults.push_back( 1.1495260 );
-  correctResults.push_back( 1.2984299 );
-  correctResults.push_back( 1.1453788 );
+  correctResults.push_back( 20.7108616 );
+  correctResults.push_back( 2.68840995 );
+  correctResults.push_back( 1.48890408 );
+  correctResults.push_back( 1.18459316 );
+  correctResults.push_back( 1.15202051 );
+  correctResults.push_back( 1.30124754 );
+  correctResults.push_back( 1.14786435 );
 
   EXPECT_EQ( correctResults.size(), aT.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -446,13 +446,13 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniformMultiWL, TestBSDF1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 1.8573175 );
-  correctResults.push_back( 0.2413733 );
-  correctResults.push_back( 0.1359415 );
-  correctResults.push_back( 0.1179602 );
-  correctResults.push_back( 0.1529924 );
-  correctResults.push_back( 0.3427376 );
-  correctResults.push_back( 1.6818254 );
+  correctResults.push_back( 1.86134798 );
+  correctResults.push_back( 0.241897096 );
+  correctResults.push_back( 0.136236462 );
+  correctResults.push_back( 0.118216206 );
+  correctResults.push_back( 0.153324393 );
+  correctResults.push_back( 0.34348137 );
+  correctResults.push_back( 1.68547507 );
   
   EXPECT_EQ( correctResults.size(), aRb.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -464,13 +464,13 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniformMultiWL, TestBSDF1 ) {
 
   correctResults.clear();
   
-  correctResults.push_back( 0.0911785 );
-  correctResults.push_back( 0.0921144 );
-  correctResults.push_back( 0.0948889 );
-  correctResults.push_back( 0.0993251 );
-  correctResults.push_back( 0.1048080 );
-  correctResults.push_back( 0.1094916 );
-  correctResults.push_back( 0.1036980 );
+  correctResults.push_back( 0.0913763758 );
+  correctResults.push_back( 0.0923143003 );
+  correctResults.push_back( 0.095094769 );
+  correctResults.push_back( 0.0995405978 );
+  correctResults.push_back( 0.105035438 );
+  correctResults.push_back( 0.10972924 );
+  correctResults.push_back( 0.103923031 );
   
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -500,17 +500,17 @@ TEST_F( EquivalentBSDFLayer_102_VenetianUniformMultiWL, TestBSDF1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.091058601 );
-  correctResults.push_back( 0.091994473 );
-  correctResults.push_back( 0.094768513 );
-  correctResults.push_back( 0.099202912 );
-  correctResults.push_back( 0.10468161 );
-  correctResults.push_back( 0.10936053 );
-  correctResults.push_back( 0.10358259 );
+  correctResults.push_back( 0.0912562045 );
+  correctResults.push_back( 0.0921941075 );
+  correctResults.push_back( 0.0949741676 );
+  correctResults.push_back( 0.0994181888 );
+  correctResults.push_back( 0.104908772 );
+  correctResults.push_back( 0.109597853 );
+  correctResults.push_back( 0.103807372 );
   
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );    
+    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
   }
 
   // Back absorptance layer 2

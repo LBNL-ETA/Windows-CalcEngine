@@ -23,7 +23,7 @@ namespace MultiLayerOptics {
     const p_Series& t_SolarRadiation, const p_VectorSeries& t_IncomingSpectra ) : 
     m_Layer( t_Layer ), m_SolarRadiationInit( t_SolarRadiation ),
     m_Results( make_shared< CBSDFIntegrator >( t_Layer->getDirections( BSDFHemisphere::Incoming ) ) ), 
-    m_Calculated( false ) {
+    m_Calculated( false ), m_MinLambdaCalculated( 0 ), m_MaxLambdaCalculated( 0 ) {
 
     for( Side aSide : EnumSide() ) {
       m_AbsHem[ aSide ] = make_shared< vector< double > >();
@@ -50,66 +50,60 @@ namespace MultiLayerOptics {
 
   shared_ptr< CSquareMatrix > CMultiBSDFLayer::getMatrix( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
+    calculate( minLambda, maxLambda );
 
     return m_Results->getMatrix( t_Side, t_Property );
   }
 
   double CMultiBSDFLayer::DirDir( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
+    calculate( minLambda, maxLambda );
 
     return m_Results->DirDir( t_Side, t_Property, t_Theta, t_Phi );
   }
 
   void CMultiBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
-    m_IncomingSolar.clear();
+    if( !m_Calculated || minLambda != m_MinLambdaCalculated || maxLambda != m_MaxLambdaCalculated ) {
+      m_IncomingSolar.clear();
 
-    for( shared_ptr< CSeries >& aSpectra : *m_IncomingSpectra ) {
-      shared_ptr< CSeries > iTotalSolar = aSpectra->integrate( IntegrationType::Trapezoidal );
-      m_IncomingSolar.push_back( iTotalSolar->sum( minLambda, maxLambda ) );
+      for( shared_ptr< CSeries >& aSpectra : *m_IncomingSpectra ) {
+        // each incoming spectra must be intepolated to same wavelengths as this IGU is using
+        aSpectra = aSpectra->interpolate( *m_Layer->getCommonWavelengths() );
 
-      // each incoming spectra must be intepolated to same wavelengths as this IGU is using
-      aSpectra = aSpectra->interpolate( *m_Layer->getCommonWavelengths() );
-    }
-    // Getting total solar energy and solar series interpolated over common wavelengths
-    
-    // m_IncomingSolar = iTotalSolar->sum( minLambda, maxLambda );
-
-    // shared_ptr< CSeries > interpolatedSolar = 
-    //  m_SolarRadiation->interpolate( *m_Layer->getCommonWavelengths() );
-
-    // Produce local results matrices for each side and property
-    map < pair< Side, PropertySimple >, shared_ptr< CSquareMatrix > > aResults;
-
-    for( Side aSide : EnumSide() ) {
-      CMatrixSeries aTotalA = *m_Layer->getTotalA( aSide );
-      aTotalA.mMult( *m_IncomingSpectra );
-      aTotalA.integrate( IntegrationType::Trapezoidal );
-      m_Abs[ aSide ] = aTotalA.getSums( minLambda, maxLambda, m_IncomingSolar );
-      for( PropertySimple aProprerty : EnumPropertySimple() ) {
-        CMatrixSeries& aTot = *m_Layer->getTotal( aSide, aProprerty );
-        aTot.mMult( *m_IncomingSpectra );
-        aTot.integrate( IntegrationType::Trapezoidal );
-        aResults[ make_pair( aSide, aProprerty ) ] = 
-          aTot.getSquaredMatrixSums( minLambda, maxLambda, m_IncomingSolar );
+        shared_ptr< CSeries > iTotalSolar = aSpectra->integrate( IntegrationType::Trapezoidal );
+        m_IncomingSolar.push_back( iTotalSolar->sum( minLambda, maxLambda ) );
       }
 
-      // Update result matrices
-      m_Results->setResultMatrices( aResults.at( make_pair( aSide, PropertySimple::T ) ),
-        aResults.at( make_pair( aSide, PropertySimple::R ) ), aSide );
-    }
+      // Produce local results matrices for each side and property
+      map < pair< Side, PropertySimple >, shared_ptr< CSquareMatrix > > aResults;
 
-    // calculate hemispherical absorptances
-    for( Side aSide : EnumSide() ) {
-      calcHemisphericalAbs( aSide );
-    }
+      for( Side aSide : EnumSide() ) {
+        CMatrixSeries aTotalA = *m_Layer->getTotalA( aSide );
+        aTotalA.mMult( *m_IncomingSpectra );
+        aTotalA.integrate( IntegrationType::Trapezoidal );
+        m_Abs[ aSide ] = aTotalA.getSums( minLambda, maxLambda, m_IncomingSolar );
+        for( PropertySimple aProprerty : EnumPropertySimple() ) {
+          CMatrixSeries aTot = *m_Layer->getTotal( aSide, aProprerty );
+          aTot.mMult( *m_IncomingSpectra );
+          aTot.integrate( IntegrationType::Trapezoidal );
+          aResults[ make_pair( aSide, aProprerty ) ] =
+            aTot.getSquaredMatrixSums( minLambda, maxLambda, m_IncomingSolar );
+        }
 
-    m_Calculated = true;
+        // Update result matrices
+        m_Results->setResultMatrices( aResults.at( make_pair( aSide, PropertySimple::T ) ),
+          aResults.at( make_pair( aSide, PropertySimple::R ) ), aSide );
+      }
+
+      // calculate hemispherical absorptances
+      for( Side aSide : EnumSide() ) {
+        calcHemisphericalAbs( aSide );
+      }
+
+      m_MinLambdaCalculated = minLambda;
+      m_MaxLambdaCalculated = maxLambda;
+      m_Calculated = true;
+    }
   }
 
   void CMultiBSDFLayer::calcHemisphericalAbs( const Side t_Side ) {
@@ -127,17 +121,13 @@ namespace MultiLayerOptics {
 
   shared_ptr< vector< double > > CMultiBSDFLayer::Abs( const double minLambda, const double maxLambda,
     const Side t_Side, const size_t Index ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
+    calculate( minLambda, maxLambda );
     return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
   }
 
   shared_ptr< vector< double > > CMultiBSDFLayer::DirHem( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
+    calculate( minLambda, maxLambda );
     return m_Results->DirHem( t_Side, t_Property );
   }
 
@@ -156,18 +146,32 @@ namespace MultiLayerOptics {
 
   double CMultiBSDFLayer::DiffDiff( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
+    calculate( minLambda, maxLambda );
     return m_Results->DiffDiff( t_Side, t_Property );
   }
 
   double CMultiBSDFLayer::AbsDiff( const double minLambda, const double maxLambda,
     const Side t_Side, const size_t t_LayerIndex ) {
-    if( !m_Calculated ) {
-      calculate( minLambda, maxLambda );
-    }
+    calculate( minLambda, maxLambda );
     return ( *m_AbsHem[ t_Side ] )[ t_LayerIndex - 1 ];
+  }
+
+  double CMultiBSDFLayer::energy( const double minLambda, const double maxLambda, 
+    const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi ) {
+    calculate( minLambda, maxLambda );
+    auto aIndex = m_Results->getNearestBeamIndex( t_Theta, t_Phi );
+    double solarRadiation = m_IncomingSolar[ aIndex ];
+    double dirHem = ( *DirHem( minLambda, maxLambda, t_Side, t_Property ) )[ aIndex ];
+    return dirHem * solarRadiation;
+  }
+
+  double CMultiBSDFLayer::energyAbs( const double minLambda, const double maxLambda, 
+    const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
+    calculate( minLambda, maxLambda );
+    auto aIndex = m_Results->getNearestBeamIndex( t_Theta, t_Phi );
+    double solarRadiation = m_IncomingSolar[ aIndex ];
+    double abs = ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
+    return abs * solarRadiation;
   }
 
 }

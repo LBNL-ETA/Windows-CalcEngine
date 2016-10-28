@@ -91,7 +91,7 @@ namespace MultiLayerOptics {
     size_t matrixSize = m_Lambda->getSize();
     size_t numberOfLayers = ( *m_LayersWL )[ 0 ]->getNumberOfLayers();
 
-    for(Side aSide : EnumSide()) {
+    for( Side aSide : EnumSide() ) {
       m_TotA[ aSide ] = make_shared< CMatrixSeries >( numberOfLayers, matrixSize );
       for( PropertySimple aProperty : EnumPropertySimple() ) {
         m_Tot[ make_pair( aSide, aProperty ) ] = make_shared< CMatrixSeries >( matrixSize, matrixSize );
@@ -100,7 +100,7 @@ namespace MultiLayerOptics {
 
     // Calculate total transmitted solar per matrix and perform integration over each wavelength
     size_t WLsize = m_CombinedLayerWavelengths->size();
-    
+
     // // This is for multithread calculations. Results were correct and it was some decent improvement.
     // // However, this would require more testing on linux machine (it does not work on Travis)
     // size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
@@ -123,8 +123,8 @@ namespace MultiLayerOptics {
     // for( size_t i = 0; i < numOfThreads; ++i ) {
     //   aThreads[ i ]->join();
     // }
-    
-    
+
+
     calculateWavelengthProperties( m_TotA, m_Tot, numberOfLayers, 0, WLsize );
 
     m_Calculated = true;

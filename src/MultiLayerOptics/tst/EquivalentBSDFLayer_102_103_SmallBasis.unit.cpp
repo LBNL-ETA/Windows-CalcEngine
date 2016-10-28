@@ -445,58 +445,95 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   CMultiBSDFLayer aLayer = CMultiBSDFLayer( aEqLayer, aSolarRadiation );
 
   double tauDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::T );
-  EXPECT_NEAR( 0.5485952, tauDiff, 1e-6 );
+  EXPECT_NEAR( 0.5497857, tauDiff, 1e-6 );
 
   double rhoDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::R );
-  EXPECT_NEAR( 0.2134064, rhoDiff, 1e-6 );
+  EXPECT_NEAR( 0.2138695, rhoDiff, 1e-6 );
 
   double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
-  EXPECT_NEAR( 0.1096602, absDiff1, 1e-6 );
+  EXPECT_NEAR( 0.1098981, absDiff1, 1e-6 );
 
   double absDiff2 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 2 );
-  EXPECT_NEAR( 0.1261729, absDiff2, 1e-6 );
+  EXPECT_NEAR( 0.1264467, absDiff2, 1e-6 );
 
   double theta = 0;
   double phi = 0;
 
   double tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.6508896, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.6523021, tauHem, 1e-6 );
 
   double tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.6508896, tauDir, 1e-6 );
+  EXPECT_NEAR( 0.6523021, tauDir, 1e-6 );
 
   double rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.1245288, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.1247990, rhoHem, 1e-6 );
 
   double rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.1245288, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.1247990, rhoDir, 1e-6 );
 
   double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.0958343, abs1, 1e-6 );
+  EXPECT_NEAR( 0.0960423, abs1, 1e-6 );
 
   double abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.1265819, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1268566, abs2, 1e-6 );
+
+  double energyTransmitted = aLayer.energy( minLambda, maxLambda, Side::Front, 
+    PropertySimple::T, theta, phi );
+  EXPECT_NEAR( 492.6576736, energyTransmitted, 1e-6 );
+
+  double energyReflected = aLayer.energy( minLambda, maxLambda, Side::Front,
+    PropertySimple::R, theta, phi );
+  EXPECT_NEAR( 94.2557185, energyReflected, 1e-6 );
+
+  double energyAbsLayer1 = aLayer.energyAbs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  EXPECT_NEAR( 72.5369194, energyAbsLayer1, 1e-6 );
+
+  double energyAbsLayer2 = aLayer.energyAbs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  EXPECT_NEAR( 95.8097270, energyAbsLayer2, 1e-6 );
 
   theta = 45;
   phi = 78;
 
   tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.6248902, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.6262463, tauHem, 1e-6 );
 
   tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.6248902, tauHem, 1e-6 );
+  EXPECT_NEAR( 0.6262463, tauHem, 1e-6 );
 
   rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.1339837, rhoHem, 1e-6 );
+  EXPECT_NEAR( 0.1342744, rhoHem, 1e-6 );
 
   rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-  EXPECT_NEAR( 0.1339837, rhoDir, 1e-6 );
+  EXPECT_NEAR( 0.1342744, rhoDir, 1e-6 );
 
   abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-  EXPECT_NEAR( 0.1047268, abs1, 1e-6 );
+  EXPECT_NEAR( 0.1049541, abs1, 1e-6 );
 
   abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-  EXPECT_NEAR( 0.1342340, abs2, 1e-6 );
+  EXPECT_NEAR( 0.1345253, abs2, 1e-6 );
+
+  energyTransmitted = aLayer.energy( minLambda, maxLambda, Side::Front,
+    PropertySimple::T, theta, phi );
+  EXPECT_NEAR( 472.9787789, energyTransmitted, 1e-6 );
+
+  energyTransmitted = aLayer.energy( 0.5, 0.8, Side::Front,
+    PropertySimple::T, theta, phi );
+  EXPECT_NEAR( 186.8455475, energyTransmitted, 1e-6 );
+
+  // repeatability test
+  energyTransmitted = aLayer.energy( minLambda, maxLambda, Side::Front,
+    PropertySimple::T, theta, phi );
+  EXPECT_NEAR( 472.9787789, energyTransmitted, 1e-6 );
+
+  energyReflected = aLayer.energy( minLambda, maxLambda, Side::Front,
+    PropertySimple::R, theta, phi );
+  EXPECT_NEAR( 101.4120988, energyReflected, 1e-6 );
+
+  energyAbsLayer1 = aLayer.energyAbs( minLambda, maxLambda, Side::Front, 1, theta, phi );
+  EXPECT_NEAR( 79.2676028, energyAbsLayer1, 1e-6 );
+
+  energyAbsLayer2 = aLayer.energyAbs( minLambda, maxLambda, Side::Front, 2, theta, phi );
+  EXPECT_NEAR( 101.6015581, energyAbsLayer2, 1e-6 );
 
   CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
@@ -504,13 +541,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   size_t size = aT.getSize();
 
   vector< double > correctResults;
-  correctResults.push_back( 16.1673906 );
-  correctResults.push_back( 2.09493151 );
-  correctResults.push_back( 1.15301910 );
-  correctResults.push_back( 0.90398541 );
-  correctResults.push_back( 0.84824538 );
-  correctResults.push_back( 0.87046740 );
-  correctResults.push_back( 0.52664704 );
+  correctResults.push_back( 16.202475 );
+  correctResults.push_back( 2.09947766 );
+  correctResults.push_back( 1.15552123 );
+  correctResults.push_back( 0.905947122 );
+  correctResults.push_back( 0.850086133 );
+  correctResults.push_back( 0.872356377 );
+  correctResults.push_back( 0.5277899 );
 
   EXPECT_EQ( correctResults.size(), aT.getSize() );
   for( size_t i = 0; i < size; ++i ) {
@@ -522,17 +559,17 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 2.8920152 );
-  correctResults.push_back( 0.3752513 );
-  correctResults.push_back( 0.2102151 );
-  correctResults.push_back( 0.1802555 );
-  correctResults.push_back( 0.2274557 );
-  correctResults.push_back( 0.4746145 );
-  correctResults.push_back( 1.8714706 );
+  correctResults.push_back( 2.89829105 );
+  correctResults.push_back( 0.376065603 );
+  correctResults.push_back( 0.210671232 );
+  correctResults.push_back( 0.18064666 );
+  correctResults.push_back( 0.227949327 );
+  correctResults.push_back( 0.475644426 );
+  correctResults.push_back( 1.87553179 );
   
   EXPECT_EQ( correctResults.size(), aRb.getSize() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );    
   }
 
   // Front absorptance layer 1
@@ -540,13 +577,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
 
   correctResults.clear();
   
-  correctResults.push_back( 0.0958343 );
-  correctResults.push_back( 0.0968066 );
-  correctResults.push_back( 0.0997453 );
-  correctResults.push_back( 0.1047268 );
-  correctResults.push_back( 0.1119500 );
-  correctResults.push_back( 0.1216867 );
-  correctResults.push_back( 0.1266990 );
+  correctResults.push_back( 0.0960423109 );
+  correctResults.push_back( 0.0970166532 );
+  correctResults.push_back( 0.099961799 );
+  correctResults.push_back( 0.104954054 );
+  correctResults.push_back( 0.112192901 );
+  correctResults.push_back( 0.121950745 );
+  correctResults.push_back( 0.126973949 );
   
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -558,17 +595,17 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
 
   correctResults.clear();
   
-  correctResults.push_back( 0.1265819 );
-  correctResults.push_back( 0.1276040 );
-  correctResults.push_back( 0.1304636 );
-  correctResults.push_back( 0.1342340 );
-  correctResults.push_back( 0.1359873 );
-  correctResults.push_back( 0.1274159 );
-  correctResults.push_back( 0.0761435 );
+  correctResults.push_back( 0.126856608 );
+  correctResults.push_back( 0.127881001 );
+  correctResults.push_back( 0.130746729 );
+  correctResults.push_back( 0.134525267 );
+  correctResults.push_back( 0.136282427 );
+  correctResults.push_back( 0.127692418 );
+  correctResults.push_back( 0.0763087652 );
   
   EXPECT_EQ( correctResults.size(), aAbsF.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );    
   }
 
   // Back absorptance layer 1
@@ -576,13 +613,13 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.0637574 );
-  correctResults.push_back( 0.0642307 );
-  correctResults.push_back( 0.0655463 );
-  correctResults.push_back( 0.0672493 );
-  correctResults.push_back( 0.0679440 );
-  correctResults.push_back( 0.0637449 );
-  correctResults.push_back( 0.0391333 );
+  correctResults.push_back( 0.0638957951 );
+  correctResults.push_back( 0.0643701066 );
+  correctResults.push_back( 0.065688493 );
+  correctResults.push_back( 0.0673951909 );
+  correctResults.push_back( 0.0680914478 );
+  correctResults.push_back( 0.0638832783 );
+  correctResults.push_back( 0.0392182324 );
   
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -594,17 +631,17 @@ TEST_F( EquivalentBSDFLayer_102_103_SmallBasis, TestSpecular1 ) {
   
   correctResults.clear();
   
-  correctResults.push_back( 0.1667568 );
-  correctResults.push_back( 0.1683440 );
-  correctResults.push_back( 0.1731158 );
-  correctResults.push_back( 0.1810915 );
-  correctResults.push_back( 0.1922690 );
-  correctResults.push_back( 0.2059066 );
-  correctResults.push_back( 0.2001705 );
+  correctResults.push_back( 0.16711867 );
+  correctResults.push_back( 0.168709322 );
+  correctResults.push_back( 0.173491484 );
+  correctResults.push_back( 0.181484482 );
+  correctResults.push_back( 0.192686234 );
+  correctResults.push_back( 0.206353414 );
+  correctResults.push_back( 0.200604864 );
   
   EXPECT_EQ( correctResults.size(), aAbsB.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );    
   }
 
 }

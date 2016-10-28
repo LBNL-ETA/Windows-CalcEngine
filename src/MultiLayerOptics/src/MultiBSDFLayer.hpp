@@ -68,6 +68,14 @@ namespace MultiLayerOptics {
     double AbsDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
       const size_t t_LayerIndex );
 
+    // Energy that gets transmitted or reflected from certain direction
+    double energy( const double minLambda, const double maxLambda,
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property,
+      const double t_Theta, const double t_Phi );
+
+    double energyAbs( const double minLambda, const double maxLambda,
+      const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
+
   private:
     void calculate( const double minLambda, const double maxLambda );
 
@@ -90,6 +98,8 @@ namespace MultiLayerOptics {
     std::map < FenestrationCommon::Side, std::shared_ptr< std::vector < double > > > m_AbsHem;
 
     bool m_Calculated;
+    double m_MinLambdaCalculated;
+    double m_MaxLambdaCalculated;
 
   };
   

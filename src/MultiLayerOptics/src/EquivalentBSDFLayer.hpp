@@ -79,7 +79,6 @@ namespace MultiLayerOptics {
 
     std::shared_ptr< std::vector< double > > m_CombinedLayerWavelengths;
     bool m_Calculated;
-
   };
 
 }
