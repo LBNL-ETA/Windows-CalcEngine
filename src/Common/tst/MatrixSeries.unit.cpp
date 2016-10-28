@@ -62,12 +62,12 @@ TEST_F( TestMatrixSeries, Test1 ) {
 
   double minLambda = 0.45;
   double maxLambda = 0.65;
-  double scaleFactor = 1;
+  vector< double > scaleFactors = { 1, 1, 1, 1 };
   
   // Note that you need to increase maxLambda from 0.6 to 0.65 in order to include last range into sum.
   // Inserting 0.6 would mean that last range to be included into sum is from 0.55 to 0.6 and last range is
   // from 0.6 to infinity.
-  CSquareMatrix Mat = *aMat->getSquaredMatrixSums( minLambda, maxLambda, scaleFactor );
+  CSquareMatrix Mat = *aMat->getSquaredMatrixSums( minLambda, maxLambda, scaleFactors );
 
   CSquareMatrix correctResults = CSquareMatrix( 2 );
   correctResults[ 0 ] = { 20, 22.4 };

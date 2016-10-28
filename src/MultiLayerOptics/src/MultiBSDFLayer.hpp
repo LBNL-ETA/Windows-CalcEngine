@@ -23,14 +23,23 @@ namespace SingleLayerOptics {
 namespace MultiLayerOptics {
 
   class CEquivalentBSDFLayer;
+
+  typedef std::shared_ptr< FenestrationCommon::CSeries > p_Series;
+  typedef std::shared_ptr< std::vector< p_Series > > p_VectorSeries;
   
   class CMultiBSDFLayer {
   public:
+    // t_SolarRadiation is spectra used for initialization of material properties in the layers
+    // t_IncomingSpectra is solar radiation distribution used to calculate actual data.
+    // If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming spectra
+    // for every direction
     CMultiBSDFLayer( const std::shared_ptr< CEquivalentBSDFLayer >& t_Layer, 
-      const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation );
+      const p_Series& t_SolarRadiation,
+      const p_VectorSeries& t_IncomingSpectra = nullptr );
 
     // Whole matrix results
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( const double minLambda, const double maxLambda,
+    std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix( 
+      const double minLambda, const double maxLambda,
       const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
 
     double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
@@ -65,7 +74,12 @@ namespace MultiLayerOptics {
     void calcHemisphericalAbs( const FenestrationCommon::Side t_Side );
 
     std::shared_ptr< CEquivalentBSDFLayer > m_Layer;
-    std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
+
+    // Solar radiation for initialization
+    std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiationInit;
+
+    p_VectorSeries m_IncomingSpectra;
+    std::vector< double > m_IncomingSolar;
 
     std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > m_Results;
 

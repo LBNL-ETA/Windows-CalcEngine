@@ -49,6 +49,15 @@ namespace FenestrationCommon {
     }
   }
 
+  void CMatrixSeries::mMult( const vector< shared_ptr< CSeries > >& t_Series ) {
+    for( size_t i = 0; i < m_Matrix.size(); ++i ) {
+      for( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
+        assert( t_Series[ i ]->size() == ( *m_Matrix[ i ][ j ] ).size() );
+        m_Matrix[ i ][ j ] = m_Matrix[ i ][ j ]->mMult( *t_Series[ i ] );
+      }
+    }
+  }
+
   vector< shared_ptr < CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
     return m_Matrix[ index ];
   }
@@ -61,14 +70,17 @@ namespace FenestrationCommon {
     }
   }
 
-  shared_ptr< vector< shared_ptr< vector< double > > > > CMatrixSeries::getSums( 
-    const double minLambda, const double maxLambda, const double t_ScaleValue ) {
-    shared_ptr< vector< shared_ptr< vector< double > > > > Result = 
+  shared_ptr< vector< shared_ptr< vector< double > > > > CMatrixSeries::getSums(
+    const double minLambda, const double maxLambda, const vector< double >& t_ScaleValue ) {
+    shared_ptr< vector< shared_ptr< vector< double > > > > Result =
       make_shared< vector< shared_ptr< vector< double > > > >( m_Matrix.size() );
     for( size_t i = 0; i < m_Matrix.size(); ++i ) {
+      if( m_Matrix[ i ].size() != t_ScaleValue.size() ) {
+        throw runtime_error( "Size of vector for scaling must be same as size of the matrix." );
+      }
       ( *Result )[ i ] = make_shared< vector< double > >();
       for( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
-        double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) * t_ScaleValue;
+        double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) / t_ScaleValue[ i ];
         ( *Result )[ i ]->push_back( value );
       }
     }
@@ -76,12 +88,15 @@ namespace FenestrationCommon {
   }
 
   shared_ptr<CSquareMatrix> CMatrixSeries::getSquaredMatrixSums( 
-    const double minLambda, const double maxLambda, const double t_ScaleValue ) {
+    const double minLambda, const double maxLambda, const vector< double >& t_ScaleValue ) {
     assert( m_Matrix.size() == m_Matrix[ 0 ].size() );
+    if( m_Matrix.size() != t_ScaleValue.size() ) {
+      throw runtime_error( "Size of vector for scaling must be same as size of the matrix." );
+    }
     shared_ptr< CSquareMatrix > Res = make_shared< CSquareMatrix >( m_Matrix.size() );
     for( size_t i = 0; i < m_Matrix.size(); ++i ) {
       for( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
-        double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) * t_ScaleValue;
+        double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) / t_ScaleValue[ i ];
         ( *Res )[ i ][ j ] = value;
       }
     }

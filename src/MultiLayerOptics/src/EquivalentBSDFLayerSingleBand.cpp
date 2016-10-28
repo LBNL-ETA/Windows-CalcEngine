@@ -59,7 +59,7 @@ namespace MultiLayerOptics {
       *t_BackLayer.getMatrix( Side::Front, PropertySimple::T ),
       *t_FrontLayer.getMatrix( Side::Back, PropertySimple::R ), *InterRefl1.value(), aLambda );
 
-    m_Results = make_shared< CBSDFIntegrator >( t_FrontLayer.getDirections() );
+    m_Results = make_shared< CBSDFIntegrator >( t_FrontLayer );
     m_Results->setResultMatrices( m_Tf, m_Rf, Side::Front );
     m_Results->setResultMatrices( m_Tb, m_Rb, Side::Back );
 
@@ -97,7 +97,7 @@ namespace MultiLayerOptics {
 
   CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand( const shared_ptr< CBSDFIntegrator >& t_Layer ) : 
     m_PropertiesCalculated( false ) {
-    m_EquivalentLayer = make_shared< CBSDFIntegrator >( t_Layer->getDirections() );
+    m_EquivalentLayer = make_shared< CBSDFIntegrator >( t_Layer );
     for( Side aSide : EnumSide() ) {
       m_A[ aSide ] = make_shared< vector< shared_ptr< vector< double > > > >();
     }

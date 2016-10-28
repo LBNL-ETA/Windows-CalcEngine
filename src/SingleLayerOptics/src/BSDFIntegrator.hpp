@@ -23,6 +23,7 @@ namespace SingleLayerOptics {
   // Layer results from BSDF directions.
   class CBSDFIntegrator {
   public:
+    explicit CBSDFIntegrator( const std::shared_ptr< const CBSDFIntegrator >& t_Integrator );
     explicit CBSDFIntegrator( const std::shared_ptr< const CBSDFDirections >& t_Directions );
 
     // Result matrices
@@ -46,7 +47,7 @@ namespace SingleLayerOptics {
       const double t_Theta, const double t_Phi );
     double Abs( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
 
-    std::shared_ptr< const CBSDFDirections > getDirections() const;
+    // std::shared_ptr< const CBSDFDirections > getDirections() const;
 
     double DiffDiff( const FenestrationCommon::Side t_Side, 
       const FenestrationCommon::PropertySimple t_Property ) const;
@@ -54,6 +55,8 @@ namespace SingleLayerOptics {
     // Lambda values for the layer.
     std::shared_ptr< const std::vector< double > > lambdaVector() const;
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > lambdaMatrix() const;
+
+    size_t getNearestBeamIndex( const double t_Theta, const double t_Phi ) const;
 
   protected:
     std::shared_ptr< const CBSDFDirections > m_Directions;

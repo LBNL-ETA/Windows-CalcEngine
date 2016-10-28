@@ -13,6 +13,19 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics {
 
+  CBSDFIntegrator::CBSDFIntegrator( const shared_ptr< const CBSDFIntegrator >& t_Integrator ) :
+    m_HemisphericalCalculated( false ) {
+    m_Directions = t_Integrator->m_Directions;
+    m_DimMatrices = m_Directions->size();
+
+    for( Side t_Side : EnumSide() ) {
+      for( PropertySimple t_Property : EnumPropertySimple() ) {
+        m_Matrix[ make_pair( t_Side, t_Property ) ] = make_shared< CSquareMatrix >( m_DimMatrices );
+        m_Hem[ make_pair( t_Side, t_Property ) ] = make_shared< vector< double > >( m_DimMatrices );
+      }
+    }
+  }
+
   CBSDFIntegrator::CBSDFIntegrator( const shared_ptr< const CBSDFDirections >& t_Directions ) :
     m_HemisphericalCalculated( false ) {
     m_Directions = t_Directions;
@@ -26,9 +39,9 @@ namespace SingleLayerOptics {
     }
   }
 
-  shared_ptr< const CBSDFDirections > CBSDFIntegrator::getDirections() const {
-    return m_Directions; 
-  }
+  // shared_ptr< const CBSDFDirections > CBSDFIntegrator::getDirections() const {
+  //   return m_Directions; 
+  // }
 
   double CBSDFIntegrator::DiffDiff( const FenestrationCommon::Side t_Side,
     const FenestrationCommon::PropertySimple t_Property ) const {
@@ -92,6 +105,10 @@ namespace SingleLayerOptics {
       }
     }
     return sum / M_PI;
+  }
+
+  size_t CBSDFIntegrator::getNearestBeamIndex( const double t_Theta, const double t_Phi ) const {
+    return m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
   }
 
   void CBSDFIntegrator::calcHemispherical() {
