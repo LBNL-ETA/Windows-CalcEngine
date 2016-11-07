@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <assert.h>
 
-#include "MultiBSDFLayer.hpp"
+#include "MultiPaneBSDF.hpp"
 #include "BSDFIntegrator.hpp"
 #include "EquivalentBSDFLayer.hpp"
 #include "Series.hpp"
@@ -19,7 +19,7 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics {
 
-  CMultiBSDFLayer::CMultiBSDFLayer( const shared_ptr< CEquivalentBSDFLayer >& t_Layer, 
+  CMultiPaneBSDF::CMultiPaneBSDF( const shared_ptr< CEquivalentBSDFLayer >& t_Layer, 
     const p_Series& t_SolarRadiation, const p_VectorSeries& t_IncomingSpectra ) : 
     m_Layer( t_Layer ), m_SolarRadiationInit( t_SolarRadiation ),
     m_Results( make_shared< CBSDFIntegrator >( t_Layer->getDirections( BSDFHemisphere::Incoming ) ) ), 
@@ -48,21 +48,21 @@ namespace MultiLayerOptics {
     }
   }
 
-  shared_ptr< CSquareMatrix > CMultiBSDFLayer::getMatrix( const double minLambda, const double maxLambda,
+  shared_ptr< CSquareMatrix > CMultiPaneBSDF::getMatrix( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property ) {
     calculate( minLambda, maxLambda );
 
     return m_Results->getMatrix( t_Side, t_Property );
   }
 
-  double CMultiBSDFLayer::DirDir( const double minLambda, const double maxLambda,
+  double CMultiPaneBSDF::DirDir( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi ) {
     calculate( minLambda, maxLambda );
 
     return m_Results->DirDir( t_Side, t_Property, t_Theta, t_Phi );
   }
 
-  void CMultiBSDFLayer::calculate( const double minLambda, const double maxLambda ) {
+  void CMultiPaneBSDF::calculate( const double minLambda, const double maxLambda ) {
     if( !m_Calculated || minLambda != m_MinLambdaCalculated || maxLambda != m_MaxLambdaCalculated ) {
       m_IncomingSolar.clear();
 
@@ -106,7 +106,7 @@ namespace MultiLayerOptics {
     }
   }
 
-  void CMultiBSDFLayer::calcHemisphericalAbs( const Side t_Side ) {
+  void CMultiPaneBSDF::calcHemisphericalAbs( const Side t_Side ) {
     size_t numOfLayers = m_Abs[ t_Side ]->size();
     vector< double > aLambdas = *m_Results->lambdaVector();
     for( size_t layNum = 0; layNum < numOfLayers; ++layNum ) {
@@ -119,44 +119,44 @@ namespace MultiLayerOptics {
     }
   }
 
-  shared_ptr< vector< double > > CMultiBSDFLayer::Abs( const double minLambda, const double maxLambda,
+  shared_ptr< vector< double > > CMultiPaneBSDF::Abs( const double minLambda, const double maxLambda,
     const Side t_Side, const size_t Index ) {
     calculate( minLambda, maxLambda );
     return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
   }
 
-  shared_ptr< vector< double > > CMultiBSDFLayer::DirHem( const double minLambda, const double maxLambda,
+  shared_ptr< vector< double > > CMultiPaneBSDF::DirHem( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property ) {
     calculate( minLambda, maxLambda );
     return m_Results->DirHem( t_Side, t_Property );
   }
 
-  double CMultiBSDFLayer::DirHem( const double minLambda, const double maxLambda,
+  double CMultiPaneBSDF::DirHem( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property,
     const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getNearestBeamIndex( t_Theta, t_Phi );
     return ( *DirHem( minLambda, maxLambda, t_Side, t_Property ) )[ aIndex ];
   }
 
-  double CMultiBSDFLayer::Abs( const double minLambda, const double maxLambda,
+  double CMultiPaneBSDF::Abs( const double minLambda, const double maxLambda,
     const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getNearestBeamIndex( t_Theta, t_Phi );
     return ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
   }
 
-  double CMultiBSDFLayer::DiffDiff( const double minLambda, const double maxLambda,
+  double CMultiPaneBSDF::DiffDiff( const double minLambda, const double maxLambda,
     const Side t_Side, const PropertySimple t_Property ) {
     calculate( minLambda, maxLambda );
     return m_Results->DiffDiff( t_Side, t_Property );
   }
 
-  double CMultiBSDFLayer::AbsDiff( const double minLambda, const double maxLambda,
+  double CMultiPaneBSDF::AbsDiff( const double minLambda, const double maxLambda,
     const Side t_Side, const size_t t_LayerIndex ) {
     calculate( minLambda, maxLambda );
     return ( *m_AbsHem[ t_Side ] )[ t_LayerIndex - 1 ];
   }
 
-  double CMultiBSDFLayer::energy( const double minLambda, const double maxLambda, 
+  double CMultiPaneBSDF::energy( const double minLambda, const double maxLambda, 
     const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi ) {
     calculate( minLambda, maxLambda );
     auto aIndex = m_Results->getNearestBeamIndex( t_Theta, t_Phi );
@@ -165,7 +165,7 @@ namespace MultiLayerOptics {
     return dirHem * solarRadiation;
   }
 
-  double CMultiBSDFLayer::energyAbs( const double minLambda, const double maxLambda, 
+  double CMultiPaneBSDF::energyAbs( const double minLambda, const double maxLambda, 
     const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
     calculate( minLambda, maxLambda );
     auto aIndex = m_Results->getNearestBeamIndex( t_Theta, t_Phi );

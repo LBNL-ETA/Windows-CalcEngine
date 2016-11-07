@@ -15,11 +15,9 @@ using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-class TestDoubleClear : public testing::Test {
+class TestDoubleClearNoSun : public testing::Test {
 
 private:
-  // shared_ptr< CBaseIGUTarcogLayer > m_SolidLayer1;
-  // shared_ptr< CBaseIGUTarcogLayer > m_SolidLayer2;
   shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
@@ -89,7 +87,7 @@ public:
 
 };
 
-TEST_F( TestDoubleClear, Test1 ) {
+TEST_F( TestDoubleClearNoSun, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Clear - Surface temperatures" );
   
   shared_ptr< CTarcogSystem > aSystem = nullptr;

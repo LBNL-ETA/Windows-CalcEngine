@@ -27,13 +27,13 @@ namespace MultiLayerOptics {
   typedef std::shared_ptr< FenestrationCommon::CSeries > p_Series;
   typedef std::shared_ptr< std::vector< p_Series > > p_VectorSeries;
   
-  class CMultiBSDFLayer {
+  class CMultiPaneBSDF {
   public:
     // t_SolarRadiation is spectra used for initialization of material properties in the layers
     // t_IncomingSpectra is solar radiation distribution used to calculate actual data.
     // If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming spectra
     // for every direction
-    CMultiBSDFLayer( const std::shared_ptr< CEquivalentBSDFLayer >& t_Layer, 
+    CMultiPaneBSDF( const std::shared_ptr< CEquivalentBSDFLayer >& t_Layer, 
       const p_Series& t_SolarRadiation,
       const p_VectorSeries& t_IncomingSpectra = nullptr );
 
