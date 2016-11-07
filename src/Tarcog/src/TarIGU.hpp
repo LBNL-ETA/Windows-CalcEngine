@@ -29,6 +29,8 @@ namespace Tarcog {
 
     void setSolarRadiation( double const t_SolarRadiation );
 
+    void setTotalSolar( double const t_TotSol );
+
     std::shared_ptr< CBaseTarcogLayer > getFirstLayer() const;
     std::shared_ptr< CBaseTarcogLayer > getLastLayer() const;
 
@@ -62,6 +64,8 @@ namespace Tarcog {
     double m_Width; // meters
     double m_Height; // meters
     double m_Tilt; // degrees
+
+    double m_TotSol; // Total solar transmittance (SHGC calculations)
 
     // Routines to calculate deflection coefficients
     double Ldmean() const;

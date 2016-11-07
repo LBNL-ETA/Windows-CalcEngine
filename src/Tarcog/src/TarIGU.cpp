@@ -85,6 +85,10 @@ namespace Tarcog {
     }
   }
 
+  void CTarIGU::setTotalSolar( double const t_TotSol ) {
+    m_TotSol = t_TotSol;
+  }
+
   shared_ptr< CBaseTarcogLayer > CTarIGU::getFirstLayer() const {
     return m_Layers.front();
   }

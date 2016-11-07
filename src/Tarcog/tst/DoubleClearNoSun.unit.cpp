@@ -135,6 +135,12 @@ TEST_F( TestDoubleClearNoSun, Test1 ) {
   EXPECT_NEAR( 279.781048, Temperature, 1e-5 );
   EXPECT_NEAR( 359.731700, Radiosity, 1e-5 );
 
+  double heatFlow = aSystem->getHeatFlow();
+  EXPECT_NEAR( 105.431019, heatFlow, 1e-5 );
+
+  double Uvalue = aSystem->getUValue();
+  EXPECT_NEAR( 2.703359, Uvalue, 1e-5 );
+
   size_t numOfIter = aSystem->getNumberOfIterations();
   EXPECT_EQ( 20, int( numOfIter ) );
 }

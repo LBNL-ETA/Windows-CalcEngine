@@ -35,6 +35,8 @@ namespace Tarcog {
     // If interior layer have openings, this will return heat flow from airflow
     double getInteriorVentilationFlow() const;
 
+    double getUValue() const;
+
     // Set solution tolerance
     void setTolerance( const double t_Tolerance );
     // Returns number of iterations

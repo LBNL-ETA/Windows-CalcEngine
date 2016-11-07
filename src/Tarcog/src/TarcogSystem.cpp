@@ -106,6 +106,12 @@ namespace Tarcog {
     return m_IGU->getInteriorVentilationFlow();
   }
 
+  double CTarcogSystem::getUValue() const {
+    double interiorAir = m_Indoor->getAirTemperature();
+    double outdoorAir = m_Outdoor->getAirTemperature();
+    return getHeatFlow() / ( interiorAir - outdoorAir );
+  }
+
   void CTarcogSystem::setTolerance( const double t_Tolerance ) {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->setTolerance( t_Tolerance );
