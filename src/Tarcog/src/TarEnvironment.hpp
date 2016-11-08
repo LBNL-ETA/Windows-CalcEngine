@@ -10,11 +10,13 @@ namespace Tarcog {
 
   class CTarSurface;
 
-  enum BoundaryConditionsCoeffModel { CalculateH, HPrescribed, HcPrescribed };
+  enum class BoundaryConditionsCoeffModel { CalculateH, HPrescribed, HcPrescribed };
+  enum class Environment { Indoor, Outdoor };
 
   class CTarEnvironment : public CBaseTarcogLayer, public CGasLayer {
   public:
     CTarEnvironment( double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection );
+    CTarEnvironment( const CTarEnvironment& t_Environment );
 
     ~CTarEnvironment();
 
@@ -31,6 +33,8 @@ namespace Tarcog {
     double getAirTemperature();
     
     virtual void connectToIGULayer( const std::shared_ptr< CBaseTarcogLayer >& t_IGULayer );
+
+    virtual std::shared_ptr< CTarEnvironment > cloneEnvironment() const = 0;
 
   protected:
     void initializeStateVariables();

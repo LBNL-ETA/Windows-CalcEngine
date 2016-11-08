@@ -92,4 +92,8 @@ namespace Tarcog {
     resetCalculated();
   }
 
+  shared_ptr< CBaseTarcogLayer > CTarIGUSolidLayer::clone() const {
+    return make_shared< CTarIGUSolidLayer >( *this );
+  }
+
 }

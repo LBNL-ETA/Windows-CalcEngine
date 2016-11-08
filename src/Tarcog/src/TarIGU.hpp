@@ -6,6 +6,7 @@
 
 namespace Tarcog {
 
+  enum class Environment;
   class CBaseTarcogLayer;
   class CBaseIGUTarcogLayer;
   class CTarIGUSolidLayer;
@@ -14,7 +15,8 @@ namespace Tarcog {
 
   class CTarIGU {
   public:
-    CTarIGU( double t_Width, double t_Height, double t_Tilt = 90 );
+    CTarIGU( double t_Width, double t_Height, double t_Tilt = 90, double t_TotalSolar = 0 );
+    CTarIGU( const CTarIGU& t_IGU );
     ~CTarIGU();
 
     void addLayer( std::shared_ptr< CBaseIGUTarcogLayer > t_Layer );
@@ -31,8 +33,9 @@ namespace Tarcog {
 
     void setTotalSolar( double const t_TotSol );
 
-    std::shared_ptr< CBaseTarcogLayer > getFirstLayer() const;
-    std::shared_ptr< CBaseTarcogLayer > getLastLayer() const;
+    // std::shared_ptr< CBaseTarcogLayer > getFirstLayer() const;
+    // std::shared_ptr< CBaseTarcogLayer > getLastLayer() const;
+    std::shared_ptr< CBaseTarcogLayer > getLayer( const Environment t_Environment ) const;
 
     std::shared_ptr< std::vector< double > > getState();
     void setState( std::shared_ptr< std::vector< double > > t_State );
@@ -65,7 +68,7 @@ namespace Tarcog {
     double m_Height; // meters
     double m_Tilt; // degrees
 
-    double m_TotSol; // Total solar transmittance (SHGC calculations)
+    double m_TotalSolar; // Total solar transmittance
 
     // Routines to calculate deflection coefficients
     double Ldmean() const;

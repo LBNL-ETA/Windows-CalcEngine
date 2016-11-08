@@ -27,6 +27,13 @@ namespace Tarcog {
     m_DirectSolarRadiation = t_DirectSolarRadiation;
   }
 
+  CTarOutdoorEnvironment::CTarOutdoorEnvironment( const CTarOutdoorEnvironment& t_Outdoor ) :
+    CTarEnvironment( t_Outdoor ) {
+    m_Tsky = t_Outdoor.m_Tsky;
+    m_FractionOfClearSky = t_Outdoor.m_FractionOfClearSky;
+    m_SkyModel = t_Outdoor.m_SkyModel;
+  }
+
   double CTarOutdoorEnvironment::calculateIRFromVariables() {
     double aEmissivity = 0;
     switch( m_SkyModel ) {
@@ -45,7 +52,7 @@ namespace Tarcog {
     }
 
     double radiationTemperature = 0;
-    if( m_HCoefficientModel == HPrescribed ) {
+    if( m_HCoefficientModel == BoundaryConditionsCoeffModel::HPrescribed ) {
       radiationTemperature = getAirTemperature();
     } else {
       double fSky = ( 1 + cos( m_Tilt * M_PI / 180 ) ) / 2;
@@ -62,6 +69,14 @@ namespace Tarcog {
     m_Surface[ Side::Back ] = t_IGULayer->getSurface( Side::Front );
   }
 
+  shared_ptr< CBaseTarcogLayer > CTarOutdoorEnvironment::clone() const {
+    return cloneEnvironment();
+  }
+
+  shared_ptr< CTarEnvironment > CTarOutdoorEnvironment::cloneEnvironment() const {
+    return make_shared< CTarOutdoorEnvironment >( *this );
+  }
+
   double CTarOutdoorEnvironment::getGasTemperature() {
     assert( m_Surface.at( Side::Front ) != nullptr );
     return m_Surface.at( Side::Front )->getTemperature();
@@ -69,16 +84,16 @@ namespace Tarcog {
 
   void CTarOutdoorEnvironment::calculateConvectionOrConductionFlow() {
     switch ( m_HCoefficientModel ) {
-      case Tarcog::CalculateH: {
+      case BoundaryConditionsCoeffModel::CalculateH: {
         calculateHc();
         break;
       }
-      case Tarcog::HPrescribed: {
+      case BoundaryConditionsCoeffModel::HPrescribed: {
         double hr = getHr();
         m_ConductiveConvectiveCoeff = m_HInput - hr;
         break;
       }
-      case Tarcog::HcPrescribed: {
+      case BoundaryConditionsCoeffModel::HcPrescribed: {
         m_ConductiveConvectiveCoeff = m_HInput;
         break;
       }

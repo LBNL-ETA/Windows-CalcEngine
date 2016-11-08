@@ -32,6 +32,8 @@ namespace Tarcog {
     void setSolarRadiation( double const t_SolarRadiation );
     void setSolarAbsorptance( double const t_SolarAbsorptance );
 
+    virtual std::shared_ptr< CBaseTarcogLayer > clone() const;
+
   protected:
     virtual void calculateConvectionOrConductionFlow();
 

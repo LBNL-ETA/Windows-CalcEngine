@@ -48,6 +48,8 @@ namespace Tarcog {
 
     CTarIGUShadeLayer( double t_Thickness, double t_Conductivity );
 
+    virtual std::shared_ptr< CBaseTarcogLayer > clone() const;
+
   private:
     void calculateConvectionOrConductionFlow();
 

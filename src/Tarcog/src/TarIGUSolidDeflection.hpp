@@ -20,6 +20,8 @@ namespace Tarcog {
 
     double flexuralRigidity() const;
 
+    virtual std::shared_ptr< CBaseTarcogLayer > clone() const;
+
   protected:
     virtual void calculateConvectionOrConductionFlow();
     double pressureDifference() const;

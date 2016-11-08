@@ -8,7 +8,7 @@
 #include "TarIGUSolidLayer.hpp"
 #include "TarIGUGapLayer.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -19,7 +19,7 @@ class TestTemperatureInitialGuess : public testing::Test {
 
 private:
   shared_ptr< CTarIGU > m_TarcogIGU;
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
   shared_ptr< CTarIGUSolidLayer > m_solidLayer1;
   shared_ptr< CTarIGUSolidLayer > m_solidLayer2;
 
@@ -73,7 +73,7 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( TarcogIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( TarcogIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }
 

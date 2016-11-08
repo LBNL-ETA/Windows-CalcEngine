@@ -8,7 +8,7 @@
 #include "TarBaseShade.hpp"
 #include "TarIGUGapLayer.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -21,7 +21,7 @@ class TestShadeOut : public testing::Test {
 private:
   shared_ptr< CTarIGUSolidLayer > m_SolidLayer1;
   shared_ptr< CTarIGUSolidLayer > m_SolidLayer2;
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
 
 protected:
   virtual void SetUp() {
@@ -99,14 +99,14 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CTarIGUSolidLayer > GetSolidLayer1() { return m_SolidLayer1; };
   shared_ptr< CTarIGUSolidLayer > GetSolidLayer2() { return m_SolidLayer2; };
 
@@ -115,7 +115,7 @@ public:
 TEST_F( TestShadeOut, Test1 ) {
   SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
   
-  shared_ptr< CTarcogSystem > aSystem = nullptr;
+  shared_ptr< CTarcogSingleSystem > aSystem = nullptr;
   shared_ptr< CTarIGUSolidLayer > aLayer1 = nullptr;
   shared_ptr< CTarIGUSolidLayer > aLayer2 = nullptr;
   

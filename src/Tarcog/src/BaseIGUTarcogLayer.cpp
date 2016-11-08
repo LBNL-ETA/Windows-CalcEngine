@@ -4,6 +4,7 @@
 #include "FenestrationCommon.hpp"
 
 using namespace FenestrationCommon;
+using namespace std;
 
 namespace Tarcog {
 

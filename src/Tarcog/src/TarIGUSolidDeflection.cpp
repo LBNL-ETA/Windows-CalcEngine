@@ -42,6 +42,10 @@ namespace Tarcog {
     return m_YoungsModulus * pow( m_Thickness, 3 ) / ( 12 * ( 1 - pow( m_PoisonRatio, 2 ) ) );
   }
 
+  shared_ptr< CBaseTarcogLayer > CTarIGUSolidLayerDeflection::clone() const {
+    return make_shared< CTarIGUSolidLayer >( *this );
+  }
+
   double CTarIGUSolidLayerDeflection::pressureDifference() const {
     double P1 = dynamic_pointer_cast< CGasLayer >( m_NextLayer )->getPressure();
     double P2 = dynamic_pointer_cast< CGasLayer >( m_PreviousLayer )->getPressure();

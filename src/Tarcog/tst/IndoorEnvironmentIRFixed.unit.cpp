@@ -7,7 +7,7 @@
 #include "TarSurface.hpp"
 #include "TarIGUSolidLayer.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 
 using namespace Tarcog;
 using namespace std;
@@ -16,7 +16,7 @@ class TestIndoorEnvironmentIRFixed : public testing::Test {
 
 private:
   shared_ptr< CTarEnvironment > m_Indoor;
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
 
 protected:
   virtual void SetUp() {
@@ -67,7 +67,7 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, m_Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, m_Indoor, Outdoor );
     m_TarcogSystem->solve();
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }

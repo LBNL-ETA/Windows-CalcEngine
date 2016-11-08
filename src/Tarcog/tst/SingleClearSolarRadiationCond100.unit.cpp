@@ -6,7 +6,7 @@
 #include "TarIndoorEnvironment.hpp"
 #include "TarIGUSolidLayer.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -18,7 +18,7 @@ class TestSingleClearSolarCond001 : public testing::Test {
 
 private:
   shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
   shared_ptr< CTarEnvironment > m_Indoor;
 
 protected:
@@ -68,14 +68,14 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, m_Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, m_Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CTarIGUSolidLayer > GetSolidLayer() { return m_SolidLayer; };
   shared_ptr< CTarEnvironment > GetIndoor() { return m_Indoor; };
 
@@ -84,7 +84,7 @@ public:
 TEST_F( TestSingleClearSolarCond001, TestTempAndRad ) {
   SCOPED_TRACE( "Begin Test: Single Clear (Solar Radiation) - Temperatures and Radiosity." );
   
-  shared_ptr< CTarcogSystem > aSystem = nullptr;
+  shared_ptr< CTarcogSingleSystem > aSystem = nullptr;
   shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
   
   aSystem = GetSystem();

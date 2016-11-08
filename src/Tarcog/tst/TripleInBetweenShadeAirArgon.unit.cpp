@@ -12,7 +12,7 @@
 #include "TarIGUGapLayer.hpp"
 #include "TarBaseShade.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -24,7 +24,7 @@ using namespace FenestrationCommon;
 class TestInBetweenShadeAirArgon : public testing::Test {
 
 private:
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
   // shared_ptr< CBaseIGUTarcogLayer > m_Layer1;
   // shared_ptr< CBaseIGUTarcogLayer > m_Layer2;
   // shared_ptr< CBaseIGUTarcogLayer > m_Layer3;
@@ -136,14 +136,14 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
   shared_ptr< CBaseIGUTarcogLayer > GetLayer1() { return m_TarcogSystem->getSolidLayers()[ 0 ]; };
   shared_ptr< CBaseIGUTarcogLayer > GetLayer2() { return m_TarcogSystem->getSolidLayers()[ 1 ]; };
   shared_ptr< CBaseIGUTarcogLayer > GetLayer3() { return m_TarcogSystem->getSolidLayers()[ 2 ]; };

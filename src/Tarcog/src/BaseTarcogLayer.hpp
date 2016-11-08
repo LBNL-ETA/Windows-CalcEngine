@@ -30,6 +30,8 @@ namespace Tarcog {
 
     void tearDownConnections();
 
+    virtual std::shared_ptr< CBaseTarcogLayer > clone() const = 0;
+
   protected:
     virtual void calculateRadiationFlow();
     virtual void calculateConvectionOrConductionFlow() = 0;

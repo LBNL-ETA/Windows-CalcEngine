@@ -9,7 +9,7 @@
 #include "TarIGUGapLayer.hpp"
 #include "TarBaseShade.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -20,7 +20,7 @@ using namespace FenestrationCommon;
 class TestInBetweenShadeAir : public testing::Test {
 
 private:
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
 
 protected:
   virtual void SetUp() {    
@@ -95,21 +95,21 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestInBetweenShadeAir, Test1 ) {
   SCOPED_TRACE( "Begin Test: InBetween Shade - Air" );
 
-  shared_ptr< CTarcogSystem > aSystem = GetSystem();
+  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
   
   vector< double > temperature = aSystem->getSurfaceTemperatures();
   vector< double > radiosity = aSystem->getSurfaceRadiosities();

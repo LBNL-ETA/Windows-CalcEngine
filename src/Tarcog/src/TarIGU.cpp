@@ -16,14 +16,27 @@
 #include "TarIGUGapDeflection.hpp"
 #include "TarIGUVentilatedGapLayer.hpp"
 #include "TarBaseShade.hpp"
+#include "TarEnvironment.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
 
 namespace Tarcog {
-  CTarIGU::CTarIGU( double t_Width, double t_Height, double t_Tilt ) : 
-    m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ) {
+  CTarIGU::CTarIGU( double t_Width, double t_Height, double t_Tilt, double t_TotalSolar ) : 
+    m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ), m_TotalSolar( t_TotalSolar ) {
+  }
+
+  CTarIGU::CTarIGU( const CTarIGU& t_IGU ) {
+    m_Width = t_IGU.m_Width;
+    m_Height = t_IGU.m_Height;
+    m_Tilt = t_IGU.m_Tilt;
+    m_TotalSolar = t_IGU.m_TotalSolar;
+    for( size_t i = 0; i < t_IGU.m_Layers.size(); ++i ) {
+      shared_ptr< CBaseIGUTarcogLayer > aLayer = 
+        dynamic_pointer_cast< CBaseIGUTarcogLayer >( t_IGU.m_Layers[ i ]->clone() );
+      addLayer( aLayer );
+    }
   }
 
   CTarIGU::~CTarIGU() {
@@ -86,15 +99,31 @@ namespace Tarcog {
   }
 
   void CTarIGU::setTotalSolar( double const t_TotSol ) {
-    m_TotSol = t_TotSol;
+    m_TotalSolar = t_TotSol;
   }
 
-  shared_ptr< CBaseTarcogLayer > CTarIGU::getFirstLayer() const {
-    return m_Layers.front();
-  }
+  // shared_ptr< CBaseTarcogLayer > CTarIGU::getFirstLayer() const {
+  //   return m_Layers.front();
+  // }
+  // 
+  // shared_ptr< CBaseTarcogLayer > CTarIGU::getLastLayer() const {
+  //   return m_Layers.back();
+  // }
 
-  shared_ptr< CBaseTarcogLayer > CTarIGU::getLastLayer() const {
-    return m_Layers.back();
+  shared_ptr<CBaseTarcogLayer> CTarIGU::getLayer( const Environment t_Environment ) const {
+    shared_ptr< CBaseTarcogLayer > aLayer = nullptr;
+    switch( t_Environment ) {
+    case Environment::Indoor:
+      aLayer = m_Layers.back();
+      break;
+    case Environment::Outdoor:
+      aLayer = m_Layers.front();
+      break;
+    default:
+      assert("Incorrect environment selection.");
+      break;
+    }
+    return aLayer;
   }
 
   shared_ptr< vector< double > > CTarIGU::getState() {

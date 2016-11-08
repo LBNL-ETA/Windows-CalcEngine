@@ -129,4 +129,8 @@ namespace Tarcog {
     return m_Pressure;
   }
 
+  shared_ptr< CBaseTarcogLayer > CTarIGUGapLayer::clone() const {
+    return make_shared< CTarIGUGapLayer >( *this );
+  }
+
 }

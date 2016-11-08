@@ -15,7 +15,12 @@ namespace Tarcog {
       const double t_SkyTemperature, const SkyModel t_Model, 
       const double t_FractClearSky = TarcogConstants::DEFAULT_FRACTION_OF_CLEAR_SKY );
 
+    CTarOutdoorEnvironment( const CTarOutdoorEnvironment& t_Outdoor );
+
     void connectToIGULayer( const std::shared_ptr< CBaseTarcogLayer >& t_IGULayer );
+
+    virtual std::shared_ptr< CBaseTarcogLayer > clone() const;
+    virtual std::shared_ptr< CTarEnvironment > cloneEnvironment() const;
 
   private:
     double getGasTemperature();

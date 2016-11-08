@@ -25,6 +25,11 @@ namespace Tarcog {
     m_Surface.at( Side::Back )->setTemperature( t_AirTemperature );
   }
 
+  CTarIndoorEnvironment::CTarIndoorEnvironment( const CTarIndoorEnvironment & t_Indoor ) :
+    CTarEnvironment( t_Indoor ) {
+    m_RoomRadiationTemperature = t_Indoor.m_RoomRadiationTemperature;
+  }
+
   void CTarIndoorEnvironment::connectToIGULayer( const shared_ptr< CBaseTarcogLayer >& t_IGULayer ) {
     t_IGULayer->connectToBackSide( shared_from_this() );
   }
@@ -32,6 +37,14 @@ namespace Tarcog {
   void CTarIndoorEnvironment::setRoomRadiationTemperature( double const t_RadiationTemperature ) {
     m_RoomRadiationTemperature = t_RadiationTemperature;
     resetCalculated();
+  }
+
+  shared_ptr< CBaseTarcogLayer > CTarIndoorEnvironment::clone() const {
+    return cloneEnvironment();
+  }
+
+  shared_ptr< CTarEnvironment > CTarIndoorEnvironment::cloneEnvironment() const {
+    return make_shared< CTarIndoorEnvironment >( *this );
   }
 
   double CTarIndoorEnvironment::getGasTemperature() {
@@ -47,16 +60,16 @@ namespace Tarcog {
   void CTarIndoorEnvironment::calculateConvectionOrConductionFlow() {
     // CTarEnvironment::calculateConvectionOrConductionFlow();
     switch( m_HCoefficientModel ) {
-      case Tarcog::CalculateH: {
+      case BoundaryConditionsCoeffModel::CalculateH: {
         calculateHc();
         break;
       }
-      case Tarcog::HPrescribed: {
+      case BoundaryConditionsCoeffModel::HPrescribed: {
         double hr = getHr();
         m_ConductiveConvectiveCoeff = m_HInput - hr;
         break;
       }
-      case Tarcog::HcPrescribed: {
+      case BoundaryConditionsCoeffModel::HcPrescribed: {
         m_ConductiveConvectiveCoeff = m_HInput;
         break;
       }

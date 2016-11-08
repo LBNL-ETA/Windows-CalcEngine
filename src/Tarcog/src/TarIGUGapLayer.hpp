@@ -28,6 +28,9 @@ namespace Tarcog {
 
     virtual double getPressure();
 
+    virtual std::shared_ptr< CBaseTarcogLayer > clone() const;
+
+
   protected:
     void initializeStateVariables();
     virtual void calculateConvectionOrConductionFlow();

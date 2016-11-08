@@ -1,6 +1,8 @@
 #ifndef FENESTRATIONCOMMONSTATE_H
 #define FENESTRATIONCOMMONSTATE_H
 
+#include <memory>
+
 namespace FenestrationCommon {
 
   // class CState is used to keep validity of object state. In some cases calculations do not need

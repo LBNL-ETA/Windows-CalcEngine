@@ -74,6 +74,10 @@ namespace Tarcog {
   
   }
 
+  shared_ptr< CBaseTarcogLayer > CTarIGUShadeLayer::clone() const {
+    return make_shared< CTarIGUShadeLayer >( *this );
+  }
+
   void CTarIGUShadeLayer::calculateConvectionOrConductionFlow() {
     CTarIGUSolidLayer::calculateConvectionOrConductionFlow();
     assert( m_NextLayer != nullptr );

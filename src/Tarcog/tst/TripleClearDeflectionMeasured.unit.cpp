@@ -7,7 +7,7 @@
 #include "TarIGUSolidLayer.hpp"
 #include "TarIGUGapLayer.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -18,7 +18,7 @@ using namespace FenestrationCommon;
 class TripleClearDeflectionMeasured : public testing::Test {
 
 private:
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
 
 protected:
   virtual void SetUp() {    
@@ -89,21 +89,21 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
 
 };
 
 TEST_F( TripleClearDeflectionMeasured, Test1 ) {
   SCOPED_TRACE( "Begin Test: Triple Clear - Measured Deflection." );
   
-  shared_ptr< CTarcogSystem > aSystem = nullptr;
+  shared_ptr< CTarcogSingleSystem > aSystem = nullptr;
   
   aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );

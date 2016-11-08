@@ -6,7 +6,7 @@
 #include "TarIndoorEnvironment.hpp"
 #include "TarIGUSolidLayer.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
+#include "TarcogSingleSystem.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -63,7 +63,7 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    shared_ptr< CTarcogSystem >  aTarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    shared_ptr< CTarcogSingleSystem >  aTarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( aTarcogSystem != nullptr );
 
     aTarcogSystem->solve();
