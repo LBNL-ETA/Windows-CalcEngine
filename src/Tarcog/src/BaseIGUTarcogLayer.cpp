@@ -1,4 +1,6 @@
 #include <memory>
+#include <assert.h>
+
 #include "BaseIGUTarcogLayer.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
@@ -34,6 +36,18 @@ namespace Tarcog {
 
   double CBaseIGUTarcogLayer::J( const Side t_Position ) const {
     return getSurface( t_Position )->J();
+  }
+
+  double CBaseIGUTarcogLayer::getMaxDeflection() const {
+    assert( getSurface( Side::Front )->getMaxDeflection() == 
+      getSurface( Side::Back )->getMaxDeflection() );
+    return getSurface( Side::Front )->getMaxDeflection();
+  }
+
+  double CBaseIGUTarcogLayer::getMeanDeflection() const {
+    assert( getSurface( Side::Front )->getMeanDeflection() ==
+      getSurface( Side::Back )->getMeanDeflection() );
+    return getSurface( Side::Front )->getMeanDeflection();
   }
 
   double CBaseIGUTarcogLayer::getConductivity() {

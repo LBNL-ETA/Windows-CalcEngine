@@ -82,26 +82,20 @@ namespace Tarcog {
     return m_IGU->getGapLayers();
   }
 
-  vector<double> CTarcogSingleSystem::getSurfaceTemperatures() const {
-    vector< double > temperatures;
-    vector< shared_ptr< CTarIGUSolidLayer > > aSolidLayers = getSolidLayers();
-    for( shared_ptr< CTarIGUSolidLayer > aLayer : aSolidLayers ) {
-      for( Side aSide : EnumSide() ) {
-        temperatures.push_back( aLayer->getTemperature( aSide ) );
-      }
-    }
-    return temperatures;
+  shared_ptr< vector< double > > CTarcogSingleSystem::getTemperatures() const {
+    return m_IGU->getTemperatures();
   }
 
-  std::vector<double> CTarcogSingleSystem::getSurfaceRadiosities() const {
-    vector< double > radiosities;
-    vector< shared_ptr< CTarIGUSolidLayer > > aSolidLayers = getSolidLayers();
-    for( shared_ptr< CTarIGUSolidLayer > aLayer : aSolidLayers ) {
-      for( Side aSide : EnumSide() ) {
-        radiosities.push_back( aLayer->J( aSide ) );
-      }
-    }
-    return radiosities;
+  shared_ptr< vector< double > > CTarcogSingleSystem::getRadiosities() const {
+    return m_IGU->getRadiosities();
+  }
+
+  shared_ptr< vector< double > > CTarcogSingleSystem::getMaxDeflections() const {
+    return m_IGU->getMaxDeflections();
+  }
+
+  shared_ptr< vector< double > > CTarcogSingleSystem::getMeanDeflections() const {
+    return m_IGU->getMeanDeflections();
   }
 
   shared_ptr< CTarcogSingleSystem > CTarcogSingleSystem::clone() const {
@@ -110,6 +104,14 @@ namespace Tarcog {
 
   double CTarcogSingleSystem::getHeatFlow( const Environment t_Environment ) const {
     return m_Environment.at( t_Environment )->getHeatFlow();
+  }
+
+  double CTarcogSingleSystem::getConvectiveHeatFlow( const Environment t_Environment ) const {
+    return m_Environment.at( t_Environment )->getConvectionConductionFlow();
+  }
+
+  double CTarcogSingleSystem::getRadiationHeatFlow( const Environment t_Environment ) const {
+    return m_Environment.at( t_Environment )->getRadiationFlow();
   }
 
   double CTarcogSingleSystem::getInteriorVentilationFlow() const {

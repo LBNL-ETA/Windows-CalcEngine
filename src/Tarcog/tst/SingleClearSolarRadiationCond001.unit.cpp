@@ -17,9 +17,7 @@ using namespace FenestrationCommon;
 class TestSingleClearSolarCond100 : public testing::Test {
 
 private:
-  shared_ptr< CTarIGUSolidLayer > m_SolidLayer;
   shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
-  shared_ptr< CTarEnvironment > m_Indoor;
 
 protected:
   virtual void SetUp() {
@@ -43,8 +41,8 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
     double roomTemperature = 294.15;
-    m_Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
-    ASSERT_TRUE( m_Indoor != nullptr );
+    shared_ptr< CTarEnvironment > aIndoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
+    ASSERT_TRUE( aIndoor != nullptr );
 
     /////////////////////////////////////////////////////////
     // IGU
@@ -53,20 +51,21 @@ protected:
     double solidLayerConductance = 0.01;
     double solarAbsorptance = 0.094189159572;
 
-    m_SolidLayer = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    m_SolidLayer->setSolarAbsorptance( solarAbsorptance );
-    ASSERT_TRUE( m_SolidLayer != nullptr );
+    shared_ptr< CTarIGUSolidLayer > aSolidLayer = 
+      make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    aSolidLayer->setSolarAbsorptance( solarAbsorptance );
+    ASSERT_TRUE( aSolidLayer != nullptr );
 
     double windowWidth = 1;
     double windowHeight = 1;
     shared_ptr< CTarIGU > aIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
-    aIGU->addLayer( m_SolidLayer );
+    aIGU->addLayer( aSolidLayer );
 
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, m_Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, aIndoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     m_TarcogSystem->solve();
@@ -74,50 +73,41 @@ protected:
 
 public:
   shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
-  shared_ptr< CTarIGUSolidLayer > GetSolidLayer() { return m_SolidLayer; };
-  shared_ptr< CTarEnvironment > GetIndoor() { return m_Indoor; };
 
 };
 
 TEST_F( TestSingleClearSolarCond100, TestTempAndRad ) {
   SCOPED_TRACE( "Begin Test: Single Clear (Solar Radiation) - Temperatures and Radiosity." );
   
-  shared_ptr< CTarcogSingleSystem > aSystem = nullptr;
-  shared_ptr< CTarIGUSolidLayer > aLayer = nullptr;
-  
-  aSystem = GetSystem();
+  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
-  aLayer = GetSolidLayer();
+  vector< double > Temperature = *aSystem->getTemperatures();
+  vector< double > correctTemperature = { 299.465898, 300.261869 };
+  ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  ASSERT_TRUE( aLayer != nullptr );
+  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+    EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
+  }
 
-  Side aPosition = Side::Front;
-  double Temperature = aLayer->getTemperature( aPosition );
-  double Radiosity = aLayer->J( aPosition );
+  vector< double > Radiosity = *aSystem->getRadiosities();
+  vector< double > correctRadiosity = { 443.871080, 455.028488 };
+  ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  EXPECT_NEAR( 299.465898, Temperature, 1e-5 );
-  EXPECT_NEAR( 443.871080, Radiosity, 1e-5 );
+  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+    EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
+  }
 
-  aPosition = Side::Back;
-  Temperature = aLayer->getTemperature( aPosition );
-  Radiosity = aLayer->J( aPosition );
-
-  EXPECT_NEAR( 300.261869, Temperature, 1e-5 );
-  EXPECT_NEAR( 455.028488, Radiosity, 1e-5 );
 }
 
 TEST_F( TestSingleClearSolarCond100, TestIndoor ) {
   SCOPED_TRACE( "Begin Test: Single Clear (Solar Radiation) - Indoor heat flow." );
 
-  shared_ptr< CTarEnvironment > aIndoor = nullptr;
+  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
 
-  aIndoor = GetIndoor();
-  ASSERT_TRUE( aIndoor != nullptr );
-
-  double convectiveHF = aIndoor->getConvectionConductionFlow();
-  double radiativeHF = aIndoor->getRadiationFlow();
-  double totalHF = aIndoor->getHeatFlow();
+  double convectiveHF = aSystem->getConvectiveHeatFlow( Environment::Indoor );
+  double radiativeHF = aSystem->getRadiationHeatFlow( Environment::Indoor );
+  double totalHF = aSystem->getHeatFlow( Environment::Indoor );
 
   EXPECT_NEAR( -13.913388, convectiveHF, 1e-5 );
   EXPECT_NEAR( -30.569739, radiativeHF, 1e-5 );

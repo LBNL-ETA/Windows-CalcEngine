@@ -98,50 +98,25 @@ public:
 TEST_F( DoubleLowEVacuumNoPillar, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Low-E - vacuum with no pillar support" );
   
-  shared_ptr< CTarcogSingleSystem > aSystem = nullptr;
-  
-  aSystem = GetSystem();
+  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
+
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< shared_ptr< CTarIGUSolidLayer > > aLayers = aSystem->getSolidLayers();
+  vector< double > Temperature = *aSystem->getTemperatures();
+  vector< double > correctTemperature = { 255.501938, 255.543003, 292.514948, 292.555627 };
+  ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  // First layer
-  shared_ptr< CTarSurface > aSurface = aLayers[ 0 ]->getSurface( Side::Front );
-  ASSERT_TRUE( aSurface != nullptr );
+  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+    EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
+  }
 
-  double Temperature = aSurface->getTemperature();
-  double Radiosity = aSurface->J();
+  vector< double > Radiosity = *aSystem->getRadiosities();
+  vector< double > correctRadiosity = { 241.409657, 407.569595, 413.894817, 416.791085 };
+  ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  EXPECT_NEAR( 255.501938, Temperature, 1e-5 );
-  EXPECT_NEAR( 241.409657, Radiosity, 1e-5 );
-
-  aSurface = aLayers[ 0 ]->getSurface( Side::Back );
-  ASSERT_TRUE( aSurface != nullptr );
-
-  Temperature = aSurface->getTemperature();
-  Radiosity = aSurface->J();
-
-  EXPECT_NEAR( 255.543003, Temperature, 1e-5 );
-  EXPECT_NEAR( 407.569595, Radiosity, 1e-5 );
-
-  // Second layer
-  aSurface = aLayers[ 1 ]->getSurface( Side::Front );
-  ASSERT_TRUE( aSurface != nullptr );
-
-  Temperature = aSurface->getTemperature();
-  Radiosity = aSurface->J();
-
-  EXPECT_NEAR( 292.514948, Temperature, 1e-5 );
-  EXPECT_NEAR( 413.894817, Radiosity, 1e-5 );
-
-  aSurface = aLayers[ 1 ]->getSurface( Side::Back );
-  ASSERT_TRUE( aSurface != nullptr );
-
-  Temperature = aSurface->getTemperature();
-  Radiosity = aSurface->J();
-
-  EXPECT_NEAR( 292.555627, Temperature, 1e-5 );
-  EXPECT_NEAR( 416.791085, Radiosity, 1e-5 );
+  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+    EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
+  }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
   EXPECT_EQ( 30, int( numOfIter ) );

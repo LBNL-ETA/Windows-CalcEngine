@@ -96,66 +96,40 @@ public:
 TEST_F( DoubleClearDeflectionTPDefault, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Clear - Calculated Deflection" );
   
-  shared_ptr< CTarcogSingleSystem > aSystem = nullptr;
-  
-  aSystem = GetSystem();
+  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< shared_ptr< CTarIGUSolidLayer > > aLayers = aSystem->getSolidLayers();
+  vector< double > Temperature = *aSystem->getTemperatures();
+  vector< double > correctTemperature = { 258.811500, 259.137749, 278.961419, 279.573136 };
+  ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  // First layer
-  shared_ptr< CTarSurface > aSurface = aLayers[ 0 ]->getSurface( Side::Front );
-  ASSERT_TRUE( aSurface != nullptr );
+  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+    EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
+  }
 
-  double Temperature = aSurface->getTemperature();
-  double Radiosity = aSurface->J();
-  double MeanDeflection = aSurface->getMeanDeflection();
-  double MaxDeflection = aSurface->getMaxDeflection();
+  vector< double > Radiosity = *aSystem->getRadiosities();
+  vector< double > correctRadiosity = { 252.131797, 267.765290, 331.256183, 358.865247 };
+  ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  EXPECT_NEAR( 258.811500, Temperature, 1e-5 );
-  EXPECT_NEAR( 252.131797, Radiosity, 1e-5 );
-  EXPECT_NEAR( -0.0013055, MeanDeflection, 1e-5 );
-  EXPECT_NEAR( -0.0031162, MaxDeflection, 1e-5 );
+  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+    EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
+  }
 
-  aSurface = aLayers[ 0 ]->getSurface( Side::Back );
-  ASSERT_TRUE( aSurface != nullptr );
+  vector< double > MaxDeflection = *aSystem->getMaxDeflections();
+  vector< double > correctMaxDeflection = { -0.0031162, 0.00029386 };
+  ASSERT_EQ( correctMaxDeflection.size(), MaxDeflection.size() );
 
-  Temperature = aSurface->getTemperature();
-  Radiosity = aSurface->J();
-  MeanDeflection = aSurface->getMeanDeflection();
-  MaxDeflection = aSurface->getMaxDeflection();
+  for( auto i = 0; i < correctMaxDeflection.size(); ++i ) {
+    EXPECT_NEAR( correctMaxDeflection[ i ], MaxDeflection[ i ], 1e-5 );
+  }
 
-  EXPECT_NEAR( 259.137749, Temperature, 1e-5 );
-  EXPECT_NEAR( 267.765290, Radiosity, 1e-5 );
-  EXPECT_NEAR( -0.0013055, MeanDeflection, 1e-5 );
-  EXPECT_NEAR( -0.0031162, MaxDeflection, 1e-5 );
+  vector< double > MeanDeflection = *aSystem->getMeanDeflections();
+  vector< double > correctMeanDeflection = { -0.0013055, 0.00012311 };
+  ASSERT_EQ( correctMeanDeflection.size(), MeanDeflection.size() );
 
-  // Second layer
-  aSurface = aLayers[ 1 ]->getSurface( Side::Front );
-  ASSERT_TRUE( aSurface != nullptr );
-
-  Temperature = aSurface->getTemperature();
-  Radiosity = aSurface->J();
-  MeanDeflection = aSurface->getMeanDeflection();
-  MaxDeflection = aSurface->getMaxDeflection();
-
-  EXPECT_NEAR( 278.961419, Temperature, 1e-5 );
-  EXPECT_NEAR( 331.256183, Radiosity, 1e-5 );
-  EXPECT_NEAR( 0.00012311, MeanDeflection, 1e-5 );
-  EXPECT_NEAR( 0.00029386, MaxDeflection, 1e-5 );
-
-  aSurface = aLayers[ 1 ]->getSurface( Side::Back );
-  ASSERT_TRUE( aSurface != nullptr );
-
-  Temperature = aSurface->getTemperature();
-  Radiosity = aSurface->J();
-  MeanDeflection = aSurface->getMeanDeflection();
-  MaxDeflection = aSurface->getMaxDeflection();
-
-  EXPECT_NEAR( 279.573136, Temperature, 1e-5 );
-  EXPECT_NEAR( 358.865247, Radiosity, 1e-5 );
-  EXPECT_NEAR( 0.00012311, MeanDeflection, 1e-5 );
-  EXPECT_NEAR( 0.00029386, MaxDeflection, 1e-5 );
+  for( auto i = 0; i < correctMaxDeflection.size(); ++i ) {
+    EXPECT_NEAR( correctMeanDeflection[ i ], MeanDeflection[ i ], 1e-5 );
+  }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
   EXPECT_EQ( 25, int( numOfIter ) );

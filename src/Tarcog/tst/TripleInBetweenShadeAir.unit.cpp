@@ -111,8 +111,8 @@ TEST_F( TestInBetweenShadeAir, Test1 ) {
 
   shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
   
-  vector< double > temperature = aSystem->getSurfaceTemperatures();
-  vector< double > radiosity = aSystem->getSurfaceRadiosities();
+  vector< double > temperature = *aSystem->getTemperatures();
+  vector< double > radiosity = *aSystem->getRadiosities();
 
   vector< double > correctTemp = { 257.90894598978144, 258.36960655371689, 271.53865884320373, 
     271.54221847389209, 283.61528464773824, 284.07594521167317 };

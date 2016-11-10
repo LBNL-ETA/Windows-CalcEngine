@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 class TestSingleClear : public testing::Test {
 
 private:
-  shared_ptr< CBaseIGUTarcogLayer > m_SolidLayer;
+  shared_ptr< CTarcogSingleSystem >  m_TarcogSystem;
 
 protected:
   virtual void SetUp() {    
@@ -51,53 +51,50 @@ protected:
     double solidLayerThickness = 0.003048; // [m]
     double solidLayerConductance = 1;
 
-    m_SolidLayer = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    ASSERT_TRUE( m_SolidLayer != nullptr );
+    shared_ptr< CBaseIGUTarcogLayer > aSolidLayer = 
+      make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    ASSERT_TRUE( aSolidLayer != nullptr );
 
     double windowWidth = 1;
     double windowHeight = 1;
     shared_ptr< CTarIGU > aIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
-    aIGU->addLayer( m_SolidLayer );
+    aIGU->addLayer( aSolidLayer );
 
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    shared_ptr< CTarcogSingleSystem >  aTarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
-    ASSERT_TRUE( aTarcogSystem != nullptr );
+    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
+    ASSERT_TRUE( m_TarcogSystem != nullptr );
 
-    aTarcogSystem->solve();
+    m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CBaseIGUTarcogLayer > GetSolidLayer() { return m_SolidLayer; };
+  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestSingleClear, Test1 ) {
   SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
 
-  shared_ptr< CBaseIGUTarcogLayer > aLayer = nullptr;
+  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
+  ASSERT_TRUE( aSystem != nullptr );
 
-  aLayer = GetSolidLayer();
+  vector< double > Temperature = *aSystem->getTemperatures();
+  vector< double > correctTemperature = { 297.207035, 297.14470 };
+  ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  ASSERT_TRUE( aLayer != nullptr );
+  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+    EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
+  }
 
-  shared_ptr< CTarSurface > aSurface = aLayer->getSurface( Side::Front );
-  ASSERT_TRUE( aSurface != nullptr );
+  vector< double > Radiosity = *aSystem->getRadiosities();
+  vector< double > correctRadiosity = { 432.444546, 439.201749 };
+  ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  double Temperature = aSurface->getTemperature();
-  double Radiosity = aSurface->J();
+  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+    EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
+  }
 
-  EXPECT_NEAR( 297.207035, Temperature, 1e-5 );
-  EXPECT_NEAR( 432.444546, Radiosity, 1e-5 );
-
-  aSurface = aLayer->getSurface( Side::Back );
-  ASSERT_TRUE( aSurface != nullptr );
-
-  Temperature = aSurface->getTemperature();
-  Radiosity = aSurface->J();
-
-  EXPECT_NEAR( 297.14470, Temperature, 1e-5 );
-  EXPECT_NEAR( 439.201749, Radiosity, 1e-5 );
 }

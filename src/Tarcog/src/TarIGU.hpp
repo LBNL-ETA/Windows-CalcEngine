@@ -19,26 +19,29 @@ namespace Tarcog {
     CTarIGU( const CTarIGU& t_IGU );
     ~CTarIGU();
 
-    void addLayer( std::shared_ptr< CBaseIGUTarcogLayer > t_Layer );
+    void addLayer( const std::shared_ptr< CBaseIGUTarcogLayer >& t_Layer );
 
-    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers();
-    std::vector< std::shared_ptr< CTarIGUGapLayer > > getGapLayers();
+    std::vector< std::shared_ptr< CTarIGUSolidLayer > > getSolidLayers() const;
+    std::vector< std::shared_ptr< CTarIGUGapLayer > > getGapLayers() const;
     std::vector< std::shared_ptr< CBaseIGUTarcogLayer > > getLayers() const;
 
-    void setTilt( double const t_Tilt );
-    void setWidth( double const t_Width );
-    void setHeight( double const t_Height );
+    void setTilt( const double t_Tilt );
+    void setWidth( const double t_Width );
+    void setHeight( const double t_Height );
 
-    void setSolarRadiation( double const t_SolarRadiation );
+    void setSolarRadiation( const double t_SolarRadiation );
 
-    void setTotalSolar( double const t_TotSol );
+    void setTotalSolar( const double t_TotSol );
 
-    // std::shared_ptr< CBaseTarcogLayer > getFirstLayer() const;
-    // std::shared_ptr< CBaseTarcogLayer > getLastLayer() const;
     std::shared_ptr< CBaseTarcogLayer > getLayer( const Environment t_Environment ) const;
 
     std::shared_ptr< std::vector< double > > getState();
     void setState( std::shared_ptr< std::vector< double > > t_State );
+
+    std::shared_ptr< std::vector< double > > getTemperatures() const;
+    std::shared_ptr< std::vector< double > > getRadiosities() const;
+    std::shared_ptr< std::vector< double > > getMaxDeflections() const;
+    std::shared_ptr< std::vector< double > > getMeanDeflections() const;
 
     double getTilt() const;
     double getWidth( ) const;

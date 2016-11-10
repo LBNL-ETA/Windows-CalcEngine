@@ -110,8 +110,8 @@ TEST_F( TestDoubleClearIndoorShadeAir, Test1 ) {
   
   shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
 
-  vector< double > temperature = aSystem->getSurfaceTemperatures();
-  vector< double > radiosity = aSystem->getSurfaceRadiosities();
+  vector< double > temperature = *aSystem->getTemperatures();
+  vector< double > radiosity = *aSystem->getRadiosities();
 
   vector< double > correctTemp = { 258.2265788, 258.7403799, 276.1996405, 276.7134416, 288.1162677, 288.1193825 };
   vector< double > correctJ = { 250.2066021, 264.5687123, 319.49179, 340.4531177, 382.6512706, 397.0346045 };

@@ -22,6 +22,8 @@ namespace Tarcog {
     double getThickness() const;
     double getTemperature( const FenestrationCommon::Side t_Position ) const;
     double J( const FenestrationCommon::Side t_Position ) const;
+    double getMaxDeflection() const;
+    double getMeanDeflection() const;
 
     double getConductivity();
 

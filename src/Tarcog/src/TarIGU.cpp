@@ -45,7 +45,7 @@ namespace Tarcog {
     }
   }
 
-  void CTarIGU::addLayer( shared_ptr< CBaseIGUTarcogLayer > t_Layer ) {
+  void CTarIGU::addLayer( const shared_ptr< CBaseIGUTarcogLayer >& t_Layer ) {
 
     // pushes only solid layers to array. Gap layers are connected via linked list
     // In case this is first layer then it must be a solid layer in order to create IGU
@@ -74,41 +74,33 @@ namespace Tarcog {
     t_Layer->setHeight( m_Height );
   }
 
-  void CTarIGU::setTilt( double const t_Tilt ) {
+  void CTarIGU::setTilt( const double t_Tilt ) {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers ) {
       layer->setTilt( t_Tilt );
     }
   }
 
-  void CTarIGU::setWidth( double const t_Width ) {
+  void CTarIGU::setWidth( const double t_Width ) {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers ) {
       layer->setWidth( t_Width );
     }
   }
 
-  void CTarIGU::setHeight( double const t_Height ) {
+  void CTarIGU::setHeight( const double t_Height ) {
     for( shared_ptr< CBaseIGUTarcogLayer > layer : m_Layers ) {
       layer->setHeight( t_Height );
     }
   }
 
-  void CTarIGU::setSolarRadiation( double const t_SolarRadiation ) {
+  void CTarIGU::setSolarRadiation( const double t_SolarRadiation ) {
     for( shared_ptr< CTarIGUSolidLayer >& layer : getSolidLayers() ) {
       layer->setSolarRadiation( t_SolarRadiation );
     }
   }
 
-  void CTarIGU::setTotalSolar( double const t_TotSol ) {
+  void CTarIGU::setTotalSolar( const double t_TotSol ) {
     m_TotalSolar = t_TotSol;
   }
-
-  // shared_ptr< CBaseTarcogLayer > CTarIGU::getFirstLayer() const {
-  //   return m_Layers.front();
-  // }
-  // 
-  // shared_ptr< CBaseTarcogLayer > CTarIGU::getLastLayer() const {
-  //   return m_Layers.back();
-  // }
 
   shared_ptr<CBaseTarcogLayer> CTarIGU::getLayer( const Environment t_Environment ) const {
     shared_ptr< CBaseTarcogLayer > aLayer = nullptr;
@@ -155,6 +147,54 @@ namespace Tarcog {
       aLayer->setLayerState( Tf, Tb, Jf, Jb );
       ++i;
     }
+  }
+
+  shared_ptr< vector< double > > CTarIGU::getTemperatures() const {
+    shared_ptr< vector< double > > aTemperatures = make_shared< vector< double > >();
+
+    for( const shared_ptr< CTarIGUSolidLayer >& layer : getSolidLayers() ) {
+      for( Side aSide : EnumSide() ) {
+        shared_ptr< CTarSurface > aSurface = layer->getSurface( aSide );
+        assert( aSurface != nullptr );
+        aTemperatures->push_back( aSurface->getTemperature() );
+      }
+    }
+
+    return aTemperatures;
+  }
+
+  shared_ptr< vector< double > > CTarIGU::getRadiosities() const {
+    shared_ptr< vector< double > > aRadiosities = make_shared< vector< double > >();
+
+    for( const shared_ptr< CTarIGUSolidLayer >& layer : getSolidLayers() ) {
+      for( Side aSide : EnumSide() ) {
+        shared_ptr< CTarSurface > aSurface = layer->getSurface( aSide );
+        assert( aSurface != nullptr );
+        aRadiosities->push_back( aSurface->J() );
+      }
+    }
+
+    return aRadiosities;
+  }
+
+  shared_ptr< vector< double > > CTarIGU::getMaxDeflections() const {
+    shared_ptr< vector< double > > aMaxDeflections = make_shared< vector< double > >();
+
+    for( const shared_ptr< CTarIGUSolidLayer >& layer : getSolidLayers() ) {
+      aMaxDeflections->push_back( layer->getMaxDeflection() );
+    }
+
+    return aMaxDeflections;
+  }
+
+  shared_ptr< vector< double > > CTarIGU::getMeanDeflections() const {
+    shared_ptr< vector< double > > aMeanDeflections = make_shared< vector< double > >();
+
+    for( const shared_ptr< CTarIGUSolidLayer >& layer : getSolidLayers() ) {
+      aMeanDeflections->push_back( layer->getMeanDeflection() );
+    }
+
+    return aMeanDeflections;
   }
   
   double CTarIGU::getThickness() const {
@@ -329,9 +369,9 @@ namespace Tarcog {
     return coeff * totalSum;
   }
 
-  vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() {
+  vector< shared_ptr< CTarIGUSolidLayer > > CTarIGU::getSolidLayers() const {
     vector< shared_ptr< CTarIGUSolidLayer > > aVect;
-    for( shared_ptr< CBaseIGUTarcogLayer >& aLayer : m_Layers ) {
+    for( const shared_ptr< CBaseIGUTarcogLayer >& aLayer : m_Layers ) {
       if( dynamic_pointer_cast< CTarIGUSolidLayer >( aLayer ) != NULL ) {
         aVect.push_back( dynamic_pointer_cast< CTarIGUSolidLayer >( aLayer ) );
       }
@@ -339,9 +379,9 @@ namespace Tarcog {
     return aVect;
   }
 
-  vector< shared_ptr< CTarIGUGapLayer > > CTarIGU::getGapLayers() {
+  vector< shared_ptr< CTarIGUGapLayer > > CTarIGU::getGapLayers() const {
     vector< shared_ptr< CTarIGUGapLayer > > aVect;
-    for( shared_ptr< CBaseIGUTarcogLayer >& aLayer : m_Layers ) {
+    for( const shared_ptr< CBaseIGUTarcogLayer >& aLayer : m_Layers ) {
       if( dynamic_pointer_cast< CTarIGUGapLayer >( aLayer ) != NULL ) {
         aVect.push_back( dynamic_pointer_cast< CTarIGUGapLayer >( aLayer ) );
       }

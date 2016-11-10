@@ -25,9 +25,6 @@ class TestInBetweenShadeAirArgon : public testing::Test {
 
 private:
   shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
-  // shared_ptr< CBaseIGUTarcogLayer > m_Layer1;
-  // shared_ptr< CBaseIGUTarcogLayer > m_Layer2;
-  // shared_ptr< CBaseIGUTarcogLayer > m_Layer3;
 
 protected:
   virtual void SetUp() {    
@@ -144,54 +141,30 @@ protected:
 
 public:
   shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
-  shared_ptr< CBaseIGUTarcogLayer > GetLayer1() { return m_TarcogSystem->getSolidLayers()[ 0 ]; };
-  shared_ptr< CBaseIGUTarcogLayer > GetLayer2() { return m_TarcogSystem->getSolidLayers()[ 1 ]; };
-  shared_ptr< CBaseIGUTarcogLayer > GetLayer3() { return m_TarcogSystem->getSolidLayers()[ 2 ]; };
 
 };
 
 TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
   SCOPED_TRACE( "Begin Test: InBetween Shade - Air(10%)/Argon(90%)" );
-  
-  shared_ptr< CBaseIGUTarcogLayer > aLayer = nullptr;
 
-  shared_ptr< CTarSurface > aSurface = nullptr;
-  
-  aLayer = GetLayer1();
-  ASSERT_TRUE( aLayer != nullptr );
-  aSurface = aLayer->getSurface( Side::Front );
+  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
+  ASSERT_TRUE( aSystem != nullptr );
 
-  EXPECT_NEAR( 257.70858602501283, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 248.51258065870940, aSurface->J(), 1e-6 );
+  vector< double > Temperature = *aSystem->getTemperatures();
+  vector< double > correctTemperature = { 257.708586, 258.135737, 271.904015, 271.907455, 284.412841, 284.839992 };
+  ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  aSurface = aLayer->getSurface( Side::Back );
+  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+    EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-6 );
+  }
 
-  EXPECT_NEAR( 258.13573727149321, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 259.76235979463536, aSurface->J(), 1e-6 );
+  vector< double > Radiosity = *aSystem->getRadiosities();
+  vector< double > correctRadiosity = { 248.512581, 259.762360, 301.878568, 318.339706, 362.562135, 382.345742 };
+  ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  aLayer = GetLayer2();
-  ASSERT_TRUE( aLayer != nullptr );
-  aSurface = aLayer->getSurface( Side::Front );
-
-  EXPECT_NEAR( 271.90401485639518, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 301.87856774037959, aSurface->J(), 1e-6 );
-
-  aSurface = aLayer->getSurface( Side::Back );
-
-  EXPECT_NEAR( 271.90745499217974, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 318.33970629247358, aSurface->J(), 1e-6 );
-
-  aLayer = GetLayer3();
-  ASSERT_TRUE( aLayer != nullptr );
-  aSurface = aLayer->getSurface( Side::Front );
-
-  EXPECT_NEAR( 284.41284098002097, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 362.56213463202778, aSurface->J(), 1e-6 );
-
-  aSurface = aLayer->getSurface( Side::Back );
-
-  EXPECT_NEAR( 284.83999222650090, aSurface->getTemperature(), 1e-6 );
-  EXPECT_NEAR( 382.34574241337458, aSurface->J(), 1e-6 );
+  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+    EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-6 );
+  }
 
   size_t numOfIter = GetSystem()->getNumberOfIterations();
   EXPECT_EQ( 21, int( numOfIter ) );
