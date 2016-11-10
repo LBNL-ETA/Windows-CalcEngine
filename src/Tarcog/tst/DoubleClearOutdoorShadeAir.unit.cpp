@@ -17,7 +17,7 @@ using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-class TestDoubleClearIndoorShadeAir : public testing::Test {
+class TestDoubleClearOutdoorShadeAir : public testing::Test {
 
 private:
   shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
@@ -55,11 +55,6 @@ protected:
     double solidLayerThickness = 0.005715; // [m]
     double solidLayerConductance = 1;
 
-    shared_ptr< CTarIGUSolidLayer > aLayer1 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    ASSERT_TRUE( aLayer1 != nullptr );
-
-    shared_ptr< CTarIGUSolidLayer > aLayer2 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-
     double shadeLayerThickness = 0.01;
     double shadeLayerConductance = 160;
     double dtop = 0.1;
@@ -68,10 +63,18 @@ protected:
     double dright = 0.1;
     double Afront = 0.2;
 
-    shared_ptr< CTarIGUSolidLayer > aLayer3 = make_shared< CTarIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
+    shared_ptr< CTarIGUSolidLayer > aLayer1 = 
+      make_shared< CTarIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
       make_shared< CShadeOpenings >( dtop, dbot, dleft, dright, Afront ) );
 
-    ASSERT_TRUE( aLayer3 != nullptr );
+    ASSERT_TRUE( aLayer1 != nullptr );
+
+    shared_ptr< CTarIGUSolidLayer > aLayer2 = 
+      make_shared< CTarIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
+    ASSERT_TRUE( aLayer2 != nullptr );
+
+    shared_ptr< CTarIGUSolidLayer > aLayer3 = 
+      make_shared< CTarIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
 
     double gapThickness = 0.0127;
     double gapPressure = 101325;
@@ -105,16 +108,16 @@ public:
 
 };
 
-TEST_F( TestDoubleClearIndoorShadeAir, Test1 ) {
-  SCOPED_TRACE( "Begin Test: Indoor Shade - Air" );
+TEST_F( TestDoubleClearOutdoorShadeAir, Test1 ) {
+  SCOPED_TRACE( "Begin Test: Outdoor Shade - Air" );
   
   shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
 
   vector< double > temperature = *aSystem->getTemperatures();
   vector< double > radiosity = *aSystem->getRadiosities();
 
-  vector< double > correctTemp = { 258.2265788, 258.7403799, 276.1996405, 276.7134416, 288.1162677, 288.1193825 };
-  vector< double > correctJ = { 250.2066021, 264.5687123, 319.49179, 340.4531177, 382.6512706, 397.0346045 };
+  vector< double > correctTemp = { 256.984174, 256.987521, 269.436767, 269.879607, 284.039136, 284.481976 };
+  vector< double > correctJ = { 246.160566, 254.396303, 291.699410, 310.189965, 359.623545, 380.772533 };
 
   EXPECT_EQ( correctTemp.size(), temperature.size() );
   EXPECT_EQ( correctJ.size(), radiosity.size() );
@@ -125,8 +128,8 @@ TEST_F( TestDoubleClearIndoorShadeAir, Test1 ) {
   }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 5, int( numOfIter ) );
+  EXPECT_EQ( 23, int( numOfIter ) );
 
-  double ventilatedFlow = aSystem->getVentilationFlow( Environment::Indoor );
-  EXPECT_NEAR( 40.066869, ventilatedFlow, 1e-6 );
+  double ventilatedFlow = aSystem->getVentilationFlow( Environment::Outdoor );
+  EXPECT_NEAR( -23.931861, ventilatedFlow, 1e-6 );
 }

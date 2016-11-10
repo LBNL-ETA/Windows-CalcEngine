@@ -50,7 +50,7 @@ namespace Tarcog {
 
     size_t getNumOfLayers() const;
 
-    double getInteriorVentilationFlow() const;
+    double getVentilationFlow( const Environment t_Environment ) const;
 
     void setInitialGuess( const std::shared_ptr< std::vector< double > >& t_Temperatures );
 

@@ -39,7 +39,7 @@ namespace Tarcog {
     double getRadiationHeatFlow( const Environment t_Environment ) const;
 
     // If interior layer have openings, this will return heat flow from airflow
-    double getInteriorVentilationFlow() const;
+    double getVentilationFlow( const Environment t_Environment ) const;
     double getUValue() const;
     size_t getNumberOfIterations() const;
 

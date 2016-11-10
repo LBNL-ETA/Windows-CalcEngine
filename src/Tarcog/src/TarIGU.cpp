@@ -223,10 +223,10 @@ namespace Tarcog {
     return ( m_Layers.size() + 1 ) / 2;
   }
 
-  double CTarIGU::getInteriorVentilationFlow() const {
+  double CTarIGU::getVentilationFlow( const Environment t_Environment ) const {
     size_t size = m_Layers.size();
-    // needs to get gas layer on indoor side
-    return m_Layers[ size - 2 ]->getGainFlow();
+    map< Environment, size_t > envLayer = { { Environment::Indoor, size - 2 }, { Environment::Outdoor, 1 } };
+    return m_Layers[ envLayer.at( t_Environment ) ]->getGainFlow();
   }
 
   void CTarIGU::setInitialGuess( const shared_ptr< vector< double > >& t_Guess ) {

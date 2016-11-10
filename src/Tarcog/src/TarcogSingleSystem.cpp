@@ -114,8 +114,8 @@ namespace Tarcog {
     return m_Environment.at( t_Environment )->getRadiationFlow();
   }
 
-  double CTarcogSingleSystem::getInteriorVentilationFlow() const {
-    return m_IGU->getInteriorVentilationFlow();
+  double CTarcogSingleSystem::getVentilationFlow( const Environment t_Environment ) const {
+    return m_IGU->getVentilationFlow( t_Environment );
   }
 
   double CTarcogSingleSystem::getUValue() const {

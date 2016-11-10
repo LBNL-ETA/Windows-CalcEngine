@@ -114,10 +114,8 @@ TEST_F( TestInBetweenShadeAir, Test1 ) {
   vector< double > temperature = *aSystem->getTemperatures();
   vector< double > radiosity = *aSystem->getRadiosities();
 
-  vector< double > correctTemp = { 257.90894598978144, 258.36960655371689, 271.53865884320373, 
-    271.54221847389209, 283.61528464773824, 284.07594521167317 };
-  vector< double > correctJ = { 249.16661938338754, 260.32061280963615, 300.57156128981001, 
-    316.33554457280860, 358.76065129183996, 378.99551190053882 };
+  vector< double > correctTemp = { 257.908946, 258.369607, 271.538659, 271.542218, 283.615285, 284.075945 };
+  vector< double > correctJ = { 249.166619, 260.320613, 300.571561, 316.335545, 358.760651, 378.995512 };
 
   EXPECT_EQ( correctTemp.size(), temperature.size() );
   EXPECT_EQ( correctJ.size(), radiosity.size() );
