@@ -2,12 +2,12 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "TarOutdoorEnvironment.hpp"
-#include "TarIndoorEnvironment.hpp"
-#include "TarIGUSolidLayer.hpp"
-#include "TarIGU.hpp"
-#include "TarcogSingleSystem.hpp"
-#include "TarSurface.hpp"
+#include "OutdoorEnvironment.hpp"
+#include "IndoorEnvironment.hpp"
+#include "IGUSolidLayer.hpp"
+#include "IGU.hpp"
+#include "SingleSystem.hpp"
+#include "Surface.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -17,7 +17,7 @@ using namespace FenestrationCommon;
 class TestSingleClearSolarCond001 : public testing::Test {
 
 private:
-  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
+  shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
   virtual void SetUp() {
@@ -31,8 +31,8 @@ protected:
     double tSky = 270; // Kelvins
     double solarRadiation = 1000;
 
-    shared_ptr< CTarEnvironment > Outdoor = 
-      make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+    shared_ptr< CEnvironment > Outdoor = 
+      make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
         airDirection, tSky, SkyModel::AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
     Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -43,8 +43,8 @@ protected:
 
     double roomTemperature = 294.15;
 
-    shared_ptr< CTarEnvironment > aIndoor = 
-      make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
+    shared_ptr< CEnvironment > aIndoor = 
+      make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( aIndoor != nullptr );
 
     /////////////////////////////////////////////////////////
@@ -54,35 +54,35 @@ protected:
     double solidLayerConductance = 100;
     double solarAbsorptance = 0.094189159572;
 
-    shared_ptr< CTarIGUSolidLayer > aSolidLayer = 
-      make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    shared_ptr< CIGUSolidLayer > aSolidLayer = 
+      make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     aSolidLayer->setSolarAbsorptance( solarAbsorptance );
     ASSERT_TRUE( aSolidLayer != nullptr );
 
     double windowWidth = 1;
     double windowHeight = 1;
-    shared_ptr< CTarIGU > aIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
+    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer );
 
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, aIndoor, Outdoor );
+    m_TarcogSystem = make_shared< CSingleSystem >( aIGU, aIndoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSingleSystem > GetSystem() { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestSingleClearSolarCond001, TestTempAndRad ) {
   SCOPED_TRACE( "Begin Test: Single Clear (Solar Radiation) - Temperatures and Radiosity." );
   
-  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
+  shared_ptr< CSingleSystem > aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
   vector< double > Temperature = *aSystem->getTemperatures();
@@ -106,7 +106,7 @@ TEST_F( TestSingleClearSolarCond001, TestTempAndRad ) {
 TEST_F( TestSingleClearSolarCond001, TestIndoor ) {
   SCOPED_TRACE( "Begin Test: Single Clear (Solar Radiation) - Indoor heat flow." );
 
-  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
+  shared_ptr< CSingleSystem > aSystem = GetSystem();
 
   double convectiveHF = aSystem->getConvectiveHeatFlow( Environment::Indoor );
   double radiativeHF = aSystem->getRadiationHeatFlow( Environment::Indoor );

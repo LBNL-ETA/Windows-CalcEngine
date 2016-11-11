@@ -2,13 +2,13 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "TarOutdoorEnvironment.hpp"
-#include "TarIndoorEnvironment.hpp"
-#include "TarIGUSolidLayer.hpp"
-#include "TarIGUGapLayer.hpp"
-#include "TarIGU.hpp"
-#include "TarcogSystem.hpp"
-#include "TarSurface.hpp"
+#include "OutdoorEnvironment.hpp"
+#include "IndoorEnvironment.hpp"
+#include "IGUSolidLayer.hpp"
+#include "IGUGapLayer.hpp"
+#include "IGU.hpp"
+#include "System.hpp"
+#include "Surface.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -19,7 +19,7 @@ using namespace FenestrationCommon;
 class TestDoubleClear : public testing::Test {
 
 private:
-  shared_ptr< CTarcogSystem > m_TarcogSystem;
+  shared_ptr< CSystem > m_TarcogSystem;
 
 protected:
   virtual void SetUp() {    
@@ -33,8 +33,8 @@ protected:
     double tSky = 255.15; // Kelvins
     double solarRadiation = 789;
 
-    shared_ptr< CTarEnvironment > Outdoor = 
-      make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+    shared_ptr< CEnvironment > Outdoor = 
+      make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
         airDirection, tSky, SkyModel::AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
     Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -45,8 +45,8 @@ protected:
 
     double roomTemperature = 294.15;
 
-    shared_ptr< CTarEnvironment > Indoor = 
-      make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
+    shared_ptr< CEnvironment > Indoor = 
+      make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     /////////////////////////////////////////////////////////
@@ -55,22 +55,22 @@ protected:
     double solidLayerThickness = 0.005715; // [m]
     double solidLayerConductance = 1;
 
-    shared_ptr< CTarIGUSolidLayer > aSolidLayer1 = 
-      make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    shared_ptr< CIGUSolidLayer > aSolidLayer1 = 
+      make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     aSolidLayer1->setSolarAbsorptance( 0.166707709432 );
 
-    shared_ptr< CTarIGUSolidLayer > aSolidLayer2 = 
-      make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    shared_ptr< CIGUSolidLayer > aSolidLayer2 = 
+      make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     aSolidLayer2->setSolarAbsorptance( 0.112737670541 );
 
     double gapThickness = 0.012;
     double gapPressure = 101325;
-    shared_ptr< CBaseIGUTarcogLayer > m_GapLayer = make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
+    shared_ptr< CBaseIGULayer > m_GapLayer = make_shared< CIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( m_GapLayer != nullptr );
 
     double windowWidth = 1;
     double windowHeight = 1;
-    shared_ptr< CTarIGU > aIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
+    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer1 );
     aIGU->addLayer( m_GapLayer );
@@ -79,19 +79,19 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }
 
 public:
-  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSystem > GetSystem() { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestDoubleClear, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Clear - Surface temperatures" );
   
-  shared_ptr< CTarcogSystem > aSystem = GetSystem();
+  shared_ptr< CSystem > aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
   //////////////////////////////////////////////////////////////////////

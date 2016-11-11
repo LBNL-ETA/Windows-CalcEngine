@@ -1,10 +1,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "TarSurface.hpp"
-#include "TarIGUSolidLayer.hpp"
-#include "TarIGUGapLayer.hpp"
-#include "TarIGU.hpp"
+#include "Surface.hpp"
+#include "IGUSolidLayer.hpp"
+#include "IGUGapLayer.hpp"
+#include "IGU.hpp"
 
 using namespace std;
 using namespace Tarcog;
@@ -12,21 +12,21 @@ using namespace Tarcog;
 class TestGapLayerStandardPressure : public testing::Test {
 
 private:
-  std::shared_ptr< CTarIGUGapLayer > m_GapLayer;
-  std::shared_ptr< CTarIGU > m_IGU;
+  std::shared_ptr< CIGUGapLayer > m_GapLayer;
+  std::shared_ptr< CIGU > m_IGU;
 
 protected:
   virtual void SetUp() {
     try {
       // Gap layer construct is made in a way that it is not possible to create gap alone. In order to test gap, entire
       // IGU has to be created. Example is taken as part of double clear air run from WINDOW 7 version of TARCOG
-      shared_ptr< CTarSurface > surface1 = make_shared< CTarSurface > ();
+      shared_ptr< CSurface > surface1 = make_shared< CSurface > ();
       ASSERT_TRUE( surface1 != nullptr );
-      shared_ptr< CTarSurface > surface2 = make_shared< CTarSurface > ();
+      shared_ptr< CSurface > surface2 = make_shared< CSurface > ();
       ASSERT_TRUE( surface2 != nullptr );
-      shared_ptr< CTarSurface > surface3 = make_shared< CTarSurface > ();
+      shared_ptr< CSurface > surface3 = make_shared< CSurface > ();
       ASSERT_TRUE( surface3 != nullptr );
-      shared_ptr< CTarSurface > surface4 = make_shared< CTarSurface > ();
+      shared_ptr< CSurface > surface4 = make_shared< CSurface > ();
       ASSERT_TRUE( surface4 != nullptr );
 
       double solidLayerThickness = 0.005715; // [m]
@@ -36,21 +36,21 @@ protected:
       // surfaces 2 and 3 are actually surfaces of the gap
       surface2->setTemperature( gapSurface1Temperature );
       surface3->setTemperature( gapSurface2Temperature );
-      std::shared_ptr< CTarIGUSolidLayer > solidLayer1 = 
-        std::make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance, surface1, surface2 );
+      std::shared_ptr< CIGUSolidLayer > solidLayer1 = 
+        std::make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance, surface1, surface2 );
       ASSERT_TRUE( solidLayer1 != nullptr );
-      std::shared_ptr< CTarIGUSolidLayer > solidLayer2 = 
-        std::make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance, surface3, surface4 );
+      std::shared_ptr< CIGUSolidLayer > solidLayer2 = 
+        std::make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance, surface3, surface4 );
       ASSERT_TRUE( solidLayer2 != nullptr );
 
       double gapThickness = 0.012;
       double gapPressure = 101325;
-      m_GapLayer = std::make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
+      m_GapLayer = std::make_shared< CIGUGapLayer >( gapThickness, gapPressure );
       ASSERT_TRUE( m_GapLayer != nullptr );
 
       double windowWidth = 1;
       double windowHeight = 1;
-      m_IGU = std::make_shared< CTarIGU >( windowWidth, windowHeight );
+      m_IGU = std::make_shared< CIGU >( windowWidth, windowHeight );
       ASSERT_TRUE( m_IGU != nullptr );
       m_IGU->addLayer( solidLayer1 );
       m_IGU->addLayer( m_GapLayer );
@@ -62,7 +62,7 @@ protected:
   }
 
 public:
-  std::shared_ptr< CTarIGUGapLayer > GetLayer() { return m_GapLayer; };
+  std::shared_ptr< CIGUGapLayer > GetLayer() { return m_GapLayer; };
 
 };
 
@@ -71,7 +71,7 @@ TEST_F( TestGapLayerStandardPressure, ConvectionHeatFlow )
   try {
     SCOPED_TRACE( "Begin Test: Test Gap Layer - Convection heat flow [Pa = 101325 Pa]" );
     
-    std::shared_ptr< CTarIGUGapLayer > aLayer = nullptr;
+    std::shared_ptr< CIGUGapLayer > aLayer = nullptr;
     
     aLayer = GetLayer();
 

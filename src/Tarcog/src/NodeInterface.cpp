@@ -1,5 +1,5 @@
 #include "NodeInterface.hpp"
-#include "BaseTarcogLayer.hpp"
+#include "BaseLayer.hpp"
 
 using namespace std;
 
@@ -78,16 +78,16 @@ namespace Tarcog {
   //      CThermalNode
   //////////////////////////////////////////////////////////////////////////
 
-  CThermalNode::CThermalNode( const shared_ptr< CBaseTarcogLayer >& t_HeatFlowLayer ) :
+  CThermalNode::CThermalNode( const shared_ptr< CBaseLayer >& t_HeatFlowLayer ) :
     m_HeatFlowLayer( t_HeatFlowLayer ) {
 
   }
 
-  shared_ptr< CBaseTarcogLayer > CThermalNode::getHeatFlowLayer() const {
+  shared_ptr< CBaseLayer > CThermalNode::getHeatFlowLayer() const {
     return m_HeatFlowLayer;
   }
 
-  void CThermalNode::setHeatFlowLayer( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
+  void CThermalNode::setHeatFlowLayer( const shared_ptr< CBaseLayer >& t_Layer ) {
     m_HeatFlowLayer = t_Layer;
   }
 

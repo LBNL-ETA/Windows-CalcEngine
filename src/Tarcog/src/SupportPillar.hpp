@@ -1,13 +1,13 @@
 #ifndef SUPPORTPILLAR_H
 #define SUPPORTPILLAR_H
 
-#include "TarIGUGapLayer.hpp"
+#include "IGUGapLayer.hpp"
 
 namespace Tarcog {
 
-  class CSupportPillar : public CTarIGUGapLayer {
+  class CSupportPillar : public CIGUGapLayer {
   public:
-    CSupportPillar( const CTarIGUGapLayer& t_Layer, const double t_Conductivity );
+    CSupportPillar( const CIGUGapLayer& t_Layer, const double t_Conductivity );
     CSupportPillar( const CSupportPillar& t_Pillar );
 
   protected:
@@ -18,7 +18,7 @@ namespace Tarcog {
 
   class CCircularPillar : public CSupportPillar {
   public:
-    CCircularPillar( const CTarIGUGapLayer& t_Gap, const double t_Conductivity,
+    CCircularPillar( const CIGUGapLayer& t_Gap, const double t_Conductivity,
       const double t_Spacing, const double t_Radius );
     CCircularPillar( const CCircularPillar& t_Pillar );
 

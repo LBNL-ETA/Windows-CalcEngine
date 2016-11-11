@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <SupportPillar.hpp>
-#include "BaseIGUTarcogLayer.hpp"
+#include "BaseIGULayer.hpp"
 
 using namespace std;
 
@@ -13,18 +13,18 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////
   ////  CSupportPillar
   ////////////////////////////////////////////////////////////////////////////
-  CSupportPillar::CSupportPillar( const CTarIGUGapLayer& t_Layer, const double t_Conductivity ) : 
-    CTarIGUGapLayer( t_Layer ), m_Conductivity( t_Conductivity ) {
+  CSupportPillar::CSupportPillar( const CIGUGapLayer& t_Layer, const double t_Conductivity ) : 
+    CIGUGapLayer( t_Layer ), m_Conductivity( t_Conductivity ) {
 
   }
 
   CSupportPillar::CSupportPillar( const CSupportPillar& t_Pillar ) : 
-    CState( t_Pillar ), CTarIGUGapLayer( t_Pillar ) {
+    CState( t_Pillar ), CIGUGapLayer( t_Pillar ) {
 
   }
 
   void CSupportPillar::calculateConvectionOrConductionFlow() {
-    CTarIGUGapLayer::calculateConvectionOrConductionFlow();
+    CIGUGapLayer::calculateConvectionOrConductionFlow();
     if( !isCalculated() ) {
       m_ConductiveConvectiveCoeff += conductivityOfPillarArray();
     }
@@ -33,7 +33,7 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////
   ////  CCircularPillar
   ////////////////////////////////////////////////////////////////////////////
-  CCircularPillar::CCircularPillar( const CTarIGUGapLayer& t_Gap,
+  CCircularPillar::CCircularPillar( const CIGUGapLayer& t_Gap,
     const double t_Conductivity, const double t_Spacing, const double t_Radius ) :
     CSupportPillar( t_Gap, t_Conductivity ), m_Spacing( t_Spacing ), m_Radius( t_Radius ) {
 
@@ -45,8 +45,8 @@ namespace Tarcog {
   }
 
   double CCircularPillar::conductivityOfPillarArray() {
-    double cond1 = dynamic_pointer_cast< CBaseIGUTarcogLayer >( m_PreviousLayer )->getConductivity();
-    double cond2 = dynamic_pointer_cast< CBaseIGUTarcogLayer >( m_NextLayer )->getConductivity();
+    double cond1 = dynamic_pointer_cast< CBaseIGULayer >( m_PreviousLayer )->getConductivity();
+    double cond2 = dynamic_pointer_cast< CBaseIGULayer >( m_NextLayer )->getConductivity();
     double aveCond = ( cond1 + cond2 ) / 2;
 
     double cond = 2 * aveCond * m_Radius / ( pow( m_Spacing, 2 ) );

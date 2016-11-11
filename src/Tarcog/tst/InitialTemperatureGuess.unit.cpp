@@ -2,13 +2,13 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "TarOutdoorEnvironment.hpp"
-#include "TarIndoorEnvironment.hpp"
-#include "TarSurface.hpp"
-#include "TarIGUSolidLayer.hpp"
-#include "TarIGUGapLayer.hpp"
-#include "TarIGU.hpp"
-#include "TarcogSingleSystem.hpp"
+#include "OutdoorEnvironment.hpp"
+#include "IndoorEnvironment.hpp"
+#include "Surface.hpp"
+#include "IGUSolidLayer.hpp"
+#include "IGUGapLayer.hpp"
+#include "IGU.hpp"
+#include "SingleSystem.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -18,10 +18,10 @@ using namespace FenestrationCommon;
 class TestTemperatureInitialGuess : public testing::Test {
 
 private:
-  shared_ptr< CTarIGU > m_TarcogIGU;
-  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
-  shared_ptr< CTarIGUSolidLayer > m_solidLayer1;
-  shared_ptr< CTarIGUSolidLayer > m_solidLayer2;
+  shared_ptr< CIGU > m_TarcogIGU;
+  shared_ptr< CSingleSystem > m_TarcogSystem;
+  shared_ptr< CIGUSolidLayer > m_solidLayer1;
+  shared_ptr< CIGUSolidLayer > m_solidLayer2;
 
 protected:
   virtual void SetUp() {
@@ -35,8 +35,8 @@ protected:
     AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
     double solarRadiation = 0;
     
-    shared_ptr< CTarEnvironment > Outdoor = 
-      make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+    shared_ptr< CEnvironment > Outdoor = 
+      make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
         airDirection, tSky, SkyModel::AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
 
@@ -44,7 +44,7 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
     double roomTemperature = 294.15;
-    shared_ptr< CTarEnvironment > Indoor = make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
+    shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     /////////////////////////////////////////////////////////
@@ -52,19 +52,19 @@ protected:
     /////////////////////////////////////////////////////////
     double solidLayerThickness = 0.005715; // [m]
     double solidLayerConductance = 1;
-    m_solidLayer1 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    m_solidLayer1 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( m_solidLayer1 != nullptr );
-    m_solidLayer2 = make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    m_solidLayer2 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( m_solidLayer2 != nullptr );
 
     double gapThickness = 0.012;
     double gapPressure = 101325;
-    shared_ptr< CTarIGUGapLayer> gapLayer = make_shared< CTarIGUGapLayer >( gapThickness, gapPressure );
+    shared_ptr< CIGUGapLayer> gapLayer = make_shared< CIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( gapLayer != nullptr );
 
     double windowWidth = 1;
     double windowHeight = 1;
-    shared_ptr< CTarIGU > TarcogIGU = make_shared< CTarIGU >( windowWidth, windowHeight );
+    shared_ptr< CIGU > TarcogIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( TarcogIGU != nullptr );
     TarcogIGU->addLayer( m_solidLayer1 );
     TarcogIGU->addLayer( gapLayer );
@@ -73,13 +73,13 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSingleSystem >( TarcogIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CSingleSystem >( TarcogIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
   }
 
 public:
-  shared_ptr< CTarIGUSolidLayer > getLayer1() { return m_solidLayer1; }
-  shared_ptr< CTarIGUSolidLayer > getLayer2() { return m_solidLayer2; }
+  shared_ptr< CIGUSolidLayer > getLayer1() { return m_solidLayer1; }
+  shared_ptr< CIGUSolidLayer > getLayer2() { return m_solidLayer2; }
 
 };
 
@@ -87,7 +87,7 @@ TEST_F( TestTemperatureInitialGuess, Test1 )
 {
   SCOPED_TRACE( "Begin Test: Initial temperature and IR guess" );
 
-  shared_ptr< CTarSurface > aSurface = getLayer1()->getSurface( Side::Front );
+  shared_ptr< CSurface > aSurface = getLayer1()->getSurface( Side::Front );
   ASSERT_TRUE( aSurface != nullptr );
   double temperature = aSurface->getTemperature();
   double J = aSurface->J();

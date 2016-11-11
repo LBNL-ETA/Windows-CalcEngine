@@ -40,17 +40,17 @@ namespace Tarcog {
     std::list< std::shared_ptr< CLayerNode > > m_Layers;
   };
 
-  class CBaseTarcogLayer;
+  class CBaseLayer;
 
   class CThermalNode : CLayerNode {
   public:
-    explicit CThermalNode( const std::shared_ptr< CBaseTarcogLayer >& t_HeatFlowLayer );
+    explicit CThermalNode( const std::shared_ptr< CBaseLayer >& t_HeatFlowLayer );
 
-    std::shared_ptr< CBaseTarcogLayer > getHeatFlowLayer() const;
-    void setHeatFlowLayer( const std::shared_ptr< CBaseTarcogLayer >& t_HeatFlowLayer );
+    std::shared_ptr< CBaseLayer > getHeatFlowLayer() const;
+    void setHeatFlowLayer( const std::shared_ptr< CBaseLayer >& t_HeatFlowLayer );
 
   protected:
-    std::shared_ptr< CBaseTarcogLayer > m_HeatFlowLayer;
+    std::shared_ptr< CBaseLayer > m_HeatFlowLayer;
   };
 
 }

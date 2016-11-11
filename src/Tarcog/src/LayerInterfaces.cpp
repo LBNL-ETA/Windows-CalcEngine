@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include "LayerInterfaces.hpp"
-#include "TarSurface.hpp"
+#include "Surface.hpp"
 #include "TarcogConstants.hpp"
 #include "Gas.hpp"
 #include "FenestrationCommon.hpp"
@@ -59,15 +59,15 @@ namespace Tarcog {
     m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
     m_LayerGainFlow = t_Layer.m_LayerGainFlow;
     for( Side aSide : EnumSide() ) {
-      shared_ptr< CTarSurface > aSurface = t_Layer.m_Surface.at( aSide );
+      shared_ptr< CSurface > aSurface = t_Layer.m_Surface.at( aSide );
       if( aSurface != nullptr ) {
-        m_Surface[ aSide ] = make_shared< CTarSurface >( *aSurface );
+        m_Surface[ aSide ] = make_shared< CSurface >( *aSurface );
       }
     }
   }
 
-  CLayerHeatFlow::CLayerHeatFlow( const shared_ptr< CTarSurface >& t_FrontSurface, 
-    const shared_ptr< CTarSurface >& t_BackSurface ) :
+  CLayerHeatFlow::CLayerHeatFlow( const shared_ptr< CSurface >& t_FrontSurface, 
+    const shared_ptr< CSurface >& t_BackSurface ) :
     m_ConductiveConvectiveCoeff( 0 ), m_LayerGainFlow( 0 ) {
     m_Surface[ Side::Front ] = t_FrontSurface;
     m_Surface[ Side::Back ] = t_BackSurface;
@@ -118,11 +118,11 @@ namespace Tarcog {
     return areInitialized;
   }
 
-  shared_ptr< CTarSurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
+  shared_ptr< CSurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
     return m_Surface.at( t_Position );
   }
 
-  void CLayerHeatFlow::setSurface( shared_ptr< CTarSurface > t_Surface, 
+  void CLayerHeatFlow::setSurface( shared_ptr< CSurface > t_Surface, 
     Side const t_Position ) {
     m_Surface[ t_Position ] = t_Surface;
     if( m_Surface.size() == 2 ) {
