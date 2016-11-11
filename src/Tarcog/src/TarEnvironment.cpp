@@ -70,6 +70,14 @@ namespace Tarcog {
     return getGasTemperature();
   }
 
+  double CTarEnvironment::getAmbientTemperature() {
+    double hc = getHc();
+    double hr = getHr();
+    double Tair = getAirTemperature();
+    double Trad = getRadiationTemperature();
+    return ( hc * Tair + hr * Trad ) / ( hc + hr );
+  }
+
   double CTarEnvironment::getDirectSolarRadiation() const {
     return m_DirectSolarRadiation;
   }

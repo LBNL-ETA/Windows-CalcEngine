@@ -22,6 +22,9 @@ namespace Tarcog {
     virtual std::shared_ptr< CBaseTarcogLayer > clone() const;
     virtual std::shared_ptr< CTarEnvironment > cloneEnvironment() const;
 
+    void setSolarRadiation( const double t_SolarRadiation );
+    double getSolarRadiation() const;
+
   private:
     double getGasTemperature();
     double calculateIRFromVariables();
@@ -29,6 +32,7 @@ namespace Tarcog {
 
     void calculateHc();
     double getHr();
+    double getRadiationTemperature() const;
 
     void setIRFromEnvironment( const double t_IR );
     double getIRFromEnvironment() const;

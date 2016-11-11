@@ -58,7 +58,12 @@ namespace Tarcog {
   CLayerHeatFlow::CLayerHeatFlow( const CLayerHeatFlow& t_Layer ) : CState( t_Layer ) {
     m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
     m_LayerGainFlow = t_Layer.m_LayerGainFlow;
-    m_Surface = t_Layer.m_Surface;
+    for( Side aSide : EnumSide() ) {
+      shared_ptr< CTarSurface > aSurface = t_Layer.m_Surface.at( aSide );
+      if( aSurface != nullptr ) {
+        m_Surface[ aSide ] = make_shared< CTarSurface >( *aSurface );
+      }
+    }
   }
 
   CLayerHeatFlow::CLayerHeatFlow( const shared_ptr< CTarSurface >& t_FrontSurface, 
@@ -106,7 +111,11 @@ namespace Tarcog {
   }
 
   bool CLayerHeatFlow::areSurfacesInitalized() const {
-    return ( m_Surface.at( Side::Front ) != nullptr && m_Surface.at( Side::Back ) != nullptr );
+    bool areInitialized = ( m_Surface.size() == 2 );
+    if( areInitialized ) {
+      areInitialized = m_Surface.at( Side::Front ) != nullptr && m_Surface.at( Side::Back ) != nullptr;
+    }
+    return areInitialized;
   }
 
   shared_ptr< CTarSurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
@@ -116,7 +125,9 @@ namespace Tarcog {
   void CLayerHeatFlow::setSurface( shared_ptr< CTarSurface > t_Surface, 
     Side const t_Position ) {
     m_Surface[ t_Position ] = t_Surface;
-    resetCalculated();
+    if( m_Surface.size() == 2 ) {
+      resetCalculated();
+    }
   }
 
 

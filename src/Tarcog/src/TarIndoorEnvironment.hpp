@@ -30,6 +30,8 @@ namespace Tarcog {
     void setIRFromEnvironment( const double t_IR );
     double getIRFromEnvironment() const;
 
+    double getRadiationTemperature() const;
+
     double m_RoomRadiationTemperature;
   };
 

@@ -10,6 +10,7 @@ namespace Tarcog {
   class CTarIGU;
   class CTarEnvironment;
   class CTarcogSingleSystem;
+  enum class Environment;
 
   enum class System { Uvalue, SHGC };
   
@@ -24,6 +25,10 @@ namespace Tarcog {
 
     std::shared_ptr< std::vector< double > > getMaxDeflections( const System t_System ) const;
     std::shared_ptr< std::vector< double > > getMeanDeflections( const System t_System ) const;
+
+    double getHeatFlow( const System t_System, const Environment t_Environment ) const;
+    double getUValue() const;
+    double getSHGC( const double t_TotSol ) const;
 
   private:
     std::map< System, std::shared_ptr< CTarcogSingleSystem > > m_IGU;

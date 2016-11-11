@@ -71,6 +71,8 @@ namespace Tarcog {
     shared_ptr< CBaseTarcogLayer > aFirstLayer = m_IGU->getLayer( Environment::Outdoor );
     m_Environment.at( Environment::Outdoor )->connectToIGULayer( aFirstLayer );
 
+    initializeStartValues();
+
     m_NonLinearSolver = make_shared< CTarNonLinearSolver >( m_IGU );
   }
 
@@ -119,8 +121,8 @@ namespace Tarcog {
   }
 
   double CTarcogSingleSystem::getUValue() const {
-    double interiorAir = m_Environment.at( Environment::Indoor )->getAirTemperature();
-    double outdoorAir = m_Environment.at( Environment::Outdoor )->getAirTemperature();
+    double interiorAir = m_Environment.at( Environment::Indoor )->getAmbientTemperature();
+    double outdoorAir = m_Environment.at( Environment::Outdoor )->getAmbientTemperature();
     return getHeatFlow( Environment::Indoor ) / ( interiorAir - outdoorAir );
   }
 
@@ -169,7 +171,14 @@ namespace Tarcog {
   }
 
   void CTarcogSingleSystem::setSolarRadiation( double const t_SolarRadiation ) {
+    dynamic_pointer_cast< CTarOutdoorEnvironment > ( m_Environment.at( Environment::Outdoor ) )->
+      setSolarRadiation( t_SolarRadiation );
     m_IGU->setSolarRadiation( t_SolarRadiation );
+  }
+
+  double CTarcogSingleSystem::getSolarRadiation() const {
+    return dynamic_pointer_cast< CTarOutdoorEnvironment > ( m_Environment.at( Environment::Outdoor ) )->
+      getSolarRadiation();
   }
 
 }

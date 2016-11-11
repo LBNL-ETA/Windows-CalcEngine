@@ -10,6 +10,7 @@ namespace Tarcog {
   public:
     CTarSurface();
     CTarSurface( double t_Emissivity, double t_Transmittance );
+    CTarSurface( const CTarSurface& t_Surface );
 
     void setTemperature( double const t_Temperature );
     double getTemperature() const;
@@ -28,7 +29,7 @@ namespace Tarcog {
     double getMaxDeflection() const;
 
   private:
-    void initialize();
+    void initializeOptical();
 
     double m_Emissivity;
     double m_Reflectance;

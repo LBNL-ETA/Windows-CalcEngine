@@ -31,6 +31,7 @@ namespace Tarcog {
     double getHc();
 
     double getAirTemperature();
+    double getAmbientTemperature();
     
     virtual void connectToIGULayer( const std::shared_ptr< CBaseTarcogLayer >& t_IGULayer );
 
@@ -43,6 +44,7 @@ namespace Tarcog {
     virtual double getHr() = 0;
     virtual void setIRFromEnvironment( const double t_IR ) = 0;
     virtual double getIRFromEnvironment() const = 0;
+    virtual double getRadiationTemperature() const = 0;
 
     double m_DirectSolarRadiation;
     double m_Emissivity; // Emissivity from the environment

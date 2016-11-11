@@ -117,7 +117,7 @@ namespace Tarcog {
 
   double CTarIndoorEnvironment::getHr() {
     assert( m_Surface.at( Side::Front ) != nullptr );
-    return getRadiationFlow() / ( getGasTemperature() - m_Surface.at( Side::Front )->getTemperature() );
+    return getRadiationFlow() / ( getRadiationTemperature() - m_Surface.at( Side::Front )->getTemperature() );
   }
 
   void CTarIndoorEnvironment::setIRFromEnvironment( const double t_IR ) {
@@ -128,5 +128,8 @@ namespace Tarcog {
   double CTarIndoorEnvironment::getIRFromEnvironment() const {
     assert( m_Surface.at( Side::Back ) != nullptr );
     return m_Surface.at( Side::Back )->J();
+  }
+  double CTarIndoorEnvironment::getRadiationTemperature() const {
+    return m_RoomRadiationTemperature;
   }
 }

@@ -49,6 +49,7 @@ namespace Tarcog {
     void setInitialGuess( const std::shared_ptr< std::vector< double > >& t_Temperatures );
 
     void setSolarRadiation( double const t_SolarRadiation );
+    double getSolarRadiation() const;
 
     void solve();
 

@@ -77,6 +77,14 @@ namespace Tarcog {
     return make_shared< CTarOutdoorEnvironment >( *this );
   }
 
+  void CTarOutdoorEnvironment::setSolarRadiation( const double t_SolarRadiation ) {
+    m_DirectSolarRadiation = t_SolarRadiation;
+  }
+
+  double CTarOutdoorEnvironment::getSolarRadiation() const {
+    return m_DirectSolarRadiation;
+  }
+
   double CTarOutdoorEnvironment::getGasTemperature() {
     assert( m_Surface.at( Side::Front ) != nullptr );
     return m_Surface.at( Side::Front )->getTemperature();
@@ -110,7 +118,13 @@ namespace Tarcog {
   double CTarOutdoorEnvironment::getHr() {
     assert( m_Surface.at( Side::Back ) != nullptr );
     assert( m_Surface.at( Side::Front ) != nullptr );
-    return getRadiationFlow() / ( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() );
+    // return getRadiationFlow() / ( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() );
+    return getRadiationFlow() / ( m_Surface.at( Side::Back )->getTemperature() - getRadiationTemperature() );
+  }
+
+  double CTarOutdoorEnvironment::getRadiationTemperature() const {
+    assert( m_Surface.at( Side::Front ) != nullptr );
+    return pow( m_Surface.at( Side::Front )->J() / STEFANBOLTZMANN, 0.25 );
   }
 
   void CTarOutdoorEnvironment::setIRFromEnvironment( const double t_IR ) {

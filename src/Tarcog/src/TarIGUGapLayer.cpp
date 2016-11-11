@@ -37,7 +37,7 @@ namespace Tarcog {
 
   void CTarIGUGapLayer::connectToBackSide( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
-    m_Surface.at( Side::Back ) = t_Layer->getSurface( Side::Front );
+    m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Front );
   }
 
   void CTarIGUGapLayer::initializeStateVariables() {

@@ -13,14 +13,26 @@ using namespace std;
 namespace Tarcog {
 
   CTarSurface::CTarSurface(double t_Emissivity, double t_Transmittance):
-    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance ), m_MeanDeflection( 0 ),
-    m_MaxDeflection( 0 ) {
-    initialize();
+    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance ), m_Temperature( 273.15 ), 
+    m_J( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
+    m_Temperature = 273.15;
+    m_J = 0;
+    initializeOptical();
   }
 
-  CTarSurface::CTarSurface() : m_Emissivity( 0.84 ), m_Transmittance( 0 ), m_MeanDeflection( 0 ),
-    m_MaxDeflection( 0 ) {
-    initialize();
+  CTarSurface::CTarSurface( const CTarSurface& t_Surface ) {
+    m_Emissivity = t_Surface.m_Emissivity;
+    m_Transmittance = t_Surface.m_Transmittance;
+    m_Temperature = t_Surface.m_Temperature;
+    m_J = t_Surface.m_J;
+    m_MaxDeflection = t_Surface.m_MaxDeflection;
+    m_MeanDeflection = t_Surface.m_MeanDeflection;
+    initializeOptical();
+  }
+
+  CTarSurface::CTarSurface() : m_Emissivity( 0.84 ), m_Transmittance( 0 ), m_Temperature( 273.15 ), 
+    m_J( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
+    initializeOptical();
   }
 
   double CTarSurface::getTemperature() const {
@@ -43,14 +55,12 @@ namespace Tarcog {
     return m_Transmittance;
   }
 
-  void CTarSurface::initialize() {
+  void CTarSurface::initializeOptical() {
     if ( m_Emissivity + m_Transmittance > 1 ) {
       throw runtime_error( "Sum of emittance and transmittance cannot be greater than one." );
     } else {
       m_Reflectance = 1 - m_Emissivity - m_Transmittance;
     }
-    m_Temperature = 273.15;
-    m_J = 0;
   }
 
   void CTarSurface::initializeStart( double const t_Temperature ) {

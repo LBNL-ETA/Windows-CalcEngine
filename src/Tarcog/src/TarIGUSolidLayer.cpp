@@ -40,12 +40,11 @@ namespace Tarcog {
 		CState( t_Layer ), CBaseIGUTarcogLayer( t_Layer ) {
     m_Conductivity = t_Layer.m_Conductivity;
     m_SolarAbsorptance = t_Layer.m_SolarAbsorptance;
-    m_Surface = t_Layer.m_Surface;
   }
 
   void CTarIGUSolidLayer::connectToBackSide( const shared_ptr< CBaseTarcogLayer >& t_Layer ) {
     CBaseTarcogLayer::connectToBackSide( t_Layer );
-    t_Layer->setSurface( m_Surface[ Side::Back ], Side::Front );
+    t_Layer->setSurface( m_Surface.at( Side::Back ), Side::Front );
   }
 
   double CTarIGUSolidLayer::getConductivity() const {
