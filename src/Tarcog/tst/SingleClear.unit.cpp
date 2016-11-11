@@ -141,6 +141,6 @@ TEST_F( TestSingleClear, Test1 ) {
   double UValue = aSystem->getUValue();
   EXPECT_NEAR( UValue, 5.493806, 1e-5 );
 
-  double SHGC = aSystem->getSHGC( 0.831248879433 );
+  double SHGC = aSystem->getSHGC( 0.831249 );
   EXPECT_NEAR( SHGC, 0.850291, 1e-5 );
 }

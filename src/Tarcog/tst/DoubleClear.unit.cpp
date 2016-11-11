@@ -7,7 +7,7 @@
 #include "TarIGUSolidLayer.hpp"
 #include "TarIGUGapLayer.hpp"
 #include "TarIGU.hpp"
-#include "TarcogSingleSystem.hpp"
+#include "TarcogSystem.hpp"
 #include "TarSurface.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -15,22 +15,23 @@ using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-class TestDoubleClearWithSun : public testing::Test {
+// Example of double clear window with inital guess for solution
+class TestDoubleClear : public testing::Test {
 
 private:
-  shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
+  shared_ptr< CTarcogSystem > m_TarcogSystem;
 
 protected:
   virtual void SetUp() {    
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 305.15; // Kelvins
+    double airTemperature = 255.15; // Kelvins
     double pressure = 101325; // Pascals
-    double airSpeed = 2.75; // meters per second
+    double airSpeed = 5.5; // meters per second
     AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 305.15; // Kelvins
-    double solarRadiation = 783;
+    double tSky = 255.15; // Kelvins
+    double solarRadiation = 789;
 
     shared_ptr< CTarEnvironment > Outdoor = 
       make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
@@ -42,7 +43,7 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 297.15;
+    double roomTemperature = 294.15;
 
     shared_ptr< CTarEnvironment > Indoor = 
       make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
@@ -53,16 +54,14 @@ protected:
     /////////////////////////////////////////////////////////
     double solidLayerThickness = 0.005715; // [m]
     double solidLayerConductance = 1;
-    double solarAbsorptance = 0.187443971634;
 
-    shared_ptr< CTarIGUSolidLayer > aSolidLayer1 =
+    shared_ptr< CTarIGUSolidLayer > aSolidLayer1 = 
       make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    aSolidLayer1->setSolarAbsorptance( solarAbsorptance );
+    aSolidLayer1->setSolarAbsorptance( 0.166707709432 );
 
-    solarAbsorptance = 0.054178960621;
-    shared_ptr< CTarIGUSolidLayer > aSolidLayer2 =
+    shared_ptr< CTarIGUSolidLayer > aSolidLayer2 = 
       make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    aSolidLayer2->setSolarAbsorptance( solarAbsorptance );
+    aSolidLayer2->setSolarAbsorptance( 0.112737670541 );
 
     double gapThickness = 0.012;
     double gapPressure = 101325;
@@ -75,50 +74,82 @@ protected:
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer1 );
     aIGU->addLayer( m_GapLayer );
-    aIGU->addLayer( aSolidLayer2 );
+    aIGU->addLayer( aSolidLayer2 );    
 
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = make_shared< CTarcogSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
-
-    m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CTarcogSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CTarcogSystem > GetSystem() { return m_TarcogSystem; };
 
 };
 
-TEST_F( TestDoubleClearWithSun, Test1 ) {
+TEST_F( TestDoubleClear, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Clear - Surface temperatures" );
   
-  shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
+  shared_ptr< CTarcogSystem > aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< double > Temperature = *aSystem->getTemperatures();
-  vector< double > correctTemperature = { 310.818074, 311.064868, 306.799522, 306.505704 };
+  //////////////////////////////////////////////////////////////////////
+  // UValue run
+  //////////////////////////////////////////////////////////////////////
+
+  System aRun = System::Uvalue;
+
+  vector< double > Temperature = *aSystem->getTemperatures( aRun );
+  vector< double > correctTemperature = { 258.756688, 259.359226, 279.178510, 279.781048 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
   for( auto i = 0; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
-  vector< double > Radiosity = *aSystem->getRadiosities();
-  vector< double > correctRadiosity = { 523.148794, 526.906252, 506.252171, 491.059753 };
+  vector< double > Radiosity = *aSystem->getRadiosities( aRun );
+  vector< double > correctRadiosity = { 251.950834, 268.667346, 332.299338, 359.731700 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
   for( auto i = 0; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 
-  double heatFlow = aSystem->getHeatFlow( Environment::Indoor );
-  EXPECT_NEAR( -72.622787, heatFlow, 1e-5 );
-
-  double Uvalue = aSystem->getUValue();
-  EXPECT_NEAR( 9.077848, Uvalue, 1e-5 );
-
-  size_t numOfIter = aSystem->getNumberOfIterations();
+  size_t numOfIter = aSystem->getNumberOfIterations( aRun );
   EXPECT_EQ( 20, int( numOfIter ) );
+
+  //////////////////////////////////////////////////////////////////////
+  // SHGC run
+  //////////////////////////////////////////////////////////////////////
+
+  aRun = System::SHGC;
+
+  Temperature = *aSystem->getTemperatures( aRun );
+  correctTemperature = { 264.022835, 265.134421, 287.947300, 288.428857 };
+  ASSERT_EQ( correctTemperature.size(), Temperature.size() );
+
+  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+    EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
+  }
+
+  Radiosity = *aSystem->getRadiosities( aRun );
+  correctRadiosity = { 269.869356, 295.289318, 374.655901, 397.518724 };
+  ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
+
+  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+    EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
+  }
+
+  numOfIter = aSystem->getNumberOfIterations( aRun );
+  EXPECT_EQ( 21, int( numOfIter ) );
+
+  //////////////////////////////////////////////////////////////////////
+  // General results
+  //////////////////////////////////////////////////////////////////////
+  double Uvalue = aSystem->getUValue();
+  EXPECT_NEAR( Uvalue, 2.703359, 1e-5 );
+
+  double SHGC = aSystem->getSHGC( 0.606897 );
+  EXPECT_NEAR( SHGC, 0.690096, 1e-5 );
 }

@@ -29,9 +29,10 @@ namespace Tarcog {
     double getHeatFlow( const System t_System, const Environment t_Environment ) const;
     double getUValue() const;
     double getSHGC( const double t_TotSol ) const;
+    size_t getNumberOfIterations( const System t_System ) const;
 
   private:
-    std::map< System, std::shared_ptr< CTarcogSingleSystem > > m_IGU;
+    std::map< System, std::shared_ptr< CTarcogSingleSystem > > m_System;
   };
 
 }

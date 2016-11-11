@@ -15,8 +15,7 @@ using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-// Example of double clear window with inital guess for solution
-class TestDoubleClearWithInitialGuess : public testing::Test {
+class TestDoubleClearSingleSystemNoSun : public testing::Test {
 
 private:
   shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
@@ -72,21 +71,13 @@ protected:
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer1 );
     aIGU->addLayer( m_GapLayer );
-    aIGU->addLayer( aSolidLayer2 );    
+    aIGU->addLayer( aSolidLayer2 );
 
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CTarcogSingleSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
-
-    // set up initial guess. It was taken to be close to solution.
-    shared_ptr< vector < double > > aTemperatures = make_shared< vector< double > >();
-    aTemperatures->push_back( 258.75 );
-    aTemperatures->push_back( 259.36 );
-    aTemperatures->push_back( 279.18 );
-    aTemperatures->push_back( 279.78 );
-    m_TarcogSystem->setInitialGuess( aTemperatures );
 
     m_TarcogSystem->solve();
   }
@@ -96,8 +87,8 @@ public:
 
 };
 
-TEST_F( TestDoubleClearWithInitialGuess, Test1 ) {
-  SCOPED_TRACE( "Begin Test: Double Clear - Surface temperatures" );
+TEST_F( TestDoubleClearSingleSystemNoSun, Test1 ) {
+  SCOPED_TRACE( "Begin Test: Double Clear Single System - Surface temperatures" );
   
   shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
@@ -118,6 +109,12 @@ TEST_F( TestDoubleClearWithInitialGuess, Test1 ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 
+  double heatFlow = aSystem->getHeatFlow( Environment::Indoor );
+  EXPECT_NEAR( 105.431019, heatFlow, 1e-5 );
+
+  double Uvalue = aSystem->getUValue();
+  EXPECT_NEAR( 2.703359, Uvalue, 1e-5 );
+
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 17, int( numOfIter ) );
+  EXPECT_EQ( 20, int( numOfIter ) );
 }

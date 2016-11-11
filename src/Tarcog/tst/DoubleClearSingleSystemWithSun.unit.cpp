@@ -15,7 +15,7 @@ using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 
-class TestDoubleClearNoSun : public testing::Test {
+class TestDoubleClearSingleSystemWithSun : public testing::Test {
 
 private:
   shared_ptr< CTarcogSingleSystem > m_TarcogSystem;
@@ -25,12 +25,12 @@ protected:
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 255.15; // Kelvins
+    double airTemperature = 305.15; // Kelvins
     double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
+    double airSpeed = 2.75; // meters per second
     AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 255.15; // Kelvins
-    double solarRadiation = 0;
+    double tSky = 305.15; // Kelvins
+    double solarRadiation = 783;
 
     shared_ptr< CTarEnvironment > Outdoor = 
       make_shared< CTarOutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
@@ -42,7 +42,7 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    double roomTemperature = 297.15;
 
     shared_ptr< CTarEnvironment > Indoor = 
       make_shared< CTarIndoorEnvironment > ( roomTemperature, pressure );
@@ -53,12 +53,16 @@ protected:
     /////////////////////////////////////////////////////////
     double solidLayerThickness = 0.005715; // [m]
     double solidLayerConductance = 1;
+    double solarAbsorptance = 0.187443971634;
 
-    shared_ptr< CBaseIGUTarcogLayer > aSolidLayer1 = 
+    shared_ptr< CTarIGUSolidLayer > aSolidLayer1 =
       make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    aSolidLayer1->setSolarAbsorptance( solarAbsorptance );
 
-    shared_ptr< CBaseIGUTarcogLayer > aSolidLayer2 = 
+    solarAbsorptance = 0.054178960621;
+    shared_ptr< CTarIGUSolidLayer > aSolidLayer2 =
       make_shared< CTarIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    aSolidLayer2->setSolarAbsorptance( solarAbsorptance );
 
     double gapThickness = 0.012;
     double gapPressure = 101325;
@@ -87,14 +91,14 @@ public:
 
 };
 
-TEST_F( TestDoubleClearNoSun, Test1 ) {
-  SCOPED_TRACE( "Begin Test: Double Clear - Surface temperatures" );
+TEST_F( TestDoubleClearSingleSystemWithSun, Test1 ) {
+  SCOPED_TRACE( "Begin Test: Double Clear Single System - Surface temperatures" );
   
   shared_ptr< CTarcogSingleSystem > aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
   vector< double > Temperature = *aSystem->getTemperatures();
-  vector< double > correctTemperature = { 258.756688, 259.359226, 279.178510, 279.781048 };
+  vector< double > correctTemperature = { 310.818074, 311.064868, 306.799522, 306.505704 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
   for( auto i = 0; i < correctTemperature.size(); ++i ) {
@@ -102,7 +106,7 @@ TEST_F( TestDoubleClearNoSun, Test1 ) {
   }
 
   vector< double > Radiosity = *aSystem->getRadiosities();
-  vector< double > correctRadiosity = { 251.950834, 268.667346, 332.299338, 359.731700 };
+  vector< double > correctRadiosity = { 523.148794, 526.906252, 506.252171, 491.059753 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
   for( auto i = 0; i < correctRadiosity.size(); ++i ) {
@@ -110,10 +114,10 @@ TEST_F( TestDoubleClearNoSun, Test1 ) {
   }
 
   double heatFlow = aSystem->getHeatFlow( Environment::Indoor );
-  EXPECT_NEAR( 105.431019, heatFlow, 1e-5 );
+  EXPECT_NEAR( -72.622787, heatFlow, 1e-5 );
 
   double Uvalue = aSystem->getUValue();
-  EXPECT_NEAR( 2.703359, Uvalue, 1e-5 );
+  EXPECT_NEAR( 9.077848, Uvalue, 1e-5 );
 
   size_t numOfIter = aSystem->getNumberOfIterations();
   EXPECT_EQ( 20, int( numOfIter ) );

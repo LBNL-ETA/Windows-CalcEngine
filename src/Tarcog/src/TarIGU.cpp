@@ -23,15 +23,14 @@ using namespace std;
 using namespace FenestrationCommon;
 
 namespace Tarcog {
-  CTarIGU::CTarIGU( double t_Width, double t_Height, double t_Tilt, double t_TotalSolar ) : 
-    m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ), m_TotalSolar( t_TotalSolar ) {
+  CTarIGU::CTarIGU( const double t_Width, const double t_Height, const double t_Tilt ) : 
+    m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ) {
   }
 
   CTarIGU::CTarIGU( const CTarIGU& t_IGU ) {
     m_Width = t_IGU.m_Width;
     m_Height = t_IGU.m_Height;
     m_Tilt = t_IGU.m_Tilt;
-    m_TotalSolar = t_IGU.m_TotalSolar;
     for( size_t i = 0; i < t_IGU.m_Layers.size(); ++i ) {
       shared_ptr< CBaseIGUTarcogLayer > aLayer = 
         dynamic_pointer_cast< CBaseIGUTarcogLayer >( t_IGU.m_Layers[ i ]->clone() );
@@ -96,10 +95,6 @@ namespace Tarcog {
     for( shared_ptr< CTarIGUSolidLayer >& layer : getSolidLayers() ) {
       layer->setSolarRadiation( t_SolarRadiation );
     }
-  }
-
-  void CTarIGU::setTotalSolar( const double t_TotSol ) {
-    m_TotalSolar = t_TotSol;
   }
 
   shared_ptr<CBaseTarcogLayer> CTarIGU::getLayer( const Environment t_Environment ) const {

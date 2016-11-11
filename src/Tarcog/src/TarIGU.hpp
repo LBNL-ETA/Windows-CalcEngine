@@ -15,7 +15,7 @@ namespace Tarcog {
 
   class CTarIGU {
   public:
-    CTarIGU( double t_Width, double t_Height, double t_Tilt = 90, double t_TotalSolar = 0 );
+    CTarIGU( const double t_Width, const double t_Height, const double t_Tilt = 90 );
     CTarIGU( const CTarIGU& t_IGU );
     ~CTarIGU();
 
@@ -30,8 +30,6 @@ namespace Tarcog {
     void setHeight( const double t_Height );
 
     void setSolarRadiation( const double t_SolarRadiation );
-
-    void setTotalSolar( const double t_TotSol );
 
     std::shared_ptr< CBaseTarcogLayer > getLayer( const Environment t_Environment ) const;
 
@@ -70,8 +68,6 @@ namespace Tarcog {
     double m_Width; // meters
     double m_Height; // meters
     double m_Tilt; // degrees
-
-    double m_TotalSolar; // Total solar transmittance
 
     // Routines to calculate deflection coefficients
     double Ldmean() const;
