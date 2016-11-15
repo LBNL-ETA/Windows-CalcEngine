@@ -12,67 +12,107 @@ using namespace std;
 
 namespace Tarcog {
 
-  CSurface::CSurface(double t_Emissivity, double t_Transmittance):
-    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance ), m_Temperature( 273.15 ), 
+  //////////////////////////////////////////////////////////////////////////////
+  // ISurface
+  //////////////////////////////////////////////////////////////////////////////
+  ISurface::ISurface() : m_Emissivity( 0.84 ), m_Transmittance( 0 ), m_Temperature( 273.15 ),
     m_J( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
-    m_Temperature = 273.15;
-    m_J = 0;
-    initializeOptical();
+    calculateReflectance();
   }
 
-  CSurface::CSurface( const CSurface& t_Surface ) {
+  ISurface::ISurface( const double t_Emissivity, const double t_Transmittance ) :
+    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance ), m_Temperature( 273.15 ),
+    m_J( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
+    calculateReflectance();
+  }
+
+  ISurface::ISurface( const ISurface & t_Surface ) {
     m_Emissivity = t_Surface.m_Emissivity;
     m_Transmittance = t_Surface.m_Transmittance;
     m_Temperature = t_Surface.m_Temperature;
     m_J = t_Surface.m_J;
     m_MaxDeflection = t_Surface.m_MaxDeflection;
     m_MeanDeflection = t_Surface.m_MeanDeflection;
-    initializeOptical();
+    calculateReflectance();
   }
 
-  CSurface::CSurface() : m_Emissivity( 0.84 ), m_Transmittance( 0 ), m_Temperature( 273.15 ), 
-    m_J( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
-    initializeOptical();
-  }
-
-  double CSurface::getTemperature() const {
+  double ISurface::getTemperature() const {
     return m_Temperature;
   }
 
-  void CSurface::setTemperature( double const t_Temperature ) {
-    m_Temperature = t_Temperature;
-  }
-
-  double CSurface::getEmissivity() const {
+  double ISurface::getEmissivity() const {
     return m_Emissivity;
   }
 
-  double CSurface::getReflectance() const {
+  double ISurface::getReflectance() const {
     return m_Reflectance;
   }
 
-  double CSurface::getTransmittance() const {
+  double ISurface::getTransmittance() const {
     return m_Transmittance;
   }
 
-  void CSurface::initializeOptical() {
-    if ( m_Emissivity + m_Transmittance > 1 ) {
+  double ISurface::J() const {
+    return m_J;
+  }
+
+  double ISurface::getMeanDeflection() const {
+    return m_MeanDeflection;
+  }
+
+  double ISurface::getMaxDeflection() const {
+    return m_MaxDeflection;
+  }
+
+  double ISurface::emissivePowerTerm() const {
+    using ConstantsData::STEFANBOLTZMANN;
+
+    return STEFANBOLTZMANN * m_Emissivity * pow( m_Temperature, 3 );
+  }
+
+  void ISurface::calculateReflectance() {
+    if( m_Emissivity + m_Transmittance > 1 ) {
       throw runtime_error( "Sum of emittance and transmittance cannot be greater than one." );
     } else {
       m_Reflectance = 1 - m_Emissivity - m_Transmittance;
     }
   }
 
-  void CSurface::initializeStart( double const t_Temperature ) {
+  void ISurface::initializeStart( double const t_Temperature ) {
     using ConstantsData::STEFANBOLTZMANN;
 
     m_Temperature = t_Temperature;
     m_J = STEFANBOLTZMANN * pow( m_Temperature, 4 );
   }
 
-  void CSurface::initializeStart( const double t_Temperature, const double t_Radiation ) {
+  void ISurface::initializeStart( const double t_Temperature, const double t_Radiation ) {
     m_Temperature = t_Temperature;
     m_J = t_Radiation;
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // CSurface
+  //////////////////////////////////////////////////////////////////////////////
+  CSurface::CSurface(double t_Emissivity, double t_Transmittance): 
+    ISurface( t_Emissivity, t_Transmittance ) {
+    
+  }
+
+  CSurface::CSurface( const CSurface& t_Surface ) : ISurface( t_Surface ) {
+    
+  }
+
+  shared_ptr< ISurface > CSurface::clone() const {
+    return make_shared< CSurface >( *this );
+  }
+
+  CSurface::CSurface() : ISurface() {
+    
+  }
+
+  void CSurface::setTemperature( double const t_Temperature ) {
+    m_Temperature = t_Temperature;
   }
 
   void CSurface::applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection ) {
@@ -80,26 +120,8 @@ namespace Tarcog {
     m_MaxDeflection = t_MaxDeflection;
   }
 
-  double CSurface::getMeanDeflection() const {
-    return m_MeanDeflection;
-  }
-
-  double CSurface::getMaxDeflection() const {
-    return m_MaxDeflection;
-  }
-
-  double CSurface::J() const {
-    return m_J;
-  }
-
   void CSurface::setJ( double const t_J ) {
     m_J = t_J;
   }
 
-  double CSurface::emissivePowerTerm() const {
-    using ConstantsData::STEFANBOLTZMANN;
-
-    return STEFANBOLTZMANN * m_Emissivity * pow( m_Temperature, 3 );
-  }
-  
 }

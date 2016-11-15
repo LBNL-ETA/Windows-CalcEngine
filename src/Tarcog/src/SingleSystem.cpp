@@ -153,7 +153,7 @@ namespace Tarcog {
 
     shared_ptr< CBaseIGULayer > aLayer = aLayers.front();
     double currentXPosition = startX;
-    shared_ptr< CSurface > aSurface = aLayer->getSurface( Side::Front );
+    shared_ptr< ISurface > aSurface = aLayer->getSurface( Side::Front );
     double curTemp = tOut + currentXPosition * deltaTemp;
 
     aSurface->initializeStart( curTemp );

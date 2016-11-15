@@ -87,7 +87,7 @@ TEST_F( TestTemperatureInitialGuess, Test1 )
 {
   SCOPED_TRACE( "Begin Test: Initial temperature and IR guess" );
 
-  shared_ptr< CSurface > aSurface = getLayer1()->getSurface( Side::Front );
+  shared_ptr< ISurface > aSurface = getLayer1()->getSurface( Side::Front );
   ASSERT_TRUE( aSurface != nullptr );
   double temperature = aSurface->getTemperature();
   double J = aSurface->J();

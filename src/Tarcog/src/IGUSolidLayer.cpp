@@ -74,7 +74,7 @@ namespace Tarcog {
 
   void CIGUSolidLayer::setSurfaceState( double const t_Temperature, double const t_J, 
     Side const t_Position ) {
-    shared_ptr< CSurface > aSurface = m_Surface.at( t_Position );
+    shared_ptr< ISurface > aSurface = m_Surface.at( t_Position );
     aSurface->setTemperature( t_Temperature );
     aSurface->setJ( t_J );
 

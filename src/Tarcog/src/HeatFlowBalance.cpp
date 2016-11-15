@@ -56,10 +56,10 @@ namespace Tarcog {
     double hgl = t_Current->getConductionConvectionCoefficient();
     double hgap_prev = t_Previous->getConductionConvectionCoefficient();
     double hgap_next = t_Next->getConductionConvectionCoefficient();
-    shared_ptr< CSurface > frontSurface = t_Current->getSurface( Side::Front );
+    shared_ptr< ISurface > frontSurface = t_Current->getSurface( Side::Front );
     assert( frontSurface != nullptr );
     double emissPowerFront = frontSurface->emissivePowerTerm();
-    shared_ptr< CSurface > backSurface = t_Current->getSurface( Side::Back );
+    shared_ptr< ISurface > backSurface = t_Current->getSurface( Side::Back );
     assert( backSurface != nullptr );
     double emissPowerBack = backSurface->emissivePowerTerm();
     double qv_prev = t_Previous->getGainFlow();

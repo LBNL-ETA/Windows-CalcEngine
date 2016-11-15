@@ -20,7 +20,7 @@ namespace Gases {
 
 namespace Tarcog {
 
-  class CSurface;
+  class ISurface;
 
   struct ForcedVentilation {
     ForcedVentilation() : Speed( 0 ), Temperature( 0 ) {};
@@ -49,15 +49,15 @@ namespace Tarcog {
   public:
     CLayerHeatFlow();
     CLayerHeatFlow( const CLayerHeatFlow& t_Layer );
-    CLayerHeatFlow( const std::shared_ptr< CSurface >& t_FrontSurface, 
-      const std::shared_ptr< CSurface >& t_BackSurface );
+    CLayerHeatFlow( const std::shared_ptr< ISurface >& t_FrontSurface, 
+      const std::shared_ptr< ISurface >& t_BackSurface );
     virtual double getHeatFlow() final;
     virtual double getGainFlow() final;
     virtual double getConductionConvectionCoefficient() final;
     virtual double getRadiationFlow() final;
     virtual double getConvectionConductionFlow() final;
-    virtual std::shared_ptr< CSurface > getSurface( FenestrationCommon::Side const t_Position ) const final;
-    virtual void setSurface( std::shared_ptr< CSurface > t_Surface, 
+    virtual std::shared_ptr< ISurface > getSurface( FenestrationCommon::Side const t_Position ) const final;
+    virtual void setSurface( std::shared_ptr< ISurface > t_Surface, 
       FenestrationCommon::Side const t_Position ) final;
 
   protected:
@@ -66,7 +66,7 @@ namespace Tarcog {
     virtual void calculateConvectionOrConductionFlow() = 0;
     bool areSurfacesInitalized() const;
 
-    std::map< FenestrationCommon::Side, std::shared_ptr< CSurface > > m_Surface;
+    std::map< FenestrationCommon::Side, std::shared_ptr< ISurface > > m_Surface;
     double m_ConductiveConvectiveCoeff;
     double m_LayerGainFlow;
   };

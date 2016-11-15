@@ -116,10 +116,9 @@ namespace Tarcog {
   shared_ptr< vector< double > > CIGU::getState() {
 
     shared_ptr< vector< double > > aState = make_shared< vector< double > >();
-    shared_ptr< CSurface > aSurface = nullptr;
 
     for( shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
-      aSurface = layer->getSurface( Side::Front );
+      shared_ptr< ISurface > aSurface = layer->getSurface( Side::Front );
       assert( aSurface != nullptr );
       aState->push_back( aSurface->getTemperature() );
       aState->push_back( aSurface->J() );
@@ -149,7 +148,7 @@ namespace Tarcog {
 
     for( const shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
       for( Side aSide : EnumSide() ) {
-        shared_ptr< CSurface > aSurface = layer->getSurface( aSide );
+        shared_ptr< ISurface > aSurface = layer->getSurface( aSide );
         assert( aSurface != nullptr );
         aTemperatures->push_back( aSurface->getTemperature() );
       }
@@ -163,7 +162,7 @@ namespace Tarcog {
 
     for( const shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
       for( Side aSide : EnumSide() ) {
-        shared_ptr< CSurface > aSurface = layer->getSurface( aSide );
+        shared_ptr< ISurface > aSurface = layer->getSurface( aSide );
         assert( aSurface != nullptr );
         aRadiosities->push_back( aSurface->J() );
       }
@@ -232,7 +231,7 @@ namespace Tarcog {
       size_t Index = 0;
       for( shared_ptr< CIGUSolidLayer >& aLayer : getSolidLayers() ) {
         for( Side aSide : EnumSide() ) {
-          shared_ptr< CSurface > aSurface = aLayer->getSurface( aSide );
+          shared_ptr< ISurface > aSurface = aLayer->getSurface( aSide );
           aSurface->initializeStart( ( *t_Guess )[ Index ] );
           ++Index;
         }
