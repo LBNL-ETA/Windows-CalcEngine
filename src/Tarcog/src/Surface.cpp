@@ -36,6 +36,19 @@ namespace Tarcog {
     calculateReflectance();
   }
 
+  void ISurface::setTemperature( double const t_Temperature ) {
+    m_Temperature = t_Temperature;
+  }
+
+  void ISurface::setJ( double const t_J ) {
+    m_J = t_J;
+  }
+
+  void ISurface::applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection ) {
+    m_MeanDeflection = t_MeanDeflection;
+    m_MaxDeflection = t_MaxDeflection;
+  }
+
   double ISurface::getTemperature() const {
     return m_Temperature;
   }
@@ -109,19 +122,6 @@ namespace Tarcog {
 
   CSurface::CSurface() : ISurface() {
     
-  }
-
-  void CSurface::setTemperature( double const t_Temperature ) {
-    m_Temperature = t_Temperature;
-  }
-
-  void CSurface::applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection ) {
-    m_MeanDeflection = t_MeanDeflection;
-    m_MaxDeflection = t_MaxDeflection;
-  }
-
-  void CSurface::setJ( double const t_J ) {
-    m_J = t_J;
   }
 
 }

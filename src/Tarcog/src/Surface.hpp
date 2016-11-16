@@ -15,10 +15,10 @@ namespace Tarcog {
 
     virtual std::shared_ptr< ISurface > clone() const = 0;
 
-    virtual void setTemperature( double const t_Temperature ) = 0;
-    virtual void setJ( double const t_J ) = 0;
-    virtual void applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection ) = 0;
+    virtual void setTemperature( double const t_Temperature );
+    virtual void setJ( double const t_J );
 
+    void applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection );
     double getTemperature() const;
     double getEmissivity() const;
     double getReflectance() const;
@@ -32,6 +32,8 @@ namespace Tarcog {
     void initializeStart( const double t_Temperature, const double t_Radiation );
 
   protected:
+    void calculateReflectance();
+
     double m_Temperature;
     double m_J;
 
@@ -44,9 +46,6 @@ namespace Tarcog {
     double m_MeanDeflection;
     double m_MaxDeflection;
 
-  private:
-    void calculateReflectance();
-
   };
 
   class CSurface : public ISurface {
@@ -56,12 +55,6 @@ namespace Tarcog {
     CSurface( const CSurface& t_Surface );
 
     virtual std::shared_ptr< ISurface > clone() const;
-
-    void setTemperature( double const t_Temperature );
-    void setJ( double const t_J );
-
-    //  Applies deflection to current surface
-    void applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection );
 
   };
 
