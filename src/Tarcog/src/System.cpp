@@ -20,23 +20,27 @@ namespace Tarcog {
 
   }
 
-  shared_ptr< vector< double > > CSystem::getTemperatures( const System t_System ) const {
+  shared_ptr< vector< double > > CSystem::getTemperatures( System const t_System ) const {
     return m_System.at( t_System )->getTemperatures();
   }
 
-  shared_ptr< vector< double > > CSystem::getRadiosities( const System t_System ) const {
+  shared_ptr< vector< double > > CSystem::getRadiosities( System const t_System ) const {
     return m_System.at( t_System )->getRadiosities();
   }
 
-  shared_ptr< vector< double > > CSystem::getMaxDeflections( const System t_System ) const {
+  shared_ptr< vector< double > > CSystem::getMaxDeflections( System const t_System ) const {
     return m_System.at( t_System )->getMaxDeflections();
   }
 
-  shared_ptr< vector< double > > CSystem::getMeanDeflections( const System t_System ) const {
+  shared_ptr< vector< double > > CSystem::getMeanDeflections( System const t_System ) const {
     return m_System.at( t_System )->getMeanDeflections();
   }
 
-  double CSystem::getHeatFlow( const System t_System, const Environment t_Environment ) const {
+  vector< shared_ptr< CIGUSolidLayer > > CSystem::getSolidLayers( System const t_System ) const {
+    return m_System.at( t_System )->getSolidLayers();
+  }
+
+  double CSystem::getHeatFlow( System const t_System, Environment const t_Environment ) const {
     return m_System.at( t_System )->getHeatFlow( t_Environment );
   }
 
@@ -44,13 +48,13 @@ namespace Tarcog {
     return m_System.at( System::Uvalue )->getUValue();
   }
 
-  double CSystem::getSHGC( const double t_TotSol ) const {
+  double CSystem::getSHGC( double const t_TotSol ) const {
     return t_TotSol - ( m_System.at( System::SHGC )->getHeatFlow( Environment::Indoor ) -
       m_System.at( System::Uvalue )->getHeatFlow( Environment::Indoor ) ) /
       m_System.at( System::SHGC )->getSolarRadiation();
   }
 
-  size_t CSystem::getNumberOfIterations( const System t_System ) const {
+  size_t CSystem::getNumberOfIterations( System const t_System ) const {
     return m_System.at( t_System )->getNumberOfIterations();
   }
 

@@ -16,7 +16,7 @@ using namespace FenestrationCommon;
 namespace Tarcog {
 
   CIGUSolidLayer::CIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
-    shared_ptr< CSurface > t_FrontSurface, shared_ptr< CSurface > t_BackSurface )
+    shared_ptr< ISurface > t_FrontSurface, shared_ptr< ISurface > t_BackSurface )
     : CState(), CBaseIGULayer( t_Thickness ), m_Conductivity( t_Conductivity ), 
     m_SolarAbsorptance( 0 ) {
     if ( t_FrontSurface != nullptr && t_BackSurface != nullptr ) {

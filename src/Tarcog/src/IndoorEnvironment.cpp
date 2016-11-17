@@ -9,6 +9,7 @@
 #include "Surface.hpp"
 #include "GasProperties.hpp"
 #include "FenestrationCommon.hpp"
+#include "Gas.hpp"
 
 using namespace std;
 using namespace Gases;

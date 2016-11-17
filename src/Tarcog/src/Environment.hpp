@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "BaseLayer.hpp"
-#include "Gas.hpp"
 
 namespace Tarcog {
 
