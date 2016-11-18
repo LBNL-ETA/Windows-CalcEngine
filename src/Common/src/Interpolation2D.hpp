@@ -31,7 +31,7 @@ namespace FenestrationCommon {
     double getValue( double const t_Value ) const;
 
   private:
-    size_t getSubinterval( double const t_Value ) const;
+    std::size_t getSubinterval( double const t_Value ) const;
     std::vector< double > calculateHs() const;
     std::vector< double > calculateDeltas() const;
     std::vector< double > calculateDerivatives() const;
