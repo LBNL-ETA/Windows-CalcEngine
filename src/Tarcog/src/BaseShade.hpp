@@ -11,7 +11,7 @@ namespace Gases{
 
 namespace Tarcog {
 
-  class CSurface;
+  class ISurface;
   class CIGUVentilatedGapLayer;
   class CEnvironment;
 
@@ -40,8 +40,8 @@ namespace Tarcog {
   public:
     CIGUShadeLayer( double t_Thickness, double t_Conductivity, 
       const std::shared_ptr< CShadeOpenings >& t_ShadeOpenings,
-      const std::shared_ptr< CSurface >& t_FrontSurface = nullptr, 
-      const std::shared_ptr< CSurface >& t_BackSurface = nullptr);
+      const std::shared_ptr< ISurface >& t_FrontSurface = nullptr, 
+      const std::shared_ptr< ISurface >& t_BackSurface = nullptr);
 
     CIGUShadeLayer( std::shared_ptr< CIGUSolidLayer >& t_Layer,
       std::shared_ptr< CShadeOpenings >& t_ShadeOpenings );

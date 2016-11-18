@@ -10,6 +10,7 @@ namespace Tarcog {
   class CIGU;
   class CEnvironment;
   class CSingleSystem;
+  class CIGUSolidLayer;
   enum class Environment;
 
   enum class System { Uvalue, SHGC };
@@ -20,16 +21,18 @@ namespace Tarcog {
       std::shared_ptr< CEnvironment > t_Indoor,
       std::shared_ptr< CEnvironment > t_Outdoor );
 
-    std::shared_ptr< std::vector< double > > getTemperatures( const System t_System ) const;
-    std::shared_ptr< std::vector< double > > getRadiosities( const System t_System ) const;
+    std::shared_ptr< std::vector< double > > getTemperatures( System const t_System ) const;
+    std::shared_ptr< std::vector< double > > getRadiosities( System const t_System ) const;
 
-    std::shared_ptr< std::vector< double > > getMaxDeflections( const System t_System ) const;
-    std::shared_ptr< std::vector< double > > getMeanDeflections( const System t_System ) const;
+    std::shared_ptr< std::vector< double > > getMaxDeflections( System const t_System ) const;
+    std::shared_ptr< std::vector< double > > getMeanDeflections( System const t_System ) const;
 
-    double getHeatFlow( const System t_System, const Environment t_Environment ) const;
+    std::vector< std::shared_ptr< CIGUSolidLayer > > getSolidLayers( System const t_System ) const;
+
+    double getHeatFlow( System const t_System, Environment const t_Environment ) const;
     double getUValue() const;
-    double getSHGC( const double t_TotSol ) const;
-    size_t getNumberOfIterations( const System t_System ) const;
+    double getSHGC( double const t_TotSol ) const;
+    size_t getNumberOfIterations( System const t_System ) const;
 
   private:
     std::map< System, std::shared_ptr< CSingleSystem > > m_System;

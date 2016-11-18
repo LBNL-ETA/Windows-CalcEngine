@@ -10,13 +10,13 @@ namespace FenestrationCommon {
 
 namespace Tarcog {
 
-  class CSurface;
+  class ISurface;
 
   class CIGUSolidLayer : public CBaseIGULayer {
   public:
     CIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
-      std::shared_ptr< CSurface > t_FrontSurface = nullptr, 
-      std::shared_ptr< CSurface > t_BackSurface = nullptr );
+      std::shared_ptr< ISurface > t_FrontSurface = nullptr, 
+      std::shared_ptr< ISurface > t_BackSurface = nullptr );
 
     CIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
       double const t_FrontEmissivity, double const t_FrontIRTransmittance,

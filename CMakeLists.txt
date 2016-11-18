@@ -78,6 +78,10 @@ else()
   file( GLOB SOURCES_HPP "src/MultiLayerOptics/src/*.hpp" )
   LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
   
+  file( GLOB SOURCES_CPP "src/Chromogenics/src/*.cpp" )
+  file( GLOB SOURCES_HPP "src/Chromogenics/src/*.hpp" )
+  LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+  
   add_library( ${target_name} STATIC ${SOURCES} )
   
   if( BUILD_TESTING )

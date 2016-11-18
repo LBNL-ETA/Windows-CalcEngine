@@ -12,8 +12,6 @@ namespace FenestrationCommon {
 
 namespace Tarcog {
 
-  class CSurface;
-
   class CBaseIGULayer : public CBaseLayer {
   public:
     CBaseIGULayer( double const t_Thickness );

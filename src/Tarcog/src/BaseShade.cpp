@@ -58,8 +58,8 @@ namespace Tarcog {
 
   CIGUShadeLayer::CIGUShadeLayer( double const t_Thickness, double const t_Conductivity, 
     const shared_ptr< CShadeOpenings >& t_ShadeOpenings,
-    const shared_ptr< CSurface >& t_FrontSurface, 
-    const shared_ptr< CSurface >& t_BackSurface ) : 
+    const shared_ptr< ISurface >& t_FrontSurface, 
+    const shared_ptr< ISurface >& t_BackSurface ) : 
     CIGUSolidLayer( t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface ), 
     m_ShadeOpenings( t_ShadeOpenings ) {
   }

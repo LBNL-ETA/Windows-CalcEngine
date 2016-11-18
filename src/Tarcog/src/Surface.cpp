@@ -15,18 +15,20 @@ namespace Tarcog {
   //////////////////////////////////////////////////////////////////////////////
   // ISurface
   //////////////////////////////////////////////////////////////////////////////
-  ISurface::ISurface() : m_Temperature( 273.15 ), m_J( 0 ), m_Emissivity( 0.84 ),
-    m_Transmittance( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
+  ISurface::ISurface() : m_Temperature( 273.15 ), m_J( 0 ),
+    m_Emissivity( 0.84 ), m_Transmittance( 0 ),
+    m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
     calculateReflectance();
   }
 
-  ISurface::ISurface( const double t_Emissivity, const double t_Transmittance ) :
-    m_Temperature( 273.15 ), m_J( 0 ), m_Emissivity( t_Emissivity ),
-    m_Transmittance( t_Transmittance ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
+  ISurface::ISurface( double const t_Emissivity, double const t_Transmittance ) :
+    m_Temperature( 273.15 ), m_J( 0 ),
+    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance ),
+    m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
     calculateReflectance();
   }
 
-  ISurface::ISurface( const ISurface & t_Surface ) {
+  ISurface::ISurface( ISurface const& t_Surface ) {
     m_Emissivity = t_Surface.m_Emissivity;
     m_Transmittance = t_Surface.m_Transmittance;
     m_Temperature = t_Surface.m_Temperature;
@@ -44,7 +46,7 @@ namespace Tarcog {
     m_J = t_J;
   }
 
-  void ISurface::applyDeflection( const double t_MeanDeflection, const double t_MaxDeflection ) {
+  void ISurface::applyDeflection( double const t_MeanDeflection, double const t_MaxDeflection ) {
     m_MeanDeflection = t_MeanDeflection;
     m_MaxDeflection = t_MaxDeflection;
   }
@@ -98,7 +100,7 @@ namespace Tarcog {
     m_J = STEFANBOLTZMANN * pow( m_Temperature, 4 );
   }
 
-  void ISurface::initializeStart( const double t_Temperature, const double t_Radiation ) {
+  void ISurface::initializeStart( double const t_Temperature, double const t_Radiation ) {
     m_Temperature = t_Temperature;
     m_J = t_Radiation;
   }
@@ -107,12 +109,12 @@ namespace Tarcog {
   //////////////////////////////////////////////////////////////////////////////
   // CSurface
   //////////////////////////////////////////////////////////////////////////////
-  CSurface::CSurface(double t_Emissivity, double t_Transmittance): 
+  CSurface::CSurface( double const t_Emissivity, double const t_Transmittance) : 
     ISurface( t_Emissivity, t_Transmittance ) {
     
   }
 
-  CSurface::CSurface( const CSurface& t_Surface ) : ISurface( t_Surface ) {
+  CSurface::CSurface( CSurface const& t_Surface ) : ISurface( t_Surface ) {
     
   }
 
