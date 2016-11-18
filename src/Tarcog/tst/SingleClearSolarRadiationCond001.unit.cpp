@@ -86,7 +86,7 @@ TEST_F( TestSingleClearSolarCond100, TestTempAndRad ) {
   vector< double > correctTemperature = { 299.465898, 300.261869 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
@@ -94,7 +94,7 @@ TEST_F( TestSingleClearSolarCond100, TestTempAndRad ) {
   vector< double > correctRadiosity = { 443.871080, 455.028488 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 

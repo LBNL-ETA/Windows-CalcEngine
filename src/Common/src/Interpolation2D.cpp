@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "Interpolation2D.hpp"
 #include "FenestrationCommon.hpp"
 
@@ -47,13 +49,14 @@ namespace FenestrationCommon {
   }
 
   size_t CSPChipInterpolation2D::getSubinterval( double const t_Value ) const {
-    size_t i = 1;
-    for( i; i < m_Points.size(); ++i ) {
+    size_t interval = 1;
+    for( auto i = 1u; i < m_Points.size(); ++i ) {
       if( m_Points[ i ].first > t_Value ) {
-        return i - 1;
+        interval = i - 1;
+        break;
       }
     }
-    return i;
+    return interval;
   }
 
   vector< double > CSPChipInterpolation2D::calculateHs() const {

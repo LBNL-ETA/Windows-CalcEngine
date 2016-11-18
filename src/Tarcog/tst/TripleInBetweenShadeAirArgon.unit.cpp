@@ -154,7 +154,7 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
   vector< double > correctTemperature = { 257.708586, 258.135737, 271.904015, 271.907455, 284.412841, 284.839992 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-6 );
   }
 
@@ -162,10 +162,10 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
   vector< double > correctRadiosity = { 248.512581, 259.762360, 301.878568, 318.339706, 362.562135, 382.345742 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-6 );
   }
 
   size_t numOfIter = GetSystem()->getNumberOfIterations();
-  EXPECT_EQ( 21, int( numOfIter ) );
+  EXPECT_EQ( 21u, numOfIter );
 }

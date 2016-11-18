@@ -101,7 +101,7 @@ TEST_F( TestDoubleClearSingleSystemWithSun, Test1 ) {
   vector< double > correctTemperature = { 310.818074, 311.064868, 306.799522, 306.505704 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
@@ -109,7 +109,7 @@ TEST_F( TestDoubleClearSingleSystemWithSun, Test1 ) {
   vector< double > correctRadiosity = { 523.148794, 526.906252, 506.252171, 491.059753 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 
@@ -120,5 +120,5 @@ TEST_F( TestDoubleClearSingleSystemWithSun, Test1 ) {
   EXPECT_NEAR( 9.077848, Uvalue, 1e-5 );
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 20, int( numOfIter ) );
+  EXPECT_EQ( 20u, numOfIter );
 }

@@ -106,7 +106,7 @@ TEST_F( DoubleLowEVacuumNoPillar, Test1 ) {
   vector< double > correctTemperature = { 255.501938, 255.543003, 292.514948, 292.555627 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
@@ -114,10 +114,10 @@ TEST_F( DoubleLowEVacuumNoPillar, Test1 ) {
   vector< double > correctRadiosity = { 241.409657, 407.569595, 413.894817, 416.791085 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 30, int( numOfIter ) );
+  EXPECT_EQ( 30u, numOfIter );
 }

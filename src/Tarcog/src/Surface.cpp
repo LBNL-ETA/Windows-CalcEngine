@@ -15,14 +15,14 @@ namespace Tarcog {
   //////////////////////////////////////////////////////////////////////////////
   // ISurface
   //////////////////////////////////////////////////////////////////////////////
-  ISurface::ISurface() : m_Emissivity( 0.84 ), m_Transmittance( 0 ), m_Temperature( 273.15 ),
-    m_J( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
+  ISurface::ISurface() : m_Temperature( 273.15 ), m_J( 0 ), m_Emissivity( 0.84 ),
+    m_Transmittance( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
     calculateReflectance();
   }
 
   ISurface::ISurface( const double t_Emissivity, const double t_Transmittance ) :
-    m_Emissivity( t_Emissivity ), m_Transmittance( t_Transmittance ), m_Temperature( 273.15 ),
-    m_J( 0 ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
+    m_Temperature( 273.15 ), m_J( 0 ), m_Emissivity( t_Emissivity ),
+    m_Transmittance( t_Transmittance ), m_MeanDeflection( 0 ), m_MaxDeflection( 0 ) {
     calculateReflectance();
   }
 

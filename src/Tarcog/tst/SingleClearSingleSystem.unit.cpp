@@ -85,7 +85,7 @@ TEST_F( TestSingleClearSingleSystem, Test1 ) {
   vector< double > correctTemperature = { 297.207035, 297.14470 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
@@ -93,7 +93,7 @@ TEST_F( TestSingleClearSingleSystem, Test1 ) {
   vector< double > correctRadiosity = { 432.444546, 439.201749 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 

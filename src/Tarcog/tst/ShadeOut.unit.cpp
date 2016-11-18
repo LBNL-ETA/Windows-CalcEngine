@@ -120,7 +120,7 @@ TEST_F( TestShadeOut, Test1 ) {
   vector< double > correctTemperature = { 256.991924, 256.992140, 269.666330, 270.128394 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
@@ -128,7 +128,7 @@ TEST_F( TestShadeOut, Test1 ) {
   vector< double > correctRadiosity = { 249.993042, 250.921069, 291.999868, 419.703053 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 

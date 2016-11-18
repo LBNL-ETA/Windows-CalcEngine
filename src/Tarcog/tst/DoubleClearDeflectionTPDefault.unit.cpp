@@ -103,7 +103,7 @@ TEST_F( DoubleClearDeflectionTPDefault, Test1 ) {
   vector< double > correctTemperature = { 258.811500, 259.137749, 278.961419, 279.573136 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0; i < correctTemperature.size(); ++i ) {
+  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
@@ -111,7 +111,7 @@ TEST_F( DoubleClearDeflectionTPDefault, Test1 ) {
   vector< double > correctRadiosity = { 252.131797, 267.765290, 331.256183, 358.865247 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0; i < correctRadiosity.size(); ++i ) {
+  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 
@@ -119,7 +119,7 @@ TEST_F( DoubleClearDeflectionTPDefault, Test1 ) {
   vector< double > correctMaxDeflection = { -0.0031162, 0.00029386 };
   ASSERT_EQ( correctMaxDeflection.size(), MaxDeflection.size() );
 
-  for( auto i = 0; i < correctMaxDeflection.size(); ++i ) {
+  for( auto i = 0u; i < correctMaxDeflection.size(); ++i ) {
     EXPECT_NEAR( correctMaxDeflection[ i ], MaxDeflection[ i ], 1e-5 );
   }
 
@@ -127,10 +127,10 @@ TEST_F( DoubleClearDeflectionTPDefault, Test1 ) {
   vector< double > correctMeanDeflection = { -0.0013055, 0.00012311 };
   ASSERT_EQ( correctMeanDeflection.size(), MeanDeflection.size() );
 
-  for( auto i = 0; i < correctMaxDeflection.size(); ++i ) {
+  for( auto i = 0u; i < correctMaxDeflection.size(); ++i ) {
     EXPECT_NEAR( correctMeanDeflection[ i ], MeanDeflection[ i ], 1e-5 );
   }
 
   size_t numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 25, int( numOfIter ) );
+  EXPECT_EQ( 25u, numOfIter );
 }
