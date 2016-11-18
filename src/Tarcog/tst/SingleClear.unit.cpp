@@ -124,7 +124,7 @@ TEST_F( TestSingleClear, Test1 ) {
   }
 
   numOfIterations = aSystem->getNumberOfIterations( System::SHGC );
-  EXPECT_EQ( numOfIterations, 19 );
+  EXPECT_EQ( 19u, numOfIterations );
 
   /////////////////////////////////////////////////////////////////////////
   //  Heat flows
