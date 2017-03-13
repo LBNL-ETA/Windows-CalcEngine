@@ -386,4 +386,22 @@ namespace SpectralAveraging {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////
+  ////  CSpectralAngleSample
+  //////////////////////////////////////////////////////////////////////////////////////
+
+  CSpectralAngleSample::CSpectralAngleSample( const shared_ptr< CSpectralSample >& t_Sample, const double t_Angle ) :
+	  m_Sample( t_Sample ), m_Angle( t_Angle ) {
+
+  }
+
+  double CSpectralAngleSample::angle( ) const {
+	  return m_Angle;
+  }
+
+  shared_ptr< CSpectralSample > CSpectralAngleSample::sample( ) const {
+	  return m_Sample;
+  }
+
+
 }
