@@ -10,12 +10,10 @@
 #include "SurfaceCoating.hpp"
 #include "FenestrationCommon.hpp"
 #include "AngularMeasurements.hpp"
-#include "E:\\TortoiseGit\\WCE\\Windows-CalcEngine\\src\\MultiLayerOptics\\src\\CommonWavelengths.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
-using namespace MultiLayerOptics;
 
 // Example (test case) of sample that calculates angular properties of single layer sample with linear interpolation
 
@@ -224,7 +222,6 @@ TEST_F( TestSampleNFRC_103_AngularTest, TestProperties45degrees ) {
   transmittance = aSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
   reflectanceFront = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Front );
   reflectanceBack = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Back );
-  double absorptance = aSample->getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
 
 
 }
