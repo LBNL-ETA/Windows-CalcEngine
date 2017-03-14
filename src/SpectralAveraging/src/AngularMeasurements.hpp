@@ -37,7 +37,6 @@ namespace SpectralAveraging {
 	private:
 		std::shared_ptr< CSpectralSample > m_Data;
 		double m_Angle;
-		double m_fraction;
 	};
 
 	// Note that name here is plural

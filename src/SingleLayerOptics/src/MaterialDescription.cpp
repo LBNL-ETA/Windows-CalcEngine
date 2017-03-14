@@ -8,6 +8,8 @@
 #include "AngularSpectralSample.hpp"
 #include "NIRRatio.hpp"
 #include "OpticalSurface.hpp"
+#include "AngularMeasurements.hpp"
+#include "Series.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -321,6 +323,92 @@ namespace SingleLayerOptics {
 
   shared_ptr< vector< double > > CMaterialSample::calculateBandWavelengths() {
     return m_AngularSample->getBandWavelengths(); 
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  ////   CMaterialMeasured
+  ////////////////////////////////////////////////////////////////////////////////////
+
+  CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
+	  const double t_Thickness, const MaterialType t_Type,
+	  const double minLambda, const double maxLambda ) :
+	  m_AngularMeasurements( t_AngularMeasurements ),
+	  CMaterial( minLambda, maxLambda ) {
+
+	  if ( t_AngularMeasurements == nullptr ) {
+		  throw runtime_error( "Cannot create specular and angular material from non-existing sample." );
+	  }
+  }
+
+  CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
+	  const double t_Thickness, const MaterialType t_Type,
+	  const WavelengthRange t_Range ) :
+	  m_AngularMeasurements( t_AngularMeasurements ),
+	  CMaterial( t_Range ) {
+
+	  if ( t_AngularMeasurements == nullptr ) {
+		  throw runtime_error( "Cannot create specular and angular material from non-existing sample." );
+	  }
+
+  }
+
+  void CMaterialMeasured::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( 0.0 );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+	  aSample->setSourceData( t_SourceData );
+  }
+
+  void CMaterialMeasured::setSourceData( shared_ptr< CSeries > t_SourceData, const double t_Angle ) {
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+	  aSample->setSourceData( t_SourceData );
+  }
+
+  double CMaterialMeasured::getPropertyAtAngle( const Property t_Property,
+	  const Side t_Side, const double t_Angle ) const {
+	  assert( m_AngularMeasurements );
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+	  return aSample->getProperty( m_MinLambda, m_MaxLambda, t_Property, t_Side );
+  }
+
+  double CMaterialMeasured::getProperty( const Property t_Property, const Side t_Side ) const {
+	  return getPropertyAtAngle( t_Property, t_Side, 0 );
+  }
+
+  shared_ptr< vector< double > > CMaterialMeasured::getBandPropertiesAtAngle( const Property t_Property,
+	  const Side t_Side, const double t_Angle ) const {
+	  assert( m_AngularMeasurements );
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+	  shared_ptr< CSeries > aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
+
+	  shared_ptr< vector< double > > aValues = nullptr;
+
+	  if ( aProperties != nullptr ) {
+		  aValues = make_shared< vector< double > >( );
+		  for ( shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
+			  if ( aProperty->x( ) >= m_MinLambda && aProperty->x( ) <= m_MaxLambda ) {
+				  aValues->push_back( aProperty->value( ) );
+			  }
+		  }
+	  }
+
+	  return aValues;
+
+  }
+
+  shared_ptr< vector< double > > CMaterialMeasured::getBandProperties( const Property t_Property,
+	  const Side t_Side ) const {
+	  return getBandPropertiesAtAngle( t_Property, t_Side, 0 );
+  }
+
+  shared_ptr< vector< double > > CMaterialMeasured::calculateBandWavelengths( ) {
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( 0.0 );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+
+	  return aSample->getWavelengthsFromSample( );
+
   }
 
 }
