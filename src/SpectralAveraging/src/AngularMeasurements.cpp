@@ -77,13 +77,15 @@ namespace SpectralAveraging {
 	////  CAngularMeasurements
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	CAngularMeasurements::CAngularMeasurements( std::shared_ptr< CSingleAngularMeasurement > t_SignleMeasurement, const std::shared_ptr< std::vector< double > > t_CommonWavelengths ):
-		m_SingleMeasurement( t_SignleMeasurement ), m_CommonWavelengths( t_CommonWavelengths )
-	{
+	CAngularMeasurements::CAngularMeasurements( std::shared_ptr< CSingleAngularMeasurement > t_SignleMeasurement, 
+    const shared_ptr< vector< double > > t_CommonWavelengths ):
+		m_SingleMeasurement( t_SignleMeasurement ), m_CommonWavelengths( t_CommonWavelengths ) {
 		if (m_SingleMeasurement == nullptr) {
 			throw runtime_error( "Sample must have measured data in AngularMeasurements." );
 		}
+    m_Measurements.push_back( t_SignleMeasurement );
 	}
+
 	CAngularMeasurements::CAngularMeasurements( std::vector< std::shared_ptr< CSingleAngularMeasurement > > t_Measurements ): m_Measurements( t_Measurements )  {
 
 	}
