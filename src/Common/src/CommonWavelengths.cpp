@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace MultiLayerOptics {
+namespace FenestrationCommon {
 
   CCommonWavelengths::CCommonWavelengths() {
   }
