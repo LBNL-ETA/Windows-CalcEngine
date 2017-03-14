@@ -10,6 +10,7 @@
 #include "SurfaceCoating.hpp"
 #include "FenestrationCommon.hpp"
 #include "AngularMeasurements.hpp"
+#include "CommonWavelengths.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;
@@ -179,8 +180,17 @@ protected:
 
   std::shared_ptr< std::vector< double > > wl = aSample40->getWavelengthsFromSample();
 
+
+  // Need to extract common wavelengths
+  CCommonWavelengths aCommonWL;
+  std::shared_ptr< std::vector< double > > wl40 = aSample40->getWavelengthsFromSample();
+  std::shared_ptr< std::vector< double > > wl50 = aSample50->getWavelengthsFromSample();
+  aCommonWL.addWavelength( wl40 );
+  aCommonWL.addWavelength( wl50 );
+  shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+
   // Creating angular sample
-  m_Measurements = make_shared< CAngularMeasurements >( aAngular40, wl );
+  m_Measurements = make_shared< CAngularMeasurements >( aAngular40, commonWavelengths );
   m_Measurements->addMeasurement( aAngular50 );
 
   }

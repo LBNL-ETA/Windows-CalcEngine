@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-namespace MultiLayerOptics {
+namespace FenestrationCommon {
 
   // When combining two wavelegth sets it is possible to do it in two ways.
   // Interpolate - this will create common wavelength set which minimum and maximum values will not exceed
