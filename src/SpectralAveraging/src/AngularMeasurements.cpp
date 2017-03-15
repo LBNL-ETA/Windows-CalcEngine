@@ -34,6 +34,10 @@ namespace SpectralAveraging {
 		return m_Data;
 	}
 
+  shared_ptr< vector< double > > CSingleAngularMeasurement::getWavelengthsFromSample() const {
+    return m_Data->getWavelengthsFromSample();
+  }
+
 	shared_ptr< CSpectralSample > CSingleAngularMeasurement::Interpolate( const double t_Angle, const std::shared_ptr< CSpectralSample > t_Data1, const double t_Angle1, const std::shared_ptr< CSpectralSample > t_Data2, const double t_Angle2 ) const
 	{
 

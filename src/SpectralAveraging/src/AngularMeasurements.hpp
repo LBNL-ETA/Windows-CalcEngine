@@ -30,6 +30,7 @@ namespace SpectralAveraging {
 
 		double getAngle( ) const;
 		std::shared_ptr< CSpectralSample > getData( ) const;
+    std::shared_ptr< std::vector< double > > getWavelengthsFromSample() const;
 		std::shared_ptr< CSpectralSample > Interpolate( const double t_Angle, const std::shared_ptr< CSpectralSample > t_Data1, const double t_Angle1, const std::shared_ptr< CSpectralSample > t_Data2, const double t_Angle2 ) const;
 		void interpolate( const std::vector< double >& t_Wavelengths );
 //		std::shared_ptr< CSpectralSample > Interpolate( const double t_fraction, const std::shared_ptr< CSpectralSample > t_Data1, const std::shared_ptr< CSpectralSample > t_Data2 ) const;
