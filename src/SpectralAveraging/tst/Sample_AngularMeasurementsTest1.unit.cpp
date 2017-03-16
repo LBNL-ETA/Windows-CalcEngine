@@ -193,12 +193,9 @@ public:
 
 protected:
   virtual void SetUp() {
-    
-    
+       
     shared_ptr< CSingleAngularMeasurement > aAngular40 = getSample1();
     shared_ptr< CSingleAngularMeasurement > aAngular50 = getSample2();
-	  
-
 
     // Need to extract common wavelengths
     CCommonWavelengths aCommonWL;
@@ -210,7 +207,7 @@ protected:
 
     // Creating angular sample
     m_Measurements = make_shared< CAngularMeasurements >( aAngular40, commonWavelengths );
-	  m_Measurements->addMeasurement( aAngular50 );
+	m_Measurements->addMeasurement( aAngular50 );
 
   }
 
