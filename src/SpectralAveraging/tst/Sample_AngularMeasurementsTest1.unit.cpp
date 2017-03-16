@@ -209,10 +209,8 @@ protected:
     shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
     // Creating angular sample
-	aAngular40->interpolate( *commonWavelengths );
-	aAngular40->getData( );
     m_Measurements = make_shared< CAngularMeasurements >( aAngular40, commonWavelengths );
-	m_Measurements->addMeasurement( aAngular50 );
+	  m_Measurements->addMeasurement( aAngular50 );
 
   }
 
