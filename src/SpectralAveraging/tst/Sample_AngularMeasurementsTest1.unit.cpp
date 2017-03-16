@@ -159,10 +159,10 @@ private:
     shared_ptr< CSpectralSampleData > aMeasurements40 = make_shared< CSpectralSampleData >();
     // incident angle = 40
 
-    aMeasurements40->addRecord( 0.290, 0, 0.1, 0.1 );
-    aMeasurements40->addRecord( 0.295, 0, 0.099, 0.099 );
-    aMeasurements40->addRecord( 0.300, 0, 0.098, 0.098 );
-    aMeasurements40->addRecord( 0.305, 0.1, 0.098, 0.098 );
+    aMeasurements40->addRecord( 0.290, 0.10, 0.1, 0.1 );
+    aMeasurements40->addRecord( 0.295, 0.15, 0.099, 0.099 );
+    aMeasurements40->addRecord( 0.300, 0.20, 0.098, 0.098 );
+    aMeasurements40->addRecord( 0.310, 0.25, 0.097, 0.097 );
 
     shared_ptr< CSpectralSample > aSample40 = make_shared< CSpectralSample >( aMeasurements40, aSolarRadiation );
     shared_ptr< CSingleAngularMeasurement > aAngular40 = make_shared< CSingleAngularMeasurement >( aSample40, 40 );
@@ -176,10 +176,10 @@ private:
     shared_ptr< CSpectralSampleData > aMeasurements50 = make_shared< CSpectralSampleData >();
     // incident angle = 40
 
-    aMeasurements50->addRecord( 0.290, 0, 0.90, 0.80 );
-    aMeasurements50->addRecord( 0.295, 0, 0.099, 0.099 );
-    aMeasurements50->addRecord( 0.300, 0, 0.0986, 0.0986 );
-    aMeasurements50->addRecord( 0.305, 0.2, 0.0984, 0.0984 );
+    aMeasurements50->addRecord( 0.290, 0.15, 0.1, 0.10 );
+    aMeasurements50->addRecord( 0.295, 0.20, 0.098, 0.099 );
+    aMeasurements50->addRecord( 0.305, 0.25, 0.097, 0.098 );
+    aMeasurements50->addRecord( 0.310, 0.30, 0.096, 0.097 );
 
     shared_ptr< CSpectralSample > aSample50 = make_shared< CSpectralSample >( aMeasurements50, aSolarRadiation );
     shared_ptr< CSingleAngularMeasurement > aAngular50 = make_shared< CSingleAngularMeasurement >( aSample50, 50 );
@@ -209,8 +209,10 @@ protected:
     shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
     // Creating angular sample
+	aAngular40->interpolate( *commonWavelengths );
+	aAngular40->getData( );
     m_Measurements = make_shared< CAngularMeasurements >( aAngular40, commonWavelengths );
-    m_Measurements->addMeasurement( aAngular50 );
+	m_Measurements->addMeasurement( aAngular50 );
 
   }
 
@@ -231,7 +233,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
   // Front transmittances
   shared_ptr< CSeries > aTransmittances = aSample->getWavelengthsProperty( Property::T, Side::Front );
 
-  vector< double > correctT = { 0, 0, 0, 0.15 };
+  vector< double > correctT = { 0.125, 0.175, 0.2125, 0.2375, 0.275 };
 
   size_t size = aTransmittances->size();
 
@@ -241,17 +243,28 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
   }
 
   // Front reflectances
-  shared_ptr< CSeries > aReflectances = aSample->getWavelengthsProperty( Property::R, Side::Front );
+  shared_ptr< CSeries > aFReflectances = aSample->getWavelengthsProperty( Property::R, Side::Front );
 
-  vector< double > correctR = { 0.5, 0.099, 0.0983, 0.0982 };
+  vector< double > correctFR = { 0.1, 0.0985, 0.09775, 0.09725, 0.0965 };
 
-  size = aReflectances->size();
+  size = aFReflectances->size();
 
-  EXPECT_EQ( size, correctR.size() );
+  EXPECT_EQ( size, correctFR.size() );
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctR[ i ], ( *aReflectances )[ i ]->value(), 1e-6 );
+    EXPECT_NEAR( correctFR[ i ], ( *aFReflectances )[ i ]->value(), 1e-6 );
   }
 
+  // Back reflectances
+  shared_ptr< CSeries > aBReflectances = aSample->getWavelengthsProperty( Property::R, Side::Back );
+
+  vector< double > correctBR = { 0.1, 0.099, 0.09825, 0.09775, 0.097 };
+
+  size = aBReflectances->size( );
+
+  EXPECT_EQ( size, correctBR.size( ) );
+  for ( size_t i = 0; i < size; ++i ) {
+	  EXPECT_NEAR( correctBR[ i ], ( *aBReflectances )[ i ]->value( ), 1e-6 );
+  }
 
 }
 

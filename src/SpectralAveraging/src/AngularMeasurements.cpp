@@ -54,8 +54,7 @@ namespace SpectralAveraging {
 		double t1, t2, t;
 		double rf1, rf2, rf;
 		double rb1, rb2, rb;
-		int size = int(t_Data1->getBandSize( ));
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < wlv->size( ); i++) {
 			wl = (*wlv)[i];
 			t1 = ( *trans1 )[i]->value( );
 			t2 = ( *trans2 )[i]->value( );
@@ -106,6 +105,10 @@ namespace SpectralAveraging {
 	{
 		const double angleTolerance = 1e-6;
 
+		if ( m_Measurements.size( ) == 1 ) {
+			throw runtime_error( "A single set is found. Spectral and angular sample must have 2 sets at least." );
+		}
+
 		for (int i = 0; i < m_Measurements.size( ); i++ ) {
 			if (fabs( m_Measurements[i]->getAngle( ) - t_Angle ) < angleTolerance ) {
 				return m_Measurements[i];
@@ -146,7 +149,7 @@ namespace SpectralAveraging {
 		// 4. Create SpectralSample from third SpectralSampleData and given SourceData
 
 		std::shared_ptr< SpectralAveraging::CSpectralSample > sample3 = nullptr;
-		sample3 = m_Measurements[imax]->Interpolate( t_Angle, sample1, angle1, sample2, angle2 );
+		sample3 = m_SingleMeasurement->Interpolate( t_Angle, sample1, angle1, sample2, angle2 );
 
 		shared_ptr< CSingleAngularMeasurement > aAngular = make_shared< CSingleAngularMeasurement >( sample3, t_Angle );
 		m_Measurements.push_back( aAngular );
