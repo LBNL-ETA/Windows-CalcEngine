@@ -330,7 +330,6 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////
 
   CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
-	  const double t_Thickness, const MaterialType t_Type,
 	  const double minLambda, const double maxLambda ) :
 	  m_AngularMeasurements( t_AngularMeasurements ),
 	  CMaterial( minLambda, maxLambda ) {
@@ -341,7 +340,6 @@ namespace SingleLayerOptics {
   }
 
   CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
-	  const double t_Thickness, const MaterialType t_Type,
 	  const WavelengthRange t_Range ) :
 	  m_AngularMeasurements( t_AngularMeasurements ),
 	  CMaterial( t_Range ) {

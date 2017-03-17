@@ -220,11 +220,9 @@ namespace SingleLayerOptics {
   class CMaterialMeasured : public CMaterial {
   public:
 	  CMaterialMeasured( const std::shared_ptr< SpectralAveraging::CAngularMeasurements >& t_Measurements,
-		  const double t_Thickness, const FenestrationCommon::MaterialType t_Type,
 		  const double minLambda, const double maxLambda );
 
 	  CMaterialMeasured( const std::shared_ptr< SpectralAveraging::CAngularMeasurements >& t_Measurements,
-		  const double t_Thickness, const FenestrationCommon::MaterialType t_Type,
 		  const FenestrationCommon::WavelengthRange t_Range );
 
 	  virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );

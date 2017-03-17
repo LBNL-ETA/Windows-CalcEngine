@@ -22,11 +22,12 @@ using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 
-class TestSpecularAngularLayer_102 : public testing::Test {
+class TestSpecularAngularLayerProperty_102 : public testing::Test {
 
 private:
 	std::shared_ptr< CAngularMeasurements > m_Measurements;
 	shared_ptr< CBSDFLayer > m_Layer;
+	shared_ptr< CMaterial > m_Material;
 
   shared_ptr< CSeries > getSolarRadiationFile( ) {
 	  shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >( );
@@ -597,115 +598,6 @@ private:
 	  return aAngular9;
   }
 
-  shared_ptr< CSingleAngularMeasurement > getSample09( ) {
-	  shared_ptr< CSeries >  aSolarRadiation = getSolarRadiationFile( );
-
-	  shared_ptr< CSpectralSampleData > aMeasurements09 = make_shared< CSpectralSampleData >( );
-	  // incident angle = 0
-
-	  aMeasurements09->addRecord( 0.290, 0, 0.0481, 0.0481 );
-	  aMeasurements09->addRecord( 0.295, 0, 0.0479, 0.0479 );
-	  aMeasurements09->addRecord( 0.300, 0, 0.0476, 0.0476 );
-	  aMeasurements09->addRecord( 0.305, 0, 0.0474, 0.0474 );
-	  aMeasurements09->addRecord( 0.310, 0.007, 0.0471, 0.0471 );
-	  aMeasurements09->addRecord( 0.315, 0.035, 0.047, 0.047 );
-	  aMeasurements09->addRecord( 0.320, 0.0975, 0.0472, 0.0472 );
-	  aMeasurements09->addRecord( 0.325, 0.2099, 0.0487, 0.0487 );
-	  aMeasurements09->addRecord( 0.330, 0.3497, 0.0525, 0.0525 );
-	  aMeasurements09->addRecord( 0.335, 0.4865, 0.0581, 0.0581 );
-	  aMeasurements09->addRecord( 0.340, 0.6057, 0.0644, 0.0644 );
-	  aMeasurements09->addRecord( 0.345, 0.7035, 0.0706, 0.0706 );
-	  aMeasurements09->addRecord( 0.350, 0.7687, 0.0751, 0.0751 );
-	  aMeasurements09->addRecord( 0.355, 0.812, 0.0783, 0.0783 );
-	  aMeasurements09->addRecord( 0.360, 0.8429, 0.0806, 0.0806 );
-	  aMeasurements09->addRecord( 0.365, 0.862, 0.0819, 0.0819 );
-	  aMeasurements09->addRecord( 0.370, 0.8678, 0.0821, 0.0821 );
-	  aMeasurements09->addRecord( 0.375, 0.8672, 0.0819, 0.0819 );
-	  aMeasurements09->addRecord( 0.380, 0.8554, 0.0806, 0.0806 );
-	  aMeasurements09->addRecord( 0.385, 0.8696, 0.0816, 0.0816 );
-	  aMeasurements09->addRecord( 0.390, 0.8804, 0.0823, 0.0823 );
-	  aMeasurements09->addRecord( 0.395, 0.8884, 0.0828, 0.0828 );
-	  aMeasurements09->addRecord( 0.400, 0.8924, 0.083, 0.083 );
-	  aMeasurements09->addRecord( 0.410, 0.8944, 0.0828, 0.0828 );
-	  aMeasurements09->addRecord( 0.420, 0.8921, 0.0823, 0.0823 );
-	  aMeasurements09->addRecord( 0.430, 0.8914, 0.082, 0.082 );
-	  aMeasurements09->addRecord( 0.440, 0.8896, 0.0815, 0.0815 );
-	  aMeasurements09->addRecord( 0.450, 0.8933, 0.0816, 0.0816 );
-	  aMeasurements09->addRecord( 0.460, 0.8972, 0.0817, 0.0817 );
-	  aMeasurements09->addRecord( 0.470, 0.8991, 0.0816, 0.0816 );
-	  aMeasurements09->addRecord( 0.480, 0.9013, 0.0816, 0.0816 );
-	  aMeasurements09->addRecord( 0.490, 0.9026, 0.0815, 0.0815 );
-	  aMeasurements09->addRecord( 0.500, 0.9026, 0.0813, 0.0813 );
-	  aMeasurements09->addRecord( 0.510, 0.9031, 0.0811, 0.0811 );
-	  aMeasurements09->addRecord( 0.520, 0.9025, 0.0809, 0.0809 );
-	  aMeasurements09->addRecord( 0.530, 0.9028, 0.0808, 0.0808 );
-	  aMeasurements09->addRecord( 0.540, 0.9033, 0.0807, 0.0807 );
-	  aMeasurements09->addRecord( 0.550, 0.9013, 0.0804, 0.0804 );
-	  aMeasurements09->addRecord( 0.560, 0.8999, 0.0802, 0.0802 );
-	  aMeasurements09->addRecord( 0.570, 0.8986, 0.0799, 0.0799 );
-	  aMeasurements09->addRecord( 0.580, 0.8975, 0.0797, 0.0797 );
-	  aMeasurements09->addRecord( 0.590, 0.8939, 0.0793, 0.0793 );
-	  aMeasurements09->addRecord( 0.600, 0.8919, 0.079, 0.079 );
-	  aMeasurements09->addRecord( 0.610, 0.891, 0.0789, 0.0789 );
-	  aMeasurements09->addRecord( 0.620, 0.8853, 0.0783, 0.0783 );
-	  aMeasurements09->addRecord( 0.630, 0.8838, 0.0781, 0.0781 );
-	  aMeasurements09->addRecord( 0.640, 0.8806, 0.0777, 0.0777 );
-	  aMeasurements09->addRecord( 0.650, 0.8769, 0.0773, 0.0773 );
-	  aMeasurements09->addRecord( 0.660, 0.8735, 0.077, 0.077 );
-	  aMeasurements09->addRecord( 0.670, 0.8731, 0.0769, 0.0769 );
-	  aMeasurements09->addRecord( 0.680, 0.8665, 0.0763, 0.0763 );
-	  aMeasurements09->addRecord( 0.690, 0.8637, 0.076, 0.076 );
-	  aMeasurements09->addRecord( 0.700, 0.8607, 0.0757, 0.0757 );
-	  aMeasurements09->addRecord( 0.710, 0.8557, 0.0753, 0.0753 );
-	  aMeasurements09->addRecord( 0.720, 0.8531, 0.075, 0.075 );
-	  aMeasurements09->addRecord( 0.730, 0.8487, 0.0746, 0.0746 );
-	  aMeasurements09->addRecord( 0.740, 0.8418, 0.074, 0.074 );
-	  aMeasurements09->addRecord( 0.750, 0.8406, 0.0738, 0.0738 );
-	  aMeasurements09->addRecord( 0.760, 0.8358, 0.0734, 0.0734 );
-	  aMeasurements09->addRecord( 0.770, 0.8341, 0.0732, 0.0732 );
-	  aMeasurements09->addRecord( 0.780, 0.8324, 0.073, 0.073 );
-	  aMeasurements09->addRecord( 0.790, 0.8232, 0.0723, 0.0723 );
-	  aMeasurements09->addRecord( 0.800, 0.8246, 0.0723, 0.0723 );
-	  aMeasurements09->addRecord( 0.850, 0.8076, 0.0708, 0.0708 );
-	  aMeasurements09->addRecord( 0.900, 0.8002, 0.07, 0.07 );
-	  aMeasurements09->addRecord( 0.950, 0.7907, 0.0692, 0.0692 );
-	  aMeasurements09->addRecord( 1.000, 0.7862, 0.0687, 0.0687 );
-	  aMeasurements09->addRecord( 1.050, 0.7849, 0.0685, 0.0685 );
-	  aMeasurements09->addRecord( 1.100, 0.7848, 0.0683, 0.0683 );
-	  aMeasurements09->addRecord( 1.150, 0.7864, 0.0683, 0.0683 );
-	  aMeasurements09->addRecord( 1.200, 0.7894, 0.0685, 0.0685 );
-	  aMeasurements09->addRecord( 1.250, 0.7944, 0.0687, 0.0687 );
-	  aMeasurements09->addRecord( 1.300, 0.8014, 0.0691, 0.0691 );
-	  aMeasurements09->addRecord( 1.350, 0.8088, 0.0695, 0.0695 );
-	  aMeasurements09->addRecord( 1.400, 0.8168, 0.07, 0.07 );
-	  aMeasurements09->addRecord( 1.450, 0.8261, 0.0705, 0.0705 );
-	  aMeasurements09->addRecord( 1.500, 0.8366, 0.0712, 0.0712 );
-	  aMeasurements09->addRecord( 1.550, 0.8444, 0.0716, 0.0716 );
-	  aMeasurements09->addRecord( 1.600, 0.8506, 0.0719, 0.0719 );
-	  aMeasurements09->addRecord( 1.650, 0.853, 0.072, 0.072 );
-	  aMeasurements09->addRecord( 1.700, 0.8527, 0.0719, 0.0719 );
-	  aMeasurements09->addRecord( 1.750, 0.8532, 0.0718, 0.0718 );
-	  aMeasurements09->addRecord( 1.800, 0.8504, 0.0714, 0.0714 );
-	  aMeasurements09->addRecord( 1.850, 0.8488, 0.0712, 0.0712 );
-	  aMeasurements09->addRecord( 1.900, 0.8523, 0.0713, 0.0713 );
-	  aMeasurements09->addRecord( 1.950, 0.8497, 0.071, 0.071 );
-	  aMeasurements09->addRecord( 2.000, 0.848, 0.0708, 0.0708 );
-	  aMeasurements09->addRecord( 2.050, 0.8488, 0.0707, 0.0707 );
-	  aMeasurements09->addRecord( 2.100, 0.8505, 0.0707, 0.0707 );
-	  aMeasurements09->addRecord( 2.150, 0.8408, 0.0699, 0.0699 );
-	  aMeasurements09->addRecord( 2.200, 0.8304, 0.0691, 0.0691 );
-	  aMeasurements09->addRecord( 2.250, 0.8277, 0.0688, 0.0688 );
-	  aMeasurements09->addRecord( 2.300, 0.8303, 0.0688, 0.0688 );
-	  aMeasurements09->addRecord( 2.350, 0.834, 0.069, 0.069 );
-	  aMeasurements09->addRecord( 2.400, 0.8236, 0.0681, 0.0681 );
-	  aMeasurements09->addRecord( 2.450, 0.8225, 0.0679, 0.0679 );
-	  aMeasurements09->addRecord( 2.500, 0.8184, 0.0675, 0.0675 );
-
-	  shared_ptr< CSpectralSample > aSample09 = make_shared< CSpectralSample >( aMeasurements09, aSolarRadiation );
-	  shared_ptr< CSingleAngularMeasurement > aAngular09 = make_shared< CSingleAngularMeasurement >( aSample09, 90.0 );
-
-	  return aAngular09;
-  }
 protected:
   virtual void SetUp() {
 
@@ -713,7 +605,6 @@ protected:
 	shared_ptr< CSingleAngularMeasurement > aAngular1 = getSample2( );
 	shared_ptr< CSingleAngularMeasurement > aAngular4 = getSample3( );
 	shared_ptr< CSingleAngularMeasurement > aAngular9 = getSample4( );
-	shared_ptr< CSingleAngularMeasurement > aAngular09 = getSample09( );
 
 	// Need to extract common wavelengths
 	CCommonWavelengths aCommonWL;
@@ -733,368 +624,136 @@ protected:
 	m_Measurements->addMeasurement( aAngular1 );
 	m_Measurements->addMeasurement( aAngular4 );
 	m_Measurements->addMeasurement( aAngular9 );
-//	m_Measurements->addMeasurement( aAngular09 );
 
     shared_ptr< CMaterial > aMaterial = make_shared< CMaterialMeasured >( m_Measurements, WavelengthRange::Solar );
-
-    // create BSDF
-    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
-
-    // make layer
-    CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
-    m_Layer = aMaker.getLayer();
-
+	m_Material = aMaterial;
   }
 
 public:
   shared_ptr< CBSDFLayer > getLayer() { return m_Layer; };
   std::shared_ptr< CAngularMeasurements > getMeasurements( ) const { return m_Measurements; };
+  std::shared_ptr< CMaterial > getMaterials( ) const { return m_Material; };
 
 };
 
-TEST_F( TestSpecularAngularLayer_102, TestSpecular1 ) {
-  SCOPED_TRACE( "Begin Test: Specular and Angular layer - BSDF." );
-  
-  shared_ptr< CBSDFLayer > aLayer = getLayer();
+TEST_F( TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree ) {
+  SCOPED_TRACE( "Begin Test: Specular and Angular layer to compare optical properties at different incident angles." );
 
-  shared_ptr< CBSDFIntegrator > aResults = aLayer->getResults();
+  double angle = 25;
 
-  double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
-   EXPECT_NEAR( 0.64541405979702648, tauDiff, 1e-6 );
+  shared_ptr< CMaterial > aMaterial = getMaterials( );
 
-  double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
-  EXPECT_NEAR( 0.272951100863078, RfDiff, 1e-6 );
+  double trans = aMaterial->getPropertyAtAngle( Property::T, Side::Front, angle );
+  double refleF = aMaterial->getPropertyAtAngle( Property::R, Side::Front, angle );
+  double refleB = aMaterial->getPropertyAtAngle( Property::R, Side::Back, angle );
+  shared_ptr< vector< double > >aTrans = aMaterial->getBandPropertiesAtAngle( Property::T, Side::Front, angle );
 
-  double theta = 35;
-  double phi = 58;
+  EXPECT_NEAR( 0.79636496475913876, trans, 1e-6 );
+  EXPECT_NEAR( 0.11405492103460167, refleF, 1e-6 );
+  EXPECT_NEAR( 0.11405492103460167, refleB, 1e-6 );
 
-  double tauHem = aResults->DirHem( Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.780630538026433, tauHem, 1e-6 );
+  vector< double > correctT;
+  correctT.push_back( 0 );
+  correctT.push_back( 0 );
+  correctT.push_back( 0.00455 );
+  correctT.push_back( 0.0252 );
+  correctT.push_back( 0.0757 );
+  correctT.push_back( 0.1736 );
+  correctT.push_back( 0.30255 );
+  correctT.push_back( 0.43405 );
+  correctT.push_back( 0.55215 );
+  correctT.push_back( 0.6511 );
+  correctT.push_back( 0.718 );
+  correctT.push_back( 0.76295 );
+  correctT.push_back( 0.7951 );
+  correctT.push_back( 0.81515 );
+  correctT.push_back( 0.82125 );
+  correctT.push_back( 0.8206 );
+  correctT.push_back( 0.80825 );
+  correctT.push_back( 0.8231 );
+  correctT.push_back( 0.83445 );
+  correctT.push_back( 0.84285 );
+  correctT.push_back( 0.84705 );
+  correctT.push_back( 0.84925 );
+  correctT.push_back( 0.8467 );
+  correctT.push_back( 0.846 );
+  correctT.push_back( 0.8441 );
+  correctT.push_back( 0.84795 );
+  correctT.push_back( 0.8522 );
+  correctT.push_back( 0.8541 );
+  correctT.push_back( 0.8564 );
+  correctT.push_back( 0.85785 );
+  correctT.push_back( 0.85785 );
+  correctT.push_back( 0.8584 );
+  correctT.push_back( 0.85775 );
+  correctT.push_back( 0.8581 );
+  correctT.push_back( 0.8586 );
+  correctT.push_back( 0.8564 );
+  correctT.push_back( 0.855 );
+  correctT.push_back( 0.85365 );
+  correctT.push_back( 0.8525 );
+  correctT.push_back( 0.8486 );
+  correctT.push_back( 0.8465 );
+  correctT.push_back( 0.84555 );
+  correctT.push_back( 0.8395 );
+  correctT.push_back( 0.8379 );
+  correctT.push_back( 0.83455 );
+  correctT.push_back( 0.8307 );
+  correctT.push_back( 0.8271 );
+  correctT.push_back( 0.8267 );
+  correctT.push_back( 0.81975 );
+  correctT.push_back( 0.81675 );
+  correctT.push_back( 0.8136 );
+  correctT.push_back( 0.8083 );
+  correctT.push_back( 0.80565 );
+  correctT.push_back( 0.80095 );
+  correctT.push_back( 0.79375 );
+  correctT.push_back( 0.7925 );
+  correctT.push_back( 0.7874 );
+  correctT.push_back( 0.78565 );
+  correctT.push_back( 0.78385 );
+  correctT.push_back( 0.7742 );
+  correctT.push_back( 0.77575 );
+  correctT.push_back( 0.75795 );
+  correctT.push_back( 0.75015 );
+  correctT.push_back( 0.7403 );
+  correctT.push_back( 0.7356 );
+  correctT.push_back( 0.73425 );
+  correctT.push_back( 0.7341 );
+  correctT.push_back( 0.7358 );
+  correctT.push_back( 0.7389 );
+  correctT.push_back( 0.7441 );
+  correctT.push_back( 0.75135 );
+  correctT.push_back( 0.7591 );
+  correctT.push_back( 0.7675 );
+  correctT.push_back( 0.77725 );
+  correctT.push_back( 0.7882 );
+  correctT.push_back( 0.7964 );
+  correctT.push_back( 0.8029 );
+  correctT.push_back( 0.8054 );
+  correctT.push_back( 0.8051 );
+  correctT.push_back( 0.8056 );
+  correctT.push_back( 0.80265 );
+  correctT.push_back( 0.801 );
+  correctT.push_back( 0.80465 );
+  correctT.push_back( 0.8019 );
+  correctT.push_back( 0.80015 );
+  correctT.push_back( 0.80095 );
+  correctT.push_back( 0.80275 );
+  correctT.push_back( 0.79255 );
+  correctT.push_back( 0.78165 );
+  correctT.push_back( 0.7788 );
+  correctT.push_back( 0.78155 );
+  correctT.push_back( 0.7854 );
+  correctT.push_back( 0.77455 );
+  correctT.push_back( 0.7733 );
+  correctT.push_back( 0.76895 );
 
-  double tauDir = aResults->DirDir( Side::Front, PropertySimple::T, theta, phi );
-  EXPECT_NEAR( 0.780630538026433, tauDir, 1e-6 );
+  size_t size = aTrans->size( );
 
-/*  shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
-
-  // Test only diagonal of transmittance matrix
-  size_t size = aT->getSize();
-
-  vector< double > correctResults;
-  correctResults.push_back( 34.940061244564802 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 35.727444960862350 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 37.933187566186469 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 35.009611836870832 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 36.522068529403214 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 35.586788153437524 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 38.033919314642546 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 29.061194222087263 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-  correctResults.push_back( 16.978250544025638 );
-
-  vector< double > calculatedResults;
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aT)[i][i] );
+  EXPECT_EQ( size, correctT.size( ) );
+  for ( size_t i = 0; i < size; ++i ) {
+	  EXPECT_NEAR( correctT[ i ], ( *aTrans )[ i ], 1e-6 );
   }
-
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-6 );
-  }
-
-  // Front reflectance
-  shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
-
-  correctResults.clear();
-  calculatedResults.clear();
-
-  correctResults.push_back( 3.1351336407416635 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.2072370120929721 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.4246526776043713 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.2466935886549604 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 3.6858547275750588 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 4.4320169592146170 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 7.2672051285243091 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 11.531318187987335 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 );
-  correctResults.push_back( 34.322921163935874 ); 
-
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aRf)[i][i] );
-  }
-
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-6 );
-  } */
 
 }
