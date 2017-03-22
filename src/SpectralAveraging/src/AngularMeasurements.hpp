@@ -53,6 +53,8 @@ namespace SpectralAveraging {
 		std::shared_ptr< CSingleAngularMeasurement > getMeasurements( const double t_Angle );
 		// Note that previous function (getMeasurements) needs to do interpolation if user asks for t_Angle that does not exist.So this is where you want to do your interpolation
 			// work
+		virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+
 	private:
 		// Do not forget storage for it
 		std::shared_ptr< CSingleAngularMeasurement > m_SingleMeasurement;

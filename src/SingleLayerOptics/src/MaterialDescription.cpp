@@ -350,10 +350,9 @@ namespace SingleLayerOptics {
 
   }
 
-  void CMaterialMeasured::setSourceData( shared_ptr< CSeries > t_SourceData, const double t_Angle ) {
-	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
-	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
-	  aSample->setSourceData( t_SourceData );
+  void CMaterialMeasured::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+
+	  m_AngularMeasurements->setSourceData( t_SourceData );
   }
 
   double CMaterialMeasured::getPropertyAtAngle( const Property t_Property,

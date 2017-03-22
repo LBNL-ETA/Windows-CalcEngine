@@ -86,8 +86,8 @@ namespace SpectralAveraging {
 		if (m_SingleMeasurement == nullptr) {
 			throw runtime_error( "Sample must have measured data in AngularMeasurements." );
 		}
-    t_SignleMeasurement->interpolate( *m_CommonWavelengths );
-    m_Measurements.push_back( t_SignleMeasurement );
+		t_SignleMeasurement->interpolate( *m_CommonWavelengths );
+		m_Measurements.push_back( t_SignleMeasurement );
 	}
 
 	CAngularMeasurements::CAngularMeasurements( vector< shared_ptr< CSingleAngularMeasurement > > t_Measurements ): m_Measurements( t_Measurements )  {
@@ -156,5 +156,15 @@ namespace SpectralAveraging {
 		m_Measurements.push_back( aAngular );
 		return aAngular;
 	}
+
+	void CAngularMeasurements::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+
+		for ( int i = 0; i < m_Measurements.size( ); i++ ) {
+			shared_ptr< CSingleAngularMeasurement > aAngular = m_Measurements[ i ];
+			shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+			aSample->setSourceData( t_SourceData );
+		}
+	}
+
 
 }
