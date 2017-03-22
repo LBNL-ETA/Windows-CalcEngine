@@ -225,8 +225,9 @@ namespace SingleLayerOptics {
 	  CMaterialMeasured( const std::shared_ptr< SpectralAveraging::CAngularMeasurements >& t_Measurements,
 		  const FenestrationCommon::WavelengthRange t_Range );
 
-	  virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
-	  virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData, const double t_Angle );
+	  // virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+	  virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData, 
+      const double t_Angle = 0 );
 
 	  // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb that is 
 	  // measured at certain wavelengths.
