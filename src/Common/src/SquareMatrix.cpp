@@ -86,8 +86,8 @@ namespace FenestrationCommon {
     shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( m_Size );
 
     for( size_t i = 0; i < m_Size; ++i ) {
-      for( size_t j = 0; j < t_Matrix.m_Size; ++j ) {
-        for( size_t k = 0; k < m_Size; ++k ) {
+      for( size_t k = 0; k < m_Size; ++k ) {
+        for( size_t j = 0; j < t_Matrix.m_Size; ++j ) {
           ( *aMatrix )[ i ][ j ] = ( *aMatrix )[ i ][ j ] + m_Matrix[ i ][ k ] * t_Matrix.m_Matrix[ k ][ j ];
         }
       }
