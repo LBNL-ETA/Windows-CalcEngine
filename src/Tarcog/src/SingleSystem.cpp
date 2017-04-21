@@ -116,6 +116,14 @@ namespace Tarcog {
     return m_Environment.at( t_Environment )->getRadiationFlow();
   }
 
+  double CSingleSystem::getHc( const Environment t_Environment ) const {
+    return m_Environment.at( t_Environment )->getHc();
+  }
+
+  double CSingleSystem::getAirTemperature( const Environment t_Environment ) const {
+    return m_Environment.at( t_Environment )->getAirTemperature();
+  }
+
   double CSingleSystem::getVentilationFlow( const Environment t_Environment ) const {
     return m_IGU->getVentilationFlow( t_Environment );
   }
