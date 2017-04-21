@@ -68,3 +68,31 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex3 ) {
   EXPECT_EQ( 23, int( beamIndex ) );
 
 }
+
+TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex4 ) {
+  SCOPED_TRACE( "Begin Test: Find closest index 4." );
+
+  CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+
+  double theta = 0;
+  double phi = 0;
+
+  size_t beamIndex = aDirections.getNearestBeamIndex( theta, phi );
+
+  EXPECT_EQ( 0, int( beamIndex ) );
+
+}
+
+TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex5 ) {
+  SCOPED_TRACE( "Begin Test: Find closest index 5." );
+
+  CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+
+  double theta = 71.2163;
+  double phi = 349.744251;
+
+  size_t beamIndex = aDirections.getNearestBeamIndex( theta, phi );
+
+  EXPECT_EQ( 33, int( beamIndex ) );
+
+}

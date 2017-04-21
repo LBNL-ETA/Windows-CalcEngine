@@ -30,7 +30,9 @@ namespace SingleLayerOptics {
   }
 
   bool CAngleLimits::isInLimits( const double t_Angle ) const {
-    return ( t_Angle >= m_Low ) && ( t_Angle <= m_High );
+    // To assure that negative patch angles are covered as well
+    double aAngle = ( m_Low + 360 ) < t_Angle ? t_Angle - 360 : t_Angle;
+    return ( aAngle >= m_Low ) && ( aAngle <= m_High );
   }
 
   double CAngleLimits::average() const {
