@@ -67,6 +67,13 @@ namespace SingleLayerOptics {
     return tau * lambda;
   }
 
+  double CBSDFIntegrator::DirDir( const Side t_Side, const PropertySimple t_Property,
+    const size_t Index ) {
+    double lambda = ( *m_Directions->lambdaVector() )[ Index ];
+    double tau = ( *getMatrix( t_Side, t_Property ) )[ Index ][ Index ];
+    return tau * lambda;
+  }
+
   shared_ptr< vector< double > > CBSDFIntegrator::DirHem( const FenestrationCommon::Side t_Side,
     const FenestrationCommon::PropertySimple t_Property ) {
     calcHemispherical();
@@ -87,6 +94,10 @@ namespace SingleLayerOptics {
   double CBSDFIntegrator::Abs( const Side t_Side, const double t_Theta, const double t_Phi ) {
     size_t index = m_Directions->getNearestBeamIndex( t_Theta, t_Phi );
     return ( *Abs( t_Side ) )[ index ];
+  }
+
+  double CBSDFIntegrator::Abs( const Side t_Side, const size_t Index ) {
+    return ( *Abs( t_Side ) )[ Index ];
   }
 
   shared_ptr< const vector< double > > CBSDFIntegrator::lambdaVector() const {

@@ -44,6 +44,8 @@ namespace MultiLayerOptics {
 
     double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
       const FenestrationCommon::PropertySimple t_Property, const double t_Theta, const double t_Phi );
+    double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
+      const FenestrationCommon::PropertySimple t_Property, const size_t Index );
 
     // Vector of layer by layer absorptances for each incoming direction
     std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda,
@@ -57,9 +59,14 @@ namespace MultiLayerOptics {
     double DirHem( const double minLambda, const double maxLambda,
       const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property,
       const double t_Theta, const double t_Phi );
+    double DirHem( const double minLambda, const double maxLambda,
+      const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property,
+      const size_t Index );
 
     double Abs( const double minLambda, const double maxLambda,
-      const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
+      const FenestrationCommon::Side t_Side, const size_t layerIndex, const double t_Theta, const double t_Phi );
+    double Abs( const double minLambda, const double maxLambda,
+      const FenestrationCommon::Side t_Side, const size_t layerIndex, const size_t beamIndex );
 
     // Diffuse to diffuse properties
     double DiffDiff( const double minLambda, const double maxLambda,
