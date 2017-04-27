@@ -1,6 +1,6 @@
 #ifndef WCECHROMOGENICS_H
 #define WCECHROMOGENICS_H
 
-#include "..\src\ThermochromicSurface.hpp"
+#include "../src/ThermochromicSurface.hpp"
 
 #endif
