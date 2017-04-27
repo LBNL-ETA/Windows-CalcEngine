@@ -4,8 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "ViewSegment2D.hpp"
-#include "Point2D.hpp"
+#include "WCEViewer.hpp"
 
 using namespace std;
 using namespace Viewer;

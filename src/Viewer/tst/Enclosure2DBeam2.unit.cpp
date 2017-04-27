@@ -3,10 +3,7 @@
 
 #include <memory>
 
-#include "Geometry2DBeam.hpp"
-#include "Geometry2D.hpp"
-#include "ViewSegment2D.hpp"
-#include "Point2D.hpp"
+#include "WCEViewer.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

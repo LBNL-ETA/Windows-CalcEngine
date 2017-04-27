@@ -3,9 +3,9 @@
 
 #include "VenetianCell.hpp"
 #include "VenetianCellDescription.hpp"
-#include "Geometry2DBeam.hpp"
 #include "BeamDirection.hpp"
 #include "MaterialDescription.hpp"
+#include "WCEViewer.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

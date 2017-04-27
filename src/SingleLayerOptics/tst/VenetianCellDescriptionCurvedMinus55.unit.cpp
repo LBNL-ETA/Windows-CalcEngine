@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "VenetianCellDescription.hpp"
-#include "Geometry2DBeam.hpp"
+#include "WCEViewer.hpp"
 #include "BeamDirection.hpp"
 #include "WCECommon.hpp"
 

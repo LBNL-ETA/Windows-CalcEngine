@@ -90,7 +90,7 @@ else()
   	include_directories( src/Gases/include )
   	include_directories( src/Tarcog/include )  	
   	include_directories( src/SpectralAveraging/src )
-  	include_directories( src/Viewer/src )
+  	include_directories( src/Viewer/include )
   	include_directories( src/SingleLayerOptics/src )
   	include_directories( src/MultiLayerOptics/src )
   	
