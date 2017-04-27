@@ -1,9 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "SpectralSample.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "SpecularCellDescription.hpp"
-#include "MeasuredSampleData.hpp"
 #include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
 #include "BSDFDirections.hpp"

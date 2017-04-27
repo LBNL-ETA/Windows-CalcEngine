@@ -3,10 +3,9 @@
 
 #include "EquivalentBSDFLayer.hpp"
 #include "MultiPaneBSDF.hpp"
-#include "SpectralSample.hpp"
 #include "PerforatedCellDescription.hpp"
 #include "MultiPaneSampleData.hpp"
-#include "MeasuredSampleData.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
 #include "BSDFDirections.hpp"

@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "SpectralSample.hpp"
+#include "WCESpectralAveraging.hpp"
 
 namespace FenestrationCommon {
 

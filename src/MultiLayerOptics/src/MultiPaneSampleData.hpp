@@ -1,7 +1,7 @@
 #ifndef MultiLayerOpticsMEASUREDDATA_H
 #define MultiLayerOpticsMEASUREDDATA_H
 
-#include "MeasuredSampleData.hpp"
+#include "WCESpectralAveraging.hpp"
 
 namespace FenestrationCommon {
 

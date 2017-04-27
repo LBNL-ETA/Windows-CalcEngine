@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "MultiPaneSampleData.hpp"
-#include "MeasuredSampleData.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

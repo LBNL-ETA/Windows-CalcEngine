@@ -8,7 +8,7 @@ set( target_name SingleLayerOptics )
 # make sure to connect to header files of common variables
 include_directories( ../Common/include )
 include_directories( ../Viewer/include )
-include_directories( ../SpectralAveraging/src )
+include_directories( ../SpectralAveraging/include )
 
 # collect all source files and add them to the SOURCES list
 file( GLOB SOURCES_CPP "src/*.cpp" )

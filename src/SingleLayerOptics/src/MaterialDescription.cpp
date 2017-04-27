@@ -3,11 +3,8 @@
 
 #include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
-#include "SpectralSample.hpp"
-#include "AngularSpectralSample.hpp"
-#include "NIRRatio.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "OpticalSurface.hpp"
-#include "AngularMeasurements.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

@@ -15,6 +15,7 @@ namespace FenestrationCommon {
 
 namespace SpectralAveraging {
 
+  class CSpectralSample;
 	class CSpectralSampleData;
 	class CSpectralAngleSample;
 	class CAngularSpectralProperties;

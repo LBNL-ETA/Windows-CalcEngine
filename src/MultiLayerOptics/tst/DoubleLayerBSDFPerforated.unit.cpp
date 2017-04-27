@@ -3,8 +3,7 @@
 
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "BSDFDirections.hpp"
-#include "SpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "MaterialDescription.hpp"
 #include "PerforatedCellDescription.hpp"
 #include "WCECommon.hpp"

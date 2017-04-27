@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 
-#include "NIRRatio.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

@@ -3,7 +3,7 @@
 
 // #include "MultiPaneSpectralSample.hpp"
 #include "MultiPaneSampleData.hpp"
-#include "MeasuredSampleData.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;
