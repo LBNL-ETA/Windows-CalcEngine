@@ -8,7 +8,7 @@
 #include "IGU.hpp"
 #include "System.hpp"
 #include "Surface.hpp"
-#include "ThermochromicSurface.hpp"
+#include "WCEChromogenics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;
