@@ -1,9 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentLayer.hpp"
+#include "EquivalentScatteringLayer.hpp"
 #include "OpticalSurface.hpp"
-#include "OpticalLayer.hpp"
+#include "ScatteringLayer.hpp"
 #include "FenestrationCommon.hpp"
 
 using namespace std;
@@ -17,43 +17,43 @@ class TestEquivalentLayerWithScattering2 : public testing::Test {
 
 private:
   // Additional layer added to the back side
-  shared_ptr< CEquivalentLayer > m_EqLayerFront;
-  shared_ptr< CEquivalentLayer > m_EqLayerBack;
+  shared_ptr< CEquivalentScatteringLayer > m_EqLayerFront;
+  shared_ptr< CEquivalentScatteringLayer > m_EqLayerBack;
 
 protected:
   virtual void SetUp() {
     shared_ptr< CScatteringSurface > f1 = make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
     shared_ptr< CScatteringSurface > b1 = make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
-    CLayer aLayer1 = CLayer( f1, b1 );
+    CScatteringLayer aLayer1 = CScatteringLayer( f1, b1 );
     
     shared_ptr< CScatteringSurface > f2 = make_shared< CScatteringSurface >( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
     shared_ptr< CScatteringSurface > b2 = make_shared< CScatteringSurface >( 0.15, 0.0, 0.38, 0.19, 0.49, 0.39 );
-    CLayer aLayer2 = CLayer( f2, b2 );
+    CScatteringLayer aLayer2 = CScatteringLayer( f2, b2 );
 
     shared_ptr< CScatteringSurface > f3 = make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
     shared_ptr< CScatteringSurface > b3 = make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
-    CLayer aLayer3 = CLayer( f3, b3 );
+    CScatteringLayer aLayer3 = CScatteringLayer( f3, b3 );
     
-    m_EqLayerFront = make_shared< CEquivalentLayer >( aLayer1 );
+    m_EqLayerFront = make_shared< CEquivalentScatteringLayer >( aLayer1 );
     m_EqLayerFront->addLayer( aLayer2, Side::Back );
     m_EqLayerFront->addLayer( aLayer3, Side::Back );
 
-    m_EqLayerBack = make_shared< CEquivalentLayer >( aLayer3 );
+    m_EqLayerBack = make_shared< CEquivalentScatteringLayer >( aLayer3 );
     m_EqLayerBack->addLayer( aLayer2, Side::Front );
     m_EqLayerBack->addLayer( aLayer1, Side::Front );
   
   }
 
 public:
-  shared_ptr< CEquivalentLayer > getBack() { return m_EqLayerBack; };
-  shared_ptr< CEquivalentLayer > getFront() { return m_EqLayerFront; };
+  shared_ptr< CEquivalentScatteringLayer > getBack() { return m_EqLayerBack; };
+  shared_ptr< CEquivalentScatteringLayer > getFront() { return m_EqLayerFront; };
 
 };
 
 TEST_F( TestEquivalentLayerWithScattering2, TestTripleLayerBack ) {
   SCOPED_TRACE( "Begin Test: Equivalent layer transmittance and reflectances (direct-direct, direct-diffuse and diffuse-diffuse" );
   
-  CEquivalentLayer doubleLayer = *getBack();
+  CEquivalentScatteringLayer doubleLayer = *getBack();
 
   ///////////////////////////////////////////////
   // Direct-Direct
@@ -104,7 +104,7 @@ TEST_F( TestEquivalentLayerWithScattering2, TestTripleLayerBack ) {
 TEST_F( TestEquivalentLayerWithScattering2, TestTripleLayerFront ) {
   SCOPED_TRACE( "Begin Test: Equivalent layer transmittance and reflectances (direct-direct, direct-diffuse and diffuse-diffuse" );
 
-  CEquivalentLayer doubleLayer = *getFront();
+  CEquivalentScatteringLayer doubleLayer = *getFront();
 
   ///////////////////////////////////////////////
   // Direct-Direct

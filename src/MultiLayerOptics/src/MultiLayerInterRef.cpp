@@ -2,10 +2,10 @@
 #include <stdexcept>
 
 #include "MultiLayerInterRef.hpp"
-#include "OpticalLayer.hpp"
+#include "ScatteringLayer.hpp"
 #include "OpticalSurface.hpp"
 #include "FenestrationCommon.hpp"
-#include "EquivalentLayer.hpp"
+#include "EquivalentScatteringLayer.hpp"
 #include "MultiLayerInterRefSingleComponent.hpp"
 
 using namespace std;
@@ -14,7 +14,7 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics {
 
-  CInterRef::CInterRef( const shared_ptr< const CLayer >& t_Layer ) : m_StateCalculated( false ) {
+  CInterRef::CInterRef( const shared_ptr< const CScatteringLayer >& t_Layer ) : m_StateCalculated( false ) {
     m_Layers.push_back( t_Layer );
     for( Scattering aScattering : EnumScattering() ) {
       m_Energy[ aScattering ] = make_shared< CSurfaceEnergy >();
@@ -33,7 +33,7 @@ namespace MultiLayerOptics {
     }
   }
 
-  void CInterRef::addLayer( const shared_ptr< const CLayer >& t_Layer, const Side t_Side ) {
+  void CInterRef::addLayer( const shared_ptr< const CScatteringLayer >& t_Layer, const Side t_Side ) {
     switch( t_Side ) {
     case Side::Front:
       m_Layers.insert( m_Layers.begin(), t_Layer );
@@ -96,12 +96,12 @@ namespace MultiLayerOptics {
     // Insert exterior environment first
     shared_ptr< CScatteringSurface > aFront = make_shared< CScatteringSurface >( 1, 0, 0, 0, 1, 0 );
     shared_ptr< CScatteringSurface > aBack = make_shared< CScatteringSurface >( 1, 0, 0, 0, 1, 0 );
-    shared_ptr< CLayer > exterior = make_shared< CLayer >( aFront, aBack );
+    shared_ptr< CScatteringLayer > exterior = make_shared< CScatteringLayer >( aFront, aBack );
     aLayers->push_back( exterior );
 
-    shared_ptr< const CLayer > aLayer = m_Layers[ 0 ];
+    shared_ptr< const CScatteringLayer > aLayer = m_Layers[ 0 ];
     aLayers->push_back( aLayer );
-    CEquivalentLayer aEqLayer = CEquivalentLayer( aLayer );
+    CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer( aLayer );
     for( size_t i = 1; i < m_Layers.size(); ++i ) {
       aEqLayer.addLayer( m_Layers[ i ] );
       aLayer = aEqLayer.getLayer();
@@ -117,14 +117,14 @@ namespace MultiLayerOptics {
     // Insert interior environment
     shared_ptr< CScatteringSurface > aFront = make_shared< CScatteringSurface >( 1, 0, 0, 0, 1, 0 );
     shared_ptr< CScatteringSurface > aBack = make_shared< CScatteringSurface >( 1, 0, 0, 0, 1, 0 );
-    shared_ptr< const CLayer > exterior = make_shared< CLayer >( aFront, aBack );
+    shared_ptr< const CScatteringLayer > exterior = make_shared< CScatteringLayer >( aFront, aBack );
     aLayers->push_back( exterior );
 
     size_t size = m_Layers.size() - 1;
     // Last layer just in
-    shared_ptr< const CLayer > aLayer = m_Layers[ size ];
+    shared_ptr< const CScatteringLayer > aLayer = m_Layers[ size ];
     aLayers->insert( aLayers->begin(), aLayer );
-    CEquivalentLayer aEqLayer = CEquivalentLayer( aLayer );
+    CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer( aLayer );
     for( size_t i = size; i > 0; --i ) {
       aEqLayer.addLayer( m_Layers[ i - 1 ], Side::Front );
       aLayer = aEqLayer.getLayer();
@@ -144,7 +144,7 @@ namespace MultiLayerOptics {
           // Calculate diffuse energy from direct exterior/interior beam
           double beamEnergy = 0;
 
-          shared_ptr< const CLayer > curLayer = ( *m_StackedLayers.at( oppSide ) )[ i ];
+          shared_ptr< const CScatteringLayer > curLayer = ( *m_StackedLayers.at( oppSide ) )[ i ];
 
           if( ( aSide == Side::Front && aEnergyFlow == EnergyFlow::Backward ) || 
               ( aSide == Side::Back && aEnergyFlow == EnergyFlow::Forward ) ) {
@@ -177,8 +177,8 @@ namespace MultiLayerOptics {
       // In this case numbering goes through gas environments (gaps, interior and exterior)
       // becase we want to keep interreflectance calculations together
       for( size_t i = 0; i <= m_Layers.size(); ++i ) {
-        shared_ptr< const CLayer > fwdLayer = ( *m_StackedLayers.at( Side::Front ) )[ i ];
-        shared_ptr< const CLayer > bkwLayer = ( *m_StackedLayers.at( Side::Back ) )[ i + 1 ];
+        shared_ptr< const CScatteringLayer > fwdLayer = ( *m_StackedLayers.at( Side::Front ) )[ i ];
+        shared_ptr< const CScatteringLayer > bkwLayer = ( *m_StackedLayers.at( Side::Back ) )[ i + 1 ];
         double Ib = 0;
         if( i != 0 ) {
           Ib = diffSum->IEnergy( i, Side::Back, aEnergyFlow );
