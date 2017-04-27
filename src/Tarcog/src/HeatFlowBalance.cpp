@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <iostream>
 
-#include "Constants.hpp"
+#include "WCEGases.hpp"
 #include "HeatFlowBalance.hpp"
 #include "BaseLayer.hpp"
 #include "BaseIGULayer.hpp"

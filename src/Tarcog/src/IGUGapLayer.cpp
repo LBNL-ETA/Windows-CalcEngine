@@ -5,11 +5,9 @@
 
 #include "BaseShade.hpp"
 #include "IGUGapLayer.hpp"
-#include "GasProperties.hpp"
 #include "Surface.hpp"
-#include "Constants.hpp"
 #include "NusseltNumber.hpp"
-#include "Gas.hpp"
+#include "WCEGases.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

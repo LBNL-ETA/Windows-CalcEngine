@@ -5,11 +5,9 @@
 
 #include "IndoorEnvironment.hpp"
 
-#include "Constants.hpp"
+#include "WCEGases.hpp"
 #include "Surface.hpp"
-#include "GasProperties.hpp"
 #include "WCECommon.hpp"
-#include "Gas.hpp"
 
 using namespace std;
 using namespace Gases;

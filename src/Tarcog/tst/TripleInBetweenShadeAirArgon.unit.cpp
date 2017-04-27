@@ -2,10 +2,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "GasData.hpp"
-#include "GasItem.hpp"
-#include "GasProperties.hpp"
-#include "Gas.hpp"
+#include "WCEGases.hpp"
 #include "OutdoorEnvironment.hpp"
 #include "IndoorEnvironment.hpp"
 #include "IGUSolidLayer.hpp"

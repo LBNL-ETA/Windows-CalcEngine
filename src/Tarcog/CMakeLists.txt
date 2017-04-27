@@ -7,7 +7,7 @@ set( target_name Tarcog )
 
 # make sure to connect to header files of common variables
 include_directories( ../Common/include )
-include_directories( ../Gases/src )
+include_directories( ../Gases/include )
 
 # collect all source files and add them to the SOURCES list
 file( GLOB SOURCES_CPP "src/*.cpp" )
