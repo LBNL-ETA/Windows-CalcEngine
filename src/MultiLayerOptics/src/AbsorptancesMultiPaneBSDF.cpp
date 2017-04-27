@@ -1,9 +1,7 @@
 #include <assert.h>
 
 #include "AbsorptancesMultiPaneBSDF.hpp"
-#include "BSDFLayer.hpp"
-#include "SpecularBSDFLayer.hpp"
-#include "BSDFIntegrator.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

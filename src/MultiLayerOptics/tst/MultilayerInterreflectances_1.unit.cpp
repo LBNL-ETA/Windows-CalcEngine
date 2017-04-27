@@ -1,7 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiLayerInterRefSingleComponent.hpp"
+#include "WCEMultiLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

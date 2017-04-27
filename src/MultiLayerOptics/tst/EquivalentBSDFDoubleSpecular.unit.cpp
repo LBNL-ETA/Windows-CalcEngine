@@ -1,15 +1,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentBSDFLayerSingleBand.hpp"
-#include "BSDFDirections.hpp"
 #include "WCESpectralAveraging.hpp"
-#include "MaterialDescription.hpp"
-#include "SpecularCellDescription.hpp"
-#include "SpecularCell.hpp"
-#include "SpecularBSDFLayer.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "BSDFIntegrator.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

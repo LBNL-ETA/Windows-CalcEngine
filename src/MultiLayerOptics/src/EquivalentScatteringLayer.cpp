@@ -2,8 +2,7 @@
 
 #include "EquivalentScatteringLayer.hpp"
 #include "EquivalentLayerSingleComponent.hpp"
-#include "OpticalSurface.hpp"
-#include "ScatteringLayer.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

@@ -1,9 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiLayerInterRef.hpp"
-#include "OpticalSurface.hpp"
-#include "ScatteringLayer.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

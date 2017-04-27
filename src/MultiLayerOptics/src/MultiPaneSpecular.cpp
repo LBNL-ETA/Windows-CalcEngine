@@ -5,9 +5,8 @@
 
 #include "MultiPaneSpecular.hpp"
 #include "AbsorptancesMultiPane.hpp"
-#include "SpecularCell.hpp"
 #include "EquivalentLayerSingleComponentMW.hpp"
-#include "BeamDirection.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

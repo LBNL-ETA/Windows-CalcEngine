@@ -10,10 +10,7 @@
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "BSDFLayer.hpp"
-#include "SpecularBSDFLayer.hpp"
-#include "BSDFIntegrator.hpp"
-#include "BSDFDirections.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

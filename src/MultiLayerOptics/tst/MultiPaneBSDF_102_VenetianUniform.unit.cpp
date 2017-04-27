@@ -1,16 +1,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentBSDFLayer.hpp"
-#include "MultiPaneBSDF.hpp"
-#include "VenetianCellDescription.hpp"
-#include "MultiPaneSampleData.hpp"
 #include "WCESpectralAveraging.hpp"
-#include "MaterialDescription.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "BSDFDirections.hpp"
-#include "BSDFLayer.hpp"
-#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

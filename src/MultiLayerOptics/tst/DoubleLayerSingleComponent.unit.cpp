@@ -1,8 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiLayerSingleComponent.hpp"
-#include "EquivalentLayerSingleComponent.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

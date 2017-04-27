@@ -5,10 +5,9 @@
 #include <assert.h>
 
 #include "MultiPaneBSDF.hpp"
-#include "BSDFIntegrator.hpp"
 #include "EquivalentBSDFLayer.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "BSDFDirections.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

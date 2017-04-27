@@ -1,9 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentBSDFLayerSingleBand.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "BSDFDirections.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

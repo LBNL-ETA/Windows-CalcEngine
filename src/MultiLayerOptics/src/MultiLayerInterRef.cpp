@@ -2,8 +2,7 @@
 #include <stdexcept>
 
 #include "MultiLayerInterRef.hpp"
-#include "ScatteringLayer.hpp"
-#include "OpticalSurface.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 #include "EquivalentScatteringLayer.hpp"
 #include "MultiLayerInterRefSingleComponent.hpp"

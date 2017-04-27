@@ -3,9 +3,7 @@
 #include "MultiLayerScattered.hpp"
 #include "MultiLayerInterRef.hpp"
 #include "EquivalentScatteringLayer.hpp"
-#include "ScatteringLayer.hpp"
-#include "OpticalSurface.hpp"
-#include "LayerSingleComponent.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

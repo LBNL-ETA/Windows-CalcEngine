@@ -1,7 +1,7 @@
 #include <assert.h>
 
-#include "BSDFIntegrator.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

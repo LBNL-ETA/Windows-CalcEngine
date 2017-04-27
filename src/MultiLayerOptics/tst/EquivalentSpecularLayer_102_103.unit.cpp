@@ -1,14 +1,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiPaneSpecular.hpp"
-#include "SpecularCell.hpp"
-#include "SpecularCellDescription.hpp"
-#include "MultiPaneSampleData.hpp"
 #include "WCESpectralAveraging.hpp"
-#include "MaterialDescription.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "BSDFDirections.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

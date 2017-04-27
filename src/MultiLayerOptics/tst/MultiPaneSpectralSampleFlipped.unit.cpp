@@ -1,8 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiPaneSpectralSample.hpp"
-#include "MultiPaneSampleData.hpp"
+#include "WCEMultiLayerOptics.hpp"
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
