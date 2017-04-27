@@ -1,14 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "OutdoorEnvironment.hpp"
-#include "IndoorEnvironment.hpp"
-#include "IGUSolidLayer.hpp"
-#include "BaseShade.hpp"
-#include "IGUGapLayer.hpp"
-#include "IGUVentilatedGapLayer.hpp"
-#include "IGU.hpp"
-#include "SingleSystem.hpp"
+#include "WCETarcog.hpp"
 
 using namespace std;
 using namespace Tarcog;

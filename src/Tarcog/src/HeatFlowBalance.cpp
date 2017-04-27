@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <iostream>
 
-#include "WCEGases.hpp"
 #include "HeatFlowBalance.hpp"
 #include "BaseLayer.hpp"
 #include "BaseIGULayer.hpp"
@@ -9,6 +8,7 @@
 #include "IGU.hpp"
 #include "Environment.hpp"
 #include "Surface.hpp"
+#include "WCEGases.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

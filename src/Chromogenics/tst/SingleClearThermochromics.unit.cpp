@@ -2,12 +2,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "OutdoorEnvironment.hpp"
-#include "IndoorEnvironment.hpp"
-#include "IGUSolidLayer.hpp"
-#include "IGU.hpp"
-#include "System.hpp"
-#include "Surface.hpp"
+#include "WCETarcog.hpp"
 #include "WCEChromogenics.hpp"
 #include "WCECommon.hpp"
 

@@ -2,12 +2,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "OutdoorEnvironment.hpp"
-#include "IndoorEnvironment.hpp"
-#include "Surface.hpp"
-#include "IGUSolidLayer.hpp"
-#include "IGU.hpp"
-#include "SingleSystem.hpp"
+#include "WCETarcog.hpp"
 
 using namespace Tarcog;
 using namespace std;

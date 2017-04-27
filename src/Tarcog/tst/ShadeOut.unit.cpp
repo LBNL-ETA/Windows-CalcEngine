@@ -2,14 +2,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "OutdoorEnvironment.hpp"
-#include "IndoorEnvironment.hpp"
-#include "IGUSolidLayer.hpp"
-#include "BaseShade.hpp"
-#include "IGUGapLayer.hpp"
-#include "IGU.hpp"
-#include "SingleSystem.hpp"
-#include "Surface.hpp"
+#include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

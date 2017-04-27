@@ -2,7 +2,7 @@
 #include <math.h>
 #include <memory>
 
-#include <SupportPillar.hpp>
+#include "WCETarcog.hpp"
 #include "BaseIGULayer.hpp"
 
 using namespace std;

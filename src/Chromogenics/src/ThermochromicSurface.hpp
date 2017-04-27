@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "Surface.hpp"
+#include "WCETarcog.hpp"
 
 namespace FenestrationCommon {
 

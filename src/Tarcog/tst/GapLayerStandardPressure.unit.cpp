@@ -1,10 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "Surface.hpp"
-#include "IGUSolidLayer.hpp"
-#include "IGUGapLayer.hpp"
-#include "IGU.hpp"
+#include "WCETarcog.hpp"
 
 using namespace std;
 using namespace Tarcog;
