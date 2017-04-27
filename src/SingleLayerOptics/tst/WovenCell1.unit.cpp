@@ -1,11 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WovenCell.hpp"
-#include "WovenCellDescription.hpp"
-#include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
-#include "BeamDirection.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

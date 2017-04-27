@@ -1,11 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "VenetianCellDescription.hpp"
-#include "VenetianCell.hpp"
 #include "WCECommon.hpp"
-#include "BeamDirection.hpp"
-#include "MaterialDescription.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

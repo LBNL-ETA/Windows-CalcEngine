@@ -1,14 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "SpecularCellDescription.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCESpectralAveraging.hpp"
-#include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
-#include "BSDFDirections.hpp"
-#include "BSDFIntegrator.hpp"
-#include "BSDFLayer.hpp"
-#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

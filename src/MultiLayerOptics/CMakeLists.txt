@@ -8,7 +8,7 @@ set( target_name MultiLayerOptics )
 # make sure to connect to header files of common variables
 include_directories( ../Common/include )
 include_directories( ../SpectralAveraging/include )
-include_directories( ../SingleLayerOptics/src )
+include_directories( ../SingleLayerOptics/include )
 
 # collect all source files and add them to the SOURCES list
 file( GLOB SOURCES_CPP "src/*.cpp" )

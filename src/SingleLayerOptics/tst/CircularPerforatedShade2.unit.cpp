@@ -1,13 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "PerforatedCellDescription.hpp"
-#include "MaterialDescription.hpp"
-#include "BSDFDirections.hpp"
-#include "BSDFIntegrator.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "BSDFLayer.hpp"
-#include "BSDFLayerMaker.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

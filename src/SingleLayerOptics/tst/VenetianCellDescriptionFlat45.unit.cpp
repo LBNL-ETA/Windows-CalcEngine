@@ -1,9 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "VenetianCellDescription.hpp"
 #include "WCEViewer.hpp"
-#include "BeamDirection.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

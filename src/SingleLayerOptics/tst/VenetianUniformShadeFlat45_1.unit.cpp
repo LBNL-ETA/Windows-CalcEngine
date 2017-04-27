@@ -1,13 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "VenetianCellDescription.hpp"
-#include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
-#include "BSDFDirections.hpp"
-#include "BSDFIntegrator.hpp"
-#include "BSDFLayer.hpp"
-#include "BSDFLayerMaker.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

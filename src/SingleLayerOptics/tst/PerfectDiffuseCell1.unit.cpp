@@ -1,11 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "UniformDiffuseCell.hpp"
-#include "PerfectDiffuseCellDescription.hpp"
-#include "MaterialDescription.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "BeamDirection.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

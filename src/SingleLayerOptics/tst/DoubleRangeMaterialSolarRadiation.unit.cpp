@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "MaterialDescription.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace std;

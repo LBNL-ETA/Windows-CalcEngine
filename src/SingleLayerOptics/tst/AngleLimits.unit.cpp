@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "BSDFPatch.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

@@ -91,7 +91,7 @@ else()
   	include_directories( src/Tarcog/include )  	
   	include_directories( src/SpectralAveraging/include )
   	include_directories( src/Viewer/include )
-  	include_directories( src/SingleLayerOptics/src )
+  	include_directories( src/SingleLayerOptics/include )
   	include_directories( src/MultiLayerOptics/src )
   	
   	file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Common/tst/*.cpp" )
