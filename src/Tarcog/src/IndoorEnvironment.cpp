@@ -8,7 +8,7 @@
 #include "Constants.hpp"
 #include "Surface.hpp"
 #include "GasProperties.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "Gas.hpp"
 
 using namespace std;

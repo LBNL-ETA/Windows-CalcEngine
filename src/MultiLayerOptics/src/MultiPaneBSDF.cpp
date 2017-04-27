@@ -7,10 +7,7 @@
 #include "MultiPaneBSDF.hpp"
 #include "BSDFIntegrator.hpp"
 #include "EquivalentBSDFLayer.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
-#include "FenestrationCommon.hpp"
-#include "MatrixSeries.hpp"
+#include "WCECommon.hpp"
 #include "BSDFDirections.hpp"
 
 using namespace std;

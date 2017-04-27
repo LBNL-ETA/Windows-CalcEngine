@@ -1,8 +1,5 @@
 #include "NIRRatio.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
-#include "WavelengthRange.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

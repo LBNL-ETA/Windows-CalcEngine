@@ -1,5 +1,5 @@
 #include "ThermochromicSurface.hpp"
-#include "Interpolation2D.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Tarcog;

@@ -4,7 +4,7 @@
 #include "MaterialDescription.hpp"
 #include "CellDescription.hpp"
 #include "BeamDirection.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

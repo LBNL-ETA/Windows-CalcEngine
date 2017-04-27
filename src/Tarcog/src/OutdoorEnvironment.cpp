@@ -7,7 +7,7 @@
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
 #include "OutdoorEnvironment.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace ConstantsData;

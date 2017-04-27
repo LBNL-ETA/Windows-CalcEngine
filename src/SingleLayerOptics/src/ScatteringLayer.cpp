@@ -3,7 +3,7 @@
 #include "ScatteringLayer.hpp"
 #include "LayerSingleComponent.hpp"
 #include "OpticalSurface.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

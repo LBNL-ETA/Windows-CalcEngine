@@ -9,7 +9,7 @@
 #include "System.hpp"
 #include "Surface.hpp"
 #include "ThermochromicSurface.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Tarcog;

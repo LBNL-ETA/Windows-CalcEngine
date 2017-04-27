@@ -5,11 +5,10 @@
 #include "DirectionalDiffuseBSDFLayer.hpp"
 #include "DirectionalDiffuseCell.hpp"
 #include "BSDFIntegrator.hpp"
-#include "SquareMatrix.hpp"
 #include "BSDFDirections.hpp"
 #include "BeamDirection.hpp"
 #include "BSDFPatch.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

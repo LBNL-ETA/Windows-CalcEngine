@@ -1,7 +1,7 @@
 #include <stdexcept>
 
 #include "OpticalSurface.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

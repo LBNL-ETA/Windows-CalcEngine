@@ -4,8 +4,7 @@
 #include <assert.h>
 
 #include "AngularProperties.hpp"
-#include "MathFunctions.hpp"
-#include "SurfaceCoating.hpp"
+#include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
 using namespace std;

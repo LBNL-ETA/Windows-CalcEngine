@@ -17,7 +17,7 @@
 #include "IGUVentilatedGapLayer.hpp"
 #include "BaseShade.hpp"
 #include "Environment.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

@@ -7,10 +7,8 @@
 #include "AbsorptancesMultiPane.hpp"
 #include "SpecularCell.hpp"
 #include "EquivalentLayerSingleComponentMW.hpp"
-#include "Series.hpp"
 #include "BeamDirection.hpp"
-#include "FenestrationCommon.hpp"
-#include "Hemispherical2DIntegrator.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

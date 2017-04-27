@@ -10,7 +10,7 @@
 #include "Constants.hpp"
 #include "NusseltNumber.hpp"
 #include "Gas.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Gases;

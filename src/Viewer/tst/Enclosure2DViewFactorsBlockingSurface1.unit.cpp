@@ -6,7 +6,7 @@
 #include "Geometry2D.hpp"
 #include "ViewSegment2D.hpp"
 #include "Point2D.hpp"
-#include "SquareMatrix.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Viewer;

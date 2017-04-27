@@ -5,9 +5,7 @@
 
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "AngularMeasurements.hpp"
 
 using namespace std;

@@ -1,5 +1,5 @@
 #include "AbsorptancesMultiPane.hpp"
-#include "Series.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

@@ -6,7 +6,7 @@
 #include "IGUSolidLayer.hpp"
 #include "BaseLayer.hpp"
 #include "Surface.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "TarcogConstants.hpp"
 #include "LayerInterfaces.hpp"
 

@@ -3,20 +3,16 @@
 
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "BSDFDirections.hpp"
-#include "Series.hpp"
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "SurfaceCoating.hpp"
 #include "MaterialDescription.hpp"
-#include "SurfaceCoating.hpp"
 #include "SpecularCellDescription.hpp"
 #include "SpecularCell.hpp"
 #include "SpecularBSDFLayer.hpp"
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "PerforatedCell.hpp"
 #include "PerforatedCellDescription.hpp"
-#include "FenestrationCommon.hpp"
-#include "SquareMatrix.hpp"
+#include "WCECommon.hpp"
 #include "BSDFIntegrator.hpp"
 
 using namespace std;

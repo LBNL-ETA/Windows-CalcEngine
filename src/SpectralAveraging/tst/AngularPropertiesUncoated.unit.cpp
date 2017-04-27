@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "AngularProperties.hpp"
-#include "SurfaceCoating.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;

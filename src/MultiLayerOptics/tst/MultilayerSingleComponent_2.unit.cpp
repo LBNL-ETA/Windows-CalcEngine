@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "MultiLayerSingleComponent.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace MultiLayerOptics;

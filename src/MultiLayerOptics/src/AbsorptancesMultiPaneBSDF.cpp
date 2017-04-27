@@ -4,10 +4,7 @@
 #include "BSDFLayer.hpp"
 #include "SpecularBSDFLayer.hpp"
 #include "BSDFIntegrator.hpp"
-#include "Series.hpp"
-#include "SquareMatrix.hpp"
-#include "FenestrationCommon.hpp"
-#include "IntegratorStrategy.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

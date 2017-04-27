@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 namespace SingleLayerOptics {
 

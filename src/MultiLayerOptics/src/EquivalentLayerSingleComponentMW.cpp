@@ -1,8 +1,7 @@
 #include <assert.h>
 
 #include "EquivalentLayerSingleComponentMW.hpp"
-#include "Series.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "EquivalentLayerSingleComponent.hpp"
 
 using namespace FenestrationCommon;

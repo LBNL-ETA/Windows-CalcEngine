@@ -2,7 +2,7 @@
 #include <math.h>
 
 #include "PolarPoint2D.hpp"
-#include "MathFunctions.hpp"
+#include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
 

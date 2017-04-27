@@ -6,7 +6,7 @@ set( target_name SpectralAveraging )
 # include_directories( include )
 
 # make sure to connect to header files of common variables
-include_directories( ../Common/src )
+include_directories( ../Common/include )
 
 # collect all source files and add them to the SOURCES list
 file( GLOB SOURCES_CPP "src/*.cpp" )

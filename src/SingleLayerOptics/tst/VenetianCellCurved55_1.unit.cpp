@@ -3,10 +3,9 @@
 
 #include "VenetianCellDescription.hpp"
 #include "VenetianCell.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "BeamDirection.hpp"
 #include "MaterialDescription.hpp"
-#include "SquareMatrix.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

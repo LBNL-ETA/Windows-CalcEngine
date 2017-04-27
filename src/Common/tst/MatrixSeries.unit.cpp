@@ -3,9 +3,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "MatrixSeries.hpp"
-#include "SquareMatrix.hpp"
-#include "Series.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

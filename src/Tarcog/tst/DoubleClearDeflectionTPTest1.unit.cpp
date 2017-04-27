@@ -10,7 +10,7 @@
 #include "SingleSystem.hpp"
 #include "Surface.hpp"
 #include "IGUSolidDeflection.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Tarcog;

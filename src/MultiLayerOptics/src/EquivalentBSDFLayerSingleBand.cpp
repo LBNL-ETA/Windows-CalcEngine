@@ -1,9 +1,8 @@
 #include <assert.h>
 
 #include "BSDFIntegrator.hpp"
-#include "SquareMatrix.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

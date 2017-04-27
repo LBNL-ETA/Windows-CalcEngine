@@ -5,8 +5,7 @@
 #include "BSDFIntegrator.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFPatch.hpp"
-#include "SquareMatrix.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

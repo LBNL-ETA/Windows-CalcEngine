@@ -4,7 +4,7 @@
 #include "EquivalentLayerSingleComponent.hpp"
 #include "OpticalSurface.hpp"
 #include "ScatteringLayer.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

@@ -5,11 +5,9 @@
 
 #include "AngularSpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "Series.hpp"
 #include "SpectralSample.hpp"
 #include "AngularProperties.hpp"
-#include "SurfaceCoating.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

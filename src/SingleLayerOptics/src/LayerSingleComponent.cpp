@@ -2,7 +2,7 @@
 #include <assert.h>
 
 #include "LayerSingleComponent.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "MaterialDescription.hpp"
 #include "OpticalSurface.hpp"
 

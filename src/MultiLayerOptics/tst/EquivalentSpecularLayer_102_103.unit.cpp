@@ -3,17 +3,13 @@
 
 #include "MultiPaneSpecular.hpp"
 #include "SpectralSample.hpp"
-#include "Series.hpp"
 #include "SpecularCell.hpp"
-#include "SurfaceCoating.hpp"
 #include "SpecularCellDescription.hpp"
-#include "CommonWavelengths.hpp"
 #include "MultiPaneSampleData.hpp"
 #include "MeasuredSampleData.hpp"
 #include "MaterialDescription.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "BSDFDirections.hpp"
-#include "SquareMatrix.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

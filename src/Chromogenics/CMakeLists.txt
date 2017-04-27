@@ -6,7 +6,7 @@ set( target_name Chromogenics )
 # include_directories( include )
 
 # make sure to connect to header files of common variables
-include_directories( ../Common/src )
+include_directories( ../Common/include )
 include_directories( ../Tarcog/src )
 
 # collect all source files and add them to the SOURCES list

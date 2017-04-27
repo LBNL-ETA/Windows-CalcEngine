@@ -3,7 +3,7 @@
 
 #include "PerforatedCellDescription.hpp"
 #include "BeamDirection.hpp"
-#include "MathFunctions.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

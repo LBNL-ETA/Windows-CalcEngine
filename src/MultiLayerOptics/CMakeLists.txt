@@ -6,7 +6,7 @@ set( target_name MultiLayerOptics )
 # include_directories( include )
 
 # make sure to connect to header files of common variables
-include_directories( ../Common/src )
+include_directories( ../Common/include )
 include_directories( ../SpectralAveraging/src )
 include_directories( ../SingleLayerOptics/src )
 

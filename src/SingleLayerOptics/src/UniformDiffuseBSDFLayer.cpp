@@ -5,10 +5,9 @@
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "UniformDiffuseCell.hpp"
 #include "BSDFIntegrator.hpp"
-#include "SquareMatrix.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFPatch.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "BeamDirection.hpp"
 
 using namespace std;

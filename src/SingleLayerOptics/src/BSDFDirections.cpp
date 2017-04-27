@@ -7,7 +7,7 @@
 #include "BSDFThetaLimits.hpp"
 #include "BSDFPhiAngles.hpp"
 #include "BSDFPhiLimits.hpp"
-#include "SquareMatrix.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

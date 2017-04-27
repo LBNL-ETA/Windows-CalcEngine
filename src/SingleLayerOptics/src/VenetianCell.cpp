@@ -6,10 +6,7 @@
 #include "Geometry2DBeam.hpp"
 #include "BeamDirection.hpp"
 #include "MaterialDescription.hpp"
-#include "LinearSolver.hpp"
-#include "SquareMatrix.hpp"
-#include "MathFunctions.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Viewer;

@@ -7,11 +7,9 @@
 #include "BaseIGULayer.hpp"
 #include "IGUSolidLayer.hpp"
 #include "IGU.hpp"
-#include "SquareMatrix.hpp"
 #include "Environment.hpp"
 #include "Surface.hpp"
-#include "LinearSolver.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

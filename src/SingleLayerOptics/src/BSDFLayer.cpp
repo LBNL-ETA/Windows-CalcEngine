@@ -8,9 +8,8 @@
 #include "BSDFDirections.hpp"
 #include "BSDFIntegrator.hpp"
 #include "MaterialDescription.hpp"
-#include "SquareMatrix.hpp"
 #include "BSDFPatch.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "BeamDirection.hpp"
 
 using namespace std;

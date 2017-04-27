@@ -2,19 +2,15 @@
 #include <gtest/gtest.h>
 
 #include "SpectralSample.hpp"
-#include "Series.hpp"
 #include "SpecularCell.hpp"
-#include "SurfaceCoating.hpp"
 #include "SpecularCellDescription.hpp"
 #include "MeasuredSampleData.hpp"
 #include "MaterialDescription.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFIntegrator.hpp"
-#include "SquareMatrix.hpp"
 #include "BSDFLayer.hpp"
 #include "BSDFLayerMaker.hpp"
-#include "WavelengthRange.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

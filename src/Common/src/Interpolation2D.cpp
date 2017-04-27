@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include "Interpolation2D.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

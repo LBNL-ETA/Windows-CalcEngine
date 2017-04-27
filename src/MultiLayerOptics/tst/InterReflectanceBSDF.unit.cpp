@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "SquareMatrix.hpp"
+#include "WCECommon.hpp"
 #include "BSDFDirections.hpp"
 
 using namespace std;

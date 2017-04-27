@@ -2,8 +2,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "FenestrationCommon.hpp"
-#include "WavelengthRange.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

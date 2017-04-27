@@ -3,7 +3,7 @@
 
 #include "MultiLayerSingleComponent.hpp"
 #include "EquivalentLayerSingleComponent.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace MultiLayerOptics;

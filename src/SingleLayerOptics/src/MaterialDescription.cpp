@@ -2,14 +2,12 @@
 #include <stdexcept>
 
 #include "MaterialDescription.hpp"
-#include "FenestrationCommon.hpp"
-#include "WavelengthRange.hpp"
+#include "WCECommon.hpp"
 #include "SpectralSample.hpp"
 #include "AngularSpectralSample.hpp"
 #include "NIRRatio.hpp"
 #include "OpticalSurface.hpp"
 #include "AngularMeasurements.hpp"
-#include "Series.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

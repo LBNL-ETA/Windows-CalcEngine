@@ -4,11 +4,9 @@
 #include <assert.h>
 
 #include "MultiPaneSampleData.hpp"
-#include "Series.hpp"
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "AbsorptancesMultiPane.hpp"
-#include "CommonWavelengths.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

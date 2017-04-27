@@ -85,7 +85,7 @@ else()
   add_library( ${target_name} STATIC ${SOURCES} )
   
   if( BUILD_TESTING )
-  	include_directories( src/Common/src )
+  	include_directories( src/Common/include )
   	include_directories( src/Gases/src )
   	include_directories( src/Tarcog/src )  	
   	include_directories( src/SpectralAveraging/src )

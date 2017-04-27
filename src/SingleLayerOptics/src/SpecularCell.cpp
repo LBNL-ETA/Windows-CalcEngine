@@ -5,7 +5,7 @@
 #include "SpecularCellDescription.hpp"
 #include "SpectralSample.hpp"
 #include "BeamDirection.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

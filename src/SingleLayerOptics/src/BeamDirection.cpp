@@ -1,7 +1,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "MathFunctions.hpp"
+#include "WCECommon.hpp"
 #include "BeamDirection.hpp"
 
 using namespace std;

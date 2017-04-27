@@ -9,7 +9,7 @@
 #include "Segment2D.hpp"
 #include "BeamDirection.hpp"
 #include "Point2D.hpp"
-#include "SquareMatrix.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Viewer;

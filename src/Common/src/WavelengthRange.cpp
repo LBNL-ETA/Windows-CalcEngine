@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "WavelengthRange.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 
