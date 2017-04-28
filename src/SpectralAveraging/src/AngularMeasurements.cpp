@@ -52,7 +52,7 @@ namespace SpectralAveraging {
 		double t1, t2, t;
 		double rf1, rf2, rf;
 		double rb1, rb2, rb;
-		for (int i = 0; i < wlv->size( ); i++) {
+		for (size_t i = 0; i < wlv->size( ); i++) {
 			wl = (*wlv)[i];
 			t1 = ( *trans1 )[i]->value( );
 			t2 = ( *trans2 )[i]->value( );
@@ -108,7 +108,7 @@ namespace SpectralAveraging {
 			throw runtime_error( "A single set is found. Spectral and angular sample must have 2 sets at least." );
 		}
 
-		for (int i = 0; i < m_Measurements.size( ); i++ ) {
+		for (size_t i = 0; i < m_Measurements.size( ); i++ ) {
 			if (fabs( m_Measurements[i]->getAngle( ) - t_Angle ) < angleTolerance ) {
 				return m_Measurements[i];
 			}
@@ -124,7 +124,7 @@ namespace SpectralAveraging {
 		double diff;
 		std::shared_ptr< CSpectralSample > sample1 = nullptr;
 		std::shared_ptr< CSpectralSample > sample2 = nullptr;
-		for (int i = 0; i < m_Measurements.size( ); i++) {
+		for (size_t i = 0; i < m_Measurements.size( ); i++) {
 			angle = m_Measurements[i]->getAngle( );
 			diff = fabs( angle - t_Angle );
 			if ( diff < min1 ) {
@@ -157,7 +157,7 @@ namespace SpectralAveraging {
 
 	void CAngularMeasurements::setSourceData( shared_ptr< CSeries > t_SourceData ) {
 
-		for ( int i = 0; i < m_Measurements.size( ); i++ ) {
+		for ( size_t i = 0; i < m_Measurements.size( ); i++ ) {
 			shared_ptr< CSingleAngularMeasurement > aAngular = m_Measurements[ i ];
 			shared_ptr< CSpectralSample > aSample = aAngular->getData( );
 			aSample->setSourceData( t_SourceData );

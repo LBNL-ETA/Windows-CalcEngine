@@ -326,8 +326,8 @@ namespace SingleLayerOptics {
 
   CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
 	  const double minLambda, const double maxLambda ) :
-	  m_AngularMeasurements( t_AngularMeasurements ),
-	  CMaterial( minLambda, maxLambda ) {
+      CMaterial( minLambda, maxLambda ),
+	  m_AngularMeasurements( t_AngularMeasurements ){
 
 	  if ( t_AngularMeasurements == nullptr ) {
 		  throw runtime_error( "Cannot create specular and angular material from non-existing sample." );
@@ -336,8 +336,8 @@ namespace SingleLayerOptics {
 
   CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
 	  const WavelengthRange t_Range ) :
-	  m_AngularMeasurements( t_AngularMeasurements ),
-	  CMaterial( t_Range ) {
+      CMaterial( t_Range ),
+	  m_AngularMeasurements( t_AngularMeasurements ) {
 
 	  if ( t_AngularMeasurements == nullptr ) {
 		  throw runtime_error( "Cannot create specular and angular material from non-existing sample." );
