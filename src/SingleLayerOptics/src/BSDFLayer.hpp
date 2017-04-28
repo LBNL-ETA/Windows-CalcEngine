@@ -31,7 +31,6 @@ namespace SingleLayerOptics {
   // Base class for handling BSDF Layer
   class CBSDFLayer {
   public:
-    // friend class MultiLayerOptics::CEquivalentBSDFLayer;
     CBSDFLayer( const std::shared_ptr< CBaseCell >& t_Cell, 
       const std::shared_ptr< const CBSDFHemisphere >& t_Directions );
 

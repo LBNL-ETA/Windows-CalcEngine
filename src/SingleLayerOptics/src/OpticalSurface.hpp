@@ -27,7 +27,7 @@ namespace SingleLayerOptics {
   class CScatteringSurface {
   public:
     CScatteringSurface( const double T_dir_dir, const double R_dir_dir, 
-      const double T_dir_dif, const double R_dir_dif, const double T_dif_dif, const double R_dif_dif );
+      double T_dir_dif, double R_dir_dif, const double T_dif_dif, const double R_dif_dif );
 
     // Simple property means only transmittance and reflectance
     double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, 
@@ -38,6 +38,7 @@ namespace SingleLayerOptics {
 
     // In this case absroptance is different property from transmittance and reflectance
     double getAbsorptance( const FenestrationCommon::ScatteringSimple t_Scattering ) const;
+    double getAbsorptance() const;
 
   private:
     std::map< std::pair< FenestrationCommon::PropertySimple, FenestrationCommon::Scattering >, double > m_PropertySimple;

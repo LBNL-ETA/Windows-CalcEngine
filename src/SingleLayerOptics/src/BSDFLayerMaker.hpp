@@ -10,6 +10,7 @@ namespace SingleLayerOptics {
   class CMaterial;
   class CBSDFHemisphere;
   class CBSDFLayer;
+  class CBaseCell;
 
   // Class to simplify interface for BSDF layer creation
   class CBSDFLayerMaker {
@@ -21,8 +22,11 @@ namespace SingleLayerOptics {
 
     std::shared_ptr< CBSDFLayer > getLayer() const;
 
+    std::shared_ptr< CBaseCell > getCell() const;
+
   private:
     std::shared_ptr< CBSDFLayer > m_Layer;
+    std::shared_ptr< CBaseCell > m_Cell;
   };
 
 }

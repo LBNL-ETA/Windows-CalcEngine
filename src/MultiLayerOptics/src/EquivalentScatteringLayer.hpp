@@ -33,7 +33,7 @@ namespace MultiLayerOptics {
       const double Tf_dif_dif, const double Rf_dif_dif, 
       const double Tb_dif_dif, const double Rb_dif_dif );
 
-    CEquivalentScatteringLayer( const SingleLayerOptics::CScatteringLayer& t_Layer );
+    CEquivalentScatteringLayer( SingleLayerOptics::CScatteringLayer& t_Layer );
 
     void addLayer( const double Tf_dir_dir, const double Rf_dir_dir, 
       const double Tb_dir_dir, const double Rb_dir_dir, 
@@ -43,7 +43,7 @@ namespace MultiLayerOptics {
       const double Tb_dif_dif, const double Rb_dif_dif,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    void addLayer( const SingleLayerOptics::CScatteringLayer& t_Layer, 
+    void addLayer( SingleLayerOptics::CScatteringLayer& t_Layer,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
     double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, 
@@ -53,8 +53,8 @@ namespace MultiLayerOptics {
     std::shared_ptr< SingleLayerOptics::CScatteringLayer > getLayer() const;
 
   private:
-    void calcEquivalentProperties( const SingleLayerOptics::CScatteringLayer& t_First, 
-      const SingleLayerOptics::CScatteringLayer& t_Second );
+    void calcEquivalentProperties( SingleLayerOptics::CScatteringLayer& t_First,
+      SingleLayerOptics::CScatteringLayer& t_Second );
 
     // Find interreflectance value for given scattering
     double getInterreflectance( 
@@ -63,7 +63,7 @@ namespace MultiLayerOptics {
       const FenestrationCommon::Scattering t_Scattering );
 
     // Add diffuse and direct components from scattering layer properties
-    void addLayerComponents( const SingleLayerOptics::CScatteringLayer& t_Layer, const FenestrationCommon::Side t_Side );
+    void addLayerComponents( SingleLayerOptics::CScatteringLayer& t_Layer, const FenestrationCommon::Side t_Side );
 
     std::shared_ptr< SimpleResults > calcDirectDiffuseTransAndRefl( 
       const SingleLayerOptics::CScatteringSurface& f1, 

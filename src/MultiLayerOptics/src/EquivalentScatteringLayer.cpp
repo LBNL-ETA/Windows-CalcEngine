@@ -34,7 +34,7 @@ namespace MultiLayerOptics {
       Tb_dir_dir, Rb_dir_dir );
   }
 
-  CEquivalentScatteringLayer::CEquivalentScatteringLayer( const CScatteringLayer& t_Layer ) {
+  CEquivalentScatteringLayer::CEquivalentScatteringLayer( CScatteringLayer& t_Layer ) {
     m_Layer = make_shared< CScatteringLayer >( t_Layer );
 
     double Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect );
@@ -74,7 +74,7 @@ namespace MultiLayerOptics {
     addLayer( aLayer, t_Side );
   }
 
-  void CEquivalentScatteringLayer::addLayer( const CScatteringLayer& t_Layer, const Side t_Side ) {
+  void CEquivalentScatteringLayer::addLayer( CScatteringLayer& t_Layer, const Side t_Side ) {
     addLayerComponents( t_Layer, t_Side );
     switch( t_Side ) {
     case Side::Front:
@@ -99,7 +99,7 @@ namespace MultiLayerOptics {
     return m_Layer;
   }
 
-  void CEquivalentScatteringLayer::calcEquivalentProperties( const CScatteringLayer& t_First, const CScatteringLayer& t_Second ) {
+  void CEquivalentScatteringLayer::calcEquivalentProperties( CScatteringLayer& t_First, CScatteringLayer& t_Second ) {
     // Direct to diffuse componet calculation
     const CScatteringSurface f1 = *t_First.getSurface( Side::Front );
     const CScatteringSurface b1 = *t_First.getSurface( Side::Back );
@@ -194,7 +194,7 @@ namespace MultiLayerOptics {
     return aResult;
   }
 
-  void CEquivalentScatteringLayer::addLayerComponents( const CScatteringLayer& t_Layer, const Side t_Side ) {
+  void CEquivalentScatteringLayer::addLayerComponents( CScatteringLayer& t_Layer, const Side t_Side ) {
     double Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect );
     double Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect );
     double Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect );

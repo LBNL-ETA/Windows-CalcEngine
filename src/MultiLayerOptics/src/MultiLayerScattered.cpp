@@ -20,7 +20,7 @@ namespace MultiLayerOptics {
     const double t_Tf_dif_dif, const double t_Rf_dif_dif, 
     const double t_Tb_dif_dif, const double t_Rb_dif_dif ) {
 
-    shared_ptr< const CScatteringLayer > aLayer = make_shared< CScatteringLayer >( 
+    shared_ptr< CScatteringLayer > aLayer = make_shared< CScatteringLayer >( 
       t_Tf_dir_dir, t_Rf_dir_dir,t_Tb_dir_dir, t_Rb_dir_dir, 
       t_Tf_dir_dif, t_Rf_dir_dif, t_Tb_dir_dif, t_Rb_dir_dif,
       t_Tf_dif_dif, t_Rf_dif_dif, t_Tb_dif_dif, t_Rb_dif_dif );
@@ -28,7 +28,7 @@ namespace MultiLayerOptics {
     initialize( aLayer );
   }
 
-  CMultiLayerScattered::CMultiLayerScattered( const shared_ptr< const CScatteringLayer >& t_Layer ) {
+  CMultiLayerScattered::CMultiLayerScattered( const shared_ptr< CScatteringLayer >& t_Layer ) {
     initialize( t_Layer );
   }
 
@@ -74,8 +74,8 @@ namespace MultiLayerOptics {
     return aAbs;
   }
 
-  void CMultiLayerScattered::initialize( const shared_ptr< const CScatteringLayer >& t_Layer ) {
-    m_Layer = make_shared< CEquivalentScatteringLayer >( t_Layer );
+  void CMultiLayerScattered::initialize( const shared_ptr< CScatteringLayer >& t_Layer ) {
+    m_Layer = make_shared< CEquivalentScatteringLayer >( *t_Layer );
     m_InterRef = make_shared< CInterRef >( t_Layer );
   }
 

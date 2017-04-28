@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 namespace FenestrationCommon {
@@ -21,7 +22,7 @@ namespace SingleLayerOptics {
 
 namespace MultiLayerOptics {
 
-  typedef std::vector< std::shared_ptr< const SingleLayerOptics::CScatteringLayer > > CLayer_List;
+  typedef std::vector< std::shared_ptr< SingleLayerOptics::CScatteringLayer > > CLayer_List;
   typedef std::shared_ptr< std::vector< double > > PtrToVectorOfDouble;
 
   class CSurfaceEnergy;
@@ -29,9 +30,9 @@ namespace MultiLayerOptics {
   
   class CInterRef {
   public:
-    CInterRef( const std::shared_ptr< const SingleLayerOptics::CScatteringLayer >& t_Layer );
+    CInterRef( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer );
 
-    void addLayer( const std::shared_ptr< const SingleLayerOptics::CScatteringLayer >& t_Layer, 
+    void addLayer( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
     double getAbsorptance( const size_t Index, FenestrationCommon::Side t_Side,
@@ -56,7 +57,7 @@ namespace MultiLayerOptics {
 
     void calculateAbsroptances();
 
-    std::vector< std::shared_ptr< const SingleLayerOptics::CScatteringLayer > > m_Layers;
+    std::vector< std::shared_ptr< SingleLayerOptics::CScatteringLayer > > m_Layers;
 
     std::map< FenestrationCommon::Side, std::shared_ptr< CLayer_List > > m_StackedLayers;
 

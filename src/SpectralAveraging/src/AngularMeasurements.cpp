@@ -119,8 +119,8 @@ namespace SpectralAveraging {
 		double angle1 = 0.0;
 		double angle2 = 0.0;
 		double angle;
-		int imin = 0;
-		int imax = 0;
+		size_t imin = 0;
+		size_t imax = 0;
 		double diff;
 		std::shared_ptr< CSpectralSample > sample1 = nullptr;
 		std::shared_ptr< CSpectralSample > sample2 = nullptr;
