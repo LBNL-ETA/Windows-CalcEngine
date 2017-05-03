@@ -34,20 +34,21 @@ namespace MultiLayerOptics {
       Tb_dir_dir, Rb_dir_dir );
   }
 
-  CEquivalentScatteringLayer::CEquivalentScatteringLayer( CScatteringLayer& t_Layer ) {
+  CEquivalentScatteringLayer::CEquivalentScatteringLayer( CScatteringLayer& t_Layer,
+    const double t_Theta, const double t_Phi ) {
     m_Layer = make_shared< CScatteringLayer >( t_Layer );
 
-    double Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect );
-    double Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect );
-    double Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect );
-    double Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DirectDirect );
+    double Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect, t_Theta, t_Phi );
+    double Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect, t_Theta, t_Phi );
+    double Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect, t_Theta, t_Phi );
+    double Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DirectDirect, t_Theta, t_Phi );
     
     m_BeamLayer = make_shared< CEquivalentLayerSingleComponent >( Tf, Rf, Tb, Rb );
 
-    Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse );
-    Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
-    Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse );
-    Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
+    Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
+    Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
+    Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
+    Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
 
     m_DiffuseLayer = make_shared< CEquivalentLayerSingleComponent >( Tf, Rf, Tb, Rb );
   }
@@ -74,8 +75,9 @@ namespace MultiLayerOptics {
     addLayer( aLayer, t_Side );
   }
 
-  void CEquivalentScatteringLayer::addLayer( CScatteringLayer& t_Layer, const Side t_Side ) {
-    addLayerComponents( t_Layer, t_Side );
+  void CEquivalentScatteringLayer::addLayer( CScatteringLayer& t_Layer, const Side t_Side, 
+    const double t_Theta, const double t_Phi ) {
+    addLayerComponents( t_Layer, t_Side, t_Theta, t_Phi );
     switch( t_Side ) {
     case Side::Front:
       calcEquivalentProperties( t_Layer, *m_Layer );
@@ -90,16 +92,16 @@ namespace MultiLayerOptics {
   }
 
   double CEquivalentScatteringLayer::getPropertySimple( const PropertySimple t_Property, const Side t_Side, 
-    const Scattering t_Scattering ) const {
-    shared_ptr< CScatteringSurface > aSurface = m_Layer->getSurface( t_Side );
-    return aSurface->getPropertySimple( t_Property, t_Scattering );
+    const Scattering t_Scattering, const double t_Theta, const double t_Phi ) {
+    return m_Layer->getPropertySimple( t_Property, t_Side, t_Scattering, t_Theta, t_Phi );
   }
 
   shared_ptr< CScatteringLayer > CEquivalentScatteringLayer::getLayer() const {
     return m_Layer;
   }
 
-  void CEquivalentScatteringLayer::calcEquivalentProperties( CScatteringLayer& t_First, CScatteringLayer& t_Second ) {
+  void CEquivalentScatteringLayer::calcEquivalentProperties( 
+    CScatteringLayer& t_First, CScatteringLayer& t_Second ) {
     // Direct to diffuse componet calculation
     const CScatteringSurface f1 = *t_First.getSurface( Side::Front );
     const CScatteringSurface b1 = *t_First.getSurface( Side::Back );
@@ -194,17 +196,18 @@ namespace MultiLayerOptics {
     return aResult;
   }
 
-  void CEquivalentScatteringLayer::addLayerComponents( CScatteringLayer& t_Layer, const Side t_Side ) {
-    double Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect );
-    double Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect );
-    double Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect );
-    double Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DirectDirect );
+  void CEquivalentScatteringLayer::addLayerComponents( CScatteringLayer& t_Layer, const Side t_Side,
+    const double t_Theta, const double t_Phi ) {
+    double Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect, t_Theta, t_Phi );
+    double Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect, t_Theta, t_Phi );
+    double Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect, t_Theta, t_Phi );
+    double Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DirectDirect, t_Theta, t_Phi );
     m_BeamLayer->addLayer( Tf, Rf, Tb, Rb, t_Side );
 
-    Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse );
-    Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
-    Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse );
-    Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
+    Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
+    Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
+    Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
+    Rb = t_Layer.getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
     m_DiffuseLayer->addLayer( Tf, Rf, Tb, Rb, t_Side );
   }
 

@@ -77,7 +77,7 @@ namespace SingleLayerOptics {
   }
 
   shared_ptr< CBSDFLayer > CBSDFLayerMaker::getLayer() const {
-    return m_Layer; 
+    return m_Layer;
   }
 
   shared_ptr< CBaseCell > CBSDFLayerMaker::getCell() const {

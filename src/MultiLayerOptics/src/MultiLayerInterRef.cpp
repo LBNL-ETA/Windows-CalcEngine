@@ -13,7 +13,8 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics {
 
-  CInterRef::CInterRef( const shared_ptr< CScatteringLayer >& t_Layer ) : m_StateCalculated( false ) {
+  CInterRef::CInterRef( const shared_ptr< CScatteringLayer >& t_Layer ) : 
+    m_StateCalculated( false ), m_Theta( 0 ), m_Phi( 0 ) {
     m_Layers.push_back( t_Layer );
     for( Scattering aScattering : EnumScattering() ) {
       m_Energy[ aScattering ] = make_shared< CSurfaceEnergy >();
@@ -32,7 +33,8 @@ namespace MultiLayerOptics {
     }
   }
 
-  void CInterRef::addLayer( const shared_ptr< CScatteringLayer >& t_Layer, const Side t_Side ) {
+  void CInterRef::addLayer( const shared_ptr< CScatteringLayer >& t_Layer, const Side t_Side,
+    const double t_Theta, const double t_Phi ) {
     switch( t_Side ) {
     case Side::Front:
       m_Layers.insert( m_Layers.begin(), t_Layer );
@@ -46,16 +48,17 @@ namespace MultiLayerOptics {
     }
 
     // addition for pure components (direct and diffuse)
-    shared_ptr< CLayerSingleComponent > aLayer = t_Layer->getLayer( Scattering::DirectDirect );
+    shared_ptr< CLayerSingleComponent > aLayer = t_Layer->getLayer( Scattering::DirectDirect, t_Theta, t_Phi );
     m_DirectComponent->addLayer( aLayer, t_Side );
-    aLayer = t_Layer->getLayer( Scattering::DiffuseDiffuse );
+    aLayer = t_Layer->getLayer( Scattering::DiffuseDiffuse, t_Theta, t_Phi );
     m_DiffuseComponent->addLayer( aLayer, t_Side );
 
     m_StateCalculated = false;
   }
 
-  double CInterRef::getAbsorptance( const size_t Index, Side t_Side, ScatteringSimple t_Scattering ) {
-    calculateEnergies();
+  double CInterRef::getAbsorptance( const size_t Index, Side t_Side, ScatteringSimple t_Scattering,
+    const double t_Theta, const double t_Phi ) {
+    calculateEnergies( t_Theta, t_Phi );
     shared_ptr< vector< double > > aVector = m_Abs.at( make_pair( t_Side, t_Scattering ) );
     size_t vecSize = aVector->size();
     if( vecSize < Index ) {
@@ -65,8 +68,8 @@ namespace MultiLayerOptics {
   }
 
   double CInterRef::getEnergyToSurface( const size_t Index, const Side t_SurfaceSide,
-    const EnergyFlow t_EnergyFlow, const Scattering t_Scattering ) {
-    calculateEnergies();
+    const EnergyFlow t_EnergyFlow, const Scattering t_Scattering, const double t_Theta, const double t_Phi ) {
+    calculateEnergies( t_Theta, t_Phi );
     shared_ptr< CSurfaceEnergy > aEnergy = m_Energy.at( t_Scattering );
     return aEnergy->IEnergy( Index, t_SurfaceSide, t_EnergyFlow );
   }
@@ -75,21 +78,25 @@ namespace MultiLayerOptics {
     return m_Layers.size();
   }
 
-  void CInterRef::calculateEnergies() {
-    if( !m_StateCalculated ) {
-      calculateForwardLayers();
-      calculateBackwardLayers();
+  void CInterRef::calculateEnergies( const double t_Theta, const double t_Phi ) {
+    if( ( !m_StateCalculated ) || ( t_Theta != m_Theta ) || ( t_Phi != m_Phi ) ) {
+      createForwardLayers( t_Theta, t_Phi );
+      createBackwardLayers( t_Theta, t_Phi );
 
       m_Energy[ Scattering::DirectDirect ] = m_DirectComponent->getSurfaceEnergy();
       m_Energy[ Scattering::DiffuseDiffuse ] = m_DiffuseComponent->getSurfaceEnergy();
-      m_Energy[ Scattering::DirectDiffuse ] = calcDirectToDiffuseComponent();
+      m_Energy[ Scattering::DirectDiffuse ] = calcDirectToDiffuseComponent( t_Theta, t_Phi );
 
-      calculateAbsroptances();
+      calculateAbsroptances( t_Theta, t_Phi );
+
+      m_StateCalculated = true;
+      m_Theta = t_Theta;
+      m_Phi = t_Phi;
 
     }
   }
 
-  void CInterRef::calculateForwardLayers() {
+  void CInterRef::createForwardLayers( const double t_Theta, const double t_Phi ) {
     shared_ptr< CLayer_List > aLayers = m_StackedLayers.at( Side::Front );
     
     // Insert exterior environment first
@@ -100,9 +107,9 @@ namespace MultiLayerOptics {
 
     shared_ptr< CScatteringLayer > aLayer = m_Layers[ 0 ];
     aLayers->push_back( aLayer );
-    CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer( *aLayer );
+    CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer( *aLayer, t_Theta, t_Phi );
     for( size_t i = 1; i < m_Layers.size(); ++i ) {
-      aEqLayer.addLayer( *m_Layers[ i ] );
+      aEqLayer.addLayer( *m_Layers[ i ], Side::Back, t_Theta, t_Phi );
       aLayer = aEqLayer.getLayer();
       aLayers->push_back( aLayer );
     }
@@ -110,7 +117,7 @@ namespace MultiLayerOptics {
     aLayers->push_back( exterior );
   }
 
-  void CInterRef::calculateBackwardLayers() {
+  void CInterRef::createBackwardLayers( const double t_Theta, const double t_Phi ) {
     shared_ptr< CLayer_List > aLayers = m_StackedLayers.at( Side::Back );
 
     // Insert interior environment
@@ -123,16 +130,16 @@ namespace MultiLayerOptics {
     // Last layer just in
     shared_ptr< CScatteringLayer > aLayer = m_Layers[ size ];
     aLayers->insert( aLayers->begin(), aLayer );
-    CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer( *aLayer );
+    CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer( *aLayer, t_Theta, t_Phi );
     for( size_t i = size; i > 0; --i ) {
-      aEqLayer.addLayer( *m_Layers[ i - 1 ], Side::Front );
+      aEqLayer.addLayer( *m_Layers[ i - 1 ], Side::Front, t_Theta, t_Phi );
       aLayer = aEqLayer.getLayer();
       aLayers->insert( aLayers->begin(), aLayer );
     }
     aLayers->insert( aLayers->begin(), exterior );
   }
 
-  shared_ptr< CSurfaceEnergy > CInterRef::calcDiffuseEnergy() {
+  shared_ptr< CSurfaceEnergy > CInterRef::calcDiffuseEnergy( const double t_Theta, const double t_Phi ) {
     //Sum of previous two components. Total diffuse energy that gets off the surfaces.
     shared_ptr< CSurfaceEnergy > diffSum = make_shared< CSurfaceEnergy >();
 
@@ -147,12 +154,14 @@ namespace MultiLayerOptics {
 
           if( ( aSide == Side::Front && aEnergyFlow == EnergyFlow::Backward ) || 
               ( aSide == Side::Back && aEnergyFlow == EnergyFlow::Forward ) ) {
-            beamEnergy = curLayer->getPropertySimple( PropertySimple::T, oppSide, Scattering::DirectDiffuse );
+            beamEnergy = curLayer->getPropertySimple( PropertySimple::T, oppSide, 
+              Scattering::DirectDiffuse, t_Theta, t_Phi );
           }
 
           // Energy that gets converted to diffuse from beam that comes from interreflections in 
           // the gap or interior/exterior environments
-          double R = curLayer->getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse );
+          double R = curLayer->getPropertySimple( PropertySimple::R, aSide, 
+            Scattering::DirectDiffuse, t_Theta, t_Phi );
           double intEnergy = R * m_Energy.at( Scattering::DirectDirect )->IEnergy( i, aSide, aEnergyFlow );
           diffSum->addEnergy( aSide, aEnergyFlow, beamEnergy + intEnergy );
         }
@@ -162,10 +171,11 @@ namespace MultiLayerOptics {
     return diffSum;
   }
 
-  shared_ptr< CSurfaceEnergy > CInterRef::calcDirectToDiffuseComponent() {
+  shared_ptr< CSurfaceEnergy > CInterRef::calcDirectToDiffuseComponent( 
+    const double t_Theta, const double t_Phi ) {
     // Gets total diffuse components that is getting off (leaving) every surface.
     // Keep in mind that diffuse componet here only comes from scattering direct beam.
-    shared_ptr< CSurfaceEnergy > diffSum = calcDiffuseEnergy();
+    shared_ptr< CSurfaceEnergy > diffSum = calcDiffuseEnergy( t_Theta, t_Phi );
 
     // Now need to calculate interreflections of total diffuse components that are leaving
     // every surface and calculate total diffuse component that is incoming to every surface.
@@ -186,8 +196,8 @@ namespace MultiLayerOptics {
         if( i != m_Layers.size() ) {
           If = diffSum->IEnergy( i + 1, Side::Front, aEnergyFlow );
         }
-        double Rf_bkw = bkwLayer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse );
-        double Rb_fwd = fwdLayer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse );
+        double Rf_bkw = bkwLayer->getPropertySimple( PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
+        double Rb_fwd = fwdLayer->getPropertySimple( PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse, t_Theta, t_Phi );
         double interRef = 1 / ( 1 - Rf_bkw * Rb_fwd );
         double Ib_tot = ( Ib * Rf_bkw + If ) * interRef;
         double If_tot = ( Ib + Rb_fwd * If ) * interRef;
@@ -203,15 +213,15 @@ namespace MultiLayerOptics {
     return aScatter;
   }
 
-  void CInterRef::calculateAbsroptances() {
+  void CInterRef::calculateAbsroptances( const double t_Theta, const double t_Phi ) {
     for( size_t i = 0; i < m_Layers.size(); ++i ) {
       for( EnergyFlow aEnergyFlow : EnumEnergyFlow() ) {
         double EnergyDirect = 0;
         double EnergyDiffuse = 0;
         for( Side aSide : EnumSide() ) {
-          double Adir = m_Layers[ i ]->getAbsorptance( aSide, ScatteringSimple::Direct );
+          double Adir = m_Layers[ i ]->getAbsorptance( aSide, ScatteringSimple::Direct, t_Theta, t_Phi );
           EnergyDirect += Adir * m_Energy[ Scattering::DirectDirect ]->IEnergy( i + 1, aSide, aEnergyFlow );
-          double Adif = m_Layers[ i ]->getAbsorptance( aSide, ScatteringSimple::Diffuse );
+          double Adif = m_Layers[ i ]->getAbsorptance( aSide, ScatteringSimple::Diffuse, t_Theta, t_Phi );
           EnergyDirect += Adif * m_Energy[ Scattering::DirectDiffuse ]->IEnergy( i + 1, aSide, aEnergyFlow );
           EnergyDiffuse += Adif * m_Energy[ Scattering::DiffuseDiffuse ]->IEnergy( i + 1, aSide, aEnergyFlow );
         }

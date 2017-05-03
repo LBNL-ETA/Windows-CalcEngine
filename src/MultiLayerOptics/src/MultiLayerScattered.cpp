@@ -18,7 +18,8 @@ namespace MultiLayerOptics {
     const double t_Tf_dir_dif, const double t_Rf_dir_dif, 
     const double t_Tb_dir_dif, const double t_Rb_dir_dif,
     const double t_Tf_dif_dif, const double t_Rf_dif_dif, 
-    const double t_Tb_dif_dif, const double t_Rb_dif_dif ) {
+    const double t_Tb_dif_dif, const double t_Rb_dif_dif ) : 
+    m_Calculated( false ), m_Theta( 0 ), m_Phi( 0 ) {
 
     shared_ptr< CScatteringLayer > aLayer = make_shared< CScatteringLayer >( 
       t_Tf_dir_dir, t_Rf_dir_dir,t_Tb_dir_dir, t_Rb_dir_dir, 
@@ -28,7 +29,8 @@ namespace MultiLayerOptics {
     initialize( aLayer );
   }
 
-  CMultiLayerScattered::CMultiLayerScattered( const shared_ptr< CScatteringLayer >& t_Layer ) {
+  CMultiLayerScattered::CMultiLayerScattered( const shared_ptr< CScatteringLayer >& t_Layer ) :
+    m_Calculated( false ), m_Theta( 0 ), m_Phi( 0 ) {
     initialize( t_Layer );
   }
 
@@ -50,33 +52,58 @@ namespace MultiLayerOptics {
   }
 
   void CMultiLayerScattered::addLayer( const shared_ptr< CScatteringLayer >& t_Layer, const Side t_Side ) {
-    m_Layer->addLayer( *t_Layer, t_Side );
-    m_InterRef->addLayer( t_Layer, t_Side );
+    switch( t_Side ) {
+    case Side::Front:
+      m_Layers.insert( m_Layers.begin(), t_Layer );
+      break;
+    case Side::Back:
+      m_Layers.push_back( t_Layer );
+      break;
+    default:
+      assert("Incorrect side selected.");
+      break;
+    }
+    m_Calculated = false;
   }
 
   double CMultiLayerScattered::getPropertySimple( const PropertySimple t_Property, const Side t_Side,
-    const Scattering t_Scattering ) const {
-    assert( m_Layer != nullptr );
-    return m_Layer->getPropertySimple( t_Property, t_Side, t_Scattering );
+    const Scattering t_Scattering, const double t_Theta, const double t_Phi ) {
+    calculateState( t_Theta, t_Phi );
+    return m_Layer->getPropertySimple( t_Property, t_Side, t_Scattering, t_Theta, t_Phi );
   }
 
   double CMultiLayerScattered::getAbsorptanceLayer( const size_t Index, Side t_Side,
-    ScatteringSimple t_Scattering ) {
-    assert( m_InterRef != nullptr );
-    return m_InterRef->getAbsorptance( Index, t_Side, t_Scattering );
+    ScatteringSimple t_Scattering, const double t_Theta, const double t_Phi ) {
+    calculateState( t_Theta, t_Phi );
+    return m_InterRef->getAbsorptance( Index, t_Side, t_Scattering, t_Theta, t_Phi );
   }
 
-  double CMultiLayerScattered::getAbsorptance( Side t_Side, ScatteringSimple t_Scattering ) {
+  double CMultiLayerScattered::getAbsorptance( Side t_Side, ScatteringSimple t_Scattering,
+    const double t_Theta, const double t_Phi ) {
+    calculateState( t_Theta, t_Phi );
     double aAbs = 0;
     for( size_t i = 0; i < m_InterRef->size(); ++i ) {
-      aAbs += m_InterRef->getAbsorptance( i + 1, t_Side, t_Scattering );
+      aAbs += m_InterRef->getAbsorptance( i + 1, t_Side, t_Scattering, t_Theta, t_Phi );
     }
     return aAbs;
   }
 
   void CMultiLayerScattered::initialize( const shared_ptr< CScatteringLayer >& t_Layer ) {
-    m_Layer = make_shared< CEquivalentScatteringLayer >( *t_Layer );
-    m_InterRef = make_shared< CInterRef >( t_Layer );
+    m_Layers.push_back( t_Layer );
+  }
+
+  void CMultiLayerScattered::calculateState( const double t_Theta, const double t_Phi ) {
+    if( !m_Calculated || ( t_Theta != m_Theta ) || ( t_Phi != m_Phi ) ) {
+      m_Layer = make_shared< CEquivalentScatteringLayer >( *m_Layers[ 0 ], t_Theta, t_Phi );
+      m_InterRef = make_shared< CInterRef >( m_Layers[ 0 ] );
+      for( size_t i = 1; i < m_Layers.size(); ++i ) {
+        m_Layer->addLayer( *m_Layers[ i ], Side::Back, t_Theta, t_Phi );
+        m_InterRef->addLayer( m_Layers[ i ], Side::Back, t_Theta, t_Phi );
+      }
+      m_Calculated = true;
+      m_Theta = t_Theta;
+      m_Phi = t_Phi;
+    }
   }
 
 }

@@ -67,7 +67,10 @@ namespace SingleLayerOptics {
       const double t_Theta = 0,
       const double t_Phi = 0 );
 
-    std::shared_ptr< CLayerSingleComponent > getLayer( const FenestrationCommon::Scattering t_Scattering );
+    std::shared_ptr< CLayerSingleComponent > getLayer( 
+      const FenestrationCommon::Scattering t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
   private:
     void createResultsAtAngle( const double t_Theta, const double t_Phi );

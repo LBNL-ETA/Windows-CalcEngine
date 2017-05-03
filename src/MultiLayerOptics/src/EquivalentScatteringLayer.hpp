@@ -33,7 +33,8 @@ namespace MultiLayerOptics {
       const double Tf_dif_dif, const double Rf_dif_dif, 
       const double Tb_dif_dif, const double Rb_dif_dif );
 
-    CEquivalentScatteringLayer( SingleLayerOptics::CScatteringLayer& t_Layer );
+    CEquivalentScatteringLayer( SingleLayerOptics::CScatteringLayer& t_Layer, 
+      const double t_Theta = 0, const double t_Phi = 0 );
 
     void addLayer( const double Tf_dir_dir, const double Rf_dir_dir, 
       const double Tb_dir_dir, const double Rb_dir_dir, 
@@ -43,12 +44,18 @@ namespace MultiLayerOptics {
       const double Tb_dif_dif, const double Rb_dif_dif,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    void addLayer( SingleLayerOptics::CScatteringLayer& t_Layer,
-      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+    void addLayer( 
+      SingleLayerOptics::CScatteringLayer& t_Layer,
+      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
-    double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, 
+    double getPropertySimple( 
+      const FenestrationCommon::PropertySimple t_Property, 
       const FenestrationCommon::Side t_Side,
-      const FenestrationCommon::Scattering t_Scattering ) const;
+      const FenestrationCommon::Scattering t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
     std::shared_ptr< SingleLayerOptics::CScatteringLayer > getLayer() const;
 
@@ -63,7 +70,11 @@ namespace MultiLayerOptics {
       const FenestrationCommon::Scattering t_Scattering );
 
     // Add diffuse and direct components from scattering layer properties
-    void addLayerComponents( SingleLayerOptics::CScatteringLayer& t_Layer, const FenestrationCommon::Side t_Side );
+    void addLayerComponents( 
+      SingleLayerOptics::CScatteringLayer& t_Layer, 
+      const FenestrationCommon::Side t_Side,
+      const double t_Theta = 0, 
+      const double t_Phi = 0 );
 
     std::shared_ptr< SimpleResults > calcDirectDiffuseTransAndRefl( 
       const SingleLayerOptics::CScatteringSurface& f1, 

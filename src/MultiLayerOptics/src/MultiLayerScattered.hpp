@@ -1,10 +1,11 @@
 #ifndef MULTILAYER_H
 #define MULTILAYER_H
 
-#include<memory>
-#include<map>
+#include <memory>
+#include <map>
+#include <vector>
 
-#include"WCECommon.hpp"
+#include "WCECommon.hpp"
 
 namespace SingleLayerOptics {
 
@@ -44,20 +45,37 @@ namespace MultiLayerOptics {
     void addLayer( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer, 
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    double getPropertySimple( const FenestrationCommon::PropertySimple t_Property,
+    double getPropertySimple( 
+      const FenestrationCommon::PropertySimple t_Property,
       const FenestrationCommon::Side t_Side,
-      const FenestrationCommon::Scattering t_Scattering ) const;
+      const FenestrationCommon::Scattering t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
-    double getAbsorptanceLayer( const size_t Index, FenestrationCommon::Side t_Side,
-      FenestrationCommon::ScatteringSimple t_Scattering );
+    double getAbsorptanceLayer( 
+      const size_t Index, FenestrationCommon::Side t_Side,
+      FenestrationCommon::ScatteringSimple t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
-    double getAbsorptance( FenestrationCommon::Side t_Side, FenestrationCommon::ScatteringSimple t_Scattering );
+    double getAbsorptance( 
+      FenestrationCommon::Side t_Side,
+      FenestrationCommon::ScatteringSimple t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
   private:
     void initialize( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer );
 
+    void calculateState( const double t_Theta, const double t_Phi );
+
     std::shared_ptr< CInterRef > m_InterRef;
     std::shared_ptr< CEquivalentScatteringLayer > m_Layer;
+    std::vector< std::shared_ptr< SingleLayerOptics::CScatteringLayer > > m_Layers;
+
+    bool m_Calculated;
+    double m_Theta;
+    double m_Phi;
   };
 }
 
