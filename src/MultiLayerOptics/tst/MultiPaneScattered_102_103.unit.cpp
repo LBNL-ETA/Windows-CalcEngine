@@ -12,7 +12,7 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-// Example on how to create multilayer BSDF from specular layers only
+// Example on how to create scattered multilayer.
 
 class MultiPaneScattered_102_103 : public testing::Test {
 
@@ -391,14 +391,9 @@ protected:
     shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
     shared_ptr< CSpectralSampleData > aMeasurements_103 = loadSampleData_NFRC_103();
 
-    shared_ptr< CSeries >  aSolarRadiation = loadSolarRadiationFile();
-
-
     // Create samples from measurements and solar radiation
-    shared_ptr< CSpectralSample > aSample_102 = 
-      make_shared< CSpectralSample >( aMeasurements_102, aSolarRadiation );
-    shared_ptr< CSpectralSample > aSample_103 = 
-      make_shared< CSpectralSample >( aMeasurements_103, aSolarRadiation );
+    shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
+    shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
 
     // Create material from samples
     double thickness = 3.048e-3; // [m]
@@ -414,6 +409,9 @@ protected:
     // Equivalent BSDF layer
     m_Layer = make_shared< CMultiLayerScattered >( Layer_102 );
     m_Layer->addLayer( Layer_103 );
+
+    shared_ptr< CSeries >  aSolarRadiation = loadSolarRadiationFile();
+    m_Layer->setSourceData( aSolarRadiation );
 
   }
 
@@ -532,10 +530,10 @@ TEST_F( MultiPaneScattered_102_103, TestSpecular3 ) {
   EXPECT_NEAR( 0.225847, R_dif_dif, 1e-6 );
 
   double A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.112280, A_dir1, 1e-6 );
+  EXPECT_NEAR( 0.111936, A_dir1, 1e-6 );
 
   double A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.150902, A_dir2, 1e-6 );
+  EXPECT_NEAR( 0.144501, A_dir2, 1e-6 );
 
   double A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
   EXPECT_NEAR( 0.112032, A_dif1, 1e-6 );

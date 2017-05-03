@@ -13,8 +13,8 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics {
 
-  CInterRef::CInterRef( const shared_ptr< CScatteringLayer >& t_Layer ) : 
-    m_StateCalculated( false ), m_Theta( 0 ), m_Phi( 0 ) {
+  CInterRef::CInterRef( const shared_ptr< CScatteringLayer >& t_Layer, const double t_Theta, const double t_Phi ) : 
+    m_StateCalculated( false ), m_Theta( t_Theta ), m_Phi( t_Phi ) {
     m_Layers.push_back( t_Layer );
     for( Scattering aScattering : EnumScattering() ) {
       m_Energy[ aScattering ] = make_shared< CSurfaceEnergy >();
@@ -22,9 +22,9 @@ namespace MultiLayerOptics {
     for( Side aSide : EnumSide() ) {
       m_StackedLayers[ aSide ] = make_shared< CLayer_List >();
     }
-    shared_ptr< CLayerSingleComponent > aLayer = t_Layer->getLayer( Scattering::DirectDirect );
+    shared_ptr< CLayerSingleComponent > aLayer = t_Layer->getLayer( Scattering::DirectDirect, t_Theta, t_Phi );
     m_DirectComponent = make_shared< CInterRefSingleComponent >( aLayer );
-    aLayer = t_Layer->getLayer( Scattering::DiffuseDiffuse );
+    aLayer = t_Layer->getLayer( Scattering::DiffuseDiffuse, t_Theta, t_Phi );
     m_DiffuseComponent = make_shared< CInterRefSingleComponent >( aLayer );
 
     for( Side aSide : EnumSide() ) {

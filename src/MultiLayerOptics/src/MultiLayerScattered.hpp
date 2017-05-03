@@ -45,6 +45,8 @@ namespace MultiLayerOptics {
     void addLayer( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer, 
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
+    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+
     double getPropertySimple( 
       const FenestrationCommon::PropertySimple t_Property,
       const FenestrationCommon::Side t_Side,

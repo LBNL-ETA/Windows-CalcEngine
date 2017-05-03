@@ -30,7 +30,8 @@ namespace MultiLayerOptics {
   
   class CInterRef {
   public:
-    CInterRef( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer );
+    CInterRef( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer, 
+      const double t_Theta = 0, const double t_Phi = 0 );
 
     void addLayer( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back,

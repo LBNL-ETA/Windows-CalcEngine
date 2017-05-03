@@ -12,6 +12,7 @@ namespace FenestrationCommon {
   enum class PropertySimple;
   enum class Scattering;
   enum class ScatteringSimple;
+  class CSeries;
 
 }
 
@@ -21,6 +22,7 @@ namespace SingleLayerOptics {
   class CLayerSingleComponent;
   class CMaterial;
   class CBSDFIntegrator;
+  class CBSDFLayer;
   class ICellDescription;
 
   // Handles general case layer when properties can be direct, diffuse or combination between these two.
@@ -42,6 +44,8 @@ namespace SingleLayerOptics {
     CScatteringLayer( const std::shared_ptr< CMaterial >& t_Material,
       std::shared_ptr< ICellDescription > t_Description = nullptr,
       const DistributionMethod t_Method = DistributionMethod::UniformDiffuse );
+
+    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     std::shared_ptr< CScatteringSurface > getSurface( const FenestrationCommon::Side t_Side );
 
@@ -82,7 +86,7 @@ namespace SingleLayerOptics {
 
     std::map< FenestrationCommon::Side, std::shared_ptr< CScatteringSurface > > m_Surface;
 
-    std::shared_ptr< CBSDFIntegrator > m_Results;
+    std::shared_ptr< CBSDFLayer > m_BSDFLayer;
     std::shared_ptr< CBaseCell > m_Cell;
 
     double m_Theta;

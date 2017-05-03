@@ -66,6 +66,13 @@ namespace MultiLayerOptics {
     m_Calculated = false;
   }
 
+  void CMultiLayerScattered::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+    for( auto layer : m_Layers ) {
+      layer->setSourceData( t_SourceData );
+      m_Calculated = false;
+    }
+  }
+
   double CMultiLayerScattered::getPropertySimple( const PropertySimple t_Property, const Side t_Side,
     const Scattering t_Scattering, const double t_Theta, const double t_Phi ) {
     calculateState( t_Theta, t_Phi );
@@ -95,7 +102,7 @@ namespace MultiLayerOptics {
   void CMultiLayerScattered::calculateState( const double t_Theta, const double t_Phi ) {
     if( !m_Calculated || ( t_Theta != m_Theta ) || ( t_Phi != m_Phi ) ) {
       m_Layer = make_shared< CEquivalentScatteringLayer >( *m_Layers[ 0 ], t_Theta, t_Phi );
-      m_InterRef = make_shared< CInterRef >( m_Layers[ 0 ] );
+      m_InterRef = make_shared< CInterRef >( m_Layers[ 0 ], t_Theta, t_Phi );
       for( size_t i = 1; i < m_Layers.size(); ++i ) {
         m_Layer->addLayer( *m_Layers[ i ], Side::Back, t_Theta, t_Phi );
         m_InterRef->addLayer( m_Layers[ i ], Side::Back, t_Theta, t_Phi );
