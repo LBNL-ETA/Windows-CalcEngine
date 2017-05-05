@@ -73,6 +73,10 @@ namespace MultiLayerOptics {
     }
   }
 
+  size_t CMultiLayerScattered::getNumOfLayers() const {
+    return m_Layers.size();
+  }
+
   double CMultiLayerScattered::getPropertySimple( const PropertySimple t_Property, const Side t_Side,
     const Scattering t_Scattering, const double t_Theta, const double t_Phi ) {
     calculateState( t_Theta, t_Phi );

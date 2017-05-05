@@ -47,6 +47,8 @@ namespace MultiLayerOptics {
 
     void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
+    size_t getNumOfLayers() const;
+
     double getPropertySimple( 
       const FenestrationCommon::PropertySimple t_Property,
       const FenestrationCommon::Side t_Side,

@@ -410,7 +410,7 @@ protected:
     m_Layer = make_shared< CMultiLayerScattered >( Layer_102 );
     m_Layer->addLayer( Layer_103 );
 
-    shared_ptr< CSeries >  aSolarRadiation = loadSolarRadiationFile();
+    shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
     m_Layer->setSourceData( aSolarRadiation );
 
   }
