@@ -77,6 +77,21 @@ namespace SingleLayerOptics {
     return aProperties;
   }
 
+  shared_ptr< CSpectralSample > CMaterial::getSpectralSample() {
+    shared_ptr< vector< double > > Tf = getBandProperties( Property::T, Side::Front );
+    shared_ptr< vector< double > > Rf = getBandProperties( Property::R, Side::Front );
+    shared_ptr< vector< double > > Rb = getBandProperties( Property::R, Side::Back );
+
+    shared_ptr< CSpectralSampleData > aSampleData = make_shared< CSpectralSampleData >();
+    
+    size_t size = getBandSize();
+    for( size_t i = 0; i < size; ++i ) {
+      aSampleData->addRecord( ( *m_Wavelengths )[ i ], ( *Tf )[ i ], ( *Rf )[ i ], ( *Rb )[ i ] );
+    }
+
+    return make_shared< CSpectralSample >( aSampleData );
+  }
+
   shared_ptr< vector< double > > CMaterial::getBandWavelengths() {
     if( !m_WavelengthsCalculated )  {
       m_Wavelengths = calculateBandWavelengths();
@@ -198,6 +213,7 @@ namespace SingleLayerOptics {
       double value = m_Materials[ i ]->getProperty( t_Property, t_Side );
       aResults->push_back( value );
     }
+
     return aResults;
   }
 
