@@ -6,7 +6,7 @@ using namespace std;
 namespace FenestrationCommon {
 
   double IIntegratorStrategy::dX( double const x1, double const x2 ) const {
-    return x2- x1;
+    return x2 - x1;
   }
 
   double CIntegratorRectangular::integrate( double const x1, double const x2, double const y1, double const ) {

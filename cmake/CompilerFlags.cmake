@@ -11,12 +11,16 @@ IF ( CMAKE_COMPILER_IS_GNUCXX OR "x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xClang" )
     # COMPILER FLAGS
     ADD_CXX_DEFINITIONS("-pipe") # Faster compiler processing
     # set (CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
-    ADD_CXX_DEFINITIONS("-std=c++11") # Enable C++11 features in g++
+    if( MINGW )
+        ADD_CXX_DEFINITIONS("-std=gnu++11") # Enable C++11 features in g++
+    else()
+        ADD_CXX_DEFINITIONS("-std=c++11") # Enable C++11 features in g++
+        ADD_CXX_DEFINITIONS("-fPIC")
+    endif()
     ADD_CXX_DEFINITIONS("-pedantic") # Turn on warnings about constructs/situations that may be non-portable or outside of the standard
     ADD_CXX_DEFINITIONS("-ffor-scope")
     ADD_CXX_DEFINITIONS("-Wall -Wextra") # Turn on warnings
     ADD_CXX_DEFINITIONS("-Wno-unknown-pragmas")
-    ADD_CXX_DEFINITIONS("-fPIC")
     if( CMAKE_COMPILER_IS_GNUCXX ) # g++
       ADD_CXX_DEFINITIONS("-Wno-unused-but-set-parameter -Wno-unused-but-set-variable") # Suppress unused-but-set warnings until more serious ones are addressed
       ADD_CXX_DEFINITIONS("-Wno-maybe-uninitialized")

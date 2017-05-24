@@ -38,13 +38,13 @@ namespace FenestrationCommon {
     }
 
     size_t subinterval = getSubinterval( t_Value );
-    double s = t_Value - m_Points[ subinterval ].first;
-    double h = m_Hs[ subinterval ];
+    auto s = t_Value - m_Points[ subinterval ].first;
+    auto h = m_Hs[ subinterval ];
 
-    double y_k = m_Points[ subinterval ].second;
-    double y_k_plus_1 = m_Points[ subinterval + 1 ].second;
-    double d_k = m_Derivatives[ subinterval ];
-    double d_k_plus_1 = m_Derivatives[ subinterval + 1 ];
+    auto y_k = m_Points[ subinterval ].second;
+    auto y_k_plus_1 = m_Points[ subinterval + 1 ].second;
+    auto d_k = m_Derivatives[ subinterval ];
+    auto d_k_plus_1 = m_Derivatives[ subinterval + 1 ];
     return interpolate( h, s, y_k, y_k_plus_1, d_k, d_k_plus_1 );
   }
 
@@ -79,7 +79,7 @@ namespace FenestrationCommon {
   vector< double > CSPChipInterpolation2D::calculateDerivatives() const {
     vector< double > res;
     //first get the special cases, first and last
-    double first_res = ( ( 2 * m_Hs[ 0 ] + m_Hs[ 1 ] ) * m_Deltas[ 0 ] -
+    auto first_res = ( ( 2 * m_Hs[ 0 ] + m_Hs[ 1 ] ) * m_Deltas[ 0 ] -
       ( m_Hs[ 0 ] * m_Deltas[ 1 ] ) ) / ( m_Hs[ 0 ] + m_Hs[ 1 ] );
     if( sgn( first_res ) != sgn( m_Deltas[ 0 ] ) ) {
       first_res = 0;
@@ -87,12 +87,12 @@ namespace FenestrationCommon {
       ( fabs( first_res ) > fabs( 3 * m_Deltas[ 0 ] ) ) ) {
       first_res = 3 * m_Deltas[ 0 ];
     }
-    double last_h = *( m_Hs.end() - 1 );
-    double penultimate_h = *( m_Hs.end() - 2 );
-    double last_d = *( m_Deltas.end() - 1 );
-    double penultimate_d = *( m_Deltas.end() - 2 );
+    auto last_h = *( m_Hs.end() - 1 );
+    auto penultimate_h = *( m_Hs.end() - 2 );
+    auto last_d = *( m_Deltas.end() - 1 );
+    auto penultimate_d = *( m_Deltas.end() - 2 );
 
-    double last_res = ( ( 2 * last_h + penultimate_h ) * last_d - last_h * penultimate_d ) / 
+    auto last_res = ( ( 2 * last_h + penultimate_h ) * last_d - last_h * penultimate_d ) /
       ( last_h + penultimate_h );
 
     if( sgn( last_res ) != sgn( last_d ) ) {
@@ -126,8 +126,8 @@ namespace FenestrationCommon {
       //   w1 = 2*hk + h_k_minus_one
       //   w2 = hk + 2 * h_k_minus_one
       //   (w1 + w2)/d = (w1 / delta_k_minus_1 + w2 / delta_k)
-      double w1 = 2 * hk + hk_minus_1;
-      double w2 = hk + 2 * hk_minus_1;
+      auto w1 = 2 * hk + hk_minus_1;
+      auto w2 = hk + 2 * hk_minus_1;
       res = ( w1 / delta_k_minus_1 ) + ( w2 / delta_k );
       res = ( w1 + w2 ) / res;
     }

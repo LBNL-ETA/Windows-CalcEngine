@@ -90,8 +90,8 @@ namespace FenestrationCommon {
         d = -d;
         (*vv)[ imax ] = (*vv)[ j ];
       }
-      (*index)[ j ] = imax;
-      if ( ( *m_MatrixA )[ j][ j ] == 0.0 ) {
+      ( *index )[ j ] = imax;
+      if ( ( *m_MatrixA )[ j ][ j ] == 0.0 ) {
         ( *m_MatrixA )[ j ][ j ] = TINY;
       }
       if ( j != ( size - 1 ) ) {
