@@ -1,12 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "VenetianCell.hpp"
-#include "VenetianCellDescription.hpp"
-#include "MaterialDescription.hpp"
-#include "FenestrationCommon.hpp"
-#include "BeamDirection.hpp"
-#include "SquareMatrix.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;
@@ -131,5 +127,36 @@ TEST_F( TestVenetianCellFlat45_1, TestVenetian3 ) {
   EXPECT_NEAR( 0.29289321881345237, Tdir_dir, 1e-6 );
   EXPECT_NEAR( 0.15853813605369516, Tdir_dif, 1e-6 );
   EXPECT_NEAR( 0.35939548999199655, Rdir_dif, 1e-6 );
+
+}
+
+TEST_F( TestVenetianCellFlat45_1, TestVenetian4 ) {
+  SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - direct-diffuse." );
+
+  shared_ptr< CVenetianCell > aCell = GetCell();
+
+  // Front side
+  Side aSide = Side::Front;
+  double Theta = 45;
+  double Phi = 90;
+  CBeamDirection aDirection = CBeamDirection( Theta, Phi );
+
+  double Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
+  double Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
+  double Rdir_dif = aCell->R_dir_dif( aSide, aDirection );
+
+  EXPECT_NEAR( 1, Tdir_dir, 1e-6 );
+  EXPECT_NEAR( 0, Tdir_dif, 1e-6 );
+  EXPECT_NEAR( 0, Rdir_dif, 1e-6 );
+
+  // Back side
+  aSide = Side::Back;
+  Tdir_dir = aCell->T_dir_dir( aSide, aDirection );
+  Tdir_dif = aCell->T_dir_dif( aSide, aDirection );
+  Rdir_dif = aCell->R_dir_dif( aSide, aDirection );
+
+  EXPECT_NEAR( 0, Tdir_dir, 1e-6 );
+  EXPECT_NEAR( 0.195251, Tdir_dif, 1e-6 );
+  EXPECT_NEAR( 0.545433, Rdir_dif, 1e-6 );
 
 }

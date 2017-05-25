@@ -5,13 +5,9 @@
 #include <assert.h>
 
 #include "MultiPaneBSDF.hpp"
-#include "BSDFIntegrator.hpp"
 #include "EquivalentBSDFLayer.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
-#include "FenestrationCommon.hpp"
-#include "MatrixSeries.hpp"
-#include "BSDFDirections.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -60,6 +56,13 @@ namespace MultiLayerOptics {
     calculate( minLambda, maxLambda );
 
     return m_Results->DirDir( t_Side, t_Property, t_Theta, t_Phi );
+  }
+
+  double CMultiPaneBSDF::DirDir( const double minLambda, const double maxLambda,
+    const Side t_Side, const PropertySimple t_Property, const size_t Index ) {
+    calculate( minLambda, maxLambda );
+
+    return m_Results->DirDir( t_Side, t_Property, Index );
   }
 
   void CMultiPaneBSDF::calculate( const double minLambda, const double maxLambda ) {
@@ -138,10 +141,21 @@ namespace MultiLayerOptics {
     return ( *DirHem( minLambda, maxLambda, t_Side, t_Property ) )[ aIndex ];
   }
 
+  double CMultiPaneBSDF::DirHem( const double minLambda, const double maxLambda,
+    const Side t_Side, const PropertySimple t_Property,
+    const size_t Index ) {
+    return ( *DirHem( minLambda, maxLambda, t_Side, t_Property ) )[ Index ];
+  }
+
   double CMultiPaneBSDF::Abs( const double minLambda, const double maxLambda,
-    const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi ) {
+    const Side t_Side, const size_t layerIndex, const double t_Theta, const double t_Phi ) {
     auto aIndex = m_Results->getNearestBeamIndex( t_Theta, t_Phi );
-    return ( *Abs( minLambda, maxLambda, t_Side, Index ) )[ aIndex ];
+    return ( *Abs( minLambda, maxLambda, t_Side, layerIndex ) )[ aIndex ];
+  }
+
+  double CMultiPaneBSDF::Abs( const double minLambda, const double maxLambda,
+    const Side t_Side, const size_t layerIndex, const size_t beamIndex ) {
+    return ( *Abs( minLambda, maxLambda, t_Side, layerIndex ) )[ beamIndex ];
   }
 
   double CMultiPaneBSDF::DiffDiff( const double minLambda, const double maxLambda,

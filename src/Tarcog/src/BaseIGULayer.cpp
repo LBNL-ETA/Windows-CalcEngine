@@ -3,7 +3,7 @@
 
 #include "BaseIGULayer.hpp"
 #include "Surface.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
 using namespace std;

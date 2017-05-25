@@ -2,7 +2,7 @@
 #include <math.h>
 
 #include "IGUSolidDeflection.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
 

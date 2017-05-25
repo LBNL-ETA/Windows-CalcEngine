@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "PolarPoint2D.hpp"
+#include "WCEViewer.hpp"
 
 using namespace std;
 using namespace Viewer;

@@ -2,11 +2,8 @@
 #include <stdexcept>
 
 #include "MaterialDescription.hpp"
-#include "FenestrationCommon.hpp"
-#include "WavelengthRange.hpp"
-#include "SpectralSample.hpp"
-#include "AngularSpectralSample.hpp"
-#include "NIRRatio.hpp"
+#include "WCECommon.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "OpticalSurface.hpp"
 
 using namespace std;
@@ -78,6 +75,21 @@ namespace SingleLayerOptics {
     }
 
     return aProperties;
+  }
+
+  shared_ptr< CSpectralSample > CMaterial::getSpectralSample() {
+    shared_ptr< vector< double > > Tf = getBandProperties( Property::T, Side::Front );
+    shared_ptr< vector< double > > Rf = getBandProperties( Property::R, Side::Front );
+    shared_ptr< vector< double > > Rb = getBandProperties( Property::R, Side::Back );
+
+    shared_ptr< CSpectralSampleData > aSampleData = make_shared< CSpectralSampleData >();
+    
+    size_t size = getBandSize();
+    for( size_t i = 0; i < size; ++i ) {
+      aSampleData->addRecord( ( *m_Wavelengths )[ i ], ( *Tf )[ i ], ( *Rf )[ i ], ( *Rb )[ i ] );
+    }
+
+    return make_shared< CSpectralSample >( aSampleData );
   }
 
   shared_ptr< vector< double > > CMaterial::getBandWavelengths() {
@@ -201,6 +213,7 @@ namespace SingleLayerOptics {
       double value = m_Materials[ i ]->getProperty( t_Property, t_Side );
       aResults->push_back( value );
     }
+
     return aResults;
   }
 
@@ -321,6 +334,83 @@ namespace SingleLayerOptics {
 
   shared_ptr< vector< double > > CMaterialSample::calculateBandWavelengths() {
     return m_AngularSample->getBandWavelengths(); 
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  ////   CMaterialMeasured
+  ////////////////////////////////////////////////////////////////////////////////////
+
+  CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
+	  const double minLambda, const double maxLambda ) :
+      CMaterial( minLambda, maxLambda ),
+	  m_AngularMeasurements( t_AngularMeasurements ){
+
+	  if ( t_AngularMeasurements == nullptr ) {
+		  throw runtime_error( "Cannot create specular and angular material from non-existing sample." );
+	  }
+  }
+
+  CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >&  t_AngularMeasurements,
+	  const WavelengthRange t_Range ) :
+      CMaterial( t_Range ),
+	  m_AngularMeasurements( t_AngularMeasurements ) {
+
+	  if ( t_AngularMeasurements == nullptr ) {
+		  throw runtime_error( "Cannot create specular and angular material from non-existing sample." );
+	  }
+
+  }
+
+  void CMaterialMeasured::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+
+	  m_AngularMeasurements->setSourceData( t_SourceData );
+  }
+
+  double CMaterialMeasured::getPropertyAtAngle( const Property t_Property,
+	  const Side t_Side, const double t_Angle ) const {
+	  assert( m_AngularMeasurements );
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+	  return aSample->getProperty( m_MinLambda, m_MaxLambda, t_Property, t_Side );
+  }
+
+  double CMaterialMeasured::getProperty( const Property t_Property, const Side t_Side ) const {
+	  return getPropertyAtAngle( t_Property, t_Side, 0 );
+  }
+
+  shared_ptr< vector< double > > CMaterialMeasured::getBandPropertiesAtAngle( const Property t_Property,
+	  const Side t_Side, const double t_Angle ) const {
+	  assert( m_AngularMeasurements );
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+	  shared_ptr< CSeries > aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
+
+	  shared_ptr< vector< double > > aValues = nullptr;
+
+	  if ( aProperties != nullptr ) {
+		  aValues = make_shared< vector< double > >( );
+		  for ( shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
+			  if ( aProperty->x( ) >= m_MinLambda && aProperty->x( ) <= m_MaxLambda ) {
+				  aValues->push_back( aProperty->value( ) );
+			  }
+		  }
+	  }
+
+	  return aValues;
+
+  }
+
+  shared_ptr< vector< double > > CMaterialMeasured::getBandProperties( const Property t_Property,
+	  const Side t_Side ) const {
+	  return getBandPropertiesAtAngle( t_Property, t_Side, 0 );
+  }
+
+  shared_ptr< vector< double > > CMaterialMeasured::calculateBandWavelengths( ) {
+	  shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( 0.0 );
+	  shared_ptr< CSpectralSample > aSample = aAngular->getData( );
+
+	  return aSample->getWavelengthsFromSample( );
+
   }
 
 }

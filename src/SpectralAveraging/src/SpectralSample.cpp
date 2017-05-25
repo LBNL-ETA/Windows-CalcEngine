@@ -3,9 +3,7 @@
 
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -385,5 +383,23 @@ namespace SpectralAveraging {
       m_StateCalculated = true;
     }
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////
+  ////  CSpectralAngleSample
+  //////////////////////////////////////////////////////////////////////////////////////
+
+  CSpectralAngleSample::CSpectralAngleSample( const shared_ptr< CSpectralSample >& t_Sample, const double t_Angle ) :
+	  m_Sample( t_Sample ), m_Angle( t_Angle ) {
+
+  }
+
+  double CSpectralAngleSample::angle( ) const {
+	  return m_Angle;
+  }
+
+  shared_ptr< CSpectralSample > CSpectralAngleSample::sample( ) const {
+	  return m_Sample;
+  }
+
 
 }

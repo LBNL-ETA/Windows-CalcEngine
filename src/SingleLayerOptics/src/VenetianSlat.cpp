@@ -3,12 +3,8 @@
 #include <assert.h>
 
 #include "VenetianSlat.hpp"
-#include "Geometry2D.hpp"
-#include "ViewSegment2D.hpp"
-#include "PolarPoint2D.hpp"
-#include "Point2D.hpp"
-#include "Segment2D.hpp"
-#include "MathFunctions.hpp"
+#include "WCEViewer.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Viewer;

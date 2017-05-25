@@ -36,6 +36,8 @@ namespace SingleLayerOptics {
     // Direct-direct components
     double DirDir( const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property, 
       const double t_Theta, const double t_Phi );
+    double DirDir( const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property,
+      const size_t Index );
 
     // Directional hemispherical results for every direction in BSDF definition
     std::shared_ptr< std::vector< double > > DirHem( const FenestrationCommon::Side t_Side, 
@@ -46,6 +48,7 @@ namespace SingleLayerOptics {
     double DirHem( const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property, 
       const double t_Theta, const double t_Phi );
     double Abs( const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi );
+    double Abs( const FenestrationCommon::Side t_Side, const size_t Index );
 
     // std::shared_ptr< const CBSDFDirections > getDirections() const;
 

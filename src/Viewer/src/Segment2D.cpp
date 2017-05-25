@@ -5,8 +5,7 @@
 
 #include "Segment2D.hpp"
 #include "Point2D.hpp"
-#include "SquareMatrix.hpp"
-#include "LinearSolver.hpp"
+#include "WCECommon.hpp"
 #include "ViewerConstants.hpp"
 
 using namespace std;

@@ -1,8 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "OpticalSurface.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

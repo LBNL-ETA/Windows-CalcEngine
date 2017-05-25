@@ -16,6 +16,7 @@ namespace FenestrationCommon {
 namespace SpectralAveraging {
 
   class CSpectralSampleData;
+  class CSpectralAngleSample;
   class CAngularSpectralProperties;
 
   enum class WavelengthSet { Custom, Source, Data };
@@ -113,6 +114,20 @@ namespace SpectralAveraging {
     std::shared_ptr< FenestrationCommon::CSeries > m_AbsFront;
     std::shared_ptr< FenestrationCommon::CSeries > m_AbsBack;
   };
+
+  class CSpectralAngleSample {
+	  // Data for spectral sample under certain angle
+	  public:
+	  CSpectralAngleSample( const std::shared_ptr< CSpectralSample >& t_Sample, const double t_Angle );
+
+	  double angle( ) const;
+	  std::shared_ptr< CSpectralSample > sample( ) const;
+
+	  private:
+		  std::shared_ptr< CSpectralSample > m_Sample;
+		  double m_Angle;
+  };
+
 
 }
 

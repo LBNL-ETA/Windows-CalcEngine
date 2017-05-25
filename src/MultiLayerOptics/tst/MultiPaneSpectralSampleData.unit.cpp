@@ -1,9 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "MultiPaneSampleData.hpp"
-#include "MeasuredSampleData.hpp"
-#include "Series.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

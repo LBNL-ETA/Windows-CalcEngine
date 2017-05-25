@@ -5,9 +5,8 @@
 #include "PerforatedCell.hpp"
 #include "CellDescription.hpp"
 #include "MaterialDescription.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "BeamDirection.hpp"
-#include "MathFunctions.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

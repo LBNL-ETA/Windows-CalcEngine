@@ -3,10 +3,8 @@
 
 #include <memory>
 
-#include "Geometry2D.hpp"
-#include "ViewSegment2D.hpp"
-#include "Point2D.hpp"
-#include "SquareMatrix.hpp"
+#include "WCEViewer.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Viewer;

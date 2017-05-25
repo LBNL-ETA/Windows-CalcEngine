@@ -2,7 +2,7 @@
 
 #include "BaseCell.hpp"
 #include "CellDescription.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "MaterialDescription.hpp"
 
 using namespace std;

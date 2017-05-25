@@ -5,7 +5,8 @@
 #include <vector>
 #include <map>
 
-#include "FenestrationCommon.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 namespace FenestrationCommon {
 
@@ -15,13 +16,13 @@ namespace FenestrationCommon {
 
 namespace SingleLayerOptics {
 
-  class CLayer;
+  class CScatteringLayer;
 
 }
 
 namespace MultiLayerOptics {
 
-  typedef std::vector< std::shared_ptr< const SingleLayerOptics::CLayer > > CLayer_List;
+  typedef std::vector< std::shared_ptr< SingleLayerOptics::CScatteringLayer > > CLayer_List;
   typedef std::shared_ptr< std::vector< double > > PtrToVectorOfDouble;
 
   class CSurfaceEnergy;
@@ -29,34 +30,44 @@ namespace MultiLayerOptics {
   
   class CInterRef {
   public:
-    CInterRef( const std::shared_ptr< const SingleLayerOptics::CLayer >& t_Layer );
+    CInterRef( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer, 
+      const double t_Theta = 0, const double t_Phi = 0 );
 
-    void addLayer( const std::shared_ptr< const SingleLayerOptics::CLayer >& t_Layer, 
-      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+    void addLayer( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer,
+      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back,
+      const double t_Theta = 0, const double t_Phi = 0 );
 
-    double getAbsorptance( const size_t Index, FenestrationCommon::Side t_Side,
-      FenestrationCommon::ScatteringSimple t_Scattering );
+    double getAbsorptance( 
+      const size_t Index, FenestrationCommon::Side t_Side,
+      FenestrationCommon::ScatteringSimple t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
-    double getEnergyToSurface( const size_t Index, const FenestrationCommon::Side t_SurfaceSide,
-      const FenestrationCommon::EnergyFlow t_EnergyFlow, const FenestrationCommon::Scattering t_Scattering );
+    double getEnergyToSurface( 
+      const size_t Index, 
+      const FenestrationCommon::Side t_SurfaceSide,
+      const FenestrationCommon::EnergyFlow t_EnergyFlow, 
+      const FenestrationCommon::Scattering t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
     size_t size() const;
 
   private:
-    void calculateEnergies();
-    void calculateForwardLayers();
-    void calculateBackwardLayers();
+    void calculateEnergies( const double t_Theta, const double t_Phi );
+    void createForwardLayers( const double t_Theta, const double t_Phi );
+    void createBackwardLayers( const double t_Theta, const double t_Phi );
     
     // Function that calculate total diffuse energy that is leaving surface 
     // and that originates from direct beam
-    std::shared_ptr< CSurfaceEnergy > calcDiffuseEnergy();
+    std::shared_ptr< CSurfaceEnergy > calcDiffuseEnergy( const double t_Theta, const double t_Phi );
 
     // Calculate direct to diffuse component at each surface
-    std::shared_ptr< CSurfaceEnergy > calcDirectToDiffuseComponent();
+    std::shared_ptr< CSurfaceEnergy > calcDirectToDiffuseComponent( const double t_Theta, const double t_Phi );
 
-    void calculateAbsroptances();
+    void calculateAbsroptances( const double t_Theta, const double t_Phi );
 
-    std::vector< std::shared_ptr< const SingleLayerOptics::CLayer > > m_Layers;
+    std::vector< std::shared_ptr< SingleLayerOptics::CScatteringLayer > > m_Layers;
 
     std::map< FenestrationCommon::Side, std::shared_ptr< CLayer_List > > m_StackedLayers;
 
@@ -77,6 +88,8 @@ namespace MultiLayerOptics {
       FenestrationCommon::ScatteringSimple >, PtrToVectorOfDouble > m_Abs;
 
     bool m_StateCalculated;
+    double m_Theta;
+    double m_Phi;
   };
 
 }

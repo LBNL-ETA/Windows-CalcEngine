@@ -6,9 +6,9 @@ set( target_name SingleLayerOptics )
 # include_directories( include )
 
 # make sure to connect to header files of common variables
-include_directories( ../Common/src )
-include_directories( ../Viewer/src )
-include_directories( ../SpectralAveraging/src )
+include_directories( ../Common/include )
+include_directories( ../Viewer/include )
+include_directories( ../SpectralAveraging/include )
 
 # collect all source files and add them to the SOURCES list
 file( GLOB SOURCES_CPP "src/*.cpp" )
@@ -31,7 +31,7 @@ install(TARGETS ${target_name}
 )
 
 if( BUILD_TESTING )
-  include_directories( src src )
+  include_directories( include )
   file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" tst/*.cpp )
   set( test_src ${all_test_src} )
   CREATE_TEST_TARGETS( ${target_name} "${test_src}" "" )

@@ -12,7 +12,7 @@
 #include "IndoorEnvironment.hpp"
 #include "Surface.hpp"
 #include "NonLinearSolver.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -114,6 +114,14 @@ namespace Tarcog {
 
   double CSingleSystem::getRadiationHeatFlow( const Environment t_Environment ) const {
     return m_Environment.at( t_Environment )->getRadiationFlow();
+  }
+
+  double CSingleSystem::getHc( const Environment t_Environment ) const {
+    return m_Environment.at( t_Environment )->getHc();
+  }
+
+  double CSingleSystem::getAirTemperature( const Environment t_Environment ) const {
+    return m_Environment.at( t_Environment )->getAirTemperature();
   }
 
   double CSingleSystem::getVentilationFlow( const Environment t_Environment ) const {

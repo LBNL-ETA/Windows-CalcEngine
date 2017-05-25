@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "IntegratorStrategy.hpp"
+#include "WCECommon.hpp"
 
 namespace FenestrationCommon {
 

@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "Interpolation2D.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

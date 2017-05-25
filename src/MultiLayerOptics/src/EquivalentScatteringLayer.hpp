@@ -1,14 +1,14 @@
-#ifndef EQUIVALENTLAYER_H
-#define EQUIVALENTLAYER_H
+#ifndef EQUIVALENTSCATTERINGLAYER_H
+#define EQUIVALENTSCATTERINGLAYER_H
 
 #include <memory>
 #include <map>
 
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 namespace SingleLayerOptics {
 
-  class CLayer;
+  class CScatteringLayer;
   class CScatteringSurface;
 
 }
@@ -24,16 +24,17 @@ namespace MultiLayerOptics {
   };
   
   // Calculates Transmittance and reflectance of multi layer IGU with direct and diffuse properties
-  class CEquivalentLayer {
+  class CEquivalentScatteringLayer {
   public:
-    CEquivalentLayer( const double Tf_dir_dir, const double Rf_dir_dir, 
+    CEquivalentScatteringLayer( const double Tf_dir_dir, const double Rf_dir_dir, 
       const double Tb_dir_dir, const double Rb_dir_dir, 
       const double Tf_dir_dif, const double Rf_dir_dif, 
       const double Tb_dir_dif, const double Rb_dir_dif, 
       const double Tf_dif_dif, const double Rf_dif_dif, 
       const double Tb_dif_dif, const double Rb_dif_dif );
 
-    CEquivalentLayer( const SingleLayerOptics::CLayer& t_Layer );
+    CEquivalentScatteringLayer( SingleLayerOptics::CScatteringLayer& t_Layer, 
+      const double t_Theta = 0, const double t_Phi = 0 );
 
     void addLayer( const double Tf_dir_dir, const double Rf_dir_dir, 
       const double Tb_dir_dir, const double Rb_dir_dir, 
@@ -43,18 +44,24 @@ namespace MultiLayerOptics {
       const double Tb_dif_dif, const double Rb_dif_dif,
       const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-    void addLayer( const SingleLayerOptics::CLayer& t_Layer, 
-      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+    void addLayer( 
+      SingleLayerOptics::CScatteringLayer& t_Layer,
+      const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
-    double getPropertySimple( const FenestrationCommon::PropertySimple t_Property, 
+    double getPropertySimple( 
+      const FenestrationCommon::PropertySimple t_Property, 
       const FenestrationCommon::Side t_Side,
-      const FenestrationCommon::Scattering t_Scattering ) const;
+      const FenestrationCommon::Scattering t_Scattering,
+      const double t_Theta = 0,
+      const double t_Phi = 0 );
 
-    std::shared_ptr< SingleLayerOptics::CLayer > getLayer() const;
+    std::shared_ptr< SingleLayerOptics::CScatteringLayer > getLayer() const;
 
   private:
-    void calcEquivalentProperties( const SingleLayerOptics::CLayer& t_First, 
-      const SingleLayerOptics::CLayer& t_Second );
+    void calcEquivalentProperties( SingleLayerOptics::CScatteringLayer& t_First,
+      SingleLayerOptics::CScatteringLayer& t_Second );
 
     // Find interreflectance value for given scattering
     double getInterreflectance( 
@@ -63,14 +70,18 @@ namespace MultiLayerOptics {
       const FenestrationCommon::Scattering t_Scattering );
 
     // Add diffuse and direct components from scattering layer properties
-    void addLayerComponents( const SingleLayerOptics::CLayer& t_Layer, const FenestrationCommon::Side t_Side );
+    void addLayerComponents( 
+      SingleLayerOptics::CScatteringLayer& t_Layer, 
+      const FenestrationCommon::Side t_Side,
+      const double t_Theta = 0, 
+      const double t_Phi = 0 );
 
     std::shared_ptr< SimpleResults > calcDirectDiffuseTransAndRefl( 
       const SingleLayerOptics::CScatteringSurface& f1, 
       const SingleLayerOptics::CScatteringSurface& b1, 
       const SingleLayerOptics::CScatteringSurface& f2 );
 
-    std::shared_ptr< SingleLayerOptics::CLayer > m_Layer;
+    std::shared_ptr< SingleLayerOptics::CScatteringLayer > m_Layer;
     
     // Layers for beam and diffuse components
     std::shared_ptr< CEquivalentLayerSingleComponent > m_DiffuseLayer;

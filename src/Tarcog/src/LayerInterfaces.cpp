@@ -4,8 +4,8 @@
 #include "LayerInterfaces.hpp"
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
-#include "Gas.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCEGases.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

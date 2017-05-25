@@ -4,8 +4,8 @@
 
 #include "MultiPaneSpectralSample.hpp"
 #include "MultiPaneSampleData.hpp"
-#include "MeasuredSampleData.hpp"
-#include "Series.hpp"
+#include "WCESpectralAveraging.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;

@@ -1,5 +1,5 @@
 #include "IGUGapDeflection.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "Surface.hpp"
 
 using namespace std;

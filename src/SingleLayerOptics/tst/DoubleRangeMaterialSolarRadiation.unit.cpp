@@ -3,9 +3,8 @@
 
 #include <memory>
 
-#include "MaterialDescription.hpp"
-#include "FenestrationCommon.hpp"
-#include "Series.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "AngularProperties.hpp"
-#include "SurfaceCoating.hpp"
+#include "WCESpectralAveraging.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;

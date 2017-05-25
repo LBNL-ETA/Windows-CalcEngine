@@ -5,7 +5,7 @@
 #include <memory>
 #include <map>
 
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 namespace SingleLayerOptics {
 

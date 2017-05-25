@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "MultiLayerInterRefSingleComponent.hpp"
-#include "LayerSingleComponent.hpp"
+#include "WCESingleLayerOptics.hpp"
 #include "EquivalentLayerSingleComponent.hpp"
 
 using namespace std;

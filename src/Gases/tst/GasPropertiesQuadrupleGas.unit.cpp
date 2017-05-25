@@ -1,10 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "Gas.hpp"
-#include "GasData.hpp"
-#include "GasItem.hpp"
-#include "GasProperties.hpp"
+#include "WCEGases.hpp"
 
 using namespace Gases;
 

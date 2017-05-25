@@ -1,20 +1,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "EquivalentBSDFLayerSingleBand.hpp"
-#include "BSDFDirections.hpp"
-#include "Series.hpp"
-#include "SpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
-#include "SurfaceCoating.hpp"
-#include "MaterialDescription.hpp"
-#include "SurfaceCoating.hpp"
-#include "PerforatedCellDescription.hpp"
-#include "FenestrationCommon.hpp"
-#include "SquareMatrix.hpp"
-#include "BSDFIntegrator.hpp"
-#include "BSDFLayer.hpp"
-#include "BSDFLayerMaker.hpp"
+#include "WCESpectralAveraging.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

@@ -1,7 +1,7 @@
 #include <stdexcept>
 
 #include "OpticalSurface.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;
@@ -30,7 +30,12 @@ namespace SingleLayerOptics {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   CScatteringSurface::CScatteringSurface( const double T_dir_dir, const double R_dir_dir,
-    const double T_dir_dif, const double R_dir_dif, const double T_dif_dif, const double R_dif_dif ) {
+    double T_dir_dif, double R_dir_dif, const double T_dif_dif, const double R_dif_dif ) {
+    // These approximations are necessary because of BSDF which cannot hit exact angle.
+    // Since dir-dir component is calculated directly from the cell, it should be considered
+    // more accurate than dir-dif components.
+    if( R_dir_dif != 0 && 1 == T_dir_dir ) R_dir_dif = 0;
+    if( T_dir_dif != 0 && 1 == T_dir_dir ) T_dir_dif = 0;
     m_PropertySimple[ make_pair( PropertySimple::T, Scattering::DirectDirect ) ] = T_dir_dir;
     m_PropertySimple[ make_pair( PropertySimple::R, Scattering::DirectDirect ) ] = R_dir_dir;
     m_PropertySimple[ make_pair( PropertySimple::T, Scattering::DirectDiffuse ) ] = T_dir_dif;
@@ -54,6 +59,10 @@ namespace SingleLayerOptics {
 
   double CScatteringSurface::getAbsorptance( const ScatteringSimple t_Scattering ) const {
     return m_Absorptance.at( t_Scattering );
+  }
+
+  double CScatteringSurface::getAbsorptance() const {
+    return m_Absorptance.at( ScatteringSimple::Direct ) + m_Absorptance.at( ScatteringSimple::Diffuse );
   }
 
 }

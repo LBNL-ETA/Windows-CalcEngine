@@ -8,6 +8,7 @@ namespace Tarcog {
 
   class ISurface {
   public:
+    virtual ~ISurface() = default;
     ISurface();
     ISurface( double const t_Emissivity, double const t_Transmittance );
 

@@ -5,12 +5,10 @@
 
 #include "BaseShade.hpp"
 #include "IGUGapLayer.hpp"
-#include "GasProperties.hpp"
 #include "Surface.hpp"
-#include "Constants.hpp"
 #include "NusseltNumber.hpp"
-#include "Gas.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCEGases.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Gases;

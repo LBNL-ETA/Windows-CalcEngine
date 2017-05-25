@@ -1,15 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "CellDescription.hpp"
-#include "PerfectDiffuseCellDescription.hpp"
-#include "UniformDiffuseCell.hpp"
-#include "MaterialDescription.hpp"
-#include "BSDFDirections.hpp"
-#include "SquareMatrix.hpp"
-#include "BSDFIntegrator.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

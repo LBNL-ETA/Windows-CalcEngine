@@ -3,8 +3,7 @@
 #include <assert.h>
 
 #include "IGUVentilatedGapLayer.hpp"
-#include "GasProperties.hpp"
-#include "Constants.hpp"
+#include "WCEGases.hpp"
 
 using namespace std;
 using namespace Gases;

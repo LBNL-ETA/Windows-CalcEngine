@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 #include <map>
-
+// Lixing
 namespace FenestrationCommon {
 
   enum class Side;
@@ -20,6 +20,8 @@ namespace SpectralAveraging {
   // enum class SampleProperty;
   class CSpectralSample;
   class CAngularSpectralSample;
+  class CSingleAngularMeasurement;
+  class CAngularMeasurements;
 
 }
 
@@ -64,6 +66,8 @@ namespace SingleLayerOptics {
       const FenestrationCommon::Side t_Side ) const = 0;
 
     std::shared_ptr< std::vector< RMaterialProperties > > getBandProperties();
+
+    std::shared_ptr< SpectralAveraging::CSpectralSample > getSpectralSample();
 
     virtual std::shared_ptr< std::vector< double > > 
       getBandPropertiesAtAngle( const FenestrationCommon::Property t_Property, 
@@ -208,6 +212,42 @@ namespace SingleLayerOptics {
 
   };
 
+  //////////////////////////////////////////////////////////////////////////////////////////
+  ///   CMaterialMeasured
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+  // Material that contains data measured over the range of wavelengths. It also provides material properties
+  // at certain angle. Assumes that material properties at certain angle can be calculated by using coated and
+  // uncoated algorithms
+  class CMaterialMeasured : public CMaterial {
+  public:
+	  CMaterialMeasured( const std::shared_ptr< SpectralAveraging::CAngularMeasurements >& t_Measurements,
+		  const double minLambda, const double maxLambda );
+
+	  CMaterialMeasured( const std::shared_ptr< SpectralAveraging::CAngularMeasurements >& t_Measurements,
+		  const FenestrationCommon::WavelengthRange t_Range );
+
+	  virtual void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+
+	  // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb that is 
+	  // measured at certain wavelengths.
+	  double getPropertyAtAngle( const FenestrationCommon::Property t_Property,
+		  const FenestrationCommon::Side t_Side, const double t_Angle ) const;
+	  double getProperty( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
+
+	  // Get properties at each wavelength and at given incident angle
+	  std::shared_ptr< std::vector< double > >
+		  getBandPropertiesAtAngle( const FenestrationCommon::Property t_Property,
+			  const FenestrationCommon::Side t_Side, const double t_Angle ) const;
+
+	  std::shared_ptr< std::vector< double > >
+		  getBandProperties( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
+
+  private:
+	  std::shared_ptr< std::vector< double > > calculateBandWavelengths( );
+	  std::shared_ptr< SpectralAveraging::CAngularMeasurements > m_AngularMeasurements;
+
+  };
 }
 
 #endif

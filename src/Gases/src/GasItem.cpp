@@ -1,12 +1,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <memory>
-#include <stdexcept>
 
 #include "Constants.hpp"
 #include "GasItem.hpp"
 #include "GasData.hpp"
-#include "GasProperties.hpp"
 #include "GasSetting.hpp"
 
 using namespace std;

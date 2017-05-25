@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "Surface.hpp"
+#include "WCETarcog.hpp"
 
 namespace FenestrationCommon {
 
@@ -25,9 +25,9 @@ namespace Chromogenics {
     
     CThermochromicSurface( CThermochromicSurface const& t_Surface );
 
-    virtual std::shared_ptr< Tarcog::ISurface > clone() const;
+    std::shared_ptr< Tarcog::ISurface > clone() const override;
 
-    void setTemperature( double const t_Temperature );
+    void setTemperature( double const t_Temperature ) override;
 
   private:
     std::shared_ptr< FenestrationCommon::IInterpolation2D > m_EmissivityInterpolator;

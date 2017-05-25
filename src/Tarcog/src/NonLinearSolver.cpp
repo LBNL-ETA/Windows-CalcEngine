@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "NonLinearSolver.hpp"
-#include "LinearSolver.hpp"
+#include "WCECommon.hpp"
 #include "TarcogConstants.hpp"
 #include "HeatFlowBalance.hpp"
 #include "IGU.hpp"

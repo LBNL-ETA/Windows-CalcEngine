@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "NusseltNumber.hpp"
+#include "WCETarcog.hpp"
 
 using namespace Tarcog;
 using namespace std;

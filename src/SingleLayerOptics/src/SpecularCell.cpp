@@ -3,9 +3,9 @@
 #include "SpecularCell.hpp"
 #include "MaterialDescription.hpp"
 #include "SpecularCellDescription.hpp"
-#include "SpectralSample.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "BeamDirection.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

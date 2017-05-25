@@ -7,8 +7,7 @@
 #include "CellDescription.hpp"
 #include "WovenCellDescription.hpp"
 #include "MaterialDescription.hpp"
-#include "MathFunctions.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 #include "BeamDirection.hpp"
 
 using namespace std;

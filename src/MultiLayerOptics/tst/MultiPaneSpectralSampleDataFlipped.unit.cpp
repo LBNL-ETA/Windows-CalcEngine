@@ -1,10 +1,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-// #include "MultiPaneSpectralSample.hpp"
-#include "MultiPaneSampleData.hpp"
-#include "MeasuredSampleData.hpp"
-#include "Series.hpp"
+#include "WCEMultiLayerOptics.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCESpectralAveraging.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

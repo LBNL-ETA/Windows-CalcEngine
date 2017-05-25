@@ -4,9 +4,8 @@
 #include "Geometry2D.hpp"
 #include "ViewSegment2D.hpp"
 #include "Point2D.hpp"
-#include "SquareMatrix.hpp"
+#include "WCECommon.hpp"
 #include "ViewerConstants.hpp"
-#include "MathFunctions.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

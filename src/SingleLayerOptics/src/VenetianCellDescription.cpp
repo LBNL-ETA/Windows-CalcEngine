@@ -3,13 +3,9 @@
 
 #include "VenetianCellDescription.hpp"
 #include "VenetianSlat.hpp"
-#include "ViewSegment2D.hpp"
-#include "Geometry2DBeam.hpp"
-#include "Geometry2D.hpp"
-#include "Segment2D.hpp"
 #include "BeamDirection.hpp"
-#include "Point2D.hpp"
-#include "SquareMatrix.hpp"
+#include "WCEViewer.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Viewer;

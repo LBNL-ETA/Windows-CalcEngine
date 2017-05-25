@@ -10,15 +10,8 @@
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "BSDFLayer.hpp"
-#include "SpecularBSDFLayer.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
-#include "BSDFIntegrator.hpp"
-#include "SquareMatrix.hpp"
-#include "MatrixSeries.hpp"
-#include "BSDFDirections.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCESingleLayerOptics.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

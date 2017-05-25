@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "BaseIGULayer.hpp"
-#include "Gas.hpp"
+#include "WCEGases.hpp"
 
 namespace Gases {
   class CGas;

@@ -3,8 +3,7 @@
 
 #include <memory>
 
-#include "Segment2D.hpp"
-#include "Point2D.hpp"
+#include "WCEViewer.hpp"
 
 using namespace std;
 using namespace Viewer;

@@ -3,7 +3,6 @@
 #include "Gas.hpp"
 #include "GasData.hpp"
 #include "GasItem.hpp"
-#include "GasProperties.hpp"
 #include "GasSetting.hpp"
 
 using namespace std;

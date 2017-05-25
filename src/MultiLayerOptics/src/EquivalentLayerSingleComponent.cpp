@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "EquivalentLayerSingleComponent.hpp"
-#include "LayerSingleComponent.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

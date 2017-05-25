@@ -2,9 +2,7 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 
-#include "Hemispherical2DIntegrator.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

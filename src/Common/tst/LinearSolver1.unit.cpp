@@ -2,8 +2,7 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "SquareMatrix.hpp"
-#include "LinearSolver.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "BSDFThetaLimits.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;

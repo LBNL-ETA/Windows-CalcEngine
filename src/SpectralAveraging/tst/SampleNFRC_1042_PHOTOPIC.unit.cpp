@@ -2,11 +2,8 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 
-#include "SpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
-#include "Series.hpp"
-#include "IntegratorStrategy.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCESpectralAveraging.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace SpectralAveraging;

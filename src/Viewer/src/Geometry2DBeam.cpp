@@ -7,8 +7,7 @@
 #include "Segment2D.hpp"
 #include "Point2D.hpp"
 #include "ViewerConstants.hpp"
-#include "MathFunctions.hpp"
-#include "FenestrationCommon.hpp"
+#include "WCECommon.hpp"
 
 using namespace std;
 using namespace FenestrationCommon;

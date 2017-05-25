@@ -3,9 +3,7 @@
 
 #include <memory>
 
-#include "BSDFDirections.hpp"
-#include "BSDFPatch.hpp"
-#include "BeamDirection.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 using namespace std;
 using namespace SingleLayerOptics;
