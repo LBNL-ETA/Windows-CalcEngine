@@ -12,7 +12,7 @@ namespace FenestrationCommon {
         m_value( value ) { }
   
       T operator*( void ) const {
-        return ( T )m_value;
+        return static_cast< T >( m_value );
       }
   
       void operator++( void ) {
@@ -44,11 +44,11 @@ namespace FenestrationCommon {
   };
 
   inline EnumSide::Iterator begin( EnumSide ) {
-    return EnumSide::Iterator( ( int )Side::Front );
+    return EnumSide::Iterator( static_cast< int >( Side::Front ) );
   }
   
   inline EnumSide::Iterator end( EnumSide ) {
-    return EnumSide::Iterator( ( ( int )Side::Back ) + 1 );
+    return EnumSide::Iterator( static_cast< int >( Side::Back ) + 1 );
   }
   
   //////////////////////////////////////////////////////////////////////////
@@ -62,15 +62,15 @@ namespace FenestrationCommon {
   };
 
   inline EnumProperty::Iterator begin( EnumProperty ) {
-    return EnumProperty::Iterator( ( int )Property::T );
+    return EnumProperty::Iterator( static_cast< int >( Property::T ) );
   }
   
   inline EnumProperty::Iterator end( EnumProperty ) {
-    return EnumProperty::Iterator( ( ( int )Property::Abs ) + 1 );
+    return EnumProperty::Iterator( static_cast< int >( Property::Abs ) + 1 );
   }
 
   inline Side oppositeSide( const Side t_Side ) {
-    Side aSide = Side::Front;
+    auto aSide = Side::Front;
     if( t_Side == Side::Front ) {
       aSide = Side::Back;
     }
@@ -93,11 +93,11 @@ namespace FenestrationCommon {
   };
 
   inline EnumPropertySimple::Iterator begin( EnumPropertySimple ) {
-    return EnumPropertySimple::Iterator( ( int )PropertySimple::T );
+    return EnumPropertySimple::Iterator( static_cast< int >( PropertySimple::T ) );
   }
   
   inline EnumPropertySimple::Iterator end( EnumPropertySimple ) {
-    return EnumPropertySimple::Iterator( ( ( int )PropertySimple::R ) + 1 );
+    return EnumPropertySimple::Iterator( static_cast< int >( PropertySimple::R ) + 1 );
   }
 
   enum class Scattering { DirectDirect, DirectDiffuse, DiffuseDiffuse };
@@ -107,11 +107,11 @@ namespace FenestrationCommon {
   };
 
   inline EnumScattering::Iterator begin( EnumScattering ) {
-    return EnumScattering::Iterator( ( int ) Scattering::DirectDirect );
+    return EnumScattering::Iterator( static_cast< int >( Scattering::DirectDirect ) );
   }
 
   inline EnumScattering::Iterator end( EnumScattering ) {
-    return EnumScattering::Iterator( ( ( int ) Scattering::DiffuseDiffuse ) + 1 );
+    return EnumScattering::Iterator( static_cast< int >( Scattering::DiffuseDiffuse ) + 1 );
   }
 
   //////////////////////////////////////////////////////////////////////////
@@ -125,11 +125,11 @@ namespace FenestrationCommon {
   };
 
   inline EnumScatteringSimple::Iterator begin( EnumScatteringSimple ) {
-    return EnumScatteringSimple::Iterator( ( int ) ScatteringSimple::Direct );
+    return EnumScatteringSimple::Iterator( static_cast< int >( ScatteringSimple::Direct ) );
   }
 
   inline EnumScatteringSimple::Iterator end( EnumScatteringSimple ) {
-    return EnumScatteringSimple::Iterator( ( ( int ) ScatteringSimple::Diffuse ) + 1 );
+    return EnumScatteringSimple::Iterator( static_cast< int >( ScatteringSimple::Diffuse ) + 1 );
   }
   
   //////////////////////////////////////////////////////////////////////////
@@ -143,15 +143,15 @@ namespace FenestrationCommon {
   };
 
   inline EnumEnergyFlow::Iterator begin( EnumEnergyFlow ) {
-    return EnumEnergyFlow::Iterator( ( int ) EnergyFlow::Forward );
+    return EnumEnergyFlow::Iterator( static_cast< int >( EnergyFlow::Forward ) );
   }
 
   inline EnumEnergyFlow::Iterator end( EnumEnergyFlow ) {
-    return EnumEnergyFlow::Iterator( ( ( int ) EnergyFlow::Backward ) + 1 );
+    return EnumEnergyFlow::Iterator( static_cast< int >( EnergyFlow::Backward ) + 1 );
   }
 
   inline EnergyFlow getFlowFromSide( const Side t_Side ) {
-    EnergyFlow aResult = EnergyFlow::Forward;
+    auto aResult = EnergyFlow::Forward;
     if( t_Side == Side::Back ) {
       aResult = EnergyFlow::Backward;
     }
@@ -161,7 +161,7 @@ namespace FenestrationCommon {
   }
 
   inline Side getSideFromFlow( const EnergyFlow t_EnergyFlow ) {
-    Side aResult = Side::Front;
+    auto aResult = Side::Front;
     if( t_EnergyFlow == EnergyFlow::Backward ) {
       aResult = Side::Back;
     }
