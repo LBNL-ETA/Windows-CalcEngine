@@ -17,10 +17,10 @@ namespace Tarcog {
 
   class CNonLinearSolver {
   public:
-    explicit CNonLinearSolver( const std::shared_ptr< CIGU >& t_IGU );
+    explicit CNonLinearSolver( std::shared_ptr< CIGU > const & t_IGU );
 
     // sets tolerance for solution
-    void setTolerance( const double t_Tolerance );
+    void setTolerance( double const t_Tolerance );
 
     // returns number of iterations for current solution.
     size_t getNumOfIterations() const;
@@ -28,8 +28,8 @@ namespace Tarcog {
     void solve();
 
   private:
-    double calculateTolerance( const std::vector< double >& t_Solution );
-    void estimateNewState( const std::vector< double >& t_Solution );
+    double calculateTolerance( std::vector< double > const & t_Solution ) const;
+    void estimateNewState( std::vector< double > const & t_Solution ) const;
 
     std::shared_ptr< CIGU > m_IGU;
     std::shared_ptr< FenestrationCommon::CLinearSolver > m_LinearSolver;

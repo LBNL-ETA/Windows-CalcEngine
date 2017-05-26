@@ -14,7 +14,7 @@ namespace Tarcog {
   }
 
   CBaseLayer::CBaseLayer( const CBaseLayer& t_Layer ) : 
-    CState( t_Layer ), CLayerGeometry( t_Layer ), CLayerHeatFlow( t_Layer ) {
+    CLayerGeometry( t_Layer ), CLayerHeatFlow( t_Layer ) {
     // if( t_Layer.m_PreviousLayer != nullptr ) {
     //   m_PreviousLayer = t_Layer.m_PreviousLayer->clone();
     // }

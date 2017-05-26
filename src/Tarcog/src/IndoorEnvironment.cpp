@@ -16,7 +16,7 @@ using namespace FenestrationCommon;
 namespace Tarcog {
 
   // Keep airspeed to zero and airdirection to default windward
-  CIndoorEnvironment::CIndoorEnvironment( const double t_AirTemperature, const double t_Pressure ) : 
+  CIndoorEnvironment::CIndoorEnvironment( double const t_AirTemperature, double const t_Pressure ) : 
     CEnvironment( t_Pressure, 0, AirHorizontalDirection::Windward ) { 
 
     m_RoomRadiationTemperature = t_AirTemperature; // Radiation temperature is by default air
@@ -24,12 +24,12 @@ namespace Tarcog {
     m_Surface.at( Side::Back )->setTemperature( t_AirTemperature );
   }
 
-  CIndoorEnvironment::CIndoorEnvironment( const CIndoorEnvironment & t_Indoor ) :
+  CIndoorEnvironment::CIndoorEnvironment( CIndoorEnvironment const & t_Indoor ) :
     CEnvironment( t_Indoor ) {
     m_RoomRadiationTemperature = t_Indoor.m_RoomRadiationTemperature;
   }
 
-  void CIndoorEnvironment::connectToIGULayer( const shared_ptr< CBaseLayer >& t_IGULayer ) {
+  void CIndoorEnvironment::connectToIGULayer( shared_ptr< CBaseLayer > const & t_IGULayer ) {
     t_IGULayer->connectToBackSide( shared_from_this() );
   }
 
@@ -64,7 +64,7 @@ namespace Tarcog {
         break;
       }
       case BoundaryConditionsCoeffModel::HPrescribed: {
-        double hr = getHr();
+        auto hr = getHr();
         m_ConductiveConvectiveCoeff = m_HInput - hr;
         break;
       }
@@ -87,16 +87,16 @@ namespace Tarcog {
       assert( m_Surface.at( Side::Front ) != nullptr );
       assert( m_Surface.at( Side::Back ) != nullptr );
 
-      double tiltRadians = m_Tilt * M_PI / 180;
-      double tMean = getGasTemperature() + 0.25 * ( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
-      double deltaTemp = fabs( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
+      auto tiltRadians = m_Tilt * M_PI / 180;
+      auto tMean = getGasTemperature() + 0.25 * ( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
+      auto deltaTemp = fabs( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
       m_Gas->setTemperatureAndPressure( tMean, m_Pressure );
-      shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
-      double gr = GRAVITYCONSTANT * pow( m_Height, 3 ) * deltaTemp * pow( aProperties->m_Density, 2 ) /
+      auto aProperties = m_Gas->getGasProperties();
+      auto gr = GRAVITYCONSTANT * pow( m_Height, 3 ) * deltaTemp * pow( aProperties->m_Density, 2 ) /
         ( tMean * pow( aProperties->m_Viscosity, 2 ) );
-      double RaCrit = 2.5e5 * pow( exp( 0.72 * m_Tilt ) / sin( tiltRadians ), 0.2 );
-      double RaL = gr * aProperties->m_PrandlNumber;
-      double Gnui = 0;
+      auto RaCrit = 2.5e5 * pow( exp( 0.72 * m_Tilt ) / sin( tiltRadians ), 0.2 );
+      auto RaL = gr * aProperties->m_PrandlNumber;
+      auto Gnui = 0.0;
       if ( ( 0.0 <= m_Tilt ) && ( m_Tilt < 15.0 ) ) {
         Gnui = 0.13 * pow( RaL, 1/3.0 );
       } else if( ( 15.0 <= m_Tilt ) && ( m_Tilt <= 90.0 ) ) {
@@ -119,7 +119,7 @@ namespace Tarcog {
     return getRadiationFlow() / ( getRadiationTemperature() - m_Surface.at( Side::Front )->getTemperature() );
   }
 
-  void CIndoorEnvironment::setIRFromEnvironment( const double t_IR ) {
+  void CIndoorEnvironment::setIRFromEnvironment( double const t_IR ) {
     assert( m_Surface.at( Side::Back ) != nullptr );
     m_Surface.at( Side::Back )->setJ( t_IR );
   }

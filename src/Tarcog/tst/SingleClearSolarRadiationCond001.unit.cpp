@@ -15,16 +15,16 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 300; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 270; // Kelvins
-    double solarRadiation = 1000;
+    auto airTemperature = 300.0; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 270.0; // Kelvins
+    auto solarRadiation = 1000.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
@@ -35,25 +35,24 @@ protected:
     /////////////////////////////////////////////////////////
     // Indoor
     /////////////////////////////////////////////////////////
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
     shared_ptr< CEnvironment > aIndoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( aIndoor != nullptr );
 
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness = 0.003048; // [m]
-    double solidLayerConductance = 0.01;
-    double solarAbsorptance = 0.094189159572;
+    auto solidLayerThickness = 0.003048; // [m]
+    auto solidLayerConductance = 0.01;
+    auto solarAbsorptance = 0.094189159572;
 
-    shared_ptr< CIGUSolidLayer > aSolidLayer = 
-      make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    auto aSolidLayer = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     aSolidLayer->setSolarAbsorptance( solarAbsorptance );
     ASSERT_TRUE( aSolidLayer != nullptr );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer );
 
@@ -67,17 +66,17 @@ protected:
   }
 
 public:
-  shared_ptr< CSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSingleSystem > GetSystem() const { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestSingleClearSolarCond100, TestTempAndRad ) {
   SCOPED_TRACE( "Begin Test: Single Clear (Solar Radiation) - Temperatures and Radiosity." );
-  
-  shared_ptr< CSingleSystem > aSystem = GetSystem();
+
+  auto aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< double > Temperature = *aSystem->getTemperatures();
+  auto Temperature = *aSystem->getTemperatures();
   vector< double > correctTemperature = { 299.465898, 300.261869 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
@@ -85,7 +84,7 @@ TEST_F( TestSingleClearSolarCond100, TestTempAndRad ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
-  vector< double > Radiosity = *aSystem->getRadiosities();
+  auto Radiosity = *aSystem->getRadiosities();
   vector< double > correctRadiosity = { 443.871080, 455.028488 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
@@ -98,11 +97,11 @@ TEST_F( TestSingleClearSolarCond100, TestTempAndRad ) {
 TEST_F( TestSingleClearSolarCond100, TestIndoor ) {
   SCOPED_TRACE( "Begin Test: Single Clear (Solar Radiation) - Indoor heat flow." );
 
-  shared_ptr< CSingleSystem > aSystem = GetSystem();
+  auto aSystem = GetSystem();
 
-  double convectiveHF = aSystem->getConvectiveHeatFlow( Environment::Indoor );
-  double radiativeHF = aSystem->getRadiationHeatFlow( Environment::Indoor );
-  double totalHF = aSystem->getHeatFlow( Environment::Indoor );
+  auto convectiveHF = aSystem->getConvectiveHeatFlow( Environment::Indoor );
+  auto radiativeHF = aSystem->getRadiationHeatFlow( Environment::Indoor );
+  auto totalHF = aSystem->getHeatFlow( Environment::Indoor );
 
   EXPECT_NEAR( -13.913388, convectiveHF, 1e-5 );
   EXPECT_NEAR( -30.569739, radiativeHF, 1e-5 );

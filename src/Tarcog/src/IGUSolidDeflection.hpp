@@ -12,18 +12,18 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////
   class CIGUSolidLayerDeflection : public CIGUSolidLayer {
   public:
-    CIGUSolidLayerDeflection( const CIGUSolidLayer& t_SolidLayer );
-    CIGUSolidLayerDeflection( const CIGUSolidLayer& t_SolidLayer,
+    explicit CIGUSolidLayerDeflection( CIGUSolidLayer const & t_SolidLayer );
+    CIGUSolidLayerDeflection( CIGUSolidLayer const & t_SolidLayer,
       const double t_YoungsModulus, const double t_PoisonRatio );
 
-    CIGUSolidLayerDeflection( const CIGUSolidLayerDeflection& t_Layer );
+    CIGUSolidLayerDeflection( CIGUSolidLayerDeflection const & t_Layer );
 
     double flexuralRigidity() const;
 
-    virtual std::shared_ptr< CBaseLayer > clone() const;
+    std::shared_ptr< CBaseLayer > clone() const override;
 
   protected:
-    virtual void calculateConvectionOrConductionFlow();
+    void calculateConvectionOrConductionFlow() override;
     double pressureDifference() const;
 
   private:
@@ -36,15 +36,15 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////
   class CIGUDeflectionTempAndPressure : public CIGUSolidLayerDeflection {
   public:
-    CIGUDeflectionTempAndPressure( std::shared_ptr< CIGUSolidLayerDeflection >& t_SolidLayer,
-      const double t_MaxDeflectionCoeff, const double t_MinDeflectionCoeff );
+    CIGUDeflectionTempAndPressure( std::shared_ptr< CIGUSolidLayerDeflection > const & t_SolidLayer,
+      double const t_MaxDeflectionCoeff, double const t_MinDeflectionCoeff );
 
   protected:
-    virtual void calculateConvectionOrConductionFlow();
+    void calculateConvectionOrConductionFlow() override;
 
   private:
-    double LdMean( const double t_P, const double t_D ) const;
-    double LdMax( const double t_P, const double t_D ) const;
+    double LdMean( double const t_P, double const t_D ) const;
+    double LdMax( double const t_P, double const t_D ) const;
 
     double m_MaxCoeff;
     double m_MeanCoeff;

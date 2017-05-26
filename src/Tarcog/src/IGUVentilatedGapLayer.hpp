@@ -15,8 +15,8 @@ namespace Tarcog {
   
   class CIGUVentilatedGapLayer : public CIGUGapLayer {
   public:
-    CIGUVentilatedGapLayer( const std::shared_ptr< CIGUGapLayer >& t_Layer );
-    CIGUVentilatedGapLayer( const CIGUVentilatedGapLayer& t_Layer );
+    explicit CIGUVentilatedGapLayer( std::shared_ptr< CIGUGapLayer > const & t_Layer );
+    CIGUVentilatedGapLayer( CIGUVentilatedGapLayer const & t_Layer );
 
     virtual double layerTemperature();
 
@@ -27,17 +27,17 @@ namespace Tarcog {
 
     double getAirflowReferencePoint( double const t_GapTemperature );
 
-    double bernoullyPressureTerm();
-    double hagenPressureTerm();
-    double pressureLossTerm();
+    double bernoullyPressureTerm() const;
+    double hagenPressureTerm() const;
+    double pressureLossTerm() const;
     double betaCoeff();
 
     void smoothEnergyGain( double const qv1, double const qv2 );
 
   private:
     virtual void calculateConvectionOrConductionFlow();
-    double characteristicHeight();
-    double calcImpedance( double const t_A );
+    double characteristicHeight() const;
+    double calcImpedance( double const t_A ) const;
     void ventilatedFlow();
 
     std::shared_ptr< CIGUGapLayer > m_Layer;

@@ -7,23 +7,23 @@ namespace Tarcog {
 
   class CSupportPillar : public CIGUGapLayer {
   public:
-    CSupportPillar( const CIGUGapLayer& t_Layer, const double t_Conductivity );
-    CSupportPillar( const CSupportPillar& t_Pillar );
+    CSupportPillar( CIGUGapLayer const & t_Layer, double const t_Conductivity );
+    CSupportPillar( CSupportPillar const & t_Pillar );
 
   protected:
-    virtual void calculateConvectionOrConductionFlow();
+    void calculateConvectionOrConductionFlow() override;
     virtual double conductivityOfPillarArray() = 0;
     double m_Conductivity;
   };
 
   class CCircularPillar : public CSupportPillar {
   public:
-    CCircularPillar( const CIGUGapLayer& t_Gap, const double t_Conductivity,
-      const double t_Spacing, const double t_Radius );
-    CCircularPillar( const CCircularPillar& t_Pillar );
+    CCircularPillar( CIGUGapLayer const & t_Gap, double const t_Conductivity,
+      double const t_Spacing, double const t_Radius );
+    CCircularPillar( CCircularPillar const & t_Pillar );
 
   private:
-    double conductivityOfPillarArray();
+    double conductivityOfPillarArray() override;
     double m_Spacing;
     double m_Radius;
 

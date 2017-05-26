@@ -114,7 +114,7 @@ namespace Tarcog {
     
   }
 
-  CSurface::CSurface( CSurface const& t_Surface ) : ISurface( t_Surface ) {
+  CSurface::CSurface( CSurface const & t_Surface ) : ISurface( t_Surface ) {
     
   }
 

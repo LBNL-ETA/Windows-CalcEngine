@@ -7,14 +7,14 @@ using namespace std;
 
 namespace Tarcog {
 
-  CSystem::CSystem( shared_ptr< CIGU > t_IGU,
-    shared_ptr< CEnvironment > t_Indoor,
-    shared_ptr< CEnvironment > t_Outdoor ) {
+  CSystem::CSystem( shared_ptr< CIGU > const & t_IGU,
+    shared_ptr< CEnvironment > const & t_Indoor,
+    shared_ptr< CEnvironment > const & t_Outdoor ) {
     m_System[ System::SHGC ] = make_shared< CSingleSystem >( t_IGU, t_Indoor, t_Outdoor );
     m_System[ System::Uvalue ] = make_shared< CSingleSystem >( *m_System.at( System::SHGC ) );
     m_System.at( System::Uvalue )->setSolarRadiation( 0 ); 
 
-    for( auto& aSystem : m_System ) {
+    for( auto & aSystem : m_System ) {
       aSystem.second->solve();
     }
 

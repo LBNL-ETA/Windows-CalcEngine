@@ -18,22 +18,23 @@ namespace Tarcog {
 
   class CBaseLayer;
 
-  CIGUGapLayer::CIGUGapLayer( double t_Thickness, double t_Pressure ) : 
+  CIGUGapLayer::CIGUGapLayer( double const t_Thickness, double const t_Pressure ) : 
     CState(), CBaseIGULayer( t_Thickness ), CGasLayer( t_Pressure ) {    
     
   }
 
-  CIGUGapLayer::CIGUGapLayer( double t_Thickness, double t_Pressure, const shared_ptr< CGas >& t_Gas ) : 
+  CIGUGapLayer::CIGUGapLayer( double const t_Thickness, double const t_Pressure, 
+    shared_ptr< CGas > const & t_Gas ) : 
     CState(), CBaseIGULayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
     assert( m_Gas != nullptr );
   }
 
-  CIGUGapLayer::CIGUGapLayer( const CIGUGapLayer& t_Layer ) : 
+  CIGUGapLayer::CIGUGapLayer( CIGUGapLayer const & t_Layer ) : 
     CState( t_Layer ), CBaseIGULayer( t_Layer ), CGasLayer( t_Layer ) {
     
   }
 
-  void CIGUGapLayer::connectToBackSide( const shared_ptr< CBaseLayer >& t_Layer ) {
+  void CIGUGapLayer::connectToBackSide( shared_ptr< CBaseLayer > const & t_Layer ) {
     CBaseLayer::connectToBackSide( t_Layer );
     m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Front );
   }
@@ -53,7 +54,7 @@ namespace Tarcog {
     }
   }
 
-  void CIGUGapLayer::checkNextLayer() {
+  void CIGUGapLayer::checkNextLayer() const {
     if( m_NextLayer != nullptr ) {
       m_NextLayer->getGainFlow();
     }
@@ -66,11 +67,11 @@ namespace Tarcog {
   double CIGUGapLayer::calculateRayleighNumber() {
     using ConstantsData::GRAVITYCONSTANT;
 
-    double tGapTemperature = layerTemperature();
-    double deltaTemp = fabs( getSurface( Side::Back )->getTemperature() - 
+    auto tGapTemperature = layerTemperature();
+    auto deltaTemp = fabs( getSurface( Side::Back )->getTemperature() - 
       getSurface( Side::Front )->getTemperature() );
 
-    shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
+    auto aProperties = m_Gas->getGasProperties();
 
     double Ra = 0;
     if( aProperties->m_Viscosity != 0 ) { // if viscosity is zero then it is vacuum
@@ -82,7 +83,7 @@ namespace Tarcog {
     return Ra;
   }
 
-  double CIGUGapLayer::aspectRatio() {
+  double CIGUGapLayer::aspectRatio() const {
     if( getThickness() == 0 ) {
       throw runtime_error( "Gap thickness is set to zero." );
     }
@@ -90,12 +91,12 @@ namespace Tarcog {
   }
 
   double CIGUGapLayer::convectiveH() {
-    double tGapTemperature = layerTemperature();
+    auto tGapTemperature = layerTemperature();
     m_Gas->setTemperatureAndPressure( tGapTemperature, getPressure() );
-    double Ra = calculateRayleighNumber();
-    double Asp = aspectRatio();
-    shared_ptr< CNusseltNumber > nusseltNumber = make_shared< CNusseltNumber > ();
-    shared_ptr< GasProperties > aProperties = m_Gas->getGasProperties();
+    auto Ra = calculateRayleighNumber();
+    auto Asp = aspectRatio();
+    auto nusseltNumber = make_shared< CNusseltNumber > ();
+    auto aProperties = m_Gas->getGasProperties();
     if( aProperties->m_Viscosity != 0 ) {
       m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp ) *
         aProperties->m_ThermalConductivity / getThickness();
@@ -113,7 +114,7 @@ namespace Tarcog {
     return layerTemperature();
   }
 
-  double CIGUGapLayer::averageTemperature() {
+  double CIGUGapLayer::averageTemperature() const {
     double aveTemp = 0;
     if( areSurfacesInitalized() ) {
       aveTemp = ( getSurface( Side::Front )->getTemperature() +

@@ -19,8 +19,8 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CSingleSystem::CSingleSystem( shared_ptr< CIGU > t_IGU,
-    shared_ptr< CEnvironment > t_Indoor, shared_ptr< CEnvironment > t_Outdoor ) :
+  CSingleSystem::CSingleSystem( shared_ptr< CIGU > const & t_IGU,
+    shared_ptr< CEnvironment > const & t_Indoor, shared_ptr< CEnvironment > const & t_Outdoor ) :
     m_IGU( t_IGU ) {
 
     m_Environment[ Environment::Indoor ] = t_Indoor;
@@ -37,22 +37,22 @@ namespace Tarcog {
     if( t_Outdoor == nullptr ) {
       throw runtime_error( "Outdoor environment has not been assigned to the system. Null value passed." );
     }
-    
-    shared_ptr< CBaseLayer > aIndoorLayer = m_IGU->getLayer( Environment::Indoor );
-    shared_ptr< CEnvironment > aIndoor = m_Environment.at( Environment::Indoor );
+
+    auto aIndoorLayer = m_IGU->getLayer( Environment::Indoor );
+    auto aIndoor = m_Environment.at( Environment::Indoor );
     aIndoor->connectToIGULayer( aIndoorLayer );
     aIndoor->setTilt( m_IGU->getTilt() );
     aIndoor->setWidth( m_IGU->getWidth() );
     aIndoor->setHeight( m_IGU->getHeight() );
 
-    shared_ptr< CBaseLayer > aOutdoorLayer = m_IGU->getLayer( Environment::Outdoor );
-    shared_ptr< CEnvironment > aOutdoor = m_Environment.at( Environment::Outdoor );
+    auto aOutdoorLayer = m_IGU->getLayer( Environment::Outdoor );
+    auto aOutdoor = m_Environment.at( Environment::Outdoor );
     aOutdoor->connectToIGULayer( aOutdoorLayer );
     aOutdoor->setTilt( m_IGU->getTilt() );
     aOutdoor->setWidth( m_IGU->getWidth() );
     aOutdoor->setHeight( m_IGU->getHeight() );
 
-    double solarRadiation = t_Outdoor->getDirectSolarRadiation();
+    auto solarRadiation = t_Outdoor->getDirectSolarRadiation();
     m_IGU->setSolarRadiation( solarRadiation );
 
     initializeStartValues();
@@ -60,15 +60,15 @@ namespace Tarcog {
     m_NonLinearSolver = make_shared< CNonLinearSolver >( m_IGU );
   }
 
-  CSingleSystem::CSingleSystem( const CSingleSystem & t_SingleSystem ) {
+  CSingleSystem::CSingleSystem( CSingleSystem const & t_SingleSystem ) {
     m_IGU = make_shared< CIGU >( *t_SingleSystem.m_IGU );
 
     m_Environment[ Environment::Indoor ] = t_SingleSystem.m_Environment.at( Environment::Indoor )->cloneEnvironment();
-    shared_ptr< CBaseLayer > aLastLayer = m_IGU->getLayer( Environment::Indoor );
+    auto aLastLayer = m_IGU->getLayer( Environment::Indoor );
     m_Environment.at( Environment::Indoor )->connectToIGULayer( aLastLayer );
 
     m_Environment[ Environment::Outdoor ] = t_SingleSystem.m_Environment.at( Environment::Outdoor )->cloneEnvironment();
-    shared_ptr< CBaseLayer > aFirstLayer = m_IGU->getLayer( Environment::Outdoor );
+    auto aFirstLayer = m_IGU->getLayer( Environment::Outdoor );
     m_Environment.at( Environment::Outdoor )->connectToIGULayer( aFirstLayer );
 
     initializeStartValues();
@@ -80,7 +80,7 @@ namespace Tarcog {
     return m_IGU->getSolidLayers();
   }
 
-  vector< shared_ptr< CIGUGapLayer > > CSingleSystem::getGapLayers() {
+  vector< shared_ptr< CIGUGapLayer > > CSingleSystem::getGapLayers() const {
     return m_IGU->getGapLayers();
   }
 
@@ -104,27 +104,27 @@ namespace Tarcog {
     return make_shared< CSingleSystem >( *this );
   }
 
-  double CSingleSystem::getHeatFlow( const Environment t_Environment ) const {
+  double CSingleSystem::getHeatFlow( Environment const t_Environment ) const {
     return m_Environment.at( t_Environment )->getHeatFlow();
   }
 
-  double CSingleSystem::getConvectiveHeatFlow( const Environment t_Environment ) const {
+  double CSingleSystem::getConvectiveHeatFlow( Environment const t_Environment ) const {
     return m_Environment.at( t_Environment )->getConvectionConductionFlow();
   }
 
-  double CSingleSystem::getRadiationHeatFlow( const Environment t_Environment ) const {
+  double CSingleSystem::getRadiationHeatFlow( Environment const t_Environment ) const {
     return m_Environment.at( t_Environment )->getRadiationFlow();
   }
 
-  double CSingleSystem::getHc( const Environment t_Environment ) const {
+  double CSingleSystem::getHc( Environment const t_Environment ) const {
     return m_Environment.at( t_Environment )->getHc();
   }
 
-  double CSingleSystem::getAirTemperature( const Environment t_Environment ) const {
+  double CSingleSystem::getAirTemperature( Environment const t_Environment ) const {
     return m_Environment.at( t_Environment )->getAirTemperature();
   }
 
-  double CSingleSystem::getVentilationFlow( const Environment t_Environment ) const {
+  double CSingleSystem::getVentilationFlow( Environment const t_Environment ) const {
     return m_IGU->getVentilationFlow( t_Environment );
   }
 
@@ -134,7 +134,7 @@ namespace Tarcog {
     return getHeatFlow( Environment::Indoor ) / ( interiorAir - outdoorAir );
   }
 
-  void CSingleSystem::setTolerance( const double t_Tolerance ) {
+  void CSingleSystem::setTolerance( double const t_Tolerance ) const {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->setTolerance( t_Tolerance );
   }
@@ -144,29 +144,29 @@ namespace Tarcog {
     return m_NonLinearSolver->getNumOfIterations();
   }
 
-  void CSingleSystem::solve() {
+  void CSingleSystem::solve() const {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->solve();
   }
 
   void CSingleSystem::initializeStartValues() {
-    const double startX = 0.001;
-    double thickness = m_IGU->getThickness() + startX + 0.01;
-    double tOut = m_Environment.at( Environment::Outdoor )->getGasTemperature();
-    double tInd = m_Environment.at( Environment::Indoor )->getGasTemperature();
-    
-    double deltaTemp = ( tInd - tOut ) / thickness;
+    auto const startX = 0.001;
+    auto thickness = m_IGU->getThickness() + startX + 0.01;
+    auto tOut = m_Environment.at( Environment::Outdoor )->getGasTemperature();
+    auto tInd = m_Environment.at( Environment::Indoor )->getGasTemperature();
 
-    vector< shared_ptr< CBaseIGULayer > > aLayers = m_IGU->getLayers();
+    auto deltaTemp = ( tInd - tOut ) / thickness;
 
-    shared_ptr< CBaseIGULayer > aLayer = aLayers.front();
-    double currentXPosition = startX;
-    shared_ptr< ISurface > aSurface = aLayer->getSurface( Side::Front );
-    double curTemp = tOut + currentXPosition * deltaTemp;
+    auto aLayers = m_IGU->getLayers();
+
+    auto aLayer = aLayers.front();
+    auto currentXPosition = startX;
+    auto aSurface = aLayer->getSurface( Side::Front );
+    auto curTemp = tOut + currentXPosition * deltaTemp;
 
     aSurface->initializeStart( curTemp );
 
-    for( shared_ptr< CBaseIGULayer > layer : aLayers ) {
+    for( auto layer : aLayers ) {
       currentXPosition += layer->getThickness();
       curTemp = tOut + currentXPosition * deltaTemp;
       aSurface = layer->getSurface( Side::Back );
@@ -174,7 +174,7 @@ namespace Tarcog {
     }
   }
 
-  void CSingleSystem::setInitialGuess( const shared_ptr< vector< double > >& t_Temperatures ) {
+  void CSingleSystem::setInitialGuess( vector< double > const & t_Temperatures ) const {
     m_IGU->setInitialGuess( t_Temperatures );
   }
 

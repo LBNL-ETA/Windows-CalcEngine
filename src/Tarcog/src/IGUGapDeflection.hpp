@@ -10,9 +10,9 @@ namespace Tarcog {
   class CIGUGapLayerDeflection : public CIGUGapLayer {
   public:
     CIGUGapLayerDeflection( std::shared_ptr< CIGUGapLayer > t_GapLayer,
-      const double t_Tini, const double t_Pini );
+      double const t_Tini, double const t_Pini );
 
-    double getPressure();
+    double getPressure() override;
 
   private:
     // Windows is produced under given temperature and pressure.

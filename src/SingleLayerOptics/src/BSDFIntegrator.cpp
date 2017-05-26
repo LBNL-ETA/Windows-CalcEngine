@@ -107,7 +107,7 @@ namespace SingleLayerOptics {
     return m_Directions->lambdaMatrix();
   }
 
-  double CBSDFIntegrator::integrate( CSquareMatrix& t_Matrix ) const {
+  double CBSDFIntegrator::integrate( CSquareMatrix const & t_Matrix ) const {
     double sum = 0;
     for( size_t i = 0; i < m_DimMatrices; ++i ) {
       for( size_t j = 0; j < m_DimMatrices; ++j ) {

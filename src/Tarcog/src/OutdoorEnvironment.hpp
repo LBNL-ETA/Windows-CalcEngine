@@ -10,32 +10,32 @@ namespace Tarcog {
 
   class COutdoorEnvironment : public CEnvironment {
   public:
-    COutdoorEnvironment( const double t_Temperature, const double t_Pressure, const double t_AirSpeed, 
-      const double t_DirectSolarRadiation, const AirHorizontalDirection t_AirDirection, 
-      const double t_SkyTemperature, const SkyModel t_Model, 
-      const double t_FractClearSky = TarcogConstants::DEFAULT_FRACTION_OF_CLEAR_SKY );
+    COutdoorEnvironment( double const t_Temperature, double const t_Pressure, double const t_AirSpeed, 
+      double const t_DirectSolarRadiation, AirHorizontalDirection const t_AirDirection, 
+      double const t_SkyTemperature, SkyModel const t_Model, 
+      double const t_FractClearSky = TarcogConstants::DEFAULT_FRACTION_OF_CLEAR_SKY );
 
-    COutdoorEnvironment( const COutdoorEnvironment& t_Outdoor );
+    COutdoorEnvironment( COutdoorEnvironment const & t_Outdoor );
 
-    void connectToIGULayer( const std::shared_ptr< CBaseLayer >& t_IGULayer );
+    void connectToIGULayer( std::shared_ptr< CBaseLayer > const & t_IGULayer ) override;
 
-    virtual std::shared_ptr< CBaseLayer > clone() const;
-    virtual std::shared_ptr< CEnvironment > cloneEnvironment() const;
+    std::shared_ptr< CBaseLayer > clone() const override;
+    std::shared_ptr< CEnvironment > cloneEnvironment() const override;
 
-    void setSolarRadiation( const double t_SolarRadiation );
+    void setSolarRadiation( double const t_SolarRadiation );
     double getSolarRadiation() const;
 
   private:
-    double getGasTemperature();
-    double calculateIRFromVariables();
-    void calculateConvectionOrConductionFlow();
+    double getGasTemperature() override;
+    double calculateIRFromVariables() override;
+    void calculateConvectionOrConductionFlow() override;
 
     void calculateHc();
-    double getHr();
-    double getRadiationTemperature() const;
+    double getHr() override;
+    double getRadiationTemperature() const override;
 
-    void setIRFromEnvironment( const double t_IR );
-    double getIRFromEnvironment() const;
+    void setIRFromEnvironment( double const t_IR ) override;
+    double getIRFromEnvironment() const override;
 
     double m_Tsky;
     double m_FractionOfClearSky;

@@ -67,7 +67,7 @@ namespace SingleLayerOptics {
 
   private:
     // Hemispherical integration over m_Directions
-    double integrate( FenestrationCommon::CSquareMatrix& t_Matrix ) const;
+    double integrate( FenestrationCommon::CSquareMatrix const & t_Matrix ) const;
 
     std::map< pair_Side_PropertySimple, p_SquareMatrix > m_Matrix;
     std::map< pair_Side_PropertySimple, std::shared_ptr< std::vector< double > > > m_Hem;

@@ -17,9 +17,9 @@ namespace Tarcog {
   
   class CSystem {
   public:
-    CSystem( std::shared_ptr< CIGU > t_IGU,
-      std::shared_ptr< CEnvironment > t_Indoor,
-      std::shared_ptr< CEnvironment > t_Outdoor );
+    CSystem( std::shared_ptr< CIGU > const & t_IGU,
+      std::shared_ptr< CEnvironment > const & t_Indoor,
+      std::shared_ptr< CEnvironment > const & t_Outdoor );
 
     std::shared_ptr< std::vector< double > > getTemperatures( System const t_System ) const;
     std::shared_ptr< std::vector< double > > getRadiosities( System const t_System ) const;

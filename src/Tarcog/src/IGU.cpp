@@ -23,17 +23,16 @@ using namespace std;
 using namespace FenestrationCommon;
 
 namespace Tarcog {
-  CIGU::CIGU( const double t_Width, const double t_Height, const double t_Tilt ) : 
+  CIGU::CIGU( double const t_Width, double const t_Height, double const t_Tilt ) : 
     m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ) {
   }
 
-  CIGU::CIGU( const CIGU& t_IGU ) {
+  CIGU::CIGU( CIGU const & t_IGU ) {
     m_Width = t_IGU.m_Width;
     m_Height = t_IGU.m_Height;
     m_Tilt = t_IGU.m_Tilt;
-    for( size_t i = 0; i < t_IGU.m_Layers.size(); ++i ) {
-      shared_ptr< CBaseIGULayer > aLayer = 
-        dynamic_pointer_cast< CBaseIGULayer >( t_IGU.m_Layers[ i ]->clone() );
+    for( auto & layer : t_IGU.m_Layers ) {
+      auto aLayer = dynamic_pointer_cast< CBaseIGULayer >( layer->clone() );
       addLayer( aLayer );
     }
   }
@@ -44,7 +43,7 @@ namespace Tarcog {
     }
   }
 
-  void CIGU::addLayer( const shared_ptr< CBaseIGULayer >& t_Layer ) {
+  void CIGU::addLayer( shared_ptr< CBaseIGULayer > const & t_Layer ) {
 
     // pushes only solid layers to array. Gap layers are connected via linked list
     // In case this is first layer then it must be a solid layer in order to create IGU
@@ -73,31 +72,31 @@ namespace Tarcog {
     t_Layer->setHeight( m_Height );
   }
 
-  void CIGU::setTilt( const double t_Tilt ) {
-    for( shared_ptr< CBaseIGULayer > layer : m_Layers ) {
+  void CIGU::setTilt( double const t_Tilt ) {
+    for( auto & layer : m_Layers ) {
       layer->setTilt( t_Tilt );
     }
   }
 
-  void CIGU::setWidth( const double t_Width ) {
-    for( shared_ptr< CBaseIGULayer > layer : m_Layers ) {
+  void CIGU::setWidth( double const t_Width ) {
+    for( auto & layer : m_Layers ) {
       layer->setWidth( t_Width );
     }
   }
 
-  void CIGU::setHeight( const double t_Height ) {
-    for( shared_ptr< CBaseIGULayer > layer : m_Layers ) {
+  void CIGU::setHeight( double const t_Height ) {
+    for( auto & layer : m_Layers ) {
       layer->setHeight( t_Height );
     }
   }
 
-  void CIGU::setSolarRadiation( const double t_SolarRadiation ) {
-    for( shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
+  void CIGU::setSolarRadiation( double const t_SolarRadiation ) const {
+    for( auto & layer : getSolidLayers() ) {
       layer->setSolarRadiation( t_SolarRadiation );
     }
   }
 
-  shared_ptr<CBaseLayer> CIGU::getLayer( const Environment t_Environment ) const {
+  shared_ptr< CBaseLayer > CIGU::getLayer( Environment const t_Environment ) const {
     shared_ptr< CBaseLayer > aLayer = nullptr;
     switch( t_Environment ) {
     case Environment::Indoor:
@@ -113,12 +112,12 @@ namespace Tarcog {
     return aLayer;
   }
 
-  shared_ptr< vector< double > > CIGU::getState() {
+  shared_ptr< vector< double > > CIGU::getState() const {
 
-    shared_ptr< vector< double > > aState = make_shared< vector< double > >();
+    auto aState = make_shared< vector< double > >();
 
-    for( shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
-      shared_ptr< ISurface > aSurface = layer->getSurface( Side::Front );
+    for( auto & layer : getSolidLayers() ) {
+      auto aSurface = layer->getSurface( Side::Front );
       assert( aSurface != nullptr );
       aState->push_back( aSurface->getTemperature() );
       aState->push_back( aSurface->J() );
@@ -131,24 +130,24 @@ namespace Tarcog {
     return aState;
   }
 
-  void CIGU::setState( shared_ptr< vector< double > > t_State ) {
+  void CIGU::setState( vector< double > & t_State ) const {
     size_t i = 0;
-    for( shared_ptr< CIGUSolidLayer >& aLayer : getSolidLayers() ) {
-      double Tf = (*t_State)[ 4*i ];
-      double Jf = (*t_State)[ 4*i + 1 ];
-      double Jb = (*t_State)[ 4*i + 2 ];
-      double Tb = (*t_State)[ 4*i + 3 ];
+    for( auto & aLayer : getSolidLayers() ) {
+      auto Tf = t_State[ 4 * i ];
+      auto Jf = t_State[ 4 * i + 1 ];
+      auto Jb = t_State[ 4 * i + 2 ];
+      auto Tb = t_State[ 4 * i + 3 ];
       aLayer->setLayerState( Tf, Tb, Jf, Jb );
       ++i;
     }
   }
 
   shared_ptr< vector< double > > CIGU::getTemperatures() const {
-    shared_ptr< vector< double > > aTemperatures = make_shared< vector< double > >();
+    auto aTemperatures = make_shared< vector< double > >();
 
-    for( const shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
-      for( Side aSide : EnumSide() ) {
-        shared_ptr< ISurface > aSurface = layer->getSurface( aSide );
+    for( auto const & layer : getSolidLayers() ) {
+      for( auto aSide : EnumSide() ) {
+        auto aSurface = layer->getSurface( aSide );
         assert( aSurface != nullptr );
         aTemperatures->push_back( aSurface->getTemperature() );
       }
@@ -158,11 +157,11 @@ namespace Tarcog {
   }
 
   shared_ptr< vector< double > > CIGU::getRadiosities() const {
-    shared_ptr< vector< double > > aRadiosities = make_shared< vector< double > >();
+    auto aRadiosities = make_shared< vector< double > >();
 
-    for( const shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
-      for( Side aSide : EnumSide() ) {
-        shared_ptr< ISurface > aSurface = layer->getSurface( aSide );
+    for( auto const & layer : getSolidLayers() ) {
+      for( auto aSide : EnumSide() ) {
+        auto aSurface = layer->getSurface( aSide );
         assert( aSurface != nullptr );
         aRadiosities->push_back( aSurface->J() );
       }
@@ -172,9 +171,9 @@ namespace Tarcog {
   }
 
   shared_ptr< vector< double > > CIGU::getMaxDeflections() const {
-    shared_ptr< vector< double > > aMaxDeflections = make_shared< vector< double > >();
+    auto aMaxDeflections = make_shared< vector< double > >();
 
-    for( const shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
+    for( auto const & layer : getSolidLayers() ) {
       aMaxDeflections->push_back( layer->getMaxDeflection() );
     }
 
@@ -182,9 +181,9 @@ namespace Tarcog {
   }
 
   shared_ptr< vector< double > > CIGU::getMeanDeflections() const {
-    shared_ptr< vector< double > > aMeanDeflections = make_shared< vector< double > >();
+    auto aMeanDeflections = make_shared< vector< double > >();
 
-    for( const shared_ptr< CIGUSolidLayer >& layer : getSolidLayers() ) {
+    for( auto const & layer : getSolidLayers() ) {
       aMeanDeflections->push_back( layer->getMeanDeflection() );
     }
 
@@ -192,9 +191,9 @@ namespace Tarcog {
   }
   
   double CIGU::getThickness() const {
-    double totalWidth = 0;
+    auto totalWidth = 0.0;
 
-    for( shared_ptr< CBaseIGULayer > layer : m_Layers ) {
+    for( auto & layer : m_Layers ) {
       totalWidth += layer->getThickness();
     }
 
@@ -217,36 +216,36 @@ namespace Tarcog {
     return ( m_Layers.size() + 1 ) / 2;
   }
 
-  double CIGU::getVentilationFlow( const Environment t_Environment ) const {
-    size_t size = m_Layers.size();
+  double CIGU::getVentilationFlow( Environment const t_Environment ) const {
+    auto size = m_Layers.size();
     map< Environment, size_t > envLayer = { { Environment::Indoor, size - 2 }, { Environment::Outdoor, 1 } };
     return m_Layers[ envLayer.at( t_Environment ) ]->getGainFlow();
   }
 
-  void CIGU::setInitialGuess( const shared_ptr< vector< double > >& t_Guess ) {
-    if( 2 * getNumOfLayers() != t_Guess->size() ) {
+  void CIGU::setInitialGuess( vector< double > const & t_Guess ) const {
+    if( 2 * getNumOfLayers() != t_Guess.size() ) {
       cout << "Number of temperatures in initial guess cannot fit number of layers."
         "Program will use initial guess instead" << endl;
     } else {
       size_t Index = 0;
-      for( shared_ptr< CIGUSolidLayer >& aLayer : getSolidLayers() ) {
-        for( Side aSide : EnumSide() ) {
-          shared_ptr< ISurface > aSurface = aLayer->getSurface( aSide );
-          aSurface->initializeStart( ( *t_Guess )[ Index ] );
+      for( auto & aLayer : getSolidLayers() ) {
+        for( auto aSide : EnumSide() ) {
+          auto aSurface = aLayer->getSurface( aSide );
+          aSurface->initializeStart( t_Guess [ Index ] );
           ++Index;
         }
       }
     }
   }
 
-  void CIGU::setDeflectionProperties( const double t_Tini, const double t_Pini ) {
+  void CIGU::setDeflectionProperties( double const t_Tini, double const t_Pini ) {
     // Simply decorating layers in a list with new behavior
-    vector< shared_ptr< CIGUSolidLayer > > aVector = getSolidLayers();
+    auto aVector = getSolidLayers();
     // deflection properties of the IGU
-    double Lmean = Ldmean();
-    double Lmax = Ldmax();
+    auto Lmean = Ldmean();
+    auto Lmax = Ldmax();
 
-    for( shared_ptr< CIGUSolidLayer >& aLayer : getSolidLayers() ) {
+    for( auto & aLayer : getSolidLayers() ) {
       // Deflection could aslo be decorated (created) outside in which case program already have a layer as
       // deflection layer. If that is not done then layer must be decorated with defalut deflection
       // properties
@@ -263,53 +262,52 @@ namespace Tarcog {
     }
   }
 
-  void CIGU::setDeflectionProperties( const vector< double >& t_MeasuredDeflections ) {
+  void CIGU::setDeflectionProperties( vector< double > const & t_MeasuredDeflections ) {
     if( t_MeasuredDeflections.size() != getNumOfLayers() - 1 ) {
       throw runtime_error("Number of measured deflection values must be equal to number of gaps.");
     }
 
-    double nominator = 0;
+    auto nominator = 0.0;
     for( size_t i = 0; i < t_MeasuredDeflections.size(); ++i ) {
-      double SumL = 0;
-      for( size_t j = i; j < t_MeasuredDeflections.size(); ++j ) {
+      auto SumL = 0.0;
+      for( auto j = i; j < t_MeasuredDeflections.size(); ++j ) {
         SumL += getGapLayers()[ j ]->getThickness() - t_MeasuredDeflections[ j ];
       }
-      CIGUSolidLayerDeflection aDefLayer = CIGUSolidLayerDeflection( *getSolidLayers()[ i ] );
+      auto aDefLayer = CIGUSolidLayerDeflection( *getSolidLayers()[ i ] );
       nominator += SumL * aDefLayer.flexuralRigidity();
     }
 
-    double denominator = 0;
-    for( size_t i = 0; i < getSolidLayers().size(); ++i ) {
-      CIGUSolidLayerDeflection aDefLayer = CIGUSolidLayerDeflection( *getSolidLayers()[ i ] );
+    auto denominator = 0.0;
+    for( auto i = 0; i < getSolidLayers().size(); ++i ) {
+      auto aDefLayer = CIGUSolidLayerDeflection( *getSolidLayers()[ i ] );
       denominator += aDefLayer.flexuralRigidity();
     }
 
     // First need to calculate new deflections before applying them. Applying them right away will
     // cause that next gap width calculation will already have included one surface deflected
-    double LDefNMax = nominator / denominator;
-    double deflectionRatio = Ldmean() / Ldmax();
+    auto LDefNMax = nominator / denominator;
+    auto deflectionRatio = Ldmean() / Ldmax();
 
     vector< double > LDefMax; 
     LDefMax.push_back( LDefNMax );
-    for( size_t i = getNumOfLayers() - 1; i > 0; --i ) {
+    for( auto i = getNumOfLayers() - 1; i > 0; --i ) {
       LDefNMax = t_MeasuredDeflections[ i - 1 ] - getGapLayers()[ i - 1 ]->getThickness() + LDefNMax;
       LDefMax.insert( LDefMax.begin(), LDefNMax );
     }
 
-    for( size_t i = 0; i < getNumOfLayers(); ++i ) {
+    for( auto i = 0; i < getNumOfLayers(); ++i ) {
       LDefNMax = LDefMax[ i ];
-      double LDefNMean = deflectionRatio * LDefNMax;
-      shared_ptr< CIGUSolidLayer > aLayer = getSolidLayers()[ i ];
-      shared_ptr< CIGUSolidLayerDeflection > aDefLayer = 
-        make_shared< CIGUSolidLayerDeflection >( *aLayer );      
+      auto LDefNMean = deflectionRatio * LDefNMax;
+      auto aLayer = getSolidLayers()[ i ];
+      auto aDefLayer = make_shared< CIGUSolidLayerDeflection >( *aLayer );      
       aDefLayer = make_shared< CIGUDeflectionMeasuread >( aDefLayer, LDefNMean, LDefNMax );
       replaceLayer( aLayer, aDefLayer );
     }
 
   }
 
-  void CIGU::replaceLayer( const shared_ptr< CBaseIGULayer >& t_Original, 
-    const shared_ptr< CBaseIGULayer >& t_Replacement ) {
+  void CIGU::replaceLayer( shared_ptr< CBaseIGULayer > const & t_Original, 
+    shared_ptr< CBaseIGULayer > const & t_Replacement ) {
     size_t index = find( m_Layers.begin(), m_Layers.end(), t_Original ) - m_Layers.begin();
     m_Layers[ index ] = t_Replacement;
     if (index > 0) {
@@ -320,30 +318,28 @@ namespace Tarcog {
     }
   }
 
-  void CIGU::checkForLayerUpgrades( const shared_ptr< CBaseIGULayer > t_Layer ) {
-    if( dynamic_pointer_cast< CIGUShadeLayer >( t_Layer ) != NULL ) {
-      if( dynamic_pointer_cast< CIGUGapLayer >( t_Layer->getPreviousLayer() ) != NULL ) {
-        shared_ptr< CIGUVentilatedGapLayer > newLayer =
-          make_shared< CIGUVentilatedGapLayer >( dynamic_pointer_cast< CIGUGapLayer > ( t_Layer->getPreviousLayer() ) );
+  void CIGU::checkForLayerUpgrades( shared_ptr< CBaseIGULayer > const & t_Layer ) {
+    if( dynamic_pointer_cast< CIGUShadeLayer >( t_Layer ) != nullptr ) {
+      if( dynamic_pointer_cast< CIGUGapLayer >( t_Layer->getPreviousLayer() ) != nullptr ) {
+        auto newLayer = make_shared< CIGUVentilatedGapLayer >( dynamic_pointer_cast< CIGUGapLayer > ( t_Layer->getPreviousLayer() ) );
         replaceLayer( dynamic_pointer_cast< CIGUGapLayer > ( t_Layer->getPreviousLayer() ), newLayer );
       }
     }
-    if( dynamic_pointer_cast< CIGUGapLayer >( t_Layer ) != NULL ) {
-      if( dynamic_pointer_cast< CIGUShadeLayer >( t_Layer->getPreviousLayer() ) != NULL ) {
-        shared_ptr< CIGUVentilatedGapLayer > newLayer =
-          make_shared< CIGUVentilatedGapLayer >( dynamic_pointer_cast< CIGUGapLayer > ( t_Layer ) );
+    if( dynamic_pointer_cast< CIGUGapLayer >( t_Layer ) != nullptr ) {
+      if( dynamic_pointer_cast< CIGUShadeLayer >( t_Layer->getPreviousLayer() ) != nullptr ) {
+        auto newLayer = make_shared< CIGUVentilatedGapLayer >( dynamic_pointer_cast< CIGUGapLayer > ( t_Layer ) );
         replaceLayer( dynamic_pointer_cast< CIGUGapLayer > ( t_Layer ), newLayer );
       }
     }
   }
 
   double CIGU::Ldmean() const {
-    double coeff = 16 / ( pow( M_PI, 6 ) );
-    double totalSum = 0;
-    for( size_t m = 1; m <= 5; m += 2 ) {
-      for( size_t n = 1; n <= 5; n += 2 ) {
-        double nomin = 4;
-        double denom = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+    auto coeff = 16 / ( pow( M_PI, 6 ) );
+    auto totalSum = 0.0;
+    for( auto m = 1; m <= 5; m += 2 ) {
+      for( auto n = 1; n <= 5; n += 2 ) {
+        auto nomin = 4.0;
+        auto denom = m * m * n * n * M_PI * M_PI * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
         totalSum += nomin / denom;
       }
     }
@@ -351,12 +347,12 @@ namespace Tarcog {
   }
 
   double CIGU::Ldmax() const {
-    double coeff = 16 / ( pow( M_PI, 6 ) );
-    double totalSum = 0;
-    for( size_t m = 1; m <= 5; m += 2 ) {
-      for( size_t n = 1; n <= 5; n += 2 ) {
-        double nomin = sin( m * M_PI / 2 ) * sin( n * M_PI / 2 );
-        double denom = m * n * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
+    auto coeff = 16 / ( pow( M_PI, 6 ) );
+    auto totalSum = 0.0;
+    for( auto m = 1; m <= 5; m += 2 ) {
+      for( auto n = 1; n <= 5; n += 2 ) {
+        auto nomin = sin( m * M_PI / 2 ) * sin( n * M_PI / 2 );
+        auto denom = m * n * pow( pow( m / m_Width, 2 ) + pow( n / m_Height, 2 ), 2 );
         totalSum += nomin / denom;
       }
     }
@@ -365,8 +361,8 @@ namespace Tarcog {
 
   vector< shared_ptr< CIGUSolidLayer > > CIGU::getSolidLayers() const {
     vector< shared_ptr< CIGUSolidLayer > > aVect;
-    for( const shared_ptr< CBaseIGULayer >& aLayer : m_Layers ) {
-      if( dynamic_pointer_cast< CIGUSolidLayer >( aLayer ) != NULL ) {
+    for( auto const & aLayer : m_Layers ) {
+      if( dynamic_pointer_cast< CIGUSolidLayer >( aLayer ) != nullptr ) {
         aVect.push_back( dynamic_pointer_cast< CIGUSolidLayer >( aLayer ) );
       }
     }
@@ -375,8 +371,8 @@ namespace Tarcog {
 
   vector< shared_ptr< CIGUGapLayer > > CIGU::getGapLayers() const {
     vector< shared_ptr< CIGUGapLayer > > aVect;
-    for( const shared_ptr< CBaseIGULayer >& aLayer : m_Layers ) {
-      if( dynamic_pointer_cast< CIGUGapLayer >( aLayer ) != NULL ) {
+    for( auto const & aLayer : m_Layers ) {
+      if( dynamic_pointer_cast< CIGUGapLayer >( aLayer ) != nullptr ) {
         aVect.push_back( dynamic_pointer_cast< CIGUGapLayer >( aLayer ) );
       }
     }
