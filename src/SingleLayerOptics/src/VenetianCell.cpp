@@ -195,9 +195,9 @@ namespace SingleLayerOptics {
     aEnergy->copyFrom( *m_Energy );
 
     shared_ptr< CLinearSolver > aSolver = make_shared< CLinearSolver >();
-    shared_ptr< vector< double > > aSolution = aSolver->solveSystem( aEnergy, B );
+    vector< double > aSolution = aSolver->solveSystem( *aEnergy, *B );
 
-    return ( *aSolution )[ numSeg - 1 ];
+    return aSolution[ numSeg - 1 ];
   }
 
   double CVenetianCellEnergy::R_dif_dif() {
@@ -209,9 +209,9 @@ namespace SingleLayerOptics {
     aEnergy->copyFrom( *m_Energy );
 
     shared_ptr< CLinearSolver > aSolver = make_shared< CLinearSolver >();
-    shared_ptr< vector< double > > aSolution = aSolver->solveSystem( aEnergy, B );
+    vector< double > aSolution = aSolver->solveSystem( *aEnergy, *B );
 
-    return ( *aSolution )[ numSeg ];
+    return aSolution[ numSeg ];
   }
 
   shared_ptr< vector< SegmentIrradiance > > CVenetianCellEnergy::slatIrradiances( const CBeamDirection& t_IncomingDirection ) {
@@ -238,19 +238,19 @@ namespace SingleLayerOptics {
     aEnergy->copyFrom( *m_Energy );
 
     shared_ptr< CLinearSolver > aSolver = make_shared< CLinearSolver >();
-    shared_ptr< vector< double > > aSolution = aSolver->solveSystem( aEnergy, B );
+    vector< double > aSolution = aSolver->solveSystem( *aEnergy, *B );
 
     for( size_t i = 0; i <= numSeg; ++i ) {
       SegmentIrradiance aIrr;
       if( i == 0 ) {
         aIrr.E_f = 1;
-        aIrr.E_b = ( *aSolution )[ numSeg + i ];
+        aIrr.E_b = aSolution[ numSeg + i ];
       } else if ( i == numSeg ) {
-        aIrr.E_f = ( *aSolution )[ i - 1 ];
+        aIrr.E_f = aSolution[ i - 1 ];
         aIrr.E_b = 0;
       } else {
-        aIrr.E_f = ( *aSolution )[ i - 1 ];
-        aIrr.E_b = ( *aSolution )[ numSeg + i ];
+        aIrr.E_f = aSolution[ i - 1 ];
+        aIrr.E_b = aSolution[ numSeg + i ];
       }
       aIrradiances->push_back( aIrr );
     }

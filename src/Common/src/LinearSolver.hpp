@@ -12,16 +12,14 @@ namespace FenestrationCommon {
   public:
     CLinearSolver();
 
-    std::shared_ptr< std::vector< double > > solveSystem( 
-      std::shared_ptr< FenestrationCommon::CSquareMatrix > const & t_MatrixA,
-      std::shared_ptr< std::vector< double > > const & t_VectorB );
+    std::vector< double > solveSystem(
+      FenestrationCommon::CSquareMatrix& t_MatrixA,
+      std::vector< double >& t_VectorB );
 
   private:
-    std::shared_ptr< std::vector< double > > checkSingularity();
-    std::shared_ptr< std::vector< size_t > > makeUpperTriangular();
+    std::vector< double > checkSingularity( FenestrationCommon::CSquareMatrix& t_MatrixA );
+    std::vector< size_t > makeUpperTriangular( FenestrationCommon::CSquareMatrix& t_MatrixA );
 
-    std::shared_ptr< FenestrationCommon::CSquareMatrix > m_MatrixA;
-    std::shared_ptr< std::vector< double > > m_VectorB;
   };
 }
 

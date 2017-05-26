@@ -25,7 +25,7 @@ namespace Tarcog {
     m_LinearSolver = make_shared< CLinearSolver >();
   }
 
-  shared_ptr< vector< double > > CHeatFlowBalance::calcBalanceMatrix() {
+  vector< double > CHeatFlowBalance::calcBalanceMatrix() {
     vector< shared_ptr< CIGUSolidLayer > > aSolidLayers = m_IGU->getSolidLayers();
     vector< shared_ptr< CIGUSolidLayer > >::iterator it;
     int positionCounter = 0;
@@ -39,7 +39,7 @@ namespace Tarcog {
       buildCell( aPreviousLayer, ( *it ), aNextLayer, positionCounter );
       ++positionCounter;
     }
-    return m_LinearSolver->solveSystem( m_MatrixA, m_VectorB );
+    return m_LinearSolver->solveSystem( *m_MatrixA, *m_VectorB );
   }
 
   void CHeatFlowBalance::buildCell( const shared_ptr< CBaseLayer >& t_Previous, 

@@ -21,7 +21,7 @@ namespace Tarcog {
   public:
     explicit CHeatFlowBalance( const std::shared_ptr< CIGU >& t_IGU );
 
-    std::shared_ptr< std::vector< double > > calcBalanceMatrix();
+    std::vector< double > calcBalanceMatrix();
   private:
     void buildCell( const std::shared_ptr< CBaseLayer >& t_Previous, 
       const std::shared_ptr< CBaseLayer >& t_Current, 
