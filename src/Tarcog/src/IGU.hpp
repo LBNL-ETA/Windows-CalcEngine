@@ -15,7 +15,7 @@ namespace Tarcog {
 
   class CIGU {
   public:
-    CIGU( const double t_Width, const double t_Height, const double t_Tilt = 90 );
+    CIGU( double const t_Width, double const t_Height, double const t_Tilt = 90 );
     CIGU( const CIGU& t_IGU );
     ~CIGU();
 

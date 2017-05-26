@@ -14,7 +14,7 @@ using namespace std;
 
 namespace Tarcog {
 
-  double const OPENING_TOLERANCE = 1e-6;
+  auto const OPENING_TOLERANCE = 1e-6;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // CShadeOpenings
@@ -57,9 +57,9 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   CIGUShadeLayer::CIGUShadeLayer( double const t_Thickness, double const t_Conductivity, 
-    const shared_ptr< CShadeOpenings >& t_ShadeOpenings,
-    const shared_ptr< ISurface >& t_FrontSurface, 
-    const shared_ptr< ISurface >& t_BackSurface ) : 
+    shared_ptr< CShadeOpenings > const & t_ShadeOpenings,
+    shared_ptr< ISurface > const & t_FrontSurface,
+    shared_ptr< ISurface > const & t_BackSurface ) :
     CIGUSolidLayer( t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface ), 
     m_ShadeOpenings( t_ShadeOpenings ) {
   }

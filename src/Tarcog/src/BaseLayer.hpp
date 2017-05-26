@@ -19,12 +19,12 @@ namespace Tarcog {
     public std::enable_shared_from_this< CBaseLayer > {
   public:
     CBaseLayer();
-    CBaseLayer( const CBaseLayer& t_Layer );
+    CBaseLayer( CBaseLayer const & t_Layer );
     
     std::shared_ptr< CBaseLayer > getPreviousLayer() const;
     std::shared_ptr< CBaseLayer > getNextLayer() const;
 
-    virtual void connectToBackSide( const std::shared_ptr< CBaseLayer >& t_Layer );
+    virtual void connectToBackSide( std::shared_ptr< CBaseLayer > const & t_Layer );
 
     void tearDownConnections();
 

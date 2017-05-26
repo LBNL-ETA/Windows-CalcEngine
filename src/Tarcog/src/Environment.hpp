@@ -15,12 +15,12 @@ namespace Tarcog {
   class CEnvironment : public CBaseLayer, public CGasLayer {
   public:
     CEnvironment( double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection );
-    CEnvironment( const CEnvironment& t_Environment );
+    CEnvironment( CEnvironment const & t_Environment );
 
     ~CEnvironment();
 
-    void setHCoeffModel( const BoundaryConditionsCoeffModel t_BCModel, const double t_HCoeff = 0 );
-    void setForcedVentilation( const ForcedVentilation &t_ForcedVentilation );
+    void setHCoeffModel( BoundaryConditionsCoeffModel const t_BCModel, double const t_HCoeff = 0 );
+    void setForcedVentilation( ForcedVentilation const & t_ForcedVentilation );
     void setPrescribedConvection( double const t_HInput );
     void setEnvironmentIR( double const t_InfraRed );
     void setEmissivity( double const t_Emissivity );
@@ -32,7 +32,7 @@ namespace Tarcog {
     double getAirTemperature();
     double getAmbientTemperature();
     
-    virtual void connectToIGULayer( const std::shared_ptr< CBaseLayer >& t_IGULayer );
+    virtual void connectToIGULayer( std::shared_ptr< CBaseLayer > const & t_IGULayer );
 
     virtual std::shared_ptr< CEnvironment > cloneEnvironment() const = 0;
 

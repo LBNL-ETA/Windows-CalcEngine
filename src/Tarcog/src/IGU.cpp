@@ -23,7 +23,7 @@ using namespace std;
 using namespace FenestrationCommon;
 
 namespace Tarcog {
-  CIGU::CIGU( const double t_Width, const double t_Height, const double t_Tilt ) : 
+  CIGU::CIGU( double const t_Width, double const t_Height, double const t_Tilt ) :
     m_Width( t_Width ), m_Height( t_Height ), m_Tilt( t_Tilt ) {
   }
 
