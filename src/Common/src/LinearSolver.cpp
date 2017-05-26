@@ -11,15 +11,7 @@ using namespace std;
 namespace FenestrationCommon {
 
   CLinearSolver::CLinearSolver() : m_MatrixA( nullptr ), m_VectorB( nullptr ) {
-  
-  }
 
-  void CLinearSolver::assignMatrixA( const shared_ptr< CSquareMatrix >& t_MatrixA ) {
-    m_MatrixA = t_MatrixA;
-  }
-
-  void CLinearSolver::assignVectorB( const shared_ptr< vector< double > >& t_VectorB ) {
-    m_VectorB = t_VectorB;
   }
 
   shared_ptr< vector< double > > CLinearSolver::checkSingularity() {

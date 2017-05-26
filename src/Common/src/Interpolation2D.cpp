@@ -12,7 +12,7 @@ namespace FenestrationCommon {
   // IInterpolation2D
   //////////////////////////////////////////////////////////////////////////////////////
 
-  IInterpolation2D::IInterpolation2D( vector< pair< double, double > > const& t_Points ) :
+  IInterpolation2D::IInterpolation2D( vector< pair< double, double > > const & t_Points ) :
     m_Points( t_Points ) {
 
   }
@@ -21,7 +21,7 @@ namespace FenestrationCommon {
   // CSPChipInterpolation2D
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSPChipInterpolation2D::CSPChipInterpolation2D( vector< pair< double, double > > const& t_Points ) :
+  CSPChipInterpolation2D::CSPChipInterpolation2D( vector< pair< double, double > > const & t_Points ) :
     IInterpolation2D( t_Points ) {
     m_Hs = calculateHs();
     m_Deltas = calculateDeltas();
@@ -37,7 +37,7 @@ namespace FenestrationCommon {
       return ( m_Points.end() - 1 )->second;
     }
 
-    size_t subinterval = getSubinterval( t_Value );
+    auto subinterval = getSubinterval(t_Value );
     auto s = t_Value - m_Points[ subinterval ].first;
     auto h = m_Hs[ subinterval ];
 
@@ -112,7 +112,7 @@ namespace FenestrationCommon {
 
   double CSPChipInterpolation2D::piecewiseCubicDerivative( double const delta_k, double const delta_k_minus_1, 
     double const hk, double const hk_minus_1 ) const {
-    double res = 0;
+    auto res = 0.0;
     if( ( delta_k == 0 ) || ( delta_k_minus_1 == 0 ) || ( delta_k > 0 && delta_k_minus_1 < 0 ) || 
       ( delta_k < 0 && delta_k_minus_1 > 0 ) ) {
       return 0;

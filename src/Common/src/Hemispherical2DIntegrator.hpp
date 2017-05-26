@@ -13,7 +13,8 @@ namespace FenestrationCommon {
   // value
   class CHemispherical2DIntegrator {
   public:
-    CHemispherical2DIntegrator( const CSeries& t_AngularProperties, const IntegrationType t_IntegrationType );
+    CHemispherical2DIntegrator( CSeries const & t_AngularProperties,
+                                IntegrationType const t_IntegrationType );
 
     double value() const;
 
