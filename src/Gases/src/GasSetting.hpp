@@ -8,7 +8,7 @@ namespace Gases {
     static CGasSettings& instance();
 
     double getVacuumPressure() const;
-    void setVacuumPressure( const double t_Value );
+    void setVacuumPressure( double const t_Value );
 
   private:
     CGasSettings();

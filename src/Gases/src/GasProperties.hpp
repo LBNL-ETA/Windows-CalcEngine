@@ -8,9 +8,9 @@ namespace Gases
 
   class CIntCoeff {
   public:
-    CIntCoeff( double t_A, double t_B, double t_C );
+    CIntCoeff( double const t_A, double const t_B, double const t_C );
     double interpolationValue( double t_Temperature ) const;
-    CIntCoeff& operator=(const CIntCoeff &t_IntCoeff);
+    CIntCoeff& operator=( CIntCoeff const & t_IntCoeff );
   private:
     double m_A;
     double m_B;
@@ -25,9 +25,9 @@ namespace Gases
 
     double getLambdaPrim() const;
     double getLambdaSecond() const;
-    GasProperties& operator+( const GasProperties& t_A );
-    GasProperties& operator+=( const GasProperties& t_A );
-    GasProperties& operator=( const GasProperties& t_A );
+    GasProperties& operator+( GasProperties const & t_A );
+    GasProperties& operator+=( GasProperties const & t_A );
+    GasProperties& operator=( GasProperties const & t_A );
 
     void calculateAlphaAndPrandl();
     double m_ThermalConductivity;

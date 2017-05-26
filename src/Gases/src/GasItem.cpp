@@ -16,7 +16,7 @@ namespace Gases {
     initialize();
   }
 
-  CGasItem::CGasItem( const CGasItem & t_GasItem ) {
+  CGasItem::CGasItem( CGasItem const & t_GasItem ) {
     m_Fraction = t_GasItem.m_Fraction;
     m_Pressure = t_GasItem.m_Pressure;
     m_Temperature = t_GasItem.m_Temperature;
@@ -27,7 +27,7 @@ namespace Gases {
     ( *m_GasProperties ) = ( *t_GasItem.m_GasProperties );
   }
 
-  CGasItem::CGasItem( double t_Fraction, const shared_ptr< const CGasData >& t_GasData ) :
+  CGasItem::CGasItem( double t_Fraction, shared_ptr< const CGasData > const & t_GasData ) :
     m_Fraction( t_Fraction ), m_GasData( t_GasData ) {
     initialize();
   }
@@ -45,15 +45,15 @@ namespace Gases {
 
   void CGasItem::flllVacuumPressureProperties() {
     using ConstantsData::UNIVERSALGASCONSTANT;
-    const double alpha1 = 0.79;
-    const double alpha2 = 0.79;
-    const double alpha = alpha1 * alpha2 / ( alpha2 + alpha1 * ( 1 - alpha2 ) );
-    const double specificHeatRatio = m_GasData->getSpecificHeatRatio();
+    auto const alpha1 = 0.79;
+    auto const alpha2 = 0.79;
+    auto const alpha = alpha1 * alpha2 / ( alpha2 + alpha1 * ( 1 - alpha2 ) );
+    auto const specificHeatRatio = m_GasData->getSpecificHeatRatio();
     if( specificHeatRatio == 1 ) {
       throw runtime_error("Specific heat ratio of a gas cannot be equal to one.");
     }
-    const double mWght = m_GasData->GetMolecularWeight();
-    double B = alpha * ( specificHeatRatio + 1 ) / ( specificHeatRatio - 1 );
+    auto const mWght = m_GasData->GetMolecularWeight();
+    auto B = alpha * ( specificHeatRatio + 1 ) / ( specificHeatRatio - 1 );
     B *= sqrt( UNIVERSALGASCONSTANT / ( 8 * M_PI * mWght * m_Temperature ) );
     m_GasProperties->m_ThermalConductivity = B * m_Pressure;
     m_GasProperties->m_Viscosity = 0;
@@ -69,7 +69,7 @@ namespace Gases {
     m_GasProperties = make_shared< GasProperties > ();
   }
 
-  CGasItem& CGasItem::operator=(const CGasItem& t_GasItem) {
+  CGasItem& CGasItem::operator=( CGasItem const & t_GasItem ) {
     m_Fraction = t_GasItem.m_Fraction;
     m_Pressure = t_GasItem.m_Pressure;
     m_Temperature = t_GasItem.m_Temperature;

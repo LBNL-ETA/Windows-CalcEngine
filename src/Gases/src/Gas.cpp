@@ -52,10 +52,9 @@ namespace Gases
 
   void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
     m_Pressure = t_Pressure;
-    vector< shared_ptr< CGasItem > >::const_iterator it;
-    for( it = m_GasItem.begin(); it < m_GasItem.end(); ++it ) {
-      ( *it )->setTemperature( t_Temperature );
-      ( *it )->setPressure( t_Pressure );
+    for( auto& item : m_GasItem ) {
+      item->setTemperature( t_Temperature );
+      item->setPressure( t_Pressure );
     }
   }
 
@@ -71,11 +70,8 @@ namespace Gases
 
   shared_ptr< GasProperties > CGas::getGasProperties() {
     CGasSettings aSettings = CGasSettings::instance();
-    if( aSettings.getVacuumPressure() < m_Pressure ) {
-      return getStandardPressureGasProperties();
-    } else {
-      return getVacuumPressureGasProperties();
-    }
+    return aSettings.getVacuumPressure() < m_Pressure ? getStandardPressureGasProperties()
+                                                      : getVacuumPressureGasProperties();
   }
 
   shared_ptr< GasProperties > CGas::getStandardPressureGasProperties() {
