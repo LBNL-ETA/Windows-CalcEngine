@@ -3,7 +3,6 @@
 
 #include "BaseIGULayer.hpp"
 #include "Surface.hpp"
-#include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
 using namespace std;
@@ -15,7 +14,7 @@ namespace Tarcog {
     
   }
 
-  CBaseIGULayer::CBaseIGULayer( const CBaseIGULayer& t_Layer ) : 
+  CBaseIGULayer::CBaseIGULayer( CBaseIGULayer const & t_Layer ) :
     CBaseLayer( t_Layer ) {
     m_Thickness = t_Layer.m_Thickness;
   }
@@ -30,11 +29,11 @@ namespace Tarcog {
       getSurface( Side::Back )->getMeanDeflection();
   }
 
-  double CBaseIGULayer::getTemperature( const Side t_Position ) const {
+  double CBaseIGULayer::getTemperature( Side const t_Position ) const {
     return getSurface( t_Position )->getTemperature();
   }
 
-  double CBaseIGULayer::J( const Side t_Position ) const {
+  double CBaseIGULayer::J( Side const t_Position ) const {
     return getSurface( t_Position )->J();
   }
 

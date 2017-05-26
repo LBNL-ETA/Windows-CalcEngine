@@ -12,11 +12,12 @@ namespace Gases {
     return m_VacuumPressure;
   }
 
-  void CGasSettings::setVacuumPressure( const double t_Value ) {
+  void CGasSettings::setVacuumPressure( double const t_Value ) {
     m_VacuumPressure = t_Value;
   }
 
   CGasSettings::CGasSettings() : m_VacuumPressure( ConstantsData::VACUUMPRESSURE ) {
+
   }
 
 }

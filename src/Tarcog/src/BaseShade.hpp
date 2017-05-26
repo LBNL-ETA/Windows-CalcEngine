@@ -39,9 +39,9 @@ namespace Tarcog {
   class CIGUShadeLayer : public CIGUSolidLayer {
   public:
     CIGUShadeLayer( double t_Thickness, double t_Conductivity, 
-      const std::shared_ptr< CShadeOpenings >& t_ShadeOpenings,
-      const std::shared_ptr< ISurface >& t_FrontSurface = nullptr, 
-      const std::shared_ptr< ISurface >& t_BackSurface = nullptr);
+      std::shared_ptr< CShadeOpenings > const & t_ShadeOpenings,
+      std::shared_ptr< ISurface > const & t_FrontSurface = nullptr,
+      std::shared_ptr< ISurface > const & t_BackSurface = nullptr);
 
     CIGUShadeLayer( std::shared_ptr< CIGUSolidLayer >& t_Layer,
       std::shared_ptr< CShadeOpenings >& t_ShadeOpenings );

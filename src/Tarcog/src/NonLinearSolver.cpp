@@ -50,19 +50,17 @@ namespace Tarcog {
   void CNonLinearSolver::solve() {
     m_IGUState = m_IGU->getState();
     assert( m_IGUState != nullptr );
-    shared_ptr< vector< double > > aSolution = nullptr;
     double achievedTolerance = 1;
 
     m_Iterations = 0;
 
     while ( achievedTolerance > m_Tolerance ) {
       ++m_Iterations;
-      aSolution = m_QBalance->calcBalanceMatrix();
-      assert( aSolution != nullptr );
+      vector< double > aSolution = m_QBalance->calcBalanceMatrix();
 
-      achievedTolerance = calculateTolerance( *aSolution );
+      achievedTolerance = calculateTolerance( aSolution );
 
-      estimateNewState( *aSolution );
+      estimateNewState( aSolution );
 
       m_IGU->setState( *m_IGUState );
       

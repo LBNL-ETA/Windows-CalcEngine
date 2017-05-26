@@ -10,15 +10,15 @@ namespace Gases
   class CGasData;
   struct GasProperties;
 
-  const double DefaultPressure = 101325;
-  const double DefaultTemperature = 273.15;
+  double const DefaultPressure = 101325;
+  double const DefaultTemperature = 273.15;
 
   class CGasItem {
   public:
     CGasItem();
-    CGasItem( const CGasItem& t_GasItem );
-    CGasItem( double aFraction, const std::shared_ptr< const CGasData >& t_GasData );
-    CGasItem& operator=( const CGasItem& t_GasItem );
+    CGasItem( CGasItem const & t_GasItem );
+    CGasItem( double aFraction, std::shared_ptr< const CGasData > const& t_GasData );
+    CGasItem& operator=( CGasItem const& t_GasItem );
     void setTemperature( double t_Temperature );
     void setPressure( double t_Pressure );
     double getFraction() const;

@@ -16,7 +16,7 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  CHeatFlowBalance::CHeatFlowBalance( const shared_ptr< CIGU >& t_IGU ) : m_IGU( t_IGU ) {
+  CHeatFlowBalance::CHeatFlowBalance( shared_ptr< CIGU > const & t_IGU ) : m_IGU( t_IGU ) {
     m_MatrixA = make_shared< CSquareMatrix >( 4 * m_IGU->getNumOfLayers() );
     assert( m_MatrixA != nullptr );
     m_VectorB = make_shared< vector< double > >();
@@ -25,7 +25,7 @@ namespace Tarcog {
     m_LinearSolver = make_shared< CLinearSolver >();
   }
 
-  shared_ptr< vector< double > > CHeatFlowBalance::calcBalanceMatrix() {
+  vector< double > CHeatFlowBalance::calcBalanceMatrix() {
     vector< shared_ptr< CIGUSolidLayer > > aSolidLayers = m_IGU->getSolidLayers();
     vector< shared_ptr< CIGUSolidLayer > >::iterator it;
     int positionCounter = 0;
@@ -39,12 +39,12 @@ namespace Tarcog {
       buildCell( aPreviousLayer, ( *it ), aNextLayer, positionCounter );
       ++positionCounter;
     }
-    return m_LinearSolver->solveSystem( m_MatrixA, m_VectorB );
+    return m_LinearSolver->solveSystem( *m_MatrixA, *m_VectorB );
   }
 
-  void CHeatFlowBalance::buildCell( const shared_ptr< CBaseLayer >& t_Previous, 
-    const shared_ptr< CBaseLayer >& t_Current, 
-    const shared_ptr< CBaseLayer >& t_Next, const int t_Index ) {
+  void CHeatFlowBalance::buildCell( shared_ptr< CBaseLayer > const & t_Previous,
+    shared_ptr< CBaseLayer > const & t_Current,
+    shared_ptr< CBaseLayer > const & t_Next, int const t_Index ) {
     // Routine is used to build matrix "cell" around solid layer.
 
     // first determine cell size

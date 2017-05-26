@@ -13,14 +13,9 @@ namespace Tarcog {
   
   }
 
-  CBaseLayer::CBaseLayer( const CBaseLayer& t_Layer ) : 
+  CBaseLayer::CBaseLayer( CBaseLayer const & t_Layer ) :
     CLayerGeometry( t_Layer ), CLayerHeatFlow( t_Layer ) {
-    // if( t_Layer.m_PreviousLayer != nullptr ) {
-    //   m_PreviousLayer = t_Layer.m_PreviousLayer->clone();
-    // }
-    // if( t_Layer.m_NextLayer != nullptr ) {
-    //   m_NextLayer = t_Layer.m_NextLayer->clone();
-    // }
+
   }
 
   shared_ptr< CBaseLayer > CBaseLayer::getPreviousLayer() const {
@@ -36,7 +31,7 @@ namespace Tarcog {
     m_NextLayer = nullptr;
   }
 
-  void CBaseLayer::connectToBackSide( const shared_ptr< CBaseLayer >& t_Layer ) {
+  void CBaseLayer::connectToBackSide( shared_ptr< CBaseLayer > const & t_Layer ) {
     m_NextLayer = t_Layer;
     t_Layer->m_PreviousLayer = shared_from_this();
   }

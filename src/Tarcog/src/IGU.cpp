@@ -54,7 +54,7 @@ namespace Tarcog {
          throw runtime_error( "First inserted layer must be a solid layer." );
       }
     } else {
-      shared_ptr< CBaseIGULayer > lastLayer = m_Layers.back();
+      auto lastLayer = m_Layers.back();
       if ( dynamic_pointer_cast< CIGUSolidLayer > ( t_Layer ) != 
         dynamic_pointer_cast< CIGUSolidLayer > ( lastLayer ) ) {
         m_Layers.push_back( t_Layer );

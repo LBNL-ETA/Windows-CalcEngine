@@ -16,7 +16,7 @@ namespace Tarcog {
     m_ForcedVentilation = ForcedVentilation(); // Creates forced ventilation with zero values
   }
 
-  CEnvironment::CEnvironment( const CEnvironment & t_Environment ) : 
+  CEnvironment::CEnvironment( CEnvironment const & t_Environment ) :
     CBaseLayer( t_Environment ), CGasLayer( t_Environment ) {
     m_DirectSolarRadiation = t_Environment.m_DirectSolarRadiation;
     m_Emissivity = t_Environment.m_Emissivity;
@@ -29,13 +29,13 @@ namespace Tarcog {
     tearDownConnections();
   }
 
-  void CEnvironment::setHCoeffModel( const BoundaryConditionsCoeffModel t_BCModel, const double t_HCoeff ) {
+  void CEnvironment::setHCoeffModel( BoundaryConditionsCoeffModel const t_BCModel, double const t_HCoeff ) {
     m_HCoefficientModel = t_BCModel;
     m_HInput = t_HCoeff;
     resetCalculated();
   }
 
-  void CEnvironment::setForcedVentilation( const ForcedVentilation &t_ForcedVentilation ) {
+  void CEnvironment::setForcedVentilation( ForcedVentilation const & t_ForcedVentilation ) {
     m_ForcedVentilation = t_ForcedVentilation;
     resetCalculated();
   }
@@ -80,7 +80,7 @@ namespace Tarcog {
     return m_DirectSolarRadiation;
   }
 
-  void CEnvironment::connectToIGULayer( const shared_ptr< CBaseLayer >& ) {
+  void CEnvironment::connectToIGULayer( shared_ptr< CBaseLayer > const & ) {
     //
   }
 
