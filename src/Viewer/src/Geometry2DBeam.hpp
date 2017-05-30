@@ -169,9 +169,9 @@ namespace Viewer {
     void calculateBeamProperties( double const t_ProfileAngle );
 
     // Check if given point is in possible path of the ray
-    bool isInRay( std::shared_ptr< const CPoint2D > const & t_Point ) const;
+    bool isInRay( CPoint2D const & t_Point ) const;
 
-    std::shared_ptr< CViewSegment2D > createSubBeam( std::shared_ptr< const CPoint2D > const & t_Point, 
+    std::shared_ptr< CViewSegment2D > createSubBeam( CPoint2D const & t_Point, 
       double const t_ProfileAngle ) const;
 
     FenestrationCommon::Side m_Side;

@@ -245,7 +245,7 @@ namespace Viewer {
         assert("Incorrect assignement of ray position.");
         break;
       }
-      entryRay = createSubBeam( aPoint, t_ProfileAngle );
+      entryRay = createSubBeam( *aPoint, t_ProfileAngle );
       if( aGeometry == *m_Geometries2D.begin() ) {
         m_LowerRay = entryRay;
         m_UpperRay = entryRay;
@@ -269,7 +269,7 @@ namespace Viewer {
     // m_Beams.push_back( m_UpperRay );
     for( auto aEnclosure : m_Geometries2D ) {
       auto aSegments = aEnclosure->segments();
-      if( isInRay( ( *aSegments )[0]->startPoint() ) ) {
+      if( isInRay( *( *aSegments )[0]->startPoint() ) ) {
         inBetweenPoints.push_back( ( *aSegments )[0]->startPoint() );
       }
       for( auto aSegment : *aSegments ) {
@@ -291,7 +291,7 @@ namespace Viewer {
     auto firstBeam = m_UpperRay;
     shared_ptr< CViewSegment2D > secondBeam = nullptr;
     for( auto aPoint : inBetweenPoints ) {
-      secondBeam = createSubBeam( aPoint, t_ProfileAngle );
+      secondBeam = createSubBeam( *aPoint, t_ProfileAngle );
       auto aRay = make_shared< CDirect2DRay >( firstBeam, secondBeam );
 
       // Dont save rays that are smaller than distance tolerance
@@ -359,19 +359,19 @@ namespace Viewer {
     m_CurrentResult = m_Results.append( t_ProfileAngle, aDirectToDirect, aViewFactors );
   }
 
-  bool CDirect2DRays::isInRay( shared_ptr< const CPoint2D > const & t_Point ) const {
+  bool CDirect2DRays::isInRay( CPoint2D const & t_Point ) const {
     assert( m_UpperRay != nullptr );
     assert( m_LowerRay != nullptr );
-    return m_UpperRay->position( *t_Point ) == PointPosition::Visible && 
-      m_LowerRay->position( *t_Point ) == PointPosition::Invisible;
+    return m_UpperRay->position( t_Point ) == PointPosition::Visible && 
+      m_LowerRay->position( t_Point ) == PointPosition::Invisible;
   }
 
-  shared_ptr< CViewSegment2D > CDirect2DRays::createSubBeam( shared_ptr< const CPoint2D > const & t_Point, 
+  shared_ptr< CViewSegment2D > CDirect2DRays::createSubBeam( CPoint2D const & t_Point, 
     double const t_ProfileAngle ) const {
     shared_ptr< CViewSegment2D > subSegment = nullptr;
     auto const deltaX = 10.0;
     auto const tanPhi = tan( radians ( t_ProfileAngle ) );
-    auto yStart = t_Point->y() - t_Point->x() * tanPhi;
+    auto yStart = t_Point.y() - t_Point.x() * tanPhi;
     auto yEnd = yStart + deltaX * tanPhi;
 
     auto startPoint = make_shared< CPoint2D >( 0, yStart );

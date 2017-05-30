@@ -16,7 +16,8 @@ namespace Viewer {
   // Representation of simple Segment in 2D space
   class CSegment2D {
   public:
-    CSegment2D( std::shared_ptr< const CPoint2D > t_StartPoint, std::shared_ptr< const CPoint2D > t_EndPoint );
+    CSegment2D( std::shared_ptr< const CPoint2D > const & t_StartPoint, 
+      std::shared_ptr< const CPoint2D > const & t_EndPoint );
 
     std::shared_ptr< const CPoint2D > startPoint() const;
     std::shared_ptr< const CPoint2D > endPoint() const;
@@ -28,16 +29,16 @@ namespace Viewer {
     double length() const;
 
     // Calculates if segment intersects with passed t_Segment
-    bool intersectionWithSegment( std::shared_ptr< const CSegment2D > t_Segment ) const;
+    bool intersectionWithSegment( std::shared_ptr< const CSegment2D > const & t_Segment ) const;
 
     // For line made up of current segment, calculate how it intersects passed segment.
-    IntersectionStatus intersectionWithLine( std::shared_ptr< const CSegment2D > t_Segment ) const;
+    IntersectionStatus intersectionWithLine( std::shared_ptr< const CSegment2D > const & t_Segment ) const;
 
     // Dot product of two vectors
-    double dotProduct( std::shared_ptr< const CSegment2D > t_Segment ) const;
+    double dotProduct( std::shared_ptr< const CSegment2D > const & t_Segment ) const;
 
     // Translates segment for given coordinates
-    std::shared_ptr< CSegment2D > translate( const double t_x, const double t_y );
+    std::shared_ptr< CSegment2D > translate( double const t_x, double const t_y ) const;
 
     // returns end point of the vector that starts at (0, 0)
     std::shared_ptr< CPoint2D > intensity() const;
@@ -53,10 +54,10 @@ namespace Viewer {
 
     // Calculates intesection point between two lines made up of vector. Even if two vectors do not
     // intersect, point of intersection will be returned
-    std::shared_ptr< CPoint2D > intersection( std::shared_ptr< const CSegment2D > t_Segment ) const;
+    std::shared_ptr< CPoint2D > intersection( std::shared_ptr< const CSegment2D > const & t_Segment ) const;
 
     // test if x coordinate is in range of rectangle made up of segment
-    bool isInRectangleRange( std::shared_ptr< const CPoint2D > t_Point ) const;
+    bool isInRectangleRange( std::shared_ptr< const CPoint2D > const & t_Point ) const;
 
     // Equation of LINE made up of two points
     // A, B and C coefficients of line that is made up of segment. Line equation is A*x + B*y = C

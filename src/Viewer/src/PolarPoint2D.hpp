@@ -9,13 +9,13 @@ namespace Viewer {
   // counter clockwise from x-axis
   class CPolarPoint2D : public CPoint2D {
   public:
-    CPolarPoint2D( const double t_Theta, const double t_Radius );
+    CPolarPoint2D( double const t_Theta, double const t_Radius );
 
     double theta() const;
     double radius() const;
 
     // Stores cartesian coordinates that are immediately converted into polar
-    void setCartesian( const double x, const double y );
+    void setCartesian( double const x, double const y );
 
   protected:
     double m_Theta;

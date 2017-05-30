@@ -8,8 +8,9 @@ using namespace FenestrationCommon;
 
 namespace Viewer {
 
-  CPolarPoint2D::CPolarPoint2D( const double t_Theta, const double t_Radius ) : CPoint2D( 0, 0 ), m_Theta( t_Theta ), m_Radius( t_Radius ) {
-    double aTheta = radians( m_Theta );
+  CPolarPoint2D::CPolarPoint2D( double const t_Theta, double const t_Radius ) : 
+    CPoint2D( 0, 0 ), m_Theta( t_Theta ), m_Radius( t_Radius ) {
+    auto aTheta = radians( m_Theta );
     m_x = m_Radius * cos( aTheta );
     m_y = m_Radius * sin( aTheta );
   }
@@ -22,7 +23,7 @@ namespace Viewer {
     return m_Radius;
   }
 
-  void CPolarPoint2D::setCartesian( const double x, const double y ) {
+  void CPolarPoint2D::setCartesian( double const x, double const y ) {
     m_x = x;
     m_y = y;
 
