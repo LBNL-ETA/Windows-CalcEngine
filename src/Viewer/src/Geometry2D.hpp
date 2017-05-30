@@ -46,8 +46,7 @@ namespace Viewer {
       CPoint2D const & t_Point );
 
     // Calculates third surface blocking.
-    bool thirdSurfaceShadowing( std::shared_ptr< const CViewSegment2D > const & t_Segment1, 
-      std::shared_ptr< const CViewSegment2D > const & t_Segment2 ) const;
+    bool thirdSurfaceShadowing( CViewSegment2D const & t_Segment1, CViewSegment2D const & t_Segment2 ) const;
 
     // Simplified version for fast calculation of third surface shadowing. Used for subsurfaces
     bool thirdSurfaceShadowingSimple( std::shared_ptr< const CViewSegment2D > const & t_Segment1, 

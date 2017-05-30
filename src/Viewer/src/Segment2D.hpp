@@ -22,6 +22,9 @@ namespace Viewer {
     std::shared_ptr< const CPoint2D > endPoint() const;
     std::shared_ptr< const CPoint2D > centerPoint() const;
 
+    bool operator==( CSegment2D const & rhs) const;
+    bool operator!=( CSegment2D const & rhs) const;
+
     double length() const;
 
     // Calculates if segment intersects with passed t_Segment

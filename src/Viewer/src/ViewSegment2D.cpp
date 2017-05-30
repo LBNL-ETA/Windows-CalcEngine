@@ -22,17 +22,21 @@ namespace Viewer {
     return m_Normal;
   }
 
-  double CViewSegment2D::viewFactorCoefficient( std::shared_ptr< const CSegment2D > t_Segment ) const {
-    if( t_Segment == nullptr ) {
-      throw runtime_error("Segment for view factor calculation must be provided.");
+  bool CViewSegment2D::operator==( CViewSegment2D const & rhs ) const {
+    return CSegment2D::operator==( rhs );
+  }
+
+  bool CViewSegment2D::operator!=( CViewSegment2D const & rhs ) const {
+      return !( *this == rhs );
     }
 
-    double r11 = CSegment2D( m_StartPoint, t_Segment->endPoint() ).length();
-    double r22 = CSegment2D( m_EndPoint, t_Segment->startPoint() ).length();
-    double r12 = CSegment2D( m_StartPoint, t_Segment->startPoint() ).length();
-    double r21 = CSegment2D( m_EndPoint, t_Segment->endPoint() ).length();
+  double CViewSegment2D::viewFactorCoefficient( CSegment2D const & t_Segment ) const {
+    auto r11 = CSegment2D( m_StartPoint, t_Segment.endPoint() ).length();
+    auto r22 = CSegment2D( m_EndPoint, t_Segment.startPoint() ).length();
+    auto r12 = CSegment2D( m_StartPoint, t_Segment.startPoint() ).length();
+    auto r21 = CSegment2D( m_EndPoint, t_Segment.endPoint() ).length();
 
-    double vFCoeff = r12 + r21 - r22 - r11;
+    auto vFCoeff = r12 + r21 - r22 - r11;
 
     if( vFCoeff < ViewerConstants::MIN_VIEW_COEFF ) {
       vFCoeff = 0;
@@ -41,10 +45,10 @@ namespace Viewer {
     return vFCoeff;
   }
 
-  Shadowing CViewSegment2D::selfShadowing( std::shared_ptr< const CViewSegment2D > t_Segment ) const {
-    Shadowing totalShadowing = Shadowing::Partial;
-    Shadowing vThis = isInSelfShadow( t_Segment );
-    Shadowing vOther = t_Segment->isInSelfShadow( shared_from_this() );
+  Shadowing CViewSegment2D::selfShadowing( CViewSegment2D const & t_Segment ) const {
+    auto totalShadowing = Shadowing::Partial;
+    auto vThis = isInSelfShadow( t_Segment );
+    auto vOther = t_Segment.isInSelfShadow( *this );
     
     if( vThis == Shadowing::Total || vOther == Shadowing::Total ) {
       totalShadowing = Shadowing::Total;
@@ -56,11 +60,11 @@ namespace Viewer {
 
   }
 
-  Shadowing CViewSegment2D::isInSelfShadow( shared_ptr< const CViewSegment2D > t_Segment ) const {
-    int numOfInvisibles = 0;
+  Shadowing CViewSegment2D::isInSelfShadow( CViewSegment2D const & t_Segment ) const {
+    auto numOfInvisibles = 0;
 
-    PointPosition visibilityStart = position( *t_Segment->startPoint() );
-    PointPosition visibilityEnd = position( *t_Segment->endPoint() );
+    auto visibilityStart = position( *t_Segment.startPoint() );
+    auto visibilityEnd = position( *t_Segment.endPoint() );
     
     if( visibilityStart == PointPosition::Invisible ) {
       ++numOfInvisibles;

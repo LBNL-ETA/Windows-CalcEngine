@@ -32,6 +32,15 @@ namespace Viewer {
     return m_x * t_Point.x() + m_y * t_Point.y(); 
   }
 
+  bool CPoint2D::operator==( CPoint2D const & rhs ) const {
+    return m_x == rhs.m_x
+      && m_y == rhs.m_y;
+  }
+
+  bool CPoint2D::operator!=( CPoint2D const & rhs ) const {
+    return !( *this == rhs );
+  }
+
   bool CPoint2D::isLeft( const CPoint2D& t_Point ) const {
     return m_x < t_Point.x();
   }

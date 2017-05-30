@@ -31,6 +31,15 @@ namespace Viewer {
     return m_CenterPoint;
   }
 
+  bool CSegment2D::operator==( CSegment2D const & rhs ) const {
+    return m_StartPoint == rhs.m_StartPoint
+      && m_EndPoint == rhs.m_EndPoint;
+  }
+
+  bool CSegment2D::operator!=(CSegment2D const& rhs) const {
+    return !( *this == rhs );
+  }
+
   double CSegment2D::length() const {
     return m_Length;
   }

@@ -19,6 +19,9 @@ namespace Viewer {
 
     double dotProduct( const CPoint2D& t_Point ) const;
 
+    bool operator==( CPoint2D const & rhs) const;
+    bool operator!=( CPoint2D const & rhs) const;
+
     // True if current point is left from passed point (t_Point)
     bool isLeft(const CPoint2D& t_Point ) const;
 

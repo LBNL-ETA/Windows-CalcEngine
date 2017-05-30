@@ -137,27 +137,27 @@ namespace Viewer {
     return inSide;
   }
 
-  bool CGeometry2D::thirdSurfaceShadowing( shared_ptr< const CViewSegment2D > const & t_Segment1, 
-    shared_ptr< const CViewSegment2D > const & t_Segment2 ) const {
+  bool CGeometry2D::thirdSurfaceShadowing( CViewSegment2D const & t_Segment1, 
+    CViewSegment2D const & t_Segment2 ) const {
     auto intersection = false;
   
     // Form cross segments
     vector< shared_ptr< CViewSegment2D > > intSegments;
-    auto r11 = make_shared< CViewSegment2D >( t_Segment1->startPoint(), t_Segment2->endPoint() );
+    auto r11 = make_shared< CViewSegment2D >( t_Segment1.startPoint(), t_Segment2.endPoint() );
     if( r11->length() > 0 ) {
       intSegments.push_back( r11 );
     }
-    auto r22 = make_shared< CViewSegment2D >( t_Segment1->endPoint(), t_Segment2->startPoint() );
+    auto r22 = make_shared< CViewSegment2D >( t_Segment1.endPoint(), t_Segment2.startPoint() );
     if( r22->length() > 0 ) {
       intSegments.push_back( r22 );
     }
   
     for( auto aSegment : *m_Segments ) {
       for( auto iSegment : intSegments ) {
-        if( aSegment != t_Segment1 && aSegment != t_Segment2 ) {
+        if( *aSegment != t_Segment1 && *aSegment != t_Segment2 ) {
           intersection = intersection || iSegment->intersectionWithSegment( aSegment );
-          intersection = intersection || pointInSegmentsView( *t_Segment1, *t_Segment2, *aSegment->startPoint() );
-          intersection = intersection || pointInSegmentsView( *t_Segment1, *t_Segment2, *aSegment->endPoint() );
+          intersection = intersection || pointInSegmentsView( t_Segment1, t_Segment2, *aSegment->startPoint() );
+          intersection = intersection || pointInSegmentsView( t_Segment1, t_Segment2, *aSegment->endPoint() );
           if( intersection ) {
             return intersection;
           }
@@ -195,10 +195,10 @@ namespace Viewer {
 
     for( shared_ptr< const CViewSegment2D > sub1 : *subSeg1 ) {
       for( shared_ptr< const CViewSegment2D > sub2 : *subSeg2 ) {
-        auto selfShadowing = sub1->selfShadowing( sub2 );
+        auto selfShadowing = sub1->selfShadowing( *sub2 );
         auto tSurfBlock = thirdSurfaceShadowingSimple( sub1, sub2 );
         if( !tSurfBlock && selfShadowing == Shadowing::No ) {
-          auto cVF = sub1->viewFactorCoefficient( sub2 );
+          auto cVF = sub1->viewFactorCoefficient( *sub2 );
           subViewCoeff += cVF;
         }
       }
@@ -233,13 +233,13 @@ namespace Viewer {
       for( auto i = 0; i < size; ++i ) {
         for( auto j = i; j < size; ++j ) {
           if( i != j ) {
-            auto selfShadowing = ( *m_Segments )[ i ]->selfShadowing( ( *m_Segments )[ j ] );
+            auto selfShadowing = ( *m_Segments )[ i ]->selfShadowing( *( *m_Segments )[ j ] );
             if( selfShadowing != Shadowing::Total ) {
-              auto shadowedByThirdSurface = thirdSurfaceShadowing( ( *m_Segments )[ i ], ( *m_Segments )[ j ] );
+              auto shadowedByThirdSurface = thirdSurfaceShadowing( *( *m_Segments )[ i ], *( *m_Segments )[ j ] );
               auto vfCoeff = 0.0;
 
               if( !shadowedByThirdSurface && ( selfShadowing == Shadowing::No ) ) {
-                vfCoeff = ( *m_Segments )[ i ]->viewFactorCoefficient( ( *m_Segments )[ j ] );
+                vfCoeff = ( *m_Segments )[ i ]->viewFactorCoefficient( *( *m_Segments )[ j ] );
               } else if ( shadowedByThirdSurface || selfShadowing == Shadowing::Partial ) {
                 vfCoeff = viewFactorCoeff( ( *m_Segments )[ i ], ( *m_Segments )[ j ] );
               }
