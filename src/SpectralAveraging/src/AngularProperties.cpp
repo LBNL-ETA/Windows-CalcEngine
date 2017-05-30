@@ -15,17 +15,16 @@ namespace SpectralAveraging {
   //  CAngularProperties
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CAngularProperties::CAngularProperties( const double t_TransmittanceZero, const double t_ReflectanceZero ) : 
+  CAngularProperties::CAngularProperties( double const t_TransmittanceZero, double const t_ReflectanceZero ) : 
     m_Transmittance0( t_TransmittanceZero ), m_Reflectance0( t_ReflectanceZero ), 
     m_Transmittance( -1 ), m_Reflectance( -1 ), m_StateAngle( -1 ), m_StateWavelength( -1 ) {
   }
 
-  double CAngularProperties::cosAngle( const double t_Angle ) {
-    double aAngle = radians( t_Angle );
-    return cos( aAngle );
+  double CAngularProperties::cosAngle( const double t_Angle ) const {
+    return cos( radians( t_Angle ) );
   }
 
-  void CAngularProperties::checkStateProperties( const double t_Angle, const double ) {
+  void CAngularProperties::checkStateProperties( double const t_Angle, double const ) {
     if( t_Angle > 90 || t_Angle < 0 ) {
       throw runtime_error("Incoming angle is out of range. Incoming angle must be between 0 and 90 degrees.");
     }
@@ -36,8 +35,8 @@ namespace SpectralAveraging {
   //  CAngularPropertiesUncoated
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CAngularPropertiesUncoated::CAngularPropertiesUncoated( const double t_Thicknes, 
-    const double t_TransmittanceZero, const double t_ReflectanceZero ) : 
+  CAngularPropertiesUncoated::CAngularPropertiesUncoated( double const t_Thicknes, 
+    double const t_TransmittanceZero, double const t_ReflectanceZero ) : 
     CAngularProperties( t_TransmittanceZero, t_ReflectanceZero ), m_Thickness( t_Thicknes ) {
     
     // calculation of intermediate uncoated properties
@@ -46,44 +45,44 @@ namespace SpectralAveraging {
     
   }
 
-  double CAngularPropertiesUncoated::transmittance( const double t_Angle, const double t_Wavelength ) {
+  double CAngularPropertiesUncoated::transmittance( double const t_Angle, double const t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Transmittance;
   }
 
-  double CAngularPropertiesUncoated::reflectance( const double t_Angle, const double t_Wavelength ) {
+  double CAngularPropertiesUncoated::reflectance( double const t_Angle, double const t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Reflectance;
   }
 
-  void CAngularPropertiesUncoated::checkStateProperties( const double t_Angle, const double t_Wavelength ) {
+  void CAngularPropertiesUncoated::checkStateProperties( double const t_Angle, double const t_Wavelength ) {
     CAngularProperties::checkStateProperties( t_Angle, t_Wavelength );
 
     if( m_StateAngle != t_Angle || m_StateWavelength != t_Wavelength ) {
-      double aAngle = radians( t_Angle );
-      double aCosPhi = cos( aAngle );
-      double n = ( 1 + sqrt( m_Rho0 ) ) / ( 1 - sqrt( m_Rho0 ) );
-      double aCosPhiPrim = cos( asin( sin( aAngle ) / n ) );
-      double a = 0;
+      auto aAngle = radians( t_Angle );
+      auto aCosPhi = cos( aAngle );
+      auto n = ( 1 + sqrt( m_Rho0 ) ) / ( 1 - sqrt( m_Rho0 ) );
+      auto aCosPhiPrim = cos( asin( sin( aAngle ) / n ) );
+      auto a = 0.0;
       
       if( m_Transmittance0 > 0 ) {
-        double k = 0;
-        double alpha = 0;
+        auto k = 0.0;
+        auto alpha = 0.0;
         k = - t_Wavelength / ( 4 * M_PI * m_Thickness ) * log( ( m_Reflectance0 - m_Rho0 ) / ( m_Transmittance0 * m_Rho0 ) );
         alpha = 2 * M_PI * k / t_Wavelength;
         a = exp( -2 * alpha * m_Thickness / aCosPhiPrim );
       }
 
-      double rhoP = pow( ( ( n * aCosPhi - aCosPhiPrim )  / ( n * aCosPhi + aCosPhiPrim ) ), 2 );
-      double rhoS = pow( ( ( aCosPhi - n * aCosPhiPrim )  / ( aCosPhi + n * aCosPhiPrim ) ), 2 );
-      double tauP = 1 - rhoP;
-      double tauS = 1 - rhoS;
+      auto rhoP = pow( ( ( n * aCosPhi - aCosPhiPrim )  / ( n * aCosPhi + aCosPhiPrim ) ), 2 );
+      auto rhoS = pow( ( ( aCosPhi - n * aCosPhiPrim )  / ( aCosPhi + n * aCosPhiPrim ) ), 2 );
+      auto tauP = 1 - rhoP;
+      auto tauS = 1 - rhoS;
 
-      double tau_TotP = a * pow( tauP, 2 ) / ( 1 - pow( a, 2 ) * pow( rhoP, 2 ) );
-      double tau_TotS = a * pow( tauS, 2 ) / ( 1 - pow( a, 2 ) * pow( rhoS, 2 ) );
+      auto tau_TotP = a * pow( tauP, 2 ) / ( 1 - pow( a, 2 ) * pow( rhoP, 2 ) );
+      auto tau_TotS = a * pow( tauS, 2 ) / ( 1 - pow( a, 2 ) * pow( rhoS, 2 ) );
 
-      double rho_TotP = ( 1 + a * tau_TotP ) * rhoP;
-      double rho_TotS = ( 1 + a * tau_TotS ) * rhoS;
+      auto rho_TotP = ( 1 + a * tau_TotP ) * rhoP;
+      auto rho_TotS = ( 1 + a * tau_TotS ) * rhoS;
 
       m_Transmittance = ( tau_TotS + tau_TotP ) / 2;
       m_Reflectance = ( rho_TotS + rho_TotP ) / 2;
@@ -104,27 +103,27 @@ namespace SpectralAveraging {
     
   }
   
-  double CAngularPropertiesCoated::transmittance( const double t_Angle, const double t_Wavelength ) {
+  double CAngularPropertiesCoated::transmittance( double const t_Angle, double const t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Transmittance;
   }
 
-  double CAngularPropertiesCoated::reflectance( const double t_Angle, const double t_Wavelength ) {
+  double CAngularPropertiesCoated::reflectance( double const t_Angle, double const t_Wavelength ) {
     checkStateProperties( t_Angle, t_Wavelength );
     return m_Reflectance;
   }
 
-  void CAngularPropertiesCoated::checkStateProperties( const double t_Angle, const double ) {
+  void CAngularPropertiesCoated::checkStateProperties( double const t_Angle, double const ) {
     CAngularProperties::checkStateProperties( t_Angle, 0 ); // Wavelength is not provided for coated glass
 
     if( m_StateAngle != t_Angle ) {
-      double aAngle = radians( t_Angle );
-      double aCosPhi = cos( aAngle );
+      auto aAngle = radians( t_Angle );
+      auto aCosPhi = cos( aAngle );
 
       shared_ptr< Coefficients > TCoeff = nullptr;
       shared_ptr< Coefficients > RCoeff = nullptr;
 
-      CCoatingCoefficients aCoefficients = CCoatingCoefficients();
+      auto aCoefficients = CCoatingCoefficients();
 
       if( m_SolTransmittance0 > 0.645 ) {
         TCoeff = aCoefficients.getCoefficients( CoatingProperty::T, CoatingType::Clear );
@@ -136,10 +135,10 @@ namespace SpectralAveraging {
 
       assert( TCoeff != nullptr );
       assert( RCoeff != nullptr );
-      
-      double tau = TCoeff->inerpolation( aCosPhi );
+
+      auto tau = TCoeff->inerpolation( aCosPhi );
       m_Transmittance = tau * m_Transmittance0;
-      double rho = RCoeff->inerpolation( aCosPhi ) - tau;
+      auto rho = RCoeff->inerpolation( aCosPhi ) - tau;
       m_Reflectance = m_Reflectance0 * ( 1 - rho ) + rho;
 
       // Interpolation coefficients are not precise enought and this check is necessary
@@ -164,12 +163,12 @@ namespace SpectralAveraging {
   //  Coefficients
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Coefficients::Coefficients( const double t_C0, const double t_C1, const double t_C2, const double t_C3,
+  Coefficients::Coefficients( double const t_C0, double const t_C1, double const t_C2, double const t_C3,
       const double t_C4 ) : C0( t_C0 ), C1( t_C1 ), C2( t_C2 ), C3( t_C3 ), C4( t_C4 ) {
   
   }
 
-  double Coefficients::inerpolation( const double t_Value ) {
+  double Coefficients::inerpolation( double const t_Value ) const {
     return C0 + C1 * t_Value + C2 * pow( t_Value, 2 ) + C3 * pow( t_Value, 3 ) + C4 * pow( t_Value, 4 );
   }
 
@@ -181,7 +180,8 @@ namespace SpectralAveraging {
   
   }
 
-  shared_ptr< Coefficients > CCoatingCoefficients::getCoefficients( const CoatingProperty t_Property, const CoatingType t_Type ) {
+  shared_ptr< Coefficients > CCoatingCoefficients::getCoefficients( CoatingProperty const t_Property, 
+    CoatingType const t_Type ) const {
     shared_ptr< Coefficients > aCoefficients = nullptr;
     switch ( t_Property ) {
     case CoatingProperty::T:
@@ -225,13 +225,14 @@ namespace SpectralAveraging {
   //  CAngularPropertiesFactory
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  CAngularPropertiesFactory::CAngularPropertiesFactory( const double t_Transmittance0, const double t_Reflectance0, const double t_Thickness,
-    const double t_SolarTransmittance ) : m_Thickness( t_Thickness ), m_Transmittance0( t_Transmittance0 ), m_Reflectance0( t_Reflectance0 ),
+  CAngularPropertiesFactory::CAngularPropertiesFactory( double const t_Transmittance0, double const t_Reflectance0, 
+    double const t_Thickness, double const t_SolarTransmittance ) : 
+    m_Thickness( t_Thickness ), m_Transmittance0( t_Transmittance0 ), m_Reflectance0( t_Reflectance0 ),
     m_SolarTransmittance0( t_SolarTransmittance ) {
     
   }
 
-  shared_ptr< CAngularProperties > CAngularPropertiesFactory::getAngularProperties( const SurfaceType t_SurfaceType ) {
+  shared_ptr< CAngularProperties > CAngularPropertiesFactory::getAngularProperties( SurfaceType const t_SurfaceType ) {
     shared_ptr< CAngularProperties > aProperties = nullptr;
     switch( t_SurfaceType ) {
     case SurfaceType::Coated:

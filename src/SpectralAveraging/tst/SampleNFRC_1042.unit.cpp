@@ -1,5 +1,4 @@
 #include <memory>
-#include <algorithm>
 #include <gtest/gtest.h>
 
 #include "WCESpectralAveraging.hpp"
@@ -15,9 +14,9 @@ private:
   shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-  virtual void SetUp() {
-    shared_ptr< CSeries > solarRadiation = make_shared< CSeries >();
-    
+  shared_ptr< CSeries > getSolarRadiation() const {
+    auto solarRadiation = make_shared< CSeries >();
+
     // Full ASTM E891-87 Table 1
     solarRadiation->addProperty( 0.3000, 0.0    );
     solarRadiation->addProperty( 0.3050, 3.4    );
@@ -141,7 +140,11 @@ protected:
     solarRadiation->addProperty( 3.7650, 9.0    );
     solarRadiation->addProperty( 4.0450, 6.9    );
 
-    shared_ptr< CSpectralSampleData > sampleMeasurements = make_shared< CSpectralSampleData >();
+    return solarRadiation;
+  }
+
+  shared_ptr< CSpectralSampleData > getMeasurements() const {
+    auto sampleMeasurements = make_shared< CSpectralSampleData >();
 
     sampleMeasurements->addRecord(  0.300, 0.0006, 0.0518, 0.2713 );
     sampleMeasurements->addRecord(  0.305, 0.0006, 0.0509, 0.2624 );
@@ -640,58 +643,66 @@ protected:
     sampleMeasurements->addRecord( 38.000, 0.0006, 0.1221, 0.9705 );
     sampleMeasurements->addRecord( 40.000, 0.0003, 0.1237, 0.9757 );
 
+    return sampleMeasurements;
+  }
+
+  void SetUp() override {
+    auto solarRadiation = getSolarRadiation();
+
+    auto sampleMeasurements = getMeasurements();
+
     m_Sample = make_shared< CSpectralSample >( sampleMeasurements, solarRadiation );
 
   }
 
 public:
-  shared_ptr< CSpectralSample > getSample() { return m_Sample; };
+  shared_ptr< CSpectralSample > getSample() const { return m_Sample; };
 
 };
 
 TEST_F( TestSampleNFRC_1042, TestSampleEnergy ) {
-  double lowLambda = 0.3;
-  double highLambda = 2.5;
+  auto lowLambda = 0.3;
+  auto highLambda = 2.5;
 
-  shared_ptr< CSpectralSample > aSample = getSample();
-  double transmittedSolar = aSample->getEnergy( lowLambda, highLambda, Property::T, Side::Front );
-  EXPECT_NEAR( 341.80361793996167, transmittedSolar, 1e-6 );
+  auto aSample = getSample();
+  auto transmittedSolar = aSample->getEnergy( lowLambda, highLambda, Property::T, Side::Front );
+  EXPECT_NEAR( 341.803618, transmittedSolar, 1e-6 );
 
   aSample->setWavelengths( WavelengthSet::Source );
   transmittedSolar = aSample->getEnergy( lowLambda, highLambda, Property::T, Side::Front );
-  EXPECT_NEAR( 341.75649476070004, transmittedSolar, 1e-6 );
+  EXPECT_NEAR( 341.756495, transmittedSolar, 1e-6 );
 
   // This is to test repeatability
   aSample->setWavelengths( WavelengthSet::Data );
   transmittedSolar = aSample->getEnergy( lowLambda, highLambda, Property::T, Side::Front );
-  EXPECT_NEAR( 341.80361793996167, transmittedSolar, 1e-6 );
+  EXPECT_NEAR( 341.803618, transmittedSolar, 1e-6 );
 
-  double reflectedFrontSolar = aSample->getEnergy( lowLambda, highLambda, Property::R, Side::Front );
-  EXPECT_NEAR( 271.88623325733971, reflectedFrontSolar, 1e-6 );
+  auto reflectedFrontSolar = aSample->getEnergy( lowLambda, highLambda, Property::R, Side::Front );
+  EXPECT_NEAR( 271.886233, reflectedFrontSolar, 1e-6 );
 
-  double reflectedBackSolar = aSample->getEnergy( lowLambda, highLambda, Property::R, Side::Back );
-  EXPECT_NEAR( 300.41370275578259, reflectedBackSolar, 1e-6 );
+  auto reflectedBackSolar = aSample->getEnergy( lowLambda, highLambda, Property::R, Side::Back );
+  EXPECT_NEAR( 300.413703, reflectedBackSolar, 1e-6 );
 
-  double absorbedSolar = aSample->getEnergy( lowLambda, highLambda, Property::Abs, Side::Front );
-  EXPECT_NEAR( 143.12469426910440, absorbedSolar, 1e-6 );
+  auto absorbedSolar = aSample->getEnergy( lowLambda, highLambda, Property::Abs, Side::Front );
+  EXPECT_NEAR( 143.124694, absorbedSolar, 1e-6 );
 
 }
 
 TEST_F( TestSampleNFRC_1042, TestSampleProperties ) {
-  double lowLambda = 0.3;
-  double highLambda = 2.5;
+  auto lowLambda = 0.3;
+  auto highLambda = 2.5;
 
-  shared_ptr< CSpectralSample > aSample = getSample();
-  double transmittance = aSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
-  EXPECT_NEAR( 0.45163457809775215, transmittance, 1e-6 );
+  auto aSample = getSample();
+  auto transmittance = aSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
+  EXPECT_NEAR( 0.451635, transmittance, 1e-6 );
 
-  double reflectanceFront = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Front );
-  EXPECT_NEAR( 0.35925080310102064, reflectanceFront, 1e-6 );
+  auto reflectanceFront = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Front );
+  EXPECT_NEAR( 0.359251, reflectanceFront, 1e-6 );
 
-  double reflectanceBack = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Back );
-  EXPECT_NEAR( 0.39694493790502622, reflectanceBack, 1e-6 );
+  auto reflectanceBack = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Back );
+  EXPECT_NEAR( 0.396945, reflectanceBack, 1e-6 );
 
-  double absorptance = aSample->getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
-  EXPECT_NEAR( 0.18911461880122887, absorptance, 1e-6 );
+  auto absorptance = aSample->getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
+  EXPECT_NEAR( 0.189115, absorptance, 1e-6 );
 
 }

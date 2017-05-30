@@ -9,12 +9,12 @@ using namespace FenestrationCommon;
 
 class TestHemispherical2DIntegration : public testing::Test {
 
-private:
+public:
   shared_ptr< CHemispherical2DIntegrator > m_Integrator;
 
 protected:
-  virtual void SetUp() {
-    shared_ptr< CSeries > aSeries = make_shared< CSeries >();
+  void SetUp() override {
+    auto aSeries = make_shared< CSeries >();
 
     // example taken from WINDOW 7 double layer (NFRC 102 and NFRC 103) angular dependency for Tsol
     // NOTE: It is not necessary to add angles in accending order. Series will sort out order before
@@ -34,16 +34,13 @@ protected:
 
   }
 
-public:
-  shared_ptr< CHemispherical2DIntegrator > getIntegrator() { return m_Integrator; };
-
 };
 
 TEST_F( TestHemispherical2DIntegration, TestHemisphericalIntegration ) {
   SCOPED_TRACE( "Begin Test: Test for 2D hemispherical integrator." );
-  
-  double aValue = getIntegrator()->value();
 
-  EXPECT_NEAR( 0.55253978438309348, aValue, 1e-6 );
+  auto aValue = m_Integrator->value();
+
+  EXPECT_NEAR( 0.552540, aValue, 1e-6 );
   
 }

@@ -14,14 +14,15 @@ namespace SpectralAveraging {
   // Calculates angular propertes at given angle
   class CAngularProperties {
   public:
-    CAngularProperties( const double t_TransmittanceZero, const double t_ReflectanceZero );
+    virtual ~CAngularProperties() = default;
+    CAngularProperties( double const t_TransmittanceZero, double const t_ReflectanceZero );
 
-    virtual double transmittance( const double t_Angle, const double t_Wavelength = 0 ) = 0;
-    virtual double reflectance( const double t_Angle, const double t_Wavelength = 0 ) = 0;
+    virtual double transmittance( double const t_Angle, double const t_Wavelength = 0 ) = 0;
+    virtual double reflectance( double const t_Angle, double const t_Wavelength = 0 ) = 0;
 
   protected:
-    double cosAngle( const double t_Angle );
-    virtual void checkStateProperties( const double t_Angle, const double t_Wavelength );
+    double cosAngle( double const t_Angle ) const;
+    virtual void checkStateProperties( double const t_Angle, double const t_Wavelength );
 
     double m_Transmittance0;
     double m_Reflectance0;
@@ -38,11 +39,11 @@ namespace SpectralAveraging {
     CAngularPropertiesUncoated( const double t_Thicknes, 
       const double t_TransmittanceZero, const double t_ReflectanceZero );
 
-    double transmittance( const double t_Angle, const double t_Wavelength );
-    double reflectance( const double t_Angle, const double t_Wavelength );
+    double transmittance( const double t_Angle, const double t_Wavelength ) override;
+    double reflectance( const double t_Angle, const double t_Wavelength ) override;
 
   protected:
-    void checkStateProperties( const double t_Angle, const double t_Wavelength );
+    void checkStateProperties( const double t_Angle, const double t_Wavelength ) override;
 
   private:
     double m_Thickness;
@@ -53,14 +54,14 @@ namespace SpectralAveraging {
 
   class CAngularPropertiesCoated : public CAngularProperties {
   public:
-    CAngularPropertiesCoated( const double t_Transmittance, const double t_Reflectance, 
-      const double t_SolTransmittance0 );
+    CAngularPropertiesCoated( double const t_Transmittance, double const t_Reflectance, 
+      double const t_SolTransmittance0 );
 
-    double transmittance( const double t_Angle, const double t_Wavelength = 0 );
-    double reflectance( const double t_Angle, const double t_Wavelength = 0 );
+    double transmittance( double const t_Angle, double const t_Wavelength = 0 ) override;
+    double reflectance( double const t_Angle, double const t_Wavelength = 0 ) override;
 
   protected:
-    void checkStateProperties( const double t_Angle, const double t_Wavelength );
+    void checkStateProperties( const double t_Angle, const double t_Wavelength ) override;
 
     double m_SolTransmittance0;
   };
@@ -70,9 +71,9 @@ namespace SpectralAveraging {
 
   class Coefficients {
   public:
-    Coefficients( const double t_C0, const double t_C1, const double t_C2, const double t_C3,
-      const double t_C4 );
-    double inerpolation( const double t_Value );
+    Coefficients( double const t_C0, double const t_C1, double const t_C2, double const t_C3,
+      double const t_C4 );
+    double inerpolation( double const t_Value ) const;
 
   private:
     double C0;
@@ -86,16 +87,16 @@ namespace SpectralAveraging {
   class CCoatingCoefficients {
   public:
     CCoatingCoefficients();
-    std::shared_ptr< Coefficients > getCoefficients( const CoatingProperty t_Property, const CoatingType t_Type );
+    std::shared_ptr< Coefficients > getCoefficients( CoatingProperty const t_Property, CoatingType const t_Type ) const;
   };
 
   class CAngularPropertiesFactory {
   public:
-    CAngularPropertiesFactory( const double t_Transmittance0, const double t_Reflectance0, 
-      const double t_Thickness = 0, const double t_SolarTransmittance = 0 );
+    CAngularPropertiesFactory( double const t_Transmittance0, double const t_Reflectance0, 
+      double const t_Thickness = 0, double const t_SolarTransmittance = 0 );
 
     std::shared_ptr< CAngularProperties > 
-      getAngularProperties( const FenestrationCommon::SurfaceType t_SurfaceType );
+      getAngularProperties( FenestrationCommon::SurfaceType const t_SurfaceType );
 
   private:
     double m_Thickness;

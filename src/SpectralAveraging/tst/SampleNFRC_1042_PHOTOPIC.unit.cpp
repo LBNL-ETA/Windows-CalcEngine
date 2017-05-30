@@ -16,10 +16,9 @@ private:
   shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-  virtual void SetUp()
-  {
-    shared_ptr< CSeries > solarRadiation = make_shared< CSeries >();
-    
+  shared_ptr< CSeries > getSolarRadiation() const {
+    auto solarRadiation = make_shared< CSeries >();
+
     // Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
     solarRadiation->addProperty( 0.3000,   0.0341 );
     solarRadiation->addProperty( 0.3010,   0.3601 );
@@ -553,7 +552,12 @@ protected:
     solarRadiation->addProperty( 0.8290,  60.0253 );
     solarRadiation->addProperty( 0.8300,  60.3125 );
 
-    shared_ptr< vector< double > > aWavelengths = make_shared< vector< double > >();
+    return solarRadiation;
+  }
+
+  shared_ptr< vector< double > > getWavelengths() const {
+    auto aWavelengths = make_shared< vector< double > >();
+
     aWavelengths->push_back( 0.380 );
     aWavelengths->push_back( 0.385 );
     aWavelengths->push_back( 0.390 );
@@ -636,8 +640,12 @@ protected:
     aWavelengths->push_back( 0.775 );
     aWavelengths->push_back( 0.780 );
 
-    // Full ASTM E308 1931 Y.dsp table (PHOTOPIC detector)
-    shared_ptr< CSeries > detectorData = make_shared< CSeries >();
+    return aWavelengths;
+  }
+
+  shared_ptr< CSeries > getDetectorData() const {
+    auto detectorData = make_shared< CSeries >();
+
     detectorData->addProperty( 0.380, 0.0000 );
     detectorData->addProperty( 0.385, 0.0001 );
     detectorData->addProperty( 0.390, 0.0001 );
@@ -720,7 +728,11 @@ protected:
     detectorData->addProperty( 0.775, 0.0000 );
     detectorData->addProperty( 0.780, 0.0000 );
 
-    shared_ptr< CSpectralSampleData > sampleMeasurements = make_shared< CSpectralSampleData >();
+    return detectorData;
+  }
+
+  shared_ptr< CSpectralSampleData > getMeasurements() const {
+    auto sampleMeasurements = make_shared< CSpectralSampleData >();
 
     sampleMeasurements->addRecord(  0.300, 0.0006, 0.0518, 0.2713 );
     sampleMeasurements->addRecord(  0.305, 0.0006, 0.0509, 0.2624 );
@@ -1219,6 +1231,15 @@ protected:
     sampleMeasurements->addRecord( 38.000, 0.0006, 0.1221, 0.9705 );
     sampleMeasurements->addRecord( 40.000, 0.0003, 0.1237, 0.9757 );
 
+    return sampleMeasurements;
+  }
+
+  void SetUp() override {
+    auto solarRadiation = getSolarRadiation();
+    auto aWavelengths = getWavelengths();
+    auto detectorData = getDetectorData();
+    auto sampleMeasurements = getMeasurements();
+
     m_Sample = make_shared< CSpectralSample >( sampleMeasurements, solarRadiation );
     m_Sample->setDetectorData( detectorData );
 
@@ -1226,22 +1247,22 @@ protected:
   }
 
 public:
-  shared_ptr< CSpectralSample > getSample() { return m_Sample; };
+  shared_ptr< CSpectralSample > getSample() const { return m_Sample; };
 
 };
 
 TEST_F( TestSampleNFRC_1042_PHOTOPIC, TestSampleProperties ) {
-  double lowLambda = 0.38;
-  double highLambda = 0.78;
+  auto lowLambda = 0.38;
+  auto highLambda = 0.78;
 
-  shared_ptr< CSpectralSample > aSample = getSample();
-  double transmittance = aSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
-  EXPECT_NEAR( 0.71400106249260342, transmittance, 1e-6 );
+  auto aSample = getSample();
+  auto transmittance = aSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
+  EXPECT_NEAR( 0.714001, transmittance, 1e-6 );
 
-  double reflectanceFront = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Front );
-  EXPECT_NEAR( 0.20722366686073837, reflectanceFront, 1e-6 );
+  auto reflectanceFront = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Front );
+  EXPECT_NEAR( 0.207224, reflectanceFront, 1e-6 );
 
-  double reflectanceBack = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Back );
-  EXPECT_NEAR( 0.14769684309810771, reflectanceBack, 1e-6 );
+  auto reflectanceBack = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Back );
+  EXPECT_NEAR( 0.147697, reflectanceBack, 1e-6 );
 
 }
