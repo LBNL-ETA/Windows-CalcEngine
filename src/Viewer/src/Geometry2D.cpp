@@ -168,8 +168,8 @@ namespace Viewer {
     return intersection;
   }
 
-  bool CGeometry2D::thirdSurfaceShadowingSimple( shared_ptr< const CViewSegment2D > const & t_Segment1, 
-    shared_ptr< const CViewSegment2D > const & t_Segment2 ) const {
+  bool CGeometry2D::thirdSurfaceShadowingSimple( shared_ptr< CViewSegment2D const > const & t_Segment1, 
+    shared_ptr< CViewSegment2D const > const & t_Segment2 ) const {
     auto intersection = false;
 
     auto centerLine = make_shared< CViewSegment2D >( t_Segment1->centerPoint(), t_Segment2->centerPoint() );
@@ -188,7 +188,7 @@ namespace Viewer {
 
   double CGeometry2D::viewFactorCoeff( shared_ptr< const CViewSegment2D > const & t_Segment1,
     shared_ptr< const CViewSegment2D > const & t_Segment2 ) const {
-    double subViewCoeff = 0;
+    auto subViewCoeff = 0.0;
 
     auto subSeg1 = t_Segment1->subSegments( ViewerConstants::NUM_OF_SEGMENTS );
     auto subSeg2 = t_Segment2->subSegments( ViewerConstants::NUM_OF_SEGMENTS );

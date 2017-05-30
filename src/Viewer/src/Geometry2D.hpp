@@ -49,8 +49,8 @@ namespace Viewer {
     bool thirdSurfaceShadowing( CViewSegment2D const & t_Segment1, CViewSegment2D const & t_Segment2 ) const;
 
     // Simplified version for fast calculation of third surface shadowing. Used for subsurfaces
-    bool thirdSurfaceShadowingSimple( std::shared_ptr< const CViewSegment2D > const & t_Segment1, 
-      std::shared_ptr< const CViewSegment2D > const & t_Segment2 ) const;
+    bool thirdSurfaceShadowingSimple( std::shared_ptr< CViewSegment2D const > const & t_Segment1, 
+      std::shared_ptr< CViewSegment2D const > const & t_Segment2 ) const;
 
     // Calculate view factor between two segments. This routine will check third surface shadowing as well. 
     // It will divide segments into subsurfaces by default
