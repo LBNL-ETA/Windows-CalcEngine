@@ -25,7 +25,7 @@ namespace Viewer {
     Shadowing selfShadowing( std::shared_ptr< const CViewSegment2D > t_Segment ) const;
 
     // To determine position from the perspective of the segment
-    PointPosition position( std::shared_ptr< const CPoint2D > t_Point ) const;
+    PointPosition position( CPoint2D const & t_Point ) const;
 
     // Divide segment into number of subsegments
     std::shared_ptr< std::vector < std::shared_ptr< CViewSegment2D > > > 

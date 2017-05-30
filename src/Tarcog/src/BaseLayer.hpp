@@ -31,8 +31,8 @@ namespace Tarcog {
     virtual std::shared_ptr< CBaseLayer > clone() const = 0;
 
   protected:
-    virtual void calculateRadiationFlow();
-    virtual void calculateConvectionOrConductionFlow() = 0;
+    void calculateRadiationFlow() override;
+    void calculateConvectionOrConductionFlow() override = 0;
 
     std::shared_ptr< CBaseLayer > m_PreviousLayer;
     std::shared_ptr< CBaseLayer > m_NextLayer;

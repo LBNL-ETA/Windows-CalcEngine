@@ -19,7 +19,7 @@ namespace MultiLayerOptics {
 
     void addSample( const std::shared_ptr< CSpectralSampleData >& t_Sample );
     std::shared_ptr< FenestrationCommon::CSeries > getLayerAbsorptances( size_t const Index );
-    std::shared_ptr< std::vector< double > > getWavelengths();
+    std::shared_ptr< std::vector< double > > getWavelengths() const;
     size_t numberOfLayers() const;
 
   private:

@@ -18,10 +18,10 @@ namespace MultiLayerOptics {
     
   }
 
-  shared_ptr< vector< double > > CMultiPaneSampleData::getWavelengths() {
+  shared_ptr< vector< double > > CMultiPaneSampleData::getWavelengths() const {
     CCommonWavelengths aWavelengths;
 
-    vector< shared_ptr< CSpectralSampleData > >::iterator it;
+    vector< shared_ptr< CSpectralSampleData > >::const_iterator it;
     for( it = m_MeasuredSamples.begin(); it < m_MeasuredSamples.end(); ++it ) {
       aWavelengths.addWavelength( ( *it )->getWavelengths() );
     }

@@ -59,8 +59,8 @@ namespace Viewer {
   Shadowing CViewSegment2D::isInSelfShadow( shared_ptr< const CViewSegment2D > t_Segment ) const {
     int numOfInvisibles = 0;
 
-    PointPosition visibilityStart = position( t_Segment->startPoint() );
-    PointPosition visibilityEnd = position( t_Segment->endPoint() );
+    PointPosition visibilityStart = position( *t_Segment->startPoint() );
+    PointPosition visibilityEnd = position( *t_Segment->endPoint() );
     
     if( visibilityStart == PointPosition::Invisible ) {
       ++numOfInvisibles;
@@ -105,13 +105,13 @@ namespace Viewer {
     return make_shared< CViewSegment2D >( aSegment->startPoint(), aSegment->endPoint() );
   }
 
-  PointPosition CViewSegment2D::position( std::shared_ptr< const CPoint2D > t_Point ) const {
-    PointPosition aPosition = PointPosition::OnLine;
+  PointPosition CViewSegment2D::position( CPoint2D const & t_Point ) const {
+    auto aPosition = PointPosition::OnLine;
 
-    if( !( t_Point->sameCoordinates( *m_StartPoint ) || t_Point->sameCoordinates( *m_EndPoint ) ) ) {
-      double dx = m_EndPoint->x() - m_StartPoint->x();
-      double dy = m_EndPoint->y() - m_StartPoint->y();
-      double position = dx * ( t_Point->y() - m_StartPoint->y() ) - dy * ( t_Point->x() - m_StartPoint->x() );
+    if( !( t_Point.sameCoordinates( *m_StartPoint ) || t_Point.sameCoordinates( *m_EndPoint ) ) ) {
+      auto dx = m_EndPoint->x() - m_StartPoint->x();
+      auto dy = m_EndPoint->y() - m_StartPoint->y();
+      auto position = dx * ( t_Point.y() - m_StartPoint->y() ) - dy * ( t_Point.x() - m_StartPoint->x() );
       if( position > ViewerConstants::DISTANCE_TOLERANCE ) {
         aPosition = PointPosition::Invisible;
       } else if( position < -ViewerConstants::DISTANCE_TOLERANCE ) {

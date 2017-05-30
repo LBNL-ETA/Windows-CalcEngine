@@ -278,8 +278,8 @@ namespace Viewer {
         shared_ptr< const CPoint2D > endPoint = aSegment->endPoint();
         // Ray is alway going from left to right. For point to be in between beam, it must be visible 
         // for upper ray and invisible for lower ray
-        if( m_UpperRay->position( endPoint ) == PointPosition::Visible && 
-          m_LowerRay->position( endPoint ) == PointPosition::Invisible ) {
+        if( m_UpperRay->position( *endPoint ) == PointPosition::Visible && 
+          m_LowerRay->position( *endPoint ) == PointPosition::Invisible ) {
           inBetweenPoints.push_back( endPoint );
         }
       }
@@ -364,8 +364,8 @@ namespace Viewer {
   bool CDirect2DRays::isInRay( const shared_ptr< const CPoint2D >& t_Point ) {
     assert( m_UpperRay != nullptr );
     assert( m_LowerRay != nullptr );
-    return m_UpperRay->position( t_Point ) == PointPosition::Visible && 
-      m_LowerRay->position( t_Point ) == PointPosition::Invisible;
+    return m_UpperRay->position( *t_Point ) == PointPosition::Visible && 
+      m_LowerRay->position( *t_Point ) == PointPosition::Invisible;
   }
 
   shared_ptr< CViewSegment2D > CDirect2DRays::createSubBeam( const shared_ptr< const CPoint2D >& t_Point, 

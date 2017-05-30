@@ -16,7 +16,7 @@ private:
   shared_ptr< CGeometry2D > m_Enclosure2D;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     m_Enclosure2D = make_shared< CGeometry2D >();
 
     // Segment 1
@@ -50,7 +50,7 @@ protected:
   }
 
 public:
-  shared_ptr< CGeometry2D > getEnclosure() { return m_Enclosure2D; };
+  shared_ptr< CGeometry2D > getEnclosure() const { return m_Enclosure2D; };
 
 };
 
