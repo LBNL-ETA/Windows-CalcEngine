@@ -19,7 +19,7 @@ namespace Tarcog {
   }
 
   CSupportPillar::CSupportPillar( CSupportPillar const & t_Pillar ) : 
-    CIGUGapLayer( t_Pillar ), m_Conductivity( t_Pillar.m_Conductivity ) {
+    CState( t_Pillar ), CIGUGapLayer( t_Pillar ), m_Conductivity( t_Pillar.m_Conductivity ) {
 
   }
 

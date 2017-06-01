@@ -44,4 +44,7 @@ macro( warning_level_update )
     # Replaces /W3 with /W4 in defaults.
     string(REPLACE "/W3" "-W4" ${flag_var} "${${flag_var}}")
   endforeach()
+  if( MSVC )
+    ADD_CXX_DEFINITIONS( "-wd4589" )
+  endif()
 endmacro()

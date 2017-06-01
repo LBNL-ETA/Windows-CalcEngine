@@ -1,20 +1,15 @@
-#include <assert.h>
-
 #include "BaseLayer.hpp"
-#include "TarcogConstants.hpp"
-#include "Surface.hpp"
-
 using namespace std;
 
 namespace Tarcog {
 
-  CBaseLayer::CBaseLayer() : CLayerGeometry(), CLayerHeatFlow(), 
+  CBaseLayer::CBaseLayer() : CState(), CLayerGeometry(), CLayerHeatFlow(),
     m_PreviousLayer( nullptr ), m_NextLayer( nullptr ) {
   
   }
 
   CBaseLayer::CBaseLayer( CBaseLayer const & t_Layer ) :
-    CLayerGeometry( t_Layer ), CLayerHeatFlow( t_Layer ) {
+    CState( t_Layer ), CLayerGeometry( t_Layer ), CLayerHeatFlow( t_Layer ) {
 
   }
 

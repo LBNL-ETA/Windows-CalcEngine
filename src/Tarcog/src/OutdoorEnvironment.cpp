@@ -28,10 +28,10 @@ namespace Tarcog {
   }
 
   COutdoorEnvironment::COutdoorEnvironment( COutdoorEnvironment const & t_Outdoor ) :
-    CEnvironment( t_Outdoor ) {
-    m_Tsky = t_Outdoor.m_Tsky;
-    m_FractionOfClearSky = t_Outdoor.m_FractionOfClearSky;
-    m_SkyModel = t_Outdoor.m_SkyModel;
+    CState( t_Outdoor ), CEnvironment( t_Outdoor ),
+    m_Tsky( t_Outdoor.m_Tsky ), m_FractionOfClearSky( t_Outdoor.m_FractionOfClearSky ),
+    m_SkyModel( t_Outdoor.m_SkyModel ) {
+
   }
 
   double COutdoorEnvironment::calculateIRFromVariables() {

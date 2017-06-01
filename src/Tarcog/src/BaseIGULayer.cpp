@@ -15,7 +15,7 @@ namespace Tarcog {
   }
 
   CBaseIGULayer::CBaseIGULayer( CBaseIGULayer const & t_Layer ) :
-    CBaseLayer( t_Layer ) {
+    CState( t_Layer ), CBaseLayer( t_Layer ) {
     m_Thickness = t_Layer.m_Thickness;
   }
 

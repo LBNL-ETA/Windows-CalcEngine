@@ -17,7 +17,7 @@ namespace Tarcog {
   }
 
   CEnvironment::CEnvironment( CEnvironment const & t_Environment ) :
-    CBaseLayer( t_Environment ), CGasLayer( t_Environment ) {
+    CState( t_Environment ), CBaseLayer( t_Environment ), CGasLayer( t_Environment ) {
     m_DirectSolarRadiation = t_Environment.m_DirectSolarRadiation;
     m_Emissivity = t_Environment.m_Emissivity;
     m_HInput = t_Environment.m_HInput;

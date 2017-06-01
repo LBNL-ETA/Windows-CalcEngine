@@ -55,7 +55,8 @@ namespace Tarcog {
     m_Surface[ Side::Back ] = nullptr;
   }
 
-  CLayerHeatFlow::CLayerHeatFlow( CLayerHeatFlow const & t_Layer ) {
+  CLayerHeatFlow::CLayerHeatFlow( CLayerHeatFlow const & t_Layer ) :
+    CState( t_Layer ) {
     m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
     m_LayerGainFlow = t_Layer.m_LayerGainFlow;
     for(auto aSide : EnumSide() ) {
@@ -169,7 +170,7 @@ namespace Tarcog {
     onCreate();
   }
 
-  CGasLayer::CGasLayer( CGasLayer const & t_Layer ) {
+  CGasLayer::CGasLayer( CGasLayer const & t_Layer ) : CState( t_Layer ) {
     m_Pressure = t_Layer.m_Pressure;
     m_AirSpeed = t_Layer.m_AirSpeed;
     m_AirVerticalDirection = t_Layer.m_AirVerticalDirection;

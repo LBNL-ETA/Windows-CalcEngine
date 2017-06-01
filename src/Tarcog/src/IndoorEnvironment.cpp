@@ -25,7 +25,7 @@ namespace Tarcog {
   }
 
   CIndoorEnvironment::CIndoorEnvironment( CIndoorEnvironment const & t_Indoor ) :
-    CEnvironment( t_Indoor ) {
+    CState( t_Indoor ), CEnvironment( t_Indoor ) {
     m_RoomRadiationTemperature = t_Indoor.m_RoomRadiationTemperature;
   }
 
