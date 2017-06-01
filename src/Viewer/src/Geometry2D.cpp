@@ -230,7 +230,7 @@ namespace Viewer {
 
       // View factor matrix. It is already initialized to zeros
       m_ViewFactors = make_shared< CSquareMatrix >( size );
-      for( auto i = 0; i < size; ++i ) {
+      for( auto i = 0u; i < size; ++i ) {
         for( auto j = i; j < size; ++j ) {
           if( i != j ) {
             auto selfShadowing = ( *m_Segments )[ i ]->selfShadowing( *( *m_Segments )[ j ] );

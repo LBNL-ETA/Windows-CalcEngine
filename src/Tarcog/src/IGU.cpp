@@ -278,7 +278,7 @@ namespace Tarcog {
     }
 
     auto denominator = 0.0;
-    for( auto i = 0; i < getSolidLayers().size(); ++i ) {
+    for( auto i = 0u; i < getSolidLayers().size(); ++i ) {
       auto aDefLayer = CIGUSolidLayerDeflection( *getSolidLayers()[ i ] );
       denominator += aDefLayer.flexuralRigidity();
     }
@@ -295,7 +295,7 @@ namespace Tarcog {
       LDefMax.insert( LDefMax.begin(), LDefNMax );
     }
 
-    for( auto i = 0; i < getNumOfLayers(); ++i ) {
+    for( auto i = 0u; i < getNumOfLayers(); ++i ) {
       LDefNMax = LDefMax[ i ];
       auto LDefNMean = deflectionRatio * LDefNMax;
       auto aLayer = getSolidLayers()[ i ];

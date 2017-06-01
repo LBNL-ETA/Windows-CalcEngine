@@ -184,7 +184,7 @@ namespace FenestrationCommon {
     auto D = make_shared< CSquareMatrix >( m_Size );
     D->copyFrom( *this );
 
-    for( auto k = 0; k <= m_Size - 2; ++k ) {
+    for( auto k = 0u; k <= m_Size - 2; ++k ) {
       for( auto j = k + 1; j <= m_Size - 1; ++j) {
         auto x = ( *D )[ j ][ k ] / ( *D )[ k ][ k ];
         for( auto i = k; i <= m_Size - 1; ++i ) {  
