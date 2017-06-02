@@ -75,18 +75,18 @@ protected:
     // gap layers
 
     // Create coefficients for Air
-    auto AirCon = CIntCoeff( 2.8733e-03, 7.76e-05, 0.0 );
-    auto AirCp = CIntCoeff( 1.002737e+03, 1.2324e-02, 0.0 );
-    auto AirVisc = CIntCoeff( 3.7233e-06, 4.94e-08, 0.0 );
+    CIntCoeff AirCon { 2.8733e-03, 7.76e-05, 0.0 };
+    CIntCoeff AirCp { 1.002737e+03, 1.2324e-02, 0.0 };
+    CIntCoeff AirVisc { 3.7233e-06, 4.94e-08, 0.0 };
 
-    auto AirData = make_shared< CGasData >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
+    CGasData AirData = { "Air", 28.97, 1.4, AirCp, AirCon, AirVisc };
 
     // Create coefficients for Argon
-    auto ArgonCon = CIntCoeff( 2.2848e-03, 5.1486e-05, 0.0 );
-    auto ArgonCp = CIntCoeff( 5.21929e+02, 0.0, 0.0 );
-    auto ArgonVisc = CIntCoeff( 3.3786e-06, 6.4514e-08, 0.0 );
+    CIntCoeff ArgonCon { 2.2848e-03, 5.1486e-05, 0.0 };
+    CIntCoeff ArgonCp { 5.21929e+02, 0.0, 0.0 };
+    CIntCoeff ArgonVisc { 3.3786e-06, 6.4514e-08, 0.0 };
 
-    auto ArgonData = make_shared< CGasData >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
+    CGasData ArgonData { "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc };
 
     auto Air = make_shared< CGasItem >( 0.1, AirData );
     auto Argon = make_shared< CGasItem >( 0.9, ArgonData );

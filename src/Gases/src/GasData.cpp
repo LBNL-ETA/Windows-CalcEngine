@@ -25,16 +25,16 @@ namespace Gases {
     m_Coefficients[ CoeffType::cVisc ] = t_Visc;
   }
 
-  CGasData& CGasData::operator=( const CGasData& t_GasData ) {
-    this->m_gasName = t_GasData.m_gasName;
-    this->m_molWeight = t_GasData.m_molWeight;
-    this->m_specificHeatRatio = t_GasData.m_specificHeatRatio;
+  CGasData& CGasData::operator=( CGasData const & t_GasData ) {
+    m_gasName = t_GasData.m_gasName;
+    m_molWeight = t_GasData.m_molWeight;
+    m_specificHeatRatio = t_GasData.m_specificHeatRatio;
     m_Coefficients = t_GasData.m_Coefficients;
 
     return *this;
   }
 
-  double CGasData::GetPropertyValue( CoeffType const t_Type, double const t_Temperature ) const {
+  double CGasData::getPropertyValue( CoeffType const t_Type, double const t_Temperature ) const {
     return m_Coefficients.at( t_Type ).interpolationValue( t_Temperature );
   }
 
@@ -42,7 +42,7 @@ namespace Gases {
     return m_specificHeatRatio;
   }
 
-  double CGasData::GetMolecularWeight() const {
+  double CGasData::getMolecularWeight() const {
     return m_molWeight;
   }
 

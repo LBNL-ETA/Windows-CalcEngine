@@ -7,8 +7,7 @@
 
 #include "GasProperties.hpp"
 
-namespace Gases
-{
+namespace Gases {
 
   enum class CoeffType;
   class CIntCoeff;
@@ -25,8 +24,8 @@ namespace Gases
         CIntCoeff const & t_Visc );
 
       CGasData& operator=( const CGasData& t_GasData );
-      double GetMolecularWeight() const;
-      double GetPropertyValue( CoeffType const t_Type, double const t_Temperature ) const;
+      double getMolecularWeight() const;
+      double getPropertyValue( CoeffType const t_Type, double const t_Temperature ) const;
       double getSpecificHeatRatio() const;
 
     private:

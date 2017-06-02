@@ -17,7 +17,7 @@ namespace Gases
   public:
     CGasItem();
     CGasItem( CGasItem const & t_GasItem );
-    CGasItem( double aFraction, std::shared_ptr< const CGasData > const& t_GasData );
+    CGasItem( double const aFraction, CGasData const & t_GasData );
     CGasItem& operator=( CGasItem const& t_GasItem );
     void setTemperature( double const t_Temperature );
     void setPressure( double const t_Pressure );
@@ -35,7 +35,7 @@ namespace Gases
     double m_Fraction; // value between 0 and 1
     std::shared_ptr< GasProperties > m_GasProperties;
     std::shared_ptr< GasProperties > m_FractionalGasProperties;
-    std::shared_ptr< const CGasData > m_GasData;
+    std::unique_ptr< CGasData > m_GasData;
   };
 
 }

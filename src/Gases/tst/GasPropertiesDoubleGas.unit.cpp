@@ -19,14 +19,14 @@ protected:
     CIntCoeff AirCp { 1.002737e+03, 1.2324e-02, 0.0 };
     CIntCoeff AirVisc { 3.7233e-06, 4.94e-08, 0.0 };
 
-    std::shared_ptr< CGasData > AirData = std::make_shared< CGasData >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
+    CGasData AirData { "Air", 28.97, 1.4, AirCp, AirCon, AirVisc };
 
     // Create coefficients for Argon
     CIntCoeff ArgonCon { 2.2848e-03, 5.1486e-05, 0.0 };
     CIntCoeff ArgonCp { 5.21929e+02, 0.0, 0.0 };
     CIntCoeff ArgonVisc { 3.3786e-06, 6.4514e-08, 0.0 };
 
-    std::shared_ptr< CGasData > ArgonData = std::make_shared< CGasData >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
+    CGasData ArgonData { "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc };
 
     std::shared_ptr< CGasItem > Air = std::make_shared< CGasItem >( 0.1, AirData );
     std::shared_ptr< CGasItem > Argon = std::make_shared< CGasItem >( 0.9, ArgonData );
