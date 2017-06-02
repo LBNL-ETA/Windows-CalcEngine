@@ -29,13 +29,13 @@ namespace Gases
     std::shared_ptr< GasProperties > getVacuumPressureGasProperties();
 
     double viscTwoGases( GasProperties const & t_Gas1Properties, GasProperties const & t_Gas2Properties ) const;
-    double viscDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 );
+    double viscDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) const;
 
-    double lambdaPrimTwoGases( GasProperties const & t_Gas1Properties, GasProperties const & t_Gas2Properties);
-    double lambdaSecondTwoGases( GasProperties const & t_Gas1Properties, GasProperties const & t_Gas2Properties);
+    double lambdaPrimTwoGases( GasProperties const & t_Gas1Properties, GasProperties const & t_Gas2Properties) const;
+    double lambdaSecondTwoGases( GasProperties const & t_Gas1Properties, GasProperties const & t_Gas2Properties) const;
 
-    double lambdaPrimDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 );
-    double lambdaSecondDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2);
+    double lambdaPrimDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) const;
+    double lambdaSecondDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2) const;
 
     std::vector< std::shared_ptr< CGasItem > > m_GasItem;
     std::shared_ptr< GasProperties > m_SimpleProperties;
