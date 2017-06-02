@@ -10,41 +10,38 @@ using namespace std;
 namespace Gases
 {
 
-  CGas::CGas() : m_SimpleProperties( make_shared< GasProperties > () ), m_Properties( make_shared< GasProperties > () ) {
+  CGas::CGas() : m_SimpleProperties( make_shared<GasProperties>() ), 
+    m_Properties( make_shared< GasProperties >() ), m_Pressure( DefaultPressure ) {
     // create default gas to be Air
-    shared_ptr< CGasItem > Air = make_shared< CGasItem >();
+    auto Air = make_shared< CGasItem >();
     m_GasItem.push_back( Air );
     m_DefaultGas = true;
   }
 
-  CGas::CGas( const CGas& t_Gas ) {
+  CGas::CGas( CGas const & t_Gas ) : 
+    m_GasItem( t_Gas.m_GasItem ), m_SimpleProperties( t_Gas.m_SimpleProperties ),
+    m_Properties( t_Gas.m_Properties ), m_DefaultGas( t_Gas.m_DefaultGas ),
+    m_Pressure( t_Gas.m_Pressure ) {
     m_GasItem.clear();
-    for( shared_ptr< CGasItem > item : t_Gas.m_GasItem ) {
-      shared_ptr< CGasItem > aItem = make_shared< CGasItem >( *item );
-      m_GasItem.push_back( aItem );
+    for (auto item : t_Gas.m_GasItem) {
+      m_GasItem.push_back( make_shared< CGasItem >( *item ) );
     }
-    m_GasItem = t_Gas.m_GasItem;
-    m_SimpleProperties = t_Gas.m_SimpleProperties;
-    m_Properties = t_Gas.m_Properties;
-    m_DefaultGas = t_Gas.m_DefaultGas;
   }
 
   void CGas::addGasItem( const shared_ptr< CGasItem >& t_GasItem ) {
     // Need to remove default since user wants to create their own Gases
-    if ( m_DefaultGas ) {
+    if( m_DefaultGas ) {
       m_GasItem.clear();
       m_DefaultGas = false;
     }
     m_GasItem.push_back( t_GasItem );
   }
 
-  double CGas::totalPercent()
-  {
-    double totalPercent = 0;
+  double CGas::totalPercent() {
+    auto totalPercent = 0.0;
 
-    vector< shared_ptr< CGasItem > >::const_iterator it;
-    for( it = m_GasItem.begin(); it<m_GasItem.end(); ++it ) {
-      totalPercent += (*it)->getFraction();
+    for( auto & it : m_GasItem ) {
+      totalPercent += it->getFraction();
     }
 
     return totalPercent;
@@ -52,7 +49,7 @@ namespace Gases
 
   void CGas::setTemperatureAndPressure( double const t_Temperature, double const t_Pressure ) {
     m_Pressure = t_Pressure;
-    for( auto& item : m_GasItem ) {
+    for( auto & item : m_GasItem ) {
       item->setTemperature( t_Temperature );
       item->setPressure( t_Pressure );
     }
