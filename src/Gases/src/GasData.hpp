@@ -1,7 +1,7 @@
 #ifndef GASDATA_H
 #define GASDATA_H
 
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <string>
 
@@ -33,7 +33,7 @@ namespace Gases
       std::string m_gasName;
       double m_molWeight;
       double m_specificHeatRatio;
-      std::unordered_map< CoeffType, CIntCoeff > m_Coefficients;
+      std::map< CoeffType, CIntCoeff > m_Coefficients;
   };
 
 }
