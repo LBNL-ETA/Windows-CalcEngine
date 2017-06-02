@@ -22,14 +22,14 @@ namespace Gases
     void setTemperature( double const t_Temperature );
     void setPressure( double const t_Pressure );
     double getFraction() const;
-    std::shared_ptr< GasProperties > getFractionalGasProperties();
-    std::shared_ptr< GasProperties > getGasProperties();
+    std::shared_ptr< GasProperties > getFractionalGasProperties() const;
+    std::shared_ptr< GasProperties > getGasProperties() const;
 
   private:
-    void fillStandardPressureProperites();
-    void flllVacuumPressureProperties();
+    void fillStandardPressureProperites() const;
+    void flllVacuumPressureProperties() const;
     void initialize();
-    void resetCalculatedProperties();
+    void resetCalculatedProperties() const;
     double m_Temperature; // unit in Kelvins
     double m_Pressure; // unit in Pa
     double m_Fraction; // value between 0 and 1

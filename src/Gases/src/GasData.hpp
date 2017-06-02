@@ -15,6 +15,7 @@ namespace Gases {
   class CGasData {
     public:
       CGasData();
+      CGasData( CGasData const & t_GasData );
       CGasData(
         std::string const &t_Name,
         double const t_Wght,

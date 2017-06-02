@@ -12,6 +12,10 @@ namespace Gases {
     m_Coefficients[ CoeffType ::cVisc ] = CIntCoeff( 3.7233e-06, 4.94e-08, 0.0 );
   }
 
+  CGasData::CGasData(CGasData const & t_GasData) {
+    *this = t_GasData;
+  }
+
   CGasData::CGasData(
     string const &t_Name, 
     double const t_Wght, 
