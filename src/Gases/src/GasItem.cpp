@@ -89,12 +89,12 @@ namespace Gases {
     m_FractionalGasProperties->m_PropertiesCalculated = false;
   }
 
-  void CGasItem::setTemperature( double t_Temperature ) {
+  void CGasItem::setTemperature( double const t_Temperature ) {
     m_Temperature = t_Temperature;
     resetCalculatedProperties();
   }
 
-  void CGasItem::setPressure( double t_Pressure ) {
+  void CGasItem::setPressure( double const t_Pressure ) {
     m_Pressure = t_Pressure;
     resetCalculatedProperties();
   }

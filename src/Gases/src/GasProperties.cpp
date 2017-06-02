@@ -14,7 +14,9 @@ namespace Gases
 
   }
 
-  double CIntCoeff::interpolationValue( double t_Temperature ) const {
+  CIntCoeff::CIntCoeff() : m_A( 0 ), m_B( 0 ), m_C( 0 ) {}
+
+  double CIntCoeff::interpolationValue( double const t_Temperature ) const {
     return m_A + m_B * t_Temperature + m_C * pow( t_Temperature, 2 );
   }
 

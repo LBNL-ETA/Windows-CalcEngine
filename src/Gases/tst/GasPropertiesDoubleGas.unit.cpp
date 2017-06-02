@@ -15,16 +15,16 @@ protected:
   virtual void SetUp()
   {
     // Create coefficients for Air
-    std::shared_ptr< CIntCoeff > AirCon = std::make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
-    std::shared_ptr< CIntCoeff > AirCp = std::make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
-    std::shared_ptr< CIntCoeff > AirVisc = std::make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
+    CIntCoeff AirCon = CIntCoeff( 2.8733e-03, 7.76e-05, 0.0 );
+    CIntCoeff AirCp = CIntCoeff( 1.002737e+03, 1.2324e-02, 0.0 );
+    CIntCoeff AirVisc = CIntCoeff( 3.7233e-06, 4.94e-08, 0.0 );
 
     std::shared_ptr< CGasData > AirData = std::make_shared< CGasData >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
 
     // Create coefficients for Argon
-    std::shared_ptr< CIntCoeff > ArgonCon = std::make_shared< CIntCoeff >( 2.2848e-03, 5.1486e-05, 0.0 );
-    std::shared_ptr< CIntCoeff > ArgonCp = std::make_shared< CIntCoeff >( 5.21929e+02, 0.0, 0.0 );
-    std::shared_ptr< CIntCoeff > ArgonVisc = std::make_shared< CIntCoeff >( 3.3786e-06, 6.4514e-08, 0.0 );
+    CIntCoeff ArgonCon = CIntCoeff( 2.2848e-03, 5.1486e-05, 0.0 );
+    CIntCoeff ArgonCp = CIntCoeff( 5.21929e+02, 0.0, 0.0 );
+    CIntCoeff ArgonVisc = CIntCoeff( 3.3786e-06, 6.4514e-08, 0.0 );
 
     std::shared_ptr< CGasData > ArgonData = std::make_shared< CGasData >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
 

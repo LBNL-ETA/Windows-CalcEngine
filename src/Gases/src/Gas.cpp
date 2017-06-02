@@ -50,7 +50,7 @@ namespace Gases
     return totalPercent;
   }
 
-  void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
+  void CGas::setTemperatureAndPressure( double const t_Temperature, double const t_Pressure ) {
     m_Pressure = t_Pressure;
     for( auto& item : m_GasItem ) {
       item->setTemperature( t_Temperature );
@@ -214,7 +214,7 @@ namespace Gases
   }
 
   // This implements equation 68 (ISO 15099)
-  double CGas::lambdaSecondTwoGases( const GasProperties& t_Gas1Properties, 
+  double CGas::lambdaSecondTwoGases( GasProperties const & t_Gas1Properties,
     const GasProperties& t_Gas2Properties ) {
 
     if ( ( t_Gas1Properties.getLambdaPrim() == 0 ) || ( t_Gas2Properties.getLambdaPrim() == 0 ) ) {

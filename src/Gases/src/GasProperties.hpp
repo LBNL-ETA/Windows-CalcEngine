@@ -8,8 +8,9 @@ namespace Gases
 
   class CIntCoeff {
   public:
+    CIntCoeff();
     CIntCoeff( double const t_A, double const t_B, double const t_C );
-    double interpolationValue( double t_Temperature ) const;
+    double interpolationValue( double const t_Temperature ) const;
     CIntCoeff& operator=( CIntCoeff const & t_IntCoeff );
   private:
     double m_A;

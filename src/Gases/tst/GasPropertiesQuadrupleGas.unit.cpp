@@ -15,34 +15,34 @@ protected:
   virtual void SetUp()
   {
     // Create coefficients for Air
-    std::shared_ptr< CIntCoeff > AirCon = std::make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
-    std::shared_ptr< CIntCoeff > AirCp = std::make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
-    std::shared_ptr< CIntCoeff > AirVisc = std::make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
+    CIntCoeff AirCon = CIntCoeff( 2.8733e-03, 7.76e-05, 0.0 );
+    CIntCoeff AirCp = CIntCoeff( 1.002737e+03, 1.2324e-02, 0.0 );
+    CIntCoeff AirVisc = CIntCoeff( 3.7233e-06, 4.94e-08, 0.0 );
 
-    std::shared_ptr< CGasData > AirData = std::make_shared< CGasData >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
+    std::shared_ptr< CGasData const > AirData = std::make_shared< CGasData const >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
 
     // Create coefficients for Argon
-    std::shared_ptr< CIntCoeff > ArgonCon = std::make_shared< CIntCoeff >( 2.2848e-03, 5.1486e-05, 0.0 );
-    std::shared_ptr< CIntCoeff > ArgonCp = std::make_shared< CIntCoeff >( 5.21929e+02, 0.0, 0.0 );
-    std::shared_ptr< CIntCoeff > ArgonVisc = std::make_shared< CIntCoeff >( 3.3786e-06, 6.4514e-08, 0.0 );
+    CIntCoeff ArgonCon = CIntCoeff( 2.2848e-03, 5.1486e-05, 0.0 );
+    CIntCoeff ArgonCp = CIntCoeff( 5.21929e+02, 0.0, 0.0 );
+    CIntCoeff ArgonVisc = CIntCoeff( 3.3786e-06, 6.4514e-08, 0.0 );
 
-    std::shared_ptr< CGasData > ArgonData = std::make_shared< CGasData >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
+    std::shared_ptr< CGasData const > ArgonData = std::make_shared< CGasData const >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
 
     // Create coefficients for Krypton
-    std::shared_ptr< CIntCoeff > KryptonCon = std::make_shared< CIntCoeff >( 9.443e-04, 2.8260e-5, 0.0 );
-    std::shared_ptr< CIntCoeff > KryptonCp = std::make_shared< CIntCoeff >( 2.4809e+02, 0.0, 0.0 );
-    std::shared_ptr< CIntCoeff > KryptonVisc = std::make_shared< CIntCoeff >( 2.213e-6, 7.777e-8, 0.0 );
+    CIntCoeff KryptonCon = CIntCoeff( 9.443e-04, 2.8260e-5, 0.0 );
+    CIntCoeff KryptonCp = CIntCoeff( 2.4809e+02, 0.0, 0.0 );
+    CIntCoeff KryptonVisc = CIntCoeff( 2.213e-6, 7.777e-8, 0.0 );
 
-    std::shared_ptr< CGasData > KryptonData = std::make_shared< CGasData >( "Krypton", 83.8, 1.68, KryptonCp, KryptonCon, KryptonVisc );
+    std::shared_ptr< CGasData const > KryptonData = std::make_shared< CGasData const >( "Krypton", 83.8, 1.68, KryptonCp, KryptonCon, KryptonVisc );
 
     // Create coefficients for Xenon
-    std::shared_ptr< CIntCoeff > XenonCon = std::make_shared< CIntCoeff >( 4.538e-04, 1.723e-05, 0.0 );
-    std::shared_ptr< CIntCoeff > XenonCp = std::make_shared< CIntCoeff >( 1.5834e+02, 0.0, 0.0 );
-    std::shared_ptr< CIntCoeff > XenonVisc = std::make_shared< CIntCoeff >( 1.069e-6, 7.414e-8, 0.0 );
+    CIntCoeff XenonCon  = CIntCoeff( 4.538e-04, 1.723e-05, 0.0 );
+    CIntCoeff XenonCp   = CIntCoeff( 1.5834e+02, 0.0, 0.0 );
+    CIntCoeff XenonVisc = CIntCoeff( 1.069e-6, 7.414e-8, 0.0 );
 
-    std::shared_ptr< CGasData > XenonData = std::make_shared< CGasData >( "Xenon", 131.3, 1.66, XenonCp, XenonCon, XenonVisc );
+    std::shared_ptr< CGasData const > XenonData = std::make_shared< CGasData const >( "Xenon", 131.3, 1.66, XenonCp, XenonCon, XenonVisc );
 
-    std::shared_ptr< CGasItem > Air = std::make_shared< CGasItem >( 0.1, AirData );
+    std::shared_ptr< CGasItem > Air   = std::make_shared< CGasItem >( 0.1, AirData );
     std::shared_ptr< CGasItem > Argon = std::make_shared< CGasItem >( 0.3, ArgonData );
     std::shared_ptr< CGasItem > Krypton = std::make_shared< CGasItem >( 0.3, KryptonData );
     std::shared_ptr< CGasItem > Xenon = std::make_shared< CGasItem >( 0.3, XenonData );
