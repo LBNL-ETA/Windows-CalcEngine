@@ -35,8 +35,8 @@ namespace FenestrationCommon {
     std::vector< double > calculateHs() const;
     std::vector< double > calculateDeltas() const;
     std::vector< double > calculateDerivatives() const;
-    double piecewiseCubicDerivative( double const delta_k, double const delta_k_minus_1, double const hk, 
-      double const hk_minus_1 ) const;
+    static double piecewiseCubicDerivative( double const delta_k, double const delta_k_minus_1, double const hk, 
+      double const hk_minus_1 );
     double interpolate( double const h, double const s, double const y_k, double const y_k_plus_one, 
       double const d_k, double const d_k_plus_one ) const;
 

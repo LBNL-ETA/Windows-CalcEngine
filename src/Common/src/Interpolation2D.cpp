@@ -111,21 +111,16 @@ namespace FenestrationCommon {
   }
 
   double CSPChipInterpolation2D::piecewiseCubicDerivative( double const delta_k, double const delta_k_minus_1, 
-    double const hk, double const hk_minus_1 ) const {
+    double const hk, double const hk_minus_1 ) {
     auto res = 0.0;
-    if( ( delta_k == 0 ) || ( delta_k_minus_1 == 0 ) || ( delta_k > 0 && delta_k_minus_1 < 0 ) || 
-      ( delta_k < 0 && delta_k_minus_1 > 0 ) ) {
+    if( delta_k == 0 || delta_k_minus_1 == 0 || delta_k > 0 && delta_k_minus_1 < 0 || 
+        delta_k < 0 && delta_k_minus_1 > 0 ) {
       return 0;
     }
     if( hk == hk_minus_1 ) {
-      //formula is 1/d = 1/2 * (1 / delta_k_minus_1 + 1 / delta_k)
       res = .5 * ( 1 / delta_k_minus_1 + 1 / delta_k );
       res = 1 / res;
     } else {
-      //formula is 
-      //   w1 = 2*hk + h_k_minus_one
-      //   w2 = hk + 2 * h_k_minus_one
-      //   (w1 + w2)/d = (w1 / delta_k_minus_1 + w2 / delta_k)
       auto w1 = 2 * hk + hk_minus_1;
       auto w2 = hk + 2 * hk_minus_1;
       res = ( w1 / delta_k_minus_1 ) + ( w2 / delta_k );
