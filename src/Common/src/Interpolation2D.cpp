@@ -112,7 +112,7 @@ namespace FenestrationCommon {
 
   double CSPChipInterpolation2D::piecewiseCubicDerivative( double const delta_k, double const delta_k_minus_1, 
     double const hk, double const hk_minus_1 ) {
-    auto res;
+    double res;
     if( ( delta_k == 0 ) || ( delta_k_minus_1 == 0 ) || ( delta_k > 0 && delta_k_minus_1 < 0 ) ||
         ( delta_k < 0 && delta_k_minus_1 > 0 ) ) {
       return 0;
