@@ -4,7 +4,6 @@
 
 #include "WCEGases.hpp"
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Gases;
@@ -88,8 +87,8 @@ protected:
 
     CGasData ArgonData { "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc };
 
-    auto Air = make_shared< CGasItem >( 0.1, AirData );
-    auto Argon = make_shared< CGasItem >( 0.9, ArgonData );
+    CGasItem Air { 0.1, AirData };
+    CGasItem Argon { 0.9, ArgonData };
 
     // Create gas mixture
     auto Gas1 = make_shared< CGas >();

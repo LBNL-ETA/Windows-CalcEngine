@@ -5,15 +5,12 @@
 
 using namespace Gases;
 
-class TestGasPropertiesQuadrupleGas : public testing::Test
-{
-
-private:
-  std::shared_ptr< CGas > Gas;
+class TestGasPropertiesQuadrupleGas : public testing::Test {
 
 protected:
-  virtual void SetUp()
-  {
+  CGas m_Gas;
+
+  virtual void SetUp() {
     // Create coefficients for Air
     CIntCoeff AirCon { 2.8733e-03, 7.76e-05, 0.0 };
     CIntCoeff AirCp { 1.002737e+03, 1.2324e-02, 0.0 };
@@ -42,36 +39,24 @@ protected:
 
     CGasData const XenonData { "Xenon", 131.3, 1.66, XenonCp, XenonCon, XenonVisc };
 
-    std::shared_ptr< CGasItem > Air   = std::make_shared< CGasItem >( 0.1, AirData );
-    std::shared_ptr< CGasItem > Argon = std::make_shared< CGasItem >( 0.3, ArgonData );
-    std::shared_ptr< CGasItem > Krypton = std::make_shared< CGasItem >( 0.3, KryptonData );
-    std::shared_ptr< CGasItem > Xenon = std::make_shared< CGasItem >( 0.3, XenonData );
+    CGasItem Air { 0.1, AirData };
+    CGasItem Argon { 0.3, ArgonData };
+    CGasItem Krypton { 0.3, KryptonData };
+    CGasItem Xenon { 0.3, XenonData };
 
-    // Create gas mixture
-    Gas = std::make_shared< CGas >();
-
-    Gas->addGasItem( Air );
-    Gas->addGasItem( Argon );
-    Gas->addGasItem( Krypton );
-    Gas->addGasItem( Xenon );
+    m_Gas.addGasItem( Air );
+    m_Gas.addGasItem( Argon );
+    m_Gas.addGasItem( Krypton );
+    m_Gas.addGasItem( Xenon );
   }
-
-public:
-  std::shared_ptr< CGas > GetGas() { return Gas; };
 
 };
 
-TEST_F( TestGasPropertiesQuadrupleGas, TestSimpleProperties )
-{
+TEST_F( TestGasPropertiesQuadrupleGas, TestSimpleProperties ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (quadruple gas) simple mix - Temperature = 300 [K], Pressure = 101325 [Pa]" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getSimpleGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getSimpleGasProperties();
 
   EXPECT_NEAR( 79.4114, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.24480400E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -82,17 +67,11 @@ TEST_F( TestGasPropertiesQuadrupleGas, TestSimpleProperties )
   EXPECT_NEAR( 0.710622448, aProperties->m_PrandlNumber, 0.0001 );
 }
 
-TEST_F( TestGasPropertiesQuadrupleGas, TestSimplePropertiesRepeat )
-{
+TEST_F( TestGasPropertiesQuadrupleGas, TestSimplePropertiesRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (quadruple gas) simple mix - Temperature = 300 [K], Pressure = 101325 [Pa] (Repeatability)" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getSimpleGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getSimpleGasProperties();
 
   EXPECT_NEAR( 79.4114, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.24480400E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -103,17 +82,11 @@ TEST_F( TestGasPropertiesQuadrupleGas, TestSimplePropertiesRepeat )
   EXPECT_NEAR( 0.710622448, aProperties->m_PrandlNumber, 0.0001 );
 }
 
-TEST_F( TestGasPropertiesQuadrupleGas, TestRealProperties )
-{
+TEST_F( TestGasPropertiesQuadrupleGas, TestRealProperties ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], Pressure = 101325 [Pa]" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 79.4114, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.108977555E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -124,17 +97,11 @@ TEST_F( TestGasPropertiesQuadrupleGas, TestRealProperties )
   EXPECT_NEAR( 0.592921334, aProperties->m_PrandlNumber, 0.0001 );
 }
 
-TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesRepeat )
-{
+TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], Pressure = 101325 [Pa] (Repeatability)" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 79.4114, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.108977555E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -145,17 +112,11 @@ TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesRepeat )
   EXPECT_NEAR( 0.592921334, aProperties->m_PrandlNumber, 0.0001 );
 }
 
-TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressure )
-{
+TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressure ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], Pressure = 90,000 [Pa]" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 90000 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 90000 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 79.4114, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.108977555E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -166,17 +127,11 @@ TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressure )
   EXPECT_NEAR( 0.592921334, aProperties->m_PrandlNumber, 0.0001 );
 }
 
-TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressureRepeat )
-{
+TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressureRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], Pressure = 90,000 [Pa] (Repeatability)" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 90000 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 90000 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 79.4114, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.108977555E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -187,15 +142,10 @@ TEST_F( TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressureRepeat )
   EXPECT_NEAR( 0.592921334, aProperties->m_PrandlNumber, 0.0001 );
 }
 
-TEST_F(TestGasPropertiesQuadrupleGas, TotalPercents)
-{
+TEST_F(TestGasPropertiesQuadrupleGas, TotalPercents) {
   SCOPED_TRACE( "Begin Test: Gas Properties (quadruple gas) - Total percents." );
 
-  std::shared_ptr< CGas > aGas;
-
-  aGas = GetGas();
-
-  double percents = aGas->totalPercent();
+  double percents = m_Gas.totalPercent();
 
   ASSERT_EQ( 1.0, percents );
 }

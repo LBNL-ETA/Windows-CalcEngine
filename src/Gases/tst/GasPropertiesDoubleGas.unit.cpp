@@ -5,15 +5,12 @@
 
 using namespace Gases;
 
-class TestGasPropertiesDoubleGas : public testing::Test
-{
-
-private:
-  std::shared_ptr< CGas > Gas;
+class TestGasPropertiesDoubleGas : public testing::Test {
 
 protected:
-  virtual void SetUp()
-  {
+  CGas m_Gas;
+
+  virtual void SetUp() {
     // Create coefficients for Air
     CIntCoeff AirCon { 2.8733e-03, 7.76e-05, 0.0 };
     CIntCoeff AirCp { 1.002737e+03, 1.2324e-02, 0.0 };
@@ -28,33 +25,21 @@ protected:
 
     CGasData ArgonData { "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc };
 
-    std::shared_ptr< CGasItem > Air = std::make_shared< CGasItem >( 0.1, AirData );
-    std::shared_ptr< CGasItem > Argon = std::make_shared< CGasItem >( 0.9, ArgonData );
+    CGasItem Air { 0.1, AirData };
+    CGasItem Argon { 0.9, ArgonData };
 
-    // Create gas mixture
-    Gas = std::make_shared< CGas >();
-
-    Gas->addGasItem( Air );
-    Gas->addGasItem( Argon );
+    m_Gas.addGasItem( Air );
+    m_Gas.addGasItem( Argon );
 
   }
 
-public:
-  std::shared_ptr< CGas > GetGas() { return Gas; };
-
 };
 
-TEST_F( TestGasPropertiesDoubleGas, TestSimpleProperties )
-{
+TEST_F( TestGasPropertiesDoubleGas, TestSimpleProperties ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air 10% / Argon 90%) simple mix - Temperature = 300 [K], Pressure = 101325 [Pa]" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getSimpleGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getSimpleGasProperties();
 
   EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.85728700E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -66,17 +51,11 @@ TEST_F( TestGasPropertiesDoubleGas, TestSimpleProperties )
 
 }
 
-TEST_F( TestGasPropertiesDoubleGas, TestSimplePropertiesRepeat )
-{
+TEST_F( TestGasPropertiesDoubleGas, TestSimplePropertiesRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air 10% / Argon 90%) simple mix - Temperature = 300 [K], Pressure = 101325 [Pa] (Repeatability)" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getSimpleGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getSimpleGasProperties();
 
   EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.85728700E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -88,17 +67,11 @@ TEST_F( TestGasPropertiesDoubleGas, TestSimplePropertiesRepeat )
 
 }
 
-TEST_F( TestGasPropertiesDoubleGas, TestRealProperties )
-{
+TEST_F( TestGasPropertiesDoubleGas, TestRealProperties ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air 10% / Argon 90%) real mix - Temperature = 300 [K], Pressure = 101325 [Pa]" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -110,17 +83,11 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealProperties )
 
 }
 
-TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesRepeat )
-{
+TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air 10% / Argon 90%) real mix - Temperature = 300 [K], Pressure = 101325 [Pa] (Repeatability)" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 101325 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 101325 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -132,17 +99,11 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesRepeat )
 
 }
 
-TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressure )
-{
+TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressure ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air 10% / Argon 90%) real mix - Temperature = 300 [K], Pressure = 90,000 [Pa]" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 90000 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 90000 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -154,17 +115,11 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressure )
 
 }
 
-TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressureRepeat )
-{
+TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressureRepeat ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air 10% / Argon 90%) real mix - Temperature = 300 [K], Pressure = 90,000 [Pa] (Repeatability)" );
-  
-  std::shared_ptr< GasProperties > aProperties;
-  std::shared_ptr< CGas > aGas;
-  
-  aGas = GetGas();
 
-  aGas->setTemperatureAndPressure( 300, 90000 );
-  aProperties = aGas->getGasProperties();
+  m_Gas.setTemperatureAndPressure( 300, 90000 );
+  auto aProperties = m_Gas.getGasProperties();
 
   EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
   EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
@@ -176,15 +131,10 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressureRepeat )
 
 }
 
-TEST_F( TestGasPropertiesDoubleGas, TotalPercents )
-{
+TEST_F( TestGasPropertiesDoubleGas, TotalPercents ) {
   SCOPED_TRACE( "Begin Test: Gas Properties (Air 10% / Argon 90%) - Total percents." );
 
-  std::shared_ptr< CGas > aGas;
-
-  aGas = GetGas();
-
-  double percents = aGas->totalPercent();
+  double percents = m_Gas.totalPercent();
 
   ASSERT_EQ( 1.0, percents );
 }

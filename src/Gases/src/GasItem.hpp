@@ -24,6 +24,8 @@ namespace Gases
     double getFraction() const;
     std::shared_ptr< GasProperties > getFractionalGasProperties() const;
     std::shared_ptr< GasProperties > getGasProperties() const;
+    bool operator==( CGasItem const &rhs ) const;
+    bool operator!=( CGasItem const &rhs ) const;
 
   private:
     void fillStandardPressureProperites() const;

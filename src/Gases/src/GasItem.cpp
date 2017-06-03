@@ -132,4 +132,17 @@ namespace Gases {
     return m_FractionalGasProperties;
   }
 
+  bool CGasItem::operator==( CGasItem const &rhs ) const {
+    return m_Temperature == rhs.m_Temperature &&
+           m_Pressure == rhs.m_Pressure &&
+           m_Fraction == rhs.m_Fraction &&
+           m_GasProperties == rhs.m_GasProperties &&
+           m_FractionalGasProperties == rhs.m_FractionalGasProperties &&
+           m_GasData == rhs.m_GasData;
+  }
+
+  bool CGasItem::operator!=( CGasItem const &rhs ) const {
+    return !( rhs == *this );
+  }
+
 }

@@ -15,13 +15,15 @@ namespace Gases
   public:
     CGas();
     CGas( const CGas& t_Gas );
-    void addGasItem( std::shared_ptr< CGasItem > const & t_GasItem );
+    void addGasItem( CGasItem  const & t_GasItem );
     double totalPercent();
     std::shared_ptr< GasProperties > getSimpleGasProperties();
     std::shared_ptr< GasProperties > getGasProperties();
     void setTemperatureAndPressure( double const t_Temperature, double const t_Pressure );
 
     CGas& operator=( CGas const & t_Gas );
+    bool operator==( CGas const & t_Gas ) const;
+    bool operator!=( CGas const & t_Gas ) const;
 
   private:
 
@@ -37,7 +39,7 @@ namespace Gases
     double lambdaPrimDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) const;
     double lambdaSecondDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2) const;
 
-    std::vector< std::shared_ptr< CGasItem > > m_GasItem;
+    std::vector< CGasItem > m_GasItem;
     std::shared_ptr< GasProperties > m_SimpleProperties;
     std::shared_ptr< GasProperties > m_Properties;
 
