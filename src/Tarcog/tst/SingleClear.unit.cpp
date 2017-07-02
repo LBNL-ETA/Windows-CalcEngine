@@ -15,16 +15,16 @@ private:
   shared_ptr< CSystem >  m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 300; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 270; // Kelvins
-    double solarRadiation = 789;
+    auto airTemperature = 300.0; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 270.0; // Kelvins
+    auto solarRadiation = 789.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
@@ -36,24 +36,23 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
     shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness = 0.003048; // [m]
-    double solidLayerConductance = 1;
+    auto solidLayerThickness = 0.003048; // [m]
+    auto solidLayerConductance = 1.0;
 
-    shared_ptr< CIGUSolidLayer > aSolidLayer =
-      make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    auto aSolidLayer = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( aSolidLayer != nullptr );
     aSolidLayer->setSolarAbsorptance( 0.094189159572 );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer );
 
@@ -62,25 +61,23 @@ protected:
     /////////////////////////////////////////////////////////
     m_TarcogSystem = make_shared< CSystem >( aIGU, Indoor, Outdoor );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
-
-    // m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSystem > GetSystem() const { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestSingleClear, Test1 ) {
   SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
 
-  shared_ptr< CSystem > aSystem = GetSystem();
+  auto aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
   /////////////////////////////////////////////////////////////////////////
   //  U-value run
   /////////////////////////////////////////////////////////////////////////
-  vector< double > Temperature = *aSystem->getTemperatures( System::Uvalue );
+  auto Temperature = *aSystem->getTemperatures( System::Uvalue );
   vector< double > correctTemperature = { 297.207035, 297.14470 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
@@ -88,7 +85,7 @@ TEST_F( TestSingleClear, Test1 ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
-  vector< double > Radiosity = *aSystem->getRadiosities( System::Uvalue );
+  auto Radiosity = *aSystem->getRadiosities( System::Uvalue );
   vector< double > correctRadiosity = { 432.444546, 439.201749 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
@@ -96,7 +93,7 @@ TEST_F( TestSingleClear, Test1 ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 
-  size_t numOfIterations = aSystem->getNumberOfIterations( System::Uvalue );
+  auto numOfIterations = aSystem->getNumberOfIterations( System::Uvalue );
   EXPECT_EQ( 19u, numOfIterations );
 
   /////////////////////////////////////////////////////////////////////////
@@ -124,7 +121,7 @@ TEST_F( TestSingleClear, Test1 ) {
   /////////////////////////////////////////////////////////////////////////
   //  Heat flows
   /////////////////////////////////////////////////////////////////////////
-  double heatFlow = aSystem->getHeatFlow( System::Uvalue, Environment::Indoor );
+  auto heatFlow = aSystem->getHeatFlow( System::Uvalue, Environment::Indoor );
   EXPECT_NEAR( heatFlow, -20.450949, 1e-5 );
 
   heatFlow = aSystem->getHeatFlow( System::Uvalue, Environment::Outdoor );
@@ -139,9 +136,9 @@ TEST_F( TestSingleClear, Test1 ) {
   /////////////////////////////////////////////////////////////////////////
   //  System properties
   /////////////////////////////////////////////////////////////////////////
-  double UValue = aSystem->getUValue();
+  auto UValue = aSystem->getUValue();
   EXPECT_NEAR( UValue, 5.493806, 1e-5 );
 
-  double SHGC = aSystem->getSHGC( 0.831249 );
+  auto SHGC = aSystem->getSHGC( 0.831249 );
   EXPECT_NEAR( SHGC, 0.850291, 1e-5 );
 }

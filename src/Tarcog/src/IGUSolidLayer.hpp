@@ -15,16 +15,16 @@ namespace Tarcog {
   class CIGUSolidLayer : public CBaseIGULayer {
   public:
     CIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
-      std::shared_ptr< ISurface > t_FrontSurface = nullptr, 
-      std::shared_ptr< ISurface > t_BackSurface = nullptr );
+      std::shared_ptr< ISurface > const & t_FrontSurface = nullptr, 
+      std::shared_ptr< ISurface > const & t_BackSurface = nullptr );
 
     CIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
       double const t_FrontEmissivity, double const t_FrontIRTransmittance,
       double const t_BackEmissivity, double const t_BackIRTransmittance );
 
-    CIGUSolidLayer( const CIGUSolidLayer& t_Layer );
+    CIGUSolidLayer( CIGUSolidLayer const & t_Layer );
 
-    void connectToBackSide( const std::shared_ptr< CBaseLayer >& t_Layer );
+    void connectToBackSide( std::shared_ptr< CBaseLayer > const & t_Layer ) override;
 
     double getConductivity() const;
 
@@ -32,10 +32,10 @@ namespace Tarcog {
     void setSolarRadiation( double const t_SolarRadiation );
     void setSolarAbsorptance( double const t_SolarAbsorptance );
 
-    virtual std::shared_ptr< CBaseLayer > clone() const;
+    std::shared_ptr< CBaseLayer > clone() const override;
 
   protected:
-    virtual void calculateConvectionOrConductionFlow();
+    void calculateConvectionOrConductionFlow() override;
 
   private:
     void setSurfaceState( double const t_Temperature, double const t_J, 

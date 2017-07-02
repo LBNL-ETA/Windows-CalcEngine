@@ -17,13 +17,14 @@ namespace SpectralAveraging {
   // Measured sample data for given wavelengths.
   class CSpectralSampleData {
   public:
+    virtual ~CSpectralSampleData() = default;
     CSpectralSampleData();
 
-    void addRecord( double t_Wavelength, double t_Transmittance, double t_ReflectanceFront, 
-      double t_ReflectanceBack );
+    void addRecord( double const t_Wavelength, double const t_Transmittance, double const t_ReflectanceFront, 
+      double const t_ReflectanceBack );
     std::shared_ptr< FenestrationCommon::CSeries > properties( SampleData t_Property );
-    virtual std::shared_ptr< std::vector< double > > getWavelengths();
-    void interpolate( const std::vector< double >& t_Wavelengths );
+    virtual std::shared_ptr< std::vector< double > > getWavelengths() const;
+    virtual void interpolate( std::vector< double > const & t_Wavelengths );
 
     bool Flipped() const;
     virtual void Filpped( bool const t_Flipped );

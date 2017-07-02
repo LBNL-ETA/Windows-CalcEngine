@@ -30,11 +30,11 @@ namespace Tarcog {
     return m_PreviousNode;
   }
 
-  void CLayerNode::connectToBackSide( const shared_ptr< CLayerNode >& t_Node ) {
+  void CLayerNode::connectToBackSide( shared_ptr< CLayerNode > const & t_Node ) {
     m_PreviousNode = t_Node->m_NextNode;
   }
 
-  void CLayerNode::connectToFrontSide( const shared_ptr< CLayerNode >& t_Node ) {
+  void CLayerNode::connectToFrontSide( shared_ptr< CLayerNode > const & t_Node ) {
     m_NextNode = t_Node->m_PreviousNode;
   }
 
@@ -46,8 +46,8 @@ namespace Tarcog {
 
   CLayerNodes::~CLayerNodes() {}
 
-  void CLayerNodes::addToFront( const shared_ptr< CLayerNode >& t_Node ) {
-    shared_ptr< CLayerNode > aNode = m_Layers.front();
+  void CLayerNodes::addToFront( shared_ptr< CLayerNode > const & t_Node ) {
+    auto aNode = m_Layers.front();
     m_Layers.push_front( t_Node );
     if( aNode != nullptr ) {
       aNode->connectToFrontSide( t_Node );
@@ -55,8 +55,8 @@ namespace Tarcog {
     }
   }
 
-  void CLayerNodes::addToBack( const shared_ptr< CLayerNode >& t_Node ) {
-    shared_ptr< CLayerNode > aNode = m_Layers.front();
+  void CLayerNodes::addToBack( shared_ptr< CLayerNode > const & t_Node ) {
+    auto aNode = m_Layers.front();
     m_Layers.push_back( t_Node );
     if( aNode != nullptr ) {
       aNode->connectToBackSide( t_Node );
@@ -65,7 +65,7 @@ namespace Tarcog {
   }
 
   void CLayerNodes::tearDownConnections() {
-    for( shared_ptr< CLayerNode > layer : m_Layers  ) {
+    for( auto & layer : m_Layers  ) {
       layer->tearDownConnections();
     }
   }
@@ -78,7 +78,7 @@ namespace Tarcog {
   //      CThermalNode
   //////////////////////////////////////////////////////////////////////////
 
-  CThermalNode::CThermalNode( const shared_ptr< CBaseLayer >& t_HeatFlowLayer ) :
+  CThermalNode::CThermalNode( shared_ptr< CBaseLayer > const & t_HeatFlowLayer ) :
     m_HeatFlowLayer( t_HeatFlowLayer ) {
 
   }
@@ -87,7 +87,7 @@ namespace Tarcog {
     return m_HeatFlowLayer;
   }
 
-  void CThermalNode::setHeatFlowLayer( const shared_ptr< CBaseLayer >& t_Layer ) {
+  void CThermalNode::setHeatFlowLayer( shared_ptr< CBaseLayer > const & t_Layer ) {
     m_HeatFlowLayer = t_Layer;
   }
 

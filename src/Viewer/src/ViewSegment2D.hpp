@@ -18,14 +18,17 @@ namespace Viewer {
 
     std::shared_ptr< const CViewSegment2D > getNormal();
 
+    bool operator==( CViewSegment2D const & rhs) const;
+    bool operator!=( CViewSegment2D const & rhs) const;
+
     // Calculates view factor coefficient. It needs to be divided by segment length to get real view factor.
-    double viewFactorCoefficient( std::shared_ptr< const CSegment2D > t_Segment ) const;
+    double viewFactorCoefficient( CSegment2D const & t_Segment ) const;
 
     // Self shadowing between two segments
-    Shadowing selfShadowing( std::shared_ptr< const CViewSegment2D > t_Segment ) const;
+    Shadowing selfShadowing( CViewSegment2D const & t_Segment ) const;
 
     // To determine position from the perspective of the segment
-    PointPosition position( std::shared_ptr< const CPoint2D > t_Point ) const;
+    PointPosition position( CPoint2D const & t_Point ) const;
 
     // Divide segment into number of subsegments
     std::shared_ptr< std::vector < std::shared_ptr< CViewSegment2D > > > 
@@ -36,7 +39,7 @@ namespace Viewer {
 
   private:
     // How much segment is self shadowed (No, Partial, Total)
-    Shadowing isInSelfShadow( std::shared_ptr< const CViewSegment2D > t_Segment ) const;
+    Shadowing isInSelfShadow( CViewSegment2D const & t_Segment ) const;
 
     void calculateNormal();
 

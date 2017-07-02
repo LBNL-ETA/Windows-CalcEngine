@@ -15,16 +15,16 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {    
+  void SetUp() override {    
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 255.15; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 255.15; // Kelvins
-    double solarRadiation = 0;
+    auto airTemperature = 255.15; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 255.15; // Kelvins
+    auto solarRadiation = 0.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
@@ -36,7 +36,7 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
 
     shared_ptr< CEnvironment > Indoor = 
       make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
@@ -45,11 +45,11 @@ protected:
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness = 0.004; // [m]
-    double solidLayerConductance = 1;
-    double TransmittanceIR = 0;
-    double emissivityFrontIR = 0.84;
-    double emissivityBackIR = 0.036749500781;
+    auto solidLayerThickness = 0.004; // [m]
+    auto solidLayerConductance = 1.0;
+    auto TransmittanceIR = 0.0;
+    auto emissivityFrontIR = 0.84;
+    auto emissivityBackIR = 0.036749500781;
 
     shared_ptr< CBaseIGULayer > aSolidLayer1 = 
       make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance,
@@ -62,22 +62,22 @@ protected:
       make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance,
         emissivityFrontIR, TransmittanceIR, emissivityBackIR, TransmittanceIR );
 
-    double gapThickness = 0.0001;
-    double gapPressure = 0.1333;
-    CIGUGapLayer aGapLayer = CIGUGapLayer( gapThickness, gapPressure );
+    auto gapThickness = 0.0001;
+    auto gapPressure = 0.1333;
+    auto aGapLayer = CIGUGapLayer( gapThickness, gapPressure );
 
     // Add support pillars
-    double pillarConductivity = 999;
-    double pillarSpacing = 0.03;
-    double pillarRadius = 0.0002;
+    auto pillarConductivity = 999.0;
+    auto pillarSpacing = 0.03;
+    auto pillarRadius = 0.0002;
     shared_ptr< CBaseIGULayer > m_GapLayer = make_shared< CCircularPillar >( aGapLayer, 
       pillarConductivity, pillarSpacing, pillarRadius );
 
     ASSERT_TRUE( m_GapLayer != nullptr );
 
-    double windowWidth = 1; //[m]
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0; //[m]
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer1 );
     aIGU->addLayer( m_GapLayer );
@@ -93,18 +93,18 @@ protected:
   }
 
 public:
-  shared_ptr< CSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSingleSystem > GetSystem() const { return m_TarcogSystem; };
 
 };
 
 TEST_F( DoubleLowEVacuumCircularPillar, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Low-E - vacuum with circular pillar support" );
-  
-  shared_ptr< CSingleSystem > aSystem = GetSystem();
+
+  auto aSystem = GetSystem();
   
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< double > Temperature = *aSystem->getTemperatures();
+  auto Temperature = *aSystem->getTemperatures();
   vector< double > correctTemperature = { 255.997063, 256.095933, 290.398479, 290.496419 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
@@ -112,7 +112,7 @@ TEST_F( DoubleLowEVacuumCircularPillar, Test1 ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
-  vector< double > Radiosity = *aSystem->getRadiosities();
+  auto Radiosity = *aSystem->getRadiosities();
   vector< double > correctRadiosity = { 242.987484, 396.293176, 402.108090, 407.071738 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
@@ -120,6 +120,6 @@ TEST_F( DoubleLowEVacuumCircularPillar, Test1 ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
   }
 
-  size_t numOfIter = aSystem->getNumberOfIterations();
+  auto numOfIter = aSystem->getNumberOfIterations();
   EXPECT_EQ( 21u, numOfIter );
 }

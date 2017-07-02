@@ -25,11 +25,12 @@ namespace SpectralAveraging {
   // Concrete sample data are handled in inherited classes and tha will depend on type of the sample data
   class CSample {
   public:
-    explicit CSample( const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
+    virtual ~CSample() = default;
+    explicit CSample( std::shared_ptr< FenestrationCommon::CSeries > const & t_SourceData );
     CSample();
 
     // Assigns detector and wavelengths from other sample. 
-    void assignDetectorAndWavelengths( const std::shared_ptr< CSample >& t_Sample );
+    void assignDetectorAndWavelengths( std::shared_ptr< CSample > const & t_Sample );
 
     // Gets source data. In case wavelengths are referenced to detector or custom 
     // wavelength set, it will perform interpolation according to desired settings.
@@ -37,25 +38,25 @@ namespace SpectralAveraging {
     void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     // Setting detector spectral properties for the sample
-    void setDetectorData( const std::shared_ptr< FenestrationCommon::CSeries >& t_DetectorData );
+    void setDetectorData( std::shared_ptr< FenestrationCommon::CSeries > const & t_DetectorData );
 
     // Integrate sample property over the certain spectrum range
-    double getProperty( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side );
+    double getProperty( double const minLambda, double const maxLambda, 
+      FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
 
     // Spectral properties over the wavelength range
     std::shared_ptr< FenestrationCommon::CSeries > getEnergyProperties( 
-      const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side );
+      FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
 
     // Defining the source of wavelengths to be used with the sample. Wavelengths can be used from measured sample,
     // detector data or can be custom provided.
-    void setWavelengths( WavelengthSet t_WavelengthSet, 
-      const std::shared_ptr< std::vector< double > >& t_Wavelenghts = nullptr );
+    void setWavelengths( WavelengthSet const t_WavelengthSet, 
+      std::shared_ptr< std::vector< double > > const & t_Wavelenghts = nullptr );
 
     // For given incoming source and detector data, calculates energy (Transmitted, Reflected or Absorbed) for given
     // spectrum range.
-    double getEnergy( const double minLambda, const double maxLambda, 
-      const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side );
+    double getEnergy( double const minLambda, double const maxLambda, 
+      FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
 
     size_t getBandSize() const;
 
@@ -65,7 +66,7 @@ namespace SpectralAveraging {
     virtual void calculateProperties() = 0;
 
     // It can be single or multiple samples. In any case this should be seen as single set of wavelengts
-    virtual std::shared_ptr< std::vector< double > > getWavelengthsFromSample() = 0;
+    virtual std::shared_ptr< std::vector< double > > getWavelengthsFromSample() const = 0;
 
     std::shared_ptr< FenestrationCommon::CSeries > m_SourceData;
     std::shared_ptr< FenestrationCommon::CSeries > m_DetectorData;
@@ -88,9 +89,9 @@ namespace SpectralAveraging {
 
   class CSpectralSample : public CSample {
   public:
-    CSpectralSample( const std::shared_ptr< CSpectralSampleData >& t_SampleData, 
-      const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
-    CSpectralSample( const std::shared_ptr< CSpectralSampleData >& t_SampleData );
+    CSpectralSample( std::shared_ptr< CSpectralSampleData > const & t_SampleData, 
+      std::shared_ptr< FenestrationCommon::CSeries > const & t_SourceData );
+    explicit CSpectralSample( std::shared_ptr< CSpectralSampleData > const & t_SampleData );
 
     // Before retreiving measured data from sample, function will do all necessary 
     // interpolations to desired wavelengths.
@@ -98,13 +99,13 @@ namespace SpectralAveraging {
 
     // Returns property at each wavelength
     std::shared_ptr< FenestrationCommon::CSeries > getWavelengthsProperty( 
-      const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side );
+      FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
 
-    std::shared_ptr< std::vector< double > > getWavelengthsFromSample();
+    std::shared_ptr< std::vector< double > > getWavelengthsFromSample() const override;
 
   protected:
-    virtual void calculateProperties();
-    void calculateState();
+    void calculateProperties() override;
+    void calculateState() override;
     
     std::shared_ptr< CSpectralSampleData > m_SampleData;
 
@@ -118,7 +119,7 @@ namespace SpectralAveraging {
   class CSpectralAngleSample {
 	  // Data for spectral sample under certain angle
 	  public:
-	  CSpectralAngleSample( const std::shared_ptr< CSpectralSample >& t_Sample, const double t_Angle );
+	  CSpectralAngleSample( std::shared_ptr< CSpectralSample > const & t_Sample, double const t_Angle );
 
 	  double angle( ) const;
 	  std::shared_ptr< CSpectralSample > sample( ) const;

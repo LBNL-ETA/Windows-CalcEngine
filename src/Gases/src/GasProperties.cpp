@@ -9,18 +9,21 @@ namespace Gases
   ///////////////////////////////////////////////////////////////////////////////////////////
   ///  IntCoeff
   ///////////////////////////////////////////////////////////////////////////////////////////
-  CIntCoeff::CIntCoeff( double t_A, double t_B, double t_C ) : m_A( t_A ), m_B( t_B ), m_C( t_C ) {
+  CIntCoeff::CIntCoeff( double const t_A, double const t_B, double const t_C) :
+      m_A( t_A ), m_B( t_B ), m_C( t_C ) {
 
   }
 
-  double CIntCoeff::interpolationValue( double t_Temperature ) const {
+  CIntCoeff::CIntCoeff() : m_A( 0 ), m_B( 0 ), m_C( 0 ) {}
+
+  double CIntCoeff::interpolationValue( double const t_Temperature ) const {
     return m_A + m_B * t_Temperature + m_C * pow( t_Temperature, 2 );
   }
 
-  CIntCoeff& CIntCoeff::operator=(const CIntCoeff& t_IntCoeff) {
-    this->m_A = t_IntCoeff.m_A;
-    this->m_B = t_IntCoeff.m_B;
-    this->m_C = t_IntCoeff.m_C;
+  CIntCoeff& CIntCoeff::operator=( CIntCoeff const & t_IntCoeff ) {
+    m_A = t_IntCoeff.m_A;
+    m_B = t_IntCoeff.m_B;
+    m_C = t_IntCoeff.m_C;
 
     return *this;
   }
@@ -28,7 +31,7 @@ namespace Gases
   ////////////////////////////////////////////////////////////////////////////////////////////
   //   GasProperties
   ////////////////////////////////////////////////////////////////////////////////////////////
-  GasProperties& GasProperties::operator+( const GasProperties& t_A ) {
+  GasProperties& GasProperties::operator+( GasProperties const & t_A ) {
     m_ThermalConductivity += t_A.m_ThermalConductivity;
     m_Viscosity += t_A.m_Viscosity;
     m_SpecificHeat += t_A.m_SpecificHeat;
@@ -49,12 +52,12 @@ namespace Gases
     return m_ThermalConductivity - getLambdaPrim();
   }
   
-  GasProperties& GasProperties::operator+=( const GasProperties& t_A ) {
+  GasProperties& GasProperties::operator+=( GasProperties const & t_A ) {
     *this = *this + t_A;
     return *this;
   }
 
-  GasProperties & GasProperties::operator=( const GasProperties & t_A ) {
+  GasProperties & GasProperties::operator=( GasProperties const & t_A ) {
     m_ThermalConductivity = t_A.m_ThermalConductivity;
     m_Viscosity = t_A.m_Viscosity;
     m_SpecificHeat = t_A.m_SpecificHeat;

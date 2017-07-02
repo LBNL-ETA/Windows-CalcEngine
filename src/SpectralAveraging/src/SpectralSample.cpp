@@ -14,19 +14,19 @@ namespace SpectralAveraging {
   ////  CSample
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSample::CSample( const shared_ptr< CSeries >& t_SourceData ) : m_SourceData( t_SourceData ),
+  CSample::CSample( shared_ptr< CSeries > const & t_SourceData ) : m_SourceData( t_SourceData ),
     m_WavelengthSet( WavelengthSet::Data ), m_IntegrationType( IntegrationType::Trapezoidal ),
     m_StateCalculated( false ) {
     m_DetectorData = nullptr;
     m_Wavelengths = nullptr;
-    reset();
+    CSample::reset();
   }
 
   CSample::CSample() : m_SourceData( nullptr ), m_WavelengthSet( WavelengthSet::Data ), 
     m_IntegrationType( IntegrationType::Trapezoidal ), m_StateCalculated( false ) {
     m_DetectorData = nullptr;
     m_Wavelengths = nullptr;
-    reset();
+    CSample::reset();
   }
 
   shared_ptr< CSeries > CSample::getSourceData() {
@@ -39,19 +39,19 @@ namespace SpectralAveraging {
     reset();
   }
 
-  void CSample::setDetectorData( const shared_ptr< CSeries >& t_DetectorData ) {
+  void CSample::setDetectorData( shared_ptr< CSeries > const & t_DetectorData ) {
     m_DetectorData = t_DetectorData;
     reset();
   }
 
-  void CSample::assignDetectorAndWavelengths( const shared_ptr< CSample >& t_Sample ) {
+  void CSample::assignDetectorAndWavelengths( shared_ptr< CSample > const & t_Sample ) {
     m_DetectorData = t_Sample->m_DetectorData;
     m_Wavelengths = t_Sample->m_Wavelengths;
     m_WavelengthSet = t_Sample->m_WavelengthSet;
   }
 
-  void CSample::setWavelengths( WavelengthSet t_WavelengthSet, 
-    const shared_ptr< vector< double > >& t_Wavelenghts ) {
+  void CSample::setWavelengths( WavelengthSet const t_WavelengthSet, 
+    shared_ptr< vector< double > > const & t_Wavelenghts ) {
     m_WavelengthSet = t_WavelengthSet;
     switch ( t_WavelengthSet ) {
     case WavelengthSet::Custom:
@@ -76,9 +76,10 @@ namespace SpectralAveraging {
     reset();
   }
 
-  double CSample::getEnergy( const double minLambda, const double maxLambda, const Property t_Property, const Side t_Side ) {
+  double CSample::getEnergy( double const minLambda, double const maxLambda, Property const t_Property, 
+    Side const t_Side ) {
     calculateState();
-    double Energy = 0;
+    auto Energy = 0.0;
     switch ( t_Property ) {
     case Property::T:
       Energy = m_TransmittedSource->sum( minLambda, maxLambda );
@@ -117,10 +118,11 @@ namespace SpectralAveraging {
     return Energy;
   }
 
-  double CSample::getProperty( const double minLambda, const double maxLambda, const Property t_Property, const Side t_Side ) {
+  double CSample::getProperty( double const minLambda, double const maxLambda, Property const t_Property, 
+    Side const t_Side ) {
     calculateState();
-    double Prop = 0;
-    double incomingEnergy = 0;
+    auto Prop = 0.0;
+    auto incomingEnergy = 0.0;
     // Incoming energy can be calculated only if user has defined incoming source.
     // Otherwise just assume zero property.
     if( m_IncomingSource != nullptr ) {
@@ -166,7 +168,7 @@ namespace SpectralAveraging {
     return Prop;
   }
 
-  shared_ptr< CSeries > CSample::getEnergyProperties( const Property t_Property, const Side t_Side ) {
+  shared_ptr< CSeries > CSample::getEnergyProperties( Property const t_Property, Side const t_Side ) {
     calculateState();
 
     shared_ptr< CSeries > aProperty = nullptr;
@@ -240,7 +242,7 @@ namespace SpectralAveraging {
 
 
         if( m_DetectorData != nullptr ) {
-          CSeries interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
+          auto interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
           m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
         }
 
@@ -262,8 +264,8 @@ namespace SpectralAveraging {
   ////  CSpectralSample
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSpectralSample::CSpectralSample( const shared_ptr< CSpectralSampleData >& t_SampleData, 
-    const shared_ptr< CSeries >& t_SourceData ) : 
+  CSpectralSample::CSpectralSample( shared_ptr< CSpectralSampleData > const & t_SampleData, 
+    shared_ptr< CSeries > const & t_SourceData ) : 
     CSample( t_SourceData ), m_SampleData( t_SampleData) {
     if( t_SampleData == nullptr ) {
       throw runtime_error("Sample must have measured data.");
@@ -276,7 +278,7 @@ namespace SpectralAveraging {
 	  m_AbsBack = nullptr;
   }
 
-  CSpectralSample::CSpectralSample( const shared_ptr< CSpectralSampleData >& t_SampleData ) :
+  CSpectralSample::CSpectralSample( shared_ptr< CSpectralSampleData > const & t_SampleData ) :
     CSample(), m_SampleData( t_SampleData ) {
     if ( t_SampleData == nullptr ) {
       throw runtime_error( "Sample must have measured data." );
@@ -294,11 +296,11 @@ namespace SpectralAveraging {
     return m_SampleData; 
   }
 
-  std::shared_ptr< std::vector< double > > CSpectralSample::getWavelengthsFromSample() {
+  shared_ptr< vector< double > > CSpectralSample::getWavelengthsFromSample() const {
     return m_SampleData->getWavelengths();
   }
 
-  shared_ptr< CSeries > CSpectralSample::getWavelengthsProperty( const Property t_Property, const Side t_Side ) {
+  shared_ptr< CSeries > CSpectralSample::getWavelengthsProperty( Property const t_Property, Side const t_Side ) {
     calculateState();
     shared_ptr< CSeries > aProperty = nullptr;
     switch( t_Property ) {
@@ -388,7 +390,8 @@ namespace SpectralAveraging {
   ////  CSpectralAngleSample
   //////////////////////////////////////////////////////////////////////////////////////
 
-  CSpectralAngleSample::CSpectralAngleSample( const shared_ptr< CSpectralSample >& t_Sample, const double t_Angle ) :
+  CSpectralAngleSample::CSpectralAngleSample( shared_ptr< CSpectralSample > const & t_Sample, 
+    double const t_Angle ) :
 	  m_Sample( t_Sample ), m_Angle( t_Angle ) {
 
   }

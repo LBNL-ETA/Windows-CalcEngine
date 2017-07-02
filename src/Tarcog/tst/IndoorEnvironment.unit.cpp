@@ -14,16 +14,16 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 300; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 270; // Kelvins
-    double solarRadiation = 0;
+    auto airTemperature = 300.0; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 270.0; // Kelvins
+    auto solarRadiation = 0.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
@@ -35,7 +35,7 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
 
     m_Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( m_Indoor != nullptr );
@@ -43,16 +43,15 @@ protected:
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness = 0.003048; // [m]
-    double solidLayerConductance = 100;
+    auto solidLayerThickness = 0.003048; // [m]
+    auto solidLayerConductance = 100.0;
 
-    shared_ptr< CIGUSolidLayer > aSolidLayer = 
-      make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    auto aSolidLayer = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( aSolidLayer != nullptr );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer );
 
@@ -65,42 +64,36 @@ protected:
   }
 
 public:
-  shared_ptr< CEnvironment > GetIndoors() { return m_Indoor; };
+  shared_ptr< CEnvironment > GetIndoors() const { return m_Indoor; };
 
 };
 
 TEST_F( TestIndoorEnvironment, IndoorRadiosity ) {
   SCOPED_TRACE( "Begin Test: Indoors -> Radiosity" );
-  
-  shared_ptr< CEnvironment > aIndoor = nullptr;
-  
-  aIndoor = GetIndoors();
+
+  auto aIndoor = GetIndoors();
   ASSERT_TRUE( aIndoor != nullptr );
 
-  double radiosity = aIndoor->getEnvironmentIR();
+  auto radiosity = aIndoor->getEnvironmentIR();
   EXPECT_NEAR( 424.458749869075, radiosity, 1e-6 );
 }
 
 TEST_F( TestIndoorEnvironment, IndoorConvection ) {
   SCOPED_TRACE( "Begin Test: Indoors -> Convection Flow" );
   
-  shared_ptr< CEnvironment > aIndoor = nullptr;
-  
-  aIndoor = GetIndoors();
+  auto aIndoor = GetIndoors();
   ASSERT_TRUE( aIndoor != nullptr );
 
-  double convectionFlow = aIndoor->getConvectionConductionFlow();
+  auto convectionFlow = aIndoor->getConvectionConductionFlow();
   EXPECT_NEAR( -5.826845, convectionFlow, 1e-6 );
 }
 
 TEST_F( TestIndoorEnvironment, IndoorHc ) {
   SCOPED_TRACE( "Begin Test: Indoors -> Convection Coefficient" );
 
-  shared_ptr< CEnvironment > aIndoor = nullptr;
-
-  aIndoor = GetIndoors();
+  auto aIndoor = GetIndoors();
   ASSERT_TRUE( aIndoor != nullptr );
 
-  double hc = aIndoor->getHc();
+  auto hc = aIndoor->getHc();
   EXPECT_NEAR( 1.913874, hc, 1e-6 );
 }

@@ -18,16 +18,16 @@ private:
   shared_ptr< CIGUSolidLayer > m_solidLayer2;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 255.15; // Kelvins
-    double tSky = airTemperature;
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double solarRadiation = 0;
+    auto airTemperature = 255.15; // Kelvins
+    auto tSky = airTemperature;
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto solarRadiation = 0.0;
     
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
@@ -37,28 +37,28 @@ protected:
     /////////////////////////////////////////////////////////
     // Indoor
     /////////////////////////////////////////////////////////
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
     shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness = 0.005715; // [m]
-    double solidLayerConductance = 1;
+    auto solidLayerThickness = 0.005715; // [m]
+    auto solidLayerConductance = 1.0;
     m_solidLayer1 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( m_solidLayer1 != nullptr );
     m_solidLayer2 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( m_solidLayer2 != nullptr );
 
-    double gapThickness = 0.012;
-    double gapPressure = 101325;
-    shared_ptr< CIGUGapLayer> gapLayer = make_shared< CIGUGapLayer >( gapThickness, gapPressure );
+    auto gapThickness = 0.012;
+    auto gapPressure = 101325.0;
+    auto gapLayer = make_shared< CIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( gapLayer != nullptr );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > TarcogIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto TarcogIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( TarcogIGU != nullptr );
     TarcogIGU->addLayer( m_solidLayer1 );
     TarcogIGU->addLayer( gapLayer );
@@ -72,8 +72,8 @@ protected:
   }
 
 public:
-  shared_ptr< CIGUSolidLayer > getLayer1() { return m_solidLayer1; }
-  shared_ptr< CIGUSolidLayer > getLayer2() { return m_solidLayer2; }
+  shared_ptr< CIGUSolidLayer > getLayer1() const { return m_solidLayer1; }
+  shared_ptr< CIGUSolidLayer > getLayer2() const { return m_solidLayer2; }
 
 };
 
@@ -81,10 +81,10 @@ TEST_F( TestTemperatureInitialGuess, Test1 )
 {
   SCOPED_TRACE( "Begin Test: Initial temperature and IR guess" );
 
-  shared_ptr< ISurface > aSurface = getLayer1()->getSurface( Side::Front );
+  auto aSurface = getLayer1()->getSurface( Side::Front );
   ASSERT_TRUE( aSurface != nullptr );
-  double temperature = aSurface->getTemperature();
-  double J = aSurface->J();
+  auto temperature = aSurface->getTemperature();
+  auto J = aSurface->J();
   EXPECT_NEAR( 256.282733081615, temperature, 1e-6 );
   EXPECT_NEAR( 244.589307222020, J, 1e-6 );
 

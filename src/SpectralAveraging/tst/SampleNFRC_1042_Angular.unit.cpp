@@ -1,5 +1,4 @@
 #include <memory>
-#include <algorithm>
 #include <gtest/gtest.h>
 
 #include "WCESpectralAveraging.hpp"
@@ -16,9 +15,9 @@ private:
   shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-  virtual void SetUp() {
-    shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
-    
+  shared_ptr< CSeries > getSolarRadiation() const {
+    auto aSolarRadiation = make_shared< CSeries >();
+
     // Full ASTM E891-87 Table 1
     aSolarRadiation->addProperty( 0.3000, 0.0    );
     aSolarRadiation->addProperty( 0.3050, 3.4    );
@@ -142,7 +141,11 @@ protected:
     aSolarRadiation->addProperty( 3.7650, 9.0    );
     aSolarRadiation->addProperty( 4.0450, 6.9    );
 
-    shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
+    return aSolarRadiation;
+  }
+
+  shared_ptr< CSpectralSampleData > getMeasurements() const {
+    auto aMeasurements = make_shared< CSpectralSampleData >();
 
     aMeasurements->addRecord(  0.300, 0.0006, 0.0518, 0.2713 );
     aMeasurements->addRecord(  0.305, 0.0006, 0.0509, 0.2624 );
@@ -641,40 +644,47 @@ protected:
     aMeasurements->addRecord( 38.000, 0.0006, 0.1221, 0.9705 );
     aMeasurements->addRecord( 40.000, 0.0003, 0.1237, 0.9757 );
 
+    return aMeasurements;
+  }
+
+  void SetUp() override {
+    auto aSolarRadiation = getSolarRadiation();
+
+    auto aMeasurements = getMeasurements();
+
     m_Sample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
   }
 
 public:
-  shared_ptr< CSpectralSample > getSample() { return m_Sample; };
+  shared_ptr< CSpectralSample > getSample() const { return m_Sample; };
 
 };
 
 TEST_F( TestSampleNFRC_1042_Angular, TestSampleProperties ) {
-  double lowLambda = 0.3;
-  double highLambda = 2.5;
+  auto lowLambda = 0.3;
+  auto highLambda = 2.5;
 
-  double thickness = 3.18e-3; // [m]
+  auto thickness = 3.18e-3; // [m]
 
-  MaterialType layerType = MaterialType::Coated;
+  auto layerType = MaterialType::Coated;
 
-  double angle = 70;
+  auto angle = 70.0;
 
-  shared_ptr< CSpectralSample > aMeasuredSample = getSample();
+  auto aMeasuredSample = getSample();
 
-  shared_ptr< CAngularSpectralSample > angularSample = 
-    make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+  auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
-  double transmittance = angularSample->getProperty( lowLambda, highLambda, Property::T, Side::Front, angle );
-  EXPECT_NEAR( 0.31260509635838446, transmittance, 1e-6 );
+  auto transmittance = angularSample->getProperty( lowLambda, highLambda, Property::T, Side::Front, angle );
+  EXPECT_NEAR( 0.312605, transmittance, 1e-6 );
 
-  double reflectanceFront = angularSample->getProperty( lowLambda, highLambda, Property::R, Side::Front, angle );
-  EXPECT_NEAR( 0.46010490433401641, reflectanceFront, 1e-6 );
+  auto reflectanceFront = angularSample->getProperty( lowLambda, highLambda, Property::R, Side::Front, angle );
+  EXPECT_NEAR( 0.460105, reflectanceFront, 1e-6 );
 
-  double reflectanceBack = angularSample->getProperty( lowLambda, highLambda, Property::R, Side::Back, angle );
-  EXPECT_NEAR( 0.49186597186956099, reflectanceBack, 1e-6 );
+  auto reflectanceBack = angularSample->getProperty( lowLambda, highLambda, Property::R, Side::Back, angle );
+  EXPECT_NEAR( 0.491866, reflectanceBack, 1e-6 );
 
-  double absorptance = angularSample->getProperty( lowLambda, highLambda, Property::Abs, Side::Front, angle );
-  EXPECT_NEAR( 0.22728999930759999, absorptance, 1e-6 );
+  auto absorptance = angularSample->getProperty( lowLambda, highLambda, Property::Abs, Side::Front, angle );
+  EXPECT_NEAR( 0.227290, absorptance, 1e-6 );
 
 }

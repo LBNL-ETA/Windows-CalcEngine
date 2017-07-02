@@ -16,7 +16,7 @@ using namespace FenestrationCommon;
 namespace Tarcog {
 
   CIGUSolidLayer::CIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
-    shared_ptr< ISurface > t_FrontSurface, shared_ptr< ISurface > t_BackSurface )
+    shared_ptr< ISurface > const & t_FrontSurface, shared_ptr< ISurface > const & t_BackSurface )
     : CState(), CBaseIGULayer( t_Thickness ), m_Conductivity( t_Conductivity ), 
     m_SolarAbsorptance( 0 ) {
     if ( t_FrontSurface != nullptr && t_BackSurface != nullptr ) {
@@ -36,13 +36,13 @@ namespace Tarcog {
     m_Surface[ Side::Back ] = make_shared< CSurface >( t_BackEmissivity, t_BackIRTransmittance );
   }
 
-  CIGUSolidLayer::CIGUSolidLayer( const CIGUSolidLayer& t_Layer ) : 
+  CIGUSolidLayer::CIGUSolidLayer( CIGUSolidLayer const & t_Layer ) : 
 		CState( t_Layer ), CBaseIGULayer( t_Layer ) {
     m_Conductivity = t_Layer.m_Conductivity;
     m_SolarAbsorptance = t_Layer.m_SolarAbsorptance;
   }
 
-  void CIGUSolidLayer::connectToBackSide( const shared_ptr< CBaseLayer >& t_Layer ) {
+  void CIGUSolidLayer::connectToBackSide( shared_ptr< CBaseLayer > const & t_Layer ) {
     CBaseLayer::connectToBackSide( t_Layer );
     t_Layer->setSurface( m_Surface.at( Side::Back ), Side::Front );
   }

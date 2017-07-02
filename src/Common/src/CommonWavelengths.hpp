@@ -20,15 +20,15 @@ namespace FenestrationCommon {
     CCommonWavelengths();
 
     // put additional wavelength
-    void addWavelength( std::shared_ptr< std::vector< double > > t_wv );
+    void addWavelength( std::shared_ptr< std::vector< double > > const & t_wv );
 
     // getting combined wavelength
-    std::shared_ptr< std::vector< double > > getCombinedWavelengths( const Combine t_Combination );
+    std::shared_ptr< std::vector< double > > getCombinedWavelengths( Combine const t_Combination );
 
   private:
     // Combine two wavelengths into one by applyting correct strategy
-    std::shared_ptr< std::vector< double > > combineWavelegths( const std::vector< double >& t_wv1,
-      const std::vector< double >& t_wv2, const Combine t_Combination );
+    std::shared_ptr< std::vector< double > > combineWavelegths( std::vector< double > const & t_wv1,
+      std::vector< double > const & t_wv2, Combine const t_Combination ) const;
 
     std::vector< std::shared_ptr< std::vector< double > > > m_Wavelengths;
   };

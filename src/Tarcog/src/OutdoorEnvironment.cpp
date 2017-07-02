@@ -17,9 +17,9 @@ namespace Tarcog {
 
   using namespace TarcogConstants;
 
-  COutdoorEnvironment::COutdoorEnvironment( const double t_AirTemperature, const double t_Pressure, 
-    const double t_AirSpeed, const double t_DirectSolarRadiation, const AirHorizontalDirection t_AirDirection, 
-    const double t_SkyTemperature, const SkyModel t_Model, const double t_FractionClearSky ) : 
+  COutdoorEnvironment::COutdoorEnvironment( double const t_AirTemperature, double const t_Pressure, 
+    double const t_AirSpeed, double const t_DirectSolarRadiation, AirHorizontalDirection const t_AirDirection, 
+    double const t_SkyTemperature, SkyModel const t_Model, double const t_FractionClearSky ) : 
     CEnvironment( t_Pressure, t_AirSpeed, t_AirDirection ), m_Tsky( t_SkyTemperature ), 
     m_FractionOfClearSky( t_FractionClearSky ), m_SkyModel( t_Model ) {
     m_Surface[ Side::Front ] = make_shared< CSurface >();
@@ -27,15 +27,15 @@ namespace Tarcog {
     m_DirectSolarRadiation = t_DirectSolarRadiation;
   }
 
-  COutdoorEnvironment::COutdoorEnvironment( const COutdoorEnvironment& t_Outdoor ) :
-    CEnvironment( t_Outdoor ) {
-    m_Tsky = t_Outdoor.m_Tsky;
-    m_FractionOfClearSky = t_Outdoor.m_FractionOfClearSky;
-    m_SkyModel = t_Outdoor.m_SkyModel;
+  COutdoorEnvironment::COutdoorEnvironment( COutdoorEnvironment const & t_Outdoor ) :
+    CState( t_Outdoor ), CEnvironment( t_Outdoor ),
+    m_Tsky( t_Outdoor.m_Tsky ), m_FractionOfClearSky( t_Outdoor.m_FractionOfClearSky ),
+    m_SkyModel( t_Outdoor.m_SkyModel ) {
+
   }
 
   double COutdoorEnvironment::calculateIRFromVariables() {
-    double aEmissivity = 0;
+    auto aEmissivity = 0.0;
     switch( m_SkyModel ) {
     case AllSpecified:
       aEmissivity = m_Emissivity * pow( m_Tsky, 4 ) / pow( getAirTemperature(), 4 );
@@ -51,20 +51,20 @@ namespace Tarcog {
       break;
     }
 
-    double radiationTemperature = 0;
+    auto radiationTemperature = 0.0;
     if( m_HCoefficientModel == BoundaryConditionsCoeffModel::HPrescribed ) {
       radiationTemperature = getAirTemperature();
     } else {
-      double fSky = ( 1 + cos( m_Tilt * M_PI / 180 ) ) / 2;
-      double fGround = 1 - fSky;
-      double eZero = fGround + ( 1 - m_FractionOfClearSky ) * fSky + fSky * m_FractionOfClearSky * aEmissivity;
+      auto fSky = ( 1 + cos( m_Tilt * M_PI / 180 ) ) / 2;
+      auto fGround = 1 - fSky;
+      auto eZero = fGround + ( 1 - m_FractionOfClearSky ) * fSky + fSky * m_FractionOfClearSky * aEmissivity;
       radiationTemperature = getAirTemperature() * pow( eZero, 0.25 );
     }
 
     return STEFANBOLTZMANN * pow( radiationTemperature, 4 );
   }
 
-  void COutdoorEnvironment::connectToIGULayer( const shared_ptr< CBaseLayer >& t_IGULayer ) {
+  void COutdoorEnvironment::connectToIGULayer( shared_ptr< CBaseLayer > const & t_IGULayer ) {
     this->connectToBackSide( t_IGULayer );
     m_Surface[ Side::Back ] = t_IGULayer->getSurface( Side::Front );
   }
@@ -77,7 +77,7 @@ namespace Tarcog {
     return make_shared< COutdoorEnvironment >( *this );
   }
 
-  void COutdoorEnvironment::setSolarRadiation( const double t_SolarRadiation ) {
+  void COutdoorEnvironment::setSolarRadiation( double const t_SolarRadiation ) {
     m_DirectSolarRadiation = t_SolarRadiation;
   }
 
@@ -97,7 +97,7 @@ namespace Tarcog {
         break;
       }
       case BoundaryConditionsCoeffModel::HPrescribed: {
-        double hr = getHr();
+        auto hr = getHr();
         m_ConductiveConvectiveCoeff = m_HInput - hr;
         break;
       }
@@ -118,7 +118,6 @@ namespace Tarcog {
   double COutdoorEnvironment::getHr() {
     assert( m_Surface.at( Side::Back ) != nullptr );
     assert( m_Surface.at( Side::Front ) != nullptr );
-    // return getRadiationFlow() / ( m_Surface.at( Side::Back )->getTemperature() - m_Surface.at( Side::Front )->getTemperature() );
     return getRadiationFlow() / ( m_Surface.at( Side::Back )->getTemperature() - getRadiationTemperature() );
   }
 
@@ -127,7 +126,7 @@ namespace Tarcog {
     return pow( m_Surface.at( Side::Front )->J() / STEFANBOLTZMANN, 0.25 );
   }
 
-  void COutdoorEnvironment::setIRFromEnvironment( const double t_IR ) {
+  void COutdoorEnvironment::setIRFromEnvironment( double const t_IR ) {
     assert( m_Surface.at( Side::Front ) != nullptr );
     m_Surface.at( Side::Front )->setJ( t_IR );
   }

@@ -24,7 +24,7 @@ namespace Tarcog {
 
   }
 
-  CLayerGeometry::CLayerGeometry( const CLayerGeometry& t_Layer ) :
+  CLayerGeometry::CLayerGeometry( CLayerGeometry const & t_Layer ) :
     CState( t_Layer ) {
     m_Height = t_Layer.m_Height;
     m_Width = t_Layer.m_Width;
@@ -55,19 +55,20 @@ namespace Tarcog {
     m_Surface[ Side::Back ] = nullptr;
   }
 
-  CLayerHeatFlow::CLayerHeatFlow( const CLayerHeatFlow& t_Layer ) : CState( t_Layer ) {
+  CLayerHeatFlow::CLayerHeatFlow( CLayerHeatFlow const & t_Layer ) :
+    CState( t_Layer ) {
     m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
     m_LayerGainFlow = t_Layer.m_LayerGainFlow;
-    for( Side aSide : EnumSide() ) {
-      shared_ptr< ISurface > aSurface = t_Layer.m_Surface.at( aSide );
+    for(auto aSide : EnumSide() ) {
+      auto aSurface = t_Layer.m_Surface.at( aSide );
       if( aSurface != nullptr ) {
         m_Surface[ aSide ] = aSurface->clone();
       }
     }
   }
 
-  CLayerHeatFlow::CLayerHeatFlow( const shared_ptr< ISurface >& t_FrontSurface, 
-    const shared_ptr< ISurface >& t_BackSurface ) :
+  CLayerHeatFlow::CLayerHeatFlow( shared_ptr< ISurface > const & t_FrontSurface, 
+    shared_ptr< ISurface > const & t_BackSurface ) :
     m_ConductiveConvectiveCoeff( 0 ), m_LayerGainFlow( 0 ) {
     m_Surface[ Side::Front ] = t_FrontSurface;
     m_Surface[ Side::Back ] = t_BackSurface;
@@ -111,7 +112,7 @@ namespace Tarcog {
   }
 
   bool CLayerHeatFlow::areSurfacesInitalized() const {
-    bool areInitialized = ( m_Surface.size() == 2 );
+    auto areInitialized = ( m_Surface.size() == 2 );
     if( areInitialized ) {
       areInitialized = m_Surface.at( Side::Front ) != nullptr && m_Surface.at( Side::Back ) != nullptr;
     }
@@ -135,9 +136,9 @@ namespace Tarcog {
   //      CGasLayer
   //////////////////////////////////////////////////////////////////////////
 
-  CGasLayer::CGasLayer() : m_Pressure(0), m_AirSpeed(0),
-    m_AirVerticalDirection(AirVerticalDirection::None), 
-    m_AirHorizontalDirection(AirHorizontalDirection::None) {
+  CGasLayer::CGasLayer() : m_Pressure( 0 ), m_AirSpeed( 0 ),
+    m_AirVerticalDirection( AirVerticalDirection::None ), 
+    m_AirHorizontalDirection( AirHorizontalDirection::None ) {
 	  onCreate();
   }
 
@@ -149,27 +150,27 @@ namespace Tarcog {
 
   CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, 
     AirVerticalDirection const t_AirVerticalDirection ) : m_Pressure( t_Pressure ), 
-    m_AirSpeed(t_AirSpeed), m_AirVerticalDirection( t_AirVerticalDirection), 
-    m_AirHorizontalDirection(AirHorizontalDirection::None) {
+    m_AirSpeed( t_AirSpeed ), m_AirVerticalDirection( t_AirVerticalDirection), 
+    m_AirHorizontalDirection( AirHorizontalDirection::None ) {
 	  onCreate();
   }
 
   CGasLayer::CGasLayer( double const t_Pressure, double const t_AirSpeed, 
-    AirHorizontalDirection const t_AirHorizontalDirection ) : m_Pressure(t_Pressure), 
-    m_AirSpeed(t_AirSpeed), m_AirVerticalDirection(AirVerticalDirection::None), 
-    m_AirHorizontalDirection(t_AirHorizontalDirection) {
+    AirHorizontalDirection const t_AirHorizontalDirection ) : m_Pressure( t_Pressure ), 
+    m_AirSpeed( t_AirSpeed ), m_AirVerticalDirection( AirVerticalDirection::None ), 
+    m_AirHorizontalDirection( t_AirHorizontalDirection ) {
     onCreate();
   }
 
-  CGasLayer::CGasLayer(double const t_Pressure, shared_ptr< CGas > t_Gas) :
-    m_Pressure(t_Pressure), m_AirSpeed(0),
-    m_AirVerticalDirection(AirVerticalDirection::None), 
-    m_AirHorizontalDirection(AirHorizontalDirection::None) {
+  CGasLayer::CGasLayer( double const t_Pressure, shared_ptr< CGas > const & t_Gas ) :
+    m_Pressure( t_Pressure ), m_AirSpeed( 0 ),
+    m_AirVerticalDirection( AirVerticalDirection::None ), 
+    m_AirHorizontalDirection( AirHorizontalDirection::None ) {
     m_Gas = t_Gas;
     onCreate();
   }
 
-  CGasLayer::CGasLayer( const CGasLayer& t_Layer ) : CState( t_Layer ) {
+  CGasLayer::CGasLayer( CGasLayer const & t_Layer ) : CState( t_Layer ) {
     m_Pressure = t_Layer.m_Pressure;
     m_AirSpeed = t_Layer.m_AirSpeed;
     m_AirVerticalDirection = t_Layer.m_AirVerticalDirection;

@@ -13,13 +13,13 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////
   ////  CSupportPillar
   ////////////////////////////////////////////////////////////////////////////
-  CSupportPillar::CSupportPillar( const CIGUGapLayer& t_Layer, const double t_Conductivity ) : 
+  CSupportPillar::CSupportPillar( CIGUGapLayer const & t_Layer, double const t_Conductivity ) : 
     CIGUGapLayer( t_Layer ), m_Conductivity( t_Conductivity ) {
 
   }
 
-  CSupportPillar::CSupportPillar( const CSupportPillar& t_Pillar ) : 
-    CState( t_Pillar ), CIGUGapLayer( t_Pillar ) {
+  CSupportPillar::CSupportPillar( CSupportPillar const & t_Pillar ) : 
+    CState( t_Pillar ), CIGUGapLayer( t_Pillar ), m_Conductivity( t_Pillar.m_Conductivity ) {
 
   }
 
@@ -33,23 +33,23 @@ namespace Tarcog {
   ////////////////////////////////////////////////////////////////////////////
   ////  CCircularPillar
   ////////////////////////////////////////////////////////////////////////////
-  CCircularPillar::CCircularPillar( const CIGUGapLayer& t_Gap,
-    const double t_Conductivity, const double t_Spacing, const double t_Radius ) :
+  CCircularPillar::CCircularPillar( CIGUGapLayer const & t_Gap,
+    double const t_Conductivity, double const t_Spacing, double const t_Radius ) :
     CSupportPillar( t_Gap, t_Conductivity ), m_Spacing( t_Spacing ), m_Radius( t_Radius ) {
 
   }
 
-  CCircularPillar::CCircularPillar( const CCircularPillar& t_Pillar ) : 
+  CCircularPillar::CCircularPillar( CCircularPillar const & t_Pillar ) : 
     CState( t_Pillar ), CSupportPillar( t_Pillar ) {
 
   }
 
   double CCircularPillar::conductivityOfPillarArray() {
-    double cond1 = dynamic_pointer_cast< CBaseIGULayer >( m_PreviousLayer )->getConductivity();
-    double cond2 = dynamic_pointer_cast< CBaseIGULayer >( m_NextLayer )->getConductivity();
-    double aveCond = ( cond1 + cond2 ) / 2;
+    auto cond1 = dynamic_pointer_cast< CBaseIGULayer >( m_PreviousLayer )->getConductivity();
+    auto cond2 = dynamic_pointer_cast< CBaseIGULayer >( m_NextLayer )->getConductivity();
+    auto aveCond = ( cond1 + cond2 ) / 2;
 
-    double cond = 2 * aveCond * m_Radius / ( pow( m_Spacing, 2 ) );
+    auto cond = 2 * aveCond * m_Radius / ( pow( m_Spacing, 2 ) );
     cond *= 1 / ( 1 + 2 * m_Thickness * aveCond / ( m_Conductivity * M_PI * m_Radius ) );
 
     return cond;

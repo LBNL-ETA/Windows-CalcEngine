@@ -1,8 +1,6 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include <memory>
-
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
@@ -14,7 +12,7 @@ class TestAngularPropertiesCoated : public testing::Test
 {
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
   }
 
 };
@@ -22,13 +20,12 @@ protected:
 TEST_F( TestAngularPropertiesCoated, Test1 ) {
   SCOPED_TRACE( "Begin Test: Coated properties - various angles." );
 
-  double T0 = 0.722;
-  double R0 = 0.066;
-  double angle = 0;
-  
-  CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, 0, T0 );
-  shared_ptr< CAngularProperties > aProperties = 
-    aAngularFactory.getAngularProperties( SurfaceType::Coated );
+  auto T0 = 0.722;
+  auto R0 = 0.066;
+  auto angle = 0.0;
+
+  auto aAngularFactory = CAngularPropertiesFactory( T0, R0, 0, T0 );
+  auto aProperties = aAngularFactory.getAngularProperties( SurfaceType::Coated );
   
   EXPECT_NEAR( 0.7236606, aProperties->transmittance( angle ), 1e-6 );
   EXPECT_NEAR( 0.0647858, aProperties->reflectance( angle ), 1e-6 );
@@ -49,13 +46,12 @@ TEST_F( TestAngularPropertiesCoated, Test1 ) {
 TEST_F( TestAngularPropertiesCoated, Test2 ) {
   SCOPED_TRACE( "Begin Test: Coated properties - NFRC Sample ID=1042." );
 
-  double T0 = 0.4517085;
-  double R0 = 0.3592343;
-  double angle = 0;
-  
-  CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, 0, T0 );
-  shared_ptr< CAngularProperties > aProperties = 
-    aAngularFactory.getAngularProperties( SurfaceType::Coated );
+  auto T0 = 0.4517085;
+  auto R0 = 0.3592343;
+  auto angle = 0.0;
+
+  auto aAngularFactory = CAngularPropertiesFactory( T0, R0, 0, T0 );
+  auto aProperties = aAngularFactory.getAngularProperties( SurfaceType::Coated );
   
   EXPECT_NEAR( 0.457016074875, aProperties->transmittance( angle ), 1e-6 );
   EXPECT_NEAR( 0.354909131525, aProperties->reflectance( angle ), 1e-6 );

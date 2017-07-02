@@ -15,19 +15,18 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 255.15; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 255.15; // Kelvins
-    double solarRadiation = 0;
+    auto airTemperature = 255.15; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 255.15; // Kelvins
+    auto solarRadiation = 0.0;
 
-    shared_ptr< COutdoorEnvironment > Outdoor = 
-      make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+    auto Outdoor = make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
         airDirection, tSky, SkyModel::AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
     Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -36,26 +35,26 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
 
-    shared_ptr< CIndoorEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
+    auto Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double emissivity = 0.832855582237;
-    double transmittance = 0.074604861438;
-    shared_ptr< CSurface > surface1 = make_shared< CSurface > ( emissivity, transmittance );
-    shared_ptr< CSurface > surface2 = make_shared< CSurface > ( emissivity, transmittance );
+    auto emissivity = 0.832855582237;
+    auto transmittance = 0.074604861438;
+    auto surface1 = make_shared< CSurface > ( emissivity, transmittance );
+    auto surface2 = make_shared< CSurface > ( emissivity, transmittance );
 
-    double shadeLayerThickness = 0.0006;
-    double shadeLayerConductance = 160;
-    double Atop = 0.0;
-    double Abot = 0.0;
-    double Aleft = 0.0;
-    double Aright = 0.0;
-    double Afront = 0.5;
+    auto shadeLayerThickness = 0.0006;
+    auto shadeLayerConductance = 160.0;
+    auto Atop = 0.0;
+    auto Abot = 0.0;
+    auto Aleft = 0.0;
+    auto Aright = 0.0;
+    auto Afront = 0.5;
 
     shared_ptr< CIGUSolidLayer > aSolidLayer1 = make_shared< CIGUShadeLayer >( 
       shadeLayerThickness, shadeLayerConductance,
@@ -63,27 +62,27 @@ protected:
 
     ASSERT_TRUE( aSolidLayer1 != nullptr );
 
-    double solidLayerThickness = 0.0056134; // [m]
-    double solidLayerConductance = 1;
-    double emissivity1 = 0.84;
-    double emissivity2 = 0.038798544556;
+    auto solidLayerThickness = 0.0056134; // [m]
+    auto solidLayerConductance = 1.0;
+    auto emissivity1 = 0.84;
+    auto emissivity2 = 0.038798544556;
     transmittance = 0.0;
 
-    shared_ptr< CSurface > surface3 = make_shared< CSurface > ( emissivity1, transmittance );
-    shared_ptr< CSurface > surface4 = make_shared< CSurface > ( emissivity2, transmittance );
+    auto surface3 = make_shared< CSurface > ( emissivity1, transmittance );
+    auto surface4 = make_shared< CSurface > ( emissivity2, transmittance );
 
-    shared_ptr< CIGUSolidLayer > aSolidLayer2 = 
+    auto aSolidLayer2 = 
       make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance, surface3, surface4 );
     ASSERT_TRUE( aSolidLayer2 != nullptr );
 
-    double gapThickness = 0.0127;
-    double gapPressure = 101325;
-    shared_ptr< CIGUGapLayer > aGapLayer = make_shared< CIGUGapLayer >( gapThickness, gapPressure );
+    auto gapThickness = 0.0127;
+    auto gapPressure = 101325.0;
+    auto aGapLayer = make_shared< CIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( aGapLayer != nullptr );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer1 );
     aIGU->addLayer( aGapLayer );
@@ -99,17 +98,17 @@ protected:
   }
 
 public:
-  shared_ptr< CSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSingleSystem > GetSystem() const { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestShadeOut, Test1 ) {
   SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
-  
-  shared_ptr< CSingleSystem > aSystem = GetSystem();
+
+  auto aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< double > Temperature = *aSystem->getTemperatures();
+  auto Temperature = *aSystem->getTemperatures();
   vector< double > correctTemperature = { 256.991924, 256.992140, 269.666330, 270.128394 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
@@ -117,7 +116,7 @@ TEST_F( TestShadeOut, Test1 ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
-  vector< double > Radiosity = *aSystem->getRadiosities();
+  auto Radiosity = *aSystem->getRadiosities();
   vector< double > correctRadiosity = { 249.993042, 250.921069, 291.999868, 419.703053 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 

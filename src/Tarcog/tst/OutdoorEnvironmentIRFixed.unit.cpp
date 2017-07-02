@@ -14,17 +14,17 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 300; // Kelvins
-    double tSky = airTemperature;
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double solarRadiation = 0;
-    double IRRadiation = 370; // [ W/m2 ]
+    auto airTemperature = 300.0; // Kelvins
+    auto tSky = airTemperature;
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto solarRadiation = 0.0;
+    auto IRRadiation = 370.0; // [ W/m2 ]
 
     Outdoor = make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
       airDirection, tSky, SkyModel::AllSpecified );
@@ -35,7 +35,7 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
 
     shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
@@ -43,15 +43,15 @@ protected:
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness = 0.003048; // [m]
-    double solidLayerConductance = 100;
+    auto solidLayerThickness = 0.003048; // [m]
+    auto solidLayerConductance = 100.0;
 
-    shared_ptr< CIGUSolidLayer > aSolidLayer = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    auto aSolidLayer = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( aSolidLayer != nullptr );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer );
 
@@ -63,23 +63,21 @@ protected:
   }
 
 public:
-  shared_ptr< CEnvironment > GetOutdoors() { return Outdoor; };
+  shared_ptr< CEnvironment > GetOutdoors() const { return Outdoor; };
 
 };
 
 TEST_F( TestOutdoorEnvironmentIRFixed, CalculateIRFixed ) {
 
-    SCOPED_TRACE( "Begin Test: Outdoors -> Infrared radiation fixed (user input)." );
+  SCOPED_TRACE( "Begin Test: Outdoors -> Infrared radiation fixed (user input)." );
     
-    shared_ptr< CEnvironment > aOutdoor = nullptr;
-    
-    aOutdoor = GetOutdoors();
-    ASSERT_TRUE( aOutdoor != nullptr );
+  auto aOutdoor = GetOutdoors();
+  ASSERT_TRUE( aOutdoor != nullptr );
 
-    double radiosity = aOutdoor->getEnvironmentIR();
-    EXPECT_NEAR( 370, radiosity, 1e-6 );
+  auto radiosity = aOutdoor->getEnvironmentIR();
+  EXPECT_NEAR( 370, radiosity, 1e-6 );
 
-    double hc = aOutdoor->getHc();
-    EXPECT_NEAR( 26, hc, 1e-6 );
+  auto hc = aOutdoor->getHc();
+  EXPECT_NEAR( 26, hc, 1e-6 );
 
 }

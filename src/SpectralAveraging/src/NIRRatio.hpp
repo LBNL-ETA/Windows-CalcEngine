@@ -17,8 +17,8 @@ namespace SpectralAveraging {
 
   class CNIRRatio {
   public:
-    CNIRRatio( std::shared_ptr< const FenestrationCommon::CSeries > t_SolarRadiation, 
-      const double lowLambda, const double highLambda );
+    CNIRRatio( std::shared_ptr< const FenestrationCommon::CSeries > const & t_SolarRadiation, 
+      double const lowLambda, double const highLambda );
     double ratio() const;
   private:
     double m_Ratio;

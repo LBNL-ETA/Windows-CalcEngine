@@ -1,8 +1,6 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include <memory>
-
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
@@ -13,7 +11,7 @@ using namespace FenestrationCommon;
 class TestAngularPropertiesUncoated : public testing::Test {
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
   }
 
 };
@@ -21,15 +19,14 @@ protected:
 TEST_F( TestAngularPropertiesUncoated, Test1 ) {
   SCOPED_TRACE( "Begin Test: Uncoated properties - various angles." );
 
-  double aThickness = 0.005715; // m
-  double lambda = 0.8e-6; // m
-  double T0 = 0.722;
-  double R0 = 0.066;
-  double angle = 0;
-  
-  CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
-  shared_ptr< CAngularProperties > aProperties = 
-    aAngularFactory.getAngularProperties( SurfaceType::Uncoated );
+  auto aThickness = 0.005715; // m
+  auto lambda = 0.8e-6; // m
+  auto T0 = 0.722;
+  auto R0 = 0.066;
+  auto angle = 0.0;
+
+  auto aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
+  auto aProperties = aAngularFactory.getAngularProperties( SurfaceType::Uncoated );
   
   EXPECT_NEAR( 0.722, aProperties->transmittance( angle, lambda ), 1e-6 );
   EXPECT_NEAR( 0.066, aProperties->reflectance( angle, lambda ), 1e-6 );
@@ -51,15 +48,14 @@ TEST_F( TestAngularPropertiesUncoated, Test1 ) {
 TEST_F( TestAngularPropertiesUncoated, Test2 ) {
   SCOPED_TRACE( "Begin Test: Uncoated properties - zero normal transmittance." );
 
-  double aThickness = 0.005715; // m
-  double lambda = 0.8e-6; // m
-  double T0 = 0.0;
-  double R0 = 0.047;
-  double angle = 0;
-  
-  CAngularPropertiesFactory aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
-  shared_ptr< CAngularProperties > aProperties = 
-    aAngularFactory.getAngularProperties( SurfaceType::Uncoated );
+  auto aThickness = 0.005715; // m
+  auto lambda = 0.8e-6; // m
+  auto T0 = 0.0;
+  auto R0 = 0.047;
+  auto angle = 0.0;
+
+  auto aAngularFactory = CAngularPropertiesFactory( T0, R0, aThickness );
+  auto aProperties = aAngularFactory.getAngularProperties( SurfaceType::Uncoated );
   
   EXPECT_NEAR( 0.0, aProperties->transmittance( angle, lambda ), 1e-6 );
   EXPECT_NEAR( 0.047, aProperties->reflectance( angle, lambda ), 1e-6 );

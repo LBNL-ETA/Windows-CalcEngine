@@ -20,8 +20,8 @@ namespace SpectralAveraging {
 
   }
 
-  void CSpectralSampleData::addRecord( double t_Wavelength, double t_Transmittance, double t_ReflectanceFront, 
-    double t_ReflectanceBack ) {
+  void CSpectralSampleData::addRecord( double const t_Wavelength, double const t_Transmittance, 
+    double const t_ReflectanceFront, double const t_ReflectanceBack ) {
     m_Transmittances->addProperty( t_Wavelength, t_Transmittance );
     m_ReflectancesFront->addProperty( t_Wavelength, t_ReflectanceFront );
     m_ReflectancesBack->addProperty( t_Wavelength, t_ReflectanceBack );
@@ -54,12 +54,12 @@ namespace SpectralAveraging {
     return aProperties;
   }
 
-  shared_ptr< vector< double > > CSpectralSampleData::getWavelengths() {
+  shared_ptr< vector< double > > CSpectralSampleData::getWavelengths() const {
     return m_Transmittances->getXArray();
   }
 
   // Interpolate current sample data to new wavelengths set
-  void CSpectralSampleData::interpolate( const vector< double >& t_Wavelengths ) {
+  void CSpectralSampleData::interpolate( vector< double > const & t_Wavelengths ) {
     m_Transmittances = m_Transmittances->interpolate( t_Wavelengths );
     m_ReflectancesFront = m_ReflectancesFront->interpolate( t_Wavelengths );
     m_ReflectancesBack = m_ReflectancesBack->interpolate( t_Wavelengths );
@@ -94,13 +94,13 @@ namespace SpectralAveraging {
       m_AbsorptancesFront->clear();
       m_AbsorptancesBack->clear();
 
-      size_t size = m_Transmittances->size();
+      auto size = m_Transmittances->size();
 
       for( size_t i = 0; i < size; ++i ) {
-        double wv = (*m_Transmittances)[i]->x();
-        double value = 1 - (*m_Transmittances)[i]->value() - (*reflectancesFront)[i]->value();
+        auto wv = ( *m_Transmittances )[ i ]->x();
+        auto value = 1 - ( *m_Transmittances )[ i ]->value() - ( *reflectancesFront )[ i ]->value();
         m_AbsorptancesFront->addProperty( wv, value );
-        value = 1 - (*m_Transmittances)[i]->value() - (*reflectancesBack)[i]->value();
+        value = 1 - ( *m_Transmittances )[ i ]->value() - ( *reflectancesBack )[ i ]->value();
         m_AbsorptancesBack->addProperty( wv, value );
       }
       m_absCalculated = true;

@@ -16,7 +16,7 @@ private:
   shared_ptr< CGeometry2DBeam > m_Enclosures2DBeam;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     m_Enclosures2DBeam = make_shared< CGeometry2DBeam >();
 
     //////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ protected:
   }
 
 public:
-  shared_ptr< CGeometry2DBeam > getEnclosure() { return m_Enclosures2DBeam; };
+  shared_ptr< CGeometry2DBeam > getEnclosure() const { return m_Enclosures2DBeam; };
 
 };
 

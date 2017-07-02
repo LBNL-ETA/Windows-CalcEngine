@@ -16,36 +16,34 @@ namespace Tarcog {
   class CIGUGapLayer :
     public CBaseIGULayer, public CGasLayer {
   public:
-    CIGUGapLayer( double t_Thickness, double t_Pressure );
-    CIGUGapLayer( double t_Thickness, double t_Pressure, const std::shared_ptr< Gases::CGas >& t_Gas );
-    CIGUGapLayer( const CIGUGapLayer& t_Layer );
+    CIGUGapLayer( double const t_Thickness, double const t_Pressure );
+    CIGUGapLayer( double const t_Thickness, double const t_Pressure, 
+      std::shared_ptr< Gases::CGas > const & t_Gas );
+    CIGUGapLayer( CIGUGapLayer const & t_Layer );
 
-    void connectToBackSide( const std::shared_ptr< CBaseLayer >& t_Layer );
+    void connectToBackSide( std::shared_ptr< CBaseLayer > const & t_Layer ) override;
 
-    virtual double layerTemperature();
+    double layerTemperature() override;
 
-    double averageTemperature();
+    double averageTemperature() const;
 
-    virtual double getPressure();
+    double getPressure() override;
 
-    virtual std::shared_ptr< CBaseLayer > clone() const;
+    std::shared_ptr< CBaseLayer > clone() const override;
 
 
   protected:
-    void initializeStateVariables();
-    virtual void calculateConvectionOrConductionFlow();
+    void initializeStateVariables() override;
+    void calculateConvectionOrConductionFlow() override;
 
   private:
     double calculateRayleighNumber();
-    double aspectRatio();
+    double aspectRatio() const;
     double convectiveH();
 
-    double getGasTemperature();
+    double getGasTemperature() override;
 
-    void checkNextLayer();
-
-    
-
+    void checkNextLayer() const;
   };
  
 }

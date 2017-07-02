@@ -10,99 +10,87 @@ using namespace std;
 namespace Gases
 {
 
-  CGas::CGas() : m_SimpleProperties( make_shared< GasProperties > () ), m_Properties( make_shared< GasProperties > () ) {
+  CGas::CGas() : m_SimpleProperties( make_shared<GasProperties>() ), 
+    m_Properties( make_shared< GasProperties >() ), m_Pressure( DefaultPressure ) {
     // create default gas to be Air
-    shared_ptr< CGasItem > Air = make_shared< CGasItem >();
+    auto Air = CGasItem();
     m_GasItem.push_back( Air );
     m_DefaultGas = true;
   }
 
-  CGas::CGas( const CGas& t_Gas ) {
+  CGas::CGas( CGas const & t_Gas ) : 
+    m_GasItem( t_Gas.m_GasItem ), m_SimpleProperties( t_Gas.m_SimpleProperties ),
+    m_Properties( t_Gas.m_Properties ), m_DefaultGas( t_Gas.m_DefaultGas ),
+    m_Pressure( t_Gas.m_Pressure ) {
     m_GasItem.clear();
-    for( shared_ptr< CGasItem > item : t_Gas.m_GasItem ) {
-      shared_ptr< CGasItem > aItem = make_shared< CGasItem >( *item );
-      m_GasItem.push_back( aItem );
+    for (auto item : t_Gas.m_GasItem) {
+      m_GasItem.push_back( item );
     }
-    m_GasItem = t_Gas.m_GasItem;
-    m_SimpleProperties = t_Gas.m_SimpleProperties;
-    m_Properties = t_Gas.m_Properties;
-    m_DefaultGas = t_Gas.m_DefaultGas;
   }
 
-  void CGas::addGasItem( const shared_ptr< CGasItem >& t_GasItem ) {
+  void CGas::addGasItem( CGasItem const & t_GasItem ) {
     // Need to remove default since user wants to create their own Gases
-    if ( m_DefaultGas ) {
+    if( m_DefaultGas ) {
       m_GasItem.clear();
       m_DefaultGas = false;
     }
     m_GasItem.push_back( t_GasItem );
   }
 
-  double CGas::totalPercent()
-  {
-    double totalPercent = 0;
+  double CGas::totalPercent() {
+    auto totalPercent = 0.0;
 
-    vector< shared_ptr< CGasItem > >::const_iterator it;
-    for( it = m_GasItem.begin(); it<m_GasItem.end(); ++it ) {
-      totalPercent += (*it)->getFraction();
+    for( auto & it : m_GasItem ) {
+      totalPercent += it.getFraction();
     }
 
     return totalPercent;
   }
 
-  void CGas::setTemperatureAndPressure( double t_Temperature, double t_Pressure ) {
+  void CGas::setTemperatureAndPressure( double const t_Temperature, double const t_Pressure ) {
     m_Pressure = t_Pressure;
-    vector< shared_ptr< CGasItem > >::const_iterator it;
-    for( it = m_GasItem.begin(); it < m_GasItem.end(); ++it ) {
-      ( *it )->setTemperature( t_Temperature );
-      ( *it )->setPressure( t_Pressure );
+    for( auto & item : m_GasItem ) {
+      item.setTemperature( t_Temperature );
+      item.setPressure( t_Pressure );
     }
   }
 
   shared_ptr< GasProperties > CGas::getSimpleGasProperties() {
-    vector< shared_ptr< CGasItem > >::iterator it;
-    *m_SimpleProperties = *( ( m_GasItem )[ 0 ]->getFractionalGasProperties() );
-    for ( it = std::next( m_GasItem.begin() ); it != m_GasItem.end(); ++it ) {
-      *m_SimpleProperties += *( ( *it )->getFractionalGasProperties() );
+    *m_SimpleProperties = *( ( m_GasItem )[ 0 ].getFractionalGasProperties() );
+    for( auto it = next( m_GasItem.begin() ); it != m_GasItem.end(); ++it ) {
+      *m_SimpleProperties += *( it->getFractionalGasProperties() );
     }
 
     return m_SimpleProperties;
   }
 
   shared_ptr< GasProperties > CGas::getGasProperties() {
-    CGasSettings aSettings = CGasSettings::instance();
-    if( aSettings.getVacuumPressure() < m_Pressure ) {
-      return getStandardPressureGasProperties();
-    } else {
-      return getVacuumPressureGasProperties();
-    }
+    auto aSettings = CGasSettings::instance();
+    return aSettings.getVacuumPressure() < m_Pressure ? getStandardPressureGasProperties()
+                                                      : getVacuumPressureGasProperties();
   }
 
   shared_ptr< GasProperties > CGas::getStandardPressureGasProperties() {
-    shared_ptr< GasProperties > simpleProperties = getSimpleGasProperties();
+    auto simpleProperties = getSimpleGasProperties();
 
     // coefficients for intermediate calculations
     vector< vector< double > > miItem;
     vector< vector< double > > lambdaPrimItem;
     vector< vector< double > > lambdaSecondItem;
 
-    size_t gasSize = m_GasItem.size();
-    int counter = 0;
+    auto gasSize = m_GasItem.size();
+    auto counter = 0;
 
     miItem.resize( gasSize );
     lambdaPrimItem.resize( gasSize );
     lambdaSecondItem.resize( gasSize );
 
-    // first to calculate denominator properties for gas mixtures
-    vector< shared_ptr< CGasItem > >::iterator primaryIt;
-    vector< shared_ptr< CGasItem > >::iterator secondaryIt;
-
-    for( primaryIt = m_GasItem.begin(); primaryIt != m_GasItem.end(); ++primaryIt ) {
-      for( secondaryIt = m_GasItem.begin(); secondaryIt != m_GasItem.end(); ++secondaryIt ) {
-        if( *primaryIt != *secondaryIt ) {
-          miItem[ counter ].push_back( viscDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
-          lambdaPrimItem[ counter ].push_back( lambdaPrimDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
-          lambdaSecondItem[ counter ].push_back( lambdaSecondDenomTwoGases( *( *primaryIt ), *( *secondaryIt ) ) );
+    for( auto & primaryIt : m_GasItem ) {
+      for( auto & secondaryIt : m_GasItem ) {
+        if( primaryIt != secondaryIt ) {
+          miItem[ counter ].push_back( viscDenomTwoGases( primaryIt, secondaryIt ) );
+          lambdaPrimItem[ counter ].push_back( lambdaPrimDenomTwoGases( primaryIt, secondaryIt ) );
+          lambdaSecondItem[ counter ].push_back( lambdaSecondDenomTwoGases( primaryIt, secondaryIt ) );
         } else {
           miItem[ counter ].push_back( 0 );
           lambdaPrimItem[ counter ].push_back( 0 );
@@ -118,35 +106,33 @@ namespace Gases
     double cpMix( 0 );
 
     counter = 0;
-    vector< shared_ptr< CGasItem > >::iterator it;
-    for( it = m_GasItem.begin(); it != m_GasItem.end(); ++it ) {
-      double sumMix = 1;
-      shared_ptr< GasProperties > itGasProperties = ( *it )->getGasProperties();
+    for( auto & it : m_GasItem ) {
+      auto itGasProperties = it.getGasProperties();
+      auto lambdaPrim( itGasProperties->getLambdaPrim() );
+      auto lambdaSecond( itGasProperties->getLambdaSecond() );
 
-      double lambdaPrim( itGasProperties->getLambdaPrim() );
-      double lambdaSecond( itGasProperties->getLambdaSecond() );
-
+      auto sumMix = 1.0;
       for( size_t i = 0; i < gasSize; ++i ) {
         sumMix += miItem[ counter ][ i ];
       }
 
       miMix += itGasProperties->m_Viscosity / sumMix;
 
-      sumMix = 1;
+      sumMix = 1.0;
       for( size_t i = 0; i < gasSize; ++i ) {
         sumMix += lambdaPrimItem[ counter ][ i ];
       }
 
       lambdaPrimMix += lambdaPrim / sumMix;
 
-      sumMix = 1;
+      sumMix = 1.0;
       for( size_t i = 0; i < gasSize; ++i ) {
         sumMix += lambdaSecondItem[ counter ][ i ];
       }
 
       lambdaSecondMix += lambdaSecond / sumMix;
 
-      cpMix += itGasProperties->m_SpecificHeat * ( *it )->getFraction() * itGasProperties->m_MolecularWeight;
+      cpMix += itGasProperties->m_SpecificHeat * it.getFraction() * itGasProperties->m_MolecularWeight;
       ++counter;
     }
 
@@ -165,20 +151,20 @@ namespace Gases
   }
 
   // This implements equation 63 (ISO 15099)
-  double CGas::viscTwoGases( const GasProperties& t_Gas1Properties,
-    const GasProperties& t_Gas2Properties ) const {
+  double CGas::viscTwoGases( GasProperties const & t_Gas1Properties,
+    GasProperties const & t_Gas2Properties ) const {
     
-    if ( ( t_Gas1Properties.m_Viscosity == 0 ) || ( t_Gas2Properties.m_Viscosity == 0 ) ) {
+    if ( t_Gas1Properties.m_Viscosity == 0 || t_Gas2Properties.m_Viscosity == 0 ) {
       throw runtime_error( "Viscosity of the gas component in Gases is equal to zero." );
     }
     if ( ( t_Gas1Properties.m_MolecularWeight == 0 ) || ( t_Gas2Properties.m_MolecularWeight == 0 ) ) {
       throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
     }
 
-    double uFraction = t_Gas1Properties.m_Viscosity / t_Gas2Properties.m_Viscosity;
-    double weightFraction = t_Gas1Properties.m_MolecularWeight / t_Gas2Properties.m_MolecularWeight;
-    double nominator = pow( (1 + pow( uFraction, 0.5 ) * pow( 1 / weightFraction, 0.25 ) ), 2 );
-    double denominator = 2 * sqrt( 2.0 ) * pow( 1 + weightFraction, 0.5 );
+    auto uFraction = t_Gas1Properties.m_Viscosity / t_Gas2Properties.m_Viscosity;
+    auto weightFraction = t_Gas1Properties.m_MolecularWeight / t_Gas2Properties.m_MolecularWeight;
+    auto nominator = pow( (1 + pow( uFraction, 0.5 ) * pow( 1 / weightFraction, 0.25 ) ), 2 );
+    auto denominator = 2 * sqrt( 2.0 ) * pow( 1 + weightFraction, 0.5 );
 
     if( denominator == 0 ) {
       throw runtime_error( "Dynamic viscosity coefficient is gas mixture is calculated to be zero." );
@@ -189,10 +175,10 @@ namespace Gases
   }
 
   // Implementation of sum items in denominator of equation 62 (ISO15099)
-  double CGas::viscDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) {
+  double CGas::viscDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) const {
 
-    double phiValue = viscTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
-    if ( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
+    auto phiValue = viscTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
+    if( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
       throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
     }
 
@@ -201,15 +187,15 @@ namespace Gases
   }
 
   // This implements equation 66 (ISO 15099)
-  double CGas::lambdaPrimTwoGases( const GasProperties& t_Gas1Properties, 
-    const GasProperties& t_Gas2Properties ) {
+  double CGas::lambdaPrimTwoGases( GasProperties const & t_Gas1Properties, 
+    GasProperties const & t_Gas2Properties ) const {
 
     if ( ( t_Gas1Properties.m_MolecularWeight == 0 ) || ( t_Gas2Properties.m_MolecularWeight == 0 ) ) {
       throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
     }
 
-    double item1 = lambdaSecondTwoGases( t_Gas1Properties, t_Gas2Properties );
-    double item2 = 1 + 2.41 * ( ( t_Gas1Properties.m_MolecularWeight - t_Gas2Properties.m_MolecularWeight ) *
+    auto item1 = lambdaSecondTwoGases( t_Gas1Properties, t_Gas2Properties );
+    auto item2 = 1 + 2.41 * ( ( t_Gas1Properties.m_MolecularWeight - t_Gas2Properties.m_MolecularWeight ) *
       ( t_Gas1Properties.m_MolecularWeight - 0.142 * t_Gas2Properties.m_MolecularWeight ) / 
       pow(( t_Gas1Properties.m_MolecularWeight + t_Gas2Properties.m_MolecularWeight ), 2) );
 
@@ -218,8 +204,8 @@ namespace Gases
   }
 
   // This implements equation 68 (ISO 15099)
-  double CGas::lambdaSecondTwoGases( const GasProperties& t_Gas1Properties, 
-    const GasProperties& t_Gas2Properties ) {
+  double CGas::lambdaSecondTwoGases( GasProperties const & t_Gas1Properties,
+    const GasProperties& t_Gas2Properties ) const {
 
     if ( ( t_Gas1Properties.getLambdaPrim() == 0 ) || ( t_Gas2Properties.getLambdaPrim() == 0 ) ) {
       throw runtime_error( "Primary thermal conductivity (lambda prim) of the gas component in Gases is equal to zero." );
@@ -229,10 +215,10 @@ namespace Gases
       throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
     }
 
-    double tFraction = t_Gas1Properties.getLambdaPrim() / t_Gas2Properties.getLambdaPrim();
-    double weightFraction = t_Gas1Properties.m_MolecularWeight / t_Gas2Properties.m_MolecularWeight;
-    double nominator = pow( ( 1 + pow( tFraction, 0.5 ) * pow( weightFraction, 0.25 ) ), 2 );
-    double denominator = 2 * sqrt( 2.0 ) * pow( (1 + weightFraction ), 0.5 );
+    auto tFraction = t_Gas1Properties.getLambdaPrim() / t_Gas2Properties.getLambdaPrim();
+    auto weightFraction = t_Gas1Properties.m_MolecularWeight / t_Gas2Properties.m_MolecularWeight;
+    auto nominator = pow( ( 1 + pow( tFraction, 0.5 ) * pow( weightFraction, 0.25 ) ), 2 );
+    auto denominator = 2 * sqrt( 2.0 ) * pow( (1 + weightFraction ), 0.5 );
 
     if ( denominator == 0 ) {
       throw runtime_error( "Thermal conductivity coefficient in gas mixture is calculated to be zero." );
@@ -243,9 +229,9 @@ namespace Gases
   }
 
   // Implementation of sum items in denominator of equation 65 (ISO15099)
-  double CGas::lambdaPrimDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) {
+  double CGas::lambdaPrimDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) const {
 
-    double phiValue = lambdaPrimTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
+    auto phiValue = lambdaPrimTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
 
     if ( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
       throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
@@ -256,11 +242,11 @@ namespace Gases
   }
 
   // Implementation of sum items in denominator of equation 67 (ISO15099)
-  double CGas::lambdaSecondDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) {
+  double CGas::lambdaSecondDenomTwoGases( CGasItem& t_GasItem1, CGasItem& t_GasItem2 ) const {
 
-    double phiValue = lambdaSecondTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
+    auto phiValue = lambdaSecondTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
 
-    if ( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
+    if( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
       throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
     }
 
@@ -268,17 +254,28 @@ namespace Gases
 
   }
 
-  CGas& CGas::operator=( const CGas& t_Gas ) {
+  CGas& CGas::operator=( CGas const & t_Gas ) {
     m_GasItem.clear();
-    for( shared_ptr< CGasItem > item : t_Gas.m_GasItem ) {
-      shared_ptr< CGasItem > aItem = make_shared< CGasItem >( *item );
-      m_GasItem.push_back( aItem );
+    for( auto item : t_Gas.m_GasItem ) {
+      m_GasItem.push_back( item );
     }
     m_SimpleProperties = t_Gas.m_SimpleProperties;
     m_Properties = t_Gas.m_Properties;
     m_DefaultGas = t_Gas.m_DefaultGas;
 
     return *this;
+  }
+
+  bool CGas::operator==( CGas const & rhs ) const {
+    return m_GasItem == rhs.m_GasItem &&
+           m_SimpleProperties == rhs.m_SimpleProperties &&
+           m_Properties == rhs.m_Properties &&
+           m_DefaultGas == rhs.m_DefaultGas &&
+           m_Pressure == rhs.m_Pressure;
+  }
+
+  bool CGas::operator!=( CGas const & rhs ) const {
+    return !( rhs == *this );
   }
 
 }

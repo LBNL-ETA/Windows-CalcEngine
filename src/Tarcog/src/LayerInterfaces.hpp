@@ -24,7 +24,7 @@ namespace Tarcog {
 
   struct ForcedVentilation {
     ForcedVentilation() : Speed( 0 ), Temperature( 0 ) {};
-    ForcedVentilation( double t_Speed, double t_Temperature ) : 
+    ForcedVentilation( double const t_Speed, double const t_Temperature ) : 
       Speed( t_Speed ), Temperature( t_Temperature ) {};
     double Speed;
     double Temperature;
@@ -33,7 +33,7 @@ namespace Tarcog {
   class CLayerGeometry : public virtual FenestrationCommon::CState {
   public:
     CLayerGeometry();
-    CLayerGeometry( const CLayerGeometry& t_Layer );
+    CLayerGeometry( CLayerGeometry const & t_Layer );
 
     virtual void setWidth( double const t_Width ) final;
     virtual void setHeight( double const t_Height ) final;
@@ -48,9 +48,9 @@ namespace Tarcog {
   class CLayerHeatFlow : public virtual FenestrationCommon::CState {
   public:
     CLayerHeatFlow();
-    CLayerHeatFlow( const CLayerHeatFlow& t_Layer );
-    CLayerHeatFlow( const std::shared_ptr< ISurface >& t_FrontSurface, 
-      const std::shared_ptr< ISurface >& t_BackSurface );
+    CLayerHeatFlow( CLayerHeatFlow const & t_Layer );
+    CLayerHeatFlow( std::shared_ptr< ISurface > const & t_FrontSurface, 
+      std::shared_ptr< ISurface > const & t_BackSurface );
     virtual double getHeatFlow() final;
     virtual double getGainFlow() final;
     virtual double getConductionConvectionCoefficient() final;
@@ -77,18 +77,18 @@ namespace Tarcog {
   class CGasLayer : public virtual FenestrationCommon::CState {
   public:
     CGasLayer();
-    CGasLayer( double const t_Pressure );
+    explicit CGasLayer( double const t_Pressure );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirDirection );
     CGasLayer( double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirDirection );
-    CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > t_Gas );
-    CGasLayer( const CGasLayer& t_Layer );
+    CGasLayer( double const t_Pressure, std::shared_ptr< Gases::CGas > const & t_Gas );
+    CGasLayer( CGasLayer const & t_Layer );
 
     virtual double getPressure();
 
     virtual double getGasTemperature() = 0;
 
   protected:
-    void initializeStateVariables();
+    void initializeStateVariables() override;
 
     double m_Pressure;
     double m_AirSpeed;

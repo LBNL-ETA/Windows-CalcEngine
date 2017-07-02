@@ -53,9 +53,9 @@ namespace Tarcog {
   public:
     CSurface();
     CSurface( double const t_Emissivity, double const t_Transmittance );
-    CSurface( CSurface const& t_Surface );
+    CSurface( CSurface const & t_Surface );
 
-    virtual std::shared_ptr< ISurface > clone() const;
+    std::shared_ptr< ISurface > clone() const override;
 
   };
 

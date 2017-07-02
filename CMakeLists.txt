@@ -5,7 +5,7 @@ set( target_name Windows-CalcEngine )
 project( ${target_name} )
 
 include( cmake/ProjectMacros.cmake )
-include( cmake/internal_utils.cmake )
+#include( cmake/internal_utils.cmake )
 include( cmake/CompilerFlags.cmake )
 
 # google test will not be created by this project if this is not main project. Main project is expected to handle google test.

@@ -7,28 +7,28 @@ namespace Tarcog {
 
   class CIndoorEnvironment : public CEnvironment {
   public:
-    CIndoorEnvironment( const double t_AirTemperature, const double t_Pressure );
-    CIndoorEnvironment( const CIndoorEnvironment& t_Indoor );
+    CIndoorEnvironment( double const t_AirTemperature, double const t_Pressure );
+    CIndoorEnvironment( CIndoorEnvironment const & t_Indoor );
 
-    void connectToIGULayer( const std::shared_ptr< CBaseLayer >& t_IGULayer );
+    void connectToIGULayer( std::shared_ptr< CBaseLayer > const & t_IGULayer ) override;
 
     void setRoomRadiationTemperature( double const t_RadiationTemperature );
 
-    virtual std::shared_ptr< CBaseLayer > clone() const;
-    virtual std::shared_ptr< CEnvironment > cloneEnvironment() const;
+    std::shared_ptr< CBaseLayer > clone() const override;
+    std::shared_ptr< CEnvironment > cloneEnvironment() const override;
 
   private:
-    double getGasTemperature();
-    double calculateIRFromVariables();
-    void calculateConvectionOrConductionFlow();
+    double getGasTemperature() override;
+    double calculateIRFromVariables() override;
+    void calculateConvectionOrConductionFlow() override;
     
     void calculateHc();
-    double getHr();
+    double getHr() override;
 
-    void setIRFromEnvironment( const double t_IR );
-    double getIRFromEnvironment() const;
+    void setIRFromEnvironment( double const t_IR ) override;
+    double getIRFromEnvironment() const override;
 
-    double getRadiationTemperature() const;
+    double getRadiationTemperature() const override;
 
     double m_RoomRadiationTemperature;
   };

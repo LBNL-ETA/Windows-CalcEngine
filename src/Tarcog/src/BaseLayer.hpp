@@ -19,20 +19,20 @@ namespace Tarcog {
     public std::enable_shared_from_this< CBaseLayer > {
   public:
     CBaseLayer();
-    CBaseLayer( const CBaseLayer& t_Layer );
+    CBaseLayer( CBaseLayer const & t_Layer );
     
     std::shared_ptr< CBaseLayer > getPreviousLayer() const;
     std::shared_ptr< CBaseLayer > getNextLayer() const;
 
-    virtual void connectToBackSide( const std::shared_ptr< CBaseLayer >& t_Layer );
+    virtual void connectToBackSide( std::shared_ptr< CBaseLayer > const & t_Layer );
 
     void tearDownConnections();
 
     virtual std::shared_ptr< CBaseLayer > clone() const = 0;
 
   protected:
-    virtual void calculateRadiationFlow();
-    virtual void calculateConvectionOrConductionFlow() = 0;
+    void calculateRadiationFlow() override;
+    void calculateConvectionOrConductionFlow() override = 0;
 
     std::shared_ptr< CBaseLayer > m_PreviousLayer;
     std::shared_ptr< CBaseLayer > m_NextLayer;

@@ -6,13 +6,14 @@ using namespace FenestrationCommon;
 
 namespace SpectralAveraging {
 
-  CNIRRatio::CNIRRatio( shared_ptr< const CSeries > t_SolarRadiation, const double lowLambda, const double highLambda ) {
-    shared_ptr< CSeries > integratedSolar = t_SolarRadiation->integrate( IntegrationType::Trapezoidal );
-    CWavelengthRange aSolarRange = CWavelengthRange( WavelengthRange::Solar );
-    
-    double totSolar = integratedSolar->sum( aSolarRange.minLambda(), aSolarRange.maxLambda() );
-    
-    double totVisible = integratedSolar->sum( lowLambda, highLambda );
+  CNIRRatio::CNIRRatio( shared_ptr< const CSeries > const & t_SolarRadiation, 
+    double const lowLambda, double const highLambda ) {
+    auto integratedSolar = t_SolarRadiation->integrate( IntegrationType::Trapezoidal );
+    auto aSolarRange = CWavelengthRange( WavelengthRange::Solar );
+
+    auto totSolar = integratedSolar->sum( aSolarRange.minLambda(), aSolarRange.maxLambda() );
+
+    auto totVisible = integratedSolar->sum( lowLambda, highLambda );
     m_Ratio = totVisible / totSolar;
   }
 

@@ -12,16 +12,16 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 255.15; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 255.15; // Kelvins
-    double solarRadiation = 0;
+    auto airTemperature = 255.15; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 255.15; // Kelvins
+    auto solarRadiation = 0.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
@@ -33,37 +33,37 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 295.15;
+    auto roomTemperature = 295.15;
 
     shared_ptr< CEnvironment > Indoor = 
       make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     // IGU
-    double solidLayerThickness = 0.005715; // [m]
-    double solidLayerConductance = 1;
+    auto solidLayerThickness = 0.005715; // [m]
+    auto solidLayerConductance = 1.0;
 
-    shared_ptr< CIGUSolidLayer > SolidLayer1 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    auto SolidLayer1 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( SolidLayer1 != nullptr );
 
-    shared_ptr< CIGUSolidLayer > SolidLayer2 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
+    auto SolidLayer2 = make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( SolidLayer2 != nullptr );
 
-    double shadeLayerThickness = 0.01;
-    double shadeLayerConductance = 160;
-    double Atop = 0.1;
-    double Abot = 0.1;
-    double Aleft = 0.1;
-    double Aright = 0.1;
-    double Afront = 0.2;
+    auto shadeLayerThickness = 0.01;
+    auto shadeLayerConductance = 160.0;
+    auto Atop = 0.1;
+    auto Abot = 0.1;
+    auto Aleft = 0.1;
+    auto Aright = 0.1;
+    auto Afront = 0.2;
 
-    shared_ptr< CIGUShadeLayer > shadeLayer = make_shared< CIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
+    auto shadeLayer = make_shared< CIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
       make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
 
     ASSERT_TRUE( shadeLayer != nullptr );
 
-    double gapThickness = 0.0127;
-    double gapPressure = 101325;
+    auto gapThickness = 0.0127;
+    auto gapPressure = 101325.0;
     shared_ptr< CBaseIGULayer > m_GapLayer1 = 
       make_shared< CIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( m_GapLayer1 != nullptr );
@@ -90,31 +90,25 @@ protected:
   }
 
 public:
-  shared_ptr< CBaseIGULayer > GetGap1() { return m_TarcogSystem->getGapLayers()[ 0 ]; };
-  shared_ptr< CBaseIGULayer > GetGap2() { return m_TarcogSystem->getGapLayers()[ 1 ]; };
+  shared_ptr< CBaseIGULayer > GetGap1() const { return m_TarcogSystem->getGapLayers()[ 0 ]; };
+  shared_ptr< CBaseIGULayer > GetGap2() const { return m_TarcogSystem->getGapLayers()[ 1 ]; };
 
 };
 
 TEST_F( TestGapLayerInBetweenVentilation, VentilationFlow ) {
-  try {
-    SCOPED_TRACE( "Begin Test: Test Ventilated Gap Layer - Intial Airflow" );
-    
-    shared_ptr< CBaseIGULayer > aLayer = GetGap1();
+  SCOPED_TRACE( "Begin Test: Test Ventilated Gap Layer - Intial Airflow" );
 
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-    
-    ASSERT_TRUE( aLayer != nullptr );
-    double gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR( 32.414571203538848, gainEnergy, 1e-4 );
+  auto aLayer = GetGap1();
 
-    aLayer = GetGap2();
-    ASSERT_TRUE( aLayer != nullptr );
-    gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR( -32.414571203538848, gainEnergy, 1e-4 );
+  // Airflow iterations are set to 1e-4 and it cannot exceed that precision
+  
+  ASSERT_TRUE( aLayer != nullptr );
+  auto gainEnergy = aLayer->getGainFlow();
+  EXPECT_NEAR( 32.414571203538848, gainEnergy, 1e-4 );
 
-
-  } catch( exception &e ) {
-    cout << e.what() << endl;
-  }
+  aLayer = GetGap2();
+  ASSERT_TRUE( aLayer != nullptr );
+  gainEnergy = aLayer->getGainFlow();
+  EXPECT_NEAR( -32.414571203538848, gainEnergy, 1e-4 );
 
 }

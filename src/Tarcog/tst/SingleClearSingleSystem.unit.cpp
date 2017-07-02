@@ -15,16 +15,16 @@ private:
   shared_ptr< CSingleSystem >  m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {    
+  void SetUp() override {    
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 300; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 270; // Kelvins
-    double solarRadiation = 0;
+    auto airTemperature = 300.0; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 270.0; // Kelvins
+    auto solarRadiation = 0.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
@@ -36,23 +36,23 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
     shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness = 0.003048; // [m]
-    double solidLayerConductance = 1;
+    auto solidLayerThickness = 0.003048; // [m]
+    auto solidLayerConductance = 1.0;
 
     shared_ptr< CBaseIGULayer > aSolidLayer = 
       make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( aSolidLayer != nullptr );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer );
 
@@ -66,17 +66,17 @@ protected:
   }
 
 public:
-  shared_ptr< CSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSingleSystem > GetSystem() const { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestSingleClearSingleSystem, Test1 ) {
   SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
 
-  shared_ptr< CSingleSystem > aSystem = GetSystem();
+  auto aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< double > Temperature = *aSystem->getTemperatures();
+  auto Temperature = *aSystem->getTemperatures();
   vector< double > correctTemperature = { 297.207035, 297.14470 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
@@ -84,7 +84,7 @@ TEST_F( TestSingleClearSingleSystem, Test1 ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
   }
 
-  vector< double > Radiosity = *aSystem->getRadiosities();
+  auto Radiosity = *aSystem->getRadiosities();
   vector< double > correctRadiosity = { 432.444546, 439.201749 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 

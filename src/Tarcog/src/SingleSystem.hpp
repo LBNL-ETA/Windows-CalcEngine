@@ -17,14 +17,14 @@ namespace Tarcog {
   
   class CSingleSystem {
   public:
-    CSingleSystem( std::shared_ptr< CIGU > t_IGU,
-                   std::shared_ptr< CEnvironment > t_Indoor,
-                   std::shared_ptr< CEnvironment > t_Outdoor );
+    CSingleSystem( std::shared_ptr< CIGU > const & t_IGU,
+                   std::shared_ptr< CEnvironment > const & t_Indoor,
+                   std::shared_ptr< CEnvironment > const & t_Outdoor );
 
-    CSingleSystem( const CSingleSystem& t_SingleSystem );
+    CSingleSystem( CSingleSystem const & t_SingleSystem );
 
     std::vector< std::shared_ptr< CIGUSolidLayer > > getSolidLayers() const;
-    std::vector< std::shared_ptr< CIGUGapLayer > > getGapLayers();
+    std::vector< std::shared_ptr< CIGUGapLayer > > getGapLayers() const;
 
     std::shared_ptr< std::vector< double > > getTemperatures() const;
     std::shared_ptr< std::vector< double > > getRadiosities() const;
@@ -34,26 +34,26 @@ namespace Tarcog {
 
     std::shared_ptr< CSingleSystem > clone() const;
 
-    double getHeatFlow( const Environment t_Environment ) const;
-    double getConvectiveHeatFlow( const Environment t_Environment ) const;
-    double getRadiationHeatFlow( const Environment t_Environment ) const;
-    double getHc( const Environment t_Environment ) const;
-    double getAirTemperature( const Environment t_Environment ) const;
+    double getHeatFlow( Environment const t_Environment ) const;
+    double getConvectiveHeatFlow( Environment const t_Environment ) const;
+    double getRadiationHeatFlow( Environment const t_Environment ) const;
+    double getHc( Environment const t_Environment ) const;
+    double getAirTemperature( Environment const t_Environment ) const;
 
     // If interior layer have openings, this will return heat flow from airflow
-    double getVentilationFlow( const Environment t_Environment ) const;
+    double getVentilationFlow( Environment const t_Environment ) const;
     double getUValue() const;
     size_t getNumberOfIterations() const;
 
     // Set solution tolerance
-    void setTolerance( const double t_Tolerance );
+    void setTolerance( double const t_Tolerance ) const;
     // Set intial guess for solution.
-    void setInitialGuess( const std::shared_ptr< std::vector< double > >& t_Temperatures );
+    void setInitialGuess( std::vector< double > const & t_Temperatures ) const;
 
     void setSolarRadiation( double const t_SolarRadiation );
     double getSolarRadiation() const;
 
-    void solve();
+    void solve() const;
 
   private:
     std::shared_ptr< CIGU > m_IGU;

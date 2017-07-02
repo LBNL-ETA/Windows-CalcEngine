@@ -1,5 +1,4 @@
 #include <memory>
-#include <algorithm>
 #include <gtest/gtest.h>
 
 #include "WCESpectralAveraging.hpp"
@@ -15,10 +14,10 @@ using namespace FenestrationCommon;
 class Sample_AngularMeasurementsTest1: public testing::Test {
 
 private:
-	std::shared_ptr< CAngularMeasurements > m_Measurements;
+	shared_ptr< CAngularMeasurements > m_Measurements;
 
-  shared_ptr< CSeries > getSolarRadiationFile() {
-    shared_ptr< CSeries >  aSolarRadiation = make_shared< CSeries >();
+  shared_ptr< CSeries > getSolarRadiationFile() const {
+    auto aSolarRadiation = make_shared< CSeries >();
 
     // Full ASTM E891-87 Table 1
     aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -146,10 +145,10 @@ private:
     return aSolarRadiation;
   }
 
-  shared_ptr< CSingleAngularMeasurement > getSample1() {
-    shared_ptr< CSeries >  aSolarRadiation = getSolarRadiationFile();
+  shared_ptr< CSingleAngularMeasurement > getSample1() const {
+    auto  aSolarRadiation = getSolarRadiationFile();
 
-    shared_ptr< CSpectralSampleData > aMeasurements40 = make_shared< CSpectralSampleData >();
+    auto aMeasurements40 = make_shared< CSpectralSampleData >();
     // incident angle = 40
 
     aMeasurements40->addRecord( 0.290, 0.10, 0.1, 0.1 );
@@ -157,16 +156,16 @@ private:
     aMeasurements40->addRecord( 0.300, 0.20, 0.098, 0.098 );
     aMeasurements40->addRecord( 0.310, 0.25, 0.097, 0.097 );
 
-    shared_ptr< CSpectralSample > aSample40 = make_shared< CSpectralSample >( aMeasurements40, aSolarRadiation );
-    shared_ptr< CSingleAngularMeasurement > aAngular40 = make_shared< CSingleAngularMeasurement >( aSample40, 40 );
+    auto aSample40 = make_shared< CSpectralSample >( aMeasurements40, aSolarRadiation );
+    auto aAngular40 = make_shared< CSingleAngularMeasurement >( aSample40, 40 );
 
     return aAngular40;
   }
 
-  shared_ptr< CSingleAngularMeasurement > getSample2() {
-    shared_ptr< CSeries >  aSolarRadiation = getSolarRadiationFile();
+  shared_ptr< CSingleAngularMeasurement > getSample2() const {
+    auto aSolarRadiation = getSolarRadiationFile();
 
-    shared_ptr< CSpectralSampleData > aMeasurements50 = make_shared< CSpectralSampleData >();
+    auto aMeasurements50 = make_shared< CSpectralSampleData >();
     // incident angle = 40
 
     aMeasurements50->addRecord( 0.290, 0.15, 0.1, 0.10 );
@@ -174,33 +173,33 @@ private:
     aMeasurements50->addRecord( 0.305, 0.25, 0.097, 0.098 );
     aMeasurements50->addRecord( 0.310, 0.30, 0.096, 0.097 );
 
-    shared_ptr< CSpectralSample > aSample50 = make_shared< CSpectralSample >( aMeasurements50, aSolarRadiation );
-    shared_ptr< CSingleAngularMeasurement > aAngular50 = make_shared< CSingleAngularMeasurement >( aSample50, 50 );
+    auto aSample50 = make_shared< CSpectralSample >( aMeasurements50, aSolarRadiation );
+    auto aAngular50 = make_shared< CSingleAngularMeasurement >( aSample50, 50 );
 
     return aAngular50;
   }
 
 
 public:
-  std::shared_ptr< CAngularMeasurements > getMeasurements() const { return m_Measurements; };
+  shared_ptr< CAngularMeasurements > getMeasurements() const { return m_Measurements; };
 
 protected:
-  virtual void SetUp() {
-       
-    shared_ptr< CSingleAngularMeasurement > aAngular40 = getSample1();
-    shared_ptr< CSingleAngularMeasurement > aAngular50 = getSample2();
+  void SetUp() override {
+
+    auto aAngular40 = getSample1();
+    auto aAngular50 = getSample2();
 
     // Need to extract common wavelengths
     CCommonWavelengths aCommonWL;
-    std::shared_ptr< std::vector< double > > wl40 = aAngular40->getWavelengthsFromSample();
-    std::shared_ptr< std::vector< double > > wl50 = aAngular50->getWavelengthsFromSample();
+    auto wl40 = aAngular40->getWavelengthsFromSample();
+    auto wl50 = aAngular50->getWavelengthsFromSample();
     aCommonWL.addWavelength( wl40 );
     aCommonWL.addWavelength( wl50 );
-    shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+    auto commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
     // Creating angular sample
     m_Measurements = make_shared< CAngularMeasurements >( aAngular40, commonWavelengths );
-	m_Measurements->addMeasurement( aAngular50 );
+	  m_Measurements->addMeasurement( aAngular50 );
 
   }
 
@@ -208,22 +207,22 @@ protected:
 
 TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
 
-  double angle = 45;
+  auto angle = 45.0;
 
-  shared_ptr< CAngularMeasurements > aMeasurements = getMeasurements();
+  auto aMeasurements = getMeasurements();
 
-  shared_ptr< CSingleAngularMeasurement > aAngleMeasurement = aMeasurements->getMeasurements( angle );
+  auto aAngleMeasurement = aMeasurements->getMeasurements( angle );
 
-  shared_ptr< CSpectralSample > aSample = aAngleMeasurement->getData( );
+  auto aSample = aAngleMeasurement->getData( );
 
   // Now retrieve specific properties
 
   // Front transmittances
-  shared_ptr< CSeries > aTransmittances = aSample->getWavelengthsProperty( Property::T, Side::Front );
+  auto aTransmittances = aSample->getWavelengthsProperty( Property::T, Side::Front );
 
   vector< double > correctT = { 0.125, 0.175, 0.2125, 0.2375, 0.275 };
 
-  size_t size = aTransmittances->size();
+  auto size = aTransmittances->size();
 
   EXPECT_EQ( size, correctT.size() );
   for( size_t i = 0; i < size; ++i ) {
@@ -231,7 +230,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
   }
 
   // Front reflectances
-  shared_ptr< CSeries > aFReflectances = aSample->getWavelengthsProperty( Property::R, Side::Front );
+  auto aFReflectances = aSample->getWavelengthsProperty( Property::R, Side::Front );
 
   vector< double > correctFR = { 0.1, 0.0985, 0.09775, 0.09725, 0.0965 };
 
@@ -243,7 +242,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
   }
 
   // Back reflectances
-  shared_ptr< CSeries > aBReflectances = aSample->getWavelengthsProperty( Property::R, Side::Back );
+  auto aBReflectances = aSample->getWavelengthsProperty( Property::R, Side::Back );
 
   vector< double > correctBR = { 0.1, 0.099, 0.09825, 0.09775, 0.097 };
 

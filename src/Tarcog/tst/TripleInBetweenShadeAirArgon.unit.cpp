@@ -4,7 +4,6 @@
 
 #include "WCEGases.hpp"
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
 
 using namespace std;
 using namespace Gases;
@@ -17,16 +16,16 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {    
+  void SetUp() override {    
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 255.15; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 255.15; // Kelvins
-    double solarRadiation = 0;
+    auto airTemperature = 255.15; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 255.15; // Kelvins
+    auto solarRadiation = 0.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
@@ -37,7 +36,7 @@ protected:
     /////////////////////////////////////////////////////////
     // Indoor
     /////////////////////////////////////////////////////////
-    double roomTemperature = 295.15;
+    auto roomTemperature = 295.15;
 
     shared_ptr< CEnvironment > Indoor = 
       make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
@@ -48,8 +47,8 @@ protected:
     /////////////////////////////////////////////////////////
 
     // Solid layers
-    double solidLayerThickness = 0.005715; // [m]
-    double solidLayerConductance = 1;
+    auto solidLayerThickness = 0.005715; // [m]
+    auto solidLayerConductance = 1.0;
 
     shared_ptr< CBaseIGULayer > aLayer1 = 
       make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
@@ -59,13 +58,13 @@ protected:
       make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
     ASSERT_TRUE( aLayer3 != nullptr );
 
-    double shadeLayerThickness = 0.01;
-    double shadeLayerConductance = 160;
-    double Atop = 0.1;
-    double Abot = 0.1;
-    double Aleft = 0.1;
-    double Aright = 0.1;
-    double Afront = 0.2;
+    auto shadeLayerThickness = 0.01;
+    auto shadeLayerConductance = 160.0;
+    auto Atop = 0.1;
+    auto Abot = 0.1;
+    auto Aleft = 0.1;
+    auto Aright = 0.1;
+    auto Afront = 0.2;
 
     shared_ptr< CBaseIGULayer > aLayer2 = make_shared< CIGUShadeLayer >( shadeLayerThickness, 
       shadeLayerConductance, make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
@@ -75,33 +74,33 @@ protected:
     // gap layers
 
     // Create coefficients for Air
-    shared_ptr< CIntCoeff > AirCon = make_shared< CIntCoeff >( 2.8733e-03, 7.76e-05, 0.0 );
-    shared_ptr< CIntCoeff > AirCp = make_shared< CIntCoeff >( 1.002737e+03, 1.2324e-02, 0.0 );
-    shared_ptr< CIntCoeff > AirVisc = make_shared< CIntCoeff >( 3.7233e-06, 4.94e-08, 0.0 );
+    CIntCoeff AirCon { 2.8733e-03, 7.76e-05, 0.0 };
+    CIntCoeff AirCp { 1.002737e+03, 1.2324e-02, 0.0 };
+    CIntCoeff AirVisc { 3.7233e-06, 4.94e-08, 0.0 };
 
-    shared_ptr< CGasData > AirData = make_shared< CGasData >( "Air", 28.97, 1.4, AirCp, AirCon, AirVisc );
+    CGasData AirData = { "Air", 28.97, 1.4, AirCp, AirCon, AirVisc };
 
     // Create coefficients for Argon
-    shared_ptr< CIntCoeff > ArgonCon = make_shared< CIntCoeff >( 2.2848e-03, 5.1486e-05, 0.0 );
-    shared_ptr< CIntCoeff > ArgonCp = make_shared< CIntCoeff >( 5.21929e+02, 0.0, 0.0 );
-    shared_ptr< CIntCoeff > ArgonVisc = make_shared< CIntCoeff >( 3.3786e-06, 6.4514e-08, 0.0 );
+    CIntCoeff ArgonCon { 2.2848e-03, 5.1486e-05, 0.0 };
+    CIntCoeff ArgonCp { 5.21929e+02, 0.0, 0.0 };
+    CIntCoeff ArgonVisc { 3.3786e-06, 6.4514e-08, 0.0 };
 
-    shared_ptr< CGasData > ArgonData = make_shared< CGasData >( "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc );
+    CGasData ArgonData { "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc };
 
-    shared_ptr< CGasItem > Air = make_shared< CGasItem >( 0.1, AirData );
-    shared_ptr< CGasItem > Argon = make_shared< CGasItem >( 0.9, ArgonData );
+    CGasItem Air { 0.1, AirData };
+    CGasItem Argon { 0.9, ArgonData };
 
     // Create gas mixture
-    shared_ptr< CGas > Gas1 = make_shared< CGas >();
+    auto Gas1 = make_shared< CGas >();
 
     Gas1->addGasItem( Air );
     Gas1->addGasItem( Argon );
 
-    shared_ptr< CGas > Gas2 = std::make_shared< CGas >();
+    auto Gas2 = std::make_shared< CGas >();
     ( *Gas2 ) = ( *Gas1 );
 
-    double gapThickness = 0.0127;
-    double gapPressure = 101325;
+    auto gapThickness = 0.0127;
+    auto gapPressure = 101325.0;
     shared_ptr< CBaseIGULayer > GapLayer1 = 
       make_shared< CIGUGapLayer >( gapThickness, gapPressure, Gas1 );
     ASSERT_TRUE( GapLayer1 != nullptr );
@@ -110,9 +109,9 @@ protected:
       make_shared< CIGUGapLayer >( gapThickness, gapPressure, Gas2 );
     ASSERT_TRUE( GapLayer2 != nullptr );
 
-    double windowWidth = 1;
-    double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto windowWidth = 1.0;
+    auto windowHeight = 1.0;
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aLayer1 );
     aIGU->addLayer( GapLayer1 );
@@ -130,17 +129,17 @@ protected:
   }
 
 public:
-  shared_ptr< CSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSingleSystem > GetSystem() const { return m_TarcogSystem; };
 
 };
 
 TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
   SCOPED_TRACE( "Begin Test: InBetween Shade - Air(10%)/Argon(90%)" );
 
-  shared_ptr< CSingleSystem > aSystem = GetSystem();
+  auto aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
-  vector< double > Temperature = *aSystem->getTemperatures();
+  auto Temperature = *aSystem->getTemperatures();
   vector< double > correctTemperature = { 257.708586, 258.135737, 271.904015, 271.907455, 284.412841, 284.839992 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
@@ -148,7 +147,7 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
     EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-6 );
   }
 
-  vector< double > Radiosity = *aSystem->getRadiosities();
+  auto Radiosity = *aSystem->getRadiosities();
   vector< double > correctRadiosity = { 248.512581, 259.762360, 301.878568, 318.339706, 362.562135, 382.345742 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
@@ -156,6 +155,6 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
     EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-6 );
   }
 
-  size_t numOfIter = GetSystem()->getNumberOfIterations();
+  auto numOfIter = GetSystem()->getNumberOfIterations();
   EXPECT_EQ( 21u, numOfIter );
 }

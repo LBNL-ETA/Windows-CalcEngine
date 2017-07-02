@@ -15,16 +15,16 @@ private:
   shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  virtual void SetUp() {    
+  void SetUp() override {    
     /////////////////////////////////////////////////////////
     // Outdoor
     /////////////////////////////////////////////////////////
-    double airTemperature = 255.15; // Kelvins
-    double pressure = 101325; // Pascals
-    double airSpeed = 5.5; // meters per second
-    AirHorizontalDirection airDirection = AirHorizontalDirection::Windward;
-    double tSky = 255.15; // Kelvins
-    double solarRadiation = 0;
+    auto airTemperature = 255.15; // Kelvins
+    auto pressure = 101325.0; // Pascals
+    auto airSpeed = 5.5; // meters per second
+    auto airDirection = AirHorizontalDirection::Windward;
+    auto tSky = 255.15; // Kelvins
+    auto solarRadiation = 0.0;
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
@@ -36,7 +36,7 @@ protected:
     // Indoor
     /////////////////////////////////////////////////////////
 
-    double roomTemperature = 294.15;
+    auto roomTemperature = 294.15;
 
     shared_ptr< CEnvironment > Indoor = 
       make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
@@ -45,37 +45,36 @@ protected:
     /////////////////////////////////////////////////////////
     // IGU
     /////////////////////////////////////////////////////////
-    double solidLayerThickness1 = 0.003048; // [m]
-    double solidLayerThickness2 = 0.005715;
-    double solidLayerConductance = 1;
+    auto solidLayerThickness1 = 0.003048; // [m]
+    auto solidLayerThickness2 = 0.005715;
+    auto solidLayerConductance = 1.0;
 
-    shared_ptr< CIGUSolidLayer > aSolidLayer1 =
-      make_shared< CIGUSolidLayer > ( solidLayerThickness1, solidLayerConductance );
+    auto aSolidLayer1 = make_shared< CIGUSolidLayer > ( solidLayerThickness1, solidLayerConductance );
 
     // Introducing non default deflection properties
-    double youngsModulus = 8.1e10;
-    double poisonRatio = 0.16;
+    auto youngsModulus = 8.1e10;
+    auto poisonRatio = 0.16;
     aSolidLayer1 = make_shared< CIGUSolidLayerDeflection >( *aSolidLayer1, youngsModulus, poisonRatio );
 
     shared_ptr< CBaseIGULayer > aSolidLayer2 = 
       make_shared< CIGUSolidLayer > ( solidLayerThickness2, solidLayerConductance );
 
-    double gapThickness = 0.0127;
-    double gapPressure = 101325;
+    auto gapThickness = 0.0127;
+    auto gapPressure = 101325.0;
     shared_ptr< CBaseIGULayer > m_GapLayer = make_shared< CIGUGapLayer >( gapThickness, gapPressure );
     ASSERT_TRUE( m_GapLayer != nullptr );
 
     double windowWidth = 1;
     double windowHeight = 1;
-    shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer1 );
     aIGU->addLayer( m_GapLayer );
     aIGU->addLayer( aSolidLayer2 );
 
     // Deflection properties
-    double Tini = 303.15;
-    double Pini = 101325;
+    auto Tini = 303.15;
+    auto Pini = 101325.0;
     aIGU->setDeflectionProperties( Tini, Pini );
 
     /////////////////////////////////////////////////////////
@@ -88,20 +87,20 @@ protected:
   }
 
 public:
-  shared_ptr< CSingleSystem > GetSystem() { return m_TarcogSystem; };
+  shared_ptr< CSingleSystem > GetSystem() const { return m_TarcogSystem; };
 
 };
 
 TEST_F( DoubleClearDeflectionTPTest1, Test1 ) {
   SCOPED_TRACE( "Begin Test: Double Clear - Calculated Deflection" );
-  
-  shared_ptr< CSingleSystem > aSystem = GetSystem();
+
+  auto aSystem = GetSystem();
   ASSERT_TRUE( aSystem != nullptr );
 
   ///////////////////////////////////////////////////////////////////////////////
   // Temperatures test
   ///////////////////////////////////////////////////////////////////////////////
-  vector< double > Temperature = *aSystem->getTemperatures();
+  auto Temperature = *aSystem->getTemperatures();
   vector< double > correctTemperature = { 258.811500, 259.137749, 278.961419, 279.573136 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
@@ -112,7 +111,7 @@ TEST_F( DoubleClearDeflectionTPTest1, Test1 ) {
   ///////////////////////////////////////////////////////////////////////////////
   // Radiosity test
   ///////////////////////////////////////////////////////////////////////////////
-  vector< double > Radiosity = *aSystem->getRadiosities();
+  auto Radiosity = *aSystem->getRadiosities();
   vector< double > correctRadiosity = { 252.131797, 267.765290, 331.256183, 358.865247 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
@@ -123,7 +122,7 @@ TEST_F( DoubleClearDeflectionTPTest1, Test1 ) {
   ///////////////////////////////////////////////////////////////////////////////
   // Max deflection test
   ///////////////////////////////////////////////////////////////////////////////
-  vector< double > MaxDeflection = *aSystem->getMaxDeflections();
+  auto MaxDeflection = *aSystem->getMaxDeflections();
   vector< double > correctMaxDeflection = { -0.0030742, 0.00033590 };
   ASSERT_EQ( correctMaxDeflection.size(), MaxDeflection.size() );
 
@@ -134,7 +133,7 @@ TEST_F( DoubleClearDeflectionTPTest1, Test1 ) {
   ///////////////////////////////////////////////////////////////////////////////
   // Mean deflection test
   ///////////////////////////////////////////////////////////////////////////////
-  vector< double > MeanDeflection = *aSystem->getMeanDeflections();
+  auto MeanDeflection = *aSystem->getMeanDeflections();
   vector< double > correctMeanDeflection = { -0.0012879, 0.00014072 };
   ASSERT_EQ( correctMeanDeflection.size(), MeanDeflection.size() );
 
@@ -142,6 +141,6 @@ TEST_F( DoubleClearDeflectionTPTest1, Test1 ) {
     EXPECT_NEAR( correctMeanDeflection[ i ], MeanDeflection[ i ], 1e-5 );
   }
 
-  size_t numOfIter = aSystem->getNumberOfIterations();
+  auto numOfIter = aSystem->getNumberOfIterations();
   EXPECT_EQ( 27u, numOfIter );
 }

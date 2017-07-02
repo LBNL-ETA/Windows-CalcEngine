@@ -33,7 +33,7 @@ namespace FenestrationCommon {
     }
   }
 
-  void CSquareMatrix::setDiagonal( const vector< double >& t_Values ) {
+  void CSquareMatrix::setDiagonal( vector< double > const & t_Values ) {
     if( t_Values.size() != m_Size ) {
       throw runtime_error("Supplied vector size mismatch matrix size");
     }
@@ -43,17 +43,22 @@ namespace FenestrationCommon {
     }
   }
 
-  vector< double >& CSquareMatrix::operator[]( const size_t index ) {
+  vector< double >& CSquareMatrix::operator[]( size_t const index ) {
     assert( index < m_Size );
     return m_Matrix[ index ];
   }
 
-  shared_ptr< CSquareMatrix > CSquareMatrix::add( const CSquareMatrix& t_Matrix ) const {
+  vector< double > const & CSquareMatrix::operator[]( size_t const index ) const {
+    assert( index < m_Size );
+    return m_Matrix[ index ];
+  }
+
+  shared_ptr< CSquareMatrix > CSquareMatrix::add( CSquareMatrix const & t_Matrix ) const {
     if( m_Size != t_Matrix.m_Size ) {
       throw runtime_error("Matrices must be identical in size.");
     }
 
-    shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( m_Size );
+    auto aMatrix = make_shared< CSquareMatrix >( m_Size );
     for( size_t i = 0; i < m_Size; ++i ) {
       for( size_t j = 0; j < t_Matrix.m_Size; ++j ) {
         ( *aMatrix )[ i ][ j ] = m_Matrix[ i ][ j ] + t_Matrix.m_Matrix[ i ][ j ];
@@ -63,12 +68,12 @@ namespace FenestrationCommon {
     return aMatrix;
   }
 
-  shared_ptr< CSquareMatrix > CSquareMatrix::sub( const CSquareMatrix& t_Matrix ) const {
+  shared_ptr< CSquareMatrix > CSquareMatrix::sub( CSquareMatrix const & t_Matrix ) const {
     if( m_Size != t_Matrix.m_Size ) {
       throw runtime_error("Matrices must be identical in size.");
     }
 
-    shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( m_Size );
+    auto aMatrix = make_shared< CSquareMatrix >( m_Size );
     for( size_t i = 0; i < m_Size; ++i ) {
       for( size_t j = 0; j < t_Matrix.m_Size; ++j ) {
         ( *aMatrix )[ i ][ j ] = m_Matrix[ i ][ j ] - t_Matrix.m_Matrix[ i ][ j ];
@@ -78,12 +83,12 @@ namespace FenestrationCommon {
     return aMatrix;
   }
 
-  shared_ptr< CSquareMatrix > CSquareMatrix::mult( const CSquareMatrix& t_Matrix ) const {
+  shared_ptr< CSquareMatrix > CSquareMatrix::mult( CSquareMatrix const & t_Matrix ) const {
     if( m_Size != t_Matrix.m_Size ) {
       throw runtime_error("Matrices must be identical in size.");
     }
 
-    shared_ptr< CSquareMatrix > aMatrix = make_shared< CSquareMatrix >( m_Size );
+    auto aMatrix = make_shared< CSquareMatrix >( m_Size );
 
     for( size_t i = 0; i < m_Size; ++i ) {
       for( size_t k = 0; k < m_Size; ++k ) {
@@ -97,13 +102,13 @@ namespace FenestrationCommon {
 
   }
 
-  shared_ptr< vector< double > > CSquareMatrix::multMxV( const vector< double >& t_Vector ) const {
+  shared_ptr< vector< double > > CSquareMatrix::multMxV( vector< double > const & t_Vector ) const {
     if( m_Size != t_Vector.size() ) {
       throw runtime_error("Matrix and vector does not have same number of rows and columns."
         " It is not possible to perform multiplication.");
     }
 
-    shared_ptr< vector< double > > aResult = make_shared< vector< double > >( m_Size );
+    auto aResult = make_shared< vector< double > >( m_Size );
 
     for( size_t i = 0; i < m_Size; ++i ) {
       for( size_t j = 0; j < m_Size; ++j ) {
@@ -114,13 +119,13 @@ namespace FenestrationCommon {
     return aResult;
   }
 
-  shared_ptr< vector< double > > CSquareMatrix::multVxM( const vector< double >& t_Vector ) const {
+  shared_ptr< vector< double > > CSquareMatrix::multVxM( vector< double > const & t_Vector ) const {
     if( m_Size != t_Vector.size() ) {
       throw runtime_error("Matrix and vector do not have same number of rows and columns."
                           " It is not possible to perform multiplication.");
     }
 
-    shared_ptr< vector< double > > aResult = make_shared< vector< double > >( m_Size );
+    auto aResult = make_shared< vector< double > >( m_Size );
 
     for( size_t i = 0; i < m_Size; ++i ) {
       for( size_t j = 0; j < m_Size; ++j ) {
@@ -131,7 +136,7 @@ namespace FenestrationCommon {
     return aResult;
   }
 
-  void CSquareMatrix::copyFrom( const CSquareMatrix& t_Matrix ) {
+  void CSquareMatrix::copyFrom( CSquareMatrix const & t_Matrix ) {
     if( m_Size != t_Matrix.m_Size ) {
       throw runtime_error("Matrices must be identical in size");
     }
@@ -142,30 +147,30 @@ namespace FenestrationCommon {
 
   shared_ptr< CSquareMatrix > CSquareMatrix::inverse() {
     // return LU decomposed matrix of current matrix
-    shared_ptr< CSquareMatrix > aLU = LU();
+    auto aLU = LU();
 
     // find the inverse
-    shared_ptr< CSquareMatrix > inverse = make_shared< CSquareMatrix >( m_Size );
+    auto inverse = make_shared< CSquareMatrix >( m_Size );
     vector< double > d( m_Size );
     vector< double > y( m_Size );
 
-    int size = int( m_Size - 1 );
+    auto size = int( m_Size - 1 );
 
-    for( int m = 0; m <= size; ++m ) {
+    for( auto m = 0; m <= size; ++m ) {
       fill( d.begin(), d.end(), 0 );
       fill( y.begin(), y.end(), 0 );
       d[ m ] = 1;
-      for( int i = 0; i <= size; ++i ) { 
+      for( auto i = 0; i <= size; ++i ) { 
         double x = 0;
-        for( int j = 0; j <= i - 1; ++j ) {
+        for( auto j = 0; j <= i - 1; ++j ) {
           x = x + ( *aLU )[ i ][ j ] * y[ j ];
         }
          y[ i ] = ( d[ i ] - x );
       }
   
-      for( int i = size; i >= 0; --i ) { 
-        double x = 0.0;
-        for( int j = i + 1; j <= size; ++j ) { 
+      for( auto i = size; i >= 0; --i ) { 
+        auto x = 0.0;
+        for( auto j = i + 1; j <= size; ++j ) { 
           x = x + ( *aLU )[ i ][ j ] * ( *inverse )[ j ][ m ];
         }
          ( *inverse )[ i ][ m ] = ( y[ i ] - x ) / ( *aLU )[ i ][ i ];
@@ -176,13 +181,13 @@ namespace FenestrationCommon {
   }
 
   shared_ptr< CSquareMatrix > CSquareMatrix::LU() {
-    shared_ptr< CSquareMatrix > D = make_shared< CSquareMatrix >( m_Size );
+    auto D = make_shared< CSquareMatrix >( m_Size );
     D->copyFrom( *this );
 
-    for( size_t k = 0; k <= m_Size - 2; ++k ) {
-      for( size_t j = k + 1; j <= m_Size - 1; ++j) {
-        double x = ( *D )[ j ][ k ] / ( *D )[ k ][ k ];
-        for( size_t i = k; i <= m_Size - 1; ++i ) {  
+    for( auto k = 0u; k <= m_Size - 2; ++k ) {
+      for( auto j = k + 1; j <= m_Size - 1; ++j) {
+        auto x = ( *D )[ j ][ k ] / ( *D )[ k ][ k ];
+        for( auto i = k; i <= m_Size - 1; ++i ) {  
           ( *D )[ j ][ i ] = ( *D )[ j ][ i ] - x * ( *D )[ k ][ i ];
         }
         ( *D )[ j ][ k ] = x;

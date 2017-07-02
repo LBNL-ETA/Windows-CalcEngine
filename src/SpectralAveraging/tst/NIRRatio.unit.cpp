@@ -1,5 +1,4 @@
 #include <memory>
-#include <algorithm>
 #include <gtest/gtest.h>
 
 #include "WCESpectralAveraging.hpp"
@@ -15,9 +14,9 @@ private:
   shared_ptr< CNIRRatio > m_NIRRatio;
 
 protected:
-  virtual void SetUp() {
-    shared_ptr< CSeries > solarRadiation = make_shared< CSeries >();
-    
+  shared_ptr< CSeries > getSolarRadiation() const {
+    auto solarRadiation = make_shared< CSeries >();
+
     // Full ASTM E891-87 Table 1
     solarRadiation->addProperty( 0.3000, 0.0    );
     solarRadiation->addProperty( 0.3050, 3.4    );
@@ -141,25 +140,31 @@ protected:
     solarRadiation->addProperty( 3.7650, 9.0    );
     solarRadiation->addProperty( 4.0450, 6.9    );
 
-    double lowLambda = 0.38;
-    double highLambda = 0.78;
+    return solarRadiation;
+  }
+
+  void SetUp() override {
+    auto solarRadiation = getSolarRadiation();
+
+    auto lowLambda = 0.38;
+    auto highLambda = 0.78;
 
     m_NIRRatio = make_shared< CNIRRatio >( solarRadiation, lowLambda, highLambda );
 
   }
 
 public:
-  shared_ptr< CNIRRatio > getNIRRatio() { return m_NIRRatio; };
+  shared_ptr< CNIRRatio > getNIRRatio() const { return m_NIRRatio; };
 
 };
 
 TEST_F( TestNIRRatio, TestRatio ) {
   SCOPED_TRACE( "Begin Test: Test calculation of ratio." );
-  
-  shared_ptr< CNIRRatio > aNIRRatio = getNIRRatio();
 
-  double ratio = aNIRRatio->ratio();
+  auto aNIRRatio = *getNIRRatio();
 
-  EXPECT_NEAR( 0.49458580672860059, ratio, 1e-6 );
+  auto ratio = aNIRRatio.ratio();
+
+  EXPECT_NEAR( 0.494586, ratio, 1e-6 );
 
 }

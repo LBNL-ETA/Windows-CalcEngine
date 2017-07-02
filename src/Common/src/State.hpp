@@ -9,6 +9,7 @@ namespace FenestrationCommon {
   // to be performed before results is requested.
   class CState {
   public:
+    virtual ~CState() = default;
     CState();
     CState( const CState & t_State );
     virtual void resetCalculated() final; // to reset state to non-calculated
