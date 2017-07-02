@@ -13,7 +13,7 @@ namespace FenestrationCommon {
     std::vector<double> getCoefficients( std::vector<std::pair<double, double> > t_Table );
 
   private:
-    size_t m_Order;
+    std::size_t m_Order;
   };
 
 }

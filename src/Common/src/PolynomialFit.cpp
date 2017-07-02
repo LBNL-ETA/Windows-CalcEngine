@@ -16,24 +16,24 @@ namespace FenestrationCommon {
   vector< double > PolynomialFit::getCoefficients( vector<pair<double, double> > t_Table ) {
     int n = int( m_Order );
 
-    vector<double> x( 2 * n + 1 );
+    vector< double > x( 2 * n + 1 );
     for ( auto i = 0; i < 2 * n + 1; i++ ) {
       x[ i ] = 0;
       for ( auto j = 0; j < int( t_Table.size()); j++ )
         x[ i ] = x[ i ] + pow( t_Table[ j ].first, i );
     }
 
-    vector<vector<double> > B( n + 1 );
+    vector< vector< double > > B( n + 1 );
     for ( auto &vec : B ) {
       vec.resize( n + 2 );
     }
-    vector<double> a( n + 1 );
+    vector< double > a( n + 1 );
 
     for ( auto i = 0; i <= n; i++ )
       for ( auto j = 0; j <= n; j++ )
         B[ i ][ j ] = x[ i + j ];
 
-    vector<double> Y( n + 1 );
+    vector< double > Y( n + 1 );
     for ( auto i = 0; i < n + 1; i++ ) {
       Y[ i ] = 0;
       for ( auto j = 0; j < int( t_Table.size()); j++ )
