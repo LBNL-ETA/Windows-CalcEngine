@@ -3,16 +3,20 @@
 
 #include <vector>
 
-class PolynomialFit {
-public:
-  explicit PolynomialFit( size_t const t_Order );
+namespace FenestrationCommon {
 
-  // Get polynomial fit for given coefficients
-  std::vector< double > getCoefficients( std::vector< std::pair< double, double > > t_Table );
+  class PolynomialFit {
+  public:
+    explicit PolynomialFit( size_t const t_Order );
 
-private:
-  size_t m_Order;
-};
+    // Get polynomial fit for given coefficients
+    std::vector<double> getCoefficients( std::vector<std::pair<double, double> > t_Table );
+
+  private:
+    size_t m_Order;
+  };
+
+}
 
 
 #endif //POLYNOMIALFIT_CPOLYFIT_HPP
