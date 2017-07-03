@@ -14,5 +14,7 @@
 #include "../src/State.hpp"
 #include "../src/SurfaceCoating.hpp"
 #include "../src/WavelengthRange.hpp"
+#include "../src/PolynomialFit.hpp"
+#include "../src/Polynom.hpp"
 
 #endif
