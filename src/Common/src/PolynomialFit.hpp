@@ -10,7 +10,7 @@ namespace FenestrationCommon {
     explicit PolynomialFit( std::size_t const t_Order );
 
     // Get polynomial fit for given coefficients
-    std::vector< double > getCoefficients( std::vector<std::pair<double, double> > t_Table );
+    std::vector< double > getCoefficients( std::vector< std::pair< double, double > > t_Table ) const;
 
   private:
     std::size_t m_Order;

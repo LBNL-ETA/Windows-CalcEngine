@@ -13,7 +13,7 @@ namespace FenestrationCommon {
 
   }
 
-  vector< double > PolynomialFit::getCoefficients( vector<pair<double, double> > t_Table ) {
+  vector< double > PolynomialFit::getCoefficients( vector< pair< double, double > > t_Table ) const {
     int n = int( m_Order );
 
     vector< double > x( 2 * n + 1 );

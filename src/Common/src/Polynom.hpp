@@ -5,12 +5,12 @@ namespace FenestrationCommon {
 
   class Polynom {
   public:
-    Polynom( std::vector<double> const &t_Coeffs );
+    explicit Polynom( std::vector<double> const & t_Coeffs );
 
-    double value( double const t_X );
+    double value( double const t_x ) const;
 
   private:
-    std::vector<double> m_Coeffs;
+    std::vector< double > m_Coeffs;
   };
 
 }

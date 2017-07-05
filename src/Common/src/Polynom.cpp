@@ -13,7 +13,7 @@ namespace FenestrationCommon {
 
   }
 
-  double Polynom::value( double const t_X ) {
+  double Polynom::value( double const t_X ) const {
     double result = 0;
     double curX = 1;
     for ( auto val : m_Coeffs ) {
