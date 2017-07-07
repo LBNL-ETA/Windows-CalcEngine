@@ -92,7 +92,7 @@ namespace MultiLayerOptics {
   }
 
   double CEquivalentScatteringLayer::getPropertySimple( const PropertySimple t_Property, const Side t_Side, 
-    const Scattering t_Scattering, const double t_Theta, const double t_Phi ) {
+    const Scattering t_Scattering, const double t_Theta, const double t_Phi ) const {
     return m_Layer->getPropertySimple( t_Property, t_Side, t_Scattering, t_Theta, t_Phi );
   }
 
@@ -148,9 +148,9 @@ namespace MultiLayerOptics {
   shared_ptr< SimpleResults > CEquivalentScatteringLayer::calcDirectDiffuseTransAndRefl( 
     const CScatteringSurface& f1,
     const CScatteringSurface& b1,
-    const CScatteringSurface& f2 ) {
-    
-    shared_ptr< SimpleResults > aResult = make_shared< SimpleResults >();
+    const CScatteringSurface& f2 ) const {
+
+    auto aResult = make_shared< SimpleResults >();
 
     // Diffuse from direct beam component on the outside
     // Direct to direct interreflectance component
@@ -197,7 +197,7 @@ namespace MultiLayerOptics {
   }
 
   void CEquivalentScatteringLayer::addLayerComponents( CScatteringLayer& t_Layer, const Side t_Side,
-    const double t_Theta, const double t_Phi ) {
+    const double t_Theta, const double t_Phi ) const {
     double Tf = t_Layer.getPropertySimple( PropertySimple::T, Side::Front, Scattering::DirectDirect, t_Theta, t_Phi );
     double Rf = t_Layer.getPropertySimple( PropertySimple::R, Side::Front, Scattering::DirectDirect, t_Theta, t_Phi );
     double Tb = t_Layer.getPropertySimple( PropertySimple::T, Side::Back, Scattering::DirectDirect, t_Theta, t_Phi );

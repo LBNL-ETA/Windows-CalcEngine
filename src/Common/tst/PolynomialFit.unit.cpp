@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestPolynomialFit : public testing::Test {
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
   }
 
 
@@ -22,7 +22,7 @@ TEST_F( TestPolynomialFit, Test1 ) {
 
   vector< pair< double, double > > input = { { 1, 1 }, { 2, 8 }, { 3, 12 }, { 4, 16 } };
 
-  PolynomialFit poly = PolynomialFit( Order );
+  auto poly = PolynomialFit( Order );
 
   auto res = poly.getCoefficients( input );
 

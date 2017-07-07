@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include "../../Common/src/mmap.hpp"
 
 namespace FenestrationCommon {
 
@@ -53,7 +54,7 @@ namespace SingleLayerOptics {
     // std::shared_ptr< const CBSDFDirections > getDirections() const;
 
     double DiffDiff( const FenestrationCommon::Side t_Side, 
-      const FenestrationCommon::PropertySimple t_Property ) const;
+      const FenestrationCommon::PropertySimple t_Property );
 
     // Lambda values for the layer.
     std::shared_ptr< const std::vector< double > > lambdaVector() const;
@@ -69,9 +70,14 @@ namespace SingleLayerOptics {
     // Hemispherical integration over m_Directions
     double integrate( FenestrationCommon::CSquareMatrix const & t_Matrix ) const;
 
+    void calcDiffuseDiffuse();
+
     std::map< pair_Side_PropertySimple, p_SquareMatrix > m_Matrix;
     std::map< pair_Side_PropertySimple, std::shared_ptr< std::vector< double > > > m_Hem;
     std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_Abs;
+
+    bool m_DiffuseDiffuseCalculated;
+    FenestrationCommon::mmap< double, FenestrationCommon::Side, FenestrationCommon::PropertySimple > m_MapDiffDiff;
 
     void calcHemispherical();
     bool m_HemisphericalCalculated;

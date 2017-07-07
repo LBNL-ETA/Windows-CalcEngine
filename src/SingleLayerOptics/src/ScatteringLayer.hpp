@@ -45,7 +45,7 @@ namespace SingleLayerOptics {
       std::shared_ptr< ICellDescription > t_Description = nullptr,
       const DistributionMethod t_Method = DistributionMethod::UniformDiffuse );
 
-    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+    void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData ) const;
 
     std::shared_ptr< CScatteringSurface > getSurface( const FenestrationCommon::Side t_Side );
 

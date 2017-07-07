@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics {
 
   CBSDFIntegrator::CBSDFIntegrator( const shared_ptr< const CBSDFIntegrator >& t_Integrator ) :
-    m_HemisphericalCalculated( false ) {
+    m_HemisphericalCalculated( false ), m_DiffuseDiffuseCalculated( false ) {
     m_Directions = t_Integrator->m_Directions;
     m_DimMatrices = m_Directions->size();
 
@@ -25,26 +25,22 @@ namespace SingleLayerOptics {
     }
   }
 
-  CBSDFIntegrator::CBSDFIntegrator( const shared_ptr< const CBSDFDirections >& t_Directions ) :
-    m_HemisphericalCalculated( false ) {
+  CBSDFIntegrator::CBSDFIntegrator( const shared_ptr< const CBSDFDirections >& t_Directions ) : 
+    m_DiffuseDiffuseCalculated( false ), m_HemisphericalCalculated( false ) {
     m_Directions = t_Directions;
     m_DimMatrices = m_Directions->size();
 
-    for( Side t_Side : EnumSide() ) {
-      for( PropertySimple t_Property : EnumPropertySimple() ) {
-        m_Matrix[ make_pair( t_Side, t_Property ) ] = make_shared< CSquareMatrix >( m_DimMatrices );
-        m_Hem[ make_pair( t_Side, t_Property ) ] = make_shared< vector< double > >( m_DimMatrices );
+    for ( Side t_Side : EnumSide() ) {
+      for ( PropertySimple t_Property : EnumPropertySimple() ) {
+        m_Matrix[ make_pair( t_Side, t_Property ) ] = make_shared<CSquareMatrix>( m_DimMatrices );
+        m_Hem[ make_pair( t_Side, t_Property ) ] = make_shared<vector<double>>( m_DimMatrices );
       }
     }
   }
 
-  // shared_ptr< const CBSDFDirections > CBSDFIntegrator::getDirections() const {
-  //   return m_Directions; 
-  // }
-
-  double CBSDFIntegrator::DiffDiff( const FenestrationCommon::Side t_Side,
-    const FenestrationCommon::PropertySimple t_Property ) const {
-    return integrate( *getMatrix( t_Side, t_Property ) );
+  double CBSDFIntegrator::DiffDiff( const Side t_Side, const PropertySimple t_Property ) {
+    calcDiffuseDiffuse();
+    return m_MapDiffDiff.at( t_Side, t_Property );
   }
 
   shared_ptr< CSquareMatrix > CBSDFIntegrator::getMatrix( const Side t_Side, 
@@ -115,6 +111,16 @@ namespace SingleLayerOptics {
       }
     }
     return sum / M_PI;
+  }
+
+  void CBSDFIntegrator::calcDiffuseDiffuse() {
+    if ( !m_DiffuseDiffuseCalculated ) {
+      for ( auto t_Side : EnumSide() ) {
+        for ( auto t_Property : EnumPropertySimple() ) {
+          m_MapDiffDiff( t_Side, t_Property ) = integrate( *getMatrix( t_Side, t_Property ) );
+        }
+      }
+    }
   }
 
   size_t CBSDFIntegrator::getNearestBeamIndex( const double t_Theta, const double t_Phi ) const {
