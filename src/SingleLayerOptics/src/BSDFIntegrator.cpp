@@ -26,7 +26,7 @@ namespace SingleLayerOptics {
   }
 
   CBSDFIntegrator::CBSDFIntegrator( const shared_ptr< const CBSDFDirections >& t_Directions ) : 
-    m_DiffuseDiffuseCalculated( false ), m_HemisphericalCalculated( false ) {
+    m_HemisphericalCalculated( false ), m_DiffuseDiffuseCalculated( false ) {
     m_Directions = t_Directions;
     m_DimMatrices = m_Directions->size();
 

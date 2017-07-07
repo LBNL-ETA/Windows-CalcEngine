@@ -71,16 +71,16 @@ namespace SingleLayerOptics {
     double integrate( FenestrationCommon::CSquareMatrix const & t_Matrix ) const;
 
     void calcDiffuseDiffuse();
+    void calcHemispherical();
 
     std::map< pair_Side_PropertySimple, p_SquareMatrix > m_Matrix;
     std::map< pair_Side_PropertySimple, std::shared_ptr< std::vector< double > > > m_Hem;
     std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_Abs;
 
+    bool m_HemisphericalCalculated;
     bool m_DiffuseDiffuseCalculated;
     FenestrationCommon::mmap< double, FenestrationCommon::Side, FenestrationCommon::PropertySimple > m_MapDiffDiff;
 
-    void calcHemispherical();
-    bool m_HemisphericalCalculated;
   };
 
 }
