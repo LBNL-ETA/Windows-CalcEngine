@@ -120,6 +120,7 @@ namespace SingleLayerOptics {
           m_MapDiffDiff( t_Side, t_Property ) = integrate( *getMatrix( t_Side, t_Property ) );
         }
       }
+      m_DiffuseDiffuseCalculated = true;
     }
   }
 
