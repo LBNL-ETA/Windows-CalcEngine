@@ -9,8 +9,8 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install -qq g++-5.4
-  - export CXX="g++-5.4"
+  - sudo apt-get install -qq g++-4.9
+  - export CXX="g++-4.9"
 
 script:
   - mkdir build
