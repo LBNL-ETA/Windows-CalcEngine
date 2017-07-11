@@ -3,7 +3,7 @@
 //
 
 #include <vector>
-#include <algorithm>
+#include <math.h>
 
 #include "Polynom.hpp"
 
@@ -70,7 +70,7 @@ namespace FenestrationCommon {
 
     auto valFirst = min_element( begin( m_Polynoms ), end( m_Polynoms ), 
       [ & ] ( PolynomPoint & x, PolynomPoint & y ) {
-      return abs( x.value() - t_PointValue ) < abs( y.value() - t_PointValue );
+      return fabs( x.value() - t_PointValue ) < fabs( y.value() - t_PointValue );
     } );
 
     auto valSecond = valFirst + 1;
