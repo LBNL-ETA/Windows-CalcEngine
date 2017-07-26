@@ -73,11 +73,6 @@ namespace Tarcog {
         m_SolutionTolerance = min( achievedTolerance, m_SolutionTolerance );
         bestSolution = *m_IGUState;
       }
-      
-      if( m_Iterations > IterationConstants::NUMBER_OF_STEPS && 
-        m_RelaxParam == IterationConstants::RELAXATION_PARAMETER_MIN ) {
-        iterate = false;
-      }
 
       if( m_Iterations > IterationConstants::NUMBER_OF_STEPS ) {
         m_Iterations = 0;
@@ -88,6 +83,10 @@ namespace Tarcog {
       }
 
       iterate = achievedTolerance > m_Tolerance;
+
+      if( m_RelaxParam < IterationConstants::RELAXATION_PARAMETER_MIN ) {
+        iterate = false;
+      }
 
     }
     *m_IGUState = bestSolution;
