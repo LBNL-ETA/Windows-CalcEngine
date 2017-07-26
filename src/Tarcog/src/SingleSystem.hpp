@@ -44,6 +44,8 @@ namespace Tarcog {
     double getVentilationFlow( Environment const t_Environment ) const;
     double getUValue() const;
     size_t getNumberOfIterations() const;
+    double solutionTolarance() const;
+    bool isToleranceAchieved() const;
 
     // Set solution tolerance
     void setTolerance( double const t_Tolerance ) const;

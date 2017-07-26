@@ -144,6 +144,16 @@ namespace Tarcog {
     return m_NonLinearSolver->getNumOfIterations();
   }
 
+  double CSingleSystem::solutionTolarance() const {
+    assert( m_NonLinearSolver != nullptr );
+    return m_NonLinearSolver->solutionTolerance();
+  }
+
+  bool CSingleSystem::isToleranceAchieved() const {
+    assert( m_NonLinearSolver != nullptr );
+    return m_NonLinearSolver->isToleranceAchieved();
+  }
+
   void CSingleSystem::solve() const {
     assert( m_NonLinearSolver != nullptr );
     m_NonLinearSolver->solve();

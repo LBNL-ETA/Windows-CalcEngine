@@ -89,6 +89,7 @@ namespace Tarcog {
 
       auto tiltRadians = m_Tilt * M_PI / 180;
       auto tMean = getGasTemperature() + 0.25 * ( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
+      if( tMean < 0 ) tMean = 0.1;
       auto deltaTemp = fabs( m_Surface.at( Side::Front )->getTemperature() - getGasTemperature() );
       m_Gas->setTemperatureAndPressure( tMean, m_Pressure );
       auto aProperties = m_Gas->getGasProperties();
