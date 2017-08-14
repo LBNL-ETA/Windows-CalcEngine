@@ -12,14 +12,14 @@ include( cmake/CompilerFlags.cmake )
 get_directory_property(hasParent PARENT_DIRECTORY)
 
 if(hasParent)
-	set( BUILD_TESTING OFF )
+	set( BUILD_WCE_TESTING OFF )
 	set( SINGLE_PROJECT ON )
 else()
-	option( BUILD_TESTING "Build testing targets" ON )
+	option( BUILD_WCE_TESTING "Build testing targets" ON )
 	option( SINGLE_PROJECT "Build windows library as single project" OFF )
 endif()
 
-if( BUILD_TESTING )
+if( BUILD_WCE_TESTING )
 	# include(CMakeLists-GTest.txt)
 	configure_file(CMakeLists.txt.in ${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt)
 	execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -84,7 +84,7 @@ else()
   
   add_library( ${target_name} STATIC ${SOURCES} )
   
-  if( BUILD_TESTING )
+  if( BUILD_WCE_TESTING )
   	include_directories( src/Common/include )
   	include_directories( src/Chromogenics/include )
   	include_directories( src/Gases/include )
