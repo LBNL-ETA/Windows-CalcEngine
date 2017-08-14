@@ -92,7 +92,7 @@ endmacro()
 
 # Create test targets
 macro( CREATE_TEST_TARGETS BASE_NAME SRC DEPENDENCIES )
-  if( BUILD_TESTING )
+  if( BUILD_WCE_TESTING )
     add_executable( ${BASE_NAME}_tests ${SRC} )
 
     if( ENABLE_GTEST_DEBUG_MODE )

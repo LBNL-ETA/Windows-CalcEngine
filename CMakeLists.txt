@@ -4,9 +4,9 @@ set( target_name Windows-CalcEngine )
 
 project( ${target_name} )
 
-include( cmake/ProjectMacros.cmake )
-include( cmake/internal_utils.cmake )
-include( cmake/CompilerFlags.cmake )
+include( cmake/WCEProjectMacros.cmake )
+include( cmake/WCEinternal_utils.cmake )
+include( cmake/WCECompilerFlags.cmake )
 
 # google test will not be created by this project if this is not main project. Main project is expected to handle google test.
 get_directory_property(hasParent PARENT_DIRECTORY)

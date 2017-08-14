@@ -29,7 +29,7 @@ install(TARGETS ${target_name}
   ARCHIVE DESTINATION lib
 )
 
-if( BUILD_TESTING )
+if( BUILD_WCE_TESTING )
   include_directories( include )
 	file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" tst/*.cpp )
 	set( test_src ${all_test_src} )
