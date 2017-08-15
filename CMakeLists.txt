@@ -5,6 +5,7 @@ set( target_name Windows-CalcEngine )
 project( ${target_name} )
 
 include( cmake/WCEProjectMacros.cmake )
+include( cmake/WCEInternalUtils.cmake )
 include( cmake/WCECompilerFlags.cmake )
 
 # google test will not be created by this project if this is not main project. Main project is expected to handle google test.
@@ -125,4 +126,4 @@ else()
   
 endif()
 
-config_compiler_and_linker()
+config_compiler_and_linker_wce()
