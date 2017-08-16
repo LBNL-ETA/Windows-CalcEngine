@@ -49,32 +49,55 @@ namespace Tarcog {
 
   void CNonLinearSolver::solve() {
     m_IGUState = m_IGU->getState();
+    vector< double > initialState( *m_IGUState );
+    vector< double > bestSolution( m_IGUState->size() );
     assert( m_IGUState != nullptr );
-    double achievedTolerance = 1;
+    auto achievedTolerance = 1000.0;
+    m_SolutionTolerance = achievedTolerance;
 
     m_Iterations = 0;
+    bool iterate = true;
 
-    while ( achievedTolerance > m_Tolerance ) {
+    while ( iterate ) {
       ++m_Iterations;
       vector< double > aSolution = m_QBalance->calcBalanceMatrix();
 
       achievedTolerance = calculateTolerance( aSolution );
 
       estimateNewState( aSolution );
-
-      m_IGU->setState( *m_IGUState );
       
-      if( m_Iterations > IterationConstants::NUMBER_OF_STEPS && 
-        m_RelaxParam == IterationConstants::RELAXATION_PARAMETER_MIN ) {
-        throw runtime_error("Failed to converge in tarcog.");
+      m_IGU->setState( *m_IGUState );
+
+      if( achievedTolerance < m_SolutionTolerance ) {
+        initialState = *m_IGUState;
+        m_SolutionTolerance = min( achievedTolerance, m_SolutionTolerance );
+        bestSolution = *m_IGUState;
       }
 
       if( m_Iterations > IterationConstants::NUMBER_OF_STEPS ) {
         m_Iterations = 0;
         m_RelaxParam -= IterationConstants::RELAXATION_PARAMETER_STEP;
+        
+        m_IGU->setState( initialState );
+        *m_IGUState = initialState;
+      }
+
+      iterate = achievedTolerance > m_Tolerance;
+
+      if( m_RelaxParam < IterationConstants::RELAXATION_PARAMETER_MIN ) {
+        iterate = false;
       }
 
     }
+    *m_IGUState = bestSolution;
+  }
+
+  double CNonLinearSolver::solutionTolerance() const {
+    return m_SolutionTolerance;
+  }
+
+  bool CNonLinearSolver::isToleranceAchieved() const {
+    return m_SolutionTolerance < m_Tolerance;
   }
 
 }

@@ -29,7 +29,7 @@ protected:
 
     shared_ptr< CEnvironment > Outdoor = 
       make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
-        airDirection, tSky, SkyModel::AllSpecified );
+        airDirection, tSky, AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
     Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
 
@@ -118,8 +118,8 @@ TEST_F( TestDoubleClearIndoorShadeAir, Test1 ) {
   }
 
   auto numOfIter = aSystem->getNumberOfIterations();
-  EXPECT_EQ( 5, int( numOfIter ) );
+  EXPECT_EQ( 1, int( numOfIter ) );
 
   auto ventilatedFlow = aSystem->getVentilationFlow( Environment::Indoor );
-  EXPECT_NEAR( 40.066869, ventilatedFlow, 1e-6 );
+  EXPECT_NEAR( 40.066868, ventilatedFlow, 1e-6 );
 }

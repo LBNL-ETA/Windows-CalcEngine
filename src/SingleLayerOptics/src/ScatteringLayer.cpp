@@ -18,12 +18,12 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics {
 
   CScatteringLayer::CScatteringLayer( const shared_ptr< CScatteringSurface >& t_Front, 
-    const shared_ptr< CScatteringSurface >& t_Back ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ) {
-    if( t_Front == nullptr ) {
-      throw runtime_error("Front surface must be created.");
+    const shared_ptr< CScatteringSurface >& t_Back ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
+    if ( t_Front == nullptr ) {
+      throw runtime_error( "Front surface must be created." );
     }
-    if( t_Back == nullptr ) {
-      throw runtime_error("Back surface must be created.");
+    if ( t_Back == nullptr ) {
+      throw runtime_error( "Back surface must be created." );
     }
 
     m_Surface[ Side::Front ] = t_Front;
@@ -31,7 +31,7 @@ namespace SingleLayerOptics {
   }
 
   CScatteringLayer::CScatteringLayer( const shared_ptr< CScatteringLayer >& t_Layer ) :
-    m_BSDFLayer( nullptr ), m_Cell( nullptr ) {
+    m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
     m_Surface[ Side::Front ] = t_Layer->getSurface( Side::Front );
     m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Back );
   }
@@ -42,27 +42,27 @@ namespace SingleLayerOptics {
     const double Tf_dir_dif, const double Rf_dir_dif,
     const double Tb_dir_dif, const double Rb_dir_dif,
     const double Tf_dif_dif, const double Rf_dif_dif,
-    const double Tb_dif_dif, const double Rb_dif_dif ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ) {
-    m_Surface[ Side::Front ] = make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, 
-                                                                  Tf_dir_dif, Rf_dir_dif, 
-                                                                  Tf_dif_dif, Rf_dif_dif );
-    m_Surface[ Side::Back ] = make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir,
-                                                                 Tb_dir_dif, Rb_dir_dif,
-                                                                 Tb_dif_dif, Rb_dif_dif );
+    const double Tb_dif_dif, const double Rb_dif_dif ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
+    m_Surface[ Side::Front ] = make_shared<CScatteringSurface>( Tf_dir_dir, Rf_dir_dir,
+                                                                Tf_dir_dif, Rf_dir_dif,
+                                                                Tf_dif_dif, Rf_dif_dif );
+    m_Surface[ Side::Back ] = make_shared<CScatteringSurface>( Tb_dir_dir, Rb_dir_dir,
+                                                               Tb_dir_dif, Rb_dir_dif,
+                                                               Tb_dif_dif, Rb_dif_dif );
   }
 
   CScatteringLayer::CScatteringLayer( const shared_ptr< CMaterial >& t_Material,
     std::shared_ptr< ICellDescription > t_Description,
-    const DistributionMethod t_Method ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ) {
+    const DistributionMethod t_Method ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
     // Scattering layer can also be created from material and cell desctiption in which case integration will
     // be performed using BSDF distribution while direct-direct component will be taken directly from cell.
-    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
-    CBSDFLayerMaker aMaker = CBSDFLayerMaker( t_Material, aBSDF, t_Description, t_Method );
+    auto aBSDF = make_shared<CBSDFHemisphere>( BSDFBasis::Full );
+    auto aMaker = CBSDFLayerMaker( t_Material, aBSDF, t_Description, t_Method );
     m_Cell = aMaker.getCell();
     m_BSDFLayer = aMaker.getLayer();
   }
 
-  void CScatteringLayer::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+  void CScatteringLayer::setSourceData( shared_ptr< CSeries > t_SourceData ) const {
     if( m_Cell != nullptr ) {
       m_Cell->setSourceData( t_SourceData );
       m_BSDFLayer->setSourceData( t_SourceData );

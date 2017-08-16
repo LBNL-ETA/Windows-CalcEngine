@@ -53,15 +53,10 @@ namespace MultiLayerOptics {
 
     void calculate();
 
-    void triggerLayerAbsCalculations( const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End );
-
     // Wavelength layer per layer calculations
-    void calculateWavelengthProperties( std::map< FenestrationCommon::Side, 
-      std::shared_ptr< FenestrationCommon::CMatrixSeries > >& t_TotA, 
-      std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > >& t_Tot,
-      const size_t t_NumOfLayers, const size_t t_Start, const size_t t_End );
+    void calculateWavelengthProperties( size_t const t_NumOfLayers, size_t const t_Start, size_t const t_End ) const;
 
-    void updateWavelengthLayers( const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
+    void updateWavelengthLayers( const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer ) const;
 
     // Vector of layer results over each wavelength
     std::shared_ptr< std::vector< std::shared_ptr< CEquivalentBSDFLayerSingleBand > > > m_LayersWL;

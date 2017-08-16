@@ -14,7 +14,7 @@ using namespace MultiLayerOptics;
 
 // Example on how to create scattered multilayer.
 
-class MultiPaneScattered_102_103 : public testing::Test {
+class MultiPaneScattered_102_Woven : public testing::Test {
 
 private:
   shared_ptr< CMultiLayerScattered > m_Layer;
@@ -268,147 +268,49 @@ private:
 
   }
 
-  shared_ptr< CSpectralSampleData > loadSampleData_NFRC_103() const {
-    auto aMeasurements_103 = make_shared< CSpectralSampleData >();
-    aMeasurements_103->addRecord( 0.300, 0.0000, 0.0470, 0.0490 );
-    aMeasurements_103->addRecord( 0.305, 0.0050, 0.0470, 0.0490 );
-    aMeasurements_103->addRecord( 0.310, 0.0000, 0.0470, 0.0480 );
-    aMeasurements_103->addRecord( 0.315, 0.0030, 0.0460, 0.0480 );
-    aMeasurements_103->addRecord( 0.320, 0.0190, 0.0460, 0.0480 );
-    aMeasurements_103->addRecord( 0.325, 0.0660, 0.0450, 0.0460 );
-    aMeasurements_103->addRecord( 0.330, 0.1600, 0.0450, 0.0470 );
-    aMeasurements_103->addRecord( 0.335, 0.2940, 0.0490, 0.0500 );
-    aMeasurements_103->addRecord( 0.340, 0.4370, 0.0550, 0.0560 );
-    aMeasurements_103->addRecord( 0.345, 0.5660, 0.0620, 0.0620 );
-    aMeasurements_103->addRecord( 0.350, 0.6710, 0.0690, 0.0690 );
-    aMeasurements_103->addRecord( 0.355, 0.7440, 0.0740, 0.0740 );
-    aMeasurements_103->addRecord( 0.360, 0.7930, 0.0780, 0.0780 );
-    aMeasurements_103->addRecord( 0.365, 0.8220, 0.0800, 0.0800 );
-    aMeasurements_103->addRecord( 0.370, 0.8320, 0.0810, 0.0810 );
-    aMeasurements_103->addRecord( 0.375, 0.8190, 0.0800, 0.0800 );
-    aMeasurements_103->addRecord( 0.380, 0.8090, 0.0790, 0.0790 );
-    aMeasurements_103->addRecord( 0.385, 0.8290, 0.0800, 0.0800 );
-    aMeasurements_103->addRecord( 0.390, 0.8530, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.395, 0.8680, 0.0830, 0.0830 );
-    aMeasurements_103->addRecord( 0.400, 0.8750, 0.0830, 0.0830 );
-    aMeasurements_103->addRecord( 0.410, 0.8750, 0.0830, 0.0830 );
-    aMeasurements_103->addRecord( 0.420, 0.8730, 0.0830, 0.0830 );
-    aMeasurements_103->addRecord( 0.430, 0.8730, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.440, 0.8730, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.450, 0.8800, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.460, 0.8870, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.470, 0.8900, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.480, 0.8920, 0.0830, 0.0830 );
-    aMeasurements_103->addRecord( 0.490, 0.8930, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.500, 0.8940, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.510, 0.8950, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.520, 0.8950, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.530, 0.8940, 0.0820, 0.0820 );
-    aMeasurements_103->addRecord( 0.540, 0.8930, 0.0810, 0.0810 );
-    aMeasurements_103->addRecord( 0.550, 0.8910, 0.0810, 0.0810 );
-    aMeasurements_103->addRecord( 0.560, 0.8880, 0.0810, 0.0810 );
-    aMeasurements_103->addRecord( 0.570, 0.8840, 0.0800, 0.0800 );
-    aMeasurements_103->addRecord( 0.580, 0.8810, 0.0800, 0.0800 );
-    aMeasurements_103->addRecord( 0.590, 0.8760, 0.0790, 0.0790 );
-    aMeasurements_103->addRecord( 0.600, 0.8710, 0.0790, 0.0790 );
-    aMeasurements_103->addRecord( 0.610, 0.8650, 0.0780, 0.0780 );
-    aMeasurements_103->addRecord( 0.620, 0.8590, 0.0770, 0.0770 );
-    aMeasurements_103->addRecord( 0.630, 0.8530, 0.0770, 0.0770 );
-    aMeasurements_103->addRecord( 0.640, 0.8470, 0.0760, 0.0760 );
-    aMeasurements_103->addRecord( 0.650, 0.8400, 0.0750, 0.0750 );
-    aMeasurements_103->addRecord( 0.660, 0.8330, 0.0750, 0.0750 );
-    aMeasurements_103->addRecord( 0.670, 0.8260, 0.0740, 0.0740 );
-    aMeasurements_103->addRecord( 0.680, 0.8180, 0.0730, 0.0730 );
-    aMeasurements_103->addRecord( 0.690, 0.8100, 0.0730, 0.0730 );
-    aMeasurements_103->addRecord( 0.700, 0.8020, 0.0720, 0.0720 );
-    aMeasurements_103->addRecord( 0.710, 0.7940, 0.0710, 0.0720 );
-    aMeasurements_103->addRecord( 0.720, 0.7860, 0.0710, 0.0710 );
-    aMeasurements_103->addRecord( 0.730, 0.7770, 0.0700, 0.0700 );
-    aMeasurements_103->addRecord( 0.740, 0.7690, 0.0690, 0.0700 );
-    aMeasurements_103->addRecord( 0.750, 0.7610, 0.0690, 0.0690 );
-    aMeasurements_103->addRecord( 0.760, 0.7520, 0.0680, 0.0680 );
-    aMeasurements_103->addRecord( 0.770, 0.7440, 0.0670, 0.0680 );
-    aMeasurements_103->addRecord( 0.780, 0.7360, 0.0670, 0.0670 );
-    aMeasurements_103->addRecord( 0.790, 0.7290, 0.0660, 0.0660 );
-    aMeasurements_103->addRecord( 0.800, 0.7220, 0.0660, 0.0660 );
-    aMeasurements_103->addRecord( 0.810, 0.7150, 0.0650, 0.0660 );
-    aMeasurements_103->addRecord( 0.820, 0.7100, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 0.830, 0.7020, 0.0640, 0.0650 );
-    aMeasurements_103->addRecord( 0.840, 0.6980, 0.0640, 0.0640 );
-    aMeasurements_103->addRecord( 0.850, 0.6900, 0.0630, 0.0640 );
-    aMeasurements_103->addRecord( 0.860, 0.6870, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 0.870, 0.6810, 0.0670, 0.0670 );
-    aMeasurements_103->addRecord( 0.880, 0.6770, 0.0650, 0.0660 );
-    aMeasurements_103->addRecord( 0.890, 0.6730, 0.0660, 0.0660 );
-    aMeasurements_103->addRecord( 0.900, 0.6700, 0.0650, 0.0660 );
-    aMeasurements_103->addRecord( 0.910, 0.6670, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 0.920, 0.6640, 0.0640, 0.0640 );
-    aMeasurements_103->addRecord( 0.930, 0.6600, 0.0630, 0.0630 );
-    aMeasurements_103->addRecord( 0.940, 0.6580, 0.0640, 0.0640 );
-    aMeasurements_103->addRecord( 0.950, 0.6560, 0.0630, 0.0630 );
-    aMeasurements_103->addRecord( 0.960, 0.6540, 0.0610, 0.0610 );
-    aMeasurements_103->addRecord( 0.970, 0.6530, 0.0620, 0.0620 );
-    aMeasurements_103->addRecord( 0.980, 0.6510, 0.0610, 0.0620 );
-    aMeasurements_103->addRecord( 0.990, 0.6490, 0.0610, 0.0620 );
-    aMeasurements_103->addRecord( 1.000, 0.6480, 0.0590, 0.0600 );
-    aMeasurements_103->addRecord( 1.050, 0.6450, 0.0590, 0.0600 );
-    aMeasurements_103->addRecord( 1.100, 0.6450, 0.0580, 0.0590 );
-    aMeasurements_103->addRecord( 1.150, 0.6470, 0.0590, 0.0590 );
-    aMeasurements_103->addRecord( 1.200, 0.6530, 0.0590, 0.0590 );
-    aMeasurements_103->addRecord( 1.250, 0.6610, 0.0580, 0.0590 );
-    aMeasurements_103->addRecord( 1.300, 0.6730, 0.0600, 0.0600 );
-    aMeasurements_103->addRecord( 1.350, 0.6870, 0.0600, 0.0600 );
-    aMeasurements_103->addRecord( 1.400, 0.7020, 0.0610, 0.0610 );
-    aMeasurements_103->addRecord( 1.450, 0.7220, 0.0610, 0.0620 );
-    aMeasurements_103->addRecord( 1.500, 0.7410, 0.0630, 0.0640 );
-    aMeasurements_103->addRecord( 1.550, 0.7570, 0.0630, 0.0640 );
-    aMeasurements_103->addRecord( 1.600, 0.7690, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 1.650, 0.7750, 0.0650, 0.0640 );
-    aMeasurements_103->addRecord( 1.700, 0.7790, 0.0640, 0.0650 );
-    aMeasurements_103->addRecord( 1.750, 0.7790, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 1.800, 0.7770, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 1.850, 0.7760, 0.0650, 0.0630 );
-    aMeasurements_103->addRecord( 1.900, 0.7730, 0.0620, 0.0620 );
-    aMeasurements_103->addRecord( 1.950, 0.7730, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 2.000, 0.7720, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 2.050, 0.7740, 0.0640, 0.0640 );
-    aMeasurements_103->addRecord( 2.100, 0.7750, 0.0640, 0.0650 );
-    aMeasurements_103->addRecord( 2.150, 0.7730, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 2.200, 0.7580, 0.0640, 0.0650 );
-    aMeasurements_103->addRecord( 2.250, 0.7590, 0.0640, 0.0640 );
-    aMeasurements_103->addRecord( 2.300, 0.7660, 0.0650, 0.0650 );
-    aMeasurements_103->addRecord( 2.350, 0.7670, 0.0640, 0.0650 );
-    aMeasurements_103->addRecord( 2.400, 0.7660, 0.0640, 0.0640 );
-    aMeasurements_103->addRecord( 2.450, 0.7570, 0.0640, 0.0640 );
-    aMeasurements_103->addRecord( 2.500, 0.7500, 0.0630, 0.0630 );
-    
-    return aMeasurements_103;
-  }
-
 protected:
   void SetUp() override {
 
     auto aMeasurements_102 = loadSampleData_NFRC_102();
-    auto aMeasurements_103 = loadSampleData_NFRC_103();
 
     // Create samples from measurements and solar radiation
     auto aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
-    auto aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
 
     // Create material from samples
     auto thickness = 3.048e-3; // [m]
     shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample_102, 
       thickness, MaterialType::Monolithic, WavelengthRange::Solar );
-    thickness = 5.715e-3; // [m]
-    shared_ptr< CMaterial > aMaterial_103 = make_shared< CMaterialSample >( aSample_103, 
-      thickness, MaterialType::Monolithic, WavelengthRange::Solar );
+
+    // Woven Shade
+    double Tmat = 0.0;
+    double Rfmat = 0.2;
+    double Rbmat = 0.2;
+    shared_ptr< CMaterial > aSolarRangeMaterial = 
+      make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
+
+    // Visible range
+    Tmat = 0.0;
+    Rfmat = 0.1;
+    Rbmat = 0.1;
+    shared_ptr< CMaterial > aVisibleRangeMaterial = 
+      make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
+
+    shared_ptr< CMaterial > aMaterialWoven = 
+      make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
+
+    // make cell geometry
+    auto diameter = 100; // mm
+    auto spacing = 300; // mm
+    shared_ptr< ICellDescription > aCellDescription = 
+      make_shared< CWovenCellDescription >( diameter, spacing );
 
     auto Layer_102 = make_shared< CScatteringLayer >( aMaterial_102 );
-    auto Layer_103 = make_shared< CScatteringLayer >( aMaterial_103 );
+    auto Layer_Woven = make_shared< CScatteringLayer >( aMaterialWoven, aCellDescription );
+    
 
     // Equivalent BSDF layer
     m_Layer = make_shared< CMultiLayerScattered >( Layer_102 );
-    m_Layer->addLayer( Layer_103 );
+    m_Layer->addLayer( Layer_Woven );
 
     auto aSolarRadiation = loadSolarRadiationFile();
     m_Layer->setSourceData( aSolarRadiation );
@@ -420,8 +322,8 @@ public:
 
 };
 
-TEST_F( MultiPaneScattered_102_103, TestSpecular1 ) {
-  SCOPED_TRACE( "Begin Test: Specular layer - Scattering model front side (normal incidence)." );
+TEST_F( MultiPaneScattered_102_Woven, TestWoven1 ) {
+  SCOPED_TRACE( "Begin Test: Woven layer - Scattering model front side (normal incidence)." );
 
   auto& aLayer = *getLayer();
 
@@ -430,80 +332,80 @@ TEST_F( MultiPaneScattered_102_103, TestSpecular1 ) {
   double phi = 0;
 
   auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-  EXPECT_NEAR( 0.645986, T_dir_dir, 1e-6 );
+  EXPECT_NEAR( 0.370581, T_dir_dir, 1e-6 );
 
   auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-  EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
+  EXPECT_NEAR( 0.004814, T_dir_dif, 1e-6 );
 
   auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-  EXPECT_NEAR( 0.528672, T_dif_dif, 1e-6 );
+  EXPECT_NEAR( 0.225817, T_dif_dif, 1e-6 );
 
   auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-  EXPECT_NEAR( 0.123728, R_dir_dir, 1e-6 );
+  EXPECT_NEAR( 0.074817, R_dir_dir, 1e-6 );
 
   auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-  EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
+  EXPECT_NEAR( 0.070507, R_dir_dif, 1e-6 );
 
   auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-  EXPECT_NEAR( 0.225847, R_dif_dif, 1e-6 );
+  EXPECT_NEAR( 0.222723, R_dif_dif, 1e-6 );
 
   auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.096730, A_dir1, 1e-6 );
+  EXPECT_NEAR( 0.100855, A_dir1, 1e-6 );
 
   auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.133556, A_dir2, 1e-6 );
+  EXPECT_NEAR( 0.378427, A_dir2, 1e-6 );
 
   auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-  EXPECT_NEAR( 0.112032, A_dif1, 1e-6 );
+  EXPECT_NEAR( 0.111612, A_dif1, 1e-6 );
 
   auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-  EXPECT_NEAR( 0.133449, A_dif2, 1e-6 );
+  EXPECT_NEAR( 0.439849, A_dif2, 1e-6 );
 
 }
 
-TEST_F( MultiPaneScattered_102_103, TestSpecular2 ) {
-  SCOPED_TRACE( "Begin Test: Specular layer - Scattering model back side (normal incidence)." );
+TEST_F( MultiPaneScattered_102_Woven, TestWoven2 ) {
+  SCOPED_TRACE( "Begin Test: Woven layer - Scattering model back side (normal incidence)." );
 
   auto & aLayer = *getLayer();
 
   auto aSide = Side::Front;
-  double theta = 0;
+  double theta = 25;
   double phi = 0;
 
   auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-  EXPECT_NEAR( 0.645986, T_dir_dir, 1e-6 );
+  EXPECT_NEAR( 0.349652, T_dir_dir, 1e-6 );
 
   auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-  EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
+  EXPECT_NEAR( 0.012181, T_dir_dif, 1e-6 );
 
   auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-  EXPECT_NEAR( 0.528672, T_dif_dif, 1e-6 );
+  EXPECT_NEAR( 0.225817, T_dif_dif, 1e-6 );
 
   auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-  EXPECT_NEAR( 0.123728, R_dir_dir, 1e-6 );
+  EXPECT_NEAR( 0.075583, R_dir_dir, 1e-6 );
 
   auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-  EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
+  EXPECT_NEAR( 0.072332, R_dir_dif, 1e-6 );
 
   auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-  EXPECT_NEAR( 0.225847, R_dif_dif, 1e-6 );
+  EXPECT_NEAR( 0.222723, R_dif_dif, 1e-6 );
 
   auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.096730, A_dir1, 1e-6 );
+  EXPECT_NEAR( 0.102759, A_dir1, 1e-6 );
 
   auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.133556, A_dir2, 1e-6 );
+  EXPECT_NEAR( 0.387211, A_dir2, 1e-6 );
 
   auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-  EXPECT_NEAR( 0.112032, A_dif1, 1e-6 );
+  EXPECT_NEAR( 0.111612, A_dif1, 1e-6 );
 
   auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-  EXPECT_NEAR( 0.133449, A_dif2, 1e-6 );
+  EXPECT_NEAR( 0.439849, A_dif2, 1e-6 );
 
 }
 
-TEST_F( MultiPaneScattered_102_103, TestSpecular3 ) {
-  SCOPED_TRACE( "Begin Test: Specular layer - Scattering model front side (Theta = 50 deg)." );
+TEST_F( MultiPaneScattered_102_Woven, TestWoven3 ) {
+  SCOPED_TRACE( "Begin Test: Woven layer - Scattering model front side (Theta = 50 deg)." );
 
   auto & aLayer = *getLayer();
 
@@ -512,33 +414,33 @@ TEST_F( MultiPaneScattered_102_103, TestSpecular3 ) {
   double phi = 0;
 
   auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-  EXPECT_NEAR( 0.584911, T_dir_dir, 1e-6 );
+  EXPECT_NEAR( 0.255674, T_dir_dir, 1e-6 );
 
   auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-  EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
+  EXPECT_NEAR( 0.007800, T_dir_dif, 1e-6 );
 
   auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-  EXPECT_NEAR( 0.528672, T_dif_dif, 1e-6 );
+  EXPECT_NEAR( 0.225817, T_dif_dif, 1e-6 );
 
   auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-  EXPECT_NEAR( 0.158652, R_dir_dir, 1e-6 );
+  EXPECT_NEAR( 0.099211, R_dir_dir, 1e-6 );
 
   auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-  EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
+  EXPECT_NEAR( 0.084641, R_dir_dif, 1e-6 );
 
   auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-  EXPECT_NEAR( 0.225847, R_dif_dif, 1e-6 );
+  EXPECT_NEAR( 0.222723, R_dif_dif, 1e-6 );
 
   auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.111936, A_dir1, 1e-6 );
+  EXPECT_NEAR( 0.115043, A_dir1, 1e-6 );
 
   auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-  EXPECT_NEAR( 0.144501, A_dir2, 1e-6 );
+  EXPECT_NEAR( 0.441753, A_dir2, 1e-6 );
 
   auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-  EXPECT_NEAR( 0.112032, A_dif1, 1e-6 );
+  EXPECT_NEAR( 0.111612, A_dif1, 1e-6 );
 
   auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-  EXPECT_NEAR( 0.133449, A_dif2, 1e-6 );
+  EXPECT_NEAR( 0.439849, A_dif2, 1e-6 );
 
 }

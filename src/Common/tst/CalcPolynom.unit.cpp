@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestCalcPolynom : public testing::Test {
 
 protected:
-  virtual void SetUp() {
+  void SetUp() override {
   }
 
 
@@ -22,7 +22,7 @@ TEST_F( TestCalcPolynom, Test1 ) {
 
   auto poly = Polynom( input );
 
-  EXPECT_NEAR( -10.95, poly.value( 12 ), 1e-6 );
+  EXPECT_NEAR( -10.95, poly.valueAt( 12 ), 1e-6 );
 
 }
 
@@ -33,7 +33,7 @@ TEST_F( TestCalcPolynom, Test2 ) {
 
   auto poly = Polynom( input );
 
-  EXPECT_NEAR( 1.15, poly.value( 1 ), 1e-6 );
+  EXPECT_NEAR( 1.15, poly.valueAt( 1 ), 1e-6 );
 
 }
 
@@ -45,6 +45,6 @@ TEST_F( TestCalcPolynom, Test3 ) {
 
   auto poly = Polynom( input );
 
-  EXPECT_NEAR( 0.807353444, poly.value( 0.7 ), 1e-6 );
+  EXPECT_NEAR( 0.807353444, poly.valueAt( 0.7 ), 1e-6 );
 
 }

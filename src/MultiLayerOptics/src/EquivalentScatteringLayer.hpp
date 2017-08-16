@@ -55,7 +55,7 @@ namespace MultiLayerOptics {
       const FenestrationCommon::Side t_Side,
       const FenestrationCommon::Scattering t_Scattering,
       const double t_Theta = 0,
-      const double t_Phi = 0 );
+      const double t_Phi = 0 ) const;
 
     std::shared_ptr< SingleLayerOptics::CScatteringLayer > getLayer() const;
 
@@ -64,7 +64,7 @@ namespace MultiLayerOptics {
       SingleLayerOptics::CScatteringLayer& t_Second );
 
     // Find interreflectance value for given scattering
-    double getInterreflectance( 
+    static double getInterreflectance( 
       const SingleLayerOptics::CScatteringSurface& t_First, 
       const SingleLayerOptics::CScatteringSurface& t_Second, 
       const FenestrationCommon::Scattering t_Scattering );
@@ -74,12 +74,12 @@ namespace MultiLayerOptics {
       SingleLayerOptics::CScatteringLayer& t_Layer, 
       const FenestrationCommon::Side t_Side,
       const double t_Theta = 0, 
-      const double t_Phi = 0 );
+      const double t_Phi = 0 ) const;
 
     std::shared_ptr< SimpleResults > calcDirectDiffuseTransAndRefl( 
       const SingleLayerOptics::CScatteringSurface& f1, 
       const SingleLayerOptics::CScatteringSurface& b1, 
-      const SingleLayerOptics::CScatteringSurface& f2 );
+      const SingleLayerOptics::CScatteringSurface& f2 ) const;
 
     std::shared_ptr< SingleLayerOptics::CScatteringLayer > m_Layer;
     

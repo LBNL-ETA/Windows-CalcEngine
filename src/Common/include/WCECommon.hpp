@@ -16,5 +16,6 @@
 #include "../src/WavelengthRange.hpp"
 #include "../src/PolynomialFit.hpp"
 #include "../src/Polynom.hpp"
+#include "../src/mmap.hpp"
 
 #endif

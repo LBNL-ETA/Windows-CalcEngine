@@ -27,6 +27,9 @@ namespace Tarcog {
 
     void solve();
 
+    double solutionTolerance() const;
+    bool isToleranceAchieved() const;
+
   private:
     double calculateTolerance( std::vector< double > const & t_Solution ) const;
     void estimateNewState( std::vector< double > const & t_Solution ) const;
@@ -38,6 +41,7 @@ namespace Tarcog {
     double m_Tolerance;
     size_t m_Iterations;
     double m_RelaxParam;
+    double m_SolutionTolerance;
   };
 
 }
