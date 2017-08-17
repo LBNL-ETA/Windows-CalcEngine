@@ -59,7 +59,7 @@ namespace FenestrationCommon {
 
   void PolynomialPoints360deg::sortPolynomials() {
     sort( begin( m_Polynoms ), end( m_Polynoms ), 
-          [ & ] ( PolynomPoint & x, PolynomPoint & y ) {
+          [ ] ( PolynomPoint & x, PolynomPoint & y ) {
           return x.value() < y.value(); 
         } );
   }
