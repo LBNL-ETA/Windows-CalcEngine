@@ -59,7 +59,7 @@ namespace FenestrationCommon {
 
   void PolynomialPoints360deg::sortPolynomials() {
     sort( begin( m_Polynoms ), end( m_Polynoms ), 
-          [ & ] ( PolynomPoint & x, PolynomPoint & y ) {
+          [ ] ( PolynomPoint const & x, PolynomPoint const & y ) {
           return x.value() < y.value(); 
         } );
   }
@@ -70,7 +70,7 @@ namespace FenestrationCommon {
     }
 
     auto valFirst = min_element( begin( m_Polynoms ), end( m_Polynoms ), 
-      [ & ] ( PolynomPoint & x, PolynomPoint & y ) {
+      [ & ] ( PolynomPoint const & x, PolynomPoint const & y ) {
       return fabs( x.value() - t_PointValue ) < fabs( y.value() - t_PointValue );
     } );
 
