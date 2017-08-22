@@ -20,68 +20,69 @@
 using namespace std;
 
 namespace SingleLayerOptics {
-  
-  CBSDFLayerMaker::CBSDFLayerMaker( const shared_ptr< CMaterial >& t_Material,
-    const shared_ptr< const CBSDFHemisphere >& t_BSDF, shared_ptr< ICellDescription > t_Description, 
-    const DistributionMethod t_Method ) : m_Cell( nullptr ) {
 
-    if( t_Material == nullptr ) {
-      throw runtime_error("Material for BSDF layer must be defined.");
-    }
+	CBSDFLayerMaker::CBSDFLayerMaker( const shared_ptr< CMaterial >& t_Material,
+	                                  const shared_ptr< const CBSDFHemisphere >& t_BSDF, shared_ptr< ICellDescription > t_Description,
+	                                  const DistributionMethod t_Method ) : m_Cell( nullptr ) {
 
-    if( t_BSDF == nullptr ) {
-      throw runtime_error("BSDF Definition for BSDF layer must be defined.");
-    }
+		if ( t_Material == nullptr ) {
+			throw runtime_error( "Material for BSDF layer must be defined." );
+		}
 
-    // Specular BSDF layer is considered to be default. Default is used if t_Description is null pointer
-    if( t_Description == nullptr ) {
-      t_Description = make_shared< CSpecularCellDescription >();
-    }
+		if ( t_BSDF == nullptr ) {
+			throw runtime_error( "BSDF Definition for BSDF layer must be defined." );
+		}
 
-    // Specular cell
-    if( dynamic_pointer_cast< CSpecularCellDescription >( t_Description ) != NULL ) {
-      shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( t_Material, t_Description );
-      m_Cell = aCell;
-      m_Layer = make_shared< CSpecularBSDFLayer >( aCell, t_BSDF );
-    }
+		// Specular BSDF layer is considered to be default. Default is used if t_Description is null pointer
+		if ( t_Description == nullptr ) {
+			t_Description = make_shared< CSpecularCellDescription >();
+		}
 
-    // Venetian cell
-    if( dynamic_pointer_cast< CVenetianCellDescription >( t_Description ) != NULL ) {
-      if( t_Method == DistributionMethod::UniformDiffuse ) {
-        shared_ptr< CUniformDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
-        m_Cell = aCell;
-        m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
-      } else {
-        shared_ptr< CDirectionalDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
-        m_Cell = aCell;
-        m_Layer = make_shared< CDirectionalDiffuseBSDFLayer >( aCell, t_BSDF );
-      }
-    }
+		// Specular cell
+		if ( dynamic_pointer_cast< CSpecularCellDescription >( t_Description ) != NULL ) {
+			shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( t_Material, t_Description );
+			m_Cell = aCell;
+			m_Layer = make_shared< CSpecularBSDFLayer >( aCell, t_BSDF );
+		}
 
-    // Perforated cell
-    if( dynamic_pointer_cast< CPerforatedCellDescription >( t_Description ) != NULL ) {
-      // Perforated shades do not work with directional diffuse algorithm
-      shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( t_Material, t_Description );
-      m_Cell = aCell;
-      m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
-    }
+		// Venetian cell
+		if ( dynamic_pointer_cast< CVenetianCellDescription >( t_Description ) != NULL ) {
+			if ( t_Method == DistributionMethod::UniformDiffuse ) {
+				shared_ptr< CUniformDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
+				m_Cell = aCell;
+				m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
+			}
+			else {
+				shared_ptr< CDirectionalDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
+				m_Cell = aCell;
+				m_Layer = make_shared< CDirectionalDiffuseBSDFLayer >( aCell, t_BSDF );
+			}
+		}
 
-    // Woven cell
-    if( dynamic_pointer_cast< CWovenCellDescription >( t_Description ) != NULL ) {
-      // Woven shades do not work with directional diffuse algorithm
-      shared_ptr< CUniformDiffuseCell > aCell = make_shared< CWovenCell >( t_Material, t_Description );
-      m_Cell = aCell;
-      m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
-    }
+		// Perforated cell
+		if ( dynamic_pointer_cast< CPerforatedCellDescription >( t_Description ) != NULL ) {
+			// Perforated shades do not work with directional diffuse algorithm
+			shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( t_Material, t_Description );
+			m_Cell = aCell;
+			m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
+		}
 
-  }
+		// Woven cell
+		if ( dynamic_pointer_cast< CWovenCellDescription >( t_Description ) != NULL ) {
+			// Woven shades do not work with directional diffuse algorithm
+			shared_ptr< CUniformDiffuseCell > aCell = make_shared< CWovenCell >( t_Material, t_Description );
+			m_Cell = aCell;
+			m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
+		}
 
-  shared_ptr< CBSDFLayer > CBSDFLayerMaker::getLayer() const {
-    return m_Layer;
-  }
+	}
 
-  shared_ptr< CBaseCell > CBSDFLayerMaker::getCell() const {
-    return m_Cell;
-  }
+	shared_ptr< CBSDFLayer > CBSDFLayerMaker::getLayer() const {
+		return m_Layer;
+	}
+
+	shared_ptr< CBaseCell > CBSDFLayerMaker::getCell() const {
+		return m_Cell;
+	}
 
 }

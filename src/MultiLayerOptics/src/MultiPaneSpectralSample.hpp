@@ -8,36 +8,36 @@
 
 namespace FenestrationCommon {
 
-  class CSeries;
+	class CSeries;
 
 }
 
 namespace SpectralAveraging {
 
-  class CSpectralSampleData;  
-  //class CSample;
+	class CSpectralSampleData;
+	//class CSample;
 }
 
 namespace MultiLayerOptics {
 
-  class CMultiPaneSampleData;
+	class CMultiPaneSampleData;
 
-  class CMultiPaneSpectralSample : public SpectralAveraging::CSpectralSample {
-  public:
-    CMultiPaneSpectralSample( const std::shared_ptr< SpectralAveraging::CSpectralSampleData >& t_SampleData,
-      const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
+	class CMultiPaneSpectralSample : public SpectralAveraging::CSpectralSample {
+	public:
+		CMultiPaneSpectralSample( const std::shared_ptr< SpectralAveraging::CSpectralSampleData >& t_SampleData,
+		                          const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
 
-    double getLayerAbsorbedEnergy( double const minLambda, double const maxLambda, size_t const Index );
-    double getLayerAbsorptance( double const minLambda, double const maxLambda, size_t const Index );
-    
-  private:
-    void reset();
-    void calculateProperties();
-    void integrateAndAppendAbsorptances( const std::shared_ptr< FenestrationCommon::CSeries >& t_Absorptances );
+		double getLayerAbsorbedEnergy( double const minLambda, double const maxLambda, size_t const Index );
+		double getLayerAbsorptance( double const minLambda, double const maxLambda, size_t const Index );
 
-    std::vector< std::shared_ptr< FenestrationCommon::CSeries > > m_AbsorbedLayersSource;
-  
-  };
+	private:
+		void reset();
+		void calculateProperties();
+		void integrateAndAppendAbsorptances( const std::shared_ptr< FenestrationCommon::CSeries >& t_Absorptances );
+
+		std::vector< std::shared_ptr< FenestrationCommon::CSeries > > m_AbsorbedLayersSource;
+
+	};
 
 }
 

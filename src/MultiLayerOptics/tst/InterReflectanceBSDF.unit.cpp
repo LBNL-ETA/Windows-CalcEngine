@@ -15,80 +15,82 @@ using namespace MultiLayerOptics;
 class TestInterReflectanceBSDF : public testing::Test {
 
 private:
-  shared_ptr< CInterReflectance > m_InterReflectance;
+	shared_ptr< CInterReflectance > m_InterReflectance;
 
 protected:
-  virtual void SetUp() {
-  
-  // Create lambda matrix
-  vector< CBSDFDefinition > aDefinitions;
-  aDefinitions.push_back( CBSDFDefinition(    0, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   15, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   30, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   45, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   60, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition(   75, 1  ) );
-  aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
+	virtual void SetUp() {
 
-  CBSDFDirections aDirections = CBSDFDirections( aDefinitions, BSDFHemisphere::Incoming );
-  CSquareMatrix aLambdas = *aDirections.lambdaMatrix();
+		// Create lambda matrix
+		vector< CBSDFDefinition > aDefinitions;
+		aDefinitions.push_back( CBSDFDefinition( 0, 1 ) );
+		aDefinitions.push_back( CBSDFDefinition( 15, 1 ) );
+		aDefinitions.push_back( CBSDFDefinition( 30, 1 ) );
+		aDefinitions.push_back( CBSDFDefinition( 45, 1 ) );
+		aDefinitions.push_back( CBSDFDefinition( 60, 1 ) );
+		aDefinitions.push_back( CBSDFDefinition( 75, 1 ) );
+		aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
 
-  size_t size = 7;
+		CBSDFDirections aDirections = CBSDFDirections( aDefinitions, BSDFHemisphere::Incoming );
+		CSquareMatrix aLambdas = *aDirections.lambdaMatrix();
 
-  CSquareMatrix Rb = CSquareMatrix( size );
-  Rb[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
-  Rb[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
-  Rb[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
-  Rb[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
-  Rb[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
-  Rb[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
-  Rb[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
+		size_t size = 7;
 
-  CSquareMatrix Rf = CSquareMatrix( size );
-  Rf[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
-  Rf[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
-  Rf[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
-  Rf[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
-  Rf[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
-  Rf[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
-  Rf[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
+		CSquareMatrix Rb = CSquareMatrix( size );
+		Rb[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
+		Rb[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
+		Rb[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
+		Rb[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
+		Rb[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
+		Rb[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
+		Rb[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
 
-  m_InterReflectance = make_shared< CInterReflectance >( aLambdas, Rb, Rf );
-    
-  }
+		CSquareMatrix Rf = CSquareMatrix( size );
+		Rf[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
+		Rf[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
+		Rf[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
+		Rf[ 3 ] = { 0, 0, 0, 0.114376511, 0, 0, 0 };
+		Rf[ 4 ] = { 0, 0, 0, 0, 0.207336671, 0, 0 };
+		Rf[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
+		Rf[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
+
+		m_InterReflectance = make_shared< CInterReflectance >( aLambdas, Rb, Rf );
+
+	}
 
 public:
-  shared_ptr< CInterReflectance > getInterReflectance() { return m_InterReflectance; };
+	shared_ptr< CInterReflectance > getInterReflectance() {
+		return m_InterReflectance;
+	};
 
 };
 
 TEST_F( TestInterReflectanceBSDF, TestBSDFInterreflectance ) {
-  SCOPED_TRACE( "Begin Test: Simple BSDF interreflectance." );
-  
-  CInterReflectance interRefl = *getInterReflectance();
+	SCOPED_TRACE( "Begin Test: Simple BSDF interreflectance." );
 
-  CSquareMatrix results = *interRefl.value();
+	CInterReflectance interRefl = *getInterReflectance();
 
-  size_t matrixSize = results.getSize();
+	CSquareMatrix results = *interRefl.value();
 
-  // Test matrix
-  size_t size = 7;
+	size_t matrixSize = results.getSize();
 
-  EXPECT_EQ( size, matrixSize );
+	// Test matrix
+	size_t size = 7;
 
-  CSquareMatrix correctResults = CSquareMatrix( size );
-  correctResults[ 0 ] = { 1.005964363, 0, 0, 0, 0, 0, 0 };
-  correctResults[ 1 ] = { 0, 1.005964363, 0, 0, 0, 0, 0 };
-  correctResults[ 2 ] = { 0, 0, 1.006280195, 0, 0, 0, 0 };
-  correctResults[ 3 ] = { 0, 0, 0, 1.008724458, 0, 0, 0 };
-  correctResults[ 4 ] = { 0, 0, 0, 0, 1.021780268, 0, 0 };
-  correctResults[ 5 ] = { 0, 0, 0, 0, 0, 1.176150952, 0 };
-  correctResults[ 6 ] = { 0, 0, 0, 0, 0, 0, 3.022280250 };
+	EXPECT_EQ( size, matrixSize );
 
-  for( size_t i = 0; i < size; ++i ) {
-    for( size_t j = 0; j < size; ++j ) {
-      EXPECT_NEAR( correctResults[ i ][ j ], results[ i ][ j ], 1e-6 );
-    }
-  }
+	CSquareMatrix correctResults = CSquareMatrix( size );
+	correctResults[ 0 ] = { 1.005964363, 0, 0, 0, 0, 0, 0 };
+	correctResults[ 1 ] = { 0, 1.005964363, 0, 0, 0, 0, 0 };
+	correctResults[ 2 ] = { 0, 0, 1.006280195, 0, 0, 0, 0 };
+	correctResults[ 3 ] = { 0, 0, 0, 1.008724458, 0, 0, 0 };
+	correctResults[ 4 ] = { 0, 0, 0, 0, 1.021780268, 0, 0 };
+	correctResults[ 5 ] = { 0, 0, 0, 0, 0, 1.176150952, 0 };
+	correctResults[ 6 ] = { 0, 0, 0, 0, 0, 0, 3.022280250 };
+
+	for ( size_t i = 0; i < size; ++i ) {
+		for ( size_t j = 0; j < size; ++j ) {
+			EXPECT_NEAR( correctResults[ i ][ j ], results[ i ][ j ], 1e-6 );
+		}
+	}
 
 }

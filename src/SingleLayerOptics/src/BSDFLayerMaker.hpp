@@ -5,29 +5,30 @@
 
 namespace SingleLayerOptics {
 
-  enum class DistributionMethod { UniformDiffuse, DirectionalDiffuse };
-  class ICellDescription;
-  class CMaterial;
-  class CBSDFHemisphere;
-  class CBSDFLayer;
-  class CBaseCell;
+	enum class DistributionMethod { UniformDiffuse, DirectionalDiffuse };
 
-  // Class to simplify interface for BSDF layer creation
-  class CBSDFLayerMaker {
-  public:
-    CBSDFLayerMaker( const std::shared_ptr< CMaterial >& t_Material, 
-      const std::shared_ptr< const CBSDFHemisphere >& t_BSDF, 
-      std::shared_ptr< ICellDescription > t_Description = nullptr,
-      const DistributionMethod t_Method = DistributionMethod::UniformDiffuse );
+	class ICellDescription;
+	class CMaterial;
+	class CBSDFHemisphere;
+	class CBSDFLayer;
+	class CBaseCell;
 
-    std::shared_ptr< CBSDFLayer > getLayer() const;
+	// Class to simplify interface for BSDF layer creation
+	class CBSDFLayerMaker {
+	public:
+		CBSDFLayerMaker( const std::shared_ptr< CMaterial >& t_Material,
+		                 const std::shared_ptr< const CBSDFHemisphere >& t_BSDF,
+		                 std::shared_ptr< ICellDescription > t_Description = nullptr,
+		                 const DistributionMethod t_Method = DistributionMethod::UniformDiffuse );
 
-    std::shared_ptr< CBaseCell > getCell() const;
+		std::shared_ptr< CBSDFLayer > getLayer() const;
 
-  private:
-    std::shared_ptr< CBSDFLayer > m_Layer;
-    std::shared_ptr< CBaseCell > m_Cell;
-  };
+		std::shared_ptr< CBaseCell > getCell() const;
+
+	private:
+		std::shared_ptr< CBSDFLayer > m_Layer;
+		std::shared_ptr< CBaseCell > m_Cell;
+	};
 
 }
 
