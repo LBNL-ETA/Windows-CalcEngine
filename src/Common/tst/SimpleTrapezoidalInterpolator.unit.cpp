@@ -6,34 +6,31 @@
 using namespace std;
 using namespace FenestrationCommon;
 
-class TestSimpleTrapezoidalIntegration : public testing::Test
-{
+class TestSimpleTrapezoidalIntegration : public testing::Test {
 
 private:
-  shared_ptr< IIntegratorStrategy > m_Integrator;
+	shared_ptr< IIntegratorStrategy > m_Integrator;
 
 protected:
-  virtual void SetUp()
-  {
-    CIntegratorFactory aFactory = CIntegratorFactory();
-    m_Integrator = aFactory.getIntegrator( IntegrationType::Trapezoidal );
-  }
+	void SetUp() override {
+		CIntegratorFactory aFactory = CIntegratorFactory();
+		m_Integrator = aFactory.getIntegrator( IntegrationType::Trapezoidal );
+	}
 
 public:
-  shared_ptr< IIntegratorStrategy > getIntegrator() { return m_Integrator; };
+	IIntegratorStrategy* getIntegrator() const {
+		return m_Integrator.get();
+	};
 
 };
 
-TEST_F( TestSimpleTrapezoidalIntegration, TestRectangular )
-{
-  SCOPED_TRACE( "Begin Test: Test trapezoidal integrator" );
-  
-  shared_ptr< IIntegratorStrategy > aIntegrator = nullptr;
-  
-  aIntegrator = getIntegrator();
+TEST_F( TestSimpleTrapezoidalIntegration, TestRectangular ) {
+	SCOPED_TRACE( "Begin Test: Test trapezoidal integrator" );
 
-  double value = aIntegrator->integrate( 1, 2, 10, 11 );
+	auto aIntegrator = getIntegrator();
 
-  EXPECT_NEAR( 10.50, value, 1e-6 );
+	double value = aIntegrator->integrate( 1, 2, 10, 11 );
+
+	EXPECT_NEAR( 10.50, value, 1e-6 );
 
 }

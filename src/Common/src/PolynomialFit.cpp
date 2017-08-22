@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "PolynomialFit.hpp"
 
 using namespace std;
