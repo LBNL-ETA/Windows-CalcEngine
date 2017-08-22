@@ -13,7 +13,7 @@ using namespace Chromogenics;
 class TestSingleClearThermochromics : public testing::Test {
 
 private:
-  std::unique_ptr< CSystem >  m_TarcogSystem;
+  std::unique_ptr< CSystem > m_TarcogSystem;
 
 protected:
   void SetUp() override {
@@ -78,7 +78,7 @@ protected:
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = std::make_unique< CSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = std::move( std::unique_ptr< CSystem >( new CSystem( aIGU, Indoor, Outdoor ) ) );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     // m_TarcogSystem->solve();
