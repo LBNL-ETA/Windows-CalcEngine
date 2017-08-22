@@ -5,33 +5,33 @@
 
 namespace Tarcog {
 
-  class CIndoorEnvironment : public CEnvironment {
-  public:
-    CIndoorEnvironment( double const t_AirTemperature, double const t_Pressure );
-    CIndoorEnvironment( CIndoorEnvironment const & t_Indoor );
+	class CIndoorEnvironment : public CEnvironment {
+	public:
+		CIndoorEnvironment( double const t_AirTemperature, double const t_Pressure );
+		CIndoorEnvironment( CIndoorEnvironment const& t_Indoor );
 
-    void connectToIGULayer( std::shared_ptr< CBaseLayer > const & t_IGULayer ) override;
+		void connectToIGULayer( std::shared_ptr< CBaseLayer > const& t_IGULayer ) override;
 
-    void setRoomRadiationTemperature( double const t_RadiationTemperature );
+		void setRoomRadiationTemperature( double const t_RadiationTemperature );
 
-    std::shared_ptr< CBaseLayer > clone() const override;
-    std::shared_ptr< CEnvironment > cloneEnvironment() const override;
+		std::shared_ptr< CBaseLayer > clone() const override;
+		std::shared_ptr< CEnvironment > cloneEnvironment() const override;
 
-  private:
-    double getGasTemperature() override;
-    double calculateIRFromVariables() override;
-    void calculateConvectionOrConductionFlow() override;
-    
-    void calculateHc();
-    double getHr() override;
+	private:
+		double getGasTemperature() override;
+		double calculateIRFromVariables() override;
+		void calculateConvectionOrConductionFlow() override;
 
-    void setIRFromEnvironment( double const t_IR ) override;
-    double getIRFromEnvironment() const override;
+		void calculateHc();
+		double getHr() override;
 
-    double getRadiationTemperature() const override;
+		void setIRFromEnvironment( double const t_IR ) override;
+		double getIRFromEnvironment() const override;
 
-    double m_RoomRadiationTemperature;
-  };
+		double getRadiationTemperature() const override;
+
+		double m_RoomRadiationTemperature;
+	};
 
 }
 

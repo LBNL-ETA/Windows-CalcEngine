@@ -3,8 +3,9 @@
 
 namespace Tarcog {
 
-  enum CalculationStandard { ISO15099, ISO10292, EN673 };
-  enum DeflectionModel {NoDeflection, DeflectionPressureTemperature, MeasuredDeflection};
+	enum CalculationStandard { ISO15099, ISO10292, EN673 };
+
+	enum DeflectionModel {NoDeflection, DeflectionPressureTemperature, MeasuredDeflection};
 
 }
 

@@ -7,49 +7,49 @@
 
 namespace Gasses {
 
-  class CGas;
+	class CGas;
 
 }
 
 namespace Tarcog {
-  
-  class CIGUVentilatedGapLayer : public CIGUGapLayer {
-  public:
-    explicit CIGUVentilatedGapLayer( std::shared_ptr< CIGUGapLayer > const & t_Layer );
-    CIGUVentilatedGapLayer( CIGUVentilatedGapLayer const & t_Layer );
 
-    virtual double layerTemperature();
+	class CIGUVentilatedGapLayer : public CIGUGapLayer {
+	public:
+		explicit CIGUVentilatedGapLayer( std::shared_ptr< CIGUGapLayer > const& t_Layer );
+		CIGUVentilatedGapLayer( CIGUVentilatedGapLayer const& t_Layer );
 
-    void setFlowGeometry( double const t_Atop, double const t_Abot, AirVerticalDirection const &t_Direction );
-    void setFlowTemperatures( double const t_topTemp, double const t_botTemp,
-      AirVerticalDirection const &t_Direction );
-    void setFlowSpeed( double const t_speed );
+		virtual double layerTemperature();
 
-    double getAirflowReferencePoint( double const t_GapTemperature );
+		void setFlowGeometry( double const t_Atop, double const t_Abot, AirVerticalDirection const& t_Direction );
+		void setFlowTemperatures( double const t_topTemp, double const t_botTemp,
+		                          AirVerticalDirection const& t_Direction );
+		void setFlowSpeed( double const t_speed );
 
-    double bernoullyPressureTerm() const;
-    double hagenPressureTerm() const;
-    double pressureLossTerm() const;
-    double betaCoeff();
+		double getAirflowReferencePoint( double const t_GapTemperature );
 
-    void smoothEnergyGain( double const qv1, double const qv2 );
+		double bernoullyPressureTerm() const;
+		double hagenPressureTerm() const;
+		double pressureLossTerm() const;
+		double betaCoeff();
 
-  private:
-    virtual void calculateConvectionOrConductionFlow();
-    double characteristicHeight() const;
-    double calcImpedance( double const t_A ) const;
-    void ventilatedFlow();
+		void smoothEnergyGain( double const qv1, double const qv2 );
 
-    std::shared_ptr< CIGUGapLayer > m_Layer;
-    std::shared_ptr< Gases::CGas > m_ReferenceGas;
+	private:
+		virtual void calculateConvectionOrConductionFlow();
+		double characteristicHeight() const;
+		double calcImpedance( double const t_A ) const;
+		void ventilatedFlow();
 
-    double m_inTemperature;
-    double m_outTemperature;
-    double m_Zin;
-    double m_Zout;
+		std::shared_ptr< CIGUGapLayer > m_Layer;
+		std::shared_ptr< Gases::CGas > m_ReferenceGas;
 
-  };
-  
+		double m_inTemperature;
+		double m_outTemperature;
+		double m_Zin;
+		double m_Zout;
+
+	};
+
 }
 
 #endif

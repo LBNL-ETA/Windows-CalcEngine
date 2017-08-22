@@ -15,105 +15,107 @@ using namespace FenestrationCommon;
 class TestSingleClearSingleSystem_EPlusMode : public testing::Test {
 
 private:
-  shared_ptr< CSingleSystem >  m_TarcogSystem;
+	shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
-  void SetUp() override {    
-    /////////////////////////////////////////////////////////
-    // Outdoor
-    /////////////////////////////////////////////////////////
-    auto airTemperature = 252.0484; // Kelvins
-    auto pressure = 99100.0; // Pascals
-    auto airSpeed = 4.2967; // meters per second
-    auto airDirection = AirHorizontalDirection::Windward;
-    auto tSky = 231.2005; // Kelvins
-    auto solarRadiation = 0.0;
-    auto fclr = 1.0;
+	void SetUp() override {
+		/////////////////////////////////////////////////////////
+		// Outdoor
+		/////////////////////////////////////////////////////////
+		auto airTemperature = 252.0484; // Kelvins
+		auto pressure = 99100.0; // Pascals
+		auto airSpeed = 4.2967; // meters per second
+		auto airDirection = AirHorizontalDirection::Windward;
+		auto tSky = 231.2005; // Kelvins
+		auto solarRadiation = 0.0;
+		auto fclr = 1.0;
 
-    shared_ptr< CEnvironment > Outdoor = 
-      make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
-        airDirection, tSky, SkyModel::AllSpecified, fclr );
-    ASSERT_TRUE( Outdoor != nullptr );
+		shared_ptr< CEnvironment > Outdoor =
+			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+			                                    airDirection, tSky, SkyModel::AllSpecified, fclr );
+		ASSERT_TRUE( Outdoor != nullptr );
 
-    auto hcout = 21.8733;
-    Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HcPrescribed, hcout );
+		auto hcout = 21.8733;
+		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HcPrescribed, hcout );
 
-    auto IR = 205.1969;
-    Outdoor->setEnvironmentIR( IR );
+		auto IR = 205.1969;
+		Outdoor->setEnvironmentIR( IR );
 
-    /////////////////////////////////////////////////////////
-    // Indoor
-    /////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
+		// Indoor
+		/////////////////////////////////////////////////////////
 
-    auto roomTemperature = 294.15;
-    shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
-    ASSERT_TRUE( Indoor != nullptr );
+		auto roomTemperature = 294.15;
+		shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		ASSERT_TRUE( Indoor != nullptr );
 
-    auto hcin = 2.6262;
-    Indoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH, hcin );
+		auto hcin = 2.6262;
+		Indoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH, hcin );
 
-    IR = 389.8318;
-    Indoor->setEnvironmentIR( IR );
+		IR = 389.8318;
+		Indoor->setEnvironmentIR( IR );
 
-    /////////////////////////////////////////////////////////
-    // IGU
-    /////////////////////////////////////////////////////////
-    auto solidLayerThickness = 0.003048; // [m]
-    auto solidLayerConductance = 1.0;
+		/////////////////////////////////////////////////////////
+		// IGU
+		/////////////////////////////////////////////////////////
+		auto solidLayerThickness = 0.003048; // [m]
+		auto solidLayerConductance = 1.0;
 
-    shared_ptr< CBaseIGULayer > aSolidLayer = 
-      make_shared< CIGUSolidLayer > ( solidLayerThickness, solidLayerConductance );
-    ASSERT_TRUE( aSolidLayer != nullptr );
+		shared_ptr< CBaseIGULayer > aSolidLayer =
+			make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
+		ASSERT_TRUE( aSolidLayer != nullptr );
 
-    auto windowWidth = 2.7130375;
-    auto windowHeight = 3.02895;
-    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
-    ASSERT_TRUE( aIGU != nullptr );
-    aIGU->addLayer( aSolidLayer );
+		auto windowWidth = 2.7130375;
+		auto windowHeight = 3.02895;
+		auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+		ASSERT_TRUE( aIGU != nullptr );
+		aIGU->addLayer( aSolidLayer );
 
-    /////////////////////////////////////////////////////////
-    // System
-    /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CSingleSystem >( aIGU, Indoor, Outdoor );
-    ASSERT_TRUE( m_TarcogSystem != nullptr );
+		/////////////////////////////////////////////////////////
+		// System
+		/////////////////////////////////////////////////////////
+		m_TarcogSystem = make_shared< CSingleSystem >( aIGU, Indoor, Outdoor );
+		ASSERT_TRUE( m_TarcogSystem != nullptr );
 
-    auto convergenceTolerance = 0.02;
-    m_TarcogSystem->setTolerance( convergenceTolerance );
+		auto convergenceTolerance = 0.02;
+		m_TarcogSystem->setTolerance( convergenceTolerance );
 
-    m_TarcogSystem->solve();
-  }
+		m_TarcogSystem->solve();
+	}
 
 public:
-  shared_ptr< CSingleSystem > GetSystem() const { return m_TarcogSystem; };
+	shared_ptr< CSingleSystem > GetSystem() const {
+		return m_TarcogSystem;
+	};
 
 };
 
 TEST_F( TestSingleClearSingleSystem_EPlusMode, Test1 ) {
-  SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
+	SCOPED_TRACE( "Begin Test: Single Clear - U-value" );
 
-  auto aSystem = GetSystem();
-  ASSERT_TRUE( aSystem != nullptr );
+	auto aSystem = GetSystem();
+	ASSERT_TRUE( aSystem != nullptr );
 
-  auto Temperature = *aSystem->getTemperatures();
-  vector< double > correctTemperature = { 259.636156, 260.283157 };
-  ASSERT_EQ( correctTemperature.size(), Temperature.size() );
+	auto Temperature = *aSystem->getTemperatures();
+	vector< double > correctTemperature = { 259.636156, 260.283157 };
+	ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
-  for( auto i = 0u; i < correctTemperature.size(); ++i ) {
-    EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
-  }
+	for ( auto i = 0u; i < correctTemperature.size(); ++i ) {
+		EXPECT_NEAR( correctTemperature[ i ], Temperature[ i ], 1e-5 );
+	}
 
-  auto Radiosity = *aSystem->getRadiosities();
-  vector< double > correctRadiosity = { 251.497764, 283.391770 };
-  ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
+	auto Radiosity = *aSystem->getRadiosities();
+	vector< double > correctRadiosity = { 251.497764, 283.391770 };
+	ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
-  for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
-    EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
-  }
+	for ( auto i = 0u; i < correctRadiosity.size(); ++i ) {
+		EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
+	}
 
-  auto isToleranceAchieved = aSystem->isToleranceAchieved();
-  EXPECT_EQ( isToleranceAchieved, false );
+	auto isToleranceAchieved = aSystem->isToleranceAchieved();
+	EXPECT_EQ( isToleranceAchieved, false );
 
-  auto solutionTolerance = aSystem->solutionTolarance();
-  EXPECT_NEAR( 2.918398, solutionTolerance, 1e-6 );
+	auto solutionTolerance = aSystem->solutionTolarance();
+	EXPECT_NEAR( 2.918398, solutionTolerance, 1e-6 );
 
 }

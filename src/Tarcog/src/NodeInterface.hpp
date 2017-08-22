@@ -5,53 +5,53 @@
 #include <list>
 
 namespace Tarcog {
-  
-  class CLayerNode {
-  public:
-    CLayerNode();
-    
-    void tearDownConnections();
-    std::shared_ptr< CLayerNode > getNextNode() const;
-    std::shared_ptr< CLayerNode > getPreviousNode() const;
 
-    void connectToBackSide( std::shared_ptr< CLayerNode > const & t_Node );
-    void connectToFrontSide( std::shared_ptr< CLayerNode > const & t_Node );
+	class CLayerNode {
+	public:
+		CLayerNode();
 
-  private:
-    void nullifyNodes();
+		void tearDownConnections();
+		std::shared_ptr< CLayerNode > getNextNode() const;
+		std::shared_ptr< CLayerNode > getPreviousNode() const;
 
-    std::shared_ptr< CLayerNode > m_PreviousNode;
-    std::shared_ptr< CLayerNode > m_NextNode;
+		void connectToBackSide( std::shared_ptr< CLayerNode > const& t_Node );
+		void connectToFrontSide( std::shared_ptr< CLayerNode > const& t_Node );
 
-  };
+	private:
+		void nullifyNodes();
 
-  class CLayerNodes {
-  public:
-    CLayerNodes();
-    ~CLayerNodes();
+		std::shared_ptr< CLayerNode > m_PreviousNode;
+		std::shared_ptr< CLayerNode > m_NextNode;
 
-    void addToFront( std::shared_ptr< CLayerNode > const & t_Node );
-    void addToBack( std::shared_ptr< CLayerNode > const & t_Node );
-    void tearDownConnections();
+	};
 
-    std::list< std::shared_ptr< CLayerNode > >::iterator iterator();
+	class CLayerNodes {
+	public:
+		CLayerNodes();
+		~CLayerNodes();
 
-  protected:
-    std::list< std::shared_ptr< CLayerNode > > m_Layers;
-  };
+		void addToFront( std::shared_ptr< CLayerNode > const& t_Node );
+		void addToBack( std::shared_ptr< CLayerNode > const& t_Node );
+		void tearDownConnections();
 
-  class CBaseLayer;
+		std::list< std::shared_ptr< CLayerNode > >::iterator iterator();
 
-  class CThermalNode : CLayerNode {
-  public:
-    explicit CThermalNode( std::shared_ptr< CBaseLayer > const & t_HeatFlowLayer );
+	protected:
+		std::list< std::shared_ptr< CLayerNode > > m_Layers;
+	};
 
-    std::shared_ptr< CBaseLayer > getHeatFlowLayer() const;
-    void setHeatFlowLayer( std::shared_ptr< CBaseLayer > const & t_HeatFlowLayer );
+	class CBaseLayer;
 
-  protected:
-    std::shared_ptr< CBaseLayer > m_HeatFlowLayer;
-  };
+	class CThermalNode : CLayerNode {
+	public:
+		explicit CThermalNode( std::shared_ptr< CBaseLayer > const& t_HeatFlowLayer );
+
+		std::shared_ptr< CBaseLayer > getHeatFlowLayer() const;
+		void setHeatFlowLayer( std::shared_ptr< CBaseLayer > const& t_HeatFlowLayer );
+
+	protected:
+		std::shared_ptr< CBaseLayer > m_HeatFlowLayer;
+	};
 
 }
 

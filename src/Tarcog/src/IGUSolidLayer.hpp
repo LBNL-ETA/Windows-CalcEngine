@@ -5,46 +5,46 @@
 #include "BaseIGULayer.hpp"
 
 namespace FenestrationCommon {
-  enum class Side;
+	enum class Side;
 }
 
 namespace Tarcog {
 
-  class ISurface;
+	class ISurface;
 
-  class CIGUSolidLayer : public CBaseIGULayer {
-  public:
-    CIGUSolidLayer( double const t_Thickness, double const t_Conductivity, 
-      std::shared_ptr< ISurface > const & t_FrontSurface = nullptr, 
-      std::shared_ptr< ISurface > const & t_BackSurface = nullptr );
+	class CIGUSolidLayer : public CBaseIGULayer {
+	public:
+		CIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
+		                std::shared_ptr< ISurface > const& t_FrontSurface = nullptr,
+		                std::shared_ptr< ISurface > const& t_BackSurface = nullptr );
 
-    CIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
-      double const t_FrontEmissivity, double const t_FrontIRTransmittance,
-      double const t_BackEmissivity, double const t_BackIRTransmittance );
+		CIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
+		                double const t_FrontEmissivity, double const t_FrontIRTransmittance,
+		                double const t_BackEmissivity, double const t_BackIRTransmittance );
 
-    CIGUSolidLayer( CIGUSolidLayer const & t_Layer );
+		CIGUSolidLayer( CIGUSolidLayer const& t_Layer );
 
-    void connectToBackSide( std::shared_ptr< CBaseLayer > const & t_Layer ) override;
+		void connectToBackSide( std::shared_ptr< CBaseLayer > const& t_Layer ) override;
 
-    double getConductivity() const;
+		double getConductivity() const;
 
-    void setLayerState( double const t_Tf, double const t_Tb, double const t_Jf, double const t_Jb );
-    void setSolarRadiation( double const t_SolarRadiation );
-    void setSolarAbsorptance( double const t_SolarAbsorptance );
+		void setLayerState( double const t_Tf, double const t_Tb, double const t_Jf, double const t_Jb );
+		void setSolarRadiation( double const t_SolarRadiation );
+		void setSolarAbsorptance( double const t_SolarAbsorptance );
 
-    std::shared_ptr< CBaseLayer > clone() const override;
+		std::shared_ptr< CBaseLayer > clone() const override;
 
-  protected:
-    void calculateConvectionOrConductionFlow() override;
+	protected:
+		void calculateConvectionOrConductionFlow() override;
 
-  private:
-    void setSurfaceState( double const t_Temperature, double const t_J, 
-      FenestrationCommon::Side const t_Position );
+	private:
+		void setSurfaceState( double const t_Temperature, double const t_J,
+		                      FenestrationCommon::Side const t_Position );
 
-    double m_Conductivity;
-    double m_SolarAbsorptance;
+		double m_Conductivity;
+		double m_SolarAbsorptance;
 
-  };
+	};
 
 }
 

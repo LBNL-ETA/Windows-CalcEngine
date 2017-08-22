@@ -16,120 +16,121 @@ using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-  class CBaseLayer;
+	class CBaseLayer;
 
-  CIGUGapLayer::CIGUGapLayer( double const t_Thickness, double const t_Pressure ) : 
-    CState(), CBaseIGULayer( t_Thickness ), CGasLayer( t_Pressure ) {    
-    
-  }
+	CIGUGapLayer::CIGUGapLayer( double const t_Thickness, double const t_Pressure ) :
+		CState(), CBaseIGULayer( t_Thickness ), CGasLayer( t_Pressure ) {
 
-  CIGUGapLayer::CIGUGapLayer( double const t_Thickness, double const t_Pressure, 
-    shared_ptr< CGas > const & t_Gas ) : 
-    CState(), CBaseIGULayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
-    assert( m_Gas != nullptr );
-  }
+	}
 
-  CIGUGapLayer::CIGUGapLayer( CIGUGapLayer const & t_Layer ) : 
-    CState( t_Layer ), CBaseIGULayer( t_Layer ), CGasLayer( t_Layer ) {
-    
-  }
+	CIGUGapLayer::CIGUGapLayer( double const t_Thickness, double const t_Pressure,
+	                            shared_ptr< CGas > const& t_Gas ) :
+		CState(), CBaseIGULayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
+		assert( m_Gas != nullptr );
+	}
 
-  void CIGUGapLayer::connectToBackSide( shared_ptr< CBaseLayer > const & t_Layer ) {
-    CBaseLayer::connectToBackSide( t_Layer );
-    m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Front );
-  }
+	CIGUGapLayer::CIGUGapLayer( CIGUGapLayer const& t_Layer ) :
+		CState( t_Layer ), CBaseIGULayer( t_Layer ), CGasLayer( t_Layer ) {
 
-  void CIGUGapLayer::initializeStateVariables() {
-    CGasLayer::initializeStateVariables();
-  }
+	}
 
-  void CIGUGapLayer::calculateConvectionOrConductionFlow() {
-    checkNextLayer();
-    if( !isCalculated() ) {
-      if ( getThickness() == 0 ) {
-        throw runtime_error( "Layer thickness is set to zero." );
-      }
+	void CIGUGapLayer::connectToBackSide( shared_ptr< CBaseLayer > const& t_Layer ) {
+		CBaseLayer::connectToBackSide( t_Layer );
+		m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Front );
+	}
 
-      convectiveH();
-    }
-  }
+	void CIGUGapLayer::initializeStateVariables() {
+		CGasLayer::initializeStateVariables();
+	}
 
-  void CIGUGapLayer::checkNextLayer() const {
-    if( m_NextLayer != nullptr ) {
-      m_NextLayer->getGainFlow();
-    }
-  }
+	void CIGUGapLayer::calculateConvectionOrConductionFlow() {
+		checkNextLayer();
+		if ( !isCalculated() ) {
+			if ( getThickness() == 0 ) {
+				throw runtime_error( "Layer thickness is set to zero." );
+			}
 
-  double CIGUGapLayer::layerTemperature() {
-    return averageTemperature();
-  }
+			convectiveH();
+		}
+	}
 
-  double CIGUGapLayer::calculateRayleighNumber() {
-    using ConstantsData::GRAVITYCONSTANT;
+	void CIGUGapLayer::checkNextLayer() const {
+		if ( m_NextLayer != nullptr ) {
+			m_NextLayer->getGainFlow();
+		}
+	}
 
-    auto tGapTemperature = layerTemperature();
-    auto deltaTemp = fabs( getSurface( Side::Back )->getTemperature() - 
-      getSurface( Side::Front )->getTemperature() );
+	double CIGUGapLayer::layerTemperature() {
+		return averageTemperature();
+	}
 
-    auto aProperties = m_Gas->getGasProperties();
+	double CIGUGapLayer::calculateRayleighNumber() {
+		using ConstantsData::GRAVITYCONSTANT;
 
-    double Ra = 0;
-    if( aProperties->m_Viscosity != 0 ) { // if viscosity is zero then it is vacuum
-      Ra = GRAVITYCONSTANT * pow( getThickness(), 3 ) * deltaTemp *
-        aProperties->m_SpecificHeat * pow( aProperties->m_Density, 2 ) /
-        ( tGapTemperature * aProperties->m_Viscosity * aProperties->m_ThermalConductivity );
-    }
+		auto tGapTemperature = layerTemperature();
+		auto deltaTemp = fabs( getSurface( Side::Back )->getTemperature() -
+		                      getSurface( Side::Front )->getTemperature() );
 
-    return Ra;
-  }
+		auto aProperties = m_Gas->getGasProperties();
 
-  double CIGUGapLayer::aspectRatio() const {
-    if( getThickness() == 0 ) {
-      throw runtime_error( "Gap thickness is set to zero." );
-    }
-    return m_Height / getThickness();
-  }
+		double Ra = 0;
+		if ( aProperties->m_Viscosity != 0 ) { // if viscosity is zero then it is vacuum
+			Ra = GRAVITYCONSTANT * pow( getThickness(), 3 ) * deltaTemp *
+				aProperties->m_SpecificHeat * pow( aProperties->m_Density, 2 ) /
+				( tGapTemperature * aProperties->m_Viscosity * aProperties->m_ThermalConductivity );
+		}
 
-  double CIGUGapLayer::convectiveH() {
-    auto tGapTemperature = layerTemperature();
-    m_Gas->setTemperatureAndPressure( tGapTemperature, getPressure() );
-    auto Ra = calculateRayleighNumber();
-    auto Asp = aspectRatio();
-    auto nusseltNumber = make_shared< CNusseltNumber > ();
-    auto aProperties = m_Gas->getGasProperties();
-    if( aProperties->m_Viscosity != 0 ) {
-      m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp ) *
-        aProperties->m_ThermalConductivity / getThickness();
-    } else { // vacuum state
-      m_ConductiveConvectiveCoeff = aProperties->m_ThermalConductivity;
-    }
-    if( m_AirSpeed != 0 ) {
-      m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirSpeed;
-    }
+		return Ra;
+	}
 
-    return m_ConductiveConvectiveCoeff;
-  }
+	double CIGUGapLayer::aspectRatio() const {
+		if ( getThickness() == 0 ) {
+			throw runtime_error( "Gap thickness is set to zero." );
+		}
+		return m_Height / getThickness();
+	}
 
-  double CIGUGapLayer::getGasTemperature() {
-    return layerTemperature();
-  }
+	double CIGUGapLayer::convectiveH() {
+		auto tGapTemperature = layerTemperature();
+		m_Gas->setTemperatureAndPressure( tGapTemperature, getPressure() );
+		auto Ra = calculateRayleighNumber();
+		auto Asp = aspectRatio();
+		auto nusseltNumber = make_shared< CNusseltNumber >();
+		auto aProperties = m_Gas->getGasProperties();
+		if ( aProperties->m_Viscosity != 0 ) {
+			m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp ) *
+				aProperties->m_ThermalConductivity / getThickness();
+		}
+		else { // vacuum state
+			m_ConductiveConvectiveCoeff = aProperties->m_ThermalConductivity;
+		}
+		if ( m_AirSpeed != 0 ) {
+			m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirSpeed;
+		}
 
-  double CIGUGapLayer::averageTemperature() const {
-    double aveTemp = 0;
-    if( areSurfacesInitalized() ) {
-      aveTemp = ( getSurface( Side::Front )->getTemperature() +
-        getSurface( Side::Back )->getTemperature() ) / 2;
-    }
+		return m_ConductiveConvectiveCoeff;
+	}
 
-    return aveTemp;
-  }
+	double CIGUGapLayer::getGasTemperature() {
+		return layerTemperature();
+	}
 
-  double CIGUGapLayer::getPressure() {
-    return m_Pressure;
-  }
+	double CIGUGapLayer::averageTemperature() const {
+		double aveTemp = 0;
+		if ( areSurfacesInitalized() ) {
+			aveTemp = ( getSurface( Side::Front )->getTemperature() +
+				getSurface( Side::Back )->getTemperature() ) / 2;
+		}
 
-  shared_ptr< CBaseLayer > CIGUGapLayer::clone() const {
-    return make_shared< CIGUGapLayer >( *this );
-  }
+		return aveTemp;
+	}
+
+	double CIGUGapLayer::getPressure() {
+		return m_Pressure;
+	}
+
+	shared_ptr< CBaseLayer > CIGUGapLayer::clone() const {
+		return make_shared< CIGUGapLayer >( *this );
+	}
 
 }
