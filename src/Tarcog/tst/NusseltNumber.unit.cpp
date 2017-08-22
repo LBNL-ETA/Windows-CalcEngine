@@ -20,7 +20,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CNusseltNumber > GetNusselt() const {
+	std::shared_ptr< CNusseltNumber > GetNusselt() const {
 		return m_NusseltNumber;
 	};
 

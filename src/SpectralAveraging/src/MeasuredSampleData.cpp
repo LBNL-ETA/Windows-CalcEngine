@@ -4,7 +4,7 @@
 #include "MeasuredSampleData.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace SpectralAveraging {
@@ -14,9 +14,9 @@ namespace SpectralAveraging {
 	////////////////////////////////////////////////////////////////////////////
 
 	CSpectralSampleData::CSpectralSampleData() :
-		m_Transmittances( make_shared< CSeries >() ), m_ReflectancesFront( make_shared< CSeries >() ),
-		m_ReflectancesBack( make_shared< CSeries >() ), m_AbsorptancesFront( make_shared< CSeries >() ),
-		m_AbsorptancesBack( make_shared< CSeries >() ), m_Flipped( false ), m_absCalculated( false ) {
+		m_Transmittances( std::make_shared< CSeries >() ), m_ReflectancesFront( std::make_shared< CSeries >() ),
+		m_ReflectancesBack( std::make_shared< CSeries >() ), m_AbsorptancesFront( std::make_shared< CSeries >() ),
+		m_AbsorptancesBack( std::make_shared< CSeries >() ), m_Flipped( false ), m_absCalculated( false ) {
 
 	}
 
@@ -28,9 +28,9 @@ namespace SpectralAveraging {
 		reset();
 	}
 
-	shared_ptr< CSeries > CSpectralSampleData::properties( SampleData t_Property ) {
+	std::shared_ptr< CSeries > CSpectralSampleData::properties( SampleData t_Property ) {
 		calculateProperties();
-		shared_ptr< CSeries > aProperties = nullptr;
+		std::shared_ptr< CSeries > aProperties = nullptr;
 		switch ( t_Property ) {
 		case SampleData::T:
 			aProperties = m_Transmittances;
@@ -48,18 +48,18 @@ namespace SpectralAveraging {
 			aProperties = m_AbsorptancesBack;
 			break;
 		default:
-			throw runtime_error( "Incorrect selection of sample property." );
+			throw std::runtime_error( "Incorrect selection of sample property." );
 			break;
 		}
 		return aProperties;
 	}
 
-	vector< double > CSpectralSampleData::getWavelengths() const {
+	std::vector< double > CSpectralSampleData::getWavelengths() const {
 		return *m_Transmittances->getXArray();
 	}
 
 	// Interpolate current sample data to new wavelengths set
-	void CSpectralSampleData::interpolate( vector< double > const& t_Wavelengths ) {
+	void CSpectralSampleData::interpolate( std::vector< double > const& t_Wavelengths ) {
 		m_Transmittances = m_Transmittances->interpolate( t_Wavelengths );
 		m_ReflectancesFront = m_ReflectancesFront->interpolate( t_Wavelengths );
 		m_ReflectancesBack = m_ReflectancesBack->interpolate( t_Wavelengths );
@@ -81,8 +81,8 @@ namespace SpectralAveraging {
 
 	void CSpectralSampleData::calculateProperties() {
 		if ( !m_absCalculated ) {
-			shared_ptr< CSeries > reflectancesFront = nullptr;
-			shared_ptr< CSeries > reflectancesBack = nullptr;
+			std::shared_ptr< CSeries > reflectancesFront = nullptr;
+			std::shared_ptr< CSeries > reflectancesBack = nullptr;
 			if ( m_Flipped ) {
 				reflectancesFront = m_ReflectancesBack;
 				reflectancesBack = m_ReflectancesFront;

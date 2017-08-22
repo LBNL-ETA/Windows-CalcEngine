@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestWovenShadeUniformMaterial : public testing::Test {
 
 private:
-	shared_ptr< CBSDFLayer > m_Shade;
+	std::shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
 	virtual void SetUp() {
@@ -21,17 +21,17 @@ protected:
 		double Rbmat = 0.75;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
 		double diameter = 6.35; // mm
 		double spacing = 19.05; // mm
-		shared_ptr< ICellDescription > aCellDescription =
-			make_shared< CWovenCellDescription >( diameter, spacing );
+		std::shared_ptr< ICellDescription > aCellDescription =
+			std::make_shared< CWovenCellDescription >( diameter, spacing );
 
 		// create BSDF
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
@@ -40,7 +40,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFLayer > GetShade() {
+	std::shared_ptr< CBSDFLayer > GetShade() {
 		return m_Shade;
 	};
 
@@ -49,9 +49,9 @@ public:
 TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
 	SCOPED_TRACE( "Begin Test: Woven shade uniform material." );
 
-	shared_ptr< CBSDFLayer > aShade = GetShade();
+	std::shared_ptr< CBSDFLayer > aShade = GetShade();
 
-	shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
+	std::shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
 	double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
 	EXPECT_NEAR( 0.467578877, tauDiff, 1e-6 );
@@ -62,7 +62,7 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
 	double RbDiff = aResults->DiffDiff( Side::Back, PropertySimple::R );
 	EXPECT_NEAR( 0.496269069, RbDiff, 1e-6 );
 
-	shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
 	size_t size = aT->getSize();
 
@@ -175,7 +175,7 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
 	}
 
 	// Test first row for reflectance matrix
-	shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 
 	correctResults.clear();
 	correctResults.push_back( 0.128103 );
@@ -231,7 +231,7 @@ TEST_F( TestWovenShadeUniformMaterial, TestSolarProperties ) {
 	}
 
 	// Test first row for reflectance matrix
-	shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 	correctResults.push_back( 0.128103 );

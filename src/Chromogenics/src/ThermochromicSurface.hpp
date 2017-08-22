@@ -30,8 +30,8 @@ namespace Chromogenics {
 		void setTemperature( double const t_Temperature ) override;
 
 	private:
-		std::unique_ptr< FenestrationCommon::IInterpolation2D > m_EmissivityInterpolator;
-		std::unique_ptr< FenestrationCommon::IInterpolation2D > m_TransmittanceInterpolator;
+		std::shared_ptr< FenestrationCommon::IInterpolation2D > m_EmissivityInterpolator;
+		std::shared_ptr< FenestrationCommon::IInterpolation2D > m_TransmittanceInterpolator;
 	};
 
 }

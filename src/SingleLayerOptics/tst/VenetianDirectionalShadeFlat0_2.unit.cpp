@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestVenetianDirectionalShadeFlat0_2 : public testing::Test {
 
 private:
-	shared_ptr< CBSDFLayer > m_Shade;
+	std::shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
 	virtual void SetUp() {
@@ -21,8 +21,8 @@ protected:
 		double Rbmat = 0.7;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterial > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
 		double slatWidth = 0.010; // m
@@ -31,15 +31,15 @@ protected:
 		double curvatureRadius = 0;
 		size_t numOfSlatSegments = 1;
 
-		shared_ptr< ICellDescription > aCellDescription =
-			make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
+		std::shared_ptr< ICellDescription > aCellDescription =
+			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, numOfSlatSegments );
 
 		// Method
 		DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
 
 		// create BSDF
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription, aDistribution );
@@ -48,7 +48,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFLayer > GetShade() {
+	std::shared_ptr< CBSDFLayer > GetShade() {
 		return m_Shade;
 	};
 
@@ -57,9 +57,9 @@ public:
 TEST_F( TestVenetianDirectionalShadeFlat0_2, TestVenetian1 ) {
 	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 45 degrees slats) - solar properties." );
 
-	shared_ptr< CBSDFLayer > aShade = GetShade();
+	std::shared_ptr< CBSDFLayer > aShade = GetShade();
 
-	shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
+	std::shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
 	double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
 	EXPECT_NEAR( 0.45408806110142574, tauDiff, 1e-6 );

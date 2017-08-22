@@ -6,7 +6,7 @@
 #include "WCECommon.hpp"
 #include "AngularMeasurements.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace SpectralAveraging {
@@ -15,10 +15,10 @@ namespace SpectralAveraging {
 	////  AngularMeasurement
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	CSingleAngularMeasurement::CSingleAngularMeasurement( shared_ptr< CSpectralSample > const& t_Data,
+	CSingleAngularMeasurement::CSingleAngularMeasurement( std::shared_ptr< CSpectralSample > const& t_Data,
 	                                                      double const t_Angle ) : m_Data( t_Data ), m_Angle( t_Angle ) {
 		if ( t_Data == nullptr ) {
-			throw runtime_error( "Sample must have measured data in AngularMeasurement." );
+			throw std::runtime_error( "Sample must have measured data in AngularMeasurement." );
 		}
 
 	}
@@ -27,19 +27,19 @@ namespace SpectralAveraging {
 		return m_Angle;
 	}
 
-	shared_ptr< CSpectralSample > CSingleAngularMeasurement::getData() const {
+	std::shared_ptr< CSpectralSample > CSingleAngularMeasurement::getData() const {
 		return m_Data;
 	}
 
-	vector< double > CSingleAngularMeasurement::getWavelengthsFromSample() const {
+	std::vector< double > CSingleAngularMeasurement::getWavelengthsFromSample() const {
 		return m_Data->getWavelengthsFromSample();
 	}
 
-	shared_ptr< CSpectralSample > CSingleAngularMeasurement::Interpolate(
-		double const t_Angle, shared_ptr< CSpectralSample > const& t_Data1, double const t_Angle1,
-		shared_ptr< CSpectralSample > const& t_Data2, double const t_Angle2 ) const {
+	std::shared_ptr< CSpectralSample > CSingleAngularMeasurement::Interpolate(
+		double const t_Angle, std::shared_ptr< CSpectralSample > const& t_Data1, double const t_Angle1,
+		std::shared_ptr< CSpectralSample > const& t_Data2, double const t_Angle2 ) const {
 
-		auto aData = make_shared< CSpectralSampleData >();
+		auto aData = std::make_shared< CSpectralSampleData >();
 		auto wlv = t_Data1->getWavelengthsFromSample();
 		auto trans1 = *t_Data1->getMeasuredData()->properties( SampleData::T );;
 		auto trans2 = *t_Data2->getMeasuredData()->properties( SampleData::T );;
@@ -61,12 +61,12 @@ namespace SpectralAveraging {
 			auto rb = rb1 + frac * ( rb2 - rb1 );
 			aData->addRecord( wl, t, rf, rb );
 		}
-		auto aSample = make_shared< CSpectralSample >( aData, t_Data1->getSourceData() );
+		auto aSample = std::make_shared< CSpectralSample >( aData, t_Data1->getSourceData() );
 
 		return aSample;
 	}
 
-	void CSingleAngularMeasurement::interpolate( vector< double > const& t_CommonWavelengths ) const {
+	void CSingleAngularMeasurement::interpolate( std::vector< double > const& t_CommonWavelengths ) const {
 		m_Data->getMeasuredData()->interpolate( t_CommonWavelengths );
 	}
 
@@ -74,17 +74,17 @@ namespace SpectralAveraging {
 	////  CAngularMeasurements
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	CAngularMeasurements::CAngularMeasurements( shared_ptr< CSingleAngularMeasurement > const& t_SignleMeasurement,
-	                                            vector< double > const& t_CommonWavelengths ):
+	CAngularMeasurements::CAngularMeasurements( std::shared_ptr< CSingleAngularMeasurement > const& t_SignleMeasurement,
+	                                            std::vector< double > const& t_CommonWavelengths ):
 		m_SingleMeasurement( t_SignleMeasurement ), m_CommonWavelengths( t_CommonWavelengths ) {
 		if ( m_SingleMeasurement == nullptr ) {
-			throw runtime_error( "Sample must have measured data in AngularMeasurements." );
+			throw std::runtime_error( "Sample must have measured data in AngularMeasurements." );
 		}
 		t_SignleMeasurement->interpolate( m_CommonWavelengths );
 		m_Measurements.push_back( t_SignleMeasurement );
 	}
 
-	CAngularMeasurements::CAngularMeasurements( vector< shared_ptr< CSingleAngularMeasurement > > const& t_Measurements ): m_Measurements( t_Measurements ) {
+	CAngularMeasurements::CAngularMeasurements( std::vector< std::shared_ptr< CSingleAngularMeasurement > > const& t_Measurements ): m_Measurements( t_Measurements ) {
 
 	}
 
@@ -95,11 +95,11 @@ namespace SpectralAveraging {
 	}
 
 	// Now insert very important function here
-	shared_ptr< CSingleAngularMeasurement > CAngularMeasurements::getMeasurements( double const t_Angle ) {
+	std::shared_ptr< CSingleAngularMeasurement > CAngularMeasurements::getMeasurements( double const t_Angle ) {
 		auto const angleTolerance = 1e-6;
 
 		if ( m_Measurements.size() == 1 ) {
-			throw runtime_error( "A single set is found. Spectral and angular sample must have 2 sets at least." );
+			throw std::runtime_error( "A single set is found. Spectral and angular sample must have 2 sets at least." );
 		}
 
 		for ( size_t i = 0; i < m_Measurements.size(); i++ ) {
@@ -139,15 +139,15 @@ namespace SpectralAveraging {
 		// 3. Do interpolation between two SpectralSampleData and create third SpectralSampleData
 		// 4. Create SpectralSample from third SpectralSampleData and given SourceData
 
-		shared_ptr< SpectralAveraging::CSpectralSample > sample3 = nullptr;
+		std::shared_ptr< SpectralAveraging::CSpectralSample > sample3 = nullptr;
 		sample3 = m_SingleMeasurement->Interpolate( t_Angle, sample1, angle1, sample2, angle2 );
 
-		auto aAngular = make_shared< CSingleAngularMeasurement >( sample3, t_Angle );
+		auto aAngular = std::make_shared< CSingleAngularMeasurement >( sample3, t_Angle );
 		m_Measurements.push_back( aAngular );
 		return aAngular;
 	}
 
-	void CAngularMeasurements::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	void CAngularMeasurements::setSourceData( std::shared_ptr< CSeries > t_SourceData ) {
 		for ( size_t i = 0; i < m_Measurements.size(); i++ ) {
 			auto aAngular = m_Measurements[ i ];
 			auto aSample = aAngular->getData();

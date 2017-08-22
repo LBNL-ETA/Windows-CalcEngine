@@ -34,13 +34,13 @@ namespace Viewer {
 		// For line made up of current segment, calculate how it intersects passed segment.
 		IntersectionStatus intersectionWithLine( std::shared_ptr< const CSegment2D > const& t_Segment ) const;
 
-		// Dot product of two vectors
+		// Dot product of two std::vectors
 		double dotProduct( std::shared_ptr< const CSegment2D > const& t_Segment ) const;
 
 		// Translates segment for given coordinates
 		std::shared_ptr< CSegment2D > translate( double const t_x, double const t_y ) const;
 
-		// returns end point of the vector that starts at (0, 0)
+		// returns end point of the std::vector that starts at (0, 0)
 		std::shared_ptr< CPoint2D > intensity() const;
 
 	protected:
@@ -52,7 +52,7 @@ namespace Viewer {
 		void calculateLength();
 		void calculateCenter();
 
-		// Calculates intesection point between two lines made up of vector. Even if two vectors do not
+		// Calculates intesection point between two lines made up of std::vector. Even if two std::vectors do not
 		// intersect, point of intersection will be returned
 		std::shared_ptr< CPoint2D > intersection( std::shared_ptr< const CSegment2D > const& t_Segment ) const;
 

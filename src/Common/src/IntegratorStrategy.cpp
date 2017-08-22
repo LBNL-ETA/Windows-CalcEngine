@@ -20,8 +20,8 @@ namespace FenestrationCommon {
 		return yCenter * deltaX;
 	}
 
-	shared_ptr< IIntegratorStrategy > CIntegratorFactory::getIntegrator( IntegrationType t_IntegratorType ) {
-		shared_ptr< IIntegratorStrategy > aStrategy = nullptr;
+	std::shared_ptr< IIntegratorStrategy > CIntegratorFactory::getIntegrator( IntegrationType t_IntegratorType ) {
+		std::shared_ptr< IIntegratorStrategy > aStrategy = nullptr;
 		switch ( t_IntegratorType ) {
 		case IntegrationType::Rectangular:
 			aStrategy = make_shared< CIntegratorRectangular >();

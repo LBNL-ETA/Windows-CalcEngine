@@ -20,11 +20,11 @@ namespace SingleLayerOptics {
 		m_Bottom( make_shared< CVenetianSlat >( t_SlatWidth, 0, t_SlatTiltAngle, t_CurvatureRadius,
 		                                        t_NumOfSlatSegments, SegmentsDirection::Negative ) ) {
 
-		shared_ptr< CViewSegment2D > exteriorSegment =
-			make_shared< CViewSegment2D >( m_Bottom->geometry()->lastPoint(), m_Top->geometry()->firstPoint() );
+		std::shared_ptr< CViewSegment2D > exteriorSegment =
+			std::make_shared< CViewSegment2D >( m_Bottom->geometry()->lastPoint(), m_Top->geometry()->firstPoint() );
 
-		shared_ptr< CViewSegment2D > interiorSegment =
-			make_shared< CViewSegment2D >( m_Top->geometry()->lastPoint(), m_Bottom->geometry()->firstPoint() );
+		std::shared_ptr< CViewSegment2D > interiorSegment =
+			std::make_shared< CViewSegment2D >( m_Top->geometry()->lastPoint(), m_Bottom->geometry()->firstPoint() );
 
 		m_Geometry = make_shared< CGeometry2D >();
 		m_Geometry->appendSegment( exteriorSegment );
@@ -45,33 +45,33 @@ namespace SingleLayerOptics {
 	}
 
 	double CVenetianCellDescription::segmentLength( const size_t Index ) const {
-		shared_ptr< vector< shared_ptr< CViewSegment2D > > > aSegments = m_Geometry->segments();
+		std::shared_ptr< std::vector< std::shared_ptr< CViewSegment2D > > > aSegments = m_Geometry->segments();
 		if ( Index > aSegments->size() ) {
 			throw runtime_error( "Incorrect index for venetian segment." );
 		}
-		shared_ptr< CViewSegment2D > aSegment = ( *aSegments )[ Index ];
+		std::shared_ptr< CViewSegment2D > aSegment = ( *aSegments )[ Index ];
 		return aSegment->length();
 	}
 
-	shared_ptr< CVenetianCellDescription > CVenetianCellDescription::makeBackwardCell() const {
+	std::shared_ptr< CVenetianCellDescription > CVenetianCellDescription::makeBackwardCell() const {
 		double slatWidth = m_Top->slatWidth();
 		double slatSpacing = m_Top->slatSpacing();
 		double slatTiltAngle = -m_Top->slatTiltAngle();
 		double curvatureRadius = m_Top->curvatureRadius();
 		size_t m_NumOfSlatSegments = m_Top->numberOfSegments();
 
-		shared_ptr< CVenetianCellDescription > aBackwardCell =
-			make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
+		std::shared_ptr< CVenetianCellDescription > aBackwardCell =
+			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, m_NumOfSlatSegments );
 
 		return aBackwardCell;
 	}
 
-	shared_ptr< CSquareMatrix > CVenetianCellDescription::viewFactors() {
+	std::shared_ptr< CSquareMatrix > CVenetianCellDescription::viewFactors() {
 		return m_Geometry->viewFactors();
 	}
 
-	shared_ptr< vector< BeamViewFactor > > CVenetianCellDescription::beamViewFactors(
+	std::shared_ptr< std::vector< BeamViewFactor > > CVenetianCellDescription::beamViewFactors(
 		const double t_ProfileAngle, const Side t_Side ) {
 		assert( m_BeamGeometry != nullptr );
 		return m_BeamGeometry->beamViewFactors( -t_ProfileAngle, t_Side );

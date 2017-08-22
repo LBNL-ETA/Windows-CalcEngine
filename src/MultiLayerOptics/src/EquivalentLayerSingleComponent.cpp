@@ -27,8 +27,8 @@ namespace MultiLayerOptics {
 
 	void CEquivalentLayerSingleComponent::addLayer( const double t_Tf, const double t_Rf, const double t_Tb,
 	                                                const double t_Rb, const Side t_Side ) {
-		shared_ptr< CLayerSingleComponent > firstLayer = nullptr;
-		shared_ptr< CLayerSingleComponent > secondLayer = nullptr;
+		std::shared_ptr< CLayerSingleComponent > firstLayer = nullptr;
+		std::shared_ptr< CLayerSingleComponent > secondLayer = nullptr;
 		switch ( t_Side ) {
 		case Side::Front:
 			firstLayer = make_shared< CLayerSingleComponent >( t_Tf, t_Rf, t_Tb, t_Rb );
@@ -63,7 +63,7 @@ namespace MultiLayerOptics {
 		return m_EquivalentLayer->getProperty( t_Property, t_Side );
 	}
 
-	shared_ptr< CLayerSingleComponent > CEquivalentLayerSingleComponent::getLayer() const {
+	std::shared_ptr< CLayerSingleComponent > CEquivalentLayerSingleComponent::getLayer() const {
 		return m_EquivalentLayer;
 	}
 

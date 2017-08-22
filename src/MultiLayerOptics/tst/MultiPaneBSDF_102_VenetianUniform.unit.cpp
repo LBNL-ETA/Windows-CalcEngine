@@ -17,11 +17,11 @@ using namespace MultiLayerOptics;
 class MultiPaneBSDF_102_VenetianUniform : public testing::Test {
 
 private:
-	shared_ptr< CMultiPaneBSDF > m_Layer;
+	std::shared_ptr< CMultiPaneBSDF > m_Layer;
 
-	shared_ptr< CSeries > loadSolarRadiationFile() {
+	std::shared_ptr< CSeries > loadSolarRadiationFile() {
 
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1 (Solar radiation)
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -149,8 +149,8 @@ private:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
-		shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
+		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
 
 		aMeasurements_102->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements_102->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -271,36 +271,36 @@ private:
 protected:
 	virtual void SetUp() {
 
-		shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
+		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
 
-		shared_ptr< CSpectralSample > aSample_102 =
-			make_shared< CSpectralSample >( aMeasurements_102 );
+		std::shared_ptr< CSpectralSample > aSample_102 =
+			std::make_shared< CSpectralSample >( aMeasurements_102 );
 
 		double thickness = 3.048e-3; // [m]
-		shared_ptr< CMaterial > aMaterial_102 =
-			make_shared< CMaterialSample >( aSample_102, thickness, MaterialType::Monolithic,
+		std::shared_ptr< CMaterial > aMaterial_102 =
+			std::make_shared< CMaterialSample >( aSample_102, thickness, MaterialType::Monolithic,
 			                                WavelengthRange::Solar );
 
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Small );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Small );
 
-		shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
 
 		// Venetian blind
 		double Tmat = 0.1;
 		double Rfmat = 0.7;
 		double Rbmat = 0.7;
-		shared_ptr< CMaterial > aSolarRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
+		std::shared_ptr< CMaterial > aSolarRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
 
 		// Visible range
 		Tmat = 0.2;
 		Rfmat = 0.6;
 		Rbmat = 0.6;
-		shared_ptr< CMaterial > aVisibleRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
+		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
 
-		shared_ptr< CMaterial > aMaterialVenetian =
-			make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
+		std::shared_ptr< CMaterial > aMaterialVenetian =
+			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
 
 		// make cell geometry
 		double slatWidth = 0.016; // m
@@ -309,27 +309,27 @@ protected:
 		double curvatureRadius = 0;
 		size_t numOfSlatSegments = 5;
 
-		shared_ptr< ICellDescription > aCellDescription =
-			make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
+		std::shared_ptr< ICellDescription > aCellDescription =
+			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, numOfSlatSegments );
 
-		shared_ptr< CBSDFLayer > Layer_Venetian =
+		std::shared_ptr< CBSDFLayer > Layer_Venetian =
 			CBSDFLayerMaker( aMaterialVenetian, aBSDF, aCellDescription ).getLayer();
 
 		vector< double > commonWavelengths = Layer_102->getBandWavelengths();
 
-		shared_ptr< CEquivalentBSDFLayer > aEqLayer =
-			make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );
+		std::shared_ptr< CEquivalentBSDFLayer > aEqLayer =
+			std::make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );
 		aEqLayer->addLayer( Layer_Venetian );
 
-		shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
+		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
 		m_Layer = make_shared< CMultiPaneBSDF >( aEqLayer, aSolarRadiation );
 
 	}
 
 public:
 
-	shared_ptr< CMultiPaneBSDF > getLayer() {
+	std::shared_ptr< CMultiPaneBSDF > getLayer() {
 		return m_Layer;
 	};
 

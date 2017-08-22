@@ -11,8 +11,8 @@ using namespace FenestrationCommon;
 class TestVenetianCellFlatMinus45_1 : public testing::Test {
 
 private:
-	// shared_ptr< CVenetianCell > m_Cell;
-	shared_ptr< CVenetianCell > m_Cell;
+	// std::shared_ptr< CVenetianCell > m_Cell;
+	std::shared_ptr< CVenetianCell > m_Cell;
 
 protected:
 	virtual void SetUp() {
@@ -22,8 +22,8 @@ protected:
 		double Rbmat = 0.7;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
 		double slatWidth = 0.010; // m
@@ -32,8 +32,8 @@ protected:
 		double curvatureRadius = 0;
 		size_t numOfSlatSegments = 2;
 
-		shared_ptr< CVenetianCellDescription > aCellDescription =
-			make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
+		std::shared_ptr< CVenetianCellDescription > aCellDescription =
+			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, numOfSlatSegments );
 
 		m_Cell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
@@ -41,7 +41,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CVenetianCell > GetCell() {
+	std::shared_ptr< CVenetianCell > GetCell() {
 		return m_Cell;
 	};
 
@@ -50,7 +50,7 @@ public:
 TEST_F( TestVenetianCellFlatMinus45_1, TestVenetian1 ) {
 	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, -45 degrees slats) - diffuse-diffuse." );
 
-	shared_ptr< CVenetianCell > aCell = GetCell();
+	std::shared_ptr< CVenetianCell > aCell = GetCell();
 
 	// Front side
 	Side aSide = Side::Front;
@@ -73,7 +73,7 @@ TEST_F( TestVenetianCellFlatMinus45_1, TestVenetian1 ) {
 TEST_F( TestVenetianCellFlatMinus45_1, TestVenetian2 ) {
 	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, -45 degrees slats) - direct-diffuse." );
 
-	shared_ptr< CVenetianCell > aCell = GetCell();
+	std::shared_ptr< CVenetianCell > aCell = GetCell();
 
 	// Front side
 	Side aSide = Side::Front;

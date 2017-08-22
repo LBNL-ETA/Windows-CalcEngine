@@ -9,7 +9,7 @@ using namespace Tarcog;
 class TestSolidLayer : public testing::Test {
 
 private:
-	shared_ptr< CIGUSolidLayer > m_SolidLayer;
+	std::shared_ptr< CIGUSolidLayer > m_SolidLayer;
 
 protected:
 	void SetUp() override {
@@ -25,7 +25,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CIGUSolidLayer > GetLayer() const {
+	std::shared_ptr< CIGUSolidLayer > GetLayer() const {
 		return m_SolidLayer;
 	};
 

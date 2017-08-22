@@ -18,11 +18,11 @@ using namespace MultiLayerOptics;
 class EquivalentSpecularLayer_102_103 : public testing::Test {
 
 private:
-	shared_ptr< CMultiPaneSpecular > m_Layer;
+	std::shared_ptr< CMultiPaneSpecular > m_Layer;
 
-	shared_ptr< CSeries > loadSolarRadiationFile() {
+	std::shared_ptr< CSeries > loadSolarRadiationFile() {
 
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1 (Solar radiation)
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -150,8 +150,8 @@ private:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
-		shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
+		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
 
 		aMeasurements_102->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements_102->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -269,8 +269,8 @@ private:
 
 	}
 
-	shared_ptr< CSpectralSampleData > loadSampleData_NFRC_103() {
-		shared_ptr< CSpectralSampleData > aMeasurements_103 = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_103() {
+		std::shared_ptr< CSpectralSampleData > aMeasurements_103 = make_shared< CSpectralSampleData >();
 		aMeasurements_103->addRecord( 0.300, 0.0000, 0.0470, 0.0490 );
 		aMeasurements_103->addRecord( 0.305, 0.0050, 0.0470, 0.0490 );
 		aMeasurements_103->addRecord( 0.310, 0.0000, 0.0470, 0.0480 );
@@ -388,29 +388,29 @@ private:
 
 protected:
 	virtual void SetUp() {
-		shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
+		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
 
-		shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
-		shared_ptr< CSpectralSampleData > aMeasurements_103 = loadSampleData_NFRC_103();
+		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
+		std::shared_ptr< CSpectralSampleData > aMeasurements_103 = loadSampleData_NFRC_103();
 
-		shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
+		std::shared_ptr< CSpectralSample > aSample_102 = make_shared< CSpectralSample >( aMeasurements_102 );
 
 		double thickness = 3.048e-3; // [m]
-		shared_ptr< CMaterialSample > aMaterial_102 = make_shared< CMaterialSample >( aSample_102,
+		std::shared_ptr< CMaterialSample > aMaterial_102 = make_shared< CMaterialSample >( aSample_102,
 		                                                                              thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		// shared_ptr< CSpecularCellDescription > aCellDescription_102 = make_shared< CSpecularCellDescription >();
-		shared_ptr< CSpecularCell > aCell_102 = make_shared< CSpecularCell >( aMaterial_102 );
+		// std::shared_ptr< CSpecularCellDescription > aCellDescription_102 = make_shared< CSpecularCellDescription >();
+		std::shared_ptr< CSpecularCell > aCell_102 = make_shared< CSpecularCell >( aMaterial_102 );
 
-		shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
+		std::shared_ptr< CSpectralSample > aSample_103 = make_shared< CSpectralSample >( aMeasurements_103 );
 
 		thickness = 5.715e-3; // [m]
-		shared_ptr< CMaterialSample > aMaterial_103 = make_shared< CMaterialSample >( aSample_103,
+		std::shared_ptr< CMaterialSample > aMaterial_103 = make_shared< CMaterialSample >( aSample_103,
 		                                                                              thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		// shared_ptr< CSpecularCellDescription > aCellDescription_103 = make_shared< CSpecularCellDescription >();
+		// std::shared_ptr< CSpecularCellDescription > aCellDescription_103 = make_shared< CSpecularCellDescription >();
 
-		shared_ptr< CSpecularCell > aCell_103 = make_shared< CSpecularCell >( aMaterial_103 );
+		std::shared_ptr< CSpecularCell > aCell_103 = make_shared< CSpecularCell >( aMaterial_103 );
 
 		// To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
 		CCommonWavelengths aCommonWL;
@@ -426,7 +426,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CMultiPaneSpecular > getLayer() {
+	std::shared_ptr< CMultiPaneSpecular > getLayer() {
 		return m_Layer;
 	};
 
@@ -697,7 +697,7 @@ TEST_F( EquivalentSpecularLayer_102_103, TestAngleHemispherical10 ) {
 
 	const double minLambda = 0.3;
 	const double maxLambda = 2.5;
-	shared_ptr< vector< double > > aAngles = make_shared< vector< double > >();
+	std::shared_ptr< std::vector< double > > aAngles = make_shared< std::vector< double > >();
 
 	*aAngles = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
 
@@ -728,7 +728,7 @@ TEST_F( EquivalentSpecularLayer_102_103, TestAngleHemispherical19 ) {
 
 	const double minLambda = 0.3;
 	const double maxLambda = 2.5;
-	shared_ptr< vector< double > > aAngles = make_shared< vector< double > >();
+	std::shared_ptr< std::vector< double > > aAngles = make_shared< std::vector< double > >();
 
 	*aAngles = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90 };
 

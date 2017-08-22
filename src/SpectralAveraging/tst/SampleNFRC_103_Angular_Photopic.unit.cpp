@@ -4,18 +4,18 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
 class TestSampleNFRC_103_Angular_Photopic : public testing::Test {
 
 private:
-	shared_ptr< CSpectralSample > m_Sample;
+	std::shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-	shared_ptr< CSeries > getSolarRadiation() const {
-		auto aSolarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiation() const {
+		auto aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
 		aSolarRadiation->addProperty( 0.3000, 0.0341 );
@@ -553,8 +553,8 @@ protected:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< vector< double > > getWavelengths() const {
-		auto aWavelengths = make_shared< vector< double > >();
+	std::shared_ptr< std::vector< double > > getWavelengths() const {
+		auto aWavelengths = std::make_shared< std::vector< double > >();
 
 		aWavelengths->push_back( 0.380 );
 		aWavelengths->push_back( 0.385 );
@@ -641,8 +641,8 @@ protected:
 		return aWavelengths;
 	}
 
-	shared_ptr< CSeries > getDetecorData() const {
-		auto detectorData = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getDetecorData() const {
+		auto detectorData = std::make_shared< CSeries >();
 
 		detectorData->addProperty( 0.380, 0.0000 );
 		detectorData->addProperty( 0.385, 0.0001 );
@@ -729,8 +729,8 @@ protected:
 		return detectorData;
 	}
 
-	shared_ptr< CSpectralSampleData > getMeasurements() const {
-		auto aMeasurements = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > getMeasurements() const {
+		auto aMeasurements = std::make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0000, 0.0470, 0.0490 );
 		aMeasurements->addRecord( 0.305, 0.0050, 0.0470, 0.0490 );
@@ -854,7 +854,7 @@ protected:
 		auto detectorData = getDetecorData();
 		auto aMeasurements = getMeasurements();
 
-		m_Sample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		m_Sample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 		m_Sample->setDetectorData( detectorData );
 
 		m_Sample->setWavelengths( WavelengthSet::Custom, aWavelengths );
@@ -862,7 +862,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSpectralSample > getSample() const {
+	std::shared_ptr< CSpectralSample > getSample() const {
 		return m_Sample;
 	};
 
@@ -877,7 +877,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties0degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -903,7 +903,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties10degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -929,7 +929,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties20degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -955,7 +955,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties30degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -981,7 +981,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties40degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -1007,7 +1007,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties50degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -1033,7 +1033,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties60degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -1059,7 +1059,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties70degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -1085,7 +1085,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties80degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;
@@ -1111,7 +1111,7 @@ TEST_F( TestSampleNFRC_103_Angular_Photopic, TestProperties90degrees ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	// VISIBLE (PHOTOPIC) RANGE
 	auto lowLambda = 0.38;

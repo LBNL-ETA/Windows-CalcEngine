@@ -12,7 +12,7 @@ using namespace SpectralAveraging;
 class TestCircularPerforatedShadeMultiWavelength : public testing::Test {
 
 private:
-	shared_ptr< CBSDFLayer > m_Layer;
+	std::shared_ptr< CBSDFLayer > m_Layer;
 
 protected:
 	virtual void SetUp() {
@@ -22,8 +22,8 @@ protected:
 		double Rbmat = 0.7;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterial > aSolarRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > aSolarRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// Visible range
 		Tmat = 0.2;
@@ -31,23 +31,23 @@ protected:
 		Rbmat = 0.6;
 		minLambda = 0.38;
 		maxLambda = 0.78;
-		shared_ptr< CMaterial > aVisibleRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		double ratio = 0.49;
 
-		shared_ptr< CMaterial > aMaterial =
-			make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
+		std::shared_ptr< CMaterial > aMaterial =
+			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
 		// make cell geometry
 		double x = 22.5; // mm
 		double y = 38.1; // mm
 		double thickness = 5; // mm
 		double radius = 8.35; // mm
-		shared_ptr< ICellDescription > aCellDescription =
-			make_shared< CCircularCellDescription >( x, y, thickness, radius );
+		std::shared_ptr< ICellDescription > aCellDescription =
+			std::make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
@@ -56,7 +56,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFLayer > getLayer() {
+	std::shared_ptr< CBSDFLayer > getLayer() {
 		return m_Layer;
 	};
 
@@ -65,9 +65,9 @@ public:
 TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWavelength ) {
 	SCOPED_TRACE( "Begin Test: Perforated layer (multi range) - BSDF." );
 
-	shared_ptr< CBSDFLayer > aLayer = getLayer();
+	std::shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-	shared_ptr< vector< shared_ptr< CBSDFIntegrator > > > aResults = aLayer->getWavelengthResults();
+	std::shared_ptr< std::vector< std::shared_ptr< CBSDFIntegrator > > > aResults = aLayer->getWavelengthResults();
 
 	size_t correctSize = 4;
 
@@ -77,7 +77,7 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
 	//  Wavelength number 1
 	///////////////////////////////////////////////////////////////////////
 
-	shared_ptr< CSquareMatrix > aT = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > aT = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::T );
 
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
@@ -136,7 +136,7 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
 	}
 
 	// Front reflectance
-	shared_ptr< CSquareMatrix > aRf = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > aRf = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::R );
 
 	correctResults.clear();
 	calculatedResults.clear();

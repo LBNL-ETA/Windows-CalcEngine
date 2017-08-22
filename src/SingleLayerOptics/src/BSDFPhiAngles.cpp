@@ -5,11 +5,11 @@ using namespace std;
 namespace SingleLayerOptics {
 
 	CBSDFPhiAngles::CBSDFPhiAngles( const size_t t_NumOfPhis ) :
-		m_PhiAngles( make_shared< vector< double > >() ) {
+		m_PhiAngles( make_shared< std::vector< double > >() ) {
 		createPhis( t_NumOfPhis );
 	}
 
-	shared_ptr< vector< double > > CBSDFPhiAngles::phiAngles() const {
+	std::shared_ptr< std::vector< double > > CBSDFPhiAngles::phiAngles() const {
 		return m_PhiAngles;
 	}
 

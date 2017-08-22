@@ -6,43 +6,43 @@
 #include "WCEViewer.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace Viewer;
 using namespace FenestrationCommon;
 
 class TestEnclosure2DBeam1 : public testing::Test {
 
 private:
-	shared_ptr< CGeometry2DBeam > m_Enclosures2DBeam;
+	std::shared_ptr< CGeometry2DBeam > m_Enclosures2DBeam;
 
 protected:
 	void SetUp() override {
-		m_Enclosures2DBeam = make_shared< CGeometry2DBeam >();
+		m_Enclosures2DBeam = std::make_shared< CGeometry2DBeam >();
 
 		//////////////////////////////////////////////////////////////////////
 		///  Enclosure 1
 		//////////////////////////////////////////////////////////////////////
-		shared_ptr< CGeometry2D > aEnclosure1 = make_shared< CGeometry2D >();
+		std::shared_ptr< CGeometry2D > aEnclosure1 = std::make_shared< CGeometry2D >();
 
 		// Segment 1
-		shared_ptr< CPoint2D > aStartPoint1 = make_shared< CPoint2D >( 3, 2 );
-		shared_ptr< CPoint2D > aEndPoint1 = make_shared< CPoint2D >( 5, 5 );
+		std::shared_ptr< CPoint2D > aStartPoint1 = std::make_shared< CPoint2D >( 3, 2 );
+		std::shared_ptr< CPoint2D > aEndPoint1 = std::make_shared< CPoint2D >( 5, 5 );
 
-		shared_ptr< CViewSegment2D > aSegment1 = make_shared< CViewSegment2D >( aStartPoint1, aEndPoint1 );
+		std::shared_ptr< CViewSegment2D > aSegment1 = std::make_shared< CViewSegment2D >( aStartPoint1, aEndPoint1 );
 		aEnclosure1->appendSegment( aSegment1 );
 
 		// Segment 2
-		shared_ptr< CPoint2D > aStartPoint2 = make_shared< CPoint2D >( 5, 5 );
-		shared_ptr< CPoint2D > aEndPoint2 = make_shared< CPoint2D >( 8, 4 );
+		std::shared_ptr< CPoint2D > aStartPoint2 = std::make_shared< CPoint2D >( 5, 5 );
+		std::shared_ptr< CPoint2D > aEndPoint2 = std::make_shared< CPoint2D >( 8, 4 );
 
-		shared_ptr< CViewSegment2D > aSegment2 = make_shared< CViewSegment2D >( aStartPoint2, aEndPoint2 );
+		std::shared_ptr< CViewSegment2D > aSegment2 = std::make_shared< CViewSegment2D >( aStartPoint2, aEndPoint2 );
 		aEnclosure1->appendSegment( aSegment2 );
 
 		// Segment 3
-		shared_ptr< CPoint2D > aStartPoint3 = make_shared< CPoint2D >( 8, 4 );
-		shared_ptr< CPoint2D > aEndPoint3 = make_shared< CPoint2D >( 9, 9 );
+		std::shared_ptr< CPoint2D > aStartPoint3 = std::make_shared< CPoint2D >( 8, 4 );
+		std::shared_ptr< CPoint2D > aEndPoint3 = std::make_shared< CPoint2D >( 9, 9 );
 
-		shared_ptr< CViewSegment2D > aSegment3 = make_shared< CViewSegment2D >( aStartPoint3, aEndPoint3 );
+		std::shared_ptr< CViewSegment2D > aSegment3 = std::make_shared< CViewSegment2D >( aStartPoint3, aEndPoint3 );
 		aEnclosure1->appendSegment( aSegment3 );
 
 		m_Enclosures2DBeam->appendGeometry2D( aEnclosure1 );
@@ -50,27 +50,27 @@ protected:
 		//////////////////////////////////////////////////////////////////////
 		///  Enclosure 2
 		//////////////////////////////////////////////////////////////////////
-		shared_ptr< CGeometry2D > aEnclosure2 = make_shared< CGeometry2D >();
+		std::shared_ptr< CGeometry2D > aEnclosure2 = std::make_shared< CGeometry2D >();
 
 		// Segment 4
-		shared_ptr< CPoint2D > aStartPoint4 = make_shared< CPoint2D >( 3, 10 );
-		shared_ptr< CPoint2D > aEndPoint4 = make_shared< CPoint2D >( 7, 11 );
+		std::shared_ptr< CPoint2D > aStartPoint4 = std::make_shared< CPoint2D >( 3, 10 );
+		std::shared_ptr< CPoint2D > aEndPoint4 = std::make_shared< CPoint2D >( 7, 11 );
 
-		shared_ptr< CViewSegment2D > aSegment4 = make_shared< CViewSegment2D >( aStartPoint4, aEndPoint4 );
+		std::shared_ptr< CViewSegment2D > aSegment4 = std::make_shared< CViewSegment2D >( aStartPoint4, aEndPoint4 );
 		aEnclosure2->appendSegment( aSegment4 );
 
 		// Segment 5
-		shared_ptr< CPoint2D > aStartPoint5 = make_shared< CPoint2D >( 7, 11 );
-		shared_ptr< CPoint2D > aEndPoint5 = make_shared< CPoint2D >( 6, 14 );
+		std::shared_ptr< CPoint2D > aStartPoint5 = std::make_shared< CPoint2D >( 7, 11 );
+		std::shared_ptr< CPoint2D > aEndPoint5 = std::make_shared< CPoint2D >( 6, 14 );
 
-		shared_ptr< CViewSegment2D > aSegment5 = make_shared< CViewSegment2D >( aStartPoint5, aEndPoint5 );
+		std::shared_ptr< CViewSegment2D > aSegment5 = std::make_shared< CViewSegment2D >( aStartPoint5, aEndPoint5 );
 		aEnclosure2->appendSegment( aSegment5 );
 
 		// Segment 6
-		shared_ptr< CPoint2D > aStartPoint6 = make_shared< CPoint2D >( 6, 14 );
-		shared_ptr< CPoint2D > aEndPoint6 = make_shared< CPoint2D >( 12, 16 );
+		std::shared_ptr< CPoint2D > aStartPoint6 = std::make_shared< CPoint2D >( 6, 14 );
+		std::shared_ptr< CPoint2D > aEndPoint6 = std::make_shared< CPoint2D >( 12, 16 );
 
-		shared_ptr< CViewSegment2D > aSegment6 = make_shared< CViewSegment2D >( aStartPoint6, aEndPoint6 );
+		std::shared_ptr< CViewSegment2D > aSegment6 = std::make_shared< CViewSegment2D >( aStartPoint6, aEndPoint6 );
 		aEnclosure2->appendSegment( aSegment6 );
 
 		m_Enclosures2DBeam->appendGeometry2D( aEnclosure2 );
@@ -79,7 +79,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CGeometry2DBeam > getEnclosure() const {
+	std::shared_ptr< CGeometry2DBeam > getEnclosure() const {
 		return m_Enclosures2DBeam;
 	};
 
@@ -88,7 +88,7 @@ public:
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
 	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (45 deg)." );
 
-	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	std::shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
 	double profileAngle = 45;
 
 	/////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
 
 	Side aSide = Side::Front;
 
-	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	std::shared_ptr< std::vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
 	EXPECT_EQ( 0.5, aEnclosure->directToDirect( profileAngle, aSide ) );
 
@@ -106,7 +106,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
 	EXPECT_EQ( correctSize, aViewFactors->size() );
 
 	// Create correct results
-	vector< BeamViewFactor > correctResults;
+	std::vector< BeamViewFactor > correctResults;
 
 	size_t enclosureIndex = 1;
 	size_t segmentIndex = 0;
@@ -134,7 +134,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
 	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (0 deg)." );
 
-	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	std::shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
 	double profileAngle = 0;
 
 	/////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
 
 	Side aSide = Side::Front;
 
-	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	std::shared_ptr< std::vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
 	EXPECT_EQ( 0.125, aEnclosure->directToDirect( profileAngle, aSide ) );
 
@@ -152,7 +152,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
 	EXPECT_EQ( correctSize, aViewFactors->size() );
 
 	// Create correct results
-	vector< BeamViewFactor > correctResults;
+	std::vector< BeamViewFactor > correctResults;
 
 	size_t enclosureIndex = 0;
 	size_t segmentIndex = 2;
@@ -180,7 +180,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
 	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (-45 deg)." );
 
-	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	std::shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
 	double profileAngle = -45;
 
 	/////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
 
 	Side aSide = Side::Front;
 
-	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	std::shared_ptr< std::vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
 	EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
 
@@ -198,7 +198,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
 	EXPECT_EQ( correctSize, aViewFactors->size() );
 
 	// Create correct results
-	vector< BeamViewFactor > correctResults;
+	std::vector< BeamViewFactor > correctResults;
 
 	size_t enclosureIndex = 0;
 	size_t segmentIndex = 2;
@@ -233,7 +233,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam4 ) {
 	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (45 deg)." );
 
-	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	std::shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
 	double profileAngle = 45;
 
 	/////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam4 ) {
 
 	Side aSide = Side::Back;
 
-	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	std::shared_ptr< std::vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
 	EXPECT_EQ( 1, aEnclosure->directToDirect( profileAngle, aSide ) );
 
@@ -255,7 +255,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam4 ) {
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
 	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (0 deg)." );
 
-	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	std::shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
 	double profileAngle = 0;
 
 	/////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
 
 	Side aSide = Side::Back;
 
-	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	std::shared_ptr< std::vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
 	EXPECT_NEAR( 1.0 / 7.0, aEnclosure->directToDirect( profileAngle, aSide ), 1e-6 );
 
@@ -273,7 +273,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
 	EXPECT_EQ( correctSize, aViewFactors->size() );
 
 	// Create correct results
-	vector< BeamViewFactor > correctResults;
+	std::vector< BeamViewFactor > correctResults;
 
 	size_t enclosureIndex = 1;
 	size_t segmentIndex = 2;
@@ -308,7 +308,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam6 ) {
 	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (-45 deg)." );
 
-	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	std::shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
 	double profileAngle = -45;
 
 	/////////////////////////////////////////////////////////////
@@ -317,7 +317,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam6 ) {
 
 	Side aSide = Side::Back;
 
-	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	std::shared_ptr< std::vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
 	EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
 
@@ -326,7 +326,7 @@ TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam6 ) {
 	EXPECT_EQ( correctSize, aViewFactors->size() );
 
 	// Create correct results
-	vector< BeamViewFactor > correctResults;
+	std::vector< BeamViewFactor > correctResults;
 
 	size_t enclosureIndex = 1;
 	size_t segmentIndex = 2;

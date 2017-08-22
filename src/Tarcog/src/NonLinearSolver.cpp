@@ -8,31 +8,31 @@
 #include "HeatFlowBalance.hpp"
 #include "IGU.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-	CNonLinearSolver::CNonLinearSolver( shared_ptr< CIGU > const& t_IGU ) :
+	CNonLinearSolver::CNonLinearSolver( std::shared_ptr< CIGU > const& t_IGU ) :
 		m_IGU( t_IGU ), m_Tolerance( IterationConstants::CONVERGENCE_TOLERANCE ), m_Iterations( 0 ),
 		m_RelaxParam( IterationConstants::RELAXATION_PARAMETER_MAX ) {
 		assert( t_IGU != nullptr );
-		m_LinearSolver = make_shared< CLinearSolver >();
+		m_LinearSolver = std::make_shared< CLinearSolver >();
 		assert( m_LinearSolver != nullptr );
-		m_QBalance = make_shared< CHeatFlowBalance >( m_IGU );
+		m_QBalance = std::make_shared< CHeatFlowBalance >( m_IGU );
 		assert( m_QBalance != nullptr );
 	}
 
-	double CNonLinearSolver::calculateTolerance( vector< double > const& t_Solution ) const {
+	double CNonLinearSolver::calculateTolerance( std::vector< double > const& t_Solution ) const {
 		assert(t_Solution.size() == m_IGUState->size() );
 		auto aError = fabs( t_Solution[ 0 ] - ( *m_IGUState )[ 0 ] );
 		for ( size_t i = 1; i < m_IGUState->size(); ++i ) {
-			aError = max( aError, fabs( t_Solution[ i ] - ( *m_IGUState )[ i ] ) );
+			aError = std::max( aError, fabs( t_Solution[ i ] - ( *m_IGUState )[ i ] ) );
 		}
 		return aError;
 	}
 
-	void CNonLinearSolver::estimateNewState( vector< double > const& t_Solution ) const {
+	void CNonLinearSolver::estimateNewState( std::vector< double > const& t_Solution ) const {
 		assert(t_Solution.size() == m_IGUState->size() );
 		for ( size_t i = 0; i < m_IGUState->size(); ++i ) {
 			( *m_IGUState )[ i ] = m_RelaxParam * t_Solution[ i ] + ( 1 - m_RelaxParam ) * ( *m_IGUState )[ i ];
@@ -49,8 +49,8 @@ namespace Tarcog {
 
 	void CNonLinearSolver::solve() {
 		m_IGUState = m_IGU->getState();
-		vector< double > initialState( *m_IGUState );
-		vector< double > bestSolution( m_IGUState->size() );
+		std::vector< double > initialState( *m_IGUState );
+		std::vector< double > bestSolution( m_IGUState->size() );
 		assert( m_IGUState != nullptr );
 		auto achievedTolerance = 1000.0;
 		m_SolutionTolerance = achievedTolerance;
@@ -60,7 +60,7 @@ namespace Tarcog {
 
 		while ( iterate ) {
 			++m_Iterations;
-			vector< double > aSolution = m_QBalance->calcBalanceMatrix();
+			std::vector< double > aSolution = m_QBalance->calcBalanceMatrix();
 
 			achievedTolerance = calculateTolerance( aSolution );
 
@@ -70,7 +70,7 @@ namespace Tarcog {
 
 			if ( achievedTolerance < m_SolutionTolerance ) {
 				initialState = *m_IGUState;
-				m_SolutionTolerance = min( achievedTolerance, m_SolutionTolerance );
+				m_SolutionTolerance = std::min( achievedTolerance, m_SolutionTolerance );
 				bestSolution = *m_IGUState;
 			}
 

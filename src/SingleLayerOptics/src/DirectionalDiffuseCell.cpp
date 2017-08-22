@@ -5,8 +5,8 @@ using namespace std;
 
 namespace SingleLayerOptics {
 
-	CDirectionalDiffuseCell::CDirectionalDiffuseCell( const shared_ptr< CMaterial >&,
-	                                                  const shared_ptr< ICellDescription >& ) {
+	CDirectionalDiffuseCell::CDirectionalDiffuseCell( const std::shared_ptr< CMaterial >&,
+	                                                  const std::shared_ptr< ICellDescription >& ) {
 
 	}
 

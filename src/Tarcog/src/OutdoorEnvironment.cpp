@@ -9,7 +9,7 @@
 #include "OutdoorEnvironment.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace ConstantsData;
 using namespace FenestrationCommon;
 
@@ -22,7 +22,7 @@ namespace Tarcog {
 	                                          double const t_SkyTemperature, SkyModel const t_Model, double const t_FractionClearSky ) :
 		CEnvironment( t_Pressure, t_AirSpeed, t_AirDirection ), m_Tsky( t_SkyTemperature ),
 		m_FractionOfClearSky( t_FractionClearSky ), m_SkyModel( t_Model ) {
-		m_Surface[ Side::Front ] = make_shared< CSurface >();
+		m_Surface[ Side::Front ] = std::make_shared< CSurface >();
 		m_Surface.at( Side::Front )->setTemperature( t_AirTemperature );
 		m_DirectSolarRadiation = t_DirectSolarRadiation;
 	}
@@ -47,7 +47,7 @@ namespace Tarcog {
 			aEmissivity = 5.31e-13 * pow( getAirTemperature(), 6 ) / ( STEFANBOLTZMANN * pow( getAirTemperature(), 4 ) );
 			break;
 		default:
-			throw runtime_error( "Incorrect sky model specified." );
+			throw std::runtime_error( "Incorrect sky model specified." );
 			break;
 		}
 
@@ -65,17 +65,17 @@ namespace Tarcog {
 		return STEFANBOLTZMANN * pow( radiationTemperature, 4 );
 	}
 
-	void COutdoorEnvironment::connectToIGULayer( shared_ptr< CBaseLayer > const& t_IGULayer ) {
+	void COutdoorEnvironment::connectToIGULayer( std::shared_ptr< CBaseLayer > const& t_IGULayer ) {
 		this->connectToBackSide( t_IGULayer );
 		m_Surface[ Side::Back ] = t_IGULayer->getSurface( Side::Front );
 	}
 
-	shared_ptr< CBaseLayer > COutdoorEnvironment::clone() const {
+	std::shared_ptr< CBaseLayer > COutdoorEnvironment::clone() const {
 		return cloneEnvironment();
 	}
 
-	shared_ptr< CEnvironment > COutdoorEnvironment::cloneEnvironment() const {
-		return make_shared< COutdoorEnvironment >( *this );
+	std::shared_ptr< CEnvironment > COutdoorEnvironment::cloneEnvironment() const {
+		return std::make_shared< COutdoorEnvironment >( *this );
 	}
 
 	void COutdoorEnvironment::setSolarRadiation( double const t_SolarRadiation ) {
@@ -107,7 +107,7 @@ namespace Tarcog {
 			break;
 		}
 		default: {
-			throw runtime_error( "Incorrect definition for convection model (Outdoor environment)." );
+			throw std::runtime_error( "Incorrect definition for convection model (Outdoor environment)." );
 		}
 		}
 	}

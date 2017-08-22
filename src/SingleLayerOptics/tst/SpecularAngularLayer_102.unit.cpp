@@ -14,10 +14,10 @@ class TestSpecularAngularLayer_102 : public testing::Test {
 
 private:
 	std::shared_ptr< CAngularMeasurements > m_Measurements;
-	shared_ptr< CBSDFLayer > m_Layer;
+	std::shared_ptr< CBSDFLayer > m_Layer;
 
-	shared_ptr< CSeries > getSolarRadiationFile() {
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiationFile() {
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -145,10 +145,10 @@ private:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSingleAngularMeasurement > getSample1() {
-		shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
+	std::shared_ptr< CSingleAngularMeasurement > getSample1() {
+		std::shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
 
-		shared_ptr< CSpectralSampleData > aMeasurements0 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements0 = make_shared< CSpectralSampleData >();
 		// incident angle = 0
 
 		aMeasurements0->addRecord( 0.290, 0, 0.0481, 0.0481 );
@@ -249,16 +249,16 @@ private:
 		aMeasurements0->addRecord( 2.450, 0.8225, 0.0679, 0.0679 );
 		aMeasurements0->addRecord( 2.500, 0.8184, 0.0675, 0.0675 );
 
-		shared_ptr< CSpectralSample > aSample0 = make_shared< CSpectralSample >( aMeasurements0, aSolarRadiation );
-		shared_ptr< CSingleAngularMeasurement > aAngular0 = make_shared< CSingleAngularMeasurement >( aSample0, 0.0 );
+		std::shared_ptr< CSpectralSample > aSample0 = make_shared< CSpectralSample >( aMeasurements0, aSolarRadiation );
+		std::shared_ptr< CSingleAngularMeasurement > aAngular0 = make_shared< CSingleAngularMeasurement >( aSample0, 0.0 );
 
 		return aAngular0;
 	}
 
-	shared_ptr< CSingleAngularMeasurement > getSample2() {
-		shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
+	std::shared_ptr< CSingleAngularMeasurement > getSample2() {
+		std::shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
 
-		shared_ptr< CSpectralSampleData > aMeasurements1 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements1 = make_shared< CSpectralSampleData >();
 		// incident angle = 10
 
 		aMeasurements1->addRecord( 0.290, 0, 0.0481, 0.0481 );
@@ -359,17 +359,17 @@ private:
 		aMeasurements1->addRecord( 2.450, 0.8218, 0.0679, 0.0679 );
 		aMeasurements1->addRecord( 2.500, 0.8176, 0.0675, 0.0675 );
 
-		shared_ptr< CSpectralSample > aSample1 = make_shared< CSpectralSample >( aMeasurements1, aSolarRadiation );
-		shared_ptr< CSingleAngularMeasurement > aAngular1 = make_shared< CSingleAngularMeasurement >( aSample1, 10.0 );
+		std::shared_ptr< CSpectralSample > aSample1 = make_shared< CSpectralSample >( aMeasurements1, aSolarRadiation );
+		std::shared_ptr< CSingleAngularMeasurement > aAngular1 = make_shared< CSingleAngularMeasurement >( aSample1, 10.0 );
 
 		return aAngular1;
 
 	}
 
-	shared_ptr< CSingleAngularMeasurement > getSample3() {
-		shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
+	std::shared_ptr< CSingleAngularMeasurement > getSample3() {
+		std::shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
 
-		shared_ptr< CSpectralSampleData > aMeasurements4 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements4 = make_shared< CSpectralSampleData >();
 		// incident angle = 40
 
 		aMeasurements4->addRecord( 0.290, 0, 0.0993, 0.0993 );
@@ -470,16 +470,16 @@ private:
 		aMeasurements4->addRecord( 2.450, 0.7248, 0.1436, 0.1436 );
 		aMeasurements4->addRecord( 2.500, 0.7203, 0.1427, 0.1427 );
 
-		shared_ptr< CSpectralSample > aSample4 = make_shared< CSpectralSample >( aMeasurements4, aSolarRadiation );
-		shared_ptr< CSingleAngularMeasurement > aAngular4 = make_shared< CSingleAngularMeasurement >( aSample4, 40.0 );
+		std::shared_ptr< CSpectralSample > aSample4 = make_shared< CSpectralSample >( aMeasurements4, aSolarRadiation );
+		std::shared_ptr< CSingleAngularMeasurement > aAngular4 = make_shared< CSingleAngularMeasurement >( aSample4, 40.0 );
 
 		return aAngular4;
 	}
 
-	shared_ptr< CSingleAngularMeasurement > getSample4() {
-		shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
+	std::shared_ptr< CSingleAngularMeasurement > getSample4() {
+		std::shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
 
-		shared_ptr< CSpectralSampleData > aMeasurements9 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements9 = make_shared< CSpectralSampleData >();
 		// incident angle = 90
 		aMeasurements9->addRecord( 0.290, 0, 1, 1 );
 		aMeasurements9->addRecord( 0.295, 0, 1, 1 );
@@ -579,16 +579,16 @@ private:
 		aMeasurements9->addRecord( 2.450, 0, 1, 1 );
 		aMeasurements9->addRecord( 2.500, 0, 1, 1 );
 
-		shared_ptr< CSpectralSample > aSample9 = make_shared< CSpectralSample >( aMeasurements9, aSolarRadiation );
-		shared_ptr< CSingleAngularMeasurement > aAngular9 = make_shared< CSingleAngularMeasurement >( aSample9, 90.0 );
+		std::shared_ptr< CSpectralSample > aSample9 = make_shared< CSpectralSample >( aMeasurements9, aSolarRadiation );
+		std::shared_ptr< CSingleAngularMeasurement > aAngular9 = make_shared< CSingleAngularMeasurement >( aSample9, 90.0 );
 
 		return aAngular9;
 	}
 
-	shared_ptr< CSingleAngularMeasurement > getSample09() {
-		shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
+	std::shared_ptr< CSingleAngularMeasurement > getSample09() {
+		std::shared_ptr< CSeries > aSolarRadiation = getSolarRadiationFile();
 
-		shared_ptr< CSpectralSampleData > aMeasurements09 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements09 = make_shared< CSpectralSampleData >();
 		// incident angle = 0
 
 		aMeasurements09->addRecord( 0.290, 0, 0.0481, 0.0481 );
@@ -689,8 +689,8 @@ private:
 		aMeasurements09->addRecord( 2.450, 0.8225, 0.0679, 0.0679 );
 		aMeasurements09->addRecord( 2.500, 0.8184, 0.0675, 0.0675 );
 
-		shared_ptr< CSpectralSample > aSample09 = make_shared< CSpectralSample >( aMeasurements09, aSolarRadiation );
-		shared_ptr< CSingleAngularMeasurement > aAngular09 = make_shared< CSingleAngularMeasurement >( aSample09, 90.0 );
+		std::shared_ptr< CSpectralSample > aSample09 = make_shared< CSpectralSample >( aMeasurements09, aSolarRadiation );
+		std::shared_ptr< CSingleAngularMeasurement > aAngular09 = make_shared< CSingleAngularMeasurement >( aSample09, 90.0 );
 
 		return aAngular09;
 	}
@@ -698,11 +698,11 @@ private:
 protected:
 	virtual void SetUp() {
 
-		shared_ptr< CSingleAngularMeasurement > aAngular0 = getSample1();
-		shared_ptr< CSingleAngularMeasurement > aAngular1 = getSample2();
-		shared_ptr< CSingleAngularMeasurement > aAngular4 = getSample3();
-		shared_ptr< CSingleAngularMeasurement > aAngular9 = getSample4();
-		shared_ptr< CSingleAngularMeasurement > aAngular09 = getSample09();
+		std::shared_ptr< CSingleAngularMeasurement > aAngular0 = getSample1();
+		std::shared_ptr< CSingleAngularMeasurement > aAngular1 = getSample2();
+		std::shared_ptr< CSingleAngularMeasurement > aAngular4 = getSample3();
+		std::shared_ptr< CSingleAngularMeasurement > aAngular9 = getSample4();
+		std::shared_ptr< CSingleAngularMeasurement > aAngular09 = getSample09();
 
 		// Need to extract common wavelengths
 		CCommonWavelengths aCommonWL;
@@ -724,10 +724,10 @@ protected:
 		m_Measurements->addMeasurement( aAngular9 );
 		//	m_Measurements->addMeasurement( aAngular09 );
 
-		shared_ptr< CMaterial > aMaterial = make_shared< CMaterialMeasured >( m_Measurements, WavelengthRange::Solar );
+		std::shared_ptr< CMaterial > aMaterial = make_shared< CMaterialMeasured >( m_Measurements, WavelengthRange::Solar );
 
 		// create BSDF
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
@@ -736,7 +736,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFLayer > getLayer() {
+	std::shared_ptr< CBSDFLayer > getLayer() {
 		return m_Layer;
 	};
 
@@ -749,9 +749,9 @@ public:
 TEST_F( TestSpecularAngularLayer_102, TestSpecular1 ) {
 	SCOPED_TRACE( "Begin Test: Specular and Angular layer - BSDF." );
 
-	shared_ptr< CBSDFLayer > aLayer = getLayer();
+	std::shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-	shared_ptr< CBSDFIntegrator > aResults = aLayer->getResults();
+	std::shared_ptr< CBSDFIntegrator > aResults = aLayer->getResults();
 
 	double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
 	EXPECT_NEAR( 0.64541405979702648, tauDiff, 1e-6 );
@@ -768,12 +768,12 @@ TEST_F( TestSpecularAngularLayer_102, TestSpecular1 ) {
 	double tauDir = aResults->DirDir( Side::Front, PropertySimple::T, theta, phi );
 	EXPECT_NEAR( 0.780630538026433, tauDir, 1e-6 );
 
-	/*  shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
+	/*  std::shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 	
 	  // Test only diagonal of transmittance matrix
 	  size_t size = aT->getSize();
 	
-	  vector< double > correctResults;
+	  std::vector< double > correctResults;
 	  correctResults.push_back( 34.940061244564802 );
 	  correctResults.push_back( 35.727444960862350 );
 	  correctResults.push_back( 35.727444960862350 );
@@ -920,7 +920,7 @@ TEST_F( TestSpecularAngularLayer_102, TestSpecular1 ) {
 	  correctResults.push_back( 16.978250544025638 );
 	  correctResults.push_back( 16.978250544025638 );
 	
-	  vector< double > calculatedResults;
+	  std::vector< double > calculatedResults;
 	  for( size_t i = 0; i < size; ++i ) {
 	    calculatedResults.push_back( (*aT)[i][i] );
 	  }
@@ -931,7 +931,7 @@ TEST_F( TestSpecularAngularLayer_102, TestSpecular1 ) {
 	  }
 	
 	  // Front reflectance
-	  shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
+	  std::shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 	
 	  correctResults.clear();
 	  calculatedResults.clear();

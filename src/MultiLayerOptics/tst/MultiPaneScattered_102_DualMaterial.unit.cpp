@@ -17,11 +17,11 @@ using namespace MultiLayerOptics;
 class MultiPaneScattered_102_DualMaterial : public testing::Test {
 
 private:
-	shared_ptr< CMultiLayerScattered > m_Layer;
+	std::shared_ptr< CMultiLayerScattered > m_Layer;
 
-	shared_ptr< CSeries > loadSolarRadiationFile() {
+	std::shared_ptr< CSeries > loadSolarRadiationFile() {
 
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Deafult solar radiation in EnergyPlus (year 2017)
 		aSolarRadiation->addProperty( 0.3000, 0 );
@@ -142,38 +142,38 @@ protected:
 		double Tmat = 0.833848;
 		double Rfmat = 7.476376e-002;
 		double Rbmat = 7.485449e-002;
-		shared_ptr< CMaterial > aSolarRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
+		std::shared_ptr< CMaterial > aSolarRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
 
 		// Material properties in visible range
 		Tmat = 0.899260;
 		Rfmat = 0.082563;
 		Rbmat = 0.082564;
-		shared_ptr< CMaterial > aVisibleRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
+		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
 
-		shared_ptr< CMaterial > aMaterialDual =
-			make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
+		std::shared_ptr< CMaterial > aMaterialDual =
+			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
 
-		shared_ptr< CSpectralSample > aSample = aMaterialDual->getSpectralSample();
+		std::shared_ptr< CSpectralSample > aSample = aMaterialDual->getSpectralSample();
 
 		// Create material from samples
 		double thickness = 3.048e-3; // [m]
-		shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample,
+		std::shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample,
 		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		shared_ptr< CScatteringLayer > Layer_102 = make_shared< CScatteringLayer >( aMaterial_102 );
+		std::shared_ptr< CScatteringLayer > Layer_102 = make_shared< CScatteringLayer >( aMaterial_102 );
 
 		// Equivalent scattering layer
 		m_Layer = make_shared< CMultiLayerScattered >( Layer_102 );
 
-		shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
+		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
 		m_Layer->setSourceData( aSolarRadiation );
 
 	}
 
 public:
-	shared_ptr< CMultiLayerScattered > getLayer() {
+	std::shared_ptr< CMultiLayerScattered > getLayer() {
 		return m_Layer;
 	};
 

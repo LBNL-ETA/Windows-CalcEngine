@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestHemispherical2DIntegration : public testing::Test {
 
 public:
-	shared_ptr< CHemispherical2DIntegrator > m_Integrator;
+	std::shared_ptr< CHemispherical2DIntegrator > m_Integrator;
 
 protected:
 	void SetUp() override {

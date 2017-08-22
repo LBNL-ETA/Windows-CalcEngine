@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestSeriesIntegration : public testing::Test {
 
 private:
-  shared_ptr< CSeries > m_Series;
+  std::shared_ptr< CSeries > m_Series;
 
 protected:
 	void SetUp() override {
@@ -40,7 +40,7 @@ protected:
   }
 
 public:
-  shared_ptr< CSeries > getProperty() { return m_Series; };
+  std::shared_ptr< CSeries > getProperty() { return m_Series; };
 
 };
 
@@ -49,9 +49,9 @@ TEST_F( TestSeriesIntegration, TestRectangular ) {
   
   CSeries& aSpectralProperties = *getProperty();
 
-  shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Rectangular );
+  std::shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Rectangular );
 
-  vector< double > correctResults;
+  std::vector< double > correctResults;
   correctResults.push_back( 0.0027555 );
   correctResults.push_back( 0.0027595 );
   correctResults.push_back( 0.0027615 );
@@ -86,9 +86,9 @@ TEST_F( TestSeriesIntegration, TestTrapezoidal ) {
   
   CSeries& aSpectralProperties = *getProperty();
 
-  shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Trapezoidal );
+  std::shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Trapezoidal );
 
-  vector< double > correctResults;
+  std::vector< double > correctResults;
   correctResults.push_back( 0.00275750 );
   correctResults.push_back( 0.00276050 );
   correctResults.push_back( 0.00276300 );

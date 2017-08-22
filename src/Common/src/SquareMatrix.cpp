@@ -33,7 +33,7 @@ namespace FenestrationCommon {
 		}
 	}
 
-	void CSquareMatrix::setDiagonal( vector< double > const& t_Values ) {
+	void CSquareMatrix::setDiagonal( std::vector< double > const& t_Values ) {
 		if ( t_Values.size() != m_Size ) {
 			throw runtime_error( "Supplied vector size mismatch matrix size" );
 		}
@@ -53,7 +53,7 @@ namespace FenestrationCommon {
 		return m_Matrix[ index ];
 	}
 
-	shared_ptr< CSquareMatrix > CSquareMatrix::add( CSquareMatrix const& t_Matrix ) const {
+	std::shared_ptr< CSquareMatrix > CSquareMatrix::add( CSquareMatrix const& t_Matrix ) const {
 		if ( m_Size != t_Matrix.m_Size ) {
 			throw runtime_error( "Matrices must be identical in size." );
 		}
@@ -68,7 +68,7 @@ namespace FenestrationCommon {
 		return aMatrix;
 	}
 
-	shared_ptr< CSquareMatrix > CSquareMatrix::sub( CSquareMatrix const& t_Matrix ) const {
+	std::shared_ptr< CSquareMatrix > CSquareMatrix::sub( CSquareMatrix const& t_Matrix ) const {
 		if ( m_Size != t_Matrix.m_Size ) {
 			throw runtime_error( "Matrices must be identical in size." );
 		}
@@ -83,7 +83,7 @@ namespace FenestrationCommon {
 		return aMatrix;
 	}
 
-	shared_ptr< CSquareMatrix > CSquareMatrix::mult( CSquareMatrix const& t_Matrix ) const {
+	std::shared_ptr< CSquareMatrix > CSquareMatrix::mult( CSquareMatrix const& t_Matrix ) const {
 		if ( m_Size != t_Matrix.m_Size ) {
 			throw runtime_error( "Matrices must be identical in size." );
 		}
@@ -103,13 +103,13 @@ namespace FenestrationCommon {
 
 	}
 
-	shared_ptr< vector< double > > CSquareMatrix::multMxV( vector< double > const& t_Vector ) const {
+	std::shared_ptr< std::vector< double > > CSquareMatrix::multMxV( std::vector< double > const& t_Vector ) const {
 		if ( m_Size != t_Vector.size() ) {
 			throw runtime_error( "Matrix and vector does not have same number of rows and columns."
 			                    " It is not possible to perform multiplication." );
 		}
 
-		auto aResult = make_shared< vector< double > >( m_Size );
+		auto aResult = make_shared< std::vector< double > >( m_Size );
 
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			for ( size_t j = 0; j < m_Size; ++j ) {
@@ -120,13 +120,13 @@ namespace FenestrationCommon {
 		return aResult;
 	}
 
-	shared_ptr< vector< double > > CSquareMatrix::multVxM( vector< double > const& t_Vector ) const {
+	std::shared_ptr< std::vector< double > > CSquareMatrix::multVxM( std::vector< double > const& t_Vector ) const {
 		if ( m_Size != t_Vector.size() ) {
 			throw runtime_error( "Matrix and vector do not have same number of rows and columns."
 			                    " It is not possible to perform multiplication." );
 		}
 
-		auto aResult = make_shared< vector< double > >( m_Size );
+		auto aResult = make_shared< std::vector< double > >( m_Size );
 
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			for ( size_t j = 0; j < m_Size; ++j ) {
@@ -146,7 +146,7 @@ namespace FenestrationCommon {
 		}
 	}
 
-	shared_ptr< CSquareMatrix > CSquareMatrix::inverse() {
+	std::shared_ptr< CSquareMatrix > CSquareMatrix::inverse() {
 		// return LU decomposed matrix of current matrix
 		auto aLU = LU();
 
@@ -181,7 +181,7 @@ namespace FenestrationCommon {
 		return inverse;
 	}
 
-	shared_ptr< CSquareMatrix > CSquareMatrix::LU() {
+	std::shared_ptr< CSquareMatrix > CSquareMatrix::LU() {
 		auto D = make_shared< CSquareMatrix >( m_Size );
 		D->copyFrom( *this );
 

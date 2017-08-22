@@ -2,7 +2,7 @@
 #include "TarcogConstants.hpp"
 #include "BaseLayer.hpp"
 
-using namespace std;
+
 
 namespace Tarcog {
 
@@ -79,7 +79,7 @@ namespace Tarcog {
 		return m_DirectSolarRadiation;
 	}
 
-	void CEnvironment::connectToIGULayer( shared_ptr< CBaseLayer > const& ) {
+	void CEnvironment::connectToIGULayer( std::shared_ptr< CBaseLayer > const& ) {
 		//
 	}
 

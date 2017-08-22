@@ -13,14 +13,14 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics {
 
-	CSpecularBSDFLayer::CSpecularBSDFLayer( const shared_ptr< CSpecularCell >& t_Cell,
-	                                        const shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) : CBSDFLayer( t_Cell, t_Hemisphere ) {
+	CSpecularBSDFLayer::CSpecularBSDFLayer( const std::shared_ptr< CSpecularCell >& t_Cell,
+	                                        const std::shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) : CBSDFLayer( t_Cell, t_Hemisphere ) {
 
 	}
 
 
-	shared_ptr< CSpecularCell > CSpecularBSDFLayer::cellAsSpecular() const {
-		shared_ptr< CSpecularCell > aCell = dynamic_pointer_cast< CSpecularCell >( m_Cell );
+	std::shared_ptr< CSpecularCell > CSpecularBSDFLayer::cellAsSpecular() const {
+		std::shared_ptr< CSpecularCell > aCell = dynamic_pointer_cast< CSpecularCell >( m_Cell );
 		assert( aCell != nullptr );
 		return aCell;
 	}

@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestVenetianUniformShadeCurvedMinus55_0 : public testing::Test {
 
 private:
-	shared_ptr< CBSDFLayer > m_Shade;
+	std::shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
 	virtual void SetUp() {
@@ -21,8 +21,8 @@ protected:
 		double Rbmat = 0.5;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterial > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 
 		// make cell geometry
@@ -32,12 +32,12 @@ protected:
 		double curvatureRadius = 0.123967;
 		size_t numOfSlatSegments = 2;
 
-		shared_ptr< ICellDescription > aCellDescription =
-			make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
+		std::shared_ptr< ICellDescription > aCellDescription =
+			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, numOfSlatSegments );
 
 		// create BSDF
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
@@ -46,7 +46,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFLayer > GetShade() {
+	std::shared_ptr< CBSDFLayer > GetShade() {
 		return m_Shade;
 	};
 
@@ -55,9 +55,9 @@ public:
 TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
 	SCOPED_TRACE( "Begin Test: Venetian shade (Curved, -55 degrees slats)." );
 
-	shared_ptr< CBSDFLayer > aShade = GetShade();
+	std::shared_ptr< CBSDFLayer > aShade = GetShade();
 
-	shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
+	std::shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
 	double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
 	EXPECT_NEAR( 0.232141, tauDiff, 1e-6 );
@@ -65,7 +65,7 @@ TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
 	double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
 	EXPECT_NEAR( 0.301555, RfDiff, 1e-6 );
 
-	shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
@@ -124,7 +124,7 @@ TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
 	}
 
 	// Front reflectance
-	shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 
 	correctResults.clear();
 	calculatedResults.clear();
@@ -181,7 +181,7 @@ TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
 	}
 
 	// Back transmittance
-	shared_ptr< CSquareMatrix > aTb = aResults->getMatrix( Side::Back, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > aTb = aResults->getMatrix( Side::Back, PropertySimple::T );
 
 	correctResults.clear();
 	calculatedResults.clear();
@@ -238,7 +238,7 @@ TEST_F( TestVenetianUniformShadeCurvedMinus55_0, TestVenetian1 ) {
 	}
 
 	// Back reflectance
-	shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > aRb = aResults->getMatrix( Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 	calculatedResults.clear();

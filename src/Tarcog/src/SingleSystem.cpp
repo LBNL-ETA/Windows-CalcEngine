@@ -14,28 +14,28 @@
 #include "NonLinearSolver.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-	CSingleSystem::CSingleSystem( shared_ptr< CIGU > const& t_IGU,
-	                              shared_ptr< CEnvironment > const& t_Indoor, shared_ptr< CEnvironment > const& t_Outdoor ) :
+	CSingleSystem::CSingleSystem( std::shared_ptr< CIGU > const& t_IGU,
+	                              std::shared_ptr< CEnvironment > const& t_Indoor, std::shared_ptr< CEnvironment > const& t_Outdoor ) :
 		m_IGU( t_IGU ) {
 
 		m_Environment[ Environment::Indoor ] = t_Indoor;
 		m_Environment[ Environment::Outdoor ] = t_Outdoor;
 
 		if ( t_IGU == nullptr ) {
-			throw runtime_error( "IGU has not been assigned to the system. Null value passed." );
+			throw std::runtime_error( "IGU has not been assigned to the system. Null value passed." );
 		}
 
 		if ( t_Indoor == nullptr ) {
-			throw runtime_error( "Indoor environment has not been assigned to the system. Null value passed." );
+			throw std::runtime_error( "Indoor environment has not been assigned to the system. Null value passed." );
 		}
 
 		if ( t_Outdoor == nullptr ) {
-			throw runtime_error( "Outdoor environment has not been assigned to the system. Null value passed." );
+			throw std::runtime_error( "Outdoor environment has not been assigned to the system. Null value passed." );
 		}
 
 		auto aIndoorLayer = m_IGU->getLayer( Environment::Indoor );
@@ -57,11 +57,11 @@ namespace Tarcog {
 
 		initializeStartValues();
 
-		m_NonLinearSolver = make_shared< CNonLinearSolver >( m_IGU );
+		m_NonLinearSolver = std::make_shared< CNonLinearSolver >( m_IGU );
 	}
 
 	CSingleSystem::CSingleSystem( CSingleSystem const& t_SingleSystem ) {
-		m_IGU = make_shared< CIGU >( *t_SingleSystem.m_IGU );
+		m_IGU = std::make_shared< CIGU >( *t_SingleSystem.m_IGU );
 
 		m_Environment[ Environment::Indoor ] = t_SingleSystem.m_Environment.at( Environment::Indoor )->cloneEnvironment();
 		auto aLastLayer = m_IGU->getLayer( Environment::Indoor );
@@ -73,35 +73,35 @@ namespace Tarcog {
 
 		initializeStartValues();
 
-		m_NonLinearSolver = make_shared< CNonLinearSolver >( m_IGU );
+		m_NonLinearSolver = std::make_shared< CNonLinearSolver >( m_IGU );
 	}
 
-	vector< shared_ptr< CIGUSolidLayer > > CSingleSystem::getSolidLayers() const {
+	std::vector< std::shared_ptr< CIGUSolidLayer > > CSingleSystem::getSolidLayers() const {
 		return m_IGU->getSolidLayers();
 	}
 
-	vector< shared_ptr< CIGUGapLayer > > CSingleSystem::getGapLayers() const {
+	std::vector< std::shared_ptr< CIGUGapLayer > > CSingleSystem::getGapLayers() const {
 		return m_IGU->getGapLayers();
 	}
 
-	shared_ptr< vector< double > > CSingleSystem::getTemperatures() const {
+	std::shared_ptr< std::vector< double > > CSingleSystem::getTemperatures() const {
 		return m_IGU->getTemperatures();
 	}
 
-	shared_ptr< vector< double > > CSingleSystem::getRadiosities() const {
+	std::shared_ptr< std::vector< double > > CSingleSystem::getRadiosities() const {
 		return m_IGU->getRadiosities();
 	}
 
-	shared_ptr< vector< double > > CSingleSystem::getMaxDeflections() const {
+	std::shared_ptr< std::vector< double > > CSingleSystem::getMaxDeflections() const {
 		return m_IGU->getMaxDeflections();
 	}
 
-	shared_ptr< vector< double > > CSingleSystem::getMeanDeflections() const {
+	std::shared_ptr< std::vector< double > > CSingleSystem::getMeanDeflections() const {
 		return m_IGU->getMeanDeflections();
 	}
 
-	shared_ptr< CSingleSystem > CSingleSystem::clone() const {
-		return make_shared< CSingleSystem >( *this );
+	std::shared_ptr< CSingleSystem > CSingleSystem::clone() const {
+		return std::make_shared< CSingleSystem >( *this );
 	}
 
 	double CSingleSystem::getHeatFlow( Environment const t_Environment ) const {
@@ -184,18 +184,18 @@ namespace Tarcog {
 		}
 	}
 
-	void CSingleSystem::setInitialGuess( vector< double > const& t_Temperatures ) const {
+	void CSingleSystem::setInitialGuess( std::vector< double > const& t_Temperatures ) const {
 		m_IGU->setInitialGuess( t_Temperatures );
 	}
 
 	void CSingleSystem::setSolarRadiation( double const t_SolarRadiation ) {
-		dynamic_pointer_cast< COutdoorEnvironment >( m_Environment.at( Environment::Outdoor ) )->
+		std::dynamic_pointer_cast< COutdoorEnvironment >( m_Environment.at( Environment::Outdoor ) )->
 			setSolarRadiation( t_SolarRadiation );
 		m_IGU->setSolarRadiation( t_SolarRadiation );
 	}
 
 	double CSingleSystem::getSolarRadiation() const {
-		return dynamic_pointer_cast< COutdoorEnvironment >( m_Environment.at( Environment::Outdoor ) )->
+		return std::dynamic_pointer_cast< COutdoorEnvironment >( m_Environment.at( Environment::Outdoor ) )->
 			getSolarRadiation();
 	}
 

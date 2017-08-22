@@ -11,7 +11,7 @@ using namespace SingleLayerOptics;
 class TestBSDFThetaLimtisQuarterBasis : public testing::Test {
 
 private:
-	shared_ptr< CThetaLimits > m_Thetas;
+	std::shared_ptr< CThetaLimits > m_Thetas;
 
 protected:
 	virtual void SetUp() {
@@ -20,7 +20,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CThetaLimits > GetLimits() {
+	std::shared_ptr< CThetaLimits > GetLimits() {
 		return m_Thetas;
 	};
 
@@ -29,7 +29,7 @@ public:
 TEST_F( TestBSDFThetaLimtisQuarterBasis, TestQuarterBasis ) {
 	SCOPED_TRACE( "Begin Test: Theta limits - quarter basis." );
 
-	shared_ptr< CThetaLimits > aLimits = GetLimits();
+	std::shared_ptr< CThetaLimits > aLimits = GetLimits();
 
 	vector< double > results = *( aLimits->getThetaLimits() );
 

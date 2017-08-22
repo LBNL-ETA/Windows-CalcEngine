@@ -5,7 +5,7 @@
 
 #include "WCEViewer.hpp"
 
-using namespace std;
+
 using namespace Viewer;
 
 class TestPolarPoint : public testing::Test {

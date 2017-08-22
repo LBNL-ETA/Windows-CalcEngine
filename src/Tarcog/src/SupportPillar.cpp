@@ -5,7 +5,7 @@
 #include "WCETarcog.hpp"
 #include "BaseIGULayer.hpp"
 
-using namespace std;
+
 
 namespace Tarcog {
 
@@ -45,8 +45,8 @@ namespace Tarcog {
 	}
 
 	double CCircularPillar::conductivityOfPillarArray() {
-		auto cond1 = dynamic_pointer_cast< CBaseIGULayer >( m_PreviousLayer )->getConductivity();
-		auto cond2 = dynamic_pointer_cast< CBaseIGULayer >( m_NextLayer )->getConductivity();
+		auto cond1 = std::dynamic_pointer_cast< CBaseIGULayer >( m_PreviousLayer )->getConductivity();
+		auto cond2 = std::dynamic_pointer_cast< CBaseIGULayer >( m_NextLayer )->getConductivity();
 		auto aveCond = ( cond1 + cond2 ) / 2;
 
 		auto cond = 2 * aveCond * m_Radius / ( pow( m_Spacing, 2 ) );

@@ -15,7 +15,7 @@ using namespace MultiLayerOptics;
 class TestInterReflectanceBSDF : public testing::Test {
 
 private:
-	shared_ptr< CInterReflectance > m_InterReflectance;
+	std::shared_ptr< CInterReflectance > m_InterReflectance;
 
 protected:
 	virtual void SetUp() {
@@ -58,7 +58,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CInterReflectance > getInterReflectance() {
+	std::shared_ptr< CInterReflectance > getInterReflectance() {
 		return m_InterReflectance;
 	};
 

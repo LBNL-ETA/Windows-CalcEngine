@@ -3,7 +3,7 @@
 #include "GasProperties.hpp"
 #include "GasData.hpp"
 
-using namespace std;
+
 
 namespace Gases {
 	CGasData::CGasData() : m_gasName( "Air" ), m_molWeight( 28.97 ), m_specificHeatRatio( 1.4 ) {
@@ -17,7 +17,7 @@ namespace Gases {
 	}
 
 	CGasData::CGasData(
-		string const& t_Name,
+		std::string const& t_Name,
 		double const t_Wght,
 		double const t_SpecHeatRatio,
 		CIntCoeff const& t_Cp,

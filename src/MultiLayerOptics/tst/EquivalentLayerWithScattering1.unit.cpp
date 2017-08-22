@@ -16,19 +16,19 @@ class TestEquivalentLayerWithScattering1 : public testing::Test {
 
 private:
 	// Additional layer added to the back side
-	shared_ptr< CEquivalentScatteringLayer > m_DoubleBack;
+	std::shared_ptr< CEquivalentScatteringLayer > m_DoubleBack;
 
 	// Additional layer added to the front side
-	shared_ptr< CEquivalentScatteringLayer > m_DoubleFront;
+	std::shared_ptr< CEquivalentScatteringLayer > m_DoubleFront;
 
 protected:
 	virtual void SetUp() {
-		shared_ptr< CScatteringSurface > f1 = make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
-		shared_ptr< CScatteringSurface > b1 = make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
+		std::shared_ptr< CScatteringSurface > f1 = make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
+		std::shared_ptr< CScatteringSurface > b1 = make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
 		CScatteringLayer aLayer1 = CScatteringLayer( f1, b1 );
 
-		shared_ptr< CScatteringSurface > f2 = make_shared< CScatteringSurface >( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
-		shared_ptr< CScatteringSurface > b2 = make_shared< CScatteringSurface >( 0.15, 0.0, 0.38, 0.19, 0.49, 0.39 );
+		std::shared_ptr< CScatteringSurface > f2 = make_shared< CScatteringSurface >( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
+		std::shared_ptr< CScatteringSurface > b2 = make_shared< CScatteringSurface >( 0.15, 0.0, 0.38, 0.19, 0.49, 0.39 );
 		CScatteringLayer aLayer2 = CScatteringLayer( f2, b2 );
 
 		m_DoubleBack = make_shared< CEquivalentScatteringLayer >( aLayer1 );
@@ -40,11 +40,11 @@ protected:
 	}
 
 public:
-	shared_ptr< CEquivalentScatteringLayer > getDoubleBack() {
+	std::shared_ptr< CEquivalentScatteringLayer > getDoubleBack() {
 		return m_DoubleBack;
 	};
 
-	shared_ptr< CEquivalentScatteringLayer > getDoubleFront() {
+	std::shared_ptr< CEquivalentScatteringLayer > getDoubleFront() {
 		return m_DoubleFront;
 	};
 

@@ -21,8 +21,8 @@ using namespace std;
 
 namespace SingleLayerOptics {
 
-	CBSDFLayerMaker::CBSDFLayerMaker( const shared_ptr< CMaterial >& t_Material,
-	                                  const shared_ptr< const CBSDFHemisphere >& t_BSDF, shared_ptr< ICellDescription > t_Description,
+	CBSDFLayerMaker::CBSDFLayerMaker( const std::shared_ptr< CMaterial >& t_Material,
+	                                  const std::shared_ptr< const CBSDFHemisphere >& t_BSDF, std::shared_ptr< ICellDescription > t_Description,
 	                                  const DistributionMethod t_Method ) : m_Cell( nullptr ) {
 
 		if ( t_Material == nullptr ) {
@@ -40,7 +40,7 @@ namespace SingleLayerOptics {
 
 		// Specular cell
 		if ( dynamic_pointer_cast< CSpecularCellDescription >( t_Description ) != NULL ) {
-			shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( t_Material, t_Description );
+			std::shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( t_Material, t_Description );
 			m_Cell = aCell;
 			m_Layer = make_shared< CSpecularBSDFLayer >( aCell, t_BSDF );
 		}
@@ -48,12 +48,12 @@ namespace SingleLayerOptics {
 		// Venetian cell
 		if ( dynamic_pointer_cast< CVenetianCellDescription >( t_Description ) != NULL ) {
 			if ( t_Method == DistributionMethod::UniformDiffuse ) {
-				shared_ptr< CUniformDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
+				std::shared_ptr< CUniformDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
 				m_Cell = aCell;
 				m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
 			}
 			else {
-				shared_ptr< CDirectionalDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
+				std::shared_ptr< CDirectionalDiffuseCell > aCell = make_shared< CVenetianCell >( t_Material, t_Description );
 				m_Cell = aCell;
 				m_Layer = make_shared< CDirectionalDiffuseBSDFLayer >( aCell, t_BSDF );
 			}
@@ -62,7 +62,7 @@ namespace SingleLayerOptics {
 		// Perforated cell
 		if ( dynamic_pointer_cast< CPerforatedCellDescription >( t_Description ) != NULL ) {
 			// Perforated shades do not work with directional diffuse algorithm
-			shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( t_Material, t_Description );
+			std::shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( t_Material, t_Description );
 			m_Cell = aCell;
 			m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
 		}
@@ -70,18 +70,18 @@ namespace SingleLayerOptics {
 		// Woven cell
 		if ( dynamic_pointer_cast< CWovenCellDescription >( t_Description ) != NULL ) {
 			// Woven shades do not work with directional diffuse algorithm
-			shared_ptr< CUniformDiffuseCell > aCell = make_shared< CWovenCell >( t_Material, t_Description );
+			std::shared_ptr< CUniformDiffuseCell > aCell = make_shared< CWovenCell >( t_Material, t_Description );
 			m_Cell = aCell;
 			m_Layer = make_shared< CUniformDiffuseBSDFLayer >( aCell, t_BSDF );
 		}
 
 	}
 
-	shared_ptr< CBSDFLayer > CBSDFLayerMaker::getLayer() const {
+	std::shared_ptr< CBSDFLayer > CBSDFLayerMaker::getLayer() const {
 		return m_Layer;
 	}
 
-	shared_ptr< CBaseCell > CBSDFLayerMaker::getCell() const {
+	std::shared_ptr< CBaseCell > CBSDFLayerMaker::getCell() const {
 		return m_Cell;
 	}
 

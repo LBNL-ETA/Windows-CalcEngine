@@ -7,28 +7,28 @@
 #include "WCECommon.hpp"
 #include "ViewerConstants.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Viewer {
 
-	CGeometry2D::CGeometry2D() : m_Segments( make_shared< vector< shared_ptr< CViewSegment2D > > >() ),
+	CGeometry2D::CGeometry2D() : m_Segments( std::make_shared< std::vector< std::shared_ptr< CViewSegment2D > > >() ),
 	                             m_ViewFactors( nullptr ), m_ViewFactorsCalculated( false ) {
 	}
 
-	void CGeometry2D::appendSegment( shared_ptr< CViewSegment2D > const& t_Segment ) {
+	void CGeometry2D::appendSegment( std::shared_ptr< CViewSegment2D > const& t_Segment ) {
 		m_Segments->push_back( t_Segment );
 		m_ViewFactorsCalculated = false;
 	}
 
-	void CGeometry2D::appendGeometry2D( shared_ptr< CGeometry2D > const& t_Geometry2D ) {
+	void CGeometry2D::appendGeometry2D( std::shared_ptr< CGeometry2D > const& t_Geometry2D ) {
 		for ( auto aSegment : ( *t_Geometry2D->m_Segments ) ) {
 			m_Segments->push_back( aSegment );
 		}
 		m_ViewFactorsCalculated = false;
 	}
 
-	shared_ptr< CSquareMatrix > CGeometry2D::viewFactors() {
+	std::shared_ptr< CSquareMatrix > CGeometry2D::viewFactors() {
 		checkViewFactors();
 
 		assert( m_ViewFactors != nullptr );
@@ -36,31 +36,31 @@ namespace Viewer {
 		return m_ViewFactors;
 	}
 
-	shared_ptr< CGeometry2D > CGeometry2D::Translate( double const t_x, double const t_y ) const {
-		auto aEnclosure = make_shared< CGeometry2D >();
+	std::shared_ptr< CGeometry2D > CGeometry2D::Translate( double const t_x, double const t_y ) const {
+		auto aEnclosure = std::make_shared< CGeometry2D >();
 		for ( auto aSegment : *m_Segments ) {
-			shared_ptr< CSegment2D > newSegment = aSegment->translate( t_x, t_y );
-			auto newEnSegment = make_shared< CViewSegment2D >( newSegment->startPoint(), newSegment->endPoint() );
+			std::shared_ptr< CSegment2D > newSegment = aSegment->translate( t_x, t_y );
+			auto newEnSegment = std::make_shared< CViewSegment2D >( newSegment->startPoint(), newSegment->endPoint() );
 			aEnclosure->appendSegment( newEnSegment );
 		}
 
 		return aEnclosure;
 	}
 
-	shared_ptr< const CPoint2D > CGeometry2D::firstPoint() const {
+	std::shared_ptr< const CPoint2D > CGeometry2D::firstPoint() const {
 		return m_Segments->front()->startPoint();
 	}
 
-	shared_ptr< const CPoint2D > CGeometry2D::lastPoint() const {
+	std::shared_ptr< const CPoint2D > CGeometry2D::lastPoint() const {
 		return m_Segments->back()->endPoint();
 	}
 
-	shared_ptr< const CPoint2D > CGeometry2D::entryPoint() const {
+	std::shared_ptr< const CPoint2D > CGeometry2D::entryPoint() const {
 		auto xStart = m_Segments->front()->centerPoint()->x();
 		auto xEnd = m_Segments->back()->centerPoint()->x();
-		shared_ptr< const CPoint2D > aPoint = nullptr;
-		shared_ptr< const CPoint2D > startPoint = nullptr;
-		shared_ptr< const CPoint2D > endPoint = nullptr;
+		std::shared_ptr< const CPoint2D > aPoint = nullptr;
+		std::shared_ptr< const CPoint2D > startPoint = nullptr;
+		std::shared_ptr< const CPoint2D > endPoint = nullptr;
 		if ( xStart <= xEnd ) {
 			startPoint = m_Segments->front()->startPoint();
 			endPoint = m_Segments->front()->endPoint();
@@ -79,12 +79,12 @@ namespace Viewer {
 		return aPoint;
 	}
 
-	shared_ptr< const CPoint2D > CGeometry2D::exitPoint() const {
+	std::shared_ptr< const CPoint2D > CGeometry2D::exitPoint() const {
 		auto xStart = m_Segments->front()->centerPoint()->x();
 		auto xEnd = m_Segments->back()->centerPoint()->x();
-		shared_ptr< const CPoint2D > aPoint = nullptr;
-		shared_ptr< const CPoint2D > startPoint = nullptr;
-		shared_ptr< const CPoint2D > endPoint = nullptr;
+		std::shared_ptr< const CPoint2D > aPoint = nullptr;
+		std::shared_ptr< const CPoint2D > startPoint = nullptr;
+		std::shared_ptr< const CPoint2D > endPoint = nullptr;
 		if ( xStart >= xEnd ) {
 			startPoint = m_Segments->front()->startPoint();
 			endPoint = m_Segments->front()->endPoint();
@@ -103,7 +103,7 @@ namespace Viewer {
 		return aPoint;
 	}
 
-	shared_ptr< vector< shared_ptr< CViewSegment2D > > > CGeometry2D::segments() const {
+	std::shared_ptr< std::vector< std::shared_ptr< CViewSegment2D > > > CGeometry2D::segments() const {
 		return m_Segments;
 	}
 
@@ -111,7 +111,7 @@ namespace Viewer {
 	                                       CViewSegment2D const& t_Segment2, CPoint2D const& t_Point ) {
 
 		// Forming polygon
-		vector< CViewSegment2D > aPolygon;
+		std::vector< CViewSegment2D > aPolygon;
 		aPolygon.push_back( t_Segment1 );
 		auto point1 = t_Segment1.endPoint();
 		auto point2 = t_Segment2.startPoint();
@@ -146,12 +146,12 @@ namespace Viewer {
 		auto intersection = false;
 
 		// Form cross segments
-		vector< shared_ptr< CViewSegment2D > > intSegments;
-		auto r11 = make_shared< CViewSegment2D >( t_Segment1.startPoint(), t_Segment2.endPoint() );
+		std::vector< std::shared_ptr< CViewSegment2D > > intSegments;
+		auto r11 = std::make_shared< CViewSegment2D >( t_Segment1.startPoint(), t_Segment2.endPoint() );
 		if ( r11->length() > 0 ) {
 			intSegments.push_back( r11 );
 		}
-		auto r22 = make_shared< CViewSegment2D >( t_Segment1.endPoint(), t_Segment2.startPoint() );
+		auto r22 = std::make_shared< CViewSegment2D >( t_Segment1.endPoint(), t_Segment2.startPoint() );
 		if ( r22->length() > 0 ) {
 			intSegments.push_back( r22 );
 		}
@@ -172,11 +172,11 @@ namespace Viewer {
 		return intersection;
 	}
 
-	bool CGeometry2D::thirdSurfaceShadowingSimple( shared_ptr< CViewSegment2D const > const& t_Segment1,
-	                                               shared_ptr< CViewSegment2D const > const& t_Segment2 ) const {
+	bool CGeometry2D::thirdSurfaceShadowingSimple( std::shared_ptr< CViewSegment2D const > const& t_Segment1,
+	                                               std::shared_ptr< CViewSegment2D const > const& t_Segment2 ) const {
 		auto intersection = false;
 
-		auto centerLine = make_shared< CViewSegment2D >( t_Segment1->centerPoint(), t_Segment2->centerPoint() );
+		auto centerLine = std::make_shared< CViewSegment2D >( t_Segment1->centerPoint(), t_Segment2->centerPoint() );
 
 		for ( auto aSegment : *m_Segments ) {
 			if ( aSegment != t_Segment1 && aSegment != t_Segment2 ) {
@@ -190,15 +190,15 @@ namespace Viewer {
 		return intersection;
 	}
 
-	double CGeometry2D::viewFactorCoeff( shared_ptr< const CViewSegment2D > const& t_Segment1,
-	                                     shared_ptr< const CViewSegment2D > const& t_Segment2 ) const {
+	double CGeometry2D::viewFactorCoeff( std::shared_ptr< const CViewSegment2D > const& t_Segment1,
+	                                     std::shared_ptr< const CViewSegment2D > const& t_Segment2 ) const {
 		auto subViewCoeff = 0.0;
 
 		auto subSeg1 = t_Segment1->subSegments( ViewerConstants::NUM_OF_SEGMENTS );
 		auto subSeg2 = t_Segment2->subSegments( ViewerConstants::NUM_OF_SEGMENTS );
 
-		for ( shared_ptr< const CViewSegment2D > sub1 : *subSeg1 ) {
-			for ( shared_ptr< const CViewSegment2D > sub2 : *subSeg2 ) {
+		for ( std::shared_ptr< const CViewSegment2D > sub1 : *subSeg1 ) {
+			for ( std::shared_ptr< const CViewSegment2D > sub2 : *subSeg2 ) {
 				auto selfShadowing = sub1->selfShadowing( *sub2 );
 				auto tSurfBlock = thirdSurfaceShadowingSimple( sub1, sub2 );
 				if ( !tSurfBlock && selfShadowing == Shadowing::No ) {
@@ -234,7 +234,7 @@ namespace Viewer {
 			auto size = m_Segments->size();
 
 			// View factor matrix. It is already initialized to zeros
-			m_ViewFactors = make_shared< CSquareMatrix >( size );
+			m_ViewFactors = std::make_shared< CSquareMatrix >( size );
 			for ( auto i = 0u; i < size; ++i ) {
 				for ( auto j = i; j < size; ++j ) {
 					if ( i != j ) {

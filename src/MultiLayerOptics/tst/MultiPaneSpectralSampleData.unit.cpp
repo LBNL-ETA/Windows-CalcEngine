@@ -13,7 +13,7 @@ using namespace MultiLayerOptics;
 class TestMultiLayerOpticsMeasuredSampleData : public testing::Test {
 
 private:
-	shared_ptr< CMultiPaneSampleData > m_MultiLayerOptics;
+	std::shared_ptr< CMultiPaneSampleData > m_MultiLayerOptics;
 
 protected:
 	virtual void SetUp() {
@@ -21,7 +21,7 @@ protected:
 		// This test (example) shows how to get multilayer sample data from two measurements. Results are calculated
 		// at each wavelength
 
-		shared_ptr< CSpectralSampleData > sampleMeasurements1 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > sampleMeasurements1 = make_shared< CSpectralSampleData >();
 		sampleMeasurements1->addRecord( 0.330, 0.0857, 0.0560, 0.2646 );
 		sampleMeasurements1->addRecord( 0.335, 0.1280, 0.0623, 0.2664 );
 		sampleMeasurements1->addRecord( 0.340, 0.1707, 0.0719, 0.2668 );
@@ -38,7 +38,7 @@ protected:
 		sampleMeasurements1->addRecord( 0.395, 0.5455, 0.2553, 0.2781 );
 		sampleMeasurements1->addRecord( 0.400, 0.5630, 0.2651, 0.2757 );
 
-		shared_ptr< CSpectralSampleData > sampleMeasurements2 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > sampleMeasurements2 = make_shared< CSpectralSampleData >();
 		sampleMeasurements2->addRecord( 0.330, 0.1600, 0.0450, 0.0470 );
 		sampleMeasurements2->addRecord( 0.335, 0.2940, 0.0490, 0.0500 );
 		sampleMeasurements2->addRecord( 0.340, 0.4370, 0.0550, 0.0560 );
@@ -61,7 +61,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CMultiPaneSampleData > getMultiLayerOptics() {
+	std::shared_ptr< CMultiPaneSampleData > getMultiLayerOptics() {
 		return m_MultiLayerOptics;
 	};
 

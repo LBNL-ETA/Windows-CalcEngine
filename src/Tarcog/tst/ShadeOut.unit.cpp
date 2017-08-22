@@ -12,7 +12,7 @@ using namespace FenestrationCommon;
 class TestShadeOut : public testing::Test {
 
 private:
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -56,7 +56,7 @@ protected:
 		auto Aright = 0.0;
 		auto Afront = 0.5;
 
-		shared_ptr< CIGUSolidLayer > aSolidLayer1 = make_shared< CIGUShadeLayer >(
+		std::shared_ptr< CIGUSolidLayer > aSolidLayer1 = make_shared< CIGUShadeLayer >(
 		                                                                          shadeLayerThickness, shadeLayerConductance,
 		                                                                          make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ), surface1, surface2 );
 
@@ -72,7 +72,7 @@ protected:
 		auto surface4 = make_shared< CSurface >( emissivity2, transmittance );
 
 		auto aSolidLayer2 =
-			make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance, surface3, surface4 );
+			std::make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance, surface3, surface4 );
 		ASSERT_TRUE( aSolidLayer2 != nullptr );
 
 		auto gapThickness = 0.0127;
@@ -98,7 +98,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSingleSystem > GetSystem() const {
+	std::shared_ptr< CSingleSystem > GetSystem() const {
 		return m_TarcogSystem;
 	};
 

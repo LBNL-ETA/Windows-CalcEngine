@@ -11,7 +11,7 @@ using namespace SingleLayerOptics;
 class TestPhisAngles2 : public testing::Test {
 
 private:
-	shared_ptr< CBSDFPhiAngles > m_BasisRing;
+	std::shared_ptr< CBSDFPhiAngles > m_BasisRing;
 
 protected:
 	virtual void SetUp() {
@@ -19,7 +19,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFPhiAngles > GetRing() {
+	std::shared_ptr< CBSDFPhiAngles > GetRing() {
 		return m_BasisRing;
 	};
 
@@ -28,7 +28,7 @@ public:
 TEST_F( TestPhisAngles2, TestBSDFRingCreation ) {
 	SCOPED_TRACE( "Begin Test: Phi angles creation." );
 
-	shared_ptr< CBSDFPhiAngles > aRing = GetRing();
+	std::shared_ptr< CBSDFPhiAngles > aRing = GetRing();
 
 	vector< double > results = *( aRing->phiAngles() );
 

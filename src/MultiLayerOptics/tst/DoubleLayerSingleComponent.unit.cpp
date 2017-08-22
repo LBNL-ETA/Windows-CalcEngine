@@ -15,10 +15,10 @@ class TestDoubleLayerSingleComponent : public testing::Test {
 
 private:
 	// Additional layer added to the back side
-	shared_ptr< CEquivalentLayerSingleComponent > m_DoubleBack;
+	std::shared_ptr< CEquivalentLayerSingleComponent > m_DoubleBack;
 
 	// Additional layer added to the front side
-	shared_ptr< CEquivalentLayerSingleComponent > m_DoubleFront;
+	std::shared_ptr< CEquivalentLayerSingleComponent > m_DoubleFront;
 
 protected:
 	virtual void SetUp() {
@@ -31,11 +31,11 @@ protected:
 	}
 
 public:
-	shared_ptr< CEquivalentLayerSingleComponent > getDoubleBack() {
+	std::shared_ptr< CEquivalentLayerSingleComponent > getDoubleBack() {
 		return m_DoubleBack;
 	};
 
-	shared_ptr< CEquivalentLayerSingleComponent > getDoubleFront() {
+	std::shared_ptr< CEquivalentLayerSingleComponent > getDoubleFront() {
 		return m_DoubleFront;
 	};
 

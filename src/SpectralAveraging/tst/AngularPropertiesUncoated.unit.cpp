@@ -4,7 +4,7 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 

@@ -10,7 +10,7 @@ using namespace FenestrationCommon;
 
 class TestMatrixSeries : public testing::Test {
 private:
-	shared_ptr< CMatrixSeries > m_MatrixSeries;
+	std::shared_ptr< CMatrixSeries > m_MatrixSeries;
 
 protected:
 	void SetUp() override {
@@ -46,7 +46,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CMatrixSeries > getMatrix() const {
+	std::shared_ptr< CMatrixSeries > getMatrix() const {
 		return m_MatrixSeries;
 	}
 
@@ -56,7 +56,7 @@ public:
 TEST_F( TestMatrixSeries, Test1 ) {
 	SCOPED_TRACE( "Begin Test: Test matrix series sum." );
 
-	shared_ptr< CMatrixSeries > aMat = getMatrix();
+	std::shared_ptr< CMatrixSeries > aMat = getMatrix();
 
 	double minLambda = 0.45;
 	double maxLambda = 0.65;
@@ -93,7 +93,7 @@ TEST_F( TestMatrixSeries, Test2 ) {
 
 	Mat.mMult( multiplier );
 
-	vector< vector< double > > correctResults( 4 );
+	vector< std::vector< double > > correctResults( 4 );
 	correctResults[ 0 ] = { 4.48, 28.12, 19.92, 12.45 };
 	correctResults[ 1 ] = { 5.44, 36.48, 0.24, 77.19 };
 	correctResults[ 2 ] = { 6.24, 29.26, 5.28, 74.7 };

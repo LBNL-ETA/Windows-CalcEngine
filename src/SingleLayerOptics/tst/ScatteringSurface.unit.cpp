@@ -12,7 +12,7 @@ using namespace FenestrationCommon;
 class TestScatteringSurface : public testing::Test {
 
 private:
-	shared_ptr< CScatteringSurface > m_Surface;
+	std::shared_ptr< CScatteringSurface > m_Surface;
 
 protected:
 	virtual void SetUp() {
@@ -33,7 +33,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CScatteringSurface > getSurface() {
+	std::shared_ptr< CScatteringSurface > getSurface() {
 		return m_Surface;
 	};
 
@@ -42,7 +42,7 @@ public:
 TEST_F( TestScatteringSurface, ScatteringSurface1 ) {
 	SCOPED_TRACE( "Begin Test: Simple scattering surface." );
 
-	shared_ptr< CScatteringSurface > surf = getSurface();
+	std::shared_ptr< CScatteringSurface > surf = getSurface();
 
 	double A_dir = surf->getAbsorptance( ScatteringSimple::Direct );
 

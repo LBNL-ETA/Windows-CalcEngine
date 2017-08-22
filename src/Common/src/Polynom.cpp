@@ -15,7 +15,7 @@ namespace FenestrationCommon {
 	////////////////////////////////////////////////////////////////////
 	//  Polynom
 	////////////////////////////////////////////////////////////////////
-	Polynom::Polynom( vector< double > const& t_Coeffs ) : m_Coeffs( t_Coeffs ) {
+	Polynom::Polynom( std::vector< double > const& t_Coeffs ) : m_Coeffs( t_Coeffs ) {
 
 	}
 

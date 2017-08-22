@@ -12,7 +12,7 @@ using namespace FenestrationCommon;
 class TestSingleClear : public testing::Test {
 
 private:
-	shared_ptr< CSystem > m_TarcogSystem;
+	std::shared_ptr< CSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -26,8 +26,8 @@ protected:
 		auto tSky = 270.0; // Kelvins
 		auto solarRadiation = 789.0;
 
-		shared_ptr< CEnvironment > Outdoor =
-			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		std::shared_ptr< CEnvironment > Outdoor =
+			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -37,7 +37,7 @@ protected:
 		/////////////////////////////////////////////////////////
 
 		auto roomTemperature = 294.15;
-		shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSystem > GetSystem() const {
+	std::shared_ptr< CSystem > GetSystem() const {
 		return m_TarcogSystem;
 	};
 

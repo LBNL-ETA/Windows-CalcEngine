@@ -17,9 +17,9 @@ using namespace MultiLayerOptics;
 class MultiPaneScattered_102_Woven : public testing::Test {
 
 private:
-	shared_ptr< CMultiLayerScattered > m_Layer;
+	std::shared_ptr< CMultiLayerScattered > m_Layer;
 
-	shared_ptr< CSeries > loadSolarRadiationFile() const {
+	std::shared_ptr< CSeries > loadSolarRadiationFile() const {
 
 		auto aSolarRadiation = make_shared< CSeries >();
 
@@ -149,7 +149,7 @@ private:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() const {
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() const {
 		auto aMeasurements_102 = make_shared< CSpectralSampleData >();
 
 		aMeasurements_102->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
@@ -278,31 +278,31 @@ protected:
 
 		// Create material from samples
 		auto thickness = 3.048e-3; // [m]
-		shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample_102,
+		std::shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample_102,
 		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
 		// Woven Shade
 		double Tmat = 0.0;
 		double Rfmat = 0.2;
 		double Rbmat = 0.2;
-		shared_ptr< CMaterial > aSolarRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
+		std::shared_ptr< CMaterial > aSolarRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
 
 		// Visible range
 		Tmat = 0.0;
 		Rfmat = 0.1;
 		Rbmat = 0.1;
-		shared_ptr< CMaterial > aVisibleRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
+		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
 
-		shared_ptr< CMaterial > aMaterialWoven =
-			make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
+		std::shared_ptr< CMaterial > aMaterialWoven =
+			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
 
 		// make cell geometry
 		auto diameter = 100; // mm
 		auto spacing = 300; // mm
-		shared_ptr< ICellDescription > aCellDescription =
-			make_shared< CWovenCellDescription >( diameter, spacing );
+		std::shared_ptr< ICellDescription > aCellDescription =
+			std::make_shared< CWovenCellDescription >( diameter, spacing );
 
 		auto Layer_102 = make_shared< CScatteringLayer >( aMaterial_102 );
 		auto Layer_Woven = make_shared< CScatteringLayer >( aMaterialWoven, aCellDescription );
@@ -318,7 +318,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CMultiLayerScattered > getLayer() const {
+	std::shared_ptr< CMultiLayerScattered > getLayer() const {
 		return m_Layer;
 	};
 

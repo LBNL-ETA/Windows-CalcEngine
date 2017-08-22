@@ -9,7 +9,7 @@ using namespace Tarcog;
 class TestGapLayerInBetweenVentilation : public testing::Test {
 
 private:
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -23,8 +23,8 @@ protected:
 		auto tSky = 255.15; // Kelvins
 		auto solarRadiation = 0.0;
 
-		shared_ptr< CEnvironment > Outdoor =
-			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		std::shared_ptr< CEnvironment > Outdoor =
+			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -35,8 +35,8 @@ protected:
 
 		auto roomTemperature = 295.15;
 
-		shared_ptr< CEnvironment > Indoor =
-			make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor =
+			std::make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		// IGU
@@ -64,17 +64,17 @@ protected:
 
 		auto gapThickness = 0.0127;
 		auto gapPressure = 101325.0;
-		shared_ptr< CBaseIGULayer > m_GapLayer1 =
-			make_shared< CIGUGapLayer >( gapThickness, gapPressure );
+		std::shared_ptr< CBaseIGULayer > m_GapLayer1 =
+			std::make_shared< CIGUGapLayer >( gapThickness, gapPressure );
 		ASSERT_TRUE( m_GapLayer1 != nullptr );
 
-		shared_ptr< CBaseIGULayer > m_GapLayer2 =
-			make_shared< CIGUGapLayer >( gapThickness, gapPressure );
+		std::shared_ptr< CBaseIGULayer > m_GapLayer2 =
+			std::make_shared< CIGUGapLayer >( gapThickness, gapPressure );
 		ASSERT_TRUE( m_GapLayer2 != nullptr );
 
 		double windowWidth = 1;
 		double windowHeight = 1;
-		shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+		std::shared_ptr< CIGU > aIGU = make_shared< CIGU >( windowWidth, windowHeight );
 		ASSERT_TRUE( aIGU != nullptr );
 		aIGU->addLayer( SolidLayer1 );
 		aIGU->addLayer( m_GapLayer1 );
@@ -90,11 +90,11 @@ protected:
 	}
 
 public:
-	shared_ptr< CBaseIGULayer > GetGap1() const {
+	std::shared_ptr< CBaseIGULayer > GetGap1() const {
 		return m_TarcogSystem->getGapLayers()[ 0 ];
 	};
 
-	shared_ptr< CBaseIGULayer > GetGap2() const {
+	std::shared_ptr< CBaseIGULayer > GetGap2() const {
 		return m_TarcogSystem->getGapLayers()[ 1 ];
 	};
 

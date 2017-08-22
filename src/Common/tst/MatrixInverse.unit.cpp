@@ -26,7 +26,7 @@ TEST_F( TestMatrixInverse, Test1 ) {
 	A[ 1 ] = { 6.87, 4.39, 7.11 };
 	A[ 2 ] = { 6.59, 4.98, 7.69 };
 
-	shared_ptr< CSquareMatrix > inverse = A.inverse();
+	std::shared_ptr< CSquareMatrix > inverse = A.inverse();
 
 	EXPECT_EQ( n, inverse->getSize() );
 
@@ -56,7 +56,7 @@ TEST_F( TestMatrixInverse, Test2 ) {
 	A[ 2 ] = { 2.12, 5.36, 4.98, 8.23 };
 	A[ 3 ] = { 4.89, 1.11, 7.45, 3.26 };
 
-	shared_ptr< CSquareMatrix > inverse = A.inverse();
+	std::shared_ptr< CSquareMatrix > inverse = A.inverse();
 
 	EXPECT_EQ( n, inverse->getSize() );
 

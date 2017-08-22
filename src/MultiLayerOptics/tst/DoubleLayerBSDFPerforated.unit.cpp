@@ -18,7 +18,7 @@ using namespace MultiLayerOptics;
 class TestDoubleLayerBSDFPerforated : public testing::Test {
 
 private:
-	shared_ptr< CBSDFDoubleLayer > m_DoubleLayer;
+	std::shared_ptr< CBSDFDoubleLayer > m_DoubleLayer;
 
 protected:
 	virtual void SetUp() {
@@ -34,9 +34,9 @@ protected:
 		aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
 
 		// Create BSDF out of previous definitions
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( aDefinitions );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( aDefinitions );
 
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -161,7 +161,7 @@ protected:
 		aSolarRadiation->addProperty( 3.7650, 9.0 );
 		aSolarRadiation->addProperty( 4.0450, 6.9 );
 
-		shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -275,38 +275,38 @@ protected:
 		aMeasurements->addRecord( 2.450, 0.8260, 0.0690, 0.0690 );
 		aMeasurements->addRecord( 2.500, 0.8220, 0.0680, 0.0680 );
 
-		shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		std::shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		double thickness = 3.048e-3; // [m]
 		MaterialType aType = MaterialType::Monolithic;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterial > aMaterial =
-			make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > aMaterial =
+			std::make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
 		// specular layer NFRC=102
 		CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial, aBSDF );
-		shared_ptr< CBSDFLayer > aLayer102 = aMaker102.getLayer();
+		std::shared_ptr< CBSDFLayer > aLayer102 = aMaker102.getLayer();
 
 		// Perforated cell
 		// create material
 		double Tmat = 0.2;
 		double Rfmat = 0.75;
 		double Rbmat = 0.66;
-		shared_ptr< CMaterial > perfMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > perfMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
 		double x = 22.5; // mm
 		double y = 38.1; // mm
 		thickness = 5; // mm
 		double radius = 8.35; // mm
-		shared_ptr< ICellDescription > perfCellDescription =
-			make_shared< CCircularCellDescription >( x, y, thickness, radius );
+		std::shared_ptr< ICellDescription > perfCellDescription =
+			std::make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
 		// get shading BSDF layer
 		CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( perfMaterial, aBSDF, perfCellDescription );
-		shared_ptr< CBSDFLayer > aShade = aMakerVenetian.getLayer();
+		std::shared_ptr< CBSDFLayer > aShade = aMakerVenetian.getLayer();
 
 		CBSDFIntegrator aLayer1 = *aLayer102->getResults();
 		CBSDFIntegrator aLayer2 = *aShade->getResults();
@@ -316,7 +316,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFDoubleLayer > getDoubleLayer() {
+	std::shared_ptr< CBSDFDoubleLayer > getDoubleLayer() {
 		return m_DoubleLayer;
 	};
 
@@ -325,10 +325,10 @@ public:
 TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	SCOPED_TRACE( "Begin Test: Double Layer BSDF." );
 
-	shared_ptr< CBSDFIntegrator > aLayer = getDoubleLayer()->value();
+	std::shared_ptr< CBSDFIntegrator > aLayer = getDoubleLayer()->value();
 
 	// Front transmittance
-	shared_ptr< CSquareMatrix > Tf = aLayer->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > Tf = aLayer->getMatrix( Side::Front, PropertySimple::T );
 	size_t matrixSize = Tf->getSize();
 
 	// Test matrix
@@ -352,7 +352,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	}
 
 	// Front reflectance
-	shared_ptr< CSquareMatrix > Rf = aLayer->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > Rf = aLayer->getMatrix( Side::Front, PropertySimple::R );
 	matrixSize = Rf->getSize();
 
 	EXPECT_EQ( size, matrixSize );
@@ -372,7 +372,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	}
 
 	// Back Transmittance
-	shared_ptr< CSquareMatrix > Tb = aLayer->getMatrix( Side::Back, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > Tb = aLayer->getMatrix( Side::Back, PropertySimple::T );
 	matrixSize = Tb->getSize();
 
 	EXPECT_EQ( size, matrixSize );
@@ -392,7 +392,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	}
 
 	// Back Reflectance
-	shared_ptr< CSquareMatrix > Rb = aLayer->getMatrix( Side::Back, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > Rb = aLayer->getMatrix( Side::Back, PropertySimple::R );
 	matrixSize = Rb->getSize();
 
 	EXPECT_EQ( size, matrixSize );

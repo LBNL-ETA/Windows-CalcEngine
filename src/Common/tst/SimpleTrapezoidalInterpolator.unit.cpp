@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestSimpleTrapezoidalIntegration : public testing::Test {
 
 private:
-	shared_ptr< IIntegratorStrategy > m_Integrator;
+	std::shared_ptr< IIntegratorStrategy > m_Integrator;
 
 protected:
 	void SetUp() override {

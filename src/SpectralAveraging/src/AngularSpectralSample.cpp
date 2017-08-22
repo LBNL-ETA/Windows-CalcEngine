@@ -9,7 +9,7 @@
 #include "AngularProperties.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace SpectralAveraging {
@@ -18,11 +18,11 @@ namespace SpectralAveraging {
 	//// CAngularSpectralProperties
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	CAngularSpectralProperties::CAngularSpectralProperties( shared_ptr< CSpectralSample > const& t_SpectralSample,
+	CAngularSpectralProperties::CAngularSpectralProperties( std::shared_ptr< CSpectralSample > const& t_SpectralSample,
 	                                                        double const t_Angle, MaterialType const t_Type, double const t_Thickness ) :
 		m_Angle( t_Angle ), m_Thickness( t_Thickness ) {
 
-		m_AngularData = make_shared< CSpectralSampleData >();
+		m_AngularData = std::make_shared< CSpectralSampleData >();
 		calculateAngularProperties( t_SpectralSample, t_Type );
 	}
 
@@ -30,11 +30,11 @@ namespace SpectralAveraging {
 		return m_Angle;
 	}
 
-	shared_ptr< CSpectralSampleData > CAngularSpectralProperties::properties() const {
+	std::shared_ptr< CSpectralSampleData > CAngularSpectralProperties::properties() const {
 		return m_AngularData;
 	}
 
-	void CAngularSpectralProperties::calculateAngularProperties( shared_ptr< CSpectralSample > const& t_SpectralSample,
+	void CAngularSpectralProperties::calculateAngularProperties( std::shared_ptr< CSpectralSample > const& t_SpectralSample,
 	                                                             MaterialType const t_Type ) {
 
 		assert( t_SpectralSample != nullptr );
@@ -91,7 +91,7 @@ namespace SpectralAveraging {
 	//// CSpectralSampleAngle
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	CSpectralSampleAngle::CSpectralSampleAngle( shared_ptr< CSpectralSample > const& t_Sample,
+	CSpectralSampleAngle::CSpectralSampleAngle( std::shared_ptr< CSpectralSample > const& t_Sample,
 	                                            double const t_Angle ) :
 		m_Sample( t_Sample ), m_Angle( t_Angle ) {
 
@@ -101,7 +101,7 @@ namespace SpectralAveraging {
 		return m_Angle;
 	}
 
-	shared_ptr< CSpectralSample > CSpectralSampleAngle::sample() const {
+	std::shared_ptr< CSpectralSample > CSpectralSampleAngle::sample() const {
 		return m_Sample;
 	}
 
@@ -109,13 +109,13 @@ namespace SpectralAveraging {
 	//// CAngularSpectralSample
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	CAngularSpectralSample::CAngularSpectralSample( shared_ptr< CSpectralSample > const& t_SpectralSample,
+	CAngularSpectralSample::CAngularSpectralSample( std::shared_ptr< CSpectralSample > const& t_SpectralSample,
 	                                                double const t_Thickness, FenestrationCommon::MaterialType const t_Type ) :
 		m_SpectralSampleZero( t_SpectralSample ), m_Thickness( t_Thickness ), m_Type( t_Type ) {
 
 	}
 
-	void CAngularSpectralSample::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	void CAngularSpectralSample::setSourceData( std::shared_ptr< CSeries > t_SourceData ) {
 		m_SpectralSampleZero->setSourceData( t_SourceData );
 		m_SpectralProperties.clear();
 	}
@@ -126,7 +126,7 @@ namespace SpectralAveraging {
 		return aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
 	}
 
-	vector< double > CAngularSpectralSample::getWavelengthsProperty(
+	std::vector< double > CAngularSpectralSample::getWavelengthsProperty(
 		double const minLambda, double const maxLambda,
 		Property const t_Property, Side const t_Side, double const t_Angle ) {
 
@@ -134,7 +134,7 @@ namespace SpectralAveraging {
 
 		auto aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
 
-		vector< double > aValues;
+		std::vector< double > aValues;
 
 		if ( aProperties != nullptr ) {
 
@@ -149,15 +149,15 @@ namespace SpectralAveraging {
 		return aValues;
 	}
 
-	vector< double > CAngularSpectralSample::getBandWavelengths() const {
+	std::vector< double > CAngularSpectralSample::getBandWavelengths() const {
 		return m_SpectralSampleZero->getWavelengthsFromSample();
 	}
 
-	shared_ptr< CSpectralSample > CAngularSpectralSample::findSpectralSample( double const t_Angle ) {
-		shared_ptr< CSpectralSample > aSample = nullptr;
+	std::shared_ptr< CSpectralSample > CAngularSpectralSample::findSpectralSample( double const t_Angle ) {
+		std::shared_ptr< CSpectralSample > aSample = nullptr;
 
-		vector< shared_ptr< CSpectralSampleAngle > >::iterator it = find_if( m_SpectralProperties.begin(), m_SpectralProperties.end(),
-		                                                                     [ &t_Angle ]( shared_ptr< CSpectralSampleAngle > const& obj ) {
+		std::vector< std::shared_ptr< CSpectralSampleAngle > >::iterator it = find_if( m_SpectralProperties.begin(), m_SpectralProperties.end(),
+		                                                                     [ &t_Angle ]( std::shared_ptr< CSpectralSampleAngle > const& obj ) {
 		                                                                     return fabs( obj->angle() - t_Angle ) < 1e-6;
 	                                                                     } );
 
@@ -167,9 +167,9 @@ namespace SpectralAveraging {
 		else {
 			auto aAngularData = CAngularSpectralProperties( m_SpectralSampleZero, t_Angle, m_Type, m_Thickness );
 
-			aSample = make_shared< CSpectralSample >( aAngularData.properties(), m_SpectralSampleZero->getSourceData() );
+			aSample = std::make_shared< CSpectralSample >( aAngularData.properties(), m_SpectralSampleZero->getSourceData() );
 			aSample->assignDetectorAndWavelengths( m_SpectralSampleZero );
-			auto aSpectralSampleAngle = make_shared< CSpectralSampleAngle >( aSample, t_Angle );
+			auto aSpectralSampleAngle = std::make_shared< CSpectralSampleAngle >( aSample, t_Angle );
 			m_SpectralProperties.push_back( aSpectralSampleAngle );
 		}
 

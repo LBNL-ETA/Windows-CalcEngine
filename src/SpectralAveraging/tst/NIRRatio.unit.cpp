@@ -4,18 +4,18 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 
 class TestNIRRatio : public testing::Test {
 
 private:
-	shared_ptr< CNIRRatio > m_NIRRatio;
+	std::shared_ptr< CNIRRatio > m_NIRRatio;
 
 protected:
-	shared_ptr< CSeries > getSolarRadiation() const {
-		auto solarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiation() const {
+		auto solarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		solarRadiation->addProperty( 0.3000, 0.0 );
@@ -149,12 +149,12 @@ protected:
 		auto lowLambda = 0.38;
 		auto highLambda = 0.78;
 
-		m_NIRRatio = make_shared< CNIRRatio >( solarRadiation, lowLambda, highLambda );
+		m_NIRRatio = std::make_shared< CNIRRatio >( solarRadiation, lowLambda, highLambda );
 
 	}
 
 public:
-	shared_ptr< CNIRRatio > getNIRRatio() const {
+	std::shared_ptr< CNIRRatio > getNIRRatio() const {
 		return m_NIRRatio;
 	};
 

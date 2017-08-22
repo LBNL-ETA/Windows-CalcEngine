@@ -15,7 +15,7 @@ class TestMultilayerSingleComponent_1 : public testing::Test {
 
 private:
 	// Additional layer added to the back side
-	shared_ptr< CMultiLayerSingleComponent > m_IGU;
+	std::shared_ptr< CMultiLayerSingleComponent > m_IGU;
 
 protected:
 	virtual void SetUp() {
@@ -26,7 +26,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CMultiLayerSingleComponent > getIGU() {
+	std::shared_ptr< CMultiLayerSingleComponent > getIGU() {
 		return m_IGU;
 	};
 

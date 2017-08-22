@@ -32,7 +32,7 @@ namespace MultiLayerOptics {
 		return m_MeasuredSamples.size();
 	}
 
-	void CMultiPaneSampleData::addSample( const shared_ptr< CSpectralSampleData >& t_Sample ) {
+	void CMultiPaneSampleData::addSample( const std::shared_ptr< CSpectralSampleData >& t_Sample ) {
 		m_MeasuredSamples.push_back( t_Sample );
 	}
 
@@ -43,7 +43,7 @@ namespace MultiLayerOptics {
 		}
 	}
 
-	shared_ptr< CSeries > CMultiPaneSampleData::getLayerAbsorptances( size_t const Index ) {
+	std::shared_ptr< CSeries > CMultiPaneSampleData::getLayerAbsorptances( size_t const Index ) {
 		calculateProperties();
 		if ( ( Index - 1 ) > m_LayerAbsorptances.size() ) {
 			throw runtime_error( "Index out of range. " );
@@ -52,8 +52,8 @@ namespace MultiLayerOptics {
 	}
 
 	// Interpolate current sample data to new wavelengths set
-	void CMultiPaneSampleData::interpolate( const vector< double >& t_Wavelengths ) {
-		vector< shared_ptr< CSpectralSampleData > >::iterator it;
+	void CMultiPaneSampleData::interpolate( const std::vector< double >& t_Wavelengths ) {
+		vector< std::shared_ptr< CSpectralSampleData > >::iterator it;
 		for ( it = m_MeasuredSamples.begin(); it < m_MeasuredSamples.end(); ++it ) {
 			( *it )->interpolate( t_Wavelengths );
 		}
@@ -67,13 +67,13 @@ namespace MultiLayerOptics {
 
 		assert( m_MeasuredSamples.size() != 0 );
 
-		shared_ptr< CSeries > T = m_MeasuredSamples[ 0 ]->properties( SampleData::T );
-		shared_ptr< CSeries > Rf = m_MeasuredSamples[ 0 ]->properties( SampleData::Rf );
-		shared_ptr< CSeries > Rb = m_MeasuredSamples[ 0 ]->properties( SampleData::Rb );
+		std::shared_ptr< CSeries > T = m_MeasuredSamples[ 0 ]->properties( SampleData::T );
+		std::shared_ptr< CSeries > Rf = m_MeasuredSamples[ 0 ]->properties( SampleData::Rf );
+		std::shared_ptr< CSeries > Rb = m_MeasuredSamples[ 0 ]->properties( SampleData::Rb );
 		CEquivalentLayerSingleComponentMW aEqivalentLayer( T, T, Rf, Rb );
 		CAbsorptancesMultiPane aAbsorptances( T, Rf, Rb );
 
-		vector< shared_ptr< CSpectralSampleData > >::iterator it;
+		vector< std::shared_ptr< CSpectralSampleData > >::iterator it;
 		for ( it = next( m_MeasuredSamples.begin() ); it < m_MeasuredSamples.end(); ++it ) {
 			aEqivalentLayer.addLayer( ( *it )->properties( SampleData::T ), ( *it )->properties( SampleData::T ),
 			                          ( *it )->properties( SampleData::Rf ), ( *it )->properties( SampleData::Rb ) );

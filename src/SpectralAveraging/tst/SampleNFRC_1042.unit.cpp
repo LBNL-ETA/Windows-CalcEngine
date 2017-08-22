@@ -4,18 +4,18 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
 class TestSampleNFRC_1042 : public testing::Test {
 
 private:
-	shared_ptr< CSpectralSample > m_Sample;
+	std::shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-	shared_ptr< CSeries > getSolarRadiation() const {
-		auto solarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiation() const {
+		auto solarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		solarRadiation->addProperty( 0.3000, 0.0 );
@@ -143,8 +143,8 @@ protected:
 		return solarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > getMeasurements() const {
-		auto sampleMeasurements = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > getMeasurements() const {
+		auto sampleMeasurements = std::make_shared< CSpectralSampleData >();
 
 		sampleMeasurements->addRecord( 0.300, 0.0006, 0.0518, 0.2713 );
 		sampleMeasurements->addRecord( 0.305, 0.0006, 0.0509, 0.2624 );
@@ -651,12 +651,12 @@ protected:
 
 		auto sampleMeasurements = getMeasurements();
 
-		m_Sample = make_shared< CSpectralSample >( sampleMeasurements, solarRadiation );
+		m_Sample = std::make_shared< CSpectralSample >( sampleMeasurements, solarRadiation );
 
 	}
 
 public:
-	shared_ptr< CSpectralSample > getSample() const {
+	std::shared_ptr< CSpectralSample > getSample() const {
 		return m_Sample;
 	};
 

@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestSeriesMultiplication : public testing::Test {
 
 private:
-	shared_ptr< CSeries > m_Series;
+	std::shared_ptr< CSeries > m_Series;
 
 protected:
 	void SetUp() override {
@@ -56,7 +56,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSeries > getProperty() {
+	std::shared_ptr< CSeries > getProperty() {
 		return m_Series;
 	};
 

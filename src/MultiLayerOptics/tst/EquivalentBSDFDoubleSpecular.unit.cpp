@@ -18,7 +18,7 @@ using namespace MultiLayerOptics;
 class TestEquivalentBSDFDoubleSpecular : public testing::Test {
 
 private:
-	shared_ptr< CEquivalentBSDFLayerSingleBand > m_EquivalentBSDFLayer;
+	std::shared_ptr< CEquivalentBSDFLayerSingleBand > m_EquivalentBSDFLayer;
 
 protected:
 	virtual void SetUp() {
@@ -33,9 +33,9 @@ protected:
 		aDefinitions.push_back( CBSDFDefinition( 75, 1 ) );
 		aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
 
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( aDefinitions );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( aDefinitions );
 
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -160,7 +160,7 @@ protected:
 		aSolarRadiation->addProperty( 3.7650, 9.0 );
 		aSolarRadiation->addProperty( 4.0450, 6.9 );
 
-		shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -274,23 +274,23 @@ protected:
 		aMeasurements->addRecord( 2.450, 0.8260, 0.0690, 0.0690 );
 		aMeasurements->addRecord( 2.500, 0.8220, 0.0680, 0.0680 );
 
-		shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		std::shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		double thickness = 3.048e-3; // [m]
 		MaterialType aType = MaterialType::Monolithic;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSample > aMaterial =
-			make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSample > aMaterial =
+			std::make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
-		shared_ptr< CSpecularCellDescription > aCellDescription = make_shared< CSpecularCellDescription >();
+		std::shared_ptr< CSpecularCellDescription > aCellDescription = make_shared< CSpecularCellDescription >();
 
-		shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( aMaterial, aCellDescription );
+		std::shared_ptr< CSpecularCell > aCell = make_shared< CSpecularCell >( aMaterial, aCellDescription );
 
-		shared_ptr< CSpecularBSDFLayer > aLayer102 = make_shared< CSpecularBSDFLayer >( aCell, aBSDF );
+		std::shared_ptr< CSpecularBSDFLayer > aLayer102 = make_shared< CSpecularBSDFLayer >( aCell, aBSDF );
 
-		shared_ptr< CBSDFIntegrator > aLayer1 = aLayer102->getResults();
-		shared_ptr< CBSDFIntegrator > aLayer2 = aLayer102->getResults();
+		std::shared_ptr< CBSDFIntegrator > aLayer1 = aLayer102->getResults();
+		std::shared_ptr< CBSDFIntegrator > aLayer2 = aLayer102->getResults();
 
 		m_EquivalentBSDFLayer = make_shared< CEquivalentBSDFLayerSingleBand >( aLayer1 );
 		m_EquivalentBSDFLayer->addLayer( aLayer2 );
@@ -298,7 +298,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CEquivalentBSDFLayerSingleBand > getLayer() {
+	std::shared_ptr< CEquivalentBSDFLayerSingleBand > getLayer() {
 		return m_EquivalentBSDFLayer;
 	};
 
@@ -307,7 +307,7 @@ public:
 TEST_F( TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF ) {
 	SCOPED_TRACE( "Begin Test: Equivalent layer NFRC=102 - NFRC=102." );
 
-	shared_ptr< CEquivalentBSDFLayerSingleBand > aLayer = getLayer();
+	std::shared_ptr< CEquivalentBSDFLayerSingleBand > aLayer = getLayer();
 
 	// Transmittance Front side
 	CSquareMatrix Tf = *aLayer->getMatrix( Side::Front, PropertySimple::T );

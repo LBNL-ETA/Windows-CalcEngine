@@ -11,7 +11,7 @@ using namespace SingleLayerOptics;
 class TestBSDFQuarterBasis : public testing::Test {
 
 private:
-	shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
+	std::shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
 
 protected:
 	virtual void SetUp() {
@@ -19,7 +19,7 @@ protected:
 	}
 
 public:
-	shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) {
+	std::shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) {
 		return m_BSDFHemisphere->getDirections( t_Side );
 	};
 
@@ -41,7 +41,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis ) {
 	EXPECT_EQ( correctSize, aDirections.size() );
 
 	vector< double > phiAngles;
-	for ( shared_ptr< const CBSDFPatch > aPatch : aDirections ) {
+	for ( std::shared_ptr< const CBSDFPatch > aPatch : aDirections ) {
 		phiAngles.push_back( aPatch->centerPoint()->phi() );
 	}
 
@@ -67,7 +67,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas ) {
 	EXPECT_EQ( correctSize, aDirections.size() );
 
 	vector< double > thetaAngles;
-	vector< shared_ptr< CBSDFPatch > >::iterator it;
+	vector< std::shared_ptr< CBSDFPatch > >::iterator it;
 	for ( it = aDirections.begin(); it < aDirections.end(); ++it ) {
 		thetaAngles.push_back( ( *it )->centerPoint()->theta() );
 	}
@@ -95,7 +95,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisLambdas ) {
 	EXPECT_EQ( correctSize, aDirections.size() );
 
 	vector< double > lambdaValues;
-	vector< shared_ptr< CBSDFPatch > >::iterator it;
+	vector< std::shared_ptr< CBSDFPatch > >::iterator it;
 	for ( it = aDirections.begin(); it < aDirections.end(); ++it ) {
 		lambdaValues.push_back( ( *it )->lambda() );
 	}

@@ -10,13 +10,13 @@
 #include "TarcogConstants.hpp"
 #include "LayerInterfaces.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Tarcog {
 
 	CIGUSolidLayer::CIGUSolidLayer( double const t_Thickness, double const t_Conductivity,
-	                                shared_ptr< ISurface > const& t_FrontSurface, shared_ptr< ISurface > const& t_BackSurface )
+	                                std::shared_ptr< ISurface > const& t_FrontSurface, std::shared_ptr< ISurface > const& t_BackSurface )
 		: CState(), CBaseIGULayer( t_Thickness ), m_Conductivity( t_Conductivity ),
 		  m_SolarAbsorptance( 0 ) {
 		if ( t_FrontSurface != nullptr && t_BackSurface != nullptr ) {
@@ -24,8 +24,8 @@ namespace Tarcog {
 			m_Surface[ Side::Back ] = t_BackSurface;
 		}
 		else {
-			m_Surface[ Side::Front ] = make_shared< CSurface >();
-			m_Surface[ Side::Back ] = make_shared< CSurface >();
+			m_Surface[ Side::Front ] = std::make_shared< CSurface >();
+			m_Surface[ Side::Back ] = std::make_shared< CSurface >();
 		}
 	}
 
@@ -33,8 +33,8 @@ namespace Tarcog {
 	                                double const t_FrontEmissivity, double const t_FrontIRTransmittance,
 	                                double const t_BackEmissivity, double const t_BackIRTransmittance ) : CState(),
 	                                                                                                      CBaseIGULayer( t_Thickness ), m_Conductivity( t_Conductivity ), m_SolarAbsorptance( 0 ) {
-		m_Surface[ Side::Front ] = make_shared< CSurface >( t_FrontEmissivity, t_FrontIRTransmittance );
-		m_Surface[ Side::Back ] = make_shared< CSurface >( t_BackEmissivity, t_BackIRTransmittance );
+		m_Surface[ Side::Front ] = std::make_shared< CSurface >( t_FrontEmissivity, t_FrontIRTransmittance );
+		m_Surface[ Side::Back ] = std::make_shared< CSurface >( t_BackEmissivity, t_BackIRTransmittance );
 	}
 
 	CIGUSolidLayer::CIGUSolidLayer( CIGUSolidLayer const& t_Layer ) :
@@ -43,7 +43,7 @@ namespace Tarcog {
 		m_SolarAbsorptance = t_Layer.m_SolarAbsorptance;
 	}
 
-	void CIGUSolidLayer::connectToBackSide( shared_ptr< CBaseLayer > const& t_Layer ) {
+	void CIGUSolidLayer::connectToBackSide( std::shared_ptr< CBaseLayer > const& t_Layer ) {
 		CBaseLayer::connectToBackSide( t_Layer );
 		t_Layer->setSurface( m_Surface.at( Side::Back ), Side::Front );
 	}
@@ -54,7 +54,7 @@ namespace Tarcog {
 
 	void CIGUSolidLayer::calculateConvectionOrConductionFlow() {
 		if ( m_Thickness == 0 ) {
-			throw runtime_error( "Solid layer thickness is set to zero." );
+			throw std::runtime_error( "Solid layer thickness is set to zero." );
 		}
 
 		m_ConductiveConvectiveCoeff = m_Conductivity / m_Thickness;
@@ -75,7 +75,7 @@ namespace Tarcog {
 
 	void CIGUSolidLayer::setSurfaceState( double const t_Temperature, double const t_J,
 	                                      Side const t_Position ) {
-		shared_ptr< ISurface > aSurface = m_Surface.at( t_Position );
+		std::shared_ptr< ISurface > aSurface = m_Surface.at( t_Position );
 		aSurface->setTemperature( t_Temperature );
 		aSurface->setJ( t_J );
 
@@ -92,8 +92,8 @@ namespace Tarcog {
 		resetCalculated();
 	}
 
-	shared_ptr< CBaseLayer > CIGUSolidLayer::clone() const {
-		return make_shared< CIGUSolidLayer >( *this );
+	std::shared_ptr< CBaseLayer > CIGUSolidLayer::clone() const {
+		return std::make_shared< CIGUSolidLayer >( *this );
 	}
 
 }

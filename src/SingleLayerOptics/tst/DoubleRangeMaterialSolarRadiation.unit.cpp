@@ -15,12 +15,12 @@ using namespace FenestrationCommon;
 class TestDoubleRangeMaterialSolarRadiation: public testing::Test {
 
 private:
-	shared_ptr< CMaterial > m_Material;
+	std::shared_ptr< CMaterial > m_Material;
 
 protected:
 	virtual void SetUp() {
 
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -151,8 +151,8 @@ protected:
 		double Rbmat = 0.7;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aSolarRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aSolarRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// Visible range
 		Tmat = 0.2;
@@ -160,14 +160,14 @@ protected:
 		Rbmat = 0.6;
 		minLambda = 0.38;
 		maxLambda = 0.78;
-		shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, aSolarRadiation );
 	}
 
 public:
-	shared_ptr< CMaterial > getMaterial() {
+	std::shared_ptr< CMaterial > getMaterial() {
 		return m_Material;
 	};
 
@@ -176,7 +176,7 @@ public:
 TEST_F( TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties ) {
 	SCOPED_TRACE( "Begin Test: Phi angles creation." );
 
-	shared_ptr< CMaterial > aMaterial = getMaterial();
+	std::shared_ptr< CMaterial > aMaterial = getMaterial();
 
 	double T = aMaterial->getProperty( Property::T, Side::Front );
 
