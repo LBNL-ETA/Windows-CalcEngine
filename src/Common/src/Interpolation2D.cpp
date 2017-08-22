@@ -1,7 +1,7 @@
 #include "Interpolation2D.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace FenestrationCommon {
@@ -10,7 +10,7 @@ namespace FenestrationCommon {
 	// IInterpolation2D
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	IInterpolation2D::IInterpolation2D( std::vector< pair< double, double > > const& t_Points ) :
+	IInterpolation2D::IInterpolation2D( std::vector< std::pair< double, double > > const& t_Points ) :
 		m_Points( t_Points ) {
 
 	}
@@ -19,7 +19,7 @@ namespace FenestrationCommon {
 	// CSPChipInterpolation2D
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	CSPChipInterpolation2D::CSPChipInterpolation2D( std::vector< pair< double, double > > const& t_Points ) :
+	CSPChipInterpolation2D::CSPChipInterpolation2D( std::vector< std::pair< double, double > > const& t_Points ) :
 		IInterpolation2D( t_Points ) {
 		m_Hs = calculateHs();
 		m_Deltas = calculateDeltas();
@@ -57,16 +57,16 @@ namespace FenestrationCommon {
 		return interval;
 	}
 
-	vector< double > CSPChipInterpolation2D::calculateHs() const {
-		vector< double > res;
+	std::vector< double > CSPChipInterpolation2D::calculateHs() const {
+		std::vector< double > res;
 		for ( size_t i = 1; i < m_Points.size(); ++i ) {
 			res.push_back( m_Points[ i ].first - m_Points[ i - 1 ].first );
 		}
 		return res;
 	}
 
-	vector< double > CSPChipInterpolation2D::calculateDeltas() const {
-		vector< double > res;
+	std::vector< double > CSPChipInterpolation2D::calculateDeltas() const {
+		std::vector< double > res;
 		for ( size_t i = 1; i < m_Points.size(); ++i ) {
 			res.push_back( ( m_Points[ i ].second - m_Points[ i - 1 ].second ) /
 			              ( m_Points[ i ].first - m_Points[ i - 1 ].first ) );
@@ -74,8 +74,8 @@ namespace FenestrationCommon {
 		return res;
 	}
 
-	vector< double > CSPChipInterpolation2D::calculateDerivatives() const {
-		vector< double > res;
+	std::vector< double > CSPChipInterpolation2D::calculateDerivatives() const {
+		std::vector< double > res;
 		//first get the special cases, first and last
 		auto first_res = ( ( 2 * m_Hs[ 0 ] + m_Hs[ 1 ] ) * m_Deltas[ 0 ] -
 			( m_Hs[ 0 ] * m_Deltas[ 1 ] ) ) / ( m_Hs[ 0 ] + m_Hs[ 1 ] );

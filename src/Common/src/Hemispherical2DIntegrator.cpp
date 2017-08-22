@@ -5,7 +5,7 @@
 #include "IntegratorStrategy.hpp"
 #include "MathFunctions.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 

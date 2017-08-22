@@ -1,7 +1,7 @@
 #include <assert.h>
 #include "IntegratorStrategy.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 
@@ -24,10 +24,10 @@ namespace FenestrationCommon {
 		std::shared_ptr< IIntegratorStrategy > aStrategy = nullptr;
 		switch ( t_IntegratorType ) {
 		case IntegrationType::Rectangular:
-			aStrategy = make_shared< CIntegratorRectangular >();
+			aStrategy = std::make_shared< CIntegratorRectangular >();
 			break;
 		case IntegrationType::Trapezoidal:
-			aStrategy = make_shared< CIntegratorTrapezoidal >();
+			aStrategy = std::make_shared< CIntegratorTrapezoidal >();
 			break;
 		default:
 			assert("Irregular call of integration strategy.");

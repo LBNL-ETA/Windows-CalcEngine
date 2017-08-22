@@ -4,7 +4,7 @@
 #include "SquareMatrix.hpp"
 #include "Series.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 
@@ -14,7 +14,7 @@ namespace FenestrationCommon {
 		for ( size_t i = 0; i < m_Size1; ++i ) {
 			m_Matrix[ i ].resize( m_Size2 );
 			for ( size_t j = 0; j < m_Size2; ++j ) {
-				m_Matrix[ i ][ j ] = make_shared< CSeries >();
+				m_Matrix[ i ][ j ] = std::make_shared< CSeries >();
 			}
 		}
 	}
@@ -58,7 +58,7 @@ namespace FenestrationCommon {
 		}
 	}
 
-	vector< std::shared_ptr< CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
+	std::vector< std::shared_ptr< CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
 		return m_Matrix[ index ];
 	}
 
@@ -76,9 +76,9 @@ namespace FenestrationCommon {
 			std::make_shared< std::vector< std::shared_ptr< std::vector< double > > > >( m_Matrix.size() );
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			if ( m_Matrix[ i ].size() != t_ScaleValue.size() ) {
-				throw runtime_error( "Size of vector for scaling must be same as size of the matrix." );
+				throw std::runtime_error( "Size of vector for scaling must be same as size of the matrix." );
 			}
-			( *Result )[ i ] = make_shared< std::vector< double > >();
+			( *Result )[ i ] = std::make_shared< std::vector< double > >();
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) / t_ScaleValue[ i ];
 				( *Result )[ i ]->push_back( value );
@@ -90,7 +90,7 @@ namespace FenestrationCommon {
 	std::shared_ptr< CSquareMatrix > CMatrixSeries::getSquaredMatrixSums(
 		const double minLambda, const double maxLambda, const std::vector< double >& t_ScaleValue ) {
 		assert( m_Matrix.size() == m_Matrix[ 0 ].size() );
-		std::shared_ptr< CSquareMatrix > Res = make_shared< CSquareMatrix >( m_Matrix.size() );
+		std::shared_ptr< CSquareMatrix > Res = std::make_shared< CSquareMatrix >( m_Matrix.size() );
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) / t_ScaleValue[ i ];

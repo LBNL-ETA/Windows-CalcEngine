@@ -3,7 +3,7 @@
 #include "WavelengthRange.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 

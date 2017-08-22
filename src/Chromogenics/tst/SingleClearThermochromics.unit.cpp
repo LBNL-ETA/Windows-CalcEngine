@@ -12,8 +12,7 @@ using namespace Chromogenics;
 
 class TestSingleClearThermochromics : public testing::Test {
 
-private:
-  std::shared_ptr< CSystem > m_TarcogSystem;
+  std::unique_ptr< CSystem > m_TarcogSystem;
 
 protected:
   void SetUp() override {
@@ -79,7 +78,7 @@ protected:
     // System
     /////////////////////////////////////////////////////////
 		// TODO: This need to be changed. C++11 does not support make_unique
-    m_TarcogSystem = std::make_shared< CSystem >( aIGU, Indoor, Outdoor );
+    m_TarcogSystem = std::unique_ptr< CSystem >( new CSystem( aIGU, Indoor, Outdoor ) );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     // m_TarcogSystem->solve();

@@ -8,7 +8,7 @@
 
 #include "Polynom.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 

@@ -9,23 +9,26 @@ namespace Chromogenics {
 	// CThermochromicSurface
 	//////////////////////////////////////////////////////////////////////////////
 	CThermochromicSurface::CThermochromicSurface( std::vector< std::pair< double, double > > const& t_Emissivity,
-	                                              std::vector< std::pair< double, double > > const& t_Transmittance ) : ISurface( 0, 0 ),
-	                                                                                                                    m_EmissivityInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Emissivity ) ),
-	                                                                                                                    m_TransmittanceInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Transmittance ) ) {
+	                                              std::vector< std::pair< double, double > > const& t_Transmittance )
+		: ISurface( 0, 0 ),
+		  m_EmissivityInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Emissivity ) ),
+		  m_TransmittanceInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Transmittance ) ) {
 
 	}
 
 	CThermochromicSurface::CThermochromicSurface( double const& t_Emissivity,
-	                                              std::vector< std::pair< double, double > > const& t_Transmittance ) : ISurface( t_Emissivity, 0 ),
-	                                                                                                                    m_EmissivityInterpolator( nullptr ),
-	                                                                                                                    m_TransmittanceInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Transmittance ) ) {
+	                                              std::vector< std::pair< double, double > > const& t_Transmittance )
+		: ISurface( t_Emissivity, 0 ),
+		  m_EmissivityInterpolator( nullptr ),
+		  m_TransmittanceInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Transmittance ) ) {
 
 	}
 
 	CThermochromicSurface::CThermochromicSurface( std::vector< std::pair< double, double > > const& t_Emissivity,
-	                                              double const& t_Transmittance ) : ISurface( 0, t_Transmittance ),
-	                                                                                m_EmissivityInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Emissivity ) ),
-	                                                                                m_TransmittanceInterpolator( nullptr ) {
+	                                              double const& t_Transmittance )
+		: ISurface( 0, t_Transmittance ),
+		  m_EmissivityInterpolator( std::make_shared< CSPChipInterpolation2D >( t_Emissivity ) ),
+		  m_TransmittanceInterpolator( nullptr ) {
 
 	}
 
@@ -40,11 +43,11 @@ namespace Chromogenics {
 	}
 
 	void CThermochromicSurface::setTemperature( double const t_Temperature ) {
-		if ( m_EmissivityInterpolator ) {
+		if ( m_EmissivityInterpolator != nullptr ) {
 			m_Emissivity = m_EmissivityInterpolator->getValue( t_Temperature );
 			calculateReflectance();
 		}
-		if ( m_TransmittanceInterpolator ) {
+		if ( m_TransmittanceInterpolator != nullptr ) {
 			m_Transmittance = m_TransmittanceInterpolator->getValue( t_Temperature );
 			calculateReflectance();
 		}

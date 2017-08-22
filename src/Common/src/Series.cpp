@@ -5,7 +5,7 @@
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 
@@ -52,12 +52,12 @@ namespace FenestrationCommon {
 	}
 
 	void CSeries::addProperty( const double t_x, const double t_Value ) {
-		std::shared_ptr< CSeriesPoint > aProperty = make_shared< CSeriesPoint >( t_x, t_Value );
+		std::shared_ptr< CSeriesPoint > aProperty = std::make_shared< CSeriesPoint >( t_x, t_Value );
 		m_Series.push_back( aProperty );
 	}
 
 	void CSeries::insertToBeginning( double t_x, double t_Value ) {
-		std::shared_ptr< CSeriesPoint > aProperty = make_shared< CSeriesPoint >( t_x, t_Value );
+		std::shared_ptr< CSeriesPoint > aProperty = std::make_shared< CSeriesPoint >( t_x, t_Value );
 		m_Series.insert( m_Series.begin(), aProperty );
 	}
 
@@ -70,7 +70,7 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< CSeries > CSeries::integrate( IntegrationType t_IntegrationType ) const {
 
-		std::shared_ptr< CSeries > newProperties = make_shared< CSeries >();
+		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
 		CIntegratorFactory aFactory = CIntegratorFactory();
 		std::shared_ptr< IIntegratorStrategy > aIntegrator = aFactory.getIntegrator( t_IntegrationType );
 		std::shared_ptr< ISeriesPoint > previousProperty = nullptr;
@@ -139,7 +139,7 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< CSeries > CSeries::interpolate(
 		const std::vector< double >& t_Wavelengths ) const {
-		std::shared_ptr< CSeries > newProperties = make_shared< CSeries >();
+		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
 
 		if ( size() != 0 ) {
 
@@ -166,11 +166,11 @@ namespace FenestrationCommon {
 	}
 
 	std::shared_ptr< CSeries > CSeries::mMult( const CSeries& t_Series ) const {
-		std::shared_ptr< CSeries > newProperties = make_shared< CSeries >();
+		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
 
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
-		size_t minSize = min( m_Series.size(), t_Series.m_Series.size() );
+		size_t minSize = std::min( m_Series.size(), t_Series.m_Series.size() );
 
 		for ( size_t i = 0; i < minSize; ++i ) {
 			double value = m_Series[ i ]->value() * t_Series.m_Series[ i ]->value();
@@ -178,7 +178,7 @@ namespace FenestrationCommon {
 			double testWv = t_Series.m_Series[ i ]->x();
 
 			if ( fabs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
-				throw runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
+				throw std::runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
 			}
 
 			newProperties->addProperty( wv, value );
@@ -190,8 +190,8 @@ namespace FenestrationCommon {
 	std::shared_ptr< CSeries > CSeries::mSub( const CSeries& t_Series ) const {
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
-		std::shared_ptr< CSeries > newProperties = make_shared< CSeries >();
-		size_t minSize = min( m_Series.size(), t_Series.m_Series.size() );
+		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
+		size_t minSize = std::min( m_Series.size(), t_Series.m_Series.size() );
 
 		for ( size_t i = 0; i < minSize; ++i ) {
 			double value = m_Series[ i ]->value() - t_Series.m_Series[ i ]->value();
@@ -199,7 +199,7 @@ namespace FenestrationCommon {
 			double testWv = t_Series.m_Series[ i ]->x();
 
 			if ( fabs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
-				throw runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
+				throw std::runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
 			}
 
 			newProperties->addProperty( wv, value );
@@ -211,8 +211,8 @@ namespace FenestrationCommon {
 	std::shared_ptr< CSeries > CSeries::mAdd( const CSeries& t_Series ) const {
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
-		std::shared_ptr< CSeries > newProperties = make_shared< CSeries >();
-		size_t minSize = min( m_Series.size(), t_Series.m_Series.size() );
+		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
+		size_t minSize = std::min( m_Series.size(), t_Series.m_Series.size() );
 
 		for ( size_t i = 0; i < minSize; ++i ) {
 			double value = m_Series[ i ]->value() + t_Series.m_Series[ i ]->value();
@@ -220,7 +220,7 @@ namespace FenestrationCommon {
 			double testWv = t_Series.m_Series[ i ]->x();
 
 			if ( fabs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
-				throw runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
+				throw std::runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
 			}
 
 			newProperties->addProperty( wv, value );
@@ -230,7 +230,7 @@ namespace FenestrationCommon {
 	}
 
 	std::shared_ptr< std::vector< double > > CSeries::getXArray() const {
-		std::shared_ptr< std::vector< double > > aArray = make_shared< std::vector< double > >();
+		std::shared_ptr< std::vector< double > > aArray = std::make_shared< std::vector< double > >();
 		for ( std::shared_ptr< ISeriesPoint > spectralProperty : m_Series ) {
 			aArray->push_back( spectralProperty->x() );
 		}
@@ -262,11 +262,11 @@ namespace FenestrationCommon {
 	           } );
 	}
 
-	vector< std::shared_ptr< CSeriesPoint > >::const_iterator CSeries::begin() const {
+	std::vector< std::shared_ptr< CSeriesPoint > >::const_iterator CSeries::begin() const {
 		return m_Series.cbegin();
 	}
 
-	vector< std::shared_ptr< CSeriesPoint > >::const_iterator CSeries::end() const {
+	std::vector< std::shared_ptr< CSeriesPoint > >::const_iterator CSeries::end() const {
 		return m_Series.cend();
 	}
 
@@ -277,7 +277,7 @@ namespace FenestrationCommon {
 	std::shared_ptr< const CSeriesPoint > CSeries::operator[]( size_t Index ) const {
 		//CSeriesPoint CSeries::operator[]( int Index ) const {
 		if ( Index >= m_Series.size() ) {
-			throw runtime_error( "Index out of range" );
+			throw std::runtime_error( "Index out of range" );
 		}
 		return m_Series[ Index ];
 	}

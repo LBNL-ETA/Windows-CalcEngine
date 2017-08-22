@@ -4,7 +4,7 @@
 
 #include "SquareMatrix.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 	CSquareMatrix::CSquareMatrix( const size_t aSize ) {
@@ -35,7 +35,7 @@ namespace FenestrationCommon {
 
 	void CSquareMatrix::setDiagonal( std::vector< double > const& t_Values ) {
 		if ( t_Values.size() != m_Size ) {
-			throw runtime_error( "Supplied vector size mismatch matrix size" );
+			throw std::runtime_error( "Supplied vector size mismatch matrix size" );
 		}
 		setZeros();
 		for ( size_t i = 0; i < m_Size; ++i ) {
@@ -43,22 +43,22 @@ namespace FenestrationCommon {
 		}
 	}
 
-	vector< double >& CSquareMatrix::operator[]( size_t const index ) {
+	std::vector< double >& CSquareMatrix::operator[]( size_t const index ) {
 		assert( index < m_Size );
 		return m_Matrix[ index ];
 	}
 
-	vector< double > const& CSquareMatrix::operator[]( size_t const index ) const {
+	std::vector< double > const& CSquareMatrix::operator[]( size_t const index ) const {
 		assert( index < m_Size );
 		return m_Matrix[ index ];
 	}
 
 	std::shared_ptr< CSquareMatrix > CSquareMatrix::add( CSquareMatrix const& t_Matrix ) const {
 		if ( m_Size != t_Matrix.m_Size ) {
-			throw runtime_error( "Matrices must be identical in size." );
+			throw std::runtime_error( "Matrices must be identical in size." );
 		}
 
-		auto aMatrix = make_shared< CSquareMatrix >( m_Size );
+		auto aMatrix = std::make_shared< CSquareMatrix >( m_Size );
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			for ( size_t j = 0; j < t_Matrix.m_Size; ++j ) {
 				( *aMatrix )[ i ][ j ] = m_Matrix[ i ][ j ] + t_Matrix.m_Matrix[ i ][ j ];
@@ -70,10 +70,10 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< CSquareMatrix > CSquareMatrix::sub( CSquareMatrix const& t_Matrix ) const {
 		if ( m_Size != t_Matrix.m_Size ) {
-			throw runtime_error( "Matrices must be identical in size." );
+			throw std::runtime_error( "Matrices must be identical in size." );
 		}
 
-		auto aMatrix = make_shared< CSquareMatrix >( m_Size );
+		auto aMatrix = std::make_shared< CSquareMatrix >( m_Size );
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			for ( size_t j = 0; j < t_Matrix.m_Size; ++j ) {
 				( *aMatrix )[ i ][ j ] = m_Matrix[ i ][ j ] - t_Matrix.m_Matrix[ i ][ j ];
@@ -85,10 +85,10 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< CSquareMatrix > CSquareMatrix::mult( CSquareMatrix const& t_Matrix ) const {
 		if ( m_Size != t_Matrix.m_Size ) {
-			throw runtime_error( "Matrices must be identical in size." );
+			throw std::runtime_error( "Matrices must be identical in size." );
 		}
 
-		auto aMatrix = make_shared< CSquareMatrix >( m_Size );
+		auto aMatrix = std::make_shared< CSquareMatrix >( m_Size );
 
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			for ( size_t k = 0; k < m_Size; ++k ) {
@@ -105,11 +105,11 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< std::vector< double > > CSquareMatrix::multMxV( std::vector< double > const& t_Vector ) const {
 		if ( m_Size != t_Vector.size() ) {
-			throw runtime_error( "Matrix and vector does not have same number of rows and columns."
+			throw std::runtime_error( "Matrix and vector does not have same number of rows and columns."
 			                    " It is not possible to perform multiplication." );
 		}
 
-		auto aResult = make_shared< std::vector< double > >( m_Size );
+		auto aResult = std::make_shared< std::vector< double > >( m_Size );
 
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			for ( size_t j = 0; j < m_Size; ++j ) {
@@ -122,11 +122,11 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< std::vector< double > > CSquareMatrix::multVxM( std::vector< double > const& t_Vector ) const {
 		if ( m_Size != t_Vector.size() ) {
-			throw runtime_error( "Matrix and vector do not have same number of rows and columns."
+			throw std::runtime_error( "Matrix and vector do not have same number of rows and columns."
 			                    " It is not possible to perform multiplication." );
 		}
 
-		auto aResult = make_shared< std::vector< double > >( m_Size );
+		auto aResult = std::make_shared< std::vector< double > >( m_Size );
 
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			for ( size_t j = 0; j < m_Size; ++j ) {
@@ -139,7 +139,7 @@ namespace FenestrationCommon {
 
 	void CSquareMatrix::copyFrom( CSquareMatrix const& t_Matrix ) {
 		if ( m_Size != t_Matrix.m_Size ) {
-			throw runtime_error( "Matrices must be identical in size" );
+			throw std::runtime_error( "Matrices must be identical in size" );
 		}
 		for ( size_t i = 0; i < m_Size; ++i ) {
 			m_Matrix[ i ] = t_Matrix.m_Matrix[ i ];
@@ -151,9 +151,9 @@ namespace FenestrationCommon {
 		auto aLU = LU();
 
 		// find the inverse
-		auto inverse = make_shared< CSquareMatrix >( m_Size );
-		vector< double > d( m_Size );
-		vector< double > y( m_Size );
+		auto inverse = std::make_shared< CSquareMatrix >( m_Size );
+		std::vector< double > d( m_Size );
+		std::vector< double > y( m_Size );
 
 		auto size = int( m_Size - 1 );
 
@@ -182,7 +182,7 @@ namespace FenestrationCommon {
 	}
 
 	std::shared_ptr< CSquareMatrix > CSquareMatrix::LU() {
-		auto D = make_shared< CSquareMatrix >( m_Size );
+		auto D = std::make_shared< CSquareMatrix >( m_Size );
 		D->copyFrom( *this );
 
 		for ( auto k = 0u; k <= m_Size - 2; ++k ) {

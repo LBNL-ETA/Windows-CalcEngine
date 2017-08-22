@@ -4,7 +4,7 @@
 
 #include "CommonWavelengths.hpp"
 
-using namespace std;
+
 
 namespace FenestrationCommon {
 
@@ -15,8 +15,8 @@ namespace FenestrationCommon {
 		m_Wavelengths.push_back( t_wv );
 	}
 
-	vector< double > CCommonWavelengths::getCombinedWavelengths( const Combine t_Combination ) {
-		vector< double > aCombined;
+	std::vector< double > CCommonWavelengths::getCombinedWavelengths( const Combine t_Combination ) {
+		std::vector< double > aCombined;
 		for ( auto it = m_Wavelengths.begin(); it < m_Wavelengths.end(); ++it ) {
 			if ( it == m_Wavelengths.begin() ) {
 				aCombined = *it;
@@ -29,12 +29,12 @@ namespace FenestrationCommon {
 		return aCombined;
 	}
 
-	vector< double > CCommonWavelengths::combineWavelegths( std::vector< double > const& t_wv1,
+	std::vector< double > CCommonWavelengths::combineWavelegths( std::vector< double > const& t_wv1,
 	                                                        std::vector< double > const& t_wv2, Combine const t_Combination ) const {
 
 		// Set union of two wavelengths without repeating common data
-		vector< double > unionWavelengths;
-		vector< double > combinedWavelengths;
+		std::vector< double > unionWavelengths;
+		std::vector< double > combinedWavelengths;
 
 		set_union( t_wv1.begin(), t_wv1.end(), t_wv2.begin(), t_wv2.end(),
 		           back_inserter( unionWavelengths ) );
@@ -43,11 +43,11 @@ namespace FenestrationCommon {
 			// Remove extrapolated data. It is incorrect to have extrapolated wavelengths from one sample
 			auto min1 = *min_element( t_wv1.begin(), t_wv1.end() );
 			auto min2 = *min_element( t_wv2.begin(), t_wv2.end() );
-			auto minWV = max( min1, min2 );
+			auto minWV = std::max( min1, min2 );
 
 			auto max2 = *max_element( t_wv2.begin(), t_wv2.end() );
 			auto max1 = *max_element( t_wv1.begin(), t_wv1.end() );
-			auto maxWV = min( max1, max2 );
+			auto maxWV = std::min( max1, max2 );
 
 			for ( auto val : unionWavelengths ) {
 				if ( ( val >= minWV ) && ( val <= maxWV ) ) {
