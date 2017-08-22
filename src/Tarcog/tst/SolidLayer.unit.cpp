@@ -9,34 +9,36 @@ using namespace Tarcog;
 class TestSolidLayer : public testing::Test {
 
 private:
-  shared_ptr< CIGUSolidLayer > m_SolidLayer;
+	shared_ptr< CIGUSolidLayer > m_SolidLayer;
 
 protected:
-  void SetUp() override {
-    auto surface1 = std::make_shared< CSurface > ();
-    ASSERT_TRUE( surface1 != nullptr );
-    surface1->setTemperature( 280 );
-    auto surface2 = std::make_shared< CSurface > ();
-    ASSERT_TRUE( surface2 != nullptr );
-    surface2->setTemperature( 300 );
+	void SetUp() override {
+		auto surface1 = std::make_shared< CSurface >();
+		ASSERT_TRUE( surface1 != nullptr );
+		surface1->setTemperature( 280 );
+		auto surface2 = std::make_shared< CSurface >();
+		ASSERT_TRUE( surface2 != nullptr );
+		surface2->setTemperature( 300 );
 
-    m_SolidLayer = make_shared< CIGUSolidLayer > ( 0.01, 2.5, surface1, surface2 );
-    ASSERT_TRUE( m_SolidLayer != nullptr );
-  }
+		m_SolidLayer = make_shared< CIGUSolidLayer >( 0.01, 2.5, surface1, surface2 );
+		ASSERT_TRUE( m_SolidLayer != nullptr );
+	}
 
 public:
-  shared_ptr< CIGUSolidLayer > GetLayer() const { return m_SolidLayer; };
+	shared_ptr< CIGUSolidLayer > GetLayer() const {
+		return m_SolidLayer;
+	};
 
 };
 
 TEST_F( TestSolidLayer, Test1 ) {
-  SCOPED_TRACE( "Begin Test: Test Solid Layer - Conduction heat flow" );
-  
-  auto aLayer = GetLayer();
-  ASSERT_TRUE( aLayer != nullptr );
+	SCOPED_TRACE( "Begin Test: Test Solid Layer - Conduction heat flow" );
 
-  auto conductionHeatFlow = aLayer->getConvectionConductionFlow();
+	auto aLayer = GetLayer();
+	ASSERT_TRUE( aLayer != nullptr );
 
-  EXPECT_NEAR( 5000, conductionHeatFlow, 1e-6 );
+	auto conductionHeatFlow = aLayer->getConvectionConductionFlow();
+
+	EXPECT_NEAR( 5000, conductionHeatFlow, 1e-6 );
 
 }

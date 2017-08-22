@@ -4,46 +4,46 @@
 #include "CellDescription.hpp"
 
 namespace SingleLayerOptics {
-  
-  class CPerforatedCellDescription : public ICellDescription {
-  public:
-    CPerforatedCellDescription( const double t_x, const double t_y, const double t_Thickness );
 
-    double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+	class CPerforatedCellDescription : public ICellDescription {
+	public:
+		CPerforatedCellDescription( const double t_x, const double t_y, const double t_Thickness );
 
-  protected:
-    double m_x;
-    double m_y;
-    double m_Thickness;
-  };
+		double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
-  class CCircularCellDescription : public CPerforatedCellDescription {
-  public:
-    CCircularCellDescription( const double t_x, const double t_y, const double t_Thickness, 
-      const double t_Radius );
+	protected:
+		double m_x;
+		double m_y;
+		double m_Thickness;
+	};
 
-    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+	class CCircularCellDescription : public CPerforatedCellDescription {
+	public:
+		CCircularCellDescription( const double t_x, const double t_y, const double t_Thickness,
+		                          const double t_Radius );
 
-  private:
-    double visibleAhole( const CBeamDirection& t_Direction ) const;
-    double visibleAcell( const CBeamDirection& t_Direction ) const;
-    double m_Radius;
-  };
+		double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
-  class CRectangularCellDescription : public CPerforatedCellDescription {
-  public:
-    CRectangularCellDescription( const double t_x, const double t_y, const double t_Thickness, 
-      const double t_XHole, const double t_YHole );
+	private:
+		double visibleAhole( const CBeamDirection& t_Direction ) const;
+		double visibleAcell( const CBeamDirection& t_Direction ) const;
+		double m_Radius;
+	};
 
-    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+	class CRectangularCellDescription : public CPerforatedCellDescription {
+	public:
+		CRectangularCellDescription( const double t_x, const double t_y, const double t_Thickness,
+		                             const double t_XHole, const double t_YHole );
 
-  private:
-    double TransmittanceV( const CBeamDirection& t_Direction ) const;
-    double TransmittanceH( const CBeamDirection& t_Direction ) const;
+		double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
-    double m_XHole;
-    double m_YHole;
-  };
+	private:
+		double TransmittanceV( const CBeamDirection& t_Direction ) const;
+		double TransmittanceH( const CBeamDirection& t_Direction ) const;
+
+		double m_XHole;
+		double m_YHole;
+	};
 
 }
 

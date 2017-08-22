@@ -6,38 +6,38 @@
 #include <memory>
 
 namespace FenestrationCommon {
-  enum class Side;
+	enum class Side;
 }
 
 namespace Tarcog {
 
-  // Base description for any tarcog layer. This includes interior and exterior environments as well.
-  // It must contain base definition of 2D geometry (Width and Height) and definition of heat flow
-  // that is divided in three categories (convection, conduction and radiation). Every layer can
-  // contain only Conduction + Radiation or Convection + Radiation.
-  class CBaseLayer : public CLayerGeometry, public CLayerHeatFlow,
-    public std::enable_shared_from_this< CBaseLayer > {
-  public:
-    CBaseLayer();
-    CBaseLayer( CBaseLayer const & t_Layer );
-    
-    std::shared_ptr< CBaseLayer > getPreviousLayer() const;
-    std::shared_ptr< CBaseLayer > getNextLayer() const;
+	// Base description for any tarcog layer. This includes interior and exterior environments as well.
+	// It must contain base definition of 2D geometry (Width and Height) and definition of heat flow
+	// that is divided in three categories (convection, conduction and radiation). Every layer can
+	// contain only Conduction + Radiation or Convection + Radiation.
+	class CBaseLayer : public CLayerGeometry, public CLayerHeatFlow,
+		public std::enable_shared_from_this< CBaseLayer > {
+	public:
+		CBaseLayer();
+		CBaseLayer( CBaseLayer const& t_Layer );
 
-    virtual void connectToBackSide( std::shared_ptr< CBaseLayer > const & t_Layer );
+		std::shared_ptr< CBaseLayer > getPreviousLayer() const;
+		std::shared_ptr< CBaseLayer > getNextLayer() const;
 
-    void tearDownConnections();
+		virtual void connectToBackSide( std::shared_ptr< CBaseLayer > const& t_Layer );
 
-    virtual std::shared_ptr< CBaseLayer > clone() const = 0;
+		void tearDownConnections();
 
-  protected:
-    void calculateRadiationFlow() override;
-    void calculateConvectionOrConductionFlow() override = 0;
+		virtual std::shared_ptr< CBaseLayer > clone() const = 0;
 
-    std::shared_ptr< CBaseLayer > m_PreviousLayer;
-    std::shared_ptr< CBaseLayer > m_NextLayer;
+	protected:
+		void calculateRadiationFlow() override;
+		void calculateConvectionOrConductionFlow() override = 0;
 
-  };
+		std::shared_ptr< CBaseLayer > m_PreviousLayer;
+		std::shared_ptr< CBaseLayer > m_NextLayer;
+
+	};
 
 }
 

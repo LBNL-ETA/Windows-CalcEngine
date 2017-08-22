@@ -13,338 +13,340 @@ using namespace FenestrationCommon;
 class TestEnclosure2DBeam1 : public testing::Test {
 
 private:
-  shared_ptr< CGeometry2DBeam > m_Enclosures2DBeam;
+	shared_ptr< CGeometry2DBeam > m_Enclosures2DBeam;
 
 protected:
-  void SetUp() override {
-    m_Enclosures2DBeam = make_shared< CGeometry2DBeam >();
+	void SetUp() override {
+		m_Enclosures2DBeam = make_shared< CGeometry2DBeam >();
 
-    //////////////////////////////////////////////////////////////////////
-    ///  Enclosure 1
-    //////////////////////////////////////////////////////////////////////
-    shared_ptr< CGeometry2D > aEnclosure1 = make_shared< CGeometry2D >();
+		//////////////////////////////////////////////////////////////////////
+		///  Enclosure 1
+		//////////////////////////////////////////////////////////////////////
+		shared_ptr< CGeometry2D > aEnclosure1 = make_shared< CGeometry2D >();
 
-    // Segment 1
-    shared_ptr< CPoint2D > aStartPoint1 = make_shared< CPoint2D >( 3, 2 );
-    shared_ptr< CPoint2D > aEndPoint1 = make_shared< CPoint2D >( 5, 5 );
-  
-    shared_ptr< CViewSegment2D > aSegment1 = make_shared< CViewSegment2D >( aStartPoint1, aEndPoint1 );
-    aEnclosure1->appendSegment( aSegment1 );
+		// Segment 1
+		shared_ptr< CPoint2D > aStartPoint1 = make_shared< CPoint2D >( 3, 2 );
+		shared_ptr< CPoint2D > aEndPoint1 = make_shared< CPoint2D >( 5, 5 );
 
-    // Segment 2
-    shared_ptr< CPoint2D > aStartPoint2 = make_shared< CPoint2D >( 5, 5 );
-    shared_ptr< CPoint2D > aEndPoint2 = make_shared< CPoint2D >( 8, 4 );
-  
-    shared_ptr< CViewSegment2D > aSegment2 = make_shared< CViewSegment2D >( aStartPoint2, aEndPoint2 );
-    aEnclosure1->appendSegment( aSegment2 );
+		shared_ptr< CViewSegment2D > aSegment1 = make_shared< CViewSegment2D >( aStartPoint1, aEndPoint1 );
+		aEnclosure1->appendSegment( aSegment1 );
 
-    // Segment 3
-    shared_ptr< CPoint2D > aStartPoint3 = make_shared< CPoint2D >( 8, 4 );
-    shared_ptr< CPoint2D > aEndPoint3 = make_shared< CPoint2D >( 9, 9 );
-  
-    shared_ptr< CViewSegment2D > aSegment3 = make_shared< CViewSegment2D >( aStartPoint3, aEndPoint3 );
-    aEnclosure1->appendSegment( aSegment3 );
+		// Segment 2
+		shared_ptr< CPoint2D > aStartPoint2 = make_shared< CPoint2D >( 5, 5 );
+		shared_ptr< CPoint2D > aEndPoint2 = make_shared< CPoint2D >( 8, 4 );
 
-    m_Enclosures2DBeam->appendGeometry2D( aEnclosure1 );
+		shared_ptr< CViewSegment2D > aSegment2 = make_shared< CViewSegment2D >( aStartPoint2, aEndPoint2 );
+		aEnclosure1->appendSegment( aSegment2 );
 
-    //////////////////////////////////////////////////////////////////////
-    ///  Enclosure 2
-    //////////////////////////////////////////////////////////////////////
-    shared_ptr< CGeometry2D > aEnclosure2 = make_shared< CGeometry2D >();
+		// Segment 3
+		shared_ptr< CPoint2D > aStartPoint3 = make_shared< CPoint2D >( 8, 4 );
+		shared_ptr< CPoint2D > aEndPoint3 = make_shared< CPoint2D >( 9, 9 );
 
-    // Segment 4
-    shared_ptr< CPoint2D > aStartPoint4 = make_shared< CPoint2D >( 3, 10 );
-    shared_ptr< CPoint2D > aEndPoint4 = make_shared< CPoint2D >( 7, 11 );
-  
-    shared_ptr< CViewSegment2D > aSegment4 = make_shared< CViewSegment2D >( aStartPoint4, aEndPoint4 );
-    aEnclosure2->appendSegment( aSegment4 );
+		shared_ptr< CViewSegment2D > aSegment3 = make_shared< CViewSegment2D >( aStartPoint3, aEndPoint3 );
+		aEnclosure1->appendSegment( aSegment3 );
 
-    // Segment 5
-    shared_ptr< CPoint2D > aStartPoint5 = make_shared< CPoint2D >( 7, 11 );
-    shared_ptr< CPoint2D > aEndPoint5 = make_shared< CPoint2D >( 6, 14 );
-  
-    shared_ptr< CViewSegment2D > aSegment5 = make_shared< CViewSegment2D >( aStartPoint5, aEndPoint5 );
-    aEnclosure2->appendSegment( aSegment5 );
+		m_Enclosures2DBeam->appendGeometry2D( aEnclosure1 );
 
-    // Segment 6
-    shared_ptr< CPoint2D > aStartPoint6 = make_shared< CPoint2D >( 6, 14 );
-    shared_ptr< CPoint2D > aEndPoint6 = make_shared< CPoint2D >( 12, 16 );
-  
-    shared_ptr< CViewSegment2D > aSegment6 = make_shared< CViewSegment2D >( aStartPoint6, aEndPoint6 );
-    aEnclosure2->appendSegment( aSegment6 );
+		//////////////////////////////////////////////////////////////////////
+		///  Enclosure 2
+		//////////////////////////////////////////////////////////////////////
+		shared_ptr< CGeometry2D > aEnclosure2 = make_shared< CGeometry2D >();
 
-    m_Enclosures2DBeam->appendGeometry2D( aEnclosure2 );
+		// Segment 4
+		shared_ptr< CPoint2D > aStartPoint4 = make_shared< CPoint2D >( 3, 10 );
+		shared_ptr< CPoint2D > aEndPoint4 = make_shared< CPoint2D >( 7, 11 );
+
+		shared_ptr< CViewSegment2D > aSegment4 = make_shared< CViewSegment2D >( aStartPoint4, aEndPoint4 );
+		aEnclosure2->appendSegment( aSegment4 );
+
+		// Segment 5
+		shared_ptr< CPoint2D > aStartPoint5 = make_shared< CPoint2D >( 7, 11 );
+		shared_ptr< CPoint2D > aEndPoint5 = make_shared< CPoint2D >( 6, 14 );
+
+		shared_ptr< CViewSegment2D > aSegment5 = make_shared< CViewSegment2D >( aStartPoint5, aEndPoint5 );
+		aEnclosure2->appendSegment( aSegment5 );
+
+		// Segment 6
+		shared_ptr< CPoint2D > aStartPoint6 = make_shared< CPoint2D >( 6, 14 );
+		shared_ptr< CPoint2D > aEndPoint6 = make_shared< CPoint2D >( 12, 16 );
+
+		shared_ptr< CViewSegment2D > aSegment6 = make_shared< CViewSegment2D >( aStartPoint6, aEndPoint6 );
+		aEnclosure2->appendSegment( aSegment6 );
+
+		m_Enclosures2DBeam->appendGeometry2D( aEnclosure2 );
 
 
-  }
+	}
 
 public:
-  shared_ptr< CGeometry2DBeam > getEnclosure() const { return m_Enclosures2DBeam; };
+	shared_ptr< CGeometry2DBeam > getEnclosure() const {
+		return m_Enclosures2DBeam;
+	};
 
 };
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam1 ) {
-  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (45 deg)." );
+	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (45 deg)." );
 
-  shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
-  double profileAngle = 45;
+	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	double profileAngle = 45;
 
-  /////////////////////////////////////////////////////////////
-  //  Incoming beam
-  /////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	//  Incoming beam
+	/////////////////////////////////////////////////////////////
 
-  Side aSide = Side::Front;
+	Side aSide = Side::Front;
 
-  shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
-  EXPECT_EQ( 0.5, aEnclosure->directToDirect( profileAngle, aSide ) );
-  
-  size_t correctSize = 2;
+	EXPECT_EQ( 0.5, aEnclosure->directToDirect( profileAngle, aSide ) );
 
-  EXPECT_EQ( correctSize, aViewFactors->size() );
+	size_t correctSize = 2;
 
-  // Create correct results
-  vector< BeamViewFactor > correctResults;
+	EXPECT_EQ( correctSize, aViewFactors->size() );
 
-  size_t enclosureIndex = 1;
-  size_t segmentIndex = 0;
-  double viewFactor = 0.375;
-  double percentHit = 1;
-  BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF1 );
+	// Create correct results
+	vector< BeamViewFactor > correctResults;
 
-  enclosureIndex = 0;
-  segmentIndex = 0;
-  viewFactor = 0.125;
-  percentHit = 1;
-  BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF2 );
+	size_t enclosureIndex = 1;
+	size_t segmentIndex = 0;
+	double viewFactor = 0.375;
+	double percentHit = 1;
+	BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF1 );
 
-  for( size_t i = 0; i < correctResults.size(); ++i ) {
-    EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
-    EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
-    EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
-    EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
-  }
+	enclosureIndex = 0;
+	segmentIndex = 0;
+	viewFactor = 0.125;
+	percentHit = 1;
+	BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF2 );
+
+	for ( size_t i = 0; i < correctResults.size(); ++i ) {
+		EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
+		EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
+		EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
+		EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
+	}
 
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam2 ) {
-  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (0 deg)." );
+	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (0 deg)." );
 
-  shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
-  double profileAngle = 0;
+	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	double profileAngle = 0;
 
-  /////////////////////////////////////////////////////////////
-  //  Incoming beam
-  /////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	//  Incoming beam
+	/////////////////////////////////////////////////////////////
 
-  Side aSide = Side::Front;
+	Side aSide = Side::Front;
 
-  shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
-  EXPECT_EQ( 0.125, aEnclosure->directToDirect( profileAngle, aSide ) );
-  
-  size_t correctSize = 2;
+	EXPECT_EQ( 0.125, aEnclosure->directToDirect( profileAngle, aSide ) );
 
-  EXPECT_EQ( correctSize, aViewFactors->size() );
+	size_t correctSize = 2;
 
-  // Create correct results
-  vector< BeamViewFactor > correctResults;
+	EXPECT_EQ( correctSize, aViewFactors->size() );
 
-  size_t enclosureIndex = 0;
-  size_t segmentIndex = 2;
-  double viewFactor = 0.5;
-  double percentHit = 0.8;
-  BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF1 );
+	// Create correct results
+	vector< BeamViewFactor > correctResults;
 
-  enclosureIndex = 0;
-  segmentIndex = 0;
-  viewFactor = 0.375;
-  percentHit = 1;
-  BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF2 );
+	size_t enclosureIndex = 0;
+	size_t segmentIndex = 2;
+	double viewFactor = 0.5;
+	double percentHit = 0.8;
+	BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF1 );
 
-  for( size_t i = 0; i < correctResults.size(); ++i ) {
-    EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
-    EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
-    EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
-    EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
-  }
+	enclosureIndex = 0;
+	segmentIndex = 0;
+	viewFactor = 0.375;
+	percentHit = 1;
+	BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF2 );
+
+	for ( size_t i = 0; i < correctResults.size(); ++i ) {
+		EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
+		EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
+		EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
+		EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
+	}
 
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam3 ) {
-  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (-45 deg)." );
+	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test incoming beam view factors and direct-direct component (-45 deg)." );
 
-  shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
-  double profileAngle = -45;
+	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	double profileAngle = -45;
 
-  /////////////////////////////////////////////////////////////
-  //  Incoming beam
-  /////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	//  Incoming beam
+	/////////////////////////////////////////////////////////////
 
-  Side aSide = Side::Front;
+	Side aSide = Side::Front;
 
-  shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
-  EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
-  
-  size_t correctSize = 3;
+	EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
 
-  EXPECT_EQ( correctSize, aViewFactors->size() );
+	size_t correctSize = 3;
 
-  // Create correct results
-  vector< BeamViewFactor > correctResults;
+	EXPECT_EQ( correctSize, aViewFactors->size() );
 
-  size_t enclosureIndex = 0;
-  size_t segmentIndex = 2;
-  double viewFactor = 0.125;
-  double percentHit = 0.16666666666666666;
-  BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF1 );
+	// Create correct results
+	vector< BeamViewFactor > correctResults;
 
-  enclosureIndex = 0;
-  segmentIndex = 1;
-  viewFactor = 0.25;
-  percentHit = 1;
-  BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF2 );
+	size_t enclosureIndex = 0;
+	size_t segmentIndex = 2;
+	double viewFactor = 0.125;
+	double percentHit = 0.16666666666666666;
+	BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF1 );
 
-  enclosureIndex = 0;
-  segmentIndex = 0;
-  viewFactor = 0.625;
-  percentHit = 1;
-  BeamViewFactor aVF3 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF3 );
+	enclosureIndex = 0;
+	segmentIndex = 1;
+	viewFactor = 0.25;
+	percentHit = 1;
+	BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF2 );
 
-  for( size_t i = 0; i < correctResults.size(); ++i ) {
-    EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
-    EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
-    EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
-    EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
-  }
+	enclosureIndex = 0;
+	segmentIndex = 0;
+	viewFactor = 0.625;
+	percentHit = 1;
+	BeamViewFactor aVF3 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF3 );
+
+	for ( size_t i = 0; i < correctResults.size(); ++i ) {
+		EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
+		EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
+		EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
+		EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
+	}
 
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam4 ) {
-  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (45 deg)." );
+	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (45 deg)." );
 
-  shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
-  double profileAngle = 45;
+	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	double profileAngle = 45;
 
-  /////////////////////////////////////////////////////////////
-  //  Outgoing beam
-  /////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	//  Outgoing beam
+	/////////////////////////////////////////////////////////////
 
-  Side aSide = Side::Back;
+	Side aSide = Side::Back;
 
-  shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
-  EXPECT_EQ( 1, aEnclosure->directToDirect( profileAngle, aSide ) );
-  
-  size_t correctSize = 0;
+	EXPECT_EQ( 1, aEnclosure->directToDirect( profileAngle, aSide ) );
 
-  EXPECT_EQ( correctSize, aViewFactors->size() );
+	size_t correctSize = 0;
+
+	EXPECT_EQ( correctSize, aViewFactors->size() );
 
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam5 ) {
-  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (0 deg)." );
+	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (0 deg)." );
 
-  shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
-  double profileAngle = 0;
+	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	double profileAngle = 0;
 
-  /////////////////////////////////////////////////////////////
-  //  Outgoing beam
-  /////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	//  Outgoing beam
+	/////////////////////////////////////////////////////////////
 
-  Side aSide = Side::Back;
+	Side aSide = Side::Back;
 
-  shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
-  EXPECT_NEAR( 1.0 / 7.0, aEnclosure->directToDirect( profileAngle, aSide ), 1e-6 );
-  
-  size_t correctSize = 3;
+	EXPECT_NEAR( 1.0 / 7.0, aEnclosure->directToDirect( profileAngle, aSide ), 1e-6 );
 
-  EXPECT_EQ( correctSize, aViewFactors->size() );
+	size_t correctSize = 3;
 
-  // Create correct results
-  vector< BeamViewFactor > correctResults;
+	EXPECT_EQ( correctSize, aViewFactors->size() );
 
-  size_t enclosureIndex = 1;
-  size_t segmentIndex = 2;
-  double viewFactor = 2.0 / 7.0;
-  double percentHit = 1;
-  BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF1 );
+	// Create correct results
+	vector< BeamViewFactor > correctResults;
 
-  enclosureIndex = 1;
-  segmentIndex = 1;
-  viewFactor = 3.0 / 7.0;
-  percentHit = 1;
-  BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF2 );
+	size_t enclosureIndex = 1;
+	size_t segmentIndex = 2;
+	double viewFactor = 2.0 / 7.0;
+	double percentHit = 1;
+	BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF1 );
 
-  enclosureIndex = 1;
-  segmentIndex = 0;
-  viewFactor = 1.0 / 7.0;
-  percentHit = 1;
-  BeamViewFactor aVF3 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF3 );
+	enclosureIndex = 1;
+	segmentIndex = 1;
+	viewFactor = 3.0 / 7.0;
+	percentHit = 1;
+	BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF2 );
 
-  for( size_t i = 0; i < correctResults.size(); ++i ) {
-    EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
-    EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
-    EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
-    EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
-  }
+	enclosureIndex = 1;
+	segmentIndex = 0;
+	viewFactor = 1.0 / 7.0;
+	percentHit = 1;
+	BeamViewFactor aVF3 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF3 );
+
+	for ( size_t i = 0; i < correctResults.size(); ++i ) {
+		EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
+		EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
+		EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
+		EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
+	}
 
 }
 
 TEST_F( TestEnclosure2DBeam1, Enclosure2DBeam6 ) {
-  SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (-45 deg)." );
+	SCOPED_TRACE( "Begin Test: 2D Enclosure - Test outgoing beam view factors and direct-direct component (-45 deg)." );
 
-  shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
-  double profileAngle = -45;
+	shared_ptr< CGeometry2DBeam > aEnclosure = getEnclosure();
+	double profileAngle = -45;
 
-  /////////////////////////////////////////////////////////////
-  //  Outgoing beam
-  /////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	//  Outgoing beam
+	/////////////////////////////////////////////////////////////
 
-  Side aSide = Side::Back;
+	Side aSide = Side::Back;
 
-  shared_ptr< vector < BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
+	shared_ptr< vector< BeamViewFactor > > aViewFactors = aEnclosure->beamViewFactors( profileAngle, aSide );
 
-  EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
-  
-  size_t correctSize = 2;
+	EXPECT_EQ( 0.0, aEnclosure->directToDirect( profileAngle, aSide ) );
 
-  EXPECT_EQ( correctSize, aViewFactors->size() );
+	size_t correctSize = 2;
 
-  // Create correct results
-  vector< BeamViewFactor > correctResults;
+	EXPECT_EQ( correctSize, aViewFactors->size() );
 
-  size_t enclosureIndex = 1;
-  size_t segmentIndex = 2;
-  double viewFactor = 0.8;
-  double percentHit = 1;
-  BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF1 );
+	// Create correct results
+	vector< BeamViewFactor > correctResults;
 
-  enclosureIndex = 1;
-  segmentIndex = 1;
-  viewFactor = 0.2;
-  percentHit = 1;
-  BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
-  correctResults.push_back( aVF2 );
+	size_t enclosureIndex = 1;
+	size_t segmentIndex = 2;
+	double viewFactor = 0.8;
+	double percentHit = 1;
+	BeamViewFactor aVF1 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF1 );
 
-  for( size_t i = 0; i < correctResults.size(); ++i ) {
-    EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
-    EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
-    EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
-    EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
-  }
+	enclosureIndex = 1;
+	segmentIndex = 1;
+	viewFactor = 0.2;
+	percentHit = 1;
+	BeamViewFactor aVF2 = BeamViewFactor( enclosureIndex, segmentIndex, viewFactor, percentHit );
+	correctResults.push_back( aVF2 );
+
+	for ( size_t i = 0; i < correctResults.size(); ++i ) {
+		EXPECT_EQ( correctResults[i].enclosureIndex, ( *aViewFactors )[i].enclosureIndex );
+		EXPECT_EQ( correctResults[i].segmentIndex, ( *aViewFactors )[i].segmentIndex );
+		EXPECT_NEAR( correctResults[i].value, ( *aViewFactors )[i].value, 1e-6 );
+		EXPECT_NEAR( correctResults[i].percentHit, ( *aViewFactors )[i].percentHit, 1e-6 );
+	}
 
 }

@@ -1,5 +1,4 @@
 #include <memory>
-#include <algorithm>
 #include <gtest/gtest.h>
 
 #include "WCECommon.hpp"
@@ -13,7 +12,7 @@ private:
   shared_ptr< CSeries > m_Series;
 
 protected:
-  virtual void SetUp() {
+	void SetUp() override {
     m_Series = make_shared< CSeries >();
 
     m_Series->addProperty( 0.500,  0.5511 );

@@ -12,542 +12,544 @@ using namespace SpectralAveraging;
 class TestCircularPerforatedShadeMultiWavelength : public testing::Test {
 
 private:
-  shared_ptr< CBSDFLayer > m_Layer;
+	shared_ptr< CBSDFLayer > m_Layer;
 
 protected:
-  virtual void SetUp() {
-    // Solar range material
-    double Tmat = 0.1;
-    double Rfmat = 0.7;
-    double Rbmat = 0.7;
-    double minLambda = 0.3;
-    double maxLambda = 2.5;
-    shared_ptr< CMaterial > aSolarRangeMaterial = 
-      make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+	virtual void SetUp() {
+		// Solar range material
+		double Tmat = 0.1;
+		double Rfmat = 0.7;
+		double Rbmat = 0.7;
+		double minLambda = 0.3;
+		double maxLambda = 2.5;
+		shared_ptr< CMaterial > aSolarRangeMaterial =
+			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
-    // Visible range
-    Tmat = 0.2;
-    Rfmat = 0.6;
-    Rbmat = 0.6;
-    minLambda = 0.38;
-    maxLambda = 0.78;
-    shared_ptr< CMaterial > aVisibleRangeMaterial = 
-      make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		// Visible range
+		Tmat = 0.2;
+		Rfmat = 0.6;
+		Rbmat = 0.6;
+		minLambda = 0.38;
+		maxLambda = 0.78;
+		shared_ptr< CMaterial > aVisibleRangeMaterial =
+			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
-    double ratio = 0.49;
+		double ratio = 0.49;
 
-    shared_ptr< CMaterial > aMaterial = 
-      make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
+		shared_ptr< CMaterial > aMaterial =
+			make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 
-    // make cell geometry
-    double x = 22.5; // mm
-    double y = 38.1; // mm
-    double thickness = 5; // mm
-    double radius = 8.35; // mm
-    shared_ptr< ICellDescription > aCellDescription = 
-      make_shared< CCircularCellDescription >( x, y, thickness, radius );
+		// make cell geometry
+		double x = 22.5; // mm
+		double y = 38.1; // mm
+		double thickness = 5; // mm
+		double radius = 8.35; // mm
+		shared_ptr< ICellDescription > aCellDescription =
+			make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-    shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-    // make layer
-    CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
-    m_Layer = aMaker.getLayer();
+		// make layer
+		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
+		m_Layer = aMaker.getLayer();
 
-  }
+	}
 
 public:
-  shared_ptr< CBSDFLayer > getLayer() { return m_Layer; };
+	shared_ptr< CBSDFLayer > getLayer() {
+		return m_Layer;
+	};
 
 };
 
 TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWavelength ) {
-  SCOPED_TRACE( "Begin Test: Perforated layer (multi range) - BSDF." );
-  
-  shared_ptr< CBSDFLayer > aLayer = getLayer();
+	SCOPED_TRACE( "Begin Test: Perforated layer (multi range) - BSDF." );
 
-  shared_ptr< vector< shared_ptr< CBSDFIntegrator > > > aResults = aLayer->getWavelengthResults();
-  
-  size_t correctSize = 4;
+	shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-  EXPECT_EQ( correctSize, aResults->size() );
+	shared_ptr< vector< shared_ptr< CBSDFIntegrator > > > aResults = aLayer->getWavelengthResults();
 
-  ///////////////////////////////////////////////////////////////////////
-  //  Wavelength number 1
-  ///////////////////////////////////////////////////////////////////////
+	size_t correctSize = 4;
 
-  shared_ptr< CSquareMatrix > aT = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::T );
+	EXPECT_EQ( correctSize, aResults->size() );
 
-  // Test only diagonal of transmittance matrix
-  size_t size = aT->getSize();
+	///////////////////////////////////////////////////////////////////////
+	//  Wavelength number 1
+	///////////////////////////////////////////////////////////////////////
 
-  vector< double > correctResults;
-  correctResults.push_back( 3.323538 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 3.233753 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 2.598526 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 1.952399 );
-  correctResults.push_back( 0.000000 );
-  correctResults.push_back( 0.000000 );
-  correctResults.push_back( 0.000000 );
-  correctResults.push_back( 0.000000 );
-  correctResults.push_back( 0.000000 );
-  correctResults.push_back( 0.000000 );
-  correctResults.push_back( 0.000000 );
-  correctResults.push_back( 0.000000 );
+	shared_ptr< CSquareMatrix > aT = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::T );
 
-  vector< double > calculatedResults;
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aT)[i][i] );
-  }
+	// Test only diagonal of transmittance matrix
+	size_t size = aT->getSize();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
-  }
+	vector< double > correctResults;
+	correctResults.push_back( 3.323538 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 3.233753 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 2.598526 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 1.952399 );
+	correctResults.push_back( 0.000000 );
+	correctResults.push_back( 0.000000 );
+	correctResults.push_back( 0.000000 );
+	correctResults.push_back( 0.000000 );
+	correctResults.push_back( 0.000000 );
+	correctResults.push_back( 0.000000 );
+	correctResults.push_back( 0.000000 );
+	correctResults.push_back( 0.000000 );
 
-  // Front reflectance
-  shared_ptr< CSquareMatrix > aRf = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::R );
+	vector< double > calculatedResults;
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aT )[ i ][ i ] );
+	}
 
-  correctResults.clear();
-  calculatedResults.clear();
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
+	}
 
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
-  correctResults.push_back( 0 );
+	// Front reflectance
+	shared_ptr< CSquareMatrix > aRf = ( *aResults )[ 0 ]->getMatrix( Side::Front, PropertySimple::R );
 
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aRf)[i][i] );
-  }
+	correctResults.clear();
+	calculatedResults.clear();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
-  }
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
+	correctResults.push_back( 0 );
 
-  ///////////////////////////////////////////////////////////////////////
-  //  Wavelength number 2
-  ///////////////////////////////////////////////////////////////////////
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aRf )[ i ][ i ] );
+	}
 
-  aT = ( *aResults )[ 1 ]->getMatrix( Side::Front, PropertySimple::T );
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
+	}
 
-  // Test only diagonal of transmittance matrix
-  size = aT->getSize();
+	///////////////////////////////////////////////////////////////////////
+	//  Wavelength number 2
+	///////////////////////////////////////////////////////////////////////
 
-  correctResults.clear();
-  calculatedResults.clear();
+	aT = ( *aResults )[ 1 ]->getMatrix( Side::Front, PropertySimple::T );
 
-  correctResults.push_back( 3.324467 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
+	// Test only diagonal of transmittance matrix
+	size = aT->getSize();
 
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aT )[ i ][ i ] );
-  }
+	correctResults.clear();
+	calculatedResults.clear();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
-  }
+	correctResults.push_back( 3.324467 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
 
-  // Front reflectance
-  aRf = ( *aResults )[ 1 ]->getMatrix( Side::Front, PropertySimple::R );
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aT )[ i ][ i ] );
+	}
 
-  correctResults.clear();
-  calculatedResults.clear();
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
+	}
 
-  correctResults.push_back( 0.188652 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
+	// Front reflectance
+	aRf = ( *aResults )[ 1 ]->getMatrix( Side::Front, PropertySimple::R );
 
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aRf)[i][i] );
-  }
+	correctResults.clear();
+	calculatedResults.clear();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
-  }
+	correctResults.push_back( 0.188652 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
 
-  ///////////////////////////////////////////////////////////////////////
-  //  Wavelength number 3
-  ///////////////////////////////////////////////////////////////////////
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aRf )[ i ][ i ] );
+	}
 
-  aT = ( *aResults )[ 2 ]->getMatrix( Side::Front, PropertySimple::T );
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
+	}
 
-  // Test only diagonal of transmittance matrix
-  size = aT->getSize();
+	///////////////////////////////////////////////////////////////////////
+	//  Wavelength number 3
+	///////////////////////////////////////////////////////////////////////
 
-  correctResults.clear();
-  calculatedResults.clear();
+	aT = ( *aResults )[ 2 ]->getMatrix( Side::Front, PropertySimple::T );
 
-  correctResults.push_back( 3.370933 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 3.282731 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.649460 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 2.006498 );
-  correctResults.push_back( 0.063662 );
-  correctResults.push_back( 0.063662 );
-  correctResults.push_back( 0.063662 );
-  correctResults.push_back( 0.063662 );
-  correctResults.push_back( 0.063662 );
-  correctResults.push_back( 0.063662 );
-  correctResults.push_back( 0.063662 );
-  correctResults.push_back( 0.063662 );
+	// Test only diagonal of transmittance matrix
+	size = aT->getSize();
 
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aT )[ i ][ i ] );
-  }
+	correctResults.clear();
+	calculatedResults.clear();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
-  }
+	correctResults.push_back( 3.370933 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 3.282731 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.649460 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 2.006498 );
+	correctResults.push_back( 0.063662 );
+	correctResults.push_back( 0.063662 );
+	correctResults.push_back( 0.063662 );
+	correctResults.push_back( 0.063662 );
+	correctResults.push_back( 0.063662 );
+	correctResults.push_back( 0.063662 );
+	correctResults.push_back( 0.063662 );
+	correctResults.push_back( 0.063662 );
 
-  // Front reflectance
-  aRf = ( *aResults )[ 2 ]->getMatrix( Side::Front, PropertySimple::R );
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aT )[ i ][ i ] );
+	}
 
-  correctResults.clear();
-  calculatedResults.clear();
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
+	}
 
-  correctResults.push_back( 0.142186 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.146934 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.152802 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.162296 );
-  correctResults.push_back( 0.190986 );
-  correctResults.push_back( 0.190986 );
-  correctResults.push_back( 0.190986 );
-  correctResults.push_back( 0.190986 );
-  correctResults.push_back( 0.190986 );
-  correctResults.push_back( 0.190986 );
-  correctResults.push_back( 0.190986 );
-  correctResults.push_back( 0.190986 );
+	// Front reflectance
+	aRf = ( *aResults )[ 2 ]->getMatrix( Side::Front, PropertySimple::R );
 
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aRf)[i][i] );
-  }
+	correctResults.clear();
+	calculatedResults.clear();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
-  }
+	correctResults.push_back( 0.142186 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.146934 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.152802 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.162296 );
+	correctResults.push_back( 0.190986 );
+	correctResults.push_back( 0.190986 );
+	correctResults.push_back( 0.190986 );
+	correctResults.push_back( 0.190986 );
+	correctResults.push_back( 0.190986 );
+	correctResults.push_back( 0.190986 );
+	correctResults.push_back( 0.190986 );
+	correctResults.push_back( 0.190986 );
 
-  ///////////////////////////////////////////////////////////////////////
-  //  Wavelength number 4
-  ///////////////////////////////////////////////////////////////////////
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aRf )[ i ][ i ] );
+	}
 
-  aT = ( *aResults )[ 3 ]->getMatrix( Side::Front, PropertySimple::T );
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
+	}
 
-  // Test only diagonal of transmittance matrix
-  size = aT->getSize();
+	///////////////////////////////////////////////////////////////////////
+	//  Wavelength number 4
+	///////////////////////////////////////////////////////////////////////
 
-  correctResults.clear();
-  calculatedResults.clear();
+	aT = ( *aResults )[ 3 ]->getMatrix( Side::Front, PropertySimple::T );
 
-  correctResults.push_back( 3.324467 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 3.234714 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 2.599525 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 1.953460 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
-  correctResults.push_back( 0.001248 );
+	// Test only diagonal of transmittance matrix
+	size = aT->getSize();
 
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( (*aT)[i][i] );
-  }
+	correctResults.clear();
+	calculatedResults.clear();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
-  }
+	correctResults.push_back( 3.324467 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 3.234714 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 2.599525 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 1.953460 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
+	correctResults.push_back( 0.001248 );
 
-  // Front reflectance
-  aRf = ( *aResults )[ 3 ]->getMatrix( Side::Front, PropertySimple::R );
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aT )[ i ][ i ] );
+	}
 
-  correctResults.clear();
-  calculatedResults.clear();
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
+	}
 
-  correctResults.push_back( 0.188652 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.194951 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.202737 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.215334 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
-  correctResults.push_back( 0.253400 );
+	// Front reflectance
+	aRf = ( *aResults )[ 3 ]->getMatrix( Side::Front, PropertySimple::R );
 
-  for( size_t i = 0; i < size; ++i ) {
-    calculatedResults.push_back( ( *aRf )[ i ][ i ] );
-  }
+	correctResults.clear();
+	calculatedResults.clear();
 
-  EXPECT_EQ( correctResults.size(), calculatedResults.size() );
-  for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
-  }
+	correctResults.push_back( 0.188652 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.194951 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.202737 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.215334 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+	correctResults.push_back( 0.253400 );
+
+	for ( size_t i = 0; i < size; ++i ) {
+		calculatedResults.push_back( ( *aRf )[ i ][ i ] );
+	}
+
+	EXPECT_EQ( correctResults.size(), calculatedResults.size() );
+	for ( size_t i = 0; i < size; ++i ) {
+		EXPECT_NEAR( correctResults[ i ], calculatedResults[ i ], 1e-5 );
+	}
 
 }

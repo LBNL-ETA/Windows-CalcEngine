@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include "UniformDiffuseCell.hpp"
 #include "MaterialDescription.hpp"
 #include "CellDescription.hpp"

@@ -5,16 +5,16 @@
 
 namespace FenestrationCommon {
 
-  class PolynomialFit {
-  public:
-    explicit PolynomialFit( std::size_t const t_Order );
+	class PolynomialFit {
+	public:
+		explicit PolynomialFit( std::size_t const t_Order );
 
-    // Get polynomial fit for given coefficients
-    std::vector< double > getCoefficients( std::vector< std::pair< double, double > > t_Table ) const;
+		// Get polynomial fit for given coefficients
+		std::vector< double > getCoefficients( std::vector< std::pair< double, double > > t_Table ) const;
 
-  private:
-    std::size_t m_Order;
-  };
+	private:
+		std::size_t m_Order;
+	};
 
 }
 

@@ -6,17 +6,17 @@
 
 namespace SingleLayerOptics {
 
-  class CBSDFPhiAngles {
-  public:
-    explicit CBSDFPhiAngles( const size_t t_NumOfPhis );
+	class CBSDFPhiAngles {
+	public:
+		explicit CBSDFPhiAngles( const size_t t_NumOfPhis );
 
-    std::shared_ptr< std::vector< double > > phiAngles() const;
+		std::shared_ptr< std::vector< double > > phiAngles() const;
 
-  private:
-    void createPhis( const size_t t_NumOfPhis );
+	private:
+		void createPhis( const size_t t_NumOfPhis );
 
-    std::shared_ptr< std::vector< double > > m_PhiAngles;
-  };
+		std::shared_ptr< std::vector< double > > m_PhiAngles;
+	};
 
 }
 

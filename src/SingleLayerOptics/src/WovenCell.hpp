@@ -7,45 +7,45 @@
 
 namespace SingleLayerOptics {
 
-  class CWovenCellDescription;
-  class ICellDescription;
-  class CBeamDirection;
+	class CWovenCellDescription;
+	class ICellDescription;
+	class CBeamDirection;
 
-  class CWovenBase : public CUniformDiffuseCell {
-  public:
-    CWovenBase( const std::shared_ptr< CMaterial >& t_MaterialProperties, 
-      const std::shared_ptr< ICellDescription >& t_Cell );
-    
-  protected:
-    std::shared_ptr< CWovenCellDescription > getCellAsWoven() const;
-  };
+	class CWovenBase : public CUniformDiffuseCell {
+	public:
+		CWovenBase( const std::shared_ptr< CMaterial >& t_MaterialProperties,
+		            const std::shared_ptr< ICellDescription >& t_Cell );
 
-  class CWovenCell : public CWovenBase {
-  public:
-    CWovenCell( const std::shared_ptr< CMaterial >& t_MaterialProperties, 
-        const std::shared_ptr< ICellDescription >& t_Cell );
+	protected:
+		std::shared_ptr< CWovenCellDescription > getCellAsWoven() const;
+	};
 
-    double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
-    double T_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
-    double R_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+	class CWovenCell : public CWovenBase {
+	public:
+		CWovenCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
+		            const std::shared_ptr< ICellDescription >& t_Cell );
 
-    std::vector< double > T_dir_dir_band( const FenestrationCommon::Side t_Side,
-      const CBeamDirection& t_Direction );
-    std::vector< double > T_dir_dif_band( const FenestrationCommon::Side t_Side,
-      const CBeamDirection& t_Direction );
-    std::vector< double > R_dir_dif_band( const FenestrationCommon::Side t_Side,
-      const CBeamDirection& t_Direction );
+		double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+		double T_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
+		double R_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
-  private:
-    double Tscatter_single( const FenestrationCommon::Side t_Side, 
-      const CBeamDirection& t_Direction );
-    std::vector< double > Tscatter_range( const FenestrationCommon::Side t_Side,
-      const CBeamDirection& t_Direction );
+		std::vector< double > T_dir_dir_band( const FenestrationCommon::Side t_Side,
+		                                      const CBeamDirection& t_Direction );
+		std::vector< double > T_dir_dif_band( const FenestrationCommon::Side t_Side,
+		                                      const CBeamDirection& t_Direction );
+		std::vector< double > R_dir_dif_band( const FenestrationCommon::Side t_Side,
+		                                      const CBeamDirection& t_Direction );
 
-    // Calculates scattered part of reflection from woven
-    double Tscatter( const CBeamDirection& t_Direction, const double Rmat );
+	private:
+		double Tscatter_single( const FenestrationCommon::Side t_Side,
+		                        const CBeamDirection& t_Direction );
+		std::vector< double > Tscatter_range( const FenestrationCommon::Side t_Side,
+		                                      const CBeamDirection& t_Direction );
 
-  };
+		// Calculates scattered part of reflection from woven
+		double Tscatter( const CBeamDirection& t_Direction, const double Rmat );
+
+	};
 
 }
 

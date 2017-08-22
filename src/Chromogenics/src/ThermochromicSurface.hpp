@@ -8,31 +8,31 @@
 
 namespace FenestrationCommon {
 
-  class IInterpolation2D;
+	class IInterpolation2D;
 
 }
 
 namespace Chromogenics {
 
-  class CThermochromicSurface : public Tarcog::ISurface {
-  public:
-    CThermochromicSurface( std::vector< std::pair< double, double > > const& t_Emissivity, 
-      std::vector< std::pair< double, double > > const& t_Transmittance );
-    CThermochromicSurface( double const& t_Emissivity,
-      std::vector< std::pair< double, double > > const& t_Transmittance );
-    CThermochromicSurface( std::vector< std::pair< double, double > > const& t_Emissivity,
-      double const& t_Transmittance );
-    
-    CThermochromicSurface( CThermochromicSurface const& t_Surface );
+	class CThermochromicSurface : public Tarcog::ISurface {
+	public:
+		CThermochromicSurface( std::vector< std::pair< double, double > > const& t_Emissivity,
+		                       std::vector< std::pair< double, double > > const& t_Transmittance );
+		CThermochromicSurface( double const& t_Emissivity,
+		                       std::vector< std::pair< double, double > > const& t_Transmittance );
+		CThermochromicSurface( std::vector< std::pair< double, double > > const& t_Emissivity,
+		                       double const& t_Transmittance );
 
-    std::shared_ptr< Tarcog::ISurface > clone() const override;
+		CThermochromicSurface( CThermochromicSurface const& t_Surface );
 
-    void setTemperature( double const t_Temperature ) override;
+		std::shared_ptr< Tarcog::ISurface > clone() const override;
 
-  private:
-    std::unique_ptr< FenestrationCommon::IInterpolation2D > m_EmissivityInterpolator;
-    std::unique_ptr< FenestrationCommon::IInterpolation2D > m_TransmittanceInterpolator;
-  };
+		void setTemperature( double const t_Temperature ) override;
+
+	private:
+		std::unique_ptr< FenestrationCommon::IInterpolation2D > m_EmissivityInterpolator;
+		std::unique_ptr< FenestrationCommon::IInterpolation2D > m_TransmittanceInterpolator;
+	};
 
 }
 

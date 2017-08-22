@@ -1,5 +1,3 @@
-#define _USE_MATH_DEFINES
-#include <math.h>
 #include <vector>
 
 #include "Hemispherical2DIntegrator.hpp"
@@ -11,25 +9,25 @@ using namespace std;
 
 namespace FenestrationCommon {
 
-  // Performs hemispherical 2D integration
-  CHemispherical2DIntegrator::CHemispherical2DIntegrator( CSeries const & t_Series,
-    IntegrationType const t_IntegrationType ) {
-    CSeries aResultValues = CSeries();
-    for( auto const & ser : t_Series ) {
-      auto angle = radians( ser->x() );
-      auto value = ser->value();
-      auto sinCos = sin( angle ) * cos( angle );
-      aResultValues.addProperty( angle, value * sinCos );
-    }
+	// Performs hemispherical 2D integration
+	CHemispherical2DIntegrator::CHemispherical2DIntegrator( CSeries const& t_Series,
+	                                                        IntegrationType const t_IntegrationType ) {
+		CSeries aResultValues = CSeries();
+		for ( auto const& ser : t_Series ) {
+			auto angle = radians( ser->x() );
+			auto value = ser->value();
+			auto sinCos = sin( angle ) * cos( angle );
+			aResultValues.addProperty( angle, value * sinCos );
+		}
 
-    aResultValues.sort();
+		aResultValues.sort();
 
-    auto integrated = aResultValues.integrate(t_IntegrationType );
-    m_Value = 2 * integrated->sum();
-  }
+		auto integrated = aResultValues.integrate( t_IntegrationType );
+		m_Value = 2 * integrated->sum();
+	}
 
-  double CHemispherical2DIntegrator::value() const {
-    return m_Value;
-  }
+	double CHemispherical2DIntegrator::value() const {
+		return m_Value;
+	}
 
 }

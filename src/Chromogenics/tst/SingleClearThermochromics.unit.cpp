@@ -6,7 +6,6 @@
 #include "WCEChromogenics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
 using namespace Tarcog;
 using namespace FenestrationCommon;
 using namespace Chromogenics;
@@ -14,7 +13,7 @@ using namespace Chromogenics;
 class TestSingleClearThermochromics : public testing::Test {
 
 private:
-  shared_ptr< CSystem >  m_TarcogSystem;
+  std::unique_ptr< CSystem > m_TarcogSystem;
 
 protected:
   void SetUp() override {
@@ -28,8 +27,8 @@ protected:
     auto tSky = 270; // Kelvins
     auto solarRadiation = 789;
 
-    shared_ptr< CEnvironment > Outdoor = 
-      make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
+    std::shared_ptr< CEnvironment > Outdoor = 
+      std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation, 
         airDirection, tSky, SkyModel::AllSpecified );
     ASSERT_TRUE( Outdoor != nullptr );
     Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -39,7 +38,7 @@ protected:
     /////////////////////////////////////////////////////////
 
     auto roomTemperature = 294.15;
-    shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
+    std::shared_ptr< CEnvironment > Indoor = std::make_shared< CIndoorEnvironment > ( roomTemperature, pressure );
     ASSERT_TRUE( Indoor != nullptr );
 
     /////////////////////////////////////////////////////////
@@ -52,41 +51,42 @@ protected:
     auto emissivity = 0.84;
 
     // Thermochromics property of the surface emissivity
-    vector< pair< double, double > > emissivities = {
-      make_pair( 288.15, 0.84 ),
-      make_pair( 293.15, 0.74 ),
-      make_pair( 296.15, 0.64 ),
-      make_pair( 300.15, 0.54 ),
-      make_pair( 303.15, 0.44 )
+    std::vector< std::pair< double, double > > emissivities = {
+      std::make_pair( 288.15, 0.84 ),
+      std::make_pair( 293.15, 0.74 ),
+      std::make_pair( 296.15, 0.64 ),
+      std::make_pair( 300.15, 0.54 ),
+      std::make_pair( 303.15, 0.44 )
     };
 
     // Creates thermochromic surface on indoor side with variable emissivity and constant transmittance
-    shared_ptr< ISurface > frontSurface = make_shared< CSurface >( emissivity, transmittance );
-    shared_ptr< ISurface > backSurface = make_shared< CThermochromicSurface >( emissivities, transmittance );
+    std::shared_ptr< ISurface > frontSurface = std::make_shared< CSurface >( emissivity, transmittance );
+    std::shared_ptr< ISurface > backSurface = std::make_shared< CThermochromicSurface >( emissivities, transmittance );
     // shared_ptr< ISurface > backSurface = make_shared< CSurface >( 0.61350442289072993, transmittance );
 
-    auto aSolidLayer = make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance, 
+    auto aSolidLayer = std::make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance, 
       frontSurface, backSurface );
     ASSERT_TRUE( aSolidLayer != nullptr );
     aSolidLayer->setSolarAbsorptance( 0.094189159572 );
 
     auto windowWidth = 1;
     auto windowHeight = 1;
-    auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+    auto aIGU = std::make_shared< CIGU >( windowWidth, windowHeight );
     ASSERT_TRUE( aIGU != nullptr );
     aIGU->addLayer( aSolidLayer );
 
     /////////////////////////////////////////////////////////
     // System
     /////////////////////////////////////////////////////////
-    m_TarcogSystem = make_shared< CSystem >( aIGU, Indoor, Outdoor );
+		// TODO: This need to be changed. C++11 does not support make_unique
+    m_TarcogSystem = std::unique_ptr< CSystem >( new CSystem( aIGU, Indoor, Outdoor ) );
     ASSERT_TRUE( m_TarcogSystem != nullptr );
 
     // m_TarcogSystem->solve();
   }
 
 public:
-  shared_ptr< CSystem > GetSystem() const { return m_TarcogSystem; };
+  CSystem* GetSystem() const { return m_TarcogSystem.get(); };
 
 };
 
@@ -107,7 +107,7 @@ TEST_F( TestSingleClearThermochromics, Test1 ) {
   EXPECT_NEAR( emissivity, 0.610863, 1e-5 );
 
   auto Temperature = *aSystem->getTemperatures( System::Uvalue );
-  vector< double > correctTemperature = { 297.313984, 297.261756 };
+  std::vector< double > correctTemperature = { 297.313984, 297.261756 };
   ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
   for( auto i = 0u; i < correctTemperature.size(); ++i ) {
@@ -115,7 +115,7 @@ TEST_F( TestSingleClearThermochromics, Test1 ) {
   }
 
   auto Radiosity = *aSystem->getRadiosities( System::Uvalue );
-  vector< double > correctRadiosity = { 432.979711, 435.605837 };
+  std::vector< double > correctRadiosity = { 432.979711, 435.605837 };
   ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
   for( auto i = 0u; i < correctRadiosity.size(); ++i ) {
