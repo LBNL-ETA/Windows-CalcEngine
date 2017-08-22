@@ -10,7 +10,7 @@ namespace FenestrationCommon {
 	// IInterpolation2D
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	IInterpolation2D::IInterpolation2D( vector< pair< double, double > > const& t_Points ) :
+	IInterpolation2D::IInterpolation2D( std::vector< pair< double, double > > const& t_Points ) :
 		m_Points( t_Points ) {
 
 	}
@@ -19,7 +19,7 @@ namespace FenestrationCommon {
 	// CSPChipInterpolation2D
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	CSPChipInterpolation2D::CSPChipInterpolation2D( vector< pair< double, double > > const& t_Points ) :
+	CSPChipInterpolation2D::CSPChipInterpolation2D( std::vector< pair< double, double > > const& t_Points ) :
 		IInterpolation2D( t_Points ) {
 		m_Hs = calculateHs();
 		m_Deltas = calculateDeltas();

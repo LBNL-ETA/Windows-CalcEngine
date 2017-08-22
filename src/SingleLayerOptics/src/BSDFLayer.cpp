@@ -12,8 +12,8 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics {
 
-	CBSDFLayer::CBSDFLayer( const shared_ptr< CBaseCell >& t_Cell,
-	                        const shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) :
+	CBSDFLayer::CBSDFLayer( const std::shared_ptr< CBaseCell >& t_Cell,
+	                        const std::shared_ptr< const CBSDFHemisphere >& t_Hemisphere ) :
 		m_BSDFHemisphere( t_Hemisphere ), m_Cell( t_Cell ), m_Calculated( false ), m_CalculatedWV( false ) {
 
 		// TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
@@ -21,17 +21,17 @@ namespace SingleLayerOptics {
 		m_Results = make_shared< CBSDFIntegrator >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
 	}
 
-	void CBSDFLayer::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	void CBSDFLayer::setSourceData( std::shared_ptr< CSeries > t_SourceData ) {
 		m_Cell->setSourceData( t_SourceData );
 		m_Calculated = false;
 		m_CalculatedWV = false;
 	}
 
-	shared_ptr< const CBSDFDirections > CBSDFLayer::getDirections( const BSDFHemisphere t_Side ) const {
+	std::shared_ptr< const CBSDFDirections > CBSDFLayer::getDirections( const BSDFHemisphere t_Side ) const {
 		return m_BSDFHemisphere->getDirections( t_Side );
 	}
 
-	shared_ptr< CBSDFIntegrator > CBSDFLayer::getResults() {
+	std::shared_ptr< CBSDFIntegrator > CBSDFLayer::getResults() {
 		if ( !m_Calculated ) {
 			calculate();
 			m_Calculated = true;
@@ -39,7 +39,7 @@ namespace SingleLayerOptics {
 		return m_Results;
 	}
 
-	shared_ptr< BSDF_Results > CBSDFLayer::getWavelengthResults() {
+	std::shared_ptr< BSDF_Results > CBSDFLayer::getWavelengthResults() {
 		if ( !m_CalculatedWV ) {
 			calculate_wv();
 			m_CalculatedWV = true;
@@ -59,8 +59,8 @@ namespace SingleLayerOptics {
 		for ( Side t_Side : EnumSide() ) {
 			CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
 			size_t size = aDirections.size();
-			shared_ptr< CSquareMatrix > Tau = make_shared< CSquareMatrix >( size );
-			shared_ptr< CSquareMatrix > Rho = make_shared< CSquareMatrix >( size );
+			std::shared_ptr< CSquareMatrix > Tau = make_shared< CSquareMatrix >( size );
+			std::shared_ptr< CSquareMatrix > Rho = make_shared< CSquareMatrix >( size );
 			for ( size_t i = 0; i < size; ++i ) {
 				const CBeamDirection aDirection = *aDirections[ i ]->centerPoint();
 				double Lambda = aDirections[ i ]->lambda();
@@ -77,7 +77,7 @@ namespace SingleLayerOptics {
 
 	void CBSDFLayer::calc_dir_dir_wv() {
 		for ( Side aSide : EnumSide() ) {
-			shared_ptr< const CBSDFDirections > aDirections =
+			std::shared_ptr< const CBSDFDirections > aDirections =
 				m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
 			size_t size = aDirections->size();
 			for ( size_t i = 0; i < size; ++i ) {
@@ -85,8 +85,8 @@ namespace SingleLayerOptics {
 				vector< double > aTau = m_Cell->T_dir_dir_band( aSide, aDirection );
 				vector< double > aRho = m_Cell->R_dir_dir_band( aSide, aDirection );
 				double Lambda = ( *aDirections )[ i ]->lambda();
-				shared_ptr< CSquareMatrix > Tau = nullptr;
-				shared_ptr< CSquareMatrix > Rho = nullptr;
+				std::shared_ptr< CSquareMatrix > Tau = nullptr;
+				std::shared_ptr< CSquareMatrix > Rho = nullptr;
 				size_t numWV = aTau.size();
 				for ( size_t j = 0; j < numWV; ++j ) {
 					CBSDFIntegrator aResults = *( *m_WVResults )[ j ];
@@ -126,11 +126,11 @@ namespace SingleLayerOptics {
 	}
 
 	void CBSDFLayer::fillWLResultsFromMaterialCell() {
-		m_WVResults = make_shared< vector< shared_ptr< CBSDFIntegrator > > >();
+		m_WVResults = make_shared< std::vector< std::shared_ptr< CBSDFIntegrator > > >();
 		size_t size = m_Cell->getBandSize();
 		for ( size_t i = 0; i < size; ++i ) {
-			shared_ptr< CBSDFIntegrator > aResults =
-				make_shared< CBSDFIntegrator >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
+			std::shared_ptr< CBSDFIntegrator > aResults =
+				std::make_shared< CBSDFIntegrator >( m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming ) );
 			m_WVResults->push_back( aResults );
 		}
 	}

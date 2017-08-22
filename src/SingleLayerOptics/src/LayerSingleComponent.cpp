@@ -22,12 +22,12 @@ namespace SingleLayerOptics {
 	}
 
 	double CLayerSingleComponent::getProperty( const Property t_Property, const Side t_Side ) const {
-		shared_ptr< CSurface > aSurface = getSurface( t_Side );
+		std::shared_ptr< CSurface > aSurface = getSurface( t_Side );
 		assert( aSurface != nullptr );
 		return aSurface->getProperty( t_Property );
 	}
 
-	shared_ptr< CSurface > CLayerSingleComponent::getSurface( const Side t_Side ) const {
+	std::shared_ptr< CSurface > CLayerSingleComponent::getSurface( const Side t_Side ) const {
 		return m_Surface.at( t_Side );
 	}
 

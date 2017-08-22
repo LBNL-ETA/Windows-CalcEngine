@@ -17,9 +17,9 @@ using namespace MultiLayerOptics;
 class MultiPaneScattered_102_103 : public testing::Test {
 
 private:
-	shared_ptr< CMultiLayerScattered > m_Layer;
+	std::shared_ptr< CMultiLayerScattered > m_Layer;
 
-	shared_ptr< CSeries > loadSolarRadiationFile() const {
+	std::shared_ptr< CSeries > loadSolarRadiationFile() const {
 
 		auto aSolarRadiation = make_shared< CSeries >();
 
@@ -149,7 +149,7 @@ private:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() const {
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() const {
 		auto aMeasurements_102 = make_shared< CSpectralSampleData >();
 
 		aMeasurements_102->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
@@ -268,7 +268,7 @@ private:
 
 	}
 
-	shared_ptr< CSpectralSampleData > loadSampleData_NFRC_103() const {
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_103() const {
 		auto aMeasurements_103 = make_shared< CSpectralSampleData >();
 		aMeasurements_103->addRecord( 0.300, 0.0000, 0.0470, 0.0490 );
 		aMeasurements_103->addRecord( 0.305, 0.0050, 0.0470, 0.0490 );
@@ -397,10 +397,10 @@ protected:
 
 		// Create material from samples
 		auto thickness = 3.048e-3; // [m]
-		shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample_102,
+		std::shared_ptr< CMaterial > aMaterial_102 = make_shared< CMaterialSample >( aSample_102,
 		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 		thickness = 5.715e-3; // [m]
-		shared_ptr< CMaterial > aMaterial_103 = make_shared< CMaterialSample >( aSample_103,
+		std::shared_ptr< CMaterial > aMaterial_103 = make_shared< CMaterialSample >( aSample_103,
 		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
 		auto Layer_102 = make_shared< CScatteringLayer >( aMaterial_102 );
@@ -416,7 +416,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CMultiLayerScattered > getLayer() const {
+	std::shared_ptr< CMultiLayerScattered > getLayer() const {
 		return m_Layer;
 	};
 

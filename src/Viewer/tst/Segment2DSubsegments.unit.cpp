@@ -6,7 +6,7 @@
 
 #include "WCEViewer.hpp"
 
-using namespace std;
+
 using namespace Viewer;
 
 class TestSegment2DSubsegments : public testing::Test {
@@ -21,21 +21,21 @@ protected:
 TEST_F( TestSegment2DSubsegments, Segment2DTest1 ) {
 	SCOPED_TRACE( "Begin Test: Segment 2D - subsegments creation." );
 
-	shared_ptr< CPoint2D > aStartPoint = make_shared< CPoint2D >( 0, 0 );
-	shared_ptr< CPoint2D > aEndPoint = make_shared< CPoint2D >( 10, 10 );
+	std::shared_ptr< CPoint2D > aStartPoint = std::make_shared< CPoint2D >( 0, 0 );
+	std::shared_ptr< CPoint2D > aEndPoint = std::make_shared< CPoint2D >( 10, 10 );
 
 	CViewSegment2D aSegment = CViewSegment2D( aStartPoint, aEndPoint );
 
-	shared_ptr< vector< shared_ptr< CViewSegment2D > > > aSubSegments = aSegment.subSegments( 4 );
+	std::shared_ptr< std::vector< std::shared_ptr< CViewSegment2D > > > aSubSegments = aSegment.subSegments( 4 );
 
-	vector< double > correctStartX = { 0, 2.5, 5, 7.5 };
-	vector< double > correctEndX = { 2.5, 5, 7.5, 10 };
+	std::vector< double > correctStartX = { 0, 2.5, 5, 7.5 };
+	std::vector< double > correctEndX = { 2.5, 5, 7.5, 10 };
 
-	vector< double > correctStartY = { 0, 2.5, 5, 7.5 };
-	vector< double > correctEndY = { 2.5, 5, 7.5, 10 };
+	std::vector< double > correctStartY = { 0, 2.5, 5, 7.5 };
+	std::vector< double > correctEndY = { 2.5, 5, 7.5, 10 };
 
 	size_t i = 0;
-	for ( shared_ptr< CViewSegment2D > aSubSegment : *aSubSegments ) {
+	for ( std::shared_ptr< CViewSegment2D > aSubSegment : *aSubSegments ) {
 		double xStart = aSubSegment->startPoint()->x();
 		double xEnd = aSubSegment->endPoint()->x();
 		double yStart = aSubSegment->startPoint()->y();
@@ -49,8 +49,8 @@ TEST_F( TestSegment2DSubsegments, Segment2DTest1 ) {
 		++i;
 	}
 
-	// shared_ptr< CSegment2D > aNormal = aSegment.getNormal();
-	// shared_ptr< const CPoint2D > aNormalPoint = aNormal->endPoint();
+	// std::shared_ptr< CSegment2D > aNormal = aSegment.getNormal();
+	// std::shared_ptr< const CPoint2D > aNormalPoint = aNormal->endPoint();
 	// double x = aNormalPoint->x();
 	// double y = aNormalPoint->y();
 	// 

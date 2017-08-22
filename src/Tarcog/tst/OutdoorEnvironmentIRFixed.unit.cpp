@@ -10,8 +10,8 @@ using namespace std;
 class TestOutdoorEnvironmentIRFixed : public testing::Test {
 
 private:
-	shared_ptr< CEnvironment > Outdoor;
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CEnvironment > Outdoor;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -37,7 +37,7 @@ protected:
 
 		auto roomTemperature = 294.15;
 
-		shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CEnvironment > GetOutdoors() const {
+	std::shared_ptr< CEnvironment > GetOutdoors() const {
 		return Outdoor;
 	};
 

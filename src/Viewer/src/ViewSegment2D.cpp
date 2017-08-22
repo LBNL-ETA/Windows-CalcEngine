@@ -5,7 +5,7 @@
 #include "Point2D.hpp"
 #include "ViewerConstants.hpp"
 
-using namespace std;
+
 
 namespace Viewer {
 
@@ -14,7 +14,7 @@ namespace Viewer {
 	                                                                                 m_Normal( nullptr ), m_NormalCalculated( false ) {
 	}
 
-	shared_ptr< const CViewSegment2D > CViewSegment2D::getNormal() {
+	std::shared_ptr< const CViewSegment2D > CViewSegment2D::getNormal() {
 		if ( !m_NormalCalculated ) {
 			calculateNormal();
 			m_NormalCalculated = true;
@@ -84,20 +84,20 @@ namespace Viewer {
 		return Shadowing( numOfInvisibles );
 	}
 
-	shared_ptr< vector< shared_ptr< CViewSegment2D > > > CViewSegment2D::subSegments( const size_t numSegments ) const {
+	std::shared_ptr< std::vector< std::shared_ptr< CViewSegment2D > > > CViewSegment2D::subSegments( const size_t numSegments ) const {
 		if ( numSegments == 0 ) {
-			throw runtime_error( "Number of subsegments must be greater than zero." );
+			throw std::runtime_error( "Number of subsegments must be greater than zero." );
 		}
-		shared_ptr< vector< shared_ptr< CViewSegment2D > > > subSegments =
-			make_shared< vector< shared_ptr< CViewSegment2D > > >();
+		std::shared_ptr< std::vector< std::shared_ptr< CViewSegment2D > > > subSegments =
+			std::make_shared< std::vector< std::shared_ptr< CViewSegment2D > > >();
 		double dX = ( m_EndPoint->x() - m_StartPoint->x() ) / numSegments;
 		double dY = ( m_EndPoint->y() - m_StartPoint->y() ) / numSegments;
 		double startX = m_StartPoint->x();
 		double startY = m_StartPoint->y();
-		shared_ptr< CPoint2D > sPoint = make_shared< CPoint2D >( startX, startY );
+		std::shared_ptr< CPoint2D > sPoint = std::make_shared< CPoint2D >( startX, startY );
 		for ( size_t i = 1; i <= numSegments; ++i ) {
-			shared_ptr< CPoint2D > ePoint = make_shared< CPoint2D >( startX + i * dX, startY + i * dY );
-			shared_ptr< CViewSegment2D > aSegment = make_shared< CViewSegment2D >( sPoint, ePoint );
+			std::shared_ptr< CPoint2D > ePoint = std::make_shared< CPoint2D >( startX + i * dX, startY + i * dY );
+			std::shared_ptr< CViewSegment2D > aSegment = std::make_shared< CViewSegment2D >( sPoint, ePoint );
 			subSegments->push_back( aSegment );
 			sPoint = ePoint;
 		}
@@ -105,9 +105,9 @@ namespace Viewer {
 		return subSegments;
 	}
 
-	shared_ptr< CViewSegment2D > CViewSegment2D::translate( const double t_x, const double t_y ) {
-		shared_ptr< CSegment2D > aSegment = CSegment2D::translate( t_x, t_y );
-		return make_shared< CViewSegment2D >( aSegment->startPoint(), aSegment->endPoint() );
+	std::shared_ptr< CViewSegment2D > CViewSegment2D::translate( const double t_x, const double t_y ) {
+		std::shared_ptr< CSegment2D > aSegment = CSegment2D::translate( t_x, t_y );
+		return std::make_shared< CViewSegment2D >( aSegment->startPoint(), aSegment->endPoint() );
 	}
 
 	PointPosition CViewSegment2D::position( CPoint2D const& t_Point ) const {
@@ -132,9 +132,9 @@ namespace Viewer {
 		assert( length() > 0 );
 		double xn = ( m_EndPoint->y() - m_StartPoint->y() ) / length();
 		double yn = ( m_StartPoint->x() - m_EndPoint->x() ) / length();
-		shared_ptr< CPoint2D > startPoint = make_shared< CPoint2D >( 0, 0 ); // normal always starts from (0, 0)
-		shared_ptr< CPoint2D > endPoint = make_shared< CPoint2D >( xn, yn );
-		m_Normal = make_shared< CViewSegment2D >( startPoint, endPoint );
+		std::shared_ptr< CPoint2D > startPoint = std::make_shared< CPoint2D >( 0, 0 ); // normal always starts from (0, 0)
+		std::shared_ptr< CPoint2D > endPoint = std::make_shared< CPoint2D >( xn, yn );
+		m_Normal = std::make_shared< CViewSegment2D >( startPoint, endPoint );
 	}
 
 }

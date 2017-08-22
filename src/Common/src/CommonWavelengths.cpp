@@ -29,8 +29,8 @@ namespace FenestrationCommon {
 		return aCombined;
 	}
 
-	vector< double > CCommonWavelengths::combineWavelegths( vector< double > const& t_wv1,
-	                                                        vector< double > const& t_wv2, Combine const t_Combination ) const {
+	vector< double > CCommonWavelengths::combineWavelegths( std::vector< double > const& t_wv1,
+	                                                        std::vector< double > const& t_wv2, Combine const t_Combination ) const {
 
 		// Set union of two wavelengths without repeating common data
 		vector< double > unionWavelengths;

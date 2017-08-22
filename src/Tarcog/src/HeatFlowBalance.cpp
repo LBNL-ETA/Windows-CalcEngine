@@ -11,40 +11,40 @@
 #include "WCEGases.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-	CHeatFlowBalance::CHeatFlowBalance( shared_ptr< CIGU > const& t_IGU ) : m_IGU( t_IGU ) {
-		m_MatrixA = make_shared< CSquareMatrix >( 4 * m_IGU->getNumOfLayers() );
+	CHeatFlowBalance::CHeatFlowBalance( std::shared_ptr< CIGU > const& t_IGU ) : m_IGU( t_IGU ) {
+		m_MatrixA = std::make_shared< CSquareMatrix >( 4 * m_IGU->getNumOfLayers() );
 		assert( m_MatrixA != nullptr );
-		m_VectorB = make_shared< vector< double > >();
+		m_VectorB = std::make_shared< std::vector< double > >();
 		assert( m_VectorB != nullptr );
 		m_VectorB->resize( 4 * m_IGU->getNumOfLayers() );
-		m_LinearSolver = make_shared< CLinearSolver >();
+		m_LinearSolver = std::make_shared< CLinearSolver >();
 	}
 
-	vector< double > CHeatFlowBalance::calcBalanceMatrix() {
-		vector< shared_ptr< CIGUSolidLayer > > aSolidLayers = m_IGU->getSolidLayers();
-		vector< shared_ptr< CIGUSolidLayer > >::iterator it;
+	std::vector< double > CHeatFlowBalance::calcBalanceMatrix() {
+		std::vector< std::shared_ptr< CIGUSolidLayer > > aSolidLayers = m_IGU->getSolidLayers();
+		std::vector< std::shared_ptr< CIGUSolidLayer > >::iterator it;
 		int positionCounter = 0;
 		m_MatrixA->setZeros();
 		for ( size_t i = 0; i < m_VectorB->size(); ++i ) {
 			( *m_VectorB )[ i ] = 0;
 		}
 		for ( it = aSolidLayers.begin(); it != aSolidLayers.end(); ++it ) {
-			shared_ptr< CBaseLayer > aPreviousLayer = ( *it )->getPreviousLayer();
-			shared_ptr< CBaseLayer > aNextLayer = ( *it )->getNextLayer();
+			std::shared_ptr< CBaseLayer > aPreviousLayer = ( *it )->getPreviousLayer();
+			std::shared_ptr< CBaseLayer > aNextLayer = ( *it )->getNextLayer();
 			buildCell( aPreviousLayer, ( *it ), aNextLayer, positionCounter );
 			++positionCounter;
 		}
 		return m_LinearSolver->solveSystem( *m_MatrixA, *m_VectorB );
 	}
 
-	void CHeatFlowBalance::buildCell( shared_ptr< CBaseLayer > const& t_Previous,
-	                                  shared_ptr< CBaseLayer > const& t_Current,
-	                                  shared_ptr< CBaseLayer > const& t_Next, int const t_Index ) {
+	void CHeatFlowBalance::buildCell( std::shared_ptr< CBaseLayer > const& t_Previous,
+	                                  std::shared_ptr< CBaseLayer > const& t_Current,
+	                                  std::shared_ptr< CBaseLayer > const& t_Next, int const t_Index ) {
 		// Routine is used to build matrix "cell" around solid layer.
 
 		// first determine cell size
@@ -54,10 +54,10 @@ namespace Tarcog {
 		double hgl = t_Current->getConductionConvectionCoefficient();
 		double hgap_prev = t_Previous->getConductionConvectionCoefficient();
 		double hgap_next = t_Next->getConductionConvectionCoefficient();
-		shared_ptr< ISurface > frontSurface = t_Current->getSurface( Side::Front );
+		std::shared_ptr< ISurface > frontSurface = t_Current->getSurface( Side::Front );
 		assert( frontSurface != nullptr );
 		double emissPowerFront = frontSurface->emissivePowerTerm();
-		shared_ptr< ISurface > backSurface = t_Current->getSurface( Side::Back );
+		std::shared_ptr< ISurface > backSurface = t_Current->getSurface( Side::Back );
 		assert( backSurface != nullptr );
 		double emissPowerBack = backSurface->emissivePowerTerm();
 		double qv_prev = t_Previous->getGainFlow();
@@ -85,7 +85,7 @@ namespace Tarcog {
 		( *m_VectorB )[ sP + 3 ] = -solarRadiation / 2 - qv_next / 2;
 
 
-		if ( dynamic_pointer_cast< CEnvironment >( t_Previous ) == NULL ) {
+		if ( std::dynamic_pointer_cast< CEnvironment >( t_Previous ) == NULL ) {
 
 			// first row
 			( *m_MatrixA )[ sP ][ sP - 2 ] = -1;
@@ -99,15 +99,15 @@ namespace Tarcog {
 
 		}
 		else {
-			double environmentRadiosity = dynamic_pointer_cast< CEnvironment >( t_Previous )->getEnvironmentIR();
-			double airTemperature = dynamic_pointer_cast< CEnvironment >( t_Previous )->getGasTemperature();
+			double environmentRadiosity = std::dynamic_pointer_cast< CEnvironment >( t_Previous )->getEnvironmentIR();
+			double airTemperature = std::dynamic_pointer_cast< CEnvironment >( t_Previous )->getGasTemperature();
 
 			( *m_VectorB )[ sP ] = ( *m_VectorB )[ sP ] + environmentRadiosity + hgap_prev * airTemperature;
 			( *m_VectorB )[ sP + 1 ] = ( *m_VectorB )[ sP + 1 ] - frontSurface->getReflectance() * environmentRadiosity;
 			( *m_VectorB )[ sP + 2 ] = ( *m_VectorB )[ sP + 2 ] - frontSurface->getTransmittance() * environmentRadiosity;
 		}
 
-		if ( dynamic_pointer_cast< CEnvironment >( t_Next ) == NULL ) {
+		if ( std::dynamic_pointer_cast< CEnvironment >( t_Next ) == NULL ) {
 
 			// second row
 			( *m_MatrixA )[ sP + 1 ][ sP + 5 ] = backSurface->getTransmittance();
@@ -121,8 +121,8 @@ namespace Tarcog {
 
 		}
 		else {
-			double environmentRadiosity = dynamic_pointer_cast< CEnvironment >( t_Next )->getEnvironmentIR();
-			double airTemperature = dynamic_pointer_cast< CEnvironment >( t_Next )->getGasTemperature();
+			double environmentRadiosity = std::dynamic_pointer_cast< CEnvironment >( t_Next )->getEnvironmentIR();
+			double airTemperature = std::dynamic_pointer_cast< CEnvironment >( t_Next )->getGasTemperature();
 
 			( *m_VectorB )[ sP + 1 ] = ( *m_VectorB )[ sP + 1 ] - backSurface->getTransmittance() * environmentRadiosity;
 			( *m_VectorB )[ sP + 2 ] = ( *m_VectorB )[ sP + 2 ] - backSurface->getReflectance() * environmentRadiosity;

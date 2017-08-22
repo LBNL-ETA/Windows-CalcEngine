@@ -8,7 +8,7 @@
 #include "NusseltNumber.hpp"
 #include "WCEGases.hpp"
 
-using namespace std;
+
 
 namespace Tarcog {
 
@@ -23,11 +23,11 @@ namespace Tarcog {
 	double CNusseltNumber0To60::calculate( double const t_Tilt, double const t_Ra, double const ) {
 		try {
 			if ( t_Ra > 1e5 ) {
-				throw runtime_error( "Rayleigh number out of range in Nusselt num. calc. for gaps (angle between 0 and 60 deg)." );
+				throw std::runtime_error( "Rayleigh number out of range in Nusselt num. calc. for gaps (angle between 0 and 60 deg)." );
 			}
 		}
-		catch ( exception& e ) {
-			cout << e.what() << endl;
+		catch ( std::exception& e ) {
+			std::cout << e.what() << std::endl;
 		}
 
 		double subNu1 = 1 - 1708 / ( t_Ra * cos( t_Tilt ) );
@@ -44,15 +44,15 @@ namespace Tarcog {
 		double G = 0.5 / pow( 1 + pow( t_Ra / 3160, 20.6 ), 0.1 ); // equation 47
 		double Nu1 = pow( 1 + pow( 0.0936 * pow( t_Ra, 0.314 ) / ( 1 + G ), 7 ), 0.1428571 ); // equation 45
 		double Nu2 = ( 0.104 + 0.175 / t_Asp ) * pow( t_Ra, 0.283 ); // equation 46
-		double gnu = max( Nu1, Nu2 ); // equation 44
+		double gnu = std::max( Nu1, Nu2 ); // equation 44
 
 		return gnu;
 	}
 
 	double CNusseltNumber60To90::calculate( double const t_Tilt, double const t_Ra, double const t_Asp ) {
-		shared_ptr< CNusseltNumber60 > nusselt60 = make_shared< CNusseltNumber60 >();
+		std::shared_ptr< CNusseltNumber60 > nusselt60 = std::make_shared< CNusseltNumber60 >();
 		double Nu60 = nusselt60->calculate( t_Tilt, t_Ra, t_Asp );
-		shared_ptr< CNusseltNumber90 > nusselt90 = make_shared< CNusseltNumber90 >();
+		std::shared_ptr< CNusseltNumber90 > nusselt90 = std::make_shared< CNusseltNumber90 >();
 		double Nu90 = nusselt90->calculate( t_Tilt, t_Ra, t_Asp );
 
 		// linear interpolation between 60 and 90 degrees
@@ -73,13 +73,13 @@ namespace Tarcog {
 		else if ( t_Ra < 1e4 ) {
 			Nu1 = 1 + 1.7596678e-10 * pow( t_Ra, 2.2984755 ); // equation 51
 		}
-		double gnu = max( Nu1, Nu2 ); // equation 48
+		double gnu = std::max( Nu1, Nu2 ); // equation 48
 
 		return gnu;
 	}
 
 	double CNusseltNumber90to180::calculate( double const t_Tilt, double const t_Ra, double const t_Asp ) {
-		shared_ptr< CNusseltNumber90 > nusselt90 = make_shared< CNusseltNumber90 >();
+		std::shared_ptr< CNusseltNumber90 > nusselt90 = std::make_shared< CNusseltNumber90 >();
 		double Nu90 = nusselt90->calculate( t_Tilt, t_Ra, t_Asp );
 		double gnu = 1 + ( Nu90 - 1 ) * sin( t_Tilt ); // equation 53
 
@@ -88,25 +88,25 @@ namespace Tarcog {
 
 	double CNusseltNumber::calculate( double const t_Tilt, double const t_Ra, double const t_Asp ) {
 		double tiltRadians = t_Tilt * M_PI / 180;
-		shared_ptr< CNusseltNumberStrategy > nusseltNumber;
+		std::shared_ptr< CNusseltNumberStrategy > nusseltNumber;
 
 		if ( t_Tilt >= 0 && t_Tilt < 60 ) {
-			nusseltNumber = make_shared< CNusseltNumber0To60 >();
+			nusseltNumber = std::make_shared< CNusseltNumber0To60 >();
 		}
 		else if ( t_Tilt == 60 ) {
-			nusseltNumber = make_shared< CNusseltNumber60 >();
+			nusseltNumber = std::make_shared< CNusseltNumber60 >();
 		}
 		else if ( t_Tilt > 60 && t_Tilt < 90 ) {
-			nusseltNumber = make_shared< CNusseltNumber60To90 >();
+			nusseltNumber = std::make_shared< CNusseltNumber60To90 >();
 		}
 		else if ( t_Tilt == 90 ) {
-			nusseltNumber = make_shared< CNusseltNumber90 >();
+			nusseltNumber = std::make_shared< CNusseltNumber90 >();
 		}
 		else if ( t_Tilt > 90 && t_Tilt <= 180 ) {
-			nusseltNumber = make_shared< CNusseltNumber90to180 >();
+			nusseltNumber = std::make_shared< CNusseltNumber90to180 >();
 		}
 		else {
-			runtime_error( "Window tilt angle is out of range." );
+			std::runtime_error( "Window tilt angle is out of range." );
 		}
 
 		return nusseltNumber->calculate( tiltRadians, t_Ra, t_Asp );

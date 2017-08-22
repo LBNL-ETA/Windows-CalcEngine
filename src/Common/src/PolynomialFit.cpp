@@ -10,7 +10,7 @@ namespace FenestrationCommon {
 
 	}
 
-	vector< double > PolynomialFit::getCoefficients( vector< pair< double, double > > t_Table ) const {
+	vector< double > PolynomialFit::getCoefficients( std::vector< pair< double, double > > t_Table ) const {
 		int n = int( m_Order );
 
 		vector< double > x( 2 * n + 1 );
@@ -20,7 +20,7 @@ namespace FenestrationCommon {
 				x[ i ] = x[ i ] + pow( t_Table[ j ].first, i );
 		}
 
-		vector< vector< double > > B( n + 1 );
+		vector< std::vector< double > > B( n + 1 );
 		for ( auto& vec : B ) {
 			vec.resize( n + 2 );
 		}

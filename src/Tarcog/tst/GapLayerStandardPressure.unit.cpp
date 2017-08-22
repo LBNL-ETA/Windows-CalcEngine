@@ -9,8 +9,8 @@ using namespace Tarcog;
 class TestGapLayerStandardPressure : public testing::Test {
 
 private:
-	shared_ptr< CIGUGapLayer > m_GapLayer;
-	shared_ptr< CIGU > m_IGU;
+	std::shared_ptr< CIGUGapLayer > m_GapLayer;
+	std::shared_ptr< CIGU > m_IGU;
 
 protected:
 	void SetUp() override {
@@ -56,7 +56,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CIGUGapLayer > GetLayer() const {
+	std::shared_ptr< CIGUGapLayer > GetLayer() const {
 		return m_GapLayer;
 	};
 

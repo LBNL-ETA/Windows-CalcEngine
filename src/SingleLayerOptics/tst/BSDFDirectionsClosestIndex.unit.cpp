@@ -11,7 +11,7 @@ using namespace SingleLayerOptics;
 class TestBSDFDirectionsClosestIndex : public testing::Test {
 
 private:
-	shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
+	std::shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
 
 protected:
 	virtual void SetUp() {
@@ -19,7 +19,7 @@ protected:
 	}
 
 public:
-	shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) {
+	std::shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) {
 		return m_BSDFHemisphere->getDirections( t_Side );
 	};
 

@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestVenetianCellFlat0_1 : public testing::Test {
 
 private:
-	shared_ptr< CVenetianCell > m_Cell;
+	std::shared_ptr< CVenetianCell > m_Cell;
 
 protected:
 	virtual void SetUp() {
@@ -21,8 +21,8 @@ protected:
 		double Rbmat = 0.0;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 
 		// make cell geometry
@@ -32,8 +32,8 @@ protected:
 		double curvatureRadius = 0;
 		size_t numOfSlatSegments = 1;
 
-		shared_ptr< CVenetianCellDescription > aCellDescription =
-			make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
+		std::shared_ptr< CVenetianCellDescription > aCellDescription =
+			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, numOfSlatSegments );
 
 		m_Cell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
@@ -41,7 +41,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CVenetianCell > GetCell() {
+	std::shared_ptr< CVenetianCell > GetCell() {
 		return m_Cell;
 	};
 
@@ -50,7 +50,7 @@ public:
 TEST_F( TestVenetianCellFlat0_1, TestVenetian1 ) {
 	SCOPED_TRACE( "Begin Test: Venetian cell (Flat, 0 degrees slats) - directional-diffuse." );
 
-	shared_ptr< CVenetianCell > aCell = GetCell();
+	std::shared_ptr< CVenetianCell > aCell = GetCell();
 
 	// Front side
 	Side aSide = Side::Front;

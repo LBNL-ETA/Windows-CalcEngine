@@ -32,7 +32,7 @@ TEST_F( TestMatrixAddition, Test1 ) {
 	B[ 1 ][ 0 ] = 4;
 	B[ 1 ][ 1 ] = 5;
 
-	shared_ptr< CSquareMatrix > C = A.add( B );
+	std::shared_ptr< CSquareMatrix > C = A.add( B );
 
 	EXPECT_NEAR( 3, ( *C )[ 0 ][ 0 ], 1e-6 );
 	EXPECT_NEAR( 5, ( *C )[ 0 ][ 1 ], 1e-6 );
@@ -57,7 +57,7 @@ TEST_F( TestMatrixAddition, Test2 ) {
 	B[ 1 ][ 0 ] = 4;
 	B[ 1 ][ 1 ] = 5;
 
-	shared_ptr< CSquareMatrix > C = A.sub( B );
+	std::shared_ptr< CSquareMatrix > C = A.sub( B );
 
 	EXPECT_NEAR( -1, ( *C )[ 0 ][ 0 ], 1e-6 );
 	EXPECT_NEAR( -1, ( *C )[ 0 ][ 1 ], 1e-6 );

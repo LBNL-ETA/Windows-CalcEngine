@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestRectangularPerforatedShade1 : public testing::Test {
 
 private:
-	shared_ptr< CBSDFLayer > m_Shade;
+	std::shared_ptr< CBSDFLayer > m_Shade;
 
 protected:
 	virtual void SetUp() {
@@ -21,8 +21,8 @@ protected:
 		double Rbmat = 0.7;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterial > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
 		double x = 19.05; // mm
@@ -30,19 +30,19 @@ protected:
 		double thickness = 0.6; // mm
 		double xHole = 3.175; // mm
 		double yHole = 6.35; // mm
-		shared_ptr< ICellDescription > aCellDescription =
-			make_shared< CRectangularCellDescription >( x, y, thickness, xHole, yHole );
+		std::shared_ptr< ICellDescription > aCellDescription =
+			std::make_shared< CRectangularCellDescription >( x, y, thickness, xHole, yHole );
 
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-		shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+		std::shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
 
 		m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
 	}
 
 public:
-	shared_ptr< CBSDFLayer > GetShade() {
+	std::shared_ptr< CBSDFLayer > GetShade() {
 		return m_Shade;
 	};
 
@@ -51,9 +51,9 @@ public:
 TEST_F( TestRectangularPerforatedShade1, TestSolarProperties ) {
 	SCOPED_TRACE( "Begin Test: Rectangular perforated cell - Solar properties." );
 
-	shared_ptr< CBSDFLayer > aShade = GetShade();
+	std::shared_ptr< CBSDFLayer > aShade = GetShade();
 
-	shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
+	std::shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
 
 	double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
 	EXPECT_NEAR( 0.041876313, tauDiff, 1e-6 );
@@ -61,7 +61,7 @@ TEST_F( TestRectangularPerforatedShade1, TestSolarProperties ) {
 	double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
 	EXPECT_NEAR( 0.670686365, RfDiff, 1e-6 );
 
-	shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
@@ -119,7 +119,7 @@ TEST_F( TestRectangularPerforatedShade1, TestSolarProperties ) {
 		EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-5 );
 	}
 
-	shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 
 	correctResults.clear();
 	correctResults.push_back( 0.210438 );

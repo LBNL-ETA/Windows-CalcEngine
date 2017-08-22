@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestPerfectDiffuseCell1 : public testing::Test {
 
 private:
-	shared_ptr< CUniformDiffuseCell > m_Cell;
+	std::shared_ptr< CUniformDiffuseCell > m_Cell;
 
 protected:
 	virtual void SetUp() {
@@ -21,18 +21,18 @@ protected:
 		double Rbmat = 0.55;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
-		shared_ptr< ICellDescription > aCell =
-			make_shared< CPerfectDiffuseCellDescription >();
+		std::shared_ptr< ICellDescription > aCell =
+			std::make_shared< CPerfectDiffuseCellDescription >();
 
 		m_Cell = make_shared< CUniformDiffuseCell >( aMaterial, aCell );
 	}
 
 public:
-	shared_ptr< CUniformDiffuseCell > GetCell() {
+	std::shared_ptr< CUniformDiffuseCell > GetCell() {
 		return m_Cell;
 	};
 
@@ -41,7 +41,7 @@ public:
 TEST_F( TestPerfectDiffuseCell1, TestPerfectDiffuse1 ) {
 	SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 0, Phi = 0)." );
 
-	shared_ptr< CUniformDiffuseCell > aCell = GetCell();
+	std::shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
 	double Theta = 0; // deg
 	double Phi = 0; // deg
@@ -66,7 +66,7 @@ TEST_F( TestPerfectDiffuseCell1, TestPerfectDiffuse1 ) {
 TEST_F( TestPerfectDiffuseCell1, TestPerfectDiffuse2 ) {
 	SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 45, Phi = 0)." );
 
-	shared_ptr< CUniformDiffuseCell > aCell = GetCell();
+	std::shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
 	double Theta = 45; // deg
 	double Phi = 0; // deg
@@ -91,7 +91,7 @@ TEST_F( TestPerfectDiffuseCell1, TestPerfectDiffuse2 ) {
 TEST_F( TestPerfectDiffuseCell1, TestPerfectDiffuse3 ) {
 	SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 78, Phi = 45)." );
 
-	shared_ptr< CUniformDiffuseCell > aCell = GetCell();
+	std::shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
 	double Theta = 78; // deg
 	double Phi = 45; // deg
@@ -116,7 +116,7 @@ TEST_F( TestPerfectDiffuseCell1, TestPerfectDiffuse3 ) {
 TEST_F( TestPerfectDiffuseCell1, TestPerfectDiffuse4 ) {
 	SCOPED_TRACE( "Begin Test: Perfect diffusing cell (Theta = 54, Phi = 270)." );
 
-	shared_ptr< CUniformDiffuseCell > aCell = GetCell();
+	std::shared_ptr< CUniformDiffuseCell > aCell = GetCell();
 
 	double Theta = 54; // deg
 	double Phi = 270; // deg

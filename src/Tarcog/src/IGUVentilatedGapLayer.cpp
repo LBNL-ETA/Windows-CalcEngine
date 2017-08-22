@@ -5,13 +5,13 @@
 #include "IGUVentilatedGapLayer.hpp"
 #include "WCEGases.hpp"
 
-using namespace std;
+
 using namespace Gases;
 
 namespace Tarcog {
 
-	CIGUVentilatedGapLayer::CIGUVentilatedGapLayer( shared_ptr< CIGUGapLayer > const& t_Layer ) :
-		CIGUGapLayer( *t_Layer ), m_Layer( t_Layer ), m_ReferenceGas( make_shared< CGas >() ),
+	CIGUVentilatedGapLayer::CIGUVentilatedGapLayer( std::shared_ptr< CIGUGapLayer > const& t_Layer ) :
+		CIGUGapLayer( *t_Layer ), m_Layer( t_Layer ), m_ReferenceGas( std::make_shared< CGas >() ),
 		m_inTemperature( 0 ), m_outTemperature( 0 ), m_Zin( 0 ), m_Zout( 0 ) {
 		( *m_ReferenceGas ) = ( *m_Gas );
 		m_ReferenceGas->setTemperatureAndPressure( ReferenceTemperature, m_Pressure );
@@ -50,7 +50,7 @@ namespace Tarcog {
 			Aout = t_Abot;
 			break;
 		default:
-			throw runtime_error( "Incorrect assignment for airflow direction." );
+			throw std::runtime_error( "Incorrect assignment for airflow direction." );
 			break;
 		}
 
@@ -75,7 +75,7 @@ namespace Tarcog {
 			m_outTemperature = t_botTemp;
 			break;
 		default:
-			throw runtime_error( "Incorrect argument for airflow direction." );
+			throw std::runtime_error( "Incorrect argument for airflow direction." );
 			break;
 		}
 

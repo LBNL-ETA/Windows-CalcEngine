@@ -10,7 +10,7 @@ using namespace FenestrationCommon;
 class TestSPChipInterpolation : public testing::Test {
 
 private:
-	shared_ptr< IInterpolation2D > m_Interpolation;
+	std::shared_ptr< IInterpolation2D > m_Interpolation;
 
 protected:
 	void SetUp() override {
@@ -26,7 +26,7 @@ protected:
 
 	}
 
-	shared_ptr< IInterpolation2D > getInterpolation() const {
+	std::shared_ptr< IInterpolation2D > getInterpolation() const {
 		return m_Interpolation;
 	};
 
@@ -35,7 +35,7 @@ protected:
 TEST_F( TestSPChipInterpolation, TestInterpolations ) {
 	SCOPED_TRACE( "Begin Test: Interpolation in various ranges." );
 
-	shared_ptr< IInterpolation2D > aInterpolation = getInterpolation();
+	std::shared_ptr< IInterpolation2D > aInterpolation = getInterpolation();
 
 	double value = 28;
 	value = aInterpolation->getValue( value );

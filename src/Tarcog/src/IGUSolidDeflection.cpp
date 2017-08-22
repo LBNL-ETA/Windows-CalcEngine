@@ -6,7 +6,7 @@
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Tarcog {
@@ -42,13 +42,13 @@ namespace Tarcog {
 		return m_YoungsModulus * pow( m_Thickness, 3 ) / ( 12 * ( 1 - pow( m_PoisonRatio, 2 ) ) );
 	}
 
-	shared_ptr< CBaseLayer > CIGUSolidLayerDeflection::clone() const {
-		return make_shared< CIGUSolidLayer >( *this );
+	std::shared_ptr< CBaseLayer > CIGUSolidLayerDeflection::clone() const {
+		return std::make_shared< CIGUSolidLayer >( *this );
 	}
 
 	double CIGUSolidLayerDeflection::pressureDifference() const {
-		auto P1 = dynamic_pointer_cast< CGasLayer >( m_NextLayer )->getPressure();
-		auto P2 = dynamic_pointer_cast< CGasLayer >( m_PreviousLayer )->getPressure();
+		auto P1 = std::dynamic_pointer_cast< CGasLayer >( m_NextLayer )->getPressure();
+		auto P2 = std::dynamic_pointer_cast< CGasLayer >( m_PreviousLayer )->getPressure();
 		return P1 - P2;
 	}
 
@@ -57,7 +57,7 @@ namespace Tarcog {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	CIGUDeflectionTempAndPressure::CIGUDeflectionTempAndPressure(
-		shared_ptr< CIGUSolidLayerDeflection > const& t_SolidLayer,
+		std::shared_ptr< CIGUSolidLayerDeflection > const& t_SolidLayer,
 		double const t_MaxDeflectionCoeff, double const t_MeanDeflectionCoeff ) :
 		CIGUSolidLayerDeflection( *t_SolidLayer ),
 		m_MaxCoeff( t_MaxDeflectionCoeff ), m_MeanCoeff( t_MeanDeflectionCoeff ) {
@@ -93,7 +93,7 @@ namespace Tarcog {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//    CIGUDeflectionTempAndPressure
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	CIGUDeflectionMeasuread::CIGUDeflectionMeasuread( shared_ptr< CIGUSolidLayerDeflection >& t_Layer,
+	CIGUDeflectionMeasuread::CIGUDeflectionMeasuread( std::shared_ptr< CIGUSolidLayerDeflection >& t_Layer,
 	                                                  const double t_MeanDeflection, const double t_MaxDeflection ) :
 		CIGUSolidLayerDeflection( *t_Layer ) {
 		for ( Side aSide : EnumSide() ) {

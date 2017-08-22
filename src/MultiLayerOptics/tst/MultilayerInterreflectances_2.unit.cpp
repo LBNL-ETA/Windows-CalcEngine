@@ -14,7 +14,7 @@ class TestMultilayerInterreflectances_2 : public testing::Test {
 
 private:
 	// Additional layer added to the back side
-	shared_ptr< CInterRefSingleComponent > m_Interref;
+	std::shared_ptr< CInterRefSingleComponent > m_Interref;
 
 protected:
 	virtual void SetUp() {
@@ -26,7 +26,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CInterRefSingleComponent > getInt() {
+	std::shared_ptr< CInterRefSingleComponent > getInt() {
 		return m_Interref;
 	};
 

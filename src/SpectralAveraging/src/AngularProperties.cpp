@@ -7,7 +7,7 @@
 #include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
-using namespace std;
+
 
 namespace SpectralAveraging {
 
@@ -26,7 +26,7 @@ namespace SpectralAveraging {
 
 	void CAngularProperties::checkStateProperties( double const t_Angle, double const ) {
 		if ( t_Angle > 90 || t_Angle < 0 ) {
-			throw runtime_error( "Incoming angle is out of range. Incoming angle must be between 0 and 90 degrees." );
+			throw std::runtime_error( "Incoming angle is out of range. Incoming angle must be between 0 and 90 degrees." );
 		}
 
 	}
@@ -120,8 +120,8 @@ namespace SpectralAveraging {
 			auto aAngle = radians( t_Angle );
 			auto aCosPhi = cos( aAngle );
 
-			shared_ptr< Coefficients > TCoeff = nullptr;
-			shared_ptr< Coefficients > RCoeff = nullptr;
+			std::shared_ptr< Coefficients > TCoeff = nullptr;
+			std::shared_ptr< Coefficients > RCoeff = nullptr;
 
 			auto aCoefficients = CCoatingCoefficients();
 
@@ -183,17 +183,17 @@ namespace SpectralAveraging {
 
 	}
 
-	shared_ptr< Coefficients > CCoatingCoefficients::getCoefficients( CoatingProperty const t_Property,
+	std::shared_ptr< Coefficients > CCoatingCoefficients::getCoefficients( CoatingProperty const t_Property,
 	                                                                  CoatingType const t_Type ) const {
-		shared_ptr< Coefficients > aCoefficients = nullptr;
+		std::shared_ptr< Coefficients > aCoefficients = nullptr;
 		switch ( t_Property ) {
 		case CoatingProperty::T:
 			switch ( t_Type ) {
 			case CoatingType::Clear:
-				aCoefficients = make_shared< Coefficients >( -0.0015, 3.355, -3.84, 1.46, 0.0288 );
+				aCoefficients = std::make_shared< Coefficients >( -0.0015, 3.355, -3.84, 1.46, 0.0288 );
 				break;
 			case CoatingType::Bronze:
-				aCoefficients = make_shared< Coefficients >( -0.002, 2.813, -2.341, -0.05725, 0.599 );
+				aCoefficients = std::make_shared< Coefficients >( -0.002, 2.813, -2.341, -0.05725, 0.599 );
 				break;
 			default:
 				assert("Incorrect selection of type.");
@@ -203,10 +203,10 @@ namespace SpectralAveraging {
 		case CoatingProperty::R:
 			switch ( t_Type ) {
 			case CoatingType::Clear:
-				aCoefficients = make_shared< Coefficients >( 0.999, -0.563, 2.043, -2.532, 1.054 );
+				aCoefficients = std::make_shared< Coefficients >( 0.999, -0.563, 2.043, -2.532, 1.054 );
 				break;
 			case CoatingType::Bronze:
-				aCoefficients = make_shared< Coefficients >( 0.997, -1.868, 6.513, -7.862, 3.225 );
+				aCoefficients = std::make_shared< Coefficients >( 0.997, -1.868, 6.513, -7.862, 3.225 );
 				break;
 			default:
 				assert("Incorrect selection of type.");
@@ -235,17 +235,17 @@ namespace SpectralAveraging {
 
 	}
 
-	shared_ptr< CAngularProperties > CAngularPropertiesFactory::getAngularProperties( SurfaceType const t_SurfaceType ) {
-		shared_ptr< CAngularProperties > aProperties = nullptr;
+	std::shared_ptr< CAngularProperties > CAngularPropertiesFactory::getAngularProperties( SurfaceType const t_SurfaceType ) {
+		std::shared_ptr< CAngularProperties > aProperties = nullptr;
 		switch ( t_SurfaceType ) {
 		case SurfaceType::Coated:
-			aProperties = make_shared< CAngularPropertiesCoated >( m_Transmittance0, m_Reflectance0, m_SolarTransmittance0 );
+			aProperties = std::make_shared< CAngularPropertiesCoated >( m_Transmittance0, m_Reflectance0, m_SolarTransmittance0 );
 			break;
 		case SurfaceType::Uncoated:
-			aProperties = make_shared< CAngularPropertiesUncoated >( m_Thickness, m_Transmittance0, m_Reflectance0 );
+			aProperties = std::make_shared< CAngularPropertiesUncoated >( m_Thickness, m_Transmittance0, m_Reflectance0 );
 			break;
 		default:
-			throw runtime_error( "Incorrect surface type. Cannot create correct angular properties." );
+			throw std::runtime_error( "Incorrect surface type. Cannot create correct angular properties." );
 			break;
 		}
 		assert( aProperties != nullptr );

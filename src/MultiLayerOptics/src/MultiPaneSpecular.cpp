@@ -18,8 +18,8 @@ namespace MultiLayerOptics {
 	//  CEquivalentLayerSingleComponentMWAngle
 	////////////////////////////////////////////////////////////////////////////////////////////
 	CEquivalentLayerSingleComponentMWAngle::CEquivalentLayerSingleComponentMWAngle(
-		const shared_ptr< CEquivalentLayerSingleComponentMW >& t_Layer,
-		const shared_ptr< CAbsorptancesMultiPane >& t_Abs, const double t_Angle ) :
+		const std::shared_ptr< CEquivalentLayerSingleComponentMW >& t_Layer,
+		const std::shared_ptr< CAbsorptancesMultiPane >& t_Abs, const double t_Angle ) :
 		m_Layer( t_Layer ), m_Abs( t_Abs ), m_Angle( t_Angle ) {
 
 	}
@@ -28,29 +28,29 @@ namespace MultiLayerOptics {
 		return m_Angle;
 	}
 
-	shared_ptr< CEquivalentLayerSingleComponentMW > CEquivalentLayerSingleComponentMWAngle::layer() const {
+	std::shared_ptr< CEquivalentLayerSingleComponentMW > CEquivalentLayerSingleComponentMWAngle::layer() const {
 		return m_Layer;
 	}
 
-	shared_ptr< CSeries > CEquivalentLayerSingleComponentMWAngle::getProperties( const Side t_Side, const Property t_Property ) {
+	std::shared_ptr< CSeries > CEquivalentLayerSingleComponentMWAngle::getProperties( const Side t_Side, const Property t_Property ) {
 		return m_Layer->getProperties( t_Property, t_Side );
 	}
 
-	shared_ptr< CSeries > CEquivalentLayerSingleComponentMWAngle::Abs( size_t const Index ) {
+	std::shared_ptr< CSeries > CEquivalentLayerSingleComponentMWAngle::Abs( size_t const Index ) {
 		return m_Abs->Abs( Index );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 	//  CMultiPaneSpecular
 	////////////////////////////////////////////////////////////////////////////////////////////
-	CMultiPaneSpecular::CMultiPaneSpecular( vector< double > const& t_CommonWavelength,
-	                                        const shared_ptr< CSeries >& t_SolarRadiation, const shared_ptr< CSpecularCell >& t_Layer ) :
+	CMultiPaneSpecular::CMultiPaneSpecular( std::vector< double > const& t_CommonWavelength,
+	                                        const std::shared_ptr< CSeries >& t_SolarRadiation, const std::shared_ptr< CSpecularCell >& t_Layer ) :
 		m_CommonWavelengths( t_CommonWavelength ), m_SolarRadiation( t_SolarRadiation ) {
 		m_SolarRadiation = m_SolarRadiation->interpolate( m_CommonWavelengths );
 		addLayer( t_Layer );
 	}
 
-	void CMultiPaneSpecular::addLayer( const shared_ptr< CSpecularCell >& t_Layer ) {
+	void CMultiPaneSpecular::addLayer( const std::shared_ptr< CSpecularCell >& t_Layer ) {
 		t_Layer->setSourceData( m_SolarRadiation );
 		m_Layers.push_back( t_Layer );
 	}
@@ -73,10 +73,10 @@ namespace MultiLayerOptics {
 	}
 
 	double CMultiPaneSpecular::getHemisphericalProperty( const Side t_Side, const Property t_Property,
-	                                                     const shared_ptr< const vector< double > >& t_Angles,
+	                                                     const std::shared_ptr< const std::vector< double > >& t_Angles,
 	                                                     const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
 		size_t size = t_Angles->size();
-		shared_ptr< CSeries > aAngularProperties = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aAngularProperties = make_shared< CSeries >();
 		for ( size_t i = 0; i < size; ++i ) {
 			double angle = ( *t_Angles )[ i ];
 			double aProperty = getProperty( t_Side, t_Property, angle, minLambda, maxLambda, t_IntegrationType );
@@ -102,10 +102,10 @@ namespace MultiLayerOptics {
 	}
 
 	double CMultiPaneSpecular::AbsHemispherical( size_t const Index,
-	                                             const shared_ptr< const vector< double > >& t_Angles, const double minLambda, const double maxLambda,
+	                                             const std::shared_ptr< const std::vector< double > >& t_Angles, const double minLambda, const double maxLambda,
 	                                             const IntegrationType t_IntegrationType ) {
 		size_t size = t_Angles->size();
-		shared_ptr< CSeries > aAngularProperties = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aAngularProperties = make_shared< CSeries >();
 		for ( size_t i = 0; i < size; ++i ) {
 			double angle = ( *t_Angles )[ i ];
 			double aAbs = Abs( Index, angle, minLambda, maxLambda, t_IntegrationType );
@@ -116,12 +116,12 @@ namespace MultiLayerOptics {
 		return aIntegrator.value();
 	}
 
-	shared_ptr< CEquivalentLayerSingleComponentMWAngle > CMultiPaneSpecular::getAngular( const double t_Angle ) {
-		shared_ptr< CEquivalentLayerSingleComponentMWAngle > aAngularProperties = nullptr;
+	std::shared_ptr< CEquivalentLayerSingleComponentMWAngle > CMultiPaneSpecular::getAngular( const double t_Angle ) {
+		std::shared_ptr< CEquivalentLayerSingleComponentMWAngle > aAngularProperties = nullptr;
 
-		vector< shared_ptr< CEquivalentLayerSingleComponentMWAngle > >::iterator it;
+		vector< std::shared_ptr< CEquivalentLayerSingleComponentMWAngle > >::iterator it;
 		it = find_if( m_EquivalentAngle.begin(), m_EquivalentAngle.end(),
-		              [ &t_Angle ]( const shared_ptr< CEquivalentLayerSingleComponentMWAngle >& obj ) {
+		              [ &t_Angle ]( const std::shared_ptr< CEquivalentLayerSingleComponentMWAngle >& obj ) {
 		              return fabs( obj->angle() - t_Angle ) < 1e-6;
 	              } );
 
@@ -135,19 +135,19 @@ namespace MultiLayerOptics {
 		return aAngularProperties;
 	}
 
-	shared_ptr< CEquivalentLayerSingleComponentMWAngle > CMultiPaneSpecular::createNewAngular( const double t_Angle ) {
+	std::shared_ptr< CEquivalentLayerSingleComponentMWAngle > CMultiPaneSpecular::createNewAngular( const double t_Angle ) {
 		// Create direction for specular. It is irrelevant what is Phi angle and it is chosen to be zero in this case
 		CBeamDirection aDirection = CBeamDirection( t_Angle, 0 );
-		shared_ptr< CEquivalentLayerSingleComponentMW > aEqLayer = nullptr;
-		shared_ptr< CAbsorptancesMultiPane > aAbs = nullptr;
+		std::shared_ptr< CEquivalentLayerSingleComponentMW > aEqLayer = nullptr;
+		std::shared_ptr< CAbsorptancesMultiPane > aAbs = nullptr;
 		for ( size_t i = 0; i < m_Layers.size(); ++i ) {
 			vector< double > wl = m_Layers[ i ]->getBandWavelengths();
 			vector< double > Tv = m_Layers[ i ]->T_dir_dir_band( Side::Front, aDirection );
 			vector< double > Rfv = m_Layers[ i ]->R_dir_dir_band( Side::Front, aDirection );
 			vector< double > Rbv = m_Layers[ i ]->R_dir_dir_band( Side::Back, aDirection );
-			shared_ptr< CSeries > T = make_shared< CSeries >();
-			shared_ptr< CSeries > Rf = make_shared< CSeries >();
-			shared_ptr< CSeries > Rb = make_shared< CSeries >();
+			std::shared_ptr< CSeries > T = make_shared< CSeries >();
+			std::shared_ptr< CSeries > Rf = make_shared< CSeries >();
+			std::shared_ptr< CSeries > Rb = make_shared< CSeries >();
 			for ( size_t j = 0; j < wl.size(); ++j ) {
 				T->addProperty( wl[ j ], Tv[ j ] );
 				Rf->addProperty( wl[ j ], Rfv[ j ] );
@@ -170,7 +170,7 @@ namespace MultiLayerOptics {
 		assert( aEqLayer != nullptr );
 		assert( aAbs != nullptr );
 
-		shared_ptr< CEquivalentLayerSingleComponentMWAngle > newLayer = make_shared< CEquivalentLayerSingleComponentMWAngle >( aEqLayer,
+		std::shared_ptr< CEquivalentLayerSingleComponentMWAngle > newLayer = make_shared< CEquivalentLayerSingleComponentMWAngle >( aEqLayer,
 		                                                                                                                       aAbs, t_Angle );
 
 		m_EquivalentAngle.push_back( newLayer );

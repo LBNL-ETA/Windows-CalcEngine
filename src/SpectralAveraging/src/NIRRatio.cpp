@@ -1,12 +1,12 @@
 #include "NIRRatio.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace SpectralAveraging {
 
-	CNIRRatio::CNIRRatio( shared_ptr< const CSeries > const& t_SolarRadiation,
+	CNIRRatio::CNIRRatio( std::shared_ptr< const CSeries > const& t_SolarRadiation,
 	                      double const lowLambda, double const highLambda ) {
 		auto integratedSolar = t_SolarRadiation->integrate( IntegrationType::Trapezoidal );
 		auto aSolarRange = CWavelengthRange( WavelengthRange::Solar );

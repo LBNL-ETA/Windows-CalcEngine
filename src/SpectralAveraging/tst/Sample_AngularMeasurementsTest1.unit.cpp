@@ -4,7 +4,7 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
@@ -14,10 +14,10 @@ using namespace FenestrationCommon;
 class Sample_AngularMeasurementsTest1: public testing::Test {
 
 private:
-	shared_ptr< CAngularMeasurements > m_Measurements;
+	std::shared_ptr< CAngularMeasurements > m_Measurements;
 
-	shared_ptr< CSeries > getSolarRadiationFile() const {
-		auto aSolarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiationFile() const {
+		auto aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -145,10 +145,10 @@ private:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSingleAngularMeasurement > getSample1() const {
+	std::shared_ptr< CSingleAngularMeasurement > getSample1() const {
 		auto aSolarRadiation = getSolarRadiationFile();
 
-		auto aMeasurements40 = make_shared< CSpectralSampleData >();
+		auto aMeasurements40 = std::make_shared< CSpectralSampleData >();
 		// incident angle = 40
 
 		aMeasurements40->addRecord( 0.290, 0.10, 0.1, 0.1 );
@@ -156,16 +156,16 @@ private:
 		aMeasurements40->addRecord( 0.300, 0.20, 0.098, 0.098 );
 		aMeasurements40->addRecord( 0.310, 0.25, 0.097, 0.097 );
 
-		auto aSample40 = make_shared< CSpectralSample >( aMeasurements40, aSolarRadiation );
-		auto aAngular40 = make_shared< CSingleAngularMeasurement >( aSample40, 40 );
+		auto aSample40 = std::make_shared< CSpectralSample >( aMeasurements40, aSolarRadiation );
+		auto aAngular40 = std::make_shared< CSingleAngularMeasurement >( aSample40, 40 );
 
 		return aAngular40;
 	}
 
-	shared_ptr< CSingleAngularMeasurement > getSample2() const {
+	std::shared_ptr< CSingleAngularMeasurement > getSample2() const {
 		auto aSolarRadiation = getSolarRadiationFile();
 
-		auto aMeasurements50 = make_shared< CSpectralSampleData >();
+		auto aMeasurements50 = std::make_shared< CSpectralSampleData >();
 		// incident angle = 40
 
 		aMeasurements50->addRecord( 0.290, 0.15, 0.1, 0.10 );
@@ -173,15 +173,15 @@ private:
 		aMeasurements50->addRecord( 0.305, 0.25, 0.097, 0.098 );
 		aMeasurements50->addRecord( 0.310, 0.30, 0.096, 0.097 );
 
-		auto aSample50 = make_shared< CSpectralSample >( aMeasurements50, aSolarRadiation );
-		auto aAngular50 = make_shared< CSingleAngularMeasurement >( aSample50, 50 );
+		auto aSample50 = std::make_shared< CSpectralSample >( aMeasurements50, aSolarRadiation );
+		auto aAngular50 = std::make_shared< CSingleAngularMeasurement >( aSample50, 50 );
 
 		return aAngular50;
 	}
 
 
 public:
-	shared_ptr< CAngularMeasurements > getMeasurements() const {
+	std::shared_ptr< CAngularMeasurements > getMeasurements() const {
 		return m_Measurements;
 	};
 
@@ -200,7 +200,7 @@ protected:
 		auto commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
 		// Creating angular sample
-		m_Measurements = make_shared< CAngularMeasurements >( aAngular40, commonWavelengths );
+		m_Measurements = std::make_shared< CAngularMeasurements >( aAngular40, commonWavelengths );
 		m_Measurements->addMeasurement( aAngular50 );
 
 	}
@@ -222,7 +222,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
 	// Front transmittances
 	auto aTransmittances = aSample->getWavelengthsProperty( Property::T, Side::Front );
 
-	vector< double > correctT = { 0.125, 0.175, 0.2125, 0.2375, 0.275 };
+	std::vector< double > correctT = { 0.125, 0.175, 0.2125, 0.2375, 0.275 };
 
 	auto size = aTransmittances->size();
 
@@ -234,7 +234,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
 	// Front reflectances
 	auto aFReflectances = aSample->getWavelengthsProperty( Property::R, Side::Front );
 
-	vector< double > correctFR = { 0.1, 0.0985, 0.09775, 0.09725, 0.0965 };
+	std::vector< double > correctFR = { 0.1, 0.0985, 0.09775, 0.09725, 0.0965 };
 
 	size = aFReflectances->size();
 
@@ -246,7 +246,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
 	// Back reflectances
 	auto aBReflectances = aSample->getWavelengthsProperty( Property::R, Side::Back );
 
-	vector< double > correctBR = { 0.1, 0.099, 0.09825, 0.09775, 0.097 };
+	std::vector< double > correctBR = { 0.1, 0.099, 0.09825, 0.09775, 0.097 };
 
 	size = aBReflectances->size();
 

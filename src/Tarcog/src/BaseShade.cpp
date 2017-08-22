@@ -10,7 +10,7 @@
 #include "TarcogConstants.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 
-using namespace std;
+
 
 namespace Tarcog {
 
@@ -57,25 +57,25 @@ namespace Tarcog {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	CIGUShadeLayer::CIGUShadeLayer( double const t_Thickness, double const t_Conductivity,
-	                                shared_ptr< CShadeOpenings > const& t_ShadeOpenings,
-	                                shared_ptr< ISurface > const& t_FrontSurface,
-	                                shared_ptr< ISurface > const& t_BackSurface ) :
+	                                std::shared_ptr< CShadeOpenings > const& t_ShadeOpenings,
+	                                std::shared_ptr< ISurface > const& t_FrontSurface,
+	                                std::shared_ptr< ISurface > const& t_BackSurface ) :
 		CIGUSolidLayer( t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface ),
 		m_ShadeOpenings( t_ShadeOpenings ) {
 	}
 
-	CIGUShadeLayer::CIGUShadeLayer( shared_ptr< CIGUSolidLayer >& t_Layer,
-	                                shared_ptr< CShadeOpenings >& t_ShadeOpenings ) : CIGUSolidLayer( *t_Layer ) {
+	CIGUShadeLayer::CIGUShadeLayer( std::shared_ptr< CIGUSolidLayer >& t_Layer,
+	                                std::shared_ptr< CShadeOpenings >& t_ShadeOpenings ) : CIGUSolidLayer( *t_Layer ) {
 		m_ShadeOpenings = t_ShadeOpenings;
 	}
 
 	CIGUShadeLayer::CIGUShadeLayer( double t_Thickness, double t_Conductivity ) :
-		CIGUSolidLayer( t_Thickness, t_Conductivity ), m_ShadeOpenings( make_shared< CShadeOpenings >() ) {
+		CIGUSolidLayer( t_Thickness, t_Conductivity ), m_ShadeOpenings( std::make_shared< CShadeOpenings >() ) {
 
 	}
 
-	shared_ptr< CBaseLayer > CIGUShadeLayer::clone() const {
-		return make_shared< CIGUShadeLayer >( *this );
+	std::shared_ptr< CBaseLayer > CIGUShadeLayer::clone() const {
+		return std::make_shared< CIGUShadeLayer >( *this );
 	}
 
 	void CIGUShadeLayer::calculateConvectionOrConductionFlow() {
@@ -86,25 +86,25 @@ namespace Tarcog {
 		// This must be set here or gap will be constantly calling this routine back throughout nextLayer property.
 		setCalculated();
 
-		if ( dynamic_pointer_cast< CIGUGapLayer >( m_PreviousLayer ) != NULL &&
-			dynamic_pointer_cast< CIGUGapLayer >( m_NextLayer ) != NULL ) {
-			calcInBetweenShadeFlow( dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_PreviousLayer ),
-			                        dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_NextLayer ) );
+		if ( std::dynamic_pointer_cast< CIGUGapLayer >( m_PreviousLayer ) != NULL &&
+			std::dynamic_pointer_cast< CIGUGapLayer >( m_NextLayer ) != NULL ) {
+			calcInBetweenShadeFlow( std::dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_PreviousLayer ),
+			                        std::dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_NextLayer ) );
 		}
-		else if ( dynamic_pointer_cast< CEnvironment >( m_PreviousLayer ) != NULL &&
-			dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_NextLayer ) != NULL ) {
-			calcEdgeShadeFlow( dynamic_pointer_cast< CEnvironment >( m_PreviousLayer ),
-			                   dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_NextLayer ) );
+		else if ( std::dynamic_pointer_cast< CEnvironment >( m_PreviousLayer ) != NULL &&
+			std::dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_NextLayer ) != NULL ) {
+			calcEdgeShadeFlow( std::dynamic_pointer_cast< CEnvironment >( m_PreviousLayer ),
+			                   std::dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_NextLayer ) );
 		}
-		else if ( dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_PreviousLayer ) != NULL &&
-			dynamic_pointer_cast< CEnvironment >( m_NextLayer ) != NULL ) {
-			calcEdgeShadeFlow( dynamic_pointer_cast< CEnvironment >( m_NextLayer ),
-			                   dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_PreviousLayer ) );
+		else if ( std::dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_PreviousLayer ) != NULL &&
+			std::dynamic_pointer_cast< CEnvironment >( m_NextLayer ) != NULL ) {
+			calcEdgeShadeFlow( std::dynamic_pointer_cast< CEnvironment >( m_NextLayer ),
+			                   std::dynamic_pointer_cast< CIGUVentilatedGapLayer >( m_PreviousLayer ) );
 		}
 	}
 
-	void CIGUShadeLayer::calcInBetweenShadeFlow( shared_ptr< CIGUVentilatedGapLayer > t_Gap1,
-	                                             shared_ptr< CIGUVentilatedGapLayer > t_Gap2 ) {
+	void CIGUShadeLayer::calcInBetweenShadeFlow( std::shared_ptr< CIGUVentilatedGapLayer > t_Gap1,
+	                                             std::shared_ptr< CIGUVentilatedGapLayer > t_Gap2 ) {
 		using namespace IterationConstants;
 
 		double Tup = t_Gap1->layerTemperature();
@@ -179,7 +179,7 @@ namespace Tarcog {
 			++ iterationStep;
 			if ( iterationStep > NUMBER_OF_STEPS ) {
 				converged = true;
-				throw runtime_error( "Airflow iterations fail to converge. Maximum number of iteration steps reached." );
+				throw std::runtime_error( "Airflow iterations fail to converge. Maximum number of iteration steps reached." );
 			}
 		}
 
@@ -190,8 +190,8 @@ namespace Tarcog {
 
 	}
 
-	void CIGUShadeLayer::calcEdgeShadeFlow( shared_ptr< CEnvironment > t_Environment,
-	                                        shared_ptr< CIGUVentilatedGapLayer > t_Gap ) {
+	void CIGUShadeLayer::calcEdgeShadeFlow( std::shared_ptr< CEnvironment > t_Environment,
+	                                        std::shared_ptr< CIGUVentilatedGapLayer > t_Gap ) {
 		using namespace IterationConstants;
 
 		double TgapOut = t_Gap->layerTemperature();
@@ -243,7 +243,7 @@ namespace Tarcog {
 				iterationStep = 0;
 				if ( RelaxationParameter == RELAXATION_PARAMETER_AIRFLOW_MIN ) {
 					converged = true;
-					throw runtime_error( "Airflow iterations fail to converge. "
+					throw std::runtime_error( "Airflow iterations fail to converge. "
 					                    "Maximum number of iteration steps reached." );
 				}
 			}

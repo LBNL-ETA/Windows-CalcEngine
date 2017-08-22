@@ -5,12 +5,12 @@
 #include "GasItem.hpp"
 #include "GasSetting.hpp"
 
-using namespace std;
+
 
 namespace Gases {
 
-	CGas::CGas() : m_SimpleProperties( make_shared< GasProperties >() ),
-	               m_Properties( make_shared< GasProperties >() ), m_Pressure( DefaultPressure ) {
+	CGas::CGas() : m_SimpleProperties( std::make_shared< GasProperties >() ),
+	               m_Properties( std::make_shared< GasProperties >() ), m_Pressure( DefaultPressure ) {
 		// create default gas to be Air
 		auto Air = CGasItem();
 		m_GasItem.push_back( Air );
@@ -54,7 +54,7 @@ namespace Gases {
 		}
 	}
 
-	shared_ptr< GasProperties > CGas::getSimpleGasProperties() {
+	std::shared_ptr< GasProperties > CGas::getSimpleGasProperties() {
 		*m_SimpleProperties = *( ( m_GasItem )[ 0 ].getFractionalGasProperties() );
 		for ( auto it = next( m_GasItem.begin() ); it != m_GasItem.end(); ++it ) {
 			*m_SimpleProperties += *( it->getFractionalGasProperties() );
@@ -63,19 +63,19 @@ namespace Gases {
 		return m_SimpleProperties;
 	}
 
-	shared_ptr< GasProperties > CGas::getGasProperties() {
+	std::shared_ptr< GasProperties > CGas::getGasProperties() {
 		auto aSettings = CGasSettings::instance();
 		return aSettings.getVacuumPressure() < m_Pressure ? getStandardPressureGasProperties()
 			       : getVacuumPressureGasProperties();
 	}
 
-	shared_ptr< GasProperties > CGas::getStandardPressureGasProperties() {
+	std::shared_ptr< GasProperties > CGas::getStandardPressureGasProperties() {
 		auto simpleProperties = getSimpleGasProperties();
 
 		// coefficients for intermediate calculations
-		vector< vector< double > > miItem;
-		vector< vector< double > > lambdaPrimItem;
-		vector< vector< double > > lambdaSecondItem;
+		std::vector< std::vector< double > > miItem;
+		std::vector< std::vector< double > > lambdaPrimItem;
+		std::vector< std::vector< double > > lambdaSecondItem;
 
 		auto gasSize = m_GasItem.size();
 		auto counter = 0;
@@ -146,7 +146,7 @@ namespace Gases {
 		return m_Properties;
 	}
 
-	shared_ptr< GasProperties > CGas::getVacuumPressureGasProperties() {
+	std::shared_ptr< GasProperties > CGas::getVacuumPressureGasProperties() {
 		return getSimpleGasProperties();
 	}
 
@@ -155,10 +155,10 @@ namespace Gases {
 	                           GasProperties const& t_Gas2Properties ) const {
 
 		if ( t_Gas1Properties.m_Viscosity == 0 || t_Gas2Properties.m_Viscosity == 0 ) {
-			throw runtime_error( "Viscosity of the gas component in Gases is equal to zero." );
+			throw std::runtime_error( "Viscosity of the gas component in Gases is equal to zero." );
 		}
 		if ( ( t_Gas1Properties.m_MolecularWeight == 0 ) || ( t_Gas2Properties.m_MolecularWeight == 0 ) ) {
-			throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
+			throw std::runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
 		}
 
 		auto uFraction = t_Gas1Properties.m_Viscosity / t_Gas2Properties.m_Viscosity;
@@ -167,7 +167,7 @@ namespace Gases {
 		auto denominator = 2 * sqrt( 2.0 ) * pow( 1 + weightFraction, 0.5 );
 
 		if ( denominator == 0 ) {
-			throw runtime_error( "Dynamic viscosity coefficient is gas mixture is calculated to be zero." );
+			throw std::runtime_error( "Dynamic viscosity coefficient is gas mixture is calculated to be zero." );
 		}
 
 		return nominator / denominator;
@@ -179,7 +179,7 @@ namespace Gases {
 
 		auto phiValue = viscTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
 		if ( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
-			throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
+			throw std::runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
 		}
 
 		return ( t_GasItem2.getFraction() / t_GasItem1.getFraction() ) * phiValue;
@@ -191,7 +191,7 @@ namespace Gases {
 	                                 GasProperties const& t_Gas2Properties ) const {
 
 		if ( ( t_Gas1Properties.m_MolecularWeight == 0 ) || ( t_Gas2Properties.m_MolecularWeight == 0 ) ) {
-			throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
+			throw std::runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
 		}
 
 		auto item1 = lambdaSecondTwoGases( t_Gas1Properties, t_Gas2Properties );
@@ -208,11 +208,11 @@ namespace Gases {
 	                                   const GasProperties& t_Gas2Properties ) const {
 
 		if ( ( t_Gas1Properties.getLambdaPrim() == 0 ) || ( t_Gas2Properties.getLambdaPrim() == 0 ) ) {
-			throw runtime_error( "Primary thermal conductivity (lambda prim) of the gas component in Gases is equal to zero." );
+			throw std::runtime_error( "Primary thermal conductivity (lambda prim) of the gas component in Gases is equal to zero." );
 		}
 
 		if ( ( t_Gas1Properties.m_MolecularWeight == 0 ) || ( t_Gas2Properties.m_MolecularWeight == 0 ) ) {
-			throw runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
+			throw std::runtime_error( "Molecular weight of the gas component in Gases is equal to zero." );
 		}
 
 		auto tFraction = t_Gas1Properties.getLambdaPrim() / t_Gas2Properties.getLambdaPrim();
@@ -221,7 +221,7 @@ namespace Gases {
 		auto denominator = 2 * sqrt( 2.0 ) * pow( ( 1 + weightFraction ), 0.5 );
 
 		if ( denominator == 0 ) {
-			throw runtime_error( "Thermal conductivity coefficient in gas mixture is calculated to be zero." );
+			throw std::runtime_error( "Thermal conductivity coefficient in gas mixture is calculated to be zero." );
 		}
 
 		return nominator / denominator;
@@ -234,7 +234,7 @@ namespace Gases {
 		auto phiValue = lambdaPrimTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
 
 		if ( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
-			throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
+			throw std::runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
 		}
 
 		return ( t_GasItem2.getFraction() / t_GasItem1.getFraction() ) * phiValue;
@@ -247,7 +247,7 @@ namespace Gases {
 		auto phiValue = lambdaSecondTwoGases( *t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties() );
 
 		if ( ( t_GasItem1.getFraction() == 0 ) || ( t_GasItem2.getFraction() == 0 ) ) {
-			throw runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
+			throw std::runtime_error( "Fraction of gas component in gas mixture is set to be equal to zero." );
 		}
 
 		return ( t_GasItem2.getFraction() / t_GasItem1.getFraction() ) * phiValue;

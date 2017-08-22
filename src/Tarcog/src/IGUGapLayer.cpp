@@ -10,7 +10,7 @@
 #include "WCEGases.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace Gases;
 using namespace FenestrationCommon;
 
@@ -24,7 +24,7 @@ namespace Tarcog {
 	}
 
 	CIGUGapLayer::CIGUGapLayer( double const t_Thickness, double const t_Pressure,
-	                            shared_ptr< CGas > const& t_Gas ) :
+	                            std::shared_ptr< CGas > const& t_Gas ) :
 		CState(), CBaseIGULayer( t_Thickness ), CGasLayer( t_Pressure, t_Gas ) {
 		assert( m_Gas != nullptr );
 	}
@@ -34,7 +34,7 @@ namespace Tarcog {
 
 	}
 
-	void CIGUGapLayer::connectToBackSide( shared_ptr< CBaseLayer > const& t_Layer ) {
+	void CIGUGapLayer::connectToBackSide( std::shared_ptr< CBaseLayer > const& t_Layer ) {
 		CBaseLayer::connectToBackSide( t_Layer );
 		m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Front );
 	}
@@ -47,7 +47,7 @@ namespace Tarcog {
 		checkNextLayer();
 		if ( !isCalculated() ) {
 			if ( getThickness() == 0 ) {
-				throw runtime_error( "Layer thickness is set to zero." );
+				throw std::runtime_error( "Layer thickness is set to zero." );
 			}
 
 			convectiveH();
@@ -85,7 +85,7 @@ namespace Tarcog {
 
 	double CIGUGapLayer::aspectRatio() const {
 		if ( getThickness() == 0 ) {
-			throw runtime_error( "Gap thickness is set to zero." );
+			throw std::runtime_error( "Gap thickness is set to zero." );
 		}
 		return m_Height / getThickness();
 	}
@@ -95,7 +95,7 @@ namespace Tarcog {
 		m_Gas->setTemperatureAndPressure( tGapTemperature, getPressure() );
 		auto Ra = calculateRayleighNumber();
 		auto Asp = aspectRatio();
-		auto nusseltNumber = make_shared< CNusseltNumber >();
+		auto nusseltNumber = std::make_shared< CNusseltNumber >();
 		auto aProperties = m_Gas->getGasProperties();
 		if ( aProperties->m_Viscosity != 0 ) {
 			m_ConductiveConvectiveCoeff = nusseltNumber->calculate( m_Tilt, Ra, Asp ) *
@@ -129,8 +129,8 @@ namespace Tarcog {
 		return m_Pressure;
 	}
 
-	shared_ptr< CBaseLayer > CIGUGapLayer::clone() const {
-		return make_shared< CIGUGapLayer >( *this );
+	std::shared_ptr< CBaseLayer > CIGUGapLayer::clone() const {
+		return std::make_shared< CIGUGapLayer >( *this );
 	}
 
 }

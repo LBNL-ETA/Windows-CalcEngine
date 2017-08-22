@@ -4,18 +4,18 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
 class TestSampleNFRC_1042_PHOTOPIC : public testing::Test {
 
 private:
-	shared_ptr< CSpectralSample > m_Sample;
+	std::shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-	shared_ptr< CSeries > getSolarRadiation() const {
-		auto solarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiation() const {
+		auto solarRadiation = std::make_shared< CSeries >();
 
 		// Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
 		solarRadiation->addProperty( 0.3000, 0.0341 );
@@ -553,8 +553,8 @@ protected:
 		return solarRadiation;
 	}
 
-	shared_ptr< vector< double > > getWavelengths() const {
-		auto aWavelengths = make_shared< vector< double > >();
+	std::shared_ptr< std::vector< double > > getWavelengths() const {
+		auto aWavelengths = std::make_shared< std::vector< double > >();
 
 		aWavelengths->push_back( 0.380 );
 		aWavelengths->push_back( 0.385 );
@@ -641,8 +641,8 @@ protected:
 		return aWavelengths;
 	}
 
-	shared_ptr< CSeries > getDetectorData() const {
-		auto detectorData = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getDetectorData() const {
+		auto detectorData = std::make_shared< CSeries >();
 
 		detectorData->addProperty( 0.380, 0.0000 );
 		detectorData->addProperty( 0.385, 0.0001 );
@@ -729,8 +729,8 @@ protected:
 		return detectorData;
 	}
 
-	shared_ptr< CSpectralSampleData > getMeasurements() const {
-		auto sampleMeasurements = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > getMeasurements() const {
+		auto sampleMeasurements = std::make_shared< CSpectralSampleData >();
 
 		sampleMeasurements->addRecord( 0.300, 0.0006, 0.0518, 0.2713 );
 		sampleMeasurements->addRecord( 0.305, 0.0006, 0.0509, 0.2624 );
@@ -1238,14 +1238,14 @@ protected:
 		auto detectorData = getDetectorData();
 		auto sampleMeasurements = getMeasurements();
 
-		m_Sample = make_shared< CSpectralSample >( sampleMeasurements, solarRadiation );
+		m_Sample = std::make_shared< CSpectralSample >( sampleMeasurements, solarRadiation );
 		m_Sample->setDetectorData( detectorData );
 
 		m_Sample->setWavelengths( WavelengthSet::Custom, aWavelengths );
 	}
 
 public:
-	shared_ptr< CSpectralSample > getSample() const {
+	std::shared_ptr< CSpectralSample > getSample() const {
 		return m_Sample;
 	};
 

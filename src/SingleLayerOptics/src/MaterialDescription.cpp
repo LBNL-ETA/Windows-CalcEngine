@@ -43,7 +43,7 @@ namespace SingleLayerOptics {
 		m_MaxLambda = aRange.maxLambda();
 	}
 
-	void CMaterial::setSourceData( shared_ptr< CSeries > ) {
+	void CMaterial::setSourceData( std::shared_ptr< CSeries > ) {
 		// Default material will not have detector data
 	}
 
@@ -56,8 +56,8 @@ namespace SingleLayerOptics {
 		return getBandProperties( t_Property, t_Side ); // Default beahvior is no angular dependence
 	}
 
-	shared_ptr< vector< RMaterialProperties > > CMaterial::getBandProperties() {
-		shared_ptr< vector< RMaterialProperties > > aProperties = make_shared< vector< RMaterialProperties > >();
+	std::shared_ptr< std::vector< RMaterialProperties > > CMaterial::getBandProperties() {
+		std::shared_ptr< std::vector< RMaterialProperties > > aProperties = make_shared< std::vector< RMaterialProperties > >();
 
 		vector< double > Tf = getBandProperties( Property::T, Side::Front );
 		vector< double > Tb = getBandProperties( Property::T, Side::Back );
@@ -75,12 +75,12 @@ namespace SingleLayerOptics {
 		return aProperties;
 	}
 
-	shared_ptr< CSpectralSample > CMaterial::getSpectralSample() {
+	std::shared_ptr< CSpectralSample > CMaterial::getSpectralSample() {
 		vector< double > Tf = getBandProperties( Property::T, Side::Front );
 		vector< double > Rf = getBandProperties( Property::R, Side::Front );
 		vector< double > Rb = getBandProperties( Property::R, Side::Back );
 
-		shared_ptr< CSpectralSampleData > aSampleData = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aSampleData = make_shared< CSpectralSampleData >();
 
 		size_t size = getBandSize();
 		for ( size_t i = 0; i < size; ++i ) {
@@ -158,17 +158,17 @@ namespace SingleLayerOptics {
 	////   CMaterialDualBand
 	////////////////////////////////////////////////////////////////////////////////////
 
-	CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
-	                                      const shared_ptr< CMaterial >& t_SolarRange, const double t_Ratio ) : CMaterial( 0.3, 2.5 ),
+	CMaterialDualBand::CMaterialDualBand( const std::shared_ptr< CMaterial >& t_PartialRange,
+	                                      const std::shared_ptr< CMaterial >& t_SolarRange, const double t_Ratio ) : CMaterial( 0.3, 2.5 ),
 	                                                                                                            m_MaterialFullRange( t_SolarRange ), m_MaterialPartialRange( t_PartialRange ) {
 		checkIfMaterialWithingSolarRange( *t_PartialRange );
 		createUVRange();
 		createNIRRange( t_PartialRange, *t_SolarRange, t_Ratio );
 	}
 
-	CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
-	                                      const shared_ptr< CMaterial >& t_SolarRange,
-	                                      const shared_ptr< CSeries >& t_SolarRadiation ) : CMaterial( 0.3, 2.5 ),
+	CMaterialDualBand::CMaterialDualBand( const std::shared_ptr< CMaterial >& t_PartialRange,
+	                                      const std::shared_ptr< CMaterial >& t_SolarRange,
+	                                      const std::shared_ptr< CSeries >& t_SolarRadiation ) : CMaterial( 0.3, 2.5 ),
 	                                                                                        m_MaterialFullRange( t_SolarRange ), m_MaterialPartialRange( t_PartialRange ) {
 		checkIfMaterialWithingSolarRange( *m_MaterialPartialRange );
 		createUVRange();
@@ -178,8 +178,8 @@ namespace SingleLayerOptics {
 		createNIRRange( m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio() );
 	}
 
-	CMaterialDualBand::CMaterialDualBand( const shared_ptr< CMaterial >& t_PartialRange,
-	                                      const shared_ptr< CMaterial >& t_SolarRange ) : CMaterial( 0.3, 2.5 ),
+	CMaterialDualBand::CMaterialDualBand( const std::shared_ptr< CMaterial >& t_PartialRange,
+	                                      const std::shared_ptr< CMaterial >& t_SolarRange ) : CMaterial( 0.3, 2.5 ),
 	                                                                                      m_MaterialFullRange( t_SolarRange ), m_MaterialPartialRange( t_PartialRange ) {
 		checkIfMaterialWithingSolarRange( *m_MaterialPartialRange );
 		createUVRange();
@@ -188,7 +188,7 @@ namespace SingleLayerOptics {
 		createNIRRange( m_MaterialPartialRange, *m_MaterialFullRange, nirRatio );
 	}
 
-	void CMaterialDualBand::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	void CMaterialDualBand::setSourceData( std::shared_ptr< CSeries > t_SourceData ) {
 		m_MaterialFullRange->setSourceData( t_SourceData );
 		m_MaterialPartialRange->setSourceData( t_SourceData );
 		checkIfMaterialWithingSolarRange( *m_MaterialPartialRange );
@@ -238,7 +238,7 @@ namespace SingleLayerOptics {
 		double R = 0;
 		double minLambda = 0.3;
 		double maxLambda = 0.32;
-		shared_ptr< CMaterial > aUVMaterial = make_shared< CMaterialSingleBand >( T, T, R, R, minLambda, maxLambda );
+		std::shared_ptr< CMaterial > aUVMaterial = make_shared< CMaterialSingleBand >( T, T, R, R, minLambda, maxLambda );
 		m_Materials.push_back( aUVMaterial );
 	}
 
@@ -257,16 +257,16 @@ namespace SingleLayerOptics {
 		double minRangeLambda = t_PartialRange->getMinLambda();
 
 		if ( minRangeLambda > 0.32 ) {
-			shared_ptr< CMaterialSingleBand > aMaterial =
-				make_shared< CMaterialSingleBand >( Tf_nir, Tb_nir, Rf_nir, Rb_nir, 0.32, minRangeLambda );
+			std::shared_ptr< CMaterialSingleBand > aMaterial =
+				std::make_shared< CMaterialSingleBand >( Tf_nir, Tb_nir, Rf_nir, Rb_nir, 0.32, minRangeLambda );
 			m_Materials.push_back( aMaterial );
 		}
 
 		m_Materials.push_back( t_PartialRange );
 
 		double maxRangeLambda = t_PartialRange->getMaxLambda();
-		shared_ptr< CMaterialSingleBand > aMaterial =
-			make_shared< CMaterialSingleBand >( Tf_nir, Tb_nir, Rf_nir, Rb_nir, maxRangeLambda, 2.5 );
+		std::shared_ptr< CMaterialSingleBand > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tf_nir, Tb_nir, Rf_nir, Rb_nir, maxRangeLambda, 2.5 );
 		m_Materials.push_back( aMaterial );
 	}
 
@@ -280,7 +280,7 @@ namespace SingleLayerOptics {
 	////   CMaterialSample
 	////////////////////////////////////////////////////////////////////////////////////
 
-	CMaterialSample::CMaterialSample( const shared_ptr< CSpectralSample >& t_SpectralSample,
+	CMaterialSample::CMaterialSample( const std::shared_ptr< CSpectralSample >& t_SpectralSample,
 	                                  const double t_Thickness, const MaterialType t_Type,
 	                                  const double minLambda, const double maxLambda ) :
 		CMaterial( minLambda, maxLambda ) {
@@ -293,7 +293,7 @@ namespace SingleLayerOptics {
 
 	}
 
-	CMaterialSample::CMaterialSample( const shared_ptr< CSpectralSample >& t_SpectralSample,
+	CMaterialSample::CMaterialSample( const std::shared_ptr< CSpectralSample >& t_SpectralSample,
 	                                  const double t_Thickness, const MaterialType t_Type,
 	                                  const WavelengthRange t_Range ) : CMaterial( t_Range ) {
 
@@ -305,7 +305,7 @@ namespace SingleLayerOptics {
 
 	}
 
-	void CMaterialSample::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	void CMaterialSample::setSourceData( std::shared_ptr< CSeries > t_SourceData ) {
 		m_AngularSample->setSourceData( t_SourceData );
 	}
 
@@ -338,7 +338,7 @@ namespace SingleLayerOptics {
 	////   CMaterialMeasured
 	////////////////////////////////////////////////////////////////////////////////////
 
-	CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >& t_AngularMeasurements,
+	CMaterialMeasured::CMaterialMeasured( const std::shared_ptr< SpectralAveraging::CAngularMeasurements >& t_AngularMeasurements,
 	                                      const double minLambda, const double maxLambda ) :
 		CMaterial( minLambda, maxLambda ),
 		m_AngularMeasurements( t_AngularMeasurements ) {
@@ -348,7 +348,7 @@ namespace SingleLayerOptics {
 		}
 	}
 
-	CMaterialMeasured::CMaterialMeasured( const shared_ptr< SpectralAveraging::CAngularMeasurements >& t_AngularMeasurements,
+	CMaterialMeasured::CMaterialMeasured( const std::shared_ptr< SpectralAveraging::CAngularMeasurements >& t_AngularMeasurements,
 	                                      const WavelengthRange t_Range ) :
 		CMaterial( t_Range ),
 		m_AngularMeasurements( t_AngularMeasurements ) {
@@ -359,7 +359,7 @@ namespace SingleLayerOptics {
 
 	}
 
-	void CMaterialMeasured::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	void CMaterialMeasured::setSourceData( std::shared_ptr< CSeries > t_SourceData ) {
 
 		m_AngularMeasurements->setSourceData( t_SourceData );
 	}
@@ -367,8 +367,8 @@ namespace SingleLayerOptics {
 	double CMaterialMeasured::getPropertyAtAngle( const Property t_Property,
 	                                              const Side t_Side, const double t_Angle ) const {
 		assert( m_AngularMeasurements );
-		shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
-		shared_ptr< CSpectralSample > aSample = aAngular->getData();
+		std::shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
+		std::shared_ptr< CSpectralSample > aSample = aAngular->getData();
 		return aSample->getProperty( m_MinLambda, m_MaxLambda, t_Property, t_Side );
 	}
 
@@ -379,14 +379,14 @@ namespace SingleLayerOptics {
 	vector< double > CMaterialMeasured::getBandPropertiesAtAngle( const Property t_Property,
 	                                                              const Side t_Side, const double t_Angle ) const {
 		assert( m_AngularMeasurements );
-		shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
-		shared_ptr< CSpectralSample > aSample = aAngular->getData();
-		shared_ptr< CSeries > aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
+		std::shared_ptr< CSingleAngularMeasurement > aAngular = m_AngularMeasurements->getMeasurements( t_Angle );
+		std::shared_ptr< CSpectralSample > aSample = aAngular->getData();
+		std::shared_ptr< CSeries > aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
 
 		vector< double > aValues;
 
 		if ( aProperties != nullptr ) {
-			for ( shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
+			for ( std::shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
 				if ( aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda ) {
 					aValues.push_back( aProperty->value() );
 				}

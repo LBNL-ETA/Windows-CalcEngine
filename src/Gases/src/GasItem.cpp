@@ -7,7 +7,7 @@
 #include "GasData.hpp"
 #include "GasSetting.hpp"
 
-using namespace std;
+
 
 namespace Gases {
 
@@ -19,8 +19,8 @@ namespace Gases {
 		m_Temperature( t_GasItem.m_Temperature ),
 		m_Pressure( t_GasItem.m_Pressure ),
 		m_Fraction( t_GasItem.m_Fraction ),
-		m_GasProperties( make_shared< GasProperties >() ),
-		m_FractionalGasProperties( make_shared< GasProperties >() ),
+		m_GasProperties( std::make_shared< GasProperties >() ),
+		m_FractionalGasProperties( std::make_shared< GasProperties >() ),
 		m_GasData( new CGasData( *t_GasItem.m_GasData.get() ) ) {
 		( *m_FractionalGasProperties ) = ( *t_GasItem.m_FractionalGasProperties );
 		( *m_GasProperties ) = ( *t_GasItem.m_GasProperties );
@@ -60,7 +60,7 @@ namespace Gases {
 		auto const alpha = alpha1 * alpha2 / ( alpha2 + alpha1 * ( 1 - alpha2 ) );
 		auto const specificHeatRatio = m_GasData->getSpecificHeatRatio();
 		if ( specificHeatRatio == 1 ) {
-			throw runtime_error( "Specific heat ratio of a gas cannot be equal to one." );
+			throw std::runtime_error( "Specific heat ratio of a gas cannot be equal to one." );
 		}
 		auto const mWght = m_GasData->getMolecularWeight();
 		auto B = alpha * ( specificHeatRatio + 1 ) / ( specificHeatRatio - 1 );
@@ -75,8 +75,8 @@ namespace Gases {
 	void CGasItem::initialize() {
 		m_Temperature = DefaultTemperature;
 		m_Pressure = DefaultPressure;
-		m_FractionalGasProperties = make_shared< GasProperties >();
-		m_GasProperties = make_shared< GasProperties >();
+		m_FractionalGasProperties = std::make_shared< GasProperties >();
+		m_GasProperties = std::make_shared< GasProperties >();
 	}
 
 	double CGasItem::getFraction() const {
@@ -98,7 +98,7 @@ namespace Gases {
 		resetCalculatedProperties();
 	}
 
-	shared_ptr< GasProperties > CGasItem::getGasProperties() const {
+	std::shared_ptr< GasProperties > CGasItem::getGasProperties() const {
 
 		if ( !m_GasProperties->m_PropertiesCalculated ) {
 			auto aSettings = CGasSettings::instance();
@@ -115,7 +115,7 @@ namespace Gases {
 		return m_GasProperties;
 	}
 
-	shared_ptr< GasProperties > CGasItem::getFractionalGasProperties() const {
+	std::shared_ptr< GasProperties > CGasItem::getFractionalGasProperties() const {
 		if ( !m_FractionalGasProperties->m_PropertiesCalculated ) {
 
 			auto itemGasProperties = getGasProperties();

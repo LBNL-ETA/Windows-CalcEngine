@@ -5,7 +5,7 @@
 #include "Surface.hpp"
 
 using namespace FenestrationCommon;
-using namespace std;
+
 
 namespace Tarcog {
 

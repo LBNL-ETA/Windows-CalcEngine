@@ -1,5 +1,5 @@
 #include "BaseLayer.hpp"
-using namespace std;
+
 
 namespace Tarcog {
 
@@ -13,11 +13,11 @@ namespace Tarcog {
 
 	}
 
-	shared_ptr< CBaseLayer > CBaseLayer::getPreviousLayer() const {
+	std::shared_ptr< CBaseLayer > CBaseLayer::getPreviousLayer() const {
 		return m_PreviousLayer;
 	}
 
-	shared_ptr< CBaseLayer > CBaseLayer::getNextLayer() const {
+	std::shared_ptr< CBaseLayer > CBaseLayer::getNextLayer() const {
 		return m_NextLayer;
 	}
 
@@ -26,7 +26,7 @@ namespace Tarcog {
 		m_NextLayer = nullptr;
 	}
 
-	void CBaseLayer::connectToBackSide( shared_ptr< CBaseLayer > const& t_Layer ) {
+	void CBaseLayer::connectToBackSide( std::shared_ptr< CBaseLayer > const& t_Layer ) {
 		m_NextLayer = t_Layer;
 		t_Layer->m_PreviousLayer = shared_from_this();
 	}

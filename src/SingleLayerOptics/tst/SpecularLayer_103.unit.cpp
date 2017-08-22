@@ -13,11 +13,11 @@ using namespace SpectralAveraging;
 class TestSpecularLayer_103 : public testing::Test {
 
 private:
-	shared_ptr< CBSDFLayer > m_Layer;
+	std::shared_ptr< CBSDFLayer > m_Layer;
 
 protected:
 	virtual void SetUp() {
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -142,7 +142,7 @@ protected:
 		aSolarRadiation->addProperty( 3.7650, 9.0 );
 		aSolarRadiation->addProperty( 4.0450, 6.9 );
 
-		shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0000, 0.0470, 0.0490 );
 		aMeasurements->addRecord( 0.305, 0.0050, 0.0470, 0.0490 );
@@ -256,14 +256,14 @@ protected:
 		aMeasurements->addRecord( 2.450, 0.7570, 0.0640, 0.0640 );
 		aMeasurements->addRecord( 2.500, 0.7500, 0.0630, 0.0630 );
 
-		shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		std::shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		double thickness = 5.715e-3; // [m]
-		shared_ptr< CMaterial > aMaterial =
-			make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
+		std::shared_ptr< CMaterial > aMaterial =
+			std::make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
 		// Define BSDF
-		shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
@@ -272,7 +272,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CBSDFLayer > getLayer() {
+	std::shared_ptr< CBSDFLayer > getLayer() {
 		return m_Layer;
 	};
 
@@ -281,9 +281,9 @@ public:
 TEST_F( TestSpecularLayer_103, TestSpecular1 ) {
 	SCOPED_TRACE( "Begin Test: Specular layer - BSDF." );
 
-	shared_ptr< CBSDFLayer > aLayer = getLayer();
+	std::shared_ptr< CBSDFLayer > aLayer = getLayer();
 
-	shared_ptr< CBSDFIntegrator > aResults = aLayer->getResults();
+	std::shared_ptr< CBSDFIntegrator > aResults = aLayer->getResults();
 
 	double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
 	EXPECT_NEAR( 0.68823803381618487, tauDiff, 1e-6 );
@@ -300,7 +300,7 @@ TEST_F( TestSpecularLayer_103, TestSpecular1 ) {
 	double tauDir = aResults->DirDir( Side::Front, PropertySimple::T, theta, phi );
 	EXPECT_NEAR( 0.76691124365416619, tauDir, 1e-6 );
 
-	shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
@@ -463,7 +463,7 @@ TEST_F( TestSpecularLayer_103, TestSpecular1 ) {
 	}
 
 	// Front reflectance
-	shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 
 	correctResults.clear();
 	calculatedResults.clear();

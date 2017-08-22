@@ -8,27 +8,27 @@
 #include "WCECommon.hpp"
 #include "ViewerConstants.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Viewer {
 
-	CSegment2D::CSegment2D( shared_ptr< const CPoint2D > const& t_StartPoint,
-	                        shared_ptr< const CPoint2D > const& t_EndPoint ) :
+	CSegment2D::CSegment2D( std::shared_ptr< const CPoint2D > const& t_StartPoint,
+	                        std::shared_ptr< const CPoint2D > const& t_EndPoint ) :
 		m_StartPoint( t_StartPoint ), m_EndPoint( t_EndPoint ) {
 		calculateLength();
 		calculateCenter();
 	}
 
-	shared_ptr< const CPoint2D > CSegment2D::startPoint() const {
+	std::shared_ptr< const CPoint2D > CSegment2D::startPoint() const {
 		return m_StartPoint;
 	}
 
-	shared_ptr< const CPoint2D > CSegment2D::endPoint() const {
+	std::shared_ptr< const CPoint2D > CSegment2D::endPoint() const {
 		return m_EndPoint;
 	}
 
-	shared_ptr< const CPoint2D > CSegment2D::centerPoint() const {
+	std::shared_ptr< const CPoint2D > CSegment2D::centerPoint() const {
 		return m_CenterPoint;
 	}
 
@@ -45,7 +45,7 @@ namespace Viewer {
 		return m_Length;
 	}
 
-	bool CSegment2D::intersectionWithSegment( shared_ptr< const CSegment2D > const& t_Segment ) const {
+	bool CSegment2D::intersectionWithSegment( std::shared_ptr< const CSegment2D > const& t_Segment ) const {
 		auto aInt = false;
 		if ( length() != 0 ) {
 			auto aPoint = intersection( t_Segment );
@@ -58,7 +58,7 @@ namespace Viewer {
 		return aInt;
 	}
 
-	IntersectionStatus CSegment2D::intersectionWithLine( shared_ptr< const CSegment2D > const& t_Segment ) const {
+	IntersectionStatus CSegment2D::intersectionWithLine( std::shared_ptr< const CSegment2D > const& t_Segment ) const {
 		auto status = IntersectionStatus::No;
 
 		if ( length() != 0 ) {
@@ -79,7 +79,7 @@ namespace Viewer {
 		return status;
 	}
 
-	double CSegment2D::dotProduct( shared_ptr< const CSegment2D > const& t_Segment ) const {
+	double CSegment2D::dotProduct( std::shared_ptr< const CSegment2D > const& t_Segment ) const {
 		auto p1 = intensity();
 		auto p2 = *t_Segment->intensity();
 
@@ -87,10 +87,10 @@ namespace Viewer {
 	}
 
 	// Translates segment for given coordinates
-	shared_ptr< CSegment2D > CSegment2D::translate( double const t_x, double const t_y ) const {
-		auto startPoint = make_shared< CPoint2D >( m_StartPoint->x() + t_x, m_StartPoint->y() + t_y );
-		auto endPoint = make_shared< CPoint2D >( m_EndPoint->x() + t_x, m_EndPoint->y() + t_y );
-		auto aSegment = make_shared< CSegment2D >( startPoint, endPoint );
+	std::shared_ptr< CSegment2D > CSegment2D::translate( double const t_x, double const t_y ) const {
+		auto startPoint = std::make_shared< CPoint2D >( m_StartPoint->x() + t_x, m_StartPoint->y() + t_y );
+		auto endPoint = std::make_shared< CPoint2D >( m_EndPoint->x() + t_x, m_EndPoint->y() + t_y );
+		auto aSegment = std::make_shared< CSegment2D >( startPoint, endPoint );
 		return aSegment;
 	}
 
@@ -104,15 +104,15 @@ namespace Viewer {
 		auto x = ( m_EndPoint->x() + m_StartPoint->x() ) / 2;
 		auto y = ( m_EndPoint->y() + m_StartPoint->y() ) / 2;
 
-		m_CenterPoint = make_shared< CPoint2D >( x, y );
+		m_CenterPoint = std::make_shared< CPoint2D >( x, y );
 	}
 
-	shared_ptr< CPoint2D > CSegment2D::intersection( shared_ptr< const CSegment2D > const& t_Segment ) const {
+	std::shared_ptr< CPoint2D > CSegment2D::intersection( std::shared_ptr< const CSegment2D > const& t_Segment ) const {
 		if ( t_Segment == nullptr ) {
-			throw runtime_error( "Segment for intersection must be provided. Cannot operate with null segment." );
+			throw std::runtime_error( "Segment for intersection must be provided. Cannot operate with null segment." );
 		}
 
-		shared_ptr< CPoint2D > intersectionPoint = nullptr;
+		std::shared_ptr< CPoint2D > intersectionPoint = nullptr;
 
 		auto A1 = coeffA();
 		auto A2 = t_Segment->coeffA();
@@ -141,19 +141,19 @@ namespace Viewer {
 			x = ( C2 - B2 * y ) / A2;
 		}
 
-		intersectionPoint = make_shared< CPoint2D >( x, y );
+		intersectionPoint = std::make_shared< CPoint2D >( x, y );
 
 		return intersectionPoint;
 	}
 
-	bool CSegment2D::isInRectangleRange( shared_ptr< const CPoint2D > const& t_Point ) const {
+	bool CSegment2D::isInRectangleRange( std::shared_ptr< const CPoint2D > const& t_Point ) const {
 		// Should return in range only if point is not exactly on the line's point
 		auto inXRange = false;
 		auto inYRange = false;
 
 		// Check X range
-		auto const maxX = max( m_EndPoint->x(), m_StartPoint->x() );
-		auto const minX = min( m_EndPoint->x(), m_StartPoint->x() );
+		auto const maxX = std::max( m_EndPoint->x(), m_StartPoint->x() );
+		auto const minX = std::min( m_EndPoint->x(), m_StartPoint->x() );
 		if ( fabs( maxX - minX ) > ViewerConstants::DISTANCE_TOLERANCE ) {
 			if ( t_Point->x() < ( maxX - ViewerConstants::DISTANCE_TOLERANCE ) && t_Point->x() > ( minX + ViewerConstants::DISTANCE_TOLERANCE ) ) {
 				inXRange = true;
@@ -166,8 +166,8 @@ namespace Viewer {
 		}
 
 		// Check Y range
-		auto const maxY = max( m_EndPoint->y(), m_StartPoint->y() );
-		auto const minY = min( m_EndPoint->y(), m_StartPoint->y() );
+		auto const maxY = std::max( m_EndPoint->y(), m_StartPoint->y() );
+		auto const minY = std::min( m_EndPoint->y(), m_StartPoint->y() );
 		if ( fabs( maxY - minY ) > ViewerConstants::DISTANCE_TOLERANCE ) {
 			if ( t_Point->y() < ( maxY - ViewerConstants::DISTANCE_TOLERANCE ) && t_Point->y() > ( minY + ViewerConstants::DISTANCE_TOLERANCE ) ) {
 				inYRange = true;
@@ -194,10 +194,10 @@ namespace Viewer {
 		return coeffB() * m_StartPoint->y() + coeffA() * m_StartPoint->x();
 	}
 
-	shared_ptr< CPoint2D > CSegment2D::intensity() const {
+	std::shared_ptr< CPoint2D > CSegment2D::intensity() const {
 		auto x = m_EndPoint->x() - m_StartPoint->x();
 		auto y = m_EndPoint->y() - m_StartPoint->y();
-		auto aPoint = make_shared< CPoint2D >( x, y );
+		auto aPoint = std::make_shared< CPoint2D >( x, y );
 		return aPoint;
 	}
 

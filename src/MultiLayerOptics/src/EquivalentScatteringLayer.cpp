@@ -18,10 +18,10 @@ namespace MultiLayerOptics {
 	                                                        const double Tf_dif_dif, const double Rf_dif_dif,
 	                                                        const double Tb_dif_dif, const double Rb_dif_dif ) {
 
-		shared_ptr< CScatteringSurface > aFrontSurface =
-			make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, Tf_dir_dif,
+		std::shared_ptr< CScatteringSurface > aFrontSurface =
+			std::make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, Tf_dir_dif,
 			                                   Rf_dir_dif, Tf_dif_dif, Rf_dif_dif );
-		shared_ptr< CScatteringSurface >
+		std::shared_ptr< CScatteringSurface >
 			aBackSurface = make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir, Tb_dir_dif,
 			                                                  Rb_dir_dif, Tb_dif_dif, Rb_dif_dif );
 
@@ -61,13 +61,13 @@ namespace MultiLayerOptics {
 	                                           const double Tb_dif_dif, const double Rb_dif_dif,
 	                                           const Side t_Side ) {
 
-		shared_ptr< CScatteringSurface > aFrontSurface =
-			make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir,
+		std::shared_ptr< CScatteringSurface > aFrontSurface =
+			std::make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir,
 			                                   Tf_dir_dif, Rf_dir_dif,
 			                                   Tf_dif_dif, Rf_dif_dif );
 
-		shared_ptr< CScatteringSurface > aBackSurface =
-			make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir,
+		std::shared_ptr< CScatteringSurface > aBackSurface =
+			std::make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir,
 			                                   Tb_dir_dif, Rb_dir_dif,
 			                                   Tb_dif_dif, Rb_dif_dif );
 
@@ -96,7 +96,7 @@ namespace MultiLayerOptics {
 		return m_Layer->getPropertySimple( t_Property, t_Side, t_Scattering, t_Theta, t_Phi );
 	}
 
-	shared_ptr< CScatteringLayer > CEquivalentScatteringLayer::getLayer() const {
+	std::shared_ptr< CScatteringLayer > CEquivalentScatteringLayer::getLayer() const {
 		return m_Layer;
 	}
 
@@ -127,10 +127,10 @@ namespace MultiLayerOptics {
 		double Tb_dif_dif = m_DiffuseLayer->getProperty( Property::T, Side::Back );
 		double Rb_dif_dif = m_DiffuseLayer->getProperty( Property::R, Side::Back );
 
-		shared_ptr< CScatteringSurface > aFrontSurface =
-			make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, Tf_dir_dif,
+		std::shared_ptr< CScatteringSurface > aFrontSurface =
+			std::make_shared< CScatteringSurface >( Tf_dir_dir, Rf_dir_dir, Tf_dir_dif,
 			                                   Rf_dir_dif, Tf_dif_dif, Rf_dif_dif );
-		shared_ptr< CScatteringSurface >
+		std::shared_ptr< CScatteringSurface >
 			aBackSurface = make_shared< CScatteringSurface >( Tb_dir_dir, Rb_dir_dir, Tb_dir_dif,
 			                                                  Rb_dir_dif, Tb_dif_dif, Rb_dif_dif );
 
@@ -145,7 +145,7 @@ namespace MultiLayerOptics {
 			t_Second.getPropertySimple( PropertySimple::R, t_Scattering );
 	}
 
-	shared_ptr< SimpleResults > CEquivalentScatteringLayer::calcDirectDiffuseTransAndRefl(
+	std::shared_ptr< SimpleResults > CEquivalentScatteringLayer::calcDirectDiffuseTransAndRefl(
 		const CScatteringSurface& f1,
 		const CScatteringSurface& b1,
 		const CScatteringSurface& f2 ) const {

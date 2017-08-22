@@ -12,10 +12,10 @@ using namespace FenestrationCommon;
 class TestTemperatureInitialGuess : public testing::Test {
 
 private:
-	shared_ptr< CIGU > m_TarcogIGU;
-	shared_ptr< CSingleSystem > m_TarcogSystem;
-	shared_ptr< CIGUSolidLayer > m_solidLayer1;
-	shared_ptr< CIGUSolidLayer > m_solidLayer2;
+	std::shared_ptr< CIGU > m_TarcogIGU;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CIGUSolidLayer > m_solidLayer1;
+	std::shared_ptr< CIGUSolidLayer > m_solidLayer2;
 
 protected:
 	void SetUp() override {
@@ -29,8 +29,8 @@ protected:
 		auto airDirection = AirHorizontalDirection::Windward;
 		auto solarRadiation = 0.0;
 
-		shared_ptr< CEnvironment > Outdoor =
-			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		std::shared_ptr< CEnvironment > Outdoor =
+			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 
@@ -38,7 +38,7 @@ protected:
 		// Indoor
 		/////////////////////////////////////////////////////////
 		auto roomTemperature = 294.15;
-		shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
@@ -72,11 +72,11 @@ protected:
 	}
 
 public:
-	shared_ptr< CIGUSolidLayer > getLayer1() const {
+	std::shared_ptr< CIGUSolidLayer > getLayer1() const {
 		return m_solidLayer1;
 	}
 
-	shared_ptr< CIGUSolidLayer > getLayer2() const {
+	std::shared_ptr< CIGUSolidLayer > getLayer2() const {
 		return m_solidLayer2;
 	}
 

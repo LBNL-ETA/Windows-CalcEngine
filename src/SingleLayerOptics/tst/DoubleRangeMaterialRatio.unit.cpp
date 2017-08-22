@@ -14,7 +14,7 @@ using namespace FenestrationCommon;
 class TestDoubleRangeMaterialRatio : public testing::Test {
 
 private:
-	shared_ptr< CMaterial > m_Material;
+	std::shared_ptr< CMaterial > m_Material;
 
 protected:
 	virtual void SetUp() {
@@ -24,8 +24,8 @@ protected:
 		double Rbmat = 0.7;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aSolarRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aSolarRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// Visible range
 		Tmat = 0.2;
@@ -33,8 +33,8 @@ protected:
 		Rbmat = 0.6;
 		minLambda = 0.38;
 		maxLambda = 0.78;
-		shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		double ratio = 0.49;
 
@@ -42,7 +42,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CMaterial > getMaterial() {
+	std::shared_ptr< CMaterial > getMaterial() {
 		return m_Material;
 	};
 
@@ -51,7 +51,7 @@ public:
 TEST_F( TestDoubleRangeMaterialRatio, TestMaterialProperties ) {
 	SCOPED_TRACE( "Begin Test: Phi angles creation." );
 
-	shared_ptr< CMaterial > aMaterial = getMaterial();
+	std::shared_ptr< CMaterial > aMaterial = getMaterial();
 
 	double T = aMaterial->getProperty( Property::T, Side::Front );
 

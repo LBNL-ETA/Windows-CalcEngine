@@ -10,7 +10,7 @@ namespace FenestrationCommon {
 
 	CMatrixSeries::CMatrixSeries( const size_t t_Size1, const size_t t_Size2 ) :
 		m_Size1( t_Size1 ), m_Size2( t_Size2 ) {
-		m_Matrix = vector< vector< shared_ptr< CSeries > > >( m_Size1 );
+		m_Matrix = std::vector< std::vector< std::shared_ptr< CSeries > > >( m_Size1 );
 		for ( size_t i = 0; i < m_Size1; ++i ) {
 			m_Matrix[ i ].resize( m_Size2 );
 			for ( size_t j = 0; j < m_Size2; ++j ) {
@@ -25,7 +25,7 @@ namespace FenestrationCommon {
 	}
 
 	void CMatrixSeries::addProperties( const size_t i, const double t_Wavelength,
-	                                   const vector< double >& t_Values ) {
+	                                   const std::vector< double >& t_Values ) {
 		for ( size_t j = 0; j < t_Values.size(); ++j ) {
 			m_Matrix[ i ][ j ]->addProperty( t_Wavelength, t_Values[ j ] );
 		}
@@ -49,7 +49,7 @@ namespace FenestrationCommon {
 		}
 	}
 
-	void CMatrixSeries::mMult( const vector< shared_ptr< CSeries > >& t_Series ) {
+	void CMatrixSeries::mMult( const std::vector< std::shared_ptr< CSeries > >& t_Series ) {
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				//assert( t_Series[ i ]->size() == ( *m_Matrix[ i ][ j ] ).size() );
@@ -58,7 +58,7 @@ namespace FenestrationCommon {
 		}
 	}
 
-	vector< shared_ptr< CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
+	vector< std::shared_ptr< CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
 		return m_Matrix[ index ];
 	}
 
@@ -70,15 +70,15 @@ namespace FenestrationCommon {
 		}
 	}
 
-	shared_ptr< vector< shared_ptr< vector< double > > > > CMatrixSeries::getSums(
-		const double minLambda, const double maxLambda, const vector< double >& t_ScaleValue ) {
-		shared_ptr< vector< shared_ptr< vector< double > > > > Result =
-			make_shared< vector< shared_ptr< vector< double > > > >( m_Matrix.size() );
+	std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > CMatrixSeries::getSums(
+		const double minLambda, const double maxLambda, const std::vector< double >& t_ScaleValue ) {
+		std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > Result =
+			std::make_shared< std::vector< std::shared_ptr< std::vector< double > > > >( m_Matrix.size() );
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			if ( m_Matrix[ i ].size() != t_ScaleValue.size() ) {
 				throw runtime_error( "Size of vector for scaling must be same as size of the matrix." );
 			}
-			( *Result )[ i ] = make_shared< vector< double > >();
+			( *Result )[ i ] = make_shared< std::vector< double > >();
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) / t_ScaleValue[ i ];
 				( *Result )[ i ]->push_back( value );
@@ -87,10 +87,10 @@ namespace FenestrationCommon {
 		return Result;
 	}
 
-	shared_ptr< CSquareMatrix > CMatrixSeries::getSquaredMatrixSums(
-		const double minLambda, const double maxLambda, const vector< double >& t_ScaleValue ) {
+	std::shared_ptr< CSquareMatrix > CMatrixSeries::getSquaredMatrixSums(
+		const double minLambda, const double maxLambda, const std::vector< double >& t_ScaleValue ) {
 		assert( m_Matrix.size() == m_Matrix[ 0 ].size() );
-		shared_ptr< CSquareMatrix > Res = make_shared< CSquareMatrix >( m_Matrix.size() );
+		std::shared_ptr< CSquareMatrix > Res = make_shared< CSquareMatrix >( m_Matrix.size() );
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				double value = m_Matrix[ i ][ j ]->sum( minLambda, maxLambda ) / t_ScaleValue[ i ];

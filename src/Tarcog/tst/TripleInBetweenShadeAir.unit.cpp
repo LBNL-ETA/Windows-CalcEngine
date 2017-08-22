@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 class TestInBetweenShadeAir : public testing::Test {
 
 private:
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -27,8 +27,8 @@ protected:
 		auto tSky = 255.15; // Kelvins
 		auto solarRadiation = 0.0;
 
-		shared_ptr< CEnvironment > Outdoor =
-			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		std::shared_ptr< CEnvironment > Outdoor =
+			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -39,7 +39,7 @@ protected:
 
 		auto roomTemperature = 295.15;
 
-		shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ protected:
 		auto Aright = 0.1;
 		auto Afront = 0.2;
 
-		shared_ptr< CIGUSolidLayer > aLayer2 = make_shared< CIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
+		std::shared_ptr< CIGUSolidLayer > aLayer2 = make_shared< CIGUShadeLayer >( shadeLayerThickness, shadeLayerConductance,
 		                                                                      make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
 
 		ASSERT_TRUE( aLayer2 != nullptr );
@@ -95,7 +95,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSingleSystem > GetSystem() const {
+	std::shared_ptr< CSingleSystem > GetSystem() const {
 		return m_TarcogSystem;
 	};
 

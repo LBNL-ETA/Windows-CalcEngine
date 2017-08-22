@@ -15,14 +15,14 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics {
 
-	CMultiPaneBSDF::CMultiPaneBSDF( const shared_ptr< CEquivalentBSDFLayer >& t_Layer,
+	CMultiPaneBSDF::CMultiPaneBSDF( const std::shared_ptr< CEquivalentBSDFLayer >& t_Layer,
 	                                const p_Series& t_SolarRadiation, const p_VectorSeries& t_IncomingSpectra ) :
 		m_Layer( t_Layer ), m_SolarRadiationInit( t_SolarRadiation ),
 		m_Results( make_shared< CBSDFIntegrator >( t_Layer->getDirections( BSDFHemisphere::Incoming ) ) ),
 		m_Calculated( false ), m_MinLambdaCalculated( 0 ), m_MaxLambdaCalculated( 0 ) {
 
 		for ( Side aSide : EnumSide() ) {
-			m_AbsHem[ aSide ] = make_shared< vector< double > >();
+			m_AbsHem[ aSide ] = make_shared< std::vector< double > >();
 		}
 
 		// This will initialize layer material data with given spectral distribution
@@ -38,14 +38,14 @@ namespace MultiLayerOptics {
 		}
 		else {
 			// For blank incoming spectra, defaults needs to be filled into
-			m_IncomingSpectra = make_shared< vector< p_Series > >();
+			m_IncomingSpectra = make_shared< std::vector< p_Series > >();
 			for ( size_t i = 0; i < directionsSize; ++i ) {
 				m_IncomingSpectra->push_back( t_SolarRadiation );
 			}
 		}
 	}
 
-	shared_ptr< CSquareMatrix > CMultiPaneBSDF::getMatrix( const double minLambda, const double maxLambda,
+	std::shared_ptr< CSquareMatrix > CMultiPaneBSDF::getMatrix( const double minLambda, const double maxLambda,
 	                                                       const Side t_Side, const PropertySimple t_Property ) {
 		calculate( minLambda, maxLambda );
 
@@ -70,16 +70,16 @@ namespace MultiLayerOptics {
 		if ( !m_Calculated || minLambda != m_MinLambdaCalculated || maxLambda != m_MaxLambdaCalculated ) {
 			m_IncomingSolar.clear();
 
-			for ( shared_ptr< CSeries >& aSpectra : *m_IncomingSpectra ) {
+			for ( std::shared_ptr< CSeries >& aSpectra : *m_IncomingSpectra ) {
 				// each incoming spectra must be intepolated to same wavelengths as this IGU is using
 				aSpectra = aSpectra->interpolate( m_Layer->getCommonWavelengths() );
 
-				shared_ptr< CSeries > iTotalSolar = aSpectra->integrate( IntegrationType::Trapezoidal );
+				std::shared_ptr< CSeries > iTotalSolar = aSpectra->integrate( IntegrationType::Trapezoidal );
 				m_IncomingSolar.push_back( iTotalSolar->sum( minLambda, maxLambda ) );
 			}
 
 			// Produce local results matrices for each side and property
-			map< pair< Side, PropertySimple >, shared_ptr< CSquareMatrix > > aResults;
+			map< pair< Side, PropertySimple >, std::shared_ptr< CSquareMatrix > > aResults;
 
 			for ( Side aSide : EnumSide() ) {
 				CMatrixSeries aTotalA = *m_Layer->getTotalA( aSide );
@@ -123,13 +123,13 @@ namespace MultiLayerOptics {
 		}
 	}
 
-	shared_ptr< vector< double > > CMultiPaneBSDF::Abs( const double minLambda, const double maxLambda,
+	std::shared_ptr< std::vector< double > > CMultiPaneBSDF::Abs( const double minLambda, const double maxLambda,
 	                                                    const Side t_Side, const size_t Index ) {
 		calculate( minLambda, maxLambda );
 		return ( *m_Abs.at( t_Side ) )[ Index - 1 ];
 	}
 
-	shared_ptr< vector< double > > CMultiPaneBSDF::DirHem( const double minLambda, const double maxLambda,
+	std::shared_ptr< std::vector< double > > CMultiPaneBSDF::DirHem( const double minLambda, const double maxLambda,
 	                                                       const Side t_Side, const PropertySimple t_Property ) {
 		calculate( minLambda, maxLambda );
 		return m_Results->DirHem( t_Side, t_Property );

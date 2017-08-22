@@ -8,7 +8,7 @@
 #include "Surface.hpp"
 #include "WCEGases.hpp"
 
-using namespace std;
+
 
 namespace Tarcog {
 
@@ -87,7 +87,7 @@ namespace Tarcog {
 
 	void ISurface::calculateReflectance() {
 		if ( m_Emissivity + m_Transmittance > 1 ) {
-			throw runtime_error( "Sum of emittance and transmittance cannot be greater than one." );
+			throw std::runtime_error( "Sum of emittance and transmittance cannot be greater than one." );
 		}
 		else {
 			m_Reflectance = 1 - m_Emissivity - m_Transmittance;
@@ -119,8 +119,8 @@ namespace Tarcog {
 
 	}
 
-	shared_ptr< ISurface > CSurface::clone() const {
-		return make_shared< CSurface >( *this );
+	std::shared_ptr< ISurface > CSurface::clone() const {
+		return std::make_shared< CSurface >( *this );
 	}
 
 	CSurface::CSurface() : ISurface() {

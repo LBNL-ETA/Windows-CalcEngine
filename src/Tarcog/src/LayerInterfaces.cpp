@@ -7,7 +7,7 @@
 #include "WCEGases.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 using namespace Gases;
 
@@ -67,8 +67,8 @@ namespace Tarcog {
 		}
 	}
 
-	CLayerHeatFlow::CLayerHeatFlow( shared_ptr< ISurface > const& t_FrontSurface,
-	                                shared_ptr< ISurface > const& t_BackSurface ) :
+	CLayerHeatFlow::CLayerHeatFlow( std::shared_ptr< ISurface > const& t_FrontSurface,
+	                                std::shared_ptr< ISurface > const& t_BackSurface ) :
 		m_ConductiveConvectiveCoeff( 0 ), m_LayerGainFlow( 0 ) {
 		m_Surface[ Side::Front ] = t_FrontSurface;
 		m_Surface[ Side::Back ] = t_BackSurface;
@@ -119,11 +119,11 @@ namespace Tarcog {
 		return areInitialized;
 	}
 
-	shared_ptr< ISurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
+	std::shared_ptr< ISurface > CLayerHeatFlow::getSurface( Side const t_Position ) const {
 		return m_Surface.at( t_Position );
 	}
 
-	void CLayerHeatFlow::setSurface( shared_ptr< ISurface > t_Surface,
+	void CLayerHeatFlow::setSurface( std::shared_ptr< ISurface > t_Surface,
 	                                 Side const t_Position ) {
 		m_Surface[ t_Position ] = t_Surface;
 		if ( m_Surface.size() == 2 ) {
@@ -162,7 +162,7 @@ namespace Tarcog {
 		onCreate();
 	}
 
-	CGasLayer::CGasLayer( double const t_Pressure, shared_ptr< CGas > const& t_Gas ) :
+	CGasLayer::CGasLayer( double const t_Pressure, std::shared_ptr< CGas > const& t_Gas ) :
 		m_Pressure( t_Pressure ), m_AirSpeed( 0 ),
 		m_AirVerticalDirection( AirVerticalDirection::None ),
 		m_AirHorizontalDirection( AirHorizontalDirection::None ) {
@@ -192,7 +192,7 @@ namespace Tarcog {
 
 		// new gas will be created only if not passed from constructor.
 		if ( m_Gas == nullptr ) {
-			m_Gas = make_shared< Gases::CGas >();
+			m_Gas = std::make_shared< Gases::CGas >();
 		}
 		m_ForcedVentilation = ForcedVentilation();
 	}

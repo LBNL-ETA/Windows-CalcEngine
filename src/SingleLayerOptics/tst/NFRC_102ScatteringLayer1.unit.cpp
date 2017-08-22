@@ -13,11 +13,11 @@ using namespace FenestrationCommon;
 class TestNFRC102ScatteringLayer1 : public testing::Test {
 
 private:
-	shared_ptr< CScatteringLayer > m_Layer;
+	std::shared_ptr< CScatteringLayer > m_Layer;
 
-	shared_ptr< CSeries > loadSolarRadiationFile() {
+	std::shared_ptr< CSeries > loadSolarRadiationFile() {
 
-		shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1 (Solar radiation)
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -145,8 +145,8 @@ private:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
-		shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
+		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
 
 		aMeasurements_102->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements_102->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -267,21 +267,21 @@ private:
 protected:
 	virtual void SetUp() {
 
-		shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
-		shared_ptr< CSpectralSampleData > aMeasurements = loadSampleData_NFRC_102();
+		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
+		std::shared_ptr< CSpectralSampleData > aMeasurements = loadSampleData_NFRC_102();
 
-		shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		std::shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		double thickness = 3.048e-3; // [m]
-		shared_ptr< CMaterial > aMaterial =
-			make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
+		std::shared_ptr< CMaterial > aMaterial =
+			std::make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
 		m_Layer = make_shared< CScatteringLayer >( aMaterial );
 
 	}
 
 public:
-	shared_ptr< CScatteringLayer > getLayer() {
+	std::shared_ptr< CScatteringLayer > getLayer() {
 		return m_Layer;
 	};
 
@@ -290,7 +290,7 @@ public:
 TEST_F( TestNFRC102ScatteringLayer1, Test1 ) {
 	SCOPED_TRACE( "Begin Test: NFRC 102 scattering layer - 0 deg incident." );
 
-	shared_ptr< CScatteringLayer > aLayer = getLayer();
+	std::shared_ptr< CScatteringLayer > aLayer = getLayer();
 
 	Side aSide = Side::Front;
 
@@ -323,7 +323,7 @@ TEST_F( TestNFRC102ScatteringLayer1, Test1 ) {
 TEST_F( TestNFRC102ScatteringLayer1, TestVenetian2 ) {
 	SCOPED_TRACE( "Begin Test: NFRC 102 scattering layer - Theta = 45 deg, Phi = 45 incident." );
 
-	shared_ptr< CScatteringLayer > aLayer = getLayer();
+	std::shared_ptr< CScatteringLayer > aLayer = getLayer();
 
 	Side aSide = Side::Front;
 	const double Theta = 45;

@@ -10,8 +10,8 @@ using namespace std;
 class TestIndoorEnvironmentIRFixed : public testing::Test {
 
 private:
-	shared_ptr< CEnvironment > m_Indoor;
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CEnvironment > m_Indoor;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -25,8 +25,8 @@ protected:
 		auto tSky = 270.0; // Kelvins
 		auto solarRadiation = 0.0;
 
-		shared_ptr< CEnvironment > Outdoor =
-			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		std::shared_ptr< CEnvironment > Outdoor =
+			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -68,7 +68,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CEnvironment > GetIndoors() const {
+	std::shared_ptr< CEnvironment > GetIndoors() const {
 		return m_Indoor;
 	};
 

@@ -12,7 +12,7 @@ using namespace FenestrationCommon;
 class TestSingleClearSingleSystem : public testing::Test {
 
 private:
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -26,8 +26,8 @@ protected:
 		auto tSky = 270.0; // Kelvins
 		auto solarRadiation = 0.0;
 
-		shared_ptr< CEnvironment > Outdoor =
-			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		std::shared_ptr< CEnvironment > Outdoor =
+			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -37,7 +37,7 @@ protected:
 		/////////////////////////////////////////////////////////
 
 		auto roomTemperature = 294.15;
-		shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
@@ -46,8 +46,8 @@ protected:
 		auto solidLayerThickness = 0.003048; // [m]
 		auto solidLayerConductance = 1.0;
 
-		shared_ptr< CBaseIGULayer > aSolidLayer =
-			make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
+		std::shared_ptr< CBaseIGULayer > aSolidLayer =
+			std::make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
 		ASSERT_TRUE( aSolidLayer != nullptr );
 
 		auto windowWidth = 1.0;
@@ -66,7 +66,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSingleSystem > GetSystem() const {
+	std::shared_ptr< CSingleSystem > GetSystem() const {
 		return m_TarcogSystem;
 	};
 

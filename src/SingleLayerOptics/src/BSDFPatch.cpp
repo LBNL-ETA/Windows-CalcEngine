@@ -54,13 +54,13 @@ namespace SingleLayerOptics {
 	///  CBSDFPatch
 	/////////////////////////////////////////////////////////////////
 
-	CBSDFPatch::CBSDFPatch( const shared_ptr< CAngleLimits >& t_Theta, const shared_ptr< CAngleLimits >& t_Phi ) {
+	CBSDFPatch::CBSDFPatch( const std::shared_ptr< CAngleLimits >& t_Theta, const std::shared_ptr< CAngleLimits >& t_Phi ) {
 		m_Phi = t_Phi;
 		m_Theta = t_Theta;
 		calculateLambda();
 	}
 
-	shared_ptr< CBeamDirection > CBSDFPatch::centerPoint() const {
+	std::shared_ptr< CBeamDirection > CBSDFPatch::centerPoint() const {
 		return make_shared< CBeamDirection >( m_Theta->average(), m_Phi->average() );
 	}
 

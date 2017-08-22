@@ -13,12 +13,12 @@ using namespace SpectralAveraging;
 
 namespace SingleLayerOptics {
 
-	CSpecularCell::CSpecularCell( const shared_ptr< CMaterial >& t_MaterialProperties,
-	                              const shared_ptr< ICellDescription >& t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
+	CSpecularCell::CSpecularCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
+	                              const std::shared_ptr< ICellDescription >& t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ) {
 
 	}
 
-	CSpecularCell::CSpecularCell( const shared_ptr< CMaterial >& t_MaterialProperties ) :
+	CSpecularCell::CSpecularCell( const std::shared_ptr< CMaterial >& t_MaterialProperties ) :
 		CBaseCell( t_MaterialProperties, make_shared< CSpecularCellDescription >() ) {
 
 	}
@@ -46,12 +46,12 @@ namespace SingleLayerOptics {
 		return m_Material->getBandPropertiesAtAngle( Property::R, t_Side, t_Direction.theta() );
 	}
 
-	shared_ptr< CSpecularCellDescription > CSpecularCell::getCellAsSpecular() const {
+	std::shared_ptr< CSpecularCellDescription > CSpecularCell::getCellAsSpecular() const {
 		if ( dynamic_pointer_cast< CSpecularCellDescription >( m_CellDescription ) == NULL ) {
 			assert("Incorrectly assigned cell description.");
 		}
 
-		shared_ptr< CSpecularCellDescription > aCell =
+		std::shared_ptr< CSpecularCellDescription > aCell =
 			dynamic_pointer_cast< CSpecularCellDescription >( m_CellDescription );
 
 		return aCell;

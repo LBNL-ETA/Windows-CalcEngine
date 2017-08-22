@@ -17,8 +17,8 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics {
 
-	CScatteringLayer::CScatteringLayer( const shared_ptr< CScatteringSurface >& t_Front,
-	                                    const shared_ptr< CScatteringSurface >& t_Back ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
+	CScatteringLayer::CScatteringLayer( const std::shared_ptr< CScatteringSurface >& t_Front,
+	                                    const std::shared_ptr< CScatteringSurface >& t_Back ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
 		if ( t_Front == nullptr ) {
 			throw runtime_error( "Front surface must be created." );
 		}
@@ -30,7 +30,7 @@ namespace SingleLayerOptics {
 		m_Surface[ Side::Back ] = t_Back;
 	}
 
-	CScatteringLayer::CScatteringLayer( const shared_ptr< CScatteringLayer >& t_Layer ) :
+	CScatteringLayer::CScatteringLayer( const std::shared_ptr< CScatteringLayer >& t_Layer ) :
 		m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
 		m_Surface[ Side::Front ] = t_Layer->getSurface( Side::Front );
 		m_Surface[ Side::Back ] = t_Layer->getSurface( Side::Back );
@@ -51,7 +51,7 @@ namespace SingleLayerOptics {
 		                                                             Tb_dif_dif, Rb_dif_dif );
 	}
 
-	CScatteringLayer::CScatteringLayer( const shared_ptr< CMaterial >& t_Material,
+	CScatteringLayer::CScatteringLayer( const std::shared_ptr< CMaterial >& t_Material,
 	                                    std::shared_ptr< ICellDescription > t_Description,
 	                                    const DistributionMethod t_Method ) : m_BSDFLayer( nullptr ), m_Cell( nullptr ), m_Theta( 0 ), m_Phi( 0 ) {
 		// Scattering layer can also be created from material and cell desctiption in which case integration will
@@ -62,14 +62,14 @@ namespace SingleLayerOptics {
 		m_BSDFLayer = aMaker.getLayer();
 	}
 
-	void CScatteringLayer::setSourceData( shared_ptr< CSeries > t_SourceData ) const {
+	void CScatteringLayer::setSourceData( std::shared_ptr< CSeries > t_SourceData ) const {
 		if ( m_Cell != nullptr ) {
 			m_Cell->setSourceData( t_SourceData );
 			m_BSDFLayer->setSourceData( t_SourceData );
 		}
 	}
 
-	shared_ptr< CScatteringSurface > CScatteringLayer::getSurface( const Side t_Side ) {
+	std::shared_ptr< CScatteringSurface > CScatteringLayer::getSurface( const Side t_Side ) {
 		if ( m_Surface.size() == 0 ) {
 			m_Theta = 0;
 			m_Phi = 0;
@@ -81,36 +81,36 @@ namespace SingleLayerOptics {
 	double CScatteringLayer::getPropertySimple( const PropertySimple t_Property,
 	                                            const Side t_Side, const Scattering t_Scattering, const double t_Theta, const double t_Phi ) {
 		checkCurrentAngles( t_Theta, t_Phi );
-		shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
+		std::shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
 		return aSurface->getPropertySimple( t_Property, t_Scattering );
 	}
 
 	// void CScatteringLayer::setPropertySimple( const PropertySimple t_Property, const Side t_Side, 
 	//   const Scattering t_Scattering, const double value ) const {
-	//   shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
+	//   std::shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
 	//   return aSurface->setPropertySimple( t_Property, t_Scattering, value );
 	// }
 
 	double CScatteringLayer::getAbsorptance( const Side t_Side, const ScatteringSimple t_Scattering,
 	                                         const double t_Theta, const double t_Phi ) {
 		checkCurrentAngles( t_Theta, t_Phi );
-		shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
+		std::shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
 		return aSurface->getAbsorptance( t_Scattering );
 	}
 
 	double CScatteringLayer::getAbsorptance( const Side t_Side, const double t_Theta, const double t_Phi ) {
 		checkCurrentAngles( t_Theta, t_Phi );
-		shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
+		std::shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
 		return aSurface->getAbsorptance();
 	}
 
-	shared_ptr< CLayerSingleComponent > CScatteringLayer::getLayer( const Scattering t_Scattering,
+	std::shared_ptr< CLayerSingleComponent > CScatteringLayer::getLayer( const Scattering t_Scattering,
 	                                                                const double t_Theta, const double t_Phi ) {
 		double Tf = getPropertySimple( PropertySimple::T, Side::Front, t_Scattering, t_Theta, t_Phi );
 		double Rf = getPropertySimple( PropertySimple::R, Side::Front, t_Scattering, t_Theta, t_Phi );
 		double Tb = getPropertySimple( PropertySimple::T, Side::Back, t_Scattering, t_Theta, t_Phi );
 		double Rb = getPropertySimple( PropertySimple::R, Side::Back, t_Scattering, t_Theta, t_Phi );
-		shared_ptr< CLayerSingleComponent > aLayer = make_shared< CLayerSingleComponent >( Tf, Rf, Tb, Rb );
+		std::shared_ptr< CLayerSingleComponent > aLayer = make_shared< CLayerSingleComponent >( Tf, Rf, Tb, Rb );
 		return aLayer;
 	}
 
@@ -121,7 +121,7 @@ namespace SingleLayerOptics {
 		}
 	}
 
-	shared_ptr< CScatteringSurface > CScatteringLayer::createSurface( const Side t_Side,
+	std::shared_ptr< CScatteringSurface > CScatteringLayer::createSurface( const Side t_Side,
 	                                                                  const double t_Theta, const double t_Phi ) {
 		CBeamDirection aDirection = CBeamDirection( t_Theta, t_Phi );
 		double T_dir_dir = m_Cell->T_dir_dir( t_Side, aDirection );

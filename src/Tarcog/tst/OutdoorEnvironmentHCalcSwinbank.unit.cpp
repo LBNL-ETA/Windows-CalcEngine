@@ -10,8 +10,8 @@ using namespace std;
 class TestOutdoorEnvironmentHCalcSwingbank : public testing::Test {
 
 private:
-	shared_ptr< CEnvironment > Outdoor;
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CEnvironment > Outdoor;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -36,7 +36,7 @@ protected:
 
 		auto roomTemperature = 294.15;
 
-		shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor = make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////

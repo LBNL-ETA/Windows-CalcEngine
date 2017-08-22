@@ -4,7 +4,7 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
@@ -13,11 +13,11 @@ using namespace FenestrationCommon;
 class TestSampleNFRC_103_Angular : public testing::Test {
 
 private:
-	shared_ptr< CAngularSpectralSample > m_Sample;
+	std::shared_ptr< CAngularSpectralSample > m_Sample;
 
 protected:
-	shared_ptr< CSeries > getSolarRadiation() const {
-		auto aSolarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiation() const {
+		auto aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -145,8 +145,8 @@ protected:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > getMeasurements() const {
-		auto aMeasurements = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > getMeasurements() const {
+		auto aMeasurements = std::make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0000, 0.0470, 0.0490 );
 		aMeasurements->addRecord( 0.305, 0.0050, 0.0470, 0.0490 );
@@ -269,17 +269,17 @@ protected:
 
 		auto aMeasurements = getMeasurements();
 
-		auto aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		auto aSample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		auto thickness = 5.715e-3; // [m]
 		auto layerType = MaterialType::Monolithic;
 
-		m_Sample = make_shared< CAngularSpectralSample >( aSample, thickness, layerType );
+		m_Sample = std::make_shared< CAngularSpectralSample >( aSample, thickness, layerType );
 
 	}
 
 public:
-	shared_ptr< CAngularSpectralSample > getSample() const {
+	std::shared_ptr< CAngularSpectralSample > getSample() const {
 		return m_Sample;
 	};
 
@@ -289,7 +289,7 @@ TEST_F( TestSampleNFRC_103_Angular, TestProperties0degrees ) {
 
 	auto angle = 0.0;
 
-	shared_ptr< CAngularSpectralSample > angularSample = getSample();
+	std::shared_ptr< CAngularSpectralSample > angularSample = getSample();
 
 	// SOLAR RANGE
 	auto lowLambda = 0.3;

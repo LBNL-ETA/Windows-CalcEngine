@@ -14,8 +14,8 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics {
 
-	CEquivalentBSDFLayer::CEquivalentBSDFLayer( vector< double > const& t_CommonWavelengths,
-	                                            const shared_ptr< CBSDFLayer >& t_Layer ) :
+	CEquivalentBSDFLayer::CEquivalentBSDFLayer( std::vector< double > const& t_CommonWavelengths,
+	                                            const std::shared_ptr< CBSDFLayer >& t_Layer ) :
 		m_CombinedLayerWavelengths( t_CommonWavelengths ),
 		m_Calculated( false ) {
 		if ( t_Layer == nullptr ) {
@@ -23,7 +23,7 @@ namespace MultiLayerOptics {
 		}
 
 		// Create layers for each wavelength
-		m_LayersWL = make_shared< vector< shared_ptr< CEquivalentBSDFLayerSingleBand > > >();
+		m_LayersWL = make_shared< std::vector< std::shared_ptr< CEquivalentBSDFLayerSingleBand > > >();
 
 		// Lambda matrix from spectral results. Same lambda is valid for any wavelength
 		m_Lambda = t_Layer->getResults()->lambdaMatrix();
@@ -32,7 +32,7 @@ namespace MultiLayerOptics {
 
 	}
 
-	void CEquivalentBSDFLayer::addLayer( const shared_ptr< CBSDFLayer >& t_Layer ) {
+	void CEquivalentBSDFLayer::addLayer( const std::shared_ptr< CBSDFLayer >& t_Layer ) {
 
 		// t_Layer->setSourceData( m_SolarRadiation );
 
@@ -42,7 +42,7 @@ namespace MultiLayerOptics {
 
 	}
 
-	shared_ptr< const CBSDFDirections > CEquivalentBSDFLayer::getDirections( const BSDFHemisphere t_Side ) const {
+	std::shared_ptr< const CBSDFDirections > CEquivalentBSDFLayer::getDirections( const BSDFHemisphere t_Side ) const {
 		return m_Layer[ 0 ]->getDirections( t_Side );
 	}
 
@@ -50,14 +50,14 @@ namespace MultiLayerOptics {
 		return m_CombinedLayerWavelengths;
 	}
 
-	shared_ptr< CMatrixSeries > CEquivalentBSDFLayer::getTotalA( const Side t_Side ) {
+	std::shared_ptr< CMatrixSeries > CEquivalentBSDFLayer::getTotalA( const Side t_Side ) {
 		if ( !m_Calculated ) {
 			calculate();
 		}
 		return m_TotA.at( t_Side );
 	}
 
-	shared_ptr< CMatrixSeries > CEquivalentBSDFLayer::getTotal(
+	std::shared_ptr< CMatrixSeries > CEquivalentBSDFLayer::getTotal(
 		const Side t_Side, const PropertySimple t_Property ) {
 		if ( !m_Calculated ) {
 			calculate();
@@ -65,10 +65,10 @@ namespace MultiLayerOptics {
 		return m_Tot.at( make_pair( t_Side, t_Property ) );
 	}
 
-	void CEquivalentBSDFLayer::setSolarRadiation( const shared_ptr< CSeries >& t_SolarRadiation ) {
+	void CEquivalentBSDFLayer::setSolarRadiation( const std::shared_ptr< CSeries >& t_SolarRadiation ) {
 		// Need to recreate wavelenght by wavelength layers
 		m_LayersWL->clear();
-		for ( shared_ptr< CBSDFLayer > aLayer : m_Layer ) {
+		for ( std::shared_ptr< CBSDFLayer > aLayer : m_Layer ) {
 			aLayer->setSourceData( t_SolarRadiation );
 			updateWavelengthLayers( aLayer );
 		}
@@ -92,7 +92,7 @@ namespace MultiLayerOptics {
 		// // This is for multithread calculations.
 		// size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
 		// size_t step = WLsize / numOfThreads;
-		// vector< shared_ptr< thread > > aThreads = vector< shared_ptr< thread > >( numOfThreads );
+		// std::vector< std::shared_ptr< thread > > aThreads = std::vector< std::shared_ptr< thread > >( numOfThreads );
 		// 
 		// size_t startNum = 0;
 		// size_t endNum = step;
@@ -141,8 +141,8 @@ namespace MultiLayerOptics {
 	}
 
 	void CEquivalentBSDFLayer::updateWavelengthLayers(
-		const shared_ptr< CBSDFLayer >& t_Layer ) const {
-		shared_ptr< vector< shared_ptr< CBSDFIntegrator > > > aResults = nullptr;
+		const std::shared_ptr< CBSDFLayer >& t_Layer ) const {
+		std::shared_ptr< std::vector< std::shared_ptr< CBSDFIntegrator > > > aResults = nullptr;
 
 		aResults = t_Layer->getWavelengthResults();
 		size_t size = m_CombinedLayerWavelengths.size();
@@ -151,16 +151,16 @@ namespace MultiLayerOptics {
 			int index = t_Layer->getBandIndex( curWL );
 			assert( index > -1 );
 
-			shared_ptr< CBSDFIntegrator > currentLayer = ( *aResults )[ size_t( index ) ];
+			std::shared_ptr< CBSDFIntegrator > currentLayer = ( *aResults )[ size_t( index ) ];
 
 			if ( m_LayersWL->size() <= i ) {
-				shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer =
-					make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
+				std::shared_ptr< CEquivalentBSDFLayerSingleBand > aEquivalentLayer =
+					std::make_shared< CEquivalentBSDFLayerSingleBand >( currentLayer );
 
 				m_LayersWL->push_back( aEquivalentLayer );
 			}
 			else {
-				shared_ptr< CEquivalentBSDFLayerSingleBand > currentEqLayer = ( *m_LayersWL )[ i ];
+				std::shared_ptr< CEquivalentBSDFLayerSingleBand > currentEqLayer = ( *m_LayersWL )[ i ];
 				currentEqLayer->addLayer( currentLayer );
 			}
 

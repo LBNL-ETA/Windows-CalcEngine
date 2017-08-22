@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestSeriesInterpolation : public testing::Test {
 
 private:
-	shared_ptr< CSeries > m_Series;
+	std::shared_ptr< CSeries > m_Series;
 
 protected:
 	void SetUp() override {
@@ -31,7 +31,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSeries > getProperty() {
+	std::shared_ptr< CSeries > getProperty() {
 		return m_Series;
 	};
 
@@ -64,7 +64,7 @@ TEST_F( TestSeriesInterpolation, TestInterpolation ) {
 	wavelengths.push_back( 0.490 );
 	wavelengths.push_back( 0.495 );
 
-	shared_ptr< CSeries > aInterpolatedProperties = aSpectralProperties.interpolate( wavelengths );
+	std::shared_ptr< CSeries > aInterpolatedProperties = aSpectralProperties.interpolate( wavelengths );
 
 	vector< double > correctResults;
 	correctResults.push_back( 556.000 );

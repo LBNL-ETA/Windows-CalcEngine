@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestWovenCell1 : public testing::Test {
 
 private:
-	shared_ptr< CWovenCell > m_Cell;
+	std::shared_ptr< CWovenCell > m_Cell;
 
 protected:
 	virtual void SetUp() {
@@ -21,20 +21,20 @@ protected:
 		double Rbmat = 0.9;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
 		double diameter = 6.35; // mm
 		double spacing = 19.05; // mm
-		shared_ptr< ICellDescription > aCell =
-			make_shared< CWovenCellDescription >( diameter, spacing );
+		std::shared_ptr< ICellDescription > aCell =
+			std::make_shared< CWovenCellDescription >( diameter, spacing );
 
 		m_Cell = make_shared< CWovenCell >( aMaterial, aCell );
 	}
 
 public:
-	shared_ptr< CWovenCell > GetCell() {
+	std::shared_ptr< CWovenCell > GetCell() {
 		return m_Cell;
 	};
 
@@ -43,7 +43,7 @@ public:
 TEST_F( TestWovenCell1, TestWoven1 ) {
 	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 0, Phi = 0)." );
 
-	shared_ptr< CWovenCell > aCell = GetCell();
+	std::shared_ptr< CWovenCell > aCell = GetCell();
 
 	double Theta = 0; // deg
 	double Phi = 0; // deg
@@ -68,7 +68,7 @@ TEST_F( TestWovenCell1, TestWoven1 ) {
 TEST_F( TestWovenCell1, TestWoven2 ) {
 	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 45, Phi = 0)." );
 
-	shared_ptr< CWovenCell > aCell = GetCell();
+	std::shared_ptr< CWovenCell > aCell = GetCell();
 
 	double Theta = 45; // deg
 	double Phi = 0; // deg
@@ -93,7 +93,7 @@ TEST_F( TestWovenCell1, TestWoven2 ) {
 TEST_F( TestWovenCell1, TestWoven3 ) {
 	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 78, Phi = 45)." );
 
-	shared_ptr< CWovenCell > aCell = GetCell();
+	std::shared_ptr< CWovenCell > aCell = GetCell();
 
 	double Theta = 78; // deg
 	double Phi = 45; // deg
@@ -118,7 +118,7 @@ TEST_F( TestWovenCell1, TestWoven3 ) {
 TEST_F( TestWovenCell1, TestWoven4 ) {
 	SCOPED_TRACE( "Begin Test: Woven cell (Theta = 54, Phi = 270)." );
 
-	shared_ptr< CWovenCell > aCell = GetCell();
+	std::shared_ptr< CWovenCell > aCell = GetCell();
 
 	double Theta = 54; // deg
 	double Phi = 270; // deg

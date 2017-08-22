@@ -2,7 +2,7 @@
 #include "ViewerConstants.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Viewer {
@@ -45,8 +45,8 @@ namespace Viewer {
 		return m_x < t_Point.x();
 	}
 
-	shared_ptr< CPoint2D > CPoint2D::translate( double const t_x, double const t_y ) const {
-		auto aPoint = make_shared< CPoint2D >( m_x + t_x, m_y + t_y );
+	std::shared_ptr< CPoint2D > CPoint2D::translate( double const t_x, double const t_y ) const {
+		auto aPoint = std::make_shared< CPoint2D >( m_x + t_x, m_y + t_y );
 		return aPoint;
 	}
 
@@ -59,8 +59,8 @@ namespace Viewer {
 
 	}
 
-	bool PointsProfile2DCompare::operator()( shared_ptr< const CPoint2D > const& t_Point1,
-	                                         shared_ptr< const CPoint2D > const& t_Point2 ) const {
+	bool PointsProfile2DCompare::operator()( std::shared_ptr< const CPoint2D > const& t_Point1,
+	                                         std::shared_ptr< const CPoint2D > const& t_Point2 ) const {
 		auto isHigher = false;
 		if ( m_ProfileAngle != 0 ) {
 			const auto tanPhi = tan( radians( m_ProfileAngle ) );

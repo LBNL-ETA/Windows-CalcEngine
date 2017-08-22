@@ -2,12 +2,12 @@
 #include "WCECommon.hpp"
 #include "Surface.hpp"
 
-using namespace std;
+
 using namespace FenestrationCommon;
 
 namespace Tarcog {
 
-	CIGUGapLayerDeflection::CIGUGapLayerDeflection( shared_ptr< CIGUGapLayer > t_GapLayer,
+	CIGUGapLayerDeflection::CIGUGapLayerDeflection( std::shared_ptr< CIGUGapLayer > t_GapLayer,
 	                                                double const t_Tini, double const t_Pini ) : CIGUGapLayer( *t_GapLayer ),
 	                                                                                             m_Tini( t_Tini ), m_Pini( t_Pini ) {
 

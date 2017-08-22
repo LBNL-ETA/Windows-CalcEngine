@@ -32,7 +32,7 @@ TEST_F( TestMatrixMultiplication, Test1 ) {
 	B[ 1 ] = { 3, 5, 6 };
 	B[ 2 ] = { 1, 2, 3 };
 
-	shared_ptr< CSquareMatrix > mult = A.mult( B );
+	std::shared_ptr< CSquareMatrix > mult = A.mult( B );
 
 	EXPECT_EQ( n, mult->getSize() );
 
@@ -63,7 +63,7 @@ TEST_F( TestMatrixMultiplication, Test2 ) {
 
 	vector< double > B = { 8, 4, 6 };
 
-	shared_ptr< vector< double > > mult = A.multMxV( B );
+	std::shared_ptr< std::vector< double > > mult = A.multMxV( B );
 
 	EXPECT_EQ( n, mult->size() );
 
@@ -88,7 +88,7 @@ TEST_F( TestMatrixMultiplication, Test3 ) {
 
 	vector< double > B = { 8, 4, 6 };
 
-	shared_ptr< vector< double > > mult = A.multVxM( B );
+	std::shared_ptr< std::vector< double > > mult = A.multVxM( B );
 
 	EXPECT_EQ( n, mult->size() );
 

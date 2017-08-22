@@ -18,18 +18,18 @@ namespace SingleLayerOptics {
 	////////////////////////////////////////////////////////////////////////////////////////////
 	//  CWovenBase
 	////////////////////////////////////////////////////////////////////////////////////////////
-	CWovenBase::CWovenBase( const shared_ptr< CMaterial >& t_MaterialProperties,
-	                        const shared_ptr< ICellDescription >& t_Cell ) :
+	CWovenBase::CWovenBase( const std::shared_ptr< CMaterial >& t_MaterialProperties,
+	                        const std::shared_ptr< ICellDescription >& t_Cell ) :
 		CBaseCell( t_MaterialProperties, t_Cell ), CUniformDiffuseCell( t_MaterialProperties, t_Cell ) {
 
 	}
 
-	shared_ptr< CWovenCellDescription > CWovenBase::getCellAsWoven() const {
+	std::shared_ptr< CWovenCellDescription > CWovenBase::getCellAsWoven() const {
 		if ( dynamic_pointer_cast< CWovenCellDescription >( m_CellDescription ) == NULL ) {
 			assert("Incorrectly assigned cell description.");
 		}
 
-		shared_ptr< CWovenCellDescription > aCell =
+		std::shared_ptr< CWovenCellDescription > aCell =
 			dynamic_pointer_cast< CWovenCellDescription >( m_CellDescription );
 
 		return aCell;
@@ -38,8 +38,8 @@ namespace SingleLayerOptics {
 	////////////////////////////////////////////////////////////////////////////////////////////
 	//  CWovenCell
 	////////////////////////////////////////////////////////////////////////////////////////////
-	CWovenCell::CWovenCell( const shared_ptr< CMaterial >& t_MaterialProperties,
-	                        const shared_ptr< ICellDescription >& t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ),
+	CWovenCell::CWovenCell( const std::shared_ptr< CMaterial >& t_MaterialProperties,
+	                        const std::shared_ptr< ICellDescription >& t_Cell ) : CBaseCell( t_MaterialProperties, t_Cell ),
 	                                                                         CWovenBase( t_MaterialProperties, t_Cell ) {
 
 	}
@@ -107,7 +107,7 @@ namespace SingleLayerOptics {
 		if ( Rmat > 0 ) {
 			double aAlt = degrees( t_Direction.Altitude() );
 			double aAzm = degrees( t_Direction.Azimuth() );
-			shared_ptr< CWovenCellDescription > aCell = getCellAsWoven();
+			std::shared_ptr< CWovenCellDescription > aCell = getCellAsWoven();
 			double gamma = aCell->gamma();
 
 			if ( gamma < 1 ) {

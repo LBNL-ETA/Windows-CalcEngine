@@ -11,8 +11,8 @@ using namespace FenestrationCommon;
 class TestRectangularPerforatedCell : public testing::Test {
 
 private:
-	shared_ptr< CRectangularCellDescription > m_DescriptionCell;
-	shared_ptr< CPerforatedCell > m_PerforatedCell;
+	std::shared_ptr< CRectangularCellDescription > m_DescriptionCell;
+	std::shared_ptr< CPerforatedCell > m_PerforatedCell;
 
 protected:
 	virtual void SetUp() {
@@ -22,8 +22,8 @@ protected:
 		double Rbmat = 0.8;
 		double minLambda = 0.3;
 		double maxLambda = 2.5;
-		shared_ptr< CMaterialSingleBand > aMaterial =
-			make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		std::shared_ptr< CMaterialSingleBand > aMaterial =
+			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
 		// make cell geometry
 		double x = 10; // mm
@@ -37,11 +37,11 @@ protected:
 	}
 
 public:
-	shared_ptr< CPerforatedCell > GetCell() {
+	std::shared_ptr< CPerforatedCell > GetCell() {
 		return m_PerforatedCell;
 	};
 
-	shared_ptr< CRectangularCellDescription > GetDescription() {
+	std::shared_ptr< CRectangularCellDescription > GetDescription() {
 		return m_DescriptionCell;
 	};
 
@@ -50,8 +50,8 @@ public:
 TEST_F( TestRectangularPerforatedCell, TestRectangular1 ) {
 	SCOPED_TRACE( "Begin Test: Rectangular perforated cell (Theta = 0, Phi = 0)." );
 
-	shared_ptr< CPerforatedCell > aCell = GetCell();
-	shared_ptr< ICellDescription > aCellDescription = GetDescription();
+	std::shared_ptr< CPerforatedCell > aCell = GetCell();
+	std::shared_ptr< ICellDescription > aCellDescription = GetDescription();
 
 	double Theta = 0; // deg
 	double Phi = 0; // deg
@@ -77,8 +77,8 @@ TEST_F( TestRectangularPerforatedCell, TestRectangular1 ) {
 TEST_F( TestRectangularPerforatedCell, TestRectangular2 ) {
 	SCOPED_TRACE( "Begin Test: Rectangular perforated cell (Theta = 45, Phi = 0)." );
 
-	shared_ptr< CPerforatedCell > aCell = GetCell();
-	shared_ptr< ICellDescription > aCellDescription = GetDescription();
+	std::shared_ptr< CPerforatedCell > aCell = GetCell();
+	std::shared_ptr< ICellDescription > aCellDescription = GetDescription();
 
 	double Theta = 45; // deg
 	double Phi = 0; // deg
@@ -104,8 +104,8 @@ TEST_F( TestRectangularPerforatedCell, TestRectangular2 ) {
 TEST_F( TestRectangularPerforatedCell, TestRectangular3 ) {
 	SCOPED_TRACE( "Begin Test: Rectangular perforated cell (Theta = 45, Phi = 45)." );
 
-	shared_ptr< CPerforatedCell > aCell = GetCell();
-	shared_ptr< ICellDescription > aCellDescription = GetDescription();
+	std::shared_ptr< CPerforatedCell > aCell = GetCell();
+	std::shared_ptr< ICellDescription > aCellDescription = GetDescription();
 
 	double Theta = 45; // deg
 	double Phi = 45; // deg

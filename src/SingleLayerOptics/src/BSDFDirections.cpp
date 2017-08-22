@@ -32,7 +32,7 @@ namespace SingleLayerOptics {
 	///  CBSDFDirections
 	/////////////////////////////////////////////////////////////////
 
-	CBSDFDirections::CBSDFDirections( vector< CBSDFDefinition >& t_Definitions, const BSDFHemisphere t_Side ) {
+	CBSDFDirections::CBSDFDirections( std::vector< CBSDFDefinition >& t_Definitions, const BSDFHemisphere t_Side ) {
 		vector< double > thetaAngles;
 		vector< size_t > numPhiAngles;
 		for ( auto it = t_Definitions.begin(); it < t_Definitions.end(); ++it ) {
@@ -46,7 +46,7 @@ namespace SingleLayerOptics {
 		double lowerTheta = thetaLimits[ 0 ];
 		for ( size_t i = 1; i < thetaLimits.size(); ++i ) {
 			double upperTheta = thetaLimits[ i ];
-			shared_ptr< CAngleLimits > currentTheta = nullptr;
+			std::shared_ptr< CAngleLimits > currentTheta = nullptr;
 			if ( i == 1 ) {
 				currentTheta = make_shared< CCentralAngleLimits >( upperTheta );
 			}
@@ -66,8 +66,8 @@ namespace SingleLayerOptics {
 				if ( t_Side == BSDFHemisphere::Outgoing ) {
 					upperPhi += 180;
 				}
-				shared_ptr< CAngleLimits > currentPhi = make_shared< CAngleLimits >( lowerPhi, upperPhi );
-				shared_ptr< CBSDFPatch > currentPatch = make_shared< CBSDFPatch >( currentTheta, currentPhi );
+				std::shared_ptr< CAngleLimits > currentPhi = make_shared< CAngleLimits >( lowerPhi, upperPhi );
+				std::shared_ptr< CBSDFPatch > currentPatch = make_shared< CBSDFPatch >( currentTheta, currentPhi );
 				m_Patches.push_back( currentPatch );
 				lowerPhi = upperPhi;
 			}
@@ -76,7 +76,7 @@ namespace SingleLayerOptics {
 
 		// build lambda vector and matrix
 		size_t size = m_Patches.size();
-		m_LambdaVector = make_shared< vector< double > >();
+		m_LambdaVector = make_shared< std::vector< double > >();
 		m_LambdaMatrix = make_shared< CSquareMatrix >( size );
 		for ( size_t i = 0; i < size; ++i ) {
 			m_LambdaVector->push_back( m_Patches[ i ]->lambda() );
@@ -89,29 +89,29 @@ namespace SingleLayerOptics {
 		return m_Patches.size();
 	}
 
-	shared_ptr< const CBSDFPatch > CBSDFDirections::operator[]( const size_t Index ) const {
+	std::shared_ptr< const CBSDFPatch > CBSDFDirections::operator[]( const size_t Index ) const {
 		return m_Patches[ Index ];
 	}
 
-	vector< shared_ptr< CBSDFPatch > >::iterator CBSDFDirections::begin() {
+	vector< std::shared_ptr< CBSDFPatch > >::iterator CBSDFDirections::begin() {
 		return m_Patches.begin();
 	}
 
-	vector< shared_ptr< CBSDFPatch > >::iterator CBSDFDirections::end() {
+	vector< std::shared_ptr< CBSDFPatch > >::iterator CBSDFDirections::end() {
 		return m_Patches.end();
 	}
 
-	shared_ptr< vector< double > > CBSDFDirections::lambdaVector() const {
+	std::shared_ptr< std::vector< double > > CBSDFDirections::lambdaVector() const {
 		return m_LambdaVector;
 	}
 
-	shared_ptr< CSquareMatrix > CBSDFDirections::lambdaMatrix() const {
+	std::shared_ptr< CSquareMatrix > CBSDFDirections::lambdaMatrix() const {
 		return m_LambdaMatrix;
 	}
 
 	size_t CBSDFDirections::getNearestBeamIndex( const double t_Theta, const double t_Phi ) const {
 		auto it = std::find_if( m_Patches.begin(), m_Patches.end(),
-		                        [ & ]( const shared_ptr< CBSDFPatch >& a ) {
+		                        [ & ]( const std::shared_ptr< CBSDFPatch >& a ) {
 		                        return a->isInPatch( t_Theta, t_Phi );
 	                        } );
 
@@ -170,13 +170,13 @@ namespace SingleLayerOptics {
 		m_OutgoingDirections = make_shared< CBSDFDirections >( aDefinitions, BSDFHemisphere::Outgoing );
 	}
 
-	CBSDFHemisphere::CBSDFHemisphere( vector< CBSDFDefinition >& t_Definitions ) :
+	CBSDFHemisphere::CBSDFHemisphere( std::vector< CBSDFDefinition >& t_Definitions ) :
 		m_IncomingDirections( make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Incoming ) ),
 		m_OutgoingDirections( make_shared< CBSDFDirections >( t_Definitions, BSDFHemisphere::Outgoing ) ) {
 	}
 
-	shared_ptr< const CBSDFDirections > CBSDFHemisphere::getDirections( const BSDFHemisphere t_Side ) const {
-		shared_ptr< CBSDFDirections > aDirections = nullptr;
+	std::shared_ptr< const CBSDFDirections > CBSDFHemisphere::getDirections( const BSDFHemisphere t_Side ) const {
+		std::shared_ptr< CBSDFDirections > aDirections = nullptr;
 		switch ( t_Side ) {
 		case BSDFHemisphere::Incoming:
 			aDirections = m_IncomingDirections;

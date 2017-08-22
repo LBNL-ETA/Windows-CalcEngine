@@ -13,7 +13,7 @@ using namespace FenestrationCommon;
 class TestInBetweenShadeAirArgon : public testing::Test {
 
 private:
-	shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -27,8 +27,8 @@ protected:
 		auto tSky = 255.15; // Kelvins
 		auto solarRadiation = 0.0;
 
-		shared_ptr< CEnvironment > Outdoor =
-			make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		std::shared_ptr< CEnvironment > Outdoor =
+			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
@@ -38,8 +38,8 @@ protected:
 		/////////////////////////////////////////////////////////
 		auto roomTemperature = 295.15;
 
-		shared_ptr< CEnvironment > Indoor =
-			make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		std::shared_ptr< CEnvironment > Indoor =
+			std::make_shared< CIndoorEnvironment >( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
@@ -50,12 +50,12 @@ protected:
 		auto solidLayerThickness = 0.005715; // [m]
 		auto solidLayerConductance = 1.0;
 
-		shared_ptr< CBaseIGULayer > aLayer1 =
-			make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
+		std::shared_ptr< CBaseIGULayer > aLayer1 =
+			std::make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
 		ASSERT_TRUE( aLayer1 != nullptr );
 
-		shared_ptr< CBaseIGULayer > aLayer3 =
-			make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
+		std::shared_ptr< CBaseIGULayer > aLayer3 =
+			std::make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
 		ASSERT_TRUE( aLayer3 != nullptr );
 
 		auto shadeLayerThickness = 0.01;
@@ -66,7 +66,7 @@ protected:
 		auto Aright = 0.1;
 		auto Afront = 0.2;
 
-		shared_ptr< CBaseIGULayer > aLayer2 = make_shared< CIGUShadeLayer >( shadeLayerThickness,
+		std::shared_ptr< CBaseIGULayer > aLayer2 = make_shared< CIGUShadeLayer >( shadeLayerThickness,
 		                                                                     shadeLayerConductance, make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
 
 		ASSERT_TRUE( aLayer2 != nullptr );
@@ -101,12 +101,12 @@ protected:
 
 		auto gapThickness = 0.0127;
 		auto gapPressure = 101325.0;
-		shared_ptr< CBaseIGULayer > GapLayer1 =
-			make_shared< CIGUGapLayer >( gapThickness, gapPressure, Gas1 );
+		std::shared_ptr< CBaseIGULayer > GapLayer1 =
+			std::make_shared< CIGUGapLayer >( gapThickness, gapPressure, Gas1 );
 		ASSERT_TRUE( GapLayer1 != nullptr );
 
-		shared_ptr< CBaseIGULayer > GapLayer2 =
-			make_shared< CIGUGapLayer >( gapThickness, gapPressure, Gas2 );
+		std::shared_ptr< CBaseIGULayer > GapLayer2 =
+			std::make_shared< CIGUGapLayer >( gapThickness, gapPressure, Gas2 );
 		ASSERT_TRUE( GapLayer2 != nullptr );
 
 		auto windowWidth = 1.0;
@@ -129,7 +129,7 @@ protected:
 	}
 
 public:
-	shared_ptr< CSingleSystem > GetSystem() const {
+	std::shared_ptr< CSingleSystem > GetSystem() const {
 		return m_TarcogSystem;
 	};
 

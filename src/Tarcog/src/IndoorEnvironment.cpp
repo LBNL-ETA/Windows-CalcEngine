@@ -9,7 +9,7 @@
 #include "Surface.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace Gases;
 using namespace FenestrationCommon;
 
@@ -20,7 +20,7 @@ namespace Tarcog {
 		CEnvironment( t_Pressure, 0, AirHorizontalDirection::Windward ) {
 
 		m_RoomRadiationTemperature = t_AirTemperature; // Radiation temperature is by default air
-		m_Surface[ Side::Back ] = make_shared< CSurface >( m_Emissivity, 0 );
+		m_Surface[ Side::Back ] = std::make_shared< CSurface >( m_Emissivity, 0 );
 		m_Surface.at( Side::Back )->setTemperature( t_AirTemperature );
 	}
 
@@ -29,7 +29,7 @@ namespace Tarcog {
 		m_RoomRadiationTemperature = t_Indoor.m_RoomRadiationTemperature;
 	}
 
-	void CIndoorEnvironment::connectToIGULayer( shared_ptr< CBaseLayer > const& t_IGULayer ) {
+	void CIndoorEnvironment::connectToIGULayer( std::shared_ptr< CBaseLayer > const& t_IGULayer ) {
 		t_IGULayer->connectToBackSide( shared_from_this() );
 	}
 
@@ -38,12 +38,12 @@ namespace Tarcog {
 		resetCalculated();
 	}
 
-	shared_ptr< CBaseLayer > CIndoorEnvironment::clone() const {
+	std::shared_ptr< CBaseLayer > CIndoorEnvironment::clone() const {
 		return cloneEnvironment();
 	}
 
-	shared_ptr< CEnvironment > CIndoorEnvironment::cloneEnvironment() const {
-		return make_shared< CIndoorEnvironment >( *this );
+	std::shared_ptr< CEnvironment > CIndoorEnvironment::cloneEnvironment() const {
+		return std::make_shared< CIndoorEnvironment >( *this );
 	}
 
 	double CIndoorEnvironment::getGasTemperature() {
@@ -73,7 +73,7 @@ namespace Tarcog {
 			break;
 		}
 		default: {
-			throw runtime_error( "Incorrect definition for convection model (Indoor environment)." );
+			throw std::runtime_error( "Incorrect definition for convection model (Indoor environment)." );
 		}
 		}
 	}

@@ -14,12 +14,12 @@ namespace SingleLayerOptics {
 
 	}
 
-	CBaseCell::CBaseCell( const shared_ptr< CMaterial >& t_Material,
-	                      const shared_ptr< ICellDescription >& t_CellDescription ) :
+	CBaseCell::CBaseCell( const std::shared_ptr< CMaterial >& t_Material,
+	                      const std::shared_ptr< ICellDescription >& t_CellDescription ) :
 		m_Material( t_Material ), m_CellDescription( t_CellDescription ) {
 	}
 
-	void CBaseCell::setSourceData( shared_ptr< CSeries > t_SourceData ) {
+	void CBaseCell::setSourceData( std::shared_ptr< CSeries > t_SourceData ) {
 		m_Material->setSourceData( t_SourceData );
 	}
 

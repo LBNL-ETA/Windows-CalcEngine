@@ -4,18 +4,18 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
 class TestSampleNFRC_1042_Angular : public testing::Test {
 
 private:
-	shared_ptr< CSpectralSample > m_Sample;
+	std::shared_ptr< CSpectralSample > m_Sample;
 
 protected:
-	shared_ptr< CSeries > getSolarRadiation() const {
-		auto aSolarRadiation = make_shared< CSeries >();
+	std::shared_ptr< CSeries > getSolarRadiation() const {
+		auto aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -143,8 +143,8 @@ protected:
 		return aSolarRadiation;
 	}
 
-	shared_ptr< CSpectralSampleData > getMeasurements() const {
-		auto aMeasurements = make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > getMeasurements() const {
+		auto aMeasurements = std::make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0006, 0.0518, 0.2713 );
 		aMeasurements->addRecord( 0.305, 0.0006, 0.0509, 0.2624 );
@@ -651,12 +651,12 @@ protected:
 
 		auto aMeasurements = getMeasurements();
 
-		m_Sample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		m_Sample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 	}
 
 public:
-	shared_ptr< CSpectralSample > getSample() const {
+	std::shared_ptr< CSpectralSample > getSample() const {
 		return m_Sample;
 	};
 
@@ -674,7 +674,7 @@ TEST_F( TestSampleNFRC_1042_Angular, TestSampleProperties ) {
 
 	auto aMeasuredSample = getSample();
 
-	auto angularSample = make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
+	auto angularSample = std::make_shared< CAngularSpectralSample >( aMeasuredSample, thickness, layerType );
 
 	auto transmittance = angularSample->getProperty( lowLambda, highLambda, Property::T, Side::Front, angle );
 	EXPECT_NEAR( 0.312605, transmittance, 1e-6 );
