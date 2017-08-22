@@ -44,7 +44,7 @@ namespace MultiLayerOptics {
 			// Calculate r and t coefficients
 			std::shared_ptr< CSeries > r = make_shared< CSeries >();
 			std::shared_ptr< CSeries > t = make_shared< CSeries >();
-			vector< double > wv = *m_T[ size - 1 ]->getXArray();
+			vector< double > wv = m_T[ size - 1 ]->getXArray();
 			r->setConstantValues( wv, 0 );
 			t->setConstantValues( wv, 0 );
 			m_rCoeffs.clear();

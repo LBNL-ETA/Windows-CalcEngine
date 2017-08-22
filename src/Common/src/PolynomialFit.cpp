@@ -6,7 +6,7 @@
 
 namespace FenestrationCommon {
 
-	PolynomialFit::PolynomialFit( size_t const t_Order ) : m_Order( t_Order ) {
+	PolynomialFit::PolynomialFit( std::size_t const t_Order ) : m_Order( t_Order ) {
 
 	}
 

@@ -229,10 +229,10 @@ namespace FenestrationCommon {
 		return newProperties;
 	}
 
-	std::shared_ptr< std::vector< double > > CSeries::getXArray() const {
-		std::shared_ptr< std::vector< double > > aArray = std::make_shared< std::vector< double > >();
+	std::vector< double > CSeries::getXArray() const {
+		std::vector< double > aArray;
 		for ( std::shared_ptr< ISeriesPoint > spectralProperty : m_Series ) {
-			aArray->push_back( spectralProperty->x() );
+			aArray.push_back( spectralProperty->x() );
 		}
 
 		return aArray;

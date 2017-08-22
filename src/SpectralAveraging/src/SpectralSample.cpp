@@ -62,7 +62,7 @@ namespace SpectralAveraging {
 			if ( m_SourceData == nullptr ) {
 				throw std::runtime_error( "Cannot extract wavelenghts from source. Source is empty." );
 			}
-			m_Wavelengths = *m_SourceData->getXArray();
+			m_Wavelengths = m_SourceData->getXArray();
 			break;
 		case WavelengthSet::Data:
 			m_Wavelengths = getWavelengthsFromSample();

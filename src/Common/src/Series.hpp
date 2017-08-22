@@ -64,7 +64,7 @@ namespace FenestrationCommon {
 		std::shared_ptr< CSeries > mAdd( const CSeries& t_Series ) const;
 
 		// Return wavelenght values for spectral properties.
-		std::shared_ptr< std::vector< double > > getXArray() const;
+		std::vector< double > getXArray() const;
 
 		// Sum of all properties between two x values. Default arguments mean all items are sum
 		double sum( double const minX = 0, double const maxX = 0 ) const;
