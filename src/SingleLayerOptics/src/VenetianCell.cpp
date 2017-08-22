@@ -516,13 +516,13 @@ namespace SingleLayerOptics {
     return aCell->T_dir_dir( t_Direction );
   }
 
-  shared_ptr< vector< double > > CVenetianCell::T_dir_dir_band( const Side t_Side, 
+  vector< double > CVenetianCell::T_dir_dir_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     size_t size = m_EnergiesBand.size();
-    shared_ptr< vector< double > > aProperties = make_shared< vector< double > >();
+    vector< double > aProperties;
     for( size_t i = 0; i < size; ++i ) {
-      shared_ptr< CVenetianCellEnergy > aCell = m_EnergiesBand[ i ].getCell( t_Side );
-      aProperties->push_back( aCell->T_dir_dir( t_Direction ) );
+      CVenetianCellEnergy aCell = *m_EnergiesBand[ i ].getCell( t_Side );
+      aProperties.push_back( aCell.T_dir_dir( t_Direction ) );
     }
     return aProperties;
   }
@@ -532,13 +532,13 @@ namespace SingleLayerOptics {
     return aCell->T_dir_dif( t_Direction );
   }
 
-  shared_ptr< vector< double > > CVenetianCell::T_dir_dif_band( const Side t_Side, 
+  vector< double > CVenetianCell::T_dir_dif_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     size_t size = m_EnergiesBand.size();
-    shared_ptr< vector< double > > aProperties = make_shared< vector< double > >();
+    vector< double > aProperties;
     for( size_t i = 0; i < size; ++i ) {
-      shared_ptr< CVenetianCellEnergy > aCell = m_EnergiesBand[ i ].getCell( t_Side );
-      aProperties->push_back( aCell->T_dir_dif( t_Direction ) );
+      CVenetianCellEnergy aCell = *m_EnergiesBand[ i ].getCell( t_Side );
+      aProperties.push_back( aCell.T_dir_dif( t_Direction ) );
     }
     return aProperties;
   }
@@ -548,13 +548,13 @@ namespace SingleLayerOptics {
     return aCell->R_dir_dif( t_Direction );
   }
 
-  shared_ptr< vector< double > > CVenetianCell::R_dir_dif_band( const Side t_Side, 
+  vector< double > CVenetianCell::R_dir_dif_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     size_t size = m_EnergiesBand.size();
-    shared_ptr< vector< double > > aProperties = make_shared< vector< double > >();
+    vector< double > aProperties;
     for( size_t i = 0; i < size; ++i ) {
       shared_ptr< CVenetianCellEnergy > aCell = m_EnergiesBand[ i ].getCell( t_Side );
-      aProperties->push_back( aCell->R_dir_dif( t_Direction ) );
+      aProperties.push_back( aCell->R_dir_dif( t_Direction ) );
     }
     return aProperties;
   }

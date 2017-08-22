@@ -35,11 +35,11 @@ namespace SingleLayerOptics {
     double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     // Transmittance of specular material for enire wavelength spectrum
-    std::shared_ptr< std::vector< double > > T_dir_dir_band( 
+    std::vector< double > T_dir_dir_band(
       const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     // Reflectance of specular material over entire wavelength spectrum
-    std::shared_ptr< std::vector< double > > R_dir_dir_band( 
+    std::vector< double > R_dir_dir_band(
       const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 

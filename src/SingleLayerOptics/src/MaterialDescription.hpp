@@ -61,7 +61,7 @@ namespace SingleLayerOptics {
       const FenestrationCommon::Side t_Side, const double t_Angle ) const;
 
     // Get properties for every band defined in the material
-    virtual std::shared_ptr< std::vector< double > > 
+    virtual std::vector< double >
       getBandProperties( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const = 0;
 
@@ -69,11 +69,11 @@ namespace SingleLayerOptics {
 
     std::shared_ptr< SpectralAveraging::CSpectralSample > getSpectralSample();
 
-    virtual std::shared_ptr< std::vector< double > > 
+    virtual std::vector< double >
       getBandPropertiesAtAngle( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side, const double t_Angle ) const;
 
-    std::shared_ptr< std::vector< double > > getBandWavelengths();
+    std::vector< double > getBandWavelengths();
     size_t getBandSize();
     // Return index of wavelength range for passed value. Returns -1 if index is out of range
     int getBandIndex( const double t_Wavelength );
@@ -86,9 +86,9 @@ namespace SingleLayerOptics {
     double m_MaxLambda;
 
     // Set state in order not to calculate wavelengths every time
-    virtual std::shared_ptr< std::vector< double > > calculateBandWavelengths() = 0;
+    virtual std::vector< double > calculateBandWavelengths() = 0;
     bool m_WavelengthsCalculated;
-    std::shared_ptr< std::vector< double > > m_Wavelengths;
+    std::vector< double > m_Wavelengths;
 
   };
 
@@ -108,11 +108,11 @@ namespace SingleLayerOptics {
     double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;
 
-    std::shared_ptr< std::vector< double > > 
+    std::vector< double >
       getBandProperties( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
     
   private:
-    std::shared_ptr< std::vector< double > > calculateBandWavelengths();
+    std::vector< double > calculateBandWavelengths();
 
   protected:
 	std::map< FenestrationCommon::Side, std::shared_ptr< CSurface > > m_Property;
@@ -147,12 +147,12 @@ namespace SingleLayerOptics {
     double getProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;
 
-    std::shared_ptr< std::vector< double > > 
+    std::vector< double >
       getBandProperties( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side ) const;
 
   private:
-    std::shared_ptr< std::vector< double > > calculateBandWavelengths();
+    std::vector< double > calculateBandWavelengths();
     // Checks if material is within valid range. Otherwise, algorithm is not valid.
     void checkIfMaterialWithingSolarRange( const CMaterial& t_Material ) const;
     void createUVRange();
@@ -199,15 +199,15 @@ namespace SingleLayerOptics {
     double getProperty( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
 
     // Get properties at each wavelength and at given incident angle
-    std::shared_ptr< std::vector< double > > 
+    std::vector< double >
       getBandPropertiesAtAngle( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side, const double t_Angle ) const;
 
-    std::shared_ptr< std::vector< double > > 
+    std::vector< double >
       getBandProperties( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
 
   private:
-    std::shared_ptr< std::vector< double > > calculateBandWavelengths();
+    std::vector< double > calculateBandWavelengths();
     std::shared_ptr< SpectralAveraging::CAngularSpectralSample > m_AngularSample;
 
   };
@@ -236,15 +236,15 @@ namespace SingleLayerOptics {
 	  double getProperty( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
 
 	  // Get properties at each wavelength and at given incident angle
-	  std::shared_ptr< std::vector< double > >
+	  std::vector< double >
 		  getBandPropertiesAtAngle( const FenestrationCommon::Property t_Property,
 			  const FenestrationCommon::Side t_Side, const double t_Angle ) const;
 
-	  std::shared_ptr< std::vector< double > >
+	  std::vector< double >
 		  getBandProperties( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;
 
   private:
-	  std::shared_ptr< std::vector< double > > calculateBandWavelengths( );
+	  std::vector< double > calculateBandWavelengths( );
 	  std::shared_ptr< SpectralAveraging::CAngularMeasurements > m_AngularMeasurements;
 
   };

@@ -33,7 +33,7 @@ namespace SpectralAveraging {
 		return m_Data;
 	}
 
-  shared_ptr< vector< double > > CSingleAngularMeasurement::getWavelengthsFromSample() const {
+  vector< double > CSingleAngularMeasurement::getWavelengthsFromSample() const {
     return m_Data->getWavelengthsFromSample();
   }
 
@@ -42,7 +42,7 @@ namespace SpectralAveraging {
     shared_ptr< CSpectralSample > const & t_Data2, double const t_Angle2 ) const {
 
 	  auto aData = make_shared< CSpectralSampleData >( );
-	  auto wlv = *t_Data1->getWavelengthsFromSample( );
+	  auto wlv = t_Data1->getWavelengthsFromSample( );
 	  auto trans1 = *t_Data1->getMeasuredData( )->properties( SampleData::T );;
 	  auto trans2 = *t_Data2->getMeasuredData( )->properties( SampleData::T );;
 	  auto reflef1 = *t_Data1->getMeasuredData( )->properties( SampleData::Rf );;
@@ -77,12 +77,12 @@ namespace SpectralAveraging {
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	CAngularMeasurements::CAngularMeasurements( shared_ptr< CSingleAngularMeasurement > const & t_SignleMeasurement, 
-    shared_ptr< vector< double > > const & t_CommonWavelengths ):
+    vector< double > const& t_CommonWavelengths ):
 		m_SingleMeasurement( t_SignleMeasurement ), m_CommonWavelengths( t_CommonWavelengths ) {
 		if (m_SingleMeasurement == nullptr) {
 			throw runtime_error( "Sample must have measured data in AngularMeasurements." );
 		}
-		t_SignleMeasurement->interpolate( *m_CommonWavelengths );
+		t_SignleMeasurement->interpolate( m_CommonWavelengths );
 		m_Measurements.push_back( t_SignleMeasurement );
 	}
 
@@ -92,7 +92,7 @@ namespace SpectralAveraging {
 
 	// then you add function that will accept measurements at different angles
 	void CAngularMeasurements::addMeasurement( std::shared_ptr< CSingleAngularMeasurement > const & t_SingleMeasurement ) {
-		t_SingleMeasurement->interpolate( *m_CommonWavelengths );
+		t_SingleMeasurement->interpolate( m_CommonWavelengths );
 		m_Measurements.push_back( t_SingleMeasurement );
 	}
 

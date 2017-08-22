@@ -314,7 +314,7 @@ protected:
     shared_ptr< CBSDFLayer > Layer_Perforated = 
       CBSDFLayerMaker( aMaterialPerforated, aBSDF, aCellDescription ).getLayer();
 
-    shared_ptr< vector< double > > commonWavelengths = Layer_102->getBandWavelengths();
+    vector< double > commonWavelengths = Layer_102->getBandWavelengths();
 
     // Equivalent multilayer
 	  shared_ptr< CEquivalentBSDFLayer > aEqLayer =

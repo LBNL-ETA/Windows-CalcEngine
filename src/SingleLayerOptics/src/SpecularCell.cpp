@@ -35,13 +35,13 @@ namespace SingleLayerOptics {
   // Transmittance of specular material for each of material range. In case of sample measured material, that are
   // properties at each wavelength. In case of some other material type, that will be properties for each of material
   // ranges
-  shared_ptr< vector< double > > CSpecularCell::T_dir_dir_band( const Side t_Side, 
+  vector< double > CSpecularCell::T_dir_dir_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     return m_Material->getBandPropertiesAtAngle( Property::T, t_Side, t_Direction.theta() );
   }
 
   // Reflectance of specular material over entire material range
-  shared_ptr< vector< double > > CSpecularCell::R_dir_dir_band( const Side t_Side, 
+  vector< double > CSpecularCell::R_dir_dir_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     return m_Material->getBandPropertiesAtAngle( Property::R, t_Side, t_Direction.theta() );
   }

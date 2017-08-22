@@ -734,15 +734,15 @@ protected:
     // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
     CCommonWavelengths aCommonWL;
     aCommonWL.addWavelength( aCell_102->getBandWavelengths() );
-	std::shared_ptr< std::vector< double > > wl0 = aAngular0->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl10 = aAngular1->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl40 = aAngular4->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl90 = aAngular9->getWavelengthsFromSample( );
+	std::vector< double > wl0 = aAngular0->getWavelengthsFromSample( );
+	std::vector< double > wl10 = aAngular1->getWavelengthsFromSample( );
+	std::vector< double > wl40 = aAngular4->getWavelengthsFromSample( );
+	std::vector< double > wl90 = aAngular9->getWavelengthsFromSample( );
 	aCommonWL.addWavelength( wl0 );
 	aCommonWL.addWavelength( wl10 );
 	aCommonWL.addWavelength( wl40 );
 	aCommonWL.addWavelength( wl90 );
-	shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+	vector< double > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
 	shared_ptr< CAngularMeasurements > m_Measurements = make_shared< CAngularMeasurements >( aAngular0, commonWavelengths );
 	m_Measurements->addMeasurement( aAngular1 );

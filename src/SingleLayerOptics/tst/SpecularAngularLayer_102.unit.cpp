@@ -705,15 +705,15 @@ protected:
 
 	// Need to extract common wavelengths
 	CCommonWavelengths aCommonWL;
-	std::shared_ptr< std::vector< double > > wl0 = aAngular0->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl10 = aAngular1->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl40 = aAngular4->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl90 = aAngular9->getWavelengthsFromSample( );
+	std::vector< double > wl0 = aAngular0->getWavelengthsFromSample( );
+	std::vector< double > wl10 = aAngular1->getWavelengthsFromSample( );
+	std::vector< double > wl40 = aAngular4->getWavelengthsFromSample( );
+	std::vector< double > wl90 = aAngular9->getWavelengthsFromSample( );
 	aCommonWL.addWavelength( wl0 );
 	aCommonWL.addWavelength( wl10 );
 	aCommonWL.addWavelength( wl40 );
 	aCommonWL.addWavelength( wl90 );
-	shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+	vector< double > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
 	// Creating angular sample
 

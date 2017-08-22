@@ -418,7 +418,7 @@ protected:
     aCommonWL.addWavelength( aCell_103->getBandWavelengths() );
 
     // Finds combination of two wavelength sets without going outside of wavelenght range for any of spectral samples.
-    shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+    vector< double > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
     
     m_Layer = make_shared< CMultiPaneSpecular >( commonWavelengths, aSolarRadiation, aCell_102 );
     m_Layer->addLayer( aCell_103 );

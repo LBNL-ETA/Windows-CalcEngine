@@ -54,8 +54,8 @@ namespace SpectralAveraging {
     return aProperties;
   }
 
-  shared_ptr< vector< double > > CSpectralSampleData::getWavelengths() const {
-    return m_Transmittances->getXArray();
+  vector< double > CSpectralSampleData::getWavelengths() const {
+    return *m_Transmittances->getXArray();
   }
 
   // Interpolate current sample data to new wavelengths set

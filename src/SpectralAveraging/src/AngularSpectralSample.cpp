@@ -46,13 +46,13 @@ namespace SpectralAveraging {
 
       auto aWavelengths = aMeasuredData->getWavelengths();
       auto aT = aMeasuredData->properties( SampleData::T );
-      assert( aT->size() == aWavelengths->size() );
+      assert( aT->size() == aWavelengths.size() );
 
       auto aRf = aMeasuredData->properties( SampleData::Rf );
-      assert( aRf->size() == aWavelengths->size() );
+      assert( aRf->size() == aWavelengths.size() );
 
       auto aRb = aMeasuredData->properties( SampleData::Rb );
-      assert( aRb->size() == aWavelengths->size() );
+      assert( aRb->size() == aWavelengths.size() );
 
       auto lowLambda = 0.3;
       auto highLambda = 2.5;
@@ -60,8 +60,8 @@ namespace SpectralAveraging {
       // TODO: Only one side is measured and it is considered that front properties are equal to back properties
       auto aTSolNorm = t_SpectralSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
 
-      for( size_t i = 0; i < aWavelengths->size(); ++i ) {
-        auto ww = ( *aWavelengths )[ i ] * 1e-6;
+      for( size_t i = 0; i < aWavelengths.size(); ++i ) {
+        auto ww = aWavelengths[ i ] * 1e-6;
         auto T = ( *aT )[ i ]->value();
         auto Rf = ( *aRf )[ i ]->value();
         auto Rb = ( *aRb )[ i ]->value();
@@ -125,7 +125,7 @@ namespace SpectralAveraging {
     return aSample->getProperty( minLambda, maxLambda, t_Property, t_Side );
   }
 
-  shared_ptr< vector< double > > CAngularSpectralSample::getWavelengthsProperty( 
+  vector< double > CAngularSpectralSample::getWavelengthsProperty(
     double const minLambda, double const maxLambda, 
     Property const t_Property, Side const t_Side, double const t_Angle ) {
 
@@ -133,15 +133,13 @@ namespace SpectralAveraging {
 
     auto aProperties = aSample->getWavelengthsProperty( t_Property, t_Side );
 
-    shared_ptr< vector< double > > aValues = nullptr;
+    vector< double > aValues;
 
     if( aProperties != nullptr ) {
 
-      aValues = make_shared< vector< double > >();
-
       for( auto aProperty : *aProperties ) {
         if( aProperty->x() >= minLambda && aProperty->x() <= maxLambda ) {
-          aValues->push_back( aProperty->value() );
+          aValues.push_back( aProperty->value() );
         }
       }
 
@@ -150,7 +148,7 @@ namespace SpectralAveraging {
     return aValues;
   }
 
-  shared_ptr< vector< double > > CAngularSpectralSample::getBandWavelengths() const {
+  vector< double > CAngularSpectralSample::getBandWavelengths() const {
     return m_SpectralSampleZero->getWavelengthsFromSample();
   }
 

@@ -56,7 +56,7 @@ namespace SingleLayerOptics {
     return m_Cell->getBandIndex( t_Wavelength ) ;
   }
 
-  shared_ptr< vector< double > > CBSDFLayer::getBandWavelengths() const {
+  vector< double > CBSDFLayer::getBandWavelengths() const {
     return m_Cell->getBandWavelengths();
   }
 
@@ -87,18 +87,18 @@ namespace SingleLayerOptics {
       size_t size = aDirections->size();
       for( size_t i = 0; i < size; ++i ) {
         const CBeamDirection aDirection = *( *aDirections )[ i ]->centerPoint();
-        shared_ptr< vector< double > > aTau = m_Cell->T_dir_dir_band( aSide, aDirection );
-        shared_ptr< vector< double > > aRho = m_Cell->R_dir_dir_band( aSide, aDirection );
+        vector< double > aTau = m_Cell->T_dir_dir_band( aSide, aDirection );
+        vector< double > aRho = m_Cell->R_dir_dir_band( aSide, aDirection );
         double Lambda = ( *aDirections )[ i ]->lambda();
         shared_ptr< CSquareMatrix > Tau = nullptr;
         shared_ptr< CSquareMatrix > Rho = nullptr;
-        size_t numWV = aTau->size();
+        size_t numWV = aTau.size();
         for( size_t j = 0; j < numWV; ++j ) {
           CBSDFIntegrator aResults = *( *m_WVResults )[ j ];
           Tau = aResults.getMatrix( aSide, PropertySimple::T );
           Rho = aResults.getMatrix( aSide, PropertySimple::R );
-          ( *Tau )[ i ][ i ] += ( *aTau )[ j ] / Lambda;
-          ( *Rho )[ i ][ i ] += ( *aRho )[ j ] / Lambda;
+          ( *Tau )[ i ][ i ] += aTau[ j ] / Lambda;
+          ( *Rho )[ i ][ i ] += aRho[ j ] / Lambda;
         }
       }
     }

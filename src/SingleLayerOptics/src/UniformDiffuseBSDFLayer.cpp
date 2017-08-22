@@ -56,23 +56,23 @@ namespace SingleLayerOptics {
 
     shared_ptr< CUniformDiffuseCell > aCell = cellAsUniformDiffuse();
 
-    shared_ptr< vector< double > > aTau = aCell->T_dir_dif_band( aSide, t_Direction );
-    shared_ptr< vector< double > > Ref = aCell->R_dir_dif_band( aSide, t_Direction );
+    vector< double > aTau = aCell->T_dir_dif_band( aSide, t_Direction );
+    vector< double > Ref = aCell->R_dir_dif_band( aSide, t_Direction );
 
     shared_ptr< const CBSDFDirections > aDirections = 
       m_BSDFHemisphere->getDirections( BSDFHemisphere::Incoming );
     size_t size = aDirections->size();
 
     for( size_t i = 0; i < size; ++i ) {
-      size_t numWV = aTau->size();
+      size_t numWV = aTau.size();
       for( size_t j = 0; j < numWV; ++j ) {
         shared_ptr< CBSDFIntegrator > aResults = nullptr;
         aResults = ( *m_WVResults )[ j ];
         assert( aResults != nullptr );
         shared_ptr< CSquareMatrix > Tau = aResults->getMatrix( aSide, PropertySimple::T );
         shared_ptr< CSquareMatrix > Rho = aResults->getMatrix( aSide, PropertySimple::R );
-        ( *Tau )[ i ][ t_DirectionIndex ] += ( *aTau )[ j ] / M_PI;
-        ( *Rho )[ i ][ t_DirectionIndex ] += ( *Ref )[ j ] / M_PI;
+        ( *Tau )[ i ][ t_DirectionIndex ] += aTau[ j ] / M_PI;
+        ( *Rho )[ i ][ t_DirectionIndex ] += Ref[ j ] / M_PI;
       }
     }
 

@@ -596,15 +596,15 @@ protected:
 
 	// Need to extract common wavelengths
 	CCommonWavelengths aCommonWL;
-	std::shared_ptr< std::vector< double > > wl0 = aAngular0->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl10 = aAngular1->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl40 = aAngular4->getWavelengthsFromSample( );
-	std::shared_ptr< std::vector< double > > wl90 = aAngular9->getWavelengthsFromSample( );
+	std::vector< double > wl0 = aAngular0->getWavelengthsFromSample( );
+	std::vector< double > wl10 = aAngular1->getWavelengthsFromSample( );
+	std::vector< double > wl40 = aAngular4->getWavelengthsFromSample( );
+	std::vector< double > wl90 = aAngular9->getWavelengthsFromSample( );
 	aCommonWL.addWavelength( wl0 );
 	aCommonWL.addWavelength( wl10 );
 	aCommonWL.addWavelength( wl40 );
 	aCommonWL.addWavelength( wl90 );
-	shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+	vector< double > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
 	// Creating angular sample
 
@@ -650,7 +650,7 @@ TEST_F( TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree ) {
   double trans = aMaterial->getPropertyAtAngle( Property::T, Side::Front, angle );
   double refleF = aMaterial->getPropertyAtAngle( Property::R, Side::Front, angle );
   double refleB = aMaterial->getPropertyAtAngle( Property::R, Side::Back, angle );
-  shared_ptr< vector< double > >aTrans = aMaterial->getBandPropertiesAtAngle( Property::T, Side::Front, angle );
+  vector< double >aTrans = aMaterial->getBandPropertiesAtAngle( Property::T, Side::Front, angle );
 
   EXPECT_NEAR( 0.79636496475913876, trans, 1e-6 );
   EXPECT_NEAR( 0.11405492103460167, refleF, 1e-6 );
@@ -753,11 +753,11 @@ TEST_F( TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree ) {
   correctT.push_back( 0.7733 );
   correctT.push_back( 0.76895 );
 
-  size_t size = aTrans->size( );
+  size_t size = aTrans.size( );
 
   EXPECT_EQ( size, correctT.size( ) );
   for ( size_t i = 0; i < size; ++i ) {
-	  EXPECT_NEAR( correctT[ i ], ( *aTrans )[ i ], 1e-6 );
+	  EXPECT_NEAR( correctT[ i ], aTrans[ i ], 1e-6 );
   }
 
 }

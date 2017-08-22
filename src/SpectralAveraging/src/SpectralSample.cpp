@@ -18,14 +18,12 @@ namespace SpectralAveraging {
     m_WavelengthSet( WavelengthSet::Data ), m_IntegrationType( IntegrationType::Trapezoidal ),
     m_StateCalculated( false ) {
     m_DetectorData = nullptr;
-    m_Wavelengths = nullptr;
     CSample::reset();
   }
 
   CSample::CSample() : m_SourceData( nullptr ), m_WavelengthSet( WavelengthSet::Data ), 
     m_IntegrationType( IntegrationType::Trapezoidal ), m_StateCalculated( false ) {
     m_DetectorData = nullptr;
-    m_Wavelengths = nullptr;
     CSample::reset();
   }
 
@@ -58,13 +56,13 @@ namespace SpectralAveraging {
       if( t_Wavelenghts == nullptr ) {
         throw runtime_error("Need to provide custom wavelength set.");
       }
-      m_Wavelengths = t_Wavelenghts;
+      m_Wavelengths = *t_Wavelenghts;
       break;
     case WavelengthSet::Source:
       if( m_SourceData == nullptr ) {
         throw runtime_error("Cannot extract wavelenghts from source. Source is empty.");
       }
-      m_Wavelengths = m_SourceData->getXArray();
+      m_Wavelengths = *m_SourceData->getXArray();
       break;
     case WavelengthSet::Data:
       m_Wavelengths = getWavelengthsFromSample();
@@ -211,7 +209,7 @@ namespace SpectralAveraging {
   }
 
   size_t CSample::getBandSize() const {
-    return m_Wavelengths->size();
+    return m_Wavelengths.size();
   }
 
   void CSample::reset() {
@@ -228,21 +226,17 @@ namespace SpectralAveraging {
     if( !m_StateCalculated ) {
       if( m_WavelengthSet != WavelengthSet::Custom ) {
         setWavelengths( m_WavelengthSet );
-        assert( m_Wavelengths != nullptr );
-      }
-      if( m_Wavelengths == nullptr ) {
-        throw runtime_error( "Wavelength range is not set. Properties cannot be calculated without given wavelenght set." );
       }
 
       // In case source data are set then apply solar radiation to the calculations.
       // Otherwise, just use measured data.
       if( m_SourceData != nullptr ) {
 
-        m_IncomingSource = m_SourceData->interpolate( *m_Wavelengths );
+        m_IncomingSource = m_SourceData->interpolate( m_Wavelengths );
 
 
         if( m_DetectorData != nullptr ) {
-          auto interpolatedDetector = *m_DetectorData->interpolate( *m_Wavelengths );
+          auto interpolatedDetector = *m_DetectorData->interpolate( m_Wavelengths );
           m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
         }
 
@@ -296,7 +290,7 @@ namespace SpectralAveraging {
     return m_SampleData; 
   }
 
-  shared_ptr< vector< double > > CSpectralSample::getWavelengthsFromSample() const {
+  vector< double > CSpectralSample::getWavelengthsFromSample() const {
     return m_SampleData->getWavelengths();
   }
 
@@ -351,11 +345,11 @@ namespace SpectralAveraging {
       m_AbsFront = m_SampleData->properties( SampleData::AbsF );
       m_AbsBack = m_SampleData->properties( SampleData::AbsB );
     } else {
-      m_Transmittance = m_SampleData->properties( SampleData::T )->interpolate( *m_Wavelengths );
-      m_RefFront = m_SampleData->properties( SampleData::Rf )->interpolate( *m_Wavelengths );
-      m_RefBack = m_SampleData->properties( SampleData::Rb )->interpolate( *m_Wavelengths );
-      m_AbsFront = m_SampleData->properties( SampleData::AbsF )->interpolate( *m_Wavelengths );
-      m_AbsBack = m_SampleData->properties( SampleData::AbsB )->interpolate( *m_Wavelengths );
+      m_Transmittance = m_SampleData->properties( SampleData::T )->interpolate( m_Wavelengths );
+      m_RefFront = m_SampleData->properties( SampleData::Rf )->interpolate( m_Wavelengths );
+      m_RefBack = m_SampleData->properties( SampleData::Rb )->interpolate( m_Wavelengths );
+      m_AbsFront = m_SampleData->properties( SampleData::AbsF )->interpolate( m_Wavelengths );
+      m_AbsBack = m_SampleData->properties( SampleData::AbsB )->interpolate( m_Wavelengths );
     }
 
     assert( m_IncomingSource != nullptr );

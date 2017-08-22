@@ -413,7 +413,7 @@ protected:
     aCommonWL.addWavelength( Layer_102->getBandWavelengths() );
     aCommonWL.addWavelength( Layer_103->getBandWavelengths() );
 
-    shared_ptr< vector< double > > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
+    vector< double > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
     // Equivalent BSDF layer
     shared_ptr< CEquivalentBSDFLayer > aEqLayer = 

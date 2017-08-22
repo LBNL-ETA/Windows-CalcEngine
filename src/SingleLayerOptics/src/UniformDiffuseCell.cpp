@@ -24,12 +24,12 @@ namespace SingleLayerOptics {
     return ( ( 1 - T_dir_dir( t_Side, t_Direction ) ) * m_Material->getProperty( Property::R, t_Side ) );
   }
 
-  shared_ptr< vector< double > > CUniformDiffuseCell::T_dir_dif_band( const Side t_Side, 
+  vector< double > CUniformDiffuseCell::T_dir_dif_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     return getMaterialProperties( Property::T, t_Side, t_Direction );
   }
 
-  shared_ptr< vector< double > > CUniformDiffuseCell::R_dir_dif_band( const Side t_Side, 
+  vector< double > CUniformDiffuseCell::R_dir_dif_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     return getMaterialProperties( Property::R, t_Side, t_Direction );
   }
@@ -39,13 +39,13 @@ namespace SingleLayerOptics {
     return ( ( 1 - T_dir_dir( t_Side, t_Direction ) ) * m_Material->getProperty( t_Property, t_Side ) );
   }
 
-  shared_ptr< vector< double > > CUniformDiffuseCell::getMaterialProperties( const Property t_Property, 
+  vector< double > CUniformDiffuseCell::getMaterialProperties( const Property t_Property,
     const Side t_Side, const CBeamDirection& t_Direction ) {
     double materialCoverFraction = 1 - T_dir_dir( t_Side, t_Direction );
-    shared_ptr< vector< double > > aMaterialProperty = m_Material->getBandProperties( t_Property, t_Side );
-    shared_ptr< vector< double > > aProperty = make_shared< vector< double > >();
-    for( size_t i = 0; i < aMaterialProperty->size(); ++i ) {
-      aProperty->push_back( materialCoverFraction * ( *aMaterialProperty )[ i ] );
+    vector< double > aMaterialProperty = m_Material->getBandProperties( t_Property, t_Side );
+    vector< double > aProperty;
+    for( size_t i = 0; i < aMaterialProperty.size(); ++i ) {
+      aProperty.push_back( materialCoverFraction * aMaterialProperty[ i ] );
     }
     return aProperty;
   }

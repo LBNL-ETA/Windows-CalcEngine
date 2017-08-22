@@ -386,7 +386,7 @@ protected:
     shared_ptr< CBSDFLayer > aVenetian = aMakerVenetian.getLayer();
 
     // All integration will be performed over wavelengths that are specified in NFRC=102
-    shared_ptr< vector< double > > commonWavelengths = aMeasurements_102->getWavelengths();
+    vector< double > commonWavelengths = aMeasurements_102->getWavelengths();
 
     shared_ptr< CEquivalentBSDFLayer > aEqLayer =
       make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );

@@ -66,12 +66,12 @@ namespace SpectralAveraging {
     virtual void calculateProperties() = 0;
 
     // It can be single or multiple samples. In any case this should be seen as single set of wavelengts
-    virtual std::shared_ptr< std::vector< double > > getWavelengthsFromSample() const = 0;
+    virtual std::vector< double > getWavelengthsFromSample() const = 0;
 
     std::shared_ptr< FenestrationCommon::CSeries > m_SourceData;
     std::shared_ptr< FenestrationCommon::CSeries > m_DetectorData;
 
-    std::shared_ptr< std::vector< double > > m_Wavelengths;
+    std::vector< double > m_Wavelengths;
     WavelengthSet m_WavelengthSet;
 
     // Keep energy for current state of the sample. Energy is calculated for each wavelength.
@@ -101,7 +101,7 @@ namespace SpectralAveraging {
     std::shared_ptr< FenestrationCommon::CSeries > getWavelengthsProperty( 
       FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
 
-    std::shared_ptr< std::vector< double > > getWavelengthsFromSample() const override;
+    std::vector< double > getWavelengthsFromSample() const override;
 
   protected:
     void calculateProperties() override;

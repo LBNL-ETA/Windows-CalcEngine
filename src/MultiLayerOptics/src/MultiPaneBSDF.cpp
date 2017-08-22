@@ -71,7 +71,7 @@ namespace MultiLayerOptics {
 
       for( shared_ptr< CSeries >& aSpectra : *m_IncomingSpectra ) {
         // each incoming spectra must be intepolated to same wavelengths as this IGU is using
-        aSpectra = aSpectra->interpolate( *m_Layer->getCommonWavelengths() );
+        aSpectra = aSpectra->interpolate( m_Layer->getCommonWavelengths() );
 
         shared_ptr< CSeries > iTotalSolar = aSpectra->integrate( IntegrationType::Trapezoidal );
         m_IncomingSolar.push_back( iTotalSolar->sum( minLambda, maxLambda ) );

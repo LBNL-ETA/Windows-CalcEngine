@@ -43,7 +43,7 @@ namespace MultiLayerOptics {
   // Handles equivalent properties of MultiLayerOptics glass consists only of specular layers
   class CMultiPaneSpecular {
   public:
-    CMultiPaneSpecular( const std::shared_ptr< std::vector< double > >& t_CommonWavelength,
+    CMultiPaneSpecular( std::vector< double > const& t_CommonWavelength,
       const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation,
       const std::shared_ptr< SingleLayerOptics::CSpecularCell >& t_Layer );
 
@@ -79,7 +79,7 @@ namespace MultiLayerOptics {
     // be able to recalculate equivalent properties for any angle
     std::vector< std::shared_ptr< SingleLayerOptics::CSpecularCell > > m_Layers;
 
-    std::shared_ptr< std::vector< double > > m_CommonWavelengths;
+    std::vector< double > m_CommonWavelengths;
     std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
 
     // Results for angle-properties pair. If same angle is required twice, then model will not

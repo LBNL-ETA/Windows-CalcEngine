@@ -31,16 +31,16 @@ namespace SingleLayerOptics {
     virtual double R_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
     // Property of the cell over the range
-    virtual std::shared_ptr< std::vector< double > > T_dir_dif_band( const FenestrationCommon::Side t_Side, 
+    virtual std::vector< double > T_dir_dif_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 
-    virtual std::shared_ptr< std::vector< double > > R_dir_dif_band( const FenestrationCommon::Side t_Side, 
+    virtual std::vector< double > R_dir_dif_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 
   private:
     double getMaterialProperty( const FenestrationCommon::Property t_Property, 
       const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
-    std::shared_ptr< std::vector< double > > getMaterialProperties( const FenestrationCommon::Property t_Property, 
+    std::vector< double > getMaterialProperties( const FenestrationCommon::Property t_Property,
       const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
     
   };

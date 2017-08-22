@@ -46,7 +46,7 @@ namespace SingleLayerOptics {
 
     int getBandIndex( const double t_Wavelength );
 
-    std::shared_ptr< std::vector< double > > getBandWavelengths() const;
+    std::vector< double > getBandWavelengths() const;
 
   protected:
     // Diffuse calculation distribution will be calculated here. It will depend on base classes.

@@ -316,7 +316,7 @@ protected:
     shared_ptr< CBSDFLayer > Layer_Venetian = 
       CBSDFLayerMaker( aMaterialVenetian, aBSDF, aCellDescription ).getLayer();
 
-    shared_ptr< vector< double > > commonWavelengths = Layer_102->getBandWavelengths();
+    vector< double > commonWavelengths = Layer_102->getBandWavelengths();
 
     shared_ptr< CEquivalentBSDFLayer > aEqLayer =
       make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );

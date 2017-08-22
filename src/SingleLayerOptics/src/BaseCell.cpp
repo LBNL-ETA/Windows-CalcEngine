@@ -31,31 +31,31 @@ namespace SingleLayerOptics {
     return m_CellDescription->R_dir_dir( t_Side, t_Direction );
   }
 
-  shared_ptr< vector< double > > CBaseCell::T_dir_dir_band( const Side t_Side, 
+  vector< double > CBaseCell::T_dir_dir_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     double value = T_dir_dir( t_Side, t_Direction );
-    shared_ptr< vector< double > > aResults = make_shared< vector< double > >();
-    shared_ptr< vector< double > > aMaterials = m_Material->getBandProperties( Property::T, t_Side );
-    size_t size = aMaterials->size();
+    vector< double > aResults;
+    vector< double > aMaterials = m_Material->getBandProperties( Property::T, t_Side );
+    size_t size = aMaterials.size();
     for( size_t i = 0; i < size; i++ ) {
-      aResults->push_back( value );
+      aResults.push_back( value );
     }
     return aResults;
   }
 
-  shared_ptr< vector< double > > CBaseCell::R_dir_dir_band( const Side t_Side, 
+  vector< double > CBaseCell::R_dir_dir_band( const Side t_Side,
     const CBeamDirection& t_Direction ) {
     double value = R_dir_dir( t_Side, t_Direction );
-    shared_ptr< vector< double > > aResults = make_shared< vector< double > >();
-    shared_ptr< vector< double > > aMaterials = m_Material->getBandProperties( Property::R, t_Side );
-    size_t size = aMaterials->size();
+    vector< double > aResults;
+    vector< double > aMaterials = m_Material->getBandProperties( Property::R, t_Side );
+    size_t size = aMaterials.size();
     for( size_t i = 0; i < size; i++ ) {
-      aResults->push_back( value );
+      aResults.push_back( value );
     }
     return aResults;
   }
 
-  shared_ptr< vector< double > > CBaseCell::getBandWavelengths() const {
+  vector< double > CBaseCell::getBandWavelengths() const {
     assert( m_Material != nullptr );
     return m_Material->getBandWavelengths();
   }

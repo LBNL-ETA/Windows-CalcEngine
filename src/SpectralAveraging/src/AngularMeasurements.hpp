@@ -31,7 +31,7 @@ namespace SpectralAveraging {
 
 		double getAngle( ) const;
 		std::shared_ptr< CSpectralSample > getData( ) const;
-    std::shared_ptr< std::vector< double > > getWavelengthsFromSample() const;
+    std::vector< double > getWavelengthsFromSample() const;
 		std::shared_ptr< CSpectralSample > Interpolate( 
       double const t_Angle, std::shared_ptr< CSpectralSample > const & t_Data1, double const t_Angle1, 
       std::shared_ptr< CSpectralSample > const & t_Data2, double const t_Angle2 ) const;
@@ -49,7 +49,7 @@ namespace SpectralAveraging {
 	  virtual ~CAngularMeasurements() = default;
 	  // You want to provide different measurement and also you want to provide common wavelengths (set of points for interpolation)
 		CAngularMeasurements( std::shared_ptr< CSingleAngularMeasurement > const & t_SingleMeasurement, 
-      std::shared_ptr< std::vector< double > > const & t_CommonWavelengths );
+      std::vector< double > const & t_CommonWavelengths );
 	  explicit CAngularMeasurements( std::vector< std::shared_ptr< CSingleAngularMeasurement > > const & t_Measurements );
 		// then you add function that will accept measurements at different angles
 		void addMeasurement( std::shared_ptr< CSingleAngularMeasurement > const & t_SingleMeasurement );
@@ -63,7 +63,7 @@ namespace SpectralAveraging {
 		// Do not forget storage for it
 		std::shared_ptr< CSingleAngularMeasurement > m_SingleMeasurement;
 		std::vector< std::shared_ptr< CSingleAngularMeasurement > > m_Measurements;
-		std::shared_ptr< std::vector< double > > m_CommonWavelengths;
+		std::vector< double > m_CommonWavelengths;
 		std::shared_ptr< CSingleAngularMeasurement > m_Angle;
 
 	}; 

@@ -23,7 +23,7 @@ namespace SpectralAveraging {
     void addRecord( double const t_Wavelength, double const t_Transmittance, double const t_ReflectanceFront, 
       double const t_ReflectanceBack );
     std::shared_ptr< FenestrationCommon::CSeries > properties( SampleData t_Property );
-    virtual std::shared_ptr< std::vector< double > > getWavelengths() const;
+    virtual std::vector< double > getWavelengths() const;
     virtual void interpolate( std::vector< double > const & t_Wavelengths );
 
     bool Flipped() const;

@@ -181,17 +181,17 @@ namespace SingleLayerOptics {
     void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
     double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
-    std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 
+    std::vector< double > T_dir_dir_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Uniform diffuse components
     /////////////////////////////////////////////////////////////////////////////////////////////
     double T_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
-    std::shared_ptr< std::vector< double > > T_dir_dif_band( const FenestrationCommon::Side t_Side, 
+    std::vector< double > T_dir_dif_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
     double R_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
-    std::shared_ptr< std::vector< double > > R_dir_dif_band( const FenestrationCommon::Side t_Side, 
+    std::vector< double > R_dir_dif_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 
     /////////////////////////////////////////////////////////////////////////////////////////////

@@ -61,7 +61,7 @@ namespace MultiLayerOptics {
   void CMultiPaneSpectralSample::integrateAndAppendAbsorptances( const shared_ptr< CSeries >& t_Absorptances ) {
     shared_ptr< CSeries > aAbs = t_Absorptances;
     if( m_WavelengthSet != WavelengthSet::Data ) {
-      aAbs = aAbs->interpolate( *m_Wavelengths );
+      aAbs = aAbs->interpolate( m_Wavelengths );
     }
     aAbs = aAbs->mMult( *m_IncomingSource );
     aAbs = aAbs->integrate( m_IntegrationType );

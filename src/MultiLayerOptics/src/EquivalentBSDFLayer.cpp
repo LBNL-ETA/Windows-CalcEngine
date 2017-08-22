@@ -14,7 +14,7 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics {
 
-  CEquivalentBSDFLayer::CEquivalentBSDFLayer( const shared_ptr< vector< double > >& t_CommonWavelengths,
+  CEquivalentBSDFLayer::CEquivalentBSDFLayer( vector< double > const& t_CommonWavelengths,
     const shared_ptr< CBSDFLayer >& t_Layer ) : 
     m_CombinedLayerWavelengths( t_CommonWavelengths ), 
     m_Calculated( false ) {
@@ -46,7 +46,7 @@ namespace MultiLayerOptics {
     return m_Layer[ 0 ]->getDirections( t_Side );
   }
 
-  shared_ptr< vector< double > > CEquivalentBSDFLayer::getCommonWavelengths() const {
+  vector< double > CEquivalentBSDFLayer::getCommonWavelengths() const {
     return m_CombinedLayerWavelengths;
   }
 
@@ -87,7 +87,7 @@ namespace MultiLayerOptics {
     }
 
     // Calculate total transmitted solar per matrix and perform integration over each wavelength
-    size_t WLsize = m_CombinedLayerWavelengths->size();
+    size_t WLsize = m_CombinedLayerWavelengths.size();
 
     // // This is for multithread calculations.
     // size_t numOfThreads = size_t( thread::hardware_concurrency() - 2 );
@@ -125,7 +125,7 @@ namespace MultiLayerOptics {
 void CEquivalentBSDFLayer::calculateWavelengthProperties( size_t const t_NumOfLayers, 
   size_t const t_Start, size_t const t_End ) const {
     for( auto i = t_Start; i < t_End; ++i ) {
-      auto curWL = ( *m_CombinedLayerWavelengths )[ i ];
+      auto curWL = m_CombinedLayerWavelengths[ i ];
       auto & curLayer = *( *m_LayersWL )[ i ];
 
       for( auto aSide : EnumSide() ) {
@@ -145,9 +145,9 @@ void CEquivalentBSDFLayer::updateWavelengthLayers(
   shared_ptr< vector< shared_ptr < CBSDFIntegrator > > > aResults = nullptr;
 
   aResults = t_Layer->getWavelengthResults();
-  size_t size = m_CombinedLayerWavelengths->size();
+  size_t size = m_CombinedLayerWavelengths.size();
   for( size_t i = 0; i < size; ++i ) {
-    double curWL = ( *m_CombinedLayerWavelengths )[ i ];
+    double curWL = m_CombinedLayerWavelengths[ i ];
     int index = t_Layer->getBandIndex( curWL );
     assert( index > -1 );
 

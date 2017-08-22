@@ -29,17 +29,17 @@ namespace SingleLayerOptics {
     double T_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
     double R_dir_dif( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
-    std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 
+    std::vector< double > T_dir_dir_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
-    std::shared_ptr< std::vector< double > > T_dir_dif_band( const FenestrationCommon::Side t_Side, 
+    std::vector< double > T_dir_dif_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
-    std::shared_ptr< std::vector< double > > R_dir_dif_band( const FenestrationCommon::Side t_Side, 
+    std::vector< double > R_dir_dif_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 
   private:
     double Tscatter_single( const FenestrationCommon::Side t_Side, 
       const CBeamDirection& t_Direction );
-    std::shared_ptr< std::vector< double > > Tscatter_range( const FenestrationCommon::Side t_Side,
+    std::vector< double > Tscatter_range( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 
     // Calculates scattered part of reflection from woven

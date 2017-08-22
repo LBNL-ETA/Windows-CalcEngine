@@ -33,12 +33,12 @@ namespace MultiLayerOptics {
   // Calculates equivalent BSDF matrices for transmittances and reflectances
   class CEquivalentBSDFLayer {
   public:
-    CEquivalentBSDFLayer( const std::shared_ptr< std::vector< double > >& t_CommonWavelengths, 
+    CEquivalentBSDFLayer( std::vector< double > const& t_CommonWavelengths,
       const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
 
     void addLayer( const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
     std::shared_ptr< const SingleLayerOptics::CBSDFDirections > getDirections( const SingleLayerOptics::BSDFHemisphere t_Side ) const;
-    std::shared_ptr< std::vector< double > > getCommonWavelengths() const;
+    std::vector< double > getCommonWavelengths() const;
 
     // Absorptance wavelength by wavelength matrices
     std::shared_ptr< FenestrationCommon::CMatrixSeries > getTotalA( const FenestrationCommon::Side t_Side );
@@ -72,7 +72,7 @@ namespace MultiLayerOptics {
 
     std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
 
-    std::shared_ptr< std::vector< double > > m_CombinedLayerWavelengths;
+    std::vector< double > m_CombinedLayerWavelengths;
     bool m_Calculated;
   };
 

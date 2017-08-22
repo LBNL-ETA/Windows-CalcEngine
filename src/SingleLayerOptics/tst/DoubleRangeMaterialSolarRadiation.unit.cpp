@@ -187,9 +187,9 @@ TEST_F( TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties ) {
 
   size_t size = 4;
 
-  shared_ptr< vector< double > > Transmittances = aMaterial->getBandProperties( Property::T, Side::Front );
+  vector< double > Transmittances = aMaterial->getBandProperties( Property::T, Side::Front );
 
-  EXPECT_EQ( size, Transmittances->size() );
+  EXPECT_EQ( size, Transmittances.size() );
 
   vector< double > correctResults;
   correctResults.push_back( 0 );
@@ -198,12 +198,12 @@ TEST_F( TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties ) {
   correctResults.push_back( 0.0021424777315234909 );
 
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], ( *Transmittances )[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], Transmittances[ i ], 1e-6 );
   }
 
-  shared_ptr< vector< double > > Reflectances = aMaterial->getBandProperties( Property::R, Side::Front );
+  vector< double > Reflectances = aMaterial->getBandProperties( Property::R, Side::Front );
 
-  EXPECT_EQ( size, Reflectances->size() );
+  EXPECT_EQ( size, Reflectances.size() );
 
   correctResults.clear();
   correctResults.push_back( 0 );
@@ -212,7 +212,7 @@ TEST_F( TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties ) {
   correctResults.push_back( 0.79785752226847650 );
 
   for( size_t i = 0; i < size; ++i ) {
-    EXPECT_NEAR( correctResults[ i ], ( *Reflectances )[ i ], 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], Reflectances[ i ], 1e-6 );
   }
 
 }

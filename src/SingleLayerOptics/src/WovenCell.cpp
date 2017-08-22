@@ -60,26 +60,26 @@ namespace SingleLayerOptics {
     return R_material - Tsct;
   }
 
-  shared_ptr< vector< double > > CWovenCell::T_dir_dir_band( const Side t_Side, const CBeamDirection& t_Direction ) {
+  vector< double > CWovenCell::T_dir_dir_band( const Side t_Side, const CBeamDirection& t_Direction ) {
     return CWovenBase::T_dir_dir_band( t_Side, t_Direction );
   }
 
-  shared_ptr< vector< double > > CWovenCell::T_dir_dif_band( const Side t_Side, const CBeamDirection& t_Direction ) {
-    shared_ptr< vector< double > > T_material = CWovenBase::T_dir_dif_band( t_Side, t_Direction );
-    shared_ptr< vector< double > > Tsct = Tscatter_range( t_Side, t_Direction );
-    assert( Tsct->size() == T_material->size() );
-    for( size_t i = 0; i < T_material->size(); ++i ) {
-      ( *T_material )[ i ] = ( *T_material )[ i ] + ( *Tsct )[ i ];
+  vector< double > CWovenCell::T_dir_dif_band( const Side t_Side, const CBeamDirection& t_Direction ) {
+    vector< double > T_material = CWovenBase::T_dir_dif_band( t_Side, t_Direction );
+    vector< double > Tsct = Tscatter_range( t_Side, t_Direction );
+    assert( Tsct.size() == T_material.size() );
+    for( size_t i = 0; i < T_material.size(); ++i ) {
+      T_material[ i ] = T_material[ i ] + Tsct[ i ];
     }
     return T_material;
   }
 
-  shared_ptr< vector< double > > CWovenCell::R_dir_dif_band( const Side t_Side, const CBeamDirection& t_Direction ) {
-    shared_ptr< vector< double > > R_material = CWovenBase::R_dir_dif_band( t_Side, t_Direction );
-    shared_ptr< vector< double > > Tsct = Tscatter_range( t_Side, t_Direction );
-    assert( Tsct->size() == R_material->size() );
-    for( size_t i = 0; i < R_material->size(); ++i ) {
-      ( *R_material )[ i ] = ( *R_material )[ i ] - ( *Tsct )[ i ];
+  vector< double > CWovenCell::R_dir_dif_band( const Side t_Side, const CBeamDirection& t_Direction ) {
+    vector< double > R_material = CWovenBase::R_dir_dif_band( t_Side, t_Direction );
+    vector< double > Tsct = Tscatter_range( t_Side, t_Direction );
+    assert( Tsct.size() == R_material.size() );
+    for( size_t i = 0; i < R_material.size(); ++i ) {
+      R_material[ i ] = R_material[ i ] - Tsct[ i ];
     }
     return R_material;
   }
@@ -91,13 +91,13 @@ namespace SingleLayerOptics {
     return Tscatter( t_Direction, RScatter_mat );
   }
 
-  shared_ptr< vector< double > > CWovenCell::Tscatter_range( const Side t_Side, const CBeamDirection& t_Direction ) {
+  vector< double > CWovenCell::Tscatter_range( const Side t_Side, const CBeamDirection& t_Direction ) {
     Side aScatterSide = oppositeSide( t_Side );
-    shared_ptr< vector< double > > RScatter_mat = m_Material->getBandProperties( Property::R, aScatterSide );
-    shared_ptr< vector< double > > aTsct = make_shared< vector< double > >();
-    for( size_t i = 0; i < RScatter_mat->size(); ++i ) {
-      double aTscatter = Tscatter( t_Direction, ( *RScatter_mat )[ i ] );
-      aTsct->push_back( aTscatter );
+    vector< double > RScatter_mat = m_Material->getBandProperties( Property::R, aScatterSide );
+    vector< double > aTsct;
+    for( size_t i = 0; i < RScatter_mat.size(); ++i ) {
+      double aTscatter = Tscatter( t_Direction, RScatter_mat[ i ] );
+      aTsct.push_back( aTscatter );
     }
     return aTsct;
   }

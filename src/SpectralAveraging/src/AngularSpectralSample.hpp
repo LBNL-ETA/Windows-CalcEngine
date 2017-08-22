@@ -62,11 +62,11 @@ namespace SpectralAveraging {
       FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side, double const t_Angle );
 
     // Get property at each wavelength
-    std::shared_ptr< std::vector< double > > getWavelengthsProperty( double const minLambda, 
+    std::vector< double > getWavelengthsProperty( double const minLambda,
       double const maxLambda, FenestrationCommon::Property const t_Property, 
       FenestrationCommon::Side const t_Side, double const t_Angle );
 
-    std::shared_ptr< std::vector< double > > getBandWavelengths() const;
+    std::vector< double > getBandWavelengths() const;
 
   private:
     // Finds spectral sample or creates new one if sample is not already created

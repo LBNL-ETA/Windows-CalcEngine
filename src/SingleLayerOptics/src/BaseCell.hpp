@@ -31,13 +31,13 @@ namespace SingleLayerOptics {
     virtual double T_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
     virtual double R_dir_dir( const FenestrationCommon::Side t_Side, const CBeamDirection& t_Direction );
 
-    virtual std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side, 
+    virtual std::vector< double > T_dir_dir_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 
-    virtual std::shared_ptr< std::vector< double > > R_dir_dir_band( const FenestrationCommon::Side t_Side, 
+    virtual std::vector< double > R_dir_dir_band( const FenestrationCommon::Side t_Side,
       const CBeamDirection& t_Direction );
 
-    std::shared_ptr< std::vector< double > > getBandWavelengths() const;
+    std::vector< double > getBandWavelengths() const;
     int getBandIndex( const double t_Wavelength );
     size_t getBandSize() const;
 
