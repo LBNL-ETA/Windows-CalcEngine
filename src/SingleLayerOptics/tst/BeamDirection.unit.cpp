@@ -5,7 +5,6 @@
 
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
 using namespace SingleLayerOptics;
 
 class TestBeamDirection : public testing::Test {

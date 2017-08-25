@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -30,7 +30,7 @@ protected:
 		std::shared_ptr< ICellDescription > aCell =
 			std::make_shared< CWovenCellDescription >( diameter, spacing );
 
-		m_Cell = make_shared< CWovenCell >( aMaterial, aCell );
+		m_Cell = std::make_shared< CWovenCell >( aMaterial, aCell );
 	}
 
 public:

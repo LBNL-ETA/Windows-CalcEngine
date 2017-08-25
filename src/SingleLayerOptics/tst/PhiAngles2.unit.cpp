@@ -5,7 +5,7 @@
 
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 
 class TestPhisAngles2 : public testing::Test {
@@ -15,7 +15,7 @@ private:
 
 protected:
 	virtual void SetUp() {
-		m_BasisRing = make_shared< CBSDFPhiAngles >( 12 );
+		m_BasisRing = std::make_shared< CBSDFPhiAngles >( 12 );
 	}
 
 public:
@@ -30,9 +30,9 @@ TEST_F( TestPhisAngles2, TestBSDFRingCreation ) {
 
 	std::shared_ptr< CBSDFPhiAngles > aRing = GetRing();
 
-	vector< double > results = *( aRing->phiAngles() );
+	std::vector< double > results = *( aRing->phiAngles() );
 
-	vector< double > correctResults = { 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330 };
+	std::vector< double > correctResults = { 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330 };
 	EXPECT_EQ( results.size(), correctResults.size() );
 
 	for ( size_t i = 0; i < results.size(); ++i ) {

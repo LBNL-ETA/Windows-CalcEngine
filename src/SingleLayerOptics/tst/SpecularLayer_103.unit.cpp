@@ -5,7 +5,7 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
@@ -17,7 +17,7 @@ private:
 
 protected:
 	virtual void SetUp() {
-		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -142,7 +142,7 @@ protected:
 		aSolarRadiation->addProperty( 3.7650, 9.0 );
 		aSolarRadiation->addProperty( 4.0450, 6.9 );
 
-		std::shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements = std::make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0000, 0.0470, 0.0490 );
 		aMeasurements->addRecord( 0.305, 0.0050, 0.0470, 0.0490 );
@@ -256,14 +256,14 @@ protected:
 		aMeasurements->addRecord( 2.450, 0.7570, 0.0640, 0.0640 );
 		aMeasurements->addRecord( 2.500, 0.7500, 0.0630, 0.0630 );
 
-		std::shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		std::shared_ptr< CSpectralSample > aSample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		double thickness = 5.715e-3; // [m]
 		std::shared_ptr< CMaterial > aMaterial =
 			std::make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
 		// Define BSDF
-		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Full );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Full );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
@@ -305,7 +305,7 @@ TEST_F( TestSpecularLayer_103, TestSpecular1 ) {
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 32.294776447203247 );
 	correctResults.push_back( 33.006380866841823 );
 	correctResults.push_back( 33.006380866841823 );
@@ -452,7 +452,7 @@ TEST_F( TestSpecularLayer_103, TestSpecular1 ) {
 	correctResults.push_back( 14.922971889762241 );
 	correctResults.push_back( 14.922971889762241 );
 
-	vector< double > calculatedResults;
+	std::vector< double > calculatedResults;
 	for ( size_t i = 0; i < size; ++i ) {
 		calculatedResults.push_back( ( *aT )[ i ][ i ] );
 	}

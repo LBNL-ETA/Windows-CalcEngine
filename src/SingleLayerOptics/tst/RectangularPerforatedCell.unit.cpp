@@ -4,7 +4,7 @@
 #include "WCECommon.hpp"
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -31,9 +31,9 @@ protected:
 		double thickness = 1; // mm
 		double xHole = 5; // mm
 		double yHole = 5; // mm
-		m_DescriptionCell = make_shared< CRectangularCellDescription >( x, y, thickness, xHole, yHole );
+		m_DescriptionCell = std::make_shared< CRectangularCellDescription >( x, y, thickness, xHole, yHole );
 
-		m_PerforatedCell = make_shared< CPerforatedCell >( aMaterial, m_DescriptionCell );
+		m_PerforatedCell = std::make_shared< CPerforatedCell >( aMaterial, m_DescriptionCell );
 	}
 
 public:

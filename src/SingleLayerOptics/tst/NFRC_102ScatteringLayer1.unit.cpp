@@ -5,7 +5,7 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
@@ -17,7 +17,7 @@ private:
 
 	std::shared_ptr< CSeries > loadSolarRadiationFile() {
 
-		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1 (Solar radiation)
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -146,7 +146,7 @@ private:
 	}
 
 	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
-		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = std::make_shared< CSpectralSampleData >();
 
 		aMeasurements_102->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements_102->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -270,13 +270,13 @@ protected:
 		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
 		std::shared_ptr< CSpectralSampleData > aMeasurements = loadSampleData_NFRC_102();
 
-		std::shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		std::shared_ptr< CSpectralSample > aSample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		double thickness = 3.048e-3; // [m]
 		std::shared_ptr< CMaterial > aMaterial =
 			std::make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		m_Layer = make_shared< CScatteringLayer >( aMaterial );
+		m_Layer = std::make_shared< CScatteringLayer >( aMaterial );
 
 	}
 

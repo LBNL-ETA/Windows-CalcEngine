@@ -5,7 +5,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
@@ -18,7 +18,7 @@ private:
 
 protected:
 	virtual void SetUp() {
-		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -27,7 +27,7 @@ protected:
 		aSolarRadiation->addProperty( 0.3150, 41.1 );
 		aSolarRadiation->addProperty( 0.3200, 71.2 );
 
-		std::shared_ptr< CSpectralSampleData > aMeasurements = make_shared< CSpectralSampleData >();
+		std::shared_ptr< CSpectralSampleData > aMeasurements = std::make_shared< CSpectralSampleData >();
 
 		aMeasurements->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -35,7 +35,7 @@ protected:
 		aMeasurements->addRecord( 0.315, 0.0350, 0.0470, 0.0480 );
 		aMeasurements->addRecord( 0.320, 0.1000, 0.0470, 0.0480 );
 
-		std::shared_ptr< CSpectralSample > aSample = make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		std::shared_ptr< CSpectralSample > aSample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
 
 		double thickness = 3.048e-3; // [m]
 		MaterialType aType = MaterialType::Monolithic;
@@ -45,7 +45,7 @@ protected:
 		std::shared_ptr< CMaterialSample > aMaterial =
 			std::make_shared< CMaterialSample >( aSample, thickness, aType, minLambda, maxLambda );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
@@ -80,7 +80,7 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 0.026014 );
 	correctResults.push_back( 0.024743 );
 	correctResults.push_back( 0.024743 );
@@ -123,7 +123,7 @@ TEST_F( TestSpecularLayerMultiWavelength_102, TestSpecular1 ) {
 	correctResults.push_back( 0.002528 );
 	correctResults.push_back( 0.002528 );
 
-	vector< double > calculatedResults;
+	std::vector< double > calculatedResults;
 	for ( size_t i = 0; i < size; ++i ) {
 		calculatedResults.push_back( ( *aT )[ i ][ i ] );
 	}

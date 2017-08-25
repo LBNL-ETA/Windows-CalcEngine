@@ -5,7 +5,7 @@
 
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 
 class TestPhiLimits1 : public testing::Test {
@@ -15,7 +15,7 @@ private:
 
 protected:
 	virtual void SetUp() {
-		m_PhiLimits = make_shared< CPhiLimits >( 8 );
+		m_PhiLimits = std::make_shared< CPhiLimits >( 8 );
 	}
 
 public:
@@ -30,9 +30,9 @@ TEST_F( TestPhiLimits1, TestBSDFRingCreation ) {
 
 	std::shared_ptr< CPhiLimits > aLimits = GetLimits();
 
-	vector< double > results = *( aLimits->getPhiLimits() );
+	std::vector< double > results = *( aLimits->getPhiLimits() );
 
-	vector< double > correctResults = { -22.5, 22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5 };
+	std::vector< double > correctResults = { -22.5, 22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5 };
 	EXPECT_EQ( results.size(), correctResults.size() );
 
 	for ( size_t i = 0; i < results.size(); ++i ) {

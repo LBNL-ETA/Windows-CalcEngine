@@ -4,7 +4,7 @@
 #include "WCECommon.hpp"
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -39,7 +39,7 @@ protected:
 		DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
 
 		// create BSDF
-		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription, aDistribution );
@@ -72,7 +72,7 @@ TEST_F( TestVenetianDirectionalShadeFlat45_5, TestVenetian1 ) {
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 0.836275880754398400 );
 	correctResults.push_back( 0.894179918528413050 );
 	correctResults.push_back( 3.893461019742295200 );
@@ -115,7 +115,7 @@ TEST_F( TestVenetianDirectionalShadeFlat45_5, TestVenetian1 ) {
 	correctResults.push_back( 0.018209736057913754 );
 	correctResults.push_back( 0.017310537462612144 );
 
-	vector< double > calculatedResults;
+	std::vector< double > calculatedResults;
 	for ( size_t i = 0; i < size; ++i ) {
 		calculatedResults.push_back( ( *aT )[ i ][ i ] );
 	}

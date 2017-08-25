@@ -5,7 +5,7 @@
 
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 
 class TestBSDFDirectionsClosestIndex : public testing::Test {
@@ -15,7 +15,7 @@ private:
 
 protected:
 	virtual void SetUp() {
-		m_BSDFHemisphere = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		m_BSDFHemisphere = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 	}
 
 public:

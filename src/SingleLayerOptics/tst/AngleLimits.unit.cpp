@@ -5,7 +5,6 @@
 
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
 using namespace SingleLayerOptics;
 
 class TestAngleLimits : public testing::Test {

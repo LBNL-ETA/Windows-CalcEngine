@@ -6,7 +6,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -38,7 +38,7 @@ protected:
 
 		double ratio = 0.49;
 
-		m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
+		m_Material = std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
 	}
 
 public:
@@ -65,11 +65,11 @@ TEST_F( TestDoubleRangeMaterialRatio, TestMaterialProperties ) {
 	// Properties at four wavelengths should have been created
 	size_t size = 4;
 
-	vector< double > Transmittances = aMaterial->getBandProperties( Property::T, Side::Front );
+	std::vector< double > Transmittances = aMaterial->getBandProperties( Property::T, Side::Front );
 
 	EXPECT_EQ( size, Transmittances.size() );
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 0 );
 	correctResults.push_back( 0.0039215686274509838 );
 	correctResults.push_back( 0.2 );
@@ -79,7 +79,7 @@ TEST_F( TestDoubleRangeMaterialRatio, TestMaterialProperties ) {
 		EXPECT_NEAR( correctResults[ i ], Transmittances[ i ], 1e-6 );
 	}
 
-	vector< double > Reflectances = aMaterial->getBandProperties( Property::R, Side::Front );
+	std::vector< double > Reflectances = aMaterial->getBandProperties( Property::R, Side::Front );
 
 	EXPECT_EQ( size, Reflectances.size() );
 

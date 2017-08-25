@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
@@ -46,7 +46,7 @@ protected:
 			std::make_shared< CWovenCellDescription >( diameter, spacing );
 
 		// create BSDF
-		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
@@ -81,7 +81,7 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 5.78100 );
 	correctResults.push_back( 6.07065 );
 	correctResults.push_back( 6.06990 );
@@ -124,7 +124,7 @@ TEST_F( TestWovenShadeMultiWavelength, TestWovenMultiWavelength ) {
 	correctResults.push_back( 0.00000 );
 	correctResults.push_back( 0.00000 );
 
-	vector< double > calculatedResults;
+	std::vector< double > calculatedResults;
 	for ( size_t i = 0; i < size; ++i ) {
 		calculatedResults.push_back( ( *aT )[ i ][ i ] );
 	}

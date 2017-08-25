@@ -5,7 +5,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace Viewer;
 using namespace FenestrationCommon;
@@ -25,7 +25,7 @@ protected:
 		double curvatureRadius = 0.123967;
 		size_t aNumOfSlats = 2;
 
-		m_Cell = make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
+		m_Cell = std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 		                                                  curvatureRadius, aNumOfSlats );
 	}
 

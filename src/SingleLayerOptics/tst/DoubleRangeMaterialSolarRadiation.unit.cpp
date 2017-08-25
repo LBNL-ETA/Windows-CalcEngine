@@ -6,7 +6,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
@@ -20,7 +20,7 @@ private:
 protected:
 	virtual void SetUp() {
 
-		std::shared_ptr< CSeries > aSolarRadiation = make_shared< CSeries >();
+		std::shared_ptr< CSeries > aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -163,7 +163,7 @@ protected:
 		std::shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial =
 			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
 
-		m_Material = make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, aSolarRadiation );
+		m_Material = std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, aSolarRadiation );
 	}
 
 public:
@@ -189,11 +189,11 @@ TEST_F( TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties ) {
 
 	size_t size = 4;
 
-	vector< double > Transmittances = aMaterial->getBandProperties( Property::T, Side::Front );
+	std::vector< double > Transmittances = aMaterial->getBandProperties( Property::T, Side::Front );
 
 	EXPECT_EQ( size, Transmittances.size() );
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 0 );
 	correctResults.push_back( 0.0021424777315234909 );
 	correctResults.push_back( 0.2 );
@@ -203,7 +203,7 @@ TEST_F( TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties ) {
 		EXPECT_NEAR( correctResults[ i ], Transmittances[ i ], 1e-6 );
 	}
 
-	vector< double > Reflectances = aMaterial->getBandProperties( Property::R, Side::Front );
+	std::vector< double > Reflectances = aMaterial->getBandProperties( Property::R, Side::Front );
 
 	EXPECT_EQ( size, Reflectances.size() );
 

@@ -5,7 +5,7 @@
 
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 
 class TestBSDFThetaLimtisQuarterBasis : public testing::Test {
@@ -15,8 +15,8 @@ private:
 
 protected:
 	virtual void SetUp() {
-		vector< double > thetaAngles = { 0, 18, 36, 54, 76.5 };
-		m_Thetas = make_shared< CThetaLimits >( thetaAngles );
+		std::vector< double > thetaAngles = { 0, 18, 36, 54, 76.5 };
+		m_Thetas = std::make_shared< CThetaLimits >( thetaAngles );
 	}
 
 public:
@@ -31,9 +31,9 @@ TEST_F( TestBSDFThetaLimtisQuarterBasis, TestQuarterBasis ) {
 
 	std::shared_ptr< CThetaLimits > aLimits = GetLimits();
 
-	vector< double > results = *( aLimits->getThetaLimits() );
+	std::vector< double > results = *( aLimits->getThetaLimits() );
 
-	vector< double > correctResults = { 0, 9, 27, 45, 63, 90 };
+	std::vector< double > correctResults = { 0, 9, 27, 45, 63, 90 };
 	EXPECT_EQ( results.size(), correctResults.size() );
 
 	for ( size_t i = 0; i < results.size(); ++i ) {

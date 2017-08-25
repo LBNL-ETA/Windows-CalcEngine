@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -26,7 +26,7 @@ protected:
 		const double T_dif_dif = 0.46;
 		const double R_dif_dif = 0.52;
 
-		m_Surface = make_shared< CScatteringSurface >( T_dir_dir, R_dir_dir,
+		m_Surface = std::make_shared< CScatteringSurface >( T_dir_dir, R_dir_dir,
 		                                               T_dir_dif, R_dir_dif,
 		                                               T_dif_dif, R_dif_dif );
 

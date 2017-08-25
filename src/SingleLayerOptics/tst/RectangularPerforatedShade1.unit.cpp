@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -33,11 +33,11 @@ protected:
 		std::shared_ptr< ICellDescription > aCellDescription =
 			std::make_shared< CRectangularCellDescription >( x, y, thickness, xHole, yHole );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
-		std::shared_ptr< CUniformDiffuseCell > aCell = make_shared< CPerforatedCell >( aMaterial, aCellDescription );
+		std::shared_ptr< CUniformDiffuseCell > aCell = std::make_shared< CPerforatedCell >( aMaterial, aCellDescription );
 
-		m_Shade = make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
+		m_Shade = std::make_shared< CUniformDiffuseBSDFLayer >( aCell, aBSDF );
 
 	}
 
@@ -66,7 +66,7 @@ TEST_F( TestRectangularPerforatedShade1, TestSolarProperties ) {
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 0.722625 );
 	correctResults.push_back( 0.731048 );
 	correctResults.push_back( 0.728881 );
@@ -109,7 +109,7 @@ TEST_F( TestRectangularPerforatedShade1, TestSolarProperties ) {
 	correctResults.push_back( 0.416249 );
 	correctResults.push_back( 0.219651 );
 
-	vector< double > calculatedResults;
+	std::vector< double > calculatedResults;
 	for ( size_t i = 0; i < size; ++i ) {
 		calculatedResults.push_back( ( *aT )[ i ][ i ] );
 	}

@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -38,7 +38,7 @@ protected:
 		// Method
 		DistributionMethod aDistribution = DistributionMethod::UniformDiffuse;
 
-		m_Shade = make_shared< CScatteringLayer >( aMaterial, aCellDescription, aDistribution );
+		m_Shade = std::make_shared< CScatteringLayer >( aMaterial, aCellDescription, aDistribution );
 
 	}
 

@@ -5,7 +5,7 @@
 
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 
 class TestBSDFQuarterBasis : public testing::Test {
@@ -15,7 +15,7 @@ private:
 
 protected:
 	virtual void SetUp() {
-		m_BSDFHemisphere = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		m_BSDFHemisphere = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 	}
 
 public:
@@ -30,7 +30,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis ) {
 
 	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
 
-	vector< double > correctResults = { 180,
+	std::vector< double > correctResults = { 180,
 		0, 45, 90, 135, 180, 225, 270, 315,
 		0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
 		0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
@@ -40,7 +40,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis ) {
 
 	EXPECT_EQ( correctSize, aDirections.size() );
 
-	vector< double > phiAngles;
+	std::vector< double > phiAngles;
 	for ( std::shared_ptr< const CBSDFPatch > aPatch : aDirections ) {
 		phiAngles.push_back( aPatch->centerPoint()->phi() );
 	}
@@ -56,7 +56,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas ) {
 
 	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
 
-	vector< double > correctResults = { 0,
+	std::vector< double > correctResults = { 0,
 		18, 18, 18, 18, 18, 18, 18, 18,
 		36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
 		54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54,
@@ -66,8 +66,8 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas ) {
 
 	EXPECT_EQ( correctSize, aDirections.size() );
 
-	vector< double > thetaAngles;
-	vector< std::shared_ptr< CBSDFPatch > >::iterator it;
+	std::vector< double > thetaAngles;
+	std::vector< std::shared_ptr< CBSDFPatch > >::iterator it;
 	for ( it = aDirections.begin(); it < aDirections.end(); ++it ) {
 		thetaAngles.push_back( ( *it )->centerPoint()->theta() );
 	}
@@ -83,7 +83,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisLambdas ) {
 
 	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
 
-	vector< double > correctResults =
+	std::vector< double > correctResults =
 	{ 0.076880244,
 		0.071328146, 0.071328146, 0.071328146, 0.071328146, 0.071328146, 0.071328146, 0.071328146, 0.071328146,
 		0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.076940910, 0.07694091, 0.07694091, 0.07694091, 0.07694091,
@@ -94,8 +94,8 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisLambdas ) {
 
 	EXPECT_EQ( correctSize, aDirections.size() );
 
-	vector< double > lambdaValues;
-	vector< std::shared_ptr< CBSDFPatch > >::iterator it;
+	std::vector< double > lambdaValues;
+	std::vector< std::shared_ptr< CBSDFPatch > >::iterator it;
 	for ( it = aDirections.begin(); it < aDirections.end(); ++it ) {
 		lambdaValues.push_back( ( *it )->lambda() );
 	}

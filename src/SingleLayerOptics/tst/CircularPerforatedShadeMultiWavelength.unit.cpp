@@ -4,7 +4,7 @@
 #include "WCECommon.hpp"
 #include "WCESingleLayerOptics.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
@@ -47,7 +47,7 @@ protected:
 		std::shared_ptr< ICellDescription > aCellDescription =
 			std::make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
@@ -82,7 +82,7 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
 	// Test only diagonal of transmittance matrix
 	size_t size = aT->getSize();
 
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 3.323538 );
 	correctResults.push_back( 3.233753 );
 	correctResults.push_back( 3.233753 );
@@ -125,7 +125,7 @@ TEST_F( TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiW
 	correctResults.push_back( 0.000000 );
 	correctResults.push_back( 0.000000 );
 
-	vector< double > calculatedResults;
+	std::vector< double > calculatedResults;
 	for ( size_t i = 0; i < size; ++i ) {
 		calculatedResults.push_back( ( *aT )[ i ][ i ] );
 	}

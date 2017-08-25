@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -35,7 +35,7 @@ protected:
 			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, numOfSlatSegments );
 
-		m_Cell = make_shared< CVenetianCell >( aMaterial, aCellDescription );
+		m_Cell = std::make_shared< CVenetianCell >( aMaterial, aCellDescription );
 
 	}
 

@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using namespace std;
+
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
@@ -32,7 +32,7 @@ protected:
 		std::shared_ptr< ICellDescription > aCellDescription =
 			std::make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
 
 		// make layer
 		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription );
@@ -68,7 +68,7 @@ TEST_F( TestCircularPerforatedShade1, TestSolarProperties ) {
 	size_t size = aT->getSize();
 
 	// Test diagonal
-	vector< double > correctResults;
+	std::vector< double > correctResults;
 	correctResults.push_back( 3.370933 );
 	correctResults.push_back( 3.282731 );
 	correctResults.push_back( 3.282731 );
@@ -111,7 +111,7 @@ TEST_F( TestCircularPerforatedShade1, TestSolarProperties ) {
 	correctResults.push_back( 0.063662 );
 	correctResults.push_back( 0.063662 );
 
-	vector< double > calculatedResults;
+	std::vector< double > calculatedResults;
 	for ( size_t i = 0; i < size; ++i ) {
 		calculatedResults.push_back( ( *aT )[ i ][ i ] );
 	}
