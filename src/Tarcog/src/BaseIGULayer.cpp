@@ -1,5 +1,5 @@
 #include <memory>
-#include <assert.h>
+#include <cassert>
 
 #include "BaseIGULayer.hpp"
 #include "Surface.hpp"

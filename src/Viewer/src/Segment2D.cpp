@@ -1,6 +1,6 @@
 #include <math.h>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include <stdexcept>
 
 #include "Segment2D.hpp"

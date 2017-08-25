@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 
 #include "WavelengthRange.hpp"
 #include "WCECommon.hpp"

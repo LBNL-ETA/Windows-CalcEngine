@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include <stdexcept>
 #include <iostream>
 

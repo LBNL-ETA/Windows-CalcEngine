@@ -2,7 +2,7 @@
 #include <math.h>
 #include <numeric>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 
 #include "MultiPaneBSDF.hpp"
 #include "EquivalentBSDFLayer.hpp"

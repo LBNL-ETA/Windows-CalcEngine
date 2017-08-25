@@ -1,6 +1,6 @@
 #include <vector>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include <math.h>
 
 #include "AngularSpectralSample.hpp"

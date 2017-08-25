@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 
 #include "EquivalentLayerSingleComponent.hpp"
 #include "WCESingleLayerOptics.hpp"

@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include <assert.h>
+#include <cassert>
 
 #include "LayerSingleComponent.hpp"
 #include "WCECommon.hpp"

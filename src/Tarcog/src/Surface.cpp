@@ -1,6 +1,6 @@
 #include <math.h>
 #include <stdexcept>
-#include <assert.h>
+#include <cassert>
 #include <vector>
 #include <algorithm>
 

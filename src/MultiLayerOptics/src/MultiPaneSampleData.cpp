@@ -1,6 +1,6 @@
 #include <vector>
 #include <iterator>
-#include <assert.h>
+#include <cassert>
 
 #include "MultiPaneSampleData.hpp"
 #include "EquivalentLayerSingleComponentMW.hpp"

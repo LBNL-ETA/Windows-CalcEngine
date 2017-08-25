@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 #include <stdexcept>
 
 #include "LayerInterfaces.hpp"

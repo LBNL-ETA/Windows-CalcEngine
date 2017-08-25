@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <iterator>
-#include <assert.h>
+#include <cassert>
 
 #include "CommonWavelengths.hpp"
 

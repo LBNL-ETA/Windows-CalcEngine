@@ -1,7 +1,7 @@
 #include <memory>
 #include <vector>
 #include <stdexcept>
-#include <assert.h>
+#include <cassert>
 
 #include "SingleSystem.hpp"
 #include "BaseLayer.hpp"
