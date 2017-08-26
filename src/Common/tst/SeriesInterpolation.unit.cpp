@@ -91,7 +91,7 @@ TEST_F( TestSeriesInterpolation, TestInterpolation ) {
 	EXPECT_EQ( aInterpolatedProperties->size(), correctResults.size() );
 
 	for ( size_t i = 0; i < aInterpolatedProperties->size(); ++i ) {
-		EXPECT_NEAR( correctResults[ i ], ( *aInterpolatedProperties )[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], ( *aInterpolatedProperties )[ i ].value(), 1e-6 );
 	}
 
 }

@@ -45,7 +45,7 @@ namespace SpectralAveraging {
 		                    FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
 
 		// Spectral properties over the wavelength range
-		std::shared_ptr< FenestrationCommon::CSeries > getEnergyProperties(
+		FenestrationCommon::CSeries* getEnergyProperties(
 			FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
 
 		// Defining the source of wavelengths to be used with the sample. Wavelengths can be used from measured sample,
@@ -75,12 +75,12 @@ namespace SpectralAveraging {
 		WavelengthSet m_WavelengthSet;
 
 		// Keep energy for current state of the sample. Energy is calculated for each wavelength.
-		std::shared_ptr< FenestrationCommon::CSeries > m_IncomingSource;
-		std::shared_ptr< FenestrationCommon::CSeries > m_TransmittedSource;
-		std::shared_ptr< FenestrationCommon::CSeries > m_ReflectedFrontSource;
-		std::shared_ptr< FenestrationCommon::CSeries > m_ReflectedBackSource;
-		std::shared_ptr< FenestrationCommon::CSeries > m_AbsorbedFrontSource;
-		std::shared_ptr< FenestrationCommon::CSeries > m_AbsorbedBackSource;
+		std::unique_ptr< FenestrationCommon::CSeries > m_IncomingSource;
+		std::unique_ptr< FenestrationCommon::CSeries > m_TransmittedSource;
+		std::unique_ptr< FenestrationCommon::CSeries > m_ReflectedFrontSource;
+		std::unique_ptr< FenestrationCommon::CSeries > m_ReflectedBackSource;
+		std::unique_ptr< FenestrationCommon::CSeries > m_AbsorbedFrontSource;
+		std::unique_ptr< FenestrationCommon::CSeries > m_AbsorbedBackSource;
 
 		FenestrationCommon::IntegrationType m_IntegrationType;
 

@@ -76,7 +76,7 @@ TEST_F( TestSeriesIntegration, TestRectangular ) {
   EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
 
   for( size_t i = 0; i < aIntegratedProperties->size(); ++i ) {
-    EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ]->value(), 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ].value(), 1e-6 );
   }
 
 }
@@ -113,7 +113,7 @@ TEST_F( TestSeriesIntegration, TestTrapezoidal ) {
   EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
 
   for( size_t i = 0; i < aIntegratedProperties->size(); ++i ) {
-    EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ]->value(), 1e-6 );
+    EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ].value(), 1e-6 );
   }
 
 }

@@ -53,12 +53,11 @@ namespace FenestrationCommon {
 
 	void CSeries::addProperty( const double t_x, const double t_Value ) {
 		std::shared_ptr< CSeriesPoint > aProperty = std::make_shared< CSeriesPoint >( t_x, t_Value );
-		m_Series.push_back( aProperty );
+		m_Series.push_back( std::unique_ptr< ISeriesPoint >( new CSeriesPoint( t_x, t_Value ) ) );
 	}
 
 	void CSeries::insertToBeginning( double t_x, double t_Value ) {
-		std::shared_ptr< CSeriesPoint > aProperty = std::make_shared< CSeriesPoint >( t_x, t_Value );
-		m_Series.insert( m_Series.begin(), aProperty );
+		m_Series.insert( m_Series.begin(), std::unique_ptr< ISeriesPoint >( new CSeriesPoint( t_x, t_Value ) ) );
 	}
 
 	void CSeries::setConstantValues( const std::vector< double >& t_Wavelengths, double const t_Value ) {
@@ -68,14 +67,14 @@ namespace FenestrationCommon {
 		}
 	}
 
-	std::shared_ptr< CSeries > CSeries::integrate( IntegrationType t_IntegrationType ) const {
+	std::unique_ptr< CSeries > CSeries::integrate( IntegrationType t_IntegrationType ) const {
 
-		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
+		std::unique_ptr< CSeries > newProperties = std::unique_ptr< CSeries >( new CSeries() );
 		CIntegratorFactory aFactory = CIntegratorFactory();
 		std::shared_ptr< IIntegratorStrategy > aIntegrator = aFactory.getIntegrator( t_IntegrationType );
-		std::shared_ptr< ISeriesPoint > previousProperty = nullptr;
+		ISeriesPoint* previousProperty = nullptr;
 
-		for ( std::shared_ptr< ISeriesPoint > spectralProperty : m_Series ) {
+		for ( auto& spectralProperty : m_Series ) {
 			if ( previousProperty != nullptr ) {
 				double w1 = previousProperty->x();
 				double w2 = spectralProperty->x();
@@ -84,34 +83,34 @@ namespace FenestrationCommon {
 				double aValue = aIntegrator->integrate( w1, w2, y1, y2 );
 				newProperties->addProperty( w1, aValue );
 			}
-			previousProperty = spectralProperty;
+			previousProperty = spectralProperty.get();
 		}
 
-		return newProperties;
+		return std::move( newProperties );
 
 	}
 
-	std::shared_ptr< ISeriesPoint > CSeries::findLower( double const t_Wavelength ) const {
-		std::shared_ptr< ISeriesPoint > currentProperty = nullptr;
+	ISeriesPoint* CSeries::findLower( double const t_Wavelength ) const {
+		ISeriesPoint* currentProperty = nullptr;
 
-		for ( std::shared_ptr< ISeriesPoint > spectralProperty : m_Series ) {
+		for ( auto & spectralProperty : m_Series ) {
 			double aWavelength = spectralProperty->x();
 			if ( aWavelength > t_Wavelength ) {
 				break;
 			}
-			currentProperty = spectralProperty;
+			currentProperty = spectralProperty.get();
 		}
 
 		return currentProperty;
 	}
 
-	std::shared_ptr< ISeriesPoint > CSeries::findUpper( double const t_Wavelength ) const {
-		std::shared_ptr< ISeriesPoint > currentProperty = nullptr;
+	ISeriesPoint* CSeries::findUpper( double const t_Wavelength ) const {
+		ISeriesPoint* currentProperty = nullptr;
 
-		for ( std::shared_ptr< ISeriesPoint > spectralProperty : m_Series ) {
+		for ( auto& spectralProperty : m_Series ) {
 			double aWavelength = spectralProperty->x();
 			if ( aWavelength > t_Wavelength ) {
-				currentProperty = spectralProperty;
+				currentProperty = spectralProperty.get();
 				break;
 			}
 		}
@@ -119,8 +118,7 @@ namespace FenestrationCommon {
 		return currentProperty;
 	}
 
-	double CSeries::interpolate( std::shared_ptr< const ISeriesPoint > t_Lower,
-	                             std::shared_ptr< const ISeriesPoint > t_Upper, double const t_Wavelength ) const {
+	double CSeries::interpolate( ISeriesPoint* t_Lower, ISeriesPoint* t_Upper, double const t_Wavelength ) {
 
 		double w1 = t_Lower->x();
 		double w2 = t_Upper->x();
@@ -137,14 +135,14 @@ namespace FenestrationCommon {
 		return vx;
 	}
 
-	std::shared_ptr< CSeries > CSeries::interpolate(
+	std::unique_ptr< CSeries > CSeries::interpolate(
 		const std::vector< double >& t_Wavelengths ) const {
-		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
+		std::unique_ptr< CSeries > newProperties = std::unique_ptr< CSeries >( new CSeries() );
 
 		if ( size() != 0 ) {
 
-			std::shared_ptr< ISeriesPoint > lower = nullptr;
-			std::shared_ptr< ISeriesPoint > upper = nullptr;
+			ISeriesPoint* lower = nullptr;
+			ISeriesPoint* upper = nullptr;
 
 			for ( double wavelength : t_Wavelengths ) {
 				lower = findLower( wavelength );
@@ -162,11 +160,11 @@ namespace FenestrationCommon {
 			}
 		}
 
-		return newProperties;
+		return std::move( newProperties );
 	}
 
-	std::shared_ptr< CSeries > CSeries::mMult( const CSeries& t_Series ) const {
-		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
+	std::unique_ptr< CSeries > CSeries::mMult( const CSeries& t_Series ) const {
+		std::unique_ptr< CSeries > newProperties = std::unique_ptr< CSeries >( new CSeries() );
 
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
@@ -187,10 +185,10 @@ namespace FenestrationCommon {
 		return newProperties;
 	}
 
-	std::shared_ptr< CSeries > CSeries::mSub( const CSeries& t_Series ) const {
+	std::unique_ptr< CSeries > CSeries::mSub( const CSeries& t_Series ) const {
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
-		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
+		std::unique_ptr< CSeries > newProperties = std::unique_ptr< CSeries >( new CSeries() );
 		size_t minSize = std::min( m_Series.size(), t_Series.m_Series.size() );
 
 		for ( size_t i = 0; i < minSize; ++i ) {
@@ -208,10 +206,10 @@ namespace FenestrationCommon {
 		return newProperties;
 	}
 
-	std::shared_ptr< CSeries > CSeries::mAdd( const CSeries& t_Series ) const {
+	std::unique_ptr< CSeries > CSeries::mAdd( const CSeries& t_Series ) const {
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
-		std::shared_ptr< CSeries > newProperties = std::make_shared< CSeries >();
+		std::unique_ptr< CSeries > newProperties = std::unique_ptr< CSeries >( new CSeries() );
 		size_t minSize = std::min( m_Series.size(), t_Series.m_Series.size() );
 
 		for ( size_t i = 0; i < minSize; ++i ) {
@@ -231,7 +229,7 @@ namespace FenestrationCommon {
 
 	std::vector< double > CSeries::getXArray() const {
 		std::vector< double > aArray;
-		for ( std::shared_ptr< ISeriesPoint > spectralProperty : m_Series ) {
+		for ( auto& spectralProperty : m_Series ) {
 			aArray.push_back( spectralProperty->x() );
 		}
 
@@ -241,7 +239,7 @@ namespace FenestrationCommon {
 	double CSeries::sum( double const minLambda, double const maxLambda ) const {
 		double const TOLERANCE = 1e-6; // introduced because of rounding error
 		double total = 0;
-		for ( std::shared_ptr< ISeriesPoint > aPoint : m_Series ) {
+		for ( auto& aPoint : m_Series ) {
 			double wavelength = aPoint->x();
 			// Last point must be excluded because of ranges. Each wavelength represent range from wavelength one
 			// to wavelength two. Summing value of the last wavelength in array would be wrong because it would
@@ -257,16 +255,16 @@ namespace FenestrationCommon {
 
 	void CSeries::sort() {
 		std::sort( m_Series.begin(), m_Series.end(),
-		           []( const std::shared_ptr< const CSeriesPoint >& l, const std::shared_ptr< const CSeriesPoint >& r ) -> bool {
+		           []( auto const& l, auto const & r ) -> bool {
 		           return l->x() < r->x();
 	           } );
 	}
 
-	std::vector< std::shared_ptr< CSeriesPoint > >::const_iterator CSeries::begin() const {
+	std::vector< std::unique_ptr< ISeriesPoint > >::const_iterator CSeries::begin() const {
 		return m_Series.cbegin();
 	}
-
-	std::vector< std::shared_ptr< CSeriesPoint > >::const_iterator CSeries::end() const {
+	
+	std::vector< std::unique_ptr< ISeriesPoint > >::const_iterator CSeries::end() const {
 		return m_Series.cend();
 	}
 
@@ -274,12 +272,11 @@ namespace FenestrationCommon {
 		return m_Series.size();
 	}
 
-	std::shared_ptr< const CSeriesPoint > CSeries::operator[]( size_t Index ) const {
-		//CSeriesPoint CSeries::operator[]( int Index ) const {
+	ISeriesPoint& CSeries::operator[]( size_t Index ) const {
 		if ( Index >= m_Series.size() ) {
 			throw std::runtime_error( "Index out of range" );
 		}
-		return m_Series[ Index ];
+		return *m_Series[ Index ];
 	}
 
 	void CSeries::clear() {

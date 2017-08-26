@@ -98,10 +98,10 @@ namespace SpectralAveraging {
 			auto size = m_Transmittances->size();
 
 			for ( size_t i = 0; i < size; ++i ) {
-				auto wv = ( *m_Transmittances )[ i ]->x();
-				auto value = 1 - ( *m_Transmittances )[ i ]->value() - ( *reflectancesFront )[ i ]->value();
+				auto wv = ( *m_Transmittances )[ i ].x();
+				auto value = 1 - ( *m_Transmittances )[ i ].value() - ( *reflectancesFront )[ i ].value();
 				m_AbsorptancesFront->addProperty( wv, value );
-				value = 1 - ( *m_Transmittances )[ i ]->value() - ( *reflectancesBack )[ i ]->value();
+				value = 1 - ( *m_Transmittances )[ i ].value() - ( *reflectancesBack )[ i ].value();
 				m_AbsorptancesBack->addProperty( wv, value );
 			}
 			m_absCalculated = true;

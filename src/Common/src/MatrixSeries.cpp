@@ -10,11 +10,11 @@ namespace FenestrationCommon {
 
 	CMatrixSeries::CMatrixSeries( const size_t t_Size1, const size_t t_Size2 ) :
 		m_Size1( t_Size1 ), m_Size2( t_Size2 ) {
-		m_Matrix = std::vector< std::vector< std::shared_ptr< CSeries > > >( m_Size1 );
+		m_Matrix = std::vector< std::vector< std::unique_ptr< CSeries > > >( m_Size1 );
 		for ( size_t i = 0; i < m_Size1; ++i ) {
 			m_Matrix[ i ].resize( m_Size2 );
 			for ( size_t j = 0; j < m_Size2; ++j ) {
-				m_Matrix[ i ][ j ] = std::make_shared< CSeries >();
+				m_Matrix[ i ][ j ] = std::unique_ptr< CSeries >( new CSeries() );
 			}
 		}
 	}
@@ -44,7 +44,7 @@ namespace FenestrationCommon {
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				assert( t_Series.size() == ( *m_Matrix[ i ][ j ] ).size() );
-				m_Matrix[ i ][ j ] = m_Matrix[ i ][ j ]->mMult( t_Series );
+				m_Matrix[ i ][ j ] = std::move( m_Matrix[ i ][ j ]->mMult( t_Series ) );
 			}
 		}
 	}
@@ -53,12 +53,12 @@ namespace FenestrationCommon {
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				//assert( t_Series[ i ]->size() == ( *m_Matrix[ i ][ j ] ).size() );
-				m_Matrix[ i ][ j ] = m_Matrix[ i ][ j ]->mMult( *t_Series[ i ] );
+				m_Matrix[ i ][ j ] = std::move( m_Matrix[ i ][ j ]->mMult( *t_Series[ i ] ) );
 			}
 		}
 	}
 
-	std::vector< std::shared_ptr< CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
+	std::vector< std::unique_ptr< CSeries > >& CMatrixSeries::operator[]( const size_t index ) {
 		return m_Matrix[ index ];
 	}
 

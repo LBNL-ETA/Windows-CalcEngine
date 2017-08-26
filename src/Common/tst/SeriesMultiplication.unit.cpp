@@ -86,7 +86,7 @@ TEST_F( TestSeriesMultiplication, TestMultiplication ) {
 	EXPECT_EQ( aSpectralProperties.size(), correctResults.size() );
 
 	for ( size_t i = 0; i < aSpectralProperties.size(); ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aSpectralProperties[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aSpectralProperties[ i ].value(), 1e-6 );
 	}
 
 }

@@ -62,9 +62,9 @@ namespace SpectralAveraging {
 
 			for ( size_t i = 0; i < aWavelengths.size(); ++i ) {
 				auto ww = aWavelengths[ i ] * 1e-6;
-				auto T = ( *aT )[ i ]->value();
-				auto Rf = ( *aRf )[ i ]->value();
-				auto Rb = ( *aRb )[ i ]->value();
+				auto T = ( *aT )[ i ].value();
+				auto Rf = ( *aRf )[ i ].value();
+				auto Rb = ( *aRb )[ i ].value();
 
 				auto aSurfaceType = coatingType.at( t_Type );
 
@@ -138,7 +138,7 @@ namespace SpectralAveraging {
 
 		if ( aProperties != nullptr ) {
 
-			for ( auto aProperty : *aProperties ) {
+			for ( auto& aProperty : *aProperties ) {
 				if ( aProperty->x() >= minLambda && aProperty->x() <= maxLambda ) {
 					aValues.push_back( aProperty->value() );
 				}

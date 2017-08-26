@@ -166,21 +166,21 @@ namespace SpectralAveraging {
 		return Prop;
 	}
 
-	std::shared_ptr< CSeries > CSample::getEnergyProperties( Property const t_Property, Side const t_Side ) {
+	CSeries* CSample::getEnergyProperties( Property const t_Property, Side const t_Side ) {
 		calculateState();
 
-		std::shared_ptr< CSeries > aProperty = nullptr;
+		CSeries* aProperty = nullptr;
 		switch ( t_Property ) {
 		case Property::T:
-			aProperty = m_TransmittedSource;
+			aProperty = m_TransmittedSource.get();
 			break;
 		case Property::R:
 			switch ( t_Side ) {
 			case Side::Front:
-				aProperty = m_ReflectedFrontSource;
+				aProperty = m_ReflectedFrontSource.get();
 				break;
 			case Side::Back:
-				aProperty = m_ReflectedBackSource;
+				aProperty = m_ReflectedBackSource.get();
 				break;
 			default:
 				assert("Incorrect selection of sample side.");
@@ -190,10 +190,10 @@ namespace SpectralAveraging {
 		case Property::Abs:
 			switch ( t_Side ) {
 			case Side::Front:
-				aProperty = m_AbsorbedFrontSource;
+				aProperty = m_AbsorbedFrontSource.get();
 				break;
 			case Side::Back:
-				aProperty = m_AbsorbedBackSource;
+				aProperty = m_AbsorbedBackSource.get();
 				break;
 			default:
 				assert("Incorrect selection of sample side.");
@@ -232,22 +232,22 @@ namespace SpectralAveraging {
 			// Otherwise, just use measured data.
 			if ( m_SourceData != nullptr ) {
 
-				m_IncomingSource = m_SourceData->interpolate( m_Wavelengths );
+				m_IncomingSource = std::move( m_SourceData->interpolate( m_Wavelengths ) );
 
 
 				if ( m_DetectorData != nullptr ) {
 					auto interpolatedDetector = *m_DetectorData->interpolate( m_Wavelengths );
-					m_IncomingSource = m_IncomingSource->mMult( interpolatedDetector );
+					m_IncomingSource = std::move( m_IncomingSource->mMult( interpolatedDetector ) );
 				}
 
 				calculateProperties();
 
-				m_IncomingSource = m_IncomingSource->integrate( m_IntegrationType );
-				m_TransmittedSource = m_TransmittedSource->integrate( m_IntegrationType );
-				m_ReflectedFrontSource = m_ReflectedFrontSource->integrate( m_IntegrationType );
-				m_ReflectedBackSource = m_ReflectedBackSource->integrate( m_IntegrationType );
-				m_AbsorbedFrontSource = m_AbsorbedFrontSource->integrate( m_IntegrationType );
-				m_AbsorbedBackSource = m_AbsorbedBackSource->integrate( m_IntegrationType );
+				m_IncomingSource = std::move( m_IncomingSource->integrate( m_IntegrationType ) );
+				m_TransmittedSource = std::move( m_TransmittedSource->integrate( m_IntegrationType ) );
+				m_ReflectedFrontSource = std::move( m_ReflectedFrontSource->integrate( m_IntegrationType ) );
+				m_ReflectedBackSource = std::move( m_ReflectedBackSource->integrate( m_IntegrationType ) );
+				m_AbsorbedFrontSource = std::move( m_AbsorbedFrontSource->integrate( m_IntegrationType ) );
+				m_AbsorbedBackSource = std::move( m_AbsorbedBackSource->integrate( m_IntegrationType ) );
 
 				m_StateCalculated = true;
 			}
