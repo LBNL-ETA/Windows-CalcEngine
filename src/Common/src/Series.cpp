@@ -270,7 +270,7 @@ namespace FenestrationCommon {
 
 	void CSeries::sort() {
 		std::sort( m_Series.begin(), m_Series.end(),
-		           []( auto const& l, auto const & r ) -> bool {
+		           []( std::unique_ptr< ISeriesPoint > const & l, std::unique_ptr< ISeriesPoint > const & r ) -> bool {
 		           return l->x() < r->x();
 	           } );
 	}
