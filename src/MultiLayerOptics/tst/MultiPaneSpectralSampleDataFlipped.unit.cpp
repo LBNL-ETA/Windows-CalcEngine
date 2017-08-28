@@ -94,7 +94,7 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlip
 	EXPECT_EQ( transmittances.size(), correctT.size() );
 
 	for ( size_t i = 0; i < transmittances.size(); ++i ) {
-		EXPECT_NEAR( correctT[ i ], transmittances[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctT[ i ], transmittances[ i ].value(), 1e-6 );
 	}
 
 	vector< double > correctRf;
@@ -119,7 +119,7 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlip
 	EXPECT_EQ( Rf.size(), correctRf.size() );
 
 	for ( size_t i = 0; i < Rf.size(); ++i ) {
-		EXPECT_NEAR( correctRf[ i ], Rf[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctRf[ i ], Rf[ i ].value(), 1e-6 );
 	}
 
 	vector< double > correctRb;
@@ -144,7 +144,7 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlip
 	EXPECT_EQ( Rb.size(), correctRb.size() );
 
 	for ( size_t i = 0; i < Rb.size(); ++i ) {
-		EXPECT_NEAR( correctRb[ i ], Rb[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctRb[ i ], Rb[ i ].value(), 1e-6 );
 	}
 
 	vector< double > correctAbs;
@@ -169,7 +169,7 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlip
 	EXPECT_EQ( Abs.size(), correctAbs.size() );
 
 	for ( size_t i = 0; i < Abs.size(); ++i ) {
-		EXPECT_NEAR( correctAbs[ i ], Abs[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctAbs[ i ], Abs[ i ].value(), 1e-6 );
 	}
 
 
@@ -202,7 +202,7 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneAbsorptance
 	EXPECT_EQ( abs.size(), correctAbs.size() );
 
 	for ( size_t i = 0; i < abs.size(); ++i ) {
-		EXPECT_NEAR( correctAbs[ i ], abs[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctAbs[ i ], abs[ i ].value(), 1e-6 );
 	}
 
 	correctAbs.clear();
@@ -227,6 +227,6 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneAbsorptance
 	EXPECT_EQ( abs.size(), correctAbs.size() );
 
 	for ( size_t i = 0; i < abs.size(); ++i ) {
-		EXPECT_NEAR( correctAbs[ i ], abs[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctAbs[ i ], abs[ i ].value(), 1e-6 );
 	}
 }

@@ -82,11 +82,15 @@ namespace MultiLayerOptics {
 			map< pair< Side, PropertySimple >, std::shared_ptr< CSquareMatrix > > aResults;
 
 			for ( Side aSide : EnumSide() ) {
+				// It is important to take a copy of aTotalA because it will be used to
+				// multiply and integrate later and local values will change
 				CMatrixSeries aTotalA = *m_Layer->getTotalA( aSide );
 				aTotalA.mMult( *m_IncomingSpectra );
 				aTotalA.integrate( IntegrationType::Trapezoidal );
 				m_Abs[ aSide ] = aTotalA.getSums( minLambda, maxLambda, m_IncomingSolar );
 				for ( PropertySimple aProprerty : EnumPropertySimple() ) {
+					// Same as for aTotalA. Copy need to be taken because of multiplication
+					// and integration
 					CMatrixSeries aTot = *m_Layer->getTotal( aSide, aProprerty );
 					aTot.mMult( *m_IncomingSpectra );
 					aTot.integrate( IntegrationType::Trapezoidal );

@@ -101,9 +101,9 @@ namespace MultiLayerOptics {
 		size_t size = t_T.size();
 
 		for ( size_t i = 0; i < size; ++i ) {
-			double wl = t_T[ i ]->x();
-			double rValue = t_Rf[ i ]->value() + t_T[ i ]->value() * t_T[ i ]->value() * t_RCoeffs[ i ]->value() /
-				( 1 - t_Rb[ i ]->value() * t_RCoeffs[ i ]->value() );
+			double wl = t_T[ i ].x();
+			double rValue = t_Rf[ i ].value() + t_T[ i ].value() * t_T[ i ].value() * t_RCoeffs[ i ].value() /
+				( 1 - t_Rb[ i ].value() * t_RCoeffs[ i ].value() );
 			rCoeffs->addProperty( wl, rValue );
 		}
 
@@ -119,8 +119,8 @@ namespace MultiLayerOptics {
 		size_t size = t_T.size();
 
 		for ( size_t i = 0; i < size; ++i ) {
-			double wl = t_T[ i ]->x();
-			double tValue = t_T[ i ]->value() / ( 1 - t_Rb[ i ]->value() * t_RCoeffs[ i ]->value() );
+			double wl = t_T[ i ].x();
+			double tValue = t_T[ i ].value() / ( 1 - t_Rb[ i ].value() * t_RCoeffs[ i ].value() );
 			tCoeffs->addProperty( wl, tValue );
 		}
 

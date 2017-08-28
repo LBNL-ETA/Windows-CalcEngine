@@ -228,7 +228,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
 
 	EXPECT_EQ( size, correctT.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctT[ i ], ( *aTransmittances )[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctT[ i ], ( *aTransmittances )[ i ].value(), 1e-6 );
 	}
 
 	// Front reflectances
@@ -240,7 +240,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
 
 	EXPECT_EQ( size, correctFR.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctFR[ i ], ( *aFReflectances )[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctFR[ i ], ( *aFReflectances )[ i ].value(), 1e-6 );
 	}
 
 	// Back reflectances
@@ -252,7 +252,7 @@ TEST_F( Sample_AngularMeasurementsTest1, TestProperties45degrees ) {
 
 	EXPECT_EQ( size, correctBR.size( ) );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctBR[ i ], ( *aBReflectances )[ i ]->value( ), 1e-6 );
+		EXPECT_NEAR( correctBR[ i ], ( *aBReflectances )[ i ].value( ), 1e-6 );
 	}
 
 }

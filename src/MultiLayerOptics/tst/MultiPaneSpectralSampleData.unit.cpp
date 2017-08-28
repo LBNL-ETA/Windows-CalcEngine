@@ -70,7 +70,7 @@ public:
 TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneResults ) {
 	SCOPED_TRACE( "Begin Test: Test simple double pane calculations (T, Rf, Rb and equivalent absorptances)." );
 
-	CMultiPaneSampleData MultiLayerOptics = *getMultiLayerOptics();
+	auto MultiLayerOptics = getMultiLayerOptics();
 
 	vector< double > correctT;
 	correctT.push_back( 0.013877236 );
@@ -89,12 +89,12 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneResults ) {
 	correctT.push_back( 0.484681565 );
 	correctT.push_back( 0.504161785 );
 
-	CSeries transmittances = *MultiLayerOptics.properties( SampleData::T );
+	CSeries transmittances = *MultiLayerOptics->properties( SampleData::T );
 
 	EXPECT_EQ( transmittances.size(), correctT.size() );
 
 	for ( size_t i = 0; i < transmittances.size(); ++i ) {
-		EXPECT_NEAR( correctT[ i ], transmittances[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctT[ i ], transmittances[ i ].value(), 1e-6 );
 	}
 
 	vector< double > correctRf;
@@ -114,12 +114,12 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneResults ) {
 	correctRf.push_back( 0.280581895 );
 	correctRf.push_back( 0.292024544 );
 
-	CSeries Rf = *MultiLayerOptics.properties( SampleData::Rf );
+	CSeries Rf = *MultiLayerOptics->properties( SampleData::Rf );
 
 	EXPECT_EQ( Rf.size(), correctRf.size() );
 
 	for ( size_t i = 0; i < Rf.size(); ++i ) {
-		EXPECT_NEAR( correctRf[ i ], Rf[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctRf[ i ], Rf[ i ].value(), 1e-6 );
 	}
 
 	vector< double > correctRb;
@@ -139,12 +139,12 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneResults ) {
 	correctRb.push_back( 0.297477857 );
 	correctRb.push_back( 0.299026161 );
 
-	CSeries Rb = *MultiLayerOptics.properties( SampleData::Rb );
+	CSeries Rb = *MultiLayerOptics->properties( SampleData::Rb );
 
 	EXPECT_EQ( Rb.size(), correctRb.size() );
 
 	for ( size_t i = 0; i < Rb.size(); ++i ) {
-		EXPECT_NEAR( correctRb[ i ], Rb[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctRb[ i ], Rb[ i ].value(), 1e-6 );
 	}
 
 	vector< double > correctAbs;
@@ -164,12 +164,12 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneResults ) {
 	correctAbs.push_back( 0.234736540 );
 	correctAbs.push_back( 0.203813671 );
 
-	CSeries Abs = *MultiLayerOptics.properties( SampleData::AbsF );
+	CSeries Abs = *MultiLayerOptics->properties( SampleData::AbsF );
 
 	EXPECT_EQ( Abs.size(), correctAbs.size() );
 
 	for ( size_t i = 0; i < Abs.size(); ++i ) {
-		EXPECT_NEAR( correctAbs[ i ], Abs[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctAbs[ i ], Abs[ i ].value(), 1e-6 );
 	}
 
 
@@ -178,7 +178,7 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneResults ) {
 TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneAbsorptances ) {
 	SCOPED_TRACE( "Begin Test: Test layer absroptances." );
 
-	CMultiPaneSampleData MultiLayerOptics = *getMultiLayerOptics();
+	auto MultiLayerOptics = getMultiLayerOptics();
 
 	vector< double > correctAbs;
 	correctAbs.push_back( 0.860835761 );
@@ -197,12 +197,12 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneAbsorptances ) {
 	correctAbs.push_back( 0.207375484 );
 	correctAbs.push_back( 0.179613906 );
 
-	CSeries abs = *MultiLayerOptics.getLayerAbsorptances( 1 );
+	CSeries abs = *MultiLayerOptics->getLayerAbsorptances( 1 );
 
 	EXPECT_EQ( abs.size(), correctAbs.size() );
 
 	for ( size_t i = 0; i < abs.size(); ++i ) {
-		EXPECT_NEAR( correctAbs[ i ], abs[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctAbs[ i ], abs[ i ].value(), 1e-6 );
 	}
 
 	correctAbs.clear();
@@ -222,11 +222,11 @@ TEST_F( TestMultiLayerOpticsMeasuredSampleData, TestDoublePaneAbsorptances ) {
 	correctAbs.push_back( 0.027361056 );
 	correctAbs.push_back( 0.024199766 );
 
-	abs = *MultiLayerOptics.getLayerAbsorptances( 2 );
+	abs = *MultiLayerOptics->getLayerAbsorptances( 2 );
 
 	EXPECT_EQ( abs.size(), correctAbs.size() );
 
 	for ( size_t i = 0; i < abs.size(); ++i ) {
-		EXPECT_NEAR( correctAbs[ i ], abs[ i ]->value(), 1e-6 );
+		EXPECT_NEAR( correctAbs[ i ], abs[ i ].value(), 1e-6 );
 	}
 }

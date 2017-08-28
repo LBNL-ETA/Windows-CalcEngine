@@ -13,18 +13,21 @@ namespace FenestrationCommon {
 		virtual double x() const = 0;
 		virtual double value() const = 0;
 		virtual void value( double const t_Value ) = 0;
+		virtual std::unique_ptr< ISeriesPoint > clone() const = 0;
 	};
 
 	// Implementation of spectral property interface
 	class CSeriesPoint : public ISeriesPoint {
 	public:
 		CSeriesPoint();
+		CSeriesPoint( CSeriesPoint const & t_SeriesPoint );
 		CSeriesPoint( double t_Wavelength, double t_Value );
+		std::unique_ptr< ISeriesPoint > clone() const override;
 		double x() const override;
 		double value() const override;
 		void value( double const t_Value ) override;
 		CSeriesPoint& operator=( const CSeriesPoint& t_Point );
-		bool operator<( const CSeriesPoint& t_Point );
+		bool operator<( const CSeriesPoint& t_Point ) const;
 
 	private:
 		double m_x;
@@ -35,10 +38,11 @@ namespace FenestrationCommon {
 
 	// Spectral properties for certain range of data. It holds common behavior like integration and interpolation
 	// over certain range of data.
-	class CSeries : public std::enable_shared_from_this< CSeries > {
-		// class CSeries {
+	// class CSeries : public std::enable_shared_from_this< CSeries > {
+	class CSeries {
 	public:
 		CSeries();
+		CSeries( CSeries const & t_Series );
 		void addProperty( const double t_x, const double t_Value );
 		void insertToBeginning( double t_x, double t_Value );
 
@@ -75,6 +79,8 @@ namespace FenestrationCommon {
 		std::vector< std::unique_ptr< ISeriesPoint > >::const_iterator begin() const;
 		std::vector< std::unique_ptr< ISeriesPoint > >::const_iterator end() const;
 		size_t size() const;
+
+		CSeries& operator=( CSeries const & t_Series );
 		ISeriesPoint& operator[]( size_t Index ) const;
 
 		void clear();

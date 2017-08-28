@@ -17,8 +17,8 @@ namespace MultiLayerOptics {
 		size_t size = t_T->size();
 		std::shared_ptr< CSeries > aAbs = make_shared< CSeries >();
 		for ( size_t i = 0; i < size; ++i ) {
-			double wl = ( *t_T )[ i ]->x();
-			double value = 1 - ( *t_T )[ i ]->value() - ( *t_R )[ i ]->value();
+			double wl = ( *t_T )[ i ].x();
+			double value = 1 - ( *t_T )[ i ].value() - ( *t_R )[ i ].value();
 			if ( value > 1 || value < 0 ) {
 				throw runtime_error( "Absorptance value for provided series is out of range." );
 			}
@@ -56,8 +56,8 @@ namespace MultiLayerOptics {
 		size_t size = t_Tf->size();
 		for ( size_t i = 0; i < size; ++i ) {
 			std::shared_ptr< CEquivalentLayerSingleComponent > aLayer =
-				std::make_shared< CEquivalentLayerSingleComponent >( ( *t_Tf )[ i ]->value(), ( *t_Rf )[ i ]->value(),
-				                                                ( *t_Tb )[ i ]->value(), ( *t_Rb )[ i ]->value() );
+				std::make_shared< CEquivalentLayerSingleComponent >( ( *t_Tf )[ i ].value(), ( *t_Rf )[ i ].value(),
+				                                                ( *t_Tb )[ i ].value(), ( *t_Rb )[ i ].value() );
 			m_EqLayerBySeries.push_back( aLayer );
 		}
 	}
@@ -69,7 +69,7 @@ namespace MultiLayerOptics {
 
 		for ( size_t i = 0; i < size; ++i ) {
 			std::shared_ptr< CEquivalentLayerSingleComponent > aLayer = m_EqLayerBySeries[ i ];
-			aLayer->addLayer( ( *t_Tf )[ i ]->value(), ( *t_Rf )[ i ]->value(), ( *t_Tb )[ i ]->value(), ( *t_Rb )[ i ]->value() );
+			aLayer->addLayer( ( *t_Tf )[ i ].value(), ( *t_Rf )[ i ].value(), ( *t_Tb )[ i ].value(), ( *t_Rb )[ i ].value() );
 		}
 
 		std::shared_ptr< CSeries > tTotf = make_shared< CSeries >();
@@ -78,7 +78,7 @@ namespace MultiLayerOptics {
 		std::shared_ptr< CSeries > tRbTot = make_shared< CSeries >();
 
 		for ( size_t i = 0; i < size; ++i ) {
-			double wl = ( *t_Tf )[ i ]->x();
+			double wl = ( *t_Tf )[ i ].x();
 
 			double Tf = m_EqLayerBySeries[ i ]->getProperty( Property::T, Side::Front );
 			tTotf->addProperty( wl, Tf );

@@ -19,6 +19,18 @@ namespace FenestrationCommon {
 		}
 	}
 
+	CMatrixSeries::CMatrixSeries( CMatrixSeries const& t_MatrixSeries ) {
+		m_Size1 = t_MatrixSeries.m_Size1;
+		m_Size2 = t_MatrixSeries.m_Size2;
+		m_Matrix = std::vector< std::vector< std::unique_ptr< CSeries > > >( m_Size1 );
+		for ( size_t i = 0; i < m_Size1; ++i ) {
+			m_Matrix[ i ].resize( m_Size2 );
+			for ( size_t j = 0; j < m_Size2; ++j ) {
+				m_Matrix[ i ][ j ] = std::unique_ptr< CSeries >( new CSeries( *t_MatrixSeries.m_Matrix[ i ][ j ] ) );
+			}
+		}
+	}
+
 	void CMatrixSeries::addProperty( const size_t i, const size_t j,
 	                                 const double t_Wavelength, const double t_Value ) {
 		m_Matrix[ i ][ j ]->addProperty( t_Wavelength, t_Value );

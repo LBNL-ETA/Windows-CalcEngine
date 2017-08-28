@@ -27,6 +27,15 @@ namespace SpectralAveraging {
 		CSample::reset();
 	}
 
+	CSample::CSample(CSample const & t_Sample) {
+		m_IncomingSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_IncomingSource ) );
+		m_TransmittedSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_TransmittedSource ) );;
+		m_ReflectedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedFrontSource ) );;
+		m_ReflectedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedBackSource ) );;
+		m_AbsorbedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedFrontSource ) );;
+		m_AbsorbedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedBackSource ) );;
+	}
+
 	std::shared_ptr< CSeries > CSample::getSourceData() {
 		calculateState(); // must interpolate data to same wavelengths
 		return m_SourceData;

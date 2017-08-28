@@ -60,11 +60,13 @@ namespace MultiLayerOptics {
 
 		CEquivalentLayerSingleComponentMWAngle& aAngularProperties = *getAngular( t_Angle );
 
-		CSeries& aProperties = *aAngularProperties.getProperties( t_Side, t_Property );
+		auto aProperties = aAngularProperties.getProperties( t_Side, t_Property );
 
-		aProperties = *aProperties.mMult( *m_SolarRadiation )->integrate( t_IntegrationType );
+		auto aMult = aProperties->mMult( *m_SolarRadiation );
 
-		double totalProperty = aProperties.sum( minLambda, maxLambda );
+		auto iIntegrated = aMult->integrate( t_IntegrationType );
+		
+		double totalProperty = iIntegrated->sum( minLambda, maxLambda );
 		double totalSolar = m_SolarRadiation->integrate( t_IntegrationType )->sum( minLambda, maxLambda );
 
 		assert( totalSolar > 0 );
@@ -89,11 +91,13 @@ namespace MultiLayerOptics {
 	double CMultiPaneSpecular::Abs( size_t const Index, const double t_Angle,
 	                                const double minLambda, const double maxLambda, const IntegrationType t_IntegrationType ) {
 		CEquivalentLayerSingleComponentMWAngle& aAngularProperties = *getAngular( t_Angle );
-		CSeries& aProperties = *aAngularProperties.Abs( Index - 1 );
+		auto aProperties = aAngularProperties.Abs( Index - 1 );
 
-		aProperties = *aProperties.mMult( *m_SolarRadiation )->integrate( t_IntegrationType );
+		auto aMult = aProperties->mMult( *m_SolarRadiation );
 
-		double totalProperty = aProperties.sum( minLambda, maxLambda );
+		auto iIntegrated = aMult->integrate( t_IntegrationType );
+
+		double totalProperty = iIntegrated->sum( minLambda, maxLambda );
 		double totalSolar = m_SolarRadiation->integrate( t_IntegrationType )->sum( minLambda, maxLambda );
 
 		assert( totalSolar > 0 );

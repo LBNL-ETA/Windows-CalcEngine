@@ -121,21 +121,21 @@ TEST_F( TestMultiLayerOpticsSampleFlipped, TestDoublePaneProperties ) {
 	double lowLambda = 0.5;
 	double highLambda = 0.7;
 
-	CMultiPaneSpectralSample MultiLayerOptics = *getMultiLayerOptics();
+	auto MultiLayerOptics = getMultiLayerOptics();
 
-	double transmittance = MultiLayerOptics.getProperty( lowLambda, highLambda, Property::T, Side::Front );
+	double transmittance = MultiLayerOptics->getProperty( lowLambda, highLambda, Property::T, Side::Front );
 
 	EXPECT_NEAR( 0.618340, transmittance, 1e-6 );
 
-	double frontReflectance = MultiLayerOptics.getProperty( lowLambda, highLambda, Property::R, Side::Front );
+	double frontReflectance = MultiLayerOptics->getProperty( lowLambda, highLambda, Property::R, Side::Front );
 
 	EXPECT_NEAR( 0.181564, frontReflectance, 1e-6 );
 
-	double backReflectance = MultiLayerOptics.getProperty( lowLambda, highLambda, Property::R, Side::Back );
+	double backReflectance = MultiLayerOptics->getProperty( lowLambda, highLambda, Property::R, Side::Back );
 
 	EXPECT_NEAR( 0.229538, backReflectance, 1e-6 );
 
-	double totalAbsorptance = MultiLayerOptics.getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
+	double totalAbsorptance = MultiLayerOptics->getProperty( lowLambda, highLambda, Property::Abs, Side::Front );
 
 	EXPECT_NEAR( 0.200096, totalAbsorptance, 1e-6 );
 
@@ -147,12 +147,12 @@ TEST_F( TestMultiLayerOpticsSampleFlipped, TestDoublePaneLayerAbsorptances ) {
 	double lowLambda = 0.5;
 	double highLambda = 0.7;
 
-	CMultiPaneSpectralSample MultiLayerOptics = *getMultiLayerOptics();
+	auto MultiLayerOptics = getMultiLayerOptics();
 
-	double abs1 = MultiLayerOptics.getLayerAbsorptance( lowLambda, highLambda, 1 );
+	double abs1 = MultiLayerOptics->getLayerAbsorptance( lowLambda, highLambda, 1 );
 	EXPECT_NEAR( 0.159710, abs1, 1e-6 );
 
-	double abs2 = MultiLayerOptics.getLayerAbsorptance( lowLambda, highLambda, 2 );
+	double abs2 = MultiLayerOptics->getLayerAbsorptance( lowLambda, highLambda, 2 );
 	EXPECT_NEAR( 0.040386, abs2, 1e-6 );
 
 }

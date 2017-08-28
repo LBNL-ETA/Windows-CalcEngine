@@ -6,7 +6,6 @@
 #include "IntegratorStrategy.hpp"
 
 
-
 namespace FenestrationCommon {
 
 	/////////////////////////////////////////////////////
@@ -17,9 +16,18 @@ namespace FenestrationCommon {
 
 	}
 
+	CSeriesPoint::CSeriesPoint( CSeriesPoint const& t_SeriesPoint ) {
+		m_x = t_SeriesPoint.m_x;
+		m_Value = t_SeriesPoint.m_Value;
+	}
+
 	CSeriesPoint::CSeriesPoint( double t_Wavelength, double t_Value ) :
 		m_x( t_Wavelength ), m_Value( t_Value ) {
 
+	}
+
+	std::unique_ptr< ISeriesPoint > CSeriesPoint::clone() const {
+		return std::unique_ptr< CSeriesPoint >( new CSeriesPoint( *this ) );
 	}
 
 	double CSeriesPoint::x() const {
@@ -40,7 +48,7 @@ namespace FenestrationCommon {
 		return *this;
 	}
 
-	bool CSeriesPoint::operator<( const CSeriesPoint& t_Point ) {
+	bool CSeriesPoint::operator<( const CSeriesPoint& t_Point ) const {
 		return m_x < t_Point.m_x;
 	}
 
@@ -49,6 +57,13 @@ namespace FenestrationCommon {
 	/////////////////////////////////////////////////////
 
 	CSeries::CSeries() {
+	}
+
+	CSeries::CSeries( CSeries const& t_Series ) {
+		m_Series.clear();
+		for( std::unique_ptr< ISeriesPoint > const & val : t_Series.m_Series ) {
+			m_Series.push_back( val->clone() );
+		}
 	}
 
 	void CSeries::addProperty( const double t_x, const double t_Value ) {
@@ -86,7 +101,7 @@ namespace FenestrationCommon {
 			previousProperty = spectralProperty.get();
 		}
 
-		return std::move( newProperties );
+		return newProperties;
 
 	}
 
@@ -160,7 +175,7 @@ namespace FenestrationCommon {
 			}
 		}
 
-		return std::move( newProperties );
+		return newProperties;
 	}
 
 	std::unique_ptr< CSeries > CSeries::mMult( const CSeries& t_Series ) const {
@@ -270,6 +285,14 @@ namespace FenestrationCommon {
 
 	size_t CSeries::size() const {
 		return m_Series.size();
+	}
+
+	CSeries& CSeries::operator=( CSeries const& t_Series ) {
+		m_Series.clear();
+		for( std::unique_ptr< ISeriesPoint > const & val : t_Series.m_Series ) {
+			m_Series.push_back( val->clone() );
+		}
+		return *this;
 	}
 
 	ISeriesPoint& CSeries::operator[]( size_t Index ) const {

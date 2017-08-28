@@ -13,6 +13,7 @@ namespace FenestrationCommon {
 	class CMatrixSeries {
 	public:
 		CMatrixSeries( const size_t t_Size1, const size_t t_Size2 );
+		CMatrixSeries( CMatrixSeries const & t_MatrixSeries );
 
 		// add property at specific series position
 		void addProperty( const size_t i, const size_t j, const double t_Wavelength, const double t_Value );

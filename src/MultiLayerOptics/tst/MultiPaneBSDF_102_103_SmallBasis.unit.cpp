@@ -491,7 +491,7 @@ TEST_F( MultiPaneBSDF_102_103_SmallBasis, TestSpecular1 ) {
 	EXPECT_NEAR( 0.6262463, tauHem, 1e-6 );
 
 	tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-	EXPECT_NEAR( 0.6262463, tauHem, 1e-6 );
+	EXPECT_NEAR( 0.626246, tauDir, 1e-6 );
 
 	rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
 	EXPECT_NEAR( 0.1342744, rhoHem, 1e-6 );

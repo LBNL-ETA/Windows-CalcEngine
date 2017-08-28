@@ -386,7 +386,7 @@ namespace SingleLayerOptics {
 		vector< double > aValues;
 
 		if ( aProperties != nullptr ) {
-			for ( std::shared_ptr< CSeriesPoint > aProperty : *aProperties ) {
+			for ( std::unique_ptr< ISeriesPoint > const & aProperty : *aProperties ) {
 				if ( aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda ) {
 					aValues.push_back( aProperty->value() );
 				}
@@ -404,9 +404,9 @@ namespace SingleLayerOptics {
 
 	vector< double > CMaterialMeasured::calculateBandWavelengths() {
 		CSingleAngularMeasurement aAngular = *m_AngularMeasurements->getMeasurements( 0.0 );
-		CSpectralSample aSample = *aAngular.getData();
+		auto aSample = aAngular.getData();
 
-		return aSample.getWavelengthsFromSample();
+		return aSample->getWavelengthsFromSample();
 
 	}
 
