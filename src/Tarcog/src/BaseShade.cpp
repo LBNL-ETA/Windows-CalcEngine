@@ -6,7 +6,6 @@
 #include "Surface.hpp"
 #include "IGUGapLayer.hpp"
 #include "Environment.hpp"
-#include "WCEGases.hpp"
 #include "TarcogConstants.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 

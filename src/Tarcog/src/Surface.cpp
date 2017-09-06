@@ -1,8 +1,6 @@
 #include <math.h>
 #include <stdexcept>
-#include <cassert>
 #include <vector>
-#include <algorithm>
 
 #include "BaseLayer.hpp"
 #include "Surface.hpp"

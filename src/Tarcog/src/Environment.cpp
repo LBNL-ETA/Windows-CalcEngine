@@ -1,7 +1,5 @@
 #include "Environment.hpp"
 #include "TarcogConstants.hpp"
-#include "BaseLayer.hpp"
-
 
 
 namespace Tarcog {

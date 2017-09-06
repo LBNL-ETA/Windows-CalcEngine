@@ -3,8 +3,7 @@
 #include "MatrixSeries.hpp"
 #include "SquareMatrix.hpp"
 #include "Series.hpp"
-
-
+#include "IntegratorStrategy.hpp"
 
 namespace FenestrationCommon {
 
@@ -56,7 +55,7 @@ namespace FenestrationCommon {
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				assert( t_Series.size() == ( *m_Matrix[ i ][ j ] ).size() );
-				m_Matrix[ i ][ j ] = std::move( m_Matrix[ i ][ j ]->mMult( t_Series ) );
+				m_Matrix[ i ][ j ] = m_Matrix[ i ][ j ]->mMult( t_Series );
 			}
 		}
 	}
@@ -65,7 +64,7 @@ namespace FenestrationCommon {
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {
 				//assert( t_Series[ i ]->size() == ( *m_Matrix[ i ][ j ] ).size() );
-				m_Matrix[ i ][ j ] = std::move( m_Matrix[ i ][ j ]->mMult( *t_Series[ i ] ) );
+				m_Matrix[ i ][ j ] = m_Matrix[ i ][ j ]->mMult( *t_Series[ i ] );
 			}
 		}
 	}

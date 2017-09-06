@@ -1,9 +1,5 @@
-//
-// Created by Dragan Vidanovic on 7/2/17.
-//
 
 #include <vector>
-#include <algorithm>
 #include <math.h>
 
 #include "Polynom.hpp"
