@@ -1,8 +1,13 @@
 language: 
   - cpp
 
+os:
+  - linux
+  - osx
+
 compiler:
-  - g++
+  - gcc
+  - clang
 
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
