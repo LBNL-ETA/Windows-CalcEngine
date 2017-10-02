@@ -1,6 +1,6 @@
 
 #include <vector>
-#include <algorithm>
+#include <cmath>
 
 #include "Polynom.hpp"
 
@@ -67,7 +67,7 @@ namespace FenestrationCommon {
 
 		auto valFirst = std::min_element( begin( m_Polynoms ), end( m_Polynoms ),
 		                             [ & ] ( PolynomPoint const& x, PolynomPoint const& y ) {
-		                             return fabs( x.value() - t_PointValue ) < fabs( y.value() - t_PointValue );
+		                             return std::abs( x.value() - t_PointValue ) < std::abs( y.value() - t_PointValue );
 	                             } );
 
 		auto valSecond = valFirst + 1;

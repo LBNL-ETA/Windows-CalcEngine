@@ -9,8 +9,8 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics {
 
 	CBSDFIntegrator::CBSDFIntegrator( const std::shared_ptr< const CBSDFIntegrator >& t_Integrator ) :
-		m_HemisphericalCalculated( false ), m_DiffuseDiffuseCalculated( false ), 
-		m_Directions( t_Integrator->m_Directions ), m_DimMatrices( m_Directions->size() ) {
+			m_Directions( t_Integrator->m_Directions ), m_DimMatrices( m_Directions->size() ),
+			m_HemisphericalCalculated( false ), m_DiffuseDiffuseCalculated( false ) {
 
 		for ( auto t_Side : EnumSide() ) {
 			for ( auto t_Property : EnumPropertySimple() ) {
@@ -21,8 +21,8 @@ namespace SingleLayerOptics {
 	}
 
 	CBSDFIntegrator::CBSDFIntegrator( const std::shared_ptr< const CBSDFDirections >& t_Directions ) :
-		m_HemisphericalCalculated( false ), m_DiffuseDiffuseCalculated( false ), m_Directions( t_Directions ),
-		m_DimMatrices( m_Directions->size() )
+		m_Directions( t_Directions ), m_DimMatrices( m_Directions->size() ),
+		m_HemisphericalCalculated( false ), m_DiffuseDiffuseCalculated( false )
 	{
 
 		for ( auto t_Side : EnumSide() ) {
