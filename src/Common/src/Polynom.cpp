@@ -1,6 +1,6 @@
 
 #include <vector>
-#include <math.h>
+#include <algorithm>
 
 #include "Polynom.hpp"
 
@@ -29,7 +29,7 @@ namespace FenestrationCommon {
 	////////////////////////////////////////////////////////////////////
 	//  PolynomPoint
 	////////////////////////////////////////////////////////////////////
-	PolynomPoint::PolynomPoint( double const t_Value, Polynom const t_Poly ) :
+	PolynomPoint::PolynomPoint( double const t_Value, Polynom const & t_Poly ) :
 		m_Polynom( t_Poly ), m_Value( t_Value ) {
 
 	}
@@ -54,7 +54,7 @@ namespace FenestrationCommon {
 	}
 
 	void PolynomialPoints360deg::sortPolynomials() {
-		sort( begin( m_Polynoms ), end( m_Polynoms ),
+		std::sort( begin( m_Polynoms ), end( m_Polynoms ),
 		      [ ] ( PolynomPoint const& x, PolynomPoint const& y ) {
 		      return x.value() < y.value();
 	      } );
@@ -65,14 +65,14 @@ namespace FenestrationCommon {
 			sortPolynomials();
 		}
 
-		auto valFirst = min_element( begin( m_Polynoms ), end( m_Polynoms ),
+		auto valFirst = std::min_element( begin( m_Polynoms ), end( m_Polynoms ),
 		                             [ & ] ( PolynomPoint const& x, PolynomPoint const& y ) {
 		                             return fabs( x.value() - t_PointValue ) < fabs( y.value() - t_PointValue );
 	                             } );
 
 		auto valSecond = valFirst + 1;
-		if ( valSecond == end( m_Polynoms ) )
-			valSecond = begin( m_Polynoms );
+		if ( valSecond == std::end( m_Polynoms ) )
+			valSecond = std::begin( m_Polynoms );
 
 		// Process case when point is above highest point in range
 		auto swappedHigh = false;

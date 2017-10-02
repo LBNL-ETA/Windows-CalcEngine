@@ -21,19 +21,26 @@ namespace SpectralAveraging {
 		CSample::reset();
 	}
 
-	CSample::CSample() : m_SourceData( nullptr ), m_WavelengthSet( WavelengthSet::Data ),
-	                     m_IntegrationType( IntegrationType::Trapezoidal ), m_StateCalculated( false ) {
-		m_DetectorData = nullptr;
+	CSample::CSample() : m_SourceData( nullptr ), m_DetectorData( nullptr ),
+	                     m_WavelengthSet( WavelengthSet::Data ), m_IntegrationType( IntegrationType::Trapezoidal ), 
+						 m_StateCalculated( false ) {
 		CSample::reset();
 	}
 
-	CSample::CSample(CSample const & t_Sample) {
+	CSample::CSample( CSample const & t_Sample ) {
+		operator=( t_Sample );
+	}
+
+	CSample & CSample::operator=( CSample const & t_Sample ) {
 		m_IncomingSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_IncomingSource ) );
-		m_TransmittedSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_TransmittedSource ) );;
-		m_ReflectedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedFrontSource ) );;
-		m_ReflectedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedBackSource ) );;
-		m_AbsorbedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedFrontSource ) );;
-		m_AbsorbedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedBackSource ) );;
+		m_TransmittedSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_TransmittedSource ) );
+		m_ReflectedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedFrontSource ) );
+		m_ReflectedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedBackSource ) );
+		m_AbsorbedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedFrontSource ) );
+		m_AbsorbedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedBackSource ) );
+		m_StateCalculated = t_Sample.m_StateCalculated ;
+
+		return *this;
 	}
 
 	std::shared_ptr< CSeries > CSample::getSourceData() {
@@ -129,11 +136,10 @@ namespace SpectralAveraging {
 	                             Side const t_Side ) {
 		calculateState();
 		auto Prop = 0.0;
-		auto incomingEnergy = 0.0;
 		// Incoming energy can be calculated only if user has defined incoming source.
 		// Otherwise just assume zero property.
 		if ( m_IncomingSource != nullptr ) {
-			incomingEnergy = m_IncomingSource->sum( minLambda, maxLambda );
+			auto incomingEnergy = m_IncomingSource->sum( minLambda, maxLambda );
 			double propertyEnergy = 0;
 			switch ( t_Property ) {
 			case Property::T:

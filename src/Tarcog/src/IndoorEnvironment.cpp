@@ -24,9 +24,16 @@ namespace Tarcog {
 		m_Surface.at( Side::Back )->setTemperature( t_AirTemperature );
 	}
 
-	CIndoorEnvironment::CIndoorEnvironment( CIndoorEnvironment const& t_Indoor ) :
-		CState( t_Indoor ), CEnvironment( t_Indoor ) {
-		m_RoomRadiationTemperature = t_Indoor.m_RoomRadiationTemperature;
+	CIndoorEnvironment::CIndoorEnvironment( CIndoorEnvironment const& t_Indoor ) : CEnvironment( t_Indoor ) {
+		operator=( t_Indoor );
+	}
+
+	CIndoorEnvironment & CIndoorEnvironment::operator=( CIndoorEnvironment const & t_Environment ) {
+		this->CState::operator=( t_Environment );
+		this->CEnvironment::operator=( t_Environment );
+		m_RoomRadiationTemperature = t_Environment.m_RoomRadiationTemperature;
+
+		return *this;
 	}
 
 	void CIndoorEnvironment::connectToIGULayer( std::shared_ptr< CBaseLayer > const& t_IGULayer ) {
