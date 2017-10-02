@@ -13,8 +13,9 @@ namespace Tarcog {
 	// 
 	// }
 
-	CBaseLayer::CBaseLayer( CBaseLayer const& t_Layer ) {
-		*this = t_Layer;
+	CBaseLayer::CBaseLayer( CBaseLayer const& t_Layer ) : CState( t_Layer ),
+														  CLayerGeometry( t_Layer ), CLayerHeatFlow( t_Layer ) {
+
 	}
 
 	CBaseLayer & CBaseLayer::operator=( CBaseLayer const & t_BaseLayer ) {

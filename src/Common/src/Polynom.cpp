@@ -1,6 +1,7 @@
 
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 #include "Polynom.hpp"
 

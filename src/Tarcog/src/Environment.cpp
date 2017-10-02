@@ -14,7 +14,8 @@ namespace Tarcog {
 		m_ForcedVentilation = ForcedVentilation(); // Creates forced ventilation with zero values
 	}
 
-	CEnvironment::CEnvironment( CEnvironment const & t_Environment ) {
+	CEnvironment::CEnvironment( CEnvironment const & t_Environment ) :
+	CState( t_Environment ), CBaseLayer( t_Environment ), CGasLayer( t_Environment ) {
 		operator=( t_Environment );
 	}
 

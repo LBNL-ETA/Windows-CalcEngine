@@ -37,7 +37,8 @@ namespace Tarcog {
 		m_Surface[ Side::Back ] = std::make_shared< CSurface >( t_BackEmissivity, t_BackIRTransmittance );
 	}
 
-	CIGUSolidLayer::CIGUSolidLayer( CIGUSolidLayer const& t_Layer ) : CBaseIGULayer( t_Layer ) {
+	CIGUSolidLayer::CIGUSolidLayer( CIGUSolidLayer const& t_Layer ) :
+			CState( t_Layer ), CBaseIGULayer( t_Layer ) {
 		operator=( t_Layer );
 	}
 

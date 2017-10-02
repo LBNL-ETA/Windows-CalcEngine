@@ -24,7 +24,7 @@ namespace Tarcog {
 
 	}
 
-	CLayerGeometry::CLayerGeometry( CLayerGeometry const& t_Layer ) {
+	CLayerGeometry::CLayerGeometry( CLayerGeometry const& t_Layer ) : CState( t_Layer ) {
 		operator=( t_Layer );
 	}
 
@@ -61,7 +61,7 @@ namespace Tarcog {
 		m_Surface[ Side::Back ] = nullptr;
 	}
 
-	CLayerHeatFlow::CLayerHeatFlow( CLayerHeatFlow const& t_Layer ) {
+	CLayerHeatFlow::CLayerHeatFlow( CLayerHeatFlow const& t_Layer ) : CState( t_Layer ) {
 		operator=( t_Layer );
 	}
 
@@ -182,7 +182,7 @@ namespace Tarcog {
 		onCreate();
 	}
 
-	CGasLayer::CGasLayer( CGasLayer const& t_Layer ) {
+	CGasLayer::CGasLayer( CGasLayer const& t_Layer ) : CState( t_Layer ) {
 		operator=( t_Layer );
 	}
 

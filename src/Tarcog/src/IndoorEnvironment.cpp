@@ -24,7 +24,8 @@ namespace Tarcog {
 		m_Surface.at( Side::Back )->setTemperature( t_AirTemperature );
 	}
 
-	CIndoorEnvironment::CIndoorEnvironment( CIndoorEnvironment const& t_Indoor ) : CEnvironment( t_Indoor ) {
+	CIndoorEnvironment::CIndoorEnvironment( CIndoorEnvironment const& t_Indoor ) :
+			CState( t_Indoor ), CEnvironment( t_Indoor ) {
 		operator=( t_Indoor );
 	}
 

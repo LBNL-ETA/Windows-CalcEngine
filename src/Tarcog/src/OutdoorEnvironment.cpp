@@ -28,7 +28,7 @@ namespace Tarcog {
 	}
 
 	COutdoorEnvironment::COutdoorEnvironment( COutdoorEnvironment const& t_Outdoor ) :
-		CEnvironment( t_Outdoor ) {
+		CState( t_Outdoor ), CEnvironment( t_Outdoor ) {
 		operator=( t_Outdoor );
 	}
 
