@@ -27,17 +27,19 @@ namespace SpectralAveraging {
 		CSample::reset();
 	}
 
-	CSample::CSample( CSample const & t_Sample ) {
-		operator=( t_Sample );
-	}
-
-	CSample::CSample(CSample const & t_Sample) {
+	CSample &CSample::operator=( CSample const &t_Sample ) {
 		m_IncomingSource = std::make_unique< CSeries >( *t_Sample.m_IncomingSource );
 		m_TransmittedSource = std::make_unique< CSeries >( *t_Sample.m_TransmittedSource );
 		m_ReflectedFrontSource = std::make_unique< CSeries >( *t_Sample.m_ReflectedFrontSource );
 		m_ReflectedBackSource = std::make_unique< CSeries >( *t_Sample.m_ReflectedBackSource );
 		m_AbsorbedFrontSource = std::make_unique< CSeries >( *t_Sample.m_AbsorbedFrontSource );
 		m_AbsorbedBackSource = std::make_unique< CSeries >( *t_Sample.m_AbsorbedBackSource );
+
+		return *this;
+	}
+
+	CSample::CSample( CSample const & t_Sample ) {
+		operator=( t_Sample );
 	}
 
 	std::shared_ptr< CSeries > CSample::getSourceData() {

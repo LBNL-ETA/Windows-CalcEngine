@@ -17,6 +17,5 @@
 #include "../src/PolynomialFit.hpp"
 #include "../src/Polynom.hpp"
 #include "../src/mmap.hpp"
-#include "../src/wceunique.hpp"
 
 #endif
