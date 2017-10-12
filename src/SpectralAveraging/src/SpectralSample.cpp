@@ -31,16 +31,13 @@ namespace SpectralAveraging {
 		operator=( t_Sample );
 	}
 
-	CSample & CSample::operator=( CSample const & t_Sample ) {
-		m_IncomingSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_IncomingSource ) );
-		m_TransmittedSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_TransmittedSource ) );
-		m_ReflectedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedFrontSource ) );
-		m_ReflectedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_ReflectedBackSource ) );
-		m_AbsorbedFrontSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedFrontSource ) );
-		m_AbsorbedBackSource = std::unique_ptr< CSeries >( new CSeries( *t_Sample.m_AbsorbedBackSource ) );
-		m_StateCalculated = t_Sample.m_StateCalculated ;
-
-		return *this;
+	CSample::CSample(CSample const & t_Sample) {
+		m_IncomingSource = std::make_unique< CSeries >( *t_Sample.m_IncomingSource );
+		m_TransmittedSource = std::make_unique< CSeries >( *t_Sample.m_TransmittedSource );
+		m_ReflectedFrontSource = std::make_unique< CSeries >( *t_Sample.m_ReflectedFrontSource );
+		m_ReflectedBackSource = std::make_unique< CSeries >( *t_Sample.m_ReflectedBackSource );
+		m_AbsorbedFrontSource = std::make_unique< CSeries >( *t_Sample.m_AbsorbedFrontSource );
+		m_AbsorbedBackSource = std::make_unique< CSeries >( *t_Sample.m_AbsorbedBackSource );
 	}
 
 	std::shared_ptr< CSeries > CSample::getSourceData() {
