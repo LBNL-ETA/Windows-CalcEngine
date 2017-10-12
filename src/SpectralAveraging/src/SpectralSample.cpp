@@ -28,12 +28,12 @@ namespace SpectralAveraging {
 	}
 
 	CSample &CSample::operator=( CSample const &t_Sample ) {
-		m_IncomingSource = std::make_unique< CSeries >( *t_Sample.m_IncomingSource );
-		m_TransmittedSource = std::make_unique< CSeries >( *t_Sample.m_TransmittedSource );
-		m_ReflectedFrontSource = std::make_unique< CSeries >( *t_Sample.m_ReflectedFrontSource );
-		m_ReflectedBackSource = std::make_unique< CSeries >( *t_Sample.m_ReflectedBackSource );
-		m_AbsorbedFrontSource = std::make_unique< CSeries >( *t_Sample.m_AbsorbedFrontSource );
-		m_AbsorbedBackSource = std::make_unique< CSeries >( *t_Sample.m_AbsorbedBackSource );
+		m_IncomingSource = wce::make_unique< CSeries >( *t_Sample.m_IncomingSource );
+		m_TransmittedSource = wce::make_unique< CSeries >( *t_Sample.m_TransmittedSource );
+		m_ReflectedFrontSource = wce::make_unique< CSeries >( *t_Sample.m_ReflectedFrontSource );
+		m_ReflectedBackSource = wce::make_unique< CSeries >( *t_Sample.m_ReflectedBackSource );
+		m_AbsorbedFrontSource = wce::make_unique< CSeries >( *t_Sample.m_AbsorbedFrontSource );
+		m_AbsorbedBackSource = wce::make_unique< CSeries >( *t_Sample.m_AbsorbedBackSource );
 
 		return *this;
 	}
