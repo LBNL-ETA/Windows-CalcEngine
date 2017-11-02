@@ -1,11 +1,12 @@
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <gtest/gtest.h>
 
 #include "WCEGases.hpp"
 #include "WCETarcog.hpp"
 
-using namespace std;
+
 using namespace Gases;
 using namespace Tarcog;
 using namespace FenestrationCommon;
@@ -66,8 +67,8 @@ protected:
 		auto Aright = 0.1;
 		auto Afront = 0.2;
 
-		std::shared_ptr< CBaseIGULayer > aLayer2 = make_shared< CIGUShadeLayer >( shadeLayerThickness,
-		                                                                     shadeLayerConductance, make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
+		std::shared_ptr< CBaseIGULayer > aLayer2 = std::make_shared< CIGUShadeLayer >( shadeLayerThickness,
+		                                                                     shadeLayerConductance, std::make_shared< CShadeOpenings >( Atop, Abot, Aleft, Aright, Afront ) );
 
 		ASSERT_TRUE( aLayer2 != nullptr );
 
@@ -78,20 +79,22 @@ protected:
 		CIntCoeff AirCp{ 1.002737e+03, 1.2324e-02, 0.0 };
 		CIntCoeff AirVisc{ 3.7233e-06, 4.94e-08, 0.0 };
 
-		CGasData AirData = { "Air", 28.97, 1.4, AirCp, AirCon, AirVisc };
+		const std::string AirName = "Air";
+		CGasData AirData = { AirName , 28.97, 1.4, AirCp, AirCon, AirVisc };
 
 		// Create coefficients for Argon
 		CIntCoeff ArgonCon{ 2.2848e-03, 5.1486e-05, 0.0 };
 		CIntCoeff ArgonCp{ 5.21929e+02, 0.0, 0.0 };
 		CIntCoeff ArgonVisc{ 3.3786e-06, 6.4514e-08, 0.0 };
 
-		CGasData ArgonData{ "Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc };
+		const std::string ArgonName = "Argon";
+		CGasData ArgonData{ ArgonName, 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc };
 
 		CGasItem Air{ 0.1, AirData };
 		CGasItem Argon{ 0.9, ArgonData };
 
 		// Create gas mixture
-		auto Gas1 = make_shared< CGas >();
+		auto Gas1 = std::make_shared< CGas >();
 
 		Gas1->addGasItem( Air );
 		Gas1->addGasItem( Argon );
@@ -111,7 +114,7 @@ protected:
 
 		auto windowWidth = 1.0;
 		auto windowHeight = 1.0;
-		auto aIGU = make_shared< CIGU >( windowWidth, windowHeight );
+		auto aIGU = std::make_shared< CIGU >( windowWidth, windowHeight );
 		ASSERT_TRUE( aIGU != nullptr );
 		aIGU->addLayer( aLayer1 );
 		aIGU->addLayer( GapLayer1 );
@@ -122,7 +125,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		// System
 		/////////////////////////////////////////////////////////
-		m_TarcogSystem = make_shared< CSingleSystem >( aIGU, Indoor, Outdoor );
+		m_TarcogSystem = std::make_shared< CSingleSystem >( aIGU, Indoor, Outdoor );
 		ASSERT_TRUE( m_TarcogSystem != nullptr );
 
 		m_TarcogSystem->solve();
@@ -142,7 +145,7 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
 	ASSERT_TRUE( aSystem != nullptr );
 
 	auto Temperature = *aSystem->getTemperatures();
-	vector< double > correctTemperature = { 257.708586, 258.135737, 271.904015, 271.907455, 284.412841, 284.839992 };
+	std::vector< double > correctTemperature = { 257.708586, 258.135737, 271.904015, 271.907455, 284.412841, 284.839992 };
 	ASSERT_EQ( correctTemperature.size(), Temperature.size() );
 
 	for ( auto i = 0u; i < correctTemperature.size(); ++i ) {
@@ -150,7 +153,7 @@ TEST_F( TestInBetweenShadeAirArgon, Test1 ) {
 	}
 
 	auto Radiosity = *aSystem->getRadiosities();
-	vector< double > correctRadiosity = { 248.512581, 259.762360, 301.878568, 318.339706, 362.562135, 382.345742 };
+	std::vector< double > correctRadiosity = { 248.512581, 259.762360, 301.878568, 318.339706, 362.562135, 382.345742 };
 	ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
 
 	for ( auto i = 0u; i < correctRadiosity.size(); ++i ) {

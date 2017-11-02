@@ -13,7 +13,7 @@ namespace FenestrationCommon {
 		void setZeros();
 		// All diagonal items are one and all non diagonal are zero
 		void setIdentity();
-		// set diagonal values from vector
+		// set diagonal values from std::vector
 		void setDiagonal( std::vector< double > const& t_Values );
 		std::vector< double >& operator[]( size_t const index );
 		std::vector< double > const& operator[]( size_t const index ) const;
@@ -21,9 +21,9 @@ namespace FenestrationCommon {
 		std::shared_ptr< CSquareMatrix > add( CSquareMatrix const& t_Matrix ) const;
 		std::shared_ptr< CSquareMatrix > sub( CSquareMatrix const& t_Matrix ) const;
 		std::shared_ptr< CSquareMatrix > mult( CSquareMatrix const& t_Matrix ) const;
-		// Matrix multiplication with vector
+		// Matrix multiplication with std::vector
 		std::shared_ptr< std::vector< double > > multMxV( std::vector< double > const& t_Vector ) const;
-		// Matrix multiplication with vector
+		// Matrix multiplication with std::vector
 		std::shared_ptr< std::vector< double > > multVxM( std::vector< double > const& t_Vector ) const;
 		void copyFrom( CSquareMatrix const& t_Matrix );
 		// inverse matrix
