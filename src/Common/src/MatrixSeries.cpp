@@ -92,7 +92,7 @@ namespace FenestrationCommon {
 			std::make_shared< std::vector< std::shared_ptr< std::vector< double > > > >( m_Matrix.size() );
 		for ( size_t i = 0; i < m_Matrix.size(); ++i ) {
 			if ( m_Matrix[ i ].size() != t_ScaleValue.size() ) {
-				throw std::runtime_error( "Size of std::vector for scaling must be same as size of the matrix." );
+				throw std::runtime_error( "Size of vector for scaling must be same as size of the matrix." );
 			}
 			( *Result )[ i ] = std::make_shared< std::vector< double > >();
 			for ( size_t j = 0; j < m_Matrix[ i ].size(); ++j ) {

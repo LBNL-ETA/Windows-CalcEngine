@@ -35,7 +35,7 @@ namespace FenestrationCommon {
 
 	void CSquareMatrix::setDiagonal( std::vector< double > const& t_Values ) {
 		if ( t_Values.size() != m_Size ) {
-			throw std::runtime_error( "Supplied std::vector size mismatch matrix size" );
+			throw std::runtime_error( "Supplied vector size mismatch matrix size" );
 		}
 		setZeros();
 		for ( size_t i = 0; i < m_Size; ++i ) {
@@ -105,7 +105,7 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< std::vector< double > > CSquareMatrix::multMxV( std::vector< double > const& t_Vector ) const {
 		if ( m_Size != t_Vector.size() ) {
-			throw std::runtime_error( "Matrix and std::vector does not have same number of rows and columns."
+			throw std::runtime_error( "Matrix and vector does not have same number of rows and columns."
 			                    " It is not possible to perform multiplication." );
 		}
 
@@ -122,7 +122,7 @@ namespace FenestrationCommon {
 
 	std::shared_ptr< std::vector< double > > CSquareMatrix::multVxM( std::vector< double > const& t_Vector ) const {
 		if ( m_Size != t_Vector.size() ) {
-			throw std::runtime_error( "Matrix and std::vector do not have same number of rows and columns."
+			throw std::runtime_error( "Matrix and vector do not have same number of rows and columns."
 			                    " It is not possible to perform multiplication." );
 		}
 

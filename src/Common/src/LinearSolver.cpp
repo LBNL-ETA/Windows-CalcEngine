@@ -102,7 +102,7 @@ namespace FenestrationCommon {
 		std::vector< double >& t_VectorB ) const {
 
 		if ( t_MatrixA.getSize() != t_VectorB.size() ) {
-			std::runtime_error( "Matrix and std::vector for system of linear equations are not same size." );
+			std::runtime_error( "Matrix and vector for system of linear equations are not same size." );
 		}
 
 		std::vector< size_t > index = makeUpperTriangular( t_MatrixA );
