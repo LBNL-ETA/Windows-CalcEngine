@@ -280,7 +280,7 @@ namespace SpectralAveraging {
 		if ( t_SampleData == nullptr ) {
 			throw std::runtime_error( "Sample must have measured data." );
 		}
-		setWavelengths( m_WavelengthSet );
+		
 		m_Transmittance = nullptr;
 		m_RefFront = nullptr;
 		m_RefBack = nullptr;
@@ -293,7 +293,7 @@ namespace SpectralAveraging {
 		if ( t_SampleData == nullptr ) {
 			throw std::runtime_error( "Sample must have measured data." );
 		}
-		setWavelengths( m_WavelengthSet );
+		
 		m_Transmittance = nullptr;
 		m_RefFront = nullptr;
 		m_RefBack = nullptr;

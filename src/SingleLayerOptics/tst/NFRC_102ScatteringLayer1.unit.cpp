@@ -320,8 +320,8 @@ TEST_F( TestNFRC102ScatteringLayer1, Test1 ) {
 
 }
 
-TEST_F( TestNFRC102ScatteringLayer1, TestVenetian2 ) {
-	SCOPED_TRACE( "Begin Test: NFRC 102 scattering layer - Theta = 45 deg, Phi = 45 incident." );
+TEST_F( TestNFRC102ScatteringLayer1, Test2 ) {
+	SCOPED_TRACE( "Begin Test: NFRC 102 scattering layer - Theta = 45 deg, Phi = 90 incident." );
 
 	std::shared_ptr< CScatteringLayer > aLayer = getLayer();
 
