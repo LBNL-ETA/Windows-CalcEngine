@@ -9,6 +9,7 @@ namespace FenestrationCommon {
 	enum class MaterialType;
 	enum class Side;
 	enum class Property;
+
 	class CSeries;
 
 }
@@ -16,6 +17,7 @@ namespace FenestrationCommon {
 namespace SpectralAveraging {
 
 	class CSpectralSampleData;
+
 	class CSpectralSample;
 
 	// enum class SampleProperty;
@@ -23,15 +25,16 @@ namespace SpectralAveraging {
 	// Angular properties for each wavelength of measured data
 	class CAngularSpectralProperties {
 	public:
-		CAngularSpectralProperties( std::shared_ptr< CSpectralSample > const& t_SpectralSample,
-		                            double const t_Angle, FenestrationCommon::MaterialType const t_Type, double const t_Thickness );
+		CAngularSpectralProperties( std::shared_ptr< CSpectralSample > const & t_SpectralSample,
+																double const t_Angle, FenestrationCommon::MaterialType const t_Type,
+																double const t_Thickness );
 
 		double angle() const;
 		std::shared_ptr< CSpectralSampleData > properties() const;
 
 	private:
-		void calculateAngularProperties( std::shared_ptr< CSpectralSample > const& t_SpectralSample,
-		                                 FenestrationCommon::MaterialType const t_Type );
+		void calculateAngularProperties( std::shared_ptr< CSpectralSample > const & t_SpectralSample,
+																		 FenestrationCommon::MaterialType const t_Type );
 
 		double m_Angle;
 		double m_Thickness;
@@ -41,7 +44,8 @@ namespace SpectralAveraging {
 	// Data for spectral sample under certain angle
 	class CSpectralSampleAngle {
 	public:
-		CSpectralSampleAngle( std::shared_ptr< CSpectralSample > const& t_Sample, double const t_Angle );
+		CSpectralSampleAngle( std::shared_ptr< CSpectralSample > const & t_Sample,
+													double const t_Angle );
 
 		double angle() const;
 		std::shared_ptr< CSpectralSample > sample() const;
@@ -53,19 +57,23 @@ namespace SpectralAveraging {
 
 	class CAngularSpectralSample {
 	public:
-		CAngularSpectralSample( std::shared_ptr< CSpectralSample > const& t_SpectralSample,
-		                        double const t_Thickness, FenestrationCommon::MaterialType const t_Type );
+		CAngularSpectralSample( std::shared_ptr< CSpectralSample > const & t_SpectralSample,
+														double const t_Thickness,
+														FenestrationCommon::MaterialType const t_Type );
 
 		void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
 
 		// Get averaged property over the wavelength
 		double getProperty( double const minLambda, double const maxLambda,
-		                    FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side, double const t_Angle );
+												FenestrationCommon::Property const t_Property,
+												FenestrationCommon::Side const t_Side, double const t_Angle );
 
 		// Get property at each wavelength
 		std::vector< double > getWavelengthsProperty( double const minLambda,
-		                                              double const maxLambda, FenestrationCommon::Property const t_Property,
-		                                              FenestrationCommon::Side const t_Side, double const t_Angle );
+																									double const maxLambda,
+																									FenestrationCommon::Property const t_Property,
+																									FenestrationCommon::Side const t_Side,
+																									double const t_Angle );
 
 		std::vector< double > getBandWavelengths() const;
 
