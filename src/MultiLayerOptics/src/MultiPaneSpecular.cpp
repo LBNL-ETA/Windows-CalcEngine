@@ -73,8 +73,9 @@ namespace MultiLayerOptics {
 		auto iIntegrated = aMult->integrate( t_IntegrationType, normalizationCoefficient );
 
 		double totalProperty = iIntegrated->sum( minLambda, maxLambda );
-		double totalSolar = m_SolarRadiation->integrate( t_IntegrationType )->sum( minLambda,
-																																							 maxLambda );
+		double totalSolar = m_SolarRadiation->integrate( t_IntegrationType,
+																										 normalizationCoefficient )->sum( minLambda,
+																																											maxLambda );
 
 		assert( totalSolar > 0 );
 
@@ -114,8 +115,9 @@ namespace MultiLayerOptics {
 		auto iIntegrated = aMult->integrate( t_IntegrationType, normalizationCoefficient );
 
 		double totalProperty = iIntegrated->sum( minLambda, maxLambda );
-		double totalSolar = m_SolarRadiation->integrate( t_IntegrationType )->sum( minLambda,
-																																							 maxLambda );
+		double totalSolar = m_SolarRadiation->integrate( t_IntegrationType,
+																										 normalizationCoefficient )->sum( minLambda,
+																																											maxLambda );
 
 		assert( totalSolar > 0 );
 

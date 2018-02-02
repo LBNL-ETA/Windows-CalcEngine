@@ -3,14 +3,7 @@
 
 #include <memory>
 #include <vector>
-
-namespace FenestrationCommon {
-
-	class CSquareMatrix;
-	enum class Side;
-	class CSeries;
-
-}
+#include "WCECommon.hpp"
 
 namespace SingleLayerOptics {
 
@@ -26,32 +19,34 @@ namespace MultiLayerOptics {
 	class CAbsorptancesMultiPaneBSDF {
 	public:
 		CAbsorptancesMultiPaneBSDF( FenestrationCommon::Side t_Side,
-		                            const std::shared_ptr< std::vector< double > >& t_CommonWavelengths,
-		                            const std::shared_ptr< FenestrationCommon::CSeries >& t_SolarRadiation,
-		                            const std::shared_ptr< SingleLayerOptics::CBSDFLayer >& t_Layer );
+																const std::shared_ptr< std::vector< double > > & t_CommonWavelengths,
+																const std::shared_ptr< FenestrationCommon::CSeries > & t_SolarRadiation,
+																const std::shared_ptr< SingleLayerOptics::CBSDFLayer > & t_Layer,
+																FenestrationCommon::IntegrationType t_integrator,
+																double normalizationCoefficient );
 
-		void addLayer( SingleLayerOptics::CBSDFLayer& t_Layer );
+		void addLayer( SingleLayerOptics::CBSDFLayer & t_Layer );
 
 		std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda,
-		                                              const size_t Index );
+																									const size_t Index );
 
 	private:
 		void calculateState( const double minLambda, const double maxLambda );
 
 		// Denominator term for t and r coefficients (absorptance calculations)
 		std::shared_ptr< FenestrationCommon::CSquareMatrix > getDenomForRTCoeff(
-			const FenestrationCommon::CSquareMatrix& t_Reflectance,
-			const FenestrationCommon::CSquareMatrix& t_PreviousR );
+				const FenestrationCommon::CSquareMatrix & t_Reflectance,
+				const FenestrationCommon::CSquareMatrix & t_PreviousR );
 
 		// Returns correct layer index. Depends if object is used to calculate forward or backward properties
 		size_t layerIndex( const size_t Index ) const;
 
-		std::shared_ptr< std::vector< double > > multVectors( const std::vector< double >& t_vec1,
-		                                                      const std::vector< double >& t_vec2 );
-		std::shared_ptr< std::vector< double > > divVectors( const std::vector< double >& t_vec1,
-		                                                     const std::vector< double >& t_vec2 );
-		std::shared_ptr< std::vector< double > > addVectors( const std::vector< double >& t_vec1,
-		                                                     const std::vector< double >& t_vec2 );
+		std::shared_ptr< std::vector< double > > multVectors( const std::vector< double > & t_vec1,
+																													const std::vector< double > & t_vec2 );
+		std::shared_ptr< std::vector< double > > divVectors( const std::vector< double > & t_vec1,
+																												 const std::vector< double > & t_vec2 );
+		std::shared_ptr< std::vector< double > > addVectors( const std::vector< double > & t_vec1,
+																												 const std::vector< double > & t_vec2 );
 
 		std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
 		std::shared_ptr< const std::vector< double > > m_LambdaVector;
@@ -74,6 +69,9 @@ namespace MultiLayerOptics {
 		bool m_StateCalculated;
 		FenestrationCommon::Side m_Side;
 		size_t m_NumOfLayers;
+
+		FenestrationCommon::IntegrationType m_Integrator;
+		double m_NormalizationCoefficient;
 
 	};
 }

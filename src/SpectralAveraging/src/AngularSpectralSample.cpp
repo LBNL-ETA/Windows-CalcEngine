@@ -167,7 +167,9 @@ namespace SpectralAveraging {
 		else {
 			auto aAngularData = CAngularSpectralProperties( m_SpectralSampleZero, t_Angle, m_Type, m_Thickness );
 
-			aSample = std::make_shared< CSpectralSample >( aAngularData.properties(), m_SpectralSampleZero->getSourceData() );
+			aSample = std::make_shared< CSpectralSample >( aAngularData.properties(), 
+				m_SpectralSampleZero->getSourceData(), m_SpectralSampleZero->getIntegrator(), 
+				m_SpectralSampleZero->getNormalizationCoeff() );
 			aSample->assignDetectorAndWavelengths( m_SpectralSampleZero );
 			auto aSpectralSampleAngle = std::make_shared< CSpectralSampleAngle >( aSample, t_Angle );
 			m_SpectralProperties.push_back( aSpectralSampleAngle );

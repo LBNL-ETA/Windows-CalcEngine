@@ -14,8 +14,9 @@ namespace SpectralAveraging {
 	////  CSample
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	CSample::CSample( std::shared_ptr< CSeries > const & t_SourceData, IntegrationType integrationType,
-		double t_NormalizationCoefficient ) :
+	CSample::CSample( std::shared_ptr< CSeries > const & t_SourceData,
+										IntegrationType integrationType,
+										double t_NormalizationCoefficient ) :
 			m_SourceData( t_SourceData ),
 			m_DetectorData( nullptr ),
 			m_WavelengthSet( WavelengthSet::Data ), m_IntegrationType( integrationType ),
@@ -27,11 +28,12 @@ namespace SpectralAveraging {
 	CSample::CSample() : m_SourceData( nullptr ), m_DetectorData( nullptr ),
 											 m_WavelengthSet( WavelengthSet::Data ),
 											 m_IntegrationType( IntegrationType::Trapezoidal ),
+											 m_NormalizationCoefficient( 1 ),
 											 m_StateCalculated( false ) {
 		CSample::reset();
 	}
 
-	CSample & CSample::operator=( CSample const & t_Sample ) {
+	CSample & CSample::operator=( const CSample & t_Sample ) {
 		m_StateCalculated = t_Sample.m_StateCalculated;
 		m_IntegrationType = t_Sample.m_IntegrationType;
 		m_NormalizationCoefficient = t_Sample.m_NormalizationCoefficient;
@@ -46,7 +48,7 @@ namespace SpectralAveraging {
 		return *this;
 	}
 
-	CSample::CSample( CSample const & t_Sample ) {
+	CSample::CSample( const CSample & t_Sample ) {
 		operator=( t_Sample );
 	}
 
@@ -63,6 +65,16 @@ namespace SpectralAveraging {
 	void CSample::setDetectorData( std::shared_ptr< CSeries > const & t_DetectorData ) {
 		m_DetectorData = t_DetectorData;
 		reset();
+	}
+
+	FenestrationCommon::IntegrationType CSample::getIntegrator() const
+	{
+		return m_IntegrationType;
+	}
+
+	double CSample::getNormalizationCoeff() const
+	{
+		return m_NormalizationCoefficient;
 	}
 
 	void CSample::assignDetectorAndWavelengths( std::shared_ptr< CSample > const & t_Sample ) {
@@ -266,12 +278,18 @@ namespace SpectralAveraging {
 
 				calculateProperties();
 
-				m_IncomingSource = m_IncomingSource->integrate( m_IntegrationType );
-				m_TransmittedSource = m_TransmittedSource->integrate( m_IntegrationType );
-				m_ReflectedFrontSource = m_ReflectedFrontSource->integrate( m_IntegrationType );
-				m_ReflectedBackSource = m_ReflectedBackSource->integrate( m_IntegrationType );
-				m_AbsorbedFrontSource = m_AbsorbedFrontSource->integrate( m_IntegrationType );
-				m_AbsorbedBackSource = m_AbsorbedBackSource->integrate( m_IntegrationType );
+				m_IncomingSource = m_IncomingSource->integrate( m_IntegrationType,
+																												m_NormalizationCoefficient );
+				m_TransmittedSource = m_TransmittedSource->integrate( m_IntegrationType,
+																															m_NormalizationCoefficient );
+				m_ReflectedFrontSource = m_ReflectedFrontSource->integrate( m_IntegrationType,
+																																		m_NormalizationCoefficient );
+				m_ReflectedBackSource = m_ReflectedBackSource->integrate( m_IntegrationType,
+																																	m_NormalizationCoefficient );
+				m_AbsorbedFrontSource = m_AbsorbedFrontSource->integrate( m_IntegrationType,
+																																	m_NormalizationCoefficient );
+				m_AbsorbedBackSource = m_AbsorbedBackSource->integrate( m_IntegrationType,
+																																m_NormalizationCoefficient );
 
 				m_StateCalculated = true;
 			}
@@ -283,8 +301,10 @@ namespace SpectralAveraging {
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	CSpectralSample::CSpectralSample( std::shared_ptr< CSpectralSampleData > const & t_SampleData,
-																		std::shared_ptr< CSeries > const & t_SourceData ) :
-			CSample( t_SourceData ), m_SampleData( t_SampleData ) {
+																		std::shared_ptr< CSeries > const & t_SourceData,
+																		FenestrationCommon::IntegrationType integrationType,
+																		double NormalizationCoefficient) :
+			CSample( t_SourceData, integrationType, NormalizationCoefficient ), m_SampleData( t_SampleData ) {
 		if( t_SampleData == nullptr ) {
 			throw std::runtime_error( "Sample must have measured data." );
 		}

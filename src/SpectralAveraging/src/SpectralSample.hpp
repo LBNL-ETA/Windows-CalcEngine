@@ -40,6 +40,9 @@ namespace SpectralAveraging {
 		// Setting detector spectral properties for the sample
 		void setDetectorData( std::shared_ptr< FenestrationCommon::CSeries > const & t_DetectorData );
 
+		FenestrationCommon::IntegrationType getIntegrator() const;
+		double getNormalizationCoeff() const;
+
 		// Integrate sample property over the certain spectrum range
 		double getProperty( double const minLambda, double const maxLambda,
 												FenestrationCommon::Property const t_Property,
@@ -93,7 +96,9 @@ namespace SpectralAveraging {
 	class CSpectralSample : public CSample {
 	public:
 		CSpectralSample( std::shared_ptr< CSpectralSampleData > const & t_SampleData,
-										 std::shared_ptr< FenestrationCommon::CSeries > const & t_SourceData );
+										 std::shared_ptr< FenestrationCommon::CSeries > const & t_SourceData,
+										 FenestrationCommon::IntegrationType integrationType = FenestrationCommon::IntegrationType::Trapezoidal,
+										 double NormalizationCoefficient = 1);
 		explicit CSpectralSample( std::shared_ptr< CSpectralSampleData > const & t_SampleData );
 
 		// Before retreiving measured data from sample, function will do all necessary 

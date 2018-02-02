@@ -79,7 +79,7 @@ namespace MultiLayerOptics {
 				aSpectra = aSpectra->interpolate( m_Layer->getCommonWavelengths() );
 
 				std::shared_ptr< CSeries > iTotalSolar = aSpectra->integrate(
-						IntegrationType::Trapezoidal );
+						m_Integrator, m_NormalizationCoefficient );
 				m_IncomingSolar.push_back( iTotalSolar->sum( minLambda, maxLambda ) );
 			}
 
