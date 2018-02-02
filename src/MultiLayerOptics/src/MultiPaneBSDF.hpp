@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <WCECommon.hpp>
 
 namespace FenestrationCommon {
 
@@ -34,8 +35,10 @@ namespace MultiLayerOptics {
 		// If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming spectra
 		// for every direction
 		CMultiPaneBSDF( const std::shared_ptr< CEquivalentBSDFLayer >& t_Layer,
-		                const p_Series& t_SolarRadiation,
+		                const p_Series & t_SolarRadiation,
 		                const p_VectorSeries& t_IncomingSpectra = nullptr );
+
+		void setIntegrationType( FenestrationCommon::IntegrationType t_type, double normalizationCoefficient );
 
 		// Whole matrix results
 		std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix(
@@ -107,6 +110,9 @@ namespace MultiLayerOptics {
 		bool m_Calculated;
 		double m_MinLambdaCalculated;
 		double m_MaxLambdaCalculated;
+
+		FenestrationCommon::IntegrationType m_Integrator;
+		double m_NormalizationCoefficient;
 
 	};
 

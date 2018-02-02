@@ -17,13 +17,13 @@ namespace FenestrationCommon {
 
 	}
 
-	CSeriesPoint::CSeriesPoint( CSeriesPoint const& t_SeriesPoint ) {
+	CSeriesPoint::CSeriesPoint( CSeriesPoint const & t_SeriesPoint ) {
 		m_x = t_SeriesPoint.m_x;
 		m_Value = t_SeriesPoint.m_Value;
 	}
 
 	CSeriesPoint::CSeriesPoint( double t_Wavelength, double t_Value ) :
-		m_x( t_Wavelength ), m_Value( t_Value ) {
+			m_x( t_Wavelength ), m_Value( t_Value ) {
 
 	}
 
@@ -43,13 +43,13 @@ namespace FenestrationCommon {
 		m_Value = t_Value;
 	}
 
-	CSeriesPoint& CSeriesPoint::operator=( const CSeriesPoint& t_Property ) {
+	CSeriesPoint & CSeriesPoint::operator=( const CSeriesPoint & t_Property ) {
 		m_x = t_Property.m_x;
 		m_Value = t_Property.m_Value;
 		return *this;
 	}
 
-	bool CSeriesPoint::operator<( const CSeriesPoint& t_Point ) const {
+	bool CSeriesPoint::operator<( const CSeriesPoint & t_Point ) const {
 		return m_x < t_Point.m_x;
 	}
 
@@ -59,21 +59,21 @@ namespace FenestrationCommon {
 
 	CSeries::CSeries( const std::vector< std::pair< double, double > > & t_values ) {
 		m_Series.clear();
-		for( auto & val : t_values ) {
+		for ( auto & val : t_values ) {
 			m_Series.push_back( wce::make_unique< CSeriesPoint >( val.first, val.second ) );
 		}
 	}
 
 	CSeries::CSeries( const std::initializer_list< std::pair< double, double > > & t_values ) {
 		m_Series.clear();
-		for( const auto & val : t_values ) {
+		for ( const auto & val : t_values ) {
 			m_Series.push_back( wce::make_unique< CSeriesPoint >( val.first, val.second ) );
 		}
 	}
 
-	CSeries::CSeries( CSeries const& t_Series ) {
+	CSeries::CSeries( CSeries const & t_Series ) {
 		m_Series.clear();
-		for( const auto & val : t_Series.m_Series ) {
+		for ( const auto & val : t_Series.m_Series ) {
 			m_Series.push_back( val->clone() );
 		}
 	}
@@ -87,18 +87,21 @@ namespace FenestrationCommon {
 		m_Series.insert( m_Series.begin(), wce::make_unique< CSeriesPoint >( t_x, t_Value ) );
 	}
 
-	void CSeries::setConstantValues( const std::vector< double >& t_Wavelengths, double const t_Value ) {
+	void
+	CSeries::setConstantValues( const std::vector< double > & t_Wavelengths, double const t_Value ) {
 		m_Series.clear();
 		for ( auto it = t_Wavelengths.begin(); it < t_Wavelengths.end(); ++it ) {
 			addProperty( ( *it ), t_Value );
 		}
 	}
 
-	std::unique_ptr< CSeries > CSeries::integrate( IntegrationType t_IntegrationType ) const {
+	std::unique_ptr< CSeries >
+	CSeries::integrate( IntegrationType t_IntegrationType, double normalizationCoefficient ) const {
 
 		// std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >( );
 		CIntegratorFactory aFactory = CIntegratorFactory();
-		std::shared_ptr< IIntegratorStrategy > aIntegrator = aFactory.getIntegrator( t_IntegrationType );
+		std::shared_ptr< IIntegratorStrategy > aIntegrator = aFactory.getIntegrator(
+				t_IntegrationType );
 		// ISeriesPoint* previousProperty = nullptr;
 		// 
 		// for ( auto& spectralProperty : m_Series ) {
@@ -113,16 +116,16 @@ namespace FenestrationCommon {
 		// 	previousProperty = spectralProperty.get();
 		// }
 
-		return aIntegrator->integrate( m_Series );
+		return aIntegrator->integrate( m_Series, normalizationCoefficient );
 
 	}
 
-	ISeriesPoint* CSeries::findLower( double const t_Wavelength ) const {
-		ISeriesPoint* currentProperty = nullptr;
+	ISeriesPoint * CSeries::findLower( double const t_Wavelength ) const {
+		ISeriesPoint * currentProperty = nullptr;
 
 		for ( auto & spectralProperty : m_Series ) {
 			double aWavelength = spectralProperty->x();
-			if ( aWavelength > t_Wavelength ) {
+			if( aWavelength > t_Wavelength ) {
 				break;
 			}
 			currentProperty = spectralProperty.get();
@@ -131,12 +134,12 @@ namespace FenestrationCommon {
 		return currentProperty;
 	}
 
-	ISeriesPoint* CSeries::findUpper( double const t_Wavelength ) const {
-		ISeriesPoint* currentProperty = nullptr;
+	ISeriesPoint * CSeries::findUpper( double const t_Wavelength ) const {
+		ISeriesPoint * currentProperty = nullptr;
 
-		for ( auto& spectralProperty : m_Series ) {
+		for ( auto & spectralProperty : m_Series ) {
 			double aWavelength = spectralProperty->x();
-			if ( aWavelength > t_Wavelength ) {
+			if( aWavelength > t_Wavelength ) {
 				currentProperty = spectralProperty.get();
 				break;
 			}
@@ -145,17 +148,17 @@ namespace FenestrationCommon {
 		return currentProperty;
 	}
 
-	double CSeries::interpolate( ISeriesPoint* t_Lower, ISeriesPoint* t_Upper, double const t_Wavelength ) {
+	double CSeries::interpolate( ISeriesPoint * t_Lower, ISeriesPoint * t_Upper,
+															 double const t_Wavelength ) {
 
 		double w1 = t_Lower->x();
 		double w2 = t_Upper->x();
 		double v1 = t_Lower->value();
 		double v2 = t_Upper->value();
 		double vx = 0;
-		if ( w2 != w1 ) {
+		if( w2 != w1 ) {
 			vx = v1 + ( t_Wavelength - w1 ) * ( v2 - v1 ) / ( w2 - w1 );
-		}
-		else {
+		} else {
 			vx = v1; // extrapolating same value for all values out of range
 		}
 
@@ -163,23 +166,23 @@ namespace FenestrationCommon {
 	}
 
 	std::unique_ptr< CSeries > CSeries::interpolate(
-		const std::vector< double >& t_Wavelengths ) const {
+			const std::vector< double > & t_Wavelengths ) const {
 		std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >();
 
-		if ( size() != 0 ) {
+		if( size() != 0 ) {
 
-			ISeriesPoint* lower = nullptr;
-			ISeriesPoint* upper = nullptr;
+			ISeriesPoint * lower = nullptr;
+			ISeriesPoint * upper = nullptr;
 
 			for ( double wavelength : t_Wavelengths ) {
 				lower = findLower( wavelength );
 				upper = findUpper( wavelength );
 
-				if ( lower == nullptr ) {
+				if( lower == nullptr ) {
 					lower = upper;
 				}
 
-				if ( upper == nullptr ) {
+				if( upper == nullptr ) {
 					upper = lower;
 				}
 
@@ -190,7 +193,7 @@ namespace FenestrationCommon {
 		return newProperties;
 	}
 
-	std::unique_ptr< CSeries > CSeries::mMult( const CSeries& t_Series ) const {
+	std::unique_ptr< CSeries > CSeries::mMult( const CSeries & t_Series ) const {
 		std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >();
 
 		const double WAVELENGTHTOLERANCE = 1e-10;
@@ -202,8 +205,9 @@ namespace FenestrationCommon {
 			double wv = m_Series[ i ]->x();
 			double testWv = t_Series.m_Series[ i ]->x();
 
-			if ( std::abs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
-				throw std::runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
+			if( std::abs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
+				throw std::runtime_error(
+						"Wavelengths of two vectors are not the same. Cannot preform multiplication." );
 			}
 
 			newProperties->addProperty( wv, value );
@@ -212,7 +216,7 @@ namespace FenestrationCommon {
 		return newProperties;
 	}
 
-	std::unique_ptr< CSeries > CSeries::mSub( const CSeries& t_Series ) const {
+	std::unique_ptr< CSeries > CSeries::mSub( const CSeries & t_Series ) const {
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
 		std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >();
@@ -223,8 +227,9 @@ namespace FenestrationCommon {
 			double wv = m_Series[ i ]->x();
 			double testWv = t_Series.m_Series[ i ]->x();
 
-			if ( std::abs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
-				throw std::runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
+			if( std::abs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
+				throw std::runtime_error(
+						"Wavelengths of two vectors are not the same. Cannot preform multiplication." );
 			}
 
 			newProperties->addProperty( wv, value );
@@ -233,7 +238,7 @@ namespace FenestrationCommon {
 		return newProperties;
 	}
 
-	std::unique_ptr< CSeries > CSeries::mAdd( const CSeries& t_Series ) const {
+	std::unique_ptr< CSeries > CSeries::mAdd( const CSeries & t_Series ) const {
 		const double WAVELENGTHTOLERANCE = 1e-10;
 
 		std::unique_ptr< CSeries > newProperties( new CSeries() );
@@ -244,8 +249,9 @@ namespace FenestrationCommon {
 			double wv = m_Series[ i ]->x();
 			double testWv = t_Series.m_Series[ i ]->x();
 
-			if ( std::abs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
-				throw std::runtime_error( "Wavelengths of two vectors are not the same. Cannot preform multiplication." );
+			if( std::abs( wv - testWv ) > WAVELENGTHTOLERANCE ) {
+				throw std::runtime_error(
+						"Wavelengths of two vectors are not the same. Cannot preform multiplication." );
 			}
 
 			newProperties->addProperty( wv, value );
@@ -256,7 +262,7 @@ namespace FenestrationCommon {
 
 	std::vector< double > CSeries::getXArray() const {
 		std::vector< double > aArray;
-		for ( auto& spectralProperty : m_Series ) {
+		for ( auto & spectralProperty : m_Series ) {
 			aArray.push_back( spectralProperty->x() );
 		}
 
@@ -266,14 +272,14 @@ namespace FenestrationCommon {
 	double CSeries::sum( double const minLambda, double const maxLambda ) const {
 		double const TOLERANCE = 1e-6; // introduced because of rounding error
 		double total = 0;
-		for ( auto& aPoint : m_Series ) {
+		for ( auto & aPoint : m_Series ) {
 			double wavelength = aPoint->x();
 			// Last point must be excluded because of ranges. Each wavelength represent range from wavelength one
 			// to wavelength two. Summing value of the last wavelength in array would be wrong because it would
 			// include one additional range after the end of spectrum. For example, summing all the data from 0.38 to
 			// 0.78 would include visible range. However, including 0.78 in sum would add extra value from 0.78 to 0.79.
-			if ( ( ( wavelength >= ( minLambda - TOLERANCE ) && wavelength < ( maxLambda - TOLERANCE ) ) ||
-				( minLambda == 0 && maxLambda == 0 ) ) ) {
+			if( ( ( wavelength >= ( minLambda - TOLERANCE ) && wavelength < ( maxLambda - TOLERANCE ) ) ||
+						( minLambda == 0 && maxLambda == 0 ) ) ) {
 				total += aPoint->value();
 			}
 		}
@@ -282,15 +288,16 @@ namespace FenestrationCommon {
 
 	void CSeries::sort() {
 		std::sort( m_Series.begin(), m_Series.end(),
-		           []( std::unique_ptr< ISeriesPoint > const & l, std::unique_ptr< ISeriesPoint > const & r ) -> bool {
-		           return l->x() < r->x();
-	           } );
+							 []( std::unique_ptr< ISeriesPoint > const & l,
+									 std::unique_ptr< ISeriesPoint > const & r ) -> bool {
+								 return l->x() < r->x();
+							 } );
 	}
 
 	std::vector< std::unique_ptr< ISeriesPoint > >::const_iterator CSeries::begin() const {
 		return m_Series.cbegin();
 	}
-	
+
 	std::vector< std::unique_ptr< ISeriesPoint > >::const_iterator CSeries::end() const {
 		return m_Series.cend();
 	}
@@ -299,16 +306,16 @@ namespace FenestrationCommon {
 		return m_Series.size();
 	}
 
-	CSeries& CSeries::operator=( CSeries const& t_Series ) {
+	CSeries & CSeries::operator=( CSeries const & t_Series ) {
 		m_Series.clear();
-		for( std::unique_ptr< ISeriesPoint > const & val : t_Series.m_Series ) {
+		for ( std::unique_ptr< ISeriesPoint > const & val : t_Series.m_Series ) {
 			m_Series.push_back( val->clone() );
 		}
 		return *this;
 	}
 
-	ISeriesPoint& CSeries::operator[]( size_t Index ) const {
-		if ( Index >= m_Series.size() ) {
+	ISeriesPoint & CSeries::operator[]( size_t Index ) const {
+		if( Index >= m_Series.size() ) {
 			throw std::runtime_error( "Index out of range" );
 		}
 		return *m_Series[ Index ];

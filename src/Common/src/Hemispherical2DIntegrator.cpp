@@ -6,14 +6,14 @@
 #include "MathFunctions.hpp"
 
 
-
 namespace FenestrationCommon {
 
 	// Performs hemispherical 2D integration
-	CHemispherical2DIntegrator::CHemispherical2DIntegrator( CSeries const& t_Series,
-	                                                        IntegrationType const t_IntegrationType ) {
+	CHemispherical2DIntegrator::CHemispherical2DIntegrator( CSeries const & t_Series,
+																													IntegrationType const t_IntegrationType,
+																													double normalizationCoefficient ) {
 		CSeries aResultValues = CSeries();
-		for ( auto const& ser : t_Series ) {
+		for ( const auto & ser : t_Series ) {
 			auto angle = radians( ser->x() );
 			auto value = ser->value();
 			auto sinCos = sin( angle ) * cos( angle );
@@ -22,7 +22,7 @@ namespace FenestrationCommon {
 
 		aResultValues.sort();
 
-		auto integrated = aResultValues.integrate( t_IntegrationType );
+		auto integrated = aResultValues.integrate( t_IntegrationType, normalizationCoefficient );
 		m_Value = 2 * integrated->sum();
 	}
 

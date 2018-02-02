@@ -11,7 +11,8 @@ namespace FenestrationCommon {
 
 	std::unique_ptr< CSeries >
 	CIntegratorRectangular::integrate(
-			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series ) {
+			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series,
+			double normalizationCoeff ) {
 		auto newProperties = wce::make_unique< CSeries >();
 		for ( auto i = 1u; i < t_Series.size(); ++i ) {
 			const auto w1 = t_Series[ i - 1 ]->x();
@@ -20,7 +21,7 @@ namespace FenestrationCommon {
 			// const auto y2 = t_Series[ i ]->value();
 			const auto deltaX = dX( w1, w2 );
 			const auto value = y1 * deltaX;
-			newProperties->addProperty( w1, value );
+			newProperties->addProperty( w1, value / normalizationCoeff );
 		}
 
 		return newProperties;
@@ -28,7 +29,8 @@ namespace FenestrationCommon {
 
 	std::unique_ptr< CSeries >
 	CIntegratorRectangularCentroid::integrate(
-			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series ) {
+			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series,
+			double normalizationCoeff ) {
 		auto newProperties = wce::make_unique< CSeries >();
 		for ( auto i = 1u; i < t_Series.size(); ++i ) {
 			const auto w1 = t_Series[ i - 1 ]->x();
@@ -38,7 +40,7 @@ namespace FenestrationCommon {
 			const auto diffX = ( w2 - w1 ) / 2;
 			const auto deltaX = dX( w1 - diffX, w2 - diffX );
 			const auto value = y1 * deltaX;
-			newProperties->addProperty( w1, value );
+			newProperties->addProperty( w1, value / normalizationCoeff );
 		}
 
 		return newProperties;
@@ -46,7 +48,8 @@ namespace FenestrationCommon {
 
 	std::unique_ptr< CSeries >
 	CIntegratorTrapezoidal::integrate(
-			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series ) {
+			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series,
+			double normalizationCoeff ) {
 		auto newProperties = wce::make_unique< CSeries >();
 		for ( auto i = 1u; i < t_Series.size(); ++i ) {
 			const auto w1 = t_Series[ i - 1 ]->x();
@@ -56,7 +59,7 @@ namespace FenestrationCommon {
 			const auto deltaX = dX( w1, w2 );
 			const auto yCenter = ( y1 + y2 ) / 2;
 			const auto value = yCenter * deltaX;
-			newProperties->addProperty( w1, value );
+			newProperties->addProperty( w1, value / normalizationCoeff );
 		}
 
 		return newProperties;
@@ -66,7 +69,8 @@ namespace FenestrationCommon {
 	/// Since WCE is working strictly within wavelengths, contributions will be added to first and
 	/// last segment
 	std::unique_ptr< CSeries > CIntegratorTrapezoidalA::integrate(
-			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series ) {
+			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series,
+			double normalizationCoeff ) {
 		auto newProperties = wce::make_unique< CSeries >();
 
 		for ( auto i = 1u; i < t_Series.size(); ++i ) {
@@ -83,14 +87,15 @@ namespace FenestrationCommon {
 			if( i == t_Series.size() - 1 ) {
 				value += ( y2 / 2 ) * deltaX;
 			}
-			newProperties->addProperty( w1, value );
+			newProperties->addProperty( w1, value / normalizationCoeff );
 		}
 
 		return newProperties;
 	}
 
 	std::unique_ptr< CSeries > CIntegratorTrapezoidalB::integrate(
-			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series ) {
+			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series,
+			double normalizationCoeff ) {
 		auto newProperties = wce::make_unique< CSeries >();
 
 		for ( auto i = 1u; i < t_Series.size(); ++i ) {
@@ -104,7 +109,21 @@ namespace FenestrationCommon {
 			if( i == 1 || i == t_Series.size() - 1 ) {
 				value += ( ( y1 + y2 ) / 4 ) * deltaX;
 			}
-			newProperties->addProperty( w1, value );
+			newProperties->addProperty( w1, value / normalizationCoeff );
+		}
+
+		return newProperties;
+	}
+
+	std::unique_ptr< CSeries > CIntegratorPreWeighted::integrate(
+			const std::vector< std::unique_ptr< ISeriesPoint > > & t_Series, double normalizationCoeff ) {
+		auto newProperties = wce::make_unique< CSeries >();
+
+		for ( auto i = 0u; i < t_Series.size(); ++i ) {
+			const auto w1 = t_Series[ i ]->x();
+			const auto y1 = t_Series[ i ]->value();
+
+			newProperties->addProperty( w1, w1 * y1 / normalizationCoeff );
 		}
 
 		return newProperties;
@@ -127,6 +146,9 @@ namespace FenestrationCommon {
 				aStrategy = std::make_shared< CIntegratorTrapezoidalA >();
 				break;
 			case IntegrationType::TrapezoidalB:
+				aStrategy = std::make_shared< CIntegratorTrapezoidalB >();
+				break;
+			case IntegrationType::PreWeighted:
 				aStrategy = std::make_shared< CIntegratorTrapezoidalB >();
 				break;
 			default:
