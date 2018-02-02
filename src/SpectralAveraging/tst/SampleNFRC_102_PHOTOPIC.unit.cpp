@@ -849,8 +849,8 @@ protected:
 
 	void SetUp() override {
 		auto solarRadiation = getSolarRadiation();
-		auto aWavelengths = getWavelengths();
-		auto detectorData = getDetectorData();
+		const auto aWavelengths = getWavelengths();
+		const auto detectorData = getDetectorData();
 		auto sampleMeasurements = getMeasurements();
 
 		m_Sample = std::make_shared< CSpectralSample >( sampleMeasurements, solarRadiation );
@@ -867,17 +867,17 @@ public:
 };
 
 TEST_F( TestSampleNFRC_102_PHOTOPIC, TestSampleProperties ) {
-	auto lowLambda = 0.38;
-	auto highLambda = 0.78;
+	const auto lowLambda = 0.38;
+	const auto highLambda = 0.78;
 
 	auto aSample = getSample();
-	auto transmittance = aSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
+	const auto transmittance = aSample->getProperty( lowLambda, highLambda, Property::T, Side::Front );
 	EXPECT_NEAR( 0.899260, transmittance, 1e-6 );
 
-	auto reflectanceFront = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Front );
+	const auto reflectanceFront = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Front );
 	EXPECT_NEAR( 0.082563, reflectanceFront, 1e-6 );
 
-	auto reflectanceBack = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Back );
+	const auto reflectanceBack = aSample->getProperty( lowLambda, highLambda, Property::R, Side::Back );
 	EXPECT_NEAR( 0.082563, reflectanceBack, 1e-6 );
 
 }

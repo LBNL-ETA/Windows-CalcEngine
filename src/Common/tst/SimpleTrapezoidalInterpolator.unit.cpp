@@ -24,13 +24,25 @@ public:
 
 };
 
-TEST_F( TestSimpleTrapezoidalIntegration, TestRectangular ) {
+TEST_F( TestSimpleTrapezoidalIntegration, TestTrapezoidal ) {
 	SCOPED_TRACE( "Begin Test: Test trapezoidal integrator" );
 
 	auto aIntegrator = getIntegrator();
 
-	double value = aIntegrator->integrate( 1, 2, 10, 11 );
+	std::vector< std::unique_ptr< ISeriesPoint > > input;
+	input.push_back( wce::make_unique< CSeriesPoint >( 10, 20 ) );
+	input.push_back( wce::make_unique< CSeriesPoint >( 15, 30 ) );
+	input.push_back( wce::make_unique< CSeriesPoint >( 20, 40 ) );
 
-	EXPECT_NEAR( 10.50, value, 1e-6 );
+	const auto series = *aIntegrator->integrate( input );
+
+	CSeries correctValues { { 10, 125 }, { 15, 175 } };
+
+	EXPECT_EQ( correctValues.size(), series.size() );
+
+	for( auto i = 0u ; i < correctValues.size() ; ++i ) {
+		EXPECT_NEAR( correctValues[ i ].x(), series[ i ].x(), 1e-6 );
+		EXPECT_NEAR( correctValues[ i ].value(), series[ i ].value(), 1e-6 );
+	}
 
 }

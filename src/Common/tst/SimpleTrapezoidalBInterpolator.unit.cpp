@@ -6,7 +6,7 @@
 
 using namespace FenestrationCommon;
 
-class TestSimpleRectangularIntegration : public testing::Test {
+class TestSimpleTrapezoidalAIntegration : public testing::Test {
 
 private:
 	std::shared_ptr< IIntegratorStrategy > m_Integrator;
@@ -14,7 +14,7 @@ private:
 protected:
 	void SetUp() override {
 		CIntegratorFactory aFactory = CIntegratorFactory();
-		m_Integrator = aFactory.getIntegrator( IntegrationType::Rectangular );
+		m_Integrator = aFactory.getIntegrator( IntegrationType::TrapezoidalA );
 	}
 
 public:
@@ -24,8 +24,8 @@ public:
 
 };
 
-TEST_F( TestSimpleRectangularIntegration, TestRectangular ) {
-	SCOPED_TRACE( "Begin Test: Test rectangular integrator" );
+TEST_F( TestSimpleTrapezoidalAIntegration, TestTrapezoidalA ) {
+	SCOPED_TRACE( "Begin Test: Test trapezoidal A integrator" );
 
 	auto aIntegrator = getIntegrator();
 
@@ -36,7 +36,7 @@ TEST_F( TestSimpleRectangularIntegration, TestRectangular ) {
 
 	const auto series = *aIntegrator->integrate( input );
 
-	CSeries correctValues { { 10, 100 }, { 15, 150 } };
+	CSeries correctValues { { 10, 175 }, { 15, 275 } };
 
 	EXPECT_EQ( correctValues.size(), series.size() );
 

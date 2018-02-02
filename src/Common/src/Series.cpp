@@ -57,22 +57,29 @@ namespace FenestrationCommon {
 	//  CSeries
 	/////////////////////////////////////////////////////
 
-	CSeries::CSeries() {
+	CSeries::CSeries( const std::vector< std::pair< double, double > > & t_values ) {
+		m_Series.clear();
+		for( auto & val : t_values ) {
+			m_Series.push_back( wce::make_unique< CSeriesPoint >( val.first, val.second ) );
+		}
 	}
 
-	CSeries::CSeries( std::vector< std::pair< double, double > > & t_values ) {
-
+	CSeries::CSeries( const std::initializer_list< std::pair< double, double > > & t_values ) {
+		m_Series.clear();
+		for( const auto & val : t_values ) {
+			m_Series.push_back( wce::make_unique< CSeriesPoint >( val.first, val.second ) );
+		}
 	}
 
 	CSeries::CSeries( CSeries const& t_Series ) {
 		m_Series.clear();
-		for( std::unique_ptr< ISeriesPoint > const & val : t_Series.m_Series ) {
+		for( const auto & val : t_Series.m_Series ) {
 			m_Series.push_back( val->clone() );
 		}
 	}
 
 	void CSeries::addProperty( const double t_x, const double t_Value ) {
-		std::shared_ptr< CSeriesPoint > aProperty = std::make_shared< CSeriesPoint >( t_x, t_Value );
+		auto aProperty = std::make_shared< CSeriesPoint >( t_x, t_Value );
 		m_Series.push_back( wce::make_unique< CSeriesPoint >( t_x, t_Value ) );
 	}
 
@@ -89,24 +96,24 @@ namespace FenestrationCommon {
 
 	std::unique_ptr< CSeries > CSeries::integrate( IntegrationType t_IntegrationType ) const {
 
-		std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >( );
+		// std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >( );
 		CIntegratorFactory aFactory = CIntegratorFactory();
 		std::shared_ptr< IIntegratorStrategy > aIntegrator = aFactory.getIntegrator( t_IntegrationType );
-		ISeriesPoint* previousProperty = nullptr;
+		// ISeriesPoint* previousProperty = nullptr;
+		// 
+		// for ( auto& spectralProperty : m_Series ) {
+		// 	if ( previousProperty != nullptr ) {
+		// 		double w1 = previousProperty->x();
+		// 		double w2 = spectralProperty->x();
+		// 		double y1 = previousProperty->value();
+		// 		double y2 = spectralProperty->value();
+		// 		double aValue = aIntegrator->integrate( w1, w2, y1, y2 );
+		// 		newProperties->addProperty( w1, aValue );
+		// 	}
+		// 	previousProperty = spectralProperty.get();
+		// }
 
-		for ( auto& spectralProperty : m_Series ) {
-			if ( previousProperty != nullptr ) {
-				double w1 = previousProperty->x();
-				double w2 = spectralProperty->x();
-				double y1 = previousProperty->value();
-				double y2 = spectralProperty->value();
-				double aValue = aIntegrator->integrate( w1, w2, y1, y2 );
-				newProperties->addProperty( w1, aValue );
-			}
-			previousProperty = spectralProperty.get();
-		}
-
-		return newProperties;
+		return aIntegrator->integrate( m_Series );
 
 	}
 
