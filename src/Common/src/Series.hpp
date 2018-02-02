@@ -42,6 +42,7 @@ namespace FenestrationCommon {
 	class CSeries {
 	public:
 		CSeries();
+		CSeries( std::vector< std::pair< double, double > > & t_values );
 		CSeries( CSeries const & t_Series );
 		void addProperty( const double t_x, const double t_Value );
 		void insertToBeginning( double t_x, double t_Value );

@@ -10,13 +10,20 @@ namespace FenestrationCommon {
 	}
 
 	double CIntegratorRectangular::integrate( double const x1, double const x2, double const y1, double const ) {
-		double deltaX = dX( x1, x2 );
+		const auto deltaX = dX( x1, x2 );
+		return y1 * deltaX;
+	}
+
+	double CIntegratorRectangularCentroid::integrate( double const x1, double const x2, double const y1,
+		double const y2 ) {
+		const auto diffX = ( x2 - x1 ) / 2;
+		const auto deltaX = dX( x1 - diffX, x2 - diffX );
 		return y1 * deltaX;
 	}
 
 	double CIntegratorTrapezoidal::integrate( double const x1, double const x2, double const y1, double const y2 ) {
-		double deltaX = dX( x1, x2 );
-		double yCenter = ( y1 + y2 ) / 2;
+		const auto deltaX = dX( x1, x2 );
+		const auto yCenter = ( y1 + y2 ) / 2;
 		return yCenter * deltaX;
 	}
 

@@ -60,6 +60,10 @@ namespace FenestrationCommon {
 	CSeries::CSeries() {
 	}
 
+	CSeries::CSeries( std::vector< std::pair< double, double > > & t_values ) {
+
+	}
+
 	CSeries::CSeries( CSeries const& t_Series ) {
 		m_Series.clear();
 		for( std::unique_ptr< ISeriesPoint > const & val : t_Series.m_Series ) {

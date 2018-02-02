@@ -5,7 +5,7 @@
 
 namespace FenestrationCommon {
 
-	enum class IntegrationType { Rectangular, Trapezoidal };
+	enum class IntegrationType { Rectangular, RectangularCentroid, Trapezoidal };
 
 	class IIntegratorStrategy {
 	public:
@@ -16,12 +16,17 @@ namespace FenestrationCommon {
 
 	class CIntegratorRectangular : public IIntegratorStrategy {
 	public:
-		double integrate( double const x1, double const x2, double const y1, double const y2 );
+		double integrate( double const x1, double const x2, double const y1, double const y2 ) override;
+	};
+
+	class CIntegratorRectangularCentroid : public IIntegratorStrategy {
+	public:
+		double integrate( double const x1, double const x2, double const y1, double const y2 ) override;
 	};
 
 	class CIntegratorTrapezoidal : public IIntegratorStrategy {
 	public:
-		double integrate( double const x1, double const x2, double const y1, double const y2 );
+		double integrate( double const x1, double const x2, double const y1, double const y2 ) override;
 	};
 
 	class CIntegratorFactory {
