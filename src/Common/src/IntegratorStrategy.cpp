@@ -120,10 +120,11 @@ namespace FenestrationCommon {
 		auto newProperties = wce::make_unique< CSeries >();
 
 		for ( auto i = 0u; i < t_Series.size(); ++i ) {
-			const auto w1 = t_Series[ i ]->x();
+			/// const auto w1 = t_Series[ i ]->x();
 			const auto y1 = t_Series[ i ]->value();
 
-			newProperties->addProperty( w1, w1 * y1 / normalizationCoeff );
+			/// newProperties->addProperty( w1, w1 * y1 / normalizationCoeff );
+			newProperties->addProperty( 1, y1 / normalizationCoeff );
 		}
 
 		return newProperties;
@@ -149,7 +150,7 @@ namespace FenestrationCommon {
 				aStrategy = std::make_shared< CIntegratorTrapezoidalB >();
 				break;
 			case IntegrationType::PreWeighted:
-				aStrategy = std::make_shared< CIntegratorTrapezoidalB >();
+				aStrategy = std::make_shared< CIntegratorPreWeighted >();
 				break;
 			default:
 				assert( "Irregular call of integration strategy." );

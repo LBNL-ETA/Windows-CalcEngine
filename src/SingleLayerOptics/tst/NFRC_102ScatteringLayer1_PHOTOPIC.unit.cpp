@@ -851,7 +851,7 @@ private:
 	}
 
 protected:
-	virtual void SetUp() {
+	void SetUp() override {
 
 		auto aSolarRadiation = loadSolarRadiationFile();
 		auto aMeasurements = loadSampleData_NFRC_102();
