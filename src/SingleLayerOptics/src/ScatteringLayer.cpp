@@ -113,6 +113,10 @@ namespace SingleLayerOptics {
 		return aLayer;
 	}
 
+	std::vector< double > CScatteringLayer::getWavelengths() const {
+		return m_Cell->getBandWavelengths();
+	}
+
 	void CScatteringLayer::createResultsAtAngle( const double t_Theta, const double t_Phi ) {
 		if ( m_BSDFLayer != nullptr && m_Cell != nullptr ) {
 			m_Surface[ Side::Front ] = createSurface( Side::Front, t_Theta, t_Phi );
@@ -143,6 +147,14 @@ namespace SingleLayerOptics {
 			createResultsAtAngle( m_Theta, m_Phi );
 		}
 		return false;
+	}
+
+	double CScatteringLayer::getMinLambda() const {
+		return m_Cell->getMinLambda();
+	}
+
+	double CScatteringLayer::getMaxLambda() const {
+		return m_Cell->getMaxLambda();
 	}
 
 }

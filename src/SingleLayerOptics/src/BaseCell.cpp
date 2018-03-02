@@ -67,4 +67,12 @@ namespace SingleLayerOptics {
 		return m_Material->getBandSize();
 	}
 
+	double CBaseCell::getMinLambda() const {
+		return m_Material->getMinLambda();
+	}
+
+	double CBaseCell::getMaxLambda() const {
+		return m_Material->getMaxLambda();
+	}
+
 }
