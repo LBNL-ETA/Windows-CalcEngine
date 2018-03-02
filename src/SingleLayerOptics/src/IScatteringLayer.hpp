@@ -1,6 +1,8 @@
 #ifndef WINDOWS_CALCENGINE_ISCATTERINGLAYER_HPP
 #define WINDOWS_CALCENGINE_ISCATTERINGLAYER_HPP
 
+#include <vector>
+
 namespace FenestrationCommon {
 
 	enum class PropertySimple;
