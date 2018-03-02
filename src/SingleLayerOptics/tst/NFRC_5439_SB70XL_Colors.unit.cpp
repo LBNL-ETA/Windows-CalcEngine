@@ -1151,23 +1151,47 @@ public:
 
 };
 
-TEST_F( TestNFRC_5439_SB70XL_Colors, Test1 ) {
-	SCOPED_TRACE( "Begin Test: NFRC 102 scattering layer - 0 deg incident." );
+TEST_F( TestNFRC_5439_SB70XL_Colors, TestTrichromatic ) {
+	SCOPED_TRACE( "Begin Test: Trichromatic." );
 
 	std::shared_ptr< SingleLayerOptics::ColorProperties > aLayer = getLayer();
 
 	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
-	double Tx = aLayer->getTrichromaticX( FenestrationCommon::PropertySimple::T, aSide,
-			FenestrationCommon::Scattering::DirectDirect );
-	EXPECT_NEAR( 66.393144, Tx, 1e-6 );
+	SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
+			FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect );
+	EXPECT_NEAR( 66.393144, T.X, 1e-6 );
+	EXPECT_NEAR( 71.662457, T.Y, 1e-6 );
+	EXPECT_NEAR( 71.768345, T.Z, 1e-6 );
 
-	double Ty = aLayer->getTrichromaticY( FenestrationCommon::PropertySimple::T, aSide,
-			FenestrationCommon::Scattering::DirectDirect );
-	EXPECT_NEAR( 71.662457, Ty, 1e-6 );
+}
 
-	double Tz = aLayer->getTrichromaticZ( FenestrationCommon::PropertySimple::T, aSide,
+TEST_F( TestNFRC_5439_SB70XL_Colors, TestRGB ) {
+	SCOPED_TRACE( "Begin Test: RGB." );
+
+	std::shared_ptr< SingleLayerOptics::ColorProperties > aLayer = getLayer();
+
+	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
+
+	auto rgb = aLayer->getRGB( FenestrationCommon::PropertySimple::T, aSide,
 			FenestrationCommon::Scattering::DirectDirect );
-	EXPECT_NEAR( 71.768345, Tz, 1e-6 );
+	EXPECT_EQ( 239, rgb.R );
+	EXPECT_EQ( 245, rgb.G );
+	EXPECT_EQ( 233, rgb.B );
+
+}
+
+TEST_F( TestNFRC_5439_SB70XL_Colors, TestCIE_LAB ) {
+	SCOPED_TRACE( "Begin Test: CIE_LAB." );
+
+	std::shared_ptr< SingleLayerOptics::ColorProperties > aLayer = getLayer();
+
+	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
+
+	auto cie = aLayer->getCIE_Lab( FenestrationCommon::PropertySimple::T, aSide,
+			FenestrationCommon::Scattering::DirectDirect );
+	EXPECT_NEAR( 87.805864, cie.L, 1e-6 );
+	EXPECT_NEAR( -3.402796, cie.a, 1e-6 );
+	EXPECT_NEAR( 4.081155, cie.b, 1e-6 );
 
 }

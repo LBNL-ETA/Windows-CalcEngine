@@ -10,6 +10,30 @@ namespace SingleLayerOptics {
 
 	class IScatteringLayer;
 
+	struct Trichromatic {
+		Trichromatic( double X, double Y, double Z );
+
+		double X;
+		double Y;
+		double Z;
+	};
+
+	struct RGB {
+		RGB( int R, int G, int B );
+
+		int R;
+		int G;
+		int B;
+	};
+
+	struct CIE_LAB {
+		CIE_LAB( double L, double A, double B );
+
+		double L;
+		double a;
+		double b;
+	};
+
 	class ColorProperties {
 
 	public:
@@ -25,26 +49,25 @@ namespace SingleLayerOptics {
 				const std::shared_ptr< std::vector< double > > & t_wavelengths = nullptr
 		);
 
-		double getTrichromaticX(
+		Trichromatic getTrichromatic(
+				const FenestrationCommon::PropertySimple t_Property,
+				const FenestrationCommon::Side t_Side,
+				const FenestrationCommon::Scattering t_Scattering,
+				const double t_Theta = 0,
+				const double t_Phi = 0
+		);
+
+		RGB getRGB(
 				const FenestrationCommon::PropertySimple t_Property,
 				const FenestrationCommon::Side t_Side,
 				const FenestrationCommon::Scattering t_Scattering,
 				const double t_Theta = 0,
 				const double t_Phi = 0 );
 
-		double getTrichromaticY(
-				const FenestrationCommon::PropertySimple t_Property,
-				const FenestrationCommon::Side t_Side,
-				const FenestrationCommon::Scattering t_Scattering,
-				const double t_Theta = 0,
-				const double t_Phi = 0 );
-
-		double getTrichromaticZ(
-				const FenestrationCommon::PropertySimple t_Property,
-				const FenestrationCommon::Side t_Side,
-				const FenestrationCommon::Scattering t_Scattering,
-				const double t_Theta = 0,
-				const double t_Phi = 0 );
+		CIE_LAB getCIE_Lab( const FenestrationCommon::PropertySimple t_Property,
+		                    const FenestrationCommon::Side t_Side,
+		                    const FenestrationCommon::Scattering t_Scattering, const double t_Theta = 0,
+		                    const double t_Phi = 0 );
 
 	private:
 		std::shared_ptr< IScatteringLayer > m_LayerX;
