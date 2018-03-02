@@ -3,13 +3,10 @@
 
 #include "WCESingleLayerOptics.hpp"
 #include "WCESpectralAveraging.hpp"
-#include "WCEMultiLayerOptics.hpp"
 
-using namespace SingleLayerOptics;
-using namespace SpectralAveraging;
-using namespace FenestrationCommon;
+using FenestrationCommon::CSeries;
 
-class TestNFRC_5439_SB70XL_Colors : public testing::Test {
+class TestNFRC_5439_SB70XL_Colors: public testing::Test {
 
 private:
 
@@ -643,8 +640,8 @@ private:
 		return solarRadiation;
 	}
 
-	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_5439() const {
-		std::shared_ptr< CSpectralSampleData > aMeasurements_5439 = std::make_shared< CSpectralSampleData >();
+	std::shared_ptr< SpectralAveraging::CSpectralSampleData > loadSampleData_NFRC_5439() const {
+		std::shared_ptr< SpectralAveraging::CSpectralSampleData > aMeasurements_5439 = std::make_shared< SpectralAveraging::CSpectralSampleData >();
 
 		aMeasurements_5439->addRecord( 0.300, 0.0019, 0.0491, 0.2686 );
 		aMeasurements_5439->addRecord( 0.305, 0.0037, 0.0885, 0.2723 );
@@ -1063,72 +1060,75 @@ private:
 		return detectorData;
 	}
 
-	std::shared_ptr< CScatteringLayer > createXLayer () const {
+	std::shared_ptr< SingleLayerOptics::CScatteringLayer > createXLayer() const {
 		auto aSolarRadiation = loadSolarRadiationFile();
 		auto aMeasurements = loadSampleData_NFRC_5439();
 		auto wavelengths = loadWavelengths();
 
 		auto aDetectorData = ASTM_E308_1964_X();
 
-		auto aSample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		auto aSample = std::make_shared< SpectralAveraging::CSpectralSample >( aMeasurements,
+				aSolarRadiation );
 
 		aSample->setDetectorData( aDetectorData );
-		aSample->setWavelengths( WavelengthSet::Custom, wavelengths );
+		aSample->setWavelengths( SpectralAveraging::WavelengthSet::Custom, wavelengths );
 
 		double thickness = 3.048e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial =
-				std::make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic,
-						WavelengthRange::Visible );
+		std::shared_ptr< SingleLayerOptics::CMaterial > aMaterial = std::make_shared< SingleLayerOptics::CMaterialSample >(
+				aSample, thickness, FenestrationCommon::MaterialType::Monolithic,
+				FenestrationCommon::WavelengthRange::Visible );
 
-		return std::make_shared< CScatteringLayer >( aMaterial );
+		return std::make_shared< SingleLayerOptics::CScatteringLayer >( aMaterial );
 	}
 
-	std::shared_ptr< CScatteringLayer > createYLayer () const {
+	std::shared_ptr< SingleLayerOptics::CScatteringLayer > createYLayer() const {
 		auto aSolarRadiation = loadSolarRadiationFile();
 		auto aMeasurements = loadSampleData_NFRC_5439();
 		auto wavelengths = loadWavelengths();
 
 		auto aDetectorData = ASTM_E308_1964_Y();
 
-		auto aSample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		auto aSample = std::make_shared< SpectralAveraging::CSpectralSample >( aMeasurements,
+				aSolarRadiation );
 
 		aSample->setDetectorData( aDetectorData );
-		aSample->setWavelengths( WavelengthSet::Custom, wavelengths );
+		aSample->setWavelengths( SpectralAveraging::WavelengthSet::Custom, wavelengths );
 
 		double thickness = 3.048e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial =
-				std::make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic,
-						WavelengthRange::Visible );
+		std::shared_ptr< SingleLayerOptics::CMaterial > aMaterial = std::make_shared< SingleLayerOptics::CMaterialSample >(
+				aSample, thickness, FenestrationCommon::MaterialType::Monolithic,
+				FenestrationCommon::WavelengthRange::Visible );
 
-		return std::make_shared< CScatteringLayer >( aMaterial );
+		return std::make_shared< SingleLayerOptics::CScatteringLayer >( aMaterial );
 	}
 
-	std::shared_ptr< CScatteringLayer > createZLayer () const {
+	std::shared_ptr< SingleLayerOptics::CScatteringLayer > createZLayer() const {
 		auto aSolarRadiation = loadSolarRadiationFile();
 		auto aMeasurements = loadSampleData_NFRC_5439();
 		auto wavelengths = loadWavelengths();
 
 		auto aDetectorData = ASTM_E308_1964_Z();
 
-		auto aSample = std::make_shared< CSpectralSample >( aMeasurements, aSolarRadiation );
+		auto aSample = std::make_shared< SpectralAveraging::CSpectralSample >( aMeasurements,
+				aSolarRadiation );
 
 		aSample->setDetectorData( aDetectorData );
-		aSample->setWavelengths( WavelengthSet::Custom, wavelengths );
+		aSample->setWavelengths( SpectralAveraging::WavelengthSet::Custom, wavelengths );
 
 		double thickness = 3.048e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial =
-				std::make_shared< CMaterialSample >( aSample, thickness, MaterialType::Monolithic,
-						WavelengthRange::Visible );
+		std::shared_ptr< SingleLayerOptics::CMaterial > aMaterial = std::make_shared< SingleLayerOptics::CMaterialSample >(
+				aSample, thickness, FenestrationCommon::MaterialType::Monolithic,
+				FenestrationCommon::WavelengthRange::Visible );
 
-		return std::make_shared< CScatteringLayer >( aMaterial );
+		return std::make_shared< SingleLayerOptics::CScatteringLayer >( aMaterial );
 	}
 
 protected:
 	void SetUp() override {
 
-		std::shared_ptr< IScatteringLayer > LayerX = createXLayer();
-		std::shared_ptr< IScatteringLayer > LayerY = createYLayer();
-		std::shared_ptr< IScatteringLayer > LayerZ = createZLayer();
+		std::shared_ptr< SingleLayerOptics::IScatteringLayer > LayerX = createXLayer();
+		std::shared_ptr< SingleLayerOptics::IScatteringLayer > LayerY = createYLayer();
+		std::shared_ptr< SingleLayerOptics::IScatteringLayer > LayerZ = createZLayer();
 
 		CSeries DX = *ASTM_E308_1964_X();
 		CSeries DY = *ASTM_E308_1964_Y();
@@ -1139,7 +1139,7 @@ protected:
 		auto wl = loadWavelengths();
 
 		m_Color = std::make_shared< SingleLayerOptics::ColorProperties >( LayerX, LayerY, LayerZ,
-			solarRadiation, DX, DY, DZ, wl );
+				solarRadiation, DX, DY, DZ, wl );
 
 	}
 
@@ -1156,15 +1156,18 @@ TEST_F( TestNFRC_5439_SB70XL_Colors, Test1 ) {
 
 	std::shared_ptr< SingleLayerOptics::ColorProperties > aLayer = getLayer();
 
-	Side aSide = Side::Front;
+	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
-	double Tx = aLayer->getTrichromaticX( PropertySimple::T, aSide, Scattering::DirectDirect );
+	double Tx = aLayer->getTrichromaticX( FenestrationCommon::PropertySimple::T, aSide,
+			FenestrationCommon::Scattering::DirectDirect );
 	EXPECT_NEAR( 66.393144, Tx, 1e-6 );
 
-	double Ty = aLayer->getTrichromaticY( PropertySimple::T, aSide, Scattering::DirectDirect );
+	double Ty = aLayer->getTrichromaticY( FenestrationCommon::PropertySimple::T, aSide,
+			FenestrationCommon::Scattering::DirectDirect );
 	EXPECT_NEAR( 71.662457, Ty, 1e-6 );
 
-	double Tz = aLayer->getTrichromaticZ( PropertySimple::T, aSide, Scattering::DirectDirect );
+	double Tz = aLayer->getTrichromaticZ( FenestrationCommon::PropertySimple::T, aSide,
+			FenestrationCommon::Scattering::DirectDirect );
 	EXPECT_NEAR( 71.768345, Tz, 1e-6 );
 
 }

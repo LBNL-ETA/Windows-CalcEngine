@@ -3,14 +3,14 @@
 //
 
 #include "ColorProperties.hpp"
-#include "WCESingleLayerOptics.hpp"
+#include "IScatteringLayer.hpp"
 
-namespace MultiLayerOptics {
+namespace SingleLayerOptics {
 
 	ColorProperties::ColorProperties(
-			const std::shared_ptr< SingleLayerOptics::IScatteringLayer > & layerX,
-			const std::shared_ptr< SingleLayerOptics::IScatteringLayer > & layerY,
-			const std::shared_ptr< SingleLayerOptics::IScatteringLayer > & layerZ,
+			const std::shared_ptr< IScatteringLayer > & layerX,
+			const std::shared_ptr< IScatteringLayer > & layerY,
+			const std::shared_ptr< IScatteringLayer > & layerZ,
 			const FenestrationCommon::CSeries & t_Source, const FenestrationCommon::CSeries & t_DetectorX,
 			const FenestrationCommon::CSeries & t_DetectorY,
 			const FenestrationCommon::CSeries & t_DetectorZ,

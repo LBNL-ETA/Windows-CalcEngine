@@ -10,18 +10,14 @@ namespace SingleLayerOptics {
 
 	class IScatteringLayer;
 
-}
-
-namespace MultiLayerOptics {
-
 	class ColorProperties {
 
 	public:
 		/// For BSDF layers make additional constructor
 		ColorProperties(
-				const std::shared_ptr< SingleLayerOptics::IScatteringLayer > & layerX,
-				const std::shared_ptr< SingleLayerOptics::IScatteringLayer > & layerY,
-				const std::shared_ptr< SingleLayerOptics::IScatteringLayer > & layerZ,
+				const std::shared_ptr< IScatteringLayer > & layerX,
+				const std::shared_ptr< IScatteringLayer > & layerY,
+				const std::shared_ptr< IScatteringLayer > & layerZ,
 				const FenestrationCommon::CSeries & t_Source,
 				const FenestrationCommon::CSeries & t_DetectorX,
 				const FenestrationCommon::CSeries & t_DetectorY,
@@ -51,9 +47,9 @@ namespace MultiLayerOptics {
 				const double t_Phi = 0 );
 
 	private:
-		std::shared_ptr< SingleLayerOptics::IScatteringLayer > m_LayerX;
-		std::shared_ptr< SingleLayerOptics::IScatteringLayer > m_LayerY;
-		std::shared_ptr< SingleLayerOptics::IScatteringLayer > m_LayerZ;
+		std::shared_ptr< IScatteringLayer > m_LayerX;
+		std::shared_ptr< IScatteringLayer > m_LayerY;
+		std::shared_ptr< IScatteringLayer > m_LayerZ;
 		double m_SDx;
 		double m_SDy;
 		double m_SDz;
