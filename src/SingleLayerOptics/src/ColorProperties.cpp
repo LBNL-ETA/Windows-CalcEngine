@@ -77,6 +77,8 @@ namespace SingleLayerOptics {
 			val = ( val <= testlimit )
 					? val * 12.92
 					: 1.055 * std::pow( val, 1 / 2.4 ) - 0.055;
+			if( val > 1.0 ) val = 1.0;
+			if( val < 0.0 ) val = 0.0;
 			val = val * 255;
 		}
 
