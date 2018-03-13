@@ -98,8 +98,8 @@ namespace SingleLayerOptics {
 		std::vector< double > Q{ X, Y, Z };
 		for( auto & val : Q ) {
 			val = ( val > std::pow( 6.0 / 29.0, 3 ) )
-					? val = std::pow( val, 1.0 / 3.0 )
-					: val = ( 841.0 / 108.0 ) * val + 4.0 / 29.0;
+					? std::pow( val, 1.0 / 3.0 )
+					: ( 841.0 / 108.0 ) * val + 4.0 / 29.0;
 		}
 
 		return CIE_LAB( 116 * Q[ 1 ] - 16, 500 * ( Q[ 0 ] - Q[ 1 ] ), 200 * ( Q[ 1 ] - Q[ 2 ] ) );
