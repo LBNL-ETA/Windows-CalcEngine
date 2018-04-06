@@ -153,5 +153,5 @@ TEST_F(TestGasPropertiesQuadrupleGas, TotalPercents) {
 
 	double percents = m_Gas.totalPercent();
 
-	ASSERT_EQ( 1.0, percents );
+	EXPECT_NEAR( 1.0, percents, 1e-6 );
 }
