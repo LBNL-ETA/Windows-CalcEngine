@@ -5,6 +5,7 @@
 #include <map>
 
 #include "BSDFLayerMaker.hpp"
+#include "IScatteringLayer.hpp"
 
 namespace FenestrationCommon {
 
@@ -26,7 +27,7 @@ namespace SingleLayerOptics {
 	class ICellDescription;
 
 	// Handles general case layer when properties can be direct, diffuse or combination between these two.
-	class CScatteringLayer {
+	class CScatteringLayer : public IScatteringLayer {
 	public:
 		CScatteringLayer( const std::shared_ptr< CScatteringSurface >& t_Front,
 		                  const std::shared_ptr< CScatteringSurface >& t_Back );
@@ -54,7 +55,7 @@ namespace SingleLayerOptics {
 			const FenestrationCommon::Side t_Side,
 			const FenestrationCommon::Scattering t_Scattering,
 			const double t_Theta = 0,
-			const double t_Phi = 0 );
+			const double t_Phi = 0 ) override;
 
 		//void setPropertySimple( const FenestrationCommon::PropertySimple t_Property,
 		//  const FenestrationCommon::Side t_Side, const FenestrationCommon::Scattering t_Scattering,
@@ -75,6 +76,11 @@ namespace SingleLayerOptics {
 			const FenestrationCommon::Scattering t_Scattering,
 			const double t_Theta = 0,
 			const double t_Phi = 0 );
+
+		std::vector< double > getWavelengths() const override;
+
+		double getMinLambda() const override;
+		double getMaxLambda() const override;
 
 	private:
 		void createResultsAtAngle( const double t_Theta, const double t_Phi );

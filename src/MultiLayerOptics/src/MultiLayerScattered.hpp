@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "WCECommon.hpp"
+#include "WCESingleLayerOptics.hpp"
 
 namespace SingleLayerOptics {
 
@@ -20,7 +21,7 @@ namespace MultiLayerOptics {
 
 	// Handles equivalent layer properties of multilayer IGU that is made of
 	// any type of layer (specular or diffuse)
-	class CMultiLayerScattered {
+	class CMultiLayerScattered : public SingleLayerOptics::IScatteringLayer {
 	public:
 		CMultiLayerScattered(
 			const double t_Tf_dir_dir, const double t_Rf_dir_dir,
@@ -53,7 +54,7 @@ namespace MultiLayerOptics {
 			const FenestrationCommon::Side t_Side,
 			const FenestrationCommon::Scattering t_Scattering,
 			const double t_Theta = 0,
-			const double t_Phi = 0 );
+			const double t_Phi = 0 ) override;
 
 		double getAbsorptanceLayer(
 			const size_t Index, FenestrationCommon::Side t_Side,
@@ -66,6 +67,11 @@ namespace MultiLayerOptics {
 			FenestrationCommon::ScatteringSimple t_Scattering,
 			const double t_Theta = 0,
 			const double t_Phi = 0 );
+
+		std::vector< double > getWavelengths() const override;
+
+		double getMinLambda() const override;
+		double getMaxLambda() const override;
 
 	private:
 		void initialize( const std::shared_ptr< SingleLayerOptics::CScatteringLayer >& t_Layer );

@@ -7,5 +7,6 @@
 #include "../src/MeasuredSampleData.hpp"
 #include "../src/NIRRatio.hpp"
 #include "../src/SpectralSample.hpp"
+#include "../src/SpectrumFunctions.hpp"
 
 #endif

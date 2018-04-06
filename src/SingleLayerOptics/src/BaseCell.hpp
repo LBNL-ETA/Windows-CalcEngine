@@ -41,6 +41,9 @@ namespace SingleLayerOptics {
 		int getBandIndex( const double t_Wavelength );
 		size_t getBandSize() const;
 
+		double getMinLambda() const;
+		double getMaxLambda() const;
+
 	protected:
 		std::shared_ptr< CMaterial > m_Material;
 		std::shared_ptr< ICellDescription > m_CellDescription;

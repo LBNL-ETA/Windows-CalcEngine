@@ -14,6 +14,8 @@ protected:
 	void SetUp() override {
 		auto aSeries = std::make_shared< CSeries >();
 
+		const double normalization = 1;
+
 		// example taken from WINDOW 7 double layer (NFRC 102 and NFRC 103) angular dependency for Tsol
 		// NOTE: It is not necessary to add angles in accending order. Series will sort out order before
 		// performing integration
@@ -28,7 +30,9 @@ protected:
 		aSeries->addProperty( 80, 0.185 );
 		aSeries->addProperty( 90, 0.000 );
 
-		m_Integrator = std::make_shared< CHemispherical2DIntegrator >( *aSeries, IntegrationType::Trapezoidal );
+		m_Integrator = std::make_shared< CHemispherical2DIntegrator >( *aSeries,
+																																	 IntegrationType::Trapezoidal,
+																																	 normalization );
 
 	}
 

@@ -6,7 +6,7 @@
 
 using namespace FenestrationCommon;
 
-class TestSimpleRectangularIntegration : public testing::Test {
+class TestSimpleRectangularCentroidIntegration : public testing::Test {
 
 private:
 	std::shared_ptr< IIntegratorStrategy > m_Integrator;
@@ -24,7 +24,7 @@ public:
 
 };
 
-TEST_F( TestSimpleRectangularIntegration, TestRectangular ) {
+TEST_F( TestSimpleRectangularCentroidIntegration, TestRectangularCentorid ) {
 	SCOPED_TRACE( "Begin Test: Test rectangular integrator" );
 
 	auto aIntegrator = getIntegrator();
