@@ -14,6 +14,11 @@ namespace FenestrationCommon {
 			m_Matrix[ i ].resize( m_Size );
 	}
 
+	CSquareMatrix::CSquareMatrix( const std::vector< std::vector< double > > & t_vector ) :
+			m_Size( t_vector.size() ), m_Matrix( t_vector ) {
+
+	}
+
 	size_t CSquareMatrix::getSize() const {
 		return m_Size;
 	}

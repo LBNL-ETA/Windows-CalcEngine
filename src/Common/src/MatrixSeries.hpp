@@ -30,7 +30,7 @@ namespace FenestrationCommon {
 
 		std::vector< std::unique_ptr< CSeries > >& operator[]( const size_t index );
 
-		void integrate( const IntegrationType t_Integration );
+		void integrate( const IntegrationType t_Integration, double normalizationCoefficient );
 
 		std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > >
 		getSums( const double minLambda, const double maxLambda, const std::vector< double >& t_ScaleValue );

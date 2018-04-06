@@ -12,8 +12,7 @@ private:
 
 protected:
 	void
-	SetUp() override
-	{
+	SetUp() override {
 		m_Series = std::make_shared< CSeries >();
 
 		m_Series->addProperty( 0.500, 0.5511 );
@@ -41,20 +40,19 @@ protected:
 
 public:
 	std::shared_ptr< CSeries >
-	getProperty() const
-	{
+	getProperty() const {
 		return m_Series;
 	}
 
 };
 
-TEST_F( TestSeriesIntegration, TestRectangular )
-{
+TEST_F( TestSeriesIntegration, TestRectangular ) {
 	SCOPED_TRACE( "Begin Test: Test rectangular integration over the specturm of data." );
 
 	auto & aSpectralProperties = *getProperty();
 
-	std::shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Rectangular );
+	std::shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate(
+			IntegrationType::Rectangular );
 
 	std::vector< double > correctResults;
 	correctResults.push_back( 0.0027555 );
@@ -78,20 +76,20 @@ TEST_F( TestSeriesIntegration, TestRectangular )
 	correctResults.push_back( 0.0027285 );
 	correctResults.push_back( 0.0027125 );
 
-EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
+	EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
 
 	for ( size_t i = 0; i < aIntegratedProperties->size(); ++i ) {
-	EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ].value(), 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ].value(), 1e-6 );
 	}
 }
 
-TEST_F( TestSeriesIntegration, TestTrapezoidal )
-{
+TEST_F( TestSeriesIntegration, TestTrapezoidal ) {
 	SCOPED_TRACE( "Begin Test: Test trapezoidal integration over the specturm of data." );
 
 	auto & aSpectralProperties = *getProperty();
 
-	std::shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate( IntegrationType::Trapezoidal );
+	std::shared_ptr< CSeries > aIntegratedProperties = aSpectralProperties.integrate(
+			IntegrationType::Trapezoidal );
 
 	std::vector< double > correctResults;
 	correctResults.push_back( 0.00275750 );
@@ -115,9 +113,9 @@ TEST_F( TestSeriesIntegration, TestTrapezoidal )
 	correctResults.push_back( 0.00272050 );
 	correctResults.push_back( 0.00271500 );
 
-EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
+	EXPECT_EQ( aIntegratedProperties->size(), correctResults.size() );
 
 	for ( size_t i = 0; i < aIntegratedProperties->size(); ++i ) {
-	EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ].value(), 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], ( *aIntegratedProperties )[ i ].value(), 1e-6 );
 	}
 }

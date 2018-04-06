@@ -9,6 +9,7 @@ namespace FenestrationCommon {
 	class CSquareMatrix {
 	public:
 		explicit CSquareMatrix( size_t const aSize );
+		explicit CSquareMatrix( const std::vector< std::vector< double > > & t_vector );
 		size_t getSize() const;
 		void setZeros();
 		// All diagonal items are one and all non diagonal are zero

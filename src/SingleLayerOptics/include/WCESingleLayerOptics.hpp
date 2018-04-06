@@ -31,5 +31,7 @@
 #include "../src/VenetianSlat.hpp"
 #include "../src/WovenCell.hpp"
 #include "../src/WovenCellDescription.hpp"
+#include "../src/IScatteringLayer.hpp"
+#include "../src/ColorProperties.hpp"
 
 #endif

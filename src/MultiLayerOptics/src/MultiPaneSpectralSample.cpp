@@ -62,7 +62,7 @@ namespace MultiLayerOptics {
 			aAbs = aAbs->interpolate( m_Wavelengths );
 		}
 		aAbs = aAbs->mMult( *m_IncomingSource );
-		aAbs = aAbs->integrate( m_IntegrationType );
+		aAbs = aAbs->integrate( m_IntegrationType, m_NormalizationCoefficient );
 		m_AbsorbedLayersSource.push_back( aAbs );
 	}
 

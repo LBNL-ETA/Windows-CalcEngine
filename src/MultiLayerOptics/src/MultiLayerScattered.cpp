@@ -116,4 +116,16 @@ namespace MultiLayerOptics {
 		}
 	}
 
+	std::vector< double > CMultiLayerScattered::getWavelengths() const {
+		return m_Layers[ 0 ]->getWavelengths();
+	}
+
+	double CMultiLayerScattered::getMinLambda() const {
+		return m_Layers[ 0 ]->getMinLambda();
+	}
+
+	double CMultiLayerScattered::getMaxLambda() const {
+		return m_Layers[ 0 ]->getMaxLambda();
+	}
+
 }
