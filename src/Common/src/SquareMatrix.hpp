@@ -18,6 +18,8 @@ namespace FenestrationCommon
         void setIdentity();
         void setDiagonal(const std::vector<double> & tInput);
 
+        std::vector<size_t> makeUpperTriangular();
+
         SquareMatrix inverse();
 
         double operator()(const std::size_t i, const std::size_t j) const;
@@ -28,6 +30,7 @@ namespace FenestrationCommon
     private:
         // explicit SquareMatrix(SquareMatrix && tMatrix);
         SquareMatrix LU();
+        std::vector<double> checkSingularity() const;
         std::size_t m_size;
         std::vector<std::vector<double>> m_Matrix;
     };
