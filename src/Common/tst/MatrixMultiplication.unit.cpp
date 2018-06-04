@@ -17,7 +17,7 @@ TEST_F(TestMatrixMultiplication, Test1)
 {
     SCOPED_TRACE("Begin Test: Test matrix multiplication (3 x 3).");
 
-    const auto n = 3;
+    const auto n = 3u;
 
     const SquareMatrix a{{4, 3, 9}, {8, 8, 4}, {4, 3, 7}};
 
