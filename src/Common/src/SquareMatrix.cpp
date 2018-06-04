@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <cassert>
+#include <cmath>
 
 #include "SquareMatrix.hpp"
 
