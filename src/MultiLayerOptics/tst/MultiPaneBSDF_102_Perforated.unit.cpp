@@ -281,7 +281,7 @@ protected:
 			                                WavelengthRange::Solar );
 
 		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
-		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		std::unique_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
 
 		// Setting circular perforated shade with double range material
 		double Tmat = 0.1;
@@ -311,7 +311,7 @@ protected:
 			std::make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
 		// Perforated layer is created here
-		std::shared_ptr< CBSDFLayer > Layer_Perforated =
+		std::unique_ptr< CBSDFLayer > Layer_Perforated =
 			CBSDFLayerMaker( aMaterialPerforated, aBSDF, aCellDescription ).getLayer();
 
 		std::vector< double > commonWavelengths = Layer_102->getBandWavelengths();
@@ -328,7 +328,7 @@ protected:
 
 public:
 
-	std::shared_ptr< CMultiPaneBSDF > getLayer() {
+	std::shared_ptr< CMultiPaneBSDF > getLayer() const {
 		return m_Layer;
 	};
 
@@ -396,10 +396,10 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 	abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
 	EXPECT_NEAR( 0.1797297, abs2, 1e-6 );
 
-	SquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+	SquareMatrix aT = aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
 	// Front transmittance matrix
-	size_t size = aT.getSize();
+	size_t size = aT.size();
 
 	std::vector< double > correctResults;
 	correctResults.push_back( 1.80940064 );
@@ -410,13 +410,13 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 	correctResults.push_back( 0.000550776082 );
 	correctResults.push_back( 0.000283894713 );
 
-	EXPECT_EQ( correctResults.size(), aT.getSize() );
+	EXPECT_EQ( correctResults.size(), aT.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aT[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aT( i , i ), 1e-6 );
 	}
 
 	// Back Reflectance matrix
-	SquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+	SquareMatrix aRb = aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 
@@ -428,9 +428,9 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 	correctResults.push_back( 0.25395669 );
 	correctResults.push_back( 0.25395669 );
 
-	EXPECT_EQ( correctResults.size(), aRb.getSize() );
+	EXPECT_EQ( correctResults.size(), aRb.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aRb( i , i ), 1e-6 );
 	}
 
 	// Front absorptance layer 1

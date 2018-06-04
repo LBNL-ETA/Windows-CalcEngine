@@ -405,8 +405,8 @@ protected:
 
 		// BSDF definition is needed as well as its material representation
 		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
-		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
-		std::shared_ptr< CBSDFLayer > Layer_103 = CBSDFLayerMaker( aMaterial_103, aBSDF ).getLayer();
+		std::unique_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		std::unique_ptr< CBSDFLayer > Layer_103 = CBSDFLayerMaker( aMaterial_103, aBSDF ).getLayer();
 
 		// To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
 		CCommonWavelengths aCommonWL;
@@ -488,10 +488,10 @@ TEST_F( MultiPaneBSDF_102_103, TestSpecular1 ) {
 	abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
 	EXPECT_NEAR( 0.1336729, abs2, 1e-6 );
 
-	SquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+	SquareMatrix aT = aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
 	// Front transmittance matrix
-	size_t size = aT.getSize();
+	size_t size = aT.size();
 
 	std::vector< double > correctResults;
 	correctResults.push_back( 8.48465113 );
@@ -536,13 +536,13 @@ TEST_F( MultiPaneBSDF_102_103, TestSpecular1 ) {
 	correctResults.push_back( 3.29115035 );
 	correctResults.push_back( 3.29115035 );
 
-	EXPECT_EQ( correctResults.size(), aT.getSize() );
+	EXPECT_EQ( correctResults.size(), aT.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aT[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aT( i , i ), 1e-6 );
 	}
 
 	// Back Reflectance matrix
-	SquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+	SquareMatrix aRb = aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 
@@ -588,9 +588,9 @@ TEST_F( MultiPaneBSDF_102_103, TestSpecular1 ) {
 	correctResults.push_back( 5.8487035 );
 	correctResults.push_back( 5.8487035 );
 
-	EXPECT_EQ( correctResults.size(), aRb.getSize() );
+	EXPECT_EQ( correctResults.size(), aRb.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aRb( i , i ), 1e-6 );
 	}
 
 	// Front absorptance layer 1
