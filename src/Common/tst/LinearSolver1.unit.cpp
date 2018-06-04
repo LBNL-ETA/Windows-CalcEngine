@@ -16,7 +16,6 @@ TEST_F(TestLinearSolver1, Test1)
 {
     SCOPED_TRACE("Begin Test: Test Linear Solver (1) - Solving simple matrix.");
 
-    const auto size = 3;
     SquareMatrix aMatrix{{2, 1, 3}, {2, 6, 8}, {6, 8, 18}};
 
     std::vector<double> aVector = {1, 3, 5};
@@ -34,7 +33,6 @@ TEST_F(TestLinearSolver1, Test2)
 {
     SCOPED_TRACE("Begin Test: Test Linear Solver (2) - Solving simple matrix.");
 
-    const auto size = 4;
     SquareMatrix aMatrix{{32817.2867004354, 1, 0, -32808.3972386696},
                          {1.28054053432588, -1, 0, 0},
                          {0, 0, -1, 1.26433319889839},

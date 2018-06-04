@@ -16,6 +16,7 @@
 #include "PerforatedCell.hpp"
 #include "WovenCellDescription.hpp"
 #include "WovenCell.hpp"
+#include <WCECommon.hpp>
 
 namespace SingleLayerOptics
 {
@@ -47,7 +48,7 @@ namespace SingleLayerOptics
         {
             std::shared_ptr<CSpecularCell> aCell = std::make_shared<CSpecularCell>(t_Material, t_Description);
             m_Cell = aCell;
-            m_Layer = std::make_unique<CSpecularBSDFLayer>(aCell, t_BSDF);
+            m_Layer = wce::make_unique<CSpecularBSDFLayer>(aCell, t_BSDF);
         }
 
         // Venetian cell
@@ -57,13 +58,13 @@ namespace SingleLayerOptics
             {
                 std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CVenetianCell>(t_Material, t_Description);
                 m_Cell = aCell;
-                m_Layer = std::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+                m_Layer = wce::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
             }
             else
             {
                 std::shared_ptr<CDirectionalDiffuseCell> aCell = std::make_shared<CVenetianCell>(t_Material, t_Description);
                 m_Cell = aCell;
-                m_Layer = std::make_unique<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
+                m_Layer = wce::make_unique<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
             }
         }
 
@@ -73,7 +74,7 @@ namespace SingleLayerOptics
             // Perforated shades do not work with directional diffuse algorithm
             std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CPerforatedCell>(t_Material, t_Description);
             m_Cell = aCell;
-            m_Layer = std::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+            m_Layer = wce::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
         }
 
         // Woven cell
@@ -82,7 +83,7 @@ namespace SingleLayerOptics
             // Woven shades do not work with directional diffuse algorithm
             std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CWovenCell>(t_Material, t_Description);
             m_Cell = aCell;
-            m_Layer = std::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+            m_Layer = wce::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
         }
     }
 
