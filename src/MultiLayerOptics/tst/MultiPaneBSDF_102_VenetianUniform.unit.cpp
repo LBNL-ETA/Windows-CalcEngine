@@ -283,7 +283,7 @@ protected:
 
 		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
 
-		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		std::unique_ptr<CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
 
 		// Venetian blind
 		double Tmat = 0.1;
@@ -313,7 +313,7 @@ protected:
 			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
 			                                         curvatureRadius, numOfSlatSegments );
 
-		std::shared_ptr< CBSDFLayer > Layer_Venetian =
+		std::unique_ptr< CBSDFLayer > Layer_Venetian =
 			CBSDFLayerMaker( aMaterialVenetian, aBSDF, aCellDescription ).getLayer();
 
 		std::vector< double > commonWavelengths = Layer_102->getBandWavelengths();
@@ -343,10 +343,10 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestBSDF1 ) {
 
 	CMultiPaneBSDF& aLayer = *getLayer();
 
-	SquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+	SquareMatrix aT = aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
 	// Front transmittance matrix
-	size_t size = aT.getSize();
+	size_t size = aT.size();
 
 	std::vector< double > correctResults;
 	correctResults.push_back( 1.23756946 );
@@ -357,13 +357,13 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestBSDF1 ) {
 	correctResults.push_back( 0.120001165 );
 	correctResults.push_back( 0.0903006339 );
 
-	EXPECT_EQ( correctResults.size(), aT.getSize() );
+	EXPECT_EQ( correctResults.size(), aT.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aT[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aT( i , i )   , 1e-6 );
 	}
 
 	// Back Reflectance matrix
-	SquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+	SquareMatrix aRb = aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 
@@ -375,9 +375,9 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestBSDF1 ) {
 	correctResults.push_back( 0.15273961 );
 	correctResults.push_back( 0.159760546 );
 
-	EXPECT_EQ( correctResults.size(), aRb.getSize() );
+	EXPECT_EQ( correctResults.size(), aRb.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aRb( i , i ), 1e-6 );
 	}
 
 	// Front absorptance layer 1

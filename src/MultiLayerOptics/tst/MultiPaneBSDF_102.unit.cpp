@@ -283,7 +283,7 @@ protected:
 
 		// BSDF definition is needed as well as its material representation
 		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
-		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		std::unique_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
 
 		// Equivalent BSDF layer
 		std::shared_ptr< CEquivalentBSDFLayer > aEqLayer =
