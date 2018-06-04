@@ -3,6 +3,8 @@ language:
 
 os:
   - linux
+      compiler: gcc
+      env: COMPILER=g++-4.9
   - osx
 
 script:
