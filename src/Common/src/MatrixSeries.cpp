@@ -127,17 +127,16 @@ namespace FenestrationCommon
         return Result;
     }
 
-    std::shared_ptr<SquareMatrix>
-      CMatrixSeries::getSquaredMatrixSums(const double minLambda, const double maxLambda, const std::vector<double> & t_ScaleValue)
+    SquareMatrix CMatrixSeries::getSquaredMatrixSums(const double minLambda, const double maxLambda, const std::vector<double> & t_ScaleValue)
     {
         assert(m_Matrix.size() == m_Matrix[0].size());
-        std::shared_ptr<SquareMatrix> Res = std::make_shared<SquareMatrix>(m_Matrix.size());
+        SquareMatrix Res(m_Matrix.size());
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
                 double value = m_Matrix[i][j]->sum(minLambda, maxLambda) / t_ScaleValue[i];
-                (*Res)(i, j) = value;
+                Res(i, j) = value;
             }
         }
         return Res;
