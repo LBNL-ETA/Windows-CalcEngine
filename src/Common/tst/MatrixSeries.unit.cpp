@@ -57,7 +57,7 @@ TEST_F(TestMatrixSeries, Test1)
     // Note that you need to increase maxLambda from 0.6 to 0.65 in order to include last range into sum.
     // Inserting 0.6 would mean that last range to be included into sum is from 0.55 to 0.6 and last range is
     // from 0.6 to infinity.
-    auto mat = *aMat.getSquaredMatrixSums(minLambda, maxLambda, scaleFactors);
+    auto mat = aMat.getSquaredMatrixSums(minLambda, maxLambda, scaleFactors);
 
     SquareMatrix correctResults{{20, 22.4}, {22.8, 19.8}};
 
