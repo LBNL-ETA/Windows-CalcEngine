@@ -12,103 +12,6 @@ namespace FenestrationCommon
     CLinearSolver::CLinearSolver()
     {}
 
-    std::vector<double> CLinearSolver::checkSingularity(SquareMatrix & t_MatrixA) const
-    {
-        const auto size = t_MatrixA.size();
-        std::vector<double> vv;
-
-        for(auto i = 0u; i < size; ++i)
-        {
-            auto aamax = 0.0;
-            for(size_t j = 0; j < size; ++j)
-            {
-                const auto absCellValue = std::abs(t_MatrixA(i, j));
-                if(absCellValue > aamax)
-                {
-                    aamax = absCellValue;
-                }
-            }
-            if(aamax == 0)
-            {
-                assert(aamax != 0);
-            }
-            vv.push_back(1 / aamax);
-        }
-
-        return vv;
-    }
-
-    std::vector<size_t> CLinearSolver::makeUpperTriangular(SquareMatrix & t_MatrixA) const
-    {
-        const auto TINY{1e-20};
-
-        const auto size = int(t_MatrixA.size());
-        std::vector<size_t> index(size);
-
-        std::vector<double> vv = checkSingularity(t_MatrixA);
-
-        auto d = 1;
-
-        for(auto j = 0; j < size; ++j)
-        {
-            for(auto i = 0; i <= j - 1; ++i)
-            {
-                auto sum = t_MatrixA(i, j);
-                for(auto k = 0; k <= i - 1; ++k)
-                {
-                    sum = sum - t_MatrixA(i, k) * t_MatrixA(k, j);
-                }
-                t_MatrixA(i, j) = sum;
-            }
-
-            auto aamax = 0.0;
-            auto imax = 0;
-
-            for(auto i = j; i < size; ++i)
-            {
-                auto sum = t_MatrixA(i, j);
-                for(auto k = 0; k <= j - 1; ++k)
-                {
-                    sum = sum - t_MatrixA(i, k) * t_MatrixA(k, j);
-                }
-                t_MatrixA(i, j) = sum;
-                const auto dum = vv[i] * std::abs(sum);
-                if(dum >= aamax)
-                {
-                    imax = i;
-                    aamax = dum;
-                }
-            }
-
-            if(j != imax)
-            {
-                for(auto k = 0; k < size; ++k)
-                {
-                    const auto dum = t_MatrixA(imax, k);
-                    t_MatrixA(imax, k) = t_MatrixA(j, k);
-                    t_MatrixA(j, k) = dum;
-                }   // k
-                d = -d;
-                vv[imax] = vv[j];
-            }
-            index[j] = imax;
-            if(t_MatrixA(j, j) == 0.0)
-            {
-                t_MatrixA(j, j) = TINY;
-            }
-            if(j != (size - 1))
-            {
-                const auto dum = 1.0 / t_MatrixA(j, j);
-                for(auto i = j + 1; i < size; ++i)
-                {
-                    t_MatrixA(i, j) = t_MatrixA(i, j) * dum;
-                }   // i
-            }
-        }
-
-        return index;
-    }
-
     std::vector<double> CLinearSolver::solveSystem(SquareMatrix & t_MatrixA, std::vector<double> & t_VectorB) const
     {
         if(t_MatrixA.size() != t_VectorB.size())
@@ -116,7 +19,7 @@ namespace FenestrationCommon
             std::runtime_error("Matrix and vector for system of linear equations are not same size.");
         }
 
-        std::vector<size_t> index = makeUpperTriangular(t_MatrixA);
+        std::vector<size_t> index = t_MatrixA.makeUpperTriangular();
 
         int size = int(t_MatrixA.size());
 

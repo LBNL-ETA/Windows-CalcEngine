@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <cassert>
 
 #include "SquareMatrix.hpp"
 
@@ -141,6 +142,101 @@ namespace FenestrationCommon
         }
 
         return D;
+    }
+
+    std::vector<double> SquareMatrix::checkSingularity() const
+    {
+        std::vector<double> vv;
+
+        for (auto i = 0u; i < m_size; ++i)
+        {
+            auto aamax = 0.0;
+            for (size_t j = 0; j < m_size; ++j)
+            {
+                const auto absCellValue = std::abs(m_Matrix[i][j]);
+                if (absCellValue > aamax)
+                {
+                    aamax = absCellValue;
+                }
+            }
+            if (aamax == 0)
+            {
+                assert(aamax != 0);
+            }
+            vv.push_back(1 / aamax);
+        }
+
+        return vv;
+    }
+
+    std::vector<size_t> SquareMatrix::makeUpperTriangular()
+    {
+        const auto TINY{ 1e-20 };
+
+        std::vector<size_t> index(m_size);
+
+        std::vector<double> vv = checkSingularity();
+
+        auto d = 1;
+
+        for (auto j = 0u; j < m_size; ++j)
+        {
+            for (auto i = 0; i <= int(j - 1); ++i)
+            {
+                auto sum = m_Matrix[i][j];
+                for (auto k = 0; k <= i - 1; ++k)
+                {
+                    sum = sum - m_Matrix[i][k] * m_Matrix[k][j];
+                }
+                m_Matrix[i][j] = sum;
+            }
+
+            auto aamax = 0.0;
+            auto imax = 0;
+
+            for (auto i = j; i < m_size; ++i)
+            {
+                auto sum = m_Matrix[i][j];
+                for (auto k = 0; k <= int(j - 1); ++k)
+                {
+                    sum = sum - m_Matrix[i][k] * m_Matrix[k][j];
+                }
+                m_Matrix[i][j] = sum;
+                const auto dum = vv[i] * std::abs(sum);
+                if (dum >= aamax)
+                {
+                    imax = i;
+                    aamax = dum;
+                }
+            }
+
+            if (int(j) != imax)
+            {
+                for (auto k = 0u; k < m_size; ++k)
+                {
+                    const auto dum = m_Matrix[imax][k];
+                    m_Matrix[imax][k] = m_Matrix[j][k];
+                    m_Matrix[j][k] = dum;
+                }   // k
+                d = -d;
+                vv[imax] = vv[j];
+            }
+            index[j] = imax;
+            if (m_Matrix[j][j] == 0.0)
+            {
+                m_Matrix[j][j] = TINY;
+            }
+            if (j != (m_size - 1))
+            {
+                const auto dum = 1.0 / m_Matrix[j][j];
+                for (auto i = j + 1; i < m_size; ++i)
+                {
+                    m_Matrix[i][j] = m_Matrix[i][j] * dum;
+                }   // i
+            }
+        }
+
+        return index;
     }
 
     SquareMatrix operator*(const SquareMatrix & first, const SquareMatrix & second)
