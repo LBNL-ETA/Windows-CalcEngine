@@ -7,7 +7,7 @@
 namespace FenestrationCommon {
 
 	class CSeries;
-	class CSquareMatrix;
+	class SquareMatrix;
 	enum class IntegrationType;
 
 	class CMatrixSeries {
@@ -20,7 +20,7 @@ namespace FenestrationCommon {
 		void addProperty( const size_t i, const size_t j, const double t_Wavelength, const double t_Value );
 		void addProperties( const size_t i, const double t_Wavelength,
 		                    const std::vector< double >& t_Values );
-		void addProperties( const double t_Wavelength, CSquareMatrix& t_Matrix );
+		void addProperties( const double t_Wavelength, SquareMatrix& t_Matrix );
 
 		// Multiply all series in matrix with provided one
 		void mMult( const CSeries& t_Series );
@@ -35,7 +35,7 @@ namespace FenestrationCommon {
 		std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > >
 		getSums( const double minLambda, const double maxLambda, const std::vector< double >& t_ScaleValue );
 
-		std::shared_ptr< CSquareMatrix > getSquaredMatrixSums(
+		std::shared_ptr< SquareMatrix > getSquaredMatrixSums(
 			const double minLambda, const double maxLambda, const std::vector< double >& t_ScaleValue );
 
 		size_t size1() const;

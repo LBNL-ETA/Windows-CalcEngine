@@ -328,7 +328,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	std::shared_ptr< CBSDFIntegrator > aLayer = getDoubleLayer()->value();
 
 	// Front transmittance
-	std::shared_ptr< CSquareMatrix > Tf = aLayer->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< SquareMatrix > Tf = aLayer->getMatrix( Side::Front, PropertySimple::T );
 	size_t matrixSize = Tf->getSize();
 
 	// Test matrix
@@ -336,7 +336,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 
 	EXPECT_EQ( size, matrixSize );
 
-	CSquareMatrix correctResults = CSquareMatrix( size );
+	SquareMatrix correctResults = SquareMatrix( size );
 	correctResults[ 0 ] = { 4.02734229, 0.04807644, 0.04923533, 0.05014887, 0.04956643, 0.04042293, 0.01069836 };
 	correctResults[ 1 ] = { 0.04660969, 0.52907808, 0.0489721, 0.04988075, 0.04930142, 0.04020681, 0.01064117 };
 	correctResults[ 2 ] = { 0.04638265, 0.04758648, 0.29694739, 0.04963778, 0.04906128, 0.04001096, 0.01058933 };
@@ -352,7 +352,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	}
 
 	// Front reflectance
-	std::shared_ptr< CSquareMatrix > Rf = aLayer->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< SquareMatrix > Rf = aLayer->getMatrix( Side::Front, PropertySimple::R );
 	matrixSize = Rf->getSize();
 
 	EXPECT_EQ( size, matrixSize );
@@ -372,7 +372,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	}
 
 	// Back Transmittance
-	std::shared_ptr< CSquareMatrix > Tb = aLayer->getMatrix( Side::Back, PropertySimple::T );
+	std::shared_ptr< SquareMatrix > Tb = aLayer->getMatrix( Side::Back, PropertySimple::T );
 	matrixSize = Tb->getSize();
 
 	EXPECT_EQ( size, matrixSize );
@@ -392,7 +392,7 @@ TEST_F( TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF ) {
 	}
 
 	// Back Reflectance
-	std::shared_ptr< CSquareMatrix > Rb = aLayer->getMatrix( Side::Back, PropertySimple::R );
+	std::shared_ptr< SquareMatrix > Rb = aLayer->getMatrix( Side::Back, PropertySimple::R );
 	matrixSize = Rb->getSize();
 
 	EXPECT_EQ( size, matrixSize );

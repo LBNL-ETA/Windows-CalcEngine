@@ -396,7 +396,7 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 	abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
 	EXPECT_NEAR( 0.1797297, abs2, 1e-6 );
 
-	CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+	SquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
 	// Front transmittance matrix
 	size_t size = aT.getSize();
@@ -416,7 +416,7 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 	}
 
 	// Back Reflectance matrix
-	CSquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+	SquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 

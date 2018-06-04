@@ -45,7 +45,7 @@ namespace MultiLayerOptics {
 		}
 	}
 
-	std::shared_ptr< CSquareMatrix >
+	std::shared_ptr< SquareMatrix >
 	CMultiPaneBSDF::getMatrix( const double minLambda, const double maxLambda,
 														 const Side t_Side, const PropertySimple t_Property ) {
 		calculate( minLambda, maxLambda );
@@ -84,7 +84,7 @@ namespace MultiLayerOptics {
 			}
 
 			// Produce local results matrices for each side and property
-			std::map< std::pair< Side, PropertySimple >, std::shared_ptr< CSquareMatrix > > aResults;
+			std::map< std::pair< Side, PropertySimple >, std::shared_ptr< SquareMatrix > > aResults;
 
 			for ( Side aSide : EnumSide() ) {
 				// It is important to take a copy of aTotalA because it will be used to

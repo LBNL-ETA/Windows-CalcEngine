@@ -10,7 +10,7 @@
 
 namespace FenestrationCommon {
 
-	class CSquareMatrix;
+	class SquareMatrix;
 	enum class Side;
 
 }
@@ -139,7 +139,7 @@ namespace SingleLayerOptics {
 		double m_Tb;
 		double m_Rf;
 		double m_Rb;
-		std::shared_ptr< FenestrationCommon::CSquareMatrix > m_Energy;
+		std::shared_ptr< FenestrationCommon::SquareMatrix > m_Energy;
 
 		// Holds mappings for the slats. Used for mapping between view factors and energy matrix.
 		std::vector< size_t > b;

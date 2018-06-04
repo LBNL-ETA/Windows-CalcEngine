@@ -3,23 +3,21 @@
 
 #include <vector>
 
-namespace FenestrationCommon {
+namespace FenestrationCommon
+{
+    class SquareMatrix;
 
-	class CSquareMatrix;
+    class CLinearSolver
+    {
+    public:
+        CLinearSolver();
 
-	class CLinearSolver {
-	public:
-		CLinearSolver();
+        std::vector<double> solveSystem(SquareMatrix & t_MatrixA, std::vector<double> & t_VectorB) const;
 
-		std::vector< double > solveSystem(
-			CSquareMatrix& t_MatrixA,
-			std::vector< double >& t_VectorB ) const;
-
-	private:
-		std::vector< double > checkSingularity( CSquareMatrix& t_MatrixA ) const;
-		std::vector< size_t > makeUpperTriangular( CSquareMatrix& t_MatrixA ) const;
-
-	};
-}
+    private:
+        std::vector<double> checkSingularity(SquareMatrix & t_MatrixA) const;
+        std::vector<size_t> makeUpperTriangular(SquareMatrix & t_MatrixA) const;
+    };
+}   // namespace FenestrationCommon
 
 #endif
