@@ -343,7 +343,7 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestBSDF1 ) {
 
 	CMultiPaneBSDF& aLayer = *getLayer();
 
-	CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+	SquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
 	// Front transmittance matrix
 	size_t size = aT.getSize();
@@ -363,7 +363,7 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestBSDF1 ) {
 	}
 
 	// Back Reflectance matrix
-	CSquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+	SquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 

@@ -35,14 +35,14 @@ namespace MultiLayerOptics {
 		m_NumOfLayers++;
 		std::shared_ptr< std::vector< std::shared_ptr< CBSDFIntegrator > > > aResults = nullptr;
 
-		std::shared_ptr< std::vector< std::shared_ptr< CSquareMatrix > > > aTausF =
-				std::make_shared< std::vector< std::shared_ptr< CSquareMatrix > > >();
-		std::shared_ptr< std::vector< std::shared_ptr< CSquareMatrix > > > aTausB =
-				std::make_shared< std::vector< std::shared_ptr< CSquareMatrix > > >();
-		std::shared_ptr< std::vector< std::shared_ptr< CSquareMatrix > > > aRhosF =
-				std::make_shared< std::vector< std::shared_ptr< CSquareMatrix > > >();
-		std::shared_ptr< std::vector< std::shared_ptr< CSquareMatrix > > > aRhosB =
-				std::make_shared< std::vector< std::shared_ptr< CSquareMatrix > > >();
+		std::shared_ptr< std::vector< std::shared_ptr< SquareMatrix > > > aTausF =
+				std::make_shared< std::vector< std::shared_ptr< SquareMatrix > > >();
+		std::shared_ptr< std::vector< std::shared_ptr< SquareMatrix > > > aTausB =
+				std::make_shared< std::vector< std::shared_ptr< SquareMatrix > > >();
+		std::shared_ptr< std::vector< std::shared_ptr< SquareMatrix > > > aRhosF =
+				std::make_shared< std::vector< std::shared_ptr< SquareMatrix > > >();
+		std::shared_ptr< std::vector< std::shared_ptr< SquareMatrix > > > aRhosB =
+				std::make_shared< std::vector< std::shared_ptr< SquareMatrix > > >();
 
 		aResults = t_Layer.getWavelengthResults();
 		size_t size = m_CommonWavelengths->size();
@@ -136,8 +136,8 @@ namespace MultiLayerOptics {
 		for ( size_t i = m_NumOfLayers; i-- > 0; ) {
 
 			// r and t for current layer (number of wavelengths)
-			std::shared_ptr< SquareMatrices > r = std::make_shared< std::vector< std::shared_ptr< CSquareMatrix > > >();
-			std::shared_ptr< SquareMatrices > t = std::make_shared< std::vector< std::shared_ptr< CSquareMatrix > > >();
+			std::shared_ptr< SquareMatrices > r = std::make_shared< std::vector< std::shared_ptr< SquareMatrix > > >();
+			std::shared_ptr< SquareMatrices > t = std::make_shared< std::vector< std::shared_ptr< SquareMatrix > > >();
 
 			std::shared_ptr< SquareMatrices > vTauF = nullptr;
 			std::shared_ptr< SquareMatrices > vTauB = nullptr;
@@ -166,23 +166,23 @@ namespace MultiLayerOptics {
 
 			for ( size_t j = 0; j < numOfWavelengths; ++j ) {
 
-				std::shared_ptr< CSquareMatrix > aTauF = ( *( vTauF ) )[ j ];
-				std::shared_ptr< CSquareMatrix > aTauB = ( *( vTauB ) )[ j ];
-				std::shared_ptr< CSquareMatrix > aRhoF = ( *( vRhoF ) )[ j ];
-				std::shared_ptr< CSquareMatrix > aRhoB = ( *( vRhoB ) )[ j ];
+				std::shared_ptr< SquareMatrix > aTauF = ( *( vTauF ) )[ j ];
+				std::shared_ptr< SquareMatrix > aTauB = ( *( vTauB ) )[ j ];
+				std::shared_ptr< SquareMatrix > aRhoF = ( *( vRhoF ) )[ j ];
+				std::shared_ptr< SquareMatrix > aRhoB = ( *( vRhoB ) )[ j ];
 
-				std::shared_ptr< CSquareMatrix > aRi = m_Lambda->mult( *aRhoF );
+				std::shared_ptr< SquareMatrix > aRi = m_Lambda->mult( *aRhoF );
 
 				if( i != m_NumOfLayers - 1 ) {
-					std::shared_ptr< CSquareMatrix > prevR = ( *m_rCoeffs[ i ] )[ j ];
-					std::shared_ptr< CSquareMatrix > lambdaTauF = m_Lambda->mult( *aTauF );
-					std::shared_ptr< CSquareMatrix > Denominator = getDenomForRTCoeff( *aRhoB, *prevR );
-					std::shared_ptr< CSquareMatrix > rsecF = lambdaTauF->mult( *lambdaTauF );
+					std::shared_ptr< SquareMatrix > prevR = ( *m_rCoeffs[ i ] )[ j ];
+					std::shared_ptr< SquareMatrix > lambdaTauF = m_Lambda->mult( *aTauF );
+					std::shared_ptr< SquareMatrix > Denominator = getDenomForRTCoeff( *aRhoB, *prevR );
+					std::shared_ptr< SquareMatrix > rsecF = lambdaTauF->mult( *lambdaTauF );
 					rsecF = rsecF->mult( *prevR );
 					rsecF = rsecF->mult( *Denominator );
 					aRi = aRi->add( *rsecF );
 
-					std::shared_ptr< CSquareMatrix > tfwd = lambdaTauF->mult( *Denominator );
+					std::shared_ptr< SquareMatrix > tfwd = lambdaTauF->mult( *Denominator );
 					t->push_back( tfwd );
 				} else {
 					t->push_back( m_Lambda->mult( *aTauF ) );
@@ -205,15 +205,15 @@ namespace MultiLayerOptics {
 		}
 
 		// This is true for every incoming wavelength
-		std::shared_ptr< CSquareMatrix > Iincoming = std::make_shared< CSquareMatrix >( matrixSize );
+		std::shared_ptr< SquareMatrix > Iincoming = std::make_shared< SquareMatrix >( matrixSize );
 		Iincoming->setIdentity();
 
 		// calculation irradiances (normalized to 1)
 		for ( size_t i = 0; i < m_NumOfLayers; ++i ) {
 			for ( size_t j = 0; j < numOfWavelengths; ++j ) {
-				std::shared_ptr< CSquareMatrix > r = ( *m_rCoeffs[ i ] )[ j ];
-				std::shared_ptr< CSquareMatrix > t = ( *m_tCoeffs[ i ] )[ j ];
-				std::shared_ptr< CSquareMatrix > activeI = nullptr;
+				std::shared_ptr< SquareMatrix > r = ( *m_rCoeffs[ i ] )[ j ];
+				std::shared_ptr< SquareMatrix > t = ( *m_tCoeffs[ i ] )[ j ];
+				std::shared_ptr< SquareMatrix > activeI = nullptr;
 				if( i == 0 ) {
 					activeI = Iincoming;
 				} else {
@@ -301,13 +301,13 @@ namespace MultiLayerOptics {
 
 	}
 
-	std::shared_ptr< CSquareMatrix > CAbsorptancesMultiPaneBSDF::getDenomForRTCoeff(
-			const CSquareMatrix & t_Reflectance,
-			const CSquareMatrix & t_PreviousR ) {
+	std::shared_ptr< SquareMatrix > CAbsorptancesMultiPaneBSDF::getDenomForRTCoeff(
+			const SquareMatrix & t_Reflectance,
+			const SquareMatrix & t_PreviousR ) {
 		size_t matrixSize = t_Reflectance.getSize();
-		std::shared_ptr< CSquareMatrix > Denominator = std::make_shared< CSquareMatrix >( matrixSize );
+		std::shared_ptr< SquareMatrix > Denominator = std::make_shared< SquareMatrix >( matrixSize );
 		Denominator->setIdentity();
-		std::shared_ptr< CSquareMatrix > lambdaRF = m_Lambda->mult( t_Reflectance );
+		std::shared_ptr< SquareMatrix > lambdaRF = m_Lambda->mult( t_Reflectance );
 		lambdaRF = lambdaRF->mult( t_PreviousR );
 		Denominator = Denominator->sub( *lambdaRF );
 		Denominator = Denominator->inverse();

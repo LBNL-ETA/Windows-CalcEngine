@@ -11,20 +11,20 @@ namespace MultiLayerOptics {
 	//  CInterReflectance
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	CInterReflectance::CInterReflectance( const CSquareMatrix& t_Lambda,
-	                                      const CSquareMatrix& t_Rb,
-	                                      const CSquareMatrix& t_Rf ) {
+	CInterReflectance::CInterReflectance( const SquareMatrix& t_Lambda,
+	                                      const SquareMatrix& t_Rb,
+	                                      const SquareMatrix& t_Rf ) {
 		size_t size = t_Lambda.getSize();
-		CSquareMatrix lRb = *t_Lambda.mult( t_Rb );
-		CSquareMatrix lRf = *t_Lambda.mult( t_Rf );
+		SquareMatrix lRb = *t_Lambda.mult( t_Rb );
+		SquareMatrix lRf = *t_Lambda.mult( t_Rf );
 		m_InterRefl = lRb.mult( lRf );
-		CSquareMatrix I = CSquareMatrix( size );
+		SquareMatrix I = SquareMatrix( size );
 		I.setIdentity();
 		m_InterRefl = I.sub( *m_InterRefl );
 		m_InterRefl = m_InterRefl->inverse();
 	}
 
-	std::shared_ptr< CSquareMatrix > CInterReflectance::value() const {
+	std::shared_ptr< SquareMatrix > CInterReflectance::value() const {
 		return m_InterRefl;
 	}
 
@@ -33,7 +33,7 @@ namespace MultiLayerOptics {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	CBSDFDoubleLayer::CBSDFDoubleLayer( const CBSDFIntegrator& t_FrontLayer, const CBSDFIntegrator& t_BackLayer ) {
-		const CSquareMatrix aLambda = *t_FrontLayer.lambdaMatrix();
+		const SquareMatrix aLambda = *t_FrontLayer.lambdaMatrix();
 		CInterReflectance InterRefl1 = CInterReflectance( aLambda,
 		                                                  *t_FrontLayer.getMatrix( Side::Back, PropertySimple::R ),
 		                                                  *t_BackLayer.getMatrix( Side::Front, PropertySimple::R ) );
@@ -65,25 +65,25 @@ namespace MultiLayerOptics {
 		return m_Results;
 	}
 
-	std::shared_ptr< CSquareMatrix > CBSDFDoubleLayer::equivalentT( const CSquareMatrix& t_Tf2,
-	                                                           const CSquareMatrix& t_InterRefl, const CSquareMatrix& t_Lambda,
-	                                                           const CSquareMatrix& t_Tf1 ) {
-		CSquareMatrix TinterRefl = *t_Tf2.mult( t_InterRefl );
-		CSquareMatrix lambdaTf1 = *t_Lambda.mult( t_Tf1 );
-		std::shared_ptr< CSquareMatrix > aResult = TinterRefl.mult( lambdaTf1 );
+	std::shared_ptr< SquareMatrix > CBSDFDoubleLayer::equivalentT( const SquareMatrix& t_Tf2,
+	                                                           const SquareMatrix& t_InterRefl, const SquareMatrix& t_Lambda,
+	                                                           const SquareMatrix& t_Tf1 ) {
+		SquareMatrix TinterRefl = *t_Tf2.mult( t_InterRefl );
+		SquareMatrix lambdaTf1 = *t_Lambda.mult( t_Tf1 );
+		std::shared_ptr< SquareMatrix > aResult = TinterRefl.mult( lambdaTf1 );
 		return aResult;
 	}
 
-	std::shared_ptr< CSquareMatrix > CBSDFDoubleLayer::equivalentR( const CSquareMatrix& t_Rf1,
-	                                                           const CSquareMatrix& t_Tf1, const CSquareMatrix& t_Tb1,
-	                                                           const CSquareMatrix& t_Rf2, const CSquareMatrix& t_InterRefl,
-	                                                           const CSquareMatrix& t_Lambda ) {
-		CSquareMatrix TinterRefl = *t_Tb1.mult( t_InterRefl );
-		CSquareMatrix lambdaRf2 = *t_Lambda.mult( t_Rf2 );
-		CSquareMatrix lambdaTf1 = *t_Lambda.mult( t_Tf1 );
+	std::shared_ptr< SquareMatrix > CBSDFDoubleLayer::equivalentR( const SquareMatrix& t_Rf1,
+	                                                           const SquareMatrix& t_Tf1, const SquareMatrix& t_Tb1,
+	                                                           const SquareMatrix& t_Rf2, const SquareMatrix& t_InterRefl,
+	                                                           const SquareMatrix& t_Lambda ) {
+		SquareMatrix TinterRefl = *t_Tb1.mult( t_InterRefl );
+		SquareMatrix lambdaRf2 = *t_Lambda.mult( t_Rf2 );
+		SquareMatrix lambdaTf1 = *t_Lambda.mult( t_Tf1 );
 		TinterRefl = *TinterRefl.mult( lambdaRf2 );
 		TinterRefl = *TinterRefl.mult( lambdaTf1 );
-		std::shared_ptr< CSquareMatrix > aResult = t_Rf1.add( TinterRefl );
+		std::shared_ptr< SquareMatrix > aResult = t_Rf1.add( TinterRefl );
 		return aResult;
 	}
 
@@ -101,13 +101,13 @@ namespace MultiLayerOptics {
 		m_Lambda = t_Layer->lambdaMatrix();
 	}
 
-	std::shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::getMatrix( const Side t_Side,
+	std::shared_ptr< SquareMatrix > CEquivalentBSDFLayerSingleBand::getMatrix( const Side t_Side,
 	                                                                       const PropertySimple t_Property ) {
 		calcEquivalentProperties();
 		return m_EquivalentLayer->getMatrix( t_Side, t_Property );
 	}
 
-	std::shared_ptr< CSquareMatrix > CEquivalentBSDFLayerSingleBand::getProperty( const Side t_Side, const
+	std::shared_ptr< SquareMatrix > CEquivalentBSDFLayerSingleBand::getProperty( const Side t_Side, const
 	                                                                         PropertySimple t_Property ) {
 		return getMatrix( t_Side, t_Property );
 	}
@@ -211,18 +211,18 @@ namespace MultiLayerOptics {
 	}
 
 	std::shared_ptr< std::vector< double > > CEquivalentBSDFLayerSingleBand::absTerm1( const std::vector< double >& t_Alpha,
-	                                                                         const CSquareMatrix& t_InterRefl, const CSquareMatrix& t_T ) {
+	                                                                         const SquareMatrix& t_InterRefl, const SquareMatrix& t_T ) {
 		std::shared_ptr< std::vector< double > > part1 = t_InterRefl.multVxM( t_Alpha );
-		CSquareMatrix part2 = *m_Lambda->mult( t_T );
+		SquareMatrix part2 = *m_Lambda->mult( t_T );
 		part1 = part2.multVxM( *part1 );
 		return part1;
 	}
 
 	std::shared_ptr< std::vector< double > > CEquivalentBSDFLayerSingleBand::absTerm2( const std::vector< double >& t_Alpha,
-	                                                                         const CSquareMatrix& t_InterRefl, const CSquareMatrix& t_R, const CSquareMatrix& t_T ) {
+	                                                                         const SquareMatrix& t_InterRefl, const SquareMatrix& t_R, const SquareMatrix& t_T ) {
 		std::shared_ptr< std::vector< double > > part1 = t_InterRefl.multVxM( t_Alpha );
-		CSquareMatrix part2 = *m_Lambda->mult( t_R );
-		CSquareMatrix part3 = *m_Lambda->mult( t_T );
+		SquareMatrix part2 = *m_Lambda->mult( t_R );
+		SquareMatrix part3 = *m_Lambda->mult( t_T );
 		part1 = part2.multVxM( *part1 );
 		part1 = part3.multVxM( *part1 );
 		return part1;

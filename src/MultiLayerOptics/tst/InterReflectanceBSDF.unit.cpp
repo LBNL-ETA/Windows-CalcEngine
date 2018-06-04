@@ -31,11 +31,11 @@ protected:
 		aDefinitions.push_back( CBSDFDefinition( 86.25, 1 ) );
 
 		CBSDFDirections aDirections = CBSDFDirections( aDefinitions, BSDFHemisphere::Incoming );
-		CSquareMatrix aLambdas = *aDirections.lambdaMatrix();
+		SquareMatrix aLambdas = *aDirections.lambdaMatrix();
 
 		size_t size = 7;
 
-		CSquareMatrix Rb = CSquareMatrix( size );
+		SquareMatrix Rb = SquareMatrix( size );
 		Rb[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
 		Rb[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
 		Rb[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
@@ -44,7 +44,7 @@ protected:
 		Rb[ 5 ] = { 0, 0, 0, 0, 0, 0.951907739, 0 };
 		Rb[ 6 ] = { 0, 0, 0, 0, 0, 0, 15.28298172 };
 
-		CSquareMatrix Rf = CSquareMatrix( size );
+		SquareMatrix Rf = SquareMatrix( size );
 		Rf[ 0 ] = { 1.438618083, 0, 0, 0, 0, 0, 0 };
 		Rf[ 1 ] = { 0, 0.189397664, 0, 0, 0, 0, 0 };
 		Rf[ 2 ] = { 0, 0, 0.112189021, 0, 0, 0, 0 };
@@ -69,7 +69,7 @@ TEST_F( TestInterReflectanceBSDF, TestBSDFInterreflectance ) {
 
 	CInterReflectance interRefl = *getInterReflectance();
 
-	CSquareMatrix results = *interRefl.value();
+	SquareMatrix results = *interRefl.value();
 
 	size_t matrixSize = results.getSize();
 
@@ -78,7 +78,7 @@ TEST_F( TestInterReflectanceBSDF, TestBSDFInterreflectance ) {
 
 	EXPECT_EQ( size, matrixSize );
 
-	CSquareMatrix correctResults = CSquareMatrix( size );
+	SquareMatrix correctResults = SquareMatrix( size );
 	correctResults[ 0 ] = { 1.005964363, 0, 0, 0, 0, 0, 0 };
 	correctResults[ 1 ] = { 0, 1.005964363, 0, 0, 0, 0, 0 };
 	correctResults[ 2 ] = { 0, 0, 1.006280195, 0, 0, 0, 0 };

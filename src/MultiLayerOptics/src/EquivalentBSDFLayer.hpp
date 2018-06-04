@@ -9,7 +9,7 @@
 
 namespace FenestrationCommon {
 
-	class CSquareMatrix;
+	class SquareMatrix;
 	class CMatrixSeries;
 	class CSeries;
 	enum class Side;
@@ -70,7 +70,7 @@ namespace MultiLayerOptics {
 		// Total Transmittance and Reflectance values for every wavelength (does not include source data)
 		std::map< std::pair< FenestrationCommon::Side, FenestrationCommon::PropertySimple >, std::shared_ptr< FenestrationCommon::CMatrixSeries > > m_Tot;
 
-		std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
+		std::shared_ptr< const FenestrationCommon::SquareMatrix > m_Lambda;
 
 		std::vector< double > m_CombinedLayerWavelengths;
 		bool m_Calculated;

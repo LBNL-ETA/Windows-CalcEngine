@@ -9,7 +9,7 @@
 namespace FenestrationCommon {
 
 	class CSeries;
-	class CSquareMatrix;
+	class SquareMatrix;
 	enum class Side;
 	enum class PropertySimple;
 
@@ -41,7 +41,7 @@ namespace MultiLayerOptics {
 		void setIntegrationType( FenestrationCommon::IntegrationType t_type, double normalizationCoefficient );
 
 		// Whole matrix results
-		std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix(
+		std::shared_ptr< FenestrationCommon::SquareMatrix > getMatrix(
 			const double minLambda, const double maxLambda,
 			const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
 

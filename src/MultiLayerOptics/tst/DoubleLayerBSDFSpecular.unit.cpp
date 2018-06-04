@@ -307,7 +307,7 @@ TEST_F( TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF ) {
 
 	std::shared_ptr< CBSDFIntegrator > aLayer = getDoubleLayer()->value();
 
-	std::shared_ptr< CSquareMatrix > T = aLayer->getMatrix( Side::Front, PropertySimple::T );
+	std::shared_ptr< SquareMatrix > T = aLayer->getMatrix( Side::Front, PropertySimple::T );
 	size_t matrixSize = T->getSize();
 
 	// Test matrix
@@ -315,7 +315,7 @@ TEST_F( TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF ) {
 
 	EXPECT_EQ( size, matrixSize );
 
-	CSquareMatrix correctResults = CSquareMatrix( size );
+	SquareMatrix correctResults = SquareMatrix( size );
 	correctResults[ 0 ] = { 13.06253965, 0, 0, 0, 0, 0, 0 };
 	correctResults[ 1 ] = { 0, 1.71444156 , 0, 0, 0, 0, 0 };
 	correctResults[ 2 ] = { 0, 0, 0.97702447, 0, 0, 0, 0 };
@@ -330,7 +330,7 @@ TEST_F( TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF ) {
 		}
 	}
 
-	std::shared_ptr< CSquareMatrix > R = aLayer->getMatrix( Side::Front, PropertySimple::R );
+	std::shared_ptr< SquareMatrix > R = aLayer->getMatrix( Side::Front, PropertySimple::R );
 	matrixSize = R->getSize();
 
 	EXPECT_EQ( size, matrixSize );

@@ -13,7 +13,7 @@ namespace SingleLayerOptics {
 
 namespace MultiLayerOptics {
 
-	typedef std::vector< std::shared_ptr< FenestrationCommon::CSquareMatrix > > SquareMatrices;
+	typedef std::vector< std::shared_ptr< FenestrationCommon::SquareMatrix > > SquareMatrices;
 
 	// Calculate BSDF absorptances of MultiLayerOptics layer.
 	class CAbsorptancesMultiPaneBSDF {
@@ -34,9 +34,9 @@ namespace MultiLayerOptics {
 		void calculateState( const double minLambda, const double maxLambda );
 
 		// Denominator term for t and r coefficients (absorptance calculations)
-		std::shared_ptr< FenestrationCommon::CSquareMatrix > getDenomForRTCoeff(
-				const FenestrationCommon::CSquareMatrix & t_Reflectance,
-				const FenestrationCommon::CSquareMatrix & t_PreviousR );
+		std::shared_ptr< FenestrationCommon::SquareMatrix > getDenomForRTCoeff(
+				const FenestrationCommon::SquareMatrix & t_Reflectance,
+				const FenestrationCommon::SquareMatrix & t_PreviousR );
 
 		// Returns correct layer index. Depends if object is used to calculate forward or backward properties
 		size_t layerIndex( const size_t Index ) const;
@@ -48,7 +48,7 @@ namespace MultiLayerOptics {
 		std::shared_ptr< std::vector< double > > addVectors( const std::vector< double > & t_vec1,
 																												 const std::vector< double > & t_vec2 );
 
-		std::shared_ptr< const FenestrationCommon::CSquareMatrix > m_Lambda;
+		std::shared_ptr< const FenestrationCommon::SquareMatrix > m_Lambda;
 		std::shared_ptr< const std::vector< double > > m_LambdaVector;
 
 		std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;

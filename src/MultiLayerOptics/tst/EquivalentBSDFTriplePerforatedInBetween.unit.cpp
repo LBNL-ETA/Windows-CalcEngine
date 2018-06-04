@@ -330,7 +330,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
 	CEquivalentBSDFLayerSingleBand aLayer = *getLayer();
 
 	// Transmittance Front side
-	CSquareMatrix Tf = *aLayer.getMatrix( Side::Front, PropertySimple::T );
+	SquareMatrix Tf = *aLayer.getMatrix( Side::Front, PropertySimple::T );
 	size_t matrixSize = Tf.getSize();
 
 	// Test matrix
@@ -338,7 +338,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
 
 	EXPECT_EQ( size, matrixSize );
 
-	CSquareMatrix correctResults = CSquareMatrix( size );
+	SquareMatrix correctResults = SquareMatrix( size );
 	correctResults[ 0 ] = { 3.36513193e+00, 4.59380024e-02, 4.68677211e-02, 4.76966681e-02, 4.73625159e-02, 3.67802927e-02, 9.73430146e-03 };
 	correctResults[ 1 ] = { 4.46793459e-02, 4.46431913e-01, 4.65707959e-02, 4.73943209e-02, 4.70632076e-02, 3.65401206e-02, 9.67073732e-03 };
 	correctResults[ 2 ] = { 4.41904097e-02, 4.51474410e-02, 2.51387826e-01, 4.68740921e-02, 4.65474460e-02, 3.61326817e-02, 9.56290421e-03 };
@@ -354,7 +354,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
 	}
 
 	// Transmittance Back side
-	CSquareMatrix Tb = *aLayer.getMatrix( Side::Back, PropertySimple::T );
+	SquareMatrix Tb = *aLayer.getMatrix( Side::Back, PropertySimple::T );
 
 	EXPECT_EQ( size, matrixSize );
 
@@ -373,7 +373,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
 	}
 
 	// Reflectance Front side
-	CSquareMatrix Rf = *aLayer.getMatrix( Side::Front, PropertySimple::R );
+	SquareMatrix Rf = *aLayer.getMatrix( Side::Front, PropertySimple::R );
 	matrixSize = Rf.getSize();
 
 	EXPECT_EQ( size, matrixSize );
@@ -393,7 +393,7 @@ TEST_F( TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF ) {
 	}
 
 	// Reflectance Back side
-	CSquareMatrix Rb = *aLayer.getMatrix( Side::Back, PropertySimple::R );
+	SquareMatrix Rb = *aLayer.getMatrix( Side::Back, PropertySimple::R );
 	matrixSize = Rb.getSize();
 
 	EXPECT_EQ( size, matrixSize );
