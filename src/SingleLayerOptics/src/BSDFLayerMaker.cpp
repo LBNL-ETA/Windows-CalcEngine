@@ -24,8 +24,7 @@ namespace SingleLayerOptics
                                      const std::shared_ptr<const CBSDFHemisphere> & t_BSDF,
                                      std::shared_ptr<ICellDescription> t_Description,
                                      const DistributionMethod t_Method) :
-        m_Cell(nullptr),
-        m_BSDF(t_BSDF)
+        m_Cell(nullptr)
     {
         if(t_Material == nullptr)
         {
@@ -48,7 +47,7 @@ namespace SingleLayerOptics
         {
             std::shared_ptr<CSpecularCell> aCell = std::make_shared<CSpecularCell>(t_Material, t_Description);
             m_Cell = aCell;
-            m_Layer = wce::make_unique<CSpecularBSDFLayer>(aCell, t_BSDF);
+            m_Layer = std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
         }
 
         // Venetian cell
@@ -58,13 +57,13 @@ namespace SingleLayerOptics
             {
                 std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CVenetianCell>(t_Material, t_Description);
                 m_Cell = aCell;
-                m_Layer = wce::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+                m_Layer = std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
             }
             else
             {
                 std::shared_ptr<CDirectionalDiffuseCell> aCell = std::make_shared<CVenetianCell>(t_Material, t_Description);
                 m_Cell = aCell;
-                m_Layer = wce::make_unique<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
+                m_Layer = std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
             }
         }
 
@@ -74,7 +73,7 @@ namespace SingleLayerOptics
             // Perforated shades do not work with directional diffuse algorithm
             std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CPerforatedCell>(t_Material, t_Description);
             m_Cell = aCell;
-            m_Layer = wce::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+            m_Layer = std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
         }
 
         // Woven cell
@@ -83,11 +82,11 @@ namespace SingleLayerOptics
             // Woven shades do not work with directional diffuse algorithm
             std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CWovenCell>(t_Material, t_Description);
             m_Cell = aCell;
-            m_Layer = wce::make_unique<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+            m_Layer = std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
         }
     }
 
-    std::unique_ptr<CBSDFLayer> CBSDFLayerMaker::getLayer()
+    std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getLayer()
     {
         return std::move(m_Layer);
     }
