@@ -2,6 +2,8 @@ cmake_minimum_required( VERSION 2.8.7 )
 
 set( target_name Windows-CalcEngine )
 
+set (CMAKE_CXX_STANDARD 11)
+
 project( ${target_name} )
 
 include( cmake/WCEProjectMacros.cmake )
