@@ -4,26 +4,6 @@ language:
 os:
   - linux
   - osx
-  
-matrix:
-  include:
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5.4
-      env: COMPILER=g++-5.4
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-5
-          packages:
-            - clang-5
-      env: COMPILER=clang++-5
 
 script:
   - mkdir build
