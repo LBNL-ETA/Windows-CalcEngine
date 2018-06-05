@@ -13,7 +13,7 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths, std::unique_ptr<CBSDFLayer> & t_Layer) :
+    CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths, std::shared_ptr<CBSDFLayer> & t_Layer) :
         m_Lambda(t_Layer->getResults()->lambdaMatrix()),
         m_CombinedLayerWavelengths(t_CommonWavelengths),
         m_Calculated(false)
@@ -26,10 +26,10 @@ namespace MultiLayerOptics
         addLayer(t_Layer);
     }
 
-    void CEquivalentBSDFLayer::addLayer( std::unique_ptr<CBSDFLayer> & t_Layer )
+    void CEquivalentBSDFLayer::addLayer( std::shared_ptr<CBSDFLayer> & t_Layer )
     {
         updateWavelengthLayers(*t_Layer);
-        m_Layer.push_back(std::move(t_Layer));        
+        m_Layer.push_back(t_Layer);
     }
 
     std::shared_ptr<const CBSDFDirections> CEquivalentBSDFLayer::getDirections(const BSDFHemisphere t_Side) const

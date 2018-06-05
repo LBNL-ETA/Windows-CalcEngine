@@ -34,9 +34,10 @@ namespace MultiLayerOptics
     class CEquivalentBSDFLayer
     {
     public:
-        CEquivalentBSDFLayer(std::vector<double> const & t_CommonWavelengths, std::unique_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
+        CEquivalentBSDFLayer(std::vector<double> const & t_CommonWavelengths,
+                             std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
 
-        void addLayer( std::unique_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer );
+        void addLayer( std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer );
         std::shared_ptr<const SingleLayerOptics::CBSDFDirections> getDirections(const SingleLayerOptics::BSDFHemisphere t_Side) const;
         std::vector<double> getCommonWavelengths() const;
 
@@ -61,7 +62,7 @@ namespace MultiLayerOptics
         std::vector<CEquivalentBSDFLayerSingleBand> m_LayersWL;
 
         // Layers that are added to the equivalent layer
-        std::vector<std::unique_ptr<SingleLayerOptics::CBSDFLayer>> m_Layer;
+        std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> m_Layer;
 
         // Total absoprtance coefficients for every wavelength (does not include source data)
         std::map<FenestrationCommon::Side, std::shared_ptr<FenestrationCommon::CMatrixSeries>> m_TotA;

@@ -357,7 +357,7 @@ protected:
 
 		// specular layer NFRC=102
 		CBSDFLayerMaker aMaker102 = CBSDFLayerMaker( aMaterial_102, aBSDF );
-		std::unique_ptr< CBSDFLayer > Layer_102 = aMaker102.getLayer();
+		std::shared_ptr< CBSDFLayer > Layer_102 = aMaker102.getLayer();
 
 		std::shared_ptr< CSpectralSampleData > aMeasurements_Venetian = loadVenetianBlindMaterial();
 
@@ -383,7 +383,7 @@ protected:
 
 		// get shading BSDF layer
 		CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker( aMaterial_Venetian, aBSDF, aCellDescription );
-		std::unique_ptr< CBSDFLayer > aVenetian = aMakerVenetian.getLayer();
+		std::shared_ptr< CBSDFLayer > aVenetian = aMakerVenetian.getLayer();
 
 		// All integration will be performed over wavelengths that are specified in NFRC=102
 		std::vector< double > commonWavelengths = aMeasurements_102->getWavelengths();

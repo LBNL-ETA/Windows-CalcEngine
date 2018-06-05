@@ -281,7 +281,7 @@ protected:
 			                                WavelengthRange::Solar );
 
 		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
-		std::unique_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
 
 		// Setting circular perforated shade with double range material
 		double Tmat = 0.1;
@@ -311,7 +311,7 @@ protected:
 			std::make_shared< CCircularCellDescription >( x, y, thickness, radius );
 
 		// Perforated layer is created here
-		std::unique_ptr< CBSDFLayer > Layer_Perforated =
+		std::shared_ptr< CBSDFLayer > Layer_Perforated =
 			CBSDFLayerMaker( aMaterialPerforated, aBSDF, aCellDescription ).getLayer();
 
 		std::vector< double > commonWavelengths = Layer_102->getBandWavelengths();
