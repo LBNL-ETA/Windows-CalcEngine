@@ -7,99 +7,95 @@
 #include "BSDFLayerMaker.hpp"
 #include "IScatteringLayer.hpp"
 
-namespace FenestrationCommon {
+namespace FenestrationCommon
+{
+    enum class Side;
+    enum class PropertySimple;
+    enum class Scattering;
+    enum class ScatteringSimple;
+    class CSeries;
 
-	enum class Side;
-	enum class PropertySimple;
-	enum class Scattering;
-	enum class ScatteringSimple;
-	class CSeries;
+}   // namespace FenestrationCommon
 
-}
+namespace SingleLayerOptics
+{
+    class CScatteringSurface;
+    class CLayerSingleComponent;
+    class CMaterial;
+    class CBSDFIntegrator;
+    class CBSDFLayer;
+    class ICellDescription;
 
-namespace SingleLayerOptics {
+    // Handles general case layer when properties can be direct, diffuse or combination between these two.
+    class CScatteringLayer : public IScatteringLayer
+    {
+    public:
+        CScatteringLayer(const std::shared_ptr<CScatteringSurface> & t_Front, const std::shared_ptr<CScatteringSurface> & t_Back);
 
-	class CScatteringSurface;
-	class CLayerSingleComponent;
-	class CMaterial;
-	class CBSDFIntegrator;
-	class CBSDFLayer;
-	class ICellDescription;
+        explicit CScatteringLayer(const std::shared_ptr<CScatteringLayer> & t_Layer);
 
-	// Handles general case layer when properties can be direct, diffuse or combination between these two.
-	class CScatteringLayer : public IScatteringLayer {
-	public:
-		CScatteringLayer( const std::shared_ptr< CScatteringSurface >& t_Front,
-		                  const std::shared_ptr< CScatteringSurface >& t_Back );
+        CScatteringLayer(const double Tf_dir_dir,
+                         const double Rf_dir_dir,
+                         const double Tb_dir_dir,
+                         const double Rb_dir_dir,
+                         const double Tf_dir_dif,
+                         const double Rf_dir_dif,
+                         const double Tb_dir_dif,
+                         const double Rb_dir_dif,
+                         const double Tf_dif_dif,
+                         const double Rf_dif_dif,
+                         const double Tb_dif_dif,
+                         const double Rb_dif_dif);
 
-		explicit CScatteringLayer( const std::shared_ptr< CScatteringLayer >& t_Layer );
+        CScatteringLayer(const std::shared_ptr<CMaterial> & t_Material,
+                         std::shared_ptr<ICellDescription> t_Description = nullptr,
+                         const DistributionMethod t_Method = DistributionMethod::UniformDiffuse);
 
-		CScatteringLayer(
-			const double Tf_dir_dir, const double Rf_dir_dir,
-			const double Tb_dir_dir, const double Rb_dir_dir,
-			const double Tf_dir_dif, const double Rf_dir_dif,
-			const double Tb_dir_dif, const double Rb_dir_dif,
-			const double Tf_dif_dif, const double Rf_dif_dif,
-			const double Tb_dif_dif, const double Rb_dif_dif );
+        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
-		CScatteringLayer( const std::shared_ptr< CMaterial >& t_Material,
-		                  std::shared_ptr< ICellDescription > t_Description = nullptr,
-		                  const DistributionMethod t_Method = DistributionMethod::UniformDiffuse );
+        std::shared_ptr<CScatteringSurface> getSurface(const FenestrationCommon::Side t_Side);
 
-		void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData ) const;
+        double getPropertySimple(const FenestrationCommon::PropertySimple t_Property,
+                                 const FenestrationCommon::Side t_Side,
+                                 const FenestrationCommon::Scattering t_Scattering,
+                                 const double t_Theta = 0,
+                                 const double t_Phi = 0) override;
 
-		std::shared_ptr< CScatteringSurface > getSurface( const FenestrationCommon::Side t_Side );
+        // void setPropertySimple( const FenestrationCommon::PropertySimple t_Property,
+        //  const FenestrationCommon::Side t_Side, const FenestrationCommon::Scattering t_Scattering,
+        //  const double value ) const;
 
-		double getPropertySimple(
-			const FenestrationCommon::PropertySimple t_Property,
-			const FenestrationCommon::Side t_Side,
-			const FenestrationCommon::Scattering t_Scattering,
-			const double t_Theta = 0,
-			const double t_Phi = 0 ) override;
+        double getAbsorptance(const FenestrationCommon::Side t_Side,
+                              const FenestrationCommon::ScatteringSimple t_Scattering,
+                              const double t_Theta = 0,
+                              const double t_Phi = 0);
 
-		//void setPropertySimple( const FenestrationCommon::PropertySimple t_Property,
-		//  const FenestrationCommon::Side t_Side, const FenestrationCommon::Scattering t_Scattering,
-		//  const double value ) const;
+        double getAbsorptance(const FenestrationCommon::Side t_Side, const double t_Theta = 0, const double t_Phi = 0);
 
-		double getAbsorptance(
-			const FenestrationCommon::Side t_Side,
-			const FenestrationCommon::ScatteringSimple t_Scattering,
-			const double t_Theta = 0,
-			const double t_Phi = 0 );
+        std::shared_ptr<CLayerSingleComponent>
+          getLayer(const FenestrationCommon::Scattering t_Scattering, const double t_Theta = 0, const double t_Phi = 0);
 
-		double getAbsorptance(
-			const FenestrationCommon::Side t_Side,
-			const double t_Theta = 0,
-			const double t_Phi = 0 );
+        std::vector<double> getWavelengths() const override;
 
-		std::shared_ptr< CLayerSingleComponent > getLayer(
-			const FenestrationCommon::Scattering t_Scattering,
-			const double t_Theta = 0,
-			const double t_Phi = 0 );
+        double getMinLambda() const override;
+        double getMaxLambda() const override;
 
-		std::vector< double > getWavelengths() const override;
+    private:
+        void createResultsAtAngle(const double t_Theta, const double t_Phi);
 
-		double getMinLambda() const override;
-		double getMaxLambda() const override;
+        std::shared_ptr<CScatteringSurface> createSurface(const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi);
 
-	private:
-		void createResultsAtAngle( const double t_Theta, const double t_Phi );
+        bool checkCurrentAngles(const double t_Theta, const double t_Phi);
 
-		std::shared_ptr< CScatteringSurface > createSurface( const FenestrationCommon::Side t_Side,
-		                                                     const double t_Theta, const double t_Phi );
+        std::map<FenestrationCommon::Side, std::shared_ptr<CScatteringSurface>> m_Surface;
 
-		bool checkCurrentAngles( const double t_Theta, const double t_Phi );
+        std::shared_ptr<CBSDFLayer> m_BSDFLayer;
+        std::shared_ptr<CBaseCell> m_Cell;
 
-		std::map< FenestrationCommon::Side, std::shared_ptr< CScatteringSurface > > m_Surface;
+        double m_Theta;
+        double m_Phi;
+    };
 
-		std::shared_ptr< CBSDFLayer > m_BSDFLayer;
-		std::shared_ptr< CBaseCell > m_Cell;
-
-		double m_Theta;
-		double m_Phi;
-
-	};
-
-}
+}   // namespace SingleLayerOptics
 
 #endif
