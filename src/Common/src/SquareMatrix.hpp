@@ -20,7 +20,7 @@ namespace FenestrationCommon
 
         std::vector<size_t> makeUpperTriangular();
 
-        SquareMatrix inverse();
+        SquareMatrix inverse() const;
 
         double operator()(const std::size_t i, const std::size_t j) const;
         double & operator()(const std::size_t i, const std::size_t j);
@@ -29,7 +29,7 @@ namespace FenestrationCommon
 
     private:
         // explicit SquareMatrix(SquareMatrix && tMatrix);
-        SquareMatrix LU();
+        SquareMatrix LU() const;
         std::vector<double> checkSingularity() const;
         std::size_t m_size;
         std::vector<std::vector<double>> m_Matrix;
