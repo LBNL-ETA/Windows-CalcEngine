@@ -401,8 +401,8 @@ protected:
 			std::make_shared< CMaterialSample >( aSample_103, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
 		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
-		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
-		std::shared_ptr< CBSDFLayer > Layer_103 = CBSDFLayerMaker( aMaterial_103, aBSDF ).getLayer();
+		std::unique_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		std::unique_ptr< CBSDFLayer > Layer_103 = CBSDFLayerMaker( aMaterial_103, aBSDF ).getLayer();
 
 		// To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
 		CCommonWavelengths aCommonWL;
@@ -423,7 +423,7 @@ protected:
 
 public:
 
-	std::shared_ptr< CMultiPaneBSDF > getLayer() {
+	std::shared_ptr< CMultiPaneBSDF > getLayer() const {
 		return m_Layer;
 	};
 
@@ -528,10 +528,10 @@ TEST_F( MultiPaneBSDF_102_103_SmallBasis, TestSpecular1 ) {
 	energyAbsLayer2 = aLayer.energyAbs( minLambda, maxLambda, Side::Front, 2, theta, phi );
 	EXPECT_NEAR( 101.6015581, energyAbsLayer2, 1e-6 );
 
-	CSquareMatrix aT = *aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+	SquareMatrix aT = aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
 	// Front transmittance matrix
-	size_t size = aT.getSize();
+	size_t size = aT.size();
 
 	std::vector< double > correctResults;
 	correctResults.push_back( 16.202475 );
@@ -542,13 +542,13 @@ TEST_F( MultiPaneBSDF_102_103_SmallBasis, TestSpecular1 ) {
 	correctResults.push_back( 0.872356377 );
 	correctResults.push_back( 0.5277899 );
 
-	EXPECT_EQ( correctResults.size(), aT.getSize() );
+	EXPECT_EQ( correctResults.size(), aT.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aT[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aT( i , i ), 1e-6 );
 	}
 
 	// Back Reflectance matrix
-	CSquareMatrix aRb = *aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+	SquareMatrix aRb = aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
 
 	correctResults.clear();
 
@@ -560,9 +560,9 @@ TEST_F( MultiPaneBSDF_102_103_SmallBasis, TestSpecular1 ) {
 	correctResults.push_back( 0.475644426 );
 	correctResults.push_back( 1.87553179 );
 
-	EXPECT_EQ( correctResults.size(), aRb.getSize() );
+	EXPECT_EQ( correctResults.size(), aRb.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aRb[ i ][ i ], 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aRb( i , i ), 1e-6 );
 	}
 
 	// Front absorptance layer 1

@@ -9,7 +9,7 @@
 namespace FenestrationCommon {
 
 	class CSeries;
-	class CSquareMatrix;
+	class SquareMatrix;
 	enum class Side;
 	enum class PropertySimple;
 
@@ -41,9 +41,11 @@ namespace MultiLayerOptics {
 		void setIntegrationType( FenestrationCommon::IntegrationType t_type, double normalizationCoefficient );
 
 		// Whole matrix results
-		std::shared_ptr< FenestrationCommon::CSquareMatrix > getMatrix(
-			const double minLambda, const double maxLambda,
-			const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
+            FenestrationCommon::SquareMatrix getMatrix(
+                const double minLambda,
+                const double maxLambda,
+                const FenestrationCommon::Side t_Side,
+                const FenestrationCommon::PropertySimple t_Property);
 
 		double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
 		               const FenestrationCommon::PropertySimple t_Property, const double t_Theta, const double t_Phi );
@@ -55,8 +57,10 @@ namespace MultiLayerOptics {
 		                                              const FenestrationCommon::Side t_Side, const size_t Index );
 
 		// Hemispherical results for every direction
-		std::shared_ptr< std::vector< double > > DirHem( const double minLambda, const double maxLambda,
-		                                                 const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
+            std::vector<double> DirHem(const double minLambda,
+                                       const double maxLambda,
+                                       const FenestrationCommon::Side t_Side,
+                                       const FenestrationCommon::PropertySimple t_Property);
 
 		// Directional hemispherical results for given Theta and Phi direction
 		double DirHem( const double minLambda, const double maxLambda,

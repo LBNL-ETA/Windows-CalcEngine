@@ -6,7 +6,7 @@
 
 namespace FenestrationCommon {
 
-	class CSquareMatrix;
+	class SquareMatrix;
 	class CLinearSolver;
 
 }
@@ -27,7 +27,7 @@ namespace Tarcog {
 		                std::shared_ptr< CBaseLayer > const& t_Current,
 		                std::shared_ptr< CBaseLayer > const& t_Next, int const t_Index );
 
-		std::shared_ptr< FenestrationCommon::CSquareMatrix > m_MatrixA;
+		std::shared_ptr< FenestrationCommon::SquareMatrix > m_MatrixA;
 		std::shared_ptr< std::vector< double > > m_VectorB;
 		std::shared_ptr< FenestrationCommon::CLinearSolver > m_LinearSolver;
 

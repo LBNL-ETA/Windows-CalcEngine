@@ -768,7 +768,7 @@ TEST_F( TestSpecularAngularLayer_102, TestSpecular1 ) {
 	double tauDir = aResults->DirDir( Side::Front, PropertySimple::T, theta, phi );
 	EXPECT_NEAR( 0.780630538026433, tauDir, 1e-6 );
 
-	/*  std::shared_ptr< CSquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
+	/*  std::shared_ptr< SquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
 	
 	  // Test only diagonal of transmittance matrix
 	  size_t size = aT->getSize();
@@ -931,7 +931,7 @@ TEST_F( TestSpecularAngularLayer_102, TestSpecular1 ) {
 	  }
 	
 	  // Front reflectance
-	  std::shared_ptr< CSquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
+	  std::shared_ptr< SquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
 	
 	  correctResults.clear();
 	  calculatedResults.clear();

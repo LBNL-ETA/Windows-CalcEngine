@@ -1,0 +1,86 @@
+AccessModifierOffset: -4
+AlignAfterOpenBracket: 'Align'
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: 'Left'
+AlignOperands: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: 'None'
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterReturnType: 'None'
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: true
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+BreakBeforeBinaryOperators: 'NonAssignment' 
+BreakBeforeBraces: 'Custom'
+BreakBeforeInheritanceComma: false
+BreakBeforeTernaryOperators: true 
+BreakConstructorInitializers: 'AfterColon'
+ColumnLimit: 150
+#CommentPragmas: '^ IWYU pragma:'
+CompactNamespaces: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 2
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+DisableFormat: false 
+FixNamespaceComments: true
+#****************** This may break the builds a lot because of include order issues*******************
+#IncludeBlocks: 'Regroup' 
+#IncludeCategories: 
+#  - Regex: 'stdafx\.h'
+#    Priority: '-1'
+#****************** END INCLUDE ORDER STRUCTURE*******************************************************
+IndentCaseLabels: true 
+IndentPPDirectives: 'AfterHash' 
+IndentWrappedFunctionNames: true  
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: false
+Language: 'Cpp' 
+MaxEmptyLinesToKeep: 2
+PointerAlignment: 'Middle'   
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true 
+#SpaceBeforeCtorInitializerColon: true #gives error when trying to run
+#SpaceBeforeInheritanceColon: true #gives error when trying to run
+SpaceBeforeParens: 'Never' 
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 3
+SpacesInAngles: false
+#SpaceBeforeRangeBasedForLoopColon: false #gives error when trying to run
+SpacesInCStyleCastParentheses: false 
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false     
+
+SortIncludes: false  # Setting this to true may break the builds because of include order issues
+SortUsingDeclarations: false
+
+UseTab: Never
+
+
+NamespaceIndentation: 'All'
+
+Standard: Cpp11

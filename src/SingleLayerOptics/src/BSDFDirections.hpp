@@ -6,7 +6,7 @@
 
 namespace FenestrationCommon {
 
-	class CSquareMatrix;
+	class SquareMatrix;
 
 }
 
@@ -36,8 +36,8 @@ namespace SingleLayerOptics {
 		std::vector< std::shared_ptr< CBSDFPatch > >::iterator begin();
 		std::vector< std::shared_ptr< CBSDFPatch > >::iterator end();
 
-		std::shared_ptr< std::vector< double > > lambdaVector() const;
-		std::shared_ptr< FenestrationCommon::CSquareMatrix > lambdaMatrix() const;
+		std::vector< double > lambdaVector() const;
+		FenestrationCommon::SquareMatrix lambdaMatrix() const;
 
 		// returns index of element that is closest to given Theta and Phi angles
 		size_t getNearestBeamIndex( const double t_Theta, const double t_Phi ) const;
@@ -45,7 +45,7 @@ namespace SingleLayerOptics {
 	private:
 		std::vector< std::shared_ptr< CBSDFPatch > > m_Patches;
 		std::shared_ptr< std::vector< double > > m_LambdaVector;
-		std::shared_ptr< FenestrationCommon::CSquareMatrix > m_LambdaMatrix;
+		std::shared_ptr< FenestrationCommon::SquareMatrix > m_LambdaMatrix;
 
 	};
 

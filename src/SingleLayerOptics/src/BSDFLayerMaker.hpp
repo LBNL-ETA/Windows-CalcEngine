@@ -21,13 +21,14 @@ namespace SingleLayerOptics {
 		                 std::shared_ptr< ICellDescription > t_Description = nullptr,
 		                 const DistributionMethod t_Method = DistributionMethod::UniformDiffuse );
 
-		std::shared_ptr< CBSDFLayer > getLayer() const;
+		std::unique_ptr< CBSDFLayer > getLayer();
 
 		std::shared_ptr< CBaseCell > getCell() const;
 
 	private:
-		std::shared_ptr< CBSDFLayer > m_Layer;
+		std::unique_ptr< CBSDFLayer > m_Layer;
 		std::shared_ptr< CBaseCell > m_Cell;
+                std::shared_ptr<const CBSDFHemisphere> m_BSDF;
 	};
 
 }
