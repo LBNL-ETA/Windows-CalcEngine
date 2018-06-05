@@ -77,7 +77,7 @@ namespace FenestrationCommon
     SquareMatrix SquareMatrix::inverse()
     {
         // return LU decomposed matrix of current matrix
-        auto aLU{LU()};
+        auto aLU(LU());
 
         // find the inverse
         SquareMatrix invMat(m_size);
