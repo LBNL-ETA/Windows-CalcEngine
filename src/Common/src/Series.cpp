@@ -100,8 +100,8 @@ namespace FenestrationCommon {
 
 		// std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >( );
 		CIntegratorFactory aFactory = CIntegratorFactory();
-		std::shared_ptr< IIntegratorStrategy > aIntegrator = aFactory.getIntegrator(
-				t_IntegrationType );
+                std::shared_ptr< IIntegratorStrategy > aIntegrator = aFactory.getIntegrator(
+                    t_IntegrationType);
 		// ISeriesPoint* previousProperty = nullptr;
 		// 
 		// for ( auto& spectralProperty : m_Series ) {
