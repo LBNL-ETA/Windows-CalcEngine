@@ -74,17 +74,16 @@ namespace FenestrationCommon
     //    m_Matrix(std::move(tMatrix.m_Matrix))
     //{}
 
-    SquareMatrix SquareMatrix::inverse()
-    {
+    SquareMatrix SquareMatrix::inverse() const {
         // return LU decomposed matrix of current matrix
-        auto aLU(LU());
+        auto aLu(LU());
 
         // find the inverse
         SquareMatrix invMat(m_size);
         std::vector<double> d(m_size);
         std::vector<double> y(m_size);
 
-        auto size{m_size - 1};
+        const auto size(m_size - 1);
 
         for(auto m = 0u; m <= size; ++m)
         {
@@ -96,7 +95,7 @@ namespace FenestrationCommon
                 double x = 0;
                 for(auto j = 0; j <= i - 1; ++j)
                 {
-                    x = x + aLU(size_t(i), size_t(j)) * y[j];
+                    x = x + aLu(size_t(i), size_t(j)) * y[j];
                 }
                 y[i] = (d[i] - x);
             }
@@ -106,9 +105,9 @@ namespace FenestrationCommon
                 auto x = 0.0;
                 for(auto j = i + 1; j <= int(size); ++j)
                 {
-                    x = x + aLU(size_t(i), size_t(j)) * invMat(size_t(j), size_t(m));
+                    x = x + aLu(size_t(i), size_t(j)) * invMat(size_t(j), size_t(m));
                 }
-                invMat(size_t(i), size_t(m)) = (y[i] - x) / aLU(size_t(i), size_t(i));
+                invMat(size_t(i), size_t(m)) = (y[i] - x) / aLu(size_t(i), size_t(i));
             }
         }
 
@@ -125,15 +124,14 @@ namespace FenestrationCommon
         return m_Matrix[i][j];
     }
 
-    SquareMatrix SquareMatrix::LU()
-    {
+    SquareMatrix SquareMatrix::LU() const {
         SquareMatrix D(this->m_Matrix);
 
         for(auto k = 0u; k <= m_size - 2; ++k)
         {
             for(auto j = k + 1; j <= m_size - 1; ++j)
             {
-                auto x = D(j, k) / D(k, k);
+                const auto x = D(j, k) / D(k, k);
                 for(auto i = k; i <= m_size - 1; ++i)
                 {
                     D(j, i) = D(j, i) - x * D(k, i);
@@ -172,7 +170,7 @@ namespace FenestrationCommon
 
     std::vector<size_t> SquareMatrix::makeUpperTriangular()
     {
-        const auto TINY{ 1e-20 };
+        const auto TINY( 1e-20 );
 
         std::vector<size_t> index(m_size);
 
@@ -301,7 +299,7 @@ namespace FenestrationCommon
             throw std::runtime_error("Matrices must be identical in size.");
         }
 
-        SquareMatrix aMatrix{first.size()};
+        SquareMatrix aMatrix(first.size());
         for(size_t i = 0; i < aMatrix.size(); ++i)
         {
             for(size_t j = 0; j < aMatrix.size(); ++j)
