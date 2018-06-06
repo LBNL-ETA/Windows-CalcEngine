@@ -62,8 +62,7 @@ namespace SingleLayerOptics
 
         double getAbsorptance(const FenestrationCommon::Side t_Side, const double t_Theta = 0, const double t_Phi = 0);
 
-        std::shared_ptr<CLayerSingleComponent>
-          getLayer(const FenestrationCommon::Scattering t_Scattering, const double t_Theta = 0, const double t_Phi = 0);
+        CLayerSingleComponent getLayer(const FenestrationCommon::Scattering t_Scattering, const double t_Theta = 0, const double t_Phi = 0);
 
         std::vector<double> getWavelengths() const override;
 

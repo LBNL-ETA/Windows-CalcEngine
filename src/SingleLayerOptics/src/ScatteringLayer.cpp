@@ -110,14 +110,13 @@ namespace SingleLayerOptics
         return aSurface.getAbsorptance();
     }
 
-    std::shared_ptr<CLayerSingleComponent> CScatteringLayer::getLayer(const Scattering t_Scattering, const double t_Theta, const double t_Phi)
+    CLayerSingleComponent CScatteringLayer::getLayer(const Scattering t_Scattering, const double t_Theta, const double t_Phi)
     {
         double Tf = getPropertySimple(PropertySimple::T, Side::Front, t_Scattering, t_Theta, t_Phi);
         double Rf = getPropertySimple(PropertySimple::R, Side::Front, t_Scattering, t_Theta, t_Phi);
         double Tb = getPropertySimple(PropertySimple::T, Side::Back, t_Scattering, t_Theta, t_Phi);
         double Rb = getPropertySimple(PropertySimple::R, Side::Back, t_Scattering, t_Theta, t_Phi);
-        std::shared_ptr<CLayerSingleComponent> aLayer = std::make_shared<CLayerSingleComponent>(Tf, Rf, Tb, Rb);
-        return aLayer;
+        return CLayerSingleComponent(Tf, Rf, Tb, Rb);
     }
 
     std::vector<double> CScatteringLayer::getWavelengths() const

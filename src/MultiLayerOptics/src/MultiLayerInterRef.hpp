@@ -7,6 +7,7 @@
 
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
+#include "MultiLayerInterRefSingleComponent.hpp"
 
 namespace FenestrationCommon
 {
@@ -21,9 +22,6 @@ namespace SingleLayerOptics
 namespace MultiLayerOptics
 {
     typedef std::vector<SingleLayerOptics::CScatteringLayer> CLayer_List;
-
-    class CSurfaceEnergy;
-    class CInterRefSingleComponent;
 
     class CInterRef
     {
@@ -57,27 +55,27 @@ namespace MultiLayerOptics
 
         // Function that calculate total diffuse energy that is leaving surface
         // and that originates from direct beam
-        std::shared_ptr<CSurfaceEnergy> calcDiffuseEnergy(const double t_Theta, const double t_Phi);
+        CSurfaceEnergy calcDiffuseEnergy(const double t_Theta, const double t_Phi);
 
         // Calculate direct to diffuse component at each surface
-        std::shared_ptr<CSurfaceEnergy> calcDirectToDiffuseComponent(const double t_Theta, const double t_Phi);
+        CSurfaceEnergy calcDirectToDiffuseComponent(const double t_Theta, const double t_Phi);
 
         void calculateAbsroptances(const double t_Theta, const double t_Phi);
 
         std::vector<SingleLayerOptics::CScatteringLayer> m_Layers;
 
-        std::map<FenestrationCommon::Side, std::shared_ptr<CLayer_List>> m_StackedLayers;
+        std::map<FenestrationCommon::Side, CLayer_List> m_StackedLayers;
 
         // for calculation of pure components (direct and diffuse)
-        std::shared_ptr<CInterRefSingleComponent> m_DirectComponent;
-        std::shared_ptr<CInterRefSingleComponent> m_DiffuseComponent;
+        CInterRefSingleComponent m_DirectComponent;
+        CInterRefSingleComponent m_DiffuseComponent;
 
         // Energy that is incoming at each surface. It contains three different components:
         // 1. Direct beam energy component calculates how much of direct beam will be incoming at
         //   each surface.
         // 2. Diffuse component that originates from incoming direct beam.
         // 3. Diffuse component that originates from incoming diffuse.
-        std::map<FenestrationCommon::Scattering, std::shared_ptr<CSurfaceEnergy>> m_Energy;
+        std::map<FenestrationCommon::Scattering, CSurfaceEnergy> m_Energy;
 
         // Absorptance for each layer comes in two different forms: Absrobed from diffuse and
         // absorbled from direct.

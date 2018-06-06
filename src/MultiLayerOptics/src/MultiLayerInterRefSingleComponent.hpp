@@ -20,7 +20,7 @@ namespace MultiLayerOptics {
 		CSurfaceEnergy();
 
 		void addEnergy( const FenestrationCommon::Side t_Side,
-		                const FenestrationCommon::EnergyFlow t_EnergyFlow, const double t_Value );
+		                const FenestrationCommon::EnergyFlow t_EnergySide, const double t_Value );
 
 		double IEnergy( const size_t Index,
 		                const FenestrationCommon::Side t_Side, const FenestrationCommon::EnergyFlow t_EnergyFlow );
@@ -35,20 +35,20 @@ namespace MultiLayerOptics {
 	class CInterRefSingleComponent {
 	public:
 		CInterRefSingleComponent( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb );
-		explicit CInterRefSingleComponent( const std::shared_ptr< const SingleLayerOptics::CLayerSingleComponent >& t_Layer );
+		explicit CInterRefSingleComponent( const SingleLayerOptics::CLayerSingleComponent & t_Layer );
 
 		// Adding layer to the back or front side of the IGU composition
 		void addLayer( const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb,
 		               const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
-		void addLayer( std::shared_ptr< const SingleLayerOptics::CLayerSingleComponent > t_Layer,
-		               const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+		void addLayer( const SingleLayerOptics::CLayerSingleComponent & t_Layer,
+                               const FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
 
 		// Retrieves value of energy to the surface of given layer. Incoming energy can be outside or inside
 		double getEnergyToSurface( const size_t Index, const FenestrationCommon::Side t_SurfaceSide,
 		                           const FenestrationCommon::EnergyFlow t_EnergyFlow );
 
-		std::shared_ptr< CSurfaceEnergy > getSurfaceEnergy();
+            CSurfaceEnergy getSurfaceEnergy();
 
 		double getLayerAbsorptance( const size_t Index, const FenestrationCommon::Side t_Side );
 
