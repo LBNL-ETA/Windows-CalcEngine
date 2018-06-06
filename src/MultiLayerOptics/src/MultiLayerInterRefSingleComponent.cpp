@@ -54,7 +54,7 @@ namespace MultiLayerOptics
 
     void CInterRefSingleComponent::addLayer(const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb, const Side t_Side)
     {
-        std::shared_ptr<CLayerSingleComponent> aLayer = std::make_shared<CLayerSingleComponent>(t_Tf, t_Rf, t_Tb, t_Rb);
+        const CLayerSingleComponent aLayer(t_Tf, t_Rf, t_Tb, t_Rb);
         switch(t_Side)
         {
             case Side::Front:
@@ -82,27 +82,27 @@ namespace MultiLayerOptics
     double CInterRefSingleComponent::getEnergyToSurface(const size_t Index, const Side t_Side, const EnergyFlow t_EnergyFlow)
     {
         calculateEnergies();
-        return m_IEnergy->IEnergy(Index, t_Side, t_EnergyFlow);
+        return m_IEnergy.IEnergy(Index, t_Side, t_EnergyFlow);
     }
 
-    CSurfaceEnergy CInterRefSingleComponent::getSurfaceEnergy()
+    const CSurfaceEnergy & CInterRefSingleComponent::getSurfaceEnergy()
     {
         calculateEnergies();
-        return *m_IEnergy;
+        return m_IEnergy;
     }
 
     double CInterRefSingleComponent::getLayerAbsorptance(const size_t Index, const Side t_Side)
     {
         // In this context side means energy flow, so we need to convert side into
         // correct energy flow
-        EnergyFlow aFlow = getFlowFromSide(t_Side);
+        const EnergyFlow aFlow = getFlowFromSide(t_Side);
 
         // Even if energy flow comes from one side, it still hits both sides of the layer and
         // this loop calculates energy absorbed at each side
         double absTot = 0;
         for(Side aSide : EnumSide())
         {
-            absTot += m_Layers[Index - 1]->getProperty(Property::Abs, aSide) * getEnergyToSurface(Index, aSide, aFlow);
+            absTot += m_Layers[Index - 1].getProperty(Property::Abs, aSide) * getEnergyToSurface(Index, aSide, aFlow);
         }
         return absTot;
     }
@@ -110,7 +110,6 @@ namespace MultiLayerOptics
     void CInterRefSingleComponent::initialize(const double t_Tf, const double t_Rf, const double t_Tb, const double t_Rb)
     {
         m_StateCalculated = false;
-        m_IEnergy = std::make_shared<CSurfaceEnergy>();
         addLayer(t_Tf, t_Rf, t_Tb, t_Rb);
     }
 
@@ -123,25 +122,25 @@ namespace MultiLayerOptics
 
             for(size_t i = 0; i <= m_Layers.size(); ++i)
             {
-                std::shared_ptr<CLayerSingleComponent> aForwardLayer = m_ForwardLayers[i];
-                std::shared_ptr<CLayerSingleComponent> aBackwardLayer = m_BackwardLayers[i];
+                const CLayerSingleComponent & aForwardLayer = m_ForwardLayers[i];
+                const CLayerSingleComponent & aBackwardLayer = m_BackwardLayers[i];
 
-                double Tf = aForwardLayer->getProperty(Property::T, Side::Front);
-                double Tb = aBackwardLayer->getProperty(Property::T, Side::Back);
-                double Rf = aBackwardLayer->getProperty(Property::R, Side::Front);
-                double Rb = aForwardLayer->getProperty(Property::R, Side::Back);
-                double iReflectance = 1 / (1 - Rf * Rb);
+                const double Tf = aForwardLayer.getProperty(Property::T, Side::Front);
+                const double Tb = aBackwardLayer.getProperty(Property::T, Side::Back);
+                const double Rf = aBackwardLayer.getProperty(Property::R, Side::Front);
+                const double Rb = aForwardLayer.getProperty(Property::R, Side::Back);
+                const double iReflectance = 1 / (1 - Rf * Rb);
 
                 if(i != m_Layers.size())
                 {
-                    m_IEnergy->addEnergy(Side::Front, EnergyFlow::Forward, Tf * iReflectance);
-                    m_IEnergy->addEnergy(Side::Front, EnergyFlow::Backward, Tb * Rb * iReflectance);
+                    m_IEnergy.addEnergy(Side::Front, EnergyFlow::Forward, Tf * iReflectance);
+                    m_IEnergy.addEnergy(Side::Front, EnergyFlow::Backward, Tb * Rb * iReflectance);
                 }
 
                 if(i != 0)
                 {
-                    m_IEnergy->addEnergy(Side::Back, EnergyFlow::Forward, Tf * Rf * iReflectance);
-                    m_IEnergy->addEnergy(Side::Back, EnergyFlow::Backward, Tb * iReflectance);
+                    m_IEnergy.addEnergy(Side::Back, EnergyFlow::Forward, Tf * Rf * iReflectance);
+                    m_IEnergy.addEnergy(Side::Back, EnergyFlow::Backward, Tb * iReflectance);
                 }
             }
 
@@ -152,37 +151,37 @@ namespace MultiLayerOptics
     void CInterRefSingleComponent::calculateForwardLayers()
     {
         // Insert exterior environment properties
-        std::shared_ptr<CLayerSingleComponent> aLayer = std::make_shared<CLayerSingleComponent>(1, 0, 1, 0);
+        CLayerSingleComponent aLayer(1, 0, 1, 0);
         m_ForwardLayers.push_back(aLayer);
 
         // First layer just in. No calculation is needed
         aLayer = m_Layers[0];
         m_ForwardLayers.push_back(aLayer);
-        CEquivalentLayerSingleComponent aEqLayer = CEquivalentLayerSingleComponent(*aLayer);
+        CEquivalentLayerSingleComponent aEqLayer(aLayer);
         for(size_t i = 1; i < m_Layers.size(); ++i)
         {
-            aEqLayer.addLayer(*m_Layers[i]);
-            aLayer = aEqLayer.getLayer();
-            m_ForwardLayers.push_back(aLayer);
+            aEqLayer.addLayer(m_Layers[i]);
+            const auto layer = aEqLayer.getLayer();
+            m_ForwardLayers.push_back(layer);
         }
     }
 
     void CInterRefSingleComponent::calculateBackwardLayers()
     {
         // Insert interior environment properties
-        std::shared_ptr<CLayerSingleComponent> aLayer = std::make_shared<CLayerSingleComponent>(1, 0, 1, 0);
+        CLayerSingleComponent aLayer(1, 0, 1, 0);
         m_BackwardLayers.push_back(aLayer);
 
-        size_t size = m_Layers.size() - 1;
+        const size_t size = m_Layers.size() - 1;
         // Last layer just in. No calculation is needed
         aLayer = m_Layers[size];
         m_BackwardLayers.insert(m_BackwardLayers.begin(), aLayer);
-        CEquivalentLayerSingleComponent aEqLayer = CEquivalentLayerSingleComponent(*aLayer);
+        CEquivalentLayerSingleComponent aEqLayer(aLayer);
         for(size_t i = size; i > 0; --i)
         {
-            aEqLayer.addLayer(*m_Layers[i - 1], Side::Front);
-            aLayer = aEqLayer.getLayer();
-            m_BackwardLayers.insert(m_BackwardLayers.begin(), aLayer);
+            aEqLayer.addLayer(m_Layers[i - 1], Side::Front);
+            const auto layer = aEqLayer.getLayer();
+            m_BackwardLayers.insert(m_BackwardLayers.begin(), layer);
         }
     }
 
