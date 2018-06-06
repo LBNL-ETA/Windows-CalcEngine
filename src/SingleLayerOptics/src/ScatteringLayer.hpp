@@ -6,16 +6,7 @@
 
 #include "BSDFLayerMaker.hpp"
 #include "IScatteringLayer.hpp"
-
-namespace FenestrationCommon
-{
-    enum class Side;
-    enum class PropertySimple;
-    enum class Scattering;
-    enum class ScatteringSimple;
-    class CSeries;
-
-}   // namespace FenestrationCommon
+#include "WCECommon.hpp"
 
 namespace SingleLayerOptics
 {
@@ -30,9 +21,8 @@ namespace SingleLayerOptics
     class CScatteringLayer : public IScatteringLayer
     {
     public:
-        CScatteringLayer(const std::shared_ptr<CScatteringSurface> & t_Front, const std::shared_ptr<CScatteringSurface> & t_Back);
-
-        explicit CScatteringLayer(const std::shared_ptr<CScatteringLayer> & t_Layer);
+        CScatteringLayer(const CScatteringSurface & t_Front, const CScatteringSurface & t_Back);
+        CScatteringLayer(const CScatteringSurface && t_Front, const CScatteringSurface && t_Back);
 
         CScatteringLayer(const double Tf_dir_dir,
                          const double Rf_dir_dir,
@@ -53,7 +43,7 @@ namespace SingleLayerOptics
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
-        std::shared_ptr<CScatteringSurface> getSurface(const FenestrationCommon::Side t_Side);
+        CScatteringSurface & getSurface( const FenestrationCommon::Side t_Side );
 
         double getPropertySimple(const FenestrationCommon::PropertySimple t_Property,
                                  const FenestrationCommon::Side t_Side,
@@ -83,11 +73,12 @@ namespace SingleLayerOptics
     private:
         void createResultsAtAngle(const double t_Theta, const double t_Phi);
 
-        std::shared_ptr<CScatteringSurface> createSurface(const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi);
+        CScatteringSurface createSurface( const FenestrationCommon::Side t_Side,
+                                          const double t_Theta, const double t_Phi );
 
         bool checkCurrentAngles(const double t_Theta, const double t_Phi);
 
-        std::map<FenestrationCommon::Side, std::shared_ptr<CScatteringSurface>> m_Surface;
+        std::map<FenestrationCommon::Side, CScatteringSurface> m_Surface;
 
         std::shared_ptr<CBSDFLayer> m_BSDFLayer;
         std::shared_ptr<CBaseCell> m_Cell;

@@ -16,34 +16,21 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CScatteringLayer::CScatteringLayer(const std::shared_ptr<CScatteringSurface> & t_Front, const std::shared_ptr<CScatteringSurface> & t_Back) :
+    CScatteringLayer::CScatteringLayer(const CScatteringSurface & t_Front, const CScatteringSurface & t_Back) :
+        m_Surface({{Side::Front, t_Front}, {Side::Back, t_Back}}),
         m_BSDFLayer(nullptr),
         m_Cell(nullptr),
         m_Theta(0),
         m_Phi(0)
-    {
-        if(t_Front == nullptr)
-        {
-            throw std::runtime_error("Front surface must be created.");
-        }
-        if(t_Back == nullptr)
-        {
-            throw std::runtime_error("Back surface must be created.");
-        }
+    {}
 
-        m_Surface[Side::Front] = t_Front;
-        m_Surface[Side::Back] = t_Back;
-    }
-
-    CScatteringLayer::CScatteringLayer(const std::shared_ptr<CScatteringLayer> & t_Layer) :
-        m_BSDFLayer(nullptr),
-        m_Cell(nullptr),
-        m_Theta(0),
-        m_Phi(0)
-    {
-        m_Surface[Side::Front] = t_Layer->getSurface(Side::Front);
-        m_Surface[Side::Back] = t_Layer->getSurface(Side::Back);
-    }
+  CScatteringLayer::CScatteringLayer(const CScatteringSurface && t_Front, const CScatteringSurface && t_Back) :
+      m_Surface({{Side::Front, std::move(t_Front)}, {Side::Back, std::move(t_Back)}}),
+      m_BSDFLayer(nullptr),
+      m_Cell(nullptr),
+      m_Theta(0),
+      m_Phi(0)
+  {}
 
     CScatteringLayer::CScatteringLayer(const double Tf_dir_dir,
                                        const double Rf_dir_dir,
@@ -57,14 +44,13 @@ namespace SingleLayerOptics
                                        const double Rf_dif_dif,
                                        const double Tb_dif_dif,
                                        const double Rb_dif_dif) :
+        m_Surface({{Side::Front, CScatteringSurface(Tf_dir_dir, Rf_dir_dir, Tf_dir_dif, Rf_dir_dif, Tf_dif_dif, Rf_dif_dif)},
+                   {Side::Back, CScatteringSurface(Tb_dir_dir, Rb_dir_dir, Tb_dir_dif, Rb_dir_dif, Tb_dif_dif, Rb_dif_dif)}}),
         m_BSDFLayer(nullptr),
         m_Cell(nullptr),
         m_Theta(0),
         m_Phi(0)
-    {
-        m_Surface[Side::Front] = std::make_shared<CScatteringSurface>(Tf_dir_dir, Rf_dir_dir, Tf_dir_dif, Rf_dir_dif, Tf_dif_dif, Rf_dif_dif);
-        m_Surface[Side::Back] = std::make_shared<CScatteringSurface>(Tb_dir_dir, Rb_dir_dir, Tb_dir_dif, Rb_dir_dif, Tb_dif_dif, Rb_dif_dif);
-    }
+    {}
 
     CScatteringLayer::CScatteringLayer(const std::shared_ptr<CMaterial> & t_Material,
                                        std::shared_ptr<ICellDescription> t_Description,
@@ -91,7 +77,7 @@ namespace SingleLayerOptics
         }
     }
 
-    std::shared_ptr<CScatteringSurface> CScatteringLayer::getSurface(const Side t_Side)
+    CScatteringSurface & CScatteringLayer::getSurface(const Side t_Side)
     {
         if(m_Surface.size() == 0)
         {
@@ -106,28 +92,22 @@ namespace SingleLayerOptics
       const PropertySimple t_Property, const Side t_Side, const Scattering t_Scattering, const double t_Theta, const double t_Phi)
     {
         checkCurrentAngles(t_Theta, t_Phi);
-        std::shared_ptr<CScatteringSurface> aSurface = getSurface(t_Side);
-        return aSurface->getPropertySimple(t_Property, t_Scattering);
+        auto aSurface = getSurface(t_Side);
+        return aSurface.getPropertySimple(t_Property, t_Scattering);
     }
-
-    // void CScatteringLayer::setPropertySimple( const PropertySimple t_Property, const Side t_Side,
-    //   const Scattering t_Scattering, const double value ) const {
-    //   std::shared_ptr< CScatteringSurface > aSurface = getSurface( t_Side );
-    //   return aSurface->setPropertySimple( t_Property, t_Scattering, value );
-    // }
 
     double CScatteringLayer::getAbsorptance(const Side t_Side, const ScatteringSimple t_Scattering, const double t_Theta, const double t_Phi)
     {
         checkCurrentAngles(t_Theta, t_Phi);
-        std::shared_ptr<CScatteringSurface> aSurface = getSurface(t_Side);
-        return aSurface->getAbsorptance(t_Scattering);
+        auto & aSurface = getSurface(t_Side);
+        return aSurface.getAbsorptance(t_Scattering);
     }
 
     double CScatteringLayer::getAbsorptance(const Side t_Side, const double t_Theta, const double t_Phi)
     {
         checkCurrentAngles(t_Theta, t_Phi);
-        std::shared_ptr<CScatteringSurface> aSurface = getSurface(t_Side);
-        return aSurface->getAbsorptance();
+        auto aSurface = getSurface(t_Side);
+        return aSurface.getAbsorptance();
     }
 
     std::shared_ptr<CLayerSingleComponent> CScatteringLayer::getLayer(const Scattering t_Scattering, const double t_Theta, const double t_Phi)
@@ -149,12 +129,12 @@ namespace SingleLayerOptics
     {
         if(m_BSDFLayer != nullptr && m_Cell != nullptr)
         {
-            m_Surface[Side::Front] = createSurface(Side::Front, t_Theta, t_Phi);
-            m_Surface[Side::Back] = createSurface(Side::Back, t_Theta, t_Phi);
+            m_Surface.emplace(Side::Front, createSurface(Side::Front, t_Theta, t_Phi) );
+            m_Surface.emplace(Side::Back, createSurface(Side::Back, t_Theta, t_Phi) );
         }
     }
 
-    std::shared_ptr<CScatteringSurface> CScatteringLayer::createSurface(const Side t_Side, const double t_Theta, const double t_Phi)
+    CScatteringSurface CScatteringLayer::createSurface(const Side t_Side, const double t_Theta, const double t_Phi)
     {
         CBeamDirection aDirection = CBeamDirection(t_Theta, t_Phi);
         double T_dir_dir = m_Cell->T_dir_dir(t_Side, aDirection);
@@ -171,7 +151,7 @@ namespace SingleLayerOptics
         }
         double T_dif_dif = m_BSDFLayer->getResults()->DiffDiff(t_Side, PropertySimple::T);
         double R_dif_dif = m_BSDFLayer->getResults()->DiffDiff(t_Side, PropertySimple::R);
-        return std::make_shared<CScatteringSurface>(T_dir_dir, R_dir_dir, T_dir_dif, R_dir_dif, T_dif_dif, R_dif_dif);
+        return CScatteringSurface(T_dir_dir, R_dir_dir, T_dir_dif, R_dir_dif, T_dif_dif, R_dif_dif);
     }
 
     bool CScatteringLayer::checkCurrentAngles(const double t_Theta, const double t_Phi)

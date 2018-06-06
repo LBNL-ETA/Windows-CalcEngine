@@ -304,8 +304,8 @@ protected:
 		std::shared_ptr< ICellDescription > aCellDescription =
 			std::make_shared< CWovenCellDescription >( diameter, spacing );
 
-		auto Layer_102 = std::make_shared< CScatteringLayer >( aMaterial_102 );
-		auto Layer_Woven = std::make_shared< CScatteringLayer >( aMaterialWoven, aCellDescription );
+		CScatteringLayer Layer_102( aMaterial_102 );
+		CScatteringLayer Layer_Woven( aMaterialWoven, aCellDescription );
 
 
 		// Equivalent BSDF layer

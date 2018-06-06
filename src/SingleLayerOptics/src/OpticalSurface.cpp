@@ -53,8 +53,7 @@ CScatteringSurface::CScatteringSurface(const double T_dir_dir,
   m_PropertySimple[std::make_pair(PropertySimple::R,
                                   Scattering::DiffuseDiffuse)] = R_dif_dif;
 
-  m_Absorptance[ScatteringSimple::Direct] =
-      1 - T_dir_dir - T_dir_dif - R_dir_dir - R_dir_dif;
+  m_Absorptance[ScatteringSimple::Direct] = 1 - T_dir_dir - T_dir_dif - R_dir_dir - R_dir_dif;
   m_Absorptance[ScatteringSimple::Diffuse] = 1 - T_dif_dif - R_dif_dif;
 }
 
