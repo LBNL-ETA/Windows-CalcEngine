@@ -20,7 +20,7 @@ protected:
 TEST_F( TestBeamDirection, TestBeamDirectionProfileAngle1 ) {
 	SCOPED_TRACE( "Begin Test: Beam direction profile angles." );
 
-	CBeamDirection aDirection = CBeamDirection( 0, 0 );
+	CBeamDirection aDirection( 0, 0 );
 
 	double profileAngle = aDirection.profileAngle();
 	EXPECT_NEAR( 0, profileAngle, 1e-6 );
@@ -30,7 +30,7 @@ TEST_F( TestBeamDirection, TestBeamDirectionProfileAngle1 ) {
 TEST_F( TestBeamDirection, TestBeamDirectionProfileAngle2 ) {
 	SCOPED_TRACE( "Begin Test: Beam direction profile angles." );
 
-	CBeamDirection aDirection = CBeamDirection( 18, 90 );
+	CBeamDirection aDirection( 18, 90 );
 
 	double profileAngle = aDirection.profileAngle();
 	EXPECT_NEAR( -18, profileAngle, 1e-6 );
@@ -40,7 +40,7 @@ TEST_F( TestBeamDirection, TestBeamDirectionProfileAngle2 ) {
 TEST_F( TestBeamDirection, TestBeamDirectionProfileAngle3 ) {
 	SCOPED_TRACE( "Begin Test: Beam direction profile angles." );
 
-	CBeamDirection aDirection = CBeamDirection( 18, 270 );
+	CBeamDirection aDirection( 18, 270 );
 
 	double profileAngle = aDirection.profileAngle();
 	EXPECT_NEAR( 18, profileAngle, 1e-6 );
@@ -50,8 +50,8 @@ TEST_F( TestBeamDirection, TestBeamDirectionProfileAngle3 ) {
 TEST_F( TestBeamDirection, TestBeamDirectionAssignment ) {
 	SCOPED_TRACE( "Begin Test: Copying beam direction." );
 
-	CBeamDirection aDirection = CBeamDirection( 18, 90 );
-	CBeamDirection aCopyDirection = CBeamDirection( 0, 0 );
+	CBeamDirection aDirection( 18, 90 );
+	CBeamDirection aCopyDirection( 0, 0 );
 
 	aCopyDirection = aDirection;
 

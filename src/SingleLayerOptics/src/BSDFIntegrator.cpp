@@ -23,8 +23,8 @@ namespace SingleLayerOptics
         }
     }
 
-    CBSDFIntegrator::CBSDFIntegrator(const std::shared_ptr<const CBSDFDirections> & t_Directions) :
-        m_Directions(*t_Directions),
+    CBSDFIntegrator::CBSDFIntegrator(const CBSDFDirections & t_Directions) :
+        m_Directions(t_Directions),
         m_DimMatrices(m_Directions.size()),
         m_HemisphericalCalculated(false),
         m_DiffuseDiffuseCalculated(false)

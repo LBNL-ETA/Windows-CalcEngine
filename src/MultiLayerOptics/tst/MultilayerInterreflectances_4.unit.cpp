@@ -16,7 +16,7 @@ class TestMultilayerInterreflectances_4 : public testing::Test {
 
 private:
 	// Additional layer added to the back side
-	std::shared_ptr< CInterRef > m_Interref;
+	std::unique_ptr<CInterRef> m_Interref;
 
 protected:
 	virtual void SetUp() {
@@ -33,15 +33,15 @@ protected:
 		aBack = CScatteringSurface( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
 		CScatteringLayer aLayer3( aFront, aBack );
 
-		m_Interref = std::make_shared< CInterRef >( aLayer3 );
+		m_Interref = wce::make_unique<CInterRef>( aLayer3 );
 		m_Interref->addLayer( aLayer2, Side::Front );
 		m_Interref->addLayer( aLayer1, Side::Front );
 
 	}
 
 public:
-	std::shared_ptr< CInterRef > getInt() {
-		return m_Interref;
+	CInterRef & getInt() {
+		return *m_Interref;
 	};
 
 };
@@ -49,7 +49,7 @@ public:
 TEST_F( TestMultilayerInterreflectances_4, TestForwardFlowFrontSide ) {
 	SCOPED_TRACE( "Begin Test: Triple pane equivalent layer properties (Forward flow - Front Side)." );
 
-	CInterRef eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	EnergyFlow aFlow = EnergyFlow::Forward;
 	Side aSide = Side::Front;
@@ -92,7 +92,7 @@ TEST_F( TestMultilayerInterreflectances_4, TestForwardFlowFrontSide ) {
 TEST_F( TestMultilayerInterreflectances_4, TestForwardFlowBackSide ) {
 	SCOPED_TRACE( "Begin Test: Triple pane equivalent layer properties (Forward flow - Back Side)." );
 
-	CInterRef eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	EnergyFlow aFlow = EnergyFlow::Forward;
 	Side aSide = Side::Back;
@@ -135,7 +135,7 @@ TEST_F( TestMultilayerInterreflectances_4, TestForwardFlowBackSide ) {
 TEST_F( TestMultilayerInterreflectances_4, TestBackwardFlowFrontSide ) {
 	SCOPED_TRACE( "Begin Test: Triple pane equivalent layer properties (Backward flow - Front Side)." );
 
-	CInterRef eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	EnergyFlow aFlow = EnergyFlow::Backward;
 	Side aSide = Side::Front;
@@ -178,7 +178,7 @@ TEST_F( TestMultilayerInterreflectances_4, TestBackwardFlowFrontSide ) {
 TEST_F( TestMultilayerInterreflectances_4, TestBackwardFlowBackSide ) {
 	SCOPED_TRACE( "Begin Test: Triple pane equivalent layer properties (Backward flow - Back Side)." );
 
-	CInterRef eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	EnergyFlow aFlow = EnergyFlow::Backward;
 	Side aSide = Side::Back;
@@ -221,7 +221,7 @@ TEST_F( TestMultilayerInterreflectances_4, TestBackwardFlowBackSide ) {
 TEST_F( TestMultilayerInterreflectances_4, TestFrontSideAbsorptances ) {
 	SCOPED_TRACE( "Begin Test: Triple pane layer by layer absroptances (Front Side)." );
 
-	CInterRef eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	Side aSide = Side::Front;
 
@@ -252,7 +252,7 @@ TEST_F( TestMultilayerInterreflectances_4, TestFrontSideAbsorptances ) {
 TEST_F( TestMultilayerInterreflectances_4, TestBackSideAbsorptances ) {
 	SCOPED_TRACE( "Begin Test: Triple pane layer by layer absroptances (Back Side)." );
 
-	CInterRef eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	Side aSide = Side::Back;
 

@@ -21,7 +21,7 @@ namespace SingleLayerOptics
 {
     class CBSDFLayer;
     class CBSDFIntegrator;
-    enum class BSDFHemisphere;
+    enum class BSDFDirection;
     class CBSDFDirections;
 
 }   // namespace SingleLayerOptics
@@ -38,7 +38,7 @@ namespace MultiLayerOptics
                              std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
 
         void addLayer( std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer );
-        std::shared_ptr<const SingleLayerOptics::CBSDFDirections> getDirections(const SingleLayerOptics::BSDFHemisphere t_Side) const;
+        const SingleLayerOptics::CBSDFDirections & getDirections( const SingleLayerOptics::BSDFDirection t_Side ) const;
         std::vector<double> getCommonWavelengths() const;
 
         // Absorptance wavelength by wavelength matrices

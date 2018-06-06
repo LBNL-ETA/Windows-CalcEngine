@@ -15,18 +15,18 @@ class TestMultilayerSingleComponent_1 : public testing::Test {
 
 private:
 	// Additional layer added to the back side
-	std::shared_ptr< CMultiLayerSingleComponent > m_IGU;
+	CMultiLayerSingleComponent m_IGU;
 
 protected:
 	virtual void SetUp() {
-		m_IGU = std::make_shared< CMultiLayerSingleComponent >( 0.46, 0.52, 0.64, 0.22 );
-		m_IGU->addLayer( 0.56, 0.34, 0.49, 0.39 );
-		m_IGU->addLayer( 0.12, 0.47, 0.33, 0.63 );
+		m_IGU = CMultiLayerSingleComponent( 0.46, 0.52, 0.64, 0.22 );
+		m_IGU.addLayer( 0.56, 0.34, 0.49, 0.39 );
+		m_IGU.addLayer( 0.12, 0.47, 0.33, 0.63 );
 
 	}
 
 public:
-	std::shared_ptr< CMultiLayerSingleComponent > getIGU() {
+	CMultiLayerSingleComponent & getIGU() {
 		return m_IGU;
 	};
 
@@ -35,7 +35,7 @@ public:
 TEST_F( TestMultilayerSingleComponent_1, TestOpticalProperties ) {
 	SCOPED_TRACE( "Begin Test: Combined layers optical properties." );
 
-	CMultiLayerSingleComponent eqLayer = *getIGU();
+	auto & eqLayer = getIGU();
 
 	double Tf = eqLayer.getProperty( Property::T, Side::Front );
 	EXPECT_NEAR( 0.042506037, Tf, 1e-6 );
@@ -60,7 +60,7 @@ TEST_F( TestMultilayerSingleComponent_1, TestOpticalProperties ) {
 TEST_F( TestMultilayerSingleComponent_1, TestLayerAbsorptances ) {
 	SCOPED_TRACE( "Begin Test: Layer by layer absorptances." );
 
-	CMultiLayerSingleComponent eqLayer = *getIGU();
+	auto & eqLayer = getIGU();
 
 	double Af1 = eqLayer.getLayerAbsorptance( 1, Side::Front );
 	EXPECT_NEAR( 0.056010229, Af1, 1e-6 );

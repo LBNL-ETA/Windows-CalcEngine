@@ -14,19 +14,19 @@ class TestMultilayerInterreflectances_2 : public testing::Test {
 
 private:
 	// Additional layer added to the back side
-	std::shared_ptr< CInterRefSingleComponent > m_Interref;
+	CInterRefSingleComponent m_Interref;
 
 protected:
 	virtual void SetUp() {
 
-		m_Interref = std::make_shared< CInterRefSingleComponent >( 0.12, 0.47, 0.33, 0.63 );
-		m_Interref->addLayer( 0.56, 0.34, 0.49, 0.39, Side::Front );
-		m_Interref->addLayer( 0.46, 0.52, 0.64, 0.22, Side::Front );
+		m_Interref = CInterRefSingleComponent( 0.12, 0.47, 0.33, 0.63 );
+		m_Interref.addLayer( 0.56, 0.34, 0.49, 0.39, Side::Front );
+		m_Interref.addLayer( 0.46, 0.52, 0.64, 0.22, Side::Front );
 
 	}
 
 public:
-	std::shared_ptr< CInterRefSingleComponent > getInt() {
+	CInterRefSingleComponent & getInt() {
 		return m_Interref;
 	};
 
@@ -35,7 +35,7 @@ public:
 TEST_F( TestMultilayerInterreflectances_2, TestForwardFlow ) {
 	SCOPED_TRACE( "Begin Test: Double pane equivalent layer properties (additonal layer on back side)." );
 
-	CInterRefSingleComponent eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	EnergyFlow aFlow = EnergyFlow::Forward;
 
@@ -62,7 +62,7 @@ TEST_F( TestMultilayerInterreflectances_2, TestForwardFlow ) {
 TEST_F( TestMultilayerInterreflectances_2, TestBackwardFlow ) {
 	SCOPED_TRACE( "Begin Test: Double pane equivalent layer properties (additonal layer on back side)." );
 
-	CInterRefSingleComponent eqLayer = *getInt();
+	auto & eqLayer = getInt();
 
 	EnergyFlow aFlow = EnergyFlow::Backward;
 

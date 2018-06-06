@@ -11,15 +11,15 @@ using namespace SingleLayerOptics;
 class TestBSDFDirectionsClosestIndex : public testing::Test {
 
 private:
-	std::shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
+	std::unique_ptr< CBSDFHemisphere > m_BSDFHemisphere;
 
 protected:
 	virtual void SetUp() {
-		m_BSDFHemisphere = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		m_BSDFHemisphere = wce::make_unique< CBSDFHemisphere >( BSDFBasis::Quarter );
 	}
 
 public:
-	std::shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) {
+	const CBSDFDirections & GetDirections( const BSDFDirection t_Side ) {
 		return m_BSDFHemisphere->getDirections( t_Side );
 	};
 
@@ -28,7 +28,7 @@ public:
 TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex1 ) {
 	SCOPED_TRACE( "Begin Test: Find closest index 1." );
 
-	const CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	const auto & aDirections = GetDirections( BSDFDirection::Incoming );
 
 	double theta = 15;
 	double phi = 270;
@@ -42,7 +42,7 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex1 ) {
 TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex2 ) {
 	SCOPED_TRACE( "Begin Test: Find closest index 2." );
 
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	const auto & aDirections = GetDirections( BSDFDirection::Incoming );
 
 	double theta = 70;
 	double phi = 175;
@@ -56,7 +56,7 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex2 ) {
 TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex3 ) {
 	SCOPED_TRACE( "Begin Test: Find closest index 3." );
 
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	const auto & aDirections = GetDirections( BSDFDirection::Incoming );
 
 	double theta = 55;
 	double phi = 60;
@@ -70,7 +70,7 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex3 ) {
 TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex4 ) {
 	SCOPED_TRACE( "Begin Test: Find closest index 4." );
 
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	const auto & aDirections = GetDirections( BSDFDirection::Incoming );
 
 	double theta = 0;
 	double phi = 0;
@@ -84,7 +84,7 @@ TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex4 ) {
 TEST_F( TestBSDFDirectionsClosestIndex, TestClosestIndex5 ) {
 	SCOPED_TRACE( "Begin Test: Find closest index 5." );
 
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	const auto & aDirections = GetDirections( BSDFDirection::Incoming );
 
 	double theta = 71.2163;
 	double phi = 349.744251;

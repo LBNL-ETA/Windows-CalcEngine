@@ -32,7 +32,7 @@ namespace MultiLayerOptics
         m_Layer.push_back(t_Layer);
     }
 
-    std::shared_ptr<const CBSDFDirections> CEquivalentBSDFLayer::getDirections(const BSDFHemisphere t_Side) const
+    const CBSDFDirections & CEquivalentBSDFLayer::getDirections( const BSDFDirection t_Side ) const
     {
         return m_Layer[0]->getDirections(t_Side);
     }

@@ -20,7 +20,7 @@ protected:
 TEST_F( TestAngleLimits, TestAngleLimits1 ) {
 	SCOPED_TRACE( "Begin Test: Angle limits 1." );
 
-	CAngleLimits aLimits = CAngleLimits( -15, 15 );
+	CAngleLimits aLimits( -15, 15 );
 
 	const double angle = 350;
 

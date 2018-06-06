@@ -25,7 +25,7 @@ namespace SingleLayerOptics
     {
     public:
         explicit CBSDFIntegrator(const std::shared_ptr<const CBSDFIntegrator> & t_Integrator);
-        explicit CBSDFIntegrator(const std::shared_ptr<const CBSDFDirections> & t_Directions);
+        explicit CBSDFIntegrator(const CBSDFDirections & t_Directions);
 
         // Result matrices
         FenestrationCommon::SquareMatrix & getMatrix(const FenestrationCommon::Side t_Side, 

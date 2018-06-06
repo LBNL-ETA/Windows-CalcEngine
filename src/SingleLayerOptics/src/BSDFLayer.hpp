@@ -19,7 +19,7 @@ namespace MultiLayerOptics {
 
 namespace SingleLayerOptics {
 
-	enum class BSDFHemisphere;
+	enum class BSDFDirection;
 	class CBSDFHemisphere;
 	class CBaseCell;
 	class CBSDFIntegrator;
@@ -39,7 +39,7 @@ namespace SingleLayerOptics {
 		// BSDF results for the enire spectrum range of the material in the cell
 		std::shared_ptr< CBSDFIntegrator > getResults();
 
-		std::shared_ptr< const CBSDFDirections > getDirections( const BSDFHemisphere t_Side ) const;
+		const CBSDFDirections & getDirections( const BSDFDirection t_Side ) const;
 
 		// BSDF results for each wavelenght given in specular cell
 		std::shared_ptr< BSDF_Results > getWavelengthResults();

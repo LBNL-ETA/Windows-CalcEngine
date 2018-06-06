@@ -18,7 +18,7 @@ namespace MultiLayerOptics
                                    const p_VectorSeries & t_IncomingSpectra) :
         m_Layer(t_Layer),
         m_SolarRadiationInit(t_SolarRadiation),
-        m_Results(std::make_shared<CBSDFIntegrator>(t_Layer->getDirections(BSDFHemisphere::Incoming))),
+        m_Results(std::make_shared<CBSDFIntegrator>(t_Layer->getDirections(BSDFDirection::Incoming))),
         m_Calculated(false),
         m_MinLambdaCalculated(0),
         m_MaxLambdaCalculated(0),
@@ -33,7 +33,7 @@ namespace MultiLayerOptics
         // This will initialize layer material data with given spectral distribution
         t_Layer->setSolarRadiation(m_SolarRadiationInit);
 
-        size_t directionsSize = t_Layer->getDirections(BSDFHemisphere::Incoming)->size();
+        size_t directionsSize = t_Layer->getDirections(BSDFDirection::Incoming).size();
         m_IncomingSolar.resize(directionsSize);
         if(t_IncomingSpectra != nullptr)
         {
