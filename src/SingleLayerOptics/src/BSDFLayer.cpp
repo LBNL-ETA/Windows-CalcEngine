@@ -19,7 +19,7 @@ namespace SingleLayerOptics
     {
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
-        m_Results = std::make_shared<CBSDFIntegrator>(m_BSDFHemisphere->getDirections(BSDFHemisphere::Incoming));
+        m_Results = std::make_shared<CBSDFIntegrator>(m_BSDFHemisphere->getDirections(BSDFDirection::Incoming));
     }
 
     void CBSDFLayer::setSourceData(std::shared_ptr<CSeries> t_SourceData)
@@ -29,7 +29,7 @@ namespace SingleLayerOptics
         m_CalculatedWV = false;
     }
 
-    std::shared_ptr<const CBSDFDirections> CBSDFLayer::getDirections(const BSDFHemisphere t_Side) const
+    const CBSDFDirections & CBSDFLayer::getDirections( const BSDFDirection t_Side ) const
     {
         return m_BSDFHemisphere->getDirections(t_Side);
     }
@@ -68,7 +68,7 @@ namespace SingleLayerOptics
     {
         for(Side t_Side : EnumSide())
         {
-            CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections(BSDFHemisphere::Incoming);
+            CBSDFDirections aDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Incoming);
             size_t size = aDirections.size();
             SquareMatrix tau{size};
             SquareMatrix rho{size};
@@ -91,14 +91,14 @@ namespace SingleLayerOptics
     {
         for(Side aSide : EnumSide())
         {
-            std::shared_ptr<const CBSDFDirections> aDirections = m_BSDFHemisphere->getDirections(BSDFHemisphere::Incoming);
-            size_t size = aDirections->size();
+            const auto & aDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Incoming);
+            size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = *(*aDirections)[i]->centerPoint();
+                const CBeamDirection aDirection = *aDirections[i]->centerPoint();
                 std::vector<double> aTau = m_Cell->T_dir_dir_band(aSide, aDirection);
                 std::vector<double> aRho = m_Cell->R_dir_dir_band(aSide, aDirection);
-                double Lambda = (*aDirections)[i]->lambda();
+                double Lambda = aDirections[i]->lambda();
                 size_t numWV = aTau.size();
                 for(size_t j = 0; j < numWV; ++j)
                 {
@@ -116,7 +116,7 @@ namespace SingleLayerOptics
     {
         for(Side aSide : EnumSide())
         {
-            CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections(BSDFHemisphere::Incoming);
+            const auto & aDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Incoming);
 
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
@@ -131,7 +131,7 @@ namespace SingleLayerOptics
     {
         for(Side aSide : EnumSide())
         {
-            CBSDFDirections aDirections = *m_BSDFHemisphere->getDirections(BSDFHemisphere::Incoming);
+            const auto & aDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Incoming);
 
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
@@ -148,7 +148,7 @@ namespace SingleLayerOptics
         size_t size = m_Cell->getBandSize();
         for(size_t i = 0; i < size; ++i)
         {
-            std::shared_ptr<CBSDFIntegrator> aResults = std::make_shared<CBSDFIntegrator>(m_BSDFHemisphere->getDirections(BSDFHemisphere::Incoming));
+            std::shared_ptr<CBSDFIntegrator> aResults = std::make_shared<CBSDFIntegrator>(m_BSDFHemisphere->getDirections(BSDFDirection::Incoming));
             m_WVResults->push_back(aResults);
         }
     }

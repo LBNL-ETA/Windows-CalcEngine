@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <map>
 
 namespace FenestrationCommon {
 
@@ -26,11 +27,11 @@ namespace SingleLayerOptics {
 		size_t m_NumOfPhis;
 	};
 
-	enum class BSDFHemisphere { Incoming, Outgoing };
+	enum class BSDFDirection { Incoming, Outgoing };
 
 	class CBSDFDirections {
 	public:
-		CBSDFDirections( std::vector< CBSDFDefinition >& t_Definitions, const BSDFHemisphere t_Side );
+		CBSDFDirections( std::vector< CBSDFDefinition >& t_Definitions, const BSDFDirection t_Side );
 		size_t size() const;
 		std::shared_ptr< const CBSDFPatch > operator[]( const size_t Index ) const;
 		std::vector< std::shared_ptr< CBSDFPatch > >::iterator begin();
@@ -57,11 +58,10 @@ namespace SingleLayerOptics {
 		explicit CBSDFHemisphere( const BSDFBasis t_Basis );
 		// Construction for custom basis
 		explicit CBSDFHemisphere( std::vector< CBSDFDefinition >& t_Definitions );
-		std::shared_ptr< const CBSDFDirections > getDirections( const BSDFHemisphere t_Side ) const;
+		const CBSDFDirections & getDirections( const BSDFDirection t_Side ) const;
 
 	private:
-		std::shared_ptr< CBSDFDirections > m_IncomingDirections;
-		std::shared_ptr< CBSDFDirections > m_OutgoingDirections;
+		std::map< BSDFDirection, CBSDFDirections > m_Directions;
 	};
 
 }

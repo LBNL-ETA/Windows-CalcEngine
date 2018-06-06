@@ -33,15 +33,15 @@ namespace SingleLayerOptics
         auto & tau = m_Results->getMatrix(aSide, PropertySimple::T);
         auto & Rho = m_Results->getMatrix(aSide, PropertySimple::R);
 
-        std::shared_ptr<const CBSDFDirections> jDirections = m_BSDFHemisphere->getDirections(BSDFHemisphere::Outgoing);
+        const auto & jDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Outgoing);
 
-        size_t size = jDirections->size();
+        size_t size = jDirections.size();
 
         for(size_t j = 0; j < size; ++j)
         {
             using ConstantsData::PI;
 
-            const CBeamDirection jDirection = *(*jDirections)[j]->centerPoint();
+            const CBeamDirection jDirection = *jDirections[j]->centerPoint();
 
             double aTau = aCell->T_dir_dif(aSide, t_Direction, jDirection);
             double aRho = aCell->R_dir_dif(aSide, t_Direction, jDirection);
@@ -55,7 +55,7 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        CBSDFDirections iDirections = *m_BSDFHemisphere->getDirections(BSDFHemisphere::Outgoing);
+        const CBSDFDirections iDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Outgoing);
 
         size_t size = iDirections.size();
 

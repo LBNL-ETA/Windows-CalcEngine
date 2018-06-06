@@ -19,7 +19,7 @@ protected:
 	}
 
 public:
-	std::shared_ptr< const CBSDFDirections > GetDirections( const BSDFHemisphere t_Side ) {
+	const CBSDFDirections & GetDirections( const BSDFDirection t_Side ) {
 		return m_BSDFHemisphere->getDirections( t_Side );
 	};
 
@@ -28,7 +28,7 @@ public:
 TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis ) {
 	SCOPED_TRACE( "Begin Test: Phi angles for patches." );
 
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	auto aDirections = GetDirections( BSDFDirection::Incoming );
 
 	std::vector< double > correctResults = { 180,
 		0, 45, 90, 135, 180, 225, 270, 315,
@@ -41,7 +41,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis ) {
 	EXPECT_EQ( correctSize, aDirections.size() );
 
 	std::vector< double > phiAngles;
-	for ( std::shared_ptr< const CBSDFPatch > aPatch : aDirections ) {
+	for ( const auto & aPatch : aDirections ) {
 		phiAngles.push_back( aPatch->centerPoint()->phi() );
 	}
 
@@ -54,7 +54,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisPhis ) {
 TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas ) {
 	SCOPED_TRACE( "Begin Test: Theta angles for patches." );
 
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	auto aDirections = GetDirections( BSDFDirection::Incoming );
 
 	std::vector< double > correctResults = { 0,
 		18, 18, 18, 18, 18, 18, 18, 18,
@@ -81,7 +81,7 @@ TEST_F( TestBSDFQuarterBasis, TestQuarterBasisThetas ) {
 TEST_F( TestBSDFQuarterBasis, TestQuarterBasisLambdas ) {
 	SCOPED_TRACE( "Begin Test: Theta angles for patches." );
 
-	CBSDFDirections aDirections = *GetDirections( BSDFHemisphere::Incoming );
+	auto aDirections = GetDirections( BSDFDirection::Incoming );
 
 	std::vector< double > correctResults =
 	{ 0.076880244,

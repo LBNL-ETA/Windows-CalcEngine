@@ -30,7 +30,7 @@ protected:
         aDefinitions.emplace_back(75, 1);
         aDefinitions.emplace_back(86.25, 1);
 
-        CBSDFDirections aDirections = CBSDFDirections(aDefinitions, BSDFHemisphere::Incoming);
+        CBSDFDirections aDirections = CBSDFDirections(aDefinitions, BSDFDirection::Incoming);
         SquareMatrix aLambdas = aDirections.lambdaMatrix();
 
         SquareMatrix Rb{{1.438618083, 0, 0, 0, 0, 0, 0},

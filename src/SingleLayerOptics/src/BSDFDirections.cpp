@@ -32,7 +32,7 @@ namespace SingleLayerOptics
     ///  CBSDFDirections
     /////////////////////////////////////////////////////////////////
 
-    CBSDFDirections::CBSDFDirections(std::vector<CBSDFDefinition> & t_Definitions, const BSDFHemisphere t_Side)
+    CBSDFDirections::CBSDFDirections(std::vector<CBSDFDefinition> & t_Definitions, const BSDFDirection t_Side)
     {
         std::vector<double> thetaAngles;
         std::vector<size_t> numPhiAngles;
@@ -63,14 +63,14 @@ namespace SingleLayerOptics
             CPhiLimits phiAngles(numPhiAngles[i - 1]);
             std::vector<double> phiLimits = *phiAngles.getPhiLimits();
             double lowerPhi = phiLimits[0];
-            if(t_Side == BSDFHemisphere::Outgoing)
+            if(t_Side == BSDFDirection::Outgoing)
             {
                 lowerPhi += 180;
             }
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
                 double upperPhi = phiLimits[j];
-                if(t_Side == BSDFHemisphere::Outgoing)
+                if(t_Side == BSDFDirection::Outgoing)
                 {
                     upperPhi += 180;
                 }
@@ -178,33 +178,20 @@ namespace SingleLayerOptics
                 aDefinitions.push_back(CBSDFDefinition(82.5, 12));
                 break;
             default:
-                throw std::runtime_error("Incorrect definiton of the basis.");
+                throw std::runtime_error("Incorrect definition of the basis.");
         }
-        m_IncomingDirections = std::make_shared<CBSDFDirections>(aDefinitions, BSDFHemisphere::Incoming);
-        m_OutgoingDirections = std::make_shared<CBSDFDirections>(aDefinitions, BSDFHemisphere::Outgoing);
+        m_Directions.insert(std::make_pair(BSDFDirection::Incoming, CBSDFDirections(aDefinitions, BSDFDirection::Incoming)));
+        m_Directions.insert(std::make_pair(BSDFDirection::Outgoing, CBSDFDirections(aDefinitions, BSDFDirection::Outgoing)));
     }
 
     CBSDFHemisphere::CBSDFHemisphere(std::vector<CBSDFDefinition> & t_Definitions) :
-        m_IncomingDirections(std::make_shared<CBSDFDirections>(t_Definitions, BSDFHemisphere::Incoming)),
-        m_OutgoingDirections(std::make_shared<CBSDFDirections>(t_Definitions, BSDFHemisphere::Outgoing))
+        m_Directions({{BSDFDirection::Incoming, CBSDFDirections(t_Definitions, BSDFDirection::Incoming)},
+        {BSDFDirection::Outgoing, CBSDFDirections(t_Definitions, BSDFDirection::Outgoing)}})
     {}
 
-    std::shared_ptr<const CBSDFDirections> CBSDFHemisphere::getDirections(const BSDFHemisphere t_Side) const
+    const CBSDFDirections & CBSDFHemisphere::getDirections( const BSDFDirection tDirection ) const
     {
-        std::shared_ptr<CBSDFDirections> aDirections = nullptr;
-        switch(t_Side)
-        {
-            case BSDFHemisphere::Incoming:
-                aDirections = m_IncomingDirections;
-                break;
-            case BSDFHemisphere::Outgoing:
-                aDirections = m_OutgoingDirections;
-                break;
-            default:
-                assert("Incorrect selection of BSDF Hemisphere.");
-                break;
-        }
-        return aDirections;
+        return m_Directions.at(tDirection);
     }
 
 }   // namespace SingleLayerOptics
