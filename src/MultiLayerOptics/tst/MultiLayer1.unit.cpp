@@ -15,32 +15,30 @@ using namespace FenestrationCommon;
 class TestMultiLayer1 : public testing::Test {
 
 private:
-	std::shared_ptr< CMultiLayerScattered > m_Layer;
+	CMultiLayerScattered m_Layer;
 
 protected:
 	virtual void SetUp() {
-		std::shared_ptr< CScatteringSurface > aFront =
-			std::make_shared< CScatteringSurface >( 0.06, 0.04, 0.46, 0.12, 0.46, 0.52 );
-		std::shared_ptr< CScatteringSurface > aBack =
-			std::make_shared< CScatteringSurface >( 0.11, 0.26, 0.34, 0.19, 0.64, 0.22 );
-		std::shared_ptr< CScatteringLayer > aLayer1 = std::make_shared< CScatteringLayer >( aFront, aBack );
+		CScatteringSurface aFront( 0.06, 0.04, 0.46, 0.12, 0.46, 0.52 );
+		CScatteringSurface aBack( 0.11, 0.26, 0.34, 0.19, 0.64, 0.22 );
+		CScatteringLayer aLayer1( aFront, aBack );
 
-		aFront = std::make_shared< CScatteringSurface >( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
-		aBack = std::make_shared< CScatteringSurface >( 0.15, 0, 0.38, 0.19, 0.49, 0.39 );
-		std::shared_ptr< CScatteringLayer > aLayer2 = std::make_shared< CScatteringLayer >( aFront, aBack );
+		aFront = CScatteringSurface( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
+		aBack = CScatteringSurface( 0.15, 0, 0.38, 0.19, 0.49, 0.39 );
+		CScatteringLayer aLayer2( aFront, aBack );
 
-		aFront = std::make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
-		aBack = std::make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
-		std::shared_ptr< CScatteringLayer > aLayer3 = std::make_shared< CScatteringLayer >( aFront, aBack );
+		aFront = CScatteringSurface( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
+		aBack = CScatteringSurface( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
+		CScatteringLayer aLayer3( aFront, aBack );
 
-		m_Layer = std::make_shared< CMultiLayerScattered >( aLayer1 );
-		m_Layer->addLayer( aLayer2 );
-		m_Layer->addLayer( aLayer3 );
+		m_Layer = CMultiLayerScattered( aLayer1 );
+		m_Layer.addLayer( aLayer2 );
+		m_Layer.addLayer( aLayer3 );
 
 	}
 
 public:
-	std::shared_ptr< CMultiLayerScattered > getLayer() {
+	CMultiLayerScattered & getLayer() {
 		return m_Layer;
 	};
 
@@ -49,7 +47,7 @@ public:
 TEST_F( TestMultiLayer1, TestTripleLayerFront ) {
 	SCOPED_TRACE( "Begin Test: Test triple layer with scattering properties (Front)." );
 
-	CMultiLayerScattered aLayer = *getLayer();
+	auto & aLayer = getLayer();
 
 	Side aSide = Side::Front;
 
@@ -91,7 +89,7 @@ TEST_F( TestMultiLayer1, TestTripleLayerFront ) {
 TEST_F( TestMultiLayer1, TestTripleLayerBack ) {
 	SCOPED_TRACE( "Begin Test: Test triple layer with scattering properties (Back)." );
 
-	CMultiLayerScattered aLayer = *getLayer();
+	auto & aLayer = getLayer();
 
 	Side aSide = Side::Back;
 
@@ -133,7 +131,7 @@ TEST_F( TestMultiLayer1, TestTripleLayerBack ) {
 TEST_F( TestMultiLayer1, TestFrontSideAbsorptances ) {
 	SCOPED_TRACE( "Begin Test: Triple pane layer by layer absroptances (Front Side)." );
 
-	CMultiLayerScattered aLayer = *getLayer();
+	auto & aLayer = getLayer();
 
 	Side aSide = Side::Front;
 
@@ -170,7 +168,7 @@ TEST_F( TestMultiLayer1, TestFrontSideAbsorptances ) {
 TEST_F( TestMultiLayer1, TestBackSideAbsorptances ) {
 	SCOPED_TRACE( "Begin Test: Triple pane layer by layer absroptances (Back Side)." );
 
-	CMultiLayerScattered aLayer = *getLayer();
+	auto & aLayer = getLayer();
 
 	Side aSide = Side::Back;
 

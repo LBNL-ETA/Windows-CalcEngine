@@ -281,7 +281,7 @@ protected:
 		std::shared_ptr< CMaterial > aMaterial_102 = std::make_shared< CMaterialSample >( aSample_102,
 		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		std::shared_ptr< CScatteringLayer > Layer_102 = std::make_shared< CScatteringLayer >( aMaterial_102 );
+		CScatteringLayer Layer_102( aMaterial_102 );
 
 		// Equivalent BSDF layer
 		m_Layer = std::make_shared< CMultiLayerScattered >( Layer_102 );

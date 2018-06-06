@@ -20,17 +20,17 @@ private:
 
 protected:
 	virtual void SetUp() {
-		std::shared_ptr< CScatteringSurface > f1 = std::make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
-		std::shared_ptr< CScatteringSurface > b1 = std::make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
-		CScatteringLayer aLayer1 = CScatteringLayer( f1, b1 );
+		CScatteringSurface f1( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
+		CScatteringSurface b1( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
+		CScatteringLayer aLayer1( f1, b1 );
 
-		std::shared_ptr< CScatteringSurface > f2 = std::make_shared< CScatteringSurface >( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
-		std::shared_ptr< CScatteringSurface > b2 = std::make_shared< CScatteringSurface >( 0.15, 0.0, 0.38, 0.19, 0.49, 0.39 );
-		CScatteringLayer aLayer2 = CScatteringLayer( f2, b2 );
+		CScatteringSurface f2( 0.1, 0.05, 0.48, 0.26, 0.56, 0.34 );
+		CScatteringSurface b2( 0.15, 0.0, 0.38, 0.19, 0.49, 0.39 );
+		CScatteringLayer aLayer2( f2, b2 );
 
-		std::shared_ptr< CScatteringSurface > f3 = std::make_shared< CScatteringSurface >( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
-		std::shared_ptr< CScatteringSurface > b3 = std::make_shared< CScatteringSurface >( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
-		CScatteringLayer aLayer3 = CScatteringLayer( f3, b3 );
+		CScatteringSurface f3( 0.08, 0.05, 0.46, 0.23, 0.46, 0.52 );
+		CScatteringSurface b3( 0.13, 0.25, 0.38, 0.19, 0.64, 0.22 );
+		CScatteringLayer aLayer3( f3, b3 );
 
 		m_EqLayerFront = std::make_shared< CEquivalentScatteringLayer >( aLayer1 );
 		m_EqLayerFront->addLayer( aLayer2, Side::Back );
