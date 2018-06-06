@@ -70,7 +70,7 @@ namespace MultiLayerOptics
         m_StateCalculated = false;
     }
 
-    void CInterRefSingleComponent::addLayer( const SingleLayerOptics::CLayerSingleComponent & tLayer, const Side t_Side )
+    void CInterRefSingleComponent::addLayer(const SingleLayerOptics::CLayerSingleComponent & tLayer, const Side t_Side)
     {
         const double Tf = tLayer.getProperty(Property::T, Side::Front);
         const double Rf = tLayer.getProperty(Property::R, Side::Front);
@@ -117,13 +117,13 @@ namespace MultiLayerOptics
     {
         if(!m_StateCalculated)
         {
-            calculateForwardLayers();
-            calculateBackwardLayers();
+            auto forwardLayers = calculateForwardLayers();
+            auto backwardLayers = calculateBackwardLayers();
 
             for(size_t i = 0; i <= m_Layers.size(); ++i)
             {
-                const CLayerSingleComponent & aForwardLayer = m_ForwardLayers[i];
-                const CLayerSingleComponent & aBackwardLayer = m_BackwardLayers[i];
+                const CLayerSingleComponent & aForwardLayer = forwardLayers[i];
+                const CLayerSingleComponent & aBackwardLayer = backwardLayers[i];
 
                 const double Tf = aForwardLayer.getProperty(Property::T, Side::Front);
                 const double Tb = aBackwardLayer.getProperty(Property::T, Side::Back);
@@ -148,41 +148,45 @@ namespace MultiLayerOptics
         }
     }
 
-    void CInterRefSingleComponent::calculateForwardLayers()
+    std::vector<SingleLayerOptics::CLayerSingleComponent> CInterRefSingleComponent::calculateForwardLayers()
     {
+        std::vector<CLayerSingleComponent> forwardLayers;
         // Insert exterior environment properties
         CLayerSingleComponent aLayer(1, 0, 1, 0);
-        m_ForwardLayers.push_back(aLayer);
+        forwardLayers.push_back(aLayer);
 
         // First layer just in. No calculation is needed
         aLayer = m_Layers[0];
-        m_ForwardLayers.push_back(aLayer);
+        forwardLayers.push_back(aLayer);
         CEquivalentLayerSingleComponent aEqLayer(aLayer);
         for(size_t i = 1; i < m_Layers.size(); ++i)
         {
             aEqLayer.addLayer(m_Layers[i]);
             const auto layer = aEqLayer.getLayer();
-            m_ForwardLayers.push_back(layer);
+            forwardLayers.push_back(layer);
         }
+        return forwardLayers;
     }
 
-    void CInterRefSingleComponent::calculateBackwardLayers()
+    std::vector<SingleLayerOptics::CLayerSingleComponent> CInterRefSingleComponent::calculateBackwardLayers()
     {
+        std::vector<CLayerSingleComponent> backwardLayers;
         // Insert interior environment properties
         CLayerSingleComponent aLayer(1, 0, 1, 0);
-        m_BackwardLayers.push_back(aLayer);
+        backwardLayers.push_back(aLayer);
 
         const size_t size = m_Layers.size() - 1;
         // Last layer just in. No calculation is needed
         aLayer = m_Layers[size];
-        m_BackwardLayers.insert(m_BackwardLayers.begin(), aLayer);
+        backwardLayers.insert(backwardLayers.begin(), aLayer);
         CEquivalentLayerSingleComponent aEqLayer(aLayer);
         for(size_t i = size; i > 0; --i)
         {
             aEqLayer.addLayer(m_Layers[i - 1], Side::Front);
             const auto layer = aEqLayer.getLayer();
-            m_BackwardLayers.insert(m_BackwardLayers.begin(), layer);
+            backwardLayers.insert(backwardLayers.begin(), layer);
         }
+        return backwardLayers;
     }
 
 }   // namespace MultiLayerOptics
