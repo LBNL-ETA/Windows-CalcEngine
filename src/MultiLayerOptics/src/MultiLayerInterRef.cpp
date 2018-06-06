@@ -109,14 +109,13 @@ namespace MultiLayerOptics
         const CScatteringLayer exterior(aFront, aBack);
         aLayers.push_back(exterior);
 
-        auto aLayer = m_Layers[0];
+        auto & aLayer = m_Layers[0];
         aLayers.push_back(aLayer);
         CEquivalentScatteringLayer aEqLayer(aLayer, t_Theta, t_Phi);
         for(size_t i = 1; i < m_Layers.size(); ++i)
         {
             aEqLayer.addLayer(m_Layers[i], Side::Back, t_Theta, t_Phi);
-            aLayer = aEqLayer.getLayer();
-            aLayers.push_back(aLayer);
+            aLayers.push_back(aEqLayer.getLayer());
         }
 
         aLayers.push_back(exterior);
@@ -134,14 +133,13 @@ namespace MultiLayerOptics
 
         const size_t size = m_Layers.size() - 1;
         // Last layer just in
-        auto aLayer = m_Layers[size];
+        auto & aLayer = m_Layers[size];
         aLayers.insert(aLayers.begin(), aLayer);
         CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer(aLayer, t_Theta, t_Phi);
         for(size_t i = size; i > 0; --i)
         {
             aEqLayer.addLayer(m_Layers[i - 1], Side::Front, t_Theta, t_Phi);
-            aLayer = aEqLayer.getLayer();
-            aLayers.insert(aLayers.begin(), aLayer);
+            aLayers.insert(aLayers.begin(), aEqLayer.getLayer());
         }
         aLayers.insert(aLayers.begin(), exterior);
     }
