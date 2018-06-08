@@ -15,7 +15,6 @@
 #include "../src/IGUVentilatedGapLayer.hpp"
 #include "../src/IndoorEnvironment.hpp"
 #include "../src/LayerInterfaces.hpp"
-#include "../src/NodeInterface.hpp"
 #include "../src/NonLinearSolver.hpp"
 #include "../src/NusseltNumber.hpp"
 #include "../src/OutdoorEnvironment.hpp"

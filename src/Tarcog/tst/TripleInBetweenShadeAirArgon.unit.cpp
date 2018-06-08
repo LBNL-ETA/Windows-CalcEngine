@@ -94,13 +94,12 @@ protected:
 		CGasItem Argon{ 0.9, ArgonData };
 
 		// Create gas mixture
-		auto Gas1 = std::make_shared< CGas >();
+                CGas Gas1{};
 
-		Gas1->addGasItem( Air );
-		Gas1->addGasItem( Argon );
+		Gas1.addGasItem( Air );
+		Gas1.addGasItem( Argon );
 
-		auto Gas2 = std::make_shared< CGas >();
-		( *Gas2 ) = ( *Gas1 );
+		auto Gas2{Gas1};
 
 		auto gapThickness = 0.0127;
 		auto gapPressure = 101325.0;
