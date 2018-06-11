@@ -23,6 +23,8 @@ namespace Tarcog
 
         double flexuralRigidity() const;
 
+        bool isDeflected() const override;
+
         std::shared_ptr<CBaseLayer> clone() const override;
 
     protected:

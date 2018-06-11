@@ -255,11 +255,11 @@ namespace Tarcog {
 		auto Lmax = Ldmax();
 
 		for ( auto& aLayer : getSolidLayers() ) {
-			// Deflection could aslo be decorated (created) outside in which case program already have a layer as
-			// deflection layer. If that is not done then layer must be decorated with defalut deflection
+			// Deflection could also be decorated (created) outside in which case program already have a layer as
+			// deflection layer. If that is not done then layer must be decorated with default deflection
 			// properties
 			std::shared_ptr< CIGUSolidLayerDeflection > aDeflectionLayer = nullptr;
-			if ( std::dynamic_pointer_cast< CIGUSolidLayerDeflection >( aLayer ) == NULL ) {
+			if ( !aLayer->isDeflected() ) {
 				aDeflectionLayer = std::make_shared< CIGUSolidLayerDeflection >( *aLayer );
 			}
 			else {
