@@ -110,4 +110,8 @@ namespace Tarcog
         return std::make_shared<CIGUSolidLayer>(*this);
     }
 
+	bool CIGUSolidLayer::isDeflected() const {
+		return false;
+	}
+
 }   // namespace Tarcog

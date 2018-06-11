@@ -36,6 +36,8 @@ namespace Tarcog
         void setSolarRadiation(double t_SolarRadiation);
         void setSolarAbsorptance(double t_SolarAbsorptance);
 
+        virtual bool isDeflected() const;
+
         std::shared_ptr<CBaseLayer> clone() const override;
 
     protected:

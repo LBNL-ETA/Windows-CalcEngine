@@ -32,9 +32,9 @@ namespace Tarcog
     public:
         CLayerGeometry();
 
-        virtual void setWidth(double const t_Width) final;
-        virtual void setHeight(double const t_Height) final;
-        virtual void setTilt(double const t_Tilt) final;
+        virtual void setWidth(double t_Width) final;
+        virtual void setHeight(double t_Height) final;
+        virtual void setTilt(double t_Tilt) final;
 
     protected:
         double m_Width;
