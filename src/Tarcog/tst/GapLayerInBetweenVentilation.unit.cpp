@@ -74,13 +74,12 @@ protected:
 
 		double windowWidth = 1;
 		double windowHeight = 1;
-		std::shared_ptr< CIGU > aIGU = std::make_shared< CIGU >( windowWidth, windowHeight );
-		ASSERT_TRUE( aIGU != nullptr );
-		aIGU->addLayer( SolidLayer1 );
-		aIGU->addLayer( m_GapLayer1 );
-		aIGU->addLayer( shadeLayer );
-		aIGU->addLayer( m_GapLayer2 );
-		aIGU->addLayer( SolidLayer2 );
+		CIGU aIGU( windowWidth, windowHeight );
+		aIGU.addLayer( SolidLayer1 );
+		aIGU.addLayer( m_GapLayer1 );
+		aIGU.addLayer( shadeLayer );
+		aIGU.addLayer( m_GapLayer2 );
+		aIGU.addLayer( SolidLayer2 );
 
 		/////////////////////////////////////////////////////////
 		// System

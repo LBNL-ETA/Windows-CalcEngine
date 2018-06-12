@@ -68,17 +68,16 @@ protected:
 
 		auto windowWidth = 1.0;
 		auto windowHeight = 1.0;
-		auto aIGU = std::make_shared< CIGU >( windowWidth, windowHeight );
-		ASSERT_TRUE( aIGU != nullptr );
-		aIGU->addLayer( aSolidLayer1 );
-		aIGU->addLayer( aGapLayer1 );
-		aIGU->addLayer( aSolidLayer2 );
-		aIGU->addLayer( aGapLayer2 );
-		aIGU->addLayer( aSolidLayer3 );
+		CIGU aIGU( windowWidth, windowHeight );
+		aIGU.addLayer( aSolidLayer1 );
+		aIGU.addLayer( aGapLayer1 );
+		aIGU.addLayer( aSolidLayer2 );
+		aIGU.addLayer( aGapLayer2 );
+		aIGU.addLayer( aSolidLayer3 );
 
 		// Deflection properties
 		std::vector< double > measuredGapsWidths = { 0.0135, 0.013 };
-		aIGU->setDeflectionProperties( measuredGapsWidths );
+		aIGU.setDeflectionProperties( measuredGapsWidths );
 
 		/////////////////////////////////////////////////////////
 		// System

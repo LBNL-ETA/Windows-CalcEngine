@@ -16,7 +16,7 @@ namespace Tarcog
     class CIGU
     {
     public:
-        CIGU(double const t_Width, double const t_Height, double const t_Tilt = 90);
+        CIGU(double t_Width = 1, double t_Height = 1, double t_Tilt = 90);
         CIGU(CIGU const & t_IGU);
         CIGU & operator=(CIGU const & t_IGU);
         ~CIGU();
@@ -27,15 +27,15 @@ namespace Tarcog
         std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
         std::vector<std::shared_ptr<CBaseIGULayer>> getLayers() const;
 
-        void setTilt(double const t_Tilt);
-        void setWidth(double const t_Width);
-        void setHeight(double const t_Height);
+        void setTilt(double t_Tilt);
+        void setWidth(double t_Width);
+        void setHeight(double t_Height);
 
-        void setSolarRadiation(double const t_SolarRadiation) const;
+        void setSolarRadiation(double t_SolarRadiation) const;
 
-        std::shared_ptr<CBaseLayer> getLayer(Environment const t_Environment) const;
+        std::shared_ptr<CBaseLayer> getLayer(Environment t_Environment) const;
 
-        std::shared_ptr<std::vector<double>> getState() const;
+        std::vector< double > getState() const;
         void setState(std::vector<double> & t_State) const;
 
         std::shared_ptr<std::vector<double>> getTemperatures() const;
@@ -50,11 +50,11 @@ namespace Tarcog
 
         size_t getNumOfLayers() const;
 
-        double getVentilationFlow(Environment const t_Environment) const;
+        double getVentilationFlow(Environment t_Environment) const;
 
-        void setInitialGuess(std::vector<double> const & t_Temperatures) const;
+        void setInitialGuess(const std::vector<double> & t_Temperatures) const;
 
-        void setDeflectionProperties(double const t_Tini, double const t_Pini);
+        void setDeflectionProperties(double t_Tini, double t_Pini);
         void setDeflectionProperties(std::vector<double> const & t_MeasuredDeflections);
 
     private:
