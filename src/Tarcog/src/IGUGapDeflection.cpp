@@ -19,4 +19,8 @@ namespace Tarcog {
 		return m_Pini * Vini * layerTemperature() / ( m_Tini * Vgap );
 	}
 
+	std::shared_ptr< CBaseLayer > CIGUGapLayerDeflection::clone() const {
+		return std::make_shared< CIGUGapLayerDeflection >( *this );
+	}
+
 }

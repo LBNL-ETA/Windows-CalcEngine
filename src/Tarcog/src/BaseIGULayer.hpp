@@ -16,12 +16,12 @@ namespace Tarcog
     {
     public:
         explicit CBaseIGULayer(double const t_Thickness);
-        CBaseIGULayer(CBaseIGULayer const & t_Layer);
-        CBaseIGULayer & operator=(CBaseIGULayer const & t_BaseIGULayer);
+        CBaseIGULayer(const CBaseIGULayer & t_Layer);
+        CBaseIGULayer & operator=(const CBaseIGULayer & t_BaseIGULayer);
 
         double getThickness() const;
-        double getTemperature(FenestrationCommon::Side const t_Position) const;
-        double J(FenestrationCommon::Side const t_Position) const;
+        double getTemperature(FenestrationCommon::Side t_Position) const;
+        double J(FenestrationCommon::Side t_Position) const;
         double getMaxDeflection() const;
         double getMeanDeflection() const;
 

@@ -16,6 +16,8 @@ namespace Tarcog
 
         double getPressure() override;
 
+		std::shared_ptr<CBaseLayer> clone() const override;
+
     private:
         // Windows is produced under given temperature and pressure.
         // That is used for deflection calculations.

@@ -36,11 +36,6 @@ namespace Tarcog
         m_Radius(t_Radius)
     {}
 
-    CCircularPillar::CCircularPillar(CCircularPillar const & t_Pillar) :
-        CState(t_Pillar),
-        CSupportPillar(t_Pillar)
-    {}
-
     double CCircularPillar::conductivityOfPillarArray()
     {
         using ConstantsData::PI;
@@ -54,5 +49,9 @@ namespace Tarcog
 
         return cond;
     }
+
+	std::shared_ptr< CBaseLayer > CCircularPillar::clone() const {
+		return std::make_shared<CCircularPillar>(*this);
+	}
 
 }   // namespace Tarcog

@@ -10,7 +10,7 @@ class TestGapLayerStandardPressure : public testing::Test {
 
 private:
 	std::shared_ptr< CIGUGapLayer > m_GapLayer;
-	std::shared_ptr< CIGU > m_IGU;
+	CIGU m_IGU;
 
 protected:
 	void SetUp() override {
@@ -47,11 +47,10 @@ protected:
 
 		auto windowWidth = 1.0;
 		auto windowHeight = 1.0;
-		m_IGU = std::make_shared< CIGU >( windowWidth, windowHeight );
-		ASSERT_TRUE( m_IGU != nullptr );
-		m_IGU->addLayer( solidLayer1 );
-		m_IGU->addLayer( m_GapLayer );
-		m_IGU->addLayer( solidLayer2 );
+		m_IGU = CIGU( windowWidth, windowHeight );
+		m_IGU.addLayer( solidLayer1 );
+		m_IGU.addLayer( m_GapLayer );
+		m_IGU.addLayer( solidLayer2 );
 
 	}
 
