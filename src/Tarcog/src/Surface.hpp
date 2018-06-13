@@ -11,17 +11,17 @@ namespace Tarcog
     public:
         virtual ~ISurface() = default;
         ISurface();
-        ISurface(double const t_Emissivity, double const t_Transmittance);
+        ISurface(double t_Emissivity, double t_Transmittance);
 
         ISurface(ISurface const & t_Surface);
         ISurface & operator=(ISurface const & t_Surface);
 
         virtual std::shared_ptr<ISurface> clone() const = 0;
 
-        virtual void setTemperature(double const t_Temperature);
-        virtual void setJ(double const t_J);
+        virtual void setTemperature(double t_Temperature);
+        virtual void setJ(double t_J);
 
-        void applyDeflection(double const t_MeanDeflection, double const t_MaxDeflection);
+        void applyDeflection(double t_MeanDeflection, double t_MaxDeflection);
         virtual double getTemperature() const final;
         virtual double getEmissivity() const final;
         virtual double getReflectance() const final;
@@ -31,8 +31,8 @@ namespace Tarcog
         virtual double getMeanDeflection() const final;
         virtual double getMaxDeflection() const final;
 
-        void initializeStart(double const t_Temperature);
-        void initializeStart(double const t_Temperature, double const t_Radiation);
+        void initializeStart(double t_Temperature);
+        void initializeStart(double t_Temperature, double t_Radiation);
 
     protected:
         void calculateReflectance();
@@ -54,8 +54,8 @@ namespace Tarcog
     {
     public:
         CSurface();
-        CSurface(double const t_Emissivity, double const t_Transmittance);
-        CSurface(CSurface const & t_Surface);
+        CSurface(double t_Emissivity, double t_Transmittance);
+        CSurface(const CSurface & t_Surface);
 
         std::shared_ptr<ISurface> clone() const override;
     };

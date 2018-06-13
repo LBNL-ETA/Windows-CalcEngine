@@ -17,12 +17,12 @@ namespace Tarcog
     class CIGUGapLayer : public CBaseIGULayer, public CGasLayer
     {
     public:
-        CIGUGapLayer(double const t_Thickness, double const t_Pressure);
-        CIGUGapLayer(double const t_Thickness,
-                     double const t_Pressure,
+        CIGUGapLayer(double t_Thickness, double t_Pressure);
+        CIGUGapLayer(double t_Thickness,
+                     double t_Pressure,
                      const Gases::CGas & t_Gas);
 
-        void connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer) override;
+        void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
         double layerTemperature() override;
 

@@ -28,7 +28,7 @@ namespace Tarcog
                        double t_BackEmissivity,
                        double t_BackIRTransmittance);
 
-        void connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer) override;
+        void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
         double getConductivity() const;
 
@@ -46,7 +46,7 @@ namespace Tarcog
     private:
         void setSurfaceState(double t_Temperature,
                              double t_J,
-                             FenestrationCommon::Side const t_Position);
+                             FenestrationCommon::Side t_Position);
 
         double m_Conductivity;
         double m_SolarAbsorptance;

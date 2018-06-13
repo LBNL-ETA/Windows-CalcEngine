@@ -24,9 +24,9 @@ namespace Tarcog
         std::vector<double> calcBalanceMatrix();
 
     private:
-        void buildCell(std::shared_ptr<CBaseLayer> const & t_Previous,
-                       std::shared_ptr<CBaseLayer> const & t_Current,
-                       std::shared_ptr<CBaseLayer> const & t_Next,
+        void buildCell(const std::shared_ptr<CBaseLayer> & t_Previous,
+                       const std::shared_ptr<CBaseLayer> & t_Current,
+                       const std::shared_ptr<CBaseLayer> & t_Next,
                        int t_Index);
 
         std::shared_ptr<FenestrationCommon::SquareMatrix> m_MatrixA;

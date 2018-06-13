@@ -15,9 +15,7 @@ namespace Tarcog
     class CBaseIGULayer : public CBaseLayer
     {
     public:
-        explicit CBaseIGULayer(double const t_Thickness);
-        CBaseIGULayer(const CBaseIGULayer & t_Layer);
-        CBaseIGULayer & operator=(const CBaseIGULayer & t_BaseIGULayer);
+        explicit CBaseIGULayer(double t_Thickness);
 
         double getThickness() const;
         double getTemperature(FenestrationCommon::Side t_Position) const;
