@@ -26,12 +26,12 @@ namespace Tarcog
           SkyModel t_Model,
           double t_FractionClearSky = TarcogConstants::DEFAULT_FRACTION_OF_CLEAR_SKY);
 
-        void connectToIGULayer(std::shared_ptr<CBaseLayer> const & t_IGULayer) override;
+        void connectToIGULayer(const std::shared_ptr<CBaseLayer> & t_IGULayer) override;
 
         std::shared_ptr<CBaseLayer> clone() const override;
         std::shared_ptr<CEnvironment> cloneEnvironment() const override;
 
-        void setSolarRadiation(double const t_SolarRadiation);
+        void setSolarRadiation(double t_SolarRadiation);
         double getSolarRadiation() const;
 
     private:
@@ -43,7 +43,7 @@ namespace Tarcog
         double getHr() override;
         double getRadiationTemperature() const override;
 
-        void setIRFromEnvironment(double const t_IR) override;
+        void setIRFromEnvironment(double t_IR) override;
         double getIRFromEnvironment() const override;
 
         double m_Tsky;

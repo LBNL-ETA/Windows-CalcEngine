@@ -20,7 +20,7 @@ namespace Tarcog
     {
         ForcedVentilation() : Speed(0), Temperature(0){};
 
-        ForcedVentilation(double const t_Speed, double const t_Temperature) :
+        ForcedVentilation(const double t_Speed, const double t_Temperature) :
             Speed(t_Speed),
             Temperature(t_Temperature){};
         double Speed;
@@ -46,8 +46,8 @@ namespace Tarcog
     {
     public:
         CLayerHeatFlow();
-        CLayerHeatFlow(CLayerHeatFlow const & t_Layer);
-        CLayerHeatFlow & operator=(CLayerHeatFlow const & t_Layer);
+        CLayerHeatFlow(const CLayerHeatFlow & t_Layer);
+        CLayerHeatFlow & operator=(const CLayerHeatFlow & t_Layer);
         virtual double getHeatFlow() final;
         virtual double getGainFlow() final;
         virtual double getConductionConvectionCoefficient() final;
@@ -89,14 +89,14 @@ namespace Tarcog
     {
     public:
         CGasLayer();
-        explicit CGasLayer(double const t_Pressure);
-        CGasLayer(double const t_Pressure,
-                  double const t_AirSpeed,
-                  AirVerticalDirection const t_AirVerticalDirection);
-        CGasLayer(double const t_Pressure,
-                  double const t_AirSpeed,
-                  AirHorizontalDirection const t_AirHorizontalDirection);
-        CGasLayer(double const t_Pressure, const Gases::CGas & t_Gas);
+        explicit CGasLayer(double t_Pressure);
+        CGasLayer(double t_Pressure,
+                  double t_AirSpeed,
+                  AirVerticalDirection t_AirVerticalDirection);
+        CGasLayer(double t_Pressure,
+                  double t_AirSpeed,
+                  AirHorizontalDirection t_AirHorizontalDirection);
+        CGasLayer(double t_Pressure, const Gases::CGas & t_Gas);
 
         virtual double getPressure();
 

@@ -8,7 +8,7 @@ namespace Tarcog
     class CSupportPillar : public CIGUGapLayer
     {
     public:
-        CSupportPillar(CIGUGapLayer const & t_Layer, double const t_Conductivity);
+        CSupportPillar(const CIGUGapLayer & t_Layer, double t_Conductivity);
 
     protected:
         void calculateConvectionOrConductionFlow() override;
@@ -24,7 +24,7 @@ namespace Tarcog
                         double t_Spacing,
                         double t_Radius);
 
-		std::shared_ptr<CBaseLayer> clone() const override;
+        std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
         double conductivityOfPillarArray() override;

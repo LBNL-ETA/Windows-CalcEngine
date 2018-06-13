@@ -26,8 +26,8 @@ namespace Tarcog {
 		bool isToleranceAchieved() const;
 
 	private:
-		double calculateTolerance( std::vector< double > const& t_Solution ) const;
-		void estimateNewState( std::vector< double > const& t_Solution );
+		double calculateTolerance( const std::vector< double > & t_Solution ) const;
+		void estimateNewState( const std::vector< double > & t_Solution );
 
 		CIGU & m_IGU;
 		FenestrationCommon::CLinearSolver m_LinearSolver;

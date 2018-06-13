@@ -26,17 +26,17 @@ namespace Tarcog
     {
     public:
         CEnvironment(double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection);
-        CEnvironment(CEnvironment const & t_Environment);
-        CEnvironment & operator=(CEnvironment const & t_Environment);
+        CEnvironment(const CEnvironment & t_Environment);
+        CEnvironment & operator=(const CEnvironment & t_Environment);
 
         ~CEnvironment();
 
-        void setHCoeffModel(BoundaryConditionsCoeffModel const t_BCModel,
-                            double const t_HCoeff = 0);
-        void setForcedVentilation(ForcedVentilation const & t_ForcedVentilation);
-        void setPrescribedConvection(double const t_HInput);
-        void setEnvironmentIR(double const t_InfraRed);
-        void setEmissivity(double const t_Emissivity);
+        void setHCoeffModel(BoundaryConditionsCoeffModel t_BCModel,
+                            double t_HCoeff = 0);
+        void setForcedVentilation(const ForcedVentilation & t_ForcedVentilation);
+        void setPrescribedConvection(double t_HInput);
+        void setEnvironmentIR(double t_InfraRed);
+        void setEmissivity(double t_Emissivity);
 
         double getDirectSolarRadiation() const;
         double getEnvironmentIR();
@@ -45,7 +45,7 @@ namespace Tarcog
         double getAirTemperature();
         double getAmbientTemperature();
 
-        virtual void connectToIGULayer(std::shared_ptr<CBaseLayer> const & t_IGULayer);
+        virtual void connectToIGULayer(const std::shared_ptr<CBaseLayer> & t_IGULayer);
 
         virtual std::shared_ptr<CEnvironment> cloneEnvironment() const = 0;
 
@@ -54,7 +54,7 @@ namespace Tarcog
         void calculateRadiationFlow() override;
         virtual double calculateIRFromVariables() = 0;
         virtual double getHr() = 0;
-        virtual void setIRFromEnvironment(const double t_IR) = 0;
+        virtual void setIRFromEnvironment(double t_IR) = 0;
         virtual double getIRFromEnvironment() const = 0;
         virtual double getRadiationTemperature() const = 0;
 

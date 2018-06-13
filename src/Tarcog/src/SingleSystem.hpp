@@ -20,11 +20,11 @@ namespace Tarcog
     {
     public:
         CSingleSystem(CIGU & t_IGU,
-                      std::shared_ptr<CEnvironment> const & t_Indoor,
-                      std::shared_ptr<CEnvironment> const & t_Outdoor);
+                      const std::shared_ptr<CEnvironment> & t_Indoor,
+                      const std::shared_ptr<CEnvironment> & t_Outdoor);
 
         CSingleSystem(const CSingleSystem & t_SingleSystem);
-        CSingleSystem & operator=(CSingleSystem const & t_SingleSystem);
+        CSingleSystem & operator=(const CSingleSystem & t_SingleSystem);
 
         std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
         std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
@@ -51,11 +51,11 @@ namespace Tarcog
         bool isToleranceAchieved() const;
 
         // Set solution tolerance
-        void setTolerance(double const t_Tolerance) const;
+        void setTolerance(double t_Tolerance) const;
         // Set intial guess for solution.
-        void setInitialGuess(std::vector<double> const & t_Temperatures) const;
+        void setInitialGuess(const std::vector<double> & t_Temperatures) const;
 
-        void setSolarRadiation(double const t_SolarRadiation);
+        void setSolarRadiation(double t_SolarRadiation);
         double getSolarRadiation() const;
 
         void solve() const;
