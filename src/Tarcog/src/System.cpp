@@ -7,7 +7,7 @@
 
 namespace Tarcog {
 
-	CSystem::CSystem( std::shared_ptr< CIGU > const& t_IGU,
+	CSystem::CSystem( CIGU & t_IGU,
 	                  std::shared_ptr< CEnvironment > const& t_Indoor,
 	                  std::shared_ptr< CEnvironment > const& t_Outdoor ) {
 		m_System[ System::SHGC ] = std::make_shared< CSingleSystem >( t_IGU, t_Indoor, t_Outdoor );

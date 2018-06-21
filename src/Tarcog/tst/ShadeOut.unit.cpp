@@ -82,11 +82,10 @@ protected:
 
 		auto windowWidth = 1.0;
 		auto windowHeight = 1.0;
-		auto aIGU = std::make_shared< CIGU >( windowWidth, windowHeight );
-		ASSERT_TRUE( aIGU != nullptr );
-		aIGU->addLayer( aSolidLayer1 );
-		aIGU->addLayer( aGapLayer );
-		aIGU->addLayer( aSolidLayer2 );
+		CIGU aIGU( windowWidth, windowHeight );
+		aIGU.addLayer( aSolidLayer1 );
+		aIGU.addLayer( aGapLayer );
+		aIGU.addLayer( aSolidLayer2 );
 
 		/////////////////////////////////////////////////////////
 		// System
