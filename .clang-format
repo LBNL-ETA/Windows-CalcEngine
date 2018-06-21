@@ -36,7 +36,7 @@ BreakBeforeBraces: 'Custom'
 BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: true 
 BreakConstructorInitializers: 'AfterColon'
-ColumnLimit: 150
+ColumnLimit: 100
 #CommentPragmas: '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: true

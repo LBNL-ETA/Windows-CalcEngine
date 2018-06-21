@@ -77,13 +77,12 @@ protected:
 
 		auto windowWidth = 1.0;
 		auto windowHeight = 1.0;
-		auto aIGU = std::make_shared< CIGU >( windowWidth, windowHeight );
-		ASSERT_TRUE( aIGU != nullptr );
-		aIGU->addLayer( aLayer1 );
-		aIGU->addLayer( GapLayer1 );
-		aIGU->addLayer( aLayer2 );
-		aIGU->addLayer( GapLayer2 );
-		aIGU->addLayer( aLayer3 );
+		CIGU aIGU( windowWidth, windowHeight );
+		aIGU.addLayer( aLayer1 );
+		aIGU.addLayer( GapLayer1 );
+		aIGU.addLayer( aLayer2 );
+		aIGU.addLayer( GapLayer2 );
+		aIGU.addLayer( aLayer3 );
 
 		/////////////////////////////////////////////////////////
 		// System

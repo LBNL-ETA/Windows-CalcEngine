@@ -14,26 +14,8 @@ namespace Tarcog {
 
 	}
 
-	CBaseIGULayer::CBaseIGULayer( CBaseIGULayer const& t_Layer ) :
-		CState( t_Layer ), CBaseLayer( t_Layer ) {
-		m_Thickness = t_Layer.m_Thickness;
-	}
-
-	// CBaseIGULayer::CBaseIGULayer( CBaseIGULayer const& t_Layer ) {
-	// 	operator=( t_Layer );
-	// }
-
-	CBaseIGULayer & CBaseIGULayer::operator=( CBaseIGULayer const & t_BaseIGULayer ) {
-		this->CState::operator=( t_BaseIGULayer );
-		this->CBaseLayer::operator=( t_BaseIGULayer );
-		m_Thickness = t_BaseIGULayer.m_Thickness;
-
-		return *this;
-	}
-
 	double CBaseIGULayer::layerTemperature() {
-		return ( m_Surface.at( Side::Front )->getTemperature() +
-			m_Surface.at( Side::Back )->getTemperature() ) / 2;
+		return (getTemperature(Side::Front) + getTemperature(Side::Back) ) / 2;
 	}
 
 	double CBaseIGULayer::getThickness() const {

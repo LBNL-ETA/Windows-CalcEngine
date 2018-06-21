@@ -16,19 +16,19 @@ using namespace FenestrationCommon;
 
 namespace Tarcog
 {
-    CHeatFlowBalance::CHeatFlowBalance(std::shared_ptr<CIGU> const & t_IGU) : m_IGU(t_IGU)
+    CHeatFlowBalance::CHeatFlowBalance(CIGU & t_IGU) : m_IGU(t_IGU)
     {
-        m_MatrixA = std::make_shared<SquareMatrix>(4 * m_IGU->getNumOfLayers());
+        m_MatrixA = std::make_shared<SquareMatrix>(4 * m_IGU.getNumOfLayers());
         assert(m_MatrixA != nullptr);
         m_VectorB = std::make_shared<std::vector<double>>();
         assert(m_VectorB != nullptr);
-        m_VectorB->resize(4 * m_IGU->getNumOfLayers());
+        m_VectorB->resize(4 * m_IGU.getNumOfLayers());
         m_LinearSolver = std::make_shared<CLinearSolver>();
     }
 
     std::vector<double> CHeatFlowBalance::calcBalanceMatrix()
     {
-        std::vector<std::shared_ptr<CIGUSolidLayer>> aSolidLayers = m_IGU->getSolidLayers();
+        std::vector<std::shared_ptr<CIGUSolidLayer>> aSolidLayers = m_IGU.getSolidLayers();
         std::vector<std::shared_ptr<CIGUSolidLayer>>::iterator it;
         int positionCounter = 0;
         m_MatrixA->setZeros();

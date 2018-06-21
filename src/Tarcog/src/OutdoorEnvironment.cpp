@@ -27,21 +27,6 @@ namespace Tarcog {
 		m_DirectSolarRadiation = t_DirectSolarRadiation;
 	}
 
-	COutdoorEnvironment::COutdoorEnvironment( COutdoorEnvironment const& t_Outdoor ) :
-		CState( t_Outdoor ), CEnvironment( t_Outdoor ) {
-		operator=( t_Outdoor );
-	}
-
-	COutdoorEnvironment & COutdoorEnvironment::operator=( COutdoorEnvironment const & t_Outdoor ) {
-		this->CState::operator=( t_Outdoor );
-		this->CEnvironment::operator=( t_Outdoor );
-		m_Tsky = t_Outdoor.m_Tsky;
-		m_FractionOfClearSky = t_Outdoor.m_FractionOfClearSky;
-		m_SkyModel = t_Outdoor.m_SkyModel;
-
-		return *this;
-	}
-
 	double COutdoorEnvironment::calculateIRFromVariables() {
 		auto aEmissivity = 0.0;
 		switch ( m_SkyModel ) {

@@ -4,23 +4,18 @@
 #include <memory>
 #include <vector>
 
-namespace FenestrationCommon {
-
-	class CLinearSolver;
-
-}
+#include <WCECommon.hpp>
+#include "HeatFlowBalance.hpp"
+#include "IGU.hpp"
 
 namespace Tarcog {
 
-	class CHeatFlowBalance;
-	class CIGU;
-
 	class CNonLinearSolver {
 	public:
-		explicit CNonLinearSolver( std::shared_ptr< CIGU > const& t_IGU );
+		explicit CNonLinearSolver( CIGU & t_IGU );
 
 		// sets tolerance for solution
-		void setTolerance( double const t_Tolerance );
+		void setTolerance( double t_Tolerance );
 
 		// returns number of iterations for current solution.
 		size_t getNumOfIterations() const;
@@ -31,13 +26,13 @@ namespace Tarcog {
 		bool isToleranceAchieved() const;
 
 	private:
-		double calculateTolerance( std::vector< double > const& t_Solution ) const;
-		void estimateNewState( std::vector< double > const& t_Solution ) const;
+		double calculateTolerance( const std::vector< double > & t_Solution ) const;
+		void estimateNewState( const std::vector< double > & t_Solution );
 
-		std::shared_ptr< CIGU > m_IGU;
-		std::shared_ptr< FenestrationCommon::CLinearSolver > m_LinearSolver;
-		std::shared_ptr< CHeatFlowBalance > m_QBalance;
-		std::shared_ptr< std::vector< double > > m_IGUState;
+		CIGU & m_IGU;
+		FenestrationCommon::CLinearSolver m_LinearSolver;
+		CHeatFlowBalance m_QBalance;
+		std::vector< double > m_IGUState;
 		double m_Tolerance;
 		size_t m_Iterations;
 		double m_RelaxParam;
