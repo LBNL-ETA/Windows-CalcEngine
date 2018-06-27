@@ -37,9 +37,6 @@ namespace FenestrationCommon {
 			m_MinLambda = 0.38;
 			m_MaxLambda = 0.78;
 			break;
-		default:
-			assert("Incorrect call for wavelength range creation.");
-			break;
 		}
 
 	}
