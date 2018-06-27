@@ -9,19 +9,16 @@
 
 namespace FenestrationCommon
 {
-    CLinearSolver::CLinearSolver()
-    {}
 
-    std::vector<double> CLinearSolver::solveSystem(SquareMatrix & t_MatrixA, std::vector<double> & t_VectorB) const
-    {
+    std::vector<double> CLinearSolver::solveSystem(SquareMatrix & t_MatrixA, std::vector<double> & t_VectorB) {
         if(t_MatrixA.size() != t_VectorB.size())
         {
-            std::runtime_error("Matrix and vector for system of linear equations are not same size.");
+            throw std::runtime_error("Matrix and vector for system of linear equations are not same size.");
         }
 
         std::vector<size_t> index = t_MatrixA.makeUpperTriangular();
 
-        int size = int(t_MatrixA.size());
+        const int size = int(t_MatrixA.size());
 
         int ii = -1;
         for(int i = 0; i < size; ++i)

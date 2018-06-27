@@ -54,9 +54,9 @@ TEST_F(TestMatrixSeries, Test1)
     const double maxLambda = 0.65;
     const std::vector<double> scaleFactors = {1, 1, 1, 1};
 
-    // Note that you need to increase maxLambda from 0.6 to 0.65 in order to include last range into sum.
-    // Inserting 0.6 would mean that last range to be included into sum is from 0.55 to 0.6 and last range is
-    // from 0.6 to infinity.
+    // Note that you need to increase maxLambda from 0.6 to 0.65 in order to include last range into
+    // sum. Inserting 0.6 would mean that last range to be included into sum is from 0.55 to 0.6 and
+    // last range is from 0.6 to infinity.
     auto mat = aMat.getSquaredMatrixSums(minLambda, maxLambda, scaleFactors);
 
     SquareMatrix correctResults{{20, 22.4}, {22.8, 19.8}};
@@ -76,7 +76,7 @@ TEST_F(TestMatrixSeries, Test2)
 {
     SCOPED_TRACE("Begin Test: Test matrix series multiplication.");
 
-    auto & mat = *getMatrix();
+    CMatrixSeries mat(*getMatrix());
 
     CSeries multiplier;
     multiplier.addProperty(0.45, 1.6);
@@ -86,11 +86,10 @@ TEST_F(TestMatrixSeries, Test2)
 
     mat.mMult(multiplier);
 
-    std::vector<std::vector<double>> correctResults(4);
-    correctResults[0] = {4.48, 28.12, 19.92, 12.45};
-    correctResults[1] = {5.44, 36.48, 0.24, 77.19};
-    correctResults[2] = {6.24, 29.26, 5.28, 74.7};
-    correctResults[3] = {12, 4.94, 8.64, 61.42};
+    std::vector<std::vector<double>> correctResults{{4.48, 28.12, 19.92, 12.45},
+                                                    {5.44, 36.48, 0.24, 77.19},
+                                                    {6.24, 29.26, 5.28, 74.7},
+                                                    {12, 4.94, 8.64, 61.42}};
 
     std::vector<CSeries *> matrixResults;
 

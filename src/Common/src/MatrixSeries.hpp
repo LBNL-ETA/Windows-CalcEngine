@@ -42,8 +42,8 @@ namespace FenestrationCommon
 
     private:
         std::vector<std::vector<std::unique_ptr<CSeries>>> m_Matrix;
-        size_t m_Size1;
-        size_t m_Size2;
+        size_t m_Size1{};
+        size_t m_Size2{};
     };
 
 }   // namespace FenestrationCommon

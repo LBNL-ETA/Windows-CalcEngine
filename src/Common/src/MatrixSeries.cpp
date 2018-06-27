@@ -20,7 +20,7 @@ namespace FenestrationCommon
         }
     }
 
-    CMatrixSeries::CMatrixSeries(CMatrixSeries const & t_MatrixSeries)
+    CMatrixSeries::CMatrixSeries(const CMatrixSeries & t_MatrixSeries)
     {
         *this = t_MatrixSeries;
     }
