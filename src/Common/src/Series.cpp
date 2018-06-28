@@ -18,8 +18,7 @@ namespace FenestrationCommon
 
     CSeriesPoint::CSeriesPoint(CSeriesPoint const & t_SeriesPoint)
     {
-        m_x = t_SeriesPoint.m_x;
-        m_Value = t_SeriesPoint.m_Value;
+        *this = t_SeriesPoint;
     }
 
     CSeriesPoint::CSeriesPoint(double t_Wavelength, double t_Value) :
@@ -365,7 +364,7 @@ namespace FenestrationCommon
     {
         if(Index >= m_Series.size())
         {
-            throw std::runtime_error("Index out of range");
+            throw std::out_of_range("Index out of range.");
         }
         return *m_Series[Index];
     }
