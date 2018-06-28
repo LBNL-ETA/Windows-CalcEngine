@@ -98,3 +98,20 @@ TEST_F(TestSeriesOperations, TestSeriesSubraction)
         EXPECT_NEAR(correctResults[i], result[i].value(), 1e-6);
     }
 }
+
+TEST_F(TestSeriesOperations, TestSeriesMultiplicationException)
+{
+    SCOPED_TRACE("Begin Test: Test multiplication with exception.");
+    CSeries first;
+    first.addProperty(1, 12);
+
+    CSeries second;
+    second.addProperty(2, 11);
+    second.addProperty(5, 34);
+
+    try {
+        auto result = first.mMult(second);
+    } catch(const std::runtime_error & err) {
+        EXPECT_EQ(err.what(), std::string("Wavelengths of two vectors are not the same. Cannot preform multiplication."));
+    }
+}
