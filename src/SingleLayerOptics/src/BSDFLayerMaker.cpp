@@ -16,6 +16,7 @@
 #include "PerforatedCell.hpp"
 #include "WovenCellDescription.hpp"
 #include "WovenCell.hpp"
+#include "PerfectDiffuseCellDescription.hpp"
 #include <WCECommon.hpp>
 
 namespace SingleLayerOptics
@@ -49,6 +50,13 @@ namespace SingleLayerOptics
             m_Cell = aCell;
             m_Layer = std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
         }
+
+        // Perfectly diffusing cell
+		if (std::dynamic_pointer_cast< CPerfectDiffuseCellDescription >(t_Description) != nullptr) {
+			std::shared_ptr< CUniformDiffuseCell > aCell = std::make_shared< CUniformDiffuseCell >(t_Material, t_Description);
+			m_Cell = aCell;
+			m_Layer = std::make_shared< CUniformDiffuseBSDFLayer >(aCell, t_BSDF);
+		}
 
         // Venetian cell
         if(std::dynamic_pointer_cast<CVenetianCellDescription>(t_Description) != nullptr)
