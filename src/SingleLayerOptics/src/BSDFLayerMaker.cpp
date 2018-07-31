@@ -96,7 +96,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getLayer()
     {
-        return std::move(m_Layer);
+        return m_Layer;
     }
 
     std::shared_ptr<CBaseCell> CBSDFLayerMaker::getCell() const
