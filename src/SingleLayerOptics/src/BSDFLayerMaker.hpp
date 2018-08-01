@@ -45,25 +45,31 @@ namespace SingleLayerOptics
         static std::shared_ptr<CBSDFLayer>
           getRectangularPerforatedLayer(const std::shared_ptr<CMaterial> & t_Material,
                                         const std::shared_ptr<const CBSDFHemisphere> & t_BSDF,
-                                        const double x,
-                                        const double y,
-                                        const double thickness,
-                                        const double xHole,
-                                        const double yHole);
+                                        double x,
+                                        double y,
+                                        double thickness,
+                                        double xHole,
+                                        double yHole);
 
         static std::shared_ptr<CBSDFLayer> getVenetianLayer(
           const std::shared_ptr<CMaterial> & t_Material,
           const std::shared_ptr<const CBSDFHemisphere> & t_BSDF,
-          const double slatWidth,
-          const double slatSpacing,
-          const double slatTiltAngle,
-          const double curvatureRadius,
-          const size_t numOfSlatSegments,
-          const DistributionMethod method = DistributionMethod::DirectionalDiffuse);
+          double slatWidth,
+          double slatSpacing,
+          double slatTiltAngle,
+          double curvatureRadius,
+          size_t numOfSlatSegments,
+          DistributionMethod method = DistributionMethod::DirectionalDiffuse);
 
         static std::shared_ptr<CBSDFLayer>
           getPerfectlyDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                    const std::shared_ptr<const CBSDFHemisphere> & t_BSDF);
+
+	    static std::shared_ptr<CBSDFLayer>
+	    getWovenLayer(const std::shared_ptr<CMaterial> & t_Material,
+	                                  const std::shared_ptr<const CBSDFHemisphere> & t_BSDF,
+	                                  double diameter,
+	                                  double spacing);
 
     private:
         std::shared_ptr<CBSDFLayer> m_Layer;

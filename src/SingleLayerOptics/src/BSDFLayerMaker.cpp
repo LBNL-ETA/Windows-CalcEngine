@@ -188,4 +188,15 @@ namespace SingleLayerOptics
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
+    std::shared_ptr<CBSDFLayer>
+      CBSDFLayerMaker::getWovenLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                     const std::shared_ptr<const CBSDFHemisphere> & t_BSDF,
+                                     double diameter,
+                                     double spacing)
+    {
+        auto aDescription = std::make_shared<CWovenCellDescription>(diameter, spacing);
+        auto aCell = std::make_shared<CUniformDiffuseCell>(t_Material, aDescription);
+        return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+    }
+
 }   // namespace SingleLayerOptics
