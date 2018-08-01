@@ -102,7 +102,6 @@ TEST_F( TestDoubleClear, Test1 ) {
 	auto Radiosity = *aSystem->getRadiosities( aRun );
 	std::vector< double > correctRadiosity = { 251.950834, 268.667346, 332.299338, 359.731700 };
 	ASSERT_EQ( correctRadiosity.size(), Radiosity.size() );
-
 	for ( auto i = 0u; i < correctRadiosity.size(); ++i ) {
 		EXPECT_NEAR( correctRadiosity[ i ], Radiosity[ i ], 1e-5 );
 	}
