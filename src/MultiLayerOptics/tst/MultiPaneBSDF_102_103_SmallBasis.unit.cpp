@@ -400,9 +400,9 @@ protected:
 		std::shared_ptr< CMaterial > aMaterial_103 =
 			std::make_shared< CMaterialSample >( aSample_103, thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
-		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
-		std::shared_ptr< CBSDFLayer > Layer_103 = CBSDFLayerMaker( aMaterial_103, aBSDF ).getLayer();
+		auto aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
+		auto Layer_102 = CBSDFLayerMaker::getSpecularLayer( aMaterial_102, aBSDF );
+		auto Layer_103 = CBSDFLayerMaker::getSpecularLayer( aMaterial_103, aBSDF );
 
 		// To assure interpolation to common wavelengths. MultiBSDF will NOT work with different wavelengths
 		CCommonWavelengths aCommonWL;
