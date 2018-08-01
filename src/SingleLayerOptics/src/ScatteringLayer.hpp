@@ -41,6 +41,10 @@ namespace SingleLayerOptics
                          std::shared_ptr<ICellDescription> t_Description = nullptr,
                          const DistributionMethod t_Method = DistributionMethod::UniformDiffuse);
 
+        static CScatteringLayer createSpecularLayer(const std::shared_ptr<CMaterial> & t_Material);
+        static CScatteringLayer createWovenLayer(const std::shared_ptr<CMaterial> & t_Material,
+        	double diameter, double spacing);
+
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
         CScatteringSurface & getSurface( const FenestrationCommon::Side t_Side );
@@ -70,6 +74,8 @@ namespace SingleLayerOptics
         double getMaxLambda() const override;
 
     private:
+    	  CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
+
         void createResultsAtAngle(const double t_Theta, const double t_Phi);
 
         CScatteringSurface createSurface( const FenestrationCommon::Side t_Side,
@@ -80,7 +86,7 @@ namespace SingleLayerOptics
         std::map<FenestrationCommon::Side, CScatteringSurface> m_Surface;
 
         std::shared_ptr<CBSDFLayer> m_BSDFLayer;
-        std::shared_ptr<CBaseCell> m_Cell;
+        //std::shared_ptr<CBaseCell> m_Cell;
 
         double m_Theta;
         double m_Phi;

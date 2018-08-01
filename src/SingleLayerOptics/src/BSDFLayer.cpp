@@ -11,7 +11,8 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CBSDFLayer::CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell, const std::shared_ptr<const CBSDFHemisphere> & t_Hemisphere) :
+    CBSDFLayer::CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
+                           const std::shared_ptr<const CBSDFHemisphere> & t_Hemisphere) :
         m_BSDFHemisphere(t_Hemisphere),
         m_Cell(t_Cell),
         m_Calculated(false),
@@ -19,7 +20,8 @@ namespace SingleLayerOptics
     {
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
-        m_Results = std::make_shared<CBSDFIntegrator>(m_BSDFHemisphere->getDirections(BSDFDirection::Incoming));
+        m_Results = std::make_shared<CBSDFIntegrator>(
+          m_BSDFHemisphere->getDirections(BSDFDirection::Incoming));
     }
 
     void CBSDFLayer::setSourceData(std::shared_ptr<CSeries> t_SourceData)
@@ -29,7 +31,7 @@ namespace SingleLayerOptics
         m_CalculatedWV = false;
     }
 
-    const CBSDFDirections & CBSDFLayer::getDirections( const BSDFDirection t_Side ) const
+    const CBSDFDirections & CBSDFLayer::getDirections(const BSDFDirection t_Side) const
     {
         return m_BSDFHemisphere->getDirections(t_Side);
     }
@@ -105,8 +107,8 @@ namespace SingleLayerOptics
                     CBSDFIntegrator & aResults = *(*m_WVResults)[j];
                     auto & tau = aResults.getMatrix(aSide, PropertySimple::T);
                     auto & rho = aResults.getMatrix(aSide, PropertySimple::R);
-                    tau(i,i) += aTau[j] / Lambda;
-                    rho(i,i) += aRho[j] / Lambda;
+                    tau(i, i) += aTau[j] / Lambda;
+                    rho(i, i) += aRho[j] / Lambda;
                 }
             }
         }
@@ -148,7 +150,8 @@ namespace SingleLayerOptics
         size_t size = m_Cell->getBandSize();
         for(size_t i = 0; i < size; ++i)
         {
-            std::shared_ptr<CBSDFIntegrator> aResults = std::make_shared<CBSDFIntegrator>(m_BSDFHemisphere->getDirections(BSDFDirection::Incoming));
+            std::shared_ptr<CBSDFIntegrator> aResults = std::make_shared<CBSDFIntegrator>(
+              m_BSDFHemisphere->getDirections(BSDFDirection::Incoming));
             m_WVResults->push_back(aResults);
         }
     }
@@ -165,6 +168,11 @@ namespace SingleLayerOptics
         fillWLResultsFromMaterialCell();
         calc_dir_dir_wv();
         calc_dir_dif_wv();
+    }
+
+    std::shared_ptr<CBaseCell> CBSDFLayer::getCell() const
+    {
+        return m_Cell;
     }
 
 }   // namespace SingleLayerOptics

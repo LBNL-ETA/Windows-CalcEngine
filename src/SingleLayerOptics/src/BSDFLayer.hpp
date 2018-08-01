@@ -48,6 +48,8 @@ namespace SingleLayerOptics {
 
 		std::vector< double > getBandWavelengths() const;
 
+		std::shared_ptr< CBaseCell > getCell() const;
+
 	protected:
 		// Diffuse calculation distribution will be calculated here. It will depend on base classes.
 		// It can for example be uniform or directional. In case of specular layers there will be no any diffuse
