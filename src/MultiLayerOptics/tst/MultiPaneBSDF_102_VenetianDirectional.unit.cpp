@@ -287,7 +287,8 @@ protected:
         std::shared_ptr<CBSDFLayer> Layer_102 =
           CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
-        // Venetian blind
+        // Venetian blind material
+        // Solar range
         double Tmat = 0.1;
         double Rfmat = 0.7;
         double Rbmat = 0.7;

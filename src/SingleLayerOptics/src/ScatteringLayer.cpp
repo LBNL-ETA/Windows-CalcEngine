@@ -214,4 +214,23 @@ namespace SingleLayerOptics
         return CScatteringLayer(CBSDFLayerMaker::getPerfectlyDiffuseLayer(t_Material, aBSDF));
     }
 
+    CScatteringLayer
+      CScatteringLayer::createVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                            double slatWidth,
+                                            double slatSpacing,
+                                            double slatTiltAngle,
+                                            double curvatureRadius,
+                                            size_t numOfSlatSegments,
+                                            DistributionMethod method)
+    {
+        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        return CScatteringLayer(CBSDFLayerMaker::getVenetianLayer(t_Material,
+                                                                  aBSDF,
+                                                                  slatWidth,
+                                                                  slatSpacing,
+                                                                  slatTiltAngle,
+                                                                  curvatureRadius,
+                                                                  numOfSlatSegments));
+    }
+
 }   // namespace SingleLayerOptics
