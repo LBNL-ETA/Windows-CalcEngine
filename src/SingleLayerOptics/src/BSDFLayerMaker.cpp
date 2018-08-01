@@ -144,12 +144,39 @@ namespace SingleLayerOptics
       const double thickness,
       const double xHole,
       const double yHole)
-	{
-		std::shared_ptr<ICellDescription> aCellDescription =
-			std::make_shared<CRectangularCellDescription>(x, y, thickness, xHole, yHole);
-		std::shared_ptr<CUniformDiffuseCell> aCell =
-			std::make_shared<CPerforatedCell>(t_Material, aCellDescription);
-		return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
-	}
+    {
+        std::shared_ptr<ICellDescription> aCellDescription =
+          std::make_shared<CRectangularCellDescription>(x, y, thickness, xHole, yHole);
+        std::shared_ptr<CUniformDiffuseCell> aCell =
+          std::make_shared<CPerforatedCell>(t_Material, aCellDescription);
+        return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+    }
+
+    std::shared_ptr<CBSDFLayer>
+      CBSDFLayerMaker::getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                        const std::shared_ptr<const CBSDFHemisphere> & t_BSDF,
+                                        const double slatWidth,
+                                        const double slatSpacing,
+                                        const double slatTiltAngle,
+                                        const double curvatureRadius,
+                                        const size_t numOfSlatSegments,
+                                        const DistributionMethod method)
+    {
+        std::shared_ptr<ICellDescription> aCellDescription =
+          std::make_shared<CVenetianCellDescription>(
+            slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
+        if(method == DistributionMethod::UniformDiffuse)
+        {
+            std::shared_ptr<CUniformDiffuseCell> aCell =
+              std::make_shared<CVenetianCell>(t_Material, aCellDescription);
+            return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+        }
+        else
+        {
+            std::shared_ptr<CDirectionalDiffuseCell> aCell =
+              std::make_shared<CVenetianCell>(t_Material, aCellDescription);
+            return std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
+        }
+    }
 
 }   // namespace SingleLayerOptics

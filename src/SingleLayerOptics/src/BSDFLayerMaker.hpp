@@ -51,6 +51,16 @@ namespace SingleLayerOptics
                                         const double xHole,
                                         const double yHole);
 
+        static std::shared_ptr<CBSDFLayer>
+          getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
+						   const std::shared_ptr<const CBSDFHemisphere> & t_BSDF,
+						   const double slatWidth,
+						   const double slatSpacing,
+						   const double slatTiltAngle,
+						   const double curvatureRadius,
+						   const size_t numOfSlatSegments,
+						   const DistributionMethod method = DistributionMethod::DirectionalDiffuse);
+
     private:
         std::shared_ptr<CBSDFLayer> m_Layer;
         std::shared_ptr<CBaseCell> m_Cell;
