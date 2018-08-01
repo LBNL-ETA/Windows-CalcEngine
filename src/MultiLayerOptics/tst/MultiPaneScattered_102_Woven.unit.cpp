@@ -299,18 +299,16 @@ protected:
 			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
 
 		// make cell geometry
-		auto diameter = 100; // mm
-		auto spacing = 300; // mm
-		std::shared_ptr< ICellDescription > aCellDescription =
-			std::make_shared< CWovenCellDescription >( diameter, spacing );
+		auto diameter = 0.1; // m
+		auto spacing = 0.3; // m
 
-		CScatteringLayer Layer_102( aMaterial_102 );
-		CScatteringLayer Layer_Woven( aMaterialWoven, aCellDescription );
+		CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer( aMaterial_102 );
+		CScatteringLayer LayerWoven = CScatteringLayer::createWovenLayer( aMaterialWoven, diameter, spacing );
 
 
 		// Equivalent BSDF layer
-		m_Layer = std::make_shared< CMultiLayerScattered >( Layer_102 );
-		m_Layer->addLayer( Layer_Woven );
+		m_Layer = std::make_shared< CMultiLayerScattered >( Layer102 );
+		m_Layer->addLayer( LayerWoven );
 
 		auto aSolarRadiation = loadSolarRadiationFile();
 		m_Layer->setSourceData( aSolarRadiation );
@@ -324,7 +322,7 @@ public:
 
 };
 
-TEST_F( MultiPaneScattered_102_Woven, TestWoven1 ) {
+TEST_F( MultiPaneScattered_102_Woven, TestWovenDirectBeam ) {
 	SCOPED_TRACE( "Begin Test: Woven layer - Scattering model front side (normal incidence)." );
 
 	auto& aLayer = *getLayer();
@@ -337,35 +335,35 @@ TEST_F( MultiPaneScattered_102_Woven, TestWoven1 ) {
 	EXPECT_NEAR( 0.370581, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.004814, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.003924, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.225817, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.218078, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
 	EXPECT_NEAR( 0.074817, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.070507, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.071221, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.222723, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.228935, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.100855, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.100950, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.378427, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.378507, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.111612, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.112447, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.439849, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.440540, A_dif2, 1e-6 );
 
 }
 
-TEST_F( MultiPaneScattered_102_Woven, TestWoven2 ) {
+TEST_F( MultiPaneScattered_102_Woven, TestWovenAngledBeam25 ) {
 	SCOPED_TRACE( "Begin Test: Woven layer - Scattering model back side (normal incidence)." );
 
 	auto& aLayer = *getLayer();
@@ -378,35 +376,35 @@ TEST_F( MultiPaneScattered_102_Woven, TestWoven2 ) {
 	EXPECT_NEAR( 0.349652, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.012181, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.011288, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.225817, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.218078, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
 	EXPECT_NEAR( 0.075583, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.072332, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.073050, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.222723, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.228935, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.102759, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.102857, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.387211, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.387293, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.111612, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.112447, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.439849, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.440540, A_dif2, 1e-6 );
 
 }
 
-TEST_F( MultiPaneScattered_102_Woven, TestWoven3 ) {
+TEST_F( MultiPaneScattered_102_Woven, TestWovenAngleBeam50 ) {
 	SCOPED_TRACE( "Begin Test: Woven layer - Scattering model front side (Theta = 50 deg)." );
 
 	auto& aLayer = *getLayer();
@@ -419,30 +417,30 @@ TEST_F( MultiPaneScattered_102_Woven, TestWoven3 ) {
 	EXPECT_NEAR( 0.255674, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.007800, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.004796, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.225817, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.218078, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
 	EXPECT_NEAR( 0.099211, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.084641, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.087053, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.222723, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.228935, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.115043, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.115353, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.441753, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.442009, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.111612, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.112447, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.439849, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.440540, A_dif2, 1e-6 );
 
 }
