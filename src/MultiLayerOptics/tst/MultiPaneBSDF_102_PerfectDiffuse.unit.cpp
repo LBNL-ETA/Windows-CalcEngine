@@ -281,9 +281,9 @@ protected:
 			std::make_shared< CMaterialSample >( aSample_102, thickness, MaterialType::Monolithic,
 			                                WavelengthRange::Solar );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
+		auto aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
 
-		std::shared_ptr<CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		auto Layer_102 = CBSDFLayerMaker::getSpecularLayer( aMaterial_102, aBSDF );
 
 		// Venetian blind
 		double Tmat = 0.1;
