@@ -42,8 +42,10 @@ namespace SingleLayerOptics
                          const DistributionMethod t_Method = DistributionMethod::UniformDiffuse);
 
         static CScatteringLayer createSpecularLayer(const std::shared_ptr<CMaterial> & t_Material);
+        static CScatteringLayer createPerfectlyDiffusingLayer(const std::shared_ptr<CMaterial> & t_Material);
         static CScatteringLayer createWovenLayer(const std::shared_ptr<CMaterial> & t_Material,
         	double diameter, double spacing);
+
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
