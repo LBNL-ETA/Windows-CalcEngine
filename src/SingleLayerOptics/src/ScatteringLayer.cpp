@@ -207,4 +207,11 @@ namespace SingleLayerOptics
           CBSDFLayerMaker::getWovenLayer(t_Material, aBSDF, diameter, spacing));
     }
 
+    CScatteringLayer
+      CScatteringLayer::createPerfectlyDiffusingLayer(const std::shared_ptr<CMaterial> & t_Material)
+    {
+        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        return CScatteringLayer(CBSDFLayerMaker::getPerfectlyDiffuseLayer(t_Material, aBSDF));
+    }
+
 }   // namespace SingleLayerOptics
