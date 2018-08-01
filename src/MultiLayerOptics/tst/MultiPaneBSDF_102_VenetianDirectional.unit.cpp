@@ -14,7 +14,7 @@ using namespace MultiLayerOptics;
 
 // Example on how to create multilayer BSDF from specular and venetian layers
 
-class MultiPaneBSDF_102_VenetianUniform : public testing::Test {
+class MultiPaneBSDF_102_VenetianDirectional : public testing::Test {
 
 private:
 	std::shared_ptr< CMultiPaneBSDF > m_Layer;
@@ -312,7 +312,7 @@ protected:
 		std::shared_ptr< CBSDFLayer > Layer_Venetian =
 			CBSDFLayerMaker::getVenetianLayer( aMaterialVenetian, aBSDF,
 				slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments,
-				DistributionMethod::UniformDiffuse);
+				DistributionMethod::DirectionalDiffuse);
 
 		std::vector< double > commonWavelengths = Layer_102->getBandWavelengths();
 
@@ -333,8 +333,8 @@ public:
 
 };
 
-TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
-	SCOPED_TRACE( "Begin Test: Specular and venetian uniform IGU - BSDF." );
+TEST_F( MultiPaneBSDF_102_VenetianDirectional, TestBSDF1 ) {
+	SCOPED_TRACE( "Begin Test: Specular and venetian directional IGU - BSDF." );
 
 	const double minLambda = 0.3;
 	const double maxLambda = 2.5;
@@ -342,58 +342,58 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
 	CMultiPaneBSDF& aLayer = *getLayer();
 
 	double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-	EXPECT_NEAR(0.194619, tauDiff, 1e-6);
+	EXPECT_NEAR(0.220915, tauDiff, 1e-6);
 
 	double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-	EXPECT_NEAR(0.432878, rhoDiff, 1e-6);
+	EXPECT_NEAR(0.533173, rhoDiff, 1e-6);
 
 	double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-	EXPECT_NEAR(0.136948, absDiff1, 1e-6);
+	EXPECT_NEAR(0.149436, absDiff1, 1e-6);
 
 	double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-	EXPECT_NEAR(0.235555, absDiff2, 1e-6);
+	EXPECT_NEAR(0.096475, absDiff2, 1e-6);
 
 	double theta = 0;
 	double phi = 0;
 
 	double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.216255, tauHem, 1e-6);
+	EXPECT_NEAR(0.245470, tauHem, 1e-6);
 
 	double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.049824, tauDir, 1e-6);
+	EXPECT_NEAR(0.050190, tauDir, 1e-6);
 
 	double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.390742, rhoHem, 1e-6);
+	EXPECT_NEAR(0.502088, rhoHem, 1e-6);
 
 	double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.079312, rhoDir, 1e-6);
+	EXPECT_NEAR(0.080896, rhoDir, 1e-6);
 
 	double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-	EXPECT_NEAR(0.131260, abs1, 1e-6);
+	EXPECT_NEAR(0.145243, abs1, 1e-6);
 
 	double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-	EXPECT_NEAR(0.261742, abs2, 1e-6);
+	EXPECT_NEAR(0.107199, abs2, 1e-6);
 
 	theta = 45;
 	phi = 78;
 
 	tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.212387, tauHem, 1e-6);
+	EXPECT_NEAR(0.241082, tauHem, 1e-6);
 
 	tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.082913, tauDir, 1e-6);
+	EXPECT_NEAR(0.089105, tauDir, 1e-6);
 
 	rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.392042, rhoHem, 1e-6);
+	EXPECT_NEAR(0.501461, rhoHem, 1e-6);
 
 	rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.156121, rhoDir, 1e-6);
+	EXPECT_NEAR(0.182388, rhoDir, 1e-6);
 
 	abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-	EXPECT_NEAR(0.138511, abs1, 1e-6);
+	EXPECT_NEAR(0.152174, abs1, 1e-6);
 
 	abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-	EXPECT_NEAR(0.257060, abs2, 1e-6);
+	EXPECT_NEAR(0.105283, abs2, 1e-6);
 
 	SquareMatrix aT = aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
@@ -401,13 +401,13 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
 	size_t size = aT.size();
 
 	std::vector< double > correctResults;
-	correctResults.push_back( 1.23756946 );
-	correctResults.push_back( 0.206788569 );
-	correctResults.push_back( 0.137959322 );
-	correctResults.push_back( 0.119945135 );
-	correctResults.push_back( 0.116410963 );
-	correctResults.push_back( 0.120001165 );
-	correctResults.push_back( 0.0903006339 );
+	correctResults.push_back( 1.246671 );
+	correctResults.push_back( 0.215880 );
+	correctResults.push_back( 0.147013 );
+	correctResults.push_back( 0.128903 );
+	correctResults.push_back( 0.125113 );
+	correctResults.push_back( 0.127947 );
+	correctResults.push_back( 0.094805 );
 
 	EXPECT_EQ( correctResults.size(), aT.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -419,13 +419,13 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.156889279 );
-	correctResults.push_back( 0.151592391 );
-	correctResults.push_back( 0.151253569 );
-	correctResults.push_back( 0.151237261 );
-	correctResults.push_back( 0.151523108 );
-	correctResults.push_back( 0.15273961 );
-	correctResults.push_back( 0.159760546 );
+	correctResults.push_back( 0.205072 );
+	correctResults.push_back( 0.199775 );
+	correctResults.push_back( 0.199437 );
+	correctResults.push_back( 0.199428 );
+	correctResults.push_back( 0.199743 );
+	correctResults.push_back( 0.201063 );
+	correctResults.push_back( 0.208553 );
 
 	EXPECT_EQ( correctResults.size(), aRb.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -437,13 +437,13 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.131260024 );
-	correctResults.push_back( 0.132130357 );
-	correctResults.push_back( 0.134666162 );
-	correctResults.push_back( 0.138510875 );
-	correctResults.push_back( 0.142483626 );
-	correctResults.push_back( 0.14295003 );
-	correctResults.push_back( 0.120720501 );
+	correctResults.push_back( 0.145243 );
+	correctResults.push_back( 0.146090 );
+	correctResults.push_back( 0.148540 );
+	correctResults.push_back( 0.152174 );
+	correctResults.push_back( 0.155614 );
+	correctResults.push_back( 0.154599 );
+	correctResults.push_back( 0.126611 );
 
 	EXPECT_EQ( correctResults.size(), aAbsF.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -455,13 +455,13 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.261742445 );
-	correctResults.push_back( 0.261448205 );
-	correctResults.push_back( 0.260286811 );
-	correctResults.push_back( 0.257060497 );
-	correctResults.push_back( 0.247992052 );
-	correctResults.push_back( 0.221158252 );
-	correctResults.push_back( 0.113999681 );
+	correctResults.push_back( 0.107199 );
+	correctResults.push_back( 0.107078 );
+	correctResults.push_back( 0.106603 );
+	correctResults.push_back( 0.105283 );
+	correctResults.push_back( 0.101569 );
+	correctResults.push_back( 0.090580 );
+	correctResults.push_back( 0.046693 );
 
 	EXPECT_EQ( correctResults.size(), aAbsF.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -473,13 +473,13 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.025373736 );
-	correctResults.push_back( 0.0254273064 );
-	correctResults.push_back( 0.0255886706 );
-	correctResults.push_back( 0.0258588002 );
-	correctResults.push_back( 0.0262377014 );
-	correctResults.push_back( 0.0267308524 );
-	correctResults.push_back( 0.0273780057 );
+	correctResults.push_back( 0.028794 );
+	correctResults.push_back( 0.028847 );
+	correctResults.push_back( 0.029009 );
+	correctResults.push_back( 0.029285 );
+	correctResults.push_back( 0.029687 );
+	correctResults.push_back( 0.030259 );
+	correctResults.push_back( 0.031249 );
 
 	EXPECT_EQ( correctResults.size(), aAbsB.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -491,13 +491,13 @@ TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.301981163 );
-	correctResults.push_back( 0.301981215 );
-	correctResults.push_back( 0.301997909 );
-	correctResults.push_back( 0.302102931 );
-	correctResults.push_back( 0.302523335 );
-	correctResults.push_back( 0.303974042 );
-	correctResults.push_back( 0.310205717 );
+	correctResults.push_back( 0.121312 );
+	correctResults.push_back( 0.121312 );
+	correctResults.push_back( 0.121318 );
+	correctResults.push_back( 0.121361 );
+	correctResults.push_back( 0.121534 );
+	correctResults.push_back( 0.122128 );
+	correctResults.push_back( 0.124680 );
 
 	EXPECT_EQ( correctResults.size(), aAbsB.size() );
 	for ( size_t i = 0; i < size; ++i ) {
