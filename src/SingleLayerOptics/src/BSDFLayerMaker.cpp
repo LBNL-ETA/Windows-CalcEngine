@@ -179,4 +179,13 @@ namespace SingleLayerOptics
         }
     }
 
+    std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getPerfectlyDiffuseLayer(
+      const std::shared_ptr<CMaterial> & t_Material,
+      const std::shared_ptr<const CBSDFHemisphere> & t_BSDF)
+    {
+        auto aDescription = std::make_shared<CPerfectDiffuseCellDescription>();
+        auto aCell = std::make_shared<CUniformDiffuseCell>(t_Material, aDescription);
+        return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+    }
+
 }   // namespace SingleLayerOptics
