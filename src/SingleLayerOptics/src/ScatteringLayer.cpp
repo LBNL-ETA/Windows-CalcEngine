@@ -230,7 +230,8 @@ namespace SingleLayerOptics
                                                                   slatSpacing,
                                                                   slatTiltAngle,
                                                                   curvatureRadius,
-                                                                  numOfSlatSegments));
+                                                                  numOfSlatSegments,
+                                                                  method));
     }
 
     CScatteringLayer

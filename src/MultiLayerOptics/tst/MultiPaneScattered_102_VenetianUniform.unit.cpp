@@ -341,31 +341,31 @@ TEST_F( MultiPaneScattered_102_VenetianUniform, TestVenetianUniformDirectBeam ) 
 	EXPECT_NEAR( 0.047686, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.191007, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.199672, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.295726, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.302710, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
 	EXPECT_NEAR( 0.074817, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.280807, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.292565, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.370696, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.379237, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.129125, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.130706, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.276558, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.254553, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.131504, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.132652, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.202074, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.185401, A_dif2, 1e-6 );
 
 }
 
@@ -382,31 +382,31 @@ TEST_F( MultiPaneScattered_102_VenetianUniform, TestVenetianUniformAngledBeam25 
 	EXPECT_NEAR( 0.047446, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.191007, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.199672, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.295726, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.302710, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
 	EXPECT_NEAR( 0.075583, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.280807, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.292565, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.370696, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.379237, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.130690, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.132265, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.275634, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.253701, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.131504, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.132652, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.202074, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.185401, A_dif2, 1e-6 );
 
 }
 
@@ -423,30 +423,30 @@ TEST_F( MultiPaneScattered_102_VenetianUniform, TestVenetianUniformAngleBeam50 )
 	EXPECT_NEAR( 0.045559, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.191007, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.199672, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.295726, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.302710, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
 	EXPECT_NEAR( 0.099211, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.280807, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.292565, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.370696, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.379237, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.140238, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.141748, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.264223, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.243199, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.131504, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.132652, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.202074, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.185401, A_dif2, 1e-6 );
 
 }
