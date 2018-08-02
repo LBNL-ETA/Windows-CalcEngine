@@ -145,8 +145,6 @@ TEST_F(TestMatrixMultiplication, Test6)
 {
     SCOPED_TRACE("Begin Test: Test matrix and std::vector multiplication exception.");
 
-    const size_t n = 3;
-
     const SquareMatrix a{ { 4, 3, 9 }, { 8, 8, 4 }, { 4, 3, 7 } };
 
     const std::vector<double> b = { 8, 4 };
@@ -162,8 +160,6 @@ TEST_F(TestMatrixMultiplication, Test6)
 TEST_F(TestMatrixMultiplication, Test7)
 {
     SCOPED_TRACE("Begin Test: Test matrix and std::vector multiplication exception.");
-
-    const size_t n = 3;
 
     const SquareMatrix a{ { 4, 3, 9 }, { 8, 8, 4 }, { 4, 3, 7 } };
 
@@ -181,8 +177,6 @@ TEST_F(TestMatrixMultiplication, Test8)
 {
     SCOPED_TRACE("Begin Test: Test matrix multiplication exception.");
 
-    const auto n = 3u;
-
     const SquareMatrix a{ { 4, 3, 9 }, { 8, 8, 4 }, { 4, 3, 7 } };
 
     const SquareMatrix b{ { 6, 8 }, { 3, 5 } };
@@ -197,8 +191,6 @@ TEST_F(TestMatrixMultiplication, Test8)
 TEST_F(TestMatrixMultiplication, TestMultRowsException)
 {
     SCOPED_TRACE("Begin Test: Test matrix mmultRow exception.");
-
-    const size_t n = 3;
 
     SquareMatrix a{ { 4, 3, 9 }, { 8, 8, 4 }, { 4, 3, 7 } };
 

@@ -22,14 +22,16 @@ protected:
         double Rbmat = 0.75;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        std::shared_ptr<CMaterialSingleBand> aMaterial =
+          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
         double diameter = 6.35;   // mm
         double spacing = 19.05;   // mm
 
         // create BSDF
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        std::shared_ptr<CBSDFHemisphere> aBSDF =
+          std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);
@@ -51,120 +53,46 @@ TEST_F(TestWovenShadeUniformMaterial, TestSolarProperties)
     std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
 
     const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.42156714375098558, tauDiff, 1e-6);
+    EXPECT_NEAR(0.421567, tauDiff, 1e-6);
 
     const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.54228080273345214, RfDiff, 1e-6);
+    EXPECT_NEAR(0.542281, RfDiff, 1e-6);
 
     const double RbDiff = aResults->DiffDiff(Side::Back, PropertySimple::R);
-    EXPECT_NEAR(0.54228080273345214, RbDiff, 1e-6);
+    EXPECT_NEAR(0.542281, RbDiff, 1e-6);
 
     auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
 
     const size_t size = aT.size();
 
-    std::cout.precision(7);
-    for(auto i = 0; i < aT.size(); ++i)
-    {
-    	std::cout << aT(i,i) << std::endl;
-    }
-
     // Test diagonal
-    std::vector<double> correctResults;
-    correctResults.push_back(5.8208903745997009);
-    correctResults.push_back(6.1112742537069362);
-    correctResults.push_back(6.1105232559211569);
-    correctResults.push_back(6.0948781743621048);
-    correctResults.push_back(6.1105232559211569);
-    correctResults.push_back(6.1112742537069362);
-    correctResults.push_back(6.1105232559211569);
-    correctResults.push_back(6.0948781743621048);
-    correctResults.push_back(6.1105232559211569);
-    correctResults.push_back(5.1378571879714912);
-    correctResults.push_back(5.1628657464653953);
-    correctResults.push_back(5.0391653915946177);
-    correctResults.push_back(4.8274726056748234);
-    correctResults.push_back(5.0391653915946177);
-    correctResults.push_back(5.1628657464653953);
-    correctResults.push_back(5.1378571879714912);
-    correctResults.push_back(5.1628657464653953);
-    correctResults.push_back(5.0391653915946186);
-    correctResults.push_back(4.8274726056748234);
-    correctResults.push_back(5.0391653915946177);
-    correctResults.push_back(5.1628657464653962);
-    correctResults.push_back(3.8105833651825955);
-    correctResults.push_back(4.0021223385767088);
-    correctResults.push_back(3.4180170235700418);
-    correctResults.push_back(1.3822013523549581);
-    correctResults.push_back(3.4180170235700409);
-    correctResults.push_back(4.0021223385767088);
-    correctResults.push_back(3.8105833651825955);
-    correctResults.push_back(4.0021223385767088);
-    correctResults.push_back(3.4180170235700431);
-    correctResults.push_back(1.3822013523549581);
-    correctResults.push_back(3.4180170235700418);
-    correctResults.push_back(4.0021223385767106);
-    correctResults.push_back(0.1035160170829772);
-    correctResults.push_back(0.0936502628857958);
-    correctResults.push_back(0.1035160170829772);
-    correctResults.push_back(0.0936502628857958);
-    correctResults.push_back(0.1035160170829772);
-    correctResults.push_back(0.0936502628857958);
-    correctResults.push_back(0.1035160170829772);
-    correctResults.push_back(0.0936502628857958);
+    std::vector<double> correctResults{
+      5.816364532,   6.106748411,   6.105997413,   6.090352332,   6.105997413,   6.106748411,
+      6.105997413,   6.090352332,   6.105997413,   5.133330004,   5.158338022,   5.034637516,
+      4.822945422,   5.034637516,   5.158338022,   5.133330004,   5.158338022,   5.034637516,
+      4.822945422,   5.034637516,   5.158338022,   3.796214925,   3.984144227,   3.39743563,
+      1.367832912,   3.39743563,    3.984144227,   3.796214925,   3.984144227,   3.39743563,
+      1.367832912,   3.39743563,    3.984144227,   0.06366197724, 0.06366197724, 0.06366197724,
+      0.06366197724, 0.06366197724, 0.06366197724, 0.06366197724, 0.06366197724};
 
     EXPECT_EQ(correctResults.size(), aT.size());
-    for (size_t i = 0; i < size; ++i)
+    for(size_t i = 0; i < size; ++i)
     {
         EXPECT_NEAR(correctResults[i], aT(i, i), 1e-5);
     }
 
     // Test first row
-    correctResults.clear();
-    correctResults.push_back(5.82089);
-    correctResults.push_back(0.0406216);
-    correctResults.push_back(0.0406251);
-    correctResults.push_back(0.0406964);
-    correctResults.push_back(0.0406251);
-    correctResults.push_back(0.0406216);
-    correctResults.push_back(0.0406251);
-    correctResults.push_back(0.0406964);
-    correctResults.push_back(0.0406251);
-    correctResults.push_back(0.0432346);
-    correctResults.push_back(0.0431121);
-    correctResults.push_back(0.0437211);
-    correctResults.push_back(0.0447624);
-    correctResults.push_back(0.0437211);
-    correctResults.push_back(0.0431121);
-    correctResults.push_back(0.0432346);
-    correctResults.push_back(0.0431121);
-    correctResults.push_back(0.0437211);
-    correctResults.push_back(0.0447624);
-    correctResults.push_back(0.0437211);
-    correctResults.push_back(0.0431121);
-    correctResults.push_back(0.0596576);
-    correctResults.push_back(0.0623422);
-    correctResults.push_back(0.0678335);
-    correctResults.push_back(0.0716109);
-    correctResults.push_back(0.0678335);
-    correctResults.push_back(0.0623422);
-    correctResults.push_back(0.0596576);
-    correctResults.push_back(0.0623422);
-    correctResults.push_back(0.0678335);
-    correctResults.push_back(0.0716109);
-    correctResults.push_back(0.0678335);
-    correctResults.push_back(0.0623422);
-    correctResults.push_back(0.103516);
-    correctResults.push_back(0.0936503);
-    correctResults.push_back(0.103516);
-    correctResults.push_back(0.0936503);
-    correctResults.push_back(0.103516);
-    correctResults.push_back(0.0936503);
-    correctResults.push_back(0.103516);
-    correctResults.push_back(0.0936503);
+    correctResults = {
+      5.816364532,   0.03609580668, 0.03609923243, 0.03617059911, 0.03609923243, 0.03609580668,
+      0.03609923243, 0.03617059911, 0.03609923243, 0.03870744384, 0.03858434635, 0.03919323995,
+      0.04023525639, 0.03919323995, 0.03858434635, 0.03870744384, 0.03858434635, 0.03919323995,
+      0.04023525639, 0.03919323995, 0.03858434635, 0.04528915348, 0.04436410513, 0.04725207318,
+      0.05724242926, 0.04725207318, 0.04436410513, 0.04528915348, 0.04436410513, 0.04725207318,
+      0.05724242926, 0.04725207318, 0.04436410513, 0.06366197724, 0.06366197724, 0.06366197724,
+      0.06366197724, 0.06366197724, 0.06366197724, 0.06366197724, 0.06366197724};
 
     EXPECT_EQ(correctResults.size(), aT.size());
-    for (size_t i = 0; i < size; ++i)
+    for(size_t i = 0; i < size; ++i)
     {
         EXPECT_NEAR(correctResults[i], aT(0, i), 1e-5);
     }
@@ -172,51 +100,17 @@ TEST_F(TestWovenShadeUniformMaterial, TestSolarProperties)
     // Test first row for reflectance matrix
     auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
-    correctResults.push_back(0.128103);
-    correctResults.push_back(0.130833);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.131114);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.130833);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.131114);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.140626);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.146355);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.140626);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.146355);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.155466);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.200291);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.155466);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.200291);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
+    correctResults = {
+      0.1326291192, 0.135359275,  0.1353721216, 0.1356397466, 0.1353721216, 0.135359275,
+      0.1353721216, 0.1356397466, 0.1353721216, 0.1451529144, 0.1446912988, 0.1469746498,
+      0.1508822115, 0.1469746498, 0.1446912988, 0.1451529144, 0.1446912988, 0.1469746498,
+      0.1508822115, 0.1469746498, 0.1446912988, 0.1698343255, 0.1663653942, 0.1771952744,
+      0.2146591097, 0.1771952744, 0.1663653942, 0.1698343255, 0.1663653942, 0.1771952744,
+      0.2146591097, 0.1771952744, 0.1663653942, 0.2387324146, 0.2387324146, 0.2387324146,
+      0.2387324146, 0.2387324146, 0.2387324146, 0.2387324146, 0.2387324146};
 
     EXPECT_EQ(correctResults.size(), aRf.size());
-    for (size_t i = 0; i < size; ++i)
+    for(size_t i = 0; i < size; ++i)
     {
         EXPECT_NEAR(correctResults[i], aRf(0, i), 1e-5);
     }
@@ -224,51 +118,17 @@ TEST_F(TestWovenShadeUniformMaterial, TestSolarProperties)
     // Test first row for reflectance matrix
     auto aRb = aResults->getMatrix(Side::Back, PropertySimple::R);
 
-    correctResults.clear();
-    correctResults.push_back(0.128103);
-    correctResults.push_back(0.130833);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.131114);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.130833);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.131114);
-    correctResults.push_back(0.130846);
-    correctResults.push_back(0.140626);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.146355);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.140626);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.146355);
-    correctResults.push_back(0.142447);
-    correctResults.push_back(0.140164);
-    correctResults.push_back(0.155466);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.200291);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.155466);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.200291);
-    correctResults.push_back(0.156614);
-    correctResults.push_back(0.148387);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
-    correctResults.push_back(0.198878);
-    correctResults.push_back(0.208744);
+    correctResults = {
+      0.1326291192, 0.135359275,  0.1353721216, 0.1356397466, 0.1353721216, 0.135359275,
+      0.1353721216, 0.1356397466, 0.1353721216, 0.1451529144, 0.1446912988, 0.1469746498,
+      0.1508822115, 0.1469746498, 0.1446912988, 0.1451529144, 0.1446912988, 0.1469746498,
+      0.1508822115, 0.1469746498, 0.1446912988, 0.1698343255, 0.1663653942, 0.1771952744,
+      0.2146591097, 0.1771952744, 0.1663653942, 0.1698343255, 0.1663653942, 0.1771952744,
+      0.2146591097, 0.1771952744, 0.1663653942, 0.2387324146, 0.2387324146, 0.2387324146,
+      0.2387324146, 0.2387324146, 0.2387324146, 0.2387324146, 0.2387324146};
 
     EXPECT_EQ(correctResults.size(), aRb.size());
-    for (size_t i = 0; i < size; ++i)
+    for(size_t i = 0; i < size; ++i)
     {
         EXPECT_NEAR(correctResults[i], aRb(0, i), 1e-5);
     }
