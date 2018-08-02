@@ -284,7 +284,7 @@ protected:
         auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Small);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
-        // Setting circular perforated shade with double range material
+        // Setting rectangular perforated shade with double range material
         double Tmat = 0.1;
         double Rfmat = 0.7;
         double Rbmat = 0.7;
