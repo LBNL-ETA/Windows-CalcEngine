@@ -57,6 +57,13 @@ namespace SingleLayerOptics
                               size_t numOfSlatSegments,
                               DistributionMethod method = DistributionMethod::DirectionalDiffuse);
 
+        static CScatteringLayer
+          createPerforatedCircularLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                        double x,
+                                        double y,
+                                        double thickness,
+                                        double radius);
+
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
