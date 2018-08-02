@@ -403,12 +403,12 @@ protected:
 		std::shared_ptr< CMaterial > aMaterial_103 = std::make_shared< CMaterialSample >( aSample_103,
 		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		CScatteringLayer Layer_102( aMaterial_102 );
-		CScatteringLayer Layer_103( aMaterial_103 );
+		CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer( aMaterial_102 );
+		CScatteringLayer Layer103 = CScatteringLayer::createSpecularLayer( aMaterial_103 );
 
 		// Equivalent BSDF layer
-		m_Layer = std::make_shared< CMultiLayerScattered >( Layer_102 );
-		m_Layer->addLayer( Layer_103 );
+		m_Layer = std::make_shared< CMultiLayerScattered >( Layer102 );
+		m_Layer->addLayer( Layer103 );
 
 		auto aSolarRadiation = loadSolarRadiationFile();
 		m_Layer->setSourceData( aSolarRadiation );

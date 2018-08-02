@@ -12,16 +12,16 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-// Example on how to create multilayer BSDF from specular and venetian layers
+// Example on how to create scattered multilayer.
 
-class MultiPaneBSDF_102_VenetianUniform : public testing::Test {
+class MultiPaneScattered_102_VenetianDirectional : public testing::Test {
 
 private:
-	std::shared_ptr< CMultiPaneBSDF > m_Layer;
+	std::shared_ptr< CMultiLayerScattered > m_Layer;
 
-	std::shared_ptr< CSeries > loadSolarRadiationFile() {
+	std::shared_ptr< CSeries > loadSolarRadiationFile() const {
 
-		std::shared_ptr< CSeries > aSolarRadiation = std::make_shared< CSeries >();
+		auto aSolarRadiation = std::make_shared< CSeries >();
 
 		// Full ASTM E891-87 Table 1 (Solar radiation)
 		aSolarRadiation->addProperty( 0.3000, 0.0 );
@@ -149,8 +149,8 @@ private:
 		return aSolarRadiation;
 	}
 
-	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() {
-		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = std::make_shared< CSpectralSampleData >();
+	std::shared_ptr< CSpectralSampleData > loadSampleData_NFRC_102() const {
+		auto aMeasurements_102 = std::make_shared< CSpectralSampleData >();
 
 		aMeasurements_102->addRecord( 0.300, 0.0020, 0.0470, 0.0480 );
 		aMeasurements_102->addRecord( 0.305, 0.0030, 0.0470, 0.0480 );
@@ -269,239 +269,183 @@ private:
 	}
 
 protected:
-	virtual void SetUp() {
+	void SetUp() override {
 
-		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
+		auto aMeasurements_102 = loadSampleData_NFRC_102();
 
-		std::shared_ptr< CSpectralSample > aSample_102 =
-			std::make_shared< CSpectralSample >( aMeasurements_102 );
+		// Create samples from measurements and solar radiation
+		auto aSample_102 = std::make_shared< CSpectralSample >( aMeasurements_102 );
 
-		double thickness = 3.048e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial_102 =
-			std::make_shared< CMaterialSample >( aSample_102, thickness, MaterialType::Monolithic,
-			                                WavelengthRange::Solar );
+		// Create material from samples
+		auto thickness = 3.048e-3; // [m]
+		std::shared_ptr< CMaterial > aMaterial_102 = std::make_shared< CMaterialSample >( aSample_102,
+		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
-
-		std::shared_ptr<CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
-
-		// Venetian blind
+		// Venetian blind material
+		// Solar range
 		double Tmat = 0.1;
 		double Rfmat = 0.7;
 		double Rbmat = 0.7;
-		std::shared_ptr< CMaterial > aSolarRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
+		std::shared_ptr<CMaterial> aSolarRangeMaterial =
+			std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar);
 
 		// Visible range
 		Tmat = 0.2;
 		Rfmat = 0.6;
 		Rbmat = 0.6;
-		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
+		std::shared_ptr<CMaterial> aVisibleRangeMaterial =
+			std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible);
 
-		std::shared_ptr< CMaterial > aMaterialVenetian =
-			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
+		std::shared_ptr<CMaterial> aMaterialVenetian =
+			std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
 
 		// make cell geometry
-		double slatWidth = 0.016; // m
-		double slatSpacing = 0.012; // m
+		double slatWidth = 0.016;     // m
+		double slatSpacing = 0.012;   // m
 		double slatTiltAngle = 45;
 		double curvatureRadius = 0;
 		size_t numOfSlatSegments = 5;
 
-		std::shared_ptr< CBSDFLayer > Layer_Venetian =
-			CBSDFLayerMaker::getVenetianLayer( aMaterialVenetian, aBSDF,
-				slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments,
-				DistributionMethod::UniformDiffuse);
+		CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer( aMaterial_102 );
+		CScatteringLayer LayerVenetian = CScatteringLayer::createVenetianLayer( aMaterialVenetian,
+			slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments );
 
-		std::vector< double > commonWavelengths = Layer_102->getBandWavelengths();
 
-		std::shared_ptr< CEquivalentBSDFLayer > aEqLayer =
-			std::make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );
-		aEqLayer->addLayer( Layer_Venetian );
+		// Equivalent BSDF layer
+		m_Layer = std::make_shared< CMultiLayerScattered >( Layer102 );
+		m_Layer->addLayer( LayerVenetian );
 
-		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
-		m_Layer = std::make_shared< CMultiPaneBSDF >( aEqLayer, aSolarRadiation );
+		auto aSolarRadiation = loadSolarRadiationFile();
+		m_Layer->setSourceData( aSolarRadiation );
 
 	}
 
 public:
-
-	std::shared_ptr< CMultiPaneBSDF > getLayer() {
+	std::shared_ptr< CMultiLayerScattered > getLayer() const {
 		return m_Layer;
 	};
 
 };
 
-TEST_F( MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF ) {
-	SCOPED_TRACE( "Begin Test: Specular and venetian uniform IGU - BSDF." );
+TEST_F( MultiPaneScattered_102_VenetianDirectional, TestVenetianDirectionalDirectBeam ) {
+	SCOPED_TRACE( "Begin Test: Venetian (directional) layer - Scattering model front side (normal incidence)." );
 
-	const double minLambda = 0.3;
-	const double maxLambda = 2.5;
+	auto& aLayer = *getLayer();
 
-	CMultiPaneBSDF& aLayer = *getLayer();
-
-	double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-	EXPECT_NEAR(0.194619, tauDiff, 1e-6);
-
-	double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-	EXPECT_NEAR(0.432878, rhoDiff, 1e-6);
-
-	double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-	EXPECT_NEAR(0.136948, absDiff1, 1e-6);
-
-	double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-	EXPECT_NEAR(0.235555, absDiff2, 1e-6);
-
+	auto aSide = Side::Front;
 	double theta = 0;
 	double phi = 0;
 
-	double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.216255, tauHem, 1e-6);
+	auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
+	EXPECT_NEAR( 0.047686, T_dir_dir, 1e-6 );
 
-	double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.049824, tauDir, 1e-6);
+	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
+	EXPECT_NEAR( 0.191007, T_dir_dif, 1e-6 );
 
-	double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.390742, rhoHem, 1e-6);
+	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
+	EXPECT_NEAR( 0.295726, T_dif_dif, 1e-6 );
 
-	double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.079312, rhoDir, 1e-6);
+	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
+	EXPECT_NEAR( 0.074817, R_dir_dir, 1e-6 );
 
-	double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-	EXPECT_NEAR(0.131260, abs1, 1e-6);
+	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
+	EXPECT_NEAR( 0.280807, R_dir_dif, 1e-6 );
 
-	double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-	EXPECT_NEAR(0.261742, abs2, 1e-6);
+	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
+	EXPECT_NEAR( 0.370696, R_dif_dif, 1e-6 );
 
-	theta = 45;
-	phi = 78;
+	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
+	EXPECT_NEAR( 0.129125, A_dir1, 1e-6 );
 
-	tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.212387, tauHem, 1e-6);
+	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
+	EXPECT_NEAR( 0.276558, A_dir2, 1e-6 );
 
-	tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-	EXPECT_NEAR(0.082913, tauDir, 1e-6);
+	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
+	EXPECT_NEAR( 0.131504, A_dif1, 1e-6 );
 
-	rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.392042, rhoHem, 1e-6);
+	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
+	EXPECT_NEAR( 0.202074, A_dif2, 1e-6 );
 
-	rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-	EXPECT_NEAR(0.156121, rhoDir, 1e-6);
+}
 
-	abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-	EXPECT_NEAR(0.138511, abs1, 1e-6);
+TEST_F( MultiPaneScattered_102_VenetianDirectional, TestVenetianDirectionalAngledBeam25 ) {
+	SCOPED_TRACE( "Begin Test: Venetian (directional) layer - Scattering model back side (normal incidence)." );
 
-	abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-	EXPECT_NEAR(0.257060, abs2, 1e-6);
+	auto& aLayer = *getLayer();
 
-	SquareMatrix aT = aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
+	auto aSide = Side::Front;
+	double theta = 25;
+	double phi = 0;
 
-	// Front transmittance matrix
-	size_t size = aT.size();
+	auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
+	EXPECT_NEAR( 0.047446, T_dir_dir, 1e-6 );
 
-	std::vector< double > correctResults;
-	correctResults.push_back( 1.23756946 );
-	correctResults.push_back( 0.206788569 );
-	correctResults.push_back( 0.137959322 );
-	correctResults.push_back( 0.119945135 );
-	correctResults.push_back( 0.116410963 );
-	correctResults.push_back( 0.120001165 );
-	correctResults.push_back( 0.0903006339 );
+	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
+	EXPECT_NEAR( 0.191007, T_dir_dif, 1e-6 );
 
-	EXPECT_EQ( correctResults.size(), aT.size() );
-	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aT( i , i )   , 1e-6 );
-	}
+	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
+	EXPECT_NEAR( 0.295726, T_dif_dif, 1e-6 );
 
-	// Back Reflectance matrix
-	SquareMatrix aRb = aLayer.getMatrix( minLambda, maxLambda, Side::Back, PropertySimple::R );
+	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
+	EXPECT_NEAR( 0.075583, R_dir_dir, 1e-6 );
 
-	correctResults.clear();
+	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
+	EXPECT_NEAR( 0.280807, R_dir_dif, 1e-6 );
 
-	correctResults.push_back( 0.156889279 );
-	correctResults.push_back( 0.151592391 );
-	correctResults.push_back( 0.151253569 );
-	correctResults.push_back( 0.151237261 );
-	correctResults.push_back( 0.151523108 );
-	correctResults.push_back( 0.15273961 );
-	correctResults.push_back( 0.159760546 );
+	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
+	EXPECT_NEAR( 0.370696, R_dif_dif, 1e-6 );
 
-	EXPECT_EQ( correctResults.size(), aRb.size() );
-	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aRb( i , i ), 1e-6 );
-	}
+	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
+	EXPECT_NEAR( 0.130690, A_dir1, 1e-6 );
 
-	// Front absorptance layer 1
-	std::vector< double > aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 1 );
+	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
+	EXPECT_NEAR( 0.275634, A_dir2, 1e-6 );
 
-	correctResults.clear();
+	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
+	EXPECT_NEAR( 0.131504, A_dif1, 1e-6 );
 
-	correctResults.push_back( 0.131260024 );
-	correctResults.push_back( 0.132130357 );
-	correctResults.push_back( 0.134666162 );
-	correctResults.push_back( 0.138510875 );
-	correctResults.push_back( 0.142483626 );
-	correctResults.push_back( 0.14295003 );
-	correctResults.push_back( 0.120720501 );
+	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
+	EXPECT_NEAR( 0.202074, A_dif2, 1e-6 );
 
-	EXPECT_EQ( correctResults.size(), aAbsF.size() );
-	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
-	}
+}
 
-	// Front absorptance layer 2
-	aAbsF = *aLayer.Abs( minLambda, maxLambda, Side::Front, 2 );
+TEST_F( MultiPaneScattered_102_VenetianDirectional, TestVenetianDirectionalAngleBeam50 ) {
+	SCOPED_TRACE( "Begin Test: Venetian (directional) layer - Scattering model front side (Theta = 50 deg)." );
 
-	correctResults.clear();
+	auto& aLayer = *getLayer();
 
-	correctResults.push_back( 0.261742445 );
-	correctResults.push_back( 0.261448205 );
-	correctResults.push_back( 0.260286811 );
-	correctResults.push_back( 0.257060497 );
-	correctResults.push_back( 0.247992052 );
-	correctResults.push_back( 0.221158252 );
-	correctResults.push_back( 0.113999681 );
+	auto aSide = Side::Front;
+	double theta = 50;
+	double phi = 0;
 
-	EXPECT_EQ( correctResults.size(), aAbsF.size() );
-	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aAbsF[ i ], 1e-6 );
-	}
+	auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
+	EXPECT_NEAR( 0.045559, T_dir_dir, 1e-6 );
 
-	// Back absorptance layer 1
-	std::vector< double > aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 1 );
+	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
+	EXPECT_NEAR( 0.191007, T_dir_dif, 1e-6 );
 
-	correctResults.clear();
+	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
+	EXPECT_NEAR( 0.295726, T_dif_dif, 1e-6 );
 
-	correctResults.push_back( 0.025373736 );
-	correctResults.push_back( 0.0254273064 );
-	correctResults.push_back( 0.0255886706 );
-	correctResults.push_back( 0.0258588002 );
-	correctResults.push_back( 0.0262377014 );
-	correctResults.push_back( 0.0267308524 );
-	correctResults.push_back( 0.0273780057 );
+	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
+	EXPECT_NEAR( 0.099211, R_dir_dir, 1e-6 );
 
-	EXPECT_EQ( correctResults.size(), aAbsB.size() );
-	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
-	}
+	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
+	EXPECT_NEAR( 0.280807, R_dir_dif, 1e-6 );
 
-	// Back absorptance layer 2
-	aAbsB = *aLayer.Abs( minLambda, maxLambda, Side::Back, 2 );
+	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
+	EXPECT_NEAR( 0.370696, R_dif_dif, 1e-6 );
 
-	correctResults.clear();
+	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
+	EXPECT_NEAR( 0.140238, A_dir1, 1e-6 );
 
-	correctResults.push_back( 0.301981163 );
-	correctResults.push_back( 0.301981215 );
-	correctResults.push_back( 0.301997909 );
-	correctResults.push_back( 0.302102931 );
-	correctResults.push_back( 0.302523335 );
-	correctResults.push_back( 0.303974042 );
-	correctResults.push_back( 0.310205717 );
+	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
+	EXPECT_NEAR( 0.264223, A_dir2, 1e-6 );
 
-	EXPECT_EQ( correctResults.size(), aAbsB.size() );
-	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aAbsB[ i ], 1e-6 );
-	}
+	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
+	EXPECT_NEAR( 0.131504, A_dif1, 1e-6 );
+
+	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
+	EXPECT_NEAR( 0.202074, A_dif2, 1e-6 );
 
 }
