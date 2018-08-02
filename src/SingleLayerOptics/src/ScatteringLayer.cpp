@@ -246,4 +246,17 @@ namespace SingleLayerOptics
           CBSDFLayerMaker::getCircularPerforatedLayer(t_Material, aBSDF, x, y, thickness, radius));
     }
 
+    CScatteringLayer CScatteringLayer::createPerforatedRectangularLayer(
+      const std::shared_ptr<CMaterial> & t_Material,
+      double x,
+      double y,
+      double thickness,
+      double xHole,
+      double yHole)
+    {
+        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        return CScatteringLayer(CBSDFLayerMaker::getRectangularPerforatedLayer(
+          t_Material, aBSDF, x, y, thickness, xHole, yHole));
+    }
+
 }   // namespace SingleLayerOptics

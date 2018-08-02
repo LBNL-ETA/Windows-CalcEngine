@@ -64,6 +64,14 @@ namespace SingleLayerOptics
                                         double thickness,
                                         double radius);
 
+        static CScatteringLayer
+          createPerforatedRectangularLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                           double x,
+                                           double y,
+                                           double thickness,
+                                           double xHole,
+                                           double yHole);
+
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
@@ -111,7 +119,6 @@ namespace SingleLayerOptics
         std::map<FenestrationCommon::Side, CScatteringSurface> m_Surface;
 
         std::shared_ptr<CBSDFLayer> m_BSDFLayer;
-        // std::shared_ptr<CBaseCell> m_Cell;
 
         double m_Theta;
         double m_Phi;
