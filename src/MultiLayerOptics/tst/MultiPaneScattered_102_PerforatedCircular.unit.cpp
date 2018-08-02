@@ -335,34 +335,34 @@ TEST_F( MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularDirectB
 	double phi = 0;
 
 	auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.072763389801335038, T_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.072763, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.08671655480392526, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.086717, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.10257675450392087, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.102577, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.074816596463456245, R_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.074817, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.44538282497519288, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.445383, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.57540845758095682, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.575408, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.15124945970249457, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.151249, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.16907117425359602, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.169071, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.1590234649775856, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.159023, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.16299132293753663, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.162991, A_dif2, 1e-6 );
 
 }
 
@@ -376,34 +376,34 @@ TEST_F( MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularAngledB
 	double phi = 0;
 
 	auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.045814358742349924, T_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.045814, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.094955991341031248, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.094956, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.10257675450392087, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.102577, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.075583231565284098, R_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.075583, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.45758673441498876, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.457587, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.57540845758095682, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.575408, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.15439887044949066, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.154399, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.17320769691573146, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.173208, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.1590234649775856, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.159023, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.16299132293753663, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.162991, A_dif2, 1e-6 );
 
 }
 
@@ -417,33 +417,33 @@ TEST_F( MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularAngleBe
 	double phi = 0;
 
 	auto T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.0042830897062331591, T_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.004283, T_dir_dir, 1e-6 );
 
 	auto T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.094496707622867646, T_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.094497, T_dir_dif, 1e-6 );
 
 	auto T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.10257675450392087, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.102577, T_dif_dif, 1e-6 );
 
 	auto R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.099211435499337169, R_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.099211, R_dir_dir, 1e-6 );
 
 	auto R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
-	EXPECT_NEAR( 0.48534228195632467, R_dir_dif, 1e-6 );
+	EXPECT_NEAR( 0.485342, R_dir_dif, 1e-6 );
 
 	auto R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.57540845758095682, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.575408, R_dif_dif, 1e-6 );
 
 	auto A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.16650709993423798, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.166507, A_dir1, 1e-6 );
 
 	auto A_dir2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.17602234111370268, A_dir2, 1e-6 );
+	EXPECT_NEAR( 0.176022, A_dir2, 1e-6 );
 
 	auto A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.1590234649775856, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.159023, A_dif1, 1e-6 );
 
 	auto A_dif2 = aLayer.getAbsorptanceLayer( 2, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.16299132293753663, A_dif2, 1e-6 );
+	EXPECT_NEAR( 0.162991, A_dif2, 1e-6 );
 
 }
