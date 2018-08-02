@@ -42,13 +42,11 @@ protected:
         double y = 38.1;        // mm
         double thickness = 5;   // mm
         double radius = 8.35;   // mm
-        std::shared_ptr<ICellDescription> aCellDescription = std::make_shared<CCircularCellDescription>(x, y, thickness, radius);
 
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
         // make layer
-        CBSDFLayerMaker aMaker = CBSDFLayerMaker(aMaterial, aBSDF, aCellDescription);
-        m_Layer = aMaker.getLayer();
+        m_Layer = CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);
     }
 
 public:

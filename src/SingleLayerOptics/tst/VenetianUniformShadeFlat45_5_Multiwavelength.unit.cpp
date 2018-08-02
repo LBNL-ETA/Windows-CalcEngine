@@ -23,7 +23,8 @@ protected:
         double Rbmat = 0.7;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aSolarRangeMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        std::shared_ptr<CMaterial> aSolarRangeMaterial =
+          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // Visible range
         Tmat = 0.2;
@@ -31,11 +32,13 @@ protected:
         Rbmat = 0.6;
         minLambda = 0.38;
         maxLambda = 0.78;
-        std::shared_ptr<CMaterial> aVisibleRangeMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        std::shared_ptr<CMaterial> aVisibleRangeMaterial =
+          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         double ratio = 0.49;
 
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
+        std::shared_ptr<CMaterial> aMaterial =
+          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
 
         // make cell geometry
         double slatWidth = 0.016;     // m
@@ -44,15 +47,19 @@ protected:
         double curvatureRadius = 0;
         size_t numOfSlatSegments = 5;
 
-        std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
-
         // create BSDF
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        std::shared_ptr<CBSDFHemisphere> aBSDF =
+          std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
         // make layer
-        CBSDFLayerMaker aMaker = CBSDFLayerMaker(aMaterial, aBSDF, aCellDescription);
-        m_Layer = aMaker.getLayer();
+        m_Layer = CBSDFLayerMaker::getVenetianLayer(aMaterial,
+                                                    aBSDF,
+                                                    slatWidth,
+                                                    slatSpacing,
+                                                    slatTiltAngle,
+                                                    curvatureRadius,
+                                                    numOfSlatSegments,
+                                                    DistributionMethod::UniformDiffuse);
     }
 
 public:
@@ -68,7 +75,8 @@ TEST_F(TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavele
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults = aLayer->getWavelengthResults();
+    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
+      aLayer->getWavelengthResults();
 
     size_t correctSize = 4;
 

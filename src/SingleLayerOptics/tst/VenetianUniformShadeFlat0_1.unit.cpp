@@ -8,8 +8,8 @@
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
-// Creation of BSDF matrix for single layer venetian shade with given material and geometrical properties.
-// Method for calculation is diffuse part of distribution is uniform.
+// Creation of BSDF matrix for single layer venetian shade with given material and geometrical
+// properties. Method for calculation is diffuse part of distribution is uniform.
 class TestVenetianUniformShadeFlat0_1 : public testing::Test
 {
 private:
@@ -24,7 +24,8 @@ protected:
         double Rbmat = 0.7;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        std::shared_ptr<CMaterial> aMaterial =
+          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
         double slatWidth = 0.010;     // m
@@ -32,15 +33,19 @@ protected:
         double slatTiltAngle = 0;
         double curvatureRadius = 0;
         size_t numOfSlatSegments = 1;
-        std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
 
         // create BSDF
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
         // make layer
-        CBSDFLayerMaker aMaker = CBSDFLayerMaker(aMaterial, aBSDF, aCellDescription);
-        m_Shade = aMaker.getLayer();
+        m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,
+                                                    aBSDF,
+                                                    slatWidth,
+                                                    slatSpacing,
+                                                    slatTiltAngle,
+                                                    curvatureRadius,
+                                                    numOfSlatSegments,
+                                                    DistributionMethod::UniformDiffuse);
     }
 
 public:

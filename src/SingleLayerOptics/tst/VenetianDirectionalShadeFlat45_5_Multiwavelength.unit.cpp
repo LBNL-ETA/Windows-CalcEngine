@@ -44,9 +44,6 @@ protected:
         double curvatureRadius = 0;
         size_t numOfSlatSegments = 5;
 
-        std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
-
         // Method
         DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
 
@@ -54,8 +51,8 @@ protected:
         std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
         // make layer
-        CBSDFLayerMaker aMaker = CBSDFLayerMaker(aMaterial, aBSDF, aCellDescription, aDistribution);
-        m_Layer = aMaker.getLayer();
+        m_Layer = CBSDFLayerMaker::getVenetianLayer(aMaterial, aBSDF, slatWidth, slatSpacing, slatTiltAngle,
+        	curvatureRadius, numOfSlatSegments, aDistribution);
     }
 
 public:

@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestVenetianScatteringLayer1 : public testing::Test {
 
 private:
-	std::shared_ptr< CScatteringLayer > m_Shade;
+	CScatteringLayer m_Shade;
 
 protected:
 	virtual void SetUp() {
@@ -38,12 +38,13 @@ protected:
 		// Method
 		DistributionMethod aDistribution = DistributionMethod::UniformDiffuse;
 
-		m_Shade = std::make_shared< CScatteringLayer >( aMaterial, aCellDescription, aDistribution );
+		m_Shade = CScatteringLayer::createVenetianLayer(aMaterial, slatWidth, slatSpacing, slatTiltAngle,
+			curvatureRadius, numOfSlatSegments, aDistribution);
 
 	}
 
 public:
-	std::shared_ptr< CScatteringLayer > GetShade() {
+	CScatteringLayer & GetShade() {
 		return m_Shade;
 	};
 
@@ -52,32 +53,32 @@ public:
 TEST_F( TestVenetianScatteringLayer1, TestVenetian1 ) {
 	SCOPED_TRACE( "Begin Test: Venetian scattering layer (Flat, 45 degrees slats) - 0 deg incident." );
 
-	std::shared_ptr< CScatteringLayer > aShade = GetShade();
+	auto aShade = GetShade();
 
 	Side aSide = Side::Front;
 
-	double T_dir_dir = aShade->getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect );
+	double T_dir_dir = aShade.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect );
 	EXPECT_NEAR( 0.292893, T_dir_dir, 1e-6 );
 
-	double R_dir_dir = aShade->getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect );
+	double R_dir_dir = aShade.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect );
 	EXPECT_NEAR( 0, R_dir_dir, 1e-6 );
 
-	double T_dir_dif = aShade->getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse );
+	double T_dir_dif = aShade.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse );
 	EXPECT_NEAR( 0.162897, T_dir_dif, 1e-6 );
 
-	double R_dir_dif = aShade->getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse );
+	double R_dir_dif = aShade.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse );
 	EXPECT_NEAR( 0.356835, R_dir_dif, 1e-6 );
 
-	double T_dif_dif = aShade->getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse );
+	double T_dif_dif = aShade.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse );
 	EXPECT_NEAR( 0.486233, T_dif_dif, 1e-6 );
 
-	double R_dif_dif = aShade->getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse );
+	double R_dif_dif = aShade.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse );
 	EXPECT_NEAR( 0.329593, R_dif_dif, 1e-6 );
 
-	double A_dir = aShade->getAbsorptance( aSide, ScatteringSimple::Direct );
+	double A_dir = aShade.getAbsorptance( aSide, ScatteringSimple::Direct );
 	EXPECT_NEAR( 0.187375, A_dir, 1e-6 );
 
-	double A_dif = aShade->getAbsorptance( aSide, ScatteringSimple::Diffuse );
+	double A_dif = aShade.getAbsorptance( aSide, ScatteringSimple::Diffuse );
 	EXPECT_NEAR( 0.184173, A_dif, 1e-6 );
 
 }
@@ -86,40 +87,40 @@ TEST_F( TestVenetianScatteringLayer1, TestVenetian2 ) {
 	SCOPED_TRACE( "Begin Test: Venetian scattering layer (Flat, 45 degrees slats) - Theta = 45 deg,"
 		" Phi = 45 incident." );
 
-	std::shared_ptr< CScatteringLayer > aShade = GetShade();
+	auto aShade = GetShade();
 
 	Side aSide = Side::Front;
 	const double Theta = 45;
 	const double Phi = 90;
 
-	double T_dir_dir = aShade->getPropertySimple( PropertySimple::T, aSide,
+	double T_dir_dir = aShade.getPropertySimple( PropertySimple::T, aSide,
 	                                              Scattering::DirectDirect, Theta, Phi );
 	EXPECT_NEAR( 1, T_dir_dir, 1e-6 );
 
-	double R_dir_dir = aShade->getPropertySimple( PropertySimple::R, aSide,
+	double R_dir_dir = aShade.getPropertySimple( PropertySimple::R, aSide,
 	                                              Scattering::DirectDirect, Theta, Phi );
 	EXPECT_NEAR( 0, R_dir_dir, 1e-6 );
 
-	double T_dir_dif = aShade->getPropertySimple( PropertySimple::T, aSide,
+	double T_dir_dif = aShade.getPropertySimple( PropertySimple::T, aSide,
 	                                              Scattering::DirectDiffuse, Theta, Phi );
 	EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
 
-	double R_dir_dif = aShade->getPropertySimple( PropertySimple::R, aSide,
+	double R_dir_dif = aShade.getPropertySimple( PropertySimple::R, aSide,
 	                                              Scattering::DirectDiffuse, Theta, Phi );
 	EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
 
-	double T_dif_dif = aShade->getPropertySimple( PropertySimple::T, aSide,
+	double T_dif_dif = aShade.getPropertySimple( PropertySimple::T, aSide,
 	                                              Scattering::DiffuseDiffuse, Theta, Phi );
 	EXPECT_NEAR( 0.486233, T_dif_dif, 1e-6 );
 
-	double R_dif_dif = aShade->getPropertySimple( PropertySimple::R, aSide,
+	double R_dif_dif = aShade.getPropertySimple( PropertySimple::R, aSide,
 	                                              Scattering::DiffuseDiffuse, Theta, Phi );
 	EXPECT_NEAR( 0.329593, R_dif_dif, 1e-6 );
 
-	double A_dir = aShade->getAbsorptance( aSide, ScatteringSimple::Direct, Theta, Phi );
+	double A_dir = aShade.getAbsorptance( aSide, ScatteringSimple::Direct, Theta, Phi );
 	EXPECT_NEAR( 0, A_dir, 1e-6 );
 
-	double A_dif = aShade->getAbsorptance( aSide, ScatteringSimple::Diffuse, Theta, Phi );
+	double A_dif = aShade.getAbsorptance( aSide, ScatteringSimple::Diffuse, Theta, Phi );
 	EXPECT_NEAR( 0.184173, A_dif, 1e-6 );
 
 }

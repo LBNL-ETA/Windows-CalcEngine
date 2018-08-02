@@ -40,14 +40,12 @@ protected:
         // make cell geometry
         double diameter = 6.35;   // mm
         double spacing = 19.05;   // mm
-        std::shared_ptr<ICellDescription> aCellDescription = std::make_shared<CWovenCellDescription>(diameter, spacing);
 
         // create BSDF
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
         // make layer
-        CBSDFLayerMaker aMaker = CBSDFLayerMaker(aMaterial, aBSDF, aCellDescription);
-        m_Layer = aMaker.getLayer();
+        m_Layer = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);
     }
 
 public:

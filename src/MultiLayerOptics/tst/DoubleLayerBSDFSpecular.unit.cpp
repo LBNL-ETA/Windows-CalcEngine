@@ -282,9 +282,7 @@ protected:
         double maxLambda = 2.5;
         std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSample>(aSample, thickness, aType, minLambda, maxLambda);
 
-        // specular layer NFRC=102
-        CBSDFLayerMaker aMaker102 = CBSDFLayerMaker(aMaterial, aBSDF);
-        std::shared_ptr<CBSDFLayer> aLayer102 = aMaker102.getLayer();
+        auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
 
         CBSDFIntegrator aLayer1 = *aLayer102->getResults();
         CBSDFIntegrator aLayer2 = *aLayer102->getResults();
