@@ -12,9 +12,9 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-// Example on how to create multilayer BSDF with combination of specular and perforated layer
+// Example on how to create multilayer BSDF from specular and venetian layers
 
-class MultiPaneBSDF_102_Perforated : public testing::Test {
+class MultiPaneBSDF_102_PerfectDiffuse : public testing::Test {
 
 private:
 	std::shared_ptr< CMultiPaneBSDF > m_Layer;
@@ -273,17 +273,19 @@ protected:
 
 		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
 
-		std::shared_ptr< CSpectralSample > aSample_102 = std::make_shared< CSpectralSample >( aMeasurements_102 );
+		std::shared_ptr< CSpectralSample > aSample_102 =
+			std::make_shared< CSpectralSample >( aMeasurements_102 );
 
 		double thickness = 3.048e-3; // [m]
 		std::shared_ptr< CMaterial > aMaterial_102 =
 			std::make_shared< CMaterialSample >( aSample_102, thickness, MaterialType::Monolithic,
 			                                WavelengthRange::Solar );
 
-		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
-		std::shared_ptr< CBSDFLayer > Layer_102 = CBSDFLayerMaker( aMaterial_102, aBSDF ).getLayer();
+		auto aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Small );
 
-		// Setting circular perforated shade with double range material
+		auto Layer_102 = CBSDFLayerMaker::getSpecularLayer( aMaterial_102, aBSDF );
+
+		// Venetian blind
 		double Tmat = 0.1;
 		double Rfmat = 0.7;
 		double Rbmat = 0.7;
@@ -297,29 +299,16 @@ protected:
 		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
 			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
 
-		// double ratio = 0.49;
-
-		std::shared_ptr< CMaterial > aMaterialPerforated =
+		std::shared_ptr< CMaterial > aMaterial =
 			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
 
-		// make cell geometry
-		double x = 19.05; // mm
-		double y = 19.05; // mm
-		thickness = 5; // mm
-		double radius = 3.175; // mm
-		std::shared_ptr< ICellDescription > aCellDescription =
-			std::make_shared< CCircularCellDescription >( x, y, thickness, radius );
-
-		// Perforated layer is created here
-		std::shared_ptr< CBSDFLayer > Layer_Perforated =
-			CBSDFLayerMaker( aMaterialPerforated, aBSDF, aCellDescription ).getLayer();
+		auto diffuseLayer = CBSDFLayerMaker::getPerfectlyDiffuseLayer( aMaterial, aBSDF );
 
 		std::vector< double > commonWavelengths = Layer_102->getBandWavelengths();
 
-		// Equivalent multilayer
 		std::shared_ptr< CEquivalentBSDFLayer > aEqLayer =
 			std::make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );
-		aEqLayer->addLayer( Layer_Perforated );
+		aEqLayer->addLayer( diffuseLayer );
 
 		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
 		m_Layer = std::make_shared< CMultiPaneBSDF >( aEqLayer, aSolarRadiation );
@@ -328,73 +317,73 @@ protected:
 
 public:
 
-	std::shared_ptr< CMultiPaneBSDF > getLayer() const {
+	std::shared_ptr< CMultiPaneBSDF > getLayer() {
 		return m_Layer;
 	};
 
 };
 
-TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
-	SCOPED_TRACE( "Begin Test: Specular layer - BSDF." );
+TEST_F( MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF ) {
+	SCOPED_TRACE( "Begin Test: Perfectly diffusing IGU - BSDF." );
 
 	const double minLambda = 0.3;
 	const double maxLambda = 2.5;
 
 	CMultiPaneBSDF& aLayer = *getLayer();
 
-	double tauDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::T );
-	EXPECT_NEAR( 0.0234539, tauDiff, 1e-6 );
+	double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
+	EXPECT_NEAR(0.001846, tauDiff, 1e-6);
 
-	double rhoDiff = aLayer.DiffDiff( minLambda, maxLambda, Side::Front, PropertySimple::R );
-	EXPECT_NEAR( 0.6474821, rhoDiff, 1e-6 );
+	double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
+	EXPECT_NEAR(0.662318, rhoDiff, 1e-6);
 
-	double absDiff1 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 1 );
-	EXPECT_NEAR( 0.1636120, absDiff1, 1e-6 );
+	double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
+	EXPECT_NEAR(0.165465, absDiff1, 1e-6);
 
-	double absDiff2 = aLayer.AbsDiff( minLambda, maxLambda, Side::Front, 2 );
-	EXPECT_NEAR( 0.1654520, absDiff2, 1e-6 );
+	double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
+	EXPECT_NEAR(0.170370, absDiff2, 1e-6);
 
 	double theta = 0;
 	double phi = 0;
 
-	double tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-	EXPECT_NEAR( 0.0759512, tauHem, 1e-6 );
+	double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+	EXPECT_NEAR(0.002052, tauHem, 1e-6);
 
-	double tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-	EXPECT_NEAR( 0.0728454, tauDir, 1e-6 );
+	double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+	EXPECT_NEAR(0.000026, tauDir, 1e-6);
 
-	double rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-	EXPECT_NEAR( 0.5947476, rhoHem, 1e-6 );
+	double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+	EXPECT_NEAR(0.645455, rhoHem, 1e-6);
 
-	double rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-	EXPECT_NEAR( 0.0822146, rhoDir, 1e-6 );
+	double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+	EXPECT_NEAR(0.082936, rhoDir, 1e-6);
 
-	double abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-	EXPECT_NEAR( 0.1568181, abs1, 1e-6 );
+	double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
+	EXPECT_NEAR(0.163191, abs1, 1e-6);
 
-	double abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-	EXPECT_NEAR( 0.1724831, abs2, 1e-6 );
+	double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
+	EXPECT_NEAR(0.189302, abs2, 1e-6);
 
 	theta = 45;
 	phi = 78;
 
-	tauHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-	EXPECT_NEAR( 0.0292174, tauHem, 1e-6 );
+	tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+	EXPECT_NEAR(0.002015, tauHem, 1e-6);
 
-	tauDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi );
-	EXPECT_NEAR( 0.0267344, tauDir, 1e-6 );
+	tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+	EXPECT_NEAR(0.000443, tauDir, 1e-6);
 
-	rhoHem = aLayer.DirHem( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-	EXPECT_NEAR( 0.6236694, rhoHem, 1e-6 );
+	rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+	EXPECT_NEAR(0.642351, rhoHem, 1e-6);
 
-	rhoDir = aLayer.DirDir( minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi );
-	EXPECT_NEAR( 0.2117240, rhoDir, 1e-6 );
+	rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+	EXPECT_NEAR(0.216209, rhoDir, 1e-6);
 
-	abs1 = aLayer.Abs( minLambda, maxLambda, Side::Front, 1, theta, phi );
-	EXPECT_NEAR( 0.1673834, abs1, 1e-6 );
+	abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
+	EXPECT_NEAR(0.169713, abs1, 1e-6);
 
-	abs2 = aLayer.Abs( minLambda, maxLambda, Side::Front, 2, theta, phi );
-	EXPECT_NEAR( 0.1797297, abs2, 1e-6 );
+	abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
+	EXPECT_NEAR(0.185922, abs2, 1e-6);
 
 	SquareMatrix aT = aLayer.getMatrix( minLambda, maxLambda, Side::Front, PropertySimple::T );
 
@@ -402,17 +391,17 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 	size_t size = aT.size();
 
 	std::vector< double > correctResults;
-	correctResults.push_back( 1.80940064 );
-	correctResults.push_back( 0.193763453 );
-	correctResults.push_back( 0.0815732527 );
-	correctResults.push_back( 0.0386747421 );
-	correctResults.push_back( 0.000617628813 );
-	correctResults.push_back( 0.000550776082 );
-	correctResults.push_back( 0.000283894713 );
+	correctResults.push_back( 0.000653 );
+	correctResults.push_back( 0.000653 );
+	correctResults.push_back( 0.000649 );
+	correctResults.push_back( 0.000641 );
+	correctResults.push_back( 0.000619 );
+	correctResults.push_back( 0.000552 );
+	correctResults.push_back( 0.000284 );
 
 	EXPECT_EQ( correctResults.size(), aT.size() );
 	for ( size_t i = 0; i < size; ++i ) {
-		EXPECT_NEAR( correctResults[ i ], aT( i , i ), 1e-6 );
+		EXPECT_NEAR( correctResults[ i ], aT( i , i )   , 1e-6 );
 	}
 
 	// Back Reflectance matrix
@@ -420,13 +409,13 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.245990461 );
-	correctResults.push_back( 0.237072299 );
-	correctResults.push_back( 0.240710132 );
-	correctResults.push_back( 0.246049796 );
-	correctResults.push_back( 0.25395669 );
-	correctResults.push_back( 0.25395669 );
-	correctResults.push_back( 0.25395669 );
+	correctResults.push_back( 0.253957 );
+	correctResults.push_back( 0.253957 );
+	correctResults.push_back( 0.253957 );
+	correctResults.push_back( 0.253957 );
+	correctResults.push_back( 0.253957 );
+	correctResults.push_back( 0.253957 );
+	correctResults.push_back( 0.253957 );
 
 	EXPECT_EQ( correctResults.size(), aRb.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -438,13 +427,13 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.156818133 );
-	correctResults.push_back( 0.158780815 );
-	correctResults.push_back( 0.16240897 );
-	correctResults.push_back( 0.167383447 );
-	correctResults.push_back( 0.1723586 );
-	correctResults.push_back( 0.169453832 );
-	correctResults.push_back( 0.134123768 );
+	correctResults.push_back( 0.163191 );
+	correctResults.push_back( 0.164008 );
+	correctResults.push_back( 0.166348 );
+	correctResults.push_back( 0.169713 );
+	correctResults.push_back( 0.172468 );
+	correctResults.push_back( 0.169550 );
+	correctResults.push_back( 0.134173 );
 
 	EXPECT_EQ( correctResults.size(), aAbsF.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -456,13 +445,13 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.172483115 );
-	correctResults.push_back( 0.175284228 );
-	correctResults.push_back( 0.177824072 );
-	correctResults.push_back( 0.179729717 );
-	correctResults.push_back( 0.179055202 );
-	correctResults.push_back( 0.159685153 );
-	correctResults.push_back( 0.0823209807 );
+	correctResults.push_back( 0.189302 );
+	correctResults.push_back( 0.189090 );
+	correctResults.push_back( 0.188252 );
+	correctResults.push_back( 0.185922 );
+	correctResults.push_back( 0.179367 );
+	correctResults.push_back( 0.159963 );
+	correctResults.push_back( 0.082465 );
 
 	EXPECT_EQ( correctResults.size(), aAbsF.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -474,13 +463,13 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.00870323918 );
-	correctResults.push_back( 0.00724093412 );
-	correctResults.push_back( 0.00567253777 );
-	correctResults.push_back( 0.00360124711 );
-	correctResults.push_back( 0.000251639361 );
-	correctResults.push_back( 0.000251639361 );
-	correctResults.push_back( 0.000251639361 );
+	correctResults.push_back( 0.000252 );
+	correctResults.push_back( 0.000252 );
+	correctResults.push_back( 0.000252 );
+	correctResults.push_back( 0.000252 );
+	correctResults.push_back( 0.000252 );
+	correctResults.push_back( 0.000252 );
+	correctResults.push_back( 0.000252 );
 
 	EXPECT_EQ( correctResults.size(), aAbsB.size() );
 	for ( size_t i = 0; i < size; ++i ) {
@@ -492,13 +481,13 @@ TEST_F( MultiPaneBSDF_102_Perforated, Test102Perofrated1 ) {
 
 	correctResults.clear();
 
-	correctResults.push_back( 0.183965605 );
-	correctResults.push_back( 0.186912832 );
-	correctResults.push_back( 0.190192536 );
-	correctResults.push_back( 0.194312499 );
-	correctResults.push_back( 0.200072125 );
-	correctResults.push_back( 0.200072125 );
-	correctResults.push_back( 0.200072125 );
+	correctResults.push_back( 0.200073 );
+	correctResults.push_back( 0.200073 );
+	correctResults.push_back( 0.200073 );
+	correctResults.push_back( 0.200073 );
+	correctResults.push_back( 0.200073 );
+	correctResults.push_back( 0.200073 );
+	correctResults.push_back( 0.200073 );
 
 	EXPECT_EQ( correctResults.size(), aAbsB.size() );
 	for ( size_t i = 0; i < size; ++i ) {
