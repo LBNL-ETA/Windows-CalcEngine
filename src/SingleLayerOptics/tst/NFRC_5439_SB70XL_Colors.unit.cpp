@@ -1060,7 +1060,7 @@ private:
 		return detectorData;
 	}
 
-	std::shared_ptr< SingleLayerOptics::CScatteringLayer > createXLayer() const {
+	SingleLayerOptics::CScatteringLayer createXLayer() const {
 		auto aSolarRadiation = loadSolarRadiationFile();
 		auto aMeasurements = loadSampleData_NFRC_5439();
 		auto wavelengths = loadWavelengths();
@@ -1078,10 +1078,10 @@ private:
 				aSample, thickness, FenestrationCommon::MaterialType::Monolithic,
 				FenestrationCommon::WavelengthRange::Visible );
 
-		return std::make_shared< SingleLayerOptics::CScatteringLayer >( aMaterial );
+		return SingleLayerOptics::CScatteringLayer::createSpecularLayer( aMaterial );
 	}
 
-	std::shared_ptr< SingleLayerOptics::CScatteringLayer > createYLayer() const {
+	SingleLayerOptics::CScatteringLayer createYLayer() const {
 		auto aSolarRadiation = loadSolarRadiationFile();
 		auto aMeasurements = loadSampleData_NFRC_5439();
 		auto wavelengths = loadWavelengths();
@@ -1099,10 +1099,10 @@ private:
 				aSample, thickness, FenestrationCommon::MaterialType::Monolithic,
 				FenestrationCommon::WavelengthRange::Visible );
 
-		return std::make_shared< SingleLayerOptics::CScatteringLayer >( aMaterial );
+		return SingleLayerOptics::CScatteringLayer::createSpecularLayer( aMaterial );
 	}
 
-	std::shared_ptr< SingleLayerOptics::CScatteringLayer > createZLayer() const {
+	SingleLayerOptics::CScatteringLayer createZLayer() const {
 		auto aSolarRadiation = loadSolarRadiationFile();
 		auto aMeasurements = loadSampleData_NFRC_5439();
 		auto wavelengths = loadWavelengths();
@@ -1120,15 +1120,15 @@ private:
 				aSample, thickness, FenestrationCommon::MaterialType::Monolithic,
 				FenestrationCommon::WavelengthRange::Visible );
 
-		return std::make_shared< SingleLayerOptics::CScatteringLayer >( aMaterial );
+		return SingleLayerOptics::CScatteringLayer::createSpecularLayer( aMaterial );
 	}
 
 protected:
 	void SetUp() override {
 
-		std::shared_ptr< SingleLayerOptics::IScatteringLayer > LayerX = createXLayer();
-		std::shared_ptr< SingleLayerOptics::IScatteringLayer > LayerY = createYLayer();
-		std::shared_ptr< SingleLayerOptics::IScatteringLayer > LayerZ = createZLayer();
+		auto LayerX = createXLayer();
+		auto LayerY = createYLayer();
+		auto LayerZ = createZLayer();
 
 		CSeries DX = *ASTM_E308_1964_X();
 		CSeries DY = *ASTM_E308_1964_Y();

@@ -275,9 +275,7 @@ protected:
         double maxLambda = 2.5;
         std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSample>(aSample, thickness, aType, minLambda, maxLambda);
 
-        // specular layer NFRC=102
-        CBSDFLayerMaker aMaker102 = CBSDFLayerMaker(aMaterial, aBSDF);
-        std::shared_ptr<CBSDFLayer> aLayer102 = aMaker102.getLayer();
+        auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
 
         // Perforated cell
         // create material
@@ -291,11 +289,9 @@ protected:
         double y = 38.1;        // mm
         thickness = 5;          // mm
         double radius = 8.35;   // mm
-        std::shared_ptr<ICellDescription> perfCellDescription = std::make_shared<CCircularCellDescription>(x, y, thickness, radius);
 
         // get shading BSDF layer
-        CBSDFLayerMaker aMakerVenetian = CBSDFLayerMaker(perfMaterial, aBSDF, perfCellDescription);
-        std::shared_ptr<CBSDFLayer> aShade = aMakerVenetian.getLayer();
+        auto aShade = CBSDFLayerMaker::getCircularPerforatedLayer(perfMaterial, aBSDF, x, y, thickness, radius);
 
         CBSDFIntegrator aLayer1 = *aLayer102->getResults();
         CBSDFIntegrator aLayer2 = *aShade->getResults();

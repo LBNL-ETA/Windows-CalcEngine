@@ -8,64 +8,66 @@
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
-class TestVenetianDirectionalShadeCurvedMinus45_0 : public testing::Test {
-
+class TestVenetianDirectionalShadeCurvedMinus45_0 : public testing::Test
+{
 private:
-	std::shared_ptr< CBSDFLayer > m_Shade;
+    std::shared_ptr<CBSDFLayer> m_Shade;
 
 protected:
-	virtual void SetUp() {
-		// create material
-		double Tmat = 0.0;
-		double Rfmat = 0.95;
-		double Rbmat = 0.95;
-		double minLambda = 0.3;
-		double maxLambda = 2.5;
-		std::shared_ptr< CMaterial > aMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+    virtual void SetUp()
+    {
+        // create material
+        double Tmat = 0.0;
+        double Rfmat = 0.95;
+        double Rbmat = 0.95;
+        double minLambda = 0.3;
+        double maxLambda = 2.5;
+        std::shared_ptr<CMaterial> aMaterial =
+          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
 
-		// make cell geometry
-		double slatWidth = 0.025400; // m
-		double slatSpacing = 0.019000; // m
-		double slatTiltAngle = -45;
-		double curvatureRadius = 0.041322;
-		size_t numOfSlatSegments = 5;
+        // make cell geometry
+        double slatWidth = 0.025400;     // m
+        double slatSpacing = 0.019000;   // m
+        double slatTiltAngle = -45;
+        double curvatureRadius = 0.041322;
+        size_t numOfSlatSegments = 5;
 
-		std::shared_ptr< ICellDescription > aCellDescription =
-			std::make_shared< CVenetianCellDescription >( slatWidth, slatSpacing, slatTiltAngle,
-			                                         curvatureRadius, numOfSlatSegments );
-			                                         
-	  // Method
-		DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
+        // Method
+        DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
 
-		// create BSDF
-		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+        // create BSDF
+        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
-		// make layer
-		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF, aCellDescription, aDistribution );
-		m_Shade = aMaker.getLayer();
-
-	}
+        // make layer
+        m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,
+                                                    aBSDF,
+                                                    slatWidth,
+                                                    slatSpacing,
+                                                    slatTiltAngle,
+                                                    curvatureRadius,
+                                                    numOfSlatSegments,
+                                                    aDistribution);
+    }
 
 public:
-	std::shared_ptr< CBSDFLayer > GetShade() {
-		return m_Shade;
-	};
-
+    std::shared_ptr<CBSDFLayer> GetShade()
+    {
+        return m_Shade;
+    };
 };
 
-TEST_F( TestVenetianDirectionalShadeCurvedMinus45_0, TestVenetian1 ) {
-	SCOPED_TRACE( "Begin Test: Venetian shade (Curved, -45 degrees slats)." );
+TEST_F(TestVenetianDirectionalShadeCurvedMinus45_0, TestVenetian1)
+{
+    SCOPED_TRACE("Begin Test: Venetian shade (Curved, -45 degrees slats).");
 
-	std::shared_ptr< CBSDFLayer > aShade = GetShade();
+    std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-	std::shared_ptr< CBSDFIntegrator > aResults = aShade->getResults();
+    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
 
-	double tauDiff = aResults->DiffDiff( Side::Front, PropertySimple::T );
-	EXPECT_NEAR( 0.382240, tauDiff, 1e-6 );
+    double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    EXPECT_NEAR(0.382240, tauDiff, 1e-6);
 
-	double RfDiff = aResults->DiffDiff( Side::Front, PropertySimple::R );
-	EXPECT_NEAR( 0.541774, RfDiff, 1e-6 );
-
+    double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    EXPECT_NEAR(0.541774, RfDiff, 1e-6);
 }

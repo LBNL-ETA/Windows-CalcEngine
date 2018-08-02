@@ -12,7 +12,7 @@ using namespace FenestrationCommon;
 class TestVE345ScatteringLayer1: public testing::Test {
 
 private:
-	std::shared_ptr< CScatteringLayer > m_Layer;
+	CScatteringLayer m_Layer;
 
 	std::shared_ptr< CSeries > loadSolarRadiationFile() {
 
@@ -249,12 +249,12 @@ protected:
 		std::shared_ptr< CMaterial > aMaterial = std::make_shared< CMaterialSample >( aSample,
 				thickness, MaterialType::Coated, WavelengthRange::Solar );
 
-		m_Layer = std::make_shared< CScatteringLayer >( aMaterial );
+		m_Layer = CScatteringLayer::createSpecularLayer( aMaterial );
 
 	}
 
 public:
-	std::shared_ptr< CScatteringLayer > getLayer() {
+	CScatteringLayer& getLayer() {
 		return m_Layer;
 	};
 
@@ -263,38 +263,38 @@ public:
 TEST_F( TestVE345ScatteringLayer1, Test1 ) {
 	SCOPED_TRACE( "Begin Test: VE345 scattering layer - 0 deg incident." );
 
-	std::shared_ptr< CScatteringLayer > aLayer = getLayer();
+	auto aLayer = getLayer();
 
 	Side aSide = Side::Front;
 
-	double T_dir_dir = aLayer->getPropertySimple( PropertySimple::T, aSide,
+	double T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide,
 			Scattering::DirectDirect );
 	EXPECT_NEAR( 0.218448, T_dir_dir, 1e-6 );
 
-	double R_dir_dir = aLayer->getPropertySimple( PropertySimple::R, aSide,
+	double R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide,
 			Scattering::DirectDirect );
 	EXPECT_NEAR( 0.101591, R_dir_dir, 1e-6 );
 
-	double T_dir_dif = aLayer->getPropertySimple( PropertySimple::T, aSide,
+	double T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide,
 			Scattering::DirectDiffuse );
 	EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
 
-	double R_dir_dif = aLayer->getPropertySimple( PropertySimple::R, aSide,
+	double R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide,
 			Scattering::DirectDiffuse );
 	EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
 
-	double T_dif_dif = aLayer->getPropertySimple( PropertySimple::T, aSide,
+	double T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide,
 			Scattering::DiffuseDiffuse );
 	EXPECT_NEAR( 0.191069, T_dif_dif, 1e-6 );
 
-	double R_dif_dif = aLayer->getPropertySimple( PropertySimple::R, aSide,
+	double R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide,
 			Scattering::DiffuseDiffuse );
 	EXPECT_NEAR( 0.159037, R_dif_dif, 1e-6 );
 
-	double A_dir = aLayer->getAbsorptance( aSide, ScatteringSimple::Direct );
+	double A_dir = aLayer.getAbsorptance( aSide, ScatteringSimple::Direct );
 	EXPECT_NEAR( 0.679960, A_dir, 1e-6 );
 
-	double A_dif = aLayer->getAbsorptance( aSide, ScatteringSimple::Diffuse );
+	double A_dif = aLayer.getAbsorptance( aSide, ScatteringSimple::Diffuse );
 	EXPECT_NEAR( 0.649894, A_dif, 1e-6 );
 
 }

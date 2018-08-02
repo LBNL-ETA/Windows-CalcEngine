@@ -6,11 +6,11 @@
 
 #include "BSDFLayerMaker.hpp"
 #include "IScatteringLayer.hpp"
+#include "OpticalSurface.hpp"
 #include "WCECommon.hpp"
 
 namespace SingleLayerOptics
 {
-    class CScatteringSurface;
     class CLayerSingleComponent;
     class CMaterial;
     class CBSDFIntegrator;
@@ -22,6 +22,7 @@ namespace SingleLayerOptics
     class CScatteringLayer : public IScatteringLayer
     {
     public:
+        CScatteringLayer() = default;
         CScatteringLayer(const CScatteringSurface & t_Front, const CScatteringSurface & t_Back);
         CScatteringLayer(const CScatteringSurface && t_Front, const CScatteringSurface && t_Back);
 
@@ -37,10 +38,6 @@ namespace SingleLayerOptics
                          const double Rf_dif_dif,
                          const double Tb_dif_dif,
                          const double Rb_dif_dif);
-
-        CScatteringLayer(const std::shared_ptr<CMaterial> & t_Material,
-                         std::shared_ptr<ICellDescription> t_Description = nullptr,
-                         const DistributionMethod t_Method = DistributionMethod::UniformDiffuse);
 
         static CScatteringLayer createSpecularLayer(const std::shared_ptr<CMaterial> & t_Material);
         static CScatteringLayer

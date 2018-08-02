@@ -727,11 +727,10 @@ protected:
 		std::shared_ptr< CMaterial > aMaterial = std::make_shared< CMaterialMeasured >( m_Measurements, WavelengthRange::Solar );
 
 		// create BSDF
-		std::shared_ptr< CBSDFHemisphere > aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Full );
+		auto aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Full );
 
 		// make layer
-		CBSDFLayerMaker aMaker = CBSDFLayerMaker( aMaterial, aBSDF );
-		m_Layer = aMaker.getLayer();
+		m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
 
 	}
 

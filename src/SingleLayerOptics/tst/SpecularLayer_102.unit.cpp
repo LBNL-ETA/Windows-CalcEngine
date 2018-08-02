@@ -267,8 +267,7 @@ protected:
         std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
 
         // make layer
-        CBSDFLayerMaker aMaker = CBSDFLayerMaker(aMaterial, aBSDF);
-        m_Layer = aMaker.getLayer();
+        m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
     }
 
 public:

@@ -5,10 +5,9 @@
 #include <vector>
 
 #include "WCECommon.hpp"
+#include "ScatteringLayer.hpp"
 
 namespace SingleLayerOptics {
-
-	class IScatteringLayer;
 
 	struct Trichromatic {
 		Trichromatic( double X, double Y, double Z );
@@ -38,16 +37,12 @@ namespace SingleLayerOptics {
 
 	public:
 		/// For BSDF layers make additional constructor
-		ColorProperties(
-				const std::shared_ptr< IScatteringLayer > & layerX,
-				const std::shared_ptr< IScatteringLayer > & layerY,
-				const std::shared_ptr< IScatteringLayer > & layerZ,
-				const FenestrationCommon::CSeries & t_Source,
-				const FenestrationCommon::CSeries & t_DetectorX,
-				const FenestrationCommon::CSeries & t_DetectorY,
-				const FenestrationCommon::CSeries & t_DetectorZ,
-				const std::shared_ptr< std::vector< double > > & t_wavelengths = nullptr
-		);
+		ColorProperties( const CScatteringLayer & layerX, const CScatteringLayer & layerY,
+		                 const CScatteringLayer & layerZ, const FenestrationCommon::CSeries & t_Source,
+		                 const FenestrationCommon::CSeries & t_DetectorX,
+		                 const FenestrationCommon::CSeries & t_DetectorY,
+		                 const FenestrationCommon::CSeries & t_DetectorZ,
+		                 const std::shared_ptr< std::vector< double > > & t_wavelengths = nullptr );
 
 		Trichromatic getTrichromatic(
 				const FenestrationCommon::PropertySimple t_Property,
@@ -70,9 +65,9 @@ namespace SingleLayerOptics {
 		                    const double t_Phi = 0 );
 
 	private:
-		std::shared_ptr< IScatteringLayer > m_LayerX;
-		std::shared_ptr< IScatteringLayer > m_LayerY;
-		std::shared_ptr< IScatteringLayer > m_LayerZ;
+		CScatteringLayer m_LayerX;
+		CScatteringLayer m_LayerY;
+		CScatteringLayer m_LayerZ;
 		double m_SDx;
 		double m_SDy;
 		double m_SDz;

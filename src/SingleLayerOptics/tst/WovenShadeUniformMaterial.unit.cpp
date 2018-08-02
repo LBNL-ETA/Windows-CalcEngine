@@ -27,14 +27,12 @@ protected:
         // make cell geometry
         double diameter = 6.35;   // mm
         double spacing = 19.05;   // mm
-        std::shared_ptr<ICellDescription> aCellDescription = std::make_shared<CWovenCellDescription>(diameter, spacing);
 
         // create BSDF
         std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
 
         // make layer
-        CBSDFLayerMaker aMaker = CBSDFLayerMaker(aMaterial, aBSDF, aCellDescription);
-        m_Shade = aMaker.getLayer();
+        m_Shade = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);
     }
 
 public:
@@ -53,17 +51,23 @@ TEST_F(TestWovenShadeUniformMaterial, TestSolarProperties)
     std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
 
     const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.467578877, tauDiff, 1e-6);
+    EXPECT_NEAR(0.42156714375098558, tauDiff, 1e-6);
 
     const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.496269069, RfDiff, 1e-6);
+    EXPECT_NEAR(0.54228080273345214, RfDiff, 1e-6);
 
     const double RbDiff = aResults->DiffDiff(Side::Back, PropertySimple::R);
-    EXPECT_NEAR(0.496269069, RbDiff, 1e-6);
+    EXPECT_NEAR(0.54228080273345214, RbDiff, 1e-6);
 
     auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
 
     const size_t size = aT.size();
+
+    std::cout.precision(7);
+    for(auto i = 0; i < aT.size(); ++i)
+    {
+    	std::cout << aT(i,i) << std::endl;
+    }
 
     // Test diagonal
     std::vector<double> correctResults;
