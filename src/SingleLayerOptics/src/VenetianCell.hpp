@@ -49,19 +49,19 @@ namespace SingleLayerOptics
     {
     public:
         CVenetianSlatEnergies(
-          const CBeamDirection & t_BeamDirection,
-          const std::shared_ptr<std::vector<SegmentIrradiance>> & t_SlatIrradiances,
-          const std::shared_ptr<std::vector<double>> & t_SlatRadiances);
+			const CBeamDirection & t_BeamDirection,
+			const std::vector< SegmentIrradiance > & t_SlatIrradiances,
+			const std::vector< double > & t_SlatRadiances );
 
-        SegmentIrradiance & irradiances(const size_t index) const;
+        const SegmentIrradiance & irradiances(const size_t index) const;
         double radiances(const size_t index) const;
         std::shared_ptr<const CBeamDirection> direction() const;
         size_t size() const;
 
     private:
         // Keep slat energies for certain beam incoming directions
-        std::shared_ptr<std::vector<SegmentIrradiance>> m_SlatIrradiances;
-        std::shared_ptr<std::vector<double>> m_SlatRadiances;
+        std::vector<SegmentIrradiance> m_SlatIrradiances;
+        std::vector<double> m_SlatRadiances;
         // Direction for which energies are calculated
         std::shared_ptr<CBeamDirection> m_CalcDirection;
     };
@@ -108,9 +108,9 @@ namespace SingleLayerOptics
               getEnergies(const CBeamDirection & t_BeamDirection) const;
 
             std::shared_ptr<CVenetianSlatEnergies>
-              append(const CBeamDirection & t_BeamDirection,
-                     const std::shared_ptr<std::vector<SegmentIrradiance>> & t_SlatIrradiances,
-                     const std::shared_ptr<std::vector<double>> & t_SlatRadiances);
+              append( const CBeamDirection & t_BeamDirection,
+					  const std::vector< SegmentIrradiance > & t_SlatIrradiances,
+					  const std::vector< double > & t_SlatRadiances );
 
         private:
             std::vector<std::shared_ptr<CVenetianSlatEnergies>> m_Energies;
@@ -128,12 +128,12 @@ namespace SingleLayerOptics
         void calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction);
 
         // Irradiances for given incoming direction
-        std::shared_ptr<std::vector<SegmentIrradiance>>
-          slatIrradiances(const CBeamDirection & t_IncomingDirection);
+		std::vector< SegmentIrradiance >
+          slatIrradiances( const CBeamDirection & t_IncomingDirection );
 
         // Radiances for given incoming direction
-        std::shared_ptr<std::vector<double>>
-          slatRadiances(std::shared_ptr<std::vector<SegmentIrradiance>> t_Irradiances);
+		std::vector< double >
+          slatRadiances( std::vector< SegmentIrradiance > & t_Irradiances );
 
         // Creates diffuse to diffuse std::vector. Right hand side of the equation
         std::shared_ptr<std::vector<double>> diffuseVector();
