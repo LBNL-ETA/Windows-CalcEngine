@@ -40,9 +40,9 @@ namespace SingleLayerOptics
     //  CVenetianSlatEnergies
     ////////////////////////////////////////////////////////////////////////////////////////////
     CVenetianSlatEnergies::CVenetianSlatEnergies(
-      const CBeamDirection & t_BeamDirection,
-      const std::shared_ptr<std::vector<SegmentIrradiance>> & t_SlatIrradiances,
-      const std::shared_ptr<std::vector<double>> & t_SlatRadiances) :
+		const CBeamDirection & t_BeamDirection,
+		const std::vector< SegmentIrradiance > & t_SlatIrradiances,
+		const std::vector< double > & t_SlatRadiances ) :
         m_SlatIrradiances(t_SlatIrradiances),
         m_SlatRadiances(t_SlatRadiances),
         m_CalcDirection(std::make_shared<CBeamDirection>())
@@ -50,22 +50,22 @@ namespace SingleLayerOptics
         *m_CalcDirection = t_BeamDirection;
     }
 
-    SegmentIrradiance & CVenetianSlatEnergies::irradiances(const size_t index) const
+    const SegmentIrradiance & CVenetianSlatEnergies::irradiances(const size_t index) const
     {
-        if(index > m_SlatIrradiances->size())
+        if(index > m_SlatIrradiances.size())
         {
             throw std::runtime_error("Index for slat irradiances is out of range.");
         }
-        return (*m_SlatIrradiances)[index];
+        return m_SlatIrradiances[index];
     }
 
     double CVenetianSlatEnergies::radiances(const size_t index) const
     {
-        if(index > m_SlatRadiances->size())
+        if(index > m_SlatRadiances.size())
         {
             throw std::runtime_error("Index for slat irradiances is out of range.");
         }
-        return (*m_SlatRadiances)[index];
+        return m_SlatRadiances[index];
     }
 
     std::shared_ptr<const CBeamDirection> CVenetianSlatEnergies::direction() const
@@ -75,7 +75,7 @@ namespace SingleLayerOptics
 
     size_t CVenetianSlatEnergies::size() const
     {
-        return m_SlatRadiances->size();
+        return m_SlatRadiances.size();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,9 +105,9 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CVenetianSlatEnergies> CVenetianCellEnergy::CSlatEnergyResults::append(
-      const CBeamDirection & t_BeamDirection,
-      const std::shared_ptr<std::vector<SegmentIrradiance>> & t_SlatIrradiances,
-      const std::shared_ptr<std::vector<double>> & t_SlatRadiances)
+		const CBeamDirection & t_BeamDirection,
+		const std::vector< SegmentIrradiance > & t_SlatIrradiances,
+		const std::vector< double > & t_SlatRadiances )
     {
         std::shared_ptr<CVenetianSlatEnergies> aEnergy = std::make_shared<CVenetianSlatEnergies>(
           t_BeamDirection, t_SlatIrradiances, t_SlatRadiances);
@@ -250,11 +250,10 @@ namespace SingleLayerOptics
         return aSolution[numSeg];
     }
 
-    std::shared_ptr<std::vector<SegmentIrradiance>>
-      CVenetianCellEnergy::slatIrradiances(const CBeamDirection & t_IncomingDirection)
+    std::vector< SegmentIrradiance >
+      CVenetianCellEnergy::slatIrradiances( const CBeamDirection & t_IncomingDirection )
     {
-        std::shared_ptr<std::vector<SegmentIrradiance>> aIrradiances =
-          std::make_shared<std::vector<SegmentIrradiance>>();
+        std::vector<SegmentIrradiance> aIrradiances;
 
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
@@ -302,34 +301,33 @@ namespace SingleLayerOptics
                 aIrr.E_f = aSolution[i - 1];
                 aIrr.E_b = aSolution[numSeg + i];
             }
-            aIrradiances->push_back(aIrr);
+            aIrradiances.push_back(aIrr);
         }
 
         return aIrradiances;
     }
 
-    std::shared_ptr<std::vector<double>> CVenetianCellEnergy::slatRadiances(
-      std::shared_ptr<std::vector<SegmentIrradiance>> t_Irradiances)
+    std::vector< double > CVenetianCellEnergy::slatRadiances(
+		std::vector< SegmentIrradiance > & t_Irradiances )
     {
-        size_t numSlats = t_Irradiances->size();
-        std::shared_ptr<std::vector<double>> aRadiances =
-          std::make_shared<std::vector<double>>(2 * numSlats - 2);
+        size_t numSlats = t_Irradiances.size();
+        std::vector<double> aRadiances(2 * numSlats - 2);
         for(size_t i = 0; i < numSlats; ++i)
         {
             if(i == 0)
             {
-                (*aRadiances)[b[i]] = 1;
+                aRadiances[b[i]] = 1;
             }
             else if(i == numSlats - 1)
             {
-                (*aRadiances)[f[i - 1]] = (*t_Irradiances)[i].E_f;
+                aRadiances[f[i - 1]] = t_Irradiances[i].E_f;
             }
             else
             {
-                (*aRadiances)[b[i]] =
-                  m_Tf * (*t_Irradiances)[i].E_f + m_Rb * (*t_Irradiances)[i].E_b;
-                (*aRadiances)[f[i - 1]] =
-                  m_Tb * (*t_Irradiances)[i].E_b + m_Rf * (*t_Irradiances)[i].E_f;
+                aRadiances[b[i]] =
+                  m_Tf * t_Irradiances[i].E_f + m_Rb * t_Irradiances[i].E_b;
+                aRadiances[f[i - 1]] =
+                  m_Tb * t_Irradiances[i].E_b + m_Rf * t_Irradiances[i].E_f;
             }
         }
 
@@ -472,9 +470,8 @@ namespace SingleLayerOptics
         }
         if(m_CurrentSlatEnergies == nullptr)
         {
-            std::shared_ptr<std::vector<SegmentIrradiance>> aIrradiances =
-              slatIrradiances(t_Direction);
-            std::shared_ptr<std::vector<double>> aRadiances = slatRadiances(aIrradiances);
+            std::vector<SegmentIrradiance> aIrradiances = slatIrradiances(t_Direction);
+            std::vector<double> aRadiances = slatRadiances(aIrradiances);
 
             m_CurrentSlatEnergies =
               m_SlatEnergyResults.append(t_Direction, aIrradiances, aRadiances);
