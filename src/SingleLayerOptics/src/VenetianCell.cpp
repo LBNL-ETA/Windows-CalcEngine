@@ -605,7 +605,7 @@ namespace SingleLayerOptics
         m_Energy = CVenetianEnergy(*m_Material, getCellAsVenetian());
         // Create energy states for entire material band
         m_EnergiesBand.clear();
-        std::vector<RMaterialProperties> aMat = *m_Material->getBandProperties();
+        std::vector<RMaterialProperties> aMat = m_Material->getBandProperties();
 
         if(aMat.size() > 0)
         {

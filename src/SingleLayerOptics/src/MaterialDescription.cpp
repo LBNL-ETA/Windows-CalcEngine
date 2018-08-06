@@ -55,8 +55,8 @@ namespace SingleLayerOptics {
 		return getBandProperties( t_Property, t_Side ); // Default beahvior is no angular dependence
 	}
 
-	std::shared_ptr< std::vector< RMaterialProperties > > CMaterial::getBandProperties() {
-		std::shared_ptr< std::vector< RMaterialProperties > > aProperties = std::make_shared< std::vector< RMaterialProperties > >();
+	std::vector< RMaterialProperties > CMaterial::getBandProperties() {
+		std::vector< RMaterialProperties > aProperties;
 
 		std::vector< double > Tf = getBandProperties( Property::T, Side::Front );
 		std::vector< double > Tb = getBandProperties( Property::T, Side::Back );
@@ -68,7 +68,7 @@ namespace SingleLayerOptics {
 		for ( size_t i = 0; i < size; ++i ) {
 			RMaterialProperties aMaterial =
 				RMaterialProperties( Tf[ i ], Tb[ i ], Rf[ i ], Rb[ i ] );
-			aProperties->push_back( aMaterial );
+			aProperties.push_back( aMaterial );
 		}
 
 		return aProperties;

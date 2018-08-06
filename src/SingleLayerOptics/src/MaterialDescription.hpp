@@ -66,7 +66,7 @@ namespace SingleLayerOptics {
 		getBandProperties( const FenestrationCommon::Property t_Property,
 		                   const FenestrationCommon::Side t_Side ) const = 0;
 
-		std::shared_ptr< std::vector< RMaterialProperties > > getBandProperties();
+		std::vector< RMaterialProperties > getBandProperties();
 
 		std::shared_ptr< SpectralAveraging::CSpectralSample > getSpectralSample();
 
