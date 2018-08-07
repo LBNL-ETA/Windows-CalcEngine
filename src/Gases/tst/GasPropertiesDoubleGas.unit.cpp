@@ -45,13 +45,13 @@ TEST_F( TestGasPropertiesDoubleGas, TestSimpleProperties ) {
 	m_Gas.setTemperatureAndPressure( 300, 101325 );
 	auto aProperties = m_Gas.getSimpleGasProperties();
 
-	EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
-	EXPECT_NEAR( 1.85728700E-02, aProperties->m_ThermalConductivity, 1e-6 );
-	EXPECT_NEAR( 2.23138500E-05, aProperties->m_Viscosity, 1e-6 );
-	EXPECT_NEAR( 570.37952, aProperties->m_SpecificHeat, 0.0001 );
-	EXPECT_NEAR( 1.578172439, aProperties->m_Density, 0.0001 );
-	EXPECT_NEAR( 2.06329175E-05, aProperties->m_Alpha, 1e-6 );
-	EXPECT_NEAR( 0.685266362, aProperties->m_PrandlNumber, 0.0001 );
+	EXPECT_NEAR( 38.8502, aProperties.m_MolecularWeight, 0.0001 );
+	EXPECT_NEAR( 1.85728700E-02, aProperties.m_ThermalConductivity, 1e-6 );
+	EXPECT_NEAR( 2.23138500E-05, aProperties.m_Viscosity, 1e-6 );
+	EXPECT_NEAR( 570.37952, aProperties.m_SpecificHeat, 0.0001 );
+	EXPECT_NEAR( 1.578172439, aProperties.m_Density, 0.0001 );
+	EXPECT_NEAR( 2.06329175E-05, aProperties.m_Alpha, 1e-6 );
+	EXPECT_NEAR( 0.685266362, aProperties.m_PrandlNumber, 0.0001 );
 
 }
 
@@ -61,13 +61,13 @@ TEST_F( TestGasPropertiesDoubleGas, TestSimplePropertiesRepeat ) {
 	m_Gas.setTemperatureAndPressure( 300, 101325 );
 	auto aProperties = m_Gas.getSimpleGasProperties();
 
-	EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
-	EXPECT_NEAR( 1.85728700E-02, aProperties->m_ThermalConductivity, 1e-6 );
-	EXPECT_NEAR( 2.23138500E-05, aProperties->m_Viscosity, 1e-6 );
-	EXPECT_NEAR( 570.37952, aProperties->m_SpecificHeat, 0.0001 );
-	EXPECT_NEAR( 1.578172439, aProperties->m_Density, 0.0001 );
-	EXPECT_NEAR( 2.06329175E-05, aProperties->m_Alpha, 1e-6 );
-	EXPECT_NEAR( 0.685266362, aProperties->m_PrandlNumber, 0.0001 );
+	EXPECT_NEAR( 38.8502, aProperties.m_MolecularWeight, 0.0001 );
+	EXPECT_NEAR( 1.85728700E-02, aProperties.m_ThermalConductivity, 1e-6 );
+	EXPECT_NEAR( 2.23138500E-05, aProperties.m_Viscosity, 1e-6 );
+	EXPECT_NEAR( 570.37952, aProperties.m_SpecificHeat, 0.0001 );
+	EXPECT_NEAR( 1.578172439, aProperties.m_Density, 0.0001 );
+	EXPECT_NEAR( 2.06329175E-05, aProperties.m_Alpha, 1e-6 );
+	EXPECT_NEAR( 0.685266362, aProperties.m_PrandlNumber, 0.0001 );
 
 }
 
@@ -77,13 +77,13 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealProperties ) {
 	m_Gas.setTemperatureAndPressure( 300, 101325 );
 	auto aProperties = m_Gas.getGasProperties();
 
-	EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
-	EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
-	EXPECT_NEAR( 2.235785737E-05, aProperties->m_Viscosity, 1e-6 );
-	EXPECT_NEAR( 558.0578118, aProperties->m_SpecificHeat, 0.0001 );
-	EXPECT_NEAR( 1.578172439, aProperties->m_Density, 0.0001 );
-	EXPECT_NEAR( 2.10164367E-05, aProperties->m_Alpha, 1e-6 );
-	EXPECT_NEAR( 0.674088072, aProperties->m_PrandlNumber, 0.0001 );
+	EXPECT_NEAR( 38.8502, aProperties.m_MolecularWeight, 0.0001 );
+	EXPECT_NEAR( 1.850941662E-02, aProperties.m_ThermalConductivity, 1e-6 );
+	EXPECT_NEAR( 2.235785737E-05, aProperties.m_Viscosity, 1e-6 );
+	EXPECT_NEAR( 558.0578118, aProperties.m_SpecificHeat, 0.0001 );
+	EXPECT_NEAR( 1.578172439, aProperties.m_Density, 0.0001 );
+	EXPECT_NEAR( 2.10164367E-05, aProperties.m_Alpha, 1e-6 );
+	EXPECT_NEAR( 0.674088072, aProperties.m_PrandlNumber, 0.0001 );
 
 }
 
@@ -93,13 +93,13 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesRepeat ) {
 	m_Gas.setTemperatureAndPressure( 300, 101325 );
 	auto aProperties = m_Gas.getGasProperties();
 
-	EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
-	EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
-	EXPECT_NEAR( 2.235785737E-05, aProperties->m_Viscosity, 1e-6 );
-	EXPECT_NEAR( 558.0578118, aProperties->m_SpecificHeat, 0.0001 );
-	EXPECT_NEAR( 1.578172439, aProperties->m_Density, 0.0001 );
-	EXPECT_NEAR( 2.10164367E-05, aProperties->m_Alpha, 1e-6 );
-	EXPECT_NEAR( 0.674088072, aProperties->m_PrandlNumber, 0.0001 );
+	EXPECT_NEAR( 38.8502, aProperties.m_MolecularWeight, 0.0001 );
+	EXPECT_NEAR( 1.850941662E-02, aProperties.m_ThermalConductivity, 1e-6 );
+	EXPECT_NEAR( 2.235785737E-05, aProperties.m_Viscosity, 1e-6 );
+	EXPECT_NEAR( 558.0578118, aProperties.m_SpecificHeat, 0.0001 );
+	EXPECT_NEAR( 1.578172439, aProperties.m_Density, 0.0001 );
+	EXPECT_NEAR( 2.10164367E-05, aProperties.m_Alpha, 1e-6 );
+	EXPECT_NEAR( 0.674088072, aProperties.m_PrandlNumber, 0.0001 );
 
 }
 
@@ -109,13 +109,13 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressure ) {
 	m_Gas.setTemperatureAndPressure( 300, 90000 );
 	auto aProperties = m_Gas.getGasProperties();
 
-	EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
-	EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
-	EXPECT_NEAR( 2.235785737E-05, aProperties->m_Viscosity, 1e-6 );
-	EXPECT_NEAR( 558.0578118, aProperties->m_SpecificHeat, 0.0001 );
-	EXPECT_NEAR( 1.401781589, aProperties->m_Density, 0.0001 );
-	EXPECT_NEAR( 2.36610050E-05, aProperties->m_Alpha, 1e-6 );
-	EXPECT_NEAR( 0.674088072, aProperties->m_PrandlNumber, 0.0001 );
+	EXPECT_NEAR( 38.8502, aProperties.m_MolecularWeight, 0.0001 );
+	EXPECT_NEAR( 1.850941662E-02, aProperties.m_ThermalConductivity, 1e-6 );
+	EXPECT_NEAR( 2.235785737E-05, aProperties.m_Viscosity, 1e-6 );
+	EXPECT_NEAR( 558.0578118, aProperties.m_SpecificHeat, 0.0001 );
+	EXPECT_NEAR( 1.401781589, aProperties.m_Density, 0.0001 );
+	EXPECT_NEAR( 2.36610050E-05, aProperties.m_Alpha, 1e-6 );
+	EXPECT_NEAR( 0.674088072, aProperties.m_PrandlNumber, 0.0001 );
 
 }
 
@@ -125,13 +125,13 @@ TEST_F( TestGasPropertiesDoubleGas, TestRealPropertiesLowPressureRepeat ) {
 	m_Gas.setTemperatureAndPressure( 300, 90000 );
 	auto aProperties = m_Gas.getGasProperties();
 
-	EXPECT_NEAR( 38.8502, aProperties->m_MolecularWeight, 0.0001 );
-	EXPECT_NEAR( 1.850941662E-02, aProperties->m_ThermalConductivity, 1e-6 );
-	EXPECT_NEAR( 2.235785737E-05, aProperties->m_Viscosity, 1e-6 );
-	EXPECT_NEAR( 558.0578118, aProperties->m_SpecificHeat, 0.0001 );
-	EXPECT_NEAR( 1.401781589, aProperties->m_Density, 0.0001 );
-	EXPECT_NEAR( 2.36610050E-05, aProperties->m_Alpha, 1e-6 );
-	EXPECT_NEAR( 0.674088072, aProperties->m_PrandlNumber, 0.0001 );
+	EXPECT_NEAR( 38.8502, aProperties.m_MolecularWeight, 0.0001 );
+	EXPECT_NEAR( 1.850941662E-02, aProperties.m_ThermalConductivity, 1e-6 );
+	EXPECT_NEAR( 2.235785737E-05, aProperties.m_Viscosity, 1e-6 );
+	EXPECT_NEAR( 558.0578118, aProperties.m_SpecificHeat, 0.0001 );
+	EXPECT_NEAR( 1.401781589, aProperties.m_Density, 0.0001 );
+	EXPECT_NEAR( 2.36610050E-05, aProperties.m_Alpha, 1e-6 );
+	EXPECT_NEAR( 0.674088072, aProperties.m_PrandlNumber, 0.0001 );
 
 }
 

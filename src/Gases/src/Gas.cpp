@@ -9,8 +9,7 @@
 
 namespace Gases {
 
-	CGas::CGas() : m_SimpleProperties( std::make_shared< GasProperties >() ),
-	               m_Properties( std::make_shared< GasProperties >() ), m_Pressure( DefaultPressure ) {
+	CGas::CGas() : m_Pressure( DefaultPressure ) {
 		// create default gas to be Air
 		auto Air = CGasItem();
 		m_GasItem.push_back( Air );
@@ -54,22 +53,22 @@ namespace Gases {
 		}
 	}
 
-	std::shared_ptr< GasProperties > CGas::getSimpleGasProperties() {
-		*m_SimpleProperties = *( ( m_GasItem )[ 0 ].getFractionalGasProperties() );
+	const GasProperties & CGas::getSimpleGasProperties() {
+		m_SimpleProperties = *( ( m_GasItem )[ 0 ].getFractionalGasProperties() );
 		for ( auto it = next( m_GasItem.begin() ); it != m_GasItem.end(); ++it ) {
-			*m_SimpleProperties += *( it->getFractionalGasProperties() );
+			m_SimpleProperties += *( it->getFractionalGasProperties() );
 		}
 
 		return m_SimpleProperties;
 	}
 
-	std::shared_ptr< GasProperties > CGas::getGasProperties() {
+	const GasProperties & CGas::getGasProperties() {
 		auto aSettings = CGasSettings::instance();
 		return aSettings.getVacuumPressure() < m_Pressure ? getStandardPressureGasProperties()
 			       : getVacuumPressureGasProperties();
 	}
 
-	std::shared_ptr< GasProperties > CGas::getStandardPressureGasProperties() {
+	const GasProperties & CGas::getStandardPressureGasProperties() {
 		auto simpleProperties = getSimpleGasProperties();
 
 		// coefficients for intermediate calculations
@@ -136,17 +135,17 @@ namespace Gases {
 			++counter;
 		}
 
-		m_Properties->m_ThermalConductivity = lambdaPrimMix + lambdaSecondMix;
-		m_Properties->m_Viscosity = miMix;
-		m_Properties->m_SpecificHeat = cpMix / simpleProperties->m_MolecularWeight;
-		m_Properties->m_Density = simpleProperties->m_Density;
-		m_Properties->m_MolecularWeight = simpleProperties->m_MolecularWeight;
-		m_Properties->calculateAlphaAndPrandl();
+		m_Properties.m_ThermalConductivity = lambdaPrimMix + lambdaSecondMix;
+		m_Properties.m_Viscosity = miMix;
+		m_Properties.m_SpecificHeat = cpMix / simpleProperties.m_MolecularWeight;
+		m_Properties.m_Density = simpleProperties.m_Density;
+		m_Properties.m_MolecularWeight = simpleProperties.m_MolecularWeight;
+		m_Properties.calculateAlphaAndPrandl();
 
 		return m_Properties;
 	}
 
-	std::shared_ptr< GasProperties > CGas::getVacuumPressureGasProperties() {
+	const GasProperties & CGas::getVacuumPressureGasProperties() {
 		return getSimpleGasProperties();
 	}
 
