@@ -81,12 +81,12 @@ namespace Tarcog
         const auto aProperties = m_Gas.getGasProperties();
 
         double ra = 0;
-        if(aProperties->m_Viscosity != 0)
+        if(aProperties.m_Viscosity != 0)
         {   // if viscosity is zero then it is vacuum
             ra =
-              GRAVITYCONSTANT * pow(getThickness(), 3) * deltaTemp * aProperties->m_SpecificHeat
-              * pow(aProperties->m_Density, 2)
-              / (tGapTemperature * aProperties->m_Viscosity * aProperties->m_ThermalConductivity);
+              GRAVITYCONSTANT * pow(getThickness(), 3) * deltaTemp * aProperties.m_SpecificHeat
+              * pow(aProperties.m_Density, 2)
+              / (tGapTemperature * aProperties.m_Viscosity * aProperties.m_ThermalConductivity);
         }
 
         return ra;
@@ -109,14 +109,14 @@ namespace Tarcog
         const auto Asp = aspectRatio();
         CNusseltNumber nusseltNumber{};
         const auto aProperties = m_Gas.getGasProperties();
-        if(aProperties->m_Viscosity != 0)
+        if(aProperties.m_Viscosity != 0)
         {
             m_ConductiveConvectiveCoeff = nusseltNumber.calculate(m_Tilt, Ra, Asp)
-                                          * aProperties->m_ThermalConductivity / getThickness();
+                                          * aProperties.m_ThermalConductivity / getThickness();
         }
         else
         {   // vacuum state
-            m_ConductiveConvectiveCoeff = aProperties->m_ThermalConductivity;
+            m_ConductiveConvectiveCoeff = aProperties.m_ThermalConductivity;
         }
         if(m_AirSpeed != 0)
         {
