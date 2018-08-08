@@ -127,9 +127,9 @@ namespace Tarcog
             m_Gas.setTemperatureAndPressure(tMean, m_Pressure);
             auto aProperties = m_Gas.getGasProperties();
             auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
-                      * pow(aProperties->m_Density, 2) / (tMean * pow(aProperties->m_Viscosity, 2));
+                      * pow(aProperties.m_Density, 2) / (tMean * pow(aProperties.m_Viscosity, 2));
             auto RaCrit = 2.5e5 * pow(exp(0.72 * m_Tilt) / sin(tiltRadians), 0.2);
-            auto RaL = gr * aProperties->m_PrandlNumber;
+            auto RaL = gr * aProperties.m_PrandlNumber;
             auto Gnui = 0.0;
             if((0.0 <= m_Tilt) && (m_Tilt < 15.0))
             {
@@ -155,7 +155,7 @@ namespace Tarcog
             {
                 Gnui = 0.58 * pow(RaL, 1 / 3.0);
             }
-            m_ConductiveConvectiveCoeff = Gnui * aProperties->m_ThermalConductivity / m_Height;
+            m_ConductiveConvectiveCoeff = Gnui * aProperties.m_ThermalConductivity / m_Height;
         }
     }
 

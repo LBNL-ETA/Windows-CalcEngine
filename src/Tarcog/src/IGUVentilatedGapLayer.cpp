@@ -102,26 +102,26 @@ namespace Tarcog
         const auto aProperties = m_ReferenceGas.getGasProperties();
         const auto temperatureMultiplier =
           std::abs(gapTemperature - t_GapTemperature) / (gapTemperature * t_GapTemperature);
-        return aProperties->m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
+        return aProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
                * std::abs(cos(tiltAngle)) * temperatureMultiplier;
     }
 
     double CIGUVentilatedGapLayer::bernoullyPressureTerm()
     {
         const auto aGasProperties = m_Gas.getGasProperties();
-        return 0.5 * aGasProperties->m_Density;
+        return 0.5 * aGasProperties.m_Density;
     }
 
     double CIGUVentilatedGapLayer::hagenPressureTerm()
     {
         const auto aGasProperties = m_Gas.getGasProperties();
-        return 12 * aGasProperties->m_Viscosity * m_Height / pow(getThickness(), 2);
+        return 12 * aGasProperties.m_Viscosity * m_Height / pow(getThickness(), 2);
     }
 
     double CIGUVentilatedGapLayer::pressureLossTerm()
     {
         const auto aGasProperties = m_Gas.getGasProperties();
-        return 0.5 * aGasProperties->m_Density * (m_Zin + m_Zout);
+        return 0.5 * aGasProperties.m_Density * (m_Zin + m_Zout);
     }
 
     double CIGUVentilatedGapLayer::betaCoeff()
@@ -156,7 +156,7 @@ namespace Tarcog
         // Characteristic height can only be calculated after initialization is performed
         if(m_ConductiveConvectiveCoeff != 0)
         {
-            cHeight = aProperties->m_Density * aProperties->m_SpecificHeat * getThickness()
+            cHeight = aProperties.m_Density * aProperties.m_SpecificHeat * getThickness()
                       * m_AirSpeed / (4 * m_ConductiveConvectiveCoeff);
         }
         return cHeight;
@@ -177,7 +177,7 @@ namespace Tarcog
     void CIGUVentilatedGapLayer::ventilatedFlow()
     {
         const auto aProperties = m_Gas.getGasProperties();
-        m_LayerGainFlow = aProperties->m_Density * aProperties->m_SpecificHeat * m_AirSpeed
+        m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat * m_AirSpeed
                           * getThickness() * m_Width * (m_inTemperature - m_outTemperature);
     }
 
