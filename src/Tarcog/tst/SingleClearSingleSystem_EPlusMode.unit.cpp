@@ -30,8 +30,8 @@ protected:
 		auto solarRadiation = 0.0;
 		auto fclr = 1.0;
 
-		std::shared_ptr< CEnvironment > Outdoor =
-			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		auto Outdoor =
+			Environments::outdoor( airTemperature, pressure, airSpeed, solarRadiation,
 			                                    airDirection, tSky, SkyModel::AllSpecified, fclr );
 		ASSERT_TRUE( Outdoor != nullptr );
 
@@ -42,11 +42,11 @@ protected:
 		Outdoor->setEnvironmentIR( IR );
 
 		/////////////////////////////////////////////////////////
-		// Indoor
+		/// Indoor
 		/////////////////////////////////////////////////////////
 
 		auto roomTemperature = 294.15;
-		std::shared_ptr< CEnvironment > Indoor = std::make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		auto Indoor = Environments::indoor( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		auto hcin = 2.6262;

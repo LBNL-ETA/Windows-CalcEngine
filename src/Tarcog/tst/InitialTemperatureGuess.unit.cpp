@@ -27,33 +27,31 @@ protected:
         auto airDirection = AirHorizontalDirection::Windward;
         auto solarRadiation = 0.0;
 
-        std::shared_ptr<CEnvironment> Outdoor =
-          std::make_shared<COutdoorEnvironment>(airTemperature,
-                                                pressure,
-                                                airSpeed,
-                                                solarRadiation,
-                                                airDirection,
-                                                tSky,
-                                                SkyModel::AllSpecified);
+        auto Outdoor = Environments::outdoor( airTemperature,
+											  pressure,
+											  airSpeed,
+											  solarRadiation,
+											  airDirection,
+											  tSky,
+											  SkyModel::AllSpecified );
         ASSERT_TRUE(Outdoor != nullptr);
 
         /////////////////////////////////////////////////////////
-        // Indoor
+        /// Indoor
         /////////////////////////////////////////////////////////
         auto roomTemperature = 294.15;
-        std::shared_ptr<CEnvironment> Indoor =
-          std::make_shared<CIndoorEnvironment>(roomTemperature, pressure);
+        auto Indoor = Environments::indoor( roomTemperature, pressure );
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
-        // IGU
+        /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
-		std::shared_ptr<CIGUSolidLayer> solidLayer1 =
+        std::shared_ptr<CIGUSolidLayer> solidLayer1 =
           std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer1 != nullptr);
-		std::shared_ptr<CIGUSolidLayer> solidLayer2 =
+        std::shared_ptr<CIGUSolidLayer> solidLayer2 =
           std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer2 != nullptr);
 
@@ -84,7 +82,7 @@ public:
 
     std::shared_ptr<CIGUSolidLayer> getLayer2() const
     {
-		return m_TarcogSystem->getSolidLayers()[1];
+        return m_TarcogSystem->getSolidLayers()[1];
     }
 };
 

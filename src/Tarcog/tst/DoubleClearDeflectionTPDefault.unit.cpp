@@ -25,9 +25,8 @@ protected:
 		auto tSky = 255.15; // Kelvins
 		auto solarRadiation = 0.0;
 
-		std::shared_ptr< CEnvironment > Outdoor =
-			std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
-			                                    airDirection, tSky, SkyModel::AllSpecified );
+		auto Outdoor = Environments::outdoor( airTemperature, pressure, airSpeed, solarRadiation,
+											  airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
 
@@ -37,8 +36,7 @@ protected:
 
 		auto roomTemperature = 294.15;
 
-		std::shared_ptr< CEnvironment > Indoor =
-			std::make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		auto Indoor = Environments::indoor( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
