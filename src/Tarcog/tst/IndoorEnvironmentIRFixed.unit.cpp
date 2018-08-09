@@ -44,12 +44,12 @@ protected:
 		m_Indoor->setEnvironmentIR( IRRadiation );
 
 		/////////////////////////////////////////////////////////
-		// IGU
+		/// IGU
 		/////////////////////////////////////////////////////////
 		auto solidLayerThickness = 0.003048; // [m]
 		auto solidLayerConductance = 100.0;
 
-		auto aSolidLayer = std::make_shared< CIGUSolidLayer >( solidLayerThickness, solidLayerConductance );
+		auto aSolidLayer = Layers::solid( solidLayerThickness, solidLayerConductance );
 		ASSERT_TRUE( aSolidLayer != nullptr );
 
 		auto windowWidth = 1.0;
@@ -58,7 +58,7 @@ protected:
 		aIGU.addLayer( aSolidLayer );
 
 		/////////////////////////////////////////////////////////
-		// System
+		/// System
 		/////////////////////////////////////////////////////////
 		m_TarcogSystem = std::make_shared< CSingleSystem >( aIGU, m_Indoor, Outdoor );
 		m_TarcogSystem->solve();

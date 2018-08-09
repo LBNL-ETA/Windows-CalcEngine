@@ -351,7 +351,7 @@ namespace Tarcog
 
         // First need to calculate new deflections before applying them. Applying them right away
         // will cause that next gap width calculation will already have included one surface
-        // deflected
+        // updateDeflectionCoefficients
         auto LDefNMax = nominator / denominator;
         auto deflectionRatio = Ldmean() / Ldmax();
 

@@ -52,29 +52,26 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer1 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer1->setSolarAbsorptance(0.166707709432);
 
-        auto aSolidLayer2 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer2 = Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer2->setSolarAbsorptance(0.112737670541);
 
         auto gapThickness = 0.012;
         auto gapPressure = 101325.0;
-        std::shared_ptr<CBaseIGULayer> m_GapLayer =
-          std::make_shared<CIGUGapLayer>(gapThickness, gapPressure);
-        ASSERT_TRUE(m_GapLayer != nullptr);
+        auto gapLayer = Layers::gap(gapThickness, gapPressure);
+        ASSERT_TRUE(gapLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(m_GapLayer);
+        aIGU.addLayer(gapLayer);
         aIGU.addLayer(aSolidLayer2);
 
         /////////////////////////////////////////////////////////
-        // System
+        /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<CSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
