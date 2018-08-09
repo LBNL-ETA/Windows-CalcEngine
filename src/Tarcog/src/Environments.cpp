@@ -15,9 +15,9 @@ namespace Tarcog
 							 double pressure,
 							 double airSpeed,
 							 double solarRadiation,
-							 AirHorizontalDirection airDirection,
 							 double skyTemperature,
 							 SkyModel skyModel,
+							 AirHorizontalDirection airDirection,
 							 double fractionOfClearSky )
     {
         return std::make_shared<COutdoorEnvironment>(airTemperature,

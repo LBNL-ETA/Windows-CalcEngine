@@ -24,23 +24,21 @@ protected:
         auto tSky = airTemperature;
         auto pressure = 101325.0;   // Pascals
         auto airSpeed = 5.5;        // meters per second
-        auto airDirection = AirHorizontalDirection::Windward;
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor( airTemperature,
-											  pressure,
-											  airSpeed,
-											  solarRadiation,
-											  airDirection,
-											  tSky,
-											  SkyModel::AllSpecified );
+        auto Outdoor = Environments::outdoor(airTemperature,
+                                             pressure,
+                                             airSpeed,
+                                             solarRadiation,
+                                             tSky,
+                                             SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
 
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
         auto roomTemperature = 294.15;
-        auto Indoor = Environments::indoor( roomTemperature, pressure );
+        auto Indoor = Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////

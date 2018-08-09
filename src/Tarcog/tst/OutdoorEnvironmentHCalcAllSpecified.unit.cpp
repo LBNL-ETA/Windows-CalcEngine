@@ -22,7 +22,6 @@ protected:
         auto airTemperature = 300.0;   // Kelvins
         auto pressure = 101325.0;      // Pascals
         auto airSpeed = 5.5;           // meters per second
-        auto airDirection = AirHorizontalDirection::Windward;
         auto tSky = 270.0;   // Kelvins
         auto solarRadiation = 0.0;
 
@@ -30,7 +29,6 @@ protected:
                                         pressure,
                                         airSpeed,
                                         solarRadiation,
-                                        airDirection,
                                         tSky,
                                         SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
