@@ -16,7 +16,7 @@ private:
 protected:
 	void SetUp() override {
 		/////////////////////////////////////////////////////////
-		// Outdoor
+		/// Outdoor
 		/////////////////////////////////////////////////////////
 		auto airTemperature = 300.0; // Kelvins
 		auto pressure = 101325.0; // Pascals
@@ -26,20 +26,20 @@ protected:
 		auto solarRadiation = 0.0;
 		auto hout = 20.0;
 
-		Outdoor = std::make_shared< COutdoorEnvironment >( airTemperature, pressure, airSpeed, solarRadiation,
+		Outdoor = Environments::outdoor( airTemperature, pressure, airSpeed, solarRadiation,
 		                                              airDirection, tSky, SkyModel::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
 		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::HPrescribed, hout );
 
 		/////////////////////////////////////////////////////////
-		// Indoor
+		/// Indoor
 		/////////////////////////////////////////////////////////
 		auto roomTemperature = 294.15;
-		std::shared_ptr< CEnvironment > Indoor = std::make_shared< CIndoorEnvironment >( roomTemperature, pressure );
+		auto Indoor = Environments::indoor( roomTemperature, pressure );
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
-		// IGU
+		/// IGU
 		/////////////////////////////////////////////////////////
 		auto solidLayerThickness = 0.003048; // [m]
 		auto solidLayerConductance = 100.0;
@@ -53,7 +53,7 @@ protected:
 		aIGU.addLayer( aSolidLayer );
 
 		/////////////////////////////////////////////////////////
-		// System
+		/// System
 		/////////////////////////////////////////////////////////
 		m_TarcogSystem = std::make_shared< CSingleSystem >( aIGU, Indoor, Outdoor );
 		m_TarcogSystem->solve();

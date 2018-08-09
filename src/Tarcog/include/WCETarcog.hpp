@@ -6,6 +6,7 @@
 #include "../src/BaseShade.hpp"
 #include "../src/CalculationModels.hpp"
 #include "../src/Environment.hpp"
+#include "../src/Environments.hpp"
 #include "../src/HeatFlowBalance.hpp"
 #include "../src/IGU.hpp"
 #include "../src/IGUGapDeflection.hpp"

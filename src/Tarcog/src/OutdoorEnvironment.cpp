@@ -30,13 +30,13 @@ namespace Tarcog {
 	double COutdoorEnvironment::calculateIRFromVariables() {
 		auto aEmissivity = 0.0;
 		switch ( m_SkyModel ) {
-		case AllSpecified:
+			case SkyModel::AllSpecified:
 			aEmissivity = m_Emissivity * pow( m_Tsky, 4 ) / pow( getAirTemperature(), 4 );
 			break;
-		case TSkySpecified:
+		case SkyModel::TSkySpecified:
 			aEmissivity = pow( m_Tsky, 4 ) / pow( getAirTemperature(), 4 );
 			break;
-		case Swinbank:
+		case SkyModel::Swinbank:
 			aEmissivity = 5.31e-13 * pow( getAirTemperature(), 6 ) / ( STEFANBOLTZMANN * pow( getAirTemperature(), 4 ) );
 			break;
 		default:
