@@ -28,16 +28,20 @@ namespace Tarcog
                                                                  double aLeft,
                                                                  double aRight,
                                                                  double aFront,
-																 double frontEmissivity = 0.84,
-																 double frontTransmittance = 0.0,
-																 double backEmissivity = 0.84,
-																 double backTransmittance = 0.0);
+                                                                 double frontEmissivity = 0.84,
+                                                                 double frontTransmittance = 0.0,
+                                                                 double backEmissivity = 0.84,
+                                                                 double backTransmittance = 0.0);
 
         static std::shared_ptr<CIGUGapLayer> gap(double thickness, double pressure);
-        static std::shared_ptr<CIGUGapLayer> gap(double thickness, double pressure, const Gases::CGas & gas);
+        static std::shared_ptr<CIGUGapLayer>
+          gap(double thickness, double pressure, const Gases::CGas & gas);
 
-        static std::shared_ptr<CIGUGapLayer> addCircularPillar(const std::shared_ptr<CIGUGapLayer> & gap,
-        	double conductivity, double spacing, double radius);
+        static std::shared_ptr<CIGUGapLayer>
+          addCircularPillar(const std::shared_ptr<CIGUGapLayer> & gap,
+                            double conductivity,
+                            double spacing,
+                            double radius);
     };
 
 }   // namespace Tarcog

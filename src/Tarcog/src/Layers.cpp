@@ -27,10 +27,11 @@ namespace Tarcog
         return std::make_shared<CIGUGapLayer>(thickness, pressure);
     }
 
-	std::shared_ptr< CIGUGapLayer >
-	Layers::gap( double thickness, double pressure, const Gases::CGas & gas ) {
-		return std::make_shared< CIGUGapLayer >(thickness, pressure, gas);
-	}
+    std::shared_ptr<CIGUGapLayer>
+      Layers::gap(double thickness, double pressure, const Gases::CGas & gas)
+    {
+        return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
+    }
 
     std::shared_ptr<CIGUSolidLayer> Layers::updateDeflectionCoefficients(
       const std::shared_ptr<CIGUSolidLayer> & layer, double youngsModulus, double poisonRatio)
