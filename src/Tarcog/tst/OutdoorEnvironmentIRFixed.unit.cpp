@@ -52,8 +52,7 @@ protected:
         auto solidLayerThickness = 0.003048;   // [m]
         auto solidLayerConductance = 100.0;
 
-        auto aSolidLayer =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer = Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aSolidLayer != nullptr);
 
         auto windowWidth = 1.0;

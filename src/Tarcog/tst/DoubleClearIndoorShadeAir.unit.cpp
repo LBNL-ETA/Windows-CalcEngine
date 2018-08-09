@@ -27,14 +27,13 @@ protected:
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 0.0;
 
-        std::shared_ptr<CEnvironment> Outdoor =
-			Environments::outdoor( airTemperature,
-								   pressure,
-								   airSpeed,
-								   solarRadiation,
-								   airDirection,
-								   tSky,
-								   SkyModel::AllSpecified );
+        auto Outdoor = Environments::outdoor(airTemperature,
+                                             pressure,
+                                             airSpeed,
+                                             solarRadiation,
+                                             airDirection,
+                                             tSky,
+                                             SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
@@ -44,8 +43,7 @@ protected:
 
         auto roomTemperature = 295.15;
 
-        std::shared_ptr<CEnvironment> Indoor =
-			Environments::indoor( roomTemperature, pressure );
+        auto Indoor = Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -54,10 +52,10 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aLayer1 = std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aLayer1 != nullptr);
 
-        auto aLayer2 = std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aLayer2 = Layers::solid(solidLayerThickness, solidLayerConductance);
 
         auto shadeLayerThickness = 0.01;
         auto shadeLayerConductance = 160.0;
@@ -67,19 +65,17 @@ protected:
         auto dright = 0.1;
         auto Afront = 0.2;
 
-        std::shared_ptr<CIGUSolidLayer> aLayer3 = std::make_shared<CIGUShadeLayer>(
-          shadeLayerThickness,
-          shadeLayerConductance,
-          std::make_shared<CShadeOpenings>(dtop, dbot, dleft, dright, Afront));
+        auto aLayer3 = Layers::shadeWithOpenness(
+          shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront);
 
         ASSERT_TRUE(aLayer3 != nullptr);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto GapLayer1 = std::make_shared<CIGUGapLayer>(gapThickness, gapPressure);
+        auto GapLayer1 = Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(GapLayer1 != nullptr);
 
-        auto GapLayer2 = std::make_shared<CIGUGapLayer>(gapThickness, gapPressure);
+        auto GapLayer2 = Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(GapLayer2 != nullptr);
 
         auto windowWidth = 1.0;

@@ -51,8 +51,6 @@ protected:
         /////////////////////////////////////////////////////////
         auto emissivity = 0.832855582237;
         auto transmittance = 0.074604861438;
-        auto surface1 = std::make_shared<CSurface>(emissivity, transmittance);
-        auto surface2 = std::make_shared<CSurface>(emissivity, transmittance);
 
         auto shadeLayerThickness = 0.0006;
         auto shadeLayerConductance = 160.0;
@@ -62,12 +60,12 @@ protected:
         auto Aright = 0.0;
         auto Afront = 0.5;
 
-        std::shared_ptr<CIGUSolidLayer> aSolidLayer1 = std::make_shared<CIGUShadeLayer>(
+        auto aSolidLayer1 = Layers::shadeWithOpenness(
           shadeLayerThickness,
           shadeLayerConductance,
-          std::make_shared<CShadeOpenings>(Atop, Abot, Aleft, Aright, Afront),
-          surface1,
-          surface2);
+          Atop, Abot, Aleft, Aright, Afront,
+          emissivity, transmittance,
+          emissivity, transmittance);
 
         ASSERT_TRUE(aSolidLayer1 != nullptr);
 
@@ -77,16 +75,13 @@ protected:
         auto emissivity2 = 0.038798544556;
         transmittance = 0.0;
 
-        auto surface3 = std::make_shared<CSurface>(emissivity1, transmittance);
-        auto surface4 = std::make_shared<CSurface>(emissivity2, transmittance);
-
-        auto aSolidLayer2 = std::make_shared<CIGUSolidLayer>(
-          solidLayerThickness, solidLayerConductance, surface3, surface4);
+        auto aSolidLayer2 = Layers::solid( solidLayerThickness, solidLayerConductance, emissivity1,
+        	transmittance, emissivity2, transmittance);
         ASSERT_TRUE(aSolidLayer2 != nullptr);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto aGapLayer = std::make_shared<CIGUGapLayer>(gapThickness, gapPressure);
+        auto aGapLayer = Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(aGapLayer != nullptr);
 
         auto windowWidth = 1.0;

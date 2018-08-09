@@ -54,29 +54,26 @@ protected:
         auto emissivityFrontIR = 0.84;
         auto emissivityBackIR = 0.036749500781;
 
-        std::shared_ptr<CBaseIGULayer> aSolidLayer1 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness,
-                                           solidLayerConductance,
-                                           emissivityFrontIR,
-                                           TransmittanceIR,
-                                           emissivityBackIR,
-                                           TransmittanceIR);
+        auto aSolidLayer1 = Layers::solid(solidLayerThickness,
+                                          solidLayerConductance,
+                                          emissivityFrontIR,
+                                          TransmittanceIR,
+                                          emissivityBackIR,
+                                          TransmittanceIR);
 
         solidLayerThickness = 0.003962399904;
         emissivityBackIR = 0.84;
 
-        std::shared_ptr<CBaseIGULayer> aSolidLayer2 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness,
-                                           solidLayerConductance,
-                                           emissivityFrontIR,
-                                           TransmittanceIR,
-                                           emissivityBackIR,
-                                           TransmittanceIR);
+        auto aSolidLayer2 = Layers::solid(solidLayerThickness,
+                                          solidLayerConductance,
+                                          emissivityFrontIR,
+                                          TransmittanceIR,
+                                          emissivityBackIR,
+                                          TransmittanceIR);
 
         auto gapThickness = 0.0001;
         auto gapPressure = 0.1333;
-        std::shared_ptr<CBaseIGULayer> m_GapLayer =
-          std::make_shared<CIGUGapLayer>(gapThickness, gapPressure);
+        auto m_GapLayer = Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         auto windowWidth = 1.0;   //[m]

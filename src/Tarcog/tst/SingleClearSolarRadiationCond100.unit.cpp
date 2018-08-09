@@ -53,8 +53,7 @@ protected:
         auto solidLayerConductance = 100.0;
         auto solarAbsorptance = 0.094189159572;
 
-        auto aSolidLayer =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer = Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer->setSolarAbsorptance(solarAbsorptance);
         ASSERT_TRUE(aSolidLayer != nullptr);
 

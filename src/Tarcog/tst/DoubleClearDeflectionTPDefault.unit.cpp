@@ -40,28 +40,26 @@ protected:
 		ASSERT_TRUE( Indoor != nullptr );
 
 		/////////////////////////////////////////////////////////
-		// IGU
+		/// IGU
 		/////////////////////////////////////////////////////////
 		auto solidLayerThickness1 = 0.003048; // [m]
 		auto solidLayerThickness2 = 0.005715;
 		auto solidLayerConductance = 1.0;
 
-		std::shared_ptr< CBaseIGULayer > aSolidLayer1 =
-			std::make_shared< CIGUSolidLayer >( solidLayerThickness1, solidLayerConductance );
+		auto aSolidLayer1 = Layers::solid( solidLayerThickness1, solidLayerConductance );
 
-		std::shared_ptr< CBaseIGULayer > aSolidLayer2 =
-			std::make_shared< CIGUSolidLayer >( solidLayerThickness2, solidLayerConductance );
+		auto aSolidLayer2 = Layers::solid( solidLayerThickness2, solidLayerConductance );
 
 		auto gapThickness = 0.0127;
 		auto gapPressure = 101325.0;
-		std::shared_ptr< CBaseIGULayer > m_GapLayer = std::make_shared< CIGUGapLayer >( gapThickness, gapPressure );
-		ASSERT_TRUE( m_GapLayer != nullptr );
+		auto gapLayer = Layers::gap( gapThickness, gapPressure );
+		ASSERT_TRUE( gapLayer != nullptr );
 
 		double windowWidth = 1;
 		double windowHeight = 1;
 		CIGU aIGU( windowWidth, windowHeight );
 		aIGU.addLayer( aSolidLayer1 );
-		aIGU.addLayer( m_GapLayer );
+		aIGU.addLayer( gapLayer );
 		aIGU.addLayer( aSolidLayer2 );
 
 		// Deflection properties
@@ -70,7 +68,7 @@ protected:
 		aIGU.setDeflectionProperties( Tini, Pini );
 
 		/////////////////////////////////////////////////////////
-		// System
+		/// System
 		/////////////////////////////////////////////////////////
 		m_TarcogSystem = std::make_shared< CSingleSystem >( aIGU, Indoor, Outdoor );
 		ASSERT_TRUE( m_TarcogSystem != nullptr );

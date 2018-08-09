@@ -48,16 +48,14 @@ protected:
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
-        std::shared_ptr<CIGUSolidLayer> solidLayer1 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto solidLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer1 != nullptr);
-        std::shared_ptr<CIGUSolidLayer> solidLayer2 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto solidLayer2 = Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer2 != nullptr);
 
         auto gapThickness = 0.012;
         auto gapPressure = 101325.0;
-        auto gapLayer = std::make_shared<CIGUGapLayer>(gapThickness, gapPressure);
+        auto gapLayer = Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(gapLayer != nullptr);
 
         auto windowWidth = 1.0;

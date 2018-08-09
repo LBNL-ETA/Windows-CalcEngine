@@ -55,12 +55,10 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        std::shared_ptr<CBaseIGULayer> aLayer1 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aLayer1 != nullptr);
 
-        std::shared_ptr<CBaseIGULayer> aLayer3 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness, solidLayerConductance);
+        auto aLayer3 = Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aLayer3 != nullptr);
 
         auto shadeLayerThickness = 0.01;
@@ -71,10 +69,8 @@ protected:
         auto Aright = 0.1;
         auto Afront = 0.2;
 
-        std::shared_ptr<CBaseIGULayer> aLayer2 = std::make_shared<CIGUShadeLayer>(
-          shadeLayerThickness,
-          shadeLayerConductance,
-          std::make_shared<CShadeOpenings>(Atop, Abot, Aleft, Aright, Afront));
+        auto aLayer2 = Layers::shadeWithOpenness(
+          shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront);
 
         ASSERT_TRUE(aLayer2 != nullptr);
 
@@ -85,36 +81,27 @@ protected:
         CIntCoeff AirCp = {1.002737e+03, 1.2324e-02, 0.0};
         CIntCoeff AirVisc = {3.7233e-06, 4.94e-08, 0.0};
 
-        const std::string AirName = "Air";
-        CGasData AirData = {AirName, 28.97, 1.4, AirCp, AirCon, AirVisc};
+        CGasData AirData{"Air", 28.97, 1.4, AirCp, AirCon, AirVisc};
 
         // Create coefficients for Argon
         CIntCoeff ArgonCon = {2.2848e-03, 5.1486e-05, 0.0};
         CIntCoeff ArgonCp = {5.21929e+02, 0.0, 0.0};
         CIntCoeff ArgonVisc = {3.3786e-06, 6.4514e-08, 0.0};
 
-        const std::string ArgonName = "Argon";
-        CGasData ArgonData = {ArgonName, 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc};
-
-        CGasItem Air = {0.1, AirData};
-        CGasItem Argon = {0.9, ArgonData};
+        CGasData ArgonData{"Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc};
 
         // Create gas mixture
-        CGas Gas1 = CGas();
+        CGas Gas1;
 
-        Gas1.addGasItem(Air);
-        Gas1.addGasItem(Argon);
-
-        CGas Gas2(Gas1);
+        Gas1.addGasItem({0.1, AirData});
+        Gas1.addGasItem({0.9, ArgonData});
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        std::shared_ptr<CBaseIGULayer> GapLayer1 =
-          std::make_shared<CIGUGapLayer>(gapThickness, gapPressure, Gas1);
+        auto GapLayer1 = Layers::gap(gapThickness, gapPressure, Gas1);
         ASSERT_TRUE(GapLayer1 != nullptr);
 
-        std::shared_ptr<CBaseIGULayer> GapLayer2 =
-          std::make_shared<CIGUGapLayer>(gapThickness, gapPressure, Gas2);
+        auto GapLayer2 = Layers::gap(gapThickness, gapPressure, Gas1);
         ASSERT_TRUE(GapLayer2 != nullptr);
 
         auto windowWidth = 1.0;
@@ -127,7 +114,7 @@ protected:
         aIGU.addLayer(aLayer3);
 
         /////////////////////////////////////////////////////////
-        // System
+        /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
