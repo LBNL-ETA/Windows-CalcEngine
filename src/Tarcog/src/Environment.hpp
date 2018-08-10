@@ -34,8 +34,7 @@ namespace Tarcog
         void setHCoeffModel(BoundaryConditionsCoeffModel t_BCModel,
                             double t_HCoeff = 0);
         void setForcedVentilation(const ForcedVentilation & t_ForcedVentilation);
-        void setPrescribedConvection(double t_HInput);
-        void setEnvironmentIR(double t_InfraRed);
+		void setEnvironmentIR(double t_InfraRed);
         void setEmissivity(double t_Emissivity);
 
         double getDirectSolarRadiation() const;

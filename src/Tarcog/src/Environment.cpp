@@ -60,13 +60,7 @@ namespace Tarcog
         resetCalculated();
     }
 
-    void CEnvironment::setPrescribedConvection(double const t_HInput)
-    {
-        m_HInput = t_HInput;
-        resetCalculated();
-    }
-
-    void CEnvironment::setEnvironmentIR(double const t_InfraRed)
+	void CEnvironment::setEnvironmentIR(double const t_InfraRed)
     {
         setIRFromEnvironment(t_InfraRed);
         m_IRCalculatedOutside = true;
