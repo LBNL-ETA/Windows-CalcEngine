@@ -17,7 +17,7 @@ protected:
     void SetUp() override
     {
         /////////////////////////////////////////////////////////
-        // Outdoor
+        /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
         auto pressure = 101325.0;       // Pascals
@@ -35,7 +35,7 @@ protected:
         Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
-        // Indoor
+        /// Indoor
         /////////////////////////////////////////////////////////
 
         auto roomTemperature = 294.15;

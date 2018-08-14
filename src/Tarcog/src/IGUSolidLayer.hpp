@@ -30,7 +30,7 @@ namespace Tarcog
 
         void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
-        double getConductivity() const;
+        double getConductance() const;
 
         void setLayerState(double t_Tf, double t_Tb, double t_Jf, double t_Jb);
         void setSolarRadiation(double t_SolarRadiation);

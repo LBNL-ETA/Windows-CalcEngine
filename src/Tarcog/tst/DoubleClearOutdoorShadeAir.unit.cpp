@@ -57,8 +57,8 @@ protected:
         auto dright = 0.1;
         auto Afront = 0.2;
 
-        auto aLayer1 = Layers::shadeWithOpenness(
-          shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront);
+        auto aLayer1 = Layers::shading(
+			shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront );
 
         ASSERT_TRUE(aLayer1 != nullptr);
 
