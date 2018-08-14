@@ -23,9 +23,9 @@ namespace Tarcog
 
         void addLayer(std::shared_ptr<CBaseIGULayer> const & t_Layer);
 
-        std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
-        std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
-        std::vector<std::shared_ptr<CBaseIGULayer>> getLayers() const;
+		std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
+		std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
+		std::vector<std::shared_ptr<CBaseIGULayer>> getLayers() const;
 
         void setTilt(double t_Tilt);
         void setWidth(double t_Width);
@@ -33,7 +33,7 @@ namespace Tarcog
 
         void setSolarRadiation(double t_SolarRadiation) const;
 
-        std::shared_ptr<CBaseLayer> getLayer(Environment t_Environment) const;
+        std::shared_ptr<CBaseLayer> getEnvironment( Environment t_Environment ) const;
 
         std::vector< double > getState() const;
         void setState(std::vector<double> & t_State) const;

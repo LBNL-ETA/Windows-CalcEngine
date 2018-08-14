@@ -58,12 +58,12 @@ protected:
         auto Aright = 0.0;
         auto Afront = 0.5;
 
-        auto aSolidLayer1 = Layers::shadeWithOpenness(
-          shadeLayerThickness,
-          shadeLayerConductance,
-          Atop, Abot, Aleft, Aright, Afront,
-          emissivity, transmittance,
-          emissivity, transmittance);
+        auto aSolidLayer1 = Layers::shading(
+			shadeLayerThickness,
+			shadeLayerConductance,
+			Atop, Abot, Aleft, Aright, Afront,
+			emissivity, transmittance,
+			emissivity, transmittance );
 
         ASSERT_TRUE(aSolidLayer1 != nullptr);
 

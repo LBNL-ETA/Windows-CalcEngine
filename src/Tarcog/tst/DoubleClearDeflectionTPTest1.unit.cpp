@@ -56,7 +56,7 @@ protected:
         auto youngsModulus = 8.1e10;
         auto poisonRatio = 0.16;
         aSolidLayer1 =
-          Layers::updateDeflectionCoefficients(aSolidLayer1, youngsModulus, poisonRatio);
+			Layers::makeDeflectable( aSolidLayer1, youngsModulus, poisonRatio );
 
         // Layer will be using default deflection values
         auto aSolidLayer2 = Layers::solid(solidLayerThickness2, solidLayerConductance);

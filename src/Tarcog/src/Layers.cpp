@@ -9,7 +9,7 @@
 namespace Tarcog
 {
     std::shared_ptr<CIGUSolidLayer> Layers::solid(const double thickness,
-                                                  const double conductance,
+                                                  const double conductivity,
                                                   const double frontEmissivity,
                                                   const double frontIRTransmittance,
                                                   const double backEmissivity,
@@ -17,7 +17,7 @@ namespace Tarcog
     {
         return std::make_shared<CIGUSolidLayer>(
           thickness,
-          conductance,
+          conductivity,
           std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
           std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
     }
@@ -33,27 +33,27 @@ namespace Tarcog
         return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
     }
 
-    std::shared_ptr<CIGUSolidLayer> Layers::updateDeflectionCoefficients(
-      const std::shared_ptr<CIGUSolidLayer> & layer, double youngsModulus, double poisonRatio)
+    std::shared_ptr<CIGUSolidLayer> Layers::makeDeflectable(
+		const std::shared_ptr< CIGUSolidLayer > & layer, double youngsModulus, double poisonRatio )
     {
         return std::make_shared<CIGUSolidLayerDeflection>(*layer, youngsModulus, poisonRatio);
     }
 
-    std::shared_ptr<CIGUSolidLayer> Layers::shadeWithOpenness(const double thickness,
-                                                              const double conductance,
-                                                              const double aTop,
-                                                              const double aBot,
-                                                              const double aLeft,
-                                                              const double aRight,
-                                                              const double aFront,
-                                                              const double frontEmissivity,
-                                                              const double frontTransmittance,
-                                                              const double backEmissivity,
-                                                              const double backTransmittance)
+    std::shared_ptr<CIGUSolidLayer> Layers::shading( double thickness,
+													 double conductivity,
+													 double aTop,
+													 double aBot,
+													 double aLeft,
+													 double aRight,
+													 double aFront,
+													 double frontEmissivity,
+													 double frontTransmittance,
+													 double backEmissivity,
+													 double backTransmittance )
     {
         return std::make_shared<CIGUShadeLayer>(
           thickness,
-          conductance,
+          conductivity,
           std::make_shared<CShadeOpenings>(aTop, aBot, aLeft, aRight, aFront),
           std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
           std::make_shared<CSurface>(backEmissivity, backTransmittance));
