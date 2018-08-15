@@ -285,22 +285,18 @@ protected:
 
 		auto Layer_102 = CBSDFLayerMaker::getSpecularLayer( aMaterial_102, aBSDF );
 
-		// Venetian blind
-		double Tmat = 0.1;
-		double Rfmat = 0.7;
-		double Rbmat = 0.7;
-		std::shared_ptr< CMaterial > aSolarRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
+		// Solar range
+		double Tsolmat = 0.1;
+		double Rfsolmat = 0.7;
+		double Rbsolmat = 0.7;
 
 		// Visible range
-		Tmat = 0.2;
-		Rfmat = 0.6;
-		Rbmat = 0.6;
-		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
+		double Tvismat = 0.2;
+		double Rfvismat = 0.6;
+		double Rbvismat = 0.6;
 
-		std::shared_ptr< CMaterial > aMaterial =
-			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
+		auto aMaterial = SingleLayerOptics::Material::dualBandMaterial(Tsolmat, Tsolmat,
+			Rfsolmat, Rbsolmat, Tvismat, Tvismat, Rfvismat, Rbvismat);
 
 		auto diffuseLayer = CBSDFLayerMaker::getPerfectlyDiffuseLayer( aMaterial, aBSDF );
 

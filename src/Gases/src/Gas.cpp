@@ -26,13 +26,14 @@ namespace Gases {
 		}
 	}
 
-	void CGas::addGasItem( CGasItem const& t_GasItem ) {
+	void CGas::addGasItem( const double percent, const CGasData & t_GasData ) {
+		CGasItem item(percent, t_GasData);
 		// Need to remove default since user wants to create their own Gases
 		if ( m_DefaultGas ) {
 			m_GasItem.clear();
 			m_DefaultGas = false;
 		}
-		m_GasItem.push_back( t_GasItem );
+		m_GasItem.push_back( item );
 	}
 
 	double CGas::totalPercent() {
