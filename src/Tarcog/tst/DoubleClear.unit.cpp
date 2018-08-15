@@ -48,7 +48,7 @@ protected:
         /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;
+        auto solidLayerConductance = 1.0;      // [W/m2K]
 
         auto aSolidLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer1->setSolarAbsorptance(0.166707709432);

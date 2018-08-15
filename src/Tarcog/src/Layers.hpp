@@ -20,7 +20,7 @@ namespace Tarcog
 
         static std::shared_ptr<CIGUSolidLayer> makeDeflectable(
 			const std::shared_ptr< CIGUSolidLayer > & layer, double youngsModulus,
-			double poisonRatio );
+			double poissonRatio );
 
         static std::shared_ptr<CIGUSolidLayer> shading(double thickness,
                                                        double conductivity,
