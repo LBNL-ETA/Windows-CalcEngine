@@ -46,7 +46,7 @@ protected:
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
-        // IGU
+        /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;

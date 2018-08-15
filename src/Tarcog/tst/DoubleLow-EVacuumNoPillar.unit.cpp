@@ -35,7 +35,7 @@ protected:
         Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
-        // Indoor
+        /// Indoor
         /////////////////////////////////////////////////////////
 
         auto roomTemperature = 294.15;
@@ -44,7 +44,7 @@ protected:
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
-        // IGU
+        /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.004;   // [m]
         auto solidLayerConductance = 1.0;
@@ -82,7 +82,7 @@ protected:
         aIGU.addLayer(aSolidLayer2);
 
         /////////////////////////////////////////////////////////
-        // System
+        /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);

@@ -18,8 +18,7 @@ namespace Tarcog
                                  double t_YoungsModulus,
                                  double t_PoisonRatio);
 
-        double flexuralRigidity() const;
-
+		double flexuralRigidity() const;
         bool isDeflected() const override;
 
         std::shared_ptr<CBaseLayer> clone() const override;
