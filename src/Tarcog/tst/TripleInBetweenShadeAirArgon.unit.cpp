@@ -91,8 +91,8 @@ protected:
         // Create gas mixture
         CGas Gas1;
 
-        Gas1.addGasItem({0.1, AirData});
-        Gas1.addGasItem({0.9, ArgonData});
+        Gas1.addGasItem(0.1, AirData);
+        Gas1.addGasItem(0.9, ArgonData);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
