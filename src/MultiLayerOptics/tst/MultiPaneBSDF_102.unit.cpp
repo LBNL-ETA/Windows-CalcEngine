@@ -272,16 +272,12 @@ private:
 protected:
     virtual void SetUp()
     {
-        std::shared_ptr<CSpectralSampleData> aMeasurements_102 = loadSampleData_NFRC_102();
-
-        // Create samples from measurements and solar radiation
-        std::shared_ptr<CSpectralSample> aSample_102 =
-          std::make_shared<CSpectralSample>(aMeasurements_102);
-
         // Create material from samples
         double thickness = 3.048e-3;   // [m]
-        std::shared_ptr<CMaterial> aMaterial_102 = std::make_shared<CMaterialSample>(
-          aSample_102, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_102(),
+                                                                        thickness,
+                                                                        MaterialType::Monolithic,
+                                                                        WavelengthRange::Solar);
 
         // BSDF definition is needed as well as its material representation
         auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
@@ -291,8 +287,7 @@ protected:
         auto aEqLayer =
           std::make_shared<CEquivalentBSDFLayer>(Layer_102->getBandWavelengths(), Layer_102);
 
-        auto aSolarRadiation = loadSolarRadiationFile();
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, aSolarRadiation);
+        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, loadSolarRadiationFile());
     }
 
 public:

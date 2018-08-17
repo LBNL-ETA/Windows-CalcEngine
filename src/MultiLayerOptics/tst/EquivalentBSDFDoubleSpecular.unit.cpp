@@ -273,19 +273,15 @@ protected:
         aMeasurements->addRecord(2.450, 0.8260, 0.0690, 0.0690);
         aMeasurements->addRecord(2.500, 0.8220, 0.0680, 0.0680);
 
-        std::shared_ptr<CSpectralSample> aSample = std::make_shared<CSpectralSample>(aMeasurements, aSolarRadiation);
-
         double thickness = 3.048e-3;   // [m]
         MaterialType aType = MaterialType::Monolithic;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterialSample> aMaterial = std::make_shared<CMaterialSample>(aSample, thickness, aType, minLambda, maxLambda);
+        auto aMaterial = SingleLayerOptics::Material::nBandMaterial(aMeasurements,
+        	thickness, aType, minLambda, maxLambda);
 
-        std::shared_ptr<CSpecularCellDescription> aCellDescription = std::make_shared<CSpecularCellDescription>();
-
-        std::shared_ptr<CSpecularCell> aCell = std::make_shared<CSpecularCell>(aMaterial, aCellDescription);
-
-        std::shared_ptr<CSpecularBSDFLayer> aLayer102 = std::make_shared<CSpecularBSDFLayer>(aCell, aBSDF);
+        auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
+        aLayer102->setSourceData(aSolarRadiation);
 
         std::shared_ptr<CBSDFIntegrator> aLayer1 = aLayer102->getResults();
         std::shared_ptr<CBSDFIntegrator> aLayer2 = aLayer102->getResults();
