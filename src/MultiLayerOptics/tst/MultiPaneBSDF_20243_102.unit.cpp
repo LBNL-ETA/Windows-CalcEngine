@@ -718,20 +718,13 @@ private:
 protected:
 	virtual void SetUp() {
 
-		std::shared_ptr< CSpectralSampleData > aMeasurements_102 = loadSampleData_NFRC_102();
-		std::shared_ptr< CSpectralSampleData > aMeasurements_20243 = loadSampleData_NFRC_20243();
-
-		// Create samples from measurements and solar radiation
-		std::shared_ptr< CSpectralSample > aSample_102 = std::make_shared< CSpectralSample >( aMeasurements_102 );
-		std::shared_ptr< CSpectralSample > aSample_20243 = std::make_shared< CSpectralSample >( aMeasurements_20243 );
-
 		// Create material from samples
 		double thickness = 3.048e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial_102 = std::make_shared< CMaterialSample >( aSample_102,
-		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
+		auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial( loadSampleData_NFRC_102(),
+			thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 		thickness = 5.715e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial_20243 = std::make_shared< CMaterialSample >( aSample_20243,
-		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
+		auto aMaterial_20243 = SingleLayerOptics::Material::nBandMaterial( loadSampleData_NFRC_20243(),
+			thickness, MaterialType::Monolithic, WavelengthRange::Solar );
 
 		// BSDF definition is needed as well as its material representation
 		auto aBSDF = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );

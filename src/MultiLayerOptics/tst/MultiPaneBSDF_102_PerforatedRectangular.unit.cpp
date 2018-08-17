@@ -272,41 +272,34 @@ private:
 protected:
     virtual void SetUp()
     {
-        std::shared_ptr<CSpectralSampleData> aMeasurements_102 = loadSampleData_NFRC_102();
-
-        std::shared_ptr<CSpectralSample> aSample_102 =
-          std::make_shared<CSpectralSample>(aMeasurements_102);
-
         double thickness = 3.048e-3;   // [m]
-        std::shared_ptr<CMaterial> aMaterial_102 = std::make_shared<CMaterialSample>(
-          aSample_102, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_102(),
+                                                                        thickness,
+                                                                        MaterialType::Monolithic,
+                                                                        WavelengthRange::Solar);
 
         auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Small);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
-        // Setting rectangular perforated shade with double range material
-        double Tmat = 0.1;
-        double Rfmat = 0.7;
-        double Rbmat = 0.7;
-        std::shared_ptr<CMaterial> aSolarRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar);
+        // Solar material properties
+        double Tsol = 0.1;
+        double Rfsol = 0.7;
+        double Rbsol = 0.7;
 
         // Visible range
-        Tmat = 0.2;
-        Rfmat = 0.6;
-        Rbmat = 0.6;
-        std::shared_ptr<CMaterial> aVisibleRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible);
+        double Tvis = 0.2;
+        double Rfvis = 0.6;
+        double Rbvis = 0.6;
 
-        std::shared_ptr<CMaterial> aMaterialPerforated =
-          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        auto aMaterialPerforated = SingleLayerOptics::Material::dualBandMaterial(
+          Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        const double x = 19.05;        // mm
-        const double y = 19.05;        // mm
-        thickness = 5;           // mm
-        const double xHole = 5;        // mm
-        const double yHole = 5;        // mm
+        const double x = 19.05;   // mm
+        const double y = 19.05;   // mm
+        thickness = 5;            // mm
+        const double xHole = 5;   // mm
+        const double yHole = 5;   // mm
 
         // Perforated layer is created here
         auto Layer_Perforated = CBSDFLayerMaker::getRectangularPerforatedLayer(
@@ -319,8 +312,7 @@ protected:
           std::make_shared<CEquivalentBSDFLayer>(commonWavelengths, Layer_102);
         aEqLayer->addLayer(Layer_Perforated);
 
-        std::shared_ptr<CSeries> aSolarRadiation = loadSolarRadiationFile();
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, aSolarRadiation);
+        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, loadSolarRadiationFile());
     }
 
 public:

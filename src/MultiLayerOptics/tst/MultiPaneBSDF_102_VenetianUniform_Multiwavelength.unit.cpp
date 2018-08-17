@@ -339,41 +339,24 @@ private:
 protected:
     virtual void SetUp()
     {
-        std::shared_ptr<CSpectralSampleData> aMeasurements_102 = loadSampleData_NFRC_102();
-
-        // Create Sample 102 by applying measurements and solar radiation. Sample represents only
-        // material transmittances and reflectances over certain wavelength data. Default behavior
-        // is to use wavelenght set from measurements. It is however possible to define custom
-        // wavelength set or to use wavelenght set from solar radiation source or even detector
-        // source. Note that in this test case we are using default settings, which are use
-        // wavelength set from measurements and do not apply any detector data
-        std::shared_ptr<CSpectralSample> aSample_102 =
-          std::make_shared<CSpectralSample>(aMeasurements_102);
-
-        // Define other properties that will be used to create material. Range is used to define
-        // range for which material will be used and thickness will be used to calculate angular
-        // dependence of the material. Material type is used to define material coating (also
-        // important for angular dependence)
         double thickness = 3.048e-3;   // [m]
-        std::shared_ptr<CMaterial> aMaterial_102 = std::make_shared<CMaterialSample>(
-          aSample_102, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_102(),
+                                                                        thickness,
+                                                                        MaterialType::Monolithic,
+                                                                        WavelengthRange::Solar);
 
-        std::shared_ptr<CBSDFHemisphere> aBSDF =
-          std::make_shared<CBSDFHemisphere>(BSDFBasis::Small);
+        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Small);
 
         // specular layer NFRC=102
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
-        std::shared_ptr<CSpectralSampleData> aMeasurements_Venetian = loadVenetianBlindMaterial();
-
-        // Spectral sample for venetian is created in same manner as for specular layer.
-        // Measurements are combined together with solar radiation data
-        std::shared_ptr<CSpectralSample> aSample_Venetian =
-          std::make_shared<CSpectralSample>(aMeasurements_Venetian);
 
         thickness = 1.5e-3;   // [m]
-        std::shared_ptr<CMaterial> aMaterial_Venetian = std::make_shared<CMaterialSample>(
-          aSample_Venetian, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial_Venetian =
+          SingleLayerOptics::Material::nBandMaterial(loadVenetianBlindMaterial(),
+                                                     thickness,
+                                                     MaterialType::Monolithic,
+                                                     WavelengthRange::Solar);
 
         // make cell geometry
         double slatWidth = 0.016;     // m
@@ -381,10 +364,6 @@ protected:
         double slatTiltAngle = 0;
         double curvatureRadius = 0;
         size_t numOfSlatSegments = 5;
-
-        std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(
-            slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
 
         // get shading BSDF layer
         auto aVenetian = CBSDFLayerMaker::getVenetianLayer(aMaterial_Venetian,
@@ -397,7 +376,7 @@ protected:
                                                            DistributionMethod::UniformDiffuse);
 
         // All integration will be performed over wavelengths that are specified in NFRC=102
-        std::vector<double> commonWavelengths = aMeasurements_102->getWavelengths();
+        std::vector<double> commonWavelengths = aVenetian->getBandWavelengths();
 
         std::shared_ptr<CEquivalentBSDFLayer> aEqLayer =
           std::make_shared<CEquivalentBSDFLayer>(commonWavelengths, Layer_102);
@@ -429,14 +408,9 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Front transmittance matrix
     size_t size = aT.size();
 
-    std::vector<double> correctResults;
-    correctResults.push_back(20.7108616);
-    correctResults.push_back(2.68840995);
-    correctResults.push_back(1.48890408);
-    correctResults.push_back(1.18459316);
-    correctResults.push_back(1.15202051);
-    correctResults.push_back(1.30124754);
-    correctResults.push_back(1.14786435);
+    std::vector<double> correctResults{
+      20.711703, 2.688517, 1.488960, 1.184634, 1.152056, 1.301277, 1.147837};
+
 
     EXPECT_EQ(correctResults.size(), aT.size());
     for(size_t i = 0; i < size; ++i)
@@ -447,15 +421,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Back Reflectance matrix
     SquareMatrix aRb = aLayer.getMatrix(minLambda, maxLambda, Side::Back, PropertySimple::R);
 
-    correctResults.clear();
-
-    correctResults.push_back(1.86134798);
-    correctResults.push_back(0.241897096);
-    correctResults.push_back(0.136236462);
-    correctResults.push_back(0.118216206);
-    correctResults.push_back(0.153324393);
-    correctResults.push_back(0.34348137);
-    correctResults.push_back(1.68547507);
+    correctResults = {1.860160, 0.241743, 0.136151, 0.118147, 0.153253, 0.343395, 1.685370};
 
     EXPECT_EQ(correctResults.size(), aRb.size());
     for(size_t i = 0; i < size; ++i)
@@ -466,15 +432,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Front absorptance layer 1
     std::vector<double> aAbsF = *aLayer.Abs(minLambda, maxLambda, Side::Front, 1);
 
-    correctResults.clear();
-
-    correctResults.push_back(0.0913763758);
-    correctResults.push_back(0.0923143003);
-    correctResults.push_back(0.095094769);
-    correctResults.push_back(0.0995405978);
-    correctResults.push_back(0.105035438);
-    correctResults.push_back(0.10972924);
-    correctResults.push_back(0.103923031);
+    correctResults = {0.091437, 0.092376, 0.095159, 0.099608, 0.105110, 0.109811, 0.104010};
 
     EXPECT_EQ(correctResults.size(), aAbsF.size());
     for(size_t i = 0; i < size; ++i)
@@ -485,15 +443,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Front absorptance layer 2
     aAbsF = *aLayer.Abs(minLambda, maxLambda, Side::Front, 2);
 
-    correctResults.clear();
-
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
+    correctResults = {0, 0, 0, 0, 0, 0, 0};
 
     EXPECT_EQ(correctResults.size(), aAbsF.size());
     for(size_t i = 0; i < size; ++i)
@@ -504,15 +454,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Back absorptance layer 1
     std::vector<double> aAbsB = *aLayer.Abs(minLambda, maxLambda, Side::Back, 1);
 
-    correctResults.clear();
-
-    correctResults.push_back(0.0912562045);
-    correctResults.push_back(0.0921941075);
-    correctResults.push_back(0.0949741676);
-    correctResults.push_back(0.0994181888);
-    correctResults.push_back(0.104908772);
-    correctResults.push_back(0.109597853);
-    correctResults.push_back(0.103807372);
+    correctResults = {0.091270, 0.092209, 0.094991, 0.099438, 0.104933, 0.109629, 0.103849};
 
     EXPECT_EQ(correctResults.size(), aAbsB.size());
     for(size_t i = 0; i < size; ++i)
@@ -523,15 +465,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Back absorptance layer 2
     aAbsB = *aLayer.Abs(minLambda, maxLambda, Side::Back, 2);
 
-    correctResults.clear();
-
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
+    correctResults = {0, 0, 0, 0, 0, 0, 0};
 
     EXPECT_EQ(correctResults.size(), aAbsB.size());
     for(size_t i = 0; i < size; ++i)
