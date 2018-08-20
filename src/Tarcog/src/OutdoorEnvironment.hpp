@@ -6,7 +6,7 @@
 
 namespace Tarcog
 {
-    enum SkyModel
+    enum class SkyModel
     {
         AllSpecified,
         TSkySpecified,

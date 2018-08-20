@@ -14,7 +14,7 @@ namespace Gases {
 	public:
 		CGas();
 		CGas( const CGas& t_Gas );
-		void addGasItem( CGasItem const& t_GasItem );
+		void addGasItem( double percent, const CGasData & t_GasData );
 		double totalPercent();
 		const GasProperties & getSimpleGasProperties();
 		const GasProperties & getGasProperties();

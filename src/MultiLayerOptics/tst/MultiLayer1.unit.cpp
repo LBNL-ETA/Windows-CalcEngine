@@ -52,7 +52,7 @@ TEST_F( TestMultiLayer1, TestTripleLayerFront ) {
 	Side aSide = Side::Front;
 
 	///////////////////////////////////////////////
-	// Direct-Direct
+	/// Direct-Direct
 	///////////////////////////////////////////////
 	Scattering aScattering = Scattering::DirectDirect;
 
@@ -63,7 +63,7 @@ TEST_F( TestMultiLayer1, TestTripleLayerFront ) {
 	EXPECT_NEAR( 0.040339429, Rf, 1e-6 );
 
 	///////////////////////////////////////////////
-	// Direct-Diffuse
+	/// Direct-Diffuse
 	///////////////////////////////////////////////
 	aScattering = Scattering::DirectDiffuse;
 
@@ -74,7 +74,7 @@ TEST_F( TestMultiLayer1, TestTripleLayerFront ) {
 	EXPECT_NEAR( 0.312631104, Rf, 1e-6 );
 
 	///////////////////////////////////////////////
-	// Diffuse-Diffuse
+	/// Diffuse-Diffuse
 	///////////////////////////////////////////////
 	aScattering = Scattering::DiffuseDiffuse;
 

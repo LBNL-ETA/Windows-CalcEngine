@@ -139,36 +139,24 @@ protected:
 	virtual void SetUp() {
 
 		// Material properties in solar range
-		double Tmat = 0.833848;
-		double Rfmat = 7.476376e-002;
-		double Rbmat = 7.485449e-002;
-		std::shared_ptr< CMaterial > aSolarRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar );
+		double Tsol = 0.833848;
+		double Rfsol = 7.476376e-002;
+		double Rbsol = 7.485449e-002;
 
 		// Material properties in visible range
-		Tmat = 0.899260;
-		Rfmat = 0.082563;
-		Rbmat = 0.082564;
-		std::shared_ptr< CMaterial > aVisibleRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible );
+		double Tvis = 0.899260;
+		double Rfvis = 0.082563;
+		double Rbvis = 0.082564;
 
-		std::shared_ptr< CMaterial > aMaterialDual =
-			std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial );
+		auto aMaterialDual = SingleLayerOptics::Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol,
+			Tvis, Tvis, Rfvis, Rbvis);
 
-		std::shared_ptr< CSpectralSample > aSample = aMaterialDual->getSpectralSample();
-
-		// Create material from samples
-		double thickness = 3.048e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial_102 = std::make_shared< CMaterialSample >( aSample,
-		                                                                        thickness, MaterialType::Monolithic, WavelengthRange::Solar );
-
-		CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer( aMaterial_102 );
+		CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer( aMaterialDual );
 
 		// Equivalent scattering layer
 		m_Layer = std::make_shared< CMultiLayerScattered >( Layer102 );
 
-		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
-		m_Layer->setSourceData( aSolarRadiation );
+		m_Layer->setSourceData( loadSolarRadiationFile() );
 
 	}
 
@@ -189,28 +177,28 @@ TEST_F( MultiPaneScattered_102_DualMaterial, TestSpecular1 ) {
 	double phi = 0;
 
 	double T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.823900, T_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.833848, T_dir_dir, 1e-6 );
 
 	double T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
 	EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
 
 	double T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.742249, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.833848, T_dif_dif, 1e-6 );
 
 	double R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.073578, R_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.074764, R_dir_dir, 1e-6 );
 
 	double R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
 	EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
 
 	double R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.144232, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.074764, R_dif_dif, 1e-6 );
 
 	double A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.102523, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.091388, A_dir1, 1e-6 );
 
 	double A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.113519, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.091388, A_dif1, 1e-6 );
 
 }
 
@@ -224,28 +212,28 @@ TEST_F( MultiPaneScattered_102_DualMaterial, TestSpecular2 ) {
 	double phi = 0;
 
 	double T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.823900, T_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.833848, T_dir_dir, 1e-6 );
 
 	double T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
 	EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
 
 	double T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.742249, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.833848, T_dif_dif, 1e-6 );
 
 	double R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.073682, R_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.074854, R_dir_dir, 1e-6 );
 
 	double R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
 	EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
 
 	double R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.144340, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.074854, R_dif_dif, 1e-6 );
 
 	double A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.102418, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.091298, A_dir1, 1e-6 );
 
 	double A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.113411, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.091298, A_dif1, 1e-6 );
 
 }
 
@@ -259,27 +247,27 @@ TEST_F( MultiPaneScattered_102_DualMaterial, TestSpecular3 ) {
 	double phi = 0;
 
 	double T_dir_dir = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.806694, T_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.833848, T_dir_dir, 1e-6 );
 
 	double T_dir_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi );
 	EXPECT_NEAR( 0, T_dir_dif, 1e-6 );
 
 	double T_dif_dif = aLayer.getPropertySimple( PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.742249, T_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.833848, T_dif_dif, 1e-6 );
 
 	double R_dir_dir = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi );
-	EXPECT_NEAR( 0.081144, R_dir_dir, 1e-6 );
+	EXPECT_NEAR( 0.074764, R_dir_dir, 1e-6 );
 
 	double R_dir_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi );
 	EXPECT_NEAR( 0, R_dir_dif, 1e-6 );
 
 	double R_dif_dif = aLayer.getPropertySimple( PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi );
-	EXPECT_NEAR( 0.144232, R_dif_dif, 1e-6 );
+	EXPECT_NEAR( 0.074764, R_dif_dif, 1e-6 );
 
 	double A_dir1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Direct, theta, phi );
-	EXPECT_NEAR( 0.112162, A_dir1, 1e-6 );
+	EXPECT_NEAR( 0.091388, A_dir1, 1e-6 );
 
 	double A_dif1 = aLayer.getAbsorptanceLayer( 1, aSide, ScatteringSimple::Diffuse, theta, phi );
-	EXPECT_NEAR( 0.113519, A_dif1, 1e-6 );
+	EXPECT_NEAR( 0.091388, A_dif1, 1e-6 );
 
 }

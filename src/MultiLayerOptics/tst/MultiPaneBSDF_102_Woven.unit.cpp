@@ -272,38 +272,29 @@ private:
 protected:
     virtual void SetUp()
     {
-        std::shared_ptr<CSpectralSampleData> aMeasurements_102 = loadSampleData_NFRC_102();
-
-        std::shared_ptr<CSpectralSample> aSample_102 =
-          std::make_shared<CSpectralSample>(aMeasurements_102);
-
         double thickness = 3.048e-3;   // [m]
-        std::shared_ptr<CMaterial> aMaterial_102 = std::make_shared<CMaterialSample>(
-          aSample_102, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial( loadSampleData_NFRC_102(),
+        	thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Small);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Setting circular perforated shade with double range material
-        double Tmat = 0.1;
-        double Rfmat = 0.7;
-        double Rbmat = 0.7;
-        std::shared_ptr<CMaterial> aSolarRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Solar);
+        double Tsol = 0.1;
+        double Rfsol = 0.7;
+        double Rbsol = 0.7;
 
         // Visible range
-        Tmat = 0.2;
-        Rfmat = 0.6;
-        Rbmat = 0.6;
-        std::shared_ptr<CMaterial> aVisibleRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, WavelengthRange::Visible);
+        double Tvis = 0.2;
+        double Rfvis = 0.6;
+        double Rbvis = 0.6;
 
-        std::shared_ptr<CMaterial> aMaterial =
-          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        auto aMaterial = SingleLayerOptics::Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol,
+        	Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
         auto diameter = 100; // mm
-	      auto spacing = 300; // mm
+        auto spacing = 300; // mm
 
         // Perforated layer is created here
         auto LayerWoven= CBSDFLayerMaker::getWovenLayer( aMaterial, aBSDF, diameter, spacing);
@@ -315,8 +306,7 @@ protected:
           std::make_shared<CEquivalentBSDFLayer>(commonWavelengths, Layer_102);
         aEqLayer->addLayer(LayerWoven);
 
-        std::shared_ptr<CSeries> aSolarRadiation = loadSolarRadiationFile();
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, aSolarRadiation);
+        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, loadSolarRadiationFile());
     }
 
 public:

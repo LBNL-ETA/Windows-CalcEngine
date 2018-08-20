@@ -9,7 +9,7 @@ using namespace Tarcog;
 //using namespace FenestrationCommon;
 
 // Example of double clear window with inital guess for solution
-class TestDoubleClear : public testing::Test
+class TestDoubleClearLeeward : public testing::Test
 {
 private:
     std::shared_ptr<CSystem> m_TarcogSystem;
@@ -23,6 +23,7 @@ protected:
         auto airTemperature = 255.15;   // Kelvins
         auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
+        auto airDirection = AirHorizontalDirection::Leeward;
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 789.0;
 
@@ -31,7 +32,8 @@ protected:
 											  airSpeed,
 											  solarRadiation,
 											  tSky,
-											  SkyModel::AllSpecified);
+											  SkyModel::AllSpecified,
+											  airDirection );
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
@@ -48,7 +50,7 @@ protected:
         /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;      // [W/m2K]
+        auto solidLayerConductance = 1.0;
 
         auto aSolidLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer1->setSolarAbsorptance(0.166707709432);
@@ -82,7 +84,7 @@ public:
     };
 };
 
-TEST_F(TestDoubleClear, Test1)
+TEST_F(TestDoubleClearLeeward, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Surface temperatures");
 
