@@ -17,23 +17,20 @@ protected:
     void SetUp() override
     {
         /////////////////////////////////////////////////////////
-        // Outdoor
+        /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
         auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto airDirection = AirHorizontalDirection::Windward;
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 0.0;
 
-        std::shared_ptr<CEnvironment> Outdoor =
-          std::make_shared<COutdoorEnvironment>(airTemperature,
-                                                pressure,
-                                                airSpeed,
-                                                solarRadiation,
-                                                airDirection,
-                                                tSky,
-                                                SkyModel::AllSpecified);
+        auto Outdoor = Environments::outdoor(airTemperature,
+                                             pressure,
+                                             airSpeed,
+                                             solarRadiation,
+                                             tSky,
+                                             SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
@@ -43,8 +40,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        std::shared_ptr<CEnvironment> Indoor =
-          std::make_shared<CIndoorEnvironment>(roomTemperature, pressure);
+        auto Indoor = Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -54,22 +50,20 @@ protected:
         auto solidLayerThickness2 = 0.005715;
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer1 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness1, solidLayerConductance);
+        auto aSolidLayer1 = Layers::solid(solidLayerThickness1, solidLayerConductance);
 
         // Introducing non default deflection properties
         auto youngsModulus = 8.1e10;
         auto poisonRatio = 0.16;
         aSolidLayer1 =
-          std::make_shared<CIGUSolidLayerDeflection>(*aSolidLayer1, youngsModulus, poisonRatio);
+			Layers::makeDeflectable( aSolidLayer1, youngsModulus, poisonRatio );
 
-        std::shared_ptr<CBaseIGULayer> aSolidLayer2 =
-          std::make_shared<CIGUSolidLayer>(solidLayerThickness2, solidLayerConductance);
+        // Layer will be using default deflection values
+        auto aSolidLayer2 = Layers::solid(solidLayerThickness2, solidLayerConductance);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        std::shared_ptr<CBaseIGULayer> m_GapLayer =
-          std::make_shared<CIGUGapLayer>(gapThickness, gapPressure);
+        auto m_GapLayer = Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         double windowWidth = 1;

@@ -9,12 +9,7 @@ using namespace Gases;
 class TestGasPropertiesVacuum : public testing::Test {
 
 private:
-	CGas Gas;
-
-protected:
-	virtual void SetUp() {
-		// default will be Air
-	}
+	CGas Gas; // Default gas is 100% air
 
 public:
 	CGas & GetGas() {

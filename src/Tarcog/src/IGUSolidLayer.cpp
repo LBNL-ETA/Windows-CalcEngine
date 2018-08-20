@@ -55,7 +55,7 @@ namespace Tarcog
         t_Layer->setSurface(m_Surface.at(Side::Back), Side::Front);
     }
 
-    double CIGUSolidLayer::getConductivity() const
+    double CIGUSolidLayer::getConductance() const
     {
         return m_Conductivity;
     }

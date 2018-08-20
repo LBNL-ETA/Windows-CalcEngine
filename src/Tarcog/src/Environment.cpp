@@ -29,9 +29,9 @@ namespace Tarcog
 
     CEnvironment & CEnvironment::operator=(CEnvironment const & t_Environment)
     {
-        this->CState::operator=(t_Environment);
-        this->CBaseLayer::operator=(t_Environment);
-        this->CGasLayer::operator=(t_Environment);
+        CState::operator=(t_Environment);
+        CBaseLayer::operator=(t_Environment);
+        CGasLayer::operator=(t_Environment);
         m_DirectSolarRadiation = t_Environment.m_DirectSolarRadiation;
         m_Emissivity = t_Environment.m_Emissivity;
         m_HInput = t_Environment.m_HInput;
@@ -60,13 +60,7 @@ namespace Tarcog
         resetCalculated();
     }
 
-    void CEnvironment::setPrescribedConvection(double const t_HInput)
-    {
-        m_HInput = t_HInput;
-        resetCalculated();
-    }
-
-    void CEnvironment::setEnvironmentIR(double const t_InfraRed)
+	void CEnvironment::setEnvironmentIR(double const t_InfraRed)
     {
         setIRFromEnvironment(t_InfraRed);
         m_IRCalculatedOutside = true;

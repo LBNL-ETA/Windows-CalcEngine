@@ -16,6 +16,7 @@
 #include "../src/DirectionalDiffuseCell.hpp"
 #include "../src/LayerSingleComponent.hpp"
 #include "../src/MaterialDescription.hpp"
+#include "../src/Material.hpp"
 #include "../src/OpticalSurface.hpp"
 #include "../src/PerfectDiffuseCellDescription.hpp"
 #include "../src/PerforatedCell.hpp"

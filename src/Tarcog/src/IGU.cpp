@@ -128,7 +128,7 @@ namespace Tarcog
         }
     }
 
-    std::shared_ptr<CBaseLayer> CIGU::getLayer(Environment const t_Environment) const
+    std::shared_ptr<CBaseLayer> CIGU::getEnvironment( Environment t_Environment ) const
     {
         std::shared_ptr<CBaseLayer> aLayer = nullptr;
         switch(t_Environment)
@@ -351,7 +351,7 @@ namespace Tarcog
 
         // First need to calculate new deflections before applying them. Applying them right away
         // will cause that next gap width calculation will already have included one surface
-        // deflected
+        // makeDeflectable
         auto LDefNMax = nominator / denominator;
         auto deflectionRatio = Ldmean() / Ldmax();
 

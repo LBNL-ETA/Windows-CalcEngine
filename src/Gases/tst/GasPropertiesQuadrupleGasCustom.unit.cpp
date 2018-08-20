@@ -6,23 +6,51 @@
 
 using namespace Gases;
 
-// Example that uses built in gas properties
+// Example on how to create and use gases with custom properties.
 
-class TestGasPropertiesQuadrupleGas : public testing::Test
+class TestGasPropertiesQuadrupleGasCustom : public testing::Test
 {
 protected:
     CGas m_Gas;
 
     virtual void SetUp()
     {
-        m_Gas.addGasItem(0.1, Gases::Gas::intance().get(GasDef::Air));
-        m_Gas.addGasItem(0.3, Gases::Gas::intance().get(GasDef::Argon));
-        m_Gas.addGasItem(0.3, Gases::Gas::intance().get(GasDef::Krypton));
-        m_Gas.addGasItem(0.3, Gases::Gas::intance().get(GasDef::Xenon));
+        const CGasData Air{"Air",
+                           28.97,                             // Molecular weight
+                           1.4,                               // Specific heat ratio
+                           {1.002737e+03, 1.2324e-02, 0.0},   // Specific heat coefficients
+                           {2.8733e-03, 7.76e-05, 0.0},       // Conductivity coefficients
+                           {3.7233e-06, 4.94e-08, 0.0}};      // Viscosity coefficients
+
+        const CGasData Argon{"Argon",
+                             39.948,                           // Molecular weight
+                             1.67,                             // Specific heat ratio
+                             {5.21929e+02, 0.0, 0.0},          // Specific heat coefficients
+                             {2.2848e-03, 5.1486e-05, 0.0},    // Conductivity coefficients
+                             {3.3786e-06, 6.4514e-08, 0.0}};   // Viscosity coefficients
+
+        const CGasData Krypton{"Krypton",
+                               83.8,                           // Molecular weight
+                               1.68,                           // Specific heat ratio
+                               {2.4809e+02, 0.0, 0.0},         // Specific heat coefficients
+                               {9.443e-04, 2.8260e-5, 0.0},    // Conductivity coefficients
+                               {2.213e-6, 7.777e-8, 0.0}};     // Viscosity coefficients
+
+        const CGasData Xenon{"Xenon",
+                             131.3,                         // Molecular weight
+                             1.66,                          // Specific heat ratio
+                             {1.5834e+02, 0.0, 0.0},        // Specific heat coefficients
+                             {4.538e-04, 1.723e-05, 0.0},   // Conductivity coefficients
+                             {1.069e-6, 7.414e-8, 0.0}};    // Viscosity coefficients
+
+        m_Gas.addGasItem(0.1, Air);
+        m_Gas.addGasItem(0.3, Argon);
+        m_Gas.addGasItem(0.3, Krypton);
+        m_Gas.addGasItem(0.3, Xenon);
     }
 };
 
-TEST_F(TestGasPropertiesQuadrupleGas, TestSimpleProperties)
+TEST_F(TestGasPropertiesQuadrupleGasCustom, TestSimpleProperties)
 {
     SCOPED_TRACE("Begin Test: Gas Properties (quadruple gas) simple mix - Temperature = 300 [K], "
                  "Pressure = 101325 [Pa]");
@@ -39,7 +67,7 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestSimpleProperties)
     EXPECT_NEAR(0.710622448, aProperties.m_PrandlNumber, 0.0001);
 }
 
-TEST_F(TestGasPropertiesQuadrupleGas, TestSimplePropertiesRepeat)
+TEST_F(TestGasPropertiesQuadrupleGasCustom, TestSimplePropertiesRepeat)
 {
     SCOPED_TRACE("Begin Test: Gas Properties (quadruple gas) simple mix - Temperature = 300 [K], "
                  "Pressure = 101325 [Pa] (Repeatability)");
@@ -56,7 +84,7 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestSimplePropertiesRepeat)
     EXPECT_NEAR(0.710622448, aProperties.m_PrandlNumber, 0.0001);
 }
 
-TEST_F(TestGasPropertiesQuadrupleGas, TestRealProperties)
+TEST_F(TestGasPropertiesQuadrupleGasCustom, TestRealProperties)
 {
     SCOPED_TRACE("Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], "
                  "Pressure = 101325 [Pa]");
@@ -73,7 +101,7 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealProperties)
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 
-TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesRepeat)
+TEST_F(TestGasPropertiesQuadrupleGasCustom, TestRealPropertiesRepeat)
 {
     SCOPED_TRACE("Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], "
                  "Pressure = 101325 [Pa] (Repeatability)");
@@ -90,7 +118,7 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesRepeat)
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 
-TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressure)
+TEST_F(TestGasPropertiesQuadrupleGasCustom, TestRealPropertiesLowPressure)
 {
     SCOPED_TRACE("Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], "
                  "Pressure = 90,000 [Pa]");
@@ -107,7 +135,7 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressure)
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 
-TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressureRepeat)
+TEST_F(TestGasPropertiesQuadrupleGasCustom, TestRealPropertiesLowPressureRepeat)
 {
     SCOPED_TRACE("Begin Test: Gas Properties (quadruple gas) real mix - Temperature = 300 [K], "
                  "Pressure = 90,000 [Pa] (Repeatability)");
@@ -124,7 +152,7 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressureRepeat)
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 
-TEST_F(TestGasPropertiesQuadrupleGas, TotalPercents)
+TEST_F(TestGasPropertiesQuadrupleGasCustom, TotalPercents)
 {
     SCOPED_TRACE("Begin Test: Gas Properties (quadruple gas) - Total percents.");
 

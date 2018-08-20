@@ -101,13 +101,13 @@ namespace SingleLayerOptics {
 	// for shading device materials
 	class CMaterialSingleBand : public CMaterial {
 	public:
-		CMaterialSingleBand( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb,
-		                     const double minLambda, const double maxLambda );
-		CMaterialSingleBand( const double t_Tf, const double t_Tb, const double t_Rf, const double t_Rb,
-		                     const FenestrationCommon::WavelengthRange t_Range );
+		CMaterialSingleBand( double t_Tf, double t_Tb, double t_Rf, double t_Rb,
+		                     double minLambda, double maxLambda );
+		CMaterialSingleBand( double t_Tf, double t_Tb, double t_Rf, double t_Rb,
+		                     FenestrationCommon::WavelengthRange t_Range );
 
-		double getProperty( const FenestrationCommon::Property t_Property,
-		                    const FenestrationCommon::Side t_Side ) const;
+		double getProperty( FenestrationCommon::Property t_Property,
+		                    FenestrationCommon::Side t_Side ) const override;
 
 		std::vector< double >
 		getBandProperties( const FenestrationCommon::Property t_Property, const FenestrationCommon::Side t_Side ) const;

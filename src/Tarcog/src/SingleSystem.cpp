@@ -40,14 +40,14 @@ namespace Tarcog
               "Outdoor environment has not been assigned to the system. Null value passed.");
         }
 
-        const auto aIndoorLayer = m_IGU.getLayer(Environment::Indoor);
+        const auto aIndoorLayer = m_IGU.getEnvironment( Environment::Indoor );
         auto aIndoor = m_Environment.at(Environment::Indoor);
         aIndoor->connectToIGULayer(aIndoorLayer);
         aIndoor->setTilt(m_IGU.getTilt());
         aIndoor->setWidth(m_IGU.getWidth());
         aIndoor->setHeight(m_IGU.getHeight());
 
-        const auto aOutdoorLayer = m_IGU.getLayer(Environment::Outdoor);
+        const auto aOutdoorLayer = m_IGU.getEnvironment( Environment::Outdoor );
         auto aOutdoor = m_Environment.at(Environment::Outdoor);
         aOutdoor->connectToIGULayer(aOutdoorLayer);
         aOutdoor->setTilt(m_IGU.getTilt());
@@ -72,12 +72,12 @@ namespace Tarcog
         m_IGU = t_SingleSystem.m_IGU;
         m_Environment[Environment::Indoor] =
           t_SingleSystem.m_Environment.at(Environment::Indoor)->cloneEnvironment();
-        const auto aLastLayer = m_IGU.getLayer(Environment::Indoor);
+        const auto aLastLayer = m_IGU.getEnvironment( Environment::Indoor );
         m_Environment.at(Environment::Indoor)->connectToIGULayer(aLastLayer);
 
         m_Environment[Environment::Outdoor] =
           t_SingleSystem.m_Environment.at(Environment::Outdoor)->cloneEnvironment();
-        const auto aFirstLayer = m_IGU.getLayer(Environment::Outdoor);
+        const auto aFirstLayer = m_IGU.getEnvironment( Environment::Outdoor );
         m_Environment.at(Environment::Outdoor)->connectToIGULayer(aFirstLayer);
 
         initializeStartValues();
