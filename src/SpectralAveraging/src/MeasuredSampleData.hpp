@@ -4,47 +4,66 @@
 #include <vector>
 #include <memory>
 
-namespace FenestrationCommon {
-
-	class CSeries;
-
+namespace FenestrationCommon
+{
+    class CSeries;
 }
 
-namespace SpectralAveraging {
+namespace SpectralAveraging
+{
+    enum class SampleData
+    {
+        T,
+        Rf,
+        Rb,
+        AbsF,
+        AbsB
+    };
 
-	enum class SampleData { T, Rf, Rb, AbsF, AbsB };
+    struct MeasuredRow {
+    	MeasuredRow(double wl, double t, double rf, double rb);
+    	double wavelength;
+    	double T;
+    	double Rf;
+    	double Rb;
+    };
 
-	// Measured sample data for given wavelengths.
-	class CSpectralSampleData {
-	public:
-		virtual ~CSpectralSampleData() = default;
-		CSpectralSampleData();
+    // Measured sample data for given wavelengths.
+    class CSpectralSampleData
+    {
+    public:
+        virtual ~CSpectralSampleData() = default;
+        CSpectralSampleData();
 
-		void addRecord( double t_Wavelength, double t_Transmittance, double t_ReflectanceFront,
-		                double t_ReflectanceBack );
-		std::shared_ptr< FenestrationCommon::CSeries > properties( SampleData t_Property );
-		virtual std::vector< double > getWavelengths() const;
-		virtual void interpolate( std::vector< double > const& t_Wavelengths );
+        explicit CSpectralSampleData( const std::initializer_list<MeasuredRow> & tValues);
 
-		bool Flipped() const;
-		virtual void Filpped( bool const t_Flipped );
+        void addRecord(double t_Wavelength,
+                       double t_Transmittance,
+                       double t_ReflectanceFront,
+                       double t_ReflectanceBack);
+        std::shared_ptr<FenestrationCommon::CSeries> properties(SampleData t_Property);
+        virtual std::vector<double> getWavelengths() const;
+        virtual void interpolate(std::vector<double> const & t_Wavelengths);
 
-	protected:
-		virtual void calculateProperties();
-		void reset();
+        bool Flipped() const;
+        virtual void Filpped(bool const t_Flipped);
 
-		std::shared_ptr< FenestrationCommon::CSeries > m_Transmittances;
-		std::shared_ptr< FenestrationCommon::CSeries > m_ReflectancesFront;
-		std::shared_ptr< FenestrationCommon::CSeries > m_ReflectancesBack;
+    protected:
+        virtual void calculateProperties();
+        void reset();
 
-		// Calculated from sample measurements
-		std::shared_ptr< FenestrationCommon::CSeries > m_AbsorptancesFront;
-		std::shared_ptr< FenestrationCommon::CSeries > m_AbsorptancesBack;
+        std::shared_ptr<FenestrationCommon::CSeries> m_Transmittances;
+        std::shared_ptr<FenestrationCommon::CSeries> m_ReflectancesFront;
+        std::shared_ptr<FenestrationCommon::CSeries> m_ReflectancesBack;
 
-		bool m_Flipped;
-		bool m_absCalculated;
-	};
+        // Calculated from sample measurements
+        std::shared_ptr<FenestrationCommon::CSeries> m_AbsorptancesFront;
+        std::shared_ptr<FenestrationCommon::CSeries> m_AbsorptancesBack;
 
-}
+        bool m_Flipped;
+        bool m_absCalculated;
+    };
+
+}   // namespace SpectralAveraging
 
 #endif
