@@ -305,14 +305,8 @@ protected:
         auto Layer_Perforated = CBSDFLayerMaker::getRectangularPerforatedLayer(
           aMaterialPerforated, aBSDF, x, y, thickness, xHole, yHole);
 
-        std::vector<double> commonWavelengths = Layer_102->getBandWavelengths();
-
-        // Equivalent multilayer
-        std::shared_ptr<CEquivalentBSDFLayer> aEqLayer =
-          std::make_shared<CEquivalentBSDFLayer>(commonWavelengths, Layer_102);
-        aEqLayer->addLayer(Layer_Perforated);
-
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, loadSolarRadiationFile());
+        m_Layer = std::make_shared<CMultiPaneBSDF>(Layer_102, loadSolarRadiationFile());
+        m_Layer->addLayer(Layer_Perforated);
     }
 
 public:

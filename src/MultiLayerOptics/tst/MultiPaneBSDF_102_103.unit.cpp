@@ -394,10 +394,10 @@ protected:
         // Create material from samples
         double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-			loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
         thickness = 5.715e-3;   // [m]
         auto aMaterial_103 = SingleLayerOptics::Material::nBandMaterial(
-			loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // BSDF definition is needed as well as its material representation
         auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
@@ -413,12 +413,9 @@ protected:
         std::vector<double> commonWavelengths =
           aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
-        // Equivalent BSDF layer
-        std::shared_ptr<CEquivalentBSDFLayer> aEqLayer =
-          std::make_shared<CEquivalentBSDFLayer>(commonWavelengths, Layer_102);
-        aEqLayer->addLayer(Layer_103);
-
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, loadSolarRadiationFile());
+        m_Layer =
+          std::make_shared<CMultiPaneBSDF>(Layer_102, commonWavelengths, loadSolarRadiationFile());
+        m_Layer->addLayer(Layer_103);
     }
 
 public:

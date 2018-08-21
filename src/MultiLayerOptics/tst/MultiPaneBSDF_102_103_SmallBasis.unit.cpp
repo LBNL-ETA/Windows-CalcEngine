@@ -405,12 +405,8 @@ protected:
 
 		std::vector< double > commonWavelengths = aCommonWL.getCombinedWavelengths( Combine::Interpolate );
 
-		// Equivalent BSDF layer
-		std::shared_ptr< CEquivalentBSDFLayer > aEqLayer =
-			std::make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );
-		aEqLayer->addLayer( Layer_103 );
-
-		m_Layer = std::make_shared< CMultiPaneBSDF >( aEqLayer, loadSolarRadiationFile() );
+		m_Layer = std::make_shared< CMultiPaneBSDF >( Layer_102, commonWavelengths, loadSolarRadiationFile() );
+		m_Layer->addLayer(Layer_103);
 
 	}
 

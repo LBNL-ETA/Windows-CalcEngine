@@ -302,13 +302,8 @@ protected:
 				slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments,
 				DistributionMethod::UniformDiffuse);
 
-		std::vector< double > commonWavelengths = Layer_102->getBandWavelengths();
-
-		std::shared_ptr< CEquivalentBSDFLayer > aEqLayer =
-			std::make_shared< CEquivalentBSDFLayer >( commonWavelengths, Layer_102 );
-		aEqLayer->addLayer( Layer_Venetian );
-
-		m_Layer = std::make_shared< CMultiPaneBSDF >( aEqLayer, loadSolarRadiationFile() );
+		m_Layer = std::make_shared< CMultiPaneBSDF >( Layer_102, loadSolarRadiationFile() );
+		m_Layer->addLayer(Layer_Venetian);
 
 	}
 

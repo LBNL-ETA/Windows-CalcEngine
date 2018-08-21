@@ -22,8 +22,8 @@ protected:
         double Rbmat = 0.75;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterialSingleBand> aMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        auto aMaterial = SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat,
+        	Rbmat, minLambda, maxLambda);
 
         // make cell geometry
         double diameter = 6.35;   // mm

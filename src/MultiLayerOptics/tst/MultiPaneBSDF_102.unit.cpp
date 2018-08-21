@@ -283,11 +283,7 @@ protected:
         auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
-        // Equivalent BSDF layer
-        auto aEqLayer =
-          std::make_shared<CEquivalentBSDFLayer>(Layer_102->getBandWavelengths(), Layer_102);
-
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, loadSolarRadiationFile());
+        m_Layer = std::make_shared<CMultiPaneBSDF>(Layer_102, loadSolarRadiationFile());
     }
 
 public:

@@ -5,6 +5,7 @@
 
 #include "MultiPaneBSDF.hpp"
 #include "EquivalentBSDFLayer.hpp"
+#include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
@@ -13,12 +14,14 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    CMultiPaneBSDF::CMultiPaneBSDF(const std::shared_ptr<CEquivalentBSDFLayer> & t_Layer,
+    CMultiPaneBSDF::CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                                   const std::vector<double> & t_CommonWavelengths,
                                    const p_Series & t_SolarRadiation,
                                    const p_VectorSeries & t_IncomingSpectra) :
-        m_Layer(t_Layer),
+        m_Layer(t_CommonWavelengths, t_Layer),
         m_SolarRadiationInit(t_SolarRadiation),
-        m_Results(std::make_shared<CBSDFIntegrator>(t_Layer->getDirections(BSDFDirection::Incoming))),
+        m_Results(
+          std::make_shared<CBSDFIntegrator>(t_Layer->getDirections(BSDFDirection::Incoming))),
         m_Calculated(false),
         m_MinLambdaCalculated(0),
         m_MaxLambdaCalculated(0),
@@ -31,7 +34,7 @@ namespace MultiLayerOptics
         }
 
         // This will initialize layer material data with given spectral distribution
-        t_Layer->setSolarRadiation(m_SolarRadiationInit);
+        m_Layer.setSolarRadiation(m_SolarRadiationInit);
 
         size_t directionsSize = t_Layer->getDirections(BSDFDirection::Incoming).size();
         m_IncomingSolar.resize(directionsSize);
@@ -39,7 +42,8 @@ namespace MultiLayerOptics
         {
             if(t_IncomingSpectra->size() != directionsSize)
             {
-                throw std::runtime_error("Provided spectra size does not match BSDF of the layers.");
+                throw std::runtime_error(
+                  "Provided spectra size does not match BSDF of the layers.");
             }
             m_IncomingSpectra = t_IncomingSpectra;
         }
@@ -54,23 +58,39 @@ namespace MultiLayerOptics
         }
     }
 
-    SquareMatrix CMultiPaneBSDF::getMatrix(const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property)
+    CMultiPaneBSDF::CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                                   const p_Series & t_SolarRadiation,
+                                   const p_VectorSeries & t_IncomingSpectra) :
+        CMultiPaneBSDF(t_Layer, t_Layer->getBandWavelengths(), t_SolarRadiation, t_IncomingSpectra)
+    {}
+
+    SquareMatrix CMultiPaneBSDF::getMatrix(const double minLambda,
+                                           const double maxLambda,
+                                           const Side t_Side,
+                                           const PropertySimple t_Property)
     {
         calculate(minLambda, maxLambda);
 
         return m_Results->getMatrix(t_Side, t_Property);
     }
 
-    double CMultiPaneBSDF::DirDir(
-      const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi)
+    double CMultiPaneBSDF::DirDir(const double minLambda,
+                                  const double maxLambda,
+                                  const Side t_Side,
+                                  const PropertySimple t_Property,
+                                  const double t_Theta,
+                                  const double t_Phi)
     {
         calculate(minLambda, maxLambda);
 
         return m_Results->DirDir(t_Side, t_Property, t_Theta, t_Phi);
     }
 
-    double
-      CMultiPaneBSDF::DirDir(const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property, const size_t Index)
+    double CMultiPaneBSDF::DirDir(const double minLambda,
+                                  const double maxLambda,
+                                  const Side t_Side,
+                                  const PropertySimple t_Property,
+                                  const size_t Index)
     {
         calculate(minLambda, maxLambda);
 
@@ -79,16 +99,19 @@ namespace MultiLayerOptics
 
     void CMultiPaneBSDF::calculate(const double minLambda, const double maxLambda)
     {
-        if(!m_Calculated || minLambda != m_MinLambdaCalculated || maxLambda != m_MaxLambdaCalculated)
+        if(!m_Calculated || minLambda != m_MinLambdaCalculated
+           || maxLambda != m_MaxLambdaCalculated)
         {
             m_IncomingSolar.clear();
 
             for(std::shared_ptr<CSeries> & aSpectra : *m_IncomingSpectra)
             {
-                // each incoming spectra must be intepolated to same wavelengths as this IGU is using
-                aSpectra = aSpectra->interpolate(m_Layer->getCommonWavelengths());
+                // each incoming spectra must be intepolated to same wavelengths as this IGU is
+                // using
+                aSpectra = aSpectra->interpolate(m_Layer.getCommonWavelengths());
 
-                std::shared_ptr<CSeries> iTotalSolar = aSpectra->integrate(m_Integrator, m_NormalizationCoefficient);
+                std::shared_ptr<CSeries> iTotalSolar =
+                  aSpectra->integrate(m_Integrator, m_NormalizationCoefficient);
                 m_IncomingSolar.push_back(iTotalSolar->sum(minLambda, maxLambda));
             }
 
@@ -99,7 +122,7 @@ namespace MultiLayerOptics
             {
                 // It is important to take a copy of aTotalA because it will be used to
                 // multiply and integrate later and local values will change
-                CMatrixSeries aTotalA = *m_Layer->getTotalA(aSide);
+                CMatrixSeries aTotalA = *m_Layer.getTotalA(aSide);
                 aTotalA.mMult(*m_IncomingSpectra);
                 aTotalA.integrate(m_Integrator, m_NormalizationCoefficient);
                 m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
@@ -107,15 +130,17 @@ namespace MultiLayerOptics
                 {
                     // Same as for aTotalA. Copy need to be taken because of multiplication
                     // and integration
-                    CMatrixSeries aTot = *m_Layer->getTotal(aSide, aProprerty);
+                    CMatrixSeries aTot = *m_Layer.getTotal(aSide, aProprerty);
                     aTot.mMult(*m_IncomingSpectra);
                     aTot.integrate(m_Integrator, m_NormalizationCoefficient);
-                    aResults[std::make_pair(aSide, aProprerty)] = aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
+                    aResults[std::make_pair(aSide, aProprerty)] =
+                      aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
                 }
 
                 // Update result matrices
-                m_Results->setResultMatrices(
-                  aResults.at(std::make_pair(aSide, PropertySimple::T)), aResults.at(std::make_pair(aSide, PropertySimple::R)), aSide);
+                m_Results->setResultMatrices(aResults.at(std::make_pair(aSide, PropertySimple::T)),
+                                             aResults.at(std::make_pair(aSide, PropertySimple::R)),
+                                             aSide);
             }
 
             // calculate hemispherical absorptances
@@ -140,63 +165,98 @@ namespace MultiLayerOptics
             std::vector<double> aAbs = *(*m_Abs[t_Side])[layNum];
             assert(aAbs.size() == aLambdas.size());
             std::vector<double> mult(aLambdas.size());
-            std::transform(aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), std::multiplies<double>());
+            std::transform(aLambdas.begin(),
+                           aLambdas.end(),
+                           aAbs.begin(),
+                           mult.begin(),
+                           std::multiplies<double>());
             double sum = std::accumulate(mult.begin(), mult.end(), 0.0) / PI;
             m_AbsHem[t_Side]->push_back(sum);
         }
     }
 
-    std::shared_ptr<std::vector<double>> CMultiPaneBSDF::Abs(const double minLambda, const double maxLambda, const Side t_Side, const size_t Index)
+    std::shared_ptr<std::vector<double>> CMultiPaneBSDF::Abs(const double minLambda,
+                                                             const double maxLambda,
+                                                             const Side t_Side,
+                                                             const size_t Index)
     {
         calculate(minLambda, maxLambda);
         return (*m_Abs.at(t_Side))[Index - 1];
     }
 
-    std::vector<double> CMultiPaneBSDF::DirHem(const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property)
+    std::vector<double> CMultiPaneBSDF::DirHem(const double minLambda,
+                                               const double maxLambda,
+                                               const Side t_Side,
+                                               const PropertySimple t_Property)
     {
         calculate(minLambda, maxLambda);
         return m_Results->DirHem(t_Side, t_Property);
     }
 
-    double CMultiPaneBSDF::DirHem(
-      const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi)
+    double CMultiPaneBSDF::DirHem(const double minLambda,
+                                  const double maxLambda,
+                                  const Side t_Side,
+                                  const PropertySimple t_Property,
+                                  const double t_Theta,
+                                  const double t_Phi)
     {
         const auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
         return DirHem(minLambda, maxLambda, t_Side, t_Property)[aIndex];
     }
 
-    double
-      CMultiPaneBSDF::DirHem(const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property, const size_t Index)
+    double CMultiPaneBSDF::DirHem(const double minLambda,
+                                  const double maxLambda,
+                                  const Side t_Side,
+                                  const PropertySimple t_Property,
+                                  const size_t Index)
     {
         return DirHem(minLambda, maxLambda, t_Side, t_Property)[Index];
     }
 
-    double CMultiPaneBSDF::Abs(
-      const double minLambda, const double maxLambda, const Side t_Side, const size_t layerIndex, const double t_Theta, const double t_Phi)
+    double CMultiPaneBSDF::Abs(const double minLambda,
+                               const double maxLambda,
+                               const Side t_Side,
+                               const size_t layerIndex,
+                               const double t_Theta,
+                               const double t_Phi)
     {
         auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
         return (*Abs(minLambda, maxLambda, t_Side, layerIndex))[aIndex];
     }
 
-    double CMultiPaneBSDF::Abs(const double minLambda, const double maxLambda, const Side t_Side, const size_t layerIndex, const size_t beamIndex)
+    double CMultiPaneBSDF::Abs(const double minLambda,
+                               const double maxLambda,
+                               const Side t_Side,
+                               const size_t layerIndex,
+                               const size_t beamIndex)
     {
         return (*Abs(minLambda, maxLambda, t_Side, layerIndex))[beamIndex];
     }
 
-    double CMultiPaneBSDF::DiffDiff(const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property)
+    double CMultiPaneBSDF::DiffDiff(const double minLambda,
+                                    const double maxLambda,
+                                    const Side t_Side,
+                                    const PropertySimple t_Property)
     {
         calculate(minLambda, maxLambda);
         return m_Results->DiffDiff(t_Side, t_Property);
     }
 
-    double CMultiPaneBSDF::AbsDiff(const double minLambda, const double maxLambda, const Side t_Side, const size_t t_LayerIndex)
+    double CMultiPaneBSDF::AbsDiff(const double minLambda,
+                                   const double maxLambda,
+                                   const Side t_Side,
+                                   const size_t t_LayerIndex)
     {
         calculate(minLambda, maxLambda);
         return (*m_AbsHem[t_Side])[t_LayerIndex - 1];
     }
 
-    double CMultiPaneBSDF::energy(
-      const double minLambda, const double maxLambda, const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi)
+    double CMultiPaneBSDF::energy(const double minLambda,
+                                  const double maxLambda,
+                                  const Side t_Side,
+                                  const PropertySimple t_Property,
+                                  const double t_Theta,
+                                  const double t_Phi)
     {
         calculate(minLambda, maxLambda);
         const auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
@@ -205,8 +265,12 @@ namespace MultiLayerOptics
         return dirHem * solarRadiation;
     }
 
-    double CMultiPaneBSDF::energyAbs(
-      const double minLambda, const double maxLambda, const Side t_Side, const size_t Index, const double t_Theta, const double t_Phi)
+    double CMultiPaneBSDF::energyAbs(const double minLambda,
+                                     const double maxLambda,
+                                     const Side t_Side,
+                                     const size_t Index,
+                                     const double t_Theta,
+                                     const double t_Phi)
     {
         calculate(minLambda, maxLambda);
         auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
@@ -215,10 +279,17 @@ namespace MultiLayerOptics
         return abs * solarRadiation;
     }
 
-    void CMultiPaneBSDF::setIntegrationType(FenestrationCommon::IntegrationType t_type, double normalizationCoefficient)
+    void CMultiPaneBSDF::setIntegrationType(FenestrationCommon::IntegrationType t_type,
+                                            double normalizationCoefficient)
     {
         m_NormalizationCoefficient = normalizationCoefficient;
         m_Integrator = t_type;
+    }
+
+    void CMultiPaneBSDF::addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer)
+    {
+        m_Layer.addLayer(t_Layer);
+        m_Layer.setSolarRadiation(m_SolarRadiationInit);
     }
 
 }   // namespace MultiLayerOptics
