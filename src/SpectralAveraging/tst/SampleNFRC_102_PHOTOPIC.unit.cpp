@@ -173,7 +173,7 @@ protected:
     std::shared_ptr<CSeries> getDetectorData() const
     {
         auto detectorData =
-          wce::make_unique<CSeries>(std::initializer_list<std::pair<double, double>>({
+          std::make_shared<CSeries>(std::initializer_list<std::pair<double, double>>({
 
             {0.380, 0.0000}, {0.385, 0.0001}, {0.390, 0.0001}, {0.395, 0.0002}, {0.400, 0.0004},
             {0.405, 0.0006}, {0.410, 0.0012}, {0.415, 0.0022}, {0.420, 0.0040}, {0.425, 0.0073},
