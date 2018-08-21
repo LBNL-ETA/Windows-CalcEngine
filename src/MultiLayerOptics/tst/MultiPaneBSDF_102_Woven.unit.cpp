@@ -299,14 +299,8 @@ protected:
         // Perforated layer is created here
         auto LayerWoven= CBSDFLayerMaker::getWovenLayer( aMaterial, aBSDF, diameter, spacing);
 
-        std::vector<double> commonWavelengths = Layer_102->getBandWavelengths();
-
-        // Equivalent multilayer
-        std::shared_ptr<CEquivalentBSDFLayer> aEqLayer =
-          std::make_shared<CEquivalentBSDFLayer>(commonWavelengths, Layer_102);
-        aEqLayer->addLayer(LayerWoven);
-
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, loadSolarRadiationFile());
+        m_Layer = std::make_shared<CMultiPaneBSDF>(Layer_102, loadSolarRadiationFile());
+        m_Layer->addLayer(LayerWoven);
     }
 
 public:

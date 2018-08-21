@@ -340,10 +340,8 @@ protected:
     virtual void SetUp()
     {
         double thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_102(),
-                                                                        thickness,
-                                                                        MaterialType::Monolithic,
-                                                                        WavelengthRange::Solar);
+        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Small);
 
@@ -352,11 +350,8 @@ protected:
 
 
         thickness = 1.5e-3;   // [m]
-        auto aMaterial_Venetian =
-          SingleLayerOptics::Material::nBandMaterial(loadVenetianBlindMaterial(),
-                                                     thickness,
-                                                     MaterialType::Monolithic,
-                                                     WavelengthRange::Solar);
+        auto aMaterial_Venetian = SingleLayerOptics::Material::nBandMaterial(
+          loadVenetianBlindMaterial(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // make cell geometry
         double slatWidth = 0.016;     // m
@@ -375,15 +370,11 @@ protected:
                                                            numOfSlatSegments,
                                                            DistributionMethod::UniformDiffuse);
 
-        // All integration will be performed over wavelengths that are specified in NFRC=102
         std::vector<double> commonWavelengths = aVenetian->getBandWavelengths();
 
-        std::shared_ptr<CEquivalentBSDFLayer> aEqLayer =
-          std::make_shared<CEquivalentBSDFLayer>(commonWavelengths, Layer_102);
-        aEqLayer->addLayer(aVenetian);
-
-        std::shared_ptr<CSeries> aSolarRadiation = loadSolarRadiationFile();
-        m_Layer = std::make_shared<CMultiPaneBSDF>(aEqLayer, aSolarRadiation);
+        m_Layer =
+          std::make_shared<CMultiPaneBSDF>(Layer_102, commonWavelengths, loadSolarRadiationFile());
+        m_Layer->addLayer(aVenetian);
     }
 
 public:

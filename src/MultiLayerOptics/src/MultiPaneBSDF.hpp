@@ -6,120 +6,159 @@
 #include <map>
 #include <WCECommon.hpp>
 
-namespace FenestrationCommon {
+#include "EquivalentBSDFLayer.hpp"
 
-	class CSeries;
-	class SquareMatrix;
-	enum class Side;
-	enum class PropertySimple;
+namespace FenestrationCommon
+{
+    class CSeries;
+    class SquareMatrix;
+    enum class Side;
+    enum class PropertySimple;
 
+}   // namespace FenestrationCommon
+
+namespace SingleLayerOptics
+{
+    class CBSDFIntegrator;
 }
 
-namespace SingleLayerOptics {
+namespace MultiLayerOptics
+{
+    class CEquivalentBSDFLayer;
 
-	class CBSDFIntegrator;
+    typedef std::shared_ptr<FenestrationCommon::CSeries> p_Series;
+    typedef std::shared_ptr<std::vector<p_Series>> p_VectorSeries;
 
-}
+    class CMultiPaneBSDF
+    {
+    public:
+        // t_SolarRadiation is spectra used for initialization of material properties in the layers
+        // t_IncomingSpectra is solar radiation distribution used to calculate actual data.
+        // If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming
+        // spectra for every direction
+        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                       const std::vector<double> & t_CommonWavelengths,
+                       const p_Series & t_SolarRadiation,
+                       const p_VectorSeries & t_IncomingSpectra = nullptr);
 
-namespace MultiLayerOptics {
+        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                       const p_Series & t_SolarRadiation,
+                       const p_VectorSeries & t_IncomingSpectra = nullptr);
 
-	class CEquivalentBSDFLayer;
+        void setIntegrationType(FenestrationCommon::IntegrationType t_type,
+                                double normalizationCoefficient);
 
-	typedef std::shared_ptr< FenestrationCommon::CSeries > p_Series;
-	typedef std::shared_ptr< std::vector< p_Series > > p_VectorSeries;
+		void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
 
-	class CMultiPaneBSDF {
-	public:
-		// t_SolarRadiation is spectra used for initialization of material properties in the layers
-		// t_IncomingSpectra is solar radiation distribution used to calculate actual data.
-		// If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming spectra
-		// for every direction
-		CMultiPaneBSDF( const std::shared_ptr< CEquivalentBSDFLayer >& t_Layer,
-		                const p_Series & t_SolarRadiation,
-		                const p_VectorSeries& t_IncomingSpectra = nullptr );
+        // Whole matrix results
+        FenestrationCommon::SquareMatrix getMatrix(double minLambda,
+                                                   double maxLambda,
+                                                   FenestrationCommon::Side t_Side,
+                                                   FenestrationCommon::PropertySimple t_Property);
 
-		void setIntegrationType( FenestrationCommon::IntegrationType t_type, double normalizationCoefficient );
+        double DirDir(double minLambda,
+                      double maxLambda,
+                      FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      double t_Theta,
+                      double t_Phi);
+        double DirDir(double minLambda,
+                      double maxLambda,
+                      FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      size_t Index);
 
-		// Whole matrix results
-            FenestrationCommon::SquareMatrix getMatrix(
-                const double minLambda,
-                const double maxLambda,
-                const FenestrationCommon::Side t_Side,
-                const FenestrationCommon::PropertySimple t_Property);
+        // std::vector of layer by layer absorptances for each incoming direction
+        std::shared_ptr<std::vector<double>>
+          Abs(double minLambda, double maxLambda, FenestrationCommon::Side t_Side, size_t Index);
 
-		double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
-		               const FenestrationCommon::PropertySimple t_Property, const double t_Theta, const double t_Phi );
-		double DirDir( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
-		               const FenestrationCommon::PropertySimple t_Property, const size_t Index );
+        // Hemispherical results for every direction
+        std::vector<double> DirHem(double minLambda,
+                                   double maxLambda,
+                                   FenestrationCommon::Side t_Side,
+                                   FenestrationCommon::PropertySimple t_Property);
 
-		// std::vector of layer by layer absorptances for each incoming direction
-		std::shared_ptr< std::vector< double > > Abs( const double minLambda, const double maxLambda,
-		                                              const FenestrationCommon::Side t_Side, const size_t Index );
+        // Directional hemispherical results for given Theta and Phi direction
+        double DirHem(double minLambda,
+                      double maxLambda,
+                      FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      double t_Theta,
+                      double t_Phi);
+        double DirHem(double minLambda,
+                      double maxLambda,
+                      FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      size_t Index);
 
-		// Hemispherical results for every direction
-            std::vector<double> DirHem(const double minLambda,
-                                       const double maxLambda,
-                                       const FenestrationCommon::Side t_Side,
-                                       const FenestrationCommon::PropertySimple t_Property);
+        double Abs(double minLambda,
+                   double maxLambda,
+                   FenestrationCommon::Side t_Side,
+                   size_t layerIndex,
+                   double t_Theta,
+                   double t_Phi);
+        double Abs(double minLambda,
+                   double maxLambda,
+                   FenestrationCommon::Side t_Side,
+                   size_t layerIndex,
+                   size_t beamIndex);
 
-		// Directional hemispherical results for given Theta and Phi direction
-		double DirHem( const double minLambda, const double maxLambda,
-		               const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property,
-		               const double t_Theta, const double t_Phi );
-		double DirHem( const double minLambda, const double maxLambda,
-		               const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property,
-		               const size_t Index );
+        // Diffuse to diffuse properties
+        double DiffDiff(double minLambda,
+                        double maxLambda,
+                        FenestrationCommon::Side t_Side,
+                        FenestrationCommon::PropertySimple t_Property);
 
-		double Abs( const double minLambda, const double maxLambda,
-		            const FenestrationCommon::Side t_Side, const size_t layerIndex, const double t_Theta, const double t_Phi );
-		double Abs( const double minLambda, const double maxLambda,
-		            const FenestrationCommon::Side t_Side, const size_t layerIndex, const size_t beamIndex );
+        double AbsDiff(double minLambda,
+                       double maxLambda,
+                       FenestrationCommon::Side t_Side,
+                       size_t t_LayerIndex);
 
-		// Diffuse to diffuse properties
-		double DiffDiff( const double minLambda, const double maxLambda,
-		                 const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property );
+        // Energy that gets transmitted or reflected from certain direction
+        double energy(double minLambda,
+                      double maxLambda,
+                      FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      double t_Theta,
+                      double t_Phi);
 
-		double AbsDiff( const double minLambda, const double maxLambda, const FenestrationCommon::Side t_Side,
-		                const size_t t_LayerIndex );
+        double energyAbs(double minLambda,
+                         double maxLambda,
+                         FenestrationCommon::Side t_Side,
+                         size_t Index,
+                         double t_Theta,
+                         double t_Phi);
 
-		// Energy that gets transmitted or reflected from certain direction
-		double energy( const double minLambda, const double maxLambda,
-		               const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property,
-		               const double t_Theta, const double t_Phi );
+    private:
+        void calculate(double minLambda, double maxLambda);
 
-		double energyAbs( const double minLambda, const double maxLambda,
-		                  const FenestrationCommon::Side t_Side, const size_t Index, const double t_Theta, const double t_Phi );
+        void calcHemisphericalAbs(FenestrationCommon::Side t_Side);
 
-	private:
-		void calculate( const double minLambda, const double maxLambda );
+        CEquivalentBSDFLayer m_Layer;
 
-		void calcHemisphericalAbs( const FenestrationCommon::Side t_Side );
+        // Solar radiation for initialization
+        std::shared_ptr<FenestrationCommon::CSeries> m_SolarRadiationInit;
 
-		std::shared_ptr< CEquivalentBSDFLayer > m_Layer;
+        p_VectorSeries m_IncomingSpectra;
+        std::vector<double> m_IncomingSolar;
 
-		// Solar radiation for initialization
-		std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiationInit;
+        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_Results;
 
-		p_VectorSeries m_IncomingSpectra;
-		std::vector< double > m_IncomingSolar;
+        std::map<FenestrationCommon::Side,
+                 std::shared_ptr<std::vector<std::shared_ptr<std::vector<double>>>>>
+          m_Abs;
 
-		std::shared_ptr< SingleLayerOptics::CBSDFIntegrator > m_Results;
+        // Hemispherical absorptances for every layer
+        std::map<FenestrationCommon::Side, std::shared_ptr<std::vector<double>>> m_AbsHem;
 
-		std::map< FenestrationCommon::Side,
-		          std::shared_ptr< std::vector< std::shared_ptr< std::vector< double > > > > > m_Abs;
+        bool m_Calculated;
+        double m_MinLambdaCalculated;
+        double m_MaxLambdaCalculated;
 
-		// Hemispherical absorptances for every layer
-		std::map< FenestrationCommon::Side, std::shared_ptr< std::vector< double > > > m_AbsHem;
+        FenestrationCommon::IntegrationType m_Integrator;
+        double m_NormalizationCoefficient;
+    };
 
-		bool m_Calculated;
-		double m_MinLambdaCalculated;
-		double m_MaxLambdaCalculated;
-
-		FenestrationCommon::IntegrationType m_Integrator;
-		double m_NormalizationCoefficient;
-
-	};
-
-}
+}   // namespace MultiLayerOptics
 
 #endif
