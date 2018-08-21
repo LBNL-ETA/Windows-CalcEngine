@@ -16,7 +16,7 @@ protected:
     std::shared_ptr<CSeries> getSolarRadiation() const
     {
         auto solarRadiation =
-          wce::make_unique<CSeries>(std::initializer_list<std::pair<double, double>>({
+          std::make_shared<CSeries>(std::initializer_list<std::pair<double, double>>({
 
             // Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
             {0.3000, 0.034100},  {0.3010, 0.360140},  {0.3020, 0.686180},  {0.3030, 1.012220},
