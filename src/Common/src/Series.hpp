@@ -45,7 +45,7 @@ namespace FenestrationCommon {
 		explicit CSeries( const std::vector< std::pair< double, double > > & t_values );
 		explicit CSeries( const std::initializer_list< std::pair< double, double > > & t_values );
 		CSeries( CSeries const & t_Series );
-		void addProperty( const double t_x, const double t_Value );
+		void addProperty( double t_x, double t_Value );
 		void insertToBeginning( double t_x, double t_Value );
 
 		// Create wavelength array with identical values over entire wavelength spectrum
