@@ -205,11 +205,9 @@ protected:
         aCommonWL.addWavelength(Layer_102->getBandWavelengths());
         aCommonWL.addWavelength(Layer_103->getBandWavelengths());
 
-        std::vector<double> commonWavelengths =
-          aCommonWL.getCombinedWavelengths(Combine::Interpolate);
+        auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
-        m_Layer =
-          std::make_shared<CMultiPaneBSDF>(Layer_102, commonWavelengths, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile(), commonWavelengths);
         m_Layer->addLayer(Layer_103);
     }
 

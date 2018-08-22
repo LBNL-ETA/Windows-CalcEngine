@@ -32,23 +32,21 @@ namespace MultiLayerOptics
     class CMultiPaneBSDF
     {
     public:
-        // t_SolarRadiation is spectra used for initialization of material properties in the layers
-        // t_IncomingSpectra is solar radiation distribution used to calculate actual data.
-        // If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming
-        // spectra for every direction
-        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                       const std::vector<double> & t_CommonWavelengths,
-                       const p_Series & t_SolarRadiation,
-                       const p_VectorSeries & t_IncomingSpectra = nullptr);
+        static std::shared_ptr<CMultiPaneBSDF>
+          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                 const p_Series & t_SolarRadiation,
+                 const std::vector<double> & t_CommonWavelengths,
+                 const p_VectorSeries & t_IncomingSpectra = nullptr);
 
-        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                       const p_Series & t_SolarRadiation,
-                       const p_VectorSeries & t_IncomingSpectra = nullptr);
+        static std::shared_ptr<CMultiPaneBSDF>
+          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                 const p_Series & t_SolarRadiation,
+                 const p_VectorSeries & t_IncomingSpectra = nullptr);
 
         void setIntegrationType(FenestrationCommon::IntegrationType t_type,
                                 double normalizationCoefficient);
 
-		void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
+        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
 
         // Whole matrix results
         FenestrationCommon::SquareMatrix getMatrix(double minLambda,
@@ -128,8 +126,21 @@ namespace MultiLayerOptics
                          size_t Index,
                          double t_Theta,
                          double t_Phi);
+	private:
 
-    private:
+		// t_SolarRadiation is spectra used for initialization of material properties in the layers
+		// t_IncomingSpectra is solar radiation distribution used to calculate actual data.
+		// If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming
+		// spectra for every direction
+		CMultiPaneBSDF( const std::shared_ptr< SingleLayerOptics::CBSDFLayer > & t_Layer,
+						const p_Series & t_SolarRadiation,
+						const std::vector< double > & t_CommonWavelengths,
+						const p_VectorSeries & t_IncomingSpectra = nullptr );
+
+		CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+					   const p_Series & t_SolarRadiation,
+					   const p_VectorSeries & t_IncomingSpectra = nullptr);
+
         void calculate(double minLambda, double maxLambda);
 
         void calcHemisphericalAbs(FenestrationCommon::Side t_Side);

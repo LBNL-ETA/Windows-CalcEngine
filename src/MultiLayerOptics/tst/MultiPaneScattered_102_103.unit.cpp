@@ -198,7 +198,7 @@ protected:
         CScatteringLayer Layer103 = CScatteringLayer::createSpecularLayer(aMaterial_103);
 
         // Equivalent BSDF layer
-        m_Layer = std::make_shared<CMultiLayerScattered>(Layer102);
+        m_Layer = CMultiLayerScattered::create(Layer102);
         m_Layer->addLayer(Layer103);
 
         m_Layer->setSourceData(loadSolarRadiationFile());

@@ -131,13 +131,13 @@ protected:
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Dual band material properties
-        auto Tsol = 0.1;
-        auto Rfsol = 0.7;
-        auto Rbsol = 0.7;
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
 
-        auto Tvis = 0.2;
-        auto Rfvis = 0.6;
-        auto Rbvis = 0.6;
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
 
         auto aMaterialPerforated = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
@@ -152,7 +152,7 @@ protected:
         auto Layer_Perforated = CBSDFLayerMaker::getCircularPerforatedLayer(
           aMaterialPerforated, aBSDF, x, y, thickness, radius);
 
-        m_Layer = std::make_shared<CMultiPaneBSDF>(Layer_102, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
         m_Layer->addLayer(Layer_Perforated);
     }
 

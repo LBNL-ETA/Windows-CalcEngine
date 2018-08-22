@@ -197,17 +197,13 @@ protected:
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
         auto Layer_103 = CBSDFLayerMaker::getSpecularLayer(aMaterial_103, aBSDF);
 
-        // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different
-        // wavelengths
         CCommonWavelengths aCommonWL;
         aCommonWL.addWavelength(Layer_102->getBandWavelengths());
         aCommonWL.addWavelength(Layer_103->getBandWavelengths());
 
-        std::vector<double> commonWavelengths =
-          aCommonWL.getCombinedWavelengths(Combine::Interpolate);
+        auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
-        m_Layer =
-          std::make_shared<CMultiPaneBSDF>(Layer_102, commonWavelengths, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile(), commonWavelengths);
         m_Layer->addLayer(Layer_103);
     }
 

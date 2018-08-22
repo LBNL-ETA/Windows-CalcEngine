@@ -189,7 +189,7 @@ private:
 protected:
     virtual void SetUp()
     {
-        double thickness = 3.048e-3;   // [m]
+        auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
@@ -204,10 +204,10 @@ protected:
           loadVenetianBlindMaterial(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // make cell geometry
-        double slatWidth = 0.016;     // m
-        double slatSpacing = 0.012;   // m
-        double slatTiltAngle = 0;
-        double curvatureRadius = 0;
+        const auto slatWidth = 0.016;     // m
+        const auto slatSpacing = 0.012;   // m
+        const auto slatTiltAngle = 0.0;
+        const auto curvatureRadius = 0.0;
         size_t numOfSlatSegments = 5;
 
         // get shading BSDF layer
@@ -220,10 +220,9 @@ protected:
                                                            numOfSlatSegments,
                                                            DistributionMethod::UniformDiffuse);
 
-        std::vector<double> commonWavelengths = aVenetian->getBandWavelengths();
+        auto commonWavelengths = aVenetian->getBandWavelengths();
 
-        m_Layer =
-          std::make_shared<CMultiPaneBSDF>(Layer_102, commonWavelengths, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile(), commonWavelengths);
         m_Layer->addLayer(aVenetian);
     }
 

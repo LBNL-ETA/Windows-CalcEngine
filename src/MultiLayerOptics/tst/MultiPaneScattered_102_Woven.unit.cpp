@@ -149,7 +149,7 @@ protected:
 
 
         // Equivalent BSDF layer
-        m_Layer = std::make_shared<CMultiLayerScattered>(Layer102);
+        m_Layer = CMultiLayerScattered::create(Layer102);
         m_Layer->addLayer(LayerWoven);
 
         auto aSolarRadiation = loadSolarRadiationFile();

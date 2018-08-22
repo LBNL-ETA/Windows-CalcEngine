@@ -131,23 +131,23 @@ protected:
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Venetian blind
-        double Tsol = 0.1;
-        double Rfsol = 0.7;
-        double Rbsol = 0.7;
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
 
         // Visible range
-        double Tvis = 0.2;
-        double Rfvis = 0.6;
-        double Rbvis = 0.6;
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
 
         auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        double slatWidth = 0.016;     // m
-        double slatSpacing = 0.012;   // m
-        double slatTiltAngle = 45;
-        double curvatureRadius = 0;
+        const auto slatWidth = 0.016;     // m
+        const auto slatSpacing = 0.012;   // m
+        const auto slatTiltAngle = 45;
+        const auto curvatureRadius = 0.0;
         size_t numOfSlatSegments = 5;
 
         auto Layer_Venetian = CBSDFLayerMaker::getVenetianLayer(aMaterialVenetian,
@@ -159,7 +159,7 @@ protected:
                                                                 numOfSlatSegments,
                                                                 DistributionMethod::UniformDiffuse);
 
-        m_Layer = std::make_shared<CMultiPaneBSDF>(Layer_102, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
         m_Layer->addLayer(Layer_Venetian);
     }
 

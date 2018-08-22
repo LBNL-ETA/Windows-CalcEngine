@@ -157,7 +157,7 @@ protected:
           aMaterialPerforated, x, y, thickness, xHole, yHole);
 
         // Equivalent BSDF layer
-        m_Layer = std::make_shared<CMultiLayerScattered>(Layer102);
+        m_Layer = CMultiLayerScattered::create(Layer102);
         m_Layer->addLayer(LayerPerforated);
 
         m_Layer->setSourceData(loadSolarRadiationFile());
