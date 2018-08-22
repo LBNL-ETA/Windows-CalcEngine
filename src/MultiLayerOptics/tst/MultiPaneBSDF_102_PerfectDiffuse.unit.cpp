@@ -131,21 +131,21 @@ protected:
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Solar range
-        double Tsol = 0.1;
-        double Rfsol = 0.7;
-        double Rbsol = 0.7;
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
 
         // Visible range
-        double Tvis = 0.2;
-        double Rfvis = 0.6;
-        double Rbvis = 0.6;
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
 
         auto aMaterial = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         auto diffuseLayer = CBSDFLayerMaker::getPerfectlyDiffuseLayer(aMaterial, aBSDF);
 
-        m_Layer = std::make_shared<CMultiPaneBSDF>(Layer_102, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
         m_Layer->addLayer(diffuseLayer);
     }
 

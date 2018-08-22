@@ -74,7 +74,7 @@ protected:
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterialDual);
 
         // Equivalent scattering layer
-        m_Layer = std::make_shared<CMultiLayerScattered>(Layer102);
+        m_Layer = CMultiLayerScattered::create(Layer102);
 
         m_Layer->setSourceData(loadSolarRadiationFile());
     }
