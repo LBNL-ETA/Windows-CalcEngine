@@ -45,7 +45,7 @@ protected:
         double spacing = 19.05;   // mm
 
         // create BSDF
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);

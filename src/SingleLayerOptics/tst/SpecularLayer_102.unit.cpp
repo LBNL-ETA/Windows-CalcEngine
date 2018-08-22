@@ -264,7 +264,7 @@ protected:
           std::make_shared<CMaterialSample>(aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // create BSDF
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

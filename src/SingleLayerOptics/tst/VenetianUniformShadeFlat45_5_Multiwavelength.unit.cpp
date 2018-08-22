@@ -48,8 +48,7 @@ protected:
         size_t numOfSlatSegments = 5;
 
         // create BSDF
-        std::shared_ptr<CBSDFHemisphere> aBSDF =
-          std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getVenetianLayer(aMaterial,

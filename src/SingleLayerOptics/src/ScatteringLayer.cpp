@@ -176,7 +176,7 @@ namespace SingleLayerOptics
     CScatteringLayer
       CScatteringLayer::createSpecularLayer(const std::shared_ptr<CMaterial> & t_Material)
     {
-        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getSpecularLayer(t_Material, aBSDF));
     }
 
@@ -187,7 +187,7 @@ namespace SingleLayerOptics
     CScatteringLayer CScatteringLayer::createWovenLayer(
       const std::shared_ptr<CMaterial> & t_Material, const double diameter, const double spacing)
     {
-        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(
           CBSDFLayerMaker::getWovenLayer(t_Material, aBSDF, diameter, spacing));
     }
@@ -195,7 +195,7 @@ namespace SingleLayerOptics
     CScatteringLayer
       CScatteringLayer::createPerfectlyDiffusingLayer(const std::shared_ptr<CMaterial> & t_Material)
     {
-        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getPerfectlyDiffuseLayer(t_Material, aBSDF));
     }
 
@@ -208,7 +208,7 @@ namespace SingleLayerOptics
                                             size_t numOfSlatSegments,
                                             DistributionMethod method)
     {
-        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getVenetianLayer(t_Material,
                                                                   aBSDF,
                                                                   slatWidth,
@@ -226,7 +226,7 @@ namespace SingleLayerOptics
                                                       double thickness,
                                                       double radius)
     {
-        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(
           CBSDFLayerMaker::getCircularPerforatedLayer(t_Material, aBSDF, x, y, thickness, radius));
     }
@@ -239,7 +239,7 @@ namespace SingleLayerOptics
       double xHole,
       double yHole)
     {
-        const auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getRectangularPerforatedLayer(
           t_Material, aBSDF, x, y, thickness, xHole, yHole));
     }

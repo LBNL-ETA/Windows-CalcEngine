@@ -357,7 +357,7 @@ protected:
           loadSampleData_NFRC_20243(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // BSDF definition is needed as well as its material representation
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
         auto Layer_20243 = CBSDFLayerMaker::getSpecularLayer(aMaterial_20243, aBSDF);
 

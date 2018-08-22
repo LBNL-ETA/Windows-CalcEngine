@@ -17,20 +17,20 @@ protected:
     virtual void SetUp()
     {
         // create material
-        double Tmat = 0.2;
-        double Rfmat = 0.75;
-        double Rbmat = 0.66;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto Tmat = 0.2;
+        const auto Rfmat = 0.75;
+        const auto Rbmat = 0.66;
+        const auto minLambda = 0.3;
+        const auto maxLambda = 2.5;
+        auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        double x = 22.5;        // mm
-        double y = 38.1;        // mm
-        double thickness = 5;   // mm
-        double radius = 8.35;   // mm
+        const auto x = 22.5;        // mm
+        const auto y = 38.1;        // mm
+        const auto thickness = 5.0;   // mm
+        const auto radius = 8.35;   // mm
 
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);

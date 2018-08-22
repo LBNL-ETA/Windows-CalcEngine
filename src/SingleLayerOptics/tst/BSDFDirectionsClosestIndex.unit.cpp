@@ -11,11 +11,11 @@ using namespace SingleLayerOptics;
 class TestBSDFDirectionsClosestIndex : public testing::Test {
 
 private:
-	std::unique_ptr< CBSDFHemisphere > m_BSDFHemisphere;
+	std::shared_ptr< CBSDFHemisphere > m_BSDFHemisphere;
 
 protected:
 	virtual void SetUp() {
-		m_BSDFHemisphere = wce::make_unique< CBSDFHemisphere >( BSDFBasis::Quarter );
+		m_BSDFHemisphere = CBSDFHemisphere::create( BSDFBasis::Quarter );
 	}
 
 public:

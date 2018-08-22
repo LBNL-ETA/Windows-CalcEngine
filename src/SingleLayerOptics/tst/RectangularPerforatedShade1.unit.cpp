@@ -22,7 +22,7 @@ protected:
         double Rbmat = 0.7;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
         double x = 19.05;         // mm
@@ -30,13 +30,10 @@ protected:
         double thickness = 0.6;   // mm
         double xHole = 3.175;     // mm
         double yHole = 6.35;      // mm
-        std::shared_ptr<ICellDescription> aCellDescription = std::make_shared<CRectangularCellDescription>(x, y, thickness, xHole, yHole);
 
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
-        std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CPerforatedCell>(aMaterial, aCellDescription);
-
-        m_Shade = std::make_shared<CUniformDiffuseBSDFLayer>(aCell, aBSDF);
+        m_Shade = CBSDFLayerMaker::getRectangularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, xHole, yHole);
     }
 
 public:
