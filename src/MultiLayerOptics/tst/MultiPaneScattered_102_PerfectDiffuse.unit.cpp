@@ -128,14 +128,14 @@ protected:
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // Solar range
-        double Tsol = 0.0;
-        double Rfsol = 0.2;
-        double Rbsol = 0.2;
+        const auto Tsol = 0.0;
+        const auto Rfsol = 0.2;
+        const auto Rbsol = 0.2;
 
         // Visible range
-        double Tvis = 0.0;
-        double Rfvis = 0.1;
-        double Rbvis = 0.1;
+        const auto Tvis = 0.0;
+        const auto Rfvis = 0.1;
+        const auto Rbvis = 0.1;
 
         auto aMaterial = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);

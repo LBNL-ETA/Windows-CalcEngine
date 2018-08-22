@@ -59,14 +59,14 @@ protected:
     virtual void SetUp()
     {
         // Material properties in solar range
-        double Tsol = 0.833848;
-        double Rfsol = 7.476376e-002;
-        double Rbsol = 7.485449e-002;
+        const auto Tsol = 0.833848;
+        const auto Rfsol = 7.476376e-002;
+        const auto Rbsol = 7.485449e-002;
 
         // Material properties in visible range
-        double Tvis = 0.899260;
-        double Rfvis = 0.082563;
-        double Rbvis = 0.082564;
+        const auto Tvis = 0.899260;
+        const auto Rfvis = 0.082563;
+        const auto Rbvis = 0.082564;
 
         auto aMaterialDual = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);

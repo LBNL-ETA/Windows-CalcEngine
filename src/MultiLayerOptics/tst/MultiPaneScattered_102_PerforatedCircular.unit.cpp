@@ -128,23 +128,23 @@ protected:
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // Setting circular perforated shade with double range material
-        double Tsol = 0.1;
-        double Rfsol = 0.7;
-        double Rbsol = 0.7;
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
 
         // Visible range
-        double Tvis = 0.2;
-        double Rfvis = 0.6;
-        double Rbvis = 0.6;
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
 
         auto aMaterialPerforated = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        double x = 19.05;        // mm
-        double y = 19.05;        // mm
+        const auto x = 19.05;        // mm
+        const auto y = 19.05;        // mm
         thickness = 5;           // mm
-        double radius = 3.175;   // mm
+        const auto radius = 3.175;   // mm
 
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
         CScatteringLayer LayerPerforated = CScatteringLayer::createPerforatedCircularLayer(
