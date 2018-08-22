@@ -129,23 +129,23 @@ protected:
 
         // Venetian blind material
         // Solar range
-        double Tsol = 0.1;
-        double Rfsol = 0.7;
-        double Rbsol = 0.7;
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
 
         // Visible range
-        double Tvis = 0.2;
-        double Rfvis = 0.6;
-        double Rbvis = 0.6;
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
 
         auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        double slatWidth = 0.016;     // m
-        double slatSpacing = 0.012;   // m
-        double slatTiltAngle = 45;
-        double curvatureRadius = 0;
+        const auto slatWidth = 0.016;     // m
+        const auto slatSpacing = 0.012;   // m
+        const auto slatTiltAngle = 45.0;
+        const auto curvatureRadius = 0.0;
         size_t numOfSlatSegments = 5;
 
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);

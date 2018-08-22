@@ -123,7 +123,7 @@ protected:
     virtual void SetUp()
     {
         // Create material from samples
-        double thickness = 3.048e-3;   // [m]
+        auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
