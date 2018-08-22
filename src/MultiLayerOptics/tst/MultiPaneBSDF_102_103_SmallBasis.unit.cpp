@@ -190,7 +190,7 @@ protected:
         auto aMaterial_103 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Small);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
         auto Layer_103 = CBSDFLayerMaker::getSpecularLayer(aMaterial_103, aBSDF);
 

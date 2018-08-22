@@ -194,4 +194,13 @@ namespace SingleLayerOptics
         return m_Directions.at(tDirection);
     }
 
+	std::shared_ptr< CBSDFHemisphere > CBSDFHemisphere::create( BSDFBasis t_Basis ) {
+		return std::shared_ptr< CBSDFHemisphere >(new CBSDFHemisphere(t_Basis));
+	}
+
+	std::shared_ptr< CBSDFHemisphere >
+	CBSDFHemisphere::create( std::vector< CBSDFDefinition > & t_Definitions ) {
+		return std::shared_ptr< CBSDFHemisphere >(new CBSDFHemisphere(t_Definitions));
+	}
+
 }   // namespace SingleLayerOptics

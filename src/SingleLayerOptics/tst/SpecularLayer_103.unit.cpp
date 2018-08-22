@@ -143,7 +143,8 @@ protected:
         aSolarRadiation->addProperty(3.7650, 9.0);
         aSolarRadiation->addProperty(4.0450, 6.9);
 
-        std::shared_ptr<CSpectralSampleData> aMeasurements = std::make_shared<CSpectralSampleData>();
+        std::shared_ptr<CSpectralSampleData> aMeasurements =
+          std::make_shared<CSpectralSampleData>();
 
         aMeasurements->addRecord(0.300, 0.0000, 0.0470, 0.0490);
         aMeasurements->addRecord(0.305, 0.0050, 0.0470, 0.0490);
@@ -257,17 +258,16 @@ protected:
         aMeasurements->addRecord(2.450, 0.7570, 0.0640, 0.0640);
         aMeasurements->addRecord(2.500, 0.7500, 0.0630, 0.0630);
 
-        std::shared_ptr<CSpectralSample> aSample = std::make_shared<CSpectralSample>(aMeasurements, aSolarRadiation);
-
-        double thickness = 5.715e-3;   // [m]
-        std::shared_ptr<CMaterial> aMaterial =
-          std::make_shared<CMaterialSample>(aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        const auto thickness = 5.715e-3;   // [m]
+        auto aMaterial = Material::nBandMaterial(
+          aMeasurements, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // Define BSDF
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
+        m_Layer->setSourceData(aSolarRadiation);
     }
 
 public:

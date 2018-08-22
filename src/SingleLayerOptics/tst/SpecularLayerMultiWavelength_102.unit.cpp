@@ -45,7 +45,7 @@ protected:
         double maxLambda = 2.5;
         std::shared_ptr<CMaterialSample> aMaterial = std::make_shared<CMaterialSample>(aSample, thickness, aType, minLambda, maxLambda);
 
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

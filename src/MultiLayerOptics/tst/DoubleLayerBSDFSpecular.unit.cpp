@@ -33,7 +33,7 @@ protected:
         aDefinitions.push_back(CBSDFDefinition(86.25, 1));
 
         // Create BSDF from definitions
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(aDefinitions);
+        const auto aBSDF = CBSDFHemisphere::create(aDefinitions);
 
         std::shared_ptr<CSeries> aSolarRadiation = std::make_shared<CSeries>();
 

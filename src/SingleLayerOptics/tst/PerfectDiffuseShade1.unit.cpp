@@ -22,16 +22,12 @@ protected:
         double Rbmat = 0.55;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        auto aMaterial =
+          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
-        // make cell
-        std::shared_ptr<ICellDescription> aCellDescription = std::make_shared<CPerfectDiffuseCellDescription>();
+        auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
-
-        std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CUniformDiffuseCell>(aMaterial, aCellDescription);
-
-        m_Shade = std::make_shared<CUniformDiffuseBSDFLayer>(aCell, aBSDF);
+        m_Shade = CBSDFLayerMaker::getPerfectlyDiffuseLayer(aMaterial, aBSDF);
     }
 
 public:
