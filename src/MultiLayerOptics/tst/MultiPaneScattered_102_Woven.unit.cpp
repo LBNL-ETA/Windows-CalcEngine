@@ -17,7 +17,7 @@ using namespace MultiLayerOptics;
 class MultiPaneScattered_102_Woven : public testing::Test
 {
 private:
-    std::shared_ptr<CMultiLayerScattered> m_Layer;
+    std::unique_ptr<CMultiLayerScattered> m_Layer;
 
     std::shared_ptr<CSeries> loadSolarRadiationFile()
     {
@@ -157,9 +157,9 @@ protected:
     }
 
 public:
-    std::shared_ptr<CMultiLayerScattered> getLayer() const
+    CMultiLayerScattered & getLayer() const
     {
-        return m_Layer;
+        return *m_Layer;
     };
 };
 
@@ -167,7 +167,7 @@ TEST_F(MultiPaneScattered_102_Woven, TestWovenDirectBeam)
 {
     SCOPED_TRACE("Begin Test: Woven layer - Scattering model front side (normal incidence).");
 
-    auto & aLayer = *getLayer();
+    auto & aLayer = getLayer();
 
     auto aSide = Side::Front;
     double theta = 0;
@@ -214,7 +214,7 @@ TEST_F(MultiPaneScattered_102_Woven, TestWovenAngledBeam25)
 {
     SCOPED_TRACE("Begin Test: Woven layer - Scattering model back side (normal incidence).");
 
-    auto & aLayer = *getLayer();
+    auto & aLayer = getLayer();
 
     auto aSide = Side::Front;
     double theta = 25;
@@ -261,7 +261,7 @@ TEST_F(MultiPaneScattered_102_Woven, TestWovenAngleBeam50)
 {
     SCOPED_TRACE("Begin Test: Woven layer - Scattering model front side (Theta = 50 deg).");
 
-    auto & aLayer = *getLayer();
+    auto & aLayer = getLayer();
 
     auto aSide = Side::Front;
     double theta = 50;

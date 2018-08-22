@@ -17,7 +17,7 @@ using namespace MultiLayerOptics;
 class MultiPaneScattered_102 : public testing::Test
 {
 private:
-    std::shared_ptr<CMultiLayerScattered> m_Layer;
+    std::unique_ptr<CMultiLayerScattered> m_Layer;
 
     std::shared_ptr<CSeries> loadSolarRadiationFile()
     {
@@ -136,9 +136,9 @@ protected:
     }
 
 public:
-    std::shared_ptr<CMultiLayerScattered> getLayer()
+    CMultiLayerScattered & getLayer()
     {
-        return m_Layer;
+        return *m_Layer;
     };
 };
 
@@ -146,7 +146,7 @@ TEST_F(MultiPaneScattered_102, TestSpecular1)
 {
     SCOPED_TRACE("Begin Test: Specular layer - Scattering model front side (normal incidence).");
 
-    CMultiLayerScattered & aLayer = *getLayer();
+    CMultiLayerScattered & aLayer = getLayer();
 
     Side aSide = Side::Front;
     double theta = 0;
@@ -187,7 +187,7 @@ TEST_F(MultiPaneScattered_102, TestSpecular2)
 {
     SCOPED_TRACE("Begin Test: Specular layer - Scattering model back side (normal incidence).");
 
-    CMultiLayerScattered & aLayer = *getLayer();
+    CMultiLayerScattered & aLayer = getLayer();
 
     Side aSide = Side::Back;
     double theta = 0;
@@ -228,7 +228,7 @@ TEST_F(MultiPaneScattered_102, TestSpecular3)
 {
     SCOPED_TRACE("Begin Test: Specular layer - Scattering model front side (Theta = 40 deg).");
 
-    CMultiLayerScattered & aLayer = *getLayer();
+    CMultiLayerScattered & aLayer = getLayer();
 
     Side aSide = Side::Front;
     double theta = 40;
