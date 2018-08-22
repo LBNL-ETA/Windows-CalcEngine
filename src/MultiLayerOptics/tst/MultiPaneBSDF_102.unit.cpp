@@ -17,7 +17,7 @@ using namespace MultiLayerOptics;
 class MultiPaneBSDF_102 : public testing::Test
 {
 private:
-    std::shared_ptr<CMultiPaneBSDF> m_Layer;
+    std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
     std::shared_ptr<CSeries> loadSolarRadiationFile()
     {
@@ -136,9 +136,9 @@ protected:
     }
 
 public:
-    std::shared_ptr<CMultiPaneBSDF> getLayer()
+    CMultiPaneBSDF & getLayer()
     {
-        return m_Layer;
+        return *m_Layer;
     };
 };
 
@@ -149,7 +149,7 @@ TEST_F(MultiPaneBSDF_102, TestSpecular1)
     const double minLambda = 0.3;
     const double maxLambda = 2.5;
 
-    CMultiPaneBSDF & aLayer = *getLayer();
+    CMultiPaneBSDF & aLayer = getLayer();
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.745379, tauDiff, 1e-6);

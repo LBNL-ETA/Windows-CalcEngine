@@ -17,7 +17,7 @@ using namespace MultiLayerOptics;
 class MultiPaneBSDF_102_PerforatedRectangular : public testing::Test
 {
 private:
-    std::shared_ptr<CMultiPaneBSDF> m_Layer;
+    std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
     std::shared_ptr<CSeries> loadSolarRadiationFile()
     {
@@ -158,9 +158,9 @@ protected:
     }
 
 public:
-    std::shared_ptr<CMultiPaneBSDF> getLayer() const
+    CMultiPaneBSDF & getLayer() const
     {
-        return m_Layer;
+        return *m_Layer;
     };
 };
 
@@ -171,7 +171,7 @@ TEST_F(MultiPaneBSDF_102_PerforatedRectangular, Test102PerofratedRectangular)
     const double minLambda = 0.3;
     const double maxLambda = 2.5;
 
-    CMultiPaneBSDF & aLayer = *getLayer();
+    CMultiPaneBSDF & aLayer = getLayer();
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.015235, tauDiff, 1e-6);

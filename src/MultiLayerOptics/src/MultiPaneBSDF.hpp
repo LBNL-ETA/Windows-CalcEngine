@@ -32,13 +32,13 @@ namespace MultiLayerOptics
     class CMultiPaneBSDF
     {
     public:
-        static std::shared_ptr<CMultiPaneBSDF>
+        static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                  const p_Series & t_SolarRadiation,
                  const std::vector<double> & t_CommonWavelengths,
                  const p_VectorSeries & t_IncomingSpectra = nullptr);
 
-        static std::shared_ptr<CMultiPaneBSDF>
+        static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                  const p_Series & t_SolarRadiation,
                  const p_VectorSeries & t_IncomingSpectra = nullptr);

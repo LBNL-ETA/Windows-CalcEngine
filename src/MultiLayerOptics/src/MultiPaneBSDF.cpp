@@ -292,24 +292,24 @@ namespace MultiLayerOptics
         m_Layer.setSolarRadiation(m_SolarRadiationInit);
     }
 
-    std::shared_ptr<CMultiPaneBSDF>
+    std::unique_ptr<CMultiPaneBSDF>
       CMultiPaneBSDF::create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                              const p_Series & t_SolarRadiation,
                              const std::vector<double> & t_CommonWavelengths,
                              const p_VectorSeries & t_IncomingSpectra)
     {
         // make_shared will not work from private function so it needs to be created this way
-        return std::shared_ptr<CMultiPaneBSDF>(
+        return std::unique_ptr<CMultiPaneBSDF>(
           new CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_CommonWavelengths, t_IncomingSpectra));
     }
 
-    std::shared_ptr<CMultiPaneBSDF>
+    std::unique_ptr<CMultiPaneBSDF>
       CMultiPaneBSDF::create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                              const p_Series & t_SolarRadiation,
                              const p_VectorSeries & t_IncomingSpectra)
     {
 		// make_shared will not work from private function so it needs to be created this way
-        return std::shared_ptr<CMultiPaneBSDF>(
+        return std::unique_ptr<CMultiPaneBSDF>(
           new CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_IncomingSpectra));
     }
 
