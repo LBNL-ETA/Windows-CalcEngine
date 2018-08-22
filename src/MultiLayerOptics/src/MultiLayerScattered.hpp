@@ -30,8 +30,8 @@ namespace MultiLayerOptics {
 			double t_Tb_dir_dif = 0, double t_Rb_dir_dif = 0,
 			double t_Tf_dif_dif = 0, double t_Rf_dif_dif = 0,
 			double t_Tb_dif_dif = 0, double t_Rb_dif_dif = 0 );
-		
-		static std::shared_ptr<CMultiLayerScattered> create(const SingleLayerOptics::CScatteringLayer & t_Layer);
+
+		static std::unique_ptr<CMultiLayerScattered> create(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
 		void addLayer(
 			double t_Tf_dir_dir, double t_Rf_dir_dir,
