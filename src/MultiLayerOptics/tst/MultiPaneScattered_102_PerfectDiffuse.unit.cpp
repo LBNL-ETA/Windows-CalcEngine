@@ -22,8 +22,7 @@ private:
     std::shared_ptr<CSeries> loadSolarRadiationFile()
     {
         // Full ASTM E891-87 Table 1 (Solar radiation)
-        auto aSolarRadiation = std::make_shared<
-          CSeries>(std::initializer_list<std::pair<double, double>>(
+        auto aSolarRadiation = CSeries::create(
           {{0.3000, 0.0},    {0.3050, 3.4},    {0.3100, 15.6},   {0.3150, 41.1},   {0.3200, 71.2},
            {0.3250, 100.2},  {0.3300, 152.4},  {0.3350, 155.6},  {0.3400, 179.4},  {0.3450, 186.7},
            {0.3500, 212.0},  {0.3600, 240.5},  {0.3700, 324.0},  {0.3800, 362.4},  {0.3900, 381.7},
@@ -50,15 +49,14 @@ private:
            {3.3170, 12.0},   {3.3440, 3.0},    {3.4500, 12.2},   {3.5730, 11.0},   {3.7650, 9.0},
            {4.0450, 6.9}
 
-          }));
+          });
 
         return aSolarRadiation;
     }
 
     std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_102()
     {
-        auto aMeasurements_102 =
-          std::make_shared<CSpectralSampleData>(std::initializer_list<MeasuredRow>(
+        auto aMeasurements_102 = CSpectralSampleData::create(
             {{0.300, 0.0020, 0.0470, 0.0480}, {0.305, 0.0030, 0.0470, 0.0480},
              {0.310, 0.0090, 0.0470, 0.0480}, {0.315, 0.0350, 0.0470, 0.0480},
              {0.320, 0.1000, 0.0470, 0.0480}, {0.325, 0.2180, 0.0490, 0.0500},
@@ -114,7 +112,7 @@ private:
              {2.200, 0.8300, 0.0700, 0.0700}, {2.250, 0.8300, 0.0700, 0.0700},
              {2.300, 0.8320, 0.0690, 0.0690}, {2.350, 0.8320, 0.0690, 0.0700},
              {2.400, 0.8320, 0.0700, 0.0700}, {2.450, 0.8260, 0.0690, 0.0690},
-             {2.500, 0.8220, 0.0680, 0.0680}}));
+             {2.500, 0.8220, 0.0680, 0.0680}});
 
         return aMeasurements_102;
     }
