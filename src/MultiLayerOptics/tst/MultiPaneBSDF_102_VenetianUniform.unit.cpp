@@ -17,7 +17,7 @@ using namespace MultiLayerOptics;
 class MultiPaneBSDF_102_VenetianUniform : public testing::Test
 {
 private:
-    std::shared_ptr<CMultiPaneBSDF> m_Layer;
+    std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
     std::shared_ptr<CSeries> loadSolarRadiationFile()
     {
@@ -122,7 +122,7 @@ private:
 protected:
     virtual void SetUp()
     {
-        double thickness = 3.048e-3;   // [m]
+        auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
@@ -164,9 +164,9 @@ protected:
     }
 
 public:
-    std::shared_ptr<CMultiPaneBSDF> getLayer()
+    CMultiPaneBSDF & getLayer()
     {
-        return m_Layer;
+        return *m_Layer;
     };
 };
 
@@ -177,7 +177,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF)
     const double minLambda = 0.3;
     const double maxLambda = 2.5;
 
-    CMultiPaneBSDF & aLayer = *getLayer();
+    CMultiPaneBSDF & aLayer = getLayer();
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.194619, tauDiff, 1e-6);
