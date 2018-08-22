@@ -35,7 +35,7 @@ namespace SpectralAveraging
         virtual ~CSpectralSampleData() = default;
         CSpectralSampleData();
 
-        explicit CSpectralSampleData( const std::initializer_list<MeasuredRow> & tValues);
+        static std::shared_ptr<CSpectralSampleData> create(const std::initializer_list<MeasuredRow> & tValues);
 
         void addRecord(double t_Wavelength,
                        double t_Transmittance,
@@ -49,6 +49,8 @@ namespace SpectralAveraging
         virtual void Filpped(bool const t_Flipped);
 
     protected:
+		CSpectralSampleData( const std::initializer_list<MeasuredRow> & tValues);
+
         virtual void calculateProperties();
         void reset();
 

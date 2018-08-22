@@ -140,6 +140,11 @@ namespace SpectralAveraging
         }
     }
 
+	std::shared_ptr< CSpectralSampleData >
+	CSpectralSampleData::create( const std::initializer_list< MeasuredRow > & tValues ) {
+		return std::shared_ptr< CSpectralSampleData >(new CSpectralSampleData(tValues));
+	}
+
 	MeasuredRow::MeasuredRow( double wl, double t, double rf, double rb ) :
 	wavelength(wl), T(t), Rf(rf), Rb(rb) {
 

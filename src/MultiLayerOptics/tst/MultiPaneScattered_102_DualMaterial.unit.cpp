@@ -22,8 +22,7 @@ private:
     std::shared_ptr<CSeries> loadSolarRadiationFile()
     {
         // Full ASTM E891-87 Table 1 (Solar radiation)
-        auto aSolarRadiation = std::make_shared<
-          CSeries>(std::initializer_list<std::pair<double, double>>(
+        auto aSolarRadiation = CSeries::create(
           {{0.3000, 0.0},    {0.3050, 3.4},    {0.3100, 15.6},   {0.3150, 41.1},   {0.3200, 71.2},
            {0.3250, 100.2},  {0.3300, 152.4},  {0.3350, 155.6},  {0.3400, 179.4},  {0.3450, 186.7},
            {0.3500, 212.0},  {0.3600, 240.5},  {0.3700, 324.0},  {0.3800, 362.4},  {0.3900, 381.7},
@@ -50,7 +49,7 @@ private:
            {3.3170, 12.0},   {3.3440, 3.0},    {3.4500, 12.2},   {3.5730, 11.0},   {3.7650, 9.0},
            {4.0450, 6.9}
 
-          }));
+          });
 
         return aSolarRadiation;
     }
