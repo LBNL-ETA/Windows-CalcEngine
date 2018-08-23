@@ -159,7 +159,8 @@ protected:
         aSolarRadiation->addProperty(3.7650, 9.0);
         aSolarRadiation->addProperty(4.0450, 6.9);
 
-        std::shared_ptr<CSpectralSampleData> aMeasurements = std::make_shared<CSpectralSampleData>();
+        std::shared_ptr<CSpectralSampleData> aMeasurements =
+          std::make_shared<CSpectralSampleData>();
 
         aMeasurements->addRecord(0.300, 0.0020, 0.0470, 0.0480);
         aMeasurements->addRecord(0.305, 0.0030, 0.0470, 0.0480);
@@ -277,10 +278,8 @@ protected:
         MaterialType aType = MaterialType::Monolithic;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        auto aMaterial = SingleLayerOptics::Material::nBandMaterial( aMeasurements,
-																	 thickness, aType, minLambda,
-																	 maxLambda, <#initializer#>,
-																	 TrapezoidalB, 0 );
+        auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
+          aMeasurements, thickness, aType, minLambda, maxLambda);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);
@@ -293,7 +292,8 @@ protected:
     }
 
 public:
-    std::shared_ptr<CEquivalentBSDFLayerSingleBand> getLayer() const {
+    std::shared_ptr<CEquivalentBSDFLayerSingleBand> getLayer() const
+    {
         return m_EquivalentBSDFLayer;
     };
 };
@@ -378,25 +378,25 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
 
     EXPECT_EQ(size, matrixSize);
 
-    SquareMatrix correctRb{
-        { 2.37893449, 0, 0, 0, 0, 0, 0 },
-        { 0, 0.31293973, 0, 0, 0, 0, 0 },
-        { 0, 0, 0.18413636, 0, 0, 0, 0 },
-        { 0, 0, 0, 0.18156261, 0, 0, 0 },
-        { 0, 0, 0, 0, 0.31970889, 0, 0 },
-        { 0, 0, 0, 0, 0, 1.16058387, 0 },
-        { 0, 0, 0, 0, 0, 0, 15.18436907 } };
+    SquareMatrix correctRb{{2.37893449, 0, 0, 0, 0, 0, 0},
+                           {0, 0.31293973, 0, 0, 0, 0, 0},
+                           {0, 0, 0.18413636, 0, 0, 0, 0},
+                           {0, 0, 0, 0.18156261, 0, 0, 0},
+                           {0, 0, 0, 0, 0.31970889, 0, 0},
+                           {0, 0, 0, 0, 0, 1.16058387, 0},
+                           {0, 0, 0, 0, 0, 0, 15.18436907}};
 
     for(size_t i = 0; i < size; ++i)
     {
         for(size_t j = 0; j < size; ++j)
         {
-            EXPECT_NEAR(correctRb(i,j), Rb(i,j), 1e-6);
+            EXPECT_NEAR(correctRb(i, j), Rb(i, j), 1e-6);
         }
     }
 
     std::vector<double> A = aLayer->getLayerAbsorptances(1, Side::Front);
-    std::vector<double> correctAbs = {0.09710127, 0.09842101, 0.10243759, 0.10939515, 0.12006037, 0.13316094, 0.10745388};
+    std::vector<double> correctAbs = {
+      0.09710127, 0.09842101, 0.10243759, 0.10939515, 0.12006037, 0.13316094, 0.10745388};
 
     for(size_t i = 0; i < size; i++)
     {
@@ -404,7 +404,8 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     A = aLayer->getLayerAbsorptances(1, Side::Back);
-    correctAbs = {0.07651907, 0.07744642, 0.08001281, 0.0831037, 0.08263442, 0.06695159, 0.02979634};
+    correctAbs = {
+      0.07651907, 0.07744642, 0.08001281, 0.0831037, 0.08263442, 0.06695159, 0.02979634};
 
     for(size_t i = 0; i < size; i++)
     {
@@ -412,7 +413,8 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     A = aLayer->getLayerAbsorptances(2, Side::Front);
-    correctAbs = {0.07661983, 0.07754706, 0.08011342, 0.08320488, 0.08273374, 0.0670302, 0.02982354};
+    correctAbs = {
+      0.07661983, 0.07754706, 0.08011342, 0.08320488, 0.08273374, 0.0670302, 0.02982354};
 
     for(size_t i = 0; i < size; i++)
     {
@@ -420,7 +422,8 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     A = aLayer->getLayerAbsorptances(2, Side::Back);
-    correctAbs = {0.09699785, 0.09831765, 0.10233405, 0.1092904, 0.11995538, 0.13306917, 0.10740026};
+    correctAbs = {
+      0.09699785, 0.09831765, 0.10233405, 0.1092904, 0.11995538, 0.13306917, 0.10740026};
 
     for(size_t i = 0; i < size; i++)
     {

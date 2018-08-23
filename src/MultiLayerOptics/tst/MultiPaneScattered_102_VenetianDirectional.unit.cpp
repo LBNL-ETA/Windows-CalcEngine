@@ -123,8 +123,7 @@ protected:
         // Create material from samples
         auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-			loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar,
-			<#initializer#>, TrapezoidalB, TrapezoidalB, 0 );
+			loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // Venetian blind material
         // Solar range

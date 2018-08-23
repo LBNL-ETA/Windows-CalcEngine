@@ -275,8 +275,7 @@ protected:
         double maxLambda = 2.5;
 
         auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-			aMeasurements, thickness, aType, minLambda, maxLambda, <#initializer#>, TrapezoidalB,
-			0 );
+			aMeasurements, thickness, aType, minLambda, maxLambda);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);
