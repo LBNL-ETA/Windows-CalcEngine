@@ -22,7 +22,8 @@ protected:
         double Rbmat = 0.7;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial =
+          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
         double x = 19.05;         // mm
@@ -33,7 +34,8 @@ protected:
 
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
-        m_Shade = CBSDFLayerMaker::getRectangularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, xHole, yHole);
+        m_Shade = CBSDFLayerMaker::getRectangularPerforatedLayer(
+          aMaterial, aBSDF, x, y, thickness, xHole, yHole);
     }
 
 public:

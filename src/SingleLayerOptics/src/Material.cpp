@@ -84,11 +84,11 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CMaterial> Material::nBandMaterial(
       const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-      double thickness,
-      FenestrationCommon::MaterialType materialType,
-      FenestrationCommon::WavelengthRange range,
-      FenestrationCommon::IntegrationType integrationType,
-      double normalizationCoefficient)
+      const double thickness,
+      const FenestrationCommon::MaterialType materialType,
+      const FenestrationCommon::WavelengthRange range,
+      const FenestrationCommon::IntegrationType integrationType,
+      const double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
           measurement, nullptr, integrationType, normalizationCoefficient);
@@ -98,10 +98,10 @@ namespace SingleLayerOptics
     std::shared_ptr<CMaterial> Material::nBandMaterial(
       const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
       double thickness,
-      FenestrationCommon::MaterialType materialType,
-      double minLambda,
-      double maxLambda,
-      FenestrationCommon::IntegrationType integrationType,
+      const FenestrationCommon::MaterialType materialType,
+      const double minLambda,
+      const double maxLambda,
+      const FenestrationCommon::IntegrationType integrationType,
       double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
@@ -109,6 +109,38 @@ namespace SingleLayerOptics
 
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
+    }
+
+    std::shared_ptr<CMaterial> Material::nBandMaterial(
+      const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+      const std::shared_ptr<CSeries> & detectorData,
+      const double thickness,
+      const FenestrationCommon::MaterialType materialType,
+      const double minLambda,
+      const double maxLambda,
+      const FenestrationCommon::IntegrationType integrationType,
+      const double normalizationCoefficient)
+    {
+        auto aSample = std::make_shared<CSpectralSample>(
+          measurement, nullptr, integrationType, normalizationCoefficient);
+        aSample->setDetectorData(detectorData);
+        return std::make_shared<CMaterialSample>(
+          aSample, thickness, materialType, minLambda, maxLambda);
+    }
+
+    std::shared_ptr<CMaterial> Material::nBandMaterial(
+      const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+      const std::shared_ptr<FenestrationCommon::CSeries> & detectorData,
+      const double thickness,
+      const FenestrationCommon::MaterialType materialType,
+      const FenestrationCommon::WavelengthRange t_Range,
+      const FenestrationCommon::IntegrationType integrationType,
+      const double normalizationCoefficient)
+    {
+        auto aSample = std::make_shared<CSpectralSample>(
+          measurement, nullptr, integrationType, normalizationCoefficient);
+        aSample->setDetectorData(detectorData);
+        return std::make_shared<CMaterialSample>(aSample, thickness, materialType, t_Range);
     }
 
 }   // namespace SingleLayerOptics
