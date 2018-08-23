@@ -70,6 +70,25 @@ namespace SingleLayerOptics
                         FenestrationCommon::IntegrationType integrationType = FenestrationCommon::IntegrationType::Trapezoidal,
                         double normalizationCoefficient = 1);
 
+		static std::shared_ptr<CMaterial>
+		nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+					  const std::shared_ptr<FenestrationCommon::CSeries> & detectorData,
+					  double thickness,
+					  FenestrationCommon::MaterialType materialType,
+					  double minLambda,
+					  double maxLambda,
+					  FenestrationCommon::IntegrationType integrationType = FenestrationCommon::IntegrationType::Trapezoidal,
+					  double normalizationCoefficient = 1);
+
+		static std::shared_ptr<CMaterial>
+		nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+					  const std::shared_ptr<FenestrationCommon::CSeries> & detectorData,
+					  double thickness,
+					  FenestrationCommon::MaterialType materialType,
+					  FenestrationCommon::WavelengthRange t_Range,
+					  FenestrationCommon::IntegrationType integrationType = FenestrationCommon::IntegrationType::Trapezoidal,
+					  double normalizationCoefficient = 1);
+
     };
 
 }   // namespace SingleLayerOptics

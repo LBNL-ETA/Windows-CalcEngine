@@ -25,10 +25,8 @@ protected:
 		const auto Rfvis = 0.6;
 		const auto Rbvis = 0.6;
 
-		const auto ratio = 0.49;
-
 		m_Material = Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis,
-			Rfvis, Rbvis, ratio);
+			Rfvis, Rbvis);
 	}
 
 public:

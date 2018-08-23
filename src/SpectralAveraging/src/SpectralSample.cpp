@@ -71,7 +71,7 @@ namespace SpectralAveraging
         reset();
     }
 
-    void CSample::setDetectorData(std::shared_ptr<CSeries> const & t_DetectorData)
+    void CSample::setDetectorData(const std::shared_ptr<CSeries> & t_DetectorData)
     {
         m_DetectorData = t_DetectorData;
         reset();

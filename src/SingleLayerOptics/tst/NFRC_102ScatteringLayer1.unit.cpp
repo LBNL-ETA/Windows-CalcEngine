@@ -116,17 +116,14 @@ private:
 protected:
     virtual void SetUp()
     {
-        std::shared_ptr<CSeries> aSolarRadiation = loadSolarRadiationFile();
-        std::shared_ptr<CSpectralSampleData> aMeasurements = loadSampleData_NFRC_102();
-
-        std::shared_ptr<CSpectralSample> aSample =
-          std::make_shared<CSpectralSample>(aMeasurements, aSolarRadiation);
+        const auto aMeasurements = loadSampleData_NFRC_102();
 
         double thickness = 3.048e-3;   // [m]
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSample>(
-          aSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        const auto aMaterial = Material::nBandMaterial(aMeasurements, thickness, MaterialType::Monolithic,
+        	WavelengthRange::Solar);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
+        m_Layer.setSourceData(loadSolarRadiationFile());
     }
 
 public:

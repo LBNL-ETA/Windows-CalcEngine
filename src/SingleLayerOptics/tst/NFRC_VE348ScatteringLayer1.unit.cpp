@@ -237,16 +237,11 @@ private:
 protected:
 	virtual void SetUp() {
 
-		std::shared_ptr< CSeries > aSolarRadiation = loadSolarRadiationFile();
 		std::shared_ptr< CSpectralSampleData > aMeasurements = loadSampleData_NFRC_VE348();
 
-		std::shared_ptr< CSpectralSample > aSample = std::make_shared< CSpectralSample >( aMeasurements,
-				aSolarRadiation, IntegrationType::PreWeighted );
-
-		aSample->setWavelengths( WavelengthSet::Source );
 
 		double thickness = 5.66e-3; // [m]
-		const auto aMaterial = Material::nBandMaterial( aMeasurements,
+		const auto aMaterial = Material::nBandMaterial( loadSampleData_NFRC_VE348(),
 				thickness, MaterialType::Coated, WavelengthRange::Solar, IntegrationType::PreWeighted);
 
 		m_Layer = CScatteringLayer::createSpecularLayer( aMaterial );

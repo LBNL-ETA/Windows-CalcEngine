@@ -222,7 +222,7 @@ namespace SingleLayerOptics
         std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
                                               FenestrationCommon::Side t_Side) const override;
 
-		void setBandWavelengths(const std::vector<double> & wavelengths);
+		void setBandWavelengths(const std::vector<double> & wavelengths) override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
