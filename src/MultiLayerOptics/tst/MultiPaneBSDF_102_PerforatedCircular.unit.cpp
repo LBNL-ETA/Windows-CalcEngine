@@ -123,7 +123,8 @@ protected:
         auto thickness = 3.048e-3;   // [m]
 
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+			loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar,
+			<#initializer#>, TrapezoidalB, TrapezoidalB, 0 );
 
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);

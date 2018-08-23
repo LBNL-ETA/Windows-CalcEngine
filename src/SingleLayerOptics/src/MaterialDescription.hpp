@@ -78,6 +78,8 @@ namespace SingleLayerOptics
                                    double t_Angle) const;
 
         std::vector<double> getBandWavelengths();
+        virtual void setBandWavelengths(const std::vector<double> & wavelengths);
+
         size_t getBandSize();
         // Return index of wavelength range for passed value. Returns -1 if index is out of range
         int getBandIndex(double t_Wavelength);
@@ -219,6 +221,8 @@ namespace SingleLayerOptics
 
         std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
                                               FenestrationCommon::Side t_Side) const override;
+
+		void setBandWavelengths(const std::vector<double> & wavelengths);
 
     private:
         std::vector<double> calculateBandWavelengths() override;

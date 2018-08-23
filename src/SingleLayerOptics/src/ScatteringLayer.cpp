@@ -119,6 +119,10 @@ namespace SingleLayerOptics
         return m_BSDFLayer->getBandWavelengths();
     }
 
+	void CScatteringLayer::setWavelengths( const std::vector< double > & wavelengths ) {
+		m_BSDFLayer->setBandWavelengths(wavelengths);
+	}
+
     void CScatteringLayer::createResultsAtAngle(const double t_Theta, const double t_Phi)
     {
         if(m_BSDFLayer != nullptr)

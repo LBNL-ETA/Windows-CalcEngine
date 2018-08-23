@@ -111,6 +111,10 @@ namespace SingleLayerOptics
         return m_Wavelengths;
     }
 
+	void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths) {
+		m_Wavelengths = wavelengths;
+	}
+
     size_t CMaterial::getBandSize()
     {
         return getBandWavelengths().size();
@@ -140,7 +144,7 @@ namespace SingleLayerOptics
         return m_MaxLambda;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
     CMaterialSingleBand::CMaterialSingleBand(const double t_Tf,
@@ -411,7 +415,12 @@ namespace SingleLayerOptics
         return m_AngularSample->getBandWavelengths();
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
+	void CMaterialSample::setBandWavelengths( const std::vector< double > & wavelengths ) {
+		CMaterial::setBandWavelengths( wavelengths );
+		m_AngularSample->setBandWavelengths(wavelengths);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialMeasured
     ////////////////////////////////////////////////////////////////////////////////////
 

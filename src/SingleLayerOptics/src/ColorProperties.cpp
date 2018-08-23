@@ -22,15 +22,15 @@ namespace SingleLayerOptics
                                       const FenestrationCommon::CSeries & t_DetectorX,
                                       const FenestrationCommon::CSeries & t_DetectorY,
                                       const FenestrationCommon::CSeries & t_DetectorZ,
-                                      const std::shared_ptr< std::vector< double>> & t_wavelengths ) :
+                                      const std::vector< double> & t_wavelengths ) :
         m_LayerX(layerX),
         m_LayerY(layerY),
         m_LayerZ(layerZ)
     {
         auto wavelengths = m_LayerX.getWavelengths();
-        if(t_wavelengths != nullptr)
+        if(!t_wavelengths.empty())
         {
-            wavelengths = *t_wavelengths;
+            wavelengths = t_wavelengths;
         }
         auto aSolar = t_Source;
         auto DX = t_DetectorX;

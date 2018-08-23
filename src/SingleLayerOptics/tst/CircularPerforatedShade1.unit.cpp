@@ -22,18 +22,20 @@ protected:
         const auto Rbmat = 0.66;
         const auto minLambda = 0.3;
         const auto maxLambda = 2.5;
-        auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial =
+          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        const auto x = 22.5;        // mm
-        const auto y = 38.1;        // mm
+        const auto x = 22.5;          // mm
+        const auto y = 38.1;          // mm
         const auto thickness = 5.0;   // mm
-        const auto radius = 8.35;   // mm
+        const auto radius = 8.35;     // mm
 
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
-        m_Shade = CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);
+        m_Shade =
+          CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);
     }
 
 public:

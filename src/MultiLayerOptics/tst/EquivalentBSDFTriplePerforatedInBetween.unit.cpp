@@ -275,7 +275,8 @@ protected:
         double minLambda = 0.3;
         double maxLambda = 2.5;
         auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements, thickness, aType, minLambda, maxLambda);
+			aMeasurements, thickness, aType, minLambda, maxLambda, <#initializer#>, TrapezoidalB,
+			0 );
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
 
