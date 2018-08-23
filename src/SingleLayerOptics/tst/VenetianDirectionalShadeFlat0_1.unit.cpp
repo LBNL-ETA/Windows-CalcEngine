@@ -22,7 +22,8 @@ protected:
         double Rbmat = 0.7;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial =
+          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
         double slatWidth = 0.010;     // m
@@ -38,12 +39,19 @@ protected:
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
-        m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial, aBSDF, slatWidth, slatSpacing, slatTiltAngle,
-	        curvatureRadius, numOfSlatSegments, aDistribution);
+        m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,
+                                                    aBSDF,
+                                                    slatWidth,
+                                                    slatSpacing,
+                                                    slatTiltAngle,
+                                                    curvatureRadius,
+                                                    numOfSlatSegments,
+                                                    aDistribution);
     }
 
 public:
-    std::shared_ptr<CBSDFLayer> GetShade() const {
+    std::shared_ptr<CBSDFLayer> GetShade() const
+    {
         return m_Shade;
     };
 };

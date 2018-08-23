@@ -22,7 +22,7 @@ protected:
         double Rbmat = 0.75;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        auto aMaterial = SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat,
+        const auto aMaterial = SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat,
         	Rbmat, minLambda, maxLambda);
 
         // make cell geometry
