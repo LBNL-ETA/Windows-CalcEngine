@@ -1,13 +1,7 @@
 #pragma once
 
 #include <memory>
-
-namespace FenestrationCommon
-{
-    enum class WavelengthRange;
-    enum class MaterialType;
-    class CSeries;
-}   // namespace FenestrationCommon
+#include "WCECommon.hpp"
 
 namespace SpectralAveraging
 {
@@ -58,20 +52,24 @@ namespace SingleLayerOptics
         static std::shared_ptr<CMaterial> singleBandMaterial(
           double Tf, double Tb, double Rf, double Rb, FenestrationCommon::WavelengthRange range);
 
-        static std::shared_ptr<CMaterial> nBandMaterial(
-          const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-          double thickness,
-          FenestrationCommon::MaterialType materialType,
-          FenestrationCommon::WavelengthRange range,
-          const std::shared_ptr<FenestrationCommon::CSeries> & detectorData = nullptr);
+        static std::shared_ptr<CMaterial>
+          nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+                        double thickness,
+                        FenestrationCommon::MaterialType materialType,
+                        FenestrationCommon::WavelengthRange range,
+                        FenestrationCommon::IntegrationType integrationType =
+                          FenestrationCommon::IntegrationType::Trapezoidal,
+                        double normalizationCoefficient = 1);
 
-        static std::shared_ptr<CMaterial> nBandMaterial(
-          const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-          double thickness,
-          FenestrationCommon::MaterialType materialType,
-          double minLambda,
-          double maxLambda,
-          const std::shared_ptr<FenestrationCommon::CSeries> & detectorData = nullptr);
+        static std::shared_ptr<CMaterial>
+          nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+                        double thickness,
+                        FenestrationCommon::MaterialType materialType,
+                        double minLambda,
+                        double maxLambda,
+                        FenestrationCommon::IntegrationType integrationType = FenestrationCommon::IntegrationType::Trapezoidal,
+                        double normalizationCoefficient = 1);
+
     };
 
 }   // namespace SingleLayerOptics

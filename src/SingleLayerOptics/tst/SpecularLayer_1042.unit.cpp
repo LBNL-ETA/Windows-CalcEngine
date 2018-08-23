@@ -645,7 +645,7 @@ protected:
 
         double thickness = 3.18e-3;   // [m]
         auto aMaterial = Material::nBandMaterial(
-          aMeasurements, thickness, MaterialType::Coated, WavelengthRange::Solar);
+			aMeasurements, thickness, MaterialType::Coated, WavelengthRange::Solar);
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer

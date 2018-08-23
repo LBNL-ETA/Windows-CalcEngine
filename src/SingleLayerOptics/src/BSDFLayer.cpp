@@ -66,6 +66,10 @@ namespace SingleLayerOptics
         return m_Cell->getBandWavelengths();
     }
 
+	void CBSDFLayer::setBandWavelengths( const std::vector< double > & wavelengths ) {
+		m_Cell->setBandWavelengths(wavelengths);
+	}
+
     void CBSDFLayer::calc_dir_dir()
     {
         for(Side t_Side : EnumSide())

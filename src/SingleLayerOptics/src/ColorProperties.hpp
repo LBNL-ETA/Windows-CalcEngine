@@ -42,7 +42,7 @@ namespace SingleLayerOptics {
 		                 const FenestrationCommon::CSeries & t_DetectorX,
 		                 const FenestrationCommon::CSeries & t_DetectorY,
 		                 const FenestrationCommon::CSeries & t_DetectorZ,
-		                 const std::shared_ptr< std::vector< double > > & t_wavelengths = nullptr );
+		                 const std::vector< double > & t_wavelengths = {} );
 
 		Trichromatic getTrichromatic(
 				const FenestrationCommon::PropertySimple t_Property,

@@ -246,11 +246,12 @@ protected:
 		aSample->setWavelengths( WavelengthSet::Source );
 
 		double thickness = 5.66e-3; // [m]
-		std::shared_ptr< CMaterial > aMaterial = std::make_shared< CMaterialSample >( aSample,
-				thickness, MaterialType::Coated, WavelengthRange::Solar );
+		const auto aMaterial = Material::nBandMaterial( aMeasurements,
+				thickness, MaterialType::Coated, WavelengthRange::Solar, IntegrationType::PreWeighted);
 
 		m_Layer = CScatteringLayer::createSpecularLayer( aMaterial );
-
+		m_Layer.setSourceData(loadSolarRadiationFile());
+		m_Layer.setWavelengths(loadSolarRadiationFile()->getXArray());
 	}
 
 public:

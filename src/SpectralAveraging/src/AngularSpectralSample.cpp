@@ -157,6 +157,10 @@ namespace SpectralAveraging {
 		return m_SpectralSampleZero->getWavelengthsFromSample();
 	}
 
+	void CAngularSpectralSample::setBandWavelengths( const std::vector< double > & wavelegths ) {
+		m_SpectralSampleZero->setWavelengths(WavelengthSet::Custom, wavelegths);
+	}
+
 	std::shared_ptr< CSpectralSample >
 	CAngularSpectralSample::findSpectralSample( double const t_Angle ) {
 		std::shared_ptr< CSpectralSample > aSample = nullptr;

@@ -39,25 +39,27 @@ namespace SingleLayerOptics
           std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol, WavelengthRange::Solar);
         auto aVisibleRangeMaterial = std::make_shared<CMaterialSingleBand>(
           Tfvis, Tbvis, Rfvis, Rbvis, WavelengthRange::Visible);
-        return std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
+        return std::make_shared<CMaterialDualBand>(
+          aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
     }
 
-    std::shared_ptr<CMaterial>
-      Material::dualBandMaterial(const double Tfsol,
-                                 const double Tbsol,
-                                 const double Rfsol,
-                                 const double Rbsol,
-                                 const double Tfvis,
-                                 const double Tbvis,
-                                 const double Rfvis,
-                                 const double Rbvis,
-                                 const std::shared_ptr<FenestrationCommon::CSeries> & solarRadiation)
+    std::shared_ptr<CMaterial> Material::dualBandMaterial(
+      const double Tfsol,
+      const double Tbsol,
+      const double Rfsol,
+      const double Rbsol,
+      const double Tfvis,
+      const double Tbvis,
+      const double Rfvis,
+      const double Rbvis,
+      const std::shared_ptr<FenestrationCommon::CSeries> & solarRadiation)
     {
-		auto aSolarRangeMaterial =
-			std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol, WavelengthRange::Solar);
-		auto aVisibleRangeMaterial = std::make_shared<CMaterialSingleBand>(
-			Tfvis, Tbvis, Rfvis, Rbvis, WavelengthRange::Visible);
-		return std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial, solarRadiation);
+        auto aSolarRangeMaterial =
+          std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol, WavelengthRange::Solar);
+        auto aVisibleRangeMaterial = std::make_shared<CMaterialSingleBand>(
+          Tfvis, Tbvis, Rfvis, Rbvis, WavelengthRange::Visible);
+        return std::make_shared<CMaterialDualBand>(
+          aVisibleRangeMaterial, aSolarRangeMaterial, solarRadiation);
     }
 
     std::shared_ptr<CMaterial> Material::singleBandMaterial(const double Tf,
@@ -82,32 +84,29 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CMaterial> Material::nBandMaterial(
       const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-      const double thickness,
-      const FenestrationCommon::MaterialType materialType,
-      const FenestrationCommon::WavelengthRange range,
-      const std::shared_ptr<FenestrationCommon::CSeries> & detectorData)
+      double thickness,
+      FenestrationCommon::MaterialType materialType,
+      FenestrationCommon::WavelengthRange range,
+      FenestrationCommon::IntegrationType integrationType,
+      double normalizationCoefficient)
     {
-        auto aSample = std::make_shared<CSpectralSample>(measurement);
-        if(detectorData != nullptr)
-        {
-            aSample->setDetectorData(detectorData);
-        }
+        auto aSample = std::make_shared<CSpectralSample>(
+          measurement, nullptr, integrationType, normalizationCoefficient);
         return std::make_shared<CMaterialSample>(aSample, thickness, materialType, range);
     }
 
     std::shared_ptr<CMaterial> Material::nBandMaterial(
       const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-      const double thickness,
-      const FenestrationCommon::MaterialType materialType,
-      const double minLambda,
-      const double maxLambda,
-      const std::shared_ptr<FenestrationCommon::CSeries> & detectorData)
+      double thickness,
+      FenestrationCommon::MaterialType materialType,
+      double minLambda,
+      double maxLambda,
+      FenestrationCommon::IntegrationType integrationType,
+      double normalizationCoefficient)
     {
-        auto aSample = std::make_shared<CSpectralSample>(measurement);
-        if(detectorData != nullptr)
-        {
-            aSample->setDetectorData(detectorData);
-        }
+        auto aSample = std::make_shared<CSpectralSample>(
+          measurement, nullptr, integrationType, normalizationCoefficient);
+
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
     }

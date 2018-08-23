@@ -260,7 +260,7 @@ protected:
 
         const auto thickness = 5.715e-3;   // [m]
         auto aMaterial = Material::nBandMaterial(
-          aMeasurements, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+			aMeasurements, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // Define BSDF
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
