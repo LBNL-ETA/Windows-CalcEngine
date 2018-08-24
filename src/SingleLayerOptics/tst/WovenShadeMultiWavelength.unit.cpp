@@ -31,8 +31,8 @@ protected:
         	Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        double diameter = 6.35;   // mm
-        double spacing = 19.05;   // mm
+		const auto diameter = 6.35;   // mm
+		const auto spacing = 19.05;   // mm
 
         // create BSDF
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);

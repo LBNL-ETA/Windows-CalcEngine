@@ -18,20 +18,20 @@ protected:
     virtual void SetUp()
     {
         // create material
-        double Tmat = 0.1;
-        double Rfmat = 0.7;
-        double Rbmat = 0.8;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
+        const auto Tmat = 0.1;
+        const auto Rfmat = 0.7;
+        const auto Rbmat = 0.8;
+        const auto minLambda = 0.3;
+        const auto maxLambda = 2.5;
         const auto aMaterial =
           Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        double x = 10;          // mm
-        double y = 10;          // mm
-        double thickness = 1;   // mm
-        double xHole = 5;       // mm
-        double yHole = 5;       // mm
+        const auto x = 10;          // mm
+        const auto y = 10;          // mm
+        const auto thickness = 1;   // mm
+        const auto xHole = 5;       // mm
+        const auto yHole = 5;       // mm
         m_DescriptionCell =
           std::make_shared<CRectangularCellDescription>(x, y, thickness, xHole, yHole);
 
@@ -57,8 +57,8 @@ TEST_F(TestRectangularPerforatedCell, TestRectangular1)
     std::shared_ptr<CPerforatedCell> aCell = GetCell();
     std::shared_ptr<ICellDescription> aCellDescription = GetDescription();
 
-    double Theta = 0;   // deg
-    double Phi = 0;     // deg
+    const auto Theta = 0;   // deg
+    const auto Phi = 0;     // deg
     Side aFrontSide = Side::Front;
     Side aBackSide = Side::Back;
 
@@ -111,8 +111,8 @@ TEST_F(TestRectangularPerforatedCell, TestRectangular3)
     std::shared_ptr<CPerforatedCell> aCell = GetCell();
     std::shared_ptr<ICellDescription> aCellDescription = GetDescription();
 
-    double Theta = 45;   // deg
-    double Phi = 45;     // deg
+    const auto Theta = 45;   // deg
+    const auto Phi = 45;     // deg
     Side aFrontSide = Side::Front;
     Side aBackSide = Side::Back;
 

@@ -20,10 +20,10 @@ protected:
     virtual void SetUp()
     {
         // make cell geometry
-        double slatWidth = 0.076200;     // m
-        double slatSpacing = 0.057150;   // m
-        double slatTiltAngle = -55.000000;
-        double curvatureRadius = 0.123967;
+		const auto slatWidth = 0.076200;     // m
+		const auto slatSpacing = 0.057150;   // m
+		const auto slatTiltAngle = -55.000000;
+		const auto curvatureRadius = 0.123967;
         size_t aNumOfSlats = 2;
 
         m_Cell = std::make_shared<CVenetianCellDescription>(slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, aNumOfSlats);

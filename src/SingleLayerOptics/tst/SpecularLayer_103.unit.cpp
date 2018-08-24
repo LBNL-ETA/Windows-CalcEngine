@@ -116,11 +116,9 @@ private:
 protected:
     virtual void SetUp()
     {
-
         const auto thickness = 5.715e-3;   // [m]
         auto aMaterial = Material::nBandMaterial(
-          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic,
-          WavelengthRange::Solar);
+          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // Define BSDF
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
@@ -165,152 +163,45 @@ TEST_F(TestSpecularLayer_103, TestSpecular1)
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
 
-    std::vector<double> correctResults;
-    correctResults.push_back(32.294776447203247);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(33.006380866841823);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(34.992702796347736);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(32.217023531752325);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(33.495205077232704);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(32.498117709812746);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(34.554542172924990);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(26.228678844675056);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
-    correctResults.push_back(14.922971889762241);
+    std::vector<double> correctResults{
+      32.294776447203247, 33.006380866841823, 33.006380866841823, 33.006380866841823,
+      33.006380866841823, 33.006380866841823, 33.006380866841823, 33.006380866841823,
+      33.006380866841823, 34.992702796347736, 34.992702796347736, 34.992702796347736,
+      34.992702796347736, 34.992702796347736, 34.992702796347736, 34.992702796347736,
+      34.992702796347736, 34.992702796347736, 34.992702796347736, 34.992702796347736,
+      34.992702796347736, 34.992702796347736, 34.992702796347736, 34.992702796347736,
+      34.992702796347736, 32.217023531752325, 32.217023531752325, 32.217023531752325,
+      32.217023531752325, 32.217023531752325, 32.217023531752325, 32.217023531752325,
+      32.217023531752325, 32.217023531752325, 32.217023531752325, 32.217023531752325,
+      32.217023531752325, 32.217023531752325, 32.217023531752325, 32.217023531752325,
+      32.217023531752325, 32.217023531752325, 32.217023531752325, 32.217023531752325,
+      32.217023531752325, 33.495205077232704, 33.495205077232704, 33.495205077232704,
+      33.495205077232704, 33.495205077232704, 33.495205077232704, 33.495205077232704,
+      33.495205077232704, 33.495205077232704, 33.495205077232704, 33.495205077232704,
+      33.495205077232704, 33.495205077232704, 33.495205077232704, 33.495205077232704,
+      33.495205077232704, 33.495205077232704, 33.495205077232704, 33.495205077232704,
+      33.495205077232704, 33.495205077232704, 33.495205077232704, 33.495205077232704,
+      33.495205077232704, 32.498117709812746, 32.498117709812746, 32.498117709812746,
+      32.498117709812746, 32.498117709812746, 32.498117709812746, 32.498117709812746,
+      32.498117709812746, 32.498117709812746, 32.498117709812746, 32.498117709812746,
+      32.498117709812746, 32.498117709812746, 32.498117709812746, 32.498117709812746,
+      32.498117709812746, 32.498117709812746, 32.498117709812746, 32.498117709812746,
+      32.498117709812746, 32.498117709812746, 32.498117709812746, 32.498117709812746,
+      32.498117709812746, 34.554542172924990, 34.554542172924990, 34.554542172924990,
+      34.554542172924990, 34.554542172924990, 34.554542172924990, 34.554542172924990,
+      34.554542172924990, 34.554542172924990, 34.554542172924990, 34.554542172924990,
+      34.554542172924990, 34.554542172924990, 34.554542172924990, 34.554542172924990,
+      34.554542172924990, 34.554542172924990, 34.554542172924990, 34.554542172924990,
+      34.554542172924990, 34.554542172924990, 34.554542172924990, 34.554542172924990,
+      34.554542172924990, 26.228678844675056, 26.228678844675056, 26.228678844675056,
+      26.228678844675056, 26.228678844675056, 26.228678844675056, 26.228678844675056,
+      26.228678844675056, 26.228678844675056, 26.228678844675056, 26.228678844675056,
+      26.228678844675056, 26.228678844675056, 26.228678844675056, 26.228678844675056,
+      26.228678844675056, 14.922971889762241, 14.922971889762241, 14.922971889762241,
+      14.922971889762241, 14.922971889762241, 14.922971889762241, 14.922971889762241,
+      14.922971889762241, 14.922971889762241, 14.922971889762241, 14.922971889762241,
+      14.922971889762241};
+
 
     EXPECT_EQ(correctResults.size(), aT.size());
     for(size_t i = 0; i < size; ++i)
@@ -321,153 +212,44 @@ TEST_F(TestSpecularLayer_103, TestSpecular1)
     // Front reflectance
     auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
-
-    correctResults.push_back(2.9326345631447182);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(2.9992304210494063);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.2001505542995270);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.0313444596793500);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(3.4411667517902407);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(4.1457355004793373);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(6.8272781510201250);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(10.900107369718414);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
-    correctResults.push_back(33.055990281570203);
+    correctResults = {
+      2.9326345631447182, 2.9992304210494063, 2.9992304210494063, 2.9992304210494063,
+      2.9992304210494063, 2.9992304210494063, 2.9992304210494063, 2.9992304210494063,
+      2.9992304210494063, 3.2001505542995270, 3.2001505542995270, 3.2001505542995270,
+      3.2001505542995270, 3.2001505542995270, 3.2001505542995270, 3.2001505542995270,
+      3.2001505542995270, 3.2001505542995270, 3.2001505542995270, 3.2001505542995270,
+      3.2001505542995270, 3.2001505542995270, 3.2001505542995270, 3.2001505542995270,
+      3.2001505542995270, 3.0313444596793500, 3.0313444596793500, 3.0313444596793500,
+      3.0313444596793500, 3.0313444596793500, 3.0313444596793500, 3.0313444596793500,
+      3.0313444596793500, 3.0313444596793500, 3.0313444596793500, 3.0313444596793500,
+      3.0313444596793500, 3.0313444596793500, 3.0313444596793500, 3.0313444596793500,
+      3.0313444596793500, 3.0313444596793500, 3.0313444596793500, 3.0313444596793500,
+      3.0313444596793500, 3.4411667517902407, 3.4411667517902407, 3.4411667517902407,
+      3.4411667517902407, 3.4411667517902407, 3.4411667517902407, 3.4411667517902407,
+      3.4411667517902407, 3.4411667517902407, 3.4411667517902407, 3.4411667517902407,
+      3.4411667517902407, 3.4411667517902407, 3.4411667517902407, 3.4411667517902407,
+      3.4411667517902407, 3.4411667517902407, 3.4411667517902407, 3.4411667517902407,
+      3.4411667517902407, 3.4411667517902407, 3.4411667517902407, 3.4411667517902407,
+      3.4411667517902407, 4.1457355004793373, 4.1457355004793373, 4.1457355004793373,
+      4.1457355004793373, 4.1457355004793373, 4.1457355004793373, 4.1457355004793373,
+      4.1457355004793373, 4.1457355004793373, 4.1457355004793373, 4.1457355004793373,
+      4.1457355004793373, 4.1457355004793373, 4.1457355004793373, 4.1457355004793373,
+      4.1457355004793373, 4.1457355004793373, 4.1457355004793373, 4.1457355004793373,
+      4.1457355004793373, 4.1457355004793373, 4.1457355004793373, 4.1457355004793373,
+      4.1457355004793373, 6.8272781510201250, 6.8272781510201250, 6.8272781510201250,
+      6.8272781510201250, 6.8272781510201250, 6.8272781510201250, 6.8272781510201250,
+      6.8272781510201250, 6.8272781510201250, 6.8272781510201250, 6.8272781510201250,
+      6.8272781510201250, 6.8272781510201250, 6.8272781510201250, 6.8272781510201250,
+      6.8272781510201250, 6.8272781510201250, 6.8272781510201250, 6.8272781510201250,
+      6.8272781510201250, 6.8272781510201250, 6.8272781510201250, 6.8272781510201250,
+      6.8272781510201250, 10.900107369718414, 10.900107369718414, 10.900107369718414,
+      10.900107369718414, 10.900107369718414, 10.900107369718414, 10.900107369718414,
+      10.900107369718414, 10.900107369718414, 10.900107369718414, 10.900107369718414,
+      10.900107369718414, 10.900107369718414, 10.900107369718414, 10.900107369718414,
+      10.900107369718414, 33.055990281570203, 33.055990281570203, 33.055990281570203,
+      33.055990281570203, 33.055990281570203, 33.055990281570203, 33.055990281570203,
+      33.055990281570203, 33.055990281570203, 33.055990281570203, 33.055990281570203,
+      33.055990281570203};
 
     EXPECT_EQ(correctResults.size(), aRf.size());
     for(size_t i = 0; i < size; ++i)

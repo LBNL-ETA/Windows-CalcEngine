@@ -34,7 +34,7 @@ protected:
         double slatSpacing = 0.012;   // m
         double slatTiltAngle = 45;
         double curvatureRadius = 0;
-        size_t numOfSlatSegments = 5;
+        const size_t numOfSlatSegments = 5;
 
         // Method
         DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;

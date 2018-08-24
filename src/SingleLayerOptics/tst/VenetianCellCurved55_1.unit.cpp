@@ -17,20 +17,20 @@ protected:
     virtual void SetUp()
     {
         // create material
-        double Tmat = 0.1;
-        double Rfmat = 0.7;
-        double Rbmat = 0.7;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
+        const auto Tmat = 0.1;
+        const auto Rfmat = 0.7;
+		const auto Rbmat = 0.7;
+		const auto minLambda = 0.3;
+		const auto maxLambda = 2.5;
         const auto aMaterial =
           Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        double slatWidth = 0.076200;     // m
-        double slatSpacing = 0.057150;   // m
-        double slatTiltAngle = 55.000000;
-        double curvatureRadius = 0.123967;
-        size_t numOfSlatSegments = 2;
+		const auto slatWidth = 0.076200;     // m
+		const auto slatSpacing = 0.057150;   // m
+		const auto slatTiltAngle = 55.000000;
+		const auto curvatureRadius = 0.123967;
+        const size_t numOfSlatSegments = 2;
 
         const auto aCellDescription =
           std::make_shared<CVenetianCellDescription>(
@@ -57,16 +57,16 @@ TEST_F(TestVenetianCellCurved55_1, TestVenetian1)
     double Tdif_dif = aCell->T_dif_dif(aSide);
     double Rdif_dif = aCell->R_dif_dif(aSide);
 
-    EXPECT_NEAR(0.31432383716259171, Tdif_dif, 1e-6);
-    EXPECT_NEAR(0.45819107731734438, Rdif_dif, 1e-6);
+    EXPECT_NEAR(0.314324, Tdif_dif, 1e-6);
+    EXPECT_NEAR(0.458191, Rdif_dif, 1e-6);
 
     // Back side
     aSide = Side::Back;
     Tdif_dif = aCell->T_dif_dif(aSide);
     Rdif_dif = aCell->R_dif_dif(aSide);
 
-    EXPECT_NEAR(0.31432383716259166, Tdif_dif, 1e-6);
-    EXPECT_NEAR(0.43717927379126331, Rdif_dif, 1e-6);
+    EXPECT_NEAR(0.314324, Tdif_dif, 1e-6);
+    EXPECT_NEAR(0.437179, Rdif_dif, 1e-6);
 }
 
 TEST_F(TestVenetianCellCurved55_1, TestVenetian2)
@@ -90,17 +90,17 @@ TEST_F(TestVenetianCellCurved55_1, TestVenetian2)
     double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
     double Rdir_dif = aCell->R_dir_dif(aSide, aDirection);
 
-    EXPECT_NEAR(0.00000000000000000, Tdir_dir, 1e-6);
-    EXPECT_NEAR(0.19839281076530671, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.51950846145958018, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.000000, Tdir_dir, 1e-6);
+    EXPECT_NEAR(0.198393, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.519508, Rdir_dif, 1e-6);
 
     CBeamDirection outDirection = CBeamDirection(outTheta, outPhi);
 
     Tdir_dif = aCell->T_dir_dif(aSide, aDirection, outDirection);
     Rdir_dif = aCell->R_dir_dif(aSide, aDirection, outDirection);
 
-    EXPECT_NEAR(0.20808349127066289, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.58255582128670280, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.208083, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.582556, Rdir_dif, 1e-6);
 
     // Back side
     aSide = Side::Back;
@@ -108,7 +108,7 @@ TEST_F(TestVenetianCellCurved55_1, TestVenetian2)
     Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
     Rdir_dif = aCell->R_dir_dif(aSide, aDirection);
 
-    EXPECT_NEAR(0.00000000000000000, Tdir_dir, 1e-6);
-    EXPECT_NEAR(0.19221286838976023, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.50885857000236578, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.000000, Tdir_dir, 1e-6);
+    EXPECT_NEAR(0.192213, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.508859, Rdir_dif, 1e-6);
 }

@@ -17,17 +17,17 @@ protected:
     virtual void SetUp()
     {
         // create material
-        double Tmat = 0.15;
-        double Rfmat = 0.8;
-        double Rbmat = 0.6;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
+		const auto Tmat = 0.15;
+		const auto Rfmat = 0.8;
+		const auto Rbmat = 0.6;
+		const auto minLambda = 0.3;
+		const auto maxLambda = 2.5;
         const auto aMaterial =
           Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        double diameter = 6.35;   // mm
-        double spacing = 19.05;   // mm
+		const auto diameter = 6.35;   // mm
+		const auto spacing = 19.05;   // mm
         std::shared_ptr<ICellDescription> aCell =
           std::make_shared<CWovenCellDescription>(diameter, spacing);
 
