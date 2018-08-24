@@ -56,48 +56,7 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
 
-    std::vector<double> correctResults;
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
+    std::vector<double> correctResults(41, 0);
 
     std::vector<double> calculatedResults;
     for(size_t i = 0; i < size; ++i)
@@ -113,48 +72,12 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
 
     auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
+    correctResults = {0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070};
 
     calculatedResults.clear();
     for(size_t i = 0; i < size; ++i)

@@ -118,7 +118,7 @@ protected:
     {
         const auto aMeasurements = loadSampleData_NFRC_102();
 
-        double thickness = 3.048e-3;   // [m]
+        const auto thickness = 3.048e-3;   // [m]
         const auto aMaterial = Material::nBandMaterial(
           aMeasurements, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 

@@ -253,7 +253,7 @@ private:
 protected:
     void SetUp() override
     {
-        double thickness = 3.048e-3;   // [m]
+        const auto thickness = 3.048e-3;   // [m]
         const auto aMaterial = Material::nBandMaterial(loadSampleData_NFRC_102(),
         	loadDetectorData(), thickness, MaterialType::Monolithic, WavelengthRange::Visible);
 

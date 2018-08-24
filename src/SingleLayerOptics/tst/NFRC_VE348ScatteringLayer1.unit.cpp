@@ -236,10 +236,6 @@ private:
 
 protected:
 	virtual void SetUp() {
-
-		std::shared_ptr< CSpectralSampleData > aMeasurements = loadSampleData_NFRC_VE348();
-
-
 		double thickness = 5.66e-3; // [m]
 		const auto aMaterial = Material::nBandMaterial( loadSampleData_NFRC_VE348(),
 				thickness, MaterialType::Coated, WavelengthRange::Solar, IntegrationType::PreWeighted);
