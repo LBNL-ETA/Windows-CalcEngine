@@ -49,6 +49,7 @@ namespace FenestrationCommon
           create(const std::initializer_list<std::pair<double, double>> & t_list);
         static std::shared_ptr<CSeries>
           create(const std::vector<std::pair<double, double>> & t_values);
+        static std::shared_ptr<CSeries> create();
 
 		explicit CSeries(const std::vector<std::pair<double, double>> & t_values);
 		explicit CSeries(const std::initializer_list<std::pair<double, double>> & t_values);

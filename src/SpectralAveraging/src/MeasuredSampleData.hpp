@@ -20,12 +20,13 @@ namespace SpectralAveraging
         AbsB
     };
 
-    struct MeasuredRow {
-    	MeasuredRow(double wl, double t, double rf, double rb);
-    	double wavelength;
-    	double T;
-    	double Rf;
-    	double Rb;
+    struct MeasuredRow
+    {
+        MeasuredRow(double wl, double t, double rf, double rb);
+        double wavelength;
+        double T;
+        double Rf;
+        double Rb;
     };
 
     // Measured sample data for given wavelengths.
@@ -35,7 +36,10 @@ namespace SpectralAveraging
         virtual ~CSpectralSampleData() = default;
         CSpectralSampleData();
 
-        static std::shared_ptr<CSpectralSampleData> create(const std::initializer_list<MeasuredRow> & tValues);
+        static std::shared_ptr<CSpectralSampleData>
+          create(const std::initializer_list<MeasuredRow> & tValues);
+
+        static std::shared_ptr<CSpectralSampleData> create();
 
         void addRecord(double t_Wavelength,
                        double t_Transmittance,
@@ -46,10 +50,10 @@ namespace SpectralAveraging
         virtual void interpolate(std::vector<double> const & t_Wavelengths);
 
         bool Flipped() const;
-        virtual void Filpped(bool const t_Flipped);
+        virtual void Filpped(bool t_Flipped);
 
     protected:
-		CSpectralSampleData( const std::initializer_list<MeasuredRow> & tValues);
+        CSpectralSampleData(const std::initializer_list<MeasuredRow> & tValues);
 
         virtual void calculateProperties();
         void reset();

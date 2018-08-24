@@ -384,4 +384,8 @@ namespace FenestrationCommon
 		return std::shared_ptr< CSeries >(new CSeries(t_values));
 	}
 
+	std::shared_ptr< CSeries > CSeries::create() {
+		return CSeries::create({});
+	}
+
 }   // namespace FenestrationCommon
