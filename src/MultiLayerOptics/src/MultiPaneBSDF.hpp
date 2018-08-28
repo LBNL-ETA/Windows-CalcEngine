@@ -35,13 +35,11 @@ namespace MultiLayerOptics
         static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                  const p_Series & t_SolarRadiation,
-                 const std::vector<double> & t_CommonWavelengths,
-                 const p_VectorSeries & t_IncomingSpectra = nullptr);
+                 const std::vector<double> & t_CommonWavelengths);
 
         static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const p_Series & t_SolarRadiation,
-                 const p_VectorSeries & t_IncomingSpectra = nullptr);
+                 const p_Series & t_SolarRadiation);
 
         void setIntegrationType(FenestrationCommon::IntegrationType t_type,
                                 double normalizationCoefficient);
@@ -126,20 +124,14 @@ namespace MultiLayerOptics
                          size_t Index,
                          double t_Theta,
                          double t_Phi);
-	private:
 
-		// t_SolarRadiation is spectra used for initialization of material properties in the layers
-		// t_IncomingSpectra is solar radiation distribution used to calculate actual data.
-		// If t_IncomingSpectra is missing then t_SolarRadiation is considered to be incoming
-		// spectra for every direction
-		CMultiPaneBSDF( const std::shared_ptr< SingleLayerOptics::CBSDFLayer > & t_Layer,
-						const p_Series & t_SolarRadiation,
-						const std::vector< double > & t_CommonWavelengths,
-						const p_VectorSeries & t_IncomingSpectra = nullptr );
+    private:
+        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                       const p_Series & t_SolarRadiation,
+                       const std::vector<double> & t_CommonWavelengths);
 
-		CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-					   const p_Series & t_SolarRadiation,
-					   const p_VectorSeries & t_IncomingSpectra = nullptr);
+        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+                       const p_Series & t_SolarRadiation);
 
         void calculate(double minLambda, double maxLambda);
 
