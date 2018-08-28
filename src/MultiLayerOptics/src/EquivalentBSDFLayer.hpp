@@ -34,27 +34,30 @@ namespace MultiLayerOptics
     class CEquivalentBSDFLayer
     {
     public:
-        CEquivalentBSDFLayer(std::vector<double> const & t_CommonWavelengths,
-                             std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
+        CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths,
+                             const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
 
-        void addLayer( std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer );
-        const SingleLayerOptics::CBSDFDirections & getDirections( const SingleLayerOptics::BSDFDirection t_Side ) const;
+        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
+        const SingleLayerOptics::CBSDFDirections &
+          getDirections(SingleLayerOptics::BSDFDirection t_Side) const;
         std::vector<double> getCommonWavelengths() const;
 
         // Absorptance wavelength by wavelength matrices
-        std::shared_ptr<FenestrationCommon::CMatrixSeries> getTotalA(const FenestrationCommon::Side t_Side);
+        std::shared_ptr<FenestrationCommon::CMatrixSeries>
+          getTotalA(FenestrationCommon::Side t_Side);
 
         // Transmittance and reflectance wavelength by wavelength matrices
-        std::shared_ptr<FenestrationCommon::CMatrixSeries> getTotal(const FenestrationCommon::Side t_Side,
-                                                                    const FenestrationCommon::PropertySimple t_Property);
+        std::shared_ptr<FenestrationCommon::CMatrixSeries>
+          getTotal(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySimple t_Property);
 
-        void setSolarRadiation(const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
+        void
+          setSolarRadiation(const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
 
     private:
         void calculate();
 
         // Wavelength layer per layer calculations
-        void calculateWavelengthProperties(size_t const t_NumOfLayers, size_t const t_Start, size_t const t_End);
+        void calculateWavelengthProperties(size_t t_NumOfLayers, size_t t_Start, size_t t_End);
 
         void updateWavelengthLayers(SingleLayerOptics::CBSDFLayer & t_Layer);
 
@@ -65,10 +68,14 @@ namespace MultiLayerOptics
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> m_Layer;
 
         // Total absoprtance coefficients for every wavelength (does not include source data)
-        std::map<FenestrationCommon::Side, std::shared_ptr<FenestrationCommon::CMatrixSeries>> m_TotA;
+        std::map<FenestrationCommon::Side, std::shared_ptr<FenestrationCommon::CMatrixSeries>>
+          m_TotA;
 
-        // Total Transmittance and Reflectance values for every wavelength (does not include source data)
-        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>, std::shared_ptr<FenestrationCommon::CMatrixSeries>> m_Tot;
+        // Total Transmittance and Reflectance values for every wavelength (does not include source
+        // data)
+        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+                 std::shared_ptr<FenestrationCommon::CMatrixSeries>>
+          m_Tot;
 
         const FenestrationCommon::SquareMatrix m_Lambda;
 

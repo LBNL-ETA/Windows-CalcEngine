@@ -32,7 +32,7 @@ TEST_F( TestPhisAngles2, TestBSDFRingCreation ) {
 
 	std::vector< double > results = *( aRing->phiAngles() );
 
-	std::vector< double > correctResults = { 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330 };
+	std::vector< double > correctResults{ 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330 };
 	EXPECT_EQ( results.size(), correctResults.size() );
 
 	for ( size_t i = 0; i < results.size(); ++i ) {

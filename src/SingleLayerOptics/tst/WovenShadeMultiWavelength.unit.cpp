@@ -18,34 +18,24 @@ protected:
     virtual void SetUp()
     {
         // Solar range material
-        double Tmat = 0.1;
-        double Rfmat = 0.7;
-        double Rbmat = 0.7;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aSolarRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
 
         // Visible range
-        Tmat = 0.2;
-        Rfmat = 0.6;
-        Rbmat = 0.6;
-        minLambda = 0.38;
-        maxLambda = 0.78;
-        std::shared_ptr<CMaterial> aVisibleRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
 
-        double ratio = 0.49;
-
-        std::shared_ptr<CMaterial> aMaterial =
-          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
+        const auto aMaterial = Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol,
+        	Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        double diameter = 6.35;   // mm
-        double spacing = 19.05;   // mm
+		const auto diameter = 6.35;   // mm
+		const auto spacing = 19.05;   // mm
 
         // create BSDF
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);

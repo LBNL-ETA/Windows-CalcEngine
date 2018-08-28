@@ -27,7 +27,7 @@ protected:
           {0, 1}, {15, 1}, {30, 1}, {45, 1}, {60, 1}, {75, 1}, {86.25, 1}};
 
         // Create BSDF out of previous definitions
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(aDefinitions);
+        const auto aBSDF = CBSDFHemisphere::create(aDefinitions);
 
         std::shared_ptr<CSeries> aSolarRadiation = std::make_shared<CSeries>();
 
@@ -275,7 +275,7 @@ protected:
         double maxLambda = 2.5;
 
         auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements, thickness, aType, minLambda, maxLambda);
+			aMeasurements, thickness, aType, minLambda, maxLambda);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);

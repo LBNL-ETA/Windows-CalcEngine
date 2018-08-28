@@ -16,19 +16,19 @@ private:
 protected:
 	virtual void SetUp() {
 		// create material
-		double Tmat = 0.1;
-		double Rfmat = 0.7;
-		double Rbmat = 0.7;
-		double minLambda = 0.3;
-		double maxLambda = 2.5;
-		std::shared_ptr< CMaterialSingleBand > aMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		const auto Tmat = 0.1;
+		const auto Rfmat = 0.7;
+		const auto Rbmat = 0.7;
+		const auto minLambda = 0.3;
+		const auto maxLambda = 2.5;
+		const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat,
+			minLambda, maxLambda );
 
 		// make cell geometry
-		double slatWidth = 0.076200; // m
-		double slatSpacing = 0.057150; // m
-		double slatTiltAngle = -55.000000;
-		double curvatureRadius = 0.123967;
+		const auto slatWidth = 0.076200; // m
+		const auto slatSpacing = 0.057150; // m
+		const auto slatTiltAngle = -55.000000;
+		const auto curvatureRadius = 0.123967;
 		size_t numOfSlatSegments = 2;
 
 		std::shared_ptr< CVenetianCellDescription > aCellDescription =

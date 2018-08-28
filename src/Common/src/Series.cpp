@@ -374,4 +374,18 @@ namespace FenestrationCommon
         m_Series.clear();
     }
 
+	std::shared_ptr< CSeries >
+	CSeries::create( const std::initializer_list< std::pair< double, double>> & t_list) {
+		return std::shared_ptr< CSeries >(new CSeries(t_list));
+	}
+
+	std::shared_ptr< CSeries >
+	CSeries::create( const std::vector< std::pair< double, double>> & t_values ) {
+		return std::shared_ptr< CSeries >(new CSeries(t_values));
+	}
+
+	std::shared_ptr< CSeries > CSeries::create() {
+		return CSeries::create({});
+	}
+
 }   // namespace FenestrationCommon

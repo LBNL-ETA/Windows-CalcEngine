@@ -18,12 +18,12 @@ namespace SingleLayerOptics {
 
 	protected:
 		std::shared_ptr< CSpecularCell > cellAsSpecular() const;
-		void calcDiffuseDistribution( const FenestrationCommon::Side aSide,
+		void calcDiffuseDistribution( FenestrationCommon::Side aSide,
 		                              const CBeamDirection& t_Direction,
-		                              const size_t t_DirectionIndex );
-		void calcDiffuseDistribution_wv( const FenestrationCommon::Side aSide,
+		                              size_t t_DirectionIndex ) override;
+		void calcDiffuseDistribution_wv( FenestrationCommon::Side aSide,
 		                                 const CBeamDirection& t_Direction,
-		                                 const size_t t_DirectionIndex );
+		                                 size_t t_DirectionIndex ) override;
 
 
 	};

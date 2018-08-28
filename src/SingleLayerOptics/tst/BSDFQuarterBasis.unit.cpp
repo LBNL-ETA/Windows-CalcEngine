@@ -15,7 +15,7 @@ private:
 
 protected:
 	virtual void SetUp() {
-		m_BSDFHemisphere = std::make_shared< CBSDFHemisphere >( BSDFBasis::Quarter );
+		m_BSDFHemisphere = CBSDFHemisphere::create( BSDFBasis::Quarter );
 	}
 
 public:

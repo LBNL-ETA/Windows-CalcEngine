@@ -47,6 +47,7 @@ namespace SingleLayerOptics {
 		int getBandIndex( const double t_Wavelength );
 
 		std::vector< double > getBandWavelengths() const;
+		void setBandWavelengths(const std::vector<double> & wavelengths);
 
 		std::shared_ptr< CBaseCell > getCell() const;
 

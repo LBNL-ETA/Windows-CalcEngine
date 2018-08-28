@@ -1,10 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include <memory>
-
 #include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
 
 
 using namespace SingleLayerOptics;
@@ -19,26 +16,17 @@ private:
 protected:
 	virtual void SetUp() {
 		// Solar range material
-		double Tmat = 0.1;
-		double Rfmat = 0.7;
-		double Rbmat = 0.7;
-		double minLambda = 0.3;
-		double maxLambda = 2.5;
-		std::shared_ptr< CMaterialSingleBand > aSolarRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		const auto Tsol = 0.1;
+		const auto Rfsol = 0.7;
+		const auto Rbsol = 0.7;
 
 		// Visible range
-		Tmat = 0.2;
-		Rfmat = 0.6;
-		Rbmat = 0.6;
-		minLambda = 0.38;
-		maxLambda = 0.78;
-		std::shared_ptr< CMaterialSingleBand > aVisibleRangeMaterial =
-			std::make_shared< CMaterialSingleBand >( Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda );
+		const auto Tvis = 0.2;
+		const auto Rfvis = 0.6;
+		const auto Rbvis = 0.6;
 
-		double ratio = 0.49;
-
-		m_Material = std::make_shared< CMaterialDualBand >( aVisibleRangeMaterial, aSolarRangeMaterial, ratio );
+		m_Material = Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis,
+			Rfvis, Rbvis);
 	}
 
 public:

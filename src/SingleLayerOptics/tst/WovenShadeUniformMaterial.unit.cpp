@@ -17,21 +17,20 @@ protected:
     virtual void SetUp()
     {
         // create material
-        double Tmat = 0.2;
-        double Rfmat = 0.75;
-        double Rbmat = 0.75;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        std::shared_ptr<CMaterialSingleBand> aMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+		const auto Tmat = 0.2;
+		const auto Rfmat = 0.75;
+		const auto Rbmat = 0.75;
+		const auto minLambda = 0.3;
+		const auto maxLambda = 2.5;
+        const auto aMaterial = SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat,
+        	Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        double diameter = 6.35;   // mm
-        double spacing = 19.05;   // mm
+		const auto diameter = 6.35;   // mm
+		const auto spacing = 19.05;   // mm
 
         // create BSDF
-        std::shared_ptr<CBSDFHemisphere> aBSDF =
-          std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);

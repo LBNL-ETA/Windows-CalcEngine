@@ -22,16 +22,12 @@ protected:
         double Rbmat = 0.55;
         double minLambda = 0.3;
         double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        auto aMaterial =
+          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
-        // make cell
-        std::shared_ptr<ICellDescription> aCellDescription = std::make_shared<CPerfectDiffuseCellDescription>();
+        auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
-        std::shared_ptr<CBSDFHemisphere> aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
-
-        std::shared_ptr<CUniformDiffuseCell> aCell = std::make_shared<CUniformDiffuseCell>(aMaterial, aCellDescription);
-
-        m_Shade = std::make_shared<CUniformDiffuseBSDFLayer>(aCell, aBSDF);
+        m_Shade = CBSDFLayerMaker::getPerfectlyDiffuseLayer(aMaterial, aBSDF);
     }
 
 public:
@@ -60,48 +56,7 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
 
-    std::vector<double> correctResults;
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
+    std::vector<double> correctResults(41, 0);
 
     std::vector<double> calculatedResults;
     for(size_t i = 0; i < size; ++i)
@@ -117,48 +72,12 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
 
     auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
-    correctResults.push_back(0.175070);
+    correctResults = {0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
+                      0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070};
 
     calculatedResults.clear();
     for(size_t i = 0; i < size; ++i)

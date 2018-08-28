@@ -32,7 +32,7 @@ namespace SingleLayerOptics
     ///  CBSDFDirections
     /////////////////////////////////////////////////////////////////
 
-    CBSDFDirections::CBSDFDirections(std::vector<CBSDFDefinition> & t_Definitions, const BSDFDirection t_Side)
+    CBSDFDirections::CBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions, const BSDFDirection t_Side)
     {
         std::vector<double> thetaAngles;
         std::vector<size_t> numPhiAngles;
@@ -184,7 +184,7 @@ namespace SingleLayerOptics
         m_Directions.insert(std::make_pair(BSDFDirection::Outgoing, CBSDFDirections(aDefinitions, BSDFDirection::Outgoing)));
     }
 
-    CBSDFHemisphere::CBSDFHemisphere(std::vector<CBSDFDefinition> & t_Definitions) :
+    CBSDFHemisphere::CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions) :
         m_Directions({{BSDFDirection::Incoming, CBSDFDirections(t_Definitions, BSDFDirection::Incoming)},
         {BSDFDirection::Outgoing, CBSDFDirections(t_Definitions, BSDFDirection::Outgoing)}})
     {}
@@ -193,5 +193,14 @@ namespace SingleLayerOptics
     {
         return m_Directions.at(tDirection);
     }
+
+	std::shared_ptr< CBSDFHemisphere > CBSDFHemisphere::create( BSDFBasis t_Basis ) {
+		return std::shared_ptr< CBSDFHemisphere >(new CBSDFHemisphere(t_Basis));
+	}
+
+	std::shared_ptr< CBSDFHemisphere >
+	CBSDFHemisphere::create( const std::vector< CBSDFDefinition > & t_Definitions ) {
+		return std::shared_ptr< CBSDFHemisphere >(new CBSDFHemisphere(t_Definitions));
+	}
 
 }   // namespace SingleLayerOptics

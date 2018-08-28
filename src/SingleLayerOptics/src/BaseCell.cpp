@@ -59,6 +59,11 @@ namespace SingleLayerOptics {
 		return m_Material->getBandWavelengths();
 	}
 
+	void CBaseCell::setBandWavelengths( const std::vector< double > & wavelengths ) {
+		assert(m_Material != nullptr);
+		m_Material->setBandWavelengths(wavelengths);
+	}
+
 	int CBaseCell::getBandIndex( const double t_Wavelength ) {
 		return m_Material->getBandIndex( t_Wavelength );
 	}
