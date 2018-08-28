@@ -31,7 +31,7 @@ namespace SingleLayerOptics {
 
 	class CBSDFDirections {
 	public:
-		CBSDFDirections( std::vector< CBSDFDefinition >& t_Definitions, const BSDFDirection t_Side );
+		CBSDFDirections( const std::vector< CBSDFDefinition >& t_Definitions, const BSDFDirection t_Side );
 		size_t size() const;
 		std::shared_ptr< const CBSDFPatch > operator[]( const size_t Index ) const;
 		std::vector< std::shared_ptr< CBSDFPatch > >::iterator begin();
@@ -55,7 +55,7 @@ namespace SingleLayerOptics {
 	class CBSDFHemisphere {
 	public:
 		static std::shared_ptr<CBSDFHemisphere> create(BSDFBasis t_Basis);
-		static std::shared_ptr<CBSDFHemisphere> create(std::vector< CBSDFDefinition >& t_Definitions);
+		static std::shared_ptr<CBSDFHemisphere> create(const std::vector< CBSDFDefinition >& t_Definitions);
 
 		const CBSDFDirections & getDirections( BSDFDirection t_Side ) const;
 
@@ -63,7 +63,7 @@ namespace SingleLayerOptics {
 		// Construction for pre-defined basis
 		explicit CBSDFHemisphere( BSDFBasis t_Basis );
 		// Construction for custom basis
-		explicit CBSDFHemisphere( std::vector< CBSDFDefinition >& t_Definitions );
+		explicit CBSDFHemisphere( const std::vector< CBSDFDefinition >& t_Definitions );
 
 		std::map< BSDFDirection, CBSDFDirections > m_Directions;
 	};

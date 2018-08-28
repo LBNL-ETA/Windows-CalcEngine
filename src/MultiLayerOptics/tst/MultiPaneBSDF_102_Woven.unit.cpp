@@ -141,8 +141,8 @@ protected:
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        const auto diameter = 100.0;   // mm
-        const auto spacing = 300.0;    // mm
+        const auto diameter = 0.1;   // m
+        const auto spacing = 0.3;    // m
 
         // Perforated layer is created here
         auto LayerWoven = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);

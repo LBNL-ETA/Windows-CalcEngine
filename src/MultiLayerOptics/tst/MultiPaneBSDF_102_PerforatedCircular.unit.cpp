@@ -141,17 +141,17 @@ protected:
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        double x = 19.05;        // mm
-        double y = 19.05;        // mm
-        thickness = 5;           // mm
-        double radius = 3.175;   // mm
+        const auto x = 0.01905;        // m
+        const auto y = 0.01905;        // m
+        thickness = 0.005;           	// m
+        const auto radius = 0.003175;  // m
 
         // Perforated layer is created here
-        auto Layer_Perforated = CBSDFLayerMaker::getCircularPerforatedLayer(
+        const auto perforated = CBSDFLayerMaker::getCircularPerforatedLayer(
           aMaterialPerforated, aBSDF, x, y, thickness, radius);
 
         m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
-        m_Layer->addLayer(Layer_Perforated);
+        m_Layer->addLayer(perforated);
     }
 
 public:
