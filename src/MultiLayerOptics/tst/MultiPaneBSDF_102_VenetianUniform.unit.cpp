@@ -126,7 +126,7 @@ protected:
 
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
 
-        auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
+        const auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Venetian blind
         const auto Tsol = 0.1;
@@ -138,7 +138,7 @@ protected:
         const auto Rfvis = 0.6;
         const auto Rbvis = 0.6;
 
-        auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
+        const auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
@@ -146,7 +146,7 @@ protected:
         const auto slatSpacing = 0.012;   // m
         const auto slatTiltAngle = 45;
         const auto curvatureRadius = 0.0;
-        size_t numOfSlatSegments = 5;
+        const size_t numOfSlatSegments = 5;
 
         auto Layer_Venetian = CBSDFLayerMaker::getVenetianLayer(aMaterialVenetian,
                                                                 aBSDF,
