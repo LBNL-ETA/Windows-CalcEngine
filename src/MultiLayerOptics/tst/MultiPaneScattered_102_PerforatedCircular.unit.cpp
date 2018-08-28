@@ -139,10 +139,10 @@ protected:
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        const auto x = 19.05;        // mm
-        const auto y = 19.05;        // mm
-        thickness = 5;           // mm
-        const auto radius = 3.175;   // mm
+        const auto x = 0.01905;        // m
+        const auto y = 0.01905;        // m
+        thickness = 0.005;           	// m
+        const auto radius = 0.003175;  // m
 
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
         CScatteringLayer LayerPerforated = CScatteringLayer::createPerforatedCircularLayer(

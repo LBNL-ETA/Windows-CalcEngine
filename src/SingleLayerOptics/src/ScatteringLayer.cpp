@@ -205,12 +205,12 @@ namespace SingleLayerOptics
 
     CScatteringLayer
       CScatteringLayer::createVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                            double slatWidth,
-                                            double slatSpacing,
-                                            double slatTiltAngle,
-                                            double curvatureRadius,
-                                            size_t numOfSlatSegments,
-                                            DistributionMethod method)
+                                            const double slatWidth,
+                                            const double slatSpacing,
+                                            const double slatTiltAngle,
+                                            const double curvatureRadius,
+                                            const size_t numOfSlatSegments,
+                                            const DistributionMethod method)
     {
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getVenetianLayer(t_Material,
@@ -237,11 +237,11 @@ namespace SingleLayerOptics
 
     CScatteringLayer CScatteringLayer::createPerforatedRectangularLayer(
       const std::shared_ptr<CMaterial> & t_Material,
-      double x,
-      double y,
-      double thickness,
-      double xHole,
-      double yHole)
+      const double x,
+      const double y,
+      const double thickness,
+      const double xHole,
+      const double yHole)
     {
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getRectangularPerforatedLayer(

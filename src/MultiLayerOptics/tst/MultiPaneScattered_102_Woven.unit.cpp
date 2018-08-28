@@ -121,8 +121,8 @@ protected:
     void SetUp() override
     {
         // Create material from samples
-        auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
+        const auto thickness = 3.048e-3;   // [m]
+        const auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
 			loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // Solar
@@ -135,22 +135,22 @@ protected:
         const auto Rfvis = 0.1;
         const auto Rbvis = 0.1;
 
-        auto aMaterialWoven = SingleLayerOptics::Material::dualBandMaterial(
+        const auto aMaterialWoven = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        auto diameter = 0.1;   // m
-        auto spacing = 0.3;    // m
+        const auto diameter = 0.1;   // m
+        const auto spacing = 0.3;    // m
 
-        auto Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
-        auto LayerWoven = CScatteringLayer::createWovenLayer(aMaterialWoven, diameter, spacing);
+        const auto Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
+        const auto LayerWoven = CScatteringLayer::createWovenLayer(aMaterialWoven, diameter, spacing);
 
 
         // Equivalent BSDF layer
         m_Layer = CMultiLayerScattered::create(Layer102);
         m_Layer->addLayer(LayerWoven);
 
-        auto aSolarRadiation = loadSolarRadiationFile();
+        const auto aSolarRadiation = loadSolarRadiationFile();
         m_Layer->setSourceData(aSolarRadiation);
     }
 
