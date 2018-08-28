@@ -17,23 +17,25 @@ protected:
     virtual void SetUp()
     {
         // create material
-        double Tmat = 0.2;
-        double Rfmat = 0.8;
-        double Rbmat = 0.8;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto Tmat = 0.2;
+        const auto Rfmat = 0.8;
+        const auto Rbmat = 0.8;
+        const auto minLambda = 0.3;
+        const auto maxLambda = 2.5;
+        const auto aMaterial =
+          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        double x = 22.5;        // mm
-        double y = 38.1;        // mm
-        double thickness = 5;   // mm
-        double radius = 0;      // mm
+        const auto x = 22.5;          // mm
+        const auto y = 38.1;          // mm
+        const auto thickness = 5.0;   // mm
+        const auto radius = 0.0;      // mm
 
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
-        m_Shade = CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);
+        m_Shade =
+          CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);
     }
 
 public:
@@ -65,48 +67,13 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     const auto size = aT.size();
 
     // Test diagonal
-    std::vector<double> correctResults;
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
+    std::vector<double> correctResults{
+      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+      0.063662, 0.063662, 0.063662, 0.063662, 0.063662};
+
 
     std::vector<double> calculatedResults;
     for(size_t i = 0; i < size; ++i)
@@ -121,48 +88,12 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     }
 
     // Test first row
-    correctResults.clear();
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
+    correctResults = {0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+                      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+                      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+                      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+                      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662,
+                      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662};
 
     calculatedResults.clear();
     for(size_t i = 0; i < size; ++i)
@@ -179,48 +110,12 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     // Test first row for reflectance matrix
     auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
+    correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648};
 
     calculatedResults.clear();
     for(size_t i = 0; i < size; ++i)
@@ -237,48 +132,12 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     // Test first row for reflectance matrix
     auto aRb = aResults->getMatrix(Side::Back, PropertySimple::R);
 
-    correctResults.clear();
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
-    correctResults.push_back(0.254648);
+	correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648};
 
     calculatedResults.clear();
     for(size_t i = 0; i < size; ++i)

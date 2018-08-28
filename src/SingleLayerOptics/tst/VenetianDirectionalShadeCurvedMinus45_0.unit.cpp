@@ -17,27 +17,27 @@ protected:
     virtual void SetUp()
     {
         // create material
-        double Tmat = 0.0;
-        double Rfmat = 0.95;
-        double Rbmat = 0.95;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+		const auto Tmat = 0.0;
+		const auto Rfmat = 0.95;
+		const auto Rbmat = 0.95;
+		const auto minLambda = 0.3;
+		const auto maxLambda = 2.5;
+        const auto aMaterial =
+          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
 
         // make cell geometry
-        double slatWidth = 0.025400;     // m
-        double slatSpacing = 0.019000;   // m
-        double slatTiltAngle = -45;
-        double curvatureRadius = 0.041322;
-        size_t numOfSlatSegments = 5;
+		const auto slatWidth = 0.025400;     // m
+		const auto slatSpacing = 0.019000;   // m
+		const auto slatTiltAngle = -45;
+		const auto curvatureRadius = 0.041322;
+        const size_t numOfSlatSegments = 5;
 
         // Method
         DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
 
         // create BSDF
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,

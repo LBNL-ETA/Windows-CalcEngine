@@ -26,18 +26,18 @@ namespace SingleLayerOptics
         CScatteringLayer(const CScatteringSurface & t_Front, const CScatteringSurface & t_Back);
         CScatteringLayer(const CScatteringSurface && t_Front, const CScatteringSurface && t_Back);
 
-        CScatteringLayer(const double Tf_dir_dir,
-                         const double Rf_dir_dir,
-                         const double Tb_dir_dir,
-                         const double Rb_dir_dir,
-                         const double Tf_dir_dif,
-                         const double Rf_dir_dif,
-                         const double Tb_dir_dif,
-                         const double Rb_dir_dif,
-                         const double Tf_dif_dif,
-                         const double Rf_dif_dif,
-                         const double Tb_dif_dif,
-                         const double Rb_dif_dif);
+        CScatteringLayer(double Tf_dir_dir,
+                         double Rf_dir_dir,
+                         double Tb_dir_dir,
+                         double Rb_dir_dir,
+                         double Tf_dir_dif,
+                         double Rf_dir_dif,
+                         double Tb_dir_dif,
+                         double Rb_dir_dif,
+                         double Tf_dif_dif,
+                         double Rf_dif_dif,
+                         double Tb_dif_dif,
+                         double Rb_dif_dif);
 
         static CScatteringLayer createSpecularLayer(const std::shared_ptr<CMaterial> & t_Material);
         static CScatteringLayer
@@ -72,32 +72,33 @@ namespace SingleLayerOptics
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
-        CScatteringSurface & getSurface(const FenestrationCommon::Side t_Side);
+        CScatteringSurface & getSurface(FenestrationCommon::Side t_Side);
 
-        double getPropertySimple(const FenestrationCommon::PropertySimple t_Property,
-                                 const FenestrationCommon::Side t_Side,
-                                 const FenestrationCommon::Scattering t_Scattering,
-                                 const double t_Theta = 0,
-                                 const double t_Phi = 0) override;
+        double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
+                                 FenestrationCommon::Side t_Side,
+                                 FenestrationCommon::Scattering t_Scattering,
+                                 double t_Theta = 0,
+                                 double t_Phi = 0) override;
 
         // void setPropertySimple( const FenestrationCommon::PropertySimple t_Property,
         //  const FenestrationCommon::Side t_Side, const FenestrationCommon::Scattering
         //  t_Scattering, const double value ) const;
 
-        double getAbsorptance(const FenestrationCommon::Side t_Side,
-                              const FenestrationCommon::ScatteringSimple t_Scattering,
-                              const double t_Theta = 0,
-                              const double t_Phi = 0);
+        double getAbsorptance(FenestrationCommon::Side t_Side,
+                              FenestrationCommon::ScatteringSimple t_Scattering,
+                              double t_Theta = 0,
+                              double t_Phi = 0);
 
-        double getAbsorptance(const FenestrationCommon::Side t_Side,
-                              const double t_Theta = 0,
-                              const double t_Phi = 0);
+        double getAbsorptance(FenestrationCommon::Side t_Side,
+                              double t_Theta = 0,
+                              double t_Phi = 0);
 
-        CLayerSingleComponent getLayer(const FenestrationCommon::Scattering t_Scattering,
-                                       const double t_Theta = 0,
-                                       const double t_Phi = 0);
+        CLayerSingleComponent getLayer(FenestrationCommon::Scattering t_Scattering,
+                                       double t_Theta = 0,
+                                       double t_Phi = 0);
 
         std::vector<double> getWavelengths() const override;
+        void setWavelengths(const std::vector<double> & wavelengths);
 
         double getMinLambda() const override;
         double getMaxLambda() const override;

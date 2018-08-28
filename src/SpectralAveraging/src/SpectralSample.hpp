@@ -55,7 +55,7 @@ namespace SpectralAveraging {
 		// Defining the source of wavelengths to be used with the sample. Wavelengths can be used from measured sample,
 		// detector data or can be custom provided.
 		void setWavelengths( WavelengthSet const t_WavelengthSet,
-												 std::shared_ptr< std::vector< double > > const & t_Wavelenghts = nullptr );
+							 const std::vector< double > & t_Wavelenghts = {} );
 
 		// For given incoming source and detector data, calculates energy (Transmitted, Reflected or Absorbed) for given
 		// spectrum range.
@@ -107,7 +107,7 @@ namespace SpectralAveraging {
 
 		// Returns property at each wavelength
 		std::shared_ptr< FenestrationCommon::CSeries > getWavelengthsProperty(
-				FenestrationCommon::Property const t_Property, FenestrationCommon::Side const t_Side );
+				FenestrationCommon::Property t_Property, FenestrationCommon::Side t_Side );
 
 		std::vector< double > getWavelengthsFromSample() const override;
 

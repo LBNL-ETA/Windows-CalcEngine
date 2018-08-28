@@ -50,34 +50,43 @@ namespace SingleLayerOptics
         return m_Matrix[std::make_pair(t_Side, t_Property)];
     }
 
-    const FenestrationCommon::SquareMatrix & CBSDFIntegrator::at(const FenestrationCommon::Side t_Side,
-        const FenestrationCommon::PropertySimple t_Property) const
+    const FenestrationCommon::SquareMatrix &
+      CBSDFIntegrator::at(const FenestrationCommon::Side t_Side,
+                          const FenestrationCommon::PropertySimple t_Property) const
     {
         return m_Matrix.at(std::make_pair(t_Side, t_Property));
     }
 
-    void CBSDFIntegrator::setResultMatrices(const SquareMatrix & t_Tau, 
-        const SquareMatrix & t_Rho, Side t_Side)
+    void CBSDFIntegrator::setResultMatrices(const SquareMatrix & t_Tau,
+                                            const SquareMatrix & t_Rho,
+                                            Side t_Side)
     {
         m_Matrix[std::make_pair(t_Side, PropertySimple::T)] = t_Tau;
         m_Matrix[std::make_pair(t_Side, PropertySimple::R)] = t_Rho;
     }
 
-    double CBSDFIntegrator::DirDir(const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi) const {
+    double CBSDFIntegrator::DirDir(const Side t_Side,
+                                   const PropertySimple t_Property,
+                                   const double t_Theta,
+                                   const double t_Phi) const
+    {
         const auto index = m_Directions.getNearestBeamIndex(t_Theta, t_Phi);
         const auto lambda = m_Directions.lambdaVector()[index];
         const auto tau = at(t_Side, t_Property)(index, index);
         return tau * lambda;
     }
 
-    double CBSDFIntegrator::DirDir(const Side t_Side, const PropertySimple t_Property, const size_t Index) const {
+    double CBSDFIntegrator::DirDir(const Side t_Side,
+                                   const PropertySimple t_Property,
+                                   const size_t Index) const
+    {
         const auto lambda = m_Directions.lambdaVector()[Index];
         const auto tau = at(t_Side, t_Property)(Index, Index);
         return tau * lambda;
     }
 
     std::vector<double> CBSDFIntegrator::DirHem(const FenestrationCommon::Side t_Side,
-                                                                 const FenestrationCommon::PropertySimple t_Property)
+                                                const FenestrationCommon::PropertySimple t_Property)
     {
         calcHemispherical();
         return m_Hem.at(std::make_pair(t_Side, t_Property));
@@ -89,7 +98,10 @@ namespace SingleLayerOptics
         return m_Abs.at(t_Side);
     }
 
-    double CBSDFIntegrator::DirHem(const Side t_Side, const PropertySimple t_Property, const double t_Theta, const double t_Phi)
+    double CBSDFIntegrator::DirHem(const Side t_Side,
+                                   const PropertySimple t_Property,
+                                   const double t_Theta,
+                                   const double t_Phi)
     {
         const auto index = m_Directions.getNearestBeamIndex(t_Theta, t_Phi);
         return DirHem(t_Side, t_Property)[index];
@@ -158,7 +170,8 @@ namespace SingleLayerOptics
             {
                 for(PropertySimple t_Property : EnumPropertySimple())
                 {
-                    m_Hem[std::make_pair(t_Side, t_Property)] = m_Directions.lambdaVector() * m_Matrix.at(std::make_pair(t_Side, t_Property));
+                    m_Hem[std::make_pair(t_Side, t_Property)] =
+                      m_Directions.lambdaVector() * m_Matrix.at(std::make_pair(t_Side, t_Property));
                 }
                 m_Abs[t_Side] = std::vector<double>();
             }
@@ -168,8 +181,9 @@ namespace SingleLayerOptics
             {
                 for(Side t_Side : EnumSide())
                 {
-                    m_Abs.at(t_Side).push_back(1.0 - m_Hem.at(std::make_pair(t_Side, PropertySimple::T))[i]
-                                                - m_Hem.at(std::make_pair(t_Side, PropertySimple::R))[i]);
+                    m_Abs.at(t_Side).push_back(
+                      1.0 - m_Hem.at(std::make_pair(t_Side, PropertySimple::T))[i]
+                      - m_Hem.at(std::make_pair(t_Side, PropertySimple::R))[i]);
                 }
             }
             m_HemisphericalCalculated = true;

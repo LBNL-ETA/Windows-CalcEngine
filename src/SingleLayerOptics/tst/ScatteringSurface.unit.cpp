@@ -33,8 +33,8 @@ protected:
 	}
 
 public:
-	std::shared_ptr< CScatteringSurface > getSurface() {
-		return m_Surface;
+	CScatteringSurface & getSurface() {
+		return *m_Surface;
 	};
 
 };
@@ -42,13 +42,13 @@ public:
 TEST_F( TestScatteringSurface, ScatteringSurface1 ) {
 	SCOPED_TRACE( "Begin Test: Simple scattering surface." );
 
-	std::shared_ptr< CScatteringSurface > surf = getSurface();
+	const auto surf = getSurface();
 
-	double A_dir = surf->getAbsorptance( ScatteringSimple::Direct );
+	double A_dir = surf.getAbsorptance( ScatteringSimple::Direct );
 
 	EXPECT_NEAR( 0.18, A_dir, 1e-6 );
 
-	double A_dif = surf->getAbsorptance( ScatteringSimple::Diffuse );
+	double A_dif = surf.getAbsorptance( ScatteringSimple::Diffuse );
 
 	EXPECT_NEAR( 0.02, A_dif, 1e-6 );
 

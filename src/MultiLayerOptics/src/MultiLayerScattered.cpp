@@ -171,4 +171,9 @@ namespace MultiLayerOptics
         return m_Layers[0].getMaxLambda();
     }
 
+	std::unique_ptr< CMultiLayerScattered >
+	CMultiLayerScattered::create( const SingleLayerOptics::CScatteringLayer & t_Layer ) {
+		return std::unique_ptr< CMultiLayerScattered >(new CMultiLayerScattered(t_Layer));
+	}
+
 }   // namespace MultiLayerOptics

@@ -28,44 +28,46 @@ namespace SingleLayerOptics
         explicit CBSDFIntegrator(const CBSDFDirections & t_Directions);
 
         // Result matrices
-        FenestrationCommon::SquareMatrix & getMatrix(const FenestrationCommon::Side t_Side, 
-            const FenestrationCommon::PropertySimple t_Property);
+        FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
+            FenestrationCommon::PropertySimple t_Property);
 
-        const FenestrationCommon::SquareMatrix & at(const FenestrationCommon::Side t_Side,
-            const FenestrationCommon::PropertySimple t_Property) const;
+        const FenestrationCommon::SquareMatrix & at(FenestrationCommon::Side t_Side,
+            FenestrationCommon::PropertySimple t_Property) const;
 
         void setResultMatrices(const FenestrationCommon::SquareMatrix & t_Tau,
                                const FenestrationCommon::SquareMatrix & t_Rho,
                                FenestrationCommon::Side t_Side);
 
         // Direct-direct components
-        double DirDir(const FenestrationCommon::Side t_Side,
-                      const FenestrationCommon::PropertySimple t_Property,
-                      const double t_Theta,
-                      const double t_Phi) const;
-        double DirDir(const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property, const size_t Index) const;
+        double DirDir(FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      double t_Theta = 0,
+                      double t_Phi = 0) const;
+        double DirDir(FenestrationCommon::Side t_Side,
+        	FenestrationCommon::PropertySimple t_Property, size_t Index) const;
 
         // Directional hemispherical results for every direction in BSDF definition
-        std::vector<double> DirHem(const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property);
-        std::vector<double> Abs(const FenestrationCommon::Side t_Side);
+        std::vector<double> DirHem(FenestrationCommon::Side t_Side,
+        	FenestrationCommon::PropertySimple t_Property);
+        std::vector<double> Abs(FenestrationCommon::Side t_Side);
 
         // Directional hemispherical results for given Theta and Phi direction
-        double DirHem(const FenestrationCommon::Side t_Side,
-                      const FenestrationCommon::PropertySimple t_Property,
-                      const double t_Theta,
-                      const double t_Phi);
-        double Abs(const FenestrationCommon::Side t_Side, const double t_Theta, const double t_Phi);
-        double Abs(const FenestrationCommon::Side t_Side, const size_t Index);
+        double DirHem(FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      double t_Theta,
+                      double t_Phi);
+        double Abs(FenestrationCommon::Side t_Side, double t_Theta, double t_Phi);
+        double Abs(FenestrationCommon::Side t_Side, size_t Index);
 
         // std::shared_ptr< const CBSDFDirections > getDirections() const;
 
-        double DiffDiff(const FenestrationCommon::Side t_Side, const FenestrationCommon::PropertySimple t_Property);
+        double DiffDiff(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySimple t_Property);
 
         // Lambda values for the layer.
         std::vector<double> lambdaVector() const;
         FenestrationCommon::SquareMatrix lambdaMatrix() const;
 
-        size_t getNearestBeamIndex(const double t_Theta, const double t_Phi) const;
+        size_t getNearestBeamIndex(double t_Theta, double t_Phi) const;
 
     protected:
         const CBSDFDirections m_Directions;

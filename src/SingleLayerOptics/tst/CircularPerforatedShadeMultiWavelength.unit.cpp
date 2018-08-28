@@ -18,35 +18,31 @@ protected:
     virtual void SetUp()
     {
         // Solar range material
-        double Tmat = 0.1;
-        double Rfmat = 0.7;
-        double Rbmat = 0.7;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        std::shared_ptr<CMaterial> aSolarRangeMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
 
         // Visible range
-        Tmat = 0.2;
-        Rfmat = 0.6;
-        Rbmat = 0.6;
-        minLambda = 0.38;
-        maxLambda = 0.78;
-        std::shared_ptr<CMaterial> aVisibleRangeMaterial = std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
 
-        double ratio = 0.49;
+        const auto ratio = 0.49;
 
-        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
+        const auto aMaterial =
+          Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis, ratio);
 
         // make cell geometry
-        double x = 22.5;        // mm
-        double y = 38.1;        // mm
-        double thickness = 5;   // mm
-        double radius = 8.35;   // mm
+        const auto x = 22.5;        // mm
+        const auto y = 38.1;        // mm
+        const auto thickness = 5;   // mm
+        const auto radius = 8.35;   // mm
 
-        auto aBSDF = std::make_shared<CBSDFHemisphere>(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
-        m_Layer = CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);
+        m_Layer =
+          CBSDFLayerMaker::getCircularPerforatedLayer(aMaterial, aBSDF, x, y, thickness, radius);
     }
 
 public:
@@ -62,7 +58,8 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults = aLayer->getWavelengthResults();
+    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
+      aLayer->getWavelengthResults();
 
     size_t correctSize = 4;
 
