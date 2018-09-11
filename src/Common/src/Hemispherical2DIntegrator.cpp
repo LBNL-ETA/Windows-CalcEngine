@@ -18,7 +18,7 @@ namespace FenestrationCommon
         {
             auto angle = radians(ser->x());
             auto value = ser->value();
-            auto sinCos = sin(angle) * cos(angle);
+            auto sinCos = std::sin(angle) * std::cos(angle);
             aResultValues.addProperty(angle, value * sinCos);
         }
 
