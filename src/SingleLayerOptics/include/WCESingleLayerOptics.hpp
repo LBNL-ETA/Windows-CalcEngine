@@ -22,6 +22,7 @@
 #include "../src/PerforatedCell.hpp"
 #include "../src/PerforatedCellDescription.hpp"
 #include "../src/ScatteringLayer.hpp"
+#include "../src/SpecularLayer.hpp"
 #include "../src/SpecularBSDFLayer.hpp"
 #include "../src/SpecularCell.hpp"
 #include "../src/SpecularCellDescription.hpp"

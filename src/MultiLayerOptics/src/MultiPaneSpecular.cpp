@@ -46,15 +46,15 @@ namespace MultiLayerOptics {
 	//  CMultiPaneSpecular
 	////////////////////////////////////////////////////////////////////////////////////////////
 	CMultiPaneSpecular::CMultiPaneSpecular( std::vector< double > const & t_CommonWavelength,
-																					const std::shared_ptr< CSeries > & t_SolarRadiation,
-																					const std::shared_ptr< CSpecularCell > & t_Layer ) :
+											const std::shared_ptr< CSeries > & t_SolarRadiation,
+											SpecularLayer & t_Layer ) :
 			m_CommonWavelengths( t_CommonWavelength ), m_SolarRadiation( t_SolarRadiation ) {
 		m_SolarRadiation = m_SolarRadiation->interpolate( m_CommonWavelengths );
 		addLayer( t_Layer );
 	}
 
-	void CMultiPaneSpecular::addLayer( const std::shared_ptr< CSpecularCell > & t_Layer ) {
-		t_Layer->setSourceData( m_SolarRadiation );
+	void CMultiPaneSpecular::addLayer( SpecularLayer & t_Layer ) {
+		t_Layer.setSourceData( m_SolarRadiation );
 		m_Layers.push_back( t_Layer );
 	}
 
@@ -170,10 +170,10 @@ namespace MultiLayerOptics {
 		std::shared_ptr< CEquivalentLayerSingleComponentMW > aEqLayer = nullptr;
 		std::shared_ptr< CAbsorptancesMultiPane > aAbs = nullptr;
 		for ( size_t i = 0; i < m_Layers.size(); ++i ) {
-			std::vector< double > wl = m_Layers[ i ]->getBandWavelengths();
-			std::vector< double > Tv = m_Layers[ i ]->T_dir_dir_band( Side::Front, aDirection );
-			std::vector< double > Rfv = m_Layers[ i ]->R_dir_dir_band( Side::Front, aDirection );
-			std::vector< double > Rbv = m_Layers[ i ]->R_dir_dir_band( Side::Back, aDirection );
+			std::vector< double > wl = m_Layers[ i ].getBandWavelengths();
+			std::vector< double > Tv = m_Layers[ i ].T_dir_dir_band( Side::Front, aDirection );
+			std::vector< double > Rfv = m_Layers[ i ].R_dir_dir_band( Side::Front, aDirection );
+			std::vector< double > Rbv = m_Layers[ i ].R_dir_dir_band( Side::Back, aDirection );
 			std::shared_ptr< CSeries > T = std::make_shared< CSeries >();
 			std::shared_ptr< CSeries > Rf = std::make_shared< CSeries >();
 			std::shared_ptr< CSeries > Rb = std::make_shared< CSeries >();

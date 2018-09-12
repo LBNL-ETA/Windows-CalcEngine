@@ -6,101 +6,117 @@
 
 #include "WCECommon.hpp"
 
-namespace FenestrationCommon {
+namespace FenestrationCommon
+{
+    enum class Side;
+    enum class Property;
 
-	enum class Side;
-	enum class Property;
+    class CSeries;
 
-	class CSeries;
+}   // namespace FenestrationCommon
 
-}
+namespace SingleLayerOptics
+{
+    class CSpecularCell;
+    class SpecularLayer;
 
-namespace SingleLayerOptics {
+}   // namespace SingleLayerOptics
 
-	class CSpecularCell;
+namespace MultiLayerOptics
+{
+    class CEquivalentLayerSingleComponentMW;
 
-}
+    class CAbsorptancesMultiPane;
 
-namespace MultiLayerOptics {
+    class CEquivalentLayerSingleComponentMWAngle
+    {
+    public:
+        CEquivalentLayerSingleComponentMWAngle(
+          const std::shared_ptr<CEquivalentLayerSingleComponentMW> & t_Layer,
+          const std::shared_ptr<CAbsorptancesMultiPane> & t_Abs,
+          double t_Angle);
+        double angle() const;
+        std::shared_ptr<CEquivalentLayerSingleComponentMW> layer() const;
+        std::shared_ptr<FenestrationCommon::CSeries>
+          getProperties(FenestrationCommon::Side t_Side,
+                        FenestrationCommon::Property t_Property);
+        std::shared_ptr<FenestrationCommon::CSeries> Abs(size_t Index);
 
-	class CEquivalentLayerSingleComponentMW;
+    private:
+        std::shared_ptr<CEquivalentLayerSingleComponentMW> m_Layer;
+        std::shared_ptr<CAbsorptancesMultiPane> m_Abs;
+        double m_Angle;
+    };
 
-	class CAbsorptancesMultiPane;
+    // Handles equivalent properties of MultiLayerOptics glass consists only of specular layers
+    class CMultiPaneSpecular
+    {
+    public:
+        CMultiPaneSpecular( std::vector< double > const & t_CommonWavelength,
+							const std::shared_ptr< FenestrationCommon::CSeries > & t_SolarRadiation,
+							SingleLayerOptics::SpecularLayer & t_Layer );
 
-	class CEquivalentLayerSingleComponentMWAngle {
-	public:
-		CEquivalentLayerSingleComponentMWAngle(
-				const std::shared_ptr< CEquivalentLayerSingleComponentMW > & t_Layer,
-				const std::shared_ptr< CAbsorptancesMultiPane > & t_Abs, const double t_Angle );
-		double angle() const;
-		std::shared_ptr< CEquivalentLayerSingleComponentMW > layer() const;
-		std::shared_ptr< FenestrationCommon::CSeries > getProperties(
-				const FenestrationCommon::Side t_Side, const FenestrationCommon::Property t_Property );
-		std::shared_ptr< FenestrationCommon::CSeries > Abs( size_t const Index );
-	private:
-		std::shared_ptr< CEquivalentLayerSingleComponentMW > m_Layer;
-		std::shared_ptr< CAbsorptancesMultiPane > m_Abs;
-		double m_Angle;
-	};
+        void addLayer( SingleLayerOptics::SpecularLayer & t_Layer );
 
-	// Handles equivalent properties of MultiLayerOptics glass consists only of specular layers
-	class CMultiPaneSpecular {
-	public:
-		CMultiPaneSpecular( std::vector< double > const & t_CommonWavelength,
-												const std::shared_ptr< FenestrationCommon::CSeries > & t_SolarRadiation,
-												const std::shared_ptr< SingleLayerOptics::CSpecularCell > & t_Layer );
+        double getProperty(FenestrationCommon::Side t_Side,
+                           FenestrationCommon::Property t_Property,
+                           double t_Angle,
+                           double minLambda,
+                           double maxLambda,
+                           FenestrationCommon::IntegrationType t_IntegrationType =
+                             FenestrationCommon::IntegrationType::Trapezoidal,
+                           double normalizationCoefficient = 1);
 
-		void addLayer( const std::shared_ptr< SingleLayerOptics::CSpecularCell > & t_Layer );
+        double
+          getHemisphericalProperty(FenestrationCommon::Side t_Side,
+                                   FenestrationCommon::Property t_Property,
+                                   const std::shared_ptr<const std::vector<double>> & t_Angles,
+                                   double minLambda,
+                                   double maxLambda,
+                                   FenestrationCommon::IntegrationType t_IntegrationType =
+                                     FenestrationCommon::IntegrationType::Trapezoidal,
+                                   double normalizationCoefficient = 1);
 
-		double getProperty( const FenestrationCommon::Side t_Side,
-												const FenestrationCommon::Property t_Property,
-												const double t_Angle, const double minLambda, const double maxLambda,
-												const FenestrationCommon::IntegrationType t_IntegrationType = FenestrationCommon::IntegrationType::Trapezoidal,
-												double normalizationCoefficient = 1);
+        // Absorptances of each layer based on angle of incidence
+        double Abs(size_t Index,
+                   double t_Angle,
+                   double minLambda,
+                   double maxLambda,
+                   FenestrationCommon::IntegrationType t_IntegrationType =
+                     FenestrationCommon::IntegrationType::Trapezoidal,
+                   double normalizationCoefficient = 1);
 
-		double getHemisphericalProperty(
-				const FenestrationCommon::Side t_Side,
-				const FenestrationCommon::Property t_Property,
-				const std::shared_ptr< const std::vector< double > > & t_Angles,
-				const double minLambda, const double maxLambda,
-				const FenestrationCommon::IntegrationType t_IntegrationType = FenestrationCommon::IntegrationType::Trapezoidal,
-				double normalizationCoefficient = 1 );
+        // Hemispherical absorptances of each layer. Integration is performed over t_Angles.
+        double AbsHemispherical(size_t Index,
+                                const std::shared_ptr<const std::vector<double>> & t_Angles,
+                                double minLambda,
+                                double maxLambda,
+                                FenestrationCommon::IntegrationType t_IntegrationType =
+                                  FenestrationCommon::IntegrationType::Trapezoidal,
+                                double normalizationCoefficient = 1);
 
-		// Absorptances of each layer based on angle of incidence
-		double
-		Abs( size_t const Index, const double t_Angle, const double minLambda, const double maxLambda,
-				 const FenestrationCommon::IntegrationType t_IntegrationType = FenestrationCommon::IntegrationType::Trapezoidal,
-				 double normalizationCoefficient = 1);
+    private:
+        // Get correct angular object out of array and if object does not exists, then it just
+        // creates new one and stores it into array
+        std::shared_ptr<CEquivalentLayerSingleComponentMWAngle> getAngular(double t_Angle);
+        // creates equivalent layer properties for certain angle
+        std::shared_ptr<CEquivalentLayerSingleComponentMWAngle>
+          createNewAngular(double t_Angle);
 
-		// Hemispherical absorptances of each layer. Integration is performed over t_Angles.
-		double AbsHemispherical( size_t const Index,
-														 const std::shared_ptr< const std::vector< double > > & t_Angles,
-														 const double minLambda, const double maxLambda,
-														 const FenestrationCommon::IntegrationType t_IntegrationType = FenestrationCommon::IntegrationType::Trapezoidal,
-														 double normalizationCoefficient = 1);
+        // Contains all specular layers (cells) that are added to the model. This way program will
+        // be able to recalculate equivalent properties for any angle
+        std::vector<SingleLayerOptics::SpecularLayer> m_Layers;
 
-	private:
-		// Get correct angular object out of array and if object does not exists, then it just
-		// creates new one and stores it into array
-		std::shared_ptr< CEquivalentLayerSingleComponentMWAngle > getAngular( const double t_Angle );
-		// creates equivalent layer properties for certain angle
-		std::shared_ptr< CEquivalentLayerSingleComponentMWAngle >
-		createNewAngular( const double t_Angle );
+        std::vector<double> m_CommonWavelengths;
+        std::shared_ptr<FenestrationCommon::CSeries> m_SolarRadiation;
 
-		// Contains all specular layers (cells) that are added to the model. This way program will
-		// be able to recalculate equivalent properties for any angle
-		std::vector< std::shared_ptr< SingleLayerOptics::CSpecularCell > > m_Layers;
+        // Results for angle-properties std::pair. If same angle is required twice, then model will
+        // not calculate it twice. First it will search for results here and if results are not
+        // available, then it will perform calculation for given angle
+        std::vector<std::shared_ptr<CEquivalentLayerSingleComponentMWAngle>> m_EquivalentAngle;
+    };
 
-		std::vector< double > m_CommonWavelengths;
-		std::shared_ptr< FenestrationCommon::CSeries > m_SolarRadiation;
-
-		// Results for angle-properties std::pair. If same angle is required twice, then model will not
-		// calculate it twice. First it will search for results here and if results are not
-		// available, then it will perform calculation for given angle
-		std::vector< std::shared_ptr< CEquivalentLayerSingleComponentMWAngle > > m_EquivalentAngle;
-	};
-
-}
+}   // namespace MultiLayerOptics
 
 
 #endif
