@@ -1120,7 +1120,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors, TestRGB)
     EXPECT_EQ(233, rgb.B);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors, TestCIE_LAB)
+TEST_F(TestNFRC_5439_SB70XL_Colors, TestCIE_LAB_T)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
@@ -1133,4 +1133,19 @@ TEST_F(TestNFRC_5439_SB70XL_Colors, TestCIE_LAB)
     EXPECT_NEAR(87.805864, cie.L, 1e-6);
     EXPECT_NEAR(-3.402796, cie.a, 1e-6);
     EXPECT_NEAR(4.081155, cie.b, 1e-6);
+}
+
+TEST_F(TestNFRC_5439_SB70XL_Colors, TestCIE_LAB_R)
+{
+	SCOPED_TRACE("Begin Test: CIE_LAB.");
+
+	std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
+
+	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
+
+	auto cie = aLayer->getCIE_Lab(
+		FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
+	EXPECT_NEAR(33.212062, cie.L, 1e-6);
+	EXPECT_NEAR(-2.636088, cie.a, 1e-6);
+	EXPECT_NEAR(-6.300395, cie.b, 1e-6);
 }
