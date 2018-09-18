@@ -1090,22 +1090,37 @@ public:
     }
 };
 
-TEST_F(TestNFRC_5439_SB70XL_Colors, TestTrichromatic)
+TEST_F(TestNFRC_5439_SB70XL_Colors, TestTrichromatic_T)
 {
-    SCOPED_TRACE("Begin Test: Trichromatic.");
+	SCOPED_TRACE("Begin Test: Trichromatic.");
 
-    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
+	std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
-    FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
+	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
-    SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
-      FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(66.393144, T.X, 1e-6);
-    EXPECT_NEAR(71.662457, T.Y, 1e-6);
-    EXPECT_NEAR(71.768345, T.Z, 1e-6);
+	SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
+		FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
+	EXPECT_NEAR(66.393144, T.X, 1e-6);
+	EXPECT_NEAR(71.662457, T.Y, 1e-6);
+	EXPECT_NEAR(71.768345, T.Z, 1e-6);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors, TestRGB)
+TEST_F(TestNFRC_5439_SB70XL_Colors, TestTrichromatic_R)
+{
+	SCOPED_TRACE("Begin Test: Trichromatic.");
+
+	std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
+
+	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
+
+	SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
+		FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
+	EXPECT_NEAR(6.971494, T.X, 1e-6);
+	EXPECT_NEAR(7.635557, T.Y, 1e-6);
+	EXPECT_NEAR(10.159147, T.Z, 1e-6);
+}
+
+TEST_F(TestNFRC_5439_SB70XL_Colors, TestRGB_T)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
@@ -1118,6 +1133,21 @@ TEST_F(TestNFRC_5439_SB70XL_Colors, TestRGB)
     EXPECT_EQ(239, rgb.R);
     EXPECT_EQ(245, rgb.G);
     EXPECT_EQ(233, rgb.B);
+}
+
+TEST_F(TestNFRC_5439_SB70XL_Colors, TestRGB_R)
+{
+	SCOPED_TRACE("Begin Test: RGB.");
+
+	std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
+
+	FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
+
+	auto rgb = aLayer->getRGB(
+		FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
+	EXPECT_EQ(75, rgb.R);
+	EXPECT_EQ(88, rgb.G);
+	EXPECT_EQ(96, rgb.B);
 }
 
 TEST_F(TestNFRC_5439_SB70XL_Colors, TestCIE_LAB_T)
