@@ -11,9 +11,11 @@ namespace FenestrationCommon
     class ISeriesPoint
     {
     public:
+        virtual ~ISeriesPoint() = default;
+
         virtual double x() const = 0;
         virtual double value() const = 0;
-        virtual void value(double const t_Value) = 0;
+        virtual void value(double t_Value) = 0;
         virtual std::unique_ptr<ISeriesPoint> clone() const = 0;
     };
 
