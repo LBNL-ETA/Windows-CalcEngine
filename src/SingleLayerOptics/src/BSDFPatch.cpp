@@ -76,7 +76,7 @@ namespace SingleLayerOptics {
 		double thetaLow = m_Theta->low() * PI / 180;
 		double thetaHight = m_Theta->high() * PI / 180;
 		double deltaPhi = m_Phi->delta() * PI / 180;
-		m_Lambda = 0.5 * deltaPhi * ( sin( thetaHight ) * sin( thetaHight ) - sin( thetaLow ) * sin( thetaLow ) );
+		m_Lambda = 0.5 * deltaPhi * ( std::sin( thetaHight ) * std::sin( thetaHight ) - std::sin( thetaLow ) * std::sin( thetaLow ) );
 	}
 
 }

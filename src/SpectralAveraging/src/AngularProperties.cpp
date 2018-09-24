@@ -21,7 +21,7 @@ namespace SpectralAveraging {
 	}
 
 	double CAngularProperties::cosAngle( const double t_Angle ) const {
-		return cos( radians( t_Angle ) );
+		return std::cos( radians( t_Angle ) );
 	}
 
 	void CAngularProperties::checkStateProperties( double const t_Angle, double const ) {
@@ -45,7 +45,7 @@ namespace SpectralAveraging {
 		m_Beta =
 				m_Transmittance0 * m_Transmittance0 - m_Reflectance0 * m_Reflectance0 + 2 * m_Reflectance0 +
 				1;
-		m_Rho0 = ( m_Beta - sqrt( m_Beta * m_Beta - 4 * ( 2 - m_Reflectance0 ) * m_Reflectance0 ) ) /
+		m_Rho0 = ( m_Beta - std::sqrt( m_Beta * m_Beta - 4 * ( 2 - m_Reflectance0 ) * m_Reflectance0 ) ) /
 		         ( 2 * ( 2 - m_Reflectance0 ) );
 
 	}
@@ -70,25 +70,25 @@ namespace SpectralAveraging {
 
 		if( m_StateAngle != t_Angle || m_StateWavelength != t_Wavelength ) {
 			auto aAngle = radians( t_Angle );
-			auto aCosPhi = cos( aAngle );
-			auto n = ( 1 + sqrt( m_Rho0 ) ) / ( 1 - sqrt( m_Rho0 ) );
-			auto aCosPhiPrim = cos( asin( sin( aAngle ) / n ) );
+			auto aCosPhi = std::cos( aAngle );
+			auto n = ( 1 + std::sqrt( m_Rho0 ) ) / ( 1 - std::sqrt( m_Rho0 ) );
+			auto aCosPhiPrim = std::cos( std::asin( std::sin( aAngle ) / n ) );
 			auto a = 0.0;
 
 			if( m_Transmittance0 > 0 ) {
 				auto k = -t_Wavelength / ( 4 * PI * m_Thickness ) *
-				         log( ( m_Reflectance0 - m_Rho0 ) / ( m_Transmittance0 * m_Rho0 ) );
+						 std::log( ( m_Reflectance0 - m_Rho0 ) / ( m_Transmittance0 * m_Rho0 ) );
 				auto alpha = 2 * PI * k / t_Wavelength;
-				a = exp( -2 * alpha * m_Thickness / aCosPhiPrim );
+				a = std::exp( -2 * alpha * m_Thickness / aCosPhiPrim );
 			}
 
-			auto rhoP = pow( ( ( n * aCosPhi - aCosPhiPrim ) / ( n * aCosPhi + aCosPhiPrim ) ), 2 );
-			auto rhoS = pow( ( ( aCosPhi - n * aCosPhiPrim ) / ( aCosPhi + n * aCosPhiPrim ) ), 2 );
+			auto rhoP = std::pow( ( ( n * aCosPhi - aCosPhiPrim ) / ( n * aCosPhi + aCosPhiPrim ) ), 2 );
+			auto rhoS = std::pow( ( ( aCosPhi - n * aCosPhiPrim ) / ( aCosPhi + n * aCosPhiPrim ) ), 2 );
 			auto tauP = 1 - rhoP;
 			auto tauS = 1 - rhoS;
 
-			auto tau_TotP = a * pow( tauP, 2 ) / ( 1 - pow( a, 2 ) * pow( rhoP, 2 ) );
-			auto tau_TotS = a * pow( tauS, 2 ) / ( 1 - pow( a, 2 ) * pow( rhoS, 2 ) );
+			auto tau_TotP = a * std::pow( tauP, 2 ) / ( 1 - std::pow( a, 2 ) * std::pow( rhoP, 2 ) );
+			auto tau_TotS = a * std::pow( tauS, 2 ) / ( 1 - std::pow( a, 2 ) * std::pow( rhoS, 2 ) );
 
 			auto rho_TotP = ( 1 + a * tau_TotP ) * rhoP;
 			auto rho_TotS = ( 1 + a * tau_TotS ) * rhoS;
@@ -131,7 +131,7 @@ namespace SpectralAveraging {
 
 		if( m_StateAngle != t_Angle ) {
 			auto aAngle = radians( t_Angle );
-			auto aCosPhi = cos( aAngle );
+			auto aCosPhi = std::cos( aAngle );
 
 			std::shared_ptr< Coefficients > TCoeff = nullptr;
 			std::shared_ptr< Coefficients > RCoeff = nullptr;
@@ -183,8 +183,8 @@ namespace SpectralAveraging {
 	}
 
 	double Coefficients::inerpolation( double const t_Value ) const {
-		return C0 + C1 * t_Value + C2 * pow( t_Value, 2 ) + C3 * pow( t_Value, 3 ) +
-		       C4 * pow( t_Value, 4 );
+		return C0 + C1 * t_Value + C2 * std::pow( t_Value, 2 ) + C3 * std::pow( t_Value, 3 ) +
+		       C4 * std::pow( t_Value, 4 );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
