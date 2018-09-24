@@ -1,4 +1,5 @@
 #include <cmath>
+#include <vector>
 
 #include "ColorProperties.hpp"
 #include "IScatteringLayer.hpp"
@@ -9,7 +10,7 @@ namespace SingleLayerOptics
     Trichromatic::Trichromatic(double X, double Y, double Z) : X(X), Y(Y), Z(Z)
     {}
 
-    RGB::RGB(int R, int G, int B) : R(R), G(G), B(B)
+    aRGB::aRGB(int R, int G, int B) : R(R), G(G), B(B)
     {}
 
     CIE_LAB::CIE_LAB(double L, double A, double B) : L(L), a(A), b(B)
@@ -58,7 +59,7 @@ namespace SingleLayerOptics
         return Trichromatic(X, Y, Z);
     }
 
-    RGB ColorProperties::getRGB(const FenestrationCommon::PropertySimple t_Property,
+	aRGB ColorProperties::getRGB(const FenestrationCommon::PropertySimple t_Property,
                                 const FenestrationCommon::Side t_Side,
                                 const FenestrationCommon::Scattering t_Scattering,
                                 double const t_Theta,
@@ -74,7 +75,7 @@ namespace SingleLayerOptics
           {{3.2406255, -1.537208, -0.4986286}, {-0.9689307, 1.8757561, 0.0415175}, {0.0557101, -0.2040211, 1.0569959}});
 
         const std::vector<double> xyz({X, Y, Z});
-        auto mmult = T * xyz;
+		auto mmult = T * xyz;
 
         const double testlimit = 0.0031308;
         for(auto & val : mmult)
@@ -85,10 +86,13 @@ namespace SingleLayerOptics
             if(val < 0.0)
                 val = 0.0;
             val = val * 255;
-        }
+		}
 
-        /// Adding 0.5 will make correct rounding because int( double ) just doing floor
-        return RGB(int(std::lround(mmult[0])), int(std::lround(mmult[1])), int(std::lround(mmult[2])));
+		auto R = int(std::round(mmult[0] + 0.5));
+		auto G = int(std::round(mmult[1] + 0.5));
+		auto B = int(std::round(mmult[2] + 0.5));
+
+		return aRGB(R, G, B);
     }
 
     CIE_LAB ColorProperties::getCIE_Lab(const FenestrationCommon::PropertySimple t_Property,

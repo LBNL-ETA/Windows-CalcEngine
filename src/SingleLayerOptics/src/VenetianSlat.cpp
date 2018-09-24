@@ -60,7 +60,7 @@ namespace SingleLayerOptics {
 		if ( radius > ( m_SlatWidth / 2 ) ) { // set properties in polar coordinate system
 			using ConstantsData::PI;
 
-			double theta = 2 * asin( m_SlatWidth / ( 2 * radius ) );
+			double theta = 2 * std::asin( m_SlatWidth / ( 2 * radius ) );
 			double theta1 = 0;
 			double theta2 = 0;
 			double alpha = radians( m_SlatTiltAngle );

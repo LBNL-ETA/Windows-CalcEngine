@@ -24,7 +24,7 @@ namespace SingleLayerOptics {
 	}
 
 	std::shared_ptr< CWovenCellDescription > CWovenBase::getCellAsWoven() const {
-		if ( std::dynamic_pointer_cast< CWovenCellDescription >( m_CellDescription ) == NULL ) {
+		if ( std::dynamic_pointer_cast< CWovenCellDescription >( m_CellDescription ) == nullptr ) {
 			assert("Incorrectly assigned cell description.");
 		}
 
@@ -110,22 +110,22 @@ namespace SingleLayerOptics {
 			double gamma = aCell->gamma();
 
 			if ( gamma < 1 ) {
-				double Tscattermax = 0.0229 * gamma + 0.2971 * Rmat - 0.03624 * pow( gamma, 2 ) +
-					0.04763 * pow( Rmat, 2 ) - 0.44416 * gamma * Rmat;
+				double Tscattermax = 0.0229 * gamma + 0.2971 * Rmat - 0.03624 *std:: pow( gamma, 2 ) +
+					0.04763 * std::pow( Rmat, 2 ) - 0.44416 * gamma * Rmat;
 				double DeltaMax = 89.7 - 10 * gamma / 0.16;
-				double Delta = pow( pow( aAlt, 2 ) + pow( aAzm, 2 ), 0.5 );
+				double Delta = std::pow( std::pow( aAlt, 2 ) + std::pow( aAzm, 2 ), 0.5 );
 				double PeakRatio = 1 / ( 0.2 * Rmat * ( 1 - gamma ) );
 
 				double E = 0;
 				if ( Delta > DeltaMax ) {
-					E = -( pow( std::abs( Delta - DeltaMax ), 2 ) ) / 600;
+					E = -( std::pow( std::abs( Delta - DeltaMax ), 2 ) ) / 600;
 					Tsct = -0.2 * Rmat * Tscattermax * ( 1 - gamma ) * std::max( 0.0, ( Delta - DeltaMax ) / ( 90 - DeltaMax ) );
 				}
 				else {
-					E = -( pow( std::abs( Delta - DeltaMax ), 2.5 ) ) / 600;
+					E = -( std::pow( std::abs( Delta - DeltaMax ), 2.5 ) ) / 600;
 					Tsct = 0;
 				}
-				Tsct = Tsct + 0.2 * Rmat * Tscattermax * ( 1 - gamma ) * ( 1 + ( PeakRatio - 1 ) * exp( E ) );
+				Tsct = Tsct + 0.2 * Rmat * Tscattermax * ( 1 - gamma ) * ( 1 + ( PeakRatio - 1 ) * std::exp( E ) );
 			}
 
 			if ( Tsct < 0 ) {
