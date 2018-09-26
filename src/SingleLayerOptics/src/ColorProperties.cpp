@@ -88,9 +88,9 @@ namespace SingleLayerOptics
             val = val * 255;
 		}
 
-		auto R = int(std::round(mmult[0] + 0.5));
-		auto G = int(std::round(mmult[1] + 0.5));
-		auto B = int(std::round(mmult[2] + 0.5));
+		auto R = int(std::round(mmult[0]));
+		auto G = int(std::round(mmult[1]));
+		auto B = int(std::round(mmult[2]));
 
 		return aRGB(R, G, B);
     }
