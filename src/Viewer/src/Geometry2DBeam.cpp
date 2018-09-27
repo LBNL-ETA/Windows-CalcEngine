@@ -374,7 +374,7 @@ namespace Viewer {
 	                                                           double const t_ProfileAngle ) const {
 		std::shared_ptr< CViewSegment2D > subSegment = nullptr;
 		auto const deltaX = 10.0;
-		auto const tanPhi = tan( radians( t_ProfileAngle ) );
+		auto const tanPhi = std::tan( radians( t_ProfileAngle ) );
 		auto yStart = t_Point.y() - t_Point.x() * tanPhi;
 		auto yEnd = yStart + deltaX * tanPhi;
 

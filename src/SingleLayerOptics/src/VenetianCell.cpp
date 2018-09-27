@@ -25,7 +25,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CVenetianCellDescription> CVenetianBase::getCellAsVenetian() const
     {
-        if(std::dynamic_pointer_cast<CVenetianCellDescription>(m_CellDescription) == NULL)
+        if(std::dynamic_pointer_cast<CVenetianCellDescription>(m_CellDescription) == nullptr)
         {
             assert("Incorrectly assigned cell description.");
         }

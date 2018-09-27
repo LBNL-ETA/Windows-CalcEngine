@@ -17,8 +17,8 @@ namespace SingleLayerOptics {
 		double Z;
 	};
 
-	struct RGB {
-		RGB( int R, int G, int B );
+	struct aRGB {
+		aRGB( int R, int G, int B );
 
 		int R;
 		int G;
@@ -52,7 +52,7 @@ namespace SingleLayerOptics {
 				const double t_Phi = 0
 		);
 
-		RGB getRGB(
+		aRGB getRGB(
 				const FenestrationCommon::PropertySimple t_Property,
 				const FenestrationCommon::Side t_Side,
 				const FenestrationCommon::Scattering t_Scattering,
