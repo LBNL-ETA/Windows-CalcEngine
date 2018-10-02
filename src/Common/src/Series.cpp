@@ -91,7 +91,6 @@ namespace FenestrationCommon
 
     void CSeries::addProperty(const double t_x, const double t_Value)
     {
-        auto aProperty = std::make_shared<CSeriesPoint>(t_x, t_Value);
         m_Series.push_back(wce::make_unique<CSeriesPoint>(t_x, t_Value));
     }
 
@@ -116,19 +115,6 @@ namespace FenestrationCommon
         CIntegratorFactory aFactory = CIntegratorFactory();
         std::shared_ptr<IIntegratorStrategy> aIntegrator =
           aFactory.getIntegrator(t_IntegrationType);
-        // ISeriesPoint* previousProperty = nullptr;
-        //
-        // for ( auto& spectralProperty : m_Series ) {
-        // 	if ( previousProperty != nullptr ) {
-        // 		double w1 = previousProperty->x();
-        // 		double w2 = spectralProperty->x();
-        // 		double y1 = previousProperty->value();
-        // 		double y2 = spectralProperty->value();
-        // 		double aValue = aIntegrator->integrate( w1, w2, y1, y2 );
-        // 		newProperties->addProperty( w1, aValue );
-        // 	}
-        // 	previousProperty = spectralProperty.get();
-        // }
 
         return aIntegrator->integrate(m_Series, normalizationCoefficient);
     }
