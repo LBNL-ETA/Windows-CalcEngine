@@ -7,7 +7,6 @@
 
 namespace Tarcog
 {
-
     namespace ISO15099
     {
         enum class BoundaryConditionsCoeffModel
@@ -23,7 +22,7 @@ namespace Tarcog
             Outdoor
         };
 
-    class CEnvironment : public Tarcog::CBaseLayer, public CGasLayer
+        class CEnvironment : public Tarcog::CBaseLayer, public CGasLayer
         {
         public:
             CEnvironment(double t_Pressure,
@@ -61,14 +60,14 @@ namespace Tarcog
 
             double m_DirectSolarRadiation;
             double m_Emissivity;   // Emissivity from the environment
-            // double m_InfraredRadiation; // Infrared radiation from environemnt [W/m2]
-            double
-              m_HInput;   // Input convection coefficient which type depends on selected BC model
-            // [W/m2*K]
-            BoundaryConditionsCoeffModel
-              m_HCoefficientModel;   // Model used to calculate BC coefficient
-            bool
-              m_IRCalculatedOutside;   // Keep info if IR radiation is provided (calculated) outside
+            // double m_InfraredRadiation; // Infrared radiation from environment [W/m2]
+			// Input convection coefficient which type depends on selected BC model [W/m2*K]
+            double m_HInput;
+			// Model used to calculate BC coefficient
+            BoundaryConditionsCoeffModel m_HCoefficientModel;
+
+			// Keep info if IR radiation is provided (calculated) outside
+            bool m_IRCalculatedOutside;
         };
 
     }   // namespace ISO15099

@@ -56,7 +56,7 @@ protected:
         aIGU.addLayer(aSolidLayer);
 
         /////////////////////////////////////////////////////////
-        // System
+        /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
