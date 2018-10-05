@@ -14,38 +14,41 @@ namespace Tarcog
 {
     double const ReferenceTemperature = 273.15;
 
-    class CIGUGapLayer : public CBaseIGULayer, public CGasLayer
-    {
-    public:
-        CIGUGapLayer(double t_Thickness, double t_Pressure);
-        CIGUGapLayer(double t_Thickness,
-                     double t_Pressure,
-                     const Gases::CGas & t_Gas);
+    namespace ISO15099 {
 
-        void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
+		class CIGUGapLayer : public CBaseIGULayer, public CGasLayer {
+		public:
+			CIGUGapLayer( double t_Thickness, double t_Pressure );
+			CIGUGapLayer( double t_Thickness,
+						  double t_Pressure,
+						  const Gases::CGas & t_Gas );
 
-        double layerTemperature() override;
+			void connectToBackSide( const std::shared_ptr< CBaseLayer > & t_Layer ) override;
 
-        double averageTemperature() const;
+			double layerTemperature() override;
 
-        double getPressure() override;
+			double averageTemperature() const;
 
-        std::shared_ptr<CBaseLayer> clone() const override;
+			double getPressure() override;
+
+			std::shared_ptr< CBaseLayer > clone() const override;
 
 
-    protected:
-        void initializeStateVariables() override;
-        void calculateConvectionOrConductionFlow() override;
+		protected:
+			void initializeStateVariables() override;
+			void calculateConvectionOrConductionFlow() override;
 
-    private:
-        double calculateRayleighNumber();
-        double aspectRatio() const;
-        double convectiveH();
+		private:
+			double calculateRayleighNumber();
+			double aspectRatio() const;
+			double convectiveH();
 
-        double getGasTemperature() override;
+			double getGasTemperature() override;
 
-        void checkNextLayer() const;
-    };
+			void checkNextLayer() const;
+		};
+
+	}
 
 }   // namespace Tarcog
 

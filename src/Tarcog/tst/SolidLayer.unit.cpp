@@ -3,29 +3,26 @@
 
 #include "WCETarcog.hpp"
 
-
-using namespace Tarcog;
-
 class TestSolidLayer : public testing::Test {
 
 private:
-	std::shared_ptr< CIGUSolidLayer > m_SolidLayer;
+	std::shared_ptr< Tarcog::ISO15099::CIGUSolidLayer > m_SolidLayer;
 
 protected:
 	void SetUp() override {
-		auto surface1 = std::make_shared< CSurface >();
+		auto surface1 = std::make_shared< Tarcog::CSurface >();
 		ASSERT_TRUE( surface1 != nullptr );
 		surface1->setTemperature( 280 );
-		auto surface2 = std::make_shared< CSurface >();
+		auto surface2 = std::make_shared< Tarcog::CSurface >();
 		ASSERT_TRUE( surface2 != nullptr );
 		surface2->setTemperature( 300 );
 
-		m_SolidLayer = std::make_shared< CIGUSolidLayer >( 0.01, 2.5, surface1, surface2 );
+		m_SolidLayer = std::make_shared< Tarcog::ISO15099::CIGUSolidLayer >( 0.01, 2.5, surface1, surface2 );
 		ASSERT_TRUE( m_SolidLayer != nullptr );
 	}
 
 public:
-	std::shared_ptr< CIGUSolidLayer > GetLayer() const {
+	std::shared_ptr< Tarcog::ISO15099::CIGUSolidLayer > GetLayer() const {
 		return m_SolidLayer;
 	};
 

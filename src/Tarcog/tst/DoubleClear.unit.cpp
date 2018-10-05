@@ -5,14 +5,11 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-using namespace Tarcog;
-//using namespace FenestrationCommon;
-
 // Example of double clear window with inital guess for solution
 class TestDoubleClear : public testing::Test
 {
 private:
-    std::shared_ptr<CSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -23,17 +20,18 @@ protected:
         auto airTemperature = 255.15;   // Kelvins
         auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;   // Kelvins
+        auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 789.0;
 
-        auto Outdoor = Environments::outdoor( airTemperature,
-											  pressure,
-											  airSpeed,
-											  solarRadiation,
-											  tSky,
-											  SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(airTemperature,
+                                                  pressure,
+                                                  airSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         /// Indoor
@@ -41,7 +39,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Environments::indoor( roomTemperature, pressure );
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -50,20 +48,22 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;      // [W/m2K]
 
-        auto aSolidLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer1 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer1->setSolarAbsorptance(0.166707709432);
 
-        auto aSolidLayer2 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer2 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer2->setSolarAbsorptance(0.112737670541);
 
         auto gapThickness = 0.012;
         auto gapPressure = 101325.0;
-        auto gapLayer = Layers::gap(gapThickness, gapPressure);
+        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(gapLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-        CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer1);
         aIGU.addLayer(gapLayer);
         aIGU.addLayer(aSolidLayer2);
@@ -71,12 +71,12 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
 public:
-    std::shared_ptr<CSystem> GetSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };
@@ -93,7 +93,7 @@ TEST_F(TestDoubleClear, Test1)
     // UValue run
     //////////////////////////////////////////////////////////////////////
 
-    auto aRun = System::Uvalue;
+    auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     auto Temperature = *aSystem->getTemperatures(aRun);
     std::vector<double> correctTemperature = {258.756688, 259.359226, 279.178510, 279.781048};
@@ -119,7 +119,7 @@ TEST_F(TestDoubleClear, Test1)
     // SHGC run
     //////////////////////////////////////////////////////////////////////
 
-    aRun = System::SHGC;
+    aRun = Tarcog::ISO15099::System::SHGC;
 
     Temperature = *aSystem->getTemperatures(aRun);
     correctTemperature = {264.022835, 265.134421, 287.947300, 288.428857};

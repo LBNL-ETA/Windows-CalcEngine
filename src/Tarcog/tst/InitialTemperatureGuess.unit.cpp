@@ -5,14 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class TestTemperatureInitialGuess : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -26,19 +22,19 @@ protected:
         auto airSpeed = 5.5;        // meters per second
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
                                              pressure,
                                              airSpeed,
                                              solarRadiation,
                                              tSky,
-                                             SkyModel::AllSpecified);
+															   Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
 
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
         auto roomTemperature = 294.15;
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -46,19 +42,19 @@ protected:
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
-        auto solidLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto solidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer1 != nullptr);
-        auto solidLayer2 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto solidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer2 != nullptr);
 
         auto gapThickness = 0.012;
         auto gapPressure = 101325.0;
-        auto gapLayer = Layers::gap(gapThickness, gapPressure);
+        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(gapLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-        CIGU aTarIGU(windowWidth, windowHeight);
+		Tarcog::ISO15099::CIGU aTarIGU(windowWidth, windowHeight);
         aTarIGU.addLayer(solidLayer1);
         aTarIGU.addLayer(gapLayer);
         aTarIGU.addLayer(solidLayer2);
@@ -66,17 +62,17 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aTarIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aTarIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
 public:
-    std::shared_ptr<CIGUSolidLayer> getLayer1() const
+    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> getLayer1() const
     {
         return m_TarcogSystem->getSolidLayers()[0];
     }
 
-    std::shared_ptr<CIGUSolidLayer> getLayer2() const
+    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> getLayer2() const
     {
         return m_TarcogSystem->getSolidLayers()[1];
     }
@@ -85,6 +81,8 @@ public:
 TEST_F(TestTemperatureInitialGuess, Test1)
 {
     SCOPED_TRACE("Begin Test: Initial temperature and IR guess");
+
+    using FenestrationCommon::Side;
 
     auto layer = getLayer1();
 

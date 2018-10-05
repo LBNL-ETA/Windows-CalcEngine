@@ -8,21 +8,19 @@
 #include "WCECommon.hpp"
 
 
-using namespace FenestrationCommon;
-using namespace Gases;
+using FenestrationCommon::Side;
 
 namespace Tarcog
 {
-    using namespace TarcogConstants;
 
     //////////////////////////////////////////////////////////////////////////
-    //      CLayerGeometry
+    ///      CLayerGeometry
     //////////////////////////////////////////////////////////////////////////
 
     CLayerGeometry::CLayerGeometry() :
-        m_Width(DEFAULT_WINDOW_WIDTH),
-        m_Height(DEFAULT_WINDOW_HEIGHT),
-        m_Tilt(DEFAULT_TILT)
+        m_Width(TarcogConstants::DEFAULT_WINDOW_WIDTH),
+        m_Height(TarcogConstants::DEFAULT_WINDOW_HEIGHT),
+        m_Tilt(TarcogConstants::DEFAULT_TILT)
     {}
 
     void CLayerGeometry::setWidth(double const t_Width)
@@ -44,7 +42,7 @@ namespace Tarcog
     }
 
     //////////////////////////////////////////////////////////////////////////
-    //      CLayerHeatFlow
+    ///      CLayerHeatFlow
     //////////////////////////////////////////////////////////////////////////
 
     CLayerHeatFlow::CLayerHeatFlow() : m_ConductiveConvectiveCoeff(0), m_LayerGainFlow(0)
@@ -63,7 +61,7 @@ namespace Tarcog
         this->CState::operator=(t_Layer);
         m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
         m_LayerGainFlow = t_Layer.m_LayerGainFlow;
-        for(auto aSide : EnumSide())
+        for(auto aSide : FenestrationCommon::EnumSide())
         {
             const auto aSurface = t_Layer.m_Surface.at(aSide);
             if(aSurface != nullptr)
@@ -147,7 +145,7 @@ namespace Tarcog
 
 
     //////////////////////////////////////////////////////////////////////////
-    //      CGasLayer
+    ///      CGasLayer
     //////////////////////////////////////////////////////////////////////////
 
     CGasLayer::CGasLayer() :
@@ -190,7 +188,7 @@ namespace Tarcog
         
     }
 
-    CGasLayer::CGasLayer(double const t_Pressure, const CGas & t_Gas) :
+    CGasLayer::CGasLayer(double const t_Pressure, const Gases::CGas & t_Gas) :
         m_Pressure(t_Pressure),
         m_AirSpeed(0),
         m_AirVerticalDirection(AirVerticalDirection::None),
