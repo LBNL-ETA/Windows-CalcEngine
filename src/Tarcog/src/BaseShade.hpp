@@ -12,62 +12,65 @@ namespace Gases
 
 namespace Tarcog
 {
-    class ISurface;
-    class CIGUVentilatedGapLayer;
-    class CEnvironment;
-
-    class CShadeOpenings
+    namespace ISO15099
     {
-    public:
-        CShadeOpenings(double const t_Atop,
-                       double const t_Abot,
-                       double const t_Aleft,
-                       double const t_Aright,
-                       double const t_Afront);
+        class ISurface;
 
-        CShadeOpenings();
+        class CIGUVentilatedGapLayer;
 
-        double Aeq_bot();
-        double Aeq_top();
+        class CEnvironment;
 
-    private:
-        void initialize();
-        double openingMultiplier();
+        class CShadeOpenings
+        {
+        public:
+            CShadeOpenings(
+              double t_Atop, double t_Abot, double t_Aleft, double t_Aright, double t_Afront);
 
-        double m_Atop;
-        double m_Abot;
-        double m_Aleft;
-        double m_Aright;
-        double m_Afront;
-    };
+            CShadeOpenings();
 
-    class CIGUShadeLayer : public CIGUSolidLayer
-    {
-    public:
-        CIGUShadeLayer(double t_Thickness,
-                       double t_Conductivity,
-                       std::shared_ptr<CShadeOpenings> const & t_ShadeOpenings,
-                       std::shared_ptr<ISurface> const & t_FrontSurface = nullptr,
-                       std::shared_ptr<ISurface> const & t_BackSurface = nullptr);
+            double Aeq_bot();
+            double Aeq_top();
 
-        CIGUShadeLayer(std::shared_ptr<CIGUSolidLayer> & t_Layer,
-                       std::shared_ptr<CShadeOpenings> & t_ShadeOpenings);
+        private:
+            void initialize();
+            double openingMultiplier();
 
-        CIGUShadeLayer(double t_Thickness, double t_Conductivity);
+            double m_Atop;
+            double m_Abot;
+            double m_Aleft;
+            double m_Aright;
+            double m_Afront;
+        };
 
-        std::shared_ptr<CBaseLayer> clone() const override;
+        class CIGUShadeLayer : public CIGUSolidLayer
+        {
+        public:
+            CIGUShadeLayer(double t_Thickness,
+                           double t_Conductivity,
+                           std::shared_ptr<CShadeOpenings> const & t_ShadeOpenings,
+                           std::shared_ptr<Tarcog::ISurface> const & t_FrontSurface = nullptr,
+                           std::shared_ptr<Tarcog::ISurface> const & t_BackSurface = nullptr);
 
-    private:
-        void calculateConvectionOrConductionFlow() override;
+            CIGUShadeLayer(std::shared_ptr<CIGUSolidLayer> & t_Layer,
+                           std::shared_ptr<CShadeOpenings> & t_ShadeOpenings);
 
-        void calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
-                                    std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2);
+            CIGUShadeLayer(double t_Thickness, double t_Conductivity);
 
-        void calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
-                               std::shared_ptr<CIGUVentilatedGapLayer> t_Gap);
+            std::shared_ptr<CBaseLayer> clone() const override;
 
-        std::shared_ptr<CShadeOpenings> m_ShadeOpenings;
-    };
+        private:
+            void calculateConvectionOrConductionFlow() override;
+
+            void calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
+                                        std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2);
+
+            void calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
+                                   std::shared_ptr<CIGUVentilatedGapLayer> t_Gap);
+
+            std::shared_ptr<CShadeOpenings> m_ShadeOpenings;
+        };
+
+    }   // namespace ISO15099
 
 }   // namespace Tarcog
 

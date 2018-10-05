@@ -7,29 +7,31 @@
 namespace FenestrationCommon
 {
     enum class Side;
-
 }
 
 namespace Tarcog
 {
-    class CBaseIGULayer : public CBaseLayer
+    namespace ISO15099
     {
-    public:
-        explicit CBaseIGULayer(double t_Thickness);
+        class CBaseIGULayer : public Tarcog::CBaseLayer
+        {
+        public:
+            explicit CBaseIGULayer(double t_Thickness);
 
-        double getThickness() const;
-        double getTemperature(FenestrationCommon::Side t_Position) const;
-        double J(FenestrationCommon::Side t_Position) const;
-        double getMaxDeflection() const;
-        double getMeanDeflection() const;
+            double getThickness() const;
+            double getTemperature(FenestrationCommon::Side t_Position) const;
+            double J(FenestrationCommon::Side t_Position) const;
+            double getMaxDeflection() const;
+            double getMeanDeflection() const;
 
-        double getConductivity();
+            double getConductivity();
 
-    protected:
-        virtual double layerTemperature();
+        protected:
+            virtual double layerTemperature();
 
-        double m_Thickness;
-    };
+            double m_Thickness;
+        };
+    }   // namespace ISO15099
 
 }   // namespace Tarcog
 #endif

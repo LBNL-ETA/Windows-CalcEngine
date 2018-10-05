@@ -5,14 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class TestSingleClearSolarCond100 : public testing::Test {
 
 private:
-	std::shared_ptr< CSingleSystem > m_TarcogSystem;
+	std::shared_ptr< Tarcog::ISO15099::CSingleSystem > m_TarcogSystem;
 
 protected:
 	void SetUp() override {
@@ -26,16 +22,16 @@ protected:
 		auto solarRadiation = 1000.0;
 
 		auto Outdoor =
-			Environments::outdoor( airTemperature, pressure, airSpeed, solarRadiation,
-			                                    tSky, SkyModel::AllSpecified );
+			Tarcog::ISO15099::Environments::outdoor( airTemperature, pressure, airSpeed, solarRadiation,
+			                                    tSky, Tarcog::ISO15099::SkyModel ::AllSpecified );
 		ASSERT_TRUE( Outdoor != nullptr );
-		Outdoor->setHCoeffModel( BoundaryConditionsCoeffModel::CalculateH );
+		Outdoor->setHCoeffModel( Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH );
 
 		/////////////////////////////////////////////////////////
 		/// Indoor
 		/////////////////////////////////////////////////////////
 		auto roomTemperature = 294.15;
-		auto aIndoor = Environments::indoor( roomTemperature, pressure );
+		auto aIndoor = Tarcog::ISO15099::Environments::indoor( roomTemperature, pressure );
 		ASSERT_TRUE( aIndoor != nullptr );
 
 		/////////////////////////////////////////////////////////
@@ -45,26 +41,26 @@ protected:
 		auto solidLayerConductance = 0.01;
 		auto solarAbsorptance = 0.094189159572;
 
-		auto aSolidLayer = Layers::solid( solidLayerThickness, solidLayerConductance );
+		auto aSolidLayer = Tarcog::ISO15099::Layers::solid( solidLayerThickness, solidLayerConductance );
 		aSolidLayer->setSolarAbsorptance( solarAbsorptance );
 		ASSERT_TRUE( aSolidLayer != nullptr );
 
 		auto windowWidth = 1.0;
 		auto windowHeight = 1.0;
-		CIGU aIGU( windowWidth, windowHeight );
+		Tarcog::ISO15099::CIGU aIGU( windowWidth, windowHeight );
 		aIGU.addLayer( aSolidLayer );
 
 		/////////////////////////////////////////////////////////
 		/// System
 		/////////////////////////////////////////////////////////
-		m_TarcogSystem = std::make_shared< CSingleSystem >( aIGU, aIndoor, Outdoor );
+		m_TarcogSystem = std::make_shared< Tarcog::ISO15099::CSingleSystem >( aIGU, aIndoor, Outdoor );
 		ASSERT_TRUE( m_TarcogSystem != nullptr );
 
 		m_TarcogSystem->solve();
 	}
 
 public:
-	std::shared_ptr< CSingleSystem > GetSystem() const {
+	std::shared_ptr< Tarcog::ISO15099::CSingleSystem > GetSystem() const {
 		return m_TarcogSystem;
 	};
 
@@ -99,9 +95,9 @@ TEST_F( TestSingleClearSolarCond100, TestIndoor ) {
 
 	auto aSystem = GetSystem();
 
-	auto convectiveHF = aSystem->getConvectiveHeatFlow( Environment::Indoor );
-	auto radiativeHF = aSystem->getRadiationHeatFlow( Environment::Indoor );
-	auto totalHF = aSystem->getHeatFlow( Environment::Indoor );
+	auto convectiveHF = aSystem->getConvectiveHeatFlow( Tarcog::ISO15099::Environment::Indoor );
+	auto radiativeHF = aSystem->getRadiationHeatFlow( Tarcog::ISO15099::Environment::Indoor );
+	auto totalHF = aSystem->getHeatFlow( Tarcog::ISO15099::Environment::Indoor );
 
 	EXPECT_NEAR( -13.913388, convectiveHF, 1e-5 );
 	EXPECT_NEAR( -30.569739, radiativeHF, 1e-5 );

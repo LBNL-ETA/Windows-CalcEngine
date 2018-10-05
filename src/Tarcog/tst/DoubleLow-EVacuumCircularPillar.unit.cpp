@@ -5,13 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class DoubleLowEVacuumCircularPillar : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -25,14 +22,14 @@ protected:
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
                                              pressure,
                                              airSpeed,
                                              solarRadiation,
                                              tSky,
-                                             SkyModel::AllSpecified);
+															   Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         /// Indoor
@@ -40,7 +37,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -52,7 +49,7 @@ protected:
         auto emissivityFrontIR = 0.84;
         auto emissivityBackIR = 0.036749500781;
 
-        auto aSolidLayer1 = Layers::solid(solidLayerThickness,
+        auto aSolidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                           solidLayerConductance,
                                           emissivityFrontIR,
                                           TransmittanceIR,
@@ -62,7 +59,7 @@ protected:
         solidLayerThickness = 0.003962399904;
         emissivityBackIR = 0.84;
 
-        auto aSolidLayer2 = Layers::solid(solidLayerThickness,
+        auto aSolidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                           solidLayerConductance,
                                           emissivityFrontIR,
                                           TransmittanceIR,
@@ -71,20 +68,20 @@ protected:
 
         auto gapThickness = 0.0001;
         auto gapPressure = 0.1333;
-        auto aGapLayer = Layers::gap(gapThickness, gapPressure);
+        auto aGapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
 
         // Add support pillars
         auto pillarConductivity = 999.0;
         auto pillarSpacing = 0.03;
         auto pillarRadius = 0.0002;
         auto aGapWithPillars =
-          Layers::addCircularPillar(aGapLayer, pillarConductivity, pillarSpacing, pillarRadius);
+			Tarcog::ISO15099::Layers::addCircularPillar(aGapLayer, pillarConductivity, pillarSpacing, pillarRadius);
 
         ASSERT_TRUE(aGapWithPillars != nullptr);
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
-        CIGU aIGU(windowWidth, windowHeight);
+		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer1);
         aIGU.addLayer(aGapWithPillars);
         aIGU.addLayer(aSolidLayer2);
@@ -92,14 +89,14 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<CSingleSystem> GetSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };

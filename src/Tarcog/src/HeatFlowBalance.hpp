@@ -14,27 +14,31 @@ namespace FenestrationCommon
 
 namespace Tarcog
 {
-    class CBaseLayer;
-
-    class CHeatFlowBalance
+    namespace ISO15099
     {
-    public:
-        explicit CHeatFlowBalance(CIGU & t_IGU);
+        class CBaseLayer;
 
-        std::vector<double> calcBalanceMatrix();
+        class CHeatFlowBalance
+        {
+        public:
+            explicit CHeatFlowBalance(CIGU & t_IGU);
 
-    private:
-        void buildCell(const std::shared_ptr<CBaseLayer> & t_Previous,
-                       const std::shared_ptr<CBaseLayer> & t_Current,
-                       const std::shared_ptr<CBaseLayer> & t_Next,
-                       int t_Index);
+            std::vector<double> calcBalanceMatrix();
 
-        std::shared_ptr<FenestrationCommon::SquareMatrix> m_MatrixA;
-        std::shared_ptr<std::vector<double>> m_VectorB;
-        std::shared_ptr<FenestrationCommon::CLinearSolver> m_LinearSolver;
+        private:
+            void buildCell(const std::shared_ptr<Tarcog::CBaseLayer> & t_Previous,
+                           const std::shared_ptr<Tarcog::CBaseLayer> & t_Current,
+                           const std::shared_ptr<Tarcog::CBaseLayer> & t_Next,
+                           int t_Index);
 
-        CIGU & m_IGU;
-    };
+            std::shared_ptr<FenestrationCommon::SquareMatrix> m_MatrixA;
+            std::shared_ptr<std::vector<double>> m_VectorB;
+            std::shared_ptr<FenestrationCommon::CLinearSolver> m_LinearSolver;
+
+            CIGU & m_IGU;
+        };
+
+    }   // namespace ISO15099
 
 }   // namespace Tarcog
 
