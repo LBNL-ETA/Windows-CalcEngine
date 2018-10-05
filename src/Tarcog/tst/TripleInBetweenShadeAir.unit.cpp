@@ -106,12 +106,12 @@ TEST_F(TestInBetweenShadeAir, Test1)
 
     auto aSystem = GetSystem();
 
-    auto temperature = *aSystem->getTemperatures();
-    auto radiosity = *aSystem->getRadiosities();
+    const auto temperature = aSystem->getTemperatures();
+    const auto radiosity = aSystem->getRadiosities();
 
-    std::vector<double> correctTemp = {
+    std::vector<double> correctTemp{
       257.908946, 258.369607, 271.538659, 271.542218, 283.615285, 284.075945};
-    std::vector<double> correctJ = {
+    std::vector<double> correctJ{
       249.166619, 260.320613, 300.571561, 316.335545, 358.760651, 378.995512};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
@@ -123,6 +123,6 @@ TEST_F(TestInBetweenShadeAir, Test1)
         EXPECT_NEAR(correctJ[i], radiosity[i], 1e-6);
     }
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(20, int(numOfIter));
 }

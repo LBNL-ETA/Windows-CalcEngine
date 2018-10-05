@@ -29,11 +29,11 @@ namespace Tarcog
 					 const std::shared_ptr< CEnvironment > & t_Indoor,
 					 const std::shared_ptr< CEnvironment > & t_Outdoor );
 
-			std::shared_ptr< std::vector< double>> getTemperatures( System t_System ) const;
-			std::shared_ptr< std::vector< double>> getRadiosities( System t_System ) const;
+			std::vector<double> getTemperatures( System t_System ) const;
+			std::vector<double> getRadiosities( System t_System ) const;
 
-			std::shared_ptr< std::vector< double>> getMaxDeflections( System t_System ) const;
-			std::shared_ptr< std::vector< double>> getMeanDeflections( System t_System ) const;
+			std::vector<double> getMaxDeflections( System t_System ) const;
+			std::vector<double> getMeanDeflections( System t_System ) const;
 
 			std::vector< std::shared_ptr< CIGUSolidLayer>> getSolidLayers( System t_System ) const;
 

@@ -93,7 +93,7 @@ TEST_F(TestDoubleClearSingleSystemWithInitialGuess, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    const auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {258.756688, 259.359226, 279.178510, 279.781048};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -102,7 +102,7 @@ TEST_F(TestDoubleClearSingleSystemWithInitialGuess, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    const auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {251.950834, 268.667346, 332.299338, 359.731700};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -111,6 +111,6 @@ TEST_F(TestDoubleClearSingleSystemWithInitialGuess, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(17u, numOfIter);
 }

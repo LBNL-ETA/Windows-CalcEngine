@@ -92,7 +92,7 @@ TEST_F(TestDoubleClearSingleSystemWithSun, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {310.818074, 311.064868, 306.799522, 306.505704};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -101,7 +101,7 @@ TEST_F(TestDoubleClearSingleSystemWithSun, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {523.148794, 526.906252, 506.252171, 491.059753};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -110,12 +110,12 @@ TEST_F(TestDoubleClearSingleSystemWithSun, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
 
-    auto heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
+    const auto heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(-72.622787, heatFlow, 1e-5);
 
-    auto Uvalue = aSystem->getUValue();
+    const auto Uvalue = aSystem->getUValue();
     EXPECT_NEAR(9.077848, Uvalue, 1e-5);
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(20u, numOfIter);
 }

@@ -129,7 +129,7 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    const auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {
       257.708586, 258.135737, 271.904015, 271.907455, 284.412841, 284.839992};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
@@ -139,7 +139,7 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-6);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    const auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {
       248.512581, 259.762360, 301.878568, 318.339706, 362.562135, 382.345742};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());

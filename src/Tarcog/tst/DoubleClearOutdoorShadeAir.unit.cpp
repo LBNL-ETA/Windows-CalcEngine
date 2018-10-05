@@ -103,8 +103,8 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
 
     auto aSystem = getSystem();
 
-    auto temperature = *aSystem->getTemperatures();
-    auto radiosity = *aSystem->getRadiosities();
+    auto temperature = aSystem->getTemperatures();
+    auto radiosity = aSystem->getRadiosities();
 
     std::vector<double> correctTemp = {
       256.984174, 256.987521, 269.436767, 269.879607, 284.039136, 284.481976};

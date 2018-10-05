@@ -105,8 +105,8 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
 
     auto aSystem = GetSystem();
 
-    auto temperature = *aSystem->getTemperatures();
-    auto radiosity = *aSystem->getRadiosities();
+    auto temperature = aSystem->getTemperatures();
+    auto radiosity = aSystem->getRadiosities();
 
     std::vector<double> correctTemp = {
       258.2265788, 258.7403799, 276.1996405, 276.7134416, 288.1162677, 288.1193825};
@@ -122,9 +122,9 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
         EXPECT_NEAR(correctJ[i], radiosity[i], 1e-6);
     }
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(1, int(numOfIter));
 
-    auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
+    const auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(40.066868, ventilatedFlow, 1e-6);
 }

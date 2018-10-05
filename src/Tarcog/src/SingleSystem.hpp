@@ -34,11 +34,11 @@ namespace Tarcog
 			std::vector< std::shared_ptr< CIGUSolidLayer>> getSolidLayers() const;
 			std::vector< std::shared_ptr< CIGUGapLayer>> getGapLayers() const;
 
-			std::shared_ptr< std::vector< double>> getTemperatures() const;
-			std::shared_ptr< std::vector< double>> getRadiosities() const;
+			std::vector< double> getTemperatures() const;
+			std::vector< double> getRadiosities() const;
 
-			std::shared_ptr< std::vector< double>> getMaxDeflections() const;
-			std::shared_ptr< std::vector< double>> getMeanDeflections() const;
+			std::vector< double> getMaxDeflections() const;
+			std::vector< double> getMeanDeflections() const;
 
 			std::shared_ptr< CSingleSystem > clone() const;
 

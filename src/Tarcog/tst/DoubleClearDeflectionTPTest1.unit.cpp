@@ -101,7 +101,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     ///////////////////////////////////////////////////////////////////////////////
     /// Temperatures test
     ///////////////////////////////////////////////////////////////////////////////
-    auto Temperature = *aSystem->getTemperatures();
+    auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {258.811500, 259.137749, 278.961419, 279.573136};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -111,9 +111,9 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    // Radiosity test
+    /// Radiosity test
     ///////////////////////////////////////////////////////////////////////////////
-    auto Radiosity = *aSystem->getRadiosities();
+    auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {252.131797, 267.765290, 331.256183, 358.865247};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -125,7 +125,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     ///////////////////////////////////////////////////////////////////////////////
     /// Max deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    auto MaxDeflection = *aSystem->getMaxDeflections();
+    const auto MaxDeflection = aSystem->getMaxDeflections();
     std::vector<double> correctMaxDeflection = {-0.0030742, 0.00033590};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
@@ -137,7 +137,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     ///////////////////////////////////////////////////////////////////////////////
     /// Mean deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    auto MeanDeflection = *aSystem->getMeanDeflections();
+    const auto MeanDeflection = aSystem->getMeanDeflections();
     std::vector<double> correctMeanDeflection = {-0.0012879, 0.00014072};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
@@ -146,6 +146,6 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
         EXPECT_NEAR(correctMeanDeflection[i], MeanDeflection[i], 1e-5);
     }
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(27u, numOfIter);
 }

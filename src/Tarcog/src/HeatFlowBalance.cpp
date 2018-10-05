@@ -80,7 +80,6 @@ namespace Tarcog
             m_MatrixA(sP + 3, sP + 3) = -hgap_next - hgl;
             m_VectorB[sP + 3] = -solarRadiation / 2 - qv_next / 2;
 
-
             if( std::dynamic_pointer_cast<CEnvironment>(previous) == nullptr)
             {
                 // first row

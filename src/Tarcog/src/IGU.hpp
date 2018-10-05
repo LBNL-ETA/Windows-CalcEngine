@@ -43,12 +43,12 @@ namespace Tarcog
             std::shared_ptr<CBaseLayer> getEnvironment(Environment t_Environment) const;
 
             std::vector<double> getState() const;
-            void setState(std::vector<double> & t_State) const;
+            void setState(const std::vector<double> & t_State) const;
 
-            std::shared_ptr<std::vector<double>> getTemperatures() const;
-            std::shared_ptr<std::vector<double>> getRadiosities() const;
-            std::shared_ptr<std::vector<double>> getMaxDeflections() const;
-            std::shared_ptr<std::vector<double>> getMeanDeflections() const;
+            std::vector<double> getTemperatures() const;
+            std::vector<double> getRadiosities() const;
+            std::vector<double> getMaxDeflections() const;
+            std::vector<double> getMeanDeflections() const;
 
             double getTilt() const;
             double getWidth() const;
