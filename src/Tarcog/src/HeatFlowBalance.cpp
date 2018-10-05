@@ -18,133 +18,115 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        CHeatFlowBalance::CHeatFlowBalance(CIGU & t_IGU) : m_IGU(t_IGU)
-        {
-            m_MatrixA = std::make_shared<FenestrationCommon::SquareMatrix>(4 * m_IGU.getNumOfLayers());
-            assert(m_MatrixA != nullptr);
-            m_VectorB = std::make_shared<std::vector<double>>();
-            assert(m_VectorB != nullptr);
-            m_VectorB->resize(4 * m_IGU.getNumOfLayers());
-            m_LinearSolver = std::make_shared<FenestrationCommon::CLinearSolver>();
-        }
+        CHeatFlowBalance::CHeatFlowBalance(CIGU & t_IGU) :
+            m_MatrixA(4 * t_IGU.getNumOfLayers()),
+            m_VectorB(4 * t_IGU.getNumOfLayers()),
+			m_IGU(t_IGU)
+        {}
 
         std::vector<double> CHeatFlowBalance::calcBalanceMatrix()
         {
-            std::vector<std::shared_ptr<CIGUSolidLayer>> aSolidLayers = m_IGU.getSolidLayers();
-            std::vector<std::shared_ptr<CIGUSolidLayer>>::iterator it;
-            int positionCounter = 0;
-            m_MatrixA->setZeros();
-            for(size_t i = 0; i < m_VectorB->size(); ++i)
-            {
-                (*m_VectorB)[i] = 0;
-            }
-            for(it = aSolidLayers.begin(); it != aSolidLayers.end(); ++it)
-            {
-                auto aPreviousLayer = (*it)->getPreviousLayer();
-                auto aNextLayer = (*it)->getNextLayer();
-                buildCell(aPreviousLayer, (*it), aNextLayer, positionCounter);
-                ++positionCounter;
-            }
-            return m_LinearSolver->solveSystem(*m_MatrixA, *m_VectorB);
+            auto aSolidLayers = m_IGU.getSolidLayers();
+            m_MatrixA.setZeros();
+            std::fill(m_VectorB.begin(), m_VectorB.end(), 0);
+			for ( size_t i = 0; i < aSolidLayers.size(); ++i ) {
+				buildCell(*aSolidLayers[i], i);
+			}
+            return FenestrationCommon::CLinearSolver::solveSystem(m_MatrixA, m_VectorB);
         }
 
-        void CHeatFlowBalance::buildCell(std::shared_ptr<Tarcog::CBaseLayer> const & t_Previous,
-                                         std::shared_ptr<Tarcog::CBaseLayer> const & t_Current,
-                                         std::shared_ptr<Tarcog::CBaseLayer> const & t_Next,
-                                         int const t_Index)
+        void CHeatFlowBalance::buildCell( Tarcog::CBaseLayer & t_Current,
+										  const size_t t_Index )
         {
             // Routine is used to build matrix "cell" around solid layer.
 
             // first determine cell size
-            int sP = 4 * t_Index;
+            size_t sP = 4 * t_Index;
+
+            auto next = t_Current.getNextLayer();
+			auto previous = t_Current.getPreviousLayer();
 
             // First build base cell
-            double hgl = t_Current->getConductionConvectionCoefficient();
-            double hgap_prev = t_Previous->getConductionConvectionCoefficient();
-            double hgap_next = t_Next->getConductionConvectionCoefficient();
-            std::shared_ptr<ISurface> frontSurface = t_Current->getSurface(Side::Front);
+            double hgl = t_Current.getConductionConvectionCoefficient();
+            double hgap_prev = previous->getConductionConvectionCoefficient();
+            double hgap_next = next->getConductionConvectionCoefficient();
+            std::shared_ptr<ISurface> frontSurface = t_Current.getSurface(Side::Front);
             assert(frontSurface != nullptr);
             double emissPowerFront = frontSurface->emissivePowerTerm();
-            std::shared_ptr<ISurface> backSurface = t_Current->getSurface(Side::Back);
+            std::shared_ptr<ISurface> backSurface = t_Current.getSurface(Side::Back);
             assert(backSurface != nullptr);
             double emissPowerBack = backSurface->emissivePowerTerm();
-            double qv_prev = t_Previous->getGainFlow();
-            double qv_next = t_Next->getGainFlow();
-            double solarRadiation = t_Current->getGainFlow();
+            double qv_prev = previous->getGainFlow();
+            double qv_next = next->getGainFlow();
+            double solarRadiation = t_Current.getGainFlow();
 
             // first row
-            (*m_MatrixA)(sP, sP) = hgap_prev + hgl;
-            (*m_MatrixA)(sP, sP + 1) = 1;
-            (*m_MatrixA)(sP, sP + 3) = -hgl;
-            (*m_VectorB)[sP] = solarRadiation / 2 + qv_prev / 2;
+            m_MatrixA(sP, sP) = hgap_prev + hgl;
+            m_MatrixA(sP, sP + 1) = 1;
+            m_MatrixA(sP, sP + 3) = -hgl;
+            m_VectorB[sP] = solarRadiation / 2 + qv_prev / 2;
 
             // second row
-            (*m_MatrixA)(sP + 1, sP) = emissPowerFront;
-            (*m_MatrixA)(sP + 1, sP + 1) = -1;
+            m_MatrixA(sP + 1, sP) = emissPowerFront;
+			m_MatrixA(sP + 1, sP + 1) = -1;
 
             // third row
-            (*m_MatrixA)(sP + 2, sP + 2) = -1;
-            (*m_MatrixA)(sP + 2, sP + 3) = emissPowerBack;
+            m_MatrixA(sP + 2, sP + 2) = -1;
+            m_MatrixA(sP + 2, sP + 3) = emissPowerBack;
 
             // fourth row
-            (*m_MatrixA)(sP + 3, sP) = hgl;
-            (*m_MatrixA)(sP + 3, sP + 2) = -1;
-            (*m_MatrixA)(sP + 3, sP + 3) = -hgap_next - hgl;
-            (*m_VectorB)[sP + 3] = -solarRadiation / 2 - qv_next / 2;
+            m_MatrixA(sP + 3, sP) = hgl;
+            m_MatrixA(sP + 3, sP + 2) = -1;
+            m_MatrixA(sP + 3, sP + 3) = -hgap_next - hgl;
+            m_VectorB[sP + 3] = -solarRadiation / 2 - qv_next / 2;
 
 
-            if(std::dynamic_pointer_cast<CEnvironment>(t_Previous) == nullptr)
+            if( std::dynamic_pointer_cast<CEnvironment>(previous) == nullptr)
             {
                 // first row
-                (*m_MatrixA)(sP, sP - 2) = -1;
-                (*m_MatrixA)(sP, sP - 1) = -hgap_prev;
+                m_MatrixA(sP, sP - 2) = -1;
+                m_MatrixA(sP, sP - 1) = -hgap_prev;
 
                 // second row
-                (*m_MatrixA)(sP + 1, sP - 2) = frontSurface->getReflectance();
+                m_MatrixA(sP + 1, sP - 2) = frontSurface->getReflectance();
 
                 // third row
-                (*m_MatrixA)(sP + 2, sP - 2) = frontSurface->getTransmittance();
+                m_MatrixA(sP + 2, sP - 2) = frontSurface->getTransmittance();
             }
             else
             {
                 const double environmentRadiosity =
-                  std::dynamic_pointer_cast<CEnvironment>(t_Previous)->getEnvironmentIR();
+                  std::dynamic_pointer_cast<CEnvironment>(previous)->getEnvironmentIR();
                 const double airTemperature =
-                  std::dynamic_pointer_cast<CEnvironment>(t_Previous)->getGasTemperature();
+                  std::dynamic_pointer_cast<CEnvironment>(previous)->getGasTemperature();
 
-                (*m_VectorB)[sP] =
-                  (*m_VectorB)[sP] + environmentRadiosity + hgap_prev * airTemperature;
-                (*m_VectorB)[sP + 1] =
-                  (*m_VectorB)[sP + 1] - frontSurface->getReflectance() * environmentRadiosity;
-                (*m_VectorB)[sP + 2] =
-                  (*m_VectorB)[sP + 2] - frontSurface->getTransmittance() * environmentRadiosity;
+                m_VectorB[sP] += environmentRadiosity + hgap_prev * airTemperature;
+                m_VectorB[sP + 1] -= frontSurface->getReflectance() * environmentRadiosity;
+                m_VectorB[sP + 2] -= frontSurface->getTransmittance() * environmentRadiosity;
             }
 
-            if(std::dynamic_pointer_cast<CEnvironment>(t_Next) == nullptr)
+            if(std::dynamic_pointer_cast<CEnvironment>(next) == nullptr)
             {
                 // second row
-                (*m_MatrixA)(sP + 1, sP + 5) = backSurface->getTransmittance();
+                m_MatrixA(sP + 1, sP + 5) = backSurface->getTransmittance();
 
                 // third row
-                (*m_MatrixA)(sP + 2, sP + 5) = backSurface->getReflectance();
+                m_MatrixA(sP + 2, sP + 5) = backSurface->getReflectance();
 
                 // fourth row
-                (*m_MatrixA)(sP + 3, sP + 4) = hgap_next;
-                (*m_MatrixA)(sP + 3, sP + 5) = 1;
+                m_MatrixA(sP + 3, sP + 4) = hgap_next;
+                m_MatrixA(sP + 3, sP + 5) = 1;
             }
             else
             {
                 const double environmentRadiosity =
-                  std::dynamic_pointer_cast<CEnvironment>(t_Next)->getEnvironmentIR();
+                  std::dynamic_pointer_cast<CEnvironment>(next)->getEnvironmentIR();
                 const double airTemperature =
-                  std::dynamic_pointer_cast<CEnvironment>(t_Next)->getGasTemperature();
+                  std::dynamic_pointer_cast<CEnvironment>(next)->getGasTemperature();
 
-                (*m_VectorB)[sP + 1] =
-                  (*m_VectorB)[sP + 1] - backSurface->getTransmittance() * environmentRadiosity;
-                (*m_VectorB)[sP + 2] =
-                  (*m_VectorB)[sP + 2] - backSurface->getReflectance() * environmentRadiosity;
-                (*m_VectorB)[sP + 3] =
-                  (*m_VectorB)[sP + 3] - environmentRadiosity - hgap_next * airTemperature;
+                m_VectorB[sP + 1] -= backSurface->getTransmittance() * environmentRadiosity;
+                m_VectorB[sP + 2] -= backSurface->getReflectance() * environmentRadiosity;
+                m_VectorB[sP + 3] -= (environmentRadiosity + hgap_next * airTemperature);
             }
         }
 
