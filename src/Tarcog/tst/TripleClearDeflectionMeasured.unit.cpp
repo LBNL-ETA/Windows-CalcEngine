@@ -127,7 +127,7 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     }
 
     const auto MeanDeflection = aSystem->getMeanDeflections();
-    std::vector<double> correctMeanDeflection = {0.00031076, -2.437e-05, -0.0001501};
+    std::vector<double> correctMeanDeflection{0.00031076, -2.437e-05, -0.0001501};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
