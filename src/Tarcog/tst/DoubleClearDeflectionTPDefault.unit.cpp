@@ -91,7 +91,7 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
     auto aSystem = getSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {258.811500, 259.137749, 278.961419, 279.573136};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -100,7 +100,7 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {252.131797, 267.765290, 331.256183, 358.865247};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -109,8 +109,8 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
 
-    auto MaxDeflection = *aSystem->getMaxDeflections();
-    std::vector<double> correctMaxDeflection = {-0.0031162, 0.00029386};
+    const auto MaxDeflection = aSystem->getMaxDeflections();
+    std::vector<double> correctMaxDeflection{-0.0031162, 0.00029386};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
@@ -118,8 +118,8 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
         EXPECT_NEAR(correctMaxDeflection[i], MaxDeflection[i], 1e-5);
     }
 
-    auto MeanDeflection = *aSystem->getMeanDeflections();
-    std::vector<double> correctMeanDeflection = {-0.0013055, 0.00012311};
+    const auto MeanDeflection = aSystem->getMeanDeflections();
+    std::vector<double> correctMeanDeflection{-0.0013055, 0.00012311};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)

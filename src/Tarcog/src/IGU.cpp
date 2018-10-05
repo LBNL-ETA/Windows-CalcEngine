@@ -161,69 +161,69 @@ namespace Tarcog
             return aState;
         }
 
-        void CIGU::setState(std::vector<double> & t_State) const
+        void CIGU::setState(const std::vector<double> & t_State) const
         {
             size_t i = 0;
-            for(auto & aLayer : getSolidLayers())
+            for(const auto & aLayer : getSolidLayers())
             {
-                auto Tf = t_State[4 * i];
-                auto Jf = t_State[4 * i + 1];
-                auto Jb = t_State[4 * i + 2];
-                auto Tb = t_State[4 * i + 3];
+                const auto Tf = t_State[4 * i];
+                const auto Jf = t_State[4 * i + 1];
+                const auto Jb = t_State[4 * i + 2];
+                const auto Tb = t_State[4 * i + 3];
                 aLayer->setLayerState(Tf, Tb, Jf, Jb);
                 ++i;
             }
         }
 
-        std::shared_ptr<std::vector<double>> CIGU::getTemperatures() const
+        std::vector<double> CIGU::getTemperatures() const
         {
-            auto aTemperatures = std::make_shared<std::vector<double>>();
+			std::vector<double> aTemperatures;
 
             for(auto const & layer : getSolidLayers())
             {
                 for(auto aSide : FenestrationCommon::EnumSide())
                 {
-                    aTemperatures->push_back(layer->getTemperature(aSide));
+                    aTemperatures.push_back(layer->getTemperature(aSide));
                 }
             }
 
             return aTemperatures;
         }
 
-        std::shared_ptr<std::vector<double>> CIGU::getRadiosities() const
+        std::vector<double> CIGU::getRadiosities() const
         {
-            auto aRadiosities = std::make_shared<std::vector<double>>();
+			std::vector<double> aRadiosities;
 
             for(auto const & layer : getSolidLayers())
             {
                 for(auto aSide : FenestrationCommon::EnumSide())
                 {
-                    aRadiosities->push_back(layer->J(aSide));
+                    aRadiosities.push_back(layer->J(aSide));
                 }
             }
 
             return aRadiosities;
         }
 
-        std::shared_ptr<std::vector<double>> CIGU::getMaxDeflections() const
+        std::vector<double> CIGU::getMaxDeflections() const
         {
-            auto aMaxDeflections = std::make_shared<std::vector<double>>();
+			std::vector<double> aMaxDeflections;
 
             for(auto const & layer : getSolidLayers())
             {
-                aMaxDeflections->push_back(layer->getMaxDeflection());
+                aMaxDeflections.push_back(layer->getMaxDeflection());
             }
 
             return aMaxDeflections;
         }
 
-        std::shared_ptr<std::vector<double>> CIGU::getMeanDeflections() const
+        std::vector<double> CIGU::getMeanDeflections() const
         {
-            auto aMeanDeflections = std::make_shared<std::vector<double>>();
+			std::vector<double> aMeanDeflections;
 
             for(auto const & layer : getSolidLayers())
             {
-                aMeanDeflections->push_back(layer->getMeanDeflection());
+                aMeanDeflections.push_back(layer->getMeanDeflection());
             }
 
             return aMeanDeflections;

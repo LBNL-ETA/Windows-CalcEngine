@@ -100,7 +100,7 @@ TEST_F(TestSingleClearSingleSystem_EPlusMode, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    const auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {259.636156, 260.283157};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -109,7 +109,7 @@ TEST_F(TestSingleClearSingleSystem_EPlusMode, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    const auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {251.497764, 283.391770};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -118,9 +118,9 @@ TEST_F(TestSingleClearSingleSystem_EPlusMode, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
 
-    auto isToleranceAchieved = aSystem->isToleranceAchieved();
+    const auto isToleranceAchieved = aSystem->isToleranceAchieved();
     EXPECT_EQ(isToleranceAchieved, false);
 
-    auto solutionTolerance = aSystem->solutionTolarance();
+    const auto solutionTolerance = aSystem->solutionTolarance();
     EXPECT_NEAR(2.918398, solutionTolerance, 1e-6);
 }

@@ -100,22 +100,22 @@ namespace Tarcog
             return m_IGU.getGapLayers();
         }
 
-        std::shared_ptr<std::vector<double>> CSingleSystem::getTemperatures() const
+        std::vector<double> CSingleSystem::getTemperatures() const
         {
             return m_IGU.getTemperatures();
         }
 
-        std::shared_ptr<std::vector<double>> CSingleSystem::getRadiosities() const
+        std::vector<double> CSingleSystem::getRadiosities() const
         {
             return m_IGU.getRadiosities();
         }
 
-        std::shared_ptr<std::vector<double>> CSingleSystem::getMaxDeflections() const
+        std::vector<double> CSingleSystem::getMaxDeflections() const
         {
             return m_IGU.getMaxDeflections();
         }
 
-        std::shared_ptr<std::vector<double>> CSingleSystem::getMeanDeflections() const
+        std::vector<double> CSingleSystem::getMeanDeflections() const
         {
             return m_IGU.getMeanDeflections();
         }

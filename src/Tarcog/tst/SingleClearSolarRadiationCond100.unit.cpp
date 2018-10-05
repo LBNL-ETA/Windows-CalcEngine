@@ -81,7 +81,7 @@ TEST_F(TestSingleClearSolarCond001, TestTempAndRad)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    const auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {299.627742, 299.627975};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -90,7 +90,7 @@ TEST_F(TestSingleClearSolarCond001, TestTempAndRad)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    const auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {444.699763, 451.769813};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 

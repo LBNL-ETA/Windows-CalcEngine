@@ -22,23 +22,22 @@ namespace Tarcog
             }
         }
 
-        std::shared_ptr<std::vector<double>> CSystem::getTemperatures(System const t_System) const
+        std::vector<double> CSystem::getTemperatures(System const t_System) const
         {
             return m_System.at(t_System)->getTemperatures();
         }
 
-        std::shared_ptr<std::vector<double>> CSystem::getRadiosities(System const t_System) const
+        std::vector<double> CSystem::getRadiosities(System const t_System) const
         {
             return m_System.at(t_System)->getRadiosities();
         }
 
-        std::shared_ptr<std::vector<double>> CSystem::getMaxDeflections(System const t_System) const
+        std::vector<double> CSystem::getMaxDeflections(System const t_System) const
         {
             return m_System.at(t_System)->getMaxDeflections();
         }
 
-        std::shared_ptr<std::vector<double>>
-          CSystem::getMeanDeflections(System const t_System) const
+        std::vector<double> CSystem::getMeanDeflections(System const t_System) const
         {
             return m_System.at(t_System)->getMeanDeflections();
         }

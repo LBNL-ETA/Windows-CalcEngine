@@ -80,7 +80,7 @@ TEST_F(TestSingleClear, Test1)
     /////////////////////////////////////////////////////////////////////////
     ///  U-value run
     /////////////////////////////////////////////////////////////////////////
-    auto Temperature = *aSystem->getTemperatures(Tarcog::ISO15099::System::Uvalue);
+    auto Temperature = aSystem->getTemperatures(Tarcog::ISO15099::System::Uvalue);
     std::vector<double> correctTemperature = {297.207035, 297.14470};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -89,7 +89,7 @@ TEST_F(TestSingleClear, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities(Tarcog::ISO15099::System::Uvalue);
+    auto Radiosity = aSystem->getRadiosities(Tarcog::ISO15099::System::Uvalue);
     std::vector<double> correctRadiosity = {432.444546, 439.201749};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -102,9 +102,9 @@ TEST_F(TestSingleClear, Test1)
     EXPECT_EQ(19u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
-    //  SHGC run
+    ///  SHGC run
     /////////////////////////////////////////////////////////////////////////
-    Temperature = *aSystem->getTemperatures(Tarcog::ISO15099::System::SHGC);
+    Temperature = aSystem->getTemperatures(Tarcog::ISO15099::System::SHGC);
     correctTemperature = {299.116601, 299.121730};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -113,7 +113,7 @@ TEST_F(TestSingleClear, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    Radiosity = *aSystem->getRadiosities(Tarcog::ISO15099::System::SHGC);
+    Radiosity = aSystem->getRadiosities(Tarcog::ISO15099::System::SHGC);
     correctRadiosity = {442.087153, 449.182158};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -126,7 +126,7 @@ TEST_F(TestSingleClear, Test1)
     EXPECT_EQ(19u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
-    //  Heat flows
+    ///  Heat flows
     /////////////////////////////////////////////////////////////////////////
     auto heatFlow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
