@@ -22,18 +22,19 @@ protected:
         auto airTemperature = 300;   // Kelvins
         auto pressure = 101325;      // Pascals
         auto airSpeed = 5.5;         // meters per second
-        auto airDirection = Tarcog::AirHorizontalDirection::Windward;
+        auto airDirection = Tarcog::ISO15099::AirHorizontalDirection::Windward;
         auto tSky = 270;   // Kelvins
         auto solarRadiation = 789;
 
         std::shared_ptr<Tarcog::ISO15099::CEnvironment> Outdoor =
-          std::make_shared<Tarcog::ISO15099::COutdoorEnvironment>(airTemperature,
-                                                pressure,
-                                                airSpeed,
-                                                solarRadiation,
-                                                airDirection,
-                                                tSky,
-																  Tarcog::ISO15099::SkyModel::AllSpecified);
+          std::make_shared<Tarcog::ISO15099::COutdoorEnvironment>(
+            airTemperature,
+            pressure,
+            airSpeed,
+            solarRadiation,
+            airDirection,
+            tSky,
+            Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -64,10 +65,11 @@ protected:
 
         // Creates thermochromic surface on indoor side with variable emissivity and constant
         // transmittance
-        std::shared_ptr<Tarcog::ISurface> frontSurface =
-          std::make_shared<Tarcog::CSurface>(emissivity, transmittance);
-        std::shared_ptr<Tarcog::ISurface> backSurface =
-          std::make_shared<CThermochromicSurface>(emissivities, transmittance);
+        std::shared_ptr<Tarcog::ISO15099::ISurface> frontSurface =
+          std::make_shared<Tarcog::ISO15099::CSurface>(emissivity, transmittance);
+        std::shared_ptr<Tarcog::ISO15099::ISurface> backSurface =
+          std::make_shared<Chromogenics::ISO15099::CThermochromicSurface>(emissivities,
+                                                                          transmittance);
         // std::shared_ptr< ISurface > backSurface = std::make_shared< CSurface >(
         // 0.61350442289072993, transmittance );
 
@@ -78,22 +80,22 @@ protected:
 
         const auto windowWidth = 1.0;
         const auto windowHeight = 1.0;
-		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer);
 
         /////////////////////////////////////////////////////////
-        // System
+        /// System
         /////////////////////////////////////////////////////////
         // TODO: This need to be changed. C++11 does not support make_unique
         m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSystem>(
-        	new Tarcog::ISO15099::CSystem(aIGU, Indoor, Outdoor));
+          new Tarcog::ISO15099::CSystem(aIGU, Indoor, Outdoor));
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         // m_TarcogSystem->solve();
     }
 
 public:
-	Tarcog::ISO15099::CSystem * GetSystem() const
+    Tarcog::ISO15099::CSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
     };
@@ -171,16 +173,20 @@ TEST_F(TestSingleClearThermochromics, Test1)
     /////////////////////////////////////////////////////////////////////////
     ///  Heat flows
     /////////////////////////////////////////////////////////////////////////
-    auto heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
+    auto heatFlow =
+      aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(heatFlow, -17.135106, 1e-5);
 
-    heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Outdoor);
+    heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue,
+                                    Tarcog::ISO15099::Environment::Outdoor);
     EXPECT_NEAR(heatFlow, -17.135106, 1e-5);
 
-    heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
+    heatFlow =
+      aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(heatFlow, -28.725048, 1e-5);
 
-    heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Outdoor);
+    heatFlow =
+      aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Outdoor);
     EXPECT_NEAR(heatFlow, 45.590199, 1e-5);
 
     /////////////////////////////////////////////////////////////////////////

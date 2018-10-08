@@ -53,7 +53,7 @@ namespace Tarcog
             return cond;
         }
 
-        std::shared_ptr<Tarcog::CBaseLayer> CCircularPillar::clone() const
+        std::shared_ptr<Tarcog::ISO15099::CBaseLayer> CCircularPillar::clone() const
         {
             return std::make_shared<CCircularPillar>(*this);
         }

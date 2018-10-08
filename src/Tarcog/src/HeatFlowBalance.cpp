@@ -35,7 +35,7 @@ namespace Tarcog
             return FenestrationCommon::CLinearSolver::solveSystem(m_MatrixA, m_VectorB);
         }
 
-        void CHeatFlowBalance::buildCell( Tarcog::CBaseLayer & t_Current,
+        void CHeatFlowBalance::buildCell( Tarcog::ISO15099::CBaseLayer & t_Current,
 										  const size_t t_Index )
         {
             // Routine is used to build matrix "cell" around solid layer.

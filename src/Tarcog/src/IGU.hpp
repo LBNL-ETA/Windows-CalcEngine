@@ -6,18 +6,14 @@
 
 namespace Tarcog
 {
-    class CBaseLayer;
-    class CSurface;
-
     namespace ISO15099
     {
         enum class Environment;
-
         class CBaseIGULayer;
-
         class CIGUSolidLayer;
-
         class CIGUGapLayer;
+        class CBaseLayer;
+        class CSurface;
 
 
         class CIGU

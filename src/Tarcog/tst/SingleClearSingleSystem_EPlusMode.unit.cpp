@@ -17,13 +17,13 @@ protected:
     void SetUp() override
     {
         /////////////////////////////////////////////////////////
-        // Outdoor
+        /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 252.0484;   // Kelvins
         auto pressure = 99100.0;          // Pascals
         auto airSpeed = 4.2967;           // meters per second
         auto tSky = 231.2005;             // Kelvins
-        auto direction = Tarcog::AirHorizontalDirection::Windward;
+        auto direction = Tarcog::ISO15099::AirHorizontalDirection::Windward;
         auto solarRadiation = 0.0;
         auto fclr = 1.0;
 
