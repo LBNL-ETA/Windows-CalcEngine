@@ -27,19 +27,21 @@ namespace Tarcog
         };
 
         struct Environment
-		{
-			Environment( double Temperature, double filmCoefficient );
-			double Temperature;
-        	double filmCoefficient;
-		};
+        {
+            Environment(double Temperature, double filmCoefficient);
+            double Temperature;
+            double filmCoefficient;
+        };
 
         class IGU
         {
         public:
-			IGU(const Environment & interior, const Environment & exterior, const Glass & glass);
+            IGU(const Environment & interior, const Environment & exterior, const Glass & glass);
 
-			void addGlass(const Glass & glass);
-			void addGap(const Gap & gap);
+            void addGlass(const Glass & glass);
+            void addGap(const Gap & gap);
+
+            double Uvalue();
 
         private:
             class BaseLayer
@@ -48,11 +50,12 @@ namespace Tarcog
                 explicit BaseLayer(double thickness, double & T1, double & T2);
 
                 virtual double thermalConductance() = 0;
-				double getEmissivityFront() const;
-				void setEmissivityFront( double EmissivityFront );
-				double getEmissivityBack() const;
-				void setEmissivityBack( double EmissivityBack );
-			protected:
+                double getEmissivityFront() const;
+                void setEmissivityFront(double EmissivityFront);
+                double getEmissivityBack() const;
+                void setEmissivityBack(double EmissivityBack);
+
+            protected:
                 double m_Thickness;
                 double & T1;
                 double & T2;
@@ -63,23 +66,24 @@ namespace Tarcog
             class GapLayer : public BaseLayer
             {
             public:
-				GapLayer(const Gap & gap, double & t1, double & t2);
+                GapLayer(const Gap & gap, double & t1, double & t2);
 
-				double thermalConductance() override;
+                double thermalConductance() override;
 
-			private:
-            	double pressure;
+            private:
+                double pressure;
                 Gases::CGas m_Gas;
             };
 
             class SolidLayer : public BaseLayer
-			{
-			public:
-				SolidLayer(const Glass & glass, double & t1, double & t2);
-				double thermalConductance() override;
-			private:
-				double m_Conductivity;
-			};
+            {
+            public:
+                SolidLayer(const Glass & glass, double & t1, double & t2);
+                double thermalConductance() override;
+
+            private:
+                double m_Conductivity;
+            };
 
             std::vector<std::unique_ptr<BaseLayer>> layers;
             std::vector<double> temperature;

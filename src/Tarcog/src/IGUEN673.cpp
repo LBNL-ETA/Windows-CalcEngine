@@ -34,9 +34,9 @@ namespace Tarcog
             return EmissivityFront;
         }
 
-        void IGU::BaseLayer::setEmissivityFront(double EmissivityFront)
+        void IGU::BaseLayer::setEmissivityFront(double tEmissivityFront)
         {
-            BaseLayer::EmissivityFront = EmissivityFront;
+            EmissivityFront = tEmissivityFront;
         }
 
         double IGU::BaseLayer::getEmissivityBack() const
@@ -44,9 +44,9 @@ namespace Tarcog
             return EmissivityBack;
         }
 
-        void IGU::BaseLayer::setEmissivityBack(double EmissivityBack)
+        void IGU::BaseLayer::setEmissivityBack(double tEmissivityBack)
         {
-            BaseLayer::EmissivityBack = EmissivityBack;
+            EmissivityBack = tEmissivityBack;
         }
 
         IGU::GapLayer::GapLayer(const Gap & gap, double & t1, double & t2) :
@@ -57,15 +57,16 @@ namespace Tarcog
 
         double IGU::GapLayer::thermalConductance()
         {
-            using ConstantsData::BOLTZMANNCONSTANT;
+            using ConstantsData::STEFANBOLTZMANN;
 
-            double Tm = (T1 + T2) / 2.0;
+            const double Tm = (T1 + T2) / 2.0;
 
             m_Gas.setTemperatureAndPressure(Tm, pressure);
-            auto prop = m_Gas.getGasProperties();
-            auto convection = prop.m_ThermalConductivity / m_Thickness;
-            auto radiation = 4 * BOLTZMANNCONSTANT * 1
-                             / (1 / EmissivityFront + 1 / EmissivityBack - 1) * std::pow(Tm, 3);
+            const auto prop = m_Gas.getGasProperties();
+            const auto convection = prop.m_ThermalConductivity / m_Thickness;
+            const auto radiation = 4 * STEFANBOLTZMANN * 1
+                                   / (1 / EmissivityFront + 1 / EmissivityBack - 1)
+                                   * std::pow(Tm, 3);
             return convection + radiation;
         }
 
@@ -123,6 +124,17 @@ namespace Tarcog
             {
                 throw std::runtime_error("Cannot put two consecutive gap layers to IGU.");
             }
+        }
+
+        double IGU::Uvalue()
+        {
+            double value = 1 / exterior.filmCoefficient + 1 / interior.filmCoefficient;
+            auto valLayers = 0.0;
+            for(auto i = 0u; i < layers.size(); ++i)
+            {
+                valLayers += 1 / layers[i]->thermalConductance();
+            }
+            return 1 / (value + valLayers);
         }
     }   // namespace EN673
 }   // namespace Tarcog
