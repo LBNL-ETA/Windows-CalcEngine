@@ -13,7 +13,7 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        class CBaseIGULayer : public Tarcog::CBaseLayer
+        class CBaseIGULayer : public Tarcog::ISO15099::CBaseLayer
         {
         public:
             explicit CBaseIGULayer(double t_Thickness);

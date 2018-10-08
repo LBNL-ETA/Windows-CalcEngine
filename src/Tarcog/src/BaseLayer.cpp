@@ -1,33 +1,43 @@
 #include "BaseLayer.hpp"
 
 
-namespace Tarcog {
+namespace Tarcog
+{
+    namespace ISO15099
+    {
+        CBaseLayer::CBaseLayer() :
+            CState(),
+            CLayerGeometry(),
+            CLayerHeatFlow(),
+            m_PreviousLayer(nullptr),
+            m_NextLayer(nullptr)
+        {}
 
-	CBaseLayer::CBaseLayer() : CState(), CLayerGeometry(), CLayerHeatFlow(),
-	                           m_PreviousLayer( nullptr ), m_NextLayer( nullptr ) {
+        std::shared_ptr<CBaseLayer> CBaseLayer::getPreviousLayer() const
+        {
+            return m_PreviousLayer;
+        }
 
-	}
+        std::shared_ptr<CBaseLayer> CBaseLayer::getNextLayer() const
+        {
+            return m_NextLayer;
+        }
 
-	std::shared_ptr< CBaseLayer > CBaseLayer::getPreviousLayer() const {
-		return m_PreviousLayer;
-	}
+        void CBaseLayer::tearDownConnections()
+        {
+            m_PreviousLayer = nullptr;
+            m_NextLayer = nullptr;
+        }
 
-	std::shared_ptr< CBaseLayer > CBaseLayer::getNextLayer() const {
-		return m_NextLayer;
-	}
+        void CBaseLayer::connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer)
+        {
+            m_NextLayer = t_Layer;
+            t_Layer->m_PreviousLayer = shared_from_this();
+        }
 
-	void CBaseLayer::tearDownConnections() {
-		m_PreviousLayer = nullptr;
-		m_NextLayer = nullptr;
-	}
+        void CBaseLayer::calculateRadiationFlow()
+        {}
 
-	void CBaseLayer::connectToBackSide( const std::shared_ptr< CBaseLayer > & t_Layer ) {
-		m_NextLayer = t_Layer;
-		t_Layer->m_PreviousLayer = shared_from_this();
-	}
+    }   // namespace ISO15099
 
-	void CBaseLayer::calculateRadiationFlow() {
-
-	}
-
-}
+}   // namespace Tarcog

@@ -20,7 +20,7 @@ protected:
         auto airTemperature = 255.15;   // Kelvins
         auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto airDirection = Tarcog::AirHorizontalDirection::Leeward;
+        auto airDirection = Tarcog::ISO15099::AirHorizontalDirection::Leeward;
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 789.0;
 

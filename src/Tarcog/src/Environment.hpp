@@ -22,7 +22,7 @@ namespace Tarcog
             Outdoor
         };
 
-        class CEnvironment : public Tarcog::CBaseLayer, public CGasLayer
+        class CEnvironment : public Tarcog::ISO15099::CBaseLayer, public CGasLayer
         {
         public:
             CEnvironment(double t_Pressure,

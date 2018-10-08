@@ -19,8 +19,8 @@ namespace Tarcog
     {
         CIGUSolidLayer::CIGUSolidLayer(double const t_Thickness,
                                        double const t_Conductivity,
-                                       std::shared_ptr<Tarcog::ISurface> const & t_FrontSurface,
-                                       std::shared_ptr<Tarcog::ISurface> const & t_BackSurface) :
+                                       std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_FrontSurface,
+                                       std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_BackSurface) :
             CBaseIGULayer(t_Thickness),
             m_Conductivity(t_Conductivity),
             m_SolarAbsorptance(0)
