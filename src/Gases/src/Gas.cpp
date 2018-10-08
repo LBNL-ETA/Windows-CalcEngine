@@ -36,6 +36,10 @@ namespace Gases {
 		m_GasItem.push_back( item );
 	}
 
+	void CGas::addGasItem( double percent, Gases::GasDef def ) {
+		addGasItem(percent, Gases::Gas::intance().get(def));
+	}
+
 	double CGas::totalPercent() {
 		auto totalPercent = 0.0;
 

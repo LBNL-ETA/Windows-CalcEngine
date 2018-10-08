@@ -25,5 +25,6 @@
 #include "../src/Surface.hpp"
 #include "../src/System.hpp"
 #include "../src/TarcogConstants.hpp"
+#include "../src/IGUEN673.hpp"
 
 #endif
