@@ -17,7 +17,7 @@ protected:
     void SetUp() override
     {
         /////////////////////////////////////////////////////////
-        // Outdoor
+        /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 300;   // Kelvins
         auto pressure = 101325;      // Pascals
@@ -39,7 +39,7 @@ protected:
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
-        // Indoor
+        /// Indoor
         /////////////////////////////////////////////////////////
 
         auto roomTemperature = 294.15;
@@ -48,7 +48,7 @@ protected:
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
-        // IGU
+        /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.003048;   // [m]
         auto solidLayerConductance = 1;
