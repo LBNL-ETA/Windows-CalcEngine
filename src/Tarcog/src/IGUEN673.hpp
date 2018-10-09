@@ -85,6 +85,8 @@ namespace Tarcog
                 double m_Conductivity;
             };
 
+            double conductanceSums() const;
+            void updateTemperatures(double scaleFactor);
             std::vector<std::unique_ptr<BaseLayer>> layers;
             std::vector<double> temperature;
             Environment interior;
