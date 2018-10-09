@@ -1,3 +1,4 @@
+#include <numeric>
 #include "IGUEN673.hpp"
 #include "WCECommon.hpp"
 
@@ -128,13 +129,44 @@ namespace Tarcog
 
         double IGU::Uvalue()
         {
-            double value = 1 / exterior.filmCoefficient + 1 / interior.filmCoefficient;
-            auto valLayers = 0.0;
-            for(auto i = 0u; i < layers.size(); ++i)
+            double condSum = conductanceSums();
+            double condSumNew = 0;
+            double ug = 0;
+
+            while(std::abs(condSum - condSumNew) > 1e-4)
             {
-                valLayers += 1 / layers[i]->thermalConductance();
+                condSum = condSumNew;
+                double intExt = 1 / exterior.filmCoefficient + 1 / interior.filmCoefficient;
+                auto accumulateFunc = [](double accumulator,
+                                         const std::unique_ptr<BaseLayer> & layer) {
+                    return accumulator + 1 / layer->thermalConductance();
+                };
+
+                ug = 1 / std::accumulate(layers.begin(), layers.end(), intExt, accumulateFunc);
+                updateTemperatures(ug*(interior.Temperature - exterior.Temperature));
+                condSumNew = conductanceSums();
             }
-            return 1 / (value + valLayers);
+
+            return ug;
+        }
+
+        double IGU::conductanceSums() const
+        {
+            auto accumulateFunc = [](double accumulator, const std::unique_ptr<BaseLayer> & layer) {
+                return accumulator + layer->thermalConductance();
+            };
+            return std::accumulate(layers.begin(), layers.end(), 0, accumulateFunc);
+        }
+
+        void IGU::updateTemperatures(double scaleFactor)
+        {
+            temperature[0] = scaleFactor / exterior.filmCoefficient + exterior.Temperature;
+            temperature[temperature.size() - 1] =
+              interior.Temperature - scaleFactor / interior.filmCoefficient;
+            for(size_t i = 0u; i < layers.size() - 1; ++i)
+            {
+                temperature[i + 1] = scaleFactor / layers[i]->thermalConductance() + temperature[i];
+            }
         }
     }   // namespace EN673
 }   // namespace Tarcog

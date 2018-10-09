@@ -77,5 +77,5 @@ TEST_F(TestDoubleClear_EN673, Test1)
 
     auto Uvalue = igu->Uvalue();
 
-    EXPECT_NEAR(2.82511, Uvalue, 1e-5);
+    EXPECT_NEAR(2.8282, Uvalue, 1e-4);
 }
