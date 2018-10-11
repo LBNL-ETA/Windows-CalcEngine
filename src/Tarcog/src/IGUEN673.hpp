@@ -11,11 +11,13 @@ namespace Tarcog
     {
         struct Glass
         {
-            Glass(double Conductivity, double Thickness, double emissFront, double emissBack);
+            Glass(double Conductivity, double Thickness, double emissFront, double emissBack,
+            	double Sol = 0.0);
             double Thickness;
             double Conductivity;
             double EmissFront;
             double EmissBack;
+            double SolarAbsorptance;
         };
 
         struct Gap
@@ -42,6 +44,7 @@ namespace Tarcog
             void addGap(const Gap & gap);
 
             double Uvalue();
+            double shgc(double totSol);
 
         private:
             class BaseLayer
@@ -87,10 +90,14 @@ namespace Tarcog
 
             double conductanceSums() const;
             void updateTemperatures(double scaleFactor);
+            void updateThermalResistances();
             std::vector<std::unique_ptr<BaseLayer>> layers;
             std::vector<double> temperature;
+            std::vector<double> thermalResistance;
+            std::vector<double> abs;
             Environment interior;
             Environment exterior;
+            size_t numOfSolidLayers;
         };
 
     }   // namespace EN673

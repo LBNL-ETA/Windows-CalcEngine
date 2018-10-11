@@ -9,11 +9,13 @@ namespace Tarcog
         Glass::Glass(const double Conductivity,
                      const double Thickness,
                      const double emissFront,
-                     const double emissBack) :
+                     const double emissBack,
+                     const double aSol) :
             Thickness(Thickness),
             Conductivity(Conductivity),
             EmissFront(emissFront),
-            EmissBack(emissBack)
+            EmissBack(emissBack),
+            SolarAbsorptance(aSol)
         {}
 
         Gap::Gap(const double Thickness, const double Pressure, const Gases::CGas & tGas) :
@@ -88,7 +90,8 @@ namespace Tarcog
 
         IGU::IGU(const Environment & interior, const Environment & exterior, const Glass & glass) :
             interior(interior),
-            exterior(exterior)
+            exterior(exterior),
+            numOfSolidLayers(1)
         {
             temperature.push_back(exterior.Temperature + 3);
             temperature.push_back(exterior.Temperature + 6);
@@ -98,6 +101,9 @@ namespace Tarcog
         void IGU::addGlass(const Glass & glass)
         {
             temperature.push_back(temperature[temperature.size() - 1] + 3);
+            abs.push_back(glass.SolarAbsorptance);
+            ++numOfSolidLayers;
+
             auto gap = layers[layers.size() - 1].get();
             if(dynamic_cast<GapLayer *>(gap))
             {
@@ -143,7 +149,8 @@ namespace Tarcog
                 };
 
                 ug = 1 / std::accumulate(layers.begin(), layers.end(), intExt, accumulateFunc);
-                updateTemperatures(ug*(interior.Temperature - exterior.Temperature));
+                updateTemperatures(ug * (interior.Temperature - exterior.Temperature));
+                updateThermalResistances();
                 condSumNew = conductanceSums();
             }
 
@@ -167,6 +174,61 @@ namespace Tarcog
             {
                 temperature[i + 1] = scaleFactor / layers[i]->thermalConductance() + temperature[i];
             }
+        }
+
+        void IGU::updateThermalResistances()
+        {
+            thermalResistance.clear();
+            thermalResistance.push_back(1 / exterior.filmCoefficient);
+            for(auto & layer : layers)
+            {
+                thermalResistance.push_back(1 / layer->thermalConductance());
+            }
+            thermalResistance.push_back(1 / interior.filmCoefficient);
+        }
+
+        double IGU::shgc(const double totSol)
+        {
+            std::vector<double> lambdaCoeff(numOfSolidLayers - 1, 0);
+            double cNom{0};
+            double cDen{0};
+
+            double cAbs{0};
+
+            // Need to set correct thermal resistances and for that Uvalue calculation is needed.
+            Uvalue();
+
+            for(size_t i = numOfSolidLayers - 1; i-- > 0;)
+            {
+                auto j = 2u * (i + 1u);
+                double k1{0.5};
+                double k2{0.5};
+
+                cAbs += abs[i];
+
+                if(i == 0)
+                {
+                    k1 = 1;
+                }
+
+                if(i == (numOfSolidLayers -2))
+                {
+                    k2 = 1;
+                }
+
+                lambdaCoeff[i] = 1
+                                 / (k1 * thermalResistance[j - 1] + thermalResistance[j]
+                                    + k2 * thermalResistance[j + 1]);
+
+                cNom += cAbs / lambdaCoeff[i];
+                cDen += 1 / lambdaCoeff[i];
+            }
+
+            cAbs += abs[0];
+            double flowin = (cAbs * thermalResistance[0] + cNom) /
+				(thermalResistance[0] + thermalResistance[2 * numOfSolidLayers] + cDen);
+
+            return flowin + totSol;
         }
     }   // namespace EN673
 }   // namespace Tarcog

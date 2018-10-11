@@ -36,8 +36,10 @@ protected:
         const auto conductivity = 1.0;     // [W/m2K]
         const auto emissFront = 0.84;
         const auto emissBack = 0.84;
+        auto layerAbsorptance = 9.64899212e-2;
 
-        const auto layer1 = Tarcog::EN673::Glass(conductivity, thickness, emissFront, emissBack);
+        const auto layer1 = Tarcog::EN673::Glass(conductivity, thickness, emissFront, emissBack,
+			layerAbsorptance);
 
         /////////////////////////////////////////////////////////
         /// IGU
@@ -58,7 +60,9 @@ protected:
 
         m_IGU->addGap(gap);
 
-        const auto layer2 = Tarcog::EN673::Glass(conductivity, thickness, emissFront, emissBack);
+        layerAbsorptance = 7.2256759e-2;
+        const auto layer2 = Tarcog::EN673::Glass(conductivity, thickness, emissFront, emissBack,
+        	layerAbsorptance);
         m_IGU->addGlass(layer2);
     }
 
@@ -78,4 +82,8 @@ TEST_F(TestDoubleClear_EN673, Test1)
     auto Uvalue = igu->Uvalue();
 
     EXPECT_NEAR(2.8282, Uvalue, 1e-4);
+
+    auto SHGC = igu->shgc(0.703296);
+
+	EXPECT_NEAR(0.7589, SHGC, 1e-4);
 }
