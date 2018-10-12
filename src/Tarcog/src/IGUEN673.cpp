@@ -24,7 +24,7 @@ namespace Tarcog
             Gas(tGas)
         {}
 
-        IGU::BaseLayer::BaseLayer(const double thickness, double & t1, double & t2) :
+        IGU::BaseLayer::BaseLayer(const double thickness, const double t1, const double t2) :
             m_Thickness(thickness),
             T1(t1),
             T2(t2),
@@ -50,6 +50,12 @@ namespace Tarcog
         void IGU::BaseLayer::setEmissivityBack(double tEmissivityBack)
         {
             EmissivityBack = tEmissivityBack;
+        }
+
+        void IGU::BaseLayer::updateTemperatures(double t1, double t2)
+        {
+            T1 = t1;
+            T2 = t2;
         }
 
         IGU::GapLayer::GapLayer(const Gap & gap, double & t1, double & t2) :
@@ -149,7 +155,7 @@ namespace Tarcog
                 };
 
                 ug = 1 / std::accumulate(layers.begin(), layers.end(), intExt, accumulateFunc);
-                updateTemperatures(ug * (interior.Temperature - exterior.Temperature));
+                calculateNewTemperatures(ug * (interior.Temperature - exterior.Temperature));
                 updateThermalResistances();
                 condSumNew = conductanceSums();
             }
@@ -165,7 +171,7 @@ namespace Tarcog
             return std::accumulate(layers.begin(), layers.end(), 0, accumulateFunc);
         }
 
-        void IGU::updateTemperatures(double scaleFactor)
+        void IGU::calculateNewTemperatures(double scaleFactor)
         {
             temperature[0] = scaleFactor / exterior.filmCoefficient + exterior.Temperature;
             temperature[temperature.size() - 1] =
@@ -174,6 +180,7 @@ namespace Tarcog
             {
                 temperature[i + 1] = scaleFactor / layers[i]->thermalConductance() + temperature[i];
             }
+            updateLayerTemperatures();
         }
 
         void IGU::updateThermalResistances()
@@ -211,7 +218,7 @@ namespace Tarcog
                     k1 = 1;
                 }
 
-                if(i == (numOfSolidLayers -2))
+                if(i == (numOfSolidLayers - 2))
                 {
                     k2 = 1;
                 }
@@ -225,10 +232,19 @@ namespace Tarcog
             }
 
             cAbs += abs[0];
-            double flowin = (cAbs * thermalResistance[0] + cNom) /
-				(thermalResistance[0] + thermalResistance[2 * numOfSolidLayers] + cDen);
+            double flowin =
+              (cAbs * thermalResistance[0] + cNom)
+              / (thermalResistance[0] + thermalResistance[2 * numOfSolidLayers] + cDen);
 
             return flowin + totSol;
+        }
+
+        void IGU::updateLayerTemperatures()
+        {
+            for(size_t i = 0u; i < layers.size(); ++i)
+            {
+                layers[i]->updateTemperatures(temperature[i], temperature[i + 1]);
+            }
         }
     }   // namespace EN673
 }   // namespace Tarcog

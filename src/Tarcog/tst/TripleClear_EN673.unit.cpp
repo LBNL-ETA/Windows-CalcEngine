@@ -6,7 +6,7 @@
 #include "WCECommon.hpp"
 
 // Example of double clear window with inital guess for solution
-class TestDoubleClear_EN673 : public testing::Test
+class TestTripleClear_EN673 : public testing::Test
 {
 private:
     std::unique_ptr<Tarcog::EN673::IGU> m_IGU;
@@ -36,7 +36,7 @@ protected:
         const auto conductivity = 1.0;     // [W/m2K]
         const auto emissFront = 0.84;
         const auto emissBack = 0.84;
-        auto layerAbsorptance = 9.64899212e-2;
+        auto layerAbsorptance = 0.099839858711;
 
         const auto layer1 = Tarcog::EN673::Glass(conductivity, thickness, emissFront, emissBack,
 			layerAbsorptance);
@@ -50,20 +50,32 @@ protected:
         /////////////////////////////////////////////////////////
         /// gap and layer
         /////////////////////////////////////////////////////////
-        Gases::CGas gas;
+        Gases::CGas gas1;
         /// 100% Air
-        gas.addGasItem(1.0, Gases::GasDef::Air);
+        gas1.addGasItem(1.0, Gases::GasDef::Air);
 
         const auto gapThickness = 0.0127;   // [mm]
         const auto pressure = 101325;       // [Pa]
-        const auto gap = Tarcog::EN673::Gap(gapThickness, pressure, gas);
+        const auto gap1 = Tarcog::EN673::Gap(gapThickness, pressure, gas1);
 
-        m_IGU->addGap(gap);
+        m_IGU->addGap(gap1);
 
-        layerAbsorptance = 7.2256759e-2;
+        layerAbsorptance = 0.076627746224;
         const auto layer2 = Tarcog::EN673::Glass(conductivity, thickness, emissFront, emissBack,
         	layerAbsorptance);
         m_IGU->addGlass(layer2);
+
+		Gases::CGas gas2;
+		/// 100% Air
+		gas2.addGasItem(1.0, Gases::GasDef::Air);
+		const auto gap2 = Tarcog::EN673::Gap(gapThickness, pressure, gas2);
+        m_IGU->addGap(gap2);
+
+		layerAbsorptance = 0.058234799653;
+		const auto layer3 = Tarcog::EN673::Glass(conductivity, thickness, emissFront, emissBack,
+												 layerAbsorptance);
+
+		m_IGU->addGlass(layer3);
     }
 
 public:
@@ -73,7 +85,7 @@ public:
     };
 };
 
-TEST_F(TestDoubleClear_EN673, Test1)
+TEST_F(TestTripleClear_EN673, Test1)
 {
     SCOPED_TRACE("Begin Test: Uvalue");
 
@@ -81,9 +93,9 @@ TEST_F(TestDoubleClear_EN673, Test1)
 
     auto Uvalue = igu->Uvalue();
 
-    EXPECT_NEAR(2.82738, Uvalue, 1e-4);
+    EXPECT_NEAR(1.8739, Uvalue, 1e-4);
 
-    auto SHGC = igu->shgc(0.703296);
+    auto SHGC = igu->shgc(0.5984);
 
-	EXPECT_NEAR(0.7589, SHGC, 1e-4);
+	EXPECT_NEAR(0.6824, SHGC, 1e-4);
 }

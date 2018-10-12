@@ -11,8 +11,11 @@ namespace Tarcog
     {
         struct Glass
         {
-            Glass(double Conductivity, double Thickness, double emissFront, double emissBack,
-            	double Sol = 0.0);
+            Glass(double Conductivity,
+                  double Thickness,
+                  double emissFront,
+                  double emissBack,
+                  double Sol = 0.0);
             double Thickness;
             double Conductivity;
             double EmissFront;
@@ -50,18 +53,19 @@ namespace Tarcog
             class BaseLayer
             {
             public:
-                explicit BaseLayer(double thickness, double & T1, double & T2);
+                explicit BaseLayer(double thickness, double T1, double T2);
 
                 virtual double thermalConductance() = 0;
                 double getEmissivityFront() const;
                 void setEmissivityFront(double EmissivityFront);
                 double getEmissivityBack() const;
                 void setEmissivityBack(double EmissivityBack);
+                void updateTemperatures(double t1, double t2);
 
             protected:
                 double m_Thickness;
-                double & T1;
-                double & T2;
+                double T1;
+                double T2;
                 double EmissivityFront;
                 double EmissivityBack;
             };
@@ -89,7 +93,8 @@ namespace Tarcog
             };
 
             double conductanceSums() const;
-            void updateTemperatures(double scaleFactor);
+            void calculateNewTemperatures(double scaleFactor);
+            void updateLayerTemperatures();
             void updateThermalResistances();
             std::vector<std::unique_ptr<BaseLayer>> layers;
             std::vector<double> temperature;
