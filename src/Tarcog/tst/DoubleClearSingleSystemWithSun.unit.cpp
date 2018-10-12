@@ -5,13 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class TestDoubleClearSingleSystemWithSun : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -22,17 +19,18 @@ protected:
         auto airTemperature = 305.15;   // Kelvins
         auto pressure = 101325.0;       // Pascals
         auto airSpeed = 2.75;           // meters per second
-        auto tSky = 305.15;   // Kelvins
+        auto tSky = 305.15;             // Kelvins
         auto solarRadiation = 783.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-                                             SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(airTemperature,
+                                                  pressure,
+                                                  airSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         /// Indoor
@@ -40,7 +38,7 @@ protected:
 
         auto roomTemperature = 297.15;
 
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -50,21 +48,23 @@ protected:
         auto solidLayerConductance = 1.0;
         auto solarAbsorptance = 0.187443971634;
 
-        auto aSolidLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer1 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer1->setSolarAbsorptance(solarAbsorptance);
 
         solarAbsorptance = 0.054178960621;
-        auto aSolidLayer2 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer2 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer2->setSolarAbsorptance(solarAbsorptance);
 
         auto gapThickness = 0.012;
         auto gapPressure = 101325.0;
-        auto m_GapLayer = Layers::gap(gapThickness, gapPressure);
+        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         double windowWidth = 1;
         double windowHeight = 1;
-        CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer1);
         aIGU.addLayer(m_GapLayer);
         aIGU.addLayer(aSolidLayer2);
@@ -72,14 +72,14 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<CSingleSystem> GetSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };
@@ -92,7 +92,7 @@ TEST_F(TestDoubleClearSingleSystemWithSun, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {310.818074, 311.064868, 306.799522, 306.505704};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -101,7 +101,7 @@ TEST_F(TestDoubleClearSingleSystemWithSun, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {523.148794, 526.906252, 506.252171, 491.059753};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -110,12 +110,12 @@ TEST_F(TestDoubleClearSingleSystemWithSun, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
 
-    auto heatFlow = aSystem->getHeatFlow(Environment::Indoor);
+    const auto heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(-72.622787, heatFlow, 1e-5);
 
-    auto Uvalue = aSystem->getUValue();
+    const auto Uvalue = aSystem->getUValue();
     EXPECT_NEAR(9.077848, Uvalue, 1e-5);
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(20u, numOfIter);
 }

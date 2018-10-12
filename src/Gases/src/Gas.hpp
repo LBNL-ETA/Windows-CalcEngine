@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include "GasProperties.hpp"
+#include "GasCreator.hpp"
 
 namespace Gases {
 
@@ -15,6 +16,7 @@ namespace Gases {
 		CGas();
 		CGas( const CGas& t_Gas );
 		void addGasItem( double percent, const CGasData & t_GasData );
+		void addGasItem(double percent, Gases::GasDef def);
 		double totalPercent();
 		const GasProperties & getSimpleGasProperties();
 		const GasProperties & getGasProperties();

@@ -5,14 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class TestSingleClearSingleSystem : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -23,24 +19,25 @@ protected:
         auto airTemperature = 300.0;   // Kelvins
         auto pressure = 101325.0;      // Pascals
         auto airSpeed = 5.5;           // meters per second
-        auto tSky = 270.0;   // Kelvins
+        auto tSky = 270.0;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-                                             SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(airTemperature,
+                                                  pressure,
+                                                  airSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
 
         auto roomTemperature = 294.15;
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -49,25 +46,26 @@ protected:
         auto solidLayerThickness = 0.003048;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aSolidLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-        CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer);
 
         /////////////////////////////////////////////////////////
-        // System
+        /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<CSingleSystem> GetSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };
@@ -80,7 +78,7 @@ TEST_F(TestSingleClearSingleSystem, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
+    const auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {297.207035, 297.14470};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -89,7 +87,7 @@ TEST_F(TestSingleClearSingleSystem, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
+    const auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {432.444546, 439.201749};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
