@@ -6,75 +6,80 @@
 
 namespace Tarcog
 {
-    enum class Environment;
-    class CBaseLayer;
-    class CBaseIGULayer;
-    class CIGUSolidLayer;
-    class CIGUGapLayer;
-    class CSurface;
-
-    class CIGU
+    namespace ISO15099
     {
-    public:
-        CIGU(double t_Width = 1, double t_Height = 1, double t_Tilt = 90);
-        CIGU(CIGU const & t_IGU);
-        CIGU & operator=(CIGU const & t_IGU);
-        ~CIGU();
+        enum class Environment;
+        class CBaseIGULayer;
+        class CIGUSolidLayer;
+        class CIGUGapLayer;
+        class CBaseLayer;
+        class CSurface;
 
-        void addLayer(std::shared_ptr<CBaseIGULayer> const & t_Layer);
 
-		std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
-		std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
-		std::vector<std::shared_ptr<CBaseIGULayer>> getLayers() const;
+        class CIGU
+        {
+        public:
+            CIGU(double t_Width = 1, double t_Height = 1, double t_Tilt = 90);
+            CIGU(CIGU const & t_IGU);
+            CIGU & operator=(CIGU const & t_IGU);
+            ~CIGU();
 
-        void setTilt(double t_Tilt);
-        void setWidth(double t_Width);
-        void setHeight(double t_Height);
+            void addLayer(std::shared_ptr<CBaseIGULayer> const & t_Layer);
 
-        void setSolarRadiation(double t_SolarRadiation) const;
+            std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
+            std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
+            std::vector<std::shared_ptr<CBaseIGULayer>> getLayers() const;
 
-        std::shared_ptr<CBaseLayer> getEnvironment( Environment t_Environment ) const;
+            void setTilt(double t_Tilt);
+            void setWidth(double t_Width);
+            void setHeight(double t_Height);
 
-        std::vector< double > getState() const;
-        void setState(std::vector<double> & t_State) const;
+            void setSolarRadiation(double t_SolarRadiation) const;
 
-        std::shared_ptr<std::vector<double>> getTemperatures() const;
-        std::shared_ptr<std::vector<double>> getRadiosities() const;
-        std::shared_ptr<std::vector<double>> getMaxDeflections() const;
-        std::shared_ptr<std::vector<double>> getMeanDeflections() const;
+            std::shared_ptr<CBaseLayer> getEnvironment(Environment t_Environment) const;
 
-        double getTilt() const;
-        double getWidth() const;
-        double getHeight() const;
-        double getThickness() const;
+            std::vector<double> getState() const;
+            void setState(const std::vector<double> & t_State) const;
 
-        size_t getNumOfLayers() const;
+            std::vector<double> getTemperatures() const;
+            std::vector<double> getRadiosities() const;
+            std::vector<double> getMaxDeflections() const;
+            std::vector<double> getMeanDeflections() const;
 
-        double getVentilationFlow(Environment t_Environment) const;
+            double getTilt() const;
+            double getWidth() const;
+            double getHeight() const;
+            double getThickness() const;
 
-        void setInitialGuess(const std::vector<double> & t_Guess) const;
+            size_t getNumOfLayers() const;
 
-        void setDeflectionProperties(double t_Tini, double t_Pini);
-        void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
+            double getVentilationFlow(Environment t_Environment) const;
 
-    private:
-        // Replces layer in existing construction and keeps correct connections in linked list
-        void replaceLayer(const std::shared_ptr<CBaseIGULayer> & t_Original,
-                          const std::shared_ptr<CBaseIGULayer> & t_Replacement);
+            void setInitialGuess(const std::vector<double> & t_Guess) const;
 
-        // Check if layer needs to be decorated with another object
-        void checkForLayerUpgrades(const std::shared_ptr<CBaseIGULayer> & t_Layer);
+            void setDeflectionProperties(double t_Tini, double t_Pini);
+            void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
 
-        std::vector<std::shared_ptr<CBaseIGULayer>> m_Layers;
+        private:
+            // Replces layer in existing construction and keeps correct connections in linked list
+            void replaceLayer(const std::shared_ptr<CBaseIGULayer> & t_Original,
+                              const std::shared_ptr<CBaseIGULayer> & t_Replacement);
 
-        double m_Width;    // meters
-        double m_Height;   // meters
-        double m_Tilt;     // degrees
+            // Check if layer needs to be decorated with another object
+            void checkForLayerUpgrades(const std::shared_ptr<CBaseIGULayer> & t_Layer);
 
-        // Routines to calculate deflection coefficients
-        double Ldmean() const;
-        double Ldmax() const;
-    };
+            std::vector<std::shared_ptr<CBaseIGULayer>> m_Layers;
+
+            double m_Width;    // meters
+            double m_Height;   // meters
+            double m_Tilt;     // degrees
+
+            // Routines to calculate deflection coefficients
+            double Ldmean() const;
+            double Ldmax() const;
+        };
+
+    }   // namespace ISO15099
 
 }   // namespace Tarcog
 

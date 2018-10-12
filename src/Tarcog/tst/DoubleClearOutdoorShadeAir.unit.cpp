@@ -5,13 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class TestDoubleClearOutdoorShadeAir : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -25,14 +22,14 @@ protected:
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
                                              pressure,
                                              airSpeed,
                                              solarRadiation,
                                              tSky,
-                                             SkyModel::AllSpecified);
+															   Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         // Indoor
@@ -40,7 +37,7 @@ protected:
 
         auto roomTemperature = 295.15;
 
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -57,27 +54,27 @@ protected:
         auto dright = 0.1;
         auto Afront = 0.2;
 
-        auto aLayer1 = Layers::shading(
+        auto aLayer1 = Tarcog::ISO15099::Layers::shading(
 			shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront );
 
         ASSERT_TRUE(aLayer1 != nullptr);
 
-        auto aLayer2 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aLayer2 != nullptr);
 
-        auto aLayer3 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aLayer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto GapLayer1 = Layers::gap(gapThickness, gapPressure);
+        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(GapLayer1 != nullptr);
 
-        auto GapLayer2 = Layers::gap(gapThickness, gapPressure);
+        auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(GapLayer2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-        CIGU aIGU(windowWidth, windowHeight);
+		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aLayer1);
         aIGU.addLayer(GapLayer1);
         aIGU.addLayer(aLayer2);
@@ -87,14 +84,14 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<CSingleSystem> getSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> getSystem() const
     {
         return m_TarcogSystem;
     };
@@ -106,8 +103,8 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
 
     auto aSystem = getSystem();
 
-    auto temperature = *aSystem->getTemperatures();
-    auto radiosity = *aSystem->getRadiosities();
+    auto temperature = aSystem->getTemperatures();
+    auto radiosity = aSystem->getRadiosities();
 
     std::vector<double> correctTemp = {
       256.984174, 256.987521, 269.436767, 269.879607, 284.039136, 284.481976};
@@ -126,6 +123,6 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
     auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(23, int(numOfIter));
 
-    auto ventilatedFlow = aSystem->getVentilationFlow(Environment::Outdoor);
+    auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
     EXPECT_NEAR(-23.931861, ventilatedFlow, 1e-6);
 }

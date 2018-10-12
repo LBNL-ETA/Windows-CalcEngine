@@ -5,13 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class DoubleClearDeflectionTPTest1 : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -25,14 +22,14 @@ protected:
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
                                              pressure,
                                              airSpeed,
                                              solarRadiation,
                                              tSky,
-                                             SkyModel::AllSpecified);
+															   Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         // Indoor
@@ -40,7 +37,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -50,25 +47,25 @@ protected:
         auto solidLayerThickness2 = 0.005715;
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer1 = Layers::solid(solidLayerThickness1, solidLayerConductance);
+        auto aSolidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
         // Introducing non default deflection properties
         auto youngsModulus = 8.1e10;
         auto poisonRatio = 0.16;
         aSolidLayer1 =
-			Layers::makeDeflectable( aSolidLayer1, youngsModulus, poisonRatio );
+			Tarcog::ISO15099::Layers::makeDeflectable( aSolidLayer1, youngsModulus, poisonRatio );
 
         // Layer will be using default deflection values
-        auto aSolidLayer2 = Layers::solid(solidLayerThickness2, solidLayerConductance);
+        auto aSolidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness2, solidLayerConductance);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto m_GapLayer = Layers::gap(gapThickness, gapPressure);
+        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         double windowWidth = 1;
         double windowHeight = 1;
-        CIGU aIGU(windowWidth, windowHeight);
+		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer1);
         aIGU.addLayer(m_GapLayer);
         aIGU.addLayer(aSolidLayer2);
@@ -81,14 +78,14 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<CSingleSystem> GetSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };
@@ -102,9 +99,9 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     ///////////////////////////////////////////////////////////////////////////////
-    // Temperatures test
+    /// Temperatures test
     ///////////////////////////////////////////////////////////////////////////////
-    auto Temperature = *aSystem->getTemperatures();
+    auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {258.811500, 259.137749, 278.961419, 279.573136};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -114,9 +111,9 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    // Radiosity test
+    /// Radiosity test
     ///////////////////////////////////////////////////////////////////////////////
-    auto Radiosity = *aSystem->getRadiosities();
+    auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {252.131797, 267.765290, 331.256183, 358.865247};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -126,9 +123,9 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    // Max deflection test
+    /// Max deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    auto MaxDeflection = *aSystem->getMaxDeflections();
+    const auto MaxDeflection = aSystem->getMaxDeflections();
     std::vector<double> correctMaxDeflection = {-0.0030742, 0.00033590};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
@@ -138,9 +135,9 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    // Mean deflection test
+    /// Mean deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    auto MeanDeflection = *aSystem->getMeanDeflections();
+    const auto MeanDeflection = aSystem->getMeanDeflections();
     std::vector<double> correctMeanDeflection = {-0.0012879, 0.00014072};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
@@ -149,6 +146,6 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
         EXPECT_NEAR(correctMeanDeflection[i], MeanDeflection[i], 1e-5);
     }
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(27u, numOfIter);
 }

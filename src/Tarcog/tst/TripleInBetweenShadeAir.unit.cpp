@@ -6,14 +6,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class TestInBetweenShadeAir : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -24,17 +20,18 @@ protected:
         auto airTemperature = 255.15;   // Kelvins
         auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;   // Kelvins
+        auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-                                             SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(airTemperature,
+                                                  pressure,
+                                                  airSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         /// Indoor
@@ -42,7 +39,7 @@ protected:
 
         auto roomTemperature = 295.15;
 
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -51,10 +48,10 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aLayer1 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aLayer1 != nullptr);
 
-        auto aLayer3 = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aLayer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aLayer3 != nullptr);
 
         auto shadeLayerThickness = 0.01;
@@ -65,24 +62,22 @@ protected:
         auto Aright = 0.1;
         auto Afront = 0.2;
 
-        auto aLayer2 = Layers::shading(
-			shadeLayerThickness,
-			shadeLayerConductance,
-			Atop, Abot, Aleft, Aright, Afront );
+        auto aLayer2 = Tarcog::ISO15099::Layers::shading(
+          shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront);
 
         ASSERT_TRUE(aLayer2 != nullptr);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto GapLayer1 = Layers::gap(gapThickness, gapPressure);
+        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(GapLayer1 != nullptr);
 
-        auto GapLayer2 = Layers::gap(gapThickness, gapPressure);
+        auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(GapLayer2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-        CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aLayer1);
         aIGU.addLayer(GapLayer1);
         aIGU.addLayer(aLayer2);
@@ -92,14 +87,14 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<CSingleSystem> GetSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };
@@ -111,12 +106,12 @@ TEST_F(TestInBetweenShadeAir, Test1)
 
     auto aSystem = GetSystem();
 
-    auto temperature = *aSystem->getTemperatures();
-    auto radiosity = *aSystem->getRadiosities();
+    const auto temperature = aSystem->getTemperatures();
+    const auto radiosity = aSystem->getRadiosities();
 
-    std::vector<double> correctTemp = {
+    std::vector<double> correctTemp{
       257.908946, 258.369607, 271.538659, 271.542218, 283.615285, 284.075945};
-    std::vector<double> correctJ = {
+    std::vector<double> correctJ{
       249.166619, 260.320613, 300.571561, 316.335545, 358.760651, 378.995512};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
@@ -128,6 +123,6 @@ TEST_F(TestInBetweenShadeAir, Test1)
         EXPECT_NEAR(correctJ[i], radiosity[i], 1e-6);
     }
 
-    auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(20, int(numOfIter));
 }

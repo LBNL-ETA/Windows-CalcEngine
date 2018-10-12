@@ -14,105 +14,109 @@ namespace FenestrationCommon
 
 namespace Tarcog
 {
-    class ISurface;
-
-    struct ForcedVentilation
+    namespace ISO15099
     {
-        ForcedVentilation() : Speed(0), Temperature(0){};
+        class ISurface;
 
-        ForcedVentilation(const double t_Speed, const double t_Temperature) :
-            Speed(t_Speed),
-            Temperature(t_Temperature){};
-        double Speed;
-        double Temperature;
-    };
+        struct ForcedVentilation
+        {
+            ForcedVentilation() : Speed(0), Temperature(0){};
 
-    class CLayerGeometry : public virtual FenestrationCommon::CState
-    {
-    public:
-        CLayerGeometry();
+            ForcedVentilation(const double t_Speed, const double t_Temperature) :
+                Speed(t_Speed),
+                Temperature(t_Temperature){};
+            double Speed;
+            double Temperature;
+        };
 
-        virtual void setWidth(double t_Width) final;
-        virtual void setHeight(double t_Height) final;
-        virtual void setTilt(double t_Tilt) final;
+        class CLayerGeometry : public virtual FenestrationCommon::CState
+        {
+        public:
+            CLayerGeometry();
 
-    protected:
-        double m_Width;
-        double m_Height;
-        double m_Tilt;
-    };
+            virtual void setWidth(double t_Width) final;
+            virtual void setHeight(double t_Height) final;
+            virtual void setTilt(double t_Tilt) final;
 
-    class CLayerHeatFlow : public virtual FenestrationCommon::CState
-    {
-    public:
-        CLayerHeatFlow();
-        CLayerHeatFlow(const CLayerHeatFlow & t_Layer);
-        CLayerHeatFlow & operator=(const CLayerHeatFlow & t_Layer);
-        virtual double getHeatFlow() final;
-        virtual double getGainFlow() final;
-        virtual double getConductionConvectionCoefficient() final;
-        virtual double getRadiationFlow() final;
-        virtual double getConvectionConductionFlow() final;
-        virtual std::shared_ptr<ISurface>
-          getSurface(FenestrationCommon::Side t_Position) const final;
-        virtual void setSurface(std::shared_ptr<ISurface> t_Surface,
-                                FenestrationCommon::Side t_Position) final;
+        protected:
+            double m_Width;
+            double m_Height;
+            double m_Tilt;
+        };
 
-    protected:
-        virtual void calculateLayerHeatFlow() final;
-        virtual void calculateRadiationFlow() = 0;
-        virtual void calculateConvectionOrConductionFlow() = 0;
+        class CLayerHeatFlow : public virtual FenestrationCommon::CState
+        {
+        public:
+            CLayerHeatFlow();
+            CLayerHeatFlow(const CLayerHeatFlow & t_Layer);
+            CLayerHeatFlow & operator=(const CLayerHeatFlow & t_Layer);
+            virtual double getHeatFlow() final;
+            virtual double getGainFlow() final;
+            virtual double getConductionConvectionCoefficient() final;
+            virtual double getRadiationFlow() final;
+            virtual double getConvectionConductionFlow() final;
+            virtual std::shared_ptr<ISurface>
+              getSurface(FenestrationCommon::Side t_Position) const final;
+            virtual void setSurface(std::shared_ptr<ISurface> t_Surface,
+                                    FenestrationCommon::Side t_Position) final;
 
-    protected:
-        bool areSurfacesInitalized() const;
+        protected:
+            virtual void calculateLayerHeatFlow() final;
+            virtual void calculateRadiationFlow() = 0;
+            virtual void calculateConvectionOrConductionFlow() = 0;
 
-        std::map<FenestrationCommon::Side, std::shared_ptr<ISurface>> m_Surface;
-        double m_ConductiveConvectiveCoeff;
-        double m_LayerGainFlow;
-    };
+        protected:
+            bool areSurfacesInitalized() const;
 
-    enum class AirVerticalDirection
-    {
-        None,
-        Up,
-        Down
-    };
+            std::map<FenestrationCommon::Side, std::shared_ptr<ISurface>> m_Surface;
+            double m_ConductiveConvectiveCoeff;
+            double m_LayerGainFlow;
+        };
 
-    enum class AirHorizontalDirection
-    {
-        None,
-        Leeward,
-        Windward
-    };
+        enum class AirVerticalDirection
+        {
+            None,
+            Up,
+            Down
+        };
 
-    class CGasLayer : public virtual FenestrationCommon::CState
-    {
-    public:
-        CGasLayer();
-        explicit CGasLayer(double t_Pressure);
-        CGasLayer(double t_Pressure,
-                  double t_AirSpeed,
-                  AirVerticalDirection t_AirVerticalDirection);
-        CGasLayer(double t_Pressure,
-                  double t_AirSpeed,
-                  AirHorizontalDirection t_AirHorizontalDirection);
-        CGasLayer(double t_Pressure, const Gases::CGas & t_Gas);
+        enum class AirHorizontalDirection
+        {
+            None,
+            Leeward,
+            Windward
+        };
 
-        virtual double getPressure();
+        class CGasLayer : public virtual FenestrationCommon::CState
+        {
+        public:
+            CGasLayer();
+            explicit CGasLayer(double t_Pressure);
+            CGasLayer(double t_Pressure,
+                      double t_AirSpeed,
+                      AirVerticalDirection t_AirVerticalDirection);
+            CGasLayer(double t_Pressure,
+                      double t_AirSpeed,
+                      AirHorizontalDirection t_AirHorizontalDirection);
+            CGasLayer(double t_Pressure, const Gases::CGas & t_Gas);
 
-        virtual double getGasTemperature() = 0;
+            virtual double getPressure();
 
-    protected:
-        void initializeStateVariables() override;
+            virtual double getGasTemperature() = 0;
 
-        double m_Pressure;
-        double m_AirSpeed;
-        AirVerticalDirection m_AirVerticalDirection;
-        AirHorizontalDirection m_AirHorizontalDirection;
-        ForcedVentilation m_ForcedVentilation;
+        protected:
+            void initializeStateVariables() override;
 
-        Gases::CGas m_Gas;
-    };
+            double m_Pressure;
+            double m_AirSpeed;
+            AirVerticalDirection m_AirVerticalDirection;
+            AirHorizontalDirection m_AirHorizontalDirection;
+            ForcedVentilation m_ForcedVentilation;
+
+            Gases::CGas m_Gas;
+        };
+
+    }   // namespace ISO15099
 
 }   // namespace Tarcog
 

@@ -4,14 +4,11 @@
 
 #include "WCETarcog.hpp"
 
-using namespace Tarcog;
-
-
 class TestIndoorEnvironmentIRFixed : public testing::Test
 {
 private:
-    std::shared_ptr<CEnvironment> m_Indoor;
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CEnvironment> m_Indoor;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -22,17 +19,18 @@ protected:
         auto airTemperature = 300.0;   // Kelvins
         auto pressure = 101325.0;      // Pascals
         auto airSpeed = 5.5;           // meters per second
-        auto tSky = 270.0;   // Kelvins
+        auto tSky = 270.0;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-                                             SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(airTemperature,
+                                                  pressure,
+                                                  airSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         /// Indoor
@@ -43,7 +41,7 @@ protected:
         // getting the results since current version of WINDOW does not support IR input.
         auto IRRadiation = 424.458750;
 
-        m_Indoor = Environments::indoor(roomTemperature, pressure);
+        m_Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(m_Indoor != nullptr);
         m_Indoor->setEnvironmentIR(IRRadiation);
 
@@ -53,24 +51,25 @@ protected:
         auto solidLayerThickness = 0.003048;   // [m]
         auto solidLayerConductance = 100.0;
 
-        auto aSolidLayer = Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto aSolidLayer =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aSolidLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-        CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer);
 
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, m_Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, m_Indoor, Outdoor);
         m_TarcogSystem->solve();
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
 public:
-    std::shared_ptr<CEnvironment> GetIndoors() const
+    std::shared_ptr<Tarcog::ISO15099::CEnvironment> GetIndoors() const
     {
         return m_Indoor;
     };

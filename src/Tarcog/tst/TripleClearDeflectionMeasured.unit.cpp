@@ -5,14 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-
-using namespace Tarcog;
-using namespace FenestrationCommon;
-
 class TripleClearDeflectionMeasured : public testing::Test
 {
 private:
-    std::shared_ptr<CSingleSystem> m_TarcogSystem;
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -26,14 +22,14 @@ protected:
         auto tSky = 255.15;   // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Environments::outdoor(airTemperature,
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
                                              pressure,
                                              airSpeed,
                                              solarRadiation,
                                              tSky,
-                                             SkyModel::AllSpecified);
+															   Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
         /// Indoor
@@ -41,7 +37,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -51,23 +47,23 @@ protected:
         auto solidLayerThickness2 = 0.005715;
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer1 = Layers::solid(solidLayerThickness1, solidLayerConductance);
+        auto aSolidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
-        auto aSolidLayer2 = Layers::solid(solidLayerThickness2, solidLayerConductance);
+        auto aSolidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness2, solidLayerConductance);
 
-        auto aSolidLayer3 = Layers::solid(solidLayerThickness1, solidLayerConductance);
+        auto aSolidLayer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto aGapLayer1 = Layers::gap(gapThickness, gapPressure);
+        auto aGapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(aGapLayer1 != nullptr);
 
-        auto aGapLayer2 = Layers::gap(gapThickness, gapPressure);
+        auto aGapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
         ASSERT_TRUE(aGapLayer2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-        CIGU aIGU(windowWidth, windowHeight);
+		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer1);
         aIGU.addLayer(aGapLayer1);
         aIGU.addLayer(aSolidLayer2);
@@ -81,14 +77,14 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<CSingleSystem> GetSystem() const
+    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };
@@ -101,8 +97,8 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = *aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {
+    const auto Temperature = aSystem->getTemperatures();
+    std::vector<double> correctTemperature{
       257.493976, 257.702652, 271.535517, 271.926785, 284.395405, 284.604082};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
@@ -111,8 +107,8 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto Radiosity = *aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {
+    const auto Radiosity = aSystem->getRadiosities();
+    std::vector<double> correctRadiosity{
       247.813715, 258.078374, 300.200818, 318.403140, 362.495875, 380.380188};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
@@ -121,8 +117,8 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
 
-    auto MaxDeflection = *aSystem->getMaxDeflections();
-    std::vector<double> correctMaxDeflection = {0.00074180, -5.820e-05, -0.0003582};
+    const auto MaxDeflection = aSystem->getMaxDeflections();
+    std::vector<double> correctMaxDeflection{0.00074180, -5.820e-05, -0.0003582};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
@@ -130,8 +126,8 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
         EXPECT_NEAR(correctMaxDeflection[i], MaxDeflection[i], 1e-7);
     }
 
-    auto MeanDeflection = *aSystem->getMeanDeflections();
-    std::vector<double> correctMeanDeflection = {0.00031076, -2.437e-05, -0.0001501};
+    const auto MeanDeflection = aSystem->getMeanDeflections();
+    std::vector<double> correctMeanDeflection{0.00031076, -2.437e-05, -0.0001501};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
