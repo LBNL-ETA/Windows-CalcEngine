@@ -290,8 +290,8 @@ TEST_F(TestVE345ScatteringLayer1, TestFront)
     double A_dir = aLayer.getAbsorptance(aSide, ScatteringSimple::Direct);
     EXPECT_NEAR(0.679960, A_dir, 1e-6);
 
-    double A_dif = aLayer.getAbsorptance(aSide, ScatteringSimple::Diffuse);
-    EXPECT_NEAR(0.649894, A_dif, 1e-6);
+	double A_dif = aLayer.getAbsorptance(aSide, ScatteringSimple::Diffuse);
+	EXPECT_NEAR(0.649894, A_dif, 1e-6);
 }
 
 TEST_F(TestVE345ScatteringLayer1, TestBack)

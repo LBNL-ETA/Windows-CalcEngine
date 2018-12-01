@@ -248,4 +248,14 @@ namespace SingleLayerOptics
           t_Material, aBSDF, x, y, thickness, xHole, yHole));
     }
 
+	double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
+															  const std::vector< double > & polynomial ) {
+		double abs = getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
+		double value = 0;
+    	for ( size_t i = 0; i < polynomial.size(); ++i ) {
+			value += std::pow(abs, i + 1);
+		}
+    	return value;
+	}
+
 }   // namespace SingleLayerOptics
