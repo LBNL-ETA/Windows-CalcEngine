@@ -93,6 +93,10 @@ namespace SingleLayerOptics
                               double t_Theta = 0,
                               double t_Phi = 0);
 
+        // TODO: Implement this.
+        double normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
+        	const std::vector<double> & polynomial = {1});
+
         CLayerSingleComponent getLayer(FenestrationCommon::Scattering t_Scattering,
                                        double t_Theta = 0,
                                        double t_Phi = 0);
