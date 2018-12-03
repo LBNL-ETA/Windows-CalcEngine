@@ -9,6 +9,7 @@
 #include "BSDFDirections.hpp"
 #include "BSDFIntegrator.hpp"
 #include "BeamDirection.hpp"
+#include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 
 using namespace SingleLayerOptics;
@@ -63,9 +64,27 @@ namespace SingleLayerOptics
         }
     }
 
+    void CScatteringLayer::setBlackBodySource(const double temperature)
+    {
+        // This will load full wavelengths data from sample. However, only wavelength higher
+        // than 5.0 are needed in black body source integration.
+        auto wlFull = getWavelengths();
+        std::vector<double> wl;
+        for(const auto wwl : wlFull)
+        {
+            if(wwl >= 5.0)
+            {
+                wl.push_back(wwl);
+            }
+        }
+        const auto spectrum = SpectralAveraging::BlackBodySpectrum(wl, temperature);
+        setSourceData(spectrum);
+        setWavelengths(wl);
+    }
+
     CScatteringSurface & CScatteringLayer::getSurface(const Side t_Side)
     {
-        if(m_Surface.size() == 0)
+        if(m_Surface.empty())
         {
             m_Theta = 0;
             m_Phi = 0;
@@ -119,9 +138,10 @@ namespace SingleLayerOptics
         return m_BSDFLayer->getBandWavelengths();
     }
 
-	void CScatteringLayer::setWavelengths( const std::vector< double > & wavelengths ) {
-		m_BSDFLayer->setBandWavelengths(wavelengths);
-	}
+    void CScatteringLayer::setWavelengths(const std::vector<double> & wavelengths)
+    {
+        m_BSDFLayer->setBandWavelengths(wavelengths);
+    }
 
     void CScatteringLayer::createResultsAtAngle(const double t_Theta, const double t_Phi)
     {
@@ -248,14 +268,38 @@ namespace SingleLayerOptics
           t_Material, aBSDF, x, y, thickness, xHole, yHole));
     }
 
+    double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
+															 EmissivityPolynomials type)
+    {
+        return normalToHemisphericalEmissivity(t_Side, emissPolynomial(type));
+    }
+
 	double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
-															  const std::vector< double > & polynomial ) {
+										   const std::vector<double> & polynomial)
+	{
 		double abs = getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
 		double value = 0;
-    	for ( size_t i = 0; i < polynomial.size(); ++i ) {
-			value += std::pow(abs, i + 1);
+		for(size_t i = 0; i < polynomial.size(); ++i)
+		{
+			value += std::pow(abs, i + 1) * polynomial[i];
 		}
-    	return value;
+		return value;
+	}
+
+	std::vector< double >
+	CScatteringLayer::emissPolynomial( EmissivityPolynomials type ) const
+	{
+    	// Polynomial numbers are taken from NFRC_301 (2017) and EN 12898
+    	switch (type)
+		{
+			case EmissivityPolynomials::NFRC_301_Coated:
+				return {1.3217, -1.8766, 4.6586, -5.8349, 2.7406};
+			case EmissivityPolynomials::NFRC_301_Uncoated:
+				return {0.1569, 3.7669, -5.4398, 2.4733};
+			case EmissivityPolynomials::EN12898:
+				return {1.1887, -0.4967, 0.2452};
+		}
+		return std::vector< double >();
 	}
 
 }   // namespace SingleLayerOptics

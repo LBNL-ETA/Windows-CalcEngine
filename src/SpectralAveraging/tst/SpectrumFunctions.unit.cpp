@@ -81,11 +81,11 @@ TEST_F( TestSpectrumFunctions, TestBlackBody ) {
 			{ 5.4, 1.511017e-010 }
 	};
 
-	EXPECT_EQ( correctResults.size(), results.size() );
+	EXPECT_EQ( correctResults.size(), results->size() );
 
 	for( auto i = 0u; i < correctResults.size(); ++i ) {
-		EXPECT_NEAR( correctResults[ i ].first, results[ i ].first, 1e-16 );
-		EXPECT_NEAR( correctResults[ i ].second, results[ i ].second, 1e-16 );
+		EXPECT_NEAR( correctResults[ i ].first, (*results)[ i ].x(), 1e-16 );
+		EXPECT_NEAR( correctResults[ i ].second, (*results)[ i ].value(), 1e-16 );
 	}
 
 }
