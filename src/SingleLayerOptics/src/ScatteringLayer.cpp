@@ -17,6 +17,12 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
+	std::map<EmissivityPolynomials, std::vector<double>> emissPolynomial{
+		{EmissivityPolynomials::NFRC_301_Coated, {1.3217, -1.8766, 4.6586, -5.8349, 2.7406}},
+		{EmissivityPolynomials::NFRC_301_Uncoated, {0.1569, 3.7669, -5.4398, 2.4733}},
+		{EmissivityPolynomials::EN12898, {1.1887, -0.4967, 0.2452}}
+	};
+
     CScatteringLayer::CScatteringLayer(const CScatteringSurface & t_Front,
                                        const CScatteringSurface & t_Back) :
         m_Surface({{Side::Front, t_Front}, {Side::Back, t_Back}}),
@@ -271,7 +277,7 @@ namespace SingleLayerOptics
     double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
 															 EmissivityPolynomials type)
     {
-        return normalToHemisphericalEmissivity(t_Side, emissPolynomial(type));
+        return normalToHemisphericalEmissivity(t_Side, emissPolynomial.at(type));
     }
 
 	double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
@@ -286,20 +292,5 @@ namespace SingleLayerOptics
 		return value;
 	}
 
-	std::vector< double >
-	CScatteringLayer::emissPolynomial( EmissivityPolynomials type ) const
-	{
-    	// Polynomial numbers are taken from NFRC_301 (2017) and EN 12898
-    	switch (type)
-		{
-			case EmissivityPolynomials::NFRC_301_Coated:
-				return {1.3217, -1.8766, 4.6586, -5.8349, 2.7406};
-			case EmissivityPolynomials::NFRC_301_Uncoated:
-				return {0.1569, 3.7669, -5.4398, 2.4733};
-			case EmissivityPolynomials::EN12898:
-				return {1.1887, -0.4967, 0.2452};
-		}
-		return std::vector< double >();
-	}
 
 }   // namespace SingleLayerOptics
