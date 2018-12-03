@@ -94,8 +94,8 @@ namespace SpectralAveraging
         m_WavelengthSet = t_Sample->m_WavelengthSet;
     }
 
-    void CSample::setWavelengths( WavelengthSet const t_WavelengthSet,
-								  const std::vector< double > & t_Wavelenghts )
+    void CSample::setWavelengths(WavelengthSet const t_WavelengthSet,
+                                 const std::vector<double> & t_Wavelenghts)
     {
         m_WavelengthSet = t_WavelengthSet;
         switch(t_WavelengthSet)

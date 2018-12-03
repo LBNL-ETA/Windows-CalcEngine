@@ -22,10 +22,11 @@ std::vector<std::pair<double, double>>
     return UVAction(t_data, 12.28, 25.56);
 }
 
-std::vector<std::pair<double, double>>
+std::shared_ptr<FenestrationCommon::CSeries>
   SpectralAveraging::BlackBodySpectrum(const std::vector<double> & t_data, double t_temperature)
 {
-    std::vector<std::pair<double, double>> result;
+    std::shared_ptr<FenestrationCommon::CSeries> result =
+      std::make_shared<FenestrationCommon::CSeries>();
 
     const double ev = 1.602e-19;   // J
 
@@ -37,10 +38,11 @@ std::vector<std::pair<double, double>>
     for(auto & val : t_data)
     {
         double lambda = val * 1e3;   // to convert it to nanometers
-        double C1 = 8e-9 * ConstantsData::PI * h * ev * ConstantsData::SPEEDOFLIGHT / std::pow(lambda * 1e-9, 5);
+        double C1 = 8e-9 * ConstantsData::PI * h * ev * ConstantsData::SPEEDOFLIGHT
+                    / std::pow(lambda * 1e-9, 5);
         double q1 = 1 / std::expm1(hc / kT / lambda);
         double energy = C1 * q1;
-        result.emplace_back(val, energy);
+        result->addProperty(val, energy);
     }
 
     return result;
