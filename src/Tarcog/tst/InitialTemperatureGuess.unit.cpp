@@ -18,23 +18,18 @@ protected:
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
         auto tSky = airTemperature;
-        auto pressure = 101325.0;   // Pascals
-        auto airSpeed = 5.5;        // meters per second
+        auto airSpeed = 5.5;   // meters per second
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-															   Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
 
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
         auto roomTemperature = 294.15;
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -42,9 +37,11 @@ protected:
         /////////////////////////////////////////////////////////
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
-        auto solidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto solidLayer1 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer1 != nullptr);
-        auto solidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto solidLayer2 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer2 != nullptr);
 
         auto gapThickness = 0.012;
@@ -54,7 +51,7 @@ protected:
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-		Tarcog::ISO15099::CIGU aTarIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aTarIGU(windowWidth, windowHeight);
         aTarIGU.addLayer(solidLayer1);
         aTarIGU.addLayer(gapLayer);
         aTarIGU.addLayer(solidLayer2);
@@ -62,7 +59,8 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aTarIGU, Indoor, Outdoor);
+        m_TarcogSystem =
+          std::make_shared<Tarcog::ISO15099::CSingleSystem>(aTarIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 

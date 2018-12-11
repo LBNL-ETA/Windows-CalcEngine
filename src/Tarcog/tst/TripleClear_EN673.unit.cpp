@@ -44,19 +44,15 @@ protected:
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        m_IGU =
-          std::unique_ptr<Tarcog::EN673::IGU>(new Tarcog::EN673::IGU(indoor, outdoor, layer1));
+        m_IGU = Tarcog::EN673::IGU::create(indoor, outdoor);
+        m_IGU->addGlass(layer1);
 
         /////////////////////////////////////////////////////////
         /// gap and layer
         /////////////////////////////////////////////////////////
-        Gases::CGas gas1;
-        /// 100% Air
-        gas1.addGasItem(1.0, Gases::GasDef::Air);
 
         const auto gapThickness = 0.0127;   // [mm]
-        const auto pressure = 101325;       // [Pa]
-        const auto gap1 = Tarcog::EN673::Gap(gapThickness, pressure, gas1);
+        const auto gap1 = Tarcog::EN673::Gap(gapThickness);
 
         m_IGU->addGap(gap1);
 
@@ -65,10 +61,7 @@ protected:
         	layerAbsorptance);
         m_IGU->addGlass(layer2);
 
-		Gases::CGas gas2;
-		/// 100% Air
-		gas2.addGasItem(1.0, Gases::GasDef::Air);
-		const auto gap2 = Tarcog::EN673::Gap(gapThickness, pressure, gas2);
+		const auto gap2 = Tarcog::EN673::Gap(gapThickness);
         m_IGU->addGap(gap2);
 
 		layerAbsorptance = 0.058234799653;
@@ -97,5 +90,5 @@ TEST_F(TestTripleClear_EN673, Test1)
 
     auto SHGC = igu->shgc(0.5984);
 
-	EXPECT_NEAR(0.6824, SHGC, 1e-4);
+	EXPECT_NEAR(0.7084, SHGC, 1e-4);
 }

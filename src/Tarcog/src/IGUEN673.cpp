@@ -94,32 +94,46 @@ namespace Tarcog
             filmCoefficient(filmCoefficient)
         {}
 
-        IGU::IGU(const Environment & interior, const Environment & exterior, const Glass & glass) :
+        IGU::IGU(const Environment & interior, const Environment & exterior) :
             interior(interior),
             exterior(exterior),
-            numOfSolidLayers(1)
+            numOfSolidLayers(0)
         {
-            temperature.push_back(exterior.Temperature + 3);
-            temperature.push_back(exterior.Temperature + 6);
-            layers.emplace_back(new SolidLayer(glass, temperature[0], temperature[1]));
+            // temperature.push_back(exterior.Temperature + 3);
+            // temperature.push_back(exterior.Temperature + 6);
+            // layers.emplace_back(new SolidLayer(glass, temperature[0], temperature[1]));
         }
 
         void IGU::addGlass(const Glass & glass)
         {
-            temperature.push_back(temperature[temperature.size() - 1] + 3);
-            abs.push_back(glass.SolarAbsorptance);
-            ++numOfSolidLayers;
-
-            auto gap = layers[layers.size() - 1].get();
-            if(dynamic_cast<GapLayer *>(gap))
+            if(temperature.size() > 0)
             {
-                gap->setEmissivityBack(glass.EmissFront);
-                layers.emplace_back(new SolidLayer(
-                  glass, temperature[temperature.size() - 2], temperature[temperature.size() - 1]));
+                temperature.push_back(temperature[temperature.size() - 1] + 3);
             }
             else
             {
-                throw std::runtime_error("Cannot put two consecutive glass layers to IGU.");
+                temperature.push_back(3);
+                temperature.push_back(exterior.Temperature + 6);
+                layers.emplace_back(new SolidLayer(glass, temperature[0], temperature[1]));
+            }
+
+            abs.push_back(glass.SolarAbsorptance);
+            ++numOfSolidLayers;
+
+            if(layers.size() > 1)
+            {
+                auto gap = layers[layers.size() - 1].get();
+                if(dynamic_cast<GapLayer *>(gap))
+                {
+                    gap->setEmissivityBack(glass.EmissFront);
+                    layers.emplace_back(new SolidLayer(glass,
+                                                       temperature[temperature.size() - 2],
+                                                       temperature[temperature.size() - 1]));
+                }
+                else
+                {
+                    throw std::runtime_error("Cannot put two consecutive glass layers to IGU.");
+                }
             }
         }
 
@@ -245,6 +259,11 @@ namespace Tarcog
             {
                 layers[i]->updateTemperatures(temperature[i], temperature[i + 1]);
             }
+        }
+
+        std::unique_ptr<IGU> IGU::create(const Environment & interior, const Environment & exterior)
+        {
+            return std::unique_ptr<IGU>(new IGU(interior, exterior));
         }
     }   // namespace EN673
 }   // namespace Tarcog

@@ -29,11 +29,11 @@ protected:
 
         auto Outdoor =
           Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                                  pressure,
                                                   airSpeed,
                                                   solarRadiation,
                                                   tSky,
                                                   Tarcog::ISO15099::SkyModel::AllSpecified,
+                                                  pressure,
                                                   direction,
                                                   fclr);
         ASSERT_TRUE(Outdoor != nullptr);

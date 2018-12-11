@@ -18,17 +18,12 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
-        auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;   // Kelvins
+        auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-															   Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -37,7 +32,7 @@ protected:
         /////////////////////////////////////////////////////////
         auto roomTemperature = 295.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -63,7 +58,7 @@ protected:
         auto Afront = 0.2;
 
         auto aLayer2 = Tarcog::ISO15099::Layers::shading(
-			shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront );
+          shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront);
 
         ASSERT_TRUE(aLayer2 != nullptr);
 
@@ -91,15 +86,15 @@ protected:
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure, Gas1);
+        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1, gapPressure);
         ASSERT_TRUE(GapLayer1 != nullptr);
 
-        auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure, Gas1);
+        auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1, gapPressure);
         ASSERT_TRUE(GapLayer2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aLayer1);
         aIGU.addLayer(GapLayer1);
         aIGU.addLayer(aLayer2);
