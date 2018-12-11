@@ -17,6 +17,15 @@ namespace SingleLayerOptics
     class CBSDFLayer;
     class ICellDescription;
 
+    enum class EmissivityPolynomials
+    {
+        NFRC_301_Coated,
+        NFRC_301_Uncoated,
+        EN12898
+    };
+
+    extern std::map<EmissivityPolynomials, std::vector<double>> emissPolynomial;
+
     // Handles general case layer when properties can be direct, diffuse or combination between
     // these two.
     class CScatteringLayer : public IScatteringLayer
@@ -72,6 +81,8 @@ namespace SingleLayerOptics
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
 
+        void setBlackBodySource(double temperature);
+
         CScatteringSurface & getSurface(FenestrationCommon::Side t_Side);
 
         double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
@@ -89,9 +100,14 @@ namespace SingleLayerOptics
                               double t_Theta = 0,
                               double t_Phi = 0);
 
-        double getAbsorptance(FenestrationCommon::Side t_Side,
-                              double t_Theta = 0,
-                              double t_Phi = 0);
+        double
+          getAbsorptance(FenestrationCommon::Side t_Side, double t_Theta = 0, double t_Phi = 0);
+
+        // This function is valid only for specular layers
+        double normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
+                                               EmissivityPolynomials type);
+        double normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
+                                               const std::vector<double> & polynomial);
 
         CLayerSingleComponent getLayer(FenestrationCommon::Scattering t_Scattering,
                                        double t_Theta = 0,
@@ -104,6 +120,7 @@ namespace SingleLayerOptics
         double getMaxLambda() const override;
 
     private:
+
         CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
 
         void createResultsAtAngle(const double t_Theta, const double t_Phi);
