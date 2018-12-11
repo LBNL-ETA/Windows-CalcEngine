@@ -18,18 +18,12 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
-        auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
         auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor =
-          Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                                  pressure,
-                                                  airSpeed,
-                                                  solarRadiation,
-                                                  tSky,
-                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -39,7 +33,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////

@@ -23,9 +23,15 @@ namespace Tarcog
             double SolarAbsorptance;
         };
 
+        //! Structure to keep data for gap.
         struct Gap
         {
-            Gap(double Thickness, double Pressure, const Gases::CGas & tGas);
+            //! Construction of gap
+            Gap(double Thickness,           //!< Gap thickness
+                double Pressure = 101325,   //!< Gap pressure (defaulted to 101325 Pa)
+                const Gases::CGas & tGas =
+                  Gases::CGas()   //!< Gas content of the gap (defaulted to Air)
+            );
             double Thickness;
             double Pressure;
             Gases::CGas Gas;
@@ -38,10 +44,12 @@ namespace Tarcog
             double filmCoefficient;
         };
 
+        //! \brief Class to handle IGU calculations.
         class IGU
         {
         public:
-            IGU(const Environment & interior, const Environment & exterior, const Glass & glass);
+            static std::unique_ptr<IGU> create(const Environment & interior,
+                                               const Environment & exterior);
 
             void addGlass(const Glass & glass);
             void addGap(const Gap & gap);
@@ -50,6 +58,8 @@ namespace Tarcog
             double shgc(double totSol);
 
         private:
+            IGU(const Environment & interior, const Environment & exterior);
+
             class BaseLayer
             {
             public:

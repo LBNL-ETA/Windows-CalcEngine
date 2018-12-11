@@ -17,18 +17,12 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 300.0;   // Kelvins
-        auto pressure = 101325.0;      // Pascals
         auto airSpeed = 5.5;           // meters per second
         auto tSky = 270.0;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor =
-          Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                                  pressure,
-                                                  airSpeed,
-                                                  solarRadiation,
-                                                  tSky,
-                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -41,7 +35,7 @@ protected:
         // getting the results since current version of WINDOW does not support IR input.
         auto IRRadiation = 424.458750;
 
-        m_Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        m_Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(m_Indoor != nullptr);
         m_Indoor->setEnvironmentIR(IRRadiation);
 

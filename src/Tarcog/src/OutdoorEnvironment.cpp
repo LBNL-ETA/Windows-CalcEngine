@@ -15,14 +15,14 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        COutdoorEnvironment::COutdoorEnvironment(double const t_AirTemperature,
-                                                 double const t_Pressure,
-                                                 double const t_AirSpeed,
-                                                 double const t_DirectSolarRadiation,
-                                                 AirHorizontalDirection const t_AirDirection,
-                                                 double const t_SkyTemperature,
-                                                 SkyModel const t_Model,
-                                                 double const t_FractionClearSky) :
+        COutdoorEnvironment::COutdoorEnvironment(double t_AirTemperature,
+                                                 double t_AirSpeed,
+                                                 double t_DirectSolarRadiation,
+                                                 AirHorizontalDirection t_AirDirection,
+                                                 double t_SkyTemperature,
+                                                 SkyModel t_Model,
+                                                 double t_Pressure,
+                                                 double t_FractionClearSky) :
             CEnvironment(t_Pressure, t_AirSpeed, t_AirDirection),
             m_Tsky(t_SkyTemperature),
             m_FractionOfClearSky(t_FractionClearSky),

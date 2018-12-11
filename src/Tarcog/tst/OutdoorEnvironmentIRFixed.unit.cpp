@@ -18,17 +18,12 @@ protected:
         /////////////////////////////////////////////////////////
         auto airTemperature = 300.0;   // Kelvins
         auto tSky = airTemperature;
-        auto pressure = 101325.0;   // Pascals
-        auto airSpeed = 5.5;        // meters per second
+        auto airSpeed = 5.5;   // meters per second
         auto solarRadiation = 0.0;
         auto IRRadiation = 370.0;   // [ W/m2 ]
 
-        Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                                          pressure,
-                                                          airSpeed,
-                                                          solarRadiation,
-                                                          tSky,
-                                                          Tarcog::ISO15099::SkyModel::AllSpecified);
+        Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setEnvironmentIR(IRRadiation);
 
@@ -38,7 +33,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////

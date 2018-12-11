@@ -17,17 +17,12 @@ protected:
         // Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
-        auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;   // Kelvins
+        auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-															   Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -37,7 +32,7 @@ protected:
 
         auto roomTemperature = 295.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -55,7 +50,7 @@ protected:
         auto Afront = 0.2;
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(
-			shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront );
+          shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront);
 
         ASSERT_TRUE(aLayer1 != nullptr);
 
@@ -74,7 +69,7 @@ protected:
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aLayer1);
         aIGU.addLayer(GapLayer1);
         aIGU.addLayer(aLayer2);
