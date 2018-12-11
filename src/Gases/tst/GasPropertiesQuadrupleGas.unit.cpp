@@ -15,10 +15,10 @@ protected:
 
     virtual void SetUp()
     {
-        m_Gas.addGasItem(0.1, Gases::Gas::intance().get(GasDef::Air));
-        m_Gas.addGasItem(0.3, Gases::Gas::intance().get(GasDef::Argon));
-        m_Gas.addGasItem(0.3, Gases::Gas::intance().get(GasDef::Krypton));
-        m_Gas.addGasItem(0.3, Gases::Gas::intance().get(GasDef::Xenon));
+        m_Gas.addGasItem(0.1, GasDef::Air);
+        m_Gas.addGasItem(0.3, GasDef::Argon);
+        m_Gas.addGasItem(0.3, GasDef::Krypton);
+        m_Gas.addGasItem(0.3, GasDef::Xenon);
     }
 };
 

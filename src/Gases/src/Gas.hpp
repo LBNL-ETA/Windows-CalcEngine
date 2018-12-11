@@ -17,6 +17,8 @@ namespace Gases {
 		CGas( const CGas& t_Gas );
 		void addGasItem( double percent, const CGasData & t_GasData );
 		void addGasItem(double percent, Gases::GasDef def);
+		void addGasItems(const std::initializer_list<std::pair<double, CGasData>> & gases);
+		void addGasItems(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases);
 		double totalPercent();
 		const GasProperties & getSimpleGasProperties();
 		const GasProperties & getGasProperties();

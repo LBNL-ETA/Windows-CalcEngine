@@ -27,8 +27,11 @@ protected:
                              {2.2848e-03, 5.1486e-05, 0.0},    // Conductivity coefficients
                              {3.3786e-06, 6.4514e-08, 0.0}};   // Viscosity coefficients
 
-        m_Gas.addGasItem(0.1, Air);
-        m_Gas.addGasItem(0.9, Argon);
+        m_Gas.addGasItems({{0.1, Air}, {0.9, Argon}});
+
+        // This is alternative way of adding mixtures
+		//m_Gas.addGasItem(0.1, Air);
+		//m_Gas.addGasItem(0.9, Argon);
     }
 };
 
