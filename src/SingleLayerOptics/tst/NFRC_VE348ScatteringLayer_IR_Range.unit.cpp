@@ -9,75 +9,11 @@ using namespace SingleLayerOptics;
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
-class TestVE345ScatteringLayer1 : public testing::Test
+class TestVE345ScatteringLayer_IR_Range : public testing::Test
 {
 private:
     CScatteringLayer m_Layer;
 
-    std::shared_ptr<CSeries> loadSolarRadiationFile()
-    {
-        std::shared_ptr<CSeries> aSolarRadiation = std::make_shared<CSeries>();
-
-        // Pre-Weighted prEN 410 Table 2 AM1_0 (Solar radiation)
-        aSolarRadiation->addProperty(0.300, 0.0005);
-        aSolarRadiation->addProperty(0.320, 0.0069);
-        aSolarRadiation->addProperty(0.340, 0.0122);
-        aSolarRadiation->addProperty(0.360, 0.0145);
-        aSolarRadiation->addProperty(0.380, 0.0177);
-        aSolarRadiation->addProperty(0.400, 0.0235);
-        aSolarRadiation->addProperty(0.420, 0.0268);
-        aSolarRadiation->addProperty(0.440, 0.0294);
-        aSolarRadiation->addProperty(0.460, 0.0343);
-        aSolarRadiation->addProperty(0.480, 0.0339);
-        aSolarRadiation->addProperty(0.500, 0.0326);
-        aSolarRadiation->addProperty(0.520, 0.0318);
-        aSolarRadiation->addProperty(0.540, 0.0321);
-        aSolarRadiation->addProperty(0.560, 0.0312);
-        aSolarRadiation->addProperty(0.580, 0.0294);
-        aSolarRadiation->addProperty(0.600, 0.0289);
-        aSolarRadiation->addProperty(0.620, 0.0289);
-        aSolarRadiation->addProperty(0.640, 0.0280);
-        aSolarRadiation->addProperty(0.660, 0.0273);
-        aSolarRadiation->addProperty(0.680, 0.0246);
-        aSolarRadiation->addProperty(0.700, 0.0237);
-        aSolarRadiation->addProperty(0.720, 0.0220);
-        aSolarRadiation->addProperty(0.740, 0.0230);
-        aSolarRadiation->addProperty(0.760, 0.0199);
-        aSolarRadiation->addProperty(0.780, 0.0211);
-        aSolarRadiation->addProperty(0.800, 0.0330);
-        aSolarRadiation->addProperty(0.850, 0.0453);
-        aSolarRadiation->addProperty(0.900, 0.0381);
-        aSolarRadiation->addProperty(0.950, 0.0220);
-        aSolarRadiation->addProperty(1.000, 0.0329);
-        aSolarRadiation->addProperty(1.050, 0.0306);
-        aSolarRadiation->addProperty(1.100, 0.0185);
-        aSolarRadiation->addProperty(1.150, 0.0136);
-        aSolarRadiation->addProperty(1.200, 0.0210);
-        aSolarRadiation->addProperty(1.250, 0.0211);
-        aSolarRadiation->addProperty(1.300, 0.0166);
-        aSolarRadiation->addProperty(1.350, 0.0042);
-        aSolarRadiation->addProperty(1.400, 0.0010);
-        aSolarRadiation->addProperty(1.450, 0.0044);
-        aSolarRadiation->addProperty(1.500, 0.0095);
-        aSolarRadiation->addProperty(1.550, 0.0123);
-        aSolarRadiation->addProperty(1.600, 0.0110);
-        aSolarRadiation->addProperty(1.650, 0.0106);
-        aSolarRadiation->addProperty(1.700, 0.0093);
-        aSolarRadiation->addProperty(1.750, 0.0068);
-        aSolarRadiation->addProperty(1.800, 0.0024);
-        aSolarRadiation->addProperty(1.850, 0.0005);
-        aSolarRadiation->addProperty(1.900, 0.0002);
-        aSolarRadiation->addProperty(1.950, 0.0012);
-        aSolarRadiation->addProperty(2.000, 0.0030);
-        aSolarRadiation->addProperty(2.050, 0.0037);
-        aSolarRadiation->addProperty(2.100, 0.0057);
-        aSolarRadiation->addProperty(2.200, 0.0066);
-        aSolarRadiation->addProperty(2.300, 0.0060);
-        aSolarRadiation->addProperty(2.400, 0.0041);
-        aSolarRadiation->addProperty(2.500, 0.0006);
-
-        return aSolarRadiation;
-    }
 
     std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_VE348()
     {
@@ -238,16 +174,16 @@ private:
 protected:
     virtual void SetUp()
     {
-        double thickness = 5.66e-3;   // [m]
+        const double thickness = 5.66e-3;   // [m]
         const auto aMaterial = Material::nBandMaterial(loadSampleData_NFRC_VE348(),
                                                        thickness,
                                                        MaterialType::Coated,
-                                                       WavelengthRange::Solar,
-                                                       IntegrationType::PreWeighted);
+                                                       WavelengthRange::IR,
+                                                       IntegrationType::Trapezoidal);
 
+        const double blackBodyTemperature = 300;
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
-        m_Layer.setSourceData(loadSolarRadiationFile());
-        m_Layer.setWavelengths(loadSolarRadiationFile()->getXArray());
+        m_Layer.setBlackBodySource(blackBodyTemperature);
     }
 
 public:
@@ -257,7 +193,7 @@ public:
     };
 };
 
-TEST_F(TestVE345ScatteringLayer1, TestFront)
+TEST_F(TestVE345ScatteringLayer_IR_Range, TestFrontIR)
 {
     SCOPED_TRACE("Begin Test: VE345 scattering layer - 0 deg incident.");
 
@@ -266,35 +202,33 @@ TEST_F(TestVE345ScatteringLayer1, TestFront)
     Side aSide = Side::Front;
 
     double T_dir_dir = aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.218448, T_dir_dir, 1e-6);
+    EXPECT_NEAR(0.0, T_dir_dir, 1e-6);
 
     double R_dir_dir = aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.101591, R_dir_dir, 1e-6);
+    EXPECT_NEAR(0.110058, R_dir_dir, 1e-6);
 
     double T_dir_dif =
       aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDiffuse);
-    EXPECT_NEAR(0, T_dir_dif, 1e-6);
+    EXPECT_NEAR(0.0, T_dir_dif, 1e-6);
 
     double R_dir_dif =
       aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDiffuse);
-    EXPECT_NEAR(0, R_dir_dif, 1e-6);
+    EXPECT_NEAR(0.0, R_dir_dif, 1e-6);
 
     double T_dif_dif =
       aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.191069, T_dif_dif, 1e-6);
+    EXPECT_NEAR(0.0, T_dif_dif, 1e-6);
 
     double R_dif_dif =
       aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.159037, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.167092, R_dif_dif, 1e-6);
 
-    double A_dir = aLayer.getAbsorptance(aSide, ScatteringSimple::Direct);
-    EXPECT_NEAR(0.679960, A_dir, 1e-6);
-
-	double A_dif = aLayer.getAbsorptance(aSide, ScatteringSimple::Diffuse);
-	EXPECT_NEAR(0.649894, A_dif, 1e-6);
+    double emiss =
+      aLayer.normalToHemisphericalEmissivity(aSide, EmissivityPolynomials::NFRC_301_Uncoated);
+    EXPECT_NEAR(0.840263, emiss, 1e-6);
 }
 
-TEST_F(TestVE345ScatteringLayer1, TestBack)
+TEST_F(TestVE345ScatteringLayer_IR_Range, TestBackIR)
 {
     SCOPED_TRACE("Begin Test: VE345 scattering layer - 0 deg incident.");
 
@@ -303,10 +237,10 @@ TEST_F(TestVE345ScatteringLayer1, TestBack)
     Side aSide = Side::Back;
 
     double T_dir_dir = aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.218448, T_dir_dir, 1e-6);
+    EXPECT_NEAR(0.0, T_dir_dir, 1e-6);
 
     double R_dir_dir = aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.190456, R_dir_dir, 1e-6);
+    EXPECT_NEAR(0.926332, R_dir_dir, 1e-6);
 
     double T_dir_dif =
       aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDiffuse);
@@ -318,15 +252,13 @@ TEST_F(TestVE345ScatteringLayer1, TestBack)
 
     double T_dif_dif =
       aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.191069, T_dif_dif, 1e-6);
+    EXPECT_NEAR(0.0, T_dif_dif, 1e-6);
 
     double R_dif_dif =
       aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.242219, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.931043, R_dif_dif, 1e-6);
 
-    double A_dir = aLayer.getAbsorptance(aSide, ScatteringSimple::Direct);
-    EXPECT_NEAR(0.591096, A_dir, 1e-6);
-
-    double A_dif = aLayer.getAbsorptance(aSide, ScatteringSimple::Diffuse);
-    EXPECT_NEAR(0.566712, A_dif, 1e-6);
+    double emiss =
+      aLayer.normalToHemisphericalEmissivity(aSide, EmissivityPolynomials::NFRC_301_Coated);
+    EXPECT_NEAR(0.088879, emiss, 1e-6);
 }
