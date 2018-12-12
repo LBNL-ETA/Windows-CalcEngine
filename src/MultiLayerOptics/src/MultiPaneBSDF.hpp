@@ -65,8 +65,9 @@ namespace MultiLayerOptics
                       size_t Index);
 
         // std::vector of layer by layer absorptances for each incoming direction
-        std::shared_ptr<std::vector<double>>
-          Abs(double minLambda, double maxLambda, FenestrationCommon::Side t_Side, size_t Index);
+		std::vector< double > &
+          Abs( const double minLambda, const double maxLambda,
+			   const FenestrationCommon::Side t_Side, const size_t Index );
 
         // Hemispherical results for every direction
         std::vector<double> DirHem(double minLambda,
@@ -147,9 +148,7 @@ namespace MultiLayerOptics
 
         std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_Results;
 
-        std::map<FenestrationCommon::Side,
-                 std::shared_ptr<std::vector<std::shared_ptr<std::vector<double>>>>>
-          m_Abs;
+        std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_Abs;
 
         // Hemispherical absorptances for every layer
         std::map<FenestrationCommon::Side, std::shared_ptr<std::vector<double>>> m_AbsHem;
