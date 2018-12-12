@@ -14,8 +14,9 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                                                               const std::shared_ptr<const CBSDFHemisphere> & t_Hemisphere) :
+    CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer(
+		const std::shared_ptr< CDirectionalDiffuseCell > & t_Cell,
+		const CBSDFHemisphere & t_Hemisphere ) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
@@ -33,7 +34,7 @@ namespace SingleLayerOptics
         auto & tau = m_Results->getMatrix(aSide, PropertySimple::T);
         auto & Rho = m_Results->getMatrix(aSide, PropertySimple::R);
 
-        const auto & jDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Outgoing);
+        const auto & jDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
         size_t size = jDirections.size();
 
@@ -55,7 +56,7 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        const CBSDFDirections iDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Outgoing);
+        const CBSDFDirections iDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
         size_t size = iDirections.size();
 

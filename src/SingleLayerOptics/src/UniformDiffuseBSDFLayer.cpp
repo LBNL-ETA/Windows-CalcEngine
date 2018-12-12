@@ -13,8 +13,9 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CUniformDiffuseBSDFLayer::CUniformDiffuseBSDFLayer(const std::shared_ptr<CUniformDiffuseCell> & t_Cell,
-                                                       const std::shared_ptr<const CBSDFHemisphere> & t_Hemisphere) :
+    CUniformDiffuseBSDFLayer::CUniformDiffuseBSDFLayer(
+		const std::shared_ptr< CUniformDiffuseCell > & t_Cell,
+		const CBSDFHemisphere & t_Hemisphere ) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
@@ -35,7 +36,7 @@ namespace SingleLayerOptics
         double aTau = aCell->T_dir_dif(aSide, t_Direction);
         double Ref = aCell->R_dir_dif(aSide, t_Direction);
 
-        const CBSDFDirections aDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Incoming);
+        const CBSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
         size_t size = aDirections.size();
 
         for(size_t j = 0; j < size; ++j)
@@ -54,7 +55,7 @@ namespace SingleLayerOptics
         std::vector<double> aTau = aCell->T_dir_dif_band(aSide, t_Direction);
         std::vector<double> Ref = aCell->R_dir_dif_band(aSide, t_Direction);
 
-        const CBSDFDirections aDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Incoming);
+        const CBSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
         size_t size = aDirections.size();
 
         for(size_t i = 0; i < size; ++i)
