@@ -14,6 +14,8 @@ namespace Gases {
 	class CGas {
 	public:
 		CGas();
+		explicit CGas(const std::initializer_list<std::pair<double, CGasData>> & gases);
+		explicit CGas(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases);
 		CGas( const CGas& t_Gas );
 		void addGasItem( double percent, const CGasData & t_GasData );
 		void addGasItem(double percent, Gases::GasDef def);

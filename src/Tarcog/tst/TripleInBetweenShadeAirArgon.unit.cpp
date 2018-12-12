@@ -65,22 +65,21 @@ protected:
         // gap layers
 
         // Create coefficients for Air
-        Gases::CIntCoeff AirCon = {2.8733e-03, 7.76e-05, 0.0};
-        Gases::CIntCoeff AirCp = {1.002737e+03, 1.2324e-02, 0.0};
-        Gases::CIntCoeff AirVisc = {3.7233e-06, 4.94e-08, 0.0};
+        Gases::CIntCoeff AirCon{2.8733e-03, 7.76e-05, 0.0};
+        Gases::CIntCoeff AirCp{1.002737e+03, 1.2324e-02, 0.0};
+        Gases::CIntCoeff AirVisc{3.7233e-06, 4.94e-08, 0.0};
 
         Gases::CGasData AirData{"Air", 28.97, 1.4, AirCp, AirCon, AirVisc};
 
         // Create coefficients for Argon
-        Gases::CIntCoeff ArgonCon = {2.2848e-03, 5.1486e-05, 0.0};
-        Gases::CIntCoeff ArgonCp = {5.21929e+02, 0.0, 0.0};
-        Gases::CIntCoeff ArgonVisc = {3.3786e-06, 6.4514e-08, 0.0};
+        Gases::CIntCoeff ArgonCon{2.2848e-03, 5.1486e-05, 0.0};
+        Gases::CIntCoeff ArgonCp{5.21929e+02, 0.0, 0.0};
+        Gases::CIntCoeff ArgonVisc{3.3786e-06, 6.4514e-08, 0.0};
 
         Gases::CGasData ArgonData{"Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc};
 
         // Create gas mixture
-        Gases::CGas Gas1;
-		Gas1.addGasItems({{0.1, AirData}, {0.9, ArgonData}});
+        Gases::CGas Gas1({{0.1, AirData}, {0.9, ArgonData}});
 
         auto gapThickness = 0.0127;
         auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1);
@@ -105,14 +104,14 @@ protected:
         /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
-        	new Tarcog::ISO15099::CSingleSystem(aIGU, Indoor, Outdoor));
+          new Tarcog::ISO15099::CSingleSystem(aIGU, Indoor, Outdoor));
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    Tarcog::ISO15099::CSingleSystem* GetSystem() const
+    Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
     };
