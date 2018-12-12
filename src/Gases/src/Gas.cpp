@@ -16,6 +16,18 @@ namespace Gases
         m_DefaultGas = true;
     }
 
+    CGas::CGas(const std::initializer_list<std::pair<double, CGasData>> & gases) :
+        m_Pressure(DefaultPressure)
+    {
+        addGasItems(gases);
+    }
+
+    CGas::CGas(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases) :
+        m_Pressure(DefaultPressure)
+    {
+        addGasItems(gases);
+    }
+
     CGas::CGas(CGas const & t_Gas) :
         m_GasItem(t_Gas.m_GasItem),
         m_SimpleProperties(t_Gas.m_SimpleProperties),
@@ -42,18 +54,18 @@ namespace Gases
         m_GasItem.push_back(item);
     }
 
-	void CGas::addGasItems( const std::initializer_list< std::pair< double, CGasData>> & gases )
-	{
-		if(m_DefaultGas)
-		{
-			m_GasItem.clear();
-			m_DefaultGas = false;
-		}
-		for(const auto & item : gases)
-		{
-			m_GasItem.emplace_back(item.first, item.second);
-		}
-	}
+    void CGas::addGasItems(const std::initializer_list<std::pair<double, CGasData>> & gases)
+    {
+        if(m_DefaultGas)
+        {
+            m_GasItem.clear();
+            m_DefaultGas = false;
+        }
+        for(const auto & item : gases)
+        {
+            m_GasItem.emplace_back(item.first, item.second);
+        }
+    }
 
     void CGas::addGasItems(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases)
     {
