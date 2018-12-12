@@ -8,7 +8,7 @@
 class TestSingleClearSolarCond001 : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -21,12 +21,8 @@ protected:
         auto tSky = 270.0;             // Kelvins
         auto solarRadiation = 1000.0;
 
-        auto Outdoor =
-			Tarcog::ISO15099::Environments::outdoor( airTemperature,
-													 airSpeed,
-													 solarRadiation,
-													 tSky,
-													 Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -59,16 +55,17 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, aIndoor, Outdoor);
+        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
+          new Tarcog::ISO15099::CSingleSystem(aIGU, aIndoor, Outdoor));
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
-        return m_TarcogSystem;
+        return m_TarcogSystem.get();
     };
 };
 

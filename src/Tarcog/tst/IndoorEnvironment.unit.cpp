@@ -41,14 +41,14 @@ protected:
         auto solidLayerThickness = 0.003048;   // [m]
         auto solidLayerConductance = 100.0;
 
-        auto aSolidLayer =
+        auto solidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(aSolidLayer != nullptr);
+        ASSERT_TRUE(solidLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer);
+        aIGU.addLayer(solidLayer);
 
         /////////////////////////////////////////////////////////
         // System

@@ -41,16 +41,18 @@ protected:
         ASSERT_TRUE(solidLayer2 != nullptr);
 
         auto gapThickness = 0.012;
-        auto gapPressure = 101325.0;
-        m_GapLayer = std::make_shared<Tarcog::ISO15099::CIGUGapLayer>(gapThickness, gapPressure);
+        m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         m_IGU = Tarcog::ISO15099::CIGU(windowWidth, windowHeight);
-        m_IGU.addLayer(solidLayer1);
-        m_IGU.addLayer(m_GapLayer);
-        m_IGU.addLayer(solidLayer2);
+        m_IGU.addLayers({solidLayer1, m_GapLayer, solidLayer2});
+
+        // Alternative way of adding layers.
+        // m_IGU.addLayer(solidLayer1);
+        // m_IGU.addLayer(m_GapLayer);
+        // m_IGU.addLayer(solidLayer2);
     }
 
 public:

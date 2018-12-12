@@ -9,7 +9,7 @@
 class TestInBetweenShadeAirArgon : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -43,11 +43,11 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(aLayer1 != nullptr);
+        auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(layer1 != nullptr);
 
-        auto aLayer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(aLayer3 != nullptr);
+        auto layer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(layer3 != nullptr);
 
         auto shadeLayerThickness = 0.01;
         auto shadeLayerConductance = 160.0;
@@ -57,10 +57,10 @@ protected:
         auto Aright = 0.1;
         auto Afront = 0.2;
 
-        auto aLayer2 = Tarcog::ISO15099::Layers::shading(
+        auto layer2 = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront);
 
-        ASSERT_TRUE(aLayer2 != nullptr);
+        ASSERT_TRUE(layer2 != nullptr);
 
         // gap layers
 
@@ -80,40 +80,41 @@ protected:
 
         // Create gas mixture
         Gases::CGas Gas1;
-
-        Gas1.addGasItem(0.1, AirData);
-        Gas1.addGasItem(0.9, ArgonData);
+		Gas1.addGasItems({{0.1, AirData}, {0.9, ArgonData}});
 
         auto gapThickness = 0.0127;
-        auto gapPressure = 101325.0;
-        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1, gapPressure);
-        ASSERT_TRUE(GapLayer1 != nullptr);
+        auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1);
+        ASSERT_TRUE(gap1 != nullptr);
 
-        auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1, gapPressure);
-        ASSERT_TRUE(GapLayer2 != nullptr);
+        auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1);
+        ASSERT_TRUE(gap2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aLayer1);
-        aIGU.addLayer(GapLayer1);
-        aIGU.addLayer(aLayer2);
-        aIGU.addLayer(GapLayer2);
-        aIGU.addLayer(aLayer3);
+        aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
+
+        // Alternative way of adding layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(gap1);
+        // aIGU.addLayer(layer2);
+        // aIGU.addLayer(gap2);
+        // aIGU.addLayer(layer3);
 
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
+        	new Tarcog::ISO15099::CSingleSystem(aIGU, Indoor, Outdoor));
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    Tarcog::ISO15099::CSingleSystem* GetSystem() const
     {
-        return m_TarcogSystem;
+        return m_TarcogSystem.get();
     };
 };
 
