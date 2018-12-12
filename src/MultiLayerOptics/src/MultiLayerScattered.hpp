@@ -7,87 +7,102 @@
 #include "WCECommon.hpp"
 #include "WCESingleLayerOptics.hpp"
 
-namespace SingleLayerOptics {
+namespace SingleLayerOptics
+{
+    class CLayerSingleComponent;
+    class CScatteringLayer;
 
-	class CLayerSingleComponent;
-	class CScatteringLayer;
+}   // namespace SingleLayerOptics
 
-}
+namespace MultiLayerOptics
+{
+    class CInterRef;
+    class CEquivalentScatteringLayer;
 
-namespace MultiLayerOptics {
+    // Handles equivalent layer properties of multilayer IGU that is made of
+    // any type of layer (specular or diffuse)
+    class CMultiLayerScattered : public SingleLayerOptics::IScatteringLayer
+    {
+    public:
+        CMultiLayerScattered(double t_Tf_dir_dir = 0,
+                             double t_Rf_dir_dir = 0,
+                             double t_Tb_dir_dir = 0,
+                             double t_Rb_dir_dir = 0,
+                             double t_Tf_dir_dif = 0,
+                             double t_Rf_dir_dif = 0,
+                             double t_Tb_dir_dif = 0,
+                             double t_Rb_dir_dif = 0,
+                             double t_Tf_dif_dif = 0,
+                             double t_Rf_dif_dif = 0,
+                             double t_Tb_dif_dif = 0,
+                             double t_Rb_dif_dif = 0);
 
-	class CInterRef;
-	class CEquivalentScatteringLayer;
+        static std::unique_ptr<CMultiLayerScattered>
+          create(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
-	// Handles equivalent layer properties of multilayer IGU that is made of
-	// any type of layer (specular or diffuse)
-	class CMultiLayerScattered : public SingleLayerOptics::IScatteringLayer {
-	public:
-		CMultiLayerScattered(
-			double t_Tf_dir_dir = 0, double t_Rf_dir_dir = 0,
-			double t_Tb_dir_dir = 0, double t_Rb_dir_dir = 0,
-			double t_Tf_dir_dif = 0, double t_Rf_dir_dif = 0,
-			double t_Tb_dir_dif = 0, double t_Rb_dir_dif = 0,
-			double t_Tf_dif_dif = 0, double t_Rf_dif_dif = 0,
-			double t_Tb_dif_dif = 0, double t_Rb_dif_dif = 0 );
+        static std::unique_ptr<CMultiLayerScattered>
+          create(const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers);
 
-		static std::unique_ptr<CMultiLayerScattered> create(const SingleLayerOptics::CScatteringLayer & t_Layer);
+        void addLayer(double t_Tf_dir_dir,
+                      double t_Rf_dir_dir,
+                      double t_Tb_dir_dir,
+                      double t_Rb_dir_dir,
+                      double t_Tf_dir_dif,
+                      double t_Rf_dir_dif,
+                      double t_Tb_dir_dif,
+                      double t_Rb_dir_dif,
+                      double t_Tf_dif_dif,
+                      double t_Rf_dif_dif,
+                      double t_Tb_dif_dif,
+                      double t_Rb_dif_dif,
+                      FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back);
 
-		void addLayer(
-			double t_Tf_dir_dir, double t_Rf_dir_dir,
-			double t_Tb_dir_dir, double t_Rb_dir_dir,
-			double t_Tf_dir_dif, double t_Rf_dir_dif,
-			double t_Tb_dir_dif, double t_Rb_dir_dif,
-			double t_Tf_dif_dif, double t_Rf_dif_dif,
-			double t_Tb_dif_dif, double t_Rb_dif_dif,
-			FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+        void addLayer(const SingleLayerOptics::CScatteringLayer & t_Layer,
+                      FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back);
 
-		void addLayer( const SingleLayerOptics::CScatteringLayer & t_Layer,
-		               FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back );
+        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData);
 
-		void setSourceData( std::shared_ptr< FenestrationCommon::CSeries > t_SourceData );
+        size_t getNumOfLayers() const;
 
-		size_t getNumOfLayers() const;
+        double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
+                                 FenestrationCommon::Side t_Side,
+                                 FenestrationCommon::Scattering t_Scattering,
+                                 double t_Theta = 0,
+                                 double t_Phi = 0) override;
 
-		double getPropertySimple(
-			FenestrationCommon::PropertySimple t_Property,
-			FenestrationCommon::Side t_Side,
-			FenestrationCommon::Scattering t_Scattering,
-			double t_Theta = 0,
-			double t_Phi = 0 ) override;
+        double getAbsorptanceLayer(size_t Index,
+                                   FenestrationCommon::Side t_Side,
+                                   FenestrationCommon::ScatteringSimple t_Scattering,
+                                   double t_Theta = 0,
+                                   double t_Phi = 0);
 
-		double getAbsorptanceLayer(
-			size_t Index, FenestrationCommon::Side t_Side,
-			FenestrationCommon::ScatteringSimple t_Scattering,
-			double t_Theta = 0,
-			double t_Phi = 0 );
+        double getAbsorptance(FenestrationCommon::Side t_Side,
+                              FenestrationCommon::ScatteringSimple t_Scattering,
+                              double t_Theta = 0,
+                              double t_Phi = 0);
 
-		double getAbsorptance(
-			FenestrationCommon::Side t_Side,
-			FenestrationCommon::ScatteringSimple t_Scattering,
-			double t_Theta = 0,
-			double t_Phi = 0 );
+        std::vector<double> getWavelengths() const override;
 
-		std::vector< double > getWavelengths() const override;
+        double getMinLambda() const override;
+        double getMaxLambda() const override;
 
-		double getMinLambda() const override;
-		double getMaxLambda() const override;
+    private:
+        explicit CMultiLayerScattered(const SingleLayerOptics::CScatteringLayer & t_Layer);
+        CMultiLayerScattered(
+          const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers);
 
-	private:
-		explicit CMultiLayerScattered( const SingleLayerOptics::CScatteringLayer & t_Layer );
+        void initialize(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
-		void initialize( const SingleLayerOptics::CScatteringLayer & t_Layer );
+        void calculateState(double t_Theta, double t_Phi);
 
-		void calculateState( double t_Theta, double t_Phi );
+        std::shared_ptr<CInterRef> m_InterRef;
+        std::shared_ptr<CEquivalentScatteringLayer> m_Layer;
+        std::vector<SingleLayerOptics::CScatteringLayer> m_Layers;
 
-		std::shared_ptr< CInterRef > m_InterRef;
-		std::shared_ptr< CEquivalentScatteringLayer > m_Layer;
-		std::vector< SingleLayerOptics::CScatteringLayer > m_Layers;
-
-		bool m_Calculated;
-		double m_Theta;
-		double m_Phi;
-	};
-}
+        bool m_Calculated;
+        double m_Theta;
+        double m_Phi;
+    };
+}   // namespace MultiLayerOptics
 
 #endif
