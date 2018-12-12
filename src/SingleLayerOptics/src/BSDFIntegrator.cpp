@@ -136,7 +136,7 @@ namespace SingleLayerOptics
         {
             for(size_t j = 0; j < m_DimMatrices; ++j)
             {
-                sum += t_Matrix(i, j) * m_Directions[i]->lambda() * m_Directions[j]->lambda();
+                sum += t_Matrix(i, j) * m_Directions[i].lambda() * m_Directions[j].lambda();
             }
         }
         return sum / PI;

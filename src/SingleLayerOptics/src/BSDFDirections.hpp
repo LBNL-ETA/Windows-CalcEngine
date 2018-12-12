@@ -6,16 +6,16 @@
 #include <map>
 
 #include "WCECommon.hpp"
+#include "BSDFPatch.hpp"
 
 namespace SingleLayerOptics
 {
-    class CBSDFPatch;
     class CBeamDirection;
 
     class CBSDFDefinition
     {
     public:
-        CBSDFDefinition(const double t_Theta, const size_t t_NumOfPhis);
+        CBSDFDefinition(double t_Theta, size_t t_NumOfPhis);
         double theta() const;
         size_t numOfPhis() const;
 
@@ -35,9 +35,9 @@ namespace SingleLayerOptics
     public:
         CBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions, BSDFDirection t_Side);
         size_t size() const;
-        std::shared_ptr<const CBSDFPatch> operator[](size_t Index) const;
-        std::vector<std::shared_ptr<CBSDFPatch>>::iterator begin();
-        std::vector<std::shared_ptr<CBSDFPatch>>::iterator end();
+        const CBSDFPatch & operator[]( size_t Index ) const;
+        std::vector<CBSDFPatch>::iterator begin();
+        std::vector<CBSDFPatch>::iterator end();
 
         std::vector<double> lambdaVector() const;
         const FenestrationCommon::SquareMatrix & lambdaMatrix() const;
@@ -46,7 +46,7 @@ namespace SingleLayerOptics
         size_t getNearestBeamIndex(double t_Theta, double t_Phi) const;
 
     private:
-        std::vector<std::shared_ptr<CBSDFPatch>> m_Patches;
+        std::vector<CBSDFPatch> m_Patches;
         std::vector<double> m_LambdaVector;
         FenestrationCommon::SquareMatrix m_LambdaMatrix;
     };

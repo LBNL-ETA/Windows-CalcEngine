@@ -64,7 +64,7 @@ namespace SingleLayerOptics
 
 
             CPhiLimits phiAngles(numPhiAngles[i - 1]);
-            std::vector<double> phiLimits = *phiAngles.getPhiLimits();
+            auto phiLimits = phiAngles.getPhiLimits();
             double lowerPhi = phiLimits[0];
             if(t_Side == BSDFDirection::Outgoing)
             {
@@ -77,10 +77,8 @@ namespace SingleLayerOptics
                 {
                     upperPhi += 180;
                 }
-                std::shared_ptr<CAngleLimits> currentPhi =
-                  std::make_shared<CAngleLimits>(lowerPhi, upperPhi);
-                std::shared_ptr<CBSDFPatch> currentPatch =
-                  std::make_shared<CBSDFPatch>(currentTheta, currentPhi);
+                CAngleLimits currentPhi(lowerPhi, upperPhi);
+                CBSDFPatch currentPatch(currentTheta, currentPhi);
                 m_Patches.push_back(currentPatch);
                 lowerPhi = upperPhi;
             }
@@ -93,8 +91,8 @@ namespace SingleLayerOptics
         m_LambdaMatrix = SquareMatrix(size);
         for(size_t i = 0; i < size; ++i)
         {
-            m_LambdaVector.push_back(m_Patches[i]->lambda());
-            m_LambdaMatrix(i, i) = m_Patches[i]->lambda();
+            m_LambdaVector.push_back(m_Patches[i].lambda());
+            m_LambdaMatrix(i, i) = m_Patches[i].lambda();
         }
     }
 
@@ -103,17 +101,17 @@ namespace SingleLayerOptics
         return m_Patches.size();
     }
 
-    std::shared_ptr<const CBSDFPatch> CBSDFDirections::operator[](const size_t Index) const
+    const CBSDFPatch & CBSDFDirections::operator[]( size_t Index ) const
     {
         return m_Patches[Index];
     }
 
-    std::vector<std::shared_ptr<CBSDFPatch>>::iterator CBSDFDirections::begin()
+    std::vector<CBSDFPatch>::iterator CBSDFDirections::begin()
     {
         return m_Patches.begin();
     }
 
-    std::vector<std::shared_ptr<CBSDFPatch>>::iterator CBSDFDirections::end()
+    std::vector<CBSDFPatch>::iterator CBSDFDirections::end()
     {
         return m_Patches.end();
     }
@@ -131,8 +129,8 @@ namespace SingleLayerOptics
     size_t CBSDFDirections::getNearestBeamIndex(const double t_Theta, const double t_Phi) const
     {
         auto it = std::find_if(
-          m_Patches.begin(), m_Patches.end(), [&](const std::shared_ptr<CBSDFPatch> & a) {
-              return a->isInPatch(t_Theta, t_Phi);
+          m_Patches.begin(), m_Patches.end(), [&](const CBSDFPatch & a) {
+              return a.isInPatch(t_Theta, t_Phi);
           });
 
         size_t index = size_t(std::distance(m_Patches.begin(), it));

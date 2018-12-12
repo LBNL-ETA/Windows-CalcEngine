@@ -80,8 +80,8 @@ namespace SingleLayerOptics
             SquareMatrix rho{size};
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = *aDirections[i]->centerPoint();
-                const double Lambda = aDirections[i]->lambda();
+                const CBeamDirection aDirection = aDirections[i].centerPoint();
+                const double Lambda = aDirections[i].lambda();
 
                 const double aTau = m_Cell->T_dir_dir(t_Side, aDirection);
                 const double aRho = m_Cell->R_dir_dir(t_Side, aDirection);
@@ -101,10 +101,10 @@ namespace SingleLayerOptics
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = *aDirections[i]->centerPoint();
+                const CBeamDirection aDirection = aDirections[i].centerPoint();
                 std::vector<double> aTau = m_Cell->T_dir_dir_band(aSide, aDirection);
                 std::vector<double> aRho = m_Cell->R_dir_dir_band(aSide, aDirection);
-                double Lambda = aDirections[i]->lambda();
+                double Lambda = aDirections[i].lambda();
                 size_t numWV = aTau.size();
                 for(size_t j = 0; j < numWV; ++j)
                 {
@@ -127,7 +127,7 @@ namespace SingleLayerOptics
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = *aDirections[i]->centerPoint();
+                const CBeamDirection aDirection = aDirections[i].centerPoint();
                 calcDiffuseDistribution(aSide, aDirection, i);
             }
         }
@@ -142,7 +142,7 @@ namespace SingleLayerOptics
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = *aDirections[i]->centerPoint();
+                const CBeamDirection aDirection = aDirections[i].centerPoint();
                 calcDiffuseDistribution_wv(aSide, aDirection, i);
             }
         }
