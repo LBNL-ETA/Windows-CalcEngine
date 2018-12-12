@@ -20,10 +20,10 @@ namespace SingleLayerOptics
         std::shared_ptr<CUniformDiffuseCell> cellAsUniformDiffuse() const;
         void calcDiffuseDistribution(FenestrationCommon::Side aSide,
                                      const CBeamDirection & t_Direction,
-                                     size_t t_DirectionIndex);
+                                     size_t t_DirectionIndex) override;
         void calcDiffuseDistribution_wv(FenestrationCommon::Side aSide,
                                         const CBeamDirection & t_Direction,
-                                        size_t t_DirectionIndex);
+                                        size_t t_DirectionIndex) override;
     };
 
 }   // namespace SingleLayerOptics
