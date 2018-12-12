@@ -8,7 +8,7 @@
 class TestSingleClear : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -53,14 +53,15 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSystem>(
+        	new Tarcog::ISO15099::CSystem(aIGU, Indoor, Outdoor));
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const
+    Tarcog::ISO15099::CSystem * GetSystem() const
     {
-        return m_TarcogSystem;
+        return m_TarcogSystem.get();
     };
 };
 

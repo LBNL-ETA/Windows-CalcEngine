@@ -6,7 +6,7 @@
 class TestSolidLayer : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> m_SolidLayer;
+    std::unique_ptr<Tarcog::ISO15099::CIGUSolidLayer> m_SolidLayer;
 
 protected:
     void SetUp() override
@@ -19,14 +19,15 @@ protected:
         surface2->setTemperature(300);
 
         m_SolidLayer =
-          std::make_shared<Tarcog::ISO15099::CIGUSolidLayer>(0.01, 2.5, surface1, surface2);
+          std::unique_ptr<Tarcog::ISO15099::CIGUSolidLayer>(
+          	new Tarcog::ISO15099::CIGUSolidLayer(0.01, 2.5, surface1, surface2));
         ASSERT_TRUE(m_SolidLayer != nullptr);
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetLayer() const
+    Tarcog::ISO15099::CIGUSolidLayer* GetLayer() const
     {
-        return m_SolidLayer;
+        return m_SolidLayer.get();
     };
 };
 

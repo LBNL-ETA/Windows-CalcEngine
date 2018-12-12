@@ -44,7 +44,7 @@ protected:
         auto emissivityFrontIR = 0.84;
         auto emissivityBackIR = 0.036749500781;
 
-        auto aSolidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
+        auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                             solidLayerConductance,
                                                             emissivityFrontIR,
                                                             TransmittanceIR,
@@ -54,7 +54,7 @@ protected:
         solidLayerThickness = 0.003962399904;
         emissivityBackIR = 0.84;
 
-        auto aSolidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
+        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                             solidLayerConductance,
                                                             emissivityFrontIR,
                                                             TransmittanceIR,
@@ -69,17 +69,20 @@ protected:
         auto pillarConductivity = 999.0;
         auto pillarSpacing = 0.03;
         auto pillarRadius = 0.0002;
-        auto aGapWithPillars = Tarcog::ISO15099::Layers::addCircularPillar(
+        auto pillarGap = Tarcog::ISO15099::Layers::addCircularPillar(
           aGapLayer, pillarConductivity, pillarSpacing, pillarRadius);
 
-        ASSERT_TRUE(aGapWithPillars != nullptr);
+        ASSERT_TRUE(pillarGap != nullptr);
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(aGapWithPillars);
-        aIGU.addLayer(aSolidLayer2);
+        aIGU.addLayers({layer1, pillarGap, layer2});
+
+        // Alternative way to add layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(pillarGap);
+        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         /// System

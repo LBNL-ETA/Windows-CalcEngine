@@ -42,31 +42,34 @@ protected:
         auto solidLayerThickness2 = 0.005715;
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer1 =
+        auto layer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
-        auto aSolidLayer2 =
+        auto layer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness2, solidLayerConductance);
 
-        auto aSolidLayer3 =
+        auto layer3 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
         auto gapThickness = 0.0127;
         auto gapPressure = 101325.0;
-        auto aGapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        ASSERT_TRUE(aGapLayer1 != nullptr);
+        auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
+        ASSERT_TRUE(gap1 != nullptr);
 
-        auto aGapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        ASSERT_TRUE(aGapLayer2 != nullptr);
+        auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
+        ASSERT_TRUE(gap2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(aGapLayer1);
-        aIGU.addLayer(aSolidLayer2);
-        aIGU.addLayer(aGapLayer2);
-        aIGU.addLayer(aSolidLayer3);
+        aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
+
+        // Alternative way of adding layers
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(gap1);
+        // aIGU.addLayer(layer2);
+        // aIGU.addLayer(gap2);
+        // aIGU.addLayer(layer3);
 
         // Deflection properties
         std::vector<double> measuredGapsWidths = {0.0135, 0.013};

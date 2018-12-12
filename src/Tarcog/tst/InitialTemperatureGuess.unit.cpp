@@ -45,16 +45,18 @@ protected:
         ASSERT_TRUE(solidLayer2 != nullptr);
 
         auto gapThickness = 0.012;
-        auto gapPressure = 101325.0;
-        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        ASSERT_TRUE(gapLayer != nullptr);
+        auto gap = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gap != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aTarIGU(windowWidth, windowHeight);
-        aTarIGU.addLayer(solidLayer1);
-        aTarIGU.addLayer(gapLayer);
-        aTarIGU.addLayer(solidLayer2);
+        aTarIGU.addLayers({solidLayer1, gap, solidLayer2});
+
+        // Alternative way of adding layers.
+        // aTarIGU.addLayer(solidLayer1);
+        // aTarIGU.addLayer(gap);
+        // aTarIGU.addLayer(solidLayer2);
 
         /////////////////////////////////////////////////////////
         // System

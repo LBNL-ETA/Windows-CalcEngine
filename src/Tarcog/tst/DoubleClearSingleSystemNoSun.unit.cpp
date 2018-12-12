@@ -41,23 +41,25 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer1 =
+        auto layer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
-        auto aSolidLayer2 =
+        auto layer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
         auto gapThickness = 0.012;
-        auto gapPressure = 101325.0;
-        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
+        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(m_GapLayer);
-        aIGU.addLayer(aSolidLayer2);
+        aIGU.addLayers({layer1, m_GapLayer, layer2});
+
+        // Alternative way to add layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(m_GapLayer);
+        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         /// System

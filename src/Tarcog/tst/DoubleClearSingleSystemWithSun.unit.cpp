@@ -42,26 +42,28 @@ protected:
         auto solidLayerConductance = 1.0;
         auto solarAbsorptance = 0.187443971634;
 
-        auto aSolidLayer1 =
+        auto layer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer1->setSolarAbsorptance(solarAbsorptance);
+        layer1->setSolarAbsorptance(solarAbsorptance);
 
         solarAbsorptance = 0.054178960621;
-        auto aSolidLayer2 =
+        auto layer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer2->setSolarAbsorptance(solarAbsorptance);
+        layer2->setSolarAbsorptance(solarAbsorptance);
 
         auto gapThickness = 0.012;
-        auto gapPressure = 101325.0;
-        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
+        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         double windowWidth = 1;
         double windowHeight = 1;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(m_GapLayer);
-        aIGU.addLayer(aSolidLayer2);
+        aIGU.addLayers({layer1, m_GapLayer, layer2});
+
+        // Alternative way to add layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(m_GapLayer);
+        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         // System

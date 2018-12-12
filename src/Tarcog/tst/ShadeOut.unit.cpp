@@ -8,7 +8,7 @@
 class TestShadeOut : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -49,7 +49,7 @@ protected:
         auto Aright = 0.0;
         auto Afront = 0.5;
 
-        auto aSolidLayer1 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
+        auto layer1 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
                                                               shadeLayerConductance,
                                                               Atop,
                                                               Abot,
@@ -61,7 +61,7 @@ protected:
                                                               emissivity,
                                                               transmittance);
 
-        ASSERT_TRUE(aSolidLayer1 != nullptr);
+        ASSERT_TRUE(layer1 != nullptr);
 
         auto solidLayerThickness = 0.0056134;   // [m]
         auto solidLayerConductance = 1.0;
@@ -69,39 +69,41 @@ protected:
         auto emissivity2 = 0.038798544556;
         transmittance = 0.0;
 
-        auto aSolidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
+        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                             solidLayerConductance,
                                                             emissivity1,
                                                             transmittance,
                                                             emissivity2,
                                                             transmittance);
-        ASSERT_TRUE(aSolidLayer2 != nullptr);
+        ASSERT_TRUE(layer2 != nullptr);
 
         auto gapThickness = 0.0127;
-        auto gapPressure = 101325.0;
-        auto aGapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        ASSERT_TRUE(aGapLayer != nullptr);
+        auto gap = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gap != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(aGapLayer);
-        aIGU.addLayer(aSolidLayer2);
+        aIGU.addLayers({layer1, gap, layer2});
+
+        // Alternative way of adding layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(gap);
+        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
-        ASSERT_TRUE(m_TarcogSystem != nullptr);
+        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
+        	new Tarcog::ISO15099::CSingleSystem( aIGU, Indoor, Outdoor));
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+	Tarcog::ISO15099::CSingleSystem* GetSystem() const
     {
-        return m_TarcogSystem;
+        return m_TarcogSystem.get();
     };
 };
 
@@ -110,7 +112,6 @@ TEST_F(TestShadeOut, Test1)
     SCOPED_TRACE("Begin Test: Single Clear - U-value");
 
     auto aSystem = GetSystem();
-    ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature{256.991924, 256.992140, 269.666330, 270.128394};
