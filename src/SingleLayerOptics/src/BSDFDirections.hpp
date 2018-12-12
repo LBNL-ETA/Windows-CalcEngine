@@ -5,69 +5,77 @@
 #include <memory>
 #include <map>
 
-namespace FenestrationCommon {
+#include "WCECommon.hpp"
 
-	class SquareMatrix;
+namespace SingleLayerOptics
+{
+    class CBSDFPatch;
+    class CBeamDirection;
 
-}
+    class CBSDFDefinition
+    {
+    public:
+        CBSDFDefinition(const double t_Theta, const size_t t_NumOfPhis);
+        double theta() const;
+        size_t numOfPhis() const;
 
-namespace SingleLayerOptics {
+    private:
+        double m_Theta;
+        size_t m_NumOfPhis;
+    };
 
-	class CBSDFPatch;
-	class CBeamDirection;
+    enum class BSDFDirection
+    {
+        Incoming,
+        Outgoing
+    };
 
-	class CBSDFDefinition {
-	public:
-		CBSDFDefinition( const double t_Theta, const size_t t_NumOfPhis );
-		double theta() const;
-		size_t numOfPhis() const;
+    class CBSDFDirections
+    {
+    public:
+        CBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions, BSDFDirection t_Side);
+        size_t size() const;
+        std::shared_ptr<const CBSDFPatch> operator[](size_t Index) const;
+        std::vector<std::shared_ptr<CBSDFPatch>>::iterator begin();
+        std::vector<std::shared_ptr<CBSDFPatch>>::iterator end();
 
-	private:
-		double m_Theta;
-		size_t m_NumOfPhis;
-	};
+        std::vector<double> lambdaVector() const;
+        const FenestrationCommon::SquareMatrix & lambdaMatrix() const;
 
-	enum class BSDFDirection { Incoming, Outgoing };
+        // returns index of element that is closest to given Theta and Phi angles
+        size_t getNearestBeamIndex(double t_Theta, double t_Phi) const;
 
-	class CBSDFDirections {
-	public:
-		CBSDFDirections( const std::vector< CBSDFDefinition >& t_Definitions, const BSDFDirection t_Side );
-		size_t size() const;
-		std::shared_ptr< const CBSDFPatch > operator[]( const size_t Index ) const;
-		std::vector< std::shared_ptr< CBSDFPatch > >::iterator begin();
-		std::vector< std::shared_ptr< CBSDFPatch > >::iterator end();
+    private:
+        std::vector<std::shared_ptr<CBSDFPatch>> m_Patches;
+        std::vector<double> m_LambdaVector;
+        FenestrationCommon::SquareMatrix m_LambdaMatrix;
+    };
 
-		std::vector< double > lambdaVector() const;
-		FenestrationCommon::SquareMatrix lambdaMatrix() const;
+    enum class BSDFBasis
+    {
+        Small,
+        Quarter,
+        Half,
+        Full
+    };
 
-		// returns index of element that is closest to given Theta and Phi angles
-		size_t getNearestBeamIndex( const double t_Theta, const double t_Phi ) const;
+    class CBSDFHemisphere
+    {
+    public:
+        static CBSDFHemisphere create(BSDFBasis t_Basis);
+        static CBSDFHemisphere create(const std::vector<CBSDFDefinition> & t_Definitions);
 
-	private:
-		std::vector< std::shared_ptr< CBSDFPatch > > m_Patches;
-		std::shared_ptr< std::vector< double > > m_LambdaVector;
-		std::shared_ptr< FenestrationCommon::SquareMatrix > m_LambdaMatrix;
+        const CBSDFDirections & getDirections(BSDFDirection t_Side) const;
 
-	};
+    private:
+        // Construction for pre-defined basis
+        explicit CBSDFHemisphere(BSDFBasis t_Basis);
+        // Construction for custom basis
+        explicit CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions);
 
-	enum class BSDFBasis { Small, Quarter, Half, Full };
+        std::map<BSDFDirection, CBSDFDirections> m_Directions;
+    };
 
-	class CBSDFHemisphere {
-	public:
-		static CBSDFHemisphere create( BSDFBasis t_Basis );
-		static CBSDFHemisphere create( const std::vector< CBSDFDefinition > & t_Definitions );
-
-		const CBSDFDirections & getDirections( BSDFDirection t_Side ) const;
-
-	private:
-		// Construction for pre-defined basis
-		explicit CBSDFHemisphere( BSDFBasis t_Basis );
-		// Construction for custom basis
-		explicit CBSDFHemisphere( const std::vector< CBSDFDefinition >& t_Definitions );
-
-		std::map< BSDFDirection, CBSDFDirections > m_Directions;
-	};
-
-}
+}   // namespace SingleLayerOptics
 
 #endif

@@ -89,12 +89,12 @@ namespace SingleLayerOptics
 
         // build lambda std::vector and matrix
         size_t size = m_Patches.size();
-        m_LambdaVector = std::make_shared<std::vector<double>>();
-        m_LambdaMatrix = std::make_shared<SquareMatrix>(size);
+        // m_LambdaVector = std::make_shared<std::vector<double>>();
+        m_LambdaMatrix = SquareMatrix(size);
         for(size_t i = 0; i < size; ++i)
         {
-            m_LambdaVector->push_back(m_Patches[i]->lambda());
-            (*m_LambdaMatrix)(i, i) = m_Patches[i]->lambda();
+            m_LambdaVector.push_back(m_Patches[i]->lambda());
+            m_LambdaMatrix(i, i) = m_Patches[i]->lambda();
         }
     }
 
@@ -120,12 +120,12 @@ namespace SingleLayerOptics
 
     std::vector<double> CBSDFDirections::lambdaVector() const
     {
-        return *m_LambdaVector;
+        return m_LambdaVector;
     }
 
-    SquareMatrix CBSDFDirections::lambdaMatrix() const
+    const SquareMatrix & CBSDFDirections::lambdaMatrix() const
     {
-        return *m_LambdaMatrix;
+        return m_LambdaMatrix;
     }
 
     size_t CBSDFDirections::getNearestBeamIndex(const double t_Theta, const double t_Phi) const
@@ -135,7 +135,7 @@ namespace SingleLayerOptics
               return a->isInPatch(t_Theta, t_Phi);
           });
 
-        size_t index = std::distance(m_Patches.begin(), it);
+        size_t index = size_t(std::distance(m_Patches.begin(), it));
         return index;
     }
 
@@ -149,40 +149,25 @@ namespace SingleLayerOptics
         switch(t_Basis)
         {
             case BSDFBasis::Small:
-                aDefinitions.emplace_back(0, 1);
-                aDefinitions.emplace_back(13, 1);
-                aDefinitions.emplace_back(26, 1);
-                aDefinitions.emplace_back(39, 1);
-                aDefinitions.emplace_back(52, 1);
-                aDefinitions.emplace_back(65, 1);
-                aDefinitions.emplace_back(80.75, 1);
+                aDefinitions = {{0, 1}, {13, 1}, {26, 1}, {39, 1}, {52, 1}, {65, 1}, {80.75, 1}};
                 break;
             case BSDFBasis::Quarter:
-                aDefinitions.emplace_back(0, 1);
-                aDefinitions.emplace_back(18, 8);
-                aDefinitions.emplace_back(36, 12);
-                aDefinitions.emplace_back(54, 12);
-                aDefinitions.emplace_back(76.5, 8);
+                aDefinitions = {{0, 1}, {18, 8}, {36, 12}, {54, 12}, {76.5, 8}};
                 break;
             case BSDFBasis::Half:
-                aDefinitions.emplace_back(0, 1);
-                aDefinitions.emplace_back(13, 8);
-                aDefinitions.emplace_back(26, 12);
-                aDefinitions.emplace_back(39, 16);
-                aDefinitions.emplace_back(52, 20);
-                aDefinitions.emplace_back(65, 12);
-                aDefinitions.emplace_back(80.75, 8);
+                aDefinitions = {
+                  {0, 1}, {13, 8}, {26, 12}, {39, 16}, {52, 20}, {65, 12}, {80.75, 8}};
                 break;
             case BSDFBasis::Full:
-                aDefinitions.emplace_back(0, 1);
-                aDefinitions.emplace_back(10, 8);
-                aDefinitions.emplace_back(20, 16);
-                aDefinitions.emplace_back(30, 20);
-                aDefinitions.emplace_back(40, 24);
-                aDefinitions.emplace_back(50, 24);
-                aDefinitions.emplace_back(60, 24);
-                aDefinitions.emplace_back(70, 16);
-                aDefinitions.emplace_back(82.5, 12);
+                aDefinitions = {{0, 1},
+                                {10, 8},
+                                {20, 16},
+                                {30, 20},
+                                {40, 24},
+                                {50, 24},
+                                {60, 24},
+                                {70, 16},
+                                {82.5, 12}};
                 break;
             default:
                 throw std::runtime_error("Incorrect definition of the basis.");
