@@ -15,7 +15,9 @@ namespace SingleLayerOptics
     ///  CBSDFDefinition
     /////////////////////////////////////////////////////////////////
 
-    CBSDFDefinition::CBSDFDefinition(const double t_Theta, const size_t t_NumOfPhis) : m_Theta(t_Theta), m_NumOfPhis(t_NumOfPhis)
+    CBSDFDefinition::CBSDFDefinition(const double t_Theta, const size_t t_NumOfPhis) :
+        m_Theta(t_Theta),
+        m_NumOfPhis(t_NumOfPhis)
     {}
 
     double CBSDFDefinition::theta() const
@@ -32,7 +34,8 @@ namespace SingleLayerOptics
     ///  CBSDFDirections
     /////////////////////////////////////////////////////////////////
 
-    CBSDFDirections::CBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions, const BSDFDirection t_Side)
+    CBSDFDirections::CBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions,
+                                     const BSDFDirection t_Side)
     {
         std::vector<double> thetaAngles;
         std::vector<size_t> numPhiAngles;
@@ -74,8 +77,10 @@ namespace SingleLayerOptics
                 {
                     upperPhi += 180;
                 }
-                std::shared_ptr<CAngleLimits> currentPhi = std::make_shared<CAngleLimits>(lowerPhi, upperPhi);
-                std::shared_ptr<CBSDFPatch> currentPatch = std::make_shared<CBSDFPatch>(currentTheta, currentPhi);
+                std::shared_ptr<CAngleLimits> currentPhi =
+                  std::make_shared<CAngleLimits>(lowerPhi, upperPhi);
+                std::shared_ptr<CBSDFPatch> currentPatch =
+                  std::make_shared<CBSDFPatch>(currentTheta, currentPhi);
                 m_Patches.push_back(currentPatch);
                 lowerPhi = upperPhi;
             }
@@ -125,8 +130,10 @@ namespace SingleLayerOptics
 
     size_t CBSDFDirections::getNearestBeamIndex(const double t_Theta, const double t_Phi) const
     {
-        auto it =
-          std::find_if(m_Patches.begin(), m_Patches.end(), [&](const std::shared_ptr<CBSDFPatch> & a) { return a->isInPatch(t_Theta, t_Phi); });
+        auto it = std::find_if(
+          m_Patches.begin(), m_Patches.end(), [&](const std::shared_ptr<CBSDFPatch> & a) {
+              return a->isInPatch(t_Theta, t_Phi);
+          });
 
         size_t index = std::distance(m_Patches.begin(), it);
         return index;
@@ -142,65 +149,69 @@ namespace SingleLayerOptics
         switch(t_Basis)
         {
             case BSDFBasis::Small:
-                aDefinitions.push_back(CBSDFDefinition(0, 1));
-                aDefinitions.push_back(CBSDFDefinition(13, 1));
-                aDefinitions.push_back(CBSDFDefinition(26, 1));
-                aDefinitions.push_back(CBSDFDefinition(39, 1));
-                aDefinitions.push_back(CBSDFDefinition(52, 1));
-                aDefinitions.push_back(CBSDFDefinition(65, 1));
-                aDefinitions.push_back(CBSDFDefinition(80.75, 1));
+                aDefinitions.emplace_back(0, 1);
+                aDefinitions.emplace_back(13, 1);
+                aDefinitions.emplace_back(26, 1);
+                aDefinitions.emplace_back(39, 1);
+                aDefinitions.emplace_back(52, 1);
+                aDefinitions.emplace_back(65, 1);
+                aDefinitions.emplace_back(80.75, 1);
                 break;
             case BSDFBasis::Quarter:
-                aDefinitions.push_back(CBSDFDefinition(0, 1));
-                aDefinitions.push_back(CBSDFDefinition(18, 8));
-                aDefinitions.push_back(CBSDFDefinition(36, 12));
-                aDefinitions.push_back(CBSDFDefinition(54, 12));
-                aDefinitions.push_back(CBSDFDefinition(76.5, 8));
+                aDefinitions.emplace_back(0, 1);
+                aDefinitions.emplace_back(18, 8);
+                aDefinitions.emplace_back(36, 12);
+                aDefinitions.emplace_back(54, 12);
+                aDefinitions.emplace_back(76.5, 8);
                 break;
             case BSDFBasis::Half:
-                aDefinitions.push_back(CBSDFDefinition(0, 1));
-                aDefinitions.push_back(CBSDFDefinition(13, 8));
-                aDefinitions.push_back(CBSDFDefinition(26, 12));
-                aDefinitions.push_back(CBSDFDefinition(39, 16));
-                aDefinitions.push_back(CBSDFDefinition(52, 20));
-                aDefinitions.push_back(CBSDFDefinition(65, 12));
-                aDefinitions.push_back(CBSDFDefinition(80.75, 8));
+                aDefinitions.emplace_back(0, 1);
+                aDefinitions.emplace_back(13, 8);
+                aDefinitions.emplace_back(26, 12);
+                aDefinitions.emplace_back(39, 16);
+                aDefinitions.emplace_back(52, 20);
+                aDefinitions.emplace_back(65, 12);
+                aDefinitions.emplace_back(80.75, 8);
                 break;
             case BSDFBasis::Full:
-                aDefinitions.push_back(CBSDFDefinition(0, 1));
-                aDefinitions.push_back(CBSDFDefinition(10, 8));
-                aDefinitions.push_back(CBSDFDefinition(20, 16));
-                aDefinitions.push_back(CBSDFDefinition(30, 20));
-                aDefinitions.push_back(CBSDFDefinition(40, 24));
-                aDefinitions.push_back(CBSDFDefinition(50, 24));
-                aDefinitions.push_back(CBSDFDefinition(60, 24));
-                aDefinitions.push_back(CBSDFDefinition(70, 16));
-                aDefinitions.push_back(CBSDFDefinition(82.5, 12));
+                aDefinitions.emplace_back(0, 1);
+                aDefinitions.emplace_back(10, 8);
+                aDefinitions.emplace_back(20, 16);
+                aDefinitions.emplace_back(30, 20);
+                aDefinitions.emplace_back(40, 24);
+                aDefinitions.emplace_back(50, 24);
+                aDefinitions.emplace_back(60, 24);
+                aDefinitions.emplace_back(70, 16);
+                aDefinitions.emplace_back(82.5, 12);
                 break;
             default:
                 throw std::runtime_error("Incorrect definition of the basis.");
         }
-        m_Directions.insert(std::make_pair(BSDFDirection::Incoming, CBSDFDirections(aDefinitions, BSDFDirection::Incoming)));
-        m_Directions.insert(std::make_pair(BSDFDirection::Outgoing, CBSDFDirections(aDefinitions, BSDFDirection::Outgoing)));
+        m_Directions.insert(std::make_pair(BSDFDirection::Incoming,
+                                           CBSDFDirections(aDefinitions, BSDFDirection::Incoming)));
+        m_Directions.insert(std::make_pair(BSDFDirection::Outgoing,
+                                           CBSDFDirections(aDefinitions, BSDFDirection::Outgoing)));
     }
 
     CBSDFHemisphere::CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions) :
-        m_Directions({{BSDFDirection::Incoming, CBSDFDirections(t_Definitions, BSDFDirection::Incoming)},
-        {BSDFDirection::Outgoing, CBSDFDirections(t_Definitions, BSDFDirection::Outgoing)}})
+        m_Directions(
+          {{BSDFDirection::Incoming, CBSDFDirections(t_Definitions, BSDFDirection::Incoming)},
+           {BSDFDirection::Outgoing, CBSDFDirections(t_Definitions, BSDFDirection::Outgoing)}})
     {}
 
-    const CBSDFDirections & CBSDFHemisphere::getDirections( const BSDFDirection tDirection ) const
+    const CBSDFDirections & CBSDFHemisphere::getDirections(const BSDFDirection tDirection) const
     {
         return m_Directions.at(tDirection);
     }
 
-	std::shared_ptr< CBSDFHemisphere > CBSDFHemisphere::create( BSDFBasis t_Basis ) {
-		return std::shared_ptr< CBSDFHemisphere >(new CBSDFHemisphere(t_Basis));
-	}
+    CBSDFHemisphere CBSDFHemisphere::create(BSDFBasis t_Basis)
+    {
+        return CBSDFHemisphere(t_Basis);
+    }
 
-	std::shared_ptr< CBSDFHemisphere >
-	CBSDFHemisphere::create( const std::vector< CBSDFDefinition > & t_Definitions ) {
-		return std::shared_ptr< CBSDFHemisphere >(new CBSDFHemisphere(t_Definitions));
-	}
+    CBSDFHemisphere CBSDFHemisphere::create(const std::vector<CBSDFDefinition> & t_Definitions)
+    {
+        return CBSDFHemisphere(t_Definitions);
+    }
 
 }   // namespace SingleLayerOptics

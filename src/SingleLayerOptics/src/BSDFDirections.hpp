@@ -54,8 +54,8 @@ namespace SingleLayerOptics {
 
 	class CBSDFHemisphere {
 	public:
-		static std::shared_ptr<CBSDFHemisphere> create(BSDFBasis t_Basis);
-		static std::shared_ptr<CBSDFHemisphere> create(const std::vector< CBSDFDefinition >& t_Definitions);
+		static CBSDFHemisphere create( BSDFBasis t_Basis );
+		static CBSDFHemisphere create( const std::vector< CBSDFDefinition > & t_Definitions );
 
 		const CBSDFDirections & getDirections( BSDFDirection t_Side ) const;
 
