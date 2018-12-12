@@ -22,9 +22,7 @@ namespace SingleLayerOptics
     {
     public:
 
-        std::shared_ptr<CBaseCell> getCell() const;
-
-        static std::shared_ptr<CBSDFLayer>
+		static std::shared_ptr<CBSDFLayer>
           getSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
                            const std::shared_ptr<const CBSDFHemisphere> & t_BSDF);
 
