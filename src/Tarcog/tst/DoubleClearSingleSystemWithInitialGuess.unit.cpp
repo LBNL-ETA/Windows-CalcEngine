@@ -18,18 +18,12 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
-        auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
         auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor =
-          Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                                  pressure,
-                                                  airSpeed,
-                                                  solarRadiation,
-                                                  tSky,
-                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -39,7 +33,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -48,23 +42,23 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer1 =
-          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
-        auto aSolidLayer2 =
-          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
         auto gapThickness = 0.012;
-        auto gapPressure = 101325.0;
-        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
+        auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(m_GapLayer);
-        aIGU.addLayer(aSolidLayer2);
+        aIGU.addLayers({layer1, m_GapLayer, layer2});
+
+        // Alternative way to add layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(m_GapLayer);
+        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         /// System
@@ -73,7 +67,7 @@ protected:
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         // set up initial guess. It was taken to be close to solution.
-        std::vector<double> aTemperatures = {258.75, 259.36, 279.18, 279.78};
+        std::vector<double> aTemperatures{258.75, 259.36, 279.18, 279.78};
         m_TarcogSystem->setInitialGuess(aTemperatures);
 
         m_TarcogSystem->solve();

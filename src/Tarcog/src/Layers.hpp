@@ -38,9 +38,9 @@ namespace Tarcog
                                                            double backEmissivity = 0.84,
                                                            double backTransmittance = 0.0);
 
-            static std::shared_ptr<CIGUGapLayer> gap(double thickness, double pressure);
+            static std::shared_ptr<CIGUGapLayer> gap(double thickness, double pressure = 101325);
             static std::shared_ptr<CIGUGapLayer>
-              gap(double thickness, double pressure, const Gases::CGas & gas);
+              gap(double thickness, const Gases::CGas & gas, double pressure = 101325);
 
             static std::shared_ptr<CIGUGapLayer>
               addCircularPillar(const std::shared_ptr<CIGUGapLayer> & gap,

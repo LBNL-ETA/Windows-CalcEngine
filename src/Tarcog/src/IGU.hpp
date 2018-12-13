@@ -24,7 +24,8 @@ namespace Tarcog
             CIGU & operator=(CIGU const & t_IGU);
             ~CIGU();
 
-            void addLayer(std::shared_ptr<CBaseIGULayer> const & t_Layer);
+            void addLayer(const std::shared_ptr<CBaseIGULayer> & t_Layer);
+            void addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers);
 
             std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
             std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;

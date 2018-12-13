@@ -98,6 +98,14 @@ namespace Tarcog
             t_Layer->setHeight(m_Height);
         }
 
+        void CIGU::addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers)
+        {
+        	for(const auto & layer : layers)
+			{
+        		addLayer(layer);
+			}
+        }
+
         void CIGU::setTilt(double const t_Tilt)
         {
             for(auto & layer : m_Layers)
@@ -177,7 +185,7 @@ namespace Tarcog
 
         std::vector<double> CIGU::getTemperatures() const
         {
-			std::vector<double> aTemperatures;
+            std::vector<double> aTemperatures;
 
             for(auto const & layer : getSolidLayers())
             {
@@ -192,7 +200,7 @@ namespace Tarcog
 
         std::vector<double> CIGU::getRadiosities() const
         {
-			std::vector<double> aRadiosities;
+            std::vector<double> aRadiosities;
 
             for(auto const & layer : getSolidLayers())
             {
@@ -207,7 +215,7 @@ namespace Tarcog
 
         std::vector<double> CIGU::getMaxDeflections() const
         {
-			std::vector<double> aMaxDeflections;
+            std::vector<double> aMaxDeflections;
 
             for(auto const & layer : getSolidLayers())
             {
@@ -219,7 +227,7 @@ namespace Tarcog
 
         std::vector<double> CIGU::getMeanDeflections() const
         {
-			std::vector<double> aMeanDeflections;
+            std::vector<double> aMeanDeflections;
 
             for(auto const & layer : getSolidLayers())
             {

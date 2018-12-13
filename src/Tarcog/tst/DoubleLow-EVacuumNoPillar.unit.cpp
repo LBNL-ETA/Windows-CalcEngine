@@ -17,18 +17,12 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
-        auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
         auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor =
-          Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                                  pressure,
-                                                  airSpeed,
-                                                  solarRadiation,
-                                                  tSky,
-                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -38,7 +32,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -50,7 +44,7 @@ protected:
         auto emissivityFrontIR = 0.84;
         auto emissivityBackIR = 0.036749500781;
 
-        auto aSolidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
+        auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                             solidLayerConductance,
                                                             emissivityFrontIR,
                                                             TransmittanceIR,
@@ -60,7 +54,7 @@ protected:
         solidLayerThickness = 0.003962399904;
         emissivityBackIR = 0.84;
 
-        auto aSolidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
+        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                             solidLayerConductance,
                                                             emissivityFrontIR,
                                                             TransmittanceIR,
@@ -75,9 +69,12 @@ protected:
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer1);
-        aIGU.addLayer(m_GapLayer);
-        aIGU.addLayer(aSolidLayer2);
+        aIGU.addLayers({layer1, m_GapLayer, layer2});
+
+        // Alternative way of adding layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(m_GapLayer);
+        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         /// System

@@ -17,17 +17,12 @@ protected:
         // Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
-        auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;   // Kelvins
+        auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-															   Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -37,7 +32,7 @@ protected:
 
         auto roomTemperature = 295.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -54,32 +49,34 @@ protected:
         auto dright = 0.1;
         auto Afront = 0.2;
 
-        auto aLayer1 = Tarcog::ISO15099::Layers::shading(
-			shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront );
+        auto layer1 = Tarcog::ISO15099::Layers::shading(
+          shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront);
 
-        ASSERT_TRUE(aLayer1 != nullptr);
+        ASSERT_TRUE(layer1 != nullptr);
 
-        auto aLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(aLayer2 != nullptr);
+        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(layer2 != nullptr);
 
-        auto aLayer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto layer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
         auto gapThickness = 0.0127;
-        auto gapPressure = 101325.0;
-        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        ASSERT_TRUE(GapLayer1 != nullptr);
+        auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gap1 != nullptr);
 
-        auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        ASSERT_TRUE(GapLayer2 != nullptr);
+        auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gap2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aLayer1);
-        aIGU.addLayer(GapLayer1);
-        aIGU.addLayer(aLayer2);
-        aIGU.addLayer(GapLayer2);
-        aIGU.addLayer(aLayer3);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
+
+        // Alternative way of adding layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(gap1);
+        // aIGU.addLayer(layer2);
+        // aIGU.addLayer(gap2);
+        // aIGU.addLayer(layer3);
 
         /////////////////////////////////////////////////////////
         // System

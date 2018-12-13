@@ -273,7 +273,7 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional, TestBSDF1)
     }
 
     // Front absorptance layer 1
-    std::vector<double> aAbsF = *aLayer.Abs(minLambda, maxLambda, Side::Front, 1);
+    auto aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 1);
 
     correctResults.clear();
 
@@ -292,7 +292,7 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional, TestBSDF1)
     }
 
     // Front absorptance layer 2
-    aAbsF = *aLayer.Abs(minLambda, maxLambda, Side::Front, 2);
+    aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 2);
 
     correctResults.clear();
 
@@ -311,7 +311,7 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional, TestBSDF1)
     }
 
     // Back absorptance layer 1
-    std::vector<double> aAbsB = *aLayer.Abs(minLambda, maxLambda, Side::Back, 1);
+    auto aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 1);
 
     correctResults.clear();
 
@@ -330,7 +330,7 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional, TestBSDF1)
     }
 
     // Back absorptance layer 2
-    aAbsB = *aLayer.Abs(minLambda, maxLambda, Side::Back, 2);
+    aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 2);
 
     correctResults.clear();
 

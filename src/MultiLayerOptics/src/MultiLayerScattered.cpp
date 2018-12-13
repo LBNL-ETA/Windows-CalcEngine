@@ -43,7 +43,10 @@ namespace MultiLayerOptics
         initialize(aLayer);
     }
 
-    CMultiLayerScattered::CMultiLayerScattered(const CScatteringLayer & t_Layer) : m_Calculated(false), m_Theta(0), m_Phi(0)
+    CMultiLayerScattered::CMultiLayerScattered(const CScatteringLayer & t_Layer) :
+        m_Calculated(false),
+        m_Theta(0),
+        m_Phi(0)
     {
         initialize(t_Layer);
     }
@@ -109,21 +112,30 @@ namespace MultiLayerOptics
         return m_Layers.size();
     }
 
-    double CMultiLayerScattered::getPropertySimple(
-      const PropertySimple t_Property, const Side t_Side, const Scattering t_Scattering, const double t_Theta, const double t_Phi)
+    double CMultiLayerScattered::getPropertySimple(const PropertySimple t_Property,
+                                                   const Side t_Side,
+                                                   const Scattering t_Scattering,
+                                                   const double t_Theta,
+                                                   const double t_Phi)
     {
         calculateState(t_Theta, t_Phi);
         return m_Layer->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
     }
 
-    double CMultiLayerScattered::getAbsorptanceLayer(
-      const size_t Index, Side t_Side, ScatteringSimple t_Scattering, const double t_Theta, const double t_Phi)
+    double CMultiLayerScattered::getAbsorptanceLayer(const size_t Index,
+                                                     Side t_Side,
+                                                     ScatteringSimple t_Scattering,
+                                                     const double t_Theta,
+                                                     const double t_Phi)
     {
         calculateState(t_Theta, t_Phi);
         return m_InterRef->getAbsorptance(Index, t_Side, t_Scattering, t_Theta, t_Phi);
     }
 
-    double CMultiLayerScattered::getAbsorptance(Side t_Side, ScatteringSimple t_Scattering, const double t_Theta, const double t_Phi)
+    double CMultiLayerScattered::getAbsorptance(Side t_Side,
+                                                ScatteringSimple t_Scattering,
+                                                const double t_Theta,
+                                                const double t_Phi)
     {
         calculateState(t_Theta, t_Phi);
         double aAbs = 0;
@@ -171,9 +183,25 @@ namespace MultiLayerOptics
         return m_Layers[0].getMaxLambda();
     }
 
-	std::unique_ptr< CMultiLayerScattered >
-	CMultiLayerScattered::create( const SingleLayerOptics::CScatteringLayer & t_Layer ) {
-		return std::unique_ptr< CMultiLayerScattered >(new CMultiLayerScattered(t_Layer));
-	}
+    std::unique_ptr<CMultiLayerScattered>
+      CMultiLayerScattered::create(const SingleLayerOptics::CScatteringLayer & t_Layer)
+    {
+        return std::unique_ptr<CMultiLayerScattered>(new CMultiLayerScattered(t_Layer));
+    }
+
+    std::unique_ptr<CMultiLayerScattered> CMultiLayerScattered::create(
+      const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers)
+    {
+        return std::unique_ptr<CMultiLayerScattered>(new CMultiLayerScattered(layers));
+    }
+
+    CMultiLayerScattered::CMultiLayerScattered(
+      const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers)
+    {
+        for(const auto & layer : layers)
+        {
+            addLayer(layer);
+        }
+    }
 
 }   // namespace MultiLayerOptics

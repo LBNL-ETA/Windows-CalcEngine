@@ -28,7 +28,7 @@ namespace Tarcog
 		}
 
 		std::shared_ptr< CIGUGapLayer >
-		Layers::gap( double thickness, double pressure, const Gases::CGas & gas ) {
+		Layers::gap( double thickness, const Gases::CGas & gas, double pressure ) {
 			return std::make_shared< CIGUGapLayer >( thickness, pressure, gas );
 		}
 
