@@ -11,16 +11,10 @@ using namespace SingleLayerOptics;
 class TestPhiLimits1 : public testing::Test
 {
 private:
-    std::shared_ptr<CPhiLimits> m_PhiLimits;
-
-protected:
-    virtual void SetUp()
-    {
-        m_PhiLimits = std::make_shared<CPhiLimits>(8);
-    }
+    CPhiLimits m_PhiLimits{8};
 
 public:
-    std::shared_ptr<CPhiLimits> GetLimits()
+    const CPhiLimits & GetLimits() const
     {
         return m_PhiLimits;
     };
@@ -30,9 +24,9 @@ TEST_F(TestPhiLimits1, TestBSDFRingCreation)
 {
     SCOPED_TRACE("Begin Test: BSDF Phi limits creation.");
 
-    std::shared_ptr<CPhiLimits> aLimits = GetLimits();
+    const auto aLimits = GetLimits();
 
-    std::vector<double> results = *(aLimits->getPhiLimits());
+    const auto & results = aLimits.getPhiLimits();
 
     std::vector<double> correctResults{-22.5, 22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5};
     EXPECT_EQ(results.size(), correctResults.size());

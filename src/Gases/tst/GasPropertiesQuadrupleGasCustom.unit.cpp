@@ -43,10 +43,13 @@ protected:
                              {4.538e-04, 1.723e-05, 0.0},   // Conductivity coefficients
                              {1.069e-6, 7.414e-8, 0.0}};    // Viscosity coefficients
 
-        m_Gas.addGasItem(0.1, Air);
-        m_Gas.addGasItem(0.3, Argon);
-        m_Gas.addGasItem(0.3, Krypton);
-        m_Gas.addGasItem(0.3, Xenon);
+        m_Gas.addGasItems({{0.1, Air}, {0.3, Argon}, {0.3, Krypton}, {0.3, Xenon}});
+
+        // Alternative way of adding mixtures
+		//m_Gas.addGasItem(0.1, Air);
+		//m_Gas.addGasItem(0.3, Argon);
+		//m_Gas.addGasItem(0.3, Krypton);
+		//m_Gas.addGasItem(0.3, Xenon);
     }
 };
 

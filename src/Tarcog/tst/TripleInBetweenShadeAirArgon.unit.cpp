@@ -9,7 +9,7 @@
 class TestInBetweenShadeAirArgon : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -18,17 +18,12 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 255.15;   // Kelvins
-        auto pressure = 101325.0;       // Pascals
         auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;   // Kelvins
+        auto tSky = 255.15;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                             pressure,
-                                             airSpeed,
-                                             solarRadiation,
-                                             tSky,
-															   Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -37,7 +32,7 @@ protected:
         /////////////////////////////////////////////////////////
         auto roomTemperature = 295.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -48,11 +43,11 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto aLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(aLayer1 != nullptr);
+        auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(layer1 != nullptr);
 
-        auto aLayer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(aLayer3 != nullptr);
+        auto layer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(layer3 != nullptr);
 
         auto shadeLayerThickness = 0.01;
         auto shadeLayerConductance = 160.0;
@@ -62,63 +57,63 @@ protected:
         auto Aright = 0.1;
         auto Afront = 0.2;
 
-        auto aLayer2 = Tarcog::ISO15099::Layers::shading(
-			shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront );
+        auto layer2 = Tarcog::ISO15099::Layers::shading(
+          shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront);
 
-        ASSERT_TRUE(aLayer2 != nullptr);
+        ASSERT_TRUE(layer2 != nullptr);
 
         // gap layers
 
         // Create coefficients for Air
-        Gases::CIntCoeff AirCon = {2.8733e-03, 7.76e-05, 0.0};
-        Gases::CIntCoeff AirCp = {1.002737e+03, 1.2324e-02, 0.0};
-        Gases::CIntCoeff AirVisc = {3.7233e-06, 4.94e-08, 0.0};
+        Gases::CIntCoeff AirCon{2.8733e-03, 7.76e-05, 0.0};
+        Gases::CIntCoeff AirCp{1.002737e+03, 1.2324e-02, 0.0};
+        Gases::CIntCoeff AirVisc{3.7233e-06, 4.94e-08, 0.0};
 
         Gases::CGasData AirData{"Air", 28.97, 1.4, AirCp, AirCon, AirVisc};
 
         // Create coefficients for Argon
-        Gases::CIntCoeff ArgonCon = {2.2848e-03, 5.1486e-05, 0.0};
-        Gases::CIntCoeff ArgonCp = {5.21929e+02, 0.0, 0.0};
-        Gases::CIntCoeff ArgonVisc = {3.3786e-06, 6.4514e-08, 0.0};
+        Gases::CIntCoeff ArgonCon{2.2848e-03, 5.1486e-05, 0.0};
+        Gases::CIntCoeff ArgonCp{5.21929e+02, 0.0, 0.0};
+        Gases::CIntCoeff ArgonVisc{3.3786e-06, 6.4514e-08, 0.0};
 
         Gases::CGasData ArgonData{"Argon", 39.948, 1.67, ArgonCp, ArgonCon, ArgonVisc};
 
         // Create gas mixture
-        Gases::CGas Gas1;
-
-        Gas1.addGasItem(0.1, AirData);
-        Gas1.addGasItem(0.9, ArgonData);
+        Gases::CGas Gas1({{0.1, AirData}, {0.9, ArgonData}});
 
         auto gapThickness = 0.0127;
-        auto gapPressure = 101325.0;
-        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure, Gas1);
-        ASSERT_TRUE(GapLayer1 != nullptr);
+        auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1);
+        ASSERT_TRUE(gap1 != nullptr);
 
-        auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure, Gas1);
-        ASSERT_TRUE(GapLayer2 != nullptr);
+        auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1);
+        ASSERT_TRUE(gap2 != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aLayer1);
-        aIGU.addLayer(GapLayer1);
-        aIGU.addLayer(aLayer2);
-        aIGU.addLayer(GapLayer2);
-        aIGU.addLayer(aLayer3);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
+
+        // Alternative way of adding layers.
+        // aIGU.addLayer(layer1);
+        // aIGU.addLayer(gap1);
+        // aIGU.addLayer(layer2);
+        // aIGU.addLayer(gap2);
+        // aIGU.addLayer(layer3);
 
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
+          new Tarcog::ISO15099::CSingleSystem(aIGU, Indoor, Outdoor));
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
-        return m_TarcogSystem;
+        return m_TarcogSystem.get();
     };
 };
 

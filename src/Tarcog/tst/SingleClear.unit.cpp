@@ -8,7 +8,7 @@
 class TestSingleClear : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -17,18 +17,12 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 300.0;   // Kelvins
-        auto pressure = 101325.0;      // Pascals
         auto airSpeed = 5.5;           // meters per second
         auto tSky = 270.0;             // Kelvins
         auto solarRadiation = 789.0;
 
-        auto Outdoor =
-          Tarcog::ISO15099::Environments::outdoor(airTemperature,
-                                                  pressure,
-                                                  airSpeed,
-                                                  solarRadiation,
-                                                  tSky,
-                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -37,7 +31,7 @@ protected:
         /////////////////////////////////////////////////////////
 
         auto roomTemperature = 294.15;
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, pressure);
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -59,14 +53,15 @@ protected:
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSystem>(
+        	new Tarcog::ISO15099::CSystem(aIGU, Indoor, Outdoor));
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const
+    Tarcog::ISO15099::CSystem * GetSystem() const
     {
-        return m_TarcogSystem;
+        return m_TarcogSystem.get();
     };
 };
 

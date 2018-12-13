@@ -20,7 +20,6 @@ protected:
         /// Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 300;   // Kelvins
-        auto pressure = 101325;      // Pascals
         auto airSpeed = 5.5;         // meters per second
         auto airDirection = Tarcog::ISO15099::AirHorizontalDirection::Windward;
         auto tSky = 270;   // Kelvins
@@ -29,7 +28,6 @@ protected:
         std::shared_ptr<Tarcog::ISO15099::CEnvironment> Outdoor =
           std::make_shared<Tarcog::ISO15099::COutdoorEnvironment>(
             airTemperature,
-            pressure,
             airSpeed,
             solarRadiation,
             airDirection,
@@ -44,7 +42,7 @@ protected:
 
         auto roomTemperature = 294.15;
         std::shared_ptr<Tarcog::ISO15099::CEnvironment> Indoor =
-          std::make_shared<Tarcog::ISO15099::CIndoorEnvironment>(roomTemperature, pressure);
+          std::make_shared<Tarcog::ISO15099::CIndoorEnvironment>(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////

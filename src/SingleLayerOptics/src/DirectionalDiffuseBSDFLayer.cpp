@@ -14,8 +14,9 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                                                               const std::shared_ptr<const CBSDFHemisphere> & t_Hemisphere) :
+    CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer(
+		const std::shared_ptr< CDirectionalDiffuseCell > & t_Cell,
+		const CBSDFHemisphere & t_Hemisphere ) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
@@ -33,7 +34,7 @@ namespace SingleLayerOptics
         auto & tau = m_Results->getMatrix(aSide, PropertySimple::T);
         auto & Rho = m_Results->getMatrix(aSide, PropertySimple::R);
 
-        const auto & jDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Outgoing);
+        const auto & jDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
         size_t size = jDirections.size();
 
@@ -41,7 +42,7 @@ namespace SingleLayerOptics
         {
             using ConstantsData::PI;
 
-            const CBeamDirection jDirection = *jDirections[j]->centerPoint();
+            const CBeamDirection jDirection = jDirections[j].centerPoint();
 
             double aTau = aCell->T_dir_dif(aSide, t_Direction, jDirection);
             double aRho = aCell->R_dir_dif(aSide, t_Direction, jDirection);
@@ -55,13 +56,13 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        const CBSDFDirections iDirections = m_BSDFHemisphere->getDirections(BSDFDirection::Outgoing);
+        const CBSDFDirections iDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
         size_t size = iDirections.size();
 
         for(size_t i = 0; i < size; ++i)
         {
-            const CBeamDirection iDirection = *iDirections[i]->centerPoint();
+            const CBeamDirection iDirection = iDirections[i].centerPoint();
 
             std::shared_ptr<std::vector<double>> aTau = aCell->T_dir_dif_band(aSide, t_Direction, iDirection);
             std::shared_ptr<std::vector<double>> Ref = aCell->R_dir_dif_band(aSide, t_Direction, iDirection);

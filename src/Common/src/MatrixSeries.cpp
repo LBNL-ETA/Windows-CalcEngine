@@ -106,22 +106,22 @@ namespace FenestrationCommon
         }
     }
 
-    std::shared_ptr<std::vector<std::shared_ptr<std::vector<double>>>>
-      CMatrixSeries::getSums(const double minLambda, const double maxLambda, const std::vector<double> & t_ScaleValue)
+    std::vector< std::vector< double>>
+      CMatrixSeries::getSums( const double minLambda, const double maxLambda,
+							  const std::vector< double > & t_ScaleValue )
     {
-        std::shared_ptr<std::vector<std::shared_ptr<std::vector<double>>>> Result =
-          std::make_shared<std::vector<std::shared_ptr<std::vector<double>>>>(m_Matrix.size());
+        std::vector<std::vector<double>> Result(m_Matrix.size());
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
             if(m_Matrix[i].size() != t_ScaleValue.size())
             {
                 throw std::runtime_error("Size of vector for scaling must be same as size of the matrix.");
             }
-            (*Result)[i] = std::make_shared<std::vector<double>>();
+            //Result[i] = std::make_shared<std::vector<double>>();
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
                 double value = m_Matrix[i][j]->sum(minLambda, maxLambda) / t_ScaleValue[i];
-                (*Result)[i]->push_back(value);
+                Result[i].push_back(value);
             }
         }
         return Result;

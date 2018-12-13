@@ -17,17 +17,12 @@ protected:
         // Outdoor
         /////////////////////////////////////////////////////////
         auto airTemperature = 300.0;   // Kelvins
-        auto pressure = 101325.0;      // Pascals
         auto airSpeed = 5.5;           // meters per second
-        auto tSky = 270.0;   // Kelvins
+        auto tSky = 270.0;             // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor( airTemperature,
-											  pressure,
-											  airSpeed,
-											  solarRadiation,
-											  tSky,
-																Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -37,7 +32,7 @@ protected:
 
         auto roomTemperature = 294.15;
 
-        m_Indoor = Tarcog::ISO15099::Environments::indoor( roomTemperature, pressure );
+        m_Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(m_Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
@@ -46,13 +41,14 @@ protected:
         auto solidLayerThickness = 0.003048;   // [m]
         auto solidLayerConductance = 100.0;
 
-        auto aSolidLayer = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(aSolidLayer != nullptr);
+        auto solidLayer =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(solidLayer != nullptr);
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
-		Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer);
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        aIGU.addLayer(solidLayer);
 
         /////////////////////////////////////////////////////////
         // System

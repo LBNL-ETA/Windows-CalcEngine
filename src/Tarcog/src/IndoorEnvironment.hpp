@@ -10,7 +10,7 @@ namespace Tarcog
         class CIndoorEnvironment : public CEnvironment
         {
         public:
-            CIndoorEnvironment(double t_AirTemperature, double t_Pressure);
+            CIndoorEnvironment(double t_AirTemperature, double t_Pressure = 101325);
             CIndoorEnvironment(const CIndoorEnvironment & t_Indoor);
             CIndoorEnvironment & operator=(const CIndoorEnvironment & t_Environment);
 
