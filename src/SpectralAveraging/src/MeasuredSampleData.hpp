@@ -36,9 +36,6 @@ namespace SpectralAveraging
         virtual ~CSpectralSampleData() = default;
         CSpectralSampleData();
 
-        static std::shared_ptr<CSpectralSampleData>
-          create(const std::initializer_list<MeasuredRow> & tValues);
-
 		static std::shared_ptr<CSpectralSampleData>
           create(const std::vector<MeasuredRow> & tValues);
 

@@ -140,11 +140,6 @@ namespace SpectralAveraging
         }
     }
 
-	std::shared_ptr< CSpectralSampleData >
-	CSpectralSampleData::create( const std::initializer_list< MeasuredRow > & tValues ) {
-		return create(std::vector<MeasuredRow>(tValues));
-	}
-
 	std::shared_ptr<CSpectralSampleData>
     CSpectralSampleData::create(const std::vector<MeasuredRow> & tValues)
     {
