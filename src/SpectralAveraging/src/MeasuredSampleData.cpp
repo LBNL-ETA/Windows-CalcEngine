@@ -34,17 +34,17 @@ namespace SpectralAveraging
         reset();
     }
 
-    CSpectralSampleData::CSpectralSampleData(
-    	const std::initializer_list<MeasuredRow> & tValues) : CSpectralSampleData()
+	CSpectralSampleData::CSpectralSampleData(
+		const std::vector<MeasuredRow> & tValues) : CSpectralSampleData()
     {
         m_Transmittances->clear();
         m_ReflectancesFront->clear();
         m_ReflectancesBack->clear();
         for(const auto & val : tValues)
         {
-        	m_Transmittances->addProperty(val.wavelength, val.T);
-        	m_ReflectancesFront->addProperty(val.wavelength, val.Rf);
-        	m_ReflectancesBack->addProperty(val.wavelength, val.Rb);
+            m_Transmittances->addProperty(val.wavelength, val.T);
+            m_ReflectancesFront->addProperty(val.wavelength, val.Rf);
+            m_ReflectancesBack->addProperty(val.wavelength, val.Rb);
         }
     }
 
@@ -142,8 +142,14 @@ namespace SpectralAveraging
 
 	std::shared_ptr< CSpectralSampleData >
 	CSpectralSampleData::create( const std::initializer_list< MeasuredRow > & tValues ) {
-		return std::shared_ptr< CSpectralSampleData >(new CSpectralSampleData(tValues));
+		return create(std::vector<MeasuredRow>(tValues));
 	}
+
+	std::shared_ptr<CSpectralSampleData>
+    CSpectralSampleData::create(const std::vector<MeasuredRow> & tValues)
+    {
+        return std::shared_ptr<CSpectralSampleData>(new CSpectralSampleData(tValues));
+    }
 
 	std::shared_ptr< CSpectralSampleData > CSpectralSampleData::create() {
 		return CSpectralSampleData::create({});
