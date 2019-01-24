@@ -190,13 +190,13 @@ namespace MultiLayerOptics
     }
 
     std::unique_ptr<CMultiLayerScattered> CMultiLayerScattered::create(
-      const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers)
+      const std::vector<SingleLayerOptics::CScatteringLayer> & layers)
     {
         return std::unique_ptr<CMultiLayerScattered>(new CMultiLayerScattered(layers));
     }
 
     CMultiLayerScattered::CMultiLayerScattered(
-      const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers)
+      const std::vector<SingleLayerOptics::CScatteringLayer> & layers)
     {
         for(const auto & layer : layers)
         {
