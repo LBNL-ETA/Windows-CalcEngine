@@ -14,13 +14,13 @@ namespace Gases {
 	class CGas {
 	public:
 		CGas();
-		explicit CGas(const std::initializer_list<std::pair<double, CGasData>> & gases);
-		explicit CGas(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases);
+		explicit CGas(const std::vector<std::pair<double, CGasData>> & gases);
+		explicit CGas(const std::vector<std::pair<double, Gases::GasDef>> & gases);
 		CGas( const CGas& t_Gas );
 		void addGasItem( double percent, const CGasData & t_GasData );
 		void addGasItem(double percent, Gases::GasDef def);
-		void addGasItems(const std::initializer_list<std::pair<double, CGasData>> & gases);
-		void addGasItems(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases);
+		void addGasItems(const std::vector<std::pair<double, CGasData>> & gases);
+		void addGasItems(const std::vector<std::pair<double, Gases::GasDef>> & gases);
 		double totalPercent();
 		const GasProperties & getSimpleGasProperties();
 		const GasProperties & getGasProperties();
