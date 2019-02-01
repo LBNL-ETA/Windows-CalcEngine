@@ -121,9 +121,9 @@ protected:
     virtual void SetUp()
     {
         // Create material from samples
-        auto thickness = 6.16e-3;   // [m]
+        auto thickness = 0.18e-3;   // [m]
         auto aMaterial_21515 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_21515(), thickness, MaterialType::Laminate, WavelengthRange::Solar);
+          loadSampleData_NFRC_21515(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         CScatteringLayer Layer21515 = CScatteringLayer::createSpecularLayer(aMaterial_21515);
 
@@ -150,8 +150,16 @@ TEST_F(MultiPaneScattered_21515, TestSpecular1)
     std::vector<double> thetaAngles{0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
     double phi = 0;
 
-    const std::vector<double> correctResults{
-      0.865999, 0.865889, 0.861048, 0.856051, 0.849901, 0.832334, 0.779659, 0.654340, 0.409592, 0};
+    const std::vector<double> correctResults{0.865999,
+                                             0.865930,
+                                             0.865420,
+                                             0.863358,
+                                             0.857035,
+                                             0.840042,
+                                             0.796716,
+                                             0.688358,
+                                             0.436450,
+                                             0.000000};
 
     std::vector<double> results;
 
