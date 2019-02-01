@@ -153,6 +153,7 @@ namespace SingleLayerOptics
     {
         if(m_BSDFLayer != nullptr)
         {
+            m_Surface.clear();
             m_Surface.emplace(Side::Front, createSurface(Side::Front, t_Theta, t_Phi));
             m_Surface.emplace(Side::Back, createSurface(Side::Back, t_Theta, t_Phi));
         }
