@@ -44,4 +44,15 @@ namespace SingleLayerOptics
     {
         m_Cell.setSourceData(t_SourceData);
     }
+
+    double SpecularLayer::getMinLambda() const
+    {
+        return getBandWavelengths()[0];
+    }
+
+    double SpecularLayer::getMaxLambda() const
+    {
+        auto lastIndex = getBandWavelengths().size();
+        return getBandWavelengths()[lastIndex - 1];
+    }
 }   // namespace SingleLayerOptics
