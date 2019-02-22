@@ -182,7 +182,7 @@ namespace Tarcog
             auto accumulateFunc = [](double accumulator, const std::unique_ptr<BaseLayer> & layer) {
                 return accumulator + layer->thermalConductance();
             };
-            return std::accumulate(layers.begin(), layers.end(), 0, accumulateFunc);
+            return std::accumulate(layers.begin(), layers.end(), 0.0, accumulateFunc);
         }
 
         void IGU::calculateNewTemperatures(double scaleFactor)

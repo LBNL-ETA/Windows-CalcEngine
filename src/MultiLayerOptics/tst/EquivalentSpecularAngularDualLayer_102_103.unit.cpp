@@ -750,13 +750,11 @@ protected:
         // Finds combination of two wavelength sets without going outside of wavelenght range for
         // any of spectral samples.
 
-        m_Layer =
-          std::make_shared<CMultiPaneSpecular>(commonWavelengths, aSolarRadiation, aCell_102);
-        m_Layer->addLayer(angularLayer);
+        m_Layer = CMultiPaneSpecular::create({aCell_102, angularLayer}, aSolarRadiation);
     }
 
 public:
-    std::shared_ptr<CMultiPaneSpecular> getLayer()
+    std::shared_ptr<CMultiPaneSpecular> getLayer() const
     {
         return m_Layer;
     };
