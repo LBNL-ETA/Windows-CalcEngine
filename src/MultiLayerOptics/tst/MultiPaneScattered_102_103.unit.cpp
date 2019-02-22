@@ -191,8 +191,8 @@ protected:
         auto aMaterial_103 = SingleLayerOptics::Material::nBandMaterial(
 			loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
-        CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
-        CScatteringLayer Layer103 = CScatteringLayer::createSpecularLayer(aMaterial_103);
+        const CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
+        const CScatteringLayer Layer103 = CScatteringLayer::createSpecularLayer(aMaterial_103);
 
         // Equivalent BSDF layer
         m_Layer = CMultiLayerScattered::create(Layer102);
