@@ -63,6 +63,7 @@ namespace Tarcog
             class BaseLayer
             {
             public:
+                virtual ~BaseLayer() = default;
                 explicit BaseLayer(double thickness, double T1, double T2);
 
                 virtual double thermalConductance() = 0;
