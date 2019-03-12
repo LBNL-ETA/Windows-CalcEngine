@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.5)
 
 project(Windows-CalcEngine VERSION 1.0.11 LANGUAGES CXX)
 
