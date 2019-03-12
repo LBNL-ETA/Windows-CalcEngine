@@ -25,8 +25,10 @@ if(hasParent)
   
   # If external project requested part of Windows-CalcEngine, then do not compile it as single project but as those parts
   if( BUILD_WCE_COMMON OR BUILD_WCE_GASES OR BUILD_WCE_THERMAL OR BUILD_WCE_OPTICAL )
+  	test("single project off")
 		#set( SINGLE_PROJECT OFF )
 	else()
+		test("single project on")
 	  # Nothing has been set from outside project. Compile complete project in that case.
 		set( BUILD_WCE_COMMON ON )
 		set( BUILD_WCE_GASES ON )
