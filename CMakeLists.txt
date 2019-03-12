@@ -23,6 +23,10 @@ if(hasParent)
   endif()
   set( SINGLE_PROJECT ON )
   
+  message("test gases pass")
+  message(${BUILD_WCE_GASES})
+  message("end of test")
+  
   # If external project requested part of Windows-CalcEngine, then do not compile it as single project but as those parts
   if( ${BUILD_WCE_COMMON} OR ${BUILD_WCE_GASES} OR ${BUILD_WCE_THERMAL} OR ${BUILD_WCE_OPTICAL} )
 		set( SINGLE_PROJECT OFF )
