@@ -97,7 +97,7 @@ endif ()
 #   message( STATUS "${_variableName}" )
 # endforeach()
 
-#if( NOT ${SINGLE_PROJECT} )
+if( NOT ${SINGLE_PROJECT} )
   add_subdirectory( src )
 else()
 	if( ${BUILD_WCE_COMMON} )
