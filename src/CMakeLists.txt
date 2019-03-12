@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 
+message("test start")
+message(${BUILD_WCE_COMMON})
+message(${BUILD_WCE_GASES})
+message(${BUILD_WCE_THERMAL})
+message("test end")
+
 if( ${BUILD_WCE_COMMON} )
 	add_subdirectory( Common )
 	set( LINK_TO_Common FenestrationCommon )
