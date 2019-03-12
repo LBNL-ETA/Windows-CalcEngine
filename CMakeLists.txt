@@ -43,26 +43,30 @@ else()
 	option( BUILD_WCE_THERMAL "Build Thermal Calculations Library" ON )
 	option( BUILD_WCE_OPTICAL "Build Optical Calculations Library" ON )
 	
-	if( ${BUILD_WCE_THERMAL} )
-		set( BUILD_WCE_COMMON ON )
-		set( BUILD_WCE_GASES ON )
-		set( BUILD_WCE_VIEWER ON )
-	endif()
-	
-	if( ${BUILD_WCE_OPTICAL} )
-		set( BUILD_WCE_COMMON ON )
-		set( BUILD_WCE_VIEWER ON )
-	endif()
-	
-	if( ${SINGLE_PROJECT} )
-		set( BUILD_WCE_COMMON ON )
-		set( BUILD_WCE_GASES ON )
-		set( BUILD_WCE_VIEWER ON )
-		set( BUILD_WCE_THERMAL ON )
-		set( BUILD_WCE_OPTICAL ON )	
-	endif()
-	
 	set( DOWNLOAD_GTEST ON )
+endif()
+
+if( ${BUILD_WCE_GASES} )
+	set( BUILD_WCE_COMMON ON )
+endif()
+
+if( ${BUILD_WCE_THERMAL} )
+	set( BUILD_WCE_COMMON ON )
+	set( BUILD_WCE_GASES ON )
+	set( BUILD_WCE_VIEWER ON )
+endif()
+
+if( ${BUILD_WCE_OPTICAL} )
+	set( BUILD_WCE_COMMON ON )
+	set( BUILD_WCE_VIEWER ON )
+endif()
+
+if( ${SINGLE_PROJECT} )
+	set( BUILD_WCE_COMMON ON )
+	set( BUILD_WCE_GASES ON )
+	set( BUILD_WCE_VIEWER ON )
+	set( BUILD_WCE_THERMAL ON )
+	set( BUILD_WCE_OPTICAL ON )	
 endif()
 
 if( DOWNLOAD_GTEST STREQUAL ON ) # Do not need gtest since it will be processed by E+
