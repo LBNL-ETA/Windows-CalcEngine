@@ -52,6 +52,8 @@ namespace SpectralAveraging
         bool Flipped() const;
         virtual void Filpped(bool t_Flipped);
 
+        void cutExtraData(double minLambda, double maxLambda);
+
     protected:
         CSpectralSampleData(const std::initializer_list<MeasuredRow> & tValues);
 

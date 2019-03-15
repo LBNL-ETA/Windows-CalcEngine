@@ -360,18 +360,41 @@ namespace FenestrationCommon
         m_Series.clear();
     }
 
-	std::shared_ptr< CSeries >
-	CSeries::create( const std::initializer_list< std::pair< double, double>> & t_list) {
-		return std::shared_ptr< CSeries >(new CSeries(t_list));
-	}
+    std::shared_ptr<CSeries>
+      CSeries::create(const std::initializer_list<std::pair<double, double>> & t_list)
+    {
+        return std::shared_ptr<CSeries>(new CSeries(t_list));
+    }
 
-	std::shared_ptr< CSeries >
-	CSeries::create( const std::vector< std::pair< double, double>> & t_values ) {
-		return std::shared_ptr< CSeries >(new CSeries(t_values));
-	}
+    std::shared_ptr<CSeries>
+      CSeries::create(const std::vector<std::pair<double, double>> & t_values)
+    {
+        return std::shared_ptr<CSeries>(new CSeries(t_values));
+    }
 
-	std::shared_ptr< CSeries > CSeries::create() {
-		return CSeries::create({});
-	}
+    std::shared_ptr<CSeries> CSeries::create()
+    {
+        return CSeries::create({});
+    }
+
+    void CSeries::cutExtraData(double minWavelength, double maxWavelength)
+    {
+        std::vector<std::unique_ptr<ISeriesPoint>> result;
+        const auto eps = 1e-8;
+        for(const auto & val : m_Series)
+        {
+            if(val->x() > (minWavelength - eps) && val->x() < (maxWavelength + eps))
+            {
+                result.push_back(val->clone());
+            }
+        }
+
+        m_Series.clear();
+
+        for(const auto & val : result)
+        {
+            m_Series.push_back(val->clone());
+        }
+    }
 
 }   // namespace FenestrationCommon
