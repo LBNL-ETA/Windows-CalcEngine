@@ -34,17 +34,17 @@ namespace SpectralAveraging
         reset();
     }
 
-    CSpectralSampleData::CSpectralSampleData(
-    	const std::initializer_list<MeasuredRow> & tValues) : CSpectralSampleData()
+    CSpectralSampleData::CSpectralSampleData(const std::initializer_list<MeasuredRow> & tValues) :
+        CSpectralSampleData()
     {
         m_Transmittances->clear();
         m_ReflectancesFront->clear();
         m_ReflectancesBack->clear();
         for(const auto & val : tValues)
         {
-        	m_Transmittances->addProperty(val.wavelength, val.T);
-        	m_ReflectancesFront->addProperty(val.wavelength, val.Rf);
-        	m_ReflectancesBack->addProperty(val.wavelength, val.Rb);
+            m_Transmittances->addProperty(val.wavelength, val.T);
+            m_ReflectancesFront->addProperty(val.wavelength, val.Rf);
+            m_ReflectancesBack->addProperty(val.wavelength, val.Rb);
         }
     }
 
@@ -140,17 +140,28 @@ namespace SpectralAveraging
         }
     }
 
-	std::shared_ptr< CSpectralSampleData >
-	CSpectralSampleData::create( const std::initializer_list< MeasuredRow > & tValues ) {
-		return std::shared_ptr< CSpectralSampleData >(new CSpectralSampleData(tValues));
-	}
+    std::shared_ptr<CSpectralSampleData>
+      CSpectralSampleData::create(const std::initializer_list<MeasuredRow> & tValues)
+    {
+        return std::shared_ptr<CSpectralSampleData>(new CSpectralSampleData(tValues));
+    }
 
-	std::shared_ptr< CSpectralSampleData > CSpectralSampleData::create() {
-		return CSpectralSampleData::create({});
-	}
+    std::shared_ptr<CSpectralSampleData> CSpectralSampleData::create()
+    {
+        return CSpectralSampleData::create({});
+    }
 
-	MeasuredRow::MeasuredRow( double wl, double t, double rf, double rb ) :
-	wavelength(wl), T(t), Rf(rf), Rb(rb) {
+    void CSpectralSampleData::cutExtraData(const double minLambda, const double maxLambda)
+    {
+        m_Transmittances->cutExtraData(minLambda, maxLambda);
+        m_ReflectancesFront->cutExtraData(minLambda, maxLambda);
+        m_ReflectancesBack->cutExtraData(minLambda, maxLambda);
+    }
 
-	}
+    MeasuredRow::MeasuredRow(double wl, double t, double rf, double rb) :
+        wavelength(wl),
+        T(t),
+        Rf(rf),
+        Rb(rb)
+    {}
 }   // namespace SpectralAveraging
