@@ -134,6 +134,9 @@ namespace SingleLayerOptics
         auto aSample = std::make_shared<CSpectralSample>(
           measurement, nullptr, integrationType, normalizationCoefficient);
 
+        // Narrow down sample in case it is over limits of desired measurements
+        aSample->cutExtraData(minLambda, maxLambda);
+
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
     }
@@ -151,6 +154,10 @@ namespace SingleLayerOptics
         auto aSample = std::make_shared<CSpectralSample>(
           measurement, nullptr, integrationType, normalizationCoefficient);
         aSample->setDetectorData(detectorData);
+
+        // Narrow down sample in case it is over limits of desired measurements
+        aSample->cutExtraData(minLambda, maxLambda);
+
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
     }
@@ -166,6 +173,7 @@ namespace SingleLayerOptics
     {
         auto aSample = std::make_shared<CSpectralSample>(
           measurement, nullptr, integrationType, normalizationCoefficient);
+
         aSample->setDetectorData(detectorData);
         return std::make_shared<CMaterialSample>(aSample, thickness, materialType, t_Range);
     }
