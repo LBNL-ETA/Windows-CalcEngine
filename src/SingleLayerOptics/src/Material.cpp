@@ -115,6 +115,9 @@ namespace SingleLayerOptics
             maxLambda = maxSample;
         }
 
+        // Narrow down sample in case it is over limits of desired measurements
+        aSample->cutExtraData(minLambda, maxLambda);
+
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
     }
