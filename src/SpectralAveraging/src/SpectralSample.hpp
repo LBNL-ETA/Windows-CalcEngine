@@ -111,6 +111,8 @@ namespace SpectralAveraging {
 
 		std::vector< double > getWavelengthsFromSample() const override;
 
+		void cutExtraData(double minLambda, double maxLambda);
+
 	protected:
 		void calculateProperties() override;
 		void calculateState() override;

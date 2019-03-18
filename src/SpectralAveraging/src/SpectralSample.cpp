@@ -475,6 +475,10 @@ namespace SpectralAveraging
         }
     }
 
+    void CSpectralSample::cutExtraData(const double minLambda, const double maxLambda) {
+        m_SampleData->cutExtraData(minLambda, maxLambda);
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////
     ////  CSpectralAngleSample
     //////////////////////////////////////////////////////////////////////////////////////

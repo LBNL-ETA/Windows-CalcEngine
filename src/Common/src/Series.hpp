@@ -53,8 +53,8 @@ namespace FenestrationCommon
           create(const std::vector<std::pair<double, double>> & t_values);
         static std::shared_ptr<CSeries> create();
 
-		explicit CSeries(const std::vector<std::pair<double, double>> & t_values);
-		explicit CSeries(const std::initializer_list<std::pair<double, double>> & t_values);
+        explicit CSeries(const std::vector<std::pair<double, double>> & t_values);
+        explicit CSeries(const std::initializer_list<std::pair<double, double>> & t_values);
 
         CSeries(CSeries const & t_Series);
         void addProperty(double t_x, double t_Value);
@@ -103,8 +103,9 @@ namespace FenestrationCommon
 
         void clear();
 
-    private:
+        void cutExtraData(double minWavelength, double maxWavelength);
 
+    private:
         ISeriesPoint * findLower(double t_x) const;
         ISeriesPoint * findUpper(double t_x) const;
         static double interpolate(ISeriesPoint * t_Lower, ISeriesPoint * t_Upper, double t_x);
