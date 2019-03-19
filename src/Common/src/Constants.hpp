@@ -14,7 +14,7 @@ namespace ConstantsData {
 	static const double SPEEDOFLIGHT = 299792458;
 	static const double PLANKCONSTANT = 6.626196e-34;
 	static const double BOLTZMANNCONSTANT = 1.380622e-23;
-
+	static const double floatErrorTolerance = 1e-12;
 }
 
 #endif
