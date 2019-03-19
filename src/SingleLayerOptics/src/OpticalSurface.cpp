@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <sstream>
 
 #include "OpticalSurface.hpp"
 #include "WCECommon.hpp"
@@ -15,9 +16,11 @@ namespace SingleLayerOptics
     {
         if(t_T + t_R > (1.0 + ConstantsData::floatErrorTolerance))
         {
-            throw std::runtime_error(
-              "Sum of Transmittance and Reflectance is greater than one.\nTransmittance: "
-              + std::to_string(t_T) + "\nReflectance: " + std::to_string(t_R));
+            std::stringstream err_msg;
+            err_msg << "Sum of Transmittance and Reflectance is greater than one.\n"
+					<< "Transmittance: " << t_T 
+					<< "\nReflectance: " << t_R;
+            throw std::runtime_error(err_msg.str());
         }
         m_Property[Property::T] = t_T;
         m_Property[Property::R] = t_R;
