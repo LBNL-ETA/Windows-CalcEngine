@@ -12,7 +12,7 @@ namespace SingleLayerOptics {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CSurface::CSurface(const double t_T, const double t_R) {
-  if (t_T + t_R > (1.0 + 1e-15)) { /// Had to put +1e-15 because of rounding error of the computer
+  if (t_T + t_R > (1.0 + ConstantsData::floatErrorTolerance)) { /// Had to put +1e-12 because of rounding error of the computer
     throw std::runtime_error(
         "Sum of transmittance and reflectance is greater than one.");
   }
