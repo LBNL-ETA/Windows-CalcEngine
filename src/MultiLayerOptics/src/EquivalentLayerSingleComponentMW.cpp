@@ -21,9 +21,13 @@ namespace MultiLayerOptics
         {
             double wl = (*t_T)[i].x();
             double value = 1 - (*t_T)[i].value() - (*t_R)[i].value();
-            if(value > (1 + ConstantsData::floatErrorTolerance) || value < -ConstantsData::floatErrorTolerance)
+            if(value > (1 + ConstantsData::floatErrorTolerance)
+               || value < -ConstantsData::floatErrorTolerance)
             {
-                throw std::runtime_error("Absorptance value for provided series is out of range.");
+                throw std::runtime_error(
+                  "Absorptance value for provided series is out of range.\nWavelength: "
+                  + std::to_string(wl) + "\nTransmittance: " + std::to_string((*t_T)[i].value()) +
+                  "\nReflectance: " + std::to_string((*t_R)[i].value()));
             }
             aAbs->addProperty(wl, value);
         }
