@@ -239,9 +239,7 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngleHemispherical10)
 
     const double minLambda = 0.3;
     const double maxLambda = 2.5;
-    std::shared_ptr<std::vector<double>> aAngles = std::make_shared<std::vector<double>>();
-
-    *aAngles = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
+    std::vector<double> aAngles{0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
 
     CMultiPaneSpecular aLayer = *getLayer();
 

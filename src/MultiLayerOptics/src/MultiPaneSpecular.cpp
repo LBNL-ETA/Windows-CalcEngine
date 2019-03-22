@@ -161,19 +161,19 @@ namespace MultiLayerOptics
     }
 
     double CMultiPaneSpecular::getHemisphericalProperty(
-      const Side t_Side,
-      const Property t_Property,
-      const std::shared_ptr<const std::vector<double>> & t_Angles,
-      const double minLambda,
-      const double maxLambda,
-      const IntegrationType t_IntegrationType,
-      double normalizationCoefficient)
+            Side t_Side,
+            Property t_Property,
+            const std::vector<double> &t_IntegrationAngles,
+            double minLambda,
+            double maxLambda,
+            IntegrationType t_IntegrationType,
+            double normalizationCoefficient)
     {
-        size_t size = t_Angles->size();
+        size_t size = t_IntegrationAngles.size();
         std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
         for(size_t i = 0; i < size; ++i)
         {
-            double angle = (*t_Angles)[i];
+            double angle = t_IntegrationAngles[i];
             double aProperty = getProperty(t_Side,
                                            t_Property,
                                            angle,
@@ -227,17 +227,17 @@ namespace MultiLayerOptics
 
     double CMultiPaneSpecular::AbsHemispherical(
       size_t const Index,
-      const std::shared_ptr<const std::vector<double>> & t_Angles,
+      const std::vector<double> & t_IntegrationAngles,
       const double minLambda,
       const double maxLambda,
       const IntegrationType t_IntegrationType,
       double normalizationCoefficient)
     {
-        size_t size = t_Angles->size();
+        size_t size = t_IntegrationAngles.size();
         std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
         for(size_t i = 0; i < size; ++i)
         {
-            double angle = (*t_Angles)[i];
+            double angle = t_IntegrationAngles[i];
             double aAbs = Abs(Index, angle, minLambda, maxLambda, t_IntegrationType);
             aAngularProperties->addProperty(angle, aAbs);
         }
