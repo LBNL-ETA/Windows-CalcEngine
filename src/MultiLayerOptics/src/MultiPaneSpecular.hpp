@@ -88,11 +88,11 @@ namespace MultiLayerOptics
 
         double getHemisphericalProperty(FenestrationCommon::Side t_Side,
                                         FenestrationCommon::Property t_Property,
-                                        const std::shared_ptr<const std::vector<double>> & t_Angles,
+                                        const std::vector<double> &t_IntegrationAngles,
                                         double minLambda,
                                         double maxLambda,
                                         FenestrationCommon::IntegrationType t_IntegrationType =
-                                          FenestrationCommon::IntegrationType::Trapezoidal,
+                                        FenestrationCommon::IntegrationType::Trapezoidal,
                                         double normalizationCoefficient = 1);
 
         double getAbsorptanceLayer(size_t index, FenestrationCommon::Side side,
@@ -109,7 +109,7 @@ namespace MultiLayerOptics
 
         // Hemispherical absorptances of each layer. Integration is performed over t_Angles.
         double AbsHemispherical(size_t Index,
-                                const std::shared_ptr<const std::vector<double>> & t_Angles,
+                                const std::vector<double> & t_IntegrationAngles,
                                 double minLambda,
                                 double maxLambda,
                                 FenestrationCommon::IntegrationType t_IntegrationType =
