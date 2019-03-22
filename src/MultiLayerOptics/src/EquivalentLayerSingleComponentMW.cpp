@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "WCECommon.hpp"
 #include "EquivalentLayerSingleComponent.hpp"
@@ -20,14 +22,17 @@ namespace MultiLayerOptics
         for(size_t i = 0; i < size; ++i)
         {
             double wl = (*t_T)[i].x();
-            double value = 1 - (*t_T)[i].value() - (*t_R)[i].value();
+            double t = (*t_T)[i].value();
+            double r = (*t_R)[i].value();
+            double value = 1 - t - r;
             if(value > (1 + ConstantsData::floatErrorTolerance)
                || value < -ConstantsData::floatErrorTolerance)
             {
-                throw std::runtime_error(
-                  "Absorptance value for provided series is out of range.\nWavelength: "
-                  + std::to_string(wl) + "\nTransmittance: " + std::to_string((*t_T)[i].value()) +
-                  "\nReflectance: " + std::to_string((*t_R)[i].value()));
+                std::stringstream err_msg;
+                err_msg << "Absorptance value for provided series is out of range.\n"
+                        << "Wavelength: " << wl << "\nTransmittance: " << t
+                        << "\nReflectance: " << r;
+                throw std::runtime_error(err_msg.str());
             }
             aAbs->addProperty(wl, value);
         }
