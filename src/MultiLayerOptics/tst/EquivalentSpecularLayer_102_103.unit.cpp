@@ -228,6 +228,15 @@ TEST_F(EquivalentSpecularLayer_102_103, TestAngle0)
 
     const double Abs2 = aLayer.getAbsorptanceLayer(2, Side::Front, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.126857, Abs2, 1e-6);
+
+    const double Them = aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+    EXPECT_NEAR(0.552562, Them, 1e-6);
+
+    const double Rfhem = aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+    EXPECT_NEAR(0.201549, Rfhem, 1e-6);
+
+    const double Rbhem = aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
+    EXPECT_NEAR(0.187602, Rbhem, 1e-6);
 }
 
 TEST_F(EquivalentSpecularLayer_102_103, TestAngle10)
