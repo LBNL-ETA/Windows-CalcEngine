@@ -69,8 +69,8 @@ namespace MultiLayerOptics
         double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
                                  FenestrationCommon::Side t_Side,
                                  FenestrationCommon::Scattering t_Scattering,
-                                 double t_Theta,
-                                 double t_Phi) override;
+                                 double t_Theta = 0,
+                                 double t_Phi = 0) override;
 
         double getMinLambda() const override;
         double getMaxLambda() const override;

@@ -110,7 +110,11 @@ namespace MultiLayerOptics
                 result = getProperty(t_Side, prop, t_Theta, getMinLambda(), getMaxLambda());
                 break;
             case Scattering::DiffuseDiffuse:
-                result = 0;
+                result = getHemisphericalProperty(t_Side,
+                                                  prop,
+                                                  {0, 10, 20, 30, 40, 50, 60, 70, 80, 90},
+                                                  getMinLambda(),
+                                                  getMaxLambda());
                 break;
             case Scattering::DirectDiffuse:
                 result = 0;
@@ -160,14 +164,14 @@ namespace MultiLayerOptics
         return totalProperty / totalSolar;
     }
 
-    double CMultiPaneSpecular::getHemisphericalProperty(
-            Side t_Side,
-            Property t_Property,
-            const std::vector<double> &t_IntegrationAngles,
-            double minLambda,
-            double maxLambda,
-            IntegrationType t_IntegrationType,
-            double normalizationCoefficient)
+    double
+      CMultiPaneSpecular::getHemisphericalProperty(Side t_Side,
+                                                   Property t_Property,
+                                                   const std::vector<double> & t_IntegrationAngles,
+                                                   double minLambda,
+                                                   double maxLambda,
+                                                   IntegrationType t_IntegrationType,
+                                                   double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
         std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
@@ -189,13 +193,13 @@ namespace MultiLayerOptics
     }
 
     double CMultiPaneSpecular::getAbsorptanceLayer(size_t index,
-        FenestrationCommon::Side,
-        FenestrationCommon::ScatteringSimple scattering,
-        double theta,
-        double) 
+                                                   FenestrationCommon::Side,
+                                                   FenestrationCommon::ScatteringSimple scattering,
+                                                   double theta,
+                                                   double)
     {
         auto result(0.0);
-        if (scattering == ScatteringSimple::Direct)
+        if(scattering == ScatteringSimple::Direct)
         {
             result = Abs(index, theta, getMinLambda(), getMaxLambda());
         }
@@ -225,13 +229,12 @@ namespace MultiLayerOptics
         return totalProperty / totalSolar;
     }
 
-    double CMultiPaneSpecular::AbsHemispherical(
-      size_t const Index,
-      const std::vector<double> & t_IntegrationAngles,
-      const double minLambda,
-      const double maxLambda,
-      const IntegrationType t_IntegrationType,
-      double normalizationCoefficient)
+    double CMultiPaneSpecular::AbsHemispherical(size_t const Index,
+                                                const std::vector<double> & t_IntegrationAngles,
+                                                const double minLambda,
+                                                const double maxLambda,
+                                                const IntegrationType t_IntegrationType,
+                                                double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
         std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
