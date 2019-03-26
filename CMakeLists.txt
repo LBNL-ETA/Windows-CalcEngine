@@ -18,9 +18,9 @@ get_directory_property(hasParent PARENT_DIRECTORY)
 if(hasParent)
   set( BUILD_WCE_TESTING OFF )
   set( DOWNLOAD_GTEST OFF )
-  if( BUILD_TESTING STREQUAL ON ) # EnergyPlus testing is ON
-    set( BUILD_WCE_TESTING ON )
-  endif()
+  #if( BUILD_TESTING STREQUAL ON ) # EnergyPlus testing is ON
+  #  set( BUILD_WCE_TESTING ON )
+  #endif()
   set( SINGLE_PROJECT ON )
   
   # If external project requested part of Windows-CalcEngine, then do not compile it as single project but as those parts
