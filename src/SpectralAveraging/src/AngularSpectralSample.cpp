@@ -143,7 +143,8 @@ namespace SpectralAveraging {
 		if( aProperties != nullptr ) {
 
 			for ( auto & aProperty : *aProperties ) {
-				if( aProperty->x() >= minLambda && aProperty->x() <= maxLambda ) {
+				if( aProperty->x() >= (minLambda - ConstantsData::floatErrorTolerance) &&
+						aProperty->x() <= (maxLambda + ConstantsData::floatErrorTolerance) ) {
 					aValues.push_back( aProperty->value() );
 				}
 			}
