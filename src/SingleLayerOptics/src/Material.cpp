@@ -118,6 +118,12 @@ namespace SingleLayerOptics
         // Narrow down sample in case it is over limits of desired measurements
         aSample->cutExtraData(minLambda, maxLambda);
 
+        if(aSample->getWavelengthsFromSample().empty())
+        {
+            throw std::runtime_error("Given measured sample does not have measurements withing "
+                                     "requested range. Calculation is not possible.");
+        }
+
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
     }
@@ -136,6 +142,11 @@ namespace SingleLayerOptics
 
         // Narrow down sample in case it is over limits of desired measurements
         aSample->cutExtraData(minLambda, maxLambda);
+        if(aSample->getWavelengthsFromSample().empty())
+        {
+            throw std::runtime_error("Given measured sample does not have measurements withing "
+                                     "requested range. Calculation is not possible.");
+        }
 
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
@@ -158,6 +169,12 @@ namespace SingleLayerOptics
         // Narrow down sample in case it is over limits of desired measurements
         aSample->cutExtraData(minLambda, maxLambda);
 
+        if(aSample->getWavelengthsFromSample().empty())
+        {
+            throw std::runtime_error("Given measured sample does not have measurements withing "
+                                     "requested range. Calculation is not possible.");
+        }
+
         return std::make_shared<CMaterialSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
     }
@@ -173,6 +190,36 @@ namespace SingleLayerOptics
     {
         auto aSample = std::make_shared<CSpectralSample>(
           measurement, nullptr, integrationType, normalizationCoefficient);
+
+        // Need to determine if sample is subset of allowed range in which case integration range
+        // needs to be narrowed.
+        auto wlRange = CWavelengthRange(t_Range);
+        auto minLambda = wlRange.minLambda();
+        auto maxLambda = wlRange.maxLambda();
+
+        const auto sampleWls = measurement->getWavelengths();
+        const auto minSample = sampleWls[0];
+        const auto maxSample = sampleWls[sampleWls.size() - 1];
+
+        // Narrow down wavelengths in case sample is not measured in that range
+        if(minLambda < minSample)
+        {
+            minLambda = minSample;
+        }
+
+        if(maxLambda > maxSample)
+        {
+            maxLambda = maxSample;
+        }
+
+        // Narrow down sample in case it is over limits of desired measurements
+        aSample->cutExtraData(minLambda, maxLambda);
+
+        if(aSample->getWavelengthsFromSample().empty())
+        {
+            throw std::runtime_error("Given measured sample does not have measurements withing "
+                                     "requested range. Calculation is not possible.");
+        }
 
         aSample->setDetectorData(detectorData);
         return std::make_shared<CMaterialSample>(aSample, thickness, materialType, t_Range);
