@@ -202,8 +202,7 @@ private:
         return detectorData;
     }
 
-    std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_102()
-    {
+    std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_102() const {
         auto aMeasurements_102 = CSpectralSampleData::create(
           {{0.300, 0.0020, 0.0470, 0.0480}, {0.305, 0.0030, 0.0470, 0.0480},
            {0.310, 0.0090, 0.0470, 0.0480}, {0.315, 0.0350, 0.0470, 0.0480},
@@ -265,8 +264,7 @@ private:
         return aMeasurements_102;
     }
 
-    std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_103()
-    {
+    std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_103() const {
         auto aMeasurements_103 = CSpectralSampleData::create(
           {{0.300, 0.0000, 0.0470, 0.0490}, {0.305, 0.0050, 0.0470, 0.0490},
            {0.310, 0.0000, 0.0470, 0.0480}, {0.315, 0.0030, 0.0460, 0.0480},
@@ -357,7 +355,7 @@ protected:
         const auto layer102 = SpecularLayer::createLayer(aMaterial_102);
         const auto layer103 = SpecularLayer::createLayer(aMaterial_103);
 
-        m_Layer = CMultiPaneSpecular::create({layer102, layer103}, getSourceSpectrum());
+        m_Layer = CMultiPaneSpecular::create({layer102}, getSourceSpectrum());
 
     }
 
@@ -366,8 +364,8 @@ public:
     {
         return m_Layer;
     };
-};
 
+};
 TEST_F(EquivalentSpecularLayer_102_103_Visible_Range, TestAngle0)
 {
     SCOPED_TRACE("Begin Test: Specular MultiLayerOptics layer - angle = 0 deg.");

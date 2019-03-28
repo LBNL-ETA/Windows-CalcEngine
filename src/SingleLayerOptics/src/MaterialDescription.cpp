@@ -111,9 +111,28 @@ namespace SingleLayerOptics
         return m_Wavelengths;
     }
 
-	void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths) {
-		m_Wavelengths = wavelengths;
-	}
+    std::vector<double>
+      CMaterial::trimWavelengthToRange(const std::vector<double> & wavelengths) const
+    {
+        std::vector<double> wl;
+
+        for(const auto & w : wavelengths)
+        {
+            if(w > (m_MinLambda - ConstantsData::floatErrorTolerance)
+               && (w < (m_MaxLambda + ConstantsData::floatErrorTolerance)))
+            {
+                wl.push_back(w);
+            }
+        }
+
+        return wl;
+    }
+
+    void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths)
+    {
+        // Trimming is necessary in order to keep data within integration range
+        m_Wavelengths = trimWavelengthToRange(wavelengths);
+    }
 
     size_t CMaterial::getBandSize()
     {
@@ -144,7 +163,7 @@ namespace SingleLayerOptics
         return m_MaxLambda;
     }
 
-	////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
     CMaterialSingleBand::CMaterialSingleBand(const double t_Tf,
@@ -415,12 +434,14 @@ namespace SingleLayerOptics
         return m_AngularSample->getBandWavelengths();
     }
 
-	void CMaterialSample::setBandWavelengths( const std::vector< double > & wavelengths ) {
-		CMaterial::setBandWavelengths( wavelengths );
-		m_AngularSample->setBandWavelengths(wavelengths);
-	}
+    void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
+    {
+        CMaterial::setBandWavelengths(wavelengths);
+        m_AngularSample->setBandWavelengths(m_Wavelengths);
+        m_WavelengthsCalculated = true;
+    }
 
-	////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialMeasured
     ////////////////////////////////////////////////////////////////////////////////////
 
