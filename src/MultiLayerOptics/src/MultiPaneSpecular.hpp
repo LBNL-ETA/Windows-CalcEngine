@@ -52,6 +52,11 @@ namespace MultiLayerOptics
     class CMultiPaneSpecular : public SingleLayerOptics::IScatteringLayer
     {
     private:
+        CMultiPaneSpecular(
+          std::vector<SingleLayerOptics::SpecularLayer> layers,
+          const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
+          const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData = nullptr);
+
         CMultiPaneSpecular(std::vector<SingleLayerOptics::SpecularLayer> layers,
                            const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
 
@@ -64,7 +69,8 @@ namespace MultiLayerOptics
     public:
         static std::unique_ptr<CMultiPaneSpecular>
           create(std::vector<SingleLayerOptics::SpecularLayer> layers,
-                 const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
+                 const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
+                 const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData = nullptr);
 
         double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
                                  FenestrationCommon::Side t_Side,
@@ -88,15 +94,18 @@ namespace MultiLayerOptics
 
         double getHemisphericalProperty(FenestrationCommon::Side t_Side,
                                         FenestrationCommon::Property t_Property,
-                                        const std::vector<double> &t_IntegrationAngles,
+                                        const std::vector<double> & t_IntegrationAngles,
                                         double minLambda,
                                         double maxLambda,
                                         FenestrationCommon::IntegrationType t_IntegrationType =
-                                        FenestrationCommon::IntegrationType::Trapezoidal,
+                                          FenestrationCommon::IntegrationType::Trapezoidal,
                                         double normalizationCoefficient = 1);
 
-        double getAbsorptanceLayer(size_t index, FenestrationCommon::Side side,
-            FenestrationCommon::ScatteringSimple scattering, double theta, double phi);
+        double getAbsorptanceLayer(size_t index,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   double theta,
+                                   double phi);
 
         // Absorptances of each layer based on angle of incidence
         double Abs(size_t Index,
@@ -129,6 +138,7 @@ namespace MultiLayerOptics
 
         std::vector<double> m_CommonWavelengths;
         std::shared_ptr<FenestrationCommon::CSeries> m_SolarRadiation;
+        std::shared_ptr<FenestrationCommon::CSeries> m_DetectorData;
 
         // Results for angle-properties std::pair. If same angle is required twice, then model will
         // not calculate it twice. First it will search for results here and if results are not
