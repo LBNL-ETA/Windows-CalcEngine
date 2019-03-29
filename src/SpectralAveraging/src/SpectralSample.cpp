@@ -305,7 +305,7 @@ namespace SpectralAveraging
 
                 if(m_DetectorData != nullptr)
                 {
-                    auto interpolatedDetector = *m_DetectorData->interpolate(m_Wavelengths);
+                    const auto interpolatedDetector = *m_DetectorData->interpolate(m_Wavelengths);
                     m_IncomingSource = m_IncomingSource->mMult(interpolatedDetector);
                 }
 
@@ -383,6 +383,7 @@ namespace SpectralAveraging
                                                                      Side const t_Side)
     {
         calculateState();
+        
         std::shared_ptr<CSeries> aProperty = nullptr;
         switch(t_Property)
         {
@@ -460,11 +461,6 @@ namespace SpectralAveraging
         CSample::calculateState();
         if(m_SourceData == nullptr)
         {
-            // TODO: Make sure that interpolation is necessary here.
-            // It slows down program for quite a bit
-
-            // m_SampleData->interpolate( *m_Wavelengths );
-
             m_Transmittance = m_SampleData->properties(SampleData::T);
             m_RefFront = m_SampleData->properties(SampleData::Rf);
             m_RefBack = m_SampleData->properties(SampleData::Rb);

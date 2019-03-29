@@ -53,9 +53,11 @@ namespace MultiLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     CMultiPaneSpecular::CMultiPaneSpecular(
       std::vector<SingleLayerOptics::SpecularLayer> layers,
-      const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation) :
+      const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
+      const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) :
         m_Layers(std::move(layers)),
-        m_SolarRadiation(t_SolarRadiation)
+        m_SolarRadiation(t_SolarRadiation),
+        m_DetectorData(t_DetectorData)
     {
         CCommonWavelengths aCommonWL;
         for(auto & layer : m_Layers)
@@ -63,11 +65,21 @@ namespace MultiLayerOptics
             aCommonWL.addWavelength(layer.getBandWavelengths());
         }
 
+        if(m_DetectorData != nullptr && m_DetectorData->size() == 0)
+        {
+            m_DetectorData = nullptr;
+        }
+
         // Finds combination of two wavelength sets without going outside of wavelenght range for
         // any of spectral samples.
         m_CommonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
         m_SolarRadiation = m_SolarRadiation->interpolate(m_CommonWavelengths);
+
+        if(m_DetectorData != nullptr)
+        {
+            m_DetectorData->interpolate(m_CommonWavelengths);
+        }
 
         for(auto & layer : m_Layers)
         {
@@ -93,10 +105,11 @@ namespace MultiLayerOptics
 
     std::unique_ptr<CMultiPaneSpecular> CMultiPaneSpecular::create(
       std::vector<SingleLayerOptics::SpecularLayer> layers,
-      const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation)
+      const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
+      const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData)
     {
         return std::unique_ptr<CMultiPaneSpecular>(
-          new CMultiPaneSpecular(std::move(layers), t_SolarRadiation));
+          new CMultiPaneSpecular(std::move(layers), t_SolarRadiation, t_DetectorData));
     }
 
     double CMultiPaneSpecular::getPropertySimple(
@@ -149,15 +162,33 @@ namespace MultiLayerOptics
     {
         CEquivalentLayerSingleComponentMWAngle & aAngularProperties = *getAngular(t_Angle);
 
-        auto aProperties = aAngularProperties.getProperties(t_Side, t_Property);
+        const auto aProperties = aAngularProperties.getProperties(t_Side, t_Property);
+
+        // aAngularProperties.getProperty(t_Side, t_Property);
 
         auto aMult = aProperties->mMult(*m_SolarRadiation);
 
-        auto iIntegrated = aMult->integrate(t_IntegrationType, normalizationCoefficient);
+        if (m_DetectorData != nullptr)
+        {
+            aMult = aMult->mMult(*m_DetectorData);
+        }
 
-        double totalProperty = iIntegrated->sum(minLambda, maxLambda);
-        double totalSolar = m_SolarRadiation->integrate(t_IntegrationType, normalizationCoefficient)
-                              ->sum(minLambda, maxLambda);
+        const auto iIntegrated = aMult->integrate(t_IntegrationType, normalizationCoefficient);
+
+        // TODO: Check detector data here and multiply with it if necessary
+
+        const double totalProperty = iIntegrated->sum(minLambda, maxLambda);        
+
+        auto solarRadiation = m_SolarRadiation;
+
+        if (m_DetectorData != nullptr)
+        {
+            solarRadiation = solarRadiation->mMult(*m_DetectorData);
+        }
+
+        double totalSolar =
+            solarRadiation->integrate(t_IntegrationType, normalizationCoefficient)
+            ->sum(minLambda, maxLambda);
 
         assert(totalSolar > 0);
 
@@ -292,7 +323,7 @@ namespace MultiLayerOptics
             std::shared_ptr<CSeries> T = std::make_shared<CSeries>();
             std::shared_ptr<CSeries> Rf = std::make_shared<CSeries>();
             std::shared_ptr<CSeries> Rb = std::make_shared<CSeries>();
-            for(size_t j = 0; j < wl.size(); ++j)
+            for(size_t j = 0; j < wl.size() - 1; ++j)
             {
                 T->addProperty(wl[j], Tv[j]);
                 Rf->addProperty(wl[j], Rfv[j]);

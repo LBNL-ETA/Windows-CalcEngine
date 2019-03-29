@@ -48,6 +48,11 @@ namespace SingleLayerOptics
 
     void CMaterial::setSourceData(std::shared_ptr<CSeries>)
     {
+        // Default material will not have source data
+    }
+
+    void CMaterial::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>&)
+    {
         // Default material will not have detector data
     }
 
@@ -111,9 +116,28 @@ namespace SingleLayerOptics
         return m_Wavelengths;
     }
 
-	void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths) {
-		m_Wavelengths = wavelengths;
-	}
+    std::vector<double>
+      CMaterial::trimWavelengthToRange(const std::vector<double> & wavelengths) const
+    {
+        std::vector<double> wl;
+
+        for(const auto & w : wavelengths)
+        {
+            if(w > (m_MinLambda - ConstantsData::floatErrorTolerance)
+               && (w < (m_MaxLambda + ConstantsData::floatErrorTolerance)))
+            {
+                wl.push_back(w);
+            }
+        }
+
+        return wl;
+    }
+
+    void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths)
+    {
+        // Trimming is necessary in order to keep data within integration range
+        m_Wavelengths = trimWavelengthToRange(wavelengths);
+    }
 
     size_t CMaterial::getBandSize()
     {
@@ -144,7 +168,7 @@ namespace SingleLayerOptics
         return m_MaxLambda;
     }
 
-	////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
     CMaterialSingleBand::CMaterialSingleBand(const double t_Tf,
@@ -244,6 +268,12 @@ namespace SingleLayerOptics
         double highLambda = m_MaterialPartialRange->getMaxLambda();
         CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
         createNIRRange(m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio());
+    }
+
+    void CMaterialDualBand::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    {
+        m_MaterialFullRange->setDetectorData(t_DetectorData);
+        m_MaterialPartialRange->setDetectorData(t_DetectorData);
     }
 
     double CMaterialDualBand::getProperty(Property t_Property, Side t_Side) const
@@ -382,6 +412,11 @@ namespace SingleLayerOptics
         m_AngularSample->setSourceData(t_SourceData);
     }
 
+    void CMaterialSample::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    {
+        m_AngularSample->setDetectorData(t_DetectorData);
+    }
+
     double CMaterialSample::getPropertyAtAngle(const Property t_Property,
                                                const Side t_Side,
                                                const double t_Angle) const
@@ -415,12 +450,14 @@ namespace SingleLayerOptics
         return m_AngularSample->getBandWavelengths();
     }
 
-	void CMaterialSample::setBandWavelengths( const std::vector< double > & wavelengths ) {
-		CMaterial::setBandWavelengths( wavelengths );
-		m_AngularSample->setBandWavelengths(wavelengths);
-	}
+    void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
+    {
+        CMaterial::setBandWavelengths(wavelengths);
+        m_AngularSample->setBandWavelengths(m_Wavelengths);
+        m_WavelengthsCalculated = true;
+    }
 
-	////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialMeasured
     ////////////////////////////////////////////////////////////////////////////////////
 

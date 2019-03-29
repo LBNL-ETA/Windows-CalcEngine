@@ -167,7 +167,7 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngle0)
 
     const double T =
       aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.513367, T, 1e-6);
+    EXPECT_NEAR(0.513369, T, 1e-6);
 
     const double Rf =
       aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
@@ -179,7 +179,7 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngle0)
 
     const double Abs1 =
       aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.431559, Abs1, 1e-6);
+    EXPECT_NEAR(0.431557, Abs1, 1e-6);
 
 }
 
@@ -193,7 +193,7 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngle10)
 
     const double T =
       aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.511677, T, 1e-6);
+    EXPECT_NEAR(0.511679, T, 1e-6);
 
     const double Rf =
       aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
@@ -205,7 +205,7 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngle10)
 
     const double Abs1 =
       aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.433297, Abs1, 1e-6);
+    EXPECT_NEAR(0.433295, Abs1, 1e-6);
 }
 
 TEST_F(EquivalentSpecularLayer_NFRC913, TestAngle20)
@@ -218,7 +218,7 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngle20)
 
     const double T =
       aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.506483, T, 1e-6);
+    EXPECT_NEAR(0.506485, T, 1e-6);
 
     const double Rf =
       aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
@@ -230,7 +230,7 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngle20)
 
     const double Abs1 =
       aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.438385, Abs1, 1e-6);
+    EXPECT_NEAR(0.438383, Abs1, 1e-6);
 }
 
 TEST_F(EquivalentSpecularLayer_NFRC913, TestAngleHemispherical10)
@@ -245,11 +245,11 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngleHemispherical10)
 
     double Tfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::T, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.439701, Tfhem, 1e-6);
+    EXPECT_NEAR(0.439703, Tfhem, 1e-6);
 
     double Tbhem =
       aLayer.getHemisphericalProperty(Side::Back, Property::T, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.439701, Tbhem, 1e-6);
+    EXPECT_NEAR(0.439703, Tbhem, 1e-6);
 
     double Rfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::R, aAngles, minLambda, maxLambda);
@@ -260,5 +260,5 @@ TEST_F(EquivalentSpecularLayer_NFRC913, TestAngleHemispherical10)
     EXPECT_NEAR(0.106320, Rbhem, 1e-6);
 
     double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.443805, Abs1, 1e-6);
+    EXPECT_NEAR(0.443803, Abs1, 1e-6);
 }
