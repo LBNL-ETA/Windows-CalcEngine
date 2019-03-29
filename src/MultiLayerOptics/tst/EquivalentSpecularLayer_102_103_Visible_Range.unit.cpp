@@ -334,7 +334,6 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial_102 = Material::nBandMaterial(loadSampleData_NFRC_102(),
-                                                           getDetectorData(),
                                                            thickness,
                                                            MaterialType::Monolithic,
                                                            minLambda,
@@ -344,7 +343,6 @@ protected:
 
         thickness = 5.715e-3;   // [m]
         const auto aMaterial_103 = Material::nBandMaterial(loadSampleData_NFRC_103(),
-                                                           getDetectorData(),
                                                            thickness,
                                                            MaterialType::Monolithic,
                                                            minLambda,
