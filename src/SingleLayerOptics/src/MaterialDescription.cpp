@@ -48,6 +48,11 @@ namespace SingleLayerOptics
 
     void CMaterial::setSourceData(std::shared_ptr<CSeries>)
     {
+        // Default material will not have source data
+    }
+
+    void CMaterial::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>&)
+    {
         // Default material will not have detector data
     }
 
@@ -265,6 +270,12 @@ namespace SingleLayerOptics
         createNIRRange(m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio());
     }
 
+    void CMaterialDualBand::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    {
+        m_MaterialFullRange->setDetectorData(t_DetectorData);
+        m_MaterialPartialRange->setDetectorData(t_DetectorData);
+    }
+
     double CMaterialDualBand::getProperty(Property t_Property, Side t_Side) const
     {
         return m_MaterialFullRange->getProperty(t_Property, t_Side);
@@ -399,6 +410,11 @@ namespace SingleLayerOptics
     void CMaterialSample::setSourceData(std::shared_ptr<CSeries> t_SourceData)
     {
         m_AngularSample->setSourceData(t_SourceData);
+    }
+
+    void CMaterialSample::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    {
+        m_AngularSample->setDetectorData(t_DetectorData);
     }
 
     double CMaterialSample::getPropertyAtAngle(const Property t_Property,
