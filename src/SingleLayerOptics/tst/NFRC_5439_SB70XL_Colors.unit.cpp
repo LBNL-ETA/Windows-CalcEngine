@@ -312,7 +312,7 @@ private:
            {0.780, 0.0000}});
     }
 
-    SingleLayerOptics::CScatteringLayer
+    std::shared_ptr<SingleLayerOptics::CScatteringLayer>
       createLayer(const std::shared_ptr<CSeries> & astmStandard) const
     {
         double thickness = 3.048e-3;   // [m]
@@ -323,9 +323,10 @@ private:
                                                      FenestrationCommon::MaterialType::Monolithic,
                                                      FenestrationCommon::WavelengthRange::Visible);
 
-        auto layer = SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial);
-        layer.setSourceData(loadSolarRadiationFile());
-        layer.setWavelengths(loadWavelengths());
+        auto layer = std::make_shared<SingleLayerOptics::CScatteringLayer>(
+          SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial));
+        layer->setSourceData(loadSolarRadiationFile());
+        layer->setWavelengths(loadWavelengths());
 
         return layer;
     }
