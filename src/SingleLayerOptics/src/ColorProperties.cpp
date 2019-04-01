@@ -16,9 +16,9 @@ namespace SingleLayerOptics
     CIE_LAB::CIE_LAB(double L, double A, double B) : L(L), a(A), b(B)
     {}
 
-    ColorProperties::ColorProperties(const CScatteringLayer & layerX,
-                                     const CScatteringLayer & layerY,
-                                     const CScatteringLayer & layerZ,
+    ColorProperties::ColorProperties(const std::shared_ptr<IScatteringLayer> & layerX,
+                                     const std::shared_ptr<IScatteringLayer> & layerY,
+                                     const std::shared_ptr<IScatteringLayer> & layerZ,
                                      const FenestrationCommon::CSeries & t_Source,
                                      const FenestrationCommon::CSeries & t_DetectorX,
                                      const FenestrationCommon::CSeries & t_DetectorY,
@@ -28,7 +28,7 @@ namespace SingleLayerOptics
         m_LayerY(layerY),
         m_LayerZ(layerZ)
     {
-        auto wavelengths = m_LayerX.getWavelengths();
+        auto wavelengths = m_LayerX->getWavelengths();
         if(!t_wavelengths.empty())
         {
             wavelengths = t_wavelengths;
@@ -42,9 +42,9 @@ namespace SingleLayerOptics
         DY = *DY.interpolate(wavelengths);
         DZ = *DZ.interpolate(wavelengths);
         aSolar.mMult(DX);
-        m_SDx = aSolar.mMult(DX)->sum(m_LayerX.getMinLambda(), m_LayerX.getMaxLambda());
-        m_SDy = aSolar.mMult(DY)->sum(m_LayerX.getMinLambda(), m_LayerX.getMaxLambda());
-        m_SDz = aSolar.mMult(DZ)->sum(m_LayerX.getMinLambda(), m_LayerX.getMaxLambda());
+        m_SDx = aSolar.mMult(DX)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
+        m_SDy = aSolar.mMult(DY)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
+        m_SDz = aSolar.mMult(DZ)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
     }
 
     Trichromatic
@@ -55,10 +55,10 @@ namespace SingleLayerOptics
                                        double const t_Phi)
     {
         auto X = m_SDx / m_SDy * 100
-                 * m_LayerX.getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
-        auto Y = 100 * m_LayerY.getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+                 * m_LayerX->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        auto Y = 100 * m_LayerY->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
         auto Z = m_SDz / m_SDy * 100
-                 * m_LayerZ.getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+                 * m_LayerZ->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
         return Trichromatic(X, Y, Z);
     }
 
@@ -105,9 +105,9 @@ namespace SingleLayerOptics
                                         double const t_Theta,
                                         double const t_Phi)
     {
-        auto X = m_LayerX.getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
-        auto Y = m_LayerY.getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
-        auto Z = m_LayerZ.getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        auto X = m_LayerX->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        auto Y = m_LayerY->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        auto Z = m_LayerZ->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
 
         std::vector<double> Q{X, Y, Z};
         for(auto & val : Q)
