@@ -16,17 +16,17 @@ namespace SingleLayerOptics
     CIE_LAB::CIE_LAB(double L, double A, double B) : L(L), a(A), b(B)
     {}
 
-    ColorProperties::ColorProperties(const std::shared_ptr<IScatteringLayer> & layerX,
-                                     const std::shared_ptr<IScatteringLayer> & layerY,
-                                     const std::shared_ptr<IScatteringLayer> & layerZ,
+    ColorProperties::ColorProperties(std::unique_ptr<IScatteringLayer> && layerX,
+                                     std::unique_ptr<IScatteringLayer> && layerY,
+                                     std::unique_ptr<IScatteringLayer> && layerZ,
                                      const FenestrationCommon::CSeries & t_Source,
                                      const FenestrationCommon::CSeries & t_DetectorX,
                                      const FenestrationCommon::CSeries & t_DetectorY,
                                      const FenestrationCommon::CSeries & t_DetectorZ,
                                      const std::vector<double> & t_wavelengths) :
-        m_LayerX(layerX),
-        m_LayerY(layerY),
-        m_LayerZ(layerZ)
+        m_LayerX(std::move(layerX)),
+        m_LayerY(std::move(layerY)),
+        m_LayerZ(std::move(layerZ))
     {
         auto wavelengths = m_LayerX->getWavelengths();
         if(!t_wavelengths.empty())
