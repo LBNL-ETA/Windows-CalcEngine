@@ -323,7 +323,7 @@ private:
                                                      FenestrationCommon::MaterialType::Monolithic,
                                                      FenestrationCommon::WavelengthRange::Visible);
 
-        auto layer = std::make_unique<SingleLayerOptics::CScatteringLayer>(
+        auto layer = wce::make_unique<SingleLayerOptics::CScatteringLayer>(
           SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial));
         layer->setSourceData(loadSolarRadiationFile());
         layer->setWavelengths(loadWavelengths());
