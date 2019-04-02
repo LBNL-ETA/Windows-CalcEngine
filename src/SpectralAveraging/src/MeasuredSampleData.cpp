@@ -34,8 +34,9 @@ namespace SpectralAveraging
         reset();
     }
 
-    CSpectralSampleData::CSpectralSampleData(const std::initializer_list<MeasuredRow> & tValues) :
-        CSpectralSampleData()
+
+	CSpectralSampleData::CSpectralSampleData(
+		const std::vector<MeasuredRow> & tValues) : CSpectralSampleData()
     {
         m_Transmittances->clear();
         m_ReflectancesFront->clear();
@@ -140,8 +141,9 @@ namespace SpectralAveraging
         }
     }
 
-    std::shared_ptr<CSpectralSampleData>
-      CSpectralSampleData::create(const std::initializer_list<MeasuredRow> & tValues)
+
+	std::shared_ptr<CSpectralSampleData>
+    CSpectralSampleData::create(const std::vector<MeasuredRow> & tValues)
     {
         return std::shared_ptr<CSpectralSampleData>(new CSpectralSampleData(tValues));
     }

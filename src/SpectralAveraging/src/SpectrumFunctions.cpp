@@ -22,11 +22,10 @@ std::vector<std::pair<double, double>>
     return UVAction(t_data, 12.28, 25.56);
 }
 
-std::shared_ptr<FenestrationCommon::CSeries>
+std::vector<std::pair<double, double>>
   SpectralAveraging::BlackBodySpectrum(const std::vector<double> & t_data, double t_temperature)
 {
-    std::shared_ptr<FenestrationCommon::CSeries> result =
-      std::make_shared<FenestrationCommon::CSeries>();
+    std::vector<std::pair<double, double>> result;
 
     const double ev = 1.602e-19;   // J
 
@@ -42,7 +41,7 @@ std::shared_ptr<FenestrationCommon::CSeries>
                     / std::pow(lambda * 1e-9, 5);
         double q1 = 1 / std::expm1(hc / kT / lambda);
         double energy = C1 * q1;
-        result->addProperty(val, energy);
+        result.push_back(std::make_pair(val, energy));        
     }
 
     return result;

@@ -41,7 +41,7 @@ namespace MultiLayerOptics
           create(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
         static std::unique_ptr<CMultiLayerScattered>
-          create(const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers);
+          create(const std::vector<SingleLayerOptics::CScatteringLayer> & layers);
 
         void addLayer(double t_Tf_dir_dir,
                       double t_Rf_dir_dir,
@@ -89,7 +89,7 @@ namespace MultiLayerOptics
     private:
         explicit CMultiLayerScattered(const SingleLayerOptics::CScatteringLayer & t_Layer);
         CMultiLayerScattered(
-          const std::initializer_list<SingleLayerOptics::CScatteringLayer> & layers);
+          const std::vector<SingleLayerOptics::CScatteringLayer> & layers);
 
         void initialize(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
