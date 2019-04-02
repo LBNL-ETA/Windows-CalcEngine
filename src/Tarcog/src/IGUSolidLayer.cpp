@@ -64,6 +64,11 @@ namespace Tarcog
             return m_Conductivity;
         }
 
+		double CIGUSolidLayer::getSolarAbsorptance() const
+        {
+                    return m_SolarAbsorptance;
+        }
+
         void CIGUSolidLayer::calculateConvectionOrConductionFlow()
         {
             if(m_Thickness == 0)

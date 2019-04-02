@@ -16,13 +16,13 @@ namespace Gases
         m_DefaultGas = true;
     }
 
-    CGas::CGas(const std::initializer_list<std::pair<double, CGasData>> & gases) :
+    CGas::CGas(const std::vector<std::pair<double, CGasData>> & gases) :
         m_Pressure(DefaultPressure)
     {
         addGasItems(gases);
     }
 
-    CGas::CGas(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases) :
+    CGas::CGas(const std::vector<std::pair<double, Gases::GasDef>> & gases) :
         m_Pressure(DefaultPressure)
     {
         addGasItems(gases);
@@ -54,7 +54,7 @@ namespace Gases
         m_GasItem.push_back(item);
     }
 
-    void CGas::addGasItems(const std::initializer_list<std::pair<double, CGasData>> & gases)
+    void CGas::addGasItems(const std::vector<std::pair<double, CGasData>> & gases)
     {
         if(m_DefaultGas)
         {
@@ -67,7 +67,7 @@ namespace Gases
         }
     }
 
-    void CGas::addGasItems(const std::initializer_list<std::pair<double, Gases::GasDef>> & gases)
+    void CGas::addGasItems(const std::vector<std::pair<double, Gases::GasDef>> & gases)
     {
         if(m_DefaultGas)
         {

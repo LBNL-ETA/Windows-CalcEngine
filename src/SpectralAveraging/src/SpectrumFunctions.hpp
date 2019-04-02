@@ -14,7 +14,7 @@ namespace SpectralAveraging
     std::vector<std::pair<double, double>> Krochmann(const std::vector<double> & t_data);
 
     /// Input wavelengths are in micrometers
-    std::shared_ptr<FenestrationCommon::CSeries>
+    std::vector<std::pair<double, double>>
       BlackBodySpectrum(const std::vector<double> & t_data, double t_temperature);
 }   // namespace SpectralAveraging
 

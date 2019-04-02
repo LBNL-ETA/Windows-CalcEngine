@@ -1,12 +1,12 @@
 #include <memory>
 #include <gtest/gtest.h>
-
+#include "WCEMultiLayerOptics.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCESpectralAveraging.hpp"
 
 using FenestrationCommon::CSeries;
 
-class TestNFRC_5439_SB70XL_Colors_Scattering : public testing::Test
+class TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular : public testing::Test
 {
 private:
     std::shared_ptr<SingleLayerOptics::ColorProperties> m_Color;
@@ -312,7 +312,7 @@ private:
            {0.780, 0.0000}});
     }
 
-    std::unique_ptr<SingleLayerOptics::CScatteringLayer>
+    std::unique_ptr<MultiLayerOptics::CMultiPaneSpecular>
       createLayer(const std::shared_ptr<CSeries> & astmStandard) const
     {
         double thickness = 3.048e-3;   // [m]
@@ -323,10 +323,15 @@ private:
                                                      FenestrationCommon::MaterialType::Monolithic,
                                                      FenestrationCommon::WavelengthRange::Visible);
 
-        auto layer = wce::make_unique<SingleLayerOptics::CScatteringLayer>(
-          SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial));
-        layer->setSourceData(loadSolarRadiationFile());
-        layer->setWavelengths(loadWavelengths());
+        aMaterial->setBandWavelengths(loadWavelengths());
+
+        SingleLayerOptics::SpecularLayer single_layer =
+          SingleLayerOptics::SpecularLayer::createLayer(aMaterial);
+
+        single_layer.setSourceData(loadSolarRadiationFile());
+
+        auto layer = MultiLayerOptics::CMultiPaneSpecular::create(
+          {single_layer}, loadSolarRadiationFile(), astmStandard);
 
         return layer;
     }
@@ -357,7 +362,7 @@ public:
     }
 };
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_T)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestTrichromatic_T)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
@@ -372,7 +377,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_T)
     EXPECT_NEAR(71.768345, T.Z, 1e-6);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_R)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestTrichromatic_R)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
@@ -387,7 +392,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_R)
     EXPECT_NEAR(10.159147, T.Z, 1e-6);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_T)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestRGB_T)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
@@ -402,7 +407,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_T)
     EXPECT_EQ(233, rgb.B);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_R)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestRGB_R)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
@@ -417,7 +422,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_R)
     EXPECT_EQ(96, rgb.B);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_T)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestCIE_LAB_T)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
@@ -432,7 +437,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_T)
     EXPECT_NEAR(4.081155, cie.b, 1e-6);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_R)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestCIE_LAB_R)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
