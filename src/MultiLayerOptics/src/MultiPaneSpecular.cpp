@@ -325,6 +325,14 @@ namespace MultiLayerOptics
             std::shared_ptr<CSeries> Rb = std::make_shared<CSeries>();
             for(size_t j = 0; j < wl.size() - 1; ++j)
             {
+                auto tr = checkRange(Tv[j], Rfv[j]);
+                Tv[j] = tr.T;
+                Rfv[j] = tr.R;
+
+                tr = checkRange(Tv[j], Rbv[j]);
+                Tv[j] = tr.T;
+                Rbv[j] = tr.R;
+
                 T->addProperty(wl[j], Tv[j]);
                 Rf->addProperty(wl[j], Rfv[j]);
                 Rb->addProperty(wl[j], Rbv[j]);
