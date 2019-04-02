@@ -193,18 +193,9 @@ namespace SpectralAveraging
                 m_Reflectance = 0;
             }
 
-            if(m_Reflectance + m_Transmittance > 1.0)
-            {
-                auto RTMax = std::max(m_Reflectance, m_Transmittance);
-                if(RTMax == m_Reflectance)
-                {
-                    m_Reflectance = 1 - m_Transmittance;
-                }
-                if(RTMax == m_Transmittance)
-                {
-                    m_Transmittance = 1 - m_Reflectance;
-                }
-            }
+            const auto tr = checkRange(m_Transmittance, m_Reflectance);
+            m_Transmittance = tr.T;
+            m_Reflectance = tr.R;
 
             m_StateAngle = t_Angle;
         }

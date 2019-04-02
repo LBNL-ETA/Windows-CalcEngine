@@ -2,6 +2,7 @@
 #define MATHFUNCTIONS_H
 
 #include <cmath>
+#include <algorithm>
 
 namespace FenestrationCommon
 {
@@ -28,7 +29,7 @@ namespace FenestrationCommon
         TR tr{T, R};
     	if(T + R > 1)
 		{
-    		const auto RTMax = std::fmax(T, R);
+    		const auto RTMax = std::max(T, R);
     		if(RTMax == R)
             {
     		    tr.R = 1 - T;
