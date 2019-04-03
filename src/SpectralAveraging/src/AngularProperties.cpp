@@ -96,15 +96,15 @@ namespace SpectralAveraging
             auto tauP = 1 - rhoP;
             auto tauS = 1 - rhoS;
 
-            auto tau_TotP{0.0};
-            const double pCoeff = 1 - std::pow(a, 2) * std::pow(rhoP, 2);
+            double tau_TotP{0.0};
+            const auto pCoeff = 1 - std::pow(a, 2) * std::pow(rhoP, 2);
             if(pCoeff != 0)
             {
                 tau_TotP = a * std::pow(tauP, 2) / pCoeff;
             }
 
-            auto tau_TotS{0.0};
-            const double sCoeff = 1 - std::pow(a, 2) * std::pow(rhoS, 2);
+            double tau_TotS{0.0};
+            const auto sCoeff = 1 - std::pow(a, 2) * std::pow(rhoS, 2);
             if(sCoeff != 0)
             {
                 tau_TotS = a * std::pow(tauS, 2) / sCoeff;
