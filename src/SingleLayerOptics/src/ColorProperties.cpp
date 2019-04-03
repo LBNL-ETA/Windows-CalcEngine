@@ -37,7 +37,6 @@ namespace SingleLayerOptics
         std::unique_ptr<FenestrationCommon::CSeries> DX = t_DetectorX.interpolate(wavelengths);
         std::unique_ptr<FenestrationCommon::CSeries> DY = t_DetectorY.interpolate(wavelengths);
         std::unique_ptr<FenestrationCommon::CSeries> DZ = t_DetectorZ.interpolate(wavelengths);
-        aSolar = aSolar->mMult(t_DetectorX);
         double min_lambda_x = m_LayerX->getMinLambda();
         double max_lambda_x = m_LayerX->getMaxLambda();
         m_SDx = aSolar->mMult(*DX)->sum(min_lambda_x, max_lambda_x);
