@@ -164,8 +164,6 @@ namespace MultiLayerOptics
 
         const auto aProperties = aAngularProperties.getProperties(t_Side, t_Property);
 
-        // aAngularProperties.getProperty(t_Side, t_Property);
-
         auto aMult = aProperties->mMult(*m_SolarRadiation);
 
         if (m_DetectorData != nullptr)
