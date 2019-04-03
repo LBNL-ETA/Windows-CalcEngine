@@ -33,18 +33,16 @@ namespace SingleLayerOptics
         {
             wavelengths = t_wavelengths;
         }
-        auto aSolar = t_Source;
-        auto DX = t_DetectorX;
-        auto DY = t_DetectorY;
-        auto DZ = t_DetectorZ;
-        aSolar = *aSolar.interpolate(wavelengths);
-        DX = *DX.interpolate(wavelengths);
-        DY = *DY.interpolate(wavelengths);
-        DZ = *DZ.interpolate(wavelengths);
-        aSolar.mMult(DX);
-        m_SDx = aSolar.mMult(DX)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
-        m_SDy = aSolar.mMult(DY)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
-        m_SDz = aSolar.mMult(DZ)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
+        std::unique_ptr<FenestrationCommon::CSeries> aSolar = t_Source.interpolate(wavelengths);
+        std::unique_ptr<FenestrationCommon::CSeries> DX = t_DetectorX.interpolate(wavelengths);
+        std::unique_ptr<FenestrationCommon::CSeries> DY = t_DetectorY.interpolate(wavelengths);
+        std::unique_ptr<FenestrationCommon::CSeries> DZ = t_DetectorZ.interpolate(wavelengths);
+        aSolar = aSolar->mMult(t_DetectorX);
+        double min_lambda_x = m_LayerX->getMinLambda();
+        double max_lambda_x = m_LayerX->getMaxLambda();
+        m_SDx = aSolar->mMult(*DX)->sum(min_lambda_x, max_lambda_x);
+        m_SDy = aSolar->mMult(*DY)->sum(min_lambda_x, max_lambda_x);
+        m_SDz = aSolar->mMult(*DZ)->sum(min_lambda_x, max_lambda_x);
     }
 
     Trichromatic
