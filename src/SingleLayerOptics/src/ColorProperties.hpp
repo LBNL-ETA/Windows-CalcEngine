@@ -98,12 +98,12 @@ namespace SingleLayerOptics
             auto Z = 0.0125313 * (tri.Z - 0.2178);
 
             /// According to https://www.w3.org/Graphics/Color/srgb.pdf
-            const FenestrationCommon::SquareMatrix T({{3.2406255, -1.537208, -0.4986286},
+            const FenestrationCommon::SquareMatrix XYZ_to_sRGB({{3.2406255, -1.537208, -0.4986286},
                                                       {-0.9689307, 1.8757561, 0.0415175},
                                                       {0.0557101, -0.2040211, 1.0569959}});
 
             const std::vector<double> xyz({X, Y, Z});
-            auto mmult = T * xyz;
+            auto mmult = XYZ_to_sRGB * xyz;
 
             const double testlimit = 0.0031308;
             for(auto & val : mmult)
