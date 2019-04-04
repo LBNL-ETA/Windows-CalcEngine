@@ -18,6 +18,8 @@ addons:
     # install toolchains
     - gcc-5
     - g++-5
+    - gcc-7
+    - g++-7
     - clang-3.6
 
 matrix:
@@ -38,6 +40,14 @@ matrix:
           packages:
             - g++-5
       env: COMPILER=g++-5
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env: COMPILER=g++-7
     - compiler: clang
       addons:
         apt:
