@@ -170,6 +170,31 @@ TEST_F(EquivalentSpecularLayer_6046, TestAngle0)
     EXPECT_NEAR(0.458351, Rbhem, 1e-6);
 }
 
+TEST_F(EquivalentSpecularLayer_6046, TestAngle10)
+{
+    SCOPED_TRACE("Begin Test: Specular MultiLayerOptics layer - angle = 10 deg.");
+
+    const double angle = 10;
+
+    CMultiPaneSpecular aLayer = *getLayer();
+
+    const double T =
+            aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.382717, T, 1e-6);
+
+    const double Rf =
+            aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.285926, Rf, 1e-6);
+
+    const double Rb =
+            aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.449215, Rb, 1e-6);
+
+    const double Abs1 =
+            aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
+    EXPECT_NEAR(0.331358, Abs1, 1e-6);
+}
+
 TEST_F(EquivalentSpecularLayer_6046, TestAngleHemispherical10)
 {
     SCOPED_TRACE("Begin Test: Hemispherical to hemispherical with ten integration points.");
