@@ -15,8 +15,9 @@ namespace SingleLayerOptics {
 
 	class IScatteringLayer {
 	public:
+        virtual ~IScatteringLayer() = default;
 
-		virtual double getPropertySimple(
+        virtual double getPropertySimple(
 				const FenestrationCommon::PropertySimple t_Property,
 				const FenestrationCommon::Side t_Side,
 				const FenestrationCommon::Scattering t_Scattering,
