@@ -771,7 +771,7 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle0)
     CMultiPaneSpecular aLayer = *getLayer();
 
     double T = aLayer.getProperty(Side::Front, Property::T, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.719535, T, 1e-6);
+    EXPECT_NEAR(0.719531, T, 1e-6);
 
     double Rf = aLayer.getProperty(Side::Front, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.128320, Rf, 1e-6);
@@ -780,10 +780,10 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle0)
     EXPECT_NEAR(0.128320, Rb, 1e-6);
 
     double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.086267, Abs1, 1e-6);
+    EXPECT_NEAR(0.086269, Abs1, 1e-6);
 
     double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.065878, Abs2, 1e-6);
+    EXPECT_NEAR(0.065880, Abs2, 1e-6);
 }
 
 TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle10)
@@ -797,7 +797,7 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle10)
     CMultiPaneSpecular aLayer = *getLayer();
 
     double T = aLayer.getProperty(Side::Front, Property::T, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.718733, T, 1e-6);
+    EXPECT_NEAR(0.718730, T, 1e-6);
 
     double Rf = aLayer.getProperty(Side::Front, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.128243, Rf, 1e-6);
@@ -806,10 +806,10 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle10)
     EXPECT_NEAR(0.128242, Rb, 1e-6);
 
     double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.086793, Abs1, 1e-6);
+    EXPECT_NEAR(0.086795, Abs1, 1e-6);
 
     double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.066232, Abs2, 1e-6);
+    EXPECT_NEAR(0.066233, Abs2, 1e-6);
 }
 
 TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle25)
@@ -823,19 +823,19 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle25)
     CMultiPaneSpecular aLayer = *getLayer();
 
     double T = aLayer.getProperty(Side::Front, Property::T, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.678200, T, 1e-6);
+    EXPECT_NEAR(0.678197, T, 1e-6);
 
     double Rf = aLayer.getProperty(Side::Front, Property::R, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.157391, Rf, 1e-6);
+    EXPECT_NEAR(0.157390, Rf, 1e-6);
 
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.162800, Rb, 1e-6);
+    EXPECT_NEAR(0.162799, Rb, 1e-6);
 
     double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.092159, Abs1, 1e-6);
+    EXPECT_NEAR(0.092161, Abs1, 1e-6);
 
     double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.072250, Abs2, 1e-6);
+    EXPECT_NEAR(0.072252, Abs2, 1e-6);
 }
 
 TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle90)
