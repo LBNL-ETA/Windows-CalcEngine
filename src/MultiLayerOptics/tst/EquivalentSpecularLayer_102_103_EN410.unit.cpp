@@ -215,7 +215,7 @@ protected:
         const auto aSolarRadiation = loadSolarRadiationFile();
 
         // Wavelength data set according to NFRC 2003 standard is from solar radiation file
-        const auto wl = aSolarRadiation->getXArray();
+        const std::vector<double> wl = aSolarRadiation->getXArray();
 
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial_102 = Material::nBandMaterial(

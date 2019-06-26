@@ -320,7 +320,7 @@ private:
 protected:
     void SetUp() override {
         const auto solarRadiationSpectrum{loadSolarRadiationFile()};
-        const auto wavelengthSet = solarRadiationSpectrum->getXArray();
+        const std::vector<double> wavelengthSet = solarRadiationSpectrum->getXArray();
 
         // Create material from samples
         auto thickness = 3.048e-3;   // [m]
