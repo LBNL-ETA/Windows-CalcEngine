@@ -45,7 +45,7 @@ namespace SingleLayerOptics
     ///   CMaterial
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Base virtual class for any material definition. It reprsents material properties over
+    // Base virtual class for any material definition. It represents material properties over
     // the certain wavelength range.
     // It also defines interface for angular dependency of material properties.
     class CMaterial
