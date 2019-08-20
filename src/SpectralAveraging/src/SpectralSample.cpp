@@ -237,7 +237,7 @@ namespace SpectralAveraging
         {
             for(const auto & side : EnumSide())
             {
-                m_Property[std::make_pair(prop, side)] = nullptr;
+                m_Property[std::make_pair(prop, side)] = CSeries();
             }
         }
     }
@@ -255,7 +255,7 @@ namespace SpectralAveraging
         {
             for(const auto & side : EnumSide())
             {
-                m_Property[std::make_pair(prop, side)] = nullptr;
+                m_Property[std::make_pair(prop, side)] = CSeries();
             }
         }
     }
@@ -271,8 +271,8 @@ namespace SpectralAveraging
         return m_SampleData->getWavelengths();
     }
 
-    std::shared_ptr<CSeries> CSpectralSample::getWavelengthsProperty(Property const t_Property,
-                                                                     Side const t_Side)
+    CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property,
+                                                    const Side t_Side)
     {
         calculateState();
 
@@ -299,7 +299,7 @@ namespace SpectralAveraging
                 for(const auto & side : EnumSide())
                 {
                     m_Property[std::make_pair(prop, side)] =
-                      m_SampleData->properties(prop, side)->interpolate(m_Wavelengths);
+                      *m_SampleData->properties(prop, side).interpolate(m_Wavelengths);
                 }
             }
         }
@@ -312,7 +312,7 @@ namespace SpectralAveraging
             for(const auto & side : EnumSide())
             {
                 m_Property[std::make_pair(prop, side)] =
-                  m_SampleData->properties(prop, side)->interpolate(m_Wavelengths);
+                  *m_SampleData->properties(prop, side).interpolate(m_Wavelengths);
             }
         }
         for(const auto & prop : EnumProperty())
@@ -320,7 +320,7 @@ namespace SpectralAveraging
             for(const auto & side : EnumSide())
             {
                 m_EnergySource[std::make_pair(prop, side)] =
-                  m_Property.at(std::make_pair(prop, side))->mMult(*m_IncomingSource);
+                  m_Property.at(std::make_pair(prop, side)).mMult(*m_IncomingSource);
             }
         }
     }
@@ -350,22 +350,6 @@ namespace SpectralAveraging
     //////////////////////////////////////////////////////////////////////////////////////
     ////  CSpectralAngleSample
     //////////////////////////////////////////////////////////////////////////////////////
-
-    CSpectralAngleSample::CSpectralAngleSample(std::shared_ptr<CSpectralSample> const & t_Sample,
-                                               double const t_Angle) :
-        m_Sample(t_Sample),
-        m_Angle(t_Angle)
-    {}
-
-    double CSpectralAngleSample::angle() const
-    {
-        return m_Angle;
-    }
-
-    std::shared_ptr<CSpectralSample> CSpectralAngleSample::sample() const
-    {
-        return m_Sample;
-    }
 
 
 }   // namespace SpectralAveraging

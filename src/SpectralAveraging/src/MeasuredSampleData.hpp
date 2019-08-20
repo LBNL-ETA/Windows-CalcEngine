@@ -37,8 +37,8 @@ namespace SpectralAveraging
                        double t_Transmittance,
                        double t_ReflectanceFront,
                        double t_ReflectanceBack);
-        std::shared_ptr<FenestrationCommon::CSeries> properties(FenestrationCommon::Property prop,
-                                                                FenestrationCommon::Side side);
+        FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
+                             FenestrationCommon::Side side);
         virtual std::vector<double> getWavelengths() const;
         virtual void interpolate(std::vector<double> const & t_Wavelengths);
 
@@ -54,7 +54,7 @@ namespace SpectralAveraging
         void reset();
 
         std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 std::shared_ptr<FenestrationCommon::CSeries>>
+                 FenestrationCommon::CSeries>
           m_Property;
 
         bool m_Flipped;

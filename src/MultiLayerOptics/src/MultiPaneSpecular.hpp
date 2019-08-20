@@ -6,15 +6,8 @@
 
 #include "WCECommon.hpp"
 #include "WCESingleLayerOptics.hpp"
-
-namespace FenestrationCommon
-{
-    enum class Side;
-    enum class Property;
-
-    class CSeries;
-
-}   // namespace FenestrationCommon
+#include "EquivalentLayerSingleComponentMW.hpp"
+#include "AbsorptancesMultiPane.hpp"
 
 namespace SingleLayerOptics
 {
@@ -25,26 +18,21 @@ namespace SingleLayerOptics
 
 namespace MultiLayerOptics
 {
-    class CEquivalentLayerSingleComponentMW;
-
-    class CAbsorptancesMultiPane;
-
     class CEquivalentLayerSingleComponentMWAngle
     {
     public:
-        CEquivalentLayerSingleComponentMWAngle(
-          const std::shared_ptr<CEquivalentLayerSingleComponentMW> & t_Layer,
-          const std::shared_ptr<CAbsorptancesMultiPane> & t_Abs,
-          double t_Angle);
+        CEquivalentLayerSingleComponentMWAngle(CEquivalentLayerSingleComponentMW t_Layer,
+                                               CAbsorptancesMultiPane t_Abs,
+                                               double t_Angle);
         double angle() const;
-        std::shared_ptr<CEquivalentLayerSingleComponentMW> layer() const;
-        std::shared_ptr<FenestrationCommon::CSeries>
-          getProperties(FenestrationCommon::Side t_Side, FenestrationCommon::Property t_Property);
-        std::shared_ptr<FenestrationCommon::CSeries> Abs(size_t Index);
+        const CEquivalentLayerSingleComponentMW & layer() const;
+        FenestrationCommon::CSeries
+        getProperties(const FenestrationCommon::Side t_Side, const FenestrationCommon::Property t_Property);
+        FenestrationCommon::CSeries Abs(const size_t Index);
 
     private:
-        std::shared_ptr<CEquivalentLayerSingleComponentMW> m_Layer;
-        std::shared_ptr<CAbsorptancesMultiPane> m_Abs;
+        CEquivalentLayerSingleComponentMW m_Layer;
+        CAbsorptancesMultiPane m_Abs;
         double m_Angle;
     };
 
@@ -56,9 +44,6 @@ namespace MultiLayerOptics
           std::vector<SingleLayerOptics::SpecularLayer> layers,
           const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
           const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData = nullptr);
-
-        CMultiPaneSpecular(std::vector<SingleLayerOptics::SpecularLayer> layers,
-                           const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
 
         CMultiPaneSpecular(std::vector<double> const & t_CommonWavelength,
                            const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
@@ -126,11 +111,17 @@ namespace MultiLayerOptics
                                 double normalizationCoefficient = 1);
 
     private:
+        struct SeriesResults
+        {
+            FenestrationCommon::CSeries T;
+            FenestrationCommon::CSeries Rf;
+            FenestrationCommon::CSeries Rb;
+        };
         // Get correct angular object out of array and if object does not exists, then it just
         // creates new one and stores it into array
-        std::shared_ptr<CEquivalentLayerSingleComponentMWAngle> getAngular(double t_Angle);
+        CEquivalentLayerSingleComponentMWAngle getAngular(double t_Angle);
         // creates equivalent layer properties for certain angle
-        std::shared_ptr<CEquivalentLayerSingleComponentMWAngle> createNewAngular(double t_Angle);
+        CEquivalentLayerSingleComponentMWAngle createNewAngular(double t_Angle);
 
         // Contains all specular layers (cells) that are added to the model. This way program will
         // be able to recalculate equivalent properties for any angle
@@ -143,7 +134,10 @@ namespace MultiLayerOptics
         // Results for angle-properties std::pair. If same angle is required twice, then model will
         // not calculate it twice. First it will search for results here and if results are not
         // available, then it will perform calculation for given angle
-        std::vector<std::shared_ptr<CEquivalentLayerSingleComponentMWAngle>> m_EquivalentAngle;
+        std::vector<CEquivalentLayerSingleComponentMWAngle> m_EquivalentAngle;
+
+        SeriesResults getSeriesResults(const SingleLayerOptics::CBeamDirection & aDirection,
+                                       size_t layerIndex);
     };
 
 }   // namespace MultiLayerOptics
