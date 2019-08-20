@@ -98,12 +98,7 @@ namespace FenestrationCommon
 
     inline Side getSide(const Side side, const bool flipped)
     {
-        auto aSide = side;
-        if(flipped)
-        {
-            aSide = oppositeSide(side);
-        }
-        return aSide;
+        return flipped ? oppositeSide(side) : side;
     }
 
     enum class WavelengthRange

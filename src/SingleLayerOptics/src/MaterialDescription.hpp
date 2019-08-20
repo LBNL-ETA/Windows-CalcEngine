@@ -188,9 +188,10 @@ namespace SingleLayerOptics
     ///   CMaterialSample
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Material that contains data measured over the range of wavelengths. It also provides material
-    // properties at certain angle. Assumes that material properties at certain angle can be
-    // calculated by using coated and uncoated algorithms
+    //! /brief Material that contains data measured over the range of wavelengths.
+    //!
+    //! It also provides material properties at certain angle. Assumes that material properties
+    //! at certain angle can be calculated by using coated and uncoated algorithms
     class CMaterialSample : public CMaterial
     {
     public:
