@@ -9,8 +9,6 @@ namespace SpectralAveraging
 {
     class CSpectralSampleData;
 
-    class CSpectralAngleSample;
-
     class CAngularSpectralProperties;
 
     enum class WavelengthSet
@@ -20,23 +18,25 @@ namespace SpectralAveraging
         Data
     };
 
-    // Base class for spectral sample data. Its base setup are spectral properties over certain
-    // range. It handles detector and source data. Concrete sample data are handled in inherited
-    // classes and tha will depend on type of the sample data
+    //! \brief Base class for spectral sample data.
+    //!
+    //! Its base setup are spectral properties over certain range. It handles detector and source
+    //! data. Concrete sample data are handled in inherited classes and tha will depend on type of
+    //! the sample data
     class CSample
     {
     public:
         virtual ~CSample() = default;
-        explicit CSample(std::shared_ptr<FenestrationCommon::CSeries> const & t_SourceData,
+        explicit CSample(const std::shared_ptr<FenestrationCommon::CSeries> & t_SourceData,
                          FenestrationCommon::IntegrationType integrationType =
                            FenestrationCommon::IntegrationType::Trapezoidal,
                          double NormalizationCoefficient = 1);
         CSample();
-        CSample(CSample const & t_Sample);
+        CSample(const CSample & t_Sample);
         CSample & operator=(CSample const & t_Sample);
 
-        // Assigns detector and wavelengths from other sample.
-        void assignDetectorAndWavelengths(std::shared_ptr<CSample> const & t_Sample);
+        //! \brief Assigns detector and wavelengths from other sample.
+        void assignDetectorAndWavelengths(const std::shared_ptr<CSample> & t_Sample);
 
         // Gets source data. In case wavelengths are referenced to detector or custom
         // wavelength set, it will perform interpolation according to desired settings.

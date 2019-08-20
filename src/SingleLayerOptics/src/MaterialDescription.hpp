@@ -45,9 +45,10 @@ namespace SingleLayerOptics
     ///   CMaterial
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Base virtual class for any material definition. It represents material properties over
-    // the certain wavelength range.
-    // It also defines interface for angular dependency of material properties.
+    //! \breif Base virtual class for any material definition.
+    //!
+    //! It represents material properties over the certain wavelength range. It also defines
+    //! interface for angular dependency of material properties.
     class CMaterial
     {
     public:
@@ -103,8 +104,9 @@ namespace SingleLayerOptics
     ///   CMaterialSingleBand
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Simple material with no angular dependence on reflection or transmittance. This is mainly
-    // used for shading device materials
+    //! \brief Simple material with no angular dependence on reflection or transmittance.
+    //!
+    //! This is mainly used for shading device materials
     class CMaterialSingleBand : public CMaterial
     {
     public:
@@ -133,8 +135,8 @@ namespace SingleLayerOptics
     ///   CMaterialDualBand
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Material that for given solar and partial range (visible, uv) will calculate equivalent
-    // optical properties for the entire range
+    //! \brief Material that for given solar and partial range (visible, uv) will calculate
+    //! equivalent optical properties for the entire range
     class CMaterialDualBand : public CMaterial
     {
     public:
@@ -154,7 +156,8 @@ namespace SingleLayerOptics
                           const std::shared_ptr<CMaterial> & t_SolarRange);
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
-        void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
+        void
+          setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
 
         double getProperty(FenestrationCommon::Property t_Property,
                            FenestrationCommon::Side t_Side) const override;
@@ -209,7 +212,8 @@ namespace SingleLayerOptics
           FenestrationCommon::WavelengthRange t_Range);
 
         void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
-        void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
+        void
+          setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
@@ -227,7 +231,7 @@ namespace SingleLayerOptics
         std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
                                               FenestrationCommon::Side t_Side) const override;
 
-		void setBandWavelengths(const std::vector<double> & wavelengths) override;
+        void setBandWavelengths(const std::vector<double> & wavelengths) override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
