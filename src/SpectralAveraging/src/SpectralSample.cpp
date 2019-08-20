@@ -45,11 +45,14 @@ namespace SpectralAveraging
         m_NormalizationCoefficient = t_Sample.m_NormalizationCoefficient;
         m_WavelengthSet = t_Sample.m_WavelengthSet;
         m_IncomingSource = wce::make_unique<CSeries>(*t_Sample.m_IncomingSource);
-        m_TransmittedSource = wce::make_unique<CSeries>(*t_Sample.m_TransmittedSource);
-        m_ReflectedFrontSource = wce::make_unique<CSeries>(*t_Sample.m_ReflectedFrontSource);
-        m_ReflectedBackSource = wce::make_unique<CSeries>(*t_Sample.m_ReflectedBackSource);
-        m_AbsorbedFrontSource = wce::make_unique<CSeries>(*t_Sample.m_AbsorbedFrontSource);
-        m_AbsorbedBackSource = wce::make_unique<CSeries>(*t_Sample.m_AbsorbedBackSource);
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_EnergySource[std::make_pair(prop, side)] = wce::make_unique<CSeries>(
+                  *t_Sample.m_EnergySource.at(std::make_pair(prop, side)));
+            }
+        }
 
         return *this;
     }
@@ -127,46 +130,7 @@ namespace SpectralAveraging
                               Side const t_Side)
     {
         calculateState();
-        auto Energy = 0.0;
-        switch(t_Property)
-        {
-            case Property::T:
-                Energy = m_TransmittedSource->sum(minLambda, maxLambda);
-                break;
-            case Property::R:
-                switch(t_Side)
-                {
-                    case Side::Front:
-                        Energy = m_ReflectedFrontSource->sum(minLambda, maxLambda);
-                        break;
-                    case Side::Back:
-                        Energy = m_ReflectedBackSource->sum(minLambda, maxLambda);
-                        break;
-                    default:
-                        assert("Incorrect selection of sample side.");
-                        break;
-                }
-                break;
-            case Property::Abs:
-                switch(t_Side)
-                {
-                    case Side::Front:
-                        Energy = m_AbsorbedFrontSource->sum(minLambda, maxLambda);
-                        break;
-                    case Side::Back:
-                        Energy = m_AbsorbedBackSource->sum(minLambda, maxLambda);
-                        break;
-                    default:
-                        assert("Incorrect selection of sample side.");
-                        break;
-                }
-                break;
-            default:
-                assert("Incorrect selection of sample property.");
-                break;
-        }
-
-        return Energy;
+        return m_EnergySource.at(std::make_pair(t_Property, t_Side))->sum(minLambda, maxLambda);
     }
 
     double CSample::getProperty(double const minLambda,
@@ -181,45 +145,8 @@ namespace SpectralAveraging
         if(m_IncomingSource != nullptr)
         {
             auto incomingEnergy = m_IncomingSource->sum(minLambda, maxLambda);
-            double propertyEnergy = 0;
-            switch(t_Property)
-            {
-                case Property::T:
-                    propertyEnergy = m_TransmittedSource->sum(minLambda, maxLambda);
-                    break;
-                case Property::R:
-                    switch(t_Side)
-                    {
-                        case Side::Front:
-                            propertyEnergy = m_ReflectedFrontSource->sum(minLambda, maxLambda);
-                            break;
-                        case Side::Back:
-                            propertyEnergy = m_ReflectedBackSource->sum(minLambda, maxLambda);
-                            break;
-                        default:
-                            assert("Incorrect selection of sample side.");
-                            break;
-                    }
-                    break;
-                case Property::Abs:
-                    switch(t_Side)
-                    {
-                        case Side::Front:
-                            propertyEnergy = m_AbsorbedFrontSource->sum(minLambda, maxLambda);
-                            break;
-                        case Side::Back:
-                            propertyEnergy = m_AbsorbedBackSource->sum(minLambda, maxLambda);
-                            break;
-                        default:
-                            assert("Incorrect selection of sample side.");
-                            break;
-                    }
-                    break;
-                default:
-                    throw std::runtime_error("Incorrect selection of sample property.");
-                    break;
-            }
-
+            double propertyEnergy =
+              m_EnergySource.at(std::make_pair(t_Property, t_Side))->sum(minLambda, maxLambda);
             Prop = propertyEnergy / incomingEnergy;
         }
         return Prop;
@@ -228,47 +155,7 @@ namespace SpectralAveraging
     CSeries * CSample::getEnergyProperties(Property const t_Property, Side const t_Side)
     {
         calculateState();
-
-        CSeries * aProperty = nullptr;
-        switch(t_Property)
-        {
-            case Property::T:
-                aProperty = m_TransmittedSource.get();
-                break;
-            case Property::R:
-                switch(t_Side)
-                {
-                    case Side::Front:
-                        aProperty = m_ReflectedFrontSource.get();
-                        break;
-                    case Side::Back:
-                        aProperty = m_ReflectedBackSource.get();
-                        break;
-                    default:
-                        assert("Incorrect selection of sample side.");
-                        break;
-                }
-                break;
-            case Property::Abs:
-                switch(t_Side)
-                {
-                    case Side::Front:
-                        aProperty = m_AbsorbedFrontSource.get();
-                        break;
-                    case Side::Back:
-                        aProperty = m_AbsorbedBackSource.get();
-                        break;
-                    default:
-                        assert("Incorrect selection of sample side.");
-                        break;
-                }
-                break;
-            default:
-                throw std::runtime_error("Incorrect selection of sample property.");
-                break;
-        }
-
-        return aProperty;
+        return m_EnergySource.at(std::make_pair(t_Property, t_Side)).get();
     }
 
     size_t CSample::getBandSize() const
@@ -280,11 +167,13 @@ namespace SpectralAveraging
     {
         m_StateCalculated = false;
         m_IncomingSource = nullptr;
-        m_TransmittedSource = nullptr;
-        m_ReflectedFrontSource = nullptr;
-        m_ReflectedBackSource = nullptr;
-        m_AbsorbedFrontSource = nullptr;
-        m_AbsorbedBackSource = nullptr;
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_EnergySource[std::make_pair(prop, side)] = nullptr;
+            }
+        }
     }
 
     void CSample::calculateState()
@@ -313,16 +202,15 @@ namespace SpectralAveraging
 
                 m_IncomingSource =
                   m_IncomingSource->integrate(m_IntegrationType, m_NormalizationCoefficient);
-                m_TransmittedSource =
-                  m_TransmittedSource->integrate(m_IntegrationType, m_NormalizationCoefficient);
-                m_ReflectedFrontSource =
-                  m_ReflectedFrontSource->integrate(m_IntegrationType, m_NormalizationCoefficient);
-                m_ReflectedBackSource =
-                  m_ReflectedBackSource->integrate(m_IntegrationType, m_NormalizationCoefficient);
-                m_AbsorbedFrontSource =
-                  m_AbsorbedFrontSource->integrate(m_IntegrationType, m_NormalizationCoefficient);
-                m_AbsorbedBackSource =
-                  m_AbsorbedBackSource->integrate(m_IntegrationType, m_NormalizationCoefficient);
+                for(const auto & prop : EnumProperty())
+                {
+                    for(const auto & side : EnumSide())
+                    {
+                        m_EnergySource[std::make_pair(prop, side)] =
+                          m_EnergySource.at(std::make_pair(prop, side))
+                            ->integrate(m_IntegrationType, m_NormalizationCoefficient);
+                    }
+                }
 
                 m_StateCalculated = true;
             }
@@ -345,11 +233,13 @@ namespace SpectralAveraging
             throw std::runtime_error("Sample must have measured data.");
         }
 
-        m_Transmittance = nullptr;
-        m_RefFront = nullptr;
-        m_RefBack = nullptr;
-        m_AbsFront = nullptr;
-        m_AbsBack = nullptr;
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_Property[std::make_pair(prop, side)] = nullptr;
+            }
+        }
     }
 
     CSpectralSample::CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData) :
@@ -361,11 +251,13 @@ namespace SpectralAveraging
             throw std::runtime_error("Sample must have measured data.");
         }
 
-        m_Transmittance = nullptr;
-        m_RefFront = nullptr;
-        m_RefBack = nullptr;
-        m_AbsFront = nullptr;
-        m_AbsBack = nullptr;
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_Property[std::make_pair(prop, side)] = nullptr;
+            }
+        }
     }
 
     std::shared_ptr<CSpectralSampleData> CSpectralSample::getMeasuredData()
@@ -383,47 +275,8 @@ namespace SpectralAveraging
                                                                      Side const t_Side)
     {
         calculateState();
-        
-        std::shared_ptr<CSeries> aProperty = nullptr;
-        switch(t_Property)
-        {
-            case Property::T:
-                aProperty = m_Transmittance;
-                break;
-            case Property::R:
-                switch(t_Side)
-                {
-                    case Side::Front:
-                        aProperty = m_RefFront;
-                        break;
-                    case Side::Back:
-                        aProperty = m_RefBack;
-                        break;
-                    default:
-                        assert("Incorrect selection of Side.");
-                        break;
-                }
-                break;
-            case Property::Abs:
-                switch(t_Side)
-                {
-                    case Side::Front:
-                        aProperty = m_AbsFront;
-                        break;
-                    case Side::Back:
-                        aProperty = m_AbsBack;
-                        break;
-                    default:
-                        assert("Incorrect selection of Side.");
-                        break;
-                }
-                break;
-            default:
-                assert("Non existent property requested.");
-                break;
-        }
 
-        return aProperty;
+        return m_Property.at(std::make_pair(t_Property, t_Side));
     }
 
     void CSpectralSample::calculateProperties()
@@ -431,29 +284,45 @@ namespace SpectralAveraging
         // No need to do interpolation if wavelength set is already from the data.
         if(m_WavelengthSet == WavelengthSet::Data)
         {
-            m_Transmittance = m_SampleData->properties(SampleData::T);
-            m_RefFront = m_SampleData->properties(SampleData::Rf);
-            m_RefBack = m_SampleData->properties(SampleData::Rb);
-            m_AbsFront = m_SampleData->properties(SampleData::AbsF);
-            m_AbsBack = m_SampleData->properties(SampleData::AbsB);
+            for(const auto & prop : EnumProperty())
+            {
+                for(const auto & side : EnumSide())
+                {
+                    m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
+                }
+            }
         }
         else
         {
-            m_Transmittance = m_SampleData->properties(SampleData::T)->interpolate(m_Wavelengths);
-            m_RefFront = m_SampleData->properties(SampleData::Rf)->interpolate(m_Wavelengths);
-            m_RefBack = m_SampleData->properties(SampleData::Rb)->interpolate(m_Wavelengths);
-            m_AbsFront = m_SampleData->properties(SampleData::AbsF)->interpolate(m_Wavelengths);
-            m_AbsBack = m_SampleData->properties(SampleData::AbsB)->interpolate(m_Wavelengths);
+            for(const auto & prop : EnumProperty())
+            {
+                for(const auto & side : EnumSide())
+                {
+                    m_Property[std::make_pair(prop, side)] =
+                      m_SampleData->properties(prop, side)->interpolate(m_Wavelengths);
+                }
+            }
         }
 
         assert(m_IncomingSource != nullptr);
 
         // Calculation of energy balances
-        m_TransmittedSource = m_Transmittance->mMult(*m_IncomingSource);
-        m_ReflectedFrontSource = m_RefFront->mMult(*m_IncomingSource);
-        m_ReflectedBackSource = m_RefBack->mMult(*m_IncomingSource);
-        m_AbsorbedFrontSource = m_AbsFront->mMult(*m_IncomingSource);
-        m_AbsorbedBackSource = m_AbsBack->mMult(*m_IncomingSource);
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_Property[std::make_pair(prop, side)] =
+                  m_SampleData->properties(prop, side)->interpolate(m_Wavelengths);
+            }
+        }
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_EnergySource[std::make_pair(prop, side)] =
+                  m_Property.at(std::make_pair(prop, side))->mMult(*m_IncomingSource);
+            }
+        }
     }
 
     void CSpectralSample::calculateState()
@@ -461,17 +330,20 @@ namespace SpectralAveraging
         CSample::calculateState();
         if(m_SourceData == nullptr)
         {
-            m_Transmittance = m_SampleData->properties(SampleData::T);
-            m_RefFront = m_SampleData->properties(SampleData::Rf);
-            m_RefBack = m_SampleData->properties(SampleData::Rb);
-            m_AbsFront = m_SampleData->properties(SampleData::AbsF);
-            m_AbsBack = m_SampleData->properties(SampleData::AbsB);
+            for(const auto & prop : EnumProperty())
+            {
+                for(const auto & side : EnumSide())
+                {
+                    m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
+                }
+            }
 
             m_StateCalculated = true;
         }
     }
 
-    void CSpectralSample::cutExtraData(const double minLambda, const double maxLambda) {
+    void CSpectralSample::cutExtraData(const double minLambda, const double maxLambda)
+    {
         m_SampleData->cutExtraData(minLambda, maxLambda);
     }
 

@@ -52,13 +52,13 @@ namespace SpectralAveraging
             auto aSourceData = t_SpectralSample->getSourceData();
 
             auto aWavelengths = aMeasuredData->getWavelengths();
-            auto aT = aMeasuredData->properties(SampleData::T);
+            auto aT = aMeasuredData->properties(Property ::T, Side::Front);
             assert(aT->size() == aWavelengths.size());
 
-            auto aRf = aMeasuredData->properties(SampleData::Rf);
+            auto aRf = aMeasuredData->properties(Property::R, Side::Front);
             assert(aRf->size() == aWavelengths.size());
 
-            auto aRb = aMeasuredData->properties(SampleData::Rb);
+            auto aRb = aMeasuredData->properties(Property::R, Side::Back);
             assert(aRb->size() == aWavelengths.size());
 
             auto lowLambda = 0.3;
@@ -136,7 +136,8 @@ namespace SpectralAveraging
         m_SpectralProperties.clear();
     }
 
-    void CAngularSpectralSample::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData)
+    void CAngularSpectralSample::setDetectorData(
+      std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData)
     {
         m_SpectralSampleZero->setDetectorData(t_DetectorData);
         m_SpectralProperties.clear();
@@ -194,12 +195,11 @@ namespace SpectralAveraging
     {
         std::shared_ptr<CSpectralSample> aSample = nullptr;
 
-        const auto it =
-          find_if(m_SpectralProperties.begin(),
-                  m_SpectralProperties.end(),
-                  [&t_Angle](std::shared_ptr<CSpectralSampleAngle> const & obj) {
-                      return std::abs(obj->angle() - t_Angle) < 1e-6;
-                  });
+        const auto it = find_if(m_SpectralProperties.begin(),
+                                m_SpectralProperties.end(),
+                                [&t_Angle](std::shared_ptr<CSpectralSampleAngle> const & obj) {
+                                    return std::abs(obj->angle() - t_Angle) < 1e-6;
+                                });
 
         if(it != m_SpectralProperties.end())
         {
@@ -216,7 +216,8 @@ namespace SpectralAveraging
                                                 m_SpectralSampleZero->getIntegrator(),
                                                 m_SpectralSampleZero->getNormalizationCoeff());
             aSample->assignDetectorAndWavelengths(m_SpectralSampleZero);
-            const auto aSpectralSampleAngle = std::make_shared<CSpectralSampleAngle>(aSample, t_Angle);
+            const auto aSpectralSampleAngle =
+              std::make_shared<CSpectralSampleAngle>(aSample, t_Angle);
             m_SpectralProperties.push_back(aSpectralSampleAngle);
         }
 

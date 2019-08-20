@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <WCECommon.hpp>
 
 namespace FenestrationCommon
 {
@@ -11,15 +12,6 @@ namespace FenestrationCommon
 
 namespace SpectralAveraging
 {
-    enum class SampleData
-    {
-        T,
-        Rf,
-        Rb,
-        AbsF,
-        AbsB
-    };
-
     struct MeasuredRow
     {
         MeasuredRow(double wl, double t, double rf, double rb);
@@ -36,7 +28,7 @@ namespace SpectralAveraging
         virtual ~CSpectralSampleData() = default;
         CSpectralSampleData();
 
-		static std::shared_ptr<CSpectralSampleData>
+        static std::shared_ptr<CSpectralSampleData>
           create(const std::vector<MeasuredRow> & tValues);
 
         static std::shared_ptr<CSpectralSampleData> create();
@@ -45,7 +37,8 @@ namespace SpectralAveraging
                        double t_Transmittance,
                        double t_ReflectanceFront,
                        double t_ReflectanceBack);
-        std::shared_ptr<FenestrationCommon::CSeries> properties(SampleData t_Property);
+        std::shared_ptr<FenestrationCommon::CSeries> properties(FenestrationCommon::Property prop,
+                                                                FenestrationCommon::Side side);
         virtual std::vector<double> getWavelengths() const;
         virtual void interpolate(std::vector<double> const & t_Wavelengths);
 
@@ -60,13 +53,9 @@ namespace SpectralAveraging
         virtual void calculateProperties();
         void reset();
 
-        std::shared_ptr<FenestrationCommon::CSeries> m_Transmittances;
-        std::shared_ptr<FenestrationCommon::CSeries> m_ReflectancesFront;
-        std::shared_ptr<FenestrationCommon::CSeries> m_ReflectancesBack;
-
-        // Calculated from sample measurements
-        std::shared_ptr<FenestrationCommon::CSeries> m_AbsorptancesFront;
-        std::shared_ptr<FenestrationCommon::CSeries> m_AbsorptancesBack;
+        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
+                 std::shared_ptr<FenestrationCommon::CSeries>>
+          m_Property;
 
         bool m_Flipped;
         bool m_absCalculated;
