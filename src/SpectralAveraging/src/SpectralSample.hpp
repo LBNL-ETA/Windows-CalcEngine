@@ -91,11 +91,9 @@ namespace SpectralAveraging
 
         // Keep energy for current state of the sample. Energy is calculated for each wavelength.
         std::unique_ptr<FenestrationCommon::CSeries> m_IncomingSource;
-        std::unique_ptr<FenestrationCommon::CSeries> m_TransmittedSource;
-        std::unique_ptr<FenestrationCommon::CSeries> m_ReflectedFrontSource;
-        std::unique_ptr<FenestrationCommon::CSeries> m_ReflectedBackSource;
-        std::unique_ptr<FenestrationCommon::CSeries> m_AbsorbedFrontSource;
-        std::unique_ptr<FenestrationCommon::CSeries> m_AbsorbedBackSource;
+        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
+                 std::unique_ptr<FenestrationCommon::CSeries>>
+          m_EnergySource;
 
         FenestrationCommon::IntegrationType m_IntegrationType;
         double m_NormalizationCoefficient;
@@ -132,11 +130,9 @@ namespace SpectralAveraging
 
         std::shared_ptr<CSpectralSampleData> m_SampleData;
 
-        std::shared_ptr<FenestrationCommon::CSeries> m_Transmittance;
-        std::shared_ptr<FenestrationCommon::CSeries> m_RefFront;
-        std::shared_ptr<FenestrationCommon::CSeries> m_RefBack;
-        std::shared_ptr<FenestrationCommon::CSeries> m_AbsFront;
-        std::shared_ptr<FenestrationCommon::CSeries> m_AbsBack;
+        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
+                 std::shared_ptr<FenestrationCommon::CSeries>>
+          m_Property;
     };
 
     class CSpectralAngleSample

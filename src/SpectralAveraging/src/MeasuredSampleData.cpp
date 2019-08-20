@@ -13,83 +13,78 @@ namespace SpectralAveraging
     ////     CSpectralSampleData
     ////////////////////////////////////////////////////////////////////////////
 
-    CSpectralSampleData::CSpectralSampleData() :
-        m_Transmittances(std::make_shared<CSeries>()),
-        m_ReflectancesFront(std::make_shared<CSeries>()),
-        m_ReflectancesBack(std::make_shared<CSeries>()),
-        m_AbsorptancesFront(std::make_shared<CSeries>()),
-        m_AbsorptancesBack(std::make_shared<CSeries>()),
-        m_Flipped(false),
-        m_absCalculated(false)
-    {}
+    CSpectralSampleData::CSpectralSampleData() : m_Flipped(false), m_absCalculated(false)
+    {
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_Property[std::make_pair(prop, side)] = std::make_shared<CSeries>();
+            }
+        }
+    }
 
     void CSpectralSampleData::addRecord(double const t_Wavelength,
                                         double const t_Transmittance,
                                         double const t_ReflectanceFront,
                                         double const t_ReflectanceBack)
     {
-        m_Transmittances->addProperty(t_Wavelength, t_Transmittance);
-        m_ReflectancesFront->addProperty(t_Wavelength, t_ReflectanceFront);
-        m_ReflectancesBack->addProperty(t_Wavelength, t_ReflectanceBack);
+        m_Property.at(std::make_pair(Property::T, Side::Front))
+          ->addProperty(t_Wavelength, t_Transmittance);
+        m_Property.at(std::make_pair(Property::T, Side::Back))
+          ->addProperty(t_Wavelength, t_Transmittance);
+        m_Property.at(std::make_pair(Property::R, Side::Front))
+          ->addProperty(t_Wavelength, t_ReflectanceFront);
+        m_Property.at(std::make_pair(Property::R, Side::Back))
+          ->addProperty(t_Wavelength, t_ReflectanceBack);
         reset();
     }
 
 
-	CSpectralSampleData::CSpectralSampleData(
-		const std::vector<MeasuredRow> & tValues) : CSpectralSampleData()
+    CSpectralSampleData::CSpectralSampleData(const std::vector<MeasuredRow> & tValues) :
+        CSpectralSampleData()
     {
-        m_Transmittances->clear();
-        m_ReflectancesFront->clear();
-        m_ReflectancesBack->clear();
+        m_Property.at(std::make_pair(Property::T, Side::Front))->clear();
+        m_Property.at(std::make_pair(Property::T, Side::Back))->clear();
+        m_Property.at(std::make_pair(Property::R, Side::Front))->clear();
+        m_Property.at(std::make_pair(Property::R, Side::Back))->clear();
         for(const auto & val : tValues)
         {
-            m_Transmittances->addProperty(val.wavelength, val.T);
-            m_ReflectancesFront->addProperty(val.wavelength, val.Rf);
-            m_ReflectancesBack->addProperty(val.wavelength, val.Rb);
+            m_Property.at(std::make_pair(Property::T, Side::Front))
+              ->addProperty(val.wavelength, val.T);
+            m_Property.at(std::make_pair(Property::T, Side::Back))
+              ->addProperty(val.wavelength, val.T);
+            m_Property.at(std::make_pair(Property::R, Side::Front))
+              ->addProperty(val.wavelength, val.Rf);
+            m_Property.at(std::make_pair(Property::R, Side::Back))
+              ->addProperty(val.wavelength, val.Rb);
         }
     }
 
-    std::shared_ptr<CSeries> CSpectralSampleData::properties(SampleData t_Property)
+    std::shared_ptr<CSeries> CSpectralSampleData::properties(FenestrationCommon::Property prop,
+                                                             FenestrationCommon::Side side)
     {
         calculateProperties();
-        std::shared_ptr<CSeries> aProperties = nullptr;
-        switch(t_Property)
-        {
-            case SampleData::T:
-                aProperties = m_Transmittances;
-                break;
-            case SampleData::Rf:
-                aProperties = m_Flipped ? m_ReflectancesBack : m_ReflectancesFront;
-                break;
-            case SampleData::Rb:
-                aProperties = m_Flipped ? m_ReflectancesFront : m_ReflectancesBack;
-                break;
-            case SampleData::AbsF:
-                aProperties = m_AbsorptancesFront;
-                break;
-            case SampleData::AbsB:
-                aProperties = m_AbsorptancesBack;
-                break;
-            default:
-                throw std::runtime_error("Incorrect selection of sample property.");
-                break;
-        }
-        return aProperties;
+        auto aSide = FenestrationCommon::getSide(side, m_Flipped);
+        return m_Property.at(std::make_pair(prop, aSide));
     }
 
     std::vector<double> CSpectralSampleData::getWavelengths() const
     {
-        return m_Transmittances->getXArray();
+        return m_Property.at(std::make_pair(Property::T, Side::Front))->getXArray();
     }
 
     // Interpolate current sample data to new wavelengths set
     void CSpectralSampleData::interpolate(std::vector<double> const & t_Wavelengths)
     {
-        m_Transmittances = m_Transmittances->interpolate(t_Wavelengths);
-        m_ReflectancesFront = m_ReflectancesFront->interpolate(t_Wavelengths);
-        m_ReflectancesBack = m_ReflectancesBack->interpolate(t_Wavelengths);
-        m_AbsorptancesFront = m_AbsorptancesFront->interpolate(t_Wavelengths);
-        m_AbsorptancesBack = m_AbsorptancesBack->interpolate(t_Wavelengths);
+        for(const auto & prop : EnumProperty())
+        {
+            for(const auto & side : EnumSide())
+            {
+                m_Property[std::make_pair(prop, side)] =
+                  m_Property.at(std::make_pair(prop, side))->interpolate(t_Wavelengths);
+            }
+        }
     }
 
     bool CSpectralSampleData::Flipped() const
@@ -115,35 +110,39 @@ namespace SpectralAveraging
             std::shared_ptr<CSeries> reflectancesBack = nullptr;
             if(m_Flipped)
             {
-                reflectancesFront = m_ReflectancesBack;
-                reflectancesBack = m_ReflectancesFront;
+                reflectancesFront = m_Property.at(std::make_pair(Property::R, Side::Back));
+                reflectancesBack = m_Property.at(std::make_pair(Property::R, Side::Front));
             }
             else
             {
-                reflectancesFront = m_ReflectancesFront;
-                reflectancesBack = m_ReflectancesBack;
+                reflectancesFront = m_Property.at(std::make_pair(Property::R, Side::Front));
+                reflectancesBack = m_Property.at(std::make_pair(Property::R, Side::Back));
             }
 
-            m_AbsorptancesFront->clear();
-            m_AbsorptancesBack->clear();
+            m_Property.at(std::make_pair(Property::Abs, Side::Front))->clear();
+            m_Property.at(std::make_pair(Property::Abs, Side::Back))->clear();
 
-            auto size = m_Transmittances->size();
+            const auto wv = m_Property.at(std::make_pair(Property::T, Side::Front))->getXArray();
 
-            for(size_t i = 0; i < size; ++i)
+            for(size_t i = 0; i < wv.size(); ++i)
             {
-                auto wv = (*m_Transmittances)[i].x();
-                auto value = 1 - (*m_Transmittances)[i].value() - (*reflectancesFront)[i].value();
-                m_AbsorptancesFront->addProperty(wv, value);
-                value = 1 - (*m_Transmittances)[i].value() - (*reflectancesBack)[i].value();
-                m_AbsorptancesBack->addProperty(wv, value);
+                auto value = 1
+                             - (*m_Property.at(std::make_pair(Property::T, Side::Front)))[i].value()
+                             - (*reflectancesFront)[i].value();
+                m_Property.at(std::make_pair(Property::Abs, Side::Front))
+                  ->addProperty(wv[i], value);
+
+                value = 1 - (*m_Property.at(std::make_pair(Property::T, Side::Back)))[i].value()
+                        - (*reflectancesBack)[i].value();
+                m_Property.at(std::make_pair(Property::Abs, Side::Back))->addProperty(wv[i], value);
             }
             m_absCalculated = true;
         }
     }
 
 
-	std::shared_ptr<CSpectralSampleData>
-    CSpectralSampleData::create(const std::vector<MeasuredRow> & tValues)
+    std::shared_ptr<CSpectralSampleData>
+      CSpectralSampleData::create(const std::vector<MeasuredRow> & tValues)
     {
         return std::shared_ptr<CSpectralSampleData>(new CSpectralSampleData(tValues));
     }
@@ -155,9 +154,11 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::cutExtraData(const double minLambda, const double maxLambda)
     {
-        m_Transmittances->cutExtraData(minLambda, maxLambda);
-        m_ReflectancesFront->cutExtraData(minLambda, maxLambda);
-        m_ReflectancesBack->cutExtraData(minLambda, maxLambda);
+        for(const auto & side : EnumSide())
+        {
+            m_Property.at(std::make_pair(Property::T, side))->cutExtraData(minLambda, maxLambda);
+            m_Property.at(std::make_pair(Property::R, side))->cutExtraData(minLambda, maxLambda);
+        }
     }
 
     MeasuredRow::MeasuredRow(double wl, double t, double rf, double rb) :
