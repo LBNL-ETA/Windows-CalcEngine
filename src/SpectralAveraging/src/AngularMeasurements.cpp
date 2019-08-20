@@ -51,12 +51,12 @@ namespace SpectralAveraging
     {
         auto aData = std::make_shared<CSpectralSampleData>();
         auto wlv = t_Data1->getWavelengthsFromSample();
-        auto trans1 = *t_Data1->getMeasuredData()->properties(Property ::T, Side::Front);
-        auto trans2 = *t_Data2->getMeasuredData()->properties(Property ::T, Side::Front);
-        auto reflef1 = *t_Data1->getMeasuredData()->properties(Property ::R, Side::Front);
-        auto reflef2 = *t_Data2->getMeasuredData()->properties(Property ::R, Side::Front);
-        auto refleb1 = *t_Data1->getMeasuredData()->properties(Property ::R, Side::Back);
-        auto refleb2 = *t_Data2->getMeasuredData()->properties(Property ::R, Side::Back);
+        auto trans1 = t_Data1->getMeasuredData()->properties(Property ::T, Side::Front);
+        auto trans2 = t_Data2->getMeasuredData()->properties(Property ::T, Side::Front);
+        auto reflef1 = t_Data1->getMeasuredData()->properties(Property ::R, Side::Front);
+        auto reflef2 = t_Data2->getMeasuredData()->properties(Property ::R, Side::Front);
+        auto refleb1 = t_Data1->getMeasuredData()->properties(Property ::R, Side::Back);
+        auto refleb2 = t_Data2->getMeasuredData()->properties(Property ::R, Side::Back);
         auto frac = (t_Angle - t_Angle1) / (t_Angle2 - t_Angle1);
         for(size_t i = 0; i < wlv.size(); i++)
         {

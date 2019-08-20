@@ -26,7 +26,7 @@ namespace MultiLayerOptics
         {
             throw std::runtime_error("Index for glazing layer absorptance is out of range.");
         }
-        aEnergy = m_AbsorbedLayersSource[Index - 1]->sum(minLambda, maxLambda);
+        aEnergy = m_AbsorbedLayersSource[Index - 1].sum(minLambda, maxLambda);
         return aEnergy;
     }
 
@@ -52,7 +52,7 @@ namespace MultiLayerOptics
                 size_t numOfLayers = aSample->numberOfLayers();
                 for(size_t i = 0; i < numOfLayers; ++i)
                 {
-                    std::shared_ptr<CSeries> layerAbsorbed = aSample->getLayerAbsorptances(i + 1);
+                    auto layerAbsorbed = aSample->getLayerAbsorptances(i + 1);
                     integrateAndAppendAbsorptances(layerAbsorbed);
                 }
             }
@@ -60,7 +60,7 @@ namespace MultiLayerOptics
             {
                 // Perspective is always from front side when using in MultiLayerOptics. Flipping
                 // flag should be used when putting layer in IGU
-                std::shared_ptr<CSeries> layerAbsorbed =
+                auto layerAbsorbed =
                   m_SampleData->properties(Property ::Abs, Side::Front);
                 integrateAndAppendAbsorptances(layerAbsorbed);
             }
@@ -70,15 +70,15 @@ namespace MultiLayerOptics
     }
 
     void CMultiPaneSpectralSample::integrateAndAppendAbsorptances(
-      const std::shared_ptr<CSeries> & t_Absorptances)
+            const CSeries &t_Absorptances)
     {
-        std::shared_ptr<CSeries> aAbs = t_Absorptances;
+        CSeries aAbs = t_Absorptances;
         if(m_WavelengthSet != WavelengthSet::Data)
         {
-            aAbs = aAbs->interpolate(m_Wavelengths);
+            aAbs = *aAbs.interpolate(m_Wavelengths);
         }
-        aAbs = aAbs->mMult(*m_IncomingSource);
-        aAbs = aAbs->integrate(m_IntegrationType, m_NormalizationCoefficient);
+        aAbs = *aAbs.mMult(*m_IncomingSource);
+        aAbs = *aAbs.integrate(m_IntegrationType, m_NormalizationCoefficient);
         m_AbsorbedLayersSource.push_back(aAbs);
     }
 

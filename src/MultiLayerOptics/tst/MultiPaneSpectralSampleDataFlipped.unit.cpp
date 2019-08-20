@@ -93,7 +93,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlipp
     correctT.push_back(0.483744498);
     correctT.push_back(0.503708244);
 
-    CSeries transmittances = *MultiLayerOptics.properties(Property ::T, Side::Front);
+    CSeries transmittances = MultiLayerOptics.properties(Property ::T, Side::Front);
 
     EXPECT_EQ(transmittances.size(), correctT.size());
 
@@ -119,7 +119,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlipp
     correctRf.push_back(0.303333016);
     correctRf.push_back(0.302600323);
 
-    CSeries Rf = *MultiLayerOptics.properties(Property ::R, Side::Front);
+    CSeries Rf = MultiLayerOptics.properties(Property ::R, Side::Front);
 
     EXPECT_EQ(Rf.size(), correctRf.size());
 
@@ -145,7 +145,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlipp
     correctRb.push_back(0.279513243);
     correctRb.push_back(0.290533612);
 
-    CSeries Rb = *MultiLayerOptics.properties(Property ::R, Side ::Back);
+    CSeries Rb = MultiLayerOptics.properties(Property ::R, Side ::Back);
 
     EXPECT_EQ(Rb.size(), correctRb.size());
 
@@ -171,7 +171,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneResultsFlipp
     correctAbs.push_back(0.212922487);
     correctAbs.push_back(0.193691434);
 
-    CSeries Abs = *MultiLayerOptics.properties(Property ::Abs, Side::Front);
+    CSeries Abs = MultiLayerOptics.properties(Property ::Abs, Side::Front);
 
     EXPECT_EQ(Abs.size(), correctAbs.size());
 
@@ -204,7 +204,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneAbsorptances
     correctAbs.push_back(0.185614330);
     correctAbs.push_back(0.169513438);
 
-    CSeries abs = *MultiLayerOptics.getLayerAbsorptances(1);
+    CSeries abs = MultiLayerOptics.getLayerAbsorptances(1);
 
     EXPECT_EQ(abs.size(), correctAbs.size());
 
@@ -230,7 +230,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneAbsorptances
     correctAbs.push_back(0.027308157);
     correctAbs.push_back(0.024177996);
 
-    abs = *MultiLayerOptics.getLayerAbsorptances(2);
+    abs = MultiLayerOptics.getLayerAbsorptances(2);
 
     EXPECT_EQ(abs.size(), correctAbs.size());
 

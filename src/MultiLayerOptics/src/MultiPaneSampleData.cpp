@@ -47,7 +47,7 @@ namespace MultiLayerOptics
         }
     }
 
-    std::shared_ptr<CSeries> CMultiPaneSampleData::getLayerAbsorptances(size_t const Index)
+    CSeries CMultiPaneSampleData::getLayerAbsorptances(size_t const Index)
     {
         calculateProperties();
         if((Index - 1) > m_LayerAbsorptances.size())
@@ -76,10 +76,10 @@ namespace MultiLayerOptics
 
         assert(m_MeasuredSamples.size() != 0);
 
-        std::shared_ptr<CSeries> Tf = m_MeasuredSamples[0]->properties(Property ::T, Side::Front);
-        std::shared_ptr<CSeries> Tb = m_MeasuredSamples[0]->properties(Property ::T, Side::Back);
-        std::shared_ptr<CSeries> Rf = m_MeasuredSamples[0]->properties(Property::R, Side::Front);
-        std::shared_ptr<CSeries> Rb = m_MeasuredSamples[0]->properties(Property::R, Side::Back);
+        CSeries Tf = m_MeasuredSamples[0]->properties(Property ::T, Side::Front);
+        CSeries Tb = m_MeasuredSamples[0]->properties(Property ::T, Side::Back);
+        CSeries Rf = m_MeasuredSamples[0]->properties(Property::R, Side::Front);
+        CSeries Rb = m_MeasuredSamples[0]->properties(Property::R, Side::Back);
         CEquivalentLayerSingleComponentMW aEqivalentLayer(Tf, Tb, Rf, Rb);
         CAbsorptancesMultiPane aAbsorptances(Tf, Rf, Rb);
 

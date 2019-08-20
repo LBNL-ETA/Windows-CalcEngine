@@ -51,7 +51,7 @@ namespace SingleLayerOptics
         // Default material will not have source data
     }
 
-    void CMaterial::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>&)
+    void CMaterial::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> &)
     {
         // Default material will not have detector data
     }
@@ -270,7 +270,8 @@ namespace SingleLayerOptics
         createNIRRange(m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio());
     }
 
-    void CMaterialDualBand::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    void CMaterialDualBand::setDetectorData(
+      std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData)
     {
         m_MaterialFullRange->setDetectorData(t_DetectorData);
         m_MaterialPartialRange->setDetectorData(t_DetectorData);
@@ -412,7 +413,8 @@ namespace SingleLayerOptics
         m_AngularSample->setSourceData(t_SourceData);
     }
 
-    void CMaterialSample::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    void CMaterialSample::setDetectorData(
+      std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData)
     {
         m_AngularSample->setDetectorData(t_DetectorData);
     }
@@ -517,18 +519,15 @@ namespace SingleLayerOptics
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
           m_AngularMeasurements->getMeasurements(t_Angle);
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
-        std::shared_ptr<CSeries> aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
+        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
 
         std::vector<double> aValues;
 
-        if(aProperties != nullptr)
+        for(const auto & aProperty : aProperties)
         {
-            for(std::unique_ptr<ISeriesPoint> const & aProperty : *aProperties)
+            if(aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda)
             {
-                if(aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda)
-                {
-                    aValues.push_back(aProperty->value());
-                }
+                aValues.push_back(aProperty->value());
             }
         }
 

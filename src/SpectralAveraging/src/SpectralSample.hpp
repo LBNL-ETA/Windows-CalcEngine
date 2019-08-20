@@ -116,9 +116,9 @@ namespace SpectralAveraging
         std::shared_ptr<CSpectralSampleData> getMeasuredData();
 
         // Returns property at each wavelength
-        std::shared_ptr<FenestrationCommon::CSeries>
-          getWavelengthsProperty(FenestrationCommon::Property t_Property,
-                                 FenestrationCommon::Side t_Side);
+        FenestrationCommon::CSeries
+          getWavelengthsProperty(const FenestrationCommon::Property t_Property,
+                                 const FenestrationCommon::Side t_Side);
 
         std::vector<double> getWavelengthsFromSample() const override;
 
@@ -131,23 +131,8 @@ namespace SpectralAveraging
         std::shared_ptr<CSpectralSampleData> m_SampleData;
 
         std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 std::shared_ptr<FenestrationCommon::CSeries>>
+                 FenestrationCommon::CSeries>
           m_Property;
-    };
-
-    class CSpectralAngleSample
-    {
-        // Data for spectral sample under certain angle
-    public:
-        CSpectralAngleSample(std::shared_ptr<CSpectralSample> const & t_Sample,
-                             double const t_Angle);
-
-        double angle() const;
-        std::shared_ptr<CSpectralSample> sample() const;
-
-    private:
-        std::shared_ptr<CSpectralSample> m_Sample;
-        double m_Angle;
     };
 
 
