@@ -311,16 +311,8 @@ namespace SpectralAveraging
         {
             for(const auto & side : EnumSide())
             {
-                m_Property[std::make_pair(prop, side)] =
-                  *m_SampleData->properties(prop, side).interpolate(m_Wavelengths);
-            }
-        }
-        for(const auto & prop : EnumProperty())
-        {
-            for(const auto & side : EnumSide())
-            {
                 m_EnergySource[std::make_pair(prop, side)] =
-                  m_Property.at(std::make_pair(prop, side)).mMult(*m_IncomingSource);
+                        m_Property.at(std::make_pair(prop, side)).mMult(*m_IncomingSource);
             }
         }
     }
