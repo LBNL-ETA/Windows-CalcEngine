@@ -72,7 +72,7 @@ namespace FenestrationCommon
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
-                assert(t_Series.size() == (*m_Matrix[i][j]).size());
+                assert(t_Series.size() == m_Matrix[i][j].size());
                 m_Matrix[i][j] = m_Matrix[i][j].mMult(t_Series);
             }
         }
