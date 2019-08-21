@@ -327,7 +327,7 @@ private:
         SingleLayerOptics::SpecularLayer single_layer =
           SingleLayerOptics::SpecularLayer::createLayer(aMaterial);
 
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
         single_layer.setSourceData(solarRadiation);
 
         auto layer = MultiLayerOptics::CMultiPaneSpecular::create(
@@ -347,7 +347,7 @@ protected:
         CSeries DY = ASTM_E308_1964_Y();
         CSeries DZ = ASTM_E308_1964_Z();
 
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
 
         auto wl = loadWavelengths();
 

@@ -314,7 +314,7 @@ protected:
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
         m_Layer->setSourceData(solarRadiation);
     }
 

@@ -198,7 +198,7 @@ protected:
         m_Layer = CMultiLayerScattered::create(Layer102);
         m_Layer->addLayer(Layer103);
 
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
         m_Layer->setSourceData(solarRadiation);
     }
 

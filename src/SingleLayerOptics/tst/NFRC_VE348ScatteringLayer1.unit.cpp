@@ -246,7 +246,7 @@ protected:
                                                        IntegrationType::PreWeighted);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
         m_Layer.setSourceData(solarRadiation);
         m_Layer.setWavelengths(loadSolarRadiationFile().getXArray());
     }
