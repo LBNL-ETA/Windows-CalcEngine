@@ -710,7 +710,7 @@ private:
 protected:
     virtual void SetUp()
     {
-        auto aSolarRadiation{loadSolarRadiationFile()};
+        CSeries aSolarRadiation{loadSolarRadiationFile()};
 
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
