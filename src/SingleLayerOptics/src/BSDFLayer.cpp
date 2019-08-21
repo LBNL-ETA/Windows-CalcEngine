@@ -24,7 +24,7 @@ namespace SingleLayerOptics
           m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
     }
 
-    void CBSDFLayer::setSourceData(std::shared_ptr<CSeries> t_SourceData)
+    void CBSDFLayer::setSourceData(CSeries &t_SourceData)
     {
         m_Cell->setSourceData(t_SourceData);
         m_Calculated = false;

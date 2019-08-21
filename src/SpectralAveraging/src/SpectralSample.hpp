@@ -27,10 +27,10 @@ namespace SpectralAveraging
     {
     public:
         virtual ~CSample() = default;
-        explicit CSample(const std::shared_ptr<FenestrationCommon::CSeries> & t_SourceData,
+        explicit CSample(const FenestrationCommon::CSeries &t_SourceData,
                          FenestrationCommon::IntegrationType integrationType =
                            FenestrationCommon::IntegrationType::Trapezoidal,
-                         double NormalizationCoefficient = 1);
+                         double t_NormalizationCoefficient = 1);
         CSample();
         CSample(const CSample & t_Sample);
         CSample & operator=(CSample const & t_Sample);
@@ -40,11 +40,11 @@ namespace SpectralAveraging
 
         // Gets source data. In case wavelengths are referenced to detector or custom
         // wavelength set, it will perform interpolation according to desired settings.
-        std::shared_ptr<FenestrationCommon::CSeries> getSourceData();
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData);
+        FenestrationCommon::CSeries & getSourceData();
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData);
 
         // Setting detector spectral properties for the sample
-        void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> const & t_DetectorData);
+        void setDetectorData(const FenestrationCommon::CSeries &t_DetectorData);
 
         FenestrationCommon::IntegrationType getIntegrator() const;
         double getNormalizationCoeff() const;
@@ -56,8 +56,8 @@ namespace SpectralAveraging
                            FenestrationCommon::Side const t_Side);
 
         // Spectral properties over the wavelength range
-        FenestrationCommon::CSeries *
-          getEnergyProperties(FenestrationCommon::Property const t_Property,
+        FenestrationCommon::CSeries &
+        getEnergyProperties(FenestrationCommon::Property const t_Property,
                               FenestrationCommon::Side const t_Side);
 
         // Defining the source of wavelengths to be used with the sample. Wavelengths can be used
@@ -83,16 +83,16 @@ namespace SpectralAveraging
         // wavelengts
         virtual std::vector<double> getWavelengthsFromSample() const = 0;
 
-        std::shared_ptr<FenestrationCommon::CSeries> m_SourceData;
-        std::shared_ptr<FenestrationCommon::CSeries> m_DetectorData;
+        FenestrationCommon::CSeries m_SourceData;
+        FenestrationCommon::CSeries m_DetectorData;
 
         std::vector<double> m_Wavelengths;
         WavelengthSet m_WavelengthSet;
 
         // Keep energy for current state of the sample. Energy is calculated for each wavelength.
-        std::unique_ptr<FenestrationCommon::CSeries> m_IncomingSource;
+        FenestrationCommon::CSeries m_IncomingSource;
         std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 std::unique_ptr<FenestrationCommon::CSeries>>
+                 FenestrationCommon::CSeries>
           m_EnergySource;
 
         FenestrationCommon::IntegrationType m_IntegrationType;
@@ -105,7 +105,7 @@ namespace SpectralAveraging
     {
     public:
         CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData,
-                        std::shared_ptr<FenestrationCommon::CSeries> const & t_SourceData,
+                        const FenestrationCommon::CSeries &t_SourceData,
                         FenestrationCommon::IntegrationType integrationType =
                           FenestrationCommon::IntegrationType::Trapezoidal,
                         double NormalizationCoefficient = 1);

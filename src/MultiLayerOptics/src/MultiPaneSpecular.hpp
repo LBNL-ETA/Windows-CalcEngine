@@ -41,12 +41,12 @@ namespace MultiLayerOptics
     {
     private:
         CMultiPaneSpecular(
-          std::vector<SingleLayerOptics::SpecularLayer> layers,
-          const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
-          const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData = nullptr);
+                std::vector<SingleLayerOptics::SpecularLayer> layers,
+                const FenestrationCommon::CSeries &t_SolarRadiation,
+                const FenestrationCommon::CSeries &t_DetectorData = FenestrationCommon::CSeries());
 
         CMultiPaneSpecular(std::vector<double> const & t_CommonWavelength,
-                           const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
+                           const FenestrationCommon::CSeries &t_SolarRadiation,
                            SingleLayerOptics::SpecularLayer & t_Layer);
 
         void addLayer(SingleLayerOptics::SpecularLayer & t_Layer);
@@ -54,8 +54,8 @@ namespace MultiLayerOptics
     public:
         static std::unique_ptr<CMultiPaneSpecular>
           create(std::vector<SingleLayerOptics::SpecularLayer> layers,
-                 const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
-                 const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData = nullptr);
+                 const FenestrationCommon::CSeries &t_SolarRadiation,
+                 const FenestrationCommon::CSeries &t_DetectorData = FenestrationCommon::CSeries());
 
         double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
                                  FenestrationCommon::Side t_Side,
@@ -128,8 +128,8 @@ namespace MultiLayerOptics
         std::vector<SingleLayerOptics::SpecularLayer> m_Layers;
 
         std::vector<double> m_CommonWavelengths;
-        std::shared_ptr<FenestrationCommon::CSeries> m_SolarRadiation;
-        std::shared_ptr<FenestrationCommon::CSeries> m_DetectorData;
+        FenestrationCommon::CSeries m_SolarRadiation;
+        FenestrationCommon::CSeries m_DetectorData;
 
         // Results for angle-properties std::pair. If same angle is required twice, then model will
         // not calculate it twice. First it will search for results here and if results are not

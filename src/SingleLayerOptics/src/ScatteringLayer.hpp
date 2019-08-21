@@ -79,7 +79,7 @@ namespace SingleLayerOptics
                                            double yHole);
 
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) const;
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData) const;
 
         void setBlackBodySource(double temperature);
 

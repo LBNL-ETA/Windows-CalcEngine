@@ -32,9 +32,8 @@ namespace MultiLayerOptics
         return m_Layer;
     }
 
-    CSeries
-    CEquivalentLayerSingleComponentMWAngle::getProperties(const Side t_Side,
-                                                          const Property t_Property)
+    CSeries CEquivalentLayerSingleComponentMWAngle::getProperties(const Side t_Side,
+                                                                  const Property t_Property)
     {
         return m_Layer.getProperties(t_Property, t_Side);
     }
@@ -47,10 +46,9 @@ namespace MultiLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  CMultiPaneSpecular
     ////////////////////////////////////////////////////////////////////////////////////////////
-    CMultiPaneSpecular::CMultiPaneSpecular(
-      std::vector<SingleLayerOptics::SpecularLayer> layers,
-      const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
-      const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) :
+    CMultiPaneSpecular::CMultiPaneSpecular(std::vector<SingleLayerOptics::SpecularLayer> layers,
+                                           const CSeries & t_SolarRadiation,
+                                           const CSeries & t_DetectorData) :
         m_Layers(std::move(layers)),
         m_SolarRadiation(t_SolarRadiation),
         m_DetectorData(t_DetectorData)
@@ -61,20 +59,15 @@ namespace MultiLayerOptics
             aCommonWL.addWavelength(layer.getBandWavelengths());
         }
 
-        if(m_DetectorData != nullptr && m_DetectorData->size() == 0)
-        {
-            m_DetectorData = nullptr;
-        }
-
         // Finds combination of two wavelength sets without going outside of wavelenght range for
         // any of spectral samples.
         m_CommonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
-        m_SolarRadiation = m_SolarRadiation->interpolate(m_CommonWavelengths);
+        m_SolarRadiation = m_SolarRadiation.interpolate(m_CommonWavelengths);
 
-        if(m_DetectorData != nullptr)
+        if(m_DetectorData.size() > 0)
         {
-            m_DetectorData->interpolate(m_CommonWavelengths);
+            m_DetectorData.interpolate(m_CommonWavelengths);
         }
 
         for(auto & layer : m_Layers)
@@ -84,12 +77,12 @@ namespace MultiLayerOptics
     }
 
     CMultiPaneSpecular::CMultiPaneSpecular(std::vector<double> const & t_CommonWavelength,
-                                           const std::shared_ptr<CSeries> & t_SolarRadiation,
+                                           const CSeries & t_SolarRadiation,
                                            SpecularLayer & t_Layer) :
         m_CommonWavelengths(t_CommonWavelength),
         m_SolarRadiation(t_SolarRadiation)
     {
-        m_SolarRadiation = m_SolarRadiation->interpolate(m_CommonWavelengths);
+        m_SolarRadiation = m_SolarRadiation.interpolate(m_CommonWavelengths);
         addLayer(t_Layer);
     }
 
@@ -99,10 +92,10 @@ namespace MultiLayerOptics
         m_Layers.push_back(t_Layer);
     }
 
-    std::unique_ptr<CMultiPaneSpecular> CMultiPaneSpecular::create(
-      std::vector<SingleLayerOptics::SpecularLayer> layers,
-      const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation,
-      const std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData)
+    std::unique_ptr<CMultiPaneSpecular>
+      CMultiPaneSpecular::create(std::vector<SingleLayerOptics::SpecularLayer> layers,
+                                 const CSeries & t_SolarRadiation,
+                                 const CSeries & t_DetectorData)
     {
         return std::unique_ptr<CMultiPaneSpecular>(
           new CMultiPaneSpecular(std::move(layers), t_SolarRadiation, t_DetectorData));
@@ -162,11 +155,11 @@ namespace MultiLayerOptics
 
         // aAngularProperties.getProperty(t_Side, t_Property);
 
-        auto aMult = aProperties.mMult(*m_SolarRadiation);
+        auto aMult = aProperties.mMult(m_SolarRadiation);
 
-        if(m_DetectorData != nullptr)
+        if(m_DetectorData.size() > 0)
         {
-            aMult = aMult->mMult(*m_DetectorData);
+            aMult = aMult->mMult(m_DetectorData);
         }
 
         const auto iIntegrated = aMult->integrate(t_IntegrationType, normalizationCoefficient);
@@ -177,12 +170,12 @@ namespace MultiLayerOptics
 
         auto solarRadiation = m_SolarRadiation;
 
-        if(m_DetectorData != nullptr)
+        if(m_DetectorData.size() > 0)
         {
-            solarRadiation = solarRadiation->mMult(*m_DetectorData);
+            solarRadiation = *solarRadiation.mMult(m_DetectorData);
         }
 
-        double totalSolar = solarRadiation->integrate(t_IntegrationType, normalizationCoefficient)
+        double totalSolar = solarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
                               ->sum(minLambda, maxLambda);
 
         assert(totalSolar > 0);
@@ -242,12 +235,12 @@ namespace MultiLayerOptics
         CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
         auto aProperties = aAngularProperties.Abs(Index - 1);
 
-        auto aMult = aProperties.mMult(*m_SolarRadiation);
+        auto aMult = aProperties.mMult(m_SolarRadiation);
 
         auto iIntegrated = aMult->integrate(t_IntegrationType, normalizationCoefficient);
 
         double totalProperty = iIntegrated->sum(minLambda, maxLambda);
-        double totalSolar = m_SolarRadiation->integrate(t_IntegrationType, normalizationCoefficient)
+        double totalSolar = m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
                               ->sum(minLambda, maxLambda);
 
         assert(totalSolar > 0);
@@ -276,17 +269,14 @@ namespace MultiLayerOptics
         return aIntegrator.value();
     }
 
-    CEquivalentLayerSingleComponentMWAngle
-      CMultiPaneSpecular::getAngular(const double t_Angle)
+    CEquivalentLayerSingleComponentMWAngle CMultiPaneSpecular::getAngular(const double t_Angle)
     {
-
         std::vector<CEquivalentLayerSingleComponentMWAngle>::iterator it;
-        it =
-          find_if(m_EquivalentAngle.begin(),
-                  m_EquivalentAngle.end(),
-                  [&t_Angle](const CEquivalentLayerSingleComponentMWAngle & obj) {
-                      return std::abs(obj.angle() - t_Angle) < 1e-6;
-                  });
+        it = find_if(m_EquivalentAngle.begin(),
+                     m_EquivalentAngle.end(),
+                     [&t_Angle](const CEquivalentLayerSingleComponentMWAngle & obj) {
+                         return std::abs(obj.angle() - t_Angle) < 1e-6;
+                     });
 
         return (it != m_EquivalentAngle.end()) ? (*it) : createNewAngular(t_Angle);
     }
@@ -332,9 +322,9 @@ namespace MultiLayerOptics
             result.Rb.addProperty(wl[j], Rbv[j]);
         }
 
-        result.T = *result.T.interpolate(m_CommonWavelengths);
-        result.Rf = *result.Rf.interpolate(m_CommonWavelengths);
-        result.Rb = *result.Rb.interpolate(m_CommonWavelengths);
+        result.T = result.T.interpolate(m_CommonWavelengths);
+        result.Rf = result.Rf.interpolate(m_CommonWavelengths);
+        result.Rb = result.Rb.interpolate(m_CommonWavelengths);
 
         return result;
     }

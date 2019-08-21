@@ -82,7 +82,7 @@ namespace SpectralAveraging
             for(const auto & side : EnumSide())
             {
                 m_Property[std::make_pair(prop, side)] =
-                  *m_Property.at(std::make_pair(prop, side)).interpolate(t_Wavelengths);
+                  m_Property.at(std::make_pair(prop, side)).interpolate(t_Wavelengths);
             }
         }
     }
@@ -106,7 +106,6 @@ namespace SpectralAveraging
     {
         if(!m_absCalculated)
         {
-
             m_Property.at(std::make_pair(Property::Abs, Side::Front)).clear();
             m_Property.at(std::make_pair(Property::Abs, Side::Back)).clear();
 
@@ -116,14 +115,12 @@ namespace SpectralAveraging
             {
                 auto RFrontSide = m_Flipped ? Side::Back : Side::Front;
                 auto RBackSide = m_Flipped ? Side::Front : Side::Back;
-                auto value = 1
-                             - m_Property.at(std::make_pair(Property::T, Side::Front))[i].value()
+                auto value = 1 - m_Property.at(std::make_pair(Property::T, Side::Front))[i].value()
                              - m_Property.at(std::make_pair(Property::R, RFrontSide))[i].value();
-                m_Property.at(std::make_pair(Property::Abs, Side::Front))
-                  .addProperty(wv[i], value);
+                m_Property.at(std::make_pair(Property::Abs, Side::Front)).addProperty(wv[i], value);
 
                 value = 1 - m_Property.at(std::make_pair(Property::T, Side::Back))[i].value()
-                            - m_Property.at(std::make_pair(Property::R, RBackSide))[i].value();
+                        - m_Property.at(std::make_pair(Property::R, RBackSide))[i].value();
                 m_Property.at(std::make_pair(Property::Abs, Side::Back)).addProperty(wv[i], value);
             }
             m_absCalculated = true;

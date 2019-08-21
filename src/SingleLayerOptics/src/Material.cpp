@@ -45,15 +45,15 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CMaterial> Material::dualBandMaterial(
-      const double Tfsol,
-      const double Tbsol,
-      const double Rfsol,
-      const double Rbsol,
-      const double Tfvis,
-      const double Tbvis,
-      const double Rfvis,
-      const double Rbvis,
-      const std::shared_ptr<FenestrationCommon::CSeries> & solarRadiation)
+            const double Tfsol,
+            const double Tbsol,
+            const double Rfsol,
+            const double Rbsol,
+            const double Tfvis,
+            const double Tbvis,
+            const double Rfvis,
+            const double Rbvis,
+            const CSeries &solarRadiation)
     {
         auto aSolarRangeMaterial =
           std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol, WavelengthRange::Solar);
@@ -92,7 +92,7 @@ namespace SingleLayerOptics
       const double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
-          measurement, nullptr, integrationType, normalizationCoefficient);
+          measurement, CSeries(), integrationType, normalizationCoefficient);
 
         // Need to determine if sample is subset of allowed range in which case integration range
         // needs to be narrowed.
@@ -138,7 +138,7 @@ namespace SingleLayerOptics
       double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
-          measurement, nullptr, integrationType, normalizationCoefficient);
+          measurement, CSeries(), integrationType, normalizationCoefficient);
 
         // Narrow down sample in case it is over limits of desired measurements
         aSample->cutExtraData(minLambda, maxLambda);
@@ -153,17 +153,17 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CMaterial> Material::nBandMaterial(
-      const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-      const std::shared_ptr<CSeries> & detectorData,
-      const double thickness,
-      const FenestrationCommon::MaterialType materialType,
-      const double minLambda,
-      const double maxLambda,
-      const FenestrationCommon::IntegrationType integrationType,
-      const double normalizationCoefficient)
+            const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+            const CSeries &detectorData,
+            const double thickness,
+            const FenestrationCommon::MaterialType materialType,
+            const double minLambda,
+            const double maxLambda,
+            const FenestrationCommon::IntegrationType integrationType,
+            const double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
-          measurement, nullptr, integrationType, normalizationCoefficient);
+          measurement, CSeries(), integrationType, normalizationCoefficient);
         aSample->setDetectorData(detectorData);
 
         // Narrow down sample in case it is over limits of desired measurements
@@ -180,16 +180,16 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CMaterial> Material::nBandMaterial(
-      const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-      const std::shared_ptr<FenestrationCommon::CSeries> & detectorData,
-      const double thickness,
-      const FenestrationCommon::MaterialType materialType,
-      const FenestrationCommon::WavelengthRange t_Range,
-      const FenestrationCommon::IntegrationType integrationType,
-      const double normalizationCoefficient)
+            const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+            const CSeries &detectorData,
+            const double thickness,
+            const FenestrationCommon::MaterialType materialType,
+            const FenestrationCommon::WavelengthRange t_Range,
+            const FenestrationCommon::IntegrationType integrationType,
+            const double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
-          measurement, nullptr, integrationType, normalizationCoefficient);
+          measurement, CSeries(), integrationType, normalizationCoefficient);
 
         // Need to determine if sample is subset of allowed range in which case integration range
         // needs to be narrowed.

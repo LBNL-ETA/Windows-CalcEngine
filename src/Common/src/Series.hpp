@@ -49,7 +49,7 @@ namespace FenestrationCommon
         CSeries() = default;
         static std::shared_ptr<CSeries>
           create(const std::initializer_list<std::pair<double, double>> & t_list);
-        static std::shared_ptr<CSeries>
+        static CSeries
           create(const std::vector<std::pair<double, double>> & t_values);
         static std::shared_ptr<CSeries> create();
 
@@ -65,7 +65,7 @@ namespace FenestrationCommon
 
         std::unique_ptr<CSeries> integrate(IntegrationType t_IntegrationType,
                                            double normalizationCoefficient = 1) const;
-        std::unique_ptr<CSeries> interpolate(const std::vector<double> & t_x) const;
+        CSeries interpolate(const std::vector<double> & t_Wavelengths) const;
 
         // Multiplication of values in spectral properties that have same wavelength. Function will
         // work only if two spectral properties have identical wavelengths. Otherwise runtime error
