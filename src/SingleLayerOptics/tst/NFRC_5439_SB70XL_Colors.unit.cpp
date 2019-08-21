@@ -325,7 +325,7 @@ private:
 
         auto layer = wce::make_unique<SingleLayerOptics::CScatteringLayer>(
           SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial));
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
         layer->setSourceData(solarRadiation);
         layer->setWavelengths(loadWavelengths());
 

@@ -231,11 +231,11 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    std::unique_ptr<CSeries> CSeries::mSub(const CSeries & t_Series) const
+    CSeries CSeries::mSub(const CSeries & t_Series) const
     {
         const double WAVELENGTHTOLERANCE = 1e-10;
 
-        std::unique_ptr<CSeries> newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
         size_t minSize = std::min(m_Series.size(), t_Series.m_Series.size());
 
         for(size_t i = 0; i < minSize; ++i)
@@ -250,17 +250,17 @@ namespace FenestrationCommon
                   "Wavelengths of two vectors are not the same. Cannot preform multiplication.");
             }
 
-            newProperties->addProperty(wv, value);
+            newProperties.addProperty(wv, value);
         }
 
         return newProperties;
     }
 
-    std::unique_ptr<CSeries> CSeries::mAdd(const CSeries & t_Series) const
+    FenestrationCommon::CSeries CSeries::mAdd(const CSeries & t_Series) const
     {
         const double WAVELENGTHTOLERANCE = 1e-10;
 
-        std::unique_ptr<CSeries> newProperties(new CSeries());
+        CSeries newProperties;
         size_t minSize = std::min(m_Series.size(), t_Series.m_Series.size());
 
         for(size_t i = 0; i < minSize; ++i)
@@ -275,7 +275,7 @@ namespace FenestrationCommon
                   "Wavelengths of two vectors are not the same. Cannot preform multiplication.");
             }
 
-            newProperties->addProperty(wv, value);
+            newProperties.addProperty(wv, value);
         }
 
         return newProperties;

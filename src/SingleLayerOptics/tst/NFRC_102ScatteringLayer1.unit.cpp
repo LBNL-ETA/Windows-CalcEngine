@@ -123,7 +123,7 @@ protected:
           aMeasurements, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
         m_Layer.setSourceData(solarRadiation);
     }
 

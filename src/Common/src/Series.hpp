@@ -77,13 +77,13 @@ namespace FenestrationCommon
         // work only if two spectral properties have identical wavelengths. Otherwise runtime error
         // will be thrown. If two spectral properites do not have same wavelength range, then
         // interpolation function should be called.
-        std::unique_ptr<CSeries> mSub(const CSeries & t_Series) const;
+        CSeries mSub(const CSeries & t_Series) const;
 
         // Addition of values in spectral properties that have same wavelength. Function will work
         // only if two spectral properties have identical wavelengths. Otherwise runtime error will
         // be thrown. If two spectral properites do not have same wavelength range, then
         // interpolation function should be called.
-        std::unique_ptr<CSeries> mAdd(const CSeries & t_Series) const;
+        FenestrationCommon::CSeries mAdd(const CSeries & t_Series) const;
 
         // Return wavelenght values for spectral properties.
         std::vector<double> getXArray() const;
@@ -91,7 +91,7 @@ namespace FenestrationCommon
         // Sum of all properties between two x values. Default arguments mean all items are sum
         double sum(double minX = 0, double maxX = 0) const;
 
-        // Sort series by x values in accending order
+        // Sort series by x values in ascending order
         void sort();
 
         std::vector<std::unique_ptr<ISeriesPoint>>::const_iterator begin() const;

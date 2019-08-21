@@ -87,9 +87,9 @@ namespace MultiLayerOptics
             size = Iminus.size();
             for(size_t i = 0; i < size - 1; ++i)
             {
-                std::shared_ptr<CSeries> Iincoming = Iminus[i].mSub(Iplus[i]);
-                std::shared_ptr<CSeries> Ioutgoing = Iminus[i + 1].mSub(Iplus[i + 1]);
-                CSeries layerAbs = *Iincoming->mSub(*Ioutgoing);
+                auto Iincoming = Iminus[i].mSub(Iplus[i]);
+                auto Ioutgoing = Iminus[i + 1].mSub(Iplus[i + 1]);
+                CSeries layerAbs = Iincoming.mSub(Ioutgoing);
                 m_Abs.push_back(layerAbs);
             }
         }

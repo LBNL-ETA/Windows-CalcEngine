@@ -130,7 +130,7 @@ protected:
         // Equivalent BSDF layer
         m_Layer = CMultiLayerScattered::create(Layer102);
 
-        auto solarRadiation{loadSolarRadiationFile()};
+        CSeries solarRadiation{loadSolarRadiationFile()};
         m_Layer->setSourceData(solarRadiation);
     }
 
