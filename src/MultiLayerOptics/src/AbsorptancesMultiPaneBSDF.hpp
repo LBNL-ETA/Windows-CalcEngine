@@ -47,7 +47,7 @@ namespace MultiLayerOptics
         FenestrationCommon::SquareMatrix m_Lambda;
         std::vector<double> m_LambdaVector;
 
-        std::shared_ptr<FenestrationCommon::CSeries> m_SolarRadiation;
+        FenestrationCommon::CSeries m_SolarRadiation;
 
         // Layer by layer coefficients for each wavelength (layer, wavelength, direction)
         std::vector<SquareMatrices> m_TausF;

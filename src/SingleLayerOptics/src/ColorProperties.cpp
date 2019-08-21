@@ -37,10 +37,10 @@ namespace SingleLayerOptics
         auto DX = t_DetectorX;
         auto DY = t_DetectorY;
         auto DZ = t_DetectorZ;
-        aSolar = *aSolar.interpolate(wavelengths);
-        DX = *DX.interpolate(wavelengths);
-        DY = *DY.interpolate(wavelengths);
-        DZ = *DZ.interpolate(wavelengths);
+        aSolar = aSolar.interpolate(wavelengths);
+        DX = DX.interpolate(wavelengths);
+        DY = DY.interpolate(wavelengths);
+        DZ = DZ.interpolate(wavelengths);
         aSolar.mMult(DX);
         m_SDx = aSolar.mMult(DX)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
         m_SDy = aSolar.mMult(DY)->sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());

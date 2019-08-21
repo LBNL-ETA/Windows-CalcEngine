@@ -14,11 +14,10 @@ namespace SpectralAveraging
     ////  CSample
     //////////////////////////////////////////////////////////////////////////////////////
 
-    CSample::CSample(std::shared_ptr<CSeries> const & t_SourceData,
+    CSample::CSample(const CSeries &t_SourceData,
                      IntegrationType integrationType,
                      double t_NormalizationCoefficient) :
         m_SourceData(t_SourceData),
-        m_DetectorData(nullptr),
         m_WavelengthSet(WavelengthSet::Data),
         m_IntegrationType(integrationType),
         m_NormalizationCoefficient(t_NormalizationCoefficient),
@@ -28,8 +27,6 @@ namespace SpectralAveraging
     }
 
     CSample::CSample() :
-        m_SourceData(nullptr),
-        m_DetectorData(nullptr),
         m_WavelengthSet(WavelengthSet::Data),
         m_IntegrationType(IntegrationType::Trapezoidal),
         m_NormalizationCoefficient(1),
@@ -44,13 +41,12 @@ namespace SpectralAveraging
         m_IntegrationType = t_Sample.m_IntegrationType;
         m_NormalizationCoefficient = t_Sample.m_NormalizationCoefficient;
         m_WavelengthSet = t_Sample.m_WavelengthSet;
-        m_IncomingSource = wce::make_unique<CSeries>(*t_Sample.m_IncomingSource);
+        m_IncomingSource = t_Sample.m_IncomingSource;
         for(const auto & prop : EnumProperty())
         {
             for(const auto & side : EnumSide())
             {
-                m_EnergySource[std::make_pair(prop, side)] = wce::make_unique<CSeries>(
-                  *t_Sample.m_EnergySource.at(std::make_pair(prop, side)));
+                m_EnergySource[std::make_pair(prop, side)] = t_Sample.m_EnergySource.at(std::make_pair(prop, side));
             }
         }
 
@@ -62,19 +58,19 @@ namespace SpectralAveraging
         operator=(t_Sample);
     }
 
-    std::shared_ptr<CSeries> CSample::getSourceData()
+    CSeries & CSample::getSourceData()
     {
         calculateState();   // must interpolate data to same wavelengths
         return m_SourceData;
     }
 
-    void CSample::setSourceData(std::shared_ptr<CSeries> t_SourceData)
+    void CSample::setSourceData(CSeries &t_SourceData)
     {
         m_SourceData = t_SourceData;
         reset();
     }
 
-    void CSample::setDetectorData(const std::shared_ptr<CSeries> & t_DetectorData)
+    void CSample::setDetectorData(const CSeries &t_DetectorData)
     {
         m_DetectorData = t_DetectorData;
         reset();
@@ -107,12 +103,12 @@ namespace SpectralAveraging
                 m_Wavelengths = t_Wavelenghts;
                 break;
             case WavelengthSet::Source:
-                if(m_SourceData == nullptr)
+                if(m_SourceData.size() == 0)
                 {
                     throw std::runtime_error(
                       "Cannot extract wavelenghts from source. Source is empty.");
                 }
-                m_Wavelengths = m_SourceData->getXArray();
+                m_Wavelengths = m_SourceData.getXArray();
                 break;
             case WavelengthSet::Data:
                 m_Wavelengths = getWavelengthsFromSample();
@@ -130,7 +126,7 @@ namespace SpectralAveraging
                               Side const t_Side)
     {
         calculateState();
-        return m_EnergySource.at(std::make_pair(t_Property, t_Side))->sum(minLambda, maxLambda);
+        return m_EnergySource.at(std::make_pair(t_Property, t_Side)).sum(minLambda, maxLambda);
     }
 
     double CSample::getProperty(double const minLambda,
@@ -142,20 +138,20 @@ namespace SpectralAveraging
         auto Prop = 0.0;
         // Incoming energy can be calculated only if user has defined incoming source.
         // Otherwise just assume zero property.
-        if(m_IncomingSource != nullptr)
+        if(m_IncomingSource.size() > 0)
         {
-            auto incomingEnergy = m_IncomingSource->sum(minLambda, maxLambda);
+            auto incomingEnergy = m_IncomingSource.sum(minLambda, maxLambda);
             double propertyEnergy =
-              m_EnergySource.at(std::make_pair(t_Property, t_Side))->sum(minLambda, maxLambda);
+              m_EnergySource.at(std::make_pair(t_Property, t_Side)).sum(minLambda, maxLambda);
             Prop = propertyEnergy / incomingEnergy;
         }
         return Prop;
     }
 
-    CSeries * CSample::getEnergyProperties(Property const t_Property, Side const t_Side)
+    CSeries & CSample::getEnergyProperties(const Property t_Property, const Side t_Side)
     {
         calculateState();
-        return m_EnergySource.at(std::make_pair(t_Property, t_Side)).get();
+        return m_EnergySource.at(std::make_pair(t_Property, t_Side));
     }
 
     size_t CSample::getBandSize() const
@@ -166,12 +162,12 @@ namespace SpectralAveraging
     void CSample::reset()
     {
         m_StateCalculated = false;
-        m_IncomingSource = nullptr;
+        m_IncomingSource = CSeries();
         for(const auto & prop : EnumProperty())
         {
             for(const auto & side : EnumSide())
             {
-                m_EnergySource[std::make_pair(prop, side)] = nullptr;
+                m_EnergySource[std::make_pair(prop, side)] = CSeries();
             }
         }
     }
@@ -187,28 +183,28 @@ namespace SpectralAveraging
 
             // In case source data are set then apply solar radiation to the calculations.
             // Otherwise, just use measured data.
-            if(m_SourceData != nullptr)
+            if(m_SourceData.size() > 0)
             {
-                m_IncomingSource = m_SourceData->interpolate(m_Wavelengths);
+                m_IncomingSource = m_SourceData.interpolate(m_Wavelengths);
 
 
-                if(m_DetectorData != nullptr)
+                if(m_DetectorData.size() > 0)
                 {
-                    const auto interpolatedDetector = *m_DetectorData->interpolate(m_Wavelengths);
-                    m_IncomingSource = m_IncomingSource->mMult(interpolatedDetector);
+                    const auto interpolatedDetector = m_DetectorData.interpolate(m_Wavelengths);
+                    m_IncomingSource = *m_IncomingSource.mMult(interpolatedDetector);
                 }
 
                 calculateProperties();
 
                 m_IncomingSource =
-                  m_IncomingSource->integrate(m_IntegrationType, m_NormalizationCoefficient);
+                  *m_IncomingSource.integrate(m_IntegrationType, m_NormalizationCoefficient);
                 for(const auto & prop : EnumProperty())
                 {
                     for(const auto & side : EnumSide())
                     {
                         m_EnergySource[std::make_pair(prop, side)] =
-                          m_EnergySource.at(std::make_pair(prop, side))
-                            ->integrate(m_IntegrationType, m_NormalizationCoefficient);
+                          *m_EnergySource.at(std::make_pair(prop, side))
+                            .integrate(m_IntegrationType, m_NormalizationCoefficient);
                     }
                 }
 
@@ -222,7 +218,7 @@ namespace SpectralAveraging
     //////////////////////////////////////////////////////////////////////////////////////
 
     CSpectralSample::CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData,
-                                     std::shared_ptr<CSeries> const & t_SourceData,
+                                     const CSeries &t_SourceData,
                                      FenestrationCommon::IntegrationType integrationType,
                                      double NormalizationCoefficient) :
         CSample(t_SourceData, integrationType, NormalizationCoefficient),
@@ -271,8 +267,7 @@ namespace SpectralAveraging
         return m_SampleData->getWavelengths();
     }
 
-    CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property,
-                                                    const Side t_Side)
+    CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property, const Side t_Side)
     {
         calculateState();
 
@@ -281,30 +276,19 @@ namespace SpectralAveraging
 
     void CSpectralSample::calculateProperties()
     {
-        // No need to do interpolation if wavelength set is already from the data.
-        if(m_WavelengthSet == WavelengthSet::Data)
+        for(const auto & prop : EnumProperty())
         {
-            for(const auto & prop : EnumProperty())
+            for(const auto & side : EnumSide())
             {
-                for(const auto & side : EnumSide())
-                {
-                    m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
-                }
-            }
-        }
-        else
-        {
-            for(const auto & prop : EnumProperty())
-            {
-                for(const auto & side : EnumSide())
+                m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
+                // No need to do interpolation if wavelength set is already from the data.
+                if(m_WavelengthSet != WavelengthSet::Data)
                 {
                     m_Property[std::make_pair(prop, side)] =
-                      *m_SampleData->properties(prop, side).interpolate(m_Wavelengths);
+                      m_Property[std::make_pair(prop, side)].interpolate(m_Wavelengths);
                 }
             }
         }
-
-        assert(m_IncomingSource != nullptr);
 
         // Calculation of energy balances
         for(const auto & prop : EnumProperty())
@@ -312,7 +296,7 @@ namespace SpectralAveraging
             for(const auto & side : EnumSide())
             {
                 m_EnergySource[std::make_pair(prop, side)] =
-                        m_Property.at(std::make_pair(prop, side)).mMult(*m_IncomingSource);
+                  *m_Property.at(std::make_pair(prop, side)).mMult(m_IncomingSource);
             }
         }
     }
@@ -320,7 +304,7 @@ namespace SpectralAveraging
     void CSpectralSample::calculateState()
     {
         CSample::calculateState();
-        if(m_SourceData == nullptr)
+        if(m_SourceData.size() == 0)
         {
             for(const auto & prop : EnumProperty())
             {

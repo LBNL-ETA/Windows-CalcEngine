@@ -29,9 +29,9 @@ private:
         return aWavelengths;
     }
 
-    std::shared_ptr<CSeries> loadDetectorData() const
+    CSeries loadDetectorData() const
     {
-        return CSeries::create(
+        return CSeries(
           {{0.380, 0.0000}, {0.385, 0.0001}, {0.390, 0.0001}, {0.395, 0.0002}, {0.400, 0.0004},
            {0.405, 0.0006}, {0.410, 0.0012}, {0.415, 0.0022}, {0.420, 0.0040}, {0.425, 0.0073},
            {0.430, 0.0116}, {0.435, 0.0168}, {0.440, 0.0230}, {0.445, 0.0298}, {0.450, 0.0380},
@@ -51,9 +51,9 @@ private:
            {0.780, 0.0000}});
     }
 
-    std::shared_ptr<CSeries> loadSolarRadiationFile()
+    CSeries loadSolarRadiationFile()
     {
-        return CSeries::create(
+        return CSeries(
           {{0.3000, 0.0341},   {0.3010, 0.3601},   {0.3020, 0.6862},   {0.3030, 1.0122},
            {0.3040, 1.3383},   {0.3050, 1.6643},   {0.3060, 1.9903},   {0.3070, 2.3164},
            {0.3080, 2.6424},   {0.3090, 2.9685},   {0.3100, 3.2945},   {0.3110, 4.9887},
@@ -255,10 +255,14 @@ protected:
     {
         const auto thickness = 3.048e-3;   // [m]
         const auto aMaterial = Material::nBandMaterial(loadSampleData_NFRC_102(),
-        	loadDetectorData(), thickness, MaterialType::Monolithic, WavelengthRange::Visible);
+                                                       loadDetectorData(),
+                                                       thickness,
+                                                       MaterialType::Monolithic,
+                                                       WavelengthRange::Visible);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
-        m_Layer.setSourceData(loadSolarRadiationFile());
+        auto solarRadiation{loadSolarRadiationFile()};
+        m_Layer.setSourceData(solarRadiation);
         m_Layer.setWavelengths(loadWavelengths());
     }
 

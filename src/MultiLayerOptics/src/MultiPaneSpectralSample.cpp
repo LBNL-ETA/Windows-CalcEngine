@@ -11,8 +11,8 @@ using namespace FenestrationCommon;
 namespace MultiLayerOptics
 {
     CMultiPaneSpectralSample::CMultiPaneSpectralSample(
-      const std::shared_ptr<CSpectralSampleData> & t_SampleData,
-      const std::shared_ptr<CSeries> & t_SourceData) :
+            const std::shared_ptr<CSpectralSampleData> &t_SampleData,
+            const CSeries &t_SourceData) :
         CSpectralSample(t_SampleData, t_SourceData)
     {}
 
@@ -36,7 +36,7 @@ namespace MultiLayerOptics
     {
         calculateState();
         double absorbedEnergy = getLayerAbsorbedEnergy(minLambda, maxLambda, Index);
-        double incomingEnergy = m_IncomingSource->sum(minLambda, maxLambda);
+        double incomingEnergy = m_IncomingSource.sum(minLambda, maxLambda);
         return absorbedEnergy / incomingEnergy;
     }
 
@@ -75,9 +75,9 @@ namespace MultiLayerOptics
         CSeries aAbs = t_Absorptances;
         if(m_WavelengthSet != WavelengthSet::Data)
         {
-            aAbs = *aAbs.interpolate(m_Wavelengths);
+            aAbs = aAbs.interpolate(m_Wavelengths);
         }
-        aAbs = *aAbs.mMult(*m_IncomingSource);
+        aAbs = *aAbs.mMult(m_IncomingSource);
         aAbs = *aAbs.integrate(m_IntegrationType, m_NormalizationCoefficient);
         m_AbsorbedLayersSource.push_back(aAbs);
     }

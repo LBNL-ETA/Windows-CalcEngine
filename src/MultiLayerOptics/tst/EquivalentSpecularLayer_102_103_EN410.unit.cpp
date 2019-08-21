@@ -19,10 +19,10 @@ class EquivalentSpecularLayer_102_103_EN410 : public testing::Test
 private:
     std::shared_ptr<CMultiPaneSpecular> m_Layer;
 
-    std::shared_ptr<CSeries> loadSolarRadiationFile() const
+    CSeries loadSolarRadiationFile() const
     {
         // Full ASTM E891-87 Table 1 (Solar radiation)
-        auto aSolarRadiation = CSeries::create(
+        CSeries aSolarRadiation(
           {{0.300, 0.0005}, {0.320, 0.0069}, {0.340, 0.0122}, {0.360, 0.0145}, {0.380, 0.0177},
            {0.400, 0.0235}, {0.420, 0.0268}, {0.440, 0.0294}, {0.460, 0.0343}, {0.480, 0.0339},
            {0.500, 0.0326}, {0.520, 0.0318}, {0.540, 0.0321}, {0.560, 0.0312}, {0.580, 0.0294},
@@ -173,7 +173,7 @@ protected:
         const auto aSolarRadiation = loadSolarRadiationFile();
 
         // Wavelength data set according to NFRC 2003 standard is from solar radiation file
-        const std::vector<double> wl = aSolarRadiation->getXArray();
+        const std::vector<double> wl = aSolarRadiation.getXArray();
 
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial_102 = Material::nBandMaterial(loadSampleData_NFRC_102(),

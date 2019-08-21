@@ -174,9 +174,9 @@ namespace FenestrationCommon
         return vx;
     }
 
-    std::unique_ptr<CSeries> CSeries::interpolate(const std::vector<double> & t_Wavelengths) const
+    CSeries CSeries::interpolate(const std::vector<double> & t_Wavelengths) const
     {
-        std::unique_ptr<CSeries> newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
 
         if(size() != 0)
         {
@@ -198,7 +198,7 @@ namespace FenestrationCommon
                     upper = lower;
                 }
 
-                newProperties->addProperty(wavelength, interpolate(lower, upper, wavelength));
+                newProperties.addProperty(wavelength, interpolate(lower, upper, wavelength));
             }
         }
 
@@ -366,10 +366,9 @@ namespace FenestrationCommon
         return std::shared_ptr<CSeries>(new CSeries(t_list));
     }
 
-    std::shared_ptr<CSeries>
-      CSeries::create(const std::vector<std::pair<double, double>> & t_values)
+    CSeries CSeries::create(const std::vector<std::pair<double, double>> & t_values)
     {
-        return std::shared_ptr<CSeries>(new CSeries(t_values));
+        return CSeries(t_values);
     }
 
     std::shared_ptr<CSeries> CSeries::create()

@@ -55,8 +55,8 @@ namespace SingleLayerOptics
         CMaterial(double minLambda, double maxLambda);
         explicit CMaterial(FenestrationCommon::WavelengthRange t_Range);
 
-        virtual void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData);
-        virtual void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData);
+        virtual void setSourceData(FenestrationCommon::CSeries &);
+        virtual void setDetectorData(FenestrationCommon::CSeries &t_DetectorData);
 
         // Get certain material property over the entire range
         virtual double getProperty(FenestrationCommon::Property t_Property,
@@ -150,14 +150,14 @@ namespace SingleLayerOptics
         // ratio is calculated based on provided solar radiation values
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_SolarRange,
-                          const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
+                          const FenestrationCommon::CSeries &t_SolarRadiation);
 
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_SolarRange);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
         void
-          setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
+          setDetectorData(FenestrationCommon::CSeries &t_DetectorData) override;
 
         double getProperty(FenestrationCommon::Property t_Property,
                            FenestrationCommon::Side t_Side) const override;
@@ -211,9 +211,9 @@ namespace SingleLayerOptics
           FenestrationCommon::MaterialType t_Type,
           FenestrationCommon::WavelengthRange t_Range);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
         void
-          setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
+          setDetectorData(FenestrationCommon::CSeries &t_DetectorData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
@@ -257,7 +257,7 @@ namespace SingleLayerOptics
           const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements,
           FenestrationCommon::WavelengthRange t_Range);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.

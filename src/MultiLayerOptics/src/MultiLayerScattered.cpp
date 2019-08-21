@@ -98,7 +98,7 @@ namespace MultiLayerOptics
         m_Calculated = false;
     }
 
-    void CMultiLayerScattered::setSourceData(std::shared_ptr<CSeries> t_SourceData)
+    void CMultiLayerScattered::setSourceData(CSeries &t_SourceData)
     {
         for(auto & layer : m_Layers)
         {

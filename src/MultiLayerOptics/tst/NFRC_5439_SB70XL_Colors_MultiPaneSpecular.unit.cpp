@@ -25,10 +25,10 @@ private:
         return aWavelengths;
     }
 
-    std::shared_ptr<CSeries> loadSolarRadiationFile() const
+    CSeries loadSolarRadiationFile() const
     {
         // Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
-        auto solarRadiation = CSeries::create(
+        CSeries solarRadiation(
           {{0.300, 0.0341000}, {0.301, 0.3601400}, {0.302, 0.6861800}, {0.303, 1.0122200},
            {0.304, 1.3382600}, {0.305, 1.6643000}, {0.306, 1.9903400}, {0.307, 2.3163800},
            {0.308, 2.6424200}, {0.309, 2.9684600}, {0.310, 3.2945000}, {0.311, 4.9886500},
@@ -245,9 +245,9 @@ private:
            {40.000, 0.0000, 0.1381, 0.9915}});
     }
 
-    std::shared_ptr<CSeries> ASTM_E308_1964_X() const
+    CSeries ASTM_E308_1964_X() const
     {
-        return CSeries::create(
+        return CSeries(
           {{0.380, 0.0002}, {0.385, 0.0007}, {0.390, 0.0024}, {0.395, 0.0072}, {0.400, 0.0191},
            {0.405, 0.0434}, {0.410, 0.0847}, {0.415, 0.1406}, {0.420, 0.2045}, {0.425, 0.2647},
            {0.430, 0.3147}, {0.435, 0.3577}, {0.440, 0.3837}, {0.445, 0.3867}, {0.450, 0.3707},
@@ -267,9 +267,9 @@ private:
            {0.780, 0.0000}});
     }
 
-    std::shared_ptr<CSeries> ASTM_E308_1964_Y() const
+    CSeries ASTM_E308_1964_Y() const
     {
-        return CSeries::create(
+        return CSeries(
           {{0.380, 0.0000}, {0.385, 0.0001}, {0.390, 0.0003}, {0.395, 0.0008}, {0.400, 0.0020},
            {0.405, 0.0045}, {0.410, 0.0088}, {0.415, 0.0145}, {0.420, 0.0214}, {0.425, 0.0295},
            {0.430, 0.0387}, {0.435, 0.0496}, {0.440, 0.0621}, {0.445, 0.0747}, {0.450, 0.0895},
@@ -289,10 +289,9 @@ private:
            {0.780, 0.0000}});
     }
 
-
-    std::shared_ptr<CSeries> ASTM_E308_1964_Z() const
+    CSeries ASTM_E308_1964_Z() const
     {
-        return CSeries::create(
+        return CSeries(
           {{0.380, 0.0007}, {0.385, 0.0029}, {0.390, 0.0105}, {0.395, 0.0323}, {0.400, 0.0860},
            {0.405, 0.1971}, {0.410, 0.3894}, {0.415, 0.6568}, {0.420, 0.9725}, {0.425, 1.2825},
            {0.430, 1.5535}, {0.435, 1.7985}, {0.440, 1.9673}, {0.445, 2.0273}, {0.450, 1.9948},
@@ -313,7 +312,7 @@ private:
     }
 
     std::unique_ptr<MultiLayerOptics::CMultiPaneSpecular>
-      createLayer(const std::shared_ptr<CSeries> & astmStandard) const
+      createLayer(const CSeries &astmStandard) const
     {
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial =
@@ -328,7 +327,8 @@ private:
         SingleLayerOptics::SpecularLayer single_layer =
           SingleLayerOptics::SpecularLayer::createLayer(aMaterial);
 
-        single_layer.setSourceData(loadSolarRadiationFile());
+        auto solarRadiation{loadSolarRadiationFile()};
+        single_layer.setSourceData(solarRadiation);
 
         auto layer = MultiLayerOptics::CMultiPaneSpecular::create(
           {single_layer}, loadSolarRadiationFile(), astmStandard);
@@ -343,11 +343,11 @@ protected:
         auto LayerY = createLayer(ASTM_E308_1964_Y());
         auto LayerZ = createLayer(ASTM_E308_1964_Z());
 
-        CSeries DX = *ASTM_E308_1964_X();
-        CSeries DY = *ASTM_E308_1964_Y();
-        CSeries DZ = *ASTM_E308_1964_Z();
+        CSeries DX = ASTM_E308_1964_X();
+        CSeries DY = ASTM_E308_1964_Y();
+        CSeries DZ = ASTM_E308_1964_Z();
 
-        CSeries solarRadiation = *loadSolarRadiationFile();
+        auto solarRadiation{loadSolarRadiationFile()};
 
         auto wl = loadWavelengths();
 

@@ -53,13 +53,13 @@ namespace SpectralAveraging
 
             auto aWavelengths = aMeasuredData->getWavelengths();
             auto aT = aMeasuredData->properties(Property ::T, Side::Front);
-            assert(aT->size() == aWavelengths.size());
+            assert(aT.size() == aWavelengths.size());
 
             auto aRf = aMeasuredData->properties(Property::R, Side::Front);
-            assert(aRf->size() == aWavelengths.size());
+            assert(aRf.size() == aWavelengths.size());
 
             auto aRb = aMeasuredData->properties(Property::R, Side::Back);
-            assert(aRb->size() == aWavelengths.size());
+            assert(aRb.size() == aWavelengths.size());
 
             auto lowLambda = 0.3;
             auto highLambda = 2.5;
@@ -130,14 +130,14 @@ namespace SpectralAveraging
         m_Type(t_Type)
     {}
 
-    void CAngularSpectralSample::setSourceData(std::shared_ptr<CSeries> t_SourceData)
+    void CAngularSpectralSample::setSourceData(CSeries &t_SourceData)
     {
         m_SpectralSampleZero->setSourceData(t_SourceData);
         m_SpectralProperties.clear();
     }
 
     void CAngularSpectralSample::setDetectorData(
-      std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData)
+            CSeries &t_DetectorData)
     {
         m_SpectralSampleZero->setDetectorData(t_DetectorData);
         m_SpectralProperties.clear();

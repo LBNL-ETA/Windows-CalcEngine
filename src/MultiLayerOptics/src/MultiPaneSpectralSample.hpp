@@ -24,8 +24,8 @@ namespace MultiLayerOptics {
 
 	class CMultiPaneSpectralSample : public SpectralAveraging::CSpectralSample {
 	public:
-		CMultiPaneSpectralSample( const std::shared_ptr< SpectralAveraging::CSpectralSampleData >& t_SampleData,
-		                          const std::shared_ptr< FenestrationCommon::CSeries >& t_SourceData );
+		CMultiPaneSpectralSample(const std::shared_ptr< SpectralAveraging::CSpectralSampleData >& t_SampleData,
+                                 const FenestrationCommon::CSeries &t_SourceData );
 
 		double getLayerAbsorbedEnergy( double const minLambda, double const maxLambda, size_t const Index );
 		double getLayerAbsorptance( double const minLambda, double const maxLambda, size_t const Index );
