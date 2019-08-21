@@ -50,7 +50,7 @@ protected:
         layerTransmittances.addProperty(0.690, 0.6492);
         layerTransmittances.addProperty(0.710, 0.6231);
 
-        m_Series = layerTransmittances.mMult(astmSolarRadiation);
+        m_Series = layerTransmittances * astmSolarRadiation;
     }
 
 public:

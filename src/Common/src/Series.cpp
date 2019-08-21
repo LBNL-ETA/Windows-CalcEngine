@@ -205,7 +205,7 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    CSeries CSeries::mMult(const CSeries & t_Series) const
+    /*CSeries CSeries::mMult(const CSeries & t_Series) const
     {
         CSeries newProperties;
 
@@ -229,6 +229,31 @@ namespace FenestrationCommon
         }
 
         return newProperties;
+    }*/
+
+    CSeries CSeries::operator*(const CSeries &other) {
+
+        CSeries newProperty;
+
+        const double WAVELENGTHTOLERANCE = 1e-10;
+
+        size_t minSize = std::min(m_Series.size(), other.m_Series.size());
+
+        for(size_t i = 0; i < minSize; ++i)
+        {
+            double value = m_Series[i]->value() * other.m_Series[i]->value();
+            double wv = m_Series[i]->x();
+            double testWv = other.m_Series[i]->x();
+
+            if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
+            {
+                throw std::runtime_error(
+                        "Wavelengths of two vectors are not the same. Cannot preform multiplication.");
+            }
+            newProperty.addProperty(wv, value);
+        }
+
+        return newProperty;
     }
 
     CSeries CSeries::mSub(const CSeries & t_Series) const

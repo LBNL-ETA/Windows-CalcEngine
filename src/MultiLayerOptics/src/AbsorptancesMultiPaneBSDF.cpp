@@ -301,7 +301,7 @@ namespace MultiLayerOptics
                     curSpectralProperties->addProperty(m_CommonWavelengths[k], absValue);
                 }
 
-                const CSeries absorbedIrradiance = curSpectralProperties->mMult(m_SolarRadiation);
+                const CSeries absorbedIrradiance = (*curSpectralProperties) * m_SolarRadiation;
                 const CSeries integratedAbsorbed = *absorbedIrradiance.integrate(m_Integrator, m_NormalizationCoefficient);
                 double value = integratedAbsorbed.sum(minLambda, maxLambda);
                 value = value / totalSolar;

@@ -21,12 +21,12 @@ protected:
     }
 
 public:
-    const CSeries & getSeries1() const
+    CSeries getSeries1() const
     {
         return m_Series1;
     };
 
-    const CSeries & getSeries2() const
+    CSeries getSeries2() const
     {
         return m_Series2;
     };
@@ -36,10 +36,10 @@ TEST_F(TestSeriesOperations, TestSeriesMultiplication)
 {
     SCOPED_TRACE("Begin Test: Test multiplication over the range of data.");
 
-    const auto ser1 = getSeries1();
-    const auto ser2 = getSeries2();
+    auto ser1 = getSeries1();
+    auto ser2 = getSeries2();
 
-    auto result = ser1.mMult(ser2);
+    auto result = ser1 * ser2;
 
     std::vector<double> correctResults{3.96, 31.72, 64.97, 95.95, 118.56};
 
@@ -101,7 +101,7 @@ TEST_F(TestSeriesOperations, TestSeriesMultiplicationException)
 
     try
     {
-        auto result = first.mMult(second);
+        auto result = first * second;
     }
     catch(const std::runtime_error & err)
     {

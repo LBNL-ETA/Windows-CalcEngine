@@ -74,8 +74,8 @@ namespace MultiLayerOptics
 
             for(size_t i = 0; i < size; ++i)
             {
-                Ip = m_rCoeffs[i]->mMult(Im);
-                Im = m_tCoeffs[i]->mMult(Im);
+                Ip = (*m_rCoeffs[i]) * Im;
+                Im = (*m_tCoeffs[i]) * Im;
                 Iplus.push_back(Ip);
                 Iminus.push_back(Im);
             }
