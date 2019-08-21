@@ -84,7 +84,7 @@ namespace SingleLayerOptics
             }
         }
         const auto spectrum = SpectralAveraging::BlackBodySpectrum(wl, temperature);
-        auto seriesSpectrum{CSeries::create(spectrum)};
+        CSeries seriesSpectrum{spectrum};
         setSourceData(seriesSpectrum);
         setWavelengths(wl);
     }
