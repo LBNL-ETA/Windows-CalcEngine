@@ -45,7 +45,7 @@ TEST_F(TestSeriesOperations, TestSeriesMultiplication)
     const auto ser1 = getSeries1();
     const auto ser2 = getSeries2();
 
-    auto result = *ser1->mMult(*ser2);
+    auto result = ser1->mMult(*ser2);
 
     std::vector<double> correctResults{3.96, 31.72, 64.97, 95.95, 118.56};
 

@@ -159,10 +159,10 @@ namespace MultiLayerOptics
 
         if(m_DetectorData.size() > 0)
         {
-            aMult = aMult->mMult(m_DetectorData);
+            aMult = aMult.mMult(m_DetectorData);
         }
 
-        const auto iIntegrated = aMult->integrate(t_IntegrationType, normalizationCoefficient);
+        const auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
 
         // TODO: Check detector data here and multiply with it if necessary
 
@@ -172,7 +172,7 @@ namespace MultiLayerOptics
 
         if(m_DetectorData.size() > 0)
         {
-            solarRadiation = *solarRadiation.mMult(m_DetectorData);
+            solarRadiation = solarRadiation.mMult(m_DetectorData);
         }
 
         double totalSolar = solarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
@@ -237,7 +237,7 @@ namespace MultiLayerOptics
 
         auto aMult = aProperties.mMult(m_SolarRadiation);
 
-        auto iIntegrated = aMult->integrate(t_IntegrationType, normalizationCoefficient);
+        auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
 
         double totalProperty = iIntegrated->sum(minLambda, maxLambda);
         double totalSolar = m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)

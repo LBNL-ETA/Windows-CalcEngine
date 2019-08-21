@@ -9,12 +9,11 @@ using namespace FenestrationCommon;
 class TestSeriesMultiplication : public testing::Test
 {
 private:
-    std::shared_ptr<CSeries> m_Series;
+    CSeries m_Series;
 
 protected:
     void SetUp() override
     {
-        m_Series = std::make_shared<CSeries>();
 
         CSeries astmSolarRadiation = CSeries();
 
@@ -55,7 +54,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<CSeries> getProperty()
+    CSeries & getProperty()
     {
         return m_Series;
     };
@@ -65,7 +64,7 @@ TEST_F(TestSeriesMultiplication, TestMultiplication)
 {
     SCOPED_TRACE("Begin Test: Test multiplication over the range of data.");
 
-    CSeries & aSpectralProperties = *getProperty();
+    CSeries & aSpectralProperties = getProperty();
 
     std::vector<double> correctResults{711.29776,
                                        747.11668,
