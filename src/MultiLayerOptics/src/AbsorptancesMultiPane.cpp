@@ -64,23 +64,22 @@ namespace MultiLayerOptics
 
             // Calculate normalized radiances
             size = m_rCoeffs.size();
-            std::vector<std::shared_ptr<CSeries>> Iplus;
-            std::vector<std::shared_ptr<CSeries>> Iminus;
+            std::vector<CSeries> Iplus;
+            std::vector<CSeries> Iminus;
 
-            std::shared_ptr<CSeries> Im = std::make_shared<CSeries>();
-            std::shared_ptr<CSeries> Ip = nullptr;
-            Im->setConstantValues(wv, 1);
+            CSeries Im;
+            CSeries Ip;
+            Im.setConstantValues(wv, 1);
             Iminus.push_back(Im);
 
             for(size_t i = 0; i < size; ++i)
             {
-                Ip = m_rCoeffs[i]->mMult(*Im);
-                Im = m_tCoeffs[i]->mMult(*Im);
+                Ip = m_rCoeffs[i]->mMult(Im);
+                Im = m_tCoeffs[i]->mMult(Im);
                 Iplus.push_back(Ip);
                 Iminus.push_back(Im);
             }
-            Ip = std::make_shared<CSeries>();
-            Ip->setConstantValues(wv, 0);
+            Ip.setConstantValues(wv, 0);
             Iplus.push_back(Ip);
 
             // Calculate absorptances
@@ -88,8 +87,8 @@ namespace MultiLayerOptics
             size = Iminus.size();
             for(size_t i = 0; i < size - 1; ++i)
             {
-                std::shared_ptr<CSeries> Iincoming = Iminus[i]->mSub(*Iplus[i]);
-                std::shared_ptr<CSeries> Ioutgoing = Iminus[i + 1]->mSub(*Iplus[i + 1]);
+                std::shared_ptr<CSeries> Iincoming = Iminus[i].mSub(Iplus[i]);
+                std::shared_ptr<CSeries> Ioutgoing = Iminus[i + 1].mSub(Iplus[i + 1]);
                 CSeries layerAbs = *Iincoming->mSub(*Ioutgoing);
                 m_Abs.push_back(layerAbs);
             }

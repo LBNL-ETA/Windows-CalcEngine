@@ -205,9 +205,9 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    std::unique_ptr<CSeries> CSeries::mMult(const CSeries & t_Series) const
+    CSeries CSeries::mMult(const CSeries & t_Series) const
     {
-        std::unique_ptr<CSeries> newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
 
         const double WAVELENGTHTOLERANCE = 1e-10;
 
@@ -225,7 +225,7 @@ namespace FenestrationCommon
                   "Wavelengths of two vectors are not the same. Cannot preform multiplication.");
             }
 
-            newProperties->addProperty(wv, value);
+            newProperties.addProperty(wv, value);
         }
 
         return newProperties;
