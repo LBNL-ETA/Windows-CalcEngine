@@ -19,8 +19,8 @@ private:
 protected:
     virtual void SetUp()
     {
-        const auto aSolarRadiation = CSeries::create(
-          {{0.3000, 0.0}, {0.3050, 3.4}, {0.3100, 15.6}, {0.3150, 41.1}, {0.3200, 71.2}});
+        //CSeries aSolarRadiation{
+        //  {0.3000, 0.0}, {0.3050, 3.4}, {0.3100, 15.6}, {0.3150, 41.1}, {0.3200, 71.2}};
 
         const auto aMeasurements = CSpectralSampleData::create({{0.300, 0.0020, 0.0470, 0.0480},
                                                                 {0.305, 0.0030, 0.0470, 0.0480},
@@ -246,6 +246,6 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     EXPECT_EQ(correctResults.size(), aRf.size());
     for(size_t i = 0; i < aRf.size(); ++i)
     {
-        EXPECT_NEAR(correctResults[i], aRf(i,i), 1e-5);
+        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
     }
 }
