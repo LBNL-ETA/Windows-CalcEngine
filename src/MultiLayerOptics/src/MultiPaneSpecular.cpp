@@ -151,15 +151,15 @@ namespace MultiLayerOptics
     {
         CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
 
-        const auto aProperties = aAngularProperties.getProperties(t_Side, t_Property);
+        auto aProperties = aAngularProperties.getProperties(t_Side, t_Property);
 
         // aAngularProperties.getProperty(t_Side, t_Property);
 
-        auto aMult = aProperties.mMult(m_SolarRadiation);
+        auto aMult = aProperties * m_SolarRadiation;
 
         if(m_DetectorData.size() > 0)
         {
-            aMult = aMult.mMult(m_DetectorData);
+            aMult = aMult * m_DetectorData;
         }
 
         const auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
@@ -172,7 +172,7 @@ namespace MultiLayerOptics
 
         if(m_DetectorData.size() > 0)
         {
-            solarRadiation = solarRadiation.mMult(m_DetectorData);
+            solarRadiation = solarRadiation * m_DetectorData;
         }
 
         double totalSolar = solarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
@@ -235,7 +235,7 @@ namespace MultiLayerOptics
         CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
         auto aProperties = aAngularProperties.Abs(Index - 1);
 
-        auto aMult = aProperties.mMult(m_SolarRadiation);
+        auto aMult = aProperties * m_SolarRadiation;
 
         auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
 

@@ -191,7 +191,7 @@ namespace SpectralAveraging
                 if(m_DetectorData.size() > 0)
                 {
                     const auto interpolatedDetector = m_DetectorData.interpolate(m_Wavelengths);
-                    m_IncomingSource = m_IncomingSource.mMult(interpolatedDetector);
+                    m_IncomingSource = m_IncomingSource * interpolatedDetector;
                 }
 
                 calculateProperties();
@@ -296,7 +296,7 @@ namespace SpectralAveraging
             for(const auto & side : EnumSide())
             {
                 m_EnergySource[std::make_pair(prop, side)] =
-                  m_Property.at(std::make_pair(prop, side)).mMult(m_IncomingSource);
+                  m_Property.at(std::make_pair(prop, side)) * m_IncomingSource;
             }
         }
     }

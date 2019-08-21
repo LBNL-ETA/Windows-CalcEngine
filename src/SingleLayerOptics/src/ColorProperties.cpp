@@ -41,10 +41,10 @@ namespace SingleLayerOptics
         DX = DX.interpolate(wavelengths);
         DY = DY.interpolate(wavelengths);
         DZ = DZ.interpolate(wavelengths);
-        aSolar.mMult(DX);
-        m_SDx = aSolar.mMult(DX).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
-        m_SDy = aSolar.mMult(DY).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
-        m_SDz = aSolar.mMult(DZ).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
+
+        m_SDx = (aSolar * DX).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
+        m_SDy = (aSolar * DY).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
+        m_SDz = (aSolar * DZ).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
     }
 
     Trichromatic
