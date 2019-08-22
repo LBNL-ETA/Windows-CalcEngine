@@ -196,7 +196,7 @@ namespace SingleLayerOptics
         CVenetianCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
                       const std::shared_ptr<ICellDescription> & t_Cell);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData);
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData);
 
         double T_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
         std::vector<double> T_dir_dir_band(const FenestrationCommon::Side t_Side,

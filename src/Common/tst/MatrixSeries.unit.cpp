@@ -91,22 +91,22 @@ TEST_F(TestMatrixSeries, Test2)
                                                     {6.24, 29.26, 5.28, 74.7},
                                                     {12, 4.94, 8.64, 61.42}};
 
-    std::vector<CSeries *> matrixResults;
+    std::vector<CSeries> matrixResults;
 
     for(size_t i = 0; i < mat.size1(); ++i)
     {
         for(size_t j = 0; j < mat.size2(); ++j)
         {
-            auto aSeries = mat[i][j].get();
+            auto aSeries = mat[i][j];
             matrixResults.push_back(aSeries);
         }
     }
 
     for(size_t i = 0; i < matrixResults.size(); ++i)
     {
-        for(size_t k = 0; k < matrixResults[i]->size(); ++k)
+        for(size_t k = 0; k < matrixResults[i].size(); ++k)
         {
-            EXPECT_NEAR(correctResults[i][k], (*matrixResults[i])[k].value(), 1e-6);
+            EXPECT_NEAR(correctResults[i][k], matrixResults[i][k].value(), 1e-6);
         }
     }
 }
