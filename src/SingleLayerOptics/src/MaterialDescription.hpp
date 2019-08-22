@@ -45,17 +45,18 @@ namespace SingleLayerOptics
     ///   CMaterial
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Base virtual class for any material definition. It reprsents material properties over
-    // the certain wavelength range.
-    // It also defines interface for angular dependency of material properties.
+    //! \breif Base virtual class for any material definition.
+    //!
+    //! It represents material properties over the certain wavelength range. It also defines
+    //! interface for angular dependency of material properties.
     class CMaterial
     {
     public:
         CMaterial(double minLambda, double maxLambda);
         explicit CMaterial(FenestrationCommon::WavelengthRange t_Range);
 
-        virtual void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData);
-        virtual void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData);
+        virtual void setSourceData(FenestrationCommon::CSeries &);
+        virtual void setDetectorData(FenestrationCommon::CSeries &t_DetectorData);
 
         // Get certain material property over the entire range
         virtual double getProperty(FenestrationCommon::Property t_Property,
@@ -103,8 +104,9 @@ namespace SingleLayerOptics
     ///   CMaterialSingleBand
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Simple material with no angular dependence on reflection or transmittance. This is mainly
-    // used for shading device materials
+    //! \brief Simple material with no angular dependence on reflection or transmittance.
+    //!
+    //! This is mainly used for shading device materials
     class CMaterialSingleBand : public CMaterial
     {
     public:
@@ -133,8 +135,8 @@ namespace SingleLayerOptics
     ///   CMaterialDualBand
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Material that for given solar and partial range (visible, uv) will calculate equivalent
-    // optical properties for the entire range
+    //! \brief Material that for given solar and partial range (visible, uv) will calculate
+    //! equivalent optical properties for the entire range
     class CMaterialDualBand : public CMaterial
     {
     public:
@@ -148,13 +150,14 @@ namespace SingleLayerOptics
         // ratio is calculated based on provided solar radiation values
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_SolarRange,
-                          const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
+                          const FenestrationCommon::CSeries &t_SolarRadiation);
 
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_SolarRange);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
-        void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
+        void
+          setDetectorData(FenestrationCommon::CSeries &t_DetectorData) override;
 
         double getProperty(FenestrationCommon::Property t_Property,
                            FenestrationCommon::Side t_Side) const override;
@@ -188,9 +191,10 @@ namespace SingleLayerOptics
     ///   CMaterialSample
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    // Material that contains data measured over the range of wavelengths. It also provides material
-    // properties at certain angle. Assumes that material properties at certain angle can be
-    // calculated by using coated and uncoated algorithms
+    //! /brief Material that contains data measured over the range of wavelengths.
+    //!
+    //! It also provides material properties at certain angle. Assumes that material properties
+    //! at certain angle can be calculated by using coated and uncoated algorithms
     class CMaterialSample : public CMaterial
     {
     public:
@@ -207,8 +211,9 @@ namespace SingleLayerOptics
           FenestrationCommon::MaterialType t_Type,
           FenestrationCommon::WavelengthRange t_Range);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
-        void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData) override;
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
+        void
+          setDetectorData(FenestrationCommon::CSeries &t_DetectorData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
@@ -226,7 +231,7 @@ namespace SingleLayerOptics
         std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
                                               FenestrationCommon::Side t_Side) const override;
 
-		void setBandWavelengths(const std::vector<double> & wavelengths) override;
+        void setBandWavelengths(const std::vector<double> & wavelengths) override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
@@ -252,7 +257,7 @@ namespace SingleLayerOptics
           const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements,
           FenestrationCommon::WavelengthRange t_Range);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData) override;
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.

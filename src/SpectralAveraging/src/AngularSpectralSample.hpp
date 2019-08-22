@@ -65,8 +65,8 @@ namespace SpectralAveraging
                                double const t_Thickness,
                                FenestrationCommon::MaterialType const t_Type);
 
-        void setSourceData(std::shared_ptr<FenestrationCommon::CSeries> t_SourceData);
-        void setDetectorData(std::shared_ptr<FenestrationCommon::CSeries> & t_DetectorData);
+        void setSourceData(FenestrationCommon::CSeries &t_SourceData);
+        void setDetectorData(FenestrationCommon::CSeries &t_DetectorData);
 
         // Get averaged property over the wavelength
         double getProperty(double const minLambda,

@@ -46,12 +46,12 @@ namespace SingleLayerOptics
         m_MaxLambda = aRange.maxLambda();
     }
 
-    void CMaterial::setSourceData(std::shared_ptr<CSeries>)
+    void CMaterial::setSourceData(CSeries &)
     {
         // Default material will not have source data
     }
 
-    void CMaterial::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>&)
+    void CMaterial::setDetectorData(FenestrationCommon::CSeries &)
     {
         // Default material will not have detector data
     }
@@ -232,7 +232,7 @@ namespace SingleLayerOptics
 
     CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                                          const std::shared_ptr<CMaterial> & t_SolarRange,
-                                         const std::shared_ptr<CSeries> & t_SolarRadiation) :
+                                         const CSeries &t_SolarRadiation) :
         CMaterial(0.3, 2.5),
         m_MaterialFullRange(t_SolarRange),
         m_MaterialPartialRange(t_PartialRange)
@@ -258,7 +258,7 @@ namespace SingleLayerOptics
         createNIRRange(m_MaterialPartialRange, *m_MaterialFullRange, nirRatio);
     }
 
-    void CMaterialDualBand::setSourceData(std::shared_ptr<CSeries> t_SourceData)
+    void CMaterialDualBand::setSourceData(CSeries &t_SourceData)
     {
         m_MaterialFullRange->setSourceData(t_SourceData);
         m_MaterialPartialRange->setSourceData(t_SourceData);
@@ -270,7 +270,8 @@ namespace SingleLayerOptics
         createNIRRange(m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio());
     }
 
-    void CMaterialDualBand::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    void CMaterialDualBand::setDetectorData(
+            FenestrationCommon::CSeries &t_DetectorData)
     {
         m_MaterialFullRange->setDetectorData(t_DetectorData);
         m_MaterialPartialRange->setDetectorData(t_DetectorData);
@@ -407,12 +408,13 @@ namespace SingleLayerOptics
           std::make_shared<CAngularSpectralSample>(t_SpectralSample, t_Thickness, t_Type);
     }
 
-    void CMaterialSample::setSourceData(std::shared_ptr<CSeries> t_SourceData)
+    void CMaterialSample::setSourceData(CSeries &t_SourceData)
     {
         m_AngularSample->setSourceData(t_SourceData);
     }
 
-    void CMaterialSample::setDetectorData(std::shared_ptr<FenestrationCommon::CSeries>& t_DetectorData)
+    void CMaterialSample::setDetectorData(
+            FenestrationCommon::CSeries &t_DetectorData)
     {
         m_AngularSample->setDetectorData(t_DetectorData);
     }
@@ -488,7 +490,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void CMaterialMeasured::setSourceData(std::shared_ptr<CSeries> t_SourceData)
+    void CMaterialMeasured::setSourceData(CSeries &t_SourceData)
     {
         m_AngularMeasurements->setSourceData(t_SourceData);
     }
@@ -517,18 +519,15 @@ namespace SingleLayerOptics
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
           m_AngularMeasurements->getMeasurements(t_Angle);
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
-        std::shared_ptr<CSeries> aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
+        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
 
         std::vector<double> aValues;
 
-        if(aProperties != nullptr)
+        for(const auto & aProperty : aProperties)
         {
-            for(std::unique_ptr<ISeriesPoint> const & aProperty : *aProperties)
+            if(aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda)
             {
-                if(aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda)
-                {
-                    aValues.push_back(aProperty->value());
-                }
+                aValues.push_back(aProperty->value());
             }
         }
 

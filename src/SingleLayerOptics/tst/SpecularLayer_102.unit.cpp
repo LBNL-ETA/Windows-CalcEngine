@@ -16,10 +16,10 @@ private:
     std::shared_ptr<CBSDFLayer> m_Layer;
 
 protected:
-    std::shared_ptr<CSeries> loadSolarRadiationFile()
+    CSeries loadSolarRadiationFile()
     {
         // Full ASTM E891-87 Table 1 (Solar radiation)
-        auto aSolarRadiation = CSeries::create(
+        CSeries aSolarRadiation(
           {{0.3000, 0.0},    {0.3050, 3.4},    {0.3100, 15.6},   {0.3150, 41.1},   {0.3200, 71.2},
            {0.3250, 100.2},  {0.3300, 152.4},  {0.3350, 155.6},  {0.3400, 179.4},  {0.3450, 186.7},
            {0.3500, 212.0},  {0.3600, 240.5},  {0.3700, 324.0},  {0.3800, 362.4},  {0.3900, 381.7},
@@ -125,7 +125,8 @@ protected:
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
-        m_Layer->setSourceData(loadSolarRadiationFile());
+        CSeries solarRadiation{loadSolarRadiationFile()};
+        m_Layer->setSourceData(solarRadiation);
     }
 
 public:

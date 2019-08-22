@@ -26,9 +26,9 @@ namespace FenestrationCommon
         void mMult(const CSeries & t_Series);
 
         // Multiplication of several series with matrix series
-        void mMult(const std::vector<std::shared_ptr<CSeries>> & t_Series);
+        void mMult(const std::vector<CSeries> &t_Series);
 
-        std::vector<std::unique_ptr<CSeries>> & operator[](const size_t index);
+        std::vector<CSeries> & operator[](const size_t index);
 
         void integrate(const IntegrationType t_Integration, double normalizationCoefficient);
 
@@ -42,7 +42,7 @@ namespace FenestrationCommon
         size_t size2() const;
 
     private:
-        std::vector<std::vector<std::unique_ptr<CSeries>>> m_Matrix;
+        std::vector<std::vector<CSeries>> m_Matrix;
         size_t m_Size1{};
         size_t m_Size2{};
     };

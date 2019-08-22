@@ -96,6 +96,11 @@ namespace FenestrationCommon
         return aSide;
     }
 
+    inline Side getSide(const Side side, const bool flipped)
+    {
+        return flipped ? oppositeSide(side) : side;
+    }
+
     enum class WavelengthRange
     {
         Solar,
