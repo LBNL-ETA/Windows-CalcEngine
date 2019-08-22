@@ -18,19 +18,19 @@ namespace MultiLayerOptics {
                       const FenestrationCommon::CSeries &t_Rf,
                       const FenestrationCommon::CSeries &t_Rb );
 
-		FenestrationCommon::CSeries Abs(size_t const Index );
+		FenestrationCommon::CSeries Abs(size_t Index );
 		size_t numOfLayers();
 
 	private:
 		void calculateState();
 
-		std::shared_ptr< FenestrationCommon::CSeries > rCoeffs(
+		FenestrationCommon::CSeries rCoeffs(
 			const FenestrationCommon::CSeries& t_T,
 			const FenestrationCommon::CSeries& t_Rf,
 			const FenestrationCommon::CSeries& t_Rb,
 			const FenestrationCommon::CSeries& t_RCoeffs );
 
-		std::shared_ptr< FenestrationCommon::CSeries > tCoeffs(
+        FenestrationCommon::CSeries tCoeffs(
 			const FenestrationCommon::CSeries& t_T,
 			const FenestrationCommon::CSeries& t_Rb,
 			const FenestrationCommon::CSeries& t_RCoeffs );
@@ -40,8 +40,8 @@ namespace MultiLayerOptics {
 		std::vector< FenestrationCommon::CSeries > m_Rb;
 		std::vector< FenestrationCommon::CSeries > m_Abs;
 
-		std::vector< std::shared_ptr< FenestrationCommon::CSeries > > m_rCoeffs;
-		std::vector< std::shared_ptr< FenestrationCommon::CSeries > > m_tCoeffs;
+		std::vector< FenestrationCommon::CSeries > m_rCoeffs;
+		std::vector< FenestrationCommon::CSeries > m_tCoeffs;
 
 		bool m_StateCalculated;
 	};
