@@ -156,6 +156,9 @@ namespace SpectralAveraging
 
         void addRecord(const PVMeasurementRow & pvRow);
 
+        FenestrationCommon::CSeries pvProperty(const FenestrationCommon::Side side,
+                                               const PVM prop) const;
+
     private:
         std::map<std::pair<FenestrationCommon::Side, PVM>, FenestrationCommon::CSeries> m_PVData;
     };

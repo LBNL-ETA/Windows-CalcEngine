@@ -207,9 +207,10 @@ namespace SpectralAveraging
         m_PVData.at(std::make_pair(Side::Back, PVM::FF)).addProperty(m_Wavelength, backSide.FF);
     }
 
-    PhotovoltaicSampleData::PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData,
-                                                   const std::vector<PVMeasurementRow> & pvMeasurements) :
-            PhotovoltaicSampleData(spectralSampleData)
+    PhotovoltaicSampleData::PhotovoltaicSampleData(
+      const CSpectralSampleData & spectralSampleData,
+      const std::vector<PVMeasurementRow> & pvMeasurements) :
+        PhotovoltaicSampleData(spectralSampleData)
     {
         for(const auto & measurement : pvMeasurements)
         {
@@ -239,7 +240,8 @@ namespace SpectralAveraging
 
         if(!wavelengthsMatch)
         {
-            throw std::runtime_error("Wavelengths in spectral and photovoltaic measurements do not match.");
+            throw std::runtime_error(
+              "Wavelengths in spectral and photovoltaic measurements do not match.");
         }
     }
 
@@ -271,6 +273,12 @@ namespace SpectralAveraging
                 m_PVData.at(std::make_pair(side, pvm)).cutExtraData(minLambda, maxLambda);
             }
         }
+    }
+
+    FenestrationCommon::CSeries
+      PhotovoltaicSampleData::pvProperty(const FenestrationCommon::Side side, const PVM prop) const
+    {
+        return m_PVData.at(std::make_pair(side, prop));
     }
 
 }   // namespace SpectralAveraging

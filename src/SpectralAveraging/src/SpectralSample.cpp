@@ -333,6 +333,46 @@ namespace SpectralAveraging
       const FenestrationCommon::CSeries & t_SourceData,
       FenestrationCommon::IntegrationType integrationType,
       double NormalizationCoefficient) :
-        CSpectralSample(t_PhotovoltaicData, t_SourceData, integrationType, NormalizationCoefficient)
+        CSpectralSample(
+          t_PhotovoltaicData, t_SourceData, integrationType, NormalizationCoefficient),
+        m_PCE{{Side::Front, CSeries()}, {Side::Back, CSeries()}},
+        m_W{{Side::Front, CSeries()}, {Side::Back, CSeries()}}
     {}
+
+    void CPhotovoltaicSample::calculateProperties()
+    {
+        CSpectralSample::calculateProperties();
+        for(const auto & side : EnumSide())
+        {
+            const auto eqe{getSample()->pvProperty(side, PVM::EQE)};
+            const auto voc{getSample()->pvProperty(side, PVM::VOC)};
+            const auto ff{getSample()->pvProperty(side, PVM::FF)};
+            const auto transmittance{m_SampleData->properties(Property::T, side)};
+            const auto reflectance{m_SampleData->properties(Property::R, side)};
+            const auto wl{getWavelengthsFromSample()};
+            CSeries pce;
+            CSeries w;
+            for(auto i = 0u; i < wl.size(); ++i)
+            {
+                const auto pceVal{pceCalc(wl[i], eqe[i].value(), voc[i].value(), ff[i].value())};
+                pce.addProperty(wl[i], pceVal);
+                w.addProperty(wl[i],
+                              1 - pceVal / (1 - transmittance[i].value() - reflectance[i].value()));
+            }
+            m_PCE[side] = pce;
+            m_W[side] = w;
+        }
+    }
+
+    PhotovoltaicSampleData * CPhotovoltaicSample::getSample() const
+    {
+        return dynamic_cast<PhotovoltaicSampleData *>(m_SampleData.get());
+    }
+
+    double CPhotovoltaicSample::pceCalc(double wavelength, double eqe, double voc, double ff)
+    {
+        double const microMeterToMeter{1e-6};
+        return eqe * voc * ff * wavelength * ConstantsData::ELECTRON_CHARGE * microMeterToMeter
+               / (ConstantsData::SPEEDOFLIGHT * ConstantsData::PLANKCONSTANT);
+    }
 }   // namespace SpectralAveraging

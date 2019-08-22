@@ -157,6 +157,15 @@ namespace SpectralAveraging
                             FenestrationCommon::IntegrationType integrationType =
                               FenestrationCommon::IntegrationType::Trapezoidal,
                             double NormalizationCoefficient = 1);
+
+    protected:
+        void calculateProperties() override;
+        PhotovoltaicSampleData * getSample() const;
+
+        double pceCalc(double wavelength, double eqe, double voc, double ff);
+
+        std::map<FenestrationCommon::Side, FenestrationCommon::CSeries> m_PCE;
+        std::map<FenestrationCommon::Side, FenestrationCommon::CSeries> m_W;
     };
 
 }   // namespace SpectralAveraging
