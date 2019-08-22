@@ -347,7 +347,7 @@ protected:
         const auto layer102 = SpecularLayer::createLayer(aMaterial_102);
         const auto layer103 = SpecularLayer::createLayer(aMaterial_103);
 
-        auto detectorData{getDetectorData()};
+        CSeries detectorData{getDetectorData()};
         m_Layer =
           CMultiPaneSpecular::create({layer102, layer103}, getSourceSpectrum(), detectorData);
     }
