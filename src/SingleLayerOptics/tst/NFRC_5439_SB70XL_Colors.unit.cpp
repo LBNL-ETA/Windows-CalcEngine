@@ -9,8 +9,7 @@ using FenestrationCommon::CSeries;
 class TestNFRC_5439_SB70XL_Colors_Scattering : public testing::Test
 {
 private:
-    std::shared_ptr<SingleLayerOptics::ColorProperties<SingleLayerOptics::CScatteringLayer>>
-      m_Color;
+    std::shared_ptr<SingleLayerOptics::ColorProperties> m_Color;
 
     std::vector<double> loadWavelengths() const
     {
@@ -348,14 +347,12 @@ protected:
 
         auto wl = loadWavelengths();
 
-        m_Color =
-          std::make_shared<SingleLayerOptics::ColorProperties<SingleLayerOptics::CScatteringLayer>>(
-            *LayerX, *LayerY, *LayerZ, solarRadiation, DX, DY, DZ, wl);
+        m_Color = std::make_shared<SingleLayerOptics::ColorProperties>(
+          std::move(LayerX), std::move(LayerY), std::move(LayerZ), solarRadiation, DX, DY, DZ, wl);
     }
 
 public:
-    std::shared_ptr<SingleLayerOptics::ColorProperties<SingleLayerOptics::CScatteringLayer>>
-      getLayer() const
+    std::shared_ptr<SingleLayerOptics::ColorProperties> getLayer() const
     {
         return m_Color;
     }
@@ -365,7 +362,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_T)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -380,7 +377,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_R)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -395,7 +392,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_T)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -410,7 +407,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_R)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -425,7 +422,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_T)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -440,7 +437,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_R)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
