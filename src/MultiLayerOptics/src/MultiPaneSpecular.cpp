@@ -153,8 +153,6 @@ namespace MultiLayerOptics
 
         auto aProperties = aAngularProperties.getProperties(t_Side, t_Property);
 
-        // aAngularProperties.getProperty(t_Side, t_Property);
-
         auto aMult = aProperties * m_SolarRadiation;
 
         if(m_DetectorData.size() > 0)
@@ -317,6 +315,13 @@ namespace MultiLayerOptics
         std::vector<double> Rbv = m_Layers[layerIndex].R_dir_dir_band(Side::Back, aDirection);
         for(size_t j = 0; j < wl.size(); ++j)
         {
+            auto tr = checkRange(Tv[j], Rfv[j]);
+            Tv[j] = tr.T;
+            Rfv[j] = tr.R;
+
+            tr = checkRange(Tv[j], Rbv[j]);
+            Tv[j] = tr.T;
+            Rbv[j] = tr.R;
             result.T.addProperty(wl[j], Tv[j]);
             result.Rf.addProperty(wl[j], Rfv[j]);
             result.Rb.addProperty(wl[j], Rbv[j]);

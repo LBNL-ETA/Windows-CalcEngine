@@ -312,7 +312,7 @@ private:
     }
 
     std::unique_ptr<MultiLayerOptics::CMultiPaneSpecular>
-      createLayer(const CSeries &astmStandard) const
+      createLayer(const CSeries & astmStandard) const
     {
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial =
