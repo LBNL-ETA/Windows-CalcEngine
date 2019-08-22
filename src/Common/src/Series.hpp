@@ -62,27 +62,28 @@ namespace FenestrationCommon
                                            double normalizationCoefficient = 1) const;
         CSeries interpolate(const std::vector<double> & t_Wavelengths) const;
 
-        // Multiplication of values in spectral properties that have same wavelength. Function will
-        // work only if two spectral properties have identical wavelengths. Otherwise runtime error
-        // will be thrown. If two spectral properites do not have same wavelength range, then
-        // interpolation function should be called.
-        //CSeries mMult(const CSeries & t_Series) const;
-
+        //! \brief Multiplication of values in spectral properties that have same wavelength.
+        //!
+        //! Function will work only if two spectral properties have identical wavelengths. Otherwise
+        //! runtime error will be thrown. If two spectral properites do not have same wavelength
+        //! range, then interpolation function should be called.
         CSeries operator*(const CSeries & other);
 
-        // Substraction of values in spectral properties that have same wavelength. Function will
-        // work only if two spectral properties have identical wavelengths. Otherwise runtime error
-        // will be thrown. If two spectral properites do not have same wavelength range, then
-        // interpolation function should be called.
-        CSeries mSub(const CSeries & t_Series) const;
+        //! \brief Subtraction of values in spectral properties that have same wavelength.
+        //!
+        //! Function will work only if two spectral properties have identical wavelengths. Otherwise
+        //! runtime error will be thrown. If two spectral properites do not have same wavelength
+        //! range, then interpolation function should be called.
+        CSeries operator-(const CSeries & other) const;
 
-        // Addition of values in spectral properties that have same wavelength. Function will work
-        // only if two spectral properties have identical wavelengths. Otherwise runtime error will
-        // be thrown. If two spectral properites do not have same wavelength range, then
-        // interpolation function should be called.
-        FenestrationCommon::CSeries mAdd(const CSeries & t_Series) const;
+        //! \brief Addition of values in spectral properties that have same wavelength.
+        //!
+        //! Function will work only if two spectral properties have identical wavelengths. Otherwise
+        //! runtime error will be thrown. If two spectral properites do not have same wavelength
+        //! range, then interpolation function should be called.
+        CSeries operator+(const CSeries & other) const;
 
-        // Return wavelenght values for spectral properties.
+        // Return wavelength values for spectral properties.
         std::vector<double> getXArray() const;
 
         // Sum of all properties between two x values. Default arguments mean all items are sum
