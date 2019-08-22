@@ -1,5 +1,4 @@
-#ifndef SPECTRALAVERAGING_H
-#define SPECTRALAVERAGING_H
+#pragma once
 
 #include "../src/AngularMeasurements.hpp"
 #include "../src/AngularProperties.hpp"
@@ -8,5 +7,3 @@
 #include "../src/NIRRatio.hpp"
 #include "../src/SpectralSample.hpp"
 #include "../src/SpectrumFunctions.hpp"
-
-#endif

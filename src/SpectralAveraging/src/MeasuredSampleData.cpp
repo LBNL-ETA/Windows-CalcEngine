@@ -13,25 +13,26 @@ namespace SpectralAveraging
     ////     MeasuredRow
     ////////////////////////////////////////////////////////////////////////////
     MeasuredRow::MeasuredRow(double wl, double t, double rf, double rb) :
-            wavelength(wl),
-            T(t),
-            Rf(rf),
-            Rb(rb)
+        wavelength(wl),
+        T(t),
+        Rf(rf),
+        Rb(rb)
     {}
 
     ////////////////////////////////////////////////////////////////////////////
     ////     SampleData
     ////////////////////////////////////////////////////////////////////////////
 
-    SampleData::SampleData() : m_Flipped(false) {
+    SampleData::SampleData() : m_Flipped(false)
+    {}
 
-    }
-
-    bool SampleData::Flipped() const {
+    bool SampleData::Flipped() const
+    {
         return m_Flipped;
     }
 
-    void SampleData::Filpped(bool t_Flipped) {
+    void SampleData::Filpped(bool t_Flipped)
+    {
         m_Flipped = t_Flipped;
     }
 
@@ -161,6 +162,120 @@ namespace SpectralAveraging
         {
             m_Property.at(std::make_pair(Property::T, side)).cutExtraData(minLambda, maxLambda);
             m_Property.at(std::make_pair(Property::R, side)).cutExtraData(minLambda, maxLambda);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// PVMeasurement
+    ///////////////////////////////////////////////////////////////////////////
+    PVMeasurement::PVMeasurement(double eqe, double voc, double ff) : EQE(eqe), VOC(voc), FF(ff)
+    {}
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// PVMeasurementRow
+    ///////////////////////////////////////////////////////////////////////////
+    PVMeasurementRow::PVMeasurementRow(double wavelength,
+                                       const PVMeasurement & front,
+                                       const PVMeasurement & back) :
+        wavelength(wavelength),
+        front(front),
+        back(back)
+    {}
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// PhotovoltaicData
+    ///////////////////////////////////////////////////////////////////////////
+    PhotovoltaicData::PhotovoltaicData(CSpectralSampleData spectralSampleData) :
+        m_SpectralSampleData(std::move(spectralSampleData)),
+        m_PVData{{{Side::Front, PVM::EQE}, CSeries()},
+                 {{Side::Front, PVM::VOC}, CSeries()},
+                 {{Side::Front, PVM::FF}, CSeries()},
+                 {{Side::Back, PVM::EQE}, CSeries()},
+                 {{Side::Back, PVM::VOC}, CSeries()},
+                 {{Side::Back, PVM::FF}, CSeries()}}
+    {}
+
+    void PhotovoltaicData::addRecord(double m_Wavelength,
+                                     const PVMeasurement frontSide,
+                                     const PVMeasurement backSide)
+    {
+        m_PVData.at(std::make_pair(Side::Front, PVM::EQE)).addProperty(m_Wavelength, frontSide.EQE);
+        m_PVData.at(std::make_pair(Side::Front, PVM::VOC)).addProperty(m_Wavelength, frontSide.VOC);
+        m_PVData.at(std::make_pair(Side::Front, PVM::FF)).addProperty(m_Wavelength, frontSide.FF);
+        m_PVData.at(std::make_pair(Side::Back, PVM::EQE)).addProperty(m_Wavelength, backSide.EQE);
+        m_PVData.at(std::make_pair(Side::Back, PVM::VOC)).addProperty(m_Wavelength, backSide.VOC);
+        m_PVData.at(std::make_pair(Side::Back, PVM::FF)).addProperty(m_Wavelength, backSide.FF);
+    }
+
+    PhotovoltaicData::PhotovoltaicData(CSpectralSampleData spectralSampleData,
+                                       const std::vector<PVMeasurementRow> & pvMeasurements) :
+        PhotovoltaicData(spectralSampleData)
+    {
+        for(const auto & measurement : pvMeasurements)
+        {
+            addRecord(measurement);
+        }
+
+        const auto spectralWl{m_SpectralSampleData.getWavelengths()};
+        const auto pvWl{m_PVData.at(std::make_pair(Side::Front, PVM::EQE)).getXArray()};
+
+        if(spectralWl.size() != pvWl.size())
+        {
+            throw std::runtime_error("Photovoltaic measurements do not have same amount of data as "
+                                     "specular measurements.");
+        }
+
+        // Need to check if wavelengths are matching too
+        bool wavelengthsMatch{true};
+
+        for(auto i = 0u; i < m_SpectralSampleData.getWavelengths().size(); ++i)
+        {
+            if(spectralWl[i] != pvWl[i])
+            {
+                wavelengthsMatch = false;
+                break;
+            }
+        }
+
+        if(!wavelengthsMatch)
+        {
+            throw std::runtime_error("Wavelengths in spectral and photovoltaic measurements do not match.");
+        }
+    }
+
+    void PhotovoltaicData::addRecord(const PVMeasurementRow & pvRow)
+    {
+        addRecord(pvRow.wavelength, pvRow.front, pvRow.back);
+    }
+
+    void PhotovoltaicData::interpolate(const std::vector<double> & t_Wavelengths)
+    {
+        m_SpectralSampleData.interpolate(t_Wavelengths);
+        for(const auto & side : EnumSide())
+        {
+            for(const auto & pvm : EnumPVM())
+            {
+                m_PVData[std::make_pair(side, pvm)] =
+                  m_PVData.at(std::make_pair(side, pvm)).interpolate(t_Wavelengths);
+            }
+        }
+    }
+
+    CSeries & PhotovoltaicData::properties(FenestrationCommon::Property prop,
+                                           FenestrationCommon::Side side)
+    {
+        return m_SpectralSampleData.properties(prop, side);
+    }
+
+    void PhotovoltaicData::cutExtraData(double minLambda, double maxLambda)
+    {
+        m_SpectralSampleData.cutExtraData(minLambda, maxLambda);
+        for(const auto & side : EnumSide())
+        {
+            for(const auto & pvm : EnumPVM())
+            {
+                m_PVData.at(std::make_pair(side, pvm)).cutExtraData(minLambda, maxLambda);
+            }
         }
     }
 
