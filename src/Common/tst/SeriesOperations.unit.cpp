@@ -58,7 +58,7 @@ TEST_F(TestSeriesOperations, TestSeriesAddition)
     const auto ser1 = getSeries1();
     const auto ser2 = getSeries2();
 
-    auto result = ser1.mAdd(ser2);
+    auto result = ser1 + ser2;
 
     std::vector<double> correctResults{4.5, 11.3, 16.2, 19.6, 21.8};
 
@@ -77,7 +77,7 @@ TEST_F(TestSeriesOperations, TestSeriesSubraction)
     const auto ser1 = getSeries1();
     const auto ser2 = getSeries2();
 
-    auto result = ser1.mSub(ser2);
+    auto result = ser1 - ser2;
 
     std::vector<double> correctResults{2.1, -0.9, 1.6, 0.6, 1};
 

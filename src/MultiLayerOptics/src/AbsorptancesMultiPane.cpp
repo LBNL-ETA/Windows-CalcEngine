@@ -87,9 +87,9 @@ namespace MultiLayerOptics
             size = Iminus.size();
             for(size_t i = 0; i < size - 1; ++i)
             {
-                auto Iincoming = Iminus[i].mSub(Iplus[i]);
-                auto Ioutgoing = Iminus[i + 1].mSub(Iplus[i + 1]);
-                CSeries layerAbs = Iincoming.mSub(Ioutgoing);
+                const auto Iincoming = Iminus[i] - Iplus[i];
+                const auto Ioutgoing = Iminus[i + 1] - Iplus[i + 1];
+                CSeries layerAbs = Iincoming - Ioutgoing;
                 m_Abs.push_back(layerAbs);
             }
         }
