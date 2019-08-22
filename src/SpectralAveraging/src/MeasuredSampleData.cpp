@@ -185,8 +185,8 @@ namespace SpectralAveraging
     ///////////////////////////////////////////////////////////////////////////
     /// PhotovoltaicData
     ///////////////////////////////////////////////////////////////////////////
-    PhotovoltaicData::PhotovoltaicData(CSpectralSampleData spectralSampleData) :
-        m_SpectralSampleData(std::move(spectralSampleData)),
+    PhotovoltaicSampleData::PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData) :
+        CSpectralSampleData(spectralSampleData),
         m_PVData{{{Side::Front, PVM::EQE}, CSeries()},
                  {{Side::Front, PVM::VOC}, CSeries()},
                  {{Side::Front, PVM::FF}, CSeries()},
@@ -195,9 +195,9 @@ namespace SpectralAveraging
                  {{Side::Back, PVM::FF}, CSeries()}}
     {}
 
-    void PhotovoltaicData::addRecord(double m_Wavelength,
-                                     const PVMeasurement frontSide,
-                                     const PVMeasurement backSide)
+    void PhotovoltaicSampleData::addRecord(double m_Wavelength,
+                                           const PVMeasurement frontSide,
+                                           const PVMeasurement backSide)
     {
         m_PVData.at(std::make_pair(Side::Front, PVM::EQE)).addProperty(m_Wavelength, frontSide.EQE);
         m_PVData.at(std::make_pair(Side::Front, PVM::VOC)).addProperty(m_Wavelength, frontSide.VOC);
@@ -207,16 +207,16 @@ namespace SpectralAveraging
         m_PVData.at(std::make_pair(Side::Back, PVM::FF)).addProperty(m_Wavelength, backSide.FF);
     }
 
-    PhotovoltaicData::PhotovoltaicData(CSpectralSampleData spectralSampleData,
-                                       const std::vector<PVMeasurementRow> & pvMeasurements) :
-        PhotovoltaicData(spectralSampleData)
+    PhotovoltaicSampleData::PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData,
+                                                   const std::vector<PVMeasurementRow> & pvMeasurements) :
+            PhotovoltaicSampleData(spectralSampleData)
     {
         for(const auto & measurement : pvMeasurements)
         {
             addRecord(measurement);
         }
 
-        const auto spectralWl{m_SpectralSampleData.getWavelengths()};
+        const auto spectralWl{getWavelengths()};
         const auto pvWl{m_PVData.at(std::make_pair(Side::Front, PVM::EQE)).getXArray()};
 
         if(spectralWl.size() != pvWl.size())
@@ -228,7 +228,7 @@ namespace SpectralAveraging
         // Need to check if wavelengths are matching too
         bool wavelengthsMatch{true};
 
-        for(auto i = 0u; i < m_SpectralSampleData.getWavelengths().size(); ++i)
+        for(auto i = 0u; i < spectralWl.size(); ++i)
         {
             if(spectralWl[i] != pvWl[i])
             {
@@ -243,14 +243,14 @@ namespace SpectralAveraging
         }
     }
 
-    void PhotovoltaicData::addRecord(const PVMeasurementRow & pvRow)
+    void PhotovoltaicSampleData::addRecord(const PVMeasurementRow & pvRow)
     {
         addRecord(pvRow.wavelength, pvRow.front, pvRow.back);
     }
 
-    void PhotovoltaicData::interpolate(const std::vector<double> & t_Wavelengths)
+    void PhotovoltaicSampleData::interpolate(const std::vector<double> & t_Wavelengths)
     {
-        m_SpectralSampleData.interpolate(t_Wavelengths);
+        CSpectralSampleData::interpolate(t_Wavelengths);
         for(const auto & side : EnumSide())
         {
             for(const auto & pvm : EnumPVM())
@@ -261,15 +261,9 @@ namespace SpectralAveraging
         }
     }
 
-    CSeries & PhotovoltaicData::properties(FenestrationCommon::Property prop,
-                                           FenestrationCommon::Side side)
+    void PhotovoltaicSampleData::cutExtraData(double minLambda, double maxLambda)
     {
-        return m_SpectralSampleData.properties(prop, side);
-    }
-
-    void PhotovoltaicData::cutExtraData(double minLambda, double maxLambda)
-    {
-        m_SpectralSampleData.cutExtraData(minLambda, maxLambda);
+        CSpectralSampleData::cutExtraData(minLambda, maxLambda);
         for(const auto & side : EnumSide())
         {
             for(const auto & pvm : EnumPVM())

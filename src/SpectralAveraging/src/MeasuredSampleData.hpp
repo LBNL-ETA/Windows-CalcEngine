@@ -137,19 +137,16 @@ namespace SpectralAveraging
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    /// PhotovoltaicData
+    /// PhotovoltaicSampleData
     ///////////////////////////////////////////////////////////////////////////
-    class PhotovoltaicData : public SampleData
+    class PhotovoltaicSampleData : public CSpectralSampleData
     {
     public:
-        PhotovoltaicData(CSpectralSampleData spectralSampleData);
-        PhotovoltaicData(CSpectralSampleData spectralSampleData,
-                         const std::vector<PVMeasurementRow> & pvMeasurements);
+        PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData);
+        PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData,
+                               const std::vector<PVMeasurementRow> & pvMeasurements);
 
-        void interpolate(const std::vector<double> &t_Wavelengths) override;
-
-        FenestrationCommon::CSeries &
-        properties(FenestrationCommon::Property prop, FenestrationCommon::Side side) override;
+        void interpolate(const std::vector<double> & t_Wavelengths) override;
 
         void cutExtraData(double minLambda, double maxLambda) override;
 
@@ -160,8 +157,6 @@ namespace SpectralAveraging
         void addRecord(const PVMeasurementRow & pvRow);
 
     private:
-        CSpectralSampleData m_SpectralSampleData;
-
         std::map<std::pair<FenestrationCommon::Side, PVM>, FenestrationCommon::CSeries> m_PVData;
     };
 
