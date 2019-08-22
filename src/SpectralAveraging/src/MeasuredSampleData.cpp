@@ -10,10 +10,36 @@ using namespace FenestrationCommon;
 namespace SpectralAveraging
 {
     ////////////////////////////////////////////////////////////////////////////
+    ////     MeasuredRow
+    ////////////////////////////////////////////////////////////////////////////
+    MeasuredRow::MeasuredRow(double wl, double t, double rf, double rb) :
+            wavelength(wl),
+            T(t),
+            Rf(rf),
+            Rb(rb)
+    {}
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////     SampleData
+    ////////////////////////////////////////////////////////////////////////////
+
+    SampleData::SampleData() : m_Flipped(false) {
+
+    }
+
+    bool SampleData::Flipped() const {
+        return m_Flipped;
+    }
+
+    void SampleData::Filpped(bool t_Flipped) {
+        m_Flipped = t_Flipped;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     ////     CSpectralSampleData
     ////////////////////////////////////////////////////////////////////////////
 
-    CSpectralSampleData::CSpectralSampleData() : m_Flipped(false), m_absCalculated(false)
+    CSpectralSampleData::CSpectralSampleData() : SampleData(), m_absCalculated(false)
     {
         for(const auto & prop : EnumProperty())
         {
@@ -87,16 +113,6 @@ namespace SpectralAveraging
         }
     }
 
-    bool CSpectralSampleData::Flipped() const
-    {
-        return m_Flipped;
-    }
-
-    void CSpectralSampleData::Filpped(bool const t_Flipped)
-    {
-        m_Flipped = t_Flipped;
-    }
-
     void CSpectralSampleData::reset()
     {
         m_absCalculated = false;
@@ -148,10 +164,4 @@ namespace SpectralAveraging
         }
     }
 
-    MeasuredRow::MeasuredRow(double wl, double t, double rf, double rb) :
-        wavelength(wl),
-        T(t),
-        Rf(rf),
-        Rb(rb)
-    {}
 }   // namespace SpectralAveraging

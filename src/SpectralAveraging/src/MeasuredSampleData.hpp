@@ -12,6 +12,9 @@ namespace FenestrationCommon
 
 namespace SpectralAveraging
 {
+    ///////////////////////////////////////////////////////////////////////////
+    /// MeasuredRow
+    ///////////////////////////////////////////////////////////////////////////
     struct MeasuredRow
     {
         MeasuredRow(double wl, double t, double rf, double rb);
@@ -21,8 +24,36 @@ namespace SpectralAveraging
         double Rb;
     };
 
+    ///////////////////////////////////////////////////////////////////////////
+    /// SampleData
+    ///////////////////////////////////////////////////////////////////////////
+    class SampleData{
+    public:
+        SampleData();
+        virtual ~SampleData() = default;
+
+        virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
+        virtual FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
+                                                 FenestrationCommon::Side side) = 0;
+
+        virtual void cutExtraData(double minLambda, double maxLambda) = 0;
+        virtual void addRecord(double t_Wavelength,
+                       double t_Transmittance,
+                       double t_ReflectanceFront,
+                       double t_ReflectanceBack) = 0;
+
+        virtual bool Flipped() const final;
+        virtual void Filpped(bool t_Flipped) final;
+
+    protected:
+        bool m_Flipped;
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// CSpectralSampleData
+    ///////////////////////////////////////////////////////////////////////////
     // Measured sample data for given wavelengths.
-    class CSpectralSampleData
+    class CSpectralSampleData : public SampleData
     {
     public:
         virtual ~CSpectralSampleData() = default;
@@ -33,19 +64,18 @@ namespace SpectralAveraging
 
         static std::shared_ptr<CSpectralSampleData> create();
 
-        void addRecord(double t_Wavelength,
+        virtual void addRecord(double t_Wavelength,
                        double t_Transmittance,
                        double t_ReflectanceFront,
-                       double t_ReflectanceBack);
-        FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
-                             FenestrationCommon::Side side);
+                       double t_ReflectanceBack) override;
+
+        virtual FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
+                             FenestrationCommon::Side side) override;
+
         virtual std::vector<double> getWavelengths() const;
-        virtual void interpolate(std::vector<double> const & t_Wavelengths);
+        virtual void interpolate(std::vector<double> const & t_Wavelengths) override;
 
-        bool Flipped() const;
-        virtual void Filpped(bool t_Flipped);
-
-        void cutExtraData(double minLambda, double maxLambda);
+        virtual void cutExtraData(double minLambda, double maxLambda) override;
 
     protected:
         CSpectralSampleData(const std::vector<MeasuredRow> & tValues);
@@ -57,7 +87,6 @@ namespace SpectralAveraging
                  FenestrationCommon::CSeries>
           m_Property;
 
-        bool m_Flipped;
         bool m_absCalculated;
     };
 
