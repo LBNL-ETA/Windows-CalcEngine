@@ -62,7 +62,7 @@ namespace MultiLayerOptics
         return m_Tot.at(std::make_pair(t_Side, t_Property));
     }
 
-    void CEquivalentBSDFLayer::setSolarRadiation(const std::shared_ptr<CSeries> & t_SolarRadiation)
+    void CEquivalentBSDFLayer::setSolarRadiation(CSeries &t_SolarRadiation)
     {
         // Need to recreate wavelenght by wavelength layers
         m_LayersWL.clear();

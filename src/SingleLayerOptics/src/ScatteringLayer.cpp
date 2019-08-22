@@ -62,7 +62,7 @@ namespace SingleLayerOptics
         m_Phi(0)
     {}
 
-    void CScatteringLayer::setSourceData(std::shared_ptr<CSeries> t_SourceData) const
+    void CScatteringLayer::setSourceData(CSeries &t_SourceData) const
     {
         if(m_BSDFLayer != nullptr)
         {
@@ -84,7 +84,8 @@ namespace SingleLayerOptics
             }
         }
         const auto spectrum = SpectralAveraging::BlackBodySpectrum(wl, temperature);
-        setSourceData(CSeries::create(spectrum));
+        CSeries seriesSpectrum{spectrum};
+        setSourceData(seriesSpectrum);
         setWavelengths(wl);
     }
 

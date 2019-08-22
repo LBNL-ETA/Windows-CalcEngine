@@ -262,7 +262,7 @@ namespace MultiLayerOptics
             m_Abs[i].resize( matrixSize );
         }
 
-        const auto totalSolar = m_SolarRadiation->integrate(m_Integrator, m_NormalizationCoefficient)->sum(minLambda, maxLambda);
+        const auto totalSolar = m_SolarRadiation.integrate(m_Integrator, m_NormalizationCoefficient)->sum(minLambda, maxLambda);
 
         // calculation of solar absorptances
         for(size_t i = 0; i < matrixSize; ++i)
@@ -301,9 +301,9 @@ namespace MultiLayerOptics
                     curSpectralProperties->addProperty(m_CommonWavelengths[k], absValue);
                 }
 
-                const std::shared_ptr<CSeries> absorbedIrradiance = curSpectralProperties->mMult(*m_SolarRadiation);
-                const std::shared_ptr<CSeries> integratedAbsorbed = absorbedIrradiance->integrate(m_Integrator, m_NormalizationCoefficient);
-                double value = integratedAbsorbed->sum(minLambda, maxLambda);
+                const CSeries absorbedIrradiance = (*curSpectralProperties) * m_SolarRadiation;
+                const CSeries integratedAbsorbed = *absorbedIrradiance.integrate(m_Integrator, m_NormalizationCoefficient);
+                double value = integratedAbsorbed.sum(minLambda, maxLambda);
                 value = value / totalSolar;
                 m_Abs[j][i] = value;
             }
