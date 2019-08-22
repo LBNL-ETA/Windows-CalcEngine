@@ -56,7 +56,8 @@ namespace SingleLayerOptics
     {
         auto X = m_SDx / m_SDy * 100
                  * m_LayerX->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
-        auto Y = 100 * m_LayerY->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        auto Y =
+          100 * m_LayerY->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
         auto Z = m_SDz / m_SDy * 100
                  * m_LayerZ->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
         return Trichromatic(X, Y, Z);
