@@ -25,7 +25,7 @@ TEST_F(TestPhotovoltaicData, TestDifferentSizeOfInputData)
 
     try
     {
-        SpectralAveraging::PhotovoltaicData pvData{
+        SpectralAveraging::PhotovoltaicSampleData pvData{
           sampleData,
           {{0.300, {0.00569, 0.83, 0.41}, {0.0, 0.83, 0.41}},
            {0.305, {0.036081, 0.83, 0.41}, {0.024239, 0.83, 0.41}},
@@ -57,7 +57,7 @@ TEST_F(TestPhotovoltaicData, TestDifferentWavelengthsOfInputData)
 
     try
     {
-        SpectralAveraging::PhotovoltaicData pvData{
+        SpectralAveraging::PhotovoltaicSampleData pvData{
           sampleData,
           {{0.300, {0.00569, 0.83, 0.41}, {0.0, 0.83, 0.41}},
            {0.305, {0.036081, 0.83, 0.41}, {0.024239, 0.83, 0.41}},

@@ -14,7 +14,7 @@ namespace SpectralAveraging
     ////  CSample
     //////////////////////////////////////////////////////////////////////////////////////
 
-    CSample::CSample(const CSeries &t_SourceData,
+    CSample::CSample(const CSeries & t_SourceData,
                      IntegrationType integrationType,
                      double t_NormalizationCoefficient) :
         m_SourceData(t_SourceData),
@@ -46,7 +46,8 @@ namespace SpectralAveraging
         {
             for(const auto & side : EnumSide())
             {
-                m_EnergySource[std::make_pair(prop, side)] = t_Sample.m_EnergySource.at(std::make_pair(prop, side));
+                m_EnergySource[std::make_pair(prop, side)] =
+                  t_Sample.m_EnergySource.at(std::make_pair(prop, side));
             }
         }
 
@@ -64,13 +65,13 @@ namespace SpectralAveraging
         return m_SourceData;
     }
 
-    void CSample::setSourceData(CSeries &t_SourceData)
+    void CSample::setSourceData(CSeries & t_SourceData)
     {
         m_SourceData = t_SourceData;
         reset();
     }
 
-    void CSample::setDetectorData(const CSeries &t_DetectorData)
+    void CSample::setDetectorData(const CSeries & t_DetectorData)
     {
         m_DetectorData = t_DetectorData;
         reset();
@@ -204,7 +205,7 @@ namespace SpectralAveraging
                     {
                         m_EnergySource[std::make_pair(prop, side)] =
                           *m_EnergySource.at(std::make_pair(prop, side))
-                            .integrate(m_IntegrationType, m_NormalizationCoefficient);
+                             .integrate(m_IntegrationType, m_NormalizationCoefficient);
                     }
                 }
 
@@ -218,7 +219,7 @@ namespace SpectralAveraging
     //////////////////////////////////////////////////////////////////////////////////////
 
     CSpectralSample::CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData,
-                                     const CSeries &t_SourceData,
+                                     const CSeries & t_SourceData,
                                      FenestrationCommon::IntegrationType integrationType,
                                      double NormalizationCoefficient) :
         CSample(t_SourceData, integrationType, NormalizationCoefficient),
@@ -323,9 +324,15 @@ namespace SpectralAveraging
         m_SampleData->cutExtraData(minLambda, maxLambda);
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    ////  CSpectralAngleSample
-    //////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /// CPhotovoltaicSample
+    /////////////////////////////////////////////////////////////////////////////////////
 
-
+    CPhotovoltaicSample::CPhotovoltaicSample(
+      const std::shared_ptr<PhotovoltaicSampleData> & t_PhotovoltaicData,
+      const FenestrationCommon::CSeries & t_SourceData,
+      FenestrationCommon::IntegrationType integrationType,
+      double NormalizationCoefficient) :
+        CSpectralSample(t_PhotovoltaicData, t_SourceData, integrationType, NormalizationCoefficient)
+    {}
 }   // namespace SpectralAveraging
