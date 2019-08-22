@@ -8,9 +8,8 @@ using FenestrationCommon::CSeries;
 
 class TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular : public testing::Test
 {
-public:
-    std::shared_ptr<SingleLayerOptics::ColorProperties<MultiLayerOptics::CMultiPaneSpecular>>
-      m_Color;
+private:
+    std::shared_ptr<SingleLayerOptics::ColorProperties> m_Color;
 
     std::vector<double> loadWavelengths() const
     {
@@ -313,7 +312,7 @@ public:
     }
 
     std::unique_ptr<MultiLayerOptics::CMultiPaneSpecular>
-      createLayer(const CSeries &astmStandard) const
+      createLayer(const CSeries & astmStandard) const
     {
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial =
@@ -340,12 +339,9 @@ public:
 protected:
     void SetUp() override
     {
-        std::unique_ptr<MultiLayerOptics::CMultiPaneSpecular> LayerX =
-          createLayer(ASTM_E308_1964_X());
-        std::unique_ptr<MultiLayerOptics::CMultiPaneSpecular> LayerY =
-          createLayer(ASTM_E308_1964_Y());
-        std::unique_ptr<MultiLayerOptics::CMultiPaneSpecular> LayerZ =
-          createLayer(ASTM_E308_1964_Z());
+        auto LayerX = createLayer(ASTM_E308_1964_X());
+        auto LayerY = createLayer(ASTM_E308_1964_Y());
+        auto LayerZ = createLayer(ASTM_E308_1964_Z());
 
         CSeries DX = ASTM_E308_1964_X();
         CSeries DY = ASTM_E308_1964_Y();
@@ -355,25 +351,22 @@ protected:
 
         auto wl = loadWavelengths();
 
-        m_Color = std::make_shared<
-          SingleLayerOptics::ColorProperties<MultiLayerOptics::CMultiPaneSpecular>>(
-          *LayerX, *LayerY, *LayerZ, solarRadiation, DX, DY, DZ, wl);
+        m_Color = std::make_shared<SingleLayerOptics::ColorProperties>(
+          std::move(LayerX), std::move(LayerY), std::move(LayerZ), solarRadiation, DX, DY, DZ, wl);
     }
 
 public:
-    std::shared_ptr<SingleLayerOptics::ColorProperties<MultiLayerOptics::CMultiPaneSpecular>>
-      getLayer() const
+    std::shared_ptr<SingleLayerOptics::ColorProperties> getLayer() const
     {
         return m_Color;
     }
 };
 
-
 TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestTrichromatic_T)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -388,7 +381,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestTrichromatic_R)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -403,7 +396,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestRGB_T)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -418,7 +411,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestRGB_R)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -433,7 +426,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestCIE_LAB_T)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
@@ -448,7 +441,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular, TestCIE_LAB_R)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
-    auto aLayer = getLayer();
+    std::shared_ptr<SingleLayerOptics::ColorProperties> aLayer = getLayer();
 
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
