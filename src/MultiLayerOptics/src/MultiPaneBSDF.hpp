@@ -26,20 +26,19 @@ namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayer;
 
-    typedef std::shared_ptr<FenestrationCommon::CSeries> p_Series;
-    typedef std::shared_ptr<std::vector<p_Series>> p_VectorSeries;
+    typedef std::shared_ptr<std::vector<FenestrationCommon::CSeries>> p_VectorSeries;
 
     class CMultiPaneBSDF
     {
     public:
         static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const p_Series & t_SolarRadiation,
+                 const FenestrationCommon::CSeries & t_SolarRadiation,
                  const std::vector<double> & t_CommonWavelengths);
 
         static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const p_Series & t_SolarRadiation);
+                 const FenestrationCommon::CSeries & t_SolarRadiation);
 
         void setIntegrationType(FenestrationCommon::IntegrationType t_type,
                                 double normalizationCoefficient);
@@ -128,11 +127,11 @@ namespace MultiLayerOptics
 
     private:
         CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                       const p_Series & t_SolarRadiation,
+                       const FenestrationCommon::CSeries & t_SolarRadiation,
                        const std::vector<double> & t_CommonWavelengths);
 
         CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                       const p_Series & t_SolarRadiation);
+                       const FenestrationCommon::CSeries & t_SolarRadiation);
 
         void calculate(double minLambda, double maxLambda);
 
@@ -141,7 +140,7 @@ namespace MultiLayerOptics
         CEquivalentBSDFLayer m_Layer;
 
         // Solar radiation for initialization
-        std::shared_ptr<FenestrationCommon::CSeries> m_SolarRadiationInit;
+        FenestrationCommon::CSeries m_SolarRadiationInit;
 
         p_VectorSeries m_IncomingSpectra;
         std::vector<double> m_IncomingSolar;

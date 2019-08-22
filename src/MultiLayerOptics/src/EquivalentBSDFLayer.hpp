@@ -51,7 +51,7 @@ namespace MultiLayerOptics
           getTotal(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySimple t_Property);
 
         void
-          setSolarRadiation(const std::shared_ptr<FenestrationCommon::CSeries> & t_SolarRadiation);
+          setSolarRadiation(FenestrationCommon::CSeries &t_SolarRadiation);
 
     private:
         void calculate();
