@@ -339,8 +339,7 @@ namespace SpectralAveraging
         m_W{{Side::Front, CSeries()}, {Side::Back, CSeries()}}
     {}
 
-    void CPhotovoltaicSample::calculateProperties()
-    {
+    void CPhotovoltaicSample::calculateState(){
         CSpectralSample::calculateProperties();
         for(const auto & side : EnumSide())
         {
@@ -374,5 +373,16 @@ namespace SpectralAveraging
         double const microMeterToMeter{1e-6};
         return eqe * voc * ff * wavelength * ConstantsData::ELECTRON_CHARGE * microMeterToMeter
                / (ConstantsData::SPEEDOFLIGHT * ConstantsData::PLANKCONSTANT);
+    }
+
+    FenestrationCommon::CSeries & CPhotovoltaicSample::pce(const FenestrationCommon::Side side)
+    {
+        calculateState();
+        return m_PCE.at(side);
+    }
+
+    FenestrationCommon::CSeries &CPhotovoltaicSample::w(const FenestrationCommon::Side side) {
+        calculateState();
+        return m_W.at(side);
     }
 }   // namespace SpectralAveraging
