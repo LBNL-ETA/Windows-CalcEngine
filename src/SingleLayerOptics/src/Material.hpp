@@ -36,14 +36,14 @@ namespace SingleLayerOptics
                                                            double ratio);
 
         static std::shared_ptr<CMaterial>
-          dualBandMaterial(const double Tfsol,
-                           const double Tbsol,
-                           const double Rfsol,
-                           const double Rbsol,
-                           const double Tfvis,
-                           const double Tbvis,
-                           const double Rfvis,
-                           const double Rbvis,
+          dualBandMaterial(double Tfsol,
+                           double Tbsol,
+                           double Rfsol,
+                           double Rbsol,
+                           double Tfvis,
+                           double Tbvis,
+                           double Rfvis,
+                           double Rbvis,
                            const FenestrationCommon::CSeries &solarRadiation);
 
         static std::shared_ptr<CMaterial> singleBandMaterial(
