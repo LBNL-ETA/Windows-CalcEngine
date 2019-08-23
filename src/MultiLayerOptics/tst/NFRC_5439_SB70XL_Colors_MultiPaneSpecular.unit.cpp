@@ -324,11 +324,11 @@ private:
 
         aMaterial->setBandWavelengths(loadWavelengths());
 
-        SingleLayerOptics::SpecularLayer single_layer =
+        auto single_layer =
           SingleLayerOptics::SpecularLayer::createLayer(aMaterial);
 
         CSeries solarRadiation{loadSolarRadiationFile()};
-        single_layer.setSourceData(solarRadiation);
+        single_layer->setSourceData(solarRadiation);
 
         auto layer = MultiLayerOptics::CMultiPaneSpecular::create(
           {single_layer}, loadSolarRadiationFile(), astmStandard);

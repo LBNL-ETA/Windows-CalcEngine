@@ -43,20 +43,27 @@ namespace MultiLayerOptics
         return m_Abs.Abs(Index);
     }
 
+    FenestrationCommon::CSeries
+      CEquivalentLayerSingleComponentMWAngle::AbsBySide(size_t Index, FenestrationCommon::Side side)
+    {
+        return m_Abs.Abs(Index, side);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  CMultiPaneSpecular
     ////////////////////////////////////////////////////////////////////////////////////////////
-    CMultiPaneSpecular::CMultiPaneSpecular(std::vector<SingleLayerOptics::SpecularLayer> layers,
-                                           const CSeries & t_SolarRadiation,
-                                           const CSeries & t_DetectorData) :
-        m_Layers(std::move(layers)),
+    CMultiPaneSpecular::CMultiPaneSpecular(
+      const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
+      const CSeries & t_SolarRadiation,
+      const CSeries & t_DetectorData) :
+        m_Layers(layers),
         m_SolarRadiation(t_SolarRadiation),
         m_DetectorData(t_DetectorData)
     {
         CCommonWavelengths aCommonWL;
         for(auto & layer : m_Layers)
         {
-            aCommonWL.addWavelength(layer.getBandWavelengths());
+            aCommonWL.addWavelength(layer->getBandWavelengths());
         }
 
         // Finds combination of two wavelength sets without going outside of wavelenght range for
@@ -72,13 +79,13 @@ namespace MultiLayerOptics
 
         for(auto & layer : m_Layers)
         {
-            layer.setSourceData(m_SolarRadiation);
+            layer->setSourceData(m_SolarRadiation);
         }
     }
 
-    CMultiPaneSpecular::CMultiPaneSpecular(std::vector<double> const & t_CommonWavelength,
+    CMultiPaneSpecular::CMultiPaneSpecular(const std::vector<double> & t_CommonWavelength,
                                            const CSeries & t_SolarRadiation,
-                                           SpecularLayer & t_Layer) :
+                                           const std::shared_ptr<SpecularLayer> & t_Layer) :
         m_CommonWavelengths(t_CommonWavelength),
         m_SolarRadiation(t_SolarRadiation)
     {
@@ -86,19 +93,20 @@ namespace MultiLayerOptics
         addLayer(t_Layer);
     }
 
-    void CMultiPaneSpecular::addLayer(SpecularLayer & t_Layer)
+    void CMultiPaneSpecular::addLayer(
+      const std::shared_ptr<SingleLayerOptics::SpecularLayer> & t_Layer)
     {
-        t_Layer.setSourceData(m_SolarRadiation);
+        t_Layer->setSourceData(m_SolarRadiation);
         m_Layers.push_back(t_Layer);
     }
 
-    std::unique_ptr<CMultiPaneSpecular>
-      CMultiPaneSpecular::create(std::vector<SingleLayerOptics::SpecularLayer> layers,
-                                 const CSeries & t_SolarRadiation,
-                                 const CSeries & t_DetectorData)
+    std::unique_ptr<CMultiPaneSpecular> CMultiPaneSpecular::create(
+      const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
+      const CSeries & t_SolarRadiation,
+      const CSeries & t_DetectorData)
     {
         return std::unique_ptr<CMultiPaneSpecular>(
-          new CMultiPaneSpecular(std::move(layers), t_SolarRadiation, t_DetectorData));
+          new CMultiPaneSpecular(layers, t_SolarRadiation, t_DetectorData));
     }
 
     double CMultiPaneSpecular::getPropertySimple(
@@ -128,12 +136,12 @@ namespace MultiLayerOptics
 
     double CMultiPaneSpecular::getMinLambda() const
     {
-        return m_Layers[0].getMinLambda();
+        return m_Layers[0]->getMinLambda();
     }
 
     double CMultiPaneSpecular::getMaxLambda() const
     {
-        return m_Layers[0].getMaxLambda();
+        return m_Layers[0]->getMaxLambda();
     }
 
     std::vector<double> CMultiPaneSpecular::getWavelengths() const
@@ -311,10 +319,10 @@ namespace MultiLayerOptics
     {
         SeriesResults result;
 
-        std::vector<double> wl = m_Layers[layerIndex].getBandWavelengths();
-        std::vector<double> Tv = m_Layers[layerIndex].T_dir_dir_band(Side::Front, aDirection);
-        std::vector<double> Rfv = m_Layers[layerIndex].R_dir_dir_band(Side::Front, aDirection);
-        std::vector<double> Rbv = m_Layers[layerIndex].R_dir_dir_band(Side::Back, aDirection);
+        std::vector<double> wl = m_Layers[layerIndex]->getBandWavelengths();
+        std::vector<double> Tv = m_Layers[layerIndex]->T_dir_dir_band(Side::Front, aDirection);
+        std::vector<double> Rfv = m_Layers[layerIndex]->R_dir_dir_band(Side::Front, aDirection);
+        std::vector<double> Rbv = m_Layers[layerIndex]->R_dir_dir_band(Side::Back, aDirection);
         for(size_t j = 0; j < wl.size(); ++j)
         {
             result.T.addProperty(wl[j], Tv[j]);
@@ -328,6 +336,4 @@ namespace MultiLayerOptics
 
         return result;
     }
-
-
 }   // namespace MultiLayerOptics
