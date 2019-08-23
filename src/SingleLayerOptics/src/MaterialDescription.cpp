@@ -467,7 +467,8 @@ namespace SingleLayerOptics
       FenestrationCommon::MaterialType t_Type,
       double minLambda,
       double maxLambda) :
-        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, minLambda, maxLambda)
+        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, minLambda, maxLambda),
+        m_PVSample(t_SpectralSample)
     {}
 
     CMaterialPhotovoltaic::CMaterialPhotovoltaic(
@@ -475,8 +476,19 @@ namespace SingleLayerOptics
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type,
       FenestrationCommon::WavelengthRange t_Range) :
-        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, t_Range)
+        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, t_Range),
+        m_PVSample(t_SpectralSample)
     {}
+
+    FenestrationCommon::CSeries CMaterialPhotovoltaic::PCE(FenestrationCommon::Side t_Side) const
+    {
+        return m_PVSample->pce(t_Side);
+    }
+
+    FenestrationCommon::CSeries CMaterialPhotovoltaic::W(FenestrationCommon::Side t_Side) const
+    {
+        return m_PVSample->w(t_Side);
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialMeasured

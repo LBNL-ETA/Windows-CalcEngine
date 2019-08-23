@@ -746,7 +746,7 @@ protected:
         // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different
         // wavelengths
         CCommonWavelengths aCommonWL;
-        aCommonWL.addWavelength(layer102.getBandWavelengths());
+        aCommonWL.addWavelength(layer102->getBandWavelengths());
         std::vector<double> wl0 = aAngular0->getWavelengthsFromSample();
         std::vector<double> wl10 = aAngular1->getWavelengthsFromSample();
         std::vector<double> wl40 = aAngular4->getWavelengthsFromSample();
