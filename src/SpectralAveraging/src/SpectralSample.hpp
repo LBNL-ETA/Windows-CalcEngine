@@ -158,8 +158,11 @@ namespace SpectralAveraging
                               FenestrationCommon::IntegrationType::Trapezoidal,
                             double NormalizationCoefficient = 1);
 
+        FenestrationCommon::CSeries & pce(const FenestrationCommon::Side side);
+        FenestrationCommon::CSeries & w(const FenestrationCommon::Side side);
+
     protected:
-        void calculateProperties() override;
+        void calculateState() override;
         PhotovoltaicSampleData * getSample() const;
 
         double pceCalc(double wavelength, double eqe, double voc, double ff);
