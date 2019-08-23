@@ -111,6 +111,8 @@ namespace FenestrationCommon
         std::vector<std::unique_ptr<ISeriesPoint>> m_Series;
     };
 
+    CSeries operator-(const double val, const CSeries & other);
+
 }   // namespace FenestrationCommon
 
 #endif
