@@ -50,7 +50,7 @@ protected:
           {0.330, {0.271745, 0.83, 0.41}, {0.053813, 0.81, 0.43}}};
 
         std::shared_ptr<PhotovoltaicSampleData> pvData =
-          wce::make_unique<PhotovoltaicSampleData>(*getMeasurements(), pvMeasurements);
+          std::make_shared<PhotovoltaicSampleData>(*getMeasurements(), pvMeasurements);
         CSeries solarRadiation{getSolarRadiation()};
         m_PhotovoltaicSample = wce::make_unique<CPhotovoltaicSample>(pvData, solarRadiation);
     }
