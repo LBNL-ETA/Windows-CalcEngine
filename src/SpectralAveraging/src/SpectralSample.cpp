@@ -348,12 +348,12 @@ namespace SpectralAveraging
             const CSeries ff{getSample()->pvProperty(side, PVM::FF)};
             const auto transmittance = m_SampleData->properties(Property::T, side);
             const auto reflectance = m_SampleData->properties(Property::R, side);
-            const auto wl{getWavelengthsFromSample()};
+            const auto wl = getWavelengthsFromSample();
             CSeries pce;
             CSeries w;
             for(auto i = 0u; i < wl.size(); ++i)
             {
-                const double pceVal{pceCalc(wl[i], eqe[i].value(), voc[i].value(), ff[i].value())};
+                const double pceVal = pceCalc(wl[i], eqe[i].value(), voc[i].value(), ff[i].value());
                 pce.addProperty(wl[i], pceVal);
                 w.addProperty(wl[i],
                               1 - pceVal / (1 - transmittance[i].value() - reflectance[i].value()));
