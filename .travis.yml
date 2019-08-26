@@ -8,18 +8,6 @@ os:
 sudo: required
 dist: trusty
 
-addons:
-  apt:
-    sources:
-    # add PPAs with more up-to-date toolchains
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.6
-    packages:
-    # install toolchains
-    - gcc-8
-    - g++-8
-    - clang-3.6
-
 matrix:
   include:
     - compiler: gcc
@@ -28,8 +16,8 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-7.4
-      env: COMPILER=g++-7.4
+            - g++-7
+      env: COMPILER=g++-7
     - compiler: clang
       addons:
         apt:
