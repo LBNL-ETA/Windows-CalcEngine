@@ -13,11 +13,11 @@ namespace SingleLayerOptics
         m_PVMaterial(material)
     {}
 
-    PhotovoltaicLayer
+    std::shared_ptr<PhotovoltaicLayer>
       PhotovoltaicLayer::createLayer(const std::shared_ptr<CMaterialPhotovoltaic> & material)
     {
         auto aCell = CSpecularCell(material);
-        return PhotovoltaicLayer(aCell, material);
+        return std::make_shared<PhotovoltaicLayer>(aCell, material);
     }
 
     FenestrationCommon::CSeries PhotovoltaicLayer::PCE(FenestrationCommon::Side t_Side) const

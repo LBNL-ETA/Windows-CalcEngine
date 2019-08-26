@@ -113,7 +113,7 @@ namespace SpectralAveraging
     class CSpectralSample : public CSample
     {
     public:
-        CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData,
+        CSpectralSample(const std::shared_ptr<CSpectralSampleData> & t_SampleData,
                         const FenestrationCommon::CSeries & t_SourceData,
                         FenestrationCommon::IntegrationType integrationType =
                           FenestrationCommon::IntegrationType::Trapezoidal,

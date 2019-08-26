@@ -35,7 +35,7 @@ namespace MultiLayerOptics
                                                             FenestrationCommon::Side side)
     {
         calculateState();
-        return m_AbsBySide.at(side)[Index];
+        return m_AbsBySide.at(side)[Index - 1];
     }
 
     size_t CAbsorptancesMultiPane::numOfLayers()
