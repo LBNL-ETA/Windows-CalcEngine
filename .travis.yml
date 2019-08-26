@@ -1,9 +1,5 @@
 language: 
   - cpp
-
-os:
-  - linux
-  - osx
   
 sudo: required
 dist: trusty
@@ -49,3 +45,4 @@ script:
   - src/SpectralAveraging/SpectralAveraging_tests
   - src/Tarcog/Tarcog_tests
   - src/Viewer/Viewer_tests
+  - src/Chromogenics/Chromogenics_test
