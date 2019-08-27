@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <WCESpectralAveraging.hpp>
 
 // Lixing
 namespace FenestrationCommon
@@ -20,6 +21,7 @@ namespace SpectralAveraging
 {
     // enum class SampleProperty;
     class CSpectralSample;
+    class CPhotovoltaicSample;
     class CAngularSpectralSample;
     class CSingleAngularMeasurement;
     class CAngularMeasurements;
@@ -233,9 +235,35 @@ namespace SingleLayerOptics
 
         void setBandWavelengths(const std::vector<double> & wavelengths) override;
 
-    private:
+    protected:
         std::vector<double> calculateBandWavelengths() override;
         std::shared_ptr<SpectralAveraging::CAngularSpectralSample> m_AngularSample;
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    ///   CMaterialPhotovoltaic
+    //////////////////////////////////////////////////////////////////////////////////////////
+    class CMaterialPhotovoltaic : public CMaterialSample
+    {
+    public:
+        CMaterialPhotovoltaic(
+                const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
+                double t_Thickness,
+                FenestrationCommon::MaterialType t_Type,
+                double minLambda,
+                double maxLambda);
+
+        CMaterialPhotovoltaic(
+                const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
+                double t_Thickness,
+                FenestrationCommon::MaterialType t_Type,
+                FenestrationCommon::WavelengthRange t_Range);
+
+        FenestrationCommon::CSeries PCE(FenestrationCommon::Side t_Side) const;
+        FenestrationCommon::CSeries W(FenestrationCommon::Side t_Side) const;
+
+    private:
+        std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> m_PVSample;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////

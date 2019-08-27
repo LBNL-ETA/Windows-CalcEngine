@@ -4,10 +4,17 @@
 
 namespace SingleLayerOptics
 {
-    class SpecularLayer
+    // Needed for dynamic_cast between two layer types
+    class BaseLayer
     {
     public:
-        static SpecularLayer createLayer(const std::shared_ptr<CMaterial> & t_Material);
+        virtual ~BaseLayer() = default;
+    };
+
+    class SpecularLayer : public BaseLayer
+    {
+    public:
+        static std::shared_ptr<SpecularLayer> createLayer(const std::shared_ptr<CMaterial> & t_Material);
 
         // Transmittance averaged over entire wavelength spectrum
         double T_dir_dir(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
@@ -29,8 +36,10 @@ namespace SingleLayerOptics
         double getMinLambda() const;
         double getMaxLambda() const;
 
-    private:
+    public:
         explicit SpecularLayer(const CSpecularCell & m_Cell);
+
+    protected:
         CSpecularCell m_Cell;
     };
 

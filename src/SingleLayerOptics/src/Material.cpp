@@ -7,6 +7,7 @@ using FenestrationCommon::WavelengthRange;
 using FenestrationCommon::CWavelengthRange;
 using FenestrationCommon::CSeries;
 using SpectralAveraging::CSpectralSample;
+using SpectralAveraging::CPhotovoltaicSample;
 
 namespace SingleLayerOptics
 {
@@ -44,16 +45,15 @@ namespace SingleLayerOptics
           aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
     }
 
-    std::shared_ptr<CMaterial> Material::dualBandMaterial(
-            const double Tfsol,
-            const double Tbsol,
-            const double Rfsol,
-            const double Rbsol,
-            const double Tfvis,
-            const double Tbvis,
-            const double Rfvis,
-            const double Rbvis,
-            const CSeries &solarRadiation)
+    std::shared_ptr<CMaterial> Material::dualBandMaterial(const double Tfsol,
+                                                          const double Tbsol,
+                                                          const double Rfsol,
+                                                          const double Rbsol,
+                                                          const double Tfvis,
+                                                          const double Tbvis,
+                                                          const double Rfvis,
+                                                          const double Rbvis,
+                                                          const CSeries & solarRadiation)
     {
         auto aSolarRangeMaterial =
           std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol, WavelengthRange::Solar);
@@ -153,14 +153,14 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CMaterial> Material::nBandMaterial(
-            const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-            const CSeries &detectorData,
-            const double thickness,
-            const FenestrationCommon::MaterialType materialType,
-            const double minLambda,
-            const double maxLambda,
-            const FenestrationCommon::IntegrationType integrationType,
-            const double normalizationCoefficient)
+      const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+      const CSeries & detectorData,
+      const double thickness,
+      const FenestrationCommon::MaterialType materialType,
+      const double minLambda,
+      const double maxLambda,
+      const FenestrationCommon::IntegrationType integrationType,
+      const double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
           measurement, CSeries(), integrationType, normalizationCoefficient);
@@ -180,13 +180,13 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CMaterial> Material::nBandMaterial(
-            const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-            const CSeries &detectorData,
-            const double thickness,
-            const FenestrationCommon::MaterialType materialType,
-            const FenestrationCommon::WavelengthRange t_Range,
-            const FenestrationCommon::IntegrationType integrationType,
-            const double normalizationCoefficient)
+      const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
+      const CSeries & detectorData,
+      const double thickness,
+      const FenestrationCommon::MaterialType materialType,
+      const FenestrationCommon::WavelengthRange t_Range,
+      const FenestrationCommon::IntegrationType integrationType,
+      const double normalizationCoefficient)
     {
         auto aSample = std::make_shared<CSpectralSample>(
           measurement, CSeries(), integrationType, normalizationCoefficient);
@@ -223,6 +223,51 @@ namespace SingleLayerOptics
 
         aSample->setDetectorData(detectorData);
         return std::make_shared<CMaterialSample>(aSample, thickness, materialType, t_Range);
+    }
+
+    std::shared_ptr<CMaterialPhotovoltaic> Material::nBandPhotovoltaicMaterial(
+      const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
+      double thickness,
+      FenestrationCommon::MaterialType materialType,
+      double minLambda,
+      double maxLambda,
+      FenestrationCommon::IntegrationType integrationType,
+      double normalizationCoefficient)
+    {
+        auto aSample = std::make_shared<SpectralAveraging::CPhotovoltaicSample>(
+          measurement, CSeries(), integrationType, normalizationCoefficient);
+
+        // Narrow down sample in case it is over limits of desired measurements
+        aSample->cutExtraData(minLambda, maxLambda);
+        if(aSample->getWavelengthsFromSample().empty())
+        {
+            throw std::runtime_error("Given measured sample does not have measurements withing "
+                                     "requested range. Calculation is not possible.");
+        }
+
+        return std::make_shared<CMaterialPhotovoltaic>(
+          aSample, thickness, materialType, minLambda, maxLambda);
+    }
+
+    std::shared_ptr<CMaterialPhotovoltaic> Material::nBandPhotovoltaicMaterial(
+      const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
+      double thickness,
+      FenestrationCommon::MaterialType materialType,
+      const FenestrationCommon::WavelengthRange range,
+      FenestrationCommon::IntegrationType integrationType,
+      double normalizationCoefficient)
+    {
+        CWavelengthRange wlRange{range};
+        const double minLambda{wlRange.minLambda()};
+        const double maxLambda{wlRange.maxLambda()};
+
+        return nBandPhotovoltaicMaterial(measurement,
+                                         thickness,
+                                         materialType,
+                                         minLambda,
+                                         maxLambda,
+                                         integrationType,
+                                         normalizationCoefficient);
     }
 
 }   // namespace SingleLayerOptics
