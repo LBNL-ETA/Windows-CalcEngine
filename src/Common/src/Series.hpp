@@ -79,7 +79,7 @@ namespace FenestrationCommon
         //! \brief Addition of values in spectral properties that have same wavelength.
         //!
         //! Function will work only if two spectral properties have identical wavelengths. Otherwise
-        //! runtime error will be thrown. If two spectral properites do not have same wavelength
+        //! runtime error will be thrown. If two spectral properties do not have same wavelength
         //! range, then interpolation function should be called.
         CSeries operator+(const CSeries & other) const;
 
@@ -110,6 +110,8 @@ namespace FenestrationCommon
 
         std::vector<std::unique_ptr<ISeriesPoint>> m_Series;
     };
+
+    CSeries operator-(const double val, const CSeries & other);
 
 }   // namespace FenestrationCommon
 

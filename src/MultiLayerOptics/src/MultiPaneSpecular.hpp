@@ -26,9 +26,10 @@ namespace MultiLayerOptics
                                                double t_Angle);
         double angle() const;
         const CEquivalentLayerSingleComponentMW & layer() const;
-        FenestrationCommon::CSeries
-        getProperties(const FenestrationCommon::Side t_Side, const FenestrationCommon::Property t_Property);
-        FenestrationCommon::CSeries Abs(const size_t Index);
+        FenestrationCommon::CSeries getProperties(FenestrationCommon::Side t_Side,
+                                                  FenestrationCommon::Property t_Property);
+        FenestrationCommon::CSeries Abs(size_t Index);
+        FenestrationCommon::CSeries AbsBySide(size_t Index, FenestrationCommon::Side side);
 
     private:
         CEquivalentLayerSingleComponentMW m_Layer;
@@ -36,26 +37,30 @@ namespace MultiLayerOptics
         double m_Angle;
     };
 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    // CMultiPaneSpecular
+    ///////////////////////////////////////////////////////////////////////////////////////
+
     // Handles equivalent properties of MultiLayerOptics glass consists only of specular layers
     class CMultiPaneSpecular : public SingleLayerOptics::IScatteringLayer
     {
-    private:
+    protected:
         CMultiPaneSpecular(
-                std::vector<SingleLayerOptics::SpecularLayer> layers,
-                const FenestrationCommon::CSeries &t_SolarRadiation,
-                const FenestrationCommon::CSeries &t_DetectorData = FenestrationCommon::CSeries());
+          const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
+          const FenestrationCommon::CSeries & t_SolarRadiation,
+          const FenestrationCommon::CSeries & t_DetectorData = FenestrationCommon::CSeries());
 
-        CMultiPaneSpecular(std::vector<double> const & t_CommonWavelength,
-                           const FenestrationCommon::CSeries &t_SolarRadiation,
-                           SingleLayerOptics::SpecularLayer & t_Layer);
+        CMultiPaneSpecular(const std::vector<double> & t_CommonWavelength,
+                           const FenestrationCommon::CSeries & t_SolarRadiation,
+                           const std::shared_ptr<SingleLayerOptics::SpecularLayer> & t_Layer);
 
-        void addLayer(SingleLayerOptics::SpecularLayer & t_Layer);
+        void addLayer(const std::shared_ptr<SingleLayerOptics::SpecularLayer> & t_Layer);
 
     public:
-        static std::unique_ptr<CMultiPaneSpecular>
-          create(std::vector<SingleLayerOptics::SpecularLayer> layers,
-                 const FenestrationCommon::CSeries &t_SolarRadiation,
-                 const FenestrationCommon::CSeries &t_DetectorData = FenestrationCommon::CSeries());
+        static std::unique_ptr<CMultiPaneSpecular> create(
+          const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
+          const FenestrationCommon::CSeries & t_SolarRadiation,
+          const FenestrationCommon::CSeries & t_DetectorData = FenestrationCommon::CSeries());
 
         double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
                                  FenestrationCommon::Side t_Side,
@@ -110,7 +115,7 @@ namespace MultiLayerOptics
                                   FenestrationCommon::IntegrationType::Trapezoidal,
                                 double normalizationCoefficient = 1);
 
-    private:
+    protected:
         struct SeriesResults
         {
             FenestrationCommon::CSeries T;
@@ -125,7 +130,7 @@ namespace MultiLayerOptics
 
         // Contains all specular layers (cells) that are added to the model. This way program will
         // be able to recalculate equivalent properties for any angle
-        std::vector<SingleLayerOptics::SpecularLayer> m_Layers;
+        std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> m_Layers;
 
         std::vector<double> m_CommonWavelengths;
         FenestrationCommon::CSeries m_SolarRadiation;

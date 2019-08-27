@@ -8,6 +8,7 @@
 namespace SpectralAveraging
 {
     class CSpectralSampleData;
+    class PhotovoltaicSampleData;
 
     class CAngularSpectralProperties;
 
@@ -18,6 +19,10 @@ namespace SpectralAveraging
         Data
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    /// CSample
+    /////////////////////////////////////////////////////////////////////////////////////
+
     //! \brief Base class for spectral sample data.
     //!
     //! Its base setup are spectral properties over certain range. It handles detector and source
@@ -27,7 +32,7 @@ namespace SpectralAveraging
     {
     public:
         virtual ~CSample() = default;
-        explicit CSample(const FenestrationCommon::CSeries &t_SourceData,
+        explicit CSample(const FenestrationCommon::CSeries & t_SourceData,
                          FenestrationCommon::IntegrationType integrationType =
                            FenestrationCommon::IntegrationType::Trapezoidal,
                          double t_NormalizationCoefficient = 1);
@@ -41,10 +46,10 @@ namespace SpectralAveraging
         // Gets source data. In case wavelengths are referenced to detector or custom
         // wavelength set, it will perform interpolation according to desired settings.
         FenestrationCommon::CSeries & getSourceData();
-        void setSourceData(FenestrationCommon::CSeries &t_SourceData);
+        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
         // Setting detector spectral properties for the sample
-        void setDetectorData(const FenestrationCommon::CSeries &t_DetectorData);
+        void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData);
 
         FenestrationCommon::IntegrationType getIntegrator() const;
         double getNormalizationCoeff() const;
@@ -57,7 +62,7 @@ namespace SpectralAveraging
 
         // Spectral properties over the wavelength range
         FenestrationCommon::CSeries &
-        getEnergyProperties(FenestrationCommon::Property const t_Property,
+          getEnergyProperties(FenestrationCommon::Property const t_Property,
                               FenestrationCommon::Side const t_Side);
 
         // Defining the source of wavelengths to be used with the sample. Wavelengths can be used
@@ -101,14 +106,19 @@ namespace SpectralAveraging
         bool m_StateCalculated;
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    /// CSpectralSample
+    /////////////////////////////////////////////////////////////////////////////////////
+
     class CSpectralSample : public CSample
     {
     public:
-        CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData,
-                        const FenestrationCommon::CSeries &t_SourceData,
+        CSpectralSample(const std::shared_ptr<CSpectralSampleData> & t_SampleData,
+                        const FenestrationCommon::CSeries & t_SourceData,
                         FenestrationCommon::IntegrationType integrationType =
                           FenestrationCommon::IntegrationType::Trapezoidal,
                         double NormalizationCoefficient = 1);
+
         explicit CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData);
 
         // Before retrieving measured data from sample, function will do all necessary
@@ -135,6 +145,31 @@ namespace SpectralAveraging
           m_Property;
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    /// CPhotovoltaicSample
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    class CPhotovoltaicSample : public CSpectralSample
+    {
+    public:
+        CPhotovoltaicSample(const std::shared_ptr<PhotovoltaicSampleData> & t_PhotovoltaicData,
+                            const FenestrationCommon::CSeries & t_SourceData,
+                            FenestrationCommon::IntegrationType integrationType =
+                              FenestrationCommon::IntegrationType::Trapezoidal,
+                            double NormalizationCoefficient = 1);
+
+        FenestrationCommon::CSeries & pce(const FenestrationCommon::Side side);
+        FenestrationCommon::CSeries & w(const FenestrationCommon::Side side);
+
+    protected:
+        void calculateState() override;
+        PhotovoltaicSampleData * getSample() const;
+
+        double pceCalc(double wavelength, double eqe, double voc, double ff);
+
+        std::map<FenestrationCommon::Side, FenestrationCommon::CSeries> m_PCE;
+        std::map<FenestrationCommon::Side, FenestrationCommon::CSeries> m_W;
+    };
 
 }   // namespace SpectralAveraging
 

@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <vector>
+#include "Series.hpp"
+
 
 namespace FenestrationCommon
 {

@@ -232,7 +232,7 @@ namespace SingleLayerOptics
 
     CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                                          const std::shared_ptr<CMaterial> & t_SolarRange,
-                                         const CSeries &t_SolarRadiation) :
+                                         const CSeries & t_SolarRadiation) :
         CMaterial(0.3, 2.5),
         m_MaterialFullRange(t_SolarRange),
         m_MaterialPartialRange(t_PartialRange)
@@ -258,7 +258,7 @@ namespace SingleLayerOptics
         createNIRRange(m_MaterialPartialRange, *m_MaterialFullRange, nirRatio);
     }
 
-    void CMaterialDualBand::setSourceData(CSeries &t_SourceData)
+    void CMaterialDualBand::setSourceData(CSeries & t_SourceData)
     {
         m_MaterialFullRange->setSourceData(t_SourceData);
         m_MaterialPartialRange->setSourceData(t_SourceData);
@@ -270,8 +270,7 @@ namespace SingleLayerOptics
         createNIRRange(m_MaterialPartialRange, *m_MaterialFullRange, nirRatio.ratio());
     }
 
-    void CMaterialDualBand::setDetectorData(
-            FenestrationCommon::CSeries &t_DetectorData)
+    void CMaterialDualBand::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
     {
         m_MaterialFullRange->setDetectorData(t_DetectorData);
         m_MaterialPartialRange->setDetectorData(t_DetectorData);
@@ -408,13 +407,12 @@ namespace SingleLayerOptics
           std::make_shared<CAngularSpectralSample>(t_SpectralSample, t_Thickness, t_Type);
     }
 
-    void CMaterialSample::setSourceData(CSeries &t_SourceData)
+    void CMaterialSample::setSourceData(CSeries & t_SourceData)
     {
         m_AngularSample->setSourceData(t_SourceData);
     }
 
-    void CMaterialSample::setDetectorData(
-            FenestrationCommon::CSeries &t_DetectorData)
+    void CMaterialSample::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
     {
         m_AngularSample->setDetectorData(t_DetectorData);
     }
@@ -460,6 +458,39 @@ namespace SingleLayerOptics
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
+    ////   CMaterialPhotovoltaic
+    ////////////////////////////////////////////////////////////////////////////////////
+
+    CMaterialPhotovoltaic::CMaterialPhotovoltaic(
+      const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
+      double t_Thickness,
+      FenestrationCommon::MaterialType t_Type,
+      double minLambda,
+      double maxLambda) :
+        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, minLambda, maxLambda),
+        m_PVSample(t_SpectralSample)
+    {}
+
+    CMaterialPhotovoltaic::CMaterialPhotovoltaic(
+      const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
+      double t_Thickness,
+      FenestrationCommon::MaterialType t_Type,
+      FenestrationCommon::WavelengthRange t_Range) :
+        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, t_Range),
+        m_PVSample(t_SpectralSample)
+    {}
+
+    FenestrationCommon::CSeries CMaterialPhotovoltaic::PCE(FenestrationCommon::Side t_Side) const
+    {
+        return m_PVSample->pce(t_Side);
+    }
+
+    FenestrationCommon::CSeries CMaterialPhotovoltaic::W(FenestrationCommon::Side t_Side) const
+    {
+        return m_PVSample->w(t_Side);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialMeasured
     ////////////////////////////////////////////////////////////////////////////////////
 
@@ -490,7 +521,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void CMaterialMeasured::setSourceData(CSeries &t_SourceData)
+    void CMaterialMeasured::setSourceData(CSeries & t_SourceData)
     {
         m_AngularMeasurements->setSourceData(t_SourceData);
     }

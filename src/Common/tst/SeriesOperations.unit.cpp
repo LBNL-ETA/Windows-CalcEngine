@@ -70,9 +70,9 @@ TEST_F(TestSeriesOperations, TestSeriesAddition)
     }
 }
 
-TEST_F(TestSeriesOperations, TestSeriesSubraction)
+TEST_F(TestSeriesOperations, TestSeriesSubtraction)
 {
-    SCOPED_TRACE("Begin Test: Test subraction over the range of data.");
+    SCOPED_TRACE("Begin Test: Test subtraction over the range of data.");
 
     const auto ser1 = getSeries1();
     const auto ser2 = getSeries2();
@@ -80,6 +80,25 @@ TEST_F(TestSeriesOperations, TestSeriesSubraction)
     auto result = ser1 - ser2;
 
     std::vector<double> correctResults{2.1, -0.9, 1.6, 0.6, 1};
+
+    EXPECT_EQ(result.size(), correctResults.size());
+
+    for(size_t i = 0; i < result.size(); ++i)
+    {
+        EXPECT_NEAR(correctResults[i], result[i].value(), 1e-6);
+    }
+}
+
+TEST_F(TestSeriesOperations, TestSeriesSubractionWithConstant)
+{
+    SCOPED_TRACE("Begin Test: Test subtraction over the range of data.");
+
+    const double val{1.0};
+    const auto ser2 = getSeries2();
+
+    auto result = val - ser2;
+
+    std::vector<double> correctResults{-0.2, -5.1, -6.3, -8.5, -9.4};
 
     EXPECT_EQ(result.size(), correctResults.size());
 

@@ -20,7 +20,9 @@ namespace SpectralAveraging
 
     class CSpectralSample;
 
-    // enum class SampleProperty;
+    ////////////////////////////////////////////////////////////////////////////////
+    //  CAngularSpectralProperties
+    ////////////////////////////////////////////////////////////////////////////////
 
     // Angular properties for each wavelength of measured data
     class CAngularSpectralProperties
@@ -43,6 +45,10 @@ namespace SpectralAveraging
         std::shared_ptr<CSpectralSampleData> m_AngularData;
     };
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //  CSpectralSampleAngle
+    ////////////////////////////////////////////////////////////////////////////////
+
     // Data for spectral sample under certain angle
     class CSpectralSampleAngle
     {
@@ -53,10 +59,14 @@ namespace SpectralAveraging
         double angle() const;
         std::shared_ptr<CSpectralSample> sample() const;
 
-    private:
+    protected:
         std::shared_ptr<CSpectralSample> m_Sample;
         double m_Angle;
     };
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //  CAngularSpectralSample
+    ////////////////////////////////////////////////////////////////////////////////
 
     class CAngularSpectralSample
     {
@@ -83,11 +93,13 @@ namespace SpectralAveraging
                                                    double const t_Angle);
 
         std::vector<double> getBandWavelengths() const;
-        void setBandWavelengths(const std::vector<double> & wavelegths);
+        void setBandWavelengths(const std::vector<double> & wavelengths);
 
-    private:
+    protected:
         // Finds spectral sample or creates new one if sample is not already created
         std::shared_ptr<CSpectralSample> findSpectralSample(double const t_Angle);
+
+    private:
         std::vector<std::shared_ptr<CSpectralSampleAngle>> m_SpectralProperties;
         std::shared_ptr<CSpectralSample> m_SpectralSampleZero;   // spectral sample as zero degrees
         double m_Thickness;
