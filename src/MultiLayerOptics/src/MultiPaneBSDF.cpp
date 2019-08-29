@@ -14,13 +14,14 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    CMultiPaneBSDF::CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                                   const FenestrationCommon::CSeries & t_SolarRadiation,
-                                   const std::vector<double> & t_CommonWavelengths) :
-        m_Layer(t_CommonWavelengths, t_Layer),
+    CMultiPaneBSDF::CMultiPaneBSDF(
+      const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
+      const FenestrationCommon::CSeries & t_SolarRadiation,
+      const std::vector<double> & t_CommonWavelengths) :
+        m_Layer(t_CommonWavelengths, t_Layer[0]),
         m_SolarRadiationInit(t_SolarRadiation),
         m_Results(
-          std::make_shared<CBSDFIntegrator>(t_Layer->getDirections(BSDFDirection::Incoming))),
+          std::make_shared<CBSDFIntegrator>(t_Layer[0]->getDirections(BSDFDirection::Incoming))),
         m_Calculated(false),
         m_MinLambdaCalculated(0),
         m_MaxLambdaCalculated(0),
@@ -35,7 +36,7 @@ namespace MultiLayerOptics
         // This will initialize layer material data with given spectral distribution
         m_Layer.setSolarRadiation(m_SolarRadiationInit);
 
-        size_t directionsSize = t_Layer->getDirections(BSDFDirection::Incoming).size();
+        size_t directionsSize = t_Layer[0]->getDirections(BSDFDirection::Incoming).size();
         m_IncomingSolar.resize(directionsSize);
 
         // For blank incoming spectra, defaults needs to be filled into
@@ -44,11 +45,17 @@ namespace MultiLayerOptics
         {
             m_IncomingSpectra->push_back(t_SolarRadiation);
         }
+
+        // First layer has already been added. Must skip it here
+        for (size_t j = 1u; j < t_Layer.size(); ++j) {
+            addLayer(t_Layer[j]);
+        }
     }
 
-    CMultiPaneBSDF::CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                                   const FenestrationCommon::CSeries & t_SolarRadiation) :
-        CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_Layer->getBandWavelengths())
+    CMultiPaneBSDF::CMultiPaneBSDF(
+      const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
+      const FenestrationCommon::CSeries & t_SolarRadiation) :
+        CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_Layer[0]->getBandWavelengths())
     {}
 
     SquareMatrix CMultiPaneBSDF::getMatrix(const double minLambda,
@@ -97,8 +104,7 @@ namespace MultiLayerOptics
                 // using
                 aSpectra = aSpectra.interpolate(m_Layer.getCommonWavelengths());
 
-                CSeries iTotalSolar =
-                  *aSpectra.integrate(m_Integrator, m_NormalizationCoefficient);
+                CSeries iTotalSolar = *aSpectra.integrate(m_Integrator, m_NormalizationCoefficient);
                 m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
             }
 
@@ -162,10 +168,10 @@ namespace MultiLayerOptics
         }
     }
 
-    std::vector< double > & CMultiPaneBSDF::Abs( const double minLambda,
-												 const double maxLambda,
-												 const Side t_Side,
-												 const size_t Index )
+    std::vector<double> & CMultiPaneBSDF::Abs(const double minLambda,
+                                              const double maxLambda,
+                                              const Side t_Side,
+                                              const size_t Index)
     {
         calculate(minLambda, maxLambda);
         return m_Abs.at(t_Side)[Index - 1];
@@ -286,7 +292,16 @@ namespace MultiLayerOptics
     {
         // make_shared will not work from private function so it needs to be created this way
         return std::unique_ptr<CMultiPaneBSDF>(
-          new CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_CommonWavelengths));
+          new CMultiPaneBSDF({t_Layer}, t_SolarRadiation, t_CommonWavelengths));
+    }
+
+    std::unique_ptr<CMultiPaneBSDF> CMultiPaneBSDF::create(
+      const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
+      const FenestrationCommon::CSeries & t_SolarRadiation,
+      const std::vector<double> & t_CommonWavelengths)
+    {
+        return std::unique_ptr<CMultiPaneBSDF>(
+          new CMultiPaneBSDF(t_Layers, t_SolarRadiation, t_CommonWavelengths));
     }
 
     std::unique_ptr<CMultiPaneBSDF>
@@ -294,7 +309,13 @@ namespace MultiLayerOptics
                              const FenestrationCommon::CSeries & t_SolarRadiation)
     {
         // make_shared will not work from private function so it needs to be created this way
-        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF(t_Layer, t_SolarRadiation));
+        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF({t_Layer}, t_SolarRadiation));
+    }
+
+    std::unique_ptr<CMultiPaneBSDF>
+    CMultiPaneBSDF::create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> &t_Layers,
+                           const FenestrationCommon::CSeries &t_SolarRadiation) {
+        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF(t_Layers, t_SolarRadiation));
     }
 
 }   // namespace MultiLayerOptics
