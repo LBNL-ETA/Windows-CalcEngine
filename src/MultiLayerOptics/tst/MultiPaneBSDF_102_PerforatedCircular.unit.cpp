@@ -150,8 +150,7 @@ protected:
         const auto perforated = CBSDFLayerMaker::getCircularPerforatedLayer(
           aMaterialPerforated, aBSDF, x, y, thickness, radius);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
-        m_Layer->addLayer(perforated);
+        m_Layer = CMultiPaneBSDF::create({Layer_102, perforated}, loadSolarRadiationFile());
     }
 
 public:
