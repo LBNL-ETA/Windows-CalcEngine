@@ -159,8 +159,7 @@ protected:
                                             numOfSlatSegments,
                                             DistributionMethod::DirectionalDiffuse);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
-        m_Layer->addLayer(Layer_Venetian);
+        m_Layer = CMultiPaneBSDF::create({Layer_102, Layer_Venetian}, loadSolarRadiationFile());
     }
 
 public:

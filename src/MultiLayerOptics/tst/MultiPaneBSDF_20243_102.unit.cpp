@@ -369,8 +369,7 @@ protected:
 
         const auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_20243, loadSolarRadiationFile(), commonWavelengths);
-        m_Layer->addLayer(Layer_102);
+        m_Layer = CMultiPaneBSDF::create({Layer_20243, Layer_102}, loadSolarRadiationFile(), commonWavelengths);
     }
 
 public:
