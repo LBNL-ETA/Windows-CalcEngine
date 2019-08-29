@@ -147,8 +147,7 @@ protected:
         // Perforated layer is created here
         auto LayerWoven = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
-        m_Layer->addLayer(LayerWoven);
+        m_Layer = CMultiPaneBSDF::create({Layer_102, LayerWoven}, loadSolarRadiationFile());
     }
 
 public:

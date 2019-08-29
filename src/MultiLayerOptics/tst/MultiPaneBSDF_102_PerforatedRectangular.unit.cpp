@@ -151,8 +151,7 @@ protected:
         auto Layer_Perforated = CBSDFLayerMaker::getRectangularPerforatedLayer(
           aMaterialPerforated, aBSDF, x, y, thickness, xHole, yHole);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
-        m_Layer->addLayer(Layer_Perforated);
+        m_Layer = CMultiPaneBSDF::create({Layer_102, Layer_Perforated}, loadSolarRadiationFile());
     }
 
 public:
