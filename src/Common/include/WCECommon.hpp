@@ -19,5 +19,6 @@
 #include "../src/Polynom.hpp"
 #include "../src/mmap.hpp"
 #include "../src/wceunique.hpp"
+#include "../src/WavelengthSpectrum.hpp"
 
 #endif

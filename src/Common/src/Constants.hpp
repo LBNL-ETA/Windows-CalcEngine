@@ -1,5 +1,4 @@
-#ifndef CONSTANTSDATA_H
-#define CONSTANTSDATA_H
+#pragma once
 
 #include <cmath>
 
@@ -17,5 +16,3 @@ namespace ConstantsData {
 	static const double floatErrorTolerance = 1e-12;
 	static const double ELECTRON_CHARGE = 1.502e-19;
 }
-
-#endif
