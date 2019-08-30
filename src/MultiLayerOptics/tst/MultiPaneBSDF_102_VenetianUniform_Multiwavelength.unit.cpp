@@ -220,8 +220,7 @@ protected:
 
         auto commonWavelengths = aVenetian->getBandWavelengths();
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile(), commonWavelengths);
-        m_Layer->addLayer(aVenetian);
+        m_Layer = CMultiPaneBSDF::create({Layer_102, aVenetian}, loadSolarRadiationFile(), commonWavelengths);
     }
 
 public:
