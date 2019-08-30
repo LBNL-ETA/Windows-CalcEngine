@@ -143,8 +143,7 @@ protected:
 
         auto diffuseLayer = CBSDFLayerMaker::getPerfectlyDiffuseLayer(aMaterial, aBSDF);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
-        m_Layer->addLayer(diffuseLayer);
+        m_Layer = CMultiPaneBSDF::create({Layer_102, diffuseLayer}, loadSolarRadiationFile());
     }
 
 public:

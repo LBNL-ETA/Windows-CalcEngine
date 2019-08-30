@@ -37,8 +37,17 @@ namespace MultiLayerOptics
                  const std::vector<double> & t_CommonWavelengths);
 
         static std::unique_ptr<CMultiPaneBSDF>
+          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
+                 const FenestrationCommon::CSeries & t_SolarRadiation,
+                 const std::vector<double> & t_CommonWavelengths);
+
+        static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                  const FenestrationCommon::CSeries & t_SolarRadiation);
+
+        static std::unique_ptr<CMultiPaneBSDF>
+        create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
+               const FenestrationCommon::CSeries & t_SolarRadiation);
 
         void setIntegrationType(FenestrationCommon::IntegrationType t_type,
                                 double normalizationCoefficient);
@@ -64,9 +73,10 @@ namespace MultiLayerOptics
                       size_t Index);
 
         // std::vector of layer by layer absorptances for each incoming direction
-		std::vector< double > &
-          Abs( const double minLambda, const double maxLambda,
-			   const FenestrationCommon::Side t_Side, const size_t Index );
+        std::vector<double> & Abs(const double minLambda,
+                                  const double maxLambda,
+                                  const FenestrationCommon::Side t_Side,
+                                  const size_t Index);
 
         // Hemispherical results for every direction
         std::vector<double> DirHem(double minLambda,
@@ -126,11 +136,11 @@ namespace MultiLayerOptics
                          double t_Phi);
 
     private:
-        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
                        const FenestrationCommon::CSeries & t_SolarRadiation,
                        const std::vector<double> & t_CommonWavelengths);
 
-        CMultiPaneBSDF(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
+        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
                        const FenestrationCommon::CSeries & t_SolarRadiation);
 
         void calculate(double minLambda, double maxLambda);
