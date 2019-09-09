@@ -9,6 +9,7 @@ namespace SingleLayerOptics
     {
     public:
         virtual ~BaseLayer() = default;
+        virtual void Flipped(bool flipped);
     };
 
     class SpecularLayer : public BaseLayer
@@ -36,7 +37,7 @@ namespace SingleLayerOptics
         double getMinLambda() const;
         double getMaxLambda() const;
 
-        void Flipped(bool flipped);
+        void Flipped(bool flipped) override;
 
         explicit SpecularLayer(const CSpecularCell & m_Cell);
 
