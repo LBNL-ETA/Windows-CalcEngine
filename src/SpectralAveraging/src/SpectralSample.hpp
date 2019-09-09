@@ -134,6 +134,8 @@ namespace SpectralAveraging
 
         void cutExtraData(double minLambda, double maxLambda);
 
+        void Flipped(bool flipped);
+
     protected:
         void calculateProperties() override;
         void calculateState() override;

@@ -324,6 +324,11 @@ namespace SpectralAveraging
         m_SampleData->cutExtraData(minLambda, maxLambda);
     }
 
+    void CSpectralSample::Flipped(bool flipped)
+    {
+        m_SampleData->Filpped(flipped);
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////
     /// CPhotovoltaicSample
     /////////////////////////////////////////////////////////////////////////////////////
@@ -339,7 +344,8 @@ namespace SpectralAveraging
         m_W{{Side::Front, CSeries()}, {Side::Back, CSeries()}}
     {}
 
-    void CPhotovoltaicSample::calculateState(){
+    void CPhotovoltaicSample::calculateState()
+    {
         CSpectralSample::calculateProperties();
         for(const auto & side : EnumSide())
         {
@@ -381,7 +387,8 @@ namespace SpectralAveraging
         return m_PCE.at(side);
     }
 
-    FenestrationCommon::CSeries &CPhotovoltaicSample::w(const FenestrationCommon::Side side) {
+    FenestrationCommon::CSeries & CPhotovoltaicSample::w(const FenestrationCommon::Side side)
+    {
         calculateState();
         return m_W.at(side);
     }

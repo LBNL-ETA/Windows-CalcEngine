@@ -71,33 +71,35 @@ namespace SpectralAveraging
     class CAngularSpectralSample
     {
     public:
-        CAngularSpectralSample(std::shared_ptr<CSpectralSample> const & t_SpectralSample,
-                               double const t_Thickness,
-                               FenestrationCommon::MaterialType const t_Type);
+        CAngularSpectralSample(const std::shared_ptr<CSpectralSample> & t_SpectralSample,
+                               double t_Thickness,
+                               FenestrationCommon::MaterialType t_Type);
 
-        void setSourceData(FenestrationCommon::CSeries &t_SourceData);
-        void setDetectorData(FenestrationCommon::CSeries &t_DetectorData);
+        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        void setDetectorData(FenestrationCommon::CSeries & t_DetectorData);
 
         // Get averaged property over the wavelength
-        double getProperty(double const minLambda,
-                           double const maxLambda,
-                           FenestrationCommon::Property const t_Property,
-                           FenestrationCommon::Side const t_Side,
-                           double const t_Angle);
+        double getProperty(double minLambda,
+                           double maxLambda,
+                           FenestrationCommon::Property t_Property,
+                           FenestrationCommon::Side t_Side,
+                           double t_Angle);
 
         // Get property at each wavelength
-        std::vector<double> getWavelengthsProperty(double const minLambda,
-                                                   double const maxLambda,
-                                                   FenestrationCommon::Property const t_Property,
-                                                   FenestrationCommon::Side const t_Side,
-                                                   double const t_Angle);
+        std::vector<double> getWavelengthsProperty(double minLambda,
+                                                   double maxLambda,
+                                                   FenestrationCommon::Property t_Property,
+                                                   FenestrationCommon::Side t_Side,
+                                                   double t_Angle);
 
         std::vector<double> getBandWavelengths() const;
         void setBandWavelengths(const std::vector<double> & wavelengths);
 
+        void Flipped(bool flipped);
+
     protected:
         // Finds spectral sample or creates new one if sample is not already created
-        std::shared_ptr<CSpectralSample> findSpectralSample(double const t_Angle);
+        std::shared_ptr<CSpectralSample> findSpectralSample(double t_Angle);
 
     private:
         std::vector<std::shared_ptr<CSpectralSampleAngle>> m_SpectralProperties;
