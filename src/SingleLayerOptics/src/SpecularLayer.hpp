@@ -36,7 +36,8 @@ namespace SingleLayerOptics
         double getMinLambda() const;
         double getMaxLambda() const;
 
-    public:
+        void Flipped(bool flipped);
+
         explicit SpecularLayer(const CSpecularCell & m_Cell);
 
     protected:

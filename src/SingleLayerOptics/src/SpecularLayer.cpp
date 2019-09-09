@@ -5,7 +5,8 @@ namespace SingleLayerOptics
     SpecularLayer::SpecularLayer(const CSpecularCell & m_Cell) : m_Cell(m_Cell)
     {}
 
-    std::shared_ptr<SpecularLayer> SpecularLayer::createLayer(const std::shared_ptr<CMaterial> & t_Material)
+    std::shared_ptr<SpecularLayer>
+      SpecularLayer::createLayer(const std::shared_ptr<CMaterial> & t_Material)
     {
         auto aCell = CSpecularCell(t_Material);
         return std::make_shared<SpecularLayer>(aCell);
@@ -40,7 +41,7 @@ namespace SingleLayerOptics
         return m_Cell.getBandWavelengths();
     }
 
-    void SpecularLayer::setSourceData(FenestrationCommon::CSeries &t_SourceData)
+    void SpecularLayer::setSourceData(FenestrationCommon::CSeries & t_SourceData)
     {
         m_Cell.setSourceData(t_SourceData);
     }
@@ -54,5 +55,10 @@ namespace SingleLayerOptics
     {
         auto lastIndex = getBandWavelengths().size();
         return getBandWavelengths()[lastIndex - 1];
+    }
+
+    void SpecularLayer::Flipped(bool flipped)
+    {
+        m_Cell.Flipped(flipped);
     }
 }   // namespace SingleLayerOptics

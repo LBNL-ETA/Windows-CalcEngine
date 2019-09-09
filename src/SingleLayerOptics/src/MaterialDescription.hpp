@@ -91,6 +91,8 @@ namespace SingleLayerOptics
         double getMinLambda() const;
         double getMaxLambda() const;
 
+        virtual void Flipped(bool flipped);
+
     protected:
         double m_MinLambda;
         double m_MaxLambda;
@@ -234,6 +236,8 @@ namespace SingleLayerOptics
                                               FenestrationCommon::Side t_Side) const override;
 
         void setBandWavelengths(const std::vector<double> & wavelengths) override;
+
+        void Flipped(bool flipped) override;
 
     protected:
         std::vector<double> calculateBandWavelengths() override;

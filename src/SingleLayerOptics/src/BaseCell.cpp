@@ -93,4 +93,9 @@ namespace SingleLayerOptics
         return m_Material->getMaxLambda();
     }
 
+    void CBaseCell::Flipped(bool flipped)
+    {
+        m_Material->Flipped(flipped);
+    }
+
 }   // namespace SingleLayerOptics

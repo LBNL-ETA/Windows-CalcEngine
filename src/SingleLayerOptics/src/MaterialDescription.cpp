@@ -168,6 +168,11 @@ namespace SingleLayerOptics
         return m_MaxLambda;
     }
 
+    void CMaterial::Flipped(bool)
+    {
+        // Does nothing so far. Needs to be virtual once shadings are resolved.
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
@@ -455,6 +460,10 @@ namespace SingleLayerOptics
         CMaterial::setBandWavelengths(wavelengths);
         m_AngularSample->setBandWavelengths(m_Wavelengths);
         m_WavelengthsCalculated = true;
+    }
+
+    void CMaterialSample::Flipped(bool flipped) {
+        m_AngularSample->Flipped(flipped);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
