@@ -27,6 +27,8 @@ namespace Tarcog
             void addLayer(const std::shared_ptr<CBaseIGULayer> & t_Layer);
             void addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers);
 
+            void setAbsorptances(const std::vector<double> & absorptances);
+
             std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
             std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
             std::vector<std::shared_ptr<CBaseIGULayer>> getLayers() const;

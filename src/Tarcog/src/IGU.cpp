@@ -496,6 +496,19 @@ namespace Tarcog
             return m_Layers;
         }
 
+        void CIGU::setAbsorptances(const std::vector<double> &absorptances)
+        {
+            auto solidLayers = getSolidLayers();
+            if(solidLayers.size() != absorptances.size())
+            {
+                throw std::runtime_error("Number of absorptances does not match number of solid layers.");
+            }
+            for(size_t i = 0; i < solidLayers.size(); ++i)
+            {
+                solidLayers[i]->setSolarAbsorptance(absorptances[i]);
+            }
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog
