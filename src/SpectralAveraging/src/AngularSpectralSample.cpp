@@ -187,6 +187,15 @@ namespace SpectralAveraging
         m_SpectralSampleZero->setWavelengths(WavelengthSet::Custom, wavelegths);
     }
 
+    void CAngularSpectralSample::Flipped(bool flipped)
+    {
+        m_SpectralSampleZero->Flipped(flipped);
+        for(auto & val: m_SpectralProperties)
+        {
+            val->sample()->Flipped(flipped);
+        }
+    }
+
     std::shared_ptr<CSpectralSample>
       CAngularSpectralSample::findSpectralSample(double const t_Angle)
     {
