@@ -58,7 +58,7 @@ namespace SingleLayerOptics {
 		double translateY = 0;
 
 		if ( radius > ( m_SlatWidth / 2 ) ) { // set properties in polar coordinate system
-			using ConstantsData::PI;
+			using ConstantsData::WCE_PI;
 
 			double theta = 2 * std::asin( m_SlatWidth / ( 2 * radius ) );
 			double theta1 = 0;
@@ -66,12 +66,12 @@ namespace SingleLayerOptics {
 			double alpha = radians( m_SlatTiltAngle );
 
 			if ( m_CurvatureRadius > 0 ) {
-				theta1 = degrees( PI / 2 + alpha - theta / 2 );
-				theta2 = degrees( PI / 2 + alpha + theta / 2 );
+				theta1 = degrees( WCE_PI / 2 + alpha - theta / 2 );
+				theta2 = degrees( WCE_PI / 2 + alpha + theta / 2 );
 			}
 			else {
-				theta1 = degrees( -PI / 2 + alpha + theta / 2 );
-				theta2 = degrees( -PI / 2 + alpha - theta / 2 );
+				theta1 = degrees( -WCE_PI / 2 + alpha + theta / 2 );
+				theta2 = degrees( -WCE_PI / 2 + alpha - theta / 2 );
 			}
 
 			double dTheta = ( theta2 - theta1 ) / m_NumOfSlatSegments;

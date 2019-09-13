@@ -130,7 +130,7 @@ namespace SingleLayerOptics
 
     double CBSDFIntegrator::integrate(SquareMatrix const & t_Matrix) const
     {
-        using ConstantsData::PI;
+        using ConstantsData::WCE_PI;
         double sum = 0;
         for(size_t i = 0; i < m_DimMatrices; ++i)
         {
@@ -139,7 +139,7 @@ namespace SingleLayerOptics
                 sum += t_Matrix(i, j) * m_Directions[i].lambda() * m_Directions[j].lambda();
             }
         }
-        return sum / PI;
+        return sum / WCE_PI;
     }
 
     void CBSDFIntegrator::calcDiffuseDiffuse()

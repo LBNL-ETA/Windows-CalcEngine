@@ -71,7 +71,7 @@ namespace SpectralAveraging
     void CAngularPropertiesUncoated::checkStateProperties(double const t_Angle,
                                                           double const t_Wavelength)
     {
-        using ConstantsData::PI;
+        using ConstantsData::WCE_PI;
 
         CAngularProperties::checkStateProperties(t_Angle, t_Wavelength);
 
@@ -85,9 +85,9 @@ namespace SpectralAveraging
 
             if(m_Transmittance0 > 0)
             {
-                auto k = -t_Wavelength / (4 * PI * m_Thickness)
+                auto k = -t_Wavelength / (4 * WCE_PI * m_Thickness)
                          * std::log((m_Reflectance0 - m_Rho0) / (m_Transmittance0 * m_Rho0));
-                auto alpha = 2 * PI * k / t_Wavelength;
+                auto alpha = 2 * WCE_PI * k / t_Wavelength;
                 a = std::exp(-2 * alpha * m_Thickness / aCosPhiPrim);
             }
 

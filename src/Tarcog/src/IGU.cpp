@@ -430,9 +430,9 @@ namespace Tarcog
 
         double CIGU::Ldmean() const
         {
-            using ConstantsData::PI;
+            using ConstantsData::WCE_PI;
 
-            auto coeff = 16 / (pow(PI, 6));
+            auto coeff = 16 / (pow(WCE_PI, 6));
             auto totalSum = 0.0;
             for(auto m = 1; m <= 5; m += 2)
             {
@@ -440,7 +440,7 @@ namespace Tarcog
                 {
                     auto nomin = 4.0;
                     auto denom =
-                      m * m * n * n * PI * PI * pow(pow(m / m_Width, 2) + pow(n / m_Height, 2), 2);
+                      m * m * n * n * WCE_PI * WCE_PI * pow(pow(m / m_Width, 2) + pow(n / m_Height, 2), 2);
                     totalSum += nomin / denom;
                 }
             }
@@ -449,15 +449,15 @@ namespace Tarcog
 
         double CIGU::Ldmax() const
         {
-            using ConstantsData::PI;
+            using ConstantsData::WCE_PI;
 
-            auto coeff = 16 / (pow(PI, 6));
+            auto coeff = 16 / (pow(WCE_PI, 6));
             auto totalSum = 0.0;
             for(auto m = 1; m <= 5; m += 2)
             {
                 for(auto n = 1; n <= 5; n += 2)
                 {
-                    auto nomin = sin(m * PI / 2) * sin(n * PI / 2);
+                    auto nomin = sin(m * WCE_PI / 2) * sin(n * WCE_PI / 2);
                     auto denom = m * n * pow(pow(m / m_Width, 2) + pow(n / m_Height, 2), 2);
                     totalSum += nomin / denom;
                 }
