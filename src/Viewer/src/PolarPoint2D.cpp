@@ -24,7 +24,7 @@ namespace Viewer {
 	}
 
 	void CPolarPoint2D::setCartesian( double const x, double const y ) {
-		using ConstantsData::PI;
+		using ConstantsData::WCE_PI;
 
 		m_x = x;
 		m_y = y;
@@ -33,10 +33,10 @@ namespace Viewer {
 			m_Theta = std::atan( y / x );
 		}
 		else if ( x == 0 && y > 0 ) {
-			m_Theta = PI / 2;
+			m_Theta = WCE_PI / 2;
 		}
 		else if ( x == 0 && y < 0 ) {
-			m_Theta = 3 * PI / 2;
+			m_Theta = 3 * WCE_PI / 2;
 		}
 		else {
 			m_Theta = 0;

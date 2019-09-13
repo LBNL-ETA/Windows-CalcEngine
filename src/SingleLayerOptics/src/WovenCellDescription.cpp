@@ -47,16 +47,16 @@ namespace SingleLayerOptics {
 	}
 
 	double CWovenCellDescription::Tx( const CBeamDirection& t_Direction ) {
-		using ConstantsData::PI;
+		using ConstantsData::WCE_PI;
 
 		double aTx = 0;
 		double cutOffAngle = this->cutOffAngle();
 		double aAzimuth = t_Direction.Azimuth();
-		if ( aAzimuth > PI / 2 ) {
-			aAzimuth = PI - aAzimuth;
+		if ( aAzimuth > WCE_PI / 2 ) {
+			aAzimuth = WCE_PI - aAzimuth;
 		}
-		if ( aAzimuth < -PI / 2 ) {
-			aAzimuth = -PI - aAzimuth;
+		if ( aAzimuth < -WCE_PI / 2 ) {
+			aAzimuth = -WCE_PI - aAzimuth;
 		}
 		aAzimuth = std::abs( aAzimuth );
 		if ( aAzimuth < cutOffAngle ) {

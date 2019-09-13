@@ -34,7 +34,7 @@ namespace SingleLayerOptics {
 	}
 
 	double CCircularCellDescription::visibleAhole( const CBeamDirection& t_Direction ) const {
-		using ConstantsData::PI;
+		using ConstantsData::WCE_PI;
 		double aHole( 0 );
 
 		double angleLimit = std::atan( 2 * m_Radius / m_Thickness );
@@ -45,8 +45,8 @@ namespace SingleLayerOptics {
 		}
 		else {
 			double A1( 0 ), A2( 0 );
-			A1 = PI / 2 * m_Radius * m_Radius * std::cos( aTheta );
-			A2 = PI / 2 * ( m_Radius * m_Radius * std::cos( aTheta ) - m_Radius *
+			A1 = WCE_PI / 2 * m_Radius * m_Radius * std::cos( aTheta );
+			A2 = WCE_PI / 2 * ( m_Radius * m_Radius * std::cos( aTheta ) - m_Radius *
 				( m_Thickness ) * std::sin( aTheta ) );
 
 			aHole = A1 + A2;

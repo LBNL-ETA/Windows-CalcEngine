@@ -57,7 +57,7 @@ namespace Tarcog
                                                double const t_Ra,
                                                double const t_Asp)
         {
-            using ConstantsData::PI;
+            using ConstantsData::WCE_PI;
 
             std::shared_ptr<CNusseltNumber60> nusselt60 = std::make_shared<CNusseltNumber60>();
             const double Nu60 = nusselt60->calculate(t_Tilt, t_Ra, t_Asp);
@@ -65,7 +65,7 @@ namespace Tarcog
             const double Nu90 = nusselt90->calculate(t_Tilt, t_Ra, t_Asp);
 
             // linear interpolation between 60 and 90 degrees
-            const double gnu = ((Nu90 - Nu60) / (90.0 - 60.0)) * (t_Tilt * 180 / PI - 60.0) + Nu60;
+            const double gnu = ((Nu90 - Nu60) / (90.0 - 60.0)) * (t_Tilt * 180 / WCE_PI - 60.0) + Nu60;
 
             return gnu;
         }
@@ -106,9 +106,9 @@ namespace Tarcog
                                          double const t_Ra,
                                          double const t_Asp) const
         {
-            using ConstantsData::PI;
+            using ConstantsData::WCE_PI;
 
-            const double tiltRadians = t_Tilt * PI / 180;
+            const double tiltRadians = t_Tilt * WCE_PI / 180;
             std::unique_ptr<CNusseltNumberStrategy> nusseltNumber;
 
             if(t_Tilt >= 0 && t_Tilt < 60)

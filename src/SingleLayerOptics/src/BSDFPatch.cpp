@@ -83,11 +83,11 @@ namespace SingleLayerOptics
 
     void CBSDFPatch::calculateLambda()
     {
-        using ConstantsData::PI;
+        using ConstantsData::WCE_PI;
 
-        const double thetaLow = m_Theta->low() * PI / 180;
-        const double thetaHight = m_Theta->high() * PI / 180;
-        const double deltaPhi = m_Phi.delta() * PI / 180;
+        const double thetaLow = m_Theta->low() * WCE_PI / 180;
+        const double thetaHight = m_Theta->high() * WCE_PI / 180;
+        const double deltaPhi = m_Phi.delta() * WCE_PI / 180;
         m_Lambda =
           0.5 * deltaPhi
           * (std::sin(thetaHight) * std::sin(thetaHight) - std::sin(thetaLow) * std::sin(thetaLow));

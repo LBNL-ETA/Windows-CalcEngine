@@ -96,9 +96,9 @@ namespace Tarcog
         double CIGUVentilatedGapLayer::getAirflowReferencePoint(double const t_GapTemperature)
         {
             using ConstantsData::GRAVITYCONSTANT;
-            using ConstantsData::PI;
+            using ConstantsData::WCE_PI;
 
-            const auto tiltAngle = PI / 180 * (m_Tilt - 90);
+            const auto tiltAngle = WCE_PI / 180 * (m_Tilt - 90);
             const auto gapTemperature = layerTemperature();
             const auto aProperties = m_ReferenceGas.getGasProperties();
             const auto temperatureMultiplier =

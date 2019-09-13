@@ -41,10 +41,10 @@ namespace SingleLayerOptics
 
         for(size_t j = 0; j < size; ++j)
         {
-            using ConstantsData::PI;
+            using ConstantsData::WCE_PI;
 
-            Tau(j, t_DirectionIndex) += aTau / PI;
-            Rho(j, t_DirectionIndex) += Ref / PI;
+            Tau(j, t_DirectionIndex) += aTau / WCE_PI;
+            Rho(j, t_DirectionIndex) += Ref / WCE_PI;
         }
     }
 
@@ -63,15 +63,15 @@ namespace SingleLayerOptics
             size_t numWV = aTau.size();
             for(size_t j = 0; j < numWV; ++j)
             {
-                using ConstantsData::PI;
+                using ConstantsData::WCE_PI;
 
                 std::shared_ptr<CBSDFIntegrator> aResults = nullptr;
                 aResults = (*m_WVResults)[j];
                 assert(aResults != nullptr);
                 auto & tau = aResults->getMatrix(aSide, PropertySimple::T);
                 auto & rho = aResults->getMatrix(aSide, PropertySimple::R);
-                tau(i,t_DirectionIndex) += aTau[j] / PI;
-                rho(i,t_DirectionIndex) += Ref[j] / PI;
+                tau(i,t_DirectionIndex) += aTau[j] / WCE_PI;
+                rho(i,t_DirectionIndex) += Ref[j] / WCE_PI;
             }
         }
     }
