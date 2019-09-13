@@ -150,7 +150,7 @@ namespace MultiLayerOptics
 
     void CMultiPaneBSDF::calcHemisphericalAbs(const Side t_Side)
     {
-        using ConstantsData::PI;
+        using ConstantsData::WCE_PI;
         const size_t numOfLayers = m_Abs[t_Side].size();
         std::vector<double> aLambdas = m_Results->lambdaVector();
         for(size_t layNum = 0; layNum < numOfLayers; ++layNum)
@@ -163,7 +163,7 @@ namespace MultiLayerOptics
                            aAbs.begin(),
                            mult.begin(),
                            std::multiplies<double>());
-            double sum = std::accumulate(mult.begin(), mult.end(), 0.0) / PI;
+            double sum = std::accumulate(mult.begin(), mult.end(), 0.0) / WCE_PI;
             m_AbsHem[t_Side]->push_back(sum);
         }
     }

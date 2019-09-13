@@ -37,7 +37,7 @@ std::vector<std::pair<double, double>>
     for(auto & val : t_data)
     {
         double lambda = val * 1e3;   // to convert it to nanometers
-        double C1 = 8e-9 * ConstantsData::PI * h * ev * ConstantsData::SPEEDOFLIGHT
+        double C1 = 8e-9 * ConstantsData::WCE_PI * h * ev * ConstantsData::SPEEDOFLIGHT
                     / std::pow(lambda * 1e-9, 5);
         double q1 = 1 / std::expm1(hc / kT / lambda);
         double energy = C1 * q1;

@@ -113,12 +113,12 @@ namespace Tarcog
             else
             {
                 using ConstantsData::GRAVITYCONSTANT;
-                using ConstantsData::PI;
+                using ConstantsData::WCE_PI;
 
                 assert(m_Surface.at(Side::Front) != nullptr);
                 assert(m_Surface.at(Side::Back) != nullptr);
 
-                auto tiltRadians = m_Tilt * PI / 180;
+                auto tiltRadians = m_Tilt * WCE_PI / 180;
                 auto tMean =
                   getGasTemperature()
                   + 0.25 * (m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
