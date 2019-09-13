@@ -101,12 +101,29 @@ namespace FenestrationCommon
         return flipped ? oppositeSide(side) : side;
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    // WavelengthRange
+    //////////////////////////////////////////////////////////////////////////
+
     enum class WavelengthRange
     {
         Solar,
         Visible,
         IR
     };
+
+    class EnumWavelengthRange : public Enum<WavelengthRange>
+    {};
+
+    inline EnumWavelengthRange::Iterator begin(EnumWavelengthRange)
+    {
+        return EnumWavelengthRange::Iterator(static_cast<int>(WavelengthRange::Solar));
+    }
+
+    inline EnumWavelengthRange::Iterator end(EnumWavelengthRange)
+    {
+        return EnumWavelengthRange::Iterator(static_cast<int>(WavelengthRange::IR) + 1);
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // PropertySimple
