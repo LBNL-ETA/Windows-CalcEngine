@@ -91,11 +91,18 @@ namespace MultiLayerOptics
                                           FenestrationCommon::IntegrationType::Trapezoidal,
                                         double normalizationCoefficient = 1);
 
+        size_t size() const;
+
         double getAbsorptanceLayer(size_t index,
                                    FenestrationCommon::Side side,
                                    FenestrationCommon::ScatteringSimple scattering,
                                    double theta,
                                    double phi);
+
+        std::vector<double> getAbsorptanceLayers(FenestrationCommon::Side side,
+                                                 FenestrationCommon::ScatteringSimple scattering,
+                                                 double theta,
+                                                 double phi);
 
         // Absorptances of each layer based on angle of incidence
         double Abs(size_t Index,
@@ -105,6 +112,13 @@ namespace MultiLayerOptics
                    FenestrationCommon::IntegrationType t_IntegrationType =
                      FenestrationCommon::IntegrationType::Trapezoidal,
                    double normalizationCoefficient = 1);
+
+        std::vector<double> Absorptances(double t_Angle,
+                            double minLambda,
+                            double maxLambda,
+                            FenestrationCommon::IntegrationType t_IntegrationType =
+                            FenestrationCommon::IntegrationType::Trapezoidal,
+                            double normalizationCoefficient = 1);
 
         // Hemispherical absorptances of each layer. Integration is performed over t_Angles.
         double AbsHemispherical(size_t Index,

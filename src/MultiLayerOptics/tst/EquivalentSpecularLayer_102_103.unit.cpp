@@ -233,13 +233,17 @@ TEST_F(EquivalentSpecularLayer_102_103, TestAngle0)
       aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.116623, Rb, 1e-6);
 
+    const std::vector<double> Absorptance{ aLayer.getAbsorptanceLayers(Side::Front, ScatteringSimple::Direct, angle, 0)};
+
     const double Abs1 =
       aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.096057, Abs1, 1e-6);
+    EXPECT_NEAR(0.096057, Absorptance[0], 1e-6);
 
     const double Abs2 =
       aLayer.getAbsorptanceLayer(2, Side::Front, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.126891, Abs2, 1e-6);
+    EXPECT_NEAR(0.126891, Absorptance[1], 1e-6);
 
     const double Them =
       aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);

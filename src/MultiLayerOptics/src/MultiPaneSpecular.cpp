@@ -231,6 +231,20 @@ namespace MultiLayerOptics
         return result;
     }
 
+    std::vector<double> CMultiPaneSpecular::getAbsorptanceLayers(FenestrationCommon::Side side,
+                                             FenestrationCommon::ScatteringSimple scattering,
+                                             double theta,
+                                             double phi)
+    {
+        std::vector<double> res;
+        for(size_t i = 1u; i <= size(); ++i)
+        {
+            res.push_back(getAbsorptanceLayer(i, side, scattering, theta, phi));
+        }
+
+        return res;
+    }
+
     double CMultiPaneSpecular::Abs(size_t const Index,
                                    const double t_Angle,
                                    const double minLambda,
@@ -252,6 +266,18 @@ namespace MultiLayerOptics
         assert(totalSolar > 0);
 
         return totalProperty / totalSolar;
+    }
+
+    std::vector<double> CMultiPaneSpecular::Absorptances(double t_Angle, double minLambda, double maxLambda,
+                                            FenestrationCommon::IntegrationType t_IntegrationType,
+                                            double normalizationCoefficient) {
+        std::vector<double> res;
+        for(size_t i = 1u; i <= size(); ++i)
+        {
+            res.push_back(Abs(i, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient));
+        }
+
+        return res;
     }
 
     double CMultiPaneSpecular::AbsHemispherical(size_t const Index,
@@ -340,5 +366,9 @@ namespace MultiLayerOptics
         result.Rb = result.Rb.interpolate(m_CommonWavelengths);
 
         return result;
+    }
+
+    size_t CMultiPaneSpecular::size() const {
+        return m_Layers.size();
     }
 }   // namespace MultiLayerOptics
