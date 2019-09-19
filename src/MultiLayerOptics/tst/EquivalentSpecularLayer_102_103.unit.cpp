@@ -440,3 +440,19 @@ TEST_F(EquivalentSpecularLayer_102_103, TestAngleHemispherical19)
     double Abs2 = aLayer.AbsHemispherical(2, aAngles, minLambda, maxLambda);
     EXPECT_NEAR(0.127368, Abs2, 1e-6);
 }
+
+TEST_F(EquivalentSpecularLayer_102_103, TestHemispherical)
+{
+    auto aLayer = *getLayer();
+
+    const std::vector<double> absorptances{
+            aLayer.getAbsorptanceLayers(Side::Front, ScatteringSimple::Diffuse)};
+
+    double Abs1 = aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Diffuse);
+    EXPECT_NEAR(0.108915, Abs1, 1e-6);
+    EXPECT_NEAR(0.108915, absorptances[0], 1e-6);
+
+    double Abs2 = aLayer.getAbsorptanceLayer(2, Side::Front, ScatteringSimple::Diffuse);
+    EXPECT_NEAR(0.126861, Abs2, 1e-6);
+    EXPECT_NEAR(0.126861, absorptances[1], 1e-6);
+}
