@@ -228,13 +228,19 @@ namespace MultiLayerOptics
         {
             result = Abs(index, theta, getMinLambda(), getMaxLambda());
         }
+        else if(scattering == ScatteringSimple::Diffuse)
+        {
+            result = AbsHemispherical(
+              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, getMinLambda(), getMaxLambda());
+        }
         return result;
     }
 
-    std::vector<double> CMultiPaneSpecular::getAbsorptanceLayers(FenestrationCommon::Side side,
-                                             FenestrationCommon::ScatteringSimple scattering,
-                                             double theta,
-                                             double phi)
+    std::vector<double>
+      CMultiPaneSpecular::getAbsorptanceLayers(FenestrationCommon::Side side,
+                                               FenestrationCommon::ScatteringSimple scattering,
+                                               double theta,
+                                               double phi)
     {
         std::vector<double> res;
         for(size_t i = 1u; i <= size(); ++i)
@@ -268,13 +274,18 @@ namespace MultiLayerOptics
         return totalProperty / totalSolar;
     }
 
-    std::vector<double> CMultiPaneSpecular::Absorptances(double t_Angle, double minLambda, double maxLambda,
-                                            FenestrationCommon::IntegrationType t_IntegrationType,
-                                            double normalizationCoefficient) {
+    std::vector<double>
+      CMultiPaneSpecular::Absorptances(double t_Angle,
+                                       double minLambda,
+                                       double maxLambda,
+                                       FenestrationCommon::IntegrationType t_IntegrationType,
+                                       double normalizationCoefficient)
+    {
         std::vector<double> res;
         for(size_t i = 1u; i <= size(); ++i)
         {
-            res.push_back(Abs(i, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient));
+            res.push_back(
+              Abs(i, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient));
         }
 
         return res;
@@ -368,7 +379,9 @@ namespace MultiLayerOptics
         return result;
     }
 
-    size_t CMultiPaneSpecular::size() const {
+    size_t CMultiPaneSpecular::size() const
+    {
         return m_Layers.size();
     }
+
 }   // namespace MultiLayerOptics

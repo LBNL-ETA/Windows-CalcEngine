@@ -62,7 +62,7 @@ namespace SingleLayerOptics
         m_Cell.Flipped(flipped);
     }
 
-    void BaseLayer::Flipped(bool flipped)
+    void BaseLayer::Flipped(bool)
     {
         // Should be turned to virtual once shading device flipping is implemented.
     }

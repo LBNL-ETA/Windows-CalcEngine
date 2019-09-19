@@ -12,6 +12,7 @@
 namespace SingleLayerOptics
 {
     class CSpecularCell;
+
     class SpecularLayer;
 
 }   // namespace SingleLayerOptics
@@ -24,11 +25,16 @@ namespace MultiLayerOptics
         CEquivalentLayerSingleComponentMWAngle(CEquivalentLayerSingleComponentMW t_Layer,
                                                CAbsorptancesMultiPane t_Abs,
                                                double t_Angle);
+
         double angle() const;
+
         const CEquivalentLayerSingleComponentMW & layer() const;
+
         FenestrationCommon::CSeries getProperties(FenestrationCommon::Side t_Side,
                                                   FenestrationCommon::Property t_Property);
+
         FenestrationCommon::CSeries Abs(size_t Index);
+
         FenestrationCommon::CSeries AbsBySide(size_t Index, FenestrationCommon::Side side);
 
     private:
@@ -69,6 +75,7 @@ namespace MultiLayerOptics
                                  double t_Phi = 0) override;
 
         double getMinLambda() const override;
+
         double getMaxLambda() const override;
 
         std::vector<double> getWavelengths() const override;
@@ -96,13 +103,13 @@ namespace MultiLayerOptics
         double getAbsorptanceLayer(size_t index,
                                    FenestrationCommon::Side side,
                                    FenestrationCommon::ScatteringSimple scattering,
-                                   double theta,
-                                   double phi);
+                                   double theta = 0,
+                                   double phi = 0);
 
         std::vector<double> getAbsorptanceLayers(FenestrationCommon::Side side,
                                                  FenestrationCommon::ScatteringSimple scattering,
-                                                 double theta,
-                                                 double phi);
+                                                 double theta = 0,
+                                                 double phi = 0);
 
         // Absorptances of each layer based on angle of incidence
         double Abs(size_t Index,
@@ -114,11 +121,11 @@ namespace MultiLayerOptics
                    double normalizationCoefficient = 1);
 
         std::vector<double> Absorptances(double t_Angle,
-                            double minLambda,
-                            double maxLambda,
-                            FenestrationCommon::IntegrationType t_IntegrationType =
-                            FenestrationCommon::IntegrationType::Trapezoidal,
-                            double normalizationCoefficient = 1);
+                                         double minLambda,
+                                         double maxLambda,
+                                         FenestrationCommon::IntegrationType t_IntegrationType =
+                                           FenestrationCommon::IntegrationType::Trapezoidal,
+                                         double normalizationCoefficient = 1);
 
         // Hemispherical absorptances of each layer. Integration is performed over t_Angles.
         double AbsHemispherical(size_t Index,
@@ -136,9 +143,11 @@ namespace MultiLayerOptics
             FenestrationCommon::CSeries Rf;
             FenestrationCommon::CSeries Rb;
         };
+
         // Get correct angular object out of array and if object does not exists, then it just
         // creates new one and stores it into array
         CEquivalentLayerSingleComponentMWAngle getAngular(double t_Angle);
+
         // creates equivalent layer properties for certain angle
         CEquivalentLayerSingleComponentMWAngle createNewAngular(double t_Angle);
 
