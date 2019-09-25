@@ -42,6 +42,8 @@ namespace Tarcog
 
             std::vector<double> getSolidEffectiveLayerConductivities(const System t_System) const;
             std::vector<double> getGapEffectiveLayerConductivities(const System t_System) const;
+            double getEffectiveSystemConductivity(const System t_System) const;
+            double thickness(const System t_System) const;
 
             double getHeatFlow(System t_System, Environment t_Environment) const;
             double getUValue() const;
