@@ -241,20 +241,20 @@ namespace Tarcog
               ->getSolarRadiation();
         }
 
-        std::vector<double> CSingleSystem::getSolidLayerConductivities() const {
+        std::vector<double> CSingleSystem::getSolidEffectiveLayerConductivities() const {
             std::vector<double> results;
             for(const auto & layer : getSolidLayers())
             {
-                results.emplace_back(layer->getConductivity());
+                results.emplace_back(layer->getEffectiveThermalConductivity());
             }
             return results;
         }
 
-        std::vector<double> CSingleSystem::getGapLayerConductivities() const {
+        std::vector<double> CSingleSystem::getGapEffectiveLayerConductivities() const {
             std::vector<double> results;
             for(const auto & layer : getGapLayers())
             {
-                results.emplace_back(layer->getConductivity());
+                results.emplace_back(layer->getEffectiveThermalConductivity());
             }
             return results;
         }
