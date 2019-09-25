@@ -50,6 +50,8 @@ namespace Tarcog
             double getSHGC(double t_TotSol) const;
             size_t getNumberOfIterations(System t_System) const;
 
+            double relativeHeatGain(double Tsol) const;
+
         private:
             std::map<System, std::shared_ptr<CSingleSystem>> m_System;
         };
