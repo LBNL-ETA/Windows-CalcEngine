@@ -130,6 +130,12 @@ TEST_F(TestDoubleClearUValueRun, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
 
+    auto effectiveSystemConductivity{aSystem->getEffectiveSystemConductivity(aRun)};
+    EXPECT_NEAR(0.095937, effectiveSystemConductivity, 1e-6);
+
+    auto thickness{aSystem->thickness(aRun)};
+    EXPECT_NEAR(0.018796, thickness, 1e-6);
+
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
     EXPECT_EQ(20, int(numOfIter));
 
@@ -174,6 +180,12 @@ TEST_F(TestDoubleClearUValueRun, Test1)
     {
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
     }
+
+    effectiveSystemConductivity = aSystem->getEffectiveSystemConductivity(aRun);
+    EXPECT_NEAR(0.052988, effectiveSystemConductivity, 1e-6);
+
+    thickness = aSystem->thickness(aRun);
+    EXPECT_NEAR(0.018796, thickness, 1e-6);
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
     EXPECT_EQ(20, int(numOfIter));

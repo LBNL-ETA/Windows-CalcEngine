@@ -71,12 +71,25 @@ namespace Tarcog
             return m_System.at(t_System)->getNumberOfIterations();
         }
 
-        std::vector<double> CSystem::getSolidEffectiveLayerConductivities(const System t_System) const {
+        std::vector<double>
+          CSystem::getSolidEffectiveLayerConductivities(const System t_System) const
+        {
             return m_System.at(t_System)->getSolidEffectiveLayerConductivities();
         }
 
-        std::vector<double> CSystem::getGapEffectiveLayerConductivities(const System t_System) const {
+        std::vector<double> CSystem::getGapEffectiveLayerConductivities(const System t_System) const
+        {
             return m_System.at(t_System)->getGapEffectiveLayerConductivities();
+        }
+
+        double CSystem::getEffectiveSystemConductivity(const System t_System) const
+        {
+            return m_System.at(t_System)->EffectiveConductivity();
+        }
+
+        double CSystem::thickness(const System t_System) const
+        {
+            return m_System.at(t_System)->thickness();
         }
 
     }   // namespace ISO15099

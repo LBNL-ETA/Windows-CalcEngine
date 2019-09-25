@@ -58,6 +58,8 @@ namespace Tarcog
 			double solutionTolarance() const;
 			bool isToleranceAchieved() const;
 
+			double EffectiveConductivity() const;
+
 			// Set solution tolerance
 			void setTolerance( double t_Tolerance ) const;
 			// Set intial guess for solution.
@@ -67,6 +69,8 @@ namespace Tarcog
 			double getSolarRadiation() const;
 
 			void solve() const;
+
+			double thickness() const;
 
 		private:
 			CIGU m_IGU;
