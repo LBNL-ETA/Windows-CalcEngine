@@ -92,6 +92,11 @@ namespace Tarcog
             return m_System.at(t_System)->thickness();
         }
 
+        double CSystem::relativeHeatGain(const double Tsol) const
+        {
+            return getUValue() * 7.78 + getSHGC(Tsol) / 0.87 * 630.9;
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog
