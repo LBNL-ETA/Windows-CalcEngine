@@ -26,6 +26,8 @@ namespace Tarcog
 
             double getConductivity();
 
+            double getEffectiveThermalConductivity();
+
         protected:
             virtual double layerTemperature();
 

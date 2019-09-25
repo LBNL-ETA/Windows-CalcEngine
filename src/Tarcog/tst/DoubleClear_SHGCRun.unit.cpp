@@ -101,7 +101,7 @@ TEST_F(TestDoubleClearSHGCRun, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    auto SolidLayerConductivities = aSystem->getSolidLayerConductivities(aRun);
+    auto SolidLayerConductivities = aSystem->getSolidEffectiveLayerConductivities(aRun);
     std::vector<double> correctSolidConductivities{1, 1};
     EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
 
@@ -110,8 +110,8 @@ TEST_F(TestDoubleClearSHGCRun, Test1)
         EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
     }
 
-    auto GapLayerConductivities = aSystem->getGapLayerConductivities(aRun);
-    std::vector<double> correctGapConductivities{0.026339};
+    auto GapLayerConductivities = aSystem->getGapEffectiveLayerConductivities(aRun);
+    std::vector<double> correctGapConductivities{0.083913};
     EXPECT_EQ(GapLayerConductivities.size(), correctGapConductivities.size());
 
     for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
@@ -145,7 +145,7 @@ TEST_F(TestDoubleClearSHGCRun, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    SolidLayerConductivities = aSystem->getSolidLayerConductivities(aRun);
+    SolidLayerConductivities = aSystem->getSolidEffectiveLayerConductivities(aRun);
     correctSolidConductivities = {1, 1};
     EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
 
@@ -154,8 +154,8 @@ TEST_F(TestDoubleClearSHGCRun, Test1)
         EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
     }
 
-    GapLayerConductivities = aSystem->getGapLayerConductivities(aRun);
-    correctGapConductivities = {0.026722};
+    GapLayerConductivities = aSystem->getGapEffectiveLayerConductivities(aRun);
+    correctGapConductivities = {0.087241};
     EXPECT_EQ(GapLayerConductivities.size(), correctGapConductivities.size());
 
     for(auto i = 0u; i < GapLayerConductivities.size(); ++i)

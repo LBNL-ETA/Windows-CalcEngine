@@ -128,6 +128,10 @@ namespace Tarcog
         {
             return false;
         }
+
+        double CIGUSolidLayer::getRadiationFlow() {
+            return 0;
+        }
     }   // namespace ISO15099
 
 }   // namespace Tarcog

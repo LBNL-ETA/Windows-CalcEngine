@@ -40,8 +40,8 @@ namespace Tarcog
 
             std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers(System t_System) const;
 
-            std::vector<double> getSolidLayerConductivities(const System t_System) const;
-            std::vector<double> getGapLayerConductivities(const System t_System) const;
+            std::vector<double> getSolidEffectiveLayerConductivities(const System t_System) const;
+            std::vector<double> getGapEffectiveLayerConductivities(const System t_System) const;
 
             double getHeatFlow(System t_System, Environment t_Environment) const;
             double getUValue() const;
