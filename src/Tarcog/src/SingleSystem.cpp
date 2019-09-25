@@ -158,11 +158,12 @@ namespace Tarcog
 
         double CSingleSystem::getUValue() const
         {
-            const double interiorAir =
+            const double interiorAirTemperature =
               m_Environment.at(Environment::Indoor)->getAmbientTemperature();
-            const double outdoorAir =
+            const double outdoorAirTemperature =
               m_Environment.at(Environment::Outdoor)->getAmbientTemperature();
-            return getHeatFlow(Environment::Indoor) / (interiorAir - outdoorAir);
+            return getHeatFlow(Environment::Indoor)
+                   / (interiorAirTemperature - outdoorAirTemperature);
         }
 
         void CSingleSystem::setTolerance(double const t_Tolerance) const
@@ -241,7 +242,8 @@ namespace Tarcog
               ->getSolarRadiation();
         }
 
-        std::vector<double> CSingleSystem::getSolidEffectiveLayerConductivities() const {
+        std::vector<double> CSingleSystem::getSolidEffectiveLayerConductivities() const
+        {
             std::vector<double> results;
             for(const auto & layer : getSolidLayers())
             {
@@ -250,13 +252,35 @@ namespace Tarcog
             return results;
         }
 
-        std::vector<double> CSingleSystem::getGapEffectiveLayerConductivities() const {
+        std::vector<double> CSingleSystem::getGapEffectiveLayerConductivities() const
+        {
             std::vector<double> results;
             for(const auto & layer : getGapLayers())
             {
                 results.emplace_back(layer->getEffectiveThermalConductivity());
             }
             return results;
+        }
+
+        double CSingleSystem::EffectiveConductivity() const
+        {
+            auto temperatures = getTemperatures();
+            auto deltaTemp = std::abs(temperatures[0] - temperatures[temperatures.size() - 1]);
+            return std::abs(thickness() * getHeatFlow(Environment::Indoor) / deltaTemp);
+        }
+
+        double CSingleSystem::thickness() const
+        {
+            double thickness{0};
+            for(const auto & layer : getSolidLayers())
+            {
+                thickness += layer->getThickness();
+            }
+            for(const auto & gap : getGapLayers())
+            {
+                thickness += gap->getThickness();
+            }
+            return thickness;
         }
 
     }   // namespace ISO15099
