@@ -53,7 +53,7 @@ namespace Tarcog
             virtual double getHeatFlow() final;
             virtual double getGainFlow() final;
             virtual double getConductionConvectionCoefficient() final;
-            virtual double getRadiationFlow() final;
+            virtual double getRadiationFlow();
             virtual double getConvectionConductionFlow() final;
             virtual std::shared_ptr<ISurface>
               getSurface(FenestrationCommon::Side t_Position) const final;

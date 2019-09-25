@@ -104,6 +104,24 @@ TEST_F(TestDoubleClearUValueRun, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
+    auto SolidLayerConductivities = aSystem->getSolidEffectiveLayerConductivities(aRun);
+    std::vector<double> correctSolidConductivities{1, 1};
+    EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
+
+    for(auto i = 0u; i < SolidLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
+    }
+
+    auto GapLayerConductivities = aSystem->getGapEffectiveLayerConductivities(aRun);
+    std::vector<double> correctGapConductivities{0.066904};
+    EXPECT_EQ(GapLayerConductivities.size(), correctGapConductivities.size());
+
+    for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], 1e-6);
+    }
+
     auto Radiosity = aSystem->getRadiosities(aRun);
     std::vector<double> correctRadiosity = {252.066216, 267.938384, 332.786197, 359.178924};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
@@ -128,6 +146,24 @@ TEST_F(TestDoubleClearUValueRun, Test1)
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+    }
+
+    SolidLayerConductivities = aSystem->getSolidEffectiveLayerConductivities(aRun);
+    correctSolidConductivities = {1, 1};
+    EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
+
+    for(auto i = 0u; i < SolidLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
+    }
+
+    GapLayerConductivities = aSystem->getGapEffectiveLayerConductivities(aRun);
+    correctGapConductivities = {0.069446};
+    EXPECT_EQ(GapLayerConductivities.size(), correctGapConductivities.size());
+
+    for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], 1e-6);
     }
 
     Radiosity = aSystem->getRadiosities(aRun);

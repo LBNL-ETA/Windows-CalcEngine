@@ -39,6 +39,9 @@ namespace Tarcog
             void setSolarRadiation(double t_SolarRadiation);
             void setSolarAbsorptance(double t_SolarAbsorptance);
 
+            // Radiation flow in solid layer should be eliminated
+            double getRadiationFlow() override;
+
             virtual bool isDeflected() const;
 
             std::shared_ptr<CBaseLayer> clone() const override;
