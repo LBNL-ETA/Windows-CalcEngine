@@ -22,12 +22,8 @@ protected:
         auto tSky = 305.15;             // Kelvins
         auto solarRadiation = 783.0;
 
-        auto Outdoor =
-			Tarcog::ISO15099::Environments::outdoor( airTemperature,
-													 airSpeed,
-													 solarRadiation,
-													 tSky,
-													 Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -48,11 +44,11 @@ protected:
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        //aSolidLayer1->setSolarAbsorptance(0.096489921212);
+        // aSolidLayer1->setSolarAbsorptance(0.096489921212);
 
         auto aSolidLayer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        //aSolidLayer2->setSolarAbsorptance(0.072256758809);
+        // aSolidLayer2->setSolarAbsorptance(0.072256758809);
 
         auto gapThickness = 0.0127;
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
@@ -65,9 +61,9 @@ protected:
         aIGU.setAbsorptances({0.096489921212, 0.072256758809});
 
         // Alternative way of adding layers.
-        //aIGU.addLayer(aSolidLayer1);
-        //aIGU.addLayer(gapLayer);
-        //aIGU.addLayer(aSolidLayer2);
+        // aIGU.addLayer(aSolidLayer1);
+        // aIGU.addLayer(gapLayer);
+        // aIGU.addLayer(aSolidLayer2);
 
         /////////////////////////////////////////////////////////
         /// System
@@ -105,6 +101,24 @@ TEST_F(TestDoubleClearSHGCRun, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
+    auto SolidLayerConductivities = aSystem->getSolidLayerConductivities(aRun);
+    std::vector<double> correctSolidConductivities{1, 1};
+    EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
+
+    for(auto i = 0u; i < SolidLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
+    }
+
+    auto GapLayerConductivities = aSystem->getGapLayerConductivities(aRun);
+    std::vector<double> correctGapConductivities{0.026339};
+    EXPECT_EQ(GapLayerConductivities.size(), correctGapConductivities.size());
+
+    for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], 1e-6);
+    }
+
     auto Radiosity = aSystem->getRadiosities(aRun);
     std::vector<double> correctRadiosity = {485.546128, 480.950664, 465.217923, 458.631346};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
@@ -129,6 +143,24 @@ TEST_F(TestDoubleClearSHGCRun, Test1)
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+    }
+
+    SolidLayerConductivities = aSystem->getSolidLayerConductivities(aRun);
+    correctSolidConductivities = {1, 1};
+    EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
+
+    for(auto i = 0u; i < SolidLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
+    }
+
+    GapLayerConductivities = aSystem->getGapLayerConductivities(aRun);
+    correctGapConductivities = {0.026722};
+    EXPECT_EQ(GapLayerConductivities.size(), correctGapConductivities.size());
+
+    for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
+    {
+        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], 1e-6);
     }
 
     Radiosity = aSystem->getRadiosities(aRun);

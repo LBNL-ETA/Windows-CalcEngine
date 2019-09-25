@@ -7,6 +7,7 @@
 #include "BaseLayer.hpp"
 #include "BaseIGULayer.hpp"
 #include "IGUSolidLayer.hpp"
+#include "IGUGapLayer.hpp"
 #include "IGU.hpp"
 #include "OutdoorEnvironment.hpp"
 #include "IndoorEnvironment.hpp"
@@ -238,6 +239,24 @@ namespace Tarcog
             return std::dynamic_pointer_cast<COutdoorEnvironment>(
                      m_Environment.at(Environment::Outdoor))
               ->getSolarRadiation();
+        }
+
+        std::vector<double> CSingleSystem::getSolidLayerConductivities() const {
+            std::vector<double> results;
+            for(const auto & layer : getSolidLayers())
+            {
+                results.emplace_back(layer->getConductivity());
+            }
+            return results;
+        }
+
+        std::vector<double> CSingleSystem::getGapLayerConductivities() const {
+            std::vector<double> results;
+            for(const auto & layer : getGapLayers())
+            {
+                results.emplace_back(layer->getConductivity());
+            }
+            return results;
         }
 
     }   // namespace ISO15099
