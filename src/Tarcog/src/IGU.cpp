@@ -496,7 +496,7 @@ namespace Tarcog
             return m_Layers;
         }
 
-        void CIGU::setAbsorptances(const std::vector<double> &absorptances)
+        void CIGU::setAbsorptances(const std::vector<double> &absorptances, double solarRadiation)
         {
             auto solidLayers = getSolidLayers();
             if(solidLayers.size() != absorptances.size())
@@ -505,7 +505,7 @@ namespace Tarcog
             }
             for(size_t i = 0; i < solidLayers.size(); ++i)
             {
-                solidLayers[i]->setSolarAbsorptance(absorptances[i]);
+                solidLayers[i]->setSolarAbsorptance(absorptances[i], solarRadiation);
             }
         }
 
