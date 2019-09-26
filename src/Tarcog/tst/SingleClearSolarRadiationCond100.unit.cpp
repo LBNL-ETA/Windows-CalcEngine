@@ -44,7 +44,7 @@ protected:
 
         auto aSolidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer->setSolarAbsorptance(solarAbsorptance);
+        aSolidLayer->setSolarAbsorptance(solarAbsorptance, solarRadiation);
         ASSERT_TRUE(aSolidLayer != nullptr);
 
         double windowWidth = 1;

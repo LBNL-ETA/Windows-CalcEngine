@@ -283,6 +283,12 @@ namespace Tarcog
             return thickness;
         }
 
+        void CSingleSystem::setAbsorptances(const std::vector<double> &absorptances)
+        {
+            m_IGU.setAbsorptances(absorptances, m_Environment.at(Environment::Outdoor)->getDirectSolarRadiation());
+            solve();
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog

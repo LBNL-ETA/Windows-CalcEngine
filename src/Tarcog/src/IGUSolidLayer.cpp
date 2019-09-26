@@ -17,10 +17,11 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        CIGUSolidLayer::CIGUSolidLayer(double const t_Thickness,
-                                       double const t_Conductivity,
-                                       std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_FrontSurface,
-                                       std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_BackSurface) :
+        CIGUSolidLayer::CIGUSolidLayer(
+          double const t_Thickness,
+          double const t_Conductivity,
+          std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_FrontSurface,
+          std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_BackSurface) :
             CBaseIGULayer(t_Thickness),
             m_Conductivity(t_Conductivity),
             m_SolarAbsorptance(0)
@@ -64,9 +65,9 @@ namespace Tarcog
             return m_Conductivity;
         }
 
-		double CIGUSolidLayer::getSolarAbsorptance() const
+        double CIGUSolidLayer::getSolarAbsorptance() const
         {
-                    return m_SolarAbsorptance;
+            return m_SolarAbsorptance;
         }
 
         void CIGUSolidLayer::calculateConvectionOrConductionFlow()
@@ -113,9 +114,10 @@ namespace Tarcog
             resetCalculated();
         }
 
-        void CIGUSolidLayer::setSolarAbsorptance(double const t_SolarAbsorptance)
+        void CIGUSolidLayer::setSolarAbsorptance(double const t_SolarAbsorptance, const double t_SolarRadiation)
         {
             m_SolarAbsorptance = t_SolarAbsorptance;
+            m_LayerGainFlow = t_SolarRadiation * m_SolarAbsorptance;
             resetCalculated();
         }
 
@@ -129,7 +131,8 @@ namespace Tarcog
             return false;
         }
 
-        double CIGUSolidLayer::getRadiationFlow() {
+        double CIGUSolidLayer::getRadiationFlow()
+        {
             return 0;
         }
     }   // namespace ISO15099

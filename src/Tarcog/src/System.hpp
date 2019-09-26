@@ -52,6 +52,8 @@ namespace Tarcog
 
             double relativeHeatGain(double Tsol) const;
 
+            void setAbsorptances(const std::vector<double> & absorptances);
+
         private:
             std::map<System, std::shared_ptr<CSingleSystem>> m_System;
         };

@@ -58,7 +58,6 @@ protected:
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, gapLayer, aSolidLayer2});
-        aIGU.setAbsorptances({0.096489921212, 0.072256758809});
 
         // Alternative way of adding layers.
         // aIGU.addLayer(aSolidLayer1);
@@ -70,6 +69,8 @@ protected:
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
+
+        m_TarcogSystem->setAbsorptances({0.096489921212, 0.072256758809});
     }
 
 public:

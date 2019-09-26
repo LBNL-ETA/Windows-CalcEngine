@@ -72,6 +72,8 @@ namespace Tarcog
 
 			double thickness() const;
 
+            void setAbsorptances(const std::vector<double> & absorptances);
+
 		private:
 			CIGU m_IGU;
 			std::map< Environment, std::shared_ptr< CEnvironment>> m_Environment;

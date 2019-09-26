@@ -37,7 +37,7 @@ namespace Tarcog
 
             void setLayerState(double t_Tf, double t_Tb, double t_Jf, double t_Jb);
             void setSolarRadiation(double t_SolarRadiation);
-            void setSolarAbsorptance(double t_SolarAbsorptance);
+            void setSolarAbsorptance(double t_SolarAbsorptance, double t_SolarRadiation);
 
             // Radiation flow in solid layer should be eliminated
             double getRadiationFlow() override;
