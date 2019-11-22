@@ -1,8 +1,8 @@
-#ifndef WCECOMMON_H
-#define WCECOMMON_H
+#pragma once
 
 #include "../src/Constants.hpp"
 #include "../src/CommonWavelengths.hpp"
+#include "../src/EnumerationTemplate.hpp"
 #include "../src/FenestrationCommon.hpp"
 #include "../src/Hemispherical2DIntegrator.hpp"
 #include "../src/IntegratorStrategy.hpp"
@@ -20,5 +20,3 @@
 #include "../src/mmap.hpp"
 #include "../src/wceunique.hpp"
 #include "../src/WavelengthSpectrum.hpp"
-
-#endif
