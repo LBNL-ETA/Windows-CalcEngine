@@ -161,25 +161,20 @@ namespace MultiLayerOptics
 
         auto aProperties = aAngularProperties.getProperties(t_Side, t_Property);
 
-        auto aMult = aProperties * m_SolarRadiation;
-
-        if(m_DetectorData.size() > 0)
-        {
-            aMult = aMult * m_DetectorData;
-        }
-
-        const auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
-
-        // TODO: Check detector data here and multiply with it if necessary
-
-        const double totalProperty = iIntegrated->sum(minLambda, maxLambda);
-
         auto solarRadiation = m_SolarRadiation;
 
         if(m_DetectorData.size() > 0)
         {
             solarRadiation = solarRadiation * m_DetectorData;
         }
+
+        auto aMult = aProperties * solarRadiation;
+
+        const auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
+
+        // TODO: Check detector data here and multiply with it if necessary
+
+        const double totalProperty = iIntegrated->sum(minLambda, maxLambda);
 
         double totalSolar = solarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
                               ->sum(minLambda, maxLambda);
