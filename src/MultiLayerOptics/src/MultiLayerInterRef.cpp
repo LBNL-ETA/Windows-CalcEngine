@@ -30,7 +30,10 @@ namespace MultiLayerOptics
         m_Layers.push_back(t_Layer);
     }
 
-    void CInterRef::addLayer(CScatteringLayer & t_Layer, const Side t_Side, const double t_Theta, const double t_Phi)
+    void CInterRef::addLayer(CScatteringLayer & t_Layer,
+                             const Side t_Side,
+                             const double t_Theta,
+                             const double t_Phi)
     {
         switch(t_Side)
         {
@@ -46,13 +49,19 @@ namespace MultiLayerOptics
         }
 
         // addition for pure components (direct and diffuse)
-        m_DirectComponent.addLayer(t_Layer.getLayer(Scattering::DirectDirect, t_Theta, t_Phi), t_Side);
-        m_DiffuseComponent.addLayer(t_Layer.getLayer(Scattering::DiffuseDiffuse, t_Theta, t_Phi), t_Side);
+        m_DirectComponent.addLayer(t_Layer.getLayer(Scattering::DirectDirect, t_Theta, t_Phi),
+                                   t_Side);
+        m_DiffuseComponent.addLayer(t_Layer.getLayer(Scattering::DiffuseDiffuse, t_Theta, t_Phi),
+                                    t_Side);
 
         m_StateCalculated = false;
     }
 
-    double CInterRef::getAbsorptance(const size_t Index, Side t_Side, ScatteringSimple t_Scattering, const double t_Theta, const double t_Phi)
+    double CInterRef::getAbsorptance(const size_t Index,
+                                     Side t_Side,
+                                     ScatteringSimple t_Scattering,
+                                     const double t_Theta,
+                                     const double t_Phi)
     {
         calculateEnergies(t_Theta, t_Phi);
         std::vector<double> & aVector = m_Abs.at(std::make_pair(t_Side, t_Scattering));
@@ -161,15 +170,29 @@ namespace MultiLayerOptics
 
                     auto & curLayer = m_StackedLayers.at(oppSide)[i];
 
-                    if((aSide == Side::Front && aEnergyFlow == EnergyFlow::Backward) || (aSide == Side::Back && aEnergyFlow == EnergyFlow::Forward))
+                    if((aSide == Side::Front && aEnergyFlow == EnergyFlow::Backward)
+                       || (aSide == Side::Back && aEnergyFlow == EnergyFlow::Forward))
                     {
-                        beamEnergy = curLayer.getPropertySimple(PropertySimple::T, oppSide, Scattering::DirectDiffuse, t_Theta, t_Phi);
+                        beamEnergy = curLayer.getPropertySimple(curLayer.getMinLambda(),
+                                                                curLayer.getMaxLambda(),
+                                                                PropertySimple::T,
+                                                                oppSide,
+                                                                Scattering::DirectDiffuse,
+                                                                t_Theta,
+                                                                t_Phi);
                     }
 
-                    // Energy that gets converted to diffuse from beam that comes from interreflections in
-                    // the gap or interior/exterior environments
-                    double R = curLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDiffuse, t_Theta, t_Phi);
-                    const double intEnergy = R * m_Energy.at(Scattering::DirectDirect).IEnergy(i, aSide, aEnergyFlow);
+                    // Energy that gets converted to diffuse from beam that comes from
+                    // interreflections in the gap or interior/exterior environments
+                    double R = curLayer.getPropertySimple(curLayer.getMinLambda(),
+                                                          curLayer.getMaxLambda(),
+                                                          PropertySimple::R,
+                                                          aSide,
+                                                          Scattering::DirectDiffuse,
+                                                          t_Theta,
+                                                          t_Phi);
+                    const double intEnergy =
+                      R * m_Energy.at(Scattering::DirectDirect).IEnergy(i, aSide, aEnergyFlow);
                     diffSum.addEnergy(aSide, aEnergyFlow, beamEnergy + intEnergy);
                 }
             }
@@ -182,7 +205,7 @@ namespace MultiLayerOptics
     {
         // Gets total diffuse components that is getting off (leaving) every surface.
         // Keep in mind that diffuse componet here only comes from scattering direct beam.
-        CSurfaceEnergy diffSum{ calcDiffuseEnergy(t_Theta, t_Phi) };
+        CSurfaceEnergy diffSum{calcDiffuseEnergy(t_Theta, t_Phi)};
 
         // Now need to calculate interreflections of total diffuse components that are leaving
         // every surface and calculate total diffuse component that is incoming to every surface.
@@ -207,8 +230,10 @@ namespace MultiLayerOptics
                 {
                     If = diffSum.IEnergy(i + 1, Side::Front, aEnergyFlow);
                 }
-                const double Rf_bkw = bkwLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse, t_Theta, t_Phi);
-                const double Rb_fwd = fwdLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse, t_Theta, t_Phi);
+                const double Rf_bkw = bkwLayer.getPropertySimple(bkwLayer.getMinLambda(), bkwLayer.getMaxLambda(),
+                  PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse, t_Theta, t_Phi);
+                const double Rb_fwd = fwdLayer.getPropertySimple(fwdLayer.getMinLambda(), fwdLayer.getMaxLambda(),
+                  PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse, t_Theta, t_Phi);
                 const double interRef = 1 / (1 - Rf_bkw * Rb_fwd);
                 const double Ib_tot = (Ib * Rf_bkw + If) * interRef;
                 const double If_tot = (Ib + Rb_fwd * If) * interRef;
@@ -236,17 +261,25 @@ namespace MultiLayerOptics
                 double EnergyDiffuse = 0;
                 for(Side aSide : EnumSide())
                 {
-                    const double Adir = m_Layers[i].getAbsorptance(aSide, ScatteringSimple::Direct, t_Theta, t_Phi);
-                    EnergyDirect += Adir * m_Energy[Scattering::DirectDirect].IEnergy(i + 1, aSide, aEnergyFlow);
-                    const double Adif = m_Layers[i].getAbsorptance(aSide, ScatteringSimple::Diffuse, t_Theta, t_Phi);
-                    EnergyDirect += Adif * m_Energy[Scattering::DirectDiffuse].IEnergy(i + 1, aSide, aEnergyFlow);
-                    EnergyDiffuse += Adif * m_Energy[Scattering::DiffuseDiffuse].IEnergy(i + 1, aSide, aEnergyFlow);
+                    const double Adir =
+                      m_Layers[i].getAbsorptance(aSide, ScatteringSimple::Direct, t_Theta, t_Phi);
+                    EnergyDirect +=
+                      Adir * m_Energy[Scattering::DirectDirect].IEnergy(i + 1, aSide, aEnergyFlow);
+                    const double Adif =
+                      m_Layers[i].getAbsorptance(aSide, ScatteringSimple::Diffuse, t_Theta, t_Phi);
+                    EnergyDirect +=
+                      Adif * m_Energy[Scattering::DirectDiffuse].IEnergy(i + 1, aSide, aEnergyFlow);
+                    EnergyDiffuse +=
+                      Adif
+                      * m_Energy[Scattering::DiffuseDiffuse].IEnergy(i + 1, aSide, aEnergyFlow);
                 }
-                // Note that front and back absorptances are actually reffereing to forward and backward
-                // energy flows. That is why we need this conversion.
+                // Note that front and back absorptances are actually reffereing to forward and
+                // backward energy flows. That is why we need this conversion.
                 Side flowSide(getSideFromFlow(aEnergyFlow));
-                m_Abs.at(std::make_pair(flowSide, ScatteringSimple::Direct)).push_back(EnergyDirect);
-                m_Abs.at(std::make_pair(flowSide, ScatteringSimple::Diffuse)).push_back(EnergyDiffuse);
+                m_Abs.at(std::make_pair(flowSide, ScatteringSimple::Direct))
+                  .push_back(EnergyDirect);
+                m_Abs.at(std::make_pair(flowSide, ScatteringSimple::Diffuse))
+                  .push_back(EnergyDiffuse);
             }
         }
     }
