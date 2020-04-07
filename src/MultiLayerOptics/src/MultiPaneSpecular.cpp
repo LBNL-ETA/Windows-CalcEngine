@@ -17,9 +17,7 @@ namespace MultiLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     CEquivalentLayerSingleComponentMWAngle::CEquivalentLayerSingleComponentMWAngle(
       CEquivalentLayerSingleComponentMW t_Layer, CAbsorptancesMultiPane t_Abs, double t_Angle) :
-        m_Layer(std::move(t_Layer)),
-        m_Abs(std::move(t_Abs)),
-        m_Angle(t_Angle)
+        m_Layer(std::move(t_Layer)), m_Abs(std::move(t_Abs)), m_Angle(t_Angle)
     {}
 
     double CEquivalentLayerSingleComponentMWAngle::angle() const
@@ -56,9 +54,7 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
       const CSeries & t_SolarRadiation,
       const CSeries & t_DetectorData) :
-        m_Layers(layers),
-        m_SolarRadiation(t_SolarRadiation),
-        m_DetectorData(t_DetectorData)
+        m_Layers(layers), m_SolarRadiation(t_SolarRadiation), m_DetectorData(t_DetectorData)
     {
         CCommonWavelengths aCommonWL;
         for(auto & layer : m_Layers)
@@ -86,8 +82,7 @@ namespace MultiLayerOptics
     CMultiPaneSpecular::CMultiPaneSpecular(const std::vector<double> & t_CommonWavelength,
                                            const CSeries & t_SolarRadiation,
                                            const std::shared_ptr<SpecularLayer> & t_Layer) :
-        m_CommonWavelengths(t_CommonWavelength),
-        m_SolarRadiation(t_SolarRadiation)
+        m_CommonWavelengths(t_CommonWavelength), m_SolarRadiation(t_SolarRadiation)
     {
         m_SolarRadiation = m_SolarRadiation.interpolate(m_CommonWavelengths);
         addLayer(t_Layer);
@@ -112,19 +107,28 @@ namespace MultiLayerOptics
     double CMultiPaneSpecular::getPropertySimple(
       PropertySimple t_Property, Side t_Side, Scattering t_Scattering, double t_Theta, double)
     {
+        return getPropertySimple(
+          getMinLambda(), getMaxLambda(), t_Property, t_Side, t_Scattering, t_Theta);
+    }
+
+    double CMultiPaneSpecular::getPropertySimple(const double minLambda,
+                                                 const double maxLambda,
+                                                 FenestrationCommon::PropertySimple t_Property,
+                                                 FenestrationCommon::Side t_Side,
+                                                 FenestrationCommon::Scattering t_Scattering,
+                                                 double t_Theta,
+                                                 double)
+    {
         double result(0);
         const auto prop(toProperty(t_Property));
         switch(t_Scattering)
         {
             case Scattering::DirectDirect:
-                result = getProperty(t_Side, prop, t_Theta, getMinLambda(), getMaxLambda());
+                result = getProperty(t_Side, prop, t_Theta, minLambda, maxLambda);
                 break;
             case Scattering::DiffuseDiffuse:
-                result = getHemisphericalProperty(t_Side,
-                                                  prop,
-                                                  {0, 10, 20, 30, 40, 50, 60, 70, 80, 90},
-                                                  getMinLambda(),
-                                                  getMaxLambda());
+                result = getHemisphericalProperty(
+                  t_Side, prop, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda);
                 break;
             case Scattering::DirectDiffuse:
                 result = 0;
@@ -213,6 +217,17 @@ namespace MultiLayerOptics
     }
 
     double CMultiPaneSpecular::getAbsorptanceLayer(size_t index,
+                                                   FenestrationCommon::Side side,
+                                                   FenestrationCommon::ScatteringSimple scattering,
+                                                   double theta,
+                                                   double)
+    {
+        return getAbsorptanceLayer(getMinLambda(), getMaxLambda(), index, side, scattering, theta);
+    }
+
+    double CMultiPaneSpecular::getAbsorptanceLayer(double minLambda,
+                                                   double maxLambda,
+                                                   size_t index,
                                                    FenestrationCommon::Side,
                                                    FenestrationCommon::ScatteringSimple scattering,
                                                    double theta,
@@ -221,18 +236,20 @@ namespace MultiLayerOptics
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)
         {
-            result = Abs(index, theta, getMinLambda(), getMaxLambda());
+            result = Abs(index, theta, minLambda, maxLambda);
         }
         else if(scattering == ScatteringSimple::Diffuse)
         {
             result = AbsHemispherical(
-              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, getMinLambda(), getMaxLambda());
+              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda);
         }
         return result;
     }
 
     std::vector<double>
-      CMultiPaneSpecular::getAbsorptanceLayers(FenestrationCommon::Side side,
+      CMultiPaneSpecular::getAbsorptanceLayers(double minLambda,
+                                               double maxLambda,
+                                               FenestrationCommon::Side side,
                                                FenestrationCommon::ScatteringSimple scattering,
                                                double theta,
                                                double phi)
@@ -240,7 +257,8 @@ namespace MultiLayerOptics
         std::vector<double> res;
         for(size_t i = 1u; i <= size(); ++i)
         {
-            res.push_back(getAbsorptanceLayer(i, side, scattering, theta, phi));
+            res.push_back(
+              getAbsorptanceLayer(minLambda, maxLambda, i, side, scattering, theta, phi));
         }
 
         return res;
@@ -378,5 +396,6 @@ namespace MultiLayerOptics
     {
         return m_Layers.size();
     }
+
 
 }   // namespace MultiLayerOptics

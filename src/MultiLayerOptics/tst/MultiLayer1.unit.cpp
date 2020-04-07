@@ -50,6 +50,9 @@ TEST_F(TestMultiLayer1, TestTripleLayerFront)
 {
     SCOPED_TRACE("Begin Test: Test triple layer with scattering properties (Front).");
 
+    const double minLambda = 0.3;
+    const double maxLambda = 2.5;
+
     auto & aLayer = getLayer();
 
     Side aSide = Side::Front;
@@ -59,10 +62,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerFront)
     ///////////////////////////////////////////////
     Scattering aScattering = Scattering::DirectDirect;
 
-    double Tf = aLayer->getPropertySimple(PropertySimple::T, aSide, aScattering);
+    double Tf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
     EXPECT_NEAR(0.000486418, Tf, 1e-6);
 
-    double Rf = aLayer->getPropertySimple(PropertySimple::R, aSide, aScattering);
+    double Rf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
     EXPECT_NEAR(0.040339429, Rf, 1e-6);
 
     ///////////////////////////////////////////////
@@ -70,10 +73,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerFront)
     ///////////////////////////////////////////////
     aScattering = Scattering::DirectDiffuse;
 
-    Tf = aLayer->getPropertySimple(PropertySimple::T, aSide, aScattering);
+    Tf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
     EXPECT_NEAR(0.190095209, Tf, 1e-6);
 
-    Rf = aLayer->getPropertySimple(PropertySimple::R, aSide, aScattering);
+    Rf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
     EXPECT_NEAR(0.312631104, Rf, 1e-6);
 
     ///////////////////////////////////////////////
@@ -81,16 +84,19 @@ TEST_F(TestMultiLayer1, TestTripleLayerFront)
     ///////////////////////////////////////////////
     aScattering = Scattering::DiffuseDiffuse;
 
-    Tf = aLayer->getPropertySimple(PropertySimple::T, aSide, aScattering);
+    Tf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
     EXPECT_NEAR(0.167799034, Tf, 1e-6);
 
-    Rf = aLayer->getPropertySimple(PropertySimple::R, aSide, aScattering);
+    Rf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
     EXPECT_NEAR(0.692483233, Rf, 1e-6);
 }
 
 TEST_F(TestMultiLayer1, TestTripleLayerBack)
 {
     SCOPED_TRACE("Begin Test: Test triple layer with scattering properties (Back).");
+
+    const double minLambda = 0.3;
+    const double maxLambda = 2.5;
 
     auto & aLayer = getLayer();
 
@@ -101,10 +107,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerBack)
     ///////////////////////////////////////////////
     Scattering aScattering = Scattering::DirectDirect;
 
-    double Tb = aLayer->getPropertySimple(PropertySimple::T, aSide, aScattering);
+    double Tb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
     EXPECT_NEAR(0.002173682, Tb, 1e-6);
 
-    double Rb = aLayer->getPropertySimple(PropertySimple::R, aSide, aScattering);
+    double Rb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
     EXPECT_NEAR(0.250041102, Rb, 1e-6);
 
     ///////////////////////////////////////////////
@@ -112,10 +118,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerBack)
     ///////////////////////////////////////////////
     aScattering = Scattering::DirectDiffuse;
 
-    Tb = aLayer->getPropertySimple(PropertySimple::T, aSide, aScattering);
+    Tb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
     EXPECT_NEAR(0.219867246, Tb, 1e-6);
 
-    Rb = aLayer->getPropertySimple(PropertySimple::R, aSide, aScattering);
+    Rb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
     EXPECT_NEAR(0.316344401, Rb, 1e-6);
 
     ///////////////////////////////////////////////
@@ -123,10 +129,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerBack)
     ///////////////////////////////////////////////
     aScattering = Scattering::DiffuseDiffuse;
 
-    Tb = aLayer->getPropertySimple(PropertySimple::T, aSide, aScattering);
+    Tb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
     EXPECT_NEAR(0.284211597, Tb, 1e-6);
 
-    Rb = aLayer->getPropertySimple(PropertySimple::R, aSide, aScattering);
+    Rb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
     EXPECT_NEAR(0.395593248, Rb, 1e-6);
 }
 
@@ -134,19 +140,22 @@ TEST_F(TestMultiLayer1, TestFrontSideAbsorptances)
 {
     SCOPED_TRACE("Begin Test: Triple pane layer by layer absroptances (Front Side).");
 
+    const double minLambda = 0.3;
+    const double maxLambda = 2.5;
+
     auto & aLayer = getLayer();
 
     Side aSide = Side::Front;
 
     // Direct
     ScatteringSimple aScattering = ScatteringSimple::Direct;
-    double Af1_dir = aLayer->getAbsorptanceLayer(1, aSide, aScattering);
+    double Af1_dir = aLayer->getAbsorptanceLayer(minLambda, maxLambda, 1, aSide, aScattering);
     EXPECT_NEAR(0.362217125, Af1_dir, 1e-6);
 
-    double Af2_dir = aLayer->getAbsorptanceLayer(2, aSide, aScattering);
+    double Af2_dir = aLayer->getAbsorptanceLayer(minLambda, maxLambda, 2, aSide, aScattering);
     EXPECT_NEAR(0.08499287, Af2_dir, 1e-6);
 
-    double Af3_dir = aLayer->getAbsorptanceLayer(3, aSide, aScattering);
+    double Af3_dir = aLayer->getAbsorptanceLayer(minLambda, maxLambda, 3, aSide, aScattering);
     EXPECT_NEAR(0.009237846, Af3_dir, 1e-6);
 
     double Aftotal_dir = aLayer->getAbsorptance(aSide, aScattering);
@@ -154,13 +163,13 @@ TEST_F(TestMultiLayer1, TestFrontSideAbsorptances)
 
     // Diffuse
     aScattering = ScatteringSimple::Diffuse;
-    double Af1_dif = aLayer->getAbsorptanceLayer(1, aSide, aScattering);
+    double Af1_dif = aLayer->getAbsorptanceLayer(minLambda, maxLambda, 1, aSide, aScattering);
     EXPECT_NEAR(0.057730707, Af1_dif, 1e-6);
 
-    double Af2_dif = aLayer->getAbsorptanceLayer(2, aSide, aScattering);
+    double Af2_dif = aLayer->getAbsorptanceLayer(minLambda, maxLambda, 2, aSide, aScattering);
     EXPECT_NEAR(0.074691415, Af2_dif, 1e-6);
 
-    double Af3_dif = aLayer->getAbsorptanceLayer(3, aSide, aScattering);
+    double Af3_dif = aLayer->getAbsorptanceLayer(minLambda, maxLambda, 3, aSide, aScattering);
     EXPECT_NEAR(0.00729561, Af3_dif, 1e-6);
 
     double Aftotal_dif = aLayer->getAbsorptance(aSide, aScattering);
