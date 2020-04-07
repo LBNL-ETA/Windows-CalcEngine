@@ -24,9 +24,7 @@ namespace SingleLayerOptics
                                      const FenestrationCommon::CSeries & t_DetectorY,
                                      const FenestrationCommon::CSeries & t_DetectorZ,
                                      const std::vector<double> & t_wavelengths) :
-        m_LayerX(std::move(layerX)),
-        m_LayerY(std::move(layerY)),
-        m_LayerZ(std::move(layerZ))
+        m_LayerX(std::move(layerX)), m_LayerY(std::move(layerY)), m_LayerZ(std::move(layerZ))
     {
         auto wavelengths = m_LayerX->getWavelengths();
         if(!t_wavelengths.empty())
@@ -55,11 +53,29 @@ namespace SingleLayerOptics
                                        double const t_Phi)
     {
         auto X = m_SDx / m_SDy * 100
-                 * m_LayerX->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
-        auto Y =
-          100 * m_LayerY->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+                 * m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
+                                               m_LayerX->getMaxLambda(),
+                                               t_Property,
+                                               t_Side,
+                                               t_Scattering,
+                                               t_Theta,
+                                               t_Phi);
+        auto Y = 100
+                 * m_LayerY->getPropertySimple(m_LayerX->getMinLambda(),
+                                               m_LayerX->getMaxLambda(),
+                                               t_Property,
+                                               t_Side,
+                                               t_Scattering,
+                                               t_Theta,
+                                               t_Phi);
         auto Z = m_SDz / m_SDy * 100
-                 * m_LayerZ->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+                 * m_LayerZ->getPropertySimple(m_LayerX->getMinLambda(),
+                                               m_LayerX->getMaxLambda(),
+                                               t_Property,
+                                               t_Side,
+                                               t_Scattering,
+                                               t_Theta,
+                                               t_Phi);
         return Trichromatic(X, Y, Z);
     }
 
@@ -106,9 +122,27 @@ namespace SingleLayerOptics
                                         double const t_Theta,
                                         double const t_Phi)
     {
-        auto X = m_LayerX->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
-        auto Y = m_LayerY->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
-        auto Z = m_LayerZ->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        auto X = m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
+                                             m_LayerX->getMaxLambda(),
+                                             t_Property,
+                                             t_Side,
+                                             t_Scattering,
+                                             t_Theta,
+                                             t_Phi);
+        auto Y = m_LayerY->getPropertySimple(m_LayerX->getMinLambda(),
+                                             m_LayerX->getMaxLambda(),
+                                             t_Property,
+                                             t_Side,
+                                             t_Scattering,
+                                             t_Theta,
+                                             t_Phi);
+        auto Z = m_LayerZ->getPropertySimple(m_LayerX->getMinLambda(),
+                                             m_LayerX->getMaxLambda(),
+                                             t_Property,
+                                             t_Side,
+                                             t_Scattering,
+                                             t_Theta,
+                                             t_Phi);
 
         std::vector<double> Q{X, Y, Z};
         for(auto & val : Q)

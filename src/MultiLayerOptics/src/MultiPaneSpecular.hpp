@@ -72,6 +72,14 @@ namespace MultiLayerOptics
                                  FenestrationCommon::Side t_Side,
                                  FenestrationCommon::Scattering t_Scattering,
                                  double t_Theta = 0,
+                                 double t_Phi = 0);
+
+        double getPropertySimple(double minLambda,
+                                 double maxLambda,
+                                 FenestrationCommon::PropertySimple t_Property,
+                                 FenestrationCommon::Side t_Side,
+                                 FenestrationCommon::Scattering t_Scattering,
+                                 double t_Theta = 0,
                                  double t_Phi = 0) override;
 
         double getMinLambda() const override;
@@ -106,10 +114,20 @@ namespace MultiLayerOptics
                                    double theta = 0,
                                    double phi = 0);
 
-        std::vector<double> getAbsorptanceLayers(FenestrationCommon::Side side,
+        double getAbsorptanceLayer(double minLambda,
+                                   double maxLambda,
+                                   size_t index,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   double theta = 0,
+                                   double phi = 0);
+
+        std::vector<double> getAbsorptanceLayers(double minLambda,
+                                                 double maxLambda,
+                                                 FenestrationCommon::Side side,
                                                  FenestrationCommon::ScatteringSimple scattering,
                                                  double theta = 0,
-                                                 double phi = 0);
+                                                 double phi = 0) override;
 
         // Absorptances of each layer based on angle of incidence
         double Abs(size_t Index,

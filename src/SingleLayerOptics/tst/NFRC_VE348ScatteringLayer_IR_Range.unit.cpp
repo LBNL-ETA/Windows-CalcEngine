@@ -197,30 +197,35 @@ TEST_F(TestVE345ScatteringLayer_IR_Range, TestFrontIR)
 {
     SCOPED_TRACE("Begin Test: VE345 scattering layer - 0 deg incident.");
 
+    const double minLambda = 5.0;
+    const double maxLambda = 100.0;
+
     auto aLayer = getLayer();
 
     Side aSide = Side::Front;
 
-    double T_dir_dir = aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDirect);
+    double T_dir_dir = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.0, T_dir_dir, 1e-6);
 
-    double R_dir_dir = aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDirect);
+    double R_dir_dir = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.110058, R_dir_dir, 1e-6);
 
-    double T_dir_dif =
-      aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDiffuse);
+    double T_dir_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.0, T_dir_dif, 1e-6);
 
-    double R_dir_dif =
-      aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDiffuse);
+    double R_dir_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.0, R_dir_dif, 1e-6);
 
-    double T_dif_dif =
-      aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
+    double T_dif_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.0, T_dif_dif, 1e-6);
 
-    double R_dif_dif =
-      aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
+    double R_dif_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.167092, R_dif_dif, 1e-6);
 
     double emiss =
@@ -232,30 +237,35 @@ TEST_F(TestVE345ScatteringLayer_IR_Range, TestBackIR)
 {
     SCOPED_TRACE("Begin Test: VE345 scattering layer - 0 deg incident.");
 
+    const double minLambda = 5.0;
+    const double maxLambda = 100.0;
+
     auto aLayer = getLayer();
 
     Side aSide = Side::Back;
 
-    double T_dir_dir = aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDirect);
+    double T_dir_dir = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.0, T_dir_dir, 1e-6);
 
-    double R_dir_dir = aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDirect);
+    double R_dir_dir = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.926332, R_dir_dir, 1e-6);
 
-    double T_dir_dif =
-      aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDiffuse);
+    double T_dir_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0, T_dir_dif, 1e-6);
 
-    double R_dir_dif =
-      aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DirectDiffuse);
+    double R_dir_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
-    double T_dif_dif =
-      aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
+    double T_dif_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.0, T_dif_dif, 1e-6);
 
-    double R_dif_dif =
-      aLayer.getPropertySimple(PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
+    double R_dif_dif = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.931043, R_dif_dif, 1e-6);
 
     double emiss =
