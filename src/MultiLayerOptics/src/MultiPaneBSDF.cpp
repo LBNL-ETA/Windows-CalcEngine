@@ -396,5 +396,69 @@ namespace MultiLayerOptics
         return std::unique_ptr<CMultiPaneBSDF>(
           new CMultiPaneBSDF(t_Layers, t_SolarRadiation, t_DetectorData));
     }
+    double CMultiPaneBSDF::getPropertySimple(const double minLambda,
+                                             const double maxLambda,
+                                             const FenestrationCommon::PropertySimple t_Property,
+                                             const FenestrationCommon::Side t_Side,
+                                             const FenestrationCommon::Scattering t_Scattering,
+                                             const double t_Theta,
+                                             const double t_Phi)
+    {
+        double result{0};
+        switch(t_Scattering)
+        {
+            case Scattering::DirectDirect:
+                result = DirDir(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
+                break;
+            case Scattering::DirectDiffuse:
+                result = DirHem(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
+                break;
+            case Scattering::DiffuseDiffuse:
+                result = DiffDiff(minLambda, maxLambda, t_Side, t_Property);
+                break;
+        }
+        return result;
+    }
+    std::vector<double> CMultiPaneBSDF::getWavelengths() const
+    {
+        return std::vector<double>();
+    }
+    double CMultiPaneBSDF::getMinLambda() const
+    {
+        return 0;
+    }
+    double CMultiPaneBSDF::getMaxLambda() const
+    {
+        return 0;
+    }
+    std::vector<double>
+      CMultiPaneBSDF::getAbsorptanceLayers(const double minLambda,
+                                           const double maxLambda,
+                                           const FenestrationCommon::Side side,
+                                           const FenestrationCommon::ScatteringSimple scattering,
+                                           const double theta,
+                                           const double phi)
+    {
+        std::vector<double> abs;
+        size_t absSize{m_Abs.at(Side::Front).size()};
+        for(size_t i = 0u; i < absSize; ++i)
+        {
+            switch(scattering)
+            {
+                case ScatteringSimple::Direct:
+                    abs.push_back(Abs(minLambda,
+                                      maxLambda,
+                                      side,
+                                      i,
+                                      theta,
+                                      phi));
+                    break;
+                case ScatteringSimple::Diffuse:
+                    abs.push_back(AbsDiff(minLambda, maxLambda, side, i));
+                    break;
+            }
+        }
+        return abs;
+    }
 
 }   // namespace MultiLayerOptics

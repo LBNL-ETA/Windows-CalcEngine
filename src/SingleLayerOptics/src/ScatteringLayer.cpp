@@ -17,11 +17,10 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-	std::map<EmissivityPolynomials, std::vector<double>> emissPolynomial{
-		{EmissivityPolynomials::NFRC_301_Coated, {1.3217, -1.8766, 4.6586, -5.8349, 2.7406}},
-		{EmissivityPolynomials::NFRC_301_Uncoated, {0.1569, 3.7669, -5.4398, 2.4733}},
-		{EmissivityPolynomials::EN12898, {1.1887, -0.4967, 0.2452}}
-	};
+    std::map<EmissivityPolynomials, std::vector<double>> emissPolynomial{
+      {EmissivityPolynomials::NFRC_301_Coated, {1.3217, -1.8766, 4.6586, -5.8349, 2.7406}},
+      {EmissivityPolynomials::NFRC_301_Uncoated, {0.1569, 3.7669, -5.4398, 2.4733}},
+      {EmissivityPolynomials::EN12898, {1.1887, -0.4967, 0.2452}}};
 
     CScatteringLayer::CScatteringLayer(const CScatteringSurface & t_Front,
                                        const CScatteringSurface & t_Back) :
@@ -62,7 +61,7 @@ namespace SingleLayerOptics
         m_Phi(0)
     {}
 
-    void CScatteringLayer::setSourceData(CSeries &t_SourceData) const
+    void CScatteringLayer::setSourceData(CSeries & t_SourceData) const
     {
         if(m_BSDFLayer != nullptr)
         {
@@ -100,7 +99,9 @@ namespace SingleLayerOptics
         return m_Surface.at(t_Side);
     }
 
-    double CScatteringLayer::getPropertySimple(const PropertySimple t_Property,
+    double CScatteringLayer::getPropertySimple(const double,
+                                               const double,
+                                               const PropertySimple t_Property,
                                                const Side t_Side,
                                                const Scattering t_Scattering,
                                                const double t_Theta,
@@ -129,14 +130,50 @@ namespace SingleLayerOptics
         return aSurface.getAbsorptance();
     }
 
+    std::vector<double> CScatteringLayer::getAbsorptanceLayers(const double,
+                                                               const double,
+                                                               FenestrationCommon::Side side,
+                                                               FenestrationCommon::ScatteringSimple,
+                                                               const double theta,
+                                                               const double phi)
+    {
+        std::vector<double> abs;
+        abs.push_back(getAbsorptance(side, theta, phi));
+        return abs;
+    }
+
     CLayerSingleComponent CScatteringLayer::getLayer(const Scattering t_Scattering,
                                                      const double t_Theta,
                                                      const double t_Phi)
     {
-        double Tf = getPropertySimple(PropertySimple::T, Side::Front, t_Scattering, t_Theta, t_Phi);
-        double Rf = getPropertySimple(PropertySimple::R, Side::Front, t_Scattering, t_Theta, t_Phi);
-        double Tb = getPropertySimple(PropertySimple::T, Side::Back, t_Scattering, t_Theta, t_Phi);
-        double Rb = getPropertySimple(PropertySimple::R, Side::Back, t_Scattering, t_Theta, t_Phi);
+        double Tf = getPropertySimple(getMinLambda(),
+                                      getMaxLambda(),
+                                      PropertySimple::T,
+                                      Side::Front,
+                                      t_Scattering,
+                                      t_Theta,
+                                      t_Phi);
+        double Rf = getPropertySimple(getMinLambda(),
+                                      getMaxLambda(),
+                                      PropertySimple::R,
+                                      Side::Front,
+                                      t_Scattering,
+                                      t_Theta,
+                                      t_Phi);
+        double Tb = getPropertySimple(getMinLambda(),
+                                      getMaxLambda(),
+                                      PropertySimple::T,
+                                      Side::Back,
+                                      t_Scattering,
+                                      t_Theta,
+                                      t_Phi);
+        double Rb = getPropertySimple(getMinLambda(),
+                                      getMaxLambda(),
+                                      PropertySimple::R,
+                                      Side::Back,
+                                      t_Scattering,
+                                      t_Theta,
+                                      t_Phi);
         return CLayerSingleComponent(Tf, Rf, Tb, Rb);
     }
 
@@ -197,12 +234,22 @@ namespace SingleLayerOptics
 
     double CScatteringLayer::getMinLambda() const
     {
-        return m_BSDFLayer->getCell()->getMinLambda();
+        double result{0};
+        if(m_BSDFLayer != nullptr)
+        {
+            result = m_BSDFLayer->getCell()->getMinLambda();
+        }
+        return result;
     }
 
     double CScatteringLayer::getMaxLambda() const
     {
-        return m_BSDFLayer->getCell()->getMaxLambda();
+        double result{0};
+        if(m_BSDFLayer != nullptr)
+        {
+            result = m_BSDFLayer->getCell()->getMaxLambda();
+        }
+        return result;
     }
 
     CScatteringLayer
@@ -277,22 +324,22 @@ namespace SingleLayerOptics
     }
 
     double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
-															 EmissivityPolynomials type)
+                                                             EmissivityPolynomials type)
     {
         return normalToHemisphericalEmissivity(t_Side, emissPolynomial.at(type));
     }
 
-	double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
-										   const std::vector<double> & polynomial)
-	{
-		double abs = getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
-		double value = 0;
-		for(size_t i = 0; i < polynomial.size(); ++i)
-		{
-			value += std::pow(abs, i + 1) * polynomial[i];
-		}
-		return value;
-	}
+    double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
+                                                             const std::vector<double> & polynomial)
+    {
+        double abs = getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
+        double value = 0;
+        for(size_t i = 0; i < polynomial.size(); ++i)
+        {
+            value += std::pow(abs, i + 1) * polynomial[i];
+        }
+        return value;
+    }
 
 
 }   // namespace SingleLayerOptics
