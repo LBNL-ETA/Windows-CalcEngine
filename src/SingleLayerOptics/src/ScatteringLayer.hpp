@@ -85,7 +85,9 @@ namespace SingleLayerOptics
 
         CScatteringSurface & getSurface(FenestrationCommon::Side t_Side);
 
-        double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
+        double getPropertySimple(const double minLambda,
+                                 const double maxLambda,
+                                 FenestrationCommon::PropertySimple t_Property,
                                  FenestrationCommon::Side t_Side,
                                  FenestrationCommon::Scattering t_Scattering,
                                  double t_Theta = 0,
@@ -102,6 +104,13 @@ namespace SingleLayerOptics
 
         double
           getAbsorptance(FenestrationCommon::Side t_Side, double t_Theta = 0, double t_Phi = 0);
+
+        std::vector<double> getAbsorptanceLayers(const double minLambda,
+                                                 const double maxLambda,
+                                                 FenestrationCommon::Side side,
+                                                 FenestrationCommon::ScatteringSimple scattering,
+                                                 const double theta,
+                                                 const double phi) override;
 
         // This function is valid only for specular layers
         double normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,

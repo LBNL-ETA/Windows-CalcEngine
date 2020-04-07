@@ -23,9 +23,7 @@ namespace MultiLayerOptics
                                                const double t_Rf_dif_dif,
                                                const double t_Tb_dif_dif,
                                                const double t_Rb_dif_dif) :
-        m_Calculated(false),
-        m_Theta(0),
-        m_Phi(0)
+        m_Calculated(false), m_Theta(0), m_Phi(0)
     {
         CScatteringLayer aLayer(t_Tf_dir_dir,
                                 t_Rf_dir_dir,
@@ -44,9 +42,7 @@ namespace MultiLayerOptics
     }
 
     CMultiLayerScattered::CMultiLayerScattered(const CScatteringLayer & t_Layer) :
-        m_Calculated(false),
-        m_Theta(0),
-        m_Phi(0)
+        m_Calculated(false), m_Theta(0), m_Phi(0)
     {
         initialize(t_Layer);
     }
@@ -98,7 +94,7 @@ namespace MultiLayerOptics
         m_Calculated = false;
     }
 
-    void CMultiLayerScattered::setSourceData(CSeries &t_SourceData)
+    void CMultiLayerScattered::setSourceData(CSeries & t_SourceData)
     {
         for(auto & layer : m_Layers)
         {
@@ -112,7 +108,9 @@ namespace MultiLayerOptics
         return m_Layers.size();
     }
 
-    double CMultiLayerScattered::getPropertySimple(const PropertySimple t_Property,
+    double CMultiLayerScattered::getPropertySimple(const double,
+                                                   const double,
+                                                   const PropertySimple t_Property,
                                                    const Side t_Side,
                                                    const Scattering t_Scattering,
                                                    const double t_Theta,
@@ -128,8 +126,36 @@ namespace MultiLayerOptics
                                                      const double t_Theta,
                                                      const double t_Phi)
     {
+        return getAbsorptanceLayer(0, 0, Index, t_Side, t_Scattering, t_Theta, t_Phi);
+    }
+
+    double
+      CMultiLayerScattered::getAbsorptanceLayer(double,
+                                                double,
+                                                size_t Index,
+                                                FenestrationCommon::Side t_Side,
+                                                FenestrationCommon::ScatteringSimple t_Scattering,
+                                                double t_Theta,
+                                                double t_Phi)
+    {
         calculateState(t_Theta, t_Phi);
         return m_InterRef->getAbsorptance(Index, t_Side, t_Scattering, t_Theta, t_Phi);
+    }
+
+    std::vector<double>
+      CMultiLayerScattered::getAbsorptanceLayers(const double minLambda,
+                                                 const double maxLambda,
+                                                 FenestrationCommon::Side side,
+                                                 FenestrationCommon::ScatteringSimple scattering,
+                                                 const double theta,
+                                                 const double phi)
+    {
+        std::vector<double> abs;
+        for(size_t i = 0u; i < m_Layers.size(); ++i)
+        {
+            abs.push_back(getAbsorptanceLayer(minLambda, maxLambda, i, side, scattering, theta, phi));
+        }
+        return abs;
     }
 
     double CMultiLayerScattered::getAbsorptance(Side t_Side,
@@ -189,8 +215,8 @@ namespace MultiLayerOptics
         return std::unique_ptr<CMultiLayerScattered>(new CMultiLayerScattered(t_Layer));
     }
 
-    std::unique_ptr<CMultiLayerScattered> CMultiLayerScattered::create(
-      const std::vector<SingleLayerOptics::CScatteringLayer> & layers)
+    std::unique_ptr<CMultiLayerScattered>
+      CMultiLayerScattered::create(const std::vector<SingleLayerOptics::CScatteringLayer> & layers)
     {
         return std::unique_ptr<CMultiLayerScattered>(new CMultiLayerScattered(layers));
     }
@@ -203,5 +229,6 @@ namespace MultiLayerOptics
             addLayer(layer);
         }
     }
+
 
 }   // namespace MultiLayerOptics

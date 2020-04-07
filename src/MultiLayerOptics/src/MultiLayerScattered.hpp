@@ -60,11 +60,13 @@ namespace MultiLayerOptics
         void addLayer(const SingleLayerOptics::CScatteringLayer & t_Layer,
                       FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back);
 
-        void setSourceData(FenestrationCommon::CSeries &t_SourceData);
+        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
         size_t getNumOfLayers() const;
 
-        double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
+        double getPropertySimple(double minLambda,
+                                 double maxLambda,
+                                 FenestrationCommon::PropertySimple t_Property,
                                  FenestrationCommon::Side t_Side,
                                  FenestrationCommon::Scattering t_Scattering,
                                  double t_Theta = 0,
@@ -75,6 +77,21 @@ namespace MultiLayerOptics
                                    FenestrationCommon::ScatteringSimple t_Scattering,
                                    double t_Theta = 0,
                                    double t_Phi = 0);
+
+        double getAbsorptanceLayer(double minLambda,
+                                   double maxLambda,
+                                   size_t Index,
+                                   FenestrationCommon::Side t_Side,
+                                   FenestrationCommon::ScatteringSimple t_Scattering,
+                                   double t_Theta = 0,
+                                   double t_Phi = 0);
+
+        std::vector<double> getAbsorptanceLayers(double minLambda,
+                                                 double maxLambda,
+                                                 FenestrationCommon::Side side,
+                                                 FenestrationCommon::ScatteringSimple scattering,
+                                                 double theta = 0,
+                                                 double phi = 0) override;
 
         double getAbsorptance(FenestrationCommon::Side t_Side,
                               FenestrationCommon::ScatteringSimple t_Scattering,
@@ -88,8 +105,7 @@ namespace MultiLayerOptics
 
     private:
         explicit CMultiLayerScattered(const SingleLayerOptics::CScatteringLayer & t_Layer);
-        CMultiLayerScattered(
-          const std::vector<SingleLayerOptics::CScatteringLayer> & layers);
+        CMultiLayerScattered(const std::vector<SingleLayerOptics::CScatteringLayer> & layers);
 
         void initialize(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
