@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <WCECommon.hpp>
+#include <WCESingleLayerOptics.hpp>
 
 #include "EquivalentBSDFLayer.hpp"
 
@@ -30,7 +31,7 @@ namespace MultiLayerOptics
 
     typedef std::shared_ptr<std::vector<FenestrationCommon::CSeries>> p_VectorSeries;
 
-    class CMultiPaneBSDF
+    class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer
     {
     public:
         static std::unique_ptr<CMultiPaneBSDF>
@@ -84,6 +85,14 @@ namespace MultiLayerOptics
                                                    FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySimple t_Property);
 
+        double getPropertySimple(const double minLambda,
+                                 const double maxLambda,
+                                 const FenestrationCommon::PropertySimple t_Property,
+                                 const FenestrationCommon::Side t_Side,
+                                 const FenestrationCommon::Scattering t_Scattering,
+                                 const double t_Theta = 0,
+                                 const double t_Phi = 0);
+
         double DirDir(double minLambda,
                       double maxLambda,
                       FenestrationCommon::Side t_Side,
@@ -98,10 +107,15 @@ namespace MultiLayerOptics
                       size_t Index);
 
         // std::vector of layer by layer absorptances for each incoming direction
-        std::vector<double> & Abs(const double minLambda,
-                                  const double maxLambda,
-                                  const FenestrationCommon::Side t_Side,
-                                  const size_t Index);
+        std::vector<double> &
+          Abs(double minLambda, double maxLambda, FenestrationCommon::Side t_Side, size_t Index);
+
+        std::vector<double> getAbsorptanceLayers(double minLambda,
+                                                 double maxLambda,
+                                                 FenestrationCommon::Side side,
+                                                 FenestrationCommon::ScatteringSimple scattering,
+                                                 double theta = 0,
+                                                 double phi = 0) override;
 
         // Hemispherical results for every direction
         std::vector<double> DirHem(double minLambda,
@@ -161,6 +175,11 @@ namespace MultiLayerOptics
                          size_t Index,
                          double t_Theta,
                          double t_Phi);
+
+        std::vector<double> getWavelengths() const override;
+
+        double getMinLambda() const override;
+        double getMaxLambda() const override;
 
     private:
         CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,

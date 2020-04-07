@@ -145,6 +145,9 @@ TEST_F(MultiPaneScattered_21515, TestSpecular1)
 {
     SCOPED_TRACE("Begin Test: Laminate layer - Angular Dependency.");
 
+    const double minLambda = 0.3;
+    const double maxLambda = 2.5;
+
     CMultiLayerScattered & aLayer = getLayer();
 
     Side aSide = Side::Front;
@@ -166,8 +169,8 @@ TEST_F(MultiPaneScattered_21515, TestSpecular1)
 
     for(const auto & theta : thetaAngles)
     {
-        results.push_back(
-          aLayer.getPropertySimple(PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi));
+        results.push_back(aLayer.getPropertySimple(
+          minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi));
     }
 
 
