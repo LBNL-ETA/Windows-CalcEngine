@@ -431,7 +431,7 @@ TEST_F(EquivalentSpecularLayer_102_103, TestAngleHemispherical19)
 
     double Rfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::R, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.205583, Rfhem, 1e-6);
+    EXPECT_NEAR(0.205582, Rfhem, 1e-6);
 
     double Rbhem =
       aLayer.getHemisphericalProperty(Side::Back, Property::R, aAngles, minLambda, maxLambda);
