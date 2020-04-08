@@ -18,7 +18,6 @@ namespace SpectralAveraging {
 	class CSpectralSample;
 	class CSpectralSampleData;
 	class CSpectralAngleSample;
-	class CAngularSpectralProperties;
 
 	//	enum class WavelengthSet { Custom, Source, Data };
 

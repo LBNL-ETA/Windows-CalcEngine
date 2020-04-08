@@ -1046,7 +1046,7 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties80degrees)
 
     auto transmittance =
       angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
-    EXPECT_NEAR(0.427266, transmittance, 1e-6);
+    EXPECT_NEAR(0.427264, transmittance, 1e-6);
 
     auto reflectanceFront =
       angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);

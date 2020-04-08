@@ -268,11 +268,11 @@ TEST_F(EquivalentSpecularLayer_21467, TestAngle0)
 
     const double Rfhem =
       aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.169475, Rfhem, 1e-6);
+    EXPECT_NEAR(0.169476, Rfhem, 1e-6);
 
     const double Rbhem =
       aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.174747, Rbhem, 1e-6);
+    EXPECT_NEAR(0.174748, Rbhem, 1e-6);
 }
 
 TEST_F(EquivalentSpecularLayer_21467, TestAngleHemispherical10)
@@ -295,11 +295,11 @@ TEST_F(EquivalentSpecularLayer_21467, TestAngleHemispherical10)
 
     double Rfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::R, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.169475, Rfhem, 1e-6);
+    EXPECT_NEAR(0.169476, Rfhem, 1e-6);
 
     double Rbhem =
       aLayer.getHemisphericalProperty(Side::Back, Property::R, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.174747, Rbhem, 1e-6);
+    EXPECT_NEAR(0.174748, Rbhem, 1e-6);
 
     double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda);
     EXPECT_NEAR(0.036625, Abs1, 1e-6);
