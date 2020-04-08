@@ -10,8 +10,6 @@ namespace SpectralAveraging
     class CSpectralSampleData;
     class PhotovoltaicSampleData;
 
-    class CAngularSpectralProperties;
-
     enum class WavelengthSet
     {
         Custom,
@@ -76,6 +74,8 @@ namespace SpectralAveraging
                          double const maxLambda,
                          FenestrationCommon::Property const t_Property,
                          FenestrationCommon::Side const t_Side);
+
+        std::vector<double> getWavelengths() const;
 
         size_t getBandSize() const;
 
