@@ -441,7 +441,7 @@ namespace MultiLayerOptics
     {
         std::vector<double> abs;
         size_t absSize{m_Abs.at(Side::Front).size()};
-        for(size_t i = 0u; i < absSize; ++i)
+        for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
             {
