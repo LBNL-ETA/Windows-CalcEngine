@@ -208,7 +208,9 @@ namespace SingleLayerOptics
                                                                const Side t_Side) const
     {
         std::vector<double> aResult;
-        aResult.push_back(getProperty(t_Property, t_Side));
+        const auto prop{getProperty(t_Property, t_Side)};
+        aResult.push_back(prop);
+        aResult.push_back(prop);
         return aResult;
     }
 
@@ -216,6 +218,7 @@ namespace SingleLayerOptics
     {
         std::vector<double> aWavelengths;
         aWavelengths.push_back(m_MinLambda);
+        aWavelengths.push_back(m_MaxLambda);
         return aWavelengths;
     }
 
