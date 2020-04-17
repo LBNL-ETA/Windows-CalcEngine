@@ -21,7 +21,8 @@ namespace EffectiveLayers
         m_Width(width),
         m_Height(height),
         m_Thickness(thickness),
-        m_ShadeOpenness(openness),
+        m_ShadeOpenness(
+          openness.Ah * width * height, openness.Dl, openness.Dr, openness.Dtop, openness.Dbot),
         coefficients{coefficients}
     {}
 
@@ -108,4 +109,45 @@ namespace EffectiveLayers
                                                        const ShadeOpenness & openness) :
         EffectiveLayerType1(width, height, thickness, openness)
     {}
+
+    EffectiveLayerDiffuse::EffectiveLayerDiffuse(double width,
+                                                 double height,
+                                                 double thickness,
+                                                 const ShadeOpenness & openness) :
+        EffectiveLayerType1(width, height, thickness, openness)
+    {}
+
+    EffectiveLayerWoven::EffectiveLayerWoven(double width,
+                                             double height,
+                                             double thickness,
+                                             const ShadeOpenness & openness) :
+        EffectiveLayerType1(width, height, thickness, openness)
+    {}
+
+    EffectiveLayerBSDF::EffectiveLayerBSDF(double width,
+                                           double height,
+                                           double thickness,
+                                           const ShadeOpenness & openness) :
+        EffectiveLayerType1(width, height, thickness, openness)
+    {}
+
+    EffectiveLayerOther::EffectiveLayerOther(double width,
+                                             double height,
+                                             double thickness,
+                                             const ShadeOpenness & openness) :
+        EffectiveLayer(width, height, thickness, openness)
+    {}
+    EffectiveOpenness EffectiveLayerOther::getEffectiveOpenness()
+    {
+        return {m_ShadeOpenness.Ah,
+                m_ShadeOpenness.Dl * m_Height,
+                m_ShadeOpenness.Dr * m_Height,
+                m_ShadeOpenness.Dtop * m_Width,
+                m_ShadeOpenness.Dbot * m_Width};
+    }
+
+    double EffectiveLayerOther::effectiveThickness()
+    {
+        return m_Thickness;
+    }
 }   // namespace EffectiveLayers
