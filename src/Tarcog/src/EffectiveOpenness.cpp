@@ -77,4 +77,35 @@ namespace EffectiveLayers
         EffectiveVenetian(
           width, height, thickness, openness, slatAngle, slatWidth, {0.041, 0.0, 0.27, 0.012})
     {}
+
+    EffectiveLayerType1::EffectiveLayerType1(double width,
+                                             double height,
+                                             double thickness,
+                                             const ShadeOpenness & openness) :
+        EffectiveLayer(width, height, thickness, openness, {0.05, 1.08, 0.79, 0.50})
+    {}
+
+    EffectiveOpenness EffectiveLayerType1::getEffectiveOpenness()
+    {
+        const auto area{m_Width * m_Height};
+        const auto Ah_eff{area * coefficients.C1
+                          * (std::pow(m_ShadeOpenness.Ah / area, coefficients.C2))};
+        const auto Al_eff{m_ShadeOpenness.Dl * m_Height * coefficients.C3};
+        const auto Ar_eff{m_ShadeOpenness.Dr * m_Height * coefficients.C3};
+        const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width * coefficients.C4};
+        const auto Abop_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
+        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff};
+    }
+
+    double EffectiveLayerType1::effectiveThickness()
+    {
+        return m_Thickness;
+    }
+
+    EffectiveLayerPerforated::EffectiveLayerPerforated(double width,
+                                                       double height,
+                                                       double thickness,
+                                                       const ShadeOpenness & openness) :
+        EffectiveLayerType1(width, height, thickness, openness)
+    {}
 }   // namespace EffectiveLayers
