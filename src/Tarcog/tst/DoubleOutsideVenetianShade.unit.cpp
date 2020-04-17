@@ -31,7 +31,7 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 295.15;
+        auto roomTemperature = 294.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
@@ -65,12 +65,14 @@ protected:
 
         EffectiveLayers::EffectiveOpenness effOpenness{effectiveVenetian.getEffectiveOpenness()};
 
+        const auto effectiveThickness{effectiveVenetian.effectiveThickness()};
+
         auto Ef = 0.557614088058;
         auto Eb = 0.557614088058;
         auto Tirf = 0.422346264124;
         auto Tirb = 0.422346264124;
 
-        auto aLayer1 = Tarcog::ISO15099::Layers::shading(matThickness,
+        auto aLayer1 = Tarcog::ISO15099::Layers::shading(effectiveThickness,
                                                          shadeLayerConductance,
                                                          effOpenness.Atop,
                                                          effOpenness.Abot,
@@ -131,9 +133,9 @@ TEST_F(TestDoubleOutsideVenetianShade, Test1)
     auto aSystem = GetSystem();
 
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(3.260747, uval, 1e-6);
+    EXPECT_NEAR(3.24139966, uval, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(130.429894, heatflow, 1e-6);
+    EXPECT_NEAR(126.41458678, heatflow, 1e-6);
 }
