@@ -48,7 +48,7 @@ namespace EffectiveLayers
                        double height,
                        double thickness,
                        const ShadeOpenness & openness,
-                       Coefficients coefficients = {0.05, 1.08, 0.79, 0.50});
+                       Coefficients coefficients = {0.0, 0.0, 0.0, 0.0});
 
         virtual EffectiveOpenness getEffectiveOpenness() = 0;
 
@@ -67,14 +67,13 @@ namespace EffectiveLayers
     class EffectiveVenetian : public EffectiveLayer
     {
     public:
-        EffectiveVenetian(
-          double width,
-          double height,
-          double thickness,
-          const ShadeOpenness & openness,
-          double slatAngle,
-          double slatWidth,
-          Coefficients coefficients);
+        EffectiveVenetian(double width,
+                          double height,
+                          double thickness,
+                          const ShadeOpenness & openness,
+                          double slatAngle,
+                          double slatWidth,
+                          Coefficients coefficients);
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;
@@ -104,6 +103,28 @@ namespace EffectiveLayers
                                    const ShadeOpenness & openness,
                                    double slatAngle,
                                    double slatWidth);
+    };
+
+    //! \brief Used for effective calculations for Perforated, Woven, Diffuse shade and BSDF
+    class EffectiveLayerType1 : public EffectiveLayer
+    {
+    public:
+        EffectiveLayerType1(double width,
+                            double height,
+                            double thickness,
+                            const ShadeOpenness & openness);
+
+        EffectiveOpenness getEffectiveOpenness() override;
+        double effectiveThickness() override;
+    };
+
+    class EffectiveLayerPerforated : public EffectiveLayerType1
+    {
+    public:
+        EffectiveLayerPerforated(double width,
+                                 double height,
+                                 double thickness,
+                                 const ShadeOpenness & openness);
     };
 
 }   // namespace EffectiveLayers
