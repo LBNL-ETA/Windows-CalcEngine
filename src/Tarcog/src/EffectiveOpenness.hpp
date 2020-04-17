@@ -1,0 +1,109 @@
+#pragma once
+
+#include <map>
+
+namespace EffectiveLayers
+{
+    //! \brief Structure to hold data about shading device opennes as it is defined from user point
+    //! of view
+    struct ShadeOpenness
+    {
+        ShadeOpenness(double ah, double dl, double dr, double dtop, double dbot);
+        double Ah;
+        double Dl;
+        double Dr;
+        double Dtop;
+        double Dbot;
+    };
+
+    //! \brief Effective openness of shading layer that is necessary for thermal calculations.
+    //!
+    //! Thermal openness of shading layer will not match physical openness and because of that some
+    //! calculations are required.
+    struct EffectiveOpenness
+    {
+        EffectiveOpenness(double ah, double al, double ar, double atop, double abot);
+        double Ah;
+        double Al;
+        double Ar;
+        double Atop;
+        double Abot;
+    };
+
+    struct Coefficients
+    {
+        Coefficients(double c1, double c2, double c3, double c4);
+        double C1;
+        double C2;
+        double C3;
+        double C4;
+    };
+
+    //! \brief Abstract class that will be used to inherit effective openness calculations for
+    //! different shade types
+    class EffectiveLayer
+    {
+    public:
+        EffectiveLayer(double width,
+                       double height,
+                       double thickness,
+                       const ShadeOpenness & openness,
+                       Coefficients coefficients = {0.05, 1.08, 0.79, 0.50});
+
+        virtual EffectiveOpenness getEffectiveOpenness() = 0;
+
+        virtual double effectiveThickness() = 0;
+
+    protected:
+        double m_Width;
+        double m_Height;
+        double m_Thickness;
+
+        ShadeOpenness m_ShadeOpenness;
+
+        Coefficients coefficients;
+    };
+
+    class EffectiveVenetian : public EffectiveLayer
+    {
+    public:
+        EffectiveVenetian(
+          double width,
+          double height,
+          double thickness,
+          const ShadeOpenness & openness,
+          double slatAngle,
+          double slatWidth,
+          Coefficients coefficients);
+
+        EffectiveOpenness getEffectiveOpenness() override;
+        double effectiveThickness() override;
+
+    private:
+        double m_SlatAngleRad;
+        double m_SlatWidth;
+    };
+
+    class EffectiveHorizontalVenetian : public EffectiveVenetian
+    {
+    public:
+        EffectiveHorizontalVenetian(double width,
+                                    double height,
+                                    double thickness,
+                                    const ShadeOpenness & openness,
+                                    double slatAngle,
+                                    double SlatWidth);
+    };
+
+    class EffectiveVerticalVenentian : public EffectiveVenetian
+    {
+    public:
+        EffectiveVerticalVenentian(double width,
+                                   double height,
+                                   double thickness,
+                                   const ShadeOpenness & openness,
+                                   double slatAngle,
+                                   double slatWidth);
+    };
+
+}   // namespace EffectiveLayers
