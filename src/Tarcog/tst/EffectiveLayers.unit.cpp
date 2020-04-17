@@ -138,3 +138,28 @@ TEST_F(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
     EXPECT_NEAR(7.11e-3, effectiveOpenness.Al, 1e-8);
     EXPECT_NEAR(5.688e-3, effectiveOpenness.Ar, 1e-8);
 }
+
+TEST_F(TestEffectiveLayers, TestOtherShadingEffectiveOpenness)
+{
+    SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
+
+    const auto width{1.3};                  // m
+    const auto height{1.8};                 // m
+    const auto materialThickness{0.0006};   // m
+
+    EffectiveLayers::ShadeOpenness openness{0.087265995, 0.005, 0.004, 0.01, 0.008};
+
+    EffectiveLayers::EffectiveLayerOther perforated{
+      width, height, materialThickness, openness};
+
+    const auto effectiveThickness{perforated.effectiveThickness()};
+
+    EXPECT_NEAR(6e-4, effectiveThickness, 1e-9);
+
+    const auto effectiveOpenness{perforated.getEffectiveOpenness()};
+    EXPECT_NEAR(0.2042024283, effectiveOpenness.Ah, 1e-8);
+    EXPECT_NEAR(0.013, effectiveOpenness.Atop, 1e-8);
+    EXPECT_NEAR(0.0104, effectiveOpenness.Abot, 1e-8);
+    EXPECT_NEAR(0.009, effectiveOpenness.Al, 1e-8);
+    EXPECT_NEAR(0.0072, effectiveOpenness.Ar, 1e-8);
+}
