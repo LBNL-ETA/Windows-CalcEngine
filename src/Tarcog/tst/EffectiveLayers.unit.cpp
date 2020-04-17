@@ -43,7 +43,7 @@ TEST_F(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpe
     const auto slatTiltAngle{0.0};
     const auto slatWidth{0.0148};   // m
 
-    EffectiveLayers::ShadeOpenness openness{2.32047748565674, 0, 0, 0.01, 0.008};
+    EffectiveLayers::ShadeOpenness openness{0.991657045, 0, 0, 0.01, 0.008};
 
     EffectiveLayers::EffectiveHorizontalVenetian venetian{
       width, height, materialThickness, openness, slatTiltAngle, slatWidth};
@@ -70,7 +70,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
     const auto slatTiltAngle{0.0};
     const auto slatWidth{0.0762};   // m
 
-    EffectiveLayers::ShadeOpenness openness{2.33584642410278, 0, 0, 0.01, 0.008};
+    EffectiveLayers::ShadeOpenness openness{0.998224968, 0, 0, 0.01, 0.008};
 
     EffectiveLayers::EffectiveVerticalVenentian venetian{
       width, height, materialThickness, openness, slatTiltAngle, slatWidth};
@@ -97,7 +97,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
     const auto slatTiltAngle{45.0};
     const auto slatWidth{0.0762};   // m
 
-    EffectiveLayers::ShadeOpenness openness{2.33584642, 0, 0, 0.01, 0.008};
+    EffectiveLayers::ShadeOpenness openness{0.998224966, 0, 0, 0.01, 0.008};
 
     EffectiveLayers::EffectiveVerticalVenentian venetian{
       width, height, materialThickness, openness, slatTiltAngle, slatWidth};
@@ -122,7 +122,7 @@ TEST_F(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
     const auto height{1.8};                 // m
     const auto materialThickness{0.0006};   // m
 
-    EffectiveLayers::ShadeOpenness openness{0.204202428, 0.005, 0.004, 0.01, 0.008};
+    EffectiveLayers::ShadeOpenness openness{0.087265995, 0.005, 0.004, 0.01, 0.008};
 
     EffectiveLayers::EffectiveLayerPerforated perforated{
       width, height, materialThickness, openness};

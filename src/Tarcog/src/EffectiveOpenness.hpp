@@ -127,4 +127,43 @@ namespace EffectiveLayers
                                  const ShadeOpenness & openness);
     };
 
+    class EffectiveLayerDiffuse : public EffectiveLayerType1
+    {
+    public:
+        EffectiveLayerDiffuse(double width,
+                              double height,
+                              double thickness,
+                              const ShadeOpenness & openness);
+    };
+
+    class EffectiveLayerWoven : public EffectiveLayerType1
+    {
+    public:
+        EffectiveLayerWoven(double width,
+                            double height,
+                            double thickness,
+                            const ShadeOpenness & openness);
+    };
+
+    class EffectiveLayerBSDF : public EffectiveLayerType1
+    {
+    public:
+        EffectiveLayerBSDF(double width,
+                           double height,
+                           double thickness,
+                           const ShadeOpenness & openness);
+    };
+
+    class EffectiveLayerOther : public EffectiveLayer
+    {
+    public:
+        EffectiveLayerOther(double width,
+                            double height,
+                            double thickness,
+                            const ShadeOpenness & openness);
+
+        EffectiveOpenness getEffectiveOpenness() override;
+        double effectiveThickness() override;
+    };
+
 }   // namespace EffectiveLayers
