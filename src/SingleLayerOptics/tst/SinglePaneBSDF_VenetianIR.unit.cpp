@@ -4,7 +4,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-// Example on how to create multilayer BSDF from specular and venetian layers
+// Example on IR Venentian NFRC = 3002
 
 class SinglePaneBSDF_VenetianIR : public testing::Test
 {
@@ -59,8 +59,8 @@ protected:
 
         const auto Tf = 0.0;
         const auto Tb = 0.0;
-        const auto Rf = 0.9;
-        const auto Rb = 0.9;
+        const auto Rf = 0.1;
+        const auto Rb = 0.1;
 
 
         const auto aMaterialVenetian = SingleLayerOptics::Material::singleBandMaterial(
@@ -72,7 +72,7 @@ protected:
         const auto slatWidth = 0.0148;     // m
         const auto slatSpacing = 0.0127;   // m
         const auto slatTiltAngle = 0;
-        const auto curvatureRadius = 0.03313057;
+        const auto curvatureRadius = 0.033092;
         const size_t numOfSlatSegments = 5;
 
         m_Layer = SingleLayerOptics::CBSDFLayerMaker::getVenetianLayer(
@@ -83,7 +83,7 @@ protected:
           slatTiltAngle,
           curvatureRadius,
           numOfSlatSegments,
-          SingleLayerOptics::DistributionMethod::DirectionalDiffuse);
+          SingleLayerOptics::DistributionMethod::UniformDiffuse);
     }
 
 public:
@@ -101,23 +101,27 @@ TEST_F(SinglePaneBSDF_VenetianIR, TestBSDF1)
 
     const double tauDiff =
       aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
-    EXPECT_NEAR(0.595995, tauDiff, 1e-6);
+    EXPECT_NEAR(0.422915, tauDiff, 1e-6);
 
     const double rhoDiff =
       aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R);
-    EXPECT_NEAR(0.257769, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.020575, rhoDiff, 1e-6);
+
+    const double absDiff =
+      aLayer.AbsDiffDiff(FenestrationCommon::Side::Front);
+    EXPECT_NEAR(0.556510, absDiff, 1e-6);
 
     const auto theta{0.0};
     const auto phi{0.0};
 
     const double tauDir = aLayer.DirDir(
       FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.936964, tauDir, 1e-6);
+    EXPECT_NEAR(0.936683, tauDir, 1e-6);
 
     const double rhoDir = aLayer.DirDir(
       FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.000222, rhoDir, 1e-6);
+    EXPECT_NEAR(7.59383e-5, rhoDir, 1e-6);
 
     const double absDir = aLayer.Abs(FenestrationCommon::Side::Front, theta, phi);
-    EXPECT_NEAR(0.012235, absDir, 1e-6);
+    EXPECT_NEAR(0.059526, absDir, 1e-6);
 }
