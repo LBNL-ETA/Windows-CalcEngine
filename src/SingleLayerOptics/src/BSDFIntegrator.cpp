@@ -189,5 +189,9 @@ namespace SingleLayerOptics
             m_HemisphericalCalculated = true;
         }
     }
+    double CBSDFIntegrator::AbsDiffDiff(FenestrationCommon::Side t_Side)
+    {
+        return 1 - DiffDiff(t_Side, PropertySimple::T) - DiffDiff(t_Side, PropertySimple::R);
+    }
 
 }   // namespace SingleLayerOptics

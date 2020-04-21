@@ -63,6 +63,8 @@ namespace SingleLayerOptics
 
         double DiffDiff(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySimple t_Property);
 
+        double AbsDiffDiff(FenestrationCommon::Side t_Side);
+
         // Lambda values for the layer.
         std::vector<double> lambdaVector() const;
         FenestrationCommon::SquareMatrix lambdaMatrix() const;
