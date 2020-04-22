@@ -21,7 +21,7 @@ namespace Tarcog
         CHeatFlowBalance::CHeatFlowBalance(CIGU & t_IGU) :
             m_MatrixA(4 * t_IGU.getNumOfLayers()),
             m_VectorB(4 * t_IGU.getNumOfLayers()),
-			m_IGU(t_IGU)
+            m_IGU(t_IGU)
         {}
 
         std::vector<double> CHeatFlowBalance::calcBalanceMatrix()
@@ -29,14 +29,15 @@ namespace Tarcog
             auto aSolidLayers = m_IGU.getSolidLayers();
             m_MatrixA.setZeros();
             std::fill(m_VectorB.begin(), m_VectorB.end(), 0);
-			for ( size_t i = 0; i < aSolidLayers.size(); ++i ) {
-				buildCell(*aSolidLayers[i], i);
-			}
+            for(size_t i = 0; i < aSolidLayers.size(); ++i)
+            {
+                buildCell(*aSolidLayers[i], i);
+            }
             return FenestrationCommon::CLinearSolver::solveSystem(m_MatrixA, m_VectorB);
         }
 
-        void CHeatFlowBalance::buildCell( Tarcog::ISO15099::CBaseLayer & t_Current,
-										  const size_t t_Index )
+        void CHeatFlowBalance::buildCell(Tarcog::ISO15099::CBaseLayer & t_Current,
+                                         const size_t t_Index)
         {
             // Routine is used to build matrix "cell" around solid layer.
 
@@ -44,7 +45,7 @@ namespace Tarcog
             size_t sP = 4 * t_Index;
 
             auto next = t_Current.getNextLayer();
-			auto previous = t_Current.getPreviousLayer();
+            auto previous = t_Current.getPreviousLayer();
 
             // First build base cell
             double hgl = t_Current.getConductionConvectionCoefficient();
@@ -68,7 +69,7 @@ namespace Tarcog
 
             // second row
             m_MatrixA(sP + 1, sP) = emissPowerFront;
-			m_MatrixA(sP + 1, sP + 1) = -1;
+            m_MatrixA(sP + 1, sP + 1) = -1;
 
             // third row
             m_MatrixA(sP + 2, sP + 2) = -1;
@@ -80,7 +81,7 @@ namespace Tarcog
             m_MatrixA(sP + 3, sP + 3) = -hgap_next - hgl;
             m_VectorB[sP + 3] = -solarRadiation / 2 - qv_next / 2;
 
-            if( std::dynamic_pointer_cast<CEnvironment>(previous) == nullptr)
+            if(std::dynamic_pointer_cast<CEnvironment>(previous) == nullptr)
             {
                 // first row
                 m_MatrixA(sP, sP - 2) = -1;

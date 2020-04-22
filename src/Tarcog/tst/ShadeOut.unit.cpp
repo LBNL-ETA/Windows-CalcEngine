@@ -49,17 +49,23 @@ protected:
         auto Aright = 0.0;
         auto Afront = 0.5;
 
+        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
+
+        double windowWidth = 1;
+        double windowHeight = 1;
+
+        EffectiveLayers::EffectiveLayerOther effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, openness};
+
+        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
+
         auto layer1 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
-                                                              shadeLayerConductance,
-                                                              Atop,
-                                                              Abot,
-                                                              Aleft,
-                                                              Aright,
-                                                              Afront,
-                                                              emissivity,
-                                                              transmittance,
-                                                              emissivity,
-                                                              transmittance);
+                                                        shadeLayerConductance,
+                                                        effOpenness,
+                                                        emissivity,
+                                                        transmittance,
+                                                        emissivity,
+                                                        transmittance);
 
         ASSERT_TRUE(layer1 != nullptr);
 
@@ -70,19 +76,17 @@ protected:
         transmittance = 0.0;
 
         auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
-                                                            solidLayerConductance,
-                                                            emissivity1,
-                                                            transmittance,
-                                                            emissivity2,
-                                                            transmittance);
+                                                      solidLayerConductance,
+                                                      emissivity1,
+                                                      transmittance,
+                                                      emissivity2,
+                                                      transmittance);
         ASSERT_TRUE(layer2 != nullptr);
 
         auto gapThickness = 0.0127;
         auto gap = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gap != nullptr);
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap, layer2});
 
@@ -95,13 +99,13 @@ protected:
         // System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
-        	new Tarcog::ISO15099::CSingleSystem( aIGU, Indoor, Outdoor));
+          new Tarcog::ISO15099::CSingleSystem(aIGU, Indoor, Outdoor));
 
         m_TarcogSystem->solve();
     }
 
 public:
-	Tarcog::ISO15099::CSingleSystem* GetSystem() const
+    Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
     };
@@ -114,7 +118,7 @@ TEST_F(TestShadeOut, Test1)
     auto aSystem = GetSystem();
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature{256.991924, 256.992140, 269.666330, 270.128394};
+    std::vector<double> correctTemperature{256.991894, 256.992326, 269.666393, 270.128456};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -123,7 +127,7 @@ TEST_F(TestShadeOut, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity{249.993042, 250.921069, 291.999868, 419.703053};
+    std::vector<double> correctRadiosity{249.992973, 250.921698, 292.000206, 419.703064};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)

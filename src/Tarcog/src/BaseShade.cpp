@@ -24,22 +24,20 @@ namespace Tarcog
                                        double const t_Abot,
                                        double const t_Aleft,
                                        double const t_Aright,
-                                       double const t_Afront) :
+                                       double const t_Afront,
+                                       double const t_FrontPorosity) :
             m_Atop(t_Atop),
             m_Abot(t_Abot),
             m_Aleft(t_Aleft),
             m_Aright(t_Aright),
-            m_Afront(t_Afront)
+            m_Afront(t_Afront),
+            m_FrontPorosity(t_FrontPorosity)
         {
             initialize();
         }
 
         CShadeOpenings::CShadeOpenings() :
-            m_Atop(0),
-            m_Abot(0),
-            m_Aleft(0),
-            m_Aright(0),
-            m_Afront(0)
+            m_Atop(0), m_Abot(0), m_Aleft(0), m_Aright(0), m_Afront(0)
         {
             initialize();
         }
@@ -72,28 +70,37 @@ namespace Tarcog
             return m_Atop + 0.5 * m_Abot * openingMultiplier();
         }
 
+        double CShadeOpenings::frontPorositiy() const
+        {
+            return m_FrontPorosity;
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////
         /// CIGUShadeLayer
         ////////////////////////////////////////////////////////////////////////////////////////////////
 
-        CIGUShadeLayer::CIGUShadeLayer(const double t_Thickness,
-                                       const double t_Conductivity,
-                                       const std::shared_ptr<CShadeOpenings> & t_ShadeOpenings,
-                                       const std::shared_ptr<Tarcog::ISO15099::ISurface> & t_FrontSurface,
-                                       const std::shared_ptr<Tarcog::ISO15099::ISurface> & t_BackSurface) :
+        CIGUShadeLayer::CIGUShadeLayer(
+          const double t_Thickness,
+          const double t_Conductivity,
+          const std::shared_ptr<CShadeOpenings> & t_ShadeOpenings,
+          const std::shared_ptr<Tarcog::ISO15099::ISurface> & t_FrontSurface,
+          const std::shared_ptr<Tarcog::ISO15099::ISurface> & t_BackSurface) :
             CIGUSolidLayer(t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface),
-            m_ShadeOpenings(t_ShadeOpenings)
+            m_ShadeOpenings(t_ShadeOpenings),
+            m_MaterialConductivity(t_Conductivity)
         {}
 
         CIGUShadeLayer::CIGUShadeLayer(std::shared_ptr<CIGUSolidLayer> & t_Layer,
                                        std::shared_ptr<CShadeOpenings> & t_ShadeOpenings) :
             CIGUSolidLayer(*t_Layer),
-            m_ShadeOpenings(t_ShadeOpenings)
+            m_ShadeOpenings(t_ShadeOpenings),
+            m_MaterialConductivity(t_Layer->getConductance())
         {}
 
         CIGUShadeLayer::CIGUShadeLayer(double t_Thickness, double t_Conductivity) :
             CIGUSolidLayer(t_Thickness, t_Conductivity),
-            m_ShadeOpenings(std::make_shared<CShadeOpenings>())
+            m_ShadeOpenings(std::make_shared<CShadeOpenings>()),
+            m_MaterialConductivity(t_Conductivity)
         {}
 
         std::shared_ptr<CBaseLayer> CIGUShadeLayer::clone() const
@@ -103,6 +110,8 @@ namespace Tarcog
 
         void CIGUShadeLayer::calculateConvectionOrConductionFlow()
         {
+            m_Conductivity =
+              equivalentConductivity(m_MaterialConductivity, m_ShadeOpenings->frontPorositiy());
             CIGUSolidLayer::calculateConvectionOrConductionFlow();
             assert(m_NextLayer != nullptr);
             assert(m_PreviousLayer != nullptr);
@@ -310,6 +319,18 @@ namespace Tarcog
             }
         }
 
+        double CIGUShadeLayer::equivalentConductivity(const double t_Conductivity,
+                                                      const double permeabilityFactor)
+        {
+            const auto standardPressure{101325};   // Pa
+            const auto Tf{m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()};
+            const auto Tb{m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()};
+            Gases::CGas air;
+            air.setTemperatureAndPressure((Tf + Tb) / 2, standardPressure);
+            const auto airThermalConductivity = air.getGasProperties().m_ThermalConductivity;
+            return airThermalConductivity * permeabilityFactor
+                   + (1 - permeabilityFactor) * t_Conductivity;
+        }
     }   // namespace ISO15099
 
 }   // namespace Tarcog

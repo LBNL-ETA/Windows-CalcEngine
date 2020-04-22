@@ -74,11 +74,7 @@ protected:
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(effectiveThickness,
                                                          shadeLayerConductance,
-                                                         effOpenness.Atop,
-                                                         effOpenness.Abot,
-                                                         effOpenness.Al,
-                                                         effOpenness.Ar,
-                                                         effOpenness.Ah,
+                                                         effOpenness,
                                                          Ef,
                                                          Tirf,
                                                          Eb,
@@ -133,9 +129,9 @@ TEST_F(TestDoubleOutsideVenetianShade, Test1)
     auto aSystem = GetSystem();
 
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(3.24139966, uval, 1e-6);
+    EXPECT_NEAR(3.239246, uval, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(126.41458678, heatflow, 1e-6);
+    EXPECT_NEAR(126.330602, heatflow, 1e-6);
 }

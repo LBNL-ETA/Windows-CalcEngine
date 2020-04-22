@@ -24,12 +24,14 @@ namespace Tarcog
         {
         public:
             CShadeOpenings(
-              double t_Atop, double t_Abot, double t_Aleft, double t_Aright, double t_Afront);
+              double t_Atop, double t_Abot, double t_Aleft, double t_Aright, double t_Afront, double t_FrontPorosity);
 
             CShadeOpenings();
 
             double Aeq_bot();
             double Aeq_top();
+
+            double frontPorositiy() const;
 
         private:
             void initialize();
@@ -40,6 +42,7 @@ namespace Tarcog
             double m_Aleft;
             double m_Aright;
             double m_Afront;
+            double m_FrontPorosity;
         };
 
         class CIGUShadeLayer : public CIGUSolidLayer
@@ -67,7 +70,11 @@ namespace Tarcog
             void calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
                                    std::shared_ptr<CIGUVentilatedGapLayer> t_Gap);
 
+            double equivalentConductivity(double t_Conductivity, double permeabilityFactor);
+
             std::shared_ptr<CShadeOpenings> m_ShadeOpenings;
+
+            double m_MaterialConductivity;
         };
 
     }   // namespace ISO15099

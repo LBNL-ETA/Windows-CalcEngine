@@ -5,6 +5,7 @@
 #include "BaseShade.hpp"
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
+#include "EffectiveOpenness.hpp"
 
 namespace Tarcog
 {
@@ -43,22 +44,24 @@ namespace Tarcog
             return std::make_shared<CIGUSolidLayerDeflection>(*layer, youngsModulus, poissonRatio);
         }
 
-        std::shared_ptr<CIGUSolidLayer> Layers::shading(double thickness,
-                                                        double conductivity,
-                                                        double aTop,
-                                                        double aBot,
-                                                        double aLeft,
-                                                        double aRight,
-                                                        double aFront,
-                                                        double frontEmissivity,
-                                                        double frontTransmittance,
-                                                        double backEmissivity,
-                                                        double backTransmittance)
+        std::shared_ptr<CIGUSolidLayer>
+          Layers::shading(double thickness,
+                          double conductivity,
+                          EffectiveLayers::EffectiveOpenness & effectiveOpenness,
+                          double frontEmissivity,
+                          double frontTransmittance,
+                          double backEmissivity,
+                          double backTransmittance)
         {
             return std::make_shared<CIGUShadeLayer>(
               thickness,
               conductivity,
-              std::make_shared<CShadeOpenings>(aTop, aBot, aLeft, aRight, aFront),
+              std::make_shared<CShadeOpenings>(effectiveOpenness.Atop,
+                                               effectiveOpenness.Abot,
+                                               effectiveOpenness.Al,
+                                               effectiveOpenness.Ar,
+                                               effectiveOpenness.Ah,
+                                               effectiveOpenness.FrontPorosity),
               std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
               std::make_shared<CSurface>(backEmissivity, backTransmittance));
         }

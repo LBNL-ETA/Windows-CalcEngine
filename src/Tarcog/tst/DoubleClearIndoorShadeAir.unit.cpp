@@ -54,9 +54,18 @@ protected:
         auto dleft = 0.1;
         auto dright = 0.1;
         auto Afront = 0.2;
+        EffectiveLayers::ShadeOpenness openness{Afront, dleft, dright, dtop, dbot};
+
+        auto windowWidth = 1.0;
+        auto windowHeight = 1.0;
+
+        EffectiveLayers::EffectiveLayerOther effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, openness};
+
+        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
 
         auto layer3 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, dtop, dbot, dleft, dright, Afront);
+          shadeLayerThickness, shadeLayerConductance, effOpenness);
 
         ASSERT_TRUE(layer3 != nullptr);
 
@@ -67,8 +76,6 @@ protected:
         auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gap2 != nullptr);
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
 
@@ -105,9 +112,9 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
     auto radiosity = aSystem->getRadiosities();
 
     std::vector<double> correctTemp = {
-      258.2265788, 258.7403799, 276.1996405, 276.7134416, 288.1162677, 288.1193825};
+      258.226548, 258.740345, 276.199456, 276.713252, 288.115819, 288.119712};
     std::vector<double> correctJ = {
-      250.2066021, 264.5687123, 319.49179, 340.4531177, 382.6512706, 397.0346045};
+      250.206503, 264.568471, 319.491011, 340.451996, 382.649045, 397.036105};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
     EXPECT_EQ(correctJ.size(), radiosity.size());
@@ -122,5 +129,5 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
     EXPECT_EQ(1, int(numOfIter));
 
     const auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(40.066868, ventilatedFlow, 1e-6);
+    EXPECT_NEAR(40.068454, ventilatedFlow, 1e-6);
 }
