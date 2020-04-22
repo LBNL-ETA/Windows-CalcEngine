@@ -8,9 +8,13 @@ namespace EffectiveLayers
         Ah(ah), Dl(dl), Dr(dr), Dtop(dtop), Dbot(dbot)
     {}
 
-    EffectiveOpenness::EffectiveOpenness(
-      const double ah, const double al, const double ar, const double atop, const double abot) :
-        Ah(ah), Al(al), Ar(ar), Atop(atop), Abot(abot)
+    EffectiveOpenness::EffectiveOpenness(const double ah,
+                                         const double al,
+                                         const double ar,
+                                         const double atop,
+                                         const double abot,
+                                         const double frontPorosity) :
+        Ah(ah), Al(al), Ar(ar), Atop(atop), Abot(abot), FrontPorosity(frontPorosity)
     {}
 
     EffectiveLayer::EffectiveLayer(double width,
@@ -50,7 +54,12 @@ namespace EffectiveLayers
                                        * std::pow(std::cos(m_SlatAngleRad), coefficients.C2),
                                      coefficients.C3)};
 
-        return {Ah_eff, 0, 0, m_ShadeOpenness.Dtop * m_Width, m_ShadeOpenness.Dbot * m_Width};
+        return {Ah_eff,
+                0,
+                0,
+                m_ShadeOpenness.Dtop * m_Width,
+                m_ShadeOpenness.Dbot * m_Width,
+                m_ShadeOpenness.Ah};
     }
 
     double EffectiveVenetian::effectiveThickness()
@@ -95,7 +104,7 @@ namespace EffectiveLayers
         const auto Ar_eff{m_ShadeOpenness.Dr * m_Height * coefficients.C3};
         const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width * coefficients.C4};
         const auto Abop_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
-        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff};
+        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_ShadeOpenness.Ah};
     }
 
     double EffectiveLayerType1::effectiveThickness()
@@ -143,7 +152,8 @@ namespace EffectiveLayers
                 m_ShadeOpenness.Dl * m_Height,
                 m_ShadeOpenness.Dr * m_Height,
                 m_ShadeOpenness.Dtop * m_Width,
-                m_ShadeOpenness.Dbot * m_Width};
+                m_ShadeOpenness.Dbot * m_Width,
+                m_ShadeOpenness.Ah};
     }
 
     double EffectiveLayerOther::effectiveThickness()
