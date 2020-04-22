@@ -411,6 +411,10 @@ namespace MultiLayerOptics
                 result = DirDir(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
                 break;
             case Scattering::DirectDiffuse:
+                result = DirHem(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi)
+                         - DirDir(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
+                break;
+            case Scattering::DirectHemispherical:
                 result = DirHem(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
                 break;
             case Scattering::DiffuseDiffuse:
@@ -446,12 +450,7 @@ namespace MultiLayerOptics
             switch(scattering)
             {
                 case ScatteringSimple::Direct:
-                    abs.push_back(Abs(minLambda,
-                                      maxLambda,
-                                      side,
-                                      i,
-                                      theta,
-                                      phi));
+                    abs.push_back(Abs(minLambda, maxLambda, side, i, theta, phi));
                     break;
                 case ScatteringSimple::Diffuse:
                     abs.push_back(AbsDiff(minLambda, maxLambda, side, i));
@@ -459,6 +458,16 @@ namespace MultiLayerOptics
             }
         }
         return abs;
+    }
+    double CMultiPaneBSDF::DirDiff(double minLambda,
+                                   double maxLambda,
+                                   FenestrationCommon::Side t_Side,
+                                   FenestrationCommon::PropertySimple t_Property,
+                                   double t_Theta,
+                                   double t_Phi)
+    {
+        return DirHem(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi)
+               - DirDir(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
     }
 
 }   // namespace MultiLayerOptics

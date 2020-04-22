@@ -131,6 +131,15 @@ namespace MultiLayerOptics
                       double t_Theta,
                       double t_Phi);
 
+        // This function will return portion of property that goes only as diffuse part. In other words,
+        // this will be DirHemispherical - DirDir.
+        double DirDiff(double minLambda,
+                      double maxLambda,
+                      FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySimple t_Property,
+                      double t_Theta,
+                      double t_Phi);
+
         double DirHem(double minLambda,
                       double maxLambda,
                       FenestrationCommon::Side t_Side,
