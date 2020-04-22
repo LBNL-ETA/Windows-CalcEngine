@@ -148,7 +148,8 @@ namespace FenestrationCommon
     {
         DirectDirect,
         DirectDiffuse,
-        DiffuseDiffuse
+        DiffuseDiffuse,
+        DirectHemispherical
     };
 
     class EnumScattering : public Enum<Scattering>

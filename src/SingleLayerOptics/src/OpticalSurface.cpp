@@ -52,8 +52,14 @@ namespace SingleLayerOptics
             T_dir_dif = 0;
         m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DirectDirect)] = T_dir_dir;
         m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DirectDirect)] = R_dir_dir;
-        m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DirectDiffuse)] = T_dir_dif;
-        m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DirectDiffuse)] = R_dir_dif;
+        m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DirectDiffuse)] =
+          T_dir_dif;
+        m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DirectDiffuse)] =
+          R_dir_dif;
+        m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DirectHemispherical)] =
+          T_dir_dif + T_dir_dir;
+        m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DirectHemispherical)] =
+          R_dir_dif + R_dir_dir;
         m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DiffuseDiffuse)] = T_dif_dif;
         m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DiffuseDiffuse)] = R_dif_dif;
 
