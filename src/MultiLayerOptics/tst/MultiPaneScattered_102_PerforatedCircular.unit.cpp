@@ -186,6 +186,10 @@ TEST_F(MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularDirectBe
       aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.086717, T_dir_dif, 1e-6);
 
+    auto T_dir_hem =
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectHemispherical, theta, phi);
+    EXPECT_NEAR(0.15948, T_dir_hem, 1e-6);
+
     auto T_dif_dif =
       aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.102577, T_dif_dif, 1e-6);

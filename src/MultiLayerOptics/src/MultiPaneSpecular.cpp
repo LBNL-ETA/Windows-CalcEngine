@@ -133,6 +133,9 @@ namespace MultiLayerOptics
             case Scattering::DirectDiffuse:
                 result = 0;
                 break;
+            case Scattering::DirectHemispherical:
+                result = getProperty(t_Side, prop, t_Theta, minLambda, maxLambda);
+                break;
         }
 
         return result;
