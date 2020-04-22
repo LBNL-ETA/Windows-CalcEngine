@@ -49,12 +49,13 @@ namespace Tarcog
         protected:
             virtual void calculateConvectionOrConductionFlow() override;
 
+            double m_Conductivity;
+
         private:
             void setSurfaceState(double t_Temperature,
                                  double t_J,
                                  FenestrationCommon::Side t_Position);
-
-            double m_Conductivity;
+            
             double m_SolarAbsorptance;
         };
 

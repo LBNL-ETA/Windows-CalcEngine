@@ -56,8 +56,18 @@ protected:
         auto Aright = 0.1;
         auto Afront = 0.2;
 
+        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
+
+        double windowWidth = 1;
+        double windowHeight = 1;
+
+        EffectiveLayers::EffectiveLayerOther effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, openness};
+
+        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
+
         auto aLayer2 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, Atop, Abot, Aleft, Aright, Afront);
+          shadeLayerThickness, shadeLayerConductance, effOpenness);
 
         ASSERT_TRUE(aLayer2 != nullptr);
 
@@ -68,8 +78,6 @@ protected:
         auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(GapLayer2 != nullptr);
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aLayer1, GapLayer1, aLayer2, GapLayer2, aLayer3});
 
@@ -107,9 +115,9 @@ TEST_F(TestInBetweenShadeAir, Test1)
     const auto radiosity = aSystem->getRadiosities();
 
     std::vector<double> correctTemp{
-      257.908946, 258.369607, 271.538659, 271.542218, 283.615285, 284.075945};
+      257.908909, 258.369563, 271.538276, 271.542725, 283.615433, 284.076088};
     std::vector<double> correctJ{
-      249.166619, 260.320613, 300.571561, 316.335545, 358.760651, 378.995512};
+      249.166497, 260.320226, 300.570040, 316.337636, 358.761633, 378.996135};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
     EXPECT_EQ(correctJ.size(), radiosity.size());

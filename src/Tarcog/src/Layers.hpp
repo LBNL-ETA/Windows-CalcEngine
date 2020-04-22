@@ -3,6 +3,10 @@
 #include <memory>
 #include <WCEGases.hpp>
 
+namespace EffectiveLayers {
+    struct EffectiveOpenness;
+}
+
 namespace Tarcog
 {
     namespace ISO15099
@@ -28,11 +32,7 @@ namespace Tarcog
 
             static std::shared_ptr<CIGUSolidLayer> shading(double thickness,
                                                            double conductivity,
-                                                           double aTop,
-                                                           double aBot,
-                                                           double aLeft,
-                                                           double aRight,
-                                                           double aFront,
+                                                           EffectiveLayers::EffectiveOpenness & effectiveOpenness,
                                                            double frontEmissivity = 0.84,
                                                            double frontTransmittance = 0.0,
                                                            double backEmissivity = 0.84,
