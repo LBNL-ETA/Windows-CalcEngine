@@ -133,7 +133,10 @@ namespace Tarcog
 
         double CIGUSolidLayer::getRadiationFlow()
         {
-            return 0;
+            const auto frontSurface{m_Surface.at(FenestrationCommon::Side::Front)};
+            const auto backSurface{m_Surface.at(FenestrationCommon::Side::Back)};
+            const auto radiationFlow{frontSurface->J() - backSurface->J()};
+            return radiationFlow;
         }
     }   // namespace ISO15099
 

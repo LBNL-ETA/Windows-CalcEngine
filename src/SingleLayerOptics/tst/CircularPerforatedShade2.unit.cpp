@@ -26,10 +26,10 @@ protected:
           Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        const auto x = 22.5;          // mm
-        const auto y = 38.1;          // mm
-        const auto thickness = 5.0;   // mm
-        const auto radius = 0.0;      // mm
+        const auto x = 0.0225;           // m
+        const auto y = 0.0381;           // m
+        const auto thickness = 0.0050;   // m
+        const auto radius = 0.0;         // m
 
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
@@ -132,12 +132,12 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     // Test first row for reflectance matrix
     auto aRb = aResults->getMatrix(Side::Back, PropertySimple::R);
 
-	correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
-					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
-					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
-					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
-					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
-					  0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648};
+    correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
+                      0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648};
 
     calculatedResults.clear();
     for(size_t i = 0; i < size; ++i)
