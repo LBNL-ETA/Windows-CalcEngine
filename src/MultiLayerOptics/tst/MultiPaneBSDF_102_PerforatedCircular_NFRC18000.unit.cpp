@@ -281,21 +281,26 @@ protected:
 
         auto thickness_102 = 3.048e-3;   // [m]
 
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness_102, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_102(),
+                                                                        thickness_102,
+                                                                        MaterialType::Monolithic,
+                                                                        WavelengthRange::Solar);
         aMaterial_102->setBandWavelengths(wl);
 
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         const auto thickness_31111{0.00023};
-        auto aMaterial_31111 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_31111(), thickness_31111, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial_31111 =
+          SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_31111(),
+                                                     thickness_31111,
+                                                     MaterialType::Monolithic,
+                                                     WavelengthRange::Solar);
         aMaterial_31111->setBandWavelengths(wl);
 
         // make cell geometry
-        const auto x = 0.00169;         // m
-        const auto y = 0.00169;         // m
-        const auto radius = 0.00058;    // m
+        const auto x = 0.00169;        // m
+        const auto y = 0.00169;        // m
+        const auto radius = 0.00058;   // m
 
         // Perforated layer is created here
         const auto perforated = CBSDFLayerMaker::getCircularPerforatedLayer(
