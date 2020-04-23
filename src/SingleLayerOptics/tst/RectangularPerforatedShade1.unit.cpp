@@ -20,17 +20,17 @@ protected:
         const auto Tmat = 0.0;
         const auto Rfmat = 0.7;
         const auto Rbmat = 0.7;
-		const auto minLambda = 0.3;
-		const auto maxLambda = 2.5;
+        const auto minLambda = 0.3;
+        const auto maxLambda = 2.5;
         const auto aMaterial =
           Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-		const auto x = 19.05;         // mm
-		const auto y = 19.05;         // mm
-		const auto thickness = 0.6;   // mm
-		const auto xHole = 3.175;     // mm
-		const auto yHole = 6.35;      // mm
+        const auto x = 19.05;         // mm
+        const auto y = 19.05;         // mm
+        const auto thickness = 0.6;   // mm
+        const auto xHole = 3.175;     // mm
+        const auto yHole = 6.35;      // mm
 
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
@@ -58,6 +58,15 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
 
     const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.670686365, RfDiff, 1e-6);
+
+    const auto theta{0};
+    const auto phi{0};
+
+    const auto tauDirHem{aResults->DirHem(Side::Front, PropertySimple::T, theta, phi)};
+    EXPECT_NEAR(0.055556, tauDirHem, 1e-6);
+
+    const double RfDirHem{aResults->DirHem(Side::Front, PropertySimple::R, theta, phi)};
+    EXPECT_NEAR(0.661111, RfDirHem, 1e-6);
 
     auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
 
