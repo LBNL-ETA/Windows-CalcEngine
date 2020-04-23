@@ -66,5 +66,5 @@ TEST_F(TestCircularPerforatedShadeNFRC18000, TestSolarProperties)
     EXPECT_NEAR(0.640892, absfDiff, 1e-6);
 
     const double absbDiff = aResults->AbsDiffDiff(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(0.623812, absfDiff, 1e-6);
+    EXPECT_NEAR(0.623812, absbDiff, 1e-6);
 }
