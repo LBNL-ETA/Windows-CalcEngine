@@ -26,10 +26,10 @@ protected:
           Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
         // make cell geometry
-        const auto x = 22.5;          // mm
-        const auto y = 38.1;          // mm
-        const auto thickness = 5.0;   // mm
-        const auto radius = 8.35;     // mm
+        const auto x = 0.0225;          // m
+        const auto y = 0.0381;          // m
+        const auto thickness = 0.005;   // m
+        const auto radius = 0.00835;    // m
 
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
 
