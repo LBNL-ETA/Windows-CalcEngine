@@ -65,7 +65,7 @@ namespace Tarcog
             m_MatrixA(sP, sP) = hgap_prev + hgl;
             m_MatrixA(sP, sP + 1) = 1;
             m_MatrixA(sP, sP + 3) = -hgl;
-            m_VectorB[sP] = solarRadiation / 2 + qv_prev / 2;
+            m_VectorB[sP] += solarRadiation / 2 + qv_prev / 2;
 
             // second row
             m_MatrixA(sP + 1, sP) = emissPowerFront;
@@ -79,19 +79,22 @@ namespace Tarcog
             m_MatrixA(sP + 3, sP) = hgl;
             m_MatrixA(sP + 3, sP + 2) = -1;
             m_MatrixA(sP + 3, sP + 3) = -hgap_next - hgl;
-            m_VectorB[sP + 3] = -solarRadiation / 2 - qv_next / 2;
+            m_VectorB[sP + 3] += -solarRadiation / 2 - qv_next / 2;
 
             if(std::dynamic_pointer_cast<CEnvironment>(previous) == nullptr)
             {
                 // first row
-                m_MatrixA(sP, sP - 2) = -1;
                 m_MatrixA(sP, sP - 1) = -hgap_prev;
+                m_MatrixA(sP, sP - 2) = frontSurface->getTransmittance() - 1;
 
                 // second row
                 m_MatrixA(sP + 1, sP - 2) = frontSurface->getReflectance();
 
                 // third row
                 m_MatrixA(sP + 2, sP - 2) = frontSurface->getTransmittance();
+
+                // fourth row
+                m_MatrixA(sP + 3, sP - 2) = frontSurface->getTransmittance();
             }
             else
             {
@@ -100,13 +103,18 @@ namespace Tarcog
                 const double airTemperature =
                   std::dynamic_pointer_cast<CEnvironment>(previous)->getGasTemperature();
 
-                m_VectorB[sP] += environmentRadiosity + hgap_prev * airTemperature;
+                m_VectorB[sP] += environmentRadiosity + hgap_prev * airTemperature
+                                 - environmentRadiosity * frontSurface->getTransmittance();
                 m_VectorB[sP + 1] -= frontSurface->getReflectance() * environmentRadiosity;
                 m_VectorB[sP + 2] -= frontSurface->getTransmittance() * environmentRadiosity;
+                m_VectorB[sP + 3] -= frontSurface->getTransmittance() * environmentRadiosity;
             }
 
             if(std::dynamic_pointer_cast<CEnvironment>(next) == nullptr)
             {
+                // first row
+                m_MatrixA(sP, sP + 5) = -backSurface->getTransmittance();
+
                 // second row
                 m_MatrixA(sP + 1, sP + 5) = backSurface->getTransmittance();
 
@@ -115,7 +123,7 @@ namespace Tarcog
 
                 // fourth row
                 m_MatrixA(sP + 3, sP + 4) = hgap_next;
-                m_MatrixA(sP + 3, sP + 5) = 1;
+                m_MatrixA(sP + 3, sP + 5) = 1 - backSurface->getTransmittance();
             }
             else
             {
@@ -124,6 +132,7 @@ namespace Tarcog
                 const double airTemperature =
                   std::dynamic_pointer_cast<CEnvironment>(next)->getGasTemperature();
 
+                m_VectorB[sP] += backSurface->getTransmittance() * environmentRadiosity;
                 m_VectorB[sP + 1] -= backSurface->getTransmittance() * environmentRadiosity;
                 m_VectorB[sP + 2] -= backSurface->getReflectance() * environmentRadiosity;
                 m_VectorB[sP + 3] -= (environmentRadiosity + hgap_next * airTemperature);
