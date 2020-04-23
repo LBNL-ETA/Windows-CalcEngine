@@ -55,6 +55,9 @@ namespace Tarcog
 
         double CBaseIGULayer::getEffectiveThermalConductivity()
         {
+            const auto heatFlow{getHeatFlow()};
+            const auto temperature1{m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()};
+            const auto temperature2{m_Surface.at(FenestrationCommon::Side::Back)->getTemperature()};
             return std::abs(getHeatFlow() * m_Thickness
                             / (m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()
                                - m_Surface.at(FenestrationCommon::Side::Back)->getTemperature()));
