@@ -118,7 +118,7 @@ TEST_F(TestShadeOut, Test1)
     auto aSystem = GetSystem();
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature{256.991894, 256.992326, 269.666393, 270.128456};
+    std::vector<double> correctTemperature{256.991898, 256.992301, 269.666385, 270.128448};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -127,7 +127,7 @@ TEST_F(TestShadeOut, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity{249.992973, 250.921698, 292.000206, 419.703064};
+    std::vector<double> correctRadiosity{249.992982, 250.921614, 292.000161, 419.703062};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
