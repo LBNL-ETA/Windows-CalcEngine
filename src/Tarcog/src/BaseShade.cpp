@@ -322,9 +322,9 @@ namespace Tarcog
         double CIGUShadeLayer::equivalentConductivity(const double t_Conductivity,
                                                       const double permeabilityFactor)
         {
-            const auto standardPressure{101325};   // Pa
+            const auto standardPressure{101325.0};   // Pa
             const auto Tf{m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()};
-            const auto Tb{m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()};
+            const auto Tb{m_Surface.at(FenestrationCommon::Side::Back)->getTemperature()};
             Gases::CGas air;
             air.setTemperatureAndPressure((Tf + Tb) / 2, standardPressure);
             const auto airThermalConductivity = air.getGasProperties().m_ThermalConductivity;

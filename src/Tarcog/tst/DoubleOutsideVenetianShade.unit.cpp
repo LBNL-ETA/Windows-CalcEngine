@@ -67,10 +67,10 @@ protected:
 
         const auto effectiveThickness{effectiveVenetian.effectiveThickness()};
 
-        auto Ef = 0.557614088058;
-        auto Eb = 0.557614088058;
-        auto Tirf = 0.422346264124;
-        auto Tirb = 0.422346264124;
+        auto Ef = 0.556487858;
+        auto Eb = 0.556487858;
+        auto Tirf = 0.422924578;
+        auto Tirb = 0.422924578;
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(effectiveThickness,
                                                          shadeLayerConductance,
@@ -128,10 +128,12 @@ TEST_F(TestDoubleOutsideVenetianShade, Test1)
 
     auto aSystem = GetSystem();
 
+    auto test{aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
+
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(3.239246, uval, 1e-6);
+    EXPECT_NEAR(3.239680, uval, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(126.330602, heatflow, 1e-6);
+    EXPECT_NEAR(126.347530, heatflow, 1e-6);
 }
