@@ -123,7 +123,7 @@ public:
 
 TEST_F(TestDoubleOutsidePerforatedShade_SHGC, Test1)
 {
-    SCOPED_TRACE("Begin Test: Outside venetian shade.");
+    SCOPED_TRACE("Begin Test: Outside perforated shade.");
 
     auto aSystem = GetSystem();
 

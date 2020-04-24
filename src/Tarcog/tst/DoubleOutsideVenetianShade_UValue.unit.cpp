@@ -45,7 +45,8 @@ protected:
         const auto slatWidth{0.0148};      // m
         const auto slatSpacing{0.0127};    // m
         const auto slatTiltAngle{0.0};
-        const auto curvatureRadius{0.0330920334};   // m
+        const auto curvatureRadius{0.0331305656433105};   // m
+
 
         const auto frontOpenness{ThermalPermeability::Venetian::openness(
           slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
@@ -67,10 +68,10 @@ protected:
 
         const auto effectiveThickness{effectiveVenetian.effectiveThickness()};
 
-        auto Ef = 0.556487858;
-        auto Eb = 0.556487858;
-        auto Tirf = 0.422924578;
-        auto Tirb = 0.422924578;
+        auto Ef = 0.5564947806702053;
+        auto Eb = 0.5564947806702053;
+        auto Tirf = 0.42293224373137134;
+        auto Tirb = 0.42293224373137134;
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(
           effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
@@ -126,7 +127,7 @@ TEST_F(TestDoubleOutsideVenetianShade_UValue, Test1)
     auto effectiveLayerConductivities{
       aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
 
-    const std::vector<double> correctEffectConductivites{1.878057, 1};
+    const std::vector<double> correctEffectConductivites{1.878064, 1};
     EXPECT_EQ(correctEffectConductivites.size(), effectiveLayerConductivities.size());
     for(size_t i = 0u; i < correctEffectConductivites.size(); ++i)
     {
@@ -134,9 +135,9 @@ TEST_F(TestDoubleOutsideVenetianShade_UValue, Test1)
     }
 
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(3.239680, uval, 1e-6);
+    EXPECT_NEAR(3.239692, uval, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(126.347530, heatflow, 1e-6);
+    EXPECT_NEAR(126.347983, heatflow, 1e-6);
 }

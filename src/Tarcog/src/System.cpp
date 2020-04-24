@@ -97,7 +97,7 @@ namespace Tarcog
             return getUValue() * 7.78 + getSHGC(Tsol) / 0.87 * 630.9;
         }
 
-        void CSystem::setAbsorptances(const std::vector<double> &absorptances)
+        void CSystem::setAbsorptances(const std::vector<double> & absorptances)
         {
             m_System.at(System::SHGC)->setAbsorptances(absorptances);
         }
