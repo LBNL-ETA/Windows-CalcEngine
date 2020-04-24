@@ -72,7 +72,7 @@ protected:
         const auto slatWidth = 0.0148;     // m
         const auto slatSpacing = 0.0127;   // m
         const auto slatTiltAngle = 0;
-        const auto curvatureRadius = 0.033092;
+        const auto curvatureRadius = 0.0331305656433105;
         const size_t numOfSlatSegments = 5;
 
         m_Layer = SingleLayerOptics::CBSDFLayerMaker::getVenetianLayer(
@@ -101,27 +101,27 @@ TEST_F(SinglePaneBSDF_VenetianIR, TestBSDF1)
 
     const double tauDiff =
       aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
-    EXPECT_NEAR(0.422915, tauDiff, 1e-6);
+    EXPECT_NEAR(0.42293224373137134, tauDiff, 1e-6);
 
     const double rhoDiff =
       aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R);
-    EXPECT_NEAR(0.020575, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.020572975598423356, rhoDiff, 1e-6);
 
     const double absDiff =
       aLayer.AbsDiffDiff(FenestrationCommon::Side::Front);
-    EXPECT_NEAR(0.556510, absDiff, 1e-6);
+    EXPECT_NEAR(0.5564947806702053, absDiff, 1e-6);
 
     const auto theta{0.0};
     const auto phi{0.0};
 
     const double tauDir = aLayer.DirDir(
       FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.936683, tauDir, 1e-6);
+    EXPECT_NEAR(0.93675867352783815, tauDir, 1e-6);
 
     const double rhoDir = aLayer.DirDir(
       FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R, theta, phi);
-    EXPECT_NEAR(7.59383e-5, rhoDir, 1e-6);
+    EXPECT_NEAR(7.5834925662017421e-5, rhoDir, 1e-6);
 
     const double absDir = aLayer.Abs(FenestrationCommon::Side::Front, theta, phi);
-    EXPECT_NEAR(0.059526, absDir, 1e-6);
+    EXPECT_NEAR(0.059455219638582371, absDir, 1e-6);
 }
