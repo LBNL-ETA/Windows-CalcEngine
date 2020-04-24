@@ -130,6 +130,16 @@ TEST_F(TestDoubleOutsidePerforatedShade_SHGC, Test1)
     const auto uval = aSystem->getUValue();
     EXPECT_NEAR(3.176832, uval, 1e-6);
 
+    auto effectiveLayerConductivities{
+      aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
+
+    const std::vector<double> correctEffectConductivites{0.115463, 1};
+    EXPECT_EQ(correctEffectConductivites.size(), effectiveLayerConductivities.size());
+    for(size_t i = 0u; i < correctEffectConductivites.size(); ++i)
+    {
+        EXPECT_NEAR(correctEffectConductivites[i], effectiveLayerConductivities[i], 1e-6);
+    }
+
     auto totSol{0.315236};
     const auto shgc{aSystem->getSHGC(totSol)};
     EXPECT_NEAR(0.348819, shgc, 1e-6);
