@@ -22,9 +22,7 @@ namespace Tarcog
           double const t_Conductivity,
           std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_FrontSurface,
           std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_BackSurface) :
-            CBaseIGULayer(t_Thickness),
-            m_Conductivity(t_Conductivity),
-            m_SolarAbsorptance(0)
+            CBaseIGULayer(t_Thickness), m_Conductivity(t_Conductivity), m_SolarAbsorptance(0)
         {
             if(t_FrontSurface != nullptr && t_BackSurface != nullptr)
             {
@@ -44,9 +42,7 @@ namespace Tarcog
                                        double const t_FrontIRTransmittance,
                                        double const t_BackEmissivity,
                                        double const t_BackIRTransmittance) :
-            CBaseIGULayer(t_Thickness),
-            m_Conductivity(t_Conductivity),
-            m_SolarAbsorptance(0)
+            CBaseIGULayer(t_Thickness), m_Conductivity(t_Conductivity), m_SolarAbsorptance(0)
         {
             m_Surface[Side::Front] =
               std::make_shared<CSurface>(t_FrontEmissivity, t_FrontIRTransmittance);
@@ -114,7 +110,8 @@ namespace Tarcog
             resetCalculated();
         }
 
-        void CIGUSolidLayer::setSolarAbsorptance(double const t_SolarAbsorptance, const double t_SolarRadiation)
+        void CIGUSolidLayer::setSolarAbsorptance(double const t_SolarAbsorptance,
+                                                 const double t_SolarRadiation)
         {
             m_SolarAbsorptance = t_SolarAbsorptance;
             m_LayerGainFlow = t_SolarRadiation * m_SolarAbsorptance;
@@ -133,9 +130,18 @@ namespace Tarcog
 
         double CIGUSolidLayer::getRadiationFlow()
         {
-            const auto frontSurface{m_Surface.at(FenestrationCommon::Side::Front)};
-            const auto backSurface{m_Surface.at(FenestrationCommon::Side::Back)};
-            const auto radiationFlow{frontSurface->J() - backSurface->J()};
+            // Solid layers share surfaces, so actually asking for front surface of previous layer
+            // will be actual incoming radiation to this surface layer. And vice versa for back
+            // surface.
+            const auto frontIncomingRadiation{
+              getPreviousLayer()->getSurface(FenestrationCommon::Side::Front)->J()};
+            const auto backIncomingRadiation{
+              getNextLayer()->getSurface(FenestrationCommon::Side::Back)->J()};
+
+            const auto frontSurface{m_Surface.at(Side::Front)};
+
+            const auto tir{frontSurface->getTransmittance()};
+            const auto radiationFlow{tir * (backIncomingRadiation - frontIncomingRadiation)};
             return radiationFlow;
         }
     }   // namespace ISO15099
