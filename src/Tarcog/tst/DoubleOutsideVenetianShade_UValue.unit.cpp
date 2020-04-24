@@ -6,7 +6,7 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-class TestDoubleOutsideVenetianShade : public testing::Test
+class TestDoubleOutsideVenetianShade_UValue : public testing::Test
 {
 private:
     std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
@@ -117,7 +117,7 @@ public:
     };
 };
 
-TEST_F(TestDoubleOutsideVenetianShade, Test1)
+TEST_F(TestDoubleOutsideVenetianShade_UValue, Test1)
 {
     SCOPED_TRACE("Begin Test: Outside venetian shade.");
 
@@ -125,6 +125,13 @@ TEST_F(TestDoubleOutsideVenetianShade, Test1)
 
     auto effectiveLayerConductivities{
       aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
+
+    const std::vector<double> correctEffectConductivites{1.878057, 1};
+    EXPECT_EQ(correctEffectConductivites.size(), effectiveLayerConductivities.size());
+    for(size_t i = 0u; i < correctEffectConductivites.size(); ++i)
+    {
+        EXPECT_NEAR(correctEffectConductivites[i], effectiveLayerConductivities[i], 1e-6);
+    }
 
     const auto uval = aSystem->getUValue();
     EXPECT_NEAR(3.239680, uval, 1e-6);
