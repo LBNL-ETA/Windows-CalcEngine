@@ -11,8 +11,8 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CBSDFLayer::CBSDFLayer( const std::shared_ptr< CBaseCell > & t_Cell,
-							const CBSDFHemisphere & t_Hemisphere ) :
+    CBSDFLayer::CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
+                           const CBSDFHemisphere & t_Hemisphere) :
         m_BSDFHemisphere(t_Hemisphere),
         m_Cell(t_Cell),
         m_Calculated(false),
@@ -21,10 +21,10 @@ namespace SingleLayerOptics
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
         m_Results = std::make_shared<CBSDFIntegrator>(
-          m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
+            m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
     }
 
-    void CBSDFLayer::setSourceData(CSeries &t_SourceData)
+    void CBSDFLayer::setSourceData(CSeries & t_SourceData)
     {
         m_Cell->setSourceData(t_SourceData);
         m_Calculated = false;
@@ -66,9 +66,10 @@ namespace SingleLayerOptics
         return m_Cell->getBandWavelengths();
     }
 
-	void CBSDFLayer::setBandWavelengths( const std::vector< double > & wavelengths ) {
-		m_Cell->setBandWavelengths(wavelengths);
-	}
+    void CBSDFLayer::setBandWavelengths(const std::vector<double> & wavelengths)
+    {
+        m_Cell->setBandWavelengths(wavelengths);
+    }
 
     void CBSDFLayer::calc_dir_dir()
     {
@@ -155,7 +156,7 @@ namespace SingleLayerOptics
         for(size_t i = 0; i < size; ++i)
         {
             std::shared_ptr<CBSDFIntegrator> aResults = std::make_shared<CBSDFIntegrator>(
-              m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
+                m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
             m_WVResults->push_back(aResults);
         }
     }
@@ -178,5 +179,4 @@ namespace SingleLayerOptics
     {
         return m_Cell;
     }
-
-}   // namespace SingleLayerOptics
+} // namespace SingleLayerOptics
