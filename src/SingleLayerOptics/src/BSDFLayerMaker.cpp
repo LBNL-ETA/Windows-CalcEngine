@@ -7,7 +7,6 @@
 #include "DirectionalDiffuseBSDFLayer.hpp"
 #include "CellDescription.hpp"
 #include "SpecularCellDescription.hpp"
-#include "BaseCell.hpp"
 #include "SpecularCell.hpp"
 #include "SpecularBSDFLayer.hpp"
 #include "VenetianCellDescription.hpp"
@@ -17,7 +16,6 @@
 #include "WovenCellDescription.hpp"
 #include "WovenCell.hpp"
 #include "PerfectDiffuseCellDescription.hpp"
-#include <WCECommon.hpp>
 
 namespace SingleLayerOptics
 {
@@ -106,7 +104,7 @@ namespace SingleLayerOptics
 									  double spacing )
     {
         auto aDescription = std::make_shared<CWovenCellDescription>(diameter, spacing);
-        auto aCell = std::make_shared<CUniformDiffuseCell>(t_Material, aDescription);
+        auto aCell = std::make_shared<CWovenCell>(t_Material, aDescription);
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
