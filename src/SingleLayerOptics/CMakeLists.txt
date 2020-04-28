@@ -38,3 +38,11 @@ if( BUILD_WCE_TESTING )
 endif ()
 
 warning_level_update_wce()
+
+target_include_directories(${target_name}
+    PUBLIC 
+        $<INSTALL_INTERFACE:include>    
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
