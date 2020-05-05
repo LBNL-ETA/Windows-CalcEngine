@@ -265,7 +265,8 @@ namespace Tarcog
         double CSingleSystem::EffectiveConductivity() const
         {
             auto temperatures = getTemperatures();
-            auto deltaTemp = std::abs(temperatures[0] - temperatures[temperatures.size() - 1]);
+            const auto deltaTemp =
+              std::abs(temperatures[0] - temperatures[temperatures.size() - 1]);
             return std::abs(thickness() * getHeatFlow(Environment::Indoor) / deltaTemp);
         }
 
@@ -283,9 +284,10 @@ namespace Tarcog
             return thickness;
         }
 
-        void CSingleSystem::setAbsorptances(const std::vector<double> &absorptances)
+        void CSingleSystem::setAbsorptances(const std::vector<double> & absorptances)
         {
-            m_IGU.setAbsorptances(absorptances, m_Environment.at(Environment::Outdoor)->getDirectSolarRadiation());
+            m_IGU.setAbsorptances(
+              absorptances, m_Environment.at(Environment::Outdoor)->getDirectSolarRadiation());
             solve();
         }
 
