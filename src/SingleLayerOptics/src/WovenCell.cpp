@@ -49,9 +49,10 @@ namespace SingleLayerOptics
 
     double CWovenCell::T_dir_dif(const Side t_Side, const CBeamDirection & t_Direction)
     {
-        double T_material = CWovenBase::T_dir_dif(t_Side, t_Direction);
-        double Tsct = Tscatter_single(t_Side, t_Direction);
-        return T_material + Tsct;
+        const double T_material = CWovenBase::T_dir_dif(t_Side, t_Direction);
+        const auto openness{CWovenBase::T_dir_dir(t_Side, t_Direction)};
+        const double Tsct = Tscatter_single(t_Side, t_Direction);
+        return T_material * (1 - openness) + Tsct;
     }
 
     double CWovenCell::R_dir_dif(const Side t_Side, const CBeamDirection & t_Direction)
@@ -137,13 +138,13 @@ namespace SingleLayerOptics
                 double E = 0;
                 if(Delta > DeltaMax)
                 {
-                    E = -(std::pow(std::abs(Delta - DeltaMax), 2)) / 600;
+                    E = -(std::pow(std::abs(Delta - DeltaMax), 2.5)) / 600;
                     Tsct = -0.2 * Rmat * Tscattermax * (1 - gamma)
                            * std::max(0.0, (Delta - DeltaMax) / (90 - DeltaMax));
                 }
                 else
                 {
-                    E = -(std::pow(std::abs(Delta - DeltaMax), 2.5)) / 600;
+                    E = -(std::pow(std::abs(Delta - DeltaMax), 2)) / 600;
                     Tsct = 0;
                 }
                 Tsct =
