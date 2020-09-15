@@ -47,23 +47,23 @@ TEST_F(TestWovenCell1, TestWoven1)
 
     std::shared_ptr<CWovenCell> aCell = GetCell();
 
-    double Theta = 0;   // deg
-    double Phi = 0;     // deg
-    Side aSide = Side::Front;
+    const double Theta{0}; // deg
+    const double Phi{0};   // deg
+    const Side aSide{Side::Front};
 
     CBeamDirection aDirection = CBeamDirection(Theta, Phi);
 
-    double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
+    const double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
     EXPECT_NEAR(0.444444444, Tdir_dir, 1e-6);
 
-    double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.06560392, Tdir_dif, 1e-6);
+    const double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.045908, Tdir_dif, 1e-6);
 
-    double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.478840524, Rfdir_dif, 1e-6);
+    const double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.478783, Rfdir_dif, 1e-6);
 
-    double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.478840524, Rbdir_dif, 1e-6);
+    const double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.478783, Rbdir_dif, 1e-6);
 }
 
 TEST_F(TestWovenCell1, TestWoven2)
@@ -72,23 +72,23 @@ TEST_F(TestWovenCell1, TestWoven2)
 
     std::shared_ptr<CWovenCell> aCell = GetCell();
 
-    double Theta = 45;   // deg
-    double Phi = 0;      // deg
-    Side aSide = Side::Front;
+    const double Theta{45}; // deg
+    const double Phi{0};    // deg
+    const Side aSide{Side::Front};
 
     CBeamDirection aDirection = CBeamDirection(Theta, Phi);
 
-    double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
-    EXPECT_NEAR(0.352396986, Tdir_dir, 1e-6);
+    const double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
+    EXPECT_NEAR(0.352397, Tdir_dir, 1e-6);
 
-    double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.074469339, Tdir_dif, 1e-6);
+    const double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.114759, Tdir_dif, 1e-6);
 
-    double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.560181615, Rfdir_dif, 1e-6);
+    const double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.501635, Rfdir_dif, 1e-6);
 
-    double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.560181615, Rbdir_dif, 1e-6);
+    const double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.501635, Rbdir_dif, 1e-6);
 }
 
 TEST_F(TestWovenCell1, TestWoven3)
@@ -97,23 +97,23 @@ TEST_F(TestWovenCell1, TestWoven3)
 
     std::shared_ptr<CWovenCell> aCell = GetCell();
 
-    double Theta = 78;   // deg
-    double Phi = 45;     // deg
-    Side aSide = Side::Front;
+    const double Theta = 78; // deg
+    const double Phi = 45;   // deg
+    const Side aSide = Side::Front;
 
-    CBeamDirection aDirection = CBeamDirection(Theta, Phi);
+    const CBeamDirection aDirection = CBeamDirection(Theta, Phi);
 
-    double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
+    const double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
     EXPECT_NEAR(0.0, Tdir_dir, 1e-6);
 
-    double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.183361355, Tdir_dif, 1e-6);
+    const double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.109392, Tdir_dif, 1e-6);
 
-    double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.796638645, Rfdir_dif, 1e-6);
+    const double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.870608, Rfdir_dif, 1e-6);
 
-    double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.796638645, Rbdir_dif, 1e-6);
+    const double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.870608, Rbdir_dif, 1e-6);
 }
 
 TEST_F(TestWovenCell1, TestWoven4)
@@ -122,21 +122,21 @@ TEST_F(TestWovenCell1, TestWoven4)
 
     std::shared_ptr<CWovenCell> aCell = GetCell();
 
-    double Theta = 54;   // deg
-    double Phi = 270;    // deg
-    Side aSide = Side::Front;
+    const double Theta = 54; // deg
+    const double Phi = 270;  // deg
+    const Side aSide = Side::Front;
 
-    CBeamDirection aDirection = CBeamDirection(Theta, Phi);
+    const CBeamDirection aDirection = CBeamDirection(Theta, Phi);
 
-    double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
+    const double Tdir_dir = aCell->T_dir_dir(aSide, aDirection);
     EXPECT_NEAR(0.100838024, Tdir_dir, 1e-6);
 
-    double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.130587497, Tdir_dif, 1e-6);
+    const double Tdir_dif = aCell->T_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.193195, Tdir_dif, 1e-6);
 
-    double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.7505912396, Rfdir_dif, 1e-6);
+    const double Rfdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.680730, Rfdir_dif, 1e-6);
 
-    double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
-    EXPECT_NEAR(0.7505912396, Rbdir_dif, 1e-6);
+    const double Rbdir_dif = aCell->R_dir_dif(aSide, aDirection);
+    EXPECT_NEAR(0.680730, Rbdir_dif, 1e-6);
 }

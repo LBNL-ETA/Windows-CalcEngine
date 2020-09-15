@@ -18,7 +18,7 @@
 #include "../src/MaterialDescription.hpp"
 #include "../src/Material.hpp"
 #include "../src/OpticalSurface.hpp"
-#include "../src/PerfectDiffuseCellDescription.hpp"
+#include "../src/FlatCellDescription.hpp"
 #include "../src/PerforatedCell.hpp"
 #include "../src/PerforatedCellDescription.hpp"
 #include "../src/ScatteringLayer.hpp"

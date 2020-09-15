@@ -122,7 +122,7 @@ TEST_F(TestDoubleOutsideVenetianShade_UValue, Test1)
 {
     SCOPED_TRACE("Begin Test: Outside venetian shade.");
 
-    auto aSystem = GetSystem();
+    const auto aSystem = GetSystem();
 
     auto effectiveLayerConductivities{
       aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
@@ -135,7 +135,7 @@ TEST_F(TestDoubleOutsideVenetianShade_UValue, Test1)
     }
 
     const auto systemKeff{aSystem->getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
-    EXPECT_NEAR(0.1030, systemKeff, 1e-6);
+    EXPECT_NEAR(0.106427, systemKeff, 1e-6);
 
     const auto uval = aSystem->getUValue();
     EXPECT_NEAR(3.239692, uval, 1e-6);
