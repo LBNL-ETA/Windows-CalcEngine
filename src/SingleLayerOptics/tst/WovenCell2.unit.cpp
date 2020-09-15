@@ -47,12 +47,12 @@ TEST_F(TestWovenCell2, TestWoven1)
 
     std::shared_ptr<CWovenCell> aCell = GetCell();
 
-    double Theta = 0;   // deg
-    double Phi = 0;     // deg
-    Side aFrontSide = Side::Front;
-    Side aBackSide = Side::Back;
+    const double Theta = 0; // deg
+    const double Phi = 0;   // deg
+    const Side aFrontSide = Side::Front;
+    const Side aBackSide = Side::Back;
 
-    CBeamDirection aDirection = CBeamDirection(Theta, Phi);
+    const CBeamDirection aDirection = CBeamDirection(Theta, Phi);
 
     double Tdir_dir = aCell->T_dir_dir(aFrontSide, aDirection);
     EXPECT_NEAR(0.444444444, Tdir_dir, 1e-6);
@@ -61,16 +61,16 @@ TEST_F(TestWovenCell2, TestWoven1)
     EXPECT_NEAR(0.444444444, Tdir_dir, 1e-6);
 
     double Tdir_dif = aCell->T_dir_dif(aFrontSide, aDirection);
-    EXPECT_NEAR(0.092147851, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.055148, Tdir_dif, 1e-6);
 
     Tdir_dif = aCell->T_dir_dif(aBackSide, aDirection);
-    EXPECT_NEAR(0.099688235, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.062702, Tdir_dif, 1e-6);
 
     double Rdir_dif = aCell->R_dir_dif(aFrontSide, aDirection);
-    EXPECT_NEAR(0.435629927, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.435593, Rdir_dif, 1e-6);
 
     Rdir_dif = aCell->R_dir_dif(aBackSide, aDirection);
-    EXPECT_NEAR(0.316978432, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.316928, Rdir_dif, 1e-6);
 }
 
 TEST_F(TestWovenCell2, TestWoven2)
@@ -79,12 +79,12 @@ TEST_F(TestWovenCell2, TestWoven2)
 
     std::shared_ptr<CWovenCell> aCell = GetCell();
 
-    double Theta = 45;   // deg
-    double Phi = 0;      // deg
-    Side aFrontSide = Side::Front;
-    Side aBackSide = Side::Back;
+    const double Theta = 45; // deg
+    const double Phi = 0;    // deg
+    const Side aFrontSide = Side::Front;
+    const Side aBackSide = Side::Back;
 
-    CBeamDirection aDirection = CBeamDirection(Theta, Phi);
+    const CBeamDirection aDirection = CBeamDirection(Theta, Phi);
 
     double Tdir_dir = aCell->T_dir_dir(aFrontSide, aDirection);
     EXPECT_NEAR(0.352396986, Tdir_dir, 1e-6);
@@ -93,16 +93,16 @@ TEST_F(TestWovenCell2, TestWoven2)
     EXPECT_NEAR(0.352396986, Tdir_dir, 1e-6);
 
     double Tdir_dif = aCell->T_dir_dif(aFrontSide, aDirection);
-    EXPECT_NEAR(0.106935928, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.110951, Tdir_dif, 1e-6);
 
     Tdir_dif = aCell->T_dir_dif(aBackSide, aDirection);
-    EXPECT_NEAR(0.114820875, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.132270, Tdir_dif, 1e-6);
 
     double Rdir_dif = aCell->R_dir_dif(aFrontSide, aDirection);
-    EXPECT_NEAR(0.508286936, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.470040, Rdir_dif, 1e-6);
 
     Rdir_dif = aCell->R_dir_dif(aBackSide, aDirection);
-    EXPECT_NEAR(0.370881385, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.319200, Rdir_dif, 1e-6);
 }
 
 TEST_F(TestWovenCell2, TestWoven3)
@@ -111,12 +111,12 @@ TEST_F(TestWovenCell2, TestWoven3)
 
     std::shared_ptr<CWovenCell> aCell = GetCell();
 
-    double Theta = 78;   // deg
-    double Phi = 45;     // deg
-    Side aFrontSide = Side::Front;
-    Side aBackSide = Side::Back;
+    const double Theta = 78; // deg
+    const double Phi = 45;   // deg
+    const Side aFrontSide = Side::Front;
+    const Side aBackSide = Side::Back;
 
-    CBeamDirection aDirection = CBeamDirection(Theta, Phi);
+    const CBeamDirection aDirection = CBeamDirection(Theta, Phi);
 
     double Tdir_dir = aCell->T_dir_dir(aFrontSide, aDirection);
     EXPECT_NEAR(0.0, Tdir_dir, 1e-6);
@@ -125,14 +125,14 @@ TEST_F(TestWovenCell2, TestWoven3)
     EXPECT_NEAR(0.0, Tdir_dir, 1e-6);
 
     double Tdir_dif = aCell->T_dir_dif(aFrontSide, aDirection);
-    EXPECT_NEAR(0.216418818, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.168097, Tdir_dif, 1e-6);
 
     Tdir_dif = aCell->T_dir_dif(aBackSide, aDirection);
-    EXPECT_NEAR(0.240727922, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.175433, Tdir_dif, 1e-6);
 
     double Rdir_dif = aCell->R_dir_dif(aFrontSide, aDirection);
-    EXPECT_NEAR(0.733581182, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.781903, Rdir_dif, 1e-6);
 
     Rdir_dif = aCell->R_dir_dif(aBackSide, aDirection);
-    EXPECT_NEAR(0.509272078, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.574567, Rdir_dif, 1e-6);
 }

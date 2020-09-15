@@ -27,7 +27,7 @@ protected:
 
         // make cell geometry
         std::shared_ptr<ICellDescription> aCell =
-          std::make_shared<CPerfectDiffuseCellDescription>();
+          std::make_shared<CFlatCellDescription>();
 
         m_Cell = std::make_shared<CUniformDiffuseCell>(aMaterial, aCell);
     }
