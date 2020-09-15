@@ -166,57 +166,57 @@ TEST_F(MultiPaneBSDF_102_Woven, TestWovenShade)
 
     CMultiPaneBSDF & aLayer = getLayer();
 
-    double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.29334921689561977, tauDiff, 1e-6);
+    const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
+    EXPECT_NEAR(0.30902794780931642, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.45520846465511949, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.44166258309136619, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.13968071343859065, absDiff1, 1e-6);
+    EXPECT_NEAR(0.13798301044479599, absDiff1, 1e-6);
 
     double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.11176160501066995, absDiff2, 1e-6);
+    EXPECT_NEAR(0.11132645865452152, absDiff2, 1e-6);
 
     double theta = 0;
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.40089301421211077, tauHem, 1e-6);
+    EXPECT_NEAR(0.40082876805072382, tauHem, 1e-6);
 
     double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.37099758213531542, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.36858722563266128, rhoHem, 1e-6);
+    EXPECT_NEAR(0.3686410026685929, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
     EXPECT_NEAR(0.078996720485268276, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.1284364533262265, abs1, 1e-6);
+    EXPECT_NEAR(0.1284451959507778, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.10208330682900114, abs2, 1e-6);
+    EXPECT_NEAR(0.10208503332990569, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
 
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.34352297105878693, tauHem, 1e-6);
+    EXPECT_NEAR(0.36755390199563992, tauHem, 1e-6);
 
     tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.31907289929984184, tauDir, 1e-6);
+    EXPECT_NEAR(0.32433962113212828, tauDir, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.40461858936010831, rhoHem, 1e-6);
+    EXPECT_NEAR(0.38385693238574098, rhoHem, 1e-6);
 
     rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.15914030119108447, rhoDir, 1e-6);
+    EXPECT_NEAR(0.15415630292359619, rhoDir, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.14006053337073399, abs1, 1e-6);
+    EXPECT_NEAR(0.1374582068690389, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.11179790621037057, abs2, 1e-6);
+    EXPECT_NEAR(0.11113095874958002, abs2, 1e-6);
 }
