@@ -683,7 +683,7 @@ namespace SingleLayerOptics
         return aProperties;
     }
 
-    double CVenetianCell::T_dir_dif(const Side t_Side,
+    double CVenetianCell::T_dir_dir(const Side t_Side,
                                     const CBeamDirection & t_IncomingDirection,
                                     const CBeamDirection & t_OutgoingDirection)
     {
@@ -692,7 +692,7 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<std::vector<double>>
-      CVenetianCell::T_dir_dif_band(const Side t_Side,
+      CVenetianCell::T_dir_dir_band(const Side t_Side,
                                     const CBeamDirection & t_IncomingDirection,
                                     const CBeamDirection & t_OutgoingDirection)
     {
@@ -706,7 +706,7 @@ namespace SingleLayerOptics
         return aProperties;
     }
 
-    double CVenetianCell::R_dir_dif(const Side t_Side,
+    double CVenetianCell::R_dir_dir(const Side t_Side,
                                     const CBeamDirection & t_IncomingDirection,
                                     const CBeamDirection & t_OutgoingDirection)
     {
@@ -715,7 +715,7 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<std::vector<double>>
-      CVenetianCell::R_dir_dif_band(const Side t_Side,
+      CVenetianCell::R_dir_dir_band(const Side t_Side,
                                     const CBeamDirection & t_IncomingDirection,
                                     const CBeamDirection & t_OutgoingDirection)
     {
