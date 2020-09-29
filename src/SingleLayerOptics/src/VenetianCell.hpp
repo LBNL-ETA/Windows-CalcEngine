@@ -81,9 +81,9 @@ namespace SingleLayerOptics
         double T_dir_dif(const CBeamDirection & t_Direction);
         double R_dir_dif(const CBeamDirection & t_Direction);
 
-        double T_dir_dif(const CBeamDirection & t_IncomingDirection,
+        double T_dir_dir(const CBeamDirection & t_IncomingDirection,
                          const CBeamDirection & t_OutgoingDirection);
-        double R_dir_dif(const CBeamDirection & t_IncomingDirection,
+        double R_dir_dir(const CBeamDirection & t_IncomingDirection,
                          const CBeamDirection & t_OutgoingDirection);
 
         double T_dif_dif();
