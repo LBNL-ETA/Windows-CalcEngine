@@ -44,8 +44,8 @@ namespace SingleLayerOptics
 
             const CBeamDirection jDirection = jDirections[j].centerPoint();
 
-            double aTau = aCell->T_dir_dif(aSide, t_Direction, jDirection);
-            double aRho = aCell->R_dir_dif(aSide, t_Direction, jDirection);
+            double aTau = aCell->T_dir_dir(aSide, t_Direction, jDirection);
+            double aRho = aCell->R_dir_dir(aSide, t_Direction, jDirection);
 
             tau(j, t_DirectionIndex) += aTau / WCE_PI;
             Rho(j, t_DirectionIndex) += aRho / WCE_PI;
@@ -64,8 +64,8 @@ namespace SingleLayerOptics
         {
             const CBeamDirection iDirection = iDirections[i].centerPoint();
 
-            std::shared_ptr<std::vector<double>> aTau = aCell->T_dir_dif_band(aSide, t_Direction, iDirection);
-            std::shared_ptr<std::vector<double>> Ref = aCell->R_dir_dif_band(aSide, t_Direction, iDirection);
+            std::shared_ptr<std::vector<double>> aTau = aCell->T_dir_dir_band(aSide, t_Direction, iDirection);
+            std::shared_ptr<std::vector<double>> Ref = aCell->R_dir_dir_band(aSide, t_Direction, iDirection);
 
             size_t numWV = aTau->size();
             for(size_t j = 0; j < numWV; ++j)
