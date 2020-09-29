@@ -215,21 +215,21 @@ namespace SingleLayerOptics
         /////////////////////////////////////////////////////////////////////////////////////////////
         // Directional diffuse components
         /////////////////////////////////////////////////////////////////////////////////////////////
-        double T_dir_dif(const FenestrationCommon::Side t_Side,
+        double T_dir_dir(const FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_IncomingDirection,
                          const CBeamDirection & t_OutgoingDirection) override;
 
-        double R_dir_dif(const FenestrationCommon::Side t_Side,
-                         const CBeamDirection & t_IncomingDirection,
-                         const CBeamDirection & t_OutgoingDirection) override;
-
-        std::shared_ptr<std::vector<double>>
-          T_dir_dif_band(const FenestrationCommon::Side t_Side,
+        double R_dir_dir(const FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_IncomingDirection,
                          const CBeamDirection & t_OutgoingDirection) override;
 
         std::shared_ptr<std::vector<double>>
-          R_dir_dif_band(const FenestrationCommon::Side t_Side,
+          T_dir_dir_band(const FenestrationCommon::Side t_Side,
+                         const CBeamDirection & t_IncomingDirection,
+                         const CBeamDirection & t_OutgoingDirection) override;
+
+        std::shared_ptr<std::vector<double>>
+          R_dir_dir_band(const FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_IncomingDirection,
                          const CBeamDirection & t_OutgoingDirection) override;
 

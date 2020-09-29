@@ -63,8 +63,8 @@ TEST_F(TestVenetianCellFlat0_1, TestVenetian1)
     Phi = 270;
     CBeamDirection outgoingDirection = CBeamDirection(Theta, Phi);
 
-    double Tdir_dif = aCell->T_dir_dif(aSide, incomingDirection, outgoingDirection);
-    double Rdir_dif = aCell->R_dir_dif(aSide, incomingDirection, outgoingDirection);
+    double Tdir_dif = aCell->T_dir_dir(aSide, incomingDirection, outgoingDirection);
+    double Rdir_dif = aCell->R_dir_dir(aSide, incomingDirection, outgoingDirection);
 
     EXPECT_NEAR(0.10711940268416009, Tdir_dif, 1e-6);
     EXPECT_NEAR(0.10711940268416009, Rdir_dif, 1e-6);
