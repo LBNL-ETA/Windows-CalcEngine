@@ -229,7 +229,7 @@ namespace SingleLayerOptics
     CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                                          const std::shared_ptr<CMaterial> & t_SolarRange,
                                          const double t_Ratio) :
-        CMaterial(0.3, 2.5),
+        CMaterial(t_SolarRange->getMinLambda(), t_SolarRange->getMaxLambda()),
         m_MaterialFullRange(t_SolarRange),
         m_MaterialPartialRange(t_PartialRange)
     {
@@ -241,7 +241,7 @@ namespace SingleLayerOptics
     CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                                          const std::shared_ptr<CMaterial> & t_SolarRange,
                                          const CSeries & t_SolarRadiation) :
-        CMaterial(0.3, 2.5),
+        CMaterial(t_SolarRange->getMinLambda(), t_SolarRange->getMaxLambda()),
         m_MaterialFullRange(t_SolarRange),
         m_MaterialPartialRange(t_PartialRange)
     {
