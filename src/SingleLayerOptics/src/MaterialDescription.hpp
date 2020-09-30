@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <WCESpectralAveraging.hpp>
+#include "BeamDirection.hpp"   //  Need to include rather than forward declare to default incoming and outgoing directions to CBeamDirection()
 
 // Lixing
 namespace FenestrationCommon
@@ -58,28 +59,26 @@ namespace SingleLayerOptics
         explicit CMaterial(FenestrationCommon::WavelengthRange t_Range);
 
         virtual void setSourceData(FenestrationCommon::CSeries &);
-        virtual void setDetectorData(FenestrationCommon::CSeries &t_DetectorData);
+        virtual void setDetectorData(FenestrationCommon::CSeries & t_DetectorData);
 
         // Get certain material property over the entire range
-        virtual double getProperty(FenestrationCommon::Property t_Property,
-                                   FenestrationCommon::Side t_Side) const = 0;
-
-        virtual double getPropertyAtAngle(FenestrationCommon::Property t_Property,
-                                          FenestrationCommon::Side t_Side,
-                                          double t_Angle) const;
+        virtual double
+          getProperty(FenestrationCommon::Property t_Property,
+                      FenestrationCommon::Side t_Side,
+                      const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const = 0;
 
         // Get properties for every band defined in the material
-        virtual std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
-                                                      FenestrationCommon::Side t_Side) const = 0;
+        virtual std::vector<double>
+          getBandProperties(FenestrationCommon::Property t_Property,
+                            FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                            const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const = 0;
 
         std::vector<RMaterialProperties> getBandProperties();
 
         std::shared_ptr<SpectralAveraging::CSpectralSample> getSpectralSample();
 
-        virtual std::vector<double>
-          getBandPropertiesAtAngle(FenestrationCommon::Property t_Property,
-                                   FenestrationCommon::Side t_Side,
-                                   double t_Angle) const;
 
         std::vector<double> getBandWavelengths();
         virtual void setBandWavelengths(const std::vector<double> & wavelengths);
@@ -122,11 +121,17 @@ namespace SingleLayerOptics
                             double t_Rb,
                             FenestrationCommon::WavelengthRange t_Range);
 
-        double getProperty(FenestrationCommon::Property t_Property,
-                           FenestrationCommon::Side t_Side) const override;
+        double
+          getProperty(FenestrationCommon::Property t_Property,
+                      FenestrationCommon::Side t_Side,
+                      const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
-        std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
-                                              FenestrationCommon::Side t_Side) const override;
+        std::vector<double> getBandProperties(
+          FenestrationCommon::Property t_Property,
+          FenestrationCommon::Side t_Side,
+          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
@@ -154,20 +159,25 @@ namespace SingleLayerOptics
         // ratio is calculated based on provided solar radiation values
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_SolarRange,
-                          const FenestrationCommon::CSeries &t_SolarRadiation);
+                          const FenestrationCommon::CSeries & t_SolarRadiation);
 
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_SolarRange);
 
-        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
-        void
-          setDetectorData(FenestrationCommon::CSeries &t_DetectorData) override;
+        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
+        void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
 
-        double getProperty(FenestrationCommon::Property t_Property,
-                           FenestrationCommon::Side t_Side) const override;
+        double
+          getProperty(FenestrationCommon::Property t_Property,
+                      FenestrationCommon::Side t_Side,
+                      const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
-        std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
-                                              FenestrationCommon::Side t_Side) const override;
+        std::vector<double> getBandProperties(
+          FenestrationCommon::Property t_Property,
+          FenestrationCommon::Side t_Side,
+          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
@@ -215,25 +225,23 @@ namespace SingleLayerOptics
           FenestrationCommon::MaterialType t_Type,
           FenestrationCommon::WavelengthRange t_Range);
 
-        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
-        void
-          setDetectorData(FenestrationCommon::CSeries &t_DetectorData) override;
+        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
+        void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
-        double getPropertyAtAngle(FenestrationCommon::Property t_Property,
-                                  FenestrationCommon::Side t_Side,
-                                  double t_Angle) const override;
-        double getProperty(FenestrationCommon::Property t_Property,
-                           FenestrationCommon::Side t_Side) const override;
-
+        double getProperty(
+          FenestrationCommon::Property t_Property,
+          FenestrationCommon::Side t_Side,
+          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        
         // Get properties at each wavelength and at given incident angle
-        std::vector<double> getBandPropertiesAtAngle(FenestrationCommon::Property t_Property,
-                                                     FenestrationCommon::Side t_Side,
-                                                     double t_Angle) const override;
-
-        std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
-                                              FenestrationCommon::Side t_Side) const override;
+        std::vector<double> getBandProperties(
+          FenestrationCommon::Property t_Property,
+          FenestrationCommon::Side t_Side,
+          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
         void setBandWavelengths(const std::vector<double> & wavelengths) override;
 
@@ -251,17 +259,17 @@ namespace SingleLayerOptics
     {
     public:
         CMaterialPhotovoltaic(
-                const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
-                double t_Thickness,
-                FenestrationCommon::MaterialType t_Type,
-                double minLambda,
-                double maxLambda);
+          const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
+          double t_Thickness,
+          FenestrationCommon::MaterialType t_Type,
+          double minLambda,
+          double maxLambda);
 
         CMaterialPhotovoltaic(
-                const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
-                double t_Thickness,
-                FenestrationCommon::MaterialType t_Type,
-                FenestrationCommon::WavelengthRange t_Range);
+          const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
+          double t_Thickness,
+          FenestrationCommon::MaterialType t_Type,
+          FenestrationCommon::WavelengthRange t_Range);
 
         FenestrationCommon::CSeries PCE(FenestrationCommon::Side t_Side) const;
         FenestrationCommon::CSeries W(FenestrationCommon::Side t_Side) const;
@@ -289,23 +297,22 @@ namespace SingleLayerOptics
           const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements,
           FenestrationCommon::WavelengthRange t_Range);
 
-        void setSourceData(FenestrationCommon::CSeries &t_SourceData) override;
+        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
-        double getPropertyAtAngle(FenestrationCommon::Property t_Property,
-                                  FenestrationCommon::Side t_Side,
-                                  double t_Angle) const override;
-        double getProperty(FenestrationCommon::Property t_Property,
-                           FenestrationCommon::Side t_Side) const override;
-
+        double getProperty(
+          FenestrationCommon::Property t_Property,
+          FenestrationCommon::Side t_Side,
+          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        
         // Get properties at each wavelength and at given incident angle
-        std::vector<double> getBandPropertiesAtAngle(FenestrationCommon::Property t_Property,
-                                                     FenestrationCommon::Side t_Side,
-                                                     double t_Angle) const override;
-
-        std::vector<double> getBandProperties(FenestrationCommon::Property t_Property,
-                                              FenestrationCommon::Side t_Side) const override;
+        std::vector<double> getBandProperties(
+          FenestrationCommon::Property t_Property,
+          FenestrationCommon::Side t_Side,
+          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;

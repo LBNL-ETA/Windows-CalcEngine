@@ -541,13 +541,13 @@ public:
 TEST_F( TestSpecularAngularLayerProperty_102, TestSpecularAngular10degree ) {
 	SCOPED_TRACE( "Begin Test: Specular and Angular layer to compare optical properties at different incident angles." );
 
-	double angle = 10;
+	CBeamDirection angle(10, 0);
 
 	std::shared_ptr< CMaterial > aMaterial = getMaterials();
 
-	double trans = aMaterial->getPropertyAtAngle( Property::T, Side::Front, angle );
-	double refleF = aMaterial->getPropertyAtAngle( Property::R, Side::Front, angle );
-	double refleB = aMaterial->getPropertyAtAngle( Property::R, Side::Back, angle );
+	double trans = aMaterial->getProperty( Property::T, Side::Front, angle );
+	double refleF = aMaterial->getProperty( Property::R, Side::Front, angle );
+	double refleB = aMaterial->getProperty( Property::R, Side::Back, angle );
 
 	EXPECT_NEAR( 0.843568244957253, trans, 1e-6 );
 	EXPECT_NEAR( 0.0743831876357468, refleF, 1e-6 );
@@ -557,14 +557,14 @@ TEST_F( TestSpecularAngularLayerProperty_102, TestSpecularAngular10degree ) {
 TEST_F( TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree ) {
 	SCOPED_TRACE( "Begin Test: Specular and Angular layer to compare optical properties at different incident angles." );
 
-	double angle = 25;
+	CBeamDirection angle(25, 0);
 
 	std::shared_ptr< CMaterial > aMaterial = getMaterials();
 
-	double trans = aMaterial->getPropertyAtAngle( Property::T, Side::Front, angle );
-	double refleF = aMaterial->getPropertyAtAngle( Property::R, Side::Front, angle );
-	double refleB = aMaterial->getPropertyAtAngle( Property::R, Side::Back, angle );
-	std::vector< double > aTrans = aMaterial->getBandPropertiesAtAngle( Property::T, Side::Front, angle );
+	double trans = aMaterial->getProperty( Property::T, Side::Front, angle );
+	double refleF = aMaterial->getProperty( Property::R, Side::Front, angle );
+	double refleB = aMaterial->getProperty( Property::R, Side::Back, angle );
+	std::vector< double > aTrans = aMaterial->getBandProperties( Property::T, Side::Front, angle );
 
 	EXPECT_NEAR( 0.79636496475913876, trans, 1e-6 );
 	EXPECT_NEAR( 0.11405492103460167, refleF, 1e-6 );
