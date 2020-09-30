@@ -34,9 +34,7 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////
 
     CMaterial::CMaterial(const double minLambda, const double maxLambda) :
-        m_MinLambda(minLambda),
-        m_MaxLambda(maxLambda),
-        m_WavelengthsCalculated(false)
+        m_MinLambda(minLambda), m_MaxLambda(maxLambda), m_WavelengthsCalculated(false)
     {}
 
     CMaterial::CMaterial(const WavelengthRange t_Range) : m_WavelengthsCalculated(false)
@@ -54,20 +52,6 @@ namespace SingleLayerOptics
     void CMaterial::setDetectorData(FenestrationCommon::CSeries &)
     {
         // Default material will not have detector data
-    }
-
-    double CMaterial::getPropertyAtAngle(const Property t_Property,
-                                         const Side t_Side,
-                                         const double, const double) const
-    {
-        return getProperty(t_Property, t_Side);   // Default behavior is no angular dependence
-    }
-
-    std::vector<double> CMaterial::getBandPropertiesAtAngle(const Property t_Property,
-                                                            const Side t_Side,
-                                                            const double) const
-    {
-        return getBandProperties(t_Property, t_Side);   // Default beahvior is no angular dependence
     }
 
     std::vector<RMaterialProperties> CMaterial::getBandProperties()
@@ -199,13 +183,18 @@ namespace SingleLayerOptics
         m_Property[Side::Back] = std::make_shared<CSurface>(t_Tb, t_Rb);
     }
 
-    double CMaterialSingleBand::getProperty(Property t_Property, Side t_Side) const
+    double CMaterialSingleBand::getProperty(Property t_Property,
+                                            Side t_Side,
+                                            const CBeamDirection &,
+                                            const CBeamDirection &) const
     {
         return m_Property.at(t_Side)->getProperty(t_Property);
     }
 
     std::vector<double> CMaterialSingleBand::getBandProperties(const Property t_Property,
-                                                               const Side t_Side) const
+                                                               const Side t_Side,
+                                                               const CBeamDirection &,
+                                                               const CBeamDirection &) const
     {
         std::vector<double> aResult;
         const auto prop{getProperty(t_Property, t_Side)};
@@ -284,13 +273,18 @@ namespace SingleLayerOptics
         m_MaterialPartialRange->setDetectorData(t_DetectorData);
     }
 
-    double CMaterialDualBand::getProperty(Property t_Property, Side t_Side) const
+    double CMaterialDualBand::getProperty(Property t_Property,
+                                          Side t_Side,
+                                          const CBeamDirection &,
+                                          const CBeamDirection &) const
     {
         return m_MaterialFullRange->getProperty(t_Property, t_Side);
     }
 
     std::vector<double> CMaterialDualBand::getBandProperties(const Property t_Property,
-                                                             const Side t_Side) const
+                                                             const Side t_Side,
+                                                             const CBeamDirection &,
+                                                             const CBeamDirection &) const
     {
         size_t aSize = m_Materials.size();
         std::vector<double> aResults;
@@ -425,33 +419,27 @@ namespace SingleLayerOptics
         m_AngularSample->setDetectorData(t_DetectorData);
     }
 
-    double CMaterialSample::getPropertyAtAngle(const Property t_Property,
-                                               const Side t_Side,
-                                               const double theta, const double) const
+    double CMaterialSample::getProperty(const Property t_Property,
+                                        const Side t_Side,
+                                        const CBeamDirection & t_IncomingDirection,
+                                        const CBeamDirection &) const
     {
         assert(m_AngularSample);
-        return m_AngularSample->getProperty(m_MinLambda, m_MaxLambda, t_Property, t_Side, theta);
+        return m_AngularSample->getProperty(
+          m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
     }
 
-    double CMaterialSample::getProperty(const Property t_Property, const Side t_Side) const
-    {
-        return getPropertyAtAngle(t_Property, t_Side, 0);
-    }
-
-    std::vector<double> CMaterialSample::getBandPropertiesAtAngle(const Property t_Property,
-                                                                  const Side t_Side,
-                                                                  const double t_Angle) const
+    std::vector<double>
+      CMaterialSample::getBandProperties(const Property t_Property,
+                                         const Side t_Side,
+                                         const CBeamDirection & t_IncomingDirection,
+                                         const CBeamDirection &) const
     {
         assert(m_AngularSample);
         return m_AngularSample->getWavelengthsProperty(
-          m_MinLambda, m_MaxLambda, t_Property, t_Side, t_Angle);
+          m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
     }
 
-    std::vector<double> CMaterialSample::getBandProperties(const Property t_Property,
-                                                           const Side t_Side) const
-    {
-        return getBandPropertiesAtAngle(t_Property, t_Side, 0);
-    }
 
     std::vector<double> CMaterialSample::calculateBandWavelengths()
     {
@@ -465,7 +453,8 @@ namespace SingleLayerOptics
         m_WavelengthsCalculated = true;
     }
 
-    void CMaterialSample::Flipped(bool flipped) {
+    void CMaterialSample::Flipped(bool flipped)
+    {
         m_AngularSample->Flipped(flipped);
     }
 
@@ -510,8 +499,7 @@ namespace SingleLayerOptics
       const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_AngularMeasurements,
       const double minLambda,
       const double maxLambda) :
-        CMaterial(minLambda, maxLambda),
-        m_AngularMeasurements(t_AngularMeasurements)
+        CMaterial(minLambda, maxLambda), m_AngularMeasurements(t_AngularMeasurements)
     {
         if(t_AngularMeasurements == nullptr)
         {
@@ -523,8 +511,7 @@ namespace SingleLayerOptics
     CMaterialMeasured::CMaterialMeasured(
       const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_AngularMeasurements,
       const WavelengthRange t_Range) :
-        CMaterial(t_Range),
-        m_AngularMeasurements(t_AngularMeasurements)
+        CMaterial(t_Range), m_AngularMeasurements(t_AngularMeasurements)
     {
         if(t_AngularMeasurements == nullptr)
         {
@@ -538,29 +525,28 @@ namespace SingleLayerOptics
         m_AngularMeasurements->setSourceData(t_SourceData);
     }
 
-    double CMaterialMeasured::getPropertyAtAngle(const Property t_Property,
-                                                 const Side t_Side,
-                                                 const double theta, const double) const
+    double CMaterialMeasured::getProperty(const Property t_Property,
+                                          const Side t_Side,
+                                          const CBeamDirection & t_IncomingDirection,
+                                          const CBeamDirection &) const
     {
         assert(m_AngularMeasurements);
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
-          m_AngularMeasurements->getMeasurements(theta);
+          m_AngularMeasurements->getMeasurements(t_IncomingDirection.theta());
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
         return aSample->getProperty(m_MinLambda, m_MaxLambda, t_Property, t_Side);
     }
 
-    double CMaterialMeasured::getProperty(const Property t_Property, const Side t_Side) const
-    {
-        return getPropertyAtAngle(t_Property, t_Side, 0);
-    }
 
-    std::vector<double> CMaterialMeasured::getBandPropertiesAtAngle(const Property t_Property,
-                                                                    const Side t_Side,
-                                                                    const double t_Angle) const
+    std::vector<double>
+      CMaterialMeasured::getBandProperties(const Property t_Property,
+                                           const Side t_Side,
+                                           const CBeamDirection & t_IncomingDirection,
+                                           const CBeamDirection &) const
     {
         assert(m_AngularMeasurements);
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
-          m_AngularMeasurements->getMeasurements(t_Angle);
+          m_AngularMeasurements->getMeasurements(t_IncomingDirection.theta());
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
         auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
 
@@ -575,12 +561,6 @@ namespace SingleLayerOptics
         }
 
         return aValues;
-    }
-
-    std::vector<double> CMaterialMeasured::getBandProperties(const Property t_Property,
-                                                             const Side t_Side) const
-    {
-        return getBandPropertiesAtAngle(t_Property, t_Side, 0);
     }
 
     std::vector<double> CMaterialMeasured::calculateBandWavelengths()

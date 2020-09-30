@@ -24,19 +24,19 @@ namespace SingleLayerOptics {
 		                         const std::shared_ptr< ICellDescription >& t_Cell );
 
 		virtual double T_dir_dir( const FenestrationCommon::Side t_Side,
-		                          const CBeamDirection& t_IncomingDirection, const CBeamDirection& t_OutgoingDirection ) = 0;
+		                          const CBeamDirection& t_IncomingDirection, const CBeamDirection& t_OutgoingDirection );
 
 		virtual double R_dir_dir( const FenestrationCommon::Side t_Side,
 		                          const CBeamDirection& t_IncomingDirection,
-		                          const CBeamDirection& t_OutgoingDirection ) = 0;
+		                          const CBeamDirection& t_OutgoingDirection );
 
 		virtual std::shared_ptr< std::vector< double > > T_dir_dir_band( const FenestrationCommon::Side t_Side,
 		                                                                 const CBeamDirection& t_IncomingDirection,
-		                                                                 const CBeamDirection& t_OutgoingDirection ) = 0;
+		                                                                 const CBeamDirection& t_OutgoingDirection );
 
 		virtual std::shared_ptr< std::vector< double > > R_dir_dir_band( const FenestrationCommon::Side t_Side,
 		                                                                 const CBeamDirection& t_IncomingDirection,
-		                                                                 const CBeamDirection& t_OutgoingDirection ) = 0;
+		                                                                 const CBeamDirection& t_OutgoingDirection );
 
 	};
 
