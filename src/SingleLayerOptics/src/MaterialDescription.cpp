@@ -58,7 +58,7 @@ namespace SingleLayerOptics
 
     double CMaterial::getPropertyAtAngle(const Property t_Property,
                                          const Side t_Side,
-                                         const double) const
+                                         const double, const double) const
     {
         return getProperty(t_Property, t_Side);   // Default behavior is no angular dependence
     }
@@ -427,10 +427,10 @@ namespace SingleLayerOptics
 
     double CMaterialSample::getPropertyAtAngle(const Property t_Property,
                                                const Side t_Side,
-                                               const double t_Angle) const
+                                               const double theta, const double) const
     {
         assert(m_AngularSample);
-        return m_AngularSample->getProperty(m_MinLambda, m_MaxLambda, t_Property, t_Side, t_Angle);
+        return m_AngularSample->getProperty(m_MinLambda, m_MaxLambda, t_Property, t_Side, theta);
     }
 
     double CMaterialSample::getProperty(const Property t_Property, const Side t_Side) const
@@ -540,11 +540,11 @@ namespace SingleLayerOptics
 
     double CMaterialMeasured::getPropertyAtAngle(const Property t_Property,
                                                  const Side t_Side,
-                                                 const double t_Angle) const
+                                                 const double theta, const double) const
     {
         assert(m_AngularMeasurements);
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
-          m_AngularMeasurements->getMeasurements(t_Angle);
+          m_AngularMeasurements->getMeasurements(theta);
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
         return aSample->getProperty(m_MinLambda, m_MaxLambda, t_Property, t_Side);
     }
