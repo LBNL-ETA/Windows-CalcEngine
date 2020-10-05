@@ -63,6 +63,46 @@ namespace SingleLayerOptics
           aVisibleRangeMaterial, aSolarRangeMaterial, solarRadiation);
     }
 
+    std::shared_ptr<CMaterial>
+      Material::dualBandBSDFMaterial(std::vector<std::vector<double>> const & Tfsol,
+                                     std::vector<std::vector<double>> const & Tbsol,
+                                     std::vector<std::vector<double>> const & Rfsol,
+                                     std::vector<std::vector<double>> const & Rbsol,
+                                     std::vector<std::vector<double>> const & Tfvis,
+                                     std::vector<std::vector<double>> const & Tbvis,
+                                     std::vector<std::vector<double>> const & Rfvis,
+                                     std::vector<std::vector<double>> const & Rbvis,
+                                     CBSDFHemisphere const & hemisphere,
+                                     double ratio)
+    {
+        auto aSolarRangeMaterial = std::make_shared<CMaterialSingleBandBSDF>(
+          Tfsol, Tbsol, Rfsol, Rbsol, hemisphere, WavelengthRange::Solar);
+        auto aVisibleRangeMaterial = std::make_shared<CMaterialSingleBandBSDF>(
+          Tfvis, Tbvis, Rfvis, Rbvis, hemisphere, WavelengthRange::Visible);
+        return std::make_shared<CMaterialDualBandBSDF>(
+          aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
+    }
+
+    std::shared_ptr<CMaterial>
+      Material::dualBandBSDFMaterial(std::vector<std::vector<double>> const & Tfsol,
+                                     std::vector<std::vector<double>> const & Tbsol,
+                                     std::vector<std::vector<double>> const & Rfsol,
+                                     std::vector<std::vector<double>> const & Rbsol,
+                                     std::vector<std::vector<double>> const & Tfvis,
+                                     std::vector<std::vector<double>> const & Tbvis,
+                                     std::vector<std::vector<double>> const & Rfvis,
+                                     std::vector<std::vector<double>> const & Rbvis,
+                                     CBSDFHemisphere const & hemisphere,
+                                     const FenestrationCommon::CSeries & solarRadiation)
+    {
+        auto aSolarRangeMaterial = std::make_shared<CMaterialSingleBandBSDF>(
+          Tfsol, Tbsol, Rfsol, Rbsol, hemisphere, WavelengthRange::Solar);
+        auto aVisibleRangeMaterial = std::make_shared<CMaterialSingleBandBSDF>(
+          Tfvis, Tbvis, Rfvis, Rbvis, hemisphere, WavelengthRange::Visible);
+        return std::make_shared<CMaterialDualBandBSDF>(
+          aVisibleRangeMaterial, aSolarRangeMaterial, solarRadiation);
+    }
+
     std::shared_ptr<CMaterial> Material::singleBandMaterial(const double Tf,
                                                             const double Tb,
                                                             const double Rf,
