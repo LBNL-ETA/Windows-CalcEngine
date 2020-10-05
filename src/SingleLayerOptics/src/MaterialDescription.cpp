@@ -269,7 +269,7 @@ namespace SingleLayerOptics
 
     void IMaterialDualBand::setSourceData(CSeries & t_SourceData)
     {
-		m_Materials.clear();
+        m_Materials.clear();
         m_MaterialFullRange->setSourceData(t_SourceData);
         m_MaterialPartialRange->setSourceData(t_SourceData);
         checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
@@ -763,37 +763,37 @@ namespace SingleLayerOptics
                                                const CMaterial & t_FullRange,
                                                const double t_Fraction)
     {
-		/*
-        double Tf_nir = modifyProperty(t_PartialRange->getProperty(Property::T, Side::Front),
-                                       t_FullRange.getProperty(Property::T, Side::Front),
-                                       t_Fraction);
-        double Tb_nir = modifyProperty(t_PartialRange->getProperty(Property::T, Side::Back),
-                                       t_FullRange.getProperty(Property::T, Side::Back),
-                                       t_Fraction);
+        /*
+double Tf_nir = modifyProperty(t_PartialRange->getProperty(Property::T, Side::Front),
+                               t_FullRange.getProperty(Property::T, Side::Front),
+                               t_Fraction);
+double Tb_nir = modifyProperty(t_PartialRange->getProperty(Property::T, Side::Back),
+                               t_FullRange.getProperty(Property::T, Side::Back),
+                               t_Fraction);
 
-        double Rf_nir = modifyProperty(t_PartialRange->getProperty(Property::R, Side::Front),
-                                       t_FullRange.getProperty(Property::R, Side::Front),
-                                       t_Fraction);
-        double Rb_nir = modifyProperty(t_PartialRange->getProperty(Property::R, Side::Back),
-                                       t_FullRange.getProperty(Property::R, Side::Back),
-                                       t_Fraction);
+double Rf_nir = modifyProperty(t_PartialRange->getProperty(Property::R, Side::Front),
+                               t_FullRange.getProperty(Property::R, Side::Front),
+                               t_Fraction);
+double Rb_nir = modifyProperty(t_PartialRange->getProperty(Property::R, Side::Back),
+                               t_FullRange.getProperty(Property::R, Side::Back),
+                               t_Fraction);
 
-        double minRangeLambda = t_PartialRange->getMinLambda();
+double minRangeLambda = t_PartialRange->getMinLambda();
 
-        if(minRangeLambda > 0.32)
-        {
-            std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(
-              Tf_nir, Tb_nir, Rf_nir, Rb_nir, 0.32, minRangeLambda);
-            m_Materials.push_back(aMaterial);
-        }
+if(minRangeLambda > 0.32)
+{
+    std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(
+      Tf_nir, Tb_nir, Rf_nir, Rb_nir, 0.32, minRangeLambda);
+    m_Materials.push_back(aMaterial);
+}
 
-        m_Materials.push_back(t_PartialRange);
+m_Materials.push_back(t_PartialRange);
 
-        double maxRangeLambda = t_PartialRange->getMaxLambda();
-        std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(
-          Tf_nir, Tb_nir, Rf_nir, Rb_nir, maxRangeLambda, 2.5);
-        m_Materials.push_back(aMaterial);
-		*/
+double maxRangeLambda = t_PartialRange->getMaxLambda();
+std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(
+  Tf_nir, Tb_nir, Rf_nir, Rb_nir, maxRangeLambda, 2.5);
+m_Materials.push_back(aMaterial);
+        */
     }
 
 }   // namespace SingleLayerOptics
