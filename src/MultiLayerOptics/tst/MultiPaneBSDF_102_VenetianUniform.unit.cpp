@@ -176,172 +176,57 @@ TEST_F(MultiPaneBSDF_102_VenetianUniform, TestVenetianUniformBSDF)
 
     CMultiPaneBSDF & aLayer = getLayer();
 
-    double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.194619, tauDiff, 1e-6);
+    const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
+    EXPECT_NEAR(0.220262, tauDiff, 1e-6);
 
-    double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.432878, rhoDiff, 1e-6);
+    const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
+    EXPECT_NEAR(0.411715, rhoDiff, 1e-6);
 
-    double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.136948, absDiff1, 1e-6);
+    const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
+    EXPECT_NEAR(0.135855, absDiff1, 1e-6);
 
-    double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.235555, absDiff2, 1e-6);
+    const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
+    EXPECT_NEAR(0.232168, absDiff2, 1e-6);
 
     double theta = 0;
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.216255, tauHem, 1e-6);
+    EXPECT_NEAR(0.244506, tauHem, 1e-6);
 
     double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.049824, tauDir, 1e-6);
+    EXPECT_NEAR(0.050187, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.390742, rhoHem, 1e-6);
+    EXPECT_NEAR(0.367431, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.079312, rhoDir, 1e-6);
+    EXPECT_NEAR(0.078983, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.131260, abs1, 1e-6);
+    EXPECT_NEAR(0.130050, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.261742, abs2, 1e-6);
+    EXPECT_NEAR(0.258013, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
 
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.212387, tauHem, 1e-6);
+    EXPECT_NEAR(0.240288, tauHem, 1e-6);
 
     tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.082913, tauDir, 1e-6);
+    EXPECT_NEAR(0.089078, tauDir, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.392042, rhoHem, 1e-6);
+    EXPECT_NEAR(0.369016, rhoHem, 1e-6);
 
     rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.156121, rhoDir, 1e-6);
+    EXPECT_NEAR(0.150609, rhoDir, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.138511, abs1, 1e-6);
+    EXPECT_NEAR(0.137320, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.257060, abs2, 1e-6);
-
-    SquareMatrix aT = aLayer.getMatrix(minLambda, maxLambda, Side::Front, PropertySimple::T);
-
-    // Front transmittance matrix
-    size_t size = aT.size();
-
-    std::vector<double> correctResults;
-    correctResults.push_back(1.23756946);
-    correctResults.push_back(0.206788569);
-    correctResults.push_back(0.137959322);
-    correctResults.push_back(0.119945135);
-    correctResults.push_back(0.116410963);
-    correctResults.push_back(0.120001165);
-    correctResults.push_back(0.0903006339);
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
-    }
-
-    // Back Reflectance matrix
-    SquareMatrix aRb = aLayer.getMatrix(minLambda, maxLambda, Side::Back, PropertySimple::R);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.156889279);
-    correctResults.push_back(0.151592391);
-    correctResults.push_back(0.151253569);
-    correctResults.push_back(0.151237261);
-    correctResults.push_back(0.151523108);
-    correctResults.push_back(0.15273961);
-    correctResults.push_back(0.159760546);
-
-    EXPECT_EQ(correctResults.size(), aRb.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRb(i, i), 1e-6);
-    }
-
-    // Front absorptance layer 1
-    auto aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 1);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.131260024);
-    correctResults.push_back(0.132130357);
-    correctResults.push_back(0.134666162);
-    correctResults.push_back(0.138510875);
-    correctResults.push_back(0.142483626);
-    correctResults.push_back(0.14295003);
-    correctResults.push_back(0.120720501);
-
-    EXPECT_EQ(correctResults.size(), aAbsF.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsF[i], 1e-6);
-    }
-
-    // Front absorptance layer 2
-    aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 2);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.261742445);
-    correctResults.push_back(0.261448205);
-    correctResults.push_back(0.260286811);
-    correctResults.push_back(0.257060497);
-    correctResults.push_back(0.247992052);
-    correctResults.push_back(0.221158252);
-    correctResults.push_back(0.113999681);
-
-    EXPECT_EQ(correctResults.size(), aAbsF.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsF[i], 1e-6);
-    }
-
-    // Back absorptance layer 1
-    auto aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 1);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.025373736);
-    correctResults.push_back(0.0254273064);
-    correctResults.push_back(0.0255886706);
-    correctResults.push_back(0.0258588002);
-    correctResults.push_back(0.0262377014);
-    correctResults.push_back(0.0267308524);
-    correctResults.push_back(0.0273780057);
-
-    EXPECT_EQ(correctResults.size(), aAbsB.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsB[i], 1e-6);
-    }
-
-    // Back absorptance layer 2
-    aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 2);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.301981163);
-    correctResults.push_back(0.301981215);
-    correctResults.push_back(0.301997909);
-    correctResults.push_back(0.302102931);
-    correctResults.push_back(0.302523335);
-    correctResults.push_back(0.303974042);
-    correctResults.push_back(0.310205717);
-
-    EXPECT_EQ(correctResults.size(), aAbsB.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsB[i], 1e-6);
-    }
+    EXPECT_NEAR(0.253375, abs2, 1e-6);
 }

@@ -388,7 +388,7 @@ namespace SingleLayerOptics
           getBSDFMatrix(FenestrationCommon::Property const & t_Property,
                         FenestrationCommon::Side const & t_Side) const;
 
-		CBSDFHemisphere getHemisphere() const;
+        CBSDFHemisphere getHemisphere() const;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
