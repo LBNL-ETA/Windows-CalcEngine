@@ -349,6 +349,7 @@ namespace SingleLayerOptics
 
     void IMaterialDualBand::setSourceData(CSeries & t_SourceData)
     {
+        m_Materials.clear();
         m_MaterialFullRange->setSourceData(t_SourceData);
         m_MaterialPartialRange->setSourceData(t_SourceData);
         checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
