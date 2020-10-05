@@ -186,7 +186,7 @@ namespace SingleLayerOptics
 
         // Creates after UV range and stores data into m_Materials
         virtual void createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
-                                    const CMaterial & t_SolarRange,
+                                    const std::shared_ptr<CMaterial> & t_SolarRange,
                                     double t_Fraction) = 0;
 
         // Creates all of the required ranges in m_Materials from a ratio
@@ -226,7 +226,7 @@ namespace SingleLayerOptics
     private:
         // Creates after UV range and stores data into m_Materials
         virtual void createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
-                                    const CMaterial & t_FullRange,
+                                    const std::shared_ptr<CMaterial> & t_FullRange,
                                     double t_Fraction) override;
     };
 
@@ -386,7 +386,9 @@ namespace SingleLayerOptics
 
         std::vector<std::vector<double>> const &
           getBSDFMatrix(FenestrationCommon::Property const & t_Property,
-                        FenestrationCommon::Side const & t_Side);
+                        FenestrationCommon::Side const & t_Side) const;
+
+		CBSDFHemisphere getHemisphere() const;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
@@ -416,19 +418,19 @@ namespace SingleLayerOptics
         // ratio is calculated outside of the class and can be provided here.
         // TODO: Need to confirm with the team if we actually need this approach
         // (ratio should be calculated and not quessed)
-        CMaterialDualBandBSDF(const std::shared_ptr<CMaterial> & t_PartialRange,
-                              const std::shared_ptr<CMaterial> & t_FullRange,
+        CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
+                              const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
                               double t_Ratio = 0.49);
 
         // ratio is calculated based on provided solar radiation values
-        CMaterialDualBandBSDF(const std::shared_ptr<CMaterial> & t_PartialRange,
-                              const std::shared_ptr<CMaterial> & t_FullRange,
+        CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
+                              const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
                               const FenestrationCommon::CSeries & t_SolarRadiation);
 
     protected:
         // Creates after UV range and stores data into m_Materials
         void createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
-                            const CMaterial & t_SolarRange,
+                            const std::shared_ptr<CMaterial> & t_SolarRange,
                             double t_Fraction) override;
     };
 }   // namespace SingleLayerOptics

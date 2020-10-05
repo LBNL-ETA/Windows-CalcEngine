@@ -13,6 +13,7 @@ namespace SingleLayerOptics
 {
     class CMaterial;
     class CMaterialPhotovoltaic;
+	class CBSDFHemisphere;
 
     class Material
     {
@@ -46,6 +47,30 @@ namespace SingleLayerOptics
                            double Rfvis,
                            double Rbvis,
                            const FenestrationCommon::CSeries & solarRadiation);
+
+        static std::shared_ptr<CMaterial>
+          dualBandBSDFMaterial(std::vector<std::vector<double>> const & Tfsol,
+                               std::vector<std::vector<double>> const & Tbsol,
+                               std::vector<std::vector<double>> const & Rfsol,
+                               std::vector<std::vector<double>> const & Rbsol,
+                               std::vector<std::vector<double>> const & Tfvis,
+                               std::vector<std::vector<double>> const & Tbvis,
+                               std::vector<std::vector<double>> const & Rfvis,
+                               std::vector<std::vector<double>> const & Rbvis,
+                               CBSDFHemisphere const & hemisphere,
+                               double ratio);
+
+        static std::shared_ptr<CMaterial>
+          dualBandBSDFMaterial(std::vector<std::vector<double>> const & Tfsol,
+                               std::vector<std::vector<double>> const & Tbsol,
+                               std::vector<std::vector<double>> const & Rfsol,
+                               std::vector<std::vector<double>> const & Rbsol,
+                               std::vector<std::vector<double>> const & Tfvis,
+                               std::vector<std::vector<double>> const & Tbvis,
+                               std::vector<std::vector<double>> const & Rfvis,
+                               std::vector<std::vector<double>> const & Rbvis,
+                               CBSDFHemisphere const & hemisphere,
+                               const FenestrationCommon::CSeries & solarRadiation);
 
         static std::shared_ptr<CMaterial> singleBandMaterial(
           double Tf, double Tb, double Rf, double Rb, double minLambda, double maxLambda);
@@ -109,7 +134,7 @@ namespace SingleLayerOptics
           FenestrationCommon::MaterialType materialType,
           const FenestrationCommon::WavelengthRange range,
           FenestrationCommon::IntegrationType integrationType =
-          FenestrationCommon::IntegrationType::Trapezoidal,
+            FenestrationCommon::IntegrationType::Trapezoidal,
           double normalizationCoefficient = 1);
     };
 
