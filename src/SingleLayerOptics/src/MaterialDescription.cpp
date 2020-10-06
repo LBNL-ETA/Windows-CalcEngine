@@ -368,23 +368,23 @@ namespace SingleLayerOptics
 
     double IMaterialDualBand::getProperty(Property t_Property,
                                           Side t_Side,
-                                          const CBeamDirection &,
-                                          const CBeamDirection &) const
+                                          const CBeamDirection & t_Incoming,
+                                          const CBeamDirection & t_Outgoing) const
     {
-        return m_MaterialFullRange->getProperty(t_Property, t_Side);
+        return m_MaterialFullRange->getProperty(t_Property, t_Side, t_Incoming, t_Outgoing);
     }
 
     std::vector<double> IMaterialDualBand::getBandProperties(const Property t_Property,
                                                              const Side t_Side,
-                                                             const CBeamDirection &,
-                                                             const CBeamDirection &) const
+                                                             const CBeamDirection & t_Incoming,
+                                                             const CBeamDirection & t_Outgoing) const
     {
         m_RangeCreator();
         size_t aSize = m_Materials.size();
         std::vector<double> aResults;
         for(size_t i = 0; i < aSize; ++i)
         {
-            double value = m_Materials[i]->getProperty(t_Property, t_Side);
+            double value = m_Materials[i]->getProperty(t_Property, t_Side, t_Incoming, t_Outgoing);
             aResults.push_back(value);
         }
 
@@ -734,11 +734,9 @@ namespace SingleLayerOptics
           m_Hemisphere.getDirections(BSDFDirection::Outgoing)
             .getNearestBeamIndex(t_OutgoingDirection.theta(), t_OutgoingDirection.phi());
 
-        auto lambda =
-          m_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()[outgoingIdx];
+        const auto val = m_Property.at({t_Property, t_Side})[incomingIdx][outgoingIdx];
 
-        // return m_Property.at(std::make_pair(t_Property, t_Side))[incomingIdx][outgoingIdx];
-        return m_Property.at({t_Property, t_Side})[incomingIdx][outgoingIdx] * lambda;
+        return val * WCE_PI;
     }
 
     std::vector<double>
