@@ -26,7 +26,7 @@ namespace SingleLayerOptics
         // Creating a vector with the correct size already reserved
         std::vector<double> outgoing;
         size_t outgoingSize = t_PartialRange.begin()->size();
-        outgoing.reserve(outgoingSize);
+        outgoing.resize(outgoingSize);
         size_t incomingSize = t_PartialRange.size();
         std::vector<std::vector<double>> modifiedValues(incomingSize, outgoing);
         for(size_t i = 0; i < incomingSize; ++i)
@@ -735,7 +735,7 @@ namespace SingleLayerOptics
             .getNearestBeamIndex(t_OutgoingDirection.theta(), t_OutgoingDirection.phi());
 
         auto lambda =
-          m_Hemisphere.getDirections(BSDFDirection::Incoming).lambdaVector()[incomingIdx];
+          m_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()[outgoingIdx];
 
         // return m_Property.at(std::make_pair(t_Property, t_Side))[incomingIdx][outgoingIdx];
         return m_Property.at({t_Property, t_Side})[incomingIdx][outgoingIdx] * lambda;
@@ -806,19 +806,15 @@ namespace SingleLayerOptics
     CMaterialDualBandBSDF::CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
                                                  const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
                                                  double t_Ratio) :
-        IMaterialDualBand(t_PartialRange, t_FullRange)
-    {
-        createRangesFromRatio(t_Ratio);
-    }
+        IMaterialDualBand(t_PartialRange, t_FullRange, t_Ratio)
+    {}
 
     CMaterialDualBandBSDF::CMaterialDualBandBSDF(
       const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
       const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
       const FenestrationCommon::CSeries & t_SolarRadiation) :
-        IMaterialDualBand(t_PartialRange, t_FullRange)
-    {
-        createRangesFromSolarRadiation(t_SolarRadiation);
-    }
+        IMaterialDualBand(t_PartialRange, t_FullRange, t_SolarRadiation)
+    {}
 
     void CMaterialDualBandBSDF::createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
                                                const std::shared_ptr<CMaterial> & t_FullRange,

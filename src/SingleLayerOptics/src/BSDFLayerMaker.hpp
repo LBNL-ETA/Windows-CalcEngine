@@ -56,6 +56,10 @@ namespace SingleLayerOptics
           getPerfectlyDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                    const CBSDFHemisphere & t_BSDF);
 
+		static std::shared_ptr<CBSDFLayer>
+			getDirectionalDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
+				const CBSDFHemisphere & t_BSDF);
+
         static std::shared_ptr<CBSDFLayer>
           getWovenLayer(const std::shared_ptr<CMaterial> & t_Material,
                         const CBSDFHemisphere & t_BSDF,
