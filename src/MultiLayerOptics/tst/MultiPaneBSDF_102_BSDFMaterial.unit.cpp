@@ -9537,12 +9537,12 @@ protected:
 		// wavelengths
 		CCommonWavelengths aCommonWL;
 		aCommonWL.addWavelength(Layer_102->getBandWavelengths());
-		aCommonWL.addWavelength(aBSDFMaterial->getBandWavelengths());
+		aCommonWL.addWavelength(aBSDFMaterial->getBandWavelengths());        
 
 		auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
-		m_Layer = CMultiPaneBSDF::create(
-			{/*Layer_102,*/ Layer_BSDF}, loadSolarRadiationFile(), commonWavelengths);
+        m_Layer = CMultiPaneBSDF::create(
+            {Layer_102, Layer_BSDF}, loadSolarRadiationFile(), commonWavelengths);
 	}
 
 public:
