@@ -66,14 +66,14 @@ namespace SingleLayerOptics
             CPhiLimits phiAngles(numPhiAngles[i - 1]);
             auto phiLimits = phiAngles.getPhiLimits();
             double lowerPhi = phiLimits[0];
-            if(t_Side == BSDFDirection::Outgoing)
+            if(t_Side == BSDFDirection::Outgoing && i != 1)
             {
                 lowerPhi += 180;
             }
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
                 double upperPhi = phiLimits[j];
-                if(t_Side == BSDFDirection::Outgoing)
+                if(t_Side == BSDFDirection::Outgoing && i != 1)
                 {
                     upperPhi += 180;
                 }
@@ -132,6 +132,11 @@ namespace SingleLayerOptics
           m_Patches.begin(), m_Patches.end(), [&](const CBSDFPatch & a) {
               return a.isInPatch(t_Theta, t_Phi);
           });
+
+		if(it == m_Patches.end())
+		{
+			throw std::runtime_error("Could not find nearest beam index");
+		}
 
         size_t index = size_t(std::distance(m_Patches.begin(), it));
         return index;

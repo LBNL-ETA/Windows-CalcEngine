@@ -3,8 +3,10 @@
 
 namespace SingleLayerOptics
 {
-    CDirectionalDiffuseCell::CDirectionalDiffuseCell(const std::shared_ptr<CMaterial> &,
-                                                     const std::shared_ptr<ICellDescription> &)
+    CDirectionalDiffuseCell::CDirectionalDiffuseCell(
+      const std::shared_ptr<CMaterial> & t_MaterialProperties,
+      const std::shared_ptr<ICellDescription> & t_Cell) :
+        CBaseCell(t_MaterialProperties, t_Cell)
     {}
 
     double CDirectionalDiffuseCell::T_dir_dir(const FenestrationCommon::Side t_Side,
@@ -42,10 +44,10 @@ namespace SingleLayerOptics
         auto materialBandValues = m_Material->getBandProperties(
           FenestrationCommon::Property::T, t_Side, t_IncomingDirection, t_OutgoingDirection);
 
-		for(auto materialBandValue : materialBandValues)
-		{
-			result->push_back(cellT + (1 - cellT) * materialBandValue);
-		}
+        for(auto materialBandValue : materialBandValues)
+        {
+            result->push_back(cellT + (1 - cellT) * materialBandValue);
+        }
 
         return result;
     }
@@ -55,20 +57,20 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection)
     {
-		double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
-		double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
+        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
 
-		std::shared_ptr<std::vector<double>> result = std::make_shared<std::vector<double>>();
+        std::shared_ptr<std::vector<double>> result = std::make_shared<std::vector<double>>();
 
-		auto materialBandValues = m_Material->getBandProperties(
-			FenestrationCommon::Property::R, t_Side, t_IncomingDirection, t_OutgoingDirection);
+        auto materialBandValues = m_Material->getBandProperties(
+          FenestrationCommon::Property::R, t_Side, t_IncomingDirection, t_OutgoingDirection);
 
-		for(auto materialBandValue : materialBandValues)
-		{
-			result->push_back(cellR + (1 - cellT) * materialBandValue);
-		}
+        for(auto materialBandValue : materialBandValues)
+        {
+            result->push_back(cellR + (1 - cellT) * materialBandValue);
+        }
 
-		return result;
+        return result;
     }
 
 }   // namespace SingleLayerOptics
