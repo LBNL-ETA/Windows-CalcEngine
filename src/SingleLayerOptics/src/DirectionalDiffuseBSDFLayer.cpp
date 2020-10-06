@@ -56,16 +56,16 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        const CBSDFDirections iDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
+        const CBSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
-        size_t size = iDirections.size();
+        size_t size = oDirections.size();
 
         for(size_t i = 0; i < size; ++i)
         {
-            const CBeamDirection iDirection = iDirections[i].centerPoint();
+            const CBeamDirection oDirection = oDirections[i].centerPoint();
 
-            std::shared_ptr<std::vector<double>> aTau = aCell->T_dir_dir_band(aSide, t_Direction, iDirection);
-            std::shared_ptr<std::vector<double>> Ref = aCell->R_dir_dir_band(aSide, t_Direction, iDirection);
+            std::shared_ptr<std::vector<double>> aTau = aCell->T_dir_dir_band(aSide, t_Direction, oDirection);
+            std::shared_ptr<std::vector<double>> Ref = aCell->R_dir_dir_band(aSide, t_Direction, oDirection);
 
             size_t numWV = aTau->size();
             for(size_t j = 0; j < numWV; ++j)
@@ -77,8 +77,8 @@ namespace SingleLayerOptics
                 assert(aResults != nullptr);
                 auto & tau = aResults->getMatrix(aSide, PropertySimple::T);
                 auto & rho = aResults->getMatrix(aSide, PropertySimple::R);
-                tau(i, t_DirectionIndex) += (*aTau)[j] / WCE_PI;
-                rho(i, t_DirectionIndex) += (*Ref)[j] / WCE_PI;
+                tau(t_DirectionIndex, i) += (*aTau)[j] / WCE_PI;
+                rho(t_DirectionIndex, i) += (*Ref)[j] / WCE_PI;
             }
         }
     }
