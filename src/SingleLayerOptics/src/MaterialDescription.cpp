@@ -401,6 +401,8 @@ namespace SingleLayerOptics
             aWavelengths.push_back(m_Materials[i]->getMinLambda());
         }
 
+        aWavelengths.push_back(m_Materials.back()->getMaxLambda());
+
         return aWavelengths;
     }
 
