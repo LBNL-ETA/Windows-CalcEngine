@@ -607,7 +607,7 @@ namespace SingleLayerOptics
         if(aMat.size() > 0)
         {
             size_t size = m_Material->getBandSize();
-            for(size_t i = 0; i < size; ++i)
+            for(size_t i = 0; i < size - 1; ++i)
             {
                 double Tf = aMat[i].getProperty(Property::T, Side::Front);
                 double Tb = aMat[i].getProperty(Property::T, Side::Back);
@@ -683,7 +683,7 @@ namespace SingleLayerOptics
         return aProperties;
     }
 
-    double CVenetianCell::T_dir_dir(const Side t_Side,
+    double CVenetianCell::T_dir_dif(const Side t_Side,
                                     const CBeamDirection & t_IncomingDirection,
                                     const CBeamDirection & t_OutgoingDirection)
     {
@@ -691,22 +691,22 @@ namespace SingleLayerOptics
         return aCell->T_dir_dir(t_IncomingDirection, t_OutgoingDirection);
     }
 
-    std::shared_ptr<std::vector<double>>
-      CVenetianCell::T_dir_dir_band(const Side t_Side,
-                                    const CBeamDirection & t_IncomingDirection,
-                                    const CBeamDirection & t_OutgoingDirection)
+    std::vector<double>
+        CVenetianCell::T_dir_dif_band(const Side t_Side,
+                                      const CBeamDirection & t_IncomingDirection,
+                                      const CBeamDirection & t_OutgoingDirection)
     {
         size_t size = m_EnergiesBand.size();
-        std::shared_ptr<std::vector<double>> aProperties = std::make_shared<std::vector<double>>();
+        std::vector<double> aProperties;
         for(size_t i = 0; i < size; ++i)
         {
             std::shared_ptr<CVenetianCellEnergy> aCell = m_EnergiesBand[i].getCell(t_Side);
-            aProperties->push_back(aCell->T_dir_dir(t_IncomingDirection, t_OutgoingDirection));
+            aProperties.push_back(aCell->T_dir_dir(t_IncomingDirection, t_OutgoingDirection));
         }
         return aProperties;
     }
 
-    double CVenetianCell::R_dir_dir(const Side t_Side,
+    double CVenetianCell::R_dir_dif(const Side t_Side,
                                     const CBeamDirection & t_IncomingDirection,
                                     const CBeamDirection & t_OutgoingDirection)
     {
@@ -714,17 +714,17 @@ namespace SingleLayerOptics
         return aCell->R_dir_dir(t_IncomingDirection, t_OutgoingDirection);
     }
 
-    std::shared_ptr<std::vector<double>>
-      CVenetianCell::R_dir_dir_band(const Side t_Side,
-                                    const CBeamDirection & t_IncomingDirection,
-                                    const CBeamDirection & t_OutgoingDirection)
+    std::vector<double>
+        CVenetianCell::R_dir_dif_band(const Side t_Side,
+                                      const CBeamDirection & t_IncomingDirection,
+                                      const CBeamDirection & t_OutgoingDirection)
     {
         size_t size = m_EnergiesBand.size();
-        std::shared_ptr<std::vector<double>> aProperties = std::make_shared<std::vector<double>>();
+        std::vector<double> aProperties;
         for(size_t i = 0; i < size; ++i)
         {
             std::shared_ptr<CVenetianCellEnergy> aCell = m_EnergiesBand[i].getCell(t_Side);
-            aProperties->push_back(aCell->R_dir_dir(t_IncomingDirection, t_OutgoingDirection));
+            aProperties.push_back(aCell->R_dir_dir(t_IncomingDirection, t_OutgoingDirection));
         }
         return aProperties;
     }
