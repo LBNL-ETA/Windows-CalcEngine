@@ -9532,7 +9532,7 @@ protected:
           tf, tb, rf, rb, tf, tb, rf, rb, aBSDF, loadSolarRadiationFile());
 
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
-        auto Layer_BSDF = CBSDFLayerMaker::getDirectionalDiffuseLayer(aBSDFMaterial, aBSDF);
+        auto Layer_BSDF = CBSDFLayerMaker::getPreLoadedBSDFLayer(aBSDFMaterial, aBSDF);
 
         // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different
         // wavelengths
