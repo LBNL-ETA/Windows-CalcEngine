@@ -729,16 +729,18 @@ namespace SingleLayerOptics
         {
             throw std::runtime_error("Absorptance not yet impelemented");
         }
-        auto incomingIdx =
+        const auto incomingIdx =
           m_Hemisphere.getDirections(BSDFDirection::Incoming)
             .getNearestBeamIndex(t_IncomingDirection.theta(), t_IncomingDirection.phi());
-        auto outgoingIdx =
+        const auto outgoingIdx =
           m_Hemisphere.getDirections(BSDFDirection::Outgoing)
             .getNearestBeamIndex(t_OutgoingDirection.theta(), t_OutgoingDirection.phi());
 
-        const auto val = m_Property.at({t_Property, t_Side})[incomingIdx][outgoingIdx];
+        auto lambda{m_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
 
-        return val * WCE_PI;
+        const auto val = m_Property.at({t_Property, t_Side})[outgoingIdx][incomingIdx];
+
+        return val * lambda[outgoingIdx];
     }
 
     std::vector<double>
