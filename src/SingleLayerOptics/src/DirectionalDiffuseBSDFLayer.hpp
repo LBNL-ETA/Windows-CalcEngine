@@ -18,11 +18,11 @@ namespace SingleLayerOptics {
 	protected:
 		std::shared_ptr< CDirectionalDiffuseCell > cellAsDirectionalDiffuse() const;
 		void calcDiffuseDistribution( const FenestrationCommon::Side aSide,
-		                              const CBeamDirection& t_Direction,
-		                              const size_t t_DirectionIndex );
+		                              const CBeamDirection& incomingDirection,
+		                              const size_t incomingDirectionIndex );
 		void calcDiffuseDistribution_wv( const FenestrationCommon::Side aSide,
-		                                 const CBeamDirection& t_Direction,
-		                                 const size_t t_DirectionIndex );
+		                                 const CBeamDirection& incomingDirection,
+		                                 const size_t incomingDirectionIndex );
 
 	};
 

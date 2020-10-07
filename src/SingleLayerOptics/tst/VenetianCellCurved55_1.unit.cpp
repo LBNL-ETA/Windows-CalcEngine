@@ -96,8 +96,8 @@ TEST_F(TestVenetianCellCurved55_1, TestVenetian2)
 
     CBeamDirection outDirection = CBeamDirection(outTheta, outPhi);
 
-    Tdir_dif = aCell->T_dir_dir(aSide, aDirection, outDirection);
-    Rdir_dif = aCell->R_dir_dir(aSide, aDirection, outDirection);
+    Tdir_dif = aCell->T_dir_dif(aSide, aDirection, outDirection);
+    Rdir_dif = aCell->R_dir_dif(aSide, aDirection, outDirection);
 
     EXPECT_NEAR(0.208083, Tdir_dif, 1e-6);
     EXPECT_NEAR(0.582556, Rdir_dif, 1e-6);

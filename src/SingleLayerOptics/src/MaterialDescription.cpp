@@ -178,7 +178,7 @@ namespace SingleLayerOptics
 
         // It is necessary to skip calculations if solar properties are not assigned yet
         size_t size = getBandSize();
-        for(size_t i = 0; i < size; ++i)
+        for(size_t i = 0; i < size - 1; ++i)
         {
             RMaterialProperties aMaterial = RMaterialProperties(Tf[i], Tb[i], Rf[i], Rb[i]);
             aProperties.push_back(aMaterial);

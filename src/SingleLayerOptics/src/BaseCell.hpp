@@ -29,6 +29,8 @@ namespace SingleLayerOptics
         virtual void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
         // Direct to direct component of transmitted ray
+        // These dir_dir and dir_dir_band functions are returning only direct portion of the incoming beam
+        // that goes directly through cell without interfering (bouncing off) with material (Simon)
         virtual double T_dir_dir(const FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_Direction);
         virtual double R_dir_dir(const FenestrationCommon::Side t_Side,
