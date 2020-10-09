@@ -57,7 +57,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
       aLayer->getWavelengthResults();
 
-    size_t correctSize = 5;
+    size_t correctSize = 4;
 
     EXPECT_EQ(correctSize, aResults->size());
 
