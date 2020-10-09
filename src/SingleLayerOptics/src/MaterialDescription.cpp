@@ -780,12 +780,6 @@ namespace SingleLayerOptics
                                                  const CBeamDirection & t_OutgoingDirection) const
     {
         double value = getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
-        auto incomingIdx =
-          m_Hemisphere.getDirections(BSDFDirection::Incoming)
-            .getNearestBeamIndex(t_IncomingDirection.theta(), t_IncomingDirection.phi());
-        auto lambda =
-          m_Hemisphere.getDirections(BSDFDirection::Incoming).lambdaVector()[incomingIdx];
-        value *= lambda;
         std::vector<double> bandProperties{value, value};
         return bandProperties;
     }
