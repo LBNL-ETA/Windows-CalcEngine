@@ -12,10 +12,6 @@ using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 
-using namespace SingleLayerOptics;
-
-#if 1
-
 class TestBSDFMaterialSingleBand : public testing::Test
 {
 public:
@@ -62,8 +58,8 @@ protected:
         m_Tb = m_Tf;
         m_Rf = loadRf();
         m_Rb = m_Rf;
-        m_Material = std::make_shared<CMaterialSingleBandBSDF>(CMaterialSingleBandBSDF(
-          m_Tf, m_Tb, m_Rf, m_Rb, m_Hemisphere, FenestrationCommon::WavelengthRange::Solar));
+        m_Material = std::make_shared<CMaterialSingleBandBSDF>(
+          m_Tf, m_Tb, m_Rf, m_Rb, m_Hemisphere, FenestrationCommon::WavelengthRange::Solar);
     }
 };
 
@@ -75,8 +71,8 @@ TEST_F(TestBSDFMaterialSingleBand, TestProperties)
     auto outgoingDirections = m_Hemisphere.getDirections(BSDFDirection::Outgoing);
     auto outgoingLambdas = m_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector();
 
-	// Test to make sure matrix returned by material is the same that it was constructed with
-	EXPECT_EQ(m_Material->getBSDFMatrix(Property::T, Side::Front), m_Tf);
+    // Test to make sure matrix returned by material is the same that it was constructed with
+    EXPECT_EQ(m_Material->getBSDFMatrix(Property::T, Side::Front), m_Tf);
 
     // Test to make sure that the value returned by normal incidence matches the
     // value at normal in the BSDF * outgoing lambda at normal outgoing
@@ -87,34 +83,37 @@ TEST_F(TestBSDFMaterialSingleBand, TestProperties)
     double incomingTheta = 37;
     double incomingPhi = 76;
     double outgoingTheta = 62;
-	double outgoingPhi = 23;
+    double outgoingPhi = 23;
     CBeamDirection incomingDirection(incomingTheta, incomingPhi);
     CBeamDirection outgoingDirection(outgoingTheta, outgoingPhi);
     auto incomingIdx =
       incomingDirections.getNearestBeamIndex(incomingDirection.theta(), incomingDirection.phi());
     auto outgoingIdx =
-		outgoingDirections.getNearestBeamIndex(outgoingDirection.theta(), outgoingDirection.phi());
+      outgoingDirections.getNearestBeamIndex(outgoingDirection.theta(), outgoingDirection.phi());
     EXPECT_EQ(
       m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection),
       m_Tf[outgoingIdx][incomingIdx] * outgoingLambdas[outgoingIdx]);
 
-	// Test to make sure absorptance calculation at off-normal angles produces 
-	// 1 - sum(outgoing transmissions for incoming angle - sum(outgoing reflectances for incoming angle)
-	double tfHem = 0;
-	double rfHem = 0;
-	for(size_t oIdx = 0; oIdx < outgoingDirections.size(); ++oIdx)
-	{
-		tfHem += m_Tf[oIdx][incomingIdx] * outgoingLambdas[oIdx];
-		rfHem += m_Rf[oIdx][incomingIdx] * outgoingLambdas[oIdx];
-	}
-	EXPECT_EQ(
-		m_Material->getProperty(Property::Abs, Side::Front, incomingDirection, outgoingDirection),
-		1 - tfHem - rfHem);
+    // Test to make sure absorptance calculation at off-normal angles produces
+    // 1 - sum(outgoing transmissions for incoming angle - sum(outgoing reflectances for incoming
+    // angle)
+    double tfHem = 0;
+    double rfHem = 0;
+    for(size_t oIdx = 0; oIdx < outgoingDirections.size(); ++oIdx)
+    {
+        tfHem += m_Tf[oIdx][incomingIdx] * outgoingLambdas[oIdx];
+        rfHem += m_Rf[oIdx][incomingIdx] * outgoingLambdas[oIdx];
+    }
+    EXPECT_EQ(
+      m_Material->getProperty(Property::Abs, Side::Front, incomingDirection, outgoingDirection),
+      1 - tfHem - rfHem);
 
-	// Test to make sure getBandProperties returns two copies of the same value returned
-	// by getProperty
-	double propValue = m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection);
-	std::vector<double> expectedBandProperties{propValue, propValue};
-	EXPECT_EQ(m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection), expectedBandProperties);
+    // Test to make sure getBandProperties returns two copies of the same value returned
+    // by getProperty
+    double propValue =
+      m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection);
+    std::vector<double> expectedBandProperties{propValue, propValue};
+    EXPECT_EQ(
+      m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection),
+      expectedBandProperties);
 }
-#endif
