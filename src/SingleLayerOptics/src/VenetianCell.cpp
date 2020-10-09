@@ -604,10 +604,10 @@ namespace SingleLayerOptics
         m_EnergiesBand.clear();
         std::vector<RMaterialProperties> aMat = m_Material->getBandProperties();
 
-        if(aMat.size() > 0)
+        if(!aMat.empty())
         {
             size_t size = m_Material->getBandSize();
-            for(size_t i = 0; i < size - 1; ++i)
+            for(size_t i = 0; i < size; ++i)
             {
                 double Tf = aMat[i].getProperty(Property::T, Side::Front);
                 double Tb = aMat[i].getProperty(Property::T, Side::Back);
@@ -642,6 +642,7 @@ namespace SingleLayerOptics
             CVenetianCellEnergy aCell = *m_EnergiesBand[i].getCell(t_Side);
             aProperties.push_back(aCell.T_dir_dir(t_Direction));
         }
+
         return aProperties;
     }
 
