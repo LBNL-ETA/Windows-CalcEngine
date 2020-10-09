@@ -27,14 +27,14 @@ protected:
         const auto Rfvis = 0.6;
         const auto Rbvis = 0.6;
 
-        const auto aMaterial = Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol,
-        	Tvis, Tvis, Rfvis, Rbvis);
+        const auto aMaterial =
+          Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-		const auto slatWidth = 0.016;     // m
-		const auto slatSpacing = 0.012;   // m
-		const auto slatTiltAngle = 45;
-		const auto curvatureRadius = 0;
+        const auto slatWidth = 0.016;     // m
+        const auto slatSpacing = 0.012;   // m
+        const auto slatTiltAngle = 45;
+        const auto curvatureRadius = 0;
         const size_t numOfSlatSegments = 5;
 
         // create BSDF
@@ -67,7 +67,7 @@ TEST_F(TestVenetianUniformShadeFlat45_5_Multiwavelength, TestVenetianMultiWavele
     std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
       aLayer->getWavelengthResults();
 
-    size_t correctSize = 5;
+    size_t correctSize = 4;
 
     EXPECT_EQ(correctSize, aResults->size());
 
