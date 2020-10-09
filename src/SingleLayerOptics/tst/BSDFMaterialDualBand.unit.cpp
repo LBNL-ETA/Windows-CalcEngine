@@ -15,7 +15,7 @@ using namespace SpectralAveraging;
 #if 0
 using namespace SingleLayerOptics;
 
-class TestBSDFMaterial : public testing::Test
+class TestBSDFMaterialDualBand : public testing::Test
 {
 private:
     CBSDFHemisphere m_BSDFHemisphere{CBSDFHemisphere::create(BSDFBasis::Full)};
@@ -9479,7 +9479,7 @@ public:
 	};
 };
 
-TEST_F(TestBSDFMaterial, TestSameSolarAndVisible)
+TEST_F(TestBSDFMaterialDualBand, TestSameSolarAndVisible)
 {
     SCOPED_TRACE("Begin Test: Solar matrices are the same as visible.");
 

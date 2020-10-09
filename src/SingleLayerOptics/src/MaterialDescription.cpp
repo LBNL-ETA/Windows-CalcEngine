@@ -109,8 +109,13 @@ namespace SingleLayerOptics
         if(minRangeLambda > 0.32)
         {
             std::shared_ptr<CMaterialSingleBandBSDF> aMaterial =
-              std::make_shared<CMaterialSingleBandBSDF>(
-                Tf_nir, Tb_nir, Rf_nir, Rb_nir, t_PartialRange->getHemisphere(), 0.32, minRangeLambda);
+              std::make_shared<CMaterialSingleBandBSDF>(Tf_nir,
+                                                        Tb_nir,
+                                                        Rf_nir,
+                                                        Rb_nir,
+                                                        t_PartialRange->getHemisphere(),
+                                                        0.32,
+                                                        minRangeLambda);
             materials.push_back(aMaterial);
         }
 
@@ -374,10 +379,11 @@ namespace SingleLayerOptics
         return m_MaterialFullRange->getProperty(t_Property, t_Side, t_Incoming, t_Outgoing);
     }
 
-    std::vector<double> IMaterialDualBand::getBandProperties(const Property t_Property,
-                                                             const Side t_Side,
-                                                             const CBeamDirection & t_Incoming,
-                                                             const CBeamDirection & t_Outgoing) const
+    std::vector<double>
+      IMaterialDualBand::getBandProperties(const Property t_Property,
+                                           const Side t_Side,
+                                           const CBeamDirection & t_Incoming,
+                                           const CBeamDirection & t_Outgoing) const
     {
         m_RangeCreator();
         size_t aSize = m_Materials.size();
@@ -720,27 +726,48 @@ namespace SingleLayerOptics
                                   FenestrationCommon::Side::Back)] = t_Rb;
     }
 
+    double calcDirectHemispheric(std::vector<std::vector<double>> const & m,
+                                 CBSDFHemisphere const & hemisphere,
+                                 size_t incomingIdx)
+    {
+		const auto outgoingLambdas = hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector();
+
+		double result = 0;
+		for(size_t outgoingIdx = 0; outgoingIdx < outgoingLambdas.size(); ++outgoingIdx)
+		{
+			result += m[outgoingIdx][incomingIdx] * outgoingLambdas[outgoingIdx];
+		}
+		return result;
+    }
+
+
     double CMaterialSingleBandBSDF::getProperty(FenestrationCommon::Property t_Property,
                                                 FenestrationCommon::Side t_Side,
                                                 const CBeamDirection & t_IncomingDirection,
                                                 const CBeamDirection & t_OutgoingDirection) const
     {
+		const auto incomingIdx =
+			m_Hemisphere.getDirections(BSDFDirection::Incoming)
+			.getNearestBeamIndex(t_IncomingDirection.theta(), t_IncomingDirection.phi());
+
         if(t_Property == FenestrationCommon::Property::Abs)
         {
-            throw std::runtime_error("Absorptance not yet impelemented");
+			double tHem = calcDirectHemispheric(m_Property.at({FenestrationCommon::Property::T, t_Side}), m_Hemisphere, incomingIdx);
+			double rHem = calcDirectHemispheric(m_Property.at({FenestrationCommon::Property::R, t_Side}), m_Hemisphere, incomingIdx);
+			return 1 - tHem - rHem;
         }
-        const auto incomingIdx =
-          m_Hemisphere.getDirections(BSDFDirection::Incoming)
-            .getNearestBeamIndex(t_IncomingDirection.theta(), t_IncomingDirection.phi());
-        const auto outgoingIdx =
-          m_Hemisphere.getDirections(BSDFDirection::Outgoing)
-            .getNearestBeamIndex(t_OutgoingDirection.theta(), t_OutgoingDirection.phi());
+		else
+		{
+			const auto outgoingIdx =
+				m_Hemisphere.getDirections(BSDFDirection::Outgoing)
+				.getNearestBeamIndex(t_OutgoingDirection.theta(), t_OutgoingDirection.phi());
 
-        auto lambda{m_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
+			auto lambda{m_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
 
-        const auto val = m_Property.at({t_Property, t_Side})[outgoingIdx][incomingIdx];
+			const auto val = m_Property.at({t_Property, t_Side})[outgoingIdx][incomingIdx];
 
-        return val * lambda[outgoingIdx];
+			return val * lambda[outgoingIdx];
+		}
     }
 
     std::vector<double>
@@ -767,12 +794,12 @@ namespace SingleLayerOptics
         return m_Property.at({t_Property, t_Side});
     }
 
-	CBSDFHemisphere CMaterialSingleBandBSDF::getHemisphere() const
-	{
-		return m_Hemisphere;
-	}
+    CBSDFHemisphere CMaterialSingleBandBSDF::getHemisphere() const
+    {
+        return m_Hemisphere;
+    }
 
-	std::vector<double> CMaterialSingleBandBSDF::calculateBandWavelengths()
+    std::vector<double> CMaterialSingleBandBSDF::calculateBandWavelengths()
     {
         std::vector<double> aWavelengths;
         aWavelengths.push_back(m_MinLambda);
@@ -805,9 +832,10 @@ namespace SingleLayerOptics
         }
     }
 
-    CMaterialDualBandBSDF::CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
-                                                 const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
-                                                 double t_Ratio) :
+    CMaterialDualBandBSDF::CMaterialDualBandBSDF(
+      const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
+      const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
+      double t_Ratio) :
         IMaterialDualBand(t_PartialRange, t_FullRange, t_Ratio)
     {}
 
