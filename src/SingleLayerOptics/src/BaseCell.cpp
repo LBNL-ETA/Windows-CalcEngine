@@ -44,6 +44,7 @@ namespace SingleLayerOptics
         {
             aResults.push_back(value);
         }
+
         return aResults;
     }
 
@@ -58,6 +59,7 @@ namespace SingleLayerOptics
         {
             aResults.push_back(value);
         }
+
         return aResults;
     }
 

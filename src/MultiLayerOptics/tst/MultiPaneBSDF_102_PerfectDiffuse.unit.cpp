@@ -166,13 +166,13 @@ TEST_F(MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF)
     EXPECT_NEAR(0.087683, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.583381, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.583623, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.161377, absDiff1, 1e-6);
+    EXPECT_NEAR(0.161418, absDiff1, 1e-6);
 
     double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.167559, absDiff2, 1e-6);
+    EXPECT_NEAR(0.167275, absDiff2, 1e-6);
 
     double theta = 0;
     double phi = 0;
@@ -188,16 +188,16 @@ TEST_F(MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF)
     EXPECT_NEAR(0.095380, tauDirDiff, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.558500, rhoHem, 1e-6);
+    EXPECT_NEAR(0.558771, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.081709, rhoDir, 1e-6);
+    EXPECT_NEAR(0.081712, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.158669, abs1, 1e-6);
+    EXPECT_NEAR(0.158714, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.186213, abs2, 1e-6);
+    EXPECT_NEAR(0.185896, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
@@ -209,16 +209,16 @@ TEST_F(MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF)
     EXPECT_NEAR(0.020994, tauDir, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.556466, rhoHem, 1e-6);
+    EXPECT_NEAR(0.556732, rhoHem, 1e-6);
 
     rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.195648, rhoDir, 1e-6);
+    EXPECT_NEAR(0.195711, rhoDir, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.165258, abs1, 1e-6);
+    EXPECT_NEAR(0.165302, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.182865, abs2, 1e-6);
+    EXPECT_NEAR(0.182555, abs2, 1e-6);
 
     SquareMatrix aT = aLayer.getMatrix(minLambda, maxLambda, Side::Front, PropertySimple::T);
 
@@ -245,13 +245,13 @@ TEST_F(MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF)
 
     correctResults.clear();
 
-    correctResults.push_back(0.223885);
-    correctResults.push_back(0.223885);
-    correctResults.push_back(0.223885);
-    correctResults.push_back(0.223885);
-    correctResults.push_back(0.223885);
-    correctResults.push_back(0.223885);
-    correctResults.push_back(0.223885);
+    correctResults.push_back(0.224012);
+    correctResults.push_back(0.224012);
+    correctResults.push_back(0.224012);
+    correctResults.push_back(0.224012);
+    correctResults.push_back(0.224012);
+    correctResults.push_back(0.224012);
+    correctResults.push_back(0.224012);
 
     EXPECT_EQ(correctResults.size(), aRb.size());
 
@@ -265,13 +265,13 @@ TEST_F(MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF)
 
     correctResults.clear();
 
-    correctResults.push_back(0.158668);
-    correctResults.push_back(0.159488);
-    correctResults.push_back(0.161844);
-    correctResults.push_back(0.165257);
-    correctResults.push_back(0.16816);
-    correctResults.push_back(0.165697);
-    correctResults.push_back(0.132164);
+    correctResults.push_back(0.158714);
+    correctResults.push_back(0.159534);
+    correctResults.push_back(0.161890);
+    correctResults.push_back(0.165302);
+    correctResults.push_back(0.168203);
+    correctResults.push_back(0.165736);
+    correctResults.push_back(0.132184);
 
     EXPECT_EQ(correctResults.size(), aAbsF.size());
 
@@ -285,13 +285,13 @@ TEST_F(MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF)
 
     correctResults.clear();
 
-    correctResults.push_back(0.186213);
-    correctResults.push_back(0.186001);
-    correctResults.push_back(0.185169);
-    correctResults.push_back(0.182865);
-    correctResults.push_back(0.176402);
-    correctResults.push_back(0.1573);
-    correctResults.push_back(0.081055);
+    correctResults.push_back(0.185896);
+    correctResults.push_back(0.185685);
+    correctResults.push_back(0.184855);
+    correctResults.push_back(0.182555);
+    correctResults.push_back(0.176103);
+    correctResults.push_back(0.157034);
+    correctResults.push_back(0.080921);
 
     EXPECT_EQ(correctResults.size(), aAbsF.size());
 
@@ -325,13 +325,13 @@ TEST_F(MultiPaneBSDF_102_PerfectDiffuse, TestPerfectDiffuseBSDF)
 
     correctResults.clear();
 
-    correctResults.push_back(0.204171);
-    correctResults.push_back(0.204171);
-    correctResults.push_back(0.204171);
-    correctResults.push_back(0.204171);
-    correctResults.push_back(0.204171);
-    correctResults.push_back(0.204171);
-    correctResults.push_back(0.204171);
+    correctResults.push_back(0.203773);
+    correctResults.push_back(0.203773);
+    correctResults.push_back(0.203773);
+    correctResults.push_back(0.203773);
+    correctResults.push_back(0.203773);
+    correctResults.push_back(0.203773);
+    correctResults.push_back(0.203773);
 
     EXPECT_EQ(correctResults.size(), aAbsB.size());
 
