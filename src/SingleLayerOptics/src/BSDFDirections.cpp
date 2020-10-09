@@ -63,17 +63,18 @@ namespace SingleLayerOptics
             }
 
 
-            CPhiLimits phiAngles(numPhiAngles[i - 1]);
+			const auto nPhis = numPhiAngles[i - 1];
+            CPhiLimits phiAngles(nPhis);
             auto phiLimits = phiAngles.getPhiLimits();
             double lowerPhi = phiLimits[0];
-            if(t_Side == BSDFDirection::Outgoing && i != 1)
+            if(t_Side == BSDFDirection::Outgoing && nPhis != 1)
             {
                 lowerPhi += 180;
             }
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
                 double upperPhi = phiLimits[j];
-                if(t_Side == BSDFDirection::Outgoing && i != 1)
+                if(t_Side == BSDFDirection::Outgoing && nPhis != 1)
                 {
                     upperPhi += 180;
                 }
