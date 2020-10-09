@@ -177,8 +177,8 @@ namespace SingleLayerOptics
         std::vector<double> Rb = getBandProperties(Property::R, Side::Back);
 
         // It is necessary to skip calculations if solar properties are not assigned yet
-        size_t size = getBandSize();
-        for(size_t i = 0; i < size - 1; ++i)
+        const size_t size = getBandSize();
+        for(size_t i = 0; i < size; ++i)
         {
             RMaterialProperties aMaterial = RMaterialProperties(Tf[i], Tb[i], Rf[i], Rb[i]);
             aProperties.push_back(aMaterial);
@@ -401,15 +401,18 @@ namespace SingleLayerOptics
             aWavelengths.push_back(m_Materials[i]->getMinLambda());
         }
 
-        aWavelengths.push_back(m_Materials.back()->getMaxLambda());
+        // TODO: Do not create extra wavelength since this might be important for the integration. Range is already kept with
+        // min and max lambda. Integration of double specular layer is working correctly. Make sure that integration of single
+        // shading layer is working correctly too.
+        //aWavelengths.push_back(m_Materials.back()->getMaxLambda());
 
         return aWavelengths;
     }
 
     void IMaterialDualBand::checkIfMaterialWithingSolarRange(const CMaterial & t_Material) const
     {
-        double lowLambda = t_Material.getMinLambda();
-        double highLambda = t_Material.getMaxLambda();
+        const double lowLambda = t_Material.getMinLambda();
+        const double highLambda = t_Material.getMaxLambda();
         if(lowLambda < 0.32 || highLambda < 0.32 || lowLambda > 2.5 || highLambda > 2.5)
         {
             throw std::runtime_error("Material properties out of range. Wavelength range must be "
