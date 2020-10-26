@@ -14,8 +14,15 @@ namespace SingleLayerOptics
 {
     double modifyProperty(const double t_Range, const double t_Solar, const double t_Fraction)
     {
-        assert(t_Fraction != 1);
-        return (t_Solar - t_Fraction * t_Range) / (1 - t_Fraction);
+		// If t_fraction == 1 that means a dual-band material is evaluated only for partial range
+		if(t_Fraction == 1)
+		{
+			return t_Range;
+		}
+		else
+		{
+			return (t_Solar - t_Fraction * t_Range) / (1 - t_Fraction);
+		}
     }
 
     std::vector<std::vector<double>>
