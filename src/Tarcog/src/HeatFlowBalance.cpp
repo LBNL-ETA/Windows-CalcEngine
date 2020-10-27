@@ -105,9 +105,9 @@ namespace Tarcog
 
                 m_VectorB[sP] += environmentRadiosity + hgap_prev * airTemperature
                                  - environmentRadiosity * frontSurface->getTransmittance();
-                m_VectorB[sP + 1] -= frontSurface->getReflectance() * environmentRadiosity;
-                m_VectorB[sP + 2] -= frontSurface->getTransmittance() * environmentRadiosity;
-                m_VectorB[sP + 3] -= frontSurface->getTransmittance() * environmentRadiosity;
+                m_VectorB[sP + 1] += -frontSurface->getReflectance() * environmentRadiosity;
+                m_VectorB[sP + 2] += -frontSurface->getTransmittance() * environmentRadiosity;
+                m_VectorB[sP + 3] += -frontSurface->getTransmittance() * environmentRadiosity;
             }
 
             if(std::dynamic_pointer_cast<CEnvironment>(next) == nullptr)
@@ -133,9 +133,9 @@ namespace Tarcog
                   std::dynamic_pointer_cast<CEnvironment>(next)->getGasTemperature();
 
                 m_VectorB[sP] += backSurface->getTransmittance() * environmentRadiosity;
-                m_VectorB[sP + 1] -= backSurface->getTransmittance() * environmentRadiosity;
-                m_VectorB[sP + 2] -= backSurface->getReflectance() * environmentRadiosity;
-                m_VectorB[sP + 3] -= (environmentRadiosity + hgap_next * airTemperature);
+                m_VectorB[sP + 1] += -backSurface->getTransmittance() * environmentRadiosity;
+                m_VectorB[sP + 2] += -backSurface->getReflectance() * environmentRadiosity;
+                m_VectorB[sP + 3] += -environmentRadiosity - hgap_next * airTemperature + backSurface->getTransmittance() * environmentRadiosity;
             }
         }
 

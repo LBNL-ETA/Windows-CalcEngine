@@ -133,7 +133,7 @@ TEST_F(TestDoubleOutsideVenetianShade_SHGC, Test1)
     auto aSystem = GetSystem();
 
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(3.352152, uval, 1e-6);
+    EXPECT_NEAR(3.171199, uval, 1e-6);
 
     auto effectiveLayerConductivities{
       aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
