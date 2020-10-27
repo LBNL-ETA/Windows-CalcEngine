@@ -41,7 +41,7 @@ protected:
         auto solidLayerThickness = 0.003048;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        auto layer1 = Tarcog::ISO15099::Layers::shading(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(layer1 != nullptr);
 
         auto shadeLayerThickness = 0.001;
@@ -65,7 +65,7 @@ protected:
         EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
 
         auto layer2 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effOpenness,
+            shadeLayerThickness, shadeLayerConductance, effOpenness,
             emissivity, tir, emissivity, tir);
 
         ASSERT_TRUE(layer2 != nullptr);        
