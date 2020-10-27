@@ -80,7 +80,7 @@ protected:
         auto Tirb = 0.257367;
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(
-          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+            effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
 
         aLayer1->setSolarAbsorptance(0.106659, solarRadiation);
 
