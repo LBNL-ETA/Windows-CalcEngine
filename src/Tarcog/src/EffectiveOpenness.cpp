@@ -17,6 +17,11 @@ namespace EffectiveLayers
         Ah(ah), Al(al), Ar(ar), Atop(atop), Abot(abot), FrontPorosity(frontPorosity)
     {}
 
+    bool EffectiveOpenness::isClosed() const
+    {
+        return Ah == 0.0 && Al == 0.0 && Ar == 0.0 && Atop == 0.0 && Abot == 0.0 && FrontPorosity == 0.0;
+    }
+
     EffectiveLayer::EffectiveLayer(double width,
                                    double height,
                                    double thickness,

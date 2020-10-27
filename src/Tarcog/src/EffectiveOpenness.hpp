@@ -23,6 +23,7 @@ namespace EffectiveLayers
     struct EffectiveOpenness
     {
         EffectiveOpenness(double ah, double al, double ar, double atop, double abot, double frontPorosity);
+        bool isClosed() const;
         double Ah;
         double Al;
         double Ar;

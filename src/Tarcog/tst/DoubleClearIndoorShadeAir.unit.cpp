@@ -65,7 +65,7 @@ protected:
         EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
 
         auto layer3 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effOpenness);
+            shadeLayerThickness, shadeLayerConductance, effOpenness);
 
         ASSERT_TRUE(layer3 != nullptr);
 
