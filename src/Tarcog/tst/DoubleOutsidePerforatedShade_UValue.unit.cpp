@@ -128,7 +128,7 @@ TEST_F(TestDoubleOutsidePerforatedShade_UValue, Test1)
     auto aSystem = GetSystem();
 
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(3.1411597200547976, uval, 1e-6);
+    EXPECT_NEAR(2.470794, uval, 1e-6);
 
     auto effectiveLayerConductivities{
       aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
