@@ -26,9 +26,7 @@ namespace Tarcog
     namespace ISO15099
     {
         CIGU::CIGU(double const t_Width, double const t_Height, double const t_Tilt) :
-            m_Width(t_Width),
-            m_Height(t_Height),
-            m_Tilt(t_Tilt)
+            m_Width(t_Width), m_Height(t_Height), m_Tilt(t_Tilt)
         {}
 
         CIGU::CIGU(CIGU const & t_IGU)
@@ -100,10 +98,10 @@ namespace Tarcog
 
         void CIGU::addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers)
         {
-        	for(const auto & layer : layers)
-			{
-        		addLayer(layer);
-			}
+            for(const auto & layer : layers)
+            {
+                addLayer(layer);
+            }
         }
 
         void CIGU::setTilt(double const t_Tilt)
@@ -271,10 +269,16 @@ namespace Tarcog
 
         double CIGU::getVentilationFlow(const Environment t_Environment) const
         {
-            auto size = m_Layers.size();
-            std::map<Environment, size_t> envLayer = {{Environment::Indoor, size - 2},
-                                                      {Environment::Outdoor, 1}};
-            return m_Layers[envLayer.at(t_Environment)]->getGainFlow();
+            // This is asking flow from the gap that is connected to the one of the environments.
+            const auto size = m_Layers.size();
+            auto result{0.0};
+            if(size > 1u)
+            {
+                std::map<Environment, size_t> envLayer = {{Environment::Indoor, size - 2},
+                                                          {Environment::Outdoor, 1}};
+                result = m_Layers[envLayer.at(t_Environment)]->getGainFlow();
+            }
+            return result;
         }
 
         void CIGU::setInitialGuess(std::vector<double> const & t_Guess) const
@@ -439,8 +443,8 @@ namespace Tarcog
                 for(auto n = 1; n <= 5; n += 2)
                 {
                     auto nomin = 4.0;
-                    auto denom =
-                      m * m * n * n * WCE_PI * WCE_PI * pow(pow(m / m_Width, 2) + pow(n / m_Height, 2), 2);
+                    auto denom = m * m * n * n * WCE_PI * WCE_PI
+                                 * pow(pow(m / m_Width, 2) + pow(n / m_Height, 2), 2);
                     totalSum += nomin / denom;
                 }
             }
@@ -496,12 +500,13 @@ namespace Tarcog
             return m_Layers;
         }
 
-        void CIGU::setAbsorptances(const std::vector<double> &absorptances, double solarRadiation)
+        void CIGU::setAbsorptances(const std::vector<double> & absorptances, double solarRadiation)
         {
             auto solidLayers = getSolidLayers();
             if(solidLayers.size() != absorptances.size())
             {
-                throw std::runtime_error("Number of absorptances does not match number of solid layers.");
+                throw std::runtime_error(
+                  "Number of absorptances does not match number of solid layers.");
             }
             for(size_t i = 0; i < solidLayers.size(); ++i)
             {

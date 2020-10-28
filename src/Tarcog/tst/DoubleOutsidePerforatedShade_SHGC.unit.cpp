@@ -142,7 +142,7 @@ TEST_F(TestDoubleOutsidePerforatedShade_SHGC, Test1)
 
     auto totSol{0.315236};
     const auto shgc{aSystem->getSHGC(totSol)};
-    EXPECT_NEAR(0.348819, shgc, 1e-6);
+    EXPECT_NEAR(0.351377, shgc, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
