@@ -48,6 +48,7 @@ namespace Tarcog
         {
         public:
             CLayerHeatFlow();
+
             CLayerHeatFlow(const CLayerHeatFlow & t_Layer);
             CLayerHeatFlow & operator=(const CLayerHeatFlow & t_Layer);
             virtual double getHeatFlow() final;

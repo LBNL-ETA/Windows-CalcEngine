@@ -13,7 +13,7 @@ namespace Tarcog
                          std::shared_ptr<CEnvironment> const & t_Outdoor)
         {
             m_System[System::SHGC] = std::make_shared<CSingleSystem>(t_IGU, t_Indoor, t_Outdoor);
-            m_System[System::Uvalue] = std::make_shared<CSingleSystem>(*m_System.at(System::SHGC));
+            m_System[System::Uvalue] = std::make_shared<CSingleSystem>(t_IGU, t_Indoor, t_Outdoor);
             m_System.at(System::Uvalue)->setSolarRadiation(0);
 
             for(auto & aSystem : m_System)
