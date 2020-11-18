@@ -91,7 +91,7 @@ namespace MultiLayerOptics
                                  const FenestrationCommon::Side t_Side,
                                  const FenestrationCommon::Scattering t_Scattering,
                                  const double t_Theta = 0,
-                                 const double t_Phi = 0);
+                                 const double t_Phi = 0) override;
 
         double DirDir(double minLambda,
                       double maxLambda,
