@@ -136,6 +136,29 @@ else()
   
   add_library( ${target_name} STATIC ${SOURCES} )
   
+  if( ${BUILD_WCE_COMMON} )
+	target_include_directories(${target_name} PUBLIC "src/Common/include")
+  endif()
+
+  if( ${BUILD_WCE_GASES} )
+	target_include_directories(${target_name} PUBLIC "src/Gases/include")
+  endif()
+
+  if( ${BUILD_WCE_VIEWER} )
+	target_include_directories(${target_name} PUBLIC "src/Viewer/include")
+  endif()
+
+  if( ${BUILD_WCE_THERMAL} )
+	target_include_directories(${target_name} PUBLIC "src/Tarcog/include")  	
+	target_include_directories(${target_name} PUBLIC "src/Chromogenics/include")
+  endif()
+
+  if( ${BUILD_WCE_OPTICAL} )
+	target_include_directories(${target_name} PUBLIC "src/SpectralAveraging/include")
+	target_include_directories(${target_name} PUBLIC "src/SingleLayerOptics/include")
+	target_include_directories(${target_name} PUBLIC "src/MultiLayerOptics/include")
+  endif()
+  
   if( BUILD_WCE_TESTING )
   	
   	if( ${BUILD_WCE_COMMON} )

@@ -163,11 +163,7 @@ namespace Tarcog
             const double outdoorAirTemperature =
               m_Environment.at(Environment::Outdoor)->getAmbientTemperature();
 
-            auto ventilatedFlow{0.0};
-            if(!m_IGU.getGapLayers().empty())
-            {
-                ventilatedFlow = m_IGU.getGapLayers().back()->getGainFlow();
-            }
+            const auto ventilatedFlow{getVentilationFlow(Environment::Indoor)};
 
             return (getHeatFlow(Environment::Indoor) + ventilatedFlow)
                    / (interiorAirTemperature - outdoorAirTemperature);
