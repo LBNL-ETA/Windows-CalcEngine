@@ -47,23 +47,33 @@ namespace Tarcog
         std::shared_ptr<CIGUSolidLayer>
           Layers::shading(double thickness,
                           double conductivity,
-                          EffectiveLayers::EffectiveOpenness & effectiveOpenness,
+                          EffectiveLayers::EffectiveOpenness effectiveOpenness,
                           double frontEmissivity,
                           double frontTransmittance,
                           double backEmissivity,
                           double backTransmittance)
         {
+            if(effectiveOpenness.isClosed())
+            {
+                return solid(thickness,
+                             conductivity,
+                             frontEmissivity,
+                             frontTransmittance,
+                             backEmissivity,
+                             backTransmittance);
+            }
+
             return std::make_shared<CIGUShadeLayer>(
-              thickness,
-              conductivity,
-              std::make_shared<CShadeOpenings>(effectiveOpenness.Atop,
-                                               effectiveOpenness.Abot,
-                                               effectiveOpenness.Al,
-                                               effectiveOpenness.Ar,
-                                               effectiveOpenness.Ah,
-                                               effectiveOpenness.FrontPorosity),
-              std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backTransmittance));
+                thickness,
+                conductivity,
+                std::make_shared<CShadeOpenings>(effectiveOpenness.Atop,
+                                                 effectiveOpenness.Abot,
+                                                 effectiveOpenness.Al,
+                                                 effectiveOpenness.Ar,
+                                                 effectiveOpenness.Ah,
+                                                 effectiveOpenness.FrontPorosity),
+                std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
+                std::make_shared<CSurface>(backEmissivity, backTransmittance));
         }
 
         std::shared_ptr<CIGUGapLayer>
