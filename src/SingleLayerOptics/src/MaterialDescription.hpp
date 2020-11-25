@@ -259,8 +259,8 @@ namespace SingleLayerOptics
         // properties for other partial ranges that are not provided by the user.
         // double getModifiedProperty(double t_Range, double t_Solar, double t_Fraction) const;
 
+		std::shared_ptr<CMaterial> m_MaterialPartialRange;
         std::shared_ptr<CMaterial> m_MaterialFullRange;
-        std::shared_ptr<CMaterial> m_MaterialPartialRange;
 
         std::vector<std::shared_ptr<CMaterial>> m_Materials;
     };

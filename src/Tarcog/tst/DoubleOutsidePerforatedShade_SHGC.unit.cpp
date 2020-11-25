@@ -80,7 +80,7 @@ protected:
         auto Tirb = 0.257367;
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(
-          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+            effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
 
         aLayer1->setSolarAbsorptance(0.106659, solarRadiation);
 
@@ -142,7 +142,7 @@ TEST_F(TestDoubleOutsidePerforatedShade_SHGC, Test1)
 
     auto totSol{0.315236};
     const auto shgc{aSystem->getSHGC(totSol)};
-    EXPECT_NEAR(0.348819, shgc, 1e-6);
+    EXPECT_NEAR(0.351377, shgc, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);

@@ -80,7 +80,7 @@ protected:
         //auto Tirb = 0.422942101955;
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(
-          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+            effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
 
         // auto aLayer1 = Tarcog::ISO15099::Layers::solid(shadeLayerThickness,
         // shadeLayerConductance);
@@ -147,7 +147,7 @@ TEST_F(TestDoubleOutsideVenetianShade_SHGC, Test1)
 
     auto totSol{0.789689322};
     const auto shgc{aSystem->getSHGC(totSol)};
-    EXPECT_NEAR(0.841574, shgc, 1e-6);
+    EXPECT_NEAR(0.843802, shgc, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
