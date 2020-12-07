@@ -24,14 +24,14 @@ namespace Tarcog
             CIGU & operator=(CIGU const & t_IGU);
             ~CIGU();
 
-            void addLayer(const std::shared_ptr<CBaseIGULayer> & t_Layer);
+            void addLayer(const std::shared_ptr<CBaseLayer> & t_Layer);
             void addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers);
 
             void setAbsorptances(const std::vector<double> & absorptances, double solarRadiation);
 
             std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
             std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
-            std::vector<std::shared_ptr<CBaseIGULayer>> getLayers() const;
+            std::vector<std::shared_ptr<CBaseLayer>> getLayers() const;
 
             void setTilt(double t_Tilt);
             void setWidth(double t_Width);
@@ -69,9 +69,9 @@ namespace Tarcog
                               const std::shared_ptr<CBaseIGULayer> & t_Replacement);
 
             // Check if layer needs to be decorated with another object
-            void checkForLayerUpgrades(const std::shared_ptr<CBaseIGULayer> & t_Layer);
+            void checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer);
 
-            std::vector<std::shared_ptr<CBaseIGULayer>> m_Layers;
+            std::vector<std::shared_ptr<CBaseLayer>> m_Layers;
 
             double m_Width;    // meters
             double m_Height;   // meters

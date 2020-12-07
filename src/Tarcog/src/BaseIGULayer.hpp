@@ -18,7 +18,7 @@ namespace Tarcog
         public:
             explicit CBaseIGULayer(double t_Thickness);
 
-            double getThickness() const;
+            double getThickness() const override;
             double getTemperature(FenestrationCommon::Side t_Position) const;
             double J(FenestrationCommon::Side t_Position) const;
             double getMaxDeflection() const;
