@@ -38,6 +38,11 @@ namespace Tarcog
         void CBaseLayer::calculateRadiationFlow()
         {}
 
+        double CBaseLayer::getThickness() const
+        {
+            return 0;
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog
