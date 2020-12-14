@@ -13,7 +13,7 @@ namespace Tarcog
                          std::shared_ptr<CEnvironment> const & t_Outdoor)
         {
             m_System[System::SHGC] = std::make_shared<CSingleSystem>(t_IGU, t_Indoor, t_Outdoor);
-            m_System[System::Uvalue] = std::make_shared<CSingleSystem>(*m_System.at(System::SHGC));
+            m_System[System::Uvalue] = std::make_shared<CSingleSystem>(t_IGU, t_Indoor->cloneEnvironment(), t_Outdoor->cloneEnvironment());
             m_System.at(System::Uvalue)->setSolarRadiation(0);
 
             for(auto & aSystem : m_System)
@@ -60,18 +60,9 @@ namespace Tarcog
 
         double CSystem::getSHGC(double const t_TotSol) const
         {
-            const auto ventilatedFlowSHGC{
-              m_System.at(System::SHGC)->getVentilationFlow(Environment::Indoor)};
-            const auto ventilatedFlowU{
-              m_System.at(System::Uvalue)->getVentilationFlow(Environment::Indoor)};
-
-            const auto indoorFlowSHGC{m_System.at(System::SHGC)->getHeatFlow(Environment::Indoor)
-                                      + ventilatedFlowSHGC};
-            const auto indoorFlowU{m_System.at(System::Uvalue)->getHeatFlow(Environment::Indoor)
-                                   + ventilatedFlowU};
-
             return t_TotSol
-                   - (indoorFlowSHGC - indoorFlowU)
+                   - (m_System.at(System::SHGC)->getHeatFlow(Environment::Indoor)
+                      - m_System.at(System::Uvalue)->getHeatFlow(Environment::Indoor))
                        / m_System.at(System::SHGC)->getSolarRadiation();
         }
 
