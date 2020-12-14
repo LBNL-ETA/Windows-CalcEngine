@@ -42,7 +42,7 @@ namespace Tarcog
             m_Layers.clear();
             for(auto & layer : t_IGU.m_Layers)
             {
-                const auto aLayer = std::dynamic_pointer_cast<CBaseIGULayer>(layer->clone());
+                const auto aLayer{layer->clone()};
                 addLayer(aLayer);
             }
 
@@ -57,7 +57,7 @@ namespace Tarcog
             }
         }
 
-        void CIGU::addLayer(std::shared_ptr<CBaseIGULayer> const & t_Layer)
+        void CIGU::addLayer(const std::shared_ptr<CBaseLayer> & t_Layer)
         {
             // pushes only solid layers to array. Gap layers are connected via linked list
             // In case this is first layer then it must be a solid layer in order to create IGU
@@ -407,7 +407,7 @@ namespace Tarcog
             }
         }
 
-        void CIGU::checkForLayerUpgrades(std::shared_ptr<CBaseIGULayer> const & t_Layer)
+        void CIGU::checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer)
         {
             if(std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer) != nullptr)
             {
@@ -495,7 +495,7 @@ namespace Tarcog
             return aVect;
         }
 
-        std::vector<std::shared_ptr<CBaseIGULayer>> CIGU::getLayers() const
+        std::vector<std::shared_ptr<CBaseLayer>> CIGU::getLayers() const
         {
             return m_Layers;
         }

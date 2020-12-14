@@ -32,6 +32,8 @@ namespace Tarcog
 
             void tearDownConnections();
 
+            virtual double getThickness() const;
+
             virtual std::shared_ptr<CBaseLayer> clone() const = 0;
 
         protected:
