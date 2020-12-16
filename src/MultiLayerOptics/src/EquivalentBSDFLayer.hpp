@@ -41,6 +41,8 @@ namespace MultiLayerOptics
         const SingleLayerOptics::CBSDFDirections &
           getDirections(SingleLayerOptics::BSDFDirection t_Side) const;
         std::vector<double> getCommonWavelengths() const;
+		double getMinLambda() const;
+		double getMaxLambda() const;
 
         // Absorptance wavelength by wavelength matrices
         std::shared_ptr<FenestrationCommon::CMatrixSeries>

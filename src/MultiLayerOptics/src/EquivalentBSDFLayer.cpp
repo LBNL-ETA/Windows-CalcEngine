@@ -43,6 +43,16 @@ namespace MultiLayerOptics
         return m_CombinedLayerWavelengths;
     }
 
+	double CEquivalentBSDFLayer::getMinLambda() const
+	{
+		return m_CombinedLayerWavelengths.front();
+	}
+
+	double CEquivalentBSDFLayer::getMaxLambda() const
+	{
+		return m_CombinedLayerWavelengths.back();
+	}
+
     std::shared_ptr<CMatrixSeries> CEquivalentBSDFLayer::getTotalA(const Side t_Side)
     {
         if(!m_Calculated)
