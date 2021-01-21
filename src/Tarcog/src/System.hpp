@@ -1,9 +1,9 @@
-#ifndef TARCOGSYSTEM_H
-#define TARCOGSYSTEM_H
+#pragma once
 
 #include <memory>
 #include <vector>
 #include <map>
+#include "IGUConfigurations.hpp"
 
 namespace Tarcog
 {
@@ -19,13 +19,7 @@ namespace Tarcog
 
         class CIGUSolidLayer;
 
-        enum class System
-        {
-            Uvalue,
-            SHGC
-        };
-
-        class CSystem
+        class CSystem : public IIGUSystem
         {
         public:
             CSystem(CIGU & t_IGU,
@@ -46,8 +40,9 @@ namespace Tarcog
             double thickness(const System t_System) const;
 
             double getHeatFlow(System t_System, Environment t_Environment) const;
-            double getUValue() const;
-            double getSHGC(double t_TotSol) const;
+            double getUValue() const override;
+            double getSHGC(double t_TotSol) const override;
+            double getHc(System sys, Environment environment) const override;
             size_t getNumberOfIterations(System t_System) const;
 
             double relativeHeatGain(double Tsol) const;
@@ -61,5 +56,3 @@ namespace Tarcog
     }   // namespace ISO15099
 
 }   // namespace Tarcog
-
-#endif

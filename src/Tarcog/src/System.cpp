@@ -102,6 +102,11 @@ namespace Tarcog
             m_System.at(System::SHGC)->setAbsorptances(absorptances);
         }
 
+        double CSystem::getHc(System sys, Environment environment) const
+        {
+            return m_System.at(sys)->getHc(environment);
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog
