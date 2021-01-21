@@ -146,7 +146,7 @@ namespace Tarcog
                     }
                     else
                     {
-                        Gnui = 0.13 * pow(RaL, 1 / 3.0) - pow(RaCrit, 1 / 3.0)
+                        Gnui = 0.13 * (pow(RaL, 1 / 3.0) - pow(RaCrit, 1 / 3.0))
                                + 0.56 * pow(RaCrit * sin(tiltRadians), 0.25);
                     }
                 }
