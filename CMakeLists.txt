@@ -6,7 +6,7 @@ set(target_name ${PROJECT_NAME})
 
 #set( target_name Windows-CalcEngine )
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 
 include( cmake/WCEProjectMacros.cmake )
 include( cmake/WCEInternalUtils.cmake )
