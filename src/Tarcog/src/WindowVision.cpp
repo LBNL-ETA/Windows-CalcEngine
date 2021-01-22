@@ -6,7 +6,7 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        Vision::Vision(double area, double tvis, double tsol, const IIGUSystem & iguSystem) :
+        VisionThermal::VisionThermal(double area, double tvis, double tsol, const IIGUSystem & iguSystem) :
           m_Area(area),
           m_Uvalue(iguSystem.getUValue()),
           m_SHGC(iguSystem.getSHGC(tsol)),
@@ -14,31 +14,31 @@ namespace Tarcog
           m_HcExterior(iguSystem.getHc(System::SHGC, Environment::Outdoor))
         {}
 
-        Vision::Vision(double area, double Uvalue, double shgc, double vt, double hcExterior) :
+        VisionThermal::VisionThermal(double area, double Uvalue, double shgc, double vt, double hcExterior) :
           m_Area(area), m_Uvalue(Uvalue), m_SHGC(shgc), m_VT(vt), m_HcExterior(hcExterior)
         {}
 
-        double Vision::uValue() const
+        double VisionThermal::uValue() const
         {
             return m_Uvalue;
         }
 
-        double Vision::shgc() const
+        double VisionThermal::shgc() const
         {
             return m_SHGC;
         }
 
-        double Vision::area() const
+        double VisionThermal::area() const
         {
             return m_Area;
         }
 
-        double Vision::vt() const
+        double VisionThermal::vt() const
         {
             return m_VT;
         }
 
-        double Vision::hc() const
+        double VisionThermal::hc() const
         {
             return m_HcExterior;
         }
