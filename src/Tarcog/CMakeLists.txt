@@ -16,7 +16,7 @@ file( GLOB SOURCES_HPP "src/*.hpp" )
 LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP} )
 
 # Generates the static library from the SOURCES
-add_library( ${target_name} STATIC ${SOURCES} src/WholeWindowConfigurations.hpp src/IGUConfigurations.hpp src/EnvironmentConfigurations.hpp src/WholeWindow.cpp src/WindowVision.hpp src/WindowVision.cpp src/SimpleIGU.cpp src/SimpleIGU.hpp src/Frame.hpp src/Frame.cpp tst/units/FrameISO15099.unit.cpp)
+add_library( ${target_name} STATIC ${SOURCES} )
 
 target_link_libraries( ${target_name} ${LINK_TO_Common} )
 target_link_libraries( ${target_name} ${LINK_TO_Gases} )
