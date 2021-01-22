@@ -33,7 +33,7 @@ namespace Tarcog
         private:
             static const double m_VisionLength;
 
-            //! Number of exterior frames is important for edge area calculations
+            //! Number of exterior frames is important for edge projectedArea calculations
             size_t m_NumOfExteriorFrames{4u};
             size_t m_NumOfVerticalDividers{0u};
             size_t m_NumOfHorizontalDividers{0u};
