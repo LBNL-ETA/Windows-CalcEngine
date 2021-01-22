@@ -4,7 +4,7 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        //! Geometry type will be used as part of vision area and it will be important to calculate
+        //! Geometry type will be used as part of vision projectedArea and it will be important to calculate
         //! frame and edge areas
         enum class FrameGeometryType
         {
@@ -33,7 +33,8 @@ namespace Tarcog
             Frame() = delete;
             Frame(double length, FrameGeometryType frameGeometryType, FrameData frameData);
 
-            [[nodiscard]] double area() const;
+            [[nodiscard]] double projectedArea() const;
+            [[nodiscard]] double wettedArea() const;
 
         private:
             double m_Length;
