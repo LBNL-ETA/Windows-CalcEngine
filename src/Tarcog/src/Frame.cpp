@@ -21,7 +21,7 @@ namespace Tarcog::ISO15099
 
     double Frame::projectedArea() const
     {
-        static std::map<FrameGeometryType, double> subtraction{
+        std::map<FrameGeometryType, double> subtraction{
           {FrameGeometryType::Square, 0},
           {FrameGeometryType::Trapezoid,
            m_FrameData.ProjectedFrameDimension * m_FrameData.ProjectedFrameDimension},
@@ -32,10 +32,11 @@ namespace Tarcog::ISO15099
 
     double Frame::wettedArea() const
     {
-        static std::map<FrameGeometryType, double> subtraction{
+        std::map<FrameGeometryType, double> subtraction{
           {FrameGeometryType::Square, 0},
           {FrameGeometryType::Trapezoid, m_FrameData.WettedLength * m_FrameData.WettedLength},
-          {FrameGeometryType::HalfTrapezoid, m_FrameData.WettedLength * m_FrameData.WettedLength / 2}};
+          {FrameGeometryType::HalfTrapezoid,
+           m_FrameData.WettedLength * m_FrameData.WettedLength / 2}};
         return m_Length * m_FrameData.WettedLength - subtraction.at(m_GeometryType);
     }
 }   // namespace Tarcog::ISO15099
