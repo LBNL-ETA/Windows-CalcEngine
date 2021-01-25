@@ -20,9 +20,19 @@ namespace Tarcog
         virtual double vt() const = 0;
     };
 
-    class ISingleVision : public IWholeWindow
+    enum class FramePosition
     {
+        Top,
+        Bottom,
+        Left,
+        Right
+    };
 
+    class IVision : public IWholeWindow
+    {
+    public:
+        virtual double area() const = 0;
+        virtual double hc() const = 0;
     };
 
 }   // namespace Tarcog

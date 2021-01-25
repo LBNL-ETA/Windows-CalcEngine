@@ -2,46 +2,65 @@
 
 #include "EnvironmentConfigurations.hpp"
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    const double WindowVision::m_EOGHeight = 0.06355;
+
+    WindowVision::WindowVision(
+      double width, double height, double tvis, double tsol, const IIGUSystem & iguSystem) :
+        m_Width(width),
+        m_Height(height),
+        m_Uvalue(iguSystem.getUValue()),
+        m_SHGC(iguSystem.getSHGC(tsol)),
+        m_VT(tvis),
+        m_HcExterior(iguSystem.getHc(System::SHGC, Environment::Outdoor)),
+        m_Frame({{FramePosition::Top, {width}},
+                 {FramePosition::Bottom, {width}},
+                 {FramePosition::Left, {height}},
+                 {FramePosition::Right, {height}}})
+    {}
+
+    WindowVision::WindowVision(
+      double width, double height, double Uvalue, double shgc, double vt, double hcExterior) :
+        m_Width(width),
+        m_Height(height),
+        m_Uvalue(Uvalue),
+        m_SHGC(shgc),
+        m_VT(vt),
+        m_HcExterior(hcExterior),
+        m_Frame({{FramePosition::Top, {width}},
+                 {FramePosition::Bottom, {width}},
+                 {FramePosition::Left, {height}},
+                 {FramePosition::Right, {height}}})
+    {}
+
+    double WindowVision::uValue() const
     {
-        VisionThermal::VisionThermal(double area, double tvis, double tsol, const IIGUSystem & iguSystem) :
-          m_Area(area),
-          m_Uvalue(iguSystem.getUValue()),
-          m_SHGC(iguSystem.getSHGC(tsol)),
-          m_VT(tvis),
-          m_HcExterior(iguSystem.getHc(System::SHGC, Environment::Outdoor))
-        {}
+        return m_Uvalue;
+    }
 
-        VisionThermal::VisionThermal(double area, double Uvalue, double shgc, double vt, double hcExterior) :
-          m_Area(area), m_Uvalue(Uvalue), m_SHGC(shgc), m_VT(vt), m_HcExterior(hcExterior)
-        {}
+    double WindowVision::shgc() const
+    {
+        return m_SHGC;
+    }
 
-        double VisionThermal::uValue() const
-        {
-            return m_Uvalue;
-        }
+    double WindowVision::area() const
+    {
+        return m_Width * m_Height;
+    }
 
-        double VisionThermal::shgc() const
-        {
-            return m_SHGC;
-        }
+    double WindowVision::vt() const
+    {
+        return m_VT;
+    }
 
-        double VisionThermal::area() const
-        {
-            return m_Area;
-        }
+    double WindowVision::hc() const
+    {
+        return m_HcExterior;
+    }
 
-        double VisionThermal::vt() const
-        {
-            return m_VT;
-        }
-
-        double VisionThermal::hc() const
-        {
-            return m_HcExterior;
-        }
-
-    }   // namespace ISO15099
-}   // namespace Tarcog
+    void WindowVision::setFrameData(FramePosition position, FrameData frameData)
+    {
+        m_Frame.at(position).setFrameData(frameData);
+    }
+}   // namespace Tarcog::ISO15099
