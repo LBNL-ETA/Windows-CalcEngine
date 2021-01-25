@@ -1,42 +1,44 @@
 #pragma once
 
+#include <map>
 #include <memory>
 #include "IGUConfigurations.hpp"
+#include "WholeWindowConfigurations.hpp"
+#include "Frame.hpp"
 
 namespace Tarcog
 {
     namespace ISO15099
     {
-        class VisionThermal
+        class WindowVision : public IVision
         {
         public:
-            VisionThermal() = delete;
-            VisionThermal(double area, double tvis, double tsol, const IIGUSystem & iguSystem);
-            VisionThermal(double area, double uvalue, double shgc, double vt, double hcExterior);
-            double area() const;
-            double uValue() const;
-            double shgc() const;
-            double vt() const;
-            double hc() const;
+            WindowVision() = delete;
+            WindowVision(double width, double height, double tvis, double tsol, const IIGUSystem & iguSystem);
+            WindowVision(double width, double height, double uvalue, double shgc, double vt, double hcExterior);
+            [[nodiscard]] double area() const override;
+            [[nodiscard]] double uValue() const override;
+            [[nodiscard]] double shgc() const override;
+            [[nodiscard]] double vt() const override;
+            [[nodiscard]] double hc() const override;
+
+            void setFrameData(FramePosition position, FrameData frameData);
 
         private:
-            double m_Area{0};
+            double m_Width{0};
+            double m_Height{0};
             double m_Uvalue{0};
             double m_SHGC{0};
             double m_VT{1};
             double m_HcExterior{0};
 
-        };
+            static const double m_EOGHeight;
 
-        class VisionGeometry
-        {
-        private:
-            static const double m_VisionLength;
-
-            //! Number of exterior frames is important for edge projectedArea calculations
-            size_t m_NumOfExteriorFrames{4u};
             size_t m_NumOfVerticalDividers{0u};
             size_t m_NumOfHorizontalDividers{0u};
+
+            std::map<FramePosition, Frame> m_Frame;
+
         };
     }   // namespace ISO15099
 }   // namespace Tarcog

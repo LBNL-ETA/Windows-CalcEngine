@@ -1,45 +1,64 @@
 #pragma once
 
+#include <optional>
+#include <WCECommon.hpp>
+
 namespace Tarcog
 {
     namespace ISO15099
     {
-        //! Geometry type will be used as part of vision projectedArea and it will be important to calculate
-        //! frame and edge areas
-        enum class FrameGeometryType
-        {
-            Square,
-            Trapezoid,
-            HalfTrapezoid
-        };
-
         struct FrameData
         {
+            FrameData();
             FrameData(double uValue,
                       double edgeUValue,
                       double projectedFrameDimension,
                       double wettedLength,
                       double absorptance);
-            double UValue;
-            double EdgeUValue;
-            double ProjectedFrameDimension;
-            double WettedLength;
-            double Absorptance;
+            double UValue{0};
+            double EdgeUValue{0};
+            double ProjectedFrameDimension{0};
+            double WettedLength{0};
+            double Absorptance{0};
+        };
+
+        enum class FrameSide
+        {
+            Left,
+            Right
+        };
+
+        //! When building window, frame will be inserted differently which is based on what the frame type is.
+        //! This is important factor when calculating frame area as well as edge of glass area since interior
+        //! frames will take less space
+        enum class FrameType
+        {
+            Interior,
+            Exterior
         };
 
         class Frame
         {
         public:
-            Frame() = delete;
-            Frame(double length, FrameGeometryType frameGeometryType, FrameData frameData);
+            Frame(double length, FrameType frameType = FrameType::Exterior, FrameData frameData = FrameData());
+
+            [[nodiscard]] FrameType frameType() const;
 
             [[nodiscard]] double projectedArea() const;
             [[nodiscard]] double wettedArea() const;
+            void setFrameData(FrameData frameData);
+            [[nodiscard]] double edgeOfAreaLength() const;
+            [[nodiscard]] double projectedFrameDimension() const;
+
+            void assignFrame(Frame frame, FrameSide side);
 
         private:
             double m_Length;
-            FrameGeometryType m_GeometryType;
+            FrameType m_FrameType;
             FrameData m_FrameData;
+
+            //! Keeping frame information on both sides of the frame. This is needed for geometry calculations.
+            std::map<FrameSide, std::optional<Frame>> m_Frame;
         };
     }   // namespace ISO15099
 }   // namespace Tarcog
