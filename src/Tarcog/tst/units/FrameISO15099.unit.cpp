@@ -95,7 +95,7 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     EXPECT_NEAR(0.12, projectedArea, 1e-6);
 
     const double eogLength{frame.edgeOfAreaLength()};
-    EXPECT_NEAR(0.6, eogLength, 1e-6);
+    EXPECT_NEAR(0.473, eogLength, 1e-6);
 
     const double wettedArea{frame.wettedArea()};
     EXPECT_NEAR(0.18, wettedArea, 1e-6);
