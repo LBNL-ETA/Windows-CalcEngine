@@ -32,18 +32,20 @@ namespace Tarcog::ISO15099
     {
         auto area{m_Length * m_FrameData.ProjectedFrameDimension};
 
+        const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
+
         if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
            && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
         {
             area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Left)->projectedFrameDimension() / 2;
+                    * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
         }
 
         if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
            && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
         {
             area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() / 2;
+                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
         }
 
         return area;
@@ -53,18 +55,20 @@ namespace Tarcog::ISO15099
     {
         auto area{m_Length * m_FrameData.WettedLength};
 
+        const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
+
         if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
            && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
         {
             area -=
-              m_FrameData.WettedLength * m_Frame.at(FrameSide::Left)->projectedFrameDimension() / 2;
+              m_FrameData.WettedLength * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
         }
 
         if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
            && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
         {
             area -= m_FrameData.WettedLength
-                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() / 2;
+                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
         }
 
         return area;
