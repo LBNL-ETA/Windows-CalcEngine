@@ -25,6 +25,10 @@ namespace Tarcog
             void setFrameData(FramePosition position, FrameData frameData);
 
         private:
+
+            //! Makes connection between frames for correct area calculations.
+            void connectFrames();
+
             double m_Width{0};
             double m_Height{0};
             double m_Uvalue{0};

@@ -61,8 +61,8 @@ namespace Tarcog::ISO15099
         if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
            && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
         {
-            area -=
-              m_FrameData.WettedLength * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
+            area -= m_FrameData.WettedLength
+                    * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
         }
 
         if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
@@ -80,7 +80,7 @@ namespace Tarcog::ISO15099
         m_FrameData = frameData;
     }
 
-    double Frame::edgeOfAreaLength() const
+    double Frame::edgeOfArea() const
     {
         auto length{m_Length};
 
@@ -101,7 +101,23 @@ namespace Tarcog::ISO15099
             }
         }
 
-        return length;
+        auto area{length * ConstantsData::EOGHeight};
+
+        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
+           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior
+           && m_FrameType == FrameType::Exterior)
+        {
+            area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
+        }
+
+        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
+           && m_Frame.at(FrameSide::Right)->frameType() == FrameType::Exterior
+           && m_FrameType == FrameType::Exterior)
+        {
+            area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
+        }
+
+        return area;
     }
 
     double Frame::projectedFrameDimension() const
