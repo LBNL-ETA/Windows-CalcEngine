@@ -3,9 +3,7 @@
 #include "EnvironmentConfigurations.hpp"
 
 namespace Tarcog::ISO15099
-{
-    const double WindowVision::m_EOGHeight = 0.06355;
-
+{    
     WindowVision::WindowVision(
       double width, double height, double tvis, double tsol, const IIGUSystem & iguSystem) :
         m_Width(width),
