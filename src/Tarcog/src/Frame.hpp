@@ -49,7 +49,7 @@ namespace Tarcog
             [[nodiscard]] double projectedArea() const;
             [[nodiscard]] double wettedArea() const;
             void setFrameData(FrameData frameData);
-            [[nodiscard]] double edgeOfAreaLength() const;
+            [[nodiscard]] double edgeOfArea() const;
             [[nodiscard]] double projectedFrameDimension() const;
 
             void assignFrame(Frame frame, FrameSide side);

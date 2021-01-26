@@ -32,8 +32,8 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameExterior)
     const double projectedArea{frame.projectedArea()};
     EXPECT_NEAR(0.18, projectedArea, 1e-6);
 
-    const double eogLength{frame.edgeOfAreaLength()};
-    EXPECT_NEAR(0.8, eogLength, 1e-6);
+    const double eogArea{frame.edgeOfArea()};
+    EXPECT_NEAR(0.048783875, eogArea, 1e-6);
 
     const double wettedArea{frame.wettedArea()};
     EXPECT_NEAR(0.27, wettedArea, 1e-6);
@@ -62,8 +62,8 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameInterior)
     const double projectedArea{frame.projectedArea()};
     EXPECT_NEAR(0.2, projectedArea, 1e-6);
 
-    const double eogLength{frame.edgeOfAreaLength()};
-    EXPECT_NEAR(0.8, eogLength, 1e-6);
+    const double eogArea{frame.edgeOfArea()};
+    EXPECT_NEAR(0.0508, eogArea, 1e-6);
 
     const double wettedArea{frame.wettedArea()};
     EXPECT_NEAR(0.3, wettedArea, 1e-6);
@@ -94,8 +94,8 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     const double projectedArea{frame.projectedArea()};
     EXPECT_NEAR(0.12, projectedArea, 1e-6);
 
-    const double eogLength{frame.edgeOfAreaLength()};
-    EXPECT_NEAR(0.473, eogLength, 1e-6);
+    const double eogArea{frame.edgeOfArea()};
+    EXPECT_NEAR(0.0300355, eogArea, 1e-6);
 
     const double wettedArea{frame.wettedArea()};
     EXPECT_NEAR(0.18, wettedArea, 1e-6);
