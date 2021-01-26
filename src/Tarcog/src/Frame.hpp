@@ -28,9 +28,9 @@ namespace Tarcog
             Right
         };
 
-        //! When building window, frame will be inserted differently which is based on what the frame type is.
-        //! This is important factor when calculating frame area as well as edge of glass area since interior
-        //! frames will take less space
+        //! When building window, frame will be inserted differently which is based on what the
+        //! frame type is. This is important factor when calculating frame area as well as edge of
+        //! glass area since interior frames will take less space
         enum class FrameType
         {
             Interior,
@@ -40,7 +40,9 @@ namespace Tarcog
         class Frame
         {
         public:
-            Frame(double length, FrameType frameType = FrameType::Exterior, FrameData frameData = FrameData());
+            Frame(double length,
+                  FrameType frameType = FrameType::Exterior,
+                  FrameData frameData = FrameData());
 
             [[nodiscard]] FrameType frameType() const;
 
@@ -57,7 +59,9 @@ namespace Tarcog
             FrameType m_FrameType;
             FrameData m_FrameData;
 
-            //! Keeping frame information on both sides of the frame. This is needed for geometry calculations.
+            //! Keeping frame information on both sides of the frame. This is needed for geometry
+            //! calculations. Optional must be used or infinite loop will be created withing Frame
+            //! constructor (Frame calling itself over and over again)
             std::map<FrameSide, std::optional<Frame>> m_Frame;
         };
     }   // namespace ISO15099
