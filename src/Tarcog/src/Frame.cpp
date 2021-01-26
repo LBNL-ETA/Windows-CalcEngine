@@ -80,7 +80,12 @@ namespace Tarcog::ISO15099
         m_FrameData = frameData;
     }
 
-    double Frame::edgeOfArea() const
+    const FrameData & Frame::frameData() const
+    {
+        return m_FrameData;
+    }
+
+    double Frame::edgeOfGlassArea() const
     {
         auto length{m_Length};
 
