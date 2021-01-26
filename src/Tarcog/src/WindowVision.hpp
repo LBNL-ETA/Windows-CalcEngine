@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <memory>
 #include "IGUConfigurations.hpp"
 #include "WholeWindowConfigurations.hpp"
 #include "Frame.hpp"
@@ -15,7 +14,6 @@ namespace Tarcog
         public:
             WindowVision() = delete;
             WindowVision(double width, double height, double tvis, double tsol, const IIGUSystem & iguSystem);
-            WindowVision(double width, double height, double uvalue, double shgc, double vt, double hcExterior);
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
             [[nodiscard]] double shgc() const override;
@@ -25,14 +23,16 @@ namespace Tarcog
             void setFrameData(FramePosition position, FrameData frameData);
 
         private:
-
             //! Makes connection between frames for correct area calculations.
             void connectFrames();
 
+            [[nodiscard]] double frameProjectedArea() const;
+            [[nodiscard]] double edgeOfGlassArea() const;
+
             double m_Width{0};
             double m_Height{0};
-            double m_Uvalue{0};
-            double m_SHGC{0};
+            double m_IGUUvalue{0};
+            double m_IGUSHGC{0};
             double m_VT{1};
             double m_HcExterior{0};
 

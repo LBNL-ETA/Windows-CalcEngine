@@ -1,10 +1,27 @@
 #include "WholeWindow.hpp"
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
-    {
-        
+    WindowSingleVision::WindowSingleVision(WindowVision vision) : vision(std::move(vision))
+    {}
 
-    }   // namespace ISO15099
-}   // namespace Tarcog
+    double WindowSingleVision::area() const
+    {
+        return vision.area();
+    }
+
+    double WindowSingleVision::uValue() const
+    {
+        return vision.uValue();
+    }
+
+    double WindowSingleVision::shgc() const
+    {
+        return vision.shgc();
+    }
+
+    double WindowSingleVision::vt() const
+    {
+        return vision.vt();
+    }
+}   // namespace Tarcog::ISO15099
