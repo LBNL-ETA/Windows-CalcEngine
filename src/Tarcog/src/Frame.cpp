@@ -1,4 +1,5 @@
 #include <map>
+#include <WCECommon.hpp>
 #include "Frame.hpp"
 
 namespace Tarcog::ISO15099
@@ -86,10 +87,18 @@ namespace Tarcog::ISO15099
         if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value())
         {
             length -= m_Frame.at(FrameSide::Left)->projectedFrameDimension();
+            if(m_FrameType == FrameType::Interior)
+            {
+                length -= ConstantsData::EOGHeight;
+            }
         }
         if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value())
         {
             length -= m_Frame.at(FrameSide::Right)->projectedFrameDimension();
+            if(m_FrameType == FrameType::Interior)
+            {
+                length -= ConstantsData::EOGHeight;
+            }
         }
 
         return length;

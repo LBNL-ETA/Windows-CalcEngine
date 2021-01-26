@@ -32,8 +32,6 @@ namespace Tarcog
             double m_VT{1};
             double m_HcExterior{0};
 
-            static const double m_EOGHeight;
-
             size_t m_NumOfVerticalDividers{0u};
             size_t m_NumOfHorizontalDividers{0u};
 
