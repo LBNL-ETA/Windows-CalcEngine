@@ -8,8 +8,8 @@ namespace Tarcog::ISO15099
       double width, double height, double tvis, double tsol, const IIGUSystem & iguSystem) :
         m_Width(width),
         m_Height(height),
-        m_Uvalue(iguSystem.getUValue()),
-        m_SHGC(iguSystem.getSHGC(tsol)),
+        m_IGUUvalue(iguSystem.getUValue()),
+        m_IGUSHGC(iguSystem.getSHGC(tsol)),
         m_VT(tvis),
         m_HcExterior(iguSystem.getHc(System::SHGC, Environment::Outdoor)),
         m_Frame({{FramePosition::Top, {width}},
@@ -18,28 +18,25 @@ namespace Tarcog::ISO15099
                  {FramePosition::Right, {height}}})
     {}
 
-    WindowVision::WindowVision(
-      double width, double height, double Uvalue, double shgc, double vt, double hcExterior) :
-        m_Width(width),
-        m_Height(height),
-        m_Uvalue(Uvalue),
-        m_SHGC(shgc),
-        m_VT(vt),
-        m_HcExterior(hcExterior),
-        m_Frame({{FramePosition::Top, {width}},
-                 {FramePosition::Bottom, {width}},
-                 {FramePosition::Left, {height}},
-                 {FramePosition::Right, {height}}})
-    {}
-
     double WindowVision::uValue() const
     {
-        return m_Uvalue;
+        auto frameWeightedUValue{0.0};
+        auto edgeOfGlassWeightedUValue{0.0};
+
+        for(const auto & frame : m_Frame)
+        {
+            frameWeightedUValue += frame.second.projectedArea() * frame.second.frameData().UValue;
+            edgeOfGlassWeightedUValue += frame.second.edgeOfGlassArea() * frame.second.frameData().EdgeUValue;
+        }
+
+        auto COGWeightedUValue{m_IGUUvalue * (area() - frameProjectedArea() - edgeOfGlassArea())};
+
+        return (COGWeightedUValue + frameWeightedUValue + edgeOfGlassWeightedUValue) / area();
     }
 
     double WindowVision::shgc() const
     {
-        return m_SHGC;
+        return m_IGUSHGC;
     }
 
     double WindowVision::area() const
@@ -49,7 +46,7 @@ namespace Tarcog::ISO15099
 
     double WindowVision::vt() const
     {
-        return m_VT;
+        return (area() - frameProjectedArea()) / area() * m_VT;
     }
 
     double WindowVision::hc() const
@@ -77,5 +74,29 @@ namespace Tarcog::ISO15099
 
         m_Frame.at(FramePosition::Right).assignFrame(m_Frame.at(FramePosition::Bottom), FrameSide::Left);
         m_Frame.at(FramePosition::Right).assignFrame(m_Frame.at(FramePosition::Top), FrameSide::Right);
+    }
+
+    double WindowVision::frameProjectedArea() const
+    {
+        auto area{0.0};
+
+        for(const auto & frame : m_Frame)
+        {
+            area += frame.second.projectedArea();
+        }
+
+        return area;
+    }
+
+    double WindowVision::edgeOfGlassArea() const
+    {
+        auto area{0.0};
+
+        for(const auto & frame : m_Frame)
+        {
+            area += frame.second.edgeOfGlassArea();
+        }
+
+        return area;
     }
 }   // namespace Tarcog::ISO15099
