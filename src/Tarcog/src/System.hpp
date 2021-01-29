@@ -52,6 +52,7 @@ namespace Tarcog
             void setWidth(double width) override;
             void setHeight(double height) override;
             void setWidthAndHeight(double width, double height) override;
+            void setExteriorSurfaceHeight(double height) override;
 
         private:
             std::map<System, std::shared_ptr<CSingleSystem>> m_System;

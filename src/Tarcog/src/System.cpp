@@ -13,7 +13,8 @@ namespace Tarcog
                          std::shared_ptr<CEnvironment> const & t_Outdoor)
         {
             m_System[System::SHGC] = std::make_shared<CSingleSystem>(t_IGU, t_Indoor, t_Outdoor);
-            m_System[System::Uvalue] = std::make_shared<CSingleSystem>(t_IGU, t_Indoor->cloneEnvironment(), t_Outdoor->cloneEnvironment());
+            m_System[System::Uvalue] = std::make_shared<CSingleSystem>(
+              t_IGU, t_Indoor->cloneEnvironment(), t_Outdoor->cloneEnvironment());
             m_System.at(System::Uvalue)->setSolarRadiation(0);
 
             for(auto & aSystem : m_System)
@@ -60,10 +61,14 @@ namespace Tarcog
 
         double CSystem::getSHGC(double const t_TotSol) const
         {
-            return t_TotSol
-                   - (m_System.at(System::SHGC)->getHeatFlow(Environment::Indoor)
-                      - m_System.at(System::Uvalue)->getHeatFlow(Environment::Indoor))
-                       / m_System.at(System::SHGC)->getSolarRadiation();
+            const auto result{
+              m_System.at(System::SHGC)->getSolarRadiation() != 0.0
+                ? t_TotSol
+                    - (m_System.at(System::SHGC)->getHeatFlow(Environment::Indoor)
+                       - m_System.at(System::Uvalue)->getHeatFlow(Environment::Indoor))
+                        / m_System.at(System::SHGC)->getSolarRadiation()
+                : 0};
+            return result;
         }
 
         size_t CSystem::getNumberOfIterations(System const t_System) const
@@ -104,7 +109,7 @@ namespace Tarcog
 
         void CSystem::setWidth(double width)
         {
-            for(auto &[key, aSystem] : m_System)
+            for(auto & [key, aSystem] : m_System)
             {
                 aSystem->setWidth(width);
                 aSystem->solve();
@@ -113,7 +118,7 @@ namespace Tarcog
 
         void CSystem::setHeight(double height)
         {
-            for(auto &[key, aSystem] : m_System)
+            for(auto & [key, aSystem] : m_System)
             {
                 aSystem->setHeight(height);
                 aSystem->solve();
@@ -122,10 +127,19 @@ namespace Tarcog
 
         void CSystem::setWidthAndHeight(double width, double height)
         {
-            for(auto &[key, aSystem] : m_System)
+            for(auto & [key, aSystem] : m_System)
             {
                 aSystem->setWidth(width);
                 aSystem->setHeight(height);
+                aSystem->solve();
+            }
+        }
+
+        void CSystem::setExteriorSurfaceHeight(double height)
+        {
+            for(auto & [key, aSystem] : m_System)
+            {
+                aSystem->setExteriorSurfaceHeight(height);
                 aSystem->solve();
             }
         }
