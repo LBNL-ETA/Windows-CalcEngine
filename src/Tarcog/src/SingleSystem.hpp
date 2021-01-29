@@ -79,6 +79,9 @@ namespace Tarcog
             void setWidth(double width);
             void setHeight(double height);
 
+            //! If IGU is part of the window then frame will still count in surface height.
+            void setExteriorSurfaceHeight(double height);
+
         private:
             CIGU m_IGU;
             std::map<Environment, std::shared_ptr<CEnvironment>> m_Environment;

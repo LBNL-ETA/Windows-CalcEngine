@@ -40,6 +40,7 @@ namespace Tarcog
             double m_IGUUvalue{0};
             double m_IGUSHGC{0};
             double m_VT{1};
+            double m_Tsol{0};
             double m_HcExterior{0};
 
             size_t m_NumOfVerticalDividers{0u};
