@@ -291,6 +291,15 @@ namespace Tarcog
             solve();
         }
 
+        void CSingleSystem::setWidth(double width)
+        {
+            m_IGU.setWidth(width);
+        }
+
+        void CSingleSystem::setHeight(double height)
+        {
+            m_IGU.setHeight(height);
+        }
     }   // namespace ISO15099
 
 }   // namespace Tarcog
