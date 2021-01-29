@@ -8,12 +8,12 @@ namespace Tarcog
           m_UValue(uValue), m_SHGC(shgc), m_Hc(hc)
         {}
 
-        double SimpleIGU::getUValue() const
+        double SimpleIGU::getUValue()
         {
             return m_UValue;
         }
 
-        double SimpleIGU::getSHGC(double) const
+        double SimpleIGU::getSHGC(double)
         {
             return m_SHGC;
         }
