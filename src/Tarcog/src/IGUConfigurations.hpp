@@ -15,8 +15,8 @@ namespace Tarcog
         class IIGUSystem
         {
         public:
-            virtual double getUValue() const = 0;
-            virtual double getSHGC(double t_TotSol) const = 0;
+            virtual double getUValue() = 0;
+            virtual double getSHGC(double t_TotSol) = 0;
             virtual double getHc(System system, Environment environment) const = 0;
             virtual void setWidth(double width) = 0;
             virtual void setHeight(double height) = 0;

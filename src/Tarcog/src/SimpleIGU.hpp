@@ -11,8 +11,8 @@ namespace Tarcog {
         public:
             SimpleIGU(double uValue, double shgc, double hc);
 
-            double getUValue() const override;
-            double getSHGC(double t_TotSol) const override;
+            double getUValue() override;
+            double getSHGC(double t_TotSol) override;
             double getHc(System system, Environment environment) const override;
 
             void setWidth(double width) override;
