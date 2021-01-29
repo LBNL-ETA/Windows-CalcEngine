@@ -20,6 +20,15 @@ namespace Tarcog::ISO15099
         Absorptance(absorptance)
     {}
 
+    double FrameData::shgc(double hc) const
+    {
+        if(hc == 0 || WettedLength == 0)
+        {
+            return 0;
+        }
+        return Absorptance * UValue / hc * ProjectedFrameDimension / WettedLength;
+    }
+
     Frame::Frame(double length, FrameType frameType, FrameData frameData) :
         m_Length(length), m_FrameType(frameType), m_FrameData(frameData)
     {}

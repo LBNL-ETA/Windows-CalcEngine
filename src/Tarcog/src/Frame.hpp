@@ -20,6 +20,7 @@ namespace Tarcog
             double ProjectedFrameDimension{0};
             double WettedLength{0};
             double Absorptance{0};
+            [[nodiscard]] double shgc(double hc) const;
         };
 
         enum class FrameSide

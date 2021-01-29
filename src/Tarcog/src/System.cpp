@@ -102,6 +102,34 @@ namespace Tarcog
             m_System.at(System::SHGC)->setAbsorptances(absorptances);
         }
 
+        void CSystem::setWidth(double width)
+        {
+            for(auto &[key, aSystem] : m_System)
+            {
+                aSystem->setWidth(width);
+                aSystem->solve();
+            }
+        }
+
+        void CSystem::setHeight(double height)
+        {
+            for(auto &[key, aSystem] : m_System)
+            {
+                aSystem->setHeight(height);
+                aSystem->solve();
+            }
+        }
+
+        void CSystem::setWidthAndHeight(double width, double height)
+        {
+            for(auto &[key, aSystem] : m_System)
+            {
+                aSystem->setWidth(width);
+                aSystem->setHeight(height);
+                aSystem->solve();
+            }
+        }
+
         double CSystem::getHc(System sys, Environment environment) const
         {
             return m_System.at(sys)->getHc(environment);

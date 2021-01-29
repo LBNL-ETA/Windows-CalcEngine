@@ -23,5 +23,13 @@ namespace Tarcog
             return m_Hc;
         }
 
+        void SimpleIGU::setWidth(double)
+        {}
+
+        void SimpleIGU::setHeight(double)
+        {}
+
+        void SimpleIGU::setWidthAndHeight(double, double)
+        {}
     }   // namespace ISO15099
 }   // namespace Tarcog
