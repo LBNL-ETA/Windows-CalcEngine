@@ -26,26 +26,26 @@ namespace Tarcog
                     const std::shared_ptr<CEnvironment> & t_Indoor,
                     const std::shared_ptr<CEnvironment> & t_Outdoor);
 
-            [[nodiscard]] std::vector<double> getTemperatures(System t_System) const;
-            [[nodiscard]] std::vector<double> getRadiosities(System t_System) const;
+            [[nodiscard]] std::vector<double> getTemperatures(System t_System);
+            [[nodiscard]] std::vector<double> getRadiosities(System t_System);
 
-            [[nodiscard]] std::vector<double> getMaxDeflections(System t_System) const;
-            [[nodiscard]] std::vector<double> getMeanDeflections(System t_System) const;
+            [[nodiscard]] std::vector<double> getMaxDeflections(System t_System);
+            [[nodiscard]] std::vector<double> getMeanDeflections(System t_System);
 
             [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers(System t_System) const;
 
-            [[nodiscard]] std::vector<double> getSolidEffectiveLayerConductivities(const System t_System) const;
-            [[nodiscard]] std::vector<double> getGapEffectiveLayerConductivities(const System t_System) const;
-            [[nodiscard]] double getEffectiveSystemConductivity(const System t_System) const;
+            [[nodiscard]] std::vector<double> getSolidEffectiveLayerConductivities(const System t_System);
+            [[nodiscard]] std::vector<double> getGapEffectiveLayerConductivities(const System t_System);
+            [[nodiscard]] double getEffectiveSystemConductivity(const System t_System);
             [[nodiscard]] double thickness(const System t_System) const;
 
-            [[nodiscard]] double getHeatFlow(System t_System, Environment t_Environment) const;
-            [[nodiscard]] double getUValue() const override;
-            [[nodiscard]] double getSHGC(double t_TotSol) const override;
+            [[nodiscard]] double getHeatFlow(System t_System, Environment t_Environment);
+            [[nodiscard]] double getUValue() override;
+            [[nodiscard]] double getSHGC(double t_TotSol) override;
             [[nodiscard]] double getHc(System sys, Environment environment) const override;
-            [[nodiscard]] size_t getNumberOfIterations(System t_System) const;
+            [[nodiscard]] size_t getNumberOfIterations(System t_System);
 
-            [[nodiscard]] double relativeHeatGain(double Tsol) const;
+            [[nodiscard]] double relativeHeatGain(double Tsol);
 
             void setAbsorptances(const std::vector<double> & absorptances);
 
@@ -55,7 +55,12 @@ namespace Tarcog
             void setExteriorSurfaceHeight(double height) override;
 
         private:
+            void solve();
+            void checkSolved();
+
             std::map<System, std::shared_ptr<CSingleSystem>> m_System;
+
+            bool m_Solved{false};
         };
 
     }   // namespace ISO15099
