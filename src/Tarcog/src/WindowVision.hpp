@@ -13,21 +13,27 @@ namespace Tarcog
         {
         public:
             WindowVision() = delete;
-            WindowVision(double width, double height, double tvis, double tsol, const IIGUSystem & iguSystem);
+            WindowVision(double width, double height, double tvis, double tsol, std::shared_ptr<IIGUSystem> iguSystem);
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
             [[nodiscard]] double shgc() const override;
             [[nodiscard]] double vt() const override;
             [[nodiscard]] double hc() const override;
-
+            void setHc(double hc) override;
+            
             void setFrameData(FramePosition position, FrameData frameData);
 
         private:
             //! Makes connection between frames for correct area calculations.
             void connectFrames();
 
+            //! Resizes IGU according to frames that are currently set in the vision
+            void resizeIGU();
+
             [[nodiscard]] double frameProjectedArea() const;
             [[nodiscard]] double edgeOfGlassArea() const;
+
+            std::shared_ptr<IIGUSystem> m_IGUSystem;
 
             double m_Width{0};
             double m_Height{0};
@@ -37,7 +43,7 @@ namespace Tarcog
             double m_HcExterior{0};
 
             size_t m_NumOfVerticalDividers{0u};
-            size_t m_NumOfHorizontalDividers{0u};
+            size_t m_NumOfHorizontalDividers{0u};            
 
             std::map<FramePosition, Frame> m_Frame;
 
