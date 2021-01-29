@@ -5,7 +5,7 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-class TestDoubleLowESingleVisionUFactorRun : public testing::Test
+class TestDoubleLowESingleVisionSHGCRun : public testing::Test
 {
 private:
     std::unique_ptr<Tarcog::ISO15099::WindowSingleVision> m_Window;
@@ -16,10 +16,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        const auto airTemperature{255.15};   // Kelvins
-        const auto airSpeed{5.5};            // meters per second
-        const auto tSky{255.15};             // Kelvins
-        const auto solarRadiation{0.0};
+        const auto airTemperature{305.15};   // Kelvins
+        const auto airSpeed{2.75};           // meters per second
+        const auto tSky{305.15};             // Kelvins
+        const auto solarRadiation{783.0};
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -30,7 +30,7 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        const auto roomTemperature{294.15};
+        const auto roomTemperature{297.15};
         const auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
@@ -50,6 +50,7 @@ protected:
                                                             backEmissivity1,
                                                             tIR1);
         ASSERT_TRUE(layer1 != nullptr);
+        layer1->setSolarAbsorptance(0.194422408938, solarRadiation);
 
         const auto gapThickness{0.0127};
         auto gap{Tarcog::ISO15099::Layers::gap(gapThickness)};
@@ -59,6 +60,8 @@ protected:
 
         const auto layer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness2, solidLayerConductance2);
+        ASSERT_TRUE(layer2 != nullptr);
+        layer2->setSolarAbsorptance(0.054760526866, solarRadiation);
 
         const auto iguWidth{1.0};
         const auto iguHeight{1.0};
@@ -88,12 +91,7 @@ protected:
         const auto tVis{0.6385};
         const auto tSol{0.371589958668};
 
-        Tarcog::ISO15099::WindowVision vision{
-          windowWidth,
-          windowHeight,
-          tVis,
-          tSol,
-          igu};
+        Tarcog::ISO15099::WindowVision vision{windowWidth, windowHeight, tVis, tSol, igu};
 
         vision.setFrameData(Tarcog::FramePosition::Top, frameData);
         vision.setFrameData(Tarcog::FramePosition::Bottom, frameData);
@@ -107,18 +105,18 @@ public:
     [[nodiscard]] Tarcog::ISO15099::WindowSingleVision getWindow() const
     {
         return *m_Window;
-    };
+    }
 };
 
-TEST_F(TestDoubleLowESingleVisionUFactorRun, Test1)
+TEST_F(TestDoubleLowESingleVisionSHGCRun, Test1)
 {
-    SCOPED_TRACE("Begin Test: Double Low-e with Single Vision - U-value run");
+    SCOPED_TRACE("Begin Test: Double Low-e with Single Vision - SHGC run");
 
     const auto window{getWindow()};
 
-    const auto UValue {window.uValue()};
-    EXPECT_NEAR(UValue, 1.833771, 1e-5);
+    const auto UValue{window.uValue()};
+    EXPECT_NEAR(UValue, 1.772762, 1e-5);
 
     const auto SHGC{window.shgc()};
-    EXPECT_NEAR(SHGC, 0.003258, 1e-5);
+    EXPECT_NEAR(SHGC, 0.373175, 1e-5);
 }
