@@ -56,6 +56,9 @@ namespace Tarcog
 
             void assignFrame(Frame frame, FrameSide side);
 
+            //! Divider area that will be subtracted from the frame
+            void assignDividerArea(double area, size_t nDividers);
+
         private:
             double m_Length;
             FrameType m_FrameType;
@@ -65,6 +68,9 @@ namespace Tarcog
             //! calculations. Optional must be used or infinite loop will be created withing Frame
             //! constructor (Frame calling itself over and over again)
             std::map<FrameSide, std::optional<Frame>> m_Frame;
+
+            double m_DividerArea{0};
+            size_t m_NumberOfDividers{0u};
         };
     }   // namespace ISO15099
 }   // namespace Tarcog
