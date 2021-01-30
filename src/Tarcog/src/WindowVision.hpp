@@ -1,6 +1,8 @@
 #pragma once
 
 #include <map>
+#include <optional>
+
 #include "IGUConfigurations.hpp"
 #include "WholeWindowConfigurations.hpp"
 #include "Frame.hpp"
@@ -23,12 +25,18 @@ namespace Tarcog
             
             void setFrameData(FramePosition position, FrameData frameData);
 
+            void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
+
         private:
             //! Makes connection between frames for correct area calculations.
             void connectFrames();
 
             //! Resizes IGU according to frames that are currently set in the vision
             void resizeIGU();
+
+            //! Returns total area of dividers assigned to this window vision area
+            [[nodiscard]] double dividerArea() const;
+            [[nodiscard]] double dividerEdgeArea() const;
 
             [[nodiscard]] double frameProjectedArea() const;
             [[nodiscard]] double edgeOfGlassArea() const;
@@ -41,12 +49,13 @@ namespace Tarcog
             double m_IGUSHGC{0};
             double m_VT{1};
             double m_Tsol{0};
-            double m_HcExterior{0};
-
-            size_t m_NumOfVerticalDividers{0u};
-            size_t m_NumOfHorizontalDividers{0u};            
+            double m_HcExterior{0};                       
 
             std::map<FramePosition, Frame> m_Frame;
+
+            size_t m_NumOfVerticalDividers{0u};
+            size_t m_NumOfHorizontalDividers{0u}; 
+            std::optional<FrameData> m_Divider;
 
         };
     }   // namespace ISO15099
