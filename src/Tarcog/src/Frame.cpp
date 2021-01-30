@@ -131,6 +131,8 @@ namespace Tarcog::ISO15099
             area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
         }
 
+        area -= m_DividerArea * m_NumberOfDividers;
+
         return area;
     }
 
@@ -142,5 +144,11 @@ namespace Tarcog::ISO15099
     void Frame::assignFrame(Frame frame, FrameSide side)
     {
         m_Frame[side] = std::move(frame);
+    }
+
+    void Frame::assignDividerArea(double area, size_t nDividers)
+    {
+        m_DividerArea = area;
+        m_NumberOfDividers = nDividers;
     }
 }   // namespace Tarcog::ISO15099

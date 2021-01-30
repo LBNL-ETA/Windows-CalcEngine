@@ -5,7 +5,7 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-class TestDoubleLowESingleVisionUFactorRun : public testing::Test
+class TestDoubleLowESingleVisionUFactorRunWithDividers : public testing::Test
 {
 private:
     std::unique_ptr<Tarcog::ISO15099::WindowSingleVision> m_Window;
@@ -100,6 +100,11 @@ protected:
         vision.setFrameData(Tarcog::FramePosition::Left, frameData);
         vision.setFrameData(Tarcog::FramePosition::Right, frameData);
 
+        auto nVertical{2u};
+        auto nHorizontal{3u};
+
+        vision.setDividers(frameData, nHorizontal, nVertical);
+
         m_Window = std::make_unique<Tarcog::ISO15099::WindowSingleVision>(vision);
     }
 
@@ -110,18 +115,18 @@ public:
     };
 };
 
-TEST_F(TestDoubleLowESingleVisionUFactorRun, Test1)
+TEST_F(TestDoubleLowESingleVisionUFactorRunWithDividers, Test1)
 {
-    SCOPED_TRACE("Begin Test: Double Low-e with Single Vision - U-value run");
+    SCOPED_TRACE("Begin Test: Double Low-e with Single Vision with dividers - U-value run");
 
     const auto window{getWindow()};
 
     const auto UValue {window.uValue()};
-    EXPECT_NEAR(UValue, 1.833771, 1e-5);
+    EXPECT_NEAR(UValue, 2.067558, 1e-5);
 
     const auto SHGC{window.shgc()};
-    EXPECT_NEAR(SHGC, 0.003258, 1e-5);
+    EXPECT_NEAR(SHGC, 0.006887, 1e-5);
 
     const auto vt{window.vt()};
-    EXPECT_NEAR(vt, 0.544831, 1e-5);
+    EXPECT_NEAR(vt, 0.440524, 1e-5);
 }
