@@ -8,7 +8,7 @@
 class TestDoubleLowESingleVisionUFactorRunWithDividers : public testing::Test
 {
 private:
-    std::unique_ptr<Tarcog::ISO15099::WindowSingleVision> m_Window;
+    Tarcog::ISO15099::WindowSingleVision m_Window;
 
 protected:
     void SetUp() override
@@ -86,33 +86,26 @@ protected:
         const auto windowWidth{1.2};
         const auto windowHeight{1.5};
         const auto tVis{0.6385};
-        const auto tSol{0.371589958668};
+        const auto tSol{0.371589958668};        
 
-        Tarcog::ISO15099::WindowVision vision{
-          windowWidth,
-          windowHeight,
-          tVis,
-          tSol,
-          igu};
+        m_Window = Tarcog::ISO15099::WindowSingleVision::Create(windowWidth, windowHeight, tVis, tSol, igu);
 
-        vision.setFrameData(Tarcog::FramePosition::Top, frameData);
-        vision.setFrameData(Tarcog::FramePosition::Bottom, frameData);
-        vision.setFrameData(Tarcog::FramePosition::Left, frameData);
-        vision.setFrameData(Tarcog::FramePosition::Right, frameData);
+        m_Window.setFrameTop(frameData);
+        m_Window.setFrameBottom(frameData);
+        m_Window.setFrameLeft(frameData);
+        m_Window.setFrameRight(frameData);
 
         auto nVertical{2u};
         auto nHorizontal{3u};
 
-        vision.setDividers(frameData, nHorizontal, nVertical);
-
-        m_Window = std::make_unique<Tarcog::ISO15099::WindowSingleVision>(vision);
+        m_Window.setDividers(frameData, nHorizontal, nVertical);
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::WindowSingleVision getWindow() const
+    [[nodiscard]] Tarcog::ISO15099::WindowSingleVision & getWindow()
     {
-        return *m_Window;
-    };
+        return m_Window;
+    }
 };
 
 TEST_F(TestDoubleLowESingleVisionUFactorRunWithDividers, Test1)

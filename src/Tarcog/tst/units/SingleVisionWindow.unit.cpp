@@ -30,19 +30,17 @@ TEST_F(TestSingleVisionWindow, ExteriorFrameLeftSideFrameExterior)
     const auto tSol{0.3716};
     const auto hcout{15.0};
 
-    Tarcog::ISO15099::WindowVision vision{
+    auto window = Tarcog::ISO15099::WindowSingleVision::Create(
       width,
       height,
       tVis,
       tSol,
-      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout)};
+      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
 
-    vision.setFrameData(Tarcog::FramePosition::Top, frameData);
-    vision.setFrameData(Tarcog::FramePosition::Bottom, frameData);
-    vision.setFrameData(Tarcog::FramePosition::Left, frameData);
-    vision.setFrameData(Tarcog::FramePosition::Right, frameData);
-
-    const Tarcog::ISO15099::WindowSingleVision window{vision};
+    window.setFrameTop(frameData);
+    window.setFrameBottom(frameData);
+    window.setFrameLeft(frameData);
+    window.setFrameRight(frameData);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.544853, vt, 1e-6);
