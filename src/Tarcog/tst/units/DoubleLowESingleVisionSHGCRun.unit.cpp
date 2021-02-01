@@ -3,12 +3,11 @@
 #include <gtest/gtest.h>
 
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
 
 class TestDoubleLowESingleVisionSHGCRun : public testing::Test
 {
 private:
-    std::unique_ptr<Tarcog::ISO15099::WindowSingleVision> m_Window;
+    Tarcog::ISO15099::WindowSingleVision m_Window;
 
 protected:
     void SetUp() override
@@ -91,20 +90,18 @@ protected:
         const auto tVis{0.6385};
         const auto tSol{0.371589958668};
 
-        Tarcog::ISO15099::WindowVision vision{windowWidth, windowHeight, tVis, tSol, igu};
+        m_Window = Tarcog::ISO15099::WindowSingleVision::Create(windowWidth, windowHeight, tVis, tSol, igu);
 
-        vision.setFrameData(Tarcog::FramePosition::Top, frameData);
-        vision.setFrameData(Tarcog::FramePosition::Bottom, frameData);
-        vision.setFrameData(Tarcog::FramePosition::Left, frameData);
-        vision.setFrameData(Tarcog::FramePosition::Right, frameData);
-
-        m_Window = std::make_unique<Tarcog::ISO15099::WindowSingleVision>(vision);
+        m_Window.setFrameTop(frameData);
+        m_Window.setFrameBottom(frameData);
+        m_Window.setFrameLeft(frameData);
+        m_Window.setFrameRight(frameData);
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::WindowSingleVision getWindow() const
+    [[nodiscard]] Tarcog::ISO15099::WindowSingleVision & getWindow()
     {
-        return *m_Window;
+        return m_Window;
     }
 };
 
