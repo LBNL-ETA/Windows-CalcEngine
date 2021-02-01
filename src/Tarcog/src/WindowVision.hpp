@@ -14,7 +14,8 @@ namespace Tarcog
         class WindowVision : public IVision
         {
         public:
-            WindowVision() = delete;
+            WindowVision() = default;
+            WindowVision(const WindowVision & vision) = default;
             WindowVision(double width, double height, double tvis, double tsol, std::shared_ptr<IIGUSystem> iguSystem);
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
