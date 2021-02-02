@@ -3,6 +3,8 @@
 #include <optional>
 #include <WCECommon.hpp>
 
+#include "WholeWindowConfigurations.hpp"
+
 namespace Tarcog
 {
     namespace ISO15099
@@ -15,6 +17,7 @@ namespace Tarcog
                       double projectedFrameDimension,
                       double wettedLength,
                       double absorptance);
+            void splitFrameWidth();
             double UValue{0};
             double EdgeUValue{0};
             double ProjectedFrameDimension{0};
@@ -58,6 +61,7 @@ namespace Tarcog
 
             //! Divider area that will be subtracted from the frame
             void assignDividerArea(double area, size_t nDividers);
+            void setFrameType(FrameType type);
 
         private:
             double m_Length;

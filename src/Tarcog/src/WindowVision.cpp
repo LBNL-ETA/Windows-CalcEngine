@@ -100,6 +100,17 @@ namespace Tarcog::ISO15099
         resizeIGU();
     }
 
+    void WindowVision::setFrameTypes(std::map<FramePosition, FrameType> frameTypes)
+    {
+        for(const auto & [position, type] : frameTypes)
+        {
+            if(m_Frame.count(position) > 0u)
+            {
+                m_Frame.at(position).setFrameType(type);
+            }
+        }
+    }
+
     void WindowVision::setDividers(FrameData divider, size_t nHorizontal, size_t nVertical)
     {
         m_Divider = divider;

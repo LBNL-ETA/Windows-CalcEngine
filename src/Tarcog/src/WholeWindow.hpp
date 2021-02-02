@@ -50,21 +50,14 @@ namespace Tarcog
         class WindowDualVision : public IWindow
         {
         public:
-            static WindowDualVision CreateHorizontal(double width,
-                                                     double height,
-                                                     double tvis_left,
-                                                     double tsol_left,
-                                                     std::shared_ptr<IIGUSystem> iguSystem_left,
-                                                     double tvis_right,
-                                                     double tsol_right,
-                                                     std::shared_ptr<IIGUSystem> iguSystem_right);
+            WindowDualVision() = delete;
 
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
             [[nodiscard]] double shgc() const override;
             [[nodiscard]] double vt() const override;
 
-        private:
+        protected:
             WindowDualVision(double width,
                              double height,
                              double tvis1,
@@ -72,13 +65,82 @@ namespace Tarcog
                              std::shared_ptr<IIGUSystem> iguSystem1,
                              double tvis2,
                              double tsol2,
-                             std::shared_ptr<IIGUSystem> iguSystem2);
-
-            //! Makes single convective film coefficient averaged over the both visions
-            void averageHc();
+                             std::shared_ptr<IIGUSystem> iguSystem2);            
 
             WindowVision m_Vision1;
             WindowVision m_Vision2;
+
+        private:
+            //! Makes single convective film coefficient averaged over the both visions
+            void averageHc();
+        };
+
+        ////////////////////////////////////////////////
+        /// DualVisionHorizontal
+        ////////////////////////////////////////////////
+
+        //! Concrete implementation of dual vision horizontal slider
+        //! Vision1 is the vision on the left side and Vision2 is the vision on the right side.
+        class DualVisionHorizontal : public WindowDualVision
+        {
+        public:
+            DualVisionHorizontal() = delete;
+
+            DualVisionHorizontal(double width,
+                                 double height,
+                                 double tvis1,
+                                 double tsol1,
+                                 const std::shared_ptr<IIGUSystem> & iguSystem1,
+                                 double tvis2,
+                                 double tsol2,
+                                 const std::shared_ptr<IIGUSystem> & iguSystem2);
+
+            void setFrameTopLeft(FrameData frameData);
+            void setFrameTopRight(FrameData frameData);
+            void setFrameBottomLeft(FrameData frameData);
+            void setFrameBottomRight(FrameData frameData);
+            void setFrameLeft(FrameData frameData);
+            void setFrameRight(FrameData frameData);
+            void setMeetingRail(FrameData frameData);
+
+            void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
+
+            void setDividersLeftVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+            void setDividersRightVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        };
+
+        ////////////////////////////////////////////////
+        /// DualVisionVertical
+        ////////////////////////////////////////////////
+
+        //! Concrete implementation of dual vision vertical slider
+        //! Vision1 is the vision on the top and Vision2 is the vision on the bottom.
+        class DualVisionVertical : public WindowDualVision
+        {
+        public:
+            DualVisionVertical() = delete;
+
+            DualVisionVertical(double width,
+                               double height,
+                               double tvis1,
+                               double tsol1,
+                               const std::shared_ptr<IIGUSystem> & iguSystem1,
+                               double tvis2,
+                               double tsol2,
+                               const std::shared_ptr<IIGUSystem> & iguSystem2);
+
+            void setFrameTop(FrameData frameData);
+            void setFrameBottom(FrameData frameData);
+            void setFrameTopLeft(FrameData frameData);
+            void setFrameTopRight(FrameData frameData);
+            void setFrameBottomLeft(FrameData frameData);
+            void setFrameBottomRight(FrameData frameData);
+            void setFrameMettingRail(FrameData frameData);
+
+            void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
+
+            void setDividersTopVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+            void setDividersBottomVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
         };
     }   // namespace ISO15099
 }   // namespace Tarcog
