@@ -20,6 +20,12 @@ namespace Tarcog::ISO15099
         Absorptance(absorptance)
     {}
 
+    void FrameData::splitFrameWidth()
+    {
+        ProjectedFrameDimension = ProjectedFrameDimension / 2;
+        WettedLength = WettedLength / 2;
+    }
+
     double FrameData::shgc(double hc) const
     {
         if(hc == 0 || WettedLength == 0)
@@ -150,5 +156,10 @@ namespace Tarcog::ISO15099
     {
         m_DividerArea = area;
         m_NumberOfDividers = nDividers;
+    }
+
+    void Frame::setFrameType(const FrameType type)
+    {
+        m_FrameType = type;
     }
 }   // namespace Tarcog::ISO15099

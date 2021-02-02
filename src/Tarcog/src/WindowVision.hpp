@@ -26,6 +26,8 @@ namespace Tarcog
             
             void setFrameData(FramePosition position, FrameData frameData);
 
+            void setFrameTypes(std::map<FramePosition, FrameType> frameTypes);
+
             void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
 
         private:
