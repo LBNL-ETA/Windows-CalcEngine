@@ -229,6 +229,11 @@ namespace Tarcog::ISO15099
           {FramePosition::Left, FrameType::Exterior},
           {FramePosition::Right, FrameType::Exterior}};
         m_Vision2.setFrameTypes(bottomVisionFrameTypes);
+
+        // In case of vertical vision we must adjust exterior surface height for film coefficient
+        // calculations since visions will scale that coefficient only to their heights.
+        m_Vision1.setExteriorSurfaceHeight(height);
+        m_Vision2.setExteriorSurfaceHeight(height);
     }
 
     void DualVisionVertical::setFrameMettingRail(FrameData frameData)
@@ -245,15 +250,15 @@ namespace Tarcog::ISO15099
     }
 
     void DualVisionVertical::setDividersTopVision(FrameData frameData,
-        size_t nHorizontal,
-        size_t nVertical)
+                                                  size_t nHorizontal,
+                                                  size_t nVertical)
     {
         m_Vision1.setDividers(frameData, nHorizontal, nVertical);
     }
 
     void DualVisionVertical::setDividersBottomVision(FrameData frameData,
-        size_t nHorizontal,
-        size_t nVertical)
+                                                     size_t nHorizontal,
+                                                     size_t nVertical)
     {
         m_Vision2.setDividers(frameData, nHorizontal, nVertical);
     }

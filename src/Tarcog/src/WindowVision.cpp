@@ -109,6 +109,8 @@ namespace Tarcog::ISO15099
                 m_Frame.at(position).setFrameType(type);
             }
         }
+
+        connectFrames();
     }
 
     void WindowVision::setDividers(FrameData divider, size_t nHorizontal, size_t nVertical)
@@ -126,6 +128,15 @@ namespace Tarcog::ISO15099
         {
             frame.assignDividerArea(m_Divider->ProjectedFrameDimension * ConstantsData::EOGHeight, numOfDivs.at(key));
         }
+    }
+
+    void WindowVision::setExteriorSurfaceHeight(const double height)
+    {
+        m_IGUSystem->setInteriorAndExteriorSurfacesHeight(height);
+
+        m_IGUUvalue = m_IGUSystem->getUValue();
+        m_IGUSHGC = m_IGUSystem->getSHGC(m_Tsol);
+        m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);
     }
 
     void WindowVision::connectFrames()
@@ -158,7 +169,7 @@ namespace Tarcog::ISO15099
         const auto height{m_Height - m_Frame.at(FramePosition::Top).projectedFrameDimension()
                           - m_Frame.at(FramePosition::Bottom).projectedFrameDimension()};
         m_IGUSystem->setWidthAndHeight(width, height);
-        m_IGUSystem->setExteriorSurfaceHeight(m_Height);
+        m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_Height);
         m_IGUUvalue = m_IGUSystem->getUValue();
         m_IGUSHGC = m_IGUSystem->getSHGC(m_Tsol);
         m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);

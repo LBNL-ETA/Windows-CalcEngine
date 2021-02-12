@@ -18,7 +18,7 @@ namespace Tarcog {
             void setWidth(double width) override;
             void setHeight(double height) override;
             void setWidthAndHeight(double width, double height) override;
-            void setExteriorSurfaceHeight(double height) override;
+            void setInteriorAndExteriorSurfacesHeight(double height) override;
 
         private:
             double m_UValue;

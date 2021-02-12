@@ -80,7 +80,7 @@ namespace Tarcog
             void setHeight(double height);
 
             //! If IGU is part of the window then frame will still count in surface height.
-            void setExteriorSurfaceHeight(double height);
+            void setInteriorAndExteriorSurfacesHeight(double height);
 
         private:
             CIGU m_IGU;
