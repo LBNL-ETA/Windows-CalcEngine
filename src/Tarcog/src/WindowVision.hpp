@@ -30,6 +30,8 @@ namespace Tarcog
 
             void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
 
+            void setExteriorSurfaceHeight(double height);
+
         private:
             //! Makes connection between frames for correct area calculations.
             void connectFrames();

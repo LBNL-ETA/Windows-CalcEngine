@@ -144,11 +144,11 @@ namespace Tarcog
             m_Solved = false;
         }
 
-        void CSystem::setExteriorSurfaceHeight(double height)
+        void CSystem::setInteriorAndExteriorSurfacesHeight(double height)
         {
             for(auto & [key, aSystem] : m_System)
             {
-                aSystem->setExteriorSurfaceHeight(height);                
+                aSystem->setInteriorAndExteriorSurfacesHeight(height);                
             }
             m_Solved = false;
         }

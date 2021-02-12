@@ -58,7 +58,7 @@ namespace Tarcog::ISO15099
         }
 
         if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
+           && m_Frame.at(FrameSide::Right)->frameType() == FrameType::Exterior)
         {
             area -= m_FrameData.ProjectedFrameDimension
                     * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
