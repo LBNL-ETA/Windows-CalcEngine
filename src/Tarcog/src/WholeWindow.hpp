@@ -50,7 +50,7 @@ namespace Tarcog
         class WindowDualVision : public IWindow
         {
         public:
-            WindowDualVision() = delete;
+            WindowDualVision() = default;
 
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
@@ -84,7 +84,7 @@ namespace Tarcog
         class DualVisionHorizontal : public WindowDualVision
         {
         public:
-            DualVisionHorizontal() = delete;
+            DualVisionHorizontal() = default;
 
             DualVisionHorizontal(double width,
                                  double height,
@@ -118,7 +118,7 @@ namespace Tarcog
         class DualVisionVertical : public WindowDualVision
         {
         public:
-            DualVisionVertical() = delete;
+            DualVisionVertical() = default;
 
             DualVisionVertical(double width,
                                double height,

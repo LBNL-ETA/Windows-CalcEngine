@@ -301,7 +301,7 @@ namespace Tarcog
             m_IGU.setHeight(height);
         }
 
-        void CSingleSystem::setExteriorSurfaceHeight(double height)
+        void CSingleSystem::setInteriorAndExteriorSurfacesHeight(double height)
         {
             for(auto & [key, environment] : m_Environment)
             {
