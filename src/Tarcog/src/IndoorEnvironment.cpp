@@ -87,7 +87,7 @@ namespace Tarcog
                 }
                 case BoundaryConditionsCoeffModel::HPrescribed:
                 {
-                    auto hr = getHr();
+                    const auto hr = getHr();
                     m_ConductiveConvectiveCoeff = m_HInput - hr;
                     break;
                 }
@@ -118,21 +118,21 @@ namespace Tarcog
                 assert(m_Surface.at(Side::Front) != nullptr);
                 assert(m_Surface.at(Side::Back) != nullptr);
 
-                auto tiltRadians = m_Tilt * WCE_PI / 180;
+                const auto tiltRadians = m_Tilt * WCE_PI / 180;
                 auto tMean =
                   getGasTemperature()
                   + 0.25 * (m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
                 if(tMean < 0)
                     tMean = 0.1;
-                auto deltaTemp =
+                const auto deltaTemp =
                   std::abs(m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
                 m_Gas.setTemperatureAndPressure(tMean, m_Pressure);
-                auto aProperties = m_Gas.getGasProperties();
-                auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
-                          * pow(aProperties.m_Density, 2)
-                          / (tMean * pow(aProperties.m_Viscosity, 2));
-                auto RaCrit = 2.5e5 * pow(exp(0.72 * m_Tilt) / sin(tiltRadians), 0.2);
-                auto RaL = gr * aProperties.m_PrandlNumber;
+                const auto aProperties = m_Gas.getGasProperties();
+                const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
+                                * pow(aProperties.m_Density, 2)
+                                / (tMean * pow(aProperties.m_Viscosity, 2));
+                const auto RaCrit = 2.5e5 * pow(exp(0.72 * m_Tilt) / sin(tiltRadians), 0.2);
+                const auto RaL = gr * aProperties.m_PrandlNumber;
                 auto Gnui = 0.0;
                 if((0.0 <= m_Tilt) && (m_Tilt < 15.0))
                 {
