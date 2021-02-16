@@ -174,7 +174,7 @@ namespace Tarcog::ISO15099
         m_Vision2.setFrameData(FramePosition::Right, frameData);
     }
 
-    void DualVisionHorizontal::setMeetingRail(FrameData frameData)
+    void DualVisionHorizontal::setFrameMeetingRail(FrameData frameData)
     {
         frameData.splitFrameWidth();
         m_Vision1.setFrameData(FramePosition::Right, frameData);

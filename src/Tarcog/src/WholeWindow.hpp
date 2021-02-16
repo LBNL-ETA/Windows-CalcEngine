@@ -101,7 +101,7 @@ namespace Tarcog
             void setFrameBottomRight(FrameData frameData);
             void setFrameLeft(FrameData frameData);
             void setFrameRight(FrameData frameData);
-            void setMeetingRail(FrameData frameData);
+            void setFrameMeetingRail(FrameData frameData);
 
             void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
