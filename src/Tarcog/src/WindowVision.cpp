@@ -14,12 +14,14 @@ namespace Tarcog::ISO15099
         m_Height(height),
         m_VT(tvis),
         m_Tsol(tsol),
+        m_ExteriorSurfaceHeight(height),
         m_Frame({{FramePosition::Top, {width}},
                  {FramePosition::Bottom, {width}},
                  {FramePosition::Left, {height}},
-                 {FramePosition::Right, {height}}})
+                 {FramePosition::Right, {height}}})        
     {
         m_IGUSystem->setWidthAndHeight(width, height);
+        m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
         m_IGUUvalue = m_IGUSystem->getUValue();
         m_IGUSHGC = m_IGUSystem->getSHGC(m_Tsol);
         m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);
@@ -130,9 +132,11 @@ namespace Tarcog::ISO15099
         }
     }
 
-    void WindowVision::setExteriorSurfaceHeight(const double height)
+    void WindowVision::setInteriorAndExteriorSurfaceHeight(const double height)
     {
-        m_IGUSystem->setInteriorAndExteriorSurfacesHeight(height);
+        m_ExteriorSurfaceHeight = height;
+
+        m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
 
         m_IGUUvalue = m_IGUSystem->getUValue();
         m_IGUSHGC = m_IGUSystem->getSHGC(m_Tsol);
@@ -169,7 +173,7 @@ namespace Tarcog::ISO15099
         const auto height{m_Height - m_Frame.at(FramePosition::Top).projectedFrameDimension()
                           - m_Frame.at(FramePosition::Bottom).projectedFrameDimension()};
         m_IGUSystem->setWidthAndHeight(width, height);
-        m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_Height);
+        m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
         m_IGUUvalue = m_IGUSystem->getUValue();
         m_IGUSHGC = m_IGUSystem->getSHGC(m_Tsol);
         m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);

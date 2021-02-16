@@ -232,8 +232,8 @@ namespace Tarcog::ISO15099
 
         // In case of vertical vision we must adjust exterior surface height for film coefficient
         // calculations since visions will scale that coefficient only to their heights.
-        m_Vision1.setExteriorSurfaceHeight(height);
-        m_Vision2.setExteriorSurfaceHeight(height);
+        m_Vision1.setInteriorAndExteriorSurfaceHeight(height);
+        m_Vision2.setInteriorAndExteriorSurfaceHeight(height);
     }
 
     void DualVisionVertical::setFrameMettingRail(FrameData frameData)
