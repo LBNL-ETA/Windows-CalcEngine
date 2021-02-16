@@ -30,7 +30,7 @@ namespace Tarcog
 
             void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
 
-            void setExteriorSurfaceHeight(double height);
+            void setInteriorAndExteriorSurfaceHeight(double height);
 
         private:
             //! Makes connection between frames for correct area calculations.
@@ -54,7 +54,11 @@ namespace Tarcog
             double m_IGUSHGC{0};
             double m_VT{1};
             double m_Tsol{0};
-            double m_HcExterior{0};                       
+            double m_HcExterior{0};
+
+            //! Exterior surface height is used to calculate exterior film coefficient.
+            //! Since vision can be part of any construction, this variable is kept internally.
+            double m_ExteriorSurfaceHeight{0};
 
             std::map<FramePosition, Frame> m_Frame;
 
