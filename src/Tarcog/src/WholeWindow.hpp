@@ -16,16 +16,16 @@ namespace Tarcog
         public:
             WindowSingleVision() = default;
 
-            static WindowSingleVision Create(double width,
-                                             double height,
-                                             double tvis,
-                                             double tsol,
-                                             std::shared_ptr<IIGUSystem> iguSystem);
+            WindowSingleVision(double width,
+                               double height,
+                               double tvis,
+                               double tsol,
+                               std::shared_ptr<IIGUSystem> iguSystem);
 
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
             [[nodiscard]] double shgc() const override;
-            [[nodiscard]] double vt() const override;
+            [[nodiscard]] double vt() const override;            
 
             void setFrameTop(FrameData frameData);
             void setFrameBottom(FrameData frameData);
@@ -33,12 +33,10 @@ namespace Tarcog
             void setFrameRight(FrameData frameData);
             void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
-        private:
-            WindowSingleVision(double width,
-                               double height,
-                               double tvis,
-                               double tsol,
-                               std::shared_ptr<IIGUSystem> iguSystem);
+        protected:
+            [[nodiscard]] double visionPercentage() const override;
+
+        private:            
 
             WindowVision vision;
         };
@@ -65,7 +63,9 @@ namespace Tarcog
                              std::shared_ptr<IIGUSystem> iguSystem1,
                              double tvis2,
                              double tsol2,
-                             std::shared_ptr<IIGUSystem> iguSystem2);            
+                             std::shared_ptr<IIGUSystem> iguSystem2);
+
+            [[nodiscard]] double visionPercentage() const override;
 
             WindowVision m_Vision1;
             WindowVision m_Vision2;

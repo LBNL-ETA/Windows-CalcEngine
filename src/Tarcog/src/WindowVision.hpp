@@ -21,6 +21,7 @@ namespace Tarcog
             [[nodiscard]] double uValue() const override;
             [[nodiscard]] double shgc() const override;
             [[nodiscard]] double vt() const override;
+            [[nodiscard]] double visionPercentage() const override;
             [[nodiscard]] double hc() const override;
             void setHc(double hc) override;
             

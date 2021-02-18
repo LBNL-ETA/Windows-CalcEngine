@@ -1,0 +1,77 @@
+#pragma once
+
+namespace CMA
+{
+    ///////////////////////////////////////////////////
+    //  CMABestWorstUFactors
+    ///////////////////////////////////////////////////
+
+    //! Will be used to calculate best and worst IGU options for CMA calculations.
+    //! It contains default variables that usually do not need to be changed by the user.
+    class CMABestWorstUFactors
+    {
+    public:
+        CMABestWorstUFactors() = default;
+        CMABestWorstUFactors(double hci, double hco, double gapConductivity);
+
+        [[nodiscard]] double uValue();
+
+    protected:
+        [[nodiscard]] double heatFlow(double interiorRadiationFilmCoefficient, double exteriorRadiationFilmCoefficient) const;
+        [[nodiscard]] double hrout(double surfaceTemperature) const;
+        [[nodiscard]] double hrin(double surfaceTemperature) const;
+        [[nodiscard]] double insideSurfaceTemperature(double interiorRadiationFilmCoefficient) const;
+        [[nodiscard]] double outsideSurfaceTemperature(double exteriorRadiationFilmCoefficient) const;
+        void caluculate();
+
+        double m_Hci{0};
+        double m_Hco{0};
+        double m_GapConductivity{0};
+        double m_GlazingGapConductance{0};
+        double m_InteriorGlassThickness{0.006};
+        double m_InteriorGlassConductivity{1};
+        double m_InteriorGlassSurfaceEmissivity{0.84};
+        double m_ExteriorGlassThickness{0.006};
+        double m_ExteriorGlassConductivity{1};
+        double m_ExteriorGlassSurfaceEmissivity{0.84};
+        double m_GapThickness{0.0134};
+        double m_InsideAirTemperature{21};
+        double m_OutsideAirTemperature{-18};
+
+        //! These two needs to be calculated through iterations 
+        double m_Hri{0};
+        double m_Hro{0};
+
+        bool m_Calculated{false};
+    };
+
+    ///////////////////////////////////////////////////
+    //  CMABestUFactor
+    ///////////////////////////////////////////////////
+
+    class CMABestUFactor : public CMABestWorstUFactors
+    {
+    public:
+        CMABestUFactor();
+
+    private:
+        static const double defaultInsideFilmCofficint;
+        static const double defaultOutsideFilmCoefficient;
+        static const double defaultGapConductivity;
+    };
+
+    ///////////////////////////////////////////////////
+    //  CMAWorstUFactor
+    ///////////////////////////////////////////////////
+    
+    class CMAWorstUFactor : public CMABestWorstUFactors
+    {
+    public:
+        CMAWorstUFactor();
+
+    private:
+        static const double defaultInsideFilmCofficint;
+        static const double defaultOutsideFilmCoefficient;
+        static const double defaultGapConductivity;
+    };
+}
