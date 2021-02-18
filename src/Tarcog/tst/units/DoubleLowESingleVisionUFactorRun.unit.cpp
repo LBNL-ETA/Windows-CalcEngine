@@ -88,7 +88,7 @@ protected:
         const auto tVis{0.6385};
         const auto tSol{0.371589958668};
 
-        m_Window = Tarcog::ISO15099::WindowSingleVision::Create(windowWidth, windowHeight, tVis, tSol, igu);
+        m_Window = Tarcog::ISO15099::WindowSingleVision(windowWidth, windowHeight, tVis, tSol, igu);
 
         m_Window.setFrameTop(frameData);
         m_Window.setFrameBottom(frameData);

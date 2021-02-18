@@ -31,3 +31,6 @@
 #include "../src/WindowVision.hpp"
 #include "../src/WholeWindow.hpp"
 #include "../src/SimpleIGU.hpp"
+#include "../src/CMAInterface.hpp"
+#include "../src/CMAWindow.hpp"
+#include "../src/CMASettings.hpp"

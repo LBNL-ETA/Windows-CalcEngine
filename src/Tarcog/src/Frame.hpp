@@ -3,8 +3,6 @@
 #include <optional>
 #include <WCECommon.hpp>
 
-#include "WholeWindowConfigurations.hpp"
-
 namespace Tarcog
 {
     namespace ISO15099

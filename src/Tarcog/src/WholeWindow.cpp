@@ -7,13 +7,6 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////
     /// WindowSingleVision
     ////////////////////////////////////////////////
-
-    WindowSingleVision WindowSingleVision::Create(
-      double width, double height, double tvis, double tsol, std::shared_ptr<IIGUSystem> iguSystem)
-    {
-        return WindowSingleVision(width, height, tvis, tsol, std::move(iguSystem));
-    }
-
     WindowSingleVision::WindowSingleVision(double width,
                                            double height,
                                            double tvis,
@@ -40,6 +33,11 @@ namespace Tarcog::ISO15099
     double WindowSingleVision::vt() const
     {
         return vision.vt();
+    }
+
+    double WindowSingleVision::visionPercentage() const
+    {
+        return vision.visionPercentage();
     }
 
     void WindowSingleVision::setFrameTop(FrameData frameData)
@@ -104,6 +102,11 @@ namespace Tarcog::ISO15099
     double WindowDualVision::vt() const
     {
         return (m_Vision1.vt() * m_Vision1.area() + m_Vision2.vt() * m_Vision2.area()) / area();
+    }
+
+    double WindowDualVision::visionPercentage() const
+    {
+        return (m_Vision1.visionPercentage() * m_Vision1.area() + m_Vision2.visionPercentage() * m_Vision2.area()) / area();
     }
 
     void WindowDualVision::averageHc()
