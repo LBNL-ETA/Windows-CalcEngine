@@ -50,8 +50,8 @@ namespace CMA
     class CMAWindow : public ICMAWindow
     {
     public:
-        CMAWindow(double spacerBestKeff,
-                  double spacerWorstKeff,
+        CMAWindow(double spacerBestKeff = 0.01,
+                  double spacerWorstKeff = 10.0,
                   CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
                   CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
 
@@ -83,10 +83,16 @@ namespace CMA
           double height,
           double tvis,
           double tsol,
-          double spacerBestKeff,
-          double spacerWorstKeff,
+          double spacerBestKeff = 0.01,
+          double spacerWorstKeff = 10.0,
           CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
           CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
+
+        void setFrameTop(CMAFrame cmaFrameData);
+        void setFrameBottom(CMAFrame cmaFrameData);
+        void setFrameLeft(CMAFrame cmaFrameData);
+        void setFrameRight(CMAFrame cmaFrameData);
+        void setDividers(CMAFrame frameData, size_t nHorizontal, size_t nVertical);
 
     private:
         //! Single vision windows needs to create this structure, otherwise it will not work
