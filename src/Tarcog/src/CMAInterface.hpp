@@ -3,6 +3,8 @@
 #include <cassert>
 #include <map>
 
+#include <WCECommon.hpp>
+
 namespace CMA
 {
     enum class Option
@@ -10,6 +12,19 @@ namespace CMA
         Best,
         Worst
     };
+
+    class EnumOption : public FenestrationCommon::Enum<Option>
+    {};
+
+    inline EnumOption::Iterator begin(EnumOption)
+    {
+        return EnumOption::Iterator(static_cast<int>(Option::Best));
+    }
+
+    inline EnumOption::Iterator end(EnumOption)
+    {
+        return EnumOption::Iterator(static_cast<int>(Option::Worst) + 1);
+    }
 
     enum class CMAProperty
     {

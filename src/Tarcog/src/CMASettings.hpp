@@ -18,6 +18,7 @@ namespace CMA
         CMABestWorstUFactors(double hci, double hco, double gapConductivity);
 
         [[nodiscard]] double uValue();
+        [[nodiscard]] double hcout();
 
     private:
         [[nodiscard]] double heatFlow(double interiorRadiationFilmCoefficient, double exteriorRadiationFilmCoefficient) const;

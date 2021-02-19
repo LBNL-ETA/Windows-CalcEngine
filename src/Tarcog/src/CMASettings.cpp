@@ -22,6 +22,12 @@ namespace CMA
         return heatFlow(m_Hri, m_Hro) / (m_InsideAirTemperature - m_OutsideAirTemperature);
     }
 
+    double CMABestWorstUFactors::hcout()
+    {
+        caluculate();
+        return m_Hco;
+    }
+
     double CMABestWorstUFactors::heatFlow(const double interiorRadiationFilmCoefficient,
                                           const double exteriorRadiationFilmCoefficient) const
     {
