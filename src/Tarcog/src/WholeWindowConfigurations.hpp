@@ -21,6 +21,8 @@ namespace Tarcog
         [[nodiscard]] virtual double visionPercentage() const = 0;
         [[nodiscard]] virtual double area() const = 0;
         [[nodiscard]] virtual double hc() const = 0;
+        
+
         virtual void setHc(double hc) = 0;
     };
 
@@ -34,6 +36,9 @@ namespace Tarcog
         [[nodiscard]] virtual double shgc() const = 0;
         [[nodiscard]] virtual double vt() const = 0;
         [[nodiscard]] virtual double visionPercentage() const = 0;
+
+        [[nodiscard]] virtual double uValueCOGAverage() const = 0;
+        [[nodiscard]] virtual double shgcCOGAverage() const = 0;
     };
 
 }   // namespace Tarcog

@@ -103,26 +103,28 @@ namespace CMA
     //  CMABestUFactor
     ///////////////////////////////////////////////////
 
-    const double CMABestUFactor::defaultInsideFilmCofficint = 1.85425;
-    const double CMABestUFactor::defaultOutsideFilmCoefficient = 26;
-    const double CMABestUFactor::defaultGapConductivity = 0.00668415;
 
-    CMABestUFactor::CMABestUFactor() :
-        CMABestWorstUFactors(
-          defaultInsideFilmCofficint, defaultOutsideFilmCoefficient, defaultGapConductivity)
-    {}
+    CMABestWorstUFactors CreateBestWorstUFactorOption(Option option)
+    {
+        static const double defaultInsideFilmCofficintBest = 1.85425;
+        static const double defaultOutsideFilmCoefficientBest = 26;
+        static const double defaultGapConductivityBest = 0.00668415;
 
-    ///////////////////////////////////////////////////
-    //  CMAWorstUFactor
-    ///////////////////////////////////////////////////
+        static const double defaultInsideFilmCofficintWorst = 2.86612;
+        static const double defaultOutsideFilmCoefficientWorst = 26;
+        static const double defaultGapConductivityWorst = 0.0787993;
 
-    const double CMAWorstUFactor::defaultInsideFilmCofficint = 2.86612;
-    const double CMAWorstUFactor::defaultOutsideFilmCoefficient = 26;
-    const double CMAWorstUFactor::defaultGapConductivity = 0.0787993;
+        static const std::map<Option, CMABestWorstUFactors> object{
+          {Option::Best,
+           CMABestWorstUFactors(defaultInsideFilmCofficintBest,
+                                defaultOutsideFilmCoefficientBest,
+                                defaultGapConductivityBest)},
+          {Option::Worst,
+           CMABestWorstUFactors(defaultInsideFilmCofficintWorst,
+                                defaultOutsideFilmCoefficientWorst,
+                                defaultGapConductivityWorst)}};
 
-    CMAWorstUFactor::CMAWorstUFactor() :
-        CMABestWorstUFactors(
-          defaultInsideFilmCofficint, defaultOutsideFilmCoefficient, defaultGapConductivity)
-    {}
+        return object.at(option);
+    }
 
 }   // namespace CMA
