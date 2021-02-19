@@ -1,7 +1,10 @@
 #pragma once
 
+#include "CMAInterface.hpp"
+
 namespace CMA
 {
+
     ///////////////////////////////////////////////////
     //  CMABestWorstUFactors
     ///////////////////////////////////////////////////
@@ -16,7 +19,7 @@ namespace CMA
 
         [[nodiscard]] double uValue();
 
-    protected:
+    private:
         [[nodiscard]] double heatFlow(double interiorRadiationFilmCoefficient, double exteriorRadiationFilmCoefficient) const;
         [[nodiscard]] double hrout(double surfaceTemperature) const;
         [[nodiscard]] double hrin(double surfaceTemperature) const;
@@ -45,33 +48,6 @@ namespace CMA
         bool m_Calculated{false};
     };
 
-    ///////////////////////////////////////////////////
-    //  CMABestUFactor
-    ///////////////////////////////////////////////////
-
-    class CMABestUFactor : public CMABestWorstUFactors
-    {
-    public:
-        CMABestUFactor();
-
-    private:
-        static const double defaultInsideFilmCofficint;
-        static const double defaultOutsideFilmCoefficient;
-        static const double defaultGapConductivity;
-    };
-
-    ///////////////////////////////////////////////////
-    //  CMAWorstUFactor
-    ///////////////////////////////////////////////////
-    
-    class CMAWorstUFactor : public CMABestWorstUFactors
-    {
-    public:
-        CMAWorstUFactor();
-
-    private:
-        static const double defaultInsideFilmCofficint;
-        static const double defaultOutsideFilmCoefficient;
-        static const double defaultGapConductivity;
-    };
+    //! Creates built in values for CMA U-factors
+    CMABestWorstUFactors CreateBestWorstUFactorOption(Option option);
 }

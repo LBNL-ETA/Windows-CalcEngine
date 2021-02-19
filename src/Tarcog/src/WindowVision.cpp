@@ -94,6 +94,16 @@ namespace Tarcog::ISO15099
         return m_HcExterior;
     }
 
+    double WindowVision::uValueCOG() const
+    {
+        return m_IGUUvalue;
+    }
+
+    double WindowVision::shgcCOG() const
+    {
+        return m_IGUSHGC;
+    }
+
     void WindowVision::setHc(double hc)
     {
         m_HcExterior = hc;

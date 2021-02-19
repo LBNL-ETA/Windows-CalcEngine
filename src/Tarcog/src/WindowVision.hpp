@@ -23,6 +23,8 @@ namespace Tarcog
             [[nodiscard]] double vt() const override;
             [[nodiscard]] double visionPercentage() const override;
             [[nodiscard]] double hc() const override;
+            [[nodiscard]] double uValueCOG() const;
+            [[nodiscard]] double shgcCOG() const;
             void setHc(double hc) override;
             
             void setFrameData(FramePosition position, FrameData frameData);

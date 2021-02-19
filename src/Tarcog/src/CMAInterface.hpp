@@ -40,8 +40,8 @@ namespace CMA
     public:
         virtual ~ICMAWindow() = default;
 
-        [[nodiscard]] virtual double uValue() const = 0;
-        [[nodiscard]] virtual double shgc() const = 0;
-        [[nodiscard]] virtual double vt() const = 0;
+        [[nodiscard]] virtual double uValue(double Ucog, double keffSpacer) = 0;
+        [[nodiscard]] virtual double shgc(double SHGCcog, double keffSpacer) = 0;
+        [[nodiscard]] virtual double vt() = 0;
     };
 }   // namespace CMA
