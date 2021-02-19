@@ -250,4 +250,376 @@ namespace CMA
             }
         }
     }
+
+    //////////////////////////////////////////
+    //  CMAWindowDualVisionHorizontal
+    //////////////////////////////////////////
+
+    CMAWindowDualVisionHorizontal::CMAWindowDualVisionHorizontal(
+      double width,
+      double height,
+      double tvis,
+      double tsol,
+      double spacerBestKeff,
+      double spacerWorstKeff,
+      CMABestWorstUFactors bestUFactor,
+      CMABestWorstUFactors worstUFactor) :
+        CMAWindow(spacerBestKeff, spacerWorstKeff, bestUFactor, worstUFactor),
+        m_Window(createBestWorstWindows(width, height, tvis, tsol, bestUFactor, worstUFactor))
+    {}
+
+    void CMAWindowDualVisionHorizontal::setFrameTopLeft(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameTopLeft(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionHorizontal::setFrameTopRight(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameTopRight(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionHorizontal::setFrameBottomLeft(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameBottomLeft(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionHorizontal::setFrameBottomRight(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameBottomRight(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionHorizontal::setFrameLeft(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameLeft(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionHorizontal::setFrameRight(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameRight(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionHorizontal::setFrameMeetingRail(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameMeetingRail(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionHorizontal::setDividers(CMAFrame cmaFrameData,
+                                                    size_t nHorizontal,
+                                                    size_t nVertical)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setDividers(frameData, nHorizontal, nVertical);
+            }
+        }
+    }
+
+    std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionHorizontal>>
+      CMAWindowDualVisionHorizontal::createBestWorstWindows(double width,
+                                                            double height,
+                                                            double tvis,
+                                                            double tsol,
+                                                            CMABestWorstUFactors bestUFactor,
+                                                            CMABestWorstUFactors worstUFactor) const
+    {
+        const auto bestSHGC{0.0};
+        const auto worstSHGC{1.0};
+        const auto bestHC{bestUFactor.hcout()};
+        const auto worstHC{worstUFactor.hcout()};
+        std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionHorizontal>> winMap(
+          {{Option::Best,
+            {{Option::Best,
+              Tarcog::ISO15099::DualVisionHorizontal(width,
+                                                     height,
+                                                     tvis,
+                                                     tsol,
+                                                     std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                       bestUFactor.uValue(), bestSHGC, bestHC),
+                                                     tvis,
+                                                     tsol,
+                                                     std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                       bestUFactor.uValue(), bestSHGC, bestHC))},
+             {Option::Worst,
+              Tarcog::ISO15099::DualVisionHorizontal(
+                width,
+                height,
+                tvis,
+                tsol,
+                std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                  worstUFactor.uValue(), worstSHGC, worstHC),
+                tvis,
+                tsol,
+                std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                  worstUFactor.uValue(), worstSHGC, worstHC))}}},
+           {Option::Worst,
+            {{Option::Best,
+              Tarcog::ISO15099::DualVisionHorizontal(width,
+                                                     height,
+                                                     tvis,
+                                                     tsol,
+                                                     std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                       bestUFactor.uValue(), bestSHGC, bestHC),
+                                                     tvis,
+                                                     tsol,
+                                                     std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                       bestUFactor.uValue(), bestSHGC, bestHC))},
+             {Option::Worst,
+              Tarcog::ISO15099::DualVisionHorizontal(
+                width,
+                height,
+                tvis,
+                tsol,
+                std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                  worstUFactor.uValue(), worstSHGC, worstHC),
+                tvis,
+                tsol,
+                std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                  worstUFactor.uValue(), worstSHGC, worstHC))}}}});
+
+        return winMap;
+    }
+
+    Tarcog::IWindow & CMAWindowDualVisionHorizontal::windowAt(Option spacer, Option glazing)
+    {
+        return m_Window.at(spacer).at(glazing);
+    }
+
+    //////////////////////////////////////////
+    //  CMAWindowDualVisionVertical
+    //////////////////////////////////////////
+
+    CMAWindowDualVisionVertical::CMAWindowDualVisionVertical(double width,
+                                                             double height,
+                                                             double tvis,
+                                                             double tsol,
+                                                             double spacerBestKeff,
+                                                             double spacerWorstKeff,
+                                                             CMABestWorstUFactors bestUFactor,
+                                                             CMABestWorstUFactors worstUFactor) :
+        CMAWindow(spacerBestKeff, spacerWorstKeff, bestUFactor, worstUFactor),
+        m_Window(createBestWorstWindows(width, height, tvis, tsol, bestUFactor, worstUFactor))
+    {}
+
+    void CMAWindowDualVisionVertical::setFrameTop(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameTop(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionVertical::setFrameBottom(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameBottom(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionVertical::setFrameTopLeft(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameTopLeft(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionVertical::setFrameTopRight(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameTopRight(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionVertical::setFrameBottomLeft(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameBottomLeft(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionVertical::setFrameBottomRight(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameBottomRight(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionVertical::setFrameMettingRail(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameMettingRail(frameData);
+            }
+        }
+    }
+
+    void CMAWindowDualVisionVertical::setDividers(CMAFrame cmaFrameData,
+                                                  size_t nHorizontal,
+                                                  size_t nVertical)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setDividers(frameData, nHorizontal, nVertical);
+            }
+        }
+    }
+
+    std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionVertical>>
+      CMAWindowDualVisionVertical::createBestWorstWindows(double width,
+                                                          double height,
+                                                          double tvis,
+                                                          double tsol,
+                                                          CMABestWorstUFactors bestUFactor,
+                                                          CMABestWorstUFactors worstUFactor) const
+    {
+        const auto bestSHGC{0.0};
+        const auto worstSHGC{1.0};
+        const auto bestHC{bestUFactor.hcout()};
+        const auto worstHC{worstUFactor.hcout()};
+        std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionVertical>> winMap(
+          {{Option::Best,
+            {{Option::Best,
+              Tarcog::ISO15099::DualVisionVertical(width,
+                                                   height,
+                                                   tvis,
+                                                   tsol,
+                                                   std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                     bestUFactor.uValue(), bestSHGC, bestHC),
+                                                   tvis,
+                                                   tsol,
+                                                   std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                     bestUFactor.uValue(), bestSHGC, bestHC))},
+             {Option::Worst,
+              Tarcog::ISO15099::DualVisionVertical(width,
+                                                   height,
+                                                   tvis,
+                                                   tsol,
+                                                   std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                     worstUFactor.uValue(), worstSHGC, worstHC),
+                                                   tvis,
+                                                   tsol,
+                                                   std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                     worstUFactor.uValue(), worstSHGC, worstHC))}}},
+           {Option::Worst,
+            {{Option::Best,
+              Tarcog::ISO15099::DualVisionVertical(width,
+                                                   height,
+                                                   tvis,
+                                                   tsol,
+                                                   std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                     bestUFactor.uValue(), bestSHGC, bestHC),
+                                                   tvis,
+                                                   tsol,
+                                                   std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                     bestUFactor.uValue(), bestSHGC, bestHC))},
+             {Option::Worst,
+              Tarcog::ISO15099::DualVisionVertical(
+                width,
+                height,
+                tvis,
+                tsol,
+                std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                  worstUFactor.uValue(), worstSHGC, worstHC),
+                tvis,
+                tsol,
+                std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                  worstUFactor.uValue(), worstSHGC, worstHC))}}}});
+
+        return winMap;
+    }
+
+    Tarcog::IWindow & CMAWindowDualVisionVertical::windowAt(Option spacer, Option glazing)
+    {
+        return m_Window.at(spacer).at(glazing);
+    }
 }   // namespace CMA

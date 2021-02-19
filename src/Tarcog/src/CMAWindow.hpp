@@ -110,5 +110,90 @@ namespace CMA
         std::map<Option, std::map<Option, Tarcog::ISO15099::WindowSingleVision>> m_Window;
     };
 
+    //////////////////////////////////////////
+    //  CMAWindowDualVisionHorizontal
+    //////////////////////////////////////////
+
+    class CMAWindowDualVisionHorizontal : public CMAWindow
+    {
+    public:
+        CMAWindowDualVisionHorizontal(
+          double width,
+          double height,
+          double tvis,
+          double tsol,
+          double spacerBestKeff = 0.01,
+          double spacerWorstKeff = 10.0,
+          CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
+          CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
+
+        void setFrameTopLeft(CMAFrame cmaFrameData);
+        void setFrameTopRight(CMAFrame cmaFrameData);
+        void setFrameBottomLeft(CMAFrame cmaFrameData);
+        void setFrameBottomRight(CMAFrame cmaFrameData);
+        void setFrameLeft(CMAFrame cmaFrameData);
+        void setFrameRight(CMAFrame cmaFrameData);
+        void setFrameMeetingRail(CMAFrame cmaFrameData);
+
+        void setDividers(CMAFrame frameData, size_t nHorizontal, size_t nVertical);
+
+    private:
+        //! Single vision windows needs to create this structure, otherwise it will not work
+        [[nodiscard]] std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionHorizontal>>
+          createBestWorstWindows(double width,
+                                 double height,
+                                 double tvis,
+                                 double tsol,
+                                 CMABestWorstUFactors bestUFactor,
+                                 CMABestWorstUFactors worstUFactor) const;
+
+        Tarcog::IWindow & windowAt(Option spacer, Option glazing) override;
+
+        //! First option is spacer and second option is glass (best, worst)
+        std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionHorizontal>> m_Window;
+    };
+
+    //////////////////////////////////////////
+    //  CMAWindowDualVisionVertical
+    //////////////////////////////////////////
+
+    class CMAWindowDualVisionVertical : public CMAWindow
+    {
+    public:
+        CMAWindowDualVisionVertical(
+          double width,
+          double height,
+          double tvis,
+          double tsol,
+          double spacerBestKeff = 0.01,
+          double spacerWorstKeff = 10.0,
+          CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
+          CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
+
+        void setFrameTop(CMAFrame cmaFrameData);
+        void setFrameBottom(CMAFrame cmaFrameData);
+        void setFrameTopLeft(CMAFrame cmaFrameData);
+        void setFrameTopRight(CMAFrame cmaFrameData);
+        void setFrameBottomLeft(CMAFrame cmaFrameData);
+        void setFrameBottomRight(CMAFrame cmaFrameData);
+        void setFrameMettingRail(CMAFrame cmaFrameData);
+
+        void setDividers(CMAFrame cmaFrameData, size_t nHorizontal, size_t nVertical);
+
+    private:
+        //! Single vision windows needs to create this structure, otherwise it will not work
+        [[nodiscard]] std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionVertical>>
+          createBestWorstWindows(double width,
+                                 double height,
+                                 double tvis,
+                                 double tsol,
+                                 CMABestWorstUFactors bestUFactor,
+                                 CMABestWorstUFactors worstUFactor) const;
+
+        Tarcog::IWindow & windowAt(Option spacer, Option glazing) override;
+
+        //! First option is spacer and second option is glass (best, worst)
+        std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionVertical>> m_Window;
+    };
 
 }   // namespace CMA
