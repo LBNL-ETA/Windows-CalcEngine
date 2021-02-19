@@ -1,8 +1,9 @@
-#include "CMAWindow.hpp"
-
 #include <utility>
 
+#include "CMAWindow.hpp"
+
 #include "SimpleIGU.hpp"
+#include "CMAInterface.hpp"
 
 namespace CMA
 {
@@ -62,16 +63,16 @@ namespace CMA
 
     double CMAWindow::uValue(const double Ucog, const double keffSpacer)
     {
-        return Ub(keffSpacer)
-               + ((Uw(keffSpacer) - Ub(keffSpacer))
-                  * (Ucog - m_BestWorstIGUUvalues.at(Option::Worst).uValue()))
-                   / (m_BestWorstIGUUvalues.at(Option::Worst).uValue()
-                      - m_BestWorstIGUUvalues.at(Option::Best).uValue());
+        const auto ub{Ub(keffSpacer)};
+        const auto uw{Uw(keffSpacer)};
+        const auto ucw{m_BestWorstIGUUvalues.at(Option::Worst).uValue()};
+        const auto ucb{m_BestWorstIGUUvalues.at(Option::Best).uValue()};
+        return ub + (uw - ub) * (Ucog - ucb) / (ucw - ucb);
     }
 
     double CMAWindow::shgc(const double SHGCcog, const double keffSpacer)
     {
-        return SHGCb(keffSpacer) + (SHGCw(keffSpacer) - SHGCb(keffSpacer)) * (SHGCcog - 1);
+        return SHGCb(keffSpacer) + (SHGCw(keffSpacer) - SHGCb(keffSpacer)) * SHGCcog;
     }
 
     double CMAWindow::Ub(const double spacerKeff)
@@ -127,39 +128,41 @@ namespace CMA
                                                     CMABestWorstUFactors worstUFactor) const
     {
         const auto bestSHGC{0.0};
-        const auto worstSHGC{0.0};
-        const auto hc{0.0};
+        const auto worstSHGC{1.0};
+        const auto bestHC{bestUFactor.hcout()};
+        const auto worstHC{worstUFactor.hcout()};
         std::map<Option, std::map<Option, Tarcog::ISO15099::WindowSingleVision>> winMap(
           {{Option::Best,
             {{Option::Best,
-              Tarcog::ISO15099::WindowSingleVision(
-                width,
-                height,
-                tvis,
-                tsol,
-                std::make_shared<Tarcog::ISO15099::SimpleIGU>(bestUFactor.uValue(), bestSHGC, hc))},
+              Tarcog::ISO15099::WindowSingleVision(width,
+                                                   height,
+                                                   tvis,
+                                                   tsol,
+                                                   std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                                                     bestUFactor.uValue(), bestSHGC, bestHC))},
              {Option::Worst,
               Tarcog::ISO15099::WindowSingleVision(width,
                                                    height,
                                                    tvis,
                                                    tsol,
                                                    std::make_shared<Tarcog::ISO15099::SimpleIGU>(
-                                                     worstUFactor.uValue(), worstSHGC, hc))}}},
+                                                     worstUFactor.uValue(), worstSHGC, worstHC))}}},
            {Option::Worst,
             {{Option::Best,
-              Tarcog::ISO15099::WindowSingleVision(
-                width,
-                height,
-                tvis,
-                tsol,
-                std::make_shared<Tarcog::ISO15099::SimpleIGU>(bestUFactor.uValue(), bestSHGC, hc))},
-             {Option::Worst,
               Tarcog::ISO15099::WindowSingleVision(width,
                                                    height,
                                                    tvis,
                                                    tsol,
                                                    std::make_shared<Tarcog::ISO15099::SimpleIGU>(
-                                                     worstUFactor.uValue(), worstSHGC, hc))}}}});
+                                                     bestUFactor.uValue(), bestSHGC, bestHC))},
+             {Option::Worst,
+              Tarcog::ISO15099::WindowSingleVision(
+                width,
+                height,
+                tvis,
+                tsol,
+                std::make_shared<Tarcog::ISO15099::SimpleIGU>(
+                  worstUFactor.uValue(), worstSHGC, worstHC))}}}});
 
         return winMap;
     }
@@ -183,4 +186,68 @@ namespace CMA
         CMAWindow(spacerBestKeff, spacerWorstKeff, bestUFactor, worstUFactor),
         m_Window(createBestWorstWindows(width, height, tvis, tsol, bestUFactor, worstUFactor))
     {}
+
+    void CMAWindowSingleVision::setFrameTop(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameTop(frameData);
+            }
+        }
+    }
+
+    void CMAWindowSingleVision::setFrameBottom(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameBottom(frameData);
+            }
+        }
+    }
+
+    void CMAWindowSingleVision::setFrameLeft(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameLeft(frameData);
+            }
+        }
+    }
+
+    void CMAWindowSingleVision::setFrameRight(CMAFrame cmaFrameData)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption).at(glazingOption).setFrameRight(frameData);
+            }
+        }
+    }
+
+    void CMAWindowSingleVision::setDividers(CMAFrame cmaFrameData,
+                                            size_t nHorizontal,
+                                            size_t nVertical)
+    {
+        for(auto spacerOption : EnumOption())
+        {
+            for(auto glazingOption : EnumOption())
+            {
+                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setDividers(frameData, nHorizontal, nVertical);
+            }
+        }
+    }
 }   // namespace CMA
