@@ -3,6 +3,8 @@
 #include "CMAInterface.hpp"
 #include "Frame.hpp"
 #include "WholeWindow.hpp"
+#include "WholeWindowConfigurations.hpp"
+#include "CMASettings.hpp"
 
 namespace CMA
 {
@@ -12,7 +14,10 @@ namespace CMA
     class SpacerGlass
     {
     public:
-        SpacerGlass(double bestUValue, double worstUValue, double bestSpacerKeff = 0.01, double worstSpacerKeff = 10);
+        SpacerGlass(double bestUValue,
+                    double worstUValue,
+                    double bestSpacerKeff = 0.01,
+                    double worstSpacerKeff = 10);
 
         [[nodiscard]] double uValue(Option option) const;
         [[nodiscard]] double spacerKeff(Option option) const;
@@ -45,12 +50,25 @@ namespace CMA
     class CMAWindow : public ICMAWindow
     {
     public:
-        CMAWindow(std::shared_ptr<Tarcog::IWindow> window, double spacerBestKeff, double spacerWorstKeff);
-        [[nodiscard]] double vt() const override;
+        CMAWindow(double spacerBestKeff,
+                  double spacerWorstKeff,
+                  CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
+                  CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
+
+        [[nodiscard]] double vt() override;
+        [[nodiscard]] double uValue(double Ucog, double keffSpacer) override;
+        [[nodiscard]] double shgc(double SHGCcog, double keffSpacer) override;
 
     protected:
-        //! First option is spacer and second option is glass
-        std::map<Option, std::map<Option, std::shared_ptr<Tarcog::IWindow>>> m_Window;
+        [[nodiscard]] double Ub(double spacerKeff);
+        [[nodiscard]] double Uw(double spacerKeff);
+        [[nodiscard]] double SHGCb(double spacerKeff);
+        [[nodiscard]] double SHGCw(double spacerKeff);
+
+        [[nodiscard]] virtual Tarcog::IWindow & windowAt(Option spacer, Option glazing) = 0;
+
+        std::map<Option, CMABestWorstUFactors> m_BestWorstIGUUvalues;
+
         BestWorst<double> m_Spacer;
     };
 
@@ -60,16 +78,31 @@ namespace CMA
     class CMAWindowSingleVision : public CMAWindow
     {
     public:
-        CMAWindowSingleVision(double width,
-            double height,
-            double tvis,
-            double tsol,
-            std::shared_ptr<Tarcog::ISO15099::IIGUSystem> iguSystem,
-            double spacerBestKeff,
-            double spacerWorstKeff);
+        CMAWindowSingleVision(
+          double width,
+          double height,
+          double tvis,
+          double tsol,
+          double spacerBestKeff,
+          double spacerWorstKeff,
+          CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
+          CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
 
-        [[nodiscard]] double uValue() const override;
-        [[nodiscard]] double shgc() const override;
+    private:
+        //! Single vision windows needs to create this structure, otherwise it will not work
+        [[nodiscard]] std::map<Option, std::map<Option, Tarcog::ISO15099::WindowSingleVision>>
+          createBestWorstWindows(double width,
+                                 double height,
+                                 double tvis,
+                                 double tsol,
+                                 CMABestWorstUFactors bestUFactor,
+                                 CMABestWorstUFactors worstUFactor) const;
+
+        Tarcog::IWindow & windowAt(Option spacer, Option glazing) override;
+
+        //! First option is spacer and second option is glass (best, worst)
+        std::map<Option, std::map<Option, Tarcog::ISO15099::WindowSingleVision>> m_Window;
     };
 
-}
+
+}   // namespace CMA
