@@ -2,16 +2,16 @@
 
 #include "WCETarcog.hpp"
 
-class TestCMASingleVisionWindow : public testing::Test
+class TestCMADoubleVisionVerticalWindow : public testing::Test
 {
 protected:
     void SetUp() override
     {}
 };
 
-TEST_F(TestCMASingleVisionWindow, CMASingleVision)
+TEST_F(TestCMADoubleVisionVerticalWindow, CMASingleVision)
 {
-    SCOPED_TRACE("Begin Test: CMA test for single vision window.");
+    SCOPED_TRACE("Begin Test: CMA test for double vision vertical window.");
 
     const double uValue{3.16130853830995};
     const double edgeUValue{3.16130853830995};
@@ -29,23 +29,26 @@ TEST_F(TestCMASingleVisionWindow, CMASingleVision)
     const auto tVis{0.535};
     const auto tSol{0.3716};
 
-    auto window{CMA::CMAWindowSingleVision(width, height, tVis, tSol)};
+    auto window{CMA::CMAWindowDualVisionVertical(width, height, tVis, tSol)};
 
     window.setFrameTop(cmaFrame);
     window.setFrameBottom(cmaFrame);
-    window.setFrameLeft(cmaFrame);
-    window.setFrameRight(cmaFrame);
+    window.setFrameTopLeft(cmaFrame);
+    window.setFrameTopRight(cmaFrame);
+    window.setFrameBottomLeft(cmaFrame);
+    window.setFrameBottomRight(cmaFrame);
+    window.setFrameMettingRail(cmaFrame);
 
     const auto UvalueCOG{1.258};
     const auto SHGCCOG{0.341};
     const auto spacerKeff{2.05280045621776};
 
     const double vt{window.vt()};
-    EXPECT_NEAR(0.441466, vt, 1e-6);
+    EXPECT_NEAR(0.421911, vt, 1e-6);
 
     const double uvalue{window.uValue(UvalueCOG, spacerKeff)};
-    EXPECT_NEAR(1.903495, uvalue, 1e-6);
+    EXPECT_NEAR(2.092566, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc(SHGCCOG, spacerKeff)};
-    EXPECT_NEAR(0.287266, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.276032, windowSHGC, 1e-6);
 }
