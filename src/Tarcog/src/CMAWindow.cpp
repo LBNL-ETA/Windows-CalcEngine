@@ -1,33 +1,9 @@
-#include <utility>
-
 #include "CMAWindow.hpp"
 
 #include "SimpleIGU.hpp"
-#include "CMAInterface.hpp"
 
 namespace CMA
 {
-    //////////////////////////////////////////
-    //  SpacerGlass
-    //////////////////////////////////////////
-    SpacerGlass::SpacerGlass(double bestUValue,
-                             double worstUValue,
-                             double bestSpacerKeff,
-                             double worstSpacerKeff) :
-        m_Options({{CMAProperty::Glass, {bestUValue, worstUValue}},
-                   {CMAProperty::Spacer, {bestSpacerKeff, worstSpacerKeff}}})
-    {}
-
-    double SpacerGlass::uValue(Option option) const
-    {
-        return m_Options.at(CMAProperty::Glass).value(option);
-    }
-
-    double SpacerGlass::spacerKeff(Option option) const
-    {
-        return m_Options.at(CMAProperty::Spacer).value(option);
-    }
-
     //////////////////////////////////////////
     //  CMAFrame
     //////////////////////////////////////////
@@ -125,7 +101,7 @@ namespace CMA
                                                     double tvis,
                                                     double tsol,
                                                     CMABestWorstUFactors bestUFactor,
-                                                    CMABestWorstUFactors worstUFactor) const
+                                                    CMABestWorstUFactors worstUFactor)
     {
         const auto bestSHGC{0.0};
         const auto worstSHGC{1.0};
