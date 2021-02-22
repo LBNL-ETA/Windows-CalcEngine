@@ -3,7 +3,6 @@
 #include "../src/BaseIGULayer.hpp"
 #include "../src/BaseLayer.hpp"
 #include "../src/BaseShade.hpp"
-#include "../src/CalculationModels.hpp"
 #include "../src/Environment.hpp"
 #include "../src/Environments.hpp"
 #include "../src/HeatFlowBalance.hpp"

@@ -26,12 +26,6 @@ namespace CMA
         return EnumOption::Iterator(static_cast<int>(Option::Worst) + 1);
     }
 
-    enum class CMAProperty
-    {
-        Glass,
-        Spacer
-    };
-
     template<typename T>
     class BestWorst
     {
