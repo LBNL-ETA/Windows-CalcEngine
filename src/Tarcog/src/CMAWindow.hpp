@@ -9,24 +9,6 @@
 namespace CMA
 {
     //////////////////////////////////////////
-    //  SpacerGlass
-    //////////////////////////////////////////
-    class SpacerGlass
-    {
-    public:
-        SpacerGlass(double bestUValue,
-                    double worstUValue,
-                    double bestSpacerKeff = 0.01,
-                    double worstSpacerKeff = 10);
-
-        [[nodiscard]] double uValue(Option option) const;
-        [[nodiscard]] double spacerKeff(Option option) const;
-
-    private:
-        std::map<CMAProperty, BestWorst<double>> m_Options;
-    };
-
-    //////////////////////////////////////////
     //  CMAFrame
     //////////////////////////////////////////
     class CMAFrame
@@ -96,13 +78,13 @@ namespace CMA
 
     private:
         //! Single vision windows needs to create this structure, otherwise it will not work
-        [[nodiscard]] std::map<Option, std::map<Option, Tarcog::ISO15099::WindowSingleVision>>
+        [[nodiscard]] static std::map<Option, std::map<Option, Tarcog::ISO15099::WindowSingleVision>>
           createBestWorstWindows(double width,
                                  double height,
                                  double tvis,
                                  double tsol,
                                  CMABestWorstUFactors bestUFactor,
-                                 CMABestWorstUFactors worstUFactor) const;
+                                 CMABestWorstUFactors worstUFactor) ;
 
         Tarcog::IWindow & windowAt(Option spacer, Option glazing) override;
 
