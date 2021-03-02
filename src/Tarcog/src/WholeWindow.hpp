@@ -16,16 +16,21 @@ namespace Tarcog
         public:
             WindowSingleVision() = default;
 
-            static WindowSingleVision Create(double width,
-                                             double height,
-                                             double tvis,
-                                             double tsol,
-                                             std::shared_ptr<IIGUSystem> iguSystem);
+            WindowSingleVision(double width,
+                               double height,
+                               double tvis,
+                               double tsol,
+                               std::shared_ptr<IIGUSystem> iguSystem);
 
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
             [[nodiscard]] double shgc() const override;
             [[nodiscard]] double vt() const override;
+            [[nodiscard]] double uValueCOG() const;
+            [[nodiscard]] double shgcCOG() const;
+
+            [[nodiscard]] double uValueCOGAverage() const override;
+            [[nodiscard]] double shgcCOGAverage() const override;
 
             void setFrameTop(FrameData frameData);
             void setFrameBottom(FrameData frameData);
@@ -33,12 +38,10 @@ namespace Tarcog
             void setFrameRight(FrameData frameData);
             void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
-        private:
-            WindowSingleVision(double width,
-                               double height,
-                               double tvis,
-                               double tsol,
-                               std::shared_ptr<IIGUSystem> iguSystem);
+        protected:
+            [[nodiscard]] double visionPercentage() const override;
+
+        private:            
 
             WindowVision vision;
         };
@@ -57,6 +60,9 @@ namespace Tarcog
             [[nodiscard]] double shgc() const override;
             [[nodiscard]] double vt() const override;
 
+            [[nodiscard]] double uValueCOGAverage() const override;
+            [[nodiscard]] double shgcCOGAverage() const override;
+
         protected:
             WindowDualVision(double width,
                              double height,
@@ -65,7 +71,14 @@ namespace Tarcog
                              std::shared_ptr<IIGUSystem> iguSystem1,
                              double tvis2,
                              double tsol2,
-                             std::shared_ptr<IIGUSystem> iguSystem2);            
+                             std::shared_ptr<IIGUSystem> iguSystem2);
+
+            [[nodiscard]] double visionPercentage() const override;
+
+            [[nodiscard]] double uValueCOG1() const;
+            [[nodiscard]] double uValueCOG2() const;
+            [[nodiscard]] double shgcCOG1() const;
+            [[nodiscard]] double shgcCOG2() const;
 
             WindowVision m_Vision1;
             WindowVision m_Vision2;
@@ -94,6 +107,11 @@ namespace Tarcog
                                  double tvis2,
                                  double tsol2,
                                  const std::shared_ptr<IIGUSystem> & iguSystem2);
+
+            [[nodiscard]] double uValueCOGLeft() const;
+            [[nodiscard]] double uValueCOGRight() const;
+            [[nodiscard]] double shgcCOGLeft() const;
+            [[nodiscard]] double shgcCOGRight() const;
 
             void setFrameTopLeft(FrameData frameData);
             void setFrameTopRight(FrameData frameData);
@@ -128,6 +146,11 @@ namespace Tarcog
                                double tvis2,
                                double tsol2,
                                const std::shared_ptr<IIGUSystem> & iguSystem2);
+
+            [[nodiscard]] double uValueCOGTop() const;
+            [[nodiscard]] double uValueCOGBottom() const;
+            [[nodiscard]] double shgcCOGTop() const;
+            [[nodiscard]] double shgcCOGBottom() const;
 
             void setFrameTop(FrameData frameData);
             void setFrameBottom(FrameData frameData);

@@ -5,10 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-class TestDoubleLowESingleVisionUFactorRun : public testing::Test
+class TestDoubleLowEVerticalSliderUFactorRun : public testing::Test
 {
 private:
-    Tarcog::ISO15099::WindowSingleVision m_Window;
+    Tarcog::ISO15099::DualVisionVertical m_Window;
 
 protected:
     void SetUp() override
@@ -80,7 +80,7 @@ protected:
         const double wettedLength{0.05633282};
         const double absorptance{0.3};
 
-        Tarcog::ISO15099::FrameData frameData{
+        const Tarcog::ISO15099::FrameData frameData{
           uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
 
         const auto windowWidth{1.2};
@@ -88,36 +88,40 @@ protected:
         const auto tVis{0.6385};
         const auto tSol{0.371589958668};
 
-        m_Window = Tarcog::ISO15099::WindowSingleVision(windowWidth, windowHeight, tVis, tSol, igu);
+        m_Window = Tarcog::ISO15099::DualVisionVertical(
+          windowWidth, windowHeight, tVis, tSol, igu, tVis, tSol, igu);
 
         m_Window.setFrameTop(frameData);
         m_Window.setFrameBottom(frameData);
-        m_Window.setFrameLeft(frameData);
-        m_Window.setFrameRight(frameData);
+        m_Window.setFrameTopLeft(frameData);
+        m_Window.setFrameTopRight(frameData);
+        m_Window.setFrameBottomLeft(frameData);
+        m_Window.setFrameBottomRight(frameData);
+        m_Window.setFrameMettingRail(frameData);
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::WindowSingleVision & getWindow()
+    [[nodiscard]] Tarcog::ISO15099::DualVisionVertical & getWindow()
     {
         return m_Window;
     }
 };
 
-TEST_F(TestDoubleLowESingleVisionUFactorRun, Test1)
+TEST_F(TestDoubleLowEVerticalSliderUFactorRun, Test1)
 {
-    SCOPED_TRACE("Begin Test: Double Low-e with Single Vision - U-value run");
+    SCOPED_TRACE("Begin Test: Double Low-e with Vertical Slider - U-value run");
 
     const auto window{getWindow()};
 
-    const auto UValue {window.uValue()};
-    EXPECT_NEAR(UValue, 1.833771, 1e-5);
+    const auto UValue{window.uValue()};
+    EXPECT_NEAR(UValue, 1.886103, 1e-5);
 
     const auto UValueCOG {window.uValueCOGAverage()};
     EXPECT_NEAR(UValueCOG, 1.667878, 1e-5);
 
     const auto SHGC{window.shgc()};
-    EXPECT_NEAR(SHGC, 0.003258, 1e-5);
+    EXPECT_NEAR(SHGC, 0.003947, 1e-5);
 
     const auto vt{window.vt()};
-    EXPECT_NEAR(vt, 0.544831, 1e-5);
+    EXPECT_NEAR(vt, 0.525034, 1e-5);
 }

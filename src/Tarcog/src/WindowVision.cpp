@@ -81,12 +81,27 @@ namespace Tarcog::ISO15099
 
     double WindowVision::vt() const
     {
-        return (area() - frameProjectedArea() - dividerArea()) / area() * m_VT;
+        return visionPercentage() * m_VT;
+    }
+
+    double WindowVision::visionPercentage() const
+    {
+        return (area() - frameProjectedArea() - dividerArea()) / area();
     }
 
     double WindowVision::hc() const
     {
         return m_HcExterior;
+    }
+
+    double WindowVision::uValueCOG() const
+    {
+        return m_IGUUvalue;
+    }
+
+    double WindowVision::shgcCOG() const
+    {
+        return m_IGUSHGC;
     }
 
     void WindowVision::setHc(double hc)
