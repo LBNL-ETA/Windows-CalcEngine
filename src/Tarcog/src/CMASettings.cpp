@@ -11,8 +11,8 @@ namespace CMA
     //  CMABestWorstUFactors
     ///////////////////////////////////////////////////
 
-    CMABestWorstUFactors::CMABestWorstUFactors(double hci, double hco, double gapConductivity) :
-        m_Hci(hci), m_Hco(hco), m_GapConductivity(gapConductivity)
+    CMABestWorstUFactors::CMABestWorstUFactors(double hci, double hco, double gapConductance) :
+        m_Hci(hci), m_Hco(hco), m_GapConductance(gapConductance)
     {}
 
     double CMABestWorstUFactors::uValue()
@@ -34,10 +34,9 @@ namespace CMA
         const double deltaTemp{m_InsideAirTemperature - m_OutsideAirTemperature};
         const double interiorGlassCond{m_InteriorGlassConductivity / m_InteriorGlassThickness};
         const double exteriorGlassCond{m_ExteriorGlassConductivity / m_ExteriorGlassThickness};
-        const double gapCond{m_GapConductivity / m_GapThickness};
 
         return deltaTemp
-               / (1 / interiorGlassCond + 1 / exteriorGlassCond + 1 / gapCond
+               / (1 / interiorGlassCond + 1 / exteriorGlassCond + 1 / m_GapConductance
                   + 1 / (m_Hci + interiorRadiationFilmCoefficient)
                   + 1 / (m_Hco + exteriorRadiationFilmCoefficient));
     }
@@ -114,21 +113,21 @@ namespace CMA
     {
         static const double defaultInsideFilmCofficintBest = 1.85425;
         static const double defaultOutsideFilmCoefficientBest = 26;
-        static const double defaultGapConductivityBest = 0.00668415;
+        static const double defaultGapConductanceBest = 0.498817;
 
         static const double defaultInsideFilmCofficintWorst = 2.86612;
         static const double defaultOutsideFilmCoefficientWorst = 26;
-        static const double defaultGapConductivityWorst = 0.0787993;
+        static const double defaultGapConductanceWorst = 5.880546;
 
         static const std::map<Option, CMABestWorstUFactors> object{
           {Option::Best,
            CMABestWorstUFactors(defaultInsideFilmCofficintBest,
                                 defaultOutsideFilmCoefficientBest,
-                                defaultGapConductivityBest)},
+                                defaultGapConductanceBest)},
           {Option::Worst,
            CMABestWorstUFactors(defaultInsideFilmCofficintWorst,
                                 defaultOutsideFilmCoefficientWorst,
-                                defaultGapConductivityWorst)}};
+                                defaultGapConductanceWorst)}};
 
         return object.at(option);
     }
