@@ -30,7 +30,7 @@ TEST_F(TestSingleVisionWindow, ExteriorFrameLeftSideFrameExterior)
     const auto tSol{0.3716};
     const auto hcout{15.0};
 
-    auto window = Tarcog::ISO15099::WindowSingleVision::Create(
+    auto window = Tarcog::ISO15099::WindowSingleVision(
       width,
       height,
       tVis,

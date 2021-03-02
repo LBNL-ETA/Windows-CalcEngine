@@ -7,13 +7,6 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////
     /// WindowSingleVision
     ////////////////////////////////////////////////
-
-    WindowSingleVision WindowSingleVision::Create(
-      double width, double height, double tvis, double tsol, std::shared_ptr<IIGUSystem> iguSystem)
-    {
-        return WindowSingleVision(width, height, tvis, tsol, std::move(iguSystem));
-    }
-
     WindowSingleVision::WindowSingleVision(double width,
                                            double height,
                                            double tvis,
@@ -40,6 +33,31 @@ namespace Tarcog::ISO15099
     double WindowSingleVision::vt() const
     {
         return vision.vt();
+    }
+
+    double WindowSingleVision::uValueCOG() const
+    {
+        return vision.uValueCOG();
+    }
+
+    double WindowSingleVision::shgcCOG() const
+    {
+        return vision.shgcCOG();
+    }
+
+    double WindowSingleVision::uValueCOGAverage() const
+    {
+        return vision.uValueCOG();
+    }
+
+    double WindowSingleVision::shgcCOGAverage() const
+    {
+        return vision.shgcCOG();
+    }
+
+    double WindowSingleVision::visionPercentage() const
+    {
+        return vision.visionPercentage();
     }
 
     void WindowSingleVision::setFrameTop(FrameData frameData)
@@ -106,6 +124,41 @@ namespace Tarcog::ISO15099
         return (m_Vision1.vt() * m_Vision1.area() + m_Vision2.vt() * m_Vision2.area()) / area();
     }
 
+    double WindowDualVision::uValueCOGAverage() const
+    {
+        return (m_Vision1.uValueCOG() * m_Vision1.area() + m_Vision2.uValueCOG() * m_Vision2.area()) / area();
+    }
+
+    double WindowDualVision::shgcCOGAverage() const
+    {
+        return (m_Vision1.shgcCOG() * m_Vision1.area() + m_Vision2.shgcCOG() * m_Vision2.area()) / area();
+    }
+
+    double WindowDualVision::visionPercentage() const
+    {
+        return (m_Vision1.visionPercentage() * m_Vision1.area() + m_Vision2.visionPercentage() * m_Vision2.area()) / area();
+    }
+
+    double WindowDualVision::uValueCOG1() const
+    {
+        return m_Vision1.uValueCOG();
+    }
+
+    double WindowDualVision::uValueCOG2() const
+    {
+        return m_Vision2.uValueCOG();
+    }
+
+    double WindowDualVision::shgcCOG1() const
+    {
+        return m_Vision1.shgcCOG();
+    }
+
+    double WindowDualVision::shgcCOG2() const
+    {
+        return m_Vision2.shgcCOG();
+    }
+
     void WindowDualVision::averageHc()
     {
         const auto hc1{m_Vision1.hc()};
@@ -142,6 +195,26 @@ namespace Tarcog::ISO15099
           {FramePosition::Left, FrameType::Interior},
           {FramePosition::Right, FrameType::Exterior}};
         m_Vision2.setFrameTypes(rightVisionFrameTypes);
+    }
+
+    double DualVisionHorizontal::uValueCOGLeft() const
+    {
+        return uValueCOG1();
+    }
+
+    double DualVisionHorizontal::uValueCOGRight() const
+    {
+        return uValueCOG2();
+    }
+
+    double DualVisionHorizontal::shgcCOGLeft() const
+    {
+        return shgcCOG1();
+    }
+
+    double DualVisionHorizontal::shgcCOGRight() const
+    {
+        return shgcCOG2();
     }
 
     void DualVisionHorizontal::setFrameTopLeft(FrameData frameData)
@@ -234,6 +307,26 @@ namespace Tarcog::ISO15099
         // calculations since visions will scale that coefficient only to their heights.
         m_Vision1.setInteriorAndExteriorSurfaceHeight(height);
         m_Vision2.setInteriorAndExteriorSurfaceHeight(height);
+    }
+
+    double DualVisionVertical::uValueCOGTop() const
+    {
+        return uValueCOG1();
+    }
+
+    double DualVisionVertical::uValueCOGBottom() const
+    {
+        return uValueCOG2();
+    }
+
+    double DualVisionVertical::shgcCOGTop() const
+    {
+        return shgcCOG1();
+    }
+
+    double DualVisionVertical::shgcCOGBottom() const
+    {
+        return shgcCOG2();
     }
 
     void DualVisionVertical::setFrameMettingRail(FrameData frameData)
