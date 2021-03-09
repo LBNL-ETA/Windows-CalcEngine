@@ -26,6 +26,7 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMASingleVision)
 
     const auto width{1.2};
     const auto height{1.5};
+
     const auto tVis{0.535};
     const auto tSol{0.3716};
 
