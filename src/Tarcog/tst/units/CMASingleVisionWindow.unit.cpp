@@ -25,11 +25,9 @@ TEST_F(TestCMASingleVisionWindow, CMASingleVision)
     const CMA::CMAFrame cmaFrame{frameData, frameData, frameData, frameData};
 
     const auto width{1.2};
-    const auto height{1.5};
-    const auto tVis{0.535};
-    const auto tSol{0.3716};
+    const auto height{1.5};    
 
-    auto window{CMA::CMAWindowSingleVision(width, height, tVis, tSol)};
+    auto window{CMA::CMAWindowSingleVision(width, height)};
 
     window.setFrameTop(cmaFrame);
     window.setFrameBottom(cmaFrame);
@@ -38,14 +36,16 @@ TEST_F(TestCMASingleVisionWindow, CMASingleVision)
 
     const auto UvalueCOG{1.258};
     const auto SHGCCOG{0.341};
+    const auto tVis{0.535};
+    const auto tSol{0.3716};
     const auto spacerKeff{2.05280045621776};
 
-    const double vt{window.vt()};
+    const double vt{window.vt(tVis)};
     EXPECT_NEAR(0.441466, vt, 1e-6);
 
     const double uvalue{window.uValue(UvalueCOG, spacerKeff)};
     EXPECT_NEAR(1.903495, uvalue, 1e-6);
 
-    const double windowSHGC{window.shgc(SHGCCOG, spacerKeff)};
+    const double windowSHGC{window.shgc(SHGCCOG, tSol, spacerKeff)};
     EXPECT_NEAR(0.287266, windowSHGC, 1e-6);
 }
