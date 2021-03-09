@@ -17,6 +17,18 @@ namespace CMA
         CMABestWorstUFactors() = default;
         CMABestWorstUFactors(double hci, double hco, double gapConductance);
 
+        CMABestWorstUFactors(double hci,
+                             double hco,
+                             double gapConductance,
+                             double interiorGlassThickness,
+                             double interiorGlassConductivity,
+                             double interiorGlassSurfaceEmissivity,
+                             double exteriorGlassThickness,
+                             double exteriorGlassConductivity,
+                             double exteriorGlassSurfaceEmissivity,
+                             double insideAirTemperature,
+                             double outsideAirTemperature);
+
         [[nodiscard]] double uValue();
         [[nodiscard]] double hcout();
 
