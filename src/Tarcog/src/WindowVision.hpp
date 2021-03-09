@@ -19,8 +19,12 @@ namespace Tarcog
             WindowVision(double width, double height, double tvis, double tsol, std::shared_ptr<IIGUSystem> iguSystem);
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
+            //! Returns solar transmittance for the default IGU solar transmittance.
             [[nodiscard]] double shgc() const override;
+            [[nodiscard]] double shgc(double tSol) const override;
+            //! Returns visible transmittance for the default IGU visible transmittance
             [[nodiscard]] double vt() const override;
+            [[nodiscard]] double vt(double tVis) const override;
             [[nodiscard]] double visionPercentage() const override;
             [[nodiscard]] double hc() const override;
             [[nodiscard]] double uValueCOG() const;
@@ -54,7 +58,6 @@ namespace Tarcog
             double m_Width{0};
             double m_Height{0};
             double m_IGUUvalue{0};
-            double m_IGUSHGC{0};
             double m_VT{1};
             double m_Tsol{0};
             double m_HcExterior{0};
