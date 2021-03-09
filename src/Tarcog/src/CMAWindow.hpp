@@ -37,15 +37,15 @@ namespace CMA
                   CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
                   CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
 
-        [[nodiscard]] double vt() override;
+        [[nodiscard]] double vt(double tVis) override;
         [[nodiscard]] double uValue(double Ucog, double keffSpacer) override;
-        [[nodiscard]] double shgc(double SHGCcog, double keffSpacer) override;
+        [[nodiscard]] double shgc(double SHGCcog, double tSol, double keffSpacer) override;
 
     protected:
         [[nodiscard]] double Ub(double spacerKeff);
         [[nodiscard]] double Uw(double spacerKeff);
-        [[nodiscard]] double SHGCb(double spacerKeff);
-        [[nodiscard]] double SHGCw(double spacerKeff);
+        [[nodiscard]] double SHGCb(double spacerKeff, const double tSol);
+        [[nodiscard]] double SHGCw(double spacerKeff, const double tSol);
 
         [[nodiscard]] virtual Tarcog::IWindow & windowAt(Option spacer, Option glazing) = 0;
 
@@ -63,8 +63,6 @@ namespace CMA
         CMAWindowSingleVision(
           double width,
           double height,
-          double tvis,
-          double tsol,
           double spacerBestKeff = 0.01,
           double spacerWorstKeff = 10.0,
           CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
@@ -102,8 +100,6 @@ namespace CMA
         CMAWindowDualVisionHorizontal(
           double width,
           double height,
-          double tvis,
-          double tsol,
           double spacerBestKeff = 0.01,
           double spacerWorstKeff = 10.0,
           CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
@@ -145,8 +141,6 @@ namespace CMA
         CMAWindowDualVisionVertical(
           double width,
           double height,
-          double tvis,
-          double tsol,
           double spacerBestKeff = 0.01,
           double spacerWorstKeff = 10.0,
           CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
