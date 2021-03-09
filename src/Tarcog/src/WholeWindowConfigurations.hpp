@@ -17,7 +17,9 @@ namespace Tarcog
 
         [[nodiscard]] virtual double uValue() const = 0;
         [[nodiscard]] virtual double shgc() const = 0;
+        [[nodiscard]] virtual double shgc(double tSol) const = 0;
         [[nodiscard]] virtual double vt() const = 0;
+        [[nodiscard]] virtual double vt(double tVis) const = 0;
         [[nodiscard]] virtual double visionPercentage() const = 0;
         [[nodiscard]] virtual double area() const = 0;
         [[nodiscard]] virtual double hc() const = 0;
@@ -34,7 +36,9 @@ namespace Tarcog
         [[nodiscard]] virtual double area() const = 0;
         [[nodiscard]] virtual double uValue() const = 0;
         [[nodiscard]] virtual double shgc() const = 0;
+        [[nodiscard]] virtual double shgc(double tSol) const = 0;
         [[nodiscard]] virtual double vt() const = 0;
+        [[nodiscard]] virtual double vt(double tVis) const = 0;
         [[nodiscard]] virtual double visionPercentage() const = 0;
 
         [[nodiscard]] virtual double uValueCOGAverage() const = 0;

@@ -15,6 +15,30 @@ namespace CMA
         m_Hci(hci), m_Hco(hco), m_GapConductance(gapConductance)
     {}
 
+    CMABestWorstUFactors::CMABestWorstUFactors(double hci,
+                                               double hco,
+                                               double gapConductance,
+                                               double interiorGlassThickness,
+                                               double interiorGlassConductivity,
+                                               double interiorGlassSurfaceEmissivity,
+                                               double exteriorGlassThickness,
+                                               double exteriorGlassConductivity,
+                                               double exteriorGlassSurfaceEmissivity,
+                                               double insideAirTemperature,
+                                               double outsideAirTemperature):
+        m_Hci(hci),
+        m_Hco(hco),
+        m_GapConductance(gapConductance),
+        m_InteriorGlassThickness(interiorGlassThickness),
+        m_InteriorGlassConductivity(interiorGlassConductivity),
+        m_InteriorGlassSurfaceEmissivity(interiorGlassSurfaceEmissivity),
+        m_ExteriorGlassThickness(exteriorGlassThickness),
+        m_ExteriorGlassConductivity(exteriorGlassConductivity),
+        m_ExteriorGlassSurfaceEmissivity(exteriorGlassSurfaceEmissivity),
+        m_InsideAirTemperature(insideAirTemperature),
+        m_OutsideAirTemperature(outsideAirTemperature)
+    {}
+
     double CMABestWorstUFactors::uValue()
     {
         assert(m_InsideAirTemperature != m_OutsideAirTemperature);
