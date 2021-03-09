@@ -30,9 +30,19 @@ namespace Tarcog::ISO15099
         return vision.shgc();
     }
 
+    double WindowSingleVision::shgc(const double tSol) const
+    {
+        return vision.shgc(tSol);
+    }
+
     double WindowSingleVision::vt() const
     {
         return vision.vt();
+    }
+
+    double WindowSingleVision::vt(const double tVis) const
+    {
+        return vision.vt(tVis);
     }
 
     double WindowSingleVision::uValueCOG() const
@@ -119,9 +129,29 @@ namespace Tarcog::ISO15099
         return (m_Vision1.shgc() * m_Vision1.area() + m_Vision2.shgc() * m_Vision2.area()) / area();
     }
 
+    double WindowDualVision::shgc(const double tSol1, const double tSol2) const
+    {
+        return (m_Vision1.shgc(tSol1) * m_Vision1.area() + m_Vision2.shgc(tSol2) * m_Vision2.area()) / area();
+    }
+
+    double WindowDualVision::shgc(const double tSol) const
+    {
+        return shgc(tSol, tSol);
+    }
+
     double WindowDualVision::vt() const
     {
         return (m_Vision1.vt() * m_Vision1.area() + m_Vision2.vt() * m_Vision2.area()) / area();
+    }
+
+    double WindowDualVision::vt(double tVis1, double tVis2) const
+    {
+        return (m_Vision1.vt(tVis1) * m_Vision1.area() + m_Vision2.vt(tVis2) * m_Vision2.area()) / area();
+    }
+
+    double WindowDualVision::vt(const double tVis) const
+    {
+        return vt(tVis, tVis);
     }
 
     double WindowDualVision::uValueCOGAverage() const

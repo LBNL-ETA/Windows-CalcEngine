@@ -31,10 +31,10 @@ namespace CMA
         m_Spacer(spacerBestKeff, spacerWorstKeff)
     {}
 
-    double CMAWindow::vt()
+    double CMAWindow::vt(const double tVis)
     {
         // All options have same visible transmittance. Simply pick one of them.
-        return windowAt(Option::Best, Option::Best).vt();
+        return windowAt(Option::Best, Option::Best).vt(tVis);
     }
 
     double CMAWindow::uValue(const double Ucog, const double keffSpacer)
@@ -46,9 +46,9 @@ namespace CMA
         return ub + (uw - ub) * (Ucog - ucb) / (ucw - ucb);
     }
 
-    double CMAWindow::shgc(const double SHGCcog, const double keffSpacer)
+    double CMAWindow::shgc(const double SHGCcog, const double tSol, const double keffSpacer)
     {
-        return SHGCb(keffSpacer) + (SHGCw(keffSpacer) - SHGCb(keffSpacer)) * SHGCcog;
+        return SHGCb(keffSpacer, tSol) + (SHGCw(keffSpacer, tSol) - SHGCb(keffSpacer, tSol)) * SHGCcog;
     }
 
     double CMAWindow::Ub(const double spacerKeff)
@@ -73,24 +73,24 @@ namespace CMA
         return windowAt(Option::Best, Option::Worst).uValue() + dU * lnTop / lnBot;
     }
 
-    double CMAWindow::SHGCb(const double spacerKeff)
+    double CMAWindow::SHGCb(const double spacerKeff, const double tSol)
     {
         const auto lnTop{std::log(spacerKeff) - std::log(m_Spacer.value(Option::Best))};
         const auto lnBot{std::log(m_Spacer.value(Option::Worst))
                          - std::log(m_Spacer.value(Option::Best))};
-        const auto dU{windowAt(Option::Worst, Option::Best).shgc()
-                      - windowAt(Option::Best, Option::Best).shgc()};
+        const auto dU{windowAt(Option::Worst, Option::Best).shgc(tSol)
+                      - windowAt(Option::Best, Option::Best).shgc(tSol)};
 
         return windowAt(Option::Best, Option::Best).shgc() + dU * lnTop / lnBot;
     }
 
-    double CMAWindow::SHGCw(const double spacerKeff)
+    double CMAWindow::SHGCw(const double spacerKeff, const double tSol)
     {
         const auto lnTop{std::log(spacerKeff) - std::log(m_Spacer.value(Option::Best))};
         const auto lnBot{std::log(m_Spacer.value(Option::Worst))
                          - std::log(m_Spacer.value(Option::Best))};
-        const auto dU{windowAt(Option::Worst, Option::Worst).shgc()
-                      - windowAt(Option::Best, Option::Worst).shgc()};
+        const auto dU{windowAt(Option::Worst, Option::Worst).shgc(tSol)
+                      - windowAt(Option::Best, Option::Worst).shgc(tSol)};
 
         return windowAt(Option::Best, Option::Worst).shgc() + dU * lnTop / lnBot;
     }
@@ -153,14 +153,12 @@ namespace CMA
     //////////////////////////////////////////
     CMAWindowSingleVision::CMAWindowSingleVision(double width,
                                                  double height,
-                                                 double tvis,
-                                                 double tsol,
                                                  double spacerBestKeff,
                                                  double spacerWorstKeff,
                                                  CMABestWorstUFactors bestUFactor,
                                                  CMABestWorstUFactors worstUFactor) :
         CMAWindow(spacerBestKeff, spacerWorstKeff, bestUFactor, worstUFactor),
-        m_Window(createBestWorstWindows(width, height, tvis, tsol, bestUFactor, worstUFactor))
+        m_Window(createBestWorstWindows(width, height, 0.0, 0.0, bestUFactor, worstUFactor))
     {}
 
     void CMAWindowSingleVision::setFrameTop(CMAFrame cmaFrameData)
@@ -234,14 +232,12 @@ namespace CMA
     CMAWindowDualVisionHorizontal::CMAWindowDualVisionHorizontal(
       double width,
       double height,
-      double tvis,
-      double tsol,
       double spacerBestKeff,
       double spacerWorstKeff,
       CMABestWorstUFactors bestUFactor,
       CMABestWorstUFactors worstUFactor) :
         CMAWindow(spacerBestKeff, spacerWorstKeff, bestUFactor, worstUFactor),
-        m_Window(createBestWorstWindows(width, height, tvis, tsol, bestUFactor, worstUFactor))
+        m_Window(createBestWorstWindows(width, height, 0.0, 0.0, bestUFactor, worstUFactor))
     {}
 
     void CMAWindowDualVisionHorizontal::setFrameTopLeft(CMAFrame cmaFrameData)
@@ -420,14 +416,12 @@ namespace CMA
 
     CMAWindowDualVisionVertical::CMAWindowDualVisionVertical(double width,
                                                              double height,
-                                                             double tvis,
-                                                             double tsol,
                                                              double spacerBestKeff,
                                                              double spacerWorstKeff,
                                                              CMABestWorstUFactors bestUFactor,
                                                              CMABestWorstUFactors worstUFactor) :
         CMAWindow(spacerBestKeff, spacerWorstKeff, bestUFactor, worstUFactor),
-        m_Window(createBestWorstWindows(width, height, tvis, tsol, bestUFactor, worstUFactor))
+        m_Window(createBestWorstWindows(width, height, 0.0, 0.0, bestUFactor, worstUFactor))
     {}
 
     void CMAWindowDualVisionVertical::setFrameTop(CMAFrame cmaFrameData)
