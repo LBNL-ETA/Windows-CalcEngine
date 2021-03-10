@@ -17,10 +17,9 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMASingleVision)
     const double edgeUValue{3.16130853830995};
     const double projectedFrameDimension{0.0610362};
     const double wettedLength{0.0661612};
-    const double absorptance{0.3};
 
     Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+      uValue, edgeUValue, projectedFrameDimension, wettedLength};
 
     const CMA::CMAFrame cmaFrame{frameData, frameData, frameData, frameData};
 

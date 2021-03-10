@@ -14,7 +14,7 @@ namespace Tarcog
                       double edgeUValue,
                       double projectedFrameDimension,
                       double wettedLength,
-                      double absorptance);
+                      double absorptance = 0.3);
             void splitFrameWidth();
             double UValue{0};
             double EdgeUValue{0};
