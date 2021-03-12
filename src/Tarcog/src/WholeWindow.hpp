@@ -25,9 +25,9 @@ namespace Tarcog
             [[nodiscard]] double area() const override;
             [[nodiscard]] double uValue() const override;
             [[nodiscard]] double shgc() const override;
-            [[nodiscard]] double shgc(double tSol) const;
+            [[nodiscard]] double shgc(double tSol) const override;
             [[nodiscard]] double vt() const override;
-            [[nodiscard]] double vt(double tVis) const;
+            [[nodiscard]] double vt(double tVis) const override;
             [[nodiscard]] double uValueCOG() const;
             [[nodiscard]] double shgcCOG() const;
 
@@ -62,11 +62,11 @@ namespace Tarcog
             [[nodiscard]] double shgc() const override;
             [[nodiscard]] double shgc(double tSol1, double tSol2) const;
             //! Both vision areas have same solar transmittance
-            [[nodiscard]] double shgc(double tSol) const;
+            [[nodiscard]] double shgc(double tSol) const override;
             [[nodiscard]] double vt() const override;
             [[nodiscard]] double vt(double tVis1, double tVis2) const;
             //! Both vision areas have same visible transmittance
-            [[nodiscard]] double vt(double tVis) const;
+            [[nodiscard]] double vt(double tVis) const override;
 
             [[nodiscard]] double uValueCOGAverage() const override;
             [[nodiscard]] double shgcCOGAverage() const override;
