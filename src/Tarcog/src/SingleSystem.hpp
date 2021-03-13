@@ -9,79 +9,87 @@
 
 namespace Tarcog
 {
-	namespace ISO15099 {
-		enum class Environment;
+    namespace ISO15099
+    {
+        enum class Environment;
 
-		class CBaseIGULayer;
+        class CBaseIGULayer;
 
-		class CIGUSolidLayer;
+        class CIGUSolidLayer;
 
-		class CIGUGapLayer;
+        class CIGUGapLayer;
 
-		class CEnvironment;
+        class CEnvironment;
 
-		class CNonLinearSolver;
+        class CNonLinearSolver;
 
-		class CSingleSystem {
-		public:
-			CSingleSystem( CIGU & t_IGU,
-						   const std::shared_ptr< CEnvironment > & t_Indoor,
-						   const std::shared_ptr< CEnvironment > & t_Outdoor );
+        class CSingleSystem
+        {
+        public:
+            CSingleSystem(CIGU & t_IGU,
+                          const std::shared_ptr<CEnvironment> & t_Indoor,
+                          const std::shared_ptr<CEnvironment> & t_Outdoor);
 
-			CSingleSystem( const CSingleSystem & t_SingleSystem );
-			CSingleSystem & operator=( const CSingleSystem & t_SingleSystem );
+            CSingleSystem(const CSingleSystem & t_SingleSystem);
+            CSingleSystem & operator=(const CSingleSystem & t_SingleSystem);
 
-			std::vector< std::shared_ptr< CIGUSolidLayer>> getSolidLayers() const;
-			std::vector< std::shared_ptr< CIGUGapLayer>> getGapLayers() const;
+            [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
+            [[nodiscard]] std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
 
-			std::vector<double> getSolidEffectiveLayerConductivities() const;
-			std::vector<double> getGapEffectiveLayerConductivities() const;
+            [[nodiscard]] std::vector<double> getSolidEffectiveLayerConductivities() const;
+            [[nodiscard]] std::vector<double> getGapEffectiveLayerConductivities() const;
 
-			std::vector< double> getTemperatures() const;
-			std::vector< double> getRadiosities() const;
+            [[nodiscard]] std::vector<double> getTemperatures() const;
+            [[nodiscard]] std::vector<double> getRadiosities() const;
 
-			std::vector< double> getMaxDeflections() const;
-			std::vector< double> getMeanDeflections() const;
+            [[nodiscard]] std::vector<double> getMaxDeflections() const;
+            [[nodiscard]] std::vector<double> getMeanDeflections() const;
 
-			std::shared_ptr< CSingleSystem > clone() const;
+            [[nodiscard]] std::shared_ptr<CSingleSystem> clone() const;
 
-			double getHeatFlow( Environment t_Environment ) const;
-			double getConvectiveHeatFlow( Environment t_Environment ) const;
-			double getRadiationHeatFlow( Environment t_Environment ) const;
-			double getHc( Environment t_Environment ) const;
-			double getAirTemperature( Environment t_Environment ) const;
+            [[nodiscard]] double getHeatFlow(Environment t_Environment) const;
+            [[nodiscard]] double getConvectiveHeatFlow(Environment t_Environment) const;
+            [[nodiscard]] double getRadiationHeatFlow(Environment t_Environment) const;
+            [[nodiscard]] double getHc(Environment t_Environment) const;
+            [[nodiscard]] double getAirTemperature(Environment t_Environment) const;
 
-			// If interior layer have openings, this will return heat flow from airflow
-			double getVentilationFlow( Environment t_Environment ) const;
-			double getUValue() const;
-			size_t getNumberOfIterations() const;
-			double solutionTolarance() const;
-			bool isToleranceAchieved() const;
+            // If interior layer have openings, this will return heat flow from airflow
+            [[nodiscard]] double getVentilationFlow(Environment t_Environment) const;
+            [[nodiscard]] double getUValue() const;
+            [[nodiscard]] size_t getNumberOfIterations() const;
+            [[nodiscard]] double solutionTolarance() const;
+            [[nodiscard]] bool isToleranceAchieved() const;
 
-			double EffectiveConductivity() const;
+            [[nodiscard]] double EffectiveConductivity() const;
 
-			// Set solution tolerance
-			void setTolerance( double t_Tolerance ) const;
-			// Set intial guess for solution.
-			void setInitialGuess( const std::vector< double > & t_Temperatures ) const;
+            // Set solution tolerance
+            void setTolerance(double t_Tolerance) const;
+            // Set intial guess for solution.
+            void setInitialGuess(const std::vector<double> & t_Temperatures) const;
 
-			void setSolarRadiation( double t_SolarRadiation );
-			double getSolarRadiation() const;
+            void setSolarRadiation(double t_SolarRadiation);
+            [[nodiscard]] double getSolarRadiation() const;
 
-			void solve() const;
+            void solve() const;
 
-			double thickness() const;
+            [[nodiscard]] double thickness() const;
 
             void setAbsorptances(const std::vector<double> & absorptances);
 
-		private:
-			CIGU m_IGU;
-			std::map< Environment, std::shared_ptr< CEnvironment>> m_Environment;
-			std::shared_ptr< CNonLinearSolver > m_NonLinearSolver;
-			void initializeStartValues();
-		};
+            void setWidth(double width);
+            void setHeight(double height);
 
-	}
+            //! If IGU is part of the window then frame will still count in surface height.
+            void setInteriorAndExteriorSurfacesHeight(double height);
+
+        private:
+            CIGU m_IGU;
+            std::map<Environment, std::shared_ptr<CEnvironment>> m_Environment;
+            std::shared_ptr<CNonLinearSolver> m_NonLinearSolver;
+            void initializeStartValues();
+        };
+
+    }   // namespace ISO15099
 
 }   // namespace Tarcog
 

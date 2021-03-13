@@ -29,9 +29,9 @@ namespace Tarcog
 
             void setAbsorptances(const std::vector<double> & absorptances, double solarRadiation);
 
-            std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
-            std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
-            std::vector<std::shared_ptr<CBaseLayer>> getLayers() const;
+            [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
+            [[nodiscard]] std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
+            [[nodiscard]] std::vector<std::shared_ptr<CBaseLayer>> getLayers() const;
 
             void setTilt(double t_Tilt);
             void setWidth(double t_Width);
@@ -39,24 +39,24 @@ namespace Tarcog
 
             void setSolarRadiation(double t_SolarRadiation) const;
 
-            std::shared_ptr<CBaseLayer> getEnvironment(Environment t_Environment) const;
+            [[nodiscard]] std::shared_ptr<CBaseLayer> getEnvironment(Environment t_Environment) const;
 
-            std::vector<double> getState() const;
+            [[nodiscard]] std::vector<double> getState() const;
             void setState(const std::vector<double> & t_State) const;
 
-            std::vector<double> getTemperatures() const;
-            std::vector<double> getRadiosities() const;
-            std::vector<double> getMaxDeflections() const;
-            std::vector<double> getMeanDeflections() const;
+            [[nodiscard]] std::vector<double> getTemperatures() const;
+            [[nodiscard]] std::vector<double> getRadiosities() const;
+            [[nodiscard]] std::vector<double> getMaxDeflections() const;
+            [[nodiscard]] std::vector<double> getMeanDeflections() const;
 
-            double getTilt() const;
-            double getWidth() const;
-            double getHeight() const;
-            double getThickness() const;
+            [[nodiscard]] double getTilt() const;
+            [[nodiscard]] double getWidth() const;
+            [[nodiscard]] double getHeight() const;
+            [[nodiscard]] double getThickness() const;
 
-            size_t getNumOfLayers() const;
+            [[nodiscard]] size_t getNumOfLayers() const;
 
-            double getVentilationFlow(Environment t_Environment) const;
+            [[nodiscard]] double getVentilationFlow(Environment t_Environment) const;
 
             void setInitialGuess(const std::vector<double> & t_Guess) const;
 
@@ -78,8 +78,8 @@ namespace Tarcog
             double m_Tilt;     // degrees
 
             // Routines to calculate deflection coefficients
-            double Ldmean() const;
-            double Ldmax() const;
+            [[nodiscard]] double Ldmean() const;
+            [[nodiscard]] double Ldmax() const;
         };
 
     }   // namespace ISO15099

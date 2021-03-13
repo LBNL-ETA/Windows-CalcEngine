@@ -118,6 +118,7 @@ namespace Tarcog
             {
                 layer->setWidth(t_Width);
             }
+            m_Width = t_Width;
         }
 
         void CIGU::setHeight(double const t_Height)
@@ -126,6 +127,7 @@ namespace Tarcog
             {
                 layer->setHeight(t_Height);
             }
+            m_Height = t_Height;
         }
 
         void CIGU::setSolarRadiation(double const t_SolarRadiation) const
