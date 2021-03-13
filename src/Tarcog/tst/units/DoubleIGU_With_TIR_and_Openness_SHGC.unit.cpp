@@ -117,7 +117,7 @@ TEST_F(DoubleIGU_With_TIR_and_Openness_SHGC, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::SHGC);
-    EXPECT_EQ(21, int(numOfIter));
+    EXPECT_EQ(1, int(numOfIter));
 
     const auto uValue = aSystem->getUValue();
     EXPECT_NEAR(3.2151172563457391, uValue, 1e-6);
