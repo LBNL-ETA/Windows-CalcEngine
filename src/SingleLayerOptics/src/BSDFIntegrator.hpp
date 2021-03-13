@@ -31,7 +31,7 @@ namespace SingleLayerOptics
         FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
             FenestrationCommon::PropertySimple t_Property);
 
-        const FenestrationCommon::SquareMatrix & at(FenestrationCommon::Side t_Side,
+        [[nodiscard]] const FenestrationCommon::SquareMatrix & at(FenestrationCommon::Side t_Side,
             FenestrationCommon::PropertySimple t_Property) const;
 
         void setResultMatrices(const FenestrationCommon::SquareMatrix & t_Tau,
