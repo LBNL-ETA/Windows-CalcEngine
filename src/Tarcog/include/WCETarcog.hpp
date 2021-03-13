@@ -1,10 +1,8 @@
-#ifndef WCETarcog_H
-#define WCETarcog_H
+#pragma once
 
 #include "../src/BaseIGULayer.hpp"
 #include "../src/BaseLayer.hpp"
 #include "../src/BaseShade.hpp"
-#include "../src/CalculationModels.hpp"
 #include "../src/Environment.hpp"
 #include "../src/Environments.hpp"
 #include "../src/HeatFlowBalance.hpp"
@@ -28,5 +26,10 @@
 #include "../src/IGUEN673.hpp"
 #include "../src/PermeabilityFactor.hpp"
 #include "../src/EffectiveOpenness.hpp"
-
-#endif
+#include "../src/Frame.hpp"
+#include "../src/WindowVision.hpp"
+#include "../src/WholeWindow.hpp"
+#include "../src/SimpleIGU.hpp"
+#include "../src/CMAInterface.hpp"
+#include "../src/CMAWindow.hpp"
+#include "../src/CMASettings.hpp"

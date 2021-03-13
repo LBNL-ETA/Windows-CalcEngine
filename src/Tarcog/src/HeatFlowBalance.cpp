@@ -49,17 +49,17 @@ namespace Tarcog
 
             // First build base cell
             double hgl = t_Current.getConductionConvectionCoefficient();
-            double hgap_prev = previous->getConductionConvectionCoefficient();
-            double hgap_next = next->getConductionConvectionCoefficient();
+            const double hgap_prev = previous->getConductionConvectionCoefficient();
+            const double hgap_next = next->getConductionConvectionCoefficient();
             std::shared_ptr<ISurface> frontSurface = t_Current.getSurface(Side::Front);
             assert(frontSurface != nullptr);
-            double emissPowerFront = frontSurface->emissivePowerTerm();
+            const double emissPowerFront = frontSurface->emissivePowerTerm();
             std::shared_ptr<ISurface> backSurface = t_Current.getSurface(Side::Back);
             assert(backSurface != nullptr);
-            double emissPowerBack = backSurface->emissivePowerTerm();
-            double qv_prev = previous->getGainFlow();
-            double qv_next = next->getGainFlow();
-            double solarRadiation = t_Current.getGainFlow();
+            const double emissPowerBack = backSurface->emissivePowerTerm();
+            const double qv_prev = previous->getGainFlow();
+            const double qv_next = next->getGainFlow();
+            const double solarRadiation = t_Current.getGainFlow();
 
             // first row
             m_MatrixA(sP, sP) = hgap_prev + hgl;

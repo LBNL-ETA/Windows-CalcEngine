@@ -3,25 +3,13 @@
 
 #include <memory>
 
+#include "EnvironmentConfigurations.hpp"
 #include "BaseLayer.hpp"
 
 namespace Tarcog
 {
     namespace ISO15099
     {
-        enum class BoundaryConditionsCoeffModel
-        {
-            CalculateH,
-            HPrescribed,
-            HcPrescribed
-        };
-
-        enum class Environment
-        {
-            Indoor,
-            Outdoor
-        };
-
         class CEnvironment : public Tarcog::ISO15099::CBaseLayer, public CGasLayer
         {
         public:
@@ -61,12 +49,12 @@ namespace Tarcog
             double m_DirectSolarRadiation;
             double m_Emissivity;   // Emissivity from the environment
             // double m_InfraredRadiation; // Infrared radiation from environment [W/m2]
-			// Input convection coefficient which type depends on selected BC model [W/m2*K]
+            // Input convection coefficient which type depends on selected BC model [W/m2*K]
             double m_HInput;
-			// Model used to calculate BC coefficient
+            // Model used to calculate BC coefficient
             BoundaryConditionsCoeffModel m_HCoefficientModel;
 
-			// Keep info if IR radiation is provided (calculated) outside
+            // Keep info if IR radiation is provided (calculated) outside
             bool m_IRCalculatedOutside;
         };
 
