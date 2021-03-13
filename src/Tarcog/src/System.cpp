@@ -60,9 +60,18 @@ namespace Tarcog
 
         double CSystem::getSHGC(double const t_TotSol) const
         {
+            const auto ventilatedFlowSHGC{
+              m_System.at(System::SHGC)->getVentilationFlow(Environment::Indoor)};
+            const auto ventilatedFlowU{
+              m_System.at(System::Uvalue)->getVentilationFlow(Environment::Indoor)};
+
+            const auto indoorFlowSHGC{m_System.at(System::SHGC)->getHeatFlow(Environment::Indoor)
+                                      + ventilatedFlowSHGC};
+            const auto indoorFlowU{m_System.at(System::Uvalue)->getHeatFlow(Environment::Indoor)
+                                   + ventilatedFlowU};
+
             return t_TotSol
-                   - (m_System.at(System::SHGC)->getHeatFlow(Environment::Indoor)
-                      - m_System.at(System::Uvalue)->getHeatFlow(Environment::Indoor))
+                   - (indoorFlowSHGC - indoorFlowU)
                        / m_System.at(System::SHGC)->getSolarRadiation();
         }
 
