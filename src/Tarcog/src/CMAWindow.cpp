@@ -46,8 +46,10 @@ namespace CMA
         return ub + (uw - ub) * (Ucog - ucb) / (ucw - ucb);
     }
 
-    double CMAWindow::shgc(const double SHGCcog, const double tSol, const double keffSpacer)
+    double CMAWindow::shgc(const double SHGCcog, const double keffSpacer)
     {
+        // For CMA it does not matter what the value of tsol is
+        const auto tSol{1.0};
         return SHGCb(keffSpacer, tSol) + (SHGCw(keffSpacer, tSol) - SHGCb(keffSpacer, tSol)) * SHGCcog;
     }
 

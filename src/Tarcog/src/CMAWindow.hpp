@@ -39,7 +39,7 @@ namespace CMA
 
         [[nodiscard]] double vt(double tVis) override;
         [[nodiscard]] double uValue(double Ucog, double keffSpacer) override;
-        [[nodiscard]] double shgc(double SHGCcog, double tSol, double keffSpacer) override;
+        [[nodiscard]] double shgc(double SHGCcog, double keffSpacer) override;
 
     protected:
         [[nodiscard]] double Ub(double spacerKeff);
