@@ -39,7 +39,6 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMASingleVision)
     const auto UvalueCOG{1.258};
     const auto SHGCCOG{0.341};
     const auto tVis{0.535};
-    const auto tSol{0.3716};
     const auto spacerKeff{2.05280045621776};
 
     const double vt{window.vt(tVis)};
@@ -48,6 +47,6 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMASingleVision)
     const double uvalue{window.uValue(UvalueCOG, spacerKeff)};
     EXPECT_NEAR(2.092566, uvalue, 1e-6);
 
-    const double windowSHGC{window.shgc(SHGCCOG, tSol, spacerKeff)};
+    const double windowSHGC{window.shgc(SHGCCOG, spacerKeff)};
     EXPECT_NEAR(0.276032, windowSHGC, 1e-6);
 }

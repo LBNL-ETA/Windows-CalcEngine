@@ -50,7 +50,7 @@ namespace CMA
         virtual ~ICMAWindow() = default;
 
         [[nodiscard]] virtual double uValue(double Ucog, double keffSpacer) = 0;
-        [[nodiscard]] virtual double shgc(double SHGCcog, double tSol, double keffSpacer) = 0;
+        [[nodiscard]] virtual double shgc(double SHGCcog, double keffSpacer) = 0;
         [[nodiscard]] virtual double vt(double tVis) = 0;
     };
 }   // namespace CMA
