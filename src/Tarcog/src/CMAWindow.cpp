@@ -498,14 +498,14 @@ namespace CMA
         }
     }
 
-    void CMAWindowDualVisionVertical::setFrameMettingRail(CMAFrame cmaFrameData)
+    void CMAWindowDualVisionVertical::setFrameMeetingRail(CMAFrame cmaFrameData)
     {
         for(auto spacerOption : EnumOption())
         {
             for(auto glazingOption : EnumOption())
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameMettingRail(frameData);
+                m_Window.at(spacerOption).at(glazingOption).setFrameMeetingRail(frameData);
             }
         }
     }
