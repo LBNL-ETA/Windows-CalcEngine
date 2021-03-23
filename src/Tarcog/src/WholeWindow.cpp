@@ -359,7 +359,7 @@ namespace Tarcog::ISO15099
         return shgcCOG2();
     }
 
-    void DualVisionVertical::setFrameMettingRail(FrameData frameData)
+    void DualVisionVertical::setFrameMeetingRail(FrameData frameData)
     {
         frameData.splitFrameWidth();
         m_Vision1.setFrameData(FramePosition::Bottom, frameData);
