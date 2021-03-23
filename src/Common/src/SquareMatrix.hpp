@@ -27,6 +27,8 @@ namespace FenestrationCommon
 
         SquareMatrix mmultRows(const std::vector<double> & tInput);
 
+		std::vector<std::vector<double>> getMatrix() const;
+
     private:
         // explicit SquareMatrix(SquareMatrix && tMatrix);
         SquareMatrix LU() const;

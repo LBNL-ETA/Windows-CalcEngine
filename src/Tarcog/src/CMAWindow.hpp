@@ -152,7 +152,7 @@ namespace CMA
         void setFrameTopRight(CMAFrame cmaFrameData);
         void setFrameBottomLeft(CMAFrame cmaFrameData);
         void setFrameBottomRight(CMAFrame cmaFrameData);
-        void setFrameMettingRail(CMAFrame cmaFrameData);
+        void setFrameMeetingRail(CMAFrame cmaFrameData);
 
         void setDividers(CMAFrame cmaFrameData, size_t nHorizontal, size_t nVertical);
 
