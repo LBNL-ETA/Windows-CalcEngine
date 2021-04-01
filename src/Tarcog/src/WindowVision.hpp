@@ -39,6 +39,9 @@ namespace Tarcog
 
             void setInteriorAndExteriorSurfaceHeight(double height);
 
+            [[nodiscard]] double getIGUWidth() const;
+            [[nodiscard]] double getIGUHeight() const;
+
         private:
             //! Makes connection between frames for correct area calculations.
             void connectFrames();

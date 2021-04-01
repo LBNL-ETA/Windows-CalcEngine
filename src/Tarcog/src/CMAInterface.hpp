@@ -5,6 +5,8 @@
 
 #include <WCECommon.hpp>
 
+#include "WholeWindowConfigurations.hpp"
+
 namespace CMA
 {
     enum class Option
@@ -52,5 +54,6 @@ namespace CMA
         [[nodiscard]] virtual double uValue(double Ucog, double keffSpacer) = 0;
         [[nodiscard]] virtual double shgc(double SHGCcog, double keffSpacer) = 0;
         [[nodiscard]] virtual double vt(double tVis) = 0;
+        [[nodiscard]] virtual Tarcog::IGUDimensions getIGUDimensions() = 0;
     };
 }   // namespace CMA

@@ -53,6 +53,11 @@ namespace CMA
         return SHGCb(keffSpacer, tSol) + (SHGCw(keffSpacer, tSol) - SHGCb(keffSpacer, tSol)) * SHGCcog;
     }
 
+    Tarcog::IGUDimensions CMAWindow::getIGUDimensions()
+    {
+        return windowAt(Option::Best, Option::Best).getIGUDimensions();
+    }
+
     double CMAWindow::Ub(const double spacerKeff)
     {
         const auto lnTop{std::log(spacerKeff) - std::log(m_Spacer.value(Option::Best))};
