@@ -40,6 +40,9 @@ namespace Tarcog
             void setFrameRight(FrameData frameData);
             void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
+
+            [[nodiscard]] IGUDimensions getIGUDimensions() const override;
+
         protected:
             [[nodiscard]] double visionPercentage() const override;
 
@@ -70,6 +73,8 @@ namespace Tarcog
 
             [[nodiscard]] double uValueCOGAverage() const override;
             [[nodiscard]] double shgcCOGAverage() const override;
+
+            [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
         protected:
             WindowDualVision(double width,

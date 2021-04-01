@@ -41,6 +41,8 @@ namespace CMA
         [[nodiscard]] double uValue(double Ucog, double keffSpacer) override;
         [[nodiscard]] double shgc(double SHGCcog, double keffSpacer) override;
 
+        [[nodiscard]] Tarcog::IGUDimensions getIGUDimensions() override;
+
     protected:
         [[nodiscard]] double Ub(double spacerKeff);
         [[nodiscard]] double Uw(double spacerKeff);
@@ -51,7 +53,7 @@ namespace CMA
 
         std::map<Option, CMABestWorstUFactors> m_BestWorstIGUUvalues;
 
-        BestWorst<double> m_Spacer;
+        BestWorst<double> m_Spacer;        
     };
 
     //////////////////////////////////////////
@@ -72,7 +74,7 @@ namespace CMA
         void setFrameBottom(CMAFrame cmaFrameData);
         void setFrameLeft(CMAFrame cmaFrameData);
         void setFrameRight(CMAFrame cmaFrameData);
-        void setDividers(CMAFrame frameData, size_t nHorizontal, size_t nVertical);
+        void setDividers(CMAFrame frameData, size_t nHorizontal, size_t nVertical);        
 
     private:
         //! Single vision windows needs to create this structure, otherwise it will not work

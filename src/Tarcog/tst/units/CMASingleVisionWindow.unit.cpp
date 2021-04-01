@@ -78,4 +78,8 @@ TEST_F(TestCMASingleVisionWindow, CMASingleVision)
 
     const double windowSHGC{window.shgc(SHGCCOG, spacerKeff)};
     EXPECT_NEAR(0.299620, windowSHGC, 1e-6);
+
+    const auto iguDimensions{window.getIGUDimensions()};
+    EXPECT_NEAR(1.114250, iguDimensions.width, 1e-6);
+    EXPECT_NEAR(1.414250, iguDimensions.height, 1e-6);
 }

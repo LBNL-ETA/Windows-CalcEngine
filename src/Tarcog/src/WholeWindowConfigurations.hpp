@@ -28,6 +28,19 @@ namespace Tarcog
         virtual void setHc(double hc) = 0;
     };
 
+    struct IGUDimensions
+    {
+        IGUDimensions(double width, double height);
+
+        double width;
+        double height;
+    };
+
+    inline IGUDimensions::IGUDimensions(double width, double height):
+        width(width),
+        height(height)
+    {}
+
     class IWindow
     {
     public:
@@ -43,6 +56,8 @@ namespace Tarcog
 
         [[nodiscard]] virtual double uValueCOGAverage() const = 0;
         [[nodiscard]] virtual double shgcCOGAverage() const = 0;
+
+        [[nodiscard]] virtual IGUDimensions getIGUDimensions() const = 0;
     };
 
 }   // namespace Tarcog
