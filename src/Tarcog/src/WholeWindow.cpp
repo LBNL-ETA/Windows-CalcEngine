@@ -95,6 +95,11 @@ namespace Tarcog::ISO15099
         vision.setDividers(frameData, nHorizontal, nVertical);
     }
 
+    IGUDimensions WindowSingleVision::getIGUDimensions() const
+    {
+        return {vision.getIGUWidth(), vision.getIGUHeight()};
+    }
+
     ////////////////////////////////////////////////
     /// WindowDualVision
     ////////////////////////////////////////////////
@@ -162,6 +167,11 @@ namespace Tarcog::ISO15099
     double WindowDualVision::shgcCOGAverage() const
     {
         return (m_Vision1.shgcCOG() * m_Vision1.area() + m_Vision2.shgcCOG() * m_Vision2.area()) / area();
+    }
+
+    IGUDimensions WindowDualVision::getIGUDimensions() const
+    {
+        return {m_Vision1.getIGUWidth(), m_Vision1.getIGUHeight()};
     }
 
     double WindowDualVision::visionPercentage() const
