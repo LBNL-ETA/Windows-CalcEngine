@@ -1,7 +1,6 @@
-#ifndef MATHFUNCTIONS_H
-#define MATHFUNCTIONS_H
+#pragma once
 
-#include <cmath>
+#include <math.h>
 #include <algorithm>
 
 namespace FenestrationCommon
@@ -45,5 +44,3 @@ namespace FenestrationCommon
 	}
 
 }   // namespace FenestrationCommon
-
-#endif
