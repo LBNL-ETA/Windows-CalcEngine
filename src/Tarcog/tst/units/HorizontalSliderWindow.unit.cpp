@@ -8,7 +8,7 @@ protected:
     void SetUp() override
     {}
 
-    std::shared_ptr<Tarcog::ISO15099::CSystem> getCOG()
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getCOG()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
