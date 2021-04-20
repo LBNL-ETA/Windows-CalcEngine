@@ -66,7 +66,7 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMADualVerticalVision)
     window.setFrameTopRight(cmaFrameJamb);
     window.setFrameBottomLeft(cmaFrameJamb);
     window.setFrameBottomRight(cmaFrameJamb);
-    window.setFrameMettingRail(cmaFrameJamb);
+    window.setFrameMeetingRail(cmaFrameJamb);
 
     const auto UvalueCOG{1.258};
     const auto SHGCCOG{0.341};
@@ -81,4 +81,8 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMADualVerticalVision)
 
     const double windowSHGC{window.shgc(SHGCCOG, spacerKeff)};
     EXPECT_NEAR(0.290800, windowSHGC, 1e-6);
+
+    const auto iguDimensions{window.getIGUDimensions()};
+    EXPECT_NEAR(1.114250, iguDimensions.width, 1e-6);
+    EXPECT_NEAR(0.685687, iguDimensions.height, 1e-6);    
 }

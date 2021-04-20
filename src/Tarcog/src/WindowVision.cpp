@@ -166,6 +166,18 @@ namespace Tarcog::ISO15099
         m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);
     }
 
+    double WindowVision::getIGUWidth() const
+    {
+        return m_Width - m_Frame.at(FramePosition::Left).projectedFrameDimension()
+               - m_Frame.at(FramePosition::Right).projectedFrameDimension();
+    }
+
+    double WindowVision::getIGUHeight() const
+    {
+        return m_Height - m_Frame.at(FramePosition::Top).projectedFrameDimension()
+               - m_Frame.at(FramePosition::Bottom).projectedFrameDimension();
+    }
+
     void WindowVision::connectFrames()
     {
         m_Frame.at(FramePosition::Top)

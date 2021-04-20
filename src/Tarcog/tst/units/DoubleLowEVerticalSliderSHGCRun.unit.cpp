@@ -102,7 +102,7 @@ protected:
         m_Window.setFrameTopRight(frameData);
         m_Window.setFrameBottomLeft(frameData);
         m_Window.setFrameBottomRight(frameData);
-        m_Window.setFrameMettingRail(frameData);
+        m_Window.setFrameMeetingRail(frameData);
     }
 
 public:
