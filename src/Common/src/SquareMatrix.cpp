@@ -336,6 +336,11 @@ namespace FenestrationCommon
         return res;
     }
 
+	std::vector<std::vector<double>> SquareMatrix::getMatrix() const
+	{
+		return m_Matrix;
+	}
+
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second)
     {
         if(first.size() != second.size())
