@@ -7,6 +7,49 @@ class TestHorizontalSliderWindow : public testing::Test
 protected:
     void SetUp() override
     {}
+
+    std::shared_ptr<Tarcog::ISO15099::CSystem> getCOG()
+    {
+        /////////////////////////////////////////////////////////
+        /// Outdoor
+        /////////////////////////////////////////////////////////
+        auto airTemperature = 300.0;   // Kelvins
+        auto airSpeed = 5.5;           // meters per second
+        auto tSky = 270.0;             // Kelvins
+        auto solarRadiation = 789.0;
+
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
+
+        /////////////////////////////////////////////////////////
+        /// Indoor
+        /////////////////////////////////////////////////////////
+
+        auto roomTemperature = 294.15;
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
+
+        /////////////////////////////////////////////////////////
+        // IGU
+        /////////////////////////////////////////////////////////
+        auto solidLayerThickness = 0.003048;   // [m]
+        auto solidLayerConductance = 1.0;
+
+        auto aSolidLayer =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        aSolidLayer->setSolarAbsorptance(0.094189159572, solarRadiation);
+
+        auto windowWidth = 1.0;
+        auto windowHeight = 1.0;
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        aIGU.addLayer(aSolidLayer);
+
+        /////////////////////////////////////////////////////////
+        // System
+        /////////////////////////////////////////////////////////
+        return std::make_shared<Tarcog::ISO15099::CSystem>(
+          aIGU, Indoor, Outdoor);
+    }
 };
 
 TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
@@ -56,4 +99,50 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
 
     const double windowSHGC{window.shgc()};
     EXPECT_NEAR(0.357692, windowSHGC, 1e-6);
+}
+
+TEST_F(TestHorizontalSliderWindow, CalculatedCOG)
+{
+    SCOPED_TRACE("Begin Test: Horizontal slider window calculated COG.");
+
+    const double uValue{2.134059};
+    const double edgeUValue{2.251039};
+    const double projectedFrameDimension{0.050813};
+    const double wettedLength{0.05633282};
+    const double absorptance{0.3};
+
+    Tarcog::ISO15099::FrameData frameData{
+      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+
+    const auto width{1.2};
+    const auto height{1.5};
+    const auto tVis{0.638525};
+    const auto tSol{0.3716};
+
+    auto window = Tarcog::ISO15099::DualVisionHorizontal(
+      width,
+      height,
+      tVis,
+      tSol,
+      getCOG(),
+      tVis,
+      tSol,
+      getCOG());
+
+    window.setFrameTopLeft(frameData);
+    window.setFrameTopRight(frameData);
+    window.setFrameMeetingRail(frameData);
+    window.setFrameLeft(frameData);
+    window.setFrameRight(frameData);
+    window.setFrameBottomLeft(frameData);
+    window.setFrameBottomRight(frameData);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.519647, vt, 1e-6);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(3.980813, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.321657, windowSHGC, 1e-6);
 }
