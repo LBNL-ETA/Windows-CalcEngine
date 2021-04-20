@@ -2,16 +2,16 @@
 
 #include "WCETarcog.hpp"
 
-class TestHorizontalSliderWindow : public testing::Test
+class TestVerticalSliderWindow : public testing::Test
 {
 protected:
     void SetUp() override
     {}
 };
 
-TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
+TEST_F(TestVerticalSliderWindow, PredefinedCOGValues)
 {
-    SCOPED_TRACE("Begin Test: Horizontal slider window predefined COG.");
+    SCOPED_TRACE("Begin Test: Vertical slider window with predefined COG values.");
 
     const double uValue{2.134059};
     const double edgeUValue{2.251039};
@@ -30,7 +30,7 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
     const auto tSol{0.3716};
     const auto hcout{15.0};
 
-    auto window = Tarcog::ISO15099::DualVisionHorizontal(
+    auto window = Tarcog::ISO15099::DualVisionVertical(
       width,
       height,
       tVis,
@@ -40,20 +40,20 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
 
+    window.setFrameTop(frameData);
     window.setFrameTopLeft(frameData);
     window.setFrameTopRight(frameData);
     window.setFrameMeetingRail(frameData);
-    window.setFrameLeft(frameData);
-    window.setFrameRight(frameData);
     window.setFrameBottomLeft(frameData);
     window.setFrameBottomRight(frameData);
+    window.setFrameBottom(frameData);
 
     const double vt{window.vt()};
-    EXPECT_NEAR(0.519647, vt, 1e-6);
+    EXPECT_NEAR(0.525054, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(1.902392, uvalue, 1e-6);
+    EXPECT_NEAR(1.886101, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.357692, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.361014, windowSHGC, 1e-6);
 }
