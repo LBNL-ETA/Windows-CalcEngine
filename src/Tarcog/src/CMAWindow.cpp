@@ -53,6 +53,11 @@ namespace CMA
         return SHGCb(keffSpacer, tSol) + (SHGCw(keffSpacer, tSol) - SHGCb(keffSpacer, tSol)) * SHGCcog;
     }
 
+    Tarcog::IGUDimensions CMAWindow::getIGUDimensions()
+    {
+        return windowAt(Option::Best, Option::Best).getIGUDimensions();
+    }
+
     double CMAWindow::Ub(const double spacerKeff)
     {
         const auto lnTop{std::log(spacerKeff) - std::log(m_Spacer.value(Option::Best))};
@@ -498,14 +503,14 @@ namespace CMA
         }
     }
 
-    void CMAWindowDualVisionVertical::setFrameMettingRail(CMAFrame cmaFrameData)
+    void CMAWindowDualVisionVertical::setFrameMeetingRail(CMAFrame cmaFrameData)
     {
         for(auto spacerOption : EnumOption())
         {
             for(auto glazingOption : EnumOption())
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameMettingRail(frameData);
+                m_Window.at(spacerOption).at(glazingOption).setFrameMeetingRail(frameData);
             }
         }
     }

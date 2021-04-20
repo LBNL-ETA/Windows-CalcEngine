@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
+
 #include <memory>
-#include <stdexcept>
 
 #include "WCETarcog.hpp"
 
-class TestSingleVisionWindow : public testing::Test
+class TestVerticalSliderWindow : public testing::Test
 {
 protected:
     void SetUp() override
@@ -54,9 +54,9 @@ protected:
     }
 };
 
-TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
+TEST_F(TestVerticalSliderWindow, PredefinedCOGValues)
 {
-    SCOPED_TRACE("Begin Test: Single vision window with predefined COG values.");
+    SCOPED_TRACE("Begin Test: Vertical slider window with predefined COG values.");
 
     const double uValue{2.134059};
     const double edgeUValue{2.251039};
@@ -75,31 +75,37 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
     const auto tSol{0.3716};
     const auto hcout{15.0};
 
-    auto window = Tarcog::ISO15099::WindowSingleVision(
+    auto window = Tarcog::ISO15099::DualVisionVertical(
       width,
       height,
+      tVis,
+      tSol,
+      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout),
       tVis,
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
 
     window.setFrameTop(frameData);
+    window.setFrameTopLeft(frameData);
+    window.setFrameTopRight(frameData);
+    window.setFrameMeetingRail(frameData);
+    window.setFrameBottomLeft(frameData);
+    window.setFrameBottomRight(frameData);
     window.setFrameBottom(frameData);
-    window.setFrameLeft(frameData);
-    window.setFrameRight(frameData);
 
     const double vt{window.vt()};
-    EXPECT_NEAR(0.544853, vt, 1e-6);
+    EXPECT_NEAR(0.525054, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(1.833769, uvalue, 1e-6);
+    EXPECT_NEAR(1.886101, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.373175, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.361014, windowSHGC, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, CalculatedCOG)
+TEST_F(TestVerticalSliderWindow, CalculatedCOG)
 {
-    SCOPED_TRACE("Begin Test: Single vision window with calculated COG values.");
+    SCOPED_TRACE("Begin Test: Vertical slider window with calculated COG.");
 
     const double uValue{2.134059};
     const double edgeUValue{2.251039};
@@ -115,24 +121,30 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
     const auto tVis{0.638525};
     const auto tSol{0.3716};
 
-    auto window = Tarcog::ISO15099::WindowSingleVision(
+    auto window = Tarcog::ISO15099::DualVisionVertical(
       width,
       height,
+      tVis,
+      tSol,
+      getCOG(),
       tVis,
       tSol,
       getCOG());
 
     window.setFrameTop(frameData);
+    window.setFrameTopLeft(frameData);
+    window.setFrameTopRight(frameData);
+    window.setFrameMeetingRail(frameData);
+    window.setFrameBottomLeft(frameData);
+    window.setFrameBottomRight(frameData);
     window.setFrameBottom(frameData);
-    window.setFrameLeft(frameData);
-    window.setFrameRight(frameData);
 
     const double vt{window.vt()};
-    EXPECT_NEAR(0.544853, vt, 1e-6);
+    EXPECT_NEAR(0.525054, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(4.377901, uvalue, 1e-6);
+    EXPECT_NEAR(4.074413, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.336182, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.324773, windowSHGC, 1e-6);
 }
