@@ -11,8 +11,6 @@ namespace FenestrationCommon
 
 namespace Tarcog
 {
-    class ISurface;
-
     namespace ISO15099
     {
         class CIGUSolidLayer : public CBaseIGULayer
