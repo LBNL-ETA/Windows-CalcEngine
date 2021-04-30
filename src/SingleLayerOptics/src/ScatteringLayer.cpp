@@ -30,8 +30,8 @@ namespace SingleLayerOptics
         m_Phi(0)
     {}
 
-    CScatteringLayer::CScatteringLayer(const CScatteringSurface && t_Front,
-                                       const CScatteringSurface && t_Back) :
+    CScatteringLayer::CScatteringLayer(CScatteringSurface && t_Front,
+                                       CScatteringSurface && t_Back) :
         m_Surface({{Side::Front, std::move(t_Front)}, {Side::Back, std::move(t_Back)}}),
         m_BSDFLayer(nullptr),
         m_Theta(0),
@@ -60,6 +60,23 @@ namespace SingleLayerOptics
         m_Theta(0),
         m_Phi(0)
     {}
+
+    CScatteringLayer::CScatteringLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                       std::shared_ptr<ICellDescription> t_Description,
+                                       const DistributionMethod t_Method) :
+        m_BSDFLayer(nullptr),
+        m_Cell(nullptr),
+        m_Theta(0),
+        m_Phi(0)
+    {
+        // Scattering layer can also be created from material and cell desctiption in which case
+        // integration will be performed using BSDF distribution while direct-direct component will
+        // be taken directly from cell.
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        auto aMaker = CBSDFLayerMaker(t_Material, aBSDF, t_Description, t_Method);
+        m_Cell = aMaker.getCell();
+        m_BSDFLayer = aMaker.getLayer();
+    }
 
     void CScatteringLayer::setSourceData(CSeries & t_SourceData) const
     {
@@ -340,6 +357,4 @@ namespace SingleLayerOptics
         }
         return value;
     }
-
-
 }   // namespace SingleLayerOptics
