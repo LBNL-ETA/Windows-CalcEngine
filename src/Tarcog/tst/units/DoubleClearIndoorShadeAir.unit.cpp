@@ -121,8 +121,8 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
 
     for(size_t i = 0; i < temperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemp[i], temperature[i], 1e-6);
-        EXPECT_NEAR(correctJ[i], radiosity[i], 1e-6);
+        EXPECT_NEAR(correctTemp[i], temperature[i], 1e-5);
+        EXPECT_NEAR(correctJ[i], radiosity[i], 1e-5);
     }
 
     //const auto numOfIter = aSystem.getNumberOfIterations();
