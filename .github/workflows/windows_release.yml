@@ -28,32 +28,32 @@ jobs:
       
     - name: Test Fenestration Common
       working-directory: ${{github.workspace}}/build
-      run: src/Common/FenestrationCommon_tests
+      run: src/Common/FenestrationCommon_tests.exe
       
     - name: Test Viewer
       working-directory: ${{github.workspace}}/build
-      run: src/Viewer/Viewer_tests
+      run: src/Viewer/Viewer_tests.exe
       
     - name: Test Gases
       working-directory: ${{github.workspace}}/build
-      run: src/Gases/Gases_tests
+      run: src/Gases/Gases_tests.exe
       
     - name: Test Tarcog
       working-directory: ${{github.workspace}}/build
-      run: src/Tarcog/Tarcog_tests
+      run: src/Tarcog/Tarcog_tests.exe
       
     - name: Test Chromogenics
       working-directory: ${{github.workspace}}/build
-      run: src/Chromogenics/Chromogenics_tests
+      run: src/Chromogenics/Chromogenics_tests.exe
       
     - name: Test Spectral Averaging
       working-directory: ${{github.workspace}}/build
-      run: src/SpectralAveraging/SpectralAveraging_tests
+      run: src/SpectralAveraging/SpectralAveraging_tests.exe
       
     - name: Test Single Layer Optics
       working-directory: ${{github.workspace}}/build
-      run: src/SingleLayerOptics/SingleLayerOptics_tests
+      run: src/SingleLayerOptics/SingleLayerOptics_tests.exe
       
     - name: Test Multi Layer Optics
       working-directory: ${{github.workspace}}/build
-      run: src/MultiLayerOptics/MultiLayerOptics_tests
+      run: src/MultiLayerOptics/MultiLayerOptics_tests.exe
