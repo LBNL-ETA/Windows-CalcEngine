@@ -25,9 +25,31 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-
-    - name: Test
+      
+    - name: Test Fenestration Common
       working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.  
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: cmake --build . -- | src/Common/FenestrationCommon_tests | src/Gases/Gases_tests | src/SingleLayerOptics/SingleLayerOptics_tests | src/MultiLayerOptics/MultiLayerOptics_tests | src/SpectralAveraging/SpectralAveraging_tests | src/Tarcog/Tarcog_tests | src/Viewer/Viewer_tests
+      run: src/Common/FenestrationCommon_tests
+      
+    - name: Test Viewer
+      working-directory: ${{github.workspace}}/build
+      run: src/Viewer/Viewer_tests
+      
+    - name: Test Gases
+      working-directory: ${{github.workspace}}/build
+      run: src/Gases/Gases_tests
+      
+    - name: Test Tarcog
+      working-directory: ${{github.workspace}}/build
+      run: src/Tarcog/Tarcog_tests
+      
+    - name: Test Spectral Averaging
+      working-directory: ${{github.workspace}}/build
+      run: src/SpectralAveraging/SpectralAveraging_tests
+      
+    - name: Test Single Layer Optics
+      working-directory: ${{github.workspace}}/build
+      run: src/SingleLayerOptics/SingleLayerOptics_tests
+      
+    - name: Test Multi Layer Optics
+      working-directory: ${{github.workspace}}/build
+      run: src/MultiLayerOptics/MultiLayerOptics_tests
