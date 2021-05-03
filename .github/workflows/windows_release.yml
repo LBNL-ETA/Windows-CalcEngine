@@ -1,4 +1,4 @@
-name: Latest Ubuntu
+name: Visual Studio 2019
 
 on: push
 
