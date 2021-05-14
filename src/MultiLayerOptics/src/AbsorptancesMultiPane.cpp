@@ -31,8 +31,7 @@ namespace MultiLayerOptics
         return m_Abs[Index];
     }
 
-    FenestrationCommon::CSeries CAbsorptancesMultiPane::Abs(size_t Index,
-                                                            FenestrationCommon::Side side)
+    CSeries CAbsorptancesMultiPane::Abs(size_t Index, Side side)
     {
         calculateState();
         return m_AbsBySide.at(side)[Index - 1];
@@ -42,6 +41,16 @@ namespace MultiLayerOptics
     {
         calculateState();
         return m_Abs.size();
+    }
+
+    CSeries CAbsorptancesMultiPane::iplus(size_t Index)
+    {
+        return Iplus[Index];
+    }
+
+    CSeries CAbsorptancesMultiPane::iminus(size_t Index)
+    {
+        return Iminus[Index];
     }
 
     void CAbsorptancesMultiPane::calculateState()
@@ -70,9 +79,7 @@ namespace MultiLayerOptics
             }
 
             // Calculate normalized radiances
-            size = m_rCoeffs.size();
-            std::vector<CSeries> Iplus;
-            std::vector<CSeries> Iminus;
+            size = m_rCoeffs.size();            
 
             CSeries Im;
             CSeries Ip;

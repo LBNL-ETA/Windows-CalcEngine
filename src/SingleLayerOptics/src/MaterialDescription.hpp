@@ -387,8 +387,7 @@ namespace SingleLayerOptics
           FenestrationCommon::MaterialType t_Type,
           FenestrationCommon::WavelengthRange t_Range);
 
-        FenestrationCommon::CSeries PCE(FenestrationCommon::Side t_Side) const;
-        FenestrationCommon::CSeries W(FenestrationCommon::Side t_Side) const;
+        [[nodiscard]] FenestrationCommon::CSeries jscPrime(FenestrationCommon::Side t_Side) const;
 
     private:
         std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> m_PVSample;
