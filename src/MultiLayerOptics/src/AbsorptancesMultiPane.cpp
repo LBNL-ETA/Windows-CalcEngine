@@ -31,12 +31,6 @@ namespace MultiLayerOptics
         return m_Abs[Index];
     }
 
-    CSeries CAbsorptancesMultiPane::Abs(size_t Index, Side side)
-    {
-        calculateState();
-        return m_AbsBySide.at(side)[Index - 1];
-    }
-
     size_t CAbsorptancesMultiPane::numOfLayers()
     {
         calculateState();
@@ -45,11 +39,13 @@ namespace MultiLayerOptics
 
     CSeries CAbsorptancesMultiPane::iplus(size_t Index)
     {
+        calculateState();
         return Iplus[Index];
     }
 
     CSeries CAbsorptancesMultiPane::iminus(size_t Index)
     {
+        calculateState();
         return Iminus[Index];
     }
 
@@ -98,8 +94,6 @@ namespace MultiLayerOptics
 
             // Calculate absorptances
             m_Abs.clear();
-            m_AbsBySide[FenestrationCommon::Side::Front] = std::vector<CSeries>();
-            m_AbsBySide[FenestrationCommon::Side::Back] = std::vector<CSeries>();
             size = Iminus.size();
             for(size_t i = 0; i < size - 1; ++i)
             {
@@ -107,8 +101,6 @@ namespace MultiLayerOptics
                 const auto Ioutgoing = Iminus[i + 1] - Iplus[i + 1];
                 CSeries layerAbs = Iincoming - Ioutgoing;
                 m_Abs.push_back(layerAbs);
-                m_AbsBySide[Side::Front].emplace_back(Iminus[i] * (1 - m_T[i] - m_Rf[i]));
-                m_AbsBySide[Side::Back].emplace_back(Iplus[i + 1] * (1 - m_T[i] - m_Rb[i]));
             }
         }
     }
