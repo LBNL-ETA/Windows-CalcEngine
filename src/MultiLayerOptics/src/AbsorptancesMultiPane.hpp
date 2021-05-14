@@ -23,6 +23,9 @@ namespace MultiLayerOptics
         FenestrationCommon::CSeries Abs(size_t Index, FenestrationCommon::Side side);
         size_t numOfLayers();
 
+        FenestrationCommon::CSeries iplus(size_t Index);
+        FenestrationCommon::CSeries iminus(size_t Index);
+
     private:
         void calculateState();
 
@@ -46,6 +49,9 @@ namespace MultiLayerOptics
 
         std::vector<FenestrationCommon::CSeries> m_rCoeffs;
         std::vector<FenestrationCommon::CSeries> m_tCoeffs;
+
+        std::vector<FenestrationCommon::CSeries> Iplus;
+        std::vector<FenestrationCommon::CSeries> Iminus;
 
         bool m_StateCalculated;
     };

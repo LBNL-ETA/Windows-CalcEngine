@@ -40,7 +40,7 @@ protected:
 
     void SetUp() override
     {
-        std::vector<SpectralAveraging::PVMeasurementRow> pvMeasurements{
+        std::vector<SpectralAveraging::PVPowerPropertiesRow> pvMeasurements{
           {0.300, {0.00569, 0.83, 0.41}, {0.0, 0.81, 0.43}},
           {0.305, {0.036081, 0.83, 0.41}, {0.024239, 0.81, 0.43}},
           {0.310, {0.098415, 0.83, 0.41}, {0.031977, 0.81, 0.43}},

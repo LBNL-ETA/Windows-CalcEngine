@@ -46,20 +46,29 @@ namespace MultiLayerOptics
             auto aLayer =
               dynamic_cast<SingleLayerOptics::PhotovoltaicLayer *>(m_Layers[Index - 1].get());
 
+            auto frontJscPrime = aLayer->jscPrime(FenestrationCommon::Side::Front);
+            auto backJscPrime = aLayer->jscPrime(FenestrationCommon::Side::Back);
+
+            auto IPlus = aAngularProperties.iplus(Index - 1);
+            auto IMinus = aAngularProperties.iminus(Index - 1);
+
+            auto frontJsc = frontJscPrime * IMinus;
+            auto backJsc = backJscPrime * IPlus;
+
             auto testHeat = aAngularProperties.AbsBySide(Index, FenestrationCommon::Side::Front);
 
             FenestrationCommon::CSeries AbsHeat =
-              aAngularProperties.AbsBySide(Index, FenestrationCommon::Side::Front)
-                * aLayer->W(FenestrationCommon::Side::Front)
-              + aAngularProperties.AbsBySide(Index, FenestrationCommon::Side::Back)
-                  * aLayer->W(FenestrationCommon::Side::Back);
+                aAngularProperties.AbsBySide(Index, FenestrationCommon::Side::Front);
+            //    * aLayer->W(FenestrationCommon::Side::Front)
+            //  + aAngularProperties.AbsBySide(Index, FenestrationCommon::Side::Back)
+            //      * aLayer->W(FenestrationCommon::Side::Back);
 
-            auto aMult = AbsHeat * m_SolarRadiation;
+            const auto aMult = AbsHeat * m_SolarRadiation;
 
-            auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
+            const auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
 
-            double totalProperty = iIntegrated->sum(minLambda, maxLambda);
-            double totalSolar =
+            const double totalProperty = iIntegrated->sum(minLambda, maxLambda);
+            const double totalSolar =
               m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
                 ->sum(minLambda, maxLambda);
 
