@@ -41,11 +41,6 @@ namespace MultiLayerOptics
         return m_Abs.Abs(Index);
     }
 
-    CSeries CEquivalentLayerSingleComponentMWAngle::AbsBySide(size_t Index, Side side)
-    {
-        return m_Abs.Abs(Index, side);
-    }
-
     CSeries CEquivalentLayerSingleComponentMWAngle::iplus(size_t Index)
     {
         return m_Abs.iplus(Index);
