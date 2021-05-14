@@ -39,6 +39,14 @@ namespace SingleLayerOptics
         [[nodiscard]] double ff(double jsc) const;
 
     private:
+        struct SearchIndexes
+        {
+            size_t first;
+            size_t second;
+        };
+
+        SearchIndexes findIndexes(double el) const;
+
         std::vector<PVPowerProperties> m_PVPowerProperties;
     };
 
