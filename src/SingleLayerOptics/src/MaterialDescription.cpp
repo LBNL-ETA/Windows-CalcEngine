@@ -604,14 +604,9 @@ namespace SingleLayerOptics
         m_PVSample(t_SpectralSample)
     {}
 
-    FenestrationCommon::CSeries CMaterialPhotovoltaic::PCE(FenestrationCommon::Side t_Side) const
+    FenestrationCommon::CSeries CMaterialPhotovoltaic::jscPrime(FenestrationCommon::Side t_Side) const
     {
-        return m_PVSample->pce(t_Side);
-    }
-
-    FenestrationCommon::CSeries CMaterialPhotovoltaic::W(FenestrationCommon::Side t_Side) const
-    {
-        return m_PVSample->w(t_Side);
+        return m_PVSample->jscPrime(t_Side);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
