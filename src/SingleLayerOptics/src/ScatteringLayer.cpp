@@ -64,10 +64,7 @@ namespace SingleLayerOptics
     CScatteringLayer::CScatteringLayer(const std::shared_ptr<CMaterial> & t_Material,
                                        std::shared_ptr<ICellDescription> t_Description,
                                        const DistributionMethod t_Method) :
-        m_BSDFLayer(nullptr),
-        m_Cell(nullptr),
-        m_Theta(0),
-        m_Phi(0)
+        m_BSDFLayer(nullptr), m_Cell(nullptr), m_Theta(0), m_Phi(0)
     {
         // Scattering layer can also be created from material and cell desctiption in which case
         // integration will be performed using BSDF distribution while direct-direct component will
@@ -340,16 +337,21 @@ namespace SingleLayerOptics
           t_Material, aBSDF, x, y, thickness, xHole, yHole));
     }
 
-    double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
-                                                             EmissivityPolynomials type)
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// CScatteringLayerIR
+    ////////////////////////////////////////////////////////////////////////////////////
+
+    CScatteringLayerIR::CScatteringLayerIR(CScatteringLayer layer) : m_Layer(std::move(layer))
+    {}
+
+    double CScatteringLayerIR::emissivity(Side t_Side, EmissivityPolynomials type)
     {
-        return normalToHemisphericalEmissivity(t_Side, emissPolynomial.at(type));
+        return emissivity(t_Side, emissPolynomial.at(type));
     }
 
-    double CScatteringLayer::normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
-                                                             const std::vector<double> & polynomial)
+    double CScatteringLayerIR::emissivity(Side t_Side, const std::vector<double> & polynomial)
     {
-        double abs = getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
+        double abs = m_Layer.getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
         double value = 0;
         for(size_t i = 0; i < polynomial.size(); ++i)
         {
@@ -357,4 +359,15 @@ namespace SingleLayerOptics
         }
         return value;
     }
+
+    double CScatteringLayerIR::transmittance(Side t_Side)
+    {
+        CWavelengthRange wrIR{WavelengthRange::IR};
+        return m_Layer.getPropertySimple(wrIR.minLambda(),
+                                         wrIR.maxLambda(),
+                                         PropertySimple::T,
+                                         t_Side,
+                                         Scattering::DiffuseDiffuse);
+    }
+
 }   // namespace SingleLayerOptics

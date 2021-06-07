@@ -202,15 +202,11 @@ namespace SpectralAveraging
         CSpectralSampleData::cutExtraData(minLambda, maxLambda);
         for(const auto & side : EnumSide())
         {
-            for(const auto & pvm : EnumPVM())
-            {
-                m_EQE.at(side).cutExtraData(minLambda, maxLambda);
-            }
+            m_EQE.at(side).cutExtraData(minLambda, maxLambda);
         }
     }
 
-    FenestrationCommon::CSeries
-      PhotovoltaicSampleData::eqe(const FenestrationCommon::Side side) const
+    CSeries PhotovoltaicSampleData::eqe(const Side side) const
     {
         return m_EQE.at(side);
     }

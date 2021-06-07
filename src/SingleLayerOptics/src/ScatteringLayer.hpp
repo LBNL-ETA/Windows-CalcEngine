@@ -112,12 +112,6 @@ namespace SingleLayerOptics
                                                  double theta,
                                                  double phi) override;
 
-        // This function is valid only for specular layers
-        double normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
-                                               EmissivityPolynomials type);
-        double normalToHemisphericalEmissivity(FenestrationCommon::Side t_Side,
-                                               const std::vector<double> & polynomial);
-
         CLayerSingleComponent getLayer(FenestrationCommon::Scattering t_Scattering,
                                        double t_Theta = 0,
                                        double t_Phi = 0);
@@ -145,6 +139,23 @@ namespace SingleLayerOptics
 
         double m_Theta{0.0};
         double m_Phi{0.0};
+    };
+
+
+    class CScatteringLayerIR
+    {
+    public:
+        explicit CScatteringLayerIR(CScatteringLayer layer);
+
+        // This function is valid only for specular layers
+        double emissivity(FenestrationCommon::Side t_Side, EmissivityPolynomials type);
+
+        double emissivity(FenestrationCommon::Side t_Side, const std::vector<double> & polynomial);
+
+        double transmittance(FenestrationCommon::Side t_Side);
+
+    private:
+        CScatteringLayer m_Layer;
     };
 
 }   // namespace SingleLayerOptics
