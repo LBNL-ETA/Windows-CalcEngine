@@ -102,9 +102,6 @@ namespace SingleLayerOptics
                               double t_Theta = 0,
                               double t_Phi = 0);
 
-        double
-          getAbsorptance(FenestrationCommon::Side t_Side, double t_Theta = 0, double t_Phi = 0);
-
         std::vector<double> getAbsorptanceLayers(double minLambda,
                                                  double maxLambda,
                                                  FenestrationCommon::Side side,
@@ -123,6 +120,9 @@ namespace SingleLayerOptics
         [[nodiscard]] double getMaxLambda() const override;
 
     private:
+        double
+          getAbsorptance(FenestrationCommon::Side t_Side, double t_Theta = 0, double t_Phi = 0);
+
         explicit CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
 
         void createResultsAtAngle(double t_Theta, double t_Phi);
