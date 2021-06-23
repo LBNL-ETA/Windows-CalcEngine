@@ -6,7 +6,11 @@
 
 namespace DeflectionData
 {
+    //! Hard coded data used in the deflection calculations. This table is only valid for the
+    //! Poisson's ratio equal 0.22.
     Table::Table2D<std::optional<double>> getWNData();
 
-    Table::Table2D<std::optional<double>> getVNData();    
-}
+    //! Hard coded data used in the deflection calculations. This table is only valid for the
+    //! Poisson's ratio equal 0.22.
+    Table::Table2D<std::optional<double>> getVNData();
+}   // namespace DeflectionData
