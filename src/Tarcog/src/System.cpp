@@ -126,46 +126,46 @@ namespace Tarcog
 
         void CSystem::setWidth(double width)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & system : m_System)
             {
-                aSystem->setWidth(width);
+                system.second->setWidth(width);
             }
             m_Solved = false;
         }
 
         void CSystem::setHeight(double height)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & system : m_System)
             {
-                aSystem->setHeight(height);
+                system.second->setHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::setWidthAndHeight(double width, double height)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & system : m_System)
             {
-                aSystem->setWidth(width);
-                aSystem->setHeight(height);
+                system.second->setWidth(width);
+                system.second->setHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::setInteriorAndExteriorSurfacesHeight(double height)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & system : m_System)
             {
-                aSystem->setInteriorAndExteriorSurfacesHeight(height);
+                system.second->setInteriorAndExteriorSurfacesHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::solve()
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & system : m_System)
             {
-                aSystem->solve();
+                system.second->solve();
             }
             m_Solved = true;
         }

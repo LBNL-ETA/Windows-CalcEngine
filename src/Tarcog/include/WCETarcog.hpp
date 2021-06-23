@@ -33,3 +33,4 @@
 #include "../src/CMAInterface.hpp"
 #include "../src/CMAWindow.hpp"
 #include "../src/CMASettings.hpp"
+#include "../src/DeflectionData.hpp"
