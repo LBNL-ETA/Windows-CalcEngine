@@ -306,9 +306,10 @@ namespace Tarcog
 
         void CSingleSystem::setInteriorAndExteriorSurfacesHeight(double height)
         {
-            for(auto & system : m_Environment)
+            for(auto & [key, environment] : m_Environment)
             {
-                system.second->setHeight(height);
+                std::ignore = key;
+                environment->setHeight(height);
             }
         }
     }   // namespace ISO15099
