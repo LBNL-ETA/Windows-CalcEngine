@@ -135,37 +135,41 @@ namespace Tarcog
 
         void CSystem::setHeight(double height)
         {
-            for(auto & system : m_System)
+            for(auto & [key, system] : m_System)
             {
-                system.second->setHeight(height);
+                std::ignore = key;
+                system->setHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::setWidthAndHeight(double width, double height)
         {
-            for(auto & system : m_System)
+            for(auto & [key, system] : m_System)
             {
-                system.second->setWidth(width);
-                system.second->setHeight(height);
+                std::ignore = key;
+                system->setWidth(width);
+                system->setHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::setInteriorAndExteriorSurfacesHeight(double height)
         {
-            for(auto & system : m_System)
+            for(auto & [key, system] : m_System)
             {
-                system.second->setInteriorAndExteriorSurfacesHeight(height);
+                std::ignore = key;
+                system->setInteriorAndExteriorSurfacesHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::solve()
         {
-            for(auto & system : m_System)
+            for(auto & [key, system] : m_System)
             {
-                system.second->solve();
+                std::ignore = key;
+                system->solve();
             }
             m_Solved = true;
         }
