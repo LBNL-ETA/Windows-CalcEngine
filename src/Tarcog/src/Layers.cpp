@@ -37,10 +37,10 @@ namespace Tarcog
         }
 
         std::shared_ptr<CIGUSolidLayer>
-          Layers::makeDeflectable(const std::shared_ptr<CIGUSolidLayer> & layer,
-                                  const double youngsModulus,
-                                  const double poissonRatio)
+          Layers::updateDeflectionCoefficients(const std::shared_ptr<CIGUSolidLayer> & layer,
+                                  const double youngsModulus)
         {
+            static const double poissonRatio{0.22};
             return std::make_shared<CIGUSolidLayerDeflection>(*layer, youngsModulus, poissonRatio);
         }
 

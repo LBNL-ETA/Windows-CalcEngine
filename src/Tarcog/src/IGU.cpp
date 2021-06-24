@@ -26,9 +26,7 @@ namespace Tarcog
     namespace ISO15099
     {
         CIGU::CIGU(double const t_Width, double const t_Height, double const t_Tilt) :
-            m_Width(t_Width),
-            m_Height(t_Height),
-            m_Tilt(t_Tilt)
+            m_Width(t_Width), m_Height(t_Height), m_Tilt(t_Tilt)
         {}
 
         CIGU::CIGU(CIGU const & t_IGU)
@@ -46,6 +44,11 @@ namespace Tarcog
             {
                 const auto aLayer{layer->clone()};
                 addLayer(aLayer);
+            }
+
+            if(t_IGU.m_DeflectionFromE1300Curves != nullptr)
+            {
+                m_DeflectionFromE1300Curves = std::make_unique<Deflection::DeflectionE1300>(*t_IGU.m_DeflectionFromE1300Curves);
             }
 
             return *this;
@@ -308,38 +311,62 @@ namespace Tarcog
             }
         }
 
-        void CIGU::setDeflectionProperties(double const t_Tini, double const t_Pini)
+        void CIGU::setDeflectionProperties(double t_Tini, double t_Pini)
         {
-            // Simply decorating layers in a list with new behavior
-            auto aVector = getSolidLayers();
-            // deflection properties of the IGU
-            auto Lmean = Ldmean();
-            auto Lmax = Ldmax();
+            std::vector<Deflection::LayerData> layerData;
+            static const double glassDensity{2500};
+            for(const auto & layer : getSolidLayers())
+            {
+                layerData.emplace_back(layer->getThickness(), glassDensity, layer->youngsModulus());
+            }
 
-            for(auto & aLayer : getSolidLayers())
+            std::vector<Deflection::GapData> gapData;
+            for(const auto & gap : getGapLayers())
             {
-                // Deflection could also be decorated (created) outside in which case program
-                // already have a layer as deflection layer. If that is not done then layer must be
-                // decorated with default deflection properties
-                std::shared_ptr<CIGUSolidLayerDeflection> aDeflectionLayer = nullptr;
-                if(!aLayer->isDeflected())
-                {
-                    aDeflectionLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
-                }
-                else
-                {
-                    aDeflectionLayer = std::dynamic_pointer_cast<CIGUSolidLayerDeflection>(aLayer);
-                }
-                replaceLayer(
-                  aLayer,
-                  std::make_shared<CIGUDeflectionTempAndPressure>(aDeflectionLayer, Lmax, Lmean));
+                gapData.emplace_back(gap->getThickness(), t_Tini, t_Pini);
             }
-            for(std::shared_ptr<CIGUGapLayer> & aLayer : getGapLayers())
-            {
-                replaceLayer(aLayer,
-                             std::make_shared<CIGUGapLayerDeflection>(*aLayer, t_Tini, t_Pini));
-            }
+
+            m_DeflectionFromE1300Curves =
+              std::make_unique<Deflection::DeflectionE1300>(m_Width, m_Height, layerData, gapData);
         }
+
+        //! The old deflection routine that did not work because program failed to converge. Will
+        //! disable it for now since results are incorrect (Simon)
+        // void CIGU::setDeflectionProperties(double const t_Tini, double const t_Pini)
+        //{
+        //    // Simply decorating layers in a list with new behavior
+        //    auto aVector = getSolidLayers();
+        //    // deflection properties of the IGU
+        //    auto Lmean = Ldmean();
+        //    auto Lmax = Ldmax();
+        //
+        //    for(auto & aLayer : getSolidLayers())
+        //    {
+        //        // Deflection could also be decorated (created) outside in which case program
+        //        // already have a layer as deflection layer. If that is not done then layer must
+        //        be
+        //        // decorated with default deflection properties
+        //        std::shared_ptr<CIGUSolidLayerDeflection> aDeflectionLayer = nullptr;
+        //        if(!aLayer->isDeflected())
+        //        {
+        //            aDeflectionLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
+        //        }
+        //        else
+        //        {
+        //            aDeflectionLayer =
+        //            std::dynamic_pointer_cast<CIGUSolidLayerDeflection>(aLayer);
+        //        }
+        //        replaceLayer(
+        //          aLayer,
+        //          std::make_shared<CIGUDeflectionTempAndPressure>(aDeflectionLayer, Lmax, Lmean));
+        //    }
+        //
+        //    for(std::shared_ptr<CIGUGapLayer> & aLayer : getGapLayers())
+        //    {
+        //        replaceLayer(aLayer,
+        //                     std::make_shared<CIGUGapLayerDeflection>(*aLayer, t_Tini, t_Pini));
+        //    }
+        //}
 
         void CIGU::setDeflectionProperties(std::vector<double> const & t_MeasuredDeflections)
         {
@@ -392,6 +419,35 @@ namespace Tarcog
                 aDefLayer =
                   std::make_shared<CIGUDeflectionMeasuread>(aDefLayer, LDefNMean, LDefNMax);
                 replaceLayer(aLayer, aDefLayer);
+            }
+        }
+
+        void CIGU::updateDeflectionState() const
+        {
+            if(m_DeflectionFromE1300Curves != nullptr)
+            {
+                const auto gapLayers{getGapLayers()};
+                std::vector<double> gapTemperatures(gapLayers.size());
+                for(size_t i = 0u; i < gapTemperatures.size(); ++i)
+                {
+                    gapTemperatures[i] = gapLayers[i]->averageTemperature();
+                }
+                m_DeflectionFromE1300Curves->setLoadTemperatures(gapTemperatures);
+
+                auto deflections{m_DeflectionFromE1300Curves->results()};
+
+                // This is borrowed from Timschenko. It will be used till E1300 calculations are actually doing this.
+                const auto deflectionRatio = Ldmean() / Ldmax();
+
+                auto solidLayers{getSolidLayers()};
+
+                assert(deflections.deflection.size() == solidLayers.size());
+
+                for(size_t i = 0u; i < deflections.deflection.size(); ++i)
+                {
+                    auto def{deflections.deflection[i]};
+                    solidLayers[i]->applyDeflection(deflectionRatio * def, def);
+                }
             }
         }
 
