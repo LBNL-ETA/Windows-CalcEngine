@@ -2,16 +2,16 @@
 
 #include <vector>
 
-#include "DeflectionFromCurves.hxx"
+#include <WCETarcog.hpp>
 
-class TestDeflectionE1300 : public testing::Test
+class TestDeflectionE1300_DoubleLayer1 : public testing::Test
 {
 private:
     double m_Width{1.0};
-    double m_Height{2.5};
+    double m_Height{1.0};
 
-    std::vector<Deflection::LayerData> m_Layer{{0.00256}, {0.00742}, {0.00556}};
-    std::vector<Deflection::GapData> m_Gap{{0.0127, 273.15 + 21}, {0.0127, 273.15 + 21}};
+    std::vector<Deflection::LayerData> m_Layer{{0.003048}, {0.00742}};
+    std::vector<Deflection::GapData> m_Gap{{0.0127, 273.15 + 30}};
 
 protected:
     void SetUp() override
@@ -25,11 +25,11 @@ public:
     }
 };
 
-TEST_F(TestDeflectionE1300, Deflection1)
+TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection1)
 {
     auto def{getDefObject()};
 
-    const std::vector<double> loadTemperatures{22 + 273.15, 21 + 273.15};
+    const std::vector<double> loadTemperatures{268};
 
     def.setLoadTemperatures(loadTemperatures);
 
@@ -39,12 +39,12 @@ TEST_F(TestDeflectionE1300, Deflection1)
 
     ASSERT_EQ(error.has_value(), true);
 
-    const auto correctError{-0.000321};
-    EXPECT_NEAR(error.value(), correctError, 1e-6);
+    const auto correctError{1.104054e-07};
+    EXPECT_NEAR(error.value(), correctError, 1e-9);
 
-    const std::vector<double> correctDeflection{-0.000854, 0.000606, 0.000248};
+    const std::vector<double> correctDeflection{-2.469193e-3, 0.259542e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
     {
-        EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-6);
+        EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-9);
     }
 }
