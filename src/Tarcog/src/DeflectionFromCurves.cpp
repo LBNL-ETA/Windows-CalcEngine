@@ -22,7 +22,8 @@ namespace Deflection
 
     DeflectionResults::DeflectionResults(std::optional<double> error,
                                          const std::vector<double> & deflection) :
-        error(std::move(error)), deflection(deflection)
+        error(std::move(error)),
+        deflection(deflection)
     {}
 
     DeflectionE1300::DeflectionE1300(double width,
@@ -37,6 +38,8 @@ namespace Deflection
         m_Pcs(calcPcs(m_ShortDimension, m_Layer)),
         m_Vcs(calcVcs(m_ShortDimension, m_Layer)),
         m_PnVns(Table::columnInterpolation(DeflectionData::getVNData(),
+                                           m_LongDimension / m_ShortDimension)),
+        m_PnWns(Table::columnInterpolation(DeflectionData::getWNData(),
                                            m_LongDimension / m_ShortDimension))
     {
         for(auto & val : m_PnVns)
@@ -53,33 +56,46 @@ namespace Deflection
         }
         // Provided tables do not include zero points and they are used for deflection calculations.
         m_PnVns.insert(m_PnVns.begin(), {0, 0});
+
+        for(auto & val : m_PnWns)
+        {
+            if(val.x.has_value())
+            {
+                val.x = std::exp(val.x.value());
+            }
+
+            if(val.y.has_value())
+            {
+                val.y = std::exp(val.y.value());
+            }
+        }
+        // Provided tables do not include zero points and they are used for deflection calculations.
+        m_PnWns.insert(m_PnWns.begin(), {0, 0});
     }
 
-    [[maybe_unused]] void DeflectionE1300::setExteriorPressure(const double pressure)
-    {
+    [[maybe_unused]] void DeflectionE1300::setExteriorPressure(const double pressure) {
         m_ExteriorPressure = pressure / 1000;
     }
 
-    [[maybe_unused]] void DeflectionE1300::setInteriorPressure(const double pressure)
+      [[maybe_unused]] void DeflectionE1300::setInteriorPressure(const double pressure)
     {
         m_InteriorPressure = pressure / 1000;
     }
 
-    [[maybe_unused]] void DeflectionE1300::setIGUTheta(const double theta)
-    {
+    [[maybe_unused]] void DeflectionE1300::setIGUTheta(const double theta) {
         m_Theta = theta;
         m_PsLoaded = getPsLoaded(m_Layer, m_Theta);
     }
 
-    [[maybe_unused]] void DeflectionE1300::setAppliedLoad(std::vector<double> appliedLoad)
+      [[maybe_unused]] void DeflectionE1300::setAppliedLoad(std::vector<double> appliedLoad)
     {
         m_AppliedLoad = std::move(appliedLoad);
     }
 
-    [[maybe_unused]] void DeflectionE1300::setLoadTemperatures(std::vector<double> loadTemperature)
-    {
-        m_LoadTemperature = std::move(loadTemperature);
-    }
+    [[maybe_unused]] void
+      DeflectionE1300::setLoadTemperatures(std::vector<double> loadTemperature) {
+          m_LoadTemperature = std::move(loadTemperature);
+      }
 
     std::vector<double> DeflectionE1300::getPsWeight(const std::vector<LayerData> & layer,
                                                      double theta)
@@ -140,7 +156,7 @@ namespace Deflection
         auto Dc{nIGU_Li(0u, 0, dp1c)};
 
         auto Errx{Dc.error.value()};
-        std::vector<double> defX;
+        std::vector<double> Dpx;
 
         if(!Dp.error.has_value() || !Dc.error.has_value())
         {
@@ -160,8 +176,21 @@ namespace Deflection
                 dp1c = dp1x;
                 Dc.error = Dx.error;
                 IterCnt++;
-                defX = Dx.deflection;
+                Dpx = Dx.deflection;
             } while(std::abs(Errx) > 0.001 && IterCnt < 500u);
+        }
+
+        std::vector<double> defX(m_Layer.size());
+        for(size_t i = 0u; i < m_Layer.size(); ++i)
+        {
+            auto ws{0.0};
+            auto val{Table::tableColumnInterpolation(m_PnWns, std::abs(Dpx[i]) * m_Pcs[i])};
+            if(val.has_value())
+            {
+                const auto si{Dpx[i] > 0 ? 1.0 : -1.0};
+                ws = val.value() / (1 / m_Layer[i].thickness * si);
+                defX[i] = -ws / 1000;
+            }
         }
 
         return {Errx, defX};
@@ -193,10 +222,10 @@ namespace Deflection
         auto si{DPni > 0 ? 1.0 : -1.0};
 
         auto Vi{0.0};
-        auto val{Table::tableColumnInterpolation(m_PnVns, DPni * si)};
-        if(val.has_value())
+        auto val1{Table::tableColumnInterpolation(m_PnVns, DPni * si)};
+        if(val1.has_value())
         {
-            Vi = val.value() / m_Vcs[index] * si;
+            Vi = val1.value() / m_Vcs[index] * si;
         }
 
         auto Pai{m_PsLoaded[index] + PasiLoaded - dpCoeff};
@@ -242,14 +271,15 @@ namespace Deflection
 
                 auto sj{DPnj > 0 ? 1 : -1};
                 auto Vj{0.0};
-                auto val{Table::tableColumnInterpolation(m_PnVns, DPnj * sj)};
-                if(val.has_value())
+                const auto value{Table::tableColumnInterpolation(m_PnVns, DPnj * sj)};
+                if(value.has_value())
                 {
-                    Vj = val.value() / m_Vcs[j] * sj;
+                    Vj = value.value() / m_Vcs[j] * sj;
                 }
                 Err0 = ((m_Gap[index].initialPressure * m_LoadTemperature[index])
-                        / (Pai * m_Gap[index].initialTemperature) - 1) * m_Gap[index].thickness
-                       * m_ShortDimension * m_LongDimension
+                          / (Pai * m_Gap[index].initialTemperature)
+                        - 1)
+                         * m_Gap[index].thickness * m_ShortDimension * m_LongDimension
                        + Vi - Vj;
                 DPs.emplace_back(dpCoeff);
                 for(const auto & val : DPsi)
@@ -264,15 +294,16 @@ namespace Deflection
             auto DPnj = DPj * m_Pcs[j];
             auto sj{DPnj > 0 ? 1.0 : -1.0};
             auto Vj{0.0};
-            auto val{Table::tableColumnInterpolation(m_PnVns, DPnj * sj)};
-            if(val.has_value())
+            const auto value{Table::tableColumnInterpolation(m_PnVns, DPnj * sj)};
+            if(value.has_value())
             {
-                Vj = val.value() / m_Vcs[j] * sj;
+                Vj = value.value() / m_Vcs[j] * sj;
             }
             Err0 = ((m_Gap[index].initialPressure * m_LoadTemperature[index])
-                      / (Pai * m_Gap[index].initialTemperature) - 1) * m_Gap[index].thickness
-                      * m_ShortDimension * m_LongDimension
-                    + Vi - Vj;
+                      / (Pai * m_Gap[index].initialTemperature)
+                    - 1)
+                     * m_Gap[index].thickness * m_ShortDimension * m_LongDimension
+                   + Vi - Vj;
             DPs.emplace_back(dpCoeff);
             DPs.emplace_back(DPj);
         }

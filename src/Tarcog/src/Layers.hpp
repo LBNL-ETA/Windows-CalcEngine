@@ -24,9 +24,8 @@ namespace Tarcog
                                                          double backIRTransmittance = 0.0);
 
             static std::shared_ptr<CIGUSolidLayer>
-              makeDeflectable(const std::shared_ptr<CIGUSolidLayer> & layer,
-                              double youngsModulus,
-                              double poissonRatio);
+              updateDeflectionCoefficients(const std::shared_ptr<CIGUSolidLayer> & layer,
+                              double youngsModulus = 71705500000);
 
             static std::shared_ptr<CIGUSolidLayer>
               shading(double thickness,

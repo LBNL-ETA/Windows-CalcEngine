@@ -96,6 +96,7 @@ namespace Deflection
         std::vector<double> m_Vcs;
 
         std::vector<Table::point> m_PnVns;
+        std::vector<Table::point> m_PnWns;
 
         [[nodiscard]] static double DP1pGuess(double Pdiff, const std::vector<LayerData> & layer);
 

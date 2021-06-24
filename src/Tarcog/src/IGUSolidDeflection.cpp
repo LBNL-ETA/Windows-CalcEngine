@@ -45,6 +45,11 @@ namespace Tarcog
             return std::make_shared<CIGUSolidLayerDeflection>(*this);
         }
 
+        double CIGUSolidLayerDeflection::youngsModulus() const
+        {
+            return m_YoungsModulus;
+        }
+
         double CIGUSolidLayerDeflection::pressureDifference() const
         {
             auto P1 = std::dynamic_pointer_cast<CGasLayer>(m_NextLayer)->getPressure();
