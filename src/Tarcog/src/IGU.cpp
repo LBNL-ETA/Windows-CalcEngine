@@ -574,6 +574,11 @@ namespace Tarcog
             }
         }
 
+        void CIGU::clearDeflection()
+        {
+            m_DeflectionFromE1300Curves = nullptr;
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog

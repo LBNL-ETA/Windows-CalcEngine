@@ -67,6 +67,8 @@ namespace Tarcog
             // void setDeflectionProperties(double t_Tini, double t_Pini);
             void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
 
+            void clearDeflection();
+
             //! Function that will update layers deflection states based on new temperature data
             void updateDeflectionState() const;
 
