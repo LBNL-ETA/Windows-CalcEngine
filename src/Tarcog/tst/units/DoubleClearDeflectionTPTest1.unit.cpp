@@ -47,9 +47,7 @@ protected:
 
         // Introducing non default deflection properties
         auto youngsModulus = 8.1e10;
-        auto poisonRatio = 0.16;
-        aSolidLayer1 =
-          Tarcog::ISO15099::Layers::makeDeflectable(aSolidLayer1, youngsModulus, poisonRatio);
+        aSolidLayer1 = Tarcog::ISO15099::Layers::updateDeflectionCoefficients(aSolidLayer1, youngsModulus);
 
         // Layer will be using default deflection values
         auto aSolidLayer2 =
@@ -101,7 +99,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     /// Temperatures test
     ///////////////////////////////////////////////////////////////////////////////
     auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {258.811500, 259.137749, 278.961419, 279.573136};
+    std::vector<double> correctTemperature = {258.799794, 259.124997, 279.007776, 279.617532};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -113,7 +111,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     /// Radiosity test
     ///////////////////////////////////////////////////////////////////////////////
     auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {252.131797, 267.765290, 331.256183, 358.865247};
+    std::vector<double> correctRadiosity = {252.093139, 267.753397, 331.446036, 359.050103};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -125,26 +123,26 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     /// Max deflection test
     ///////////////////////////////////////////////////////////////////////////////
     const auto MaxDeflection = aSystem->getMaxDeflections();
-    std::vector<double> correctMaxDeflection = {-0.0030742, 0.00033590};
+    std::vector<double> correctMaxDeflection = {-2.256997e-3, 0.531714e-3};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
     {
-        EXPECT_NEAR(correctMaxDeflection[i], MaxDeflection[i], 1e-5);
+        EXPECT_NEAR(correctMaxDeflection[i], MaxDeflection[i], 1e-8);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Mean deflection test
     ///////////////////////////////////////////////////////////////////////////////
     const auto MeanDeflection = aSystem->getMeanDeflections();
-    std::vector<double> correctMeanDeflection = {-0.0012879, 0.00014072};
+    std::vector<double> correctMeanDeflection = {-0.945515e-3, 0.222749e-3};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
     {
-        EXPECT_NEAR(correctMeanDeflection[i], MeanDeflection[i], 1e-5);
+        EXPECT_NEAR(correctMeanDeflection[i], MeanDeflection[i], 1e-8);
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(27u, numOfIter);
+    EXPECT_EQ(20u, numOfIter);
 }

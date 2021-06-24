@@ -4,6 +4,8 @@
 #include <memory>
 #include <vector>
 
+#include "DeflectionFromCurves.hpp"
+
 namespace Tarcog
 {
     namespace ISO15099
@@ -62,7 +64,11 @@ namespace Tarcog
             void setInitialGuess(const std::vector<double> & t_Guess) const;
 
             void setDeflectionProperties(double t_Tini, double t_Pini);
+            // void setDeflectionProperties(double t_Tini, double t_Pini);
             void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
+
+            //! Function that will update layers deflection states based on new temperature data
+            void updateDeflectionState() const;
 
         private:
             // Replces layer in existing construction and keeps correct connections in linked list
@@ -81,6 +87,10 @@ namespace Tarcog
             // Routines to calculate deflection coefficients
             [[nodiscard]] double Ldmean() const;
             [[nodiscard]] double Ldmax() const;
+
+            //! This is by default set to nullptr since deflection is not turn on by default.
+            //! Setting deflection properties will enable deflection calculations automatically.
+            std::unique_ptr<Deflection::DeflectionE1300> m_DeflectionFromE1300Curves;
         };
 
     }   // namespace ISO15099

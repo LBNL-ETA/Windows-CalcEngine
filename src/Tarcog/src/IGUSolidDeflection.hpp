@@ -25,6 +25,9 @@ namespace Tarcog
 
             std::shared_ptr<CBaseLayer> clone() const override;
 
+
+            double youngsModulus() const override;
+
         protected:
             void calculateConvectionOrConductionFlow() override;
             double pressureDifference() const;
