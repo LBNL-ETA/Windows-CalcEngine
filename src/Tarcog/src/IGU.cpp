@@ -242,6 +242,19 @@ namespace Tarcog
             return aMeanDeflections;
         }
 
+        std::vector<double> CIGU::getPressureDifference() const
+        {
+
+            std::vector<double> pressureDiff(getSolidLayers().size());
+
+            if(m_DeflectionFromE1300Curves != nullptr)
+            {
+                pressureDiff = m_DeflectionFromE1300Curves->results().pressureDifference;
+            }
+
+            return pressureDiff;
+        }
+
         double CIGU::getThickness() const
         {
             auto totalWidth = 0.0;
@@ -426,7 +439,7 @@ namespace Tarcog
             }
         }
 
-        void CIGU::updateDeflectionState() const
+        void CIGU::updateDeflectionState()
         {
             if(m_DeflectionFromE1300Curves != nullptr)
             {
@@ -438,18 +451,18 @@ namespace Tarcog
                 }
                 m_DeflectionFromE1300Curves->setLoadTemperatures(gapTemperatures);
 
-                auto deflections{m_DeflectionFromE1300Curves->results()};
+                auto deflectionResults{m_DeflectionFromE1300Curves->results()};
 
                 // This is borrowed from Timschenko. It will be used till E1300 calculations are actually doing this.
                 const auto deflectionRatio = Ldmean() / Ldmax();
 
                 auto solidLayers{getSolidLayers()};
 
-                assert(deflections.deflection.size() == solidLayers.size());
+                assert(deflectionResults.deflection.size() == solidLayers.size());
 
-                for(size_t i = 0u; i < deflections.deflection.size(); ++i)
+                for(size_t i = 0u; i < deflectionResults.deflection.size(); ++i)
                 {
-                    auto def{deflections.deflection[i]};
+                    auto def{deflectionResults.deflection[i]};
                     solidLayers[i]->applyDeflection(deflectionRatio * def, def);
                 }
             }
@@ -590,12 +603,6 @@ namespace Tarcog
             {
                 m_DeflectionFromE1300Curves->setAppliedLoad(std::move(t_AppliedLoad));
             }
-        }
-
-        std::vector<double> CIGU::getPressureDifference() const
-        {
-
-            return std::vector<double>(getSolidLayers().size());
         }
 
     }   // namespace ISO15099
