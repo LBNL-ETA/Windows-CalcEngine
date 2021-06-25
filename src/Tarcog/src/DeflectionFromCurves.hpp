@@ -47,9 +47,12 @@ namespace Deflection
 
     struct DeflectionResults
     {
-        DeflectionResults(std::optional<double> error, const std::vector<double> & deflection);
+        DeflectionResults(std::optional<double> error,
+                          const std::vector<double> & deflection,
+                          const std::vector<double> & pressureDifference);
         std::optional<double> error;
         std::vector<double> deflection;
+        std::vector<double> pressureDifference;
     };
 
     //! Class that does deflection calculations based on E1300 curves. It is working only for
