@@ -592,6 +592,11 @@ namespace Tarcog
             }
         }
 
+        std::vector<double> CIGU::getPressureDifference() const
+        {
+            return std::vector<double>(getSolidLayers().size());
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog

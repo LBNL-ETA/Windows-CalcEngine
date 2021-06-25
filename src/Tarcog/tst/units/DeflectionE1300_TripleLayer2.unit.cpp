@@ -35,7 +35,7 @@ TEST_F(TestDeflectionE1300_TripleLayer2, Deflection1)
     def.setIGUTilt(45);
     def.setInteriorPressure(102500);
     def.setExteriorPressure(101000);
-    def.setAppliedLoad({1500, 0, 0});
+    def.setAppliedLoad({0, 0, 0});
 
     def.setLoadTemperatures(loadTemperatures);
 
