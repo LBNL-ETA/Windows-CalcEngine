@@ -47,10 +47,11 @@ namespace Deflection
 
     struct DeflectionResults
     {
+        DeflectionResults() = default;
         DeflectionResults(std::optional<double> error,
                           const std::vector<double> & deflection,
                           const std::vector<double> & pressureDifference);
-        std::optional<double> error;
+        std::optional<double> error{0.0};
         std::vector<double> deflection;
         std::vector<double> pressureDifference;
     };
@@ -110,5 +111,10 @@ namespace Deflection
         [[nodiscard]] static double DP1pGuess(double Pdiff, const std::vector<LayerData> & layer);
 
         [[nodiscard]] DeflectionResults nIGU_Li(size_t index, double PasiLoaded, double dpCoeff);
+
+        bool m_ResultsCalculated{false};
+        DeflectionResults m_DeflectionResults;
+
+        DeflectionResults calculateResults();
     };
 }   // namespace Deflection

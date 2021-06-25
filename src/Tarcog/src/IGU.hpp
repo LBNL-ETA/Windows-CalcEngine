@@ -76,7 +76,7 @@ namespace Tarcog
             void clearDeflection();
 
             //! Function that will update layers deflection states based on new temperature data
-            void updateDeflectionState() const;
+            void updateDeflectionState();
 
         private:
             // Replces layer in existing construction and keeps correct connections in linked list

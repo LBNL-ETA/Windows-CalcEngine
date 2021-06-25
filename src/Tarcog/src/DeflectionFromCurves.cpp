@@ -5,6 +5,8 @@
 
 #include <WCECommon.hpp>
 #include <WCETarcog.hpp>
+#include "DeflectionFromCurves.hpp"
+
 
 namespace Deflection
 {
@@ -76,17 +78,22 @@ namespace Deflection
     [[maybe_unused]] void DeflectionE1300::setExteriorPressure(const double pressure)
     {
         m_ExteriorPressure = pressure / 1000;
+        m_PsLoaded = getPsLoaded(m_Layer, m_Theta);
+        m_ResultsCalculated = false;
     }
 
     [[maybe_unused]] void DeflectionE1300::setInteriorPressure(const double pressure)
     {
         m_InteriorPressure = pressure / 1000;
+        m_PsLoaded = getPsLoaded(m_Layer, m_Theta);
+        m_ResultsCalculated = false;
     }
 
     [[maybe_unused]] void DeflectionE1300::setIGUTilt(const double theta)
     {
         m_Theta = theta;
         m_PsLoaded = getPsLoaded(m_Layer, m_Theta);
+        m_ResultsCalculated = false;
     }
 
     [[maybe_unused]] void DeflectionE1300::setAppliedLoad(std::vector<double> appliedLoad)
@@ -96,11 +103,14 @@ namespace Deflection
             load = load / 1000;
         }
         m_AppliedLoad = std::move(appliedLoad);
+        m_PsLoaded = getPsLoaded(m_Layer, m_Theta);
+        m_ResultsCalculated = false;
     }
 
     [[maybe_unused]] void DeflectionE1300::setLoadTemperatures(std::vector<double> loadTemperature)
     {
         m_LoadTemperature = std::move(loadTemperature);
+        m_ResultsCalculated = false;
     }
 
     std::vector<double> DeflectionE1300::getPsWeight(const std::vector<LayerData> & layer,
@@ -155,51 +165,13 @@ namespace Deflection
 
     DeflectionResults DeflectionE1300::results()
     {
-        auto dp1p{DP1pGuess(m_PsLoaded[0] - m_PsLoaded[m_PsLoaded.size() - 1], m_Layer)};
-        auto dp1c{dp1p * 1.01};
-
-        auto Dp{nIGU_Li(0u, 0, dp1p)};
-        auto Dc{nIGU_Li(0u, 0, dp1c)};
-
-        auto Errx{Dc.error.value()};
-        std::vector<double> Dpx;
-
-        if(!Dp.error.has_value() || !Dc.error.has_value())
+        if(!m_ResultsCalculated)
         {
-            throw std::runtime_error("Beyond Charts");
-        }
-        else
-        {
-            auto IterCnt{0u};
-            do
-            {
-                auto dp1x{
-                  dp1c - Dc.error.value() * (dp1c - dp1p) / (Dc.error.value() - Dp.error.value())};
-                auto Dx{nIGU_Li(0, 0, dp1x)};
-                Errx = Dx.error.value();
-                dp1p = dp1c;
-                Dp.error = Dc.error;
-                dp1c = dp1x;
-                Dc.error = Dx.error;
-                IterCnt++;
-                Dpx = Dx.deflection;
-            } while(std::abs(Errx) > 0.001 && IterCnt < 500u);
+            m_DeflectionResults = calculateResults();
+            m_ResultsCalculated = true;
         }
 
-        std::vector<double> defX(m_Layer.size());
-        for(size_t i = 0u; i < m_Layer.size(); ++i)
-        {
-            auto ws{0.0};
-            auto val{Table::tableColumnInterpolation(m_PnWns, std::abs(Dpx[i]) * m_Pcs[i])};
-            if(val.has_value())
-            {
-                const auto si{Dpx[i] > 0 ? 1.0 : -1.0};
-                ws = val.value() / (1 / m_Layer[i].thickness * si);
-                defX[i] = -ws / 1000;
-            }
-        }
-
-        return {Errx, defX, Dpx};
+        return m_DeflectionResults;
     }
 
     double DeflectionE1300::DP1pGuess(double Pdiff, const std::vector<LayerData> & layer)
@@ -315,5 +287,55 @@ namespace Deflection
         }
 
         return {Err0, DPs, std::vector<double>()};
+    }
+
+    DeflectionResults DeflectionE1300::calculateResults()
+    {
+        auto dp1p{DP1pGuess(m_PsLoaded[0] - m_PsLoaded[m_PsLoaded.size() - 1], m_Layer)};
+        auto dp1c{dp1p * 1.01};
+
+        auto Dp{nIGU_Li(0u, 0, dp1p)};
+        auto Dc{nIGU_Li(0u, 0, dp1c)};
+
+        auto Errx{Dc.error.value()};
+        std::vector<double> Dpx;
+
+        if(!Dp.error.has_value() || !Dc.error.has_value())
+        {
+            throw std::runtime_error("Beyond Charts");
+        }
+        else
+        {
+            auto IterCnt{0u};
+            do
+            {
+                auto dp1x{
+                  dp1c - Dc.error.value() * (dp1c - dp1p) / (Dc.error.value() - Dp.error.value())};
+                auto Dx{nIGU_Li(0, 0, dp1x)};
+                Errx = Dx.error.value();
+                dp1p = dp1c;
+                Dp.error = Dc.error;
+                dp1c = dp1x;
+                Dc.error = Dx.error;
+                IterCnt++;
+                Dpx = Dx.deflection;
+            } while(std::abs(Errx) > 0.001 && IterCnt < 500u);
+        }
+
+        std::vector<double> defX(m_Layer.size());
+        for(size_t i = 0u; i < m_Layer.size(); ++i)
+        {
+            auto ws{0.0};
+            auto val{Table::tableColumnInterpolation(m_PnWns, std::abs(Dpx[i]) * m_Pcs[i])};
+            if(val.has_value())
+            {
+                const auto si{Dpx[i] > 0 ? 1.0 : -1.0};
+                ws = val.value() / (1 / m_Layer[i].thickness * si);
+                Dpx[i] = -Dpx[i] * 1000;
+                defX[i] = -ws / 1000;
+            }
+        }
+
+        return {Errx, defX, Dpx};
     }
 }   // namespace Deflection

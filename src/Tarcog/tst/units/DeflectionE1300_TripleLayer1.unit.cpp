@@ -36,6 +36,7 @@ TEST_F(TestDeflectionE1300_TripleLayer1, Deflection1)
     const auto res{def.results()};
     const auto error{res.error};
     const auto deflection{res.deflection};
+    const auto pressureDifference{res.pressureDifference};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -46,5 +47,11 @@ TEST_F(TestDeflectionE1300_TripleLayer1, Deflection1)
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
     {
         EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-9);
+    }
+
+    const std::vector<double> correctPressureDifference{0.857941, -0.608492, -0.249450};
+    for(size_t i = 0u; i < correctDeflection.size(); ++i)
+    {
+        EXPECT_NEAR(correctPressureDifference[i], pressureDifference[i], 1e-6);
     }
 }
