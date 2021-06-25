@@ -143,8 +143,14 @@ namespace Tarcog
 
         double CIGUSolidLayer::youngsModulus() const
         {
-            static const double defaultYoungsModulus{71705500000};
+            static const double defaultYoungsModulus{Tarcog::DeflectionConstants::YOUNGSMODULUS};
             return defaultYoungsModulus;
+        }
+
+        double CIGUSolidLayer::density() const
+        {
+            static const double defaultDensity{Tarcog::MaterialConstants::GLASSDENSITY};
+            return defaultDensity;
         }
 
         double CIGUSolidLayer::getRadiationFlow()

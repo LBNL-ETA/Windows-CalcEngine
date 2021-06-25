@@ -98,7 +98,7 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
     }
 
     auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {252.092023, 267.753054, 331.451521, 359.055444};
+    std::vector<double> correctRadiosity = {252.092023, 267.753054, 331.451548, 359.055470};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -107,7 +107,7 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
     }
 
     const auto MaxDeflection = aSystem->getMaxDeflections();
-    std::vector<double> correctMaxDeflection{-2.285970e-3, 0.483781e-3};
+    std::vector<double> correctMaxDeflection{-2.285903e-3, 0.483756e-3};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)

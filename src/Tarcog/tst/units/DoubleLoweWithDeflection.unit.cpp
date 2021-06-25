@@ -98,7 +98,7 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
     /// Deflection results
     ///////////////////////////////////////////////////////////////////////////////
     const auto MaxDeflectionU = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
-    std::vector<double> correctMaxDeflectionU = {-1.850023e-3, 0.344038e-3};
+    std::vector<double> correctMaxDeflectionU = {-1.849981e-3, 0.344021e-3};
     ASSERT_EQ(correctMaxDeflectionU.size(), MaxDeflectionU.size());
 
     for(auto i = 0u; i < correctMaxDeflectionU.size(); ++i)
@@ -107,7 +107,7 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
     }
 
     const auto MaxDeflectionS = aSystem->getMaxDeflections(Tarcog::ISO15099::System::SHGC);
-    std::vector<double> correctMaxDeflectionSHGC = {-1.3854411822055864e-3, 0.25302312430849428e-3};
+    std::vector<double> correctMaxDeflectionSHGC = {-1.385369e-3, 0.253010e-3};
     ASSERT_EQ(correctMaxDeflectionSHGC.size(), MaxDeflectionU.size());
 
     for(auto i = 0u; i < correctMaxDeflectionSHGC.size(); ++i)
