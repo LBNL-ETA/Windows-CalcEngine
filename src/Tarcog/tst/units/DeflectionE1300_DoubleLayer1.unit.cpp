@@ -39,10 +39,10 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection1)
 
     ASSERT_EQ(error.has_value(), true);
 
-    const auto correctError{1.104054e-07};
+    const auto correctError{9.924406e-08};
     EXPECT_NEAR(error.value(), correctError, 1e-9);
 
-    const std::vector<double> correctDeflection{-2.469193e-3, 0.259542e-3};
+    const std::vector<double> correctDeflection{-2.469101e-3, 0.259526e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
     {
         EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-9);

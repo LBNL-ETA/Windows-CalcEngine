@@ -22,8 +22,7 @@ namespace Deflection
 
     DeflectionResults::DeflectionResults(std::optional<double> error,
                                          const std::vector<double> & deflection) :
-        error(std::move(error)),
-        deflection(deflection)
+        error(std::move(error)), deflection(deflection)
     {}
 
     DeflectionE1300::DeflectionE1300(double width,
@@ -73,29 +72,35 @@ namespace Deflection
         m_PnWns.insert(m_PnWns.begin(), {0, 0});
     }
 
-    [[maybe_unused]] void DeflectionE1300::setExteriorPressure(const double pressure) {
+    [[maybe_unused]] void DeflectionE1300::setExteriorPressure(const double pressure)
+    {
         m_ExteriorPressure = pressure / 1000;
     }
 
-      [[maybe_unused]] void DeflectionE1300::setInteriorPressure(const double pressure)
+    [[maybe_unused]] void DeflectionE1300::setInteriorPressure(const double pressure)
     {
         m_InteriorPressure = pressure / 1000;
     }
 
-    [[maybe_unused]] void DeflectionE1300::setIGUTheta(const double theta) {
+    [[maybe_unused]] void DeflectionE1300::setIGUTilt(const double theta)
+    {
         m_Theta = theta;
         m_PsLoaded = getPsLoaded(m_Layer, m_Theta);
     }
 
-      [[maybe_unused]] void DeflectionE1300::setAppliedLoad(std::vector<double> appliedLoad)
+    [[maybe_unused]] void DeflectionE1300::setAppliedLoad(std::vector<double> appliedLoad)
     {
+        for(auto & load : appliedLoad)
+        {
+            load = load / 1000;
+        }
         m_AppliedLoad = std::move(appliedLoad);
     }
 
-    [[maybe_unused]] void
-      DeflectionE1300::setLoadTemperatures(std::vector<double> loadTemperature) {
-          m_LoadTemperature = std::move(loadTemperature);
-      }
+    [[maybe_unused]] void DeflectionE1300::setLoadTemperatures(std::vector<double> loadTemperature)
+    {
+        m_LoadTemperature = std::move(loadTemperature);
+    }
 
     std::vector<double> DeflectionE1300::getPsWeight(const std::vector<LayerData> & layer,
                                                      double theta)
@@ -104,8 +109,8 @@ namespace Deflection
         const auto pi{std::atan(1) * 4};
         for(const auto & lay : layer)
         {
-            result.push_back(lay.thickness / 1000 * lay.density * 9.81 / 1000
-                             * std::cos((theta * pi) / 180));
+            result.push_back(lay.thickness / 1000 * lay.density * ConstantsData::GRAVITYCONSTANT
+                             / 1000 * std::cos((theta * pi) / 180));
         }
         return result;
     }

@@ -67,6 +67,8 @@ namespace Tarcog
             // void setDeflectionProperties(double t_Tini, double t_Pini);
             void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
 
+            void setAppliedLoad(std::vector<double> t_AppliedLoad);
+
             void clearDeflection();
 
             //! Function that will update layers deflection states based on new temperature data
@@ -93,6 +95,11 @@ namespace Tarcog
             //! This is by default set to nullptr since deflection is not turn on by default.
             //! Setting deflection properties will enable deflection calculations automatically.
             std::unique_ptr<Deflection::DeflectionE1300> m_DeflectionFromE1300Curves;
+
+            //! It is possible that user can set applied load before setting initial parameters for
+            //! the deflection in which case applied load will not be set automatically. This is
+            //! intermediate variable that keeps applied load so it can be applied later.
+            std::vector<double> m_DeflectionAppliedLoad;
         };
 
     }   // namespace ISO15099

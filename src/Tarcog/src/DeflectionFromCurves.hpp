@@ -3,18 +3,20 @@
 #include <vector>
 #include <WCECommon.hpp>
 
+#include "TarcogConstants.hpp"
+
 namespace Deflection
 {
-    const double defaultGlassDensity = 2500;                 // kg/m3
-    const double defaultPressure = 101325;                   // Pa
-    const double defaultModulusOfElasticity = 71705500000;   // Pa
+    const double defaultGlassDensity = Tarcog::MaterialConstants::GLASSDENSITY;                                                // kg/m3
+    const double defaultPressure = 101325;                                                  // Pa
+    const double defaultModulusOfElasticity = Tarcog::DeflectionConstants::YOUNGSMODULUS;   // Pa
 
     struct LayerData
     {
         //! Expected input data are in standard SI units. This structure will convert them in what
         //! is needed for the calculation.
         //!
-        //! \param thickness Layer thickness in meteres
+        //! \param thickness Layer thickness in meters
         //! \param density Layer material density in kg/m3
         //! \param modulusOfElasticity Modulus of elasticity in Pa
         LayerData(double thickness,
@@ -65,7 +67,11 @@ namespace Deflection
         [[maybe_unused]] void setExteriorPressure(double pressure);
         [[maybe_unused]] void setInteriorPressure(double pressure);
 
-        [[maybe_unused]] void setIGUTheta(double theta);
+        [[maybe_unused]] void setIGUTilt(double theta);
+
+        //! Adding applied load to the layers
+        //!
+        //! \param appliedLoad Vector of applied loads to the each of the layers [Pa]
         [[maybe_unused]] void setAppliedLoad(std::vector<double> appliedLoad);
 
         DeflectionResults results();
@@ -75,11 +81,11 @@ namespace Deflection
         [[nodiscard]] std::vector<double> getPsLoaded(const std::vector<LayerData> & layer,
                                                       double theta);
 
-        double m_ExteriorPressure{defaultPressure/1000};   // KPa
-        double m_InteriorPressure{defaultPressure/1000};   // KPa
-        double m_LongDimension;                       // mm
-        double m_ShortDimension;                      // mm
-        double m_Theta{90};                           // degrees
+        double m_ExteriorPressure{defaultPressure / 1000};   // KPa
+        double m_InteriorPressure{defaultPressure / 1000};   // KPa
+        double m_LongDimension;                              // mm
+        double m_ShortDimension;                             // mm
+        double m_Theta{90};                                  // degrees
         std::vector<LayerData> m_Layer;
         std::vector<GapData> m_Gap;
         std::vector<double> m_LoadTemperature;
