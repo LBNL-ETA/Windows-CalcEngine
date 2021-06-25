@@ -314,10 +314,9 @@ namespace Tarcog
         void CIGU::setDeflectionProperties(double t_Tini, double t_Pini)
         {
             std::vector<Deflection::LayerData> layerData;
-            static const double glassDensity{2500};
             for(const auto & layer : getSolidLayers())
             {
-                layerData.emplace_back(layer->getThickness(), glassDensity, layer->youngsModulus());
+                layerData.emplace_back(layer->getThickness(), layer->density(), layer->youngsModulus());
             }
 
             std::vector<Deflection::GapData> gapData;
@@ -328,6 +327,11 @@ namespace Tarcog
 
             m_DeflectionFromE1300Curves =
               std::make_unique<Deflection::DeflectionE1300>(m_Width, m_Height, layerData, gapData);
+
+            if(m_DeflectionAppliedLoad.size() == layerData.size())
+            {
+                m_DeflectionFromE1300Curves->setAppliedLoad(m_DeflectionAppliedLoad);
+            }
         }
 
         //! The old deflection routine that did not work because program failed to converge. Will
@@ -577,6 +581,15 @@ namespace Tarcog
         void CIGU::clearDeflection()
         {
             m_DeflectionFromE1300Curves = nullptr;
+        }
+
+        void CIGU::setAppliedLoad(std::vector<double> t_AppliedLoad)
+        {
+            m_DeflectionAppliedLoad = t_AppliedLoad;
+            if(m_DeflectionFromE1300Curves != nullptr)
+            {
+                m_DeflectionFromE1300Curves->setAppliedLoad(std::move(t_AppliedLoad));
+            }
         }
 
     }   // namespace ISO15099

@@ -36,12 +36,12 @@ namespace Tarcog
             return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
         }
 
-        std::shared_ptr<CIGUSolidLayer>
-          Layers::updateDeflectionCoefficients(const std::shared_ptr<CIGUSolidLayer> & layer,
-                                  const double youngsModulus)
+        std::shared_ptr<CIGUSolidLayer> Layers::updateMaterialData(
+          const std::shared_ptr<CIGUSolidLayer> & layer, double density, double youngsModulus)
         {
             static const double poissonRatio{0.22};
-            return std::make_shared<CIGUSolidLayerDeflection>(*layer, youngsModulus, poissonRatio);
+            return std::make_shared<CIGUSolidLayerDeflection>(
+              *layer, youngsModulus, poissonRatio, density);
         }
 
         std::shared_ptr<CIGUSolidLayer>

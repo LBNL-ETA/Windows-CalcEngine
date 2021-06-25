@@ -45,6 +45,8 @@ namespace Tarcog
 
             virtual double youngsModulus() const;
 
+            virtual double density() const;
+
             std::shared_ptr<CBaseLayer> clone() const override;
 
             void applyDeflection(double meanDeflection, double maxDeflection);
