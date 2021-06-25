@@ -44,6 +44,7 @@ namespace Tarcog
 
             [[nodiscard]] std::vector<double> getMaxDeflections() const;
             [[nodiscard]] std::vector<double> getMeanDeflections() const;
+            [[nodiscard]] std::vector<double> getPressureDifference() const;
 
             [[nodiscard]] std::shared_ptr<CSingleSystem> clone() const;
 

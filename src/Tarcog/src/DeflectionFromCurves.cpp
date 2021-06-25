@@ -21,8 +21,9 @@ namespace Deflection
     {}
 
     DeflectionResults::DeflectionResults(std::optional<double> error,
-                                         const std::vector<double> & deflection) :
-        error(std::move(error)), deflection(deflection)
+                                         const std::vector<double> & deflection,
+                                         const std::vector<double> & pressureDifference) :
+        error(std::move(error)), deflection(deflection), pressureDifference(pressureDifference)
     {}
 
     DeflectionE1300::DeflectionE1300(double width,
@@ -198,7 +199,7 @@ namespace Deflection
             }
         }
 
-        return {Errx, defX};
+        return {Errx, defX, Dpx};
     }
 
     double DeflectionE1300::DP1pGuess(double Pdiff, const std::vector<LayerData> & layer)
@@ -313,6 +314,6 @@ namespace Deflection
             DPs.emplace_back(DPj);
         }
 
-        return {Err0, DPs};
+        return {Err0, DPs, std::vector<double>()};
     }
 }   // namespace Deflection

@@ -121,6 +121,11 @@ namespace Tarcog
             return m_IGU.getMeanDeflections();
         }
 
+        std::vector<double> CSingleSystem::getPressureDifference() const
+        {
+            return m_IGU.getPressureDifference();
+        }
+
         std::shared_ptr<CSingleSystem> CSingleSystem::clone() const
         {
             return std::make_shared<CSingleSystem>(*this);
