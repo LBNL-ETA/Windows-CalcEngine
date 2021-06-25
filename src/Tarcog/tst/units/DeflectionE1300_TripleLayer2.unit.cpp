@@ -8,11 +8,11 @@ class TestDeflectionE1300_TripleLayer2 : public testing::Test
 {
 private:
     double m_Width{1.0};
-    double m_Height{2.5};
+    double m_Height{1.0};
 
     std::vector<Deflection::LayerData> m_Layer{{0.00556}, {0.00742}, {0.00556}};
-    std::vector<Deflection::GapData> m_Gap{{0.0127, 273.15 + 21, 101000},
-                                           {0.0127, 273.15 + 21, 101000}};
+    std::vector<Deflection::GapData> m_Gap{{0.0127, 273.15 + 30, 101000},
+                                           {0.0127, 273.15 + 30, 101000}};
 
 protected:
     void SetUp() override
@@ -32,8 +32,8 @@ TEST_F(TestDeflectionE1300_TripleLayer2, Deflection1)
 
     const std::vector<double> loadTemperatures{22 + 273.15, 21 + 273.15};
 
-    def.setIGUTilt(45);
-    def.setInteriorPressure(102500);
+    def.setIGUTilt(90);
+    def.setInteriorPressure(101000);
     def.setExteriorPressure(101000);
     def.setAppliedLoad({0, 0, 0});
 
@@ -45,10 +45,10 @@ TEST_F(TestDeflectionE1300_TripleLayer2, Deflection1)
 
     ASSERT_EQ(error.has_value(), true);
 
-    const auto correctError{2.497109e-08};
+    const auto correctError{6.278315e-07};
     EXPECT_NEAR(error.value(), correctError, 1e-12);
 
-    const std::vector<double> correctDeflection{-0.349741e-3, -0.337168e-3, -0.213962e-3};
+    const std::vector<double> correctDeflection{-0.735948e-3, -0.022103e-03, 0.785073e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
     {
         EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-9);
