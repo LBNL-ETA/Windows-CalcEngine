@@ -52,6 +52,10 @@ namespace Tarcog
             [[nodiscard]] std::vector<double> getMaxDeflections() const;
             [[nodiscard]] std::vector<double> getMeanDeflections() const;
 
+            //! Function to return pressure difference on each of the layers when using deflection
+            //! model
+            [[nodiscard]] std::vector<double> getPressureDifference() const;
+
             [[nodiscard]] double getTilt() const;
             [[nodiscard]] double getWidth() const;
             [[nodiscard]] double getHeight() const;
