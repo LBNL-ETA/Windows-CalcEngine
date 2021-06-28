@@ -4,18 +4,15 @@
 
 #include <WCETarcog.hpp>
 
-class TestDeflectionE1300_DoubleLayer1 : public testing::Test
+class TestDeflectionE1300_DoubleLayer : public testing::Test
 {
-
 protected:
     void SetUp() override
     {}
 
-public:
-
 };
 
-TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection1)
+TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionSquaredWindow)
 {
     const double width{1.0};
     const double height{1.0};
@@ -30,7 +27,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection1)
     const auto res{def.results()};
     const auto error{res.error};
     const auto deflection{res.deflection};
-    const auto pressureDifference{res.pressureDifference};
+    const auto pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -50,7 +47,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection1)
     }
 }
 
-TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection2)
+TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionDifferentWidthAndHeight)
 {
     const double width{1.0};
     const double height{2.5};
@@ -65,7 +62,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection2)
     const auto res{def.results()};
     const auto error{res.error};
     const auto deflection{res.deflection};
-    const auto pressureDifference{res.pressureDifference};
+    const auto pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -85,7 +82,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection2)
     }
 }
 
-TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection3)
+TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionDifferentInteriorAndExteriorPressure)
 {
     const double width{1.0};
     const double height{2.5};
@@ -103,7 +100,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection3)
     const auto res{def.results()};
     const auto error{res.error};
     const auto deflection{res.deflection};
-    const auto pressureDifference{res.pressureDifference};
+    const auto pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -123,7 +120,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection3)
     }
 }
 
-TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection4)
+TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionWithTiltAngle)
 {
     const double width{1.0};
     const double height{2.5};
@@ -131,7 +128,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection4)
     std::vector<Deflection::GapData> gap{{0.0127, 273.15 + 30}};
     Deflection::DeflectionE1300 def(width, height, layer, gap);
 
-    const double tiltAngle{45};
+    const auto tiltAngle{45.0};
     def.setIGUTilt(tiltAngle);
 
     const std::vector<double> loadTemperatures{268};
@@ -141,7 +138,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection4)
     const auto res{def.results()};
     const auto error{res.error};
     const auto deflection{res.deflection};
-    const auto pressureDifference{res.pressureDifference};
+    const auto pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -161,7 +158,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection4)
     }
 }
 
-TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection5)
+TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionWithAppliedLoad)
 {
     const double width{1.0};
     const double height{2.5};
@@ -178,7 +175,7 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection5)
     const auto res{def.results()};
     const auto error{res.error};
     const auto deflection{res.deflection};
-    const auto pressureDifference{res.pressureDifference};
+    const auto panesLoad{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -191,9 +188,9 @@ TEST_F(TestDeflectionE1300_DoubleLayer1, Deflection5)
         EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-9);
     }
 
-    const std::vector<double> correctPressureDifference{-177.299229, -1322.700771};
+    const std::vector<double> correctPanesLoad{-177.299229, -1322.700771};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
     {
-        EXPECT_NEAR(correctPressureDifference[i], pressureDifference[i], 1e-6);
+        EXPECT_NEAR(correctPanesLoad[i], panesLoad[i], 1e-6);
     }
 }
