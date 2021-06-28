@@ -126,6 +126,11 @@ namespace Tarcog
             return m_IGU.getPanesLoad();
         }
 
+        void CSingleSystem::setAppliedLoad(std::vector<double> load)
+        {
+            m_IGU.setAppliedLoad(std::move(load));
+        }
+
         std::shared_ptr<CSingleSystem> CSingleSystem::clone() const
         {
             return std::make_shared<CSingleSystem>(*this);
@@ -307,6 +312,11 @@ namespace Tarcog
         void CSingleSystem::setHeight(double height)
         {
             m_IGU.setHeight(height);
+        }
+
+        void CSingleSystem::setTilt(const double tilt)
+        {
+            m_IGU.setTilt(tilt);
         }
 
         void CSingleSystem::setInteriorAndExteriorSurfacesHeight(double height)

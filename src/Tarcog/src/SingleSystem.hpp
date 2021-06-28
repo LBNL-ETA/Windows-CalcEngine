@@ -45,6 +45,7 @@ namespace Tarcog
             [[nodiscard]] std::vector<double> getMaxDeflections() const;
             [[nodiscard]] std::vector<double> getMeanDeflections() const;
             [[nodiscard]] std::vector<double> getPanesLoad() const;
+            void setAppliedLoad(std::vector<double> load);
 
             [[nodiscard]] std::shared_ptr<CSingleSystem> clone() const;
 
@@ -79,6 +80,7 @@ namespace Tarcog
 
             void setWidth(double width);
             void setHeight(double height);
+            void setTilt(double tilt);
 
             //! If IGU is part of the window then frame will still count in surface height.
             void setInteriorAndExteriorSurfacesHeight(double height);
