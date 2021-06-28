@@ -357,6 +357,8 @@ namespace Tarcog
             m_DeflectionFromE1300Curves =
               std::make_unique<Deflection::DeflectionE1300>(m_Width, m_Height, layerData, gapData);
 
+            m_DeflectionFromE1300Curves->setIGUTilt(m_Tilt);
+
             if(m_DeflectionAppliedLoad.size() == layerData.size())
             {
                 m_DeflectionFromE1300Curves->setAppliedLoad(m_DeflectionAppliedLoad);
