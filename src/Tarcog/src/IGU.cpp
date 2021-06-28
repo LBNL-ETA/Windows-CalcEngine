@@ -115,6 +115,8 @@ namespace Tarcog
             {
                 layer->setTilt(t_Tilt);
             }
+            m_Tilt = t_Tilt;
+
             if(m_DeflectionFromE1300Curves != nullptr)
             {
                 m_DeflectionFromE1300Curves->setIGUTilt(t_Tilt);
