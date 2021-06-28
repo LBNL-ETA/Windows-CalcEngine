@@ -31,7 +31,7 @@ namespace Tarcog
 
             [[nodiscard]] std::vector<double> getMaxDeflections(System t_System);
             [[nodiscard]] std::vector<double> getMeanDeflections(System t_System);
-            [[nodiscard]] std::vector<double> getPressureDifference(System t_System);
+            [[nodiscard]] std::vector<double> getPanesLoad(System t_System);
 
             [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>>
               getSolidLayers(System t_System) const;

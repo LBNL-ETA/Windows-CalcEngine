@@ -44,10 +44,10 @@ namespace Tarcog
             return m_System.at(t_System)->getMeanDeflections();
         }
 
-        std::vector<double> CSystem::getPressureDifference(System t_System)
+        std::vector<double> CSystem::getPanesLoad(System t_System)
         {
             checkSolved();
-            return m_System.at(t_System)->getPressureDifference();
+            return m_System.at(t_System)->getPanesLoad();
         }
 
         std::vector<std::shared_ptr<CIGUSolidLayer>>
