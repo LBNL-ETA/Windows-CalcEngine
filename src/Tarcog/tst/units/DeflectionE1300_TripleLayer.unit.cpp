@@ -6,23 +6,9 @@
 
 class TestDeflectionE1300_TripleLayer : public testing::Test
 {
-private:
-    double m_Width{1.0};
-    double m_Height{2.5};
-
-    std::vector<Deflection::LayerData> m_Layer{{0.00256}, {0.00742}, {0.00556}};
-    std::vector<Deflection::GapData> m_Gap{{0.0127, 273.15 + 21}, {0.0127, 273.15 + 21}};
-
 protected:
     void SetUp() override
     {}
-
-public:
-    [[nodiscard]] Deflection::DeflectionE1300 getDefObject() const
-    {
-        Deflection::DeflectionE1300 deflection(m_Width, m_Height, m_Layer, m_Gap);
-        return deflection;
-    }
 };
 
 TEST_F(TestDeflectionE1300_TripleLayer, ZeroDeflection)
