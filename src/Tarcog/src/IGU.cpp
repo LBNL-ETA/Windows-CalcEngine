@@ -115,6 +115,10 @@ namespace Tarcog
             {
                 layer->setTilt(t_Tilt);
             }
+            if(m_DeflectionFromE1300Curves != nullptr)
+            {
+                m_DeflectionFromE1300Curves->setIGUTilt(t_Tilt);
+            }
         }
 
         void CIGU::setWidth(double const t_Width)
@@ -124,6 +128,11 @@ namespace Tarcog
                 layer->setWidth(t_Width);
             }
             m_Width = t_Width;
+
+            if(m_DeflectionFromE1300Curves != nullptr)
+            {
+                m_DeflectionFromE1300Curves->setDimensions(m_Width, m_Height);
+            }
         }
 
         void CIGU::setHeight(double const t_Height)
@@ -133,6 +142,11 @@ namespace Tarcog
                 layer->setHeight(t_Height);
             }
             m_Height = t_Height;
+
+            if(m_DeflectionFromE1300Curves != nullptr)
+            {
+                m_DeflectionFromE1300Curves->setDimensions(m_Width, m_Height);
+            }
         }
 
         void CIGU::setSolarRadiation(double const t_SolarRadiation) const
