@@ -54,7 +54,7 @@ namespace Tarcog
 
             //! Function to return pressure difference on each of the layers when using deflection
             //! model
-            [[nodiscard]] std::vector<double> getPressureDifference() const;
+            [[nodiscard]] std::vector<double> getPanesLoad() const;
 
             [[nodiscard]] double getTilt() const;
             [[nodiscard]] double getWidth() const;

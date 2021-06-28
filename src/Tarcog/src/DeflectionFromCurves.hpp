@@ -53,7 +53,7 @@ namespace Deflection
                           const std::vector<double> & pressureDifference);
         std::optional<double> error{0.0};
         std::vector<double> deflection;
-        std::vector<double> pressureDifference;
+        std::vector<double> paneLoad;
     };
 
     //! Class that does deflection calculations based on E1300 curves. It is working only for

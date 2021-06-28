@@ -242,17 +242,17 @@ namespace Tarcog
             return aMeanDeflections;
         }
 
-        std::vector<double> CIGU::getPressureDifference() const
+        std::vector<double> CIGU::getPanesLoad() const
         {
 
-            std::vector<double> pressureDiff(getSolidLayers().size());
+            std::vector<double> paneLoad(getSolidLayers().size());
 
             if(m_DeflectionFromE1300Curves != nullptr)
             {
-                pressureDiff = m_DeflectionFromE1300Curves->results().pressureDifference;
+                paneLoad = m_DeflectionFromE1300Curves->results().paneLoad;
             }
 
-            return pressureDiff;
+            return paneLoad;
         }
 
         double CIGU::getThickness() const

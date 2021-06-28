@@ -25,7 +25,7 @@ namespace Deflection
     DeflectionResults::DeflectionResults(std::optional<double> error,
                                          const std::vector<double> & deflection,
                                          const std::vector<double> & pressureDifference) :
-        error(std::move(error)), deflection(deflection), pressureDifference(pressureDifference)
+        error(std::move(error)), deflection(deflection), paneLoad(pressureDifference)
     {}
 
     DeflectionE1300::DeflectionE1300(double width,
