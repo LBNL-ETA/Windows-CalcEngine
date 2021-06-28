@@ -72,6 +72,7 @@ namespace Deflection
         [[maybe_unused]] void setInteriorPressure(double pressure);
 
         [[maybe_unused]] void setIGUTilt(double theta);
+        [[maybe_unused]] void setDimensions(double width, double height);
 
         //! Adding applied load to the layers
         //!
