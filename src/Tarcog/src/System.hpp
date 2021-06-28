@@ -32,6 +32,7 @@ namespace Tarcog
             [[nodiscard]] std::vector<double> getMaxDeflections(System t_System);
             [[nodiscard]] std::vector<double> getMeanDeflections(System t_System);
             [[nodiscard]] std::vector<double> getPanesLoad(System t_System);
+            void setAppliedLoad(const std::vector<double> & load);
 
             [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>>
               getSolidLayers(System t_System) const;
@@ -55,6 +56,7 @@ namespace Tarcog
 
             void setWidth(double width) override;
             void setHeight(double height) override;
+            void setTilt(double tilt) override;
             void setWidthAndHeight(double width, double height) override;
             void setInteriorAndExteriorSurfacesHeight(double height) override;
 

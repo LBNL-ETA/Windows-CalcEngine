@@ -50,6 +50,16 @@ namespace Tarcog
             return m_System.at(t_System)->getPanesLoad();
         }
 
+        void CSystem::setAppliedLoad(const std::vector<double> & load)
+        {
+            m_Solved = false;
+            for(auto & [key, value] : m_System)
+            {
+                std::ignore = key;
+                value->setAppliedLoad(load);
+            }
+        }
+
         std::vector<std::shared_ptr<CIGUSolidLayer>>
           CSystem::getSolidLayers(System const t_System) const
         {
@@ -145,6 +155,16 @@ namespace Tarcog
             {
                 std::ignore = key;
                 system->setHeight(height);
+            }
+            m_Solved = false;
+        }
+
+        void CSystem::setTilt(double tilt)
+        {
+            for(auto & [key, system] : m_System)
+            {
+                std::ignore = key;
+                system->setTilt(tilt);
             }
             m_Solved = false;
         }
