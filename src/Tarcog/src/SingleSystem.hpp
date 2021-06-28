@@ -85,6 +85,9 @@ namespace Tarcog
             //! If IGU is part of the window then frame will still count in surface height.
             void setInteriorAndExteriorSurfacesHeight(double height);
 
+            void setDeflectionProperties(double t_Tini, double t_Pini);
+            void clearDeflection();
+
         private:
             CIGU m_IGU;
             std::map<Environment, std::shared_ptr<CEnvironment>> m_Environment;

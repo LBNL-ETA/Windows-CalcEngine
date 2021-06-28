@@ -327,6 +327,15 @@ namespace Tarcog
                 environment->setHeight(height);
             }
         }
+        void CSingleSystem::setDeflectionProperties(double t_Tini, double t_Pini)
+        {
+            m_IGU.setDeflectionProperties(t_Tini, t_Pini);
+        }
+
+        void CSingleSystem::clearDeflection()
+        {
+            m_IGU.clearDeflection();
+        }
     }   // namespace ISO15099
 
 }   // namespace Tarcog

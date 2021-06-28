@@ -60,6 +60,9 @@ namespace Tarcog
             void setWidthAndHeight(double width, double height) override;
             void setInteriorAndExteriorSurfacesHeight(double height) override;
 
+            void setDeflectionProperties(double t_Tini, double t_Pini);
+            void clearDeflection();
+
         private:
             void solve();
             void checkSolved();

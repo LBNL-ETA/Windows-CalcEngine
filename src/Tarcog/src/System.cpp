@@ -214,6 +214,26 @@ namespace Tarcog
             return m_System.at(sys)->getHc(environment);
         }
 
+        void CSystem::setDeflectionProperties(double t_Tini, double t_Pini)
+        {
+            for(auto & [key, system] : m_System)
+            {
+                std::ignore = key;
+                system->setDeflectionProperties(t_Tini, t_Pini);
+            }
+            m_Solved = false;
+        }
+
+        void CSystem::clearDeflection()
+        {
+            for(auto & [key, system] : m_System)
+            {
+                std::ignore = key;
+                system->clearDeflection();
+            }
+            m_Solved = false;
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog
