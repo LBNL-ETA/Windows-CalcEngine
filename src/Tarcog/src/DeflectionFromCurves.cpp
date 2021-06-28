@@ -96,6 +96,14 @@ namespace Deflection
         m_ResultsCalculated = false;
     }
 
+    void DeflectionE1300::setDimensions(const double width, const double height)
+    {
+        m_LongDimension = width > height ? width * 1000 : height * 1000;
+        m_ShortDimension = width > height ? height * 1000 : width * 1000;
+        m_PsLoaded = getPsLoaded(m_Layer, m_Theta);
+        m_ResultsCalculated = false;
+    }
+
     [[maybe_unused]] void DeflectionE1300::setAppliedLoad(std::vector<double> appliedLoad)
     {
         for(auto & load : appliedLoad)
