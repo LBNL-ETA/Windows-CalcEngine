@@ -148,8 +148,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionDifferentInteriorAndExteriorPr
 
     ASSERT_EQ(error.has_value(), true);
 
-    const auto correctError{-5.196203e-4};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
+    const auto correctError{-0.00051958486437797546};
+    EXPECT_NEAR(error.value(), correctError, 1e-8);
 
     const std::vector<double> correctDeflection{-2.408286e-3, -2.317540e-3, -2.242010e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
