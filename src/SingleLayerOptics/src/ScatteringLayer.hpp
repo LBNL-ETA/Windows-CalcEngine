@@ -119,6 +119,9 @@ namespace SingleLayerOptics
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
+        //! Function will return true if for IR emissivity calculations should use polynomial
+        [[nodiscard]] bool canApplyEmissivityPolynomial() const;
+
     private:
         double
           getAbsorptance(FenestrationCommon::Side t_Side, double t_Theta = 0, double t_Phi = 0);
@@ -148,7 +151,8 @@ namespace SingleLayerOptics
         explicit CScatteringLayerIR(CScatteringLayer layer);
 
         // This function is valid only for specular layers
-        double emissivity(FenestrationCommon::Side t_Side, EmissivityPolynomials type);
+        double emissivity(FenestrationCommon::Side t_Side,
+                          EmissivityPolynomials type = EmissivityPolynomials::NFRC_301_Uncoated);
 
         double emissivity(FenestrationCommon::Side t_Side, const std::vector<double> & polynomial);
 

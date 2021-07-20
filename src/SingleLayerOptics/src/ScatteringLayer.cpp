@@ -11,6 +11,7 @@
 #include "BeamDirection.hpp"
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
+#include "SpecularBSDFLayer.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -337,6 +338,11 @@ namespace SingleLayerOptics
           t_Material, aBSDF, x, y, thickness, xHole, yHole));
     }
 
+    bool CScatteringLayer::canApplyEmissivityPolynomial() const
+    {
+        return std::dynamic_pointer_cast<CSpecularBSDFLayer>(m_BSDFLayer) != nullptr;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////
     /// CScatteringLayerIR
     ////////////////////////////////////////////////////////////////////////////////////
@@ -351,11 +357,18 @@ namespace SingleLayerOptics
 
     double CScatteringLayerIR::emissivity(Side t_Side, const std::vector<double> & polynomial)
     {
-        double abs = m_Layer.getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
         double value = 0;
-        for(size_t i = 0; i < polynomial.size(); ++i)
+        if(m_Layer.canApplyEmissivityPolynomial())
         {
-            value += std::pow(abs, i + 1) * polynomial[i];
+            double abs = m_Layer.getAbsorptance(t_Side, ScatteringSimple::Direct, 0, 0);
+            for(size_t i = 0; i < polynomial.size(); ++i)
+            {
+                value += std::pow(abs, i + 1) * polynomial[i];
+            }
+        }
+        else
+        {
+            value = m_Layer.getAbsorptance(t_Side, ScatteringSimple::Diffuse, 0, 0);
         }
         return value;
     }
