@@ -84,9 +84,10 @@ namespace Tarcog
             const auto aFirstLayer = m_IGU.getEnvironment(Environment::Outdoor);
             m_Environment.at(Environment::Outdoor)->connectToIGULayer(aFirstLayer);
 
-            //initializeStartValues();
+            // initializeStartValues();
 
-            m_NonLinearSolver = std::make_shared<CNonLinearSolver>(m_IGU, t_SingleSystem.getNumberOfIterations());
+            m_NonLinearSolver =
+              std::make_shared<CNonLinearSolver>(m_IGU, t_SingleSystem.getNumberOfIterations());
 
             return *this;
         }
@@ -327,9 +328,14 @@ namespace Tarcog
                 environment->setHeight(height);
             }
         }
+
         void CSingleSystem::setDeflectionProperties(double t_Tini, double t_Pini)
         {
             m_IGU.setDeflectionProperties(t_Tini, t_Pini);
+
+            // Need to throw previous solution off in case someone calculated CSingleSystem without
+            // deflection and then turns deflection on, iterations will conclude that solution is correct (Simon)
+            initializeStartValues();
         }
 
         void CSingleSystem::clearDeflection()
