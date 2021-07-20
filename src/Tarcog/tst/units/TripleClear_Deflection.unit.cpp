@@ -67,7 +67,7 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, gapLayer1, aSolidLayer2, gapLayer2, aSolidLayer3});
 
-        aIGU.setDeflectionProperties(273, 101325);
+        //aIGU.setDeflectionProperties(273, 101325);
 
         // Alternative way of adding layers.
         // aIGU.addLayer(aSolidLayer1);
@@ -78,6 +78,7 @@ protected:
         /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem->setDeflectionProperties(273, 101325);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
