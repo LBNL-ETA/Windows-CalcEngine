@@ -339,7 +339,9 @@ namespace SingleLayerOptics
 
     bool CScatteringLayer::canApplyEmissivityPolynomial() const
     {
-        return std::dynamic_pointer_cast<CSpecularBSDFLayer>(m_BSDFLayer) != nullptr;
+        return m_BSDFLayer != nullptr
+               && std::dynamic_pointer_cast<CSpecularBSDFLayer>(m_BSDFLayer) != nullptr
+               && m_BSDFLayer->getBandWavelengths().size() > 2;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
