@@ -122,11 +122,11 @@ namespace SingleLayerOptics
         //! Function will return true if for IR emissivity calculations should use polynomial
         [[nodiscard]] bool canApplyEmissivityPolynomial() const;
 
+        explicit CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
+
     private:
         double
           getAbsorptance(FenestrationCommon::Side t_Side, double t_Theta = 0, double t_Phi = 0);
-
-        explicit CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
 
         void createResultsAtAngle(double t_Theta, double t_Phi);
 
@@ -138,7 +138,6 @@ namespace SingleLayerOptics
         std::map<FenestrationCommon::Side, CScatteringSurface> m_Surface;
 
         std::shared_ptr<CBSDFLayer> m_BSDFLayer;
-        std::shared_ptr<CBaseCell> m_Cell;
 
         double m_Theta{0.0};
         double m_Phi{0.0};
