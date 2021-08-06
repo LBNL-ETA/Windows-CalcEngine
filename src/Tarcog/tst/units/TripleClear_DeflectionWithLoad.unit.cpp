@@ -6,7 +6,7 @@
 #include "WCECommon.hpp"
 
 // Example of double clear window with inital guess for solution
-class TestTripleClearDeflection : public testing::Test
+class TestTripleClearDeflectionWithLoad : public testing::Test
 {
 private:
     std::shared_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
@@ -20,7 +20,7 @@ protected:
         const auto airTemperature{250};      // Kelvins
         const auto airSpeed{5.5};            // meters per second
         const auto tSky{255.15};             // Kelvins
-        const auto solarRadiation{783.0};
+        const auto solarRadiation{0.0};
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -78,7 +78,7 @@ protected:
         /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
-
+        m_TarcogSystem->setAppliedLoad({0, 0, 100000});
         m_TarcogSystem->setDeflectionProperties(273, 101325);        
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
@@ -90,7 +90,7 @@ public:
     }
 };
 
-TEST_F(TestTripleClearDeflection, Test1)
+TEST_F(TestTripleClearDeflectionWithLoad, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Surface temperatures");
 
@@ -104,7 +104,7 @@ TEST_F(TestTripleClearDeflection, Test1)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     auto Temperature = aSystem->getTemperatures(aRun);
-    std::vector<double> correctTemperature = {253.145118, 253.399346, 265.491216, 265.745444, 281.162092, 281.416320};
+    std::vector<double> correctTemperature = {253.314583, 253.583839, 265.810776, 266.080031, 280.499960, 280.769216};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -112,7 +112,7 @@ TEST_F(TestTripleClearDeflection, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
     }
 
-    std::vector<double> correctDeflection = {-0.421986e-3, 0.265021e-3, 0.167762e-3};
+    std::vector<double> correctDeflection = {22.784211e-3, 24.460877e-3, 63.338034e-3};
 
     auto deflection = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
 
@@ -120,46 +120,4 @@ TEST_F(TestTripleClearDeflection, Test1)
     {
         EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-8);
     }
-
-    auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(20u, numOfIter);
-
-    //////////////////////////////////////////////////////////////////////
-    /// SHGC run
-    //////////////////////////////////////////////////////////////////////
-
-    aRun = Tarcog::ISO15099::System::SHGC;
-
-    Temperature = aSystem->getTemperatures(aRun);
-    correctTemperature = {257.435790, 257.952362, 276.186799, 276.492794, 289.163055, 289.308119};
-    ASSERT_EQ(correctTemperature.size(), Temperature.size());
-
-    for(auto i = 0u; i < correctTemperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
-    }
-
-    correctDeflection = {-0.421986e-3, 0.265021e-3, 0.167762e-3};
-
-    deflection = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
-
-    for(auto i = 0u; i < correctDeflection.size(); ++i)
-    {
-        EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-8);
-    }
-
-    numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(21u, numOfIter);
-
-    //////////////////////////////////////////////////////////////////////
-    /// General results
-    //////////////////////////////////////////////////////////////////////
-    const auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 1.9522982371191091, 1e-5);
-
-    const auto SHGC = aSystem->getSHGC(0.598424255848);
-    EXPECT_NEAR(SHGC, 0.673282, 1e-5);
-
-    const auto relativeHeatGain = aSystem->relativeHeatGain(0.703296);
-    EXPECT_NEAR(relativeHeatGain, 579.484762, 1e-5);
 }
