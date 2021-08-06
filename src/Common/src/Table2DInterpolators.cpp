@@ -80,7 +80,9 @@ namespace Table
         return result;
     }
 
-    std::optional<double> tableColumnInterpolation(const std::vector<point> & table, double value)
+    std::optional<double> tableColumnInterpolation(const std::vector<point> & table,
+                                                   double value,
+                                                   Extrapolate extrapolate)
     {
         std::optional<double> result;
         point p1;
@@ -108,6 +110,19 @@ namespace Table
         if(p1.has_value() && p2.has_value() && p1 != p2)
         {
             result = linearInterpolation(p1.x, p2.x, p1.y, p2.y, value);
+        }
+
+        if(!result.has_value() && extrapolate == Extrapolate::Yes)
+        {
+            const auto firstValue{
+              std::find_if(std::begin(table), std::end(table), [&](const point & a) {
+                  return a.y.has_value();
+              })};
+            const auto lastValue{
+              std::find_if(std::rbegin(table), std::rend(table), [&](const point & a) {
+                  return a.y.has_value();
+              })};
+            result = table[0].x.value() > value ? firstValue->y : lastValue->y;
         }
 
         return result;

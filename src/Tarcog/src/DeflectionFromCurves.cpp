@@ -208,7 +208,7 @@ namespace Deflection
         auto si{DPni > 0 ? 1.0 : -1.0};
 
         auto Vi{0.0};
-        auto val1{Table::tableColumnInterpolation(m_PnVns, DPni * si)};
+        auto val1{tableColumnInterpolation(m_PnVns, DPni * si, Table::Extrapolate::Yes)};
         if(val1.has_value())
         {
             Vi = val1.value() / m_Vcs[index] * si;
@@ -257,7 +257,7 @@ namespace Deflection
 
                 auto sj{DPnj > 0 ? 1 : -1};
                 auto Vj{0.0};
-                const auto value{Table::tableColumnInterpolation(m_PnVns, DPnj * sj)};
+                const auto value{Table::tableColumnInterpolation(m_PnVns, DPnj * sj, Table::Extrapolate::Yes)};
                 if(value.has_value())
                 {
                     Vj = value.value() / m_Vcs[j] * sj;
@@ -280,7 +280,7 @@ namespace Deflection
             auto DPnj = DPj * m_Pcs[j];
             auto sj{DPnj > 0 ? 1.0 : -1.0};
             auto Vj{0.0};
-            const auto value{Table::tableColumnInterpolation(m_PnVns, DPnj * sj)};
+            const auto value{Table::tableColumnInterpolation(m_PnVns, DPnj * sj, Table::Extrapolate::Yes)};
             if(value.has_value())
             {
                 Vj = value.value() / m_Vcs[j] * sj;
@@ -334,7 +334,7 @@ namespace Deflection
         for(size_t i = 0u; i < m_Layer.size(); ++i)
         {
             auto ws{0.0};
-            auto val{Table::tableColumnInterpolation(m_PnWns, std::abs(Dpx[i]) * m_Pcs[i])};
+            auto val{Table::tableColumnInterpolation(m_PnWns, std::abs(Dpx[i]) * m_Pcs[i], Table::Extrapolate::Yes)};
             if(val.has_value())
             {
                 const auto si{Dpx[i] > 0 ? 1.0 : -1.0};
