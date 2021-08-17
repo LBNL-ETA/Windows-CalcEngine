@@ -21,7 +21,12 @@ namespace SingleLayerOptics
         }
         else
         {
-            return (t_Solar - t_Fraction * t_Range) / (1 - t_Fraction);
+            auto ratio{(t_Solar - t_Fraction * t_Range) / (1 - t_Fraction)};
+            if(ratio > 1)
+                ratio = 1;
+            if(ratio < 0)
+                ratio = 0;
+            return ratio;
         }
     }
 
@@ -604,7 +609,8 @@ namespace SingleLayerOptics
         m_PVSample(t_SpectralSample)
     {}
 
-    FenestrationCommon::CSeries CMaterialPhotovoltaic::jscPrime(FenestrationCommon::Side t_Side) const
+    FenestrationCommon::CSeries
+      CMaterialPhotovoltaic::jscPrime(FenestrationCommon::Side t_Side) const
     {
         return m_PVSample->jscPrime(t_Side);
     }
