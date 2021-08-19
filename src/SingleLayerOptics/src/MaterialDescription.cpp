@@ -376,7 +376,7 @@ namespace SingleLayerOptics
         double lowLambda = m_MaterialPartialRange->getMinLambda();
         double highLambda = m_MaterialPartialRange->getMaxLambda();
         CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
-        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, nirRatio.ratio());
+        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
     }
 
     void IMaterialDualBand::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
@@ -498,7 +498,7 @@ namespace SingleLayerOptics
         double lowLambda = m_MaterialPartialRange->getMinLambda();
         double highLambda = m_MaterialPartialRange->getMaxLambda();
         CNIRRatio nirRatio = CNIRRatio(t_SolarRadiation, lowLambda, highLambda);
-        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, nirRatio.ratio());
+        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
     }
 
 

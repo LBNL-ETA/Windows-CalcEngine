@@ -79,7 +79,7 @@ protected:
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
         m_TarcogSystem->setAppliedLoad({0, 0, 100000});
-        m_TarcogSystem->setDeflectionProperties(273, 101325);        
+        m_TarcogSystem->setDeflectionProperties(273, 101325);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
