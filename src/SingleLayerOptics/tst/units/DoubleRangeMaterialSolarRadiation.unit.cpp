@@ -99,9 +99,9 @@ TEST_F(TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties)
 
     std::vector<double> correctResults;
     correctResults.push_back(0);
-    correctResults.push_back(0.0021424777315234909);
+    correctResults.push_back(0.0039215686274509838);
     correctResults.push_back(0.2);
-    correctResults.push_back(0.0021424777315234909);
+    correctResults.push_back(0.0039215686274509838);
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -114,9 +114,9 @@ TEST_F(TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties)
 
     correctResults.clear();
     correctResults.push_back(0);
-    correctResults.push_back(0.79785752226847650);
+    correctResults.push_back(0.79607843137254897);
     correctResults.push_back(0.6);
-    correctResults.push_back(0.79785752226847650);
+    correctResults.push_back(0.79607843137254897);
 
     for(size_t i = 0; i < size; ++i)
     {
