@@ -9,7 +9,6 @@
 #include "BeamDirection.hpp"   //  Need to include rather than forward declare to default incoming and outgoing directions to CBeamDirection()
 #include "BSDFDirections.hpp"   //  Needed to have CBSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF material was changed to hide members using the pimpl ideom.
 
-// Lixing
 namespace FenestrationCommon
 {
     enum class Side;
@@ -45,6 +44,8 @@ namespace SingleLayerOptics
     private:
         std::map<FenestrationCommon::Side, std::shared_ptr<CSurface>> m_Surface;
     };
+
+    static double NIRRatio = 0.49;
 
     //////////////////////////////////////////////////////////////////////////////////////////
     ///   CMaterial
