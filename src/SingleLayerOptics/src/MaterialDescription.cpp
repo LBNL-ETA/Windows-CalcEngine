@@ -411,6 +411,18 @@ namespace SingleLayerOptics
         return aResults;
     }
 
+    void IMaterialDualBand::setBandWavelengths(const std::vector<double> & wavelengths)
+    {
+        auto bandWl{calculateBandWavelengths()};
+        FenestrationCommon::CCommonWavelengths commonWl;
+        commonWl.addWavelength(bandWl);
+        commonWl.addWavelength(wavelengths);
+        // It is OK to extrapolate wavelegnths in this case since dual band material will end way
+        // bellow the upper limit. Wavelengths will also be cut off later for the calculations.
+        m_Wavelengths = commonWl.getCombinedWavelengths(Combine::Extrapolate);
+        m_WavelengthsCalculated = true;
+    }
+
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
     {
         m_RangeCreator();
@@ -421,10 +433,7 @@ namespace SingleLayerOptics
             aWavelengths.push_back(m_Materials[i]->getMinLambda());
         }
 
-        // TODO: Do not create extra wavelength since this might be important for the integration.
-        // Range is already kept with min and max lambda. Integration of double specular layer is
-        // working correctly. Make sure that integration of single shading layer is working
-        // correctly too.
+        // Do not create extra wavelength since it will create an extra step for the integration.
         // aWavelengths.push_back(m_Materials.back()->getMaxLambda());
 
         return aWavelengths;
