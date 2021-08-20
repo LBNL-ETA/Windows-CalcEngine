@@ -340,7 +340,10 @@ namespace Tarcog
             }
         }
 
-        void CIGU::setDeflectionProperties(double t_Tini, double t_Pini)
+        void CIGU::setDeflectionProperties(const double t_Tini,
+                                           const double t_Pini,
+                                           const double t_InsidePressure,
+                                           const double t_OutsidePressure)
         {
             std::vector<Deflection::LayerData> layerData;
             for(const auto & layer : getSolidLayers())
@@ -358,6 +361,8 @@ namespace Tarcog
               std::make_unique<Deflection::DeflectionE1300>(m_Width, m_Height, layerData, gapData);
 
             m_DeflectionFromE1300Curves->setIGUTilt(m_Tilt);
+            m_DeflectionFromE1300Curves->setInteriorPressure(t_InsidePressure);
+            m_DeflectionFromE1300Curves->setExteriorPressure(t_OutsidePressure);
 
             if(m_DeflectionAppliedLoad.size() == layerData.size())
             {
