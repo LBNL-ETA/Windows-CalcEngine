@@ -236,6 +236,8 @@ namespace SingleLayerOptics
           const CBeamDirection & t_IncomingDirection = CBeamDirection(),
           const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
+        virtual void setBandWavelengths(const std::vector<double> & wavelengths) override;
+
     protected:
         std::vector<double> calculateBandWavelengths() override;
         // Checks if material is within valid range. Otherwise, algorithm is not valid.
