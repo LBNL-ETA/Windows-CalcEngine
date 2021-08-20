@@ -329,9 +329,13 @@ namespace Tarcog
             }
         }
 
-        void CSingleSystem::setDeflectionProperties(double t_Tini, double t_Pini)
+        void CSingleSystem::setDeflectionProperties(const double t_Tini,
+                                                    const double t_Pini)
         {
-            m_IGU.setDeflectionProperties(t_Tini, t_Pini);
+            m_IGU.setDeflectionProperties(t_Tini,
+                                          t_Pini,
+                                          m_Environment.at(Environment::Indoor)->getPressure(),
+                                          m_Environment.at(Environment::Outdoor)->getPressure());
 
             // Need to throw previous solution off in case someone calculated CSingleSystem without
             // deflection and then turns deflection on, iterations will conclude that solution is correct (Simon)

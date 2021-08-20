@@ -86,6 +86,7 @@ namespace Tarcog
             void setInteriorAndExteriorSurfacesHeight(double height);
 
             void setDeflectionProperties(double t_Tini, double t_Pini);
+
             void clearDeflection();
 
         private:

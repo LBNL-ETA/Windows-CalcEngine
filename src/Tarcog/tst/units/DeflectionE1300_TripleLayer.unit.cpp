@@ -297,3 +297,43 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleClearWithLoad)
         EXPECT_NEAR(correctPanesLoad[i], panesLoad[i], 1e-6);
     }
 }
+
+TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleDifferentInOutPressureLoad)
+{
+    const auto width{1.0};
+    const auto height{1.0};
+    const std::vector<Deflection::LayerData> layer{{0.003048}, {0.003048}, {0.003048}};
+    const std::vector<Deflection::GapData> gap{{0.006, 330, 102000}, {0.0127, 330, 102000}};
+    Deflection::DeflectionE1300 def(width, height, layer, gap);
+
+    const auto interiorPressure{101000};
+    const auto exteriorPressure{104000};
+
+    def.setInteriorPressure(interiorPressure);
+    def.setExteriorPressure(exteriorPressure);
+
+    const std::vector<double> loadTemperatures{316.3393916, 317.7188435};
+    def.setLoadTemperatures(loadTemperatures);
+
+    const auto res{def.results()};
+    const auto error{res.error};
+    const auto deflection{res.deflection};
+    const auto panesLoad{res.paneLoad};
+
+    ASSERT_EQ(error.has_value(), true);
+
+    const auto correctError{1.078472e-06};
+    EXPECT_NEAR(error.value(), correctError, 1e-9);
+
+    const std::vector<double> correctDeflection{-9.338437e-3, -9.100851e-3, -8.466587e-3};
+    for(size_t i = 0u; i < correctDeflection.size(); ++i)
+    {
+        EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-9);
+    }
+
+    const std::vector<double> correctPanesLoad{-1132.076073, -1015.644143, -852.279784};
+    for(size_t i = 0u; i < correctPanesLoad.size(); ++i)
+    {
+        EXPECT_NEAR(correctPanesLoad[i], panesLoad[i], 1e-6);
+    }
+}
