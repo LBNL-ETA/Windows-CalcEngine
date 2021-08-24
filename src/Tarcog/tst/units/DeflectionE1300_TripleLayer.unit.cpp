@@ -23,14 +23,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, ZeroDeflection)
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
-
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{-3.686496e-07};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
 
     const std::vector<double> correctDeflection{0, 0, 0};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
@@ -57,14 +51,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionSquaredWindow)
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
-
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{5.582482e-05};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
 
     const std::vector<double> correctDeflection{0.07465884e-03, -0.022613683e-03, -0.02094219e-03};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
@@ -95,11 +83,6 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionDifferentWidthAndHeight)
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
 
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{-5.033322e-06};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
-
     const std::vector<double> correctDeflection{0.072674289e-03, -0.02168655e-03, -0.02113032e-03};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
     {
@@ -128,14 +111,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionDifferentInteriorAndExteriorPr
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
-
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{-0.00052};
-    EXPECT_NEAR(error.value(), correctError, 1e-5);
 
     const std::vector<double> correctDeflection{-2.408286e-3, -2.317540e-3, -2.242010e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
@@ -165,14 +142,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionWithTiltAngle)
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
-
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{-2.177694e-4};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
 
     const std::vector<double> correctDeflection{-0.261122e-3, -0.337247e-3, -0.302394e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
@@ -202,14 +173,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionWithAppliedLoad)
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
-
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{-2.908520e-06};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
 
     const std::vector<double> correctDeflection{-3.619900e-3, -3.420178e-3, -3.323497e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
@@ -243,11 +208,6 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleClearNoLoad)
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
 
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{3.770401e-08};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
-
     const std::vector<double> correctDeflection{-0.421354e-3, 0.265433e-3, 0.166646e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
     {
@@ -276,14 +236,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleClearWithLoad)
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
-
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{2.222136e-06};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
 
     const std::vector<double> correctDeflection{22.795550e-3, 24.486071e-3, 63.329275e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
@@ -316,14 +270,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleDifferentInOutPressu
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
-
-    ASSERT_EQ(error.has_value(), true);
-
-    const auto correctError{1.078472e-06};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
 
     const std::vector<double> correctDeflection{-9.338437e-3, -9.100851e-3, -8.466587e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)

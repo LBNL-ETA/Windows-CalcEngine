@@ -71,7 +71,7 @@ namespace Tarcog
                                          double t_Pini,
                                          double t_InsidePressure = 101325,
                                          double t_OutsidePressure = 101325);
-            // void setDeflectionProperties(double t_Tini, double t_Pini);
+
             void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
 
             void setAppliedLoad(std::vector<double> t_AppliedLoad);
