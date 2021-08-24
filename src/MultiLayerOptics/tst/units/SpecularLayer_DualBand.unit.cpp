@@ -1,26 +1,25 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include <memory>
-
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
+#include "WCEMultiLayerOptics.hpp"
 
 
 using namespace SingleLayerOptics;
-using namespace SpectralAveraging;
 using namespace FenestrationCommon;
+using namespace SpectralAveraging;
 
-// Creation of double range material with provided ratio
-class TestDoubleRangeMaterialSolarRadiation : public testing::Test
+class TestSpecularLayer_102 : public testing::Test
 {
-private:
-    std::shared_ptr<CMaterial> m_Material;
+protected:
+    virtual void SetUp()
+    {}
 
-    CSeries loadSolarRadiation()
+    CSeries loadSolarRadiationFile() const
     {
         // Full ASTM E891-87 Table 1 (Solar radiation)
-        CSeries aSolarRadiation(
+        auto aSolarRadiation = CSeries(
           {{0.3000, 0.0},    {0.3050, 3.4},    {0.3100, 15.6},   {0.3150, 41.1},   {0.3200, 71.2},
            {0.3250, 100.2},  {0.3300, 152.4},  {0.3350, 155.6},  {0.3400, 179.4},  {0.3450, 186.7},
            {0.3500, 212.0},  {0.3600, 240.5},  {0.3700, 324.0},  {0.3800, 362.4},  {0.3900, 381.7},
@@ -51,77 +50,33 @@ private:
 
         return aSolarRadiation;
     }
-
-protected:
-    virtual void SetUp()
-    {
-        // Solar range material
-        const double Tsol = 0.1;
-        const double Rfsol = 0.7;
-        const double Rbsol = 0.7;
-
-        // Visible range
-        const double Tvis = 0.2;
-        const double Rfvis = 0.6;
-        const double Rbvis = 0.6;
-
-        m_Material = Material::dualBandMaterial(
-          Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis, loadSolarRadiation());
-    }
-
-public:
-    std::shared_ptr<CMaterial> getMaterial()
-    {
-        return m_Material;
-    };
 };
 
-TEST_F(TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties)
+TEST_F(TestSpecularLayer_102, TestSpecularDualBandSingleLayer1)
 {
-    SCOPED_TRACE("Begin Test: Phi angles creation.");
+    SCOPED_TRACE("Begin Test: Scattering Specular Layer with Dual Band Material.");
 
-    std::shared_ptr<CMaterial> aMaterial = getMaterial();
+    const auto thickness = 3.048e-3;   // [m]
+    const auto TfSolar{0.6};
+    const auto TbSolar{0.6};
+    const auto RfSolar{0.074764};
+    const auto RbSolar{0.074764};
+    const auto TfVisible{0.6};
+    const auto TbVisible{0.6};
+    const auto RfVisible{0.082562};
+    const auto RbVisible{0.082562};
+    const auto aMaterial = Material::dualBandMaterial(
+      TfSolar, TbSolar, RfSolar, RbSolar, TfVisible, TbVisible, RfVisible, RbVisible);
 
-    double T = aMaterial->getProperty(Property::T, Side::Front);
+    const auto aLayer = SingleLayerOptics::SpecularLayer::createLayer(aMaterial);
 
-    // Test for solar range first
-    EXPECT_NEAR(0.1, T, 1e-6);
+    auto igu{MultiLayerOptics::CMultiPaneSpecular::create({aLayer}, loadSolarRadiationFile())};
 
-    double R = aMaterial->getProperty(Property::R, Side::Front);
+    const auto minLambda{0.3};
+    const auto maxlambda{2.5};
 
-    EXPECT_NEAR(0.7, R, 1e-6);
+    auto test{igu->getPropertySimple(
+      minLambda, maxlambda, PropertySimple::T, Side::Front, Scattering::DirectDirect)};
 
-    size_t size = 5;
-
-    std::vector<double> Transmittances = aMaterial->getBandProperties(Property::T, Side::Front);
-
-    EXPECT_EQ(size, Transmittances.size());
-
-    std::vector<double> correctResults;
-    correctResults.push_back(0);
-    correctResults.push_back(0.0039215686274509838);
-    correctResults.push_back(0.2);
-    correctResults.push_back(0.0039215686274509838);
-    correctResults.push_back(0.0039215686274509838);
-
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], Transmittances[i], 1e-6);
-    }
-
-    std::vector<double> Reflectances = aMaterial->getBandProperties(Property::R, Side::Front);
-
-    EXPECT_EQ(size, Reflectances.size());
-
-    correctResults.clear();
-    correctResults.push_back(0);
-    correctResults.push_back(0.79607843137254897);
-    correctResults.push_back(0.6);
-    correctResults.push_back(0.79607843137254897);
-    correctResults.push_back(0.79607843137254897);
-
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], Reflectances[i], 1e-6);
-    }
+    EXPECT_NEAR(test, 0.6, 1e-6);
 }
