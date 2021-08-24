@@ -95,6 +95,8 @@ namespace SingleLayerOptics
 
         virtual void Flipped(bool flipped);
 
+        [[nodiscard]] bool isWavelengthInRange(double wavelength) const;
+
     protected:
         double m_MinLambda;
         double m_MaxLambda;
@@ -236,8 +238,6 @@ namespace SingleLayerOptics
           const CBeamDirection & t_IncomingDirection = CBeamDirection(),
           const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
-        virtual void setBandWavelengths(const std::vector<double> & wavelengths) override;
-
     protected:
         std::vector<double> calculateBandWavelengths() override;
         // Checks if material is within valid range. Otherwise, algorithm is not valid.
@@ -255,10 +255,14 @@ namespace SingleLayerOptics
         // Creates all of the required ranges in m_Materials from solar radiation
         void createRangesFromSolarRadiation(const FenestrationCommon::CSeries & t_SolarRadiation);
 
+        std::vector<double> getWavelengthsFromMaterials() const;
+
         // Properties over the rest of range will depend on partial range as well.
         // We do want to keep correct properties of partial range, but will want to update
         // properties for other partial ranges that are not provided by the user.
         // double getModifiedProperty(double t_Range, double t_Solar, double t_Fraction) const;
+
+        std::shared_ptr<CMaterial> getMaterialFromWavelegth(double wavelength) const;
 
         std::shared_ptr<CMaterial> m_MaterialFullRange;
         std::shared_ptr<CMaterial> m_MaterialPartialRange;
