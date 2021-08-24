@@ -131,7 +131,7 @@ protected:
 
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
-        //Layer_102->setBandWavelengths(commonWL);
+        // Layer_102->setBandWavelengths(commonWL);
 
         // Solar range
         const auto Tsol = 0.5;
@@ -149,8 +149,11 @@ protected:
 
         const auto diffuseLayer = CBSDFLayerMaker::getPerfectlyDiffuseLayer(aMaterial, aBSDF);
 
-        m_Layer = CMultiPaneBSDF::create({Layer_102, diffuseLayer},
-                                         loadSolarRadiationFile());
+        // This is to test if results will remain the same even with empty detector spectrum.
+        const CSeries detectorSpectrum;
+
+        m_Layer = CMultiPaneBSDF::create(
+          {Layer_102, diffuseLayer}, loadSolarRadiationFile(), detectorSpectrum);
     }
 
 public:
