@@ -216,7 +216,7 @@ namespace SingleLayerOptics
         // (ratio should be calculated and not quessed)
         IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_FullRange,
-                          double t_Ratio = 0.49);
+                          double t_Ratio = NIRRatio);
 
         // ratio is calculated based on provided solar radiation values
         IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -280,7 +280,7 @@ namespace SingleLayerOptics
         // (ratio should be calculated and not quessed)
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_FullRange,
-                          double t_Ratio = 0.49);
+                          double t_Ratio = NIRRatio);
 
         // ratio is calculated based on provided solar radiation values
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -310,7 +310,7 @@ namespace SingleLayerOptics
         // (ratio should be calculated and not quessed)
         CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
                               const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
-                              double t_Ratio = 0.49);
+                              double t_Ratio = NIRRatio);
 
         // ratio is calculated based on provided solar radiation values
         CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
