@@ -350,7 +350,7 @@ namespace SingleLayerOptics
     {
         assert(m_Cell != nullptr);
 
-        std::shared_ptr<SquareMatrix> aViewFactors = m_Cell->viewFactors();
+        SquareMatrix aViewFactors{m_Cell->viewFactors()};
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
         // Create energy matrix
@@ -368,7 +368,7 @@ namespace SingleLayerOptics
                 if(i != numSeg - 1)
                 {
                     double value =
-                      (*aViewFactors)(b[i + 1], f[j]) * T + (*aViewFactors)(f[i], f[j]) * R;
+                      aViewFactors(b[i + 1], f[j]) * T + aViewFactors(f[i], f[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -397,7 +397,7 @@ namespace SingleLayerOptics
                 if(i != numSeg - 1)
                 {
                     const double value =
-                      (*aViewFactors)(b[i + 1], b[j]) * T + (*aViewFactors)(f[i], b[j]) * R;
+                      aViewFactors(b[i + 1], b[j]) * T + aViewFactors(f[i], b[j]) * R;
                     (*m_Energy)(j + numSeg, i) = value;
                 }
                 else
@@ -418,7 +418,7 @@ namespace SingleLayerOptics
                 if(i != 0)
                 {
                     const double value =
-                      (*aViewFactors)(f[i - 1], f[j]) * T + (*aViewFactors)(b[i], f[j]) * R;
+                      aViewFactors(f[i - 1], f[j]) * T + aViewFactors(b[i], f[j]) * R;
                     (*m_Energy)(j, i + numSeg) = value;
                 }
                 else
@@ -436,7 +436,7 @@ namespace SingleLayerOptics
                 if(i != 0)
                 {
                     double value =
-                      (*aViewFactors)(f[i - 1], b[j]) * T + (*aViewFactors)(b[i], b[j]) * R;
+                      aViewFactors(f[i - 1], b[j]) * T + aViewFactors(b[i], b[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -480,13 +480,13 @@ namespace SingleLayerOptics
     std::shared_ptr<std::vector<double>> CVenetianCellEnergy::diffuseVector()
     {
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
-        std::shared_ptr<SquareMatrix> aViewFactors = m_Cell->viewFactors();
+        SquareMatrix aViewFactors{m_Cell->viewFactors()};
 
         std::shared_ptr<std::vector<double>> B = std::make_shared<std::vector<double>>(2 * numSeg);
         for(size_t i = 0; i < numSeg; ++i)
         {
-            (*B)[i] = -(*aViewFactors)(b[0], f[i]);
-            (*B)[i + numSeg] = -(*aViewFactors)(b[0], b[i]);
+            (*B)[i] = -aViewFactors(b[0], f[i]);
+            (*B)[i + numSeg] = -aViewFactors(b[0], b[i]);
         }
 
         return B;

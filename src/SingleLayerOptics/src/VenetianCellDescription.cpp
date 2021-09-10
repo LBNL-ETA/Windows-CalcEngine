@@ -88,7 +88,7 @@ namespace SingleLayerOptics
         return aBackwardCell;
     }
 
-    std::shared_ptr<SquareMatrix> CVenetianCellDescription::viewFactors()
+    SquareMatrix CVenetianCellDescription::viewFactors() const
     {
         return m_Geometry->viewFactors();
     }
