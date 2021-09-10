@@ -39,7 +39,7 @@ namespace SingleLayerOptics
         double segmentLength(const size_t Index) const;
 
         // View factors of enclosure slats
-        std::shared_ptr<FenestrationCommon::SquareMatrix> viewFactors();
+        FenestrationCommon::SquareMatrix viewFactors() const;
 
         // view factor of the beam entering the cell with profile angle
         std::shared_ptr<std::vector<Viewer::BeamViewFactor>>
