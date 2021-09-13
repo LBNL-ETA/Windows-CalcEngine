@@ -43,9 +43,8 @@ namespace SingleLayerOptics
         m_Geometry.appendSegment(interiorSegment);
         m_Geometry.appendGeometry2D(m_Bottom->geometry());
 
-        m_BeamGeometry = std::make_shared<Viewer::CGeometry2DBeam>();
-        m_BeamGeometry->appendGeometry2D(m_Top->geometry());
-        m_BeamGeometry->appendGeometry2D(m_Bottom->geometry());
+        m_BeamGeometry.appendGeometry2D(m_Top->geometry());
+        m_BeamGeometry.appendGeometry2D(m_Bottom->geometry());
     }
 
     size_t CVenetianCellDescription::numberOfSegments() const
@@ -91,8 +90,7 @@ namespace SingleLayerOptics
     std::shared_ptr<std::vector<Viewer::BeamViewFactor>>
       CVenetianCellDescription::beamViewFactors(const double t_ProfileAngle, const FenestrationCommon::Side t_Side)
     {
-        assert(m_BeamGeometry != nullptr);
-        return m_BeamGeometry->beamViewFactors(-t_ProfileAngle, t_Side);
+        return m_BeamGeometry.beamViewFactors(-t_ProfileAngle, t_Side);
     }
 
     double CVenetianCellDescription::T_dir_dir(const FenestrationCommon::Side t_Side,
@@ -100,7 +98,7 @@ namespace SingleLayerOptics
     {
         assert(m_BeamGeometry != nullptr);
         const double aProfileAngle = t_Direction.profileAngle();
-        return m_BeamGeometry->directToDirect(-aProfileAngle, t_Side);
+        return m_BeamGeometry.directToDirect(-aProfileAngle, t_Side);
     }
 
     double CVenetianCellDescription::R_dir_dir(const FenestrationCommon::Side, const CBeamDirection &)
