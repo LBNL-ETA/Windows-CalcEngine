@@ -6,6 +6,7 @@
 #include <WCEViewer.hpp>
 
 #include "CellDescription.hpp"
+#include "VenetianSlat.hpp"
 
 namespace FenestrationCommon
 {
@@ -59,8 +60,8 @@ namespace SingleLayerOptics
         size_t m_NumOfSegments;
 
         // Top and bottom slats of venetian cell
-        std::shared_ptr<CVenetianSlat> m_Top;
-        std::shared_ptr<CVenetianSlat> m_Bottom;
+        CVenetianSlat m_Top;
+        CVenetianSlat m_Bottom;
 
         // Complete enclosure from venetian cell
         Viewer::CGeometry2D m_Geometry;
