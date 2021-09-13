@@ -66,7 +66,7 @@ namespace SingleLayerOptics
         Viewer::CGeometry2D m_Geometry;
 
         // Geometry to handle direct to direct beam component
-        std::shared_ptr<Viewer::CGeometry2DBeam> m_BeamGeometry;
+        Viewer::CGeometry2DBeam m_BeamGeometry;
     };
 
 }   // namespace SingleLayerOptics
