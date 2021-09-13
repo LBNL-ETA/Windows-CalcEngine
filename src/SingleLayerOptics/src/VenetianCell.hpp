@@ -92,8 +92,7 @@ namespace SingleLayerOptics
         // Keeps information about beam view factor and percentage view
         struct BeamSegmentView
         {
-        public:
-            BeamSegmentView() : viewFactor(0), percentViewed(0){};
+            BeamSegmentView() : viewFactor(0), percentViewed(0){}
             double viewFactor;
             double percentViewed;
         };
