@@ -50,8 +50,6 @@ namespace SingleLayerOptics
 
     size_t CVenetianCellDescription::numberOfSegments() const
     {
-        assert(m_Top != nullptr);
-        assert(m_Bottom != nullptr);
         // Two additional segments are for interior and exterior openess
         return 2 + m_Top.numberOfSegments() + m_Bottom.numberOfSegments();
     }
@@ -98,7 +96,6 @@ namespace SingleLayerOptics
     double CVenetianCellDescription::T_dir_dir(const FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction)
     {
-        assert(m_BeamGeometry != nullptr);
         const double aProfileAngle = t_Direction.profileAngle();
         return m_BeamGeometry.directToDirect(-aProfileAngle, t_Side);
     }
