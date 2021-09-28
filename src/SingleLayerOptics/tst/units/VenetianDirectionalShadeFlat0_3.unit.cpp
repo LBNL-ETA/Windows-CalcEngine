@@ -47,7 +47,7 @@ protected:
                                                     curvatureRadius,
                                                     numOfSlatSegments,
                                                     aDistribution,
-                                                    0);
+                                                    true);
     }
 
 public:

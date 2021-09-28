@@ -49,7 +49,7 @@ protected:
                                                     curvatureRadius,
                                                     numOfSlatSegments,
                                                     DistributionMethod::UniformDiffuse,
-                                                    0);
+                                                    true);
     }
 
 public:
