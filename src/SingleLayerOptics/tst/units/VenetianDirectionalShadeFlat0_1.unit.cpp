@@ -46,7 +46,8 @@ protected:
                                                     slatTiltAngle,
                                                     curvatureRadius,
                                                     numOfSlatSegments,
-                                                    aDistribution);
+                                                    aDistribution,
+                                                    0);
     }
 
 public:

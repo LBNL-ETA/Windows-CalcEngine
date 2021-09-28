@@ -30,10 +30,11 @@ namespace SingleLayerOptics
     {
     public:
         CVenetianBase(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                      const std::shared_ptr<ICellDescription> & t_Cell);
+                      const std::shared_ptr<ICellDescription> & t_Cell,
+                      double rotation = 0);
 
     protected:
-        std::shared_ptr<CVenetianCellDescription> getCellAsVenetian() const;
+        [[nodiscard]] std::shared_ptr<CVenetianCellDescription> getCellAsVenetian() const;
     };
 
     // Simple structure to hold backward and forward irradiances
@@ -190,7 +191,8 @@ namespace SingleLayerOptics
     {
     public:
         CVenetianCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                      const std::shared_ptr<ICellDescription> & t_Cell);
+                      const std::shared_ptr<ICellDescription> & t_Cell,
+                      double rotation = 0);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
 

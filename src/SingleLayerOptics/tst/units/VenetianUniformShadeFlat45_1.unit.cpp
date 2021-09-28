@@ -43,7 +43,8 @@ protected:
                                                     slatTiltAngle,
                                                     curvatureRadius,
                                                     numOfSlatSegments,
-                                                    DistributionMethod::UniformDiffuse);
+                                                    DistributionMethod::UniformDiffuse,
+                                                    0);
     }
 
 public:
