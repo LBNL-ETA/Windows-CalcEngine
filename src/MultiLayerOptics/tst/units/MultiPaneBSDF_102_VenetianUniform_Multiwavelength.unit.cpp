@@ -217,7 +217,7 @@ protected:
                                                            curvatureRadius,
                                                            numOfSlatSegments,
                                                            DistributionMethod::UniformDiffuse,
-                                                           0);
+                                                           true);
 
         auto commonWavelengths = aVenetian->getBandWavelengths();
 
