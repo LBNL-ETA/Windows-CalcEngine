@@ -321,7 +321,8 @@ protected:
                                             slatTiltAngle,
                                             curvatureRadius,
                                             numOfSlatSegments,
-                                            DistributionMethod::DirectionalDiffuse);
+                                            DistributionMethod::DirectionalDiffuse,
+                                            0);
 
         m_Layer = CMultiPaneBSDF::create({Layer_Venetian, Layer_102}, loadSolarRadiationFile());
     }

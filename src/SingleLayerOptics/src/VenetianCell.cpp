@@ -19,9 +19,10 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
 
     CVenetianBase::CVenetianBase(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                                 const std::shared_ptr<ICellDescription> & t_Cell) :
-        CUniformDiffuseCell(t_MaterialProperties, t_Cell),
-        CDirectionalDiffuseCell(t_MaterialProperties, t_Cell)
+                                 const std::shared_ptr<ICellDescription> & t_Cell,
+                                 double rotation) :
+        CUniformDiffuseCell(t_MaterialProperties, t_Cell, 0),
+        CDirectionalDiffuseCell(t_MaterialProperties, t_Cell, 0)
     {}
 
     std::shared_ptr<CVenetianCellDescription> CVenetianBase::getCellAsVenetian() const
@@ -120,12 +121,7 @@ namespace SingleLayerOptics
     //  CVenetianCellEnergy
     ////////////////////////////////////////////////////////////////////////////////////////////
     CVenetianCellEnergy::CVenetianCellEnergy() :
-        m_Cell(nullptr),
-        m_Tf(0),
-        m_Tb(0),
-        m_Rf(0),
-        m_Rb(0),
-        m_Energy(nullptr)
+        m_Cell(nullptr), m_Tf(0), m_Tb(0), m_Rf(0), m_Rb(0), m_Energy(nullptr)
     {}
 
     CVenetianCellEnergy::CVenetianCellEnergy(
@@ -134,11 +130,7 @@ namespace SingleLayerOptics
       const double Tb,
       const double Rf,
       const double Rb) :
-        m_Cell(t_Cell),
-        m_Tf(Tf),
-        m_Tb(Tb),
-        m_Rf(Rf),
-        m_Rb(Rb)
+        m_Cell(t_Cell), m_Tf(Tf), m_Tb(Tb), m_Rf(Rf), m_Rb(Rb)
     {
         createSlatsMapping();
         formEnergyMatrix();
@@ -367,8 +359,7 @@ namespace SingleLayerOptics
             {
                 if(i != numSeg - 1)
                 {
-                    double value =
-                      aViewFactors(b[i + 1], f[j]) * T + aViewFactors(f[i], f[j]) * R;
+                    double value = aViewFactors(b[i + 1], f[j]) * T + aViewFactors(f[i], f[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -435,8 +426,7 @@ namespace SingleLayerOptics
             {
                 if(i != 0)
                 {
-                    double value =
-                      aViewFactors(f[i - 1], b[j]) * T + aViewFactors(b[i], b[j]) * R;
+                    double value = aViewFactors(f[i - 1], b[j]) * T + aViewFactors(b[i], b[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -585,13 +575,14 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  CVenetianCell
     ////////////////////////////////////////////////////////////////////////////////////////////
-    CVenetianCell::CVenetianCell(const std::shared_ptr<CMaterial> & t_Material,
-                                 const std::shared_ptr<ICellDescription> & t_Cell) :
-        CBaseCell(t_Material, t_Cell),
-        CVenetianBase(t_Material, t_Cell)
+    CVenetianCell::CVenetianCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
+                                 const std::shared_ptr<ICellDescription> & t_Cell,
+                                 const double rotation) :
+        CBaseCell(t_MaterialProperties, t_Cell),
+        CVenetianBase(t_MaterialProperties, t_Cell, rotation)
     {
         assert(t_Cell != nullptr);
-        assert(t_Material != nullptr);
+        assert(t_MaterialProperties != nullptr);
 
         generateVenetianEnergy();
     }
