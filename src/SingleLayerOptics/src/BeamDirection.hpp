@@ -28,6 +28,8 @@ namespace SingleLayerOptics
         [[nodiscard]] double Altitude() const;
         [[nodiscard]] double Azimuth() const;
 
+        [[nodiscard]] CBeamDirection rotate(double angle) const;
+
     private:
         void updateProfileAngle(double t_Theta, double t_Phi);
         double m_Theta;
