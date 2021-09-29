@@ -299,7 +299,8 @@ namespace SingleLayerOptics
                                             const double slatTiltAngle,
                                             const double curvatureRadius,
                                             const size_t numOfSlatSegments,
-                                            const DistributionMethod method)
+                                            const DistributionMethod method,
+                                            const bool isHorizontal)
     {
         const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getVenetianLayer(t_Material,
@@ -309,7 +310,8 @@ namespace SingleLayerOptics
                                                                   slatTiltAngle,
                                                                   curvatureRadius,
                                                                   numOfSlatSegments,
-                                                                  method));
+                                                                  method,
+                                                                  isHorizontal));
     }
 
     CScatteringLayer
