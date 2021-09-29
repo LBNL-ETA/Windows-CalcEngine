@@ -65,7 +65,8 @@ namespace SingleLayerOptics
                               double slatTiltAngle,
                               double curvatureRadius,
                               size_t numOfSlatSegments,
-                              DistributionMethod method = DistributionMethod::DirectionalDiffuse);
+                              DistributionMethod method = DistributionMethod::DirectionalDiffuse,
+                              bool isHorizontal = true);
 
         static CScatteringLayer
           createPerforatedCircularLayer(const std::shared_ptr<CMaterial> & t_Material,
@@ -119,11 +120,14 @@ namespace SingleLayerOptics
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
+        //! Function will return true if for IR emissivity calculations should use polynomial
+        [[nodiscard]] bool canApplyEmissivityPolynomial() const;
+
+        explicit CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
+
     private:
         double
           getAbsorptance(FenestrationCommon::Side t_Side, double t_Theta = 0, double t_Phi = 0);
-
-        explicit CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
 
         void createResultsAtAngle(double t_Theta, double t_Phi);
 
@@ -135,7 +139,6 @@ namespace SingleLayerOptics
         std::map<FenestrationCommon::Side, CScatteringSurface> m_Surface;
 
         std::shared_ptr<CBSDFLayer> m_BSDFLayer;
-        std::shared_ptr<CBaseCell> m_Cell;
 
         double m_Theta{0.0};
         double m_Phi{0.0};
@@ -148,7 +151,8 @@ namespace SingleLayerOptics
         explicit CScatteringLayerIR(CScatteringLayer layer);
 
         // This function is valid only for specular layers
-        double emissivity(FenestrationCommon::Side t_Side, EmissivityPolynomials type);
+        double emissivity(FenestrationCommon::Side t_Side,
+                          EmissivityPolynomials type = EmissivityPolynomials::NFRC_301_Uncoated);
 
         double emissivity(FenestrationCommon::Side t_Side, const std::vector<double> & polynomial);
 
