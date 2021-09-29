@@ -8,7 +8,7 @@ namespace SingleLayerOptics
     ///////////////////////////////////////////////////////////////////////////
     /// PVPowerProperties
     ///////////////////////////////////////////////////////////////////////////
-    [[maybe_unused]] PVPowerProperties::PVPowerProperties(double jsc, double voc, double ff) :
+    PVPowerProperties::PVPowerProperties(double jsc, double voc, double ff) :
         JSC(jsc), VOC(voc), FF(ff)
     {}
 
