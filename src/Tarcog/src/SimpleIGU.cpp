@@ -36,5 +36,8 @@ namespace Tarcog
 
         void SimpleIGU::setInteriorAndExteriorSurfacesHeight(double)
         {}
+
+        void SimpleIGU::setTilt(double)
+        {}
     }   // namespace ISO15099
 }   // namespace Tarcog

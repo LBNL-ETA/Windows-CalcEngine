@@ -44,6 +44,22 @@ namespace Tarcog
             return m_System.at(t_System)->getMeanDeflections();
         }
 
+        std::vector<double> CSystem::getPanesLoad(System t_System)
+        {
+            checkSolved();
+            return m_System.at(t_System)->getPanesLoad();
+        }
+
+        void CSystem::setAppliedLoad(const std::vector<double> & load)
+        {
+            m_Solved = false;
+            for(auto & [key, value] : m_System)
+            {
+                std::ignore = key;
+                value->setAppliedLoad(load);
+            }
+        }
+
         std::vector<std::shared_ptr<CIGUSolidLayer>>
           CSystem::getSolidLayers(System const t_System) const
         {
@@ -126,46 +142,60 @@ namespace Tarcog
 
         void CSystem::setWidth(double width)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & system : m_System)
             {
-                aSystem->setWidth(width);
+                system.second->setWidth(width);
             }
             m_Solved = false;
         }
 
         void CSystem::setHeight(double height)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & [key, system] : m_System)
             {
-                aSystem->setHeight(height);
+                std::ignore = key;
+                system->setHeight(height);
+            }
+            m_Solved = false;
+        }
+
+        void CSystem::setTilt(double tilt)
+        {
+            for(auto & [key, system] : m_System)
+            {
+                std::ignore = key;
+                system->setTilt(tilt);
             }
             m_Solved = false;
         }
 
         void CSystem::setWidthAndHeight(double width, double height)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & [key, system] : m_System)
             {
-                aSystem->setWidth(width);
-                aSystem->setHeight(height);
+                std::ignore = key;
+                system->setWidth(width);
+                system->setHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::setInteriorAndExteriorSurfacesHeight(double height)
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & [key, system] : m_System)
             {
-                aSystem->setInteriorAndExteriorSurfacesHeight(height);
+                std::ignore = key;
+                system->setInteriorAndExteriorSurfacesHeight(height);
             }
             m_Solved = false;
         }
 
         void CSystem::solve()
         {
-            for(auto & [key, aSystem] : m_System)
+            for(auto & [key, system] : m_System)
             {
-                aSystem->solve();
+                std::ignore = key;
+                system->solve();
             }
             m_Solved = true;
         }
@@ -182,6 +212,26 @@ namespace Tarcog
         double CSystem::getHc(System sys, Environment environment) const
         {
             return m_System.at(sys)->getHc(environment);
+        }
+
+        void CSystem::setDeflectionProperties(double t_Tini, double t_Pini)
+        {
+            for(auto & [key, system] : m_System)
+            {
+                std::ignore = key;
+                system->setDeflectionProperties(t_Tini, t_Pini);
+            }
+            m_Solved = false;
+        }
+
+        void CSystem::clearDeflection()
+        {
+            for(auto & [key, system] : m_System)
+            {
+                std::ignore = key;
+                system->clearDeflection();
+            }
+            m_Solved = false;
         }
 
     }   // namespace ISO15099
