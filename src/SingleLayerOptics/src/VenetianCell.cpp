@@ -21,8 +21,8 @@ namespace SingleLayerOptics
     CVenetianBase::CVenetianBase(const std::shared_ptr<CMaterial> & t_MaterialProperties,
                                  const std::shared_ptr<ICellDescription> & t_Cell,
                                  double rotation) :
-        CUniformDiffuseCell(t_MaterialProperties, t_Cell, 0),
-        CDirectionalDiffuseCell(t_MaterialProperties, t_Cell, 0)
+        CUniformDiffuseCell(t_MaterialProperties, t_Cell, rotation),
+        CDirectionalDiffuseCell(t_MaterialProperties, t_Cell, rotation)
     {}
 
     std::shared_ptr<CVenetianCellDescription> CVenetianBase::getCellAsVenetian() const
