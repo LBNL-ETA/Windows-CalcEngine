@@ -10,11 +10,11 @@ namespace Tarcog
         class SimpleIGU : public IIGUSystem
         {
         public:
-            SimpleIGU(double uValue, double shgc, double hc);
+            SimpleIGU(double uValue, double shgc, double h);
 
             double getUValue() override;
             double getSHGC(double t_TotSol) override;
-            double getHc(System system, Environment environment) const override;
+            double getH(System system, Environment environment) const override;
 
             void setWidth(double width) override;
             void setHeight(double height) override;
@@ -25,7 +25,7 @@ namespace Tarcog
         private:
             double m_UValue;
             double m_SHGC;
-            double m_Hc;
+            double m_H;
         };
     }   // namespace ISO15099
 }   // namespace Tarcog

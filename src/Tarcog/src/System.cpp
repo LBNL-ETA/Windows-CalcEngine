@@ -209,9 +209,9 @@ namespace Tarcog
             }
         }
 
-        double CSystem::getHc(System sys, Environment environment) const
+        double CSystem::getH(System sys, Environment environment) const
         {
-            return m_System.at(sys)->getHc(environment);
+            return m_System.at(sys)->getH(environment);
         }
 
         void CSystem::setDeflectionProperties(double t_Tini, double t_Pini)
