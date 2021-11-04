@@ -4,10 +4,10 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        SimpleIGU::SimpleIGU(double uValue, double shgc, double hc) :
+        SimpleIGU::SimpleIGU(double uValue, double shgc, double h) :
             m_UValue(uValue),
             m_SHGC(shgc),
-            m_Hc(hc)
+            m_H(h)
         {}
 
         double SimpleIGU::getUValue()
@@ -20,9 +20,9 @@ namespace Tarcog
             return m_SHGC;
         }
 
-        double SimpleIGU::getHc(System, Environment) const
+        double SimpleIGU::getH(System, Environment) const
         {
-            return m_Hc;
+            return m_H;
         }
 
         void SimpleIGU::setWidth(double)

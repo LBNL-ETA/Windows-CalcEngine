@@ -23,7 +23,7 @@ namespace Tarcog::ISO15099
         m_IGUSystem->setWidthAndHeight(width, height);
         m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
         m_IGUUvalue = m_IGUSystem->getUValue();
-        m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);
+        m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
     }
 
     double WindowVision::uValue() const
@@ -67,7 +67,7 @@ namespace Tarcog::ISO15099
         for(const auto & [key, frame] : m_Frame)
         {
             std::ignore = key;
-            frameWeightedSHGC += frame.projectedArea() * frame.frameData().shgc(m_HcExterior);
+            frameWeightedSHGC += frame.projectedArea() * frame.frameData().shgc(m_HExterior);
         }
 
         const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
@@ -76,7 +76,7 @@ namespace Tarcog::ISO15099
         auto dividerWeightedSHGC{0.0};
         if(m_Divider.has_value())
         {
-            dividerWeightedSHGC += dividerArea() * m_Divider->shgc(m_HcExterior);
+            dividerWeightedSHGC += dividerArea() * m_Divider->shgc(m_HExterior);
         }
 
         return (COGWeightedSHGC + frameWeightedSHGC + dividerWeightedSHGC) / area();
@@ -104,7 +104,7 @@ namespace Tarcog::ISO15099
 
     double WindowVision::hc() const
     {
-        return m_HcExterior;
+        return m_HExterior;
     }
 
     double WindowVision::uValueCOG() const
@@ -119,7 +119,7 @@ namespace Tarcog::ISO15099
 
     void WindowVision::setHc(double hc)
     {
-        m_HcExterior = hc;
+        m_HExterior = hc;
     }
 
     void WindowVision::setFrameData(FramePosition position, FrameData frameData)
@@ -168,7 +168,7 @@ namespace Tarcog::ISO15099
         m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
 
         m_IGUUvalue = m_IGUSystem->getUValue();
-        m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);
+        m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
     }
 
     double WindowVision::getIGUWidth() const
@@ -215,7 +215,7 @@ namespace Tarcog::ISO15099
         m_IGUSystem->setWidthAndHeight(width, height);
         m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
         m_IGUUvalue = m_IGUSystem->getUValue();
-        m_HcExterior = m_IGUSystem->getHc(System::SHGC, Environment::Outdoor);
+        m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
     }
 
     double WindowVision::dividerArea() const
