@@ -47,7 +47,7 @@ namespace Tarcog
             [[nodiscard]] double getHeatFlow(System t_System, Environment t_Environment);
             [[nodiscard]] double getUValue() override;
             [[nodiscard]] double getSHGC(double t_TotSol) override;
-            [[nodiscard]] double getHc(System sys, Environment environment) const override;
+            [[nodiscard]] double getH(System sys, Environment environment) const override;
             [[nodiscard]] size_t getNumberOfIterations(System t_System);
 
             [[nodiscard]] double relativeHeatGain(double Tsol);
