@@ -128,5 +128,5 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
     EXPECT_NEAR(4.377901, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.336182, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.335676, windowSHGC, 1e-6);
 }
