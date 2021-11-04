@@ -157,6 +157,16 @@ namespace Tarcog
             return m_Environment.at(t_Environment)->getHc();
         }
 
+        double CSingleSystem::getHr(Environment t_Environment) const
+        {
+            return m_Environment.at(t_Environment)->getHr();;
+        }
+
+        double CSingleSystem::getH(Environment t_Environment) const
+        {
+            return getHc(t_Environment) + getHr(t_Environment);
+        }
+
         double CSingleSystem::getAirTemperature(Environment const t_Environment) const
         {
             return m_Environment.at(t_Environment)->getAirTemperature();
