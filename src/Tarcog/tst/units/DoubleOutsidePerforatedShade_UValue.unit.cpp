@@ -126,7 +126,7 @@ TEST_F(TestDoubleOutsidePerforatedShade_UValue, Test1)
     auto * const aSystem = GetSystem();
 
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(2.378568, uval, 1e-6);
+    EXPECT_NEAR(3.213412, uval, 1e-6);
 
     const auto effectiveLayerConductivities{
       aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
@@ -139,6 +139,6 @@ TEST_F(TestDoubleOutsidePerforatedShade_UValue, Test1)
     }
 
     const auto heatflow =
-      aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
+      aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(125.323087, heatflow, 1e-6);
 }
