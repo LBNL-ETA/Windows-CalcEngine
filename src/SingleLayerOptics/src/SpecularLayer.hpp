@@ -32,11 +32,11 @@ namespace SingleLayerOptics
         std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
                                            const CBeamDirection & t_Direction);
 
-        std::vector<double> getBandWavelengths() const;
+        [[nodiscard]] std::vector<double> getBandWavelengths() const;
         void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
-        double getMinLambda() const;
-        double getMaxLambda() const;
+        [[nodiscard]] double getMinLambda() const;
+        [[nodiscard]] double getMaxLambda() const;
 
         void Flipped(bool flipped) override;
 
