@@ -761,9 +761,9 @@ TEST_F(Photovoltaic_DoublePane_Example1, Test1)
 {
     SCOPED_TRACE("Begin Test: Double pane photovoltaic - Example 1.");
 
-    const double angle{0.0};
-    const double minLambda{0.3};
-    const double maxLambda{2.5};
+    constexpr double angle{0.0};
+    constexpr double minLambda{0.3};
+    constexpr double maxLambda{2.5};
 
     auto aLayer = getLayer();
 
