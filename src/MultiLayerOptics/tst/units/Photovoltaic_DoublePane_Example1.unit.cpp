@@ -13,12 +13,12 @@ using FenestrationCommon::Side;
 using FenestrationCommon::Scattering;
 using SpectralAveraging::CSpectralSampleData;
 using SingleLayerOptics::Material;
-using MultiLayerOptics::CMultiPanePhotovoltaic;
+using MultiLayerOptics::CMultiPaneSpecular;
 
 class Photovoltaic_DoublePane_Example1 : public testing::Test
 {
 private:
-    std::unique_ptr<CMultiPanePhotovoltaic> m_Layer;
+    std::unique_ptr<CMultiPaneSpecular> m_Layer;
 
     static CSeries loadSolarRadiationFile()
     {
@@ -747,11 +747,11 @@ protected:
         const auto layer1 = SingleLayerOptics::PhotovoltaicLayer::createLayer(aMaterial_1, table());
         const auto layer2 = SingleLayerOptics::SpecularLayer::createLayer(aMaterial_2);
 
-        m_Layer = CMultiPanePhotovoltaic::create({layer1, layer2}, loadSolarRadiationFile());
+        m_Layer = CMultiPaneSpecular::create({layer1, layer2}, loadSolarRadiationFile());
     }
 
 public:
-    [[nodiscard]] CMultiPanePhotovoltaic & getLayer() const
+    [[nodiscard]] CMultiPaneSpecular & getLayer() const
     {
         return *m_Layer;
     }
