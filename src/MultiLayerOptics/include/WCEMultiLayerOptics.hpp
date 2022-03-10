@@ -16,6 +16,5 @@
 #include "../src/MultiPaneSampleData.hpp"
 #include "../src/MultiPaneSpectralSample.hpp"
 #include "../src/MultiPaneSpecular.hpp"
-#include "../src/MultiPanePhotovoltaic.hpp"
 
 #endif

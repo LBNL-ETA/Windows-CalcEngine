@@ -190,7 +190,7 @@ namespace MultiLayerOptics
         double getMinLambda() const override;
         double getMaxLambda() const override;
 
-    private:
+    protected:
         CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
                        const FenestrationCommon::CSeries & t_SolarRadiation,
                        const std::vector<double> & t_CommonWavelengths);

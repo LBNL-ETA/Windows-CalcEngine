@@ -139,6 +139,22 @@ namespace MultiLayerOptics
                      FenestrationCommon::IntegrationType::Trapezoidal,
                    double normalizationCoefficient = 1);
 
+        double AbsHeat(size_t Index,
+                       double t_Angle,
+                       double minLambda,
+                       double maxLambda,
+                       FenestrationCommon::IntegrationType t_IntegrationType =
+                         FenestrationCommon::IntegrationType::Trapezoidal,
+                       double normalizationCoefficient = 1);
+
+        double AbsElectricity(size_t Index,
+                              double t_Angle,
+                              double minLambda,
+                              double maxLambda,
+                              FenestrationCommon::IntegrationType t_IntegrationType =
+                                FenestrationCommon::IntegrationType::Trapezoidal,
+                              double normalizationCoefficient = 1);
+
         std::vector<double> Absorptances(double t_Angle,
                                          double minLambda,
                                          double maxLambda,
