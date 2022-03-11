@@ -32,6 +32,7 @@ namespace SingleLayerOptics
     class CBSDFLayer
     {
     public:
+        virtual ~CBSDFLayer() = default;
         CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell, const CBSDFHemisphere & t_Directions);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData);
