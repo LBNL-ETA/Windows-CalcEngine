@@ -22,7 +22,7 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        std::vector<SingleLayerOptics::CBSDFDefinition> aDefinitions;
+        std::vector<CBSDFDefinition> aDefinitions;
         aDefinitions.emplace_back(0, 1);
         aDefinitions.emplace_back(15, 1);
         aDefinitions.emplace_back(30, 1);
@@ -31,8 +31,8 @@ protected:
         aDefinitions.emplace_back(75, 1);
         aDefinitions.emplace_back(86.25, 1);
 
-        CBSDFDirections aDirections = CBSDFDirections(aDefinitions, BSDFDirection::Incoming);
-        SquareMatrix aLambdas = aDirections.lambdaMatrix();
+        const auto aDirections{CBSDFDirections(aDefinitions, BSDFDirection::Incoming)};
+        const auto aLambdas{aDirections.lambdaMatrix()};
 
         SquareMatrix Rb{{1.438618083, 0, 0, 0, 0, 0, 0},
                         {0, 0.189397664, 0, 0, 0, 0, 0},
@@ -64,22 +64,22 @@ TEST_F(TestInterReflectanceBSDF, TestBSDFInterreflectance)
 {
     SCOPED_TRACE("Begin Test: Simple BSDF interreflectance.");
 
-    const auto results = getInterReflectance();
+    const auto results{getInterReflectance()};
 
-    const size_t matrixSize = results.size();
+    const size_t matrixSize{results.size()};
 
     // Test matrix
-    size_t size = 7;
+    constexpr size_t size{7u};
 
     EXPECT_EQ(size, matrixSize);
 
-    SquareMatrix correctResults{{1.005964363, 0, 0, 0, 0, 0, 0},
-                                {0, 1.005964363, 0, 0, 0, 0, 0},
-                                {0, 0, 1.006280195, 0, 0, 0, 0},
-                                {0, 0, 0, 1.008724458, 0, 0, 0},
-                                {0, 0, 0, 0, 1.021780268, 0, 0},
-                                {0, 0, 0, 0, 0, 1.176150952, 0},
-                                {0, 0, 0, 0, 0, 0, 3.022280250}};
+    const SquareMatrix correctResults{{1.005964363, 0, 0, 0, 0, 0, 0},
+                                      {0, 1.005964363, 0, 0, 0, 0, 0},
+                                      {0, 0, 1.006280195, 0, 0, 0, 0},
+                                      {0, 0, 0, 1.008724458, 0, 0, 0},
+                                      {0, 0, 0, 0, 1.021780268, 0, 0},
+                                      {0, 0, 0, 0, 0, 1.176150952, 0},
+                                      {0, 0, 0, 0, 0, 0, 3.022280250}};
 
     for(size_t i = 0; i < size; ++i)
     {
