@@ -17,19 +17,10 @@ namespace MultiLayerOptics
     // Matrix will store absorptances for each layer at every direction
     typedef std::vector<std::vector<double>> Abs_Matrix;
 
-    // Class to handle interreflectance calculations
-    class CInterReflectance
-    {
-    public:
-        CInterReflectance(const FenestrationCommon::SquareMatrix & t_Lambda,
-                          const FenestrationCommon::SquareMatrix & t_Rb,
-                          const FenestrationCommon::SquareMatrix & t_Rf);
-
-        FenestrationCommon::SquareMatrix value() const;
-
-    private:
-        FenestrationCommon::SquareMatrix m_InterRefl;
-    };
+    FenestrationCommon::SquareMatrix
+      interReflectance(const FenestrationCommon::SquareMatrix & t_Lambda,
+                       const FenestrationCommon::SquareMatrix & t_Rb,
+                       const FenestrationCommon::SquareMatrix & t_Rf);
 
     // Class to calculate equivalent BSDF transmittance and reflectances. This will be used by
     // multilayer routines to calculate properties for any number of layers.
@@ -80,19 +71,21 @@ namespace MultiLayerOptics
 
         std::vector<double> getLayerAbsorptances(size_t Index, FenestrationCommon::Side t_Side);
 
-        size_t getNumberOfLayers() const;
+        [[nodiscard]] size_t getNumberOfLayers() const;
 
     private:
         void calcEquivalentProperties();
 
-        std::vector<double> absTerm1(const std::vector<double> & t_Alpha,
-                                     const FenestrationCommon::SquareMatrix & t_InterRefl,
-                                     const FenestrationCommon::SquareMatrix & t_T) const;
+        [[nodiscard]] std::vector<double>
+          absTerm1(const std::vector<double> & t_Alpha,
+                   const FenestrationCommon::SquareMatrix & t_InterRefl,
+                   const FenestrationCommon::SquareMatrix & t_T) const;
 
-        std::vector<double> absTerm2(const std::vector<double> & t_Alpha,
-                                     const FenestrationCommon::SquareMatrix & t_InterRefl,
-                                     const FenestrationCommon::SquareMatrix & t_R,
-                                     const FenestrationCommon::SquareMatrix & t_T) const;
+        [[nodiscard]] std::vector<double>
+          absTerm2(const std::vector<double> & t_Alpha,
+                   const FenestrationCommon::SquareMatrix & t_InterRefl,
+                   const FenestrationCommon::SquareMatrix & t_R,
+                   const FenestrationCommon::SquareMatrix & t_T) const;
 
         std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_EquivalentLayer;
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Layers;

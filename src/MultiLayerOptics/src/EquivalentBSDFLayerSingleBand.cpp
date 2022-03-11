@@ -7,27 +7,19 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //  CInterReflectance
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    CInterReflectance::CInterReflectance(const SquareMatrix & t_Lambda,
-                                         const SquareMatrix & t_Rb,
-                                         const SquareMatrix & t_Rf)
+    SquareMatrix interReflectance(const SquareMatrix & t_Lambda,
+                                  const SquareMatrix & t_Rb,
+                                  const SquareMatrix & t_Rf)
     {
         const auto size = t_Lambda.size();
         const auto lRb = t_Lambda * t_Rb;
         const auto lRf = t_Lambda * t_Rf;
-        m_InterRefl = lRb * lRf;
+        auto InterRefl = lRb * lRf;
         SquareMatrix I(size);
         I.setIdentity();
-        m_InterRefl = I - m_InterRefl;
-        m_InterRefl = m_InterRefl.inverse();
-    }
-
-    SquareMatrix CInterReflectance::value() const
-    {
-        return m_InterRefl;
+        InterRefl = I - InterRefl;
+        InterRefl = InterRefl.inverse();
+        return InterRefl;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,35 +30,33 @@ namespace MultiLayerOptics
                                        const CBSDFIntegrator & t_BackLayer)
     {
         const SquareMatrix aLambda = t_FrontLayer.lambdaMatrix();
-        CInterReflectance InterRefl1 =
-          CInterReflectance(aLambda,
-                            t_FrontLayer.at(Side::Back, PropertySimple::R),
-                            t_BackLayer.at(Side::Front, PropertySimple::R));
+        const auto InterRefl1 = interReflectance(aLambda,
+                                                 t_FrontLayer.at(Side::Back, PropertySimple::R),
+                                                 t_BackLayer.at(Side::Front, PropertySimple::R));
 
-        CInterReflectance InterRefl2 =
-          CInterReflectance(aLambda,
-                            t_BackLayer.at(Side::Front, PropertySimple::R),
-                            t_FrontLayer.at(Side::Back, PropertySimple::R));
+        const auto InterRefl2 = interReflectance(aLambda,
+                                                 t_BackLayer.at(Side::Front, PropertySimple::R),
+                                                 t_FrontLayer.at(Side::Back, PropertySimple::R));
 
         m_Tf = equivalentT(t_BackLayer.at(Side::Front, PropertySimple::T),
-                           InterRefl1.value(),
+                           InterRefl1,
                            aLambda,
                            t_FrontLayer.at(Side::Front, PropertySimple::T));
         m_Tb = equivalentT(t_FrontLayer.at(Side::Back, PropertySimple::T),
-                           InterRefl2.value(),
+                           InterRefl2,
                            aLambda,
                            t_BackLayer.at(Side::Back, PropertySimple::T));
         m_Rf = equivalentR(t_FrontLayer.at(Side::Front, PropertySimple::R),
                            t_FrontLayer.at(Side::Front, PropertySimple::T),
                            t_FrontLayer.at(Side::Back, PropertySimple::T),
                            t_BackLayer.at(Side::Front, PropertySimple::R),
-                           InterRefl2.value(),
+                           InterRefl2,
                            aLambda);
         m_Rb = equivalentR(t_BackLayer.at(Side::Back, PropertySimple::R),
                            t_BackLayer.at(Side::Back, PropertySimple::T),
                            t_BackLayer.at(Side::Front, PropertySimple::T),
                            t_FrontLayer.at(Side::Back, PropertySimple::R),
-                           InterRefl1.value(),
+                           InterRefl1,
                            aLambda);
 
         m_Results = std::make_shared<CBSDFIntegrator>(t_FrontLayer);
@@ -201,15 +191,13 @@ namespace MultiLayerOptics
             {
                 CBSDFIntegrator & Layer1 = *m_Backward[i + 1];
                 CBSDFIntegrator & Layer2 = *m_Forward[i];
-                CInterReflectance InterRefl2 =
-                  CInterReflectance(m_Lambda,
-                                    Layer1.at(Side::Front, PropertySimple::R),
-                                    Layer2.at(Side::Back, PropertySimple::R));
+                const auto InterRefl2 = interReflectance(m_Lambda,
+                                                         Layer1.at(Side::Front, PropertySimple::R),
+                                                         Layer2.at(Side::Back, PropertySimple::R));
                 const std::vector<double> Ab = m_Layers[i]->Abs(Side::Back);
-                Ap1b =
-                  absTerm1(Ab, InterRefl2.value(), Layer1.getMatrix(Side::Back, PropertySimple::T));
+                Ap1b = absTerm1(Ab, InterRefl2, Layer1.getMatrix(Side::Back, PropertySimple::T));
                 Ap2f = absTerm2(Ab,
-                                InterRefl2.value(),
+                                InterRefl2,
                                 Layer1.getMatrix(Side::Front, PropertySimple::R),
                                 Layer2.getMatrix(Side::Front, PropertySimple::T));
             }
@@ -223,14 +211,13 @@ namespace MultiLayerOptics
             {
                 CBSDFIntegrator & Layer1 = *m_Forward[i - 1];
                 CBSDFIntegrator & Layer2 = *m_Backward[i];
-                CInterReflectance InterRefl1 =
-                  CInterReflectance(m_Lambda,
-                                    Layer1.at(Side::Back, PropertySimple::R),
-                                    Layer2.at(Side::Front, PropertySimple::R));
+                const auto InterRefl1 = interReflectance(m_Lambda,
+                                                         Layer1.at(Side::Back, PropertySimple::R),
+                                                         Layer2.at(Side::Front, PropertySimple::R));
                 std::vector<double> Af = m_Layers[i]->Abs(Side::Front);
-                Ap1f = absTerm1(Af, InterRefl1.value(), Layer1.at(Side::Front, PropertySimple::T));
+                Ap1f = absTerm1(Af, InterRefl1, Layer1.at(Side::Front, PropertySimple::T));
                 Ap2b = absTerm2(Af,
-                                InterRefl1.value(),
+                                InterRefl1,
                                 Layer1.at(Side::Back, PropertySimple::R),
                                 Layer2.at(Side::Back, PropertySimple::T));
             }

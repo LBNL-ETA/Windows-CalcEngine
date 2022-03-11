@@ -6,22 +6,23 @@
 #include "WCECommon.hpp"
 
 
-using namespace FenestrationCommon;
-using namespace SingleLayerOptics;
-using namespace MultiLayerOptics;
+using FenestrationCommon::SquareMatrix;
+using SingleLayerOptics::CBSDFDefinition;
+using SingleLayerOptics::BSDFDirection;
+using SingleLayerOptics::CBSDFDirections;
 
 // Example that tests interreflectance between two adjacent layers. This procedure will be used to
 // calculate other multilayer properties
 class TestInterReflectanceBSDF : public testing::Test
 {
 private:
-    std::shared_ptr<CInterReflectance> m_InterReflectance;
+    FenestrationCommon::SquareMatrix m_InterReflectance;
 
 protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        std::vector<CBSDFDefinition> aDefinitions;
+        std::vector<SingleLayerOptics::CBSDFDefinition> aDefinitions;
         aDefinitions.emplace_back(0, 1);
         aDefinitions.emplace_back(15, 1);
         aDefinitions.emplace_back(30, 1);
@@ -49,11 +50,11 @@ protected:
                         {0, 0, 0, 0, 0, 0.951907739, 0},
                         {0, 0, 0, 0, 0, 0, 15.28298172}};
 
-        m_InterReflectance = std::make_shared<CInterReflectance>(aLambdas, Rb, Rf);
+        m_InterReflectance = MultiLayerOptics::interReflectance(aLambdas, Rb, Rf);
     }
 
 public:
-    std::shared_ptr<CInterReflectance> getInterReflectance()
+    SquareMatrix getInterReflectance()
     {
         return m_InterReflectance;
     };
@@ -63,9 +64,7 @@ TEST_F(TestInterReflectanceBSDF, TestBSDFInterreflectance)
 {
     SCOPED_TRACE("Begin Test: Simple BSDF interreflectance.");
 
-    CInterReflectance interRefl = *getInterReflectance();
-
-    SquareMatrix results = interRefl.value();
+    const auto results = getInterReflectance();
 
     const size_t matrixSize = results.size();
 
