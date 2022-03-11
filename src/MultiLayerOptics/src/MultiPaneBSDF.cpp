@@ -52,7 +52,6 @@ namespace MultiLayerOptics
       const CSeries & t_SolarRadiation,
       const CSeries & t_DetectorData)
     {
-
         // Detector data needs to be included into solar radiation right away on this place.
         auto solarRadiation{t_SolarRadiation};
         if(t_DetectorData.size() > 0)
@@ -213,7 +212,7 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const
     {
         FenestrationCommon::CCommonWavelengths cw;
-        for(const auto & layer: t_Layer)
+        for(const auto & layer : t_Layer)
         {
             cw.addWavelength(layer->getBandWavelengths());
         }
@@ -227,6 +226,27 @@ namespace MultiLayerOptics
     {
         calculate(minLambda, maxLambda);
         return m_Abs.at(t_Side)[Index - 1];
+    }
+
+    std::vector<double>
+      CMultiPaneBSDF::AbsHeat(double minLambda, double maxLambda, Side t_Side, size_t Index)
+    {
+        calculate(minLambda, maxLambda);
+        std::vector<double> result;
+        for(size_t i = 0u; i < m_Abs.at(t_Side).size(); ++i)
+        {
+            result.push_back(m_Abs.at(t_Side)[Index - 1][i]
+                             - m_AbsElectricity.at(t_Side)[Index - 1][i]);
+        }
+
+        return result;
+    }
+
+    std::vector<double> &
+      CMultiPaneBSDF::AbsElectricity(double minLambda, double maxLambda, Side t_Side, size_t Index)
+    {
+        calculate(minLambda, maxLambda);
+        return m_AbsElectricity.at(t_Side)[Index - 1];
     }
 
     std::vector<double> CMultiPaneBSDF::DirHem(const double minLambda,
@@ -267,6 +287,28 @@ namespace MultiLayerOptics
     {
         auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
         return Abs(minLambda, maxLambda, t_Side, layerIndex)[aIndex];
+    }
+
+    double CMultiPaneBSDF::AbsHeat(double minLambda,
+                                   double maxLambda,
+                                   Side t_Side,
+                                   size_t layerIndex,
+                                   double t_Theta,
+                                   double t_Phi)
+    {
+        return Abs(minLambda, maxLambda, t_Side, layerIndex, t_Theta, t_Phi)
+               - AbsElectricity(minLambda, maxLambda, t_Side, layerIndex, t_Theta, t_Phi);
+    }
+
+    double CMultiPaneBSDF::AbsElectricity(double minLambda,
+                                          double maxLambda,
+                                          Side t_Side,
+                                          size_t layerIndex,
+                                          double t_Theta,
+                                          double t_Phi)
+    {
+        auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
+        return AbsElectricity(minLambda, maxLambda, t_Side, layerIndex)[aIndex];
     }
 
     double CMultiPaneBSDF::Abs(const double minLambda,

@@ -315,7 +315,7 @@ namespace MultiLayerOptics
                                               double t_Angle,
                                               double minLambda,
                                               double maxLambda,
-                                              FenestrationCommon::IntegrationType t_IntegrationType,
+                                              IntegrationType t_IntegrationType,
                                               double normalizationCoefficient)
     {
         if(std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]) != nullptr)
@@ -327,10 +327,8 @@ namespace MultiLayerOptics
             CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
             auto aLayer = std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]);
 
-            auto frontJscPrime = aLayer->jscPrime(FenestrationCommon::Side::Front);
-            // auto backJscPrime = aLayer->jscPrime(FenestrationCommon::Side::Back);
+            auto frontJscPrime = aLayer->jscPrime(Side::Front);
 
-            // auto IPlus = aAngularProperties.iplus(Index - 1);
             auto IMinus = aAngularProperties.iminus(Index - 1);
 
             auto frontJsc = frontJscPrime * IMinus;
