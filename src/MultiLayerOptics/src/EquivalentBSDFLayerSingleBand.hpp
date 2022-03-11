@@ -30,7 +30,7 @@ namespace MultiLayerOptics
         CBSDFDoubleLayer(const SingleLayerOptics::CBSDFIntegrator & t_FrontLayer,
                          const SingleLayerOptics::CBSDFIntegrator & t_BackLayer);
 
-        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> value() const;
+        [[nodiscard]] std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> value() const;
 
     private:
         static FenestrationCommon::SquareMatrix

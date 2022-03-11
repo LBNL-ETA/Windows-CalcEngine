@@ -30,7 +30,7 @@ namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayerSingleBand;
 
-    // Calculates equivalent BSDF matrices for transmittances and reflectances
+    // Calculates equivalent BSDF matrices for transmittances and reflectances and vectors for absorptances
     class CEquivalentBSDFLayer
     {
     public:
