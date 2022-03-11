@@ -328,12 +328,17 @@ namespace MultiLayerOptics
             auto aLayer = std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]);
 
             auto frontJscPrime = aLayer->jscPrime(Side::Front);
+            auto backJscPrime = aLayer->jscPrime(Side::Back);
 
-            auto IMinus = aAngularProperties.iminus(Index - 1);
+            const auto IMinus = aAngularProperties.iminus(Index - 1);
+            const auto IPlus = aAngularProperties.iplus(Index);
 
-            auto frontJsc = frontJscPrime * IMinus;
-            auto JscIntegrated = frontJsc.integrate(t_IntegrationType, normalizationCoefficient);
-            auto jsc{JscIntegrated->sum() * totalSolar};
+            const auto frontJsc = frontJscPrime * IMinus;
+            const auto JscIntegratedFront =
+              frontJsc.integrate(t_IntegrationType, normalizationCoefficient);
+            const auto backJsc = backJscPrime * IPlus;
+            const auto JscIntegratedBack = backJsc.integrate(t_IntegrationType, normalizationCoefficient);
+            const auto jsc{(JscIntegratedFront->sum() + JscIntegratedBack->sum()) * totalSolar};
 
             const auto voc{aLayer->voc(jsc)};
             const auto ff{aLayer->ff(jsc)};
