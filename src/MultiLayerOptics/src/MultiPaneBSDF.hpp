@@ -110,6 +110,16 @@ namespace MultiLayerOptics
         std::vector<double> &
           Abs(double minLambda, double maxLambda, FenestrationCommon::Side t_Side, size_t Index);
 
+        std::vector<double> AbsHeat(double minLambda,
+                                      double maxLambda,
+                                      FenestrationCommon::Side t_Side,
+                                      size_t Index);
+
+        std::vector<double> & AbsElectricity(double minLambda,
+                                             double maxLambda,
+                                             FenestrationCommon::Side t_Side,
+                                             size_t Index);
+
         std::vector<double> getAbsorptanceLayers(double minLambda,
                                                  double maxLambda,
                                                  FenestrationCommon::Side side,
@@ -152,6 +162,20 @@ namespace MultiLayerOptics
                    size_t layerIndex,
                    double t_Theta,
                    double t_Phi);
+
+        double AbsHeat(double minLambda,
+                       double maxLambda,
+                       FenestrationCommon::Side t_Side,
+                       size_t layerIndex,
+                       double t_Theta,
+                       double t_Phi);
+
+        double AbsElectricity(double minLambda,
+                              double maxLambda,
+                              FenestrationCommon::Side t_Side,
+                              size_t layerIndex,
+                              double t_Theta,
+                              double t_Phi);
 
         double Abs(double minLambda,
                    double maxLambda,
@@ -230,6 +254,7 @@ namespace MultiLayerOptics
         std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_Results;
 
         std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_Abs;
+        std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_AbsElectricity;
 
         // Hemispherical absorptances for every layer
         std::map<FenestrationCommon::Side, std::shared_ptr<std::vector<double>>> m_AbsHem;
