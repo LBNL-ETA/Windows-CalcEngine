@@ -100,7 +100,7 @@ namespace MultiLayerOptics
         }
 
         // Calculate total transmitted solar per matrix and perform integration over each wavelength
-        size_t WLsize = m_CombinedLayerWavelengths.size();
+        const size_t WLsize{m_CombinedLayerWavelengths.size()};
 
         calculateWavelengthProperties(numberOfLayers, 0, WLsize);
 
@@ -146,9 +146,7 @@ namespace MultiLayerOptics
 
             if(m_LayersWL.size() <= i)
             {
-                const CEquivalentBSDFLayerSingleBand aEquivalentLayer(currentLayer);
-
-                m_LayersWL.push_back(aEquivalentLayer);
+                m_LayersWL.emplace_back(currentLayer);
             }
             else
             {

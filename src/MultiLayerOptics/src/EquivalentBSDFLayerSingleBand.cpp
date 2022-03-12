@@ -175,13 +175,13 @@ namespace MultiLayerOptics
         const size_t matrixSize = m_Lambda.size();
         std::vector<double> zeros(matrixSize, 0);
 
-        std::vector<double> Ap1f;
-        std::vector<double> Ap2f;
-        std::vector<double> Ap1b;
-        std::vector<double> Ap2b;
-
         for(size_t i = 0; i < size; i++)
         {
+            std::vector<double> Ap1f;
+            std::vector<double> Ap2f;
+            std::vector<double> Ap1b;
+            std::vector<double> Ap2b;
+
             if(i == size - 1)
             {
                 Ap2f = zeros;
@@ -189,17 +189,17 @@ namespace MultiLayerOptics
             }
             else
             {
-                CBSDFIntegrator & Layer1 = *m_Backward[i + 1];
-                CBSDFIntegrator & Layer2 = *m_Forward[i];
+                CBSDFIntegrator & Layer1 = *m_Forward[i];
+                CBSDFIntegrator & Layer2 = *m_Backward[i + 1];
                 const auto InterRefl2 = interReflectance(m_Lambda,
-                                                         Layer1.at(Side::Front, PropertySimple::R),
-                                                         Layer2.at(Side::Back, PropertySimple::R));
+                                                         Layer2.at(Side::Front, PropertySimple::R),
+                                                         Layer1.at(Side::Back, PropertySimple::R));
                 const std::vector<double> Ab = m_Layers[i]->Abs(Side::Back);
-                Ap1b = absTerm1(Ab, InterRefl2, Layer1.getMatrix(Side::Back, PropertySimple::T));
+                Ap1b = absTerm1(Ab, InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T));
                 Ap2f = absTerm2(Ab,
                                 InterRefl2,
-                                Layer1.getMatrix(Side::Front, PropertySimple::R),
-                                Layer2.getMatrix(Side::Front, PropertySimple::T));
+                                Layer2.getMatrix(Side::Front, PropertySimple::R),
+                                Layer1.getMatrix(Side::Front, PropertySimple::T));
             }
 
             if(i == 0)
