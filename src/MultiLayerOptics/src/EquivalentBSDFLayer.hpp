@@ -5,7 +5,9 @@
 #include <vector>
 #include <map>
 
-#include "AbsorptancesMultiPaneBSDF.hpp"
+#include <WCECommon.hpp>
+
+//#include "AbsorptancesMultiPaneBSDF.hpp"
 
 namespace FenestrationCommon
 {
