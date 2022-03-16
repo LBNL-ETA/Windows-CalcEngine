@@ -177,20 +177,13 @@ namespace MultiLayerOptics
         // Equations used here are from Klems-Matrix Layer calculations- part 2 paper
         for(size_t i = 0; i < size; i++)
         {
-            std::vector<double> Ap1f;
-            std::vector<double> Ap2f;
-            std::vector<double> Ap1b;
-            std::vector<double> Ap2b;
-
             if(i == size - 1)
             {
-                SquareMatrix iMinus;
+                SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
                 m_Iminus[Side::Back].push_back(iMinus);
-                SquareMatrix iPlus;
+                SquareMatrix iPlus{matrixSize};
                 m_Iplus[Side::Front].push_back(iPlus);
-                Ap2f = zeros;
-                Ap1b = m_Layers[i]->Abs(Side::Back);
             }
             else
             {
@@ -202,58 +195,51 @@ namespace MultiLayerOptics
                 const auto Ab{m_Layers[i]->Abs(Side::Back)};
                 const auto iMinus{
                   iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T))};
-                Ap1b = Ab * iMinus;
                 m_Iminus[Side::Back].push_back(iMinus);
                 const auto iPlus{iplusCalc(InterRefl2,
-                                     Layer2.getMatrix(Side::Front, PropertySimple::R),
-                                     Layer1.getMatrix(Side::Front, PropertySimple::T))};
-                Ap2f = Ab * iPlus;
+                                           Layer2.getMatrix(Side::Front, PropertySimple::R),
+                                           Layer1.getMatrix(Side::Front, PropertySimple::T))};
                 m_Iplus[Side::Front].push_back(iPlus);
             }
 
             if(i == 0)
             {
-                SquareMatrix iMinus;
+                SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
                 m_Iminus[Side::Front].push_back(iMinus);
-                SquareMatrix iPlus;
+                SquareMatrix iPlus{matrixSize};
                 m_Iplus[Side::Back].push_back(iPlus);
-                Ap1f = m_Layers[i]->Abs(Side::Front);
-                Ap2b = zeros;
             }
             else
             {
                 CBSDFIntegrator & Layer1 = *m_Forward[i - 1];
                 CBSDFIntegrator & Layer2 = *m_Backward[i];
-                const auto InterRefl1 {interReflectance(m_Lambda,
-                                                         Layer1.at(Side::Back, PropertySimple::R),
-                                                         Layer2.at(Side::Front, PropertySimple::R))};
+                const auto InterRefl1{interReflectance(m_Lambda,
+                                                       Layer1.at(Side::Back, PropertySimple::R),
+                                                       Layer2.at(Side::Front, PropertySimple::R))};
                 const auto Af{m_Layers[i]->Abs(Side::Front)};
                 const auto iMinus{
                   iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySimple::T))};
-                Ap1f = Af * iMinus;
                 m_Iminus[Side::Front].push_back(iMinus);
                 const auto iPlus{iplusCalc(InterRefl1,
                                            Layer1.at(Side::Back, PropertySimple::R),
                                            Layer2.at(Side::Back, PropertySimple::T))};
-                Ap2b = Af * iPlus;
                 m_Iplus[Side::Back].push_back(iPlus);
             }
+        }
 
-            std::map<Side, std::vector<double>> aTotal;
+        for(size_t i = 0; i < size; i++)
+        {
             for(Side aSide : EnumSide())
             {
-                aTotal[aSide] = std::vector<double>();
-            }
-            for(size_t j = 0; j < matrixSize; ++j)
-            {
-                aTotal.at(Side::Front).push_back(Ap1f[j] + Ap2f[j]);
-                aTotal.at(Side::Back).push_back(Ap1b[j] + Ap2b[j]);
-            }
-
-            for(Side aSide : EnumSide())
-            {
-                m_A.at(aSide).push_back(aTotal.at(aSide));
+                auto AbsFront{m_Layers[i]->Abs(aSide)};
+                auto AbsBack{m_Layers[i]->Abs(oppositeSide(aSide))};
+                auto part1{AbsFront * m_Iminus.at(aSide)[i]};
+                auto part2{AbsBack * m_Iplus.at(aSide)[i]};
+                std::transform(
+                  part1.begin(), part1.end(), part2.begin(), part1.begin(), std::plus<>());
+                //m_A.at(aSide).push_back(aTotal.at(aSide));
+                m_A.at(aSide).push_back(part1);
             }
         }
         m_PropertiesCalculated = true;
