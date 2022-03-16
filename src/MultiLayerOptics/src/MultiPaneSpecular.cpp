@@ -320,7 +320,7 @@ namespace MultiLayerOptics
     {
         if(std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]) != nullptr)
         {
-            const double totalSolar =
+            const double totalEnergy =
               m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
                 ->sum(minLambda, maxLambda);
 
@@ -338,15 +338,15 @@ namespace MultiLayerOptics
               frontJsc.integrate(t_IntegrationType, normalizationCoefficient);
             const auto backJsc = backJscPrime * IPlus;
             const auto JscIntegratedBack = backJsc.integrate(t_IntegrationType, normalizationCoefficient);
-            const auto jsc{(JscIntegratedFront->sum() + JscIntegratedBack->sum()) * totalSolar};
+            const auto jsc{(JscIntegratedFront->sum() + JscIntegratedBack->sum()) * totalEnergy};
 
             const auto voc{aLayer->voc(jsc)};
             const auto ff{aLayer->ff(jsc)};
 
             const auto power{jsc * voc * ff};
 
-            assert(totalSolar > 0);
-            return power / totalSolar;
+            assert(totalEnergy > 0);
+            return power / totalEnergy;
         }
 
         return 0;
