@@ -76,16 +76,14 @@ namespace MultiLayerOptics
     private:
         void calcEquivalentProperties();
 
-        [[nodiscard]] std::vector<double>
-          absTerm1(const std::vector<double> & t_Alpha,
-                   const FenestrationCommon::SquareMatrix & t_InterRefl,
-                   const FenestrationCommon::SquareMatrix & t_T) const;
+        [[nodiscard]] FenestrationCommon::SquareMatrix
+          iminusCalc(const FenestrationCommon::SquareMatrix & t_InterRefl,
+                     const FenestrationCommon::SquareMatrix & t_T) const;
 
-        [[nodiscard]] std::vector<double>
-          absTerm2(const std::vector<double> & t_Alpha,
-                   const FenestrationCommon::SquareMatrix & t_InterRefl,
-                   const FenestrationCommon::SquareMatrix & t_R,
-                   const FenestrationCommon::SquareMatrix & t_T) const;
+        [[nodiscard]] FenestrationCommon::SquareMatrix
+          iplusCalc(const FenestrationCommon::SquareMatrix & t_InterRefl,
+                    const FenestrationCommon::SquareMatrix & t_R,
+                    const FenestrationCommon::SquareMatrix & t_T) const;
 
         std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_EquivalentLayer;
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Layers;
@@ -93,6 +91,13 @@ namespace MultiLayerOptics
         // Forward and backward layers are used for calculation of equivalent absorptances
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Forward;
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Backward;
+
+        // Equations for absorptance calculations are described in "Klems-Matrix Layer Calculations"
+        // document. Two equations (3.7a) and (3.7b) are used to calculate front and back
+        // absorptances. In to process of calculation incoming and outgoing rays are calculated and
+        // stored into this map.
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::SquareMatrix>> m_Iminus;
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::SquareMatrix>> m_Iplus;
 
         // Abs_Matrix m_Af;
         // Abs_Matrix m_Ab;

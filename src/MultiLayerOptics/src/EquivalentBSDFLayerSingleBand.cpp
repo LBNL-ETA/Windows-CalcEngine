@@ -174,7 +174,7 @@ namespace MultiLayerOptics
 
         const size_t matrixSize = m_Lambda.size();
         std::vector<double> zeros(matrixSize, 0);
-
+        // Equations used here are from Klems-Matrix Layer calculations- part 2 paper
         for(size_t i = 0; i < size; i++)
         {
             std::vector<double> Ap1f;
@@ -184,6 +184,11 @@ namespace MultiLayerOptics
 
             if(i == size - 1)
             {
+                SquareMatrix iMinus;
+                iMinus.setIdentity();
+                m_Iminus[Side::Back].push_back(iMinus);
+                SquareMatrix iPlus;
+                m_Iplus[Side::Front].push_back(iPlus);
                 Ap2f = zeros;
                 Ap1b = m_Layers[i]->Abs(Side::Back);
             }
@@ -191,19 +196,28 @@ namespace MultiLayerOptics
             {
                 CBSDFIntegrator & Layer1 = *m_Forward[i];
                 CBSDFIntegrator & Layer2 = *m_Backward[i + 1];
-                const auto InterRefl2 = interReflectance(m_Lambda,
-                                                         Layer2.at(Side::Front, PropertySimple::R),
-                                                         Layer1.at(Side::Back, PropertySimple::R));
-                const std::vector<double> Ab = m_Layers[i]->Abs(Side::Back);
-                Ap1b = absTerm1(Ab, InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T));
-                Ap2f = absTerm2(Ab,
-                                InterRefl2,
-                                Layer2.getMatrix(Side::Front, PropertySimple::R),
-                                Layer1.getMatrix(Side::Front, PropertySimple::T));
+                const auto InterRefl2{interReflectance(m_Lambda,
+                                                       Layer2.at(Side::Front, PropertySimple::R),
+                                                       Layer1.at(Side::Back, PropertySimple::R))};
+                const auto Ab{m_Layers[i]->Abs(Side::Back)};
+                const auto iMinus{
+                  iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T))};
+                Ap1b = Ab * iMinus;
+                m_Iminus[Side::Back].push_back(iMinus);
+                const auto iPlus{iplusCalc(InterRefl2,
+                                     Layer2.getMatrix(Side::Front, PropertySimple::R),
+                                     Layer1.getMatrix(Side::Front, PropertySimple::T))};
+                Ap2f = Ab * iPlus;
+                m_Iplus[Side::Front].push_back(iPlus);
             }
 
             if(i == 0)
             {
+                SquareMatrix iMinus;
+                iMinus.setIdentity();
+                m_Iminus[Side::Front].push_back(iMinus);
+                SquareMatrix iPlus;
+                m_Iplus[Side::Back].push_back(iPlus);
                 Ap1f = m_Layers[i]->Abs(Side::Front);
                 Ap2b = zeros;
             }
@@ -211,15 +225,19 @@ namespace MultiLayerOptics
             {
                 CBSDFIntegrator & Layer1 = *m_Forward[i - 1];
                 CBSDFIntegrator & Layer2 = *m_Backward[i];
-                const auto InterRefl1 = interReflectance(m_Lambda,
+                const auto InterRefl1 {interReflectance(m_Lambda,
                                                          Layer1.at(Side::Back, PropertySimple::R),
-                                                         Layer2.at(Side::Front, PropertySimple::R));
-                std::vector<double> Af = m_Layers[i]->Abs(Side::Front);
-                Ap1f = absTerm1(Af, InterRefl1, Layer1.at(Side::Front, PropertySimple::T));
-                Ap2b = absTerm2(Af,
-                                InterRefl1,
-                                Layer1.at(Side::Back, PropertySimple::R),
-                                Layer2.at(Side::Back, PropertySimple::T));
+                                                         Layer2.at(Side::Front, PropertySimple::R))};
+                const auto Af{m_Layers[i]->Abs(Side::Front)};
+                const auto iMinus{
+                  iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySimple::T))};
+                Ap1f = Af * iMinus;
+                m_Iminus[Side::Front].push_back(iMinus);
+                const auto iPlus{iplusCalc(InterRefl1,
+                                           Layer1.at(Side::Back, PropertySimple::R),
+                                           Layer2.at(Side::Back, PropertySimple::T))};
+                Ap2b = Af * iPlus;
+                m_Iplus[Side::Back].push_back(iPlus);
             }
 
             std::map<Side, std::vector<double>> aTotal;
@@ -241,27 +259,21 @@ namespace MultiLayerOptics
         m_PropertiesCalculated = true;
     }
 
-    std::vector<double>
-      CEquivalentBSDFLayerSingleBand::absTerm1(const std::vector<double> & t_Alpha,
-                                               const SquareMatrix & t_InterRefl,
-                                               const SquareMatrix & t_T) const
+    SquareMatrix CEquivalentBSDFLayerSingleBand::iminusCalc(const SquareMatrix & t_InterRefl,
+                                                            const SquareMatrix & t_T) const
     {
-        auto part1 = t_Alpha * t_InterRefl;
         const auto part2 = m_Lambda * t_T;
-        part1 = part1 * part2;
+        auto part1 = t_InterRefl * part2;
         return part1;
     }
 
-    std::vector<double>
-      CEquivalentBSDFLayerSingleBand::absTerm2(const std::vector<double> & t_Alpha,
-                                               const SquareMatrix & t_InterRefl,
-                                               const SquareMatrix & t_R,
-                                               const SquareMatrix & t_T) const
+    SquareMatrix CEquivalentBSDFLayerSingleBand::iplusCalc(const SquareMatrix & t_InterRefl,
+                                                           const SquareMatrix & t_R,
+                                                           const SquareMatrix & t_T) const
     {
-        auto part1 = t_Alpha * t_InterRefl;
         const auto part2 = m_Lambda * t_R;
         const auto part3 = m_Lambda * t_T;
-        part1 = part1 * part2;
+        auto part1 = t_InterRefl * part2;
         part1 = part1 * part3;
         return part1;
     }
