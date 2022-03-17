@@ -111,9 +111,9 @@ namespace MultiLayerOptics
           Abs(double minLambda, double maxLambda, FenestrationCommon::Side t_Side, size_t Index);
 
         std::vector<double> AbsHeat(double minLambda,
-                                      double maxLambda,
-                                      FenestrationCommon::Side t_Side,
-                                      size_t Index);
+                                    double maxLambda,
+                                    FenestrationCommon::Side t_Side,
+                                    size_t Index);
 
         std::vector<double> & AbsElectricity(double minLambda,
                                              double maxLambda,
@@ -243,6 +243,8 @@ namespace MultiLayerOptics
         [[nodiscard]] std::vector<double> getCommonWavelengths(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const;
 
+        static std::vector<std::vector<double>> getZeroVectorVector(size_t size1, size_t size2);
+
         CEquivalentBSDFLayer m_Layer;
 
         // Solar radiation for initialization
@@ -253,6 +255,8 @@ namespace MultiLayerOptics
 
         std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_Results;
 
+        // Absorptances of every layer and every incoming direction in BSDF integrated over given
+        // range
         std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_Abs;
         std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_AbsElectricity;
 

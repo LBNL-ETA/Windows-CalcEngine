@@ -70,7 +70,9 @@ namespace MultiLayerOptics
         // Layers that are added to the equivalent layer
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> m_Layer;
 
-        // Total absoprtance coefficients for every wavelength (does not include source data)
+        // Total absorptance coefficients for every wavelength (does not include source data)
+        // First dimension contain number of layers and second dimension is BSDF matrix size
+        // Each series contain the data arranged by wavelengths (absorptance for the given wavelength)
         std::map<FenestrationCommon::Side, std::shared_ptr<FenestrationCommon::CMatrixSeries>>
           m_TotA;
 
