@@ -45,8 +45,8 @@ namespace FenestrationCommon
                                           const double maxLambda,
                                           const std::vector<double> & t_ScaleValue);
 
-        size_t size1() const;
-        size_t size2() const;
+        [[nodiscard]] size_t size1() const;
+        [[nodiscard]] size_t size2() const;
 
     private:
         std::vector<std::vector<CSeries>> m_Matrix;

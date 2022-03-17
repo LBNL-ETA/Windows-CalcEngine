@@ -100,7 +100,7 @@ namespace MultiLayerOptics
         }
 
         // Calculate total transmitted solar per matrix and perform integration over each wavelength
-        const size_t WLsize{m_CombinedLayerWavelengths.size()};
+        const auto WLsize{m_CombinedLayerWavelengths.size()};
 
         calculateWavelengthProperties(numberOfLayers, 0, WLsize);
 
