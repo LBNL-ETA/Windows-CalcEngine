@@ -370,12 +370,12 @@ namespace SpectralAveraging
 
     double CPhotovoltaicSample::jscPrimeCalc(double wavelength, double eqe)
     {
-        double const microMeterToMeter{1e-6};
+        double constexpr microMeterToMeter{1e-6};
         return eqe * wavelength * ConstantsData::ELECTRON_CHARGE * microMeterToMeter
                / (ConstantsData::SPEEDOFLIGHT * ConstantsData::PLANKCONSTANT);
     }
 
-    FenestrationCommon::CSeries & CPhotovoltaicSample::jscPrime(const FenestrationCommon::Side side)
+    CSeries & CPhotovoltaicSample::jscPrime(const Side side)
     {
         calculateState();
         return m_JcsPrime.at(side);

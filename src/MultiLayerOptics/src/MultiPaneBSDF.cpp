@@ -157,8 +157,15 @@ namespace MultiLayerOptics
                 // multiply and integrate later and local values will change
                 CMatrixSeries aTotalA = *m_Layer.getTotalA(aSide);
                 aTotalA.mMult(*m_IncomingSpectra);
+                // Calculates absorbed energy in every layer for every wavelength
                 aTotalA.integrate(m_Integrator, m_NormalizationCoefficient);
+                // Calculates total absorptance for every layer over the given wavelength range
                 m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
+
+                // Default absorbed electricity is set to zero
+                m_AbsElectricity[aSide] =
+                  getZeroVectorVector(m_Abs.at(aSide).size(), m_IncomingSolar.size());
+
                 for(PropertySimple aProprerty : EnumPropertySimple())
                 {
                     // Same as for aTotalA. Copy need to be taken because of multiplication
@@ -217,6 +224,20 @@ namespace MultiLayerOptics
             cw.addWavelength(layer->getBandWavelengths());
         }
         return cw.getCombinedWavelengths(FenestrationCommon::Combine::Interpolate);
+    }
+
+    std::vector<std::vector<double>> CMultiPaneBSDF::getZeroVectorVector(size_t size1, size_t size2)
+    {
+        std::vector<std::vector<double>> result(size1);
+        for(auto & val : result)
+        {
+            for(size_t i = 0u; i < size2; ++i)
+            {
+                val.push_back(0);
+            }
+        }
+
+        return result;
     }
 
     std::vector<double> & CMultiPaneBSDF::Abs(const double minLambda,

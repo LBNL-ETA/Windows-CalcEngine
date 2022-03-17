@@ -205,7 +205,7 @@ protected:
     }
 
 public:
-    CMultiPaneBSDF & getLayer() const
+    [[nodiscard]] CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
     };
@@ -215,8 +215,8 @@ TEST_F(MultiPaneBSDF_102_103_SmallBasis, TestSpecular1)
 {
     SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiPaneBSDF & aLayer = getLayer();
 
