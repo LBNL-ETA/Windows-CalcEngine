@@ -146,38 +146,33 @@ namespace MultiLayerOptics
         }
     }
 
-    void CEquivalentBSDFLayerSingleBand::calcEquivalentProperties()
+    void CEquivalentBSDFLayerSingleBand::BuildForwardAndBackwardLayers(size_t numberOfLayers)
     {
-        if(m_PropertiesCalculated)
-        {
-            return;
-        }
-        // Absorptance calculations need to observe every layer in isolation. For that purpose
-        // code bellow will create m_Forward and m_Backward layers
-        size_t size = m_Layers.size();
         m_EquivalentLayer = m_Layers[0];
         m_Forward.push_back(m_EquivalentLayer);
-        for(size_t i = 1; i < size; ++i)
+        for(size_t i = 1; i < numberOfLayers; ++i)
         {
             m_EquivalentLayer = CBSDFDoubleLayer(*m_EquivalentLayer, *m_Layers[i]).value();
             m_Forward.push_back(m_EquivalentLayer);
         }
         m_Backward.push_back(m_EquivalentLayer);
 
-        std::shared_ptr<CBSDFIntegrator> bLayer = m_Layers[size - 1];
-        for(size_t i = size - 1; i > 1; --i)
+        std::shared_ptr<CBSDFIntegrator> bLayer = m_Layers[numberOfLayers - 1];
+        for(size_t i = numberOfLayers - 1; i > 1; --i)
         {
             bLayer = CBSDFDoubleLayer(*m_Layers[i - 1], *bLayer).value();
             m_Backward.push_back(bLayer);
         }
-        m_Backward.push_back(m_Layers[size - 1]);
+        m_Backward.push_back(m_Layers[numberOfLayers - 1]);
+    }
 
-        const size_t matrixSize = m_Lambda.size();
-        std::vector<double> zeros(matrixSize, 0);
+    void CEquivalentBSDFLayerSingleBand::CreateIplusAndIminusValues(size_t numberOfLayers,
+                                                                    const size_t matrixSize)
+    {
         // Equations used here are from Klems-Matrix Layer calculations- part 2 paper
-        for(size_t i = 0; i < size; i++)
+        for(size_t i = 0; i < numberOfLayers; i++)
         {
-            if(i == size - 1)
+            if(i == numberOfLayers - 1)
             {
                 SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
@@ -227,22 +222,43 @@ namespace MultiLayerOptics
                 m_Iplus[Side::Back].push_back(iPlus);
             }
         }
+    }
 
-        for(size_t i = 0; i < size; i++)
+    void CEquivalentBSDFLayerSingleBand::CalculateLayerAbsorptances(size_t numberOfLayers)
+    {
+        for(size_t i = 0; i < numberOfLayers; i++)
         {
             for(Side aSide : EnumSide())
             {
                 auto AbsFront{m_Layers[i]->Abs(aSide)};
                 auto AbsBack{m_Layers[i]->Abs(oppositeSide(aSide))};
-                auto part1{AbsFront * m_Iminus.at(aSide)[i]};
-                auto part2{AbsBack * m_Iplus.at(aSide)[i]};
-                std::transform(
-                  part1.begin(), part1.end(), part2.begin(), part1.begin(), std::plus<>());
-                //m_A.at(aSide).push_back(aTotal.at(aSide));
-                m_A.at(aSide).push_back(part1);
+                auto absorbedFront{AbsFront * m_Iminus.at(aSide)[i]};
+                auto absorbedBack{AbsBack * m_Iplus.at(aSide)[i]};
+                std::transform(absorbedFront.begin(),
+                               absorbedFront.end(),
+                               absorbedBack.begin(),
+                               absorbedFront.begin(),
+                               std::plus<>());
+                m_A.at(aSide).push_back(absorbedFront);
             }
         }
-        m_PropertiesCalculated = true;
+    }
+
+    void CEquivalentBSDFLayerSingleBand::calcEquivalentProperties()
+    {
+        if(!m_PropertiesCalculated)
+        {
+            // Absorptance calculations need to observe every layer in isolation. For that purpose
+            // code bellow will create m_Forward and m_Backward layers
+            const auto numberOfLayers{m_Layers.size()};
+            BuildForwardAndBackwardLayers(numberOfLayers);
+
+            const auto matrixSize{m_Lambda.size()};
+            CreateIplusAndIminusValues(numberOfLayers, matrixSize);
+
+            CalculateLayerAbsorptances(numberOfLayers);
+            m_PropertiesCalculated = true;
+        }
     }
 
     SquareMatrix CEquivalentBSDFLayerSingleBand::iminusCalc(const SquareMatrix & t_InterRefl,

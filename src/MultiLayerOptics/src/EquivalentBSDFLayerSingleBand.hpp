@@ -62,6 +62,9 @@ namespace MultiLayerOptics
         explicit CEquivalentBSDFLayerSingleBand(
           const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer);
         void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer);
+        void BuildForwardAndBackwardLayers(size_t numberOfLayers);
+        void CreateIplusAndIminusValues(size_t numberOfLayers, size_t matrixSize);
+        void CalculateLayerAbsorptances(size_t numberOfLayers);
 
         FenestrationCommon::SquareMatrix getMatrix(FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySimple t_Property);
