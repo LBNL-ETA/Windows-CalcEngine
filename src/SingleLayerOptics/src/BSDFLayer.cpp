@@ -179,4 +179,23 @@ namespace SingleLayerOptics
     {
         return m_Cell;
     }
+
+    std::vector<CSeries> CBSDFLayer::jscPrime(Side, const std::vector<double> & wavelengths) const
+    {
+        std::vector<CSeries> result;
+
+        const auto wls = wavelengths.empty() ? getBandWavelengths() : wavelengths;
+
+        for(const auto &wl: wls)
+        {
+            CSeries curSeries;
+            for(size_t i = 0u; i < m_BSDFHemisphere.getDirections(BSDFDirection::Incoming).size(); ++i)
+            {
+                curSeries.addProperty(wl, 0);
+            }
+            result.push_back(curSeries);
+        }
+
+        return result;
+    }
 }   // namespace SingleLayerOptics

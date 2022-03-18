@@ -27,6 +27,8 @@ namespace FenestrationCommon
                            const std::vector<double> & t_Values);
         void addProperties(const double t_Wavelength, SquareMatrix & t_Matrix);
 
+        void addSeries(const size_t i, const size_t j, const CSeries & series);
+
         // Multiply all series in matrix with provided one
         void mMult(const CSeries & t_Series);
 

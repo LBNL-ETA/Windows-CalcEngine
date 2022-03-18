@@ -27,7 +27,7 @@ namespace SingleLayerOptics
                            const CBSDFHemisphere & t_BSDF);
 
         static std::shared_ptr<CBSDFLayer>
-          getPhotovoltaicLayer(const std::shared_ptr<CMaterial> & t_Material,
+          getPhotovoltaicSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
                                const CBSDFHemisphere & t_BSDF,
                                PVPowerPropertiesTable powerTable);
 

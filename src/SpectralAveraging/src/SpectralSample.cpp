@@ -375,7 +375,7 @@ namespace SpectralAveraging
                / (ConstantsData::SPEEDOFLIGHT * ConstantsData::PLANKCONSTANT);
     }
 
-    CSeries & CPhotovoltaicSample::jscPrime(const Side side)
+    CSeries CPhotovoltaicSample::jscPrime(const Side side)
     {
         calculateState();
         return m_JcsPrime.at(side);
