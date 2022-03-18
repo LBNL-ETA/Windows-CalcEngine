@@ -91,6 +91,28 @@ namespace MultiLayerOptics
         }
     }
 
+    std::vector<std::vector<double>>
+      CMultiPaneBSDF::calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
+                                        const std::vector<double> & incomingSolar)
+    {
+        std::vector<std::vector<double>> result;
+        const auto & layers{m_Layer.getLayers()};
+        assert(layers.size() == jsc.size());
+        for(size_t i = 0u; i < layers.size(); ++i)
+        {
+            std::vector<double> power;
+            const auto voc{layers[i]->voc(jsc[i])};
+            const auto ff{layers[i]->ff(jsc[i])};
+            for(size_t j = 0u; j < jsc[i].size(); ++j)
+            {
+                power.emplace_back(voc[j] * ff[j] * jsc[i][j] / incomingSolar[j]);
+            }
+            result.emplace_back(power);
+        }
+
+        return result;
+    }
+
     CMultiPaneBSDF::CMultiPaneBSDF(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const FenestrationCommon::CSeries & t_SolarRadiation) :
@@ -168,9 +190,22 @@ namespace MultiLayerOptics
                 // Calculates total absorptance for every layer over the given wavelength range
                 m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
 
+                CMatrixSeries jscTotal = *m_Layer.getTotalJSC(aSide);
+                jscTotal.integrate(m_Integrator, m_NormalizationCoefficient);
+                auto jscSum{jscTotal.getSums(minLambda, maxLambda)};
+
+                std::vector<std::vector<double>> jscWithSolar;
+                for(size_t i = 0u; i < jscSum.size(); ++i)
+                {
+                    jscWithSolar.emplace_back();
+                    for(size_t j = 0u; j < jscSum[i].size(); ++j)
+                    {
+                        jscWithSolar[i].push_back(jscSum[i][j] * m_IncomingSolar[i]);
+                    }
+                }
+
                 // Default absorbed electricity is set to zero
-                m_AbsElectricity[aSide] =
-                  getZeroVectorVector(m_Abs.at(aSide).size(), m_IncomingSolar.size());
+                m_AbsElectricity[aSide] = calcPVLayersElectricity(jscWithSolar, m_IncomingSolar);
 
                 for(PropertySimple aProprerty : EnumPropertySimple())
                 {

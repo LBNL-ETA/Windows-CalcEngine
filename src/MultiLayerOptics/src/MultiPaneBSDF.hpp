@@ -236,6 +236,10 @@ namespace MultiLayerOptics
           const FenestrationCommon::CSeries & t_SolarRadiation,
           const FenestrationCommon::CSeries & t_DetectorData = FenestrationCommon::CSeries());
 
+        std::vector<std::vector<double>>
+          calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
+                            const std::vector<double> & incomingSolar);
+
         void calculate(double minLambda, double maxLambda);
 
         void calcHemisphericalAbs(FenestrationCommon::Side t_Side);
