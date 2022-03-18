@@ -178,15 +178,18 @@ namespace MultiLayerOptics
                                                                     const size_t matrixSize)
     {
         // Equations used here are from Klems-Matrix Layer calculations- part 2 paper
+        // Note that absorptance calculations do not need irradiances leaving first layer
+        // for front flow calculations (or back layer for backward flow calculations) and because of
+        // that, they are not calculated.
         for(size_t i = 0; i < numberOfLayers; i++)
         {
             if(i == numberOfLayers - 1)
             {
                 SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
-                m_Iminus[Side::Back].push_back(iMinus);
+                m_Iminus[EnergyFlow::Backward].push_back(iMinus);
                 SquareMatrix iPlus{matrixSize};
-                m_Iplus[Side::Front].push_back(iPlus);
+                m_Iplus[EnergyFlow::Forward].push_back(iPlus);
             }
             else
             {
@@ -195,23 +198,22 @@ namespace MultiLayerOptics
                 const auto InterRefl2{interReflectance(m_Lambda,
                                                        Layer2.at(Side::Front, PropertySimple::R),
                                                        Layer1.at(Side::Back, PropertySimple::R))};
-                const auto Ab{m_Layers[i]->Abs(Side::Back)};
                 const auto iMinus{
                   iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T))};
-                m_Iminus[Side::Back].push_back(iMinus);
+                m_Iminus[EnergyFlow::Backward].push_back(iMinus);
                 const auto iPlus{iplusCalc(InterRefl2,
                                            Layer2.getMatrix(Side::Front, PropertySimple::R),
                                            Layer1.getMatrix(Side::Front, PropertySimple::T))};
-                m_Iplus[Side::Front].push_back(iPlus);
+                m_Iplus[EnergyFlow::Forward].push_back(iPlus);
             }
 
             if(i == 0)
             {
                 SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
-                m_Iminus[Side::Front].push_back(iMinus);
+                m_Iminus[EnergyFlow::Forward].push_back(iMinus);
                 SquareMatrix iPlus{matrixSize};
-                m_Iplus[Side::Back].push_back(iPlus);
+                m_Iplus[EnergyFlow::Backward].push_back(iPlus);
             }
             else
             {
@@ -220,14 +222,13 @@ namespace MultiLayerOptics
                 const auto InterRefl1{interReflectance(m_Lambda,
                                                        Layer1.at(Side::Back, PropertySimple::R),
                                                        Layer2.at(Side::Front, PropertySimple::R))};
-                const auto Af{m_Layers[i]->Abs(Side::Front)};
                 const auto iMinus{
                   iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySimple::T))};
-                m_Iminus[Side::Front].push_back(iMinus);
+                m_Iminus[EnergyFlow::Forward].push_back(iMinus);
                 const auto iPlus{iplusCalc(InterRefl1,
                                            Layer1.at(Side::Back, PropertySimple::R),
                                            Layer2.at(Side::Back, PropertySimple::T))};
-                m_Iplus[Side::Back].push_back(iPlus);
+                m_Iplus[EnergyFlow::Backward].push_back(iPlus);
             }
         }
     }
@@ -240,8 +241,9 @@ namespace MultiLayerOptics
             {
                 auto AbsFront{m_Layers[i]->Abs(aSide)};
                 auto AbsBack{m_Layers[i]->Abs(oppositeSide(aSide))};
-                auto absorbedFront{AbsFront * m_Iminus.at(aSide)[i]};
-                auto absorbedBack{AbsBack * m_Iplus.at(aSide)[i]};
+                auto aEnergyFlow{aSide == Side::Front ? EnergyFlow::Forward : EnergyFlow::Backward};
+                auto absorbedFront{AbsFront * m_Iminus.at(aEnergyFlow)[i]};
+                auto absorbedBack{AbsBack * m_Iplus.at(aEnergyFlow)[i]};
                 std::transform(absorbedFront.begin(),
                                absorbedFront.end(),
                                absorbedBack.begin(),

@@ -102,9 +102,11 @@ namespace MultiLayerOptics
         // Equations for absorptance calculations are described in "Klems-Matrix Layer Calculations"
         // document. Two equations (3.7a) and (3.7b) are used to calculate front and back
         // absorptances. In to process of calculation incoming and outgoing rays are calculated and
-        // stored into this map.
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::SquareMatrix>> m_Iminus;
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::SquareMatrix>> m_Iplus;
+        // stored into this map. Iminus and Iplus are stored in a way that Iminus[EnergyFlow::Forward][i]
+        // and Iplus[EnergyFlow::Backward][i] are representing front and back incoming irradinace at
+        // the layer on the position "i"
+        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>> m_Iminus;
+        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>> m_Iplus;
 
         // Photovoltaic properties for every direction
         std::vector<FenestrationCommon::CSeries> m_JSCPrimeFront;
