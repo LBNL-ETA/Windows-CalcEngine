@@ -148,7 +148,7 @@ namespace MultiLayerOptics
         const auto size = m_CombinedLayerWavelengths.size();
 
         auto jscPrimeFront{t_Layer.jscPrime(Side::Front, m_CombinedLayerWavelengths)};
-        const auto jscPrimeBack{t_Layer.jscPrime(Side::Front, m_CombinedLayerWavelengths)};
+        const auto jscPrimeBack{t_Layer.jscPrime(Side::Back, m_CombinedLayerWavelengths)};
 
         for(size_t i = 0; i < size; ++i)
         {
