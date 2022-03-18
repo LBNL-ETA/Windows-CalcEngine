@@ -6,6 +6,7 @@
 #include <map>
 
 #include "WCECommon.hpp"
+#include "../../SingleLayerOptics/src/BSDFIntegrator.hpp"
 
 namespace SingleLayerOptics
 {
@@ -61,11 +62,11 @@ namespace MultiLayerOptics
     public:
         explicit CEquivalentBSDFLayerSingleBand(
           const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
-          const FenestrationCommon::CSeries & jscPrimeFront = FenestrationCommon::CSeries(),
-          const FenestrationCommon::CSeries & jscPrimeBack = FenestrationCommon::CSeries());
+          const std::vector<double> & jscPrimeFront = std::vector<double>(),
+          const std::vector<double> & jscPrimeBack = std::vector<double>());
         void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
-                      const FenestrationCommon::CSeries & jcsFront = FenestrationCommon::CSeries(),
-                      const FenestrationCommon::CSeries & jcsBack = FenestrationCommon::CSeries());
+                      const std::vector<double> & jcsFront = std::vector<double>(),
+                      const std::vector<double> & jcsBack = std::vector<double>());
         void BuildForwardAndBackwardLayers(size_t numberOfLayers);
         void CreateIplusAndIminusValues(size_t numberOfLayers, size_t matrixSize);
         void CalculateLayerAbsorptances(size_t numberOfLayers);
@@ -77,6 +78,7 @@ namespace MultiLayerOptics
                                                      FenestrationCommon::PropertySimple t_Property);
 
         std::vector<double> getLayerAbsorptances(size_t Index, FenestrationCommon::Side t_Side);
+        std::vector<double> getLayerJSC(size_t Index, FenestrationCommon::Side t_Side);
 
         [[nodiscard]] size_t getNumberOfLayers() const;
 
@@ -102,18 +104,23 @@ namespace MultiLayerOptics
         // Equations for absorptance calculations are described in "Klems-Matrix Layer Calculations"
         // document. Two equations (3.7a) and (3.7b) are used to calculate front and back
         // absorptances. In to process of calculation incoming and outgoing rays are calculated and
-        // stored into this map. Iminus and Iplus are stored in a way that Iminus[EnergyFlow::Forward][i]
-        // and Iplus[EnergyFlow::Backward][i] are representing front and back incoming irradinace at
-        // the layer on the position "i"
-        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>> m_Iminus;
-        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>> m_Iplus;
+        // stored into this map. Iminus and Iplus are stored in a way that
+        // Iminus[EnergyFlow::Forward][i] and Iplus[EnergyFlow::Backward][i] are representing front
+        // and back incoming irradinace at the layer on the position "i"
+        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
+          m_Iminus;
+        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
+          m_Iplus;
 
-        // Photovoltaic properties for every direction
-        std::vector<FenestrationCommon::CSeries> m_JSCPrimeFront;
-        std::vector<FenestrationCommon::CSeries> m_JSCPrimeBack;
+        // Photovoltaic properties for every direction. Vector is scaled to incoming
+        // irradiance set to one.
+        std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_JSCPrime{
+          {FenestrationCommon::Side::Front, Abs_Matrix()},
+          {FenestrationCommon::Side::Back, Abs_Matrix()}};
 
         // Absorptance is stored for each layer and every direction (Abs_Matrix)
         std::map<FenestrationCommon::Side, Abs_Matrix> m_A;
+        std::map<FenestrationCommon::Side, Abs_Matrix> m_JSC;
 
         bool m_PropertiesCalculated;
 
