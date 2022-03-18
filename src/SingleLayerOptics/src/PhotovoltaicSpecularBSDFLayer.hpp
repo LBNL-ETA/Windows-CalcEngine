@@ -16,14 +16,14 @@ namespace SingleLayerOptics
         PhotovoltaicSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
                                       const CBSDFHemisphere & t_Hemisphere);
 
-        [[nodiscard]] std::vector<FenestrationCommon::CSeries> jscPrime(
+        [[nodiscard]] std::vector<std::vector<double>> jscPrime(
             FenestrationCommon::Side t_Side,
             const std::vector<double> & wavelengths = std::vector<double>()) const override;
 
         void assignPowerTable(PVPowerPropertiesTable powerTable);
 
-        [[nodiscard]] double voc(double electricity) const;
-        [[nodiscard]] double ff(double electricity) const;
+        [[nodiscard]] std::vector<double> voc(const std::vector<double> & electricalCurrent) const;
+        [[nodiscard]] std::vector<double> ff(const std::vector<double> & electricalCurrent) const;
 
     private:
         std::shared_ptr<CMaterialPhotovoltaic> m_PVMaterial;

@@ -39,9 +39,12 @@ namespace FenestrationCommon
 
         void integrate(const IntegrationType t_Integration, double normalizationCoefficient);
 
-        std::vector<std::vector<double>> getSums(const double minLambda,
-                                                 const double maxLambda,
-                                                 const std::vector<double> & t_ScaleValue);
+        [[nodiscard]] std::vector<std::vector<double>> getSums(const double minLambda,
+                                                               const double maxLambda,
+                                                               const std::vector<double> & t_ScaleValue) const;
+
+        [[nodiscard]] std::vector<std::vector<double>> getSums(const double minLambda,
+                                                               const double maxLambda) const;
 
         SquareMatrix getSquaredMatrixSums(const double minLambda,
                                           const double maxLambda,

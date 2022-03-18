@@ -19,10 +19,10 @@ namespace SingleLayerOptics
         }
     }
 
-    std::vector<FenestrationCommon::CSeries>
+    std::vector<std::vector<double>>
       PhotovoltaicSpecularBSDFLayer::jscPrime(FenestrationCommon::Side t_Side, const std::vector<double> & wavelengths) const
     {
-        std::vector<FenestrationCommon::CSeries> result;
+        std::vector<std::vector<double>> result;
         auto jscPrime{m_PVMaterial->jscPrime(t_Side)};
         if(jscPrime.size() != wavelengths.size())
         {
@@ -30,13 +30,13 @@ namespace SingleLayerOptics
         }
         for(const auto & jsc : jscPrime)
         {
-            FenestrationCommon::CSeries curVal;
+            std::vector<double> curVal;
 
             // No angular dependence for jsc for now. Every direction will have the same electricity generation.
             for(size_t i = 0u; i < m_BSDFHemisphere.getDirections(BSDFDirection::Incoming).size();
                 ++i)
             {
-                curVal.addProperty(jsc->x(), jsc->value());
+                curVal.push_back(jsc->value());
             }
             result.push_back(curVal);
         }
@@ -48,13 +48,27 @@ namespace SingleLayerOptics
         m_PVPowerTable = std::move(powerTable);
     }
 
-    double PhotovoltaicSpecularBSDFLayer::voc(double electricity) const
+    std::vector<double>
+      PhotovoltaicSpecularBSDFLayer::voc(const std::vector<double> & electricalCurrent) const
     {
-        return m_PVPowerTable.voc(electricity);
+        std::vector<double> result;
+        result.reserve(electricalCurrent.size());
+        for(const auto & cur: electricalCurrent)
+        {
+            result.push_back(m_PVPowerTable.voc(cur));
+        }
+        return result;
     }
 
-    double PhotovoltaicSpecularBSDFLayer::ff(double electricity) const
+    std::vector<double>
+      PhotovoltaicSpecularBSDFLayer::ff(const std::vector<double> & electricalCurrent) const
     {
-        return m_PVPowerTable.ff(electricity);
+        std::vector<double> result;
+        result.reserve(electricalCurrent.size());
+        for(const auto & cur : electricalCurrent)
+        {
+            result.push_back(m_PVPowerTable.ff(cur));
+        }
+        return result;
     }
 }   // namespace SingleLayerOptics

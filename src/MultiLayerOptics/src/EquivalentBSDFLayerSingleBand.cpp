@@ -100,16 +100,33 @@ namespace MultiLayerOptics
 
     CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand(
       const std::shared_ptr<CBSDFIntegrator> & t_Layer,
-      const CSeries & jscPrimeFront,
-      const CSeries & jscPrimeBack) :
+      const std::vector<double> & jscPrimeFront,
+      const std::vector<double> & jscPrimeBack) :
         m_PropertiesCalculated(false)
     {
-        m_JSCPrimeFront.push_back(jscPrimeFront);
-        m_JSCPrimeBack.push_back(jscPrimeBack);
+        if(!jscPrimeFront.empty())
+        {
+            m_JSCPrime[Side::Front].push_back(jscPrimeFront);
+        }
+        else
+        {
+            m_JSCPrime[Side::Front].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
+        if(!jscPrimeBack.empty())
+        {
+            m_JSCPrime[Side::Back].push_back(jscPrimeBack);
+        }
+        else
+        {
+            m_JSCPrime[Side::Back].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
         m_EquivalentLayer = std::make_shared<CBSDFIntegrator>(t_Layer);
         for(Side aSide : EnumSide())
         {
             m_A[aSide] = std::vector<std::vector<double>>();
+            m_JSC[aSide] = std::vector<std::vector<double>>();
         }
         m_Layers.push_back(t_Layer);
         m_Lambda = t_Layer->lambdaMatrix();
@@ -135,22 +152,45 @@ namespace MultiLayerOptics
         return m_A.at(t_Side)[Index - 1];
     }
 
+    std::vector<double> CEquivalentBSDFLayerSingleBand::getLayerJSC(size_t Index, Side t_Side)
+    {
+        calcEquivalentProperties();
+        return m_JSC.at(t_Side)[Index - 1];
+    }
+
     size_t CEquivalentBSDFLayerSingleBand::getNumberOfLayers() const
     {
         return m_Layers.size();
     }
 
     void CEquivalentBSDFLayerSingleBand::addLayer(const std::shared_ptr<CBSDFIntegrator> & t_Layer,
-                                                  const CSeries & jcsFront,
-                                                  const CSeries & jcsBack)
+                                                  const std::vector<double> & jcsFront,
+                                                  const std::vector<double> & jcsBack)
     {
         m_Layers.emplace_back(t_Layer);
-        m_JSCPrimeFront.push_back(jcsFront);
-        m_JSCPrimeBack.push_back(jcsBack);
+        if(!jcsFront.empty())
+        {
+            m_JSCPrime[Side::Front].push_back(jcsFront);
+        }
+        else
+        {
+            m_JSCPrime[Side::Front].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
+        if(!jcsBack.empty())
+        {
+            m_JSCPrime[Side::Back].push_back(jcsBack);
+        }
+        else
+        {
+            m_JSCPrime[Side::Back].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
         m_PropertiesCalculated = false;
         for(Side aSide : EnumSide())
         {
             m_A.at(aSide).clear();
+            m_JSC.at(aSide).clear();
         }
     }
 
@@ -250,6 +290,16 @@ namespace MultiLayerOptics
                                absorbedFront.begin(),
                                std::plus<>());
                 m_A.at(aSide).push_back(absorbedFront);
+
+                // Photovoltaic calculation
+                auto jscFront{m_JSCPrime.at(aSide)[i] * m_Iminus.at(aEnergyFlow)[i]};
+                auto jscBack{m_JSCPrime.at(oppositeSide(aSide))[i] * m_Iplus.at(aEnergyFlow)[i]};
+                std::transform(jscFront.begin(),
+                               jscFront.end(),
+                               jscBack.begin(),
+                               jscFront.begin(),
+                               std::plus<>());
+                m_JSC.at(aSide).push_back(jscFront);
             }
         }
     }
