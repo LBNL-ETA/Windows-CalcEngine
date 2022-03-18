@@ -8,6 +8,12 @@
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
+#include "../../SingleLayerOptics/src/PhotovoltaicSpecularBSDFLayer.hpp"
+
+namespace SingleLayerOptics
+{
+    class PhotovoltaicSpecularBSDFLayer;
+}
 
 using namespace FenestrationCommon;
 using namespace SingleLayerOptics;

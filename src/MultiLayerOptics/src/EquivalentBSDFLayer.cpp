@@ -84,6 +84,16 @@ namespace MultiLayerOptics
         m_Calculated = false;
     }
 
+    std::vector<std::shared_ptr<CBSDFLayer>> & CEquivalentBSDFLayer::getLayers()
+    {
+        return m_Layer;
+    }
+
+    size_t CEquivalentBSDFLayer::numberOfLayers() const
+    {
+        return m_Layer.size();
+    }
+
     void CEquivalentBSDFLayer::calculate()
     {
         size_t matrixSize = m_Lambda.size();
@@ -136,21 +146,26 @@ namespace MultiLayerOptics
     {
         const auto aResults = t_Layer.getWavelengthResults();
         const auto size = m_CombinedLayerWavelengths.size();
+
+        auto jscPrimeFront{t_Layer.jscPrime(Side::Front, m_CombinedLayerWavelengths)};
+        const auto jscPrimeBack{t_Layer.jscPrime(Side::Front, m_CombinedLayerWavelengths)};
+
         for(size_t i = 0; i < size; ++i)
         {
             const auto curWL = m_CombinedLayerWavelengths[i];
             const auto index = t_Layer.getBandIndex(curWL);
             assert(index > -1);
 
-            const std::shared_ptr<CBSDFIntegrator> currentLayer = (*aResults)[size_t(index)];
+            const std::shared_ptr<CBSDFIntegrator> currentLayer =
+              (*aResults)[static_cast<size_t>(index)];
 
             if(m_LayersWL.size() <= i)
             {
-                m_LayersWL.emplace_back(currentLayer);
+                m_LayersWL.emplace_back(currentLayer, jscPrimeFront[i], jscPrimeBack[i]);
             }
             else
             {
-                m_LayersWL[i].addLayer(currentLayer);
+                m_LayersWL[i].addLayer(currentLayer, jscPrimeFront[i], jscPrimeBack[i]);
             }
         }
     }

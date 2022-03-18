@@ -52,6 +52,10 @@ namespace SingleLayerOptics
 
         std::shared_ptr<CBaseCell> getCell() const;
 
+        [[nodiscard]] virtual std::vector<FenestrationCommon::CSeries> jscPrime(
+            FenestrationCommon::Side t_Side,
+            const std::vector<double> & wavelengths = std::vector<double>()) const;
+
     protected:
         // Diffuse calculation distribution will be calculated here. It will depend on base classes.
         // It can for example be uniform or directional. In case of specular layers there will be no
