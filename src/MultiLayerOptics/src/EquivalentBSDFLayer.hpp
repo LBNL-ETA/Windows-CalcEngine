@@ -56,6 +56,9 @@ namespace MultiLayerOptics
 
         void setSolarRadiation(FenestrationCommon::CSeries & t_SolarRadiation);
 
+        [[nodiscard]] std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>>& getLayers();
+        [[nodiscard]] size_t numberOfLayers() const;
+
     private:
         void calculate();
 

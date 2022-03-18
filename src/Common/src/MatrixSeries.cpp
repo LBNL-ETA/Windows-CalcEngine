@@ -74,6 +74,11 @@ namespace FenestrationCommon
         }
     }
 
+    void CMatrixSeries::addSeries(const size_t i, const size_t j, const CSeries & series)
+    {
+        m_Matrix[i][j] = series;
+    }
+
     void CMatrixSeries::mMult(const CSeries & t_Series)
     {
         for(size_t i = 0; i < m_Matrix.size(); ++i)

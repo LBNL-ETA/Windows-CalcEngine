@@ -108,4 +108,8 @@ namespace SingleLayerOptics
         m_Material->Flipped(flipped);
     }
 
+    std::shared_ptr<CMaterial> CBaseCell::getMaterial()
+    {
+        return m_Material;
+    }
 }   // namespace SingleLayerOptics

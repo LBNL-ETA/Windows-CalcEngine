@@ -99,9 +99,13 @@ namespace MultiLayerOptics
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand(
-      const std::shared_ptr<CBSDFIntegrator> & t_Layer) :
+      const std::shared_ptr<CBSDFIntegrator> & t_Layer,
+      const CSeries & jscPrimeFront,
+      const CSeries & jscPrimeBack) :
         m_PropertiesCalculated(false)
     {
+        m_JSCPrimeFront.push_back(jscPrimeFront);
+        m_JSCPrimeBack.push_back(jscPrimeBack);
         m_EquivalentLayer = std::make_shared<CBSDFIntegrator>(t_Layer);
         for(Side aSide : EnumSide())
         {
@@ -136,9 +140,13 @@ namespace MultiLayerOptics
         return m_Layers.size();
     }
 
-    void CEquivalentBSDFLayerSingleBand::addLayer(const std::shared_ptr<CBSDFIntegrator> & t_Layer)
+    void CEquivalentBSDFLayerSingleBand::addLayer(const std::shared_ptr<CBSDFIntegrator> & t_Layer,
+                                                  const CSeries & jcsFront,
+                                                  const CSeries & jcsBack)
     {
-        m_Layers.push_back(t_Layer);
+        m_Layers.emplace_back(t_Layer);
+        m_JSCPrimeFront.push_back(jcsFront);
+        m_JSCPrimeBack.push_back(jcsBack);
         m_PropertiesCalculated = false;
         for(Side aSide : EnumSide())
         {

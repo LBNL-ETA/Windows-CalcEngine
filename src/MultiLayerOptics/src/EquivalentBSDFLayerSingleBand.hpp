@@ -60,8 +60,12 @@ namespace MultiLayerOptics
     {
     public:
         explicit CEquivalentBSDFLayerSingleBand(
-          const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer);
-        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer);
+          const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+          const FenestrationCommon::CSeries & jscPrimeFront = FenestrationCommon::CSeries(),
+          const FenestrationCommon::CSeries & jscPrimeBack = FenestrationCommon::CSeries());
+        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+                      const FenestrationCommon::CSeries & jcsFront = FenestrationCommon::CSeries(),
+                      const FenestrationCommon::CSeries & jcsBack = FenestrationCommon::CSeries());
         void BuildForwardAndBackwardLayers(size_t numberOfLayers);
         void CreateIplusAndIminusValues(size_t numberOfLayers, size_t matrixSize);
         void CalculateLayerAbsorptances(size_t numberOfLayers);
@@ -102,8 +106,11 @@ namespace MultiLayerOptics
         std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::SquareMatrix>> m_Iminus;
         std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::SquareMatrix>> m_Iplus;
 
-        // Abs_Matrix m_Af;
-        // Abs_Matrix m_Ab;
+        // Photovoltaic properties for every direction
+        std::vector<FenestrationCommon::CSeries> m_JSCPrimeFront;
+        std::vector<FenestrationCommon::CSeries> m_JSCPrimeBack;
+
+        // Absorptance is stored for each layer and every direction (Abs_Matrix)
         std::map<FenestrationCommon::Side, Abs_Matrix> m_A;
 
         bool m_PropertiesCalculated;

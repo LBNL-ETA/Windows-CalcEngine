@@ -30,7 +30,7 @@ namespace SingleLayerOptics
         return std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
     }
 
-    std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getPhotovoltaicLayer(
+    std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getPhotovoltaicSpecularLayer(
         const std::shared_ptr<CMaterial> & t_Material,
         const CBSDFHemisphere & t_BSDF,
         PVPowerPropertiesTable powerTable)
