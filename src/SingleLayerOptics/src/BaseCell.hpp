@@ -54,6 +54,8 @@ namespace SingleLayerOptics
 
         void Flipped(bool flipped) const;
 
+        std::shared_ptr<CMaterial> getMaterial();
+
     protected:
         std::shared_ptr<CMaterial> m_Material;
         std::shared_ptr<ICellDescription> m_CellDescription;

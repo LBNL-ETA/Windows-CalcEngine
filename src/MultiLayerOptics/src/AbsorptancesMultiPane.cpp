@@ -65,7 +65,7 @@ namespace MultiLayerOptics
             m_tCoeffs.clear();
 
             // layers loop
-            for(int i = int(size) - 1; i >= 0; --i)
+            for(int i = static_cast<int>(size) - 1; i >= 0; --i)
             {
                 t = tCoeffs(m_T[i], m_Rb[i], r);
                 r = rCoeffs(m_T[i], m_Rf[i], m_Rb[i], r);
@@ -97,10 +97,9 @@ namespace MultiLayerOptics
             size = Iminus.size();
             for(size_t i = 0; i < size - 1; ++i)
             {
-                const auto Iincoming = Iminus[i] - Iplus[i];
-                const auto Ioutgoing = Iminus[i + 1] - Iplus[i + 1];
-                CSeries layerAbs = Iincoming - Ioutgoing;
-                m_Abs.push_back(layerAbs);
+                const auto Iincoming = Iminus[i] + Iplus[i + 1];
+                const auto Ioutgoing = Iminus[i + 1] + Iplus[i];
+                m_Abs.emplace_back(Iincoming - Ioutgoing);
             }
         }
     }

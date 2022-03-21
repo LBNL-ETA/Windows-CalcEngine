@@ -2,7 +2,6 @@
 #define MULTILAYEROPTICS_H
 
 #include "../src/AbsorptancesMultiPane.hpp"
-#include "../src/AbsorptancesMultiPaneBSDF.hpp"
 #include "../src/EquivalentBSDFLayer.hpp"
 #include "../src/EquivalentBSDFLayerSingleBand.hpp"
 #include "../src/EquivalentLayerSingleComponent.hpp"
@@ -16,6 +15,5 @@
 #include "../src/MultiPaneSampleData.hpp"
 #include "../src/MultiPaneSpectralSample.hpp"
 #include "../src/MultiPaneSpecular.hpp"
-#include "../src/MultiPanePhotovoltaic.hpp"
 
 #endif
