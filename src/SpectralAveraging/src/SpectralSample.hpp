@@ -130,7 +130,7 @@ namespace SpectralAveraging
           getWavelengthsProperty(const FenestrationCommon::Property t_Property,
                                  const FenestrationCommon::Side t_Side);
 
-        std::vector<double> getWavelengthsFromSample() const override;
+        [[nodiscard]] std::vector<double> getWavelengthsFromSample() const override;
 
         void cutExtraData(double minLambda, double maxLambda);
 
@@ -160,7 +160,7 @@ namespace SpectralAveraging
                               FenestrationCommon::IntegrationType::Trapezoidal,
                             double NormalizationCoefficient = 1);
 
-        FenestrationCommon::CSeries & jscPrime(const FenestrationCommon::Side side);
+        FenestrationCommon::CSeries jscPrime(const FenestrationCommon::Side side);
 
     protected:
         void calculateState() override;

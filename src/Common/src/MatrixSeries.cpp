@@ -9,8 +9,7 @@
 namespace FenestrationCommon
 {
     CMatrixSeries::CMatrixSeries(const size_t t_Size1, const size_t t_Size2) :
-        m_Size1(t_Size1),
-        m_Size2(t_Size2)
+        m_Size1(t_Size1), m_Size2(t_Size2)
     {
         m_Matrix = std::vector<std::vector<CSeries>>(m_Size1);
         for(size_t i = 0; i < m_Size1; ++i)
@@ -74,6 +73,11 @@ namespace FenestrationCommon
         }
     }
 
+    void CMatrixSeries::addSeries(const size_t i, const size_t j, const CSeries & series)
+    {
+        m_Matrix[i][j] = series;
+    }
+
     void CMatrixSeries::mMult(const CSeries & t_Series)
     {
         for(size_t i = 0; i < m_Matrix.size(); ++i)
@@ -115,8 +119,10 @@ namespace FenestrationCommon
         }
     }
 
-    std::vector<std::vector<double>> CMatrixSeries::getSums(
-      const double minLambda, const double maxLambda, const std::vector<double> & t_ScaleValue)
+    std::vector<std::vector<double>>
+      CMatrixSeries::getSums(const double minLambda,
+                             const double maxLambda,
+                             const std::vector<double> & t_ScaleValue) const
     {
         std::vector<std::vector<double>> Result(m_Matrix.size());
         for(size_t i = 0; i < m_Matrix.size(); ++i)
@@ -134,6 +140,13 @@ namespace FenestrationCommon
             }
         }
         return Result;
+    }
+
+    std::vector<std::vector<double>> CMatrixSeries::getSums(const double minLambda,
+                                                            const double maxLambda) const
+    {
+        const std::vector<double> scaleValue(m_Matrix[0].size(), 1);
+        return getSums(minLambda, maxLambda, scaleValue);
     }
 
     SquareMatrix CMatrixSeries::getSquaredMatrixSums(const double minLambda,

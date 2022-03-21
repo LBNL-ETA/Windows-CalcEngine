@@ -17,9 +17,7 @@ namespace MultiLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     CEquivalentLayerSingleComponentMWAngle::CEquivalentLayerSingleComponentMWAngle(
       CEquivalentLayerSingleComponentMW t_Layer, CAbsorptancesMultiPane t_Abs, double t_Angle) :
-        m_Layer(std::move(t_Layer)),
-        m_Abs(std::move(t_Abs)),
-        m_Angle(t_Angle)
+        m_Layer(std::move(t_Layer)), m_Abs(std::move(t_Abs)), m_Angle(t_Angle)
     {}
 
     double CEquivalentLayerSingleComponentMWAngle::angle() const
@@ -60,9 +58,7 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
       const CSeries & t_SolarRadiation,
       const CSeries & t_DetectorData) :
-        m_Layers(layers),
-        m_SolarRadiation(t_SolarRadiation),
-        m_DetectorData(t_DetectorData)
+        m_Layers(layers), m_SolarRadiation(t_SolarRadiation), m_DetectorData(t_DetectorData)
     {
         CCommonWavelengths aCommonWL;
         for(auto & layer : m_Layers)
@@ -90,8 +86,7 @@ namespace MultiLayerOptics
     CMultiPaneSpecular::CMultiPaneSpecular(const std::vector<double> & t_CommonWavelength,
                                            const CSeries & t_SolarRadiation,
                                            const std::shared_ptr<SpecularLayer> & t_Layer) :
-        m_CommonWavelengths(t_CommonWavelength),
-        m_SolarRadiation(t_SolarRadiation)
+        m_CommonWavelengths(t_CommonWavelength), m_SolarRadiation(t_SolarRadiation)
     {
         m_SolarRadiation = m_SolarRadiation.interpolate(m_CommonWavelengths);
         addLayer(t_Layer);
@@ -183,7 +178,7 @@ namespace MultiLayerOptics
         {
             if(m_DetectorData.size() != solarRadiation.size())
             {
-                m_DetectorData = m_DetectorData.interpolate(solarRadiation.getXArray());    
+                m_DetectorData = m_DetectorData.interpolate(solarRadiation.getXArray());
             }
             solarRadiation = solarRadiation * m_DetectorData;
         }
@@ -301,6 +296,60 @@ namespace MultiLayerOptics
         assert(totalSolar > 0);
 
         return totalProperty / totalSolar;
+    }
+
+    double CMultiPaneSpecular::AbsHeat(size_t Index,
+                                       double t_Angle,
+                                       double minLambda,
+                                       double maxLambda,
+                                       FenestrationCommon::IntegrationType t_IntegrationType,
+                                       double normalizationCoefficient)
+    {
+        return Abs(
+                 Index, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient)
+               - AbsElectricity(
+                 Index, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient);
+    }
+
+    double CMultiPaneSpecular::AbsElectricity(size_t Index,
+                                              double t_Angle,
+                                              double minLambda,
+                                              double maxLambda,
+                                              IntegrationType t_IntegrationType,
+                                              double normalizationCoefficient)
+    {
+        if(std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]) != nullptr)
+        {
+            const double totalEnergy =
+              m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
+                ->sum(minLambda, maxLambda);
+
+            CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
+            auto aLayer = std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]);
+
+            auto frontJscPrime = aLayer->jscPrime(Side::Front);
+            auto backJscPrime = aLayer->jscPrime(Side::Back);
+
+            const auto IMinus = aAngularProperties.iminus(Index - 1);
+            const auto IPlus = aAngularProperties.iplus(Index);
+
+            const auto frontJsc = frontJscPrime * IMinus;
+            const auto JscIntegratedFront =
+              frontJsc.integrate(t_IntegrationType, normalizationCoefficient);
+            const auto backJsc = backJscPrime * IPlus;
+            const auto JscIntegratedBack = backJsc.integrate(t_IntegrationType, normalizationCoefficient);
+            const auto jsc{(JscIntegratedFront->sum() + JscIntegratedBack->sum()) * totalEnergy};
+
+            const auto voc{aLayer->voc(jsc)};
+            const auto ff{aLayer->ff(jsc)};
+
+            const auto power{jsc * voc * ff};
+
+            assert(totalEnergy > 0);
+            return power / totalEnergy;
+        }
+
+        return 0;
     }
 
     std::vector<double>

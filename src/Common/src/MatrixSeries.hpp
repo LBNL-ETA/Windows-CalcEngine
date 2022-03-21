@@ -27,6 +27,8 @@ namespace FenestrationCommon
                            const std::vector<double> & t_Values);
         void addProperties(const double t_Wavelength, SquareMatrix & t_Matrix);
 
+        void addSeries(const size_t i, const size_t j, const CSeries & series);
+
         // Multiply all series in matrix with provided one
         void mMult(const CSeries & t_Series);
 
@@ -37,16 +39,19 @@ namespace FenestrationCommon
 
         void integrate(const IntegrationType t_Integration, double normalizationCoefficient);
 
-        std::vector<std::vector<double>> getSums(const double minLambda,
-                                                 const double maxLambda,
-                                                 const std::vector<double> & t_ScaleValue);
+        [[nodiscard]] std::vector<std::vector<double>> getSums(const double minLambda,
+                                                               const double maxLambda,
+                                                               const std::vector<double> & t_ScaleValue) const;
+
+        [[nodiscard]] std::vector<std::vector<double>> getSums(const double minLambda,
+                                                               const double maxLambda) const;
 
         SquareMatrix getSquaredMatrixSums(const double minLambda,
                                           const double maxLambda,
                                           const std::vector<double> & t_ScaleValue);
 
-        size_t size1() const;
-        size_t size2() const;
+        [[nodiscard]] size_t size1() const;
+        [[nodiscard]] size_t size2() const;
 
     private:
         std::vector<std::vector<CSeries>> m_Matrix;

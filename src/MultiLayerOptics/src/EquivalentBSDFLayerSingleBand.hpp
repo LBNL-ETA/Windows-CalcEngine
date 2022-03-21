@@ -6,6 +6,7 @@
 #include <map>
 
 #include "WCECommon.hpp"
+#include "../../SingleLayerOptics/src/BSDFIntegrator.hpp"
 
 namespace SingleLayerOptics
 {
@@ -17,19 +18,10 @@ namespace MultiLayerOptics
     // Matrix will store absorptances for each layer at every direction
     typedef std::vector<std::vector<double>> Abs_Matrix;
 
-    // Class to handle interreflectance calculations
-    class CInterReflectance
-    {
-    public:
-        CInterReflectance(const FenestrationCommon::SquareMatrix & t_Lambda,
-                          const FenestrationCommon::SquareMatrix & t_Rb,
-                          const FenestrationCommon::SquareMatrix & t_Rf);
-
-        FenestrationCommon::SquareMatrix value() const;
-
-    private:
-        FenestrationCommon::SquareMatrix m_InterRefl;
-    };
+    FenestrationCommon::SquareMatrix
+      interReflectance(const FenestrationCommon::SquareMatrix & t_Lambda,
+                       const FenestrationCommon::SquareMatrix & t_Rb,
+                       const FenestrationCommon::SquareMatrix & t_Rf);
 
     // Class to calculate equivalent BSDF transmittance and reflectances. This will be used by
     // multilayer routines to calculate properties for any number of layers.
@@ -39,7 +31,7 @@ namespace MultiLayerOptics
         CBSDFDoubleLayer(const SingleLayerOptics::CBSDFIntegrator & t_FrontLayer,
                          const SingleLayerOptics::CBSDFIntegrator & t_BackLayer);
 
-        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> value() const;
+        [[nodiscard]] std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> value() const;
 
     private:
         static FenestrationCommon::SquareMatrix
@@ -69,8 +61,15 @@ namespace MultiLayerOptics
     {
     public:
         explicit CEquivalentBSDFLayerSingleBand(
-          const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer);
-        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer);
+          const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+          const std::vector<double> & jscPrimeFront = std::vector<double>(),
+          const std::vector<double> & jscPrimeBack = std::vector<double>());
+        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+                      const std::vector<double> & jcsFront = std::vector<double>(),
+                      const std::vector<double> & jcsBack = std::vector<double>());
+        void BuildForwardAndBackwardLayers(size_t numberOfLayers);
+        void CreateIplusAndIminusValues(size_t numberOfLayers, size_t matrixSize);
+        void CalculateLayerAbsorptances(size_t numberOfLayers);
 
         FenestrationCommon::SquareMatrix getMatrix(FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySimple t_Property);
@@ -79,20 +78,21 @@ namespace MultiLayerOptics
                                                      FenestrationCommon::PropertySimple t_Property);
 
         std::vector<double> getLayerAbsorptances(size_t Index, FenestrationCommon::Side t_Side);
+        std::vector<double> getLayerJSC(size_t Index, FenestrationCommon::Side t_Side);
 
-        size_t getNumberOfLayers() const;
+        [[nodiscard]] size_t getNumberOfLayers() const;
 
     private:
         void calcEquivalentProperties();
 
-        std::vector<double> absTerm1(const std::vector<double> & t_Alpha,
-                                     const FenestrationCommon::SquareMatrix & t_InterRefl,
-                                     const FenestrationCommon::SquareMatrix & t_T) const;
+        [[nodiscard]] FenestrationCommon::SquareMatrix
+          iminusCalc(const FenestrationCommon::SquareMatrix & t_InterRefl,
+                     const FenestrationCommon::SquareMatrix & t_T) const;
 
-        std::vector<double> absTerm2(const std::vector<double> & t_Alpha,
-                                     const FenestrationCommon::SquareMatrix & t_InterRefl,
-                                     const FenestrationCommon::SquareMatrix & t_R,
-                                     const FenestrationCommon::SquareMatrix & t_T) const;
+        [[nodiscard]] FenestrationCommon::SquareMatrix
+          iplusCalc(const FenestrationCommon::SquareMatrix & t_InterRefl,
+                    const FenestrationCommon::SquareMatrix & t_R,
+                    const FenestrationCommon::SquareMatrix & t_T) const;
 
         std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_EquivalentLayer;
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Layers;
@@ -101,9 +101,26 @@ namespace MultiLayerOptics
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Forward;
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Backward;
 
-        // Abs_Matrix m_Af;
-        // Abs_Matrix m_Ab;
+        // Equations for absorptance calculations are described in "Klems-Matrix Layer Calculations"
+        // document. Two equations (3.7a) and (3.7b) are used to calculate front and back
+        // absorptances. In to process of calculation incoming and outgoing rays are calculated and
+        // stored into this map. Iminus and Iplus are stored in a way that
+        // Iminus[EnergyFlow::Forward][i] and Iplus[EnergyFlow::Backward][i] are representing front
+        // and back incoming irradinace at the layer on the position "i"
+        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
+          m_Iminus;
+        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
+          m_Iplus;
+
+        // Photovoltaic properties for every direction. Vector is scaled to incoming
+        // irradiance set to one.
+        std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_JSCPrime{
+          {FenestrationCommon::Side::Front, Abs_Matrix()},
+          {FenestrationCommon::Side::Back, Abs_Matrix()}};
+
+        // Absorptance is stored for each layer and every direction (Abs_Matrix)
         std::map<FenestrationCommon::Side, Abs_Matrix> m_A;
+        std::map<FenestrationCommon::Side, Abs_Matrix> m_JSC;
 
         bool m_PropertiesCalculated;
 

@@ -1,7 +1,8 @@
-#ifndef BSDFLAYERMAKER_H
-#define BSDFLAYERMAKER_H
+#pragma once
 
 #include <memory>
+
+#include "PhotovoltaicProperties.hpp"
 
 namespace SingleLayerOptics
 {
@@ -24,6 +25,11 @@ namespace SingleLayerOptics
         static std::shared_ptr<CBSDFLayer>
           getSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
                            const CBSDFHemisphere & t_BSDF);
+
+        static std::shared_ptr<CBSDFLayer>
+          getPhotovoltaicSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
+                               const CBSDFHemisphere & t_BSDF,
+                               PVPowerPropertiesTable powerTable);
 
         static std::shared_ptr<CBSDFLayer>
           getCircularPerforatedLayer(const std::shared_ptr<CMaterial> & t_Material,
@@ -86,5 +92,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

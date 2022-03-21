@@ -6,16 +6,17 @@
 #include "WCECommon.hpp"
 
 
-using namespace FenestrationCommon;
-using namespace SingleLayerOptics;
-using namespace MultiLayerOptics;
+using FenestrationCommon::SquareMatrix;
+using SingleLayerOptics::CBSDFDefinition;
+using SingleLayerOptics::BSDFDirection;
+using SingleLayerOptics::CBSDFDirections;
 
 // Example that tests interreflectance between two adjacent layers. This procedure will be used to
 // calculate other multilayer properties
 class TestInterReflectanceBSDF : public testing::Test
 {
 private:
-    std::shared_ptr<CInterReflectance> m_InterReflectance;
+    FenestrationCommon::SquareMatrix m_InterReflectance;
 
 protected:
     virtual void SetUp()
@@ -30,8 +31,8 @@ protected:
         aDefinitions.emplace_back(75, 1);
         aDefinitions.emplace_back(86.25, 1);
 
-        CBSDFDirections aDirections = CBSDFDirections(aDefinitions, BSDFDirection::Incoming);
-        SquareMatrix aLambdas = aDirections.lambdaMatrix();
+        const auto aDirections{CBSDFDirections(aDefinitions, BSDFDirection::Incoming)};
+        const auto aLambdas{aDirections.lambdaMatrix()};
 
         SquareMatrix Rb{{1.438618083, 0, 0, 0, 0, 0, 0},
                         {0, 0.189397664, 0, 0, 0, 0, 0},
@@ -49,11 +50,11 @@ protected:
                         {0, 0, 0, 0, 0, 0.951907739, 0},
                         {0, 0, 0, 0, 0, 0, 15.28298172}};
 
-        m_InterReflectance = std::make_shared<CInterReflectance>(aLambdas, Rb, Rf);
+        m_InterReflectance = MultiLayerOptics::interReflectance(aLambdas, Rb, Rf);
     }
 
 public:
-    std::shared_ptr<CInterReflectance> getInterReflectance()
+    SquareMatrix getInterReflectance()
     {
         return m_InterReflectance;
     };
@@ -63,24 +64,22 @@ TEST_F(TestInterReflectanceBSDF, TestBSDFInterreflectance)
 {
     SCOPED_TRACE("Begin Test: Simple BSDF interreflectance.");
 
-    CInterReflectance interRefl = *getInterReflectance();
+    const auto results{getInterReflectance()};
 
-    SquareMatrix results = interRefl.value();
-
-    const size_t matrixSize = results.size();
+    const size_t matrixSize{results.size()};
 
     // Test matrix
-    size_t size = 7;
+    constexpr size_t size{7u};
 
     EXPECT_EQ(size, matrixSize);
 
-    SquareMatrix correctResults{{1.005964363, 0, 0, 0, 0, 0, 0},
-                                {0, 1.005964363, 0, 0, 0, 0, 0},
-                                {0, 0, 1.006280195, 0, 0, 0, 0},
-                                {0, 0, 0, 1.008724458, 0, 0, 0},
-                                {0, 0, 0, 0, 1.021780268, 0, 0},
-                                {0, 0, 0, 0, 0, 1.176150952, 0},
-                                {0, 0, 0, 0, 0, 0, 3.022280250}};
+    const SquareMatrix correctResults{{1.005964363, 0, 0, 0, 0, 0, 0},
+                                      {0, 1.005964363, 0, 0, 0, 0, 0},
+                                      {0, 0, 1.006280195, 0, 0, 0, 0},
+                                      {0, 0, 0, 1.008724458, 0, 0, 0},
+                                      {0, 0, 0, 0, 1.021780268, 0, 0},
+                                      {0, 0, 0, 0, 0, 1.176150952, 0},
+                                      {0, 0, 0, 0, 0, 0, 3.022280250}};
 
     for(size_t i = 0; i < size; ++i)
     {
