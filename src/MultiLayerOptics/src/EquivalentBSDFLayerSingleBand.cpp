@@ -7,27 +7,19 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //  CInterReflectance
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    CInterReflectance::CInterReflectance(const SquareMatrix & t_Lambda,
-                                         const SquareMatrix & t_Rb,
-                                         const SquareMatrix & t_Rf)
+    SquareMatrix interReflectance(const SquareMatrix & t_Lambda,
+                                  const SquareMatrix & t_Rb,
+                                  const SquareMatrix & t_Rf)
     {
         const auto size = t_Lambda.size();
         const auto lRb = t_Lambda * t_Rb;
         const auto lRf = t_Lambda * t_Rf;
-        m_InterRefl = lRb * lRf;
+        auto InterRefl = lRb * lRf;
         SquareMatrix I(size);
         I.setIdentity();
-        m_InterRefl = I - m_InterRefl;
-        m_InterRefl = m_InterRefl.inverse();
-    }
-
-    SquareMatrix CInterReflectance::value() const
-    {
-        return m_InterRefl;
+        InterRefl = I - InterRefl;
+        InterRefl = InterRefl.inverse();
+        return InterRefl;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,35 +30,33 @@ namespace MultiLayerOptics
                                        const CBSDFIntegrator & t_BackLayer)
     {
         const SquareMatrix aLambda = t_FrontLayer.lambdaMatrix();
-        CInterReflectance InterRefl1 =
-          CInterReflectance(aLambda,
-                            t_FrontLayer.at(Side::Back, PropertySimple::R),
-                            t_BackLayer.at(Side::Front, PropertySimple::R));
+        const auto InterRefl1 = interReflectance(aLambda,
+                                                 t_FrontLayer.at(Side::Back, PropertySimple::R),
+                                                 t_BackLayer.at(Side::Front, PropertySimple::R));
 
-        CInterReflectance InterRefl2 =
-          CInterReflectance(aLambda,
-                            t_BackLayer.at(Side::Front, PropertySimple::R),
-                            t_FrontLayer.at(Side::Back, PropertySimple::R));
+        const auto InterRefl2 = interReflectance(aLambda,
+                                                 t_BackLayer.at(Side::Front, PropertySimple::R),
+                                                 t_FrontLayer.at(Side::Back, PropertySimple::R));
 
         m_Tf = equivalentT(t_BackLayer.at(Side::Front, PropertySimple::T),
-                           InterRefl1.value(),
+                           InterRefl1,
                            aLambda,
                            t_FrontLayer.at(Side::Front, PropertySimple::T));
         m_Tb = equivalentT(t_FrontLayer.at(Side::Back, PropertySimple::T),
-                           InterRefl2.value(),
+                           InterRefl2,
                            aLambda,
                            t_BackLayer.at(Side::Back, PropertySimple::T));
         m_Rf = equivalentR(t_FrontLayer.at(Side::Front, PropertySimple::R),
                            t_FrontLayer.at(Side::Front, PropertySimple::T),
                            t_FrontLayer.at(Side::Back, PropertySimple::T),
                            t_BackLayer.at(Side::Front, PropertySimple::R),
-                           InterRefl2.value(),
+                           InterRefl2,
                            aLambda);
         m_Rb = equivalentR(t_BackLayer.at(Side::Back, PropertySimple::R),
                            t_BackLayer.at(Side::Back, PropertySimple::T),
                            t_BackLayer.at(Side::Front, PropertySimple::T),
                            t_FrontLayer.at(Side::Back, PropertySimple::R),
-                           InterRefl1.value(),
+                           InterRefl1,
                            aLambda);
 
         m_Results = std::make_shared<CBSDFIntegrator>(t_FrontLayer);
@@ -109,13 +99,34 @@ namespace MultiLayerOptics
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand(
-      const std::shared_ptr<CBSDFIntegrator> & t_Layer) :
+      const std::shared_ptr<CBSDFIntegrator> & t_Layer,
+      const std::vector<double> & jscPrimeFront,
+      const std::vector<double> & jscPrimeBack) :
         m_PropertiesCalculated(false)
     {
+        if(!jscPrimeFront.empty())
+        {
+            m_JSCPrime[Side::Front].push_back(jscPrimeFront);
+        }
+        else
+        {
+            m_JSCPrime[Side::Front].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
+        if(!jscPrimeBack.empty())
+        {
+            m_JSCPrime[Side::Back].push_back(jscPrimeBack);
+        }
+        else
+        {
+            m_JSCPrime[Side::Back].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
         m_EquivalentLayer = std::make_shared<CBSDFIntegrator>(t_Layer);
         for(Side aSide : EnumSide())
         {
             m_A[aSide] = std::vector<std::vector<double>>();
+            m_JSC[aSide] = std::vector<std::vector<double>>();
         }
         m_Layers.push_back(t_Layer);
         m_Lambda = t_Layer->lambdaMatrix();
@@ -141,140 +152,190 @@ namespace MultiLayerOptics
         return m_A.at(t_Side)[Index - 1];
     }
 
+    std::vector<double> CEquivalentBSDFLayerSingleBand::getLayerJSC(size_t Index, Side t_Side)
+    {
+        calcEquivalentProperties();
+        return m_JSC.at(t_Side)[Index - 1];
+    }
+
     size_t CEquivalentBSDFLayerSingleBand::getNumberOfLayers() const
     {
         return m_Layers.size();
     }
 
-    void CEquivalentBSDFLayerSingleBand::addLayer(const std::shared_ptr<CBSDFIntegrator> & t_Layer)
+    void CEquivalentBSDFLayerSingleBand::addLayer(const std::shared_ptr<CBSDFIntegrator> & t_Layer,
+                                                  const std::vector<double> & jcsFront,
+                                                  const std::vector<double> & jcsBack)
     {
-        m_Layers.push_back(t_Layer);
+        m_Layers.emplace_back(t_Layer);
+        if(!jcsFront.empty())
+        {
+            m_JSCPrime[Side::Front].push_back(jcsFront);
+        }
+        else
+        {
+            m_JSCPrime[Side::Front].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
+        if(!jcsBack.empty())
+        {
+            m_JSCPrime[Side::Back].push_back(jcsBack);
+        }
+        else
+        {
+            m_JSCPrime[Side::Back].emplace_back(
+              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+        }
         m_PropertiesCalculated = false;
         for(Side aSide : EnumSide())
         {
             m_A.at(aSide).clear();
+            m_JSC.at(aSide).clear();
         }
     }
 
-    void CEquivalentBSDFLayerSingleBand::calcEquivalentProperties()
+    void CEquivalentBSDFLayerSingleBand::BuildForwardAndBackwardLayers(size_t numberOfLayers)
     {
-        if(m_PropertiesCalculated)
-        {
-            return;
-        }
-        // Absorptance calculations need to observe every layer in isolation. For that purpose
-        // code bellow will create m_Forward and m_Backward layers
-        size_t size = m_Layers.size();
         m_EquivalentLayer = m_Layers[0];
         m_Forward.push_back(m_EquivalentLayer);
-        for(size_t i = 1; i < size; ++i)
+        for(size_t i = 1; i < numberOfLayers; ++i)
         {
             m_EquivalentLayer = CBSDFDoubleLayer(*m_EquivalentLayer, *m_Layers[i]).value();
             m_Forward.push_back(m_EquivalentLayer);
         }
         m_Backward.push_back(m_EquivalentLayer);
 
-        std::shared_ptr<CBSDFIntegrator> bLayer = m_Layers[size - 1];
-        for(size_t i = size - 1; i > 1; --i)
+        std::shared_ptr<CBSDFIntegrator> bLayer = m_Layers[numberOfLayers - 1];
+        for(size_t i = numberOfLayers - 1; i > 1; --i)
         {
             bLayer = CBSDFDoubleLayer(*m_Layers[i - 1], *bLayer).value();
             m_Backward.push_back(bLayer);
         }
-        m_Backward.push_back(m_Layers[size - 1]);
+        m_Backward.push_back(m_Layers[numberOfLayers - 1]);
+    }
 
-        const size_t matrixSize = m_Lambda.size();
-        std::vector<double> zeros(matrixSize, 0);
-
-        std::vector<double> Ap1f;
-        std::vector<double> Ap2f;
-        std::vector<double> Ap1b;
-        std::vector<double> Ap2b;
-
-        for(size_t i = 0; i < size; i++)
+    void CEquivalentBSDFLayerSingleBand::CreateIplusAndIminusValues(size_t numberOfLayers,
+                                                                    const size_t matrixSize)
+    {
+        // Equations used here are from Klems-Matrix Layer calculations- part 2 paper
+        // Note that absorptance calculations do not need irradiances leaving first layer
+        // for front flow calculations (or back layer for backward flow calculations) and because of
+        // that, they are not calculated.
+        for(size_t i = 0; i < numberOfLayers; i++)
         {
-            if(i == size - 1)
+            if(i == numberOfLayers - 1)
             {
-                Ap2f = zeros;
-                Ap1b = m_Layers[i]->Abs(Side::Back);
+                SquareMatrix iMinus{matrixSize};
+                iMinus.setIdentity();
+                m_Iminus[EnergyFlow::Backward].push_back(iMinus);
+                SquareMatrix iPlus{matrixSize};
+                m_Iplus[EnergyFlow::Forward].push_back(iPlus);
             }
             else
             {
-                CBSDFIntegrator & Layer1 = *m_Backward[i + 1];
-                CBSDFIntegrator & Layer2 = *m_Forward[i];
-                CInterReflectance InterRefl2 =
-                  CInterReflectance(m_Lambda,
-                                    Layer1.at(Side::Front, PropertySimple::R),
-                                    Layer2.at(Side::Back, PropertySimple::R));
-                const std::vector<double> Ab = m_Layers[i]->Abs(Side::Back);
-                Ap1b =
-                  absTerm1(Ab, InterRefl2.value(), Layer1.getMatrix(Side::Back, PropertySimple::T));
-                Ap2f = absTerm2(Ab,
-                                InterRefl2.value(),
-                                Layer1.getMatrix(Side::Front, PropertySimple::R),
-                                Layer2.getMatrix(Side::Front, PropertySimple::T));
+                CBSDFIntegrator & Layer1 = *m_Forward[i];
+                CBSDFIntegrator & Layer2 = *m_Backward[i + 1];
+                const auto InterRefl2{interReflectance(m_Lambda,
+                                                       Layer2.at(Side::Front, PropertySimple::R),
+                                                       Layer1.at(Side::Back, PropertySimple::R))};
+                const auto iMinus{
+                  iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T))};
+                m_Iminus[EnergyFlow::Backward].push_back(iMinus);
+                const auto iPlus{iplusCalc(InterRefl2,
+                                           Layer2.getMatrix(Side::Front, PropertySimple::R),
+                                           Layer1.getMatrix(Side::Front, PropertySimple::T))};
+                m_Iplus[EnergyFlow::Forward].push_back(iPlus);
             }
 
             if(i == 0)
             {
-                Ap1f = m_Layers[i]->Abs(Side::Front);
-                Ap2b = zeros;
+                SquareMatrix iMinus{matrixSize};
+                iMinus.setIdentity();
+                m_Iminus[EnergyFlow::Forward].push_back(iMinus);
+                SquareMatrix iPlus{matrixSize};
+                m_Iplus[EnergyFlow::Backward].push_back(iPlus);
             }
             else
             {
                 CBSDFIntegrator & Layer1 = *m_Forward[i - 1];
                 CBSDFIntegrator & Layer2 = *m_Backward[i];
-                CInterReflectance InterRefl1 =
-                  CInterReflectance(m_Lambda,
-                                    Layer1.at(Side::Back, PropertySimple::R),
-                                    Layer2.at(Side::Front, PropertySimple::R));
-                std::vector<double> Af = m_Layers[i]->Abs(Side::Front);
-                Ap1f = absTerm1(Af, InterRefl1.value(), Layer1.at(Side::Front, PropertySimple::T));
-                Ap2b = absTerm2(Af,
-                                InterRefl1.value(),
-                                Layer1.at(Side::Back, PropertySimple::R),
-                                Layer2.at(Side::Back, PropertySimple::T));
-            }
-
-            std::map<Side, std::vector<double>> aTotal;
-            for(Side aSide : EnumSide())
-            {
-                aTotal[aSide] = std::vector<double>();
-            }
-            for(size_t j = 0; j < matrixSize; ++j)
-            {
-                aTotal.at(Side::Front).push_back(Ap1f[j] + Ap2f[j]);
-                aTotal.at(Side::Back).push_back(Ap1b[j] + Ap2b[j]);
-            }
-
-            for(Side aSide : EnumSide())
-            {
-                m_A.at(aSide).push_back(aTotal.at(aSide));
+                const auto InterRefl1{interReflectance(m_Lambda,
+                                                       Layer1.at(Side::Back, PropertySimple::R),
+                                                       Layer2.at(Side::Front, PropertySimple::R))};
+                const auto iMinus{
+                  iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySimple::T))};
+                m_Iminus[EnergyFlow::Forward].push_back(iMinus);
+                const auto iPlus{iplusCalc(InterRefl1,
+                                           Layer1.at(Side::Back, PropertySimple::R),
+                                           Layer2.at(Side::Back, PropertySimple::T))};
+                m_Iplus[EnergyFlow::Backward].push_back(iPlus);
             }
         }
-        m_PropertiesCalculated = true;
     }
 
-    std::vector<double>
-      CEquivalentBSDFLayerSingleBand::absTerm1(const std::vector<double> & t_Alpha,
-                                               const SquareMatrix & t_InterRefl,
-                                               const SquareMatrix & t_T) const
+    void CEquivalentBSDFLayerSingleBand::CalculateLayerAbsorptances(size_t numberOfLayers)
     {
-        auto part1 = t_Alpha * t_InterRefl;
+        for(size_t i = 0; i < numberOfLayers; i++)
+        {
+            for(Side aSide : EnumSide())
+            {
+                auto AbsFront{m_Layers[i]->Abs(aSide)};
+                auto AbsBack{m_Layers[i]->Abs(oppositeSide(aSide))};
+                auto aEnergyFlow{aSide == Side::Front ? EnergyFlow::Forward : EnergyFlow::Backward};
+                auto absorbedFront{AbsFront * m_Iminus.at(aEnergyFlow)[i]};
+                auto absorbedBack{AbsBack * m_Iplus.at(aEnergyFlow)[i]};
+                std::transform(absorbedFront.begin(),
+                               absorbedFront.end(),
+                               absorbedBack.begin(),
+                               absorbedFront.begin(),
+                               std::plus<>());
+                m_A.at(aSide).push_back(absorbedFront);
+
+                // Photovoltaic calculation
+                auto jscFront{m_JSCPrime.at(aSide)[i] * m_Iminus.at(aEnergyFlow)[i]};
+                auto jscBack{m_JSCPrime.at(oppositeSide(aSide))[i] * m_Iplus.at(aEnergyFlow)[i]};
+                std::transform(jscFront.begin(),
+                               jscFront.end(),
+                               jscBack.begin(),
+                               jscFront.begin(),
+                               std::plus<>());
+                m_JSC.at(aSide).push_back(jscFront);
+            }
+        }
+    }
+
+    void CEquivalentBSDFLayerSingleBand::calcEquivalentProperties()
+    {
+        if(!m_PropertiesCalculated)
+        {
+            // Absorptance calculations need to observe every layer in isolation. For that purpose
+            // code bellow will create m_Forward and m_Backward layers
+            const auto numberOfLayers{m_Layers.size()};
+            BuildForwardAndBackwardLayers(numberOfLayers);
+
+            const auto matrixSize{m_Lambda.size()};
+            CreateIplusAndIminusValues(numberOfLayers, matrixSize);
+
+            CalculateLayerAbsorptances(numberOfLayers);
+            m_PropertiesCalculated = true;
+        }
+    }
+
+    SquareMatrix CEquivalentBSDFLayerSingleBand::iminusCalc(const SquareMatrix & t_InterRefl,
+                                                            const SquareMatrix & t_T) const
+    {
         const auto part2 = m_Lambda * t_T;
-        part1 = part1 * part2;
+        auto part1 = t_InterRefl * part2;
         return part1;
     }
 
-    std::vector<double>
-      CEquivalentBSDFLayerSingleBand::absTerm2(const std::vector<double> & t_Alpha,
-                                               const SquareMatrix & t_InterRefl,
-                                               const SquareMatrix & t_R,
-                                               const SquareMatrix & t_T) const
+    SquareMatrix CEquivalentBSDFLayerSingleBand::iplusCalc(const SquareMatrix & t_InterRefl,
+                                                           const SquareMatrix & t_R,
+                                                           const SquareMatrix & t_T) const
     {
-        auto part1 = t_Alpha * t_InterRefl;
         const auto part2 = m_Lambda * t_R;
         const auto part3 = m_Lambda * t_T;
-        part1 = part1 * part2;
+        auto part1 = t_InterRefl * part2;
         part1 = part1 * part3;
         return part1;
     }

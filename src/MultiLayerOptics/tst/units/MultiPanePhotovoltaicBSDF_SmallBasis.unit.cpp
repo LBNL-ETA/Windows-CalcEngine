@@ -6,19 +6,18 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using FenestrationCommon::CSeries;
-using FenestrationCommon::Property;
-using FenestrationCommon::PropertySimple;
-using FenestrationCommon::Side;
-using FenestrationCommon::Scattering;
-using SpectralAveraging::CSpectralSampleData;
-using SingleLayerOptics::Material;
-using MultiLayerOptics::CMultiPaneSpecular;
 
-class Photovoltaic_DoublePane_Example1 : public testing::Test
+using namespace SingleLayerOptics;
+using namespace FenestrationCommon;
+using namespace SpectralAveraging;
+using namespace MultiLayerOptics;
+
+// Example on how to create multilayer BSDF from specular layers only
+
+class MultiPanePhotovoltaicBSDF_SmallBasis : public testing::Test
 {
 private:
-    std::unique_ptr<CMultiPaneSpecular> m_Layer;
+    std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
     static CSeries loadSolarRadiationFile()
     {
@@ -281,46 +280,67 @@ private:
            {2.500, 0, 0.8108, 0.9309}});
     }
 
-    [[nodiscard]] std::shared_ptr<CSpectralSampleData> loadSampleData_2() const
+    [[nodiscard]] std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_103() const
     {
-        return CSpectralSampleData::create(
-          {{0.3, 0.002, 0.047, 0.048},   {0.305, 0.003, 0.047, 0.048}, {0.31, 0.009, 0.047, 0.048},
-           {0.315, 0.035, 0.047, 0.048}, {0.32, 0.1, 0.047, 0.048},    {0.325, 0.218, 0.049, 0.05},
-           {0.33, 0.356, 0.053, 0.054},  {0.335, 0.498, 0.06, 0.061},  {0.34, 0.616, 0.067, 0.067},
-           {0.345, 0.709, 0.073, 0.074}, {0.35, 0.774, 0.078, 0.079},  {0.355, 0.818, 0.082, 0.082},
-           {0.36, 0.847, 0.084, 0.084},  {0.365, 0.863, 0.085, 0.085}, {0.37, 0.869, 0.085, 0.086},
-           {0.375, 0.861, 0.085, 0.085}, {0.38, 0.856, 0.084, 0.084},  {0.385, 0.866, 0.085, 0.085},
-           {0.39, 0.881, 0.086, 0.086},  {0.395, 0.889, 0.086, 0.086}, {0.4, 0.893, 0.086, 0.086},
-           {0.41, 0.893, 0.086, 0.086},  {0.42, 0.892, 0.086, 0.086},  {0.43, 0.892, 0.085, 0.085},
-           {0.44, 0.892, 0.085, 0.085},  {0.45, 0.896, 0.085, 0.085},  {0.46, 0.9, 0.085, 0.085},
-           {0.47, 0.902, 0.084, 0.084},  {0.48, 0.903, 0.084, 0.084},  {0.49, 0.904, 0.085, 0.085},
-           {0.5, 0.905, 0.084, 0.084},   {0.51, 0.905, 0.084, 0.084},  {0.52, 0.905, 0.084, 0.084},
-           {0.53, 0.904, 0.084, 0.084},  {0.54, 0.904, 0.083, 0.083},  {0.55, 0.903, 0.083, 0.083},
-           {0.56, 0.902, 0.083, 0.083},  {0.57, 0.9, 0.082, 0.082},    {0.58, 0.898, 0.082, 0.082},
-           {0.59, 0.896, 0.081, 0.081},  {0.6, 0.893, 0.081, 0.081},   {0.61, 0.89, 0.081, 0.081},
-           {0.62, 0.886, 0.08, 0.08},    {0.63, 0.883, 0.08, 0.08},    {0.64, 0.879, 0.079, 0.079},
-           {0.65, 0.875, 0.079, 0.079},  {0.66, 0.872, 0.079, 0.079},  {0.67, 0.868, 0.078, 0.078},
-           {0.68, 0.863, 0.078, 0.078},  {0.69, 0.859, 0.077, 0.077},  {0.7, 0.854, 0.076, 0.077},
-           {0.71, 0.85, 0.076, 0.076},   {0.72, 0.845, 0.075, 0.076},  {0.73, 0.84, 0.075, 0.075},
-           {0.74, 0.835, 0.075, 0.075},  {0.75, 0.831, 0.074, 0.074},  {0.76, 0.826, 0.074, 0.074},
-           {0.77, 0.821, 0.074, 0.074},  {0.78, 0.816, 0.073, 0.073},  {0.79, 0.812, 0.073, 0.073},
-           {0.8, 0.808, 0.072, 0.072},   {0.81, 0.803, 0.072, 0.072},  {0.82, 0.8, 0.072, 0.072},
-           {0.83, 0.796, 0.071, 0.071},  {0.84, 0.793, 0.07, 0.071},   {0.85, 0.788, 0.07, 0.071},
-           {0.86, 0.786, 0.07, 0.07},    {0.87, 0.782, 0.074, 0.074},  {0.88, 0.78, 0.072, 0.072},
-           {0.89, 0.777, 0.073, 0.074},  {0.9, 0.776, 0.072, 0.072},   {0.91, 0.773, 0.072, 0.072},
-           {0.92, 0.771, 0.071, 0.071},  {0.93, 0.77, 0.07, 0.07},     {0.94, 0.768, 0.069, 0.069},
-           {0.95, 0.766, 0.068, 0.068},  {0.96, 0.766, 0.067, 0.068},  {0.97, 0.764, 0.068, 0.068},
-           {0.98, 0.763, 0.068, 0.068},  {0.99, 0.762, 0.067, 0.067},  {1, 0.762, 0.066, 0.067},
-           {1.05, 0.76, 0.066, 0.066},   {1.1, 0.759, 0.066, 0.066},   {1.15, 0.761, 0.066, 0.066},
-           {1.2, 0.765, 0.066, 0.066},   {1.25, 0.77, 0.065, 0.065},   {1.3, 0.777, 0.067, 0.067},
-           {1.35, 0.786, 0.066, 0.067},  {1.4, 0.795, 0.067, 0.068},   {1.45, 0.808, 0.067, 0.067},
-           {1.5, 0.819, 0.069, 0.069},   {1.55, 0.829, 0.069, 0.069},  {1.6, 0.836, 0.07, 0.07},
-           {1.65, 0.84, 0.07, 0.07},     {1.7, 0.842, 0.069, 0.07},    {1.75, 0.842, 0.069, 0.07},
-           {1.8, 0.841, 0.07, 0.07},     {1.85, 0.84, 0.069, 0.069},   {1.9, 0.839, 0.068, 0.068},
-           {1.95, 0.839, 0.071, 0.071},  {2, 0.839, 0.069, 0.069},     {2.05, 0.84, 0.068, 0.068},
-           {2.1, 0.841, 0.068, 0.068},   {2.15, 0.839, 0.069, 0.069},  {2.2, 0.83, 0.07, 0.07},
-           {2.25, 0.83, 0.07, 0.07},     {2.3, 0.832, 0.069, 0.069},   {2.35, 0.832, 0.069, 0.07},
-           {2.4, 0.832, 0.07, 0.07},     {2.45, 0.826, 0.069, 0.069},  {2.5, 0.822, 0.068, 0.068}});
+        auto aMeasurements_103 = CSpectralSampleData::create(
+          {{0.300, 0.0000, 0.0470, 0.0490}, {0.305, 0.0050, 0.0470, 0.0490},
+           {0.310, 0.0000, 0.0470, 0.0480}, {0.315, 0.0030, 0.0460, 0.0480},
+           {0.320, 0.0190, 0.0460, 0.0480}, {0.325, 0.0660, 0.0450, 0.0460},
+           {0.330, 0.1600, 0.0450, 0.0470}, {0.335, 0.2940, 0.0490, 0.0500},
+           {0.340, 0.4370, 0.0550, 0.0560}, {0.345, 0.5660, 0.0620, 0.0620},
+           {0.350, 0.6710, 0.0690, 0.0690}, {0.355, 0.7440, 0.0740, 0.0740},
+           {0.360, 0.7930, 0.0780, 0.0780}, {0.365, 0.8220, 0.0800, 0.0800},
+           {0.370, 0.8320, 0.0810, 0.0810}, {0.375, 0.8190, 0.0800, 0.0800},
+           {0.380, 0.8090, 0.0790, 0.0790}, {0.385, 0.8290, 0.0800, 0.0800},
+           {0.390, 0.8530, 0.0820, 0.0820}, {0.395, 0.8680, 0.0830, 0.0830},
+           {0.400, 0.8750, 0.0830, 0.0830}, {0.410, 0.8750, 0.0830, 0.0830},
+           {0.420, 0.8730, 0.0830, 0.0830}, {0.430, 0.8730, 0.0820, 0.0820},
+           {0.440, 0.8730, 0.0820, 0.0820}, {0.450, 0.8800, 0.0820, 0.0820},
+           {0.460, 0.8870, 0.0820, 0.0820}, {0.470, 0.8900, 0.0820, 0.0820},
+           {0.480, 0.8920, 0.0830, 0.0830}, {0.490, 0.8930, 0.0820, 0.0820},
+           {0.500, 0.8940, 0.0820, 0.0820}, {0.510, 0.8950, 0.0820, 0.0820},
+           {0.520, 0.8950, 0.0820, 0.0820}, {0.530, 0.8940, 0.0820, 0.0820},
+           {0.540, 0.8930, 0.0810, 0.0810}, {0.550, 0.8910, 0.0810, 0.0810},
+           {0.560, 0.8880, 0.0810, 0.0810}, {0.570, 0.8840, 0.0800, 0.0800},
+           {0.580, 0.8810, 0.0800, 0.0800}, {0.590, 0.8760, 0.0790, 0.0790},
+           {0.600, 0.8710, 0.0790, 0.0790}, {0.610, 0.8650, 0.0780, 0.0780},
+           {0.620, 0.8590, 0.0770, 0.0770}, {0.630, 0.8530, 0.0770, 0.0770},
+           {0.640, 0.8470, 0.0760, 0.0760}, {0.650, 0.8400, 0.0750, 0.0750},
+           {0.660, 0.8330, 0.0750, 0.0750}, {0.670, 0.8260, 0.0740, 0.0740},
+           {0.680, 0.8180, 0.0730, 0.0730}, {0.690, 0.8100, 0.0730, 0.0730},
+           {0.700, 0.8020, 0.0720, 0.0720}, {0.710, 0.7940, 0.0710, 0.0720},
+           {0.720, 0.7860, 0.0710, 0.0710}, {0.730, 0.7770, 0.0700, 0.0700},
+           {0.740, 0.7690, 0.0690, 0.0700}, {0.750, 0.7610, 0.0690, 0.0690},
+           {0.760, 0.7520, 0.0680, 0.0680}, {0.770, 0.7440, 0.0670, 0.0680},
+           {0.780, 0.7360, 0.0670, 0.0670}, {0.790, 0.7290, 0.0660, 0.0660},
+           {0.800, 0.7220, 0.0660, 0.0660}, {0.810, 0.7150, 0.0650, 0.0660},
+           {0.820, 0.7100, 0.0650, 0.0650}, {0.830, 0.7020, 0.0640, 0.0650},
+           {0.840, 0.6980, 0.0640, 0.0640}, {0.850, 0.6900, 0.0630, 0.0640},
+           {0.860, 0.6870, 0.0650, 0.0650}, {0.870, 0.6810, 0.0670, 0.0670},
+           {0.880, 0.6770, 0.0650, 0.0660}, {0.890, 0.6730, 0.0660, 0.0660},
+           {0.900, 0.6700, 0.0650, 0.0660}, {0.910, 0.6670, 0.0650, 0.0650},
+           {0.920, 0.6640, 0.0640, 0.0640}, {0.930, 0.6600, 0.0630, 0.0630},
+           {0.940, 0.6580, 0.0640, 0.0640}, {0.950, 0.6560, 0.0630, 0.0630},
+           {0.960, 0.6540, 0.0610, 0.0610}, {0.970, 0.6530, 0.0620, 0.0620},
+           {0.980, 0.6510, 0.0610, 0.0620}, {0.990, 0.6490, 0.0610, 0.0620},
+           {1.000, 0.6480, 0.0590, 0.0600}, {1.050, 0.6450, 0.0590, 0.0600},
+           {1.100, 0.6450, 0.0580, 0.0590}, {1.150, 0.6470, 0.0590, 0.0590},
+           {1.200, 0.6530, 0.0590, 0.0590}, {1.250, 0.6610, 0.0580, 0.0590},
+           {1.300, 0.6730, 0.0600, 0.0600}, {1.350, 0.6870, 0.0600, 0.0600},
+           {1.400, 0.7020, 0.0610, 0.0610}, {1.450, 0.7220, 0.0610, 0.0620},
+           {1.500, 0.7410, 0.0630, 0.0640}, {1.550, 0.7570, 0.0630, 0.0640},
+           {1.600, 0.7690, 0.0650, 0.0650}, {1.650, 0.7750, 0.0650, 0.0640},
+           {1.700, 0.7790, 0.0640, 0.0650}, {1.750, 0.7790, 0.0650, 0.0650},
+           {1.800, 0.7770, 0.0650, 0.0650}, {1.850, 0.7760, 0.0650, 0.0630},
+           {1.900, 0.7730, 0.0620, 0.0620}, {1.950, 0.7730, 0.0650, 0.0650},
+           {2.000, 0.7720, 0.0650, 0.0650}, {2.050, 0.7740, 0.0640, 0.0640},
+           {2.100, 0.7750, 0.0640, 0.0650}, {2.150, 0.7730, 0.0650, 0.0650},
+           {2.200, 0.7580, 0.0640, 0.0650}, {2.250, 0.7590, 0.0640, 0.0640},
+           {2.300, 0.7660, 0.0650, 0.0650}, {2.350, 0.7670, 0.0640, 0.0650},
+           {2.400, 0.7660, 0.0640, 0.0640}, {2.450, 0.7570, 0.0640, 0.0640},
+           {2.500, 0.7500, 0.0630, 0.0630}});
+
+        return aMeasurements_103;
     }
 
     static CSeries eqeFront()
@@ -557,7 +577,7 @@ private:
         return eqe;
     }
 
-    static SingleLayerOptics::PVPowerPropertiesTable table()
+    static PVPowerPropertiesTable table()
     {
         return {{{0.002478752, 0.550933333, 0.5467},
                  {0.002605841, 0.552778333, 0.5467415},
@@ -722,61 +742,69 @@ private:
                  {7.389056099, 0.846133333, 0.4219}}};
     }
 
-
 protected:
     virtual void SetUp()
     {
-        const auto aSolarRadiation = loadSolarRadiationFile();
-        auto pvSample = std::make_shared<SpectralAveraging::PhotovoltaicSampleData>(
-          *loadSampleData_1(), eqeFront(), eqeBack());
+        auto pvSample =
+          std::make_shared<PhotovoltaicSampleData>(*loadSampleData_1(), eqeFront(), eqeBack());
 
         double thickness = 3.048e-3;   // [m]
-        const auto aMaterial_1 =
-          Material::nBandPhotovoltaicMaterial(pvSample,
-                                              thickness,
-                                              FenestrationCommon::MaterialType::Monolithic,
-                                              FenestrationCommon::WavelengthRange::Solar);
-
+        const auto aMaterial_1 = Material::nBandPhotovoltaicMaterial(
+          pvSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
         thickness = 5.715e-3;   // [m]
-        const auto aMaterial_2 =
-          Material::nBandMaterial(loadSampleData_2(),
-                                  thickness,
-                                  FenestrationCommon::MaterialType::Monolithic,
-                                  FenestrationCommon::WavelengthRange::Solar);
+        const auto aMaterial_2 = Material::nBandMaterial(
+          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
-        const auto layer1 = SingleLayerOptics::PhotovoltaicLayer::createLayer(aMaterial_1, table());
-        const auto layer2 = SingleLayerOptics::SpecularLayer::createLayer(aMaterial_2);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
+        auto Layer_1 = CBSDFLayerMaker::getPhotovoltaicSpecularLayer(aMaterial_1, aBSDF, table());
+        auto Layer_2 = CBSDFLayerMaker::getSpecularLayer(aMaterial_2, aBSDF);
 
-        m_Layer = CMultiPaneSpecular::create({layer1, layer2}, loadSolarRadiationFile());
+        CCommonWavelengths aCommonWL;
+        aCommonWL.addWavelength(Layer_1->getBandWavelengths());
+        aCommonWL.addWavelength(Layer_2->getBandWavelengths());
+
+        const auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
+
+        m_Layer =
+          CMultiPaneBSDF::create({Layer_1, Layer_2}, loadSolarRadiationFile(), commonWavelengths);
     }
 
 public:
-    [[nodiscard]] CMultiPaneSpecular & getLayer() const
+    [[nodiscard]] CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
     }
 };
 
-TEST_F(Photovoltaic_DoublePane_Example1, Test1)
+TEST_F(MultiPanePhotovoltaicBSDF_SmallBasis, TestSpecular1)
 {
-    SCOPED_TRACE("Begin Test: Double pane photovoltaic - Example 1.");
+    SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
 
-    constexpr double angle{0.0};
-    constexpr double minLambda{0.3};
-    constexpr double maxLambda{2.5};
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
-    auto aLayer = getLayer();
+    CMultiPaneBSDF & aLayer = getLayer();
 
-    const double T =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.373665, T, 1e-6);
+    const auto theta{0.0};
+    const auto phi{0};
 
-    const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.317529, absHeat, 1e-6);
+    const double abs1{aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi)};
+    EXPECT_NEAR(0.331071, abs1, 1e-6);
 
-    const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0.013917, absEl1, 1e-6);
+    const double abs2{aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi)};
+    EXPECT_NEAR(0.060142, abs2, 1e-6);
 
-    const double absEl2 = aLayer.AbsElectricity(2, angle, minLambda, maxLambda);
-    EXPECT_NEAR(0, absEl2, 1e-6);
+    const double absHeat1{aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 1, theta, phi)};
+    EXPECT_NEAR(0.317164, absHeat1, 1e-6);
+
+    const double absHeat2{aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 2, theta, phi)};
+    EXPECT_NEAR(0.060142, absHeat2, 1e-6);
+
+    const double absElectric1{
+      aLayer.AbsElectricity(minLambda, maxLambda, Side::Front, 1, theta, phi)};
+    EXPECT_NEAR(0.013908, absElectric1, 1e-6);
+
+    const double absElectric2{
+      aLayer.AbsElectricity(minLambda, maxLambda, Side::Front, 2, theta, phi)};
+    EXPECT_NEAR(0.0, absElectric2, 1e-6);
 }

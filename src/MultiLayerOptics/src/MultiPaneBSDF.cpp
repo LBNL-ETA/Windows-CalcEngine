@@ -8,6 +8,12 @@
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
+#include "../../SingleLayerOptics/src/PhotovoltaicSpecularBSDFLayer.hpp"
+
+namespace SingleLayerOptics
+{
+    class PhotovoltaicSpecularBSDFLayer;
+}
 
 using namespace FenestrationCommon;
 using namespace SingleLayerOptics;
@@ -52,7 +58,6 @@ namespace MultiLayerOptics
       const CSeries & t_SolarRadiation,
       const CSeries & t_DetectorData)
     {
-
         // Detector data needs to be included into solar radiation right away on this place.
         auto solarRadiation{t_SolarRadiation};
         if(t_DetectorData.size() > 0)
@@ -84,6 +89,28 @@ namespace MultiLayerOptics
         {
             this->addLayer(t_Layer[j]);
         }
+    }
+
+    std::vector<std::vector<double>>
+      CMultiPaneBSDF::calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
+                                        const std::vector<double> & incomingSolar)
+    {
+        std::vector<std::vector<double>> result;
+        const auto & layers{m_Layer.getLayers()};
+        assert(layers.size() == jsc.size());
+        for(size_t i = 0u; i < layers.size(); ++i)
+        {
+            std::vector<double> power;
+            const auto voc{layers[i]->voc(jsc[i])};
+            const auto ff{layers[i]->ff(jsc[i])};
+            for(size_t j = 0u; j < jsc[i].size(); ++j)
+            {
+                power.emplace_back(voc[j] * ff[j] * jsc[i][j] / incomingSolar[j]);
+            }
+            result.emplace_back(power);
+        }
+
+        return result;
     }
 
     CMultiPaneBSDF::CMultiPaneBSDF(
@@ -158,8 +185,28 @@ namespace MultiLayerOptics
                 // multiply and integrate later and local values will change
                 CMatrixSeries aTotalA = *m_Layer.getTotalA(aSide);
                 aTotalA.mMult(*m_IncomingSpectra);
+                // Calculates absorbed energy in every layer for every wavelength
                 aTotalA.integrate(m_Integrator, m_NormalizationCoefficient);
+                // Calculates total absorptance for every layer over the given wavelength range
                 m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
+
+                CMatrixSeries jscTotal = *m_Layer.getTotalJSC(aSide);
+                jscTotal.integrate(m_Integrator, m_NormalizationCoefficient);
+                auto jscSum{jscTotal.getSums(minLambda, maxLambda)};
+
+                std::vector<std::vector<double>> jscWithSolar;
+                for(size_t i = 0u; i < jscSum.size(); ++i)
+                {
+                    jscWithSolar.emplace_back();
+                    for(size_t j = 0u; j < jscSum[i].size(); ++j)
+                    {
+                        jscWithSolar[i].push_back(jscSum[i][j] * m_IncomingSolar[i]);
+                    }
+                }
+
+                // Default absorbed electricity is set to zero
+                m_AbsElectricity[aSide] = calcPVLayersElectricity(jscWithSolar, m_IncomingSolar);
+
                 for(PropertySimple aProprerty : EnumPropertySimple())
                 {
                     // Same as for aTotalA. Copy need to be taken because of multiplication
@@ -213,11 +260,25 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const
     {
         FenestrationCommon::CCommonWavelengths cw;
-        for(const auto & layer: t_Layer)
+        for(const auto & layer : t_Layer)
         {
             cw.addWavelength(layer->getBandWavelengths());
         }
         return cw.getCombinedWavelengths(FenestrationCommon::Combine::Interpolate);
+    }
+
+    std::vector<std::vector<double>> CMultiPaneBSDF::getZeroVectorVector(size_t size1, size_t size2)
+    {
+        std::vector<std::vector<double>> result(size1);
+        for(auto & val : result)
+        {
+            for(size_t i = 0u; i < size2; ++i)
+            {
+                val.push_back(0);
+            }
+        }
+
+        return result;
     }
 
     std::vector<double> & CMultiPaneBSDF::Abs(const double minLambda,
@@ -227,6 +288,27 @@ namespace MultiLayerOptics
     {
         calculate(minLambda, maxLambda);
         return m_Abs.at(t_Side)[Index - 1];
+    }
+
+    std::vector<double>
+      CMultiPaneBSDF::AbsHeat(double minLambda, double maxLambda, Side t_Side, size_t Index)
+    {
+        calculate(minLambda, maxLambda);
+        std::vector<double> result;
+        for(size_t i = 0u; i < m_Abs.at(t_Side).size(); ++i)
+        {
+            result.push_back(m_Abs.at(t_Side)[Index - 1][i]
+                             - m_AbsElectricity.at(t_Side)[Index - 1][i]);
+        }
+
+        return result;
+    }
+
+    std::vector<double> &
+      CMultiPaneBSDF::AbsElectricity(double minLambda, double maxLambda, Side t_Side, size_t Index)
+    {
+        calculate(minLambda, maxLambda);
+        return m_AbsElectricity.at(t_Side)[Index - 1];
     }
 
     std::vector<double> CMultiPaneBSDF::DirHem(const double minLambda,
@@ -267,6 +349,28 @@ namespace MultiLayerOptics
     {
         auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
         return Abs(minLambda, maxLambda, t_Side, layerIndex)[aIndex];
+    }
+
+    double CMultiPaneBSDF::AbsHeat(double minLambda,
+                                   double maxLambda,
+                                   Side t_Side,
+                                   size_t layerIndex,
+                                   double t_Theta,
+                                   double t_Phi)
+    {
+        return Abs(minLambda, maxLambda, t_Side, layerIndex, t_Theta, t_Phi)
+               - AbsElectricity(minLambda, maxLambda, t_Side, layerIndex, t_Theta, t_Phi);
+    }
+
+    double CMultiPaneBSDF::AbsElectricity(double minLambda,
+                                          double maxLambda,
+                                          Side t_Side,
+                                          size_t layerIndex,
+                                          double t_Theta,
+                                          double t_Phi)
+    {
+        auto aIndex = m_Results->getNearestBeamIndex(t_Theta, t_Phi);
+        return AbsElectricity(minLambda, maxLambda, t_Side, layerIndex)[aIndex];
     }
 
     double CMultiPaneBSDF::Abs(const double minLambda,

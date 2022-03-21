@@ -198,14 +198,14 @@ protected:
         aCommonWL.addWavelength(Layer_102->getBandWavelengths());
         aCommonWL.addWavelength(Layer_103->getBandWavelengths());
 
-        auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
+        const auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
 
         m_Layer = CMultiPaneBSDF::create(
           {Layer_102, Layer_103}, loadSolarRadiationFile(), commonWavelengths);
     }
 
 public:
-    CMultiPaneBSDF & getLayer() const
+    [[nodiscard]] CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
     };
@@ -215,8 +215,8 @@ TEST_F(MultiPaneBSDF_102_103_SmallBasis, TestSpecular1)
 {
     SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiPaneBSDF & aLayer = getLayer();
 

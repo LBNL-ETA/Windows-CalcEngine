@@ -13,10 +13,7 @@ namespace SingleLayerOptics
 {
     CBSDFLayer::CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                            const CBSDFHemisphere & t_Hemisphere) :
-        m_BSDFHemisphere(t_Hemisphere),
-        m_Cell(t_Cell),
-        m_Calculated(false),
-        m_CalculatedWV(false)
+        m_BSDFHemisphere(t_Hemisphere), m_Cell(t_Cell), m_Calculated(false), m_CalculatedWV(false)
     {
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
@@ -178,5 +175,24 @@ namespace SingleLayerOptics
     std::shared_ptr<CBaseCell> CBSDFLayer::getCell() const
     {
         return m_Cell;
+    }
+
+    std::vector<std::vector<double>>
+      CBSDFLayer::jscPrime(Side, const std::vector<double> & wavelengths) const
+    {
+        const auto wls = wavelengths.empty() ? getBandWavelengths() : wavelengths;
+        const auto innerSize{m_BSDFHemisphere.getDirections(BSDFDirection::Incoming).size()};
+
+        return {wls.size(), std::vector<double>(innerSize, 0)};
+    }
+
+    std::vector<double> CBSDFLayer::voc(const std::vector<double> & electricalCurrent) const
+    {
+        return std::vector<double>(electricalCurrent.size(), 0);
+    }
+
+    std::vector<double> CBSDFLayer::ff(const std::vector<double> & electricalCurrent) const
+    {
+        return std::vector<double>(electricalCurrent.size(), 0);
     }
 }   // namespace SingleLayerOptics

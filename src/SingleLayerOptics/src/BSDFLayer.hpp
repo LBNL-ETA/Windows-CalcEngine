@@ -32,6 +32,7 @@ namespace SingleLayerOptics
     class CBSDFLayer
     {
     public:
+        virtual ~CBSDFLayer() = default;
         CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell, const CBSDFHemisphere & t_Directions);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData);
@@ -50,6 +51,13 @@ namespace SingleLayerOptics
         void setBandWavelengths(const std::vector<double> & wavelengths);
 
         std::shared_ptr<CBaseCell> getCell() const;
+
+        [[nodiscard]] virtual std::vector<std::vector<double>> jscPrime(
+            FenestrationCommon::Side t_Side,
+            const std::vector<double> & wavelengths = std::vector<double>()) const;
+
+        [[nodiscard]] virtual std::vector<double> voc(const std::vector<double> & electricalCurrent) const;
+        [[nodiscard]] virtual std::vector<double> ff(const std::vector<double> & electricalCurrent) const;
 
     protected:
         // Diffuse calculation distribution will be calculated here. It will depend on base classes.

@@ -44,7 +44,7 @@ namespace SingleLayerOptics
                                            const CBeamDirection & t_Direction) override;
 
     protected:
-        std::shared_ptr<CSpecularCellDescription> getCellAsSpecular() const;
+        [[nodiscard]] std::shared_ptr<CSpecularCellDescription> getCellAsSpecular() const;
     };
 
 }   // namespace SingleLayerOptics

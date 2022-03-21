@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <utility>
 
 #include "BSDFLayerMaker.hpp"
 #include "UniformDiffuseCell.hpp"
@@ -16,6 +17,7 @@
 #include "WovenCellDescription.hpp"
 #include "WovenCell.hpp"
 #include "FlatCellDescription.hpp"
+#include "PhotovoltaicSpecularBSDFLayer.hpp"
 
 namespace SingleLayerOptics
 {
@@ -26,6 +28,19 @@ namespace SingleLayerOptics
         auto aDescription = std::make_shared<CSpecularCellDescription>();
         auto aCell = std::make_shared<CSpecularCell>(t_Material, aDescription);
         return std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
+    }
+
+    std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getPhotovoltaicSpecularLayer(
+        const std::shared_ptr<CMaterial> & t_Material,
+        const CBSDFHemisphere & t_BSDF,
+        PVPowerPropertiesTable powerTable)
+    {
+        auto aDecription{std::make_shared<CSpecularCellDescription>()};
+        auto aCell = std::make_shared<CSpecularCell>(t_Material, aDecription);
+        auto aLayer = std::make_shared<PhotovoltaicSpecularBSDFLayer>(aCell, t_BSDF);
+        aLayer->assignPowerTable(std::move(powerTable));
+
+        return aLayer;
     }
 
     std::shared_ptr<CBSDFLayer>

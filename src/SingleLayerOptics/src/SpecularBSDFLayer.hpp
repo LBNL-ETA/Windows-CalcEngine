@@ -18,7 +18,7 @@ namespace SingleLayerOptics
                            const CBSDFHemisphere & t_Hemisphere);
 
     protected:
-        std::shared_ptr<CSpecularCell> cellAsSpecular() const;
+        [[nodiscard]] std::shared_ptr<CSpecularCell> cellAsSpecular() const;
         void calcDiffuseDistribution(FenestrationCommon::Side aSide,
                                      const CBeamDirection & t_Direction,
                                      size_t t_DirectionIndex) override;
