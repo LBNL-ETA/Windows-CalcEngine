@@ -331,7 +331,7 @@ namespace MultiLayerOptics
             auto backJscPrime = aLayer->jscPrime(Side::Back);
 
             const auto IMinus = aAngularProperties.iminus(Index - 1);
-            const auto IPlus = aAngularProperties.iplus(Index);
+            const auto IPlus = aAngularProperties.iplus(Index - 1);
 
             const auto frontJsc = frontJscPrime * IMinus;
             const auto JscIntegratedFront =
