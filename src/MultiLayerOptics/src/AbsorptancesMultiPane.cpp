@@ -54,6 +54,8 @@ namespace MultiLayerOptics
         if(!m_StateCalculated)
         {
             size_t size = m_T.size();
+            Iplus.clear();
+            Iminus.clear();
 
             // Calculate r and t coefficients
             CSeries r;
@@ -75,7 +77,7 @@ namespace MultiLayerOptics
             }
 
             // Calculate normalized radiances
-            size = m_rCoeffs.size();            
+            size = m_rCoeffs.size();
 
             CSeries Im;
             CSeries Ip;
@@ -97,9 +99,11 @@ namespace MultiLayerOptics
             size = Iminus.size();
             for(size_t i = 0; i < size - 1; ++i)
             {
-                const auto Iincoming = Iminus[i] + Iplus[i + 1];
-                const auto Ioutgoing = Iminus[i + 1] + Iplus[i];
-                m_Abs.emplace_back(Iincoming - Ioutgoing);
+                const auto Afront{1 - m_T[i] - m_Rf[i]};
+                const auto Aback{1 - m_T[i] - m_Rb[i]};
+                const auto Ifront = Iminus[i] * Afront;
+                const auto Iback = Iplus[i + 1] * Aback;
+                m_Abs.emplace_back(Ifront + Iback);
             }
         }
     }
