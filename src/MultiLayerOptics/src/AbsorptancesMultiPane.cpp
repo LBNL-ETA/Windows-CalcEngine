@@ -88,7 +88,10 @@ namespace MultiLayerOptics
             {
                 Ip = m_rCoeffs[i] * Im;
                 Im = m_tCoeffs[i] * Im;
-                Iplus.push_back(Ip);
+                if(i != 0u)
+                {
+                    Iplus.push_back(Ip);
+                }
                 Iminus.push_back(Im);
             }
             Ip.setConstantValues(wv, 0);
@@ -102,7 +105,7 @@ namespace MultiLayerOptics
                 const auto Afront{1 - m_T[i] - m_Rf[i]};
                 const auto Aback{1 - m_T[i] - m_Rb[i]};
                 const auto Ifront = Iminus[i] * Afront;
-                const auto Iback = Iplus[i + 1] * Aback;
+                const auto Iback = Iplus[i] * Aback;
                 m_Abs.emplace_back(Ifront + Iback);
             }
         }
