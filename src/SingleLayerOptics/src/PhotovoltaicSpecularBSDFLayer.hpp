@@ -22,8 +22,8 @@ namespace SingleLayerOptics
 
         void assignPowerTable(PVPowerPropertiesTable powerTable);
 
-        [[nodiscard]] std::vector<double> voc(const std::vector<double> & electricalCurrent) const;
-        [[nodiscard]] std::vector<double> ff(const std::vector<double> & electricalCurrent) const;
+        [[nodiscard]] std::vector<double> voc(const std::vector<double> & electricalCurrent) const override;
+        [[nodiscard]] std::vector<double> ff(const std::vector<double> & electricalCurrent) const override;
 
     private:
         std::shared_ptr<CMaterialPhotovoltaic> m_PVMaterial;

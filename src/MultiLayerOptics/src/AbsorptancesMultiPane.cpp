@@ -49,58 +49,82 @@ namespace MultiLayerOptics
         return Iminus[Index];
     }
 
+    void CAbsorptancesMultiPane::calculateRTCoefficients()
+    {
+        const size_t size{m_T.size()};
+
+        // Calculate r and t coefficients
+        CSeries r;
+        CSeries t;
+        const auto wv {m_T[size - 1].getXArray()};
+        r.setConstantValues(wv, 0);
+        t.setConstantValues(wv, 0);
+        m_rCoeffs.clear();
+        m_tCoeffs.clear();
+
+        // layers loop
+        for(int i = static_cast<int>(size) - 1; i >= 0; --i)
+        {
+            t = tCoeffs(m_T[i], m_Rb[i], r);
+            r = rCoeffs(m_T[i], m_Rf[i], m_Rb[i], r);
+
+            m_rCoeffs.insert(m_rCoeffs.begin(), r);
+            m_tCoeffs.insert(m_tCoeffs.begin(), t);
+        }
+    }
+
+    void CAbsorptancesMultiPane::calculateNormalizedRadiances()
+    {
+        // Calculate normalized radiances
+        const auto wv{m_T[0].getXArray()};
+        const size_t size{m_rCoeffs.size()};
+
+        CSeries Im;
+        CSeries Ip;
+        Im.setConstantValues(wv, 1);
+        Iminus.push_back(Im);
+
+        for(size_t i = 0; i < size; ++i)
+        {
+            Ip = m_rCoeffs[i] * Im;
+            Im = m_tCoeffs[i] * Im;
+            if(i != 0u)
+            {
+                Iplus.push_back(Ip);
+            }
+            Iminus.push_back(Im);
+        }
+        Ip.setConstantValues(wv, 0);
+        Iplus.push_back(Ip);
+    }
+
+    void CAbsorptancesMultiPane::calculateAbsorptances()
+    {
+        // Calculate absorptances
+        const size_t size{Iminus.size()};
+        m_Abs.clear();
+        for(size_t i = 0; i < size - 1; ++i)
+        {
+            const auto Afront{1 - m_T[i] - m_Rf[i]};
+            const auto Aback{1 - m_T[i] - m_Rb[i]};
+            const auto Ifront = Iminus[i] * Afront;
+            const auto Iback = Iplus[i] * Aback;
+            m_Abs.emplace_back(Ifront + Iback);
+        }
+    }
+
     void CAbsorptancesMultiPane::calculateState()
     {
         if(!m_StateCalculated)
         {
-            size_t size = m_T.size();
+            Iplus.clear();
+            Iminus.clear();
 
-            // Calculate r and t coefficients
-            CSeries r;
-            CSeries t;
-            std::vector<double> wv = m_T[size - 1].getXArray();
-            r.setConstantValues(wv, 0);
-            t.setConstantValues(wv, 0);
-            m_rCoeffs.clear();
-            m_tCoeffs.clear();
+            calculateRTCoefficients();
 
-            // layers loop
-            for(int i = static_cast<int>(size) - 1; i >= 0; --i)
-            {
-                t = tCoeffs(m_T[i], m_Rb[i], r);
-                r = rCoeffs(m_T[i], m_Rf[i], m_Rb[i], r);
+            calculateNormalizedRadiances();
 
-                m_rCoeffs.insert(m_rCoeffs.begin(), r);
-                m_tCoeffs.insert(m_tCoeffs.begin(), t);
-            }
-
-            // Calculate normalized radiances
-            size = m_rCoeffs.size();            
-
-            CSeries Im;
-            CSeries Ip;
-            Im.setConstantValues(wv, 1);
-            Iminus.push_back(Im);
-
-            for(size_t i = 0; i < size; ++i)
-            {
-                Ip = m_rCoeffs[i] * Im;
-                Im = m_tCoeffs[i] * Im;
-                Iplus.push_back(Ip);
-                Iminus.push_back(Im);
-            }
-            Ip.setConstantValues(wv, 0);
-            Iplus.push_back(Ip);
-
-            // Calculate absorptances
-            m_Abs.clear();
-            size = Iminus.size();
-            for(size_t i = 0; i < size - 1; ++i)
-            {
-                const auto Iincoming = Iminus[i] + Iplus[i + 1];
-                const auto Ioutgoing = Iminus[i + 1] + Iplus[i];
-                m_Abs.emplace_back(Iincoming - Ioutgoing);
-            }
+            calculateAbsorptances();
         }
     }
 

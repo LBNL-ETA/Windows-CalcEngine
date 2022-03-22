@@ -24,6 +24,9 @@ namespace MultiLayerOptics
 
         FenestrationCommon::CSeries iplus(size_t Index);
         FenestrationCommon::CSeries iminus(size_t Index);
+        void calculateRTCoefficients();
+        void calculateNormalizedRadiances();
+        void calculateAbsorptances();
 
     private:
         void calculateState();
