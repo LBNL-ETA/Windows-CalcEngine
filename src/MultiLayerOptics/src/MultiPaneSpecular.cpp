@@ -318,14 +318,14 @@ namespace MultiLayerOptics
                                               IntegrationType t_IntegrationType,
                                               double normalizationCoefficient)
     {
-        if(std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]) != nullptr)
+        if(std::dynamic_pointer_cast<PhotovoltaicSpecularLayer>(m_Layers[Index - 1]) != nullptr)
         {
             const double totalEnergy =
               m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
                 ->sum(minLambda, maxLambda);
 
             CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
-            auto aLayer = std::dynamic_pointer_cast<PhotovoltaicLayer>(m_Layers[Index - 1]);
+            auto aLayer = std::dynamic_pointer_cast<PhotovoltaicSpecularLayer>(m_Layers[Index - 1]);
 
             auto frontJscPrime = aLayer->jscPrime(Side::Front);
             auto backJscPrime = aLayer->jscPrime(Side::Back);

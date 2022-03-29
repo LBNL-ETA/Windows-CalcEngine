@@ -744,7 +744,7 @@ protected:
                                   FenestrationCommon::MaterialType::Monolithic,
                                   FenestrationCommon::WavelengthRange::Solar);
 
-        const auto layer1 = SingleLayerOptics::PhotovoltaicLayer::createLayer(aMaterial_1, table());
+        const auto layer1 = SingleLayerOptics::PhotovoltaicSpecularLayer::createLayer(aMaterial_1, table());
         const auto layer2 = SingleLayerOptics::SpecularLayer::createLayer(aMaterial_2);
 
         m_Layer = CMultiPaneSpecular::create({layer1, layer2}, loadSolarRadiationFile());

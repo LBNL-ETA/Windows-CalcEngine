@@ -7,22 +7,22 @@
 
 namespace SingleLayerOptics
 {
-    class CMaterialPhotovoltaic;
+    class CMaterialPhotovoltaicSample;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    // PhotovoltaicLayer
+    // PhotovoltaicSpecularLayer
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class PhotovoltaicLayer : public SpecularLayer
+    class PhotovoltaicSpecularLayer : public SpecularLayer
     {
     public:
-        static std::shared_ptr<PhotovoltaicLayer>
-          createLayer(const std::shared_ptr<CMaterialPhotovoltaic> & material, PVPowerPropertiesTable powerTable);
+        static std::shared_ptr<PhotovoltaicSpecularLayer>
+          createLayer(const std::shared_ptr<CMaterial> & material, PVPowerPropertiesTable powerTable);
 
         [[nodiscard]] FenestrationCommon::CSeries jscPrime(FenestrationCommon::Side t_Side) const;
 
-        explicit PhotovoltaicLayer(const CSpecularCell & cell,
-                                   const std::shared_ptr<CMaterialPhotovoltaic> & material);
+        explicit PhotovoltaicSpecularLayer(const CSpecularCell & cell,
+                                   const std::shared_ptr<CMaterial> & material);
 
         void assignPowerTable(PVPowerPropertiesTable powerTable);
 
@@ -30,7 +30,7 @@ namespace SingleLayerOptics
         [[nodiscard]] double ff(double electricity) const;
 
     private:
-        std::shared_ptr<CMaterialPhotovoltaic> m_PVMaterial;
+        std::shared_ptr<CMaterial> m_PVMaterial;
         PVPowerPropertiesTable m_PVPowerTable;
     };
 
