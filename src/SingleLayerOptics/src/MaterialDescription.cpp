@@ -294,6 +294,11 @@ namespace SingleLayerOptics
         // Does nothing so far. Needs to be virtual once shadings are resolved.
     }
 
+    FenestrationCommon::CSeries CMaterial::jscPrime(FenestrationCommon::Side t_Side) const
+    {
+        return {};
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
@@ -631,10 +636,10 @@ namespace SingleLayerOptics
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    ////   CMaterialPhotovoltaic
+    ////   CMaterialPhotovoltaicSample
     ////////////////////////////////////////////////////////////////////////////////////
 
-    CMaterialPhotovoltaic::CMaterialPhotovoltaic(
+    CMaterialPhotovoltaicSample::CMaterialPhotovoltaicSample(
       const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type,
@@ -644,7 +649,7 @@ namespace SingleLayerOptics
         m_PVSample(t_SpectralSample)
     {}
 
-    CMaterialPhotovoltaic::CMaterialPhotovoltaic(
+    CMaterialPhotovoltaicSample::CMaterialPhotovoltaicSample(
       const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type,
@@ -654,7 +659,7 @@ namespace SingleLayerOptics
     {}
 
     FenestrationCommon::CSeries
-      CMaterialPhotovoltaic::jscPrime(FenestrationCommon::Side t_Side) const
+      CMaterialPhotovoltaicSample::jscPrime(FenestrationCommon::Side t_Side) const
     {
         return m_PVSample->jscPrime(t_Side);
     }
