@@ -261,10 +261,10 @@ namespace MultiLayerOptics
       CMultiPaneSpecular::getAbsorptanceLayerHeat(double minLambda,
                                                   double maxLambda,
                                                   size_t index,
-                                                  FenestrationCommon::Side side,
+                                                  FenestrationCommon::Side,
                                                   FenestrationCommon::ScatteringSimple scattering,
                                                   double theta,
-                                                  double phi)
+                                                  double)
     {
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)
@@ -283,10 +283,10 @@ namespace MultiLayerOptics
       double minLambda,
       double maxLambda,
       size_t index,
-      FenestrationCommon::Side side,
+      FenestrationCommon::Side,
       FenestrationCommon::ScatteringSimple scattering,
       double theta,
-      double phi)
+      double)
     {
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)

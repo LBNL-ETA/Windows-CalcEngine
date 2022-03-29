@@ -356,12 +356,12 @@ namespace SingleLayerOptics
         return getAbsorptanceLayers(minLambda, maxLambda, side, scattering, theta, phi);
     }
     std::vector<double>
-      CScatteringLayer::getAbsorptanceLayersElectricity(double minLambda,
-                                                  double maxLambda,
-                                                  FenestrationCommon::Side side,
-                                                  FenestrationCommon::ScatteringSimple scattering,
-                                                  double theta,
-                                                  double phi)
+      CScatteringLayer::getAbsorptanceLayersElectricity(double,
+                                                        double,
+                                                        FenestrationCommon::Side,
+                                                        FenestrationCommon::ScatteringSimple,
+                                                        double,
+                                                        double)
     {
         return {};
     }
