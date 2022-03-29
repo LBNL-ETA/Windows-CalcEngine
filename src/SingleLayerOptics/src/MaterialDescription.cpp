@@ -294,7 +294,7 @@ namespace SingleLayerOptics
         // Does nothing so far. Needs to be virtual once shadings are resolved.
     }
 
-    FenestrationCommon::CSeries CMaterial::jscPrime(FenestrationCommon::Side t_Side) const
+    FenestrationCommon::CSeries CMaterial::jscPrime(FenestrationCommon::Side ) const
     {
         return {};
     }
