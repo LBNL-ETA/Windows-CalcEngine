@@ -257,6 +257,50 @@ namespace MultiLayerOptics
         return result;
     }
 
+    double
+      CMultiPaneSpecular::getAbsorptanceLayerHeat(double minLambda,
+                                                  double maxLambda,
+                                                  size_t index,
+                                                  FenestrationCommon::Side side,
+                                                  FenestrationCommon::ScatteringSimple scattering,
+                                                  double theta,
+                                                  double phi)
+    {
+        auto result(0.0);
+        if(scattering == ScatteringSimple::Direct)
+        {
+            result = AbsHeat(index, theta, minLambda, maxLambda);
+        }
+        else if(scattering == ScatteringSimple::Diffuse)
+        {
+            result = AbsHemisphericalHeat(
+              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda);
+        }
+        return result;
+    }
+
+    double CMultiPaneSpecular::getAbsorptanceLayerElectricity(
+      double minLambda,
+      double maxLambda,
+      size_t index,
+      FenestrationCommon::Side side,
+      FenestrationCommon::ScatteringSimple scattering,
+      double theta,
+      double phi)
+    {
+        auto result(0.0);
+        if(scattering == ScatteringSimple::Direct)
+        {
+            result = AbsElectricity(index, theta, minLambda, maxLambda);
+        }
+        else if(scattering == ScatteringSimple::Diffuse)
+        {
+            result = AbsHemisphericalElectricity(
+              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda);
+        }
+        return result;
+    }
+
     std::vector<double>
       CMultiPaneSpecular::getAbsorptanceLayers(double minLambda,
                                                double maxLambda,
@@ -270,6 +314,41 @@ namespace MultiLayerOptics
         {
             res.push_back(
               getAbsorptanceLayer(minLambda, maxLambda, i, side, scattering, theta, phi));
+        }
+
+        return res;
+    }
+
+    std::vector<double>
+      CMultiPaneSpecular::getAbsorptanceLayersHeat(const double minLambda,
+                                                   const double maxLambda,
+                                                   FenestrationCommon::Side side,
+                                                   FenestrationCommon::ScatteringSimple scattering,
+                                                   const double theta,
+                                                   const double phi)
+    {
+        std::vector<double> res;
+        for(size_t i = 1u; i <= size(); ++i)
+        {
+            res.push_back(
+              getAbsorptanceLayerHeat(minLambda, maxLambda, i, side, scattering, theta, phi));
+        }
+
+        return res;
+    }
+    std::vector<double> CMultiPaneSpecular::getAbsorptanceLayersElectricity(
+      const double minLambda,
+      const double maxLambda,
+      FenestrationCommon::Side side,
+      FenestrationCommon::ScatteringSimple scattering,
+      const double theta,
+      const double phi)
+    {
+        std::vector<double> res;
+        for(size_t i = 1u; i <= size(); ++i)
+        {
+            res.push_back(getAbsorptanceLayerElectricity(
+              minLambda, maxLambda, i, side, scattering, theta, phi));
         }
 
         return res;
@@ -337,7 +416,8 @@ namespace MultiLayerOptics
             const auto JscIntegratedFront =
               frontJsc.integrate(t_IntegrationType, normalizationCoefficient);
             const auto backJsc = backJscPrime * IPlus;
-            const auto JscIntegratedBack = backJsc.integrate(t_IntegrationType, normalizationCoefficient);
+            const auto JscIntegratedBack =
+              backJsc.integrate(t_IntegrationType, normalizationCoefficient);
             const auto jsc{(JscIntegratedFront->sum() + JscIntegratedBack->sum()) * totalEnergy};
 
             const auto voc{aLayer->voc(jsc)};
@@ -382,6 +462,50 @@ namespace MultiLayerOptics
         {
             double angle = t_IntegrationAngles[i];
             double aAbs = Abs(Index, angle, minLambda, maxLambda, t_IntegrationType);
+            aAngularProperties->addProperty(angle, aAbs);
+        }
+
+        CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator(
+          *aAngularProperties, t_IntegrationType, normalizationCoefficient);
+        return aIntegrator.value();
+    }
+
+    double CMultiPaneSpecular::AbsHemisphericalHeat(
+      size_t Index,
+      const std::vector<double> & t_IntegrationAngles,
+      double minLambda,
+      double maxLambda,
+      FenestrationCommon::IntegrationType t_IntegrationType,
+      double normalizationCoefficient)
+    {
+        size_t size = t_IntegrationAngles.size();
+        std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
+        for(size_t i = 0; i < size; ++i)
+        {
+            double angle = t_IntegrationAngles[i];
+            double aAbs = AbsHeat(Index, angle, minLambda, maxLambda, t_IntegrationType);
+            aAngularProperties->addProperty(angle, aAbs);
+        }
+
+        CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator(
+          *aAngularProperties, t_IntegrationType, normalizationCoefficient);
+        return aIntegrator.value();
+    }
+
+    double CMultiPaneSpecular::AbsHemisphericalElectricity(
+      size_t Index,
+      const std::vector<double> & t_IntegrationAngles,
+      double minLambda,
+      double maxLambda,
+      FenestrationCommon::IntegrationType t_IntegrationType,
+      double normalizationCoefficient)
+    {
+        size_t size = t_IntegrationAngles.size();
+        std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
+        for(size_t i = 0; i < size; ++i)
+        {
+            double angle = t_IntegrationAngles[i];
+            double aAbs = AbsElectricity(Index, angle, minLambda, maxLambda, t_IntegrationType);
             aAngularProperties->addProperty(angle, aAbs);
         }
 
