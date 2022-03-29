@@ -123,12 +123,44 @@ namespace MultiLayerOptics
                                    double theta = 0,
                                    double phi = 0);
 
+        double getAbsorptanceLayerHeat(double minLambda,
+                                       double maxLambda,
+                                       size_t index,
+                                       FenestrationCommon::Side side,
+                                       FenestrationCommon::ScatteringSimple scattering,
+                                       double theta = 0,
+                                       double phi = 0);
+
+        double getAbsorptanceLayerElectricity(double minLambda,
+                                              double maxLambda,
+                                              size_t index,
+                                              FenestrationCommon::Side side,
+                                              FenestrationCommon::ScatteringSimple scattering,
+                                              double theta = 0,
+                                              double phi = 0);
+
         std::vector<double> getAbsorptanceLayers(double minLambda,
                                                  double maxLambda,
                                                  FenestrationCommon::Side side,
                                                  FenestrationCommon::ScatteringSimple scattering,
                                                  double theta = 0,
                                                  double phi = 0) override;
+
+        std::vector<double>
+          getAbsorptanceLayersHeat(const double minLambda,
+                                   const double maxLambda,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   const double theta,
+                                   const double phi) override;
+
+        std::vector<double>
+          getAbsorptanceLayersElectricity(const double minLambda,
+                                          const double maxLambda,
+                                          FenestrationCommon::Side side,
+                                          FenestrationCommon::ScatteringSimple scattering,
+                                          const double theta,
+                                          const double phi) override;
 
         // Absorptances of each layer based on angle of incidence
         double Abs(size_t Index,
@@ -170,6 +202,22 @@ namespace MultiLayerOptics
                                 FenestrationCommon::IntegrationType t_IntegrationType =
                                   FenestrationCommon::IntegrationType::Trapezoidal,
                                 double normalizationCoefficient = 1);
+
+        double AbsHemisphericalHeat(size_t Index,
+                                    const std::vector<double> & t_IntegrationAngles,
+                                    double minLambda,
+                                    double maxLambda,
+                                    FenestrationCommon::IntegrationType t_IntegrationType =
+                                      FenestrationCommon::IntegrationType::Trapezoidal,
+                                    double normalizationCoefficient = 1);
+
+        double AbsHemisphericalElectricity(size_t Index,
+                                           const std::vector<double> & t_IntegrationAngles,
+                                           double minLambda,
+                                           double maxLambda,
+                                           FenestrationCommon::IntegrationType t_IntegrationType =
+                                             FenestrationCommon::IntegrationType::Trapezoidal,
+                                           double normalizationCoefficient = 1);
 
     protected:
         struct SeriesResults

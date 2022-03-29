@@ -110,6 +110,22 @@ namespace SingleLayerOptics
                                                  double theta,
                                                  double phi) override;
 
+        std::vector<double>
+          getAbsorptanceLayersHeat(double minLambda,
+                                   double maxLambda,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   double theta,
+                                   double phi) override;
+
+        std::vector<double>
+          getAbsorptanceLayersElectricity(double minLambda,
+                                    double maxLambda,
+                                    FenestrationCommon::Side side,
+                                    FenestrationCommon::ScatteringSimple scattering,
+                                    double theta,
+                                    double phi) override;
+
         CLayerSingleComponent getLayer(FenestrationCommon::Scattering t_Scattering,
                                        double t_Theta = 0,
                                        double t_Phi = 0);

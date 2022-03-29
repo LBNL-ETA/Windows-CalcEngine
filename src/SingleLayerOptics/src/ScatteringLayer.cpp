@@ -345,6 +345,26 @@ namespace SingleLayerOptics
                && std::dynamic_pointer_cast<CSpecularBSDFLayer>(m_BSDFLayer) != nullptr
                && m_BSDFLayer->getBandWavelengths().size() > 2;
     }
+    std::vector<double>
+      CScatteringLayer::getAbsorptanceLayersHeat(double minLambda,
+                                                 double maxLambda,
+                                                 FenestrationCommon::Side side,
+                                                 FenestrationCommon::ScatteringSimple scattering,
+                                                 double theta,
+                                                 double phi)
+    {
+        return getAbsorptanceLayers(minLambda, maxLambda, side, scattering, theta, phi);
+    }
+    std::vector<double>
+      CScatteringLayer::getAbsorptanceLayersElectricity(double minLambda,
+                                                  double maxLambda,
+                                                  FenestrationCommon::Side side,
+                                                  FenestrationCommon::ScatteringSimple scattering,
+                                                  double theta,
+                                                  double phi)
+    {
+        return {};
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////
     /// CScatteringLayerIR

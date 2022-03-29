@@ -163,6 +163,28 @@ namespace MultiLayerOptics
         return abs;
     }
 
+    std::vector<double> CMultiLayerScattered::getAbsorptanceLayersHeat(
+      double minLambda,
+      double maxLambda,
+      FenestrationCommon::Side side,
+      FenestrationCommon::ScatteringSimple scattering,
+      double theta,
+      double phi)
+    {
+        return getAbsorptanceLayers(minLambda, maxLambda, side, scattering, theta, phi);
+    }
+
+    std::vector<double> CMultiLayerScattered::getAbsorptanceLayersElectricity(
+      double minLambda,
+      double maxLambda,
+      FenestrationCommon::Side side,
+      FenestrationCommon::ScatteringSimple scattering,
+      double theta,
+      double phi)
+    {
+        return std::vector<double>(m_Layers.size(), 0);
+    }
+
     double CMultiLayerScattered::getAbsorptance(Side t_Side,
                                                 ScatteringSimple t_Scattering,
                                                 const double t_Theta,
