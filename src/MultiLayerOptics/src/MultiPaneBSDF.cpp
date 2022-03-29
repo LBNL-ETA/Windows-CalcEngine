@@ -579,6 +579,56 @@ namespace MultiLayerOptics
         }
         return abs;
     }
+
+    std::vector<double>
+      CMultiPaneBSDF::getAbsorptanceLayersHeat(const double minLambda,
+                                               const double maxLambda,
+                                               FenestrationCommon::Side side,
+                                               FenestrationCommon::ScatteringSimple scattering,
+                                               const double theta,
+                                               const double phi)
+    {
+        std::vector<double> abs;
+        size_t absSize{m_Abs.at(Side::Front).size()};
+        for(size_t i = 1u; i <= absSize; ++i)
+        {
+            switch(scattering)
+            {
+                case ScatteringSimple::Direct:
+                    abs.push_back(AbsHeat(minLambda, maxLambda, side, i, theta, phi));
+                    break;
+                case ScatteringSimple::Diffuse:
+                    abs.push_back(AbsDiff(minLambda, maxLambda, side, i));
+                    break;
+            }
+        }
+        return abs;
+    }
+    std::vector<double> CMultiPaneBSDF::getAbsorptanceLayersElectricity(
+      const double minLambda,
+      const double maxLambda,
+      FenestrationCommon::Side side,
+      FenestrationCommon::ScatteringSimple scattering,
+      const double theta,
+      const double phi)
+    {
+        std::vector<double> abs;
+        size_t absSize{m_Abs.at(Side::Front).size()};
+        for(size_t i = 1u; i <= absSize; ++i)
+        {
+            switch(scattering)
+            {
+                case ScatteringSimple::Direct:
+                    abs.push_back(AbsElectricity(minLambda, maxLambda, side, i, theta, phi));
+                    break;
+                case ScatteringSimple::Diffuse:
+                    abs.push_back(AbsDiff(minLambda, maxLambda, side, i));
+                    break;
+            }
+        }
+        return abs;
+    }
+
     double CMultiPaneBSDF::DirDiff(double minLambda,
                                    double maxLambda,
                                    FenestrationCommon::Side t_Side,

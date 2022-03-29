@@ -127,6 +127,22 @@ namespace MultiLayerOptics
                                                  double theta = 0,
                                                  double phi = 0) override;
 
+        std::vector<double>
+          getAbsorptanceLayersHeat(const double minLambda,
+                                   const double maxLambda,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   const double theta,
+                                   const double phi) override;
+
+        std::vector<double>
+          getAbsorptanceLayersElectricity(const double minLambda,
+                                          const double maxLambda,
+                                          FenestrationCommon::Side side,
+                                          FenestrationCommon::ScatteringSimple scattering,
+                                          const double theta,
+                                          const double phi) override;
+
         // Hemispherical results for every direction
         std::vector<double> DirHem(double minLambda,
                                    double maxLambda,

@@ -93,6 +93,22 @@ namespace MultiLayerOptics
                                                  double theta = 0,
                                                  double phi = 0) override;
 
+        std::vector<double>
+          getAbsorptanceLayersHeat(double minLambda,
+                                   double maxLambda,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   double theta,
+                                   double phi) override;
+
+        std::vector<double>
+          getAbsorptanceLayersElectricity(double minLambda,
+                                          double maxLambda,
+                                          FenestrationCommon::Side side,
+                                          FenestrationCommon::ScatteringSimple scattering,
+                                          double theta,
+                                          double phi) override;
+
         double getAbsorptance(FenestrationCommon::Side t_Side,
                               FenestrationCommon::ScatteringSimple t_Scattering,
                               double t_Theta = 0,
