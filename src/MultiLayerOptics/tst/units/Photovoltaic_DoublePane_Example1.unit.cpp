@@ -7,7 +7,6 @@
 #include "WCECommon.hpp"
 
 using FenestrationCommon::CSeries;
-using FenestrationCommon::Property;
 using FenestrationCommon::PropertySimple;
 using FenestrationCommon::Side;
 using FenestrationCommon::Scattering;
