@@ -351,8 +351,9 @@ namespace SpectralAveraging
         CSpectralSample::calculateProperties();
         for(const auto & side : EnumSide())
         {
-            const CSeries eqe{getSample()->eqe(side)};
+            CSeries eqe{getSample()->eqe(side)};
             const auto wl = getWavelengthsFromSample();
+            eqe = eqe.interpolate(wl);
             CSeries jscPrime;
             for(auto i = 0u; i < wl.size(); ++i)
             {
