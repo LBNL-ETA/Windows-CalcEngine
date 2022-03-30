@@ -178,8 +178,9 @@ namespace SpectralAveraging
         m_EQE{{Side::Front, eqeValuesFront}, {Side::Back, eqeValuesBack}}
     {
         const auto spectralWl{getWavelengths()};
-        for(const auto side : FenestrationCommon::EnumSide())
+        for(const auto side : EnumSide())
         {
+            m_EQE[side] = m_EQE.at(side).interpolate(spectralWl);
             const auto eqeWavelengths{m_EQE.at(side).getXArray()};
             if(spectralWl.size() != eqeWavelengths.size())
             {
