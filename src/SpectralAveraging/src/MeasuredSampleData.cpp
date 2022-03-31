@@ -177,24 +177,25 @@ namespace SpectralAveraging
         CSpectralSampleData(spectralSampleData),
         m_EQE{{Side::Front, eqeValuesFront}, {Side::Back, eqeValuesBack}}
     {
-        const auto spectralWl{getWavelengths()};
-        for(const auto side : FenestrationCommon::EnumSide())
-        {
-            const auto eqeWavelengths{m_EQE.at(side).getXArray()};
-            if(spectralWl.size() != eqeWavelengths.size())
-            {
-                throw std::runtime_error("Measured spectral data do not have same amount of data "
-                                         "as provided eqe values for the photovoltaic.");
-            }
-            for(size_t i = 0u; i < spectralWl.size(); ++i)
-            {
-                if(spectralWl[i] != eqeWavelengths[i])
-                {
-                    throw std::runtime_error("Measured spectral wavelengths are not matching to "
-                                             "provided eqe photovoltaic wavelengths.");
-                }
-            }
-        }
+        //const auto spectralWl{getWavelengths()};
+        //for(const auto side : EnumSide())
+        //{
+        //    m_EQE[side] = m_EQE.at(side).interpolate(spectralWl);
+        //    const auto eqeWavelengths{m_EQE.at(side).getXArray()};
+        //    if(spectralWl.size() != eqeWavelengths.size())
+        //    {
+        //        throw std::runtime_error("Measured spectral data do not have same amount of data "
+        //                                 "as provided eqe values for the photovoltaic.");
+        //    }
+        //    for(size_t i = 0u; i < spectralWl.size(); ++i)
+        //    {
+        //        if(spectralWl[i] != eqeWavelengths[i])
+        //        {
+        //            throw std::runtime_error("Measured spectral wavelengths are not matching to "
+        //                                     "provided eqe photovoltaic wavelengths.");
+        //        }
+        //    }
+        //}
     }
 
     void PhotovoltaicSampleData::cutExtraData(double minLambda, double maxLambda)

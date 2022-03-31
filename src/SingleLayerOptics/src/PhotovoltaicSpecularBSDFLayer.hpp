@@ -8,7 +8,7 @@
 namespace SingleLayerOptics
 {
     class CSpecularCell;
-    class CMaterialPhotovoltaic;
+    class CMaterialPhotovoltaicSample;
 
     class PhotovoltaicSpecularBSDFLayer : public CSpecularBSDFLayer
     {
@@ -26,7 +26,7 @@ namespace SingleLayerOptics
         [[nodiscard]] std::vector<double> ff(const std::vector<double> & electricalCurrent) const override;
 
     private:
-        std::shared_ptr<CMaterialPhotovoltaic> m_PVMaterial;
+        std::shared_ptr<CMaterialPhotovoltaicSample> m_PVMaterial;
         PVPowerPropertiesTable m_PVPowerTable;
     };
 }   // namespace SingleLayerOptics

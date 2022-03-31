@@ -97,6 +97,8 @@ namespace SingleLayerOptics
 
         [[nodiscard]] bool isWavelengthInRange(double wavelength) const;
 
+        [[nodiscard]] virtual FenestrationCommon::CSeries jscPrime(FenestrationCommon::Side t_Side) const;
+
     protected:
         double m_MinLambda;
         double m_MaxLambda;
@@ -376,25 +378,25 @@ namespace SingleLayerOptics
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////
-    ///   CMaterialPhotovoltaic
+    ///   CMaterialPhotovoltaicSample
     //////////////////////////////////////////////////////////////////////////////////////////
-    class CMaterialPhotovoltaic : public CMaterialSample
+    class CMaterialPhotovoltaicSample : public CMaterialSample
     {
     public:
-        CMaterialPhotovoltaic(
+        CMaterialPhotovoltaicSample(
           const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
           double t_Thickness,
           FenestrationCommon::MaterialType t_Type,
           double minLambda,
           double maxLambda);
 
-        CMaterialPhotovoltaic(
+        CMaterialPhotovoltaicSample(
           const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
           double t_Thickness,
           FenestrationCommon::MaterialType t_Type,
           FenestrationCommon::WavelengthRange t_Range);
 
-        [[nodiscard]] FenestrationCommon::CSeries jscPrime(FenestrationCommon::Side t_Side) const;
+        [[nodiscard]] FenestrationCommon::CSeries jscPrime(FenestrationCommon::Side t_Side) const override;
 
     private:
         std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> m_PVSample;
