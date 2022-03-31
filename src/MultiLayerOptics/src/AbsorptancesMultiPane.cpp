@@ -63,7 +63,6 @@ namespace MultiLayerOptics
         {
             const auto oppositeSide{FenestrationCommon::oppositeSide(side)};
 
-            // Calculate r and t coefficients
             CSeries r;
             CSeries t;
             const auto wv{m_T[size - 1].getXArray()};
@@ -72,10 +71,8 @@ namespace MultiLayerOptics
             m_rCoeffs.at(side).clear();
             m_tCoeffs.at(side).clear();
 
-            // TODO: Coefficients need to be in other direction for backward calculations
             auto index{side == Side::Front ? static_cast<int>(size) - 1 : 0};
-            auto endValue{side == Side::Front ? -1 : static_cast<int>(size)};
-            // for(int i = static_cast<int>(size) - 1; i >= 0; --i)
+            const auto endValue{side == Side::Front ? -1 : static_cast<int>(size)};
             do
             {
                 t = tCoeffs(m_T[index], m_R.at(oppositeSide)[index], r);
