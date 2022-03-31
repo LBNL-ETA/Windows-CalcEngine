@@ -404,10 +404,10 @@ TEST_F(EquivalentSpecularLayer_102_103, TestAngleHemispherical10)
       aLayer.getHemisphericalProperty(Side::Back, Property::R, aAngles, minLambda, maxLambda);
     EXPECT_NEAR(0.187542, Rbhem, 1e-6);
 
-    double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda);
+    double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.108915, Abs1, 1e-6);
 
-    double Abs2 = aLayer.AbsHemispherical(2, aAngles, minLambda, maxLambda);
+    double Abs2 = aLayer.AbsHemispherical(2, aAngles, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.126861, Abs2, 1e-6);
 }
 
@@ -438,10 +438,10 @@ TEST_F(EquivalentSpecularLayer_102_103, TestAngleHemispherical19)
       aLayer.getHemisphericalProperty(Side::Back, Property::R, aAngles, minLambda, maxLambda);
     EXPECT_NEAR(0.191550, Rbhem, 1e-6);
 
-    double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda);
+    double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.109579, Abs1, 1e-6);
 
-    double Abs2 = aLayer.AbsHemispherical(2, aAngles, minLambda, maxLambda);
+    double Abs2 = aLayer.AbsHemispherical(2, aAngles, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.127368, Abs2, 1e-6);
 }
 

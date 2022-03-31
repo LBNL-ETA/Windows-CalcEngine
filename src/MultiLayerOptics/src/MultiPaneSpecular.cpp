@@ -36,19 +36,19 @@ namespace MultiLayerOptics
         return m_Layer.getProperties(t_Property, t_Side);
     }
 
-    CSeries CEquivalentLayerSingleComponentMWAngle::Abs(size_t const Index)
+    CSeries CEquivalentLayerSingleComponentMWAngle::Abs(size_t const Index, Side side)
     {
-        return m_Abs.Abs(Index);
+        return m_Abs.Abs(Index, side);
     }
 
-    CSeries CEquivalentLayerSingleComponentMWAngle::iplus(size_t Index)
+    CSeries CEquivalentLayerSingleComponentMWAngle::iplus(size_t Index, Side side)
     {
-        return m_Abs.iplus(Index);
+        return m_Abs.iplus(Index, side);
     }
 
-    CSeries CEquivalentLayerSingleComponentMWAngle::iminus(size_t Index)
+    CSeries CEquivalentLayerSingleComponentMWAngle::iminus(size_t Index, Side side)
     {
-        return m_Abs.iminus(Index);
+        return m_Abs.iminus(Index, side);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ namespace MultiLayerOptics
     double CMultiPaneSpecular::getAbsorptanceLayer(double minLambda,
                                                    double maxLambda,
                                                    size_t index,
-                                                   FenestrationCommon::Side,
+                                                   FenestrationCommon::Side side,
                                                    FenestrationCommon::ScatteringSimple scattering,
                                                    double theta,
                                                    double)
@@ -247,12 +247,12 @@ namespace MultiLayerOptics
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)
         {
-            result = Abs(index, theta, minLambda, maxLambda);
+            result = Abs(index, theta, minLambda, maxLambda, side);
         }
         else if(scattering == ScatteringSimple::Diffuse)
         {
             result = AbsHemispherical(
-              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda);
+                index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
         }
         return result;
     }
@@ -261,20 +261,20 @@ namespace MultiLayerOptics
       CMultiPaneSpecular::getAbsorptanceLayerHeat(double minLambda,
                                                   double maxLambda,
                                                   size_t index,
-                                                  FenestrationCommon::Side,
-                                                  FenestrationCommon::ScatteringSimple scattering,
+                                                  Side side,
+                                                  ScatteringSimple scattering,
                                                   double theta,
                                                   double)
     {
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)
         {
-            result = AbsHeat(index, theta, minLambda, maxLambda);
+            result = AbsHeat(index, theta, minLambda, maxLambda, side);
         }
         else if(scattering == ScatteringSimple::Diffuse)
         {
             result = AbsHemisphericalHeat(
-              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda);
+                index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
         }
         return result;
     }
@@ -283,20 +283,20 @@ namespace MultiLayerOptics
       double minLambda,
       double maxLambda,
       size_t index,
-      FenestrationCommon::Side,
-      FenestrationCommon::ScatteringSimple scattering,
+      Side side,
+      ScatteringSimple scattering,
       double theta,
       double)
     {
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)
         {
-            result = AbsElectricity(index, theta, minLambda, maxLambda);
+            result = AbsElectricity(index, theta, minLambda, maxLambda, side);
         }
         else if(scattering == ScatteringSimple::Diffuse)
         {
             result = AbsHemisphericalElectricity(
-              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda);
+                index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
         }
         return result;
     }
@@ -358,11 +358,12 @@ namespace MultiLayerOptics
                                    const double t_Angle,
                                    const double minLambda,
                                    const double maxLambda,
+                                   FenestrationCommon::Side side,
                                    const IntegrationType t_IntegrationType,
                                    double normalizationCoefficient)
     {
         CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
-        auto aProperties = aAngularProperties.Abs(Index - 1);
+        auto aProperties = aAngularProperties.Abs(Index - 1, side);
 
         auto aMult = aProperties * m_SolarRadiation;
 
@@ -381,19 +382,23 @@ namespace MultiLayerOptics
                                        double t_Angle,
                                        double minLambda,
                                        double maxLambda,
-                                       FenestrationCommon::IntegrationType t_IntegrationType,
+                                       Side side,
+                                       IntegrationType t_IntegrationType,
                                        double normalizationCoefficient)
     {
         return Abs(
-                 Index, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient)
+                   Index, t_Angle, minLambda, maxLambda, side, t_IntegrationType,
+                   normalizationCoefficient)
                - AbsElectricity(
-                 Index, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient);
+                   Index, t_Angle, minLambda, maxLambda, side, t_IntegrationType,
+                   normalizationCoefficient);
     }
 
     double CMultiPaneSpecular::AbsElectricity(size_t Index,
                                               double t_Angle,
                                               double minLambda,
                                               double maxLambda,
+                                              Side side,
                                               IntegrationType t_IntegrationType,
                                               double normalizationCoefficient)
     {
@@ -409,8 +414,8 @@ namespace MultiLayerOptics
             auto frontJscPrime = aLayer->jscPrime(Side::Front);
             auto backJscPrime = aLayer->jscPrime(Side::Back);
 
-            const auto IMinus = aAngularProperties.iminus(Index - 1);
-            const auto IPlus = aAngularProperties.iplus(Index - 1);
+            const auto IMinus = aAngularProperties.iminus(Index - 1, side);
+            const auto IPlus = aAngularProperties.iplus(Index - 1, side);
 
             const auto frontJsc = frontJscPrime * IMinus;
             const auto JscIntegratedFront =
@@ -436,14 +441,15 @@ namespace MultiLayerOptics
       CMultiPaneSpecular::Absorptances(double t_Angle,
                                        double minLambda,
                                        double maxLambda,
-                                       FenestrationCommon::IntegrationType t_IntegrationType,
+                                       Side side,
+                                       IntegrationType t_IntegrationType,
                                        double normalizationCoefficient)
     {
         std::vector<double> res;
         for(size_t i = 1u; i <= size(); ++i)
         {
             res.push_back(
-              Abs(i, t_Angle, minLambda, maxLambda, t_IntegrationType, normalizationCoefficient));
+              Abs(i, t_Angle, minLambda, maxLambda, side, t_IntegrationType, normalizationCoefficient));
         }
 
         return res;
@@ -453,6 +459,7 @@ namespace MultiLayerOptics
                                                 const std::vector<double> & t_IntegrationAngles,
                                                 const double minLambda,
                                                 const double maxLambda,
+                                                Side side,
                                                 const IntegrationType t_IntegrationType,
                                                 double normalizationCoefficient)
     {
@@ -461,7 +468,7 @@ namespace MultiLayerOptics
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
-            double aAbs = Abs(Index, angle, minLambda, maxLambda, t_IntegrationType);
+            double aAbs = Abs(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
             aAngularProperties->addProperty(angle, aAbs);
         }
 
@@ -475,7 +482,8 @@ namespace MultiLayerOptics
       const std::vector<double> & t_IntegrationAngles,
       double minLambda,
       double maxLambda,
-      FenestrationCommon::IntegrationType t_IntegrationType,
+      Side side,
+      IntegrationType t_IntegrationType,
       double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
@@ -483,7 +491,7 @@ namespace MultiLayerOptics
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
-            double aAbs = AbsHeat(Index, angle, minLambda, maxLambda, t_IntegrationType);
+            double aAbs = AbsHeat(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
             aAngularProperties->addProperty(angle, aAbs);
         }
 
@@ -493,19 +501,20 @@ namespace MultiLayerOptics
     }
 
     double CMultiPaneSpecular::AbsHemisphericalElectricity(
-      size_t Index,
-      const std::vector<double> & t_IntegrationAngles,
-      double minLambda,
-      double maxLambda,
-      FenestrationCommon::IntegrationType t_IntegrationType,
-      double normalizationCoefficient)
+        size_t Index,
+        const std::vector<double> & t_IntegrationAngles,
+        double minLambda,
+        double maxLambda,
+        Side side,
+        IntegrationType t_IntegrationType,
+        double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
         std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
-            double aAbs = AbsElectricity(Index, angle, minLambda, maxLambda, t_IntegrationType);
+            double aAbs = AbsElectricity(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
             aAngularProperties->addProperty(angle, aAbs);
         }
 

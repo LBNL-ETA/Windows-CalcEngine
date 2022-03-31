@@ -779,10 +779,10 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle0)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.128320, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.086269, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.065880, Abs2, 1e-6);
 }
 
@@ -805,10 +805,10 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle10)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.128242, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.086795, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.066233, Abs2, 1e-6);
 }
 
@@ -831,10 +831,10 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle25)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.162799, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.092161, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.072252, Abs2, 1e-6);
 }
 
@@ -857,9 +857,9 @@ TEST_F(EquivalentSpecularAngularDualLayer_102_103, TestAngle90)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(1.0, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(3.33066907387547E-16, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.0, Abs2, 1e-6);
 }

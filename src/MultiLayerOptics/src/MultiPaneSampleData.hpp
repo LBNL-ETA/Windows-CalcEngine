@@ -14,7 +14,7 @@ namespace MultiLayerOptics
         CMultiPaneSampleData();
 
         void addSample(const std::shared_ptr<CSpectralSampleData> & t_Sample);
-        FenestrationCommon::CSeries getLayerAbsorptances(size_t const Index);
+        FenestrationCommon::CSeries getLayerAbsorptances(size_t const Index, FenestrationCommon::Side side);
         std::vector<double> getWavelengths() const;
         size_t numberOfLayers() const;
 
@@ -25,7 +25,7 @@ namespace MultiLayerOptics
         void calculateEquivalentProperties();
 
         std::vector<std::shared_ptr<CSpectralSampleData>> m_MeasuredSamples;
-        std::vector<FenestrationCommon::CSeries> m_LayerAbsorptances;
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_LayerAbsorptances;
     };
 
 }   // namespace MultiLayerOptics
