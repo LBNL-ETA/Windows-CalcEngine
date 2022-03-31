@@ -133,8 +133,9 @@ namespace MultiLayerOptics
             m_Abs.at(side).clear();
             for(size_t i = 0; i < size - 1; ++i)
             {
-                const auto Afront{1 - m_T[i] - m_R.at(side)[i]};
-                const auto Aback{1 - m_T[i] - m_R.at(oppositeSide)[i]};
+                const auto index{side == Side::Front ? i : size - i - 2u};
+                const auto Afront{1 - m_T[index] - m_R.at(side)[index]};
+                const auto Aback{1 - m_T[index] - m_R.at(oppositeSide)[index]};
                 const auto Ifront = Iminus.at(side)[i] * Afront;
                 const auto Iback = Iplus.at(side)[i] * Aback;
                 m_Abs.at(side).emplace_back(Ifront + Iback);
