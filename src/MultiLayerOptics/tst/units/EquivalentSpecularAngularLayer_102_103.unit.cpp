@@ -800,10 +800,10 @@ TEST_F(EquivalentSpecularAngularLayer_102_103, TestAngle0)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.128810, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.096524, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.064654, Abs2, 1e-6);
 
     double sum = T + Rf + Abs1 + Abs2;
@@ -829,10 +829,10 @@ TEST_F(EquivalentSpecularAngularLayer_102_103, TestAngle10)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.128729, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.097104, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.064993, Abs2, 1e-6);
 
     double sum = T + Rf + Abs1 + Abs2;
@@ -858,10 +858,10 @@ TEST_F(EquivalentSpecularAngularLayer_102_103, TestAngle25)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(0.163234, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.102983, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.070852, Abs2, 1e-6);
 
     double sum = T + Rf + Abs1 + Abs2;
@@ -887,10 +887,10 @@ TEST_F(EquivalentSpecularAngularLayer_102_103, TestAngle90)
     double Rb = aLayer.getProperty(Side::Back, Property::R, angle, minLambda, maxLambda);
     EXPECT_NEAR(1.0, Rb, 1e-6);
 
-    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    double Abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.0, Abs1, 1e-6);
 
-    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda);
+    double Abs2 = aLayer.Abs(2, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.0, Abs2, 1e-6);
 
     double sum = T + Rf + Abs1 + Abs2;

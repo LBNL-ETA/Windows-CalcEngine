@@ -156,9 +156,9 @@ TEST_F(TestMultiLayerOpticsSample, TestDoublePaneLayerAbsorptances)
 
     auto MultiLayerOptics = getMultiLayerOptics();
 
-    double abs1 = MultiLayerOptics->getLayerAbsorptance(lowLambda, highLambda, 1);
+    double abs1 = MultiLayerOptics->getLayerAbsorptance(lowLambda, highLambda, 1, Side::Front);
     EXPECT_NEAR(0.106356, abs1, 1e-6);
 
-    double abs2 = MultiLayerOptics->getLayerAbsorptance(lowLambda, highLambda, 2);
+    double abs2 = MultiLayerOptics->getLayerAbsorptance(lowLambda, highLambda, 2, Side::Front);
     EXPECT_NEAR(0.040217, abs2, 1e-6);
 }

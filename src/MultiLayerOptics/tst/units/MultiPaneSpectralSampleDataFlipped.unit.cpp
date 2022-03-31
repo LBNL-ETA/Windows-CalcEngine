@@ -204,7 +204,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneAbsorptances
     correctAbs.push_back(0.185614330);
     correctAbs.push_back(0.169513438);
 
-    CSeries abs = MultiLayerOptics.getLayerAbsorptances(1);
+    CSeries abs = MultiLayerOptics.getLayerAbsorptances(1, Side::Front);
 
     EXPECT_EQ(abs.size(), correctAbs.size());
 
@@ -230,7 +230,7 @@ TEST_F(TestMultiLayerOpticsMeasuredSampleDataFlipped, TestDoublePaneAbsorptances
     correctAbs.push_back(0.027308157);
     correctAbs.push_back(0.024177996);
 
-    abs = MultiLayerOptics.getLayerAbsorptances(2);
+    abs = MultiLayerOptics.getLayerAbsorptances(2, Side::Front);
 
     EXPECT_EQ(abs.size(), correctAbs.size());
 

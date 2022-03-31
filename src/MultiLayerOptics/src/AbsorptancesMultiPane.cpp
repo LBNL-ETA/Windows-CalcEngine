@@ -31,10 +31,10 @@ namespace MultiLayerOptics
         m_StateCalculated = false;
     }
 
-    CSeries CAbsorptancesMultiPane::Abs(const size_t Index)
+    CSeries CAbsorptancesMultiPane::Abs(const size_t Index, Side side)
     {
         calculateState();
-        return m_Abs.at(Side::Front)[Index];
+        return m_Abs.at(side)[Index];
     }
 
     size_t CAbsorptancesMultiPane::numOfLayers()
@@ -43,16 +43,16 @@ namespace MultiLayerOptics
         return m_Abs.size();
     }
 
-    CSeries CAbsorptancesMultiPane::iplus(size_t Index)
+    CSeries CAbsorptancesMultiPane::iplus(size_t Index, Side side)
     {
         calculateState();
-        return Iplus.at(Side::Front)[Index];
+        return Iplus.at(side)[Index];
     }
 
-    CSeries CAbsorptancesMultiPane::iminus(size_t Index)
+    CSeries CAbsorptancesMultiPane::iminus(size_t Index, Side side)
     {
         calculateState();
-        return Iminus.at(Side::Front)[Index];
+        return Iminus.at(side)[Index];
     }
 
     void CAbsorptancesMultiPane::calculateRTCoefficients()
