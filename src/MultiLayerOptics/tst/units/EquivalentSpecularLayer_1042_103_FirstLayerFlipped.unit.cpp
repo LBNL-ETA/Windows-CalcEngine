@@ -7,7 +7,7 @@
 #include "WCECommon.hpp"
 
 using namespace SingleLayerOptics;
-using namespace FenestrationCommon;
+using namespace FenestrationCommon; 
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
