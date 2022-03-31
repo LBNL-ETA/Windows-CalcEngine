@@ -39,6 +39,22 @@ namespace SingleLayerOptics
                                FenestrationCommon::ScatteringSimple scattering,
                                const double theta,
                                const double phi) = 0;
+
+        virtual std::vector<double>
+          getAbsorptanceLayersHeat(const double minLambda,
+                                   const double maxLambda,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   const double theta,
+                                   const double phi) = 0;
+
+        virtual std::vector<double>
+          getAbsorptanceLayersElectricity(const double minLambda,
+                                   const double maxLambda,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   const double theta,
+                                   const double phi) = 0;
     };
 
 }   // namespace SingleLayerOptics

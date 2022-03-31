@@ -23,9 +23,7 @@ namespace MultiLayerOptics
                                                const double t_Rf_dif_dif,
                                                const double t_Tb_dif_dif,
                                                const double t_Rb_dif_dif) :
-        m_Calculated(false),
-        m_Theta(0),
-        m_Phi(0)
+        m_Calculated(false), m_Theta(0), m_Phi(0)
     {
         CScatteringLayer aLayer(t_Tf_dir_dir,
                                 t_Rf_dir_dir,
@@ -44,9 +42,7 @@ namespace MultiLayerOptics
     }
 
     CMultiLayerScattered::CMultiLayerScattered(const CScatteringLayer & t_Layer) :
-        m_Calculated(false),
-        m_Theta(0),
-        m_Phi(0)
+        m_Calculated(false), m_Theta(0), m_Phi(0)
     {
         initialize(t_Layer);
     }
@@ -161,6 +157,28 @@ namespace MultiLayerOptics
               getAbsorptanceLayer(minLambda, maxLambda, i, side, scattering, theta, phi));
         }
         return abs;
+    }
+
+    std::vector<double> CMultiLayerScattered::getAbsorptanceLayersHeat(
+      double minLambda,
+      double maxLambda,
+      FenestrationCommon::Side side,
+      FenestrationCommon::ScatteringSimple scattering,
+      double theta,
+      double phi)
+    {
+        return getAbsorptanceLayers(minLambda, maxLambda, side, scattering, theta, phi);
+    }
+
+    std::vector<double>
+      CMultiLayerScattered::getAbsorptanceLayersElectricity(double,
+                                                            double,
+                                                            FenestrationCommon::Side,
+                                                            FenestrationCommon::ScatteringSimple,
+                                                            double,
+                                                            double)
+    {
+        return std::vector<double>(m_Layers.size(), 0);
     }
 
     double CMultiLayerScattered::getAbsorptance(Side t_Side,
