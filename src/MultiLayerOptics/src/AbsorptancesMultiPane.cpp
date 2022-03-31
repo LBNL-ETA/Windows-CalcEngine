@@ -59,7 +59,7 @@ namespace MultiLayerOptics
     {
         const size_t size{m_T.size()};
 
-        for(const auto side: EnumSide())
+        for(const auto side : EnumSide())
         {
             const auto oppositeSide{FenestrationCommon::oppositeSide(side)};
 
@@ -73,14 +73,25 @@ namespace MultiLayerOptics
             m_tCoeffs.at(side).clear();
 
             // TODO: Coefficients need to be in other direction for backward calculations
-            for(int i = static_cast<int>(size) - 1; i >= 0; --i)
+            auto index{side == Side::Front ? static_cast<int>(size) - 1 : 0};
+            auto endValue{side == Side::Front ? -1 : static_cast<int>(size)};
+            // for(int i = static_cast<int>(size) - 1; i >= 0; --i)
+            do
             {
-                t = tCoeffs(m_T[i], m_R.at(oppositeSide)[i], r);
-                r = rCoeffs(m_T[i], m_R.at(side)[i], m_R.at(oppositeSide)[i], r);
+                t = tCoeffs(m_T[index], m_R.at(oppositeSide)[index], r);
+                r = rCoeffs(m_T[index], m_R.at(side)[index], m_R.at(oppositeSide)[index], r);
 
                 m_rCoeffs.at(side).insert(m_rCoeffs.at(side).begin(), r);
                 m_tCoeffs.at(side).insert(m_tCoeffs.at(side).begin(), t);
-            }
+                if(side == Side::Front)
+                {
+                    index--;
+                }
+                else
+                {
+                    index++;
+                }
+            } while(index != endValue);
         }
     }
 
