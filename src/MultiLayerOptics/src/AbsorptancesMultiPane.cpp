@@ -9,6 +9,11 @@ namespace MultiLayerOptics
                                                    const CSeries & t_Rf,
                                                    const CSeries & t_Rb) :
         m_R({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
+        m_Abs({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
+        m_rCoeffs({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
+        m_tCoeffs({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
+        Iplus({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
+        Iminus({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
         m_StateCalculated(false)
     {
         m_T.push_back(t_T);
@@ -29,7 +34,7 @@ namespace MultiLayerOptics
     CSeries CAbsorptancesMultiPane::Abs(const size_t Index)
     {
         calculateState();
-        return m_Abs[Index];
+        return m_Abs.at(Side::Front)[Index];
     }
 
     size_t CAbsorptancesMultiPane::numOfLayers()
@@ -41,36 +46,41 @@ namespace MultiLayerOptics
     CSeries CAbsorptancesMultiPane::iplus(size_t Index)
     {
         calculateState();
-        return Iplus[Index];
+        return Iplus.at(Side::Front)[Index];
     }
 
     CSeries CAbsorptancesMultiPane::iminus(size_t Index)
     {
         calculateState();
-        return Iminus[Index];
+        return Iminus.at(Side::Front)[Index];
     }
 
     void CAbsorptancesMultiPane::calculateRTCoefficients()
     {
         const size_t size{m_T.size()};
 
-        // Calculate r and t coefficients
-        CSeries r;
-        CSeries t;
-        const auto wv{m_T[size - 1].getXArray()};
-        r.setConstantValues(wv, 0);
-        t.setConstantValues(wv, 0);
-        m_rCoeffs.clear();
-        m_tCoeffs.clear();
-
-        // layers loop
-        for(int i = static_cast<int>(size) - 1; i >= 0; --i)
+        for(const auto side: EnumSide())
         {
-            t = tCoeffs(m_T[i], m_R.at(Side::Back)[i], r);
-            r = rCoeffs(m_T[i], m_R.at(Side::Front)[i], m_R.at(Side::Back)[i], r);
+            const auto oppositeSide{FenestrationCommon::oppositeSide(side)};
 
-            m_rCoeffs.insert(m_rCoeffs.begin(), r);
-            m_tCoeffs.insert(m_tCoeffs.begin(), t);
+            // Calculate r and t coefficients
+            CSeries r;
+            CSeries t;
+            const auto wv{m_T[size - 1].getXArray()};
+            r.setConstantValues(wv, 0);
+            t.setConstantValues(wv, 0);
+            m_rCoeffs.at(side).clear();
+            m_tCoeffs.at(side).clear();
+
+            // TODO: Coefficients need to be in other direction for backward calculations
+            for(int i = static_cast<int>(size) - 1; i >= 0; --i)
+            {
+                t = tCoeffs(m_T[i], m_R.at(oppositeSide)[i], r);
+                r = rCoeffs(m_T[i], m_R.at(side)[i], m_R.at(oppositeSide)[i], r);
+
+                m_rCoeffs.at(side).insert(m_rCoeffs.at(side).begin(), r);
+                m_tCoeffs.at(side).insert(m_tCoeffs.at(side).begin(), t);
+            }
         }
     }
 
@@ -78,39 +88,49 @@ namespace MultiLayerOptics
     {
         // Calculate normalized radiances
         const auto wv{m_T[0].getXArray()};
-        const size_t size{m_rCoeffs.size()};
 
-        CSeries Im;
-        CSeries Ip;
-        Im.setConstantValues(wv, 1);
-        Iminus.push_back(Im);
-
-        for(size_t i = 0; i < size; ++i)
+        for(const auto side : EnumSide())
         {
-            Ip = m_rCoeffs[i] * Im;
-            Im = m_tCoeffs[i] * Im;
-            if(i != 0u)
+            const size_t size{m_rCoeffs.at(side).size()};
+
+            Iplus.at(side).clear();
+            Iminus.at(side).clear();
+
+            CSeries Im;
+            CSeries Ip;
+            Im.setConstantValues(wv, 1);
+            Iminus.at(side).push_back(Im);
+
+            for(size_t i = 0; i < size; ++i)
             {
-                Iplus.push_back(Ip);
+                Ip = m_rCoeffs.at(side)[i] * Im;
+                Im = m_tCoeffs.at(side)[i] * Im;
+                if(i != 0u)
+                {
+                    Iplus.at(side).push_back(Ip);
+                }
+                Iminus.at(side).push_back(Im);
             }
-            Iminus.push_back(Im);
+            Ip.setConstantValues(wv, 0);
+            Iplus.at(side).push_back(Ip);
         }
-        Ip.setConstantValues(wv, 0);
-        Iplus.push_back(Ip);
     }
 
     void CAbsorptancesMultiPane::calculateAbsorptances()
     {
-        // Calculate absorptances
-        const size_t size{Iminus.size()};
-        m_Abs.clear();
-        for(size_t i = 0; i < size - 1; ++i)
+        for(const auto side : EnumSide())
         {
-            const auto Afront{1 - m_T[i] - m_R.at(Side::Front)[i]};
-            const auto Aback{1 - m_T[i] - m_R.at(Side::Back)[i]};
-            const auto Ifront = Iminus[i] * Afront;
-            const auto Iback = Iplus[i] * Aback;
-            m_Abs.emplace_back(Ifront + Iback);
+            const auto oppositeSide{FenestrationCommon::oppositeSide(side)};
+            const size_t size{Iminus.at(side).size()};
+            m_Abs.at(side).clear();
+            for(size_t i = 0; i < size - 1; ++i)
+            {
+                const auto Afront{1 - m_T[i] - m_R.at(side)[i]};
+                const auto Aback{1 - m_T[i] - m_R.at(oppositeSide)[i]};
+                const auto Ifront = Iminus.at(side)[i] * Afront;
+                const auto Iback = Iplus.at(side)[i] * Aback;
+                m_Abs.at(side).emplace_back(Ifront + Iback);
+            }
         }
     }
 
@@ -118,9 +138,6 @@ namespace MultiLayerOptics
     {
         if(!m_StateCalculated)
         {
-            Iplus.clear();
-            Iminus.clear();
-
             calculateRTCoefficients();
 
             calculateNormalizedRadiances();
