@@ -40,17 +40,18 @@ namespace MultiLayerOptics
                                             const FenestrationCommon::CSeries & t_Rb,
                                             const FenestrationCommon::CSeries & t_RCoeffs);
 
+        // This are measured values
         std::vector<FenestrationCommon::CSeries> m_T;
-        //std::vector<FenestrationCommon::CSeries> m_Rf;
-        //std::vector<FenestrationCommon::CSeries> m_Rb;
         std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_R;
-        std::vector<FenestrationCommon::CSeries> m_Abs;
 
-        std::vector<FenestrationCommon::CSeries> m_rCoeffs;
-        std::vector<FenestrationCommon::CSeries> m_tCoeffs;
+        // Calculated values are stored here
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_Abs;
 
-        std::vector<FenestrationCommon::CSeries> Iplus;
-        std::vector<FenestrationCommon::CSeries> Iminus;
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_rCoeffs;
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_tCoeffs;
+
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> Iplus;
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> Iminus;
 
         bool m_StateCalculated;
     };
