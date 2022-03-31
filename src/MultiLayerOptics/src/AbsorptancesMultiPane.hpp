@@ -19,11 +19,12 @@ namespace MultiLayerOptics
                       const FenestrationCommon::CSeries & t_Rf,
                       const FenestrationCommon::CSeries & t_Rb);
 
-        FenestrationCommon::CSeries Abs(size_t Index);
+        FenestrationCommon::CSeries Abs(size_t Index, FenestrationCommon::Side side);
         size_t numOfLayers();
 
-        FenestrationCommon::CSeries iplus(size_t Index);
-        FenestrationCommon::CSeries iminus(size_t Index);
+        FenestrationCommon::CSeries iplus(size_t Index, FenestrationCommon::Side side);
+        FenestrationCommon::CSeries iminus(size_t Index, FenestrationCommon::Side side);
+
         void calculateRTCoefficients();
         void calculateNormalizedRadiances();
         void calculateAbsorptances();

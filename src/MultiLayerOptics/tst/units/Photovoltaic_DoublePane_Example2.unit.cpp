@@ -561,12 +561,12 @@ TEST_F(Photovoltaic_DoublePane_Example2, Test1)
       aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.833849, T, 1e-6);
 
-    const double abs1 = aLayer.Abs(1, angle, minLambda, maxLambda);
+    const double abs1 = aLayer.Abs(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.091386, abs1, 1e-6);
 
-    const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda);
+    const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.077666, absHeat, 1e-6);
 
-    const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda);
+    const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.01372, absEl1, 1e-6);
 }
