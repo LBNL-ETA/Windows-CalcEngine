@@ -41,8 +41,9 @@ namespace MultiLayerOptics
                                             const FenestrationCommon::CSeries & t_RCoeffs);
 
         std::vector<FenestrationCommon::CSeries> m_T;
-        std::vector<FenestrationCommon::CSeries> m_Rf;
-        std::vector<FenestrationCommon::CSeries> m_Rb;
+        //std::vector<FenestrationCommon::CSeries> m_Rf;
+        //std::vector<FenestrationCommon::CSeries> m_Rb;
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_R;
         std::vector<FenestrationCommon::CSeries> m_Abs;
 
         std::vector<FenestrationCommon::CSeries> m_rCoeffs;
