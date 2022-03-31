@@ -33,10 +33,10 @@ namespace MultiLayerOptics
         FenestrationCommon::CSeries getProperties(FenestrationCommon::Side t_Side,
                                                   FenestrationCommon::Property t_Property);
 
-        FenestrationCommon::CSeries Abs(size_t Index);
+        FenestrationCommon::CSeries Abs(size_t Index, FenestrationCommon::Side side);
 
-        FenestrationCommon::CSeries iplus(size_t Index);
-        FenestrationCommon::CSeries iminus(size_t Index);
+        FenestrationCommon::CSeries iplus(size_t Index, FenestrationCommon::Side side);
+        FenestrationCommon::CSeries iminus(size_t Index, FenestrationCommon::Side side);
 
     private:
         CEquivalentLayerSingleComponentMW m_Layer;
@@ -167,31 +167,35 @@ namespace MultiLayerOptics
                    double t_Angle,
                    double minLambda,
                    double maxLambda,
+                   FenestrationCommon::Side side,
                    FenestrationCommon::IntegrationType t_IntegrationType =
-                     FenestrationCommon::IntegrationType::Trapezoidal,
+                       FenestrationCommon::IntegrationType::Trapezoidal,
                    double normalizationCoefficient = 1);
 
         double AbsHeat(size_t Index,
                        double t_Angle,
                        double minLambda,
                        double maxLambda,
+                       FenestrationCommon::Side side,
                        FenestrationCommon::IntegrationType t_IntegrationType =
-                         FenestrationCommon::IntegrationType::Trapezoidal,
+                           FenestrationCommon::IntegrationType::Trapezoidal,
                        double normalizationCoefficient = 1);
 
         double AbsElectricity(size_t Index,
                               double t_Angle,
                               double minLambda,
                               double maxLambda,
+                              FenestrationCommon::Side side,
                               FenestrationCommon::IntegrationType t_IntegrationType =
-                                FenestrationCommon::IntegrationType::Trapezoidal,
+                                  FenestrationCommon::IntegrationType::Trapezoidal,
                               double normalizationCoefficient = 1);
 
         std::vector<double> Absorptances(double t_Angle,
                                          double minLambda,
                                          double maxLambda,
+                                         FenestrationCommon::Side side,
                                          FenestrationCommon::IntegrationType t_IntegrationType =
-                                           FenestrationCommon::IntegrationType::Trapezoidal,
+                                             FenestrationCommon::IntegrationType::Trapezoidal,
                                          double normalizationCoefficient = 1);
 
         // Hemispherical absorptances of each layer. Integration is performed over t_Angles.
@@ -199,24 +203,27 @@ namespace MultiLayerOptics
                                 const std::vector<double> & t_IntegrationAngles,
                                 double minLambda,
                                 double maxLambda,
+                                FenestrationCommon::Side side,
                                 FenestrationCommon::IntegrationType t_IntegrationType =
-                                  FenestrationCommon::IntegrationType::Trapezoidal,
+                                    FenestrationCommon::IntegrationType::Trapezoidal,
                                 double normalizationCoefficient = 1);
 
         double AbsHemisphericalHeat(size_t Index,
                                     const std::vector<double> & t_IntegrationAngles,
                                     double minLambda,
                                     double maxLambda,
+                                    FenestrationCommon::Side side,
                                     FenestrationCommon::IntegrationType t_IntegrationType =
-                                      FenestrationCommon::IntegrationType::Trapezoidal,
+                                        FenestrationCommon::IntegrationType::Trapezoidal,
                                     double normalizationCoefficient = 1);
 
         double AbsHemisphericalElectricity(size_t Index,
                                            const std::vector<double> & t_IntegrationAngles,
                                            double minLambda,
                                            double maxLambda,
+                                           FenestrationCommon::Side side,
                                            FenestrationCommon::IntegrationType t_IntegrationType =
-                                             FenestrationCommon::IntegrationType::Trapezoidal,
+                                               FenestrationCommon::IntegrationType::Trapezoidal,
                                            double normalizationCoefficient = 1);
 
     protected:

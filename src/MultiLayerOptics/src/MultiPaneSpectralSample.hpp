@@ -30,16 +30,17 @@ namespace MultiLayerOptics
 
         double getLayerAbsorbedEnergy(double const minLambda,
                                       double const maxLambda,
-                                      size_t const Index);
+                                      size_t const Index,
+                                      FenestrationCommon::Side side);
         double
-          getLayerAbsorptance(double const minLambda, double const maxLambda, size_t const Index);
+          getLayerAbsorptance(double const minLambda, double const maxLambda, size_t const Index, FenestrationCommon::Side side);
 
     private:
         void reset();
         void calculateProperties();
-        void integrateAndAppendAbsorptances(const FenestrationCommon::CSeries & t_Absorptances);
+        void integrateAndAppendAbsorptances(const FenestrationCommon::CSeries & t_Absorptances, FenestrationCommon::Side side);
 
-        std::vector<FenestrationCommon::CSeries> m_AbsorbedLayersSource;
+        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_AbsorbedLayersSource;
     };
 
 }   // namespace MultiLayerOptics

@@ -7,7 +7,7 @@
 #include "WCECommon.hpp"
 
 using namespace SingleLayerOptics;
-using namespace FenestrationCommon;
+using namespace FenestrationCommon; 
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
@@ -397,17 +397,17 @@ protected:
     }
 
 public:
-    std::shared_ptr<CMultiPaneSpecular> getLayer() const
+    [[nodiscard]] std::shared_ptr<CMultiPaneSpecular> getLayer() const
     {
         return m_Layer;
-    };
+    }
 };
 
 TEST_F(EquivalentSpecularLayer_1042_103_FirstLayerFlipped, TestAngle0)
 {
     SCOPED_TRACE("Begin Test: Specular MultiLayerOptics layer - angle = 0 deg.");
 
-    const double angle = 0;
+    constexpr double angle = 0;
 
     CMultiPaneSpecular aLayer = *getLayer();
 
