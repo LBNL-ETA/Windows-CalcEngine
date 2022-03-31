@@ -411,8 +411,9 @@ namespace MultiLayerOptics
             CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
             auto aLayer = std::dynamic_pointer_cast<PhotovoltaicSpecularLayer>(m_Layers[Index - 1]);
 
-            auto frontJscPrime = aLayer->jscPrime(Side::Front);
-            auto backJscPrime = aLayer->jscPrime(Side::Back);
+            const auto opposite{oppositeSide(side)};
+            auto frontJscPrime = aLayer->jscPrime(side);
+            auto backJscPrime = aLayer->jscPrime(opposite);
 
             const auto IMinus = aAngularProperties.iminus(Index - 1, side);
             const auto IPlus = aAngularProperties.iplus(Index - 1, side);
