@@ -352,13 +352,12 @@ namespace SpectralAveraging
         for(const auto & side : EnumSide())
         {
             CSeries eqe{getSample()->eqe(side)};
-            const auto wl = getWavelengthsFromSample();
-            eqe = eqe.interpolate(wl);
+            eqe = eqe.interpolate(m_Wavelengths);
             CSeries jscPrime;
-            for(auto i = 0u; i < wl.size(); ++i)
+            for(auto i = 0u; i < m_Wavelengths.size(); ++i)
             {
-                const double pceVal = jscPrimeCalc(wl[i], eqe[i].value());
-                jscPrime.addProperty(wl[i], pceVal);
+                const double pceVal = jscPrimeCalc(m_Wavelengths[i], eqe[i].value());
+                jscPrime.addProperty(m_Wavelengths[i], pceVal);
             }
             m_JcsPrime[side] = jscPrime;
         }
