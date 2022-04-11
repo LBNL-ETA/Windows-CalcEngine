@@ -294,6 +294,11 @@ namespace SpectralAveraging
             }
         }
 
+        if(m_WavelengthSet == WavelengthSet::Data)
+        {
+            m_Wavelengths = getWavelengthsFromSample();
+        }
+
         // Calculation of energy balances
         for(const auto & prop : EnumProperty())
         {
