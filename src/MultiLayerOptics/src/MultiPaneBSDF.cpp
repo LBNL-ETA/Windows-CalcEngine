@@ -68,7 +68,8 @@ namespace MultiLayerOptics
         m_SolarRadiationInit = solarRadiation;
         for(Side aSide : EnumSide())
         {
-            this->m_AbsHem[aSide] = std::make_shared<std::vector<double>>();
+            this->m_AbsHem[aSide] = std::vector<double>();
+            this->m_AbsHemElectricity[aSide] = std::vector<double>();
         }
 
         // This will initialize layer material data with given spectral distribution
@@ -93,7 +94,7 @@ namespace MultiLayerOptics
 
     std::vector<std::vector<double>>
       CMultiPaneBSDF::calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
-                                        const std::vector<double> & incomingSolar)
+                                              const std::vector<double> & incomingSolar)
     {
         std::vector<std::vector<double>> result;
         const auto & layers{m_Layer.getLayers()};
@@ -244,15 +245,23 @@ namespace MultiLayerOptics
         for(size_t layNum = 0; layNum < numOfLayers; ++layNum)
         {
             std::vector<double> aAbs = m_Abs[t_Side][layNum];
+            std::vector<double> aAbsElectricity = m_AbsElectricity[t_Side][layNum];
             assert(aAbs.size() == aLambdas.size());
+            assert(aAbsElectricity.size() == aLambdas.size());
             std::vector<double> mult(aLambdas.size());
+            std::vector<double> multElectricity(aLambdas.size());
+            std::transform(
+              aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), std::multiplies<>());
             std::transform(aLambdas.begin(),
                            aLambdas.end(),
-                           aAbs.begin(),
-                           mult.begin(),
-                           std::multiplies<double>());
+                           aAbsElectricity.begin(),
+                           multElectricity.begin(),
+                           std::multiplies<>());
             double sum = std::accumulate(mult.begin(), mult.end(), 0.0) / WCE_PI;
-            m_AbsHem[t_Side]->push_back(sum);
+            double sumElectricity =
+              std::accumulate(multElectricity.begin(), multElectricity.end(), 0.0) / WCE_PI;
+            m_AbsHem[t_Side].push_back(sum);
+            m_AbsHemElectricity[t_Side].push_back(sumElectricity);
         }
     }
 
@@ -397,7 +406,25 @@ namespace MultiLayerOptics
                                    const size_t t_LayerIndex)
     {
         calculate(minLambda, maxLambda);
-        return (*m_AbsHem[t_Side])[t_LayerIndex - 1];
+        return m_AbsHem[t_Side][t_LayerIndex - 1];
+    }
+
+    double CMultiPaneBSDF::AbsDiffHeat(double minLambda,
+                                       double maxLambda,
+                                       FenestrationCommon::Side t_Side,
+                                       size_t t_LayerIndex)
+    {
+        return AbsDiff(minLambda, maxLambda, t_Side, t_LayerIndex)
+               - AbsDiffElectricity(minLambda, maxLambda, t_Side, t_LayerIndex);
+    }
+
+    double CMultiPaneBSDF::AbsDiffElectricity(double minLambda,
+                                              double maxLambda,
+                                              FenestrationCommon::Side t_Side,
+                                              size_t t_LayerIndex)
+    {
+        calculate(minLambda, maxLambda);
+        return m_AbsHemElectricity[t_Side][t_LayerIndex];
     }
 
     double CMultiPaneBSDF::energy(const double minLambda,
@@ -598,7 +625,7 @@ namespace MultiLayerOptics
                     abs.push_back(AbsHeat(minLambda, maxLambda, side, i, theta, phi));
                     break;
                 case ScatteringSimple::Diffuse:
-                    abs.push_back(AbsDiff(minLambda, maxLambda, side, i));
+                    abs.push_back(AbsDiffHeat(minLambda, maxLambda, side, i));
                     break;
             }
         }
@@ -622,7 +649,7 @@ namespace MultiLayerOptics
                     abs.push_back(AbsElectricity(minLambda, maxLambda, side, i, theta, phi));
                     break;
                 case ScatteringSimple::Diffuse:
-                    abs.push_back(AbsDiff(minLambda, maxLambda, side, i));
+                    abs.push_back(AbsDiffElectricity(minLambda, maxLambda, side, i));
                     break;
             }
         }
@@ -639,5 +666,6 @@ namespace MultiLayerOptics
         return DirHem(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi)
                - DirDir(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
     }
+
 
 }   // namespace MultiLayerOptics

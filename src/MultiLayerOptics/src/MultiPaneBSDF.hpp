@@ -210,6 +210,16 @@ namespace MultiLayerOptics
                        FenestrationCommon::Side t_Side,
                        size_t t_LayerIndex);
 
+        double AbsDiffHeat(double minLambda,
+                           double maxLambda,
+                           FenestrationCommon::Side t_Side,
+                           size_t t_LayerIndex);
+
+        double AbsDiffElectricity(double minLambda,
+                                  double maxLambda,
+                                  FenestrationCommon::Side t_Side,
+                                  size_t t_LayerIndex);
+
         // Energy that gets transmitted or reflected from certain direction
         double energy(double minLambda,
                       double maxLambda,
@@ -254,7 +264,7 @@ namespace MultiLayerOptics
 
         std::vector<std::vector<double>>
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
-                            const std::vector<double> & incomingSolar);
+                                  const std::vector<double> & incomingSolar);
 
         void calculate(double minLambda, double maxLambda);
 
@@ -281,7 +291,8 @@ namespace MultiLayerOptics
         std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_AbsElectricity;
 
         // Hemispherical absorptances for every layer
-        std::map<FenestrationCommon::Side, std::shared_ptr<std::vector<double>>> m_AbsHem;
+        std::map<FenestrationCommon::Side, std::vector<double>> m_AbsHem;
+        std::map<FenestrationCommon::Side, std::vector<double>> m_AbsHemElectricity;
 
         bool m_Calculated;
         double m_MinLambdaCalculated;
