@@ -237,31 +237,23 @@ namespace MultiLayerOptics
         }
     }
 
+    double CMultiPaneBSDF::integrateBSDFAbsorptance(const std::vector<double> & lambda,
+                                                    const std::vector<double> & absorptance)
+    {
+        assert(absorptance.size() == lambda.size());
+        using ConstantsData::WCE_PI;
+        const auto mult{FenestrationCommon::mult<double>(lambda, absorptance)};
+        return std::accumulate(mult.begin(), mult.end(), 0.0) / WCE_PI;
+    }
+
     void CMultiPaneBSDF::calcHemisphericalAbs(const Side t_Side)
     {
-        using ConstantsData::WCE_PI;
         const size_t numOfLayers = m_Abs[t_Side].size();
-        std::vector<double> aLambdas = m_Results->lambdaVector();
         for(size_t layNum = 0; layNum < numOfLayers; ++layNum)
         {
-            std::vector<double> aAbs = m_Abs[t_Side][layNum];
-            std::vector<double> aAbsElectricity = m_AbsElectricity[t_Side][layNum];
-            assert(aAbs.size() == aLambdas.size());
-            assert(aAbsElectricity.size() == aLambdas.size());
-            std::vector<double> mult(aLambdas.size());
-            std::vector<double> multElectricity(aLambdas.size());
-            std::transform(
-              aLambdas.begin(), aLambdas.end(), aAbs.begin(), mult.begin(), std::multiplies<>());
-            std::transform(aLambdas.begin(),
-                           aLambdas.end(),
-                           aAbsElectricity.begin(),
-                           multElectricity.begin(),
-                           std::multiplies<>());
-            double sum = std::accumulate(mult.begin(), mult.end(), 0.0) / WCE_PI;
-            double sumElectricity =
-              std::accumulate(multElectricity.begin(), multElectricity.end(), 0.0) / WCE_PI;
-            m_AbsHem[t_Side].push_back(sum);
-            m_AbsHemElectricity[t_Side].push_back(sumElectricity);
+            m_AbsHem[t_Side].push_back(integrateBSDFAbsorptance(m_Results->lambdaVector(), m_Abs[t_Side][layNum]));
+            m_AbsHemElectricity[t_Side].push_back(
+              integrateBSDFAbsorptance(m_Results->lambdaVector(), m_AbsElectricity[t_Side][layNum]));
         }
     }
 

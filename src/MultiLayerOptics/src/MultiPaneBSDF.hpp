@@ -275,6 +275,8 @@ namespace MultiLayerOptics
 
         static std::vector<std::vector<double>> getZeroVectorVector(size_t size1, size_t size2);
 
+        double integrateBSDFAbsorptance(const std::vector<double> & lambda, const std::vector<double> & absorptance);
+
         CEquivalentBSDFLayer m_Layer;
 
         // Solar radiation for initialization

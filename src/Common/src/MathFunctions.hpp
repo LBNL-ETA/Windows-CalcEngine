@@ -54,4 +54,22 @@ namespace FenestrationCommon
         }
         return y1 + delta;
     }
+
+    //! Multiplies two vectors
+    template<typename T>
+    std::vector<T> mult(const std::vector<T> & v1, const std::vector<T> & v2)
+    {
+        if(v1.size() != v2.size())
+        {
+            throw std::runtime_error(
+              "Vectors that are multiplied with each other are different size.");
+        }
+
+        std::vector<T> result(v1.size());
+
+        std::transform(
+          v1.begin(), v1.end(), v2.begin(), result.begin(), std::multiplies<T>());
+
+        return result;
+    }
 }   // namespace FenestrationCommon
