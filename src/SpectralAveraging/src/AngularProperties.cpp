@@ -45,8 +45,7 @@ namespace SpectralAveraging
     CAngularPropertiesUncoated::CAngularPropertiesUncoated(double const t_Thicknes,
                                                            double const t_TransmittanceZero,
                                                            double const t_ReflectanceZero) :
-        CAngularProperties(t_TransmittanceZero, t_ReflectanceZero),
-        m_Thickness(t_Thicknes)
+        CAngularProperties(t_TransmittanceZero, t_ReflectanceZero), m_Thickness(t_Thicknes)
     {
         // calculation of intermediate uncoated properties
         m_Beta = m_Transmittance0 * m_Transmittance0 - m_Reflectance0 * m_Reflectance0
@@ -75,52 +74,62 @@ namespace SpectralAveraging
 
         CAngularProperties::checkStateProperties(t_Angle, t_Wavelength);
 
-        if(m_StateAngle != t_Angle || m_StateWavelength != t_Wavelength)
+        if(!isEqual(m_StateAngle, t_Angle) || !isEqual(m_StateWavelength, t_Wavelength))
         {
-            auto aAngle = radians(t_Angle);
-            auto aCosPhi = std::cos(aAngle);
-            auto n = (1 + std::sqrt(m_Rho0)) / (1 - std::sqrt(m_Rho0));
-            auto aCosPhiPrim = std::cos(std::asin(std::sin(aAngle) / n));
-            auto a = 0.0;
-
-            if(m_Transmittance0 > 0)
+            if(!isEqual(m_Rho0, 0) && !isEqual(m_Transmittance0, 1.0))
             {
-                auto k = -t_Wavelength / (4 * WCE_PI * m_Thickness)
-                         * std::log((m_Reflectance0 - m_Rho0) / (m_Transmittance0 * m_Rho0));
-                auto alpha = 2 * WCE_PI * k / t_Wavelength;
-                a = std::exp(-2 * alpha * m_Thickness / aCosPhiPrim);
+                const auto aAngle = radians(t_Angle);
+                const auto aCosPhi = std::cos(aAngle);
+                auto n = (1 + std::sqrt(m_Rho0)) / (1 - std::sqrt(m_Rho0));
+                const auto aCosPhiPrim = std::cos(std::asin(std::sin(aAngle) / n));
+                auto a = 0.0;
+
+                if(m_Transmittance0 > 0 && m_Rho0 > 0)
+                {
+                    auto k = -t_Wavelength / (4 * WCE_PI * m_Thickness)
+                             * std::log((m_Reflectance0 - m_Rho0) / (m_Transmittance0 * m_Rho0));
+                    auto alpha = 2 * WCE_PI * k / t_Wavelength;
+                    a = std::exp(-2 * alpha * m_Thickness / aCosPhiPrim);
+                }
+
+                auto rhoP =
+                  std::pow(((n * aCosPhi - aCosPhiPrim) / (n * aCosPhi + aCosPhiPrim)), 2);
+                auto rhoS =
+                  std::pow(((aCosPhi - n * aCosPhiPrim) / (aCosPhi + n * aCosPhiPrim)), 2);
+                auto tauP = 1 - rhoP;
+                auto tauS = 1 - rhoS;
+
+                double tau_TotP{0.0};
+                const auto pCoeff = 1 - std::pow(a, 2) * std::pow(rhoP, 2);
+                if(pCoeff != 0)
+                {
+                    tau_TotP = a * std::pow(tauP, 2) / pCoeff;
+                }
+
+                double tau_TotS{0.0};
+                const auto sCoeff = 1 - std::pow(a, 2) * std::pow(rhoS, 2);
+                if(sCoeff != 0)
+                {
+                    tau_TotS = a * std::pow(tauS, 2) / sCoeff;
+                }
+
+                auto rho_TotP = (1 + a * tau_TotP) * rhoP;
+                auto rho_TotS = (1 + a * tau_TotS) * rhoS;
+
+                m_Transmittance = (tau_TotS + tau_TotP) / 2;
+                m_Reflectance = (rho_TotS + rho_TotP) / 2;
+
+                // Angular calculations are not precise and can calculate T + R to be > 1.
+                // This will check that limit and correct values.
+                const auto [T, R] = checkRange(m_Transmittance, m_Reflectance);
+                m_Transmittance = T;
+                m_Reflectance = R;
             }
-
-            auto rhoP = std::pow(((n * aCosPhi - aCosPhiPrim) / (n * aCosPhi + aCosPhiPrim)), 2);
-            auto rhoS = std::pow(((aCosPhi - n * aCosPhiPrim) / (aCosPhi + n * aCosPhiPrim)), 2);
-            auto tauP = 1 - rhoP;
-            auto tauS = 1 - rhoS;
-
-            double tau_TotP{0.0};
-            const auto pCoeff = 1 - std::pow(a, 2) * std::pow(rhoP, 2);
-            if(pCoeff != 0)
+            else
             {
-                tau_TotP = a * std::pow(tauP, 2) / pCoeff;
+                m_Transmittance = m_Transmittance0;
+                m_Reflectance = m_Reflectance0;
             }
-
-            double tau_TotS{0.0};
-            const auto sCoeff = 1 - std::pow(a, 2) * std::pow(rhoS, 2);
-            if(sCoeff != 0)
-            {
-                tau_TotS = a * std::pow(tauS, 2) / sCoeff;
-            }
-
-            auto rho_TotP = (1 + a * tau_TotP) * rhoP;
-            auto rho_TotS = (1 + a * tau_TotS) * rhoS;
-
-            m_Transmittance = (tau_TotS + tau_TotP) / 2;
-            m_Reflectance = (rho_TotS + rho_TotP) / 2;
-
-            // Angular calculations are not precise and can calculate T + R to be > 1.
-            // This will check that limit and correct values.
-            const auto tr = checkRange(m_Transmittance, m_Reflectance);
-            m_Transmittance = tr.T;
-            m_Reflectance = tr.R;
 
             m_StateAngle = t_Angle;
             m_StateWavelength = t_Wavelength;
@@ -221,11 +230,7 @@ namespace SpectralAveraging
                                double const t_C2,
                                double const t_C3,
                                const double t_C4) :
-        C0(t_C0),
-        C1(t_C1),
-        C2(t_C2),
-        C3(t_C3),
-        C4(t_C4)
+        C0(t_C0), C1(t_C1), C2(t_C2), C3(t_C3), C4(t_C4)
     {}
 
     double Coefficients::inerpolation(double const t_Value) const
