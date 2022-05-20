@@ -15,19 +15,17 @@ namespace SingleLayerOptics
     double modifyProperty(const double t_Range, const double t_Solar, const double t_Fraction)
     {
         // If t_fraction == 1 that means a dual-band material is evaluated only for partial range
-        if(t_Fraction == 1)
+        if(isEqual(t_Fraction, 1))
         {
             return t_Range;
         }
-        else
-        {
-            auto ratio{(t_Solar - t_Fraction * t_Range) / (1 - t_Fraction)};
-            if(ratio > 1)
-                ratio = 1;
-            if(ratio < 0)
-                ratio = 0;
-            return ratio;
-        }
+
+        auto ratio{(t_Solar - t_Fraction * t_Range) / (1 - t_Fraction)};
+        if(ratio > 1)
+            ratio = 1;
+        if(ratio < 0)
+            ratio = 0;
+        return ratio;
     }
 
     std::vector<std::vector<double>>
@@ -294,7 +292,7 @@ namespace SingleLayerOptics
         // Does nothing so far. Needs to be virtual once shadings are resolved.
     }
 
-    FenestrationCommon::CSeries CMaterial::jscPrime(FenestrationCommon::Side ) const
+    FenestrationCommon::CSeries CMaterial::jscPrime(FenestrationCommon::Side) const
     {
         return {};
     }
@@ -385,7 +383,7 @@ namespace SingleLayerOptics
         createUVRange();
         double lowLambda = m_MaterialPartialRange->getMinLambda();
         double highLambda = m_MaterialPartialRange->getMaxLambda();
-        CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
+        //CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
         createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
     }
 
@@ -498,8 +496,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void IMaterialDualBand::createRangesFromSolarRadiation(
-      const FenestrationCommon::CSeries & t_SolarRadiation)
+    void IMaterialDualBand::createRangesFromSolarRadiation(const CSeries & t_SolarRadiation)
     {
         if(!m_Materials.empty())
         {
@@ -509,7 +506,8 @@ namespace SingleLayerOptics
         createUVRange();
         const double lowLambda = m_MaterialPartialRange->getMinLambda();
         const double highLambda = m_MaterialPartialRange->getMaxLambda();
-        CNIRRatio nirRatio = CNIRRatio(t_SolarRadiation, lowLambda, highLambda);
+        // For now we have decided to use hard NIR ratio and not calculate it from the solar radiation.
+        // CNIRRatio nirRatio = CNIRRatio(t_SolarRadiation, lowLambda, highLambda);
         createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
         if(!m_WavelengthsCalculated)
         {

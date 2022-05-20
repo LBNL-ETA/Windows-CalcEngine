@@ -1378,7 +1378,7 @@ protected:
         auto condensedSpectrum{
           FenestrationCommon::generateSpectrum(numberOfVisibleBands, numberOfIRBands)};
 
-        m_Layer = CMultiPaneBSDF::create({Layer_Glass, Layer_BSDF}, loadSolarRadiationFile(), condensedSpectrum);
+        m_Layer = CMultiPaneBSDF::create({Layer_BSDF}, loadSolarRadiationFile(), condensedSpectrum);
     }
 
 public:
