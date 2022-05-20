@@ -23,7 +23,7 @@ namespace FenestrationCommon
     //! Test if two values are withing float tolerance defined in FenestrationCommon constants
     inline bool isEqual(const double val1, const double val2)
     {
-        return (std::abs(val1) - std::abs(val2)) < ConstantsData::floatErrorTolerance;
+        return std::abs(val1 - val2) < ConstantsData::floatErrorTolerance;
     }
 
     struct TR
