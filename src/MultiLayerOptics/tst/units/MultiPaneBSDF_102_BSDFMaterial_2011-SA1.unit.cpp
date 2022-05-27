@@ -740,8 +740,17 @@ protected:
         auto tbSolar = loadTbSolar();
         auto rfSolar = loadRfSolar();
         auto rbSolar = loadRbSolar();
-        const auto aBSDFMaterial = Material::singleBandBSDFMaterial(
-          tfSolar, tbSolar, rfSolar, rbSolar, aBSDF, WavelengthRange::Solar);
+        // const auto aBSDFMaterial = Material::singleBandBSDFMaterial(
+        //  tfSolar, tbSolar, rfSolar, rbSolar, aBSDF, WavelengthRange::Solar);
+        const auto aBSDFMaterial = Material::dualBandBSDFMaterial(tfSolar,
+                                                                  tbSolar,
+                                                                  rfSolar,
+                                                                  rbSolar,
+                                                                  tfSolar,
+                                                                  tbSolar,
+                                                                  rfSolar,
+                                                                  rbSolar,
+                                                                  aBSDF, 0.49);
 
         auto Layer_Glass = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
         auto Layer_BSDF = CBSDFLayerMaker::getPreLoadedBSDFLayer(aBSDFMaterial, aBSDF);
@@ -751,7 +760,7 @@ protected:
         auto condensedSpectrum{
           FenestrationCommon::generateSpectrum(numberOfVisibleBands, numberOfIRBands)};
 
-        m_Layer = CMultiPaneBSDF::create({Layer_BSDF}, loadSolarRadiationFile(), condensedSpectrum);
+        m_Layer = CMultiPaneBSDF::create({Layer_Glass, Layer_BSDF}, loadSolarRadiationFile(), condensedSpectrum);
     }
 
 public:
@@ -775,16 +784,20 @@ TEST_F(MultiPaneBSDF_102_BSDFMaterial_2011_SA1, TestBSDFMatrixAsInput)
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.117909, tauHem, 1e-4);
+    EXPECT_NEAR(0.105543, tauHem, 1e-4);
 
     double rhoFrontHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.465440, rhoFrontHem, 1e-4);
+    EXPECT_NEAR(0.402695, rhoFrontHem, 1e-4);
 
     double rhoBackHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.525790, rhoBackHem, 1e-4);
+    EXPECT_NEAR(0.527301, rhoBackHem, 1e-4);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.416651, abs1, 1e-4);
+    EXPECT_NEAR(0.118130, abs1, 1e-4);
+
+    auto absHeat1 = aLayer.getAbsorptanceLayersHeat(
+      minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
+    EXPECT_NEAR(0.126859, absHeat1[0], 1e-4);
 }

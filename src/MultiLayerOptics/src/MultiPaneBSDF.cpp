@@ -416,7 +416,7 @@ namespace MultiLayerOptics
                                               size_t t_LayerIndex)
     {
         calculate(minLambda, maxLambda);
-        return m_AbsHemElectricity[t_Side][t_LayerIndex];
+        return m_AbsHemElectricity[t_Side][t_LayerIndex - 1];
     }
 
     double CMultiPaneBSDF::energy(const double minLambda,
@@ -583,7 +583,7 @@ namespace MultiLayerOptics
                                            const double phi)
     {
         std::vector<double> abs;
-        size_t absSize{m_Abs.at(Side::Front).size()};
+        size_t absSize{m_Layer.numberOfLayers()};
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
@@ -608,7 +608,7 @@ namespace MultiLayerOptics
                                                const double phi)
     {
         std::vector<double> abs;
-        size_t absSize{m_Abs.at(Side::Front).size()};
+        size_t absSize{m_Layer.numberOfLayers()};
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
@@ -632,7 +632,7 @@ namespace MultiLayerOptics
       const double phi)
     {
         std::vector<double> abs;
-        size_t absSize{m_Abs.at(Side::Front).size()};
+        size_t absSize{m_Layer.numberOfLayers()};
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
