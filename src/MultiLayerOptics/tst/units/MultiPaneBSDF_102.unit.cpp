@@ -161,6 +161,10 @@ TEST_F(MultiPaneBSDF_102, TestSpecular1)
     double theta = 0;
     double phi = 0;
 
+    auto absDiffFrontElectricity = aLayer.getAbsorptanceLayersElectricity(
+      minLambda, maxLambda, Side::Front, FenestrationCommon::ScatteringSimple::Diffuse, theta, phi);
+    EXPECT_NEAR(0.0, absDiffFrontElectricity[0], 1e-6);
+
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.833807, tauHem, 1e-6);
 

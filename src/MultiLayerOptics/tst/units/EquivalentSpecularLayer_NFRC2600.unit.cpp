@@ -327,6 +327,6 @@ TEST_F(EquivalentSpecularLayer_NFRC2600, TestAngleHemispherical10)
       aLayer.getHemisphericalProperty(Side::Back, Property::R, aAngles, minLambda, maxLambda);
     EXPECT_NEAR(0.134494, Rbhem, 1e-6);
 
-    double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda);
+    double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda, Side::Front);
     EXPECT_NEAR(0.076758, Abs1, 1e-6);
 }

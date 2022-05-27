@@ -294,6 +294,11 @@ namespace SpectralAveraging
             }
         }
 
+        if(m_WavelengthSet == WavelengthSet::Data)
+        {
+            m_Wavelengths = getWavelengthsFromSample();
+        }
+
         // Calculation of energy balances
         for(const auto & prop : EnumProperty())
         {
@@ -351,13 +356,13 @@ namespace SpectralAveraging
         CSpectralSample::calculateProperties();
         for(const auto & side : EnumSide())
         {
-            const CSeries eqe{getSample()->eqe(side)};
-            const auto wl = getWavelengthsFromSample();
+            CSeries eqe{getSample()->eqe(side)};
+            eqe = eqe.interpolate(m_Wavelengths);
             CSeries jscPrime;
-            for(auto i = 0u; i < wl.size(); ++i)
+            for(auto i = 0u; i < m_Wavelengths.size(); ++i)
             {
-                const double pceVal = jscPrimeCalc(wl[i], eqe[i].value());
-                jscPrime.addProperty(wl[i], pceVal);
+                const double pceVal = jscPrimeCalc(m_Wavelengths[i], eqe[i].value());
+                jscPrime.addProperty(m_Wavelengths[i], pceVal);
             }
             m_JcsPrime[side] = jscPrime;
         }

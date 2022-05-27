@@ -12,7 +12,7 @@ namespace SpectralAveraging
 namespace SingleLayerOptics
 {
     class CMaterial;
-    class CMaterialPhotovoltaic;
+    class CMaterialPhotovoltaicSample;
     class CBSDFHemisphere;
 
     class Material
@@ -79,6 +79,23 @@ namespace SingleLayerOptics
           double Tf, double Tb, double Rf, double Rb, FenestrationCommon::WavelengthRange range);
 
         static std::shared_ptr<CMaterial>
+          singleBandBSDFMaterial(const std::vector<std::vector<double>> & Tf,
+                                 const std::vector<std::vector<double>> & Tb,
+                                 const std::vector<std::vector<double>> & Rf,
+                                 const std::vector<std::vector<double>> & Rb,
+                                 const CBSDFHemisphere & hemisphere,
+                                 FenestrationCommon::WavelengthRange t_Range);
+
+        static std::shared_ptr<CMaterial>
+          singleBandBSDFMaterial(const std::vector<std::vector<double>> & Tf,
+                                 const std::vector<std::vector<double>> & Tb,
+                                 const std::vector<std::vector<double>> & Rf,
+                                 const std::vector<std::vector<double>> & Rb,
+                                 const CBSDFHemisphere & hemisphere,
+                                 const double minLambda,
+                                 const double maxLambda);
+
+        static std::shared_ptr<CMaterial>
           nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
                         double thickness,
                         FenestrationCommon::MaterialType materialType,
@@ -118,7 +135,7 @@ namespace SingleLayerOptics
                           FenestrationCommon::IntegrationType::Trapezoidal,
                         const double normalizationCoefficient = 1);
 
-        static std::shared_ptr<CMaterialPhotovoltaic> nBandPhotovoltaicMaterial(
+        static std::shared_ptr<CMaterialPhotovoltaicSample> nBandPhotovoltaicMaterial(
           const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
           double thickness,
           FenestrationCommon::MaterialType materialType,
@@ -128,7 +145,7 @@ namespace SingleLayerOptics
             FenestrationCommon::IntegrationType::Trapezoidal,
           double normalizationCoefficient = 1);
 
-        static std::shared_ptr<CMaterialPhotovoltaic> nBandPhotovoltaicMaterial(
+        static std::shared_ptr<CMaterialPhotovoltaicSample> nBandPhotovoltaicMaterial(
           const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
           double thickness,
           FenestrationCommon::MaterialType materialType,

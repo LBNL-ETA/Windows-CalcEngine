@@ -13,7 +13,10 @@ using namespace SpectralAveraging;
 
 namespace MultiLayerOptics
 {
-    CMultiPaneSampleData::CMultiPaneSampleData() : CSpectralSampleData()
+    CMultiPaneSampleData::CMultiPaneSampleData() :
+        CSpectralSampleData(),
+        m_LayerAbsorptances{{Side::Front, std::vector<CSeries>()},
+                            {Side::Back, std::vector<CSeries>()}}
     {}
 
     std::vector<double> CMultiPaneSampleData::getWavelengths() const
@@ -48,14 +51,14 @@ namespace MultiLayerOptics
         }
     }
 
-    CSeries CMultiPaneSampleData::getLayerAbsorptances(size_t const Index)
+    CSeries CMultiPaneSampleData::getLayerAbsorptances(size_t const Index, Side side)
     {
         calculateProperties();
         if((Index - 1) > m_LayerAbsorptances.size())
         {
             throw std::runtime_error("Index out of range. ");
         }
-        return m_LayerAbsorptances[Index - 1];
+        return m_LayerAbsorptances.at(side)[Index - 1];
     }
 
     // Interpolate current sample data to new wavelengths set
@@ -98,17 +101,20 @@ namespace MultiLayerOptics
 
         for(const auto & prop : EnumProperty())
         {
-            for(const auto & side : EnumSide())
+            for(const auto side : EnumSide())
             {
                 m_Property[std::make_pair(prop, side)] = aEqivalentLayer.getProperties(prop, side);
             }
         }
 
-        m_LayerAbsorptances.clear();
-        size_t size = aAbsorptances.numOfLayers();
-        for(size_t i = 0; i < size; ++i)
+        for(const auto side : EnumSide())
         {
-            m_LayerAbsorptances.push_back(aAbsorptances.Abs(i));
+            m_LayerAbsorptances.at(side).clear();
+            size_t size = aAbsorptances.numOfLayers();
+            for(size_t i = 0; i < size; ++i)
+            {
+                m_LayerAbsorptances.at(side).push_back(aAbsorptances.Abs(i, side));
+            }
         }
     }
 

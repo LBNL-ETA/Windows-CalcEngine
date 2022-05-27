@@ -9,9 +9,9 @@ namespace SingleLayerOptics
         CSpecularBSDFLayer(t_Cell, t_Hemisphere)
     {
         const auto material(t_Cell->getMaterial());
-        if(std::dynamic_pointer_cast<CMaterialPhotovoltaic>(material))
+        if(std::dynamic_pointer_cast<CMaterialPhotovoltaicSample>(material))
         {
-            m_PVMaterial = std::dynamic_pointer_cast<CMaterialPhotovoltaic>(material);
+            m_PVMaterial = std::dynamic_pointer_cast<CMaterialPhotovoltaicSample>(material);
         }
         else
         {

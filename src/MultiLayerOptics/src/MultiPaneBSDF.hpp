@@ -127,6 +127,22 @@ namespace MultiLayerOptics
                                                  double theta = 0,
                                                  double phi = 0) override;
 
+        std::vector<double>
+          getAbsorptanceLayersHeat(const double minLambda,
+                                   const double maxLambda,
+                                   FenestrationCommon::Side side,
+                                   FenestrationCommon::ScatteringSimple scattering,
+                                   const double theta,
+                                   const double phi) override;
+
+        std::vector<double>
+          getAbsorptanceLayersElectricity(const double minLambda,
+                                          const double maxLambda,
+                                          FenestrationCommon::Side side,
+                                          FenestrationCommon::ScatteringSimple scattering,
+                                          const double theta,
+                                          const double phi) override;
+
         // Hemispherical results for every direction
         std::vector<double> DirHem(double minLambda,
                                    double maxLambda,
@@ -194,6 +210,16 @@ namespace MultiLayerOptics
                        FenestrationCommon::Side t_Side,
                        size_t t_LayerIndex);
 
+        double AbsDiffHeat(double minLambda,
+                           double maxLambda,
+                           FenestrationCommon::Side t_Side,
+                           size_t t_LayerIndex);
+
+        double AbsDiffElectricity(double minLambda,
+                                  double maxLambda,
+                                  FenestrationCommon::Side t_Side,
+                                  size_t t_LayerIndex);
+
         // Energy that gets transmitted or reflected from certain direction
         double energy(double minLambda,
                       double maxLambda,
@@ -238,7 +264,7 @@ namespace MultiLayerOptics
 
         std::vector<std::vector<double>>
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
-                            const std::vector<double> & incomingSolar);
+                                  const std::vector<double> & incomingSolar);
 
         void calculate(double minLambda, double maxLambda);
 
@@ -248,6 +274,8 @@ namespace MultiLayerOptics
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const;
 
         static std::vector<std::vector<double>> getZeroVectorVector(size_t size1, size_t size2);
+
+        double integrateBSDFAbsorptance(const std::vector<double> & lambda, const std::vector<double> & absorptance);
 
         CEquivalentBSDFLayer m_Layer;
 
@@ -265,7 +293,8 @@ namespace MultiLayerOptics
         std::map<FenestrationCommon::Side, std::vector<std::vector<double>>> m_AbsElectricity;
 
         // Hemispherical absorptances for every layer
-        std::map<FenestrationCommon::Side, std::shared_ptr<std::vector<double>>> m_AbsHem;
+        std::map<FenestrationCommon::Side, std::vector<double>> m_AbsHem;
+        std::map<FenestrationCommon::Side, std::vector<double>> m_AbsHemElectricity;
 
         bool m_Calculated;
         double m_MinLambdaCalculated;

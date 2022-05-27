@@ -125,6 +125,30 @@ namespace SingleLayerOptics
         return std::make_shared<CMaterialSingleBand>(Tf, Tb, Rf, Rb, range);
     }
 
+    std::shared_ptr<CMaterial>
+      Material::singleBandBSDFMaterial(const std::vector<std::vector<double>> & Tf,
+                                       const std::vector<std::vector<double>> & Tb,
+                                       const std::vector<std::vector<double>> & Rf,
+                                       const std::vector<std::vector<double>> & Rb,
+                                       const CBSDFHemisphere & hemisphere,
+                                       FenestrationCommon::WavelengthRange t_Range)
+    {
+        return std::make_shared<CMaterialSingleBandBSDF>(Tf, Tb, Rf, Rb, hemisphere, t_Range);
+    }
+
+    std::shared_ptr<CMaterial>
+      Material::singleBandBSDFMaterial(const std::vector<std::vector<double>> & Tf,
+                                       const std::vector<std::vector<double>> & Tb,
+                                       const std::vector<std::vector<double>> & Rf,
+                                       const std::vector<std::vector<double>> & Rb,
+                                       const CBSDFHemisphere & hemisphere,
+                                       const double minLambda,
+                                       const double maxLambda)
+    {
+        return std::make_shared<CMaterialSingleBandBSDF>(
+          Tf, Tb, Rf, Rb, hemisphere, minLambda, maxLambda);
+    }
+
     std::shared_ptr<CMaterial> Material::nBandMaterial(
       const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
       const double thickness,
@@ -267,7 +291,7 @@ namespace SingleLayerOptics
         return std::make_shared<CMaterialSample>(aSample, thickness, materialType, t_Range);
     }
 
-    std::shared_ptr<CMaterialPhotovoltaic> Material::nBandPhotovoltaicMaterial(
+    std::shared_ptr<CMaterialPhotovoltaicSample> Material::nBandPhotovoltaicMaterial(
       const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
       double thickness,
       FenestrationCommon::MaterialType materialType,
@@ -287,11 +311,11 @@ namespace SingleLayerOptics
                                      "requested range. Calculation is not possible.");
         }
 
-        return std::make_shared<CMaterialPhotovoltaic>(
+        return std::make_shared<CMaterialPhotovoltaicSample>(
           aSample, thickness, materialType, minLambda, maxLambda);
     }
 
-    std::shared_ptr<CMaterialPhotovoltaic> Material::nBandPhotovoltaicMaterial(
+    std::shared_ptr<CMaterialPhotovoltaicSample> Material::nBandPhotovoltaicMaterial(
       const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
       double thickness,
       FenestrationCommon::MaterialType materialType,

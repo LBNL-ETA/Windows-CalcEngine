@@ -68,7 +68,8 @@ namespace MultiLayerOptics
         m_SolarRadiationInit = solarRadiation;
         for(Side aSide : EnumSide())
         {
-            this->m_AbsHem[aSide] = std::make_shared<std::vector<double>>();
+            this->m_AbsHem[aSide] = std::vector<double>();
+            this->m_AbsHemElectricity[aSide] = std::vector<double>();
         }
 
         // This will initialize layer material data with given spectral distribution
@@ -93,7 +94,7 @@ namespace MultiLayerOptics
 
     std::vector<std::vector<double>>
       CMultiPaneBSDF::calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
-                                        const std::vector<double> & incomingSolar)
+                                              const std::vector<double> & incomingSolar)
     {
         std::vector<std::vector<double>> result;
         const auto & layers{m_Layer.getLayers()};
@@ -236,23 +237,23 @@ namespace MultiLayerOptics
         }
     }
 
+    double CMultiPaneBSDF::integrateBSDFAbsorptance(const std::vector<double> & lambda,
+                                                    const std::vector<double> & absorptance)
+    {
+        assert(absorptance.size() == lambda.size());
+        using ConstantsData::WCE_PI;
+        const auto mult{FenestrationCommon::mult<double>(lambda, absorptance)};
+        return std::accumulate(mult.begin(), mult.end(), 0.0) / WCE_PI;
+    }
+
     void CMultiPaneBSDF::calcHemisphericalAbs(const Side t_Side)
     {
-        using ConstantsData::WCE_PI;
         const size_t numOfLayers = m_Abs[t_Side].size();
-        std::vector<double> aLambdas = m_Results->lambdaVector();
         for(size_t layNum = 0; layNum < numOfLayers; ++layNum)
         {
-            std::vector<double> aAbs = m_Abs[t_Side][layNum];
-            assert(aAbs.size() == aLambdas.size());
-            std::vector<double> mult(aLambdas.size());
-            std::transform(aLambdas.begin(),
-                           aLambdas.end(),
-                           aAbs.begin(),
-                           mult.begin(),
-                           std::multiplies<double>());
-            double sum = std::accumulate(mult.begin(), mult.end(), 0.0) / WCE_PI;
-            m_AbsHem[t_Side]->push_back(sum);
+            m_AbsHem[t_Side].push_back(integrateBSDFAbsorptance(m_Results->lambdaVector(), m_Abs[t_Side][layNum]));
+            m_AbsHemElectricity[t_Side].push_back(
+              integrateBSDFAbsorptance(m_Results->lambdaVector(), m_AbsElectricity[t_Side][layNum]));
         }
     }
 
@@ -397,7 +398,25 @@ namespace MultiLayerOptics
                                    const size_t t_LayerIndex)
     {
         calculate(minLambda, maxLambda);
-        return (*m_AbsHem[t_Side])[t_LayerIndex - 1];
+        return m_AbsHem[t_Side][t_LayerIndex - 1];
+    }
+
+    double CMultiPaneBSDF::AbsDiffHeat(double minLambda,
+                                       double maxLambda,
+                                       FenestrationCommon::Side t_Side,
+                                       size_t t_LayerIndex)
+    {
+        return AbsDiff(minLambda, maxLambda, t_Side, t_LayerIndex)
+               - AbsDiffElectricity(minLambda, maxLambda, t_Side, t_LayerIndex);
+    }
+
+    double CMultiPaneBSDF::AbsDiffElectricity(double minLambda,
+                                              double maxLambda,
+                                              FenestrationCommon::Side t_Side,
+                                              size_t t_LayerIndex)
+    {
+        calculate(minLambda, maxLambda);
+        return m_AbsHemElectricity[t_Side][t_LayerIndex];
     }
 
     double CMultiPaneBSDF::energy(const double minLambda,
@@ -579,6 +598,56 @@ namespace MultiLayerOptics
         }
         return abs;
     }
+
+    std::vector<double>
+      CMultiPaneBSDF::getAbsorptanceLayersHeat(const double minLambda,
+                                               const double maxLambda,
+                                               FenestrationCommon::Side side,
+                                               FenestrationCommon::ScatteringSimple scattering,
+                                               const double theta,
+                                               const double phi)
+    {
+        std::vector<double> abs;
+        size_t absSize{m_Abs.at(Side::Front).size()};
+        for(size_t i = 1u; i <= absSize; ++i)
+        {
+            switch(scattering)
+            {
+                case ScatteringSimple::Direct:
+                    abs.push_back(AbsHeat(minLambda, maxLambda, side, i, theta, phi));
+                    break;
+                case ScatteringSimple::Diffuse:
+                    abs.push_back(AbsDiffHeat(minLambda, maxLambda, side, i));
+                    break;
+            }
+        }
+        return abs;
+    }
+    std::vector<double> CMultiPaneBSDF::getAbsorptanceLayersElectricity(
+      const double minLambda,
+      const double maxLambda,
+      FenestrationCommon::Side side,
+      FenestrationCommon::ScatteringSimple scattering,
+      const double theta,
+      const double phi)
+    {
+        std::vector<double> abs;
+        size_t absSize{m_Abs.at(Side::Front).size()};
+        for(size_t i = 1u; i <= absSize; ++i)
+        {
+            switch(scattering)
+            {
+                case ScatteringSimple::Direct:
+                    abs.push_back(AbsElectricity(minLambda, maxLambda, side, i, theta, phi));
+                    break;
+                case ScatteringSimple::Diffuse:
+                    abs.push_back(AbsDiffElectricity(minLambda, maxLambda, side, i));
+                    break;
+            }
+        }
+        return abs;
+    }
+
     double CMultiPaneBSDF::DirDiff(double minLambda,
                                    double maxLambda,
                                    FenestrationCommon::Side t_Side,
@@ -589,5 +658,6 @@ namespace MultiLayerOptics
         return DirHem(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi)
                - DirDir(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
     }
+
 
 }   // namespace MultiLayerOptics

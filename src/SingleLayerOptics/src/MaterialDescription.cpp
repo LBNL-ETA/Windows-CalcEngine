@@ -15,19 +15,15 @@ namespace SingleLayerOptics
     double modifyProperty(const double t_Range, const double t_Solar, const double t_Fraction)
     {
         // If t_fraction == 1 that means a dual-band material is evaluated only for partial range
-        if(t_Fraction == 1)
+        if(isEqual(t_Fraction, 1))
         {
             return t_Range;
         }
-        else
-        {
-            auto ratio{(t_Solar - t_Fraction * t_Range) / (1 - t_Fraction)};
-            if(ratio > 1)
-                ratio = 1;
-            if(ratio < 0)
-                ratio = 0;
-            return ratio;
-        }
+
+        auto ratio{(t_Solar - t_Fraction * t_Range) / (1 - t_Fraction)};
+        if(ratio < 0)
+            ratio = 0;
+        return ratio;
     }
 
     std::vector<std::vector<double>>
@@ -35,10 +31,10 @@ namespace SingleLayerOptics
                        std::vector<std::vector<double>> const & t_FullRange,
                        const double t_Fraction)
     {
-        // Creating a vector with the correct size already reserved
-        std::vector<double> outgoing;
         size_t outgoingSize = t_PartialRange.begin()->size();
-        outgoing.resize(outgoingSize);
+
+        // Creating a vector with the correct size already reserved
+        std::vector<double> outgoing(outgoingSize);
         size_t incomingSize = t_PartialRange.size();
         std::vector<std::vector<double>> modifiedValues(incomingSize, outgoing);
         for(size_t i = 0; i < incomingSize; ++i)
@@ -294,6 +290,11 @@ namespace SingleLayerOptics
         // Does nothing so far. Needs to be virtual once shadings are resolved.
     }
 
+    FenestrationCommon::CSeries CMaterial::jscPrime(FenestrationCommon::Side) const
+    {
+        return {};
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
@@ -378,9 +379,9 @@ namespace SingleLayerOptics
         m_MaterialPartialRange->setSourceData(t_SourceData);
         checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
         createUVRange();
-        double lowLambda = m_MaterialPartialRange->getMinLambda();
-        double highLambda = m_MaterialPartialRange->getMaxLambda();
-        CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
+        //double lowLambda = m_MaterialPartialRange->getMinLambda();
+        //double highLambda = m_MaterialPartialRange->getMaxLambda();
+        //CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
         createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
     }
 
@@ -493,8 +494,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void IMaterialDualBand::createRangesFromSolarRadiation(
-      const FenestrationCommon::CSeries & t_SolarRadiation)
+    void IMaterialDualBand::createRangesFromSolarRadiation(const CSeries &)
     {
         if(!m_Materials.empty())
         {
@@ -502,9 +502,10 @@ namespace SingleLayerOptics
         }
         checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
         createUVRange();
-        const double lowLambda = m_MaterialPartialRange->getMinLambda();
-        const double highLambda = m_MaterialPartialRange->getMaxLambda();
-        CNIRRatio nirRatio = CNIRRatio(t_SolarRadiation, lowLambda, highLambda);
+        //const double lowLambda = m_MaterialPartialRange->getMinLambda();
+        //const double highLambda = m_MaterialPartialRange->getMaxLambda();
+        // For now we have decided to use hard NIR ratio and not calculate it from the solar radiation.
+        // CNIRRatio nirRatio = CNIRRatio(t_SolarRadiation, lowLambda, highLambda);
         createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
         if(!m_WavelengthsCalculated)
         {
@@ -631,10 +632,10 @@ namespace SingleLayerOptics
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    ////   CMaterialPhotovoltaic
+    ////   CMaterialPhotovoltaicSample
     ////////////////////////////////////////////////////////////////////////////////////
 
-    CMaterialPhotovoltaic::CMaterialPhotovoltaic(
+    CMaterialPhotovoltaicSample::CMaterialPhotovoltaicSample(
       const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type,
@@ -644,7 +645,7 @@ namespace SingleLayerOptics
         m_PVSample(t_SpectralSample)
     {}
 
-    CMaterialPhotovoltaic::CMaterialPhotovoltaic(
+    CMaterialPhotovoltaicSample::CMaterialPhotovoltaicSample(
       const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type,
@@ -654,7 +655,7 @@ namespace SingleLayerOptics
     {}
 
     FenestrationCommon::CSeries
-      CMaterialPhotovoltaic::jscPrime(FenestrationCommon::Side t_Side) const
+      CMaterialPhotovoltaicSample::jscPrime(FenestrationCommon::Side t_Side) const
     {
         return m_PVSample->jscPrime(t_Side);
     }

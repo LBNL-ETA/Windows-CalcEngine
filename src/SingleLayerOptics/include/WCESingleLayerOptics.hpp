@@ -23,7 +23,7 @@
 #include "../src/PerforatedCellDescription.hpp"
 #include "../src/ScatteringLayer.hpp"
 #include "../src/SpecularLayer.hpp"
-#include "../src/PhotovoltaicLayer.hpp"
+#include "../src/PhotovoltaicSpecularLayer.hpp"
 #include "../src/PhotovoltaicSpecularBSDFLayer.hpp"
 #include "../src/SpecularBSDFLayer.hpp"
 #include "../src/SpecularCell.hpp"
