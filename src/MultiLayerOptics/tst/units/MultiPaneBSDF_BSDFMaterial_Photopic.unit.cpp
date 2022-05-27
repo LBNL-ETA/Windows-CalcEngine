@@ -1320,13 +1320,15 @@ protected:
 
         auto Layer_BSDF = CBSDFLayerMaker::getPreLoadedBSDFLayer(aBSDFMaterial, aBSDF);
 
-        const auto numberOfVisibleBands{5u};
-        const auto numberOfIRBands{10u};
-        auto condensedSpectrum{
-          FenestrationCommon::generateSpectrum(numberOfVisibleBands, numberOfIRBands)};
+        //const auto numberOfVisibleBands{5u};
+        //const auto numberOfIRBands{10u};
+        //auto condensedSpectrum{
+        //  FenestrationCommon::generateSpectrum(numberOfVisibleBands, numberOfIRBands)};
+
+        const auto wlSpectrum = Layer_BSDF->getBandWavelengths();
 
         m_Layer = CMultiPaneBSDF::create(
-          {Layer_BSDF}, loadSolarRadiationFile(), getDetectorData(), condensedSpectrum);
+          {Layer_BSDF}, loadSolarRadiationFile(), getDetectorData(), wlSpectrum);
     }
 
 public:
