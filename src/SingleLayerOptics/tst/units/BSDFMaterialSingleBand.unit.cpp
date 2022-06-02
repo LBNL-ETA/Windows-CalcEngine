@@ -113,6 +113,7 @@ TEST_F(TestBSDFMaterialSingleBand, TestProperties)
     double propValue =
       m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection);
     std::vector<double> expectedBandProperties{propValue, propValue};
+    auto test{m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection)};
     EXPECT_EQ(
       m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection),
       expectedBandProperties);

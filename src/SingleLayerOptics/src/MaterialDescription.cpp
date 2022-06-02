@@ -761,6 +761,7 @@ namespace SingleLayerOptics
                                   FenestrationCommon::Side::Front)] = t_Rf;
         m_Property[std::make_pair(FenestrationCommon::Property::R,
                                   FenestrationCommon::Side::Back)] = t_Rb;
+        m_Wavelengths = calculateBandWavelengths();
     }
 
     CMaterialSingleBandBSDF::CMaterialSingleBandBSDF(std::vector<std::vector<double>> const & t_Tf,
@@ -783,6 +784,7 @@ namespace SingleLayerOptics
                                   FenestrationCommon::Side::Front)] = t_Rf;
         m_Property[std::make_pair(FenestrationCommon::Property::R,
                                   FenestrationCommon::Side::Back)] = t_Rb;
+        m_Wavelengths = calculateBandWavelengths();
     }
 
     double calcDirectHemispheric(std::vector<std::vector<double>> const & m,
@@ -839,7 +841,7 @@ namespace SingleLayerOptics
                                                  const CBeamDirection & t_OutgoingDirection) const
     {
         double value = getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
-        std::vector<double> bandProperties{value, value};
+        std::vector<double> bandProperties(m_Wavelengths.size(), value);
         return bandProperties;
     }
 
