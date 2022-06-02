@@ -839,7 +839,7 @@ namespace SingleLayerOptics
                                                  const CBeamDirection & t_OutgoingDirection) const
     {
         double value = getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
-        std::vector<double> bandProperties{value, value};
+        std::vector<double> bandProperties(m_Wavelengths.size(), value);
         return bandProperties;
     }
 

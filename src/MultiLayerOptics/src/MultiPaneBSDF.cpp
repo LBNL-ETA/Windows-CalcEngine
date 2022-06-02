@@ -169,7 +169,7 @@ namespace MultiLayerOptics
 
             for(CSeries & aSpectra : *m_IncomingSpectra)
             {
-                // each incoming spectra must be intepolated to same wavelengths as this IGU is
+                // each incoming spectra must be interpolated to same wavelengths as this IGU is
                 // using
                 aSpectra = aSpectra.interpolate(m_Layer.getCommonWavelengths());
 
