@@ -12,10 +12,8 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-// Example on how to create multilayer BSDF from specular layers only
-
-#include <fstream>
-
+// Example on predefined matrix input that contains single band data.
+// Case contains data from '46016 SEATEX Midnight.xml' visible range.
 
 class MultiPaneBSDF_BSDFMaterial_Photopic : public testing::Test
 {
@@ -817,16 +815,6 @@ protected:
 
         const auto aBSDFMaterial = Material::singleBandBSDFMaterial(
           tfVisible, tbVisible, rfVisible, rbVisible, aBSDF, WavelengthRange::Visible);
-        //const auto aBSDFMaterial = Material::dualBandBSDFMaterial(tfVisible,
-        //                                                          tbVisible,
-        //                                                          rfVisible,
-        //                                                          rbVisible,
-        //                                                          tfVisible,
-        //                                                          tbVisible,
-        //                                                          rfVisible,
-        //                                                          rbVisible,
-        //                                                          aBSDF,
-        //                                                          0.49);
 
         aBSDFMaterial->setBandWavelengths(fiveNMWavelenths());
 
