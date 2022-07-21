@@ -112,9 +112,9 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
     auto radiosity = aSystem->getRadiosities();
 
     std::vector<double> correctTemp = {
-      256.984067, 256.988250, 269.437058, 269.879893, 284.039251, 284.482085};
+      256.970848, 256.975002, 269.380302, 269.824078, 284.016847, 284.460623};
     std::vector<double> correctJ = {
-      246.160219, 254.398900, 291.700909, 310.191145, 359.624235, 380.773015};
+      246.117485, 254.320225, 291.476900, 309.960656, 359.489563, 380.678891};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
     EXPECT_EQ(correctJ.size(), radiosity.size());
@@ -126,8 +126,8 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(23, int(numOfIter));
+    EXPECT_EQ(22, int(numOfIter));
 
     const auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
-    EXPECT_NEAR(-23.934154, ventilatedFlow, 1e-6);
+    EXPECT_NEAR(-24.485268, ventilatedFlow, 1e-6);
 }

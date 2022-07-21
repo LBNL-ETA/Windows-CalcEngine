@@ -39,6 +39,10 @@ namespace Tarcog
 
             [[nodiscard]] bool isOpen() const;
 
+            //! If gap next to shade is tighter than the opening, that gap will be dominant compared
+            //! to the openning
+            void checkAndSetDominantWidth(double gapWidth);
+
         private:
             void initialize();
             double openingMultiplier();
@@ -71,6 +75,8 @@ namespace Tarcog
             bool isPermeable() const override;
 
         private:
+            void setDominanthAirflowWidth();
+
             void calculateConvectionOrConductionFlow() override;
 
             void calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
