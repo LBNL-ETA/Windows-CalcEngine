@@ -84,6 +84,14 @@ namespace Tarcog
             return m_Abot > 0 || m_Atop > 0 || m_Aleft > 0 || m_Aright > 0 || m_Afront > 0;
         }
 
+        void CShadeOpenings::checkAndSetDominantWidth(const double gapWidth)
+        {
+            m_Abot = std::min(gapWidth, m_Abot);
+            m_Atop = std::min(gapWidth, m_Atop);
+            m_Aleft = std::min(gapWidth, m_Aleft);
+            m_Aright = std::min(gapWidth, m_Aright);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////
         /// CIGUShadeLayer
         ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,8 +130,21 @@ namespace Tarcog
             return m_ShadeOpenings->isOpen();
         }
 
+        void CIGUShadeLayer::setDominanthAirflowWidth()
+        {
+            if(m_PreviousLayer != nullptr)
+            {
+                m_ShadeOpenings->checkAndSetDominantWidth(m_PreviousLayer->getThickness());
+            }
+            if(m_NextLayer != nullptr)
+            {
+                m_ShadeOpenings->checkAndSetDominantWidth(m_NextLayer->getThickness());
+            }
+        }
+
         void CIGUShadeLayer::calculateConvectionOrConductionFlow()
         {
+            setDominanthAirflowWidth();
             m_Conductivity =
               equivalentConductivity(m_MaterialConductivity, m_ShadeOpenings->frontPorositiy());
             CIGUSolidLayer::calculateConvectionOrConductionFlow();

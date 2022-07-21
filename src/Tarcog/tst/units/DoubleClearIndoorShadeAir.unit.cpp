@@ -112,9 +112,9 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
     const auto radiosity = aSystem.getRadiosities();
 
     std::vector<double> correctTemp = {
-      258.226548, 258.740345, 276.199456, 276.713252, 288.115819, 288.119712};
+      258.240219, 258.756303, 276.282652, 276.798736, 288.170470, 288.174332};
     std::vector<double> correctJ = {
-      250.206503, 264.568471, 319.491011, 340.451996, 382.649045, 397.036105};
+      250.251349, 264.677378, 319.842529, 340.847167, 382.961347, 397.285043};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
     EXPECT_EQ(correctJ.size(), radiosity.size());
@@ -130,5 +130,5 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
 
     // Tolerance inside the tarcog is set to 1e-5
     const auto ventilatedFlow = aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(40.068458, ventilatedFlow, 1e-5);
+    EXPECT_NEAR(40.879043, ventilatedFlow, 1e-5);
 }

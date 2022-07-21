@@ -40,7 +40,7 @@ namespace Tarcog
 
         double CBaseLayer::getThickness() const
         {
-            return 0;
+            return std::numeric_limits<double>::max();
         }
 
         bool CBaseLayer::isPermeable() const
