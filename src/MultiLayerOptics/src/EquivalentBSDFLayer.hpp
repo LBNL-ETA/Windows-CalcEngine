@@ -6,6 +6,7 @@
 #include <map>
 
 #include <WCECommon.hpp>
+#include <WCESingleLayerOptics.hpp>
 
 //#include "AbsorptancesMultiPaneBSDF.hpp"
 
@@ -21,7 +22,6 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class CBSDFLayer;
     class CBSDFIntegrator;
     enum class BSDFDirection;
     class CBSDFDirections;
@@ -36,8 +36,7 @@ namespace MultiLayerOptics
     class CEquivalentBSDFLayer
     {
     public:
-        CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths,
-                             const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
+        CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths);
 
         void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
         const SingleLayerOptics::CBSDFDirections &
@@ -93,7 +92,7 @@ namespace MultiLayerOptics
                  std::shared_ptr<FenestrationCommon::CMatrixSeries>>
           m_Tot;
 
-        const FenestrationCommon::SquareMatrix m_Lambda;
+        FenestrationCommon::SquareMatrix m_Lambda;
 
         std::vector<double> m_CombinedLayerWavelengths;
         bool m_Calculated;

@@ -25,7 +25,7 @@ namespace MultiLayerOptics
       const FenestrationCommon::CSeries & t_SolarRadiation,
       const FenestrationCommon::CSeries & t_DetectorData,
       const std::vector<double> & t_CommonWavelengths) :
-        m_Layer(t_CommonWavelengths, t_Layer[0]),
+        m_Layer(t_CommonWavelengths),
         m_Results(
           std::make_shared<CBSDFIntegrator>(t_Layer[0]->getDirections(BSDFDirection::Incoming))),
         m_Calculated(false),
@@ -41,7 +41,7 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const FenestrationCommon::CSeries & t_SolarRadiation,
       const std::vector<double> & t_CommonWavelengths) :
-        m_Layer(t_CommonWavelengths, t_Layer[0]),
+        m_Layer(t_CommonWavelengths),
         m_Results(
           std::make_shared<CBSDFIntegrator>(t_Layer[0]->getDirections(BSDFDirection::Incoming))),
         m_Calculated(false),
@@ -86,7 +86,7 @@ namespace MultiLayerOptics
         }
 
         // First layer has already been added. Must skip it here
-        for(size_t j = 1u; j < t_Layer.size(); ++j)
+        for(size_t j = 0u; j < t_Layer.size(); ++j)
         {
             this->addLayer(t_Layer[j]);
         }

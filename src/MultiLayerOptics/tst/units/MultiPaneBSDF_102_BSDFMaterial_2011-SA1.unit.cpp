@@ -1342,7 +1342,7 @@ protected:
 
         //aMaterial_102->setBandWavelengths(condensedSpectrum);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
         //auto tfSolar = TransmittanceFrontSolar();
         //auto tbSolar = TransmittanceBackSolar();
         //auto rfSolar = ReflectanceFrontSolar();

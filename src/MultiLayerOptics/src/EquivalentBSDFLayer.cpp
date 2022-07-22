@@ -5,7 +5,6 @@
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
@@ -13,22 +12,18 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths,
-                                               const std::shared_ptr<CBSDFLayer> & t_Layer) :
-        m_Lambda(t_Layer->getResults()->lambdaMatrix()),
+    CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
         m_CombinedLayerWavelengths(t_CommonWavelengths),
         m_Calculated(false)
-    {
-        if(t_Layer == nullptr)
-        {
-            throw std::runtime_error("Equivalent BSDF Layer must contain valid layer.");
-        }
-
-        addLayer(t_Layer);
-    }
+    {}
 
     void CEquivalentBSDFLayer::addLayer(const std::shared_ptr<CBSDFLayer> & t_Layer)
     {
+        t_Layer->setBandWavelengths(m_CombinedLayerWavelengths);
+        if(m_Layer.empty())
+        {
+            m_Lambda = t_Layer->getResults()->lambdaMatrix();
+        }
         updateWavelengthLayers(*t_Layer);
         m_Layer.push_back(t_Layer);
     }
