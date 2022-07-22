@@ -120,7 +120,6 @@ private:
 protected:
     virtual void SetUp()
     {
-        CSeries test({{1, 2}, {3, 4}});
         // Create material from samples
         double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
