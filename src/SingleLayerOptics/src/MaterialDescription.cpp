@@ -114,7 +114,7 @@ namespace SingleLayerOptics
 
         double minRangeLambda = t_PartialRange->getMinLambda();
 
-        if(minRangeLambda > 0.32)
+        if(minRangeLambda > 0.3)
         {
             std::shared_ptr<CMaterialSingleBandBSDF> aMaterial =
               std::make_shared<CMaterialSingleBandBSDF>(Tf_nir,
@@ -122,7 +122,7 @@ namespace SingleLayerOptics
                                                         Rf_nir,
                                                         Rb_nir,
                                                         t_PartialRange->getHemisphere(),
-                                                        0.32,
+                                                        0.3,
                                                         minRangeLambda);
             materials.push_back(aMaterial);
         }
@@ -378,7 +378,7 @@ namespace SingleLayerOptics
         m_MaterialFullRange->setSourceData(t_SourceData);
         m_MaterialPartialRange->setSourceData(t_SourceData);
         checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
-        createUVRange();
+        //createUVRange();
         //double lowLambda = m_MaterialPartialRange->getMinLambda();
         //double highLambda = m_MaterialPartialRange->getMaxLambda();
         //CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
@@ -432,14 +432,14 @@ namespace SingleLayerOptics
         return aWavelengths;
     }
 
-    void IMaterialDualBand::checkIfMaterialWithingSolarRange(const CMaterial & t_Material) const
+    void IMaterialDualBand::checkIfMaterialWithingSolarRange(const CMaterial & t_Material)
     {
         const double lowLambda = t_Material.getMinLambda();
         const double highLambda = t_Material.getMaxLambda();
-        if(lowLambda < 0.32 || highLambda < 0.32 || lowLambda > 2.5 || highLambda > 2.5)
+        if(lowLambda < 0.3 || highLambda < 0.3 || lowLambda > 2.5 || highLambda > 2.5)
         {
             throw std::runtime_error("Material properties out of range. Wavelength range must be "
-                                     "between 0.32 and 2.5 microns.");
+                                     "between 0.3 and 2.5 microns.");
         }
     }
 
@@ -484,7 +484,7 @@ namespace SingleLayerOptics
             return;
         }
         checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
-        createUVRange();
+        //createUVRange();
         createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, t_Ratio);
 
         if(!m_WavelengthsCalculated)
@@ -521,7 +521,7 @@ namespace SingleLayerOptics
         if(m_MaterialFullRange != nullptr && m_MaterialPartialRange != nullptr)
         {
             result.emplace_back(m_MaterialFullRange->getMinLambda());
-            result.emplace_back(0.32);
+            //result.emplace_back(0.32);
             result.emplace_back(m_MaterialPartialRange->getMinLambda());
             result.emplace_back(m_MaterialPartialRange->getMaxLambda());
             result.emplace_back(m_MaterialFullRange->getMaxLambda());

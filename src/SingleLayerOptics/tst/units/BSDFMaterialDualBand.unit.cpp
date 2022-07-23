@@ -31,7 +31,7 @@ public:
 	std::vector<std::vector<double>> loadTfVis()
 	{
 		std::vector<std::vector<double>> data{
-		  {2.033760, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174},
+		  {1.033760, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174},
 		  {0.022223, 0.022223, 0.022223, 0.022223, 0.022223, 0.022223, 0.022223},
 		  {0.022223, 0.022223, 0.022223, 0.022223, 0.022223, 0.022223, 0.022223},
 		  {0.022461, 0.022461, 0.022461, 0.022461, 0.022461, 0.022461, 0.022461},
@@ -118,19 +118,24 @@ TEST_F(TestBSDFMaterialDualBand, TestProperties)
 
 	// Test to make sure an off-normal incoming and outgoing angle produce the same result
 	// as the value returned by the CMaterialSingleBandBSDF that represents the full range
-	double incomingTheta = 37;
-	double incomingPhi = 76;
-	double outgoingTheta = 62;
-	double outgoingPhi = 23;
+	double incomingTheta = 0;
+	double incomingPhi = 0;
+	double outgoingTheta = 0;
+	double outgoingPhi = 0;
 	CBeamDirection incomingDirection(incomingTheta, incomingPhi);
 	CBeamDirection outgoingDirection(outgoingTheta, outgoingPhi);
 	EXPECT_EQ(
 		m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection),
 		m_MaterialSol->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection));
 
+        const auto wavelengths{m_Material->getBandWavelengths()};
+        const std::vector<double> correctWavelengths{0.3, 0.38, 0.78};
+        EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
+        EXPECT_EQ(wavelengths, correctWavelengths);
+
 	// Test to make sure getBandProperties returns the correctly scaled values
 	// for each of the calculated wavelength bands.
 	auto bandProperties = m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection);
-	std::vector<double> expectedBandProperties{0, 0.012749736954558742, 0.012749736954558742, 0.012749736954558742, 0.012749736954558742};
+	std::vector<double> expectedBandProperties{0.120559, 0.041619, 0.120559};
 	EXPECT_EQ(bandProperties, expectedBandProperties);
 }

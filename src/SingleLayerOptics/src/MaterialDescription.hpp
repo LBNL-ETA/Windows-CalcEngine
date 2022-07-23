@@ -238,7 +238,7 @@ namespace SingleLayerOptics
     protected:
         std::vector<double> calculateBandWavelengths() override;
         // Checks if material is within valid range. Otherwise, algorithm is not valid.
-        void checkIfMaterialWithingSolarRange(const CMaterial & t_Material) const;
+        static void checkIfMaterialWithingSolarRange(const CMaterial & t_Material) ;
         void createUVRange();
 
         // Creates after UV range and stores data into m_Materials
