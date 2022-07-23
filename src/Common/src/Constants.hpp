@@ -17,4 +17,7 @@ namespace ConstantsData
     static const double wavelengthErrorTolerance = 1e-6;
     static const double ELECTRON_CHARGE = 1.502e-19;
     static const double EOGHeight = 0.0635;   // meters
+
+    //! Default ratio used in scaling of dual band materials.
+    static const double NIRRatio = 0.49;
 }   // namespace ConstantsData

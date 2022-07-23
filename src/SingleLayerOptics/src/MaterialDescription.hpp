@@ -45,8 +45,6 @@ namespace SingleLayerOptics
         std::map<FenestrationCommon::Side, std::shared_ptr<CSurface>> m_Surface;
     };
 
-    static double NIRRatio = 0.49;
-
     //////////////////////////////////////////////////////////////////////////////////////////
     ///   CMaterial
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -213,12 +211,9 @@ namespace SingleLayerOptics
     class IMaterialDualBand : public CMaterial
     {
     public:
-        // ratio is calculated outside of the class and can be provided here.
-        // TODO: Need to confirm with the team if we actually need this approach
-        // (ratio should be calculated and not quessed)
         IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_FullRange,
-                          double t_Ratio = NIRRatio);
+                          double t_Ratio = ConstantsData::NIRRatio);
 
         // ratio is calculated based on provided solar radiation values
         IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -257,14 +252,14 @@ namespace SingleLayerOptics
         // Creates all of the required ranges in m_Materials from solar radiation
         void createRangesFromSolarRadiation(const FenestrationCommon::CSeries & t_SolarRadiation);
 
-        std::vector<double> getWavelengthsFromMaterials() const;
+        [[nodiscard]] std::vector<double> getWavelengthsFromMaterials() const;
 
         // Properties over the rest of range will depend on partial range as well.
         // We do want to keep correct properties of partial range, but will want to update
         // properties for other partial ranges that are not provided by the user.
         // double getModifiedProperty(double t_Range, double t_Solar, double t_Fraction) const;
 
-        std::shared_ptr<CMaterial> getMaterialFromWavelegth(double wavelength) const;
+        [[nodiscard]] std::shared_ptr<CMaterial> getMaterialFromWavelegth(double wavelength) const;
 
         std::shared_ptr<CMaterial> m_MaterialFullRange;
         std::shared_ptr<CMaterial> m_MaterialPartialRange;
@@ -282,7 +277,7 @@ namespace SingleLayerOptics
         // (ratio should be calculated and not quessed)
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
                           const std::shared_ptr<CMaterial> & t_FullRange,
-                          double t_Ratio = NIRRatio);
+                          double t_Ratio = ConstantsData::NIRRatio);
 
         // ratio is calculated based on provided solar radiation values
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -312,7 +307,7 @@ namespace SingleLayerOptics
         // (ratio should be calculated and not quessed)
         CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
                               const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
-                              double t_Ratio = NIRRatio);
+                              double t_Ratio = ConstantsData::NIRRatio);
 
         // ratio is calculated based on provided solar radiation values
         CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,

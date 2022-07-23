@@ -350,7 +350,7 @@ namespace SingleLayerOptics
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    ////   CMaterialDualBand
+    ////   IMaterialDualBand
     ////////////////////////////////////////////////////////////////////////////////////
 
     IMaterialDualBand::IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -382,7 +382,7 @@ namespace SingleLayerOptics
         //double lowLambda = m_MaterialPartialRange->getMinLambda();
         //double highLambda = m_MaterialPartialRange->getMaxLambda();
         //CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
-        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
+        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, ConstantsData::NIRRatio);
     }
 
     void IMaterialDualBand::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
@@ -506,7 +506,7 @@ namespace SingleLayerOptics
         //const double highLambda = m_MaterialPartialRange->getMaxLambda();
         // For now we have decided to use hard NIR ratio and not calculate it from the solar radiation.
         // CNIRRatio nirRatio = CNIRRatio(t_SolarRadiation, lowLambda, highLambda);
-        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
+        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, ConstantsData::NIRRatio);
         if(!m_WavelengthsCalculated)
         {
             m_Wavelengths = getWavelengthsFromMaterials();
