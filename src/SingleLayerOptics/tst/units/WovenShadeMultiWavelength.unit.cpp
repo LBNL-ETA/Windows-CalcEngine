@@ -57,7 +57,17 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
       aLayer->getWavelengthResults();
 
-    size_t correctSize = 3;
+    const auto wavelengths{aLayer->getBandWavelengths()};
+    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
+
+    EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
+
+    for(size_t i =0u; i < correctWavelengths.size(); ++i)
+    {
+        EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
+    }
+
+    size_t correctSize = correctWavelengths.size();
 
     EXPECT_EQ(correctSize, aResults->size());
 
@@ -167,6 +177,44 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
 
     // Front reflectance
     aRf = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::R);
+
+    correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
+                      0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,
+                      0.14151,  0.142351, 0.14151,  0.143861, 0.148459, 0.143861, 0.14151,
+                      0.145716, 0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.145716,
+                      0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.217877, 0.241636,
+                      0.217877, 0.241636, 0.217877, 0.241636, 0.217877, 0.241636};
+
+    EXPECT_EQ(correctResults.size(), aRf.size());
+    for(size_t i = 0; i < size; ++i)
+    {
+        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    //  Wavelength number 4
+    ///////////////////////////////////////////////////////////////////////
+
+    aT = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::T);
+
+    // Test only diagonal of transmittance matrix
+    size = aT.size();
+
+    correctResults = {5.786283, 6.076508, 6.075762, 6.060038, 6.075762, 6.076508, 6.075762,
+                      6.060038, 6.075762, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355,
+                      5.132581, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355, 5.132581,
+                      3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 3.786365,
+                      3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 0.03677,  0.013011,
+                      0.03677,  0.013011, 0.03677,  0.013011, 0.03677,  0.013011};
+
+    EXPECT_EQ(correctResults.size(), aT.size());
+    for(size_t i = 0; i < size; ++i)
+    {
+        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-5);
+    }
+
+    // Front reflectance
+    aRf = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
                       0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,

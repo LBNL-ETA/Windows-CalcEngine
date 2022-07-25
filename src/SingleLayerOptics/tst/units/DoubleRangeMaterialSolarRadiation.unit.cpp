@@ -92,7 +92,7 @@ TEST_F(TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties)
     EXPECT_NEAR(0.7, R, 1e-6);
 
     const auto wavelengths{aMaterial->getBandWavelengths()};
-    const std::vector<double> correctWavelengths{0.3, 0.38, 0.78};
+    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
 
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
 

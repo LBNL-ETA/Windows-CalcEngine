@@ -148,7 +148,9 @@ TEST_F(TestBSDFMaterialDualBand, TestProperties)
     // for each of the calculated wavelength bands.
     auto bandProperties =
       m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection);
-    std::vector<double> expectedBandProperties{0.121977, 0.0416186, 0.121977};
+    std::vector<double> expectedBandProperties{0.121977, 0.0416186, 0.121977, 0.121977};
+
+    EXPECT_EQ(bandProperties.size(), expectedBandProperties.size());
     for(size_t i = 0u; i < expectedBandProperties.size(); ++i)
     {
         EXPECT_NEAR(expectedBandProperties[i], bandProperties[i], 1e-6);
