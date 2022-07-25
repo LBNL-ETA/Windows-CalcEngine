@@ -75,10 +75,10 @@ namespace SingleLayerOptics
 
         double minRangeLambda = t_PartialRange->getMinLambda();
 
-        if(minRangeLambda > 0.32)
+        if(minRangeLambda > 0.3)
         {
             std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(
-              Tf_nir, Tb_nir, Rf_nir, Rb_nir, 0.32, minRangeLambda);
+              Tf_nir, Tb_nir, Rf_nir, Rb_nir, 0.3, minRangeLambda);
             materials.push_back(aMaterial);
         }
 
@@ -427,7 +427,7 @@ namespace SingleLayerOptics
             aWavelengths.push_back(m_Materials[i]->getMinLambda());
         }
 
-        // aWavelengths.push_back(m_Materials.back()->getMaxLambda());
+        aWavelengths.push_back(m_Materials.back()->getMaxLambda());
 
         return aWavelengths;
     }
@@ -501,7 +501,7 @@ namespace SingleLayerOptics
             return;
         }
         checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
-        createUVRange();
+        //createUVRange();
         //const double lowLambda = m_MaterialPartialRange->getMinLambda();
         //const double highLambda = m_MaterialPartialRange->getMaxLambda();
         // For now we have decided to use hard NIR ratio and not calculate it from the solar radiation.
@@ -521,7 +521,6 @@ namespace SingleLayerOptics
         if(m_MaterialFullRange != nullptr && m_MaterialPartialRange != nullptr)
         {
             result.emplace_back(m_MaterialFullRange->getMinLambda());
-            //result.emplace_back(0.32);
             result.emplace_back(m_MaterialPartialRange->getMinLambda());
             result.emplace_back(m_MaterialPartialRange->getMaxLambda());
             result.emplace_back(m_MaterialFullRange->getMaxLambda());

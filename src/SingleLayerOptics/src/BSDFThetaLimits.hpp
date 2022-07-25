@@ -11,11 +11,11 @@ namespace SingleLayerOptics
     public:
         explicit CThetaLimits(const std::vector<double> & t_ThetaAngles);
 
-        std::shared_ptr<std::vector<double>> getThetaLimits() const;
+        std::vector<double> getThetaLimits() const;
 
     private:
         void createLimits(const std::vector<double> & t_ThetaAngles);
-        std::shared_ptr<std::vector<double>> m_ThetaLimits;
+        std::vector<double> m_ThetaLimits;
     };
 
 }   // namespace SingleLayerOptics

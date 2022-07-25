@@ -18,6 +18,13 @@ namespace ConstantsData
     static const double ELECTRON_CHARGE = 1.502e-19;
     static const double EOGHeight = 0.0635;   // meters
 
-    //! Default ratio used in scaling of dual band materials.
-    static const double NIRRatio = 0.49;
+    //! Default ratio used in scaling of the materials that are defined only with solar and visible
+    //! range.
+    static const double NIRRatio = 0.499;
+
+    //! This is used in conjuntion with materials that are defined with solar and visible range
+    //! only. Since that material at the wavelength of 0.78 needs to return visible properties, this
+    //! will be used to create small offset from the end of the visible range to make sure that
+    //! visible properties are returned in that case.
+    static const double VisibleRangeOffset = 2 * wavelengthErrorTolerance;
 }   // namespace ConstantsData

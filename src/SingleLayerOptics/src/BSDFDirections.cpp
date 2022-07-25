@@ -47,7 +47,7 @@ namespace SingleLayerOptics
         }
 
         CThetaLimits ThetaLimits(thetaAngles);
-        std::vector<double> thetaLimits = *ThetaLimits.getThetaLimits();
+        const auto thetaLimits{ThetaLimits.getThetaLimits()};
 
         double lowerTheta = thetaLimits[0];
         for(size_t i = 1; i < thetaLimits.size(); ++i)
