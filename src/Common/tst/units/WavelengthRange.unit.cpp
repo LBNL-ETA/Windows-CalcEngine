@@ -40,7 +40,7 @@ TEST_F(WavelengthRangeTest, Test3)
     CWavelengthRange aRange = CWavelengthRange(WavelengthRange::Visible);
 
     EXPECT_NEAR(0.38, aRange.minLambda(), 1e-6);
-    EXPECT_NEAR(0.78, aRange.maxLambda(), 1e-6);
+    EXPECT_NEAR(0.780002, aRange.maxLambda(), 1e-6);
 }
 
 TEST_F(WavelengthRangeTest, TestCondensedSpectrum)
@@ -74,7 +74,7 @@ TEST_F(WavelengthRangeTest, TestCondensedSpectrum)
     EXPECT_EQ(condensendSpectrum.size(), correctSpectrum.size());
     for(size_t i = 0u; i < condensendSpectrum.size(); ++i)
     {
-        EXPECT_NEAR(condensendSpectrum[i], correctSpectrum[i], 1e-6);
+        EXPECT_NEAR(condensendSpectrum[i], correctSpectrum[i], 1e-5);
     }
 }
 

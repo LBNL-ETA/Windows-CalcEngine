@@ -6,11 +6,11 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
+// Example of predefined XML layer
 
-using namespace SingleLayerOptics;
-using namespace FenestrationCommon;
-using namespace SpectralAveraging;
-using namespace MultiLayerOptics;
+using MultiLayerOptics::CMultiPaneBSDF;
+using FenestrationCommon::CSeries;
+using SpectralAveraging::CSpectralSampleData;
 
 class MultiPaneBSDF_102_BSDFMaterial_2011_SA1 : public testing::Test
 {
@@ -1330,6 +1330,10 @@ return {
 protected:
     virtual void SetUp()
     {
+        using FenestrationCommon::MaterialType;
+        using FenestrationCommon::WavelengthRange;
+        using SingleLayerOptics::CBSDFHemisphere;
+
         const auto numberOfVisibleBands{5u};
         const auto numberOfIRBands{10u};
         auto condensedSpectrum{
@@ -1342,7 +1346,7 @@ protected:
 
         aMaterial_102->setBandWavelengths(condensedSpectrum);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = CBSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Full);
         auto tfSolar = TransmittanceFrontSolar();
         auto tbSolar = TransmittanceBackSolar();
         auto rfSolar = ReflectanceFrontSolar();
@@ -1353,7 +1357,7 @@ protected:
         auto rbVisible = ReflectanceBackVisible();
 
         auto nirRatio{0.499};
-        const auto aBSDFMaterial = Material::dualBandBSDFMaterial(tfSolar,
+        const auto aBSDFMaterial = SingleLayerOptics::Material::dualBandBSDFMaterial(tfSolar,
                                                                   tbSolar,
                                                                   rfSolar,
                                                                   rbSolar,
@@ -1366,9 +1370,8 @@ protected:
 
         aBSDFMaterial->setBandWavelengths(condensedSpectrum);
 
-        auto Layer_Glass = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
-        Layer_Glass->setBandWavelengths(condensedSpectrum);
-        auto Layer_BSDF = CBSDFLayerMaker::getPreLoadedBSDFLayer(aBSDFMaterial, aBSDF);
+        auto Layer_Glass = SingleLayerOptics::CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
+        auto Layer_BSDF = SingleLayerOptics::CBSDFLayerMaker::getPreLoadedBSDFLayer(aBSDFMaterial, aBSDF);
 
         m_Layer = CMultiPaneBSDF::create({Layer_Glass, Layer_BSDF}, loadSolarRadiationFile());
     }
@@ -1383,6 +1386,10 @@ public:
 
 TEST_F(MultiPaneBSDF_102_BSDFMaterial_2011_SA1, TestBSDFMatrixAsInput)
 {
+    using FenestrationCommon::Side;
+    using FenestrationCommon::PropertySimple;
+    using FenestrationCommon::ScatteringSimple;
+
     SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
 
     const double minLambda = 0.3;
@@ -1394,20 +1401,30 @@ TEST_F(MultiPaneBSDF_102_BSDFMaterial_2011_SA1, TestBSDFMatrixAsInput)
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.103154, tauHem, 1e-6);
+    EXPECT_NEAR(0.104287, tauHem, 1e-6);
 
-    //double rhoFrontHem =
-    //  aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    //EXPECT_NEAR(0.40537985378849184, rhoFrontHem, 1e-6);
-    //
-    //double rhoBackHem =
-    //  aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
-    //EXPECT_NEAR(0.52845227432122244, rhoBackHem, 1e-6);
-    //
-    //double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    //EXPECT_NEAR(0.11614336750923809, abs1, 1e-6);
-    //
-    //auto absHeat1 = aLayer.getAbsorptanceLayersHeat(
-    //  minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
-    //EXPECT_NEAR(0.12486670301018926, absHeat1[0], 1e-6);
+    double rhoFrontHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+    EXPECT_NEAR(0.405182, rhoFrontHem, 1e-6);
+
+    double rhoBackHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
+    EXPECT_NEAR(0.527871, rhoBackHem, 1e-6);
+
+    double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
+    EXPECT_NEAR(0.116106, abs1, 1e-6);
+
+    double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
+    EXPECT_NEAR(0.374426, abs2, 1e-6);
+
+    auto absHeatDirect = aLayer.getAbsorptanceLayersHeat(
+      minLambda, maxLambda, Side::Front, ScatteringSimple::Direct, 0, 0);
+    EXPECT_NEAR(0.116106, absHeatDirect[0], 1e-6);
+    EXPECT_NEAR(0.374426, absHeatDirect[1], 1e-6);
+
+    auto absHeatDiffuse = aLayer.getAbsorptanceLayersHeat(
+      minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
+    EXPECT_NEAR(0.124832, absHeatDiffuse[0], 1e-6);
+    EXPECT_NEAR(0.313837, absHeatDiffuse[1], 1e-6);
+
 }
