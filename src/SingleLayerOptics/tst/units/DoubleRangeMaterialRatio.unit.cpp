@@ -52,34 +52,24 @@ TEST_F(TestDoubleRangeMaterialRatio, TestMaterialProperties)
     EXPECT_NEAR(0.7, R, 1e-6);
 
     // Properties at four wavelengths should have been created
-    size_t size = 5;
+    size_t size = 4;
 
-    std::vector<double> Transmittances = aMaterial->getBandProperties(Property::T, Side::Front);
+    const auto Transmittances = aMaterial->getBandProperties(Property::T, Side::Front);
 
     EXPECT_EQ(size, Transmittances.size());
 
-    std::vector<double> correctResults;
-    correctResults.push_back(0);
-    correctResults.push_back(0.0039215686274509838);
-    correctResults.push_back(0.2);
-    correctResults.push_back(0.0039215686274509838);
-    correctResults.push_back(0.0039215686274509838);
+    std::vector<double> correctResults{0.000399, 0.2, 0.000399, 0.000399};
 
     for(size_t i = 0; i < size; ++i)
     {
         EXPECT_NEAR(correctResults[i], Transmittances[i], 1e-6);
     }
 
-    std::vector<double> Reflectances = aMaterial->getBandProperties(Property::R, Side::Front);
+    const auto Reflectances = aMaterial->getBandProperties(Property::R, Side::Front);
 
     EXPECT_EQ(size, Reflectances.size());
 
-    correctResults.clear();
-    correctResults.push_back(0);
-    correctResults.push_back(0.79607843137254897);
-    correctResults.push_back(0.6);
-    correctResults.push_back(0.79607843137254897);
-    correctResults.push_back(0.79607843137254897);
+    correctResults = {0.799601, 0.6, 0.799601, 0.799601};
 
     for(size_t i = 0; i < size; ++i)
     {

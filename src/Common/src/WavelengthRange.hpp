@@ -25,8 +25,8 @@ namespace FenestrationCommon
     {
     public:
         explicit CWavelengthRange(const WavelengthRange t_Range);
-        double minLambda() const;
-        double maxLambda() const;
+        [[nodiscard]] double minLambda() const;
+        [[nodiscard]] double maxLambda() const;
 
     private:
         void setWavelengthRange(const WavelengthRange t_Range);
@@ -35,7 +35,7 @@ namespace FenestrationCommon
         const std::map<WavelengthRange, WavelengthRangeData> m_WavelengthRange{
           {WavelengthRange::IR, {5.0, 100.0}},
           {WavelengthRange::Solar, {0.3, 2.5}},
-          {WavelengthRange::Visible, {0.38, 0.78}}};
+          {WavelengthRange::Visible, {0.38, 0.78 + ConstantsData::VisibleRangeOffset}}};
     };   // namespace FenestrationCommon
 
 }   // namespace FenestrationCommon

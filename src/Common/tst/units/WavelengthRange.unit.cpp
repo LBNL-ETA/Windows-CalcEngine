@@ -40,7 +40,7 @@ TEST_F(WavelengthRangeTest, Test3)
     CWavelengthRange aRange = CWavelengthRange(WavelengthRange::Visible);
 
     EXPECT_NEAR(0.38, aRange.minLambda(), 1e-6);
-    EXPECT_NEAR(0.78, aRange.maxLambda(), 1e-6);
+    EXPECT_NEAR(0.780002, aRange.maxLambda(), 1e-6);
 }
 
 TEST_F(WavelengthRangeTest, TestCondensedSpectrum)
@@ -53,28 +53,28 @@ TEST_F(WavelengthRangeTest, TestCondensedSpectrum)
     const auto condensendSpectrum =
       FenestrationCommon::generateSpectrum(numOfVisibleBands, numOfIRBands);
 
-    std::vector<double> correctSpectrum{0.3,
-                                        0.38,
-                                        0.46,
-                                        0.54,
-                                        0.62,
-                                        0.7,
-                                        0.78,
-                                        0.952,
-                                        1.124,
-                                        1.296,
-                                        1.468,
-                                        1.64,
-                                        1.812,
-                                        1.984,
-                                        2.156,
-                                        2.328,
-                                        2.5};
+    const std::vector<double> correctSpectrum{0.3,
+                                              0.38,
+                                              0.46,
+                                              0.54,
+                                              0.62,
+                                              0.7,
+                                              0.78,
+                                              0.952,
+                                              1.124,
+                                              1.296,
+                                              1.468,
+                                              1.64,
+                                              1.812,
+                                              1.984,
+                                              2.156,
+                                              2.328,
+                                              2.5};
 
     EXPECT_EQ(condensendSpectrum.size(), correctSpectrum.size());
     for(size_t i = 0u; i < condensendSpectrum.size(); ++i)
     {
-        EXPECT_NEAR(condensendSpectrum[i], correctSpectrum[i], 1e-6);
+        EXPECT_NEAR(condensendSpectrum[i], correctSpectrum[i], 1e-5);
     }
 }
 

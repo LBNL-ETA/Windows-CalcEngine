@@ -33,7 +33,7 @@ TEST_F(TestBSDFThetaLimtisQuarterBasis, TestQuarterBasis)
 
     const auto aLimits = GetLimits();
 
-    std::vector<double> results = *(aLimits.getThetaLimits());
+    const auto results{aLimits.getThetaLimits()};
 
     std::vector<double> correctResults{0, 9, 27, 45, 63, 90};
     EXPECT_EQ(results.size(), correctResults.size());

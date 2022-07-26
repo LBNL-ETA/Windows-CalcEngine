@@ -7,12 +7,14 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
+using SingleLayerOptics::CBSDFHemisphere;
+using SingleLayerOptics::BSDFBasis;
+using SingleLayerOptics::CMaterialSingleBandBSDF;
+using SingleLayerOptics::CMaterialDualBandBSDF;
+using SingleLayerOptics::BSDFDirection;
+using SingleLayerOptics::CBeamDirection;
 
-using namespace SingleLayerOptics;
-using namespace FenestrationCommon;
-using namespace SpectralAveraging;
-
-class TestBSDFMaterialDualBand : public testing::Test
+class TestBSDFMaterialDualBandCondensedRange : public testing::Test
 {
 public:
     CBSDFHemisphere m_Hemisphere{CBSDFHemisphere::create(BSDFBasis::Small)};
@@ -28,7 +30,28 @@ public:
     std::vector<std::vector<double>> m_RfSol;
     std::vector<std::vector<double>> m_RbSol;
 
-    std::vector<std::vector<double>> loadTfVis()
+    static std::vector<double> condensedSpectrum()
+    {
+        return {0.3,
+                0.38,
+                0.46,
+                0.54,
+                0.62,
+                0.7,
+                0.78,
+                0.952,
+                1.124,
+                1.296,
+                1.468,
+                1.64,
+                1.812,
+                1.984,
+                2.156,
+                2.328,
+                2.5};
+    }
+
+    static std::vector<std::vector<double>> loadTfVis()
     {
         std::vector<std::vector<double>> data{
           {1.033760, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174},
@@ -42,7 +65,7 @@ public:
         return data;
     }
 
-    std::vector<std::vector<double>> loadRfVis()
+    static std::vector<std::vector<double>> loadRfVis()
     {
         std::vector<std::vector<double>> data{
           {0.148154, 0.148805, 0.148805, 0.148805, 0.148805, 0.148805, 0.148805},
@@ -56,7 +79,7 @@ public:
         return data;
     }
 
-    std::vector<std::vector<double>> loadTfSol()
+    static std::vector<std::vector<double>> loadTfSol()
     {
         std::vector<std::vector<double>> data{
           {2.033760, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174, 0.022174},
@@ -70,7 +93,7 @@ public:
         return data;
     }
 
-    std::vector<std::vector<double>> loadRfSol()
+    static std::vector<std::vector<double>> loadRfSol()
     {
         std::vector<std::vector<double>> data{
           {0.148154, 0.148805, 0.148805, 0.148805, 0.148805, 0.148805, 0.148805},
@@ -111,12 +134,17 @@ protected:
                                                     m_Hemisphere,
                                                     FenestrationCommon::WavelengthRange::Solar);
         m_Material = std::make_shared<CMaterialDualBandBSDF>(m_MaterialVis, m_MaterialSol);
+
+        m_Material->setBandWavelengths(condensedSpectrum());
     }
 };
 
-TEST_F(TestBSDFMaterialDualBand, TestProperties)
+TEST_F(TestBSDFMaterialDualBandCondensedRange, TestProperties)
 {
     SCOPED_TRACE("Begin Test: Properties for a single band BSDF material.");
+
+    using FenestrationCommon::Property;
+    using FenestrationCommon::Side;
 
     auto incomingDirections = m_Hemisphere.getDirections(BSDFDirection::Incoming);
     auto outgoingDirections = m_Hemisphere.getDirections(BSDFDirection::Outgoing);
@@ -140,15 +168,50 @@ TEST_F(TestBSDFMaterialDualBand, TestProperties)
       m_MaterialSol->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection));
 
     const auto wavelengths{m_Material->getBandWavelengths()};
-    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
+    const std::vector<double> correctWavelengths{0.3,
+                                                 0.38,
+                                                 0.46,
+                                                 0.54,
+                                                 0.62,
+                                                 0.7,
+                                                 0.78,
+                                                 0.952,
+                                                 1.124,
+                                                 1.296,
+                                                 1.468,
+                                                 1.64,
+                                                 1.812,
+                                                 1.984,
+                                                 2.156,
+                                                 2.328,
+                                                 2.5};
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
-    EXPECT_EQ(wavelengths, correctWavelengths);
+    for(size_t i = 0u; i < correctWavelengths.size(); ++i)
+    {
+        EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
+    }
 
     // Test to make sure getBandProperties returns the correctly scaled values
     // for each of the calculated wavelength bands.
     auto bandProperties =
       m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection);
-    std::vector<double> expectedBandProperties{0.121977, 0.0416186, 0.121977, 0.121977};
+    std::vector<double> expectedBandProperties{0.121977,
+                                               0.0416186,
+                                               0.0416186,
+                                               0.0416186,
+                                               0.0416186,
+                                               0.0416186,
+                                               0.0416186,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977,
+                                               0.121977};
 
     EXPECT_EQ(bandProperties.size(), expectedBandProperties.size());
     for(size_t i = 0u; i < expectedBandProperties.size(); ++i)
