@@ -64,10 +64,9 @@ TEST_F(TestBSDFQuarterBasis, TestQuarterBasisThetas)
     EXPECT_EQ(correctSize, aDirections.size());
 
     std::vector<double> thetaAngles;
-    std::vector<CBSDFPatch>::iterator it;
-    for(it = aDirections.begin(); it < aDirections.end(); ++it)
+    for(const auto & direction: aDirections)
     {
-        thetaAngles.push_back((*it).centerPoint().theta());
+        thetaAngles.push_back(direction.centerPoint().theta());
     }
 
     for(size_t i = 0; i < thetaAngles.size(); ++i)

@@ -50,21 +50,12 @@ namespace SingleLayerOptics
         const auto thetaLimits{ThetaLimits.getThetaLimits()};
 
         double lowerTheta = thetaLimits[0];
-        for(size_t i = 1; i < thetaLimits.size(); ++i)
+        for(size_t thetaIndex = 1; thetaIndex < thetaLimits.size(); ++thetaIndex)
         {
-            double upperTheta = thetaLimits[i];
-            std::shared_ptr<CAngleLimits> currentTheta = nullptr;
-            if(i == 1)
-            {
-                currentTheta = std::make_shared<CCentralAngleLimits>(upperTheta);
-            }
-            else
-            {
-                currentTheta = std::make_shared<CAngleLimits>(lowerTheta, upperTheta);
-            }
+            double upperTheta = thetaLimits[thetaIndex];
+            const auto currentThetaLimits = createAngleLimits(lowerTheta, upperTheta, thetaIndex);
 
-
-            const auto nPhis = numPhiAngles[i - 1];
+            const auto nPhis = numPhiAngles[thetaIndex - 1];
             CPhiLimits phiAngles(nPhis);
             auto phiLimits = phiAngles.getPhiLimits();
             double lowerPhi = phiLimits[0];
@@ -79,9 +70,9 @@ namespace SingleLayerOptics
                 {
                     upperPhi += 180;
                 }
-                CAngleLimits currentPhi(lowerPhi, upperPhi);
-                CBSDFPatch currentPatch(currentTheta, currentPhi);
-                m_Patches.push_back(currentPatch);
+                AngleLimits currentPhiLimits(lowerPhi, upperPhi);
+                CBSDFPatch currentPatch(currentThetaLimits, currentPhiLimits);
+                m_Patches.emplace_back(currentThetaLimits, currentPhiLimits);
                 lowerPhi = upperPhi;
             }
             lowerTheta = upperTheta;
@@ -141,6 +132,12 @@ namespace SingleLayerOptics
 
         size_t index = size_t(std::distance(m_Patches.begin(), it));
         return index;
+    }
+
+    AngleLimits
+      CBSDFDirections::createAngleLimits(double lowerAngle, double upperAngle, size_t patchIndex)
+    {
+        return patchIndex == 1 ? AngleLimits(upperAngle) : AngleLimits(lowerAngle, upperAngle);
     }
 
     /////////////////////////////////////////////////////////////////

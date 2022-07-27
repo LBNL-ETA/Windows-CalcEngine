@@ -49,6 +49,9 @@ namespace SingleLayerOptics
         std::vector<CBSDFPatch> m_Patches;
         std::vector<double> m_LambdaVector;
         FenestrationCommon::SquareMatrix m_LambdaMatrix;
+
+        //! Function that will create angle limits based on patch index.
+        AngleLimits createAngleLimits(double lowerAngle, double upperAngle, size_t patchIndex);
     };
 
     enum class BSDFBasis
