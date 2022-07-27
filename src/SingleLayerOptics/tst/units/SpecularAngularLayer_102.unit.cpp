@@ -678,7 +678,7 @@ TEST_F(TestSpecularAngularLayer_102, TestSpecular1)
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    CBSDFIntegrator aResults = aLayer->getResults();
+    BSDFIntegrator aResults = aLayer->getResults();
 
     double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.64541405979702648, tauDiff, 1e-6);

@@ -26,8 +26,8 @@ namespace MultiLayerOptics
     //  CBSDFDoubleLayer
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    CBSDFDoubleLayer::CBSDFDoubleLayer(const CBSDFIntegrator & t_FrontLayer,
-                                       const CBSDFIntegrator & t_BackLayer)
+    CBSDFDoubleLayer::CBSDFDoubleLayer(const BSDFIntegrator & t_FrontLayer,
+                                       const BSDFIntegrator & t_BackLayer)
     {
         const SquareMatrix aLambda = t_FrontLayer.lambdaMatrix();
         const auto InterRefl1 = interReflectance(aLambda,
@@ -59,12 +59,12 @@ namespace MultiLayerOptics
                            InterRefl1,
                            aLambda);
 
-        m_Results = CBSDFIntegrator(t_FrontLayer);
+        m_Results = BSDFIntegrator(t_FrontLayer);
         m_Results.setMatrices(m_Tf, m_Rf, Side::Front);
         m_Results.setMatrices(m_Tb, m_Rb, Side::Back);
     }
 
-    CBSDFIntegrator CBSDFDoubleLayer::value() const
+    BSDFIntegrator CBSDFDoubleLayer::value() const
     {
         return m_Results;
     }
@@ -99,7 +99,7 @@ namespace MultiLayerOptics
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand(
-      const CBSDFIntegrator & t_Layer,
+      const BSDFIntegrator & t_Layer,
       const std::vector<double> & jscPrimeFront,
       const std::vector<double> & jscPrimeBack) :
         m_PropertiesCalculated(false)
@@ -122,7 +122,7 @@ namespace MultiLayerOptics
             m_JSCPrime[Side::Back].emplace_back(
               std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
-        m_EquivalentLayer = CBSDFIntegrator(t_Layer);
+        m_EquivalentLayer = BSDFIntegrator(t_Layer);
         for(Side aSide : EnumSide())
         {
             m_A[aSide] = std::vector<std::vector<double>>();
@@ -163,7 +163,7 @@ namespace MultiLayerOptics
         return m_Layers.size();
     }
 
-    void CEquivalentBSDFLayerSingleBand::addLayer(const CBSDFIntegrator & t_Layer,
+    void CEquivalentBSDFLayerSingleBand::addLayer(const BSDFIntegrator & t_Layer,
                                                   const std::vector<double> & jcsFront,
                                                   const std::vector<double> & jcsBack)
     {
@@ -205,7 +205,7 @@ namespace MultiLayerOptics
         }
         m_Backward.push_back(m_EquivalentLayer);
 
-        CBSDFIntegrator bLayer = m_Layers[numberOfLayers - 1];
+        BSDFIntegrator bLayer = m_Layers[numberOfLayers - 1];
         for(size_t i = numberOfLayers - 1; i > 1; --i)
         {
             bLayer = CBSDFDoubleLayer(m_Layers[i - 1], bLayer).value();
@@ -233,8 +233,8 @@ namespace MultiLayerOptics
             }
             else
             {
-                CBSDFIntegrator & Layer1 = m_Forward[i];
-                CBSDFIntegrator & Layer2 = m_Backward[i + 1];
+                BSDFIntegrator & Layer1 = m_Forward[i];
+                BSDFIntegrator & Layer2 = m_Backward[i + 1];
                 const auto InterRefl2{interReflectance(m_Lambda,
                                                        Layer2.at(Side::Front, PropertySimple::R),
                                                        Layer1.at(Side::Back, PropertySimple::R))};
@@ -257,8 +257,8 @@ namespace MultiLayerOptics
             }
             else
             {
-                CBSDFIntegrator & Layer1 = m_Forward[i - 1];
-                CBSDFIntegrator & Layer2 = m_Backward[i];
+                BSDFIntegrator & Layer1 = m_Forward[i - 1];
+                BSDFIntegrator & Layer2 = m_Backward[i];
                 const auto InterRefl1{interReflectance(m_Lambda,
                                                        Layer1.at(Side::Back, PropertySimple::R),
                                                        Layer2.at(Side::Front, PropertySimple::R))};

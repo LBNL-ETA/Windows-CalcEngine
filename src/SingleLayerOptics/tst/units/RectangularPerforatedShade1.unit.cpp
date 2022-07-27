@@ -51,7 +51,7 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    CBSDFIntegrator aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.041876313, tauDiff, 1e-6);

@@ -278,7 +278,7 @@ namespace MultiLayerOptics
         std::vector<FenestrationCommon::CSeries> m_IncomingSpectra;
         std::vector<double> m_IncomingSolar;
 
-        SingleLayerOptics::CBSDFIntegrator m_Results;
+        SingleLayerOptics::BSDFIntegrator m_Results;
 
         // Absorptances of every layer and every incoming direction in BSDF integrated over given
         // range

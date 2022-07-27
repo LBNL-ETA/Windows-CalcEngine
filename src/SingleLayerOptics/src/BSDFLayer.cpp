@@ -35,7 +35,7 @@ namespace SingleLayerOptics
         return m_BSDFHemisphere.getDirections(t_Side);
     }
 
-    CBSDFIntegrator CBSDFLayer::getResults()
+    BSDFIntegrator CBSDFLayer::getResults()
     {
         if(!m_Calculated)
         {
@@ -45,7 +45,7 @@ namespace SingleLayerOptics
         return m_Results;
     }
 
-    std::vector<CBSDFIntegrator> CBSDFLayer::getWavelengthResults()
+    std::vector<BSDFIntegrator> CBSDFLayer::getWavelengthResults()
     {
         if(!m_CalculatedWV)
         {
@@ -108,9 +108,8 @@ namespace SingleLayerOptics
                 size_t numWV = aTau.size();
                 for(size_t j = 0; j < numWV; ++j)
                 {
-                    CBSDFIntegrator & aResults = m_WVResults[j];
-                    auto & tau = aResults.getMatrix(aSide, PropertySimple::T);
-                    auto & rho = aResults.getMatrix(aSide, PropertySimple::R);
+                    auto & tau = m_WVResults[j].getMatrix(aSide, PropertySimple::T);
+                    auto & rho = m_WVResults[j].getMatrix(aSide, PropertySimple::R);
                     tau(i, i) += aTau[j] / Lambda;
                     rho(i, i) += aRho[j] / Lambda;
                 }
@@ -150,6 +149,7 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::fillWLResultsFromMaterialCell()
     {
+        m_WVResults.clear();
         size_t size = m_Cell->getBandSize();
         for(size_t i = 0; i < size; ++i)
         {

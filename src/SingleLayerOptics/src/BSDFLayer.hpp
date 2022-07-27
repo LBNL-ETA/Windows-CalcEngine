@@ -36,12 +36,12 @@ namespace SingleLayerOptics
         void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
         // BSDF results for the enire spectrum range of the material in the cell
-        CBSDFIntegrator getResults();
+        BSDFIntegrator getResults();
 
         const CBSDFDirections & getDirections(BSDFDirection t_Side) const;
 
         // BSDF results for each wavelenght given in specular cell
-        std::vector<CBSDFIntegrator> getWavelengthResults();
+        std::vector<BSDFIntegrator> getWavelengthResults();
 
         int getBandIndex(double t_Wavelength);
 
@@ -77,9 +77,9 @@ namespace SingleLayerOptics
 
         const CBSDFHemisphere m_BSDFHemisphere;
         std::shared_ptr<CBaseCell> m_Cell;
-        CBSDFIntegrator m_Results;
+        BSDFIntegrator m_Results;
         // Results over each wavelength
-        std::vector<CBSDFIntegrator> m_WVResults;
+        std::vector<BSDFIntegrator> m_WVResults;
 
     private:
         void calc_dir_dir();

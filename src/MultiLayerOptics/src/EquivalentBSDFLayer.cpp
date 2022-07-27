@@ -163,7 +163,7 @@ namespace MultiLayerOptics
             const auto index = t_Layer.getBandIndex(curWL);
             assert(index > -1);
 
-            const CBSDFIntegrator currentLayer = aResults[static_cast<size_t>(index)];
+            const BSDFIntegrator currentLayer = aResults[static_cast<size_t>(index)];
 
             if(m_LayersWL.size() <= i)
             {

@@ -63,7 +63,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5, TestVenetian1)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    CBSDFIntegrator aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.38194085830991792, tauDiff, 1e-6);

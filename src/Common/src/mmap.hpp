@@ -1,5 +1,4 @@
-#ifndef TUPLEASMAPKEY_VARIADICMAP_H
-#define TUPLEASMAPKEY_VARIADICMAP_H
+#pragma once
 
 #include <map>
 
@@ -10,8 +9,7 @@ namespace FenestrationCommon
     class mmap
     {
     public:
-        mmap()
-        {}
+        mmap() = default;
 
         T & operator()(const Values... a)
         {
@@ -28,6 +26,3 @@ namespace FenestrationCommon
     };
 
 }   // namespace FenestrationCommon
-
-
-#endif   // TUPLEASMAPKEY_VARIADICMAP_H

@@ -298,8 +298,8 @@ protected:
         auto aShade =
           CBSDFLayerMaker::getCircularPerforatedLayer(perfMaterial, aBSDF, x, y, thickness, radius);
 
-        CBSDFIntegrator aLayer1 = aLayer102->getResults();
-        CBSDFIntegrator aLayer2 = aShade->getResults();
+        BSDFIntegrator aLayer1 = aLayer102->getResults();
+        BSDFIntegrator aLayer2 = aShade->getResults();
 
         m_DoubleLayer = std::make_shared<CBSDFDoubleLayer>(aLayer1, aLayer2);
     }
@@ -315,7 +315,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
 {
     SCOPED_TRACE("Begin Test: Double Layer BSDF.");
 
-    CBSDFIntegrator aLayer = getDoubleLayer()->value();
+    BSDFIntegrator aLayer = getDoubleLayer()->value();
 
     // Front transmittance
     auto Tf = aLayer.getMatrix(Side::Front, PropertySimple::T);

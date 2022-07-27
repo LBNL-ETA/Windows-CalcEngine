@@ -56,7 +56,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::vector<CBSDFIntegrator> aResults = aLayer->getWavelengthResults();
+    std::vector<BSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
     size_t correctSize = 5;
 

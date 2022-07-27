@@ -43,7 +43,7 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    CBSDFIntegrator aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
     double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.000000000, tauDiff, 1e-6);

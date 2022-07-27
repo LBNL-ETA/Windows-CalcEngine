@@ -67,7 +67,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::vector<CBSDFIntegrator> aResults = aLayer->getWavelengthResults();
+    std::vector<BSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
     const auto wavelengths{aLayer->getBandWavelengths()};
     const std::vector<double> correctWavelengths{0.3, 0.38, 0.780001, 2.5};

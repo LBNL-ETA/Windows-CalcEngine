@@ -58,7 +58,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::vector<CBSDFIntegrator> aResults = aLayer->getWavelengthResults();
+    std::vector<BSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
     const auto wavelengths{aLayer->getBandWavelengths()};
     const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
