@@ -15,7 +15,7 @@ private:
 
 
 public:
-    const CBSDFDirections & GetDirections(const BSDFDirection t_Side) const
+    const BSDFDirections & GetDirections(const BSDFDirection t_Side) const
     {
         return m_BSDFHemisphere.getDirections(t_Side);
     };

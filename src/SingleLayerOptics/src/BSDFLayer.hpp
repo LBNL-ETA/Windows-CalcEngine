@@ -24,7 +24,7 @@ namespace SingleLayerOptics
     enum class BSDFDirection;
     class CBaseCell;
     class CBeamDirection;
-    class CBSDFDirections;
+    class BSDFDirections;
 
     // Base class for handling BSDF Layer
     class CBSDFLayer
@@ -38,7 +38,7 @@ namespace SingleLayerOptics
         // BSDF results for the enire spectrum range of the material in the cell
         BSDFIntegrator getResults();
 
-        const CBSDFDirections & getDirections(BSDFDirection t_Side) const;
+        const BSDFDirections & getDirections(BSDFDirection t_Side) const;
 
         // BSDF results for each wavelenght given in specular cell
         std::vector<BSDFIntegrator> getWavelengthResults();

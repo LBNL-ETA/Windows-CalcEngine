@@ -28,7 +28,7 @@ namespace MultiLayerOptics
         m_Layer.push_back(t_Layer);
     }
 
-    const CBSDFDirections & CEquivalentBSDFLayer::getDirections(const BSDFDirection t_Side) const
+    const BSDFDirections & CEquivalentBSDFLayer::getDirections(const BSDFDirection t_Side) const
     {
         return m_Layer[0]->getDirections(t_Side);
     }

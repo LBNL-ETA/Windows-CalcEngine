@@ -62,7 +62,7 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        const CBSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
+        const BSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
         size_t size = oDirections.size();
 

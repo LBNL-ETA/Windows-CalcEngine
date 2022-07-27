@@ -24,7 +24,7 @@ namespace SingleLayerOptics
     public:
         BSDFIntegrator() = default;
         BSDFIntegrator(const BSDFIntegrator & t_Integrator) = default;
-        BSDFIntegrator(const CBSDFDirections & t_Directions);
+        BSDFIntegrator(const BSDFDirections & t_Directions);
 
         // Result matrices
         FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
@@ -59,7 +59,7 @@ namespace SingleLayerOptics
         [[nodiscard]] double Abs(FenestrationCommon::Side t_Side, double t_Theta, double t_Phi);
         [[nodiscard]] double Abs(FenestrationCommon::Side t_Side, size_t Index);
 
-        // std::shared_ptr< const CBSDFDirections > getDirections() const;
+        // std::shared_ptr< const BSDFDirections > getDirections() const;
 
         [[nodiscard]] double DiffDiff(FenestrationCommon::Side t_Side,
                                       FenestrationCommon::PropertySimple t_Property);
@@ -73,7 +73,7 @@ namespace SingleLayerOptics
         [[nodiscard]] size_t getNearestBeamIndex(double t_Theta, double t_Phi) const;
 
     protected:
-        CBSDFDirections m_Directions;
+        BSDFDirections m_Directions;
         size_t m_DimMatrices;
 
     private:

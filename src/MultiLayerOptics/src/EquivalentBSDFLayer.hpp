@@ -23,7 +23,7 @@ namespace FenestrationCommon
 namespace SingleLayerOptics
 {
     enum class BSDFDirection;
-    class CBSDFDirections;
+    class BSDFDirections;
 
 }   // namespace SingleLayerOptics
 
@@ -38,7 +38,7 @@ namespace MultiLayerOptics
         CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths);
 
         void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
-        const SingleLayerOptics::CBSDFDirections &
+        const SingleLayerOptics::BSDFDirections &
           getDirections(SingleLayerOptics::BSDFDirection t_Side) const;
         std::vector<double> getCommonWavelengths() const;
         double getMinLambda() const;

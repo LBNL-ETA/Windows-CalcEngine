@@ -30,7 +30,7 @@ namespace SingleLayerOptics
         m_CalculatedWV = false;
     }
 
-    const CBSDFDirections & CBSDFLayer::getDirections(const BSDFDirection t_Side) const
+    const BSDFDirections & CBSDFLayer::getDirections(const BSDFDirection t_Side) const
     {
         return m_BSDFHemisphere.getDirections(t_Side);
     }
@@ -74,7 +74,7 @@ namespace SingleLayerOptics
     {
         for(Side t_Side : EnumSide())
         {
-            CBSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
+            BSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
             size_t size = aDirections.size();
             SquareMatrix tau{size};
             SquareMatrix rho{size};

@@ -7,7 +7,7 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    BSDFIntegrator::BSDFIntegrator(const CBSDFDirections & t_Directions) :
+    BSDFIntegrator::BSDFIntegrator(const BSDFDirections & t_Directions) :
         m_Directions(t_Directions),
         m_DimMatrices(m_Directions.size()),
         m_HemisphericalCalculated(false),

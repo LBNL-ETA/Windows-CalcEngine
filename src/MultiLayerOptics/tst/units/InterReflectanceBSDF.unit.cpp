@@ -9,7 +9,7 @@
 using FenestrationCommon::SquareMatrix;
 using SingleLayerOptics::CBSDFDefinition;
 using SingleLayerOptics::BSDFDirection;
-using SingleLayerOptics::CBSDFDirections;
+using SingleLayerOptics::BSDFDirections;
 
 // Example that tests interreflectance between two adjacent layers. This procedure will be used to
 // calculate other multilayer properties
@@ -31,7 +31,7 @@ protected:
         aDefinitions.emplace_back(75, 1);
         aDefinitions.emplace_back(86.25, 1);
 
-        const auto aDirections{CBSDFDirections(aDefinitions, BSDFDirection::Incoming)};
+        const auto aDirections{BSDFDirections(aDefinitions, BSDFDirection::Incoming)};
         const auto aLambdas{aDirections.lambdaMatrix()};
 
         SquareMatrix Rb{{1.438618083, 0, 0, 0, 0, 0, 0},
