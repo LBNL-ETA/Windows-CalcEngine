@@ -22,7 +22,7 @@ namespace MultiLayerOptics
         t_Layer->setBandWavelengths(m_CombinedLayerWavelengths);
         if(m_Layer.empty())
         {
-            m_Lambda = t_Layer->getResults()->lambdaMatrix();
+            m_Lambda = t_Layer->getResults().lambdaMatrix();
         }
         updateWavelengthLayers(*t_Layer);
         m_Layer.push_back(t_Layer);
@@ -163,8 +163,7 @@ namespace MultiLayerOptics
             const auto index = t_Layer.getBandIndex(curWL);
             assert(index > -1);
 
-            const std::shared_ptr<CBSDFIntegrator> currentLayer =
-              (*aResults)[static_cast<size_t>(index)];
+            const CBSDFIntegrator currentLayer = aResults[static_cast<size_t>(index)];
 
             if(m_LayersWL.size() <= i)
             {

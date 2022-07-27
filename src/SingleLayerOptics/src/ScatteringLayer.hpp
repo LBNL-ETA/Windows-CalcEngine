@@ -8,12 +8,12 @@
 #include "IScatteringLayer.hpp"
 #include "OpticalSurface.hpp"
 #include "WCECommon.hpp"
+#include "BSDFIntegrator.hpp"
 
 namespace SingleLayerOptics
 {
     class CLayerSingleComponent;
     class CMaterial;
-    class CBSDFIntegrator;
     class CBSDFLayer;
     class ICellDescription;
 

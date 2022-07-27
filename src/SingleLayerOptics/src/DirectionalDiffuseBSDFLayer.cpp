@@ -34,8 +34,8 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        auto & tau = m_Results->getMatrix(aSide, PropertySimple::T);
-        auto & Rho = m_Results->getMatrix(aSide, PropertySimple::R);
+        auto & tau = m_Results.getMatrix(aSide, PropertySimple::T);
+        auto & Rho = m_Results.getMatrix(aSide, PropertySimple::R);
 
         const auto & jDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
@@ -77,11 +77,8 @@ namespace SingleLayerOptics
             const size_t numWV = aTau.size();
             for(size_t j = 0; j < numWV; ++j)
             {
-                std::shared_ptr<CBSDFIntegrator> aResults = nullptr;
-                aResults = (*m_WVResults)[j];
-                assert(aResults != nullptr);
-                auto & tau = aResults->getMatrix(aSide, PropertySimple::T);
-                auto & rho = aResults->getMatrix(aSide, PropertySimple::R);
+                auto & tau = m_WVResults[j].getMatrix(aSide, PropertySimple::T);
+                auto & rho = m_WVResults[j].getMatrix(aSide, PropertySimple::R);
                 tau(outgoingDirectionIndex, incomingDirectionIndex) +=
                   aTau[j] * diffuseDistributionScalar(outgoingDirectionIndex);
                 rho(outgoingDirectionIndex, incomingDirectionIndex) +=

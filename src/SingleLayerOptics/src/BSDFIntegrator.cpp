@@ -7,11 +7,11 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CBSDFIntegrator::CBSDFIntegrator(const std::shared_ptr<const CBSDFIntegrator> & t_Integrator) :
-        m_Directions(t_Integrator->m_Directions),
+    CBSDFIntegrator::CBSDFIntegrator(const CBSDFIntegrator & t_Integrator) :
+        m_Directions(t_Integrator.m_Directions),
         m_DimMatrices(m_Directions.size()),
-        m_HemisphericalCalculated(false),
-        m_DiffuseDiffuseCalculated(false)
+        m_HemisphericalCalculated(t_Integrator.m_HemisphericalCalculated),
+        m_DiffuseDiffuseCalculated(t_Integrator.m_DiffuseDiffuseCalculated)
     {
         for(auto t_Side : EnumSide())
         {
@@ -45,7 +45,7 @@ namespace SingleLayerOptics
         return m_MapDiffDiff.at(t_Side, t_Property);
     }
 
-    SquareMatrix & CBSDFIntegrator::getMatrix(const Side t_Side, const PropertySimple t_Property)
+    SquareMatrix CBSDFIntegrator::getMatrix(const Side t_Side, const PropertySimple t_Property)
     {
         return m_Matrix[std::make_pair(t_Side, t_Property)];
     }
@@ -57,7 +57,7 @@ namespace SingleLayerOptics
         return m_Matrix.at(std::make_pair(t_Side, t_Property));
     }
 
-    void CBSDFIntegrator::setResultMatrices(const SquareMatrix & t_Tau,
+    void CBSDFIntegrator::setMatrices(const SquareMatrix & t_Tau,
                                             const SquareMatrix & t_Rho,
                                             Side t_Side)
     {

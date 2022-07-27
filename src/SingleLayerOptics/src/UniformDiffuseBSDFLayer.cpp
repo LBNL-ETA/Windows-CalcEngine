@@ -32,8 +32,8 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
 
-        auto & Tau = m_Results->getMatrix(aSide, PropertySimple::T);
-        auto & Rho = m_Results->getMatrix(aSide, PropertySimple::R);
+        auto & Tau = m_Results.getMatrix(aSide, PropertySimple::T);
+        auto & Rho = m_Results.getMatrix(aSide, PropertySimple::R);
 
         double aTau = aCell->T_dir_dif(aSide, t_Direction);
         double Ref = aCell->R_dir_dif(aSide, t_Direction);
@@ -69,11 +69,8 @@ namespace SingleLayerOptics
             {
                 using ConstantsData::WCE_PI;
 
-                std::shared_ptr<CBSDFIntegrator> aResults = nullptr;
-                aResults = (*m_WVResults)[j];
-                assert(aResults != nullptr);
-                auto & tau = aResults->getMatrix(aSide, PropertySimple::T);
-                auto & rho = aResults->getMatrix(aSide, PropertySimple::R);
+                auto & tau = m_WVResults[j].getMatrix(aSide, PropertySimple::T);
+                auto & rho = m_WVResults[j].getMatrix(aSide, PropertySimple::R);
                 tau(i, t_DirectionIndex) += aTau[j] / WCE_PI;
                 rho(i, t_DirectionIndex) += Ref[j] / WCE_PI;
             }

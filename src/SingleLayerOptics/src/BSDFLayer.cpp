@@ -13,12 +13,14 @@ namespace SingleLayerOptics
 {
     CBSDFLayer::CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                            const CBSDFHemisphere & t_Hemisphere) :
-        m_BSDFHemisphere(t_Hemisphere), m_Cell(t_Cell), m_Calculated(false), m_CalculatedWV(false)
+        m_BSDFHemisphere(t_Hemisphere),
+        m_Results(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)),
+        m_Cell(t_Cell),
+        m_Calculated(false),
+        m_CalculatedWV(false)
     {
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
-        m_Results = std::make_shared<CBSDFIntegrator>(
-          m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
     }
 
     void CBSDFLayer::setSourceData(CSeries & t_SourceData)
@@ -33,7 +35,7 @@ namespace SingleLayerOptics
         return m_BSDFHemisphere.getDirections(t_Side);
     }
 
-    std::shared_ptr<CBSDFIntegrator> CBSDFLayer::getResults()
+    CBSDFIntegrator CBSDFLayer::getResults()
     {
         if(!m_Calculated)
         {
@@ -43,7 +45,7 @@ namespace SingleLayerOptics
         return m_Results;
     }
 
-    std::shared_ptr<BSDF_Results> CBSDFLayer::getWavelengthResults()
+    std::vector<CBSDFIntegrator> CBSDFLayer::getWavelengthResults()
     {
         if(!m_CalculatedWV)
         {
@@ -87,7 +89,7 @@ namespace SingleLayerOptics
                 tau(i, i) += aTau / Lambda;
                 rho(i, i) += aRho / Lambda;
             }
-            m_Results->setResultMatrices(tau, rho, t_Side);
+            m_Results.setMatrices(tau, rho, t_Side);
         }
     }
 
@@ -106,7 +108,7 @@ namespace SingleLayerOptics
                 size_t numWV = aTau.size();
                 for(size_t j = 0; j < numWV; ++j)
                 {
-                    CBSDFIntegrator & aResults = *(*m_WVResults)[j];
+                    CBSDFIntegrator & aResults = m_WVResults[j];
                     auto & tau = aResults.getMatrix(aSide, PropertySimple::T);
                     auto & rho = aResults.getMatrix(aSide, PropertySimple::R);
                     tau(i, i) += aTau[j] / Lambda;
@@ -148,13 +150,10 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::fillWLResultsFromMaterialCell()
     {
-        m_WVResults = std::make_shared<std::vector<std::shared_ptr<CBSDFIntegrator>>>();
         size_t size = m_Cell->getBandSize();
         for(size_t i = 0; i < size; ++i)
         {
-            std::shared_ptr<CBSDFIntegrator> aResults = std::make_shared<CBSDFIntegrator>(
-              m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
-            m_WVResults->push_back(aResults);
+            m_WVResults.emplace_back(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
         }
     }
 

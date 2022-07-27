@@ -286,8 +286,8 @@ protected:
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);
 
-        CBSDFIntegrator aLayer1 = *aLayer102->getResults();
-        CBSDFIntegrator aLayer2 = *aLayer102->getResults();
+        CBSDFIntegrator aLayer1 = aLayer102->getResults();
+        CBSDFIntegrator aLayer2 = aLayer102->getResults();
 
         m_DoubleLayer = std::make_shared<CBSDFDoubleLayer>(aLayer1, aLayer2);
     }

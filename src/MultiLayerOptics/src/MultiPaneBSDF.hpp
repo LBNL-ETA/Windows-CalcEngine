@@ -20,16 +20,9 @@ namespace FenestrationCommon
 
 }   // namespace FenestrationCommon
 
-namespace SingleLayerOptics
-{
-    class CBSDFIntegrator;
-}
-
 namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayer;
-
-    typedef std::shared_ptr<std::vector<FenestrationCommon::CSeries>> p_VectorSeries;
 
     class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer
     {
@@ -277,15 +270,15 @@ namespace MultiLayerOptics
 
         double integrateBSDFAbsorptance(const std::vector<double> & lambda, const std::vector<double> & absorptance);
 
-        CEquivalentBSDFLayer m_Layer;
+        CEquivalentBSDFLayer m_EquivalentLayer;
 
         // Solar radiation for initialization
         FenestrationCommon::CSeries m_SolarRadiationInit;
 
-        p_VectorSeries m_IncomingSpectra;
+        std::vector<FenestrationCommon::CSeries> m_IncomingSpectra;
         std::vector<double> m_IncomingSolar;
 
-        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_Results;
+        SingleLayerOptics::CBSDFIntegrator m_Results;
 
         // Absorptances of every layer and every incoming direction in BSDF integrated over given
         // range

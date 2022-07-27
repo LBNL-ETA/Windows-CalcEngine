@@ -60,8 +60,8 @@ namespace MultiLayerOptics
                            aLambda);
 
         m_Results = std::make_shared<CBSDFIntegrator>(t_FrontLayer);
-        m_Results->setResultMatrices(m_Tf, m_Rf, Side::Front);
-        m_Results->setResultMatrices(m_Tb, m_Rb, Side::Back);
+        m_Results->setMatrices(m_Tf, m_Rf, Side::Front);
+        m_Results->setMatrices(m_Tb, m_Rb, Side::Back);
     }
 
     std::shared_ptr<CBSDFIntegrator> CBSDFDoubleLayer::value() const
@@ -99,7 +99,7 @@ namespace MultiLayerOptics
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     CEquivalentBSDFLayerSingleBand::CEquivalentBSDFLayerSingleBand(
-      const std::shared_ptr<CBSDFIntegrator> & t_Layer,
+      const CBSDFIntegrator & t_Layer,
       const std::vector<double> & jscPrimeFront,
       const std::vector<double> & jscPrimeBack) :
         m_PropertiesCalculated(false)
@@ -111,7 +111,7 @@ namespace MultiLayerOptics
         else
         {
             m_JSCPrime[Side::Front].emplace_back(
-              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+              std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
         if(!jscPrimeBack.empty())
         {
@@ -120,23 +120,23 @@ namespace MultiLayerOptics
         else
         {
             m_JSCPrime[Side::Back].emplace_back(
-              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+              std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
-        m_EquivalentLayer = std::make_shared<CBSDFIntegrator>(t_Layer);
+        m_EquivalentLayer = CBSDFIntegrator(t_Layer);
         for(Side aSide : EnumSide())
         {
             m_A[aSide] = std::vector<std::vector<double>>();
             m_JSC[aSide] = std::vector<std::vector<double>>();
         }
         m_Layers.push_back(t_Layer);
-        m_Lambda = t_Layer->lambdaMatrix();
+        m_Lambda = t_Layer.lambdaMatrix();
     }
 
     SquareMatrix CEquivalentBSDFLayerSingleBand::getMatrix(const Side t_Side,
                                                            const PropertySimple t_Property)
     {
         calcEquivalentProperties();
-        return m_EquivalentLayer->getMatrix(t_Side, t_Property);
+        return m_EquivalentLayer.getMatrix(t_Side, t_Property);
     }
 
     SquareMatrix CEquivalentBSDFLayerSingleBand::getProperty(const Side t_Side,
@@ -163,7 +163,7 @@ namespace MultiLayerOptics
         return m_Layers.size();
     }
 
-    void CEquivalentBSDFLayerSingleBand::addLayer(const std::shared_ptr<CBSDFIntegrator> & t_Layer,
+    void CEquivalentBSDFLayerSingleBand::addLayer(const CBSDFIntegrator & t_Layer,
                                                   const std::vector<double> & jcsFront,
                                                   const std::vector<double> & jcsBack)
     {
@@ -175,7 +175,7 @@ namespace MultiLayerOptics
         else
         {
             m_JSCPrime[Side::Front].emplace_back(
-              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+              std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
         if(!jcsBack.empty())
         {
@@ -184,7 +184,7 @@ namespace MultiLayerOptics
         else
         {
             m_JSCPrime[Side::Back].emplace_back(
-              std::vector<double>(t_Layer->lambdaVector().size(), 0));
+              std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
         m_PropertiesCalculated = false;
         for(Side aSide : EnumSide())
@@ -200,15 +200,15 @@ namespace MultiLayerOptics
         m_Forward.push_back(m_EquivalentLayer);
         for(size_t i = 1; i < numberOfLayers; ++i)
         {
-            m_EquivalentLayer = CBSDFDoubleLayer(*m_EquivalentLayer, *m_Layers[i]).value();
+            m_EquivalentLayer = CBSDFDoubleLayer(m_EquivalentLayer, m_Layers[i]).value();
             m_Forward.push_back(m_EquivalentLayer);
         }
         m_Backward.push_back(m_EquivalentLayer);
 
-        std::shared_ptr<CBSDFIntegrator> bLayer = m_Layers[numberOfLayers - 1];
+        CBSDFIntegrator bLayer = m_Layers[numberOfLayers - 1];
         for(size_t i = numberOfLayers - 1; i > 1; --i)
         {
-            bLayer = CBSDFDoubleLayer(*m_Layers[i - 1], *bLayer).value();
+            bLayer = CBSDFDoubleLayer(m_Layers[i - 1], bLayer).value();
             m_Backward.push_back(bLayer);
         }
         m_Backward.push_back(m_Layers[numberOfLayers - 1]);
@@ -233,8 +233,8 @@ namespace MultiLayerOptics
             }
             else
             {
-                CBSDFIntegrator & Layer1 = *m_Forward[i];
-                CBSDFIntegrator & Layer2 = *m_Backward[i + 1];
+                CBSDFIntegrator & Layer1 = m_Forward[i];
+                CBSDFIntegrator & Layer2 = m_Backward[i + 1];
                 const auto InterRefl2{interReflectance(m_Lambda,
                                                        Layer2.at(Side::Front, PropertySimple::R),
                                                        Layer1.at(Side::Back, PropertySimple::R))};
@@ -257,8 +257,8 @@ namespace MultiLayerOptics
             }
             else
             {
-                CBSDFIntegrator & Layer1 = *m_Forward[i - 1];
-                CBSDFIntegrator & Layer2 = *m_Backward[i];
+                CBSDFIntegrator & Layer1 = m_Forward[i - 1];
+                CBSDFIntegrator & Layer2 = m_Backward[i];
                 const auto InterRefl1{interReflectance(m_Lambda,
                                                        Layer1.at(Side::Back, PropertySimple::R),
                                                        Layer2.at(Side::Front, PropertySimple::R))};
@@ -279,8 +279,8 @@ namespace MultiLayerOptics
         {
             for(Side aSide : EnumSide())
             {
-                auto AbsFront{m_Layers[i]->Abs(aSide)};
-                auto AbsBack{m_Layers[i]->Abs(oppositeSide(aSide))};
+                auto AbsFront{m_Layers[i].Abs(aSide)};
+                auto AbsBack{m_Layers[i].Abs(oppositeSide(aSide))};
                 auto aEnergyFlow{aSide == Side::Front ? EnergyFlow::Forward : EnergyFlow::Backward};
                 auto absorbedFront{AbsFront * m_Iminus.at(aEnergyFlow)[i]};
                 auto absorbedBack{AbsBack * m_Iplus.at(aEnergyFlow)[i]};

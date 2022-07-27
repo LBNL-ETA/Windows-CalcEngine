@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "BSDFDirections.hpp"
+#include "BSDFIntegrator.hpp"
 
 namespace FenestrationCommon
 {
@@ -22,11 +23,8 @@ namespace SingleLayerOptics
 {
     enum class BSDFDirection;
     class CBaseCell;
-    class CBSDFIntegrator;
     class CBeamDirection;
     class CBSDFDirections;
-
-    typedef std::vector<std::shared_ptr<CBSDFIntegrator>> BSDF_Results;
 
     // Base class for handling BSDF Layer
     class CBSDFLayer
@@ -38,12 +36,12 @@ namespace SingleLayerOptics
         void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
         // BSDF results for the enire spectrum range of the material in the cell
-        std::shared_ptr<CBSDFIntegrator> getResults();
+        CBSDFIntegrator getResults();
 
         const CBSDFDirections & getDirections(BSDFDirection t_Side) const;
 
         // BSDF results for each wavelenght given in specular cell
-        std::shared_ptr<BSDF_Results> getWavelengthResults();
+        std::vector<CBSDFIntegrator> getWavelengthResults();
 
         int getBandIndex(double t_Wavelength);
 
@@ -79,16 +77,16 @@ namespace SingleLayerOptics
 
         const CBSDFHemisphere m_BSDFHemisphere;
         std::shared_ptr<CBaseCell> m_Cell;
-        std::shared_ptr<CBSDFIntegrator> m_Results;
+        CBSDFIntegrator m_Results;
         // Results over each wavelength
-        std::shared_ptr<BSDF_Results> m_WVResults;
+        std::vector<CBSDFIntegrator> m_WVResults;
 
     private:
         void calc_dir_dir();
         void calc_dir_dif();
         void fillWLResultsFromMaterialCell();
-        // Keeps state of the object. Calculations are not done by defult (in constructor)
-        // becuase they are time consuming.
+        // Keeps state of the object. Calculations are not done by default (in constructor)
+        // because they are time-consuming.
         bool m_Calculated;
 
         // Calculation of results over each wavelength

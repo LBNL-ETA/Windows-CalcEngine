@@ -25,19 +25,20 @@ namespace SingleLayerOptics
     class CBSDFIntegrator
     {
     public:
-        explicit CBSDFIntegrator(const std::shared_ptr<const CBSDFIntegrator> & t_Integrator);
+        CBSDFIntegrator() = default;
+        CBSDFIntegrator(const CBSDFIntegrator & t_Integrator);
         explicit CBSDFIntegrator(const CBSDFDirections & t_Directions);
 
         // Result matrices
-        FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
+        FenestrationCommon::SquareMatrix getMatrix(FenestrationCommon::Side t_Side,
                                                      FenestrationCommon::PropertySimple t_Property);
 
         [[nodiscard]] const FenestrationCommon::SquareMatrix &
           at(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySimple t_Property) const;
 
-        void setResultMatrices(const FenestrationCommon::SquareMatrix & t_Tau,
-                               const FenestrationCommon::SquareMatrix & t_Rho,
-                               FenestrationCommon::Side t_Side);
+        void setMatrices(const FenestrationCommon::SquareMatrix & t_Tau,
+                         const FenestrationCommon::SquareMatrix & t_Rho,
+                         FenestrationCommon::Side t_Side);
 
         // Direct-direct components
         double DirDir(FenestrationCommon::Side t_Side,
@@ -75,7 +76,7 @@ namespace SingleLayerOptics
         size_t getNearestBeamIndex(double t_Theta, double t_Phi) const;
 
     protected:
-        const CBSDFDirections m_Directions;
+        CBSDFDirections m_Directions;
         size_t m_DimMatrices;
 
     private:

@@ -22,7 +22,6 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class CBSDFIntegrator;
     enum class BSDFDirection;
     class CBSDFDirections;
 

@@ -218,19 +218,19 @@ namespace SingleLayerOptics
         double T_dir_dir = m_BSDFLayer->getCell()->T_dir_dir(t_Side, aDirection);
         double R_dir_dir = m_BSDFLayer->getCell()->R_dir_dir(t_Side, aDirection);
         double T_dir_dif =
-          m_BSDFLayer->getResults()->DirHem(t_Side, PropertySimple::T, t_Theta, t_Phi) - T_dir_dir;
+          m_BSDFLayer->getResults().DirHem(t_Side, PropertySimple::T, t_Theta, t_Phi) - T_dir_dir;
         if(T_dir_dif < 0)
         {
             T_dir_dif = 0;
         }
         double R_dir_dif =
-          m_BSDFLayer->getResults()->DirHem(t_Side, PropertySimple::R, t_Theta, t_Phi) - R_dir_dir;
+          m_BSDFLayer->getResults().DirHem(t_Side, PropertySimple::R, t_Theta, t_Phi) - R_dir_dir;
         if(R_dir_dif < 0)
         {
             R_dir_dif = 0;
         }
-        double T_dif_dif = m_BSDFLayer->getResults()->DiffDiff(t_Side, PropertySimple::T);
-        double R_dif_dif = m_BSDFLayer->getResults()->DiffDiff(t_Side, PropertySimple::R);
+        double T_dif_dif = m_BSDFLayer->getResults().DiffDiff(t_Side, PropertySimple::T);
+        double R_dif_dif = m_BSDFLayer->getResults().DiffDiff(t_Side, PropertySimple::R);
         return CScatteringSurface(T_dir_dir, R_dir_dir, T_dir_dif, R_dir_dif, T_dif_dif, R_dif_dif);
     }
 

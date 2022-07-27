@@ -1,17 +1,11 @@
-#ifndef EQUIVALENTBSDFLAYERSINGLEBAND_H
-#define EQUIVALENTBSDFLAYERSINGLEBAND_H
+#pragma once
 
 #include <memory>
 #include <vector>
 #include <map>
 
 #include "WCECommon.hpp"
-#include "../../SingleLayerOptics/src/BSDFIntegrator.hpp"
-
-namespace SingleLayerOptics
-{
-    class CBSDFIntegrator;
-}
+#include "WCESingleLayerOptics.hpp"
 
 namespace MultiLayerOptics
 {
@@ -61,10 +55,10 @@ namespace MultiLayerOptics
     {
     public:
         explicit CEquivalentBSDFLayerSingleBand(
-          const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+          const SingleLayerOptics::CBSDFIntegrator & t_Layer,
           const std::vector<double> & jscPrimeFront = std::vector<double>(),
           const std::vector<double> & jscPrimeBack = std::vector<double>());
-        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+        void addLayer(const SingleLayerOptics::CBSDFIntegrator & t_Layer,
                       const std::vector<double> & jcsFront = std::vector<double>(),
                       const std::vector<double> & jcsBack = std::vector<double>());
         void BuildForwardAndBackwardLayers(size_t numberOfLayers);
@@ -94,12 +88,12 @@ namespace MultiLayerOptics
                     const FenestrationCommon::SquareMatrix & t_R,
                     const FenestrationCommon::SquareMatrix & t_T) const;
 
-        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_EquivalentLayer;
-        std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Layers;
+        SingleLayerOptics::CBSDFIntegrator m_EquivalentLayer;
+        std::vector<SingleLayerOptics::CBSDFIntegrator> m_Layers;
 
         // Forward and backward layers are used for calculation of equivalent absorptances
-        std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Forward;
-        std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Backward;
+        std::vector<SingleLayerOptics::CBSDFIntegrator> m_Forward;
+        std::vector<SingleLayerOptics::CBSDFIntegrator> m_Backward;
 
         // Equations for absorptance calculations are described in "Klems-Matrix Layer Calculations"
         // document. Two equations (3.7a) and (3.7b) are used to calculate front and back
@@ -128,5 +122,3 @@ namespace MultiLayerOptics
     };
 
 }   // namespace MultiLayerOptics
-
-#endif
