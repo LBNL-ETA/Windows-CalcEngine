@@ -49,20 +49,20 @@ TEST_F(TestWovenShadeUniformMaterial, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    auto aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.037033896815761802, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.096296610318422418, RfDiff, 1e-6);
 
-    const double RbDiff = aResults->DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
     EXPECT_NEAR(0.096296610318422418, RbDiff, 1e-6);
 
     const double theta{0.0};
     const double phi{0.0};
 
-    const double Emiss{aResults->Abs(Side::Front, theta, phi)};
+    const double Emiss{aResults.Abs(Side::Front, theta, phi)};
     EXPECT_NEAR(0.8, Emiss, 1e-6);
 }

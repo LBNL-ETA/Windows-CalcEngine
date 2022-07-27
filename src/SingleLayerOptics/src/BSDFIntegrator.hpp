@@ -27,10 +27,10 @@ namespace SingleLayerOptics
     public:
         CBSDFIntegrator() = default;
         CBSDFIntegrator(const CBSDFIntegrator & t_Integrator);
-        explicit CBSDFIntegrator(const CBSDFDirections & t_Directions);
+        CBSDFIntegrator(const CBSDFDirections & t_Directions);
 
         // Result matrices
-        FenestrationCommon::SquareMatrix getMatrix(FenestrationCommon::Side t_Side,
+        FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
                                                      FenestrationCommon::PropertySimple t_Property);
 
         [[nodiscard]] const FenestrationCommon::SquareMatrix &

@@ -59,12 +59,12 @@ namespace MultiLayerOptics
                            InterRefl1,
                            aLambda);
 
-        m_Results = std::make_shared<CBSDFIntegrator>(t_FrontLayer);
-        m_Results->setMatrices(m_Tf, m_Rf, Side::Front);
-        m_Results->setMatrices(m_Tb, m_Rb, Side::Back);
+        m_Results = CBSDFIntegrator(t_FrontLayer);
+        m_Results.setMatrices(m_Tf, m_Rf, Side::Front);
+        m_Results.setMatrices(m_Tb, m_Rb, Side::Back);
     }
 
-    std::shared_ptr<CBSDFIntegrator> CBSDFDoubleLayer::value() const
+    CBSDFIntegrator CBSDFDoubleLayer::value() const
     {
         return m_Results;
     }

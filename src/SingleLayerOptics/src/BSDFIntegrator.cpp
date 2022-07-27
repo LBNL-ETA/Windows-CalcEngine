@@ -45,7 +45,7 @@ namespace SingleLayerOptics
         return m_MapDiffDiff.at(t_Side, t_Property);
     }
 
-    SquareMatrix CBSDFIntegrator::getMatrix(const Side t_Side, const PropertySimple t_Property)
+    SquareMatrix & CBSDFIntegrator::getMatrix(const Side t_Side, const PropertySimple t_Property)
     {
         return m_Matrix[std::make_pair(t_Side, t_Property)];
     }

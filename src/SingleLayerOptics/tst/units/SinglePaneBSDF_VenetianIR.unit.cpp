@@ -97,7 +97,7 @@ TEST_F(SinglePaneBSDF_VenetianIR, TestBSDF1)
 {
     SCOPED_TRACE("Begin Test: Venetian IR.");
 
-    auto & aLayer = *getLayer().getResults();
+    auto aLayer = getLayer().getResults();
 
     const double tauDiff =
       aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);

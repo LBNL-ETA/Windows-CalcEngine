@@ -298,8 +298,8 @@ protected:
         auto aShade =
           CBSDFLayerMaker::getCircularPerforatedLayer(perfMaterial, aBSDF, x, y, thickness, radius);
 
-        CBSDFIntegrator aLayer1 = *aLayer102->getResults();
-        CBSDFIntegrator aLayer2 = *aShade->getResults();
+        CBSDFIntegrator aLayer1 = aLayer102->getResults();
+        CBSDFIntegrator aLayer2 = aShade->getResults();
 
         m_DoubleLayer = std::make_shared<CBSDFDoubleLayer>(aLayer1, aLayer2);
     }
@@ -315,10 +315,10 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
 {
     SCOPED_TRACE("Begin Test: Double Layer BSDF.");
 
-    std::shared_ptr<CBSDFIntegrator> aLayer = getDoubleLayer()->value();
+    CBSDFIntegrator aLayer = getDoubleLayer()->value();
 
     // Front transmittance
-    auto Tf = aLayer->getMatrix(Side::Front, PropertySimple::T);
+    auto Tf = aLayer.getMatrix(Side::Front, PropertySimple::T);
     size_t matrixSize = Tf.size();
 
     // Test matrix
@@ -344,7 +344,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Front reflectance
-    auto Rf = aLayer->getMatrix(Side::Front, PropertySimple::R);
+    auto Rf = aLayer.getMatrix(Side::Front, PropertySimple::R);
     matrixSize = Rf.size();
 
     EXPECT_EQ(size, matrixSize);
@@ -367,7 +367,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Back Transmittance
-    auto Tb = aLayer->getMatrix(Side::Back, PropertySimple::T);
+    auto Tb = aLayer.getMatrix(Side::Back, PropertySimple::T);
     matrixSize = Tb.size();
 
     EXPECT_EQ(size, matrixSize);
@@ -390,7 +390,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Back Reflectance
-    auto Rb = aLayer->getMatrix(Side::Back, PropertySimple::R);
+    auto Rb = aLayer.getMatrix(Side::Back, PropertySimple::R);
     matrixSize = Rb.size();
 
     EXPECT_EQ(size, matrixSize);

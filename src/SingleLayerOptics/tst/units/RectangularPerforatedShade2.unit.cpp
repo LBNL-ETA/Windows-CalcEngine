@@ -51,18 +51,18 @@ TEST_F(TestRectangularPerforatedShade2, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    CBSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.112843786, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.492864523, RfDiff, 1e-6);
 
-    const double RbDiff = aResults->DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
     EXPECT_NEAR(0.591437306, RbDiff, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     const size_t size = aT.size();
 
@@ -109,7 +109,7 @@ TEST_F(TestRectangularPerforatedShade2, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.146423, 0.152214, 0.152254, 0.150042, 0.152254, 0.152214, 0.152254,
                       0.150042, 0.152254, 0.159155, 0.158120, 0.156343, 0.154517, 0.156343,

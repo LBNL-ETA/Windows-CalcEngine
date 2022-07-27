@@ -58,28 +58,27 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
-      aLayer->getWavelengthResults();
+    std::vector<CBSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
     const auto wavelengths{aLayer->getBandWavelengths()};
     const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
 
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
 
-    for(size_t i =0u; i < correctWavelengths.size(); ++i)
+    for(size_t i = 0u; i < correctWavelengths.size(); ++i)
     {
         EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
     }
 
     size_t correctSize = correctWavelengths.size();
 
-    EXPECT_EQ(correctSize, aResults->size());
+    EXPECT_EQ(correctSize, aResults.size());
 
     ///////////////////////////////////////////////////////////////////////
     //  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size_t size = aT.size();
@@ -104,7 +103,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    auto aRf = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
 
     calculatedResults.clear();
     correctResults = {0.188652, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951,
@@ -129,7 +128,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -154,7 +153,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
 
     calculatedResults.clear();
     correctResults = {0.142186, 0.146934, 0.146934, 0.146934, 0.146934, 0.146934, 0.146934,
@@ -179,19 +178,19 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
 
     calculatedResults.clear();
 
-    correctResults = {
-      3.324467, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713,
-      2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
-      2.599524, 2.599524, 2.599524, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460,
-      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 0.001248, 0.001248, 0.001248,
-      0.001248, 0.001248, 0.001248, 0.001248, 0.001248};
+    correctResults = {3.324467, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713,
+                      3.234713, 3.234713, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 0.001248, 0.001248,
+                      0.001248, 0.001248, 0.001248, 0.001248, 0.001248, 0.001248};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -205,7 +204,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
 
     calculatedResults.clear();
 
@@ -231,19 +230,19 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
 
     calculatedResults.clear();
 
-    correctResults = {
-      3.324467, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713,
-      2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
-      2.599524, 2.599524, 2.599524, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460,
-      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 0.001248, 0.001248, 0.001248,
-      0.001248, 0.001248, 0.001248, 0.001248, 0.001248};
+    correctResults = {3.324467, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713,
+                      3.234713, 3.234713, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 0.001248, 0.001248,
+                      0.001248, 0.001248, 0.001248, 0.001248, 0.001248, 0.001248};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -257,7 +256,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
 
     calculatedResults.clear();
 

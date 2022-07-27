@@ -26,8 +26,7 @@ namespace MultiLayerOptics
       const FenestrationCommon::CSeries & t_DetectorData,
       const std::vector<double> & t_CommonWavelengths) :
         m_EquivalentLayer(t_CommonWavelengths),
-        m_Results(
-          std::make_shared<CBSDFIntegrator>(t_Layer[0]->getDirections(BSDFDirection::Incoming))),
+        m_Results(t_Layer[0]->getDirections(BSDFDirection::Incoming)),
         m_Calculated(false),
         m_MinLambdaCalculated(0),
         m_MaxLambdaCalculated(0),
@@ -42,8 +41,7 @@ namespace MultiLayerOptics
       const FenestrationCommon::CSeries & t_SolarRadiation,
       const std::vector<double> & t_CommonWavelengths) :
         m_EquivalentLayer(t_CommonWavelengths),
-        m_Results(
-          std::make_shared<CBSDFIntegrator>(t_Layer[0]->getDirections(BSDFDirection::Incoming))),
+        m_Results(t_Layer[0]->getDirections(BSDFDirection::Incoming)),
         m_Calculated(false),
         m_MinLambdaCalculated(0),
         m_MaxLambdaCalculated(0),

@@ -142,24 +142,24 @@ TEST_F(TestSpecularLayer_102, TestSpecular1)
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aLayer->getResults();
+    auto aResults = aLayer->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.75265482876657230, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.14604173568524281, RfDiff, 1e-6);
 
     const double theta = 35;
     const double phi = 58;
 
-    const double tauHem = aResults->DirHem(Side::Front, PropertySimple::T, theta, phi);
+    const double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.82700480785360742, tauHem, 1e-6);
 
-    const double tauDir = aResults->DirDir(Side::Front, PropertySimple::T, theta, phi);
+    const double tauDir = aResults.DirDir(Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.82700480785360742, tauDir, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
@@ -216,7 +216,7 @@ TEST_F(TestSpecularLayer_102, TestSpecular1)
     }
 
     // Front reflectance
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     calculatedResults.clear();
     correctResults = {

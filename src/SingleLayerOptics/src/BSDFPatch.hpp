@@ -40,7 +40,7 @@ namespace SingleLayerOptics
     private:
         void calculateLambda();
         std::shared_ptr<CAngleLimits> m_Theta;
-        const CAngleLimits m_Phi;
+        CAngleLimits m_Phi;
         double m_Lambda;
     };
 

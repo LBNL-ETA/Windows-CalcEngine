@@ -303,9 +303,9 @@ TEST_F(TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF)
 {
     SCOPED_TRACE("Begin Test: Double Layer BSDF.");
 
-    std::shared_ptr<CBSDFIntegrator> aLayer = getDoubleLayer()->value();
+    CBSDFIntegrator aLayer = getDoubleLayer()->value();
 
-    auto T = aLayer->getMatrix(Side::Front, PropertySimple::T);
+    auto T = aLayer.getMatrix(Side::Front, PropertySimple::T);
     size_t matrixSize = T.size();
 
     // Test matrix
@@ -329,7 +329,7 @@ TEST_F(TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF)
         }
     }
 
-    auto R = aLayer->getMatrix(Side::Front, PropertySimple::R);
+    auto R = aLayer.getMatrix(Side::Front, PropertySimple::R);
     matrixSize = R.size();
 
     EXPECT_EQ(size, matrixSize);

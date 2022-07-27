@@ -61,11 +61,11 @@ TEST_F(TestVenetianUniformShadeCurvedMinus45_0, TestVenetian1)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    CBSDFIntegrator aResults = aShade->getResults();
 
-    double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.384231, tauDiff, 1e-6);
 
-    double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.542896, RfDiff, 1e-6);
 }
