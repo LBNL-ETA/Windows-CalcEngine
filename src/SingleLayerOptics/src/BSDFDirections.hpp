@@ -55,6 +55,16 @@ namespace SingleLayerOptics
         static double correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
                                             const size_t nPhis,
                                             double currentPhi) ;
+        std::vector<CBSDFPatch> createBSDFPatches(const BSDFDirection & t_Side,
+                               const std::vector<double> & thetaAngles,
+                               const std::vector<size_t> & numPhiAngles);
+        static std::vector<double>
+          getThetaAngles(const std::vector<CBSDFDefinition> & t_Definitions) ;
+        static std::vector<size_t>
+          getNumberOfPhiAngles(const std::vector<CBSDFDefinition> & t_Definitions) ;
+
+        static std::vector<double> getLambdaVector(std::vector<CBSDFPatch> patches);
+        static FenestrationCommon::SquareMatrix setLambdaMatrix(const std::vector<double> & lambdas);
     };
 
     enum class BSDFBasis

@@ -36,16 +36,41 @@ namespace SingleLayerOptics
     /////////////////////////////////////////////////////////////////
 
     BSDFDirections::BSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions,
-                                     const BSDFDirection t_Side)
+                                   const BSDFDirection t_Side) :
+        m_Patches(createBSDFPatches(
+          t_Side, getThetaAngles(t_Definitions), getNumberOfPhiAngles(t_Definitions))),
+        m_LambdaVector(getLambdaVector(m_Patches)),
+        m_LambdaMatrix(setLambdaMatrix(m_LambdaVector))
+    {}
+
+    std::vector<size_t>
+      BSDFDirections::getNumberOfPhiAngles(const std::vector<CBSDFDefinition> & t_Definitions)
+    {
+        std::vector<size_t> numPhiAngles(t_Definitions.size());
+        std::transform(std::begin(t_Definitions),
+                       std::end(t_Definitions),
+                       std::begin(numPhiAngles),
+                       [](const CBSDFDefinition & val) -> size_t { return val.numOfPhis(); });
+        return numPhiAngles;
+    }
+
+    std::vector<double>
+      BSDFDirections::getThetaAngles(const std::vector<CBSDFDefinition> & t_Definitions)
     {
         std::vector<double> thetaAngles(t_Definitions.size());
-        std::transform(std::begin(t_Definitions), std::end(t_Definitions), std::begin(thetaAngles),
-                       [](const CBSDFDefinition & val) -> double { return val.theta();});
+        std::transform(std::begin(t_Definitions),
+                       std::end(t_Definitions),
+                       std::begin(thetaAngles),
+                       [](const CBSDFDefinition & val) -> double { return val.theta(); });
+        return thetaAngles;
+    }
 
-        std::vector<size_t> numPhiAngles(t_Definitions.size());
-        std::transform(std::begin(t_Definitions), std::end(t_Definitions), std::begin(numPhiAngles),
-                       [](const CBSDFDefinition & val) -> size_t { return val.numOfPhis();});
-
+    std::vector<CBSDFPatch>
+      BSDFDirections::createBSDFPatches(const BSDFDirection & t_Side,
+                                        const std::vector<double> & thetaAngles,
+                                        const std::vector<size_t> & numPhiAngles)
+    {
+        std::vector<CBSDFPatch> patches;
         CThetaLimits ThetaLimits(thetaAngles);
         const auto thetaLimits{ThetaLimits.getThetaLimits()};
 
@@ -58,31 +83,23 @@ namespace SingleLayerOptics
             const auto nPhis = numPhiAngles[thetaIndex - 1];
             CPhiLimits phiAngles(nPhis);
             auto phiLimits = phiAngles.getPhiLimits();
-            auto lowerPhi {correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[0])};
+            auto lowerPhi{correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[0])};
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
                 const auto upperPhi = correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[j]);
                 AngleLimits currentPhiLimits(lowerPhi, upperPhi);
-                m_Patches.emplace_back(currentThetaLimits, currentPhiLimits);
+                patches.emplace_back(currentThetaLimits, currentPhiLimits);
                 lowerPhi = upperPhi;
             }
             lowerTheta = upperTheta;
         }
 
-        // build lambda std::vector and matrix
-        size_t size = m_Patches.size();
-        // m_LambdaVector = std::make_shared<std::vector<double>>();
-        m_LambdaMatrix = SquareMatrix(size);
-        for(size_t i = 0; i < size; ++i)
-        {
-            m_LambdaVector.push_back(m_Patches[i].lambda());
-            m_LambdaMatrix(i, i) = m_Patches[i].lambda();
-        }
+        return patches;
     }
 
     double BSDFDirections::correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
-                                                        const size_t nPhis,
-                                                        double currentPhi)
+                                                          const size_t nPhis,
+                                                          double currentPhi)
     {
         return (t_Side == BSDFDirection::Outgoing && nPhis != 1) ? currentPhi + 180 : currentPhi;
     }
@@ -136,6 +153,24 @@ namespace SingleLayerOptics
       BSDFDirections::createAngleLimits(double lowerAngle, double upperAngle, size_t patchIndex)
     {
         return patchIndex == 1 ? AngleLimits(upperAngle) : AngleLimits(lowerAngle, upperAngle);
+    }
+
+    std::vector<double> BSDFDirections::getLambdaVector(std::vector<CBSDFPatch> patches)
+    {
+        std::vector<double> lambda(patches.size());
+        std::transform(std::begin(patches),
+                       std::end(patches),
+                       std::begin(lambda),
+                       [](const CBSDFPatch & val) -> double { return val.lambda(); });
+        return lambda;
+    }
+
+    FenestrationCommon::SquareMatrix
+      BSDFDirections::setLambdaMatrix(const std::vector<double> & lambdas)
+    {
+        FenestrationCommon::SquareMatrix lambdaMatrix(lambdas.size());
+        lambdaMatrix.setDiagonal(lambdas);
+        return lambdaMatrix;
     }
 
     /////////////////////////////////////////////////////////////////
