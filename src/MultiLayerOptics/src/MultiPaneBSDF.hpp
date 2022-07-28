@@ -263,12 +263,10 @@ namespace MultiLayerOptics
 
         void calcHemisphericalAbs(FenestrationCommon::Side t_Side);
 
-        [[nodiscard]] std::vector<double> getCommonWavelengths(
+        [[nodiscard]] std::vector<double> getCommonWavelengthsFromLayers(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const;
 
-        static std::vector<std::vector<double>> getZeroVectorVector(size_t size1, size_t size2);
-
-        double integrateBSDFAbsorptance(const std::vector<double> & lambda, const std::vector<double> & absorptance);
+        static double integrateBSDFAbsorptance(const std::vector<double> & lambda, const std::vector<double> & absorptance);
 
         CEquivalentBSDFLayer m_EquivalentLayer;
 

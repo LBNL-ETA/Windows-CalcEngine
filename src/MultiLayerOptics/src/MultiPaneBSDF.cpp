@@ -115,14 +115,14 @@ namespace MultiLayerOptics
     CMultiPaneBSDF::CMultiPaneBSDF(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const FenestrationCommon::CSeries & t_SolarRadiation) :
-        CMultiPaneBSDF(t_Layer, t_SolarRadiation, getCommonWavelengths(t_Layer))
+        CMultiPaneBSDF(t_Layer, t_SolarRadiation, getCommonWavelengthsFromLayers(t_Layer))
     {}
 
     CMultiPaneBSDF::CMultiPaneBSDF(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const FenestrationCommon::CSeries & t_SolarRadiation,
       const FenestrationCommon::CSeries & t_DetectorData) :
-        CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_DetectorData, getCommonWavelengths(t_Layer))
+        CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_DetectorData, getCommonWavelengthsFromLayers(t_Layer))
     {}
 
     SquareMatrix CMultiPaneBSDF::getMatrix(const double minLambda,
@@ -252,7 +252,7 @@ namespace MultiLayerOptics
         }
     }
 
-    std::vector<double> CMultiPaneBSDF::getCommonWavelengths(
+    std::vector<double> CMultiPaneBSDF::getCommonWavelengthsFromLayers(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const
     {
         FenestrationCommon::CCommonWavelengths cw;
@@ -261,20 +261,6 @@ namespace MultiLayerOptics
             cw.addWavelength(layer->getBandWavelengths());
         }
         return cw.getCombinedWavelengths(FenestrationCommon::Combine::Interpolate);
-    }
-
-    std::vector<std::vector<double>> CMultiPaneBSDF::getZeroVectorVector(size_t size1, size_t size2)
-    {
-        std::vector<std::vector<double>> result(size1);
-        for(auto & val : result)
-        {
-            for(size_t i = 0u; i < size2; ++i)
-            {
-                val.push_back(0);
-            }
-        }
-
-        return result;
     }
 
     std::vector<double> & CMultiPaneBSDF::Abs(const double minLambda,
