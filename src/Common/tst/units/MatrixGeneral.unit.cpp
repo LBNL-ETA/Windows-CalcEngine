@@ -24,8 +24,8 @@ TEST_F(TestMatrixGeneral, TestSetDiagonal)
     a.setDiagonal(b);
 
     EXPECT_NEAR(7, a(0, 0), 1e-6);
-    EXPECT_NEAR(0, a(0, 1), 1e-6);
-    EXPECT_NEAR(0, a(1, 0), 1e-6);
+    EXPECT_NEAR(2, a(0, 1), 1e-6);
+    EXPECT_NEAR(3, a(1, 0), 1e-6);
     EXPECT_NEAR(8, a(1, 1), 1e-6);
 }
 
