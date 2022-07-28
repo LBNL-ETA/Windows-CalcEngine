@@ -14,7 +14,7 @@ namespace SingleLayerOptics
     {
     public:
         CDirectionalBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                              const CBSDFHemisphere & t_Hemisphere);
+                              const BSDFHemisphere & t_Hemisphere);
 
     protected:
         std::shared_ptr<CDirectionalDiffuseCell> cellAsDirectionalDiffuse() const;
@@ -32,7 +32,7 @@ namespace SingleLayerOptics
     {
     public:
         CDirectionalDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                                     const CBSDFHemisphere & t_Hemisphere);
+                                     const BSDFHemisphere & t_Hemisphere);
 
     protected:
         double diffuseDistributionScalar(size_t outgoingDirection) override;
@@ -42,7 +42,7 @@ namespace SingleLayerOptics
     {
     public:
         CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                         const CBSDFHemisphere & t_Hemisphere);
+                         const BSDFHemisphere & t_Hemisphere);
 
     protected:
         double diffuseDistributionScalar(size_t outgoingDirection) override;

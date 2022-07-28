@@ -127,7 +127,7 @@ protected:
 
         aMaterial_102->setBandWavelengths(commonWL);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
 
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 

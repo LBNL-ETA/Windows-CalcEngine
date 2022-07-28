@@ -121,7 +121,7 @@ protected:
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

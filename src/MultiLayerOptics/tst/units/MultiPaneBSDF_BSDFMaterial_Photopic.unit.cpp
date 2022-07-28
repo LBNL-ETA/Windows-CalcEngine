@@ -807,7 +807,7 @@ private:
 protected:
     virtual void SetUp()
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         const auto tfVisible = loadTfVisible();
         const auto tbVisible = loadTbVisible();
         const auto rfVisible = loadRfVisible();

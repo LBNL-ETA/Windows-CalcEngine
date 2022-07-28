@@ -124,7 +124,7 @@ protected:
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Solar material properties

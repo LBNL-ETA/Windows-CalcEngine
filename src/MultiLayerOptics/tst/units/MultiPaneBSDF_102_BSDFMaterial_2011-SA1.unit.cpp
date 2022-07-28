@@ -1332,7 +1332,7 @@ protected:
     {
         using FenestrationCommon::MaterialType;
         using FenestrationCommon::WavelengthRange;
-        using SingleLayerOptics::CBSDFHemisphere;
+        using SingleLayerOptics::BSDFHemisphere;
 
         const auto numberOfVisibleBands{5u};
         const auto numberOfIRBands{10u};
@@ -1346,7 +1346,7 @@ protected:
 
         aMaterial_102->setBandWavelengths(condensedSpectrum);
 
-        const auto aBSDF = CBSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Full);
         auto tfSolar = TransmittanceFrontSolar();
         auto tbSolar = TransmittanceBackSolar();
         auto rfSolar = ReflectanceFrontSolar();

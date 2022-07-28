@@ -283,7 +283,7 @@ protected:
 
         aMaterial_102->setBandWavelengths(commonWavelengths);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Woven material

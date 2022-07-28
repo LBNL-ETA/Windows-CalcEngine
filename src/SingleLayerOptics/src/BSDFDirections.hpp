@@ -11,10 +11,10 @@ namespace SingleLayerOptics
 {
     class CBeamDirection;
 
-    class CBSDFDefinition
+    class BSDFDefinition
     {
     public:
-        CBSDFDefinition(double t_Theta, size_t t_NumOfPhis);
+        BSDFDefinition(double t_Theta, size_t t_NumOfPhis);
         [[nodiscard]] double theta() const;
         [[nodiscard]] size_t numOfPhis() const;
 
@@ -46,7 +46,7 @@ namespace SingleLayerOptics
     {
     public:
         BSDFDirections() = default;
-        BSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions, BSDFDirection t_Side);
+        BSDFDirections(const std::vector<BSDFDefinition> & t_Definitions, BSDFDirection t_Side);
         [[nodiscard]] size_t size() const;
         const CBSDFPatch & operator[](size_t Index) const;
         std::vector<CBSDFPatch>::iterator begin();
@@ -72,9 +72,9 @@ namespace SingleLayerOptics
                                const std::vector<double> & thetaAngles,
                                const std::vector<size_t> & numPhiAngles);
         static std::vector<double>
-          getThetaAngles(const std::vector<CBSDFDefinition> & t_Definitions) ;
+          getThetaAngles(const std::vector<BSDFDefinition> & t_Definitions) ;
         static std::vector<size_t>
-          getNumberOfPhiAngles(const std::vector<CBSDFDefinition> & t_Definitions) ;
+          getNumberOfPhiAngles(const std::vector<BSDFDefinition> & t_Definitions) ;
 
         static std::vector<double> getLambdaVector(std::vector<CBSDFPatch> patches);
         static FenestrationCommon::SquareMatrix setLambdaMatrix(const std::vector<double> & lambdas);
@@ -88,24 +88,24 @@ namespace SingleLayerOptics
         Full
     };
 
-    class CBSDFHemisphere
+    class BSDFHemisphere
     {
     public:
-        static CBSDFHemisphere create(BSDFBasis t_Basis);
-        static CBSDFHemisphere create(const std::vector<CBSDFDefinition> & t_Definitions);
+        static BSDFHemisphere create(BSDFBasis t_Basis);
+        static BSDFHemisphere create(const std::vector<BSDFDefinition> & t_Definitions);
 
         [[nodiscard]] const BSDFDirections & getDirections(BSDFDirection t_Side) const;
 
     private:
-        static const std::map<BSDFBasis, std::vector<CBSDFDefinition>> bsdfDefinition;
+        static const std::map<BSDFBasis, std::vector<BSDFDefinition>> bsdfDefinition;
 
         // Construction for pre-defined basis
-        explicit CBSDFHemisphere(BSDFBasis t_Basis);
+        explicit BSDFHemisphere(BSDFBasis t_Basis);
         // Construction for custom basis
-        explicit CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions);
+        explicit BSDFHemisphere(const std::vector<BSDFDefinition> & t_Definitions);
 
         std::map<BSDFDirection, BSDFDirections> m_Directions;
-        static std::map<BSDFDirection, BSDFDirections> generateBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions);
+        static std::map<BSDFDirection, BSDFDirections> generateBSDFDirections(const std::vector<BSDFDefinition> & t_Definitions);
     };
 
 }   // namespace SingleLayerOptics

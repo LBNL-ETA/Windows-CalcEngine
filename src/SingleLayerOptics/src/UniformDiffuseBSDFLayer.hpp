@@ -14,7 +14,7 @@ namespace SingleLayerOptics
     {
     public:
         CUniformDiffuseBSDFLayer(const std::shared_ptr<CUniformDiffuseCell> & t_Cell,
-                                 const CBSDFHemisphere & t_Hemisphere);
+                                 const BSDFHemisphere & t_Hemisphere);
 
     protected:
         std::shared_ptr<CUniformDiffuseCell> cellAsUniformDiffuse() const;

@@ -7,7 +7,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
-using SingleLayerOptics::CBSDFHemisphere;
+using SingleLayerOptics::BSDFHemisphere;
 using SingleLayerOptics::BSDFBasis;
 using SingleLayerOptics::CMaterialSingleBandBSDF;
 using SingleLayerOptics::CMaterialDualBandBSDF;
@@ -17,7 +17,7 @@ using SingleLayerOptics::CBeamDirection;
 class TestBSDFMaterialDualBandCondensedRange : public testing::Test
 {
 public:
-    CBSDFHemisphere m_Hemisphere{CBSDFHemisphere::create(BSDFBasis::Small)};
+    BSDFHemisphere m_Hemisphere{BSDFHemisphere::create(BSDFBasis::Small)};
     std::shared_ptr<CMaterialSingleBandBSDF> m_MaterialVis;
     std::shared_ptr<CMaterialSingleBandBSDF> m_MaterialSol;
     std::shared_ptr<CMaterialDualBandBSDF> m_Material;

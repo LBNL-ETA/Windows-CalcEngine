@@ -7,7 +7,7 @@
 
 
 using FenestrationCommon::SquareMatrix;
-using SingleLayerOptics::CBSDFDefinition;
+using SingleLayerOptics::BSDFDefinition;
 using SingleLayerOptics::BSDFDirection;
 using SingleLayerOptics::BSDFDirections;
 
@@ -22,7 +22,7 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        std::vector<CBSDFDefinition> aDefinitions;
+        std::vector<BSDFDefinition> aDefinitions;
         aDefinitions.emplace_back(0, 1);
         aDefinitions.emplace_back(15, 1);
         aDefinitions.emplace_back(30, 1);

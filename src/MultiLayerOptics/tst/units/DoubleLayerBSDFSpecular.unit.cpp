@@ -23,17 +23,17 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        std::vector<CBSDFDefinition> aDefinitions;
-        aDefinitions.push_back(CBSDFDefinition(0, 1));
-        aDefinitions.push_back(CBSDFDefinition(15, 1));
-        aDefinitions.push_back(CBSDFDefinition(30, 1));
-        aDefinitions.push_back(CBSDFDefinition(45, 1));
-        aDefinitions.push_back(CBSDFDefinition(60, 1));
-        aDefinitions.push_back(CBSDFDefinition(75, 1));
-        aDefinitions.push_back(CBSDFDefinition(86.25, 1));
+        std::vector<BSDFDefinition> aDefinitions;
+        aDefinitions.push_back(BSDFDefinition(0, 1));
+        aDefinitions.push_back(BSDFDefinition(15, 1));
+        aDefinitions.push_back(BSDFDefinition(30, 1));
+        aDefinitions.push_back(BSDFDefinition(45, 1));
+        aDefinitions.push_back(BSDFDefinition(60, 1));
+        aDefinitions.push_back(BSDFDefinition(75, 1));
+        aDefinitions.push_back(BSDFDefinition(86.25, 1));
 
         // Create BSDF from definitions
-        const auto aBSDF = CBSDFHemisphere::create(aDefinitions);
+        const auto aBSDF = BSDFHemisphere::create(aDefinitions);
 
         CSeries aSolarRadiation;
 

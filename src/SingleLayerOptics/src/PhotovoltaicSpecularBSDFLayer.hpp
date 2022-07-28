@@ -14,7 +14,7 @@ namespace SingleLayerOptics
     {
     public:
         PhotovoltaicSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
-                                      const CBSDFHemisphere & t_Hemisphere);
+                                      const BSDFHemisphere & t_Hemisphere);
 
         [[nodiscard]] std::vector<std::vector<double>> jscPrime(
             FenestrationCommon::Side t_Side,

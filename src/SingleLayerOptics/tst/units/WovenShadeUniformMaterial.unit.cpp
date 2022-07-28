@@ -30,7 +30,7 @@ protected:
         const auto spacing = 0.003;    // m
 
         // create BSDF
-        const auto aBSDF{CBSDFHemisphere::create(BSDFBasis::Quarter)};
+        const auto aBSDF{BSDFHemisphere::create(BSDFBasis::Quarter)};
 
         // make layer
         m_Shade = CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing);

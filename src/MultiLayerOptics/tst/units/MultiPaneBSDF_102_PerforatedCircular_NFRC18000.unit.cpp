@@ -277,7 +277,7 @@ protected:
         const auto solarRadiation{loadSolarRadiationFile()};
         const auto wl{solarRadiation.getXArray()};
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         auto thickness_102 = 3.048e-3;   // [m]
 

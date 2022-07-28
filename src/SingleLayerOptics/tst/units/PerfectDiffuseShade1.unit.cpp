@@ -25,7 +25,7 @@ protected:
         auto aMaterial =
           Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
 
-        auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         m_Shade = CBSDFLayerMaker::getPerfectlyDiffuseLayer(aMaterial, aBSDF);
     }

@@ -31,7 +31,7 @@ protected:
         const auto thickness = 0.005;   // m
         const auto radius = 0.00835;    // m
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade =

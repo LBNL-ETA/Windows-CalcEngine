@@ -126,7 +126,7 @@ protected:
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
 
         // BSDF definition is needed as well as its material representation
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());

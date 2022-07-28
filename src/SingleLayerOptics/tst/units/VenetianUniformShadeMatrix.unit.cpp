@@ -30,7 +30,7 @@ protected:
 
         // create BSDF
         const auto aBSDF =
-          SingleLayerOptics::CBSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
+          SingleLayerOptics::BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
 
         // make layer
         m_Shade = SingleLayerOptics::CBSDFLayerMaker::getVenetianLayer(

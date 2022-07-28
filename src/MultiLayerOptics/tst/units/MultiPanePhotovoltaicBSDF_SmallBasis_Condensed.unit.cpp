@@ -1830,7 +1830,7 @@ protected:
 
         aMaterial_1->setBandWavelengths(condensedSpectrum());
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
         auto Layer_1 = CBSDFLayerMaker::getPhotovoltaicSpecularLayer(aMaterial_1, aBSDF, table());
 
         m_Layer = CMultiPaneBSDF::create({Layer_1}, loadSolarRadiationFile());

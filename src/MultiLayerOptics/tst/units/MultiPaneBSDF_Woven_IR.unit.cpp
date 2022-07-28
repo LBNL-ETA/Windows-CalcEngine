@@ -55,7 +55,7 @@ private:
 protected:
     virtual void SetUp()
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         const auto TIR = 0.0;
         const auto RfIR = 0.1;

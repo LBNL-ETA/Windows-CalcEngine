@@ -74,7 +74,7 @@ namespace SingleLayerOptics
                                      std::vector<std::vector<double>> const & Tbvis,
                                      std::vector<std::vector<double>> const & Rfvis,
                                      std::vector<std::vector<double>> const & Rbvis,
-                                     CBSDFHemisphere const & hemisphere,
+                                     BSDFHemisphere const & hemisphere,
                                      double ratio)
     {
         auto aSolarRangeMaterial = std::make_shared<CMaterialSingleBandBSDF>(
@@ -94,7 +94,7 @@ namespace SingleLayerOptics
                                      std::vector<std::vector<double>> const & Tbvis,
                                      std::vector<std::vector<double>> const & Rfvis,
                                      std::vector<std::vector<double>> const & Rbvis,
-                                     CBSDFHemisphere const & hemisphere,
+                                     BSDFHemisphere const & hemisphere,
                                      const FenestrationCommon::CSeries & solarRadiation)
     {
         auto aSolarRangeMaterial = std::make_shared<CMaterialSingleBandBSDF>(
@@ -130,7 +130,7 @@ namespace SingleLayerOptics
                                        const std::vector<std::vector<double>> & Tb,
                                        const std::vector<std::vector<double>> & Rf,
                                        const std::vector<std::vector<double>> & Rb,
-                                       const CBSDFHemisphere & hemisphere,
+                                       const BSDFHemisphere & hemisphere,
                                        FenestrationCommon::WavelengthRange t_Range)
     {
         return std::make_shared<CMaterialSingleBandBSDF>(Tf, Tb, Rf, Rb, hemisphere, t_Range);
@@ -141,7 +141,7 @@ namespace SingleLayerOptics
                                        const std::vector<std::vector<double>> & Tb,
                                        const std::vector<std::vector<double>> & Rf,
                                        const std::vector<std::vector<double>> & Rb,
-                                       const CBSDFHemisphere & hemisphere,
+                                       const BSDFHemisphere & hemisphere,
                                        const double minLambda,
                                        const double maxLambda)
     {

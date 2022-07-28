@@ -53,7 +53,7 @@ protected:
         const auto commonWavelengths{solarRadiation.getXArray()};
 
         const auto aBSDF =
-          SingleLayerOptics::CBSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
+          SingleLayerOptics::BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
 
         // Venetian blind material
 

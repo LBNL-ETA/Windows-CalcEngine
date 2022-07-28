@@ -13,20 +13,20 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics
 {
     /////////////////////////////////////////////////////////////////
-    ///  CBSDFDefinition
+    ///  BSDFDefinition
     /////////////////////////////////////////////////////////////////
 
-    CBSDFDefinition::CBSDFDefinition(const double t_Theta, const size_t t_NumOfPhis) :
+    BSDFDefinition::BSDFDefinition(const double t_Theta, const size_t t_NumOfPhis) :
         m_Theta(t_Theta),
         m_NumOfPhis(t_NumOfPhis)
     {}
 
-    double CBSDFDefinition::theta() const
+    double BSDFDefinition::theta() const
     {
         return m_Theta;
     }
 
-    size_t CBSDFDefinition::numOfPhis() const
+    size_t BSDFDefinition::numOfPhis() const
     {
         return m_NumOfPhis;
     }
@@ -35,7 +35,7 @@ namespace SingleLayerOptics
     ///  BSDFDirections
     /////////////////////////////////////////////////////////////////
 
-    BSDFDirections::BSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions,
+    BSDFDirections::BSDFDirections(const std::vector<BSDFDefinition> & t_Definitions,
                                    const BSDFDirection t_Side) :
         m_Patches(createBSDFPatches(
           t_Side, getThetaAngles(t_Definitions), getNumberOfPhiAngles(t_Definitions))),
@@ -44,24 +44,24 @@ namespace SingleLayerOptics
     {}
 
     std::vector<size_t>
-      BSDFDirections::getNumberOfPhiAngles(const std::vector<CBSDFDefinition> & t_Definitions)
+      BSDFDirections::getNumberOfPhiAngles(const std::vector<BSDFDefinition> & t_Definitions)
     {
         std::vector<size_t> numPhiAngles(t_Definitions.size());
         std::transform(std::begin(t_Definitions),
                        std::end(t_Definitions),
                        std::begin(numPhiAngles),
-                       [](const CBSDFDefinition & val) -> size_t { return val.numOfPhis(); });
+                       [](const BSDFDefinition & val) -> size_t { return val.numOfPhis(); });
         return numPhiAngles;
     }
 
     std::vector<double>
-      BSDFDirections::getThetaAngles(const std::vector<CBSDFDefinition> & t_Definitions)
+      BSDFDirections::getThetaAngles(const std::vector<BSDFDefinition> & t_Definitions)
     {
         std::vector<double> thetaAngles(t_Definitions.size());
         std::transform(std::begin(t_Definitions),
                        std::end(t_Definitions),
                        std::begin(thetaAngles),
-                       [](const CBSDFDefinition & val) -> double { return val.theta(); });
+                       [](const BSDFDefinition & val) -> double { return val.theta(); });
         return thetaAngles;
     }
 
@@ -174,41 +174,41 @@ namespace SingleLayerOptics
     }
 
     /////////////////////////////////////////////////////////////////
-    ///  CBSDFHemisphere
+    ///  BSDFHemisphere
     /////////////////////////////////////////////////////////////////
 
-    const std::map<BSDFBasis, std::vector<CBSDFDefinition>> CBSDFHemisphere::bsdfDefinition = {
+    const std::map<BSDFBasis, std::vector<BSDFDefinition>> BSDFHemisphere::bsdfDefinition = {
       {BSDFBasis::Small, {{0, 1}, {13, 1}, {26, 1}, {39, 1}, {52, 1}, {65, 1}, {80.75, 1}}},
       {BSDFBasis::Quarter, {{0, 1}, {18, 8}, {36, 12}, {54, 12}, {76.5, 8}}},
       {BSDFBasis::Half, {{0, 1}, {13, 8}, {26, 12}, {39, 16}, {52, 20}, {65, 12}, {80.75, 8}}},
       {BSDFBasis::Full,
        {{0, 1}, {10, 8}, {20, 16}, {30, 20}, {40, 24}, {50, 24}, {60, 24}, {70, 16}, {82.5, 12}}}};
 
-    CBSDFHemisphere::CBSDFHemisphere(const BSDFBasis t_Basis) :
+    BSDFHemisphere::BSDFHemisphere(const BSDFBasis t_Basis) :
         m_Directions(generateBSDFDirections(bsdfDefinition.at(t_Basis)))
     {}
 
-    CBSDFHemisphere::CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions) :
+    BSDFHemisphere::BSDFHemisphere(const std::vector<BSDFDefinition> & t_Definitions) :
         m_Directions(generateBSDFDirections(t_Definitions))
     {}
 
-    const BSDFDirections & CBSDFHemisphere::getDirections(const BSDFDirection tDirection) const
+    const BSDFDirections & BSDFHemisphere::getDirections(const BSDFDirection tDirection) const
     {
         return m_Directions.at(tDirection);
     }
 
-    CBSDFHemisphere CBSDFHemisphere::create(BSDFBasis t_Basis)
+    BSDFHemisphere BSDFHemisphere::create(BSDFBasis t_Basis)
     {
-        return CBSDFHemisphere(t_Basis);
+        return BSDFHemisphere(t_Basis);
     }
 
-    CBSDFHemisphere CBSDFHemisphere::create(const std::vector<CBSDFDefinition> & t_Definitions)
+    BSDFHemisphere BSDFHemisphere::create(const std::vector<BSDFDefinition> & t_Definitions)
     {
-        return CBSDFHemisphere(t_Definitions);
+        return BSDFHemisphere(t_Definitions);
     }
 
     std::map<BSDFDirection, BSDFDirections>
-      CBSDFHemisphere::generateBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions)
+      BSDFHemisphere::generateBSDFDirections(const std::vector<BSDFDefinition> & t_Definitions)
     {
         return {{BSDFDirection::Incoming, BSDFDirections(t_Definitions, BSDFDirection::Incoming)},
                 {BSDFDirection::Outgoing, BSDFDirections(t_Definitions, BSDFDirection::Outgoing)}};
