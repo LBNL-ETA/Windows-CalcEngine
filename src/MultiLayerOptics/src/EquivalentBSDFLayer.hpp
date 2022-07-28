@@ -41,8 +41,9 @@ namespace MultiLayerOptics
           getTotalJSC(FenestrationCommon::Side t_Side);
 
         // Transmittance and reflectance wavelength by wavelength matrices
-        std::shared_ptr<FenestrationCommon::CMatrixSeries>
-          getTotal(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySimple t_Property);
+        FenestrationCommon::CMatrixSeries
+          getTotal(const FenestrationCommon::Side t_Side,
+                   const FenestrationCommon::PropertySimple t_Property);
 
         void setSolarRadiation(FenestrationCommon::CSeries & t_SolarRadiation);
 
@@ -76,7 +77,7 @@ namespace MultiLayerOptics
         // Total Transmittance and Reflectance values for every wavelength (does not include source
         // data)
         std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
-                 std::shared_ptr<FenestrationCommon::CMatrixSeries>>
+                 FenestrationCommon::CMatrixSeries>
           m_Tot;
 
         FenestrationCommon::SquareMatrix m_Lambda;

@@ -206,9 +206,7 @@ namespace MultiLayerOptics
 
                 for(PropertySimple aProprerty : EnumPropertySimple())
                 {
-                    // Same as for aTotalA. Copy need to be taken because of multiplication
-                    // and integration
-                    CMatrixSeries aTot = *m_EquivalentLayer.getTotal(aSide, aProprerty);
+                    CMatrixSeries aTot = m_EquivalentLayer.getTotal(aSide, aProprerty);
                     aTot.mMult(m_IncomingSpectra);
                     aTot.integrate(m_Integrator, m_NormalizationCoefficient);
                     aResults[std::make_pair(aSide, aProprerty)] =
