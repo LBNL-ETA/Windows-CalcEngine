@@ -57,7 +57,7 @@ namespace MultiLayerOptics
         return m_TotA.at(t_Side);
     }
 
-    std::shared_ptr<CMatrixSeries> CEquivalentBSDFLayer::getTotalJSC(Side t_Side)
+    CMatrixSeries CEquivalentBSDFLayer::getTotalJSC(Side t_Side)
     {
         if(!m_Calculated)
         {
@@ -105,10 +105,10 @@ namespace MultiLayerOptics
         for(Side aSide : EnumSide())
         {
             m_TotA[aSide] = CMatrixSeries(numberOfLayers, matrixSize);
-            m_TotJSC[aSide] = std::make_shared<CMatrixSeries>(numberOfLayers, matrixSize);
+            m_TotJSC[aSide] = CMatrixSeries(numberOfLayers, matrixSize);
             for(PropertySimple aProperty : EnumPropertySimple())
             {
-                m_Tot[std::make_pair(aSide, aProperty)] = CMatrixSeries(matrixSize, matrixSize);
+                m_Tot[{aSide, aProperty}] = CMatrixSeries(matrixSize, matrixSize);
             }
         }
 
@@ -134,7 +134,7 @@ namespace MultiLayerOptics
                 {
                     m_TotA.at(aSide).addProperties(
                       k, curWL, m_LayersWL[i].getLayerAbsorptances(k + 1, aSide));
-                    m_TotJSC.at(aSide)->addProperties(
+                    m_TotJSC.at(aSide).addProperties(
                       k, curWL, m_LayersWL[i].getLayerJSC(k + 1, aSide));
                 }
                 for(auto aProperty : EnumPropertySimple())

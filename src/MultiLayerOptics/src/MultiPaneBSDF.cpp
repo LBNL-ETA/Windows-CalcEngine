@@ -187,7 +187,7 @@ namespace MultiLayerOptics
                 // Calculates total absorptance for every layer over the given wavelength range
                 m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
 
-                CMatrixSeries jscTotal = *m_EquivalentLayer.getTotalJSC(aSide);
+                CMatrixSeries jscTotal = m_EquivalentLayer.getTotalJSC(aSide);
                 jscTotal.integrate(m_Integrator, m_NormalizationCoefficient);
                 auto jscSum{jscTotal.getSums(minLambda, maxLambda)};
 
@@ -209,7 +209,7 @@ namespace MultiLayerOptics
                     CMatrixSeries aTot = m_EquivalentLayer.getTotal(aSide, aProprerty);
                     aTot.mMult(m_IncomingSpectra);
                     aTot.integrate(m_Integrator, m_NormalizationCoefficient);
-                    aResults[std::make_pair(aSide, aProprerty)] =
+                    aResults[{aSide, aProprerty}] =
                       aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
                 }
 
@@ -245,7 +245,8 @@ namespace MultiLayerOptics
         const size_t numOfLayers = m_Abs[t_Side].size();
         for(size_t layNum = 0; layNum < numOfLayers; ++layNum)
         {
-            m_AbsHem[t_Side].push_back(integrateBSDFAbsorptance(m_Results.lambdaVector(), m_Abs[t_Side][layNum]));
+            m_AbsHem[t_Side].push_back(
+              integrateBSDFAbsorptance(m_Results.lambdaVector(), m_Abs[t_Side][layNum]));
             m_AbsHemElectricity[t_Side].push_back(
               integrateBSDFAbsorptance(m_Results.lambdaVector(), m_AbsElectricity[t_Side][layNum]));
         }

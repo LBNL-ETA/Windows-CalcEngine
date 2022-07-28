@@ -37,8 +37,7 @@ namespace MultiLayerOptics
         FenestrationCommon::CMatrixSeries getTotalA(const FenestrationCommon::Side t_Side);
 
         // Photovoltaic current (scaled to income irradiance equal to one)
-        std::shared_ptr<FenestrationCommon::CMatrixSeries>
-          getTotalJSC(FenestrationCommon::Side t_Side);
+        FenestrationCommon::CMatrixSeries getTotalJSC(FenestrationCommon::Side t_Side);
 
         // Transmittance and reflectance wavelength by wavelength matrices
         FenestrationCommon::CMatrixSeries
@@ -71,8 +70,7 @@ namespace MultiLayerOptics
         std::map<FenestrationCommon::Side, FenestrationCommon::CMatrixSeries> m_TotA;
 
         // Total photovoltaic current (see above comment for absorptance
-        std::map<FenestrationCommon::Side, std::shared_ptr<FenestrationCommon::CMatrixSeries>>
-          m_TotJSC;
+        std::map<FenestrationCommon::Side, FenestrationCommon::CMatrixSeries> m_TotJSC;
 
         // Total Transmittance and Reflectance values for every wavelength (does not include source
         // data)
