@@ -52,6 +52,9 @@ namespace SingleLayerOptics
 
         //! Function that will create angle limits based on patch index.
         AngleLimits createAngleLimits(double lowerAngle, double upperAngle, size_t patchIndex);
+        static double correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
+                                            const size_t nPhis,
+                                            double currentPhi) ;
     };
 
     enum class BSDFBasis

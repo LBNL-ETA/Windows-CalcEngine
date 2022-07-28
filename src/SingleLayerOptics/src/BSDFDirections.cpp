@@ -58,18 +58,10 @@ namespace SingleLayerOptics
             const auto nPhis = numPhiAngles[thetaIndex - 1];
             CPhiLimits phiAngles(nPhis);
             auto phiLimits = phiAngles.getPhiLimits();
-            double lowerPhi = phiLimits[0];
-            if(t_Side == BSDFDirection::Outgoing && nPhis != 1)
-            {
-                lowerPhi += 180;
-            }
+            auto lowerPhi {correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[0])};
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
-                double upperPhi = phiLimits[j];
-                if(t_Side == BSDFDirection::Outgoing && nPhis != 1)
-                {
-                    upperPhi += 180;
-                }
+                const auto upperPhi = correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[j]);
                 AngleLimits currentPhiLimits(lowerPhi, upperPhi);
                 m_Patches.emplace_back(currentThetaLimits, currentPhiLimits);
                 lowerPhi = upperPhi;
@@ -86,6 +78,13 @@ namespace SingleLayerOptics
             m_LambdaVector.push_back(m_Patches[i].lambda());
             m_LambdaMatrix(i, i) = m_Patches[i].lambda();
         }
+    }
+
+    double BSDFDirections::correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
+                                                        const size_t nPhis,
+                                                        double currentPhi)
+    {
+        return (t_Side == BSDFDirection::Outgoing && nPhis != 1) ? currentPhi + 180 : currentPhi;
     }
 
     size_t BSDFDirections::size() const
