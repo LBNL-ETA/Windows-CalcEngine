@@ -54,22 +54,21 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
-      aLayer->getWavelengthResults();
+    auto aResults = aLayer->getWavelengthResults();
 
     const auto wavelengths{aLayer->getBandWavelengths()};
     const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
 
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
 
-    for(size_t i =0u; i < correctWavelengths.size(); ++i)
+    for(size_t i = 0u; i < correctWavelengths.size(); ++i)
     {
         EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
     }
 
     size_t correctSize = correctWavelengths.size();
 
-    EXPECT_EQ(correctSize, aResults->size());
+    EXPECT_EQ(correctSize, aResults.size());
 
     std::vector<double> correctResults;
 
@@ -77,7 +76,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     //  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size_t size = aT.size();
@@ -97,7 +96,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     }
 
     // Front reflectance
-    auto aRf = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
                       0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,
@@ -117,7 +116,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     //  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -137,7 +136,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     }
 
     // Front reflectance
-    aRf = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.103285, 0.105049, 0.105053, 0.105273, 0.105053, 0.105049, 0.105053,
                       0.105273, 0.105053, 0.107984, 0.107356, 0.109122, 0.112568, 0.109122,
@@ -157,7 +156,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     //  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -176,7 +175,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     }
 
     // Front reflectance
-    aRf = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
                       0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,
@@ -195,7 +194,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     //  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -214,7 +213,7 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     }
 
     // Front reflectance
-    aRf = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
                       0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,

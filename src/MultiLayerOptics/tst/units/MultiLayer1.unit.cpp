@@ -35,8 +35,8 @@ protected:
         m_Layer = CMultiLayerScattered::create({aLayer1, aLayer2, aLayer3});
 
         // Additional layers can be inserted as following
-        // m_Layer->addLayer(aLayer2);
-        // m_Layer->addLayer(aLayer3);
+        // m_EquivalentLayer->addLayer(aLayer2);
+        // m_EquivalentLayer->addLayer(aLayer3);
     }
 
 public:

@@ -32,103 +32,109 @@ namespace SingleLayerOptics
     }
 
     /////////////////////////////////////////////////////////////////
-    ///  CBSDFDirections
+    ///  BSDFDirections
     /////////////////////////////////////////////////////////////////
 
-    CBSDFDirections::CBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions,
-                                     const BSDFDirection t_Side)
-    {
-        std::vector<double> thetaAngles;
-        std::vector<size_t> numPhiAngles;
-        for(auto it = t_Definitions.begin(); it < t_Definitions.end(); ++it)
-        {
-            thetaAngles.push_back((*it).theta());
-            numPhiAngles.push_back((*it).numOfPhis());
-        }
+    BSDFDirections::BSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions,
+                                   const BSDFDirection t_Side) :
+        m_Patches(createBSDFPatches(
+          t_Side, getThetaAngles(t_Definitions), getNumberOfPhiAngles(t_Definitions))),
+        m_LambdaVector(getLambdaVector(m_Patches)),
+        m_LambdaMatrix(setLambdaMatrix(m_LambdaVector))
+    {}
 
+    std::vector<size_t>
+      BSDFDirections::getNumberOfPhiAngles(const std::vector<CBSDFDefinition> & t_Definitions)
+    {
+        std::vector<size_t> numPhiAngles(t_Definitions.size());
+        std::transform(std::begin(t_Definitions),
+                       std::end(t_Definitions),
+                       std::begin(numPhiAngles),
+                       [](const CBSDFDefinition & val) -> size_t { return val.numOfPhis(); });
+        return numPhiAngles;
+    }
+
+    std::vector<double>
+      BSDFDirections::getThetaAngles(const std::vector<CBSDFDefinition> & t_Definitions)
+    {
+        std::vector<double> thetaAngles(t_Definitions.size());
+        std::transform(std::begin(t_Definitions),
+                       std::end(t_Definitions),
+                       std::begin(thetaAngles),
+                       [](const CBSDFDefinition & val) -> double { return val.theta(); });
+        return thetaAngles;
+    }
+
+    std::vector<CBSDFPatch>
+      BSDFDirections::createBSDFPatches(const BSDFDirection & t_Side,
+                                        const std::vector<double> & thetaAngles,
+                                        const std::vector<size_t> & numPhiAngles)
+    {
+        std::vector<CBSDFPatch> patches;
         CThetaLimits ThetaLimits(thetaAngles);
         const auto thetaLimits{ThetaLimits.getThetaLimits()};
 
         double lowerTheta = thetaLimits[0];
-        for(size_t i = 1; i < thetaLimits.size(); ++i)
+        for(size_t thetaIndex = 1; thetaIndex < thetaLimits.size(); ++thetaIndex)
         {
-            double upperTheta = thetaLimits[i];
-            std::shared_ptr<CAngleLimits> currentTheta = nullptr;
-            if(i == 1)
-            {
-                currentTheta = std::make_shared<CCentralAngleLimits>(upperTheta);
-            }
-            else
-            {
-                currentTheta = std::make_shared<CAngleLimits>(lowerTheta, upperTheta);
-            }
+            double upperTheta = thetaLimits[thetaIndex];
+            const auto currentThetaLimits = createAngleLimits(lowerTheta, upperTheta, thetaIndex);
 
-
-            const auto nPhis = numPhiAngles[i - 1];
+            const auto nPhis = numPhiAngles[thetaIndex - 1];
             CPhiLimits phiAngles(nPhis);
             auto phiLimits = phiAngles.getPhiLimits();
-            double lowerPhi = phiLimits[0];
-            if(t_Side == BSDFDirection::Outgoing && nPhis != 1)
-            {
-                lowerPhi += 180;
-            }
+            auto lowerPhi{correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[0])};
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
-                double upperPhi = phiLimits[j];
-                if(t_Side == BSDFDirection::Outgoing && nPhis != 1)
-                {
-                    upperPhi += 180;
-                }
-                CAngleLimits currentPhi(lowerPhi, upperPhi);
-                CBSDFPatch currentPatch(currentTheta, currentPhi);
-                m_Patches.push_back(currentPatch);
+                const auto upperPhi = correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[j]);
+                AngleLimits currentPhiLimits(lowerPhi, upperPhi);
+                patches.emplace_back(currentThetaLimits, currentPhiLimits);
                 lowerPhi = upperPhi;
             }
             lowerTheta = upperTheta;
         }
 
-        // build lambda std::vector and matrix
-        size_t size = m_Patches.size();
-        // m_LambdaVector = std::make_shared<std::vector<double>>();
-        m_LambdaMatrix = SquareMatrix(size);
-        for(size_t i = 0; i < size; ++i)
-        {
-            m_LambdaVector.push_back(m_Patches[i].lambda());
-            m_LambdaMatrix(i, i) = m_Patches[i].lambda();
-        }
+        return patches;
     }
 
-    size_t CBSDFDirections::size() const
+    double BSDFDirections::correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
+                                                          const size_t nPhis,
+                                                          double currentPhi)
+    {
+        return (t_Side == BSDFDirection::Outgoing && nPhis != 1) ? currentPhi + 180 : currentPhi;
+    }
+
+    size_t BSDFDirections::size() const
     {
         return m_Patches.size();
     }
 
-    const CBSDFPatch & CBSDFDirections::operator[](size_t Index) const
+    const CBSDFPatch & BSDFDirections::operator[](size_t Index) const
     {
         return m_Patches[Index];
     }
 
-    std::vector<CBSDFPatch>::iterator CBSDFDirections::begin()
+    std::vector<CBSDFPatch>::iterator BSDFDirections::begin()
     {
         return m_Patches.begin();
     }
 
-    std::vector<CBSDFPatch>::iterator CBSDFDirections::end()
+    std::vector<CBSDFPatch>::iterator BSDFDirections::end()
     {
         return m_Patches.end();
     }
 
-    std::vector<double> CBSDFDirections::lambdaVector() const
+    std::vector<double> BSDFDirections::lambdaVector() const
     {
         return m_LambdaVector;
     }
 
-    const SquareMatrix & CBSDFDirections::lambdaMatrix() const
+    const SquareMatrix & BSDFDirections::lambdaMatrix() const
     {
         return m_LambdaMatrix;
     }
 
-    size_t CBSDFDirections::getNearestBeamIndex(const double t_Theta, const double t_Phi) const
+    size_t BSDFDirections::getNearestBeamIndex(const double t_Theta, const double t_Phi) const
     {
         auto it = std::find_if(m_Patches.begin(), m_Patches.end(), [&](const CBSDFPatch & a) {
             return a.isInPatch(t_Theta, t_Phi);
@@ -141,6 +147,30 @@ namespace SingleLayerOptics
 
         size_t index = size_t(std::distance(m_Patches.begin(), it));
         return index;
+    }
+
+    AngleLimits
+      BSDFDirections::createAngleLimits(double lowerAngle, double upperAngle, size_t patchIndex)
+    {
+        return patchIndex == 1 ? AngleLimits(upperAngle) : AngleLimits(lowerAngle, upperAngle);
+    }
+
+    std::vector<double> BSDFDirections::getLambdaVector(std::vector<CBSDFPatch> patches)
+    {
+        std::vector<double> lambda(patches.size());
+        std::transform(std::begin(patches),
+                       std::end(patches),
+                       std::begin(lambda),
+                       [](const CBSDFPatch & val) -> double { return val.lambda(); });
+        return lambda;
+    }
+
+    FenestrationCommon::SquareMatrix
+      BSDFDirections::setLambdaMatrix(const std::vector<double> & lambdas)
+    {
+        FenestrationCommon::SquareMatrix lambdaMatrix(lambdas.size());
+        lambdaMatrix.setDiagonal(lambdas);
+        return lambdaMatrix;
     }
 
     /////////////////////////////////////////////////////////////////
@@ -177,18 +207,18 @@ namespace SingleLayerOptics
                 throw std::runtime_error("Incorrect definition of the basis.");
         }
         m_Directions.insert(std::make_pair(BSDFDirection::Incoming,
-                                           CBSDFDirections(aDefinitions, BSDFDirection::Incoming)));
+                                           BSDFDirections(aDefinitions, BSDFDirection::Incoming)));
         m_Directions.insert(std::make_pair(BSDFDirection::Outgoing,
-                                           CBSDFDirections(aDefinitions, BSDFDirection::Outgoing)));
+                                           BSDFDirections(aDefinitions, BSDFDirection::Outgoing)));
     }
 
     CBSDFHemisphere::CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions) :
         m_Directions(
-          {{BSDFDirection::Incoming, CBSDFDirections(t_Definitions, BSDFDirection::Incoming)},
-           {BSDFDirection::Outgoing, CBSDFDirections(t_Definitions, BSDFDirection::Outgoing)}})
+          {{BSDFDirection::Incoming, BSDFDirections(t_Definitions, BSDFDirection::Incoming)},
+           {BSDFDirection::Outgoing, BSDFDirections(t_Definitions, BSDFDirection::Outgoing)}})
     {}
 
-    const CBSDFDirections & CBSDFHemisphere::getDirections(const BSDFDirection tDirection) const
+    const BSDFDirections & CBSDFHemisphere::getDirections(const BSDFDirection tDirection) const
     {
         return m_Directions.at(tDirection);
     }

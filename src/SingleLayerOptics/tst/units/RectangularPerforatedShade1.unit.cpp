@@ -51,24 +51,24 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.041876313, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.670686365, RfDiff, 1e-6);
 
     const auto theta{0};
     const auto phi{0};
 
-    const auto tauDirHem{aResults->DirHem(Side::Front, PropertySimple::T, theta, phi)};
+    const auto tauDirHem{aResults.DirHem(Side::Front, PropertySimple::T, theta, phi)};
     EXPECT_NEAR(0.055556, tauDirHem, 1e-6);
 
-    const double RfDirHem{aResults->DirHem(Side::Front, PropertySimple::R, theta, phi)};
+    const double RfDirHem{aResults.DirHem(Side::Front, PropertySimple::R, theta, phi)};
     EXPECT_NEAR(0.661111, RfDirHem, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
@@ -128,7 +128,7 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
         EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
     }
 
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     correctResults.clear();
     correctResults.push_back(0.210438);

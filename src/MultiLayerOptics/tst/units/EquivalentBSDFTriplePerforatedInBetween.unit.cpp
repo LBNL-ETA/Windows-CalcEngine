@@ -297,9 +297,9 @@ protected:
         auto aShade =
           CBSDFLayerMaker::getCircularPerforatedLayer(perfMaterial, aBSDF, x, y, thickness, radius);
 
-        std::shared_ptr<CBSDFIntegrator> aLayer1 = aLayer102->getResults();
-        std::shared_ptr<CBSDFIntegrator> aLayer2 = aShade->getResults();
-        std::shared_ptr<CBSDFIntegrator> aLayer3 = aLayer102->getResults();
+        BSDFIntegrator aLayer1 = aLayer102->getResults();
+        BSDFIntegrator aLayer2 = aShade->getResults();
+        BSDFIntegrator aLayer3 = aLayer102->getResults();
 
         m_EquivalentBSDFLayer = std::make_shared<CEquivalentBSDFLayerSingleBand>(aLayer1);
         m_EquivalentBSDFLayer->addLayer(aLayer2);

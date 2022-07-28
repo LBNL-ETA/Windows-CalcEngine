@@ -7,40 +7,36 @@ namespace SingleLayerOptics
 {
     class CBeamDirection;
 
-    class CAngleLimits
+    class AngleLimits
     {
     public:
-        CAngleLimits(double const t_Low, double const t_High);
-        double low() const;
-        double high() const;
-        double delta() const;
-        bool isInLimits(const double t_Angle) const;
+        AngleLimits(double t_Low, double t_High);
+        AngleLimits(double t_High);
+        [[nodiscard]] double low() const;
+        [[nodiscard]] double high() const;
+        [[nodiscard]] double delta() const;
+        [[nodiscard]] bool isInLimits(const double t_Angle) const;
         virtual double average() const;
 
     protected:
+        enum class Type{Central, NonCentral};
+        Type m_Type{Type::NonCentral};
         double m_Low;
         double m_High;
-    };
-
-    class CCentralAngleLimits : public CAngleLimits
-    {
-    public:
-        explicit CCentralAngleLimits(double t_High);
-        double average() const override;
     };
 
     class CBSDFPatch
     {
     public:
-        CBSDFPatch(const std::shared_ptr<CAngleLimits> & t_Theta, const CAngleLimits & t_Phi);
-        CBeamDirection centerPoint() const;
-        double lambda() const;
-        bool isInPatch(double t_Theta, double t_Phi) const;
+        CBSDFPatch(const AngleLimits & t_Theta, const AngleLimits & t_Phi);
+        [[nodiscard]] CBeamDirection centerPoint() const;
+        [[nodiscard]] double lambda() const;
+        [[nodiscard]] bool isInPatch(double t_Theta, double t_Phi) const;
 
     private:
-        void calculateLambda();
-        std::shared_ptr<CAngleLimits> m_Theta;
-        const CAngleLimits m_Phi;
+        double calculateLambda(double lowerTheta, double upperTheta, double phiDelta);
+        AngleLimits m_Theta;
+        AngleLimits m_Phi;
         double m_Lambda;
     };
 

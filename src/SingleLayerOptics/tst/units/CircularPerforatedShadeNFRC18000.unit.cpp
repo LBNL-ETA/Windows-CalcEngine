@@ -51,20 +51,20 @@ TEST_F(TestCircularPerforatedShadeNFRC18000, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.257367, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.101741, RfDiff, 1e-6);
 
-    const double RbDiff = aResults->DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
     EXPECT_NEAR(0.118821, RbDiff, 1e-6);
 
-    const double absfDiff = aResults->AbsDiffDiff(FenestrationCommon::Side::Front);
+    const double absfDiff = aResults.AbsDiffDiff(FenestrationCommon::Side::Front);
     EXPECT_NEAR(0.640892, absfDiff, 1e-6);
 
-    const double absbDiff = aResults->AbsDiffDiff(FenestrationCommon::Side::Back);
+    const double absbDiff = aResults.AbsDiffDiff(FenestrationCommon::Side::Back);
     EXPECT_NEAR(0.623812, absbDiff, 1e-6);
 }

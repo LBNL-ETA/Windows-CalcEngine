@@ -62,7 +62,7 @@ TEST_F(TestVenetianUniformShadeMatrixVertical, TestVenetianMatrix)
     auto aResults = aShade.getResults();
 
     FenestrationCommon::SquareMatrix & aT =
-      aResults->getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+      aResults.getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
 
     // clang-format off
     std::vector<std::vector<double>> correctResults{

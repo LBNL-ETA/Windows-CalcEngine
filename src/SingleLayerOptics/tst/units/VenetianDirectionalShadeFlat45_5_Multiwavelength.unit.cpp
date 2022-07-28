@@ -67,8 +67,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
-      aLayer->getWavelengthResults();
+    std::vector<BSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
     const auto wavelengths{aLayer->getBandWavelengths()};
     const std::vector<double> correctWavelengths{0.3, 0.38, 0.780001, 2.5};
@@ -81,13 +80,13 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
 
     size_t correctSize = correctWavelengths.size();
 
-    EXPECT_EQ(correctSize, aResults->size());
+    EXPECT_EQ(correctSize, aResults.size());
 
     ///////////////////////////////////////////////////////////////////////
     //  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size_t size = aT.size();
@@ -106,7 +105,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     }
 
     // Front reflectance
-    auto aRf = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.196291, 0.196291, 0.150276, 0.138258, 0.150276, 0.196291, 0.158764,
                       0.13836,  0.158764, 0.196291, 0.126729, 0.070042, 0.053571, 0.070042,
@@ -125,7 +124,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     //  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -144,7 +143,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.165903, 0.165903, 0.127956, 0.117843, 0.127956, 0.165903, 0.134906,
                       0.117926, 0.134906, 0.165903, 0.108225, 0.060355, 0.046206, 0.060355,
@@ -163,17 +162,17 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     //  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
 
-    correctResults = {
-      0.810591, 0.868495, 3.878222, 5.126954, 3.878222, 0.868495,  0.054218, 0.050793,  0.054218,
-      0.810004, 5.221758, 8.462545, 9.651114, 8.462545, 5.221758,  0.810004, 0.046418,  0.029956,
-      0.028063, 0.029956, 0.046418, 0.810004, 9.182664, 10.646963, 8.394372, 10.646963, 9.182664,
-      0.810004, 0.028635, 0.017473, 0.015928, 0.017473, 0.028635,  0.773294, 0.126744,  0.126608,
-      0.126744, 0.773294, 0.009315, 0.00915,  0.009315};
+    correctResults = {0.810591, 0.868495, 3.878222,  5.126954, 3.878222,  0.868495, 0.054218,
+                      0.050793, 0.054218, 0.810004,  5.221758, 8.462545,  9.651114, 8.462545,
+                      5.221758, 0.810004, 0.046418,  0.029956, 0.028063,  0.029956, 0.046418,
+                      0.810004, 9.182664, 10.646963, 8.394372, 10.646963, 9.182664, 0.810004,
+                      0.028635, 0.017473, 0.015928,  0.017473, 0.028635,  0.773294, 0.126744,
+                      0.126608, 0.126744, 0.773294,  0.009315, 0.00915,   0.009315};
 
     EXPECT_EQ(correctResults.size(), aT.size());
     for(size_t i = 0; i < size; ++i)
@@ -182,7 +181,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.196291, 0.196291, 0.150276, 0.138258, 0.150276, 0.196291, 0.158764,
                       0.13836,  0.158764, 0.196291, 0.126729, 0.070042, 0.053571, 0.070042,
@@ -201,17 +200,17 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     //  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
 
-    correctResults = {
-      0.810591, 0.868495, 3.878222, 5.126954, 3.878222, 0.868495,  0.054218, 0.050793,  0.054218,
-      0.810004, 5.221758, 8.462545, 9.651114, 8.462545, 5.221758,  0.810004, 0.046418,  0.029956,
-      0.028063, 0.029956, 0.046418, 0.810004, 9.182664, 10.646963, 8.394372, 10.646963, 9.182664,
-      0.810004, 0.028635, 0.017473, 0.015928, 0.017473, 0.028635,  0.773294, 0.126744,  0.126608,
-      0.126744, 0.773294, 0.009315, 0.00915,  0.009315};
+    correctResults = {0.810591, 0.868495, 3.878222,  5.126954, 3.878222,  0.868495, 0.054218,
+                      0.050793, 0.054218, 0.810004,  5.221758, 8.462545,  9.651114, 8.462545,
+                      5.221758, 0.810004, 0.046418,  0.029956, 0.028063,  0.029956, 0.046418,
+                      0.810004, 9.182664, 10.646963, 8.394372, 10.646963, 9.182664, 0.810004,
+                      0.028635, 0.017473, 0.015928,  0.017473, 0.028635,  0.773294, 0.126744,
+                      0.126608, 0.126744, 0.773294,  0.009315, 0.00915,   0.009315};
 
     EXPECT_EQ(correctResults.size(), aT.size());
     for(size_t i = 0; i < size; ++i)
@@ -220,7 +219,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.196291, 0.196291, 0.150276, 0.138258, 0.150276, 0.196291, 0.158764,
                       0.13836,  0.158764, 0.196291, 0.126729, 0.070042, 0.053571, 0.070042,

@@ -29,10 +29,11 @@ namespace SingleLayerOptics
         Outgoing
     };
 
-    class CBSDFDirections
+    class BSDFDirections
     {
     public:
-        CBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions, BSDFDirection t_Side);
+        BSDFDirections() = default;
+        BSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions, BSDFDirection t_Side);
         [[nodiscard]] size_t size() const;
         const CBSDFPatch & operator[](size_t Index) const;
         std::vector<CBSDFPatch>::iterator begin();
@@ -48,6 +49,22 @@ namespace SingleLayerOptics
         std::vector<CBSDFPatch> m_Patches;
         std::vector<double> m_LambdaVector;
         FenestrationCommon::SquareMatrix m_LambdaMatrix;
+
+        //! Function that will create angle limits based on patch index.
+        AngleLimits createAngleLimits(double lowerAngle, double upperAngle, size_t patchIndex);
+        static double correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
+                                            const size_t nPhis,
+                                            double currentPhi) ;
+        std::vector<CBSDFPatch> createBSDFPatches(const BSDFDirection & t_Side,
+                               const std::vector<double> & thetaAngles,
+                               const std::vector<size_t> & numPhiAngles);
+        static std::vector<double>
+          getThetaAngles(const std::vector<CBSDFDefinition> & t_Definitions) ;
+        static std::vector<size_t>
+          getNumberOfPhiAngles(const std::vector<CBSDFDefinition> & t_Definitions) ;
+
+        static std::vector<double> getLambdaVector(std::vector<CBSDFPatch> patches);
+        static FenestrationCommon::SquareMatrix setLambdaMatrix(const std::vector<double> & lambdas);
     };
 
     enum class BSDFBasis
@@ -64,7 +81,7 @@ namespace SingleLayerOptics
         static CBSDFHemisphere create(BSDFBasis t_Basis);
         static CBSDFHemisphere create(const std::vector<CBSDFDefinition> & t_Definitions);
 
-        [[nodiscard]] const CBSDFDirections & getDirections(BSDFDirection t_Side) const;
+        [[nodiscard]] const BSDFDirections & getDirections(BSDFDirection t_Side) const;
 
     private:
         // Construction for pre-defined basis
@@ -72,7 +89,7 @@ namespace SingleLayerOptics
         // Construction for custom basis
         explicit CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions);
 
-        std::map<BSDFDirection, CBSDFDirections> m_Directions;
+        std::map<BSDFDirection, BSDFDirections> m_Directions;
     };
 
 }   // namespace SingleLayerOptics

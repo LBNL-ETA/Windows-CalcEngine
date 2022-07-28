@@ -286,8 +286,8 @@ protected:
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);
 
-        CBSDFIntegrator aLayer1 = *aLayer102->getResults();
-        CBSDFIntegrator aLayer2 = *aLayer102->getResults();
+        BSDFIntegrator aLayer1 = aLayer102->getResults();
+        BSDFIntegrator aLayer2 = aLayer102->getResults();
 
         m_DoubleLayer = std::make_shared<CBSDFDoubleLayer>(aLayer1, aLayer2);
     }
@@ -303,9 +303,9 @@ TEST_F(TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF)
 {
     SCOPED_TRACE("Begin Test: Double Layer BSDF.");
 
-    std::shared_ptr<CBSDFIntegrator> aLayer = getDoubleLayer()->value();
+    BSDFIntegrator aLayer = getDoubleLayer()->value();
 
-    auto T = aLayer->getMatrix(Side::Front, PropertySimple::T);
+    auto T = aLayer.getMatrix(Side::Front, PropertySimple::T);
     size_t matrixSize = T.size();
 
     // Test matrix
@@ -329,7 +329,7 @@ TEST_F(TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF)
         }
     }
 
-    auto R = aLayer->getMatrix(Side::Front, PropertySimple::R);
+    auto R = aLayer.getMatrix(Side::Front, PropertySimple::R);
     matrixSize = R.size();
 
     EXPECT_EQ(size, matrixSize);
