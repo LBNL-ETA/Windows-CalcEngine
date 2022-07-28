@@ -29,6 +29,19 @@ namespace SingleLayerOptics
         Outgoing
     };
 
+    class EnumBSDFDirection : public FenestrationCommon::Enum<BSDFDirection>
+    {};
+
+    inline EnumBSDFDirection::Iterator begin(EnumBSDFDirection)
+    {
+        return EnumBSDFDirection::Iterator(static_cast<int>(BSDFDirection::Incoming));
+    }
+
+    inline EnumBSDFDirection::Iterator end(EnumBSDFDirection)
+    {
+        return EnumBSDFDirection::Iterator(static_cast<int>(BSDFDirection::Outgoing) + 1);
+    }
+
     class BSDFDirections
     {
     public:
@@ -84,6 +97,8 @@ namespace SingleLayerOptics
         [[nodiscard]] const BSDFDirections & getDirections(BSDFDirection t_Side) const;
 
     private:
+        static const std::map<BSDFBasis, std::vector<CBSDFDefinition>> bsdfDefinition;
+
         // Construction for pre-defined basis
         explicit CBSDFHemisphere(BSDFBasis t_Basis);
         // Construction for custom basis

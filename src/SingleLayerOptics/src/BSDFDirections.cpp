@@ -177,39 +177,21 @@ namespace SingleLayerOptics
     ///  CBSDFHemisphere
     /////////////////////////////////////////////////////////////////
 
+    const std::map<BSDFBasis, std::vector<CBSDFDefinition>> CBSDFHemisphere::bsdfDefinition = {
+      {BSDFBasis::Small, {{0, 1}, {13, 1}, {26, 1}, {39, 1}, {52, 1}, {65, 1}, {80.75, 1}}},
+      {BSDFBasis::Quarter, {{0, 1}, {18, 8}, {36, 12}, {54, 12}, {76.5, 8}}},
+      {BSDFBasis::Half, {{0, 1}, {13, 8}, {26, 12}, {39, 16}, {52, 20}, {65, 12}, {80.75, 8}}},
+      {BSDFBasis::Full,
+       {{0, 1}, {10, 8}, {20, 16}, {30, 20}, {40, 24}, {50, 24}, {60, 24}, {70, 16}, {82.5, 12}}}};
+
     CBSDFHemisphere::CBSDFHemisphere(const BSDFBasis t_Basis)
     {
-        std::vector<CBSDFDefinition> aDefinitions;
-        switch(t_Basis)
-        {
-            case BSDFBasis::Small:
-                aDefinitions = {{0, 1}, {13, 1}, {26, 1}, {39, 1}, {52, 1}, {65, 1}, {80.75, 1}};
-                break;
-            case BSDFBasis::Quarter:
-                aDefinitions = {{0, 1}, {18, 8}, {36, 12}, {54, 12}, {76.5, 8}};
-                break;
-            case BSDFBasis::Half:
-                aDefinitions = {
-                  {0, 1}, {13, 8}, {26, 12}, {39, 16}, {52, 20}, {65, 12}, {80.75, 8}};
-                break;
-            case BSDFBasis::Full:
-                aDefinitions = {{0, 1},
-                                {10, 8},
-                                {20, 16},
-                                {30, 20},
-                                {40, 24},
-                                {50, 24},
-                                {60, 24},
-                                {70, 16},
-                                {82.5, 12}};
-                break;
-            default:
-                throw std::runtime_error("Incorrect definition of the basis.");
-        }
-        m_Directions.insert(std::make_pair(BSDFDirection::Incoming,
-                                           BSDFDirections(aDefinitions, BSDFDirection::Incoming)));
-        m_Directions.insert(std::make_pair(BSDFDirection::Outgoing,
-                                           BSDFDirections(aDefinitions, BSDFDirection::Outgoing)));
+        m_Directions.insert(
+          std::make_pair(BSDFDirection::Incoming,
+                         BSDFDirections(bsdfDefinition.at(t_Basis), BSDFDirection::Incoming)));
+        m_Directions.insert(
+          std::make_pair(BSDFDirection::Outgoing,
+                         BSDFDirections(bsdfDefinition.at(t_Basis), BSDFDirection::Outgoing)));
     }
 
     CBSDFHemisphere::CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions) :
