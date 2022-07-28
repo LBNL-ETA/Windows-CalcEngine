@@ -722,9 +722,9 @@ namespace SingleLayerOptics
 
         for(const auto & aProperty : aProperties)
         {
-            if(aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda)
+            if(aProperty.x() >= m_MinLambda && aProperty.x() <= m_MaxLambda)
             {
-                aValues.push_back(aProperty->value());
+                aValues.push_back(aProperty.value());
             }
         }
 

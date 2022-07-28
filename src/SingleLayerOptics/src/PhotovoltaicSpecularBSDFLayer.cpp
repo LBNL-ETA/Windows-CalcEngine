@@ -36,7 +36,7 @@ namespace SingleLayerOptics
             for(size_t i = 0u; i < m_BSDFHemisphere.getDirections(BSDFDirection::Incoming).size();
                 ++i)
             {
-                curVal.push_back(jsc->value());
+                curVal.push_back(jsc.value());
             }
             result.push_back(curVal);
         }

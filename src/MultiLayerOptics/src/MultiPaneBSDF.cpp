@@ -171,7 +171,7 @@ namespace MultiLayerOptics
                 // using
                 aSpectra = aSpectra.interpolate(m_EquivalentLayer.getCommonWavelengths());
 
-                CSeries iTotalSolar = *aSpectra.integrate(m_Integrator, m_NormalizationCoefficient);
+                CSeries iTotalSolar = aSpectra.integrate(m_Integrator, m_NormalizationCoefficient);
                 m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
             }
 

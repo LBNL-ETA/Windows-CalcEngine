@@ -13,9 +13,9 @@ namespace SpectralAveraging
         auto integratedSolar = t_SolarRadiation.integrate(IntegrationType::Trapezoidal);
         auto aSolarRange = CWavelengthRange(WavelengthRange::Solar);
 
-        auto totSolar = integratedSolar->sum(aSolarRange.minLambda(), aSolarRange.maxLambda());
+        auto totSolar = integratedSolar.sum(aSolarRange.minLambda(), aSolarRange.maxLambda());
 
-        auto totVisible = integratedSolar->sum(lowLambda, highLambda);
+        auto totVisible = integratedSolar.sum(lowLambda, highLambda);
         m_Ratio = totVisible / totSolar;
     }
 

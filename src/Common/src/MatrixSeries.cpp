@@ -114,7 +114,7 @@ namespace FenestrationCommon
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
-                m_Matrix[i][j] = *m_Matrix[i][j].integrate(t_Integration, normalizationCoefficient);
+                m_Matrix[i][j] = m_Matrix[i][j].integrate(t_Integration, normalizationCoefficient);
             }
         }
     }
