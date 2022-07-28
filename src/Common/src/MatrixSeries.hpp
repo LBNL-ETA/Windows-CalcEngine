@@ -13,6 +13,7 @@ namespace FenestrationCommon
     class CMatrixSeries
     {
     public:
+        CMatrixSeries() = default;
         CMatrixSeries(const size_t t_Size1, const size_t t_Size2);
         CMatrixSeries(const CMatrixSeries & t_MatrixSeries);
         CMatrixSeries & operator=(CMatrixSeries const & t_MatrixSeries);

@@ -48,7 +48,7 @@ namespace MultiLayerOptics
         return m_CombinedLayerWavelengths.back();
     }
 
-    std::shared_ptr<CMatrixSeries> CEquivalentBSDFLayer::getTotalA(const Side t_Side)
+    CMatrixSeries CEquivalentBSDFLayer::getTotalA(const Side t_Side)
     {
         if(!m_Calculated)
         {
@@ -105,7 +105,7 @@ namespace MultiLayerOptics
 
         for(Side aSide : EnumSide())
         {
-            m_TotA[aSide] = std::make_shared<CMatrixSeries>(numberOfLayers, matrixSize);
+            m_TotA[aSide] = CMatrixSeries(numberOfLayers, matrixSize);
             m_TotJSC[aSide] = std::make_shared<CMatrixSeries>(numberOfLayers, matrixSize);
             for(PropertySimple aProperty : EnumPropertySimple())
             {
@@ -134,7 +134,7 @@ namespace MultiLayerOptics
             {
                 for(size_t k = 0; k < t_NumOfLayers; ++k)
                 {
-                    m_TotA.at(aSide)->addProperties(
+                    m_TotA.at(aSide).addProperties(
                       k, curWL, m_LayersWL[i].getLayerAbsorptances(k + 1, aSide));
                     m_TotJSC.at(aSide)->addProperties(
                       k, curWL, m_LayersWL[i].getLayerJSC(k + 1, aSide));

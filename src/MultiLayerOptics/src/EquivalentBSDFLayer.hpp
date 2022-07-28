@@ -8,18 +8,6 @@
 #include <WCECommon.hpp>
 #include <WCESingleLayerOptics.hpp>
 
-//#include "AbsorptancesMultiPaneBSDF.hpp"
-
-namespace FenestrationCommon
-{
-    class SquareMatrix;
-    class CMatrixSeries;
-    class CSeries;
-    enum class Side;
-    enum class PropertySimple;
-
-}   // namespace FenestrationCommon
-
 namespace SingleLayerOptics
 {
     enum class BSDFDirection;
@@ -31,7 +19,8 @@ namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayerSingleBand;
 
-    // Calculates equivalent BSDF matrices for transmittances and reflectances and vectors for absorptances
+    // Calculates equivalent BSDF matrices for transmittances and reflectances and vectors for
+    // absorptances
     class CEquivalentBSDFLayer
     {
     public:
@@ -45,8 +34,7 @@ namespace MultiLayerOptics
         double getMaxLambda() const;
 
         // Absorptance wavelength by wavelength matrices
-        std::shared_ptr<FenestrationCommon::CMatrixSeries>
-          getTotalA(FenestrationCommon::Side t_Side);
+        FenestrationCommon::CMatrixSeries getTotalA(const FenestrationCommon::Side t_Side);
 
         // Photovoltaic current (scaled to income irradiance equal to one)
         std::shared_ptr<FenestrationCommon::CMatrixSeries>
@@ -58,7 +46,7 @@ namespace MultiLayerOptics
 
         void setSolarRadiation(FenestrationCommon::CSeries & t_SolarRadiation);
 
-        [[nodiscard]] std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>>& getLayers();
+        [[nodiscard]] std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & getLayers();
         [[nodiscard]] size_t numberOfLayers() const;
 
     private:
@@ -77,9 +65,9 @@ namespace MultiLayerOptics
 
         // Total absorptance coefficients for every wavelength (does not include source data)
         // First dimension contain number of layers and second dimension is BSDF matrix size
-        // Each series contain the data arranged by wavelengths (absorptance for the given wavelength)
-        std::map<FenestrationCommon::Side, std::shared_ptr<FenestrationCommon::CMatrixSeries>>
-          m_TotA;
+        // Each series contain the data arranged by wavelengths (absorptance for the given
+        // wavelength)
+        std::map<FenestrationCommon::Side, FenestrationCommon::CMatrixSeries> m_TotA;
 
         // Total photovoltaic current (see above comment for absorptance
         std::map<FenestrationCommon::Side, std::shared_ptr<FenestrationCommon::CMatrixSeries>>

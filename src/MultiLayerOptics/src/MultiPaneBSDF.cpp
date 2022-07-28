@@ -180,9 +180,7 @@ namespace MultiLayerOptics
 
             for(Side aSide : EnumSide())
             {
-                // It is important to take a copy of aTotalA because it will be used to
-                // multiply and integrate later and local values will change
-                CMatrixSeries aTotalA = *m_EquivalentLayer.getTotalA(aSide);
+                CMatrixSeries aTotalA = m_EquivalentLayer.getTotalA(aSide);
                 aTotalA.mMult(m_IncomingSpectra);
                 // Calculates absorbed energy in every layer for every wavelength
                 aTotalA.integrate(m_Integrator, m_NormalizationCoefficient);
