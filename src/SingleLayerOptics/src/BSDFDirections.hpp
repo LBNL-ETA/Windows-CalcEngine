@@ -105,6 +105,7 @@ namespace SingleLayerOptics
         explicit CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions);
 
         std::map<BSDFDirection, BSDFDirections> m_Directions;
+        static std::map<BSDFDirection, BSDFDirections> generateBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions);
     };
 
 }   // namespace SingleLayerOptics

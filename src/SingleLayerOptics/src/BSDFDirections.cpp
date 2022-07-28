@@ -184,20 +184,12 @@ namespace SingleLayerOptics
       {BSDFBasis::Full,
        {{0, 1}, {10, 8}, {20, 16}, {30, 20}, {40, 24}, {50, 24}, {60, 24}, {70, 16}, {82.5, 12}}}};
 
-    CBSDFHemisphere::CBSDFHemisphere(const BSDFBasis t_Basis)
-    {
-        m_Directions.insert(
-          std::make_pair(BSDFDirection::Incoming,
-                         BSDFDirections(bsdfDefinition.at(t_Basis), BSDFDirection::Incoming)));
-        m_Directions.insert(
-          std::make_pair(BSDFDirection::Outgoing,
-                         BSDFDirections(bsdfDefinition.at(t_Basis), BSDFDirection::Outgoing)));
-    }
+    CBSDFHemisphere::CBSDFHemisphere(const BSDFBasis t_Basis) :
+        m_Directions(generateBSDFDirections(bsdfDefinition.at(t_Basis)))
+    {}
 
     CBSDFHemisphere::CBSDFHemisphere(const std::vector<CBSDFDefinition> & t_Definitions) :
-        m_Directions(
-          {{BSDFDirection::Incoming, BSDFDirections(t_Definitions, BSDFDirection::Incoming)},
-           {BSDFDirection::Outgoing, BSDFDirections(t_Definitions, BSDFDirection::Outgoing)}})
+        m_Directions(generateBSDFDirections(t_Definitions))
     {}
 
     const BSDFDirections & CBSDFHemisphere::getDirections(const BSDFDirection tDirection) const
@@ -213,6 +205,13 @@ namespace SingleLayerOptics
     CBSDFHemisphere CBSDFHemisphere::create(const std::vector<CBSDFDefinition> & t_Definitions)
     {
         return CBSDFHemisphere(t_Definitions);
+    }
+
+    std::map<BSDFDirection, BSDFDirections>
+      CBSDFHemisphere::generateBSDFDirections(const std::vector<CBSDFDefinition> & t_Definitions)
+    {
+        return {{BSDFDirection::Incoming, BSDFDirections(t_Definitions, BSDFDirection::Incoming)},
+                {BSDFDirection::Outgoing, BSDFDirections(t_Definitions, BSDFDirection::Outgoing)}};
     }
 
 }   // namespace SingleLayerOptics
