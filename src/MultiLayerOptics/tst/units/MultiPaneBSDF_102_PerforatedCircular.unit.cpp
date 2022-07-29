@@ -150,12 +150,11 @@ protected:
         const auto perforated = CBSDFLayerMaker::getCircularPerforatedLayer(
           aMaterialPerforated, aBSDF, x, y, thickness, radius);
 
-        CCommonWavelengths commonWavelengths;
-        commonWavelengths.addWavelength(Layer_102->getBandWavelengths());
-        commonWavelengths.addWavelength(perforated->getBandWavelengths());
-        const auto common_wl{commonWavelengths.getCombinedWavelengths(Combine::Interpolate)};
+        m_Layer = CMultiPaneBSDF::create({Layer_102, perforated});
 
-        m_Layer = CMultiPaneBSDF::create({Layer_102, perforated}, loadSolarRadiationFile(), common_wl);
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -175,56 +174,56 @@ TEST_F(MultiPaneBSDF_102_Perforated, Test102PerofratedCircular)
     CMultiPaneBSDF & aLayer = getLayer();
 
     const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.106832, tauDiff, 1e-6);
+    EXPECT_NEAR(0.10862774324689654, tauDiff, 1e-6);
     
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.571404, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.56986119983395001, rhoDiff, 1e-6);
     
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.159854, absDiff1, 1e-6);
+    EXPECT_NEAR(0.15966839117388992, absDiff1, 1e-6);
     
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.161909, absDiff2, 1e-6);
+    EXPECT_NEAR(0.16184266574527387, absDiff2, 1e-6);
 
     double theta = 0;
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.162518, tauHem, 1e-6);
+    EXPECT_NEAR(0.16441435074547683, tauHem, 1e-6);
 
     double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.075026, tauDir, 1e-6);
+    EXPECT_NEAR(0.075075474632259026, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.514337, rhoHem, 1e-6);
+    EXPECT_NEAR(0.51271683131949242, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.086856, rhoDir, 1e-6);
+    EXPECT_NEAR(0.086757190772148052, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.153119, abs1, 1e-6);
+    EXPECT_NEAR(0.15291151130256964, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.170026, abs2, 1e-6);
+    EXPECT_NEAR(0.16995730663246172, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
     
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.124489, tauHem, 1e-6);
+    EXPECT_NEAR(0.1264541979653489, tauHem, 1e-6);
     
     tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.033017, tauDir, 1e-6);
+    EXPECT_NEAR(0.033066356404909625, tauDir, 1e-6);
     
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.536386, rhoHem, 1e-6);
+    EXPECT_NEAR(0.53470392199356542, rhoHem, 1e-6);
     
     rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.091732, rhoDir, 1e-6);
+    EXPECT_NEAR(0.09163167458303563, rhoDir, 1e-6);
     
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.162296, abs1, 1e-6);
+    EXPECT_NEAR(0.16208433292853708, abs1, 1e-6);
     
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.176829, abs2, 1e-6);
+    EXPECT_NEAR(0.1767575471125484, abs2, 1e-6);
 }

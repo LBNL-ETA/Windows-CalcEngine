@@ -70,7 +70,12 @@ protected:
         // Perforated layer is created here
         const auto LayerWoven{CBSDFLayerMaker::getWovenLayer(aMaterial, aBSDF, diameter, spacing)};
 
-        m_Layer = CMultiPaneBSDF::create({LayerWoven}, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create({LayerWoven});
+
+        // Need to update correct solar radiation table. This one will not produce results since it is out of range
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:

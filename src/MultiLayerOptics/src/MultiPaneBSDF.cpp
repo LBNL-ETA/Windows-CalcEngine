@@ -188,11 +188,8 @@ namespace MultiLayerOptics
 
             for(CSeries & aSpectra : m_IncomingSpectra)
             {
-                // each incoming spectra must be interpolated to same wavelengths as this IGU is
-                // using
-                // aSpectra = aSpectra.interpolate(m_EquivalentLayer.getCommonWavelengths());
-
-                CSeries iTotalSolar = aSpectra.integrate(m_Integrator, m_NormalizationCoefficient);
+                CSeries iTotalSolar = aSpectra.integrate(
+                  m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
             }
 

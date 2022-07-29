@@ -300,7 +300,11 @@ protected:
         // Perforated layer is created here
         auto LayerWoven = CBSDFLayerMaker::getWovenLayer(aWovenMaterial, aBSDF, diameter, spacing);
 
-        m_Layer = CMultiPaneBSDF::create({LayerWoven, Layer_102}, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create({LayerWoven, Layer_102});
+
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -323,36 +327,36 @@ TEST_F(MultiPaneBSDF_102_Woven_n_BandMaterial, TestWovenShade)
     EXPECT_NEAR(0.13484889575042058, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.5661722609648232, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.56618660131592768, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.28265135446851702, absDiff1, 1e-6);
+    EXPECT_NEAR(0.28263551018831601, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.016327488816241579, absDiff2, 1e-6);
+    EXPECT_NEAR(0.016329671229861488, absDiff2, 1e-6);
 
     const double theta = 0;
     const double phi = 0;
 
     const double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.2210247634178821, tauHem, 1e-6);
+    EXPECT_NEAR(0.22102289250670637, tauHem, 1e-6);
 
     const double tauDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.20880579937979679, tauDir, 1e-6);
+    EXPECT_NEAR(0.20880417866124168, tauDir, 1e-6);
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.51171129367143786, rhoHem, 1e-6);
+    EXPECT_NEAR(0.51172408586557705, rhoHem, 1e-6);
 
     const double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
     EXPECT_NEAR(0.017084421624025157, rhoDir, 1e-6);
 
     const double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.24287076469501989, abs1, 1e-6);
+    EXPECT_NEAR(0.24285700879406391, abs1, 1e-6);
 
     const double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.024393178215660453, abs2, 1e-6);
+    EXPECT_NEAR(0.024396012833652843, abs2, 1e-6);
 }
