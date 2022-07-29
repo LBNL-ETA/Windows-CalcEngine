@@ -2,13 +2,13 @@
 #include <numeric>
 #include <algorithm>
 #include <cassert>
+#include <utility>
 
 #include "MultiPaneBSDF.hpp"
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "../../SingleLayerOptics/src/PhotovoltaicSpecularBSDFLayer.hpp"
 
 namespace SingleLayerOptics
 {
@@ -20,11 +20,31 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    CMultiPaneBSDF::CMultiPaneBSDF(
-      const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-      const FenestrationCommon::CSeries & t_SolarRadiation,
-      const FenestrationCommon::CSeries & t_DetectorData,
-      const std::vector<double> & t_CommonWavelengths) :
+    CalculationProperties::CalculationProperties(
+      const CSeries & solarRadiation,
+      std::optional<std::vector<double>> commonWavelengths,
+      std::optional<FenestrationCommon::CSeries> detectorData) :
+        SolarRadiation(solarRadiation),
+        CommonWavelengths(std::move(commonWavelengths)),
+        DetectorData(std::move(detectorData))
+    {}
+
+    CMultiPaneBSDF::CMultiPaneBSDF(const std::vector<std::shared_ptr<CBSDFLayer>> & t_Layer,
+                                   const std::optional<std::vector<double>> & matrixWavelengths) :
+        m_EquivalentLayer(t_Layer, matrixWavelengths),
+        m_Results(t_Layer[0]->getDirections(BSDFDirection::Incoming)),
+        m_Calculated(false),
+        m_MinLambdaCalculated(0),
+        m_MaxLambdaCalculated(0),
+        m_Integrator(IntegrationType::Trapezoidal),
+        m_NormalizationCoefficient(1),
+        m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
+    {}
+
+    CMultiPaneBSDF::CMultiPaneBSDF(const std::vector<std::shared_ptr<CBSDFLayer>> & t_Layer,
+                                   const CSeries & t_SolarRadiation,
+                                   const CSeries & t_DetectorData,
+                                   const std::vector<double> & t_CommonWavelengths) :
         m_EquivalentLayer(t_CommonWavelengths),
         m_Results(t_Layer[0]->getDirections(BSDFDirection::Incoming)),
         m_Calculated(false),
@@ -122,7 +142,8 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const FenestrationCommon::CSeries & t_SolarRadiation,
       const FenestrationCommon::CSeries & t_DetectorData) :
-        CMultiPaneBSDF(t_Layer, t_SolarRadiation, t_DetectorData, getCommonWavelengthsFromLayers(t_Layer))
+        CMultiPaneBSDF(
+          t_Layer, t_SolarRadiation, t_DetectorData, getCommonWavelengthsFromLayers(t_Layer))
     {}
 
     SquareMatrix CMultiPaneBSDF::getMatrix(const double minLambda,
@@ -169,7 +190,7 @@ namespace MultiLayerOptics
             {
                 // each incoming spectra must be interpolated to same wavelengths as this IGU is
                 // using
-                aSpectra = aSpectra.interpolate(m_EquivalentLayer.getCommonWavelengths());
+                // aSpectra = aSpectra.interpolate(m_EquivalentLayer.getCommonWavelengths());
 
                 CSeries iTotalSolar = aSpectra.integrate(m_Integrator, m_NormalizationCoefficient);
                 m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
@@ -181,14 +202,20 @@ namespace MultiLayerOptics
             for(Side aSide : EnumSide())
             {
                 CMatrixSeries aTotalA = m_EquivalentLayer.getTotalA(aSide);
-                aTotalA.mMult(m_IncomingSpectra);
                 // Calculates absorbed energy in every layer for every wavelength
-                aTotalA.integrate(m_Integrator, m_NormalizationCoefficient);
+                if(m_SpectralIntegrationWavelengths.has_value())
+                {
+                    aTotalA.interpolate(m_SpectralIntegrationWavelengths.value());
+                }
+                aTotalA.mMult(m_IncomingSpectra);
+                aTotalA.integrate(
+                  m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 // Calculates total absorptance for every layer over the given wavelength range
                 m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
 
                 CMatrixSeries jscTotal = m_EquivalentLayer.getTotalJSC(aSide);
-                jscTotal.integrate(m_Integrator, m_NormalizationCoefficient);
+                jscTotal.integrate(
+                  m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 auto jscSum{jscTotal.getSums(minLambda, maxLambda)};
 
                 std::vector<std::vector<double>> jscWithSolar;
@@ -207,20 +234,25 @@ namespace MultiLayerOptics
                 for(PropertySimple aProprerty : EnumPropertySimple())
                 {
                     CMatrixSeries aTot = m_EquivalentLayer.getTotal(aSide, aProprerty);
+                    if(m_SpectralIntegrationWavelengths.has_value())
+                    {
+                        aTot.interpolate(m_SpectralIntegrationWavelengths.value());
+                    }
                     aTot.mMult(m_IncomingSpectra);
-                    aTot.integrate(m_Integrator, m_NormalizationCoefficient);
+                    aTot.integrate(
+                      m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                     aResults[{aSide, aProprerty}] =
                       aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
                 }
 
                 // Update result matrices
-                m_Results.setMatrices(aResults.at(std::make_pair(aSide, PropertySimple::T)),
-                                      aResults.at(std::make_pair(aSide, PropertySimple::R)),
+                m_Results.setMatrices(aResults.at({aSide, PropertySimple::T}),
+                                      aResults.at({aSide, PropertySimple::R}),
                                       aSide);
             }
 
             // calculate hemispherical absorptances
-            for(Side aSide : EnumSide())
+            for(const Side aSide : EnumSide())
             {
                 calcHemisphericalAbs(aSide);
             }
@@ -441,6 +473,13 @@ namespace MultiLayerOptics
         m_EquivalentLayer.setSolarRadiation(m_SolarRadiationInit);
     }
 
+    std::unique_ptr<CMultiPaneBSDF> CMultiPaneBSDF::create(
+      const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
+      const std::optional<std::vector<double>> & matrixWavelengths)
+    {
+        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF(t_Layer, matrixWavelengths));
+    }
+
     std::unique_ptr<CMultiPaneBSDF>
       CMultiPaneBSDF::create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                              const FenestrationCommon::CSeries & t_SolarRadiation,
@@ -555,6 +594,19 @@ namespace MultiLayerOptics
         // return 0;
         return m_EquivalentLayer.getMaxLambda();
     }
+
+    void CMultiPaneBSDF::setCalculationProperties(const CalculationProperties & calcProperties)
+    {
+        const auto directionsSize{m_BSDFDirections.size()};
+
+        this->m_IncomingSpectra = std::vector<CSeries>(directionsSize);
+        for(size_t i = 0; i < directionsSize; ++i)
+        {
+            this->m_IncomingSpectra[i] = calcProperties.SolarRadiation;
+        }
+        m_SpectralIntegrationWavelengths = calcProperties.CommonWavelengths;
+    }
+
     std::vector<double>
       CMultiPaneBSDF::getAbsorptanceLayers(const double minLambda,
                                            const double maxLambda,
@@ -564,7 +616,7 @@ namespace MultiLayerOptics
                                            const double phi)
     {
         std::vector<double> abs;
-        size_t absSize{m_EquivalentLayer.numberOfLayers()};
+        const size_t absSize{m_EquivalentLayer.numberOfLayers()};
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
@@ -589,7 +641,7 @@ namespace MultiLayerOptics
                                                const double phi)
     {
         std::vector<double> abs;
-        size_t absSize{m_EquivalentLayer.numberOfLayers()};
+        const size_t absSize{m_EquivalentLayer.numberOfLayers()};
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
@@ -639,6 +691,5 @@ namespace MultiLayerOptics
         return DirHem(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi)
                - DirDir(minLambda, maxLambda, t_Side, t_Property, t_Theta, t_Phi);
     }
-
 
 }   // namespace MultiLayerOptics

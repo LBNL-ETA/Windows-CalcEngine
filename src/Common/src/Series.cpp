@@ -22,8 +22,7 @@ namespace FenestrationCommon
     }
 
     CSeriesPoint::CSeriesPoint(double t_Wavelength, double t_Value) :
-        m_x(t_Wavelength),
-        m_Value(t_Value)
+        m_x(t_Wavelength), m_Value(t_Value)
     {}
 
     double CSeriesPoint::x() const
@@ -95,13 +94,17 @@ namespace FenestrationCommon
     }
 
     CSeries CSeries::integrate(IntegrationType t_IntegrationType,
-                               double normalizationCoefficient) const
+                               double normalizationCoefficient,
+                               const std::optional<std::vector<double>> & integrationPoints) const
     {
-        CIntegratorFactory aFactory = CIntegratorFactory();
-        std::shared_ptr<IIntegratorStrategy> aIntegrator =
-          aFactory.getIntegrator(t_IntegrationType);
+        const CIntegratorFactory aFactory = CIntegratorFactory();
+        const auto aIntegrator = aFactory.getIntegrator(t_IntegrationType);
 
-        return aIntegrator->integrate(m_Series, normalizationCoefficient);
+        const auto series = integrationPoints.has_value()
+                              ? interpolate(integrationPoints.value()).m_Series
+                              : m_Series;
+
+        return aIntegrator->integrate(series, normalizationCoefficient);
     }
 
     std::optional<CSeriesPoint> CSeries::findLower(double const t_Wavelength) const
@@ -285,6 +288,17 @@ namespace FenestrationCommon
         for(auto & spectralProperty : m_Series)
         {
             aArray.push_back(spectralProperty.x());
+        }
+
+        return aArray;
+    }
+
+    std::vector<double> CSeries::getYArray() const
+    {
+        std::vector<double> aArray;
+        for(auto & spectralProperty : m_Series)
+        {
+            aArray.push_back(spectralProperty.value());
         }
 
         return aArray;

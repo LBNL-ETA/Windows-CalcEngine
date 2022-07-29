@@ -8,13 +8,6 @@
 #include <WCECommon.hpp>
 #include <WCESingleLayerOptics.hpp>
 
-namespace SingleLayerOptics
-{
-    enum class BSDFDirection;
-    class BSDFDirections;
-
-}   // namespace SingleLayerOptics
-
 namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayerSingleBand;
@@ -24,14 +17,20 @@ namespace MultiLayerOptics
     class CEquivalentBSDFLayer
     {
     public:
-        CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths);
+        explicit CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths);
+
+
+        explicit CEquivalentBSDFLayer(
+          std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> t_Layer,
+          const std::optional<std::vector<double>> & matrixWavelengths);
 
         void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
-        const SingleLayerOptics::BSDFDirections &
+        [[nodiscard]] const SingleLayerOptics::BSDFDirections &
           getDirections(SingleLayerOptics::BSDFDirection t_Side) const;
-        std::vector<double> getCommonWavelengths() const;
-        double getMinLambda() const;
-        double getMaxLambda() const;
+
+        [[nodiscard]] std::vector<double> getCommonWavelengths() const;
+        [[nodiscard]] double getMinLambda() const;
+        [[nodiscard]] double getMaxLambda() const;
 
         // Absorptance wavelength by wavelength matrices
         FenestrationCommon::CMatrixSeries getTotalA(const FenestrationCommon::Side t_Side);
@@ -49,6 +48,8 @@ namespace MultiLayerOptics
         [[nodiscard]] std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & getLayers();
         [[nodiscard]] size_t numberOfLayers() const;
 
+        void setMatrixLayerWavelengths(const std::vector<double> & wavelenghts);
+
     private:
         void calculate();
 
@@ -56,6 +57,9 @@ namespace MultiLayerOptics
         void calculateWavelengthProperties(size_t t_NumOfLayers, size_t t_Start, size_t t_End);
 
         void updateWavelengthLayers(SingleLayerOptics::CBSDFLayer & t_Layer);
+
+        static std::vector<double> unionOfLayerWavelengths(
+          const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer);
 
         // std::vector of layer results over each wavelength
         std::vector<CEquivalentBSDFLayerSingleBand> m_LayersWL;

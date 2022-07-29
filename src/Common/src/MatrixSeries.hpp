@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <optional>
 
 namespace FenestrationCommon
 {
@@ -38,11 +39,16 @@ namespace FenestrationCommon
 
         std::vector<CSeries> & operator[](const size_t index);
 
-        void integrate(const IntegrationType t_Integration, double normalizationCoefficient);
+        void integrate(const IntegrationType t_Integration,
+                       double normalizationCoefficient,
+                       const std::optional<std::vector<double>> & integrationPoints);
 
-        [[nodiscard]] std::vector<std::vector<double>> getSums(const double minLambda,
-                                                               const double maxLambda,
-                                                               const std::vector<double> & t_ScaleValue) const;
+        void interpolate(const std::vector<double> & t_Wavelengths);
+
+        [[nodiscard]] std::vector<std::vector<double>>
+          getSums(const double minLambda,
+                  const double maxLambda,
+                  const std::vector<double> & t_ScaleValue) const;
 
         [[nodiscard]] std::vector<std::vector<double>> getSums(const double minLambda,
                                                                const double maxLambda) const;

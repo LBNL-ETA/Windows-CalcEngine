@@ -108,13 +108,26 @@ namespace FenestrationCommon
     }
 
     void CMatrixSeries::integrate(const IntegrationType t_Integration,
-                                  double normalizationCoefficient)
+                                  double normalizationCoefficient,
+                                  const std::optional<std::vector<double>> & integrationPoints)
     {
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
-                m_Matrix[i][j] = m_Matrix[i][j].integrate(t_Integration, normalizationCoefficient);
+                m_Matrix[i][j] = m_Matrix[i][j].integrate(
+                  t_Integration, normalizationCoefficient, integrationPoints);
+            }
+        }
+    }
+
+    void CMatrixSeries::interpolate(const std::vector<double> & t_Wavelengths)
+    {
+        for(size_t i = 0; i < m_Matrix.size(); ++i)
+        {
+            for(size_t j = 0; j < m_Matrix[i].size(); ++j)
+            {
+                m_Matrix[i][j] = m_Matrix[i][j].interpolate(t_Wavelengths);
             }
         }
     }

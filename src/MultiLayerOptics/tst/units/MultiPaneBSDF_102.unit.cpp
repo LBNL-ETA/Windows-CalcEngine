@@ -121,73 +121,75 @@ protected:
     virtual void SetUp()
     {
         // Create material from samples
-        double thickness = 3.048e-3;   // [m]
+        constexpr double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
-
-        // BSDF definition is needed as well as its material representation
+        
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create({Layer_102});
+
+        const CalculationProperties input{loadSolarRadiationFile(), loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
-    CMultiPaneBSDF & getLayer()
+    [[nodiscard]] CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
-    };
+    }
 };
 
 TEST_F(MultiPaneBSDF_102, TestSpecular1)
 {
     SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiPaneBSDF & aLayer = getLayer();
 
-    double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.745379, tauDiff, 1e-6);
+    const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
+    EXPECT_NEAR(0.745404, tauDiff, 1e-6);
 
-    double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.153050, rhoDiff, 1e-6);
+    const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
+    EXPECT_NEAR(0.152995, rhoDiff, 1e-6);
 
-    double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.101571, absDiff1, 1e-6);
+    const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
+    EXPECT_NEAR(0.101601, absDiff1, 1e-6);
 
     double theta = 0;
     double phi = 0;
 
-    auto absDiffFrontElectricity = aLayer.getAbsorptanceLayersElectricity(
-      minLambda, maxLambda, Side::Front, FenestrationCommon::ScatteringSimple::Diffuse, theta, phi);
+    const auto absDiffFrontElectricity = aLayer.getAbsorptanceLayersElectricity(
+      minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, theta, phi);
     EXPECT_NEAR(0.0, absDiffFrontElectricity[0], 1e-6);
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.833807, tauHem, 1e-6);
+    EXPECT_NEAR(0.833843, tauHem, 1e-6);
 
     double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.833807, tauDir, 1e-6);
+    EXPECT_NEAR(0.833843, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.074817, rhoHem, 1e-6);
+    EXPECT_NEAR(0.074761, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.074817, rhoDir, 1e-6);
+    EXPECT_NEAR(0.074761, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.091376, abs1, 1e-6);
+    EXPECT_NEAR(0.091396, abs1, 1e-6);
 
     theta = 45;
     phi = 78;
 
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.822230, tauHem, 1e-6);
+    EXPECT_NEAR(0.822262, tauHem, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.079382, rhoHem, 1e-6);
+    EXPECT_NEAR(0.079326, rhoHem, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.098388, abs1, 1e-6);
+    EXPECT_NEAR(0.098413, abs1, 1e-6);
 }

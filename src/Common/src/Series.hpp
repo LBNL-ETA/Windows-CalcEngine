@@ -6,7 +6,7 @@
 #include <optional>
 
 namespace FenestrationCommon
-{// Implementation of spectral property interface
+{   // Implementation of spectral property interface
     class CSeriesPoint
     {
     public:
@@ -45,7 +45,9 @@ namespace FenestrationCommon
         void setConstantValues(const std::vector<double> & t_x, double const t_Value);
 
         CSeries integrate(IntegrationType t_IntegrationType,
-                                           double normalizationCoefficient = 1) const;
+                          double normalizationCoefficient = 1,
+                          const std::optional<std::vector<double>> & integrationPoints = std::nullopt) const;
+
         CSeries interpolate(const std::vector<double> & t_Wavelengths) const;
 
         //! \brief Multiplication of values in spectral properties that have same wavelength.
@@ -70,7 +72,8 @@ namespace FenestrationCommon
         CSeries operator+(const CSeries & other) const;
 
         // Return wavelength values for spectral properties.
-        std::vector<double> getXArray() const;
+        [[nodiscard]] std::vector<double> getXArray() const;
+        [[nodiscard]] std::vector<double> getYArray() const;
 
         // Sum of all properties between two x values. Default arguments mean all items are sum
         double sum(double minX = 0, double maxX = 0) const;
@@ -92,7 +95,9 @@ namespace FenestrationCommon
     private:
         [[nodiscard]] std::optional<CSeriesPoint> findLower(double t_x) const;
         [[nodiscard]] std::optional<CSeriesPoint> findUpper(double t_x) const;
-        static double interpolate(const CSeriesPoint& t_Lower, const CSeriesPoint& t_Upper, const double t_Wavelength);
+        static double interpolate(const CSeriesPoint & t_Lower,
+                                  const CSeriesPoint & t_Upper,
+                                  const double t_Wavelength);
 
         std::vector<CSeriesPoint> m_Series;
     };

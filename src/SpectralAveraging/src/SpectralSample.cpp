@@ -321,7 +321,7 @@ namespace SpectralAveraging
             {
                 for(const auto & side : EnumSide())
                 {
-                    m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
+                    m_Property[{prop, side}] = m_SampleData->properties(prop, side);
                 }
             }
 

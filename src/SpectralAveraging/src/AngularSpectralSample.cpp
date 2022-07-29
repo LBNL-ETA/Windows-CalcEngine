@@ -195,6 +195,9 @@ namespace SpectralAveraging
     void CAngularSpectralSample::setBandWavelengths(const std::vector<double> & wavelegths)
     {
         m_SpectralSampleZero->setWavelengths(WavelengthSet::Custom, wavelegths);
+        
+        // All previous spectral properties are calculated with different wavelengths
+        m_SpectralProperties.clear();
     }
 
     void CAngularSpectralSample::Flipped(bool flipped)
