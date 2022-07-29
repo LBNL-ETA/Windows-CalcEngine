@@ -820,7 +820,11 @@ protected:
 
         auto Layer_BSDF = CBSDFLayerMaker::getPreLoadedBSDFLayer(aBSDFMaterial, aBSDF);
 
-        m_Layer = CMultiPaneBSDF::create({Layer_BSDF}, getSourceSpectrum(), getDetectorData());
+        m_Layer = CMultiPaneBSDF::create({Layer_BSDF});
+
+        const CalculationProperties input{
+          getSourceSpectrum(), fiveNMWavelenths(), getDetectorData()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:

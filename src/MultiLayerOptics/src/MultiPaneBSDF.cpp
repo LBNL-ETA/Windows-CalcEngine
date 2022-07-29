@@ -29,6 +29,21 @@ namespace MultiLayerOptics
         DetectorData(std::move(detectorData))
     {}
 
+    FenestrationCommon::CSeries CalculationProperties::scaledSolarRadiation() const
+    {
+        FenestrationCommon::CSeries result{SolarRadiation};
+        if(CommonWavelengths.has_value())
+        {
+            result = result.interpolate(CommonWavelengths.value());
+        }
+
+        if(DetectorData.has_value())
+        {
+            result = result * DetectorData.value().interpolate(result.getXArray());
+        }
+        return result;
+    }
+
     CMultiPaneBSDF::CMultiPaneBSDF(const std::vector<std::shared_ptr<CBSDFLayer>> & t_Layer,
                                    const std::optional<std::vector<double>> & matrixWavelengths) :
         m_EquivalentLayer(t_Layer, matrixWavelengths),
@@ -599,7 +614,7 @@ namespace MultiLayerOptics
         this->m_IncomingSpectra = std::vector<CSeries>(directionsSize);
         for(size_t i = 0; i < directionsSize; ++i)
         {
-            this->m_IncomingSpectra[i] = calcProperties.SolarRadiation;
+            this->m_IncomingSpectra[i] = calcProperties.scaledSolarRadiation();
         }
         m_SpectralIntegrationWavelengths = calcProperties.CommonWavelengths;
     }

@@ -33,6 +33,8 @@ namespace MultiLayerOptics
         FenestrationCommon::CSeries SolarRadiation;
         std::optional<std::vector<double>> CommonWavelengths;
         std::optional<FenestrationCommon::CSeries> DetectorData;
+
+        FenestrationCommon::CSeries scaledSolarRadiation() const;
     };
 
     class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer
