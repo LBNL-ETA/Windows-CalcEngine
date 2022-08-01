@@ -54,7 +54,7 @@ namespace MultiLayerOptics
         void calculate();
 
         // Wavelength layer per layer calculations
-        void calculateWavelengthProperties(size_t t_NumOfLayers, size_t t_Start, size_t t_End);
+        void calculateWavelengthProperties(size_t t_NumOfLayers, const std::vector<double> & wavelengths);
 
         void updateWavelengthLayers(SingleLayerOptics::CBSDFLayer & t_Layer);
 

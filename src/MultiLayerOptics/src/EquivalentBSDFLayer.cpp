@@ -143,35 +143,30 @@ namespace MultiLayerOptics
             }
         }
 
-        // Calculate total transmitted solar per matrix and perform integration over each wavelength
-        const auto WLsize{m_CombinedLayerWavelengths.size()};
-
-        calculateWavelengthProperties(numberOfLayers, 0, WLsize);
+        calculateWavelengthProperties(numberOfLayers, m_CombinedLayerWavelengths);
 
         m_Calculated = true;
     }
 
-    void CEquivalentBSDFLayer::calculateWavelengthProperties(size_t const t_NumOfLayers,
-                                                             size_t const t_Start,
-                                                             size_t const t_End)
+    void
+      CEquivalentBSDFLayer::calculateWavelengthProperties(size_t const t_NumOfLayers,
+                                                          const std::vector<double> & wavelengths)
     {
-        for(auto i = t_Start; i < t_End; ++i)
+        for(size_t i = 0u; i < wavelengths.size(); ++i)
         {
-            const auto curWL = m_CombinedLayerWavelengths[i];
-
             for(auto aSide : EnumSide())
             {
                 for(size_t k = 0; k < t_NumOfLayers; ++k)
                 {
                     m_TotA.at(aSide).addProperties(
-                      k, curWL, m_LayersWL[i].getLayerAbsorptances(k + 1, aSide));
+                      k, wavelengths[i], m_LayersWL[i].getLayerAbsorptances(k + 1, aSide));
                     m_TotJSC.at(aSide).addProperties(
-                      k, curWL, m_LayersWL[i].getLayerJSC(k + 1, aSide));
+                      k, wavelengths[i], m_LayersWL[i].getLayerJSC(k + 1, aSide));
                 }
                 for(auto aProperty : EnumPropertySimple())
                 {
                     auto curPropertyMatrix = m_LayersWL[i].getProperty(aSide, aProperty);
-                    m_Tot.at({aSide, aProperty}).addProperties(curWL, curPropertyMatrix);
+                    m_Tot.at({aSide, aProperty}).addProperties(wavelengths[i], curPropertyMatrix);
                 }
             }
         }
