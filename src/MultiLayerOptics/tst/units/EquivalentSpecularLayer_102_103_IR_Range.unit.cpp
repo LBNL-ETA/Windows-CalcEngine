@@ -86,12 +86,6 @@ public:
 
 TEST_F(EquivalentSpecularLayer_102_103_IR_Range, TestNoAvailableData)
 {
-    SCOPED_TRACE("Begin Test: Specular MultiLayerOptics layer - angle = 0 deg.");
-
-    const auto wl = loadSampleData_NFRC_102()->getWavelengths();
-    const auto blackBodyTemperature = 300;
-    const auto sourceData = SpectralAveraging::BlackBodySpectrum(wl, blackBodyTemperature);
-
     const auto minLambda = 5.0;
     const auto maxLambda = 100.0;
 
