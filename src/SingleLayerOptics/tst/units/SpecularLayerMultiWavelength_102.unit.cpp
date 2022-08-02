@@ -37,7 +37,7 @@ protected:
         const auto aMaterial =
           Material::nBandMaterial(aMeasurements, thickness, aType, minLambda, maxLambda);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

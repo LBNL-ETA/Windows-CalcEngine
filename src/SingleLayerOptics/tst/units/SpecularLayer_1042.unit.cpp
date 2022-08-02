@@ -310,7 +310,7 @@ protected:
         double thickness = 3.18e-3;   // [m]
         auto aMaterial = Material::nBandMaterial(
           loadSampleData_NFRC_1042(), thickness, MaterialType::Coated, WavelengthRange::Solar);
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

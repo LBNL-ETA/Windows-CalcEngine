@@ -34,7 +34,7 @@ protected:
         const size_t numOfSlatSegments = 5;
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,

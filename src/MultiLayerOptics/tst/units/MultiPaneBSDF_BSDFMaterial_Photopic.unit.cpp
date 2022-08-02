@@ -807,7 +807,7 @@ private:
 protected:
     virtual void SetUp()
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         const auto tfVisible = loadTfVisible();
         const auto tbVisible = loadTbVisible();
         const auto rfVisible = loadRfVisible();
@@ -820,7 +820,11 @@ protected:
 
         auto Layer_BSDF = CBSDFLayerMaker::getPreLoadedBSDFLayer(aBSDFMaterial, aBSDF);
 
-        m_Layer = CMultiPaneBSDF::create({Layer_BSDF}, getSourceSpectrum(), getDetectorData());
+        m_Layer = CMultiPaneBSDF::create({Layer_BSDF});
+
+        const CalculationProperties input{
+          getSourceSpectrum(), fiveNMWavelenths(), getDetectorData()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:

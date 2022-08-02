@@ -11,7 +11,7 @@ using namespace SingleLayerOptics;
 class TestBSDFQuarterBasis : public testing::Test
 {
 private:
-    CBSDFHemisphere m_BSDFHemisphere{CBSDFHemisphere::create(BSDFBasis::Quarter)};
+    BSDFHemisphere m_BSDFHemisphere{BSDFHemisphere::create(BSDFBasis::Quarter)};
 
 
 public:

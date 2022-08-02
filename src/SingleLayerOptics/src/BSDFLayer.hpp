@@ -31,7 +31,7 @@ namespace SingleLayerOptics
     {
     public:
         virtual ~CBSDFLayer() = default;
-        CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell, const CBSDFHemisphere & t_Directions);
+        CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell, const BSDFHemisphere & t_Directions);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
@@ -75,7 +75,7 @@ namespace SingleLayerOptics
         void calculate();
         void calculate_wv();
 
-        const CBSDFHemisphere m_BSDFHemisphere;
+        const BSDFHemisphere m_BSDFHemisphere;
         std::shared_ptr<CBaseCell> m_Cell;
         BSDFIntegrator m_Results;
         // Results over each wavelength

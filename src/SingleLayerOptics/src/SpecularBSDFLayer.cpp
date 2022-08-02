@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics
 {
     CSpecularBSDFLayer::CSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
-                                           const CBSDFHemisphere & t_Hemisphere) :
+                                           const BSDFHemisphere & t_Hemisphere) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
 

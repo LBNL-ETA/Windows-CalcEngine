@@ -65,7 +65,7 @@ protected:
           Material::singleBandMaterial(Tsol, Tsol, Rfsol, Rbsol, minLambda, maxLambda)};
 
         // Define BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

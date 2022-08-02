@@ -83,7 +83,7 @@ namespace MultiLayerOptics
             aAbs = aAbs.interpolate(m_Wavelengths);
         }
         aAbs = aAbs * m_IncomingSource;
-        aAbs = *aAbs.integrate(m_IntegrationType, m_NormalizationCoefficient);
+        aAbs = aAbs.integrate(m_IntegrationType, m_NormalizationCoefficient);
         m_AbsorbedLayersSource.at(side).push_back(aAbs);
     }
 

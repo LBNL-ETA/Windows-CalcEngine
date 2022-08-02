@@ -203,14 +203,14 @@ namespace SpectralAveraging
                 calculateProperties();
 
                 m_IncomingSource =
-                  *m_IncomingSource.integrate(m_IntegrationType, m_NormalizationCoefficient);
+                  m_IncomingSource.integrate(m_IntegrationType, m_NormalizationCoefficient);
                 for(const auto & prop : EnumProperty())
                 {
                     for(const auto & side : EnumSide())
                     {
                         m_EnergySource[std::make_pair(prop, side)] =
-                          *m_EnergySource.at(std::make_pair(prop, side))
-                             .integrate(m_IntegrationType, m_NormalizationCoefficient);
+                          m_EnergySource.at(std::make_pair(prop, side))
+                            .integrate(m_IntegrationType, m_NormalizationCoefficient);
                     }
                 }
 
@@ -227,7 +227,8 @@ namespace SpectralAveraging
                                      const CSeries & t_SourceData,
                                      FenestrationCommon::IntegrationType integrationType,
                                      double NormalizationCoefficient) :
-        CSample(t_SourceData, integrationType, NormalizationCoefficient), m_SampleData(t_SampleData)
+        CSample(t_SourceData, integrationType, NormalizationCoefficient),
+        m_SampleData(t_SampleData)
     {
         if(t_SampleData == nullptr)
         {
@@ -244,7 +245,8 @@ namespace SpectralAveraging
     }
 
     CSpectralSample::CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData) :
-        CSample(), m_SampleData(t_SampleData)
+        CSample(),
+        m_SampleData(t_SampleData)
     {
         if(t_SampleData == nullptr)
         {
@@ -319,7 +321,7 @@ namespace SpectralAveraging
             {
                 for(const auto & side : EnumSide())
                 {
-                    m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
+                    m_Property[{prop, side}] = m_SampleData->properties(prop, side);
                 }
             }
 

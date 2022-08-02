@@ -24,9 +24,26 @@ namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayer;
 
+    struct CalculationProperties
+    {
+        CalculationProperties(
+          const FenestrationCommon::CSeries & solarRadiation,
+          std::optional<std::vector<double>> commonWavelengths = std::nullopt,
+          std::optional<FenestrationCommon::CSeries> detectorData = std::nullopt);
+        FenestrationCommon::CSeries SolarRadiation;
+        std::optional<std::vector<double>> CommonWavelengths;
+        std::optional<FenestrationCommon::CSeries> DetectorData;
+
+        FenestrationCommon::CSeries scaledSolarRadiation() const;
+    };
+
     class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer
     {
     public:
+        static std::unique_ptr<CMultiPaneBSDF>
+          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
+                 const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
+
         static std::unique_ptr<CMultiPaneBSDF>
           create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
                  const FenestrationCommon::CSeries & t_SolarRadiation,
@@ -228,12 +245,18 @@ namespace MultiLayerOptics
                          double t_Theta,
                          double t_Phi);
 
-        std::vector<double> getWavelengths() const override;
+        [[nodiscard]] std::vector<double> getWavelengths() const override;
 
-        double getMinLambda() const override;
-        double getMaxLambda() const override;
+        [[nodiscard]] double getMinLambda() const override;
+        [[nodiscard]] double getMaxLambda() const override;
+
+        void setCalculationProperties(const CalculationProperties & calcProperties);
 
     protected:
+        explicit CMultiPaneBSDF(
+          const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
+          const std::optional<std::vector<double>> & matrixWavelengths);
+
         CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
                        const FenestrationCommon::CSeries & t_SolarRadiation,
                        const std::vector<double> & t_CommonWavelengths);
@@ -263,12 +286,11 @@ namespace MultiLayerOptics
 
         void calcHemisphericalAbs(FenestrationCommon::Side t_Side);
 
-        [[nodiscard]] std::vector<double> getCommonWavelengths(
+        [[nodiscard]] std::vector<double> getCommonWavelengthsFromLayers(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const;
 
-        static std::vector<std::vector<double>> getZeroVectorVector(size_t size1, size_t size2);
-
-        double integrateBSDFAbsorptance(const std::vector<double> & lambda, const std::vector<double> & absorptance);
+        static double integrateBSDFAbsorptance(const std::vector<double> & lambda,
+                                               const std::vector<double> & absorptance);
 
         CEquivalentBSDFLayer m_EquivalentLayer;
 
@@ -295,6 +317,12 @@ namespace MultiLayerOptics
 
         FenestrationCommon::IntegrationType m_Integrator;
         double m_NormalizationCoefficient;
+
+        SingleLayerOptics::BSDFDirections m_BSDFDirections;
+
+        // These are wavelength used only for the spectral integration seprately from wavelengths in
+        // matrices calculations. Matrices wavelenghts will be used only if this is not provided.
+        std::optional<std::vector<double>> m_SpectralIntegrationWavelengths;
     };
 
 }   // namespace MultiLayerOptics

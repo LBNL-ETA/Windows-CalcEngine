@@ -59,8 +59,6 @@ namespace SingleLayerOptics
         [[nodiscard]] double Abs(FenestrationCommon::Side t_Side, double t_Theta, double t_Phi);
         [[nodiscard]] double Abs(FenestrationCommon::Side t_Side, size_t Index);
 
-        // std::shared_ptr< const BSDFDirections > getDirections() const;
-
         [[nodiscard]] double DiffDiff(FenestrationCommon::Side t_Side,
                                       FenestrationCommon::PropertySimple t_Property);
 
@@ -86,12 +84,16 @@ namespace SingleLayerOptics
         std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
                  FenestrationCommon::SquareMatrix>
           m_Matrix;
+
+        //! Direct-Hemispherical transmittance/reflectance (front/back) for each of the incoming directions
         std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
                  std::vector<double>>
-          m_Hem;
+          m_DirectHemispherical;
+
+        //! Absorbtances for each incoming direction
         std::map<FenestrationCommon::Side, std::vector<double>> m_Abs;
 
-        bool m_HemisphericalCalculated;
+        bool m_DirectHemisphericalCalculated;
         bool m_DiffuseDiffuseCalculated;
         FenestrationCommon::
           mmap<double, FenestrationCommon::Side, FenestrationCommon::PropertySimple>

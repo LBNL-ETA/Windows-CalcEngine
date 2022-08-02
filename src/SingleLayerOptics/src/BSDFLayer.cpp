@@ -12,10 +12,10 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics
 {
     CBSDFLayer::CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
-                           const CBSDFHemisphere & t_Hemisphere) :
+                           const BSDFHemisphere & t_Hemisphere) :
         m_BSDFHemisphere(t_Hemisphere),
-        m_Results(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)),
         m_Cell(t_Cell),
+        m_Results(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)),
         m_Calculated(false),
         m_CalculatedWV(false)
     {
@@ -68,6 +68,7 @@ namespace SingleLayerOptics
     void CBSDFLayer::setBandWavelengths(const std::vector<double> & wavelengths)
     {
         m_Cell->setBandWavelengths(wavelengths);
+        m_CalculatedWV = false;
     }
 
     void CBSDFLayer::calc_dir_dir()

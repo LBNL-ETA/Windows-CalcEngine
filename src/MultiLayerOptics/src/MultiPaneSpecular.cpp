@@ -17,7 +17,9 @@ namespace MultiLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     CEquivalentLayerSingleComponentMWAngle::CEquivalentLayerSingleComponentMWAngle(
       CEquivalentLayerSingleComponentMW t_Layer, CAbsorptancesMultiPane t_Abs, double t_Angle) :
-        m_Layer(std::move(t_Layer)), m_Abs(std::move(t_Abs)), m_Angle(t_Angle)
+        m_Layer(std::move(t_Layer)),
+        m_Abs(std::move(t_Abs)),
+        m_Angle(t_Angle)
     {}
 
     double CEquivalentLayerSingleComponentMWAngle::angle() const
@@ -58,7 +60,9 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
       const CSeries & t_SolarRadiation,
       const CSeries & t_DetectorData) :
-        m_Layers(layers), m_SolarRadiation(t_SolarRadiation), m_DetectorData(t_DetectorData)
+        m_Layers(layers),
+        m_SolarRadiation(t_SolarRadiation),
+        m_DetectorData(t_DetectorData)
     {
         CCommonWavelengths aCommonWL;
         for(auto & layer : m_Layers)
@@ -86,7 +90,8 @@ namespace MultiLayerOptics
     CMultiPaneSpecular::CMultiPaneSpecular(const std::vector<double> & t_CommonWavelength,
                                            const CSeries & t_SolarRadiation,
                                            const std::shared_ptr<SpecularLayer> & t_Layer) :
-        m_CommonWavelengths(t_CommonWavelength), m_SolarRadiation(t_SolarRadiation)
+        m_CommonWavelengths(t_CommonWavelength),
+        m_SolarRadiation(t_SolarRadiation)
     {
         m_SolarRadiation = m_SolarRadiation.interpolate(m_CommonWavelengths);
         addLayer(t_Layer);
@@ -189,10 +194,10 @@ namespace MultiLayerOptics
 
         // TODO: Check detector data here and multiply with it if necessary
 
-        const double totalProperty = iIntegrated->sum(minLambda, maxLambda);
+        const double totalProperty = iIntegrated.sum(minLambda, maxLambda);
 
         double totalSolar = solarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
-                              ->sum(minLambda, maxLambda);
+                              .sum(minLambda, maxLambda);
 
         assert(totalSolar > 0);
 
@@ -252,19 +257,18 @@ namespace MultiLayerOptics
         else if(scattering == ScatteringSimple::Diffuse)
         {
             result = AbsHemispherical(
-                index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
+              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
         }
         return result;
     }
 
-    double
-      CMultiPaneSpecular::getAbsorptanceLayerHeat(double minLambda,
-                                                  double maxLambda,
-                                                  size_t index,
-                                                  Side side,
-                                                  ScatteringSimple scattering,
-                                                  double theta,
-                                                  double)
+    double CMultiPaneSpecular::getAbsorptanceLayerHeat(double minLambda,
+                                                       double maxLambda,
+                                                       size_t index,
+                                                       Side side,
+                                                       ScatteringSimple scattering,
+                                                       double theta,
+                                                       double)
     {
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)
@@ -274,19 +278,18 @@ namespace MultiLayerOptics
         else if(scattering == ScatteringSimple::Diffuse)
         {
             result = AbsHemisphericalHeat(
-                index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
+              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
         }
         return result;
     }
 
-    double CMultiPaneSpecular::getAbsorptanceLayerElectricity(
-      double minLambda,
-      double maxLambda,
-      size_t index,
-      Side side,
-      ScatteringSimple scattering,
-      double theta,
-      double)
+    double CMultiPaneSpecular::getAbsorptanceLayerElectricity(double minLambda,
+                                                              double maxLambda,
+                                                              size_t index,
+                                                              Side side,
+                                                              ScatteringSimple scattering,
+                                                              double theta,
+                                                              double)
     {
         auto result(0.0);
         if(scattering == ScatteringSimple::Direct)
@@ -296,7 +299,7 @@ namespace MultiLayerOptics
         else if(scattering == ScatteringSimple::Diffuse)
         {
             result = AbsHemisphericalElectricity(
-                index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
+              index, {0, 10, 20, 30, 40, 50, 60, 70, 80, 90}, minLambda, maxLambda, side);
         }
         return result;
     }
@@ -369,9 +372,9 @@ namespace MultiLayerOptics
 
         auto iIntegrated = aMult.integrate(t_IntegrationType, normalizationCoefficient);
 
-        double totalProperty = iIntegrated->sum(minLambda, maxLambda);
+        double totalProperty = iIntegrated.sum(minLambda, maxLambda);
         double totalSolar = m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
-                              ->sum(minLambda, maxLambda);
+                              .sum(minLambda, maxLambda);
 
         assert(totalSolar > 0);
 
@@ -386,12 +389,20 @@ namespace MultiLayerOptics
                                        IntegrationType t_IntegrationType,
                                        double normalizationCoefficient)
     {
-        return Abs(
-                   Index, t_Angle, minLambda, maxLambda, side, t_IntegrationType,
+        return Abs(Index,
+                   t_Angle,
+                   minLambda,
+                   maxLambda,
+                   side,
+                   t_IntegrationType,
                    normalizationCoefficient)
-               - AbsElectricity(
-                   Index, t_Angle, minLambda, maxLambda, side, t_IntegrationType,
-                   normalizationCoefficient);
+               - AbsElectricity(Index,
+                                t_Angle,
+                                minLambda,
+                                maxLambda,
+                                side,
+                                t_IntegrationType,
+                                normalizationCoefficient);
     }
 
     double CMultiPaneSpecular::AbsElectricity(size_t Index,
@@ -406,7 +417,7 @@ namespace MultiLayerOptics
         {
             const double totalEnergy =
               m_SolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
-                ->sum(minLambda, maxLambda);
+                .sum(minLambda, maxLambda);
 
             CEquivalentLayerSingleComponentMWAngle aAngularProperties = getAngular(t_Angle);
             auto aLayer = std::dynamic_pointer_cast<PhotovoltaicSpecularLayer>(m_Layers[Index - 1]);
@@ -424,7 +435,7 @@ namespace MultiLayerOptics
             const auto backJsc = backJscPrime * IPlus;
             const auto JscIntegratedBack =
               backJsc.integrate(t_IntegrationType, normalizationCoefficient);
-            const auto jsc{(JscIntegratedFront->sum() + JscIntegratedBack->sum()) * totalEnergy};
+            const auto jsc{(JscIntegratedFront.sum() + JscIntegratedBack.sum()) * totalEnergy};
 
             const auto voc{aLayer->voc(jsc)};
             const auto ff{aLayer->ff(jsc)};
@@ -438,19 +449,18 @@ namespace MultiLayerOptics
         return 0;
     }
 
-    std::vector<double>
-      CMultiPaneSpecular::Absorptances(double t_Angle,
-                                       double minLambda,
-                                       double maxLambda,
-                                       Side side,
-                                       IntegrationType t_IntegrationType,
-                                       double normalizationCoefficient)
+    std::vector<double> CMultiPaneSpecular::Absorptances(double t_Angle,
+                                                         double minLambda,
+                                                         double maxLambda,
+                                                         Side side,
+                                                         IntegrationType t_IntegrationType,
+                                                         double normalizationCoefficient)
     {
         std::vector<double> res;
         for(size_t i = 1u; i <= size(); ++i)
         {
-            res.push_back(
-              Abs(i, t_Angle, minLambda, maxLambda, side, t_IntegrationType, normalizationCoefficient));
+            res.push_back(Abs(
+              i, t_Angle, minLambda, maxLambda, side, t_IntegrationType, normalizationCoefficient));
         }
 
         return res;
@@ -478,14 +488,13 @@ namespace MultiLayerOptics
         return aIntegrator.value();
     }
 
-    double CMultiPaneSpecular::AbsHemisphericalHeat(
-      size_t Index,
-      const std::vector<double> & t_IntegrationAngles,
-      double minLambda,
-      double maxLambda,
-      Side side,
-      IntegrationType t_IntegrationType,
-      double normalizationCoefficient)
+    double CMultiPaneSpecular::AbsHemisphericalHeat(size_t Index,
+                                                    const std::vector<double> & t_IntegrationAngles,
+                                                    double minLambda,
+                                                    double maxLambda,
+                                                    Side side,
+                                                    IntegrationType t_IntegrationType,
+                                                    double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
         std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
@@ -502,20 +511,21 @@ namespace MultiLayerOptics
     }
 
     double CMultiPaneSpecular::AbsHemisphericalElectricity(
-        size_t Index,
-        const std::vector<double> & t_IntegrationAngles,
-        double minLambda,
-        double maxLambda,
-        Side side,
-        IntegrationType t_IntegrationType,
-        double normalizationCoefficient)
+      size_t Index,
+      const std::vector<double> & t_IntegrationAngles,
+      double minLambda,
+      double maxLambda,
+      Side side,
+      IntegrationType t_IntegrationType,
+      double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
         std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
-            double aAbs = AbsElectricity(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
+            double aAbs =
+              AbsElectricity(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
             aAngularProperties->addProperty(angle, aAbs);
         }
 

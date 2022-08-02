@@ -654,7 +654,7 @@ protected:
           std::make_shared<CMaterialMeasured>(m_Measurements, WavelengthRange::Solar);
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

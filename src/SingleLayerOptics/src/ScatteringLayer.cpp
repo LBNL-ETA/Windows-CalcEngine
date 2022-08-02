@@ -70,7 +70,7 @@ namespace SingleLayerOptics
         // Scattering layer can also be created from material and cell desctiption in which case
         // integration will be performed using BSDF distribution while direct-direct component will
         // be taken directly from cell.
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         auto aMaker = CBSDFLayerMaker(t_Material, aBSDF, t_Description, t_Method);
         m_BSDFLayer = aMaker.getLayer();
     }
@@ -269,7 +269,7 @@ namespace SingleLayerOptics
     CScatteringLayer
       CScatteringLayer::createSpecularLayer(const std::shared_ptr<CMaterial> & t_Material)
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getSpecularLayer(t_Material, aBSDF));
     }
 
@@ -280,7 +280,7 @@ namespace SingleLayerOptics
     CScatteringLayer CScatteringLayer::createWovenLayer(
       const std::shared_ptr<CMaterial> & t_Material, const double diameter, const double spacing)
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(
           CBSDFLayerMaker::getWovenLayer(t_Material, aBSDF, diameter, spacing));
     }
@@ -288,7 +288,7 @@ namespace SingleLayerOptics
     CScatteringLayer
       CScatteringLayer::createPerfectlyDiffusingLayer(const std::shared_ptr<CMaterial> & t_Material)
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getPerfectlyDiffuseLayer(t_Material, aBSDF));
     }
 
@@ -302,7 +302,7 @@ namespace SingleLayerOptics
                                             const DistributionMethod method,
                                             const bool isHorizontal)
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getVenetianLayer(t_Material,
                                                                   aBSDF,
                                                                   slatWidth,
@@ -321,7 +321,7 @@ namespace SingleLayerOptics
                                                       double thickness,
                                                       double radius)
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(
           CBSDFLayerMaker::getCircularPerforatedLayer(t_Material, aBSDF, x, y, thickness, radius));
     }
@@ -334,7 +334,7 @@ namespace SingleLayerOptics
       const double xHole,
       const double yHole)
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         return CScatteringLayer(CBSDFLayerMaker::getRectangularPerforatedLayer(
           t_Material, aBSDF, x, y, thickness, xHole, yHole));
     }

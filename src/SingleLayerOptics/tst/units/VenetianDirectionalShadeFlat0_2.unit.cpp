@@ -36,7 +36,7 @@ protected:
         DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,

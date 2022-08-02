@@ -22,14 +22,8 @@ namespace FenestrationCommon
     }
 
     CSeriesPoint::CSeriesPoint(double t_Wavelength, double t_Value) :
-        m_x(t_Wavelength),
-        m_Value(t_Value)
+        m_x(t_Wavelength), m_Value(t_Value)
     {}
-
-    std::unique_ptr<ISeriesPoint> CSeriesPoint::clone() const
-    {
-        return wce::make_unique<CSeriesPoint>(*this);
-    }
 
     double CSeriesPoint::x() const
     {
@@ -67,7 +61,7 @@ namespace FenestrationCommon
         m_Series.clear();
         for(auto & val : t_values)
         {
-            m_Series.push_back(wce::make_unique<CSeriesPoint>(val.first, val.second));
+            m_Series.emplace_back(val.first, val.second);
         }
     }
 
@@ -76,27 +70,18 @@ namespace FenestrationCommon
         m_Series.clear();
         for(const auto & val : t_values)
         {
-            m_Series.push_back(wce::make_unique<CSeriesPoint>(val.first, val.second));
-        }
-    }
-
-    CSeries::CSeries(CSeries const & t_Series)
-    {
-        m_Series.clear();
-        for(const auto & val : t_Series.m_Series)
-        {
-            m_Series.push_back(val->clone());
+            m_Series.emplace_back(val.first, val.second);
         }
     }
 
     void CSeries::addProperty(const double t_x, const double t_Value)
     {
-        m_Series.push_back(wce::make_unique<CSeriesPoint>(t_x, t_Value));
+        m_Series.emplace_back(t_x, t_Value);
     }
 
     void CSeries::insertToBeginning(double t_x, double t_Value)
     {
-        m_Series.insert(m_Series.begin(), wce::make_unique<CSeriesPoint>(t_x, t_Value));
+        m_Series.insert(m_Series.begin(), {t_x, t_Value});
     }
 
     void CSeries::setConstantValues(const std::vector<double> & t_Wavelengths, double const t_Value)
@@ -108,44 +93,45 @@ namespace FenestrationCommon
         }
     }
 
-    std::unique_ptr<CSeries> CSeries::integrate(IntegrationType t_IntegrationType,
-                                                double normalizationCoefficient) const
+    CSeries CSeries::integrate(IntegrationType t_IntegrationType,
+                               double normalizationCoefficient,
+                               const std::optional<std::vector<double>> & integrationPoints) const
     {
-        // std::unique_ptr< CSeries > newProperties = wce::make_unique< CSeries >( );
-        CIntegratorFactory aFactory = CIntegratorFactory();
-        std::shared_ptr<IIntegratorStrategy> aIntegrator =
-          aFactory.getIntegrator(t_IntegrationType);
+        const CIntegratorFactory aFactory = CIntegratorFactory();
+        const auto aIntegrator = aFactory.getIntegrator(t_IntegrationType);
 
-        return aIntegrator->integrate(m_Series, normalizationCoefficient);
+        const auto series = integrationPoints.has_value()
+                              ? interpolate(integrationPoints.value()).m_Series
+                              : m_Series;
+
+        return aIntegrator->integrate(series, normalizationCoefficient);
     }
 
-    ISeriesPoint * CSeries::findLower(double const t_Wavelength) const
+    std::optional<CSeriesPoint> CSeries::findLower(double const t_Wavelength) const
     {
-        ISeriesPoint * currentProperty = nullptr;
+        std::optional<CSeriesPoint> currentProperty;
 
         for(auto & spectralProperty : m_Series)
         {
-            double aWavelength = spectralProperty->x();
-            if(aWavelength > t_Wavelength)
+            if(spectralProperty.x() > t_Wavelength)
             {
                 break;
             }
-            currentProperty = spectralProperty.get();
+            currentProperty = spectralProperty;
         }
 
         return currentProperty;
     }
 
-    ISeriesPoint * CSeries::findUpper(double const t_Wavelength) const
+    std::optional<CSeriesPoint> CSeries::findUpper(double const t_Wavelength) const
     {
-        ISeriesPoint * currentProperty = nullptr;
+        std::optional<CSeriesPoint> currentProperty;
 
         for(auto & spectralProperty : m_Series)
         {
-            double aWavelength = spectralProperty->x();
-            if(aWavelength > t_Wavelength)
+            if(spectralProperty.x() > t_Wavelength)
             {
-                currentProperty = spectralProperty.get();
+                currentProperty = spectralProperty;
                 break;
             }
         }
@@ -153,14 +139,14 @@ namespace FenestrationCommon
         return currentProperty;
     }
 
-    double CSeries::interpolate(ISeriesPoint * t_Lower,
-                                ISeriesPoint * t_Upper,
+    double CSeries::interpolate(const CSeriesPoint & t_Lower,
+                                const CSeriesPoint & t_Upper,
                                 double const t_Wavelength)
     {
-        double w1 = t_Lower->x();
-        double w2 = t_Upper->x();
-        double v1 = t_Lower->value();
-        double v2 = t_Upper->value();
+        double w1 = t_Lower.x();
+        double w2 = t_Upper.x();
+        double v1 = t_Lower.value();
+        double v2 = t_Upper.value();
         double vx = 0;
         if(w2 != w1)
         {
@@ -180,25 +166,26 @@ namespace FenestrationCommon
 
         if(size() != 0)
         {
-            ISeriesPoint * lower = nullptr;
-            ISeriesPoint * upper = nullptr;
+            std::optional<CSeriesPoint> lower;
+            std::optional<CSeriesPoint> upper;
 
             for(double wavelength : t_Wavelengths)
             {
                 lower = findLower(wavelength);
                 upper = findUpper(wavelength);
 
-                if(lower == nullptr)
+                if(!lower.has_value())
                 {
                     lower = upper;
                 }
 
-                if(upper == nullptr)
+                if(!upper.has_value())
                 {
                     upper = lower;
                 }
 
-                newProperties.addProperty(wavelength, interpolate(lower, upper, wavelength));
+                newProperties.addProperty(wavelength,
+                                          interpolate(lower.value(), upper.value(), wavelength));
             }
         }
 
@@ -215,9 +202,9 @@ namespace FenestrationCommon
 
         for(size_t i = 0; i < minSize; ++i)
         {
-            double value = m_Series[i]->value() * other.m_Series[i]->value();
-            double wv = m_Series[i]->x();
-            double testWv = other.m_Series[i]->x();
+            double value = m_Series[i].value() * other.m_Series[i].value();
+            double wv = m_Series[i].x();
+            double testWv = other.m_Series[i].x();
 
             if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
             {
@@ -239,9 +226,9 @@ namespace FenestrationCommon
 
         for(size_t i = 0; i < minSize; ++i)
         {
-            double value = m_Series[i]->value() - t_Series.m_Series[i]->value();
-            double wv = m_Series[i]->x();
-            double testWv = t_Series.m_Series[i]->x();
+            double value = m_Series[i].value() - t_Series.m_Series[i].value();
+            double wv = m_Series[i].x();
+            double testWv = t_Series.m_Series[i].x();
 
             if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
             {
@@ -261,8 +248,8 @@ namespace FenestrationCommon
 
         for(const auto & ot : other)
         {
-            double value = val - ot->value();
-            double wv = ot->x();
+            double value = val - ot.value();
+            double wv = ot.x();
 
             newProperties.addProperty(wv, value);
         }
@@ -279,9 +266,9 @@ namespace FenestrationCommon
 
         for(size_t i = 0; i < minSize; ++i)
         {
-            double value = m_Series[i]->value() + other.m_Series[i]->value();
-            double wv = m_Series[i]->x();
-            double testWv = other.m_Series[i]->x();
+            double value = m_Series[i].value() + other.m_Series[i].value();
+            double wv = m_Series[i].x();
+            double testWv = other.m_Series[i].x();
 
             if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
             {
@@ -300,7 +287,18 @@ namespace FenestrationCommon
         std::vector<double> aArray;
         for(auto & spectralProperty : m_Series)
         {
-            aArray.push_back(spectralProperty->x());
+            aArray.push_back(spectralProperty.x());
+        }
+
+        return aArray;
+    }
+
+    std::vector<double> CSeries::getYArray() const
+    {
+        std::vector<double> aArray;
+        for(auto & spectralProperty : m_Series)
+        {
+            aArray.push_back(spectralProperty.value());
         }
 
         return aArray;
@@ -312,7 +310,7 @@ namespace FenestrationCommon
         double total = 0;
         for(auto & aPoint : m_Series)
         {
-            double wavelength = aPoint->x();
+            double wavelength = aPoint.x();
             // Last point must be excluded because of ranges. Each wavelength represent range from
             // wavelength one to wavelength two. Summing value of the last wavelength in array would
             // be wrong because it would include one additional range after the end of spectrum. For
@@ -321,7 +319,7 @@ namespace FenestrationCommon
             if(((wavelength >= (minLambda - TOLERANCE) && wavelength < (maxLambda - TOLERANCE))
                 || (minLambda == 0 && maxLambda == 0)))
             {
-                total += aPoint->value();
+                total += aPoint.value();
             }
         }
         return total;
@@ -329,18 +327,18 @@ namespace FenestrationCommon
 
     void CSeries::sort()
     {
-        std::sort(m_Series.begin(),
-                  m_Series.end(),
-                  [](std::unique_ptr<ISeriesPoint> const & l,
-                     std::unique_ptr<ISeriesPoint> const & r) -> bool { return l->x() < r->x(); });
+        std::sort(
+          m_Series.begin(),
+          m_Series.end(),
+          [](CSeriesPoint const & l, CSeriesPoint const & r) -> bool { return l.x() < r.x(); });
     }
 
-    std::vector<std::unique_ptr<ISeriesPoint>>::const_iterator CSeries::begin() const
+    std::vector<CSeriesPoint>::const_iterator CSeries::begin() const
     {
         return m_Series.cbegin();
     }
 
-    std::vector<std::unique_ptr<ISeriesPoint>>::const_iterator CSeries::end() const
+    std::vector<CSeriesPoint>::const_iterator CSeries::end() const
     {
         return m_Series.cend();
     }
@@ -350,23 +348,13 @@ namespace FenestrationCommon
         return m_Series.size();
     }
 
-    CSeries & CSeries::operator=(CSeries const & t_Series)
-    {
-        m_Series.clear();
-        for(std::unique_ptr<ISeriesPoint> const & val : t_Series.m_Series)
-        {
-            m_Series.push_back(val->clone());
-        }
-        return *this;
-    }
-
-    ISeriesPoint & CSeries::operator[](size_t Index) const
+    const CSeriesPoint & CSeries::operator[](size_t Index) const
     {
         if(Index >= m_Series.size())
         {
             throw std::out_of_range("Index out of range.");
         }
-        return *m_Series[Index];
+        return m_Series[Index];
     }
 
     void CSeries::clear()
@@ -376,13 +364,13 @@ namespace FenestrationCommon
 
     void CSeries::cutExtraData(double minWavelength, double maxWavelength)
     {
-        std::vector<std::unique_ptr<ISeriesPoint>> result;
+        std::vector<CSeriesPoint> result;
         const auto eps = 1e-8;
         for(const auto & val : m_Series)
         {
-            if(val->x() > (minWavelength - eps) && val->x() < (maxWavelength + eps))
+            if(val.x() > (minWavelength - eps) && val.x() < (maxWavelength + eps))
             {
-                result.push_back(val->clone());
+                result.push_back(val);
             }
         }
 
@@ -390,7 +378,7 @@ namespace FenestrationCommon
 
         for(const auto & val : result)
         {
-            m_Series.push_back(val->clone());
+            m_Series.push_back(val);
         }
     }
 

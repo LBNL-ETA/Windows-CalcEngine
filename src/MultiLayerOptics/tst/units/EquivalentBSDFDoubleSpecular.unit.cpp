@@ -21,7 +21,7 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        const auto aBSDF = CBSDFHemisphere::create(
+        const auto aBSDF = BSDFHemisphere::create(
           {{0, 1}, {15, 1}, {30, 1}, {45, 1}, {60, 1}, {75, 1}, {86.25, 1}});
 
         // Full ASTM E891-87 Table 1

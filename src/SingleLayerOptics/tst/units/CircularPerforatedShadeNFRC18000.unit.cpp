@@ -16,7 +16,7 @@ private:
 protected:
     virtual void SetUp()
     {
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // create material
         const auto Tmat = 0.0;

@@ -32,7 +32,7 @@ protected:
         const auto xHole = 5.0;       // mm
         const auto yHole = 8.0;       // mm
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         m_Shade = CBSDFLayerMaker::getRectangularPerforatedLayer(
           aMaterial, aBSDF, x, y, thickness, xHole, yHole);

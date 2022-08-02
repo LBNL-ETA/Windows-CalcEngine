@@ -15,7 +15,7 @@ using namespace SpectralAveraging;
 class TestBSDFMaterialDualBand : public testing::Test
 {
 public:
-    CBSDFHemisphere m_Hemisphere{CBSDFHemisphere::create(BSDFBasis::Small)};
+    BSDFHemisphere m_Hemisphere{BSDFHemisphere::create(BSDFBasis::Small)};
     std::shared_ptr<CMaterialSingleBandBSDF> m_MaterialVis;
     std::shared_ptr<CMaterialSingleBandBSDF> m_MaterialSol;
     std::shared_ptr<CMaterialDualBandBSDF> m_Material;

@@ -16,8 +16,8 @@ namespace FenestrationCommon
         CSeries aResultValues = CSeries();
         for(const auto & ser : t_Series)
         {
-            auto angle = radians(ser->x());
-            auto value = ser->value();
+            auto angle = radians(ser.x());
+            auto value = ser.value();
             auto sinCos = std::sin(angle) * std::cos(angle);
             aResultValues.addProperty(angle, value * sinCos);
         }
@@ -25,7 +25,7 @@ namespace FenestrationCommon
         aResultValues.sort();
 
         auto integrated = aResultValues.integrate(t_IntegrationType, normalizationCoefficient);
-        m_Value = 2 * integrated->sum();
+        m_Value = 2 * integrated.sum();
     }
 
     double CHemispherical2DIntegrator::value() const

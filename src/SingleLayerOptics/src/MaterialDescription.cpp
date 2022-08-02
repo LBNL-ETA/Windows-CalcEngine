@@ -722,9 +722,9 @@ namespace SingleLayerOptics
 
         for(const auto & aProperty : aProperties)
         {
-            if(aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda)
+            if(aProperty.x() >= m_MinLambda && aProperty.x() <= m_MaxLambda)
             {
-                aValues.push_back(aProperty->value());
+                aValues.push_back(aProperty.value());
             }
         }
 
@@ -743,7 +743,7 @@ namespace SingleLayerOptics
                                                      std::vector<std::vector<double>> const & t_Tb,
                                                      std::vector<std::vector<double>> const & t_Rf,
                                                      std::vector<std::vector<double>> const & t_Rb,
-                                                     CBSDFHemisphere const & t_Hemisphere,
+                                                     BSDFHemisphere const & t_Hemisphere,
                                                      double minLambda,
                                                      double maxLambda) :
         CMaterial(minLambda, maxLambda), m_Hemisphere(t_Hemisphere)
@@ -767,7 +767,7 @@ namespace SingleLayerOptics
                                                      std::vector<std::vector<double>> const & t_Tb,
                                                      std::vector<std::vector<double>> const & t_Rf,
                                                      std::vector<std::vector<double>> const & t_Rb,
-                                                     CBSDFHemisphere const & t_Hemisphere,
+                                                     BSDFHemisphere const & t_Hemisphere,
                                                      FenestrationCommon::WavelengthRange t_Range) :
         CMaterial(t_Range), m_Hemisphere(t_Hemisphere)
     {
@@ -787,7 +787,7 @@ namespace SingleLayerOptics
     }
 
     double calcDirectHemispheric(std::vector<std::vector<double>> const & m,
-                                 CBSDFHemisphere const & hemisphere,
+                                 BSDFHemisphere const & hemisphere,
                                  size_t incomingIdx)
     {
         const auto outgoingLambdas =
@@ -851,7 +851,7 @@ namespace SingleLayerOptics
         return m_Property.at({t_Property, t_Side});
     }
 
-    CBSDFHemisphere CMaterialSingleBandBSDF::getHemisphere() const
+    BSDFHemisphere CMaterialSingleBandBSDF::getHemisphere() const
     {
         return m_Hemisphere;
     }
@@ -865,7 +865,7 @@ namespace SingleLayerOptics
     }
 
     void CMaterialSingleBandBSDF::validateMatrix(std::vector<std::vector<double>> const & matrix,
-                                                 CBSDFHemisphere const & hemisphere) const
+                                                 BSDFHemisphere const & hemisphere) const
     {
         size_t rowCt = matrix.size();
         size_t colCt = matrix[0].size();

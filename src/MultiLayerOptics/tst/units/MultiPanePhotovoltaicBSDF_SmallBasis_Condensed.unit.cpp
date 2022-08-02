@@ -1830,10 +1830,14 @@ protected:
 
         aMaterial_1->setBandWavelengths(condensedSpectrum());
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
         auto Layer_1 = CBSDFLayerMaker::getPhotovoltaicSpecularLayer(aMaterial_1, aBSDF, table());
 
-        m_Layer = CMultiPaneBSDF::create({Layer_1}, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create({Layer_1});
+
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -1856,16 +1860,16 @@ TEST_F(MultiPanePhotovoltaicBSDF_SmallBasis_Condensed, TestSpecular1)
     const auto phi{0};
 
     const double abs1{aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.77771, abs1, 1e-6);
+    EXPECT_NEAR(0.77644968432662831, abs1, 1e-6);
 
     const double absHeat1{aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.673905, absHeat1, 1e-6);
+    EXPECT_NEAR(0.67128461694557817, absHeat1, 1e-6);
 
     const double absElectricFront1{
       aLayer.AbsElectricity(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.103805, absElectricFront1, 1e-6);
+    EXPECT_NEAR(0.10516506738105015, absElectricFront1, 1e-6);
 
     const double absElectricBack1{
       aLayer.AbsElectricity(minLambda, maxLambda, Side::Back, 1, theta, phi)};
-    EXPECT_NEAR(0.043832, absElectricBack1, 1e-6);
+    EXPECT_NEAR(0.044782428030771371, absElectricBack1, 1e-6);
 }

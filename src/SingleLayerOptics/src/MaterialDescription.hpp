@@ -7,7 +7,7 @@
 #include <functional>
 #include <WCESpectralAveraging.hpp>
 #include "BeamDirection.hpp"   //  Need to include rather than forward declare to default incoming and outgoing directions to CBeamDirection()
-#include "BSDFDirections.hpp"   //  Needed to have CBSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF material was changed to hide members using the pimpl ideom.
+#include "BSDFDirections.hpp"   //  Needed to have BSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF material was changed to hide members using the pimpl ideom.
 
 namespace FenestrationCommon
 {
@@ -159,14 +159,14 @@ namespace SingleLayerOptics
                                 std::vector<std::vector<double>> const & t_Tb,
                                 std::vector<std::vector<double>> const & t_Rf,
                                 std::vector<std::vector<double>> const & t_Rb,
-                                CBSDFHemisphere const & t_Hemisphere,
+                                BSDFHemisphere const & t_Hemisphere,
                                 double minLambda,
                                 double maxLambda);
         CMaterialSingleBandBSDF(std::vector<std::vector<double>> const & t_Tf,
                                 std::vector<std::vector<double>> const & t_Tb,
                                 std::vector<std::vector<double>> const & t_Rf,
                                 std::vector<std::vector<double>> const & t_Rb,
-                                CBSDFHemisphere const & t_Hemisphere,
+                                BSDFHemisphere const & t_Hemisphere,
                                 FenestrationCommon::WavelengthRange t_Range);
 
         double
@@ -185,7 +185,7 @@ namespace SingleLayerOptics
           getBSDFMatrix(FenestrationCommon::Property const & t_Property,
                         FenestrationCommon::Side const & t_Side) const;
 
-        CBSDFHemisphere getHemisphere() const;
+        BSDFHemisphere getHemisphere() const;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
@@ -193,13 +193,13 @@ namespace SingleLayerOptics
         // has directions.  Assumption:  All the inner vectors have the same number of values
         // This should probably be somewhere more general, just putting it here for now
         void validateMatrix(std::vector<std::vector<double>> const & matrix,
-                            CBSDFHemisphere const & m_Hemisphere) const;
+                            BSDFHemisphere const & m_Hemisphere) const;
 
     protected:
         std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
                  std::vector<std::vector<double>>>
           m_Property;
-        CBSDFHemisphere m_Hemisphere;
+        BSDFHemisphere m_Hemisphere;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////

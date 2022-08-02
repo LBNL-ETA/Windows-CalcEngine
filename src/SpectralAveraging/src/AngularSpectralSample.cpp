@@ -177,10 +177,10 @@ namespace SpectralAveraging
 
         for(auto & aProperty : aProperties)
         {
-            if(aProperty->x() >= (minLambda - ConstantsData::floatErrorTolerance)
-               && aProperty->x() <= (maxLambda + ConstantsData::floatErrorTolerance))
+            if(aProperty.x() >= (minLambda - ConstantsData::floatErrorTolerance)
+               && aProperty.x() <= (maxLambda + ConstantsData::floatErrorTolerance))
             {
-                aValues.push_back(aProperty->value());
+                aValues.push_back(aProperty.value());
             }
         }
 
@@ -195,6 +195,9 @@ namespace SpectralAveraging
     void CAngularSpectralSample::setBandWavelengths(const std::vector<double> & wavelegths)
     {
         m_SpectralSampleZero->setWavelengths(WavelengthSet::Custom, wavelegths);
+        
+        // All previous spectral properties are calculated with different wavelengths
+        m_SpectralProperties.clear();
     }
 
     void CAngularSpectralSample::Flipped(bool flipped)
