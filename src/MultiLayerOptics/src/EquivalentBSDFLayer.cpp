@@ -2,7 +2,9 @@
 #include <cmath>
 #include <cassert>
 #include <stdexcept>
-#include <execution>
+#ifdef STL_MULTITHREADING
+#    include <execution>
+#endif
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
@@ -176,8 +178,13 @@ namespace MultiLayerOptics
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties(
       const size_t t_NumOfLayers, std::vector<wavelenghtData> & wlData) const
     {
+#ifdef STL_MULTITHREADING
         std::for_each(
           std::execution::par_unseq, wlData.begin(), wlData.end(), [&](wavelenghtData & val) {
+#else
+        std::for_each(
+          wlData.begin(), wlData.end(), [&](wavelenghtData & val) {
+#endif
               for(auto aSide : EnumSide())
               {
                   for(size_t layerNumber = 0; layerNumber < t_NumOfLayers; ++layerNumber)
