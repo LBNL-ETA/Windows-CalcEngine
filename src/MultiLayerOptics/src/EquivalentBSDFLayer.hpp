@@ -51,10 +51,27 @@ namespace MultiLayerOptics
         void setMatrixLayerWavelengths(const std::vector<double> & wavelenghts);
 
     private:
+        struct wavelenghtData
+        {
+            wavelenghtData(double wl, CEquivalentBSDFLayerSingleBand & layerWl) :
+                wavelength(wl),
+                layer(layerWl)
+            {}
+
+            double wavelength;
+            CEquivalentBSDFLayerSingleBand & layer;
+            std::map<std::pair<FenestrationCommon::Side, size_t>, std::vector<double>> totA;
+            std::map<std::pair<FenestrationCommon::Side, size_t>, std::vector<double>> totJSC;
+            std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+                     FenestrationCommon::SquareMatrix>
+              tot;
+        };
+
         void calculate();
 
         // Wavelength layer per layer calculations
-        void calculateWavelengthProperties(size_t t_NumOfLayers, const std::vector<double> & wavelengths);
+        void calculateAndStoreWavelengthProperties(const size_t t_NumOfLayers,
+                                                   const std::vector<double> & wavelengths);
 
         void updateWavelengthLayers(SingleLayerOptics::CBSDFLayer & t_Layer);
 
@@ -86,6 +103,14 @@ namespace MultiLayerOptics
 
         std::vector<double> m_CombinedLayerWavelengths;
         bool m_Calculated;
+
+        void storeWavelengthByWavelengthProperties(const size_t t_NumOfLayers,
+                                                   const std::vector<wavelenghtData> & wlData);
+
+        void calculateWavelengthByWavelengthProperties(const size_t t_NumOfLayers,
+                                                       std::vector<wavelenghtData> & wlData) const;
+        std::vector<wavelenghtData>
+          createWavelengthByWavelengthData(const std::vector<double> & wavelengths);
     };
 
 }   // namespace MultiLayerOptics

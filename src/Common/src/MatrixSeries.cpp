@@ -61,7 +61,7 @@ namespace FenestrationCommon
         }
     }
 
-    void CMatrixSeries::addProperties(const double t_Wavelength, SquareMatrix & t_Matrix)
+    void CMatrixSeries::addProperties(const double t_Wavelength, const SquareMatrix & t_Matrix)
     {
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {

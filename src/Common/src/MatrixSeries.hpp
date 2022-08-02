@@ -27,7 +27,7 @@ namespace FenestrationCommon
         void addProperties(const size_t i,
                            const double t_Wavelength,
                            const std::vector<double> & t_Values);
-        void addProperties(const double t_Wavelength, SquareMatrix & t_Matrix);
+        void addProperties(const double t_Wavelength, const SquareMatrix & t_Matrix);
 
         void addSeries(const size_t i, const size_t j, const CSeries & series);
 

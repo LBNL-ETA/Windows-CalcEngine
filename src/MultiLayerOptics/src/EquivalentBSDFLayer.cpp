@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cassert>
 #include <stdexcept>
+#include <execution>
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
@@ -12,7 +13,8 @@ using namespace FenestrationCommon;
 namespace MultiLayerOptics
 {
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
-        m_CombinedLayerWavelengths(t_CommonWavelengths), m_Calculated(false)
+        m_CombinedLayerWavelengths(t_CommonWavelengths),
+        m_Calculated(false)
     {}
 
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(
@@ -143,30 +145,74 @@ namespace MultiLayerOptics
             }
         }
 
-        calculateWavelengthProperties(numberOfLayers, m_CombinedLayerWavelengths);
+        calculateAndStoreWavelengthProperties(numberOfLayers, m_CombinedLayerWavelengths);
 
         m_Calculated = true;
     }
 
-    void
-      CEquivalentBSDFLayer::calculateWavelengthProperties(size_t const t_NumOfLayers,
-                                                          const std::vector<double> & wavelengths)
+    void CEquivalentBSDFLayer::calculateAndStoreWavelengthProperties(
+      size_t const t_NumOfLayers, const std::vector<double> & wavelengths)
     {
+        auto wlData = createWavelengthByWavelengthData(wavelengths);
+
+        calculateWavelengthByWavelengthProperties(t_NumOfLayers, wlData);
+
+        storeWavelengthByWavelengthProperties(t_NumOfLayers, wlData);
+    }
+
+    std::vector<CEquivalentBSDFLayer::wavelenghtData>
+      CEquivalentBSDFLayer::createWavelengthByWavelengthData(
+        const std::vector<double> & wavelengths)
+    {
+        std::vector<wavelenghtData> wlData;
+
         for(size_t i = 0u; i < wavelengths.size(); ++i)
+        {
+            wlData.emplace_back(wavelengths[i], m_LayersWL[i]);
+        }
+        return wlData;
+    }
+
+    void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties(
+      const size_t t_NumOfLayers, std::vector<wavelenghtData> & wlData) const
+    {
+        std::for_each(
+          std::execution::par_unseq, wlData.begin(), wlData.end(), [&](wavelenghtData & val) {
+              for(auto aSide : EnumSide())
+              {
+                  for(size_t layerNumber = 0; layerNumber < t_NumOfLayers; ++layerNumber)
+                  {
+                      val.totA[{aSide, layerNumber}] =
+                        val.layer.getLayerAbsorptances(layerNumber + 1, aSide);
+                      val.totJSC[{aSide, layerNumber}] =
+                        val.layer.getLayerJSC(layerNumber + 1, aSide);
+                  }
+                  for(auto aProperty : EnumPropertySimple())
+                  {
+                      val.tot[{aSide, aProperty}] = val.layer.getProperty(aSide, aProperty);
+                  }
+              }
+          });
+    }
+
+    void CEquivalentBSDFLayer::storeWavelengthByWavelengthProperties(
+      const size_t t_NumOfLayers, const std::vector<wavelenghtData> & wlData)
+    {
+        for(auto & t : wlData)
         {
             for(auto aSide : EnumSide())
             {
-                for(size_t k = 0; k < t_NumOfLayers; ++k)
+                for(size_t layerNumber = 0; layerNumber < t_NumOfLayers; ++layerNumber)
                 {
                     m_TotA.at(aSide).addProperties(
-                      k, wavelengths[i], m_LayersWL[i].getLayerAbsorptances(k + 1, aSide));
+                      layerNumber, t.wavelength, t.totA.at({aSide, layerNumber}));
                     m_TotJSC.at(aSide).addProperties(
-                      k, wavelengths[i], m_LayersWL[i].getLayerJSC(k + 1, aSide));
+                      layerNumber, t.wavelength, t.totJSC.at({aSide, layerNumber}));
                 }
                 for(auto aProperty : EnumPropertySimple())
                 {
-                    auto curPropertyMatrix = m_LayersWL[i].getProperty(aSide, aProperty);
-                    m_Tot.at({aSide, aProperty}).addProperties(wavelengths[i], curPropertyMatrix);
+                    m_Tot.at({aSide, aProperty})
+                      .addProperties(t.wavelength, t.tot.at({aSide, aProperty}));
                 }
             }
         }
