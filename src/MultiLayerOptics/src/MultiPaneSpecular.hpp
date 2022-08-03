@@ -1,5 +1,4 @@
-#ifndef MultiPaneSpecular_H
-#define MultiPaneSpecular_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -8,6 +7,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "AbsorptancesMultiPane.hpp"
+#include "CalculationProperties.hpp"
 
 namespace SingleLayerOptics
 {
@@ -49,25 +49,19 @@ namespace MultiLayerOptics
     ///////////////////////////////////////////////////////////////////////////////////////
 
     // Handles equivalent properties of MultiLayerOptics glass consists only of specular layers
-    class CMultiPaneSpecular : public SingleLayerOptics::IScatteringLayer
+    class CMultiPaneSpecular : public SingleLayerOptics::IScatteringLayer,
+                               public MultiPaneCalcluationsSetter
     {
     protected:
-        CMultiPaneSpecular(
-          const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
-          const FenestrationCommon::CSeries & t_SolarRadiation,
-          const FenestrationCommon::CSeries & t_DetectorData = FenestrationCommon::CSeries());
-
-        CMultiPaneSpecular(const std::vector<double> & t_CommonWavelength,
-                           const FenestrationCommon::CSeries & t_SolarRadiation,
-                           const std::shared_ptr<SingleLayerOptics::SpecularLayer> & t_Layer);
-
-        void addLayer(const std::shared_ptr<SingleLayerOptics::SpecularLayer> & t_Layer);
+        explicit CMultiPaneSpecular(
+          const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & t_Layer,
+          const std::optional<std::vector<double>> & matrixWavelengths);
 
     public:
-        static std::unique_ptr<CMultiPaneSpecular> create(
-          const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
-          const FenestrationCommon::CSeries & t_SolarRadiation,
-          const FenestrationCommon::CSeries & t_DetectorData = FenestrationCommon::CSeries());
+        static std::unique_ptr<CMultiPaneSpecular>
+          create(const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & layers,
+                 const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
+
 
         double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
                                  FenestrationCommon::Side t_Side,
@@ -83,11 +77,11 @@ namespace MultiLayerOptics
                                  double t_Theta = 0,
                                  double t_Phi = 0) override;
 
-        double getMinLambda() const override;
+        [[nodiscard]] double getMinLambda() const override;
 
-        double getMaxLambda() const override;
+        [[nodiscard]] double getMaxLambda() const override;
 
-        std::vector<double> getWavelengths() const override;
+        [[nodiscard]] std::vector<double> getWavelengths() const override;
 
         double getProperty(FenestrationCommon::Side t_Side,
                            FenestrationCommon::Property t_Property,
@@ -107,7 +101,7 @@ namespace MultiLayerOptics
                                           FenestrationCommon::IntegrationType::Trapezoidal,
                                         double normalizationCoefficient = 1);
 
-        size_t size() const;
+        [[nodiscard]] size_t size() const;
 
         double getAbsorptanceLayer(size_t index,
                                    FenestrationCommon::Side side,
@@ -169,7 +163,7 @@ namespace MultiLayerOptics
                    double maxLambda,
                    FenestrationCommon::Side side,
                    FenestrationCommon::IntegrationType t_IntegrationType =
-                       FenestrationCommon::IntegrationType::Trapezoidal,
+                     FenestrationCommon::IntegrationType::Trapezoidal,
                    double normalizationCoefficient = 1);
 
         double AbsHeat(size_t Index,
@@ -178,7 +172,7 @@ namespace MultiLayerOptics
                        double maxLambda,
                        FenestrationCommon::Side side,
                        FenestrationCommon::IntegrationType t_IntegrationType =
-                           FenestrationCommon::IntegrationType::Trapezoidal,
+                         FenestrationCommon::IntegrationType::Trapezoidal,
                        double normalizationCoefficient = 1);
 
         double AbsElectricity(size_t Index,
@@ -187,7 +181,7 @@ namespace MultiLayerOptics
                               double maxLambda,
                               FenestrationCommon::Side side,
                               FenestrationCommon::IntegrationType t_IntegrationType =
-                                  FenestrationCommon::IntegrationType::Trapezoidal,
+                                FenestrationCommon::IntegrationType::Trapezoidal,
                               double normalizationCoefficient = 1);
 
         std::vector<double> Absorptances(double t_Angle,
@@ -195,7 +189,7 @@ namespace MultiLayerOptics
                                          double maxLambda,
                                          FenestrationCommon::Side side,
                                          FenestrationCommon::IntegrationType t_IntegrationType =
-                                             FenestrationCommon::IntegrationType::Trapezoidal,
+                                           FenestrationCommon::IntegrationType::Trapezoidal,
                                          double normalizationCoefficient = 1);
 
         // Hemispherical absorptances of each layer. Integration is performed over t_Angles.
@@ -205,7 +199,7 @@ namespace MultiLayerOptics
                                 double maxLambda,
                                 FenestrationCommon::Side side,
                                 FenestrationCommon::IntegrationType t_IntegrationType =
-                                    FenestrationCommon::IntegrationType::Trapezoidal,
+                                  FenestrationCommon::IntegrationType::Trapezoidal,
                                 double normalizationCoefficient = 1);
 
         double AbsHemisphericalHeat(size_t Index,
@@ -214,7 +208,7 @@ namespace MultiLayerOptics
                                     double maxLambda,
                                     FenestrationCommon::Side side,
                                     FenestrationCommon::IntegrationType t_IntegrationType =
-                                        FenestrationCommon::IntegrationType::Trapezoidal,
+                                      FenestrationCommon::IntegrationType::Trapezoidal,
                                     double normalizationCoefficient = 1);
 
         double AbsHemisphericalElectricity(size_t Index,
@@ -223,8 +217,10 @@ namespace MultiLayerOptics
                                            double maxLambda,
                                            FenestrationCommon::Side side,
                                            FenestrationCommon::IntegrationType t_IntegrationType =
-                                               FenestrationCommon::IntegrationType::Trapezoidal,
+                                             FenestrationCommon::IntegrationType::Trapezoidal,
                                            double normalizationCoefficient = 1);
+
+        void setCalculationProperties(const CalculationProperties & calcProperties) override;
 
     protected:
         struct SeriesResults
@@ -245,9 +241,9 @@ namespace MultiLayerOptics
         // be able to recalculate equivalent properties for any angle
         std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> m_Layers;
 
-        std::vector<double> m_CommonWavelengths;
-        FenestrationCommon::CSeries m_SolarRadiation;
-        FenestrationCommon::CSeries m_DetectorData;
+        std::vector<double> m_MatrixWavelengths;
+        std::optional<std::vector<double>> m_SpectralIntegrationWavelengths;
+        FenestrationCommon::CSeries m_ScaledSolarRadiation;
 
         // Results for angle-properties std::pair. If same angle is required twice, then model will
         // not calculate it twice. First it will search for results here and if results are not
@@ -256,9 +252,10 @@ namespace MultiLayerOptics
 
         SeriesResults getSeriesResults(const SingleLayerOptics::CBeamDirection & aDirection,
                                        size_t layerIndex);
+
+    private:
+        static std::vector<double> unionOfLayerWavelengths(
+          const std::vector<std::shared_ptr<SingleLayerOptics::SpecularLayer>> & t_Layer);
     };
 
 }   // namespace MultiLayerOptics
-
-
-#endif

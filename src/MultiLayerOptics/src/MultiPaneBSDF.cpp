@@ -31,21 +31,6 @@ namespace SingleLayerOptics
 
 namespace MultiLayerOptics
 {
-    FenestrationCommon::CSeries CalculationProperties::scaledSolarRadiation() const
-    {
-        FenestrationCommon::CSeries result{SolarRadiation};
-        if(CommonWavelengths.has_value())
-        {
-            result = result.interpolate(CommonWavelengths.value());
-        }
-
-        if(DetectorData.has_value())
-        {
-            result = result * DetectorData.value().interpolate(result.getXArray());
-        }
-        return result;
-    }
-
     CMultiPaneBSDF::CMultiPaneBSDF(const std::vector<std::shared_ptr<CBSDFLayer>> & t_Layer,
                                    const std::optional<std::vector<double>> & matrixWavelengths) :
         m_EquivalentLayer(t_Layer, matrixWavelengths),

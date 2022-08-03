@@ -329,8 +329,11 @@ private:
         CSeries solarRadiation{loadSolarRadiationFile()};
         single_layer->setSourceData(solarRadiation);
 
-        auto layer = MultiLayerOptics::CMultiPaneSpecular::create(
-          {single_layer}, loadSolarRadiationFile(), astmStandard);
+        auto layer = MultiLayerOptics::CMultiPaneSpecular::create({single_layer});
+
+        const MultiLayerOptics::CalculationProperties input{
+          loadSolarRadiationFile(), loadWavelengths(), astmStandard};
+        layer->setCalculationProperties(input);
 
         return layer;
     }
@@ -355,7 +358,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<SingleLayerOptics::ColorProperties> getLayer() const
+    [[nodiscard]] std::shared_ptr<SingleLayerOptics::ColorProperties> getLayer() const
     {
         return m_Color;
     }

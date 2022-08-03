@@ -1838,7 +1838,11 @@ protected:
         const auto layer1 =
           SingleLayerOptics::PhotovoltaicSpecularLayer::createLayer(aMaterial_1, table());
 
-        m_Layer = CMultiPaneSpecular::create({layer1}, loadSolarRadiationFile());
+        m_Layer = CMultiPaneSpecular::create({layer1});
+
+        const MultiLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
+                                                            loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -1863,8 +1867,8 @@ TEST_F(Photovoltaic_DoublePane_Example2, Test1)
     EXPECT_NEAR(0.2, T, 1e-6);
 
     const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.673905, absHeat, 1e-6);
+    EXPECT_NEAR(0.6712760, absHeat, 1e-6);
 
     const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.103805, absEl1, 1e-6);
+    EXPECT_NEAR(0.105174, absEl1, 1e-6);
 }

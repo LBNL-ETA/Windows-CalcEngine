@@ -12,10 +12,7 @@ namespace MultiLayerOptics
         explicit CalculationProperties(
           const FenestrationCommon::CSeries & solarRadiation,
           std::optional<std::vector<double>> commonWavelengths = std::nullopt,
-          std::optional<FenestrationCommon::CSeries> detectorData = std::nullopt) :
-            SolarRadiation(solarRadiation),
-            CommonWavelengths(std::move(commonWavelengths)),
-            DetectorData(std::move(detectorData)){};
+          std::optional<FenestrationCommon::CSeries> detectorData = std::nullopt);;
 
         FenestrationCommon::CSeries SolarRadiation;
         std::optional<std::vector<double>> CommonWavelengths;

@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-class EquivalentSpecularLayer_102_103_IR_Range : public testing::Test
+class MultiPaneSpecular_102_103_IR_Range : public testing::Test
 {
 protected:
     std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_102()
@@ -84,7 +84,7 @@ protected:
 public:
 };
 
-TEST_F(EquivalentSpecularLayer_102_103_IR_Range, TestNoAvailableData)
+TEST_F(MultiPaneSpecular_102_103_IR_Range, TestNoAvailableData)
 {
     const auto minLambda = 5.0;
     const auto maxLambda = 100.0;

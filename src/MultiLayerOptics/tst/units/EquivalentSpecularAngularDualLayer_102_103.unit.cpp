@@ -750,7 +750,11 @@ protected:
         // Finds combination of two wavelength sets without going outside of wavelenght range for
         // any of spectral samples.
 
-        m_Layer = CMultiPaneSpecular::create({aCell_102, angularLayer}, aSolarRadiation);
+        m_Layer = CMultiPaneSpecular::create({aCell_102, angularLayer});
+
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          commonWavelengths};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
