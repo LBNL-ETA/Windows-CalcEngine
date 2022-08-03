@@ -1,5 +1,4 @@
-#ifndef MULTIBSDFLAYER_H
-#define MULTIBSDFLAYER_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -43,46 +42,6 @@ namespace MultiLayerOptics
         static std::unique_ptr<CMultiPaneBSDF>
           create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
                  const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData);
 
         void setIntegrationType(FenestrationCommon::IntegrationType t_type,
                                 double normalizationCoefficient);
@@ -257,22 +216,6 @@ namespace MultiLayerOptics
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
           const std::optional<std::vector<double>> & matrixWavelengths);
 
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_SolarRadiation,
-                       const std::vector<double> & t_CommonWavelengths);
-
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_SolarRadiation,
-                       const FenestrationCommon::CSeries & t_DetectorData,
-                       const std::vector<double> & t_CommonWavelengths);
-
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_SolarRadiation);
-
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_DetectorData,
-                       const FenestrationCommon::CSeries & t_SolarRadiation);
-
         void initialize(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
           const FenestrationCommon::CSeries & t_SolarRadiation,
@@ -326,5 +269,3 @@ namespace MultiLayerOptics
     };
 
 }   // namespace MultiLayerOptics
-
-#endif
