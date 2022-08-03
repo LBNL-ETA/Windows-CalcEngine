@@ -14,7 +14,7 @@ using namespace MultiLayerOptics;
 
 // Example on how to create multilayer BSDF from specular layers only
 
-class MultiPaneBSDF_102 : public testing::Test
+class MultiPaneBSDF_102_FullSpectrum_QuarterBasis : public testing::Test
 {
 private:
     std::unique_ptr<CMultiPaneBSDF> m_Layer;
@@ -124,13 +124,14 @@ protected:
         constexpr double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
-        
+
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         m_Layer = CMultiPaneBSDF::create({Layer_102});
 
-        const CalculationProperties input{loadSolarRadiationFile(), loadSolarRadiationFile().getXArray()};
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 
@@ -141,7 +142,7 @@ public:
     }
 };
 
-TEST_F(MultiPaneBSDF_102, TestSpecular1)
+TEST_F(MultiPaneBSDF_102_FullSpectrum_QuarterBasis, TestSpecular1)
 {
     SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
 
