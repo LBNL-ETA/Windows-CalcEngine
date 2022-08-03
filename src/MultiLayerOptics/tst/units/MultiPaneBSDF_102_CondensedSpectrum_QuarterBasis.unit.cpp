@@ -6,11 +6,11 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCEMultiLayerOptics.hpp"
 
-
-using namespace SingleLayerOptics;
-using namespace FenestrationCommon;
-using namespace SpectralAveraging;
-using namespace MultiLayerOptics;
+using MultiLayerOptics::CMultiPaneBSDF;
+using FenestrationCommon::CSeries;
+using FenestrationCommon::MaterialType;
+using FenestrationCommon::WavelengthRange;
+using SpectralAveraging::CSpectralSampleData;
 
 // Example on how to create multilayer BSDF from specular layers only
 
@@ -120,6 +120,11 @@ private:
 protected:
     virtual void SetUp()
     {
+        using SingleLayerOptics::BSDFHemisphere;
+        using SingleLayerOptics::BSDFBasis;
+        using SingleLayerOptics::CBSDFLayerMaker;
+        using MultiLayerOptics::CalculationProperties;
+
         // Create material from samples
         constexpr double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
@@ -162,7 +167,9 @@ public:
 
 TEST_F(MultiPaneBSDF_102_CondensedSpectrum_QuarterBasis, TestSpecular1)
 {
-    SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
+    using FenestrationCommon::Side;
+    using FenestrationCommon::PropertySimple;
+    using FenestrationCommon::ScatteringSimple;
 
     constexpr double minLambda = 0.3;
     constexpr double maxLambda = 2.5;
