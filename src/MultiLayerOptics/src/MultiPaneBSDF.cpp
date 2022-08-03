@@ -398,12 +398,6 @@ namespace MultiLayerOptics
         m_Integrator = t_type;
     }
 
-    void CMultiPaneBSDF::addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer)
-    {
-        m_EquivalentLayer.addLayer(t_Layer);
-        m_EquivalentLayer.setSolarRadiation(m_SolarRadiationInit);
-    }
-
     std::unique_ptr<CMultiPaneBSDF> CMultiPaneBSDF::create(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const std::optional<std::vector<double>> & matrixWavelengths)

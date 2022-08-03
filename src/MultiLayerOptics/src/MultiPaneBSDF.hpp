@@ -23,8 +23,6 @@ namespace MultiLayerOptics
         void setIntegrationType(FenestrationCommon::IntegrationType t_type,
                                 double normalizationCoefficient);
 
-        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
-
         // Whole matrix results
         FenestrationCommon::SquareMatrix getMatrix(double minLambda,
                                                    double maxLambda,
