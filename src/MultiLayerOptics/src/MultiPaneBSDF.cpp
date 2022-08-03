@@ -9,26 +9,28 @@
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
+#include "CalculationProperties.hpp"
+
+using FenestrationCommon::IntegrationType;
+using FenestrationCommon::Side;
+using FenestrationCommon::Property;
+using FenestrationCommon::PropertySimple;
+using FenestrationCommon::Scattering;
+using FenestrationCommon::ScatteringSimple;
+using FenestrationCommon::SquareMatrix;
+using FenestrationCommon::CSeries;
+using FenestrationCommon::CMatrixSeries;
+
+using SingleLayerOptics::CBSDFLayer;
+using SingleLayerOptics::BSDFDirection;
 
 namespace SingleLayerOptics
 {
     class PhotovoltaicSpecularBSDFLayer;
 }
 
-using namespace FenestrationCommon;
-using namespace SingleLayerOptics;
-
 namespace MultiLayerOptics
 {
-    CalculationProperties::CalculationProperties(
-      const CSeries & solarRadiation,
-      std::optional<std::vector<double>> commonWavelengths,
-      std::optional<FenestrationCommon::CSeries> detectorData) :
-        SolarRadiation(solarRadiation),
-        CommonWavelengths(std::move(commonWavelengths)),
-        DetectorData(std::move(detectorData))
-    {}
-
     FenestrationCommon::CSeries CalculationProperties::scaledSolarRadiation() const
     {
         FenestrationCommon::CSeries result{SolarRadiation};
@@ -55,45 +57,6 @@ namespace MultiLayerOptics
         m_NormalizationCoefficient(1),
         m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
     {}
-
-    void CMultiPaneBSDF::initialize(
-      const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-      const CSeries & t_SolarRadiation,
-      const CSeries & t_DetectorData)
-    {
-        // Detector data needs to be included into solar radiation right away on this place.
-        auto solarRadiation{t_SolarRadiation};
-        if(t_DetectorData.size() > 0)
-        {
-            const auto commonWavelengths = solarRadiation.getXArray();
-            solarRadiation = solarRadiation * t_DetectorData.interpolate(commonWavelengths);
-        }
-        m_SolarRadiationInit = solarRadiation;
-        for(Side aSide : EnumSide())
-        {
-            this->m_AbsHem[aSide] = std::vector<double>();
-            this->m_AbsHemElectricity[aSide] = std::vector<double>();
-        }
-
-        // This will initialize layer material data with given spectral distribution
-        this->m_EquivalentLayer.setSolarRadiation(this->m_SolarRadiationInit);
-
-        size_t directionsSize = t_Layer[0]->getDirections(BSDFDirection::Incoming).size();
-        this->m_IncomingSolar.resize(directionsSize);
-
-        // For blank incoming spectra, defaults needs to be filled into
-        this->m_IncomingSpectra = std::vector<FenestrationCommon::CSeries>(directionsSize);
-        for(size_t i = 0; i < directionsSize; ++i)
-        {
-            this->m_IncomingSpectra[i] = solarRadiation;
-        }
-
-        // First layer has already been added. Must skip it here
-        for(size_t j = 0u; j < t_Layer.size(); ++j)
-        {
-            this->addLayer(t_Layer[j]);
-        }
-    }
 
     std::vector<std::vector<double>>
       CMultiPaneBSDF::calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
@@ -167,7 +130,7 @@ namespace MultiLayerOptics
             // Produce local results matrices for each side and property
             std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
 
-            for(Side aSide : EnumSide())
+            for(Side aSide : FenestrationCommon::EnumSide())
             {
                 CMatrixSeries aTotalA = m_EquivalentLayer.getTotalA(aSide);
                 // Calculates absorbed energy in every layer for every wavelength
@@ -199,7 +162,7 @@ namespace MultiLayerOptics
                 // Default absorbed electricity is set to zero
                 m_AbsElectricity[aSide] = calcPVLayersElectricity(jscWithSolar, m_IncomingSolar);
 
-                for(PropertySimple aProprerty : EnumPropertySimple())
+                for(PropertySimple aProprerty : FenestrationCommon::EnumPropertySimple())
                 {
                     CMatrixSeries aTot = m_EquivalentLayer.getTotal(aSide, aProprerty);
                     if(m_SpectralIntegrationWavelengths.has_value())
@@ -220,7 +183,7 @@ namespace MultiLayerOptics
             }
 
             // calculate hemispherical absorptances
-            for(const Side aSide : EnumSide())
+            for(const Side aSide : FenestrationCommon::EnumSide())
             {
                 calcHemisphericalAbs(aSide);
             }

@@ -7,36 +7,13 @@
 #include <WCESingleLayerOptics.hpp>
 
 #include "EquivalentBSDFLayer.hpp"
-
-namespace FenestrationCommon
-{
-    class CSeries;
-
-    class SquareMatrix;
-
-    enum class Side;
-    enum class PropertySimple;
-
-}   // namespace FenestrationCommon
+#include "CalculationProperties.hpp"
 
 namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayer;
 
-    struct CalculationProperties
-    {
-        CalculationProperties(
-          const FenestrationCommon::CSeries & solarRadiation,
-          std::optional<std::vector<double>> commonWavelengths = std::nullopt,
-          std::optional<FenestrationCommon::CSeries> detectorData = std::nullopt);
-        FenestrationCommon::CSeries SolarRadiation;
-        std::optional<std::vector<double>> CommonWavelengths;
-        std::optional<FenestrationCommon::CSeries> DetectorData;
-
-        FenestrationCommon::CSeries scaledSolarRadiation() const;
-    };
-
-    class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer
+    class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer, public MultiPaneCalcluationsSetter
     {
     public:
         static std::unique_ptr<CMultiPaneBSDF>
@@ -209,17 +186,12 @@ namespace MultiLayerOptics
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
-        void setCalculationProperties(const CalculationProperties & calcProperties);
+        void setCalculationProperties(const CalculationProperties & calcProperties) override;
 
     protected:
         explicit CMultiPaneBSDF(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
           const std::optional<std::vector<double>> & matrixWavelengths);
-
-        void initialize(
-          const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-          const FenestrationCommon::CSeries & t_SolarRadiation,
-          const FenestrationCommon::CSeries & t_DetectorData = FenestrationCommon::CSeries());
 
         std::vector<std::vector<double>>
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
