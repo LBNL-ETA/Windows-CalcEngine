@@ -1,4 +1,4 @@
-name: MacOS 12.5
+name: MacOS 11.0
 
 on: [push, pull_request]
 
