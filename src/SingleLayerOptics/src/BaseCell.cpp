@@ -77,7 +77,7 @@ namespace SingleLayerOptics
         return m_Material->getBandWavelengths();
     }
 
-    void CBaseCell::setBandWavelengths(const std::vector<double> & wavelengths) const
+    void CBaseCell::setBandWavelengths(const std::vector<double> & wavelengths)
     {
         assert(m_Material != nullptr);
         m_Material->setBandWavelengths(wavelengths);

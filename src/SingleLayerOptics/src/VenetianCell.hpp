@@ -196,6 +196,8 @@ namespace SingleLayerOptics
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
 
+        void setBandWavelengths(const std::vector<double> & wavelengths) override;
+
         double T_dir_dir(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;
         std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,

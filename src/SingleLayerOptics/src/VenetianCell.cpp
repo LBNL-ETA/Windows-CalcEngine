@@ -616,6 +616,12 @@ namespace SingleLayerOptics
         generateVenetianEnergy();
     }
 
+    void CVenetianCell::setBandWavelengths(const std::vector<double> & wavelengths)
+    {
+        CBaseCell::setBandWavelengths(wavelengths);
+        generateVenetianEnergy();
+    }
+
     double CVenetianCell::T_dir_dir(const Side t_Side, const CBeamDirection & t_Direction)
     {
         std::shared_ptr<CVenetianCellEnergy> aCell = m_Energy.getCell(t_Side);

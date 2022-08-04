@@ -45,7 +45,7 @@ namespace SingleLayerOptics
                                                    const CBeamDirection & t_Direction);
 
         std::vector<double> getBandWavelengths() const;
-        void setBandWavelengths(const std::vector<double> & wavelengths) const;
+        virtual void setBandWavelengths(const std::vector<double> & wavelengths);
         int getBandIndex(double t_Wavelength) const;
         size_t getBandSize() const;
 
