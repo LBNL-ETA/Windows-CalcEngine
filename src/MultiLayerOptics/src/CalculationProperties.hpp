@@ -19,6 +19,7 @@ namespace MultiLayerOptics
         std::optional<FenestrationCommon::CSeries> DetectorData;
 
         [[nodiscard]] FenestrationCommon::CSeries scaledSolarRadiation() const;
+        bool isDetectorDataValid() const;
     };
 
     class MultiPaneCalcluationsSetter
