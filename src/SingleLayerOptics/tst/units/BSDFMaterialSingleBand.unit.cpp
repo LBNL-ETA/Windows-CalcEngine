@@ -59,7 +59,7 @@ protected:
         m_Rf = loadRf();
         m_Rb = m_Rf;
         m_Material = std::make_shared<CMaterialSingleBandBSDF>(
-          m_Tf, m_Tb, m_Rf, m_Rb, m_Hemisphere, FenestrationCommon::WavelengthRange::Solar);
+          m_Tf, m_Tb, m_Rf, m_Rb, m_Hemisphere);
     }
 };
 

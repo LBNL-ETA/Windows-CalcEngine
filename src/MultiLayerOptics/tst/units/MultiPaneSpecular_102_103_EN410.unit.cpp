@@ -173,19 +173,13 @@ protected:
         const auto aSolarRadiation = loadSolarRadiationFile();
 
         double thickness = 3.048e-3;   // [m]
-        const auto aMaterial_102 = Material::nBandMaterial(loadSampleData_NFRC_102(),
-                                                           thickness,
-                                                           MaterialType::Monolithic,
-                                                           WavelengthRange::Solar,
-                                                           IntegrationType::PreWeighted);
+        const auto aMaterial_102 =
+          Material::nBandMaterial(loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
 
         thickness = 5.715e-3;   // [m]
-        const auto aMaterial_103 = Material::nBandMaterial(loadSampleData_NFRC_103(),
-                                                           thickness,
-                                                           MaterialType::Monolithic,
-                                                           WavelengthRange::Solar,
-                                                           IntegrationType::PreWeighted);
+        const auto aMaterial_103 =
+          Material::nBandMaterial(loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic);
 
 
         const auto layer102 = SpecularLayer::createLayer(aMaterial_102);
@@ -211,37 +205,40 @@ TEST_F(MultiPaneSpecular_102_103_EN410, TestAngle0)
 
     const double angle = 0;
 
+    const double minLambda = 0.3;
+    const double maxLambda = 2.5;
+
     CMultiPaneSpecular aLayer = *getLayer();
 
     const double T =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.621741, T, 1e-6);
 
     const double Rf =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.119697, Rf, 1e-6);
 
     const double Rb =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.110757, Rb, 1e-6);
 
     const double Abs1 =
-      aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
+      aLayer.getAbsorptanceLayer(minLambda, maxLambda, 1, Side::Front, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.113512, Abs1, 1e-6);
 
     const double Abs2 =
-      aLayer.getAbsorptanceLayer(2, Side::Front, ScatteringSimple::Direct, angle, 0);
+      aLayer.getAbsorptanceLayer(minLambda, maxLambda, 2, Side::Front, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.145050, Abs2, 1e-6);
 
     const double Them =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.523013, Them, 1e-6);
 
     const double Rfhem =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.194344, Rfhem, 1e-6);
 
     const double Rbhem =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.178996, Rbhem, 1e-6);
 }

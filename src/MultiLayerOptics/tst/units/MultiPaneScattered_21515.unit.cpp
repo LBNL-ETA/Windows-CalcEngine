@@ -123,7 +123,7 @@ protected:
         // Create material from samples
         auto thickness = 0.18e-3;   // [m]
         auto aMaterial_21515 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_21515(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_21515(), thickness, MaterialType::Monolithic);
 
         CScatteringLayer Layer21515 = CScatteringLayer::createSpecularLayer(aMaterial_21515);
 

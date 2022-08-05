@@ -120,8 +120,7 @@ protected:
                                                     m_TbVis,
                                                     m_RfVis,
                                                     m_RbVis,
-                                                    m_Hemisphere,
-                                                    FenestrationCommon::WavelengthRange::Visible);
+                                                    m_Hemisphere);
         m_TfSol = loadTfSol();
         m_TbSol = m_TfSol;
         m_RfSol = loadRfSol();
@@ -131,8 +130,7 @@ protected:
                                                     m_TbSol,
                                                     m_RfSol,
                                                     m_RbSol,
-                                                    m_Hemisphere,
-                                                    FenestrationCommon::WavelengthRange::Solar);
+                                                    m_Hemisphere);
         m_Material = std::make_shared<CMaterialDualBandBSDF>(m_MaterialVis, m_MaterialSol);
 
         m_Material->setBandWavelengths(condensedSpectrum());

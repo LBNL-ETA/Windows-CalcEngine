@@ -272,10 +272,8 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         MaterialType aType = MaterialType::Monolithic;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements, thickness, aType, minLambda, maxLambda);
+        auto aMaterial =
+          SingleLayerOptics::Material::nBandMaterial(aMeasurements, thickness, aType);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
 
@@ -286,8 +284,8 @@ protected:
         double Tmat = 0.2;
         double Rfmat = 0.75;
         double Rbmat = 0.66;
-        auto perfMaterial = SingleLayerOptics::Material::singleBandMaterial(
-          Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        auto perfMaterial =
+          SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         double x = 22.5;        // mm

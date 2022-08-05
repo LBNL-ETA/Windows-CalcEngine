@@ -73,13 +73,6 @@ namespace MultiLayerOptics
           new CMultiPaneSpecular(layers, matrixWavelengths));
     }
 
-    double CMultiPaneSpecular::getPropertySimple(
-      PropertySimple t_Property, Side t_Side, Scattering t_Scattering, double t_Theta, double)
-    {
-        return getPropertySimple(
-          getMinLambda(), getMaxLambda(), t_Property, t_Side, t_Scattering, t_Theta);
-    }
-
     double CMultiPaneSpecular::getPropertySimple(const double minLambda,
                                                  const double maxLambda,
                                                  FenestrationCommon::PropertySimple t_Property,
@@ -190,15 +183,6 @@ namespace MultiLayerOptics
         CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator(
           *aAngularProperties, t_IntegrationType, normalizationCoefficient);
         return aIntegrator.value();
-    }
-
-    double CMultiPaneSpecular::getAbsorptanceLayer(size_t index,
-                                                   FenestrationCommon::Side side,
-                                                   FenestrationCommon::ScatteringSimple scattering,
-                                                   double theta,
-                                                   double)
-    {
-        return getAbsorptanceLayer(getMinLambda(), getMaxLambda(), index, side, scattering, theta);
     }
 
     double CMultiPaneSpecular::getAbsorptanceLayer(double minLambda,

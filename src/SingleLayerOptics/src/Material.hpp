@@ -72,44 +72,21 @@ namespace SingleLayerOptics
                                BSDFHemisphere const & hemisphere,
                                const FenestrationCommon::CSeries & solarRadiation);
 
-        static std::shared_ptr<CMaterial> singleBandMaterial(
-          double Tf, double Tb, double Rf, double Rb, double minLambda, double maxLambda);
-
-        static std::shared_ptr<CMaterial> singleBandMaterial(
-          double Tf, double Tb, double Rf, double Rb, FenestrationCommon::WavelengthRange range);
+        static std::shared_ptr<CMaterial>
+          singleBandMaterial(double Tf, double Tb, double Rf, double Rb);
 
         static std::shared_ptr<CMaterial>
           singleBandBSDFMaterial(const std::vector<std::vector<double>> & Tf,
                                  const std::vector<std::vector<double>> & Tb,
                                  const std::vector<std::vector<double>> & Rf,
                                  const std::vector<std::vector<double>> & Rb,
-                                 const BSDFHemisphere & hemisphere,
-                                 FenestrationCommon::WavelengthRange t_Range);
+                                 const BSDFHemisphere & hemisphere);
 
-        static std::shared_ptr<CMaterial>
-          singleBandBSDFMaterial(const std::vector<std::vector<double>> & Tf,
-                                 const std::vector<std::vector<double>> & Tb,
-                                 const std::vector<std::vector<double>> & Rf,
-                                 const std::vector<std::vector<double>> & Rb,
-                                 const BSDFHemisphere & hemisphere,
-                                 const double minLambda,
-                                 const double maxLambda);
 
         static std::shared_ptr<CMaterial>
           nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
                         double thickness,
                         FenestrationCommon::MaterialType materialType,
-                        FenestrationCommon::WavelengthRange range,
-                        FenestrationCommon::IntegrationType integrationType =
-                          FenestrationCommon::IntegrationType::Trapezoidal,
-                        double normalizationCoefficient = 1);
-
-        static std::shared_ptr<CMaterial>
-          nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-                        double thickness,
-                        FenestrationCommon::MaterialType materialType,
-                        double minLambda,
-                        double maxLambda,
                         FenestrationCommon::IntegrationType integrationType =
                           FenestrationCommon::IntegrationType::Trapezoidal,
                         double normalizationCoefficient = 1);
@@ -119,18 +96,6 @@ namespace SingleLayerOptics
                         const FenestrationCommon::CSeries & detectorData,
                         const double thickness,
                         const FenestrationCommon::MaterialType materialType,
-                        const double minLambda,
-                        const double maxLambda,
-                        const FenestrationCommon::IntegrationType integrationType =
-                          FenestrationCommon::IntegrationType::Trapezoidal,
-                        const double normalizationCoefficient = 1);
-
-        static std::shared_ptr<CMaterial>
-          nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
-                        const FenestrationCommon::CSeries & detectorData,
-                        const double thickness,
-                        const FenestrationCommon::MaterialType materialType,
-                        const FenestrationCommon::WavelengthRange t_Range,
                         const FenestrationCommon::IntegrationType integrationType =
                           FenestrationCommon::IntegrationType::Trapezoidal,
                         const double normalizationCoefficient = 1);
@@ -139,17 +104,6 @@ namespace SingleLayerOptics
           const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
           double thickness,
           FenestrationCommon::MaterialType materialType,
-          double minLambda,
-          double maxLambda,
-          FenestrationCommon::IntegrationType integrationType =
-            FenestrationCommon::IntegrationType::Trapezoidal,
-          double normalizationCoefficient = 1);
-
-        static std::shared_ptr<CMaterialPhotovoltaicSample> nBandPhotovoltaicMaterial(
-          const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
-          double thickness,
-          FenestrationCommon::MaterialType materialType,
-          const FenestrationCommon::WavelengthRange range,
           FenestrationCommon::IntegrationType integrationType =
             FenestrationCommon::IntegrationType::Trapezoidal,
           double normalizationCoefficient = 1);

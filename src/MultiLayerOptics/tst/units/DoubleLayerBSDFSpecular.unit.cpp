@@ -277,11 +277,9 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         MaterialType aType = MaterialType::Monolithic;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
 
-        auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements, thickness, aType, minLambda, maxLambda);
+        auto aMaterial =
+          SingleLayerOptics::Material::nBandMaterial(aMeasurements, thickness, aType);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);

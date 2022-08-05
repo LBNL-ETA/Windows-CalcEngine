@@ -21,10 +21,7 @@ protected:
         const auto Tmat = 0.0;
         const auto Rfmat = 0.1;
         const auto Rbmat = 0.1;
-        const auto minLambda = 5.0;
-        const auto maxLambda = 40.0;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto slatWidth = 0.016;     // m

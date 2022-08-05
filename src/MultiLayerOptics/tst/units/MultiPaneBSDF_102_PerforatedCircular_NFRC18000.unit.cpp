@@ -281,20 +281,15 @@ protected:
 
         auto thickness_102 = 3.048e-3;   // [m]
 
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_102(),
-                                                                        thickness_102,
-                                                                        MaterialType::Monolithic,
-                                                                        WavelengthRange::Solar);
+        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_102(), thickness_102, MaterialType::Monolithic);
         aMaterial_102->setBandWavelengths(wl);
 
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         const auto thickness_31111{0.00023};
-        auto aMaterial_31111 =
-          SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_31111(),
-                                                     thickness_31111,
-                                                     MaterialType::Monolithic,
-                                                     WavelengthRange::Solar);
+        auto aMaterial_31111 = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_31111(), thickness_31111, MaterialType::Monolithic);
         aMaterial_31111->setBandWavelengths(wl);
 
         // make cell geometry

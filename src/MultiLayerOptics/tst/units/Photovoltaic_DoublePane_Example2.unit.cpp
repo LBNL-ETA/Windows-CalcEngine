@@ -1830,8 +1830,7 @@ protected:
         const auto aMaterial_1 =
           Material::nBandPhotovoltaicMaterial(pvSample,
                                               thickness,
-                                              FenestrationCommon::MaterialType::Monolithic,
-                                              FenestrationCommon::WavelengthRange::Solar);
+                                              FenestrationCommon::MaterialType::Monolithic);
 
         aMaterial_1->setBandWavelengths(condensedSpectrum());
 
@@ -1863,7 +1862,7 @@ TEST_F(Photovoltaic_DoublePane_Example2, Test1)
     auto aLayer = getLayer();
 
     const double T =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+      aLayer.getPropertySimple(minLambda, maxLambda,PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.2, T, 1e-6);
 
     const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);

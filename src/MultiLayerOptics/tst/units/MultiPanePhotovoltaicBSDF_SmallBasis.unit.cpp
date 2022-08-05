@@ -1805,7 +1805,7 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial_1 = Material::nBandPhotovoltaicMaterial(
-          pvSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          pvSample, thickness, MaterialType::Monolithic);
 
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
         auto Layer_1 = CBSDFLayerMaker::getPhotovoltaicSpecularLayer(aMaterial_1, aBSDF, table());

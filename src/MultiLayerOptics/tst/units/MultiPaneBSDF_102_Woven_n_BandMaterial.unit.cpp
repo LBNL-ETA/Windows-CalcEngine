@@ -279,7 +279,7 @@ protected:
 
         auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
         aMaterial_102->setBandWavelengths(commonWavelengths);
 
@@ -289,7 +289,7 @@ protected:
         // Woven material
         thickness = 0.1;   // [m]
         auto aWovenMaterial = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_31100(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_31100(), thickness, MaterialType::Monolithic);
 
         aWovenMaterial->setBandWavelengths(commonWavelengths);
 

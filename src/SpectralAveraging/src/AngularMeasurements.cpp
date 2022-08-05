@@ -187,7 +187,7 @@ namespace SpectralAveraging
         }
     }
 
-    FenestrationCommon::Limits CAngularMeasurements::getWavelengtLimits() const
+    FenestrationCommon::Limits CAngularMeasurements::getWavelengthLimits() const
     {
         return {m_CommonWavelengths[0], m_CommonWavelengths[m_CommonWavelengths.size() - 1]};
     }

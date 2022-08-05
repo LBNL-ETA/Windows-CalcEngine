@@ -28,6 +28,8 @@ namespace FenestrationCommon
         [[nodiscard]] double minLambda() const;
         [[nodiscard]] double maxLambda() const;
 
+        [[nodiscard]] bool isInRange(double value) const;
+
     private:
         void setWavelengthRange(const WavelengthRange t_Range);
         double m_MinLambda;

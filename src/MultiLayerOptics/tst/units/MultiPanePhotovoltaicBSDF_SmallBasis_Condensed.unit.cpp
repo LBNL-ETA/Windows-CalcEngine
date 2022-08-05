@@ -1825,8 +1825,8 @@ protected:
           std::make_shared<PhotovoltaicSampleData>(*loadSampleData_1(), eqeFront(), eqeBack());
 
         double thickness = 3.048e-3;   // [m]
-        const auto aMaterial_1 = Material::nBandPhotovoltaicMaterial(
-          pvSample, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        const auto aMaterial_1 =
+          Material::nBandPhotovoltaicMaterial(pvSample, thickness, MaterialType::Monolithic);
 
         aMaterial_1->setBandWavelengths(condensedSpectrum());
 

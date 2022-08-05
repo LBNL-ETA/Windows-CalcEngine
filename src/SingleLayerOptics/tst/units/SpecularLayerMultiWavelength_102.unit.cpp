@@ -31,11 +31,8 @@ protected:
 
         const auto thickness = 3.048e-3;   // [m]
         const MaterialType aType = MaterialType::Monolithic;
-        // WavelengthRange aRange = WavelengthRange::Solar;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::nBandMaterial(aMeasurements, thickness, aType, minLambda, maxLambda);
+
+        const auto aMaterial = Material::nBandMaterial(aMeasurements, thickness, aType);
 
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 

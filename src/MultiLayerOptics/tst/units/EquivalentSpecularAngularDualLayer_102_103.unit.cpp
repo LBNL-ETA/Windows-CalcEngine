@@ -714,7 +714,7 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
         auto aCell_102 = SingleLayerOptics::SpecularLayer::createLayer(aMaterial_102);
 
@@ -744,7 +744,7 @@ protected:
         m_Measurements->addMeasurement(aAngular9);
 
         const auto aMaterial_103 =
-          std::make_shared<CMaterialMeasured>(m_Measurements, WavelengthRange::Solar);
+          std::make_shared<CMaterialMeasured>(m_Measurements);
         auto angularLayer = SingleLayerOptics::SpecularLayer::createLayer(aMaterial_103);
 
         // Finds combination of two wavelength sets without going outside of wavelenght range for

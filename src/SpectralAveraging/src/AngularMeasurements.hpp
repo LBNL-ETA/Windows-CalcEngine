@@ -62,7 +62,7 @@ namespace SpectralAveraging
         // t_Angle that does not exist.So this is where you want to do your interpolation work
         virtual void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
-        [[nodiscard]] FenestrationCommon::Limits getWavelengtLimits() const;
+        [[nodiscard]] FenestrationCommon::Limits getWavelengthLimits() const;
 
     private:
         // Do not forget storage for it

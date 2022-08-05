@@ -20,10 +20,8 @@ protected:
         const auto Tmat = 0.0;
         const auto Rfmat = 0.1;
         const auto Rbmat = 0.1;
-        const auto minLambda = 5.0;
-        const auto maxLambda = 40.0;
-        const auto aMaterial = SingleLayerOptics::Material::singleBandMaterial(
-          Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial =
+          SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto diameter = 0.002;   // m

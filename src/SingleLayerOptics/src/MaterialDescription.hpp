@@ -57,7 +57,7 @@ namespace SingleLayerOptics
     {
     public:
         CMaterial(double minLambda, double maxLambda);
-        explicit CMaterial(FenestrationCommon::WavelengthRange t_Range);
+        explicit CMaterial(FenestrationCommon::Limits wavelengthRange);
 
         virtual void setSourceData(FenestrationCommon::CSeries &);
         virtual void setDetectorData(FenestrationCommon::CSeries & t_DetectorData);
@@ -104,7 +104,7 @@ namespace SingleLayerOptics
         std::vector<double> trimWavelengthToRange(const std::vector<double> & wavelengths) const;
         // Set state in order not to calculate wavelengths every time
         virtual std::vector<double> calculateBandWavelengths() = 0;
-        bool m_WavelengthsCalculated;
+        bool m_WavelengthsCalculated{false};
         std::vector<double> m_Wavelengths;
     };
 
@@ -118,13 +118,7 @@ namespace SingleLayerOptics
     class CMaterialSingleBand : public CMaterial
     {
     public:
-        CMaterialSingleBand(
-          double t_Tf, double t_Tb, double t_Rf, double t_Rb, double minLambda, double maxLambda);
-        CMaterialSingleBand(double t_Tf,
-                            double t_Tb,
-                            double t_Rf,
-                            double t_Rb,
-                            FenestrationCommon::WavelengthRange t_Range);
+        CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb);
 
         double
           getProperty(FenestrationCommon::Property t_Property,
@@ -159,15 +153,7 @@ namespace SingleLayerOptics
                                 std::vector<std::vector<double>> const & t_Tb,
                                 std::vector<std::vector<double>> const & t_Rf,
                                 std::vector<std::vector<double>> const & t_Rb,
-                                BSDFHemisphere const & t_Hemisphere,
-                                double minLambda,
-                                double maxLambda);
-        CMaterialSingleBandBSDF(std::vector<std::vector<double>> const & t_Tf,
-                                std::vector<std::vector<double>> const & t_Tb,
-                                std::vector<std::vector<double>> const & t_Rf,
-                                std::vector<std::vector<double>> const & t_Rb,
-                                BSDFHemisphere const & t_Hemisphere,
-                                FenestrationCommon::WavelengthRange t_Range);
+                                BSDFHemisphere const & t_Hemisphere);
 
         double
           getProperty(FenestrationCommon::Property t_Property,
@@ -211,13 +197,13 @@ namespace SingleLayerOptics
     class IMaterialDualBand : public CMaterial
     {
     public:
-        IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                          const std::shared_ptr<CMaterial> & t_FullRange,
+        IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
+                          const std::shared_ptr<CMaterial> & solarRange,
                           double t_Ratio = ConstantsData::NIRRatio);
 
         // ratio is calculated based on provided solar radiation values
-        IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                          const std::shared_ptr<CMaterial> & t_FullRange,
+        IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
+                          const std::shared_ptr<CMaterial> & solarRange,
                           const FenestrationCommon::CSeries & t_SolarRadiation);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
@@ -237,9 +223,6 @@ namespace SingleLayerOptics
 
     protected:
         std::vector<double> calculateBandWavelengths() override;
-        // Checks if material is within valid range. Otherwise, algorithm is not valid.
-        static void checkIfMaterialWithingSolarRange(const CMaterial & t_Material) ;
-        void createUVRange();
 
         // Creates after UV range and stores data into m_Materials
         virtual void createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -261,12 +244,14 @@ namespace SingleLayerOptics
 
         [[nodiscard]] std::shared_ptr<CMaterial> getMaterialFromWavelegth(double wavelength) const;
 
-        std::shared_ptr<CMaterial> m_MaterialFullRange;
-        std::shared_ptr<CMaterial> m_MaterialPartialRange;
+        std::shared_ptr<CMaterial> m_MaterialSolarRange;
+        std::shared_ptr<CMaterial> m_MaterialVisibleRange;
+
+
+        std::shared_ptr<CMaterial> m_MaterialScaledRange;
 
         std::function<void(void)> m_RangeCreator;
 
-        std::vector<std::shared_ptr<CMaterial>> m_Materials;
     };
 
     class CMaterialDualBand : public IMaterialDualBand
@@ -332,18 +317,11 @@ namespace SingleLayerOptics
     class CMaterialSample : public CMaterial
     {
     public:
-        CMaterialSample(
-          const std::shared_ptr<SpectralAveraging::CSpectralSample> & t_SpectralSample,
-          double t_Thickness,
-          FenestrationCommon::MaterialType t_Type,
-          double minLambda,
-          double maxLambda);
 
         CMaterialSample(
           const std::shared_ptr<SpectralAveraging::CSpectralSample> & t_SpectralSample,
           double t_Thickness,
-          FenestrationCommon::MaterialType t_Type,
-          FenestrationCommon::WavelengthRange t_Range);
+          FenestrationCommon::MaterialType t_Type);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
         void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
@@ -381,15 +359,7 @@ namespace SingleLayerOptics
         CMaterialPhotovoltaicSample(
           const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
           double t_Thickness,
-          FenestrationCommon::MaterialType t_Type,
-          double minLambda,
-          double maxLambda);
-
-        CMaterialPhotovoltaicSample(
-          const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
-          double t_Thickness,
-          FenestrationCommon::MaterialType t_Type,
-          FenestrationCommon::WavelengthRange t_Range);
+          FenestrationCommon::MaterialType t_Type);
 
         [[nodiscard]] FenestrationCommon::CSeries jscPrime(FenestrationCommon::Side t_Side) const override;
 
@@ -407,14 +377,9 @@ namespace SingleLayerOptics
     class CMaterialMeasured : public CMaterial
     {
     public:
-        CMaterialMeasured(
-          const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements,
-          double minLambda,
-          double maxLambda);
 
         CMaterialMeasured(
-          const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements,
-          FenestrationCommon::WavelengthRange t_Range);
+          const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
 

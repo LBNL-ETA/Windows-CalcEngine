@@ -117,8 +117,8 @@ protected:
     virtual void SetUp()
     {
         const auto thickness = 5.715e-3;   // [m]
-        auto aMaterial = Material::nBandMaterial(
-          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        auto aMaterial =
+          Material::nBandMaterial(loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic);
 
         // Define BSDF
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);

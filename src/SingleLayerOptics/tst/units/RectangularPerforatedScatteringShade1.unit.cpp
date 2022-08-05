@@ -25,8 +25,7 @@ TEST_F(TestRectangularPerforatedScatteringShade1, TestProperties)
     const auto Rbmat = 0.4;
     const auto minLambda = 0.3;
     const auto maxLambda = 2.5;
-    const auto aMaterial =
-      Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+    const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
     // make cell geometry
     const auto x = 20.0;          // mm
@@ -63,8 +62,7 @@ TEST_F(TestRectangularPerforatedScatteringShade1, TestHighEmissivity)
     const auto Rbmat = 0.01;
     const auto minLambda = 0.3;
     const auto maxLambda = 2.5;
-    const auto aMaterial =
-      Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+    const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
     // make cell geometry
     const auto x = 20.0;          // mm

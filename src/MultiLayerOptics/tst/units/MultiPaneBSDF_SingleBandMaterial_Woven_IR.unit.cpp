@@ -26,7 +26,7 @@ protected:
         const auto RfIR = 0.1;
         const auto RbIR = 0.1;
 
-        auto aMaterial = Material::singleBandMaterial(TIR, TIR, RfIR, RbIR, WavelengthRange::IR);
+        auto aMaterial = Material::singleBandMaterial(TIR, TIR, RfIR, RbIR);
 
         // make cell geometry
         const auto diameter = 0.002;   // m

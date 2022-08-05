@@ -63,12 +63,6 @@ namespace MultiLayerOptics
                  const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
 
 
-        double getPropertySimple(FenestrationCommon::PropertySimple t_Property,
-                                 FenestrationCommon::Side t_Side,
-                                 FenestrationCommon::Scattering t_Scattering,
-                                 double t_Theta = 0,
-                                 double t_Phi = 0);
-
         double getPropertySimple(double minLambda,
                                  double maxLambda,
                                  FenestrationCommon::PropertySimple t_Property,
@@ -102,12 +96,6 @@ namespace MultiLayerOptics
                                         double normalizationCoefficient = 1);
 
         [[nodiscard]] size_t size() const;
-
-        double getAbsorptanceLayer(size_t index,
-                                   FenestrationCommon::Side side,
-                                   FenestrationCommon::ScatteringSimple scattering,
-                                   double theta = 0,
-                                   double phi = 0);
 
         double getAbsorptanceLayer(double minLambda,
                                    double maxLambda,

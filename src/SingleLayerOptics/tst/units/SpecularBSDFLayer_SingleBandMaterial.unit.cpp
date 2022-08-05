@@ -58,11 +58,7 @@ protected:
         const auto Rfsol = 0.05;
         const auto Rbsol = 0.05;
 
-        const auto minLambda{0.3};
-        const auto maxLambda{2.5};
-
-        auto aMaterial{
-          Material::singleBandMaterial(Tsol, Tsol, Rfsol, Rbsol, minLambda, maxLambda)};
+        auto aMaterial{Material::singleBandMaterial(Tsol, Tsol, Rfsol, Rbsol)};
 
         // Define BSDF
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);

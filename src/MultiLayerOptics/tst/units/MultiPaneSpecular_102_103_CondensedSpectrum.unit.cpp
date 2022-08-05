@@ -182,12 +182,12 @@ protected:
     virtual void SetUp()
     {
         double thickness = 3.048e-3;   // [m]
-        const auto aMaterial_102 = Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        const auto aMaterial_102 =
+          Material::nBandMaterial(loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
         thickness = 5.715e-3;   // [m]
-        const auto aMaterial_103 = Material::nBandMaterial(
-          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        const auto aMaterial_103 =
+          Material::nBandMaterial(loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic);
 
 
         auto layer102 = SpecularLayer::createLayer(aMaterial_102);
@@ -216,7 +216,6 @@ protected:
         const CalculationProperties input{loadSolarRadiationFile(),
                                           loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
-
     }
 
 public:
@@ -252,38 +251,38 @@ TEST_F(MultiPaneSpecular_102_103_CondensedSpectrum, TestAngle0)
     const std::vector<double> AbsorptanceFront{aLayer.getAbsorptanceLayers(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Direct, angle, 0)};
 
-    const double AbsFront1 =
-      aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
+    const double AbsFront1 = aLayer.getAbsorptanceLayer(
+      minLambda, maxLambda, 1, Side::Front, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.09886828346187998, AbsFront1, 1e-6);
     EXPECT_NEAR(0.09886828346187998, AbsorptanceFront[0], 1e-6);
 
-    const double AbsFront2 =
-      aLayer.getAbsorptanceLayer(2, Side::Front, ScatteringSimple::Direct, angle, 0);
+    const double AbsFront2 = aLayer.getAbsorptanceLayer(
+      minLambda, maxLambda, 2, Side::Front, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.12579200884067865, AbsFront2, 1e-6);
     EXPECT_NEAR(0.12579200884067865, AbsorptanceFront[1], 1e-6);
 
     const std::vector<double> AbsorptanceBack{aLayer.getAbsorptanceLayers(
       minLambda, maxLambda, Side::Back, ScatteringSimple::Direct, angle, 0)};
 
-    const double AbsBack1 =
-      aLayer.getAbsorptanceLayer(1, Side::Back, ScatteringSimple::Direct, angle, 0);
+    const double AbsBack1 = aLayer.getAbsorptanceLayer(
+      minLambda, maxLambda, 1, Side::Back, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.16896549433713057, AbsBack1, 1e-6);
     EXPECT_NEAR(0.16896549433713057, AbsorptanceBack[0], 1e-6);
 
-    const double AbsBack2 =
-      aLayer.getAbsorptanceLayer(2, Side::Back, ScatteringSimple::Direct, angle, 0);
+    const double AbsBack2 = aLayer.getAbsorptanceLayer(
+      minLambda, maxLambda, 2, Side::Back, ScatteringSimple::Direct, angle, 0);
     EXPECT_NEAR(0.063851365359220133, AbsBack2, 1e-6);
     EXPECT_NEAR(0.063851365359220133, AbsorptanceBack[1], 1e-6);
 
-    const double Them =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+    const double Them = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.55134962796067644, Them, 1e-6);
 
-    const double Rfhem =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+    const double Rfhem = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.20101014299215508, Rfhem, 1e-6);
 
-    const double Rbhem =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
+    const double Rbhem = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.18703361935727306, Rbhem, 1e-6);
 }

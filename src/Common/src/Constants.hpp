@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
 
 namespace ConstantsData
 {
@@ -27,4 +28,7 @@ namespace ConstantsData
     //! will be used to create small offset from the end of the visible range to make sure that
     //! visible properties are returned in that case.
     static const double VisibleRangeOffset = 2 * wavelengthErrorTolerance;
+
+    static const double MINLAMBDAVALUE = 0;
+    static const double MAXLAMBDAVALUE = std::numeric_limits<double>::max();
 }   // namespace ConstantsData

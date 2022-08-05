@@ -319,8 +319,7 @@ private:
           SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_5439(),
                                                      astmStandard,
                                                      thickness,
-                                                     FenestrationCommon::MaterialType::Monolithic,
-                                                     FenestrationCommon::WavelengthRange::Visible);
+                                                     FenestrationCommon::MaterialType::Monolithic);
 
         auto single_layer = SingleLayerOptics::SpecularLayer::createLayer(aMaterial);
 
@@ -372,9 +371,9 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_FullSpectrum, TestTrichroma
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
       FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(66.445296720302537, T.X, 1e-6);
+    EXPECT_NEAR(66.451485635952949, T.X, 1e-6);
     EXPECT_NEAR(71.662457, T.Y, 1e-6);
-    EXPECT_NEAR(71.940385010574701, T.Z, 1e-6);
+    EXPECT_NEAR(71.961066201212802, T.Z, 1e-6);
 }
 
 TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_FullSpectrum, TestTrichromatic_R)
@@ -387,9 +386,9 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_FullSpectrum, TestTrichroma
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
       FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(6.976970444136497, T.X, 1e-6);
+    EXPECT_NEAR(6.9776203002392698, T.X, 1e-6);
     EXPECT_NEAR(7.635557, T.Y, 1e-6);
-    EXPECT_NEAR(10.183499797132086, T.Z, 1e-6);
+    EXPECT_NEAR(10.186427316919987, T.Z, 1e-6);
 }
 
 TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_FullSpectrum, TestRGB_T)

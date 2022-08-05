@@ -63,10 +63,8 @@ protected:
         const auto Rb = 0.1;
 
 
-        const auto aMaterialVenetian = SingleLayerOptics::Material::singleBandMaterial(
-          Tf, Tb, Rf, Rb, FenestrationCommon::WavelengthRange::IR);
-
-        aMaterialVenetian->setBandWavelengths(commonWavelengths);
+        const auto aMaterialVenetian =
+          SingleLayerOptics::Material::singleBandMaterial(Tf, Tb, Rf, Rb);
 
         // make cell geometry
         const auto slatWidth = 0.0148;     // m

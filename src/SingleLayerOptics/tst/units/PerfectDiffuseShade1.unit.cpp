@@ -20,10 +20,7 @@ protected:
         double Tmat = 0.00;
         double Rfmat = 0.55;
         double Rbmat = 0.55;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 

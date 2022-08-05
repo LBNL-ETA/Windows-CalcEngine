@@ -814,7 +814,7 @@ protected:
         const auto rbVisible = loadRbVisible();
 
         const auto aBSDFMaterial = Material::singleBandBSDFMaterial(
-          tfVisible, tbVisible, rfVisible, rbVisible, aBSDF, WavelengthRange::Visible);
+          tfVisible, tbVisible, rfVisible, rbVisible, aBSDF);
 
         aBSDFMaterial->setBandWavelengths(fiveNMWavelenths());
 

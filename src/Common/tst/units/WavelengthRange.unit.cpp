@@ -102,3 +102,61 @@ TEST_F(WavelengthRangeTest, TestISO9050Spectrum)
         EXPECT_NEAR(wavelenghts[i], correctWavelengths[i], 1e-6);
     }
 }
+
+TEST_F(WavelengthRangeTest, TestInVisibleRange_1)
+{
+    constexpr double wavelength{0.58};
+    CWavelengthRange range{WavelengthRange::Visible};
+
+    EXPECT_EQ(true, range.isInRange(wavelength));
+}
+
+TEST_F(WavelengthRangeTest, TestInVisibleRange_2)
+{
+    constexpr double wavelength{0.38};
+    CWavelengthRange range{WavelengthRange::Visible};
+
+    EXPECT_EQ(true, range.isInRange(wavelength));
+}
+
+TEST_F(WavelengthRangeTest, TestInVisibleRange_3)
+{
+    constexpr double wavelength{0.3799};
+    CWavelengthRange range{WavelengthRange::Visible};
+
+    EXPECT_EQ(false, range.isInRange(wavelength));
+}
+
+TEST_F(WavelengthRangeTest, TestInVisibleRange_4)
+{
+    constexpr double wavelength{0.78};
+    CWavelengthRange range{WavelengthRange::Visible};
+
+    EXPECT_EQ(true, range.isInRange(wavelength));
+}
+
+TEST_F(WavelengthRangeTest, TestInVisibleRange_5)
+{
+    constexpr double wavelength{0.780001};
+    CWavelengthRange range{WavelengthRange::Visible};
+
+    EXPECT_EQ(true, range.isInRange(wavelength));
+}
+
+TEST_F(WavelengthRangeTest, TestInVisibleRange_6)
+{
+    constexpr double wavelength{0.780002};
+    CWavelengthRange range{WavelengthRange::Visible};
+
+    EXPECT_EQ(false, range.isInRange(wavelength));
+}
+
+TEST_F(WavelengthRangeTest, TestInVisibleRange_7)
+{
+    constexpr double wavelength{0.780003};
+    CWavelengthRange range{WavelengthRange::Visible};
+
+    auto test{range.isInRange(wavelength)};
+
+    EXPECT_EQ(false, range.isInRange(wavelength));
+}

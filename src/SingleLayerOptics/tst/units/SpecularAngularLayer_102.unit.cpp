@@ -651,7 +651,7 @@ protected:
         //	m_Measurements->addMeasurement( aAngular09 );
 
         std::shared_ptr<CMaterial> aMaterial =
-          std::make_shared<CMaterialMeasured>(m_Measurements, WavelengthRange::Solar);
+          std::make_shared<CMaterialMeasured>(m_Measurements);
 
         // create BSDF
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);

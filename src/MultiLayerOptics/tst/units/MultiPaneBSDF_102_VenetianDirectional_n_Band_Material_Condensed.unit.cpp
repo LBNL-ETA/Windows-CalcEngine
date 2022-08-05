@@ -279,7 +279,7 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
 
@@ -288,7 +288,7 @@ protected:
         // Venetian blind material
         thickness = 0.1;   // [m]
         auto aMaterialVenetian = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_31100(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_31100(), thickness, MaterialType::Monolithic);
 
 
         // make cell geometry

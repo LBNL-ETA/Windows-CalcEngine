@@ -175,11 +175,8 @@ protected:
     virtual void SetUp()
     {
         const double thickness = 5.66e-3;   // [m]
-        const auto aMaterial = Material::nBandMaterial(loadSampleData_NFRC_VE348(),
-                                                       thickness,
-                                                       MaterialType::Coated,
-                                                       WavelengthRange::IR,
-                                                       IntegrationType::Trapezoidal);
+        const auto aMaterial =
+          Material::nBandMaterial(loadSampleData_NFRC_VE348(), thickness, MaterialType::Coated);
 
         const double blackBodyTemperature = 300;
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
