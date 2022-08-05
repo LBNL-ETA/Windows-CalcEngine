@@ -339,6 +339,11 @@ namespace SpectralAveraging
         m_SampleData->Filpped(flipped);
     }
 
+    FenestrationCommon::Limits CSpectralSample::getWavelengthLimits() const
+    {
+        return m_SampleData->getWavelengthLimits();
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////
     /// CPhotovoltaicSample
     /////////////////////////////////////////////////////////////////////////////////////

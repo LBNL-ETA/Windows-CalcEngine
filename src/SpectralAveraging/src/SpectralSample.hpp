@@ -136,6 +136,8 @@ namespace SpectralAveraging
 
         void Flipped(bool flipped);
 
+        [[nodiscard]] FenestrationCommon::Limits getWavelengthLimits() const;
+
     protected:
         void calculateProperties() override;
         void calculateState() override;
