@@ -340,7 +340,10 @@ namespace SingleLayerOptics
                                            const CBeamDirection & t_Incoming,
                                            const CBeamDirection & t_Outgoing) const
     {
-        m_RangeCreator();
+        if(m_MaterialScaledRange == nullptr)
+        {
+            m_RangeCreator();
+        }
         std::vector<double> aResults;
 
         for(const auto wl : m_Wavelengths)
