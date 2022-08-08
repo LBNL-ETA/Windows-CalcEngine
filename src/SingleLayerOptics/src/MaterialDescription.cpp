@@ -199,8 +199,8 @@ namespace SingleLayerOptics
 
         for(const auto & w : wavelengths)
         {
-            if(w > (m_MinLambda - ConstantsData::floatErrorTolerance)
-               && (w < (m_MaxLambda + ConstantsData::floatErrorTolerance)))
+            if(w > (m_MinLambda - ConstantsData::wavelengthErrorTolerance)
+               && (w < (m_MaxLambda + ConstantsData::wavelengthErrorTolerance)))
             {
                 wl.push_back(w);
             }
