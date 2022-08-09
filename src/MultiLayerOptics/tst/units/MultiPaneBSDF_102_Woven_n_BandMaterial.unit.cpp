@@ -280,7 +280,7 @@ protected:
         const auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
-        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Woven material
@@ -295,7 +295,7 @@ protected:
         // Perforated layer is created here
         auto LayerWoven = CBSDFLayerMaker::getWovenLayer(aWovenMaterial, aBSDF, diameter, spacing);
 
-        m_Layer = CMultiPaneBSDF::create({LayerWoven, Layer_102});
+        m_Layer = CMultiPaneBSDF::create({LayerWoven});
 
         const CalculationProperties input{loadSolarRadiationFile(),
                                           loadSolarRadiationFile().getXArray()};

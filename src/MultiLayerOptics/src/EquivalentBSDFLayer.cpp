@@ -35,7 +35,6 @@ namespace MultiLayerOptics
             {
                 layer->setBandWavelengths(matrixWavelengths.value());
             }
-            updateWavelengthLayers(*layer);
         }
     }
 
@@ -47,7 +46,6 @@ namespace MultiLayerOptics
         {
             m_Lambda = t_Layer->getResults().lambdaMatrix();
         }
-        updateWavelengthLayers(*t_Layer);
         m_Layer.push_back(t_Layer);
     }
 
@@ -102,11 +100,9 @@ namespace MultiLayerOptics
     void CEquivalentBSDFLayer::setSolarRadiation(CSeries & t_SolarRadiation)
     {
         // Need to recreate wavelenght by wavelength layers
-        m_LayersWL.clear();
         for(auto & aLayer : m_Layer)
         {
             aLayer->setSourceData(t_SolarRadiation);
-            updateWavelengthLayers(*aLayer);
         }
         m_Calculated = false;
     }
@@ -124,18 +120,16 @@ namespace MultiLayerOptics
     void CEquivalentBSDFLayer::setMatrixLayerWavelengths(const std::vector<double> & wavelenghts)
     {
         m_CombinedLayerWavelengths = wavelenghts;
-        m_LayersWL.clear();
         for(const auto & layer : m_Layer)
         {
             layer->setBandWavelengths(wavelenghts);
-            updateWavelengthLayers(*layer);
         }
     }
 
     void CEquivalentBSDFLayer::calculate()
     {
         const size_t matrixSize = m_Lambda.size();
-        const size_t numberOfLayers = m_LayersWL[0].getNumberOfLayers();
+        const size_t numberOfLayers = m_Layer.size();
 
         for(Side aSide : EnumSide())
         {
@@ -147,107 +141,59 @@ namespace MultiLayerOptics
             }
         }
 
-        calculateAndStoreWavelengthProperties(numberOfLayers, m_CombinedLayerWavelengths);
+        calculateWavelengthByWavelengthProperties();
 
         m_Calculated = true;
     }
 
-    void CEquivalentBSDFLayer::calculateAndStoreWavelengthProperties(
-      size_t const t_NumOfLayers, const std::vector<double> & wavelengths)
+    void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
-        auto wlData = createWavelengthByWavelengthData(wavelengths);
-
-        calculateWavelengthByWavelengthProperties(t_NumOfLayers, wlData);
-
-        storeWavelengthByWavelengthProperties(t_NumOfLayers, wlData);
-    }
-
-    std::vector<CEquivalentBSDFLayer::wavelenghtData>
-      CEquivalentBSDFLayer::createWavelengthByWavelengthData(
-        const std::vector<double> & wavelengths)
-    {
-        std::vector<wavelenghtData> wlData;
-
-        for(size_t i = 0u; i < wavelengths.size(); ++i)
+        for(size_t i = 0u; i < m_CombinedLayerWavelengths.size(); ++i)
         {
-            wlData.emplace_back(wavelengths[i], m_LayersWL[i]);
-        }
-        return wlData;
-    }
-
-    void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties(
-      const size_t t_NumOfLayers, std::vector<wavelenghtData> & wlData) const
-    {
-#ifdef STL_MULTITHREADING
-        std::for_each(
-          std::execution::par_unseq, wlData.begin(), wlData.end(), [&](wavelenghtData & val) {
-#else
-        std::for_each(
-          wlData.begin(), wlData.end(), [&](wavelenghtData & val) {
-#endif
-              for(auto aSide : EnumSide())
-              {
-                  for(size_t layerNumber = 0; layerNumber < t_NumOfLayers; ++layerNumber)
-                  {
-                      val.totA[{aSide, layerNumber}] =
-                        val.layer.getLayerAbsorptances(layerNumber + 1, aSide);
-                      val.totJSC[{aSide, layerNumber}] =
-                        val.layer.getLayerJSC(layerNumber + 1, aSide);
-                  }
-                  for(auto aProperty : EnumPropertySimple())
-                  {
-                      val.tot[{aSide, aProperty}] = val.layer.getProperty(aSide, aProperty);
-                  }
-              }
-          });
-    }
-
-    void CEquivalentBSDFLayer::storeWavelengthByWavelengthProperties(
-      const size_t t_NumOfLayers, const std::vector<wavelenghtData> & wlData)
-    {
-        for(auto & t : wlData)
-        {
+            auto layer{getEquivalentLayerAtWavelength(i)};
             for(auto aSide : EnumSide())
             {
-                for(size_t layerNumber = 0; layerNumber < t_NumOfLayers; ++layerNumber)
+                const auto numberOfLayers{m_Layer.size()};
+                for(size_t layerNumber = 0; layerNumber < numberOfLayers; ++layerNumber)
                 {
                     m_TotA.at(aSide).addProperties(
-                      layerNumber, t.wavelength, t.totA.at({aSide, layerNumber}));
+                      layerNumber, m_CombinedLayerWavelengths[i], layer.getLayerAbsorptances(layerNumber + 1, aSide));
                     m_TotJSC.at(aSide).addProperties(
-                      layerNumber, t.wavelength, t.totJSC.at({aSide, layerNumber}));
+                      layerNumber, m_CombinedLayerWavelengths[i], layer.getLayerJSC(layerNumber + 1, aSide));
                 }
                 for(auto aProperty : EnumPropertySimple())
                 {
                     m_Tot.at({aSide, aProperty})
-                      .addProperties(t.wavelength, t.tot.at({aSide, aProperty}));
+                      .addProperties(m_CombinedLayerWavelengths[i], layer.getProperty(aSide, aProperty));
                 }
             }
         }
+        
     }
 
-    void CEquivalentBSDFLayer::updateWavelengthLayers(SingleLayerOptics::CBSDFLayer & t_Layer)
+    CEquivalentBSDFLayerSingleBand
+      CEquivalentBSDFLayer::getEquivalentLayerAtWavelength(size_t wavelengthIndex) const
     {
-        const auto aResults = t_Layer.getWavelengthResults();
-        const auto size = m_CombinedLayerWavelengths.size();
+        auto jscPrimeFront{m_Layer[0]->jscPrime(Side::Front, m_CombinedLayerWavelengths)};
+        auto jscPrimeBack{m_Layer[0]->jscPrime(Side::Back, m_CombinedLayerWavelengths)};
+        const auto layerWLResults{m_Layer[0]->getWavelengthResults()};
+        const auto curWL = m_CombinedLayerWavelengths[wavelengthIndex];
+        auto index = m_Layer[0]->getBandIndex(curWL);
+        CEquivalentBSDFLayerSingleBand result{layerWLResults[static_cast<size_t>(index)],
+                                              jscPrimeFront[wavelengthIndex],
+                                              jscPrimeBack[wavelengthIndex]};
 
-        auto jscPrimeFront{t_Layer.jscPrime(Side::Front, m_CombinedLayerWavelengths)};
-        const auto jscPrimeBack{t_Layer.jscPrime(Side::Back, m_CombinedLayerWavelengths)};
-
-        for(size_t i = 0; i < size; ++i)
+        for(size_t i = 1u; i < m_Layer.size(); ++i)
         {
-            const auto curWL = m_CombinedLayerWavelengths[i];
-            const auto index = t_Layer.getBandIndex(curWL);
-            assert(index > -1);
-
-            if(m_LayersWL.size() <= i)
-            {
-                m_LayersWL.emplace_back(aResults[static_cast<size_t>(index)], jscPrimeFront[i], jscPrimeBack[i]);
-            }
-            else
-            {
-                m_LayersWL[i].addLayer(aResults[static_cast<size_t>(index)], jscPrimeFront[i], jscPrimeBack[i]);
-            }
+            jscPrimeFront = m_Layer[i]->jscPrime(Side::Front, m_CombinedLayerWavelengths);
+            jscPrimeBack = m_Layer[i]->jscPrime(Side::Back, m_CombinedLayerWavelengths);
+            index = m_Layer[i]->getBandIndex(curWL);
+            result.addLayer(m_Layer[i]->getWavelengthResults()[index],
+                            jscPrimeFront[wavelengthIndex],
+                            jscPrimeBack[wavelengthIndex]);
         }
+
+        return result;
     }
 
     std::vector<double> CEquivalentBSDFLayer::unionOfLayerWavelengths(

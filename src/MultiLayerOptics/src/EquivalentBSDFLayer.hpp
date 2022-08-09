@@ -69,17 +69,10 @@ namespace MultiLayerOptics
 
         void calculate();
 
-        // Wavelength layer per layer calculations
-        void calculateAndStoreWavelengthProperties(const size_t t_NumOfLayers,
-                                                   const std::vector<double> & wavelengths);
-
-        void updateWavelengthLayers(SingleLayerOptics::CBSDFLayer & t_Layer);
+        CEquivalentBSDFLayerSingleBand getEquivalentLayerAtWavelength(size_t wavelengthIndex) const;
 
         static std::vector<double> unionOfLayerWavelengths(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer);
-
-        // std::vector of layer results over each wavelength
-        std::vector<CEquivalentBSDFLayerSingleBand> m_LayersWL;
 
         // Layers that are added to the equivalent layer
         std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> m_Layer;
@@ -104,13 +97,8 @@ namespace MultiLayerOptics
         std::vector<double> m_CombinedLayerWavelengths;
         bool m_Calculated;
 
-        void storeWavelengthByWavelengthProperties(const size_t t_NumOfLayers,
-                                                   const std::vector<wavelenghtData> & wlData);
-
-        void calculateWavelengthByWavelengthProperties(const size_t t_NumOfLayers,
-                                                       std::vector<wavelenghtData> & wlData) const;
-        std::vector<wavelenghtData>
-          createWavelengthByWavelengthData(const std::vector<double> & wavelengths);
+        void calculateWavelengthByWavelengthProperties();
+        
     };
 
 }   // namespace MultiLayerOptics
