@@ -194,29 +194,38 @@ namespace MultiLayerOptics
         }
     }
 
-    void CEquivalentBSDFLayerSingleBand::BuildForwardAndBackwardLayers(size_t numberOfLayers)
+    CEquivalentBSDFLayerSingleBand::AbsorptanceLayers
+      CEquivalentBSDFLayerSingleBand::BuildForwardAndBackwardLayers(size_t numberOfLayers)
     {
+        AbsorptanceLayers result;
         m_EquivalentLayer = m_Layers[0];
-        m_Forward.push_back(m_EquivalentLayer);
+        result.Forward.push_back(m_EquivalentLayer);
         for(size_t i = 1; i < numberOfLayers; ++i)
         {
             m_EquivalentLayer = CBSDFDoubleLayer(m_EquivalentLayer, m_Layers[i]).value();
-            m_Forward.push_back(m_EquivalentLayer);
+            result.Forward.push_back(m_EquivalentLayer);
         }
-        m_Backward.push_back(m_EquivalentLayer);
+
+        result.Backward.push_back(m_EquivalentLayer);
 
         BSDFIntegrator bLayer = m_Layers[numberOfLayers - 1];
         for(size_t i = numberOfLayers - 1; i > 1; --i)
         {
             bLayer = CBSDFDoubleLayer(m_Layers[i - 1], bLayer).value();
-            m_Backward.push_back(bLayer);
+            result.Backward.push_back(bLayer);
         }
-        m_Backward.push_back(m_Layers[numberOfLayers - 1]);
+        result.Backward.push_back(m_Layers[numberOfLayers - 1]);
+
+        return result;
     }
 
-    void CEquivalentBSDFLayerSingleBand::CreateIplusAndIminusValues(size_t numberOfLayers,
-                                                                    const size_t matrixSize)
+    CEquivalentBSDFLayerSingleBand::IrradiationMatrices
+      CEquivalentBSDFLayerSingleBand::CreateIplusAndIminusValues(size_t numberOfLayers,
+                                                                 const size_t matrixSize,
+                                                                 AbsorptanceLayers & absLayers)
     {
+        IrradiationMatrices result;
+
         // Equations used here are from Klems-Matrix Layer calculations- part 2 paper
         // Note that absorptance calculations do not need irradiances leaving first layer
         // for front flow calculations (or back layer for backward flow calculations) and because of
@@ -227,53 +236,56 @@ namespace MultiLayerOptics
             {
                 SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
-                m_Iminus[EnergyFlow::Backward].push_back(iMinus);
+                result.Iminus[EnergyFlow::Backward].push_back(iMinus);
                 SquareMatrix iPlus{matrixSize};
-                m_Iplus[EnergyFlow::Forward].push_back(iPlus);
+                result.Iplus[EnergyFlow::Forward].push_back(iPlus);
             }
             else
             {
-                BSDFIntegrator & Layer1 = m_Forward[i];
-                BSDFIntegrator & Layer2 = m_Backward[i + 1];
+                BSDFIntegrator & Layer1 = absLayers.Forward[i];
+                BSDFIntegrator & Layer2 = absLayers.Backward[i + 1];
                 const auto InterRefl2{interReflectance(m_Lambda,
                                                        Layer2.at(Side::Front, PropertySimple::R),
                                                        Layer1.at(Side::Back, PropertySimple::R))};
                 const auto iMinus{
                   iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T))};
-                m_Iminus[EnergyFlow::Backward].push_back(iMinus);
+                result.Iminus[EnergyFlow::Backward].push_back(iMinus);
                 const auto iPlus{iplusCalc(InterRefl2,
                                            Layer2.getMatrix(Side::Front, PropertySimple::R),
                                            Layer1.getMatrix(Side::Front, PropertySimple::T))};
-                m_Iplus[EnergyFlow::Forward].push_back(iPlus);
+                result.Iplus[EnergyFlow::Forward].push_back(iPlus);
             }
 
             if(i == 0)
             {
                 SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
-                m_Iminus[EnergyFlow::Forward].push_back(iMinus);
+                result.Iminus[EnergyFlow::Forward].push_back(iMinus);
                 SquareMatrix iPlus{matrixSize};
-                m_Iplus[EnergyFlow::Backward].push_back(iPlus);
+                result.Iplus[EnergyFlow::Backward].push_back(iPlus);
             }
             else
             {
-                BSDFIntegrator & Layer1 = m_Forward[i - 1];
-                BSDFIntegrator & Layer2 = m_Backward[i];
+                BSDFIntegrator & Layer1 = absLayers.Forward[i - 1];
+                BSDFIntegrator & Layer2 = absLayers.Backward[i];
                 const auto InterRefl1{interReflectance(m_Lambda,
                                                        Layer1.at(Side::Back, PropertySimple::R),
                                                        Layer2.at(Side::Front, PropertySimple::R))};
                 const auto iMinus{
                   iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySimple::T))};
-                m_Iminus[EnergyFlow::Forward].push_back(iMinus);
+                result.Iminus[EnergyFlow::Forward].push_back(iMinus);
                 const auto iPlus{iplusCalc(InterRefl1,
                                            Layer1.at(Side::Back, PropertySimple::R),
                                            Layer2.at(Side::Back, PropertySimple::T))};
-                m_Iplus[EnergyFlow::Backward].push_back(iPlus);
+                result.Iplus[EnergyFlow::Backward].push_back(iPlus);
             }
         }
+
+        return result;
     }
 
-    void CEquivalentBSDFLayerSingleBand::CalculateLayerAbsorptances(size_t numberOfLayers)
+    void CEquivalentBSDFLayerSingleBand::CalculateLayerAbsorptances(size_t numberOfLayers,
+                                                                    IrradiationMatrices irradiation)
     {
         for(size_t i = 0; i < numberOfLayers; i++)
         {
@@ -282,8 +294,8 @@ namespace MultiLayerOptics
                 auto AbsFront{m_Layers[i].Abs(aSide)};
                 auto AbsBack{m_Layers[i].Abs(oppositeSide(aSide))};
                 auto aEnergyFlow{aSide == Side::Front ? EnergyFlow::Forward : EnergyFlow::Backward};
-                auto absorbedFront{AbsFront * m_Iminus.at(aEnergyFlow)[i]};
-                auto absorbedBack{AbsBack * m_Iplus.at(aEnergyFlow)[i]};
+                auto absorbedFront{AbsFront * irradiation.Iminus.at(aEnergyFlow)[i]};
+                auto absorbedBack{AbsBack * irradiation.Iplus.at(aEnergyFlow)[i]};
                 std::transform(absorbedFront.begin(),
                                absorbedFront.end(),
                                absorbedBack.begin(),
@@ -292,8 +304,9 @@ namespace MultiLayerOptics
                 m_A.at(aSide).push_back(absorbedFront);
 
                 // Photovoltaic calculation
-                auto jscFront{m_JSCPrime.at(aSide)[i] * m_Iminus.at(aEnergyFlow)[i]};
-                auto jscBack{m_JSCPrime.at(oppositeSide(aSide))[i] * m_Iplus.at(aEnergyFlow)[i]};
+                auto jscFront{m_JSCPrime.at(aSide)[i] * irradiation.Iminus.at(aEnergyFlow)[i]};
+                auto jscBack{m_JSCPrime.at(oppositeSide(aSide))[i]
+                             * irradiation.Iplus.at(aEnergyFlow)[i]};
                 std::transform(jscFront.begin(),
                                jscFront.end(),
                                jscBack.begin(),
@@ -311,12 +324,13 @@ namespace MultiLayerOptics
             // Absorptance calculations need to observe every layer in isolation. For that purpose
             // code bellow will create m_Forward and m_Backward layers
             const auto numberOfLayers{m_Layers.size()};
-            BuildForwardAndBackwardLayers(numberOfLayers);
+            auto absLayers{BuildForwardAndBackwardLayers(numberOfLayers)};
 
             const auto matrixSize{m_Lambda.size()};
-            CreateIplusAndIminusValues(numberOfLayers, matrixSize);
+            const auto irradiance{
+              CreateIplusAndIminusValues(numberOfLayers, matrixSize, absLayers)};
 
-            CalculateLayerAbsorptances(numberOfLayers);
+            CalculateLayerAbsorptances(numberOfLayers, irradiance);
             m_PropertiesCalculated = true;
         }
     }

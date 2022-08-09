@@ -178,7 +178,8 @@ namespace MultiLayerOptics
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties(
       const size_t t_NumOfLayers, std::vector<wavelenghtData> & wlData) const
     {
-#ifdef STL_MULTITHREADING
+//#ifdef STL_MULTITHREADING
+#ifdef foo
         std::for_each(
           std::execution::par_unseq, wlData.begin(), wlData.end(), [&](wavelenghtData & val) {
 #else

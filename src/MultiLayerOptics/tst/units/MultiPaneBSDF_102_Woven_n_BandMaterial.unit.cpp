@@ -275,7 +275,7 @@ protected:
     virtual void SetUp()
     {
         const auto solarRadiation{loadSolarRadiationFile()};
-        const auto commonWavelengths{solarRadiation.getXArray()};
+        const auto wl{loadSolarRadiationFile().getXArray()};
 
         auto thickness = 3.048e-3;   // [m]
         const auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
