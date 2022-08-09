@@ -22,6 +22,7 @@ namespace SingleLayerOptics
     class CBaseCell
     {
     public:
+        virtual ~CBaseCell() = default;
         CBaseCell();
         CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
                   const std::shared_ptr<ICellDescription> & t_CellDescription,

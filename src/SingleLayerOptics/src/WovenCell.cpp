@@ -13,27 +13,6 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    //  CWovenBase
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    CWovenBase::CWovenBase(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                           const std::shared_ptr<ICellDescription> & t_Cell) :
-        CBaseCell(t_MaterialProperties, t_Cell),
-        CUniformDiffuseCell(t_MaterialProperties, t_Cell)
-    {}
-
-    std::shared_ptr<CWovenCellDescription> CWovenBase::getCellAsWoven() const
-    {
-        if(std::dynamic_pointer_cast<CWovenCellDescription>(m_CellDescription) == nullptr)
-        {
-            assert("Incorrectly assigned cell description.");
-        }
-
-        std::shared_ptr<CWovenCellDescription> aCell =
-          std::dynamic_pointer_cast<CWovenCellDescription>(m_CellDescription);
-
-        return aCell;
-    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  CWovenCell
@@ -41,39 +20,28 @@ namespace SingleLayerOptics
     CWovenCell::CWovenCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
                            const std::shared_ptr<ICellDescription> & t_Cell) :
         CBaseCell(t_MaterialProperties, t_Cell),
-        CWovenBase(t_MaterialProperties, t_Cell)
+        CUniformDiffuseCell(t_MaterialProperties, t_Cell)
     {}
-
-    double CWovenCell::T_dir_dir(const Side t_Side, const CBeamDirection & t_Direction)
-    {
-        return m_CellDescription->T_dir_dir(t_Side, t_Direction);
-    }
 
     double CWovenCell::T_dir_dif(const Side t_Side, const CBeamDirection & t_Direction)
     {
-        const double T_material = CWovenBase::T_dir_dif(t_Side, t_Direction);
-        const auto openness{CWovenBase::T_dir_dir(t_Side, t_Direction)};
+        const double T_material = CUniformDiffuseCell::T_dir_dif(t_Side, t_Direction);
+        const auto openness{CUniformDiffuseCell::T_dir_dir(t_Side, t_Direction)};
         const double Tsct = Tscatter_single(t_Side, t_Direction);
         return T_material * (1 - openness) + Tsct;
     }
 
     double CWovenCell::R_dir_dif(const Side t_Side, const CBeamDirection & t_Direction)
     {
-        double R_material = CWovenBase::R_dir_dif(t_Side, t_Direction);
+        double R_material = CUniformDiffuseCell::R_dir_dif(t_Side, t_Direction);
         double Tsct = Tscatter_single(t_Side, t_Direction);
         return R_material - Tsct;
-    }
-
-    std::vector<double> CWovenCell::T_dir_dir_band(const Side t_Side,
-                                                   const CBeamDirection & t_Direction)
-    {
-        return CWovenBase::T_dir_dir_band(t_Side, t_Direction);
     }
 
     std::vector<double> CWovenCell::T_dir_dif_band(const Side t_Side,
                                                    const CBeamDirection & t_Direction)
     {
-        std::vector<double> T_material = CWovenBase::T_dir_dif_band(t_Side, t_Direction);
+        std::vector<double> T_material = CUniformDiffuseCell::T_dir_dif_band(t_Side, t_Direction);
         std::vector<double> Tsct = Tscatter_range(t_Side, t_Direction);
         assert(Tsct.size() == T_material.size());
         for(size_t i = 0; i < T_material.size(); ++i)
@@ -86,7 +54,7 @@ namespace SingleLayerOptics
     std::vector<double> CWovenCell::R_dir_dif_band(const Side t_Side,
                                                    const CBeamDirection & t_Direction)
     {
-        std::vector<double> R_material = CWovenBase::R_dir_dif_band(t_Side, t_Direction);
+        std::vector<double> R_material = CUniformDiffuseCell::R_dir_dif_band(t_Side, t_Direction);
         std::vector<double> Tsct = Tscatter_range(t_Side, t_Direction);
         assert(Tsct.size() == R_material.size());
         for(size_t i = 0; i < R_material.size(); ++i)
@@ -94,6 +62,19 @@ namespace SingleLayerOptics
             R_material[i] = R_material[i] - Tsct[i];
         }
         return R_material;
+    }
+
+    std::shared_ptr<CWovenCellDescription> CWovenCell::getCellAsWoven() const
+    {
+        if(std::dynamic_pointer_cast<CWovenCellDescription>(m_CellDescription) == nullptr)
+        {
+            assert("Incorrectly assigned cell description.");
+        }
+
+        std::shared_ptr<CWovenCellDescription> aCell =
+          std::dynamic_pointer_cast<CWovenCellDescription>(m_CellDescription);
+
+        return aCell;
     }
 
     double CWovenCell::Tscatter_single(const Side t_Side, const CBeamDirection & t_Direction)
@@ -125,8 +106,8 @@ namespace SingleLayerOptics
         {
             const double aAlt = degrees(t_Direction.Altitude());
             const double aAzm = degrees(t_Direction.Azimuth());
-            std::shared_ptr<CWovenCellDescription> aCell = getCellAsWoven();
-            const double gamma = aCell->gamma();
+            const auto & aCell = *getCellAsWoven();
+            const double gamma = aCell.gamma();
 
             if(gamma < 1)
             {

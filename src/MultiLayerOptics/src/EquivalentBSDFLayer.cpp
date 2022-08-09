@@ -239,16 +239,13 @@ namespace MultiLayerOptics
             const auto index = t_Layer.getBandIndex(curWL);
             assert(index > -1);
 
-            const SingleLayerOptics::BSDFIntegrator currentLayer =
-              aResults[static_cast<size_t>(index)];
-
             if(m_LayersWL.size() <= i)
             {
-                m_LayersWL.emplace_back(currentLayer, jscPrimeFront[i], jscPrimeBack[i]);
+                m_LayersWL.emplace_back(aResults[static_cast<size_t>(index)], jscPrimeFront[i], jscPrimeBack[i]);
             }
             else
             {
-                m_LayersWL[i].addLayer(currentLayer, jscPrimeFront[i], jscPrimeBack[i]);
+                m_LayersWL[i].addLayer(aResults[static_cast<size_t>(index)], jscPrimeFront[i], jscPrimeBack[i]);
             }
         }
     }
