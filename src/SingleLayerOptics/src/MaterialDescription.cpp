@@ -53,10 +53,9 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CMaterial> createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
-                     const std::shared_ptr<CMaterial> & t_FullRange,
-                     const double t_Fraction)
+                                              const std::shared_ptr<CMaterial> & t_FullRange,
+                                              const double t_Fraction)
     {
-
         double Tf_nir = modifyProperty(t_PartialRange->getProperty(Property::T, Side::Front),
                                        t_FullRange->getProperty(Property::T, Side::Front),
                                        t_Fraction);
@@ -79,7 +78,6 @@ namespace SingleLayerOptics
                      const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
                      const double t_Fraction)
     {
-
         auto Tf_nir = modifyProperties(t_PartialRange->getBSDFMatrix(Property::T, Side::Front),
                                        t_FullRange->getBSDFMatrix(Property::T, Side::Front),
                                        t_Fraction);
@@ -285,6 +283,18 @@ namespace SingleLayerOptics
         return aResult;
     }
 
+    double CMaterialSingleBand::getBandProperty(FenestrationCommon::Property t_Property,
+                                                FenestrationCommon::Side t_Side,
+                                                size_t wavelengthIndex,
+                                                const CBeamDirection & t_IncomingDirection,
+                                                const CBeamDirection & t_OutgoingDirection) const
+    {
+        std::ignore = wavelengthIndex;
+        std::ignore = t_IncomingDirection;
+        std::ignore = t_OutgoingDirection;
+        return getProperty(t_Property, t_Side);
+    }
+
     std::vector<double> CMaterialSingleBand::calculateBandWavelengths()
     {
         return {m_MinLambda, m_MaxLambda};
@@ -348,16 +358,27 @@ namespace SingleLayerOptics
 
         for(const auto wl : m_Wavelengths)
         {
-            aResults.emplace_back(getMaterialFromWavelegth(wl)->getProperty(
+            aResults.emplace_back(getMaterialFromWavelength(wl)->getProperty(
               t_Property, t_Side, t_Incoming, t_Outgoing));
         }
 
         return aResults;
     }
 
+    double IMaterialDualBand::getBandProperty(FenestrationCommon::Property t_Property,
+                                              FenestrationCommon::Side t_Side,
+                                              size_t wavelengthIndex,
+                                              const CBeamDirection & t_IncomingDirection,
+                                              const CBeamDirection & t_OutgoingDirection) const
+    {
+        return getBandProperties(
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
+    }
+
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
     {
-        return {0.3, 0.38, 0.78 + ConstantsData::VisibleRangeOffset, 2.5};
+        m_Wavelengths = {0.3, 0.38, 0.78 + ConstantsData::VisibleRangeOffset, 2.5};
+        return m_Wavelengths;
     }
 
     CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -376,7 +397,8 @@ namespace SingleLayerOptics
                                            const std::shared_ptr<CMaterial> & t_FullRange,
                                            const double t_Fraction)
     {
-        m_MaterialScaledRange = SingleLayerOptics::createNIRRange(t_PartialRange, t_FullRange, t_Fraction);
+        m_MaterialScaledRange =
+          SingleLayerOptics::createNIRRange(t_PartialRange, t_FullRange, t_Fraction);
     }
 
     void IMaterialDualBand::createRangesFromRatio(double t_Ratio)
@@ -407,7 +429,7 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<CMaterial>
-      IMaterialDualBand::getMaterialFromWavelegth(const double wavelength) const
+      IMaterialDualBand::getMaterialFromWavelength(const double wavelength) const
     {
         std::shared_ptr<CMaterial> result;
 
@@ -465,6 +487,16 @@ namespace SingleLayerOptics
         assert(m_AngularSample);
         return m_AngularSample->getWavelengthsProperty(
           m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
+    }
+
+    double CMaterialSample::getBandProperty(FenestrationCommon::Property t_Property,
+                                            FenestrationCommon::Side t_Side,
+                                            size_t wavelengthIndex,
+                                            const CBeamDirection & t_IncomingDirection,
+                                            const CBeamDirection & t_OutgoingDirection) const
+    {
+        return getBandProperties(
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
     }
 
 
@@ -562,6 +594,16 @@ namespace SingleLayerOptics
         return aValues;
     }
 
+    double CMaterialMeasured::getBandProperty(FenestrationCommon::Property t_Property,
+                                              FenestrationCommon::Side t_Side,
+                                              size_t wavelengthIndex,
+                                              const CBeamDirection & t_IncomingDirection,
+                                              const CBeamDirection & t_OutgoingDirection) const
+    {
+        return getBandProperties(
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
+    }
+
     std::vector<double> CMaterialMeasured::calculateBandWavelengths()
     {
         CSingleAngularMeasurement aAngular = *m_AngularMeasurements->getMeasurements(0.0);
@@ -649,6 +691,17 @@ namespace SingleLayerOptics
         double value = getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
         std::vector<double> bandProperties(m_Wavelengths.size(), value);
         return bandProperties;
+    }
+
+    double
+      CMaterialSingleBandBSDF::getBandProperty(FenestrationCommon::Property t_Property,
+                                               FenestrationCommon::Side t_Side,
+                                               size_t wavelengthIndex,
+                                               const CBeamDirection & t_IncomingDirection,
+                                               const CBeamDirection & t_OutgoingDirection) const
+    {
+        std::ignore = wavelengthIndex;
+        return getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
     }
 
     std::vector<std::vector<double>> const &

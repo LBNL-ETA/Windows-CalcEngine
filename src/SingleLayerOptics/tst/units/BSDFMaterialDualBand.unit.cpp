@@ -154,3 +154,18 @@ TEST_F(TestBSDFMaterialDualBand, TestProperties)
         EXPECT_NEAR(expectedBandProperties[i], bandProperties[i], 1e-6);
     }
 }
+
+TEST_F(TestBSDFMaterialDualBand, TestPropertyAtWavelength)
+{
+    double theta = 0;
+    double phi = 0;
+    CBeamDirection incomingDirection(theta, phi);
+    CBeamDirection outgoingDirection(theta, phi);
+    size_t wavelengthIndex{1u};
+
+    const auto correct{0.0416186};
+    const auto result = m_Material->getBandProperty(
+      Property::T, Side::Front, wavelengthIndex, incomingDirection, outgoingDirection);
+
+    EXPECT_NEAR(correct, result, 1e-6);
+}

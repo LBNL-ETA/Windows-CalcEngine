@@ -58,8 +58,8 @@ protected:
         m_Tb = m_Tf;
         m_Rf = loadRf();
         m_Rb = m_Rf;
-        m_Material = std::make_shared<CMaterialSingleBandBSDF>(
-          m_Tf, m_Tb, m_Rf, m_Rb, m_Hemisphere);
+        m_Material =
+          std::make_shared<CMaterialSingleBandBSDF>(m_Tf, m_Tb, m_Rf, m_Rb, m_Hemisphere);
     }
 };
 
@@ -113,8 +113,24 @@ TEST_F(TestBSDFMaterialSingleBand, TestProperties)
     double propValue =
       m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection);
     std::vector<double> expectedBandProperties{propValue, propValue};
-    auto test{m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection)};
+    auto test{m_Material->getBandProperties(
+      Property::T, Side::Front, incomingDirection, outgoingDirection)};
     EXPECT_EQ(
       m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection),
       expectedBandProperties);
+}
+
+TEST_F(TestBSDFMaterialSingleBand, TestPropertyAtWavelength)
+{
+    double theta = 0;
+    double phi = 0;
+    CBeamDirection incomingDirection(theta, phi);
+    CBeamDirection outgoingDirection(theta, phi);
+    size_t wavelengthIndex{1u};
+
+    const auto correct{0.081878};
+    const auto result = m_Material->getBandProperty(
+      Property::T, Side::Front, wavelengthIndex, incomingDirection, outgoingDirection);
+
+    EXPECT_NEAR(correct, result, 1e-6);
 }
