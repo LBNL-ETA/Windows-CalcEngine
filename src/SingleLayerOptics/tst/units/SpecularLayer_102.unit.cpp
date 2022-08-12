@@ -269,3 +269,18 @@ TEST_F(TestSpecularLayer_102, TestSpecular1)
         EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-6);
     }
 }
+
+TEST_F(TestSpecularLayer_102, WavelengthByWavelengthResults)
+{
+    std::shared_ptr<CBSDFLayer> aLayer = getLayer();
+
+    auto aResults = aLayer->getWavelengthResults();
+
+    constexpr size_t wlIndex{5u};
+    auto result = aLayer->getResultsAtWavelength(wlIndex);
+
+    const auto test1 = aResults[wlIndex].DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+    const auto test2 = result.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+
+    EXPECT_NEAR(test1, test2, 1e-6);
+}

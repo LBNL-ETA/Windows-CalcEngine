@@ -40,6 +40,13 @@ namespace SingleLayerOptics
         return m_Material->getBandProperties(Property::T, t_Side, t_Direction);
     }
 
+    double CSpecularCell::T_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
+                                                  const CBeamDirection & t_Direction,
+                                                  size_t wavelengthIndex)
+    {
+        return m_Material->getBandProperty(Property::T, t_Side, wavelengthIndex, t_Direction);
+    }
+
     // Reflectance of specular material over entire material range
     std::vector<double> CSpecularCell::R_dir_dir_band(const Side t_Side,
                                                       const CBeamDirection & t_Direction)
@@ -58,6 +65,13 @@ namespace SingleLayerOptics
           std::dynamic_pointer_cast<CSpecularCellDescription>(m_CellDescription);
 
         return aCell;
+    }
+
+    double CSpecularCell::R_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
+                                                  const CBeamDirection & t_Direction,
+                                                  size_t wavelengthIndex)
+    {
+        return m_Material->getBandProperty(Property::R, t_Side, wavelengthIndex, t_Direction);
     }
 
 }   // namespace SingleLayerOptics

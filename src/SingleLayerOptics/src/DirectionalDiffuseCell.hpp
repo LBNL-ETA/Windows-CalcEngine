@@ -39,9 +39,19 @@ namespace SingleLayerOptics
                                                    const CBeamDirection & t_IncomingDirection,
                                                    const CBeamDirection & t_OutgoingDirection);
 
+        virtual double T_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_IncomingDirection,
+                                               const CBeamDirection & t_OutgoingDirection,
+                                               size_t wavelengthIndex);
+
         virtual std::vector<double> R_dir_dif_band(const FenestrationCommon::Side t_Side,
                                                    const CBeamDirection & t_IncomingDirection,
                                                    const CBeamDirection & t_OutgoingDirection);
+
+        virtual double R_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_IncomingDirection,
+                                               const CBeamDirection & t_OutgoingDirection,
+                                               size_t wavelengthIndex);
     };
 
 }   // namespace SingleLayerOptics

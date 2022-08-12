@@ -24,6 +24,11 @@ namespace SingleLayerOptics
         void calcDiffuseDistribution_wv(const FenestrationCommon::Side aSide,
                                         const CBeamDirection & incomingDirection,
                                         const size_t incomingDirectionIndex) override;
+        void calcDiffuseDistribution_byWavelength(FenestrationCommon::Side aSide,
+                                                  const CBeamDirection & incomingDirection,
+                                                  size_t incomingDirectionIndex,
+                                                  size_t wavelengthIndex,
+                                                  BSDFIntegrator & results) override;
 
         virtual double diffuseDistributionScalar(size_t outgoingDirection) = 0;
     };

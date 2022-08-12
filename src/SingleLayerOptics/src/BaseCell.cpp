@@ -15,7 +15,9 @@ namespace SingleLayerOptics
     CBaseCell::CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
                          const std::shared_ptr<ICellDescription> & t_CellDescription,
                          const double rotation) :
-        m_Material(t_Material), m_CellDescription(t_CellDescription), m_CellRotation(rotation)
+        m_Material(t_Material),
+        m_CellDescription(t_CellDescription),
+        m_CellRotation(rotation)
     {}
 
     void CBaseCell::setSourceData(CSeries & t_SourceData)
@@ -56,6 +58,13 @@ namespace SingleLayerOptics
         return aResults;
     }
 
+    double CBaseCell::T_dir_dir_at_wavelength(const FenestrationCommon::Side t_Side,
+                                              const CBeamDirection & t_Direction,
+                                              size_t wavelengthIndex)
+    {
+        return T_dir_dir(t_Side, t_Direction);
+    }
+
     std::vector<double> CBaseCell::R_dir_dir_band(const Side t_Side,
                                                   const CBeamDirection & t_Direction)
     {
@@ -69,6 +78,13 @@ namespace SingleLayerOptics
         }
 
         return aResults;
+    }
+
+    double CBaseCell::R_dir_dir_at_wavelength(const FenestrationCommon::Side t_Side,
+                                              const CBeamDirection & t_Direction,
+                                              size_t wavelengthIndex)
+    {
+        return R_dir_dir(t_Side, t_Direction);
     }
 
     std::vector<double> CBaseCell::getBandWavelengths() const

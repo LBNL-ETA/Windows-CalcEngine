@@ -55,6 +55,50 @@ namespace SingleLayerOptics
         return m_WVResults;
     }
 
+    BSDFIntegrator CBSDFLayer::getResultsAtWavelength(size_t wavelengthIndex)
+    {
+        BSDFIntegrator results{m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)};
+        calculate_dir_dir_wl(wavelengthIndex, results);
+        return results;
+    }
+
+    void CBSDFLayer::calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results)
+    {
+        for(Side aSide : EnumSide())
+        {
+            const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
+            size_t size = aDirections.size();
+            for(size_t i = 0; i < size; ++i)
+            {
+                const CBeamDirection aDirection = aDirections[i].centerPoint();
+                const auto aTau =
+                  m_Cell->T_dir_dir_at_wavelength(aSide, aDirection, wavelengthIndex);
+                const auto aRho =
+                  m_Cell->R_dir_dir_at_wavelength(aSide, aDirection, wavelengthIndex);
+                double Lambda = aDirections[i].lambda();
+
+                auto & tau = results.getMatrix(aSide, PropertySimple::T);
+                auto & rho = results.getMatrix(aSide, PropertySimple::R);
+                tau(i, i) += aTau / Lambda;
+                rho(i, i) += aRho / Lambda;
+            }
+        }
+    }
+
+    void CBSDFLayer::calculate_dir_dif_wv(size_t wavelengthIndex, BSDFIntegrator & results)
+    {
+        for(Side aSide : EnumSide())
+        {
+            const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
+
+            for(size_t directionIndex = 0; directionIndex < aDirections.size(); ++directionIndex)
+            {
+                const CBeamDirection aDirection = aDirections[directionIndex].centerPoint();
+                calcDiffuseDistribution_byWavelength(aSide, aDirection, directionIndex, wavelengthIndex, results);
+            }
+        }
+    }
+
     int CBSDFLayer::getBandIndex(const double t_Wavelength)
     {
         return m_Cell->getBandIndex(t_Wavelength);

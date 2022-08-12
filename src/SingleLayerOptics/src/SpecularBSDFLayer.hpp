@@ -1,5 +1,4 @@
-#ifndef SPECULARBSDFLAYER_H
-#define SPECULARBSDFLAYER_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -22,11 +21,17 @@ namespace SingleLayerOptics
         void calcDiffuseDistribution(FenestrationCommon::Side aSide,
                                      const CBeamDirection & t_Direction,
                                      size_t t_DirectionIndex) override;
+
         void calcDiffuseDistribution_wv(FenestrationCommon::Side aSide,
                                         const CBeamDirection & t_Direction,
                                         size_t t_DirectionIndex) override;
+
+        void calcDiffuseDistribution_byWavelength(const FenestrationCommon::Side aSide,
+                                                  const CBeamDirection & t_Direction,
+                                                  const size_t t_DirectionIndex,
+                                                  size_t wavelengthIndex,
+                                                  BSDFIntegrator & results) override;
     };
 
 }   // namespace SingleLayerOptics
 
-#endif

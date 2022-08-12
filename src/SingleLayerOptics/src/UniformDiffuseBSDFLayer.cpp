@@ -77,4 +77,30 @@ namespace SingleLayerOptics
         }
     }
 
+    void CUniformDiffuseBSDFLayer::calcDiffuseDistribution_byWavelength(
+      const FenestrationCommon::Side aSide,
+      const CBeamDirection & t_Direction,
+      const size_t t_DirectionIndex,
+      size_t wavelengthIndex,
+      BSDFIntegrator & results)
+    {
+        std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
+
+        const auto aTau = aCell->T_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
+        const auto Ref = aCell->R_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
+
+        const BSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
+        size_t size = aDirections.size();
+
+        for(size_t i = 0; i < size; ++i)
+        {
+            using ConstantsData::WCE_PI;
+
+            auto & tau = results.getMatrix(aSide, PropertySimple::T);
+            auto & rho = results.getMatrix(aSide, PropertySimple::R);
+            tau(i, t_DirectionIndex) += aTau / WCE_PI;
+            rho(i, t_DirectionIndex) += Ref / WCE_PI;
+        }
+    }
+
 }   // namespace SingleLayerOptics

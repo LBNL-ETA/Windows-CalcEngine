@@ -39,9 +39,17 @@ namespace SingleLayerOptics
         std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
                                            const CBeamDirection & t_Direction) override;
 
+        double T_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
+                                       const CBeamDirection & t_Direction,
+                                       size_t wavelengthIndex) override;
+
         // Reflectance of specular material over entire wavelength spectrum
         std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
                                            const CBeamDirection & t_Direction) override;
+
+        double R_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
+                                       const CBeamDirection & t_Direction,
+                                       size_t wavelengthIndex) override;
 
     protected:
         [[nodiscard]] std::shared_ptr<CSpecularCellDescription> getCellAsSpecular() const;

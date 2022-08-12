@@ -42,6 +42,7 @@ namespace SingleLayerOptics
 
         // BSDF results for each wavelenght given in specular cell
         std::vector<BSDFIntegrator> getWavelengthResults();
+        BSDFIntegrator getResultsAtWavelength(size_t wavelengthIndex);
 
         int getBandIndex(double t_Wavelength);
 
@@ -69,6 +70,12 @@ namespace SingleLayerOptics
                                                 const CBeamDirection & t_Direction,
                                                 const size_t t_DirectionIndex) = 0;
 
+        virtual void calcDiffuseDistribution_byWavelength(const FenestrationCommon::Side aSide,
+                                                          const CBeamDirection & t_Direction,
+                                                          const size_t t_DirectionIndex,
+                                                          size_t wavelengthIndex,
+                                                          BSDFIntegrator & results) = 0;
+
         // BSDF layer is not calculated by default because it is time consuming process and in some
         // cases this call is not necessary. However, refactoring is needed since there is no reason
         // to create CBSDFLayer if it will not be calculated
@@ -94,6 +101,9 @@ namespace SingleLayerOptics
         void calc_dir_dif_wv();
         // State to hold information of wavelength results are already calculated
         bool m_CalculatedWV;
+
+        void calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results);
+        void calculate_dir_dif_wv(size_t wavelengthIndex, BSDFIntegrator & results);
     };
 
 }   // namespace SingleLayerOptics

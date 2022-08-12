@@ -36,4 +36,13 @@ namespace SingleLayerOptics
         // No diffuse calculations are necessary for specular layer.
     }
 
+    void CSpecularBSDFLayer::calcDiffuseDistribution_byWavelength(const FenestrationCommon::Side,
+                                                                  const CBeamDirection &,
+                                                                  const size_t,
+                                                                  size_t,
+                                                                  BSDFIntegrator &)
+    {
+        // No diffusion in specular layers
+    }
+
 }   // namespace SingleLayerOptics
