@@ -38,8 +38,6 @@ namespace SingleLayerOptics
         std::shared_ptr<CWovenCellDescription> getCellAsWoven() const;
 
         double Tscatter_single(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
-        std::vector<double> Tscatter_range(FenestrationCommon::Side t_Side,
-                                           const CBeamDirection & t_Direction);
         double Tscatter_at_wavelength(FenestrationCommon::Side t_Side,
                                       const CBeamDirection & t_Direction,
                                       size_t wavelengthIndex);
