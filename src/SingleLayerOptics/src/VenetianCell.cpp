@@ -646,19 +646,11 @@ namespace SingleLayerOptics
     {
         size_t size = m_EnergiesBand.size();
         std::vector<double> aProperties;
+        aProperties.reserve(size);
         for(size_t i = 0; i < size; ++i)
         {
-            CVenetianCellEnergy aCell = *m_EnergiesBand[i].getCell(t_Side);
-            if(m_CellRotation != 0)
-            {
-                aProperties.push_back(aCell.T_dir_dir(t_Direction.rotate(m_CellRotation)));
-            }
-            else
-            {
-                aProperties.push_back(aCell.T_dir_dir(t_Direction));
-            }
+            aProperties.push_back(T_dir_dir_at_wavelength(t_Side, t_Direction, i));
         }
-
         return aProperties;
     }
 
@@ -690,17 +682,10 @@ namespace SingleLayerOptics
     {
         size_t size = m_EnergiesBand.size();
         std::vector<double> aProperties;
+        aProperties.reserve(size);
         for(size_t i = 0; i < size; ++i)
         {
-            CVenetianCellEnergy aCell = *m_EnergiesBand[i].getCell(t_Side);
-            if(m_CellRotation != 0)
-            {
-                aProperties.push_back(aCell.T_dir_dif(t_Direction.rotate(m_CellRotation)));
-            }
-            else
-            {
-                aProperties.push_back(aCell.T_dir_dif(t_Direction));
-            }
+            aProperties.push_back(T_dir_dif_at_wavelength(t_Side, t_Direction, i));
         }
         return aProperties;
     }
@@ -733,17 +718,10 @@ namespace SingleLayerOptics
     {
         size_t size = m_EnergiesBand.size();
         std::vector<double> aProperties;
+        aProperties.reserve(size);
         for(size_t i = 0; i < size; ++i)
         {
-            std::shared_ptr<CVenetianCellEnergy> aCell = m_EnergiesBand[i].getCell(t_Side);
-            if(m_CellRotation != 0)
-            {
-                aProperties.push_back(aCell->R_dir_dif(t_Direction.rotate(m_CellRotation)));
-            }
-            else
-            {
-                aProperties.push_back(aCell->R_dir_dif(t_Direction));
-            }
+            aProperties.push_back(R_dir_dif_at_wavelength(t_Side, t_Direction, i));
         }
         return aProperties;
     }
@@ -780,18 +758,11 @@ namespace SingleLayerOptics
     {
         size_t size = m_EnergiesBand.size();
         std::vector<double> aProperties;
+        aProperties.reserve(size);
         for(size_t i = 0; i < size; ++i)
         {
-            std::shared_ptr<CVenetianCellEnergy> aCell = m_EnergiesBand[i].getCell(t_Side);
-            if(m_CellRotation != 0)
-            {
-                aProperties.push_back(aCell->T_dir_dir(t_IncomingDirection.rotate(m_CellRotation),
-                                                       t_OutgoingDirection.rotate(m_CellRotation)));
-            }
-            else
-            {
-                aProperties.push_back(aCell->T_dir_dir(t_IncomingDirection, t_OutgoingDirection));
-            }
+            aProperties.push_back(
+              T_dir_dif_by_wavelength(t_Side, t_IncomingDirection, t_OutgoingDirection, i));
         }
         return aProperties;
     }
@@ -831,18 +802,11 @@ namespace SingleLayerOptics
     {
         size_t size = m_EnergiesBand.size();
         std::vector<double> aProperties;
+        aProperties.reserve(size);
         for(size_t i = 0; i < size; ++i)
         {
-            std::shared_ptr<CVenetianCellEnergy> aCell = m_EnergiesBand[i].getCell(t_Side);
-            if(m_CellRotation != 0)
-            {
-                aProperties.push_back(aCell->R_dir_dir(t_IncomingDirection.rotate(m_CellRotation),
-                                                       t_OutgoingDirection.rotate(m_CellRotation)));
-            }
-            else
-            {
-                aProperties.push_back(aCell->R_dir_dir(t_IncomingDirection, t_OutgoingDirection));
-            }
+            aProperties.push_back(
+              R_dir_dif_by_wavelength(t_Side, t_IncomingDirection, t_OutgoingDirection, i));
         }
         return aProperties;
     }
