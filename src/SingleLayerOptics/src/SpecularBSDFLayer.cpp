@@ -31,7 +31,8 @@ namespace SingleLayerOptics
 
     void CSpecularBSDFLayer::calcDiffuseDistribution_wv(const Side,
                                                         const CBeamDirection &,
-                                                        const size_t)
+                                                        const size_t,
+                                                        std::vector<BSDFIntegrator> &)
     {
         // No diffuse calculations are necessary for specular layer.
     }

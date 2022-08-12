@@ -52,7 +52,8 @@ namespace SingleLayerOptics
 
     void CUniformDiffuseBSDFLayer::calcDiffuseDistribution_wv(const Side aSide,
                                                               const CBeamDirection & t_Direction,
-                                                              const size_t t_DirectionIndex)
+                                                              const size_t t_DirectionIndex,
+                                                              std::vector<BSDFIntegrator> & results)
     {
         std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
 
@@ -69,8 +70,8 @@ namespace SingleLayerOptics
             {
                 using ConstantsData::WCE_PI;
 
-                auto & tau = m_WVResults[j].getMatrix(aSide, PropertySimple::T);
-                auto & rho = m_WVResults[j].getMatrix(aSide, PropertySimple::R);
+                auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
+                auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
                 tau(i, t_DirectionIndex) += aTau[j] / WCE_PI;
                 rho(i, t_DirectionIndex) += Ref[j] / WCE_PI;
             }

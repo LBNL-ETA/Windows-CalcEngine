@@ -68,7 +68,8 @@ namespace SingleLayerOptics
 
         virtual void calcDiffuseDistribution_wv(const FenestrationCommon::Side aSide,
                                                 const CBeamDirection & t_Direction,
-                                                const size_t t_DirectionIndex) = 0;
+                                                const size_t t_DirectionIndex,
+                                                std::vector<BSDFIntegrator> & results) = 0;
 
         virtual void calcDiffuseDistribution_byWavelength(const FenestrationCommon::Side aSide,
                                                           const CBeamDirection & t_Direction,
@@ -80,27 +81,22 @@ namespace SingleLayerOptics
         // cases this call is not necessary. However, refactoring is needed since there is no reason
         // to create CBSDFLayer if it will not be calculated
         void calculate();
-        void calculate_wv();
+        std::vector<BSDFIntegrator> calculate_wv();
 
         const BSDFHemisphere m_BSDFHemisphere;
         std::shared_ptr<CBaseCell> m_Cell;
         BSDFIntegrator m_Results;
-        // Results over each wavelength
-        std::vector<BSDFIntegrator> m_WVResults;
 
     private:
         void calc_dir_dir();
         void calc_dir_dif();
-        void fillWLResultsFromMaterialCell();
         // Keeps state of the object. Calculations are not done by default (in constructor)
         // because they are time-consuming.
         bool m_Calculated;
 
         // Calculation of results over each wavelength
-        void calc_dir_dir_wv();
-        void calc_dir_dif_wv();
-        // State to hold information of wavelength results are already calculated
-        bool m_CalculatedWV;
+        void calc_dir_dir_wv(std::vector<BSDFIntegrator> & results);
+        void calc_dir_dif_wv(std::vector<BSDFIntegrator> & results);
 
         void calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results);
         void calculate_dir_dif_wv(size_t wavelengthIndex, BSDFIntegrator & results);

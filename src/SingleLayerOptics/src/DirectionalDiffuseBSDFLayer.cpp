@@ -58,7 +58,8 @@ namespace SingleLayerOptics
 
     void CDirectionalBSDFLayer::calcDiffuseDistribution_wv(const Side aSide,
                                                            const CBeamDirection & incomingDirection,
-                                                           const size_t incomingDirectionIndex)
+                                                           const size_t incomingDirectionIndex,
+                                                           std::vector<BSDFIntegrator> & results)
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
@@ -77,8 +78,8 @@ namespace SingleLayerOptics
             const size_t numWV = aTau.size();
             for(size_t j = 0; j < numWV; ++j)
             {
-                auto & tau = m_WVResults[j].getMatrix(aSide, PropertySimple::T);
-                auto & rho = m_WVResults[j].getMatrix(aSide, PropertySimple::R);
+                auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
+                auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
                 tau(outgoingDirectionIndex, incomingDirectionIndex) +=
                   aTau[j] * diffuseDistributionScalar(outgoingDirectionIndex);
                 rho(outgoingDirectionIndex, incomingDirectionIndex) +=

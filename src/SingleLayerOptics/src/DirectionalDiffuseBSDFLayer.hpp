@@ -23,7 +23,8 @@ namespace SingleLayerOptics
                                      const size_t incomingDirectionIndex) override;
         void calcDiffuseDistribution_wv(const FenestrationCommon::Side aSide,
                                         const CBeamDirection & incomingDirection,
-                                        const size_t incomingDirectionIndex) override;
+                                        const size_t incomingDirectionIndex,
+                                        std::vector<BSDFIntegrator> & results) override;
         void calcDiffuseDistribution_byWavelength(FenestrationCommon::Side aSide,
                                                   const CBeamDirection & incomingDirection,
                                                   size_t incomingDirectionIndex,

@@ -16,8 +16,7 @@ namespace SingleLayerOptics
         m_BSDFHemisphere(t_Hemisphere),
         m_Cell(t_Cell),
         m_Results(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)),
-        m_Calculated(false),
-        m_CalculatedWV(false)
+        m_Calculated(false)
     {
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
@@ -27,7 +26,6 @@ namespace SingleLayerOptics
     {
         m_Cell->setSourceData(t_SourceData);
         m_Calculated = false;
-        m_CalculatedWV = false;
     }
 
     const BSDFDirections & CBSDFLayer::getDirections(const BSDFDirection t_Side) const
@@ -47,12 +45,7 @@ namespace SingleLayerOptics
 
     std::vector<BSDFIntegrator> CBSDFLayer::getWavelengthResults()
     {
-        if(!m_CalculatedWV)
-        {
-            calculate_wv();
-            m_CalculatedWV = true;
-        }
-        return m_WVResults;
+        return calculate_wv();
     }
 
     BSDFIntegrator CBSDFLayer::getResultsAtWavelength(size_t wavelengthIndex)
@@ -113,7 +106,6 @@ namespace SingleLayerOptics
     void CBSDFLayer::setBandWavelengths(const std::vector<double> & wavelengths)
     {
         m_Cell->setBandWavelengths(wavelengths);
-        m_CalculatedWV = false;
     }
 
     void CBSDFLayer::calc_dir_dir()
@@ -139,7 +131,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void CBSDFLayer::calc_dir_dir_wv()
+    void CBSDFLayer::calc_dir_dir_wv(std::vector<BSDFIntegrator> & results)
     {
         for(Side aSide : EnumSide())
         {
@@ -154,8 +146,8 @@ namespace SingleLayerOptics
                 size_t numWV = aTau.size();
                 for(size_t j = 0; j < numWV; ++j)
                 {
-                    auto & tau = m_WVResults[j].getMatrix(aSide, PropertySimple::T);
-                    auto & rho = m_WVResults[j].getMatrix(aSide, PropertySimple::R);
+                    auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
+                    auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
                     tau(i, i) += aTau[j] / Lambda;
                     rho(i, i) += aRho[j] / Lambda;
                 }
@@ -178,7 +170,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void CBSDFLayer::calc_dir_dif_wv()
+    void CBSDFLayer::calc_dir_dif_wv(std::vector<BSDFIntegrator> & results)
     {
         for(Side aSide : EnumSide())
         {
@@ -188,33 +180,25 @@ namespace SingleLayerOptics
             for(size_t i = 0; i < size; ++i)
             {
                 const CBeamDirection aDirection = aDirections[i].centerPoint();
-                calcDiffuseDistribution_wv(aSide, aDirection, i);
+                calcDiffuseDistribution_wv(aSide, aDirection, i, results);
             }
-        }
-    }
-
-    void CBSDFLayer::fillWLResultsFromMaterialCell()
-    {
-        m_WVResults.clear();
-        size_t size = m_Cell->getBandSize();
-        for(size_t i = 0; i < size; ++i)
-        {
-            m_WVResults.emplace_back(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
         }
     }
 
     void CBSDFLayer::calculate()
     {
-        fillWLResultsFromMaterialCell();
         calc_dir_dir();
         calc_dir_dif();
     }
 
-    void CBSDFLayer::calculate_wv()
+    std::vector<BSDFIntegrator> CBSDFLayer::calculate_wv()
     {
-        fillWLResultsFromMaterialCell();
-        calc_dir_dir_wv();
-        calc_dir_dif_wv();
+        std::vector<BSDFIntegrator> results(m_Cell->getBandSize(), m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
+
+        calc_dir_dir_wv(results);
+        calc_dir_dif_wv(results);
+
+        return results;
     }
 
     std::shared_ptr<CBaseCell> CBSDFLayer::getCell() const
