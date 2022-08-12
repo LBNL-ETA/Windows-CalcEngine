@@ -88,3 +88,17 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
         EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
     }
 }
+
+TEST_F(TestPerfectDiffuseShade1, AtWavelength)
+{
+
+    std::shared_ptr<CBSDFLayer> aShade = GetShade();
+
+    constexpr size_t wavelengthIndex{0u};
+    auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
+
+    const auto correct{0.55};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::R)};
+
+    EXPECT_NEAR(correct, result, 1e-6);
+}
