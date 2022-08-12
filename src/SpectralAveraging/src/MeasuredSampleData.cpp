@@ -2,6 +2,8 @@
 #include <cassert>
 #include <utility>
 
+#include <mutex>
+
 #include "MeasuredSampleData.hpp"
 #include "WCECommon.hpp"
 
@@ -125,6 +127,7 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::calculateProperties()
     {
+
         if(!m_absCalculated)
         {
             m_Property.at(std::make_pair(Property::Abs, Side::Front)).clear();

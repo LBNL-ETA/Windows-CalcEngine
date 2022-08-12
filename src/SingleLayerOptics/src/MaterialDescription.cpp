@@ -2,10 +2,17 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <mutex>
+
 #include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
 #include "WCESpectralAveraging.hpp"
 #include "OpticalSurface.hpp"
+
+std::mutex materialWL;
+std::mutex materialSampleWL;
+std::mutex dualBandMaterialMutexRatio;
+std::mutex dualBandMaterialMutexRadiation;
 
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
@@ -177,9 +184,11 @@ namespace SingleLayerOptics
 
     std::vector<double> CMaterial::getBandWavelengths()
     {
+        std::lock_guard<std::mutex> lock(materialWL);
         if(!m_WavelengthsCalculated)
         {
             m_Wavelengths = calculateBandWavelengths();
+            m_WavelengthsCalculated = true;
         }
         return m_Wavelengths;
     }
@@ -405,6 +414,7 @@ namespace SingleLayerOptics
     {
         createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, t_Ratio);
 
+        std::lock_guard<std::mutex> lock(dualBandMaterialMutexRatio);
         if(!m_WavelengthsCalculated)
         {
             m_Wavelengths = calculateBandWavelengths();
@@ -416,6 +426,7 @@ namespace SingleLayerOptics
     {
         createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, ConstantsData::NIRRatio);
 
+        std::lock_guard<std::mutex> lock(dualBandMaterialMutexRadiation);
         if(!m_WavelengthsCalculated)
         {
             m_Wavelengths = calculateBandWavelengths();
@@ -507,6 +518,8 @@ namespace SingleLayerOptics
 
     void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
     {
+        std::lock_guard<std::mutex> lock(materialSampleWL);
+
         CMaterial::setBandWavelengths(wavelengths);
         m_AngularSample->setBandWavelengths(m_Wavelengths);
         m_WavelengthsCalculated = true;

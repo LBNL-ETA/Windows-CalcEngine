@@ -54,6 +54,7 @@ namespace MultiLayerOptics
     class CEquivalentBSDFLayerSingleBand
     {
     public:
+        CEquivalentBSDFLayerSingleBand() = default;
         explicit CEquivalentBSDFLayerSingleBand(
           const SingleLayerOptics::BSDFIntegrator & t_Layer,
           const std::vector<double> & jscPrimeFront = std::vector<double>(),

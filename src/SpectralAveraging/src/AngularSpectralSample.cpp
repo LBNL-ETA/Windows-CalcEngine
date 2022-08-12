@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <mutex>
 
 #include "AngularSpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
@@ -9,6 +10,7 @@
 #include "AngularProperties.hpp"
 #include "WCECommon.hpp"
 
+std::mutex findAngularSample;
 
 using namespace FenestrationCommon;
 
@@ -169,6 +171,7 @@ namespace SpectralAveraging
                                                                        Side const t_Side,
                                                                        double const t_Angle)
     {
+
         auto aSample = findSpectralSample(t_Angle);
 
         auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
@@ -212,6 +215,8 @@ namespace SpectralAveraging
     std::shared_ptr<CSpectralSample>
       CAngularSpectralSample::findSpectralSample(double const t_Angle)
     {
+        std::lock_guard<std::mutex> lock(findAngularSample);
+
         std::shared_ptr<CSpectralSample> aSample = nullptr;
 
         const auto it = find_if(m_SpectralProperties.begin(),

@@ -134,31 +134,50 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
-        for(size_t i = 0u; i < m_CombinedLayerWavelengths.size(); ++i)
+        std::vector<size_t> wavelengthIndexes;
+        for(size_t i = 0; i < m_CombinedLayerWavelengths.size(); ++i)
         {
-            auto layer{getEquivalentLayerAtWavelength(i)};
-            for(auto aSide : EnumSide())
-            {
-                const auto numberOfLayers{m_Layer.size()};
-                for(size_t layerNumber = 0; layerNumber < numberOfLayers; ++layerNumber)
-                {
-                    m_TotA.at(aSide).addProperties(
-                      layerNumber,
-                      m_CombinedLayerWavelengths[i],
-                      layer.getLayerAbsorptances(layerNumber + 1, aSide));
-                    m_TotJSC.at(aSide).addProperties(layerNumber,
-                                                     m_CombinedLayerWavelengths[i],
-                                                     layer.getLayerJSC(layerNumber + 1, aSide));
-                }
-                for(auto aProperty : EnumPropertySimple())
-                {
-                    m_Tot.at({aSide, aProperty})
-                      .addProperties(m_CombinedLayerWavelengths[i],
-                                     layer.getProperty(aSide, aProperty));
-                }
-            }
+            wavelengthIndexes.push_back(i);
         }
-    }
+
+        std::mutex absorptanceMutex;
+        std::mutex jscMutex;
+        std::mutex totMutex;
+
+        std::for_each(std::execution::par,
+                      wavelengthIndexes.begin(),
+                      wavelengthIndexes.end(),
+                      [&](const size_t & index) {
+                          // for(size_t i = 0u; i < m_CombinedLayerWavelengths.size(); ++i)
+                          auto layer{getEquivalentLayerAtWavelength(index)};
+                          for(auto aSide : EnumSide())
+                          {
+                              const auto numberOfLayers{m_Layer.size()};
+                              for(size_t layerNumber = 0; layerNumber < numberOfLayers;
+                                  ++layerNumber)
+                              {
+                                  auto totA{layer.getLayerAbsorptances(layerNumber + 1, aSide)};
+                                  
+                                  std::lock_guard<std::mutex> lock_abs(absorptanceMutex);
+                                  m_TotA.at(aSide).addProperties(
+                                    layerNumber, m_CombinedLayerWavelengths[index], totA);
+                                  
+                                  auto totJSC{layer.getLayerJSC(layerNumber + 1, aSide)};
+                                  std::lock_guard<std::mutex> lock_jsc(jscMutex);
+                                  m_TotJSC.at(aSide).addProperties(
+                                    layerNumber, m_CombinedLayerWavelengths[index], totJSC);
+                              }
+                              for(auto aProperty : EnumPropertySimple())
+                              {
+                                  auto tot{layer.getProperty(aSide, aProperty)};
+
+                                  std::lock_guard<std::mutex> lock_tot(totMutex);
+                                  m_Tot.at({aSide, aProperty})
+                                    .addProperties(m_CombinedLayerWavelengths[index], tot);
+                              }
+                          }
+                      });
+    };
 
     CEquivalentBSDFLayerSingleBand
       CEquivalentBSDFLayer::getEquivalentLayerAtWavelength(size_t wavelengthIndex) const
@@ -166,6 +185,8 @@ namespace MultiLayerOptics
         auto jscPrimeFront{m_Layer[0]->jscPrime(Side::Front, m_CombinedLayerWavelengths)};
         auto jscPrimeBack{m_Layer[0]->jscPrime(Side::Back, m_CombinedLayerWavelengths)};
         auto layerWLResults{m_Layer[0]->getResultsAtWavelength(wavelengthIndex)};
+        
+
         CEquivalentBSDFLayerSingleBand result{
           layerWLResults, jscPrimeFront[wavelengthIndex], jscPrimeBack[wavelengthIndex]};
 

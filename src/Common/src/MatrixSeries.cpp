@@ -6,6 +6,7 @@
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 
+
 namespace FenestrationCommon
 {
     CMatrixSeries::CMatrixSeries(const size_t t_Size1, const size_t t_Size2) :

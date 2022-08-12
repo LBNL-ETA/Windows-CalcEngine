@@ -1,10 +1,12 @@
 #include <stdexcept>
 #include <cassert>
+#include <mutex>
 
 #include "SpectralSample.hpp"
 #include "MeasuredSampleData.hpp"
 #include "WCECommon.hpp"
 
+std::mutex spectralSampleMutex;
 
 using namespace FenestrationCommon;
 
@@ -315,6 +317,8 @@ namespace SpectralAveraging
     void CSpectralSample::calculateState()
     {
         CSample::calculateState();
+
+        std::lock_guard<std::mutex> lock(spectralSampleMutex);
         if(m_SourceData.size() == 0)
         {
             for(const auto & prop : EnumProperty())
