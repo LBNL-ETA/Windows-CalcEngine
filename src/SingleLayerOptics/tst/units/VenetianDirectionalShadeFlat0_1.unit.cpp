@@ -181,3 +181,18 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
         EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
     }
 }
+
+TEST_F(TestVenetianDirectionalShadeFlat0_1, AtWavelength)
+{
+
+    std::shared_ptr<CBSDFLayer> aShade = GetShade();
+
+    constexpr size_t wavelengthIndex{0u};
+    auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
+    auto test{aShade->getWavelengthResults()};
+
+    const auto correct{test[wavelengthIndex].DiffDiff(Side::Front, PropertySimple::T)};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+
+    EXPECT_NEAR(correct, result, 1e-6);
+}
