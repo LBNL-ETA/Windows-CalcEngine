@@ -46,13 +46,12 @@ namespace SingleLayerOptics
     std::vector<double> CBaseCell::T_dir_dir_band(const Side t_Side,
                                                   const CBeamDirection & t_Direction)
     {
-        const double value = T_dir_dir(t_Side, t_Direction);
+        const size_t size = m_Material->getBandSize();
         std::vector<double> aResults;
-        std::vector<double> aMaterials = m_Material->getBandProperties(Property::T, t_Side);
-        size_t size = aMaterials.size();
+        aResults.reserve(size);
         for(size_t i = 0; i < size; i++)
         {
-            aResults.push_back(value);
+            aResults.push_back(T_dir_dir_at_wavelength(t_Side, t_Direction, i));
         }
 
         return aResults;
@@ -62,19 +61,19 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_Direction,
                                               size_t wavelengthIndex)
     {
+        std::ignore = wavelengthIndex;
         return T_dir_dir(t_Side, t_Direction);
     }
 
     std::vector<double> CBaseCell::R_dir_dir_band(const Side t_Side,
                                                   const CBeamDirection & t_Direction)
     {
-        double value = R_dir_dir(t_Side, t_Direction);
+        const size_t size = m_Material->getBandSize();
         std::vector<double> aResults;
-        std::vector<double> aMaterials = m_Material->getBandProperties(Property::R, t_Side);
-        size_t size = aMaterials.size();
+        aResults.reserve(size);
         for(size_t i = 0; i < size; i++)
         {
-            aResults.push_back(value);
+            aResults.push_back(R_dir_dir_at_wavelength(t_Side, t_Direction, i));
         }
 
         return aResults;
@@ -84,6 +83,7 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_Direction,
                                               size_t wavelengthIndex)
     {
+        std::ignore = wavelengthIndex;
         return R_dir_dir(t_Side, t_Direction);
     }
 
