@@ -143,18 +143,21 @@ namespace MultiLayerOptics
                 for(size_t layerNumber = 0; layerNumber < numberOfLayers; ++layerNumber)
                 {
                     m_TotA.at(aSide).addProperties(
-                      layerNumber, m_CombinedLayerWavelengths[i], layer.getLayerAbsorptances(layerNumber + 1, aSide));
-                    m_TotJSC.at(aSide).addProperties(
-                      layerNumber, m_CombinedLayerWavelengths[i], layer.getLayerJSC(layerNumber + 1, aSide));
+                      layerNumber,
+                      m_CombinedLayerWavelengths[i],
+                      layer.getLayerAbsorptances(layerNumber + 1, aSide));
+                    m_TotJSC.at(aSide).addProperties(layerNumber,
+                                                     m_CombinedLayerWavelengths[i],
+                                                     layer.getLayerJSC(layerNumber + 1, aSide));
                 }
                 for(auto aProperty : EnumPropertySimple())
                 {
                     m_Tot.at({aSide, aProperty})
-                      .addProperties(m_CombinedLayerWavelengths[i], layer.getProperty(aSide, aProperty));
+                      .addProperties(m_CombinedLayerWavelengths[i],
+                                     layer.getProperty(aSide, aProperty));
                 }
             }
         }
-        
     }
 
     CEquivalentBSDFLayerSingleBand
@@ -162,19 +165,15 @@ namespace MultiLayerOptics
     {
         auto jscPrimeFront{m_Layer[0]->jscPrime(Side::Front, m_CombinedLayerWavelengths)};
         auto jscPrimeBack{m_Layer[0]->jscPrime(Side::Back, m_CombinedLayerWavelengths)};
-        const auto layerWLResults{m_Layer[0]->getWavelengthResults()};
-        const auto curWL = m_CombinedLayerWavelengths[wavelengthIndex];
-        auto index = m_Layer[0]->getBandIndex(curWL);
-        CEquivalentBSDFLayerSingleBand result{layerWLResults[static_cast<size_t>(index)],
-                                              jscPrimeFront[wavelengthIndex],
-                                              jscPrimeBack[wavelengthIndex]};
+        auto layerWLResults{m_Layer[0]->getResultsAtWavelength(wavelengthIndex)};
+        CEquivalentBSDFLayerSingleBand result{
+          layerWLResults, jscPrimeFront[wavelengthIndex], jscPrimeBack[wavelengthIndex]};
 
         for(size_t i = 1u; i < m_Layer.size(); ++i)
         {
             jscPrimeFront = m_Layer[i]->jscPrime(Side::Front, m_CombinedLayerWavelengths);
             jscPrimeBack = m_Layer[i]->jscPrime(Side::Back, m_CombinedLayerWavelengths);
-            index = m_Layer[i]->getBandIndex(curWL);
-            result.addLayer(m_Layer[i]->getWavelengthResults()[index],
+            result.addLayer(m_Layer[i]->getResultsAtWavelength(wavelengthIndex),
                             jscPrimeFront[wavelengthIndex],
                             jscPrimeBack[wavelengthIndex]);
         }
