@@ -228,3 +228,26 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
         EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
     }
 }
+
+TEST_F(TestWovenShadeMultiWavelength, AtWavelength)
+{
+    std::shared_ptr<CBSDFLayer> aLayer = getLayer();
+
+    constexpr size_t wavelengthIndex{3u};
+    auto aResults = aLayer->getResultsAtWavelength(wavelengthIndex);
+
+    std::vector<double> correctResults = {
+      5.786283, 6.076508, 6.075762, 6.060038, 6.075762, 6.076508, 6.075762, 6.060038, 6.075762,
+      5.1071,   5.132581, 5.008355, 4.795191, 5.008355, 5.132581, 5.1071,   5.132581, 5.008355,
+      4.795191, 5.008355, 5.132581, 3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287,
+      3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 0.03677,  0.013011, 0.03677,
+      0.013011, 0.03677,  0.013011, 0.03677,  0.013011};
+
+    const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+
+    EXPECT_EQ(correctResults.size(), aT.size());
+    for(size_t i = 0; i < correctResults.size(); ++i)
+    {
+        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
+    }
+}

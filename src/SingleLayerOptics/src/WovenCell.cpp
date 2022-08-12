@@ -13,7 +13,6 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  CWovenCell
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +50,16 @@ namespace SingleLayerOptics
         return T_material;
     }
 
+    double CWovenCell::T_dir_dif_at_wavelength(FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_Direction,
+                                               size_t wavelengthIndex)
+    {
+        auto Tmaterial{
+          CUniformDiffuseCell::T_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
+        auto Tsct{Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
+        return Tmaterial + Tsct;
+    }
+
     std::vector<double> CWovenCell::R_dir_dif_band(const Side t_Side,
                                                    const CBeamDirection & t_Direction)
     {
@@ -62,6 +71,15 @@ namespace SingleLayerOptics
             R_material[i] = R_material[i] - Tsct[i];
         }
         return R_material;
+    }
+
+    double CWovenCell::R_dir_dif_at_wavelength(FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_Direction,
+                                               size_t wavelengthIndex)
+    {
+        auto RMaterial{CUniformDiffuseCell::R_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
+        auto Tsct{Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
+        return RMaterial - Tsct;
     }
 
     std::shared_ptr<CWovenCellDescription> CWovenCell::getCellAsWoven() const
@@ -97,6 +115,15 @@ namespace SingleLayerOptics
             aTsct.push_back(aTscatter);
         }
         return aTsct;
+    }
+
+    double CWovenCell::Tscatter_at_wavelength(FenestrationCommon::Side t_Side,
+                                              const CBeamDirection & t_Direction,
+                                              size_t wavelengthIndex)
+    {
+        auto RScatterMat{
+          m_Material->getBandProperty(Property::R, oppositeSide(t_Side), wavelengthIndex)};
+        return Tscatter(t_Direction, RScatterMat);
     }
 
     double CWovenCell::Tscatter(const CBeamDirection & t_Direction, const double Rmat) const

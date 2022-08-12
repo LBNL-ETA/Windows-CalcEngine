@@ -59,6 +59,7 @@ namespace SingleLayerOptics
     {
         BSDFIntegrator results{m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)};
         calculate_dir_dir_wl(wavelengthIndex, results);
+        calculate_dir_dif_wv(wavelengthIndex, results);
         return results;
     }
 

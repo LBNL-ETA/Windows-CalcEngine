@@ -274,13 +274,11 @@ TEST_F(TestSpecularLayer_102, WavelengthByWavelengthResults)
 {
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    auto aResults = aLayer->getWavelengthResults();
-
     constexpr size_t wlIndex{5u};
     auto result = aLayer->getResultsAtWavelength(wlIndex);
 
-    const auto test1 = aResults[wlIndex].DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
-    const auto test2 = result.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+    const auto diffDiff = result.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+    const auto correct{0.167105};
 
-    EXPECT_NEAR(test1, test2, 1e-6);
+    EXPECT_NEAR(diffDiff, correct, 1e-6);
 }
