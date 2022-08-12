@@ -31,22 +31,8 @@ namespace MultiLayerOptics
     {
         for(const auto & layer : m_Layer)
         {
-            if(matrixWavelengths.has_value())
-            {
-                layer->setBandWavelengths(matrixWavelengths.value());
-            }
+            layer->setBandWavelengths(m_CombinedLayerWavelengths);
         }
-    }
-
-    void
-      CEquivalentBSDFLayer::addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer)
-    {
-        t_Layer->setBandWavelengths(m_CombinedLayerWavelengths);
-        if(m_Layer.empty())
-        {
-            m_Lambda = t_Layer->getResults().lambdaMatrix();
-        }
-        m_Layer.push_back(t_Layer);
     }
 
     const SingleLayerOptics::BSDFDirections &

@@ -24,7 +24,6 @@ namespace MultiLayerOptics
           std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> t_Layer,
           const std::optional<std::vector<double>> & matrixWavelengths);
 
-        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
         [[nodiscard]] const SingleLayerOptics::BSDFDirections &
           getDirections(SingleLayerOptics::BSDFDirection t_Side) const;
 
