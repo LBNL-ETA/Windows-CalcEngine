@@ -241,7 +241,7 @@ namespace SingleLayerOptics
         std::vector<double> T_dir_dif_band(FenestrationCommon::Side t_Side,
                                            const CBeamDirection & t_IncomingDirection,
                                            const CBeamDirection & t_OutgoingDirection) override;
-        double T_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+        double T_dir_dif_by_wavelength(FenestrationCommon::Side t_Side,
                                        const CBeamDirection & t_IncomingDirection,
                                        const CBeamDirection & t_OutgoingDirection,
                                        size_t wavelengthIndex) override;
@@ -249,7 +249,7 @@ namespace SingleLayerOptics
         std::vector<double> R_dir_dif_band(FenestrationCommon::Side t_Side,
                                            const CBeamDirection & t_IncomingDirection,
                                            const CBeamDirection & t_OutgoingDirection) override;
-        double R_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+        double R_dir_dif_by_wavelength(FenestrationCommon::Side t_Side,
                                        const CBeamDirection & t_IncomingDirection,
                                        const CBeamDirection & t_OutgoingDirection,
                                        size_t wavelengthIndex) override;

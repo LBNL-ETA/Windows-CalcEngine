@@ -189,9 +189,8 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, AtWavelength)
 
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
-    auto test{aShade->getWavelengthResults()};
 
-    const auto correct{test[wavelengthIndex].DiffDiff(Side::Front, PropertySimple::T)};
+    const auto correct{0.446498};
     const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);

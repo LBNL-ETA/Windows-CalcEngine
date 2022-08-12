@@ -280,3 +280,17 @@ TEST_F(TestVenetianUniformShadeFlat0_1, TestVenetian1)
         EXPECT_NEAR(correctResults[i], aRb(i, i), 1e-5);
     }
 }
+
+TEST_F(TestVenetianUniformShadeFlat0_1, AtWavelength)
+{
+
+    std::shared_ptr<CBSDFLayer> aShade = GetShade();
+
+    constexpr size_t wavelengthIndex{0u};
+    auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
+
+    const auto correct{0.650940};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+
+    EXPECT_NEAR(correct, result, 1e-6);
+}
