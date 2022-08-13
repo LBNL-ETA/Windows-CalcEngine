@@ -382,8 +382,12 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection) const
     {
-        return getBandProperties(
-          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
+        if(m_MaterialScaledRange == nullptr)
+        {
+            m_RangeCreator();
+        }
+        return getMaterialFromWavelength(m_Wavelengths[wavelengthIndex])->getProperty(
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
     }
 
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
