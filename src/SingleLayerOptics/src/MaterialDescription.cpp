@@ -10,6 +10,7 @@
 #include "OpticalSurface.hpp"
 
 std::mutex materialWL;
+std::mutex baseMaterialMutex;
 std::mutex materialSampleWL;
 std::mutex dualBandMaterialMutexRatio;
 std::mutex dualBandMaterialMutexRadiation;
@@ -218,6 +219,7 @@ namespace SingleLayerOptics
 
     void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths)
     {
+        std::lock_guard<std::mutex> lock(baseMaterialMutex);
         // Trimming is necessary in order to keep data within integration range
         m_Wavelengths = trimWavelengthToRange(wavelengths);
         m_WavelengthsCalculated = true;
