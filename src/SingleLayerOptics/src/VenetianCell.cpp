@@ -1,6 +1,7 @@
 #include <cassert>
 #include <algorithm>
 #include <stdexcept>
+#include <mutex>
 
 #include "VenetianCell.hpp"
 #include "VenetianCellDescription.hpp"
@@ -11,6 +12,9 @@
 
 using namespace Viewer;
 using namespace FenestrationCommon;
+
+std::mutex cellEnergyTMutex;
+std::mutex cellEnergyRMutex;
 
 namespace SingleLayerOptics
 {
@@ -173,6 +177,8 @@ namespace SingleLayerOptics
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_IncomingDirection,
                                           const CBeamDirection & t_OutgoingDirection)
     {
+        std::lock_guard<std::mutex> lock_abs(cellEnergyTMutex);
+
         calculateSlatEnergiesFromBeam(t_IncomingDirection);
         assert(m_CurrentSlatEnergies != nullptr);
 
@@ -200,6 +206,7 @@ namespace SingleLayerOptics
     double CVenetianCellEnergy::R_dir_dir(const CBeamDirection & t_IncomingDirection,
                                           const CBeamDirection & t_OutgoingDirection)
     {
+        std::lock_guard<std::mutex> lock_abs(cellEnergyRMutex);
         calculateSlatEnergiesFromBeam(t_IncomingDirection);
         assert(m_CurrentSlatEnergies != nullptr);
 
