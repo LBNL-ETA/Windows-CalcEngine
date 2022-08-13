@@ -38,7 +38,7 @@ TEST_F(TestSeriesGeneral, TestSeriesPoint)
     EXPECT_EQ(a.value(), b.value());
     EXPECT_EQ(a.x(), b.x());
 
-    b.value(7);
+    b.setValue(7);
 
     EXPECT_EQ(b.value(), 7);
 
@@ -113,4 +113,30 @@ TEST_F(TestSeriesGeneral, TestConstantSeries)
     {
         EXPECT_EQ(err.what(), std::string("Index out of range."));
     }
+}
+
+TEST_F(TestSeriesGeneral, SeriesPredefinedSize)
+{
+    constexpr size_t seriesSize{12};
+    CSeries series{seriesSize};
+
+    EXPECT_EQ(series.size(), seriesSize);
+}
+
+TEST_F(TestSeriesGeneral, SetValueAtIndex)
+{
+    constexpr size_t seriesSize{12};
+    CSeries series{seriesSize};
+
+    constexpr size_t index{2u};
+    constexpr double xValue{3.1};
+    constexpr double yValue{14.5};
+
+    series.setPropertyAtIndex(index, xValue, yValue);
+
+    const CSeriesPoint correct{xValue, yValue};
+    const auto result{series[index]};
+
+    EXPECT_NEAR(correct.x(), result.x(), 1e-6);
+    EXPECT_NEAR(correct.value(), result.value(), 1e-6);
 }

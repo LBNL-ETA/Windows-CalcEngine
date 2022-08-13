@@ -30,12 +30,17 @@ namespace FenestrationCommon
         return m_x;
     }
 
+    void CSeriesPoint::setX(double x)
+    {
+        m_x = x;
+    }
+
     double CSeriesPoint::value() const
     {
         return m_Value;
     }
 
-    void CSeriesPoint::value(double const t_Value)
+    void CSeriesPoint::setValue(double const t_Value)
     {
         m_Value = t_Value;
     }
@@ -56,9 +61,12 @@ namespace FenestrationCommon
     //  CSeries
     /////////////////////////////////////////////////////
 
+    CSeries::CSeries(size_t size) : m_Series(size)
+    {}
+
     CSeries::CSeries(const std::vector<std::pair<double, double>> & t_values)
     {
-        m_Series.clear();
+        //m_Series.clear();
         for(auto & val : t_values)
         {
             m_Series.emplace_back(val.first, val.second);
@@ -67,7 +75,7 @@ namespace FenestrationCommon
 
     CSeries::CSeries(const std::initializer_list<std::pair<double, double>> & t_values)
     {
-        m_Series.clear();
+        //m_Series.clear();
         for(const auto & val : t_values)
         {
             m_Series.emplace_back(val.first, val.second);
@@ -77,6 +85,12 @@ namespace FenestrationCommon
     void CSeries::addProperty(const double t_x, const double t_Value)
     {
         m_Series.emplace_back(t_x, t_Value);
+    }
+
+    void CSeries::setPropertyAtIndex(size_t index, double x, double value)
+    {
+        m_Series[index].setX(x);
+        m_Series[index].setValue(value);
     }
 
     void CSeries::insertToBeginning(double t_x, double t_Value)

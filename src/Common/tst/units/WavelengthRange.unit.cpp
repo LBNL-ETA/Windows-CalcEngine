@@ -156,7 +156,5 @@ TEST_F(WavelengthRangeTest, TestInVisibleRange_7)
     constexpr double wavelength{0.780003};
     CWavelengthRange range{WavelengthRange::Visible};
 
-    auto test{range.isInRange(wavelength)};
-
     EXPECT_EQ(false, range.isInRange(wavelength));
 }
