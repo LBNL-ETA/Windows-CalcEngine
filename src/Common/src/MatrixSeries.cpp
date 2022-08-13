@@ -9,7 +9,7 @@
 
 namespace FenestrationCommon
 {
-    CMatrixSeries::CMatrixSeries(const size_t t_Size1, const size_t t_Size2) :
+    CMatrixSeries::CMatrixSeries(const size_t t_Size1, const size_t t_Size2, size_t seriesSize) :
         m_Size1(t_Size1), m_Size2(t_Size2)
     {
         m_Matrix = std::vector<std::vector<CSeries>>(m_Size1);
@@ -18,7 +18,7 @@ namespace FenestrationCommon
             m_Matrix[i].resize(m_Size2);
             for(size_t j = 0; j < m_Size2; ++j)
             {
-                m_Matrix[i][j] = CSeries();
+                m_Matrix[i][j] = CSeries(seriesSize);
             }
         }
     }
@@ -70,6 +70,20 @@ namespace FenestrationCommon
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
                 m_Matrix[i][j].addProperty(t_Wavelength, t_Matrix(i, j));
+            }
+        }
+    }
+
+    void CMatrixSeries::setPropertiesAtIndex(size_t index,
+                                             double t_Wavelength,
+                                             const SquareMatrix & t_Matrix)
+    {
+        for(size_t i = 0; i < m_Matrix.size(); ++i)
+        {
+            assert(m_Matrix.size() == t_Matrix.size());
+            for(size_t j = 0; j < m_Matrix[i].size(); ++j)
+            {
+                m_Matrix[i][j].setPropertyAtIndex(index, t_Wavelength, t_Matrix(i, j));
             }
         }
     }

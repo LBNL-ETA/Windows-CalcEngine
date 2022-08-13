@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestMatrixSeries : public testing::Test
 {
 private:
-    std::shared_ptr<CMatrixSeries> m_MatrixSeries;
+    CMatrixSeries m_MatrixSeries{2, 2};
 
 protected:
     void SetUp() override
@@ -29,26 +29,22 @@ protected:
         mat.emplace_back(SquareMatrix{{1.5, 9.3}, {9.0, 7.4}});
         wl.push_back(0.60);
 
-        // Fill up matrix series
-        m_MatrixSeries = std::make_shared<CMatrixSeries>(2, 2);
         for(size_t i = 0; i < wl.size(); ++i)
         {
-            m_MatrixSeries->addProperties(wl[i], mat[i]);
+            m_MatrixSeries.addProperties(wl[i], mat[i]);
         }
     }
 
 public:
-    std::shared_ptr<CMatrixSeries> getMatrix() const
+    [[nodiscard]] CMatrixSeries & getMatrix()
     {
         return m_MatrixSeries;
     }
 };
 
-TEST_F(TestMatrixSeries, Test1)
+TEST_F(TestMatrixSeries, Sum)
 {
-    SCOPED_TRACE("Begin Test: Test matrix series sum.");
-
-    auto & aMat = *getMatrix();
+    auto & aMat = getMatrix();
 
     const double minLambda = 0.45;
     const double maxLambda = 0.65;
@@ -72,11 +68,11 @@ TEST_F(TestMatrixSeries, Test1)
     }
 }
 
-TEST_F(TestMatrixSeries, Test2)
+TEST_F(TestMatrixSeries, Multiplication)
 {
     SCOPED_TRACE("Begin Test: Test matrix series multiplication.");
 
-    CMatrixSeries mat(*getMatrix());
+    CMatrixSeries mat(getMatrix());
 
     CSeries multiplier;
     multiplier.addProperty(0.45, 1.6);
@@ -109,4 +105,26 @@ TEST_F(TestMatrixSeries, Test2)
             EXPECT_NEAR(correctResults[i][k], matrixResults[i][k].value(), 1e-6);
         }
     }
+}
+
+TEST_F(TestMatrixSeries, SetPropertiesAtIndex)
+{
+    constexpr size_t size1{2u};
+    constexpr size_t size2{2u};
+    constexpr size_t seriesSize{12u};
+
+    const SquareMatrix mat{{2.8, 3.4}, {3.9, 7.5}};
+
+    CMatrixSeries matrix{size1, size2, seriesSize};
+
+    constexpr size_t index{5u};
+    const double wl{0.305};
+
+    matrix.setPropertiesAtIndex(index, wl, mat);
+
+
+    const auto result1 = matrix[0][0];
+
+    EXPECT_NEAR(0.305, result1[index].x(), 1e-6);
+    EXPECT_NEAR(2.8, result1[index].value(), 1e-6);
 }

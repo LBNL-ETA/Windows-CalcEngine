@@ -15,21 +15,17 @@ namespace FenestrationCommon
     {
     public:
         CMatrixSeries() = default;
-        CMatrixSeries(const size_t t_Size1, const size_t t_Size2);
+        CMatrixSeries(size_t t_Size1, size_t t_Size2, size_t seriesSize = 0u);
         CMatrixSeries(const CMatrixSeries & t_MatrixSeries);
         CMatrixSeries & operator=(CMatrixSeries const & t_MatrixSeries);
 
         // add property at specific series position
-        void addProperty(const size_t i,
-                         const size_t j,
-                         const double t_Wavelength,
-                         const double t_Value);
-        void addProperties(const size_t i,
-                           const double t_Wavelength,
-                           const std::vector<double> & t_Values);
-        void addProperties(const double t_Wavelength, const SquareMatrix & t_Matrix);
+        void addProperty(size_t i, size_t j, double t_Wavelength, double t_Value);
+        void addProperties(size_t i, double t_Wavelength, const std::vector<double> & t_Values);
+        void addProperties(double t_Wavelength, const SquareMatrix & t_Matrix);
+        void setPropertiesAtIndex(size_t index, double t_Wavelength, const SquareMatrix & t_Matrix);
 
-        void addSeries(const size_t i, const size_t j, const CSeries & series);
+        void addSeries(size_t i, size_t j, const CSeries & series);
 
         // Multiply all series in matrix with provided one
         void mMult(const CSeries & t_Series);
@@ -37,24 +33,22 @@ namespace FenestrationCommon
         // Multiplication of several series with matrix series
         void mMult(const std::vector<CSeries> & t_Series);
 
-        std::vector<CSeries> & operator[](const size_t index);
+        std::vector<CSeries> & operator[](size_t index);
 
-        void integrate(const IntegrationType t_Integration,
+        void integrate(IntegrationType t_Integration,
                        double normalizationCoefficient,
                        const std::optional<std::vector<double>> & integrationPoints);
 
         void interpolate(const std::vector<double> & t_Wavelengths);
 
-        [[nodiscard]] std::vector<std::vector<double>>
-          getSums(const double minLambda,
-                  const double maxLambda,
-                  const std::vector<double> & t_ScaleValue) const;
+        [[nodiscard]] std::vector<std::vector<double>> getSums(
+          double minLambda, double maxLambda, const std::vector<double> & t_ScaleValue) const;
 
-        [[nodiscard]] std::vector<std::vector<double>> getSums(const double minLambda,
-                                                               const double maxLambda) const;
+        [[nodiscard]] std::vector<std::vector<double>> getSums(double minLambda,
+                                                               double maxLambda) const;
 
-        SquareMatrix getSquaredMatrixSums(const double minLambda,
-                                          const double maxLambda,
+        SquareMatrix getSquaredMatrixSums(double minLambda,
+                                          double maxLambda,
                                           const std::vector<double> & t_ScaleValue);
 
         [[nodiscard]] size_t size1() const;
