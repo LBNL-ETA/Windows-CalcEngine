@@ -4,6 +4,8 @@
 #include <stdexcept>
 #ifdef STL_MULTITHREADING
 #    include <execution>
+#else
+# include <mutex>
 #endif
 
 #include "EquivalentBSDFLayer.hpp"
@@ -145,7 +147,11 @@ namespace MultiLayerOptics
         std::mutex jscMutex;
         std::mutex totMutex;
 
+#ifdef STL_MULTITHREADING
         std::for_each(std::execution::par,
+#else
+        std::for_each(
+#endif
                       wavelengthIndexes.begin(),
                       wavelengthIndexes.end(),
                       [&](const size_t & index) {
