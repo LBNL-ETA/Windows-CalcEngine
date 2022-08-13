@@ -116,14 +116,15 @@ namespace MultiLayerOptics
     {
         const size_t matrixSize = m_Lambda.size();
         const size_t numberOfLayers = m_Layer.size();
+        const size_t seriesSize = m_CombinedLayerWavelengths.size();
 
         for(Side aSide : EnumSide())
         {
-            m_TotA[aSide] = CMatrixSeries(numberOfLayers, matrixSize);
-            m_TotJSC[aSide] = CMatrixSeries(numberOfLayers, matrixSize);
+            m_TotA[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
+            m_TotJSC[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
             for(PropertySimple aProperty : EnumPropertySimple())
             {
-                m_Tot[{aSide, aProperty}] = CMatrixSeries(matrixSize, matrixSize);
+                m_Tot[{aSide, aProperty}] = CMatrixSeries(matrixSize, matrixSize, seriesSize);
             }
         }
 
@@ -159,12 +160,12 @@ namespace MultiLayerOptics
                                   auto totA{layer.getLayerAbsorptances(layerNumber + 1, aSide)};
                                   
                                   std::lock_guard<std::mutex> lock_abs(absorptanceMutex);
-                                  m_TotA.at(aSide).addProperties(
+                                  m_TotA.at(aSide).setPropertiesAtIndex(index,
                                     layerNumber, m_CombinedLayerWavelengths[index], totA);
                                   
                                   auto totJSC{layer.getLayerJSC(layerNumber + 1, aSide)};
                                   std::lock_guard<std::mutex> lock_jsc(jscMutex);
-                                  m_TotJSC.at(aSide).addProperties(
+                                  m_TotJSC.at(aSide).setPropertiesAtIndex(index,
                                     layerNumber, m_CombinedLayerWavelengths[index], totJSC);
                               }
                               for(auto aProperty : EnumPropertySimple())
@@ -173,7 +174,7 @@ namespace MultiLayerOptics
 
                                   std::lock_guard<std::mutex> lock_tot(totMutex);
                                   m_Tot.at({aSide, aProperty})
-                                    .addProperties(m_CombinedLayerWavelengths[index], tot);
+                                    .setPropertiesAtIndex(index, m_CombinedLayerWavelengths[index], tot);
                               }
                           }
                       });

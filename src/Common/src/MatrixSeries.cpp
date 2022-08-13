@@ -62,6 +62,17 @@ namespace FenestrationCommon
         }
     }
 
+    void CMatrixSeries::setPropertiesAtIndex(size_t index,
+                                             size_t i,
+                                             double t_Wavelength,
+                                             const std::vector<double> & t_Values)
+    {
+        for(size_t j = 0; j < t_Values.size(); ++j)
+        {
+            m_Matrix[i][j].setPropertyAtIndex(index, t_Wavelength, t_Values[j]);
+        }
+    }
+
     void CMatrixSeries::addProperties(const double t_Wavelength, const SquareMatrix & t_Matrix)
     {
         for(size_t i = 0; i < m_Matrix.size(); ++i)
