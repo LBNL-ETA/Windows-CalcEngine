@@ -1,6 +1,5 @@
 #include "IntegratorStrategy.hpp"
 #include "Series.hpp"
-#include "wceunique.hpp"
 #include <cassert>
 
 namespace FenestrationCommon
@@ -156,7 +155,7 @@ namespace FenestrationCommon
                 aStrategy = std::make_unique<CIntegratorTrapezoidalB>();
                 break;
             case IntegrationType::PreWeighted:
-                aStrategy = wce::make_unique<CIntegratorPreWeighted>();
+                aStrategy = std::make_unique<CIntegratorPreWeighted>();
                 break;
             default:
                 assert("Irregular call of integration strategy.");

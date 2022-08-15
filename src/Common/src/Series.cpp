@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "wceunique.hpp"
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
 

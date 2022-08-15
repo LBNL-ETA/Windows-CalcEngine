@@ -33,7 +33,7 @@ protected:
         aBack = CScatteringSurface(0.13, 0.25, 0.38, 0.19, 0.64, 0.22);
         CScatteringLayer aLayer3(aFront, aBack);
 
-        m_Interref = wce::make_unique<CInterRef>(aLayer1);
+        m_Interref = std::make_unique<CInterRef>(aLayer1);
         m_Interref->addLayer(aLayer2, Side::Back);
         m_Interref->addLayer(aLayer3, Side::Back);
     }
