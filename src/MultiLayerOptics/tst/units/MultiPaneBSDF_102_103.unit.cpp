@@ -186,26 +186,21 @@ protected:
         // Create material from samples
         auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
         thickness = 5.715e-3;   // [m]
         auto aMaterial_103 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_103(), thickness, MaterialType::Monolithic);
 
         // BSDF definition is needed as well as its material representation
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
         auto Layer_103 = CBSDFLayerMaker::getSpecularLayer(aMaterial_103, aBSDF);
 
-        // To assure interpolation to common wavelengths. MultiBSDF will NOT work with different
-        // wavelengths
-        CCommonWavelengths aCommonWL;
-        aCommonWL.addWavelength(Layer_102->getBandWavelengths());
-        aCommonWL.addWavelength(Layer_103->getBandWavelengths());
+        m_Layer = CMultiPaneBSDF::create({Layer_102, Layer_103});
 
-        auto commonWavelengths = aCommonWL.getCombinedWavelengths(Combine::Interpolate);
-
-        m_Layer = CMultiPaneBSDF::create(
-          {Layer_102, Layer_103}, loadSolarRadiationFile(), commonWavelengths);
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -225,369 +220,50 @@ TEST_F(MultiPaneBSDF_102_103, TestSpecular1)
     CMultiPaneBSDF & aLayer = getLayer();
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.542363245, tauDiff, 1e-6);
+    EXPECT_NEAR(0.542341, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.221296951, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.221229, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.110614233, absDiff1, 1e-6);
+    EXPECT_NEAR(0.110653, absDiff1, 1e-6);
 
     double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.125725571, absDiff2, 1e-6);
+    EXPECT_NEAR(0.125776, absDiff2, 1e-6);
 
     double theta = 0;
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.6523021, tauHem, 1e-6);
+    EXPECT_NEAR(0.652295, tauHem, 1e-6);
 
     double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.6523021, tauDir, 1e-6);
+    EXPECT_NEAR(0.652295, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.1247990, rhoHem, 1e-6);
+    EXPECT_NEAR(0.124734, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.1247990, rhoDir, 1e-6);
+    EXPECT_NEAR(0.124734, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.0960423, abs1, 1e-6);
+    EXPECT_NEAR(0.096067, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.1268566, abs2, 1e-6);
+    EXPECT_NEAR(0.126904, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
 
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.6316995, tauHem, 1e-6);
+    EXPECT_NEAR(0.631684, tauHem, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.1310145, rhoHem, 1e-6);
+    EXPECT_NEAR(0.130947, rhoHem, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.1036131, abs1, 1e-6);
+    EXPECT_NEAR(0.10364381087538396, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.1336729, abs2, 1e-6);
-
-    SquareMatrix aT = aLayer.getMatrix(minLambda, maxLambda, Side::Front, PropertySimple::T);
-
-    // Front transmittance matrix
-    size_t size = aT.size();
-
-    std::vector<double> correctResults;
-    correctResults.push_back(8.48465113);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(9.091993);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(8.21019002);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(7.43187164);
-    correctResults.push_back(3.29115035);
-    correctResults.push_back(3.29115035);
-    correctResults.push_back(3.29115035);
-    correctResults.push_back(3.29115035);
-    correctResults.push_back(3.29115035);
-    correctResults.push_back(3.29115035);
-    correctResults.push_back(3.29115035);
-    correctResults.push_back(3.29115035);
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
-    }
-
-    // Back Reflectance matrix
-    SquareMatrix aRb = aLayer.getMatrix(minLambda, maxLambda, Side::Back, PropertySimple::R);
-
-    correctResults.clear();
-
-    correctResults.push_back(1.51773038);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.63363393);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(1.58473531);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(2.15213242);
-    correctResults.push_back(5.8487035);
-    correctResults.push_back(5.8487035);
-    correctResults.push_back(5.8487035);
-    correctResults.push_back(5.8487035);
-    correctResults.push_back(5.8487035);
-    correctResults.push_back(5.8487035);
-    correctResults.push_back(5.8487035);
-    correctResults.push_back(5.8487035);
-
-    EXPECT_EQ(correctResults.size(), aRb.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRb(i, i), 1e-6);
-    }
-
-    // Front absorptance layer 1
-    std::vector<double> aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 1);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.0960423109);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.0979134775);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.103613076);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.113529853);
-    correctResults.push_back(0.129362807);
-    correctResults.push_back(0.129362807);
-    correctResults.push_back(0.129362807);
-    correctResults.push_back(0.129362807);
-    correctResults.push_back(0.129362807);
-    correctResults.push_back(0.129362807);
-    correctResults.push_back(0.129362807);
-    correctResults.push_back(0.129362807);
-
-    EXPECT_EQ(correctResults.size(), aAbsF.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsF[i], 1e-6);
-    }
-
-    // Front absorptance layer 2
-    aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 2);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.126856608);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.128792833);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.133672932);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.135961523);
-    correctResults.push_back(0.0969602521);
-    correctResults.push_back(0.0969602521);
-    correctResults.push_back(0.0969602521);
-    correctResults.push_back(0.0969602521);
-    correctResults.push_back(0.0969602521);
-    correctResults.push_back(0.0969602521);
-    correctResults.push_back(0.0969602521);
-    correctResults.push_back(0.0969602521);
-
-    EXPECT_EQ(correctResults.size(), aAbsF.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsF[i], 1e-6);
-    }
-
-    // Back absorptance layer 1
-    std::vector<double> aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 1);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.0638957951);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0647910638);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0670154364);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0679155523);
-    correctResults.push_back(0.0492207385);
-    correctResults.push_back(0.0492207385);
-    correctResults.push_back(0.0492207385);
-    correctResults.push_back(0.0492207385);
-    correctResults.push_back(0.0492207385);
-    correctResults.push_back(0.0492207385);
-    correctResults.push_back(0.0492207385);
-    correctResults.push_back(0.0492207385);
-
-    EXPECT_EQ(correctResults.size(), aAbsB.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsB[i], 1e-6);
-    }
-
-    // Back absorptance layer 2
-    aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 2);
-
-    correctResults.clear();
-
-    correctResults.push_back(0.16711867);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.170169853);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.179354099);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.194682457);
-    correctResults.push_back(0.211016157);
-    correctResults.push_back(0.211016157);
-    correctResults.push_back(0.211016157);
-    correctResults.push_back(0.211016157);
-    correctResults.push_back(0.211016157);
-    correctResults.push_back(0.211016157);
-    correctResults.push_back(0.211016157);
-    correctResults.push_back(0.211016157);
-
-    EXPECT_EQ(correctResults.size(), aAbsB.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aAbsB[i], 1e-6);
-    }
+    EXPECT_NEAR(0.13372437711523896, abs2, 1e-6);
 }

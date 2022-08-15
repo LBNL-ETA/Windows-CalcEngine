@@ -1,5 +1,4 @@
-#ifndef UniformDiffuseShade_H
-#define UniformDiffuseShade_H
+#pragma once
 
 #include <memory>
 
@@ -14,18 +13,24 @@ namespace SingleLayerOptics
     {
     public:
         CUniformDiffuseBSDFLayer(const std::shared_ptr<CUniformDiffuseCell> & t_Cell,
-                                 const CBSDFHemisphere & t_Hemisphere);
+                                 const BSDFHemisphere & t_Hemisphere);
 
     protected:
         std::shared_ptr<CUniformDiffuseCell> cellAsUniformDiffuse() const;
         void calcDiffuseDistribution(FenestrationCommon::Side aSide,
                                      const CBeamDirection & t_Direction,
                                      size_t t_DirectionIndex) override;
+
         void calcDiffuseDistribution_wv(FenestrationCommon::Side aSide,
                                         const CBeamDirection & t_Direction,
-                                        size_t t_DirectionIndex) override;
+                                        size_t t_DirectionIndex,
+                                        std::vector<BSDFIntegrator> & results) override;
+
+        void calcDiffuseDistribution_byWavelength(const FenestrationCommon::Side aSide,
+                                                  const CBeamDirection & t_Direction,
+                                                  const size_t t_DirectionIndex,
+                                                  size_t wavelengthIndex,
+                                                  BSDFIntegrator & results) override;
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

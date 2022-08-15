@@ -40,16 +40,30 @@ namespace SingleLayerOptics
         virtual std::vector<double> T_dir_dif_band(const FenestrationCommon::Side t_Side,
                                                    const CBeamDirection & t_Direction);
 
-        virtual std::vector<double> R_dir_dif_band(const FenestrationCommon::Side t_Side,
+        virtual double T_dir_dif_at_wavelength(FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_Direction,
+                                               size_t wavelengthIndex);
+
+        virtual std::vector<double> R_dir_dif_band(FenestrationCommon::Side t_Side,
                                                    const CBeamDirection & t_Direction);
+
+        virtual double R_dir_dif_at_wavelength(FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_Direction,
+                                               size_t wavelengthIndex);
 
     private:
         double getMaterialProperty(const FenestrationCommon::Property t_Property,
                                    const FenestrationCommon::Side t_Side,
                                    const CBeamDirection & t_Direction);
+
         std::vector<double> getMaterialProperties(const FenestrationCommon::Property t_Property,
                                                   const FenestrationCommon::Side t_Side,
                                                   const CBeamDirection & t_Direction);
+
+        double getMaterialPropertyAtWavelength(FenestrationCommon::Property t_Property,
+                                               FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_Direction,
+                                               size_t wavelengthIndex);
     };
 
 }   // namespace SingleLayerOptics

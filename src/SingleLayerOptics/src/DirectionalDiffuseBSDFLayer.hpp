@@ -14,7 +14,7 @@ namespace SingleLayerOptics
     {
     public:
         CDirectionalBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                              const CBSDFHemisphere & t_Hemisphere);
+                              const BSDFHemisphere & t_Hemisphere);
 
     protected:
         std::shared_ptr<CDirectionalDiffuseCell> cellAsDirectionalDiffuse() const;
@@ -23,7 +23,13 @@ namespace SingleLayerOptics
                                      const size_t incomingDirectionIndex) override;
         void calcDiffuseDistribution_wv(const FenestrationCommon::Side aSide,
                                         const CBeamDirection & incomingDirection,
-                                        const size_t incomingDirectionIndex) override;
+                                        const size_t incomingDirectionIndex,
+                                        std::vector<BSDFIntegrator> & results) override;
+        void calcDiffuseDistribution_byWavelength(FenestrationCommon::Side aSide,
+                                                  const CBeamDirection & incomingDirection,
+                                                  size_t incomingDirectionIndex,
+                                                  size_t wavelengthIndex,
+                                                  BSDFIntegrator & results) override;
 
         virtual double diffuseDistributionScalar(size_t outgoingDirection) = 0;
     };
@@ -32,7 +38,7 @@ namespace SingleLayerOptics
     {
     public:
         CDirectionalDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                                     const CBSDFHemisphere & t_Hemisphere);
+                                     const BSDFHemisphere & t_Hemisphere);
 
     protected:
         double diffuseDistributionScalar(size_t outgoingDirection) override;
@@ -42,7 +48,7 @@ namespace SingleLayerOptics
     {
     public:
         CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                         const CBSDFHemisphere & t_Hemisphere);
+                         const BSDFHemisphere & t_Hemisphere);
 
     protected:
         double diffuseDistributionScalar(size_t outgoingDirection) override;

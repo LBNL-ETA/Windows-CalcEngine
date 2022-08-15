@@ -10,59 +10,56 @@ namespace FenestrationCommon
         return x2 - x1;
     }
 
-    std::unique_ptr<CSeries>
-      CIntegratorRectangular::integrate(const std::vector<std::unique_ptr<ISeriesPoint>> & t_Series,
+    CSeries
+      CIntegratorRectangular::integrate(const std::vector<CSeriesPoint> & t_Series,
                                         double normalizationCoeff)
     {
-        auto newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
         for(auto i = 1u; i < t_Series.size(); ++i)
         {
-            const auto w1 = t_Series[i - 1]->x();
-            const auto w2 = t_Series[i]->x();
-            const auto y1 = t_Series[i - 1]->value();
-            // const auto y2 = t_Series[ i ]->value();
+            const auto w1 = t_Series[i - 1].x();
+            const auto w2 = t_Series[i].x();
+            const auto y1 = t_Series[i - 1].value();
             const auto deltaX = dX(w1, w2);
             const auto value = y1 * deltaX;
-            newProperties->addProperty(w1, value / normalizationCoeff);
+            newProperties.addProperty(w1, value / normalizationCoeff);
         }
 
         return newProperties;
     }
 
-    std::unique_ptr<CSeries> CIntegratorRectangularCentroid::integrate(
-      const std::vector<std::unique_ptr<ISeriesPoint>> & t_Series, double normalizationCoeff)
+    CSeries CIntegratorRectangularCentroid::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
     {
-        auto newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
         for(auto i = 1u; i < t_Series.size(); ++i)
         {
-            const auto w1 = t_Series[i - 1]->x();
-            const auto w2 = t_Series[i]->x();
-            const auto y1 = t_Series[i - 1]->value();
-            // const auto y2 = t_Series[ i ]->value();
+            const auto w1 = t_Series[i - 1].x();
+            const auto w2 = t_Series[i].x();
+            const auto y1 = t_Series[i - 1].value();
             const auto diffX = (w2 - w1) / 2;
             const auto deltaX = dX(w1 - diffX, w2 - diffX);
             const auto value = y1 * deltaX;
-            newProperties->addProperty(w1, value / normalizationCoeff);
+            newProperties.addProperty(w1, value / normalizationCoeff);
         }
 
         return newProperties;
     }
 
-    std::unique_ptr<CSeries>
-      CIntegratorTrapezoidal::integrate(const std::vector<std::unique_ptr<ISeriesPoint>> & t_Series,
+    CSeries
+      CIntegratorTrapezoidal::integrate(const std::vector<CSeriesPoint> & t_Series,
                                         double normalizationCoeff)
     {
-        auto newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
         for(auto i = 1u; i < t_Series.size(); ++i)
         {
-            const auto w1 = t_Series[i - 1]->x();
-            const auto w2 = t_Series[i]->x();
-            const auto y1 = t_Series[i - 1]->value();
-            const auto y2 = t_Series[i]->value();
+            const auto w1 = t_Series[i - 1].x();
+            const auto w2 = t_Series[i].x();
+            const auto y1 = t_Series[i - 1].value();
+            const auto y2 = t_Series[i].value();
             const auto deltaX = dX(w1, w2);
             const auto yCenter = (y1 + y2) / 2;
             const auto value = yCenter * deltaX;
-            newProperties->addProperty(w1, value / normalizationCoeff);
+            newProperties.addProperty(w1, value / normalizationCoeff);
         }
 
         return newProperties;
@@ -71,17 +68,16 @@ namespace FenestrationCommon
     /// TrapezoidalA integration insert additional items before and after first and
     /// last wavelenghts Since WCE is working strictly within wavelengths,
     /// contributions will be added to first and last segment
-    std::unique_ptr<CSeries> CIntegratorTrapezoidalA::integrate(
-      const std::vector<std::unique_ptr<ISeriesPoint>> & t_Series, double normalizationCoeff)
+    CSeries CIntegratorTrapezoidalA::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
     {
-        auto newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
 
         for(auto i = 1u; i < t_Series.size(); ++i)
         {
-            const auto w1 = t_Series[i - 1]->x();
-            const auto w2 = t_Series[i]->x();
-            const auto y1 = t_Series[i - 1]->value();
-            const auto y2 = t_Series[i]->value();
+            const auto w1 = t_Series[i - 1].x();
+            const auto w2 = t_Series[i].x();
+            const auto y1 = t_Series[i - 1].value();
+            const auto y2 = t_Series[i].value();
             const auto deltaX = dX(w1, w2);
             const auto yCenter = (y1 + y2) / 2;
             auto value = yCenter * deltaX;
@@ -93,23 +89,22 @@ namespace FenestrationCommon
             {
                 value += (y2 / 2) * deltaX;
             }
-            newProperties->addProperty(w1, value / normalizationCoeff);
+            newProperties.addProperty(w1, value / normalizationCoeff);
         }
 
         return newProperties;
     }
 
-    std::unique_ptr<CSeries> CIntegratorTrapezoidalB::integrate(
-      const std::vector<std::unique_ptr<ISeriesPoint>> & t_Series, double normalizationCoeff)
+    CSeries CIntegratorTrapezoidalB::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
     {
-        auto newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
 
         for(auto i = 1u; i < t_Series.size(); ++i)
         {
-            const auto w1 = t_Series[i - 1]->x();
-            const auto w2 = t_Series[i]->x();
-            const auto y1 = t_Series[i - 1]->value();
-            const auto y2 = t_Series[i]->value();
+            const auto w1 = t_Series[i - 1].x();
+            const auto w2 = t_Series[i].x();
+            const auto y1 = t_Series[i - 1].value();
+            const auto y2 = t_Series[i].value();
             const auto deltaX = dX(w1, w2);
             const auto yCenter = (y1 + y2) / 2;
             auto value = yCenter * deltaX;
@@ -117,25 +112,23 @@ namespace FenestrationCommon
             {
                 value += ((y1 + y2) / 4) * deltaX;
             }
-            newProperties->addProperty(w1, value / normalizationCoeff);
+            newProperties.addProperty(w1, value / normalizationCoeff);
         }
 
         return newProperties;
     }
 
-    std::unique_ptr<CSeries>
-      CIntegratorPreWeighted::integrate(const std::vector<std::unique_ptr<ISeriesPoint>> & t_Series,
+    CSeries
+      CIntegratorPreWeighted::integrate(const std::vector<CSeriesPoint> & t_Series,
                                         double normalizationCoeff)
     {
-        auto newProperties = wce::make_unique<CSeries>();
+        CSeries newProperties;
 
         for(auto i = 0u; i < t_Series.size(); ++i)
         {
-            /// const auto w1 = t_Series[ i ]->x();
-            const auto y1 = t_Series[i]->value();
+            const auto y1 = t_Series[i].value();
 
-            /// newProperties->addProperty( w1, w1 * y1 / normalizationCoeff );
-            newProperties->addProperty(1, y1 / normalizationCoeff);
+            newProperties.addProperty(1, y1 / normalizationCoeff);
         }
 
         return newProperties;
@@ -148,19 +141,19 @@ namespace FenestrationCommon
         switch(t_IntegratorType)
         {
             case IntegrationType::Rectangular:
-                aStrategy = wce::make_unique<CIntegratorRectangular>();
+                aStrategy = std::make_unique<CIntegratorRectangular>();
                 break;
             case IntegrationType::RectangularCentroid:
-                aStrategy = wce::make_unique<CIntegratorRectangularCentroid>();
+                aStrategy = std::make_unique<CIntegratorRectangularCentroid>();
                 break;
             case IntegrationType::Trapezoidal:
-                aStrategy = wce::make_unique<CIntegratorTrapezoidal>();
+                aStrategy = std::make_unique<CIntegratorTrapezoidal>();
                 break;
             case IntegrationType::TrapezoidalA:
-                aStrategy = wce::make_unique<CIntegratorTrapezoidalA>();
+                aStrategy = std::make_unique<CIntegratorTrapezoidalA>();
                 break;
             case IntegrationType::TrapezoidalB:
-                aStrategy = wce::make_unique<CIntegratorTrapezoidalB>();
+                aStrategy = std::make_unique<CIntegratorTrapezoidalB>();
                 break;
             case IntegrationType::PreWeighted:
                 aStrategy = wce::make_unique<CIntegratorPreWeighted>();

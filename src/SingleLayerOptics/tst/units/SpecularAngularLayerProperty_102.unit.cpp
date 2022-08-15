@@ -535,8 +535,7 @@ protected:
         m_Measurements->addMeasurement(aAngular4);
         m_Measurements->addMeasurement(aAngular9);
 
-        std::shared_ptr<CMaterial> aMaterial =
-          std::make_shared<CMaterialMeasured>(m_Measurements, WavelengthRange::Solar);
+        std::shared_ptr<CMaterial> aMaterial = std::make_shared<CMaterialMeasured>(m_Measurements);
         m_Material = aMaterial;
     }
 
@@ -592,109 +591,4 @@ TEST_F(TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree)
     EXPECT_NEAR(0.79636496475913876, trans, 1e-6);
     EXPECT_NEAR(0.11405492103460167, refleF, 1e-6);
     EXPECT_NEAR(0.11405492103460167, refleB, 1e-6);
-
-    std::vector<double> correctT;
-    correctT.push_back(0);
-    correctT.push_back(0);
-    correctT.push_back(0.00455);
-    correctT.push_back(0.0252);
-    correctT.push_back(0.0757);
-    correctT.push_back(0.1736);
-    correctT.push_back(0.30255);
-    correctT.push_back(0.43405);
-    correctT.push_back(0.55215);
-    correctT.push_back(0.6511);
-    correctT.push_back(0.718);
-    correctT.push_back(0.76295);
-    correctT.push_back(0.7951);
-    correctT.push_back(0.81515);
-    correctT.push_back(0.82125);
-    correctT.push_back(0.8206);
-    correctT.push_back(0.80825);
-    correctT.push_back(0.8231);
-    correctT.push_back(0.83445);
-    correctT.push_back(0.84285);
-    correctT.push_back(0.84705);
-    correctT.push_back(0.84925);
-    correctT.push_back(0.8467);
-    correctT.push_back(0.846);
-    correctT.push_back(0.8441);
-    correctT.push_back(0.84795);
-    correctT.push_back(0.8522);
-    correctT.push_back(0.8541);
-    correctT.push_back(0.8564);
-    correctT.push_back(0.85785);
-    correctT.push_back(0.85785);
-    correctT.push_back(0.8584);
-    correctT.push_back(0.85775);
-    correctT.push_back(0.8581);
-    correctT.push_back(0.8586);
-    correctT.push_back(0.8564);
-    correctT.push_back(0.855);
-    correctT.push_back(0.85365);
-    correctT.push_back(0.8525);
-    correctT.push_back(0.8486);
-    correctT.push_back(0.8465);
-    correctT.push_back(0.84555);
-    correctT.push_back(0.8395);
-    correctT.push_back(0.8379);
-    correctT.push_back(0.83455);
-    correctT.push_back(0.8307);
-    correctT.push_back(0.8271);
-    correctT.push_back(0.8267);
-    correctT.push_back(0.81975);
-    correctT.push_back(0.81675);
-    correctT.push_back(0.8136);
-    correctT.push_back(0.8083);
-    correctT.push_back(0.80565);
-    correctT.push_back(0.80095);
-    correctT.push_back(0.79375);
-    correctT.push_back(0.7925);
-    correctT.push_back(0.7874);
-    correctT.push_back(0.78565);
-    correctT.push_back(0.78385);
-    correctT.push_back(0.7742);
-    correctT.push_back(0.77575);
-    correctT.push_back(0.75795);
-    correctT.push_back(0.75015);
-    correctT.push_back(0.7403);
-    correctT.push_back(0.7356);
-    correctT.push_back(0.73425);
-    correctT.push_back(0.7341);
-    correctT.push_back(0.7358);
-    correctT.push_back(0.7389);
-    correctT.push_back(0.7441);
-    correctT.push_back(0.75135);
-    correctT.push_back(0.7591);
-    correctT.push_back(0.7675);
-    correctT.push_back(0.77725);
-    correctT.push_back(0.7882);
-    correctT.push_back(0.7964);
-    correctT.push_back(0.8029);
-    correctT.push_back(0.8054);
-    correctT.push_back(0.8051);
-    correctT.push_back(0.8056);
-    correctT.push_back(0.80265);
-    correctT.push_back(0.801);
-    correctT.push_back(0.80465);
-    correctT.push_back(0.8019);
-    correctT.push_back(0.80015);
-    correctT.push_back(0.80095);
-    correctT.push_back(0.80275);
-    correctT.push_back(0.79255);
-    correctT.push_back(0.78165);
-    correctT.push_back(0.7788);
-    correctT.push_back(0.78155);
-    correctT.push_back(0.7854);
-    correctT.push_back(0.77455);
-    correctT.push_back(0.7733);
-    correctT.push_back(0.76895);
-
-    size_t size = aTrans.size();
-
-    EXPECT_EQ(size, correctT.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctT[i], aTrans[i], 1e-6);
-    }
 }

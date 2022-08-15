@@ -20,10 +20,7 @@ protected:
         const auto Tmat = 0.00;
         const auto Rfmat = 0.55;
         const auto Rbmat = 0.55;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         std::shared_ptr<ICellDescription> aCell = std::make_shared<CFlatCellDescription>();

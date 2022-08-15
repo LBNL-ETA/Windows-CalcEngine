@@ -72,6 +72,7 @@ namespace SpectralAveraging
                                                          FenestrationCommon::Side side) override;
 
         virtual std::vector<double> getWavelengths() const;
+        [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
         virtual void interpolate(std::vector<double> const & t_Wavelengths) override;
 
         virtual void cutExtraData(double minLambda, double maxLambda) override;

@@ -31,12 +31,9 @@ TEST_F(TestSimpleTrapezoidalBIntegration, TestTrapezoidalB)
 
     auto aIntegrator = getIntegrator();
 
-    std::vector<std::unique_ptr<ISeriesPoint>> input;
-    input.push_back(wce::make_unique<CSeriesPoint>(10, 20));
-    input.push_back(wce::make_unique<CSeriesPoint>(15, 30));
-    input.push_back(wce::make_unique<CSeriesPoint>(20, 40));
+    std::vector<CSeriesPoint> input{{10, 20}, {15, 30}, {20, 40}};
 
-    const auto series = *aIntegrator->integrate(input);
+    const auto series = aIntegrator->integrate(input);
 
     CSeries correctValues{{10, 187.5}, {15, 262.5}};
 

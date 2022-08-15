@@ -83,6 +83,11 @@ namespace SpectralAveraging
         m_Data->getMeasuredData()->interpolate(t_CommonWavelengths);
     }
 
+    FenestrationCommon::Limits CSingleAngularMeasurement::getWavelengthLimits() const
+    {
+        return m_Data->getWavelengthLimits();
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////
     ////  CAngularMeasurements
     //////////////////////////////////////////////////////////////////////////////////////
@@ -180,6 +185,11 @@ namespace SpectralAveraging
             auto aSample = aAngular->getData();
             aSample->setSourceData(t_SourceData);
         }
+    }
+
+    FenestrationCommon::Limits CAngularMeasurements::getWavelengthLimits() const
+    {
+        return {m_CommonWavelengths[0], m_CommonWavelengths[m_CommonWavelengths.size() - 1]};
     }
 
 

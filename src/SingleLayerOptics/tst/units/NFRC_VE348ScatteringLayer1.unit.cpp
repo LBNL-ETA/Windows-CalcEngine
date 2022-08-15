@@ -239,11 +239,8 @@ protected:
     virtual void SetUp()
     {
         double thickness = 5.66e-3;   // [m]
-        const auto aMaterial = Material::nBandMaterial(loadSampleData_NFRC_VE348(),
-                                                       thickness,
-                                                       MaterialType::Coated,
-                                                       WavelengthRange::Solar,
-                                                       IntegrationType::PreWeighted);
+        const auto aMaterial =
+          Material::nBandMaterial(loadSampleData_NFRC_VE348(), thickness, MaterialType::Coated);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
         CSeries solarRadiation{loadSolarRadiationFile()};
@@ -271,11 +268,11 @@ TEST_F(TestVE345ScatteringLayer1, TestFront)
 
     double T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.218448, T_dir_dir, 1e-6);
+    EXPECT_NEAR(0.18859183654544612, T_dir_dir, 1e-6);
 
     double R_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.101591, R_dir_dir, 1e-6);
+    EXPECT_NEAR(0.12316443596123823, R_dir_dir, 1e-6);
 
     double T_dir_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse);
@@ -287,17 +284,17 @@ TEST_F(TestVE345ScatteringLayer1, TestFront)
 
     double T_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.191069, T_dif_dif, 1e-6);
+    EXPECT_NEAR(0.1649548166166081, T_dif_dif, 1e-6);
 
     double R_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.159037, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.17923022308583067, R_dif_dif, 1e-6);
 
     double A_dir = aLayer.getAbsorptance(aSide, ScatteringSimple::Direct);
-    EXPECT_NEAR(0.679960, A_dir, 1e-6);
+    EXPECT_NEAR(0.68824372749331564, A_dir, 1e-6);
 
     double A_dif = aLayer.getAbsorptance(aSide, ScatteringSimple::Diffuse);
-    EXPECT_NEAR(0.649894, A_dif, 1e-6);
+    EXPECT_NEAR(0.65581496029756114, A_dif, 1e-6);
 }
 
 TEST_F(TestVE345ScatteringLayer1, TestBack)
@@ -313,11 +310,11 @@ TEST_F(TestVE345ScatteringLayer1, TestBack)
 
     double T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.218448, T_dir_dir, 1e-6);
+    EXPECT_NEAR(0.18859183654544612, T_dir_dir, 1e-6);
 
     double R_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.190456, R_dir_dir, 1e-6);
+    EXPECT_NEAR(0.28243131539495842, R_dir_dir, 1e-6);
 
     double T_dir_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse);
@@ -329,15 +326,15 @@ TEST_F(TestVE345ScatteringLayer1, TestBack)
 
     double T_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.191069, T_dif_dif, 1e-6);
+    EXPECT_NEAR(0.1649548166166081, T_dif_dif, 1e-6);
 
     double R_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.242219, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.3283134109306744, R_dif_dif, 1e-6);
 
     double A_dir = aLayer.getAbsorptance(aSide, ScatteringSimple::Direct);
-    EXPECT_NEAR(0.591096, A_dir, 1e-6);
+    EXPECT_NEAR(0.52897684805959555, A_dir, 1e-6);
 
     double A_dif = aLayer.getAbsorptance(aSide, ScatteringSimple::Diffuse);
-    EXPECT_NEAR(0.566712, A_dif, 1e-6);
+    EXPECT_NEAR(0.50673177245271739, A_dif, 1e-6);
 }

@@ -2,8 +2,6 @@
 #include <gtest/gtest.h>
 
 #include "WCESpectralAveraging.hpp"
-#include "WCECommon.hpp"
-#include "WCESingleLayerOptics.hpp"
 #include "WCEMultiLayerOptics.hpp"
 
 
@@ -12,9 +10,9 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-// Example on how to create multilayer BSDF from specular layers only
+// Example on how to create multilayer BSDF from specular and venetian layers
 
-class MultiPaneBSDF_102 : public testing::Test
+class MultiPaneBSDF_102_VenetianUniform_CondensedSpectrum : public testing::Test
 {
 private:
     std::unique_ptr<CMultiPaneBSDF> m_Layer;
@@ -120,17 +118,67 @@ private:
 protected:
     virtual void SetUp()
     {
-        CSeries test({{1, 2}, {3, 4}});
-        // Create material from samples
-        double thickness = 3.048e-3;   // [m]
+        auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
-        // BSDF definition is needed as well as its material representation
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
-        auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
 
-        m_Layer = CMultiPaneBSDF::create(Layer_102, loadSolarRadiationFile());
+        const auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
+
+        // Venetian blind
+        const auto Tsol = 0.1;
+        const auto Rfsol = 0.7;
+        const auto Rbsol = 0.7;
+
+        // Visible range
+        const auto Tvis = 0.2;
+        const auto Rfvis = 0.6;
+        const auto Rbvis = 0.6;
+
+        const auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
+          Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
+
+        // make cell geometry
+        const auto slatWidth = 0.016;     // m
+        const auto slatSpacing = 0.012;   // m
+        const auto slatTiltAngle = 45;
+        const auto curvatureRadius = 0.0;
+        const size_t numOfSlatSegments = 5;
+
+        auto Layer_Venetian = CBSDFLayerMaker::getVenetianLayer(aMaterialVenetian,
+                                                                aBSDF,
+                                                                slatWidth,
+                                                                slatSpacing,
+                                                                slatTiltAngle,
+                                                                curvatureRadius,
+                                                                numOfSlatSegments,
+                                                                DistributionMethod::DirectionalDiffuse,
+                                                                false);
+
+        const std::vector<double> condensed{0.3,
+                                            0.38,
+                                            0.46,
+                                            0.54,
+                                            0.62,
+                                            0.7,
+                                            0.78,
+                                            0.952,
+                                            1.124,
+                                            1.296,
+                                            1.468,
+                                            1.64,
+                                            1.812,
+                                            1.984,
+                                            2.156,
+                                            2.328,
+                                            2.5};
+
+        m_Layer = CMultiPaneBSDF::create({Layer_102, Layer_Venetian}, condensed);
+
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -140,9 +188,9 @@ public:
     };
 };
 
-TEST_F(MultiPaneBSDF_102, TestSpecular1)
+TEST_F(MultiPaneBSDF_102_VenetianUniform_CondensedSpectrum, TestVenetianUniformBSDF)
 {
-    SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
+    SCOPED_TRACE("Begin Test: Specular and venetian uniform IGU - BSDF.");
 
     const double minLambda = 0.3;
     const double maxLambda = 2.5;
@@ -150,45 +198,56 @@ TEST_F(MultiPaneBSDF_102, TestSpecular1)
     CMultiPaneBSDF & aLayer = getLayer();
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.745379, tauDiff, 1e-6);
+    EXPECT_NEAR(0.258603651182443, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.153050, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.48998374580441773, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.101571, absDiff1, 1e-6);
+    EXPECT_NEAR(0.14878842374206153, absDiff1, 1e-6);
+
+    double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
+    EXPECT_NEAR(0.10262417927107793, absDiff2, 1e-6);
 
     double theta = 0;
     double phi = 0;
 
-    auto absDiffFrontElectricity = aLayer.getAbsorptanceLayersElectricity(
-      minLambda, maxLambda, Side::Front, FenestrationCommon::ScatteringSimple::Diffuse, theta, phi);
-    EXPECT_NEAR(0.0, absDiffFrontElectricity[0], 1e-6);
-
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.833807, tauHem, 1e-6);
+    EXPECT_NEAR(0.28706530011872539, tauHem, 1e-6);
 
     double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.833807, tauDir, 1e-6);
+    EXPECT_NEAR(0.050581982910334992, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.074817, rhoHem, 1e-6);
+    EXPECT_NEAR(0.45449691321156827, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.074817, rhoDir, 1e-6);
+    EXPECT_NEAR(0.07996926883736187, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.091376, abs1, 1e-6);
+    EXPECT_NEAR(0.14445866069190433, abs1, 1e-6);
+
+    double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
+    EXPECT_NEAR(0.11397912597780208, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
 
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.822230, tauHem, 1e-6);
+    EXPECT_NEAR(0.28212158919552938, tauHem, 1e-6);
+
+    tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+    EXPECT_NEAR(0.098077249146745676, tauDir, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.079382, rhoHem, 1e-6);
+    EXPECT_NEAR(0.45450685540785085, rhoHem, 1e-6);
+
+    rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+    EXPECT_NEAR(0.17094126533560586, rhoDir, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.098388, abs1, 1e-6);
+    EXPECT_NEAR(0.15139412381757428, abs1, 1e-6);
+
+    abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
+    EXPECT_NEAR(0.11197743157904565, abs2, 1e-6);
 }

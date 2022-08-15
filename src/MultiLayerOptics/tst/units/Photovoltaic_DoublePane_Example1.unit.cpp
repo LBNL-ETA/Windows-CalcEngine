@@ -1801,7 +1801,6 @@ private:
 protected:
     virtual void SetUp()
     {
-        
         auto pvSample = std::make_shared<SpectralAveraging::PhotovoltaicSampleData>(
           *loadSampleData_1(), eqeFront(), eqeBack());
 
@@ -1812,15 +1811,18 @@ protected:
         const auto aMaterial_1 =
           Material::nBandPhotovoltaicMaterial(pvSample,
                                               thickness,
-                                              FenestrationCommon::MaterialType::Monolithic,
-                                              FenestrationCommon::WavelengthRange::Solar);
+                                              FenestrationCommon::MaterialType::Monolithic);
 
 
         aMaterial_1->setBandWavelengths(wl);
         const auto layer1 =
           SingleLayerOptics::PhotovoltaicSpecularLayer::createLayer(aMaterial_1, table());
 
-        m_Layer = CMultiPaneSpecular::create({layer1}, aSolarRadiation);
+        m_Layer = CMultiPaneSpecular::create({layer1});
+
+        const MultiLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
+                                                            loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -1841,12 +1843,12 @@ TEST_F(Photovoltaic_DoublePane_Example1, Test1)
     auto aLayer = getLayer();
 
     const double T =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+      aLayer.getPropertySimple(minLambda, maxLambda,PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.2, T, 1e-6);
 
     const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.670864, absHeat, 1e-6);
+    EXPECT_NEAR(0.670842, absHeat, 1e-6);
 
     const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.106229, absEl1, 1e-6);
+    EXPECT_NEAR(0.106243, absEl1, 1e-6);
 }

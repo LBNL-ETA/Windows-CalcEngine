@@ -20,10 +20,7 @@ protected:
         const auto Tmat = 0.0;
         const auto Rfmat = 0.7;
         const auto Rbmat = 0.7;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto x = 19.05;         // mm
@@ -32,7 +29,7 @@ protected:
         const auto xHole = 3.175;     // mm
         const auto yHole = 6.35;      // mm
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         m_Shade = CBSDFLayerMaker::getRectangularPerforatedLayer(
           aMaterial, aBSDF, x, y, thickness, xHole, yHole);
@@ -51,70 +48,34 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.041876313, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.670686365, RfDiff, 1e-6);
 
     const auto theta{0};
     const auto phi{0};
 
-    const auto tauDirHem{aResults->DirHem(Side::Front, PropertySimple::T, theta, phi)};
+    const auto tauDirHem{aResults.DirHem(Side::Front, PropertySimple::T, theta, phi)};
     EXPECT_NEAR(0.055556, tauDirHem, 1e-6);
 
-    const double RfDirHem{aResults->DirHem(Side::Front, PropertySimple::R, theta, phi)};
+    const double RfDirHem{aResults.DirHem(Side::Front, PropertySimple::R, theta, phi)};
     EXPECT_NEAR(0.661111, RfDirHem, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
 
-    std::vector<double> correctResults;
-    correctResults.push_back(0.722625);
-    correctResults.push_back(0.731048);
-    correctResults.push_back(0.728881);
-    correctResults.push_back(0.754961);
-    correctResults.push_back(0.728881);
-    correctResults.push_back(0.731048);
-    correctResults.push_back(0.728881);
-    correctResults.push_back(0.754961);
-    correctResults.push_back(0.728881);
-    correctResults.push_back(0.622917);
-    correctResults.push_back(0.614362);
-    correctResults.push_back(0.632505);
-    correctResults.push_back(0.672486);
-    correctResults.push_back(0.632505);
-    correctResults.push_back(0.614362);
-    correctResults.push_back(0.622917);
-    correctResults.push_back(0.614362);
-    correctResults.push_back(0.632505);
-    correctResults.push_back(0.672486);
-    correctResults.push_back(0.632505);
-    correctResults.push_back(0.614362);
-    correctResults.push_back(0.534246);
-    correctResults.push_back(0.523031);
-    correctResults.push_back(0.557403);
-    correctResults.push_back(0.628150);
-    correctResults.push_back(0.557403);
-    correctResults.push_back(0.523031);
-    correctResults.push_back(0.534246);
-    correctResults.push_back(0.523031);
-    correctResults.push_back(0.557403);
-    correctResults.push_back(0.628150);
-    correctResults.push_back(0.557403);
-    correctResults.push_back(0.523031);
-    correctResults.push_back(0.146104);
-    correctResults.push_back(0.219651);
-    correctResults.push_back(0.416249);
-    correctResults.push_back(0.219651);
-    correctResults.push_back(0.146104);
-    correctResults.push_back(0.219651);
-    correctResults.push_back(0.416249);
-    correctResults.push_back(0.219651);
+    std::vector<double> correctResults{
+      0.722625, 0.731048, 0.728881, 0.754961, 0.728881, 0.731048, 0.728881, 0.754961, 0.728881,
+      0.622917, 0.614362, 0.632505, 0.672486, 0.632505, 0.614362, 0.622917, 0.614362, 0.632505,
+      0.672486, 0.632505, 0.614362, 0.534246, 0.523031, 0.557403, 0.628150, 0.557403, 0.523031,
+      0.534246, 0.523031, 0.557403, 0.628150, 0.557403, 0.523031, 0.146104, 0.219651, 0.416249,
+      0.219651, 0.146104, 0.219651, 0.416249, 0.219651};
 
     std::vector<double> calculatedResults;
     for(size_t i = 0; i < size; ++i)
@@ -128,50 +89,14 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
         EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
     }
 
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
-    correctResults.push_back(0.210438);
-    correctResults.push_back(0.211198);
-    correctResults.push_back(0.211233);
-    correctResults.push_back(0.210818);
-    correctResults.push_back(0.211233);
-    correctResults.push_back(0.211198);
-    correctResults.push_back(0.211233);
-    correctResults.push_back(0.210818);
-    correctResults.push_back(0.211233);
-    correctResults.push_back(0.212138);
-    correctResults.push_back(0.212284);
-    correctResults.push_back(0.211973);
-    correctResults.push_back(0.211288);
-    correctResults.push_back(0.211973);
-    correctResults.push_back(0.212284);
-    correctResults.push_back(0.212138);
-    correctResults.push_back(0.212284);
-    correctResults.push_back(0.211973);
-    correctResults.push_back(0.211288);
-    correctResults.push_back(0.211973);
-    correctResults.push_back(0.212284);
-    correctResults.push_back(0.213658);
-    correctResults.push_back(0.213850);
-    correctResults.push_back(0.213261);
-    correctResults.push_back(0.212048);
-    correctResults.push_back(0.213261);
-    correctResults.push_back(0.213850);
-    correctResults.push_back(0.213658);
-    correctResults.push_back(0.213850);
-    correctResults.push_back(0.213261);
-    correctResults.push_back(0.212048);
-    correctResults.push_back(0.213261);
-    correctResults.push_back(0.213850);
-    correctResults.push_back(0.220182);
-    correctResults.push_back(0.218856);
-    correctResults.push_back(0.215310);
-    correctResults.push_back(0.218856);
-    correctResults.push_back(0.220182);
-    correctResults.push_back(0.218856);
-    correctResults.push_back(0.215310);
-    correctResults.push_back(0.218856);
+    correctResults = {0.210438, 0.211198, 0.211233, 0.210818, 0.211233, 0.211198, 0.211233,
+                      0.210818, 0.211233, 0.212138, 0.212284, 0.211973, 0.211288, 0.211973,
+                      0.212284, 0.212138, 0.212284, 0.211973, 0.211288, 0.211973, 0.212284,
+                      0.213658, 0.213850, 0.213261, 0.212048, 0.213261, 0.213850, 0.213658,
+                      0.213850, 0.213261, 0.212048, 0.213261, 0.213850, 0.220182, 0.218856,
+                      0.215310, 0.218856, 0.220182, 0.218856, 0.215310, 0.218856};
 
     calculatedResults.clear();
     for(size_t i = 0; i < size; ++i)
@@ -184,4 +109,18 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
     {
         EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
     }
+}
+
+TEST_F(TestRectangularPerforatedShade1, AtWavelength)
+{
+
+    std::shared_ptr<CBSDFLayer> aShade = GetShade();
+
+    constexpr size_t wavelengthIndex{0u};
+    auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
+
+    const auto correct{0.0418763};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+
+    EXPECT_NEAR(correct, result, 1e-6);
 }

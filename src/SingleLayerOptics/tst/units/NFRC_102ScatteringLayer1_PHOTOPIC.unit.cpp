@@ -257,8 +257,7 @@ protected:
         const auto aMaterial = Material::nBandMaterial(loadSampleData_NFRC_102(),
                                                        loadDetectorData(),
                                                        thickness,
-                                                       MaterialType::Monolithic,
-                                                       WavelengthRange::Visible);
+                                                       MaterialType::Monolithic);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
         CSeries solarRadiation{loadSolarRadiationFile()};

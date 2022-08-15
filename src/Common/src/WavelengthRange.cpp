@@ -41,4 +41,10 @@ namespace FenestrationCommon
         m_MaxLambda = wRange.endLambda;
     }
 
+    bool CWavelengthRange::isInRange(double value) const
+    {
+        return value >= (m_MinLambda - ConstantsData::floatErrorTolerance)
+               && value < (m_MaxLambda - ConstantsData::floatErrorTolerance);
+    }
+
 }   // namespace FenestrationCommon

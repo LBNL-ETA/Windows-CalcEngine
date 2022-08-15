@@ -1,5 +1,4 @@
-#ifndef MULTIBSDFLAYER_H
-#define MULTIBSDFLAYER_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -8,76 +7,21 @@
 #include <WCESingleLayerOptics.hpp>
 
 #include "EquivalentBSDFLayer.hpp"
-
-namespace FenestrationCommon
-{
-    class CSeries;
-
-    class SquareMatrix;
-
-    enum class Side;
-    enum class PropertySimple;
-
-}   // namespace FenestrationCommon
-
-namespace SingleLayerOptics
-{
-    class CBSDFIntegrator;
-}
+#include "CalculationProperties.hpp"
 
 namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayer;
 
-    typedef std::shared_ptr<std::vector<FenestrationCommon::CSeries>> p_VectorSeries;
-
-    class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer
+    class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer, public MultiPaneCalcluationsSetter
     {
     public:
         static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData,
-                 const std::vector<double> & t_CommonWavelengths);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation);
-
-        static std::unique_ptr<CMultiPaneBSDF>
-          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layers,
-                 const FenestrationCommon::CSeries & t_SolarRadiation,
-                 const FenestrationCommon::CSeries & t_DetectorData);
+          create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
+                 const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
 
         void setIntegrationType(FenestrationCommon::IntegrationType t_type,
                                 double normalizationCoefficient);
-
-        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFLayer> & t_Layer);
 
         // Whole matrix results
         FenestrationCommon::SquareMatrix getMatrix(double minLambda,
@@ -235,32 +179,17 @@ namespace MultiLayerOptics
                          double t_Theta,
                          double t_Phi);
 
-        std::vector<double> getWavelengths() const override;
+        [[nodiscard]] std::vector<double> getWavelengths() const override;
 
-        double getMinLambda() const override;
-        double getMaxLambda() const override;
+        [[nodiscard]] double getMinLambda() const override;
+        [[nodiscard]] double getMaxLambda() const override;
+
+        void setCalculationProperties(const CalculationProperties & calcProperties) override;
 
     protected:
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_SolarRadiation,
-                       const std::vector<double> & t_CommonWavelengths);
-
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_SolarRadiation,
-                       const FenestrationCommon::CSeries & t_DetectorData,
-                       const std::vector<double> & t_CommonWavelengths);
-
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_SolarRadiation);
-
-        CMultiPaneBSDF(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                       const FenestrationCommon::CSeries & t_DetectorData,
-                       const FenestrationCommon::CSeries & t_SolarRadiation);
-
-        void initialize(
+        explicit CMultiPaneBSDF(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-          const FenestrationCommon::CSeries & t_SolarRadiation,
-          const FenestrationCommon::CSeries & t_DetectorData = FenestrationCommon::CSeries());
+          const std::optional<std::vector<double>> & matrixWavelengths);
 
         std::vector<std::vector<double>>
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
@@ -270,22 +199,21 @@ namespace MultiLayerOptics
 
         void calcHemisphericalAbs(FenestrationCommon::Side t_Side);
 
-        [[nodiscard]] std::vector<double> getCommonWavelengths(
+        [[nodiscard]] std::vector<double> getCommonWavelengthsFromLayers(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer) const;
 
-        static std::vector<std::vector<double>> getZeroVectorVector(size_t size1, size_t size2);
+        static double integrateBSDFAbsorptance(const std::vector<double> & lambda,
+                                               const std::vector<double> & absorptance);
 
-        double integrateBSDFAbsorptance(const std::vector<double> & lambda, const std::vector<double> & absorptance);
-
-        CEquivalentBSDFLayer m_Layer;
+        CEquivalentBSDFLayer m_EquivalentLayer;
 
         // Solar radiation for initialization
         FenestrationCommon::CSeries m_SolarRadiationInit;
 
-        p_VectorSeries m_IncomingSpectra;
+        std::vector<FenestrationCommon::CSeries> m_IncomingSpectra;
         std::vector<double> m_IncomingSolar;
 
-        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_Results;
+        SingleLayerOptics::BSDFIntegrator m_Results;
 
         // Absorptances of every layer and every incoming direction in BSDF integrated over given
         // range
@@ -302,8 +230,12 @@ namespace MultiLayerOptics
 
         FenestrationCommon::IntegrationType m_Integrator;
         double m_NormalizationCoefficient;
+
+        SingleLayerOptics::BSDFDirections m_BSDFDirections;
+
+        // These are wavelength used only for the spectral integration seprately from wavelengths in
+        // matrices calculations. Matrices wavelenghts will be used only if this is not provided.
+        std::optional<std::vector<double>> m_SpectralIntegrationWavelengths;
     };
 
 }   // namespace MultiLayerOptics
-
-#endif

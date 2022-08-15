@@ -3,33 +3,20 @@
 
 #include <vector>
 #include <memory>
+#include <optional>
 
 namespace FenestrationCommon
-{
-    // Interface definition for any spectral property. This can be any property that is depending on
-    // wavelength (solar intensity, reflectance, transmittance, etc)
-    class ISeriesPoint
-    {
-    public:
-        virtual ~ISeriesPoint() = default;
-
-        virtual double x() const = 0;
-        virtual double value() const = 0;
-        virtual void value(double t_Value) = 0;
-        virtual std::unique_ptr<ISeriesPoint> clone() const = 0;
-    };
-
-    // Implementation of spectral property interface
-    class CSeriesPoint : public ISeriesPoint
+{   // Implementation of spectral property interface
+    class CSeriesPoint
     {
     public:
         CSeriesPoint();
         CSeriesPoint(CSeriesPoint const & t_SeriesPoint);
         CSeriesPoint(double t_Wavelength, double t_Value);
-        std::unique_ptr<ISeriesPoint> clone() const override;
-        double x() const override;
-        double value() const override;
-        void value(double const t_Value) override;
+        [[nodiscard]] double x() const;
+        void setX(double x);
+        [[nodiscard]] double value() const;
+        void setValue(double t_Value);
         CSeriesPoint & operator=(const CSeriesPoint & t_Point);
         bool operator<(const CSeriesPoint & t_Point) const;
 
@@ -48,19 +35,23 @@ namespace FenestrationCommon
     public:
         CSeries() = default;
 
+        explicit CSeries (size_t size);
         explicit CSeries(const std::vector<std::pair<double, double>> & t_values);
-        explicit CSeries(const std::initializer_list<std::pair<double, double>> & t_values);
+        CSeries(const std::initializer_list<std::pair<double, double>> & t_values);
 
-        CSeries(CSeries const & t_Series);
+        CSeries(const CSeries & t_Series) = default;
         void addProperty(double t_x, double t_Value);
+        void setPropertyAtIndex(size_t index, double x, double value);
         void insertToBeginning(double t_x, double t_Value);
 
         // Create wavelength array with identical values over entire wavelength spectrum
-        void setConstantValues(const std::vector<double> & t_x, double const t_Value);
+        void setConstantValues(const std::vector<double> & t_x, double t_Value);
 
-        std::unique_ptr<CSeries> integrate(IntegrationType t_IntegrationType,
-                                           double normalizationCoefficient = 1) const;
-        CSeries interpolate(const std::vector<double> & t_Wavelengths) const;
+        [[nodiscard]] CSeries integrate(IntegrationType t_IntegrationType,
+                          double normalizationCoefficient = 1,
+                          const std::optional<std::vector<double>> & integrationPoints = std::nullopt) const;
+
+        [[nodiscard]] CSeries interpolate(const std::vector<double> & t_Wavelengths) const;
 
         //! \brief Multiplication of values in spectral properties that have same wavelength.
         //!
@@ -84,7 +75,8 @@ namespace FenestrationCommon
         CSeries operator+(const CSeries & other) const;
 
         // Return wavelength values for spectral properties.
-        std::vector<double> getXArray() const;
+        [[nodiscard]] std::vector<double> getXArray() const;
+        [[nodiscard]] std::vector<double> getYArray() const;
 
         // Sum of all properties between two x values. Default arguments mean all items are sum
         double sum(double minX = 0, double maxX = 0) const;
@@ -92,23 +84,25 @@ namespace FenestrationCommon
         // Sort series by x values in ascending order
         void sort();
 
-        std::vector<std::unique_ptr<ISeriesPoint>>::const_iterator begin() const;
-        std::vector<std::unique_ptr<ISeriesPoint>>::const_iterator end() const;
-        size_t size() const;
+        [[nodiscard]] std::vector<CSeriesPoint>::const_iterator begin() const;
+        [[nodiscard]] std::vector<CSeriesPoint>::const_iterator end() const;
+        [[nodiscard]] size_t size() const;
 
-        CSeries & operator=(CSeries const & t_Series);
-        ISeriesPoint & operator[](size_t Index) const;
+        CSeries & operator=(const CSeries & t_Series) = default;
+        const CSeriesPoint & operator[](size_t Index) const;
 
         void clear();
 
         void cutExtraData(double minWavelength, double maxWavelength);
 
     private:
-        ISeriesPoint * findLower(double t_x) const;
-        ISeriesPoint * findUpper(double t_x) const;
-        static double interpolate(ISeriesPoint * t_Lower, ISeriesPoint * t_Upper, double t_x);
+        [[nodiscard]] std::optional<CSeriesPoint> findLower(double t_x) const;
+        [[nodiscard]] std::optional<CSeriesPoint> findUpper(double t_x) const;
+        static double interpolate(const CSeriesPoint & t_Lower,
+                                  const CSeriesPoint & t_Upper,
+                                  const double t_Wavelength);
 
-        std::vector<std::unique_ptr<ISeriesPoint>> m_Series;
+        std::vector<CSeriesPoint> m_Series;
     };
 
     CSeries operator-(const double val, const CSeries & other);

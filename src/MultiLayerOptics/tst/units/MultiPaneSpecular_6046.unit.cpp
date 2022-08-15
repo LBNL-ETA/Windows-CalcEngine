@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-class EquivalentSpecularLayer_6046 : public testing::Test
+class MultiPaneSpecular_6046 : public testing::Test
 {
 private:
     std::shared_ptr<CMultiPaneSpecular> m_Layer;
@@ -110,30 +110,27 @@ private:
 protected:
     virtual void SetUp()
     {
-        const auto aSolarRadiation = loadSolarRadiationFile();
-
-        // Wavelength data set according to NFRC 2003 standard is from solar radiation file
-        const auto wl = aSolarRadiation.getXArray();
-
         double thickness = 5.66e-3;   // [m]
-        const auto aMaterial_6046 = Material::nBandMaterial(
-          loadSampleData_NFRC_6046(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
-
-        aMaterial_6046->setBandWavelengths(wl);
+        const auto aMaterial_6046 =
+          Material::nBandMaterial(loadSampleData_NFRC_6046(), thickness, MaterialType::Monolithic);
 
         const auto layer102 = SpecularLayer::createLayer(aMaterial_6046);
 
-        m_Layer = CMultiPaneSpecular::create({layer102}, loadSolarRadiationFile());
+        m_Layer = CMultiPaneSpecular::create({layer102});
+
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
-    std::shared_ptr<CMultiPaneSpecular> getLayer() const
+    [[nodiscard]] std::shared_ptr<CMultiPaneSpecular> getLayer() const
     {
         return m_Layer;
     };
 };
 
-TEST_F(EquivalentSpecularLayer_6046, TestAngle0)
+TEST_F(MultiPaneSpecular_6046, TestAngle0)
 {
     SCOPED_TRACE("Begin Test: Specular MultiLayerOptics layer - angle = 0 deg.");
 
@@ -141,61 +138,67 @@ TEST_F(EquivalentSpecularLayer_6046, TestAngle0)
 
     CMultiPaneSpecular aLayer = *getLayer();
 
+    const double minLambda = 0.3;
+    const double maxLambda = 2.5;
+
     const double T =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.383209, T, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.38299706431771591, T, 1e-6);
 
     const double Rf =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.285971, Rf, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.28616972912819455, Rf, 1e-6);
 
     const double Rb =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.449239, Rb, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.44953481057588385, Rb, 1e-6);
 
     const double Abs1 =
-      aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.330818, Abs1, 1e-6);
+      aLayer.getAbsorptanceLayer(minLambda, maxLambda, 1, Side::Front, ScatteringSimple::Direct, angle, 0);
+    EXPECT_NEAR(0.33083320655408976, Abs1, 1e-6);
 
     const double Them =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.349505, Them, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+    EXPECT_NEAR(0.34930792564766677, Them, 1e-6);
 
     const double Rfhem =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.303384, Rfhem, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+    EXPECT_NEAR(0.30355611406159649, Rfhem, 1e-6);
 
     const double Rbhem =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.458336, Rbhem, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
+    EXPECT_NEAR(0.45861965268430771, Rbhem, 1e-6);
 }
 
-TEST_F(EquivalentSpecularLayer_6046, TestAngle10)
+TEST_F(MultiPaneSpecular_6046, TestAngle10)
 {
     SCOPED_TRACE("Begin Test: Specular MultiLayerOptics layer - angle = 10 deg.");
 
     const double angle = 10;
 
+    const double minLambda = 0.3;
+    const double maxLambda = 2.5;
+
     CMultiPaneSpecular aLayer = *getLayer();
 
     const double T =
-      aLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.382717, T, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.38250500788015518, T, 1e-6);
 
     const double Rf =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.285927, Rf, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.28612567799481614, Rf, 1e-6);
 
     const double Rb =
-      aLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.449203, Rb, 1e-6);
+      aLayer.getPropertySimple(minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
+    EXPECT_NEAR(0.44949838906463818, Rb, 1e-6);
 
     const double Abs1 =
-      aLayer.getAbsorptanceLayer(1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.331354, Abs1, 1e-6);
+      aLayer.getAbsorptanceLayer(minLambda, maxLambda, 1, Side::Front, ScatteringSimple::Direct, angle, 0);
+    EXPECT_NEAR(0.33136931412502829, Abs1, 1e-6);
 }
 
-TEST_F(EquivalentSpecularLayer_6046, TestAngleHemispherical10)
+TEST_F(MultiPaneSpecular_6046, TestAngleHemispherical10)
 {
     SCOPED_TRACE("Begin Test: Hemispherical to hemispherical with ten integration points.");
 
@@ -207,20 +210,20 @@ TEST_F(EquivalentSpecularLayer_6046, TestAngleHemispherical10)
 
     double Tfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::T, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.349505, Tfhem, 1e-6);
+    EXPECT_NEAR(0.34930792564766677, Tfhem, 1e-6);
 
     double Tbhem =
       aLayer.getHemisphericalProperty(Side::Back, Property::T, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.349505, Tbhem, 1e-6);
+    EXPECT_NEAR(0.34930792564766677, Tbhem, 1e-6);
 
     double Rfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::R, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.303384, Rfhem, 1e-6);
+    EXPECT_NEAR(0.30355611406159649, Rfhem, 1e-6);
 
     double Rbhem =
       aLayer.getHemisphericalProperty(Side::Back, Property::R, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.458336, Rbhem, 1e-6);
+    EXPECT_NEAR(0.45861965268430771, Rbhem, 1e-6);
 
     double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.336936, Abs1, 1e-6);
+    EXPECT_NEAR(0.33696136589897857, Abs1, 1e-6);
 }

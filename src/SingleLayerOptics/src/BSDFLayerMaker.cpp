@@ -23,7 +23,7 @@ namespace SingleLayerOptics
 {
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                        const CBSDFHemisphere & t_BSDF)
+                                        const BSDFHemisphere & t_BSDF)
     {
         auto aDescription = std::make_shared<CSpecularCellDescription>();
         auto aCell = std::make_shared<CSpecularCell>(t_Material, aDescription);
@@ -32,7 +32,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getPhotovoltaicSpecularLayer(
         const std::shared_ptr<CMaterial> & t_Material,
-        const CBSDFHemisphere & t_BSDF,
+        const BSDFHemisphere & t_BSDF,
         PVPowerPropertiesTable powerTable)
     {
         auto aDecription{std::make_shared<CSpecularCellDescription>()};
@@ -45,7 +45,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getCircularPerforatedLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                                  const CBSDFHemisphere & t_BSDF,
+                                                  const BSDFHemisphere & t_BSDF,
                                                   double x,
                                                   double y,
                                                   double thickness,
@@ -60,7 +60,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getRectangularPerforatedLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                                     const CBSDFHemisphere & t_BSDF,
+                                                     const BSDFHemisphere & t_BSDF,
                                                      double x,
                                                      double y,
                                                      double thickness,
@@ -76,7 +76,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                        const CBSDFHemisphere & t_BSDF,
+                                        const BSDFHemisphere & t_BSDF,
                                         double slatWidth,
                                         double slatSpacing,
                                         double slatTiltAngle,
@@ -109,7 +109,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getPerfectlyDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                                const CBSDFHemisphere & t_BSDF)
+                                                const BSDFHemisphere & t_BSDF)
     {
         auto aDescription = std::make_shared<CFlatCellDescription>();
         auto aCell = std::make_shared<CUniformDiffuseCell>(t_Material, aDescription);
@@ -118,7 +118,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getDirectionalDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                                  const CBSDFHemisphere & t_BSDF)
+                                                  const BSDFHemisphere & t_BSDF)
     {
         auto aDescription = std::make_shared<CFlatCellDescription>();
         auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, aDescription);
@@ -127,7 +127,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getPreLoadedBSDFLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                             const CBSDFHemisphere & t_BSDF)
+                                             const BSDFHemisphere & t_BSDF)
     {
         auto aDescription = std::make_shared<CFlatCellDescription>();
         auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, aDescription);
@@ -136,7 +136,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getWovenLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                     const CBSDFHemisphere & t_BSDF,
+                                     const BSDFHemisphere & t_BSDF,
                                      double diameter,
                                      double spacing)
     {
@@ -146,7 +146,7 @@ namespace SingleLayerOptics
     }
 
     CBSDFLayerMaker::CBSDFLayerMaker(const std::shared_ptr<CMaterial> & t_Material,
-                                     const CBSDFHemisphere & t_BSDF,
+                                     const BSDFHemisphere & t_BSDF,
                                      std::shared_ptr<ICellDescription> t_Description,
                                      const DistributionMethod t_Method) :
         m_Cell(nullptr)

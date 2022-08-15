@@ -83,6 +83,14 @@ namespace FenestrationCommon
         IR
     };
 
+    struct Limits
+    {
+        Limits(double min, double max) : min(min), max(max)
+        {}
+        double min;
+        double max;
+    };
+
     class EnumWavelengthRange : public Enum<WavelengthRange>
     {};
 

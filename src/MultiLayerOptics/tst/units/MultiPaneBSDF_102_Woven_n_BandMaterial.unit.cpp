@@ -19,7 +19,7 @@ class MultiPaneBSDF_102_Woven_n_BandMaterial : public testing::Test
 private:
     std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
-    CSeries loadSolarRadiationFile()
+    static CSeries loadSolarRadiationFile()
     {
         // Full ASTM E891-87 Table 1 (Solar radiation)
         CSeries aSolarRadiation(
@@ -275,84 +275,83 @@ protected:
     virtual void SetUp()
     {
         const auto solarRadiation{loadSolarRadiationFile()};
-        const auto commonWavelengths{solarRadiation.getXArray()};
 
         auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        const auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
-        aMaterial_102->setBandWavelengths(commonWavelengths);
-
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Woven material
         thickness = 0.1;   // [m]
-        auto aWovenMaterial = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_31100(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
-
-        aWovenMaterial->setBandWavelengths(commonWavelengths);
+        const auto aWovenMaterial = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_31100(), thickness, MaterialType::Monolithic);
 
         // make cell geometry
-        const auto diameter = 0.001;   // m
-        const auto spacing = 0.002;    // m
+        constexpr auto diameter = 0.001;   // m
+        constexpr auto spacing = 0.002;    // m
 
         // Perforated layer is created here
         auto LayerWoven = CBSDFLayerMaker::getWovenLayer(aWovenMaterial, aBSDF, diameter, spacing);
 
-        m_Layer = CMultiPaneBSDF::create({LayerWoven, Layer_102}, loadSolarRadiationFile());
+        m_Layer = CMultiPaneBSDF::create({LayerWoven, Layer_102});
+
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
-    CMultiPaneBSDF & getLayer() const
+    [[nodiscard]] CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
-    };
+    }
 };
 
 TEST_F(MultiPaneBSDF_102_Woven_n_BandMaterial, TestWovenShade)
 {
     SCOPED_TRACE("Begin Test: Woven shade - BSDF n-band material.");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiPaneBSDF & aLayer = getLayer();
 
     const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.13484889575042058, tauDiff, 1e-6);
+    EXPECT_NEAR(0.13484825298678549, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.5661722609648232, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.56618660131592768, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.28265135446851702, absDiff1, 1e-6);
+    EXPECT_NEAR(0.28263551018831601, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.016327488816241579, absDiff2, 1e-6);
+    EXPECT_NEAR(0.016329675082156797, absDiff2, 1e-6);
 
-    const double theta = 0;
-    const double phi = 0;
+    constexpr double theta = 0;
+    constexpr double phi = 0;
 
     const double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.2210247634178821, tauHem, 1e-6);
+    EXPECT_NEAR(0.22102289948987869, tauHem, 1e-6);
 
     const double tauDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.20880579937979679, tauDir, 1e-6);
+    EXPECT_NEAR(0.20880416888774572, tauDir, 1e-6);
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.51171129367143786, rhoHem, 1e-6);
+    EXPECT_NEAR(0.51172408586557705, rhoHem, 1e-6);
 
     const double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
     EXPECT_NEAR(0.017084421624025157, rhoDir, 1e-6);
 
     const double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.24287076469501989, abs1, 1e-6);
+    EXPECT_NEAR(0.24285700879406391, abs1, 1e-6);
 
     const double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.024393178215660453, abs2, 1e-6);
+    EXPECT_NEAR(0.024396023333432437, abs2, 1e-6);
 }

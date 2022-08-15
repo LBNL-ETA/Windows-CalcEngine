@@ -13,6 +13,8 @@ namespace FenestrationCommon
         explicit SquareMatrix(const std::vector<std::vector<double>> & tInput);
         explicit SquareMatrix(const std::vector<std::vector<double>> && tInput);
 
+        SquareMatrix & operator=(const SquareMatrix & val) = default;
+
         std::size_t size() const;
         void setZeros();
         void setIdentity();

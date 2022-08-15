@@ -119,8 +119,8 @@ protected:
         const auto aMeasurements = loadSampleData_NFRC_102();
 
         const auto thickness = 3.048e-3;   // [m]
-        const auto aMaterial = Material::nBandMaterial(
-          aMeasurements, thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+        const auto aMaterial =
+          Material::nBandMaterial(aMeasurements, thickness, MaterialType::Monolithic);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
         CSeries solarRadiation{loadSolarRadiationFile()};

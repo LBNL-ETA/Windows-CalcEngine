@@ -2,38 +2,43 @@
 #include <cmath>
 #include <cassert>
 #include <stdexcept>
+#ifdef STL_MULTITHREADING
+#    include <execution>
+#else
+# include <mutex>
+#endif
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
-using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths,
-                                               const std::shared_ptr<CBSDFLayer> & t_Layer) :
-        m_Lambda(t_Layer->getResults()->lambdaMatrix()),
+    CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
         m_CombinedLayerWavelengths(t_CommonWavelengths),
         m_Calculated(false)
+    {}
+
+    CEquivalentBSDFLayer::CEquivalentBSDFLayer(
+      std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> t_Layer,
+      const std::optional<std::vector<double>> & matrixWavelengths) :
+        m_Layer(std::move(t_Layer)),
+        m_Lambda(m_Layer[0]->getResults().lambdaMatrix()),
+        m_CombinedLayerWavelengths(matrixWavelengths.has_value()
+                                     ? matrixWavelengths.value()
+                                     : unionOfLayerWavelengths(m_Layer)),
+        m_Calculated(false)
     {
-        if(t_Layer == nullptr)
+        for(const auto & layer : m_Layer)
         {
-            throw std::runtime_error("Equivalent BSDF Layer must contain valid layer.");
+            layer->setBandWavelengths(m_CombinedLayerWavelengths);
         }
-
-        addLayer(t_Layer);
     }
 
-    void CEquivalentBSDFLayer::addLayer(const std::shared_ptr<CBSDFLayer> & t_Layer)
-    {
-        updateWavelengthLayers(*t_Layer);
-        m_Layer.push_back(t_Layer);
-    }
-
-    const CBSDFDirections & CEquivalentBSDFLayer::getDirections(const BSDFDirection t_Side) const
+    const SingleLayerOptics::BSDFDirections &
+      CEquivalentBSDFLayer::getDirections(const SingleLayerOptics::BSDFDirection t_Side) const
     {
         return m_Layer[0]->getDirections(t_Side);
     }
@@ -53,7 +58,7 @@ namespace MultiLayerOptics
         return m_CombinedLayerWavelengths.back();
     }
 
-    std::shared_ptr<CMatrixSeries> CEquivalentBSDFLayer::getTotalA(const Side t_Side)
+    CMatrixSeries CEquivalentBSDFLayer::getTotalA(const Side t_Side)
     {
         if(!m_Calculated)
         {
@@ -62,7 +67,7 @@ namespace MultiLayerOptics
         return m_TotA.at(t_Side);
     }
 
-    std::shared_ptr<CMatrixSeries> CEquivalentBSDFLayer::getTotalJSC(Side t_Side)
+    CMatrixSeries CEquivalentBSDFLayer::getTotalJSC(Side t_Side)
     {
         if(!m_Calculated)
         {
@@ -71,29 +76,26 @@ namespace MultiLayerOptics
         return m_TotJSC.at(t_Side);
     }
 
-    std::shared_ptr<CMatrixSeries> CEquivalentBSDFLayer::getTotal(const Side t_Side,
-                                                                  const PropertySimple t_Property)
+    CMatrixSeries CEquivalentBSDFLayer::getTotal(const Side t_Side, const PropertySimple t_Property)
     {
         if(!m_Calculated)
         {
             calculate();
         }
-        return m_Tot.at(std::make_pair(t_Side, t_Property));
+        return m_Tot.at({t_Side, t_Property});
     }
 
     void CEquivalentBSDFLayer::setSolarRadiation(CSeries & t_SolarRadiation)
     {
         // Need to recreate wavelenght by wavelength layers
-        m_LayersWL.clear();
         for(auto & aLayer : m_Layer)
         {
             aLayer->setSourceData(t_SolarRadiation);
-            updateWavelengthLayers(*aLayer);
         }
         m_Calculated = false;
     }
 
-    std::vector<std::shared_ptr<CBSDFLayer>> & CEquivalentBSDFLayer::getLayers()
+    std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & CEquivalentBSDFLayer::getLayers()
     {
         return m_Layer;
     }
@@ -103,83 +105,119 @@ namespace MultiLayerOptics
         return m_Layer.size();
     }
 
+    void CEquivalentBSDFLayer::setMatrixLayerWavelengths(const std::vector<double> & wavelenghts)
+    {
+        m_CombinedLayerWavelengths = wavelenghts;
+        for(const auto & layer : m_Layer)
+        {
+            layer->setBandWavelengths(wavelenghts);
+        }
+    }
+
     void CEquivalentBSDFLayer::calculate()
     {
-        size_t matrixSize = m_Lambda.size();
-        size_t numberOfLayers = m_LayersWL[0].getNumberOfLayers();
+        const size_t matrixSize = m_Lambda.size();
+        const size_t numberOfLayers = m_Layer.size();
+        const size_t seriesSize = m_CombinedLayerWavelengths.size();
 
         for(Side aSide : EnumSide())
         {
-            m_TotA[aSide] = std::make_shared<CMatrixSeries>(numberOfLayers, matrixSize);
-            m_TotJSC[aSide] = std::make_shared<CMatrixSeries>(numberOfLayers, matrixSize);
+            m_TotA[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
+            m_TotJSC[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
             for(PropertySimple aProperty : EnumPropertySimple())
             {
-                m_Tot[std::make_pair(aSide, aProperty)] =
-                  std::make_shared<CMatrixSeries>(matrixSize, matrixSize);
+                m_Tot[{aSide, aProperty}] = CMatrixSeries(matrixSize, matrixSize, seriesSize);
             }
         }
 
-        // Calculate total transmitted solar per matrix and perform integration over each wavelength
-        const auto WLsize{m_CombinedLayerWavelengths.size()};
-
-        calculateWavelengthProperties(numberOfLayers, 0, WLsize);
+        calculateWavelengthByWavelengthProperties();
 
         m_Calculated = true;
     }
 
-    void CEquivalentBSDFLayer::calculateWavelengthProperties(size_t const t_NumOfLayers,
-                                                             size_t const t_Start,
-                                                             size_t const t_End)
+    void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
-        for(auto i = t_Start; i < t_End; ++i)
+        std::vector<size_t> wavelengthIndexes;
+        for(size_t i = 0; i < m_CombinedLayerWavelengths.size(); ++i)
         {
-            const auto curWL = m_CombinedLayerWavelengths[i];
-
-            for(auto aSide : EnumSide())
-            {
-                for(size_t k = 0; k < t_NumOfLayers; ++k)
-                {
-                    m_TotA.at(aSide)->addProperties(
-                      k, curWL, m_LayersWL[i].getLayerAbsorptances(k + 1, aSide));
-                    m_TotJSC.at(aSide)->addProperties(
-                      k, curWL, m_LayersWL[i].getLayerJSC(k + 1, aSide));
-                }
-                for(auto aProperty : EnumPropertySimple())
-                {
-                    auto curPropertyMatrix = m_LayersWL[i].getProperty(aSide, aProperty);
-                    m_Tot.at(std::make_pair(aSide, aProperty))
-                      ->addProperties(curWL, curPropertyMatrix);
-                }
-            }
+            wavelengthIndexes.push_back(i);
         }
+
+        std::mutex absorptanceMutex;
+        std::mutex jscMutex;
+        std::mutex totMutex;
+
+#ifdef STL_MULTITHREADING
+        std::for_each(std::execution::par,
+#else
+        std::for_each(
+#endif
+                      wavelengthIndexes.begin(),
+                      wavelengthIndexes.end(),
+                      [&](const size_t & index) {
+                          // for(size_t i = 0u; i < m_CombinedLayerWavelengths.size(); ++i)
+                          auto layer{getEquivalentLayerAtWavelength(index)};
+                          for(auto aSide : EnumSide())
+                          {
+                              const auto numberOfLayers{m_Layer.size()};
+                              for(size_t layerNumber = 0; layerNumber < numberOfLayers;
+                                  ++layerNumber)
+                              {
+                                  auto totA{layer.getLayerAbsorptances(layerNumber + 1, aSide)};
+                                  
+                                  std::lock_guard<std::mutex> lock_abs(absorptanceMutex);
+                                  m_TotA.at(aSide).setPropertiesAtIndex(index,
+                                    layerNumber, m_CombinedLayerWavelengths[index], totA);
+                                  
+                                  auto totJSC{layer.getLayerJSC(layerNumber + 1, aSide)};
+                                  std::lock_guard<std::mutex> lock_jsc(jscMutex);
+                                  m_TotJSC.at(aSide).setPropertiesAtIndex(index,
+                                    layerNumber, m_CombinedLayerWavelengths[index], totJSC);
+                              }
+                              for(auto aProperty : EnumPropertySimple())
+                              {
+                                  auto tot{layer.getProperty(aSide, aProperty)};
+
+                                  std::lock_guard<std::mutex> lock_tot(totMutex);
+                                  m_Tot.at({aSide, aProperty})
+                                    .setPropertiesAtIndex(index, m_CombinedLayerWavelengths[index], tot);
+                              }
+                          }
+                      });
+    };
+
+    CEquivalentBSDFLayerSingleBand
+      CEquivalentBSDFLayer::getEquivalentLayerAtWavelength(size_t wavelengthIndex) const
+    {
+        auto jscPrimeFront{m_Layer[0]->jscPrime(Side::Front, m_CombinedLayerWavelengths)};
+        auto jscPrimeBack{m_Layer[0]->jscPrime(Side::Back, m_CombinedLayerWavelengths)};
+        auto layerWLResults{m_Layer[0]->getResultsAtWavelength(wavelengthIndex)};
+        
+
+        CEquivalentBSDFLayerSingleBand result{
+          layerWLResults, jscPrimeFront[wavelengthIndex], jscPrimeBack[wavelengthIndex]};
+
+        for(size_t i = 1u; i < m_Layer.size(); ++i)
+        {
+            jscPrimeFront = m_Layer[i]->jscPrime(Side::Front, m_CombinedLayerWavelengths);
+            jscPrimeBack = m_Layer[i]->jscPrime(Side::Back, m_CombinedLayerWavelengths);
+            result.addLayer(m_Layer[i]->getResultsAtWavelength(wavelengthIndex),
+                            jscPrimeFront[wavelengthIndex],
+                            jscPrimeBack[wavelengthIndex]);
+        }
+
+        return result;
     }
 
-    void CEquivalentBSDFLayer::updateWavelengthLayers(CBSDFLayer & t_Layer)
+    std::vector<double> CEquivalentBSDFLayer::unionOfLayerWavelengths(
+      const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer)
     {
-        const auto aResults = t_Layer.getWavelengthResults();
-        const auto size = m_CombinedLayerWavelengths.size();
-
-        auto jscPrimeFront{t_Layer.jscPrime(Side::Front, m_CombinedLayerWavelengths)};
-        const auto jscPrimeBack{t_Layer.jscPrime(Side::Back, m_CombinedLayerWavelengths)};
-
-        for(size_t i = 0; i < size; ++i)
+        CCommonWavelengths wl;
+        for(const auto & layer : t_Layer)
         {
-            const auto curWL = m_CombinedLayerWavelengths[i];
-            const auto index = t_Layer.getBandIndex(curWL);
-            assert(index > -1);
-
-            const std::shared_ptr<CBSDFIntegrator> currentLayer =
-              (*aResults)[static_cast<size_t>(index)];
-
-            if(m_LayersWL.size() <= i)
-            {
-                m_LayersWL.emplace_back(currentLayer, jscPrimeFront[i], jscPrimeBack[i]);
-            }
-            else
-            {
-                m_LayersWL[i].addLayer(currentLayer, jscPrimeFront[i], jscPrimeBack[i]);
-            }
+            wl.addWavelength(layer->getBandWavelengths());
         }
-    }
 
+        return wl.getCombinedWavelengths(Combine::Interpolate);
+    }
 }   // namespace MultiLayerOptics

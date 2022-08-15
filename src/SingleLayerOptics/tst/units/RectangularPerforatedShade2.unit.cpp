@@ -20,10 +20,7 @@ protected:
         const auto Tmat = 0.1;
         const auto Rfmat = 0.5;
         const auto Rbmat = 0.6;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto x = 20.0;          // mm
@@ -32,7 +29,7 @@ protected:
         const auto xHole = 5.0;       // mm
         const auto yHole = 8.0;       // mm
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         m_Shade = CBSDFLayerMaker::getRectangularPerforatedLayer(
           aMaterial, aBSDF, x, y, thickness, xHole, yHole);
@@ -51,18 +48,18 @@ TEST_F(TestRectangularPerforatedShade2, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.112843786, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.492864523, RfDiff, 1e-6);
 
-    const double RbDiff = aResults->DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
     EXPECT_NEAR(0.591437306, RbDiff, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     const size_t size = aT.size();
 
@@ -109,7 +106,7 @@ TEST_F(TestRectangularPerforatedShade2, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.146423, 0.152214, 0.152254, 0.150042, 0.152254, 0.152214, 0.152254,
                       0.150042, 0.152254, 0.159155, 0.158120, 0.156343, 0.154517, 0.156343,

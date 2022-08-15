@@ -36,12 +36,12 @@ matrix:
     # XCode 9.1
     - env: COMPILER=clang++ BUILD_TYPE=Debug GSL_CXX_STANDARD=11
       os: osx
-      osx_image: xcode9.1
+      osx_image: xcode13.4
       compiler: clang
 
     - env: COMPILER=clang++ BUILD_TYPE=Release GSL_CXX_STANDARD=11
       os: osx
-      osx_image: xcode9.1
+      osx_image: xcode13.4
       compiler: clang
 
     ##########################################################################

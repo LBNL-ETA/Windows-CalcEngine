@@ -1,17 +1,11 @@
-#ifndef EQUIVALENTBSDFLAYERSINGLEBAND_H
-#define EQUIVALENTBSDFLAYERSINGLEBAND_H
+#pragma once
 
 #include <memory>
 #include <vector>
 #include <map>
 
 #include "WCECommon.hpp"
-#include "../../SingleLayerOptics/src/BSDFIntegrator.hpp"
-
-namespace SingleLayerOptics
-{
-    class CBSDFIntegrator;
-}
+#include "WCESingleLayerOptics.hpp"
 
 namespace MultiLayerOptics
 {
@@ -28,10 +22,10 @@ namespace MultiLayerOptics
     class CBSDFDoubleLayer
     {
     public:
-        CBSDFDoubleLayer(const SingleLayerOptics::CBSDFIntegrator & t_FrontLayer,
-                         const SingleLayerOptics::CBSDFIntegrator & t_BackLayer);
+        CBSDFDoubleLayer(const SingleLayerOptics::BSDFIntegrator & t_FrontLayer,
+                         const SingleLayerOptics::BSDFIntegrator & t_BackLayer);
 
-        [[nodiscard]] std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> value() const;
+        [[nodiscard]] SingleLayerOptics::BSDFIntegrator value() const;
 
     private:
         static FenestrationCommon::SquareMatrix
@@ -48,7 +42,7 @@ namespace MultiLayerOptics
                       const FenestrationCommon::SquareMatrix & t_InterRefl,
                       const FenestrationCommon::SquareMatrix & t_Lambda);
 
-        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_Results;
+        SingleLayerOptics::BSDFIntegrator m_Results;
 
         FenestrationCommon::SquareMatrix m_Tf;
         FenestrationCommon::SquareMatrix m_Tb;
@@ -60,16 +54,14 @@ namespace MultiLayerOptics
     class CEquivalentBSDFLayerSingleBand
     {
     public:
+        CEquivalentBSDFLayerSingleBand() = default;
         explicit CEquivalentBSDFLayerSingleBand(
-          const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+          const SingleLayerOptics::BSDFIntegrator & t_Layer,
           const std::vector<double> & jscPrimeFront = std::vector<double>(),
           const std::vector<double> & jscPrimeBack = std::vector<double>());
-        void addLayer(const std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> & t_Layer,
+        void addLayer(const SingleLayerOptics::BSDFIntegrator & t_Layer,
                       const std::vector<double> & jcsFront = std::vector<double>(),
                       const std::vector<double> & jcsBack = std::vector<double>());
-        void BuildForwardAndBackwardLayers(size_t numberOfLayers);
-        void CreateIplusAndIminusValues(size_t numberOfLayers, size_t matrixSize);
-        void CalculateLayerAbsorptances(size_t numberOfLayers);
 
         FenestrationCommon::SquareMatrix getMatrix(FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySimple t_Property);
@@ -83,6 +75,15 @@ namespace MultiLayerOptics
         [[nodiscard]] size_t getNumberOfLayers() const;
 
     private:
+        // Forward and backward layers are used for calculation of equivalent absorptances
+        struct AbsorptanceLayers
+        {
+            std::vector<SingleLayerOptics::BSDFIntegrator> Forward;
+            std::vector<SingleLayerOptics::BSDFIntegrator> Backward;
+        };
+
+        AbsorptanceLayers BuildForwardAndBackwardLayers(size_t numberOfLayers);
+
         void calcEquivalentProperties();
 
         [[nodiscard]] FenestrationCommon::SquareMatrix
@@ -94,23 +95,30 @@ namespace MultiLayerOptics
                     const FenestrationCommon::SquareMatrix & t_R,
                     const FenestrationCommon::SquareMatrix & t_T) const;
 
-        std::shared_ptr<SingleLayerOptics::CBSDFIntegrator> m_EquivalentLayer;
-        std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Layers;
+        SingleLayerOptics::BSDFIntegrator m_EquivalentLayer;
+        std::vector<SingleLayerOptics::BSDFIntegrator> m_Layers;
 
-        // Forward and backward layers are used for calculation of equivalent absorptances
-        std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Forward;
-        std::vector<std::shared_ptr<SingleLayerOptics::CBSDFIntegrator>> m_Backward;
+        struct IrradiationMatrices
+        {
+            // Equations for absorptance calculations are described in "Klems-Matrix Layer
+            // Calculations" document. Two equations (3.7a) and (3.7b) are used to calculate front
+            // and back absorptances. In to process of calculation incoming and outgoing rays are
+            // calculated and stored into this map. Iminus and Iplus are stored in a way that
+            // Iminus[EnergyFlow::Forward][i] and Iplus[EnergyFlow::Backward][i] are representing
+            // front and back incoming irradinace at the layer on the position "i"
+            std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
+              Iminus;
+            std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
+              Iplus;
+        };
 
-        // Equations for absorptance calculations are described in "Klems-Matrix Layer Calculations"
-        // document. Two equations (3.7a) and (3.7b) are used to calculate front and back
-        // absorptances. In to process of calculation incoming and outgoing rays are calculated and
-        // stored into this map. Iminus and Iplus are stored in a way that
-        // Iminus[EnergyFlow::Forward][i] and Iplus[EnergyFlow::Backward][i] are representing front
-        // and back incoming irradinace at the layer on the position "i"
-        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
-          m_Iminus;
-        std::map<FenestrationCommon::EnergyFlow, std::vector<FenestrationCommon::SquareMatrix>>
-          m_Iplus;
+        IrradiationMatrices CreateIplusAndIminusValues(size_t numberOfLayers,
+                                                       size_t matrixSize,
+                                                       AbsorptanceLayers & absLayers);
+
+        void CalculateLayerAbsorptances(size_t numberOfLayers,
+                                        IrradiationMatrices irradiation);
+
 
         // Photovoltaic properties for every direction. Vector is scaled to incoming
         // irradiance set to one.
@@ -128,5 +136,3 @@ namespace MultiLayerOptics
     };
 
 }   // namespace MultiLayerOptics
-
-#endif

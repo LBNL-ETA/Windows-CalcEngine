@@ -11,11 +11,10 @@ namespace SingleLayerOptics
             throw std::runtime_error(
               "Error in definition of theta angles. Cannot form theta definitions.");
         }
-        m_ThetaLimits = std::make_shared<std::vector<double>>();
         createLimits(t_ThetaAngles);
     }
 
-    std::shared_ptr<std::vector<double>> CThetaLimits::getThetaLimits() const
+    std::vector<double> CThetaLimits::getThetaLimits() const
     {
         return m_ThetaLimits;
     }
@@ -24,7 +23,7 @@ namespace SingleLayerOptics
     {
         std::vector<double>::const_reverse_iterator it;
         double previousAngle = 90;
-        m_ThetaLimits->push_back(previousAngle);
+        m_ThetaLimits.push_back(previousAngle);
 
         for(it = t_ThetaAngles.rbegin(); it < t_ThetaAngles.rend(); ++it)
         {
@@ -35,7 +34,7 @@ namespace SingleLayerOptics
             {
                 limit = 0;
             }
-            m_ThetaLimits->insert(m_ThetaLimits->begin(), limit);
+            m_ThetaLimits.insert(m_ThetaLimits.begin(), limit);
             previousAngle = limit;
         }
     }

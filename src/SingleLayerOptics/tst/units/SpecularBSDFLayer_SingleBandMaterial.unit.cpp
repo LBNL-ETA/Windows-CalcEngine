@@ -58,14 +58,10 @@ protected:
         const auto Rfsol = 0.05;
         const auto Rbsol = 0.05;
 
-        const auto minLambda{0.3};
-        const auto maxLambda{2.5};
-
-        auto aMaterial{
-          Material::singleBandMaterial(Tsol, Tsol, Rfsol, Rbsol, minLambda, maxLambda)};
+        auto aMaterial{Material::singleBandMaterial(Tsol, Tsol, Rfsol, Rbsol)};
 
         // Define BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
@@ -84,15 +80,15 @@ TEST_F(TestSpecularBSDFLayer_SingleBandMaterial, SingleBandSpecular)
 {
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aLayer->getResults();
+    BSDFIntegrator aResults = aLayer->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.0, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.05, RfDiff, 1e-6);
 
-    const auto AbsFront{aResults->Abs(Side::Front)};
+    const auto AbsFront{aResults.Abs(Side::Front)};
     EXPECT_EQ(AbsFront.size(), 145u);
 
     const std::vector<double> correctAbs(145, 0.95);

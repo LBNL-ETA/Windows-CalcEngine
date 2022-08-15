@@ -21,7 +21,7 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        const auto aBSDF = CBSDFHemisphere::create(
+        const auto aBSDF = BSDFHemisphere::create(
           {{0, 1}, {15, 1}, {30, 1}, {45, 1}, {60, 1}, {75, 1}, {86.25, 1}});
 
         // Full ASTM E891-87 Table 1
@@ -112,10 +112,8 @@ protected:
 
         const auto thickness = 3.048e-3;   // [m]
         const MaterialType aType = MaterialType::Monolithic;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements_102, thickness, aType, minLambda, maxLambda);
+        const auto aMaterial =
+          SingleLayerOptics::Material::nBandMaterial(aMeasurements_102, thickness, aType);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);

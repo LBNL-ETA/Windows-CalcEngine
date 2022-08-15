@@ -2,6 +2,8 @@
 #include <cassert>
 #include <utility>
 
+#include <mutex>
+
 #include "MeasuredSampleData.hpp"
 #include "WCECommon.hpp"
 
@@ -99,6 +101,12 @@ namespace SpectralAveraging
         return m_Property.at(std::make_pair(Property::T, Side::Front)).getXArray();
     }
 
+    FenestrationCommon::Limits CSpectralSampleData::getWavelengthLimits() const
+    {
+        const auto wl{getWavelengths()};
+        return {wl[0], wl[wl.size() - 1]};
+    }
+
     // Interpolate current sample data to new wavelengths set
     void CSpectralSampleData::interpolate(std::vector<double> const & t_Wavelengths)
     {
@@ -119,6 +127,7 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::calculateProperties()
     {
+
         if(!m_absCalculated)
         {
             m_Property.at(std::make_pair(Property::Abs, Side::Front)).clear();

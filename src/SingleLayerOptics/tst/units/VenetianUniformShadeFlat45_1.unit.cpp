@@ -20,10 +20,7 @@ protected:
         const auto Tmat = 0.1;
         const auto Rfmat = 0.7;
         const auto Rbmat = 0.7;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto slatWidth = 0.010;     // m
@@ -33,7 +30,7 @@ protected:
         const size_t numOfSlatSegments = 1;
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,
@@ -60,15 +57,15 @@ TEST_F(TestVenetianUniformShadeFlat45_1, TestVenetian1)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    auto aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.47624006362615717, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.33488359240717491, RfDiff, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size_t size = aT.size();
@@ -123,7 +120,7 @@ TEST_F(TestVenetianUniformShadeFlat45_1, TestVenetian1)
     }
 
     // Front reflectance
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     correctResults.clear();
 
@@ -176,7 +173,7 @@ TEST_F(TestVenetianUniformShadeFlat45_1, TestVenetian1)
     }
 
     // Back transmittance
-    auto aTb = aResults->getMatrix(Side::Back, PropertySimple::T);
+    auto aTb = aResults.getMatrix(Side::Back, PropertySimple::T);
 
     correctResults.clear();
 
@@ -229,7 +226,7 @@ TEST_F(TestVenetianUniformShadeFlat45_1, TestVenetian1)
     }
 
     // Back reflectance
-    auto aRb = aResults->getMatrix(Side::Back, PropertySimple::R);
+    auto aRb = aResults.getMatrix(Side::Back, PropertySimple::R);
 
     correctResults.clear();
 

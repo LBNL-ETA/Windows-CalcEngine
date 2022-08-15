@@ -5,7 +5,7 @@
 namespace SingleLayerOptics
 {
     PhotovoltaicSpecularBSDFLayer::PhotovoltaicSpecularBSDFLayer(
-      const std::shared_ptr<CSpecularCell> & t_Cell, const CBSDFHemisphere & t_Hemisphere) :
+      const std::shared_ptr<CSpecularCell> & t_Cell, const BSDFHemisphere & t_Hemisphere) :
         CSpecularBSDFLayer(t_Cell, t_Hemisphere)
     {
         const auto material(t_Cell->getMaterial());
@@ -36,7 +36,7 @@ namespace SingleLayerOptics
             for(size_t i = 0u; i < m_BSDFHemisphere.getDirections(BSDFDirection::Incoming).size();
                 ++i)
             {
-                curVal.push_back(jsc->value());
+                curVal.push_back(jsc.value());
             }
             result.push_back(curVal);
         }

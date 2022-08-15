@@ -2,10 +2,18 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <mutex>
+
 #include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
 #include "WCESpectralAveraging.hpp"
 #include "OpticalSurface.hpp"
+
+std::mutex materialWL;
+std::mutex baseMaterialMutex;
+std::mutex materialSampleWL;
+std::mutex dualBandMaterialMutexRatio;
+std::mutex dualBandMaterialMutexRadiation;
 
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
@@ -52,13 +60,10 @@ namespace SingleLayerOptics
         return modifiedValues;
     }
 
-    std::vector<std::shared_ptr<CMaterial>>
-      createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
-                     const std::shared_ptr<CMaterial> & t_FullRange,
-                     const double t_Fraction)
+    std::shared_ptr<CMaterial> createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
+                                              const std::shared_ptr<CMaterial> & t_FullRange,
+                                              const double t_Fraction)
     {
-        std::vector<std::shared_ptr<CMaterial>> materials;
-
         double Tf_nir = modifyProperty(t_PartialRange->getProperty(Property::T, Side::Front),
                                        t_FullRange->getProperty(Property::T, Side::Front),
                                        t_Fraction);
@@ -73,31 +78,14 @@ namespace SingleLayerOptics
                                        t_FullRange->getProperty(Property::R, Side::Back),
                                        t_Fraction);
 
-        double minRangeLambda = t_PartialRange->getMinLambda();
-
-        if(minRangeLambda > 0.32)
-        {
-            std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(
-              Tf_nir, Tb_nir, Rf_nir, Rb_nir, 0.32, minRangeLambda);
-            materials.push_back(aMaterial);
-        }
-
-        materials.push_back(t_PartialRange);
-
-        double maxRangeLambda = t_PartialRange->getMaxLambda();
-        std::shared_ptr<CMaterialSingleBand> aMaterial = std::make_shared<CMaterialSingleBand>(
-          Tf_nir, Tb_nir, Rf_nir, Rb_nir, maxRangeLambda, 2.5);
-        materials.push_back(aMaterial);
-        return materials;
+        return std::make_shared<CMaterialSingleBand>(Tf_nir, Tb_nir, Rf_nir, Rb_nir);
     }
 
-    std::vector<std::shared_ptr<CMaterial>>
+    std::shared_ptr<CMaterial>
       createNIRRange(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
                      const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
                      const double t_Fraction)
     {
-        std::vector<std::shared_ptr<CMaterial>> materials;
-
         auto Tf_nir = modifyProperties(t_PartialRange->getBSDFMatrix(Property::T, Side::Front),
                                        t_FullRange->getBSDFMatrix(Property::T, Side::Front),
                                        t_Fraction);
@@ -112,29 +100,8 @@ namespace SingleLayerOptics
                                        t_FullRange->getBSDFMatrix(Property::R, Side::Back),
                                        t_Fraction);
 
-        double minRangeLambda = t_PartialRange->getMinLambda();
-
-        if(minRangeLambda > 0.32)
-        {
-            std::shared_ptr<CMaterialSingleBandBSDF> aMaterial =
-              std::make_shared<CMaterialSingleBandBSDF>(Tf_nir,
-                                                        Tb_nir,
-                                                        Rf_nir,
-                                                        Rb_nir,
-                                                        t_PartialRange->getHemisphere(),
-                                                        0.32,
-                                                        minRangeLambda);
-            materials.push_back(aMaterial);
-        }
-
-        materials.push_back(t_PartialRange);
-
-        double maxRangeLambda = t_PartialRange->getMaxLambda();
-        std::shared_ptr<CMaterialSingleBandBSDF> aMaterial =
-          std::make_shared<CMaterialSingleBandBSDF>(
-            Tf_nir, Tb_nir, Rf_nir, Rb_nir, t_PartialRange->getHemisphere(), maxRangeLambda, 2.5);
-        materials.push_back(aMaterial);
-        return materials;
+        return std::make_shared<CMaterialSingleBandBSDF>(
+          Tf_nir, Tb_nir, Rf_nir, Rb_nir, t_PartialRange->getHemisphere());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -160,15 +127,14 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////
 
     CMaterial::CMaterial(const double minLambda, const double maxLambda) :
-        m_MinLambda(minLambda), m_MaxLambda(maxLambda), m_WavelengthsCalculated(false)
+        m_MinLambda(minLambda),
+        m_MaxLambda(maxLambda),
+        m_WavelengthsCalculated(false)
     {}
 
-    CMaterial::CMaterial(const WavelengthRange t_Range) : m_WavelengthsCalculated(false)
-    {
-        CWavelengthRange aRange = CWavelengthRange(t_Range);
-        m_MinLambda = aRange.minLambda();
-        m_MaxLambda = aRange.maxLambda();
-    }
+    CMaterial::CMaterial(FenestrationCommon::Limits wavelengthRange) :
+        CMaterial(wavelengthRange.min, wavelengthRange.max)
+    {}
 
     void CMaterial::setSourceData(CSeries &)
     {
@@ -219,9 +185,11 @@ namespace SingleLayerOptics
 
     std::vector<double> CMaterial::getBandWavelengths()
     {
+        std::lock_guard<std::mutex> lock(materialWL);
         if(!m_WavelengthsCalculated)
         {
             m_Wavelengths = calculateBandWavelengths();
+            m_WavelengthsCalculated = true;
         }
         return m_Wavelengths;
     }
@@ -239,8 +207,8 @@ namespace SingleLayerOptics
 
         for(const auto & w : wavelengths)
         {
-            if(w > (m_MinLambda - ConstantsData::floatErrorTolerance)
-               && (w < (m_MaxLambda + ConstantsData::floatErrorTolerance)))
+            if(w > (m_MinLambda - ConstantsData::wavelengthErrorTolerance)
+               && (w < (m_MaxLambda + ConstantsData::wavelengthErrorTolerance)))
             {
                 wl.push_back(w);
             }
@@ -251,6 +219,7 @@ namespace SingleLayerOptics
 
     void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths)
     {
+        std::lock_guard<std::mutex> lock(baseMaterialMutex);
         // Trimming is necessary in order to keep data within integration range
         m_Wavelengths = trimWavelengthToRange(wavelengths);
         m_WavelengthsCalculated = true;
@@ -298,24 +267,8 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
-    CMaterialSingleBand::CMaterialSingleBand(const double t_Tf,
-                                             const double t_Tb,
-                                             const double t_Rf,
-                                             const double t_Rb,
-                                             const double minLambda,
-                                             const double maxLambda) :
-        CMaterial(minLambda, maxLambda)
-    {
-        m_Property[Side::Front] = std::make_shared<CSurface>(t_Tf, t_Rf);
-        m_Property[Side::Back] = std::make_shared<CSurface>(t_Tb, t_Rb);
-    }
-
-    CMaterialSingleBand::CMaterialSingleBand(const double t_Tf,
-                                             const double t_Tb,
-                                             const double t_Rf,
-                                             const double t_Rb,
-                                             const WavelengthRange t_Range) :
-        CMaterial(t_Range)
+    CMaterialSingleBand::CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb) :
+        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
     {
         m_Property[Side::Front] = std::make_shared<CSurface>(t_Tf, t_Rf);
         m_Property[Side::Back] = std::make_shared<CSurface>(t_Tb, t_Rb);
@@ -341,54 +294,57 @@ namespace SingleLayerOptics
         return aResult;
     }
 
+    double CMaterialSingleBand::getBandProperty(FenestrationCommon::Property t_Property,
+                                                FenestrationCommon::Side t_Side,
+                                                size_t wavelengthIndex,
+                                                const CBeamDirection & t_IncomingDirection,
+                                                const CBeamDirection & t_OutgoingDirection) const
+    {
+        std::ignore = wavelengthIndex;
+        std::ignore = t_IncomingDirection;
+        std::ignore = t_OutgoingDirection;
+        return getProperty(t_Property, t_Side);
+    }
+
     std::vector<double> CMaterialSingleBand::calculateBandWavelengths()
     {
-        std::vector<double> aWavelengths;
-        aWavelengths.push_back(m_MinLambda);
-        aWavelengths.push_back(m_MaxLambda);
-        return aWavelengths;
+        return {m_MinLambda, m_MaxLambda};
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    ////   CMaterialDualBand
+    ////   IMaterialDualBand
     ////////////////////////////////////////////////////////////////////////////////////
 
-    IMaterialDualBand::IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                                         const std::shared_ptr<CMaterial> & t_FullRange,
+    IMaterialDualBand::IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
+                                         const std::shared_ptr<CMaterial> & solarRange,
                                          double t_Ratio) :
-        CMaterial(t_FullRange->getMinLambda(), t_FullRange->getMaxLambda()),
-        m_MaterialFullRange(t_FullRange),
-        m_MaterialPartialRange(t_PartialRange),
+        CMaterial(solarRange->getMinLambda(), solarRange->getMaxLambda()),
+        m_MaterialSolarRange(solarRange),
+        m_MaterialVisibleRange(visibleRange),
         m_RangeCreator(std::bind(&IMaterialDualBand::createRangesFromRatio, this, t_Ratio))
     {}
 
-    IMaterialDualBand::IMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                                         const std::shared_ptr<CMaterial> & t_FullRange,
+    IMaterialDualBand::IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
+                                         const std::shared_ptr<CMaterial> & solarRange,
                                          const FenestrationCommon::CSeries & t_SolarRadiation) :
-        CMaterial(t_FullRange->getMinLambda(), t_FullRange->getMaxLambda()),
-        m_MaterialFullRange(t_FullRange),
-        m_MaterialPartialRange(t_PartialRange),
+        CMaterial(solarRange->getMinLambda(), solarRange->getMaxLambda()),
+        m_MaterialSolarRange(solarRange),
+        m_MaterialVisibleRange(visibleRange),
         m_RangeCreator(
           std::bind(&IMaterialDualBand::createRangesFromSolarRadiation, this, t_SolarRadiation))
     {}
 
     void IMaterialDualBand::setSourceData(CSeries & t_SourceData)
     {
-        m_Materials.clear();
-        m_MaterialFullRange->setSourceData(t_SourceData);
-        m_MaterialPartialRange->setSourceData(t_SourceData);
-        checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
-        createUVRange();
-        //double lowLambda = m_MaterialPartialRange->getMinLambda();
-        //double highLambda = m_MaterialPartialRange->getMaxLambda();
-        //CNIRRatio nirRatio = CNIRRatio(t_SourceData, lowLambda, highLambda);
-        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
+        m_MaterialSolarRange->setSourceData(t_SourceData);
+        m_MaterialVisibleRange->setSourceData(t_SourceData);
+        createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, ConstantsData::NIRRatio);
     }
 
     void IMaterialDualBand::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
     {
-        m_MaterialFullRange->setDetectorData(t_DetectorData);
-        m_MaterialPartialRange->setDetectorData(t_DetectorData);
+        m_MaterialSolarRange->setDetectorData(t_DetectorData);
+        m_MaterialVisibleRange->setDetectorData(t_DetectorData);
     }
 
     double IMaterialDualBand::getProperty(Property t_Property,
@@ -396,7 +352,7 @@ namespace SingleLayerOptics
                                           const CBeamDirection & t_Incoming,
                                           const CBeamDirection & t_Outgoing) const
     {
-        return m_MaterialFullRange->getProperty(t_Property, t_Side, t_Incoming, t_Outgoing);
+        return m_MaterialSolarRange->getProperty(t_Property, t_Side, t_Incoming, t_Outgoing);
     }
 
     std::vector<double>
@@ -405,53 +361,39 @@ namespace SingleLayerOptics
                                            const CBeamDirection & t_Incoming,
                                            const CBeamDirection & t_Outgoing) const
     {
-        m_RangeCreator();
+        if(m_MaterialScaledRange == nullptr)
+        {
+            m_RangeCreator();
+        }
         std::vector<double> aResults;
 
         for(const auto wl : m_Wavelengths)
         {
-            aResults.emplace_back(getMaterialFromWavelegth(wl)->getProperty(
+            aResults.emplace_back(getMaterialFromWavelength(wl)->getProperty(
               t_Property, t_Side, t_Incoming, t_Outgoing));
         }
 
         return aResults;
     }
 
+    double IMaterialDualBand::getBandProperty(FenestrationCommon::Property t_Property,
+                                              FenestrationCommon::Side t_Side,
+                                              size_t wavelengthIndex,
+                                              const CBeamDirection & t_IncomingDirection,
+                                              const CBeamDirection & t_OutgoingDirection) const
+    {
+        if(m_MaterialScaledRange == nullptr)
+        {
+            m_RangeCreator();
+        }
+        return getMaterialFromWavelength(m_Wavelengths[wavelengthIndex])->getProperty(
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
+    }
+
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
     {
-        m_RangeCreator();
-        std::vector<double> aWavelengths;
-        size_t size = m_Materials.size();
-        for(size_t i = 0; i < size; ++i)
-        {
-            aWavelengths.push_back(m_Materials[i]->getMinLambda());
-        }
-
-        // aWavelengths.push_back(m_Materials.back()->getMaxLambda());
-
-        return aWavelengths;
-    }
-
-    void IMaterialDualBand::checkIfMaterialWithingSolarRange(const CMaterial & t_Material) const
-    {
-        const double lowLambda = t_Material.getMinLambda();
-        const double highLambda = t_Material.getMaxLambda();
-        if(lowLambda < 0.32 || highLambda < 0.32 || lowLambda > 2.5 || highLambda > 2.5)
-        {
-            throw std::runtime_error("Material properties out of range. Wavelength range must be "
-                                     "between 0.32 and 2.5 microns.");
-        }
-    }
-
-    void IMaterialDualBand::createUVRange()
-    {
-        double T = 0;
-        double R = 0;
-        double minLambda = 0.3;
-        double maxLambda = 0.32;
-        std::shared_ptr<CMaterial> aUVMaterial =
-          std::make_shared<CMaterialSingleBand>(T, T, R, R, minLambda, maxLambda);
-        m_Materials.push_back(aUVMaterial);
+        m_Wavelengths = {0.3, 0.38, 0.78 + ConstantsData::VisibleRangeOffset, 2.5};
+        return m_Wavelengths;
     }
 
     CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -470,80 +412,47 @@ namespace SingleLayerOptics
                                            const std::shared_ptr<CMaterial> & t_FullRange,
                                            const double t_Fraction)
     {
-        auto materials = SingleLayerOptics::createNIRRange(t_PartialRange, t_FullRange, t_Fraction);
-        for(auto & material : materials)
-        {
-            m_Materials.push_back(material);
-        }
+        m_MaterialScaledRange =
+          SingleLayerOptics::createNIRRange(t_PartialRange, t_FullRange, t_Fraction);
     }
 
     void IMaterialDualBand::createRangesFromRatio(double t_Ratio)
     {
-        if(!m_Materials.empty())
-        {
-            return;
-        }
-        checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
-        createUVRange();
-        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, t_Ratio);
+        createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, t_Ratio);
 
+        std::lock_guard<std::mutex> lock(dualBandMaterialMutexRatio);
         if(!m_WavelengthsCalculated)
         {
-            m_Wavelengths = getWavelengthsFromMaterials();
+            m_Wavelengths = calculateBandWavelengths();
             m_WavelengthsCalculated = true;
         }
     }
 
     void IMaterialDualBand::createRangesFromSolarRadiation(const CSeries &)
     {
-        if(!m_Materials.empty())
-        {
-            return;
-        }
-        checkIfMaterialWithingSolarRange(*m_MaterialPartialRange);
-        createUVRange();
-        //const double lowLambda = m_MaterialPartialRange->getMinLambda();
-        //const double highLambda = m_MaterialPartialRange->getMaxLambda();
-        // For now we have decided to use hard NIR ratio and not calculate it from the solar radiation.
-        // CNIRRatio nirRatio = CNIRRatio(t_SolarRadiation, lowLambda, highLambda);
-        createNIRRange(m_MaterialPartialRange, m_MaterialFullRange, NIRRatio);
+        createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, ConstantsData::NIRRatio);
+
+        std::lock_guard<std::mutex> lock(dualBandMaterialMutexRadiation);
         if(!m_WavelengthsCalculated)
         {
-            m_Wavelengths = getWavelengthsFromMaterials();
+            m_Wavelengths = calculateBandWavelengths();
             m_WavelengthsCalculated = true;
         }
     }
 
     std::vector<double> IMaterialDualBand::getWavelengthsFromMaterials() const
     {
-        std::vector<double> result;
-
-        if(m_MaterialFullRange != nullptr && m_MaterialPartialRange != nullptr)
-        {
-            result.emplace_back(m_MaterialFullRange->getMinLambda());
-            result.emplace_back(0.32);
-            result.emplace_back(m_MaterialPartialRange->getMinLambda());
-            result.emplace_back(m_MaterialPartialRange->getMaxLambda());
-            result.emplace_back(m_MaterialFullRange->getMaxLambda());
-        }
-
-        return result;
+        return m_Wavelengths;
     }
 
     std::shared_ptr<CMaterial>
-      IMaterialDualBand::getMaterialFromWavelegth(const double wavelength) const
+      IMaterialDualBand::getMaterialFromWavelength(const double wavelength) const
     {
         std::shared_ptr<CMaterial> result;
 
-        for(const auto & material : m_Materials)
-        {
-            if(material->isWavelengthInRange(wavelength))
-            {
-                result = material;
-            }
-        }
+        FenestrationCommon::CWavelengthRange range{WavelengthRange::Visible};
 
-        return result;
+        return range.isInRange(wavelength) ? m_MaterialVisibleRange : m_MaterialScaledRange;
     }
 
 
@@ -551,27 +460,11 @@ namespace SingleLayerOptics
     ////   CMaterialSample
     ////////////////////////////////////////////////////////////////////////////////////
 
-    CMaterialSample::CMaterialSample(const std::shared_ptr<CSpectralSample> & t_SpectralSample,
-                                     const double t_Thickness,
-                                     const MaterialType t_Type,
-                                     const double minLambda,
-                                     const double maxLambda) :
-        CMaterial(minLambda, maxLambda)
-    {
-        if(t_SpectralSample == nullptr)
-        {
-            throw std::runtime_error("Cannot create specular material from non-existing sample.");
-        }
-
-        m_AngularSample =
-          std::make_shared<CAngularSpectralSample>(t_SpectralSample, t_Thickness, t_Type);
-    }
-
-    CMaterialSample::CMaterialSample(const std::shared_ptr<CSpectralSample> & t_SpectralSample,
-                                     const double t_Thickness,
-                                     const MaterialType t_Type,
-                                     const WavelengthRange t_Range) :
-        CMaterial(t_Range)
+    CMaterialSample::CMaterialSample(
+      const std::shared_ptr<SpectralAveraging::CSpectralSample> & t_SpectralSample,
+      double t_Thickness,
+      FenestrationCommon::MaterialType t_Type) :
+        CMaterial(t_SpectralSample->getWavelengthLimits())
     {
         if(t_SpectralSample == nullptr)
         {
@@ -613,6 +506,16 @@ namespace SingleLayerOptics
           m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
     }
 
+    double CMaterialSample::getBandProperty(FenestrationCommon::Property t_Property,
+                                            FenestrationCommon::Side t_Side,
+                                            size_t wavelengthIndex,
+                                            const CBeamDirection & t_IncomingDirection,
+                                            const CBeamDirection & t_OutgoingDirection) const
+    {
+        return getBandProperties(
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
+    }
+
 
     std::vector<double> CMaterialSample::calculateBandWavelengths()
     {
@@ -621,6 +524,8 @@ namespace SingleLayerOptics
 
     void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
     {
+        std::lock_guard<std::mutex> lock(materialSampleWL);
+
         CMaterial::setBandWavelengths(wavelengths);
         m_AngularSample->setBandWavelengths(m_Wavelengths);
         m_WavelengthsCalculated = true;
@@ -638,19 +543,8 @@ namespace SingleLayerOptics
     CMaterialPhotovoltaicSample::CMaterialPhotovoltaicSample(
       const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
       double t_Thickness,
-      FenestrationCommon::MaterialType t_Type,
-      double minLambda,
-      double maxLambda) :
-        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, minLambda, maxLambda),
-        m_PVSample(t_SpectralSample)
-    {}
-
-    CMaterialPhotovoltaicSample::CMaterialPhotovoltaicSample(
-      const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
-      double t_Thickness,
-      FenestrationCommon::MaterialType t_Type,
-      FenestrationCommon::WavelengthRange t_Range) :
-        CMaterialSample(t_SpectralSample, t_Thickness, t_Type, t_Range),
+      FenestrationCommon::MaterialType t_Type) :
+        CMaterialSample(t_SpectralSample, t_Thickness, t_Type),
         m_PVSample(t_SpectralSample)
     {}
 
@@ -665,24 +559,11 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////
 
     CMaterialMeasured::CMaterialMeasured(
-      const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_AngularMeasurements,
-      const double minLambda,
-      const double maxLambda) :
-        CMaterial(minLambda, maxLambda), m_AngularMeasurements(t_AngularMeasurements)
+      const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements) :
+        CMaterial(t_Measurements->getWavelengthLimits()),
+        m_AngularMeasurements(t_Measurements)
     {
-        if(t_AngularMeasurements == nullptr)
-        {
-            throw std::runtime_error(
-              "Cannot create specular and angular material from non-existing sample.");
-        }
-    }
-
-    CMaterialMeasured::CMaterialMeasured(
-      const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_AngularMeasurements,
-      const WavelengthRange t_Range) :
-        CMaterial(t_Range), m_AngularMeasurements(t_AngularMeasurements)
-    {
-        if(t_AngularMeasurements == nullptr)
+        if(t_Measurements == nullptr)
         {
             throw std::runtime_error(
               "Cannot create specular and angular material from non-existing sample.");
@@ -723,13 +604,23 @@ namespace SingleLayerOptics
 
         for(const auto & aProperty : aProperties)
         {
-            if(aProperty->x() >= m_MinLambda && aProperty->x() <= m_MaxLambda)
+            if(aProperty.x() >= m_MinLambda && aProperty.x() <= m_MaxLambda)
             {
-                aValues.push_back(aProperty->value());
+                aValues.push_back(aProperty.value());
             }
         }
 
         return aValues;
+    }
+
+    double CMaterialMeasured::getBandProperty(FenestrationCommon::Property t_Property,
+                                              FenestrationCommon::Side t_Side,
+                                              size_t wavelengthIndex,
+                                              const CBeamDirection & t_IncomingDirection,
+                                              const CBeamDirection & t_OutgoingDirection) const
+    {
+        return getBandProperties(
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
     }
 
     std::vector<double> CMaterialMeasured::calculateBandWavelengths()
@@ -744,33 +635,9 @@ namespace SingleLayerOptics
                                                      std::vector<std::vector<double>> const & t_Tb,
                                                      std::vector<std::vector<double>> const & t_Rf,
                                                      std::vector<std::vector<double>> const & t_Rb,
-                                                     CBSDFHemisphere const & t_Hemisphere,
-                                                     double minLambda,
-                                                     double maxLambda) :
-        CMaterial(minLambda, maxLambda), m_Hemisphere(t_Hemisphere)
-    {
-        validateMatrix(t_Tf, m_Hemisphere);
-        validateMatrix(t_Tb, m_Hemisphere);
-        validateMatrix(t_Rf, m_Hemisphere);
-        validateMatrix(t_Rb, m_Hemisphere);
-        m_Property[std::make_pair(FenestrationCommon::Property::T,
-                                  FenestrationCommon::Side::Front)] = t_Tf;
-        m_Property[std::make_pair(FenestrationCommon::Property::T,
-                                  FenestrationCommon::Side::Back)] = t_Tb;
-        m_Property[std::make_pair(FenestrationCommon::Property::R,
-                                  FenestrationCommon::Side::Front)] = t_Rf;
-        m_Property[std::make_pair(FenestrationCommon::Property::R,
-                                  FenestrationCommon::Side::Back)] = t_Rb;
-        m_Wavelengths = calculateBandWavelengths();
-    }
-
-    CMaterialSingleBandBSDF::CMaterialSingleBandBSDF(std::vector<std::vector<double>> const & t_Tf,
-                                                     std::vector<std::vector<double>> const & t_Tb,
-                                                     std::vector<std::vector<double>> const & t_Rf,
-                                                     std::vector<std::vector<double>> const & t_Rb,
-                                                     CBSDFHemisphere const & t_Hemisphere,
-                                                     FenestrationCommon::WavelengthRange t_Range) :
-        CMaterial(t_Range), m_Hemisphere(t_Hemisphere)
+                                                     BSDFHemisphere const & t_Hemisphere) :
+        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE),
+        m_Hemisphere(t_Hemisphere)
     {
         validateMatrix(t_Tf, m_Hemisphere);
         validateMatrix(t_Tb, m_Hemisphere);
@@ -788,7 +655,7 @@ namespace SingleLayerOptics
     }
 
     double calcDirectHemispheric(std::vector<std::vector<double>> const & m,
-                                 CBSDFHemisphere const & hemisphere,
+                                 BSDFHemisphere const & hemisphere,
                                  size_t incomingIdx)
     {
         const auto outgoingLambdas =
@@ -845,6 +712,17 @@ namespace SingleLayerOptics
         return bandProperties;
     }
 
+    double
+      CMaterialSingleBandBSDF::getBandProperty(FenestrationCommon::Property t_Property,
+                                               FenestrationCommon::Side t_Side,
+                                               size_t wavelengthIndex,
+                                               const CBeamDirection & t_IncomingDirection,
+                                               const CBeamDirection & t_OutgoingDirection) const
+    {
+        std::ignore = wavelengthIndex;
+        return getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
+    }
+
     std::vector<std::vector<double>> const &
       CMaterialSingleBandBSDF::getBSDFMatrix(FenestrationCommon::Property const & t_Property,
                                              FenestrationCommon::Side const & t_Side) const
@@ -852,21 +730,18 @@ namespace SingleLayerOptics
         return m_Property.at({t_Property, t_Side});
     }
 
-    CBSDFHemisphere CMaterialSingleBandBSDF::getHemisphere() const
+    BSDFHemisphere CMaterialSingleBandBSDF::getHemisphere() const
     {
         return m_Hemisphere;
     }
 
     std::vector<double> CMaterialSingleBandBSDF::calculateBandWavelengths()
     {
-        std::vector<double> aWavelengths;
-        aWavelengths.push_back(m_MinLambda);
-        aWavelengths.push_back(m_MaxLambda);
-        return aWavelengths;
+        return {m_MinLambda, m_MaxLambda};
     }
 
     void CMaterialSingleBandBSDF::validateMatrix(std::vector<std::vector<double>> const & matrix,
-                                                 CBSDFHemisphere const & hemisphere) const
+                                                 BSDFHemisphere const & hemisphere) const
     {
         size_t rowCt = matrix.size();
         size_t colCt = matrix[0].size();
@@ -908,14 +783,10 @@ namespace SingleLayerOptics
                                                const std::shared_ptr<CMaterial> & t_FullRange,
                                                const double t_Fraction)
     {
-        auto materials = SingleLayerOptics::createNIRRange(
+        m_MaterialScaledRange = SingleLayerOptics::createNIRRange(
           std::dynamic_pointer_cast<CMaterialSingleBandBSDF>(t_PartialRange),
           std::dynamic_pointer_cast<CMaterialSingleBandBSDF>(t_FullRange),
           t_Fraction);
-        for(auto & material : materials)
-        {
-            m_Materials.push_back(material);
-        }
     }
 
 }   // namespace SingleLayerOptics

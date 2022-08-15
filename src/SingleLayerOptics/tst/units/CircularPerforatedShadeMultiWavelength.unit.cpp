@@ -38,7 +38,7 @@ protected:
         const auto thickness = 5;   // mm
         const auto radius = 8.35;   // mm
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Layer =
@@ -58,64 +58,37 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
-      aLayer->getWavelengthResults();
+    std::vector<BSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
-    size_t correctSize = 4;
+    const auto wavelengths{aLayer->getBandWavelengths()};
+    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
 
-    EXPECT_EQ(correctSize, aResults->size());
+    EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
+
+    for(size_t i = 0u; i < correctWavelengths.size(); ++i)
+    {
+        EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
+    }
+
+    size_t correctSize = correctWavelengths.size();
+
+    EXPECT_EQ(correctSize, aResults.size());
 
     ///////////////////////////////////////////////////////////////////////
     //  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size_t size = aT.size();
 
-    std::vector<double> correctResults;
-    correctResults.push_back(3.323538);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(3.233753);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(2.598526);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(1.952399);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
-    correctResults.push_back(0.000000);
+    std::vector<double> correctResults{
+      3.324467, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713,
+      2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+      2.599524, 2.599524, 2.599524, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460,
+      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 0.001248, 0.001248, 0.001248,
+      0.001248, 0.001248, 0.001248, 0.001248, 0.001248};
 
     std::vector<double> calculatedResults;
     for(size_t i = 0; i < size; ++i)
@@ -130,52 +103,15 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    auto aRf = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
     calculatedResults.clear();
-
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
-    correctResults.push_back(0);
+    correctResults = {0.188652, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951,
+                      0.194951, 0.194951, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737,
+                      0.202737, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737,
+                      0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.215334,
+                      0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.253400, 0.253400,
+                      0.253400, 0.253400, 0.253400, 0.253400, 0.253400, 0.253400};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -192,55 +128,18 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
 
-    correctResults.clear();
     calculatedResults.clear();
-
-    correctResults.push_back(3.324467);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
+    correctResults = {3.370933, 3.282731, 3.282731, 3.282731, 3.282731, 3.282731, 3.282731,
+                      3.282731, 3.282731, 2.649459, 2.649459, 2.649459, 2.649459, 2.649459,
+                      2.649459, 2.649459, 2.649459, 2.649459, 2.649459, 2.649459, 2.649459,
+                      2.006498, 2.006498, 2.006498, 2.006498, 2.006498, 2.006498, 2.006498,
+                      2.006498, 2.006498, 2.006498, 2.006498, 2.006498, 0.063662, 0.063662,
+                      0.063662, 0.063662, 0.063662, 0.063662, 0.063662, 0.063662};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -254,52 +153,15 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
     calculatedResults.clear();
-
-    correctResults.push_back(0.188652);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
+    correctResults = {0.142186, 0.146934, 0.146934, 0.146934, 0.146934, 0.146934, 0.146934,
+                      0.146934, 0.146934, 0.152802, 0.152802, 0.152802, 0.152802, 0.152802,
+                      0.152802, 0.152802, 0.152802, 0.152802, 0.152802, 0.152802, 0.152802,
+                      0.162296, 0.162296, 0.162296, 0.162296, 0.162296, 0.162296, 0.162296,
+                      0.162296, 0.162296, 0.162296, 0.162296, 0.162296, 0.190986, 0.190986,
+                      0.190986, 0.190986, 0.190986, 0.190986, 0.190986, 0.190986};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -316,55 +178,19 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
 
-    correctResults.clear();
     calculatedResults.clear();
 
-    correctResults.push_back(3.370933);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(3.282731);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.649460);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(2.006498);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
-    correctResults.push_back(0.063662);
+    correctResults = {3.324467, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713,
+                      3.234713, 3.234713, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 0.001248, 0.001248,
+                      0.001248, 0.001248, 0.001248, 0.001248, 0.001248, 0.001248};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -378,52 +204,16 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
     calculatedResults.clear();
 
-    correctResults.push_back(0.142186);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.146934);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.152802);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.162296);
-    correctResults.push_back(0.190986);
-    correctResults.push_back(0.190986);
-    correctResults.push_back(0.190986);
-    correctResults.push_back(0.190986);
-    correctResults.push_back(0.190986);
-    correctResults.push_back(0.190986);
-    correctResults.push_back(0.190986);
-    correctResults.push_back(0.190986);
+    correctResults = {0.188652, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951,
+                      0.194951, 0.194951, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737,
+                      0.202737, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737,
+                      0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.215334,
+                      0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.253400, 0.253400,
+                      0.253400, 0.253400, 0.253400, 0.253400, 0.253400, 0.253400};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -440,55 +230,19 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
 
-    correctResults.clear();
     calculatedResults.clear();
 
-    correctResults.push_back(3.324467);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(3.234714);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(2.599525);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(1.953460);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
-    correctResults.push_back(0.001248);
+    correctResults = {3.324467, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713, 3.234713,
+                      3.234713, 3.234713, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524, 2.599524,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 1.953460,
+                      1.953460, 1.953460, 1.953460, 1.953460, 1.953460, 0.001248, 0.001248,
+                      0.001248, 0.001248, 0.001248, 0.001248, 0.001248, 0.001248};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -502,52 +256,16 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
     calculatedResults.clear();
 
-    correctResults.push_back(0.188652);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.194951);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.202737);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.215334);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
-    correctResults.push_back(0.253400);
+    correctResults = {0.188652, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951, 0.194951,
+                      0.194951, 0.194951, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737,
+                      0.202737, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737, 0.202737,
+                      0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.215334,
+                      0.215334, 0.215334, 0.215334, 0.215334, 0.215334, 0.253400, 0.253400,
+                      0.253400, 0.253400, 0.253400, 0.253400, 0.253400, 0.253400};
 
     for(size_t i = 0; i < size; ++i)
     {

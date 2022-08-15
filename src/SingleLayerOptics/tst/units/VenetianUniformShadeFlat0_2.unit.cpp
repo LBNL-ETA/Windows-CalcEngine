@@ -21,10 +21,7 @@ protected:
         const auto Tmat = 0.0;
         const auto Rfmat = 0.1;
         const auto Rbmat = 0.1;
-        const auto minLambda = 5.0;
-        const auto maxLambda = 40.0;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto slatWidth = 0.016;     // m
@@ -34,7 +31,7 @@ protected:
         const size_t numOfSlatSegments = 5;
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,
@@ -61,11 +58,11 @@ TEST_F(TestVenetianUniformShadeFlat0_2, TestDefaultA0Venetian)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    auto aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.397, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.019894, RfDiff, 1e-6);
 }

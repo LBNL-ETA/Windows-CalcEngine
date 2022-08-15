@@ -1,17 +1,9 @@
-#ifndef ANGULARMEASUREMENT_H
-#define ANGULARMEASUREMENT_H
+#pragma once
 
 #include <memory>
 #include <vector>
 
-namespace FenestrationCommon
-{
-    enum class Property;
-    enum class Side;
-    enum class IntegrationType;
-    class CSeries;
-
-}   // namespace FenestrationCommon
+#include "WCECommon.hpp"
 
 namespace SpectralAveraging
 {
@@ -34,6 +26,7 @@ namespace SpectralAveraging
         double getAngle() const;
         std::shared_ptr<CSpectralSample> getData() const;
         std::vector<double> getWavelengthsFromSample() const;
+        [[nodiscard]] FenestrationCommon::Limits getWavelengthLimits() const;
         std::shared_ptr<CSpectralSample>
           Interpolate(double const t_Angle,
                       std::shared_ptr<CSpectralSample> const & t_Data1,
@@ -69,6 +62,8 @@ namespace SpectralAveraging
         // t_Angle that does not exist.So this is where you want to do your interpolation work
         virtual void setSourceData(FenestrationCommon::CSeries & t_SourceData);
 
+        [[nodiscard]] FenestrationCommon::Limits getWavelengthLimits() const;
+
     private:
         // Do not forget storage for it
         std::shared_ptr<CSingleAngularMeasurement> m_SingleMeasurement;
@@ -79,5 +74,3 @@ namespace SpectralAveraging
 
 }   // namespace SpectralAveraging
 
-
-#endif

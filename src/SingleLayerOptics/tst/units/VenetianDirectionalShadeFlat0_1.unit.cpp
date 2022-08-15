@@ -20,10 +20,7 @@ protected:
         const auto Tmat = 0.1;
         const auto Rfmat = 0.7;
         const auto Rbmat = 0.7;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto slatWidth = 0.010;     // m
@@ -36,7 +33,7 @@ protected:
         DistributionMethod aDistribution = DistributionMethod::DirectionalDiffuse;
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,
@@ -63,21 +60,21 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.44649813630049223, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.28386835793952669, RfDiff, 1e-6);
 
     const double theta = 23;
     const double phi = 198;
 
-    const double tauHem = aResults->DirHem(Side::Front, PropertySimple::T, theta, phi);
+    const double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.42987405997685452, tauHem, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
@@ -132,7 +129,7 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
     }
 
     // Front reflectance
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     correctResults.clear();
 
@@ -183,4 +180,18 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
     {
         EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
     }
+}
+
+TEST_F(TestVenetianDirectionalShadeFlat0_1, AtWavelength)
+{
+
+    std::shared_ptr<CBSDFLayer> aShade = GetShade();
+
+    constexpr size_t wavelengthIndex{0u};
+    auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
+
+    const auto correct{0.446498};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+
+    EXPECT_NEAR(correct, result, 1e-6);
 }

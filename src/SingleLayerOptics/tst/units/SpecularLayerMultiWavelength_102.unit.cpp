@@ -31,13 +31,10 @@ protected:
 
         const auto thickness = 3.048e-3;   // [m]
         const MaterialType aType = MaterialType::Monolithic;
-        // WavelengthRange aRange = WavelengthRange::Solar;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::nBandMaterial(aMeasurements, thickness, aType, minLambda, maxLambda);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aMaterial = Material::nBandMaterial(aMeasurements, thickness, aType);
+
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
@@ -56,18 +53,17 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<std::vector<std::shared_ptr<CBSDFIntegrator>>> aResults =
-      aLayer->getWavelengthResults();
+    std::vector<BSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
     size_t correctSize = 5;
 
-    EXPECT_EQ(correctSize, aResults->size());
+    EXPECT_EQ(correctSize, aResults.size());
 
     ///////////////////////////////////////////////////////////////////////
     ///  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -85,7 +81,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    auto aRf = (*aResults)[0]->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {
       0.61134,  0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508,
@@ -105,7 +101,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -123,7 +119,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = (*aResults)[1]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.61134,  0.661507, 0.661507, 0.661507, 0.661507, 0.661507, 0.661507,
                       0.661507, 0.661507, 0.659001, 0.659001, 0.659001, 0.659001, 0.659001,
@@ -142,7 +138,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -160,7 +156,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = (*aResults)[2]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.61134,  0.661498, 0.661498, 0.661498, 0.661498, 0.661498, 0.661498,
                       0.661498, 0.661498, 0.658976, 0.658976, 0.658976, 0.658976, 0.658976,
@@ -179,7 +175,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -197,7 +193,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = (*aResults)[3]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.61134,  0.661398, 0.661398, 0.661398, 0.661398, 0.661398, 0.661398,
                       0.661398, 0.661398, 0.658665, 0.658665, 0.658665, 0.658665, 0.658665,
@@ -216,7 +212,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 5
     ///////////////////////////////////////////////////////////////////////
 
-    aT = (*aResults)[4]->getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[4].getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -234,7 +230,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = (*aResults)[4]->getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[4].getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.61134,  0.660889, 0.660889, 0.660889, 0.660889, 0.660889, 0.660889,
                       0.660889, 0.660889, 0.657004, 0.657004, 0.657004, 0.657004, 0.657004,

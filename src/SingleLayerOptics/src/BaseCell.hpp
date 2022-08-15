@@ -22,6 +22,7 @@ namespace SingleLayerOptics
     class CBaseCell
     {
     public:
+        virtual ~CBaseCell() = default;
         CBaseCell();
         CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
                   const std::shared_ptr<ICellDescription> & t_CellDescription,
@@ -33,19 +34,27 @@ namespace SingleLayerOptics
         // These dir_dir and dir_dir_band functions are returning only direct portion of the
         // incoming beam that goes directly through cell without interfering (bouncing off) with
         // material (Simon)
-        virtual double T_dir_dir(const FenestrationCommon::Side t_Side,
+        virtual double T_dir_dir(FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_Direction);
-        virtual double R_dir_dir(const FenestrationCommon::Side t_Side,
+        virtual double R_dir_dir(FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_Direction);
 
-        virtual std::vector<double> T_dir_dir_band(const FenestrationCommon::Side t_Side,
+        virtual std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
                                                    const CBeamDirection & t_Direction);
 
-        virtual std::vector<double> R_dir_dir_band(const FenestrationCommon::Side t_Side,
+        virtual double T_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_Direction,
+                                               size_t wavelengthIndex);
+
+        virtual std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
                                                    const CBeamDirection & t_Direction);
+
+        virtual double R_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
+                                               const CBeamDirection & t_Direction,
+                                               size_t wavelengthIndex);
 
         std::vector<double> getBandWavelengths() const;
-        void setBandWavelengths(const std::vector<double> & wavelengths) const;
+        virtual void setBandWavelengths(const std::vector<double> & wavelengths);
         int getBandIndex(double t_Wavelength) const;
         size_t getBandSize() const;
 

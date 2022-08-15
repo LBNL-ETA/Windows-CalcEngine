@@ -651,10 +651,10 @@ protected:
         //	m_Measurements->addMeasurement( aAngular09 );
 
         std::shared_ptr<CMaterial> aMaterial =
-          std::make_shared<CMaterialMeasured>(m_Measurements, WavelengthRange::Solar);
+          std::make_shared<CMaterialMeasured>(m_Measurements);
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Full);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
@@ -678,29 +678,31 @@ TEST_F(TestSpecularAngularLayer_102, TestSpecular1)
 
     std::shared_ptr<CBSDFLayer> aLayer = getLayer();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aLayer->getResults();
+    BSDFIntegrator aResults = aLayer->getResults();
 
-    double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.64541405979702648, tauDiff, 1e-6);
 
-    double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.272951100863078, RfDiff, 1e-6);
 
     double theta = 35;
     double phi = 58;
 
-    double tauHem = aResults->DirHem(Side::Front, PropertySimple::T, theta, phi);
+    double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.780630538026433, tauHem, 1e-6);
 
-    double tauDir = aResults->DirDir(Side::Front, PropertySimple::T, theta, phi);
+    double tauDir = aResults.DirDir(Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.780630538026433, tauDir, 1e-6);
 
     /*  std::shared_ptr< SquareMatrix > aT = aResults->getMatrix( Side::Front, PropertySimple::T );
-    
+    
+
 
       // Test only diagonal of transmittance matrix
       size_t size = aT->getSize();
-    
+    
+
 
       std::vector< double > correctResults;
       correctResults.push_back( 34.940061244564802 );
@@ -848,27 +850,32 @@ TEST_F(TestSpecularAngularLayer_102, TestSpecular1)
       correctResults.push_back( 16.978250544025638 );
       correctResults.push_back( 16.978250544025638 );
       correctResults.push_back( 16.978250544025638 );
-    
+    
+
 
       std::vector< double > calculatedResults;
       for( size_t i = 0; i < size; ++i ) {
         calculatedResults.push_back( (*aT)[i][i] );
       }
-    
+    
+
 
       EXPECT_EQ( correctResults.size(), calculatedResults.size() );
       for( size_t i = 0; i < size; ++i ) {
         EXPECT_NEAR( correctResults[i], calculatedResults[i], 1e-6 );
       }
-    
+    
+
 
       // Front reflectance
       std::shared_ptr< SquareMatrix > aRf = aResults->getMatrix( Side::Front, PropertySimple::R );
-    
+    
+
 
       correctResults.clear();
       calculatedResults.clear();
-    
+    
+
 
       correctResults.push_back( 3.1351336407416635 );
       correctResults.push_back( 3.2072370120929721 );
@@ -1015,12 +1022,14 @@ TEST_F(TestSpecularAngularLayer_102, TestSpecular1)
       correctResults.push_back( 34.322921163935874 );
       correctResults.push_back( 34.322921163935874 );
       correctResults.push_back( 34.322921163935874 );
-    
+    
+
 
       for( size_t i = 0; i < size; ++i ) {
         calculatedResults.push_back( (*aRf)[i][i] );
       }
-    
+    
+
 
       EXPECT_EQ( correctResults.size(), calculatedResults.size() );
       for( size_t i = 0; i < size; ++i ) {

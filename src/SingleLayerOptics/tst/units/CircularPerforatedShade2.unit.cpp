@@ -20,10 +20,7 @@ protected:
         const auto Tmat = 0.2;
         const auto Rfmat = 0.8;
         const auto Rbmat = 0.8;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto x = 0.0225;           // m
@@ -31,7 +28,7 @@ protected:
         const auto thickness = 0.0050;   // m
         const auto radius = 0.0;         // m
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade =
@@ -51,18 +48,18 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.2, tauDiff, 1e-6);
 
-    const double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.8, RfDiff, 1e-6);
 
-    const double RbDiff = aResults->DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
     EXPECT_NEAR(0.8, RbDiff, 1e-6);
 
-    auto aT = aResults->getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     const auto size = aT.size();
 
@@ -108,7 +105,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRf = aResults->getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
                       0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
@@ -130,7 +127,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRb = aResults->getMatrix(Side::Back, PropertySimple::R);
+    auto aRb = aResults.getMatrix(Side::Back, PropertySimple::R);
 
     correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
                       0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,

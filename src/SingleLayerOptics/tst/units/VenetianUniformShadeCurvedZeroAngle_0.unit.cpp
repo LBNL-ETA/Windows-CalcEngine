@@ -20,10 +20,7 @@ protected:
         const auto Tmat = 0.0;
         const auto Rfmat = 0.1;
         const auto Rbmat = 0.1;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial =
-          Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
 
         // make cell geometry
@@ -34,7 +31,7 @@ protected:
         const size_t numOfSlatSegments = 5;
 
         // create BSDF
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Quarter);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(aMaterial,
@@ -61,22 +58,22 @@ TEST_F(TestVenetianUniformShadeCurvedZeroAngle_0, TestVenetian1)
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
-    std::shared_ptr<CBSDFIntegrator> aResults = aShade->getResults();
+    BSDFIntegrator aResults = aShade->getResults();
 
-    double tauDiff = aResults->DiffDiff(Side::Front, PropertySimple::T);
+    double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
     EXPECT_NEAR(0.422932, tauDiff, 1e-6);
 
-    double RfDiff = aResults->DiffDiff(Side::Front, PropertySimple::R);
+    double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.020573, RfDiff, 1e-6);
 
     auto theta{0.0};
     auto phi{0.0};
-    double tauDir = aResults->DirDir(Side::Front, PropertySimple::T, theta, phi);
+    double tauDir = aResults.DirDir(Side::Front, PropertySimple::T, theta, phi);
     EXPECT_NEAR(0.936759, tauDir, 1e-6);
 
-    double rhoDir = aResults->DirDir(Side::Front, PropertySimple::R, theta, phi);
+    double rhoDir = aResults.DirDir(Side::Front, PropertySimple::R, theta, phi);
     EXPECT_NEAR(7.583e-05, rhoDir, 1e-6);
 
-    double absIR = aResults->Abs(Side::Front, theta, phi);
+    double absIR = aResults.Abs(Side::Front, theta, phi);
     EXPECT_NEAR(0.059455, absIR, 1e-6);
 }

@@ -53,7 +53,7 @@ protected:
         const auto commonWavelengths{solarRadiation.getXArray()};
 
         const auto aBSDF =
-          SingleLayerOptics::CBSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
+          SingleLayerOptics::BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
 
         // Venetian blind material
 
@@ -63,10 +63,8 @@ protected:
         const auto Rb = 0.1;
 
 
-        const auto aMaterialVenetian = SingleLayerOptics::Material::singleBandMaterial(
-          Tf, Tb, Rf, Rb, FenestrationCommon::WavelengthRange::IR);
-
-        aMaterialVenetian->setBandWavelengths(commonWavelengths);
+        const auto aMaterialVenetian =
+          SingleLayerOptics::Material::singleBandMaterial(Tf, Tb, Rf, Rb);
 
         // make cell geometry
         const auto slatWidth = 0.0148;     // m
@@ -97,7 +95,7 @@ TEST_F(SinglePaneBSDF_VenetianIR, TestBSDF1)
 {
     SCOPED_TRACE("Begin Test: Venetian IR.");
 
-    auto & aLayer = *getLayer().getResults();
+    auto aLayer = getLayer().getResults();
 
     const double tauDiff =
       aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);

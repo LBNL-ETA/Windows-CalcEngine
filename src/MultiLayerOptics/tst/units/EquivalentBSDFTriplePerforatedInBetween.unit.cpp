@@ -19,16 +19,16 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        std::vector<CBSDFDefinition> aDefinitions;
-        aDefinitions.push_back(CBSDFDefinition(0, 1));
-        aDefinitions.push_back(CBSDFDefinition(15, 1));
-        aDefinitions.push_back(CBSDFDefinition(30, 1));
-        aDefinitions.push_back(CBSDFDefinition(45, 1));
-        aDefinitions.push_back(CBSDFDefinition(60, 1));
-        aDefinitions.push_back(CBSDFDefinition(75, 1));
-        aDefinitions.push_back(CBSDFDefinition(86.25, 1));
+        std::vector<BSDFDefinition> aDefinitions;
+        aDefinitions.push_back(BSDFDefinition(0, 1));
+        aDefinitions.push_back(BSDFDefinition(15, 1));
+        aDefinitions.push_back(BSDFDefinition(30, 1));
+        aDefinitions.push_back(BSDFDefinition(45, 1));
+        aDefinitions.push_back(BSDFDefinition(60, 1));
+        aDefinitions.push_back(BSDFDefinition(75, 1));
+        aDefinitions.push_back(BSDFDefinition(86.25, 1));
 
-        const auto aBSDF = CBSDFHemisphere::create(aDefinitions);
+        const auto aBSDF = BSDFHemisphere::create(aDefinitions);
 
         CSeries aSolarRadiation;
 
@@ -272,10 +272,8 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         MaterialType aType = MaterialType::Monolithic;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
-        auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements, thickness, aType, minLambda, maxLambda);
+        auto aMaterial =
+          SingleLayerOptics::Material::nBandMaterial(aMeasurements, thickness, aType);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
 
@@ -286,8 +284,8 @@ protected:
         double Tmat = 0.2;
         double Rfmat = 0.75;
         double Rbmat = 0.66;
-        auto perfMaterial = SingleLayerOptics::Material::singleBandMaterial(
-          Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        auto perfMaterial =
+          SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         double x = 22.5;        // mm
@@ -297,9 +295,9 @@ protected:
         auto aShade =
           CBSDFLayerMaker::getCircularPerforatedLayer(perfMaterial, aBSDF, x, y, thickness, radius);
 
-        std::shared_ptr<CBSDFIntegrator> aLayer1 = aLayer102->getResults();
-        std::shared_ptr<CBSDFIntegrator> aLayer2 = aShade->getResults();
-        std::shared_ptr<CBSDFIntegrator> aLayer3 = aLayer102->getResults();
+        BSDFIntegrator aLayer1 = aLayer102->getResults();
+        BSDFIntegrator aLayer2 = aShade->getResults();
+        BSDFIntegrator aLayer3 = aLayer102->getResults();
 
         m_EquivalentBSDFLayer = std::make_shared<CEquivalentBSDFLayerSingleBand>(aLayer1);
         m_EquivalentBSDFLayer->addLayer(aLayer2);

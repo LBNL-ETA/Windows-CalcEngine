@@ -1,19 +1,22 @@
 #include <memory>
 #include <gtest/gtest.h>
 
+#include <memory>
+
 #include "WCESpectralAveraging.hpp"
-#include "WCEMultiLayerOptics.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
+
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
-using namespace MultiLayerOptics;
 
-class EquivalentSpecularLayer_102_103_IR_Range : public testing::Test
+class TestnBandMaterial : public testing::Test
 {
-protected:
+private:
+    std::shared_ptr<CMaterial> m_Material;
+
     std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_102()
     {
         auto aMeasurements_102 = CSpectralSampleData::create(
@@ -79,40 +82,26 @@ protected:
 
 protected:
     virtual void SetUp()
-    {}
+    {
+        // Create material from samples
+        auto thickness = 3.048e-3;   // [m]
+        m_Material = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
+    }
 
 public:
+    CMaterial & getMaterial()
+    {
+        return *m_Material;
+    };
 };
 
-TEST_F(EquivalentSpecularLayer_102_103_IR_Range, TestNoAvailableData)
+TEST_F(TestnBandMaterial, TestProperties)
 {
-    SCOPED_TRACE("Begin Test: Specular MultiLayerOptics layer - angle = 0 deg.");
+    const auto & mat{getMaterial()};
+    const size_t wlIndex{5u};
+    const auto value{mat.getBandProperty(Property::T, Side::Front, wlIndex)};
+    const auto correct{0.218};
 
-    const auto wl = loadSampleData_NFRC_102()->getWavelengths();
-    const auto blackBodyTemperature = 300;
-    const auto sourceData = SpectralAveraging::BlackBodySpectrum(wl, blackBodyTemperature);
-
-    const auto minLambda = 5.0;
-    const auto maxLambda = 100.0;
-
-    double thickness = 3.048e-3;   // [m]
-    EXPECT_THROW(
-      {
-          try
-          {
-              const auto aMaterial_102 = Material::nBandMaterial(loadSampleData_NFRC_102(),
-                                                                 thickness,
-                                                                 MaterialType::Monolithic,
-                                                                 minLambda,
-                                                                 maxLambda);
-          }
-          catch(const std::runtime_error & err)
-          {
-              EXPECT_STREQ(err.what(),
-                           "Given measured sample does not have measurements withing "
-                           "requested range. Calculation is not possible.");
-              throw;
-          }
-      },
-      std::runtime_error);
+    EXPECT_NEAR(value, correct, 1e-6);
 }

@@ -23,17 +23,17 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        std::vector<CBSDFDefinition> aDefinitions;
-        aDefinitions.push_back(CBSDFDefinition(0, 1));
-        aDefinitions.push_back(CBSDFDefinition(15, 1));
-        aDefinitions.push_back(CBSDFDefinition(30, 1));
-        aDefinitions.push_back(CBSDFDefinition(45, 1));
-        aDefinitions.push_back(CBSDFDefinition(60, 1));
-        aDefinitions.push_back(CBSDFDefinition(75, 1));
-        aDefinitions.push_back(CBSDFDefinition(86.25, 1));
+        std::vector<BSDFDefinition> aDefinitions;
+        aDefinitions.push_back(BSDFDefinition(0, 1));
+        aDefinitions.push_back(BSDFDefinition(15, 1));
+        aDefinitions.push_back(BSDFDefinition(30, 1));
+        aDefinitions.push_back(BSDFDefinition(45, 1));
+        aDefinitions.push_back(BSDFDefinition(60, 1));
+        aDefinitions.push_back(BSDFDefinition(75, 1));
+        aDefinitions.push_back(BSDFDefinition(86.25, 1));
 
         // Create BSDF from definitions
-        const auto aBSDF = CBSDFHemisphere::create(aDefinitions);
+        const auto aBSDF = BSDFHemisphere::create(aDefinitions);
 
         CSeries aSolarRadiation;
 
@@ -277,17 +277,15 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         MaterialType aType = MaterialType::Monolithic;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
 
-        auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements, thickness, aType, minLambda, maxLambda);
+        auto aMaterial =
+          SingleLayerOptics::Material::nBandMaterial(aMeasurements, thickness, aType);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);
 
-        CBSDFIntegrator aLayer1 = *aLayer102->getResults();
-        CBSDFIntegrator aLayer2 = *aLayer102->getResults();
+        BSDFIntegrator aLayer1 = aLayer102->getResults();
+        BSDFIntegrator aLayer2 = aLayer102->getResults();
 
         m_DoubleLayer = std::make_shared<CBSDFDoubleLayer>(aLayer1, aLayer2);
     }
@@ -303,9 +301,9 @@ TEST_F(TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF)
 {
     SCOPED_TRACE("Begin Test: Double Layer BSDF.");
 
-    std::shared_ptr<CBSDFIntegrator> aLayer = getDoubleLayer()->value();
+    BSDFIntegrator aLayer = getDoubleLayer()->value();
 
-    auto T = aLayer->getMatrix(Side::Front, PropertySimple::T);
+    auto T = aLayer.getMatrix(Side::Front, PropertySimple::T);
     size_t matrixSize = T.size();
 
     // Test matrix
@@ -329,7 +327,7 @@ TEST_F(TestDoubleLayerBSDFSpecular, TestDoubleLayerBSDF)
         }
     }
 
-    auto R = aLayer->getMatrix(Side::Front, PropertySimple::R);
+    auto R = aLayer.getMatrix(Side::Front, PropertySimple::R);
     matrixSize = R.size();
 
     EXPECT_EQ(size, matrixSize);

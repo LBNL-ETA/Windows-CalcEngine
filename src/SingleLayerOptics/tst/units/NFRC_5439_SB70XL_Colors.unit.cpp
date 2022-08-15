@@ -320,8 +320,7 @@ private:
           SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_5439(),
                                                      astmStandard,
                                                      thickness,
-                                                     FenestrationCommon::MaterialType::Monolithic,
-                                                     FenestrationCommon::WavelengthRange::Visible);
+                                                     FenestrationCommon::MaterialType::Monolithic);
 
         auto layer = wce::make_unique<SingleLayerOptics::CScatteringLayer>(
           SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial));

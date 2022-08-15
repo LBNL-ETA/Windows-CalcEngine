@@ -23,11 +23,11 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        std::vector<CBSDFDefinition> aDefinitions{
+        std::vector<BSDFDefinition> aDefinitions{
           {0, 1}, {15, 1}, {30, 1}, {45, 1}, {60, 1}, {75, 1}, {86.25, 1}};
 
         // Create BSDF out of previous definitions
-        const auto aBSDF = CBSDFHemisphere::create(aDefinitions);
+        const auto aBSDF = BSDFHemisphere::create(aDefinitions);
 
         CSeries aSolarRadiation;
 
@@ -271,11 +271,9 @@ protected:
 
         double thickness = 3.048e-3;   // [m]
         MaterialType aType = MaterialType::Monolithic;
-        double minLambda = 0.3;
-        double maxLambda = 2.5;
 
-        auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          aMeasurements, thickness, aType, minLambda, maxLambda);
+        auto aMaterial =
+          SingleLayerOptics::Material::nBandMaterial(aMeasurements, thickness, aType);
 
         auto aLayer102 = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
         aLayer102->setSourceData(aSolarRadiation);
@@ -286,7 +284,7 @@ protected:
         double Rfmat = 0.75;
         double Rbmat = 0.66;
         std::shared_ptr<CMaterial> perfMaterial =
-          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+          std::make_shared<CMaterialSingleBand>(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         double x = 22.5;        // mm
@@ -298,8 +296,8 @@ protected:
         auto aShade =
           CBSDFLayerMaker::getCircularPerforatedLayer(perfMaterial, aBSDF, x, y, thickness, radius);
 
-        CBSDFIntegrator aLayer1 = *aLayer102->getResults();
-        CBSDFIntegrator aLayer2 = *aShade->getResults();
+        BSDFIntegrator aLayer1 = aLayer102->getResults();
+        BSDFIntegrator aLayer2 = aShade->getResults();
 
         m_DoubleLayer = std::make_shared<CBSDFDoubleLayer>(aLayer1, aLayer2);
     }
@@ -315,10 +313,10 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
 {
     SCOPED_TRACE("Begin Test: Double Layer BSDF.");
 
-    std::shared_ptr<CBSDFIntegrator> aLayer = getDoubleLayer()->value();
+    BSDFIntegrator aLayer = getDoubleLayer()->value();
 
     // Front transmittance
-    auto Tf = aLayer->getMatrix(Side::Front, PropertySimple::T);
+    auto Tf = aLayer.getMatrix(Side::Front, PropertySimple::T);
     size_t matrixSize = Tf.size();
 
     // Test matrix
@@ -344,7 +342,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Front reflectance
-    auto Rf = aLayer->getMatrix(Side::Front, PropertySimple::R);
+    auto Rf = aLayer.getMatrix(Side::Front, PropertySimple::R);
     matrixSize = Rf.size();
 
     EXPECT_EQ(size, matrixSize);
@@ -367,7 +365,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Back Transmittance
-    auto Tb = aLayer->getMatrix(Side::Back, PropertySimple::T);
+    auto Tb = aLayer.getMatrix(Side::Back, PropertySimple::T);
     matrixSize = Tb.size();
 
     EXPECT_EQ(size, matrixSize);
@@ -390,7 +388,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Back Reflectance
-    auto Rb = aLayer->getMatrix(Side::Back, PropertySimple::R);
+    auto Rb = aLayer.getMatrix(Side::Back, PropertySimple::R);
     matrixSize = Rb.size();
 
     EXPECT_EQ(size, matrixSize);

@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics
 {
     CSpecularBSDFLayer::CSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
-                                           const CBSDFHemisphere & t_Hemisphere) :
+                                           const BSDFHemisphere & t_Hemisphere) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
@@ -31,9 +31,19 @@ namespace SingleLayerOptics
 
     void CSpecularBSDFLayer::calcDiffuseDistribution_wv(const Side,
                                                         const CBeamDirection &,
-                                                        const size_t)
+                                                        const size_t,
+                                                        std::vector<BSDFIntegrator> &)
     {
         // No diffuse calculations are necessary for specular layer.
+    }
+
+    void CSpecularBSDFLayer::calcDiffuseDistribution_byWavelength(const FenestrationCommon::Side,
+                                                                  const CBeamDirection &,
+                                                                  const size_t,
+                                                                  size_t,
+                                                                  BSDFIntegrator &)
+    {
+        // No diffusion in specular layers
     }
 
 }   // namespace SingleLayerOptics

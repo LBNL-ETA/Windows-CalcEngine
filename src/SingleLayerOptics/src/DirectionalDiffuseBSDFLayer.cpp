@@ -16,7 +16,7 @@ namespace SingleLayerOptics
 {
     CDirectionalBSDFLayer::CDirectionalBSDFLayer(
       const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-      const CBSDFHemisphere & t_Hemisphere) :
+      const BSDFHemisphere & t_Hemisphere) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
@@ -34,8 +34,8 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        auto & tau = m_Results->getMatrix(aSide, PropertySimple::T);
-        auto & Rho = m_Results->getMatrix(aSide, PropertySimple::R);
+        auto & tau = m_Results.getMatrix(aSide, PropertySimple::T);
+        auto & Rho = m_Results.getMatrix(aSide, PropertySimple::R);
 
         const auto & jDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
@@ -58,11 +58,12 @@ namespace SingleLayerOptics
 
     void CDirectionalBSDFLayer::calcDiffuseDistribution_wv(const Side aSide,
                                                            const CBeamDirection & incomingDirection,
-                                                           const size_t incomingDirectionIndex)
+                                                           const size_t incomingDirectionIndex,
+                                                           std::vector<BSDFIntegrator> & results)
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        const CBSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
+        const BSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
         size_t size = oDirections.size();
 
@@ -77,11 +78,8 @@ namespace SingleLayerOptics
             const size_t numWV = aTau.size();
             for(size_t j = 0; j < numWV; ++j)
             {
-                std::shared_ptr<CBSDFIntegrator> aResults = nullptr;
-                aResults = (*m_WVResults)[j];
-                assert(aResults != nullptr);
-                auto & tau = aResults->getMatrix(aSide, PropertySimple::T);
-                auto & rho = aResults->getMatrix(aSide, PropertySimple::R);
+                auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
+                auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
                 tau(outgoingDirectionIndex, incomingDirectionIndex) +=
                   aTau[j] * diffuseDistributionScalar(outgoingDirectionIndex);
                 rho(outgoingDirectionIndex, incomingDirectionIndex) +=
@@ -90,9 +88,41 @@ namespace SingleLayerOptics
         }
     }
 
+    void CDirectionalBSDFLayer::calcDiffuseDistribution_byWavelength(
+      const FenestrationCommon::Side aSide,
+      const CBeamDirection & incomingDirection,
+      const size_t incomingDirectionIndex,
+      size_t wavelengthIndex,
+      BSDFIntegrator & results)
+    {
+        std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
+
+        const BSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
+
+        size_t size = oDirections.size();
+
+        for(size_t outgoingDirectionIndex = 0; outgoingDirectionIndex < size;
+            ++outgoingDirectionIndex)
+        {
+            const CBeamDirection oDirection = oDirections[outgoingDirectionIndex].centerPoint();
+
+            auto aTau =
+              aCell->T_dir_dif_by_wavelength(aSide, incomingDirection, oDirection, wavelengthIndex);
+            auto Ref =
+              aCell->R_dir_dif_by_wavelength(aSide, incomingDirection, oDirection, wavelengthIndex);
+
+            auto & tau = results.getMatrix(aSide, PropertySimple::T);
+            auto & rho = results.getMatrix(aSide, PropertySimple::R);
+            tau(outgoingDirectionIndex, incomingDirectionIndex) +=
+              aTau * diffuseDistributionScalar(outgoingDirectionIndex);
+            rho(outgoingDirectionIndex, incomingDirectionIndex) +=
+              Ref * diffuseDistributionScalar(outgoingDirectionIndex);
+        }
+    }
+
     CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer(
       const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-      const CBSDFHemisphere & t_Hemisphere) :
+      const BSDFHemisphere & t_Hemisphere) :
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
@@ -102,7 +132,7 @@ namespace SingleLayerOptics
     }
 
     CMatrixBSDFLayer::CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                                       const CBSDFHemisphere & t_Hemisphere) :
+                                       const BSDFHemisphere & t_Hemisphere) :
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 

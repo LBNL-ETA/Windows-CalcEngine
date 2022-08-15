@@ -189,9 +189,9 @@ protected:
     {
         auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
-        const auto aBSDF = CBSDFHemisphere::create(BSDFBasis::Small);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
 
         // specular layer NFRC=102
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
@@ -199,7 +199,7 @@ protected:
 
         thickness = 1.5e-3;   // [m]
         auto aMaterial_Venetian = SingleLayerOptics::Material::nBandMaterial(
-          loadVenetianBlindMaterial(), thickness, MaterialType::Monolithic, WavelengthRange::Solar);
+          loadVenetianBlindMaterial(), thickness, MaterialType::Monolithic);
 
         // make cell geometry
         const auto slatWidth = 0.016;     // m
@@ -221,8 +221,11 @@ protected:
 
         auto commonWavelengths = aVenetian->getBandWavelengths();
 
-        m_Layer = CMultiPaneBSDF::create(
-          {Layer_102, aVenetian}, loadSolarRadiationFile(), commonWavelengths);
+        m_Layer = CMultiPaneBSDF::create({Layer_102, aVenetian}, commonWavelengths);
+
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
+        m_Layer->setCalculationProperties(input);
     }
 
 public:
@@ -247,8 +250,13 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Front transmittance matrix
     size_t size = aT.size();
 
-    std::vector<double> correctResults{
-      20.711703, 2.688517, 1.488960, 1.184634, 1.152056, 1.301277, 1.147837};
+    std::vector<double> correctResults{20.704876361082952,
+                                       2.6876261056026207,
+                                       1.4884587821243103,
+                                       1.184224847758828,
+                                       1.1516440264754242,
+                                       1.3007908721969141,
+                                       1.1473327594840519};
 
 
     EXPECT_EQ(correctResults.size(), aT.size());
@@ -260,7 +268,13 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Back Reflectance matrix
     SquareMatrix aRb = aLayer.getMatrix(minLambda, maxLambda, Side::Back, PropertySimple::R);
 
-    correctResults = {1.860160, 0.241743, 0.136151, 0.118147, 0.153253, 0.343395, 1.685370};
+    correctResults = {1.8592983854164531,
+                      0.24163057657322592,
+                      0.13608742192145262,
+                      0.11809363568173475,
+                      0.15319382630343492,
+                      0.34329561288490762,
+                      1.6850908192028509};
 
     EXPECT_EQ(correctResults.size(), aRb.size());
     for(size_t i = 0; i < size; ++i)
@@ -271,7 +285,13 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Front absorptance layer 1
     auto aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 1);
 
-    correctResults = {0.091437, 0.092376, 0.095159, 0.099608, 0.105110, 0.109811, 0.104010};
+    correctResults = {0.091741474208008794,
+                      0.092681337861886426,
+                      0.095467541364117794,
+                      0.099922354300501642,
+                      0.10542702702814911,
+                      0.11012252597234512,
+                      0.10425307616990795};
 
     EXPECT_EQ(correctResults.size(), aAbsF.size());
     for(size_t i = 0; i < size; ++i)
@@ -293,7 +313,13 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Back absorptance layer 1
     auto aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 1);
 
-    correctResults = {0.091270, 0.092209, 0.094991, 0.099438, 0.104933, 0.109629, 0.103849};
+    correctResults = {0.091579680636289171,
+                      0.092519510646167868,
+                      0.095305151046115769,
+                      0.099757516080865291,
+                      0.10525646069344624,
+                      0.10994564072275897,
+                      0.10409705446127393};
 
     EXPECT_EQ(correctResults.size(), aAbsB.size());
     for(size_t i = 0; i < size; ++i)

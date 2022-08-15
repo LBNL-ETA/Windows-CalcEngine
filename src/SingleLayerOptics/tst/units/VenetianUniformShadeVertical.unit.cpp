@@ -16,10 +16,8 @@ protected:
         const auto Tmat = 0.1;
         const auto Rfmat = 0.7;
         const auto Rbmat = 0.7;
-        const auto minLambda = 0.3;
-        const auto maxLambda = 2.5;
-        const auto aMaterial = SingleLayerOptics::Material::singleBandMaterial(
-          Tmat, Tmat, Rfmat, Rbmat, minLambda, maxLambda);
+        const auto aMaterial =
+          SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
         const auto slatWidth = 0.010;     // m
@@ -30,7 +28,7 @@ protected:
 
         // create BSDF
         const auto aBSDF =
-          SingleLayerOptics::CBSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
+          SingleLayerOptics::BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
 
         const auto isHorizontalVenetian{false};
         // make layer
@@ -62,7 +60,7 @@ TEST_F(TestVenetianUniformShadeMatrixVertical, TestVenetianMatrix)
     auto aResults = aShade.getResults();
 
     FenestrationCommon::SquareMatrix & aT =
-      aResults->getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+      aResults.getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
 
     // clang-format off
     std::vector<std::vector<double>> correctResults{

@@ -53,6 +53,21 @@ namespace SingleLayerOptics
         return result;
     }
 
+    double
+      CDirectionalDiffuseCell::T_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+                                                       const CBeamDirection & t_IncomingDirection,
+                                                       const CBeamDirection & t_OutgoingDirection,
+                                                       size_t wavelengthIndex)
+    {
+        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        auto materialTransmittance = m_Material->getBandProperty(FenestrationCommon::Property::T,
+                                                                 t_Side,
+                                                                 wavelengthIndex,
+                                                                 t_IncomingDirection,
+                                                                 t_OutgoingDirection);
+        return cellT + (1 - cellT) * materialTransmittance;
+    }
+
     std::vector<double>
       CDirectionalDiffuseCell::R_dir_dif_band(const FenestrationCommon::Side t_Side,
                                               const CBeamDirection & t_IncomingDirection,
@@ -72,6 +87,18 @@ namespace SingleLayerOptics
         }
 
         return result;
+    }
+    double
+      CDirectionalDiffuseCell::R_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+                                                       const CBeamDirection & t_IncomingDirection,
+                                                       const CBeamDirection & t_OutgoingDirection,
+                                                       size_t wavelengthIndex)
+    {
+        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
+        auto materialValue = m_Material->getBandProperty(
+          FenestrationCommon::Property::R, t_Side, wavelengthIndex, t_IncomingDirection, t_OutgoingDirection);
+        return cellR + (1 - cellT) * materialValue;
     }
 
 }   // namespace SingleLayerOptics

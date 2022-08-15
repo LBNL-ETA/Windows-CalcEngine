@@ -61,7 +61,6 @@ namespace FenestrationCommon
         {
             throw std::runtime_error("Matrix and vector must be same size.");
         }
-        setZeros();
 
         for(auto i = 0u; i < m_size; ++i)
         {
