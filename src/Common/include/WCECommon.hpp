@@ -21,3 +21,4 @@
 #include "../src/WavelengthSpectrum.hpp"
 #include "../src/Table2D.hpp"
 #include "../src/Table2DInterpolators.hpp"
+#include "../src/Utility.hpp"
