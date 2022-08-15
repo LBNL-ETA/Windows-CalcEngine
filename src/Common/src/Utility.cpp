@@ -2,19 +2,23 @@
 
 namespace FenestrationCommon
 {
-    IndexRange::IndexRange(size_t startIndex, size_t endIndex) : start(startIndex), end(endIndex)
+    IndexRange::IndexRange(unsigned startIndex, unsigned endIndex) :
+        start(startIndex), end(endIndex)
     {}
 
-    std::vector<IndexRange> chunkIt(size_t start, size_t end, size_t numberOfSplits)
+    std::vector<IndexRange> chunkIt(unsigned start, unsigned end, unsigned numberOfSplits)
     {
-        size_t stepSize{numberOfSplits < (end - start) ? static_cast<size_t>((end - start) / numberOfSplits): 0u};
+        unsigned stepSize{numberOfSplits < (end - start)
+                            ? static_cast<unsigned>((end - start) / numberOfSplits)
+                            : 0u};
 
         std::vector<IndexRange> result;
 
-        size_t currentStart{start};
-        size_t currentEnd{currentStart};
+        unsigned currentStart{start};
+        unsigned currentEnd{currentStart};
 
-        do {
+        do
+        {
             currentEnd = currentStart + stepSize < end ? currentStart + stepSize + 1u : end + 1u;
             result.emplace_back(currentStart, currentEnd);
             currentStart = currentEnd;
