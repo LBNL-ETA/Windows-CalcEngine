@@ -6,7 +6,7 @@ namespace FenestrationCommon
 {
     struct IndexRange
     {
-        IndexRange(size_t start, size_t end);
+        IndexRange(size_t startIndex, size_t endIndex);
         size_t start{0u};
         size_t end{0u};
     };

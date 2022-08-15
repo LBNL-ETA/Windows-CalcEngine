@@ -316,20 +316,23 @@ namespace SpectralAveraging
 
     void CSpectralSample::calculateState()
     {
-        CSample::calculateState();
-
         std::lock_guard<std::mutex> lock(spectralSampleMutex);
-        if(m_SourceData.size() == 0)
+        if(!m_StateCalculated)
         {
-            for(const auto & prop : EnumProperty())
-            {
-                for(const auto & side : EnumSide())
-                {
-                    m_Property[{prop, side}] = m_SampleData->properties(prop, side);
-                }
-            }
+            CSample::calculateState();
 
-            m_StateCalculated = true;
+            if(m_SourceData.size() == 0)
+            {
+                for(const auto & prop : EnumProperty())
+                {
+                    for(const auto & side : EnumSide())
+                    {
+                        m_Property[{prop, side}] = m_SampleData->properties(prop, side);
+                    }
+                }
+
+                m_StateCalculated = true;
+            }
         }
     }
 
