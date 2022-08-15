@@ -277,7 +277,11 @@ namespace SpectralAveraging
 
     CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property, const Side t_Side)
     {
-        calculateState();
+        std::lock_guard<std::mutex> lock(spectralSampleMutex);
+        if(!m_StateCalculated)
+        {
+            calculateState();
+        }
 
         return m_Property.at(std::make_pair(t_Property, t_Side));
     }
@@ -316,23 +320,19 @@ namespace SpectralAveraging
 
     void CSpectralSample::calculateState()
     {
-        std::lock_guard<std::mutex> lock(spectralSampleMutex);
-        if(!m_StateCalculated)
+        CSample::calculateState();
+
+        if(m_SourceData.size() == 0)
         {
-            CSample::calculateState();
-
-            if(m_SourceData.size() == 0)
+            for(const auto & prop : EnumProperty())
             {
-                for(const auto & prop : EnumProperty())
+                for(const auto & side : EnumSide())
                 {
-                    for(const auto & side : EnumSide())
-                    {
-                        m_Property[{prop, side}] = m_SampleData->properties(prop, side);
-                    }
+                    m_Property[{prop, side}] = m_SampleData->properties(prop, side);
                 }
-
-                m_StateCalculated = true;
             }
+
+            m_StateCalculated = true;
         }
     }
 

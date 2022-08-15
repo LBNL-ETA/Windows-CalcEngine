@@ -150,7 +150,6 @@ namespace MultiLayerOptics
         auto numberOfThreads{1u};
 #if MULTITHREADING
         numberOfThreads = std::thread::hardware_concurrency();
-        //numberOfThreads = 1u;
 #endif
 
         const auto chunks{FenestrationCommon::chunkIt(

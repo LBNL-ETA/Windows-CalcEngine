@@ -12,6 +12,8 @@
 std::mutex materialWL;
 std::mutex baseMaterialMutex;
 std::mutex materialSampleWL;
+std::mutex dualBandMaterialMutexProperty;
+std::mutex dualBandMaterialMutexProperties;
 std::mutex dualBandMaterialMutexRatio;
 std::mutex dualBandMaterialMutexRadiation;
 
@@ -361,6 +363,7 @@ namespace SingleLayerOptics
                                            const CBeamDirection & t_Incoming,
                                            const CBeamDirection & t_Outgoing) const
     {
+        std::lock_guard<std::mutex> lock(dualBandMaterialMutexProperties);
         if(m_MaterialScaledRange == nullptr)
         {
             m_RangeCreator();
@@ -382,6 +385,7 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection) const
     {
+        std::lock_guard<std::mutex> lock(dualBandMaterialMutexProperty);
         if(m_MaterialScaledRange == nullptr)
         {
             m_RangeCreator();
