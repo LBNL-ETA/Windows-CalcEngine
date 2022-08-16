@@ -1,16 +1,20 @@
 #include <cassert>
 #include <stdexcept>
 
+#include <thread>
+
 #include "MatrixSeries.hpp"
 #include "SquareMatrix.hpp"
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
+#include "Utility.hpp"
 
 
 namespace FenestrationCommon
 {
     CMatrixSeries::CMatrixSeries(const size_t t_Size1, const size_t t_Size2, size_t seriesSize) :
-        m_Size1(t_Size1), m_Size2(t_Size2)
+        m_Size1(t_Size1),
+        m_Size2(t_Size2)
     {
         m_Matrix = std::vector<std::vector<CSeries>>(m_Size1);
         for(size_t i = 0; i < m_Size1; ++i)
@@ -106,6 +110,7 @@ namespace FenestrationCommon
 
     void CMatrixSeries::mMult(const CSeries & t_Series)
     {
+        // Parallelization here did not show any improvements. Program was performing even slower.
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
@@ -118,11 +123,11 @@ namespace FenestrationCommon
 
     void CMatrixSeries::mMult(const std::vector<CSeries> & t_Series)
     {
+        // Parallelization here did not show any improvements. Program was performing even slower.
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
-                // assert( t_Series[ i ]->size() == ( *m_Matrix[ i ][ j ] ).size() );
                 m_Matrix[i][j] = m_Matrix[i][j] * t_Series[i];
             }
         }
@@ -139,21 +144,57 @@ namespace FenestrationCommon
     {
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
-            for(size_t j = 0; j < m_Matrix[i].size(); ++j)
+            auto numberOfThreads{1u};
+#if MULTITHREADING
+            numberOfThreads = std::thread::hardware_concurrency();
+#endif
+            const auto chunks{
+              FenestrationCommon::chunkIt(0u, m_Matrix[i].size() - 1u, numberOfThreads)};
+
+            std::vector<std::thread> workers;
+            for(const auto & chunk : chunks)
             {
-                m_Matrix[i][j] = m_Matrix[i][j].integrate(
-                  t_Integration, normalizationCoefficient, integrationPoints);
+                workers.emplace_back([&]() {
+                    for(size_t j = chunk.start; j < chunk.end; ++j)
+                    {
+                        m_Matrix[i][j] = m_Matrix[i][j].integrate(
+                          t_Integration, normalizationCoefficient, integrationPoints);
+                    }
+                });
+            }
+
+            for(auto & worker : workers)
+            {
+                worker.join();
             }
         }
     }
 
     void CMatrixSeries::interpolate(const std::vector<double> & t_Wavelengths)
     {
-        for(size_t i = 0; i < m_Matrix.size(); ++i)
+        for(size_t i = 0u; i < m_Matrix.size(); ++i)
         {
-            for(size_t j = 0; j < m_Matrix[i].size(); ++j)
+            auto numberOfThreads{1u};
+#if MULTITHREADING
+            numberOfThreads = std::thread::hardware_concurrency();
+#endif
+            const auto chunks{
+              FenestrationCommon::chunkIt(0u, m_Matrix[i].size() - 1u, numberOfThreads)};
+
+            std::vector<std::thread> workers;
+            for(const auto & chunk : chunks)
             {
-                m_Matrix[i][j] = m_Matrix[i][j].interpolate(t_Wavelengths);
+                workers.emplace_back([&]() {
+                    for(size_t j = chunk.start; j < chunk.end; ++j)
+                    {
+                        m_Matrix[i][j] = m_Matrix[i][j].interpolate(t_Wavelengths);
+                    }
+                });
+            }
+
+            for(auto & worker : workers)
+            {
+                worker.join();
             }
         }
     }
