@@ -110,6 +110,7 @@ namespace FenestrationCommon
 
     void CMatrixSeries::mMult(const CSeries & t_Series)
     {
+        // Parallelization here did not show any improvements. Program was performing even slower.
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
@@ -122,6 +123,7 @@ namespace FenestrationCommon
 
     void CMatrixSeries::mMult(const std::vector<CSeries> & t_Series)
     {
+        // Parallelization here did not show any improvements. Program was performing even slower.
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
