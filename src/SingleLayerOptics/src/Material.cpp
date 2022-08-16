@@ -26,7 +26,10 @@ namespace SingleLayerOptics
           std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol);
         auto aVisibleRangeMaterial =
           std::make_shared<CMaterialSingleBand>(Tfvis, Tbvis, Rfvis, Rbvis);
-        return std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        auto material =
+          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        material->createRangesFromRatio(ConstantsData::NIRRatio);
+        return material;
     }
 
     std::shared_ptr<CMaterial> Material::dualBandMaterial(const double Tfsol,
@@ -43,8 +46,10 @@ namespace SingleLayerOptics
           std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol);
         auto aVisibleRangeMaterial =
           std::make_shared<CMaterialSingleBand>(Tfvis, Tbvis, Rfvis, Rbvis);
-        return std::make_shared<CMaterialDualBand>(
-          aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
+        auto material =
+          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        material->createRangesFromRatio(ratio);
+        return material;
     }
 
     std::shared_ptr<CMaterial> Material::dualBandMaterial(const double Tfsol,
@@ -61,8 +66,10 @@ namespace SingleLayerOptics
           std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol);
         auto aVisibleRangeMaterial =
           std::make_shared<CMaterialSingleBand>(Tfvis, Tbvis, Rfvis, Rbvis);
-        return std::make_shared<CMaterialDualBand>(
-          aVisibleRangeMaterial, aSolarRangeMaterial, solarRadiation);
+        auto material =
+          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        material->createRangesFromSolarRadiation(solarRadiation);
+        return material;
     }
 
     std::shared_ptr<CMaterial>
@@ -81,8 +88,10 @@ namespace SingleLayerOptics
           std::make_shared<CMaterialSingleBandBSDF>(Tfsol, Tbsol, Rfsol, Rbsol, hemisphere);
         auto aVisibleRangeMaterial =
           std::make_shared<CMaterialSingleBandBSDF>(Tfvis, Tbvis, Rfvis, Rbvis, hemisphere);
-        return std::make_shared<CMaterialDualBandBSDF>(
-          aVisibleRangeMaterial, aSolarRangeMaterial, ratio);
+        auto material =
+          std::make_shared<CMaterialDualBandBSDF>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        material->createRangesFromRatio(ratio);
+        return material;
     }
 
     std::shared_ptr<CMaterial>
@@ -101,8 +110,11 @@ namespace SingleLayerOptics
           std::make_shared<CMaterialSingleBandBSDF>(Tfsol, Tbsol, Rfsol, Rbsol, hemisphere);
         auto aVisibleRangeMaterial =
           std::make_shared<CMaterialSingleBandBSDF>(Tfvis, Tbvis, Rfvis, Rbvis, hemisphere);
-        return std::make_shared<CMaterialDualBandBSDF>(
-          aVisibleRangeMaterial, aSolarRangeMaterial, solarRadiation);
+        auto material =
+          std::make_shared<CMaterialDualBandBSDF>(aVisibleRangeMaterial, aSolarRangeMaterial);
+        material->createRangesFromSolarRadiation(solarRadiation);
+
+        return material;
     }
 
     std::shared_ptr<CMaterial> Material::singleBandMaterial(const double Tf,
