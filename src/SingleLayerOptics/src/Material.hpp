@@ -18,14 +18,6 @@ namespace SingleLayerOptics
     class Material
     {
     public:
-        static std::shared_ptr<CMaterial> dualBandMaterial(double Tfsol,
-                                                           double Tbsol,
-                                                           double Rfsol,
-                                                           double Rbsol,
-                                                           double Tfvis,
-                                                           double Tbvis,
-                                                           double Rfvis,
-                                                           double Rbvis);
 
         static std::shared_ptr<CMaterial> dualBandMaterial(double Tfsol,
                                                            double Tbsol,
@@ -35,7 +27,7 @@ namespace SingleLayerOptics
                                                            double Tbvis,
                                                            double Rfvis,
                                                            double Rbvis,
-                                                           double ratio);
+                                                           double ratio = ConstantsData::NIRRatio);
 
         static std::shared_ptr<CMaterial>
           dualBandMaterial(double Tfsol,
@@ -58,7 +50,7 @@ namespace SingleLayerOptics
                                std::vector<std::vector<double>> const & Rfvis,
                                std::vector<std::vector<double>> const & Rbvis,
                                BSDFHemisphere const & hemisphere,
-                               double ratio);
+                               double ratio = ConstantsData::NIRRatio);
 
         static std::shared_ptr<CMaterial>
           dualBandBSDFMaterial(std::vector<std::vector<double>> const & Tfsol,

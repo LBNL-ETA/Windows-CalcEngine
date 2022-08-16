@@ -20,25 +20,6 @@ namespace SingleLayerOptics
                                                           const double Tfvis,
                                                           const double Tbvis,
                                                           const double Rfvis,
-                                                          const double Rbvis)
-    {
-        auto aSolarRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tfsol, Tbsol, Rfsol, Rbsol);
-        auto aVisibleRangeMaterial =
-          std::make_shared<CMaterialSingleBand>(Tfvis, Tbvis, Rfvis, Rbvis);
-        auto material =
-          std::make_shared<CMaterialDualBand>(aVisibleRangeMaterial, aSolarRangeMaterial);
-        material->createRangesFromRatio(ConstantsData::NIRRatio);
-        return material;
-    }
-
-    std::shared_ptr<CMaterial> Material::dualBandMaterial(const double Tfsol,
-                                                          const double Tbsol,
-                                                          const double Rfsol,
-                                                          const double Rbsol,
-                                                          const double Tfvis,
-                                                          const double Tbvis,
-                                                          const double Rfvis,
                                                           const double Rbvis,
                                                           const double ratio)
     {
