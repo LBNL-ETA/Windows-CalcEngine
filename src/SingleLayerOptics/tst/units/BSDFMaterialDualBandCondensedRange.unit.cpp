@@ -132,6 +132,7 @@ protected:
                                                     m_RbSol,
                                                     m_Hemisphere);
         m_Material = std::make_shared<CMaterialDualBandBSDF>(m_MaterialVis, m_MaterialSol);
+        m_Material->createRangesFromRatio(ConstantsData::NIRRatio);
 
         m_Material->setBandWavelengths(condensedSpectrum());
     }
