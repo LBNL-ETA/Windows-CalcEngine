@@ -114,23 +114,23 @@ namespace Tarcog
 
             if(t_Tilt >= 0 && t_Tilt < 60)
             {
-                nusseltNumber = wce::make_unique<CNusseltNumber0To60>();
+                nusseltNumber = std::make_unique<CNusseltNumber0To60>();
             }
             else if(t_Tilt == 60)
             {
-                nusseltNumber = wce::make_unique<CNusseltNumber60>();
+                nusseltNumber = std::make_unique<CNusseltNumber60>();
             }
             else if(t_Tilt > 60 && t_Tilt < 90)
             {
-                nusseltNumber = wce::make_unique<CNusseltNumber60To90>();
+                nusseltNumber = std::make_unique<CNusseltNumber60To90>();
             }
             else if(t_Tilt == 90)
             {
-                nusseltNumber = wce::make_unique<CNusseltNumber90>();
+                nusseltNumber = std::make_unique<CNusseltNumber90>();
             }
             else if(t_Tilt > 90 && t_Tilt <= 180)
             {
-                nusseltNumber = wce::make_unique<CNusseltNumber90to180>();
+                nusseltNumber = std::make_unique<CNusseltNumber90to180>();
             }
             else
             {

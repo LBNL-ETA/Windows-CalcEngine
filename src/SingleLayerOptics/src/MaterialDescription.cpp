@@ -127,9 +127,7 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////
 
     CMaterial::CMaterial(const double minLambda, const double maxLambda) :
-        m_MinLambda(minLambda),
-        m_MaxLambda(maxLambda),
-        m_WavelengthsCalculated(false)
+        m_MinLambda(minLambda), m_MaxLambda(maxLambda), m_WavelengthsCalculated(false)
     {}
 
     CMaterial::CMaterial(FenestrationCommon::Limits wavelengthRange) :
@@ -316,22 +314,10 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////
 
     IMaterialDualBand::IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
-                                         const std::shared_ptr<CMaterial> & solarRange,
-                                         double t_Ratio) :
+                                         const std::shared_ptr<CMaterial> & solarRange) :
         CMaterial(solarRange->getMinLambda(), solarRange->getMaxLambda()),
         m_MaterialSolarRange(solarRange),
-        m_MaterialVisibleRange(visibleRange),
-        m_RangeCreator(std::bind(&IMaterialDualBand::createRangesFromRatio, this, t_Ratio))
-    {}
-
-    IMaterialDualBand::IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
-                                         const std::shared_ptr<CMaterial> & solarRange,
-                                         const FenestrationCommon::CSeries & t_SolarRadiation) :
-        CMaterial(solarRange->getMinLambda(), solarRange->getMaxLambda()),
-        m_MaterialSolarRange(solarRange),
-        m_MaterialVisibleRange(visibleRange),
-        m_RangeCreator(
-          std::bind(&IMaterialDualBand::createRangesFromSolarRadiation, this, t_SolarRadiation))
+        m_MaterialVisibleRange(visibleRange)
     {}
 
     void IMaterialDualBand::setSourceData(CSeries & t_SourceData)
@@ -361,11 +347,8 @@ namespace SingleLayerOptics
                                            const CBeamDirection & t_Incoming,
                                            const CBeamDirection & t_Outgoing) const
     {
-        if(m_MaterialScaledRange == nullptr)
-        {
-            m_RangeCreator();
-        }
         std::vector<double> aResults;
+        aResults.reserve(m_Wavelengths.size());
 
         for(const auto wl : m_Wavelengths)
         {
@@ -382,12 +365,8 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection) const
     {
-        if(m_MaterialScaledRange == nullptr)
-        {
-            m_RangeCreator();
-        }
-        return getMaterialFromWavelength(m_Wavelengths[wavelengthIndex])->getProperty(
-          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
+        return getMaterialFromWavelength(m_Wavelengths[wavelengthIndex])
+          ->getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
     }
 
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
@@ -397,15 +376,8 @@ namespace SingleLayerOptics
     }
 
     CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                                         const std::shared_ptr<CMaterial> & t_FullRange,
-                                         double t_Ratio) :
-        IMaterialDualBand(t_PartialRange, t_FullRange, t_Ratio)
-    {}
-
-    CMaterialDualBand::CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                                         const std::shared_ptr<CMaterial> & t_FullRange,
-                                         const FenestrationCommon::CSeries & t_SolarRadiation) :
-        IMaterialDualBand(t_PartialRange, t_FullRange, t_SolarRadiation)
+                                         const std::shared_ptr<CMaterial> & t_FullRange) :
+        IMaterialDualBand(t_PartialRange, t_FullRange)
     {}
 
     void CMaterialDualBand::createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
@@ -544,8 +516,7 @@ namespace SingleLayerOptics
       const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type) :
-        CMaterialSample(t_SpectralSample, t_Thickness, t_Type),
-        m_PVSample(t_SpectralSample)
+        CMaterialSample(t_SpectralSample, t_Thickness, t_Type), m_PVSample(t_SpectralSample)
     {}
 
     FenestrationCommon::CSeries
@@ -560,8 +531,7 @@ namespace SingleLayerOptics
 
     CMaterialMeasured::CMaterialMeasured(
       const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements) :
-        CMaterial(t_Measurements->getWavelengthLimits()),
-        m_AngularMeasurements(t_Measurements)
+        CMaterial(t_Measurements->getWavelengthLimits()), m_AngularMeasurements(t_Measurements)
     {
         if(t_Measurements == nullptr)
         {
@@ -767,16 +737,8 @@ namespace SingleLayerOptics
 
     CMaterialDualBandBSDF::CMaterialDualBandBSDF(
       const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
-      const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
-      double t_Ratio) :
-        IMaterialDualBand(t_PartialRange, t_FullRange, t_Ratio)
-    {}
-
-    CMaterialDualBandBSDF::CMaterialDualBandBSDF(
-      const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
-      const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
-      const FenestrationCommon::CSeries & t_SolarRadiation) :
-        IMaterialDualBand(t_PartialRange, t_FullRange, t_SolarRadiation)
+      const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange) :
+        IMaterialDualBand(t_PartialRange, t_FullRange)
     {}
 
     void CMaterialDualBandBSDF::createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,

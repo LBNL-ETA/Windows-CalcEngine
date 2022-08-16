@@ -18,7 +18,7 @@
 #include "../src/PolynomialFit.hpp"
 #include "../src/Polynom.hpp"
 #include "../src/mmap.hpp"
-#include "../src/wceunique.hpp"
 #include "../src/WavelengthSpectrum.hpp"
 #include "../src/Table2D.hpp"
 #include "../src/Table2DInterpolators.hpp"
+#include "../src/Utility.hpp"

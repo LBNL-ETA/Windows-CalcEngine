@@ -17,7 +17,7 @@ protected:
     virtual void SetUp()
     {
         std::vector<double> thetaAngles{0, 13, 26, 39, 52, 65, 80.75};
-        m_Thetas = wce::make_unique<CThetaLimits>(thetaAngles);
+        m_Thetas = std::make_unique<CThetaLimits>(thetaAngles);
     }
 
 public:

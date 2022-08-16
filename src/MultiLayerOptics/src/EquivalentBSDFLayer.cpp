@@ -1,24 +1,21 @@
 
 #include <cmath>
-#include <cassert>
-#include <stdexcept>
-#ifdef STL_MULTITHREADING
-#    include <execution>
-#else
-# include <mutex>
-#endif
+
+#include <thread>
+#include <mutex>
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "WCECommon.hpp"
 
-using namespace FenestrationCommon;
+using FenestrationCommon::CMatrixSeries;
+using FenestrationCommon::Side;
+using FenestrationCommon::PropertySimple;
+using FenestrationCommon::CSeries;
 
 namespace MultiLayerOptics
 {
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
-        m_CombinedLayerWavelengths(t_CommonWavelengths),
-        m_Calculated(false)
+        m_CombinedLayerWavelengths(t_CommonWavelengths), m_Calculated(false)
     {}
 
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(
@@ -120,11 +117,11 @@ namespace MultiLayerOptics
         const size_t numberOfLayers = m_Layer.size();
         const size_t seriesSize = m_CombinedLayerWavelengths.size();
 
-        for(Side aSide : EnumSide())
+        for(Side aSide : FenestrationCommon::EnumSide())
         {
             m_TotA[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
             m_TotJSC[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
-            for(PropertySimple aProperty : EnumPropertySimple())
+            for(PropertySimple aProperty : FenestrationCommon::EnumPropertySimple())
             {
                 m_Tot[{aSide, aProperty}] = CMatrixSeries(matrixSize, matrixSize, seriesSize);
             }
@@ -147,44 +144,56 @@ namespace MultiLayerOptics
         std::mutex jscMutex;
         std::mutex totMutex;
 
-#ifdef STL_MULTITHREADING
-        std::for_each(std::execution::par,
-#else
-        std::for_each(
+        auto numberOfThreads{1u};
+#if MULTITHREADING
+        numberOfThreads = std::thread::hardware_concurrency();
 #endif
-                      wavelengthIndexes.begin(),
-                      wavelengthIndexes.end(),
-                      [&](const size_t & index) {
-                          // for(size_t i = 0u; i < m_CombinedLayerWavelengths.size(); ++i)
-                          auto layer{getEquivalentLayerAtWavelength(index)};
-                          for(auto aSide : EnumSide())
-                          {
-                              const auto numberOfLayers{m_Layer.size()};
-                              for(size_t layerNumber = 0; layerNumber < numberOfLayers;
-                                  ++layerNumber)
-                              {
-                                  auto totA{layer.getLayerAbsorptances(layerNumber + 1, aSide)};
-                                  
-                                  std::lock_guard<std::mutex> lock_abs(absorptanceMutex);
-                                  m_TotA.at(aSide).setPropertiesAtIndex(index,
-                                    layerNumber, m_CombinedLayerWavelengths[index], totA);
-                                  
-                                  auto totJSC{layer.getLayerJSC(layerNumber + 1, aSide)};
-                                  std::lock_guard<std::mutex> lock_jsc(jscMutex);
-                                  m_TotJSC.at(aSide).setPropertiesAtIndex(index,
-                                    layerNumber, m_CombinedLayerWavelengths[index], totJSC);
-                              }
-                              for(auto aProperty : EnumPropertySimple())
-                              {
-                                  auto tot{layer.getProperty(aSide, aProperty)};
 
-                                  std::lock_guard<std::mutex> lock_tot(totMutex);
-                                  m_Tot.at({aSide, aProperty})
-                                    .setPropertiesAtIndex(index, m_CombinedLayerWavelengths[index], tot);
-                              }
-                          }
-                      });
-    };
+        const auto chunks{
+          FenestrationCommon::chunkIt(0u, m_CombinedLayerWavelengths.size() - 1u, numberOfThreads)};
+
+        std::vector<std::thread> workers;
+
+        for(const auto & chunk : chunks)
+        {
+            workers.emplace_back([&]() {
+                for(size_t index = chunk.start; index < chunk.end; ++index)
+                {
+                    auto layer{getEquivalentLayerAtWavelength(index)};
+                    for(auto aSide : FenestrationCommon::EnumSide())
+                    {
+                        const auto numberOfLayers{m_Layer.size()};
+                        for(size_t layerNumber = 0; layerNumber < numberOfLayers; ++layerNumber)
+                        {
+                            auto totA{layer.getLayerAbsorptances(layerNumber + 1, aSide)};
+
+                            std::lock_guard<std::mutex> lock_abs(absorptanceMutex);
+                            m_TotA.at(aSide).setPropertiesAtIndex(
+                              index, layerNumber, m_CombinedLayerWavelengths[index], totA);
+
+                            auto totJSC{layer.getLayerJSC(layerNumber + 1, aSide)};
+                            std::lock_guard<std::mutex> lock_jsc(jscMutex);
+                            m_TotJSC.at(aSide).setPropertiesAtIndex(
+                              index, layerNumber, m_CombinedLayerWavelengths[index], totJSC);
+                        }
+                        for(auto aProperty : FenestrationCommon::EnumPropertySimple())
+                        {
+                            auto tot{layer.getProperty(aSide, aProperty)};
+
+                            std::lock_guard<std::mutex> lock_tot(totMutex);
+                            m_Tot.at({aSide, aProperty})
+                              .setPropertiesAtIndex(index, m_CombinedLayerWavelengths[index], tot);
+                        }
+                    }
+                }
+            });
+        }
+
+        for(auto & worker : workers)
+        {
+            worker.join();
+        }
+    }
 
     CEquivalentBSDFLayerSingleBand
       CEquivalentBSDFLayer::getEquivalentLayerAtWavelength(size_t wavelengthIndex) const
@@ -192,7 +201,7 @@ namespace MultiLayerOptics
         auto jscPrimeFront{m_Layer[0]->jscPrime(Side::Front, m_CombinedLayerWavelengths)};
         auto jscPrimeBack{m_Layer[0]->jscPrime(Side::Back, m_CombinedLayerWavelengths)};
         auto layerWLResults{m_Layer[0]->getResultsAtWavelength(wavelengthIndex)};
-        
+
 
         CEquivalentBSDFLayerSingleBand result{
           layerWLResults, jscPrimeFront[wavelengthIndex], jscPrimeBack[wavelengthIndex]};
@@ -212,12 +221,12 @@ namespace MultiLayerOptics
     std::vector<double> CEquivalentBSDFLayer::unionOfLayerWavelengths(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer)
     {
-        CCommonWavelengths wl;
+        FenestrationCommon::CCommonWavelengths wl;
         for(const auto & layer : t_Layer)
         {
             wl.addWavelength(layer->getBandWavelengths());
         }
 
-        return wl.getCombinedWavelengths(Combine::Interpolate);
+        return wl.getCombinedWavelengths(FenestrationCommon::Combine::Interpolate);
     }
 }   // namespace MultiLayerOptics

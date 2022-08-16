@@ -322,7 +322,7 @@ private:
                                                      thickness,
                                                      FenestrationCommon::MaterialType::Monolithic);
 
-        auto layer = wce::make_unique<SingleLayerOptics::CScatteringLayer>(
+        auto layer = std::make_unique<SingleLayerOptics::CScatteringLayer>(
           SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial));
         CSeries solarRadiation{loadSolarRadiationFile()};
         layer->setSourceData(solarRadiation);

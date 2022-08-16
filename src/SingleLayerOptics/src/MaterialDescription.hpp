@@ -220,13 +220,8 @@ namespace SingleLayerOptics
     {
     public:
         IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
-                          const std::shared_ptr<CMaterial> & solarRange,
-                          double t_Ratio = ConstantsData::NIRRatio);
+                          const std::shared_ptr<CMaterial> & solarRange);
 
-        // ratio is calculated based on provided solar radiation values
-        IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
-                          const std::shared_ptr<CMaterial> & solarRange,
-                          const FenestrationCommon::CSeries & t_SolarRadiation);
 
         void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
         void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
@@ -250,6 +245,12 @@ namespace SingleLayerOptics
           const CBeamDirection & t_IncomingDirection = CBeamDirection(),
           const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
 
+        // Creates all the required ranges in m_Materials from a ratio
+        void createRangesFromRatio(double t_Ratio);
+
+        // Creates all the required ranges in m_Materials from solar radiation
+        void createRangesFromSolarRadiation(const FenestrationCommon::CSeries & t_SolarRadiation);
+
     protected:
         std::vector<double> calculateBandWavelengths() override;
 
@@ -257,12 +258,6 @@ namespace SingleLayerOptics
         virtual void createNIRRange(const std::shared_ptr<CMaterial> & t_PartialRange,
                                     const std::shared_ptr<CMaterial> & t_SolarRange,
                                     double t_Fraction) = 0;
-
-        // Creates all of the required ranges in m_Materials from a ratio
-        void createRangesFromRatio(double t_Ratio);
-
-        // Creates all of the required ranges in m_Materials from solar radiation
-        void createRangesFromSolarRadiation(const FenestrationCommon::CSeries & t_SolarRadiation);
 
         [[nodiscard]] std::vector<double> getWavelengthsFromMaterials() const;
 
@@ -272,31 +267,21 @@ namespace SingleLayerOptics
         // double getModifiedProperty(double t_Range, double t_Solar, double t_Fraction) const;
 
         [[nodiscard]] std::shared_ptr<CMaterial> getMaterialFromWavelength(double wavelength) const;
-        [[nodiscard]] std::shared_ptr<CMaterial> getMaterialFromWavelength(size_t wavelengthIndex) const;
+        [[nodiscard]] std::shared_ptr<CMaterial>
+          getMaterialFromWavelength(size_t wavelengthIndex) const;
 
         std::shared_ptr<CMaterial> m_MaterialSolarRange;
         std::shared_ptr<CMaterial> m_MaterialVisibleRange;
 
 
         std::shared_ptr<CMaterial> m_MaterialScaledRange;
-
-        std::function<void(void)> m_RangeCreator;
     };
 
     class CMaterialDualBand : public IMaterialDualBand
     {
     public:
-        // ratio is calculated outside of the class and can be provided here.
-        // TODO: Need to confirm with the team if we actually need this approach
-        // (ratio should be calculated and not quessed)
         CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                          const std::shared_ptr<CMaterial> & t_FullRange,
-                          double t_Ratio = ConstantsData::NIRRatio);
-
-        // ratio is calculated based on provided solar radiation values
-        CMaterialDualBand(const std::shared_ptr<CMaterial> & t_PartialRange,
-                          const std::shared_ptr<CMaterial> & t_FullRange,
-                          const FenestrationCommon::CSeries & t_SolarRadiation);
+                          const std::shared_ptr<CMaterial> & t_FullRange);
 
     private:
         // Creates after UV range and stores data into m_Materials
@@ -316,17 +301,8 @@ namespace SingleLayerOptics
     class CMaterialDualBandBSDF : public IMaterialDualBand
     {
     public:
-        // ratio is calculated outside of the class and can be provided here.
-        // TODO: Need to confirm with the team if we actually need this approach
-        // (ratio should be calculated and not quessed)
         CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
-                              const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
-                              double t_Ratio = ConstantsData::NIRRatio);
-
-        // ratio is calculated based on provided solar radiation values
-        CMaterialDualBandBSDF(const std::shared_ptr<CMaterialSingleBandBSDF> & t_PartialRange,
-                              const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange,
-                              const FenestrationCommon::CSeries & t_SolarRadiation);
+                              const std::shared_ptr<CMaterialSingleBandBSDF> & t_FullRange);
 
     protected:
         // Creates after UV range and stores data into m_Materials
