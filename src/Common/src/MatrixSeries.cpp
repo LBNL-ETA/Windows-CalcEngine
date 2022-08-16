@@ -142,10 +142,28 @@ namespace FenestrationCommon
     {
         for(size_t i = 0; i < m_Matrix.size(); ++i)
         {
-            for(size_t j = 0; j < m_Matrix[i].size(); ++j)
+            auto numberOfThreads{1u};
+#if MULTITHREADING
+            numberOfThreads = std::thread::hardware_concurrency();
+#endif
+            const auto chunks{
+              FenestrationCommon::chunkIt(0u, m_Matrix[i].size() - 1u, numberOfThreads)};
+
+            std::vector<std::thread> workers;
+            for(const auto & chunk : chunks)
             {
-                m_Matrix[i][j] = m_Matrix[i][j].integrate(
-                  t_Integration, normalizationCoefficient, integrationPoints);
+                workers.emplace_back([&]() {
+                    for(size_t j = chunk.start; j < chunk.end; ++j)
+                    {
+                        m_Matrix[i][j] = m_Matrix[i][j].integrate(
+                          t_Integration, normalizationCoefficient, integrationPoints);
+                    }
+                });
+            }
+
+            for(auto & worker : workers)
+            {
+                worker.join();
             }
         }
     }
@@ -177,7 +195,6 @@ namespace FenestrationCommon
                 worker.join();
             }
         }
-
     }
 
     std::vector<std::vector<double>>
