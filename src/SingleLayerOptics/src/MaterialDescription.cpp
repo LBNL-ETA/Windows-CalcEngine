@@ -6,7 +6,6 @@
 
 #include "MaterialDescription.hpp"
 #include "WCECommon.hpp"
-#include "WCESpectralAveraging.hpp"
 #include "OpticalSurface.hpp"
 
 std::mutex materialWL;
@@ -203,7 +202,6 @@ namespace SingleLayerOptics
     void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths)
     {
         std::lock_guard<std::mutex> lock(baseMaterialMutex);
-        // Trimming is necessary in order to keep data within integration range
         m_Wavelengths = wavelengths;
         m_WavelengthsCalculated = true;
     }

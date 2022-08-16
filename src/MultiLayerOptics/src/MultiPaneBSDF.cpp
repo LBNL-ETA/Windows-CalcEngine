@@ -39,7 +39,9 @@ namespace MultiLayerOptics
         m_Integrator(IntegrationType::Trapezoidal),
         m_NormalizationCoefficient(1),
         m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
-    {}
+    {
+        m_EquivalentLayer.calculate();
+    }
 
     std::vector<std::vector<double>>
       CMultiPaneBSDF::calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
@@ -109,7 +111,6 @@ namespace MultiLayerOptics
                   m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
             }
-
 
             // Produce local results matrices for each side and property
             std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
