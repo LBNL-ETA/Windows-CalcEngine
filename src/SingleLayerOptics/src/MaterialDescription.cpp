@@ -363,11 +363,13 @@ namespace SingleLayerOptics
                                            const CBeamDirection & t_Incoming,
                                            const CBeamDirection & t_Outgoing) const
     {
-        std::lock_guard<std::mutex> lock(dualBandMaterialMutexProperties);
+        dualBandMaterialMutexProperties.lock();
         if(m_MaterialScaledRange == nullptr)
         {
             m_RangeCreator();
         }
+        dualBandMaterialMutexProperties.unlock();
+
         std::vector<double> aResults;
 
         for(const auto wl : m_Wavelengths)
@@ -385,13 +387,14 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection) const
     {
-        std::lock_guard<std::mutex> lock(dualBandMaterialMutexProperty);
+        dualBandMaterialMutexProperty.lock();
         if(m_MaterialScaledRange == nullptr)
         {
             m_RangeCreator();
         }
-        return getMaterialFromWavelength(m_Wavelengths[wavelengthIndex])->getProperty(
-          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
+        dualBandMaterialMutexProperty.unlock();
+        return getMaterialFromWavelength(m_Wavelengths[wavelengthIndex])
+          ->getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
     }
 
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
