@@ -109,7 +109,6 @@ namespace SingleLayerOptics
         double m_MinLambda;
         double m_MaxLambda;
 
-        std::vector<double> trimWavelengthToRange(const std::vector<double> & wavelengths) const;
         // Set state in order not to calculate wavelengths every time
         virtual std::vector<double> calculateBandWavelengths() = 0;
         bool m_WavelengthsCalculated{false};

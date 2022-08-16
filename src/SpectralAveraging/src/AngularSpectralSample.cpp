@@ -165,29 +165,16 @@ namespace SpectralAveraging
         return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side);
     }
 
-    std::vector<double> CAngularSpectralSample::getWavelengthsProperty(double const minLambda,
-                                                                       double const maxLambda,
-                                                                       Property const t_Property,
-                                                                       Side const t_Side,
-                                                                       double const t_Angle)
+    std::vector<double> CAngularSpectralSample::getWavelengthProperties(Property const t_Property,
+                                                                        Side const t_Side,
+                                                                        double const t_Angle)
     {
 
         auto aSample = findSpectralSample(t_Angle);
 
         auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
 
-        std::vector<double> aValues;
-
-        for(auto & aProperty : aProperties)
-        {
-            if(aProperty.x() >= (minLambda - ConstantsData::wavelengthErrorTolerance)
-               && aProperty.x() <= (maxLambda + ConstantsData::wavelengthErrorTolerance))
-            {
-                aValues.push_back(aProperty.value());
-            }
-        }
-
-        return aValues;
+        return aProperties.getYArray();
     }
 
     std::vector<double> CAngularSpectralSample::getBandWavelengths() const
