@@ -1,11 +1,9 @@
 #include <cmath>
 #include <numeric>
-#include <algorithm>
 #include <cassert>
 #include <utility>
 
 #include "MultiPaneBSDF.hpp"
-#include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
@@ -111,6 +109,7 @@ namespace MultiLayerOptics
                   m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
             }
+
 
             // Produce local results matrices for each side and property
             std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;

@@ -102,15 +102,6 @@ namespace MultiLayerOptics
         return m_Layer.size();
     }
 
-    void CEquivalentBSDFLayer::setMatrixLayerWavelengths(const std::vector<double> & wavelenghts)
-    {
-        m_CombinedLayerWavelengths = wavelenghts;
-        for(const auto & layer : m_Layer)
-        {
-            layer->setBandWavelengths(wavelenghts);
-        }
-    }
-
     void CEquivalentBSDFLayer::calculate()
     {
         const size_t matrixSize = m_Lambda.size();
@@ -134,12 +125,6 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
-        std::vector<size_t> wavelengthIndexes;
-        for(size_t i = 0; i < m_CombinedLayerWavelengths.size(); ++i)
-        {
-            wavelengthIndexes.push_back(i);
-        }
-
         std::mutex absorptanceMutex;
         std::mutex jscMutex;
         std::mutex totMutex;

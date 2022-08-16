@@ -32,43 +32,25 @@ namespace MultiLayerOptics
         [[nodiscard]] double getMaxLambda() const;
 
         // Absorptance wavelength by wavelength matrices
-        FenestrationCommon::CMatrixSeries getTotalA(const FenestrationCommon::Side t_Side);
+        FenestrationCommon::CMatrixSeries getTotalA(FenestrationCommon::Side t_Side);
 
         // Photovoltaic current (scaled to income irradiance equal to one)
         FenestrationCommon::CMatrixSeries getTotalJSC(FenestrationCommon::Side t_Side);
 
         // Transmittance and reflectance wavelength by wavelength matrices
-        FenestrationCommon::CMatrixSeries
-          getTotal(const FenestrationCommon::Side t_Side,
-                   const FenestrationCommon::PropertySimple t_Property);
+        FenestrationCommon::CMatrixSeries getTotal(FenestrationCommon::Side t_Side,
+                                                   FenestrationCommon::PropertySimple t_Property);
 
         void setSolarRadiation(FenestrationCommon::CSeries & t_SolarRadiation);
 
         [[nodiscard]] std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & getLayers();
         [[nodiscard]] size_t numberOfLayers() const;
 
-        void setMatrixLayerWavelengths(const std::vector<double> & wavelenghts);
-
-    private:
-        struct wavelenghtData
-        {
-            wavelenghtData(double wl, CEquivalentBSDFLayerSingleBand & layerWl) :
-                wavelength(wl),
-                layer(layerWl)
-            {}
-
-            double wavelength;
-            CEquivalentBSDFLayerSingleBand & layer;
-            std::map<std::pair<FenestrationCommon::Side, size_t>, std::vector<double>> totA;
-            std::map<std::pair<FenestrationCommon::Side, size_t>, std::vector<double>> totJSC;
-            std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
-                     FenestrationCommon::SquareMatrix>
-              tot;
-        };
-
         void calculate();
 
-        CEquivalentBSDFLayerSingleBand getEquivalentLayerAtWavelength(size_t wavelengthIndex) const;
+    private:
+        [[nodiscard]] CEquivalentBSDFLayerSingleBand
+          getEquivalentLayerAtWavelength(size_t wavelengthIndex) const;
 
         static std::vector<double> unionOfLayerWavelengths(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer);
@@ -97,7 +79,6 @@ namespace MultiLayerOptics
         bool m_Calculated;
 
         void calculateWavelengthByWavelengthProperties();
-        
     };
 
 }   // namespace MultiLayerOptics
