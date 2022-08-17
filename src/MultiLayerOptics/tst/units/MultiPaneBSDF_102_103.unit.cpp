@@ -219,13 +219,16 @@ public:
         return detectorData;
     }
 
-    std::vector<double> wavelengthSetPhotopic{
-      0.38, 0.385, 0.39, 0.395, 0.4,  0.405, 0.41, 0.415, 0.42, 0.425, 0.43, 0.435, 0.44, 0.445,
-      0.45, 0.455, 0.46, 0.465, 0.47, 0.475, 0.48, 0.485, 0.49, 0.495, 0.5,  0.505, 0.51, 0.515,
-      0.52, 0.525, 0.53, 0.535, 0.54, 0.545, 0.55, 0.555, 0.56, 0.565, 0.57, 0.575, 0.58, 0.585,
-      0.59, 0.595, 0.6,  0.605, 0.61, 0.615, 0.62, 0.625, 0.63, 0.635, 0.64, 0.645, 0.65, 0.655,
-      0.66, 0.665, 0.67, 0.675, 0.68, 0.685, 0.69, 0.695, 0.7,  0.705, 0.71, 0.715, 0.72, 0.725,
-      0.73, 0.735, 0.74, 0.745, 0.75, 0.755, 0.76, 0.765, 0.77, 0.775, 0.78};
+    [[nodiscard]] static std::vector<double> wavelengthSetPhotopic()
+    {
+        return {0.38, 0.385, 0.39, 0.395, 0.4,  0.405, 0.41, 0.415, 0.42, 0.425, 0.43, 0.435,
+                0.44, 0.445, 0.45, 0.455, 0.46, 0.465, 0.47, 0.475, 0.48, 0.485, 0.49, 0.495,
+                0.5,  0.505, 0.51, 0.515, 0.52, 0.525, 0.53, 0.535, 0.54, 0.545, 0.55, 0.555,
+                0.56, 0.565, 0.57, 0.575, 0.58, 0.585, 0.59, 0.595, 0.6,  0.605, 0.61, 0.615,
+                0.62, 0.625, 0.63, 0.635, 0.64, 0.645, 0.65, 0.655, 0.66, 0.665, 0.67, 0.675,
+                0.68, 0.685, 0.69, 0.695, 0.7,  0.705, 0.71, 0.715, 0.72, 0.725, 0.73, 0.735,
+                0.74, 0.745, 0.75, 0.755, 0.76, 0.765, 0.77, 0.775, 0.78};
+    };
 
     static std::shared_ptr<CSpectralSampleData> loadSampleData_NFRC_102()
     {
@@ -446,7 +449,7 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     maxLambda = 0.78;
 
     const CalculationProperties inputVisible{
-      solarRadiationFilePhotopicStandard(), wavelengthSetPhotopic, getDetectorDataPhotopic()};
+      solarRadiationFilePhotopicStandard(), wavelengthSetPhotopic(), getDetectorDataPhotopic()};
     aLayer.setCalculationProperties(inputVisible);
 
     tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
