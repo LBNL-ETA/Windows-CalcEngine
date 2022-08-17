@@ -11,8 +11,8 @@
 #include "ViewerConstants.hpp"
 #include "WCECommon.hpp"
 
-std::mutex beamViewFactorsMutex;
-std::mutex directToDirectMutex;
+std::mutex calculateAllPropertiesMutex;
+std::mutex findRayBoundariesMutex;
 
 using namespace FenestrationCommon;
 
@@ -264,7 +264,6 @@ namespace Viewer
     std::shared_ptr<std::vector<BeamViewFactor>>
       CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
     {
-        std::lock_guard<std::mutex> lock(beamViewFactorsMutex);
         calculateAllProperties(t_ProfileAngle);
         assert(m_CurrentResult != nullptr);
         return m_CurrentResult->beamViewFactors();
@@ -272,7 +271,6 @@ namespace Viewer
 
     double CDirect2DRays::directToDirect(double const t_ProfileAngle)
     {
-        std::lock_guard<std::mutex> lock(directToDirectMutex);
         calculateAllProperties(t_ProfileAngle);
         assert(m_CurrentResult != nullptr);
         return m_CurrentResult->directToDirect();
@@ -280,6 +278,7 @@ namespace Viewer
 
     void CDirect2DRays::calculateAllProperties(double const t_ProfileAngle)
     {
+        std::lock_guard<std::mutex> lock(calculateAllPropertiesMutex);
         if(m_CurrentResult != nullptr && m_CurrentResult->profileAngle() != t_ProfileAngle)
         {
             m_CurrentResult = m_Results.getResult(t_ProfileAngle);
@@ -294,6 +293,7 @@ namespace Viewer
 
     void CDirect2DRays::findRayBoundaries(double const t_ProfileAngle)
     {
+        std::lock_guard<std::mutex> lock(findRayBoundariesMutex);
         std::shared_ptr<CViewSegment2D> entryRay = nullptr;
         for(auto aGeometry : m_Geometries2D)
         {

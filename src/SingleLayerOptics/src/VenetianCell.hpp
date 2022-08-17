@@ -1,5 +1,4 @@
-#ifndef VENETIANCELL_H
-#define VENETIANCELL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -98,23 +97,6 @@ namespace SingleLayerOptics
             double percentViewed;
         };
 
-        class CSlatEnergyResults
-        {
-        public:
-            CSlatEnergyResults();
-
-            std::shared_ptr<CVenetianSlatEnergies>
-              getEnergies(const CBeamDirection & t_BeamDirection) const;
-
-            std::shared_ptr<CVenetianSlatEnergies>
-              append(const CBeamDirection & t_BeamDirection,
-                     const std::vector<SegmentIrradiance> & t_SlatIrradiances,
-                     const std::vector<double> & t_SlatRadiances);
-
-        private:
-            std::vector<std::shared_ptr<CVenetianSlatEnergies>> m_Energies;
-        };
-
         // Create mapping from view factors matrix to front and back slats (fills b and f
         // std::vectors of this class)
         void createSlatsMapping();
@@ -124,7 +106,7 @@ namespace SingleLayerOptics
         void formEnergyMatrix();
 
         // calculate slat irradiances and radiances based on incoming beam
-        void calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction);
+        CVenetianSlatEnergies calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction);
 
         // Irradiances for given incoming direction
         std::vector<SegmentIrradiance> slatIrradiances(const CBeamDirection & t_IncomingDirection);
@@ -152,13 +134,13 @@ namespace SingleLayerOptics
 
         // Keeps pointer to valid slat energies (for given direction). If result is not valid, it
         // must be pulled out of m_SlatEnergyResults and assigned to this pointer.
-        std::shared_ptr<CVenetianSlatEnergies> m_CurrentSlatEnergies;
+        //std::shared_ptr<CVenetianSlatEnergies> m_CurrentSlatEnergies;
 
         // Keep results for slat radiances and irradiances for different directions.
         // Once radiances and irradiances are calculated for certain direction, results are stored
         // here. That reduces necessity to recalculate results multiple times for same direction.
         // Note that direction is always incoming direction.
-        CSlatEnergyResults m_SlatEnergyResults;
+        //CSlatEnergyResults m_SlatEnergyResults;
     };
 
     class CVenetianEnergy
@@ -269,5 +251,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-
-#endif
