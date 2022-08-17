@@ -290,7 +290,7 @@ TEST_F(MultiPaneBSDF_102_103_SmallBasis, TestSpecular1)
     EXPECT_NEAR(473.9927037857197, energyTransmitted, 1e-6);
 
     energyTransmitted = aLayer.energy(0.5, 0.8, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(186.62837845781016, energyTransmitted, 1e-6);
+    EXPECT_NEAR(211.85886389996119, energyTransmitted, 1e-6);
 
     // repeatability test
     energyTransmitted =

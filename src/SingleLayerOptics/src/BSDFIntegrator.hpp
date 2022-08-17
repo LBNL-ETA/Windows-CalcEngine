@@ -26,6 +26,8 @@ namespace SingleLayerOptics
         BSDFIntegrator(const BSDFIntegrator & t_Integrator) = default;
         BSDFIntegrator(const BSDFDirections & t_Directions);
 
+        void resetCalculatedResults();
+
         // Result matrices
         FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
                                                      FenestrationCommon::PropertySimple t_Property);

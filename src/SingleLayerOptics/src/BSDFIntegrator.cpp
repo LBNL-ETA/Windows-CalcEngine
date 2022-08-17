@@ -178,4 +178,10 @@ namespace SingleLayerOptics
         return 1 - DiffDiff(t_Side, PropertySimple::T) - DiffDiff(t_Side, PropertySimple::R);
     }
 
+    void BSDFIntegrator::resetCalculatedResults()
+    {
+        m_DirectHemisphericalCalculated = false;
+        m_DiffuseDiffuseCalculated = false;
+    }
+
 }   // namespace SingleLayerOptics

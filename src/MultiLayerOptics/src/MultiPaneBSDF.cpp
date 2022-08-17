@@ -165,6 +165,7 @@ namespace MultiLayerOptics
                 m_Results.setMatrices(aResults.at({aSide, PropertySimple::T}),
                                       aResults.at({aSide, PropertySimple::R}),
                                       aSide);
+                m_Results.resetCalculatedResults();
             }
 
             // calculate hemispherical absorptances
@@ -190,6 +191,8 @@ namespace MultiLayerOptics
 
     void CMultiPaneBSDF::calcHemisphericalAbs(const Side t_Side)
     {
+        m_AbsHem[t_Side].clear();
+        m_AbsHemElectricity[t_Side].clear();
         const size_t numOfLayers = m_Abs[t_Side].size();
         for(size_t layNum = 0; layNum < numOfLayers; ++layNum)
         {
@@ -440,6 +443,8 @@ namespace MultiLayerOptics
             this->m_IncomingSpectra[i] = calcProperties.scaledSolarRadiation();
         }
         m_SpectralIntegrationWavelengths = calcProperties.CommonWavelengths;
+
+        m_Calculated = false;
     }
 
     std::vector<double>
