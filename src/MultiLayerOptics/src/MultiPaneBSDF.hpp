@@ -7,13 +7,12 @@
 #include <WCESingleLayerOptics.hpp>
 
 #include "EquivalentBSDFLayer.hpp"
-#include "CalculationProperties.hpp"
 
 namespace MultiLayerOptics
 {
     class CEquivalentBSDFLayer;
 
-    class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer, public MultiPaneCalcluationsSetter
+    class CMultiPaneBSDF : public SingleLayerOptics::IScatteringLayer
     {
     public:
         static std::unique_ptr<CMultiPaneBSDF>
@@ -184,7 +183,7 @@ namespace MultiLayerOptics
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
-        void setCalculationProperties(const CalculationProperties & calcProperties) override;
+        void setCalculationProperties(const SingleLayerOptics::CalculationProperties & calcProperties) override;
 
     protected:
         explicit CMultiPaneBSDF(

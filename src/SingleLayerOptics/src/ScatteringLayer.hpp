@@ -28,7 +28,7 @@ namespace SingleLayerOptics
 
     // Handles general case layer when properties can be direct, diffuse or combination between
     // these two.
-    class CScatteringLayer : public IScatteringLayer
+    class CScatteringLayer// : public IScatteringLayer
     {
     public:
         CScatteringLayer() = default;
@@ -96,7 +96,7 @@ namespace SingleLayerOptics
                                  FenestrationCommon::Side t_Side,
                                  FenestrationCommon::Scattering t_Scattering,
                                  double t_Theta = 0,
-                                 double t_Phi = 0) override;
+                                 double t_Phi = 0);
 
         double getAbsorptance(FenestrationCommon::Side t_Side,
                               FenestrationCommon::ScatteringSimple t_Scattering,
@@ -108,7 +108,7 @@ namespace SingleLayerOptics
                                                  FenestrationCommon::Side side,
                                                  FenestrationCommon::ScatteringSimple scattering,
                                                  double theta,
-                                                 double phi) override;
+                                                 double phi);
 
         std::vector<double>
           getAbsorptanceLayersHeat(double minLambda,
@@ -116,7 +116,7 @@ namespace SingleLayerOptics
                                    FenestrationCommon::Side side,
                                    FenestrationCommon::ScatteringSimple scattering,
                                    double theta,
-                                   double phi) override;
+                                   double phi);
 
         std::vector<double>
           getAbsorptanceLayersElectricity(double minLambda,
@@ -124,22 +124,23 @@ namespace SingleLayerOptics
                                     FenestrationCommon::Side side,
                                     FenestrationCommon::ScatteringSimple scattering,
                                     double theta,
-                                    double phi) override;
+                                    double phi);
 
         CLayerSingleComponent getLayer(FenestrationCommon::Scattering t_Scattering,
                                        double t_Theta = 0,
                                        double t_Phi = 0);
 
-        [[nodiscard]] std::vector<double> getWavelengths() const override;
+        [[nodiscard]] std::vector<double> getWavelengths() const;
         void setWavelengths(const std::vector<double> & wavelengths);
 
-        [[nodiscard]] double getMinLambda() const override;
-        [[nodiscard]] double getMaxLambda() const override;
+        [[nodiscard]] double getMinLambda() const;
+        [[nodiscard]] double getMaxLambda() const;
 
         //! Function will return true if for IR emissivity calculations should use polynomial
         [[nodiscard]] bool canApplyEmissivityPolynomial() const;
 
         explicit CScatteringLayer(const std::shared_ptr<CBSDFLayer> & aBSDF);
+
 
     private:
         double

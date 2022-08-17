@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "CalculationProperties.hpp"
+
 namespace FenestrationCommon
 {
     enum class PropertySimple;
@@ -50,11 +52,13 @@ namespace SingleLayerOptics
 
         virtual std::vector<double>
           getAbsorptanceLayersElectricity(const double minLambda,
-                                   const double maxLambda,
-                                   FenestrationCommon::Side side,
-                                   FenestrationCommon::ScatteringSimple scattering,
-                                   const double theta,
-                                   const double phi) = 0;
+                                          const double maxLambda,
+                                          FenestrationCommon::Side side,
+                                          FenestrationCommon::ScatteringSimple scattering,
+                                          const double theta,
+                                          const double phi) = 0;
+
+        virtual void setCalculationProperties(const SingleLayerOptics::CalculationProperties & calcProperties) = 0;
     };
 
 }   // namespace SingleLayerOptics

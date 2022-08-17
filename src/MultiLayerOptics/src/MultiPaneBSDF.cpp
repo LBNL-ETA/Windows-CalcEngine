@@ -7,7 +7,7 @@
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "CalculationProperties.hpp"
+#include "../../SingleLayerOptics/src/CalculationProperties.hpp"
 
 using FenestrationCommon::IntegrationType;
 using FenestrationCommon::Side;
@@ -433,7 +433,8 @@ namespace MultiLayerOptics
         return m_EquivalentLayer.getMaxLambda();
     }
 
-    void CMultiPaneBSDF::setCalculationProperties(const CalculationProperties & calcProperties)
+    void CMultiPaneBSDF::setCalculationProperties(
+      const SingleLayerOptics::CalculationProperties & calcProperties)
     {
         const auto directionsSize{m_BSDFDirections.size()};
 

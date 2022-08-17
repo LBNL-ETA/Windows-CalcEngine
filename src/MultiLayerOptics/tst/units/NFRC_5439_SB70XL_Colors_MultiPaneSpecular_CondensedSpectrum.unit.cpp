@@ -329,7 +329,7 @@ private:
 
         auto layer = MultiLayerOptics::CMultiPaneSpecular::create({single_layer});
 
-        const MultiLayerOptics::CalculationProperties input{
+        const SingleLayerOptics::CalculationProperties input{
           loadSolarRadiationFile(), loadWavelengths(), astmStandard};
         layer->setCalculationProperties(input);
 
@@ -340,8 +340,6 @@ protected:
     void SetUp() override
     {
         auto LayerX = createLayer(ASTM_E308_1964_X());
-        auto LayerY = createLayer(ASTM_E308_1964_Y());
-        auto LayerZ = createLayer(ASTM_E308_1964_Z());
 
         CSeries DX = ASTM_E308_1964_X();
         CSeries DY = ASTM_E308_1964_Y();
@@ -368,8 +366,6 @@ protected:
                                             2.5};
 
         m_Color = std::make_shared<SingleLayerOptics::ColorProperties>(std::move(LayerX),
-                                                                       std::move(LayerY),
-                                                                       std::move(LayerZ),
                                                                        solarRadiation,
                                                                        DX,
                                                                        DY,
@@ -394,9 +390,9 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestTric
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
       FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(70.053487153848835, T.X, 1e-6);
-    EXPECT_NEAR(71.662456839737615, T.Y, 1e-6);
-    EXPECT_NEAR(91.883789838379968, T.Z, 1e-6);
+    EXPECT_NEAR(70.396960961453161, T.X, 1e-6);
+    EXPECT_NEAR(71.820816556453934, T.Y, 1e-6);
+    EXPECT_NEAR(94.261141621453049, T.Z, 1e-6);
 }
 
 TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestTrichromatic_R)
@@ -409,9 +405,9 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestTric
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
       FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(7.3558417434189272, T.X, 1e-6);
-    EXPECT_NEAR(7.635557, T.Y, 1e-6);
-    EXPECT_NEAR(13.006582534154203, T.Z, 1e-6);
+    EXPECT_NEAR(6.5750323091372902, T.X, 1e-6);
+    EXPECT_NEAR(7.4806116464982617, T.Y, 1e-6);
+    EXPECT_NEAR(11.449241032471321, T.Z, 1e-6);
 }
 
 TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestRGB_T)
@@ -439,9 +435,9 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestRGB_
 
     auto rgb = aLayer->getRGB(
       FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_EQ(74, rgb.R);
-    EXPECT_EQ(87, rgb.G);
-    EXPECT_EQ(110, rgb.B);
+    EXPECT_EQ(62, rgb.R);
+    EXPECT_EQ(89, rgb.G);
+    EXPECT_EQ(103, rgb.B);
 }
 
 TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestCIE_LAB_T)
@@ -454,9 +450,9 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestCIE_
 
     auto cie = aLayer->getCIE_Lab(
       FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(87.805864, cie.L, 1e-6);
-    EXPECT_NEAR(-3.402796, cie.a, 1e-6);
-    EXPECT_NEAR(4.081155, cie.b, 1e-6);
+    EXPECT_NEAR(87.882271020513727, cie.L, 1e-6);
+    EXPECT_NEAR(-3.0076138607594838, cie.a, 1e-6);
+    EXPECT_NEAR(2.7173418997323617, cie.b, 1e-6);
 }
 
 TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestCIE_LAB_R)
@@ -469,7 +465,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestCIE_
 
     auto cie = aLayer->getCIE_Lab(
       FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(33.212062, cie.L, 1e-6);
-    EXPECT_NEAR(-2.636088, cie.a, 1e-6);
-    EXPECT_NEAR(-6.300395, cie.b, 1e-6);
+    EXPECT_NEAR(32.876904402274945, cie.L, 1e-6);
+    EXPECT_NEAR(-8.8825089996607272, cie.a, 1e-6);
+    EXPECT_NEAR(-3.0846589824653825, cie.b, 1e-6);
 }

@@ -119,6 +119,10 @@ namespace MultiLayerOptics
         double getMinLambda() const override;
         double getMaxLambda() const override;
 
+        // TODO: Need scattering to be the same approach as other two types
+        void setCalculationProperties(const SingleLayerOptics::CalculationProperties &) override
+          {};
+
         explicit CMultiLayerScattered(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
     private:
