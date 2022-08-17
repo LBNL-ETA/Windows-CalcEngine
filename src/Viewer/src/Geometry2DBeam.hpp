@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 namespace FenestrationCommon
 {
@@ -98,6 +99,8 @@ namespace Viewer
     // CDirect2DRayResult
     ////////////////////////////////////////////////////////////////////////////////////////
 
+    size_t keyFromProfileAngle(double angle);
+
     // Keeps result of beam ViewFactors. It is expensive operation to recalculate them every time
     // so this will just save results for the next call
     class CDirect2DRaysResult
@@ -122,33 +125,6 @@ namespace Viewer
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    // CDirect2DRayResults
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-    // Keeps result of beam ViewFactors. It is expensive operation to recalculate them every time
-    // so this will just save results for the next call
-    class CDirect2DRaysResults
-    {
-    public:
-        CDirect2DRaysResults();
-
-        // Beam view factors for given profile angle
-        std::shared_ptr<CDirect2DRaysResult> getResult(double const t_ProfileAngle);
-
-        // append results
-        std::shared_ptr<CDirect2DRaysResult>
-          append(double const t_ProfileAngle,
-                 double const t_DirectToDirect,
-                 std::shared_ptr<std::vector<BeamViewFactor>> const & t_BeamViewFactor) const;
-
-        // clear all results
-        void clear() const;
-
-    private:
-        std::shared_ptr<std::vector<std::shared_ptr<CDirect2DRaysResult>>> m_Results;
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////////////
     // CDirect2DRays
     ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,19 +143,27 @@ namespace Viewer
         double directToDirect(double const t_ProfileAngle);
 
     private:
-        void calculateAllProperties(double const t_ProfileAngle);
+        struct RayBoundaries
+        {
+            std::shared_ptr<CViewSegment2D> m_LowerRay;
+            std::shared_ptr<CViewSegment2D> m_UpperRay;
+
+            bool isInRay(CPoint2D const & t_Point) const;
+        };
+
+        CDirect2DRaysResult calculateAllProperties(double const t_ProfileAngle);
 
         // Finds lower and upper ray of every enclosure in the system
-        void findRayBoundaries(double const t_ProfileAngle);
+        RayBoundaries findRayBoundaries(double const t_ProfileAngle);
 
         // Finds all points that are on the path of the ray
-        void findInBetweenRays(double const t_ProfileAngle);
+        std::vector<std::shared_ptr<CDirect2DRay>> findInBetweenRays(double const t_ProfileAngle, RayBoundaries & boudnaries);
 
         // Calculate beam view factors
-        void calculateBeamProperties(double const t_ProfileAngle);
+        CDirect2DRaysResult
+          calculateBeamProperties(double const t_ProfileAngle,
+                                  std::vector<std::shared_ptr<CDirect2DRay>> & rays);
 
-        // Check if given point is in possible path of the ray
-        bool isInRay(CPoint2D const & t_Point) const;
 
         std::shared_ptr<CViewSegment2D> createSubBeam(CPoint2D const & t_Point,
                                                       double const t_ProfileAngle) const;
@@ -187,12 +171,10 @@ namespace Viewer
         FenestrationCommon::Side m_Side;
 
         std::vector<std::shared_ptr<const CGeometry2D>> m_Geometries2D;
-        std::shared_ptr<CViewSegment2D> m_LowerRay;
-        std::shared_ptr<CViewSegment2D> m_UpperRay;
-        std::vector<std::shared_ptr<CDirect2DRay>> m_Rays;
 
-        CDirect2DRaysResults m_Results;
-        std::shared_ptr<CDirect2DRaysResult> m_CurrentResult;
+        std::map<size_t, CDirect2DRaysResult> m_RayResults;
+
+        //std::vector<std::shared_ptr<CDirect2DRay>> m_Rays;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////
