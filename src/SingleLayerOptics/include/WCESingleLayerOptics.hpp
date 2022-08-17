@@ -37,5 +37,6 @@
 #include "../src/WovenCellDescription.hpp"
 #include "../src/IScatteringLayer.hpp"
 #include "../src/ColorProperties.hpp"
+#include "../src/CalculationProperties.hpp"
 
 #endif

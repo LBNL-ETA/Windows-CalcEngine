@@ -41,36 +41,37 @@ namespace SingleLayerOptics
     public:
         /// For BSDF layers make additional constructor
         ColorProperties(std::unique_ptr<IScatteringLayer> && layerX,
-                        std::unique_ptr<IScatteringLayer> && layerY,
-                        std::unique_ptr<IScatteringLayer> && layerZ,
                         const FenestrationCommon::CSeries & t_Source,
                         const FenestrationCommon::CSeries & t_DetectorX,
                         const FenestrationCommon::CSeries & t_DetectorY,
                         const FenestrationCommon::CSeries & t_DetectorZ,
                         const std::vector<double> & t_wavelengths = {});
 
-        Trichromatic getTrichromatic(const FenestrationCommon::PropertySimple t_Property,
-                                     const FenestrationCommon::Side t_Side,
-                                     const FenestrationCommon::Scattering t_Scattering,
-                                     const double t_Theta = 0,
-                                     const double t_Phi = 0);
+        Trichromatic getTrichromatic(FenestrationCommon::PropertySimple t_Property,
+                                     FenestrationCommon::Side t_Side,
+                                     FenestrationCommon::Scattering t_Scattering,
+                                     double t_Theta = 0,
+                                     double t_Phi = 0);
 
-        aRGB getRGB(const FenestrationCommon::PropertySimple t_Property,
-                    const FenestrationCommon::Side t_Side,
-                    const FenestrationCommon::Scattering t_Scattering,
-                    const double t_Theta = 0,
-                    const double t_Phi = 0);
+        aRGB getRGB(FenestrationCommon::PropertySimple t_Property,
+                    FenestrationCommon::Side t_Side,
+                    FenestrationCommon::Scattering t_Scattering,
+                    double t_Theta = 0,
+                    double t_Phi = 0);
 
-        CIE_LAB getCIE_Lab(const FenestrationCommon::PropertySimple t_Property,
-                           const FenestrationCommon::Side t_Side,
-                           const FenestrationCommon::Scattering t_Scattering,
-                           const double t_Theta = 0,
-                           const double t_Phi = 0);
+        CIE_LAB getCIE_Lab(FenestrationCommon::PropertySimple t_Property,
+                           FenestrationCommon::Side t_Side,
+                           FenestrationCommon::Scattering t_Scattering,
+                           double t_Theta = 0,
+                           double t_Phi = 0);
 
     private:
         std::unique_ptr<IScatteringLayer> m_LayerX;
-        std::unique_ptr<IScatteringLayer> m_LayerY;
-        std::unique_ptr<IScatteringLayer> m_LayerZ;
+        FenestrationCommon::CSeries m_Source;
+        FenestrationCommon::CSeries m_DetectorX;
+        FenestrationCommon::CSeries m_DetectorY;
+        FenestrationCommon::CSeries m_DetectorZ;
+        std::vector<double> m_wavelengths;
         double m_SDx;
         double m_SDy;
         double m_SDz;

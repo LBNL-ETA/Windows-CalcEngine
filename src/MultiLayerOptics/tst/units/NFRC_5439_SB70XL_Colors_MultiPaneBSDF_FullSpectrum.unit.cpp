@@ -1,17 +1,17 @@
 #include <memory>
 #include <gtest/gtest.h>
-
+#include "WCEMultiLayerOptics.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCESpectralAveraging.hpp"
 
 using FenestrationCommon::CSeries;
 
-class TestNFRC_5439_SB70XL_Colors_Scattering : public testing::Test
+class TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum : public testing::Test
 {
 private:
     std::shared_ptr<SingleLayerOptics::ColorProperties> m_Color;
 
-    std::vector<double> loadWavelengths() const
+    static std::vector<double> loadWavelengths()
     {
         std::vector<double> aWavelengths{
           0.380, 0.385, 0.390, 0.395, 0.400, 0.405, 0.410, 0.415, 0.420, 0.425, 0.430, 0.435,
@@ -25,7 +25,7 @@ private:
         return aWavelengths;
     }
 
-    CSeries loadSolarRadiationFile() const
+    static CSeries loadSolarRadiationFile()
     {
         // Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
         CSeries solarRadiation(
@@ -166,7 +166,7 @@ private:
         return solarRadiation;
     }
 
-    std::shared_ptr<SpectralAveraging::CSpectralSampleData> loadSampleData_NFRC_5439() const
+    [[nodiscard]] static std::shared_ptr<SpectralAveraging::CSpectralSampleData> loadSampleData_NFRC_5439()
     {
         return SpectralAveraging::CSpectralSampleData::create(
           {{0.300, 0.0019, 0.0491, 0.2686},  {0.305, 0.0037, 0.0885, 0.2723},
@@ -245,7 +245,7 @@ private:
            {40.000, 0.0000, 0.1381, 0.9915}});
     }
 
-    CSeries ASTM_E308_1964_X() const
+    static CSeries ASTM_E308_1964_X()
     {
         return CSeries(
           {{0.380, 0.0002}, {0.385, 0.0007}, {0.390, 0.0024}, {0.395, 0.0072}, {0.400, 0.0191},
@@ -267,7 +267,7 @@ private:
            {0.780, 0.0000}});
     }
 
-    CSeries ASTM_E308_1964_Y() const
+    static CSeries ASTM_E308_1964_Y()
     {
         return CSeries(
           {{0.380, 0.0000}, {0.385, 0.0001}, {0.390, 0.0003}, {0.395, 0.0008}, {0.400, 0.0020},
@@ -289,8 +289,7 @@ private:
            {0.780, 0.0000}});
     }
 
-
-    CSeries ASTM_E308_1964_Z() const
+    static CSeries ASTM_E308_1964_Z()
     {
         return CSeries(
           {{0.380, 0.0007}, {0.385, 0.0029}, {0.390, 0.0105}, {0.395, 0.0323}, {0.400, 0.0860},
@@ -312,21 +311,18 @@ private:
            {0.780, 0.0000}});
     }
 
-    std::unique_ptr<SingleLayerOptics::CScatteringLayer>
-      createLayer(const CSeries & astmStandard) const
+    [[nodiscard]] std::unique_ptr<MultiLayerOptics::CMultiPaneBSDF> createLayer() const
     {
         double thickness = 3.048e-3;   // [m]
         const auto aMaterial =
           SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_5439(),
-                                                     astmStandard,
                                                      thickness,
                                                      FenestrationCommon::MaterialType::Monolithic);
 
-        auto layer = std::make_unique<SingleLayerOptics::CScatteringLayer>(
-          SingleLayerOptics::CScatteringLayer::createSpecularLayer(aMaterial));
-        CSeries solarRadiation{loadSolarRadiationFile()};
-        layer->setSourceData(solarRadiation);
-        layer->setWavelengths(loadWavelengths());
+        const auto aBSDF = SingleLayerOptics::BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
+        auto layer_5439 = SingleLayerOptics::CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
+
+        auto layer = MultiLayerOptics::CMultiPaneBSDF::create({layer_5439});
 
         return layer;
     }
@@ -334,30 +330,28 @@ private:
 protected:
     void SetUp() override
     {
-        auto LayerX = createLayer(ASTM_E308_1964_X());
-        auto LayerY = createLayer(ASTM_E308_1964_Y());
-        auto LayerZ = createLayer(ASTM_E308_1964_Z());
+        auto Layer = createLayer();
 
         CSeries DX = ASTM_E308_1964_X();
         CSeries DY = ASTM_E308_1964_Y();
         CSeries DZ = ASTM_E308_1964_Z();
 
-        CSeries solarRadiation = loadSolarRadiationFile();
+        CSeries solarRadiation{loadSolarRadiationFile()};
 
-        auto wl = loadWavelengths();
+        //auto wl = loadWavelengths();
 
         m_Color = std::make_shared<SingleLayerOptics::ColorProperties>(
-          std::move(LayerX), std::move(LayerY), std::move(LayerZ), solarRadiation, DX, DY, DZ, wl);
+          std::move(Layer), solarRadiation, DX, DY, DZ);
     }
 
 public:
-    std::shared_ptr<SingleLayerOptics::ColorProperties> getLayer() const
+    [[nodiscard]] std::shared_ptr<SingleLayerOptics::ColorProperties> getLayer() const
     {
         return m_Color;
     }
 };
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_T)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum, TestTrichromatic_T)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
@@ -367,12 +361,12 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_T)
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
       FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(66.393144, T.X, 1e-6);
-    EXPECT_NEAR(71.662457, T.Y, 1e-6);
-    EXPECT_NEAR(71.768345, T.Z, 1e-6);
+    EXPECT_NEAR(66.479550507930455, T.X, 1e-6);
+    EXPECT_NEAR(71.676433571429115, T.Y, 1e-6);
+    EXPECT_NEAR(72.036556794335624, T.Z, 1e-6);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_R)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum, TestTrichromatic_R)
 {
     SCOPED_TRACE("Begin Test: Trichromatic.");
 
@@ -382,12 +376,12 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestTrichromatic_R)
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
       FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(6.971494, T.X, 1e-6);
-    EXPECT_NEAR(7.635557, T.Y, 1e-6);
-    EXPECT_NEAR(10.159147, T.Z, 1e-6);
+    EXPECT_NEAR(6.9615975925406062, T.X, 1e-6);
+    EXPECT_NEAR(7.6320645694529237, T.Y, 1e-6);
+    EXPECT_NEAR(10.144263012183918, T.Z, 1e-6);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_T)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum, TestRGB_T)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
@@ -402,7 +396,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_T)
     EXPECT_EQ(233, rgb.B);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_R)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum, TestRGB_R)
 {
     SCOPED_TRACE("Begin Test: RGB.");
 
@@ -417,7 +411,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestRGB_R)
     EXPECT_EQ(96, rgb.B);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_T)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum, TestCIE_LAB_T)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
@@ -427,12 +421,12 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_T)
 
     auto cie = aLayer->getCIE_Lab(
       FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(87.805864, cie.L, 1e-6);
-    EXPECT_NEAR(-3.402796, cie.a, 1e-6);
-    EXPECT_NEAR(4.081155, cie.b, 1e-6);
+    EXPECT_NEAR(87.812612040616273, cie.L, 1e-6);
+    EXPECT_NEAR(-3.3693813072975809, cie.a, 1e-6);
+    EXPECT_NEAR(4.0316540801110357, cie.b, 1e-6);
 }
 
-TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_R)
+TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum, TestCIE_LAB_R)
 {
     SCOPED_TRACE("Begin Test: CIE_LAB.");
 
@@ -442,7 +436,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_Scattering, TestCIE_LAB_R)
 
     auto cie = aLayer->getCIE_Lab(
       FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
-    EXPECT_NEAR(33.212062, cie.L, 1e-6);
-    EXPECT_NEAR(-2.636088, cie.a, 1e-6);
-    EXPECT_NEAR(-6.300395, cie.b, 1e-6);
+    EXPECT_NEAR(33.204557956508474, cie.L, 1e-6);
+    EXPECT_NEAR(-2.764212021208273, cie.a, 1e-6);
+    EXPECT_NEAR(-6.1873961643050261, cie.b, 1e-6);
 }

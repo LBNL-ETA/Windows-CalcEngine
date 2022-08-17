@@ -537,7 +537,7 @@ protected:
 
         m_Layer = CMultiPaneBSDF::create({Layer_Glass, Layer_BSDF});
 
-        const MultiLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
+        const SingleLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
                                                             loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
     }

@@ -3,9 +3,9 @@
 #include <optional>
 #include <vector>
 
-#include <WCECommon.hpp>
+#include "WCECommon.hpp"
 
-namespace MultiLayerOptics
+namespace SingleLayerOptics
 {
     struct CalculationProperties
     {
@@ -20,10 +20,5 @@ namespace MultiLayerOptics
 
         [[nodiscard]] FenestrationCommon::CSeries scaledSolarRadiation() const;
         bool isDetectorDataValid() const;
-    };
-
-    class MultiPaneCalcluationsSetter
-    {
-        virtual void setCalculationProperties(const CalculationProperties & calcProperties) = 0;
     };
 }   // namespace MultiLayerOptics

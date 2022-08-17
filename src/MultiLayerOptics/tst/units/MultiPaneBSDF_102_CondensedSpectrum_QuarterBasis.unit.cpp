@@ -123,7 +123,7 @@ protected:
         using SingleLayerOptics::BSDFHemisphere;
         using SingleLayerOptics::BSDFBasis;
         using SingleLayerOptics::CBSDFLayerMaker;
-        using MultiLayerOptics::CalculationProperties;
+        using SingleLayerOptics::CalculationProperties;
 
         // Create material from samples
         constexpr double thickness = 3.048e-3;   // [m]

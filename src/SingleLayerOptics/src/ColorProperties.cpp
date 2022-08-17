@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "ColorProperties.hpp"
+#include "CalculationProperties.hpp"
 #include "IScatteringLayer.hpp"
 #include <WCECommon.hpp>
 
@@ -17,30 +18,30 @@ namespace SingleLayerOptics
     {}
 
     ColorProperties::ColorProperties(std::unique_ptr<IScatteringLayer> && layerX,
-                                     std::unique_ptr<IScatteringLayer> && layerY,
-                                     std::unique_ptr<IScatteringLayer> && layerZ,
                                      const FenestrationCommon::CSeries & t_Source,
                                      const FenestrationCommon::CSeries & t_DetectorX,
                                      const FenestrationCommon::CSeries & t_DetectorY,
                                      const FenestrationCommon::CSeries & t_DetectorZ,
                                      const std::vector<double> & t_wavelengths) :
         m_LayerX(std::move(layerX)),
-        m_LayerY(std::move(layerY)),
-        m_LayerZ(std::move(layerZ))
+        m_Source(t_Source),
+        m_DetectorX(t_DetectorX),
+        m_DetectorY(t_DetectorY),
+        m_DetectorZ(t_DetectorZ),
+        m_wavelengths(t_wavelengths)
     {
-        auto wavelengths = m_LayerX->getWavelengths();
-        if(!t_wavelengths.empty())
+        if(t_wavelengths.empty())
         {
-            wavelengths = t_wavelengths;
+            m_wavelengths = m_LayerX->getWavelengths();
         }
         auto aSolar = t_Source;
         auto DX = t_DetectorX;
         auto DY = t_DetectorY;
         auto DZ = t_DetectorZ;
-        aSolar = aSolar.interpolate(wavelengths);
-        DX = DX.interpolate(wavelengths);
-        DY = DY.interpolate(wavelengths);
-        DZ = DZ.interpolate(wavelengths);
+        aSolar = aSolar.interpolate(m_wavelengths);
+        DX = DX.interpolate(m_wavelengths);
+        DY = DY.interpolate(m_wavelengths);
+        DZ = DZ.interpolate(m_wavelengths);
 
         m_SDx = (aSolar * DX).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
         m_SDy = (aSolar * DY).sum(m_LayerX->getMinLambda(), m_LayerX->getMaxLambda());
@@ -54,6 +55,8 @@ namespace SingleLayerOptics
                                        double const t_Theta,
                                        double const t_Phi)
     {
+        SingleLayerOptics::CalculationProperties inputX{m_Source, m_wavelengths, m_DetectorX};
+        m_LayerX->setCalculationProperties(inputX);
         auto X = m_SDx / m_SDy * 100
                  * m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
                                                m_LayerX->getMaxLambda(),
@@ -62,16 +65,22 @@ namespace SingleLayerOptics
                                                t_Scattering,
                                                t_Theta,
                                                t_Phi);
+
+        SingleLayerOptics::CalculationProperties inputY{m_Source, m_wavelengths, m_DetectorY};
+        m_LayerX->setCalculationProperties(inputY);
         auto Y = 100
-                 * m_LayerY->getPropertySimple(m_LayerX->getMinLambda(),
+                 * m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
                                                m_LayerX->getMaxLambda(),
                                                t_Property,
                                                t_Side,
                                                t_Scattering,
                                                t_Theta,
                                                t_Phi);
+
+        SingleLayerOptics::CalculationProperties inputZ{m_Source, m_wavelengths, m_DetectorZ};
+        m_LayerX->setCalculationProperties(inputZ);
         auto Z = m_SDz / m_SDy * 100
-                 * m_LayerZ->getPropertySimple(m_LayerX->getMinLambda(),
+                 * m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
                                                m_LayerX->getMaxLambda(),
                                                t_Property,
                                                t_Side,
@@ -124,6 +133,8 @@ namespace SingleLayerOptics
                                         double const t_Theta,
                                         double const t_Phi)
     {
+        SingleLayerOptics::CalculationProperties inputX{m_Source, m_wavelengths, m_DetectorX};
+        m_LayerX->setCalculationProperties(inputX);
         auto X = m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
                                              m_LayerX->getMaxLambda(),
                                              t_Property,
@@ -131,14 +142,20 @@ namespace SingleLayerOptics
                                              t_Scattering,
                                              t_Theta,
                                              t_Phi);
-        auto Y = m_LayerY->getPropertySimple(m_LayerX->getMinLambda(),
+
+        SingleLayerOptics::CalculationProperties inputY{m_Source, m_wavelengths, m_DetectorY};
+        m_LayerX->setCalculationProperties(inputY);
+        auto Y = m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
                                              m_LayerX->getMaxLambda(),
                                              t_Property,
                                              t_Side,
                                              t_Scattering,
                                              t_Theta,
                                              t_Phi);
-        auto Z = m_LayerZ->getPropertySimple(m_LayerX->getMinLambda(),
+
+        SingleLayerOptics::CalculationProperties inputZ{m_Source, m_wavelengths, m_DetectorZ};
+        m_LayerX->setCalculationProperties(inputZ);
+        auto Z = m_LayerX->getPropertySimple(m_LayerX->getMinLambda(),
                                              m_LayerX->getMaxLambda(),
                                              t_Property,
                                              t_Side,
