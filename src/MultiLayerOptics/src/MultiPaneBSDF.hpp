@@ -233,8 +233,8 @@ namespace MultiLayerOptics
 
         SingleLayerOptics::BSDFDirections m_BSDFDirections;
 
-        // These are wavelength used only for the spectral integration seprately from wavelengths in
-        // matrices calculations. Matrices wavelenghts will be used only if this is not provided.
+        // These are wavelength used only for the spectral integration separately from wavelengths in
+        // matrices calculations. Matrices wavelengths will be used only if this is not provided.
         std::optional<std::vector<double>> m_SpectralIntegrationWavelengths;
     };
 
