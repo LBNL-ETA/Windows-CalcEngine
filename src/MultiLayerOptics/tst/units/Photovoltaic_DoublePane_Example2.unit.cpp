@@ -1839,7 +1839,7 @@ protected:
 
         m_Layer = CMultiPaneSpecular::create({layer1});
 
-        const MultiLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
+        const SingleLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
                                                             loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
     }

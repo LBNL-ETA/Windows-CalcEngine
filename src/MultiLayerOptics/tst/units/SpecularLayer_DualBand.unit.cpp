@@ -71,7 +71,7 @@ TEST_F(TestSpecularLayer_102, TestSpecularDualBandSingleLayer1)
 
     auto igu{MultiLayerOptics::CMultiPaneSpecular::create({aLayer})};
 
-    const MultiLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
+    const SingleLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
                                       loadSolarRadiationFile().getXArray()};
     igu->setCalculationProperties(input);
 

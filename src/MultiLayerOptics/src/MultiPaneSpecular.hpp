@@ -7,7 +7,6 @@
 #include "WCESingleLayerOptics.hpp"
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "AbsorptancesMultiPane.hpp"
-#include "CalculationProperties.hpp"
 
 namespace SingleLayerOptics
 {
@@ -49,8 +48,7 @@ namespace MultiLayerOptics
     ///////////////////////////////////////////////////////////////////////////////////////
 
     // Handles equivalent properties of MultiLayerOptics glass consists only of specular layers
-    class CMultiPaneSpecular : public SingleLayerOptics::IScatteringLayer,
-                               public MultiPaneCalcluationsSetter
+    class CMultiPaneSpecular : public SingleLayerOptics::IScatteringLayer
     {
     protected:
         explicit CMultiPaneSpecular(
@@ -208,7 +206,8 @@ namespace MultiLayerOptics
                                              FenestrationCommon::IntegrationType::Trapezoidal,
                                            double normalizationCoefficient = 1);
 
-        void setCalculationProperties(const CalculationProperties & calcProperties) override;
+        void setCalculationProperties(
+          const SingleLayerOptics::CalculationProperties & calcProperties) override;
 
     protected:
         struct SeriesResults

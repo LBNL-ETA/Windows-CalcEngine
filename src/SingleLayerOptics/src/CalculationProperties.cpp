@@ -1,6 +1,6 @@
 #include "CalculationProperties.hpp"
 
-namespace MultiLayerOptics{
+namespace SingleLayerOptics{
 
     CalculationProperties::CalculationProperties(
       const FenestrationCommon::CSeries & solarRadiation,
