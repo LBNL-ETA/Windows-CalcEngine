@@ -7,7 +7,6 @@
 #include "WCESingleLayerOptics.hpp"
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "AbsorptancesMultiPane.hpp"
-#include "../../SingleLayerOptics/src/CalculationProperties.hpp"
 
 namespace SingleLayerOptics
 {
