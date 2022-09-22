@@ -2,7 +2,6 @@
 #include <cmath>
 
 #include <thread>
-#include <mutex>
 
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
@@ -125,10 +124,6 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
-        std::mutex absorptanceMutex;
-        std::mutex jscMutex;
-        std::mutex totMutex;
-
         auto numberOfThreads{1u};
 #if MULTITHREADING
         numberOfThreads = std::thread::hardware_concurrency();
@@ -152,12 +147,10 @@ namespace MultiLayerOptics
                         {
                             auto totA{layer.getLayerAbsorptances(layerNumber + 1, aSide)};
 
-                            std::lock_guard<std::mutex> lock_abs(absorptanceMutex);
                             m_TotA.at(aSide).setPropertiesAtIndex(
                               index, layerNumber, m_CombinedLayerWavelengths[index], totA);
 
                             auto totJSC{layer.getLayerJSC(layerNumber + 1, aSide)};
-                            std::lock_guard<std::mutex> lock_jsc(jscMutex);
                             m_TotJSC.at(aSide).setPropertiesAtIndex(
                               index, layerNumber, m_CombinedLayerWavelengths[index], totJSC);
                         }
@@ -165,7 +158,6 @@ namespace MultiLayerOptics
                         {
                             auto tot{layer.getProperty(aSide, aProperty)};
 
-                            std::lock_guard<std::mutex> lock_tot(totMutex);
                             m_Tot.at({aSide, aProperty})
                               .setPropertiesAtIndex(index, m_CombinedLayerWavelengths[index], tot);
                         }

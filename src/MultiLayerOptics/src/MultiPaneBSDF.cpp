@@ -7,7 +7,6 @@
 #include "EquivalentBSDFLayerSingleBand.hpp"
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
-#include "../../SingleLayerOptics/src/CalculationProperties.hpp"
 
 using FenestrationCommon::IntegrationType;
 using FenestrationCommon::Side;
