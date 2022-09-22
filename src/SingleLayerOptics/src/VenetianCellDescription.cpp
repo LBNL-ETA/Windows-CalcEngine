@@ -86,7 +86,7 @@ namespace SingleLayerOptics
         return m_Geometry.viewFactors();
     }
 
-    std::shared_ptr<std::vector<Viewer::BeamViewFactor>>
+    std::vector<Viewer::BeamViewFactor>
       CVenetianCellDescription::beamViewFactors(const double t_ProfileAngle,
                                                 const FenestrationCommon::Side t_Side)
     {

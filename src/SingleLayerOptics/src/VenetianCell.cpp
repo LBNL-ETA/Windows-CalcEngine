@@ -1,6 +1,5 @@
 #include <cassert>
 #include <stdexcept>
-#include <mutex>
 
 #include "VenetianCell.hpp"
 #include "VenetianCellDescription.hpp"
@@ -451,12 +450,12 @@ namespace SingleLayerOptics
             profileAngle = -profileAngle;
         }
 
-        std::shared_ptr<std::vector<Viewer::BeamViewFactor>> beamVF =
+        std::vector<Viewer::BeamViewFactor> beamVF =
           m_Cell->beamViewFactors(profileAngle, t_Side);
 
         std::vector<BeamSegmentView> B(2 * numSeg);
         size_t index = 0;
-        for(Viewer::BeamViewFactor & aVF : *beamVF)
+        for(Viewer::BeamViewFactor & aVF : beamVF)
         {
             if(aVF.enclosureIndex == 0)
             {   // Top

@@ -8,7 +8,7 @@ set(target_name ${PROJECT_NAME})
 
 set (CMAKE_CXX_STANDARD 17)
 
-add_definitions(-DMULTITHREADING)
+#add_definitions(-DMULTITHREADING)
 
 include( cmake/WCEProjectMacros.cmake )
 include( cmake/WCEInternalUtils.cmake )

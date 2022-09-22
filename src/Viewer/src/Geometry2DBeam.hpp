@@ -106,12 +106,13 @@ namespace Viewer
     class CDirect2DRaysResult
     {
     public:
+        CDirect2DRaysResult() = default;
         CDirect2DRaysResult(double const t_ProfileAngle,
                             double const t_DirectToDirect,
-                            std::shared_ptr<std::vector<BeamViewFactor>> const & t_BeamViewFactors);
+                            std::vector<BeamViewFactor> t_BeamViewFactors);
 
         // Beam view factors for given profile angle
-        std::shared_ptr<std::vector<BeamViewFactor>> beamViewFactors() const;
+        std::vector<BeamViewFactor> beamViewFactors() const;
 
         // Direct to direct transmitted beam component
         double directToDirect() const;
@@ -119,7 +120,7 @@ namespace Viewer
         double profileAngle() const;
 
     private:
-        std::shared_ptr<std::vector<BeamViewFactor>> m_ViewFactors;
+        std::vector<BeamViewFactor> m_ViewFactors;
         double m_DirectToDirect;
         double m_ProfileAngle;
     };
@@ -137,7 +138,7 @@ namespace Viewer
         void appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D);
 
         // Beam view factors for given profile angle
-        std::shared_ptr<std::vector<BeamViewFactor>> beamViewFactors(double const t_ProfileAngle);
+        std::vector<BeamViewFactor> beamViewFactors(double t_ProfileAngle);
 
         // Direct to direct transmitted beam component
         double directToDirect(double const t_ProfileAngle);
@@ -173,8 +174,6 @@ namespace Viewer
         std::vector<std::shared_ptr<const CGeometry2D>> m_Geometries2D;
 
         std::map<size_t, CDirect2DRaysResult> m_RayResults;
-
-        //std::vector<std::shared_ptr<CDirect2DRay>> m_Rays;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +188,7 @@ namespace Viewer
 
         void appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D);
 
-        std::shared_ptr<std::vector<BeamViewFactor>>
+        std::vector<BeamViewFactor>
           beamViewFactors(double const t_ProfileAngle, FenestrationCommon::Side const t_Side);
 
         // Direct to direct transmitted beam component

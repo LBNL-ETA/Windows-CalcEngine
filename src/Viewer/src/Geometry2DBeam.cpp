@@ -1,7 +1,6 @@
 #include <cassert>
 #include <algorithm>
 #include <stdexcept>
-#include <mutex>
 
 #include "Geometry2DBeam.hpp"
 #include "Geometry2D.hpp"
@@ -10,9 +9,6 @@
 #include "Point2D.hpp"
 #include "ViewerConstants.hpp"
 #include "WCECommon.hpp"
-
-std::mutex calculateAllPropertiesMutex;
-std::mutex findRayBoundariesMutex;
 
 using namespace FenestrationCommon;
 
@@ -180,13 +176,13 @@ namespace Viewer
     CDirect2DRaysResult::CDirect2DRaysResult(
       double const t_ProfileAngle,
       double const t_DirectToDirect,
-      std::shared_ptr<std::vector<BeamViewFactor>> const & t_BeamViewFactors) :
-        m_ViewFactors(t_BeamViewFactors),
+      std::vector<BeamViewFactor> t_BeamViewFactors) :
+        m_ViewFactors(std::move(t_BeamViewFactors)),
         m_DirectToDirect(t_DirectToDirect),
         m_ProfileAngle(t_ProfileAngle)
     {}
 
-    std::shared_ptr<std::vector<BeamViewFactor>> CDirect2DRaysResult::beamViewFactors() const
+    std::vector<BeamViewFactor> CDirect2DRaysResult::beamViewFactors() const
     {
         return m_ViewFactors;
     }
@@ -214,26 +210,26 @@ namespace Viewer
         m_Geometries2D.push_back(t_Geometry2D);
     }
 
-    std::shared_ptr<std::vector<BeamViewFactor>>
+    std::vector<BeamViewFactor>
       CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
     {
         if(m_RayResults.count(keyFromProfileAngle(t_ProfileAngle))){
             return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).beamViewFactors();
         }
 
-        std::lock_guard<std::mutex> lock(findRayBoundariesMutex);
         auto results = calculateAllProperties(t_ProfileAngle);
         return results.beamViewFactors();
     }
 
     double CDirect2DRays::directToDirect(double const t_ProfileAngle)
     {
-        if(m_RayResults.count(keyFromProfileAngle(t_ProfileAngle))){
-            return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).directToDirect();
+        const size_t key{keyFromProfileAngle(t_ProfileAngle)};
+        if(m_RayResults.count(key)){
+            return m_RayResults.at(key).directToDirect();
         }
 
-        std::lock_guard<std::mutex> lock(findRayBoundariesMutex);
         auto results = calculateAllProperties(t_ProfileAngle);
+        m_RayResults[key] = results;
         return results.directToDirect();
     }
 
@@ -359,7 +355,7 @@ namespace Viewer
         }
 
         // Now calculate beam view factors
-        auto aViewFactors = std::make_shared<std::vector<BeamViewFactor>>();
+        std::vector<BeamViewFactor> aViewFactors;
         double aDirectToDirect = 0;
         // Create beam direction parallel to x-axe
         auto sPoint = std::make_shared<CPoint2D>(0, 0);
@@ -386,8 +382,8 @@ namespace Viewer
                           / std::abs(beamRay->cosAngle(currentSegment->getNormal()));
                         percentHit = segmentHitLength / currentSegment->length();
                         auto aTest = find(
-                          aViewFactors->begin(), aViewFactors->end(), BeamViewFactor(e, s, 0, 0));
-                        if(aTest != aViewFactors->end())
+                          aViewFactors.begin(), aViewFactors.end(), BeamViewFactor(e, s, 0, 0));
+                        if(aTest != aViewFactors.end())
                         {
                             auto & aVF = *aTest;
                             aVF.value += viewFactor;
@@ -396,7 +392,7 @@ namespace Viewer
                         else
                         {
                             auto aVF = BeamViewFactor(e, s, viewFactor, percentHit);
-                            aViewFactors->push_back(aVF);
+                            aViewFactors.push_back(aVF);
                         }
                     }
                 }
@@ -447,7 +443,7 @@ namespace Viewer
     }
 
     // Returns non zero view factors. It also calculates direct to direct component for the beam
-    std::shared_ptr<std::vector<BeamViewFactor>>
+    std::vector<BeamViewFactor>
       CGeometry2DBeam::beamViewFactors(double const t_ProfileAngle, Side const t_Side)
     {
         auto aRay = getRay(t_Side);

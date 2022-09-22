@@ -37,7 +37,7 @@ namespace SingleLayerOptics
         FenestrationCommon::SquareMatrix viewFactors();
 
         // view factor of the beam entering the cell with profile angle
-        std::shared_ptr<std::vector<Viewer::BeamViewFactor>>
+        std::vector<Viewer::BeamViewFactor>
           beamViewFactors(double t_ProfileAngle, const FenestrationCommon::Side t_Side);
 
         // Direct to direct component of the ray
