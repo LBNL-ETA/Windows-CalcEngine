@@ -11,6 +11,9 @@ namespace Viewer
     CViewSegment2D::CViewSegment2D(std::shared_ptr<const CPoint2D> const & t_StartPoint,
                                    std::shared_ptr<const CPoint2D> const & t_EndPoint) :
         CSegment2D(t_StartPoint, t_EndPoint),
+        // Since m_Normal is CViewSegment2D, it is important to do lazy normal calculation since
+        // creating new segment (aka normal) would automatically trigger its own normal calculation
+        // causing infinite loop.
         m_Normal(nullptr),
         m_NormalCalculated(false)
     {}
