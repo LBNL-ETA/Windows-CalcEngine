@@ -195,7 +195,6 @@ namespace Viewer
         double directToDirect(double const t_ProfileAngle, FenestrationCommon::Side const t_Side);
 
     private:
-        CDirect2DRays * getRay(FenestrationCommon::Side t_Side);
         std::map<FenestrationCommon::Side, CDirect2DRays> m_Ray;
     };
 

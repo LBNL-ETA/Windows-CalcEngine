@@ -450,19 +450,12 @@ namespace Viewer
     std::vector<BeamViewFactor> CGeometry2DBeam::beamViewFactors(double const t_ProfileAngle,
                                                                  Side const t_Side)
     {
-        auto aRay = getRay(t_Side);
-        return aRay->beamViewFactors(t_ProfileAngle);
+        return m_Ray.at(t_Side).beamViewFactors(t_ProfileAngle);
     }
 
     double CGeometry2DBeam::directToDirect(double const t_ProfileAngle, Side const t_Side)
     {
-        auto aRay = getRay(t_Side);
-        return aRay->directToDirect(t_ProfileAngle);
-    }
-
-    CDirect2DRays * CGeometry2DBeam::getRay(Side const t_Side)
-    {
-        return &m_Ray.at(t_Side);
+        return m_Ray.at(t_Side).directToDirect(t_ProfileAngle);
     }
 
     long long int keyFromProfileAngle(double angle)
