@@ -111,14 +111,14 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam1)
     /////////////////////////////////////////////////////////////
     Side aSide = Side::Front;
 
-    std::shared_ptr<std::vector<BeamViewFactor>> aViewFactors =
+    const auto aViewFactors =
       aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(0, aEnclosure->directToDirect(profileAngle, aSide));
 
     size_t correctSize = 2;
 
-    EXPECT_EQ(correctSize, aViewFactors->size());
+    EXPECT_EQ(correctSize, aViewFactors.size());
 
     // Create correct results
     std::vector<BeamViewFactor> correctResults;
@@ -139,10 +139,10 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam1)
 
     for(size_t i = 0; i < correctResults.size(); ++i)
     {
-        EXPECT_EQ(correctResults[i].enclosureIndex, (*aViewFactors)[i].enclosureIndex);
-        EXPECT_EQ(correctResults[i].segmentIndex, (*aViewFactors)[i].segmentIndex);
-        EXPECT_NEAR(correctResults[i].value, (*aViewFactors)[i].value, 1e-6);
-        EXPECT_NEAR(correctResults[i].percentHit, (*aViewFactors)[i].percentHit, 1e-6);
+        EXPECT_EQ(correctResults[i].enclosureIndex, aViewFactors[i].enclosureIndex);
+        EXPECT_EQ(correctResults[i].segmentIndex, aViewFactors[i].segmentIndex);
+        EXPECT_NEAR(correctResults[i].value, aViewFactors[i].value, 1e-6);
+        EXPECT_NEAR(correctResults[i].percentHit, aViewFactors[i].percentHit, 1e-6);
     }
 }
 
@@ -159,14 +159,14 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam2)
     /////////////////////////////////////////////////////////////
     Side aSide = Side::Front;
 
-    std::shared_ptr<std::vector<BeamViewFactor>> aViewFactors =
+    const auto aViewFactors =
       aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(0, aEnclosure->directToDirect(profileAngle, aSide));
 
     size_t correctSize = 2;
 
-    EXPECT_EQ(correctSize, aViewFactors->size());
+    EXPECT_EQ(correctSize, aViewFactors.size());
 
     // Create correct results
     std::vector<BeamViewFactor> correctResults;
@@ -187,10 +187,10 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam2)
 
     for(size_t i = 0; i < correctResults.size(); ++i)
     {
-        EXPECT_EQ(correctResults[i].enclosureIndex, (*aViewFactors)[i].enclosureIndex);
-        EXPECT_EQ(correctResults[i].segmentIndex, (*aViewFactors)[i].segmentIndex);
-        EXPECT_NEAR(correctResults[i].value, (*aViewFactors)[i].value, 1e-6);
-        EXPECT_NEAR(correctResults[i].percentHit, (*aViewFactors)[i].percentHit, 1e-6);
+        EXPECT_EQ(correctResults[i].enclosureIndex, aViewFactors[i].enclosureIndex);
+        EXPECT_EQ(correctResults[i].segmentIndex, aViewFactors[i].segmentIndex);
+        EXPECT_NEAR(correctResults[i].value, aViewFactors[i].value, 1e-6);
+        EXPECT_NEAR(correctResults[i].percentHit, aViewFactors[i].percentHit, 1e-6);
     }
 }
 
@@ -207,12 +207,12 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam3)
     /////////////////////////////////////////////////////////////
     Side aSide = Side::Front;
 
-    std::shared_ptr<std::vector<BeamViewFactor>> aViewFactors =
+    const auto aViewFactors =
       aEnclosure->beamViewFactors(profileAngle, aSide);
 
     size_t correctSize = 1;
 
-    EXPECT_EQ(correctSize, aViewFactors->size());
+    EXPECT_EQ(correctSize, aViewFactors.size());
 
     // Create correct results
     std::vector<BeamViewFactor> correctResults;
@@ -226,9 +226,9 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam3)
 
     for(size_t i = 0; i < correctResults.size(); ++i)
     {
-        EXPECT_EQ(correctResults[i].enclosureIndex, (*aViewFactors)[i].enclosureIndex);
-        EXPECT_EQ(correctResults[i].segmentIndex, (*aViewFactors)[i].segmentIndex);
-        EXPECT_NEAR(correctResults[i].value, (*aViewFactors)[i].value, 1e-6);
-        EXPECT_NEAR(correctResults[i].percentHit, (*aViewFactors)[i].percentHit, 1e-6);
+        EXPECT_EQ(correctResults[i].enclosureIndex, aViewFactors[i].enclosureIndex);
+        EXPECT_EQ(correctResults[i].segmentIndex, aViewFactors[i].segmentIndex);
+        EXPECT_NEAR(correctResults[i].value, aViewFactors[i].value, 1e-6);
+        EXPECT_NEAR(correctResults[i].percentHit, aViewFactors[i].percentHit, 1e-6);
     }
 }
