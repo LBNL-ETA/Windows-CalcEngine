@@ -550,6 +550,8 @@ namespace SingleLayerOptics
         m_EnergiesBand.clear();
         std::vector<RMaterialProperties> aMat = m_Material->getBandProperties();
 
+        const auto venetianGeometry{getCellAsVenetian()};
+
         if(!aMat.empty())
         {
             size_t size = m_Material->getBandSize();
@@ -560,7 +562,7 @@ namespace SingleLayerOptics
                 double Rf = aMat[i].getProperty(Property::R, Side::Front);
                 double Rb = aMat[i].getProperty(Property::R, Side::Back);
 
-                CVenetianEnergy aEnergy = CVenetianEnergy(Tf, Tb, Rf, Rb, getCellAsVenetian());
+                CVenetianEnergy aEnergy = CVenetianEnergy(Tf, Tb, Rf, Rb, venetianGeometry);
                 m_EnergiesBand.push_back(aEnergy);
             }
         }
