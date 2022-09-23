@@ -99,7 +99,7 @@ namespace Viewer
     // CDirect2DRayResult
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t keyFromProfileAngle(double angle);
+    long long int keyFromProfileAngle(double angle);
 
     // Keeps result of beam ViewFactors. It is expensive operation to recalculate them every time
     // so this will just save results for the next call
@@ -173,7 +173,7 @@ namespace Viewer
 
         std::vector<std::shared_ptr<const CGeometry2D>> m_Geometries2D;
 
-        std::map<size_t, CDirect2DRaysResult> m_RayResults;
+        std::map<long long, CDirect2DRaysResult> m_RayResults;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////

@@ -213,17 +213,19 @@ namespace Viewer
     std::vector<BeamViewFactor>
       CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
     {
-        if(m_RayResults.count(keyFromProfileAngle(t_ProfileAngle))){
-            return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).beamViewFactors();
+        const auto key{keyFromProfileAngle(t_ProfileAngle)};
+        if(m_RayResults.count(key)){
+            return m_RayResults.at(key).beamViewFactors();
         }
 
         auto results = calculateAllProperties(t_ProfileAngle);
+        m_RayResults[key] = results;
         return results.beamViewFactors();
     }
 
     double CDirect2DRays::directToDirect(double const t_ProfileAngle)
     {
-        const size_t key{keyFromProfileAngle(t_ProfileAngle)};
+        const auto key{keyFromProfileAngle(t_ProfileAngle)};
         if(m_RayResults.count(key)){
             return m_RayResults.at(key).directToDirect();
         }
@@ -474,8 +476,9 @@ namespace Viewer
         return aRay;
     }
 
-    size_t keyFromProfileAngle(double angle)
+    long long int keyFromProfileAngle(double angle)
     {
-        return static_cast<size_t>(angle * 100);
+        constexpr auto precision{1e9};
+        return static_cast<long long>(angle * precision);
     }
 }   // namespace Viewer
