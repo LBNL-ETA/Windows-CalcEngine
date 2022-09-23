@@ -26,14 +26,14 @@ namespace Viewer
 
         // First and last point function are necessary to make connection between different
         // enclosures
-        std::shared_ptr<const CPoint2D> firstPoint() const;
-        std::shared_ptr<const CPoint2D> lastPoint() const;
+        [[nodiscard]] CPoint2D firstPoint() const;
+        [[nodiscard]] CPoint2D lastPoint() const;
 
         // Entry point of the enclosure. Important since enclosure can be entered in reverse way.
-        std::shared_ptr<const CPoint2D> entryPoint() const;
+        [[nodiscard]] CPoint2D entryPoint() const;
 
         // Exit point of the enclosure. Important since enclosure can be entered in reverse way.
-        std::shared_ptr<const CPoint2D> exitPoint() const;
+        [[nodiscard]] CPoint2D exitPoint() const;
 
         std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>> segments() const;
 

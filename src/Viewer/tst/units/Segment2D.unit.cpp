@@ -19,8 +19,8 @@ TEST_F(TestSegment2D, Segment2DTest1)
 {
     SCOPED_TRACE("Begin Test: Segment 2D - length and normal (1).");
 
-    std::shared_ptr<CPoint2D> aStartPoint = std::make_shared<CPoint2D>(0, 0);
-    std::shared_ptr<CPoint2D> aEndPoint = std::make_shared<CPoint2D>(10, 0);
+    CPoint2D aStartPoint{0, 0};
+    CPoint2D aEndPoint{10, 0};
 
     CSegment2D aSegment = CSegment2D(aStartPoint, aEndPoint);
 
@@ -33,8 +33,8 @@ TEST_F(TestSegment2D, Segment2DTest2)
 {
     SCOPED_TRACE("Begin Test: Segment 2D - length and normal (2).");
 
-    std::shared_ptr<CPoint2D> aStartPoint = std::make_shared<CPoint2D>(0, 0);
-    std::shared_ptr<CPoint2D> aEndPoint = std::make_shared<CPoint2D>(10, 10);
+    CPoint2D aStartPoint{0, 0};
+    CPoint2D aEndPoint{10, 10};
 
     CSegment2D aSegment = CSegment2D(aStartPoint, aEndPoint);
 

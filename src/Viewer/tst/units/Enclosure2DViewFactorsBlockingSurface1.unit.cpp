@@ -21,24 +21,24 @@ protected:
         m_Enclosure2D = std::make_shared<CGeometry2D>();
 
         // Segment 1
-        std::shared_ptr<CPoint2D> aStartPoint1 = std::make_shared<CPoint2D>(10, 0);
-        std::shared_ptr<CPoint2D> aEndPoint1 = std::make_shared<CPoint2D>(0, 0);
+        CPoint2D aStartPoint1{10.0, 0.0};
+        CPoint2D aEndPoint1{0.0, 0.0};
 
         std::shared_ptr<CViewSegment2D> aSegment1 =
           std::make_shared<CViewSegment2D>(aStartPoint1, aEndPoint1);
         m_Enclosure2D->appendSegment(aSegment1);
 
         // Segment 2
-        std::shared_ptr<CPoint2D> aStartPoint2 = std::make_shared<CPoint2D>(0, 5);
-        std::shared_ptr<CPoint2D> aEndPoint2 = std::make_shared<CPoint2D>(10, 5);
+        CPoint2D aStartPoint2{0.0, 5.0};
+        CPoint2D aEndPoint2{10.0, 5.0};
 
         std::shared_ptr<CViewSegment2D> aSegment2 =
           std::make_shared<CViewSegment2D>(aStartPoint2, aEndPoint2);
         m_Enclosure2D->appendSegment(aSegment2);
 
         // Segment 3
-        std::shared_ptr<CPoint2D> aStartPoint3 = std::make_shared<CPoint2D>(5, 2);
-        std::shared_ptr<CPoint2D> aEndPoint3 = std::make_shared<CPoint2D>(0, 2);
+        CPoint2D aStartPoint3{5.0, 2.0};
+        CPoint2D aEndPoint3{0.0, 2.0};
 
         std::shared_ptr<CViewSegment2D> aSegment3 =
           std::make_shared<CViewSegment2D>(aStartPoint3, aEndPoint3);
