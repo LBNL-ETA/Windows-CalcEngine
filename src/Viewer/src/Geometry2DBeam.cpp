@@ -114,8 +114,7 @@ namespace Viewer
 
     CDirect2DRay::CDirect2DRay(std::shared_ptr<CDirect2DBeam> const & t_Beam1,
                                std::shared_ptr<CDirect2DBeam> const & t_Beam2) :
-        m_Beam1(t_Beam1),
-        m_Beam2(t_Beam2)
+        m_Beam1(t_Beam1), m_Beam2(t_Beam2)
     {
         if(t_Beam1 == nullptr)
         {
@@ -173,10 +172,9 @@ namespace Viewer
     // CDirect2DRayResult
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    CDirect2DRaysResult::CDirect2DRaysResult(
-      double const t_ProfileAngle,
-      double const t_DirectToDirect,
-      std::vector<BeamViewFactor> t_BeamViewFactors) :
+    CDirect2DRaysResult::CDirect2DRaysResult(double const t_ProfileAngle,
+                                             double const t_DirectToDirect,
+                                             std::vector<BeamViewFactor> t_BeamViewFactors) :
         m_ViewFactors(std::move(t_BeamViewFactors)),
         m_DirectToDirect(t_DirectToDirect),
         m_ProfileAngle(t_ProfileAngle)
@@ -202,19 +200,18 @@ namespace Viewer
     ////////////////////////////////////////////////////////////////////////////////////////
 
     CDirect2DRays::CDirect2DRays(Side const t_Side) : m_Side(t_Side)
-    {
-    }
+    {}
 
     void CDirect2DRays::appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D)
     {
         m_Geometries2D.push_back(t_Geometry2D);
     }
 
-    std::vector<BeamViewFactor>
-      CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
+    std::vector<BeamViewFactor> CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
     {
         const auto key{keyFromProfileAngle(t_ProfileAngle)};
-        if(m_RayResults.count(key)){
+        if(m_RayResults.count(key))
+        {
             return m_RayResults.at(key).beamViewFactors();
         }
 
@@ -226,7 +223,8 @@ namespace Viewer
     double CDirect2DRays::directToDirect(double const t_ProfileAngle)
     {
         const auto key{keyFromProfileAngle(t_ProfileAngle)};
-        if(m_RayResults.count(key)){
+        if(m_RayResults.count(key))
+        {
             return m_RayResults.at(key).directToDirect();
         }
 
@@ -435,18 +433,22 @@ namespace Viewer
     // CGeometry2DBeam
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    CGeometry2DBeam::CGeometry2DBeam() : m_Incoming(Side::Front), m_Outgoing(Side::Back)
+    CGeometry2DBeam::CGeometry2DBeam() :
+        m_Ray{{Side::Front, CDirect2DRays(Side::Front)}, {Side::Back, CDirect2DRays(Side::Back)}}
     {}
 
     void CGeometry2DBeam::appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D)
     {
-        m_Incoming.appendGeometry2D(t_Geometry2D);
-        m_Outgoing.appendGeometry2D(t_Geometry2D);
+        for(auto & [key, ray]: m_Ray)
+        {
+            std::ignore = key;
+            ray.appendGeometry2D(t_Geometry2D);
+        }
     }
 
     // Returns non zero view factors. It also calculates direct to direct component for the beam
-    std::vector<BeamViewFactor>
-      CGeometry2DBeam::beamViewFactors(double const t_ProfileAngle, Side const t_Side)
+    std::vector<BeamViewFactor> CGeometry2DBeam::beamViewFactors(double const t_ProfileAngle,
+                                                                 Side const t_Side)
     {
         auto aRay = getRay(t_Side);
         return aRay->beamViewFactors(t_ProfileAngle);
@@ -460,20 +462,7 @@ namespace Viewer
 
     CDirect2DRays * CGeometry2DBeam::getRay(Side const t_Side)
     {
-        CDirect2DRays * aRay = nullptr;
-        switch(t_Side)
-        {
-            case Side::Front:
-                return aRay = &m_Incoming;
-                break;
-            case Side::Back:
-                return aRay = &m_Outgoing;
-                break;
-            default:
-                assert("Incorrect assignement of ray position.");
-                break;
-        }
-        return aRay;
+        return &m_Ray.at(t_Side);
     }
 
     long long int keyFromProfileAngle(double angle)
