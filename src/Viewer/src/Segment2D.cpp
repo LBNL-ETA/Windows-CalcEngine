@@ -1,5 +1,6 @@
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
 
 #include "Segment2D.hpp"
 #include "ViewerConstants.hpp"
