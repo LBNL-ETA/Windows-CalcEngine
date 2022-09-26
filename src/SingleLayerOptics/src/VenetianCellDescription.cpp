@@ -31,13 +31,11 @@ namespace SingleLayerOptics
                  t_NumOfSlatSegments,
                  SegmentsDirection::Negative)
     {
-        std::shared_ptr<Viewer::CViewSegment2D> exteriorSegment =
-          std::make_shared<Viewer::CViewSegment2D>(m_Bottom.geometry()->lastPoint(),
-                                                   m_Top.geometry()->firstPoint());
+        Viewer::CViewSegment2D exteriorSegment(m_Bottom.geometry()->lastPoint(),
+                                               m_Top.geometry()->firstPoint());
 
-        std::shared_ptr<Viewer::CViewSegment2D> interiorSegment =
-          std::make_shared<Viewer::CViewSegment2D>(m_Top.geometry()->lastPoint(),
-                                                   m_Bottom.geometry()->firstPoint());
+        Viewer::CViewSegment2D interiorSegment(m_Top.geometry()->lastPoint(),
+                                               m_Bottom.geometry()->firstPoint());
 
         m_Geometry.appendSegment(exteriorSegment);
         m_Geometry.appendGeometry2D(m_Top.geometry());
@@ -50,20 +48,19 @@ namespace SingleLayerOptics
 
     size_t CVenetianCellDescription::numberOfSegments() const
     {
-        // Two additional segments are for interior and exterior openess
+        // Two additional segments are for interior and exterior openness
         return 2 + m_Top.numberOfSegments() + m_Bottom.numberOfSegments();
     }
 
     double CVenetianCellDescription::segmentLength(const size_t Index) const
     {
-        std::vector<std::shared_ptr<Viewer::CViewSegment2D>> aSegments =
-          m_Geometry.segments();
+        const auto aSegments = m_Geometry.segments();
         if(Index > aSegments.size())
         {
             throw std::runtime_error("Incorrect index for venetian segment.");
         }
-        std::shared_ptr<Viewer::CViewSegment2D> aSegment = aSegments[Index];
-        return aSegment->length();
+        const auto aSegment = aSegments[Index];
+        return aSegment.length();
     }
 
     std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::makeBackwardCell() const

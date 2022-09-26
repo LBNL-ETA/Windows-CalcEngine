@@ -25,8 +25,7 @@ TEST_F(TestSegment2DSubsegments, Segment2DTest1)
 
     CViewSegment2D aSegment = CViewSegment2D(aStartPoint, aEndPoint);
 
-    std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>> aSubSegments =
-      aSegment.subSegments(4);
+    const auto aSubSegments = aSegment.subSegments(4);
 
     std::vector<double> correctStartX = {0, 2.5, 5, 7.5};
     std::vector<double> correctEndX = {2.5, 5, 7.5, 10};
@@ -35,12 +34,12 @@ TEST_F(TestSegment2DSubsegments, Segment2DTest1)
     std::vector<double> correctEndY = {2.5, 5, 7.5, 10};
 
     size_t i = 0;
-    for(std::shared_ptr<CViewSegment2D> aSubSegment : *aSubSegments)
+    for(const auto & aSubSegment : aSubSegments)
     {
-        double xStart = aSubSegment->startPoint().x();
-        double xEnd = aSubSegment->endPoint().x();
-        double yStart = aSubSegment->startPoint().y();
-        double yEnd = aSubSegment->endPoint().y();
+        double xStart = aSubSegment.startPoint().x();
+        double xEnd = aSubSegment.endPoint().x();
+        double yStart = aSubSegment.startPoint().y();
+        double yEnd = aSubSegment.endPoint().y();
 
         EXPECT_NEAR(correctStartX[i], xStart, 1e-6);
         EXPECT_NEAR(correctEndX[i], xEnd, 1e-6);

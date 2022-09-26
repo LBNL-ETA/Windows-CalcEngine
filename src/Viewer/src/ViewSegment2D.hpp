@@ -43,8 +43,7 @@ namespace Viewer
         PointPosition position(const CPoint2D & t_Point) const;
 
         // Divide segment into number of subsegments
-        std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>>
-          subSegments(size_t numSegments) const;
+        std::vector<CViewSegment2D> subSegments(const size_t numSegments) const;
 
         // Translates segment for given coordinates
         CViewSegment2D translate(double t_x, double t_y);

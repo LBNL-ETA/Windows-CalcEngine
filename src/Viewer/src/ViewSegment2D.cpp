@@ -100,15 +100,13 @@ namespace Viewer
         return Shadowing(numOfInvisibles);
     }
 
-    std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>>
-      CViewSegment2D::subSegments(const size_t numSegments) const
+    std::vector<CViewSegment2D> CViewSegment2D::subSegments(const size_t numSegments) const
     {
         if(numSegments == 0)
         {
             throw std::runtime_error("Number of subsegments must be greater than zero.");
         }
-        std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>> subSegments =
-          std::make_shared<std::vector<std::shared_ptr<CViewSegment2D>>>();
+        std::vector<CViewSegment2D> subSegments;
         double dX = (m_EndPoint.x() - m_StartPoint.x()) / numSegments;
         double dY = (m_EndPoint.y() - m_StartPoint.y()) / numSegments;
         double startX = m_StartPoint.x();
@@ -117,9 +115,7 @@ namespace Viewer
         for(size_t i = 1; i <= numSegments; ++i)
         {
             CPoint2D ePoint{startX + i * dX, startY + i * dY};
-            std::shared_ptr<CViewSegment2D> aSegment =
-              std::make_shared<CViewSegment2D>(sPoint, ePoint);
-            subSegments->push_back(aSegment);
+            subSegments.emplace_back(sPoint, ePoint);
             sPoint = ePoint;
         }
 

@@ -281,13 +281,13 @@ namespace Viewer
         for(auto aEnclosure : m_Geometries2D)
         {
             auto aSegments = aEnclosure->segments();
-            if(boudnaries.isInRay(aSegments[0]->startPoint()))
+            if(boudnaries.isInRay(aSegments[0].startPoint()))
             {
-                inBetweenPoints.push_back(aSegments[0]->startPoint());
+                inBetweenPoints.push_back(aSegments[0].startPoint());
             }
             for(auto aSegment : aSegments)
             {
-                auto endPoint = aSegment->endPoint();
+                auto endPoint = aSegment.endPoint();
                 // Ray is alway going from left to right. For point to be in between beam, it must
                 // be visible for upper ray and invisible for lower ray
                 if(boudnaries.m_UpperRay->position(endPoint) == PointPosition::Visible
@@ -337,7 +337,7 @@ namespace Viewer
             {
                 for(auto aSegment : aEnclosure->segments())
                 {
-                    beamRay->checkSegment(*aSegment);
+                    beamRay->checkSegment(aSegment);
                 }
             }
         }
@@ -361,14 +361,14 @@ namespace Viewer
                 for(size_t s = 0; s < m_Geometries2D[e]->segments().size(); ++s)
                 {
                     auto currentSegment = m_Geometries2D[e]->segments()[s];
-                    if(*currentSegment == beamRay->closestSegmentHit())
+                    if(currentSegment == beamRay->closestSegmentHit())
                     {
                         viewFactor = currentHeight / totalHeight;
                         projectedBeamHeight = projectedBeamHeight * currentHeight;
                         auto segmentHitLength =
                           projectedBeamHeight
-                          / std::abs(beamRay->cosAngle(*currentSegment->getNormal()));
-                        percentHit = segmentHitLength / currentSegment->length();
+                          / std::abs(beamRay->cosAngle(*currentSegment.getNormal()));
+                        percentHit = segmentHitLength / currentSegment.length();
                         auto aTest = find(
                           aViewFactors.begin(), aViewFactors.end(), BeamViewFactor(e, s, 0, 0));
                         if(aTest != aViewFactors.end())

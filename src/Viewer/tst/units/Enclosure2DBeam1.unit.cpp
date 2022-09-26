@@ -28,24 +28,21 @@ protected:
         CPoint2D aStartPoint1{3, 2};
         CPoint2D aEndPoint1{5, 5};
 
-        std::shared_ptr<CViewSegment2D> aSegment1 =
-          std::make_shared<CViewSegment2D>(aStartPoint1, aEndPoint1);
+        CViewSegment2D aSegment1(aStartPoint1, aEndPoint1);
         aEnclosure1->appendSegment(aSegment1);
 
         // Segment 2
         CPoint2D aStartPoint2{5, 5};
         CPoint2D aEndPoint2{8, 4};
 
-        std::shared_ptr<CViewSegment2D> aSegment2 =
-          std::make_shared<CViewSegment2D>(aStartPoint2, aEndPoint2);
+        CViewSegment2D aSegment2(aStartPoint2, aEndPoint2);
         aEnclosure1->appendSegment(aSegment2);
 
         // Segment 3
         CPoint2D aStartPoint3{8, 4};
         CPoint2D aEndPoint3{9, 9};
 
-        std::shared_ptr<CViewSegment2D> aSegment3 =
-          std::make_shared<CViewSegment2D>(aStartPoint3, aEndPoint3);
+        CViewSegment2D aSegment3(aStartPoint3, aEndPoint3);
         aEnclosure1->appendSegment(aSegment3);
 
         m_Enclosures2DBeam->appendGeometry2D(aEnclosure1);
@@ -59,24 +56,21 @@ protected:
         CPoint2D aStartPoint4{3, 10};
         CPoint2D aEndPoint4{7, 11};
 
-        std::shared_ptr<CViewSegment2D> aSegment4 =
-          std::make_shared<CViewSegment2D>(aStartPoint4, aEndPoint4);
+        CViewSegment2D aSegment4(aStartPoint4, aEndPoint4);
         aEnclosure2->appendSegment(aSegment4);
 
         // Segment 5
         CPoint2D aStartPoint5{7, 11};
         CPoint2D aEndPoint5{6, 14};
 
-        std::shared_ptr<CViewSegment2D> aSegment5 =
-          std::make_shared<CViewSegment2D>(aStartPoint5, aEndPoint5);
+        CViewSegment2D aSegment5(aStartPoint5, aEndPoint5);
         aEnclosure2->appendSegment(aSegment5);
 
         // Segment 6
         CPoint2D aStartPoint6{6, 14};
         CPoint2D aEndPoint6{12, 16};
 
-        std::shared_ptr<CViewSegment2D> aSegment6 =
-          std::make_shared<CViewSegment2D>(aStartPoint6, aEndPoint6);
+        CViewSegment2D aSegment6(aStartPoint6, aEndPoint6);
         aEnclosure2->appendSegment(aSegment6);
 
         m_Enclosures2DBeam->appendGeometry2D(aEnclosure2);

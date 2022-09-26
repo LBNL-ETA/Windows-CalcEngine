@@ -130,8 +130,7 @@ namespace SingleLayerOptics
 
                 std::shared_ptr<CPolarPoint2D> endPoint =
                   std::make_shared<CPolarPoint2D>(nextTheta, radius);
-                std::shared_ptr<CViewSegment2D> aSegment =
-                  std::make_shared<CViewSegment2D>(*startPoint, *endPoint);
+                CViewSegment2D aSegment{*startPoint, *endPoint};
                 m_Geometry->appendSegment(aSegment);
                 startPoint = endPoint;
             }
@@ -170,8 +169,7 @@ namespace SingleLayerOptics
                 }
                 std::shared_ptr<CPolarPoint2D> endPoint =
                   std::make_shared<CPolarPoint2D>(m_SlatTiltAngle, nextRadius);
-                std::shared_ptr<CViewSegment2D> aSegment =
-                  std::make_shared<CViewSegment2D>(*startPoint, *endPoint);
+                CViewSegment2D aSegment{*startPoint, *endPoint};
                 m_Geometry->appendSegment(aSegment);
                 startPoint = endPoint;
             }
