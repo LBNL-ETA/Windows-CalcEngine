@@ -51,72 +51,34 @@ namespace Viewer
         return aEnclosure;
     }
 
-    std::shared_ptr<const CPoint2D> CGeometry2D::firstPoint() const
+    CPoint2D CGeometry2D::firstPoint() const
     {
         return m_Segments->front()->startPoint();
     }
 
-    std::shared_ptr<const CPoint2D> CGeometry2D::lastPoint() const
+    CPoint2D CGeometry2D::lastPoint() const
     {
         return m_Segments->back()->endPoint();
     }
 
-    std::shared_ptr<const CPoint2D> CGeometry2D::entryPoint() const
+    CPoint2D CGeometry2D::entryPoint() const
     {
-        auto xStart = m_Segments->front()->centerPoint()->x();
-        auto xEnd = m_Segments->back()->centerPoint()->x();
-        std::shared_ptr<const CPoint2D> aPoint = nullptr;
-        std::shared_ptr<const CPoint2D> startPoint = nullptr;
-        std::shared_ptr<const CPoint2D> endPoint = nullptr;
-        if(xStart <= xEnd)
-        {
-            startPoint = m_Segments->front()->startPoint();
-            endPoint = m_Segments->front()->endPoint();
-        }
-        else
-        {
-            startPoint = m_Segments->back()->startPoint();
-            endPoint = m_Segments->back()->endPoint();
-        }
-        if(startPoint->x() < endPoint->x())
-        {
-            aPoint = startPoint;
-        }
-        else
-        {
-            aPoint = endPoint;
-        }
+        auto xStart = m_Segments->front()->centerPoint().x();
+        auto xEnd = m_Segments->back()->centerPoint().x();
+        const CPoint2D startPoint{xStart <= xEnd ? m_Segments->front()->startPoint() : m_Segments->back()->startPoint()};
+        const CPoint2D endPoint{xStart <= xEnd ? m_Segments->front()->endPoint() : m_Segments->back()->endPoint()};
 
-        return aPoint;
+        return startPoint.x() < endPoint.x() ? startPoint : endPoint;
     }
 
-    std::shared_ptr<const CPoint2D> CGeometry2D::exitPoint() const
+    CPoint2D CGeometry2D::exitPoint() const
     {
-        auto xStart = m_Segments->front()->centerPoint()->x();
-        auto xEnd = m_Segments->back()->centerPoint()->x();
-        std::shared_ptr<const CPoint2D> aPoint = nullptr;
-        std::shared_ptr<const CPoint2D> startPoint = nullptr;
-        std::shared_ptr<const CPoint2D> endPoint = nullptr;
-        if(xStart >= xEnd)
-        {
-            startPoint = m_Segments->front()->startPoint();
-            endPoint = m_Segments->front()->endPoint();
-        }
-        else
-        {
-            startPoint = m_Segments->back()->startPoint();
-            endPoint = m_Segments->back()->endPoint();
-        }
-        if(startPoint->x() > endPoint->x())
-        {
-            aPoint = startPoint;
-        }
-        else
-        {
-            aPoint = endPoint;
-        }
+        auto xStart = m_Segments->front()->centerPoint().x();
+        auto xEnd = m_Segments->back()->centerPoint().x();
+        const CPoint2D startPoint{xStart >= xEnd ? m_Segments->front()->startPoint() : m_Segments->back()->startPoint()};
+        const CPoint2D endPoint{xStart >= xEnd ? m_Segments->front()->endPoint() : m_Segments->back()->endPoint()};
 
-        return aPoint;
+        return startPoint.x() > endPoint.x() ? startPoint : endPoint;
     }
 
     std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>> CGeometry2D::segments() const
@@ -190,10 +152,10 @@ namespace Viewer
                     intersection = intersection || iSegment->intersectionWithSegment(aSegment);
                     intersection =
                       intersection
-                      || pointInSegmentsView(t_Segment1, t_Segment2, *aSegment->startPoint());
+                      || pointInSegmentsView(t_Segment1, t_Segment2, aSegment->startPoint());
                     intersection =
                       intersection
-                      || pointInSegmentsView(t_Segment1, t_Segment2, *aSegment->endPoint());
+                      || pointInSegmentsView(t_Segment1, t_Segment2, aSegment->endPoint());
                     if(intersection)
                     {
                         return intersection;

@@ -49,10 +49,10 @@ namespace Viewer
     class PointsProfile2DCompare
     {
     public:
-        explicit PointsProfile2DCompare(double const t_ProfileAngle);
+        explicit PointsProfile2DCompare(double t_ProfileAngle);
 
-        bool operator()(std::shared_ptr<const CPoint2D> const & t_Point1,
-                        std::shared_ptr<const CPoint2D> const & t_Point2) const;
+        bool operator()(const CPoint2D & t_Point1,
+                        const CPoint2D & t_Point2) const;
 
     private:
         double m_ProfileAngle;

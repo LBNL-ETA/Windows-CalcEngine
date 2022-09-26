@@ -131,7 +131,7 @@ namespace SingleLayerOptics
                 std::shared_ptr<CPolarPoint2D> endPoint =
                   std::make_shared<CPolarPoint2D>(nextTheta, radius);
                 std::shared_ptr<CViewSegment2D> aSegment =
-                  std::make_shared<CViewSegment2D>(startPoint, endPoint);
+                  std::make_shared<CViewSegment2D>(*startPoint, *endPoint);
                 m_Geometry->appendSegment(aSegment);
                 startPoint = endPoint;
             }
@@ -171,7 +171,7 @@ namespace SingleLayerOptics
                 std::shared_ptr<CPolarPoint2D> endPoint =
                   std::make_shared<CPolarPoint2D>(m_SlatTiltAngle, nextRadius);
                 std::shared_ptr<CViewSegment2D> aSegment =
-                  std::make_shared<CViewSegment2D>(startPoint, endPoint);
+                  std::make_shared<CViewSegment2D>(*startPoint, *endPoint);
                 m_Geometry->appendSegment(aSegment);
                 startPoint = endPoint;
             }
@@ -181,18 +181,11 @@ namespace SingleLayerOptics
             throw std::runtime_error("Cannot create slat.");
         }
 
-        std::shared_ptr<const CPoint2D> aPoint = nullptr;
-        if(m_Direction == SegmentsDirection::Positive)
-        {
-            aPoint = m_Geometry->firstPoint();
-        }
-        else if(m_Direction == SegmentsDirection::Negative)
-        {
-            aPoint = m_Geometry->lastPoint();
-        }
+        const CPoint2D aPoint{m_Direction == SegmentsDirection::Positive ? m_Geometry->firstPoint()
+                                                                         : m_Geometry->lastPoint()};
 
-        translateX = -aPoint->x();
-        translateY = -aPoint->y();
+        translateX = -aPoint.x();
+        translateY = -aPoint.y();
 
         m_Geometry = m_Geometry->Translate(translateX, translateY + m_SlatSpacing);
     }

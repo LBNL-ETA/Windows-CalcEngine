@@ -64,8 +64,8 @@ namespace Viewer
         m_ProfileAngle(t_ProfileAngle)
     {}
 
-    bool PointsProfile2DCompare::operator()(std::shared_ptr<const CPoint2D> const & t_Point1,
-                                            std::shared_ptr<const CPoint2D> const & t_Point2) const
+    bool PointsProfile2DCompare::operator()(const CPoint2D & t_Point1,
+                                            const CPoint2D & t_Point2) const
     {
         auto isHigher = false;
         if(m_ProfileAngle != 0)
@@ -73,18 +73,18 @@ namespace Viewer
             const auto tanPhi = std::tan(radians(m_ProfileAngle));
             if(tanPhi > 0)
             {
-                isHigher = (t_Point1->x() - t_Point1->y() / tanPhi)
-                           < (t_Point2->x() - t_Point2->y() / tanPhi);
+                isHigher = (t_Point1.x() - t_Point1.y() / tanPhi)
+                           < (t_Point2.x() - t_Point2.y() / tanPhi);
             }
             else
             {
-                isHigher = (t_Point1->x() - t_Point1->y() / tanPhi)
-                           > (t_Point2->x() - t_Point2->y() / tanPhi);
+                isHigher = (t_Point1.x() - t_Point1.y() / tanPhi)
+                           > (t_Point2.x() - t_Point2.y() / tanPhi);
             }
         }
         else
         {
-            isHigher = t_Point1->y() > t_Point2->y();
+            isHigher = t_Point1.y() > t_Point2.y();
         }
         return isHigher;
     }
