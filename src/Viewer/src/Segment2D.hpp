@@ -22,6 +22,7 @@ namespace Viewer
     class CSegment2D
     {
     public:
+        CSegment2D() = default;
         CSegment2D(const CPoint2D & t_StartPoint, const CPoint2D & t_EndPoint);
 
         [[nodiscard]] CPoint2D startPoint() const;

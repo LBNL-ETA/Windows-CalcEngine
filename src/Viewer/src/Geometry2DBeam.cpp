@@ -59,7 +59,7 @@ namespace Viewer
       CDirect2DBeam::getClosestCommonSegment(const CDirect2DBeam & t_Beam) const
     {
         std::optional<CViewSegment2D> aSegment;
-        for(const auto& thisSegment : m_Segments)
+        for(const auto & thisSegment : m_Segments)
         {
             if(t_Beam.isSegmentIn(thisSegment))
             {
@@ -88,7 +88,7 @@ namespace Viewer
     bool CDirect2DBeam::isSegmentIn(const CViewSegment2D & t_Segment) const
     {
         auto isIn = false;
-        for(const auto& thisSegment : m_Segments)
+        for(const auto & thisSegment : m_Segments)
         {
             if(thisSegment == t_Segment)
             {
@@ -210,14 +210,14 @@ namespace Viewer
     CDirect2DRays::RayBoundaries CDirect2DRays::findRayBoundaries(double const t_ProfileAngle)
     {
         RayBoundaries result;
-        std::shared_ptr<CViewSegment2D> entryRay = nullptr;
+
         for(size_t i = 0; i < m_Geometries2D.size(); ++i)
         {
             const auto & aGeometry{m_Geometries2D[i]};
             const CPoint2D aPoint{m_Side == Side::Front ? aGeometry.entryPoint()
                                                         : aGeometry.exitPoint()};
 
-            entryRay = createSubBeam(aPoint, t_ProfileAngle);
+            CViewSegment2D entryRay{createSubBeam(aPoint, t_ProfileAngle)};
             if(i == 0u)
             {
                 result.m_LowerRay = entryRay;
@@ -227,11 +227,11 @@ namespace Viewer
             {
                 // This sets profile angle for point comparison that follows in next lines
                 auto aProfilePoint = PointsProfile2DCompare(t_ProfileAngle);
-                if(aProfilePoint(result.m_LowerRay->startPoint(), entryRay->startPoint()))
+                if(aProfilePoint(result.m_LowerRay.startPoint(), entryRay.startPoint()))
                 {
                     result.m_LowerRay = entryRay;
                 }
-                if(!aProfilePoint(result.m_UpperRay->startPoint(), entryRay->startPoint()))
+                if(!aProfilePoint(result.m_UpperRay.startPoint(), entryRay.startPoint()))
                 {
                     result.m_UpperRay = entryRay;
                 }
@@ -258,8 +258,8 @@ namespace Viewer
                 auto endPoint = aSegment.endPoint();
                 // Ray is always going from left to right. For point to be in between beam, it must
                 // be visible for upper ray and invisible for lower ray
-                if(boudnaries.m_UpperRay->position(endPoint) == PointPosition::Visible
-                   && boudnaries.m_LowerRay->position(endPoint) == PointPosition::Invisible)
+                if(boudnaries.m_UpperRay.position(endPoint) == PointPosition::Visible
+                   && boudnaries.m_LowerRay.position(endPoint) == PointPosition::Invisible)
                 {
                     inBetweenPoints.push_back(endPoint);
                 }
@@ -272,21 +272,20 @@ namespace Viewer
           inBetweenPoints.begin(), inBetweenPoints.end(), PointsProfile2DCompare(t_ProfileAngle));
 
         // Creating incoming rays
-        auto firstBeam = boudnaries.m_UpperRay;
-        std::shared_ptr<CViewSegment2D> secondBeam = nullptr;
+        CViewSegment2D firstBeam = boudnaries.m_UpperRay;
         for(auto aPoint : inBetweenPoints)
         {
-            secondBeam = createSubBeam(aPoint, t_ProfileAngle);
-            CDirect2DRay aRay(*firstBeam, *secondBeam);
+            CViewSegment2D secondBeam{createSubBeam(aPoint, t_ProfileAngle)};
+            CDirect2DRay aRay(firstBeam, secondBeam);
 
             // Don't save rays that are smaller than distance tolerance
             if(aRay.rayNormalHeight() > ViewerConstants::DISTANCE_TOLERANCE)
             {
-                rays.emplace_back(*firstBeam, *secondBeam);
+                rays.emplace_back(firstBeam, secondBeam);
             }
             firstBeam = secondBeam;
         }
-        rays.emplace_back(*firstBeam, *boudnaries.m_LowerRay);
+        rays.emplace_back(firstBeam, boudnaries.m_LowerRay);
 
         return rays;
     }
@@ -363,16 +362,13 @@ namespace Viewer
 
     bool CDirect2DRays::RayBoundaries::isInRay(CPoint2D const & t_Point) const
     {
-        assert(m_UpperRay != nullptr);
-        assert(m_LowerRay != nullptr);
-        return m_UpperRay->position(t_Point) == PointPosition::Visible
-               && m_LowerRay->position(t_Point) == PointPosition::Invisible;
+        return m_UpperRay.position(t_Point) == PointPosition::Visible
+               && m_LowerRay.position(t_Point) == PointPosition::Invisible;
     }
 
-    std::shared_ptr<CViewSegment2D> CDirect2DRays::createSubBeam(CPoint2D const & t_Point,
-                                                                 double const t_ProfileAngle) const
+    CViewSegment2D CDirect2DRays::createSubBeam(CPoint2D const & t_Point,
+                                                double const t_ProfileAngle) const
     {
-        std::shared_ptr<CViewSegment2D> subSegment = nullptr;
         auto const deltaX = 10.0;
         auto const tanPhi = std::tan(radians(t_ProfileAngle));
         auto yStart = t_Point.y() - t_Point.x() * tanPhi;
@@ -380,7 +376,7 @@ namespace Viewer
 
         CPoint2D startPoint(0, yStart);
         CPoint2D endPoint(deltaX, yEnd);
-        return std::make_shared<CViewSegment2D>(startPoint, endPoint);
+        return {startPoint, endPoint};
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////

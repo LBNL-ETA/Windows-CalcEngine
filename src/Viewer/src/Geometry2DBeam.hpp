@@ -145,8 +145,11 @@ namespace Viewer
     private:
         struct RayBoundaries
         {
-            std::shared_ptr<CViewSegment2D> m_LowerRay;
-            std::shared_ptr<CViewSegment2D> m_UpperRay;
+            // Default constructor
+            RayBoundaries() = default;
+
+            CViewSegment2D m_LowerRay;
+            CViewSegment2D m_UpperRay;
 
             [[nodiscard]] bool isInRay(CPoint2D const & t_Point) const;
         };
@@ -165,8 +168,8 @@ namespace Viewer
                                                     std::vector<CDirect2DRay> & rays);
 
 
-        [[nodiscard]] std::shared_ptr<CViewSegment2D> createSubBeam(CPoint2D const & t_Point,
-                                                                    double t_ProfileAngle) const;
+        [[nodiscard]] CViewSegment2D createSubBeam(CPoint2D const & t_Point,
+                                                   const double t_ProfileAngle) const;
 
         FenestrationCommon::Side m_Side;
 
