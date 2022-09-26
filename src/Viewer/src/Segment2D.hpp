@@ -34,14 +34,14 @@ namespace Viewer
         [[nodiscard]] double length() const;
 
         // Calculates if segment intersects with passed t_Segment
-        [[nodiscard]] bool intersectionWithSegment(std::shared_ptr<const CSegment2D> const & t_Segment) const;
+        [[nodiscard]] bool
+          intersectionWithSegment(const CSegment2D & t_Segment) const;
 
         // For line made up of current segment, calculate how it intersects passed segment.
-        [[nodiscard]] IntersectionStatus
-          intersectionWithLine(std::shared_ptr<const CSegment2D> const & t_Segment) const;
+        [[nodiscard]] IntersectionStatus intersectionWithLine(const CSegment2D & t_Segment) const;
 
         // Dot product of two std::vectors
-        [[nodiscard]] double dotProduct(std::shared_ptr<const CSegment2D> const & t_Segment) const;
+        [[nodiscard]] double dotProduct(const CSegment2D & t_Segment) const;
 
         // Translates segment for given coordinates
         [[nodiscard]] std::shared_ptr<CSegment2D> translate(double t_x, double t_y) const;
@@ -61,7 +61,7 @@ namespace Viewer
         // Calculates intesection point between two lines made up of std::vector. Even if two
         // std::vectors do not intersect, point of intersection will be returned
         [[nodiscard]] std::optional<CPoint2D>
-          intersection(std::shared_ptr<const CSegment2D> const & t_Segment) const;
+          intersection(const CSegment2D & t_Segment) const;
 
         // test if x coordinate is in range of rectangle made up of segment
         bool isInRectangleRange(const CPoint2D & t_Point) const;

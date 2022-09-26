@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <optional>
 
 namespace FenestrationCommon
 {
@@ -45,25 +46,24 @@ namespace Viewer
         explicit CDirect2DBeam(std::shared_ptr<const CViewSegment2D> const & t_Beam);
 
         // Checks if segments intersects with the beam
-        void checkSegment(std::shared_ptr<const CViewSegment2D> const & t_Segment) const;
+        void checkSegment(const CViewSegment2D & t_Segment);
 
         double Side() const;
 
         // Check if passed segment is part of the beam
-        std::shared_ptr<const CViewSegment2D>
-          getClosestCommonSegment(std::shared_ptr<const CDirect2DBeam> const & t_Beam) const;
+        std::optional<CViewSegment2D> getClosestCommonSegment(const CDirect2DBeam & t_Beam) const;
 
-        double cosAngle(std::shared_ptr<const CViewSegment2D> const & t_Segment) const;
+        [[nodiscard]] double cosAngle(const CViewSegment2D & t_Segment) const;
 
     private:
         // Checks if segment is aleardy part of beam hit
-        bool isSegmentIn(std::shared_ptr<const CViewSegment2D> const & t_Segment) const;
+        [[nodiscard]] bool isSegmentIn(const CViewSegment2D & t_Segment) const;
 
         // Direct beam
         std::shared_ptr<const CViewSegment2D> m_Beam;
 
         // Segments that beam is intersecting with
-        std::shared_ptr<std::vector<std::shared_ptr<const CViewSegment2D>>> m_Segments;
+        std::vector<CViewSegment2D> m_Segments;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -83,12 +83,12 @@ namespace Viewer
         double rayNormalHeight() const;
 
         // Checks if segments intersects with the ray
-        void checkSegment(std::shared_ptr<const CViewSegment2D> const & t_Segment) const;
+        void checkSegment(const CViewSegment2D & t_Segment) const;
 
         // Return segment hit by the ray
-        std::shared_ptr<const CViewSegment2D> closestSegmentHit() const;
+        std::optional<CViewSegment2D> closestSegmentHit() const;
 
-        double cosAngle(std::shared_ptr<const CViewSegment2D> const & t_Segment) const;
+        double cosAngle(const CViewSegment2D & t_Segment) const;
 
     private:
         std::shared_ptr<CDirect2DBeam> m_Beam1;
@@ -158,7 +158,8 @@ namespace Viewer
         RayBoundaries findRayBoundaries(double const t_ProfileAngle);
 
         // Finds all points that are on the path of the ray
-        std::vector<std::shared_ptr<CDirect2DRay>> findInBetweenRays(double const t_ProfileAngle, RayBoundaries & boudnaries);
+        std::vector<std::shared_ptr<CDirect2DRay>> findInBetweenRays(double const t_ProfileAngle,
+                                                                     RayBoundaries & boudnaries);
 
         // Calculate beam view factors
         CDirect2DRaysResult
@@ -188,8 +189,8 @@ namespace Viewer
 
         void appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D);
 
-        std::vector<BeamViewFactor>
-          beamViewFactors(double const t_ProfileAngle, FenestrationCommon::Side const t_Side);
+        std::vector<BeamViewFactor> beamViewFactors(double const t_ProfileAngle,
+                                                    FenestrationCommon::Side const t_Side);
 
         // Direct to direct transmitted beam component
         double directToDirect(double const t_ProfileAngle, FenestrationCommon::Side const t_Side);

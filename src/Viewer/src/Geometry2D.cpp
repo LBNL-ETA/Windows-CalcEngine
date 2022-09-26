@@ -149,7 +149,7 @@ namespace Viewer
             {
                 if(*aSegment != t_Segment1 && *aSegment != t_Segment2)
                 {
-                    intersection = intersection || iSegment->intersectionWithSegment(aSegment);
+                    intersection = intersection || iSegment->intersectionWithSegment(*aSegment);
                     intersection =
                       intersection
                       || pointInSegmentsView(t_Segment1, t_Segment2, aSegment->startPoint());
@@ -180,7 +180,7 @@ namespace Viewer
         {
             if(aSegment != t_Segment1 && aSegment != t_Segment2)
             {
-                intersection = intersection || centerLine->intersectionWithSegment(aSegment);
+                intersection = intersection || centerLine->intersectionWithSegment(*aSegment);
                 if(intersection)
                 {
                     break;

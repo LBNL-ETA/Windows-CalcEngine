@@ -22,14 +22,14 @@ TEST_F(TestSegment2DIntersectionWithLine, Segment2DTest1)
     CPoint2D aStartPoint1{0, 0};
     CPoint2D aEndPoint1{10, 10};
 
-    std::shared_ptr<CSegment2D> aSegment1 = std::make_shared<CSegment2D>(aStartPoint1, aEndPoint1);
+    CSegment2D aSegment1{aStartPoint1, aEndPoint1};
 
     CPoint2D aStartPoint2{1, 0};
     CPoint2D aEndPoint2{10, 10};
 
-    std::shared_ptr<CSegment2D> aSegment2 = std::make_shared<CSegment2D>(aStartPoint2, aEndPoint2);
+    CSegment2D aSegment2{aStartPoint2, aEndPoint2};
 
-    IntersectionStatus isInt = aSegment1->intersectionWithLine(aSegment2);
+    IntersectionStatus isInt = aSegment1.intersectionWithLine(aSegment2);
 
     EXPECT_EQ(IntersectionStatus::Point, isInt);
 }
@@ -41,14 +41,14 @@ TEST_F(TestSegment2DIntersectionWithLine, Segment2DTest2)
     CPoint2D aStartPoint1{4, 2};
     CPoint2D aEndPoint1{8, 1};
 
-    std::shared_ptr<CSegment2D> aSegment1 = std::make_shared<CSegment2D>(aStartPoint1, aEndPoint1);
+    CSegment2D aSegment1{aStartPoint1, aEndPoint1};
 
     CPoint2D aStartPoint2{1, 3};
     CPoint2D aEndPoint2{5, 7};
 
-    std::shared_ptr<CSegment2D> aSegment2 = std::make_shared<CSegment2D>(aStartPoint2, aEndPoint2);
+    CSegment2D aSegment2{aStartPoint2, aEndPoint2};
 
-    IntersectionStatus isInt = aSegment1->intersectionWithLine(aSegment2);
+    IntersectionStatus isInt = aSegment1.intersectionWithLine(aSegment2);
 
     EXPECT_EQ(IntersectionStatus::No, isInt);
 }
@@ -60,14 +60,14 @@ TEST_F(TestSegment2DIntersectionWithLine, Segment2DTest3)
     CPoint2D aStartPoint1{0, 0};
     CPoint2D aEndPoint1{0, 1};
 
-    std::shared_ptr<CSegment2D> aSegment1 = std::make_shared<CSegment2D>(aStartPoint1, aEndPoint1);
+    CSegment2D aSegment1{aStartPoint1, aEndPoint1};
 
     CPoint2D aStartPoint2{1, 0};
     CPoint2D aEndPoint2{1, 1};
 
-    std::shared_ptr<CSegment2D> aSegment2 = std::make_shared<CSegment2D>(aStartPoint2, aEndPoint2);
+    CSegment2D aSegment2{aStartPoint2, aEndPoint2};
 
-    IntersectionStatus isInt = aSegment1->intersectionWithLine(aSegment2);
+    IntersectionStatus isInt = aSegment1.intersectionWithLine(aSegment2);
 
     EXPECT_EQ(IntersectionStatus::No, isInt);
 }
@@ -79,14 +79,14 @@ TEST_F(TestSegment2DIntersectionWithLine, Segment2DTest4)
     CPoint2D aStartPoint1{0, 0};
     CPoint2D aEndPoint1{0, 1};
 
-    std::shared_ptr<CSegment2D> aSegment1 = std::make_shared<CSegment2D>(aStartPoint1, aEndPoint1);
+    CSegment2D aSegment1{aStartPoint1, aEndPoint1};
 
     CPoint2D aStartPoint2{0, 0};
     CPoint2D aEndPoint2{0, 2};
 
-    std::shared_ptr<CSegment2D> aSegment2 = std::make_shared<CSegment2D>(aStartPoint2, aEndPoint2);
+    CSegment2D aSegment2{aStartPoint2, aEndPoint2};
 
-    IntersectionStatus isInt = aSegment1->intersectionWithLine(aSegment2);
+    IntersectionStatus isInt = aSegment1.intersectionWithLine(aSegment2);
 
     EXPECT_EQ(IntersectionStatus::No, isInt);
 }
@@ -98,14 +98,14 @@ TEST_F(TestSegment2DIntersectionWithLine, Segment2DTest5)
     CPoint2D aStartPoint1{0, 0};
     CPoint2D aEndPoint1{0, 1};
 
-    std::shared_ptr<CSegment2D> aSegment1 = std::make_shared<CSegment2D>(aStartPoint1, aEndPoint1);
+    CSegment2D aSegment1{aStartPoint1, aEndPoint1};
 
     CPoint2D aStartPoint2{0, 2};
     CPoint2D aEndPoint2{0, 0};
 
-    std::shared_ptr<CSegment2D> aSegment2 = std::make_shared<CSegment2D>(aStartPoint2, aEndPoint2);
+    CSegment2D aSegment2{aStartPoint2, aEndPoint2};
 
-    IntersectionStatus isInt = aSegment1->intersectionWithLine(aSegment2);
+    IntersectionStatus isInt = aSegment1.intersectionWithLine(aSegment2);
 
     EXPECT_EQ(IntersectionStatus::No, isInt);
 }
@@ -118,14 +118,14 @@ TEST_F(TestSegment2DIntersectionWithLine, Segment2DTest6)
     CPoint2D aStartPoint1{0, 10};
     CPoint2D aEndPoint1{10, 0};
 
-    std::shared_ptr<CSegment2D> aSegment1 = std::make_shared<CSegment2D>(aStartPoint1, aEndPoint1);
+    CSegment2D aSegment1{aStartPoint1, aEndPoint1};
 
     CPoint2D aStartPoint2{0, 0};
     CPoint2D aEndPoint2{1, 1};
 
-    std::shared_ptr<CSegment2D> aSegment2 = std::make_shared<CSegment2D>(aStartPoint2, aEndPoint2);
+    CSegment2D aSegment2{aStartPoint2, aEndPoint2};
 
-    IntersectionStatus isInt = aSegment2->intersectionWithLine(aSegment1);
+    IntersectionStatus isInt = aSegment2.intersectionWithLine(aSegment1);
 
     EXPECT_EQ(IntersectionStatus::Segment, isInt);
 }

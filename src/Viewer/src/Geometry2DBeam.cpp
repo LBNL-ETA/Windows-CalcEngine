@@ -44,16 +44,15 @@ namespace Viewer
         {
             throw std::runtime_error("Direct beam must have correct beam assigned.");
         }
-        m_Segments = std::make_shared<std::vector<std::shared_ptr<const CViewSegment2D>>>();
     }
 
     // Check if segment intersects with the beam
-    void CDirect2DBeam::checkSegment(std::shared_ptr<const CViewSegment2D> const & t_Segment) const
+    void CDirect2DBeam::checkSegment(const CViewSegment2D & t_Segment)
     {
         auto aStatus = m_Beam->intersectionWithLine(t_Segment);
         if(aStatus != IntersectionStatus::No)
         {
-            m_Segments->push_back(t_Segment);
+            m_Segments.push_back(t_Segment);
         }
     }
 
@@ -63,21 +62,21 @@ namespace Viewer
         return m_Beam->startPoint().y();
     }
 
-    std::shared_ptr<const CViewSegment2D> CDirect2DBeam::getClosestCommonSegment(
-      std::shared_ptr<const CDirect2DBeam> const & t_Beam) const
+    std::optional<CViewSegment2D>
+      CDirect2DBeam::getClosestCommonSegment(const CDirect2DBeam & t_Beam) const
     {
-        std::shared_ptr<const CViewSegment2D> aSegment = nullptr;
-        for(auto thisSegment : *m_Segments)
+        std::optional<CViewSegment2D> aSegment;
+        for(auto thisSegment : m_Segments)
         {
-            if(t_Beam->isSegmentIn(thisSegment))
+            if(t_Beam.isSegmentIn(thisSegment))
             {
-                if(aSegment == nullptr)
+                if(!aSegment.has_value())
                 {
                     aSegment = thisSegment;
                 }
                 else
                 {
-                    if(aSegment->centerPoint().x() > thisSegment->centerPoint().x())
+                    if(aSegment->centerPoint().x() > thisSegment.centerPoint().x())
                     {
                         aSegment = thisSegment;
                     }
@@ -88,16 +87,16 @@ namespace Viewer
         return aSegment;
     }
 
-    double CDirect2DBeam::cosAngle(std::shared_ptr<const CViewSegment2D> const & t_Segment) const
+    double CDirect2DBeam::cosAngle(const CViewSegment2D & t_Segment) const
     {
         assert(m_Beam != nullptr);
         return m_Beam->dotProduct(t_Segment) / m_Beam->length();
     }
 
-    bool CDirect2DBeam::isSegmentIn(std::shared_ptr<const CViewSegment2D> const & t_Segment) const
+    bool CDirect2DBeam::isSegmentIn(const CViewSegment2D & t_Segment) const
     {
         auto isIn = false;
-        for(auto thisSegment : *m_Segments)
+        for(auto thisSegment : m_Segments)
         {
             if(thisSegment == t_Segment)
             {
@@ -148,7 +147,7 @@ namespace Viewer
         return m_Beam1->Side() - m_Beam2->Side();
     }
 
-    void CDirect2DRay::checkSegment(std::shared_ptr<const CViewSegment2D> const & t_Segment) const
+    void CDirect2DRay::checkSegment(const CViewSegment2D & t_Segment) const
     {
         assert(m_Beam1 != nullptr);
         assert(m_Beam2 != nullptr);
@@ -157,12 +156,12 @@ namespace Viewer
     }
 
     // Return segment hit by the ray
-    std::shared_ptr<const CViewSegment2D> CDirect2DRay::closestSegmentHit() const
+    std::optional<CViewSegment2D> CDirect2DRay::closestSegmentHit() const
     {
-        return m_Beam1->getClosestCommonSegment(m_Beam2);
+        return m_Beam1->getClosestCommonSegment(*m_Beam2);
     }
 
-    double CDirect2DRay::cosAngle(std::shared_ptr<const CViewSegment2D> const & t_Segment) const
+    double CDirect2DRay::cosAngle(const CViewSegment2D & t_Segment) const
     {
         assert(m_Beam1 != nullptr);
         return m_Beam1->cosAngle(t_Segment);
@@ -338,7 +337,7 @@ namespace Viewer
             {
                 for(auto aSegment : (*aEnclosure->segments()))
                 {
-                    beamRay->checkSegment(aSegment);
+                    beamRay->checkSegment(*aSegment);
                 }
             }
         }
@@ -349,7 +348,7 @@ namespace Viewer
         // Create beam direction parallel to x-axe
         CPoint2D sPoint(0, 0);
         CPoint2D ePoint(1, 0);
-        auto aNormalBeamDirection = std::make_shared<CViewSegment2D>(sPoint, ePoint);
+        CViewSegment2D aNormalBeamDirection{sPoint, ePoint};
         for(auto beamRay : rays)
         {
             auto currentHeight = beamRay->rayNormalHeight();
@@ -362,13 +361,13 @@ namespace Viewer
                 for(size_t s = 0; s < m_Geometries2D[e]->segments()->size(); ++s)
                 {
                     auto currentSegment = (*m_Geometries2D[e]->segments())[s];
-                    if(currentSegment == beamRay->closestSegmentHit())
+                    if(*currentSegment == beamRay->closestSegmentHit())
                     {
                         viewFactor = currentHeight / totalHeight;
                         projectedBeamHeight = projectedBeamHeight * currentHeight;
                         auto segmentHitLength =
                           projectedBeamHeight
-                          / std::abs(beamRay->cosAngle(currentSegment->getNormal()));
+                          / std::abs(beamRay->cosAngle(*currentSegment->getNormal()));
                         percentHit = segmentHitLength / currentSegment->length();
                         auto aTest = find(
                           aViewFactors.begin(), aViewFactors.end(), BeamViewFactor(e, s, 0, 0));
