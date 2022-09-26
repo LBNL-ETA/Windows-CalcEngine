@@ -35,7 +35,7 @@ namespace Viewer
         // Exit point of the enclosure. Important since enclosure can be entered in reverse way.
         [[nodiscard]] CPoint2D exitPoint() const;
 
-        [[nodiscard]] std::vector<CViewSegment2D> segments() const;
+        [[nodiscard]] const std::vector<CViewSegment2D> & segments() const;
 
     private:
         // Determines if point is laying inside rectangle made by two segments. That would mean that

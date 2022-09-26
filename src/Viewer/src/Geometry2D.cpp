@@ -82,7 +82,7 @@ namespace Viewer
         return startPoint.x() > endPoint.x() ? startPoint : endPoint;
     }
 
-    std::vector<CViewSegment2D> CGeometry2D::segments() const
+    const std::vector<CViewSegment2D> & CGeometry2D::segments() const
     {
         return m_Segments;
     }
