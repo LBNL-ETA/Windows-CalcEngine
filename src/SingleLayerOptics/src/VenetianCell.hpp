@@ -117,7 +117,7 @@ namespace SingleLayerOptics
         std::vector<double> slatRadiances(std::vector<SegmentIrradiance> & t_Irradiances);
 
         // Creates diffuse to diffuse std::vector. Right hand side of the equation
-        std::shared_ptr<std::vector<double>> diffuseVector();
+        std::vector<double> diffuseVector();
 
         // Create beam to diffuse std::vector. Right hand side of the equation
         std::vector<BeamSegmentView> beamVector(const CBeamDirection & t_Direction,

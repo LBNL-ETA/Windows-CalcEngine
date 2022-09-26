@@ -180,12 +180,10 @@ namespace SingleLayerOptics
     {
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
-        std::shared_ptr<std::vector<double>> B = diffuseVector();
-
-        SquareMatrix aEnergy{m_Energy};
+        auto B {diffuseVector()};
 
         CLinearSolver aSolver;
-        std::vector<double> aSolution = aSolver.solveSystem(aEnergy, *B);
+        std::vector<double> aSolution = aSolver.solveSystem(m_Energy, B);
 
         return aSolution[numSeg - 1];
     }
@@ -194,12 +192,10 @@ namespace SingleLayerOptics
     {
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
-        std::shared_ptr<std::vector<double>> B = diffuseVector();
-
-        SquareMatrix aEnergy{m_Energy};
+        auto B{diffuseVector()};
 
         CLinearSolver aSolver;
-        std::vector<double> aSolution = aSolver.solveSystem(aEnergy, *B);
+        std::vector<double> aSolution = aSolver.solveSystem(m_Energy, B);
 
         return aSolution[numSeg];
     }
@@ -216,7 +212,8 @@ namespace SingleLayerOptics
 
         // Need to calculate irradiances based on current energy state. Need to do reordering
         // according to energy slat numbering
-        std::shared_ptr<std::vector<double>> B = std::make_shared<std::vector<double>>();
+        std::vector<double> B;
+        B.reserve(2 * numSeg);
         for(size_t i = 0; i < 2 * numSeg; ++i)
         {
             size_t index = 0;
@@ -228,13 +225,11 @@ namespace SingleLayerOptics
             {
                 index = b[i - numSeg];
             }
-            B->push_back(-BVF[index].viewFactor);
+            B.push_back(-BVF[index].viewFactor);
         }
 
-        SquareMatrix aEnergy{m_Energy};
-
         CLinearSolver aSolver;
-        std::vector<double> aSolution = aSolver.solveSystem(aEnergy, *B);
+        std::vector<double> aSolution = aSolver.solveSystem(m_Energy, B);
 
         for(size_t i = 0; i <= numSeg; ++i)
         {
@@ -418,16 +413,16 @@ namespace SingleLayerOptics
         return {t_Direction, aIrradiances, aRadiances};
     }
 
-    std::shared_ptr<std::vector<double>> CVenetianCellEnergy::diffuseVector()
+    std::vector<double> CVenetianCellEnergy::diffuseVector()
     {
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
         SquareMatrix aViewFactors{m_Cell->viewFactors()};
 
-        std::shared_ptr<std::vector<double>> B = std::make_shared<std::vector<double>>(2 * numSeg);
+        std::vector<double> B(2 * numSeg);
         for(size_t i = 0; i < numSeg; ++i)
         {
-            (*B)[i] = -aViewFactors(b[0], f[i]);
-            (*B)[i + numSeg] = -aViewFactors(b[0], b[i]);
+            B[i] = -aViewFactors(b[0], f[i]);
+            B[i + numSeg] = -aViewFactors(b[0], b[i]);
         }
 
         return B;

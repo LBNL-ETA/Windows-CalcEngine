@@ -9,7 +9,7 @@
 
 namespace FenestrationCommon
 {
-    std::vector<double> CLinearSolver::solveSystem(SquareMatrix & t_MatrixA,
+    std::vector<double> CLinearSolver::solveSystem(SquareMatrix t_MatrixA,
                                                    std::vector<double> & t_VectorB)
     {
         if(t_MatrixA.size() != t_VectorB.size())
