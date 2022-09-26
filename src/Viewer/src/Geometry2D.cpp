@@ -42,9 +42,9 @@ namespace Viewer
         auto aEnclosure = std::make_shared<CGeometry2D>();
         for(auto aSegment : *m_Segments)
         {
-            std::shared_ptr<CSegment2D> newSegment = aSegment->translate(t_x, t_y);
+            const auto newSegment{aSegment->translate(t_x, t_y)};
             auto newEnSegment =
-              std::make_shared<CViewSegment2D>(newSegment->startPoint(), newSegment->endPoint());
+              std::make_shared<CViewSegment2D>(newSegment.startPoint(), newSegment.endPoint());
             aEnclosure->appendSegment(newEnSegment);
         }
 
@@ -65,8 +65,10 @@ namespace Viewer
     {
         auto xStart = m_Segments->front()->centerPoint().x();
         auto xEnd = m_Segments->back()->centerPoint().x();
-        const CPoint2D startPoint{xStart <= xEnd ? m_Segments->front()->startPoint() : m_Segments->back()->startPoint()};
-        const CPoint2D endPoint{xStart <= xEnd ? m_Segments->front()->endPoint() : m_Segments->back()->endPoint()};
+        const CPoint2D startPoint{xStart <= xEnd ? m_Segments->front()->startPoint()
+                                                 : m_Segments->back()->startPoint()};
+        const CPoint2D endPoint{xStart <= xEnd ? m_Segments->front()->endPoint()
+                                               : m_Segments->back()->endPoint()};
 
         return startPoint.x() < endPoint.x() ? startPoint : endPoint;
     }
@@ -75,8 +77,10 @@ namespace Viewer
     {
         auto xStart = m_Segments->front()->centerPoint().x();
         auto xEnd = m_Segments->back()->centerPoint().x();
-        const CPoint2D startPoint{xStart >= xEnd ? m_Segments->front()->startPoint() : m_Segments->back()->startPoint()};
-        const CPoint2D endPoint{xStart >= xEnd ? m_Segments->front()->endPoint() : m_Segments->back()->endPoint()};
+        const CPoint2D startPoint{xStart >= xEnd ? m_Segments->front()->startPoint()
+                                                 : m_Segments->back()->startPoint()};
+        const CPoint2D endPoint{xStart >= xEnd ? m_Segments->front()->endPoint()
+                                               : m_Segments->back()->endPoint()};
 
         return startPoint.x() > endPoint.x() ? startPoint : endPoint;
     }

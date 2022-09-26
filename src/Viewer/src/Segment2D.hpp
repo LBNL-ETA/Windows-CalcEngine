@@ -44,7 +44,7 @@ namespace Viewer
         [[nodiscard]] double dotProduct(const CSegment2D & t_Segment) const;
 
         // Translates segment for given coordinates
-        [[nodiscard]] std::shared_ptr<CSegment2D> translate(double t_x, double t_y) const;
+        [[nodiscard]] CSegment2D translate(double t_x, double t_y) const;
 
         // returns end point of the std::vector that starts at (0, 0)
         [[nodiscard]] CPoint2D intensity() const;
@@ -64,14 +64,14 @@ namespace Viewer
           intersection(const CSegment2D & t_Segment) const;
 
         // test if x coordinate is in range of rectangle made up of segment
-        bool isInRectangleRange(const CPoint2D & t_Point) const;
+        [[nodiscard]] bool isInRectangleRange(const CPoint2D & t_Point) const;
 
         // Equation of LINE made up of two points
         // A, B and C coefficients of line that is made up of segment. Line equation is A*x + B*y =
         // C
-        double coeffA() const;
-        double coeffB() const;
-        double coeffC() const;
+        [[nodiscard]] double coeffA() const;
+        [[nodiscard]] double coeffB() const;
+        [[nodiscard]] double coeffC() const;
 
         double m_Length;
     };

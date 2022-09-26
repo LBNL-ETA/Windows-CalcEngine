@@ -126,10 +126,10 @@ namespace Viewer
         return subSegments;
     }
 
-    std::shared_ptr<CViewSegment2D> CViewSegment2D::translate(const double t_x, const double t_y)
+    CViewSegment2D CViewSegment2D::translate(const double t_x, const double t_y)
     {
-        std::shared_ptr<CSegment2D> aSegment = CSegment2D::translate(t_x, t_y);
-        return std::make_shared<CViewSegment2D>(aSegment->startPoint(), aSegment->endPoint());
+        const auto aSegment {CSegment2D::translate(t_x, t_y)};
+        return {aSegment.startPoint(), aSegment.endPoint()};
     }
 
     PointPosition CViewSegment2D::position(CPoint2D const & t_Point) const

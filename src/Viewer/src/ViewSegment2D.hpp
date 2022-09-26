@@ -47,7 +47,7 @@ namespace Viewer
           subSegments(size_t numSegments) const;
 
         // Translates segment for given coordinates
-        std::shared_ptr<CViewSegment2D> translate(double t_x, double t_y);
+        CViewSegment2D translate(double t_x, double t_y);
 
     private:
         // How much segment is self shadowed (No, Partial, Total)

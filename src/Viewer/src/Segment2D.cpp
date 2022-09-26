@@ -97,12 +97,11 @@ namespace Viewer
     }
 
     // Translates segment for given coordinates
-    std::shared_ptr<CSegment2D> CSegment2D::translate(double const t_x, double const t_y) const
+    CSegment2D CSegment2D::translate(double const t_x, double const t_y) const
     {
         CPoint2D startPoint{m_StartPoint.x() + t_x, m_StartPoint.y() + t_y};
         CPoint2D endPoint{m_EndPoint.x() + t_x, m_EndPoint.y() + t_y};
-        auto aSegment = std::make_shared<CSegment2D>(startPoint, endPoint);
-        return aSegment;
+        return {startPoint, endPoint};
     }
 
     double CSegment2D::calculateLength(const CPoint2D & startPoint, const CPoint2D & endPoint)
