@@ -158,13 +158,13 @@ namespace Viewer
         RayBoundaries findRayBoundaries(double const t_ProfileAngle);
 
         // Finds all points that are on the path of the ray
-        std::vector<std::shared_ptr<CDirect2DRay>> findInBetweenRays(double const t_ProfileAngle,
+        std::vector<CDirect2DRay> findInBetweenRays(double const t_ProfileAngle,
                                                                      RayBoundaries & boudnaries);
 
         // Calculate beam view factors
         CDirect2DRaysResult
           calculateBeamProperties(double const t_ProfileAngle,
-                                  std::vector<std::shared_ptr<CDirect2DRay>> & rays);
+                                                    std::vector<CDirect2DRay> & rays);
 
 
         std::shared_ptr<CViewSegment2D> createSubBeam(CPoint2D const & t_Point,
