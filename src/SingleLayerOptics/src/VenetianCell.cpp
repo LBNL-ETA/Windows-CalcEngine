@@ -5,7 +5,6 @@
 #include "VenetianCellDescription.hpp"
 #include "BeamDirection.hpp"
 #include "MaterialDescription.hpp"
-#include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
 
@@ -85,8 +84,7 @@ namespace SingleLayerOptics
         m_Tf(0),
         m_Tb(0),
         m_Rf(0),
-        m_Rb(0),
-        m_Energy(nullptr)
+        m_Rb(0)
     {}
 
     CVenetianCellEnergy::CVenetianCellEnergy(
@@ -184,8 +182,7 @@ namespace SingleLayerOptics
 
         std::shared_ptr<std::vector<double>> B = diffuseVector();
 
-        SquareMatrix aEnergy{m_Energy->size()};
-        aEnergy = *m_Energy;
+        SquareMatrix aEnergy{m_Energy};
 
         CLinearSolver aSolver;
         std::vector<double> aSolution = aSolver.solveSystem(aEnergy, *B);
@@ -199,8 +196,7 @@ namespace SingleLayerOptics
 
         std::shared_ptr<std::vector<double>> B = diffuseVector();
 
-        SquareMatrix aEnergy{m_Energy->size()};
-        aEnergy = *m_Energy;
+        SquareMatrix aEnergy{m_Energy};
 
         CLinearSolver aSolver;
         std::vector<double> aSolution = aSolver.solveSystem(aEnergy, *B);
@@ -235,8 +231,7 @@ namespace SingleLayerOptics
             B->push_back(-BVF[index].viewFactor);
         }
 
-        SquareMatrix aEnergy{m_Energy->size()};
-        aEnergy = *m_Energy;
+        SquareMatrix aEnergy{m_Energy};
 
         CLinearSolver aSolver;
         std::vector<double> aSolution = aSolver.solveSystem(aEnergy, *B);
@@ -311,7 +306,7 @@ namespace SingleLayerOptics
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
         // Create energy matrix
-        m_Energy = std::make_shared<SquareMatrix>(2 * numSeg);
+        m_Energy = SquareMatrix(2 * numSeg);
 
         // Results always from front side since cell is already flipped
         double T = m_Tf;
@@ -329,17 +324,17 @@ namespace SingleLayerOptics
                     {
                         value -= 1;
                     }
-                    (*m_Energy)(j, i) = value;
+                    m_Energy(j, i) = value;
                 }
                 else
                 {
                     if(i != j)
                     {
-                        (*m_Energy)(j, i) = 0;
+                        m_Energy(j, i) = 0;
                     }
                     else
                     {
-                        (*m_Energy)(j, i) = -1;
+                        m_Energy(j, i) = -1;
                     }
                 }
             }
@@ -354,11 +349,11 @@ namespace SingleLayerOptics
                 {
                     const double value =
                       aViewFactors(b[i + 1], b[j]) * T + aViewFactors(f[i], b[j]) * R;
-                    (*m_Energy)(j + numSeg, i) = value;
+                    m_Energy(j + numSeg, i) = value;
                 }
                 else
                 {
-                    (*m_Energy)(j + numSeg, i) = 0;
+                    m_Energy(j + numSeg, i) = 0;
                 }
             }
         }
@@ -375,11 +370,11 @@ namespace SingleLayerOptics
                 {
                     const double value =
                       aViewFactors(f[i - 1], f[j]) * T + aViewFactors(b[i], f[j]) * R;
-                    (*m_Energy)(j, i + numSeg) = value;
+                    m_Energy(j, i + numSeg) = value;
                 }
                 else
                 {
-                    (*m_Energy)(j, i + numSeg) = 0;
+                    m_Energy(j, i + numSeg) = 0;
                 }
             }
         }
@@ -396,17 +391,17 @@ namespace SingleLayerOptics
                     {
                         value -= 1;
                     }
-                    (*m_Energy)(j + numSeg, i + numSeg) = value;
+                    m_Energy(j + numSeg, i + numSeg) = value;
                 }
                 else
                 {
                     if(i != j)
                     {
-                        (*m_Energy)(j + numSeg, i + numSeg) = 0;
+                        m_Energy(j + numSeg, i + numSeg) = 0;
                     }
                     else
                     {
-                        (*m_Energy)(j + numSeg, i + numSeg) = -1;
+                        m_Energy(j + numSeg, i + numSeg) = -1;
                     }
                 }
             }

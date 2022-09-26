@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+#include <WCECommon.hpp>
+
 #include "UniformDiffuseCell.hpp"
 #include "DirectionalDiffuseCell.hpp"
 
@@ -126,7 +128,7 @@ namespace SingleLayerOptics
         double m_Tb;
         double m_Rf;
         double m_Rb;
-        std::shared_ptr<FenestrationCommon::SquareMatrix> m_Energy;
+        FenestrationCommon::SquareMatrix m_Energy;
 
         // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
         std::vector<size_t> b;

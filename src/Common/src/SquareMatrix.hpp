@@ -8,28 +8,29 @@ namespace FenestrationCommon
     class SquareMatrix
     {
     public:
-        explicit SquareMatrix(const std::size_t tSize = 0);
+        SquareMatrix(const SquareMatrix &) = default;
+        explicit SquareMatrix(std::size_t tSize = 0);
         explicit SquareMatrix(const std::initializer_list<std::vector<double>> & tInput);
         explicit SquareMatrix(const std::vector<std::vector<double>> & tInput);
         explicit SquareMatrix(const std::vector<std::vector<double>> && tInput);
 
         SquareMatrix & operator=(const SquareMatrix & val) = default;
 
-        std::size_t size() const;
+        [[nodiscard]] std::size_t size() const;
         void setZeros();
         void setIdentity();
         void setDiagonal(const std::vector<double> & tInput);
 
         std::vector<size_t> makeUpperTriangular();
 
-        SquareMatrix inverse() const;
+        [[nodiscard]] SquareMatrix inverse() const;
 
-        double operator()(const std::size_t i, const std::size_t j) const;
-        double & operator()(const std::size_t i, const std::size_t j);
+        double operator()(std::size_t i, std::size_t j) const;
+        double & operator()(std::size_t i, std::size_t j);
 
         SquareMatrix mmultRows(const std::vector<double> & tInput);
 
-        std::vector<std::vector<double>> getMatrix() const;
+        [[nodiscard]] std::vector<std::vector<double>> getMatrix() const;
 
     private:
         // explicit SquareMatrix(SquareMatrix && tMatrix);
