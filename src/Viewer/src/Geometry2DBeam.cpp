@@ -367,7 +367,7 @@ namespace Viewer
                         projectedBeamHeight = projectedBeamHeight * currentHeight;
                         auto segmentHitLength =
                           projectedBeamHeight
-                          / std::abs(beamRay->cosAngle(*currentSegment.getNormal()));
+                          / std::abs(beamRay->cosAngle(currentSegment.getNormal()));
                         percentHit = segmentHitLength / currentSegment.length();
                         auto aTest = find(
                           aViewFactors.begin(), aViewFactors.end(), BeamViewFactor(e, s, 0, 0));
