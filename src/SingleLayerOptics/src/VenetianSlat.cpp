@@ -22,13 +22,12 @@ namespace SingleLayerOptics
         m_SlatTiltAngle(t_SlatTiltAngle),
         m_CurvatureRadius(t_CurvatureRadius),
         m_NumOfSlatSegments(t_NumOfSegments),
-        m_Direction(t_Direction),
-        m_Geometry(std::make_shared<CGeometry2D>())
+        m_Direction(t_Direction)
     {
         buildSlat();
     }
 
-    std::shared_ptr<CGeometry2D> CVenetianSlat::geometry() const
+    CGeometry2D CVenetianSlat::geometry() const
     {
         return m_Geometry;
     }
@@ -131,7 +130,7 @@ namespace SingleLayerOptics
                 std::shared_ptr<CPolarPoint2D> endPoint =
                   std::make_shared<CPolarPoint2D>(nextTheta, radius);
                 CViewSegment2D aSegment{*startPoint, *endPoint};
-                m_Geometry->appendSegment(aSegment);
+                m_Geometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }
         }
@@ -170,7 +169,7 @@ namespace SingleLayerOptics
                 std::shared_ptr<CPolarPoint2D> endPoint =
                   std::make_shared<CPolarPoint2D>(m_SlatTiltAngle, nextRadius);
                 CViewSegment2D aSegment{*startPoint, *endPoint};
-                m_Geometry->appendSegment(aSegment);
+                m_Geometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }
         }
@@ -179,13 +178,13 @@ namespace SingleLayerOptics
             throw std::runtime_error("Cannot create slat.");
         }
 
-        const CPoint2D aPoint{m_Direction == SegmentsDirection::Positive ? m_Geometry->firstPoint()
-                                                                         : m_Geometry->lastPoint()};
+        const CPoint2D aPoint{m_Direction == SegmentsDirection::Positive ? m_Geometry.firstPoint()
+                                                                         : m_Geometry.lastPoint()};
 
         translateX = -aPoint.x();
         translateY = -aPoint.y();
 
-        m_Geometry = m_Geometry->Translate(translateX, translateY + m_SlatSpacing);
+        m_Geometry = m_Geometry.Translate(translateX, translateY + m_SlatSpacing);
     }
 
 }   // namespace SingleLayerOptics

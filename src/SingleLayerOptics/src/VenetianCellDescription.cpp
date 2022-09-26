@@ -31,11 +31,11 @@ namespace SingleLayerOptics
                  t_NumOfSlatSegments,
                  SegmentsDirection::Negative)
     {
-        Viewer::CViewSegment2D exteriorSegment(m_Bottom.geometry()->lastPoint(),
-                                               m_Top.geometry()->firstPoint());
+        Viewer::CViewSegment2D exteriorSegment(m_Bottom.geometry().lastPoint(),
+                                               m_Top.geometry().firstPoint());
 
-        Viewer::CViewSegment2D interiorSegment(m_Top.geometry()->lastPoint(),
-                                               m_Bottom.geometry()->firstPoint());
+        Viewer::CViewSegment2D interiorSegment(m_Top.geometry().lastPoint(),
+                                               m_Bottom.geometry().firstPoint());
 
         m_Geometry.appendSegment(exteriorSegment);
         m_Geometry.appendGeometry2D(m_Top.geometry());

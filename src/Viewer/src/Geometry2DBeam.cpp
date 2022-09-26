@@ -201,7 +201,7 @@ namespace Viewer
     CDirect2DRays::CDirect2DRays(Side const t_Side) : m_Side(t_Side)
     {}
 
-    void CDirect2DRays::appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D)
+    void CDirect2DRays::appendGeometry2D(const CGeometry2D & t_Geometry2D)
     {
         m_Geometries2D.push_back(t_Geometry2D);
     }
@@ -243,13 +243,13 @@ namespace Viewer
     {
         RayBoundaries result;
         std::shared_ptr<CViewSegment2D> entryRay = nullptr;
-        for(auto aGeometry : m_Geometries2D)
+        for(size_t i = 0; i < m_Geometries2D.size(); ++i)
         {
-            // TODO: Geometry depends on entry or exit points
-            const CPoint2D aPoint{m_Side == Side::Front ? aGeometry->entryPoint() : aGeometry->exitPoint()};
+            const auto & aGeometry{m_Geometries2D[i]};
+            const CPoint2D aPoint{m_Side == Side::Front ? aGeometry.entryPoint() : aGeometry.exitPoint()};
 
             entryRay = createSubBeam(aPoint, t_ProfileAngle);
-            if(aGeometry == *m_Geometries2D.begin())
+            if(i == 0u)
             {
                 result.m_LowerRay = entryRay;
                 result.m_UpperRay = entryRay;
@@ -280,7 +280,7 @@ namespace Viewer
         // m_Beams.push_back( m_UpperRay );
         for(auto aEnclosure : m_Geometries2D)
         {
-            auto aSegments = aEnclosure->segments();
+            auto aSegments = aEnclosure.segments();
             if(boudnaries.isInRay(aSegments[0].startPoint()))
             {
                 inBetweenPoints.push_back(aSegments[0].startPoint());
@@ -288,7 +288,7 @@ namespace Viewer
             for(auto aSegment : aSegments)
             {
                 auto endPoint = aSegment.endPoint();
-                // Ray is alway going from left to right. For point to be in between beam, it must
+                // Ray is always going from left to right. For point to be in between beam, it must
                 // be visible for upper ray and invisible for lower ray
                 if(boudnaries.m_UpperRay->position(endPoint) == PointPosition::Visible
                    && boudnaries.m_LowerRay->position(endPoint) == PointPosition::Invisible)
@@ -330,12 +330,12 @@ namespace Viewer
     {
         // First check all segments and calculte total ray height
         auto totalHeight = 0.0;
-        for(auto beamRay : rays)
+        for(const auto& beamRay : rays)
         {
             totalHeight += beamRay->rayNormalHeight();
-            for(auto aEnclosure : m_Geometries2D)
+            for(const auto& aEnclosure : m_Geometries2D)
             {
-                for(auto aSegment : aEnclosure->segments())
+                for(const auto& aSegment : aEnclosure.segments())
                 {
                     beamRay->checkSegment(aSegment);
                 }
@@ -349,7 +349,7 @@ namespace Viewer
         CPoint2D sPoint(0, 0);
         CPoint2D ePoint(1, 0);
         CViewSegment2D aNormalBeamDirection{sPoint, ePoint};
-        for(auto beamRay : rays)
+        for(const auto& beamRay : rays)
         {
             auto currentHeight = beamRay->rayNormalHeight();
             auto projectedBeamHeight = beamRay->cosAngle(aNormalBeamDirection);
@@ -358,9 +358,9 @@ namespace Viewer
             auto closestSegment = beamRay->closestSegmentHit();
             for(size_t e = 0; e < m_Geometries2D.size(); ++e)
             {
-                for(size_t s = 0; s < m_Geometries2D[e]->segments().size(); ++s)
+                for(size_t s = 0; s < m_Geometries2D[e].segments().size(); ++s)
                 {
-                    auto currentSegment = m_Geometries2D[e]->segments()[s];
+                    auto currentSegment = m_Geometries2D[e].segments()[s];
                     if(currentSegment == beamRay->closestSegmentHit())
                     {
                         viewFactor = currentHeight / totalHeight;
@@ -425,7 +425,7 @@ namespace Viewer
         m_Ray{{Side::Front, CDirect2DRays(Side::Front)}, {Side::Back, CDirect2DRays(Side::Back)}}
     {}
 
-    void CGeometry2DBeam::appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D)
+    void CGeometry2DBeam::appendGeometry2D(const CGeometry2D & t_Geometry2D)
     {
         for(auto & [key, ray]: m_Ray)
         {

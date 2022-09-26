@@ -133,15 +133,15 @@ namespace Viewer
     class CDirect2DRays
     {
     public:
-        explicit CDirect2DRays(FenestrationCommon::Side const t_Side);
+        explicit CDirect2DRays(FenestrationCommon::Side t_Side);
 
-        void appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D);
+        void appendGeometry2D(const CGeometry2D & t_Geometry2D);
 
         // Beam view factors for given profile angle
         std::vector<BeamViewFactor> beamViewFactors(double t_ProfileAngle);
 
         // Direct to direct transmitted beam component
-        double directToDirect(double const t_ProfileAngle);
+        double directToDirect(double t_ProfileAngle);
 
     private:
         struct RayBoundaries
@@ -149,10 +149,10 @@ namespace Viewer
             std::shared_ptr<CViewSegment2D> m_LowerRay;
             std::shared_ptr<CViewSegment2D> m_UpperRay;
 
-            bool isInRay(CPoint2D const & t_Point) const;
+            [[nodiscard]] bool isInRay(CPoint2D const & t_Point) const;
         };
 
-        CDirect2DRaysResult calculateAllProperties(double const t_ProfileAngle);
+        CDirect2DRaysResult calculateAllProperties(double t_ProfileAngle);
 
         // Finds lower and upper ray of every enclosure in the system
         RayBoundaries findRayBoundaries(double const t_ProfileAngle);
@@ -172,7 +172,7 @@ namespace Viewer
 
         FenestrationCommon::Side m_Side;
 
-        std::vector<std::shared_ptr<const CGeometry2D>> m_Geometries2D;
+        std::vector<CGeometry2D> m_Geometries2D;
 
         std::map<long long, CDirect2DRaysResult> m_RayResults;
     };
@@ -187,7 +187,7 @@ namespace Viewer
     public:
         CGeometry2DBeam();
 
-        void appendGeometry2D(std::shared_ptr<const CGeometry2D> const & t_Geometry2D);
+        void appendGeometry2D(const CGeometry2D & t_Geometry2D);
 
         std::vector<BeamViewFactor> beamViewFactors(double const t_ProfileAngle,
                                                     FenestrationCommon::Side const t_Side);

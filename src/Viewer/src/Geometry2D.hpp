@@ -18,11 +18,11 @@ namespace Viewer
         CGeometry2D();
 
         void appendSegment(const CViewSegment2D & t_Segment);
-        void appendGeometry2D(std::shared_ptr<CGeometry2D> const & t_Geometry2D);
+        void appendGeometry2D(const CGeometry2D & t_Geometry2D);
         FenestrationCommon::SquareMatrix viewFactors();
 
         // Shifts all segments for given coordinates
-        std::shared_ptr<CGeometry2D> Translate(double const t_x, double const t_y) const;
+        CGeometry2D Translate(double const t_x, double const t_y) const;
 
         // First and last point function are necessary to make connection between different
         // enclosures

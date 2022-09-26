@@ -19,9 +19,9 @@ namespace Viewer
         m_ViewFactorsCalculated = false;
     }
 
-    void CGeometry2D::appendGeometry2D(std::shared_ptr<CGeometry2D> const & t_Geometry2D)
+    void CGeometry2D::appendGeometry2D(const CGeometry2D & t_Geometry2D)
     {
-        for(auto aSegment : (t_Geometry2D->m_Segments))
+        for(auto aSegment : (t_Geometry2D.m_Segments))
         {
             m_Segments.push_back(aSegment);
         }
@@ -35,14 +35,14 @@ namespace Viewer
         return m_ViewFactors;
     }
 
-    std::shared_ptr<CGeometry2D> CGeometry2D::Translate(double const t_x, double const t_y) const
+    CGeometry2D CGeometry2D::Translate(double const t_x, double const t_y) const
     {
-        auto aEnclosure = std::make_shared<CGeometry2D>();
+        CGeometry2D aEnclosure;
         for(auto aSegment : m_Segments)
         {
             const auto newSegment{aSegment.translate(t_x, t_y)};
             CViewSegment2D newEnSegment{newSegment.startPoint(), newSegment.endPoint()};
-            aEnclosure->appendSegment(newEnSegment);
+            aEnclosure.appendSegment(newEnSegment);
         }
 
         return aEnclosure;
