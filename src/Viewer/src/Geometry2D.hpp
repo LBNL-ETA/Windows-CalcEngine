@@ -35,7 +35,7 @@ namespace Viewer
         // Exit point of the enclosure. Important since enclosure can be entered in reverse way.
         [[nodiscard]] CPoint2D exitPoint() const;
 
-        std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>> segments() const;
+        [[nodiscard]] std::vector<std::shared_ptr<CViewSegment2D>> segments() const;
 
     private:
         // Determines if point is laying inside rectangle made by two segments. That would mean that
@@ -65,7 +65,7 @@ namespace Viewer
         // Checks if view factors are valid for current geometry
         void checkViewFactors();
 
-        std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>> m_Segments;
+        std::vector<std::shared_ptr<CViewSegment2D>> m_Segments;
 
         // Holds state for the view factors. No need to recalculate them every time since it is
         // time consuming operation.

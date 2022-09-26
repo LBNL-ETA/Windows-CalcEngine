@@ -281,11 +281,11 @@ namespace Viewer
         for(auto aEnclosure : m_Geometries2D)
         {
             auto aSegments = aEnclosure->segments();
-            if(boudnaries.isInRay((*aSegments)[0]->startPoint()))
+            if(boudnaries.isInRay(aSegments[0]->startPoint()))
             {
-                inBetweenPoints.push_back((*aSegments)[0]->startPoint());
+                inBetweenPoints.push_back(aSegments[0]->startPoint());
             }
-            for(auto aSegment : *aSegments)
+            for(auto aSegment : aSegments)
             {
                 auto endPoint = aSegment->endPoint();
                 // Ray is alway going from left to right. For point to be in between beam, it must
@@ -335,7 +335,7 @@ namespace Viewer
             totalHeight += beamRay->rayNormalHeight();
             for(auto aEnclosure : m_Geometries2D)
             {
-                for(auto aSegment : (*aEnclosure->segments()))
+                for(auto aSegment : aEnclosure->segments())
                 {
                     beamRay->checkSegment(*aSegment);
                 }
@@ -358,9 +358,9 @@ namespace Viewer
             auto closestSegment = beamRay->closestSegmentHit();
             for(size_t e = 0; e < m_Geometries2D.size(); ++e)
             {
-                for(size_t s = 0; s < m_Geometries2D[e]->segments()->size(); ++s)
+                for(size_t s = 0; s < m_Geometries2D[e]->segments().size(); ++s)
                 {
-                    auto currentSegment = (*m_Geometries2D[e]->segments())[s];
+                    auto currentSegment = m_Geometries2D[e]->segments()[s];
                     if(*currentSegment == beamRay->closestSegmentHit())
                     {
                         viewFactor = currentHeight / totalHeight;

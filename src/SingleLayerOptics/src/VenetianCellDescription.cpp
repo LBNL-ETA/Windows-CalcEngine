@@ -56,13 +56,13 @@ namespace SingleLayerOptics
 
     double CVenetianCellDescription::segmentLength(const size_t Index) const
     {
-        std::shared_ptr<std::vector<std::shared_ptr<Viewer::CViewSegment2D>>> aSegments =
+        std::vector<std::shared_ptr<Viewer::CViewSegment2D>> aSegments =
           m_Geometry.segments();
-        if(Index > aSegments->size())
+        if(Index > aSegments.size())
         {
             throw std::runtime_error("Incorrect index for venetian segment.");
         }
-        std::shared_ptr<Viewer::CViewSegment2D> aSegment = (*aSegments)[Index];
+        std::shared_ptr<Viewer::CViewSegment2D> aSegment = aSegments[Index];
         return aSegment->length();
     }
 

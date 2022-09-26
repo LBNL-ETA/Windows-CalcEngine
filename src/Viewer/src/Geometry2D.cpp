@@ -11,21 +11,20 @@ using namespace FenestrationCommon;
 namespace Viewer
 {
     CGeometry2D::CGeometry2D() :
-        m_Segments(std::make_shared<std::vector<std::shared_ptr<CViewSegment2D>>>()),
         m_ViewFactorsCalculated(false)
     {}
 
     void CGeometry2D::appendSegment(std::shared_ptr<CViewSegment2D> const & t_Segment)
     {
-        m_Segments->push_back(t_Segment);
+        m_Segments.push_back(t_Segment);
         m_ViewFactorsCalculated = false;
     }
 
     void CGeometry2D::appendGeometry2D(std::shared_ptr<CGeometry2D> const & t_Geometry2D)
     {
-        for(auto aSegment : (*t_Geometry2D->m_Segments))
+        for(auto aSegment : (t_Geometry2D->m_Segments))
         {
-            m_Segments->push_back(aSegment);
+            m_Segments.push_back(aSegment);
         }
         m_ViewFactorsCalculated = false;
     }
@@ -40,7 +39,7 @@ namespace Viewer
     std::shared_ptr<CGeometry2D> CGeometry2D::Translate(double const t_x, double const t_y) const
     {
         auto aEnclosure = std::make_shared<CGeometry2D>();
-        for(auto aSegment : *m_Segments)
+        for(auto aSegment : m_Segments)
         {
             const auto newSegment{aSegment->translate(t_x, t_y)};
             auto newEnSegment =
@@ -53,39 +52,39 @@ namespace Viewer
 
     CPoint2D CGeometry2D::firstPoint() const
     {
-        return m_Segments->front()->startPoint();
+        return m_Segments.front()->startPoint();
     }
 
     CPoint2D CGeometry2D::lastPoint() const
     {
-        return m_Segments->back()->endPoint();
+        return m_Segments.back()->endPoint();
     }
 
     CPoint2D CGeometry2D::entryPoint() const
     {
-        auto xStart = m_Segments->front()->centerPoint().x();
-        auto xEnd = m_Segments->back()->centerPoint().x();
-        const CPoint2D startPoint{xStart <= xEnd ? m_Segments->front()->startPoint()
-                                                 : m_Segments->back()->startPoint()};
-        const CPoint2D endPoint{xStart <= xEnd ? m_Segments->front()->endPoint()
-                                               : m_Segments->back()->endPoint()};
+        auto xStart = m_Segments.front()->centerPoint().x();
+        auto xEnd = m_Segments.back()->centerPoint().x();
+        const CPoint2D startPoint{xStart <= xEnd ? m_Segments.front()->startPoint()
+                                                 : m_Segments.back()->startPoint()};
+        const CPoint2D endPoint{xStart <= xEnd ? m_Segments.front()->endPoint()
+                                               : m_Segments.back()->endPoint()};
 
         return startPoint.x() < endPoint.x() ? startPoint : endPoint;
     }
 
     CPoint2D CGeometry2D::exitPoint() const
     {
-        auto xStart = m_Segments->front()->centerPoint().x();
-        auto xEnd = m_Segments->back()->centerPoint().x();
-        const CPoint2D startPoint{xStart >= xEnd ? m_Segments->front()->startPoint()
-                                                 : m_Segments->back()->startPoint()};
-        const CPoint2D endPoint{xStart >= xEnd ? m_Segments->front()->endPoint()
-                                               : m_Segments->back()->endPoint()};
+        auto xStart = m_Segments.front()->centerPoint().x();
+        auto xEnd = m_Segments.back()->centerPoint().x();
+        const CPoint2D startPoint{xStart >= xEnd ? m_Segments.front()->startPoint()
+                                                 : m_Segments.back()->startPoint()};
+        const CPoint2D endPoint{xStart >= xEnd ? m_Segments.front()->endPoint()
+                                               : m_Segments.back()->endPoint()};
 
         return startPoint.x() > endPoint.x() ? startPoint : endPoint;
     }
 
-    std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>> CGeometry2D::segments() const
+    std::vector<std::shared_ptr<CViewSegment2D>> CGeometry2D::segments() const
     {
         return m_Segments;
     }
@@ -147,7 +146,7 @@ namespace Viewer
             intSegments.push_back(r22);
         }
 
-        for(auto aSegment : *m_Segments)
+        for(auto aSegment : m_Segments)
         {
             for(auto iSegment : intSegments)
             {
@@ -180,7 +179,7 @@ namespace Viewer
         auto centerLine =
           std::make_shared<CViewSegment2D>(t_Segment1->centerPoint(), t_Segment2->centerPoint());
 
-        for(auto aSegment : *m_Segments)
+        for(auto aSegment : m_Segments)
         {
             if(aSegment != t_Segment1 && aSegment != t_Segment2)
             {
@@ -245,7 +244,7 @@ namespace Viewer
     {
         if(!m_ViewFactorsCalculated)
         {
-            auto size = m_Segments->size();
+            auto size = m_Segments.size();
 
             // View factor matrix. It is already initialized to zeros
             m_ViewFactors = SquareMatrix(size);
@@ -255,25 +254,25 @@ namespace Viewer
                 {
                     if(i != j)
                     {
-                        auto selfShadowing = (*m_Segments)[i]->selfShadowing(*(*m_Segments)[j]);
+                        auto selfShadowing = m_Segments[i]->selfShadowing(*(m_Segments[j]));
                         if(selfShadowing != Shadowing::Total)
                         {
                             auto shadowedByThirdSurface =
-                              thirdSurfaceShadowing(*(*m_Segments)[i], *(*m_Segments)[j]);
+                              thirdSurfaceShadowing(*(m_Segments[i]), *(m_Segments[j]));
                             auto vfCoeff = 0.0;
 
                             if(!shadowedByThirdSurface && (selfShadowing == Shadowing::No))
                             {
                                 vfCoeff =
-                                  (*m_Segments)[i]->viewFactorCoefficient(*(*m_Segments)[j]);
+                                  m_Segments[i]->viewFactorCoefficient(*(m_Segments[j]));
                             }
                             else if(shadowedByThirdSurface || selfShadowing == Shadowing::Partial)
                             {
-                                vfCoeff = viewFactorCoeff((*m_Segments)[i], (*m_Segments)[j]);
+                                vfCoeff = viewFactorCoeff(m_Segments[i], m_Segments[j]);
                             }
 
-                            m_ViewFactors(i, j) = vfCoeff / (2 * (*m_Segments)[i]->length());
-                            m_ViewFactors(j, i) = vfCoeff / (2 * (*m_Segments)[j]->length());
+                            m_ViewFactors(i, j) = vfCoeff / (2 * m_Segments[i]->length());
+                            m_ViewFactors(j, i) = vfCoeff / (2 * m_Segments[j]->length());
                         }
                     }
                 }
