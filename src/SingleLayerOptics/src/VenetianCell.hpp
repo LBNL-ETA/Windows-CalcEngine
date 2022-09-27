@@ -94,7 +94,8 @@ namespace SingleLayerOptics
         // Keeps information about beam view factor and percentage view
         struct BeamSegmentView
         {
-            BeamSegmentView() : viewFactor(0), percentViewed(0){}
+            BeamSegmentView() : viewFactor(0), percentViewed(0)
+            {}
             double viewFactor;
             double percentViewed;
         };
@@ -136,13 +137,13 @@ namespace SingleLayerOptics
 
         // Keeps pointer to valid slat energies (for given direction). If result is not valid, it
         // must be pulled out of m_SlatEnergyResults and assigned to this pointer.
-        //std::shared_ptr<CVenetianSlatEnergies> m_CurrentSlatEnergies;
+        // std::shared_ptr<CVenetianSlatEnergies> m_CurrentSlatEnergies;
 
         // Keep results for slat radiances and irradiances for different directions.
         // Once radiances and irradiances are calculated for certain direction, results are stored
         // here. That reduces necessity to recalculate results multiple times for same direction.
         // Note that direction is always incoming direction.
-        //CSlatEnergyResults m_SlatEnergyResults;
+        // CSlatEnergyResults m_SlatEnergyResults;
     };
 
     class CVenetianEnergy
@@ -157,18 +158,18 @@ namespace SingleLayerOptics
                         const double Rb,
                         const std::shared_ptr<CVenetianCellDescription> & t_Cell);
 
-        std::shared_ptr<CVenetianCellEnergy> getCell(const FenestrationCommon::Side t_Side) const;
+        [[nodiscard]] CVenetianCellEnergy & getCell(const FenestrationCommon::Side t_Side);
 
     private:
         // construction of forward and backward cells from both constructors have identical part of
         // the code
-        void createForwardAndBackward(const double Tf,
-                                      const double Tb,
-                                      const double Rf,
-                                      const double Rb,
+        void createForwardAndBackward(double Tf,
+                                      double Tb,
+                                      double Rf,
+                                      double Rb,
                                       const std::shared_ptr<CVenetianCellDescription> & t_Cell);
 
-        std::map<FenestrationCommon::Side, std::shared_ptr<CVenetianCellEnergy>> m_CellEnergy;
+        std::map<FenestrationCommon::Side, CVenetianCellEnergy> m_CellEnergy;
     };
 
     class CVenetianCell : public CVenetianBase
