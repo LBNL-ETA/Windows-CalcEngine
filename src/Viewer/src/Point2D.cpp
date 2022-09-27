@@ -55,6 +55,12 @@ namespace Viewer
         return {m_x + t_x, m_y + t_y};
     }
 
+    CPoint2D CPoint2D::createPointFromPolarCoordinates(double theta, double radius)
+    {
+        auto aTheta = radians(theta);
+        return {radius * std::cos(aTheta), radius * std::sin(aTheta)};
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////
     // PointsCompare
     ////////////////////////////////////////////////////////////////////////////////////////

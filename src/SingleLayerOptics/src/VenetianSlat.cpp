@@ -111,10 +111,7 @@ namespace SingleLayerOptics
             }
 
 
-            std::shared_ptr<CPolarPoint2D> startPoint =
-              std::make_shared<CPolarPoint2D>(startTheta, radius);
-            // startX = startPoint->x();
-            // startY = startPoint->y();
+            auto startPoint{CPoint2D::createPointFromPolarCoordinates(startTheta, radius)};
             for(size_t i = 1; i <= m_NumOfSlatSegments; ++i)
             {
                 double nextTheta = 0;
@@ -127,9 +124,8 @@ namespace SingleLayerOptics
                     nextTheta = startTheta + dTheta * i;
                 }
 
-                std::shared_ptr<CPolarPoint2D> endPoint =
-                  std::make_shared<CPolarPoint2D>(nextTheta, radius);
-                CViewSegment2D aSegment{*startPoint, *endPoint};
+                const auto endPoint{CPoint2D::createPointFromPolarCoordinates(nextTheta, radius)};
+                CViewSegment2D aSegment{startPoint, endPoint};
                 m_Geometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }
@@ -151,10 +147,8 @@ namespace SingleLayerOptics
                 assert("Incorrect selection for slat segments directions.");
             }
 
-            std::shared_ptr<CPolarPoint2D> startPoint =
-              std::make_shared<CPolarPoint2D>(m_SlatTiltAngle, startRadius);
-            // startX = startPoint->x();
-            // startY = startPoint->y();
+            auto startPoint{
+              CPoint2D::createPointFromPolarCoordinates(m_SlatTiltAngle, startRadius)};
             for(size_t i = 1; i <= m_NumOfSlatSegments; ++i)
             {
                 double nextRadius = 0;
@@ -166,9 +160,9 @@ namespace SingleLayerOptics
                 {
                     nextRadius = m_SlatWidth - i * dWidth;
                 }
-                std::shared_ptr<CPolarPoint2D> endPoint =
-                  std::make_shared<CPolarPoint2D>(m_SlatTiltAngle, nextRadius);
-                CViewSegment2D aSegment{*startPoint, *endPoint};
+                const auto endPoint{
+                  CPoint2D::createPointFromPolarCoordinates(m_SlatTiltAngle, nextRadius)};
+                CViewSegment2D aSegment{startPoint, endPoint};
                 m_Geometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }

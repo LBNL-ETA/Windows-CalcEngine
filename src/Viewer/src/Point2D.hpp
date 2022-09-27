@@ -18,6 +18,8 @@ namespace Viewer
         [[nodiscard]] double x() const;
         [[nodiscard]] double y() const;
 
+        static CPoint2D createPointFromPolarCoordinates(double theta, double radius);
+
         ///////////////////////////////////////////////////////////////////////////////////
         // brief Test if two points are withing certain tolerance.
         // param t_Point
