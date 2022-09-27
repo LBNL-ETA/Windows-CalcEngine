@@ -1,5 +1,4 @@
-#ifndef POINT2D_H
-#define POINT2D_H
+#pragma once
 
 #include <memory>
 
@@ -61,5 +60,3 @@ namespace Viewer
         double m_ProfileAngle;
     };
 }   // namespace Viewer
-
-#endif
