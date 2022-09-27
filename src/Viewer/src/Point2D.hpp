@@ -1,5 +1,4 @@
-#ifndef POINT2D_H
-#define POINT2D_H
+#pragma once
 
 #include <memory>
 
@@ -13,31 +12,34 @@ namespace Viewer
     class CPoint2D
     {
     public:
-        CPoint2D(double const x, double const y);
-        double x() const;
-        double y() const;
+        CPoint2D() = default;
+        CPoint2D(double x, double y);
+        [[nodiscard]] double x() const;
+        [[nodiscard]] double y() const;
+
+        static CPoint2D createPointFromPolarCoordinates(double theta, double radius);
 
         ///////////////////////////////////////////////////////////////////////////////////
         // brief Test if two points are withing certain tolerance.
         // param t_Point
         // return
         ///////////////////////////////////////////////////////////////////////////////////
-        bool sameCoordinates(CPoint2D const & t_Point) const;
+        [[nodiscard]] bool sameCoordinates(CPoint2D const & t_Point) const;
 
-        double dotProduct(CPoint2D const & t_Point) const;
+        [[nodiscard]] double dotProduct(CPoint2D const & t_Point) const;
 
         bool operator==(CPoint2D const & rhs) const;
         bool operator!=(CPoint2D const & rhs) const;
 
         // True if current point is left from passed point (t_Point)
-        bool isLeft(CPoint2D const & t_Point) const;
+        [[nodiscard]] bool isLeft(CPoint2D const & t_Point) const;
 
         // Translates point for given coordinates
-        std::shared_ptr<CPoint2D> translate(double const t_x, double const t_y) const;
+        [[nodiscard]] CPoint2D translate(double t_x, double t_y) const;
 
     protected:
-        double m_x;
-        double m_y;
+        double m_x{0.0};
+        double m_y{0.0};
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -58,5 +60,3 @@ namespace Viewer
         double m_ProfileAngle;
     };
 }   // namespace Viewer
-
-#endif

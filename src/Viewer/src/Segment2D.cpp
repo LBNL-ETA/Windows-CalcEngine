@@ -45,8 +45,7 @@ namespace Viewer
         return m_Length;
     }
 
-    bool
-      CSegment2D::intersectionWithSegment(std::shared_ptr<const CSegment2D> const & t_Segment) const
+    bool CSegment2D::intersectionWithSegment(const CSegment2D & t_Segment) const
     {
         auto aInt = false;
         if(length() != 0)
@@ -56,15 +55,14 @@ namespace Viewer
             if(aPoint.has_value())
             {
                 aInt = isInRectangleRange(aPoint.value())
-                       && t_Segment->isInRectangleRange(aPoint.value());
+                       && t_Segment.isInRectangleRange(aPoint.value());
             }
         }
 
         return aInt;
     }
 
-    IntersectionStatus
-      CSegment2D::intersectionWithLine(std::shared_ptr<const CSegment2D> const & t_Segment) const
+    IntersectionStatus CSegment2D::intersectionWithLine(const CSegment2D & t_Segment) const
     {
         auto status = IntersectionStatus::No;
 
@@ -74,13 +72,13 @@ namespace Viewer
 
             if(aPoint.has_value())
             {
-                auto aInt = t_Segment->isInRectangleRange(aPoint.value());
+                auto aInt = t_Segment.isInRectangleRange(aPoint.value());
                 if(aInt)
                 {
                     status = IntersectionStatus::Segment;
                 }
-                if(t_Segment->startPoint().sameCoordinates(*aPoint)
-                   || t_Segment->endPoint().sameCoordinates(*aPoint))
+                if(t_Segment.startPoint().sameCoordinates(*aPoint)
+                   || t_Segment.endPoint().sameCoordinates(*aPoint))
                 {
                     status = IntersectionStatus::Point;
                 }
@@ -90,21 +88,20 @@ namespace Viewer
         return status;
     }
 
-    double CSegment2D::dotProduct(std::shared_ptr<const CSegment2D> const & t_Segment) const
+    double CSegment2D::dotProduct(const CSegment2D & t_Segment) const
     {
         auto p1 = intensity();
-        auto p2 = t_Segment->intensity();
+        auto p2 = t_Segment.intensity();
 
         return p1.dotProduct(p2);
     }
 
     // Translates segment for given coordinates
-    std::shared_ptr<CSegment2D> CSegment2D::translate(double const t_x, double const t_y) const
+    CSegment2D CSegment2D::translate(double const t_x, double const t_y) const
     {
         CPoint2D startPoint{m_StartPoint.x() + t_x, m_StartPoint.y() + t_y};
         CPoint2D endPoint{m_EndPoint.x() + t_x, m_EndPoint.y() + t_y};
-        auto aSegment = std::make_shared<CSegment2D>(startPoint, endPoint);
-        return aSegment;
+        return {startPoint, endPoint};
     }
 
     double CSegment2D::calculateLength(const CPoint2D & startPoint, const CPoint2D & endPoint)
@@ -122,22 +119,15 @@ namespace Viewer
         return {x, y};
     }
 
-    std::optional<CPoint2D>
-      CSegment2D::intersection(std::shared_ptr<const CSegment2D> const & t_Segment) const
+    std::optional<CPoint2D> CSegment2D::intersection(const CSegment2D & t_Segment) const
     {
-        if(t_Segment == nullptr)
-        {
-            throw std::runtime_error(
-              "Segment for intersection must be provided. Cannot operate with null segment.");
-        }
-
         auto A1 = coeffA();
-        auto A2 = t_Segment->coeffA();
+        auto A2 = t_Segment.coeffA();
         auto B1 = coeffB();
-        auto B2 = t_Segment->coeffB();
+        auto B2 = t_Segment.coeffB();
 
         auto C1 = coeffC();
-        auto C2 = t_Segment->coeffC();
+        auto C2 = t_Segment.coeffC();
         auto x = 0.0;
         auto y = 0.0;
 

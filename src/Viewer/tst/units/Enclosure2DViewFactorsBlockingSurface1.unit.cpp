@@ -24,24 +24,21 @@ protected:
         CPoint2D aStartPoint1{10.0, 0.0};
         CPoint2D aEndPoint1{0.0, 0.0};
 
-        std::shared_ptr<CViewSegment2D> aSegment1 =
-          std::make_shared<CViewSegment2D>(aStartPoint1, aEndPoint1);
+        CViewSegment2D aSegment1(aStartPoint1, aEndPoint1);
         m_Enclosure2D->appendSegment(aSegment1);
 
         // Segment 2
         CPoint2D aStartPoint2{0.0, 5.0};
         CPoint2D aEndPoint2{10.0, 5.0};
 
-        std::shared_ptr<CViewSegment2D> aSegment2 =
-          std::make_shared<CViewSegment2D>(aStartPoint2, aEndPoint2);
+        CViewSegment2D aSegment2(aStartPoint2, aEndPoint2);
         m_Enclosure2D->appendSegment(aSegment2);
 
         // Segment 3
         CPoint2D aStartPoint3{5.0, 2.0};
         CPoint2D aEndPoint3{0.0, 2.0};
 
-        std::shared_ptr<CViewSegment2D> aSegment3 =
-          std::make_shared<CViewSegment2D>(aStartPoint3, aEndPoint3);
+        CViewSegment2D aSegment3(aStartPoint3, aEndPoint3);
         m_Enclosure2D->appendSegment(aSegment3);
     }
 

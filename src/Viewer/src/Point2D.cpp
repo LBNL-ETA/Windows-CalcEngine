@@ -50,10 +50,15 @@ namespace Viewer
         return m_x < t_Point.x();
     }
 
-    std::shared_ptr<CPoint2D> CPoint2D::translate(double const t_x, double const t_y) const
+    CPoint2D CPoint2D::translate(double const t_x, double const t_y) const
     {
-        auto aPoint = std::make_shared<CPoint2D>(m_x + t_x, m_y + t_y);
-        return aPoint;
+        return {m_x + t_x, m_y + t_y};
+    }
+
+    CPoint2D CPoint2D::createPointFromPolarCoordinates(double theta, double radius)
+    {
+        auto aTheta = radians(theta);
+        return {radius * std::cos(aTheta), radius * std::sin(aTheta)};
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
