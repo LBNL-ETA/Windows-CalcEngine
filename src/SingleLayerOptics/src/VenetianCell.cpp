@@ -470,23 +470,27 @@ namespace SingleLayerOptics
     CVenetianEnergy::CVenetianEnergy()
     {}
 
-    CVenetianEnergy::CVenetianEnergy(const CMaterial & t_Material,
-                                     const std::shared_ptr<CVenetianCellDescription> & t_Cell)
+    CVenetianEnergy::CVenetianEnergy(
+      const CMaterial & t_Material,
+      const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
+      const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
     {
         double Tf = t_Material.getProperty(Property::T, Side::Front);
         double Tb = t_Material.getProperty(Property::T, Side::Back);
         double Rf = t_Material.getProperty(Property::R, Side::Front);
         double Rb = t_Material.getProperty(Property::R, Side::Back);
-        createForwardAndBackward(Tf, Tb, Rf, Rb, t_Cell);
+        createForwardAndBackward(Tf, Tb, Rf, Rb, t_ForwardFlowGeometry, t_BackwardFlowGeometry);
     }
 
-    CVenetianEnergy::CVenetianEnergy(const double Tf,
-                                     const double Tb,
-                                     const double Rf,
-                                     const double Rb,
-                                     const std::shared_ptr<CVenetianCellDescription> & t_Cell)
+    CVenetianEnergy::CVenetianEnergy(
+      const double Tf,
+      const double Tb,
+      const double Rf,
+      const double Rb,
+      const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
+      const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
     {
-        createForwardAndBackward(Tf, Tb, Rf, Rb, t_Cell);
+        createForwardAndBackward(Tf, Tb, Rf, Rb, t_ForwardFlowGeometry, t_BackwardFlowGeometry);
     }
 
     CVenetianCellEnergy & CVenetianEnergy::getCell(const Side t_Side)
@@ -495,17 +499,17 @@ namespace SingleLayerOptics
     }
 
     void CVenetianEnergy::createForwardAndBackward(
-      const double Tf,
-      const double Tb,
-      const double Rf,
-      const double Rb,
-      const std::shared_ptr<CVenetianCellDescription> & t_Cell)
+      double Tf,
+      double Tb,
+      double Rf,
+      double Rb,
+      const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
+      const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
     {
-        assert(t_Cell != nullptr);
-        m_CellEnergy[Side::Front] = CVenetianCellEnergy(t_Cell, Tf, Tb, Rf, Rb);
-
-        std::shared_ptr<CVenetianCellDescription> aBackwardCell = t_Cell->makeBackwardCell();
-        m_CellEnergy[Side::Back] = CVenetianCellEnergy(aBackwardCell, Tf, Tb, Rf, Rb);
+        assert(t_ForwardFlowGeometry != nullptr);
+        assert(t_BackwardFlowGeometry != nullptr);
+        m_CellEnergy[Side::Front] = CVenetianCellEnergy(t_ForwardFlowGeometry, Tf, Tb, Rf, Rb);
+        m_CellEnergy[Side::Back] = CVenetianCellEnergy(t_BackwardFlowGeometry, Tf, Tb, Rf, Rb);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -515,7 +519,8 @@ namespace SingleLayerOptics
                                  const std::shared_ptr<ICellDescription> & t_Cell,
                                  const double rotation) :
         CBaseCell(t_MaterialProperties, t_Cell, rotation),
-        CVenetianBase(t_MaterialProperties, t_Cell, rotation)
+        CVenetianBase(t_MaterialProperties, t_Cell, rotation),
+        m_BackwardFlowCellDescription(getCellAsVenetian()->getBackwardFlowCell())
     {
         assert(t_Cell != nullptr);
         assert(t_MaterialProperties != nullptr);
@@ -525,12 +530,12 @@ namespace SingleLayerOptics
 
     void CVenetianCell::generateVenetianEnergy()
     {
-        m_Energy = CVenetianEnergy(*m_Material, getCellAsVenetian());
+        const auto & venetianForwardGeometry{getCellAsVenetian()};
+        m_Energy =
+          CVenetianEnergy(*m_Material, venetianForwardGeometry, m_BackwardFlowCellDescription);
         // Create energy states for entire material band
         m_EnergiesBand.clear();
         std::vector<RMaterialProperties> aMat = m_Material->getBandProperties();
-
-        const auto venetianGeometry{getCellAsVenetian()};
 
         if(!aMat.empty())
         {
@@ -542,7 +547,8 @@ namespace SingleLayerOptics
                 double Rf = aMat[i].getProperty(Property::R, Side::Front);
                 double Rb = aMat[i].getProperty(Property::R, Side::Back);
 
-                CVenetianEnergy aEnergy = CVenetianEnergy(Tf, Tb, Rf, Rb, venetianGeometry);
+                CVenetianEnergy aEnergy = CVenetianEnergy(
+                  Tf, Tb, Rf, Rb, venetianForwardGeometry, m_BackwardFlowCellDescription);
                 m_EnergiesBand.push_back(aEnergy);
             }
         }

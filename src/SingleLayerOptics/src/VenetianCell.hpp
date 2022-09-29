@@ -151,23 +151,28 @@ namespace SingleLayerOptics
     public:
         CVenetianEnergy();
         CVenetianEnergy(const CMaterial & t_Material,
-                        const std::shared_ptr<CVenetianCellDescription> & t_Cell);
-        CVenetianEnergy(const double Tf,
-                        const double Tb,
-                        const double Rf,
-                        const double Rb,
-                        const std::shared_ptr<CVenetianCellDescription> & t_Cell);
+                        const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
+                        const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
+
+        CVenetianEnergy(double Tf,
+                        double Tb,
+                        double Rf,
+                        double Rb,
+                        const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
+                        const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
 
         [[nodiscard]] CVenetianCellEnergy & getCell(const FenestrationCommon::Side t_Side);
 
     private:
         // construction of forward and backward cells from both constructors have identical part of
         // the code
-        void createForwardAndBackward(double Tf,
-                                      double Tb,
-                                      double Rf,
-                                      double Rb,
-                                      const std::shared_ptr<CVenetianCellDescription> & t_Cell);
+        void createForwardAndBackward(
+          double Tf,
+          double Tb,
+          double Rf,
+          double Rb,
+          const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
+          const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
 
         std::map<FenestrationCommon::Side, CVenetianCellEnergy> m_CellEnergy;
     };
@@ -251,6 +256,8 @@ namespace SingleLayerOptics
 
         // Energy calculations for material range (wavelengths)
         std::vector<CVenetianEnergy> m_EnergiesBand;
+
+        std::shared_ptr<CVenetianCellDescription> m_BackwardFlowCellDescription;
     };
 
 }   // namespace SingleLayerOptics

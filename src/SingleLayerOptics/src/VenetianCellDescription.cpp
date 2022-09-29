@@ -63,7 +63,7 @@ namespace SingleLayerOptics
         return aSegment.length();
     }
 
-    std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::makeBackwardCell() const
+    std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
     {
         double slatWidth = m_Top.slatWidth();
         double slatSpacing = m_Top.slatSpacing();

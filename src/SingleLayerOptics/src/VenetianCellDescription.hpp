@@ -29,7 +29,7 @@ namespace SingleLayerOptics
                                  size_t t_NumOfSlatSegments);
 
         // Makes exact copy of cell description
-        std::shared_ptr<CVenetianCellDescription> makeBackwardCell() const;
+        std::shared_ptr<CVenetianCellDescription> getBackwardFlowCell() const;
         size_t numberOfSegments() const;
         double segmentLength(const size_t Index) const;
 
