@@ -178,6 +178,7 @@ namespace Viewer
         std::vector<CGeometry2D> m_Geometries2D;
 
         std::map<long long, CDirect2DRaysResult> m_RayResults;
+        void checkForProfileAngle(double t_ProfileAngle);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////

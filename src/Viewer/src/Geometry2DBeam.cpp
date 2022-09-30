@@ -176,12 +176,23 @@ namespace Viewer
 
     std::vector<BeamViewFactor> CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
     {
+        checkForProfileAngle(t_ProfileAngle);
         return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).beamViewFactors();
     }
 
     double CDirect2DRays::directToDirect(double const t_ProfileAngle)
     {
+        checkForProfileAngle(t_ProfileAngle);
         return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).directToDirect();
+    }
+
+    void CDirect2DRays::checkForProfileAngle(const double t_ProfileAngle)
+    {   // Need to have this in case the profile angle is not precalculated
+        if(!m_RayResults.count(keyFromProfileAngle(t_ProfileAngle)))
+        {
+            m_RayResults[keyFromProfileAngle(t_ProfileAngle)] =
+              calculateAllProperties(t_ProfileAngle);
+        }
     }
 
     CDirect2DRaysResult CDirect2DRays::calculateAllProperties(double const t_ProfileAngle)

@@ -75,9 +75,13 @@ namespace SingleLayerOptics
           std::make_shared<CVenetianCellDescription>(
             slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, m_NumOfSlatSegments);
 
-        aBackwardCell->preCalculateForProfileAngles(FenestrationCommon::Side::Front, m_ProfileAngles.at(FenestrationCommon::Side::Back));
-        aBackwardCell->preCalculateForProfileAngles(FenestrationCommon::Side::Back, m_ProfileAngles.at(FenestrationCommon::Side::Front));
-
+        if(!m_ProfileAngles.empty())
+        {
+            aBackwardCell->preCalculateForProfileAngles(
+              FenestrationCommon::Side::Front, m_ProfileAngles.at(FenestrationCommon::Side::Back));
+            aBackwardCell->preCalculateForProfileAngles(
+              FenestrationCommon::Side::Back, m_ProfileAngles.at(FenestrationCommon::Side::Front));
+        }
         return aBackwardCell;
     }
 
