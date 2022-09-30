@@ -52,6 +52,9 @@ namespace SingleLayerOptics
         [[nodiscard]] double curvatureRadius() const;
         [[nodiscard]] size_t numOfSegments() const;
 
+        void preCalculateForProfileAngles(FenestrationCommon::Side side,
+                                          const std::vector<double> & t_ProfileAngles);
+
     private:
         double m_SlatWidth;
         double m_SlatSpacing;
@@ -68,6 +71,9 @@ namespace SingleLayerOptics
 
         // Geometry to handle direct to direct beam component
         Viewer::CGeometry2DBeam m_BeamGeometry;
+
+        //! Storing profile angles for backward cell calculations
+        std::map<FenestrationCommon::Side, std::vector<double>> m_ProfileAngles;
     };
 
 }   // namespace SingleLayerOptics
