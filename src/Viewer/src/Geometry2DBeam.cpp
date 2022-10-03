@@ -176,28 +176,23 @@ namespace Viewer
 
     std::vector<BeamViewFactor> CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
     {
-        const auto key{keyFromProfileAngle(t_ProfileAngle)};
-        if(m_RayResults.count(key))
-        {
-            return m_RayResults.at(key).beamViewFactors();
-        }
-
-        auto results = calculateAllProperties(t_ProfileAngle);
-        m_RayResults[key] = results;
-        return results.beamViewFactors();
+        checkForProfileAngle(t_ProfileAngle);
+        return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).beamViewFactors();
     }
 
     double CDirect2DRays::directToDirect(double const t_ProfileAngle)
     {
-        const auto key{keyFromProfileAngle(t_ProfileAngle)};
-        if(m_RayResults.count(key))
-        {
-            return m_RayResults.at(key).directToDirect();
-        }
+        checkForProfileAngle(t_ProfileAngle);
+        return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).directToDirect();
+    }
 
-        auto results = calculateAllProperties(t_ProfileAngle);
-        m_RayResults[key] = results;
-        return results.directToDirect();
+    void CDirect2DRays::checkForProfileAngle(const double t_ProfileAngle)
+    {   // Need to have this in case the profile angle is not precalculated
+        if(!m_RayResults.count(keyFromProfileAngle(t_ProfileAngle)))
+        {
+            m_RayResults[keyFromProfileAngle(t_ProfileAngle)] =
+              calculateAllProperties(t_ProfileAngle);
+        }
     }
 
     CDirect2DRaysResult CDirect2DRays::calculateAllProperties(double const t_ProfileAngle)
@@ -379,6 +374,14 @@ namespace Viewer
         return {startPoint, endPoint};
     }
 
+    void CDirect2DRays::precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles)
+    {
+        for(const auto & angle : t_ProfileAngles)
+        {
+            m_RayResults[keyFromProfileAngle(angle)] = calculateAllProperties(angle);
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////
     // CGeometry2DBeam
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +409,12 @@ namespace Viewer
     double CGeometry2DBeam::directToDirect(double const t_ProfileAngle, Side const t_Side)
     {
         return m_Ray.at(t_Side).directToDirect(t_ProfileAngle);
+    }
+
+    void CGeometry2DBeam::precalculateForProfileAngles(FenestrationCommon::Side side,
+                                                       const std::vector<double> & t_ProfileAngles)
+    {
+        m_Ray.at(side).precalculateForProfileAngles(t_ProfileAngles);
     }
 
     long long int keyFromProfileAngle(double angle)

@@ -146,7 +146,7 @@ namespace FenestrationCommon
         {
             auto numberOfThreads{1u};
 #if MULTITHREADING
-            numberOfThreads = std::thread::hardware_concurrency();
+            numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix[i].size());
 #endif
             const auto chunks{
               FenestrationCommon::chunkIt(0u, m_Matrix[i].size() - 1u, numberOfThreads)};
@@ -176,7 +176,7 @@ namespace FenestrationCommon
         {
             auto numberOfThreads{1u};
 #if MULTITHREADING
-            numberOfThreads = std::thread::hardware_concurrency();
+            numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix[i].size());
 #endif
             const auto chunks{
               FenestrationCommon::chunkIt(0u, m_Matrix[i].size() - 1u, numberOfThreads)};

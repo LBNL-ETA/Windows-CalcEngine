@@ -63,7 +63,7 @@ namespace SingleLayerOptics
         return aSegment.length();
     }
 
-    std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::makeBackwardCell() const
+    std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
     {
         double slatWidth = m_Top.slatWidth();
         double slatSpacing = m_Top.slatSpacing();
@@ -75,6 +75,13 @@ namespace SingleLayerOptics
           std::make_shared<CVenetianCellDescription>(
             slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, m_NumOfSlatSegments);
 
+        if(!m_ProfileAngles.empty())
+        {
+            aBackwardCell->preCalculateForProfileAngles(
+              FenestrationCommon::Side::Front, m_ProfileAngles.at(FenestrationCommon::Side::Back));
+            aBackwardCell->preCalculateForProfileAngles(
+              FenestrationCommon::Side::Back, m_ProfileAngles.at(FenestrationCommon::Side::Front));
+        }
         return aBackwardCell;
     }
 
@@ -126,6 +133,13 @@ namespace SingleLayerOptics
     size_t CVenetianCellDescription::numOfSegments() const
     {
         return m_NumOfSegments;
+    }
+
+    void CVenetianCellDescription::preCalculateForProfileAngles(
+      FenestrationCommon::Side side, const std::vector<double> & t_ProfileAngles)
+    {
+        m_ProfileAngles[side] = t_ProfileAngles;
+        m_BeamGeometry.precalculateForProfileAngles(side, t_ProfileAngles);
     }
 
 }   // namespace SingleLayerOptics

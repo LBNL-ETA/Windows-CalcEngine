@@ -6,10 +6,10 @@
 
 #include "WCECommon.hpp"
 #include "BSDFPatch.hpp"
+#include "BeamDirection.hpp"
 
 namespace SingleLayerOptics
 {
-    class CBeamDirection;
 
     class BSDFDefinition
     {
@@ -53,6 +53,7 @@ namespace SingleLayerOptics
         std::vector<CBSDFPatch>::iterator end();
 
         [[nodiscard]] std::vector<double> lambdaVector() const;
+        [[nodiscard]] std::vector<double> profileAngles() const;
         [[nodiscard]] const FenestrationCommon::SquareMatrix & lambdaMatrix() const;
 
         // returns index of element that is closest to given Theta and Phi angles
@@ -95,6 +96,8 @@ namespace SingleLayerOptics
         static BSDFHemisphere create(const std::vector<BSDFDefinition> & t_Definitions);
 
         [[nodiscard]] const BSDFDirections & getDirections(BSDFDirection t_Side) const;
+
+        std::vector<double> profileAngles(BSDFDirection t_Side) const;
 
     private:
         static const std::map<BSDFBasis, std::vector<BSDFDefinition>> bsdfDefinition;

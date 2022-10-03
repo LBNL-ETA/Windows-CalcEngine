@@ -173,6 +173,16 @@ namespace SingleLayerOptics
         return lambdaMatrix;
     }
 
+    std::vector<double> BSDFDirections::profileAngles() const
+    {
+        std::vector<double> angles;
+        for(const auto & patch : m_Patches)
+        {
+            angles.push_back(patch.centerPoint().profileAngle());
+        }
+        return angles;
+    }
+
     /////////////////////////////////////////////////////////////////
     ///  BSDFHemisphere
     /////////////////////////////////////////////////////////////////
@@ -212,6 +222,11 @@ namespace SingleLayerOptics
     {
         return {{BSDFDirection::Incoming, BSDFDirections(t_Definitions, BSDFDirection::Incoming)},
                 {BSDFDirection::Outgoing, BSDFDirections(t_Definitions, BSDFDirection::Outgoing)}};
+    }
+
+    std::vector<double> BSDFHemisphere::profileAngles(BSDFDirection t_Side) const
+    {
+        return m_Directions.at(t_Side).profileAngles();
     }
 
 }   // namespace SingleLayerOptics

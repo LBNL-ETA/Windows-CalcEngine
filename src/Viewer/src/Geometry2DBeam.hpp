@@ -142,6 +142,8 @@ namespace Viewer
         // Direct to direct transmitted beam component
         double directToDirect(double t_ProfileAngle);
 
+        void precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles);
+
     private:
         struct RayBoundaries
         {
@@ -176,6 +178,7 @@ namespace Viewer
         std::vector<CGeometry2D> m_Geometries2D;
 
         std::map<long long, CDirect2DRaysResult> m_RayResults;
+        void checkForProfileAngle(double t_ProfileAngle);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -195,6 +198,9 @@ namespace Viewer
 
         // Direct to direct transmitted beam component
         double directToDirect(double t_ProfileAngle, FenestrationCommon::Side t_Side);
+
+        void precalculateForProfileAngles(FenestrationCommon::Side side,
+                                          const std::vector<double> & t_ProfileAngles);
 
     private:
         std::map<FenestrationCommon::Side, CDirect2DRays> m_Ray;
