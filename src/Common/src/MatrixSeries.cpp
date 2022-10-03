@@ -142,60 +142,58 @@ namespace FenestrationCommon
                                   double normalizationCoefficient,
                                   const std::optional<std::vector<double>> & integrationPoints)
     {
-        for(size_t i = 0; i < m_Matrix.size(); ++i)
-        {
-            auto numberOfThreads{1u};
+        auto numberOfThreads{1u};
 #if MULTITHREADING
-            numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix[i].size());
+        numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix.size());
 #endif
-            const auto chunks{
-              FenestrationCommon::chunkIt(0u, m_Matrix[i].size() - 1u, numberOfThreads)};
+        const auto chunks{FenestrationCommon::chunkIt(0u, m_Matrix.size() - 1u, numberOfThreads)};
 
-            std::vector<std::thread> workers;
-            for(const auto & chunk : chunks)
-            {
-                workers.emplace_back([&]() {
-                    for(size_t j = chunk.start; j < chunk.end; ++j)
+        std::vector<std::thread> workers;
+        for(const auto & chunk : chunks)
+        {
+            workers.emplace_back([&]() {
+                for(size_t i = chunk.start; i < chunk.end; ++i)
+                {
+                    for(size_t j = 0u; j < m_Matrix[i].size(); ++j)
                     {
                         m_Matrix[i][j] = m_Matrix[i][j].integrate(
                           t_Integration, normalizationCoefficient, integrationPoints);
                     }
-                });
-            }
+                }
+            });
+        }
 
-            for(auto & worker : workers)
-            {
-                worker.join();
-            }
+        for(auto & worker : workers)
+        {
+            worker.join();
         }
     }
 
     void CMatrixSeries::interpolate(const std::vector<double> & t_Wavelengths)
     {
-        for(size_t i = 0u; i < m_Matrix.size(); ++i)
-        {
-            auto numberOfThreads{1u};
+        auto numberOfThreads{1u};
 #if MULTITHREADING
-            numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix[i].size());
+        numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix.size());
 #endif
-            const auto chunks{
-              FenestrationCommon::chunkIt(0u, m_Matrix[i].size() - 1u, numberOfThreads)};
+        const auto chunks{FenestrationCommon::chunkIt(0u, m_Matrix.size() - 1u, numberOfThreads)};
 
-            std::vector<std::thread> workers;
-            for(const auto & chunk : chunks)
-            {
-                workers.emplace_back([&]() {
-                    for(size_t j = chunk.start; j < chunk.end; ++j)
+        std::vector<std::thread> workers;
+        for(const auto & chunk : chunks)
+        {
+            workers.emplace_back([&]() {
+                for(size_t i = chunk.start; i < chunk.end; ++i)
+                {
+                    for(size_t j = 0u; j < m_Matrix[i].size(); ++j)
                     {
                         m_Matrix[i][j] = m_Matrix[i][j].interpolate(t_Wavelengths);
                     }
-                });
-            }
+                }
+            });
+        }
 
-            for(auto & worker : workers)
-            {
-                worker.join();
-            }
+        for(auto & worker : workers)
+        {
+            worker.join();
         }
     }
 
