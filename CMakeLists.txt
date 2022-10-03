@@ -10,9 +10,6 @@ set (CMAKE_CXX_STANDARD 17)
 
 add_definitions(-DMULTITHREADING)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-
 include( cmake/WCEProjectMacros.cmake )
 include( cmake/WCEInternalUtils.cmake )
 include( cmake/WCECompilerFlags.cmake )
