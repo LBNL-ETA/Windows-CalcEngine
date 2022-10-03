@@ -13,4 +13,6 @@ namespace FenestrationCommon
 
     //! Makes division for indexes that are defined from start to end for the purpose of multithreading.
     std::vector<IndexRange> chunkIt(unsigned start, unsigned end, unsigned numberOfSplits);
+
+    size_t getNumberOfThreads(size_t numberOfJobs);
 }
