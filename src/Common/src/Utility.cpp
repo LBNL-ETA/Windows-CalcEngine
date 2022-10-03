@@ -1,4 +1,5 @@
 #include <thread>
+#include <algorithm>
 #include "Utility.hpp"
 
 namespace FenestrationCommon
@@ -31,7 +32,7 @@ namespace FenestrationCommon
 
     size_t getNumberOfThreads(size_t numberOfJobs)
     {
-        size_t numberOfThreads{std::min(std::thread::hardware_concurrency(), static_cast<size_t>(numberOfJobs / 2))};
+        size_t numberOfThreads{std::min<size_t>(std::thread::hardware_concurrency(), static_cast<size_t>(numberOfJobs / 2))};
         //static const size_t maxNumberOfThreads{32u};
         //numberOfThreads = std::min(numberOfThreads, maxNumberOfThreads);
         static const size_t minNumberOfThreads{1u};
