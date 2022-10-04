@@ -73,10 +73,10 @@ namespace SingleLayerOptics
     public:
         CVenetianCellEnergy();
         CVenetianCellEnergy(const std::shared_ptr<CVenetianCellDescription> & t_Cell,
-                            const double Tf,
-                            const double Tb,
-                            const double Rf,
-                            const double Rb);
+                            double Tf,
+                            double Tb,
+                            double Rf,
+                            double Rb);
 
         double T_dir_dir(const CBeamDirection & t_Direction);
         double T_dir_dif(const CBeamDirection & t_Direction);
@@ -100,17 +100,35 @@ namespace SingleLayerOptics
             double percentViewed;
         };
 
+        // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
+        struct SlatSegments
+        {
+            explicit SlatSegments(CVenetianCellDescription & cell);
+            SlatSegments() = default;
+            std::vector<size_t> b;
+            std::vector<size_t> f;
+        };
+
         // calculate slat irradiances and radiances based on incoming beam
-        CVenetianSlatEnergies calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction);
+        CVenetianSlatEnergies calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction,
+                                                            CVenetianCellDescription & cell,
+                                                            const SlatSegments & slats,
+                                                            const FenestrationCommon::SquareMatrix & energy);
 
         // Irradiances for given incoming direction
-        std::vector<SegmentIrradiance> slatIrradiances(const CBeamDirection & t_IncomingDirection);
+        std::vector<SegmentIrradiance>
+          slatIrradiances(const CBeamDirection & t_IncomingDirection,
+                          CVenetianCellDescription & cell,
+                          const SlatSegments & slats,
+                          const FenestrationCommon::SquareMatrix & energy);
 
         // Radiances for given incoming direction
-        std::vector<double> slatRadiances(std::vector<SegmentIrradiance> & t_Irradiances);
+        std::vector<double> slatRadiances(std::vector<SegmentIrradiance> & t_Irradiances,
+                                          const SlatSegments & slats);
 
         // Creates diffuse to diffuse std::vector. Right hand side of the equation
-        std::vector<double> diffuseVector();
+        std::vector<double> diffuseVector(CVenetianCellDescription & cell,
+                                          const SlatSegments & slats);
 
         // Create beam to diffuse std::vector. Right hand side of the equation
         std::vector<BeamSegmentView> beamVector(const CBeamDirection & t_Direction,
@@ -122,24 +140,13 @@ namespace SingleLayerOptics
         double m_Rf;
         double m_Rb;
 
-        // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
-        struct SlatsMapping
-        {
-            std::vector<size_t> b;
-            std::vector<size_t> f;
-        };
-
-        SlatsMapping m_SlatsMapping;
+        SlatSegments m_SlatSegments;
         FenestrationCommon::SquareMatrix m_Energy;
 
-        // Create mapping from view factors matrix to front and back slats (fills b and f
-        // std::vectors of this class)
-        SlatsMapping createSlatsMapping();
-
         // Energy matrix is valid for any incoming direction. Depends on geometry and will be
-        // caluculated only once and stored into m_Energy field
+        // calculated only once and stored into m_Energy field
         FenestrationCommon::SquareMatrix formEnergyMatrix(CVenetianCellDescription & cell,
-                                                          const SlatsMapping & slats);
+                                                          const SlatSegments & slats);
     };
 
     class CVenetianEnergy
