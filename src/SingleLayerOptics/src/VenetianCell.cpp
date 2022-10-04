@@ -693,8 +693,8 @@ namespace SingleLayerOptics
     SlatSegments::SlatSegments(
       CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb) :
         numberOfSegments(static_cast<size_t>(cell.numberOfSegments() / 2)),
-        f(formFrontSegments(numberOfSegments)),
         b(formBackSegments(numberOfSegments)),
+        f(formFrontSegments(numberOfSegments)),
         slatsEnergy(formEnergyMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
     {}
 
