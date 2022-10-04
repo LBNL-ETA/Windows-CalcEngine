@@ -142,10 +142,7 @@ namespace FenestrationCommon
                                   double normalizationCoefficient,
                                   const std::optional<std::vector<double>> & integrationPoints)
     {
-        auto numberOfThreads{1u};
-#if MULTITHREADING
-        numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix.size());
-#endif
+        const auto numberOfThreads{FenestrationCommon::getNumberOfThreads(m_Matrix.size())};
         const auto chunks{FenestrationCommon::chunkIt(0u, m_Matrix.size() - 1u, numberOfThreads)};
 
         std::vector<std::thread> workers;
@@ -171,10 +168,7 @@ namespace FenestrationCommon
 
     void CMatrixSeries::interpolate(const std::vector<double> & t_Wavelengths)
     {
-        auto numberOfThreads{1u};
-#if MULTITHREADING
-        numberOfThreads = FenestrationCommon::getNumberOfThreads(m_Matrix.size());
-#endif
+        const auto numberOfThreads{FenestrationCommon::getNumberOfThreads(m_Matrix.size())};
         const auto chunks{FenestrationCommon::chunkIt(0u, m_Matrix.size() - 1u, numberOfThreads)};
 
         std::vector<std::thread> workers;

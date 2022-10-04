@@ -14,7 +14,8 @@ using FenestrationCommon::CSeries;
 namespace MultiLayerOptics
 {
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
-        m_CombinedLayerWavelengths(t_CommonWavelengths), m_Calculated(false)
+        m_CombinedLayerWavelengths(t_CommonWavelengths),
+        m_Calculated(false)
     {}
 
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(
@@ -124,10 +125,8 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
-        auto numberOfThreads{1u};
-#if MULTITHREADING
-        numberOfThreads = FenestrationCommon::getNumberOfThreads(m_CombinedLayerWavelengths.size());
-#endif
+        const auto numberOfThreads{
+          FenestrationCommon::getNumberOfThreads(m_CombinedLayerWavelengths.size())};
 
         const auto chunks{
           FenestrationCommon::chunkIt(0u, m_CombinedLayerWavelengths.size() - 1u, numberOfThreads)};
