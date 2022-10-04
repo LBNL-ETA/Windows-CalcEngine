@@ -47,6 +47,36 @@ namespace SingleLayerOptics
         double E_b;
     };
 
+    ////////////////////////////////////////////////////////////////////
+    // SlatSegments
+    ////////////////////////////////////////////////////////////////////
+
+    // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
+    class SlatSegments
+    {
+    public:
+        explicit SlatSegments(
+          CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb);
+        SlatSegments() = default;
+        size_t numberOfSegments{0u};
+        std::vector<size_t> b;
+        std::vector<size_t> f;
+        FenestrationCommon::SquareMatrix slatsEnergy;
+
+    private:
+        std::vector<size_t> formFrontSegments(size_t numberOfSegments);
+        std::vector<size_t> formBackSegments(size_t numberOfSegments);
+
+        // Energy matrix is valid for any incoming direction. Depends on geometry and will be
+        // calculated only once and stored into m_Energy field
+        FenestrationCommon::SquareMatrix
+          formEnergyMatrix(FenestrationCommon::SquareMatrix && viewFactors,
+                           double Tf,
+                           double Tb,
+                           double Rf,
+                           double Rb);
+    };
+
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
     {
@@ -80,16 +110,6 @@ namespace SingleLayerOptics
             double percentViewed;
         };
 
-        // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
-        struct SlatSegments
-        {
-            explicit SlatSegments(CVenetianCellDescription & cell);
-            SlatSegments() = default;
-            std::vector<size_t> b;
-            std::vector<size_t> f;
-            size_t numberOfSegments{0u};
-        };
-
         // Irradiances for given incoming direction
         std::vector<SegmentIrradiance>
           slatIrradiances(const CBeamDirection & t_IncomingDirection,
@@ -116,13 +136,6 @@ namespace SingleLayerOptics
         double m_Rb;
 
         SlatSegments m_SlatSegments;
-        FenestrationCommon::SquareMatrix m_Energy;
-
-        // Energy matrix is valid for any incoming direction. Depends on geometry and will be
-        // calculated only once and stored into m_Energy field
-        FenestrationCommon::SquareMatrix
-          formEnergyMatrix(const SlatSegments & slats,
-                           FenestrationCommon::SquareMatrix && viewFactors);
     };
 
     class CVenetianEnergy
