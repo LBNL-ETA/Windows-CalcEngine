@@ -35,48 +35,6 @@ namespace SingleLayerOptics
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
-    //  CVenetianSlatEnergies
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    CVenetianSlatEnergies::CVenetianSlatEnergies(
-      const CBeamDirection & t_BeamDirection,
-      const std::vector<SegmentIrradiance> & t_SlatIrradiances,
-      const std::vector<double> & t_SlatRadiances) :
-        m_SlatIrradiances(t_SlatIrradiances),
-        m_SlatRadiances(t_SlatRadiances),
-        m_CalcDirection(std::make_shared<CBeamDirection>())
-    {
-        *m_CalcDirection = t_BeamDirection;
-    }
-
-    const SegmentIrradiance & CVenetianSlatEnergies::irradiances(const size_t index) const
-    {
-        if(index > m_SlatIrradiances.size())
-        {
-            throw std::runtime_error("Index for slat irradiances is out of range.");
-        }
-        return m_SlatIrradiances[index];
-    }
-
-    double CVenetianSlatEnergies::radiances(const size_t index) const
-    {
-        if(index > m_SlatRadiances.size())
-        {
-            throw std::runtime_error("Index for slat irradiances is out of range.");
-        }
-        return m_SlatRadiances[index];
-    }
-
-    std::shared_ptr<const CBeamDirection> CVenetianSlatEnergies::direction() const
-    {
-        return m_CalcDirection;
-    }
-
-    size_t CVenetianSlatEnergies::size() const
-    {
-        return m_SlatRadiances.size();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
     //  CVenetianCellEnergy
     ////////////////////////////////////////////////////////////////////////////////////////////
     CVenetianCellEnergy::CVenetianCellEnergy() : m_Cell(nullptr), m_Tf(0), m_Tb(0), m_Rf(0), m_Rb(0)
@@ -94,7 +52,7 @@ namespace SingleLayerOptics
         m_Rf(Rf),
         m_Rb(Rb),
         m_SlatSegments(*m_Cell),
-        m_Energy(formEnergyMatrix(*m_Cell, m_SlatSegments))
+        m_Energy(formEnergyMatrix(m_SlatSegments, m_Cell->viewFactors()))
     {}
 
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_Direction)
@@ -104,26 +62,26 @@ namespace SingleLayerOptics
 
     double CVenetianCellEnergy::T_dir_dif(const CBeamDirection & t_Direction)
     {
-        auto slatEnergies = calculateSlatEnergiesFromBeam(t_Direction, *m_Cell, m_SlatSegments, m_Energy);
+        const auto irradiance = slatIrradiances(t_Direction, m_SlatSegments, m_Energy);
 
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
         // Total energy accounts for direct to direct component. That needs to be subtracted since
         // only direct to diffuse is of interest
-        return slatEnergies.irradiances(numSeg).E_f - T_dir_dir(t_Direction);
+        return irradiance[numSeg].E_f - T_dir_dir(t_Direction);
     }
 
     double CVenetianCellEnergy::R_dir_dif(const CBeamDirection & t_Direction)
     {
-        auto slatEnergies = calculateSlatEnergiesFromBeam(t_Direction, *m_Cell, m_SlatSegments, m_Energy);
+        const auto irradiance{slatIrradiances(t_Direction, m_SlatSegments, m_Energy)};
 
-        return slatEnergies.irradiances(0).E_b;
+        return irradiance[0].E_b;
     }
 
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_IncomingDirection,
                                           const CBeamDirection & t_OutgoingDirection)
     {
-        auto slatEnergies = calculateSlatEnergiesFromBeam(t_IncomingDirection, *m_Cell, m_SlatSegments, m_Energy);
+        const auto radiance{slatRadiances(t_IncomingDirection, m_SlatSegments, m_Energy)};
 
         std::vector<BeamSegmentView> BVF = beamVector(t_OutgoingDirection, Side::Back);
 
@@ -131,10 +89,10 @@ namespace SingleLayerOptics
 
         // Counting starts from one because this should exclude beam to beam energy.
         // double totalSegmentsLength = 0;
-        for(size_t i = 1; i < slatEnergies.size(); ++i)
+        for(size_t i = 1; i < radiance.size(); ++i)
         {
-            aResult += slatEnergies.radiances(i) * BVF[i].percentViewed * BVF[i].viewFactor
-                       / m_Cell->segmentLength(i);
+            aResult +=
+              radiance[i] * BVF[i].percentViewed * BVF[i].viewFactor / m_Cell->segmentLength(i);
         }
 
         // Area weighting. Needs to be multiplied with number of segments
@@ -149,16 +107,16 @@ namespace SingleLayerOptics
     double CVenetianCellEnergy::R_dir_dir(const CBeamDirection & t_IncomingDirection,
                                           const CBeamDirection & t_OutgoingDirection)
     {
-        auto slatEnergies = calculateSlatEnergiesFromBeam(t_IncomingDirection, *m_Cell, m_SlatSegments, m_Energy);
+        const auto radiance = slatRadiances(t_IncomingDirection, m_SlatSegments, m_Energy);
 
         std::vector<BeamSegmentView> BVF = beamVector(t_OutgoingDirection, Side::Front);
 
         double aResult = 0;
 
-        for(size_t i = 1; i < slatEnergies.size(); ++i)
+        for(size_t i = 1; i < radiance.size(); ++i)
         {
-            aResult += slatEnergies.radiances(i) * BVF[i].percentViewed * BVF[i].viewFactor
-                       / m_Cell->segmentLength(i);
+            aResult +=
+              radiance[i] * BVF[i].percentViewed * BVF[i].viewFactor / m_Cell->segmentLength(i);
         }
 
         // Area weighting. Needs to be multiplied with number of segments
@@ -174,7 +132,7 @@ namespace SingleLayerOptics
     {
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
-        auto B{diffuseVector(*m_Cell, m_SlatSegments)};
+        auto B{diffuseVector(m_SlatSegments, m_Cell->viewFactors())};
 
         CLinearSolver aSolver;
         std::vector<double> aSolution = aSolver.solveSystem(m_Energy, B);
@@ -186,7 +144,7 @@ namespace SingleLayerOptics
     {
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
 
-        auto B{diffuseVector(*m_Cell, m_SlatSegments)};
+        auto B{diffuseVector(m_SlatSegments, m_Cell->viewFactors())};
 
         CLinearSolver aSolver;
         std::vector<double> aSolution = aSolver.solveSystem(m_Energy, B);
@@ -196,13 +154,12 @@ namespace SingleLayerOptics
 
     std::vector<SegmentIrradiance>
       CVenetianCellEnergy::slatIrradiances(const CBeamDirection & t_IncomingDirection,
-                                           CVenetianCellDescription & cell,
                                            const SlatSegments & slats,
                                            const FenestrationCommon::SquareMatrix & energy)
     {
         std::vector<SegmentIrradiance> aIrradiances;
 
-        size_t numSeg = int(cell.numberOfSegments() / 2);
+        size_t numSeg{slats.numberOfSegments};
 
         // Beam view factors with percentage view
         std::vector<BeamSegmentView> BVF = beamVector(t_IncomingDirection, Side::Front);
@@ -226,7 +183,7 @@ namespace SingleLayerOptics
         }
 
         CLinearSolver aSolver;
-        std::vector<double> aSolution = aSolver.solveSystem(energy, B);
+        const auto aSolution{aSolver.solveSystem(energy, B)};
 
         for(size_t i = 0; i <= numSeg; ++i)
         {
@@ -253,10 +210,12 @@ namespace SingleLayerOptics
     }
 
     std::vector<double>
-      CVenetianCellEnergy::slatRadiances(std::vector<SegmentIrradiance> & t_Irradiances,
-                                         const SlatSegments & slats)
+      CVenetianCellEnergy::slatRadiances(const CBeamDirection & t_IncomingDirection,
+                                         const SlatSegments & slats,
+                                         const FenestrationCommon::SquareMatrix & energy)
     {
-        size_t numSlats = t_Irradiances.size();
+        const auto irradiance{slatIrradiances(t_IncomingDirection, slats, energy)};
+        size_t numSlats = irradiance.size();
         std::vector<double> aRadiances(2 * numSlats - 2);
         for(size_t i = 0; i < numSlats; ++i)
         {
@@ -266,13 +225,12 @@ namespace SingleLayerOptics
             }
             else if(i == numSlats - 1)
             {
-                aRadiances[slats.f[i - 1]] = t_Irradiances[i].E_f;
+                aRadiances[slats.f[i - 1]] = irradiance[i].E_f;
             }
             else
             {
-                aRadiances[slats.b[i]] = m_Tf * t_Irradiances[i].E_f + m_Rb * t_Irradiances[i].E_b;
-                aRadiances[slats.f[i - 1]] =
-                  m_Tb * t_Irradiances[i].E_b + m_Rf * t_Irradiances[i].E_f;
+                aRadiances[slats.b[i]] = m_Tf * irradiance[i].E_f + m_Rb * irradiance[i].E_b;
+                aRadiances[slats.f[i - 1]] = m_Tb * irradiance[i].E_b + m_Rf * irradiance[i].E_f;
             }
         }
 
@@ -280,11 +238,10 @@ namespace SingleLayerOptics
     }
 
     FenestrationCommon::SquareMatrix
-      CVenetianCellEnergy::formEnergyMatrix(CVenetianCellDescription & cell,
-                                            const SlatSegments & slats)
+      CVenetianCellEnergy::formEnergyMatrix(const SlatSegments & slats,
+                                            FenestrationCommon::SquareMatrix && viewFactors)
     {
-        SquareMatrix aViewFactors{cell.viewFactors()};
-        size_t numSeg = int(cell.numberOfSegments() / 2);
+        size_t numSeg = slats.numberOfSegments;
 
         // Create energy matrix
         SquareMatrix energy{2 * numSeg};
@@ -300,8 +257,8 @@ namespace SingleLayerOptics
             {
                 if(i != numSeg - 1)
                 {
-                    double value = aViewFactors(slats.b[i + 1], slats.f[j]) * T
-                                   + aViewFactors(slats.f[i], slats.f[j]) * R;
+                    double value = viewFactors(slats.b[i + 1], slats.f[j]) * T
+                                   + viewFactors(slats.f[i], slats.f[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -329,8 +286,8 @@ namespace SingleLayerOptics
             {
                 if(i != numSeg - 1)
                 {
-                    const double value = aViewFactors(slats.b[i + 1], slats.b[j]) * T
-                                         + aViewFactors(slats.f[i], slats.b[j]) * R;
+                    const double value = viewFactors(slats.b[i + 1], slats.b[j]) * T
+                                         + viewFactors(slats.f[i], slats.b[j]) * R;
                     energy(j + numSeg, i) = value;
                 }
                 else
@@ -350,8 +307,8 @@ namespace SingleLayerOptics
             {
                 if(i != 0)
                 {
-                    const double value = aViewFactors(slats.f[i - 1], slats.f[j]) * T
-                                         + aViewFactors(slats.b[i], slats.f[j]) * R;
+                    const double value = viewFactors(slats.f[i - 1], slats.f[j]) * T
+                                         + viewFactors(slats.b[i], slats.f[j]) * R;
                     energy(j, i + numSeg) = value;
                 }
                 else
@@ -368,8 +325,8 @@ namespace SingleLayerOptics
             {
                 if(i != 0)
                 {
-                    double value = aViewFactors(slats.f[i - 1], slats.b[j]) * T
-                                   + aViewFactors(slats.b[i], slats.b[j]) * R;
+                    double value = viewFactors(slats.f[i - 1], slats.b[j]) * T
+                                   + viewFactors(slats.b[i], slats.b[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -392,31 +349,17 @@ namespace SingleLayerOptics
         return energy;
     }
 
-    CVenetianSlatEnergies
-      CVenetianCellEnergy::calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction,
-                                                         CVenetianCellDescription & cell,
-                                                         const SlatSegments & slats,
-                                                         const FenestrationCommon::SquareMatrix & energy)
+    std::vector<double>
+      CVenetianCellEnergy::diffuseVector(const SlatSegments & slats,
+                                         FenestrationCommon::SquareMatrix && viewFactors)
     {
-        std::vector<SegmentIrradiance> aIrradiances{
-          slatIrradiances(t_Direction, cell, slats, energy)};
-
-        std::vector<double> aRadiances{slatRadiances(aIrradiances, slats)};
-
-        return {t_Direction, aIrradiances, aRadiances};
-    }
-
-    std::vector<double> CVenetianCellEnergy::diffuseVector(CVenetianCellDescription & cell,
-                                                           const SlatSegments & slats)
-    {
-        size_t numSeg = int(cell.numberOfSegments() / 2);
-        SquareMatrix aViewFactors{cell.viewFactors()};
+        size_t numSeg{slats.numberOfSegments};
 
         std::vector<double> B(2 * numSeg);
         for(size_t i = 0; i < numSeg; ++i)
         {
-            B[i] = -aViewFactors(slats.b[0], slats.f[i]);
-            B[i + numSeg] = -aViewFactors(slats.b[0], slats.b[i]);
+            B[i] = -viewFactors(slats.b[0], slats.f[i]);
+            B[i + numSeg] = -viewFactors(slats.b[0], slats.b[i]);
         }
 
         return B;
@@ -765,13 +708,13 @@ namespace SingleLayerOptics
         return m_Energy.getCell(t_Side).R_dif_dif();
     }
 
-    CVenetianCellEnergy::SlatSegments::SlatSegments(CVenetianCellDescription & cell)
+    CVenetianCellEnergy::SlatSegments::SlatSegments(CVenetianCellDescription & cell) :
+        numberOfSegments(static_cast<size_t>(cell.numberOfSegments() / 2))
     {
-        size_t numSeg = int(cell.numberOfSegments() / 2);
-        for(size_t i = 0; i < numSeg; ++i)
+        for(size_t i = 0; i < numberOfSegments; ++i)
         {
             b.push_back(i);
-            f.push_back(2 * numSeg - 1 - i);
+            f.push_back(2 * numberOfSegments - 1 - i);
         }
     }
 }   // namespace SingleLayerOptics

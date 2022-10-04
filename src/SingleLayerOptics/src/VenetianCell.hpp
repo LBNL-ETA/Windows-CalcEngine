@@ -8,6 +8,7 @@
 
 #include "UniformDiffuseCell.hpp"
 #include "DirectionalDiffuseCell.hpp"
+#include "BeamDirection.hpp"
 
 namespace FenestrationCommon
 {
@@ -25,7 +26,6 @@ namespace SingleLayerOptics
 {
     class ICellDescription;
     class CVenetianCellDescription;
-    class CBeamDirection;
 
     class CVenetianBase : public CUniformDiffuseCell, public CDirectionalDiffuseCell
     {
@@ -45,26 +45,6 @@ namespace SingleLayerOptics
         SegmentIrradiance() : E_f(0), E_b(0){};
         double E_f;
         double E_b;
-    };
-
-    class CVenetianSlatEnergies
-    {
-    public:
-        CVenetianSlatEnergies(const CBeamDirection & t_BeamDirection,
-                              const std::vector<SegmentIrradiance> & t_SlatIrradiances,
-                              const std::vector<double> & t_SlatRadiances);
-
-        const SegmentIrradiance & irradiances(const size_t index) const;
-        double radiances(const size_t index) const;
-        std::shared_ptr<const CBeamDirection> direction() const;
-        size_t size() const;
-
-    private:
-        // Keep slat energies for certain beam incoming directions
-        std::vector<SegmentIrradiance> m_SlatIrradiances;
-        std::vector<double> m_SlatRadiances;
-        // Direction for which energies are calculated
-        std::shared_ptr<CBeamDirection> m_CalcDirection;
     };
 
     // Keeping intermediate results for backward and forward directions.
@@ -107,28 +87,23 @@ namespace SingleLayerOptics
             SlatSegments() = default;
             std::vector<size_t> b;
             std::vector<size_t> f;
+            size_t numberOfSegments{0u};
         };
-
-        // calculate slat irradiances and radiances based on incoming beam
-        CVenetianSlatEnergies calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction,
-                                                            CVenetianCellDescription & cell,
-                                                            const SlatSegments & slats,
-                                                            const FenestrationCommon::SquareMatrix & energy);
 
         // Irradiances for given incoming direction
         std::vector<SegmentIrradiance>
           slatIrradiances(const CBeamDirection & t_IncomingDirection,
-                          CVenetianCellDescription & cell,
                           const SlatSegments & slats,
                           const FenestrationCommon::SquareMatrix & energy);
 
         // Radiances for given incoming direction
-        std::vector<double> slatRadiances(std::vector<SegmentIrradiance> & t_Irradiances,
-                                          const SlatSegments & slats);
+        std::vector<double> slatRadiances(const CBeamDirection & t_IncomingDirection,
+                                          const SlatSegments & slats,
+                                          const FenestrationCommon::SquareMatrix & energy);
 
         // Creates diffuse to diffuse std::vector. Right hand side of the equation
-        std::vector<double> diffuseVector(CVenetianCellDescription & cell,
-                                          const SlatSegments & slats);
+        std::vector<double> diffuseVector(const SlatSegments & slats,
+                                          FenestrationCommon::SquareMatrix && viewFactors);
 
         // Create beam to diffuse std::vector. Right hand side of the equation
         std::vector<BeamSegmentView> beamVector(const CBeamDirection & t_Direction,
@@ -145,8 +120,9 @@ namespace SingleLayerOptics
 
         // Energy matrix is valid for any incoming direction. Depends on geometry and will be
         // calculated only once and stored into m_Energy field
-        FenestrationCommon::SquareMatrix formEnergyMatrix(CVenetianCellDescription & cell,
-                                                          const SlatSegments & slats);
+        FenestrationCommon::SquareMatrix
+          formEnergyMatrix(const SlatSegments & slats,
+                           FenestrationCommon::SquareMatrix && viewFactors);
     };
 
     class CVenetianEnergy
@@ -164,7 +140,7 @@ namespace SingleLayerOptics
                         const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
                         const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
 
-        [[nodiscard]] CVenetianCellEnergy & getCell(const FenestrationCommon::Side t_Side);
+        [[nodiscard]] CVenetianCellEnergy & getCell(FenestrationCommon::Side t_Side);
 
     private:
         // construction of forward and backward cells from both constructors have identical part of
