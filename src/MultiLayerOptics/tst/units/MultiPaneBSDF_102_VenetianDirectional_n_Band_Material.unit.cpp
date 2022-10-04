@@ -3,8 +3,6 @@
 
 #include "WCESpectralAveraging.hpp"
 #include "WCEMultiLayerOptics.hpp"
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
 
 
 using namespace SingleLayerOptics;
@@ -275,42 +273,25 @@ protected:
     virtual void SetUp()
     {
         const auto solarRadiation{loadSolarRadiationFile()};
-        const auto commonWavelengths{solarRadiation.getXArray()};
 
         double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
 
-        aMaterial_102->setBandWavelengths(commonWavelengths);
-
-        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Venetian blind material
-        thickness = 0.1;   // [m]
+        thickness = 0.0001;   // [m]
         auto aMaterialVenetian = SingleLayerOptics::Material::nBandMaterial(
           loadSampleData_NFRC_31100(), thickness, MaterialType::Monolithic);
 
-        aMaterialVenetian->setBandWavelengths(commonWavelengths);
-
-        // const auto Tsol = 0.0;
-        // const auto Rfsol = 0.677;
-        // const auto Rbsol = 0.677;
-        //
-        //// Visible range
-        // const auto Tvis = 0.0;
-        // const auto Rfvis = 0.743;
-        // const auto Rbvis = 0.743;
-        //
-        // const auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
-        //  Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
-
         // make cell geometry
-        const auto slatWidth = 0.0148;     // m
-        const auto slatSpacing = 0.0127;   // m
-        const auto slatTiltAngle = 0;
-        const auto curvatureRadius = 0.03313057;
+        const auto slatWidth = 0.005;     // m
+        const auto slatSpacing = 0.007;   // m
+        const auto slatTiltAngle = 45;
+        const auto curvatureRadius = 0.003;
         const size_t numOfSlatSegments = 5;
 
         std::shared_ptr<CBSDFLayer> Layer_Venetian =
@@ -348,39 +329,39 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional_n_Band_Material, TestBSDF1)
     CMultiPaneBSDF & aLayer = getLayer();
 
     const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.70866902412843158, tauDiff, 1e-6);
+    EXPECT_NEAR(0.44536554406945233, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.138811067708112, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.34849866229530069, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.056829, absDiff1, 1e-6);
+    EXPECT_NEAR(0.1484338930188, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.095691167179567854, absDiff2, 1e-6);
+    EXPECT_NEAR(0.057701900616446693, absDiff2, 1e-6);
 
     const double theta = 0;
     const double phi = 0;
 
     const double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.78651110282631254, tauHem, 1e-6);
+    EXPECT_NEAR(0.51952442584354297, tauHem, 1e-6);
 
     const double tauDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.78117221146538485, tauDir, 1e-6);
+    EXPECT_NEAR(0.41549215928407501, tauDir, 1e-6);
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.073781478461371161, rhoHem, 1e-6);
+    EXPECT_NEAR(0.33083431644105965, rhoHem, 1e-6);
 
     const double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.065699953592542867, rhoDir, 1e-6);
+    EXPECT_NEAR(0.025923716904274176, rhoDir, 1e-6);
 
     const double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.053395, abs1, 1e-6);
+    EXPECT_NEAR(0.090916320061772818, abs1, 1e-6);
 
     const double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.086312654974486591, abs2, 1e-6);
+    EXPECT_NEAR(0.058724937653624902, abs2, 1e-6);
 }

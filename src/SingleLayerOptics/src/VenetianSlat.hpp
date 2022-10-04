@@ -1,11 +1,11 @@
-#ifndef VENETIANSLAT_H
-#define VENETIANSLAT_H
+#pragma once
 
 #include <memory>
 
+#include <WCEViewer.hpp>
+
 namespace Viewer
 {
-    class CGeometry2D;
     class CSegment2D;
 
 }   // namespace Viewer
@@ -29,7 +29,7 @@ namespace SingleLayerOptics
                       SegmentsDirection t_Direction);
 
         // Returns the geometry segments that are slats made of
-        [[nodiscard]] std::shared_ptr<Viewer::CGeometry2D> geometry() const;
+        [[nodiscard]] Viewer::CGeometry2D geometry() const;
 
         [[nodiscard]] double slatWidth() const;
         [[nodiscard]] double slatSpacing() const;
@@ -47,9 +47,7 @@ namespace SingleLayerOptics
         size_t m_NumOfSlatSegments;
         SegmentsDirection m_Direction;
 
-        std::shared_ptr<Viewer::CGeometry2D> m_Geometry;
+        Viewer::CGeometry2D m_Geometry;
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

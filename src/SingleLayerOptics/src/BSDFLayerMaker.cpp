@@ -30,10 +30,10 @@ namespace SingleLayerOptics
         return std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
     }
 
-    std::shared_ptr<CBSDFLayer> CBSDFLayerMaker::getPhotovoltaicSpecularLayer(
-        const std::shared_ptr<CMaterial> & t_Material,
-        const BSDFHemisphere & t_BSDF,
-        PVPowerPropertiesTable powerTable)
+    std::shared_ptr<CBSDFLayer>
+      CBSDFLayerMaker::getPhotovoltaicSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                                    const BSDFHemisphere & t_BSDF,
+                                                    PVPowerPropertiesTable powerTable)
     {
         auto aDecription{std::make_shared<CSpecularCellDescription>()};
         auto aCell = std::make_shared<CSpecularCell>(t_Material, aDecription);
@@ -88,6 +88,14 @@ namespace SingleLayerOptics
         std::shared_ptr<ICellDescription> aCellDescription =
           std::make_shared<CVenetianCellDescription>(
             slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
+
+        const auto profileAnglesIncoming = t_BSDF.profileAngles(BSDFDirection::Incoming);
+        std::dynamic_pointer_cast<CVenetianCellDescription>(aCellDescription)
+          ->preCalculateForProfileAngles(FenestrationCommon::Side::Front, profileAnglesIncoming);
+
+        const auto profileAnglesOutgoing = t_BSDF.profileAngles(BSDFDirection::Outgoing);
+        std::dynamic_pointer_cast<CVenetianCellDescription>(aCellDescription)
+          ->preCalculateForProfileAngles(FenestrationCommon::Side::Back, profileAnglesOutgoing);
 
         static const auto horizontalVenetianRotation{0.0};
         static const auto verticalVenetianRotation{90.0};

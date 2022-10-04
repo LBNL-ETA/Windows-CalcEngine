@@ -2,8 +2,6 @@
 #include <cassert>
 #include <utility>
 
-#include <mutex>
-
 #include "MeasuredSampleData.hpp"
 #include "WCECommon.hpp"
 

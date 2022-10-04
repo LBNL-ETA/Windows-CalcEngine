@@ -126,7 +126,7 @@ namespace MultiLayerOptics
     {
         auto numberOfThreads{1u};
 #if MULTITHREADING
-        numberOfThreads = std::thread::hardware_concurrency();
+        numberOfThreads = FenestrationCommon::getNumberOfThreads(m_CombinedLayerWavelengths.size());
 #endif
 
         const auto chunks{

@@ -4,7 +4,6 @@
 #include "WCESpectralAveraging.hpp"
 #include "WCEMultiLayerOptics.hpp"
 #include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
 
 
 using namespace SingleLayerOptics;

@@ -25,10 +25,10 @@ namespace Viewer
     class CViewSegment2D : public CSegment2D, public std::enable_shared_from_this<CViewSegment2D>
     {
     public:
-        CViewSegment2D(std::shared_ptr<const CPoint2D> const & t_StartPoint,
-                       std::shared_ptr<const CPoint2D> const & t_EndPoint);
+        CViewSegment2D() = default;
+        CViewSegment2D(const CPoint2D & t_StartPoint, const CPoint2D & t_EndPoint);
 
-        std::shared_ptr<const CViewSegment2D> getNormal();
+        CViewSegment2D getNormal();
 
         bool operator==(CViewSegment2D const & rhs) const;
         bool operator!=(CViewSegment2D const & rhs) const;
@@ -41,24 +41,17 @@ namespace Viewer
         Shadowing selfShadowing(CViewSegment2D const & t_Segment) const;
 
         // To determine position from the perspective of the segment
-        PointPosition position(CPoint2D const & t_Point) const;
+        PointPosition position(const CPoint2D & t_Point) const;
 
         // Divide segment into number of subsegments
-        std::shared_ptr<std::vector<std::shared_ptr<CViewSegment2D>>>
-          subSegments(const size_t numSegments) const;
+        std::vector<CViewSegment2D> subSegments(size_t numSegments) const;
 
         // Translates segment for given coordinates
-        std::shared_ptr<CViewSegment2D> translate(const double t_x, const double t_y);
+        CViewSegment2D translate(double t_x, double t_y);
 
     private:
         // How much segment is self shadowed (No, Partial, Total)
         Shadowing isInSelfShadow(CViewSegment2D const & t_Segment) const;
-
-        void calculateNormal();
-
-        // Normal to the segment
-        std::shared_ptr<CViewSegment2D> m_Normal;
-        bool m_NormalCalculated;
     };
 
 }   // namespace Viewer
