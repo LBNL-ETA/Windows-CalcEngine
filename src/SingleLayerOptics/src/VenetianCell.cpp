@@ -472,9 +472,8 @@ namespace SingleLayerOptics
                 double Rf = aMat[i].getProperty(Property::R, Side::Front);
                 double Rb = aMat[i].getProperty(Property::R, Side::Back);
 
-                CVenetianEnergy aEnergy = CVenetianEnergy(
+                m_EnergiesBand.emplace_back(
                   Tf, Tb, Rf, Rb, venetianForwardGeometry, m_BackwardFlowCellDescription);
-                m_EnergiesBand.push_back(aEnergy);
             }
         }
     }
@@ -697,8 +696,7 @@ namespace SingleLayerOptics
         f(formFrontSegments(numberOfSegments)),
         b(formBackSegments(numberOfSegments)),
         slatsEnergy(formEnergyMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
-    {
-    }
+    {}
 
     std::vector<size_t> SlatSegments::formFrontSegments(const size_t numOfSegments)
     {
