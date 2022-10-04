@@ -92,9 +92,9 @@ namespace SingleLayerOptics
         m_Tf(Tf),
         m_Tb(Tb),
         m_Rf(Rf),
-        m_Rb(Rb)
+        m_Rb(Rb),
+        m_SlatsMapping(createSlatsMapping())
     {
-        createSlatsMapping();
         formEnergyMatrix();
     }
 
@@ -214,11 +214,11 @@ namespace SingleLayerOptics
             size_t index = 0;
             if(i < numSeg)
             {
-                index = f[i];
+                index = m_SlatsMapping.f[i];
             }
             else
             {
-                index = b[i - numSeg];
+                index = m_SlatsMapping.b[i - numSeg];
             }
             B.push_back(-BVF[index].viewFactor);
         }
@@ -259,33 +259,36 @@ namespace SingleLayerOptics
         {
             if(i == 0)
             {
-                aRadiances[b[i]] = 1;
+                aRadiances[m_SlatsMapping.b[i]] = 1;
             }
             else if(i == numSlats - 1)
             {
-                aRadiances[f[i - 1]] = t_Irradiances[i].E_f;
+                aRadiances[m_SlatsMapping.f[i - 1]] = t_Irradiances[i].E_f;
             }
             else
             {
-                aRadiances[b[i]] = m_Tf * t_Irradiances[i].E_f + m_Rb * t_Irradiances[i].E_b;
-                aRadiances[f[i - 1]] = m_Tb * t_Irradiances[i].E_b + m_Rf * t_Irradiances[i].E_f;
+                aRadiances[m_SlatsMapping.b[i]] =
+                  m_Tf * t_Irradiances[i].E_f + m_Rb * t_Irradiances[i].E_b;
+                aRadiances[m_SlatsMapping.f[i - 1]] =
+                  m_Tb * t_Irradiances[i].E_b + m_Rf * t_Irradiances[i].E_f;
             }
         }
 
         return aRadiances;
     }
 
-    void CVenetianCellEnergy::createSlatsMapping()
+    CVenetianCellEnergy::SlatsMapping CVenetianCellEnergy::createSlatsMapping()
     {
         assert(m_Cell != nullptr);
+        CVenetianCellEnergy::SlatsMapping slats;
         size_t numSeg = int(m_Cell->numberOfSegments() / 2);
-        b.clear();
-        f.clear();
         for(size_t i = 0; i < numSeg; ++i)
         {
-            b.push_back(i);
-            f.push_back(2 * numSeg - 1 - i);
+            slats.b.push_back(i);
+            slats.f.push_back(2 * numSeg - 1 - i);
         }
+
+        return slats;
     }
 
     void CVenetianCellEnergy::formEnergyMatrix()
@@ -309,7 +312,8 @@ namespace SingleLayerOptics
             {
                 if(i != numSeg - 1)
                 {
-                    double value = aViewFactors(b[i + 1], f[j]) * T + aViewFactors(f[i], f[j]) * R;
+                    double value = aViewFactors(m_SlatsMapping.b[i + 1], m_SlatsMapping.f[j]) * T
+                                   + aViewFactors(m_SlatsMapping.f[i], m_SlatsMapping.f[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -338,7 +342,8 @@ namespace SingleLayerOptics
                 if(i != numSeg - 1)
                 {
                     const double value =
-                      aViewFactors(b[i + 1], b[j]) * T + aViewFactors(f[i], b[j]) * R;
+                      aViewFactors(m_SlatsMapping.b[i + 1], m_SlatsMapping.b[j]) * T
+                      + aViewFactors(m_SlatsMapping.f[i], m_SlatsMapping.b[j]) * R;
                     m_Energy(j + numSeg, i) = value;
                 }
                 else
@@ -359,7 +364,8 @@ namespace SingleLayerOptics
                 if(i != 0)
                 {
                     const double value =
-                      aViewFactors(f[i - 1], f[j]) * T + aViewFactors(b[i], f[j]) * R;
+                      aViewFactors(m_SlatsMapping.f[i - 1], m_SlatsMapping.f[j]) * T
+                      + aViewFactors(m_SlatsMapping.b[i], m_SlatsMapping.f[j]) * R;
                     m_Energy(j, i + numSeg) = value;
                 }
                 else
@@ -376,7 +382,8 @@ namespace SingleLayerOptics
             {
                 if(i != 0)
                 {
-                    double value = aViewFactors(f[i - 1], b[j]) * T + aViewFactors(b[i], b[j]) * R;
+                    double value = aViewFactors(m_SlatsMapping.f[i - 1], m_SlatsMapping.b[j]) * T
+                                   + aViewFactors(m_SlatsMapping.b[i], m_SlatsMapping.b[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
@@ -416,8 +423,8 @@ namespace SingleLayerOptics
         std::vector<double> B(2 * numSeg);
         for(size_t i = 0; i < numSeg; ++i)
         {
-            B[i] = -aViewFactors(b[0], f[i]);
-            B[i + numSeg] = -aViewFactors(b[0], b[i]);
+            B[i] = -aViewFactors(m_SlatsMapping.b[0], m_SlatsMapping.f[i]);
+            B[i + numSeg] = -aViewFactors(m_SlatsMapping.b[0], m_SlatsMapping.b[i]);
         }
 
         return B;

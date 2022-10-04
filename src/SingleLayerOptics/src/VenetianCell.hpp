@@ -100,10 +100,6 @@ namespace SingleLayerOptics
             double percentViewed;
         };
 
-        // Create mapping from view factors matrix to front and back slats (fills b and f
-        // std::vectors of this class)
-        void createSlatsMapping();
-
         // Energy matrix is valid for any incoming direction. Depends on geometry and will be
         // caluculated only once and stored into m_Energy field
         void formEnergyMatrix();
@@ -122,7 +118,7 @@ namespace SingleLayerOptics
 
         // Create beam to diffuse std::vector. Right hand side of the equation
         std::vector<BeamSegmentView> beamVector(const CBeamDirection & t_Direction,
-                                                const FenestrationCommon::Side t_Side);
+                                                FenestrationCommon::Side t_Side);
 
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         double m_Tf;
@@ -132,8 +128,17 @@ namespace SingleLayerOptics
         FenestrationCommon::SquareMatrix m_Energy;
 
         // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
-        std::vector<size_t> b;
-        std::vector<size_t> f;
+        struct SlatsMapping
+        {
+            std::vector<size_t> b;
+            std::vector<size_t> f;
+        };
+
+        SlatsMapping m_SlatsMapping;
+
+        // Create mapping from view factors matrix to front and back slats (fills b and f
+        // std::vectors of this class)
+        SlatsMapping createSlatsMapping();
 
         // Keeps pointer to valid slat energies (for given direction). If result is not valid, it
         // must be pulled out of m_SlatEnergyResults and assigned to this pointer.
