@@ -64,11 +64,9 @@ namespace SingleLayerOptics
     {
         const auto irradiance = slatIrradiances(t_Direction, m_SlatSegments, m_Energy);
 
-        size_t numSeg = int(m_Cell->numberOfSegments() / 2);
-
         // Total energy accounts for direct to direct component. That needs to be subtracted since
         // only direct to diffuse is of interest
-        return irradiance[numSeg].E_f - T_dir_dir(t_Direction);
+        return irradiance[m_SlatSegments.numberOfSegments].E_f - T_dir_dir(t_Direction);
     }
 
     double CVenetianCellEnergy::R_dir_dif(const CBeamDirection & t_Direction)
@@ -96,8 +94,7 @@ namespace SingleLayerOptics
         }
 
         // Area weighting. Needs to be multiplied with number of segments
-        size_t insideSegIndex = int(m_Cell->numberOfSegments() / 2);
-        double insideSegLength = m_Cell->segmentLength(insideSegIndex);
+        double insideSegLength = m_Cell->segmentLength(m_SlatSegments.numberOfSegments);
 
         assert(insideSegLength != 0);
 
@@ -120,8 +117,7 @@ namespace SingleLayerOptics
         }
 
         // Area weighting. Needs to be multiplied with number of segments
-        size_t insideSegIndex = int(m_Cell->numberOfSegments() / 2);
-        double insideSegLength = m_Cell->segmentLength(insideSegIndex);
+        double insideSegLength = m_Cell->segmentLength(m_SlatSegments.numberOfSegments);
 
         assert(insideSegLength != 0);
 
@@ -130,7 +126,7 @@ namespace SingleLayerOptics
 
     double CVenetianCellEnergy::T_dif_dif()
     {
-        size_t numSeg = int(m_Cell->numberOfSegments() / 2);
+        const auto numSeg{m_SlatSegments.numberOfSegments};
 
         auto B{diffuseVector(m_SlatSegments, m_Cell->viewFactors())};
 
@@ -142,14 +138,12 @@ namespace SingleLayerOptics
 
     double CVenetianCellEnergy::R_dif_dif()
     {
-        size_t numSeg = int(m_Cell->numberOfSegments() / 2);
-
         auto B{diffuseVector(m_SlatSegments, m_Cell->viewFactors())};
 
         CLinearSolver aSolver;
         std::vector<double> aSolution = aSolver.solveSystem(m_Energy, B);
 
-        return aSolution[numSeg];
+        return aSolution[m_SlatSegments.numberOfSegments];
     }
 
     std::vector<SegmentIrradiance>
@@ -368,7 +362,7 @@ namespace SingleLayerOptics
     std::vector<CVenetianCellEnergy::BeamSegmentView>
       CVenetianCellEnergy::beamVector(const CBeamDirection & t_Direction, const Side t_Side)
     {
-        size_t numSeg = int(m_Cell->numberOfSegments() / 2);
+        size_t numSeg{m_SlatSegments.numberOfSegments};
 
         double profileAngle = t_Direction.profileAngle();
 
