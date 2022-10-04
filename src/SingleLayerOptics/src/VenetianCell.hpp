@@ -100,10 +100,6 @@ namespace SingleLayerOptics
             double percentViewed;
         };
 
-        // Energy matrix is valid for any incoming direction. Depends on geometry and will be
-        // caluculated only once and stored into m_Energy field
-        void formEnergyMatrix();
-
         // calculate slat irradiances and radiances based on incoming beam
         CVenetianSlatEnergies calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction);
 
@@ -125,7 +121,6 @@ namespace SingleLayerOptics
         double m_Tb;
         double m_Rf;
         double m_Rb;
-        FenestrationCommon::SquareMatrix m_Energy;
 
         // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
         struct SlatsMapping
@@ -135,20 +130,16 @@ namespace SingleLayerOptics
         };
 
         SlatsMapping m_SlatsMapping;
+        FenestrationCommon::SquareMatrix m_Energy;
 
         // Create mapping from view factors matrix to front and back slats (fills b and f
         // std::vectors of this class)
         SlatsMapping createSlatsMapping();
 
-        // Keeps pointer to valid slat energies (for given direction). If result is not valid, it
-        // must be pulled out of m_SlatEnergyResults and assigned to this pointer.
-        // std::shared_ptr<CVenetianSlatEnergies> m_CurrentSlatEnergies;
-
-        // Keep results for slat radiances and irradiances for different directions.
-        // Once radiances and irradiances are calculated for certain direction, results are stored
-        // here. That reduces necessity to recalculate results multiple times for same direction.
-        // Note that direction is always incoming direction.
-        // CSlatEnergyResults m_SlatEnergyResults;
+        // Energy matrix is valid for any incoming direction. Depends on geometry and will be
+        // caluculated only once and stored into m_Energy field
+        FenestrationCommon::SquareMatrix formEnergyMatrix(CVenetianCellDescription & cell,
+                                                          const SlatsMapping & slats);
     };
 
     class CVenetianEnergy

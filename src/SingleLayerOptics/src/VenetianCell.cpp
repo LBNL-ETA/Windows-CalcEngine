@@ -93,10 +93,9 @@ namespace SingleLayerOptics
         m_Tb(Tb),
         m_Rf(Rf),
         m_Rb(Rb),
-        m_SlatsMapping(createSlatsMapping())
-    {
-        formEnergyMatrix();
-    }
+        m_SlatsMapping(createSlatsMapping()),
+        m_Energy(formEnergyMatrix(*m_Cell, m_SlatsMapping))
+    {}
 
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_Direction)
     {
@@ -291,15 +290,15 @@ namespace SingleLayerOptics
         return slats;
     }
 
-    void CVenetianCellEnergy::formEnergyMatrix()
+    FenestrationCommon::SquareMatrix
+      CVenetianCellEnergy::formEnergyMatrix(CVenetianCellDescription & cell,
+                                            const SlatsMapping & slats)
     {
-        assert(m_Cell != nullptr);
-
-        SquareMatrix aViewFactors{m_Cell->viewFactors()};
-        size_t numSeg = int(m_Cell->numberOfSegments() / 2);
+        SquareMatrix aViewFactors{cell.viewFactors()};
+        size_t numSeg = int(cell.numberOfSegments() / 2);
 
         // Create energy matrix
-        m_Energy = SquareMatrix(2 * numSeg);
+        SquareMatrix energy{2 * numSeg};
 
         // Results always from front side since cell is already flipped
         double T = m_Tf;
@@ -312,23 +311,23 @@ namespace SingleLayerOptics
             {
                 if(i != numSeg - 1)
                 {
-                    double value = aViewFactors(m_SlatsMapping.b[i + 1], m_SlatsMapping.f[j]) * T
-                                   + aViewFactors(m_SlatsMapping.f[i], m_SlatsMapping.f[j]) * R;
+                    double value = aViewFactors(slats.b[i + 1], slats.f[j]) * T
+                                   + aViewFactors(slats.f[i], slats.f[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
                     }
-                    m_Energy(j, i) = value;
+                    energy(j, i) = value;
                 }
                 else
                 {
                     if(i != j)
                     {
-                        m_Energy(j, i) = 0;
+                        energy(j, i) = 0;
                     }
                     else
                     {
-                        m_Energy(j, i) = -1;
+                        energy(j, i) = -1;
                     }
                 }
             }
@@ -341,14 +340,13 @@ namespace SingleLayerOptics
             {
                 if(i != numSeg - 1)
                 {
-                    const double value =
-                      aViewFactors(m_SlatsMapping.b[i + 1], m_SlatsMapping.b[j]) * T
-                      + aViewFactors(m_SlatsMapping.f[i], m_SlatsMapping.b[j]) * R;
-                    m_Energy(j + numSeg, i) = value;
+                    const double value = aViewFactors(slats.b[i + 1], slats.b[j]) * T
+                                         + aViewFactors(slats.f[i], slats.b[j]) * R;
+                    energy(j + numSeg, i) = value;
                 }
                 else
                 {
-                    m_Energy(j + numSeg, i) = 0;
+                    energy(j + numSeg, i) = 0;
                 }
             }
         }
@@ -363,14 +361,13 @@ namespace SingleLayerOptics
             {
                 if(i != 0)
                 {
-                    const double value =
-                      aViewFactors(m_SlatsMapping.f[i - 1], m_SlatsMapping.f[j]) * T
-                      + aViewFactors(m_SlatsMapping.b[i], m_SlatsMapping.f[j]) * R;
-                    m_Energy(j, i + numSeg) = value;
+                    const double value = aViewFactors(slats.f[i - 1], slats.f[j]) * T
+                                         + aViewFactors(slats.b[i], slats.f[j]) * R;
+                    energy(j, i + numSeg) = value;
                 }
                 else
                 {
-                    m_Energy(j, i + numSeg) = 0;
+                    energy(j, i + numSeg) = 0;
                 }
             }
         }
@@ -382,27 +379,28 @@ namespace SingleLayerOptics
             {
                 if(i != 0)
                 {
-                    double value = aViewFactors(m_SlatsMapping.f[i - 1], m_SlatsMapping.b[j]) * T
-                                   + aViewFactors(m_SlatsMapping.b[i], m_SlatsMapping.b[j]) * R;
+                    double value = aViewFactors(slats.f[i - 1], slats.b[j]) * T
+                                   + aViewFactors(slats.b[i], slats.b[j]) * R;
                     if(i == j)
                     {
                         value -= 1;
                     }
-                    m_Energy(j + numSeg, i + numSeg) = value;
+                    energy(j + numSeg, i + numSeg) = value;
                 }
                 else
                 {
                     if(i != j)
                     {
-                        m_Energy(j + numSeg, i + numSeg) = 0;
+                        energy(j + numSeg, i + numSeg) = 0;
                     }
                     else
                     {
-                        m_Energy(j + numSeg, i + numSeg) = -1;
+                        energy(j + numSeg, i + numSeg) = -1;
                     }
                 }
             }
         }
+        return energy;
     }
 
     CVenetianSlatEnergies
