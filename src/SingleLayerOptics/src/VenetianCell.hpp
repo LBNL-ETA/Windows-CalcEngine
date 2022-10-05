@@ -136,6 +136,9 @@ namespace SingleLayerOptics
         double m_Rb;
 
         SlatSegments m_SlatSegments;
+
+        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
+        std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
     };
 
     class CVenetianEnergy

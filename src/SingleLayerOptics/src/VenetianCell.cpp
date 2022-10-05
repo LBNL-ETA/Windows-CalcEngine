@@ -1,5 +1,5 @@
 #include <cassert>
-#include <stdexcept>
+#include <mutex>
 
 #include "VenetianCell.hpp"
 #include "VenetianCellDescription.hpp"
@@ -10,6 +10,9 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
+    std::mutex radianceMutex;
+    std::mutex irradianceMutex;
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  CVenetianBase
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +157,12 @@ namespace SingleLayerOptics
                                            const SlatSegments & slats,
                                            const FenestrationCommon::SquareMatrix & energy)
     {
+        std::lock_guard<std::mutex> lock(irradianceMutex);
+        if(m_SlatIrradiances.count(t_IncomingDirection))
+        {
+            return m_SlatIrradiances.at(t_IncomingDirection);
+        }
+
         std::vector<SegmentIrradiance> aIrradiances;
 
         size_t numSeg{slats.numberOfSegments};
@@ -203,6 +212,8 @@ namespace SingleLayerOptics
             aIrradiances.push_back(aIrr);
         }
 
+        m_SlatIrradiances[t_IncomingDirection] = aIrradiances;
+
         return aIrradiances;
     }
 
@@ -211,7 +222,13 @@ namespace SingleLayerOptics
                                          const SlatSegments & slats,
                                          const FenestrationCommon::SquareMatrix & energy)
     {
+        if(m_SlatRadiances.count(t_IncomingDirection))
+        {
+            return m_SlatRadiances.at(t_IncomingDirection);
+        }
+
         const auto irradiance{slatIrradiances(t_IncomingDirection, slats, energy)};
+        m_SlatIrradiances[t_IncomingDirection] = irradiance;
         size_t numSlats = irradiance.size();
         std::vector<double> aRadiances(2 * numSlats - 2);
         for(size_t i = 0; i < numSlats; ++i)
@@ -230,6 +247,8 @@ namespace SingleLayerOptics
                 aRadiances[slats.f[i - 1]] = m_Tb * irradiance[i].E_b + m_Rf * irradiance[i].E_f;
             }
         }
+
+        m_SlatRadiances[t_IncomingDirection] = aRadiances;
 
         return aRadiances;
     }

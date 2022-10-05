@@ -22,6 +22,7 @@ namespace SingleLayerOptics
         CBeamDirection & operator=(const CBeamDirection & t_SphericalPoint);
         bool operator==(const CBeamDirection & t_SphericalPoint) const;
         bool operator!=(const CBeamDirection & t_SphericalPoint) const;
+        bool operator<(const CBeamDirection & t_SphericalPoint) const;
 
         [[nodiscard]] double distance(double t_Theta, double t_Phi) const;
 

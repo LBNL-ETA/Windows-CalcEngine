@@ -108,4 +108,10 @@ namespace SingleLayerOptics
         return {m_Theta, m_Phi + angle};
     }
 
+    bool CBeamDirection::operator<(const CBeamDirection & t_SphericalPoint) const
+    {
+        return m_Theta < t_SphericalPoint.m_Theta
+               || (m_Theta == t_SphericalPoint.m_Theta && m_Phi < t_SphericalPoint.m_Phi);
+    }
+
 }   // namespace SingleLayerOptics
