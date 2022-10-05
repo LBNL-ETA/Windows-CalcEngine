@@ -8,6 +8,7 @@
 
 #include "UniformDiffuseCell.hpp"
 #include "DirectionalDiffuseCell.hpp"
+#include "BeamDirection.hpp"
 
 namespace FenestrationCommon
 {
@@ -25,7 +26,6 @@ namespace SingleLayerOptics
 {
     class ICellDescription;
     class CVenetianCellDescription;
-    class CBeamDirection;
 
     class CVenetianBase : public CUniformDiffuseCell, public CDirectionalDiffuseCell
     {
@@ -47,24 +47,34 @@ namespace SingleLayerOptics
         double E_b;
     };
 
-    class CVenetianSlatEnergies
+    ////////////////////////////////////////////////////////////////////
+    // SlatSegments
+    ////////////////////////////////////////////////////////////////////
+
+    // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
+    class SlatSegments
     {
     public:
-        CVenetianSlatEnergies(const CBeamDirection & t_BeamDirection,
-                              const std::vector<SegmentIrradiance> & t_SlatIrradiances,
-                              const std::vector<double> & t_SlatRadiances);
-
-        const SegmentIrradiance & irradiances(const size_t index) const;
-        double radiances(const size_t index) const;
-        std::shared_ptr<const CBeamDirection> direction() const;
-        size_t size() const;
+        explicit SlatSegments(
+          CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb);
+        SlatSegments() = default;
+        size_t numberOfSegments{0u};
+        std::vector<size_t> b;
+        std::vector<size_t> f;
+        FenestrationCommon::SquareMatrix slatsEnergy;
 
     private:
-        // Keep slat energies for certain beam incoming directions
-        std::vector<SegmentIrradiance> m_SlatIrradiances;
-        std::vector<double> m_SlatRadiances;
-        // Direction for which energies are calculated
-        std::shared_ptr<CBeamDirection> m_CalcDirection;
+        std::vector<size_t> formFrontSegments(size_t numberOfSegments);
+        std::vector<size_t> formBackSegments(size_t numberOfSegments);
+
+        // Energy matrix is valid for any incoming direction. Depends on geometry and will be
+        // calculated only once and stored into m_Energy field
+        FenestrationCommon::SquareMatrix
+          formEnergyMatrix(FenestrationCommon::SquareMatrix && viewFactors,
+                           double Tf,
+                           double Tb,
+                           double Rf,
+                           double Rb);
     };
 
     // Keeping intermediate results for backward and forward directions.
@@ -73,10 +83,10 @@ namespace SingleLayerOptics
     public:
         CVenetianCellEnergy();
         CVenetianCellEnergy(const std::shared_ptr<CVenetianCellDescription> & t_Cell,
-                            const double Tf,
-                            const double Tb,
-                            const double Rf,
-                            const double Rb);
+                            double Tf,
+                            double Tb,
+                            double Rf,
+                            double Rb);
 
         double T_dir_dir(const CBeamDirection & t_Direction);
         double T_dir_dif(const CBeamDirection & t_Direction);
@@ -100,50 +110,35 @@ namespace SingleLayerOptics
             double percentViewed;
         };
 
-        // Create mapping from view factors matrix to front and back slats (fills b and f
-        // std::vectors of this class)
-        void createSlatsMapping();
-
-        // Energy matrix is valid for any incoming direction. Depends on geometry and will be
-        // caluculated only once and stored into m_Energy field
-        void formEnergyMatrix();
-
-        // calculate slat irradiances and radiances based on incoming beam
-        CVenetianSlatEnergies calculateSlatEnergiesFromBeam(const CBeamDirection & t_Direction);
-
         // Irradiances for given incoming direction
-        std::vector<SegmentIrradiance> slatIrradiances(const CBeamDirection & t_IncomingDirection);
+        std::vector<SegmentIrradiance>
+          slatIrradiances(const CBeamDirection & t_IncomingDirection,
+                          const SlatSegments & slats,
+                          const FenestrationCommon::SquareMatrix & energy);
 
         // Radiances for given incoming direction
-        std::vector<double> slatRadiances(std::vector<SegmentIrradiance> & t_Irradiances);
+        std::vector<double> slatRadiances(const CBeamDirection & t_IncomingDirection,
+                                          const SlatSegments & slats,
+                                          const FenestrationCommon::SquareMatrix & energy);
 
         // Creates diffuse to diffuse std::vector. Right hand side of the equation
-        std::vector<double> diffuseVector();
+        std::vector<double> diffuseVector(const SlatSegments & slats,
+                                          FenestrationCommon::SquareMatrix && viewFactors);
 
         // Create beam to diffuse std::vector. Right hand side of the equation
         std::vector<BeamSegmentView> beamVector(const CBeamDirection & t_Direction,
-                                                const FenestrationCommon::Side t_Side);
+                                                FenestrationCommon::Side t_Side);
 
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         double m_Tf;
         double m_Tb;
         double m_Rf;
         double m_Rb;
-        FenestrationCommon::SquareMatrix m_Energy;
 
-        // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
-        std::vector<size_t> b;
-        std::vector<size_t> f;
+        SlatSegments m_SlatSegments;
 
-        // Keeps pointer to valid slat energies (for given direction). If result is not valid, it
-        // must be pulled out of m_SlatEnergyResults and assigned to this pointer.
-        // std::shared_ptr<CVenetianSlatEnergies> m_CurrentSlatEnergies;
-
-        // Keep results for slat radiances and irradiances for different directions.
-        // Once radiances and irradiances are calculated for certain direction, results are stored
-        // here. That reduces necessity to recalculate results multiple times for same direction.
-        // Note that direction is always incoming direction.
-        // CSlatEnergyResults m_SlatEnergyResults;
+        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
+        std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
     };
 
     class CVenetianEnergy
@@ -161,7 +156,7 @@ namespace SingleLayerOptics
                         const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
                         const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
 
-        [[nodiscard]] CVenetianCellEnergy & getCell(const FenestrationCommon::Side t_Side);
+        [[nodiscard]] CVenetianCellEnergy & getCell(FenestrationCommon::Side t_Side);
 
     private:
         // construction of forward and backward cells from both constructors have identical part of

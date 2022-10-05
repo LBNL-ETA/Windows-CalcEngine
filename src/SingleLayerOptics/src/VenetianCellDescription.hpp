@@ -29,16 +29,16 @@ namespace SingleLayerOptics
                                  size_t t_NumOfSlatSegments);
 
         // Makes exact copy of cell description
-        std::shared_ptr<CVenetianCellDescription> getBackwardFlowCell() const;
-        size_t numberOfSegments() const;
-        double segmentLength(const size_t Index) const;
+        [[nodiscard]] std::shared_ptr<CVenetianCellDescription> getBackwardFlowCell() const;
+        [[nodiscard]] size_t numberOfSegments() const;
+        [[nodiscard]] double segmentLength(size_t Index) const;
 
         // View factors of enclosure slats
         FenestrationCommon::SquareMatrix viewFactors();
 
         // view factor of the beam entering the cell with profile angle
-        std::vector<Viewer::BeamViewFactor>
-          beamViewFactors(double t_ProfileAngle, const FenestrationCommon::Side t_Side);
+        std::vector<Viewer::BeamViewFactor> beamViewFactors(double t_ProfileAngle,
+                                                            FenestrationCommon::Side t_Side);
 
         // Direct to direct component of the ray
         double T_dir_dir(FenestrationCommon::Side t_Side,

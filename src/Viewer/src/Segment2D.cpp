@@ -9,9 +9,8 @@ namespace Viewer
     CSegment2D::CSegment2D(const CPoint2D & t_StartPoint, const CPoint2D & t_EndPoint) :
         m_StartPoint(t_StartPoint),
         m_EndPoint(t_EndPoint),
-        m_Length(calculateLength(m_StartPoint, m_EndPoint)),
-        m_CenterPoint(calculateCenter(m_StartPoint, m_EndPoint))
-
+        m_CenterPoint(calculateCenter(m_StartPoint, m_EndPoint)),
+        m_Length(calculateLength(m_StartPoint, m_EndPoint))
     {}
 
     CPoint2D CSegment2D::startPoint() const

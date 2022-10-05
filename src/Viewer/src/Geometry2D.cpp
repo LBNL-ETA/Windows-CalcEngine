@@ -198,9 +198,9 @@ namespace Viewer
         auto subSeg1 = t_Segment1.subSegments(ViewerConstants::NUM_OF_SEGMENTS);
         auto subSeg2 = t_Segment2.subSegments(ViewerConstants::NUM_OF_SEGMENTS);
 
-        for(const auto sub1 : subSeg1)
+        for(const auto & sub1 : subSeg1)
         {
-            for(const auto sub2 : subSeg2)
+            for(const auto & sub2 : subSeg2)
             {
                 auto selfShadowing = sub1.selfShadowing(sub2);
                 auto tSurfBlock = thirdSurfaceShadowingSimple(sub1, sub2);
