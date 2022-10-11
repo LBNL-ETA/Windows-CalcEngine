@@ -124,8 +124,9 @@ TEST_F(TestSeriesOperations, TestSeriesMultiplicationException)
     }
     catch(const std::runtime_error & err)
     {
-        EXPECT_EQ(err.what(),
-                  std::string(
-                    "Wavelengths of two vectors are not the same. Cannot preform multiplication."));
+        EXPECT_EQ(
+          err.what(),
+          std::string(
+            "The wavelengths of the two vectors are not the same. Cannot perform multiplication."));
     }
 }

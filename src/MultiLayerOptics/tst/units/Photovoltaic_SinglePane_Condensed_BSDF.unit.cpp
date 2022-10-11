@@ -12,12 +12,14 @@ using FenestrationCommon::Side;
 using FenestrationCommon::Scattering;
 using SpectralAveraging::CSpectralSampleData;
 using SingleLayerOptics::Material;
-using MultiLayerOptics::CMultiPaneSpecular;
+using SingleLayerOptics::BSDFHemisphere;
+using SingleLayerOptics::BSDFBasis;
+using MultiLayerOptics::CMultiPaneBSDF;
 
-class Photovoltaic_DoublePane_Example1 : public testing::Test
+class Photovoltaic_SinglePane_Condensed_BSDF : public testing::Test
 {
 private:
-    std::unique_ptr<CMultiPaneSpecular> m_Layer;
+    std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
     static CSeries loadSolarRadiationFile()
     {
@@ -1805,50 +1807,66 @@ protected:
           *loadSampleData_1(), eqeFront(), eqeBack());
 
         const auto aSolarRadiation = loadSolarRadiationFile();
-        const auto wl = aSolarRadiation.getXArray();
 
         constexpr double thickness{3.048e-3};   // [m]
-        const auto aMaterial_1 =
-          Material::nBandPhotovoltaicMaterial(pvSample,
-                                              thickness,
-                                              FenestrationCommon::MaterialType::Monolithic);
+        const auto aMaterial_1 = Material::nBandPhotovoltaicMaterial(
+          pvSample, thickness, FenestrationCommon::MaterialType::Monolithic);
+
+        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
 
 
-        aMaterial_1->setBandWavelengths(wl);
-        const auto layer1 =
-          SingleLayerOptics::PhotovoltaicSpecularLayer::createLayer(aMaterial_1, table());
+        const auto layer1 = SingleLayerOptics::CBSDFLayerMaker::getPhotovoltaicSpecularLayer(
+          aMaterial_1, aBSDF, table());
 
-        m_Layer = CMultiPaneSpecular::create({layer1});
+        const std::vector<double> condensed{0.3,
+                                            0.38,
+                                            0.46,
+                                            0.54,
+                                            0.62,
+                                            0.7,
+                                            0.78,
+                                            0.952,
+                                            1.124,
+                                            1.296,
+                                            1.468,
+                                            1.64,
+                                            1.812,
+                                            1.984,
+                                            2.156,
+                                            2.328,
+                                            2.5};
+
+        m_Layer = MultiLayerOptics::CMultiPaneBSDF::create({layer1}, condensed);
 
         const SingleLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
-                                                            loadSolarRadiationFile().getXArray()};
+                                                             loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 
 public:
-    [[nodiscard]] CMultiPaneSpecular & getLayer() const
+    [[nodiscard]] CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
     }
 };
 
-TEST_F(Photovoltaic_DoublePane_Example1, Test1)
+TEST_F(Photovoltaic_SinglePane_Condensed_BSDF, Test1)
 {
-    SCOPED_TRACE("Begin Test: Double pane photovoltaic - Example 1.");
-
     constexpr double angle{0.0};
     constexpr double minLambda{0.3};
     constexpr double maxLambda{2.5};
 
     auto aLayer = getLayer();
 
-    const double T =
-      aLayer.getPropertySimple(minLambda, maxLambda,PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+    const double T = aLayer.getPropertySimple(
+      minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.2, T, 1e-6);
 
-    const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.670842, absHeat, 1e-6);
+    const auto theta{0.0};
+    const auto phi{0.0};
+    const double absHeat = aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 1, theta, phi);
+    EXPECT_NEAR(0.671285, absHeat, 1e-6);
 
-    const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.106243, absEl1, 1e-6);
+    const double absEl1 = aLayer.AbsElectricity(minLambda, maxLambda, Side::Front, 1, theta, phi);
+    EXPECT_NEAR(0.105165, absEl1, 1e-6);
 }

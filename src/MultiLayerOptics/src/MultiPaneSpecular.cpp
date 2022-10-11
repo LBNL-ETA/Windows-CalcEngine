@@ -329,7 +329,7 @@ namespace MultiLayerOptics
         double totalProperty = iIntegrated.sum(minLambda, maxLambda);
         double totalSolar =
           m_ScaledSolarRadiation.integrate(t_IntegrationType, normalizationCoefficient)
-                              .sum(minLambda, maxLambda);
+            .sum(minLambda, maxLambda);
 
         assert(totalSolar > 0);
 
@@ -380,6 +380,17 @@ namespace MultiLayerOptics
             const auto opposite{oppositeSide(side)};
             auto frontJscPrime = aLayer->jscPrime(side);
             auto backJscPrime = aLayer->jscPrime(opposite);
+
+
+            if(m_MatrixWavelengths.size() != frontJscPrime.size())
+            {
+                frontJscPrime = frontJscPrime.interpolate(m_MatrixWavelengths);
+            }
+            if(m_MatrixWavelengths.size() != backJscPrime.size())
+            {
+                backJscPrime = backJscPrime.interpolate(m_MatrixWavelengths);
+            }
+
 
             const auto IMinus = aAngularProperties.iminus(Index - 1, side);
             const auto IPlus = aAngularProperties.iplus(Index - 1, side);
