@@ -4,6 +4,7 @@
 #include <WCEGases.hpp>
 
 #include "EffectiveOpenness.hpp"
+#include "LayerInterfaces.hpp"
 #include "TarcogConstants.hpp"
 
 namespace Tarcog
@@ -42,6 +43,17 @@ namespace Tarcog
             static std::shared_ptr<CIGUGapLayer> gap(double thickness, double pressure = 101325);
             static std::shared_ptr<CIGUGapLayer>
               gap(double thickness, const Gases::CGas & gas, double pressure = 101325);
+
+            static std::shared_ptr<CIGUGapLayer>
+              forcedVentilationGap(double thickness,
+                                   double airSpeed,
+                                   AirHorizontalDirection const airHorizontalDirection,
+                                   double pressure = 101325);
+            static std::shared_ptr<CIGUGapLayer>
+              forcedVentilationGap(double thickness,
+                                   double airSpeed,
+                                   AirVerticalDirection const airVerticalDirection,
+                                   double pressure = 101325);
 
             static std::shared_ptr<CIGUGapLayer>
               addCircularPillar(const std::shared_ptr<CIGUGapLayer> & gap,

@@ -19,14 +19,28 @@ namespace Tarcog
     {
         CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure) :
             CBaseIGULayer(t_Thickness),
-            CGasLayer(t_Pressure)
+            CGasLayer(t_Pressure),
+            m_ForcedVentilation(false)
         {}
 
         CIGUGapLayer::CIGUGapLayer(double const t_Thickness,
                                    double const t_Pressure,
                                    const Gases::CGas & t_Gas) :
             CBaseIGULayer(t_Thickness),
-            CGasLayer(t_Pressure, t_Gas)
+            CGasLayer(t_Pressure, t_Gas),
+            m_ForcedVentilation(false)
+        {}
+
+        CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure, double const t_AirSpeed, AirHorizontalDirection const t_AirHorizontalDirection) :
+            CBaseIGULayer(t_Thickness),
+            CGasLayer(t_Pressure, t_AirSpeed, t_AirHorizontalDirection),
+            m_ForcedVentilation(true)
+        {}
+
+        CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure, double const t_AirSpeed, AirVerticalDirection const t_AirVerticalDirection) :
+            CBaseIGULayer(t_Thickness),
+            CGasLayer(t_Pressure, t_AirSpeed, t_AirVerticalDirection),
+            m_ForcedVentilation(true)
         {}
 
         void CIGUGapLayer::connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer)
@@ -144,6 +158,11 @@ namespace Tarcog
         double CIGUGapLayer::getPressure()
         {
             return m_Pressure;
+        }
+
+        bool CIGUGapLayer::isVentilationForced() const
+        {
+            return m_ForcedVentilation;
         }
 
         std::shared_ptr<CBaseLayer> CIGUGapLayer::clone() const

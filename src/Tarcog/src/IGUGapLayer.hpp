@@ -21,6 +21,8 @@ namespace Tarcog
         public:
             CIGUGapLayer(double t_Thickness, double t_Pressure);
             CIGUGapLayer(double t_Thickness, double t_Pressure, const Gases::CGas & t_Gas);
+            CIGUGapLayer(double t_Thickness, double t_Pressure, double t_AirSpeed, AirHorizontalDirection const t_AirHorizontalDirection);
+            CIGUGapLayer(double t_Thickness, double t_Pressure, double t_AirSpeed, AirVerticalDirection const t_AirVerticalDirection);
 
             void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
@@ -30,10 +32,13 @@ namespace Tarcog
 
             double getPressure() override;
 
+            bool isVentilationForced() const;
+
             std::shared_ptr<CBaseLayer> clone() const override;
 
 
         protected:
+            bool m_ForcedVentilation;
             void initializeStateVariables() override;
             void calculateConvectionOrConductionFlow() override;
 

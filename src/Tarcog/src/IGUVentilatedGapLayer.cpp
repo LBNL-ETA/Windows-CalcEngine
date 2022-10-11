@@ -36,6 +36,10 @@ namespace Tarcog
                                                      double const t_Abot,
                                                      AirVerticalDirection const & t_Direction)
         {
+            // TODO Is this what we want?
+            if (this->m_ForcedVentilation) {
+                assert(t_Direction == m_AirVerticalDirection);
+            }
             m_AirVerticalDirection = t_Direction;
             auto Ain = 0.0;
             auto Aout = 0.0;
@@ -67,6 +71,10 @@ namespace Tarcog
                                                          double const t_botTemp,
                                                          AirVerticalDirection const & t_Direction)
         {
+            // TODO Is this what we want?
+            if (this->m_ForcedVentilation) {
+                assert(t_Direction == m_AirVerticalDirection);
+            }
             m_AirVerticalDirection = t_Direction;
             switch(m_AirVerticalDirection)
             {
@@ -90,6 +98,10 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::setFlowSpeed(double const t_speed)
         {
+            // TODO Is this what we want?
+            if (this->m_ForcedVentilation) {
+                assert(t_speed == m_AirSpeed);
+            }
             m_AirSpeed = t_speed;
             resetCalculated();
         }
