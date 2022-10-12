@@ -104,17 +104,19 @@ TEST_F(TestDoubleLowESingleVisionUFactorRun, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Low-e with Single Vision - U-value run");
 
+    constexpr auto Tolerance = 1e-6;
+
     const auto window{getWindow()};
 
     const auto UValue{window.uValue()};
-    EXPECT_NEAR(UValue, 1.833771, 1e-5);
+    EXPECT_NEAR(UValue, 1.833771, Tolerance);
 
     const auto UValueCOG{window.uValueCOGAverage()};
-    EXPECT_NEAR(UValueCOG, 1.667878, 1e-5);
+    EXPECT_NEAR(UValueCOG, 1.667878, Tolerance);
 
     const auto SHGC{window.shgc()};
-    EXPECT_NEAR(SHGC, 0.002901, 1e-5);
+    EXPECT_NEAR(SHGC, 0.002901, Tolerance);
 
     const auto vt{window.vt()};
-    EXPECT_NEAR(vt, 0.544831, 1e-5);
+    EXPECT_NEAR(vt, 0.544831, Tolerance);
 }

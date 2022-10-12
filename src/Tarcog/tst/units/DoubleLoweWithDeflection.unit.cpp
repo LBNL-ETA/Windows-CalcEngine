@@ -91,28 +91,31 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Low-e - Deflection Results");
 
-    auto aSystem = GetSystem();
+    constexpr auto Tolerance = 1e-6;
+    constexpr auto DeflectionTolerance = 1e-8;
+
+    const auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr); 
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Deflection results
     ///////////////////////////////////////////////////////////////////////////////
     const auto MaxDeflectionU = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
-    std::vector<double> correctMaxDeflectionU = {-1.849981e-3, 0.344021e-3};
+    const std::vector correctMaxDeflectionU{-1.849981e-3, 0.344021e-3};
     ASSERT_EQ(correctMaxDeflectionU.size(), MaxDeflectionU.size());
 
     for(auto i = 0u; i < correctMaxDeflectionU.size(); ++i)
     {
-        EXPECT_NEAR(correctMaxDeflectionU[i], MaxDeflectionU[i], 1e-8);
+        EXPECT_NEAR(correctMaxDeflectionU[i], MaxDeflectionU[i], DeflectionTolerance);
     }
 
     const auto MaxDeflectionS = aSystem->getMaxDeflections(Tarcog::ISO15099::System::SHGC);
-    std::vector<double> correctMaxDeflectionSHGC = {-1.385369e-3, 0.253010e-3};
+    const std::vector correctMaxDeflectionSHGC{-1.385369e-3, 0.253010e-3};
     ASSERT_EQ(correctMaxDeflectionSHGC.size(), MaxDeflectionU.size());
 
     for(auto i = 0u; i < correctMaxDeflectionSHGC.size(); ++i)
     {
-        EXPECT_NEAR(correctMaxDeflectionSHGC[i], MaxDeflectionS[i], 1e-8);
+        EXPECT_NEAR(correctMaxDeflectionSHGC[i], MaxDeflectionS[i], DeflectionTolerance);
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -126,8 +129,8 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
     EXPECT_EQ(21u, numOfIterS);
 
     const auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 1.695037, 1e-6);
+    EXPECT_NEAR(Uvalue, 1.695037, Tolerance);
 
     const auto SHGC = aSystem->getSHGC(0.3716);
-    EXPECT_NEAR(SHGC, 0.425361, 1e-5);
+    EXPECT_NEAR(SHGC, 0.425361, Tolerance);
 }

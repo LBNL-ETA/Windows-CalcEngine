@@ -73,42 +73,44 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
-    };
+    }
 };
 
 TEST_F(TestDoubleClearSingleSystemWithSun, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear Single System - Surface temperatures");
 
-    auto aSystem = GetSystem();
+    constexpr auto Tolerance{1e-6};
+
+    const auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {310.818074, 311.064868, 306.799522, 306.505704};
+    const auto Temperature = aSystem->getTemperatures();
+    const std::vector correctTemperature{310.818074, 311.064868, 306.799522, 306.505704};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
-    auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {523.148794, 526.906252, 506.252171, 491.059753};
+    const auto Radiosity = aSystem->getRadiosities();
+    const std::vector correctRadiosity{523.148794, 526.906252, 506.252171, 491.059753};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     const auto heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(-72.622787, heatFlow, 1e-5);
+    EXPECT_NEAR(-72.622787, heatFlow, Tolerance);
 
     const auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(9.077848, Uvalue, 1e-5);
+    EXPECT_NEAR(9.077848, Uvalue, Tolerance);
 
     const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(20u, numOfIter);

@@ -62,31 +62,33 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CEnvironment> GetOutdoors() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CEnvironment> GetOutdoors() const
     {
         return Outdoor;
-    };
+    }
 };
 
 TEST_F(TestOutdoorEnvironmentHPrescribedTSkySpecified, CalculateH_TSkySpecified)
 {
     SCOPED_TRACE("Begin Test: Outdoors -> H model = Prescribed; Sky Model = TSky specified");
 
-    auto aOutdoor = GetOutdoors();
+    constexpr auto Tolerance = 1e-6;
+
+    const auto aOutdoor = GetOutdoors();
     ASSERT_TRUE(aOutdoor != nullptr);
 
-    auto radiosity = aOutdoor->getEnvironmentIR();
-    EXPECT_NEAR(459.2457, radiosity, 1e-5);
+    const auto radiosity = aOutdoor->getEnvironmentIR();
+    EXPECT_NEAR(459.2457, radiosity, Tolerance);
 
-    auto hc = aOutdoor->getHc();
-    EXPECT_NEAR(14.895502, hc, 1e-5);
+    const auto hc = aOutdoor->getHc();
+    EXPECT_NEAR(14.895502, hc, Tolerance);
 
-    auto outIR = aOutdoor->getRadiationFlow();
-    EXPECT_NEAR(-7.777658, outIR, 1e-5);
+    const auto outIR = aOutdoor->getRadiationFlow();
+    EXPECT_NEAR(-7.777658, outIR, Tolerance);
 
-    auto outConvection = aOutdoor->getConvectionConductionFlow();
-    EXPECT_NEAR(-22.696083, outConvection, 1e-5);
+    const auto outConvection = aOutdoor->getConvectionConductionFlow();
+    EXPECT_NEAR(-22.696081, outConvection, Tolerance);
 
-    auto totalHeatFlow = aOutdoor->getHeatFlow();
-    EXPECT_NEAR(-30.473740, totalHeatFlow, 1e-5);
+    const auto totalHeatFlow = aOutdoor->getHeatFlow();
+    EXPECT_NEAR(-30.473739, totalHeatFlow, Tolerance);
 }

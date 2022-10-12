@@ -46,18 +46,20 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
 {
     SCOPED_TRACE("Begin Test: Circular perforated cell - Solar properties.");
 
+    constexpr auto Tolerance = 1e-6;
+    
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.2, tauDiff, 1e-6);
+    EXPECT_NEAR(0.2, tauDiff, Tolerance);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.8, RfDiff, 1e-6);
+    EXPECT_NEAR(0.8, RfDiff, Tolerance);
 
     const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
-    EXPECT_NEAR(0.8, RbDiff, 1e-6);
+    EXPECT_NEAR(0.8, RbDiff, Tolerance);
 
     auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
@@ -81,7 +83,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 
     // Test first row
@@ -101,7 +103,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 
     // Test first row for reflectance matrix
@@ -123,7 +125,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 
     // Test first row for reflectance matrix
@@ -145,6 +147,6 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 }

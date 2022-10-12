@@ -60,34 +60,36 @@ protected:
     }
 
 public:
-    Tarcog::ISO15099::CSingleSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
-    };
+    }
 };
 
 TEST_F(TestSingleClearSingleSystem, Test1)
 {
     SCOPED_TRACE("Begin Test: Single Clear - U-value");
 
+    constexpr auto Tolerance = 1e-6;
+
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {297.207035, 297.14470};
+    const std::vector correctTemperature{297.207035, 297.14470};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {432.444546, 439.201749};
+    const std::vector correctRadiosity{432.444546, 439.201749};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 }

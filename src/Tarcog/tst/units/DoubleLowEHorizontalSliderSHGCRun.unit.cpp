@@ -112,14 +112,16 @@ TEST_F(TestDoubleLowEHorizontalSliderSHGCRun, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Low-e with Horizontal Slider - SHGC run");
 
+    constexpr auto Tolerance = 1e-6;
+
     const auto window{getWindow()};
 
     const auto UValue{window.uValue()};
-    EXPECT_NEAR(UValue, 1.836425, 1e-5);
+    EXPECT_NEAR(UValue, 1.836425, Tolerance);
 
     const auto SHGC{window.shgc()};
-    EXPECT_NEAR(SHGC, 0.359329, 1e-5);
+    EXPECT_NEAR(SHGC, 0.359329, Tolerance);
 
     const auto vt{window.vt()};
-    EXPECT_NEAR(vt, 0.525034, 1e-5);
+    EXPECT_NEAR(vt, 0.525034, Tolerance);
 }

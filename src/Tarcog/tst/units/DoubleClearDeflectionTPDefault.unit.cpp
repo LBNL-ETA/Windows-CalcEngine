@@ -75,7 +75,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> getSystem() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> getSystem() const
     {
         return m_TarcogSystem;
     }
@@ -85,29 +85,31 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Calculated Deflection");
 
+    constexpr double Tolerance = 1e-6;
+
     auto aSystem = getSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
     auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {258.799455, 259.124629, 279.009115, 279.618815};
+    std::vector correctTemperature = {258.799454, 259.124627, 279.009121, 279.618821};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {252.092023, 267.753054, 331.451548, 359.055470};
+    std::vector correctRadiosity = {252.092017, 267.753052, 331.451548, 359.055470};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     const auto MaxDeflection = aSystem->getMaxDeflections();
-    std::vector<double> correctMaxDeflection{-2.285903e-3, 0.483756e-3};
+    std::vector correctMaxDeflection{-2.285903e-3, 0.483756e-3};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
@@ -116,12 +118,12 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
     }
 
     const auto MeanDeflection = aSystem->getMeanDeflections();
-    std::vector<double> correctMeanDeflection{-0.957652e-3, 0.202669e-3};
+    std::vector correctMeanDeflection{-0.957652e-3, 0.202669e-3};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
     {
-        EXPECT_NEAR(correctMeanDeflection[i], MeanDeflection[i], 1e-5);
+        EXPECT_NEAR(correctMeanDeflection[i], MeanDeflection[i], Tolerance);
     }
 
     auto numOfIter = aSystem->getNumberOfIterations();

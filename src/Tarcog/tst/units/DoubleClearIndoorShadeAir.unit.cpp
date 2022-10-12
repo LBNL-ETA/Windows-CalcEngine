@@ -106,14 +106,16 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
 {
     SCOPED_TRACE("Begin Test: Indoor Shade - Air");
 
+    constexpr auto Tolerance = 1e-6;
+
     const auto aSystem = GetSystem();
 
     const auto temperature = aSystem.getTemperatures();
     const auto radiosity = aSystem.getRadiosities();
 
-    std::vector<double> correctTemp = {
+    std::vector correctTemp = {
       258.240219, 258.756303, 276.282652, 276.798736, 288.170470, 288.174332};
-    std::vector<double> correctJ = {
+    std::vector correctJ = {
       250.251349, 264.677378, 319.842529, 340.847167, 382.961347, 397.285043};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
@@ -121,14 +123,13 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
 
     for(size_t i = 0; i < temperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemp[i], temperature[i], 1e-5);
-        EXPECT_NEAR(correctJ[i], radiosity[i], 1e-5);
+        EXPECT_NEAR(correctTemp[i], temperature[i], Tolerance);
+        EXPECT_NEAR(correctJ[i], radiosity[i], Tolerance);
     }
 
-    //const auto numOfIter = aSystem.getNumberOfIterations();
-    //EXPECT_EQ(3u, numOfIter);
-
-    // Tolerance inside the tarcog is set to 1e-5
+    const auto numOfIter = aSystem.getNumberOfIterations();
+    EXPECT_EQ(1u, numOfIter);
+    
     const auto ventilatedFlow = aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(40.879043, ventilatedFlow, 1e-5);
+    EXPECT_NEAR(40.879043, ventilatedFlow, Tolerance);
 }

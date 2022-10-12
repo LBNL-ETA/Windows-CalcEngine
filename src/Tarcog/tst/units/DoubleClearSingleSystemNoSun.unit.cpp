@@ -69,42 +69,43 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
-    };
+    }
 };
 
 TEST_F(TestDoubleClearSingleSystemNoSun, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear Single System - Surface temperatures");
-
-    auto aSystem = GetSystem();
+    
+    constexpr auto Tolerance{1e-6};
+    const auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {258.756688, 259.359226, 279.178510, 279.781048};
+    const auto Temperature = aSystem->getTemperatures();
+    const std::vector correctTemperature{258.756688, 259.359226, 279.178508, 279.781047};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
-    auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {251.950834, 268.667346, 332.299338, 359.731700};
-    ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
+    const auto radiosity = aSystem->getRadiosities();
+    std::vector correctRadiosity = {251.950834, 268.667346, 332.299341, 359.731704};
+    ASSERT_EQ(correctRadiosity.size(), radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], radiosity[i], Tolerance);
     }
 
-    auto heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(105.431019, heatFlow, 1e-5);
+    const auto heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
+    EXPECT_NEAR(105.431019, heatFlow, Tolerance);
 
     auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(2.703359, Uvalue, 1e-5);
+    EXPECT_NEAR(2.703359, Uvalue, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(20u, numOfIter);

@@ -44,6 +44,7 @@ public:
 
 TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
 {
+    constexpr auto Tolerance = 1e-6;
     SCOPED_TRACE("Begin Test: Circular perforated cell - Solar properties.");
 
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
@@ -51,13 +52,13 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
     BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.320845, tauDiff, 1e-6);
+    EXPECT_NEAR(0.320845, tauDiff, Tolerance);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.636708, RfDiff, 1e-6);
+    EXPECT_NEAR(0.636708, RfDiff, Tolerance);
 
     const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
-    EXPECT_NEAR(0.560303, RbDiff, 1e-6);
+    EXPECT_NEAR(0.560303, RbDiff, Tolerance);
 
     auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
@@ -80,7 +81,7 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 
     // Test first row
@@ -100,7 +101,7 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 
     // Test first row for reflectance matrix
@@ -122,7 +123,7 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 
     // Test first row for reflectance matrix
@@ -144,7 +145,7 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
     EXPECT_EQ(correctResults.size(), calculatedResults.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
+        EXPECT_NEAR(correctResults[i], calculatedResults[i], Tolerance);
     }
 }
 
