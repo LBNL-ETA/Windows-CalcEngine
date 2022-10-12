@@ -46,13 +46,7 @@ namespace Tarcog
 
             static std::shared_ptr<CIGUGapLayer>
               forcedVentilationGap(double thickness,
-                                   double airSpeed,
-                                   AirHorizontalDirection const airHorizontalDirection,
-                                   double pressure = 101325);
-            static std::shared_ptr<CIGUGapLayer>
-              forcedVentilationGap(double thickness,
-                                   double airSpeed,
-                                   AirVerticalDirection const airVerticalDirection,
+                                   const ForcedVentilation & forcedVentilation,
                                    double pressure = 101325);
 
             static std::shared_ptr<CIGUGapLayer>

@@ -68,13 +68,13 @@ protected:
 
         auto gapThickness = 0.0127;
         auto gapAirSpeed = 0.5;
-        auto gapAirHorizontalDirection = Tarcog::ISO15099::AirVerticalDirection::Up;
-        auto gap1 = Tarcog::ISO15099::Layers::forcedVentilationGap(
-          gapThickness, gapAirSpeed, gapAirHorizontalDirection);
+        auto gapAirTemperature = 0.5;
+        // auto gapAirHorizontalDirection = Tarcog::ISO15099::AirVerticalDirection::Up;
+        Tarcog::ISO15099::ForcedVentilation forcedVentilation = {gapAirSpeed, gapAirTemperature};
+        auto gap1 = Tarcog::ISO15099::Layers::forcedVentilationGap(gapThickness, forcedVentilation);
         ASSERT_TRUE(gap1 != nullptr);
 
-        auto gap2 = Tarcog::ISO15099::Layers::forcedVentilationGap(
-          gapThickness, gapAirSpeed, gapAirHorizontalDirection);
+        auto gap2 = Tarcog::ISO15099::Layers::forcedVentilationGap(gapThickness, forcedVentilation);
         ASSERT_TRUE(gap2 != nullptr);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
@@ -116,10 +116,10 @@ TEST_F(TestGapLayerInBetweenForcedVentilation, VentilationFlow)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(32.988234, gainEnergy, 1e-4);
+    EXPECT_NEAR(0.0, gainEnergy, 1e-4);
 
     aLayer = GetGap2();
     ASSERT_TRUE(aLayer != nullptr);
     gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-32.988234, gainEnergy, 1e-4);
+    EXPECT_NEAR(-0.0, gainEnergy, 1e-4);
 }

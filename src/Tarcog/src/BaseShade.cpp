@@ -180,6 +180,27 @@ namespace Tarcog
         void CIGUShadeLayer::calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
                                                     std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2)
         {
+            // TODO What if only one ventilation is forced?
+            if(t_Gap1->isVentilationForced() && t_Gap2->isVentilationForced())
+            {
+                ForcedVentilation forcedVentilation1 = t_Gap1->getForcedVentilation();
+                ForcedVentilation forcedVentilation2 = t_Gap2->getForcedVentilation();
+                t_Gap1->setFlowSpeed(forcedVentilation1.Speed);
+                t_Gap2->setFlowSpeed(forcedVentilation2.Speed);
+                // t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
+                //                         m_ShadeOpenings->Aeq_top(),
+                //                         AirVerticalDirection::Up);
+                // t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
+                //                         m_ShadeOpenings->Aeq_bot(),
+                //                         AirVerticalDirection::Down);
+                t_Gap1->setFlowTemperatures(forcedVentilation1.Temperature,
+                                            forcedVentilation1.Temperature,
+                                            AirVerticalDirection::None);
+                t_Gap2->setFlowTemperatures(forcedVentilation2.Temperature,
+                                            forcedVentilation2.Temperature,
+                                            AirVerticalDirection::None);
+                return;
+            }
             double Tup = t_Gap1->layerTemperature();
             double Tdown = t_Gap2->layerTemperature();
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
@@ -192,41 +213,37 @@ namespace Tarcog
                 double tempGap2 = t_Gap2->layerTemperature();
                 double Tav1 = t_Gap1->averageTemperature();
                 double Tav2 = t_Gap2->averageTemperature();
-                // TODO What if only one ventilation is forced?
-                if (!(t_Gap1->isVentilationForced() && t_Gap2->isVentilationForced()))
+                if(tempGap1 > tempGap2)
                 {
-                    if (tempGap1 > tempGap2)
-                    {
-                        t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
-                                                m_ShadeOpenings->Aeq_top(),
-                                                AirVerticalDirection::Up);
-                        t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
-                                                m_ShadeOpenings->Aeq_bot(),
-                                                AirVerticalDirection::Down);
-                    }
-                    else
-                    {
-                        t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
-                                                m_ShadeOpenings->Aeq_bot(),
-                                                AirVerticalDirection::Down);
-                        t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
-                                                m_ShadeOpenings->Aeq_top(),
-                                                AirVerticalDirection::Up);
-                    }
-                    double drivingPressure = t_Gap1->getAirflowReferencePoint(tempGap2);
-                    double ratio = t_Gap1->getThickness() / t_Gap2->getThickness();
-                    double A1 = t_Gap1->bernoullyPressureTerm() + t_Gap1->pressureLossTerm();
-                    double A2 = t_Gap2->bernoullyPressureTerm() + t_Gap2->pressureLossTerm();
-                    double B1 = t_Gap1->hagenPressureTerm();
-                    double B2 = t_Gap2->hagenPressureTerm();
-                    double A = A1 + pow(ratio, 2) * A2;
-                    double B = B1 + ratio * B2;
-                    double speed1 =
-                      (sqrt(std::abs(pow(B, 2.0) + 4 * A * drivingPressure)) - B) / (2.0 * A);
-                    double speed2 = speed1 / ratio;
-                    t_Gap1->setFlowSpeed(speed1);
-                    t_Gap2->setFlowSpeed(speed2);
+                    t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
+                                            m_ShadeOpenings->Aeq_top(),
+                                            AirVerticalDirection::Up);
+                    t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
+                                            m_ShadeOpenings->Aeq_bot(),
+                                            AirVerticalDirection::Down);
                 }
+                else
+                {
+                    t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
+                                            m_ShadeOpenings->Aeq_bot(),
+                                            AirVerticalDirection::Down);
+                    t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
+                                            m_ShadeOpenings->Aeq_top(),
+                                            AirVerticalDirection::Up);
+                }
+                double drivingPressure = t_Gap1->getAirflowReferencePoint(tempGap2);
+                double ratio = t_Gap1->getThickness() / t_Gap2->getThickness();
+                double A1 = t_Gap1->bernoullyPressureTerm() + t_Gap1->pressureLossTerm();
+                double A2 = t_Gap2->bernoullyPressureTerm() + t_Gap2->pressureLossTerm();
+                double B1 = t_Gap1->hagenPressureTerm();
+                double B2 = t_Gap2->hagenPressureTerm();
+                double A = A1 + pow(ratio, 2) * A2;
+                double B = B1 + ratio * B2;
+                double speed1 =
+                  (sqrt(std::abs(pow(B, 2.0) + 4 * A * drivingPressure)) - B) / (2.0 * A);
+                double speed2 = speed1 / ratio;
+                t_Gap1->setFlowSpeed(speed1);
+                t_Gap2->setFlowSpeed(speed2);
 
                 double beta1 = t_Gap1->betaCoeff();
                 double beta2 = t_Gap2->betaCoeff();
@@ -262,7 +279,6 @@ namespace Tarcog
                     gap1Direction = AirVerticalDirection::Down;
                     gap2Direction = AirVerticalDirection::Up;
                 }
-
                 converged =
                   std::abs(Tup - TupOld) < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
                 converged =
@@ -279,17 +295,27 @@ namespace Tarcog
                     throw std::runtime_error("Airflow iterations fail to converge. Maximum number "
                                              "of iteration steps reached.");
                 }
+                double qv1 = t_Gap1->getGainFlow();
+                double qv2 = t_Gap2->getGainFlow();
+                t_Gap1->smoothEnergyGain(qv1, qv2);
+                t_Gap2->smoothEnergyGain(qv1, qv2);
             }
-
-            double qv1 = t_Gap1->getGainFlow();
-            double qv2 = t_Gap2->getGainFlow();
-            t_Gap1->smoothEnergyGain(qv1, qv2);
-            t_Gap2->smoothEnergyGain(qv1, qv2);
         }
 
         void CIGUShadeLayer::calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
                                                std::shared_ptr<CIGUVentilatedGapLayer> t_Gap)
         {
+            if(t_Gap->isVentilationForced())
+            {
+                ForcedVentilation forcedVentilation = t_Gap->getForcedVentilation();
+                // t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top(),
+                // AirVerticalDirection::Up);
+                t_Gap->setFlowSpeed(forcedVentilation.Speed);
+                t_Gap->setFlowTemperatures(forcedVentilation.Temperature,
+                                           forcedVentilation.Temperature,
+                                           AirVerticalDirection::None);
+                return;
+            }
             double TgapOut = t_Gap->layerTemperature();
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
@@ -300,26 +326,23 @@ namespace Tarcog
             {
                 double tempEnvironment = t_Environment->getGasTemperature();
                 double TavGap = t_Gap->averageTemperature();
-                if (!t_Gap->isVentilationForced())
+                if(tempGap > tempEnvironment)
                 {
-                    if(tempGap > tempEnvironment)
-                    {
-                        t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
-                                               m_ShadeOpenings->Aeq_top(),
-                                               AirVerticalDirection::Up);
-                    }
-                    else
-                    {
-                        t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
-                                               m_ShadeOpenings->Aeq_bot(),
-                                               AirVerticalDirection::Down);
-                    }
-                    double drivingPressure = t_Gap->getAirflowReferencePoint(tempEnvironment);
-                    double A = t_Gap->bernoullyPressureTerm() + t_Gap->pressureLossTerm();
-                    double B = t_Gap->hagenPressureTerm();
-                    double speed = (sqrt(std::abs(pow(B, 2) + 4 * A * drivingPressure)) - B) / (2 * A);
-                    t_Gap->setFlowSpeed(speed);
+                    t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
+                                           m_ShadeOpenings->Aeq_top(),
+                                           AirVerticalDirection::Up);
                 }
+                else
+                {
+                    t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
+                                           m_ShadeOpenings->Aeq_bot(),
+                                           AirVerticalDirection::Down);
+                }
+                double drivingPressure = t_Gap->getAirflowReferencePoint(tempEnvironment);
+                double A = t_Gap->bernoullyPressureTerm() + t_Gap->pressureLossTerm();
+                double B = t_Gap->hagenPressureTerm();
+                double speed = (sqrt(std::abs(pow(B, 2) + 4 * A * drivingPressure)) - B) / (2 * A);
+                t_Gap->setFlowSpeed(speed);
                 double beta = t_Gap->betaCoeff();
                 double alpha = 1 - beta;
 
