@@ -347,7 +347,7 @@ namespace Gases
     CGas & CGas::operator=(CGas const & t_Gas)
     {
         m_GasItem.clear();
-        for(auto const item : t_Gas.m_GasItem)
+        for(auto const & item : t_Gas.m_GasItem)
         {
             m_GasItem.push_back(item);
         }
