@@ -70,8 +70,6 @@ namespace Tarcog
 
                 achievedTolerance = calculateTolerance(aSolution);
 
-                std::cout << std::endl;
-
                 estimateNewState(aSolution);
 
                 m_IGU.setState(m_IGUState);
