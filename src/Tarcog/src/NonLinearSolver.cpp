@@ -2,8 +2,9 @@
 #include <cmath>
 #include <algorithm>
 
-#include "NonLinearSolver.hpp"
 #include "WCECommon.hpp"
+
+#include "NonLinearSolver.hpp"
 #include "TarcogConstants.hpp"
 #include "HeatFlowBalance.hpp"
 #include "IGU.hpp"
@@ -56,7 +57,7 @@ namespace Tarcog
             m_IGUState = m_IGU.getState();
             std::vector<double> initialState(m_IGUState);
             std::vector<double> bestSolution(m_IGUState.size());
-            auto achievedTolerance = 1000.0;
+            auto achievedTolerance = std::numeric_limits<double>::max();
             m_SolutionTolerance = achievedTolerance;
 
             m_Iterations = 0;
@@ -68,6 +69,8 @@ namespace Tarcog
                 std::vector<double> aSolution = m_QBalance.calcBalanceMatrix();
 
                 achievedTolerance = calculateTolerance(aSolution);
+
+                std::cout << std::endl;
 
                 estimateNewState(aSolution);
 
