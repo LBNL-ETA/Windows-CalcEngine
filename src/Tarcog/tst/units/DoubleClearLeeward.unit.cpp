@@ -88,6 +88,8 @@ TEST_F(TestDoubleClearLeeward, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Surface temperatures");
 
+    constexpr double Tolerance = 1e-6;
+
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
@@ -98,20 +100,20 @@ TEST_F(TestDoubleClearLeeward, Test1)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     auto Temperature = aSystem->getTemperatures(aRun);
-    std::vector<double> correctTemperature = {258.756688, 259.359226, 279.178510, 279.781048};
+    std::vector<double> correctTemperature = {258.756688, 259.359226, 279.178508, 279.781047};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     auto Radiosity = aSystem->getRadiosities(aRun);
-    std::vector<double> correctRadiosity = {251.950834, 268.667346, 332.299338, 359.731700};
+    std::vector<double> correctRadiosity = {251.950834, 268.667346, 332.299341, 359.731704};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
@@ -124,21 +126,21 @@ TEST_F(TestDoubleClearLeeward, Test1)
     aRun = Tarcog::ISO15099::System::SHGC;
 
     Temperature = aSystem->getTemperatures(aRun);
-    correctTemperature = {264.022835, 265.134421, 287.947300, 288.428857};
+    correctTemperature = {264.022835, 265.134421, 287.947302, 288.428859};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     Radiosity = aSystem->getRadiosities(aRun);
-    correctRadiosity = {269.869356, 295.289318, 374.655901, 397.518724};
+    correctRadiosity = {269.869356, 295.289318, 374.655898, 397.518721};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
@@ -148,8 +150,8 @@ TEST_F(TestDoubleClearLeeward, Test1)
     /// General results
     //////////////////////////////////////////////////////////////////////
     auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 2.703359, 1e-5);
+    EXPECT_NEAR(Uvalue, 2.703359, Tolerance);
 
     auto SHGC = aSystem->getSHGC(0.606897);
-    EXPECT_NEAR(SHGC, 0.690096, 1e-5);
+    EXPECT_NEAR(SHGC, 0.690096, Tolerance);
 }
