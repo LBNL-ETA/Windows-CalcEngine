@@ -34,21 +34,23 @@ TEST_F(TestSPChipInterpolation, TestInterpolations)
 {
     SCOPED_TRACE("Begin Test: Interpolation in various ranges.");
 
-    std::shared_ptr<IInterpolation2D> aInterpolation = getInterpolation();
+    constexpr auto tolerance{1e-6};
+
+    const std::shared_ptr<IInterpolation2D> aInterpolation = getInterpolation();
 
     double value = 28;
     value = aInterpolation->getValue(value);
-    EXPECT_NEAR(value, 0.664845, 1e-5);
+    EXPECT_NEAR(value, 0.664845, tolerance);
 
     value = 40.9106;
     value = aInterpolation->getValue(value);
-    EXPECT_NEAR(value, 0.586155, 1e-5);
+    EXPECT_NEAR(value, 0.586155, tolerance);
 
     value = 20;
     value = aInterpolation->getValue(value);
-    EXPECT_NEAR(value, 0.683876, 1e-5);
+    EXPECT_NEAR(value, 0.683876, tolerance);
 
     value = 80;
     value = aInterpolation->getValue(value);
-    EXPECT_NEAR(value, 0.330733, 1e-5);
+    EXPECT_NEAR(value, 0.330733, tolerance);
 }

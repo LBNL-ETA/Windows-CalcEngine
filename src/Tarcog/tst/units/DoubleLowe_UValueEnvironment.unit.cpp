@@ -83,6 +83,8 @@ TEST_F(TestDoubleLoweUValueEnvironment, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Surface temperatures");
 
+    constexpr double Tolerance = 1e-6;
+
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
@@ -98,7 +100,7 @@ TEST_F(TestDoubleLoweUValueEnvironment, Test1)
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     auto SolidLayerConductivities = aSystem->getSolidEffectiveLayerConductivities(aRun);
@@ -107,7 +109,7 @@ TEST_F(TestDoubleLoweUValueEnvironment, Test1)
 
     for(auto i = 0u; i < SolidLayerConductivities.size(); ++i)
     {
-        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
+        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], Tolerance);
     }
 
     auto GapLayerConductivities = aSystem->getGapEffectiveLayerConductivities(aRun);
@@ -116,7 +118,7 @@ TEST_F(TestDoubleLoweUValueEnvironment, Test1)
 
     for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
     {
-        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], 1e-6);
+        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], Tolerance);
     }
 
     auto Radiosity = aSystem->getRadiosities(aRun);
@@ -124,14 +126,14 @@ TEST_F(TestDoubleLoweUValueEnvironment, Test1)
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     auto effectiveSystemConductivity{aSystem->getEffectiveSystemConductivity(aRun)};
     EXPECT_NEAR(0.051424, effectiveSystemConductivity, 1e-6);
 
     auto thickness{aSystem->thickness(aRun)};
-    EXPECT_NEAR(0.021595, thickness, 1e-6);
+    EXPECT_NEAR(0.021595, thickness, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
     EXPECT_EQ(21, int(numOfIter));
@@ -140,8 +142,8 @@ TEST_F(TestDoubleLoweUValueEnvironment, Test1)
     /// General results
     //////////////////////////////////////////////////////////////////////
     const auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 1.683701, 1e-5);
+    EXPECT_NEAR(Uvalue, 1.683701, Tolerance);
 
     const auto SHGC = aSystem->getSHGC(0.3716);
-    EXPECT_NEAR(SHGC, 0.0, 1e-5);
+    EXPECT_NEAR(SHGC, 0.0, Tolerance);
 }
