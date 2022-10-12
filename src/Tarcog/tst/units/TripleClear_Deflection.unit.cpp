@@ -94,6 +94,9 @@ TEST_F(TestTripleClearDeflection, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Surface temperatures");
 
+    constexpr auto Tolerance = 1e-6;
+    constexpr auto DeflectionTolerance = 1e-8;
+
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
@@ -104,21 +107,21 @@ TEST_F(TestTripleClearDeflection, Test1)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     auto Temperature = aSystem->getTemperatures(aRun);
-    std::vector<double> correctTemperature = {253.145118, 253.399346, 265.491216, 265.745444, 281.162092, 281.416320};
+    std::vector correctTemperature = {253.145118, 253.399346, 265.491216, 265.745444, 281.162092, 281.416320};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
-    std::vector<double> correctDeflection = {-0.421986e-3, 0.265021e-3, 0.167762e-3};
+    std::vector correctDeflection{-0.421986e-3, 0.265021e-3, 0.167762e-3};
 
     auto deflection = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
 
     for(auto i = 0u; i < correctDeflection.size(); ++i)
     {
-        EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-8);
+        EXPECT_NEAR(correctDeflection[i], deflection[i], DeflectionTolerance);
     }
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
@@ -136,7 +139,7 @@ TEST_F(TestTripleClearDeflection, Test1)
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     correctDeflection = {-0.421986e-3, 0.265021e-3, 0.167762e-3};
@@ -145,7 +148,7 @@ TEST_F(TestTripleClearDeflection, Test1)
 
     for(auto i = 0u; i < correctDeflection.size(); ++i)
     {
-        EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-8);
+        EXPECT_NEAR(correctDeflection[i], deflection[i], DeflectionTolerance);
     }
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
@@ -155,11 +158,11 @@ TEST_F(TestTripleClearDeflection, Test1)
     /// General results
     //////////////////////////////////////////////////////////////////////
     const auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 1.9522982371191091, 1e-5);
+    EXPECT_NEAR(Uvalue, 1.9522982371191091, Tolerance);
 
     const auto SHGC = aSystem->getSHGC(0.598424255848);
-    EXPECT_NEAR(SHGC, 0.673282, 1e-5);
+    EXPECT_NEAR(SHGC, 0.673282, Tolerance);
 
     const auto relativeHeatGain = aSystem->relativeHeatGain(0.703296);
-    EXPECT_NEAR(relativeHeatGain, 579.484762, 1e-5);
+    EXPECT_NEAR(relativeHeatGain, 579.484762, Tolerance);
 }
