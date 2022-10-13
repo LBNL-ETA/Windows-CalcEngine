@@ -137,7 +137,7 @@ TEST_F(TestSingleClearThermochromics, Test1)
     }
 
     auto numOfIterations = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::Uvalue);
-    EXPECT_EQ(19u, numOfIterations);
+    EXPECT_EQ(24u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
     ///  SHGC run
@@ -168,7 +168,7 @@ TEST_F(TestSingleClearThermochromics, Test1)
     }
 
     numOfIterations = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::SHGC);
-    EXPECT_EQ(19u, numOfIterations);
+    EXPECT_EQ(23u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
     ///  Heat flows
