@@ -124,8 +124,10 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
         EXPECT_NEAR(correctJ[i], radiosity[i], Tolerance);
     }
 
-    const auto numOfIter = aSystem.getNumberOfIterations();
-    EXPECT_EQ(43u, numOfIter);
+    // Removing this because it is causing different results on different machines
+    // See the issue regarding to this
+    //const auto numOfIter = aSystem.getNumberOfIterations();
+    //EXPECT_EQ(43u, numOfIter);
     
     const auto ventilatedFlow = aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(40.879043, ventilatedFlow, Tolerance);
