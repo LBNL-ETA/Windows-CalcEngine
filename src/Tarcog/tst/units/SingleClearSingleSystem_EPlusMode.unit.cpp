@@ -122,5 +122,5 @@ TEST_F(TestSingleClearSingleSystem_EPlusMode, Test1)
     EXPECT_EQ(isToleranceAchieved, true);
 
     const auto solutionTolerance = aSystem->solutionTolarance();
-    EXPECT_NEAR(9.264811e-07, solutionTolerance, SolutionTolerance);
+    EXPECT_NEAR(6.0753393427148694e-09, solutionTolerance, SolutionTolerance);
 }

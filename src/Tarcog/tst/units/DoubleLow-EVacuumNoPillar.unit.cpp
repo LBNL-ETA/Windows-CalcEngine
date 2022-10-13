@@ -121,5 +121,5 @@ TEST_F(DoubleLowEVacuumNoPillar, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(30u, numOfIter);
+    EXPECT_EQ(37u, numOfIter);
 }

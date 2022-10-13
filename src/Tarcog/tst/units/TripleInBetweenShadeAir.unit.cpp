@@ -122,5 +122,5 @@ TEST_F(TestInBetweenShadeAir, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(20, int(numOfIter));
+    EXPECT_EQ(25u, numOfIter);
 }

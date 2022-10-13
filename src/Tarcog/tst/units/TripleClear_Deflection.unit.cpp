@@ -125,7 +125,7 @@ TEST_F(TestTripleClearDeflection, Test1)
     }
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(20u, numOfIter);
+    EXPECT_EQ(24u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// SHGC run
@@ -152,7 +152,7 @@ TEST_F(TestTripleClearDeflection, Test1)
     }
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(21u, numOfIter);
+    EXPECT_EQ(27u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results

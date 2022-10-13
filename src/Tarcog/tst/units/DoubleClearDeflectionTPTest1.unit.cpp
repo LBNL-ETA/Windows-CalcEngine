@@ -146,5 +146,5 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(20u, numOfIter);
+    EXPECT_EQ(25u, numOfIter);
 }

@@ -135,7 +135,7 @@ TEST_F(TestDoubleClearUValueEnvironment, Test1)
     EXPECT_NEAR(0.018796, thickness, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(20u, numOfIter);
+    EXPECT_EQ(24u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// SHGC run
@@ -186,7 +186,7 @@ TEST_F(TestDoubleClearUValueEnvironment, Test1)
     EXPECT_NEAR(0.018796, thickness, Tolerance);
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(20u, numOfIter);
+    EXPECT_EQ(25u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results

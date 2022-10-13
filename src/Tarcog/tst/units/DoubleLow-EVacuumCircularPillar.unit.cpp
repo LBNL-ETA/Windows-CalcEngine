@@ -129,5 +129,5 @@ TEST_F(DoubleLowEVacuumCircularPillar, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(21u, numOfIter);
+    EXPECT_EQ(26u, numOfIter);
 }

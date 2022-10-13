@@ -108,5 +108,5 @@ TEST_F(TestDoubleClearSingleSystemNoSun, Test1)
     EXPECT_NEAR(2.703359, Uvalue, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(20u, numOfIter);
+    EXPECT_EQ(25u, numOfIter);
 }

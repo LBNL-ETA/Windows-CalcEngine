@@ -130,5 +130,5 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     }
 
     auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(20u, numOfIter);
+    EXPECT_EQ(24u, numOfIter);
 }

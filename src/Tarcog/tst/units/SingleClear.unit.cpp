@@ -87,7 +87,7 @@ TEST_F(TestSingleClear, Test1)
     }
 
     auto Radiosity = aSystem->getRadiosities(Tarcog::ISO15099::System::Uvalue);
-    std::vector correctRadiosity{432.444546, 439.201749};
+    std::vector correctRadiosity{432.444545, 439.201749};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -96,7 +96,7 @@ TEST_F(TestSingleClear, Test1)
     }
 
     auto numOfIterations = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::Uvalue);
-    EXPECT_EQ(19u, numOfIterations);
+    EXPECT_EQ(24u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
     ///  SHGC run
@@ -120,7 +120,7 @@ TEST_F(TestSingleClear, Test1)
     }
 
     numOfIterations = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::SHGC);
-    EXPECT_EQ(19u, numOfIterations);
+    EXPECT_EQ(23u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
     ///  Heat flows

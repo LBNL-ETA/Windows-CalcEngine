@@ -117,7 +117,7 @@ TEST_F(TestDoubleClearLeeward, Test1)
     }
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(20, int(numOfIter));
+    EXPECT_EQ(25u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// SHGC run
@@ -144,7 +144,7 @@ TEST_F(TestDoubleClearLeeward, Test1)
     }
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(21, int(numOfIter));
+    EXPECT_EQ(25u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results

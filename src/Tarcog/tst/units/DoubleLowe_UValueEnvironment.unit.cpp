@@ -136,7 +136,7 @@ TEST_F(TestDoubleLoweUValueEnvironment, Test1)
     EXPECT_NEAR(0.021595, thickness, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(21, int(numOfIter));
+    EXPECT_EQ(25u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results

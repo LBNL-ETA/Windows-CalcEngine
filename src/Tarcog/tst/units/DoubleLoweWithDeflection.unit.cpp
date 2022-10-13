@@ -123,10 +123,10 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
     //////////////////////////////////////////////////////////////////////
 
     const auto numOfIterU = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::Uvalue);
-    EXPECT_EQ(21u, numOfIterU);
+    EXPECT_EQ(26u, numOfIterU);
 
     const auto numOfIterS = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::SHGC);
-    EXPECT_EQ(21u, numOfIterS);
+    EXPECT_EQ(26u, numOfIterS);
 
     const auto Uvalue = aSystem->getUValue();
     EXPECT_NEAR(Uvalue, 1.695037, Tolerance);

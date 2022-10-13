@@ -146,5 +146,5 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
     }
 
     auto numOfIter = GetSystem()->getNumberOfIterations();
-    EXPECT_EQ(21u, numOfIter);
+    EXPECT_EQ(26u, numOfIter);
 }

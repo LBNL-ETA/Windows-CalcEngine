@@ -1,10 +1,7 @@
 #include <memory>
-#include <stdexcept>
 #include <gtest/gtest.h>
-#include <string>
 
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
 
 class TestDoubleClearIndoorShadeAir : public testing::Test
 {
@@ -128,7 +125,7 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
     }
 
     const auto numOfIter = aSystem.getNumberOfIterations();
-    EXPECT_EQ(1u, numOfIter);
+    EXPECT_EQ(43u, numOfIter);
     
     const auto ventilatedFlow = aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(40.879043, ventilatedFlow, Tolerance);

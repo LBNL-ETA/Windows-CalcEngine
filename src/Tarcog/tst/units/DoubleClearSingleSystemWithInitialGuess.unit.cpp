@@ -108,5 +108,5 @@ TEST_F(TestDoubleClearSingleSystemWithInitialGuess, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(17u, numOfIter);
+    EXPECT_EQ(21u, numOfIter);
 }
