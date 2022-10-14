@@ -142,8 +142,8 @@ protected:
         const auto aSolarRadiation = loadSolarRadiationFile();
 
         double thickness = 4.7752e-3;   // [m]
-        const auto aMaterial_913 = Material::nBandMaterial(
-          loadSampleData_NFRC_913(), thickness, MaterialType::Monolithic);
+        const auto aMaterial_913 =
+          Material::nBandMaterial(loadSampleData_NFRC_913(), thickness, MaterialType::Monolithic);
 
         const auto layer913 = SpecularLayer::createLayer(aMaterial_913);
 

@@ -45,7 +45,10 @@ namespace SingleLayerOptics
                         const FenestrationCommon::CSeries & t_DetectorX,
                         const FenestrationCommon::CSeries & t_DetectorY,
                         const FenestrationCommon::CSeries & t_DetectorZ,
-                        const std::vector<double> & t_wavelengths = {});
+                        const std::vector<double> & t_wavelengths = {},
+                        FenestrationCommon::IntegrationType integrator =
+                          FenestrationCommon::IntegrationType::Trapezoidal,
+                        double normalizationCoefficient = 1.0);
 
         Trichromatic getTrichromatic(FenestrationCommon::PropertySimple t_Property,
                                      FenestrationCommon::Side t_Side,
@@ -72,6 +75,8 @@ namespace SingleLayerOptics
         FenestrationCommon::CSeries m_DetectorY;
         FenestrationCommon::CSeries m_DetectorZ;
         std::vector<double> m_wavelengths;
+        FenestrationCommon::IntegrationType m_Integrator;
+        double m_NormalizationCoefficient;
         double m_SDx;
         double m_SDy;
         double m_SDz;

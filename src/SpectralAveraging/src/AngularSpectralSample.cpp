@@ -223,9 +223,7 @@ namespace SpectralAveraging
 
             aSample =
               std::make_shared<CSpectralSample>(aAngularData.properties(),
-                                                m_SpectralSampleZero->getSourceData(),
-                                                m_SpectralSampleZero->getIntegrator(),
-                                                m_SpectralSampleZero->getNormalizationCoeff());
+                                                m_SpectralSampleZero->getSourceData());
             aSample->assignDetectorAndWavelengths(m_SpectralSampleZero);
             const auto aSpectralSampleAngle =
               std::make_shared<CSpectralSampleAngle>(aSample, t_Angle);

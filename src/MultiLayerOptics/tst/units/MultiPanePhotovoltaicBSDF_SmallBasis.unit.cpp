@@ -1804,8 +1804,8 @@ protected:
           std::make_shared<PhotovoltaicSampleData>(*loadSampleData_1(), eqeFront(), eqeBack());
 
         double thickness = 3.048e-3;   // [m]
-        const auto aMaterial_1 = Material::nBandPhotovoltaicMaterial(
-          pvSample, thickness, MaterialType::Monolithic);
+        const auto aMaterial_1 =
+          Material::nBandPhotovoltaicMaterial(pvSample, thickness, MaterialType::Monolithic);
 
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
         auto Layer_1 = CBSDFLayerMaker::getPhotovoltaicSpecularLayer(aMaterial_1, aBSDF, table());

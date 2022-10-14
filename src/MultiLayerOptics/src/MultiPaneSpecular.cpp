@@ -586,6 +586,8 @@ namespace MultiLayerOptics
 
     void CMultiPaneSpecular::setCalculationProperties(const CalculationProperties & calcProperties)
     {
+        m_CalculationProperties = calcProperties;
+
         m_ScaledSolarRadiation = calcProperties.scaledSolarRadiation();
 
         if(calcProperties.CommonWavelengths.has_value())

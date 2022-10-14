@@ -207,7 +207,7 @@ namespace MultiLayerOptics
                                            double normalizationCoefficient = 1);
 
         void setCalculationProperties(
-          const SingleLayerOptics::CalculationProperties & calcProperties) override;
+          const SingleLayerOptics::CalculationProperties & calcProperties);
 
     protected:
         struct SeriesResults
@@ -236,6 +236,8 @@ namespace MultiLayerOptics
         // not calculate it twice. First it will search for results here and if results are not
         // available, then it will perform calculation for given angle
         std::vector<CEquivalentLayerSingleComponentMWAngle> m_EquivalentAngle;
+
+        SingleLayerOptics::CalculationProperties m_CalculationProperties;
 
         SeriesResults getSeriesResults(const SingleLayerOptics::CBeamDirection & aDirection,
                                        size_t layerIndex);

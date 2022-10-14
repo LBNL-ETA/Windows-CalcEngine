@@ -1807,10 +1807,8 @@ protected:
         const auto aSolarRadiation = loadSolarRadiationFile();
 
         constexpr double thickness{3.048e-3};   // [m]
-        const auto aMaterial_1 =
-          Material::nBandPhotovoltaicMaterial(pvSample,
-                                              thickness,
-                                              FenestrationCommon::MaterialType::Monolithic);
+        const auto aMaterial_1 = Material::nBandPhotovoltaicMaterial(
+          pvSample, thickness, FenestrationCommon::MaterialType::Monolithic);
 
 
         const auto layer1 =
@@ -1837,7 +1835,7 @@ protected:
         m_Layer = CMultiPaneSpecular::create({layer1}, condensed);
 
         const SingleLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
-                                                            loadSolarRadiationFile().getXArray()};
+                                                             loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 

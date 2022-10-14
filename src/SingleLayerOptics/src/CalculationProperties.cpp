@@ -5,10 +5,15 @@ namespace SingleLayerOptics{
     CalculationProperties::CalculationProperties(
       const FenestrationCommon::CSeries & solarRadiation,
       std::optional<std::vector<double>> commonWavelengths,
-      std::optional<FenestrationCommon::CSeries> detectorData) :
+      std::optional<FenestrationCommon::CSeries> detectorData,
+      FenestrationCommon::IntegrationType integrationType,
+      double normalizationCoefficient) :
         SolarRadiation(solarRadiation),
         CommonWavelengths(std::move(commonWavelengths)),
-        DetectorData(std::move(detectorData)){}
+        DetectorData(std::move(detectorData)),
+        m_IntegrationType(integrationType),
+        m_NormalizationCoefficient(normalizationCoefficient)
+    {}
 
     FenestrationCommon::CSeries CalculationProperties::scaledSolarRadiation() const
     {

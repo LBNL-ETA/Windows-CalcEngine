@@ -681,10 +681,10 @@ TEST_F(TestSpecularAngularLayer_102, TestSpecular1)
     BSDFIntegrator aResults = aLayer->getResults();
 
     double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.64541405979702648, tauDiff, 1e-6);
+    EXPECT_NEAR(0.6454105631796091, tauDiff, 1e-6);
 
     double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.272951100863078, RfDiff, 1e-6);
+    EXPECT_NEAR(0.27294980940021729, RfDiff, 1e-6);
 
     double theta = 35;
     double phi = 58;

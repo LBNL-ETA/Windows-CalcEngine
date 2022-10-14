@@ -316,10 +316,8 @@ private:
       createLayer(const CSeries & astmStandard) const
     {
         double thickness = 3.048e-3;   // [m]
-        const auto aMaterial =
-          SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_5439(),
-                                                     thickness,
-                                                     FenestrationCommon::MaterialType::Monolithic);
+        const auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_5439(), thickness, FenestrationCommon::MaterialType::Monolithic);
 
         auto single_layer = SingleLayerOptics::SpecularLayer::createLayer(aMaterial);
 
