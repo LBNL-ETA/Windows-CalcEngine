@@ -180,7 +180,7 @@ namespace MultiLayerOptics
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
-        void setCalculationProperties(const SingleLayerOptics::CalculationProperties & calcProperties);
+        void setCalculationProperties(const SingleLayerOptics::CalculationProperties & calcProperties) override;
 
     protected:
         explicit CMultiPaneBSDF(

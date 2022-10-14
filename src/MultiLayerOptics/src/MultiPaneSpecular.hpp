@@ -207,7 +207,7 @@ namespace MultiLayerOptics
                                            double normalizationCoefficient = 1);
 
         void setCalculationProperties(
-          const SingleLayerOptics::CalculationProperties & calcProperties);
+          const SingleLayerOptics::CalculationProperties & calcProperties) override;
 
     protected:
         struct SeriesResults
