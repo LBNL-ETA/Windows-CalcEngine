@@ -569,9 +569,9 @@ TEST_F(TestSpecularAngularLayerProperty_102, TestSpecularAngular10degree)
     double refleF = aMaterial->getProperty(Property::R, Side::Front, angle);
     double refleB = aMaterial->getProperty(Property::R, Side::Back, angle);
 
-    EXPECT_NEAR(0.84355467434102727, trans, 1e-6);
-    EXPECT_NEAR(0.074379357359260365, refleF, 1e-6);
-    EXPECT_NEAR(0.074379357359260365, refleB, 1e-6);
+    EXPECT_NEAR(0.84356824495725335, trans, 1e-6);
+    EXPECT_NEAR(0.074383187635746806, refleF, 1e-6);
+    EXPECT_NEAR(0.074383187635746806, refleB, 1e-6);
 }
 
 TEST_F(TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree)
