@@ -32,7 +32,7 @@ protected:
         aDefinitions.emplace_back(86.25, 1);
 
         const auto aDirections{BSDFDirections(aDefinitions, BSDFDirection::Incoming)};
-        const auto aLambdas{aDirections.lambdaMatrix()};
+        const auto aLambdas{aDirections.lambdaVector()};
 
         SquareMatrix Rb{{1.438618083, 0, 0, 0, 0, 0, 0},
                         {0, 0.189397664, 0, 0, 0, 0, 0},

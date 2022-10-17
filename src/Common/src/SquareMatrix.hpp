@@ -50,4 +50,11 @@ namespace FenestrationCommon
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second);
     std::vector<double> operator*(const SquareMatrix & first, const std::vector<double> & second);
 
+    SquareMatrix multiplyWithDiagonalMatrix(const std::vector<double> & tInput,
+                                            const SquareMatrix & tMatrix);
+
+    SquareMatrix multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
+                                            const std::vector<double> & tInput);
+
+
 }   // namespace FenestrationCommon

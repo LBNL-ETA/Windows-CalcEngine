@@ -13,7 +13,7 @@ namespace MultiLayerOptics
     typedef std::vector<std::vector<double>> Abs_Matrix;
 
     FenestrationCommon::SquareMatrix
-      interReflectance(const FenestrationCommon::SquareMatrix & t_Lambda,
+      interReflectance(const std::vector<double> & t_Lambda,
                        const FenestrationCommon::SquareMatrix & t_Rb,
                        const FenestrationCommon::SquareMatrix & t_Rf);
 
@@ -31,7 +31,7 @@ namespace MultiLayerOptics
         static FenestrationCommon::SquareMatrix
           equivalentT(const FenestrationCommon::SquareMatrix & t_Tf2,
                       const FenestrationCommon::SquareMatrix & t_InterRefl,
-                      const FenestrationCommon::SquareMatrix & t_Lambda,
+                      const std::vector<double> & t_Lambda,
                       const FenestrationCommon::SquareMatrix & t_Tf1);
 
         static FenestrationCommon::SquareMatrix
@@ -40,7 +40,7 @@ namespace MultiLayerOptics
                       const FenestrationCommon::SquareMatrix & t_Tb1,
                       const FenestrationCommon::SquareMatrix & t_Rf2,
                       const FenestrationCommon::SquareMatrix & t_InterRefl,
-                      const FenestrationCommon::SquareMatrix & t_Lambda);
+                      const std::vector<double> & t_Lambda);
 
         SingleLayerOptics::BSDFIntegrator m_Results;
 
@@ -132,7 +132,7 @@ namespace MultiLayerOptics
 
         bool m_PropertiesCalculated;
 
-        FenestrationCommon::SquareMatrix m_Lambda;
+        std::vector<double> m_Lambda;
     };
 
 }   // namespace MultiLayerOptics
