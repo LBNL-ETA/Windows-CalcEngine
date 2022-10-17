@@ -30,9 +30,9 @@ namespace SingleLayerOptics
         m_DetectorX(t_DetectorX),
         m_DetectorY(t_DetectorY),
         m_DetectorZ(t_DetectorZ),
+        m_wavelengths(t_wavelengths),
         m_Integrator(integrator),
-        m_NormalizationCoefficient(normalizationCoefficient),
-        m_wavelengths(t_wavelengths)
+        m_NormalizationCoefficient(normalizationCoefficient)
     {
         if(t_wavelengths.empty())
         {
