@@ -397,7 +397,7 @@ namespace FenestrationCommon
         return res;
     }
 
-    SquareMatrix FenestrationCommon::multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
+    SquareMatrix multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
                                                                 const std::vector<double> & tInput)
     {
         SquareMatrix res{tInput.size()};
