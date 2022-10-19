@@ -18,15 +18,30 @@ namespace Tarcog
     {
         class ISurface;
 
+        enum class AirVerticalDirection
+        {
+            None,
+            Up,
+            Down
+        };
+
+        enum class AirHorizontalDirection
+        {
+            None,
+            Leeward,
+            Windward
+        };
+
         struct ForcedVentilation
         {
-            ForcedVentilation() : Speed(0), Temperature(0){};
+            ForcedVentilation() : Speed(0), VerticalDirection(AirVerticalDirection::None){};
 
-            ForcedVentilation(const double t_Speed, const double t_Temperature) :
-                Speed(t_Speed),
-                Temperature(t_Temperature){};
+            ForcedVentilation(const double t_Speed,
+                              const AirVerticalDirection t_VerticalDirection) :
+                Speed(t_Speed), VerticalDirection(t_VerticalDirection){};
+
             double Speed;
-            double Temperature;
+            AirVerticalDirection VerticalDirection;
         };
 
         class CLayerGeometry : public virtual FenestrationCommon::CState
@@ -72,20 +87,6 @@ namespace Tarcog
             std::map<FenestrationCommon::Side, std::shared_ptr<ISurface>> m_Surface;
             double m_ConductiveConvectiveCoeff;
             double m_LayerGainFlow;
-        };
-
-        enum class AirVerticalDirection
-        {
-            None,
-            Up,
-            Down
-        };
-
-        enum class AirHorizontalDirection
-        {
-            None,
-            Leeward,
-            Windward
         };
 
         class CGasLayer : public virtual FenestrationCommon::CState

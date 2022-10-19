@@ -158,9 +158,25 @@ namespace Tarcog
             if(std::dynamic_pointer_cast<CIGUGapLayer>(m_PreviousLayer) != nullptr
                && std::dynamic_pointer_cast<CIGUGapLayer>(m_NextLayer) != nullptr)
             {
-                calcInBetweenShadeFlow(
-                  std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_PreviousLayer),
-                  std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer));
+                auto previousGapLayer =
+                  std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_PreviousLayer);
+                auto nextGapLayer = std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer);
+                if(previousGapLayer->isVentilationForced() || nextGapLayer->isVentilationForced())
+                {
+                    // TODO How shall we handle this case?
+                    // We could think of configurations where the "Forced Ventilation" gap is not in
+                    // contact with the indoor or the outdoor environment, such as: Outdoor
+                    // environment - glazing unit - forced ventilated gap - shade - forced
+                    // ventilated gap - glazing unit - Interior environment, but then the user has
+                    // to indicate to the model what is the inlet temperature for each ventilated
+                    // gap (indoor air temperature, outdoor air temperature or user-defined air
+                    // temperature).
+                    assert(false);
+                }
+                else
+                {
+                    calcInBetweenShadeFlow(previousGapLayer, nextGapLayer);
+                }
             }
             else if(std::dynamic_pointer_cast<CEnvironment>(m_PreviousLayer) != nullptr
                     && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer) != nullptr)
@@ -180,27 +196,6 @@ namespace Tarcog
         void CIGUShadeLayer::calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
                                                     std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2)
         {
-            // TODO What if only one ventilation is forced?
-            if(t_Gap1->isVentilationForced() && t_Gap2->isVentilationForced())
-            {
-                ForcedVentilation forcedVentilation1 = t_Gap1->getForcedVentilation();
-                ForcedVentilation forcedVentilation2 = t_Gap2->getForcedVentilation();
-                t_Gap1->setFlowSpeed(forcedVentilation1.Speed);
-                t_Gap2->setFlowSpeed(forcedVentilation2.Speed);
-                // t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
-                //                         m_ShadeOpenings->Aeq_top(),
-                //                         AirVerticalDirection::Up);
-                // t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
-                //                         m_ShadeOpenings->Aeq_bot(),
-                //                         AirVerticalDirection::Down);
-                t_Gap1->setFlowTemperatures(forcedVentilation1.Temperature,
-                                            forcedVentilation1.Temperature,
-                                            AirVerticalDirection::None);
-                t_Gap2->setFlowTemperatures(forcedVentilation2.Temperature,
-                                            forcedVentilation2.Temperature,
-                                            AirVerticalDirection::None);
-                return;
-            }
             double Tup = t_Gap1->layerTemperature();
             double Tdown = t_Gap2->layerTemperature();
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
@@ -305,44 +300,42 @@ namespace Tarcog
         void CIGUShadeLayer::calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
                                                std::shared_ptr<CIGUVentilatedGapLayer> t_Gap)
         {
-            if(t_Gap->isVentilationForced())
-            {
-                ForcedVentilation forcedVentilation = t_Gap->getForcedVentilation();
-                // t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top(),
-                // AirVerticalDirection::Up);
-                t_Gap->setFlowSpeed(forcedVentilation.Speed);
-                t_Gap->setFlowTemperatures(forcedVentilation.Temperature,
-                                           forcedVentilation.Temperature,
-                                           AirVerticalDirection::None);
-                return;
-            }
             double TgapOut = t_Gap->layerTemperature();
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
             size_t iterationStep = 0;
 
             double tempGap = t_Gap->layerTemperature();
+            ForcedVentilation forcedVentilation = t_Gap->getForcedVentilation();
+            if(t_Gap->isVentilationForced())
+            {
+                t_Gap->setFlowSpeed(forcedVentilation.Speed);
+            }
             while(!converged)
             {
                 double tempEnvironment = t_Environment->getGasTemperature();
                 double TavGap = t_Gap->averageTemperature();
-                if(tempGap > tempEnvironment)
+                if(!t_Gap->isVentilationForced())
                 {
-                    t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
-                                           m_ShadeOpenings->Aeq_top(),
-                                           AirVerticalDirection::Up);
+                    if(tempGap > tempEnvironment)
+                    {
+                        t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
+                                               m_ShadeOpenings->Aeq_top(),
+                                               AirVerticalDirection::Up);
+                    }
+                    else
+                    {
+                        t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
+                                               m_ShadeOpenings->Aeq_bot(),
+                                               AirVerticalDirection::Down);
+                    }
+                    double drivingPressure = t_Gap->getAirflowReferencePoint(tempEnvironment);
+                    double A = t_Gap->bernoullyPressureTerm() + t_Gap->pressureLossTerm();
+                    double B = t_Gap->hagenPressureTerm();
+                    double speed =
+                      (sqrt(std::abs(pow(B, 2) + 4 * A * drivingPressure)) - B) / (2 * A);
+                    t_Gap->setFlowSpeed(speed);
                 }
-                else
-                {
-                    t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
-                                           m_ShadeOpenings->Aeq_bot(),
-                                           AirVerticalDirection::Down);
-                }
-                double drivingPressure = t_Gap->getAirflowReferencePoint(tempEnvironment);
-                double A = t_Gap->bernoullyPressureTerm() + t_Gap->pressureLossTerm();
-                double B = t_Gap->hagenPressureTerm();
-                double speed = (sqrt(std::abs(pow(B, 2) + 4 * A * drivingPressure)) - B) / (2 * A);
-                t_Gap->setFlowSpeed(speed);
                 double beta = t_Gap->betaCoeff();
                 double alpha = 1 - beta;
 
@@ -353,12 +346,16 @@ namespace Tarcog
                 AirVerticalDirection gapDirection = AirVerticalDirection::None;
                 if(TgapOut > tempEnvironment)
                 {
-                    gapDirection = AirVerticalDirection::Up;
+                    gapDirection = t_Gap->isVentilationForced()
+                                     ? forcedVentilation.VerticalDirection
+                                     : AirVerticalDirection::Up;
                     t_Gap->setFlowTemperatures(TgapOut, tempEnvironment, gapDirection);
                 }
                 else
                 {
-                    gapDirection = AirVerticalDirection::Down;
+                    gapDirection = t_Gap->isVentilationForced()
+                                     ? forcedVentilation.VerticalDirection
+                                     : AirVerticalDirection::Down;
                     t_Gap->setFlowTemperatures(tempEnvironment, TgapOut, gapDirection);
                 }
 
