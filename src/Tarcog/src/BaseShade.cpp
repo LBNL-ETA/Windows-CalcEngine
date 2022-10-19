@@ -161,22 +161,9 @@ namespace Tarcog
                 auto previousGapLayer =
                   std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_PreviousLayer);
                 auto nextGapLayer = std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer);
-                if(previousGapLayer->isVentilationForced() || nextGapLayer->isVentilationForced())
-                {
-                    // TODO How shall we handle this case?
-                    // We could think of configurations where the "Forced Ventilation" gap is not in
-                    // contact with the indoor or the outdoor environment, such as: Outdoor
-                    // environment - glazing unit - forced ventilated gap - shade - forced
-                    // ventilated gap - glazing unit - Interior environment, but then the user has
-                    // to indicate to the model what is the inlet temperature for each ventilated
-                    // gap (indoor air temperature, outdoor air temperature or user-defined air
-                    // temperature).
-                    assert(false);
-                }
-                else
-                {
-                    calcInBetweenShadeFlow(previousGapLayer, nextGapLayer);
-                }
+                assert(!previousGapLayer->isVentilationForced()
+                       && !nextGapLayer->isVentilationForced());
+                calcInBetweenShadeFlow(previousGapLayer, nextGapLayer);
             }
             else if(std::dynamic_pointer_cast<CEnvironment>(m_PreviousLayer) != nullptr
                     && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer) != nullptr)
