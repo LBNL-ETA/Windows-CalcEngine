@@ -30,10 +30,7 @@ namespace SpectralAveraging
     {
     public:
         virtual ~CSample() = default;
-        explicit CSample(const FenestrationCommon::CSeries & t_SourceData,
-                         FenestrationCommon::IntegrationType integrationType =
-                           FenestrationCommon::IntegrationType::Trapezoidal,
-                         double t_NormalizationCoefficient = 1);
+        explicit CSample(const FenestrationCommon::CSeries & t_SourceData);
         CSample();
         CSample(const CSample & t_Sample);
         CSample & operator=(CSample const & t_Sample);
@@ -81,8 +78,10 @@ namespace SpectralAveraging
 
     protected:
         virtual void reset();
-        virtual void calculateState();
-        virtual void calculateProperties() = 0;
+        virtual void calculateState(FenestrationCommon::IntegrationType integrator,
+                                    double normalizationCoefficient);
+        virtual void calculateProperties(FenestrationCommon::IntegrationType integrator,
+                                         double normalizationCoefficient) = 0;
 
         // It can be single or multiple samples. In any case this should be seen as single set of
         // wavelengts
@@ -100,9 +99,6 @@ namespace SpectralAveraging
                  FenestrationCommon::CSeries>
           m_EnergySource;
 
-        FenestrationCommon::IntegrationType m_IntegrationType;
-        double m_NormalizationCoefficient;
-
         bool m_StateCalculated;
     };
 
@@ -113,11 +109,8 @@ namespace SpectralAveraging
     class CSpectralSample : public CSample
     {
     public:
-        CSpectralSample(const std::shared_ptr<CSpectralSampleData> & t_SampleData,
-                        const FenestrationCommon::CSeries & t_SourceData,
-                        FenestrationCommon::IntegrationType integrationType =
-                          FenestrationCommon::IntegrationType::Trapezoidal,
-                        double NormalizationCoefficient = 1);
+        CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData,
+                        const FenestrationCommon::CSeries & t_SourceData);
 
         explicit CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData);
 
@@ -139,8 +132,10 @@ namespace SpectralAveraging
         [[nodiscard]] FenestrationCommon::Limits getWavelengthLimits() const;
 
     protected:
-        void calculateProperties() override;
-        void calculateState() override;
+        void calculateProperties(FenestrationCommon::IntegrationType integrator,
+                                 double normalizationCoefficient) override;
+        void calculateState(FenestrationCommon::IntegrationType integrator,
+                            double normalizationCoefficient) override;
 
         std::shared_ptr<CSpectralSampleData> m_SampleData;
 
@@ -157,15 +152,13 @@ namespace SpectralAveraging
     {
     public:
         CPhotovoltaicSample(const std::shared_ptr<PhotovoltaicSampleData> & t_PhotovoltaicData,
-                            const FenestrationCommon::CSeries & t_SourceData,
-                            FenestrationCommon::IntegrationType integrationType =
-                              FenestrationCommon::IntegrationType::Trapezoidal,
-                            double NormalizationCoefficient = 1);
+                            const FenestrationCommon::CSeries & t_SourceData);
 
         FenestrationCommon::CSeries jscPrime(const FenestrationCommon::Side side);
 
     protected:
-        void calculateState() override;
+        void calculateState(FenestrationCommon::IntegrationType integrator,
+                            double normalizationCoefficient) override;
         [[nodiscard]] PhotovoltaicSampleData * getSample() const;
 
         static double jscPrimeCalc(double wavelength, double eqe);

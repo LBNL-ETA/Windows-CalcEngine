@@ -329,8 +329,8 @@ protected:
         m_Layer = CMultiPaneBSDF::create({Layer_Venetian, Layer_102}, condensed);
 
         CSeries detector; // Need to work even for empty detector.
-        const CalculationProperties input{loadSolarRadiationFile(),
-                                          loadSolarRadiationFile().getXArray(), detector};
+        const CalculationProperties input{
+          loadSolarRadiationFile(), loadSolarRadiationFile().getXArray(), detector};
         m_Layer->setCalculationProperties(input);
     }
 

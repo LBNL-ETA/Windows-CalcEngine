@@ -85,27 +85,29 @@ TEST_F(TestDoubleClearDeflectionWithLoad, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Deflection case with loads");
 
-    auto aSystem = GetSystem();
+    constexpr auto Tolerance{1e-6};
+
+    const auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
     //////////////////////////////////////////////////////////////////////
     /// UValue run
     //////////////////////////////////////////////////////////////////////
 
-    auto aRun = Tarcog::ISO15099::System::Uvalue;
+    const auto aRun = Tarcog::ISO15099::System::Uvalue;
 
-    auto Temperature = aSystem->getTemperatures(aRun);
-    std::vector<double> correctTemperature = {292.076937, 291.609964, 272.797101, 272.330129};
+    const auto Temperature = aSystem->getTemperatures(aRun);
+    const std::vector correctTemperature = {292.076937, 291.609964, 272.797101, 272.330129};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
-    std::vector<double> correctDeflection = {-55.488195e-3, -54.644421e-3};
+    const std::vector correctDeflection{-55.488195e-3, -54.644421e-3};
 
-    auto deflection = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
+    const auto deflection{aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue)};
 
     for(auto i = 0u; i < correctDeflection.size(); ++i)
     {

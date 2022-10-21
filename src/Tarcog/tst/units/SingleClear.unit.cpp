@@ -59,15 +59,17 @@ protected:
     }
 
 public:
-    Tarcog::ISO15099::CSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
-    };
+    }
 };
 
 TEST_F(TestSingleClear, Test1)
 {
     SCOPED_TRACE("Begin Test: Single Clear - U-value");
+
+    constexpr auto Tolerance = 1e-6;
 
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
@@ -76,25 +78,25 @@ TEST_F(TestSingleClear, Test1)
     ///  U-value run
     /////////////////////////////////////////////////////////////////////////
     auto Temperature = aSystem->getTemperatures(Tarcog::ISO15099::System::Uvalue);
-    std::vector<double> correctTemperature = {297.207035, 297.14470};
+    std::vector correctTemperature{297.207035, 297.14470};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     auto Radiosity = aSystem->getRadiosities(Tarcog::ISO15099::System::Uvalue);
-    std::vector<double> correctRadiosity = {432.444546, 439.201749};
+    std::vector correctRadiosity{432.444545, 439.201749};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     auto numOfIterations = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::Uvalue);
-    EXPECT_EQ(19u, numOfIterations);
+    EXPECT_EQ(24u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
     ///  SHGC run
@@ -105,7 +107,7 @@ TEST_F(TestSingleClear, Test1)
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     Radiosity = aSystem->getRadiosities(Tarcog::ISO15099::System::SHGC);
@@ -114,37 +116,39 @@ TEST_F(TestSingleClear, Test1)
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     numOfIterations = aSystem->getNumberOfIterations(Tarcog::ISO15099::System::SHGC);
-    EXPECT_EQ(19u, numOfIterations);
+    EXPECT_EQ(23u, numOfIterations);
 
     /////////////////////////////////////////////////////////////////////////
     ///  Heat flows
     /////////////////////////////////////////////////////////////////////////
     auto heatFlow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(heatFlow, -20.450949, 1e-5);
+    EXPECT_NEAR(heatFlow, -20.450949, Tolerance);
 
     heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue,
                                     Tarcog::ISO15099::Environment::Outdoor);
-    EXPECT_NEAR(heatFlow, -20.450949, 1e-5);
+    EXPECT_NEAR(heatFlow, -20.450949, Tolerance);
 
     heatFlow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(heatFlow, -35.474878, 1e-5);
+    EXPECT_NEAR(heatFlow, -35.474877, Tolerance);
 
     heatFlow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Outdoor);
-    EXPECT_NEAR(heatFlow, 38.840370, 1e-5);
+    EXPECT_NEAR(heatFlow, 38.840370, Tolerance);
 
     /////////////////////////////////////////////////////////////////////////
     //  System properties
     /////////////////////////////////////////////////////////////////////////
     auto UValue = aSystem->getUValue();
-    EXPECT_NEAR(UValue, 5.493806, 1e-5);
+    EXPECT_NEAR(UValue, 5.493806, Tolerance);
 
-    auto SHGC = aSystem->getSHGC(0.831249);
-    EXPECT_NEAR(SHGC, 0.850291, 1e-5);
+    constexpr auto totalSolarTransmittance = 0.831249;
+
+    auto SHGC = aSystem->getSHGC(totalSolarTransmittance);
+    EXPECT_NEAR(SHGC, 0.850291, Tolerance);
 }

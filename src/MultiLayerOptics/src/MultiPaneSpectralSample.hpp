@@ -37,8 +37,10 @@ namespace MultiLayerOptics
 
     private:
         void reset();
-        void calculateProperties();
-        void integrateAndAppendAbsorptances(const FenestrationCommon::CSeries & t_Absorptances, FenestrationCommon::Side side);
+        void calculateProperties(FenestrationCommon::IntegrationType integrator,
+                                 double m_NormalizationCoefficient);
+        void integrateAndAppendAbsorptances(const FenestrationCommon::CSeries & t_Absorptances, FenestrationCommon::Side side,FenestrationCommon::IntegrationType integrator,
+                                            double m_NormalizationCoefficient);
 
         std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_AbsorbedLayersSource;
     };

@@ -342,6 +342,7 @@ namespace FenestrationCommon
         return m_Matrix;
     }
 
+
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second)
     {
         if(first.size() != second.size())
@@ -379,6 +380,34 @@ namespace FenestrationCommon
             }
         }
 
+        return res;
+    }
+
+    SquareMatrix multiplyWithDiagonalMatrix(const std::vector<double> & tInput,
+                                            const SquareMatrix & tMatrix)
+    {
+        SquareMatrix res{tInput.size()};
+        for(auto i = 0u; i < tInput.size(); ++i)
+        {
+            for(auto j = 0u; j < tInput.size(); ++j)
+            {
+                res(i, j) = tMatrix(i, j) * tInput[i];
+            }
+        }
+        return res;
+    }
+
+    SquareMatrix multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
+                                                                const std::vector<double> & tInput)
+    {
+        SquareMatrix res{tInput.size()};
+        for(auto i = 0u; i < tInput.size(); ++i)
+        {
+            for(auto j = 0u; j < tInput.size(); ++j)
+            {
+                res(i, j) = tMatrix(i, j) * tInput[j];
+            }
+        }
         return res;
     }
 

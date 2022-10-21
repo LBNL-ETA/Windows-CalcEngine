@@ -72,15 +72,17 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const
     {
         return m_TarcogSystem;
-    };
+    }
 };
 
 TEST_F(TestDoubleClearUValueEnvironment, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Surface temperatures");
+
+    constexpr auto Tolerance = 1e-6;
 
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
@@ -92,48 +94,48 @@ TEST_F(TestDoubleClearUValueEnvironment, Test1)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     auto Temperature = aSystem->getTemperatures(aRun);
-    std::vector<double> correctTemperature = {258.791640, 259.116115, 279.323983, 279.648458};
+    std::vector correctTemperature = {258.791640, 259.116115, 279.323983, 279.648458};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     auto SolidLayerConductivities = aSystem->getSolidEffectiveLayerConductivities(aRun);
-    std::vector<double> correctSolidConductivities{1, 1};
+    std::vector correctSolidConductivities{1.0, 1.0};
     EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
 
     for(auto i = 0u; i < SolidLayerConductivities.size(); ++i)
     {
-        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
+        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], Tolerance);
     }
 
     auto GapLayerConductivities = aSystem->getGapEffectiveLayerConductivities(aRun);
-    std::vector<double> correctGapConductivities{0.066904};
+    std::vector correctGapConductivities{0.066904};
     EXPECT_EQ(GapLayerConductivities.size(), correctGapConductivities.size());
 
     for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
     {
-        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], 1e-6);
+        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], Tolerance);
     }
 
-    auto Radiosity = aSystem->getRadiosities(aRun);
-    std::vector<double> correctRadiosity = {252.066216, 267.938384, 332.786197, 359.178924};
-    ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
+    auto radiosity = aSystem->getRadiosities(aRun);
+    std::vector correctRadiosity = {252.066216, 267.938384, 332.786197, 359.178924};
+    ASSERT_EQ(correctRadiosity.size(), radiosity.size());
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], radiosity[i], Tolerance);
     }
 
     auto effectiveSystemConductivity{aSystem->getEffectiveSystemConductivity(aRun)};
-    EXPECT_NEAR(0.095937, effectiveSystemConductivity, 1e-6);
+    EXPECT_NEAR(0.095937, effectiveSystemConductivity, Tolerance);
 
     auto thickness{aSystem->thickness(aRun)};
-    EXPECT_NEAR(0.018796, thickness, 1e-6);
+    EXPECT_NEAR(0.018796, thickness, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(20, int(numOfIter));
+    EXPECT_EQ(24u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// SHGC run
@@ -147,16 +149,16 @@ TEST_F(TestDoubleClearUValueEnvironment, Test1)
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     SolidLayerConductivities = aSystem->getSolidEffectiveLayerConductivities(aRun);
-    correctSolidConductivities = {1, 1};
+    correctSolidConductivities = {1.0, 1.0};
     EXPECT_EQ(SolidLayerConductivities.size(), correctSolidConductivities.size());
 
     for(auto i = 0u; i < SolidLayerConductivities.size(); ++i)
     {
-        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], 1e-6);
+        EXPECT_NEAR(correctSolidConductivities[i], SolidLayerConductivities[i], Tolerance);
     }
 
     GapLayerConductivities = aSystem->getGapEffectiveLayerConductivities(aRun);
@@ -165,36 +167,36 @@ TEST_F(TestDoubleClearUValueEnvironment, Test1)
 
     for(auto i = 0u; i < GapLayerConductivities.size(); ++i)
     {
-        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], 1e-6);
+        EXPECT_NEAR(correctGapConductivities[i], GapLayerConductivities[i], Tolerance);
     }
 
-    Radiosity = aSystem->getRadiosities(aRun);
+    radiosity = aSystem->getRadiosities(aRun);
     correctRadiosity = {262.584530, 283.162254, 358.425764, 382.290985};
-    ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
+    ASSERT_EQ(correctRadiosity.size(), radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], radiosity[i], Tolerance);
     }
 
     effectiveSystemConductivity = aSystem->getEffectiveSystemConductivity(aRun);
-    EXPECT_NEAR(0.052988, effectiveSystemConductivity, 1e-6);
+    EXPECT_NEAR(0.052988, effectiveSystemConductivity, Tolerance);
 
     thickness = aSystem->thickness(aRun);
-    EXPECT_NEAR(0.018796, thickness, 1e-6);
+    EXPECT_NEAR(0.018796, thickness, Tolerance);
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(20, int(numOfIter));
+    EXPECT_EQ(25u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results
     //////////////////////////////////////////////////////////////////////
     auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 2.729619, 1e-5);
+    EXPECT_NEAR(Uvalue, 2.729619, Tolerance);
 
     auto SHGC = aSystem->getSHGC(0.703296);
-    EXPECT_NEAR(SHGC, 0.755619, 1e-5);
+    EXPECT_NEAR(SHGC, 0.755619, Tolerance);
 
     auto relativeHeatGain = aSystem->relativeHeatGain(0.703296);
-    EXPECT_NEAR(relativeHeatGain, 569.190777, 1e-5);
+    EXPECT_NEAR(relativeHeatGain, 569.190777, Tolerance);
 }

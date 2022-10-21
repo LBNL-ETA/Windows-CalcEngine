@@ -94,38 +94,40 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
-    };
+    }
 };
 
 TEST_F(DoubleLowEVacuumCircularPillar, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Low-E - vacuum with circular pillar support");
 
-    auto aSystem = GetSystem();
+    constexpr auto Tolerance = 1e-6;
+
+    const auto aSystem = GetSystem();
 
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {255.997063, 256.095933, 290.398479, 290.496419};
+    std::vector correctTemperature = {255.997063, 256.095933, 290.398479, 290.496419};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {242.987484, 396.293176, 402.108090, 407.071738};
+    std::vector correctRadiosity = {242.987484, 396.293176, 402.108090, 407.071738};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(21u, numOfIter);
+    EXPECT_EQ(26u, numOfIter);
 }

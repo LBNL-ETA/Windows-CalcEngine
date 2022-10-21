@@ -35,8 +35,6 @@ namespace MultiLayerOptics
         m_Calculated(false),
         m_MinLambdaCalculated(0),
         m_MaxLambdaCalculated(0),
-        m_Integrator(IntegrationType::Trapezoidal),
-        m_NormalizationCoefficient(1),
         m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
     {
         m_EquivalentLayer.calculate();
@@ -107,7 +105,7 @@ namespace MultiLayerOptics
             for(CSeries & aSpectra : m_IncomingSpectra)
             {
                 CSeries iTotalSolar = aSpectra.integrate(
-                  m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
+                  m_CalculationProperties.m_IntegrationType, m_CalculationProperties.m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
             }
 
@@ -124,13 +122,13 @@ namespace MultiLayerOptics
                 }
                 aTotalA.mMult(m_IncomingSpectra);
                 aTotalA.integrate(
-                  m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
+                  m_CalculationProperties.m_IntegrationType, m_CalculationProperties.m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 // Calculates total absorptance for every layer over the given wavelength range
                 m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
 
                 CMatrixSeries jscTotal = m_EquivalentLayer.getTotalJSC(aSide);
                 jscTotal.integrate(
-                  m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
+                  m_CalculationProperties.m_IntegrationType, m_CalculationProperties.m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                 auto jscSum{jscTotal.getSums(minLambda, maxLambda)};
 
                 std::vector<std::vector<double>> jscWithSolar;
@@ -155,7 +153,7 @@ namespace MultiLayerOptics
                     }
                     aTot.mMult(m_IncomingSpectra);
                     aTot.integrate(
-                      m_Integrator, m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
+                      m_CalculationProperties.m_IntegrationType, m_CalculationProperties.m_NormalizationCoefficient, m_SpectralIntegrationWavelengths);
                     aResults[{aSide, aProprerty}] =
                       aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
                 }
@@ -378,13 +376,6 @@ namespace MultiLayerOptics
         return abs * solarRadiation;
     }
 
-    void CMultiPaneBSDF::setIntegrationType(FenestrationCommon::IntegrationType t_type,
-                                            double normalizationCoefficient)
-    {
-        m_NormalizationCoefficient = normalizationCoefficient;
-        m_Integrator = t_type;
-    }
-
     std::unique_ptr<CMultiPaneBSDF> CMultiPaneBSDF::create(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const std::optional<std::vector<double>> & matrixWavelengths)
@@ -435,6 +426,8 @@ namespace MultiLayerOptics
     void CMultiPaneBSDF::setCalculationProperties(
       const SingleLayerOptics::CalculationProperties & calcProperties)
     {
+        m_CalculationProperties = calcProperties;
+
         const auto directionsSize{m_BSDFDirections.size()};
 
         this->m_IncomingSpectra = std::vector<CSeries>(directionsSize);

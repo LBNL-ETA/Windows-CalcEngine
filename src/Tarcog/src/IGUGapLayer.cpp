@@ -45,7 +45,7 @@ namespace Tarcog
             checkNextLayer();
             if(!isCalculated())
             {
-                if(getThickness() == 0)
+                if(FenestrationCommon::isEqual(getThickness(), 0))
                 {
                     throw std::runtime_error("Layer thickness is set to zero.");
                 }
@@ -78,7 +78,7 @@ namespace Tarcog
             const auto aProperties = m_Gas.getGasProperties();
 
             double ra = 0;
-            if(aProperties.m_Viscosity != 0)
+            if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
             {   // if viscosity is zero then it is vacuum
                 ra =
                   GRAVITYCONSTANT * pow(getThickness(), 3) * deltaTemp * aProperties.m_SpecificHeat
@@ -91,7 +91,7 @@ namespace Tarcog
 
         double CIGUGapLayer::aspectRatio() const
         {
-            if(getThickness() == 0)
+            if(FenestrationCommon::isEqual(getThickness(), 0))
             {
                 throw std::runtime_error("Gap thickness is set to zero.");
             }
@@ -106,7 +106,7 @@ namespace Tarcog
             const auto Asp = aspectRatio();
             CNusseltNumber nusseltNumber{};
             const auto aProperties = m_Gas.getGasProperties();
-            if(aProperties.m_Viscosity != 0)
+            if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
             {
                 m_ConductiveConvectiveCoeff = nusseltNumber.calculate(m_Tilt, Ra, Asp)
                                               * aProperties.m_ThermalConductivity / getThickness();
@@ -115,7 +115,7 @@ namespace Tarcog
             {   // vacuum state
                 m_ConductiveConvectiveCoeff = aProperties.m_ThermalConductivity;
             }
-            if(m_AirSpeed != 0)
+            if(!FenestrationCommon::isEqual(m_AirSpeed, 0))
             {
                 m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirSpeed;
             }

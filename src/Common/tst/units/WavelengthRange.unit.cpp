@@ -47,42 +47,41 @@ TEST_F(WavelengthRangeTest, TestCondensedSpectrum)
 {
     SCOPED_TRACE("Begin Test: Creation of condensed spectrum range.");
 
-    const size_t numOfVisibleBands{5u};
-    const size_t numOfIRBands{10u};
+    constexpr auto numOfVisibleBands{5u};
+    constexpr auto numOfIRBands{10u};
 
-    const auto condensendSpectrum =
-      FenestrationCommon::generateSpectrum(numOfVisibleBands, numOfIRBands);
+    const auto condensendSpectrum{generateSpectrum(numOfVisibleBands, numOfIRBands)};
 
-    const std::vector<double> correctSpectrum{0.3,
-                                              0.38,
-                                              0.46,
-                                              0.54,
-                                              0.62,
-                                              0.7,
-                                              0.78,
-                                              0.952,
-                                              1.124,
-                                              1.296,
-                                              1.468,
-                                              1.64,
-                                              1.812,
-                                              1.984,
-                                              2.156,
-                                              2.328,
-                                              2.5};
+    const std::vector correctSpectrum{0.3,
+                                      0.38,
+                                      0.46,
+                                      0.54,
+                                      0.620001,
+                                      0.700001,
+                                      0.780002,
+                                      0.9520018,
+                                      1.1240016,
+                                      1.29600139,
+                                      1.4680012,
+                                      1.64,
+                                      1.812,
+                                      1.984,
+                                      2.156,
+                                      2.328,
+                                      2.5};
 
     EXPECT_EQ(condensendSpectrum.size(), correctSpectrum.size());
     for(size_t i = 0u; i < condensendSpectrum.size(); ++i)
     {
-        EXPECT_NEAR(condensendSpectrum[i], correctSpectrum[i], 1e-5);
+        EXPECT_NEAR(condensendSpectrum[i], correctSpectrum[i], 1e-6);
     }
 }
 
 TEST_F(WavelengthRangeTest, TestISO9050Spectrum)
 {
-    const auto wavelenghts{FenestrationCommon::generateISO9050Wavelengths()};
+    const auto wavelengths{generateISO9050Wavelengths()};
 
-    std::vector<double> correctWavelengths{
+    const std::vector correctWavelengths{
       0.300,  0.305,  0.310,  0.315,  0.320,  0.325,  0.330,  0.335,  0.340,  0.345,  0.350,
       0.355,  0.360,  0.365,  0.370,  0.375,  0.380,  0.385,  0.390,  0.395,  0.400,  0.410,
       0.420,  0.430,  0.440,  0.450,  0.460,  0.470,  0.480,  0.490,  0.500,  0.510,  0.520,
@@ -96,10 +95,10 @@ TEST_F(WavelengthRangeTest, TestISO9050Spectrum)
       20.000, 21.000, 22.000, 23.000, 24.000, 25.000, 26.000, 27.000, 28.000, 29.000, 30.000,
       31.000, 32.000, 33.000, 34.000, 35.000, 36.000, 37.000, 38.000, 39.000, 40.000};
 
-    EXPECT_EQ(wavelenghts.size(), correctWavelengths.size());
-    for(size_t i = 0u; i < wavelenghts.size(); ++i)
+    EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
+    for(size_t i = 0u; i < wavelengths.size(); ++i)
     {
-        EXPECT_NEAR(wavelenghts[i], correctWavelengths[i], 1e-6);
+        EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
     }
 }
 

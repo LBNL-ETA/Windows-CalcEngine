@@ -21,7 +21,8 @@ namespace FenestrationCommon
     }
 
     CSeriesPoint::CSeriesPoint(double t_Wavelength, double t_Value) :
-        m_x(t_Wavelength), m_Value(t_Value)
+        m_x(t_Wavelength),
+        m_Value(t_Value)
     {}
 
     double CSeriesPoint::x() const
@@ -65,7 +66,7 @@ namespace FenestrationCommon
 
     CSeries::CSeries(const std::vector<std::pair<double, double>> & t_values)
     {
-        //m_Series.clear();
+        // m_Series.clear();
         for(auto & val : t_values)
         {
             m_Series.emplace_back(val.first, val.second);
@@ -74,7 +75,7 @@ namespace FenestrationCommon
 
     CSeries::CSeries(const std::initializer_list<std::pair<double, double>> & t_values)
     {
-        //m_Series.clear();
+        // m_Series.clear();
         for(const auto & val : t_values)
         {
             m_Series.emplace_back(val.first, val.second);
@@ -221,8 +222,8 @@ namespace FenestrationCommon
 
             if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
             {
-                throw std::runtime_error(
-                  "Wavelengths of two vectors are not the same. Cannot preform multiplication.");
+                throw std::runtime_error("The wavelengths of the two vectors are not the same. "
+                                         "Cannot perform multiplication.");
             }
             newProperty.addProperty(wv, value);
         }

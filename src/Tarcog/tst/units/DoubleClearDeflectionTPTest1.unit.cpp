@@ -92,6 +92,8 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear - Calculated Deflection");
 
+    constexpr double Tolerance = 1e-6;
+
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
@@ -99,24 +101,24 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     /// Temperatures test
     ///////////////////////////////////////////////////////////////////////////////
     auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {258.799454, 259.124627, 279.009121, 279.618821};
+    std::vector correctTemperature = {258.799454, 259.124627, 279.009121, 279.618821};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Radiosity test
     ///////////////////////////////////////////////////////////////////////////////
     auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {252.092017, 267.753052, 331.451548, 359.055470};
+    std::vector correctRadiosity = {252.092017, 267.753052, 331.451548, 359.055470};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -135,7 +137,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     /// Mean deflection test
     ///////////////////////////////////////////////////////////////////////////////
     const auto MeanDeflection = aSystem->getMeanDeflections();
-    std::vector<double> correctMeanDeflection = {-0.957624e-3, 0.202658e-3};
+    std::vector correctMeanDeflection = {-0.957624e-3, 0.202658e-3};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
@@ -144,5 +146,5 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(20u, numOfIter);
+    EXPECT_EQ(25u, numOfIter);
 }

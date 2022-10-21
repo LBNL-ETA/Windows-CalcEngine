@@ -24,7 +24,7 @@ namespace MultiLayerOptics
                                                             Side side)
     {
         double aEnergy = 0;
-        calculateState();
+        calculateState(IntegrationType::Trapezoidal, 1);
         if(Index > m_AbsorbedLayersSource.size())
         {
             throw std::runtime_error("Index for glazing layer absorptance is out of range.");
@@ -38,19 +38,21 @@ namespace MultiLayerOptics
                                                          size_t const Index,
                                                          Side side)
     {
-        calculateState();
+        calculateState(IntegrationType::Trapezoidal, 1);
         double absorbedEnergy = getLayerAbsorbedEnergy(minLambda, maxLambda, Index, side);
         double incomingEnergy = m_IncomingSource.sum(minLambda, maxLambda);
         return absorbedEnergy / incomingEnergy;
     }
 
-    void CMultiPaneSpectralSample::calculateProperties()
+    void
+      CMultiPaneSpectralSample::calculateProperties(FenestrationCommon::IntegrationType integrator,
+                                                    double normalizationCoefficient)
     {
         if(!m_StateCalculated)
         {
             for(const auto side : EnumSide())
             {
-                CSpectralSample::calculateProperties();
+                CSpectralSample::calculateProperties(integrator, normalizationCoefficient);
                 if(std::dynamic_pointer_cast<CMultiPaneSampleData>(m_SampleData) != NULL)
                 {
                     std::shared_ptr<CMultiPaneSampleData> aSample =
@@ -60,13 +62,14 @@ namespace MultiLayerOptics
                     for(size_t i = 0; i < numOfLayers; ++i)
                     {
                         auto layerAbsorbed = aSample->getLayerAbsorptances(i + 1, side);
-                        integrateAndAppendAbsorptances(layerAbsorbed, side);
+                        integrateAndAppendAbsorptances(
+                          layerAbsorbed, side, integrator, normalizationCoefficient);
                     }
                 }
                 else
                 {
                     auto layerAbsorbed = m_SampleData->properties(Property::Abs, side);
-                    integrateAndAppendAbsorptances(layerAbsorbed, side);
+                    integrateAndAppendAbsorptances(layerAbsorbed, side, integrator, normalizationCoefficient);
                 }
             }
 
@@ -75,7 +78,9 @@ namespace MultiLayerOptics
     }
 
     void CMultiPaneSpectralSample::integrateAndAppendAbsorptances(const CSeries & t_Absorptances,
-                                                                  Side side)
+                                                                  Side side,
+                                                                  FenestrationCommon::IntegrationType integrator,
+                                                                  double normalizationCoefficient)
     {
         CSeries aAbs = t_Absorptances;
         if(m_WavelengthSet != WavelengthSet::Data)
@@ -83,7 +88,7 @@ namespace MultiLayerOptics
             aAbs = aAbs.interpolate(m_Wavelengths);
         }
         aAbs = aAbs * m_IncomingSource;
-        aAbs = aAbs.integrate(m_IntegrationType, m_NormalizationCoefficient);
+        aAbs = aAbs.integrate(integrator, normalizationCoefficient);
         m_AbsorbedLayersSource.at(side).push_back(aAbs);
     }
 

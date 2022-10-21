@@ -1808,20 +1808,36 @@ protected:
         const auto wl = aSolarRadiation.getXArray();
 
         constexpr double thickness{3.048e-3};   // [m]
-        const auto aMaterial_1 =
-          Material::nBandPhotovoltaicMaterial(pvSample,
-                                              thickness,
-                                              FenestrationCommon::MaterialType::Monolithic);
+        const auto aMaterial_1 = Material::nBandPhotovoltaicMaterial(
+          pvSample, thickness, FenestrationCommon::MaterialType::Monolithic);
 
 
         aMaterial_1->setBandWavelengths(wl);
         const auto layer1 =
           SingleLayerOptics::PhotovoltaicSpecularLayer::createLayer(aMaterial_1, table());
 
-        m_Layer = CMultiPaneSpecular::create({layer1});
+        const std::vector<double> condensed{0.3,
+                                            0.38,
+                                            0.46,
+                                            0.54,
+                                            0.62,
+                                            0.7,
+                                            0.78,
+                                            0.952,
+                                            1.124,
+                                            1.296,
+                                            1.468,
+                                            1.64,
+                                            1.812,
+                                            1.984,
+                                            2.156,
+                                            2.328,
+                                            2.5};
+
+        m_Layer = CMultiPaneSpecular::create({layer1}, condensed);
 
         const SingleLayerOptics::CalculationProperties input{loadSolarRadiationFile(),
-                                                            loadSolarRadiationFile().getXArray()};
+                                                             loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 
@@ -1847,8 +1863,8 @@ TEST_F(Photovoltaic_DoublePane_Example1, Test1)
     EXPECT_NEAR(0.2, T, 1e-6);
 
     const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.670842, absHeat, 1e-6);
+    EXPECT_NEAR(0.671296, absHeat, 1e-6);
 
     const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.106243, absEl1, 1e-6);
+    EXPECT_NEAR(0.105142, absEl1, 1e-6);
 }

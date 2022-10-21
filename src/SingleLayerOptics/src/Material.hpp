@@ -78,27 +78,18 @@ namespace SingleLayerOptics
         static std::shared_ptr<CMaterial>
           nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
                         double thickness,
-                        FenestrationCommon::MaterialType materialType,
-                        FenestrationCommon::IntegrationType integrationType =
-                          FenestrationCommon::IntegrationType::Trapezoidal,
-                        double normalizationCoefficient = 1);
+                        FenestrationCommon::MaterialType materialType);
 
         static std::shared_ptr<CMaterial>
           nBandMaterial(const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
                         const FenestrationCommon::CSeries & detectorData,
                         const double thickness,
-                        const FenestrationCommon::MaterialType materialType,
-                        const FenestrationCommon::IntegrationType integrationType =
-                          FenestrationCommon::IntegrationType::Trapezoidal,
-                        const double normalizationCoefficient = 1);
+                        const FenestrationCommon::MaterialType materialType);
 
         static std::shared_ptr<CMaterialPhotovoltaicSample> nBandPhotovoltaicMaterial(
           const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
           double thickness,
-          FenestrationCommon::MaterialType materialType,
-          FenestrationCommon::IntegrationType integrationType =
-            FenestrationCommon::IntegrationType::Trapezoidal,
-          double normalizationCoefficient = 1);
+          FenestrationCommon::MaterialType materialType);
     };
 
 }   // namespace SingleLayerOptics

@@ -1,10 +1,8 @@
 #include <cmath>
 #include <stdexcept>
-#include <vector>
 
 #include "BaseLayer.hpp"
 #include "Surface.hpp"
-#include "WCEGases.hpp"
 
 
 namespace Tarcog

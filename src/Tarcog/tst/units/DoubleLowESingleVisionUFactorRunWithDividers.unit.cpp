@@ -109,14 +109,16 @@ TEST_F(TestDoubleLowESingleVisionUFactorRunWithDividers, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Low-e with Single Vision with dividers - U-value run");
 
+    constexpr auto Tolerance = 1e-6;
+
     const auto window{getWindow()};
 
     const auto UValue{window.uValue()};
-    EXPECT_NEAR(UValue, 2.067558, 1e-5);
+    EXPECT_NEAR(UValue, 2.067558, Tolerance);
 
     const auto SHGC{window.shgc()};
-    EXPECT_NEAR(SHGC, 0.006131, 1e-5);
+    EXPECT_NEAR(SHGC, 0.006131, Tolerance);
 
     const auto vt{window.vt()};
-    EXPECT_NEAR(vt, 0.440524, 1e-5);
+    EXPECT_NEAR(vt, 0.440524, Tolerance);
 }

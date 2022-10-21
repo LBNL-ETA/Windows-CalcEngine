@@ -16,23 +16,13 @@ namespace SpectralAveraging
     ////  CSample
     //////////////////////////////////////////////////////////////////////////////////////
 
-    CSample::CSample(const CSeries & t_SourceData,
-                     IntegrationType integrationType,
-                     double t_NormalizationCoefficient) :
-        m_SourceData(t_SourceData),
-        m_WavelengthSet(WavelengthSet::Data),
-        m_IntegrationType(integrationType),
-        m_NormalizationCoefficient(t_NormalizationCoefficient),
-        m_StateCalculated(false)
+    CSample::CSample(const CSeries & t_SourceData) :
+        m_SourceData(t_SourceData), m_WavelengthSet(WavelengthSet::Data), m_StateCalculated(false)
     {
         CSample::reset();
     }
 
-    CSample::CSample() :
-        m_WavelengthSet(WavelengthSet::Data),
-        m_IntegrationType(IntegrationType::Trapezoidal),
-        m_NormalizationCoefficient(1),
-        m_StateCalculated(false)
+    CSample::CSample() : m_WavelengthSet(WavelengthSet::Data), m_StateCalculated(false)
     {
         CSample::reset();
     }
@@ -40,8 +30,6 @@ namespace SpectralAveraging
     CSample & CSample::operator=(const CSample & t_Sample)
     {
         m_StateCalculated = t_Sample.m_StateCalculated;
-        m_IntegrationType = t_Sample.m_IntegrationType;
-        m_NormalizationCoefficient = t_Sample.m_NormalizationCoefficient;
         m_WavelengthSet = t_Sample.m_WavelengthSet;
         m_IncomingSource = t_Sample.m_IncomingSource;
         for(const auto & prop : EnumProperty())
@@ -63,7 +51,8 @@ namespace SpectralAveraging
 
     CSeries & CSample::getSourceData()
     {
-        calculateState();   // must interpolate data to same wavelengths
+        calculateState(IntegrationType::Trapezoidal,
+                       1);   // must interpolate data to same wavelengths
         return m_SourceData;
     }
 
@@ -77,16 +66,6 @@ namespace SpectralAveraging
     {
         m_DetectorData = t_DetectorData;
         reset();
-    }
-
-    FenestrationCommon::IntegrationType CSample::getIntegrator() const
-    {
-        return m_IntegrationType;
-    }
-
-    double CSample::getNormalizationCoeff() const
-    {
-        return m_NormalizationCoefficient;
     }
 
     void CSample::assignDetectorAndWavelengths(std::shared_ptr<CSample> const & t_Sample)
@@ -128,7 +107,7 @@ namespace SpectralAveraging
                               Property const t_Property,
                               Side const t_Side)
     {
-        calculateState();
+        calculateState(IntegrationType::Trapezoidal, 1);
         return m_EnergySource.at(std::make_pair(t_Property, t_Side)).sum(minLambda, maxLambda);
     }
 
@@ -142,7 +121,7 @@ namespace SpectralAveraging
                                 Property const t_Property,
                                 Side const t_Side)
     {
-        calculateState();
+        calculateState(IntegrationType::Trapezoidal, 1);
         auto Prop = 0.0;
         // Incoming energy can be calculated only if user has defined incoming source.
         // Otherwise just assume zero property.
@@ -158,7 +137,7 @@ namespace SpectralAveraging
 
     CSeries & CSample::getEnergyProperties(const Property t_Property, const Side t_Side)
     {
-        calculateState();
+        calculateState(IntegrationType::Trapezoidal, 1);
         return m_EnergySource.at(std::make_pair(t_Property, t_Side));
     }
 
@@ -180,7 +159,8 @@ namespace SpectralAveraging
         }
     }
 
-    void CSample::calculateState()
+    void CSample::calculateState(FenestrationCommon::IntegrationType integrator,
+                                 double normalizationCoefficient)
     {
         if(!m_StateCalculated)
         {
@@ -202,17 +182,16 @@ namespace SpectralAveraging
                     m_IncomingSource = m_IncomingSource * interpolatedDetector;
                 }
 
-                calculateProperties();
+                calculateProperties(integrator, normalizationCoefficient);
 
-                m_IncomingSource =
-                  m_IncomingSource.integrate(m_IntegrationType, m_NormalizationCoefficient);
+                m_IncomingSource = m_IncomingSource.integrate(integrator, normalizationCoefficient);
                 for(const auto & prop : EnumProperty())
                 {
                     for(const auto & side : EnumSide())
                     {
                         m_EnergySource[std::make_pair(prop, side)] =
                           m_EnergySource.at(std::make_pair(prop, side))
-                            .integrate(m_IntegrationType, m_NormalizationCoefficient);
+                            .integrate(integrator, normalizationCoefficient);
                     }
                 }
 
@@ -226,11 +205,8 @@ namespace SpectralAveraging
     //////////////////////////////////////////////////////////////////////////////////////
 
     CSpectralSample::CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData,
-                                     const CSeries & t_SourceData,
-                                     FenestrationCommon::IntegrationType integrationType,
-                                     double NormalizationCoefficient) :
-        CSample(t_SourceData, integrationType, NormalizationCoefficient),
-        m_SampleData(t_SampleData)
+                                     const CSeries & t_SourceData) :
+        CSample(t_SourceData), m_SampleData(t_SampleData)
     {
         if(t_SampleData == nullptr)
         {
@@ -247,8 +223,7 @@ namespace SpectralAveraging
     }
 
     CSpectralSample::CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData) :
-        CSample(),
-        m_SampleData(t_SampleData)
+        CSample(), m_SampleData(t_SampleData)
     {
         if(t_SampleData == nullptr)
         {
@@ -266,7 +241,8 @@ namespace SpectralAveraging
 
     std::shared_ptr<CSpectralSampleData> CSpectralSample::getMeasuredData()
     {
-        calculateState();   // Interpolation is needed before returning the data
+        calculateState(IntegrationType::Trapezoidal,
+                       1);   // Interpolation is needed before returning the data
         return m_SampleData;
     }
 
@@ -280,14 +256,17 @@ namespace SpectralAveraging
         std::lock_guard<std::mutex> lock(spectralSampleMutex);
         if(!m_StateCalculated)
         {
-            calculateState();
+            calculateState(IntegrationType::Trapezoidal, 1);
         }
 
         return m_Property.at(std::make_pair(t_Property, t_Side));
     }
 
-    void CSpectralSample::calculateProperties()
+    void CSpectralSample::calculateProperties(FenestrationCommon::IntegrationType integrator,
+                                              double normalizationCoefficient)
     {
+        std::ignore = integrator;
+        std::ignore = normalizationCoefficient;
         for(const auto & prop : EnumProperty())
         {
             for(const auto & side : EnumSide())
@@ -318,9 +297,10 @@ namespace SpectralAveraging
         }
     }
 
-    void CSpectralSample::calculateState()
+    void CSpectralSample::calculateState(FenestrationCommon::IntegrationType integrator,
+                                         double normalizationCoefficient)
     {
-        CSample::calculateState();
+        CSample::calculateState(integrator, normalizationCoefficient);
 
         if(m_SourceData.size() == 0)
         {
@@ -357,17 +337,15 @@ namespace SpectralAveraging
 
     CPhotovoltaicSample::CPhotovoltaicSample(
       const std::shared_ptr<PhotovoltaicSampleData> & t_PhotovoltaicData,
-      const FenestrationCommon::CSeries & t_SourceData,
-      FenestrationCommon::IntegrationType integrationType,
-      double NormalizationCoefficient) :
-        CSpectralSample(
-          t_PhotovoltaicData, t_SourceData, integrationType, NormalizationCoefficient),
+      const FenestrationCommon::CSeries & t_SourceData) :
+        CSpectralSample(t_PhotovoltaicData, t_SourceData),
         m_JcsPrime{{Side::Front, CSeries()}, {Side::Back, CSeries()}}
     {}
 
-    void CPhotovoltaicSample::calculateState()
+    void CPhotovoltaicSample::calculateState(FenestrationCommon::IntegrationType integrator,
+                                             double normalizationCoefficient)
     {
-        CSpectralSample::calculateProperties();
+        CSpectralSample::calculateProperties(integrator, normalizationCoefficient);
         for(const auto & side : EnumSide())
         {
             CSeries eqe{getSample()->eqe(side)};
@@ -396,7 +374,7 @@ namespace SpectralAveraging
 
     CSeries CPhotovoltaicSample::jscPrime(const Side side)
     {
-        calculateState();
+        calculateState(IntegrationType::Trapezoidal, 1);
         return m_JcsPrime.at(side);
     }
 }   // namespace SpectralAveraging

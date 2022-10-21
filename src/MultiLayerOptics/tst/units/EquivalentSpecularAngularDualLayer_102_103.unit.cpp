@@ -752,8 +752,7 @@ protected:
 
         m_Layer = CMultiPaneSpecular::create({aCell_102, angularLayer});
 
-        const CalculationProperties input{loadSolarRadiationFile(),
-                                          commonWavelengths};
+        const CalculationProperties input{loadSolarRadiationFile(), commonWavelengths};
         m_Layer->setCalculationProperties(input);
     }
 

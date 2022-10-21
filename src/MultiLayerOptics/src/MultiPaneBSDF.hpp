@@ -19,9 +19,6 @@ namespace MultiLayerOptics
           create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
                  const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
 
-        void setIntegrationType(FenestrationCommon::IntegrationType t_type,
-                                double normalizationCoefficient);
-
         // Whole matrix results
         FenestrationCommon::SquareMatrix getMatrix(double minLambda,
                                                    double maxLambda,
@@ -227,14 +224,13 @@ namespace MultiLayerOptics
         double m_MinLambdaCalculated;
         double m_MaxLambdaCalculated;
 
-        FenestrationCommon::IntegrationType m_Integrator;
-        double m_NormalizationCoefficient;
-
         SingleLayerOptics::BSDFDirections m_BSDFDirections;
 
         // These are wavelength used only for the spectral integration separately from wavelengths in
         // matrices calculations. Matrices wavelengths will be used only if this is not provided.
         std::optional<std::vector<double>> m_SpectralIntegrationWavelengths;
+
+        SingleLayerOptics::CalculationProperties m_CalculationProperties;
     };
 
 }   // namespace MultiLayerOptics

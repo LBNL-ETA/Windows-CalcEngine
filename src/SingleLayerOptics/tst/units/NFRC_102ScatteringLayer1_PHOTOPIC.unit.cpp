@@ -255,9 +255,7 @@ protected:
     {
         const auto thickness = 3.048e-3;   // [m]
         const auto aMaterial = Material::nBandMaterial(loadSampleData_NFRC_102(),
-                                                       loadDetectorData(),
-                                                       thickness,
-                                                       MaterialType::Monolithic);
+                                                       thickness, MaterialType::Monolithic);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
         CSeries solarRadiation{loadSolarRadiationFile()};
@@ -285,11 +283,11 @@ TEST_F(TestNFRC102ScatteringLayer1_PHOTOPIC, Test1)
 
     double T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.899260, T_dir_dir, 1e-6);
+    EXPECT_NEAR(0.88392833946432292, T_dir_dir, 1e-6);
 
     double R_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect);
-    EXPECT_NEAR(0.082563, R_dir_dir, 1e-6);
+    EXPECT_NEAR(0.081491816754847721, R_dir_dir, 1e-6);
 
     double T_dir_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse);
@@ -301,15 +299,15 @@ TEST_F(TestNFRC102ScatteringLayer1_PHOTOPIC, Test1)
 
     double T_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.821306, T_dif_dif, 1e-6);
+    EXPECT_NEAR(0.80517620769857268, T_dif_dif, 1e-6);
 
     double R_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
-    EXPECT_NEAR(0.158094, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.1559084672280428, R_dif_dif, 1e-6);
 
     double A_dir = aLayer.getAbsorptance(aSide, ScatteringSimple::Direct);
-    EXPECT_NEAR(0.018177, A_dir, 1e-6);
+    EXPECT_NEAR(0.034579843780829359, A_dir, 1e-6);
 
     double A_dif = aLayer.getAbsorptance(aSide, ScatteringSimple::Diffuse);
-    EXPECT_NEAR(0.020599, A_dif, 1e-6);
+    EXPECT_NEAR(0.038915325073384521, A_dif, 1e-6);
 }

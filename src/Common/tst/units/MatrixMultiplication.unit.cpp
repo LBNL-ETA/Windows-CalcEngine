@@ -38,6 +38,52 @@ TEST_F(TestMatrixMultiplication, Test1)
     }
 }
 
+TEST_F(TestMatrixMultiplication, DiagonalMatrixMultiplicationRightSide)
+{
+    const auto n = 3u;
+
+    const SquareMatrix a{{4, 3, 9}, {8, 8, 4}, {4, 3, 7}};
+
+    const std::vector b{2.0, 3.0, 4.0};
+
+    const auto mult = multiplyWithDiagonalMatrix(a, b);
+
+    EXPECT_EQ(n, mult.size());
+
+    SquareMatrix multCorrect{{8, 9, 36}, {16, 24, 16}, {8, 9, 28}};
+
+    for(size_t i = 0; i < n; ++i)
+    {
+        for(size_t j = 0; j < n; ++j)
+        {
+            EXPECT_NEAR(mult(i, j), multCorrect(i, j), 1e-6);
+        }
+    }
+}
+
+TEST_F(TestMatrixMultiplication, DiagonalMatrixMultiplicationLeftSide)
+{
+    const auto n = 3u;
+
+    const SquareMatrix a{{4, 3, 9}, {8, 8, 4}, {4, 3, 7}};
+
+    const std::vector b{2.0, 3.0, 4.0};
+
+    const auto mult = multiplyWithDiagonalMatrix(b, a);
+
+    EXPECT_EQ(n, mult.size());
+
+    SquareMatrix multCorrect{{8, 6, 18}, {24, 24, 12}, {16, 12, 28}};
+
+    for(size_t i = 0; i < n; ++i)
+    {
+        for(size_t j = 0; j < n; ++j)
+        {
+            EXPECT_NEAR(mult(i, j), multCorrect(i, j), 1e-6);
+        }
+    }
+}
+
 TEST_F(TestMatrixMultiplication, Test2)
 {
     SCOPED_TRACE("Begin Test: Test matrix and std::vector multiplication (3 x 3) and (1 x 3).");

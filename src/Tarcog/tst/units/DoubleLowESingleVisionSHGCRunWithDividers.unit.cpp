@@ -112,14 +112,16 @@ TEST_F(TestDoubleLowESingleVisionSHGCRunWithDividers, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Low-e with Single Vision with dividers - SHGC run");
 
+    constexpr auto Tolerance = 1e-6;
+
     const auto window{getWindow()};
 
     const auto UValue{window.uValue()};
-    EXPECT_NEAR(UValue, 2.045111, 1e-5);
+    EXPECT_NEAR(UValue, 2.045111, Tolerance);
 
     const auto SHGC{window.shgc()};
-    EXPECT_NEAR(SHGC, 0.305860, 1e-5);
+    EXPECT_NEAR(SHGC, 0.305860, Tolerance);
 
     const auto vt{window.vt()};
-    EXPECT_NEAR(vt, 0.440524, 1e-5);
+    EXPECT_NEAR(vt, 0.440524, Tolerance);
 }

@@ -237,6 +237,8 @@ namespace MultiLayerOptics
         // available, then it will perform calculation for given angle
         std::vector<CEquivalentLayerSingleComponentMWAngle> m_EquivalentAngle;
 
+        SingleLayerOptics::CalculationProperties m_CalculationProperties;
+
         SeriesResults getSeriesResults(const SingleLayerOptics::CBeamDirection & aDirection,
                                        size_t layerIndex);
 

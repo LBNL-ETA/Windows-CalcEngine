@@ -7,13 +7,13 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
-    SquareMatrix interReflectance(const SquareMatrix & t_Lambda,
+    SquareMatrix interReflectance(const std::vector<double> & t_Lambda,
                                   const SquareMatrix & t_Rb,
                                   const SquareMatrix & t_Rf)
     {
         const auto size = t_Lambda.size();
-        const auto lRb = t_Lambda * t_Rb;
-        const auto lRf = t_Lambda * t_Rf;
+        const auto lRb = multiplyWithDiagonalMatrix(t_Lambda, t_Rb);
+        const auto lRf = multiplyWithDiagonalMatrix(t_Lambda, t_Rf);
         auto InterRefl = lRb * lRf;
         SquareMatrix I(size);
         I.setIdentity();
@@ -29,7 +29,7 @@ namespace MultiLayerOptics
     CBSDFDoubleLayer::CBSDFDoubleLayer(const BSDFIntegrator & t_FrontLayer,
                                        const BSDFIntegrator & t_BackLayer)
     {
-        const SquareMatrix aLambda = t_FrontLayer.lambdaMatrix();
+        const auto aLambda = t_FrontLayer.lambdaVector();
         const auto InterRefl1 = interReflectance(aLambda,
                                                  t_FrontLayer.at(Side::Back, PropertySimple::R),
                                                  t_BackLayer.at(Side::Front, PropertySimple::R));
@@ -71,11 +71,11 @@ namespace MultiLayerOptics
 
     SquareMatrix CBSDFDoubleLayer::equivalentT(const SquareMatrix & t_Tf2,
                                                const SquareMatrix & t_InterRefl,
-                                               const SquareMatrix & t_Lambda,
+                                               const std::vector<double> & t_Lambda,
                                                const SquareMatrix & t_Tf1)
     {
         const auto TinterRefl = t_Tf2 * t_InterRefl;
-        const auto lambdaTf1 = t_Lambda * t_Tf1;
+        const auto lambdaTf1 = multiplyWithDiagonalMatrix(t_Lambda, t_Tf1);
         return TinterRefl * lambdaTf1;
     }
 
@@ -84,11 +84,11 @@ namespace MultiLayerOptics
                                                const SquareMatrix & t_Tb1,
                                                const SquareMatrix & t_Rf2,
                                                const SquareMatrix & t_InterRefl,
-                                               const SquareMatrix & t_Lambda)
+                                               const std::vector<double> & t_Lambda)
     {
         auto TinterRefl = t_Tb1 * t_InterRefl;
-        const auto lambdaRf2 = t_Lambda * t_Rf2;
-        const auto lambdaTf1 = t_Lambda * t_Tf1;
+        const auto lambdaRf2 = multiplyWithDiagonalMatrix(t_Lambda, t_Rf2);
+        const auto lambdaTf1 = multiplyWithDiagonalMatrix(t_Lambda, t_Tf1);
         TinterRefl = TinterRefl * lambdaRf2;
         TinterRefl = TinterRefl * lambdaTf1;
         return t_Rf1 + TinterRefl;
@@ -129,7 +129,7 @@ namespace MultiLayerOptics
             m_JSC[aSide] = std::vector<std::vector<double>>();
         }
         m_Layers.push_back(t_Layer);
-        m_Lambda = t_Layer.lambdaMatrix();
+        m_Lambda = t_Layer.lambdaVector();
     }
 
     SquareMatrix CEquivalentBSDFLayerSingleBand::getMatrix(const Side t_Side,
@@ -338,7 +338,7 @@ namespace MultiLayerOptics
     SquareMatrix CEquivalentBSDFLayerSingleBand::iminusCalc(const SquareMatrix & t_InterRefl,
                                                             const SquareMatrix & t_T) const
     {
-        const auto part2 = m_Lambda * t_T;
+        const auto part2 = multiplyWithDiagonalMatrix(m_Lambda, t_T);
         auto part1 = t_InterRefl * part2;
         return part1;
     }
@@ -347,8 +347,8 @@ namespace MultiLayerOptics
                                                            const SquareMatrix & t_R,
                                                            const SquareMatrix & t_T) const
     {
-        const auto part2 = m_Lambda * t_R;
-        const auto part3 = m_Lambda * t_T;
+        const auto part2 = multiplyWithDiagonalMatrix(m_Lambda, t_R);
+        const auto part3 = multiplyWithDiagonalMatrix(m_Lambda, t_T);
         auto part1 = t_InterRefl * part2;
         part1 = part1 * part3;
         return part1;

@@ -119,12 +119,9 @@ namespace SingleLayerOptics
     std::shared_ptr<CMaterial> Material::nBandMaterial(
       const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
       double thickness,
-      FenestrationCommon::MaterialType materialType,
-      FenestrationCommon::IntegrationType integrationType,
-      double normalizationCoefficient)
+      FenestrationCommon::MaterialType materialType)
     {
-        auto aSample = std::make_shared<CSpectralSample>(
-          measurement, CSeries(), integrationType, normalizationCoefficient);
+        auto aSample = std::make_shared<CSpectralSample>(measurement, CSeries());
 
         if(aSample->getWavelengthsFromSample().empty())
         {
@@ -139,12 +136,9 @@ namespace SingleLayerOptics
       const std::shared_ptr<SpectralAveraging::CSpectralSampleData> & measurement,
       const FenestrationCommon::CSeries & detectorData,
       const double thickness,
-      const FenestrationCommon::MaterialType materialType,
-      const FenestrationCommon::IntegrationType integrationType,
-      const double normalizationCoefficient)
+      const FenestrationCommon::MaterialType materialType)
     {
-        auto aSample = std::make_shared<CSpectralSample>(
-          measurement, CSeries(), integrationType, normalizationCoefficient);
+        auto aSample = std::make_shared<CSpectralSample>(measurement, CSeries());
         aSample->setDetectorData(detectorData);
 
         if(aSample->getWavelengthsFromSample().empty())
@@ -159,12 +153,10 @@ namespace SingleLayerOptics
     std::shared_ptr<CMaterialPhotovoltaicSample> Material::nBandPhotovoltaicMaterial(
       const std::shared_ptr<SpectralAveraging::PhotovoltaicSampleData> & measurement,
       double thickness,
-      FenestrationCommon::MaterialType materialType,
-      FenestrationCommon::IntegrationType integrationType,
-      double normalizationCoefficient)
+      FenestrationCommon::MaterialType materialType)
     {
-        auto aSample = std::make_shared<SpectralAveraging::CPhotovoltaicSample>(
-          measurement, CSeries(), integrationType, normalizationCoefficient);
+        auto aSample =
+          std::make_shared<SpectralAveraging::CPhotovoltaicSample>(measurement, CSeries());
 
         if(aSample->getWavelengthsFromSample().empty())
         {

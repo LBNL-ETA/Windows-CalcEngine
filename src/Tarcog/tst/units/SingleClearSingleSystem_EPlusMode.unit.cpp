@@ -84,40 +84,43 @@ protected:
     }
 
 public:
-    Tarcog::ISO15099::CSingleSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
-    };
+    }
 };
 
 TEST_F(TestSingleClearSingleSystem_EPlusMode, Test1)
 {
     SCOPED_TRACE("Begin Test: Single Clear - U-value");
 
-    auto aSystem = GetSystem();
+    constexpr auto Tolerance = 1e-6;
+    constexpr auto SolutionTolerance = 1e-10;
+
+    const auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {259.293476, 259.907311};
+    const std::vector correctTemperature{259.293476, 259.907311};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-5);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {248.112516, 279.699920};
+    const std::vector correctRadiosity{248.112516, 279.699920};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-5);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
     const auto isToleranceAchieved = aSystem->isToleranceAchieved();
     EXPECT_EQ(isToleranceAchieved, true);
 
     const auto solutionTolerance = aSystem->solutionTolarance();
-    EXPECT_NEAR(9.264811e-07, solutionTolerance, 1e-10);
+    EXPECT_NEAR(6.0753393427148694e-09, solutionTolerance, SolutionTolerance);
 }

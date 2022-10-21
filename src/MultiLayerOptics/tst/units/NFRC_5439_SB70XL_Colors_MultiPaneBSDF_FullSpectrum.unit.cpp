@@ -314,10 +314,8 @@ private:
     [[nodiscard]] std::unique_ptr<MultiLayerOptics::CMultiPaneBSDF> createLayer() const
     {
         double thickness = 3.048e-3;   // [m]
-        const auto aMaterial =
-          SingleLayerOptics::Material::nBandMaterial(loadSampleData_NFRC_5439(),
-                                                     thickness,
-                                                     FenestrationCommon::MaterialType::Monolithic);
+        const auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
+          loadSampleData_NFRC_5439(), thickness, FenestrationCommon::MaterialType::Monolithic);
 
         const auto aBSDF = SingleLayerOptics::BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
         auto layer_5439 = SingleLayerOptics::CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);
