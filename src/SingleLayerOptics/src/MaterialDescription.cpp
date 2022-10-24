@@ -132,7 +132,7 @@ namespace SingleLayerOptics
     {}
 
     CMaterial::CMaterial(FenestrationCommon::Limits wavelengthRange) :
-        CMaterial(wavelengthRange.min, wavelengthRange.max)
+        CMaterial(wavelengthRange.minimum, wavelengthRange.maximum)
     {}
 
     void CMaterial::setSourceData(CSeries &)

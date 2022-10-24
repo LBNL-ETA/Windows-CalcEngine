@@ -37,7 +37,7 @@ namespace FenestrationCommon
         TR tr{T, R};
         if(T + R > 1)
         {
-            // Brackets around std::max are necessary because this fails when included in MFC files
+            // Brackets around std::maximum are necessary because this fails when included in MFC files
             // that uses Windows.h
             const auto RTMax = (std::max)(T, R);
             if(isEqual(RTMax, R))

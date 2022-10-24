@@ -85,10 +85,10 @@ namespace FenestrationCommon
 
     struct Limits
     {
-        Limits(double min, double max) : min(min), max(max)
+        Limits(double min, double max) : minimum(min), maximum(max)
         {}
-        double min;
-        double max;
+        double minimum;
+        double maximum;
     };
 
     class EnumWavelengthRange : public Enum<WavelengthRange>

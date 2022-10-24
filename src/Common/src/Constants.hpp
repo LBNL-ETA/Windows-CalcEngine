@@ -30,5 +30,7 @@ namespace ConstantsData
     static const double VisibleRangeOffset = 2 * wavelengthErrorTolerance;
 
     static const double MINLAMBDAVALUE = 0;
-    static const double MAXLAMBDAVALUE = std::numeric_limits<double>::max();
+
+    // Brackets around std::numeric_limits<double>::max() are needed to avoid a bug in MSVC
+    static const double MAXLAMBDAVALUE = (std::numeric_limits<double>::max)();
 }   // namespace ConstantsData

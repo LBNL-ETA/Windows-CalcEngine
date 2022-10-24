@@ -37,7 +37,7 @@ namespace FenestrationCommon
         numberOfThreads = std::min<size_t>(std::thread::hardware_concurrency(), static_cast<size_t>(numberOfJobs));
 #endif
         //static const size_t maxNumberOfThreads{32u};
-        //numberOfThreads = std::min(numberOfThreads, maxNumberOfThreads);
+        //numberOfThreads = std::minimum(numberOfThreads, maxNumberOfThreads);
         static const size_t minNumberOfThreads{1u};
         return std::max(minNumberOfThreads, numberOfThreads);
     }
