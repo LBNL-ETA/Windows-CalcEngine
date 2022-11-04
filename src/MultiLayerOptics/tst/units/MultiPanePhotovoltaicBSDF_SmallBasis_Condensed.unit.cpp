@@ -1872,4 +1872,21 @@ TEST_F(MultiPanePhotovoltaicBSDF_SmallBasis_Condensed, TestSpecular1)
     const double absElectricBack1{
       aLayer.AbsElectricity(minLambda, maxLambda, Side::Back, 1, theta, phi)};
     EXPECT_NEAR(0.044782428030771371, absElectricBack1, 1e-6);
+
+    const auto absHeat{aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 1)};
+    EXPECT_EQ(7u, absHeat.size());
+
+    const std::vector correctAbsHeat{0.67128461694557817,
+                                     0.67625173871884059,
+                                     0.69054825309847567,
+                                     0.7116403454845841,
+                                     0.7318335876242712,
+                                     0.72614230646597078,
+                                     0.51898468628243122};
+
+
+    for(size_t i = 0; i < absHeat.size(); ++i)
+    {
+        EXPECT_NEAR(correctAbsHeat[i], absHeat[i], 1e-6);
+    }
 }

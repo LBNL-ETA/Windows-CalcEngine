@@ -47,7 +47,7 @@ namespace MultiLayerOptics
                       size_t Index);
 
         // std::vector of layer by layer absorptances for each incoming direction
-        std::vector<double> &
+        std::vector<double>
           Abs(double minLambda, double maxLambda, FenestrationCommon::Side t_Side, size_t Index);
 
         std::vector<double> AbsHeat(double minLambda,
@@ -55,7 +55,7 @@ namespace MultiLayerOptics
                                     FenestrationCommon::Side t_Side,
                                     size_t Index);
 
-        std::vector<double> & AbsElectricity(double minLambda,
+        std::vector<double> AbsElectricity(double minLambda,
                                              double maxLambda,
                                              FenestrationCommon::Side t_Side,
                                              size_t Index);

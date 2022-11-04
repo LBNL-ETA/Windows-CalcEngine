@@ -211,10 +211,9 @@ namespace MultiLayerOptics
         return cw.getCombinedWavelengths(FenestrationCommon::Combine::Interpolate);
     }
 
-    std::vector<double> & CMultiPaneBSDF::Abs(const double minLambda,
-                                              const double maxLambda,
-                                              const Side t_Side,
-                                              const size_t Index)
+    std::vector<double>
+      CMultiPaneBSDF::Abs(double minLambda,
+                                              double maxLambda, Side t_Side, size_t Index)
     {
         calculate(minLambda, maxLambda);
         return m_Abs.at(t_Side)[Index - 1];
@@ -225,7 +224,7 @@ namespace MultiLayerOptics
     {
         calculate(minLambda, maxLambda);
         std::vector<double> result;
-        for(size_t i = 0u; i < m_Abs.at(t_Side).size(); ++i)
+        for(size_t i = 0u; i < m_Abs.at(t_Side)[Index - 1].size(); ++i)
         {
             result.push_back(m_Abs.at(t_Side)[Index - 1][i]
                              - m_AbsElectricity.at(t_Side)[Index - 1][i]);
@@ -234,7 +233,7 @@ namespace MultiLayerOptics
         return result;
     }
 
-    std::vector<double> &
+    std::vector<double>
       CMultiPaneBSDF::AbsElectricity(double minLambda, double maxLambda, Side t_Side, size_t Index)
     {
         calculate(minLambda, maxLambda);
