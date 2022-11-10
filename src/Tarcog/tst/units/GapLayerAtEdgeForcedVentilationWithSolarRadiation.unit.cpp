@@ -86,6 +86,11 @@ protected:
     }
 
 public:
+    Tarcog::ISO15099::CSingleSystem * GetSystem() const
+    {
+        return m_TarcogSystem.get();
+    };
+
     std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer() const
     {
         auto solidLayer = m_TarcogSystem->getSolidLayers()[0];
@@ -229,4 +234,19 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, AirflowReferencePo
     ASSERT_TRUE(aLayer != nullptr);
     auto airflowReferencePoint = aLayer->getAirflowReferencePoint(0.5);
     EXPECT_NEAR(6911.4593095243026, airflowReferencePoint, 1e-4);
+}
+
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorHeatFlow)
+{
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer - Indoor Heat Flow");
+
+    auto aSystem = GetSystem();
+
+    auto convectiveHF = aSystem->getConvectiveHeatFlow(Tarcog::ISO15099::Environment::Indoor);
+    auto radiativeHF = aSystem->getRadiationHeatFlow(Tarcog::ISO15099::Environment::Indoor);
+    auto totalHF = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
+
+    EXPECT_NEAR(26.945883008974519, convectiveHF, 1e-5);
+    EXPECT_NEAR(48.074175638495092, radiativeHF, 1e-5);
+    EXPECT_NEAR(75.020058647469611, totalHF, 1e-5);
 }
