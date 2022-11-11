@@ -65,8 +65,7 @@ protected:
 
         auto gapThickness = 0.0127;
         auto gapAirSpeed = 0.5;
-        auto gapVerticalDirection = Tarcog::ISO15099::AirVerticalDirection::Up;
-        Tarcog::ISO15099::ForcedVentilation forcedVentilation = {gapAirSpeed, gapVerticalDirection};
+        Tarcog::ISO15099::ForcedVentilation forcedVentilation = {gapAirSpeed};
         auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(gapThickness, forcedVentilation);
         ASSERT_TRUE(gap != nullptr);
 
@@ -78,6 +77,8 @@ protected:
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
+
+        m_TarcogSystem->solve();
     }
 
 public:
@@ -116,7 +117,7 @@ TEST_F(TestGapLayerAtEdgeForcedVentilation, GainEnergy)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-173.19394352133912, gainEnergy, 1e-4);
+    EXPECT_NEAR(131.54792253693392, gainEnergy, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilation, SolidTemperatures)
@@ -130,8 +131,8 @@ TEST_F(TestGapLayerAtEdgeForcedVentilation, SolidTemperatures)
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(256.16484206520363, frontTemperature, 1e-4);
-    EXPECT_NEAR(261.96466446784217, backTemperature, 1e-4);
+    EXPECT_NEAR(262.1681784128499, frontTemperature, 1e-4);
+    EXPECT_NEAR(263.34326181929191, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilation, GapTemperatures)
@@ -147,10 +148,10 @@ TEST_F(TestGapLayerAtEdgeForcedVentilation, GapTemperatures)
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
     auto layerTemperature = aLayer->layerTemperature();
     auto averageTemperature = aLayer->averageTemperature();
-    EXPECT_NEAR(261.96466446784217, frontTemperature, 1e-4);
-    EXPECT_NEAR(274.85315869592796, backTemperature, 1e-4);
-    EXPECT_NEAR(268.40891158188504, layerTemperature, 1e-4);
-    EXPECT_NEAR(268.40891158188504, averageTemperature, 1e-4);
+    EXPECT_NEAR(263.34326181929191, frontTemperature, 1e-4);
+    EXPECT_NEAR(284.92247564626859, backTemperature, 1e-4);
+    EXPECT_NEAR(284.76940122170021, layerTemperature, 1e-4);
+    EXPECT_NEAR(274.13286873278025, averageTemperature, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilation, ShadeTemperatures)
@@ -164,8 +165,8 @@ TEST_F(TestGapLayerAtEdgeForcedVentilation, ShadeTemperatures)
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(274.85315869592796, frontTemperature, 1e-4);
-    EXPECT_NEAR(285.00157934796397, backTemperature, 1e-4);
+    EXPECT_NEAR(284.92247564626859, frontTemperature, 1e-4);
+    EXPECT_NEAR(284.92826182710292, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilation, AirflowReferencePoint)
@@ -178,5 +179,5 @@ TEST_F(TestGapLayerAtEdgeForcedVentilation, AirflowReferencePoint)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto airflowReferencePoint = aLayer->getAirflowReferencePoint(0.5);
-    EXPECT_NEAR(6911.7392493523666, airflowReferencePoint, 1e-4);
+    EXPECT_NEAR(6912.4803431270711, airflowReferencePoint, 1e-4);
 }

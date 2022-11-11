@@ -88,6 +88,14 @@ namespace Tarcog
             resetCalculated();
         }
 
+        void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
+                                                         double t_outTemperature)
+        {
+            m_inTemperature = t_inTemperature;
+            m_outTemperature = t_outTemperature;
+            resetCalculated();
+        }
+
         void CIGUVentilatedGapLayer::setFlowSpeed(double const t_speed)
         {
             m_AirSpeed = t_speed;

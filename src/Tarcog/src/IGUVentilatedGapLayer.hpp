@@ -24,6 +24,7 @@ namespace Tarcog
             void setFlowTemperatures(double t_topTemp,
                                      double t_botTemp,
                                      const AirVerticalDirection & t_Direction);
+            void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
             void setFlowSpeed(double t_speed);
 
             double getAirflowReferencePoint(double t_GapTemperature);

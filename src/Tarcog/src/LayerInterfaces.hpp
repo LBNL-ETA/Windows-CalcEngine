@@ -34,14 +34,11 @@ namespace Tarcog
 
         struct ForcedVentilation
         {
-            ForcedVentilation() : Speed(0), VerticalDirection(AirVerticalDirection::None){};
+            ForcedVentilation() : Speed(0){};
 
-            ForcedVentilation(const double t_Speed,
-                              const AirVerticalDirection t_VerticalDirection) :
-                Speed(t_Speed), VerticalDirection(t_VerticalDirection){};
+            ForcedVentilation(const double t_Speed) : Speed(t_Speed){};
 
             double Speed;
-            AirVerticalDirection VerticalDirection;
         };
 
         class CLayerGeometry : public virtual FenestrationCommon::CState

@@ -331,19 +331,22 @@ namespace Tarcog
                 TgapOut = alpha * TavGap + beta * tempEnvironment;
 
                 AirVerticalDirection gapDirection = AirVerticalDirection::None;
-                if(TgapOut > tempEnvironment)
+                if(t_Gap->isVentilationForced())
                 {
-                    gapDirection = t_Gap->isVentilationForced()
-                                     ? forcedVentilation.VerticalDirection
-                                     : AirVerticalDirection::Up;
-                    t_Gap->setFlowTemperatures(TgapOut, tempEnvironment, gapDirection);
+                    t_Gap->setFlowTemperatures(tempEnvironment, TgapOut);
                 }
                 else
                 {
-                    gapDirection = t_Gap->isVentilationForced()
-                                     ? forcedVentilation.VerticalDirection
-                                     : AirVerticalDirection::Down;
-                    t_Gap->setFlowTemperatures(tempEnvironment, TgapOut, gapDirection);
+                    if(TgapOut > tempEnvironment)
+                    {
+                        gapDirection = AirVerticalDirection::Up;
+                        t_Gap->setFlowTemperatures(TgapOut, tempEnvironment, gapDirection);
+                    }
+                    else
+                    {
+                        gapDirection = AirVerticalDirection::Down;
+                        t_Gap->setFlowTemperatures(tempEnvironment, TgapOut, gapDirection);
+                    }
                 }
 
                 tempGap = t_Gap->layerTemperature();
