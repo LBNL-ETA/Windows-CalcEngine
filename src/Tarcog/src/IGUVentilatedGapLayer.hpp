@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "BaseShade.hpp"
 #include "WCEGases.hpp"
 #include "IGUGapLayer.hpp"
 
@@ -41,6 +42,9 @@ namespace Tarcog
             double characteristicHeight();
             double calcImpedance(double t_A) const;
             void ventilatedFlow();
+            void calcSealedForcedVentilationGapTemperatures(
+              std::shared_ptr<CIGUSolidLayer> t_PreviousLayer,
+              std::shared_ptr<CIGUSolidLayer> t_NextLayer);
 
             std::shared_ptr<CIGUGapLayer> m_Layer;
             Gases::CGas m_ReferenceGas;

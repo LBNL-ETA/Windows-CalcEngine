@@ -3,9 +3,13 @@
 #include <cassert>
 #include <stdexcept>
 
+#include "BaseShade.hpp"
+#include "TarcogConstants.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 #include "WCEGases.hpp"
+#include "WCECommon.hpp"
 
+using FenestrationCommon::Side;
 
 namespace Tarcog
 {
@@ -155,7 +159,76 @@ namespace Tarcog
             CIGUGapLayer::calculateConvectionOrConductionFlow();
             if(!isCalculated())
             {
+                if(isVentilationForced() && m_NextLayer != nullptr && m_PreviousLayer != nullptr
+                   && std::dynamic_pointer_cast<CIGUSolidLayer>(m_PreviousLayer) != nullptr
+                   && std::dynamic_pointer_cast<CIGUShadeLayer>(m_PreviousLayer) == nullptr
+                   && std::dynamic_pointer_cast<CIGUSolidLayer>(m_NextLayer) != nullptr
+                   && std::dynamic_pointer_cast<CIGUShadeLayer>(m_NextLayer) == nullptr)
+                {
+                    auto previousSolidLayer =
+                      std::dynamic_pointer_cast<CIGUSolidLayer>(m_PreviousLayer);
+                    auto nextSolidLayer = std::dynamic_pointer_cast<CIGUSolidLayer>(m_NextLayer);
+                    calcSealedForcedVentilationGapTemperatures(previousSolidLayer, nextSolidLayer);
+                }
                 ventilatedFlow();
+            }
+        }
+
+        void CIGUVentilatedGapLayer::calcSealedForcedVentilationGapTemperatures(
+          std::shared_ptr<CIGUSolidLayer> t_PreviousLayer,
+          std::shared_ptr<CIGUSolidLayer> t_NextLayer)
+        {
+            // Inspired by `CIGUShadeLayer::calcEdgeShadeFlow`
+            double TgapOut = layerTemperature();
+            double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
+            bool converged = false;
+            size_t iterationStep = 0;
+
+            double tempGap = layerTemperature();
+            ForcedVentilation forcedVentilation = getForcedVentilation();
+            setFlowSpeed(forcedVentilation.Speed);
+            // m_AirSpeed = forcedVentilation.Speed;
+            double tempPreviousLayer = t_PreviousLayer->getTemperature(Side::Back);
+            while(!converged)
+            {
+                double TavGap = averageTemperature();
+                // TODO Calling `betaCoeff` results in an infinite recursion
+                // because it calls `calculateLayerHeatFlow`. I do not believe
+                // that the latter call is required because we set `m_AirSpeed`
+                // above. Are all other properties also set? What about
+                // `m_ConductiveConvectiveCoeff`?
+                // TODO If `beta` and `TavGap` do not change during the
+                // loop, then extract them.
+                double beta = exp(-m_Height / characteristicHeight());
+                double alpha = 1 - beta;
+
+                double TgapOutOld = TgapOut;
+
+                TgapOut = alpha * TavGap + beta * tempPreviousLayer;
+
+                setFlowTemperatures(tempPreviousLayer, TgapOut);
+                // m_inTemperature = tempPreviousLayer;
+                // m_outTemperature = TgapOut;
+
+                tempGap = layerTemperature();
+
+                TgapOut = RelaxationParameter * tempGap + (1 - RelaxationParameter) * TgapOutOld;
+
+                converged = std::abs(TgapOut - TgapOutOld)
+                            < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
+
+                ++iterationStep;
+                if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
+                {
+                    RelaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
+                    iterationStep = 0;
+                    if(RelaxationParameter == IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+                    {
+                        converged = true;
+                        throw std::runtime_error("Airflow iterations fail to converge. "
+                                                 "Maximum number of iteration steps reached.");
+                    }
+                }
             }
         }
 
