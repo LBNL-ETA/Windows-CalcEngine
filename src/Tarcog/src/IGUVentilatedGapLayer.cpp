@@ -192,13 +192,11 @@ namespace Tarcog
             while(!converged)
             {
                 double TavGap = averageTemperature();
-                // TODO Calling `betaCoeff` results in an infinite recursion
-                // because it calls `calculateLayerHeatFlow`. I do not believe
-                // that the latter call is required because we set `m_AirSpeed`
-                // above. Are all other properties also set? What about
-                // `m_ConductiveConvectiveCoeff`?
-                // TODO If `beta` and `TavGap` do not change during the
-                // loop, then extract them.
+                // To calculate `beta` we do not invoke `betaCoeff` because
+                // doing so results in an infinite recursion as it calls
+                // `calculateLayerHeatFlow`, which calls
+                // `calculateConvectionOrConductionFlow`, which calls this
+                // method.
                 double beta = exp(-m_Height / characteristicHeight());
                 double alpha = 1 - beta;
 
