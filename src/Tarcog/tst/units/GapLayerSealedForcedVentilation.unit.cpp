@@ -90,7 +90,7 @@ public:
 
 TEST_F(TestGapLayerSealedForcedVentilation, GainEnergy)
 {
-    SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Gain Energy");
+    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Gap Layer - Gain Energy");
 
     auto aLayer = GetGap();
 
@@ -103,7 +103,7 @@ TEST_F(TestGapLayerSealedForcedVentilation, GainEnergy)
 
 TEST_F(TestGapLayerSealedForcedVentilation, Solid1Temperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Solid 1 Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Gap Layer - Solid 1 Temperatures");
 
     auto aLayer = GetSolidLayer1();
 
@@ -118,7 +118,7 @@ TEST_F(TestGapLayerSealedForcedVentilation, Solid1Temperatures)
 
 TEST_F(TestGapLayerSealedForcedVentilation, GapTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Gap Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Gap Layer - Gap Temperatures");
 
     auto aLayer = GetGap();
 
@@ -137,7 +137,7 @@ TEST_F(TestGapLayerSealedForcedVentilation, GapTemperatures)
 
 TEST_F(TestGapLayerSealedForcedVentilation, Solid2Temperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Solid 2 Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Gap Layer - Solid 2 Temperatures");
 
     auto aLayer = GetSolidLayer2();
 
@@ -152,7 +152,7 @@ TEST_F(TestGapLayerSealedForcedVentilation, Solid2Temperatures)
 
 TEST_F(TestGapLayerSealedForcedVentilation, AirflowReferencePoint)
 {
-    SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Airflow Reference Point");
+    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Gap Layer - Airflow Reference Point");
 
     auto aLayer = GetGap();
 
