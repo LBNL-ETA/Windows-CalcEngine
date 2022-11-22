@@ -3,7 +3,7 @@
 
 #include "WCETarcog.hpp"
 
-class TestGapLayerAtEdgeForcedVentilationWithSolarRadiation : public testing::Test
+class TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer : public testing::Test
 {
 private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
@@ -14,10 +14,10 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 255.15;   // Kelvins
+        auto airTemperature = 305.15;   // Kelvins
         auto airSpeed = 5.5;            // meters per second
         auto tSky = 255.15;             // Kelvins
-        auto solarRadiation = 700.0;
+        auto solarRadiation = 783.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -28,7 +28,7 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 295.15;
+        auto roomTemperature = 297.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
@@ -114,31 +114,29 @@ public:
     std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer() const
     {
         auto solidLayer = m_TarcogSystem->getSolidLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer)
-               != nullptr);
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer) != nullptr);
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer);
     };
 
     std::shared_ptr<Tarcog::ISO15099::CIGUVentilatedGapLayer> GetGap() const
     {
         auto gap = m_TarcogSystem->getGapLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap)
-               != nullptr);
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap) != nullptr);
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap);
     };
 
     std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetShadeLayer() const
     {
         auto shadeLayer = m_TarcogSystem->getSolidLayers()[1];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer)
-               != nullptr);
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer) != nullptr);
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer);
     };
 };
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GainEnergy)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, GainEnergy)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Gain Energy");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Gain Energy");
 
     auto aLayer = GetGap();
 
@@ -146,12 +144,13 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GainEnergy)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(16.449907386063828, gainEnergy, 1e-4);
+    EXPECT_NEAR(-130.5048438198269, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, SolidTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Solid Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Solid Temperatures");
 
     auto aLayer = GetSolidLayer();
 
@@ -160,13 +159,14 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidTemperatures)
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(268.85563831728786, frontTemperature, 1e-4);
-    EXPECT_NEAR(270.97231009255381, backTemperature, 1e-4);
+    EXPECT_NEAR(307.64940595087643, frontTemperature, 1e-4);
+    EXPECT_NEAR(308.49154217411314, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, SolidRadiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Solid Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Solid Radiosities");
 
     auto aLayer = GetSolidLayer();
 
@@ -175,13 +175,14 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidRadiosities)
     ASSERT_TRUE(aLayer != nullptr);
     auto frontRadiosity = aLayer->J(FenestrationCommon::Side::Front);
     auto backRadiosity = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(287.28456598343178, frontRadiosity, 1e-4);
-    EXPECT_NEAR(339.73558433006201, backRadiosity, 1e-4);
+    EXPECT_NEAR(485.19373063498108, frontRadiosity, 1e-4);
+    EXPECT_NEAR(534.49572555881934, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, GapTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Gap Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Gap Temperatures");
 
     auto aLayer = GetGap();
 
@@ -192,15 +193,16 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapTemperatures)
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
     auto layerTemperature = aLayer->layerTemperature();
     auto averageTemperature = aLayer->averageTemperature();
-    EXPECT_NEAR(270.97231009255381, frontTemperature, 1e-4);
-    EXPECT_NEAR(314.20685654711355, backTemperature, 1e-4);
-    EXPECT_NEAR(293.77207512587205, layerTemperature, 1e-4);
-    EXPECT_NEAR(292.58958331983365, averageTemperature, 1e-4);
+    EXPECT_NEAR(308.49154217411314, frontTemperature, 1e-4);
+    EXPECT_NEAR(329.18614190431651, backTemperature, 1e-4);
+    EXPECT_NEAR(308.5243189875772, layerTemperature, 1e-4);
+    EXPECT_NEAR(318.8388420392148, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, GapRadiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Gap Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Gap Radiosities");
 
     auto aLayer = GetGap();
 
@@ -209,13 +211,14 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapRadiosities)
     ASSERT_TRUE(aLayer != nullptr);
     auto frontRadiosity = aLayer->J(FenestrationCommon::Side::Front);
     auto backRadiosity = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(339.73558433006201, frontRadiosity, 1e-4);
-    EXPECT_NEAR(518.55433901363858, backRadiosity, 1e-4);
+    EXPECT_NEAR(534.49572555881934, frontRadiosity, 1e-4);
+    EXPECT_NEAR(644.76873455415853, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, ShadeTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Shade Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Shade Temperatures");
 
     auto aLayer = GetShadeLayer();
 
@@ -224,13 +227,14 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeTemperatures)
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(314.20685654711355, frontTemperature, 1e-4);
-    EXPECT_NEAR(314.21313360489381, backTemperature, 1e-4);
+    EXPECT_NEAR(329.18614190431651, frontTemperature, 1e-4);
+    EXPECT_NEAR(329.18394285290708, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, ShadeRadiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Shade Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Shade Radiosities");
 
     auto aLayer = GetShadeLayer();
 
@@ -239,13 +243,14 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeRadiosities)
     ASSERT_TRUE(aLayer != nullptr);
     auto frontRadiosity = aLayer->J(FenestrationCommon::Side::Front);
     auto backRadiosity = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(518.55433901363858, frontRadiosity, 1e-4);
-    EXPECT_NEAR(533.07538128082308, backRadiosity, 1e-4);
+    EXPECT_NEAR(644.76873455415853, frontRadiosity, 1e-4);
+    EXPECT_NEAR(629.96111066455899, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, AirflowReferencePoint)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, AirflowReferencePoint)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Airflow Reference Point");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Airflow Reference Point");
 
     auto aLayer = GetGap();
 
@@ -253,12 +258,13 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, AirflowReferencePo
 
     ASSERT_TRUE(aLayer != nullptr);
     auto airflowReferencePoint = aLayer->getAirflowReferencePoint(0.5);
-    EXPECT_NEAR(6912.8529362264735, airflowReferencePoint, 1e-4);
+    EXPECT_NEAR(6913.4164769308836, airflowReferencePoint, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorHeatFlow)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, IndoorHeatFlow)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Indoor Heat Flow");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
+                 "Summer - Indoor Heat Flow");
 
     auto aSystem = GetSystem();
 
@@ -266,7 +272,7 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorHeatFlow)
     auto radiativeHF = aSystem->getRadiationHeatFlow(Tarcog::ISO15099::Environment::Indoor);
     auto totalHF = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
 
-    EXPECT_NEAR(-57.440502097412043, convectiveHF, 1e-5);
-    EXPECT_NEAR(-102.81512658453136, radiativeHF, 1e-5);
-    EXPECT_NEAR(-160.25562868194339, totalHF, 1e-5);
+    EXPECT_NEAR(-109.36378592796353, convectiveHF, 1e-5);
+    EXPECT_NEAR(-187.91963696055234, radiativeHF, 1e-5);
+    EXPECT_NEAR(-297.28342288851587, totalHF, 1e-5);
 }
