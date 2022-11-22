@@ -37,13 +37,13 @@ protected:
         auto solidLayerThickness = 0.005715;   // [m]
         auto solidLayerConductance = 1.0;
 
-        auto solidLayer1 =
+        auto solidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(solidLayer1 != nullptr);
+        ASSERT_TRUE(solidLayer != nullptr);
 
-        auto solidLayer2 =
-          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(solidLayer2 != nullptr);
+        auto closedShadeLayer =
+          Tarcog::ISO15099::Layers::closedShading(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(closedShadeLayer != nullptr);
 
         auto gapThickness = 0.00001;
         auto gapAirSpeed = 0.0;
@@ -54,7 +54,7 @@ protected:
         double windowWidth = 1;
         double windowHeight = 1;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({solidLayer1, gap, solidLayer2});
+        aIGU.addLayers({solidLayer, gap, closedShadeLayer});
 
         /////////////////////////////////////////////////////////
         /// System
@@ -66,7 +66,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer1() const
+    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer() const
     {
         auto solidLayer = m_TarcogSystem->getSolidLayers()[0];
         assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer) != nullptr);
@@ -80,11 +80,12 @@ public:
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap);
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer2() const
+    std::shared_ptr<Tarcog::ISO15099::CIGUShadeLayer> GetClosedShadeLayer() const
     {
-        auto solidLayer = m_TarcogSystem->getSolidLayers()[1];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer) != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer);
+        auto closedShadeLayer = m_TarcogSystem->getSolidLayers()[1];
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUShadeLayer>(closedShadeLayer)
+               != nullptr);
+        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUShadeLayer>(closedShadeLayer);
     };
 };
 
@@ -101,11 +102,11 @@ TEST_F(TestGapLayerSealedForcedVentilationNarrowWithZeroAirSpeed, GainEnergy)
     EXPECT_NEAR(0.0, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapLayerSealedForcedVentilationNarrowWithZeroAirSpeed, Solid1Temperatures)
+TEST_F(TestGapLayerSealedForcedVentilationNarrowWithZeroAirSpeed, SolidTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Narrow Gap Layer With Zero Air Speed - Solid 1 Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Narrow Gap Layer With Zero Air Speed - Solid Temperatures");
 
-    auto aLayer = GetSolidLayer1();
+    auto aLayer = GetSolidLayer();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
@@ -135,11 +136,11 @@ TEST_F(TestGapLayerSealedForcedVentilationNarrowWithZeroAirSpeed, GapTemperature
     EXPECT_NEAR(264.18283724260709, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerSealedForcedVentilationNarrowWithZeroAirSpeed, Solid2Temperatures)
+TEST_F(TestGapLayerSealedForcedVentilationNarrowWithZeroAirSpeed, ClosedShadeTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Narrow Gap Layer With Zero Air Speed - Solid 2 Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Narrow Gap Layer With Zero Air Speed - Closed Shade Temperatures");
 
-    auto aLayer = GetSolidLayer2();
+    auto aLayer = GetClosedShadeLayer();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 

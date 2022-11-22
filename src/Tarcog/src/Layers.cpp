@@ -92,6 +92,22 @@ namespace Tarcog
               std::make_shared<CSurface>(backEmissivity, backTransmittance));
         }
 
+        std::shared_ptr<CIGUShadeLayer> Layers::closedShading(double thickness,
+                                                              double conductivity,
+                                                              double frontEmissivity,
+                                                              double frontTransmittance,
+                                                              double backEmissivity,
+                                                              double backTransmittance)
+        {
+            return std::make_shared<CIGUShadeLayer>(
+              thickness,
+              conductivity,
+              std::make_shared<CShadeOpenings>(0, 0, 0, 0, 0, 0),
+              std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
+              std::make_shared<CSurface>(backEmissivity, backTransmittance));
+        }
+
+
         std::shared_ptr<CIGUGapLayer>
           Layers::addCircularPillar(const std::shared_ptr<CIGUGapLayer> & gap,
                                     double conductivity,

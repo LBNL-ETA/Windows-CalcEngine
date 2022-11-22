@@ -534,22 +534,8 @@ namespace Tarcog
             }
             if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer) != nullptr)
             {
-                auto gap = std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer);
                 if(std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer->getPreviousLayer())
                    != nullptr)
-                {
-                    auto newLayer = std::make_shared<CIGUVentilatedGapLayer>(gap);
-                    replaceLayer(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer), newLayer);
-                }
-                else if(gap->isVentilationForced()
-                        && std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer->getPreviousLayer())
-                             != nullptr
-                        && std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer->getPreviousLayer())
-                             == nullptr
-                        && std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer->getNextLayer())
-                             != nullptr
-                        && std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer->getNextLayer())
-                             == nullptr)
                 {
                     auto newLayer = std::make_shared<CIGUVentilatedGapLayer>(
                       std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer));

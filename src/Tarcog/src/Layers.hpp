@@ -6,6 +6,7 @@
 #include "EffectiveOpenness.hpp"
 #include "LayerInterfaces.hpp"
 #include "TarcogConstants.hpp"
+#include "BaseShade.hpp"
 
 namespace Tarcog
 {
@@ -39,6 +40,13 @@ namespace Tarcog
                       double frontTransmittance = 0.0,
                       double backEmissivity = 0.84,
                       double backTransmittance = 0.0);
+
+            static std::shared_ptr<CIGUShadeLayer> closedShading(double thickness,
+                                                                 double conductivity,
+                                                                 double frontEmissivity = 0.84,
+                                                                 double frontTransmittance = 0.0,
+                                                                 double backEmissivity = 0.84,
+                                                                 double backTransmittance = 0.0);
 
             static std::shared_ptr<CIGUGapLayer> gap(double thickness, double pressure = 101325);
             static std::shared_ptr<CIGUGapLayer>
