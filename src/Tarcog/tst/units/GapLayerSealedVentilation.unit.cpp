@@ -3,7 +3,7 @@
 
 #include "WCETarcog.hpp"
 
-class TestGapLayerAtEdgeVentilationSealed : public testing::Test
+class TestGapLayerSealedVentilation : public testing::Test
 {
 private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
@@ -91,9 +91,9 @@ public:
     };
 };
 
-TEST_F(TestGapLayerAtEdgeVentilationSealed, GainEnergy)
+TEST_F(TestGapLayerSealedVentilation, GainEnergy)
 {
-    SCOPED_TRACE("Begin Test: Test Sealed  Ventilated Gap Layer - Gain Energy");
+    SCOPED_TRACE("Begin Test: Test Sealed Ventilated Gap Layer - Gain Energy");
 
     auto aLayer = GetGap();
 
@@ -104,9 +104,9 @@ TEST_F(TestGapLayerAtEdgeVentilationSealed, GainEnergy)
     EXPECT_NEAR(0.01825302550352461, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeVentilationSealed, SolidTemperatures)
+TEST_F(TestGapLayerSealedVentilation, SolidTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Sealed  Ventilated Gap Layer - Solid Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Ventilated Gap Layer - Solid Temperatures");
 
     auto aLayer = GetSolidLayer();
 
@@ -119,9 +119,9 @@ TEST_F(TestGapLayerAtEdgeVentilationSealed, SolidTemperatures)
     EXPECT_NEAR(259.54021444301679, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeVentilationSealed, GapTemperatures)
+TEST_F(TestGapLayerSealedVentilation, GapTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Sealed  Ventilated Gap Layer - Gap Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Ventilated Gap Layer - Gap Temperatures");
 
     auto aLayer = GetGap();
 
@@ -138,9 +138,9 @@ TEST_F(TestGapLayerAtEdgeVentilationSealed, GapTemperatures)
     EXPECT_NEAR(269.90713864229735, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeVentilationSealed, ShadeTemperatures)
+TEST_F(TestGapLayerSealedVentilation, ShadeTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Sealed  Ventilated Gap Layer - Shade Temperatures");
+    SCOPED_TRACE("Begin Test: Test Sealed Ventilated Gap Layer - Shade Temperatures");
 
     auto aLayer = GetShadeLayer();
 
@@ -153,9 +153,9 @@ TEST_F(TestGapLayerAtEdgeVentilationSealed, ShadeTemperatures)
     EXPECT_NEAR(280.28093506752992, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeVentilationSealed, AirflowReferencePoint)
+TEST_F(TestGapLayerSealedVentilation, AirflowReferencePoint)
 {
-    SCOPED_TRACE("Begin Test: Test Sealed  Ventilated Gap Layer - Airflow Reference Point");
+    SCOPED_TRACE("Begin Test: Test Sealed Ventilated Gap Layer - Airflow Reference Point");
 
     auto aLayer = GetGap();
 

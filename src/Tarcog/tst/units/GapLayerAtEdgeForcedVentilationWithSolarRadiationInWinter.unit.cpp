@@ -3,7 +3,7 @@
 
 #include "WCETarcog.hpp"
 
-class TestGapLayerAtEdgeForcedVentilationWithSolarRadiation : public testing::Test
+class TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter : public testing::Test
 {
 private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
@@ -136,9 +136,9 @@ public:
     };
 };
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GainEnergy)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GainEnergy)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Gain Energy");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Gain Energy");
 
     auto aLayer = GetGap();
 
@@ -149,9 +149,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GainEnergy)
     EXPECT_NEAR(16.449907386063828, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Solid Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid Temperatures");
 
     auto aLayer = GetSolidLayer();
 
@@ -164,9 +164,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidTemperatures)
     EXPECT_NEAR(270.97231009255381, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidRadiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Solid Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid Radiosities");
 
     auto aLayer = GetSolidLayer();
 
@@ -179,9 +179,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, SolidRadiosities)
     EXPECT_NEAR(339.73558433006201, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GapTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Gap Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Gap Temperatures");
 
     auto aLayer = GetGap();
 
@@ -198,9 +198,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapTemperatures)
     EXPECT_NEAR(292.58958331983365, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GapRadiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Gap Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Gap Radiosities");
 
     auto aLayer = GetGap();
 
@@ -213,9 +213,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, GapRadiosities)
     EXPECT_NEAR(518.55433901363858, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeTemperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Shade Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Shade Temperatures");
 
     auto aLayer = GetShadeLayer();
 
@@ -228,9 +228,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeTemperatures)
     EXPECT_NEAR(314.21313360489381, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeRadiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Shade Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Shade Radiosities");
 
     auto aLayer = GetShadeLayer();
 
@@ -243,9 +243,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, ShadeRadiosities)
     EXPECT_NEAR(533.07538128082308, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, AirflowReferencePoint)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, AirflowReferencePoint)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Airflow Reference Point");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Airflow Reference Point");
 
     auto aLayer = GetGap();
 
@@ -256,9 +256,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, AirflowReferencePo
     EXPECT_NEAR(6912.8529362264735, airflowReferencePoint, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorHeatFlow)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, IndoorHeatFlow)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Indoor Heat Flow");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Indoor Heat Flow");
 
     auto aSystem = GetSystem();
 
@@ -271,10 +271,10 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorHeatFlow)
     EXPECT_NEAR(-160.25562868194339, totalHF, 1e-5);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorValues)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, IndoorValues)
 {
     SCOPED_TRACE(
-      "Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Indoor Values");
+      "Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Indoor Values");
 
     auto aSystem = GetSystem();
 
@@ -288,10 +288,10 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorValues)
     EXPECT_NEAR(0, iRCalculatedOutside, 1e-5);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, OutdoorValues)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, OutdoorValues)
 {
     SCOPED_TRACE(
-      "Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Outdoor Values");
+      "Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Outdoor Values");
 
     auto aSystem = GetSystem();
 
