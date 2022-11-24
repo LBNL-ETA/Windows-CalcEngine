@@ -270,3 +270,37 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorHeatFlow)
     EXPECT_NEAR(-102.81512658453136, radiativeHF, 1e-5);
     EXPECT_NEAR(-160.25562868194339, totalHF, 1e-5);
 }
+
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, IndoorValues)
+{
+    SCOPED_TRACE(
+      "Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Indoor Values");
+
+    auto aSystem = GetSystem();
+
+    auto hInput = aSystem->getHInput(Tarcog::ISO15099::Environment::Indoor);
+    auto hCoefficientModel = aSystem->getHCoefficientModel(Tarcog::ISO15099::Environment::Indoor);
+    auto iRCalculatedOutside =
+      aSystem->getIRCalculatedOutside(Tarcog::ISO15099::Environment::Indoor);
+
+    EXPECT_NEAR(0, hInput, 1e-5);
+    EXPECT_EQ(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH, hCoefficientModel);
+    EXPECT_NEAR(0, iRCalculatedOutside, 1e-5);
+}
+
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiation, OutdoorValues)
+{
+    SCOPED_TRACE(
+      "Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation - Outdoor Values");
+
+    auto aSystem = GetSystem();
+
+    auto hInput = aSystem->getHInput(Tarcog::ISO15099::Environment::Outdoor);
+    auto hCoefficientModel = aSystem->getHCoefficientModel(Tarcog::ISO15099::Environment::Outdoor);
+    auto iRCalculatedOutside =
+      aSystem->getIRCalculatedOutside(Tarcog::ISO15099::Environment::Outdoor);
+
+    EXPECT_NEAR(0, hInput, 1e-5);
+    EXPECT_EQ(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH, hCoefficientModel);
+    EXPECT_NEAR(0, iRCalculatedOutside, 1e-5);
+}
