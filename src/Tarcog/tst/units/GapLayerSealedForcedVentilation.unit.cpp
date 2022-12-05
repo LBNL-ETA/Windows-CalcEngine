@@ -41,9 +41,9 @@ protected:
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer != nullptr);
 
-        auto closedShadeLayer =
-          Tarcog::ISO15099::Layers::closedShading(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(closedShadeLayer != nullptr);
+        auto sealedLayer =
+          Tarcog::ISO15099::Layers::sealedLayer(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(sealedLayer != nullptr);
 
         auto gapThickness = 0.0127;
         auto gapAirSpeed = 0.5;
@@ -54,7 +54,7 @@ protected:
         double windowWidth = 1;
         double windowHeight = 1;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({solidLayer, gap, closedShadeLayer});
+        aIGU.addLayers({solidLayer, gap, sealedLayer});
 
         /////////////////////////////////////////////////////////
         /// System
@@ -80,12 +80,12 @@ public:
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap);
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUShadeLayer> GetClosedShadeLayer() const
+    std::shared_ptr<Tarcog::ISO15099::CIGUShadeLayer> GetSealedLayer() const
     {
-        auto closedShadeLayer = m_TarcogSystem->getSolidLayers()[1];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUShadeLayer>(closedShadeLayer)
+        auto sealedLayer = m_TarcogSystem->getSolidLayers()[1];
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUShadeLayer>(sealedLayer)
                != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUShadeLayer>(closedShadeLayer);
+        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUShadeLayer>(sealedLayer);
     };
 };
 
@@ -140,7 +140,7 @@ TEST_F(TestGapLayerSealedForcedVentilation, ClosedShadeTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Sealed Forced Ventilated Gap Layer - Closed Shade Temperatures");
 
-    auto aLayer = GetClosedShadeLayer();
+    auto aLayer = GetSealedLayer();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 

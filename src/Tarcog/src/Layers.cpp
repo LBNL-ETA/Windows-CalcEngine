@@ -92,12 +92,12 @@ namespace Tarcog
               std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
         }
 
-        std::shared_ptr<CIGUShadeLayer> Layers::closedShading(double thickness,
-                                                              double conductivity,
-                                                              double frontEmissivity,
-                                                              double frontIRTransmittance,
-                                                              double backEmissivity,
-                                                              double backIRTransmittance)
+        std::shared_ptr<CIGUShadeLayer> Layers::sealedLayer(double thickness,
+                                                            double conductivity,
+                                                            double frontEmissivity,
+                                                            double frontIRTransmittance,
+                                                            double backEmissivity,
+                                                            double backIRTransmittance)
         {
             return std::make_shared<CIGUShadeLayer>(
               thickness,

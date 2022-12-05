@@ -41,13 +41,13 @@ protected:
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(solidLayer != nullptr);
 
-        auto shadeLayerThickness = 0.01;
-        auto shadeLayerConductance = 160.0;
+        auto sealedLayerThickness = 0.01;
+        auto sealedLayerConductance = 160.0;
 
-        auto shadeLayer =
-          Tarcog::ISO15099::Layers::closedShading(shadeLayerThickness, shadeLayerConductance);
+        auto sealedLayer =
+          Tarcog::ISO15099::Layers::sealedLayer(sealedLayerThickness, sealedLayerConductance);
 
-        ASSERT_TRUE(shadeLayer != nullptr);
+        ASSERT_TRUE(sealedLayer != nullptr);
 
         auto gapThickness = 0.0127;
         auto gap = Tarcog::ISO15099::Layers::gap(gapThickness);
@@ -57,7 +57,7 @@ protected:
         double windowHeight = 1;
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({solidLayer, gap, shadeLayer});
+        aIGU.addLayers({solidLayer, gap, sealedLayer});
 
         /////////////////////////////////////////////////////////
         /// System
@@ -83,11 +83,11 @@ public:
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap);
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetShadeLayer() const
+    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSealedLayer() const
     {
-        auto shadeLayer = m_TarcogSystem->getSolidLayers()[1];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer) != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer);
+        auto sealedLayer = m_TarcogSystem->getSolidLayers()[1];
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(sealedLayer) != nullptr);
+        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(sealedLayer);
     };
 };
 
@@ -142,7 +142,7 @@ TEST_F(TestGapLayerSealedVentilation, ShadeTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Sealed Ventilated Gap Layer - Shade Temperatures");
 
-    auto aLayer = GetShadeLayer();
+    auto aLayer = GetSealedLayer();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
