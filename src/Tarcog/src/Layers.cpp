@@ -65,18 +65,18 @@ namespace Tarcog
                           double conductivity,
                           EffectiveLayers::EffectiveOpenness effectiveOpenness,
                           double frontEmissivity,
-                          double frontTransmittance,
+                          double frontIRTransmittance,
                           double backEmissivity,
-                          double backTransmittance)
+                          double backIRTransmittance)
         {
             if(effectiveOpenness.isClosed())
             {
                 return solid(thickness,
                              conductivity,
                              frontEmissivity,
-                             frontTransmittance,
+                             frontIRTransmittance,
                              backEmissivity,
-                             backTransmittance);
+                             backIRTransmittance);
             }
 
             return std::make_shared<CIGUShadeLayer>(
@@ -88,23 +88,23 @@ namespace Tarcog
                                                effectiveOpenness.Ar,
                                                effectiveOpenness.Ah,
                                                effectiveOpenness.FrontPorosity),
-              std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backTransmittance));
+              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
+              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
         }
 
         std::shared_ptr<CIGUShadeLayer> Layers::closedShading(double thickness,
                                                               double conductivity,
                                                               double frontEmissivity,
-                                                              double frontTransmittance,
+                                                              double frontIRTransmittance,
                                                               double backEmissivity,
-                                                              double backTransmittance)
+                                                              double backIRTransmittance)
         {
             return std::make_shared<CIGUShadeLayer>(
               thickness,
               conductivity,
               std::make_shared<CShadeOpenings>(0, 0, 0, 0, 0, 0),
-              std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backTransmittance));
+              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
+              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
         }
 
 
