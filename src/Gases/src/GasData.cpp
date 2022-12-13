@@ -24,9 +24,7 @@ namespace Gases
                        CIntCoeff const & t_Cp,
                        CIntCoeff const & t_Con,
                        CIntCoeff const & t_Visc) :
-        m_gasName(t_Name),
-        m_molWeight(t_Wght),
-        m_specificHeatRatio(t_SpecHeatRatio)
+        m_gasName(t_Name), m_molWeight(t_Wght), m_specificHeatRatio(t_SpecHeatRatio)
     {
         m_Coefficients[CoeffType::cCp] = t_Cp;
         m_Coefficients[CoeffType::cCond] = t_Con;
@@ -56,6 +54,11 @@ namespace Gases
     double CGasData::getMolecularWeight() const
     {
         return m_molWeight;
+    }
+
+    std::string CGasData::name() const
+    {
+        return m_gasName;
     }
 
 }   // namespace Gases

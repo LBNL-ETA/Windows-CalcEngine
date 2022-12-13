@@ -1,5 +1,6 @@
 #include <stdexcept>
-#include <cmath>
+
+#include "WCECommon.hpp"
 #include "Gas.hpp"
 #include "GasData.hpp"
 #include "GasItem.hpp"
@@ -90,7 +91,7 @@ namespace Gases
 
         for(auto & it : m_GasItem)
         {
-            totalPercent += it.getFraction();
+            totalPercent += it.fraction();
         }
 
         return totalPercent;
@@ -198,7 +199,7 @@ namespace Gases
 
             lambdaSecondMix += lambdaSecond / sumMix;
 
-            cpMix += itGasProperties->m_SpecificHeat * it.getFraction()
+            cpMix += itGasProperties->m_SpecificHeat * it.fraction()
                      * itGasProperties->m_MolecularWeight;
             ++counter;
         }
@@ -252,13 +253,13 @@ namespace Gases
     {
         auto phiValue =
           viscTwoGases(*t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties());
-        if((t_GasItem1.getFraction() == 0) || (t_GasItem2.getFraction() == 0))
+        if((t_GasItem1.fraction() == 0) || (t_GasItem2.fraction() == 0))
         {
             throw std::runtime_error(
               "Fraction of gas component in gas mixture is set to be equal to zero.");
         }
 
-        return (t_GasItem2.getFraction() / t_GasItem1.getFraction()) * phiValue;
+        return (t_GasItem2.fraction() / t_GasItem1.fraction()) * phiValue;
     }
 
     // This implements equation 66 (ISO 15099)
@@ -320,13 +321,13 @@ namespace Gases
         auto phiValue =
           lambdaPrimTwoGases(*t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties());
 
-        if((t_GasItem1.getFraction() == 0) || (t_GasItem2.getFraction() == 0))
+        if((t_GasItem1.fraction() == 0) || (t_GasItem2.fraction() == 0))
         {
             throw std::runtime_error(
               "Fraction of gas component in gas mixture is set to be equal to zero.");
         }
 
-        return (t_GasItem2.getFraction() / t_GasItem1.getFraction()) * phiValue;
+        return (t_GasItem2.fraction() / t_GasItem1.fraction()) * phiValue;
     }
 
     // Implementation of sum items in denominator of equation 67 (ISO15099)
@@ -335,13 +336,13 @@ namespace Gases
         auto phiValue =
           lambdaSecondTwoGases(*t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties());
 
-        if((t_GasItem1.getFraction() == 0) || (t_GasItem2.getFraction() == 0))
+        if((t_GasItem1.fraction() == 0) || (t_GasItem2.fraction() == 0))
         {
             throw std::runtime_error(
               "Fraction of gas component in gas mixture is set to be equal to zero.");
         }
 
-        return (t_GasItem2.getFraction() / t_GasItem1.getFraction()) * phiValue;
+        return (t_GasItem2.fraction() / t_GasItem1.fraction()) * phiValue;
     }
 
     CGas & CGas::operator=(CGas const & t_Gas)
@@ -369,6 +370,11 @@ namespace Gases
     bool CGas::operator!=(CGas const & rhs) const
     {
         return !(rhs == *this);
+    }
+
+    std::vector<CGasItem> CGas::gasItems() const
+    {
+        return m_GasItem;
     }
 
 }   // namespace Gases

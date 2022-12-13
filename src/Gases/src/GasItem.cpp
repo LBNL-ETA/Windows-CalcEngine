@@ -27,8 +27,7 @@ namespace Gases
     }
 
     CGasItem::CGasItem(double const t_Fraction, CGasData const & t_GasData) :
-        m_Fraction(t_Fraction),
-        m_GasData(new CGasData(t_GasData))
+        m_Fraction(t_Fraction), m_GasData(new CGasData(t_GasData))
     {
         initialize();
     }
@@ -89,7 +88,7 @@ namespace Gases
         m_GasProperties = std::make_shared<GasProperties>();
     }
 
-    double CGasItem::getFraction() const
+    double CGasItem::fraction() const
     {
         return m_Fraction;
     }
@@ -166,6 +165,11 @@ namespace Gases
     bool CGasItem::operator!=(CGasItem const & rhs) const
     {
         return !(rhs == *this);
+    }
+
+    std::string CGasItem::name() const
+    {
+        return m_GasData->name();
     }
 
 }   // namespace Gases

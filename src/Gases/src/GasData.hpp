@@ -17,16 +17,17 @@ namespace Gases
         CGasData();
         CGasData(CGasData const & t_GasData);
         CGasData(std::string const & t_Name,
-                 double const t_Wght,
-                 double const t_SpecHeatRatio,
+                 double t_Wght,
+                 double t_SpecHeatRatio,
                  CIntCoeff const & t_Cp,
                  CIntCoeff const & t_Con,
                  CIntCoeff const & t_Visc);
 
         CGasData & operator=(const CGasData & t_GasData);
-        double getMolecularWeight() const;
-        double getPropertyValue(CoeffType const t_Type, double const t_Temperature) const;
-        double getSpecificHeatRatio() const;
+        [[nodiscard]] double getMolecularWeight() const;
+        [[nodiscard]] double getPropertyValue(CoeffType t_Type, double t_Temperature) const;
+        [[nodiscard]] double getSpecificHeatRatio() const;
+        [[nodiscard]] std::string name() const;
 
     private:
         std::string m_gasName;

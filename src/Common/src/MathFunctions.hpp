@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <sstream>
 #include <stdexcept>
 
 #include "Constants.hpp"
@@ -61,6 +62,15 @@ namespace FenestrationCommon
             delta = ((y2 - y1) / (x2 - x1)) * (x - x1);
         }
         return y1 + delta;
+    }
+
+    template <typename T>
+    std::string to_string_with_precision(const T a_value, const int n = 6)
+    {
+        std::ostringstream out;
+        out.precision(n);
+        out << std::fixed << a_value;
+        return out.str();
     }
 
     //! Multiplies two vectors

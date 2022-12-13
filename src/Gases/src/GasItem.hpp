@@ -17,15 +17,17 @@ namespace Gases
     public:
         CGasItem();
         CGasItem(CGasItem const & t_GasItem);
-        CGasItem(double const aFraction, CGasData const & t_GasData);
+        CGasItem(double aFraction, CGasData const & t_GasData);
         CGasItem & operator=(CGasItem const & t_GasItem);
-        void setTemperature(double const t_Temperature);
-        void setPressure(double const t_Pressure);
-        double getFraction() const;
-        std::shared_ptr<GasProperties> getFractionalGasProperties() const;
-        std::shared_ptr<GasProperties> getGasProperties() const;
+        void setTemperature(double t_Temperature);
+        void setPressure(double t_Pressure);
+        [[nodiscard]] double fraction() const;
+        [[nodiscard]] std::shared_ptr<GasProperties> getFractionalGasProperties() const;
+        [[nodiscard]] std::shared_ptr<GasProperties> getGasProperties() const;
         bool operator==(CGasItem const & rhs) const;
         bool operator!=(CGasItem const & rhs) const;
+
+        [[nodiscard]] std::string name() const;
 
     private:
         void fillStandardPressureProperites() const;

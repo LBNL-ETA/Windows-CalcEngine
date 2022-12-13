@@ -5,10 +5,10 @@
 #include <vector>
 #include "GasProperties.hpp"
 #include "GasCreator.hpp"
+#include "GasItem.hpp"
 
 namespace Gases
 {
-    class CGasItem;
     class CGasData;
 
     class CGas
@@ -26,6 +26,8 @@ namespace Gases
         const GasProperties & getSimpleGasProperties();
         const GasProperties & getGasProperties();
         void setTemperatureAndPressure(double t_Temperature, double t_Pressure);
+
+        [[nodiscard]] std::vector<CGasItem> gasItems() const;;
 
         CGas & operator=(CGas const & t_Gas);
         bool operator==(CGas const & t_Gas) const;

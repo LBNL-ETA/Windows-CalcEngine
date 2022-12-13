@@ -27,3 +27,19 @@ TEST_F(MathFunctionsTest, TestFloatInequality)
 
     EXPECT_EQ(FenestrationCommon::isEqual(x1, x2), false);
 }
+
+TEST_F(MathFunctionsTest, DoubleToStringTwoDeimals)
+{
+    constexpr double value{13.234};
+    constexpr auto numberOfDecimals{2u};
+    const std::string correct{"13.23"};
+    EXPECT_EQ(correct, FenestrationCommon::to_string_with_precision(value, numberOfDecimals));
+}
+
+TEST_F(MathFunctionsTest, DoubleToStringThreeDeimals)
+{
+    constexpr double value{13.234564};
+    constexpr auto numberOfDecimals{3u};
+    const std::string correct{"13.235"};
+    EXPECT_EQ(correct, FenestrationCommon::to_string_with_precision(value, numberOfDecimals));
+}
