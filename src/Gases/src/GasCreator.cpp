@@ -2,7 +2,7 @@
 
 namespace Gases
 {
-    Gas & Gas::intance()
+    Gas & Gas::instance()
     {
         static Gas instant;
         return instant;

@@ -1,5 +1,7 @@
 #include <stdexcept>
 
+
+#include "WCECommon.hpp"
 #include "GasProperties.hpp"
 #include "GasData.hpp"
 
@@ -59,6 +61,18 @@ namespace Gases
     std::string CGasData::name() const
     {
         return m_gasName;
+    }
+
+    bool CGasData::operator==(const CGasData & rhs) const
+    {
+        return m_gasName == rhs.m_gasName && m_molWeight == rhs.m_molWeight
+               && m_specificHeatRatio == rhs.m_specificHeatRatio
+               && m_Coefficients == rhs.m_Coefficients;
+    }
+
+    bool CGasData::operator!=(const CGasData & rhs) const
+    {
+        return !(rhs == *this);
     }
 
 }   // namespace Gases

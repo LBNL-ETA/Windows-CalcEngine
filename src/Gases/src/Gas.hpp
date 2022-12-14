@@ -27,7 +27,8 @@ namespace Gases
         const GasProperties & getGasProperties();
         void setTemperatureAndPressure(double t_Temperature, double t_Pressure);
 
-        [[nodiscard]] std::vector<CGasItem> gasItems() const;;
+        [[nodiscard]] std::vector<CGasItem> gasItems() const;
+        ;
 
         CGas & operator=(CGas const & t_Gas);
         bool operator==(CGas const & t_Gas) const;
@@ -37,14 +38,14 @@ namespace Gases
         const GasProperties & getStandardPressureGasProperties();
         const GasProperties & getVacuumPressureGasProperties();
 
-        double viscTwoGases(GasProperties const & t_Gas1Properties,
-                            GasProperties const & t_Gas2Properties) const;
+        [[nodiscard]] double viscTwoGases(GasProperties const & t_Gas1Properties,
+                                          GasProperties const & t_Gas2Properties) const;
         double viscDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const;
 
-        double lambdaPrimTwoGases(GasProperties const & t_Gas1Properties,
-                                  GasProperties const & t_Gas2Properties) const;
-        double lambdaSecondTwoGases(GasProperties const & t_Gas1Properties,
-                                    GasProperties const & t_Gas2Properties) const;
+        [[nodiscard]] double lambdaPrimTwoGases(GasProperties const & t_Gas1Properties,
+                                                GasProperties const & t_Gas2Properties) const;
+        [[nodiscard]] double lambdaSecondTwoGases(GasProperties const & t_Gas1Properties,
+                                                  GasProperties const & t_Gas2Properties) const;
 
         double lambdaPrimDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const;
         double lambdaSecondDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const;

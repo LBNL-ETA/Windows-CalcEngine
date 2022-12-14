@@ -36,6 +36,17 @@ namespace Gases
         return *this;
     }
 
+    bool CIntCoeff::operator==(const CIntCoeff & rhs) const
+    {
+        using FenestrationCommon::isEqual;
+        return isEqual(m_A, rhs.m_A) && isEqual(m_B, rhs.m_B) && isEqual(m_C, rhs.m_C);
+    }
+
+    bool CIntCoeff::operator!=(const CIntCoeff & rhs) const
+    {
+        return !(rhs == *this);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     //   GasProperties
     ////////////////////////////////////////////////////////////////////////////////////////////

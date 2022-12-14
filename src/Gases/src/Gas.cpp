@@ -76,13 +76,13 @@ namespace Gases
         }
         for(const auto & item : gases)
         {
-            m_GasItem.emplace_back(item.first, Gases::Gas::intance().get(item.second));
+            m_GasItem.emplace_back(item.first, Gases::Gas::instance().get(item.second));
         }
     }
 
     void CGas::addGasItem(double percent, Gases::GasDef def)
     {
-        addGasItem(percent, Gases::Gas::intance().get(def));
+        addGasItem(percent, Gases::Gas::instance().get(def));
     }
 
     double CGas::totalPercent()
@@ -109,10 +109,10 @@ namespace Gases
 
     const GasProperties & CGas::getSimpleGasProperties()
     {
-        m_SimpleProperties = *((m_GasItem)[0].getFractionalGasProperties());
+        m_SimpleProperties = m_GasItem[0].getFractionalGasProperties();
         for(auto it = next(m_GasItem.begin()); it != m_GasItem.end(); ++it)
         {
-            m_SimpleProperties += *(it->getFractionalGasProperties());
+            m_SimpleProperties += it->getFractionalGasProperties();
         }
 
         return m_SimpleProperties;
@@ -172,8 +172,8 @@ namespace Gases
         for(auto & it : m_GasItem)
         {
             auto itGasProperties = it.getGasProperties();
-            auto lambdaPrim(itGasProperties->getLambdaPrim());
-            auto lambdaSecond(itGasProperties->getLambdaSecond());
+            auto lambdaPrim(itGasProperties.getLambdaPrim());
+            auto lambdaSecond(itGasProperties.getLambdaSecond());
 
             auto sumMix = 1.0;
             for(size_t i = 0; i < gasSize; ++i)
@@ -181,7 +181,7 @@ namespace Gases
                 sumMix += miItem[counter][i];
             }
 
-            miMix += itGasProperties->m_Viscosity / sumMix;
+            miMix += itGasProperties.m_Viscosity / sumMix;
 
             sumMix = 1.0;
             for(size_t i = 0; i < gasSize; ++i)
@@ -199,8 +199,8 @@ namespace Gases
 
             lambdaSecondMix += lambdaSecond / sumMix;
 
-            cpMix += itGasProperties->m_SpecificHeat * it.fraction()
-                     * itGasProperties->m_MolecularWeight;
+            cpMix += itGasProperties.m_SpecificHeat * it.fraction()
+                     * itGasProperties.m_MolecularWeight;
             ++counter;
         }
 
@@ -252,7 +252,7 @@ namespace Gases
     double CGas::viscDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const
     {
         auto phiValue =
-          viscTwoGases(*t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties());
+          viscTwoGases(t_GasItem1.getGasProperties(), t_GasItem2.getGasProperties());
         if((t_GasItem1.fraction() == 0) || (t_GasItem2.fraction() == 0))
         {
             throw std::runtime_error(
@@ -319,7 +319,7 @@ namespace Gases
     double CGas::lambdaPrimDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const
     {
         auto phiValue =
-          lambdaPrimTwoGases(*t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties());
+          lambdaPrimTwoGases(t_GasItem1.getGasProperties(), t_GasItem2.getGasProperties());
 
         if((t_GasItem1.fraction() == 0) || (t_GasItem2.fraction() == 0))
         {
@@ -334,7 +334,7 @@ namespace Gases
     double CGas::lambdaSecondDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const
     {
         auto phiValue =
-          lambdaSecondTwoGases(*t_GasItem1.getGasProperties(), *t_GasItem2.getGasProperties());
+          lambdaSecondTwoGases(t_GasItem1.getGasProperties(), t_GasItem2.getGasProperties());
 
         if((t_GasItem1.fraction() == 0) || (t_GasItem2.fraction() == 0))
         {

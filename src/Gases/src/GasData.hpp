@@ -29,6 +29,9 @@ namespace Gases
         [[nodiscard]] double getSpecificHeatRatio() const;
         [[nodiscard]] std::string name() const;
 
+        bool operator==(const CGasData & rhs) const;
+        bool operator!=(const CGasData & rhs) const;
+
     private:
         std::string m_gasName;
         double m_molWeight;
