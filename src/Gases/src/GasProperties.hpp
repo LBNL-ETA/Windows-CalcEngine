@@ -1,5 +1,4 @@
-#ifndef GASPROPERTIES_H
-#define GASPROPERTIES_H
+#pragma once
 
 namespace Gases
 {
@@ -14,10 +13,13 @@ namespace Gases
     {
     public:
         CIntCoeff();
-        CIntCoeff(double const t_A, double const t_B, double const t_C);
-        double interpolationValue(double const t_Temperature) const;
+        CIntCoeff(double t_A, double t_B, double t_C);
+        [[nodiscard]] double interpolationValue(double t_Temperature) const;
         CIntCoeff(CIntCoeff const & t_IntCoeff);
         CIntCoeff & operator=(CIntCoeff const & t_IntCoeff);
+
+        bool operator==(const CIntCoeff & rhs) const;
+        bool operator!=(const CIntCoeff & rhs) const;
 
     private:
         double m_A;
@@ -40,8 +42,8 @@ namespace Gases
 
         GasProperties(GasProperties const & t_GasProperties);
 
-        double getLambdaPrim() const;
-        double getLambdaSecond() const;
+        [[nodiscard]] double getLambdaPrim() const;
+        [[nodiscard]] double getLambdaSecond() const;
         GasProperties & operator+(const GasProperties & t_A);
         GasProperties & operator+=(const GasProperties & t_A);
         GasProperties & operator=(const GasProperties & t_A);
@@ -59,5 +61,3 @@ namespace Gases
     };
 
 }   // namespace Gases
-
-#endif

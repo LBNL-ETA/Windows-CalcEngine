@@ -15,4 +15,11 @@ namespace FenestrationCommon
     std::vector<IndexRange> chunkIt(size_t start, size_t end, size_t numberOfSplits);
 
     size_t getNumberOfThreads(size_t numberOfJobs);
+
+    template <typename Map>
+    bool map_compare (Map const &lhs, Map const &rhs) {
+        return lhs.size() == rhs.size()
+               && std::equal(lhs.begin(), lhs.end(),
+                             rhs.begin());
+    }
 }

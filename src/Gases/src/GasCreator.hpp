@@ -16,9 +16,9 @@ namespace Gases
     class Gas
     {
     public:
-        static Gas & intance();
+        static Gas & instance();
 
-        CGasData get(GasDef gasDef) const;
+        [[nodiscard]] CGasData get(GasDef gasDef) const;
 
     private:
         Gas();

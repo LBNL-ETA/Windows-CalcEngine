@@ -1,5 +1,4 @@
-#ifndef GASSETTING_H
-#define GASSETTING_H
+#pragma once
 
 namespace Gases
 {
@@ -8,8 +7,8 @@ namespace Gases
     public:
         static CGasSettings & instance();
 
-        double getVacuumPressure() const;
-        void setVacuumPressure(double const t_Value);
+        [[nodiscard]] double getVacuumPressure() const;
+        void setVacuumPressure(double t_Value);
 
     private:
         CGasSettings();
@@ -20,5 +19,3 @@ namespace Gases
     };
 
 }   // namespace Gases
-
-#endif
