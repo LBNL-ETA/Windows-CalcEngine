@@ -38,7 +38,7 @@ namespace Tarcog
 
             void smoothEnergyGain(double qv1, double qv2);
 
-            double calculateOutletTemperatureFromAirFlow();
+            void calculateOutletTemperatureFromAirFlow();
 
         private:
             void calculateConvectionOrConductionFlow() override;

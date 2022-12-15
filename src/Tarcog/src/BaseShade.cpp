@@ -304,26 +304,7 @@ namespace Tarcog
             {
                 double TgapOutOld = TgapOut;
 
-                TgapOut = t_Gap->calculateOutletTemperatureFromAirFlow();
-
-                AirVerticalDirection gapDirection = AirVerticalDirection::None;
-                if(t_Gap->isVentilationForced())
-                {
-                    t_Gap->setFlowTemperatures(environmentTemperature, TgapOut);
-                }
-                else
-                {
-                    if(TgapOut > environmentTemperature)
-                    {
-                        gapDirection = AirVerticalDirection::Up;
-                        t_Gap->setFlowTemperatures(TgapOut, environmentTemperature, gapDirection);
-                    }
-                    else
-                    {
-                        gapDirection = AirVerticalDirection::Down;
-                        t_Gap->setFlowTemperatures(environmentTemperature, TgapOut, gapDirection);
-                    }
-                }
+                t_Gap->calculateOutletTemperatureFromAirFlow();
 
                 const auto tempGap = t_Gap->layerTemperature();
 

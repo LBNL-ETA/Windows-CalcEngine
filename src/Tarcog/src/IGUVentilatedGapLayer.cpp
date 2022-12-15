@@ -202,7 +202,7 @@ namespace Tarcog
             return (sqrt(std::abs(pow(B, 2) + 4 * A * drivingPressure)) - B) / (2 * A);
         }
 
-        double CIGUVentilatedGapLayer::calculateOutletTemperatureFromAirFlow()
+        void CIGUVentilatedGapLayer::calculateOutletTemperatureFromAirFlow()
         {
             if(!isVentilationForced())
             {
@@ -211,7 +211,8 @@ namespace Tarcog
             double beta = betaCoeff();
             double alpha = 1 - beta;
 
-            return alpha * averageTemperature() + beta * m_InletTemperature;
+            m_outTemperature = alpha * averageTemperature() + beta * m_InletTemperature;
+            m_inTemperature = m_InletTemperature;
         }
 
     }   // namespace ISO15099
