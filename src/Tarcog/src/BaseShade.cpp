@@ -208,7 +208,9 @@ namespace Tarcog
                     t_Gap1->setFlowDirection(AirVerticalDirection::Down);
                     t_Gap2->setFlowDirection(AirVerticalDirection::Up);
                 }
-                double drivingPressure = t_Gap1->getAirflowReferencePoint(tempGap2);
+                t_Gap1->setInletTemperature(t_Gap2->layerTemperature());
+                t_Gap2->setInletTemperature(t_Gap1->layerTemperature());
+                double drivingPressure = t_Gap1->getDrivingPressure();
                 double ratio = t_Gap1->getThickness() / t_Gap2->getThickness();
                 double A1 = t_Gap1->bernoullyPressureTerm() + t_Gap1->pressureLossTerm();
                 double A2 = t_Gap2->bernoullyPressureTerm() + t_Gap2->pressureLossTerm();
@@ -283,7 +285,6 @@ namespace Tarcog
                                                std::shared_ptr<CIGUVentilatedGapLayer> t_Gap)
         {
             double TgapOut = t_Gap->layerTemperature();
-            double tempGap = t_Gap->layerTemperature();
             const auto forcedVentilationAirSpeed = t_Gap->getForcedVentilationAirSpeed();
             if(t_Gap->isVentilationForced())
             {
@@ -302,15 +303,9 @@ namespace Tarcog
                 double TavGap = t_Gap->averageTemperature();
                 if(!t_Gap->isVentilationForced())
                 {
-                    if(tempGap > inletTemperature)
-                    {
-                        t_Gap->setFlowDirection(AirVerticalDirection::Up);
-                    }
-                    else
-                    {
-                        t_Gap->setFlowDirection(AirVerticalDirection::Down);
-                    }
-                    double drivingPressure = t_Gap->getAirflowReferencePoint(inletTemperature);
+                    t_Gap->setInletTemperature(inletTemperature);
+
+                    double drivingPressure = t_Gap->getDrivingPressure();
                     double A = t_Gap->bernoullyPressureTerm() + t_Gap->pressureLossTerm();
                     double B = t_Gap->hagenPressureTerm();
                     double speed =
@@ -343,7 +338,7 @@ namespace Tarcog
                     }
                 }
 
-                tempGap = t_Gap->layerTemperature();
+                const auto tempGap = t_Gap->layerTemperature();
 
                 TgapOut = RelaxationParameter * tempGap + (1 - RelaxationParameter) * TgapOutOld;
 

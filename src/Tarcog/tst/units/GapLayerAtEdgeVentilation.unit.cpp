@@ -176,6 +176,8 @@ TEST_F(TestGapLayerAtEdgeVentilation, AirflowReferencePoint)
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto airflowReferencePoint = aLayer->getAirflowReferencePoint(0.5);
-    EXPECT_NEAR(6912.3686896869631, airflowReferencePoint, 1e-4);
+    constexpr auto inletTemperature{285.0};
+    aLayer->setInletTemperature(inletTemperature);
+    auto airflowReferencePoint = aLayer->getDrivingPressure();
+    EXPECT_NEAR(0.12149095225569298, airflowReferencePoint, 1e-4);
 }

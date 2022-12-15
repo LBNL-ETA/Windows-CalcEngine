@@ -251,8 +251,10 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, AirflowRef
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto airflowReferencePoint = aLayer->getAirflowReferencePoint(0.5);
-    EXPECT_NEAR(6912.8529362264735, airflowReferencePoint, 1e-4);
+    constexpr auto inletTemperature{285.0};
+    aLayer->setInletTemperature(inletTemperature);
+    auto airflowReferencePoint = aLayer->getDrivingPressure();
+    EXPECT_NEAR(0.36275557476893788, airflowReferencePoint, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, IndoorHeatFlow)

@@ -47,6 +47,24 @@ namespace Tarcog
             resetCalculated();
         }
 
+        void CIGUVentilatedGapLayer::setInletTemperature(double inletTemperature)
+        {
+            m_InletTemperature = inletTemperature;
+            calculateImpedances(inletTemperature);
+        }
+
+        void CIGUVentilatedGapLayer::calculateImpedances(double inletTemperature)
+        {
+            m_AirVerticalDirection = layerTemperature() > inletTemperature
+                                       ? AirVerticalDirection::Up
+                                       : AirVerticalDirection::Down;
+
+            m_Zin = calcImpedance(m_Ain);
+            m_Zout = calcImpedance(m_Aout);
+
+            resetCalculated();
+        }
+
         void CIGUVentilatedGapLayer::setFlowTemperatures(double const t_topTemp,
                                                          double const t_botTemp,
                                                          AirVerticalDirection const & t_Direction)
@@ -86,7 +104,7 @@ namespace Tarcog
             resetCalculated();
         }
 
-        double CIGUVentilatedGapLayer::getAirflowReferencePoint(double const t_GapTemperature)
+        double CIGUVentilatedGapLayer::getDrivingPressure()
         {
             using ConstantsData::GRAVITYCONSTANT;
             using ConstantsData::WCE_PI;
@@ -95,7 +113,7 @@ namespace Tarcog
             const auto gapTemperature = layerTemperature();
             const auto aProperties = m_ReferenceGas.getGasProperties();
             const auto temperatureMultiplier =
-              std::abs(gapTemperature - t_GapTemperature) / (gapTemperature * t_GapTemperature);
+              std::abs(gapTemperature - m_InletTemperature) / (gapTemperature * m_InletTemperature);
             return aProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
                    * std::abs(cos(tiltAngle)) * temperatureMultiplier;
         }
@@ -114,6 +132,7 @@ namespace Tarcog
 
         double CIGUVentilatedGapLayer::pressureLossTerm()
         {
+            calculateImpedances(m_InletTemperature);
             const auto aGasProperties = m_Gas.getGasProperties();
             return 0.5 * aGasProperties.m_Density * (m_Zin + m_Zout);
         }

@@ -20,7 +20,8 @@ namespace Tarcog
 
             void setFlowGeometry(double const t_Ain, double const t_Aout);
 
-            void setFlowDirection(const AirVerticalDirection t_Direction);
+            void setFlowDirection(AirVerticalDirection t_Direction);
+            void setInletTemperature(double inletTemperature);
 
             void setFlowTemperatures(double t_topTemp,
                                      double t_botTemp,
@@ -28,7 +29,7 @@ namespace Tarcog
             void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
             void setFlowSpeed(double t_speed);
 
-            double getAirflowReferencePoint(double t_GapTemperature);
+            double getDrivingPressure();
 
             double bernoullyPressureTerm();
             double hagenPressureTerm();
@@ -48,10 +49,12 @@ namespace Tarcog
 
             double m_inTemperature;
             double m_outTemperature;
+            double m_InletTemperature{0};
             double m_Zin;
             double m_Ain{0};
             double m_Zout;
             double m_Aout{0};
+            void calculateImpedances(double inletTemperature);
         };
 
     }   // namespace ISO15099
