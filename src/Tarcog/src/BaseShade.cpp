@@ -198,31 +198,21 @@ namespace Tarcog
                 double tempGap2 = t_Gap2->layerTemperature();
                 double Tav1 = t_Gap1->averageTemperature();
                 double Tav2 = t_Gap2->averageTemperature();
-                if(tempGap1 > tempGap2)
-                {
-                    t_Gap1->setFlowDirection(AirVerticalDirection::Up);
-                    t_Gap2->setFlowDirection(AirVerticalDirection::Down);
-                }
-                else
-                {
-                    t_Gap1->setFlowDirection(AirVerticalDirection::Down);
-                    t_Gap2->setFlowDirection(AirVerticalDirection::Up);
-                }
                 t_Gap1->setInletTemperature(t_Gap2->layerTemperature());
                 t_Gap2->setInletTemperature(t_Gap1->layerTemperature());
-                double drivingPressure = t_Gap1->getDrivingPressure();
-                double ratio = t_Gap1->getThickness() / t_Gap2->getThickness();
-                double A1 = t_Gap1->bernoullyPressureTerm() + t_Gap1->pressureLossTerm();
-                double A2 = t_Gap2->bernoullyPressureTerm() + t_Gap2->pressureLossTerm();
-                double B1 = t_Gap1->hagenPressureTerm();
-                double B2 = t_Gap2->hagenPressureTerm();
-                double A = A1 + pow(ratio, 2) * A2;
-                double B = B1 + ratio * B2;
-                double speed1 =
-                  (sqrt(std::abs(pow(B, 2.0) + 4 * A * drivingPressure)) - B) / (2.0 * A);
-                double speed2 = speed1 / ratio;
-                t_Gap1->setFlowSpeed(speed1);
-                t_Gap2->setFlowSpeed(speed2);
+                //double drivingPressure = t_Gap1->getDrivingPressure();
+                //double ratio = t_Gap1->getThickness() / t_Gap2->getThickness();
+                //double A1 = t_Gap1->bernoullyPressureTerm() + t_Gap1->pressureLossTerm();
+                //double A2 = t_Gap2->bernoullyPressureTerm() + t_Gap2->pressureLossTerm();
+                //double B1 = t_Gap1->hagenPressureTerm();
+                //double B2 = t_Gap2->hagenPressureTerm();
+                //double A = A1 + pow(ratio, 2) * A2;
+                //double B = B1 + ratio * B2;
+                //double speed1 =
+                //  (sqrt(std::abs(pow(B, 2.0) + 4 * A * drivingPressure)) - B) / (2.0 * A);
+                //double speed2 = speed1 / ratio;
+
+                t_Gap2->setFlowSpeed(t_Gap1->calculateThermallyDrivenSpeedOfAdjacentGap(*t_Gap2));
 
                 double beta1 = t_Gap1->betaCoeff();
                 double beta2 = t_Gap2->betaCoeff();

@@ -215,6 +215,21 @@ namespace Tarcog
             m_inTemperature = m_InletTemperature;
         }
 
+        double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeedOfAdjacentGap(
+          CIGUVentilatedGapLayer & adjacentGap)
+        {
+            double ratio = getThickness() / adjacentGap.getThickness();
+            double A1 = bernoullyPressureTerm() + adjacentGap.pressureLossTerm();
+            double A2 = adjacentGap.bernoullyPressureTerm() + adjacentGap.pressureLossTerm();
+            double B1 = hagenPressureTerm();
+            double B2 = adjacentGap.hagenPressureTerm();
+            double A = A1 + pow(ratio, 2) * A2;
+            double B = B1 + ratio * B2;
+            m_AirSpeed =
+              (sqrt(std::abs(pow(B, 2.0) + 4 * A * getDrivingPressure())) - B) / (2.0 * A);
+            return m_AirSpeed / ratio;
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog

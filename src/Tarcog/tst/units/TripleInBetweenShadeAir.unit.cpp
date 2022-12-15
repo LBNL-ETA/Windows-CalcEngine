@@ -108,9 +108,9 @@ TEST_F(TestInBetweenShadeAir, Test1)
     const auto radiosity = aSystem->getRadiosities();
 
     std::vector<double> correctTemp{
-      257.914369, 258.375937, 271.528707, 271.533140, 283.593728, 284.055296};
+      257.914481, 258.376067, 271.528512, 271.532944, 283.593285, 284.054871};
     std::vector<double> correctJ{
-      249.184342, 260.335726, 300.536026, 316.284627, 358.658833, 378.905343};
+      249.184707, 260.336043, 300.535331, 316.283543, 358.656731, 378.903488};
 
     EXPECT_EQ(correctTemp.size(), temperature.size());
     EXPECT_EQ(correctJ.size(), radiosity.size());

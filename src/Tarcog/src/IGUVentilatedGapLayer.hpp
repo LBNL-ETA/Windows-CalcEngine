@@ -39,6 +39,7 @@ namespace Tarcog
             void smoothEnergyGain(double qv1, double qv2);
 
             void calculateOutletTemperatureFromAirFlow();
+            double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
         private:
             void calculateConvectionOrConductionFlow() override;
