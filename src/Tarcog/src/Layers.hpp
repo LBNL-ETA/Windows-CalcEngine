@@ -53,8 +53,7 @@ namespace Tarcog
               gap(double thickness, const Gases::CGas & gas, double pressure = 101325);
 
             static std::shared_ptr<CIGUGapLayer>
-              forcedVentilationGap(double thickness,
-                                   const ForcedVentilation & forcedVentilation,
+              forcedVentilationGap(double thickness, double forcedVentilationAirSpeed,
                                    double pressure = 101325);
 
             static std::shared_ptr<CIGUGapLayer>

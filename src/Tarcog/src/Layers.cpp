@@ -37,11 +37,11 @@ namespace Tarcog
         }
 
         std::shared_ptr<CIGUGapLayer>
-          Layers::forcedVentilationGap(const double thickness,
-                                       const ForcedVentilation & forcedVentilation,
-                                       const double pressure)
+          Layers::forcedVentilationGap(double thickness,
+                                                                   double forcedVentilationAirSpeed,
+                                       double pressure)
         {
-            return std::make_shared<CIGUGapLayer>(thickness, pressure, forcedVentilation);
+            return std::make_shared<CIGUGapLayer>(thickness, pressure, forcedVentilationAirSpeed);
         }
 
         std::shared_ptr<CIGUSolidLayer> Layers::updateMaterialData(

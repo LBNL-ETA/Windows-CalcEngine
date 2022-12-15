@@ -65,8 +65,7 @@ protected:
 
         auto gapThickness = 0.0127;
         auto gapAirSpeed = 0.0;
-        Tarcog::ISO15099::ForcedVentilation forcedVentilation = {gapAirSpeed};
-        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(gapThickness, forcedVentilation);
+        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(gapThickness, gapAirSpeed);
         ASSERT_TRUE(gap != nullptr);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);

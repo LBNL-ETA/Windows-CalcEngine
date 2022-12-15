@@ -18,15 +18,6 @@ namespace Tarcog
     {
         class ISurface;
 
-        struct ForcedVentilation
-        {
-            ForcedVentilation() : Speed(0){};
-
-            ForcedVentilation(const double t_Speed) : Speed(t_Speed){};
-
-            double Speed;
-        };
-
         class CLayerGeometry : public virtual FenestrationCommon::CState
         {
         public:
@@ -97,12 +88,12 @@ namespace Tarcog
             CGasLayer(double const t_Pressure,
                       double const t_AirSpeed,
                       AirHorizontalDirection const t_AirHorizontalDirection);
-            CGasLayer(double t_Pressure, const ForcedVentilation & t_ForcedVentilation);
+            CGasLayer(double t_Pressure, double t_ForcedVentilationAirSpeed);
             CGasLayer(double t_Pressure, const Gases::CGas & t_Gas);
 
             virtual double getPressure();
 
-            ForcedVentilation getForcedVentilation() const;
+            double getForcedVentilationAirSpeed() const;
 
             bool isVentilationForced() const;
 
@@ -115,7 +106,7 @@ namespace Tarcog
             double m_AirSpeed;
             AirVerticalDirection m_AirVerticalDirection;
             AirHorizontalDirection m_AirHorizontalDirection;
-            ForcedVentilation m_ForcedVentilation;
+            double m_ForcedVentilationAirSpeed{0};
             bool m_IsVentilationForced;
 
             Gases::CGas m_Gas;

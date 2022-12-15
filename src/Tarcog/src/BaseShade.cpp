@@ -293,10 +293,10 @@ namespace Tarcog
             size_t iterationStep = 0;
 
             double tempGap = t_Gap->layerTemperature();
-            ForcedVentilation forcedVentilation = t_Gap->getForcedVentilation();
+            const auto forcedVentilationAirSpeed = t_Gap->getForcedVentilationAirSpeed();
             if(t_Gap->isVentilationForced())
             {
-                t_Gap->setFlowSpeed(forcedVentilation.Speed);
+                t_Gap->setFlowSpeed(forcedVentilationAirSpeed);
             }
             while(!converged)
             {
