@@ -24,23 +24,12 @@ namespace Tarcog
 
             double layerTemperature() override;
 
-            void setFlowGeometry(double const t_Ain, double const t_Aout);
+            void setFlowGeometry(double t_Ain, double t_Aout);
 
-            void setFlowDirection(AirVerticalDirection t_Direction);
             void setInletTemperature(double inletTemperature);
 
-            void setFlowTemperatures(double t_topTemp,
-                                     double t_botTemp,
-                                     const AirVerticalDirection & t_Direction);
             void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
             void setFlowSpeed(double t_speed);
-
-            double getDrivingPressure();
-
-            double bernoullyPressureTerm();
-            double hagenPressureTerm();
-            double pressureLossTerm();
-            double betaCoeff();
 
             void smoothEnergyGain(double qv1, double qv2);
 
@@ -53,6 +42,12 @@ namespace Tarcog
             double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
         private:
+            double getDrivingPressure();
+
+            double bernoullyPressureTerm();
+            double hagenPressureTerm();
+            double pressureLossTerm();
+            double betaCoeff();
             void calculateConvectionOrConductionFlow() override;
             double characteristicHeight();
             double calcImpedance(double t_A) const;

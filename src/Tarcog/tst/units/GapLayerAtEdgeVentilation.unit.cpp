@@ -166,18 +166,3 @@ TEST_F(TestGapLayerAtEdgeVentilation, ShadeTemperatures)
     EXPECT_NEAR(283.91677515043358, frontTemperature, 1e-4);
     EXPECT_NEAR(283.92316397867683, backTemperature, 1e-4);
 }
-
-TEST_F(TestGapLayerAtEdgeVentilation, AirflowReferencePoint)
-{
-    SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Airflow Reference Point");
-
-    auto aLayer = GetGap();
-
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-
-    ASSERT_TRUE(aLayer != nullptr);
-    constexpr auto inletTemperature{285.0};
-    aLayer->setInletTemperature(inletTemperature);
-    auto airflowReferencePoint = aLayer->getDrivingPressure();
-    EXPECT_NEAR(0.12149095225569298, airflowReferencePoint, 1e-4);
-}

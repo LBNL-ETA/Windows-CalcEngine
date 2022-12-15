@@ -246,22 +246,6 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, ShadeRadio
     EXPECT_NEAR(629.96111066455899, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, AirflowReferencePoint)
-{
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "
-                 "Summer - Airflow Reference Point");
-
-    auto aLayer = GetGap();
-
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-
-    ASSERT_TRUE(aLayer != nullptr);
-    constexpr auto inletTemperature{290.0};
-    aLayer->setInletTemperature(inletTemperature);
-    auto airflowReferencePoint = aLayer->getDrivingPressure();
-    EXPECT_NEAR(0.71683956851137554, airflowReferencePoint, 1e-4);
-}
-
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInSummer, IndoorHeatFlow)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In "

@@ -37,16 +37,6 @@ namespace Tarcog
             m_Aout = t_Ain;
         }
 
-        void CIGUVentilatedGapLayer::setFlowDirection(const AirVerticalDirection t_Direction)
-        {
-            m_AirVerticalDirection = t_Direction;
-
-            m_Zin = calcImpedance(m_Ain);
-            m_Zout = calcImpedance(m_Aout);
-
-            resetCalculated();
-        }
-
         void CIGUVentilatedGapLayer::setInletTemperature(double inletTemperature)
         {
             m_InletTemperature = inletTemperature;
@@ -61,31 +51,6 @@ namespace Tarcog
 
             m_Zin = calcImpedance(m_Ain);
             m_Zout = calcImpedance(m_Aout);
-
-            resetCalculated();
-        }
-
-        void CIGUVentilatedGapLayer::setFlowTemperatures(double const t_topTemp,
-                                                         double const t_botTemp,
-                                                         AirVerticalDirection const & t_Direction)
-        {
-            m_AirVerticalDirection = t_Direction;
-            switch(m_AirVerticalDirection)
-            {
-                case AirVerticalDirection::None:
-                    break;
-                case AirVerticalDirection::Up:
-                    m_inTemperature = t_botTemp;
-                    m_outTemperature = t_topTemp;
-                    break;
-                case AirVerticalDirection::Down:
-                    m_inTemperature = t_topTemp;
-                    m_outTemperature = t_botTemp;
-                    break;
-                default:
-                    throw std::runtime_error("Incorrect argument for airflow direction.");
-                    break;
-            }
 
             resetCalculated();
         }

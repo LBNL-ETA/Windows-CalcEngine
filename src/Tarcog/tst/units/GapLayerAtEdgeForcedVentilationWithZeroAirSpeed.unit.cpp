@@ -167,18 +167,3 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithZeroAirSpeed, ShadeTemperatures)
     EXPECT_NEAR(280.27229464776792, frontTemperature, 1e-4);
     EXPECT_NEAR(280.28088462967912, backTemperature, 1e-4);
 }
-
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithZeroAirSpeed, AirflowReferencePoint)
-{
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer With Zero Air Speed - Airflow Reference Point");
-
-    auto aLayer = GetGap();
-
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-
-    ASSERT_TRUE(aLayer != nullptr);
-    constexpr auto inletTemperature{285.0};
-    aLayer->setInletTemperature(inletTemperature);
-    auto airflowReferencePoint = aLayer->getDrivingPressure();
-    EXPECT_NEAR(0.67938685984566982, airflowReferencePoint, 1e-4);
-}
