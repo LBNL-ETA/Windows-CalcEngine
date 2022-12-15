@@ -230,6 +230,47 @@ namespace Tarcog
             return m_AirSpeed / ratio;
         }
 
+        VentilatedTemperature
+          CIGUVentilatedGapLayer::calculateInletAndOutletTemperaturesWithTheAdjecentGap(
+            CIGUVentilatedGapLayer & adjacentGap,
+            VentilatedTemperature current,
+            VentilatedTemperature previous,
+            double relaxationParameter)
+        {
+            VentilatedTemperature result;
+
+            double tempGap1 = layerTemperature();
+            double tempGap2 = adjacentGap.layerTemperature();
+            double Tav1 = averageTemperature();
+            double Tav2 = adjacentGap.averageTemperature();
+
+            adjacentGap.setFlowSpeed(calculateThermallyDrivenSpeedOfAdjacentGap(adjacentGap));
+
+            double beta1 = betaCoeff();
+            double beta2 = adjacentGap.betaCoeff();
+            double alpha1 = 1 - beta1;
+            double alpha2 = 1 - beta2;
+
+            if(tempGap1 > tempGap2)
+            {
+                result.outlet = (alpha1 * Tav1 + beta1 * alpha2 * Tav2) / (1 - beta1 * beta2);
+                result.inlet = alpha2 * Tav2 + beta2 * current.outlet;
+            }
+            else
+            {
+                result.inlet = (alpha1 * Tav1 + beta1 * alpha2 * Tav2) / (1 - beta1 * beta2);
+                result.outlet = alpha2 * Tav2 + beta2 * current.inlet;
+            }
+
+            const auto Tup = relaxationParameter * result.outlet + (1 - relaxationParameter) * previous.outlet;
+            const auto Tdown = relaxationParameter * result.inlet + (1 - relaxationParameter) * previous.inlet;
+
+            setFlowTemperatures(Tup, Tdown);
+            adjacentGap.setFlowTemperatures(Tdown, Tup);
+
+            return result;
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog

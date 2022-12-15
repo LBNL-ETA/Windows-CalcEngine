@@ -11,6 +11,12 @@ namespace Tarcog
 {
     namespace ISO15099
     {
+        struct VentilatedTemperature
+        {
+            double inlet{0};
+            double outlet{0};
+        };
+
         class CIGUVentilatedGapLayer : public CIGUGapLayer
         {
         public:
@@ -39,6 +45,11 @@ namespace Tarcog
             void smoothEnergyGain(double qv1, double qv2);
 
             void calculateOutletTemperatureFromAirFlow();
+            VentilatedTemperature calculateInletAndOutletTemperaturesWithTheAdjecentGap(
+              CIGUVentilatedGapLayer & adjacentGap,
+              VentilatedTemperature current,
+              VentilatedTemperature previous,
+              double relaxationParameter);
             double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
         private:
