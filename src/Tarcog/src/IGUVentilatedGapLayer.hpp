@@ -18,7 +18,7 @@ namespace Tarcog
 
             double layerTemperature() override;
 
-            void setFlowGeometry(double const t_Atop, double const t_Abot);
+            void setFlowGeometry(double const t_Ain, double const t_Aout);
 
             void setFlowDirection(const AirVerticalDirection t_Direction);
 

@@ -189,6 +189,9 @@ namespace Tarcog
             bool converged = false;
             size_t iterationStep = 0;
 
+            t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
+            t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(), m_ShadeOpenings->Aeq_bot());
+
             while(!converged)
             {
                 double tempGap1 = t_Gap1->layerTemperature();
@@ -197,16 +200,12 @@ namespace Tarcog
                 double Tav2 = t_Gap2->averageTemperature();
                 if(tempGap1 > tempGap2)
                 {
-                    t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
                     t_Gap1->setFlowDirection(AirVerticalDirection::Up);
-                    t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(), m_ShadeOpenings->Aeq_bot());
                     t_Gap2->setFlowDirection(AirVerticalDirection::Down);
                 }
                 else
                 {
-                    t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_top(), m_ShadeOpenings->Aeq_bot());
                     t_Gap1->setFlowDirection(AirVerticalDirection::Down);
-                    t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
                     t_Gap2->setFlowDirection(AirVerticalDirection::Up);
                 }
                 double drivingPressure = t_Gap1->getAirflowReferencePoint(tempGap2);
@@ -291,6 +290,9 @@ namespace Tarcog
                 t_Gap->setFlowSpeed(forcedVentilationAirSpeed);
             }
 
+            t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
+                                   m_ShadeOpenings->Aeq_top());
+
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
             size_t iterationStep = 0;
@@ -302,14 +304,10 @@ namespace Tarcog
                 {
                     if(tempGap > inletTemperature)
                     {
-                        t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(),
-                                               m_ShadeOpenings->Aeq_top());
                         t_Gap->setFlowDirection(AirVerticalDirection::Up);
                     }
                     else
                     {
-                        t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_top(),
-                                               m_ShadeOpenings->Aeq_bot());
                         t_Gap->setFlowDirection(AirVerticalDirection::Down);
                     }
                     double drivingPressure = t_Gap->getAirflowReferencePoint(inletTemperature);
