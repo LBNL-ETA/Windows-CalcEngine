@@ -194,6 +194,26 @@ namespace Tarcog
                               * getThickness() * (m_inTemperature - m_outTemperature) / m_Height;
         }
 
+        double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeed()
+        {
+            double drivingPressure = getDrivingPressure();
+            double A = bernoullyPressureTerm() + pressureLossTerm();
+            double B = hagenPressureTerm();
+            return (sqrt(std::abs(pow(B, 2) + 4 * A * drivingPressure)) - B) / (2 * A);
+        }
+
+        double CIGUVentilatedGapLayer::calculateOutletTemperatureFromAirFlow()
+        {
+            if(!isVentilationForced())
+            {
+                m_AirSpeed = calculateThermallyDrivenSpeed();
+            }
+            double beta = betaCoeff();
+            double alpha = 1 - beta;
+
+            return alpha * averageTemperature() + beta * m_InletTemperature;
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog

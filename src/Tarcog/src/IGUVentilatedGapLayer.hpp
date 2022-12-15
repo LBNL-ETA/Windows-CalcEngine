@@ -38,11 +38,14 @@ namespace Tarcog
 
             void smoothEnergyGain(double qv1, double qv2);
 
+            double calculateOutletTemperatureFromAirFlow();
+
         private:
             void calculateConvectionOrConductionFlow() override;
             double characteristicHeight();
             double calcImpedance(double t_A) const;
             void ventilatedFlow();
+            double calculateThermallyDrivenSpeed();
 
             std::shared_ptr<CIGUGapLayer> m_Layer;
             Gases::CGas m_ReferenceGas;
