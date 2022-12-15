@@ -76,13 +76,6 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
 
-        // Alternative way to add layers
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(gap1);
-        // aIGU.addLayer(layer2);
-        // aIGU.addLayer(gap2);
-        // aIGU.addLayer(layer3);
-
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////

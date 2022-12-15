@@ -31,33 +31,33 @@ namespace Tarcog
             return avTemp - (cHeight / m_Height) * (m_outTemperature - m_inTemperature);
         }
 
-        void CIGUVentilatedGapLayer::setFlowGeometry(double const t_Atop,
-                                                     double const t_Abot,
-                                                     AirVerticalDirection const & t_Direction)
+        void CIGUVentilatedGapLayer::setFlowGeometry(double const t_Atop, double const t_Abot)
         {
-            m_AirVerticalDirection = t_Direction;
-            auto Ain = 0.0;
-            auto Aout = 0.0;
             switch(m_AirVerticalDirection)
             {
                 case AirVerticalDirection::None:
                     // Do nothing. Airflow does not exist
                     break;
                 case AirVerticalDirection::Up:
-                    Ain = t_Abot;
-                    Aout = t_Atop;
+                    m_Ain = t_Abot;
+                    m_Aout = t_Atop;
                     break;
                 case AirVerticalDirection::Down:
-                    Ain = t_Atop;
-                    Aout = t_Abot;
+                    m_Ain = t_Atop;
+                    m_Aout = t_Abot;
                     break;
                 default:
                     throw std::runtime_error("Incorrect assignment for airflow direction.");
                     break;
             }
+        }
 
-            m_Zin = calcImpedance(Ain);
-            m_Zout = calcImpedance(Aout);
+        void CIGUVentilatedGapLayer::setFlowDirection(const AirVerticalDirection t_Direction)
+        {
+            m_AirVerticalDirection = t_Direction;
+
+            m_Zin = calcImpedance(m_Ain);
+            m_Zout = calcImpedance(m_Aout);
 
             resetCalculated();
         }
