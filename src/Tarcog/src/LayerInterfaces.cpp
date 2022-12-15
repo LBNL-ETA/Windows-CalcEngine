@@ -191,6 +191,7 @@ namespace Tarcog
             m_AirVerticalDirection(AirVerticalDirection::None),
             m_AirHorizontalDirection(AirHorizontalDirection::None),
             m_ForcedVentilationAirSpeed(t_ForcedVentilationAirSpeed),
+            m_AirSpeed(t_ForcedVentilationAirSpeed),
             m_IsVentilationForced(true)
         {}
 

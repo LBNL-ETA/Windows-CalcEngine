@@ -222,12 +222,6 @@ namespace Tarcog
         void CIGUShadeLayer::calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
                                                std::shared_ptr<CIGUVentilatedGapLayer> t_Gap)
         {
-            const auto forcedVentilationAirSpeed = t_Gap->getForcedVentilationAirSpeed();
-            if(t_Gap->isVentilationForced())
-            {
-                t_Gap->setFlowSpeed(forcedVentilationAirSpeed);
-            }
-
             t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
 
             const auto environmentTemperature{t_Environment->getGasTemperature()};
