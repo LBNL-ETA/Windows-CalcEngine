@@ -39,9 +39,10 @@ namespace Tarcog
               VentilatedTemperature current,
               VentilatedTemperature previous,
               double relaxationParameter);
-            double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
         private:
+            double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+
             double getDrivingPressure();
 
             double bernoullyPressureTerm();

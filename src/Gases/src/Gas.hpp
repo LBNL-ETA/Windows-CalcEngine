@@ -28,7 +28,6 @@ namespace Gases
         void setTemperatureAndPressure(double t_Temperature, double t_Pressure);
 
         [[nodiscard]] std::vector<CGasItem> gasItems() const;
-        ;
 
         CGas & operator=(CGas const & t_Gas);
         bool operator==(CGas const & t_Gas) const;
