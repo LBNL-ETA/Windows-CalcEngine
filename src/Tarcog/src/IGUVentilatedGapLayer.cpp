@@ -41,7 +41,6 @@ namespace Tarcog
         void CIGUVentilatedGapLayer::setInletTemperature(double inletTemperature)
         {
             m_InletTemperature = inletTemperature;
-            calculateImpedances(inletTemperature);
         }
 
         void CIGUVentilatedGapLayer::calculateImpedances(double inletTemperature)
@@ -244,6 +243,8 @@ namespace Tarcog
                 setInletTemperature(inletTemperature.value());
             }
 
+            calculateImpedances(m_InletTemperature);
+
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
             size_t iterationStep = 0;
@@ -273,6 +274,46 @@ namespace Tarcog
                                                  "Maximum number of iteration steps reached.");
                     }
                 }
+            }
+        }
+
+        void CIGUVentilatedGapLayer::calculateThermallyDrivenAirflowWithAdjacentGap(
+          CIGUVentilatedGapLayer & adjacentGap)
+        {
+            double Tup = layerTemperature();
+            double Tdown = adjacentGap.layerTemperature();
+            VentilatedTemperature current{Tdown, Tup};
+            double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
+            bool converged = false;
+            size_t iterationStep = 0;
+
+            while(!converged)
+            {
+                setInletTemperature(adjacentGap.layerTemperature());
+                adjacentGap.setInletTemperature(layerTemperature());
+
+                VentilatedTemperature previous{current};
+
+                current = calculateInletAndOutletTemperaturesWithTheAdjecentGap(
+                  adjacentGap, current, previous, RelaxationParameter);
+
+                converged = std::abs(current.outlet - previous.outlet)
+                            < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
+                converged = converged
+                            && std::abs(current.inlet - previous.inlet)
+                                 < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
+
+                ++iterationStep;
+                if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
+                {
+                    converged = true;
+                    throw std::runtime_error("Airflow iterations fail to converge. Maximum number "
+                                             "of iteration steps reached.");
+                }
+                double qv1 = getGainFlow();
+                double qv2 = adjacentGap.getGainFlow();
+                smoothEnergyGain(qv1, qv2);
+                adjacentGap.smoothEnergyGain(qv1, qv2);
             }
         }
 

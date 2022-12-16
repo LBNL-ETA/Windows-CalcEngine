@@ -37,6 +37,8 @@ namespace Tarcog
             // temperature is not give, class will use temperature provided in the gap constructor.
             void calculateVentilatedAirflow(std::optional<double> inletTemperature);
 
+            void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+
             void calculateOutletTemperatureFromAirFlow();
             VentilatedTemperature calculateInletAndOutletTemperaturesWithTheAdjecentGap(
               CIGUVentilatedGapLayer & adjacentGap,

@@ -179,44 +179,11 @@ namespace Tarcog
         void CIGUShadeLayer::calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
                                                     std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2)
         {
-            double Tup = t_Gap1->layerTemperature();
-            double Tdown = t_Gap2->layerTemperature();
-            VentilatedTemperature current{Tdown, Tup};
-            double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
-            bool converged = false;
-            size_t iterationStep = 0;
 
             t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
             t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(), m_ShadeOpenings->Aeq_bot());
 
-            while(!converged)
-            {
-                t_Gap1->setInletTemperature(t_Gap2->layerTemperature());
-                t_Gap2->setInletTemperature(t_Gap1->layerTemperature());
-
-                VentilatedTemperature previous{current};
-
-                current = t_Gap1->calculateInletAndOutletTemperaturesWithTheAdjecentGap(
-                  *t_Gap2, current, previous, RelaxationParameter);
-
-                converged = std::abs(current.outlet - previous.outlet)
-                            < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
-                converged = converged
-                            && std::abs(current.inlet - previous.inlet)
-                                 < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
-
-                ++iterationStep;
-                if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
-                {
-                    converged = true;
-                    throw std::runtime_error("Airflow iterations fail to converge. Maximum number "
-                                             "of iteration steps reached.");
-                }
-                double qv1 = t_Gap1->getGainFlow();
-                double qv2 = t_Gap2->getGainFlow();
-                t_Gap1->smoothEnergyGain(qv1, qv2);
-                t_Gap2->smoothEnergyGain(qv1, qv2);
-            }
+            t_Gap1->calculateThermallyDrivenAirflowWithAdjacentGap(*t_Gap2);
         }
 
         void CIGUShadeLayer::calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
