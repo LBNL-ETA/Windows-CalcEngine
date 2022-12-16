@@ -39,14 +39,15 @@ namespace Tarcog
 
             void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
+        private:
             void calculateOutletTemperatureFromAirFlow();
+
             VentilatedTemperature calculateInletAndOutletTemperaturesWithTheAdjecentGap(
               CIGUVentilatedGapLayer & adjacentGap,
               VentilatedTemperature current,
               VentilatedTemperature previous,
               double relaxationParameter);
 
-        private:
             double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
             double getDrivingPressure();
