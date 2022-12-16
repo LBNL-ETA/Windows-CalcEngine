@@ -34,25 +34,13 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::setFlowGeometry(double const t_Ain, double const t_Aout)
         {
-            m_Ain = t_Aout;
-            m_Aout = t_Ain;
+            m_Zin = calcImpedance(t_Aout);
+            m_Zout = calcImpedance(t_Ain);
         }
 
         void CIGUVentilatedGapLayer::setInletTemperature(double inletTemperature)
         {
             m_InletTemperature = inletTemperature;
-        }
-
-        void CIGUVentilatedGapLayer::calculateImpedances(double inletTemperature)
-        {
-            m_AirVerticalDirection = layerTemperature() > inletTemperature
-                                       ? AirVerticalDirection::Up
-                                       : AirVerticalDirection::Down;
-
-            m_Zin = calcImpedance(m_Ain);
-            m_Zout = calcImpedance(m_Aout);
-
-            resetCalculated();
         }
 
         void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
@@ -97,7 +85,6 @@ namespace Tarcog
 
         double CIGUVentilatedGapLayer::pressureLossTerm()
         {
-            calculateImpedances(m_InletTemperature);
             const auto aGasProperties = m_Gas.getGasProperties();
             return 0.5 * aGasProperties.m_Density * (m_Zin + m_Zout);
         }
@@ -243,14 +230,13 @@ namespace Tarcog
                 setInletTemperature(inletTemperature.value());
             }
 
-            calculateImpedances(m_InletTemperature);
-
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
             size_t iterationStep = 0;
             double TgapOut = layerTemperature();
             while(!converged)
             {
+                resetCalculated();
                 double TgapOutOld = TgapOut;
 
                 calculateOutletTemperatureFromAirFlow();
@@ -289,6 +275,7 @@ namespace Tarcog
 
             while(!converged)
             {
+                resetCalculated();
                 setInletTemperature(adjacentGap.layerTemperature());
                 adjacentGap.setInletTemperature(layerTemperature());
 

@@ -69,10 +69,7 @@ namespace Tarcog
             double m_outTemperature;
             double m_InletTemperature{0};
             double m_Zin;
-            double m_Ain{0};
             double m_Zout;
-            double m_Aout{0};
-            void calculateImpedances(double inletTemperature);
         };
 
     }   // namespace ISO15099
