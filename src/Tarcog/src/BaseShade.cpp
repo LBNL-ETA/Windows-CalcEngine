@@ -223,40 +223,9 @@ namespace Tarcog
                                                std::shared_ptr<CIGUVentilatedGapLayer> t_Gap)
         {
             t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
-
             const auto environmentTemperature{t_Environment->getGasTemperature()};
-            t_Gap->setInletTemperature(environmentTemperature);
 
-            double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
-            bool converged = false;
-            size_t iterationStep = 0;
-            double TgapOut = t_Gap->layerTemperature();
-            while(!converged)
-            {
-                double TgapOutOld = TgapOut;
-
-                t_Gap->calculateOutletTemperatureFromAirFlow();
-
-                const auto tempGap = t_Gap->layerTemperature();
-
-                TgapOut = RelaxationParameter * tempGap + (1 - RelaxationParameter) * TgapOutOld;
-
-                converged = std::abs(TgapOut - TgapOutOld)
-                            < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
-
-                ++iterationStep;
-                if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
-                {
-                    RelaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
-                    iterationStep = 0;
-                    if(RelaxationParameter == IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
-                    {
-                        converged = true;
-                        throw std::runtime_error("Airflow iterations fail to converge. "
-                                                 "Maximum number of iteration steps reached.");
-                    }
-                }
-            }
+            t_Gap->calculateVentilatedAirflow(environmentTemperature);
         }
 
         double CIGUShadeLayer::equivalentConductivity(const double t_Conductivity,

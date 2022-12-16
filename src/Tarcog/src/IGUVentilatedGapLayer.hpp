@@ -33,6 +33,10 @@ namespace Tarcog
 
             void smoothEnergyGain(double qv1, double qv2);
 
+            // Calculates airflow properties of the gap given inlet temperature. In case inlet
+            // temperature is not give, class will use temperature provided in the gap constructor.
+            void calculateVentilatedAirflow(std::optional<double> inletTemperature);
+
             void calculateOutletTemperatureFromAirFlow();
             VentilatedTemperature calculateInletAndOutletTemperaturesWithTheAdjecentGap(
               CIGUVentilatedGapLayer & adjacentGap,

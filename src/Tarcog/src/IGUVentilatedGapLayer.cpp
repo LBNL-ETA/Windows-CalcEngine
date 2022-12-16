@@ -3,8 +3,9 @@
 #include <cassert>
 #include <stdexcept>
 
-#include "IGUVentilatedGapLayer.hpp"
 #include "WCEGases.hpp"
+#include "IGUVentilatedGapLayer.hpp"
+#include "TarcogConstants.hpp"
 
 namespace Tarcog
 {
@@ -234,6 +235,45 @@ namespace Tarcog
             adjacentGap.setFlowTemperatures(Tdown, Tup);
 
             return result;
+        }
+
+        void CIGUVentilatedGapLayer::calculateVentilatedAirflow(std::optional<double> inletTemperature)
+        {
+            if(inletTemperature.has_value())
+            {
+                setInletTemperature(inletTemperature.value());
+            }
+
+            double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
+            bool converged = false;
+            size_t iterationStep = 0;
+            double TgapOut = layerTemperature();
+            while(!converged)
+            {
+                double TgapOutOld = TgapOut;
+
+                calculateOutletTemperatureFromAirFlow();
+
+                const auto tempGap = layerTemperature();
+
+                TgapOut = RelaxationParameter * tempGap + (1 - RelaxationParameter) * TgapOutOld;
+
+                converged = std::abs(TgapOut - TgapOutOld)
+                            < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
+
+                ++iterationStep;
+                if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
+                {
+                    RelaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
+                    iterationStep = 0;
+                    if(RelaxationParameter == IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+                    {
+                        converged = true;
+                        throw std::runtime_error("Airflow iterations fail to converge. "
+                                                 "Maximum number of iteration steps reached.");
+                    }
+                }
+            }
         }
 
     }   // namespace ISO15099
