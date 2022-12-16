@@ -127,7 +127,7 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
 
     const auto Temperature = aSystem->getTemperatures();
     std::vector<double> correctTemperature = {
-      257.714517, 258.142660, 271.892982, 271.897266, 284.389201, 284.817344};
+      257.730238, 258.161010, 271.864895, 271.869140, 284.326543, 284.757315};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -137,7 +137,7 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
 
     const auto Radiosity = aSystem->getRadiosities();
     std::vector<double> correctRadiosity = {
-      248.531918, 259.778702, 301.838936, 318.282656, 362.449413, 382.246046};
+      248.583186, 259.822766, 301.738456, 318.127072, 362.150064, 381.981914};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)

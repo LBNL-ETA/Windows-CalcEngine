@@ -65,11 +65,10 @@ namespace Tarcog
             std::shared_ptr<CIGUGapLayer> m_Layer;
             Gases::CGas m_ReferenceGas;
 
-            double m_inTemperature;
-            double m_outTemperature;
-            double m_InletTemperature{0};
-            double m_Zin;
-            double m_Zout;
+            double m_inTemperature{0};
+            double m_outTemperature{0};
+            double m_Zin{0};
+            double m_Zout{0};
         };
 
     }   // namespace ISO15099

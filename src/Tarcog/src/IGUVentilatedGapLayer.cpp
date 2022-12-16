@@ -40,7 +40,8 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::setInletTemperature(double inletTemperature)
         {
-            m_InletTemperature = inletTemperature;
+            m_inTemperature = inletTemperature;
+            resetCalculated();
         }
 
         void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
@@ -66,7 +67,7 @@ namespace Tarcog
             const auto gapTemperature = layerTemperature();
             const auto aProperties = m_ReferenceGas.getGasProperties();
             const auto temperatureMultiplier =
-              std::abs(gapTemperature - m_InletTemperature) / (gapTemperature * m_InletTemperature);
+              std::abs(gapTemperature - m_inTemperature) / (gapTemperature * m_inTemperature);
             return aProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
                    * std::abs(cos(tiltAngle)) * temperatureMultiplier;
         }
@@ -163,8 +164,8 @@ namespace Tarcog
             double beta = betaCoeff();
             double alpha = 1 - beta;
 
-            m_outTemperature = alpha * averageTemperature() + beta * m_InletTemperature;
-            m_inTemperature = m_InletTemperature;
+            m_outTemperature = alpha * averageTemperature() + beta * m_inTemperature;
+            m_inTemperature = m_inTemperature;
         }
 
         double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeedOfAdjacentGap(
@@ -275,7 +276,6 @@ namespace Tarcog
 
             while(!converged)
             {
-                resetCalculated();
                 setInletTemperature(adjacentGap.layerTemperature());
                 adjacentGap.setInletTemperature(layerTemperature());
 
