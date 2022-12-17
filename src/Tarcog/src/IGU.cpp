@@ -640,6 +640,14 @@ namespace Tarcog
             }
         }
 
+        void CIGU::precalculateLayerStates()
+        {
+            for(auto & layer: m_Layers)
+            {
+                layer->precalculateState();
+            }
+        }
+
     }   // namespace ISO15099
 
 }   // namespace Tarcog

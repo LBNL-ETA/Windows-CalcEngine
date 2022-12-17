@@ -52,9 +52,10 @@ namespace Tarcog
             static std::shared_ptr<CIGUGapLayer>
               gap(double thickness, const Gases::CGas & gas, double pressure = 101325);
 
-            static std::shared_ptr<CIGUGapLayer>
-              forcedVentilationGap(double thickness, double forcedVentilationAirSpeed,
-                                   double pressure = 101325);
+            static std::shared_ptr<CIGUVentilatedGapLayer>
+              forcedVentilationGap(const std::shared_ptr<CIGUGapLayer> & gap,
+                                   double forcedVentilationAirSpeed,
+                                   double forcedVentilationAirTemperature);
 
             static std::shared_ptr<CIGUGapLayer>
               addCircularPillar(const std::shared_ptr<CIGUGapLayer> & gap,

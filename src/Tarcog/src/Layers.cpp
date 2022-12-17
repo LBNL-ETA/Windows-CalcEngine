@@ -6,6 +6,7 @@
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
 #include "EffectiveOpenness.hpp"
+#include "IGUVentilatedGapLayer.hpp"
 
 namespace Tarcog
 {
@@ -36,12 +37,13 @@ namespace Tarcog
             return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
         }
 
-        std::shared_ptr<CIGUGapLayer>
-          Layers::forcedVentilationGap(double thickness,
-                                                                   double forcedVentilationAirSpeed,
-                                       double pressure)
+        std::shared_ptr<CIGUVentilatedGapLayer>
+          Layers::forcedVentilationGap(const std::shared_ptr<CIGUGapLayer> & gap,
+                                       double forcedVentilationAirSpeed,
+                                       double forcedVentilationAirTemperature)
         {
-            return std::make_shared<CIGUGapLayer>(thickness, pressure, forcedVentilationAirSpeed);
+            return std::make_shared<CIGUVentilatedGapLayer>(
+              gap, forcedVentilationAirTemperature, forcedVentilationAirSpeed);
         }
 
         std::shared_ptr<CIGUSolidLayer> Layers::updateMaterialData(

@@ -54,12 +54,6 @@ namespace Tarcog
             resetCalculated();
         }
 
-        void CEnvironment::setForcedVentilationAirSpeed(const double t_ForcedVentilationAirSpeed)
-        {
-            m_ForcedVentilationAirSpeed = t_ForcedVentilationAirSpeed;
-            resetCalculated();
-        }
-
         void CEnvironment::setEnvironmentIR(double const t_InfraRed)
         {
             setIRFromEnvironment(t_InfraRed);

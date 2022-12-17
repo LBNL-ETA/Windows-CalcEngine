@@ -157,8 +157,6 @@ namespace Tarcog
                 auto previousGapLayer =
                   std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_PreviousLayer);
                 auto nextGapLayer = std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer);
-                assert(!previousGapLayer->isVentilationForced()
-                       && !nextGapLayer->isVentilationForced());
                 calcInBetweenShadeFlow(previousGapLayer, nextGapLayer);
             }
             else if(std::dynamic_pointer_cast<CEnvironment>(m_PreviousLayer) != nullptr

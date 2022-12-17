@@ -22,7 +22,6 @@ namespace Tarcog
             ~CEnvironment();
 
             void setHCoeffModel(BoundaryConditionsCoeffModel t_BCModel, double t_HCoeff = 0);
-            void setForcedVentilationAirSpeed(double t_ForcedVentilation);
             void setEnvironmentIR(double t_InfraRed);
             void setEmissivity(double t_Emissivity);
 

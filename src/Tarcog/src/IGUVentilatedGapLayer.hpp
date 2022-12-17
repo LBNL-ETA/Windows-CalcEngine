@@ -19,10 +19,24 @@ namespace Tarcog
             double outletTemperature{0};
         };
 
+        //! @brief Storage for forced ventilation properties.
+        //!
+        //! @property speed - Speed at which air is flowing into the gap
+        //! @property temperature - Temperature at which air will be coming into the gap
+        struct ForcedVentilation
+        {
+            ForcedVentilation(double speed, double temperature);
+            double speed{0};
+            double temperature{0};
+        };
+
         class CIGUVentilatedGapLayer : public CIGUGapLayer
         {
         public:
             explicit CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer);
+            CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
+                                   double forcedVentilationInletTemperature,
+                                   double forcedVentilationInletSpeed);
 
             double layerTemperature() override;
 
@@ -35,13 +49,18 @@ namespace Tarcog
 
             void smoothEnergyGain(double qv1, double qv2);
 
-            // Calculates airflow properties of the gap given inletTemperature temperature. In case inletTemperature
-            // temperature is not give, class will use temperature provided in the gap constructor.
-            void calculateVentilatedAirflow(std::optional<double> inletTemperature);
+            // Calculates airflow properties of the gap given inletTemperature temperature. In case
+            // inletTemperature temperature is not give, class will use temperature provided in the
+            // gap constructor.
+            void calculateVentilatedAirflow(double inletTemperature);
 
-            void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+            void
+              calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+
+            std::shared_ptr<CBaseLayer> clone() const override;
 
         private:
+            void precalculateState() override;
             void calculateOutletTemperatureFromAirFlow();
 
             VentilatedGapState calculateInletAndOutletTemperaturesWithTheAdjecentGap(
@@ -61,7 +80,7 @@ namespace Tarcog
             void calculateConvectionOrConductionFlow() override;
             double characteristicHeight();
             double calcImpedance(double t_A) const;
-            void ventilatedFlow();
+            void ventilatedHeatGain();
             double calculateThermallyDrivenSpeed();
 
             std::shared_ptr<CIGUGapLayer> m_Layer;
@@ -70,6 +89,12 @@ namespace Tarcog
             VentilatedGapState m_State;
             double m_Zin{0};
             double m_Zout{0};
+
+            //! Forced ventilation is stored as optional so that it can be decided if airflow
+            //! calculations will be either thermally driven or forced. Forced ventilation will be
+            //! used automatically if this value has been populated, otherwise, thermally driven is
+            //! assumed.
+            std::optional<ForcedVentilation> m_ForcedVentilation;
         };
 
     }   // namespace ISO15099

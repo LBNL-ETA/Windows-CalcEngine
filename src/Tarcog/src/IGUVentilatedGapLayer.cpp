@@ -15,6 +15,10 @@ namespace Tarcog
             inletTemperature(inletTemperature), outletTemperature(outletTemperature)
         {}
 
+        ForcedVentilation::ForcedVentilation(double speed, double temperature) :
+            speed(speed), temperature(temperature)
+        {}
+
         CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(
           std::shared_ptr<CIGUGapLayer> const & t_Layer) :
             CIGUGapLayer(*t_Layer),
@@ -22,6 +26,22 @@ namespace Tarcog
             m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
             m_Zin(0),
             m_Zout(0)
+        {
+            m_ReferenceGas = m_Gas;
+            m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, m_Pressure);
+        }
+
+        CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(
+          const std::shared_ptr<CIGUGapLayer> & t_Layer,
+          double forcedVentilationInletTemperature,
+          double forcedVentilationInletSpeed) :
+            CIGUGapLayer(*t_Layer),
+            m_Layer(t_Layer),
+            m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
+            m_Zin(0),
+            m_Zout(0),
+            m_ForcedVentilation(
+              ForcedVentilation(forcedVentilationInletSpeed, forcedVentilationInletTemperature))
         {
             m_ReferenceGas = m_Gas;
             m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, m_Pressure);
@@ -115,7 +135,7 @@ namespace Tarcog
             CIGUGapLayer::calculateConvectionOrConductionFlow();
             if(!isCalculated())
             {
-                ventilatedFlow();
+                ventilatedHeatGain();
             }
         }
 
@@ -144,7 +164,7 @@ namespace Tarcog
             return impedance;
         }
 
-        void CIGUVentilatedGapLayer::ventilatedFlow()
+        void CIGUVentilatedGapLayer::ventilatedHeatGain()
         {
             const auto aProperties = m_Gas.getGasProperties();
             m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat * m_AirSpeed
@@ -162,10 +182,9 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::calculateOutletTemperatureFromAirFlow()
         {
-            if(!isVentilationForced())
-            {
-                m_AirSpeed = calculateThermallyDrivenSpeed();
-            }
+            // Always use forced ventilation if exists.
+            m_AirSpeed = m_ForcedVentilation.has_value() ? m_ForcedVentilation->speed
+                                                         : calculateThermallyDrivenSpeed();
             double beta = betaCoeff();
             double alpha = 1 - beta;
 
@@ -233,13 +252,9 @@ namespace Tarcog
             return result;
         }
 
-        void
-          CIGUVentilatedGapLayer::calculateVentilatedAirflow(std::optional<double> inletTemperature)
+        void CIGUVentilatedGapLayer::calculateVentilatedAirflow(double inletTemperature)
         {
-            if(inletTemperature.has_value())
-            {
-                setInletTemperature(inletTemperature.value());
-            }
+            setInletTemperature(inletTemperature);
 
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
@@ -311,6 +326,19 @@ namespace Tarcog
                 double qv2 = adjacentGap.getGainFlow();
                 smoothEnergyGain(qv1, qv2);
                 adjacentGap.smoothEnergyGain(qv1, qv2);
+            }
+        }
+
+        std::shared_ptr<CBaseLayer> CIGUVentilatedGapLayer::clone() const
+        {
+            return std::make_shared<CIGUVentilatedGapLayer>(*this);
+        }
+
+        void CIGUVentilatedGapLayer::precalculateState()
+        {
+            if(m_ForcedVentilation.has_value())
+            {
+                calculateVentilatedAirflow(m_ForcedVentilation->temperature);
             }
         }
     }   // namespace ISO15099

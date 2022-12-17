@@ -14,13 +14,17 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 255.15;   // Kelvins
-        auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;             // Kelvins
+        auto outdoorTemperature = 255.15;   // Kelvins
+        auto airSpeed = 5.5;                // meters per second
+        auto tSky = 255.15;                 // Kelvins
         auto solarRadiation = 0.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(outdoorTemperature,
+                                                  airSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -34,42 +38,35 @@ protected:
         ASSERT_TRUE(Indoor != nullptr);
 
         // IGU
-        auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;
+        const auto layer1Thickness = 0.005715;   // [m]
+        const auto layer1Conductance = 1.0;
 
-        auto solidLayer = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(solidLayer != nullptr);
+        auto solidLayer1 =
+          Tarcog::ISO15099::Layers::solid(layer1Thickness, layer1Conductance);
+        ASSERT_TRUE(solidLayer1 != nullptr);
 
-        auto shadeLayerThickness = 0.01;
-        auto shadeLayerConductance = 160.0;
-        auto Atop = 0.1;
-        auto Abot = 0.1;
-        auto Aleft = 0.1;
-        auto Aright = 0.1;
-        auto Afront = 0.2;
+        const auto layer2Thickness = 0.01;
+        const auto layer2Conductance = 160.0;
 
-        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
+        auto shadeLayer =
+          Tarcog::ISO15099::Layers::solid(layer2Thickness, layer2Conductance);
+        ASSERT_TRUE(shadeLayer != nullptr);
+
+        auto gapThickness = 0.0127;
+        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(GapLayer1 != nullptr);
+
+        // Now add forced ventilation to the gap
+        auto gapAirSpeed = 0.5;
+        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(
+          GapLayer1, gapAirSpeed, outdoorTemperature);
+        ASSERT_TRUE(gap != nullptr);
 
         double windowWidth = 1;
         double windowHeight = 1;
 
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness};
-
-        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
-
-        auto shadeLayer = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effOpenness);
-
-        ASSERT_TRUE(shadeLayer != nullptr);
-
-        auto gapThickness = 0.0127;
-        auto gapAirSpeed = 0.5;
-        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(gapThickness, gapAirSpeed);
-        ASSERT_TRUE(gap != nullptr);
-
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({solidLayer, gap, shadeLayer});
+        aIGU.addLayers({solidLayer1, gap, shadeLayer});
 
         /////////////////////////////////////////////////////////
         /// System
@@ -84,24 +81,21 @@ public:
     std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer() const
     {
         auto solidLayer = m_TarcogSystem->getSolidLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer)
-               != nullptr);
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer) != nullptr);
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer);
     };
 
     std::shared_ptr<Tarcog::ISO15099::CIGUVentilatedGapLayer> GetGap() const
     {
         auto gap = m_TarcogSystem->getGapLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap)
-               != nullptr);
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap) != nullptr);
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap);
     };
 
     std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetShadeLayer() const
     {
         auto shadeLayer = m_TarcogSystem->getSolidLayers()[1];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer)
-               != nullptr);
+        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer) != nullptr);
         return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer);
     };
 };

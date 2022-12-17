@@ -47,7 +47,7 @@ protected:
 
         auto gapThickness = 0.0127;
         auto gapAirSpeed = 0.5;
-        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(gapThickness, gapAirSpeed);
+        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(0, gapAirSpeed, 0);
         ASSERT_TRUE(gap != nullptr);
 
         double windowWidth = 1;
