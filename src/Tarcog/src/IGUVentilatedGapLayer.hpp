@@ -11,10 +11,12 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        struct VentilatedTemperature
+        struct VentilatedGapState
         {
-            double inlet{0};
-            double outlet{0};
+            VentilatedGapState() = default;
+            VentilatedGapState(double inletTemperature, double outletTemperature);
+            double inletTemperature{0};
+            double outletTemperature{0};
         };
 
         class CIGUVentilatedGapLayer : public CIGUGapLayer
@@ -33,7 +35,7 @@ namespace Tarcog
 
             void smoothEnergyGain(double qv1, double qv2);
 
-            // Calculates airflow properties of the gap given inlet temperature. In case inlet
+            // Calculates airflow properties of the gap given inletTemperature temperature. In case inletTemperature
             // temperature is not give, class will use temperature provided in the gap constructor.
             void calculateVentilatedAirflow(std::optional<double> inletTemperature);
 
@@ -42,10 +44,10 @@ namespace Tarcog
         private:
             void calculateOutletTemperatureFromAirFlow();
 
-            VentilatedTemperature calculateInletAndOutletTemperaturesWithTheAdjecentGap(
+            VentilatedGapState calculateInletAndOutletTemperaturesWithTheAdjecentGap(
               CIGUVentilatedGapLayer & adjacentGap,
-              VentilatedTemperature current,
-              VentilatedTemperature previous,
+              VentilatedGapState current,
+              VentilatedGapState previous,
               double relaxationParameter);
 
             double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
@@ -65,8 +67,7 @@ namespace Tarcog
             std::shared_ptr<CIGUGapLayer> m_Layer;
             Gases::CGas m_ReferenceGas;
 
-            double m_inTemperature{0};
-            double m_outTemperature{0};
+            VentilatedGapState m_State;
             double m_Zin{0};
             double m_Zout{0};
         };

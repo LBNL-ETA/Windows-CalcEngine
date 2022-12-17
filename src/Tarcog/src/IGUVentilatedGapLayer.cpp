@@ -11,12 +11,15 @@ namespace Tarcog
 {
     namespace ISO15099
     {
+        VentilatedGapState::VentilatedGapState(double inletTemperature, double outletTemperature) :
+            inletTemperature(inletTemperature), outletTemperature(outletTemperature)
+        {}
+
         CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(
           std::shared_ptr<CIGUGapLayer> const & t_Layer) :
             CIGUGapLayer(*t_Layer),
             m_Layer(t_Layer),
-            m_inTemperature(Gases::DefaultTemperature),
-            m_outTemperature(Gases::DefaultTemperature),
+            m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
             m_Zin(0),
             m_Zout(0)
         {
@@ -29,7 +32,8 @@ namespace Tarcog
             assert(m_Height != 0);
             const auto cHeight = characteristicHeight();
             const auto avTemp = averageTemperature();
-            return avTemp - (cHeight / m_Height) * (m_outTemperature - m_inTemperature);
+            return avTemp
+                   - (cHeight / m_Height) * (m_State.outletTemperature - m_State.inletTemperature);
         }
 
         void CIGUVentilatedGapLayer::setFlowGeometry(double const t_Ain, double const t_Aout)
@@ -40,15 +44,15 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::setInletTemperature(double inletTemperature)
         {
-            m_inTemperature = inletTemperature;
+            m_State.inletTemperature = inletTemperature;
             resetCalculated();
         }
 
         void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
                                                          double t_outTemperature)
         {
-            m_inTemperature = t_inTemperature;
-            m_outTemperature = t_outTemperature;
+            m_State.inletTemperature = t_inTemperature;
+            m_State.outletTemperature = t_outTemperature;
             resetCalculated();
         }
 
@@ -66,8 +70,8 @@ namespace Tarcog
             const auto tiltAngle = WCE_PI / 180 * (m_Tilt - 90);
             const auto gapTemperature = layerTemperature();
             const auto aProperties = m_ReferenceGas.getGasProperties();
-            const auto temperatureMultiplier =
-              std::abs(gapTemperature - m_inTemperature) / (gapTemperature * m_inTemperature);
+            const auto temperatureMultiplier = std::abs(gapTemperature - m_State.inletTemperature)
+                                               / (gapTemperature * m_State.inletTemperature);
             return aProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
                    * std::abs(cos(tiltAngle)) * temperatureMultiplier;
         }
@@ -100,7 +104,7 @@ namespace Tarcog
         {
             const auto smooth = (std::abs(qv1) + std::abs(qv2)) / 2;
             m_LayerGainFlow = smooth;
-            if(m_inTemperature < m_outTemperature)
+            if(m_State.inletTemperature < m_State.outletTemperature)
             {
                 m_LayerGainFlow = -m_LayerGainFlow;
             }
@@ -144,7 +148,8 @@ namespace Tarcog
         {
             const auto aProperties = m_Gas.getGasProperties();
             m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat * m_AirSpeed
-                              * getThickness() * (m_inTemperature - m_outTemperature) / m_Height;
+                              * getThickness()
+                              * (m_State.inletTemperature - m_State.outletTemperature) / m_Height;
         }
 
         double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeed()
@@ -164,8 +169,8 @@ namespace Tarcog
             double beta = betaCoeff();
             double alpha = 1 - beta;
 
-            m_outTemperature = alpha * averageTemperature() + beta * m_inTemperature;
-            m_inTemperature = m_inTemperature;
+            m_State.outletTemperature =
+              alpha * averageTemperature() + beta * m_State.inletTemperature;
         }
 
         double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeedOfAdjacentGap(
@@ -183,14 +188,14 @@ namespace Tarcog
             return m_AirSpeed / ratio;
         }
 
-        VentilatedTemperature
+        VentilatedGapState
           CIGUVentilatedGapLayer::calculateInletAndOutletTemperaturesWithTheAdjecentGap(
             CIGUVentilatedGapLayer & adjacentGap,
-            VentilatedTemperature current,
-            VentilatedTemperature previous,
+            VentilatedGapState current,
+            VentilatedGapState previous,
             double relaxationParameter)
         {
-            VentilatedTemperature result;
+            VentilatedGapState result;
 
             double tempGap1 = layerTemperature();
             double tempGap2 = adjacentGap.layerTemperature();
@@ -206,17 +211,21 @@ namespace Tarcog
 
             if(tempGap1 > tempGap2)
             {
-                result.outlet = (alpha1 * Tav1 + beta1 * alpha2 * Tav2) / (1 - beta1 * beta2);
-                result.inlet = alpha2 * Tav2 + beta2 * current.outlet;
+                result.outletTemperature =
+                  (alpha1 * Tav1 + beta1 * alpha2 * Tav2) / (1 - beta1 * beta2);
+                result.inletTemperature = alpha2 * Tav2 + beta2 * current.outletTemperature;
             }
             else
             {
-                result.inlet = (alpha1 * Tav1 + beta1 * alpha2 * Tav2) / (1 - beta1 * beta2);
-                result.outlet = alpha2 * Tav2 + beta2 * current.inlet;
+                result.inletTemperature =
+                  (alpha1 * Tav1 + beta1 * alpha2 * Tav2) / (1 - beta1 * beta2);
+                result.outletTemperature = alpha2 * Tav2 + beta2 * current.inletTemperature;
             }
 
-            const auto Tup = relaxationParameter * result.outlet + (1 - relaxationParameter) * previous.outlet;
-            const auto Tdown = relaxationParameter * result.inlet + (1 - relaxationParameter) * previous.inlet;
+            const auto Tup = relaxationParameter * result.outletTemperature
+                             + (1 - relaxationParameter) * previous.outletTemperature;
+            const auto Tdown = relaxationParameter * result.inletTemperature
+                               + (1 - relaxationParameter) * previous.inletTemperature;
 
             setFlowTemperatures(Tup, Tdown);
             adjacentGap.setFlowTemperatures(Tdown, Tup);
@@ -224,7 +233,8 @@ namespace Tarcog
             return result;
         }
 
-        void CIGUVentilatedGapLayer::calculateVentilatedAirflow(std::optional<double> inletTemperature)
+        void
+          CIGUVentilatedGapLayer::calculateVentilatedAirflow(std::optional<double> inletTemperature)
         {
             if(inletTemperature.has_value())
             {
@@ -269,7 +279,7 @@ namespace Tarcog
         {
             double Tup = layerTemperature();
             double Tdown = adjacentGap.layerTemperature();
-            VentilatedTemperature current{Tdown, Tup};
+            VentilatedGapState current{Tdown, Tup};
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
             size_t iterationStep = 0;
@@ -279,15 +289,15 @@ namespace Tarcog
                 setInletTemperature(adjacentGap.layerTemperature());
                 adjacentGap.setInletTemperature(layerTemperature());
 
-                VentilatedTemperature previous{current};
+                VentilatedGapState previous{current};
 
                 current = calculateInletAndOutletTemperaturesWithTheAdjecentGap(
                   adjacentGap, current, previous, RelaxationParameter);
 
-                converged = std::abs(current.outlet - previous.outlet)
+                converged = std::abs(current.outletTemperature - previous.outletTemperature)
                             < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
                 converged = converged
-                            && std::abs(current.inlet - previous.inlet)
+                            && std::abs(current.inletTemperature - previous.inletTemperature)
                                  < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
 
                 ++iterationStep;
@@ -303,7 +313,6 @@ namespace Tarcog
                 adjacentGap.smoothEnergyGain(qv1, qv2);
             }
         }
-
     }   // namespace ISO15099
 
 }   // namespace Tarcog
