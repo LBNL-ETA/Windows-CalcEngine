@@ -3,10 +3,14 @@
 
 #include "WCETarcog.hpp"
 
+using Tarcog::ISO15099::CIGUSolidLayer;
+using Tarcog::ISO15099::CIGUGapLayer;
+using Tarcog::ISO15099::CSingleSystem;
+
 class TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -28,69 +32,58 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 295.15;
+        auto roomTemperature = 297.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         // IGU
-        auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;
-        auto solidLayerSolarAbsorptance = 0.094189159572;
-        auto solidLayerFrontEmissivity = 0.84;
-        auto solidLayerFrontIRTransmittance = 0.0;
-        auto solidLayerBackEmissivity = 0.84;
-        auto solidLayerBackIRTransmittance = 0.0;
-        // reflectance = 1 - emissivity - transmittance
+        auto solidLayer1Thickness = 0.005715;   // [m]
+        auto solidLayer1Conductance = 1.0;
+        auto solidLayer1SolarAbsorptance = 0.094189159572;
+        auto solidLayer1FrontEmissivity = 0.84;
+        auto solidLayer1FrontIRTransmittance = 0.0;
+        auto solidLayer1BackEmissivity = 0.84;
+        auto solidLayer1BackIRTransmittance = 0.0;
 
-        auto solidLayer = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
-                                                          solidLayerConductance,
-                                                          solidLayerFrontEmissivity,
-                                                          solidLayerFrontIRTransmittance,
-                                                          solidLayerBackEmissivity,
-                                                          solidLayerBackIRTransmittance);
-        solidLayer->setSolarAbsorptance(solidLayerSolarAbsorptance, solarRadiation);
+        auto solidLayer = Tarcog::ISO15099::Layers::solid(solidLayer1Thickness,
+                                                          solidLayer1Conductance,
+                                                          solidLayer1FrontEmissivity,
+                                                          solidLayer1FrontIRTransmittance,
+                                                          solidLayer1BackEmissivity,
+                                                          solidLayer1BackIRTransmittance);
+        solidLayer->setSolarAbsorptance(solidLayer1SolarAbsorptance, solarRadiation);
         ASSERT_TRUE(solidLayer != nullptr);
 
-        auto shadeLayerThickness = 0.01;
-        auto shadeLayerConductance = 160.0;
-        auto shadeLayerFrontEmissivity = 0.84;
-        auto shadeLayerFrontTransmittance = 0.0;
-        auto shadeLayerBackEmissivity = 0.84;
-        auto shadeLayerBackTransmittance = 0.0;
-        // reflectance = 1 - emissivity - transmittance
-        auto shadeLayerSolarAbsorptance = 0.687443971634;
-        auto Atop = 0.1;
-        auto Abot = 0.1;
-        auto Aleft = 0.1;
-        auto Aright = 0.1;
-        auto Afront = 0.2;
+        const auto solidLayer2Thickness = 0.01;
+        const auto solidLayer2Conductance = 160.0;
+        const auto solidLayer2FrontEmissivity = 0.84;
+        const auto solidLayer2FrontTransmittance = 0.0;
+        const auto solidLayer2BackEmissivity = 0.84;
+        const auto solidLayer2BackTransmittance = 0.0;
+        const auto solidLayer2SolarAbsorptance = 0.687443971634;
 
-        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
-
-        double windowWidth = 1;
-        double windowHeight = 1;
-
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness};
-
-        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
-
-        auto shadeLayer = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
-                                                            shadeLayerConductance,
-                                                            effOpenness,
-                                                            shadeLayerFrontEmissivity,
-                                                            shadeLayerFrontTransmittance,
-                                                            shadeLayerBackEmissivity,
-                                                            shadeLayerBackTransmittance);
-        shadeLayer->setSolarAbsorptance(shadeLayerSolarAbsorptance, solarRadiation);
+        auto shadeLayer = Tarcog::ISO15099::Layers::solid(solidLayer2Thickness,
+                                                          solidLayer2Conductance,
+                                                          solidLayer2FrontEmissivity,
+                                                          solidLayer2FrontTransmittance,
+                                                          solidLayer2BackEmissivity,
+                                                          solidLayer2BackTransmittance);
+        shadeLayer->setSolarAbsorptance(solidLayer2SolarAbsorptance, solarRadiation);
 
         ASSERT_TRUE(shadeLayer != nullptr);
 
-        auto gapThickness = 0.0127;
+        const auto gapThickness = 0.0127;
+        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gapLayer != nullptr);
+
         auto gapAirSpeed = 0.5;
-        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(0, gapAirSpeed, 0);
+        auto gap =
+          Tarcog::ISO15099::Layers::forcedVentilationGap(gapLayer, gapAirSpeed, roomTemperature);
         ASSERT_TRUE(gap != nullptr);
+
+        const auto windowWidth{1.0};
+        const auto windowHeight{1.0};
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({solidLayer, gap, shadeLayer});
@@ -98,40 +91,31 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    Tarcog::ISO15099::CSingleSystem * GetSystem() const
+    [[nodiscard]] CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer() const
+    [[nodiscard]] CIGUSolidLayer * GetSolidLayer() const
     {
-        auto solidLayer = m_TarcogSystem->getSolidLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer)
-               != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer);
+        return m_TarcogSystem->getSolidLayers()[0].get();
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUVentilatedGapLayer> GetGap() const
+    [[nodiscard]] CIGUGapLayer * GetGap() const
     {
-        auto gap = m_TarcogSystem->getGapLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap)
-               != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap);
+        return m_TarcogSystem->getGapLayers()[0].get();
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetShadeLayer() const
+    [[nodiscard]] CIGUSolidLayer * GetShadeLayer() const
     {
-        auto shadeLayer = m_TarcogSystem->getSolidLayers()[1];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer)
-               != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer);
+        return m_TarcogSystem->getSolidLayers()[1].get();
     };
 };
 
@@ -145,7 +129,7 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GainEnergy
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(16.449907386063828, gainEnergy, 1e-4);
+    EXPECT_NEAR(23.541540, gainEnergy, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidTemperatures)
@@ -159,8 +143,8 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidTempe
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(268.85563831728786, frontTemperature, 1e-4);
-    EXPECT_NEAR(270.97231009255381, backTemperature, 1e-4);
+    EXPECT_NEAR(269.257146, frontTemperature, 1e-4);
+    EXPECT_NEAR(271.441992, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidRadiosities)
@@ -174,8 +158,8 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidRadio
     ASSERT_TRUE(aLayer != nullptr);
     auto frontRadiosity = aLayer->J(FenestrationCommon::Side::Front);
     auto backRadiosity = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(287.28456598343178, frontRadiosity, 1e-4);
-    EXPECT_NEAR(339.73558433006201, backRadiosity, 1e-4);
+    EXPECT_NEAR(288.774350, frontRadiosity, 1e-4);
+    EXPECT_NEAR(342.842260, backRadiosity, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GapTemperatures)
@@ -191,10 +175,10 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GapTempera
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
     auto layerTemperature = aLayer->layerTemperature();
     auto averageTemperature = aLayer->averageTemperature();
-    EXPECT_NEAR(270.97231009255381, frontTemperature, 1e-4);
-    EXPECT_NEAR(314.20685654711355, backTemperature, 1e-4);
-    EXPECT_NEAR(293.77207512587205, layerTemperature, 1e-4);
-    EXPECT_NEAR(292.58958331983365, averageTemperature, 1e-4);
+    EXPECT_NEAR(271.441992, frontTemperature, 1e-4);
+    EXPECT_NEAR(315.512561, backTemperature, 1e-4);
+    EXPECT_NEAR(295.166009, layerTemperature, 1e-4);
+    EXPECT_NEAR(293.477276, averageTemperature, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GapRadiosities)
@@ -208,8 +192,8 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GapRadiosi
     ASSERT_TRUE(aLayer != nullptr);
     auto frontRadiosity = aLayer->J(FenestrationCommon::Side::Front);
     auto backRadiosity = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(339.73558433006201, frontRadiosity, 1e-4);
-    EXPECT_NEAR(518.55433901363858, backRadiosity, 1e-4);
+    EXPECT_NEAR(342.842260, frontRadiosity, 1e-4);
+    EXPECT_NEAR(526.815620, backRadiosity, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeTemperatures)
@@ -223,8 +207,8 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeTempe
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(314.20685654711355, frontTemperature, 1e-4);
-    EXPECT_NEAR(314.21313360489381, backTemperature, 1e-4);
+    EXPECT_NEAR(315.512561, frontTemperature, 1e-4);
+    EXPECT_NEAR(315.517885, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeRadiosities)
@@ -238,8 +222,8 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeRadio
     ASSERT_TRUE(aLayer != nullptr);
     auto frontRadiosity = aLayer->J(FenestrationCommon::Side::Front);
     auto backRadiosity = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(518.55433901363858, frontRadiosity, 1e-4);
-    EXPECT_NEAR(533.07538128082308, backRadiosity, 1e-4);
+    EXPECT_NEAR(526.815620, frontRadiosity, 1e-4);
+    EXPECT_NEAR(542.719352, backRadiosity, 1e-4);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, IndoorHeatFlow)
@@ -252,9 +236,9 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, IndoorHeat
     auto radiativeHF = aSystem->getRadiationHeatFlow(Tarcog::ISO15099::Environment::Indoor);
     auto totalHF = aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor);
 
-    EXPECT_NEAR(-57.440502097412043, convectiveHF, 1e-5);
-    EXPECT_NEAR(-102.81512658453136, radiativeHF, 1e-5);
-    EXPECT_NEAR(-160.25562868194339, totalHF, 1e-5);
+    EXPECT_NEAR(-54.740403, convectiveHF, 1e-5);
+    EXPECT_NEAR(-100.677878, radiativeHF, 1e-5);
+    EXPECT_NEAR(-155.418281, totalHF, 1e-5);
 }
 
 TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, IndoorValues)
