@@ -3,10 +3,12 @@
 
 #include "WCETarcog.hpp"
 
-class TestGapLayerInBetweenVentilation : public testing::Test
+using Tarcog::ISO15099::CBaseIGULayer;
+
+class TestGapLayerInBetweenThermallyDrivenVentilation : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -76,33 +78,26 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, shadeLayer, gap2, layer2});
 
-        // Alternative way of adding layers.
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(gap1);
-        // aIGU.addLayer(shadeLayer);
-        // aIGU.addLayer(gap2);
-        // aIGU.addLayer(layer2);
-
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CBaseIGULayer> GetGap1() const
+    [[nodiscard]] CBaseIGULayer * GetGap1() const
     {
-        return m_TarcogSystem->getGapLayers()[0];
+        return m_TarcogSystem->getGapLayers()[0].get();
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CBaseIGULayer> GetGap2() const
+    [[nodiscard]] CBaseIGULayer * GetGap2() const
     {
-        return m_TarcogSystem->getGapLayers()[1];
+        return m_TarcogSystem->getGapLayers()[1].get();
     };
 };
 
-TEST_F(TestGapLayerInBetweenVentilation, VentilationFlow)
+TEST_F(TestGapLayerInBetweenThermallyDrivenVentilation, VentilationFlow)
 {
     SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Intial Airflow");
 

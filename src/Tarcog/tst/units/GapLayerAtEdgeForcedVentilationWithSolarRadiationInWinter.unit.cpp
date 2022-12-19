@@ -103,7 +103,7 @@ public:
         return m_TarcogSystem.get();
     };
 
-    [[nodiscard]] CIGUSolidLayer * GetSolidLayer() const
+    [[nodiscard]] CIGUSolidLayer * GetSolidLayer1() const
     {
         return m_TarcogSystem->getSolidLayers()[0].get();
     };
@@ -113,7 +113,7 @@ public:
         return m_TarcogSystem->getGapLayers()[0].get();
     };
 
-    [[nodiscard]] CIGUSolidLayer * GetShadeLayer() const
+    [[nodiscard]] CIGUSolidLayer * GetSolidLayer2() const
     {
         return m_TarcogSystem->getSolidLayers()[1].get();
     };
@@ -132,11 +132,11 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GainEnergy
     EXPECT_NEAR(23.541540, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidLayer1Temperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid Layer 1 Temperatures");
 
-    auto aLayer = GetSolidLayer();
+    auto aLayer = GetSolidLayer1();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
@@ -147,11 +147,11 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidTempe
     EXPECT_NEAR(271.441992, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidLayer1Radiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid Layer 1 Radiosities");
 
-    auto aLayer = GetSolidLayer();
+    auto aLayer = GetSolidLayer1();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
@@ -196,11 +196,11 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, GapRadiosi
     EXPECT_NEAR(526.815620, backRadiosity, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidLayer2Temperatures)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Shade Temperatures");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid layer 2 Temperatures");
 
-    auto aLayer = GetShadeLayer();
+    auto aLayer = GetSolidLayer2();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
@@ -211,11 +211,11 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeTempe
     EXPECT_NEAR(315.517885, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, ShadeRadiosities)
+TEST_F(TestGapLayerAtEdgeForcedVentilationWithSolarRadiationInWinter, SolidLayer2Radiosities)
 {
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Shade Radiosities");
+    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge With Solar Radiation In Winter - Solid Layer 2 Radiosities");
 
-    auto aLayer = GetShadeLayer();
+    auto aLayer = GetSolidLayer2();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
