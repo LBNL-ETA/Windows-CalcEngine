@@ -3,10 +3,13 @@
 
 #include "WCETarcog.hpp"
 
-class TestGapLayerAtEdgeForcedVentilation : public testing::Test
+using Tarcog::ISO15099::CIGUSolidLayer;
+using Tarcog::ISO15099::CIGUGapLayer;
+
+class TestGapLayerAtEdgeForcedVentilationOutsideAir : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -71,36 +74,45 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetSolidLayer() const
+    [[nodiscard]] CIGUSolidLayer * GetFirstLayer() const
     {
-        auto solidLayer = m_TarcogSystem->getSolidLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer) != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(solidLayer);
+        return m_TarcogSystem->getSolidLayers()[0].get();
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUVentilatedGapLayer> GetGap() const
+    [[nodiscard]] CIGUGapLayer * GetGap() const
     {
-        auto gap = m_TarcogSystem->getGapLayers()[0];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap) != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUVentilatedGapLayer>(gap);
+        return m_TarcogSystem->getGapLayers()[0].get();
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> GetShadeLayer() const
+    [[nodiscard]] CIGUSolidLayer * GetSecondLayer() const
     {
-        auto shadeLayer = m_TarcogSystem->getSolidLayers()[1];
-        assert(std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer) != nullptr);
-        return std::dynamic_pointer_cast<Tarcog::ISO15099::CIGUSolidLayer>(shadeLayer);
+        return m_TarcogSystem->getSolidLayers()[1].get();
     };
 };
 
-TEST_F(TestGapLayerAtEdgeForcedVentilation, GainEnergy)
+TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GapLayerSurfaceIRFlow)
+{
+    SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
+
+    auto aLayer = GetGap();
+
+    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
+
+    ASSERT_TRUE(aLayer != nullptr);
+    auto frontIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Front);
+    auto backIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Back);
+    EXPECT_NEAR(261.579394, frontIRRadiationFlow, 1e-4);
+    EXPECT_NEAR(316.739416, backIRRadiationFlow, 1e-4);
+}
+
+TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GainEnergy)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
 
@@ -110,25 +122,25 @@ TEST_F(TestGapLayerAtEdgeForcedVentilation, GainEnergy)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(131.54792253693392, gainEnergy, 1e-4);
+    EXPECT_NEAR(-75.720712, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilation, SolidTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
-    auto aLayer = GetSolidLayer();
+    auto aLayer = GetFirstLayer();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(262.1681784128499, frontTemperature, 1e-4);
-    EXPECT_NEAR(263.34326181929191, backTemperature, 1e-4);
+    EXPECT_NEAR(257.561838, frontTemperature, 1e-4);
+    EXPECT_NEAR(257.964452, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilation, GapTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GapTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
@@ -141,23 +153,23 @@ TEST_F(TestGapLayerAtEdgeForcedVentilation, GapTemperatures)
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
     auto layerTemperature = aLayer->layerTemperature();
     auto averageTemperature = aLayer->averageTemperature();
-    EXPECT_NEAR(263.34326181929191, frontTemperature, 1e-4);
-    EXPECT_NEAR(284.92247564626859, backTemperature, 1e-4);
-    EXPECT_NEAR(284.76940122170021, layerTemperature, 1e-4);
-    EXPECT_NEAR(274.13286873278025, averageTemperature, 1e-4);
+    EXPECT_NEAR(257.964452, frontTemperature, 1e-4);
+    EXPECT_NEAR(275.631339, backTemperature, 1e-4);
+    EXPECT_NEAR(260.505441, layerTemperature, 1e-4);
+    EXPECT_NEAR(266.797896, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilation, ShadeTemperatures)
+TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
-    auto aLayer = GetShadeLayer();
+    auto aLayer = GetSecondLayer();
 
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(284.92247564626859, frontTemperature, 1e-4);
-    EXPECT_NEAR(284.92826182710292, backTemperature, 1e-4);
+    EXPECT_NEAR(275.631339, frontTemperature, 1e-4);
+    EXPECT_NEAR(275.640475, backTemperature, 1e-4);
 }
