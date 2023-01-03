@@ -11,44 +11,90 @@ namespace Tarcog
 {
     namespace ISO15099
     {
+        struct VentilatedGapState
+        {
+            VentilatedGapState() = default;
+            VentilatedGapState(double inletTemperature, double outletTemperature);
+            double inletTemperature{0};
+            double outletTemperature{0};
+        };
+
+        //! @brief Storage for forced ventilation properties.
+        //!
+        //! @property speed - Speed at which air is flowing into the gap
+        //! @property temperature - Temperature at which air will be coming into the gap
+        struct ForcedVentilation
+        {
+            ForcedVentilation(double speed, double temperature);
+            double speed{0};
+            double temperature{0};
+        };
+
         class CIGUVentilatedGapLayer : public CIGUGapLayer
         {
         public:
             explicit CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer);
+            CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
+                                   double forcedVentilationInletTemperature,
+                                   double forcedVentilationInletSpeed);
 
             double layerTemperature() override;
 
-            void setFlowGeometry(double t_Atop,
-                                 double t_Abot,
-                                 const AirVerticalDirection & t_Direction);
-            void setFlowTemperatures(double t_topTemp,
-                                     double t_botTemp,
-                                     const AirVerticalDirection & t_Direction);
+            void setFlowGeometry(double t_Ain, double t_Aout);
+
+            void setInletTemperature(double inletTemperature);
+
             void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
             void setFlowSpeed(double t_speed);
 
-            double getAirflowReferencePoint(double t_GapTemperature);
+            void smoothEnergyGain(double qv1, double qv2);
+
+            // Calculates airflow properties of the gap given inletTemperature temperature. In case
+            // inletTemperature temperature is not give, class will use temperature provided in the
+            // gap constructor.
+            void calculateVentilatedAirflow(double inletTemperature);
+
+            void
+              calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+
+            std::shared_ptr<CBaseLayer> clone() const override;
+
+        private:
+            void precalculateState() override;
+            void calculateOutletTemperatureFromAirFlow();
+
+            VentilatedGapState calculateInletAndOutletTemperaturesWithTheAdjecentGap(
+              CIGUVentilatedGapLayer & adjacentGap,
+              VentilatedGapState current,
+              VentilatedGapState previous,
+              double relaxationParameter);
+
+            double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+
+            double getDrivingPressure();
 
             double bernoullyPressureTerm();
             double hagenPressureTerm();
             double pressureLossTerm();
             double betaCoeff();
-
-            void smoothEnergyGain(double qv1, double qv2);
-
-        private:
             void calculateConvectionOrConductionFlow() override;
             double characteristicHeight();
             double calcImpedance(double t_A) const;
-            void ventilatedFlow();
+            void ventilatedHeatGain();
+            double calculateThermallyDrivenSpeed();
 
             std::shared_ptr<CIGUGapLayer> m_Layer;
             Gases::CGas m_ReferenceGas;
 
-            double m_inTemperature;
-            double m_outTemperature;
-            double m_Zin;
-            double m_Zout;
+            VentilatedGapState m_State;
+            double m_Zin{0};
+            double m_Zout{0};
+
+            //! Forced ventilation is stored as optional so that it can be decided if airflow
+            //! calculations will be either thermally driven or forced. Forced ventilation will be
+            //! used automatically if this value has been populated, otherwise, thermally driven is
+            //! assumed.
+            std::optional<ForcedVentilation> m_ForcedVentilation;
         };
 
     }   // namespace ISO15099

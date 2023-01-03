@@ -6,6 +6,7 @@
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
 #include "EffectiveOpenness.hpp"
+#include "IGUVentilatedGapLayer.hpp"
 
 namespace Tarcog
 {
@@ -36,12 +37,13 @@ namespace Tarcog
             return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
         }
 
-        std::shared_ptr<CIGUGapLayer>
-          Layers::forcedVentilationGap(const double thickness,
-                                       const ForcedVentilation & forcedVentilation,
-                                       const double pressure)
+        std::shared_ptr<CIGUVentilatedGapLayer>
+          Layers::forcedVentilationGap(const std::shared_ptr<CIGUGapLayer> & gap,
+                                       double forcedVentilationAirSpeed,
+                                       double forcedVentilationAirTemperature)
         {
-            return std::make_shared<CIGUGapLayer>(thickness, pressure, forcedVentilation);
+            return std::make_shared<CIGUVentilatedGapLayer>(
+              gap, forcedVentilationAirTemperature, forcedVentilationAirSpeed);
         }
 
         std::shared_ptr<CIGUSolidLayer> Layers::updateMaterialData(
@@ -88,21 +90,6 @@ namespace Tarcog
                                                effectiveOpenness.Ar,
                                                effectiveOpenness.Ah,
                                                effectiveOpenness.FrontPorosity),
-              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
-        }
-
-        std::shared_ptr<CIGUShadeLayer> Layers::sealedLayer(double thickness,
-                                                            double conductivity,
-                                                            double frontEmissivity,
-                                                            double frontIRTransmittance,
-                                                            double backEmissivity,
-                                                            double backIRTransmittance)
-        {
-            return std::make_shared<CIGUShadeLayer>(
-              thickness,
-              conductivity,
-              std::make_shared<CShadeOpenings>(0, 0, 0, 0, 0, 0),
               std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
               std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
         }

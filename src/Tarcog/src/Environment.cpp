@@ -16,8 +16,7 @@ namespace Tarcog
             m_HCoefficientModel(BoundaryConditionsCoeffModel::CalculateH),
             m_IRCalculatedOutside(false)
         {
-            m_ForcedVentilation =
-              ForcedVentilation();   // Creates forced ventilation with zero values
+
         }
 
         CEnvironment::CEnvironment(const CEnvironment & t_Environment) :
@@ -52,12 +51,6 @@ namespace Tarcog
         {
             m_HCoefficientModel = t_BCModel;
             m_HInput = t_HCoeff;
-            resetCalculated();
-        }
-
-        void CEnvironment::setForcedVentilation(ForcedVentilation const & t_ForcedVentilation)
-        {
-            m_ForcedVentilation = t_ForcedVentilation;
             resetCalculated();
         }
 

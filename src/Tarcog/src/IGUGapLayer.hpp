@@ -21,9 +21,6 @@ namespace Tarcog
         public:
             CIGUGapLayer(double t_Thickness, double t_Pressure);
             CIGUGapLayer(double t_Thickness, double t_Pressure, const Gases::CGas & t_Gas);
-            CIGUGapLayer(double t_Thickness,
-                         double t_Pressure,
-                         const ForcedVentilation & t_ForcedVentilation);
 
             void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 

@@ -81,6 +81,8 @@ namespace Tarcog
             //! Function that will update layers deflection states based on new temperature data
             void updateDeflectionState();
 
+            void precalculateLayerStates();
+
         private:
             // Replces layer in existing construction and keeps correct connections in linked list
             void replaceLayer(const std::shared_ptr<CBaseIGULayer> & t_Original,

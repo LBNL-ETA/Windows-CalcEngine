@@ -68,6 +68,7 @@ namespace Tarcog
                 ++m_Iterations;
                 std::vector<double> aSolution = m_QBalance.calcBalanceMatrix();
 
+                m_IGU.precalculateLayerStates();
                 achievedTolerance = calculateTolerance(aSolution);
 
                 estimateNewState(aSolution);

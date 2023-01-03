@@ -185,15 +185,6 @@ namespace Tarcog
             m_IsVentilationForced(false)
         {}
 
-        CGasLayer::CGasLayer(double const t_Pressure,
-                             const ForcedVentilation & t_ForcedVentilation) :
-            m_Pressure(t_Pressure),
-            m_AirVerticalDirection(AirVerticalDirection::None),
-            m_AirHorizontalDirection(AirHorizontalDirection::None),
-            m_ForcedVentilation(t_ForcedVentilation),
-            m_IsVentilationForced(true)
-        {}
-
         CGasLayer::CGasLayer(double const t_Pressure, const Gases::CGas & t_Gas) :
             m_Pressure(t_Pressure),
             m_AirSpeed(0),
@@ -206,11 +197,6 @@ namespace Tarcog
         double CGasLayer::getPressure()
         {
             return m_Pressure;
-        }
-
-        ForcedVentilation CGasLayer::getForcedVentilation() const
-        {
-            return m_ForcedVentilation;
         }
 
         bool CGasLayer::isVentilationForced() const
