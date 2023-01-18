@@ -1,7 +1,10 @@
 #include <memory>
+#include <stdexcept>
 #include <gtest/gtest.h>
 
+#include "WCEGases.hpp"
 #include "WCETarcog.hpp"
+#include "WCECommon.hpp"
 
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
@@ -9,7 +12,7 @@ using Tarcog::ISO15099::CIGUGapLayer;
 class TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir : public testing::Test
 {
 private:
-    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -17,17 +20,13 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
-        auto outdoorTemperature = 293.15;   // Kelvins
+        auto outdoorTemperature = 298.15;   // Kelvins
         auto airSpeed = 5.5;                // meters per second
-        auto tSky = 293.15;                 // Kelvins
+        auto tSky = 298.15;                 // Kelvins
         auto solarRadiation = 1000.0;
 
-        auto Outdoor =
-          Tarcog::ISO15099::Environments::outdoor(outdoorTemperature,
-                                                  airSpeed,
-                                                  solarRadiation,
-                                                  tSky,
-                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -35,38 +34,77 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 293.15;
+        auto roomTemperature = 298.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
-        // IGU
-        const auto layer1Thickness = 0.006;   // [m]
-        const auto layer1Conductance = 1.0;
+        /////////////////////////////////////////////////////////
+        /// IGU
+        /////////////////////////////////////////////////////////
+        auto shadeLayerConductance = 0.12;
 
-        auto solidLayer1 =
-          Tarcog::ISO15099::Layers::solid(layer1Thickness, layer1Conductance);
-        ASSERT_TRUE(solidLayer1 != nullptr);
+        // make cell geometry
+        const auto thickness_31111{0.00023};
+        const auto x = 0.00169;        // m
+        const auto y = 0.00169;        // m
+        const auto radius = 0.00058;   // m
 
-        const auto shadeLayerThickness = 0.002;
-        const auto shadeLayerConductance = 0.16;
+        const auto CellDimension{
+          ThermalPermeability::Perforated::diameterToXYDimension(2 * radius)};
 
-        auto shadeLayer =
-          Tarcog::ISO15099::Layers::solid(shadeLayerThickness, shadeLayerConductance);
-        ASSERT_TRUE(shadeLayer != nullptr);
+        const auto frontOpenness{ThermalPermeability::Perforated::openness(
+          ThermalPermeability::Perforated::Geometry::Circular,
+          x,
+          y,
+          CellDimension.x,
+          CellDimension.y)};
+
+        const auto dl{0.0};
+        const auto dr{0.0};
+        const auto dtop{0.0};
+        const auto dbot{0.0};
+
+        EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
+
+        auto windowWidth = 1.0;
+        auto windowHeight = 1.0;
+
+        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
+          windowWidth, windowHeight, thickness_31111, openness};
+
+        EffectiveLayers::EffectiveOpenness effOpenness{
+          effectiveLayerPerforated.getEffectiveOpenness()};
+
+        const auto effectiveThickness{effectiveLayerPerforated.effectiveThickness()};
+
+        auto Ef = 0.640892;
+        auto Eb = 0.623812;
+        auto Tirf = 0.257367;
+        auto Tirb = 0.257367;
+
+        auto shadeLayer = Tarcog::ISO15099::Layers::shading(
+          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+
+        shadeLayer->setSolarAbsorptance(0.106659, solarRadiation);
 
         auto gapThickness = 0.05;
         auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(GapLayer1 != nullptr);
 
+        const auto solidLayerThickness = 0.003048;   // [m]
+        const auto solidLayerConductance = 1.0;
+        auto solidLayer1 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        ASSERT_TRUE(solidLayer1 != nullptr);
+
+        aLayer2->setSolarAbsorptance(0.034677, solarRadiation);
+
         // Now add forced ventilation to the gap
-        auto gapAirSpeed = 0.5;
+        auto gapAirSpeed = 0.1;
         auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(
           GapLayer1, gapAirSpeed, outdoorTemperature);
         ASSERT_TRUE(gap != nullptr);
-
-        double windowWidth = 1;
-        double windowHeight = 1;
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({shadeLayer, gap, solidLayer1});
@@ -74,10 +112,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
-        m_TarcogSystem->solve();
+        //m_TarcogSystem->solve();
     }
 
 public:
