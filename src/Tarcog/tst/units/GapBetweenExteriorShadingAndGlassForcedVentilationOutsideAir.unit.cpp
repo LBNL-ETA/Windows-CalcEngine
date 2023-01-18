@@ -6,7 +6,7 @@
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 
-class TestGapLayerAtEdgeForcedVentilationOutsideAir : public testing::Test
+class TestGapBetweenExteriorShadingAndGlassForcedVentilationOutsideAir : public testing::Test
 {
 private:
     std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
@@ -97,7 +97,7 @@ public:
     };
 };
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GapLayerSurfaceIRFlow)
+TEST_F(TestGapBetweenExteriorShadingAndGlassForcedVentilationOutsideAir, GapLayerSurfaceIRFlow)
 {
     SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
 
@@ -112,7 +112,7 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GapLayerSurfaceIRFlow)
     EXPECT_NEAR(316.739416, backIRRadiationFlow, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GainEnergy)
+TEST_F(TestGapBetweenExteriorShadingAndGlassForcedVentilationOutsideAir, GainEnergy)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
 
@@ -125,7 +125,7 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GainEnergy)
     EXPECT_NEAR(-75.720712, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, FirstLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenExteriorShadingAndGlassForcedVentilationOutsideAir, FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
@@ -140,7 +140,7 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, FirstLayerSurfaceTemperatu
     EXPECT_NEAR(257.964452, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GapTemperatures)
+TEST_F(TestGapBetweenExteriorShadingAndGlassForcedVentilationOutsideAir, GapTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
@@ -159,7 +159,7 @@ TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, GapTemperatures)
     EXPECT_NEAR(266.797896, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapLayerAtEdgeForcedVentilationOutsideAir, SecondLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenExteriorShadingAndGlassForcedVentilationOutsideAir, SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
