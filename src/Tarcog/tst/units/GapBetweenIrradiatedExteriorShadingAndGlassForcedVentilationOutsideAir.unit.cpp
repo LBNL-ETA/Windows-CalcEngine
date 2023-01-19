@@ -88,25 +88,23 @@ protected:
         ASSERT_TRUE(shadeLayer != nullptr);
 
         auto gapThickness = 0.05;
-        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
-        ASSERT_TRUE(GapLayer1 != nullptr);
+        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gapLayer != nullptr);
 
         const auto solidLayerThickness = 0.003048;   // [m]
         const auto solidLayerConductance = 1.0;
-        auto solidLayer1 =
+        auto solidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(solidLayer1 != nullptr);
+        solidLayer->setSolarAbsorptance(0.034677, solarRadiation);
+        ASSERT_TRUE(solidLayer != nullptr);
 
-        aLayer2->setSolarAbsorptance(0.034677, solarRadiation);
-
-        // Now add forced ventilation to the gap
         auto gapAirSpeed = 0.1;
-        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(
-          GapLayer1, gapAirSpeed, outdoorTemperature);
-        ASSERT_TRUE(gap != nullptr);
+        auto forcedGapLayer =
+          Tarcog::ISO15099::Layers::forcedVentilationGap(gapLayer, gapAirSpeed, outdoorTemperature);
+        ASSERT_TRUE(forcedGapLayer != nullptr);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({shadeLayer, gap, solidLayer1});
+        aIGU.addLayers({shadeLayer, forcedGapLayer, solidLayer});
 
         /////////////////////////////////////////////////////////
         /// System
