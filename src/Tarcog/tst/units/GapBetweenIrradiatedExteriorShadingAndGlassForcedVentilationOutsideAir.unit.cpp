@@ -1,10 +1,7 @@
 #include <memory>
-#include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCEGases.hpp"
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
 
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
