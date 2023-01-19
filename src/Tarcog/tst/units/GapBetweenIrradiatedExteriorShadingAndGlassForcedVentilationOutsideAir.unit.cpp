@@ -5,11 +5,12 @@
 
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
+using Tarcog::ISO15099::CSingleSystem;
 
 class TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir : public testing::Test
 {
 private:
-    std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
+    std::unique_ptr<CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -109,7 +110,7 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_unique<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         //m_TarcogSystem->solve();
