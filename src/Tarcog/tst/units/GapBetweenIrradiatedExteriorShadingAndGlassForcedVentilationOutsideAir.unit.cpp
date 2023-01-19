@@ -114,7 +114,7 @@ protected:
         m_TarcogSystem = std::make_unique<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
-        //m_TarcogSystem->solve();
+        m_TarcogSystem->solve();
     }
 
 public:
