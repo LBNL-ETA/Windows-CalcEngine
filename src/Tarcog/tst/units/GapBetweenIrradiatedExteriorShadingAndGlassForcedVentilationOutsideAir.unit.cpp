@@ -84,8 +84,8 @@ protected:
 
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
           effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
-
         shadeLayer->setSolarAbsorptance(0.106659, solarRadiation);
+        ASSERT_TRUE(shadeLayer != nullptr);
 
         auto gapThickness = 0.05;
         auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
