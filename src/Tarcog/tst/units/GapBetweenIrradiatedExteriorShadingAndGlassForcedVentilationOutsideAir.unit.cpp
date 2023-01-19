@@ -18,6 +18,7 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
+        auto airTemperature = 255.15;       // Kelvins
         auto outdoorTemperature = 298.15;   // Kelvins
         auto airSpeed = 5.5;                // meters per second
         auto tSky = 298.15;                 // Kelvins
