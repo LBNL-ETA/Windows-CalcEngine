@@ -123,5 +123,5 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
     //EXPECT_EQ(43u, numOfIter);
     
     const auto ventilatedFlow = aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(40.879048, ventilatedFlow, Tolerance);
+    EXPECT_NEAR(40.879045167167362, ventilatedFlow, Tolerance);
 }

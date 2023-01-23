@@ -1,18 +1,16 @@
 #include <memory>
-#include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCEGases.hpp"
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
 
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
+using Tarcog::ISO15099::CSingleSystem;
 
 class TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir : public testing::Test
 {
 private:
-    std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
+    std::unique_ptr<CSingleSystem> m_TarcogSystem;
 
 protected:
     void SetUp() override
@@ -20,6 +18,7 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
+        auto airTemperature = 255.15;       // Kelvins
         auto outdoorTemperature = 298.15;   // Kelvins
         auto airSpeed = 5.5;                // meters per second
         auto tSky = 298.15;                 // Kelvins
@@ -85,37 +84,35 @@ protected:
 
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
           effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
-
         shadeLayer->setSolarAbsorptance(0.106659, solarRadiation);
+        ASSERT_TRUE(shadeLayer != nullptr);
 
         auto gapThickness = 0.05;
-        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
-        ASSERT_TRUE(GapLayer1 != nullptr);
+        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gapLayer != nullptr);
 
         const auto solidLayerThickness = 0.003048;   // [m]
         const auto solidLayerConductance = 1.0;
-        auto solidLayer1 =
+        auto solidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        ASSERT_TRUE(solidLayer1 != nullptr);
+        solidLayer->setSolarAbsorptance(0.034677, solarRadiation);
+        ASSERT_TRUE(solidLayer != nullptr);
 
-        aLayer2->setSolarAbsorptance(0.034677, solarRadiation);
-
-        // Now add forced ventilation to the gap
         auto gapAirSpeed = 0.1;
-        auto gap = Tarcog::ISO15099::Layers::forcedVentilationGap(
-          GapLayer1, gapAirSpeed, outdoorTemperature);
-        ASSERT_TRUE(gap != nullptr);
+        auto forcedGapLayer =
+          Tarcog::ISO15099::Layers::forcedVentilationGap(gapLayer, gapAirSpeed, outdoorTemperature);
+        ASSERT_TRUE(forcedGapLayer != nullptr);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({shadeLayer, gap, solidLayer1});
+        aIGU.addLayers({shadeLayer, forcedGapLayer, solidLayer});
 
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        m_TarcogSystem = std::make_unique<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
-        //m_TarcogSystem->solve();
+        m_TarcogSystem->solve();
     }
 
 public:
@@ -146,8 +143,8 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     ASSERT_TRUE(aLayer != nullptr);
     auto frontIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Front);
     auto backIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(261.579394, frontIRRadiationFlow, 1e-4);
-    EXPECT_NEAR(316.739416, backIRRadiationFlow, 1e-4);
+    EXPECT_NEAR(300.51850897417813, frontIRRadiationFlow, 1e-4);
+    EXPECT_NEAR(352.30917088728245, backIRRadiationFlow, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, GainEnergy)
@@ -160,7 +157,7 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-75.720712, gainEnergy, 1e-4);
+    EXPECT_NEAR(123.35122562642526, gainEnergy, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, FirstLayerSurfaceTemperatures)
@@ -174,8 +171,8 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(257.561838, frontTemperature, 1e-4);
-    EXPECT_NEAR(257.964452, backTemperature, 1e-4);
+    EXPECT_NEAR(263.04855139463018, frontTemperature, 1e-4);
+    EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, GapTemperatures)
@@ -191,10 +188,10 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
     auto layerTemperature = aLayer->layerTemperature();
     auto averageTemperature = aLayer->averageTemperature();
-    EXPECT_NEAR(257.964452, frontTemperature, 1e-4);
-    EXPECT_NEAR(275.631339, backTemperature, 1e-4);
-    EXPECT_NEAR(260.505441, layerTemperature, 1e-4);
-    EXPECT_NEAR(266.797896, averageTemperature, 1e-4);
+    EXPECT_NEAR(263.33651241783423, frontTemperature, 1e-4);
+    EXPECT_NEAR(282.70879216106016, backTemperature, 1e-4);
+    EXPECT_NEAR(285.74858839456721, layerTemperature, 1e-4);
+    EXPECT_NEAR(273.02265228944719, averageTemperature, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, SecondLayerSurfaceTemperatures)
@@ -208,6 +205,6 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(275.631339, frontTemperature, 1e-4);
-    EXPECT_NEAR(275.640475, backTemperature, 1e-4);
+    EXPECT_NEAR(282.70879216106016, frontTemperature, 1e-4);
+    EXPECT_NEAR(283.10709823028276, backTemperature, 1e-4);
 }
