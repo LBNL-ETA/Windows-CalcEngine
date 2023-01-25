@@ -7,7 +7,7 @@ using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 using Tarcog::ISO15099::CSingleSystem;
 
-class TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir : public testing::Test
+class TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation : public testing::Test
 {
 private:
     std::unique_ptr<CSingleSystem> m_TarcogSystem;
@@ -42,6 +42,21 @@ protected:
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
 
+        const auto solidLayerThickness = 0.003048;   // [m]
+        const auto solidLayerConductance = 1.0;
+        auto solidLayer =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+        solidLayer->setSolarAbsorptance(0.04, solarRadiation);
+        ASSERT_TRUE(solidLayer != nullptr);
+
+        auto gapThickness = 0.05;
+        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
+        ASSERT_TRUE(gapLayer != nullptr);
+        auto gapAirSpeed = 0.0;
+        auto forcedGapLayer =
+          Tarcog::ISO15099::Layers::forcedVentilationGap(gapLayer, gapAirSpeed, roomTemperature);
+        ASSERT_TRUE(forcedGapLayer != nullptr);
+
         auto shadeLayerConductance = 0.12;
         // make cell geometry
         const auto thickness_31111{0.00023};
@@ -75,23 +90,8 @@ protected:
         shadeLayer->setSolarAbsorptance(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 
-        auto gapThickness = 0.05;
-        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
-        ASSERT_TRUE(gapLayer != nullptr);
-        auto gapAirSpeed = 0.1;
-        auto forcedGapLayer =
-          Tarcog::ISO15099::Layers::forcedVentilationGap(gapLayer, gapAirSpeed, outdoorAirTemperature);
-        ASSERT_TRUE(forcedGapLayer != nullptr);
-
-        const auto solidLayerThickness = 0.003048;   // [m]
-        const auto solidLayerConductance = 1.0;
-        auto solidLayer =
-          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        solidLayer->setSolarAbsorptance(0.04, solarRadiation);
-        ASSERT_TRUE(solidLayer != nullptr);
-
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({shadeLayer, forcedGapLayer, solidLayer});
+        aIGU.addLayers({solidLayer, forcedGapLayer, shadeLayer});
 
         /////////////////////////////////////////////////////////
         /// System
@@ -119,7 +119,7 @@ public:
     };
 };
 
-TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, GapLayerSurfaceIRFlow)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GapLayerSurfaceIRFlow)
 {
     SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
 
@@ -134,7 +134,7 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     EXPECT_NEAR(352.30917088728245, backIRRadiationFlow, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, GainEnergy)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GainEnergy)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
 
@@ -147,7 +147,7 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     EXPECT_NEAR(123.35122562642526, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, FirstLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
@@ -162,7 +162,7 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, GapTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GapTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
@@ -181,7 +181,7 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     EXPECT_NEAR(273.02265228944719, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, SecondLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
