@@ -7,7 +7,7 @@ using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 using Tarcog::ISO15099::CSingleSystem;
 
-class TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer : public testing::Test
+class TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation : public testing::Test
 {
 private:
     std::unique_ptr<CSingleSystem> m_TarcogSystem;
@@ -112,7 +112,7 @@ public:
     };
 };
 
-TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, GapLayerSurfaceIRFlow)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, GapLayerSurfaceIRFlow)
 {
     SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
 
@@ -127,7 +127,7 @@ TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, GapLa
     EXPECT_NEAR(352.30917088728245, backIRRadiationFlow, 1e-4);
 }
 
-TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, GainEnergy)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, GainEnergy)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
 
@@ -140,7 +140,7 @@ TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, GainE
     EXPECT_NEAR(123.35122562642526, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, FirstLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
@@ -155,7 +155,7 @@ TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, First
     EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, GapTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, GapTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
@@ -174,7 +174,7 @@ TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, GapTe
     EXPECT_NEAR(273.02265228944719, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenGlassPanesForcedVentilationInsideAirValidationSummer, SecondLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
