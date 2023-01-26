@@ -18,6 +18,7 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
+
         auto outdoorAirTemperature = 298.15;   // Kelvins
         auto outdoorAirSpeed = 2.75;                // meters per second
         auto tSky = outdoorAirTemperature;                 // Kelvins
@@ -96,6 +97,7 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
+        
         m_TarcogSystem = std::make_unique<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
