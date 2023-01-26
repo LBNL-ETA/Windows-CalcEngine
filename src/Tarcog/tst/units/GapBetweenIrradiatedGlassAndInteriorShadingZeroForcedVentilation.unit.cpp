@@ -7,7 +7,7 @@ using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 using Tarcog::ISO15099::CSingleSystem;
 
-class TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation : public testing::Test
+class TestGapBetweenIrradiatedGlassAndInteriorShadingZeroForcedVentilation : public testing::Test
 {
 private:
     std::unique_ptr<CSingleSystem> m_TarcogSystem;
@@ -121,7 +121,7 @@ public:
     };
 };
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GapLayerSurfaceIRFlow)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingZeroForcedVentilation, GapLayerSurfaceIRFlow)
 {
     SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
 
@@ -136,7 +136,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GapLayerSur
     EXPECT_NEAR(352.30917088728245, backIRRadiationFlow, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GainEnergy)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingZeroForcedVentilation, GainEnergy)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
 
@@ -149,7 +149,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GainEnergy)
     EXPECT_NEAR(123.35122562642526, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, FirstLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingZeroForcedVentilation, FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
@@ -164,7 +164,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, FirstLayerS
     EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GapTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingZeroForcedVentilation, GapTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
@@ -183,7 +183,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, GapTemperat
     EXPECT_NEAR(273.02265228944719, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNoVentilation, SecondLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingZeroForcedVentilation, SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
