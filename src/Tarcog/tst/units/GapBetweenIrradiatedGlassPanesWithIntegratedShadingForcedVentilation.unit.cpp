@@ -20,9 +20,9 @@ protected:
         // Outdoor
         /////////////////////////////////////////////////////////
 
-        auto airTemperature = 255.15;   // Kelvins
+        auto airTemperature = 298.15;   // Kelvins
         auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;             // Kelvins
+        auto tSky = 298.15;             // Kelvins
         auto solarRadiation = 1000.0;
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -33,7 +33,7 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 295.15;
+        auto roomTemperature = 298.15;
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
@@ -92,6 +92,8 @@ protected:
 
         m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
+
+        m_TarcogSystem->solve(); 
     }
 
 public:
