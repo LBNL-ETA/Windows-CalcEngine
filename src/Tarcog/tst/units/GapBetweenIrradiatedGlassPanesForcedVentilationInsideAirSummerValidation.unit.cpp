@@ -6,8 +6,10 @@
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 using Tarcog::ISO15099::CSingleSystem;
+using Tarcog::ISO15099::CIndoorEnvironment;
 
-class TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation : public testing::Test
+class TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation
+    : public testing::Test
 {
 private:
     std::unique_ptr<CSingleSystem> m_TarcogSystem;
@@ -19,13 +21,17 @@ protected:
         // Outdoor
         /////////////////////////////////////////////////////////
 
-        auto outdoorAirTemperature = 303.15;       // Kelvins
-        auto outdoorAirSpeed = 2.75;                // meters per second
-        auto tSky = 303.15;                 // Kelvins
+        auto outdoorAirTemperature = 303.15;   // Kelvins
+        auto outdoorAirSpeed = 2.75;           // meters per second
+        auto tSky = 303.15;                    // Kelvins
         auto solarRadiation = 1000.0;
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          outdoorAirTemperature, outdoorAirSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(outdoorAirTemperature,
+                                                  outdoorAirSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -37,8 +43,10 @@ protected:
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(indoorAirTemperature);
 
-        auto convective_heat_transfer_coefficient_indoor = 3.9; // + radiative_heat_transfer_coefficient (4.1 W/(m²K) from EN 410) = 8 W/(m²K)
-        Indoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH, convective_heat_transfer_coefficient_indoor);
+        auto convective_heat_transfer_coefficient_indoor =
+          3.9;   // + radiative_heat_transfer_coefficient (4.1 W/(m²K) from EN 410) = 8 W/(m²K)
+        Indoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH,
+                               convective_heat_transfer_coefficient_indoor);
 
 
         ASSERT_TRUE(Indoor != nullptr);
@@ -55,11 +63,11 @@ protected:
         auto emissivity1 = 0.84;
         auto transmittance1 = 0;
         auto solidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayer1Thickness,
-                                                      solidLayer1Conductance,
-                                                      emissivity1,
-                                                      transmittance1,
-                                                      emissivity1,
-                                                      transmittance1);
+                                                           solidLayer1Conductance,
+                                                           emissivity1,
+                                                           transmittance1,
+                                                           emissivity1,
+                                                           transmittance1);
         solidLayer1->setSolarAbsorptance(0.2, solarRadiation);
         ASSERT_TRUE(solidLayer1 != nullptr);
 
@@ -67,8 +75,8 @@ protected:
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gapLayer != nullptr);
         auto gapAirSpeed = 1;
-        auto forcedGapLayer =
-          Tarcog::ISO15099::Layers::forcedVentilationGap(gapLayer, gapAirSpeed, indoorAirTemperature);
+        auto forcedGapLayer = Tarcog::ISO15099::Layers::forcedVentilationGap(
+          gapLayer, gapAirSpeed, indoorAirTemperature);
         ASSERT_TRUE(forcedGapLayer != nullptr);
 
         const auto solidLayer2Thickness = 0.004;   // [m]
@@ -76,11 +84,11 @@ protected:
         auto emissivity2 = 0.84;
         auto transmittance2 = 0;
         auto solidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayer2Thickness,
-                                                      solidLayer2Conductance,
-                                                      emissivity2,
-                                                      transmittance2,
-                                                      emissivity2,
-                                                      transmittance2);
+                                                           solidLayer2Conductance,
+                                                           emissivity2,
+                                                           transmittance2,
+                                                           emissivity2,
+                                                           transmittance2);
         solidLayer2->setSolarAbsorptance(0.2, solarRadiation);
         ASSERT_TRUE(solidLayer2 != nullptr);
 
@@ -90,7 +98,7 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        
+
         m_TarcogSystem = std::make_unique<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
@@ -112,9 +120,16 @@ public:
     {
         return m_TarcogSystem->getSolidLayers()[1].get();
     };
+
+    [[nodiscard]] CIndoorEnvironment * GetIndoorRadiativeHeatTransferCoefficient() const
+    {
+        return Indoor->getHr();
+        //->calculateHc()
+    };
 };
 
-TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, GapLayerSurfaceIRFlow)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation,
+       GapLayerSurfaceIRFlow)
 {
     SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
 
@@ -142,7 +157,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidat
     EXPECT_NEAR(123.35122562642526, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, FirstLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation,
+       FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
@@ -157,7 +173,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidat
     EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, GapTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation,
+       GapTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
@@ -176,7 +193,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidat
     EXPECT_NEAR(273.02265228944719, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation, SecondLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation,
+       SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
@@ -189,4 +207,16 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidat
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(282.70879216106016, frontTemperature, 1e-4);
     EXPECT_NEAR(283.10709823028276, backTemperature, 1e-4);
+}
+
+TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation,
+       IndoorHeatTransferCoefficients)
+{
+    SCOPED_TRACE("Begin Test: Test The Indoor Heat Transfer Coefficients");
+
+    auto indoorRadiativeHeatTransferCoefficient = GetIndoorRadiativeHeatTransferCoefficient();
+
+    ASSERT_TRUE(indoorRadiativeHeatTransferCoefficient != nullptr);
+
+    EXPECT_NEAR(0, indoorRadiativeHeatTransferCoefficient, 1e-4);
 }
