@@ -121,10 +121,15 @@ public:
         return m_TarcogSystem->getSolidLayers()[1].get();
     };
 
-    [[nodiscard]] CIndoorEnvironment * GetIndoorRadiativeHeatTransferCoefficient() const
+    // [[nodiscard]] CIndoorEnvironment * GetIndoorRadiativeHeatTransferCoefficient() const
+    // {
+    //     return Indoor->getHr();
+    //     //->calculateHc()
+    // };
+
+    [[nodiscard]] double GetIndoorRadiativeHeatTransferCoefficient() const
     {
-        return Indoor->getHr();
-        //->calculateHc()
+        return m_TarcogSystem->CSingleSystem::getHc(Tarcog::ISO15099::Environment::Indoor);
     };
 };
 
@@ -216,7 +221,7 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidat
 
     auto indoorRadiativeHeatTransferCoefficient = GetIndoorRadiativeHeatTransferCoefficient();
 
-    ASSERT_TRUE(indoorRadiativeHeatTransferCoefficient != nullptr);
+    // ASSERT_TRUE(indoorRadiativeHeatTransferCoefficient != nullptr);
 
     EXPECT_NEAR(0, indoorRadiativeHeatTransferCoefficient, 1e-4);
 }
