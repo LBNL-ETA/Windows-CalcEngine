@@ -121,15 +121,34 @@ public:
         return m_TarcogSystem->getSolidLayers()[1].get();
     };
 
-    // [[nodiscard]] CIndoorEnvironment * GetIndoorRadiativeHeatTransferCoefficient() const
-    // {
-    //     return Indoor->getHr();
-    //     //->calculateHc()
-    // };
+    [[nodiscard]] double GetOutdoorConvectiveHeatTransferCoefficient() const
+    {
+        return m_TarcogSystem->CSingleSystem::getHc(Tarcog::ISO15099::Environment::Outdoor);
+    };
+
+    [[nodiscard]] double GetOutdoorRadiativeHeatTransferCoefficient() const
+    {
+        return m_TarcogSystem->CSingleSystem::getHr(Tarcog::ISO15099::Environment::Outdoor);
+    };
+
+    [[nodiscard]] double GetOutdoorHeatTransferCoefficient() const
+    {
+        return m_TarcogSystem->CSingleSystem::getH(Tarcog::ISO15099::Environment::Outdoor);
+    };
+
+    [[nodiscard]] double GetIndoorConvectiveHeatTransferCoefficient() const
+    {
+        return m_TarcogSystem->CSingleSystem::getHc(Tarcog::ISO15099::Environment::Indoor);
+    };
 
     [[nodiscard]] double GetIndoorRadiativeHeatTransferCoefficient() const
     {
-        return m_TarcogSystem->CSingleSystem::getHc(Tarcog::ISO15099::Environment::Indoor);
+        return m_TarcogSystem->CSingleSystem::getHr(Tarcog::ISO15099::Environment::Indoor);
+    };
+
+    [[nodiscard]] double GetIndoorHeatTransferCoefficient() const
+    {
+        return m_TarcogSystem->CSingleSystem::getH(Tarcog::ISO15099::Environment::Indoor);
     };
 };
 
@@ -215,13 +234,21 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidat
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation,
-       IndoorHeatTransferCoefficients)
+       HeatTransferCoefficients)
 {
-    SCOPED_TRACE("Begin Test: Test The Indoor Heat Transfer Coefficients");
+    SCOPED_TRACE("Begin Test: Test The Heat Transfer Coefficients");
 
+    auto outdoorConvectiveHeatTransferCoefficient = GetOutdoorConvectiveHeatTransferCoefficient();
+    auto outdoorRadiativeHeatTransferCoefficient = GetOutdoorRadiativeHeatTransferCoefficient();
+    auto outdoorHeatTransferCoefficient = GetOutdoorHeatTransferCoefficient();
+    auto indoorConvectiveHeatTransferCoefficient = GetIndoorConvectiveHeatTransferCoefficient();
     auto indoorRadiativeHeatTransferCoefficient = GetIndoorRadiativeHeatTransferCoefficient();
+    auto indoorHeatTransferCoefficient = GetIndoorHeatTransferCoefficient();
 
-    // ASSERT_TRUE(indoorRadiativeHeatTransferCoefficient != nullptr);
-
+    EXPECT_NEAR(0, outdoorConvectiveHeatTransferCoefficient, 1e-4);
+    EXPECT_NEAR(0, outdoorRadiativeHeatTransferCoefficient, 1e-4);
+    EXPECT_NEAR(0, outdoorHeatTransferCoefficient, 1e-4);
+    EXPECT_NEAR(0, indoorConvectiveHeatTransferCoefficient, 1e-4);
     EXPECT_NEAR(0, indoorRadiativeHeatTransferCoefficient, 1e-4);
+    EXPECT_NEAR(0, indoorHeatTransferCoefficient, 1e-4);
 }
