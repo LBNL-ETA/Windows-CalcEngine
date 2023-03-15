@@ -40,6 +40,9 @@ protected:
         auto Indoor = Tarcog::ISO15099::Environments::indoor(indoorAirTemperature);
         auto convective_heat_transfer_coefficient_indoor =
           3.9;   // + radiative_heat_transfer_coefficient (4.1 W/(m²K) from EN 410) = 8 W/(m²K)
+                 // The convective_heat_transfer_coefficient_indoor is NOT USED if
+                 // Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH. It is used in the
+                 // cases `::HPrescribed` and `::HcPrescribed`
         Indoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH,
                                convective_heat_transfer_coefficient_indoor);
         ASSERT_TRUE(Indoor != nullptr);
