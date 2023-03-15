@@ -6,7 +6,6 @@
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 using Tarcog::ISO15099::CSingleSystem;
-using Tarcog::ISO15099::CIndoorEnvironment;
 
 class TestGapBetweenIrradiatedGlassPanesForcedVentilationInsideAirSummerValidation
     : public testing::Test
