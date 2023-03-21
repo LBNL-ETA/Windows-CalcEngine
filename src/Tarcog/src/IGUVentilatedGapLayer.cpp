@@ -47,6 +47,16 @@ namespace Tarcog
             m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, m_Pressure);
         }
 
+        double CIGUVentilatedGapLayer::inletTemperature()
+        {
+            return m_State.inletTemperature;
+        }
+
+        double CIGUVentilatedGapLayer::outletTemperature()
+        {
+            return m_State.outletTemperature;
+        }
+
         double CIGUVentilatedGapLayer::layerTemperature()
         {
             assert(m_Height != 0);
