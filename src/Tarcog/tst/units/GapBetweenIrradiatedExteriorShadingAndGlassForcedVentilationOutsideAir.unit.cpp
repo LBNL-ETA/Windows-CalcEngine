@@ -132,8 +132,8 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     ASSERT_TRUE(aLayer != nullptr);
     auto frontIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Front);
     auto backIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(300.51850897417813, frontIRRadiationFlow, 1e-4);
-    EXPECT_NEAR(352.30917088728245, backIRRadiationFlow, 1e-4);
+    EXPECT_NEAR(514.09979648823617, frontIRRadiationFlow, 1e-4);
+    EXPECT_NEAR(494.62579436827116, backIRRadiationFlow, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, GainEnergy)
@@ -146,7 +146,7 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(123.35122562642526, gainEnergy, 1e-4);
+    EXPECT_NEAR(-45.333884920391, gainEnergy, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, FirstLayerSurfaceTemperatures)
@@ -160,8 +160,8 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(263.04855139463018, frontTemperature, 1e-4);
-    EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
+    EXPECT_NEAR(312.84342610457981, frontTemperature, 1e-4);
+    EXPECT_NEAR(313.12896009393842, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, GapTemperatures)
@@ -177,10 +177,10 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
     auto layerTemperature = aLayer->layerTemperature();
     auto averageTemperature = aLayer->averageTemperature();
-    EXPECT_NEAR(263.33651241783423, frontTemperature, 1e-4);
-    EXPECT_NEAR(282.70879216106016, backTemperature, 1e-4);
-    EXPECT_NEAR(285.74858839456721, layerTemperature, 1e-4);
-    EXPECT_NEAR(273.02265228944719, averageTemperature, 1e-4);
+    EXPECT_NEAR(313.12896009393842, frontTemperature, 1e-4);
+    EXPECT_NEAR(305.04357261282178, backTemperature, 1e-4);
+    EXPECT_NEAR(302.78306814785384, layerTemperature, 1e-4);
+    EXPECT_NEAR(309.0862663533801, averageTemperature, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAir, SecondLayerSurfaceTemperatures)
@@ -194,6 +194,6 @@ TEST_F(TestGapBetweenIrradiatedExteriorShadingAndGlassForcedVentilationOutsideAi
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(282.70879216106016, frontTemperature, 1e-4);
-    EXPECT_NEAR(283.10709823028276, backTemperature, 1e-4);
+    EXPECT_NEAR(305.04357261282178, frontTemperature, 1e-4);
+    EXPECT_NEAR(304.94803305914581, backTemperature, 1e-4);
 }

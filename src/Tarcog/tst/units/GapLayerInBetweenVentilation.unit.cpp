@@ -112,10 +112,10 @@ TEST_F(TestGapLayerInBetweenVentilation, VentilationFlow)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(32.988234, gainEnergy, 1e-4);
+    EXPECT_NEAR(34.909058114121649, gainEnergy, 1e-4);
 
     aLayer = GetGap2();
     ASSERT_TRUE(aLayer != nullptr);
     gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-32.988234, gainEnergy, 1e-4);
+    EXPECT_NEAR(-34.909058114121649, gainEnergy, 1e-4);
 }

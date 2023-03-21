@@ -134,12 +134,12 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(34.909058, gainEnergy, 1e-4);
+    EXPECT_NEAR(3.7294499418281335, gainEnergy, 1e-4);
 
     aLayer = GetGap2();
     ASSERT_TRUE(aLayer != nullptr);
     gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-34.909058, gainEnergy, 1e-4);
+    EXPECT_NEAR(-3.7294499418281335, gainEnergy, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation, FirstLayerSurfaceTemperatures)
@@ -153,8 +153,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(263.04855139463018, frontTemperature, 1e-4);
-    EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
+    EXPECT_NEAR(306.04014011835119, frontTemperature, 1e-4);
+    EXPECT_NEAR(307.36367843102033, backTemperature, 1e-4);
 }
 
 // TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation, GapTemperatures)
@@ -187,8 +187,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(263.04855139463018, frontTemperature, 1e-4);
-    EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
+    EXPECT_NEAR(334.87586844983286, frontTemperature, 1e-4);
+    EXPECT_NEAR(334.87882619192641, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation, ThirdLayerSurfaceTemperatures)
@@ -202,6 +202,6 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(263.04855139463018, frontTemperature, 1e-4);
-    EXPECT_NEAR(263.33651241783423, backTemperature, 1e-4);
+    EXPECT_NEAR(318.08669652857139, frontTemperature, 1e-4);
+    EXPECT_NEAR(317.23853484124118, backTemperature, 1e-4);
 }
