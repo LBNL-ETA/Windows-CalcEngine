@@ -95,21 +95,6 @@ namespace Tarcog
             return m_DirectSolarRadiation;
         }
 
-        double CEnvironment::getHInput() const
-        {
-            return m_HInput;
-        }
-
-        BoundaryConditionsCoeffModel CEnvironment::getHCoefficientModel() const
-        {
-            return m_HCoefficientModel;
-        }
-
-        double CEnvironment::getIRCalculatedOutside() const
-        {
-            return m_IRCalculatedOutside;
-        }
-
         void CEnvironment::connectToIGULayer(std::shared_ptr<CBaseLayer> const &)
         {
             //

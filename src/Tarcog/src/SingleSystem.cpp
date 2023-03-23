@@ -172,22 +172,6 @@ namespace Tarcog
             return m_Environment.at(t_Environment)->getAirTemperature();
         }
 
-        double CSingleSystem::getHInput(Environment const t_Environment) const
-        {
-            return m_Environment.at(t_Environment)->getHInput();
-        }
-
-        BoundaryConditionsCoeffModel
-          CSingleSystem::getHCoefficientModel(Environment const t_Environment) const
-        {
-            return m_Environment.at(t_Environment)->getHCoefficientModel();
-        }
-
-        double CSingleSystem::getIRCalculatedOutside(Environment const t_Environment) const
-        {
-            return m_Environment.at(t_Environment)->getIRCalculatedOutside();
-        }
-
         double CSingleSystem::getVentilationFlow(Environment const t_Environment) const
         {
             return m_IGU.getVentilationFlow(t_Environment);

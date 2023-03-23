@@ -13,8 +13,6 @@ namespace Tarcog
     {
         enum class Environment;
 
-        enum class BoundaryConditionsCoeffModel;
-
         class CBaseIGULayer;
 
         class CIGUSolidLayer;
@@ -58,11 +56,6 @@ namespace Tarcog
             [[nodiscard]] double getHr(Environment t_Environment) const;
             [[nodiscard]] double getH(Environment t_Environment) const;
             [[nodiscard]] double getAirTemperature(Environment t_Environment) const;
-
-            [[nodiscard]] double getHInput(Environment t_Environment) const;
-            [[nodiscard]] BoundaryConditionsCoeffModel
-              getHCoefficientModel(Environment t_Environment) const;
-            [[nodiscard]] double getIRCalculatedOutside(Environment t_Environment) const;
 
             // If interior layer have openings, this will return heat flow from airflow
             [[nodiscard]] double getVentilationFlow(Environment t_Environment) const;

@@ -33,10 +33,6 @@ namespace Tarcog
             double getAirTemperature();
             double getAmbientTemperature();
 
-            double getHInput() const;
-            BoundaryConditionsCoeffModel getHCoefficientModel() const;
-            double getIRCalculatedOutside() const;
-
             virtual void connectToIGULayer(const std::shared_ptr<CBaseLayer> & t_IGULayer);
 
             virtual std::shared_ptr<CEnvironment> cloneEnvironment() const = 0;
