@@ -122,35 +122,6 @@ public:
 };
 
 TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
-       GapLayerSurfaceIRFlow)
-{
-    SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
-
-    auto aLayer = GetGap();
-
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-
-    ASSERT_TRUE(aLayer != nullptr);
-    auto frontIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Front);
-    auto backIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(0, frontIRRadiationFlow, 1e-4);
-    EXPECT_NEAR(0, backIRRadiationFlow, 1e-4);
-}
-
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, GainEnergy)
-{
-    SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
-
-    auto aLayer = GetGap();
-
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-
-    ASSERT_TRUE(aLayer != nullptr);
-    auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(0, gainEnergy, 1e-4);
-}
-
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
        FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");

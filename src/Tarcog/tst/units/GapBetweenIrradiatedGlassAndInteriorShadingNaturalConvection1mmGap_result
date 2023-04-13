@@ -1,104 +1,77 @@
 Note: Google Test filter = *Convection1mmGap*
-[==========] Running 5 tests from 1 test suite.
+[==========] Running 3 tests from 1 test suite.
 [----------] Global test environment set-up.
-[----------] 5 tests from TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap
-[ RUN      ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GapLayerSurfaceIRFlow
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:136: Failure
-The difference between 503.2725415073902 and frontIRRadiationFlow is 24.028746952238976, which exceeds 1e-4, where
-503.2725415073902 evaluates to 503.2725415073902,
-frontIRRadiationFlow evaluates to 527.30128845962918, and
-1e-4 evaluates to 0.0001.
-Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:127: Begin Test: Test gap layer surface temperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:137: Failure
-The difference between 571.43594632791894 and backIRRadiationFlow is 35.159354079452328, which exceeds 1e-4, where
-571.43594632791894 evaluates to 571.43594632791894,
-backIRRadiationFlow evaluates to 536.27659224846661, and
-1e-4 evaluates to 0.0001.
-Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:127: Begin Test: Test gap layer surface temperatures
-[  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GapLayerSurfaceIRFlow (3 ms)
-[ RUN      ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GainEnergy
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:150: Failure
-The difference between -43.832687161547518 and gainEnergy is 43.788780500494859, which exceeds 1e-4, where
--43.832687161547518 evaluates to -43.832687161547518,
-gainEnergy evaluates to -0.043906661052657385, and
-1e-4 evaluates to 0.0001.
-Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:142: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy
-[  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GainEnergy (3 ms)
+[----------] 3 tests from TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap
 [ RUN      ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.FirstLayerSurfaceTemperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:165: Failure
-The difference between 304.60903517150138 and frontTemperature is 5.0322995990859454, which exceeds 1e-4, where
-304.60903517150138 evaluates to 304.60903517150138,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:136: Failure
+The difference between 0 and frontTemperature is 309.64133477058732, which exceeds 1e-4, where
+0 evaluates to 0,
 frontTemperature evaluates to 309.64133477058732, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:156: Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:166: Failure
-The difference between 304.94605922753459 and backTemperature is 5.3470320455302272, which exceeds 1e-4, where
-304.94605922753459 evaluates to 304.94605922753459,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:127: Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:137: Failure
+The difference between 0 and backTemperature is 310.29309127306482, which exceeds 1e-4, where
+0 evaluates to 0,
 backTemperature evaluates to 310.29309127306482, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:156: Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:127: Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures
 [  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.FirstLayerSurfaceTemperatures (3 ms)
 [ RUN      ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GapTemperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:182: Failure
-The difference between 304.94605922753459 and frontTemperature is 5.3470320455302272, which exceeds 1e-4, where
-304.94605922753459 evaluates to 304.94605922753459,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:153: Failure
+The difference between 0 and frontTemperature is 310.29309127306482, which exceeds 1e-4, where
+0 evaluates to 0,
 frontTemperature evaluates to 310.29309127306482, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:171: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:183: Failure
-The difference between 324.90604783261381 and backTemperature is 7.8211137262012471, which exceeds 1e-4, where
-324.90604783261381 evaluates to 324.90604783261381,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:142: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:154: Failure
+The difference between 0 and backTemperature is 317.08493410641256, which exceeds 1e-4, where
+0 evaluates to 0,
 backTemperature evaluates to 317.08493410641256, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:171: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:184: Failure
-The difference between 309.99149481933722 and layerTemperature is 3.6971146208118171, which exceeds 1e-4, where
-309.99149481933722 evaluates to 309.99149481933722,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:142: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:155: Failure
+The difference between 0 and layerTemperature is 313.68860944014904, which exceeds 1e-4, where
+0 evaluates to 0,
 layerTemperature evaluates to 313.68860944014904, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:171: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:185: Failure
-The difference between 314.92605353007423 and averageTemperature is 1.2370408403355668, which exceeds 1e-4, where
-314.92605353007423 evaluates to 314.92605353007423,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:142: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:156: Failure
+The difference between 0 and averageTemperature is 313.68901268973866, which exceeds 1e-4, where
+0 evaluates to 0,
 averageTemperature evaluates to 313.68901268973866, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:171: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:142: Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures
 [  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GapTemperatures (3 ms)
 [ RUN      ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.SecondLayerSurfaceTemperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:200: Failure
-The difference between 324.90604783261381 and frontTemperature is 7.8211137262012471, which exceeds 1e-4, where
-324.90604783261381 evaluates to 324.90604783261381,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:171: Failure
+The difference between 0 and frontTemperature is 317.08493410641256, which exceeds 1e-4, where
+0 evaluates to 0,
 frontTemperature evaluates to 317.08493410641256, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:191: Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:201: Failure
-The difference between 324.83549933079962 and backTemperature is 7.6452314879404071, which exceeds 1e-4, where
-324.83549933079962 evaluates to 324.83549933079962,
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:162: Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:172: Failure
+The difference between 0 and backTemperature is 317.19026784285921, which exceeds 1e-4, where
+0 evaluates to 0,
 backTemperature evaluates to 317.19026784285921, and
 1e-4 evaluates to 0.0001.
 Google Test trace:
-/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:191: Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures
+/home/christoph/Documents/Windows-CalcEngine/src/Tarcog/tst/units/GapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.unit.cpp:162: Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures
 [  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.SecondLayerSurfaceTemperatures (3 ms)
-[----------] 5 tests from TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap (17 ms total)
+[----------] 3 tests from TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap (10 ms total)
 
 [----------] Global test environment tear-down
-[==========] 5 tests from 1 test suite ran. (17 ms total)
+[==========] 3 tests from 1 test suite ran. (10 ms total)
 [  PASSED  ] 0 tests.
-[  FAILED  ] 5 tests, listed below:
-[  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GapLayerSurfaceIRFlow
-[  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GainEnergy
+[  FAILED  ] 3 tests, listed below:
 [  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.FirstLayerSurfaceTemperatures
 [  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.GapTemperatures
 [  FAILED  ] TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap.SecondLayerSurfaceTemperatures
 
- 5 FAILED TESTS
+ 3 FAILED TESTS
