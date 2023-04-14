@@ -40,6 +40,10 @@ namespace Tarcog
 
             virtual std::shared_ptr<CBaseLayer> clone() const = 0;
 
+            //! Some of the layers will require pre-calculation to be done in order to perform
+            //! main loop calculation.
+            virtual void precalculateState() {};
+
         protected:
             void calculateRadiationFlow() override;
             void calculateConvectionOrConductionFlow() override = 0;

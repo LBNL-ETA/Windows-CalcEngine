@@ -523,7 +523,9 @@ namespace Tarcog
         {
             if(std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer) != nullptr)
             {
-                if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer()) != nullptr)
+                if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer()) != nullptr
+                   && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(t_Layer->getPreviousLayer())
+                        == nullptr)
                 {
                     auto newLayer = std::make_shared<CIGUVentilatedGapLayer>(
                       std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer()));
@@ -532,7 +534,8 @@ namespace Tarcog
                       newLayer);
                 }
             }
-            if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer) != nullptr)
+            if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer) != nullptr
+               && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(t_Layer) == nullptr)
             {
                 if(std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer->getPreviousLayer())
                    != nullptr)
@@ -637,6 +640,14 @@ namespace Tarcog
             if(m_DeflectionFromE1300Curves != nullptr)
             {
                 m_DeflectionFromE1300Curves->setAppliedLoad(std::move(t_AppliedLoad));
+            }
+        }
+
+        void CIGU::precalculateLayerStates()
+        {
+            for(auto & layer: m_Layers)
+            {
+                layer->precalculateState();
             }
         }
 

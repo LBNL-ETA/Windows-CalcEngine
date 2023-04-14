@@ -16,6 +16,7 @@
 *.res
 *.so
 *.so.*
+*.vscode*
 *~
 .directory
 .DS_Store

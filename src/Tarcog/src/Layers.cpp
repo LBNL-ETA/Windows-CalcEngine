@@ -6,6 +6,7 @@
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
 #include "EffectiveOpenness.hpp"
+#include "IGUVentilatedGapLayer.hpp"
 
 namespace Tarcog
 {
@@ -36,6 +37,15 @@ namespace Tarcog
             return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
         }
 
+        std::shared_ptr<CIGUVentilatedGapLayer>
+          Layers::forcedVentilationGap(const std::shared_ptr<CIGUGapLayer> & gap,
+                                       double forcedVentilationAirSpeed,
+                                       double forcedVentilationAirTemperature)
+        {
+            return std::make_shared<CIGUVentilatedGapLayer>(
+              gap, forcedVentilationAirTemperature, forcedVentilationAirSpeed);
+        }
+
         std::shared_ptr<CIGUSolidLayer> Layers::updateMaterialData(
           const std::shared_ptr<CIGUSolidLayer> & layer, double density, double youngsModulus)
         {
@@ -57,18 +67,18 @@ namespace Tarcog
                           double conductivity,
                           EffectiveLayers::EffectiveOpenness effectiveOpenness,
                           double frontEmissivity,
-                          double frontTransmittance,
+                          double frontIRTransmittance,
                           double backEmissivity,
-                          double backTransmittance)
+                          double backIRTransmittance)
         {
             if(effectiveOpenness.isClosed())
             {
                 return solid(thickness,
                              conductivity,
                              frontEmissivity,
-                             frontTransmittance,
+                             frontIRTransmittance,
                              backEmissivity,
-                             backTransmittance);
+                             backIRTransmittance);
             }
 
             return std::make_shared<CIGUShadeLayer>(
@@ -80,8 +90,24 @@ namespace Tarcog
                                                effectiveOpenness.Ar,
                                                effectiveOpenness.Ah,
                                                effectiveOpenness.FrontPorosity),
-              std::make_shared<CSurface>(frontEmissivity, frontTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backTransmittance));
+              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
+              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
+        }
+
+        std::shared_ptr<CIGUShadeLayer>
+          Layers::sealedLayer(double thickness,
+                              double conductivity,
+                              double frontEmissivity,
+                              double frontIRTransmittance,
+                              double backEmissivity,
+                              double backIRTransmittance)
+        {
+            return std::make_shared<CIGUShadeLayer>(
+              thickness,
+              conductivity,
+              std::make_shared<CShadeOpenings>(0, 0, 0, 0, 0, 0),
+              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
+              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
         }
 
         std::shared_ptr<CIGUGapLayer>
