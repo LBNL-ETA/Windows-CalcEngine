@@ -15,11 +15,11 @@ namespace Gases
     public:
         CGas();
         explicit CGas(const std::vector<CGasItem> & gases);
-        CGas(const CGas & t_Gas);
+        CGas(const CGas & t_Gas) = default;
         void addGasItem(double percent, const CGasData & t_GasData);
         void addGasItem(double percent, Gases::GasDef def);
         void addGasItems(const std::vector<CGasItem> & gases);
-        double totalPercent();
+        double totalPercent() const;
         GasProperties getSimpleGasProperties();
         GasProperties getGasProperties();
         void setTemperatureAndPressure(double t_Temperature, double t_Pressure);
