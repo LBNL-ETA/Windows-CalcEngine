@@ -66,18 +66,6 @@ namespace Gases
         operator=(t_GasProperties);
     }
 
-    double GasProperties::getLambdaPrim() const
-    {
-        using ConstantsData::UNIVERSALGASCONSTANT;
-
-        return 15.0 / 4.0 * UNIVERSALGASCONSTANT / m_MolecularWeight * m_Viscosity;
-    }
-
-    double GasProperties::getLambdaSecond() const
-    {
-        return m_ThermalConductivity - getLambdaPrim();
-    }
-
     GasProperties & GasProperties::operator+=(GasProperties const & t_A)
     {
         *this = *this + t_A;
@@ -116,5 +104,17 @@ namespace Gases
                                   double density)
     {
         return viscosity / density / (thermalConductivity / (specificHeat * density));
+    }
+
+    double lambdaPrim(double molecularWeight, double viscosity)
+    {
+        using ConstantsData::UNIVERSALGASCONSTANT;
+
+        return 15.0 / 4.0 * UNIVERSALGASCONSTANT / molecularWeight * viscosity;
+    }
+
+    double lambdaSecond(double molecularWeight, double viscosity, double thermalConductivity)
+    {
+        return thermalConductivity - lambdaPrim(molecularWeight, viscosity);
     }
 }   // namespace Gases

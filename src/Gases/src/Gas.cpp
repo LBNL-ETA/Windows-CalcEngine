@@ -172,8 +172,11 @@ namespace Gases
         for(auto & it : m_GasItem)
         {
             auto itGasProperties = it.getGasProperties();
-            auto lambdaPrim(itGasProperties.getLambdaPrim());
-            auto lambdaSecond(itGasProperties.getLambdaSecond());
+            auto lambdaPr(
+              lambdaPrim(itGasProperties.m_MolecularWeight, itGasProperties.m_Viscosity));
+            auto lambdaSe(lambdaSecond(itGasProperties.m_MolecularWeight,
+                                       itGasProperties.m_Viscosity,
+                                       itGasProperties.m_ThermalConductivity));
 
             auto sumMix = 1.0;
             for(size_t i = 0; i < gasSize; ++i)
@@ -189,7 +192,7 @@ namespace Gases
                 sumMix += lambdaPrimItem[counter][i];
             }
 
-            lambdaPrimMix += lambdaPrim / sumMix;
+            lambdaPrimMix += lambdaPr / sumMix;
 
             sumMix = 1.0;
             for(size_t i = 0; i < gasSize; ++i)
@@ -197,7 +200,7 @@ namespace Gases
                 sumMix += lambdaSecondItem[counter][i];
             }
 
-            lambdaSecondMix += lambdaSecond / sumMix;
+            lambdaSecondMix += lambdaSe / sumMix;
 
             cpMix +=
               itGasProperties.m_SpecificHeat * it.fraction() * itGasProperties.m_MolecularWeight;
@@ -290,7 +293,9 @@ namespace Gases
     double CGas::lambdaSecondTwoGases(GasProperties const & t_Gas1Properties,
                                       const GasProperties & t_Gas2Properties) const
     {
-        if((t_Gas1Properties.getLambdaPrim() == 0) || (t_Gas2Properties.getLambdaPrim() == 0))
+        auto lambdaPrim1{lambdaPrim(t_Gas1Properties.m_MolecularWeight, t_Gas1Properties.m_Viscosity)};
+        auto lambdaPrim2{lambdaPrim(t_Gas2Properties.m_MolecularWeight, t_Gas2Properties.m_Viscosity)};
+        if((lambdaPrim1 == 0) || (lambdaPrim2 == 0))
         {
             throw std::runtime_error("Primary thermal conductivity (lambda prim) of the gas "
                                      "component in Gases is equal to zero.");
@@ -302,7 +307,7 @@ namespace Gases
               "Molecular weight of the gas component in Gases is equal to zero.");
         }
 
-        auto tFraction = t_Gas1Properties.getLambdaPrim() / t_Gas2Properties.getLambdaPrim();
+        auto tFraction = lambdaPrim1 / lambdaPrim2;
         auto weightFraction =
           t_Gas1Properties.m_MolecularWeight / t_Gas2Properties.m_MolecularWeight;
         auto nominator = pow((1 + pow(tFraction, 0.5) * pow(weightFraction, 0.25)), 2);
