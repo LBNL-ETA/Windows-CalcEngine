@@ -9,11 +9,6 @@
 
 namespace Gases
 {
-    CGasItem::CGasItem() : m_Fraction(1.0)
-    {
-        initialize();
-    }
-
     CGasItem::CGasItem(CGasItem const & t_GasItem) :
         m_Temperature(t_GasItem.m_Temperature),
         m_Pressure(t_GasItem.m_Pressure),
@@ -26,7 +21,7 @@ namespace Gases
     CGasItem::CGasItem(double const t_Fraction, CGasData const & t_GasData) :
         m_Fraction(t_Fraction), m_GasData(t_GasData)
     {
-        initialize();
+
     }
 
     CGasItem & CGasItem::operator=(CGasItem const & t_GasItem)
@@ -78,12 +73,6 @@ namespace Gases
         m_GasProperties.m_SpecificHeat = 0;
         m_GasProperties.m_MolecularWeight = mWght;
         m_GasProperties.m_Density = 0;
-    }
-
-    void CGasItem::initialize()
-    {
-        m_Temperature = DefaultTemperature;
-        m_Pressure = DefaultPressure;
     }
 
     double CGasItem::fraction() const
