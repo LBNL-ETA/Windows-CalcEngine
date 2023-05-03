@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <numeric>
 
 #include "WCECommon.hpp"
 #include "Gas.hpp"
@@ -109,49 +110,20 @@ namespace Gases
     {
         auto simpleProperties = getSimpleGasProperties();
 
-        // coefficients for intermediate calculations
-        std::vector<std::vector<double>> miItem;
-        std::vector<std::vector<double>> lambdaPrimItem;
-        std::vector<std::vector<double>> lambdaSecondItem;
+        // Call the new functions
+        auto miItem = calculateMiItems();
+        auto [lambdaPrimItem, lambdaSecondItem] = calculateLambdaItems();
 
         auto gasSize = m_GasItem.size();
-        auto counter = 0;
-
-        miItem.resize(gasSize);
-        lambdaPrimItem.resize(gasSize);
-        lambdaSecondItem.resize(gasSize);
-
-        for(auto & primaryIt : m_GasItem)
-        {
-            for(auto & secondaryIt : m_GasItem)
-            {
-                if(primaryIt != secondaryIt)
-                {
-                    miItem[counter].push_back(viscDenomTwoGases(primaryIt, secondaryIt));
-                    lambdaPrimItem[counter].push_back(
-                      lambdaPrimDenomTwoGases(primaryIt, secondaryIt));
-                    lambdaSecondItem[counter].push_back(
-                      lambdaSecondDenomTwoGases(primaryIt, secondaryIt));
-                }
-                else
-                {
-                    miItem[counter].push_back(0);
-                    lambdaPrimItem[counter].push_back(0);
-                    lambdaSecondItem[counter].push_back(0);
-                }
-            }
-            counter++;
-        }
 
         double miMix(0);
         double lambdaPrimMix(0);
         double lambdaSecondMix(0);
         double cpMix(0);
 
-        counter = 0;
-        for(auto & it : m_GasItem)
+        for (size_t i = 0; i < gasSize; ++i)
         {
-            auto itGasProperties = it.getGasProperties();
+            auto itGasProperties = m_GasItem[i].getGasProperties();
             auto lambdaPr(
               lambdaPrim(itGasProperties.m_MolecularWeight, itGasProperties.m_Viscosity));
             auto lambdaSe(lambdaSecond(itGasProperties.m_MolecularWeight,
@@ -159,32 +131,31 @@ namespace Gases
                                        itGasProperties.m_ThermalConductivity));
 
             auto sumMix = 1.0;
-            for(size_t i = 0; i < gasSize; ++i)
+            for (size_t j = 0; j < gasSize; ++j)
             {
-                sumMix += miItem[counter][i];
+                sumMix += miItem[i][j];
             }
 
             miMix += itGasProperties.m_Viscosity / sumMix;
 
             sumMix = 1.0;
-            for(size_t i = 0; i < gasSize; ++i)
+            for (size_t j = 0; j < gasSize; ++j)
             {
-                sumMix += lambdaPrimItem[counter][i];
+                sumMix += lambdaPrimItem[i][j];
             }
 
             lambdaPrimMix += lambdaPr / sumMix;
 
             sumMix = 1.0;
-            for(size_t i = 0; i < gasSize; ++i)
+            for (size_t j = 0; j < gasSize; ++j)
             {
-                sumMix += lambdaSecondItem[counter][i];
+                sumMix += lambdaSecondItem[i][j];
             }
 
             lambdaSecondMix += lambdaSe / sumMix;
 
             cpMix +=
-              itGasProperties.m_SpecificHeat * it.fraction() * itGasProperties.m_MolecularWeight;
-            ++counter;
+              itGasProperties.m_SpecificHeat * m_GasItem[i].fraction() * itGasProperties.m_MolecularWeight;
         }
 
         m_Properties.m_ThermalConductivity = lambdaPrimMix + lambdaSecondMix;
@@ -198,6 +169,58 @@ namespace Gases
                                                              m_Properties.m_Density);
 
         return m_Properties;
+    }
+
+
+    std::vector<std::vector<double>> CGas::calculateMiItems()
+    {
+        std::vector<std::vector<double>> miItem;
+        auto gasSize = m_GasItem.size();
+        miItem.resize(gasSize);
+
+        for(size_t i = 0; i < gasSize; ++i)
+        {
+            for(size_t j = 0; j < gasSize; ++j)
+            {
+                if(i != j)
+                    miItem[i].push_back(viscDenomTwoGases(m_GasItem[i], m_GasItem[j]));
+                else
+                    miItem[i].push_back(0);
+            }
+        }
+
+        return miItem;
+    }
+
+    std::pair<std::vector<std::vector<double>>, std::vector<std::vector<double>>>
+      CGas::calculateLambdaItems()
+    {
+        std::vector<std::vector<double>> lambdaPrimItem;
+        std::vector<std::vector<double>> lambdaSecondItem;
+        auto gasSize = m_GasItem.size();
+        lambdaPrimItem.resize(gasSize);
+        lambdaSecondItem.resize(gasSize);
+
+        for(size_t i = 0; i < gasSize; ++i)
+        {
+            for(size_t j = 0; j < gasSize; ++j)
+            {
+                if(i != j)
+                {
+                    lambdaPrimItem[i].push_back(
+                      lambdaPrimDenomTwoGases(m_GasItem[i], m_GasItem[j]));
+                    lambdaSecondItem[i].push_back(
+                      lambdaSecondDenomTwoGases(m_GasItem[i], m_GasItem[j]));
+                }
+                else
+                {
+                    lambdaPrimItem[i].push_back(0);
+                    lambdaSecondItem[i].push_back(0);
+                }
+            }
+        }
+
+        return {lambdaPrimItem, lambdaSecondItem};
     }
 
     GasProperties CGas::getVacuumPressureGasProperties()
@@ -273,8 +296,10 @@ namespace Gases
     double CGas::lambdaSecondTwoGases(GasProperties const & t_Gas1Properties,
                                       const GasProperties & t_Gas2Properties) const
     {
-        auto lambdaPrim1{lambdaPrim(t_Gas1Properties.m_MolecularWeight, t_Gas1Properties.m_Viscosity)};
-        auto lambdaPrim2{lambdaPrim(t_Gas2Properties.m_MolecularWeight, t_Gas2Properties.m_Viscosity)};
+        auto lambdaPrim1{
+          lambdaPrim(t_Gas1Properties.m_MolecularWeight, t_Gas1Properties.m_Viscosity)};
+        auto lambdaPrim2{
+          lambdaPrim(t_Gas2Properties.m_MolecularWeight, t_Gas2Properties.m_Viscosity)};
         if((lambdaPrim1 == 0) || (lambdaPrim2 == 0))
         {
             throw std::runtime_error("Primary thermal conductivity (lambda prim) of the gas "

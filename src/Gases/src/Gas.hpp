@@ -46,6 +46,10 @@ namespace Gases
         double lambdaPrimDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const;
         double lambdaSecondDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const;
 
+        std::vector<std::vector<double>> calculateMiItems();
+        std::pair<std::vector<std::vector<double>>, std::vector<std::vector<double>>>
+          calculateLambdaItems();
+
         std::vector<CGasItem> m_GasItem;
         GasProperties m_SimpleProperties;
         GasProperties m_Properties;
