@@ -33,7 +33,6 @@ TEST_F(TestGasPropertiesVacuum, TestVacuumProperties1)
     EXPECT_NEAR(0, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(0, aProperties.m_SpecificHeat, 1e-6);
     EXPECT_NEAR(0, aProperties.m_Density, 1e-6);
-    EXPECT_NEAR(0, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0, aProperties.m_PrandlNumber, 1e-6);
 }
 
@@ -52,6 +51,5 @@ TEST_F(TestGasPropertiesVacuum, TestVacuumProperties2)
     EXPECT_NEAR(0, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(0, aProperties.m_SpecificHeat, 1e-6);
     EXPECT_NEAR(0, aProperties.m_Density, 1e-6);
-    EXPECT_NEAR(0, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0, aProperties.m_PrandlNumber, 1e-6);
 }

@@ -1,5 +1,4 @@
-#ifndef GAS_H
-#define GAS_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -15,27 +14,25 @@ namespace Gases
     {
     public:
         CGas();
-        explicit CGas(const std::vector<std::pair<double, CGasData>> & gases);
-        explicit CGas(const std::vector<std::pair<double, Gases::GasDef>> & gases);
-        CGas(const CGas & t_Gas);
+        explicit CGas(const std::vector<CGasItem> & gases);
+        CGas(const CGas & t_Gas) = default;
         void addGasItem(double percent, const CGasData & t_GasData);
         void addGasItem(double percent, Gases::GasDef def);
-        void addGasItems(const std::vector<std::pair<double, CGasData>> & gases);
-        void addGasItems(const std::vector<std::pair<double, Gases::GasDef>> & gases);
-        double totalPercent();
-        const GasProperties & getSimpleGasProperties();
-        const GasProperties & getGasProperties();
+        void addGasItems(const std::vector<CGasItem> & gases);
+        double totalPercent() const;
+        GasProperties getSimpleGasProperties();
+        GasProperties getGasProperties();
         void setTemperatureAndPressure(double t_Temperature, double t_Pressure);
 
         [[nodiscard]] std::vector<CGasItem> gasItems() const;
 
-        CGas & operator=(CGas const & t_Gas);
+        CGas & operator=(CGas const & t_Gas) = default;
         bool operator==(CGas const & t_Gas) const;
         bool operator!=(CGas const & t_Gas) const;
 
     private:
-        const GasProperties & getStandardPressureGasProperties();
-        const GasProperties & getVacuumPressureGasProperties();
+        GasProperties getStandardPressureGasProperties();
+        GasProperties getVacuumPressureGasProperties();
 
         [[nodiscard]] double viscTwoGases(GasProperties const & t_Gas1Properties,
                                           GasProperties const & t_Gas2Properties) const;
@@ -49,14 +46,16 @@ namespace Gases
         double lambdaPrimDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const;
         double lambdaSecondDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const;
 
+        std::vector<std::vector<double>> calculateMiItems();
+        std::pair<std::vector<std::vector<double>>, std::vector<std::vector<double>>>
+          calculateLambdaItems();
+
         std::vector<CGasItem> m_GasItem;
         GasProperties m_SimpleProperties;
         GasProperties m_Properties;
 
-        bool m_DefaultGas;
-        double m_Pressure;
+        bool m_DefaultGas{true};
+        double m_Pressure{DefaultPressure};
     };
 
 }   // namespace Gases
-
-#endif

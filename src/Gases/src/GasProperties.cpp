@@ -9,9 +9,7 @@ namespace Gases
     ///  IntCoeff
     ///////////////////////////////////////////////////////////////////////////////////////////
     CIntCoeff::CIntCoeff(double const t_A, double const t_B, double const t_C) :
-        m_A(t_A),
-        m_B(t_B),
-        m_C(t_C)
+        m_A(t_A), m_B(t_B), m_C(t_C)
     {}
 
     CIntCoeff::CIntCoeff() : m_A(0), m_B(0), m_C(0)
@@ -57,7 +55,8 @@ namespace Gases
         m_SpecificHeat += t_A.m_SpecificHeat;
         m_Density += t_A.m_Density;
         m_MolecularWeight += t_A.m_MolecularWeight;
-        calculateAlphaAndPrandl();
+        m_PrandlNumber =
+          calculatePrandtlNumber(m_ThermalConductivity, m_SpecificHeat, m_Viscosity, m_Density);
 
         return *this;
     }
@@ -65,18 +64,6 @@ namespace Gases
     GasProperties::GasProperties(GasProperties const & t_GasProperties)
     {
         operator=(t_GasProperties);
-    }
-
-    double GasProperties::getLambdaPrim() const
-    {
-        using ConstantsData::UNIVERSALGASCONSTANT;
-
-        return 15.0 / 4.0 * UNIVERSALGASCONSTANT / m_MolecularWeight * m_Viscosity;
-    }
-
-    double GasProperties::getLambdaSecond() const
-    {
-        return m_ThermalConductivity - getLambdaPrim();
     }
 
     GasProperties & GasProperties::operator+=(GasProperties const & t_A)
@@ -92,7 +79,6 @@ namespace Gases
         m_SpecificHeat = t_A.m_SpecificHeat;
         m_Density = t_A.m_Density;
         m_MolecularWeight = t_A.m_MolecularWeight;
-        m_Alpha = t_A.m_Alpha;
         m_PrandlNumber = t_A.m_PrandlNumber;
         m_PropertiesCalculated = t_A.m_PropertiesCalculated;
 
@@ -107,17 +93,28 @@ namespace Gases
         equal = equal && m_SpecificHeat == t_A.m_SpecificHeat;
         equal = equal && m_Density == t_A.m_Density;
         equal = equal && m_MolecularWeight == t_A.m_MolecularWeight;
-        equal = equal && m_Alpha == t_A.m_Alpha;
         equal = equal && m_PrandlNumber == t_A.m_PrandlNumber;
         equal = equal && m_PropertiesCalculated == t_A.m_PropertiesCalculated;
         return equal;
     }
 
-    void GasProperties::calculateAlphaAndPrandl()
+    double calculatePrandtlNumber(double thermalConductivity,
+                                  double specificHeat,
+                                  double viscosity,
+                                  double density)
     {
-        m_Alpha = m_ThermalConductivity / (m_SpecificHeat * m_Density);
-        m_PrandlNumber = m_Viscosity / m_Density / m_Alpha;
+        return viscosity / density / (thermalConductivity / (specificHeat * density));
     }
 
+    double lambdaPrim(double molecularWeight, double viscosity)
+    {
+        using ConstantsData::UNIVERSALGASCONSTANT;
 
+        return 15.0 / 4.0 * UNIVERSALGASCONSTANT / molecularWeight * viscosity;
+    }
+
+    double lambdaSecond(double molecularWeight, double viscosity, double thermalConductivity)
+    {
+        return thermalConductivity - lambdaPrim(molecularWeight, viscosity);
+    }
 }   // namespace Gases

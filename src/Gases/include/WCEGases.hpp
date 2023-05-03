@@ -1,5 +1,4 @@
-#ifndef WCEGases_H
-#define WCEGases_H
+#pragma once
 
 #include "../src/Gas.hpp"
 #include "../src/GasData.hpp"
@@ -7,5 +6,4 @@
 #include "../src/GasProperties.hpp"
 #include "../src/GasSetting.hpp"
 #include "../src/GasCreator.hpp"
-
-#endif
+#include "../src/GasExcept.hpp"

@@ -27,37 +27,32 @@ namespace Gases
         double m_C;
     };
 
+    [[nodiscard]] double calculatePrandtlNumber(double thermalConductivity,
+                                               double specificHeat,
+                                               double viscosity,
+                                               double density);
+
+    [[nodiscard]] double lambdaPrim(double molecularWeight, double viscosity);
+    [[nodiscard]] double lambdaSecond(double molecularWeight, double viscosity, double thermalConductivity);
+
     struct GasProperties
     {
-        GasProperties() :
-            m_ThermalConductivity(0.0),
-            m_Viscosity(0.0),
-            m_SpecificHeat(0.0),
-            m_Density(0.0),
-            m_MolecularWeight(0.0),
-            m_Alpha(0.0),
-            m_PrandlNumber(0.0),
-            m_PropertiesCalculated(false)
-        {}
-
+        GasProperties() = default;
         GasProperties(GasProperties const & t_GasProperties);
 
-        [[nodiscard]] double getLambdaPrim() const;
-        [[nodiscard]] double getLambdaSecond() const;
         GasProperties & operator+(const GasProperties & t_A);
         GasProperties & operator+=(const GasProperties & t_A);
         GasProperties & operator=(const GasProperties & t_A);
         bool operator==(const GasProperties & t_A) const;
 
-        void calculateAlphaAndPrandl();
-        double m_ThermalConductivity;
-        double m_Viscosity;
-        double m_SpecificHeat;
-        double m_Density;
-        double m_MolecularWeight;
-        double m_Alpha;
-        double m_PrandlNumber;
-        bool m_PropertiesCalculated;
+        double m_ThermalConductivity{0.0};
+        double m_Viscosity{0.0};
+        double m_SpecificHeat{0.0};
+        double m_Density{0.0};
+        double m_MolecularWeight{0.0};
+        double m_PrandlNumber{0.0};
+
+        bool m_PropertiesCalculated{false};
     };
 
 }   // namespace Gases
