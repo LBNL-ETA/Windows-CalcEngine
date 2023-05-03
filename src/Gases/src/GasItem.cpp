@@ -6,6 +6,7 @@
 #include "GasItem.hpp"
 #include "GasData.hpp"
 #include "GasSetting.hpp"
+#include "GasCreator.hpp"
 
 namespace Gases
 {
@@ -20,6 +21,10 @@ namespace Gases
 
     CGasItem::CGasItem(double const t_Fraction, CGasData const & t_GasData) :
         m_Fraction(t_Fraction), m_GasData(t_GasData)
+    {}
+
+    CGasItem::CGasItem(double aFraction, Gases::GasDef def) :
+        CGasItem(aFraction, getGasData(def))
     {}
 
     CGasItem & CGasItem::operator=(CGasItem const & t_GasItem)

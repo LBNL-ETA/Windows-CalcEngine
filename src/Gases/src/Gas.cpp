@@ -59,9 +59,9 @@ namespace Gases
             m_GasItem.clear();
             m_DefaultGas = false;
         }
-        for(const auto & item : gases)
+        for(const auto & gasItem : gases)
         {
-            m_GasItem.emplace_back(item.fraction(), item.gasData());
+            m_GasItem.emplace_back(gasItem.fraction(), gasItem.gasData());
         }
     }
 

@@ -8,9 +8,11 @@
 
 namespace Gases
 {
+
     double const DefaultPressure = 101325;
     double const DefaultTemperature = 273.15;
     double const DefaultFraction = 1.0;
+    enum class GasDef;
 
     class CGasItem
     {
@@ -18,6 +20,7 @@ namespace Gases
         CGasItem() = default;
         CGasItem(CGasItem const & t_GasItem);
         CGasItem(double aFraction, CGasData const & t_GasData);
+        CGasItem(double aFraction, Gases::GasDef def);
         CGasItem & operator=(CGasItem const & t_GasItem);
         void setTemperature(double t_Temperature);
         void setPressure(double t_Pressure);
