@@ -21,7 +21,7 @@ namespace Gases
         CGasItem(CGasItem const & t_GasItem);
         CGasItem(double aFraction, CGasData const & t_GasData);
         CGasItem(double aFraction, Gases::GasDef def);
-        CGasItem & operator=(CGasItem const & t_GasItem);
+        CGasItem & operator=(CGasItem const & t_GasItem) = default;
         void setTemperature(double t_Temperature);
         void setPressure(double t_Pressure);
         [[nodiscard]] double fraction() const;

@@ -27,18 +27,6 @@ namespace Gases
         CGasItem(aFraction, getGasData(def))
     {}
 
-    CGasItem & CGasItem::operator=(CGasItem const & t_GasItem)
-    {
-        m_Fraction = t_GasItem.m_Fraction;
-        m_Pressure = t_GasItem.m_Pressure;
-        m_Temperature = t_GasItem.m_Temperature;
-        m_GasData = t_GasItem.m_GasData;
-        m_FractionalGasProperties = t_GasItem.m_FractionalGasProperties;
-        m_GasProperties = t_GasItem.m_GasProperties;
-
-        return *this;
-    }
-
     void CGasItem::fillStandardPressureProperites()
     {
         using ConstantsData::UNIVERSALGASCONSTANT;
