@@ -22,6 +22,7 @@ namespace Gases
         void setTemperature(double t_Temperature);
         void setPressure(double t_Pressure);
         [[nodiscard]] double fraction() const;
+        [[nodiscard]] CGasData gasData() const;
         [[nodiscard]] GasProperties getFractionalGasProperties();
         [[nodiscard]] GasProperties getGasProperties();
         bool operator==(CGasItem const & rhs) const;

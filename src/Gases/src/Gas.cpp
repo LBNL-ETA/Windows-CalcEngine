@@ -14,16 +14,14 @@ namespace Gases
         // create default gas to be Air
         auto Air = CGasItem();
         m_GasItem.push_back(Air);
-        m_DefaultGas = true;
     }
 
-    CGas::CGas(const std::vector<std::pair<double, CGasData>> & gases) : m_Pressure(DefaultPressure)
+    CGas::CGas(const std::vector<CGasItem> & gases)
     {
         addGasItems(gases);
     }
 
-    CGas::CGas(const std::vector<std::pair<double, Gases::GasDef>> & gases) :
-        m_Pressure(DefaultPressure)
+    CGas::CGas(const std::vector<std::pair<double, Gases::GasDef>> & gases)
     {
         addGasItems(gases);
     }
@@ -54,7 +52,7 @@ namespace Gases
         m_GasItem.push_back(item);
     }
 
-    void CGas::addGasItems(const std::vector<std::pair<double, CGasData>> & gases)
+    void CGas::addGasItems(const std::vector<CGasItem> & gases)
     {
         if(m_DefaultGas)
         {
@@ -63,7 +61,7 @@ namespace Gases
         }
         for(const auto & item : gases)
         {
-            m_GasItem.emplace_back(item.first, item.second);
+            m_GasItem.emplace_back(item.fraction(), item.gasData());
         }
     }
 
@@ -107,7 +105,7 @@ namespace Gases
         }
     }
 
-    const GasProperties & CGas::getSimpleGasProperties()
+    GasProperties CGas::getSimpleGasProperties()
     {
         m_SimpleProperties = m_GasItem[0].getFractionalGasProperties();
         for(auto it = next(m_GasItem.begin()); it != m_GasItem.end(); ++it)
@@ -118,14 +116,14 @@ namespace Gases
         return m_SimpleProperties;
     }
 
-    const GasProperties & CGas::getGasProperties()
+    GasProperties CGas::getGasProperties()
     {
         auto aSettings = CGasSettings::instance();
         return aSettings.getVacuumPressure() < m_Pressure ? getStandardPressureGasProperties()
                                                           : getVacuumPressureGasProperties();
     }
 
-    const GasProperties & CGas::getStandardPressureGasProperties()
+    GasProperties CGas::getStandardPressureGasProperties()
     {
         auto simpleProperties = getSimpleGasProperties();
 
@@ -220,7 +218,7 @@ namespace Gases
         return m_Properties;
     }
 
-    const GasProperties & CGas::getVacuumPressureGasProperties()
+    GasProperties CGas::getVacuumPressureGasProperties()
     {
         return getSimpleGasProperties();
     }
@@ -350,21 +348,6 @@ namespace Gases
         }
 
         return (t_GasItem2.fraction() / t_GasItem1.fraction()) * phiValue;
-    }
-
-    CGas & CGas::operator=(CGas const & t_Gas)
-    {
-        m_GasItem.clear();
-        for(auto const & item : t_Gas.m_GasItem)
-        {
-            m_GasItem.push_back(item);
-        }
-        m_SimpleProperties = t_Gas.m_SimpleProperties;
-        m_Properties = t_Gas.m_Properties;
-        m_DefaultGas = t_Gas.m_DefaultGas;
-        m_Pressure = t_Gas.m_Pressure;
-
-        return *this;
     }
 
     bool CGas::operator==(CGas const & rhs) const

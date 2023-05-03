@@ -1,5 +1,4 @@
-#ifndef GAS_H
-#define GAS_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -15,27 +14,27 @@ namespace Gases
     {
     public:
         CGas();
-        explicit CGas(const std::vector<std::pair<double, CGasData>> & gases);
+        explicit CGas(const std::vector<CGasItem> & gases);
         explicit CGas(const std::vector<std::pair<double, Gases::GasDef>> & gases);
         CGas(const CGas & t_Gas);
         void addGasItem(double percent, const CGasData & t_GasData);
         void addGasItem(double percent, Gases::GasDef def);
-        void addGasItems(const std::vector<std::pair<double, CGasData>> & gases);
+        void addGasItems(const std::vector<CGasItem> & gases);
         void addGasItems(const std::vector<std::pair<double, Gases::GasDef>> & gases);
         double totalPercent();
-        const GasProperties & getSimpleGasProperties();
-        const GasProperties & getGasProperties();
+        GasProperties getSimpleGasProperties();
+        GasProperties getGasProperties();
         void setTemperatureAndPressure(double t_Temperature, double t_Pressure);
 
         [[nodiscard]] std::vector<CGasItem> gasItems() const;
 
-        CGas & operator=(CGas const & t_Gas);
+        CGas & operator=(CGas const & t_Gas) = default;
         bool operator==(CGas const & t_Gas) const;
         bool operator!=(CGas const & t_Gas) const;
 
     private:
-        const GasProperties & getStandardPressureGasProperties();
-        const GasProperties & getVacuumPressureGasProperties();
+        GasProperties getStandardPressureGasProperties();
+        GasProperties getVacuumPressureGasProperties();
 
         [[nodiscard]] double viscTwoGases(GasProperties const & t_Gas1Properties,
                                           GasProperties const & t_Gas2Properties) const;
@@ -53,10 +52,8 @@ namespace Gases
         GasProperties m_SimpleProperties;
         GasProperties m_Properties;
 
-        bool m_DefaultGas;
-        double m_Pressure;
+        bool m_DefaultGas{true};
+        double m_Pressure{DefaultPressure};
     };
 
 }   // namespace Gases
-
-#endif

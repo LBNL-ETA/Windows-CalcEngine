@@ -20,9 +20,7 @@ namespace Gases
 
     CGasItem::CGasItem(double const t_Fraction, CGasData const & t_GasData) :
         m_Fraction(t_Fraction), m_GasData(t_GasData)
-    {
-
-    }
+    {}
 
     CGasItem & CGasItem::operator=(CGasItem const & t_GasItem)
     {
@@ -42,15 +40,15 @@ namespace Gases
         m_GasProperties.m_ThermalConductivity =
           m_GasData.getPropertyValue(CoeffType::cCond, m_Temperature);
         m_GasProperties.m_Viscosity = m_GasData.getPropertyValue(CoeffType::cVisc, m_Temperature);
-        m_GasProperties.m_SpecificHeat =
-          m_GasData.getPropertyValue(CoeffType::cCp, m_Temperature);
+        m_GasProperties.m_SpecificHeat = m_GasData.getPropertyValue(CoeffType::cCp, m_Temperature);
         m_GasProperties.m_MolecularWeight = m_GasData.getMolecularWeight();
         m_GasProperties.m_Density =
           m_Pressure * m_GasProperties.m_MolecularWeight / (UNIVERSALGASCONSTANT * m_Temperature);
-        m_GasProperties.m_PrandlNumber = calculatePrandtlNumber(m_GasProperties.m_ThermalConductivity,
-                                                                m_GasProperties.m_SpecificHeat,
-                                                                m_GasProperties.m_Viscosity,
-                                                                m_GasProperties.m_Density);
+        m_GasProperties.m_PrandlNumber =
+          calculatePrandtlNumber(m_GasProperties.m_ThermalConductivity,
+                                 m_GasProperties.m_SpecificHeat,
+                                 m_GasProperties.m_Viscosity,
+                                 m_GasProperties.m_Density);
     }
 
     void CGasItem::flllVacuumPressureProperties()
@@ -156,6 +154,11 @@ namespace Gases
     std::string CGasItem::name() const
     {
         return m_GasData.name();
+    }
+
+    CGasData CGasItem::gasData() const
+    {
+        return m_GasData;
     }
 
 }   // namespace Gases
