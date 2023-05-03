@@ -10,9 +10,9 @@ namespace Gases
 {
     CGasData::CGasData() : m_gasName("Air"), m_molWeight(28.97), m_specificHeatRatio(1.4)
     {
-        m_Coefficients[CoeffType::cCp] = CIntCoeff(1.002737e+03, 1.2324e-02, 0.0);
-        m_Coefficients[CoeffType::cCond] = CIntCoeff(2.8733e-03, 7.76e-05, 0.0);
-        m_Coefficients[CoeffType::cVisc] = CIntCoeff(3.7233e-06, 4.94e-08, 0.0);
+        m_Coefficients[CoeffType::cCp] = {1.002737e+03, 1.2324e-02, 0.0};
+        m_Coefficients[CoeffType::cCond] = {2.8733e-03, 7.76e-05, 0.0};
+        m_Coefficients[CoeffType::cVisc] = {3.7233e-06, 4.94e-08, 0.0};
     }
 
     CGasData::CGasData(CGasData const & t_GasData)
@@ -20,7 +20,7 @@ namespace Gases
         *this = t_GasData;
     }
 
-    CGasData::CGasData(std::string const & t_Name,
+    CGasData::CGasData(std::string_view t_Name,
                        double const t_Wght,
                        double const t_SpecHeatRatio,
                        CIntCoeff const & t_Cp,
@@ -31,16 +31,6 @@ namespace Gases
         m_Coefficients[CoeffType::cCp] = t_Cp;
         m_Coefficients[CoeffType::cCond] = t_Con;
         m_Coefficients[CoeffType::cVisc] = t_Visc;
-    }
-
-    CGasData & CGasData::operator=(CGasData const & t_GasData)
-    {
-        m_gasName = t_GasData.m_gasName;
-        m_molWeight = t_GasData.m_molWeight;
-        m_specificHeatRatio = t_GasData.m_specificHeatRatio;
-        m_Coefficients = t_GasData.m_Coefficients;
-
-        return *this;
     }
 
     double CGasData::getPropertyValue(CoeffType const t_Type, double const t_Temperature) const

@@ -76,13 +76,13 @@ namespace Gases
         }
         for(const auto & item : gases)
         {
-            m_GasItem.emplace_back(item.first, Gases::Gas::instance().get(item.second));
+            m_GasItem.emplace_back(item.first, getGasData(item.second));
         }
     }
 
     void CGas::addGasItem(double percent, Gases::GasDef def)
     {
-        addGasItem(percent, Gases::Gas::instance().get(def));
+        addGasItem(percent, getGasData(def));
     }
 
     double CGas::totalPercent()

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include "GasData.hpp"
 
 namespace Gases
@@ -13,18 +12,6 @@ namespace Gases
         Xenon
     };
 
-    class Gas
-    {
-    public:
-        static Gas & instance();
-
-        [[nodiscard]] CGasData get(GasDef gasDef) const;
-
-    private:
-        Gas();
-
-        // Storage for predefined gases
-        const std::map<GasDef, const CGasData> m_Gas;
-    };
+    CGasData getGasData(GasDef gasDef);
 
 }   // namespace Gases

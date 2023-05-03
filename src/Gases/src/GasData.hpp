@@ -1,5 +1,4 @@
-#ifndef GASDATA_H
-#define GASDATA_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -16,14 +15,13 @@ namespace Gases
     public:
         CGasData();
         CGasData(CGasData const & t_GasData);
-        CGasData(std::string const & t_Name,
+        CGasData(std::string_view t_Name,
                  double t_Wght,
                  double t_SpecHeatRatio,
                  CIntCoeff const & t_Cp,
                  CIntCoeff const & t_Con,
                  CIntCoeff const & t_Visc);
 
-        CGasData & operator=(const CGasData & t_GasData);
         [[nodiscard]] double getMolecularWeight() const;
         [[nodiscard]] double getPropertyValue(CoeffType t_Type, double t_Temperature) const;
         [[nodiscard]] double getSpecificHeatRatio() const;
@@ -40,5 +38,3 @@ namespace Gases
     };
 
 }   // namespace Gases
-
-#endif
