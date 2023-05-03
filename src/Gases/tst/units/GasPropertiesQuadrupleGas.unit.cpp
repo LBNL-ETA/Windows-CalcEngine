@@ -35,7 +35,6 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestSimpleProperties)
     EXPECT_NEAR(2.33306700E-05, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(379.15142, aProperties.m_SpecificHeat, 0.001);
     EXPECT_NEAR(3.225849103, aProperties.m_Density, 0.0001);
-    EXPECT_NEAR(1.01775733E-05, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0.710622448, aProperties.m_PrandlNumber, 0.0001);
 }
 
@@ -52,7 +51,6 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestSimplePropertiesRepeat)
     EXPECT_NEAR(2.33306700E-05, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(379.15142, aProperties.m_SpecificHeat, 0.001);
     EXPECT_NEAR(3.225849103, aProperties.m_Density, 0.0001);
-    EXPECT_NEAR(1.01775733E-05, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0.710622448, aProperties.m_PrandlNumber, 0.0001);
 }
 
@@ -69,7 +67,6 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealProperties)
     EXPECT_NEAR(2.412413749E-05, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(272.5637141, aProperties.m_SpecificHeat, 0.001);
     EXPECT_NEAR(3.225849103, aProperties.m_Density, 0.0001);
-    EXPECT_NEAR(1.26127756E-05, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 
@@ -86,7 +83,6 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesRepeat)
     EXPECT_NEAR(2.412413749E-05, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(272.5637141, aProperties.m_SpecificHeat, 0.001);
     EXPECT_NEAR(3.225849103, aProperties.m_Density, 0.0001);
-    EXPECT_NEAR(1.26127756E-05, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 
@@ -103,7 +99,6 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressure)
     EXPECT_NEAR(2.412413749E-05, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(272.5637141, aProperties.m_SpecificHeat, 0.001);
     EXPECT_NEAR(2.865298981, aProperties.m_Density, 0.0001);
-    EXPECT_NEAR(1.41998832E-05, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 
@@ -120,7 +115,6 @@ TEST_F(TestGasPropertiesQuadrupleGas, TestRealPropertiesLowPressureRepeat)
     EXPECT_NEAR(2.412413749E-05, aProperties.m_Viscosity, 1e-6);
     EXPECT_NEAR(272.5637141, aProperties.m_SpecificHeat, 0.001);
     EXPECT_NEAR(2.865298981, aProperties.m_Density, 0.0001);
-    EXPECT_NEAR(1.41998832E-05, aProperties.m_Alpha, 1e-6);
     EXPECT_NEAR(0.592921334, aProperties.m_PrandlNumber, 0.0001);
 }
 

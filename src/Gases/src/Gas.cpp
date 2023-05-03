@@ -199,8 +199,8 @@ namespace Gases
 
             lambdaSecondMix += lambdaSecond / sumMix;
 
-            cpMix += itGasProperties.m_SpecificHeat * it.fraction()
-                     * itGasProperties.m_MolecularWeight;
+            cpMix +=
+              itGasProperties.m_SpecificHeat * it.fraction() * itGasProperties.m_MolecularWeight;
             ++counter;
         }
 
@@ -209,7 +209,10 @@ namespace Gases
         m_Properties.m_SpecificHeat = cpMix / simpleProperties.m_MolecularWeight;
         m_Properties.m_Density = simpleProperties.m_Density;
         m_Properties.m_MolecularWeight = simpleProperties.m_MolecularWeight;
-        m_Properties.calculateAlphaAndPrandl();
+        m_Properties.m_PrandlNumber = calculatePrandtlNumber(m_Properties.m_ThermalConductivity,
+                                                             m_Properties.m_SpecificHeat,
+                                                             m_Properties.m_Viscosity,
+                                                             m_Properties.m_Density);
 
         return m_Properties;
     }
@@ -251,8 +254,7 @@ namespace Gases
     // Implementation of sum items in denominator of equation 62 (ISO15099)
     double CGas::viscDenomTwoGases(CGasItem & t_GasItem1, CGasItem & t_GasItem2) const
     {
-        auto phiValue =
-          viscTwoGases(t_GasItem1.getGasProperties(), t_GasItem2.getGasProperties());
+        auto phiValue = viscTwoGases(t_GasItem1.getGasProperties(), t_GasItem2.getGasProperties());
         if((t_GasItem1.fraction() == 0) || (t_GasItem2.fraction() == 0))
         {
             throw std::runtime_error(

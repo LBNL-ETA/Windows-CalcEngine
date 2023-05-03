@@ -27,6 +27,11 @@ namespace Gases
         double m_C;
     };
 
+    [[nodiscard]] double calculatePrandtlNumber(double thermalConductivity,
+                                               double specificHeat,
+                                               double viscosity,
+                                               double density);
+
     struct GasProperties
     {
         GasProperties() :
@@ -35,7 +40,6 @@ namespace Gases
             m_SpecificHeat(0.0),
             m_Density(0.0),
             m_MolecularWeight(0.0),
-            m_Alpha(0.0),
             m_PrandlNumber(0.0),
             m_PropertiesCalculated(false)
         {}
@@ -49,14 +53,13 @@ namespace Gases
         GasProperties & operator=(const GasProperties & t_A);
         bool operator==(const GasProperties & t_A) const;
 
-        void calculateAlphaAndPrandl();
         double m_ThermalConductivity;
         double m_Viscosity;
         double m_SpecificHeat;
         double m_Density;
         double m_MolecularWeight;
-        double m_Alpha;
         double m_PrandlNumber;
+
         bool m_PropertiesCalculated;
     };
 

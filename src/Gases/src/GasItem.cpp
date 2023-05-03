@@ -52,7 +52,10 @@ namespace Gases
         m_GasProperties.m_MolecularWeight = m_GasData.getMolecularWeight();
         m_GasProperties.m_Density =
           m_Pressure * m_GasProperties.m_MolecularWeight / (UNIVERSALGASCONSTANT * m_Temperature);
-        m_GasProperties.calculateAlphaAndPrandl();
+        m_GasProperties.m_PrandlNumber = calculatePrandtlNumber(m_GasProperties.m_ThermalConductivity,
+                                                                m_GasProperties.m_SpecificHeat,
+                                                                m_GasProperties.m_Viscosity,
+                                                                m_GasProperties.m_Density);
     }
 
     void CGasItem::flllVacuumPressureProperties()
@@ -141,7 +144,6 @@ namespace Gases
             m_FractionalGasProperties.m_MolecularWeight =
               itemGasProperties.m_MolecularWeight * m_Fraction;
             m_FractionalGasProperties.m_Density = itemGasProperties.m_Density * m_Fraction;
-            m_FractionalGasProperties.m_Alpha = itemGasProperties.m_Alpha * m_Fraction;
             m_FractionalGasProperties.m_PrandlNumber =
               itemGasProperties.m_PrandlNumber * m_Fraction;
         }
