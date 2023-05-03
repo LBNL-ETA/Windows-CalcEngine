@@ -21,11 +21,6 @@ namespace Gases
         addGasItems(gases);
     }
 
-    CGas::CGas(const std::vector<std::pair<double, Gases::GasDef>> & gases)
-    {
-        addGasItems(gases);
-    }
-
     CGas::CGas(CGas const & t_Gas) :
         m_GasItem(t_Gas.m_GasItem),
         m_SimpleProperties(t_Gas.m_SimpleProperties),
@@ -62,19 +57,6 @@ namespace Gases
         for(const auto & gasItem : gases)
         {
             m_GasItem.emplace_back(gasItem.fraction(), gasItem.gasData());
-        }
-    }
-
-    void CGas::addGasItems(const std::vector<std::pair<double, Gases::GasDef>> & gases)
-    {
-        if(m_DefaultGas)
-        {
-            m_GasItem.clear();
-            m_DefaultGas = false;
-        }
-        for(const auto & item : gases)
-        {
-            m_GasItem.emplace_back(item.first, getGasData(item.second));
         }
     }
 
