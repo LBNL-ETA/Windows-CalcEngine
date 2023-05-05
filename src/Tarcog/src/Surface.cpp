@@ -13,23 +13,16 @@ namespace Tarcog
         /// ISurface
         //////////////////////////////////////////////////////////////////////////////
         ISurface::ISurface() :
-            m_Temperature(273.15),
-            m_J(0),
-            m_Emissivity(0.84),
-            m_Transmittance(0),
-            m_MeanDeflection(0),
-            m_MaxDeflection(0)
+            m_SurfaceProperties(std::make_unique<ConstantSurfaceProperties>(0.84, 0))
         {
             calculateReflectance();
         }
 
         ISurface::ISurface(double const t_Emissivity, double const t_Transmittance) :
-            m_Temperature(273.15),
-            m_J(0),
             m_Emissivity(t_Emissivity),
             m_Transmittance(t_Transmittance),
-            m_MeanDeflection(0),
-            m_MaxDeflection(0)
+            m_SurfaceProperties(
+              std::make_unique<ConstantSurfaceProperties>(m_Emissivity, m_Transmittance))
         {
             calculateReflectance();
         }
@@ -47,6 +40,7 @@ namespace Tarcog
             m_J = t_Surface.m_J;
             m_MaxDeflection = t_Surface.m_MaxDeflection;
             m_MeanDeflection = t_Surface.m_MeanDeflection;
+            m_SurfaceProperties = t_Surface.m_SurfaceProperties->clone();
             calculateReflectance();
 
             return *this;
@@ -75,7 +69,7 @@ namespace Tarcog
 
         double ISurface::getEmissivity() const
         {
-            return m_Emissivity;
+            return m_SurfaceProperties->emissivity(m_Temperature);
         }
 
         double ISurface::getReflectance() const
@@ -85,7 +79,7 @@ namespace Tarcog
 
         double ISurface::getTransmittance() const
         {
-            return m_Transmittance;
+            return m_SurfaceProperties->transmittance(m_Temperature);
         }
 
         double ISurface::J() const
@@ -137,22 +131,15 @@ namespace Tarcog
             m_J = t_Radiation;
         }
 
-        //////////////////////////////////////////////////////////////////////////////
-        /// CSurface
-        //////////////////////////////////////////////////////////////////////////////
-        CSurface::CSurface(double const t_Emissivity, double const t_Transmittance) :
-            ISurface(t_Emissivity, t_Transmittance)
-        {}
-
-        CSurface::CSurface(CSurface const & t_Surface) : ISurface(t_Surface)
-        {}
-
-        std::shared_ptr<ISurface> CSurface::clone() const
+        std::shared_ptr<ISurface> ISurface::clone() const
         {
-            return std::make_shared<CSurface>(*this);
+            return std::make_shared<ISurface>(*this);
         }
 
-        CSurface::CSurface() : ISurface()
+        ISurface::ISurface(const std::vector<std::pair<double, double>> & t_Emissivity,
+                           const std::vector<std::pair<double, double>> & t_Transmittance) :
+            m_SurfaceProperties(
+              std::make_unique<ThermochromicSurfaceProperties>(t_Emissivity, t_Transmittance))
         {}
 
     }   // namespace ISO15099

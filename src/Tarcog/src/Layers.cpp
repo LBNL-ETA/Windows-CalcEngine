@@ -22,8 +22,8 @@ namespace Tarcog
             return std::make_shared<CIGUSolidLayer>(
               thickness,
               conductivity,
-              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
+              std::make_shared<ISurface>(frontEmissivity, frontIRTransmittance),
+              std::make_shared<ISurface>(backEmissivity, backIRTransmittance));
         }
 
         std::shared_ptr<CIGUGapLayer> Layers::gap(const double thickness, const double pressure)
@@ -90,8 +90,8 @@ namespace Tarcog
                                                effectiveOpenness.Ar,
                                                effectiveOpenness.Ah,
                                                effectiveOpenness.FrontPorosity),
-              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
+              std::make_shared<ISurface>(frontEmissivity, frontIRTransmittance),
+              std::make_shared<ISurface>(backEmissivity, backIRTransmittance));
         }
 
         std::shared_ptr<CIGUShadeLayer>
@@ -106,8 +106,8 @@ namespace Tarcog
               thickness,
               conductivity,
               std::make_shared<CShadeOpenings>(0, 0, 0, 0, 0, 0),
-              std::make_shared<CSurface>(frontEmissivity, frontIRTransmittance),
-              std::make_shared<CSurface>(backEmissivity, backIRTransmittance));
+              std::make_shared<ISurface>(frontEmissivity, frontIRTransmittance),
+              std::make_shared<ISurface>(backEmissivity, backIRTransmittance));
         }
 
         std::shared_ptr<CIGUGapLayer>

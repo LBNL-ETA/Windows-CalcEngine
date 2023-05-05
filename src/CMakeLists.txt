@@ -18,8 +18,6 @@ endif()
 if( ${BUILD_WCE_THERMAL} )
 	add_subdirectory( Tarcog )
 	set( LINK_TO_Tarcog Tarcog )
-	
-	add_subdirectory( Chromogenics )
 endif()
 
 if( ${BUILD_WCE_OPTICAL} )

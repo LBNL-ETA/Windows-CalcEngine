@@ -33,8 +33,8 @@ namespace Tarcog
             }
             else
             {
-                m_Surface[Side::Front] = std::make_shared<CSurface>();
-                m_Surface[Side::Back] = std::make_shared<CSurface>();
+                m_Surface[Side::Front] = std::make_shared<ISurface>();
+                m_Surface[Side::Back] = std::make_shared<ISurface>();
             }
         }
 
@@ -49,9 +49,9 @@ namespace Tarcog
             m_SolarAbsorptance(0)
         {
             m_Surface[Side::Front] =
-              std::make_shared<CSurface>(t_FrontEmissivity, t_FrontIRTransmittance);
+              std::make_shared<ISurface>(t_FrontEmissivity, t_FrontIRTransmittance);
             m_Surface[Side::Back] =
-              std::make_shared<CSurface>(t_BackEmissivity, t_BackIRTransmittance);
+              std::make_shared<ISurface>(t_BackEmissivity, t_BackIRTransmittance);
         }
 
         void CIGUSolidLayer::connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer)

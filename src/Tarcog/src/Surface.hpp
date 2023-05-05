@@ -1,37 +1,41 @@
-#ifndef SURFACE_H
-#define SURFACE_H
+#pragma once
 
 #include <memory>
 #include <vector>
+
+#include "SurfaceProperties.hpp"
 
 namespace Tarcog
 {
     namespace ISO15099
     {
+
         class ISurface
         {
         public:
             virtual ~ISurface() = default;
             ISurface();
             ISurface(double t_Emissivity, double t_Transmittance);
+            ISurface(const std::vector<std::pair<double, double>> & t_Emissivity,
+                     const std::vector<std::pair<double, double>> & t_Transmittance);
 
             ISurface(ISurface const & t_Surface);
             ISurface & operator=(ISurface const & t_Surface);
 
-            virtual std::shared_ptr<ISurface> clone() const = 0;
+            [[nodiscard]] std::shared_ptr<ISurface> clone() const;
 
             virtual void setTemperature(double t_Temperature);
             virtual void setJ(double t_J);
 
             void applyDeflection(double t_MeanDeflection, double t_MaxDeflection);
-            virtual double getTemperature() const final;
-            virtual double getEmissivity() const final;
-            virtual double getReflectance() const final;
-            virtual double getTransmittance() const final;
-            virtual double J() const final;
-            virtual double emissivePowerTerm() const final;
-            virtual double getMeanDeflection() const final;
-            virtual double getMaxDeflection() const final;
+            [[nodiscard]] double getTemperature() const;
+            [[nodiscard]] double getEmissivity() const;
+            [[nodiscard]] double getReflectance() const;
+            [[nodiscard]] double getTransmittance() const;
+            [[nodiscard]] double J() const;
+            [[nodiscard]] double emissivePowerTerm() const;
+            [[nodiscard]] double getMeanDeflection() const;
+            [[nodiscard]] double getMaxDeflection() const;
 
             void initializeStart(double t_Temperature);
             void initializeStart(double t_Temperature, double t_Radiation);
@@ -39,30 +43,20 @@ namespace Tarcog
         protected:
             void calculateReflectance();
 
-            double m_Temperature;
-            double m_J;
+            double m_Temperature{273.15};
+            double m_J{0.0};
 
-            double m_Emissivity;
-            double m_Reflectance;
-            double m_Transmittance;
+            double m_Emissivity{0.84};
+            double m_Reflectance{0.0};
+            double m_Transmittance{0.0};
 
             // Value for deflection. Positive deflection is surface curved towards left side and
             // negative deflection vice-versa.
-            double m_MeanDeflection;
-            double m_MaxDeflection;
-        };
+            double m_MeanDeflection{0.0};
+            double m_MaxDeflection{0.0};
 
-        class CSurface : public ISurface
-        {
-        public:
-            CSurface();
-            CSurface(double t_Emissivity, double t_Transmittance);
-            CSurface(const CSurface & t_Surface);
-
-            std::shared_ptr<ISurface> clone() const override;
+            std::unique_ptr<ISurfaceProperties> m_SurfaceProperties;
         };
     }   // namespace ISO15099
 
 }   // namespace Tarcog
-
-#endif
