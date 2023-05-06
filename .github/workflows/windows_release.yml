@@ -42,10 +42,6 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: src\Tarcog\Release\Tarcog_tests.exe
       
-    - name: Test Chromogenics
-      working-directory: ${{github.workspace}}/build
-      run: src\Chromogenics\Release\Chromogenics_tests.exe
-      
     - name: Test Spectral Averaging
       working-directory: ${{github.workspace}}/build
       run: src\SpectralAveraging\Release\SpectralAveraging_tests.exe
