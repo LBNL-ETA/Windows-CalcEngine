@@ -22,7 +22,7 @@ namespace Tarcog
         {
             m_RoomRadiationTemperature =
               t_AirTemperature;   // Radiation temperature is by default air
-            m_Surface[Side::Back] = std::make_shared<ISurface>(m_Emissivity, 0);
+            m_Surface[Side::Back] = std::make_shared<Surface>(m_Emissivity, 0);
             m_Surface.at(Side::Back)->setTemperature(t_AirTemperature);
         }
 

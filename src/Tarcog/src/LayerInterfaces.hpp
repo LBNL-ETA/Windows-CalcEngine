@@ -16,7 +16,7 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        class ISurface;
+        class Surface;
 
         class CLayerGeometry : public virtual FenestrationCommon::CState
         {
@@ -45,9 +45,9 @@ namespace Tarcog
             virtual double getConductionConvectionCoefficient() final;
             virtual double getRadiationFlow();
             virtual double getConvectionConductionFlow() final;
-            virtual std::shared_ptr<ISurface>
+            virtual std::shared_ptr<Surface>
               getSurface(FenestrationCommon::Side t_Position) const final;
-            virtual void setSurface(std::shared_ptr<ISurface> t_Surface,
+            virtual void setSurface(std::shared_ptr<Surface> t_Surface,
                                     FenestrationCommon::Side t_Position) final;
 
         protected:
@@ -58,7 +58,7 @@ namespace Tarcog
         protected:
             bool areSurfacesInitalized() const;
 
-            std::map<FenestrationCommon::Side, std::shared_ptr<ISurface>> m_Surface;
+            std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;
             double m_ConductiveConvectiveCoeff;
             double m_LayerGainFlow;
         };

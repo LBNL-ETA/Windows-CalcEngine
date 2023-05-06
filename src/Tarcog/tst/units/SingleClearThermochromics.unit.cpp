@@ -61,9 +61,9 @@ protected:
 
         // Creates thermochromic surface on indoor side with variable emissivity and constant
         // transmittance
-        auto frontSurface = std::make_shared<Tarcog::ISO15099::ISurface>(emissivity, transmittance);
+        auto frontSurface = std::make_shared<Tarcog::ISO15099::Surface>(emissivity, transmittance);
         auto backSurface =
-          std::make_shared<Tarcog::ISO15099::ISurface>(emissivities, transmittances);
+          std::make_shared<Tarcog::ISO15099::Surface>(emissivities, transmittances);
 
         auto aSolidLayer = std::make_shared<Tarcog::ISO15099::CIGUSolidLayer>(
           solidLayerThickness, solidLayerConductance, frontSurface, backSurface);

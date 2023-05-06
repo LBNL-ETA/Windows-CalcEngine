@@ -1,13 +1,10 @@
 #pragma once
 
 #include <WCECommon.hpp>
-#include <variant>
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
-    {
-        class ISurfaceProperties
+    class ISurfaceProperties
         {
         public:
             virtual ~ISurfaceProperties() = default;
@@ -50,5 +47,4 @@ namespace Tarcog
             std::shared_ptr<FenestrationCommon::IInterpolation2D> m_TransmittanceInterpolator;
         };
 
-    }   // namespace ISO15099
-}   // namespace Tarcog
+}   // namespace Tarcog::ISO15099

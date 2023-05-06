@@ -28,7 +28,7 @@ namespace Tarcog
             m_FractionOfClearSky(t_FractionClearSky),
             m_SkyModel(t_Model)
         {
-            m_Surface[Side::Front] = std::make_shared<ISurface>();
+            m_Surface[Side::Front] = std::make_shared<Surface>();
             m_Surface.at(Side::Front)->setTemperature(t_AirTemperature);
             m_DirectSolarRadiation = t_DirectSolarRadiation;
         }

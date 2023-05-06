@@ -16,13 +16,13 @@ protected:
         // Gap layer construct is made in a way that it is not possible to create gap alone. In
         // order to test gap, entire IGU has to be created. Example is taken as part of double clear
         // air run from WINDOW 7 version of TARCOG
-        auto surface1 = std::make_shared<Tarcog::ISO15099::ISurface>();
+        auto surface1 = std::make_shared<Tarcog::ISO15099::Surface>();
         ASSERT_TRUE(surface1 != nullptr);
-        auto surface2 = std::make_shared<Tarcog::ISO15099::ISurface>();
+        auto surface2 = std::make_shared<Tarcog::ISO15099::Surface>();
         ASSERT_TRUE(surface2 != nullptr);
-        auto surface3 = std::make_shared<Tarcog::ISO15099::ISurface>();
+        auto surface3 = std::make_shared<Tarcog::ISO15099::Surface>();
         ASSERT_TRUE(surface3 != nullptr);
-        auto surface4 = std::make_shared<Tarcog::ISO15099::ISurface>();
+        auto surface4 = std::make_shared<Tarcog::ISO15099::Surface>();
         ASSERT_TRUE(surface4 != nullptr);
 
         auto solidLayerThickness = 0.005715;   // [m]
