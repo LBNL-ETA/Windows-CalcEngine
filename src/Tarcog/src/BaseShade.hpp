@@ -10,93 +10,89 @@ namespace Gases
     class CGas;
 }
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    class Surface;
+
+    class CIGUVentilatedGapLayer;
+
+    class CEnvironment;
+
+    auto const OPENING_TOLERANCE = 1e-6;
+
+    class CShadeOpenings
     {
-        class Surface;
+    public:
+        CShadeOpenings() = default;
 
-        class CIGUVentilatedGapLayer;
+        CShadeOpenings(double t_Atop,
+                       double t_Abot,
+                       double t_Aleft,
+                       double t_Aright,
+                       double t_Afront,
+                       double t_FrontPorosity);
 
-        class CEnvironment;
+        [[nodiscard]] double Aeq_bot() const;
+        [[nodiscard]] double Aeq_top() const;
 
-        auto const OPENING_TOLERANCE = 1e-6;
+        [[nodiscard]] double frontPorositiy() const;
 
-        class CShadeOpenings
-        {
-        public:
-            CShadeOpenings() = default;
+        [[nodiscard]] bool isOpen() const;
 
-            CShadeOpenings(double t_Atop,
-                           double t_Abot,
-                           double t_Aleft,
-                           double t_Aright,
-                           double t_Afront,
-                           double t_FrontPorosity);
+        //! If gap next to shade is tighter than the opening, that gap will be dominant compared
+        //! to the openning
+        void checkAndSetDominantWidth(double gapWidth);
 
-            double Aeq_bot();
-            double Aeq_top();
+    private:
+        void fixForValidity();
+        [[nodiscard]] double openingMultiplier() const;
 
-            [[nodiscard]] double frontPorositiy() const;
+        double m_Atop{OPENING_TOLERANCE};
+        double m_Abot{OPENING_TOLERANCE};
+        double m_Aleft{0};
+        double m_Aright{0};
+        double m_Afront{0};
+        double m_FrontPorosity{0};
+    };
 
-            [[nodiscard]] bool isOpen() const;
+    class CIGUShadeLayer : public CIGUSolidLayer
+    {
+    public:
+        CIGUShadeLayer(double t_Thickness,
+                       double t_Conductivity,
+                       CShadeOpenings && t_ShadeOpenings,
+                       const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface = nullptr,
+                       const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface = nullptr);
 
-            //! If gap next to shade is tighter than the opening, that gap will be dominant compared
-            //! to the openning
-            void checkAndSetDominantWidth(double gapWidth);
+        CIGUShadeLayer(const std::shared_ptr<CIGUSolidLayer> & t_Layer,
+                       const CShadeOpenings & t_ShadeOpenings);
 
-        private:
-            void checkForValidity();
-            double openingMultiplier() const;
+        CIGUShadeLayer(double t_Thickness, double t_Conductivity);
 
-            double m_Atop{OPENING_TOLERANCE};
-            double m_Abot{OPENING_TOLERANCE};
-            double m_Aleft{0};
-            double m_Aright{0};
-            double m_Afront{0};
-            double m_FrontPorosity{0};
-        };
+        std::shared_ptr<CBaseLayer> clone() const override;
 
-        class CIGUShadeLayer : public CIGUSolidLayer
-        {
-        public:
-            CIGUShadeLayer(
-              const double t_Thickness,
-              const double t_Conductivity,
-              CShadeOpenings && t_ShadeOpenings,
-              const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface = nullptr,
-              const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface = nullptr);
+        bool isPermeable() const override;
 
-            CIGUShadeLayer(const std::shared_ptr<CIGUSolidLayer> & t_Layer,
-                           const CShadeOpenings & t_ShadeOpenings);
+    private:
+        void setDominanthAirflowWidth();
 
-            CIGUShadeLayer(double t_Thickness, double t_Conductivity);
+        void calculateConvectionOrConductionFlow() override;
 
-            std::shared_ptr<CBaseLayer> clone() const override;
+        void calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
+                                    std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2);
 
-            bool isPermeable() const override;
+        void calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
+                               std::shared_ptr<CIGUVentilatedGapLayer> t_Gap);
 
-        private:
-            void setDominanthAirflowWidth();
+        double equivalentConductivity(double t_Conductivity, double permeabilityFactor);
 
-            void calculateConvectionOrConductionFlow() override;
+        CShadeOpenings m_ShadeOpenings;
 
-            void calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
-                                        std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2);
+        double m_MaterialConductivity;
+    };
 
-            void calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
-                                   std::shared_ptr<CIGUVentilatedGapLayer> t_Gap);
 
-            double equivalentConductivity(double t_Conductivity, double permeabilityFactor);
-
-            CShadeOpenings m_ShadeOpenings;
-
-            double m_MaterialConductivity;
-        };
-
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
+}   // namespace Tarcog::ISO15099
 
 
 #endif

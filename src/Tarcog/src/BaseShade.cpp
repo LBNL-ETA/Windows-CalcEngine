@@ -31,10 +31,10 @@ namespace Tarcog
             m_Afront(t_Afront),
             m_FrontPorosity(t_FrontPorosity)
         {
-            checkForValidity();
+            fixForValidity();
         }
 
-        void CShadeOpenings::checkForValidity()
+        void CShadeOpenings::fixForValidity()
         {
             if(m_Atop == 0)
             {
@@ -52,12 +52,12 @@ namespace Tarcog
             return (m_Aleft + m_Aright + m_Afront) / (m_Abot + m_Atop);
         }
 
-        double CShadeOpenings::Aeq_bot()
+        double CShadeOpenings::Aeq_bot() const
         {
             return m_Abot + 0.5 * m_Atop * openingMultiplier();
         }
 
-        double CShadeOpenings::Aeq_top()
+        double CShadeOpenings::Aeq_top() const
         {
             return m_Atop + 0.5 * m_Abot * openingMultiplier();
         }
@@ -91,7 +91,7 @@ namespace Tarcog
           const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface,
           const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface) :
             CIGUSolidLayer(t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface),
-            m_ShadeOpenings(t_ShadeOpenings),
+            m_ShadeOpenings(std::move(t_ShadeOpenings)),
             m_MaterialConductivity(t_Conductivity)
         {}
 
