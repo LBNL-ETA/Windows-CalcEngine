@@ -33,9 +33,8 @@ namespace Tarcog::ISO15099
         class ThermochromicSurfaceProperties : public ISurfaceProperties
         {
         public:
-            ThermochromicSurfaceProperties(
-              const std::vector<std::pair<double, double>> & t_Emissivity,
-              const std::vector<std::pair<double, double>> & t_Transmittance);
+            ThermochromicSurfaceProperties(const std::vector<FenestrationCommon::TableValue> & t_Emissivity,
+                                           const std::vector<FenestrationCommon::TableValue> & t_Transmittance);
 
             [[nodiscard]] std::unique_ptr<ISurfaceProperties> clone() const override;
 
@@ -43,8 +42,8 @@ namespace Tarcog::ISO15099
             [[nodiscard]] double transmittance(double t_Temperature) const override;
 
         private:
-            std::shared_ptr<FenestrationCommon::IInterpolation2D> m_EmissivityInterpolator;
-            std::shared_ptr<FenestrationCommon::IInterpolation2D> m_TransmittanceInterpolator;
+            FenestrationCommon::SPChipInterpolation2D m_EmissivityInterpolator;
+            FenestrationCommon::SPChipInterpolation2D m_TransmittanceInterpolator;
         };
 
 }   // namespace Tarcog::ISO15099

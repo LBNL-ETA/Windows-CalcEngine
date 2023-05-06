@@ -1,61 +1,49 @@
 #include "Interpolation2D.hpp"
 #include "WCECommon.hpp"
 
-
-using namespace FenestrationCommon;
-
 namespace FenestrationCommon
 {
     //////////////////////////////////////////////////////////////////////////////////////
-    // IInterpolation2D
+    // SPChipInterpolation2D
     //////////////////////////////////////////////////////////////////////////////////////
 
-    IInterpolation2D::IInterpolation2D(std::vector<std::pair<double, double>> const & t_Points) :
-        m_Points(t_Points)
-    {}
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    // CSPChipInterpolation2D
-    //////////////////////////////////////////////////////////////////////////////////////
-
-    CSPChipInterpolation2D::CSPChipInterpolation2D(
-      std::vector<std::pair<double, double>> const & t_Points) :
-        IInterpolation2D(t_Points)
+    SPChipInterpolation2D::SPChipInterpolation2D(
+      const std::vector<TableValue> & t_Points) : m_Points(t_Points)
     {
         m_Hs = calculateHs();
         m_Deltas = calculateDeltas();
         m_Derivatives = calculateDerivatives();
     }
 
-    double CSPChipInterpolation2D::getValue(double const t_Value) const
+    double SPChipInterpolation2D::value(double const t_Value) const
     {
-        if(t_Value <= m_Points.begin()->first)
+        if(t_Value <= m_Points.begin()->x)
         {
-            return m_Points.begin()->second;
+            return m_Points.begin()->y;
         }
 
-        if(t_Value >= (m_Points.end() - 1)->first)
+        if(t_Value >= (m_Points.end() - 1)->x)
         {
-            return (m_Points.end() - 1)->second;
+            return (m_Points.end() - 1)->y;
         }
 
         auto subinterval = getSubinterval(t_Value);
-        auto s = t_Value - m_Points[subinterval].first;
+        auto s = t_Value - m_Points[subinterval].x;
         auto h = m_Hs[subinterval];
 
-        auto y_k = m_Points[subinterval].second;
-        auto y_k_plus_1 = m_Points[subinterval + 1].second;
+        auto y_k = m_Points[subinterval].y;
+        auto y_k_plus_1 = m_Points[subinterval + 1].y;
         auto d_k = m_Derivatives[subinterval];
         auto d_k_plus_1 = m_Derivatives[subinterval + 1];
         return interpolate(h, s, y_k, y_k_plus_1, d_k, d_k_plus_1);
     }
 
-    size_t CSPChipInterpolation2D::getSubinterval(double const t_Value) const
+    size_t SPChipInterpolation2D::getSubinterval(double const t_Value) const
     {
         size_t interval = 1;
         for(auto i = 1u; i < m_Points.size(); ++i)
         {
-            if(m_Points[i].first > t_Value)
+            if(m_Points[i].x > t_Value)
             {
                 interval = i - 1;
                 break;
@@ -64,28 +52,28 @@ namespace FenestrationCommon
         return interval;
     }
 
-    std::vector<double> CSPChipInterpolation2D::calculateHs() const
+    std::vector<double> SPChipInterpolation2D::calculateHs() const
     {
         std::vector<double> res;
         for(size_t i = 1; i < m_Points.size(); ++i)
         {
-            res.push_back(m_Points[i].first - m_Points[i - 1].first);
+            res.push_back(m_Points[i].x - m_Points[i - 1].x);
         }
         return res;
     }
 
-    std::vector<double> CSPChipInterpolation2D::calculateDeltas() const
+    std::vector<double> SPChipInterpolation2D::calculateDeltas() const
     {
         std::vector<double> res;
         for(size_t i = 1; i < m_Points.size(); ++i)
         {
-            res.push_back((m_Points[i].second - m_Points[i - 1].second)
-                          / (m_Points[i].first - m_Points[i - 1].first));
+            res.push_back((m_Points[i].y - m_Points[i - 1].y)
+                          / (m_Points[i].x - m_Points[i - 1].x));
         }
         return res;
     }
 
-    std::vector<double> CSPChipInterpolation2D::calculateDerivatives() const
+    std::vector<double> SPChipInterpolation2D::calculateDerivatives() const
     {
         std::vector<double> res;
         // first get the special cases, first and last
@@ -128,7 +116,7 @@ namespace FenestrationCommon
         return res;
     }
 
-    double CSPChipInterpolation2D::piecewiseCubicDerivative(double const delta_k,
+    double SPChipInterpolation2D::piecewiseCubicDerivative(double const delta_k,
                                                             double const delta_k_minus_1,
                                                             double const hk,
                                                             double const hk_minus_1)
@@ -154,7 +142,7 @@ namespace FenestrationCommon
         return res;
     }
 
-    double CSPChipInterpolation2D::interpolate(double const h,
+    double SPChipInterpolation2D::interpolate(double const h,
                                                double const s,
                                                double const y_k,
                                                double const y_k_plus_one,
