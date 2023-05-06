@@ -4,9 +4,6 @@
 
 #include "WCECommon.hpp"
 
-
-using namespace FenestrationCommon;
-
 class TestSPChipInterpolation : public testing::Test
 {};
 
@@ -16,7 +13,7 @@ TEST_F(TestSPChipInterpolation, TestInterpolations)
 
     constexpr auto tolerance{1e-6};
 
-    SPChipInterpolation2D aInterpolation(
+    FenestrationCommon::SPChipInterpolation2D aInterpolation(
       {{24, 0.683876}, {34, 0.631739}, {48, 0.532746}, {62, 0.410234}, {75, 0.330733}});
 
     double value = 28;
