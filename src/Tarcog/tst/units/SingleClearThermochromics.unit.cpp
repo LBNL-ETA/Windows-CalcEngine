@@ -3,11 +3,9 @@
 #include <gtest/gtest.h>
 
 #include "WCETarcog.hpp"
-#include "WCEChromogenics.hpp"
 #include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
-using namespace Chromogenics;
 
 class TestSingleClearThermochromics : public testing::Test
 {
@@ -55,21 +53,17 @@ protected:
         auto emissivity = 0.84;
 
         // Thermochromics property of the surface emissivity
-        std::vector<std::pair<double, double>> emissivities = {std::make_pair(288.15, 0.84),
-                                                               std::make_pair(293.15, 0.74),
-                                                               std::make_pair(296.15, 0.64),
-                                                               std::make_pair(300.15, 0.54),
-                                                               std::make_pair(303.15, 0.44)};
+        std::vector<std::pair<double, double>> emissivities = {
+          {288.15, 0.84}, {293.15, 0.74}, {296.15, 0.64}, {300.15, 0.54}, {303.15, 0.44}};
+
+        std::vector<std::pair<double, double>> transmittances = {
+          {288.15, 0}, {293.15, 0}, {303.15, 0}};
 
         // Creates thermochromic surface on indoor side with variable emissivity and constant
         // transmittance
-        std::shared_ptr<Tarcog::ISO15099::ISurface> frontSurface =
-          std::make_shared<Tarcog::ISO15099::CSurface>(emissivity, transmittance);
-        std::shared_ptr<Tarcog::ISO15099::ISurface> backSurface =
-          std::make_shared<Chromogenics::ISO15099::CThermochromicSurface>(emissivities,
-                                                                          transmittance);
-        // std::shared_ptr< ISurface > backSurface = std::make_shared< CSurface >(
-        // 0.61350442289072993, transmittance );
+        auto frontSurface = std::make_shared<Tarcog::ISO15099::Surface>(emissivity, transmittance);
+        auto backSurface =
+          std::make_shared<Tarcog::ISO15099::Surface>(emissivities, transmittances);
 
         auto aSolidLayer = std::make_shared<Tarcog::ISO15099::CIGUSolidLayer>(
           solidLayerThickness, solidLayerConductance, frontSurface, backSurface);
@@ -84,12 +78,8 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        // TODO: This need to be changed. C++11 does not support make_unique
-        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSystem>(
-          new Tarcog::ISO15099::CSystem(aIGU, Indoor, Outdoor));
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
-
-        // m_TarcogSystem->solve();
     }
 
 public:
@@ -116,10 +106,10 @@ TEST_F(TestSingleClearThermochromics, Test1)
     auto aLayer = *aSolidLayers[0];
 
     auto emissivity = aLayer.getSurface(Side::Back)->getEmissivity();
-    EXPECT_NEAR(emissivity, 0.610863, Tolerance);
+    EXPECT_NEAR(emissivity, 0.613717, Tolerance);
 
     auto Temperature = aSystem->getTemperatures(Tarcog::ISO15099::System::Uvalue);
-    std::vector<double> correctTemperature{297.313984, 297.261756};
+    std::vector<double> correctTemperature{297.207035, 297.144700};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -128,7 +118,7 @@ TEST_F(TestSingleClearThermochromics, Test1)
     }
 
     auto Radiosity = aSystem->getRadiosities(Tarcog::ISO15099::System::Uvalue);
-    std::vector<double> correctRadiosity{432.979711, 435.605837};
+    std::vector<double> correctRadiosity{432.444545, 439.201750};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -147,10 +137,10 @@ TEST_F(TestSingleClearThermochromics, Test1)
     aLayer = *aSolidLayers[0];
 
     emissivity = aLayer.getSurface(Side::Back)->getEmissivity();
-    EXPECT_NEAR(emissivity, 0.561212, Tolerance);
+    EXPECT_NEAR(emissivity, 0.567105, Tolerance);
 
     Temperature = aSystem->getTemperatures(Tarcog::ISO15099::System::SHGC);
-    correctTemperature = {299.333611, 299.359313};
+    correctTemperature = {299.116601, 299.121730};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -159,7 +149,7 @@ TEST_F(TestSingleClearThermochromics, Test1)
     }
 
     Radiosity = aSystem->getRadiosities(Tarcog::ISO15099::System::SHGC);
-    correctRadiosity = {443.194727, 441.786960};
+    correctRadiosity = {442.087153, 449.182158};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -175,26 +165,26 @@ TEST_F(TestSingleClearThermochromics, Test1)
     /////////////////////////////////////////////////////////////////////////
     auto heatFlow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(heatFlow, -17.135106, Tolerance);
+    EXPECT_NEAR(heatFlow, -20.450949, Tolerance);
 
     heatFlow = aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue,
                                     Tarcog::ISO15099::Environment::Outdoor);
-    EXPECT_NEAR(heatFlow, -17.135106, Tolerance);
+    EXPECT_NEAR(heatFlow, -20.450949, Tolerance);
 
     heatFlow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(heatFlow, -28.725048, Tolerance);
+    EXPECT_NEAR(heatFlow, -35.474877, Tolerance);
 
     heatFlow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Outdoor);
-    EXPECT_NEAR(heatFlow, 45.590199, Tolerance);
+    EXPECT_NEAR(heatFlow, 38.840370, Tolerance);
 
     /////////////////////////////////////////////////////////////////////////
     ///  System properties
     /////////////////////////////////////////////////////////////////////////
     auto UValue = aSystem->getUValue();
-    EXPECT_NEAR(UValue, 4.604300, Tolerance);
+    EXPECT_NEAR(UValue, 5.493806, Tolerance);
 
     auto SHGC = aSystem->getSHGC(0.831249);
-    EXPECT_NEAR(SHGC, 0.845938, Tolerance);
+    EXPECT_NEAR(SHGC, 0.850291, Tolerance);
 }

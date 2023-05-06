@@ -10,36 +10,29 @@ namespace Tarcog
     namespace ISO15099
     {
         //////////////////////////////////////////////////////////////////////////////
-        /// ISurface
+        /// Surface
         //////////////////////////////////////////////////////////////////////////////
-        ISurface::ISurface() :
-            m_Temperature(273.15),
-            m_J(0),
-            m_Emissivity(0.84),
-            m_Transmittance(0),
-            m_MeanDeflection(0),
-            m_MaxDeflection(0)
+        Surface::Surface() :
+            m_SurfaceProperties(std::make_unique<ConstantSurfaceProperties>(0.84, 0))
         {
             calculateReflectance();
         }
 
-        ISurface::ISurface(double const t_Emissivity, double const t_Transmittance) :
-            m_Temperature(273.15),
-            m_J(0),
+        Surface::Surface(double const t_Emissivity, double const t_Transmittance) :
             m_Emissivity(t_Emissivity),
             m_Transmittance(t_Transmittance),
-            m_MeanDeflection(0),
-            m_MaxDeflection(0)
+            m_SurfaceProperties(
+              std::make_unique<ConstantSurfaceProperties>(m_Emissivity, m_Transmittance))
         {
             calculateReflectance();
         }
 
-        ISurface::ISurface(ISurface const & t_Surface)
+        Surface::Surface(Surface const & t_Surface)
         {
             operator=(t_Surface);
         }
 
-        ISurface & ISurface::operator=(ISurface const & t_Surface)
+        Surface & Surface::operator=(Surface const & t_Surface)
         {
             m_Emissivity = t_Surface.m_Emissivity;
             m_Transmittance = t_Surface.m_Transmittance;
@@ -47,70 +40,71 @@ namespace Tarcog
             m_J = t_Surface.m_J;
             m_MaxDeflection = t_Surface.m_MaxDeflection;
             m_MeanDeflection = t_Surface.m_MeanDeflection;
+            m_SurfaceProperties = t_Surface.m_SurfaceProperties->clone();
             calculateReflectance();
 
             return *this;
         }
 
-        void ISurface::setTemperature(double const t_Temperature)
+        void Surface::setTemperature(double const t_Temperature)
         {
             m_Temperature = t_Temperature;
         }
 
-        void ISurface::setJ(double const t_J)
+        void Surface::setJ(double const t_J)
         {
             m_J = t_J;
         }
 
-        void ISurface::applyDeflection(double const t_MeanDeflection, double const t_MaxDeflection)
+        void Surface::applyDeflection(double const t_MeanDeflection, double const t_MaxDeflection)
         {
             m_MeanDeflection = t_MeanDeflection;
             m_MaxDeflection = t_MaxDeflection;
         }
 
-        double ISurface::getTemperature() const
+        double Surface::getTemperature() const
         {
             return m_Temperature;
         }
 
-        double ISurface::getEmissivity() const
+        double Surface::getEmissivity() const
         {
-            return m_Emissivity;
+            return m_SurfaceProperties->emissivity(m_Temperature);
         }
 
-        double ISurface::getReflectance() const
+        double Surface::getReflectance() const
         {
             return m_Reflectance;
         }
 
-        double ISurface::getTransmittance() const
+        double Surface::getTransmittance() const
         {
-            return m_Transmittance;
+            return m_SurfaceProperties->transmittance(m_Temperature);
         }
 
-        double ISurface::J() const
+        double Surface::J() const
         {
             return m_J;
         }
 
-        double ISurface::getMeanDeflection() const
+        double Surface::getMeanDeflection() const
         {
             return m_MeanDeflection;
         }
 
-        double ISurface::getMaxDeflection() const
+        double Surface::getMaxDeflection() const
         {
             return m_MaxDeflection;
         }
 
-        double ISurface::emissivePowerTerm() const
+        double Surface::emissivePowerTerm() const
         {
             using ConstantsData::STEFANBOLTZMANN;
 
             return STEFANBOLTZMANN * m_Emissivity * pow(m_Temperature, 3);
         }
 
-        void ISurface::calculateReflectance()
+        void Surface::calculateReflectance()
         {
             if(m_Emissivity + m_Transmittance > 1)
             {
@@ -123,7 +117,7 @@ namespace Tarcog
             }
         }
 
-        void ISurface::initializeStart(double const t_Temperature)
+        void Surface::initializeStart(double const t_Temperature)
         {
             using ConstantsData::STEFANBOLTZMANN;
 
@@ -131,28 +125,21 @@ namespace Tarcog
             m_J = STEFANBOLTZMANN * pow(m_Temperature, 4);
         }
 
-        void ISurface::initializeStart(double const t_Temperature, double const t_Radiation)
+        void Surface::initializeStart(double const t_Temperature, double const t_Radiation)
         {
             m_Temperature = t_Temperature;
             m_J = t_Radiation;
         }
 
-        //////////////////////////////////////////////////////////////////////////////
-        /// CSurface
-        //////////////////////////////////////////////////////////////////////////////
-        CSurface::CSurface(double const t_Emissivity, double const t_Transmittance) :
-            ISurface(t_Emissivity, t_Transmittance)
-        {}
-
-        CSurface::CSurface(CSurface const & t_Surface) : ISurface(t_Surface)
-        {}
-
-        std::shared_ptr<ISurface> CSurface::clone() const
+        std::shared_ptr<Surface> Surface::clone() const
         {
-            return std::make_shared<CSurface>(*this);
+            return std::make_shared<Surface>(*this);
         }
 
-        CSurface::CSurface() : ISurface()
+        Surface::Surface(const std::vector<std::pair<double, double>> & t_Emissivity,
+                           const std::vector<std::pair<double, double>> & t_Transmittance) :
+            m_SurfaceProperties(
+              std::make_unique<ThermochromicSurfaceProperties>(t_Emissivity, t_Transmittance))
         {}
 
     }   // namespace ISO15099

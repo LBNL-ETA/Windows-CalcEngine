@@ -20,8 +20,8 @@ namespace Tarcog
         CIGUSolidLayer::CIGUSolidLayer(
           double const t_Thickness,
           double const t_Conductivity,
-          std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_FrontSurface,
-          std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_BackSurface) :
+          std::shared_ptr<Tarcog::ISO15099::Surface> const & t_FrontSurface,
+          std::shared_ptr<Tarcog::ISO15099::Surface> const & t_BackSurface) :
             CBaseIGULayer(t_Thickness),
             m_Conductivity(t_Conductivity),
             m_SolarAbsorptance(0)
@@ -33,8 +33,8 @@ namespace Tarcog
             }
             else
             {
-                m_Surface[Side::Front] = std::make_shared<CSurface>();
-                m_Surface[Side::Back] = std::make_shared<CSurface>();
+                m_Surface[Side::Front] = std::make_shared<Surface>();
+                m_Surface[Side::Back] = std::make_shared<Surface>();
             }
         }
 
@@ -49,9 +49,9 @@ namespace Tarcog
             m_SolarAbsorptance(0)
         {
             m_Surface[Side::Front] =
-              std::make_shared<CSurface>(t_FrontEmissivity, t_FrontIRTransmittance);
+              std::make_shared<Surface>(t_FrontEmissivity, t_FrontIRTransmittance);
             m_Surface[Side::Back] =
-              std::make_shared<CSurface>(t_BackEmissivity, t_BackIRTransmittance);
+              std::make_shared<Surface>(t_BackEmissivity, t_BackIRTransmittance);
         }
 
         void CIGUSolidLayer::connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer)
@@ -101,7 +101,7 @@ namespace Tarcog
                                              double const t_J,
                                              Side const t_Position)
         {
-            std::shared_ptr<ISurface> aSurface = m_Surface.at(t_Position);
+            std::shared_ptr<Surface> aSurface = m_Surface.at(t_Position);
             aSurface->setTemperature(t_Temperature);
             aSurface->setJ(t_J);
 

@@ -14,7 +14,7 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        class ISurface;
+        class Surface;
 
         class CIGUVentilatedGapLayer;
 
@@ -62,8 +62,8 @@ namespace Tarcog
               double t_Thickness,
               double t_Conductivity,
               std::shared_ptr<CShadeOpenings> const & t_ShadeOpenings,
-              std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_FrontSurface = nullptr,
-              std::shared_ptr<Tarcog::ISO15099::ISurface> const & t_BackSurface = nullptr);
+              std::shared_ptr<Tarcog::ISO15099::Surface> const & t_FrontSurface = nullptr,
+              std::shared_ptr<Tarcog::ISO15099::Surface> const & t_BackSurface = nullptr);
 
             CIGUShadeLayer(std::shared_ptr<CIGUSolidLayer> & t_Layer,
                            std::shared_ptr<CShadeOpenings> & t_ShadeOpenings);

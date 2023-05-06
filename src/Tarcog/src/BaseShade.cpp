@@ -96,8 +96,8 @@ namespace Tarcog
           const double t_Thickness,
           const double t_Conductivity,
           const std::shared_ptr<CShadeOpenings> & t_ShadeOpenings,
-          const std::shared_ptr<Tarcog::ISO15099::ISurface> & t_FrontSurface,
-          const std::shared_ptr<Tarcog::ISO15099::ISurface> & t_BackSurface) :
+          const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface,
+          const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface) :
             CIGUSolidLayer(t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface),
             m_ShadeOpenings(t_ShadeOpenings),
             m_MaterialConductivity(t_Conductivity)

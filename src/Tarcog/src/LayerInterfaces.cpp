@@ -130,12 +130,12 @@ namespace Tarcog
             return areInitialized;
         }
 
-        std::shared_ptr<ISurface> CLayerHeatFlow::getSurface(Side const t_Position) const
+        std::shared_ptr<Surface> CLayerHeatFlow::getSurface(Side const t_Position) const
         {
             return m_Surface.at(t_Position);
         }
 
-        void CLayerHeatFlow::setSurface(std::shared_ptr<ISurface> t_Surface, Side const t_Position)
+        void CLayerHeatFlow::setSurface(std::shared_ptr<Surface> t_Surface, Side const t_Position)
         {
             m_Surface[t_Position] = t_Surface;
             if(m_Surface.size() == 2)

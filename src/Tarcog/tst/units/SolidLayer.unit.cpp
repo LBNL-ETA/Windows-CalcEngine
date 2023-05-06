@@ -11,10 +11,10 @@ private:
 protected:
     void SetUp() override
     {
-        auto surface1 = std::make_shared<Tarcog::ISO15099::CSurface>();
+        auto surface1 = std::make_shared<Tarcog::ISO15099::Surface>();
         ASSERT_TRUE(surface1 != nullptr);
         surface1->setTemperature(280);
-        auto surface2 = std::make_shared<Tarcog::ISO15099::CSurface>();
+        auto surface2 = std::make_shared<Tarcog::ISO15099::Surface>();
         ASSERT_TRUE(surface2 != nullptr);
         surface2->setTemperature(300);
 

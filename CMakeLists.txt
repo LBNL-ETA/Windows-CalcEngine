@@ -116,10 +116,6 @@ else()
   	file( GLOB SOURCES_CPP "src/Tarcog/src/*.cpp" )
   	file( GLOB SOURCES_HPP "src/Tarcog/src/*.hpp" )
   	LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
-  	
-  	file( GLOB SOURCES_CPP "src/Chromogenics/src/*.cpp" )
-  	file( GLOB SOURCES_HPP "src/Chromogenics/src/*.hpp" )
-  	LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
   endif()
   
   if( ${BUILD_WCE_OPTICAL} )
@@ -151,8 +147,7 @@ else()
   endif()
 
   if( ${BUILD_WCE_THERMAL} )
-	target_include_directories(${target_name} PUBLIC "src/Tarcog/include")  	
-	target_include_directories(${target_name} PUBLIC "src/Chromogenics/include")
+	target_include_directories(${target_name} PUBLIC "src/Tarcog/include")
   endif()
 
   if( ${BUILD_WCE_OPTICAL} )
@@ -184,11 +179,6 @@ else()
     endif()
     
     if( ${BUILD_WCE_THERMAL} )
-    	include_directories( src/Chromogenics/include )
-  		file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Chromogenics/tst/units/*.cpp" )
-    	LIST( REMOVE_ITEM all_test_src "src/Chromogenics/tst/units/main.cpp")
-    	LIST( APPEND test_src ${all_test_src} )
-    	
   		include_directories( src/Tarcog/include )
     	file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Tarcog/tst/units/*.cpp" )
     	LIST( REMOVE_ITEM all_test_src "src/Tarcog/tst/units/main.cpp")
