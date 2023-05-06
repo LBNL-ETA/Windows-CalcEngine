@@ -20,17 +20,19 @@ namespace Tarcog
 
         class CEnvironment;
 
+        auto const OPENING_TOLERANCE = 1e-6;
+
         class CShadeOpenings
         {
         public:
+            CShadeOpenings() = default;
+
             CShadeOpenings(double t_Atop,
                            double t_Abot,
                            double t_Aleft,
                            double t_Aright,
                            double t_Afront,
                            double t_FrontPorosity);
-
-            CShadeOpenings();
 
             double Aeq_bot();
             double Aeq_top();
@@ -44,29 +46,29 @@ namespace Tarcog
             void checkAndSetDominantWidth(double gapWidth);
 
         private:
-            void initialize();
-            double openingMultiplier();
+            void checkForValidity();
+            double openingMultiplier() const;
 
-            double m_Atop;
-            double m_Abot;
-            double m_Aleft;
-            double m_Aright;
-            double m_Afront;
-            double m_FrontPorosity;
+            double m_Atop{OPENING_TOLERANCE};
+            double m_Abot{OPENING_TOLERANCE};
+            double m_Aleft{0};
+            double m_Aright{0};
+            double m_Afront{0};
+            double m_FrontPorosity{0};
         };
 
         class CIGUShadeLayer : public CIGUSolidLayer
         {
         public:
             CIGUShadeLayer(
-              double t_Thickness,
-              double t_Conductivity,
-              std::shared_ptr<CShadeOpenings> const & t_ShadeOpenings,
-              std::shared_ptr<Tarcog::ISO15099::Surface> const & t_FrontSurface = nullptr,
-              std::shared_ptr<Tarcog::ISO15099::Surface> const & t_BackSurface = nullptr);
+              const double t_Thickness,
+              const double t_Conductivity,
+              CShadeOpenings && t_ShadeOpenings,
+              const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface = nullptr,
+              const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface = nullptr);
 
-            CIGUShadeLayer(std::shared_ptr<CIGUSolidLayer> & t_Layer,
-                           std::shared_ptr<CShadeOpenings> & t_ShadeOpenings);
+            CIGUShadeLayer(const std::shared_ptr<CIGUSolidLayer> & t_Layer,
+                           const CShadeOpenings & t_ShadeOpenings);
 
             CIGUShadeLayer(double t_Thickness, double t_Conductivity);
 
@@ -87,7 +89,7 @@ namespace Tarcog
 
             double equivalentConductivity(double t_Conductivity, double permeabilityFactor);
 
-            std::shared_ptr<CShadeOpenings> m_ShadeOpenings;
+            CShadeOpenings m_ShadeOpenings;
 
             double m_MaterialConductivity;
         };
