@@ -35,7 +35,7 @@
 [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CIndoorEnvironment> nfrcWinterRoomConditions()
 {
     constexpr auto roomTemperature = 294.15;   // Kelvins
-    constexpr auto roomPressure = 101325;      // Pascals
+    constexpr auto roomPressure = 101325.0;    // Pascals
 
     auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature, roomPressure);
     return Indoor;
@@ -44,7 +44,8 @@
 [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CIndoorEnvironment> nfrcSummerRoomConditions()
 {
     constexpr auto roomTemperature = 297.15;   // Kelvins
-    return Tarcog::ISO15099::Environments::indoor(roomTemperature);
+    constexpr auto roomPressure = 101325.0;    // Pascals
+    return Tarcog::ISO15099::Environments::indoor(roomTemperature, roomPressure);
 }
 
 [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CIGUSolidLayer> createSolidLayer102()
@@ -66,8 +67,7 @@
 }
 
 class TestDoubleClear102_102_ForcedVentilation : public testing::Test
-{
-};
+{};
 
 TEST_F(TestDoubleClear102_102_ForcedVentilation, WinterSystem)
 {
@@ -220,12 +220,12 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     /// IGU
     /////////////////////////////////////////////////////////
 
-    constexpr auto nfrcSolarRadiation{783.0};                          // [W/m2]
-    constexpr auto solarAbsorptanceCoefficientLayer1{0.096489921212};   // [-]
+    constexpr auto nfrcSolarRadiation{783.0};                                // [W/m2]
+    constexpr auto solarAbsorptanceCoefficientLayer1{0.09649835037305263};   // [-]
     auto aSolidLayer1{createSolidLayer102()};
     aSolidLayer1->setSolarAbsorptance(solarAbsorptanceCoefficientLayer1, nfrcSolarRadiation);
 
-    constexpr auto solarAbsorptanceCoefficientLayer2{0.072256758809};   // [-]
+    constexpr auto solarAbsorptanceCoefficientLayer2{0.07226476969576598};   // [-]
     auto aSolidLayer2{createSolidLayer102()};
     aSolidLayer2->setSolarAbsorptance(solarAbsorptanceCoefficientLayer2, nfrcSolarRadiation);
     auto forcedGapLayer{createForcedVentilationGap()};
@@ -298,7 +298,8 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     aRun = Tarcog::ISO15099::System::SHGC;
 
     Temperature = aSystem->getTemperatures(aRun);
-    correctTemperature = {305.253340, 305.144629, 302.096850, 302.073888};
+    correctTemperature = {
+      305.253628, 305.144926, 302.097278, 302.074315};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -325,7 +326,8 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     }
 
     radiosity = aSystem->getRadiosities(aRun);
-    correctRadiosity = {492.161590, 488.898798, 474.889057, 467.271297};
+    correctRadiosity = {
+      492.163153, 488.900813, 474.891627, 467.273541};
     ASSERT_EQ(correctRadiosity.size(), radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -334,7 +336,7 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     }
 
     effectiveSystemConductivity = aSystem->getEffectiveSystemConductivity(aRun);
-    EXPECT_NEAR(0.211770, effectiveSystemConductivity, Tolerance);
+    EXPECT_NEAR(0.211799, effectiveSystemConductivity, Tolerance);
 
     thickness = aSystem->thickness(aRun);
     EXPECT_NEAR(0.018796, thickness, Tolerance);
@@ -348,9 +350,10 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     auto Uvalue = aSystem->getUValue();
     EXPECT_NEAR(Uvalue, 0.610775, Tolerance);
 
-    auto SHGC = aSystem->getSHGC(0.703296);
-    EXPECT_NEAR(SHGC, 0.742805, Tolerance);
+    constexpr auto totSol{0.703286};
+    auto SHGC = aSystem->getSHGC(totSol);
+    EXPECT_NEAR(SHGC, 0.742799, Tolerance);
 
-    auto relativeHeatGain = aSystem->relativeHeatGain(0.703296);
-    EXPECT_NEAR(relativeHeatGain, 543.413812, Tolerance);
+    auto relativeHeatGain = aSystem->relativeHeatGain(totSol);
+    EXPECT_NEAR(relativeHeatGain, 543.409700, Tolerance);
 }
