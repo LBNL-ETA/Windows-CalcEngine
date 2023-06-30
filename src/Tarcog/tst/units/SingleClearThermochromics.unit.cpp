@@ -20,7 +20,7 @@ protected:
         auto airTemperature = 300;   // Kelvins
         auto airSpeed = 5.5;         // meters per second
         auto airDirection = Tarcog::ISO15099::AirHorizontalDirection::Windward;
-        auto tSky = 270;   // Kelvins
+        auto tSky = 270;             // Kelvins
         auto solarRadiation = 789;
 
         std::shared_ptr<Tarcog::ISO15099::CEnvironment> Outdoor =
@@ -53,14 +53,13 @@ protected:
         auto emissivity = 0.84;
 
         // Thermochromics property of the surface emissivity
-        std::vector<std::pair<double, double>> emissivities = {
+        std::vector<FenestrationCommon::TableValue> emissivities = {
           {288.15, 0.84}, {293.15, 0.74}, {296.15, 0.64}, {300.15, 0.54}, {303.15, 0.44}};
 
-        std::vector<std::pair<double, double>> transmittances = {
+        std::vector<FenestrationCommon::TableValue> transmittances = {
           {288.15, 0}, {293.15, 0}, {303.15, 0}};
 
-        // Creates thermochromic surface on indoor side with variable emissivity and constant
-        // transmittance
+
         auto frontSurface = std::make_shared<Tarcog::ISO15099::Surface>(emissivity, transmittance);
         auto backSurface =
           std::make_shared<Tarcog::ISO15099::Surface>(emissivities, transmittances);
@@ -83,7 +82,7 @@ protected:
     }
 
 public:
-    Tarcog::ISO15099::CSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
     };

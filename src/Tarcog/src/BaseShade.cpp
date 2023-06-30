@@ -14,8 +14,6 @@ namespace Tarcog
 {
     namespace ISO15099
     {
-        auto const OPENING_TOLERANCE = 1e-6;
-
         ////////////////////////////////////////////////////////////////////////////////////////////////
         /// CShadeOpenings
         ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,16 +31,10 @@ namespace Tarcog
             m_Afront(t_Afront),
             m_FrontPorosity(t_FrontPorosity)
         {
-            initialize();
+            fixForValidity();
         }
 
-        CShadeOpenings::CShadeOpenings() :
-            m_Atop(0), m_Abot(0), m_Aleft(0), m_Aright(0), m_Afront(0)
-        {
-            initialize();
-        }
-
-        void CShadeOpenings::initialize()
+        void CShadeOpenings::fixForValidity()
         {
             if(m_Atop == 0)
             {
@@ -55,17 +47,17 @@ namespace Tarcog
             }
         }
 
-        double CShadeOpenings::openingMultiplier()
+        double CShadeOpenings::openingMultiplier() const
         {
             return (m_Aleft + m_Aright + m_Afront) / (m_Abot + m_Atop);
         }
 
-        double CShadeOpenings::Aeq_bot()
+        double CShadeOpenings::Aeq_bot() const
         {
             return m_Abot + 0.5 * m_Atop * openingMultiplier();
         }
 
-        double CShadeOpenings::Aeq_top()
+        double CShadeOpenings::Aeq_top() const
         {
             return m_Atop + 0.5 * m_Abot * openingMultiplier();
         }
@@ -95,16 +87,16 @@ namespace Tarcog
         CIGUShadeLayer::CIGUShadeLayer(
           const double t_Thickness,
           const double t_Conductivity,
-          const std::shared_ptr<CShadeOpenings> & t_ShadeOpenings,
+          CShadeOpenings && t_ShadeOpenings,
           const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface,
           const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface) :
             CIGUSolidLayer(t_Thickness, t_Conductivity, t_FrontSurface, t_BackSurface),
-            m_ShadeOpenings(t_ShadeOpenings),
+            m_ShadeOpenings(std::move(t_ShadeOpenings)),
             m_MaterialConductivity(t_Conductivity)
         {}
 
-        CIGUShadeLayer::CIGUShadeLayer(std::shared_ptr<CIGUSolidLayer> & t_Layer,
-                                       std::shared_ptr<CShadeOpenings> & t_ShadeOpenings) :
+        CIGUShadeLayer::CIGUShadeLayer(const std::shared_ptr<CIGUSolidLayer> & t_Layer,
+                                       const CShadeOpenings & t_ShadeOpenings) :
             CIGUSolidLayer(*t_Layer),
             m_ShadeOpenings(t_ShadeOpenings),
             m_MaterialConductivity(t_Layer->getConductance())
@@ -112,7 +104,6 @@ namespace Tarcog
 
         CIGUShadeLayer::CIGUShadeLayer(double t_Thickness, double t_Conductivity) :
             CIGUSolidLayer(t_Thickness, t_Conductivity),
-            m_ShadeOpenings(std::make_shared<CShadeOpenings>()),
             m_MaterialConductivity(t_Conductivity)
         {}
 
@@ -123,18 +114,18 @@ namespace Tarcog
 
         bool CIGUShadeLayer::isPermeable() const
         {
-            return m_ShadeOpenings->isOpen();
+            return m_ShadeOpenings.isOpen();
         }
 
         void CIGUShadeLayer::setDominanthAirflowWidth()
         {
             if(m_PreviousLayer != nullptr)
             {
-                m_ShadeOpenings->checkAndSetDominantWidth(m_PreviousLayer->getThickness());
+                m_ShadeOpenings.checkAndSetDominantWidth(m_PreviousLayer->getThickness());
             }
             if(m_NextLayer != nullptr)
             {
-                m_ShadeOpenings->checkAndSetDominantWidth(m_NextLayer->getThickness());
+                m_ShadeOpenings.checkAndSetDominantWidth(m_NextLayer->getThickness());
             }
         }
 
@@ -142,7 +133,7 @@ namespace Tarcog
         {
             setDominanthAirflowWidth();
             m_Conductivity =
-              equivalentConductivity(m_MaterialConductivity, m_ShadeOpenings->frontPorositiy());
+              equivalentConductivity(m_MaterialConductivity, m_ShadeOpenings.frontPorositiy());
             CIGUSolidLayer::calculateConvectionOrConductionFlow();
             assert(m_NextLayer != nullptr);
             assert(m_PreviousLayer != nullptr);
@@ -178,8 +169,8 @@ namespace Tarcog
                                                     std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2)
         {
 
-            t_Gap1->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
-            t_Gap2->setFlowGeometry(m_ShadeOpenings->Aeq_top(), m_ShadeOpenings->Aeq_bot());
+            t_Gap1->setFlowGeometry(m_ShadeOpenings.Aeq_bot(), m_ShadeOpenings.Aeq_top());
+            t_Gap2->setFlowGeometry(m_ShadeOpenings.Aeq_top(), m_ShadeOpenings.Aeq_bot());
 
             t_Gap1->calculateThermallyDrivenAirflowWithAdjacentGap(*t_Gap2);
         }
@@ -187,7 +178,7 @@ namespace Tarcog
         void CIGUShadeLayer::calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
                                                std::shared_ptr<CIGUVentilatedGapLayer> t_Gap)
         {
-            t_Gap->setFlowGeometry(m_ShadeOpenings->Aeq_bot(), m_ShadeOpenings->Aeq_top());
+            t_Gap->setFlowGeometry(m_ShadeOpenings.Aeq_bot(), m_ShadeOpenings.Aeq_top());
             const auto environmentTemperature{t_Environment->getGasTemperature()};
 
             t_Gap->calculateVentilatedAirflow(environmentTemperature);

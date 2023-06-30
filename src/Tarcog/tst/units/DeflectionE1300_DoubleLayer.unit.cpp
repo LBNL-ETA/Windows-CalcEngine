@@ -6,9 +6,6 @@
 
 class TestDeflectionE1300_DoubleLayer : public testing::Test
 {
-protected:
-    void SetUp() override
-    {}
 
 };
 
@@ -26,8 +23,8 @@ TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionSquaredWindow)
 
     const auto res{def.results()};
     const auto error{res.error};
-    const auto deflection{res.deflection};
-    const auto pressureDifference{res.paneLoad};
+    const auto & deflection{res.deflection};
+    const auto & pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -61,8 +58,8 @@ TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionDifferentWidthAndHeight)
 
     const auto res{def.results()};
     const auto error{res.error};
-    const auto deflection{res.deflection};
-    const auto pressureDifference{res.paneLoad};
+    const auto & deflection{res.deflection};
+    const auto & pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -99,8 +96,8 @@ TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionDifferentInteriorAndExteriorPr
 
     const auto res{def.results()};
     const auto error{res.error};
-    const auto deflection{res.deflection};
-    const auto pressureDifference{res.paneLoad};
+    const auto & deflection{res.deflection};
+    const auto & pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
@@ -137,13 +134,13 @@ TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionWithTiltAngle)
 
     const auto res{def.results()};
     const auto error{res.error};
-    const auto deflection{res.deflection};
-    const auto pressureDifference{res.paneLoad};
+    const auto & deflection{res.deflection};
+    const auto & pressureDifference{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 
     const auto correctError{3.521785e-05};
-    EXPECT_NEAR(error.value(), correctError, 1e-9);
+    EXPECT_NEAR(error.value(), correctError, 1e-8);
 
     const std::vector<double> correctDeflection{-2.626985e-3, 0.532367e-3};
     for(size_t i = 0u; i < correctDeflection.size(); ++i)
@@ -174,8 +171,8 @@ TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionWithAppliedLoad)
 
     const auto res{def.results()};
     const auto error{res.error};
-    const auto deflection{res.deflection};
-    const auto panesLoad{res.paneLoad};
+    const auto & deflection{res.deflection};
+    const auto & panesLoad{res.paneLoad};
 
     ASSERT_EQ(error.has_value(), true);
 

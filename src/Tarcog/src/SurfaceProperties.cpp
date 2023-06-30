@@ -23,22 +23,19 @@ namespace Tarcog::ISO15099
     }
 
     ThermochromicSurfaceProperties::ThermochromicSurfaceProperties(
-      const std::vector<std::pair<double, double>> & t_Emissivity,
-      const std::vector<std::pair<double, double>> & t_Transmittance) :
-        m_EmissivityInterpolator(
-          std::make_shared<FenestrationCommon::CSPChipInterpolation2D>(t_Emissivity)),
-        m_TransmittanceInterpolator(
-          std::make_shared<FenestrationCommon::CSPChipInterpolation2D>(t_Transmittance))
+      const std::vector<FenestrationCommon::TableValue> & t_Emissivity,
+      const std::vector<FenestrationCommon::TableValue> & t_Transmittance) :
+        m_EmissivityInterpolator(t_Emissivity), m_TransmittanceInterpolator(t_Transmittance)
     {}
 
     double ThermochromicSurfaceProperties::transmittance(double t_Temperature) const
     {
-        return m_TransmittanceInterpolator->getValue(t_Temperature);
+        return m_TransmittanceInterpolator.value(t_Temperature);
     }
 
     double ThermochromicSurfaceProperties::emissivity(double t_Temperature) const
     {
-        return m_EmissivityInterpolator->getValue(t_Temperature);
+        return m_EmissivityInterpolator.value(t_Temperature);
     }
 
     std::unique_ptr<ISurfaceProperties> ThermochromicSurfaceProperties::clone() const

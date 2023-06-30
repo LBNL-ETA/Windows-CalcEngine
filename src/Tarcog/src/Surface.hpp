@@ -13,8 +13,8 @@ namespace Tarcog::ISO15099
     public:
         Surface();
         Surface(double t_Emissivity, double t_Transmittance);
-        Surface(const std::vector<std::pair<double, double>> & t_Emissivity,
-                 const std::vector<std::pair<double, double>> & t_Transmittance);
+        Surface(const std::vector<FenestrationCommon::TableValue> & t_Emissivity,
+                 const std::vector<FenestrationCommon::TableValue> & t_Transmittance);
 
         Surface(Surface const & t_Surface);
         Surface & operator=(Surface const & t_Surface);

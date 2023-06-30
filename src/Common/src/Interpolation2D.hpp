@@ -4,32 +4,23 @@
 
 namespace FenestrationCommon
 {
-    //////////////////////////////////////////////////////////////////////////////////////
-    // IInterpolation2D
-    //////////////////////////////////////////////////////////////////////////////////////
-
-    // Interface for 2D interpolation curve
-    class IInterpolation2D
+    struct TableValue
     {
-    public:
-        explicit IInterpolation2D(std::vector<std::pair<double, double>> const & t_Points);
-
-        [[nodiscard]] virtual double getValue(double t_Value) const = 0;
-
-    protected:
-        std::vector<std::pair<double, double>> m_Points;
+        TableValue(double t_X, double t_Y) : x(t_X), y(t_Y) {}
+        double x;
+        double y;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // CSPChipInterpolation2D
+    // SPChipInterpolation2D
     //////////////////////////////////////////////////////////////////////////////////////
 
-    class CSPChipInterpolation2D : public IInterpolation2D
+    class SPChipInterpolation2D
     {
     public:
-        explicit CSPChipInterpolation2D(std::vector<std::pair<double, double>> const & t_Points);
+        explicit SPChipInterpolation2D(const std::vector<TableValue> & t_Points);
 
-        [[nodiscard]] double getValue(double t_Value) const;
+        [[nodiscard]] double value(double t_Value) const;
 
     private:
         [[nodiscard]] std::size_t getSubinterval(double t_Value) const;
@@ -50,6 +41,7 @@ namespace FenestrationCommon
         std::vector<double> m_Hs;
         std::vector<double> m_Deltas;
         std::vector<double> m_Derivatives;
+        std::vector<TableValue> m_Points;
     };
 
 }   // namespace FenestrationCommon

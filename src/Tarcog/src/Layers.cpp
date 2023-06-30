@@ -84,28 +84,27 @@ namespace Tarcog
             return std::make_shared<CIGUShadeLayer>(
               thickness,
               conductivity,
-              std::make_shared<CShadeOpenings>(effectiveOpenness.Atop,
-                                               effectiveOpenness.Abot,
-                                               effectiveOpenness.Al,
-                                               effectiveOpenness.Ar,
-                                               effectiveOpenness.Ah,
-                                               effectiveOpenness.FrontPorosity),
+              CShadeOpenings(effectiveOpenness.Atop,
+                             effectiveOpenness.Abot,
+                             effectiveOpenness.Al,
+                             effectiveOpenness.Ar,
+                             effectiveOpenness.Ah,
+                             effectiveOpenness.FrontPorosity),
               std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
               std::make_shared<Surface>(backEmissivity, backIRTransmittance));
         }
 
-        std::shared_ptr<CIGUShadeLayer>
-          Layers::sealedLayer(double thickness,
-                              double conductivity,
-                              double frontEmissivity,
-                              double frontIRTransmittance,
-                              double backEmissivity,
-                              double backIRTransmittance)
+        std::shared_ptr<CIGUShadeLayer> Layers::sealedLayer(double thickness,
+                                                            double conductivity,
+                                                            double frontEmissivity,
+                                                            double frontIRTransmittance,
+                                                            double backEmissivity,
+                                                            double backIRTransmittance)
         {
             return std::make_shared<CIGUShadeLayer>(
               thickness,
               conductivity,
-              std::make_shared<CShadeOpenings>(0, 0, 0, 0, 0, 0),
+              CShadeOpenings(),
               std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
               std::make_shared<Surface>(backEmissivity, backIRTransmittance));
         }
