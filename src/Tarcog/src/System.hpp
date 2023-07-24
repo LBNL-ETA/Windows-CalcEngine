@@ -61,6 +61,7 @@ namespace Tarcog
             void setInteriorAndExteriorSurfacesHeight(double height) override;
 
             void setDeflectionProperties(double t_Tini, double t_Pini);
+            void setDeflectionProperties(const std::vector<double> & measuredGapWidths);
             void clearDeflection();
 
         private:

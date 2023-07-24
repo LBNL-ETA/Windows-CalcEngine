@@ -224,6 +224,16 @@ namespace Tarcog
             m_Solved = false;
         }
 
+        void CSystem::setDeflectionProperties(const std::vector<double> & measuredGapWidths)
+        {
+            for(auto & [key, system] : m_System)
+            {
+                std::ignore = key;
+                system->setDeflectionProperties(measuredGapWidths);
+            }
+            m_Solved = false;
+        }
+
         void CSystem::clearDeflection()
         {
             for(auto & [key, system] : m_System)
