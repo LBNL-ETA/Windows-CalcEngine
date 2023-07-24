@@ -61,15 +61,15 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
 
-        // Deflection properties
-        std::vector<double> measuredGapsWidths = {0.0135, 0.013};
-        aIGU.setDeflectionProperties(measuredGapsWidths);
-
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
+
+        // Deflection properties
+        std::vector<double> measuredGapsWidths = {0.0135, 0.013};
+        m_TarcogSystem->setDeflectionProperties(measuredGapsWidths);
 
         m_TarcogSystem->solve();
     }
@@ -93,7 +93,7 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
 
     const auto Temperature = aSystem->getTemperatures();
     std::vector correctTemperature{
-      257.493976, 257.702652, 271.535517, 271.926785, 284.395405, 284.604082};
+      257.484440, 257.692266, 271.474931, 271.864606, 284.291280, 284.499106};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -103,7 +103,7 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
 
     const auto Radiosity = aSystem->getRadiosities();
     std::vector correctRadiosity{
-      247.813715, 258.078374, 300.200818, 318.403140, 362.495875, 380.380188};
+      247.782703, 258.005696, 299.958197, 318.083908, 361.988777, 379.919433};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
