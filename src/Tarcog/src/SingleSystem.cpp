@@ -352,6 +352,11 @@ namespace Tarcog
             initializeStartValues();
         }
 
+        void CSingleSystem::setDeflectionProperties(const std::vector<double> & measuredGapWidths)
+        {
+            m_IGU.setDeflectionProperties(measuredGapWidths);
+        }
+
         void CSingleSystem::clearDeflection()
         {
             m_IGU.clearDeflection();
