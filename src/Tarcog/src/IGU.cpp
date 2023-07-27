@@ -381,6 +381,20 @@ namespace Tarcog
             }
         }
 
+        // Purpose of this function is not to convert solid layer twice since it is already converted
+        // for the measured deflection
+        CIGUSolidLayerDeflection convertToMeasuredDeflectionLayer(const CIGUSolidLayer & layer)
+        {
+            if(auto deflectionLayer = dynamic_cast<const CIGUDeflectionMeasuread *>(&layer))
+            {
+                return *deflectionLayer;
+            }
+            else
+            {
+                return CIGUSolidLayerDeflection(layer);
+            }
+        }
+
         void CIGU::setDeflectionProperties(std::vector<double> const & t_MeasuredDeflections)
         {
             // In case user sets the deflection properties as pressure and temperauture and then
@@ -402,7 +416,7 @@ namespace Tarcog
                 {
                     SumL += getGapLayers()[j]->getThickness() - t_MeasuredDeflections[j];
                 }
-                auto aDefLayer = CIGUSolidLayerDeflection(*getSolidLayers()[i]);
+                auto aDefLayer = convertToMeasuredDeflectionLayer(*getSolidLayers()[i]);
                 nominator += SumL * aDefLayer.flexuralRigidity();
             }
 
