@@ -39,7 +39,6 @@ protected:
         /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness1 = 0.003048;   // [m]
-        // auto solidLayerThickness2 = 0.005715;
         auto solidLayerConductance = 1.0;
 
         auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
