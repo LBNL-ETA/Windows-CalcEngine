@@ -26,7 +26,9 @@ namespace Tarcog
     namespace ISO15099
     {
         CIGU::CIGU(double const t_Width, double const t_Height, double const t_Tilt) :
-            m_Width(t_Width), m_Height(t_Height), m_Tilt(t_Tilt)
+            m_Width(t_Width),
+            m_Height(t_Height),
+            m_Tilt(t_Tilt)
         {}
 
         CIGU::CIGU(CIGU const & t_IGU)
@@ -316,8 +318,8 @@ namespace Tarcog
                                                                 {Environment::Outdoor, 1}};
 
                 // Need to make sure that solid layer is actually permeable as well
-                const std::map<Environment, size_t> solidLayerIndex = {{Environment::Indoor, size - 1},
-                                                                  {Environment::Outdoor, 0}};
+                const std::map<Environment, size_t> solidLayerIndex = {
+                  {Environment::Indoor, size - 1}, {Environment::Outdoor, 0}};
 
                 if(m_Layers[solidLayerIndex.at(t_Environment)]->isPermeable())
                 {
@@ -381,8 +383,8 @@ namespace Tarcog
             }
         }
 
-        // Purpose of this function is not to convert solid layer twice since it is already converted
-        // for the measured deflection
+        // Purpose of this function is not to convert solid layer twice since it is already
+        // converted for the measured deflection
         CIGUSolidLayerDeflection convertToMeasuredDeflectionLayer(const CIGUSolidLayer & layer)
         {
             if(auto deflectionLayer = dynamic_cast<const CIGUDeflectionMeasuread *>(&layer))
@@ -447,10 +449,13 @@ namespace Tarcog
                 LDefNMax = LDefMax[i];
                 auto LDefNMean = deflectionRatio * LDefNMax;
                 auto aLayer = getSolidLayers()[i];
-                auto aDefLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
-                aDefLayer =
-                  std::make_shared<CIGUDeflectionMeasuread>(aDefLayer, LDefNMean, LDefNMax);
-                replaceLayer(aLayer, aDefLayer);
+                if(dynamic_cast<CIGUDeflectionMeasuread *>(aLayer.get()) == nullptr)
+                {
+                    auto aDefLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
+                    aDefLayer =
+                      std::make_shared<CIGUDeflectionMeasuread>(aDefLayer, LDefNMean, LDefNMax);
+                    replaceLayer(aLayer, aDefLayer);
+                }
             }
         }
 
@@ -626,7 +631,7 @@ namespace Tarcog
 
         void CIGU::precalculateLayerStates()
         {
-            for(auto & layer: m_Layers)
+            for(auto & layer : m_Layers)
             {
                 layer->precalculateState();
             }
