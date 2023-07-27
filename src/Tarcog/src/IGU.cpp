@@ -410,50 +410,18 @@ namespace Tarcog
                   "Number of measured deflection values must be equal to number of gaps.");
             }
 
-            auto nominator = 0.0;
-            for(size_t i = 0; i < t_MeasuredDeflections.size(); ++i)
-            {
-                auto SumL = 0.0;
-                for(auto j = i; j < t_MeasuredDeflections.size(); ++j)
-                {
-                    SumL += getGapLayers()[j]->getThickness() - t_MeasuredDeflections[j];
-                }
-                auto aDefLayer = convertToMeasuredDeflectionLayer(*getSolidLayers()[i]);
-                nominator += SumL * aDefLayer.flexuralRigidity();
-            }
-
-            auto denominator = 0.0;
-            for(auto i = 0u; i < getSolidLayers().size(); ++i)
-            {
-                auto aDefLayer = CIGUSolidLayerDeflection(*getSolidLayers()[i]);
-                denominator += aDefLayer.flexuralRigidity();
-            }
-
-            // First need to calculate new deflections before applying them. Applying them right
-            // away will cause that next gap width calculation will already have included one
-            // surface makeDeflectable
-            auto LDefNMax = nominator / denominator;
             auto deflectionRatio = Ldmean() / Ldmax();
-
-            std::vector<double> LDefMax;
-            LDefMax.push_back(LDefNMax);
-            for(auto i = getNumOfLayers() - 1; i > 0; --i)
-            {
-                LDefNMax =
-                  t_MeasuredDeflections[i - 1] - getGapLayers()[i - 1]->getThickness() + LDefNMax;
-                LDefMax.insert(LDefMax.begin(), LDefNMax);
-            }
+            auto LDefMax = calculateLDefMax(t_MeasuredDeflections);
 
             for(auto i = 0u; i < getNumOfLayers(); ++i)
             {
-                LDefNMax = LDefMax[i];
-                auto LDefNMean = deflectionRatio * LDefNMax;
+                auto LDefNMean = deflectionRatio * LDefMax[i];
                 auto aLayer = getSolidLayers()[i];
                 if(dynamic_cast<CIGUDeflectionMeasuread *>(aLayer.get()) == nullptr)
                 {
                     auto aDefLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
                     aDefLayer =
-                      std::make_shared<CIGUDeflectionMeasuread>(aDefLayer, LDefNMean, LDefNMax);
+                      std::make_shared<CIGUDeflectionMeasuread>(aDefLayer, LDefNMean, LDefMax[i]);
                     replaceLayer(aLayer, aDefLayer);
                 }
             }
@@ -635,6 +603,53 @@ namespace Tarcog
             {
                 layer->precalculateState();
             }
+        }
+
+        double CIGU::calculateDeflectionNumerator(
+          const std::vector<double> & t_MeasuredDeflections) const
+        {
+            auto numerator = 0.0;
+            for(size_t i = 0; i < t_MeasuredDeflections.size(); ++i)
+            {
+                auto SumL = 0.0;
+                for(auto j = i; j < t_MeasuredDeflections.size(); ++j)
+                {
+                    SumL += getGapLayers()[j]->getThickness() - t_MeasuredDeflections[j];
+                }
+                auto aDefLayer = convertToMeasuredDeflectionLayer(*getSolidLayers()[i]);
+                numerator += SumL * aDefLayer.flexuralRigidity();
+            }
+            return numerator;
+        }
+
+        double CIGU::calculateDeflectionDenominator() const
+        {
+            auto denominator = 0.0;
+            for(auto i = 0u; i < getSolidLayers().size(); ++i)
+            {
+                auto aDefLayer = CIGUSolidLayerDeflection(*getSolidLayers()[i]);
+                denominator += aDefLayer.flexuralRigidity();
+            }
+            return denominator;
+        }
+
+        std::vector<double>
+          CIGU::calculateLDefMax(const std::vector<double> & t_MeasuredDeflections) const
+        {
+            auto nominator = calculateDeflectionNumerator(t_MeasuredDeflections);
+            auto denominator = calculateDeflectionDenominator();
+
+            auto LDefNMax = nominator / denominator;
+
+            std::vector<double> LDefMax;
+            LDefMax.push_back(LDefNMax);
+            for(auto i = getNumOfLayers() - 1; i > 0; --i)
+            {
+                LDefNMax =
+                  t_MeasuredDeflections[i - 1] - getGapLayers()[i - 1]->getThickness() + LDefNMax;
+                LDefMax.insert(LDefMax.begin(), LDefNMax);
+            }
+            return LDefMax;
         }
 
     }   // namespace ISO15099

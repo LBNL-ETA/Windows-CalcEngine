@@ -91,6 +91,10 @@ namespace Tarcog
             // Check if layer needs to be decorated with another object
             void checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer);
 
+            double calculateDeflectionNumerator(const std::vector<double> & t_MeasuredDeflections) const;
+            double calculateDeflectionDenominator() const;
+            std::vector<double> calculateLDefMax(const std::vector<double> & t_MeasuredDeflections) const;
+
             std::vector<std::shared_ptr<CBaseLayer>> m_Layers;
 
             double m_Width;    // meters
