@@ -39,21 +39,22 @@ protected:
         /// IGU
         /////////////////////////////////////////////////////////
         auto solidLayerThickness1 = 0.003048;   // [m]
-        auto solidLayerThickness2 = 0.005715;
+        // auto solidLayerThickness2 = 0.005715;
         auto solidLayerConductance = 1.0;
 
         auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
-        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness2, solidLayerConductance);
+        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
         auto layer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
-        auto gapThickness = 0.0127;
-        auto gapPressure = 101325.0;
-        auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
+        const auto gapThickness1 = 0.006;
+        const auto gapThickness2 = 0.025;
+        auto gapPressure = Gases::DefaultPressure;
+        auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness1, gapPressure);
         ASSERT_TRUE(gap1 != nullptr);
 
-        auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
+        auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness2, gapPressure);
         ASSERT_TRUE(gap2 != nullptr);
 
         auto windowWidth = 1.0;
@@ -92,8 +93,12 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature{
-      257.484440, 257.692266, 271.474931, 271.864606, 284.291280, 284.499106};
+    std::vector correctTemperature{257.56333804292137,
+                                   257.778199167472,
+                                   270.38163708188478,
+                                   270.5964982064354,
+                                   283.89299684982035,
+                                   284.10785797437092};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -102,8 +107,12 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity{
-      247.782703, 258.005696, 299.958197, 318.083908, 361.988777, 379.919433};
+    std::vector correctRadiosity{248.03939792628864,
+                                 257.61321393304598,
+                                 295.7534834937947,
+                                 312.85131025670762,
+                                 359.41188170064646,
+                                 378.20666480049886};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -112,7 +121,7 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     }
 
     const auto MaxDeflection = aSystem->getMaxDeflections();
-    std::vector correctMaxDeflection{0.00074180, -5.820e-05, -0.0003582};
+    std::vector correctMaxDeflection{0.001, -0.0065, 0.0055};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
@@ -121,7 +130,8 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     }
 
     const auto MeanDeflection = aSystem->getMeanDeflections();
-    std::vector correctMeanDeflection{0.00031076, -2.437e-05, -0.0001501};
+    std::vector correctMeanDeflection{
+      0.00041892601712781834, -0.0027230191113308219, 0.0023040930942030032};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 
     for(auto i = 0u; i < correctMaxDeflection.size(); ++i)

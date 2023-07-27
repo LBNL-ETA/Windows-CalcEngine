@@ -381,46 +381,13 @@ namespace Tarcog
             }
         }
 
-        //! The old deflection routine that did not work because program failed to converge. Will
-        //! disable it for now since results are incorrect (Simon)
-        // void CIGU::setDeflectionProperties(double const t_Tini, double const t_Pini)
-        //{
-        //    // Simply decorating layers in a list with new behavior
-        //    auto aVector = getSolidLayers();
-        //    // deflection properties of the IGU
-        //    auto Lmean = Ldmean();
-        //    auto Lmax = Ldmax();
-        //
-        //    for(auto & aLayer : getSolidLayers())
-        //    {
-        //        // Deflection could also be decorated (created) outside in which case program
-        //        // already have a layer as deflection layer. If that is not done then layer must
-        //        be
-        //        // decorated with default deflection properties
-        //        std::shared_ptr<CIGUSolidLayerDeflection> aDeflectionLayer = nullptr;
-        //        if(!aLayer->isDeflected())
-        //        {
-        //            aDeflectionLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
-        //        }
-        //        else
-        //        {
-        //            aDeflectionLayer =
-        //            std::dynamic_pointer_cast<CIGUSolidLayerDeflection>(aLayer);
-        //        }
-        //        replaceLayer(
-        //          aLayer,
-        //          std::make_shared<CIGUDeflectionTempAndPressure>(aDeflectionLayer, Lmax, Lmean));
-        //    }
-        //
-        //    for(std::shared_ptr<CIGUGapLayer> & aLayer : getGapLayers())
-        //    {
-        //        replaceLayer(aLayer,
-        //                     std::make_shared<CIGUGapLayerDeflection>(*aLayer, t_Tini, t_Pini));
-        //    }
-        //}
-
         void CIGU::setDeflectionProperties(std::vector<double> const & t_MeasuredDeflections)
         {
+            // In case user sets the deflection properties as pressure and temperauture and then
+            // reset this back to measured deflection should delete calculator for the deflection
+            // from E1300 curves.
+            m_DeflectionFromE1300Curves = nullptr;
+
             if(t_MeasuredDeflections.size() != getNumOfLayers() - 1)
             {
                 throw std::runtime_error(
