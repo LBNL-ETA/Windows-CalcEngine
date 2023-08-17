@@ -36,6 +36,8 @@ namespace Tarcog
             [[nodiscard]] std::vector<double> getPanesLoad(System t_System);
             void setAppliedLoad(const std::vector<double> & load);
 
+            [[nodiscard]] std::vector<double> getGapPressures(System t_System);
+
             [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>>
               getSolidLayers(System t_System) const;
 

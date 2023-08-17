@@ -77,6 +77,13 @@ namespace Tarcog
             Windward
         };
 
+        struct SealedGapProperties
+        {
+            SealedGapProperties(double t_Temperature, double t_Pressure);
+            double temperature;
+            double pressure;
+        };
+
         class CGasLayer : public virtual FenestrationCommon::CState
         {
         public:
@@ -92,7 +99,9 @@ namespace Tarcog
 
             virtual double getPressure();
 
-            bool isVentilationForced() const;
+            void setSealedGapProperties(double t_Temperature, double t_Pressure);
+
+            [[nodiscard]] bool isVentilationForced() const;
 
             virtual double getGasTemperature() = 0;
 
@@ -104,6 +113,10 @@ namespace Tarcog
             AirVerticalDirection m_AirVerticalDirection;
             AirHorizontalDirection m_AirHorizontalDirection;
             bool m_IsVentilationForced;
+
+            // Gap by default will not be considered to be sealed. If not sealed then
+            // pressure will be considered to be m_Pressure;
+            std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
 
             Gases::CGas m_Gas;
         };

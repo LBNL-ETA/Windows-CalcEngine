@@ -147,6 +147,20 @@ namespace Tarcog
             return defaultYoungsModulus;
         }
 
+        double CIGUSolidLayer::getMaxDeflection() const
+        {
+            assert(getSurface(Side::Front)->getMaxDeflection()
+                   == getSurface(Side::Back)->getMaxDeflection());
+            return getSurface(Side::Front)->getMaxDeflection();
+        }
+
+        double CIGUSolidLayer::getMeanDeflection() const
+        {
+            assert(getSurface(Side::Front)->getMeanDeflection()
+                   == getSurface(Side::Back)->getMeanDeflection());
+            return getSurface(Side::Front)->getMeanDeflection();
+        }
+
         double CIGUSolidLayer::density() const
         {
             static const double defaultDensity{Tarcog::MaterialConstants::GLASSDENSITY};

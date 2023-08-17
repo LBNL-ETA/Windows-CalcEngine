@@ -49,6 +49,8 @@ namespace Tarcog
             [[nodiscard]] std::vector<double> getPanesLoad();
             void setAppliedLoad(std::vector<double> load);
 
+            [[nodiscard]] std::vector<double> getGapPressures() const;
+
             [[nodiscard]] std::shared_ptr<CSingleSystem> clone() const;
 
             [[nodiscard]] double getHeatFlow(Environment t_Environment) const;

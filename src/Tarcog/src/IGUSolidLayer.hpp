@@ -42,8 +42,10 @@ namespace Tarcog
             double getRadiationFlow() override;
 
             virtual bool isDeflected() const;
-
             virtual double youngsModulus() const;
+
+            double getMaxDeflection() const override;
+            double getMeanDeflection() const override;
 
             virtual double density() const;
 
@@ -52,7 +54,7 @@ namespace Tarcog
             void applyDeflection(double meanDeflection, double maxDeflection);
 
         protected:
-            virtual void calculateConvectionOrConductionFlow() override;
+            void calculateConvectionOrConductionFlow() override;
 
             double m_Conductivity;
 

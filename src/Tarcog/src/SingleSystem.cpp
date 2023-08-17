@@ -371,6 +371,11 @@ namespace Tarcog
         {
             m_IGU.clearDeflection();
         }
+
+        std::vector<double> CSingleSystem::getGapPressures() const
+        {
+            return m_IGU.getGapPressures();
+        }
     }   // namespace ISO15099
 
 }   // namespace Tarcog

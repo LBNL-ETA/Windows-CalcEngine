@@ -48,10 +48,13 @@ namespace Tarcog
 
             [[nodiscard]] std::vector<double> getTemperatures() const;
             [[nodiscard]] std::vector<double> getRadiosities() const;
+
             [[nodiscard]] std::vector<double> getMaxLayerDeflections() const;
             [[nodiscard]] std::vector<double> getMeanLayerDeflections() const;
             [[nodiscard]] std::vector<double> getMaxGapDeflections() const;
             [[nodiscard]] std::vector<double> getMeanGapDeflections() const;
+
+            [[nodiscard]] std::vector<double> getGapPressures() const;
 
             //! Function to return pressure difference on each of the layers when using deflection
             //! model

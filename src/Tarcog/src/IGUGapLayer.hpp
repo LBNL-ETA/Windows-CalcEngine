@@ -32,6 +32,9 @@ namespace Tarcog
 
             std::shared_ptr<CBaseLayer> clone() const override;
 
+            double getMaxDeflection() const override;
+            double getMeanDeflection() const override;
+
 
         protected:
             void initializeStateVariables() override;

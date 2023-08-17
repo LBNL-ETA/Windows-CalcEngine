@@ -62,6 +62,12 @@ namespace Tarcog
             return m_System.at(t_System)->getPanesLoad();
         }
 
+        std::vector<double> CSystem::getGapPressures(System t_System)
+        {
+            checkSolved();
+            return m_System.at(t_System)->getGapPressures();
+        }
+
         void CSystem::setAppliedLoad(const std::vector<double> & load)
         {
             m_Solved = false;

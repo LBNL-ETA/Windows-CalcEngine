@@ -13,7 +13,6 @@
 #include "IGUGapLayer.hpp"
 #include "Surface.hpp"
 #include "IGUSolidDeflection.hpp"
-#include "IGUGapDeflection.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 #include "BaseShade.hpp"
 #include "Environment.hpp"
@@ -281,6 +280,18 @@ namespace Tarcog
             return aMeanDeflections;
         }
 
+        std::vector<double> CIGU::getGapPressures() const
+        {
+            std::vector<double> aPressures;
+
+            for(auto const & layer : getGapLayers())
+            {
+                aPressures.push_back(layer->getPressure());
+            }
+
+            return aPressures;
+        }
+
         std::vector<double> CIGU::getPanesLoad()
         {
             std::vector<double> paneLoad(getSolidLayers().size());
@@ -385,8 +396,9 @@ namespace Tarcog
             }
 
             std::vector<Deflection::GapData> gapData;
-            for(const auto & gap : getGapLayers())
+            for(auto & gap : getGapLayers())
             {
+                gap->setSealedGapProperties(t_Tini, t_Pini);
                 gapData.emplace_back(gap->getThickness(), t_Tini, t_Pini);
             }
 

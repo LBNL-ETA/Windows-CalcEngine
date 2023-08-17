@@ -7,7 +7,6 @@
 #include "../src/Environments.hpp"
 #include "../src/HeatFlowBalance.hpp"
 #include "../src/IGU.hpp"
-#include "../src/IGUGapDeflection.hpp"
 #include "../src/IGUGapLayer.hpp"
 #include "../src/IGUSolidDeflection.hpp"
 #include "../src/IGUSolidLayer.hpp"
