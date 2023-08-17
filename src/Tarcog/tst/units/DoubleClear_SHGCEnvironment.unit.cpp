@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
 
 // Example of double clear window with inital guess for solution
 class TestDoubleClearSHGCEnvironment : public testing::Test
@@ -44,11 +43,11 @@ protected:
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        // aSolidLayer1->setSolarAbsorptance(0.096489921212);
+        //aSolidLayer1->setSolarAbsorptance(0.096489921212, solarRadiation);
 
         auto aSolidLayer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        // aSolidLayer2->setSolarAbsorptance(0.072256758809);
+        //aSolidLayer2->setSolarAbsorptance(0.072256758809, solarRadiation);
 
         auto gapThickness = 0.0127;
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
@@ -58,11 +57,6 @@ protected:
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, gapLayer, aSolidLayer2});
-
-        // Alternative way of adding layers.
-        // aIGU.addLayer(aSolidLayer1);
-        // aIGU.addLayer(gapLayer);
-        // aIGU.addLayer(aSolidLayer2);
 
         /////////////////////////////////////////////////////////
         /// System

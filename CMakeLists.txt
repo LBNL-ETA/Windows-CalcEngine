@@ -157,8 +157,8 @@ else()
   endif()
   
   if( BUILD_WCE_TESTING )
-  	
-  	if( ${BUILD_WCE_COMMON} )
+  
+	if( ${BUILD_WCE_COMMON} )
   		include_directories( src/Common/include )
   		file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Common/tst/units/*.cpp" )
     	LIST( APPEND test_src ${all_test_src} )
