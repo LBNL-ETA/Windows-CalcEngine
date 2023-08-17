@@ -117,7 +117,7 @@ TEST_F(TestTripleClearDeflectionWithLoad, Test1)
 
     const std::vector correctDeflection{22.784211e-3, 24.460877e-3, 63.338034e-3};
 
-    const auto deflection = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
+    const auto deflection = aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue);
 
     for(auto i = 0u; i < correctDeflection.size(); ++i)
     {

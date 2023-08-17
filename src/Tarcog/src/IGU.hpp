@@ -1,5 +1,4 @@
-#ifndef TARIGU_H
-#define TARIGU_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -49,12 +48,14 @@ namespace Tarcog
 
             [[nodiscard]] std::vector<double> getTemperatures() const;
             [[nodiscard]] std::vector<double> getRadiosities() const;
-            [[nodiscard]] std::vector<double> getMaxDeflections() const;
-            [[nodiscard]] std::vector<double> getMeanDeflections() const;
+            [[nodiscard]] std::vector<double> getMaxLayerDeflections() const;
+            [[nodiscard]] std::vector<double> getMeanLayerDeflections() const;
+            [[nodiscard]] std::vector<double> getMaxGapDeflections() const;
+            [[nodiscard]] std::vector<double> getMeanGapDeflections() const;
 
             //! Function to return pressure difference on each of the layers when using deflection
             //! model
-            [[nodiscard]] std::vector<double> getPanesLoad() const;
+            [[nodiscard]] std::vector<double> getPanesLoad();
 
             [[nodiscard]] double getTilt() const;
             [[nodiscard]] double getWidth() const;
@@ -84,16 +85,18 @@ namespace Tarcog
             void precalculateLayerStates();
 
         private:
-            // Replces layer in existing construction and keeps correct connections in linked list
+            // Replaces layer in existing construction and keeps correct connections in linked list
             void replaceLayer(const std::shared_ptr<CBaseIGULayer> & t_Original,
                               const std::shared_ptr<CBaseIGULayer> & t_Replacement);
 
             // Check if layer needs to be decorated with another object
             void checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer);
 
-            double calculateDeflectionNumerator(const std::vector<double> & t_MeasuredDeflections) const;
-            double calculateDeflectionDenominator() const;
-            std::vector<double> calculateLDefMax(const std::vector<double> & t_MeasuredDeflections) const;
+            [[nodiscard]] double
+              calculateDeflectionNumerator(const std::vector<double> & t_MeasuredDeflections) const;
+            [[nodiscard]] double calculateDeflectionDenominator() const;
+            [[nodiscard]] std::vector<double>
+              calculateLDefMax(const std::vector<double> & t_MeasuredDeflections) const;
 
             std::vector<std::shared_ptr<CBaseLayer>> m_Layers;
 
@@ -107,7 +110,7 @@ namespace Tarcog
 
             //! This is by default set to nullptr since deflection is not turn on by default.
             //! Setting deflection properties will enable deflection calculations automatically.
-            std::unique_ptr<Deflection::DeflectionE1300> m_DeflectionFromE1300Curves;
+            std::optional<Deflection::DeflectionE1300> m_DeflectionFromE1300Curves{std::nullopt};
 
             //! It is possible that user can set applied load before setting initial parameters for
             //! the deflection in which case applied load will not be set automatically. This is
@@ -118,6 +121,3 @@ namespace Tarcog
     }   // namespace ISO15099
 
 }   // namespace Tarcog
-
-
-#endif

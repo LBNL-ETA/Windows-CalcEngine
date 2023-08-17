@@ -55,11 +55,6 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap, layer2});
 
-        // Alternative way of adding layers.
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(gap);
-        // aIGU.addLayer(layer2);
-
         // Deflection properties
         auto Tini = 303.15;
         auto Pini = 101325.0;
@@ -108,7 +103,7 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
-    const auto MaxDeflection = aSystem->getMaxDeflections();
+    const auto MaxDeflection = aSystem->getMaxLayerDeflections();
     std::vector correctMaxDeflection{-2.285903e-3, 0.483756e-3};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
@@ -117,7 +112,7 @@ TEST_F(DoubleClearDeflectionTPDefault, Test1)
         EXPECT_NEAR(correctMaxDeflection[i], MaxDeflection[i], 1e-8);
     }
 
-    const auto MeanDeflection = aSystem->getMeanDeflections();
+    const auto MeanDeflection = aSystem->getMeanLayerDeflections();
     std::vector correctMeanDeflection{-0.957652e-3, 0.202669e-3};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 

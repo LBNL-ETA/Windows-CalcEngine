@@ -42,9 +42,11 @@ namespace Tarcog
             [[nodiscard]] std::vector<double> getTemperatures() const;
             [[nodiscard]] std::vector<double> getRadiosities() const;
 
-            [[nodiscard]] std::vector<double> getMaxDeflections() const;
-            [[nodiscard]] std::vector<double> getMeanDeflections() const;
-            [[nodiscard]] std::vector<double> getPanesLoad() const;
+            [[nodiscard]] std::vector<double> getMaxLayerDeflections() const;
+            [[nodiscard]] std::vector<double> getMeanLayerDeflections() const;
+            [[nodiscard]] std::vector<double> getMaxGapDeflections() const;
+            [[nodiscard]] std::vector<double> getMeanGapDeflections() const;
+            [[nodiscard]] std::vector<double> getPanesLoad();
             void setAppliedLoad(std::vector<double> load);
 
             [[nodiscard]] std::shared_ptr<CSingleSystem> clone() const;

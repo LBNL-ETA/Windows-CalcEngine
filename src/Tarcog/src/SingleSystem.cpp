@@ -112,17 +112,27 @@ namespace Tarcog
             return m_IGU.getRadiosities();
         }
 
-        std::vector<double> CSingleSystem::getMaxDeflections() const
+        std::vector<double> CSingleSystem::getMaxLayerDeflections() const
         {
-            return m_IGU.getMaxDeflections();
+            return m_IGU.getMaxLayerDeflections();
         }
 
-        std::vector<double> CSingleSystem::getMeanDeflections() const
+        std::vector<double> CSingleSystem::getMeanLayerDeflections() const
         {
-            return m_IGU.getMeanDeflections();
+            return m_IGU.getMeanLayerDeflections();
         }
 
-        std::vector<double> CSingleSystem::getPanesLoad() const
+        std::vector<double> CSingleSystem::getMaxGapDeflections() const
+        {
+            return m_IGU.getMaxGapDeflections();
+        }
+
+        std::vector<double> CSingleSystem::getMeanGapDeflections() const
+        {
+            return m_IGU.getMeanGapDeflections();
+        }
+
+        std::vector<double> CSingleSystem::getPanesLoad()
         {
             return m_IGU.getPanesLoad();
         }

@@ -62,11 +62,6 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, m_GapLayer, aSolidLayer2});
 
-        // Alternative way of putting layers in
-        // aIGU.addLayer(aSolidLayer1);
-        // aIGU.addLayer(m_GapLayer);
-        // aIGU.addLayer(aSolidLayer2);
-
         // Deflection properties
         auto Tini = 303.15;
         auto Pini = 101325.0;
@@ -82,7 +77,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
     {
         return m_TarcogSystem;
     };
@@ -124,7 +119,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     ///////////////////////////////////////////////////////////////////////////////
     /// Max deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    const auto MaxDeflection = aSystem->getMaxDeflections();
+    const auto MaxDeflection = aSystem->getMaxLayerDeflections();
     std::vector<double> correctMaxDeflection = {-2.285903e-3, 0.483756e-3};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
@@ -136,7 +131,7 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     ///////////////////////////////////////////////////////////////////////////////
     /// Mean deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    const auto MeanDeflection = aSystem->getMeanDeflections();
+    const auto MeanDeflection = aSystem->getMeanLayerDeflections();
     std::vector correctMeanDeflection = {-0.957624e-3, 0.202658e-3};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
 

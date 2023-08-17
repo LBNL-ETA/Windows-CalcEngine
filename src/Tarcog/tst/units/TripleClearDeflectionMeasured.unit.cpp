@@ -119,7 +119,7 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
-    const auto MaxDeflection = aSystem->getMaxDeflections();
+    const auto MaxDeflection = aSystem->getMaxLayerDeflections();
     std::vector correctMaxDeflection{0.001, -0.0065, 0.0055};
     ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
 
@@ -128,7 +128,7 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
         EXPECT_NEAR(correctMaxDeflection[i], MaxDeflection[i], DeflectionTolerance);
     }
 
-    const auto MeanDeflection = aSystem->getMeanDeflections();
+    const auto MeanDeflection = aSystem->getMeanLayerDeflections();
     std::vector correctMeanDeflection{
       0.00041892601712781834, -0.0027230191113308219, 0.0023040930942030032};
     ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());

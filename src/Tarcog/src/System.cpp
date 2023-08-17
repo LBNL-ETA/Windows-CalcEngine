@@ -32,16 +32,28 @@ namespace Tarcog
             return m_System.at(t_System)->getRadiosities();
         }
 
-        std::vector<double> CSystem::getMaxDeflections(System const t_System)
+        std::vector<double> CSystem::getMaxLayerDeflections(System t_System)
         {
             checkSolved();
-            return m_System.at(t_System)->getMaxDeflections();
+            return m_System.at(t_System)->getMaxLayerDeflections();
         }
 
-        std::vector<double> CSystem::getMeanDeflections(System const t_System)
+        std::vector<double> CSystem::getMeanLayerDeflections(System t_System)
         {
             checkSolved();
-            return m_System.at(t_System)->getMeanDeflections();
+            return m_System.at(t_System)->getMeanLayerDeflections();
+        }
+
+        std::vector<double> CSystem::getMaxGapDeflections(System t_System)
+        {
+            checkSolved();
+            return m_System.at(t_System)->getMaxGapDeflections();
+        }
+
+        std::vector<double> CSystem::getMeanGapDeflections(System t_System)
+        {
+            checkSolved();
+            return m_System.at(t_System)->getMeanGapDeflections();
         }
 
         std::vector<double> CSystem::getPanesLoad(System t_System)
