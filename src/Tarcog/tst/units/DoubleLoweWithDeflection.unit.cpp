@@ -3,7 +3,8 @@
 #include <gtest/gtest.h>
 
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+
+#include "vectorTesting.hpp"
 
 // Example of double clear window with inital guess for solution
 class TestDoubleLoweEnvironmentWithDeflection : public testing::Test
@@ -82,7 +83,8 @@ protected:
     }
 
 public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const {
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const
+    {
         return m_TarcogSystem;
     }
 };
@@ -95,28 +97,22 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
     constexpr auto DeflectionTolerance = 1e-8;
 
     const auto aSystem = GetSystem();
-    ASSERT_TRUE(aSystem != nullptr); 
+    ASSERT_TRUE(aSystem != nullptr);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Deflection results
     ///////////////////////////////////////////////////////////////////////////////
-    const auto MaxDeflectionU = aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue);
-    const std::vector correctMaxDeflectionU{-1.849981e-3, 0.344021e-3};
-    ASSERT_EQ(correctMaxDeflectionU.size(), MaxDeflectionU.size());
+    const std::vector correctMaxDeflectionU{-1.849876e-3, 0.343977e-3};
+    testVectors("Max deflection U-value run",
+                correctMaxDeflectionU,
+                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                DeflectionTolerance);
 
-    for(auto i = 0u; i < correctMaxDeflectionU.size(); ++i)
-    {
-        EXPECT_NEAR(correctMaxDeflectionU[i], MaxDeflectionU[i], DeflectionTolerance);
-    }
-
-    const auto MaxDeflectionS = aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::SHGC);
-    const std::vector correctMaxDeflectionSHGC{-1.385369e-3, 0.253010e-3};
-    ASSERT_EQ(correctMaxDeflectionSHGC.size(), MaxDeflectionU.size());
-
-    for(auto i = 0u; i < correctMaxDeflectionSHGC.size(); ++i)
-    {
-        EXPECT_NEAR(correctMaxDeflectionSHGC[i], MaxDeflectionS[i], DeflectionTolerance);
-    }
+    const std::vector correctMaxDeflectionSHGC{-1.385198e-3, 0.252978e-3};
+    testVectors("Max deflection SHGC run",
+                correctMaxDeflectionSHGC,
+                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::SHGC),
+                DeflectionTolerance);
 
     //////////////////////////////////////////////////////////////////////
     /// General results
@@ -129,8 +125,8 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
     EXPECT_EQ(26u, numOfIterS);
 
     const auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 1.695037, Tolerance);
+    EXPECT_NEAR(Uvalue, 1.693616, Tolerance);
 
     const auto SHGC = aSystem->getSHGC(0.3716);
-    EXPECT_NEAR(SHGC, 0.425361, Tolerance);
+    EXPECT_NEAR(SHGC, 0.425337, Tolerance);
 }

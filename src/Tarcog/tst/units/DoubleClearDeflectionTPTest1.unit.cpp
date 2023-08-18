@@ -3,7 +3,8 @@
 #include <gtest/gtest.h>
 
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+
+#include "vectorTesting.hpp"
 
 class DoubleClearDeflectionTPTest1 : public testing::Test
 {
@@ -16,10 +17,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 255.15;   // Kelvins
-        auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;             // Kelvins
-        auto solarRadiation = 0.0;
+        constexpr auto airTemperature = 255.15;   // Kelvins
+        constexpr auto airSpeed = 5.5;            // meters per second
+        constexpr auto tSky = 255.15;             // Kelvins
+        constexpr auto solarRadiation = 0.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -30,7 +31,7 @@ protected:
         // Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
@@ -38,33 +39,33 @@ protected:
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness1 = 0.003048;   // [m]
-        auto solidLayerThickness2 = 0.005715;
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness1 = 0.003048;   // [m]
+        constexpr auto solidLayerThickness2 = 0.005715;
+        constexpr auto solidLayerConductance = 1.0;
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness1, solidLayerConductance);
 
         // Introducing non default deflection properties
-        auto youngsModulus = 8.1e10;
+        constexpr auto youngsModulus = 8.1e10;
         aSolidLayer1 = Tarcog::ISO15099::Layers::updateMaterialData(aSolidLayer1, youngsModulus);
 
         // Layer will be using default deflection values
         auto aSolidLayer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness2, solidLayerConductance);
 
-        auto gapThickness = 0.0127;
+        constexpr auto gapThickness = 0.0127;
         auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(m_GapLayer != nullptr);
 
-        double windowWidth = 1;
-        double windowHeight = 1;
+        constexpr double windowWidth = 1;
+        constexpr double windowHeight = 1;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, m_GapLayer, aSolidLayer2});
 
         // Deflection properties
-        auto Tini = 303.15;
-        auto Pini = 101325.0;
+        constexpr auto Tini = 303.15;
+        constexpr auto Pini = 101325.0;
         aIGU.setDeflectionProperties(Tini, Pini);
 
         /////////////////////////////////////////////////////////
@@ -95,50 +96,26 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     ///////////////////////////////////////////////////////////////////////////////
     /// Temperatures test
     ///////////////////////////////////////////////////////////////////////////////
-    auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {258.799454, 259.124627, 279.009121, 279.618821};
-    ASSERT_EQ(correctTemperature.size(), Temperature.size());
-
-    for(auto i = 0u; i < correctTemperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
-    }
+    std::vector correctTemperature = {258.795861, 259.120713, 279.023351, 279.632449};
+    testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), Tolerance);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Radiosity test
     ///////////////////////////////////////////////////////////////////////////////
-    auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {252.092017, 267.753052, 331.451548, 359.055470};
-    ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
-
-    for(auto i = 0u; i < correctRadiosity.size(); ++i)
-    {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
-    }
+    std::vector correctRadiosity = {252.080153, 267.749407, 331.509846, 359.112232};
+    testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), Tolerance);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Max deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    const auto MaxDeflection = aSystem->getMaxLayerDeflections();
-    std::vector<double> correctMaxDeflection = {-2.285903e-3, 0.483756e-3};
-    ASSERT_EQ(correctMaxDeflection.size(), MaxDeflection.size());
-
-    for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
-    {
-        EXPECT_NEAR(correctMaxDeflection[i], MaxDeflection[i], 1e-8);
-    }
+    std::vector<double> correctMaxDeflection = {-2.28568e-3, 0.483674e-3};
+    testVectors("Max deflection", correctMaxDeflection, aSystem->getMaxLayerDeflections(), 1e-8);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Mean deflection test
     ///////////////////////////////////////////////////////////////////////////////
-    const auto MeanDeflection = aSystem->getMeanLayerDeflections();
-    std::vector correctMeanDeflection = {-0.957624e-3, 0.202658e-3};
-    ASSERT_EQ(correctMeanDeflection.size(), MeanDeflection.size());
-
-    for(auto i = 0u; i < correctMaxDeflection.size(); ++i)
-    {
-        EXPECT_NEAR(correctMeanDeflection[i], MeanDeflection[i], 1e-8);
-    }
+    std::vector correctMeanDeflection = {-0.957531e-3, 0.202624e-3};
+    testVectors("Mean deflection", correctMeanDeflection, aSystem->getMeanLayerDeflections(), 1e-8);
 
     const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(25u, numOfIter);

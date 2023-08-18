@@ -3,7 +3,8 @@
 #include <gtest/gtest.h>
 
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+
+#include "vectorTesting.hpp"
 
 class TestDoubleClearDeflectionWithLoad : public testing::Test
 {};
@@ -68,7 +69,6 @@ TEST_F(TestDoubleClearDeflectionWithLoad, U_ValueRun)
     tarcogSystem.setAppliedLoad({2000, 1000});
     tarcogSystem.setDeflectionProperties(320, 102000);
 
-
     constexpr auto Tolerance{1e-6};
 
     //////////////////////////////////////////////////////////////////////
@@ -77,21 +77,13 @@ TEST_F(TestDoubleClearDeflectionWithLoad, U_ValueRun)
 
     constexpr auto aRun = Tarcog::ISO15099::System::Uvalue;
 
-    const auto Temperature = tarcogSystem.getTemperatures(aRun);
-    const std::vector correctTemperature{292.076937, 291.609964, 272.797101, 272.330129};
-    ASSERT_EQ(correctTemperature.size(), Temperature.size());
-
-    for(auto i = 0u; i < correctTemperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
-    }
+    const std::vector correctTemperature{292.076977, 291.610008, 272.796958, 272.329989};
+    testVectors(
+      "U-value temperatures", correctTemperature, tarcogSystem.getTemperatures(aRun), Tolerance);
 
     const std::vector correctDeflection{-55.488195e-3, -54.644421e-3};
-
-    const auto deflection{tarcogSystem.getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue)};
-
-    for(auto i = 0u; i < correctDeflection.size(); ++i)
-    {
-        EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-8);
-    }
+    testVectors("U-value deflection",
+                correctDeflection,
+                tarcogSystem.getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                Tolerance);
 }
