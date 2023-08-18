@@ -144,6 +144,9 @@ namespace Tarcog
             }
         }
 
+        SealedGapProperties::SealedGapProperties(double t_Temperature, double t_Pressure) :
+                temperature(t_Temperature), pressure(t_Pressure)
+        {}
 
         //////////////////////////////////////////////////////////////////////////
         ///      CGasLayer
@@ -199,6 +202,11 @@ namespace Tarcog
             return m_Pressure;
         }
 
+        void CGasLayer::setSealedGapProperties(double t_Temperature, double t_Pressure)
+        {
+            m_SealedGapProperties = SealedGapProperties(t_Temperature, t_Pressure);
+        }
+
         bool CGasLayer::isVentilationForced() const
         {
             return m_IsVentilationForced;
@@ -208,7 +216,6 @@ namespace Tarcog
         {
             m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
         }
-
     }   // namespace ISO15099
 
 }   // namespace Tarcog

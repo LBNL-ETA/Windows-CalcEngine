@@ -143,7 +143,26 @@ namespace Tarcog
 
         double CIGUGapLayer::getPressure()
         {
+            if(m_SealedGapProperties.has_value())
+            {
+                auto Vini = m_Width * m_Height * m_Thickness;
+                auto modThickness = getThickness();
+                auto Vgap = m_Width * m_Height * modThickness;
+                return m_SealedGapProperties->pressure * Vini * layerTemperature()
+                       / (m_SealedGapProperties->temperature * Vgap);
+            }
             return m_Pressure;
+        }
+
+        double CIGUGapLayer::getMaxDeflection() const
+        {
+            return m_Thickness + getSurface(Side::Front)->getMaxDeflection()
+                          - getSurface(Side::Back)->getMaxDeflection();
+        }
+
+        double CIGUGapLayer::getMeanDeflection() const
+        {
+            return getThickness();
         }
 
         std::shared_ptr<CBaseLayer> CIGUGapLayer::clone() const

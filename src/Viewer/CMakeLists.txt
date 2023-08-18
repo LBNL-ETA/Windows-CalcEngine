@@ -27,10 +27,15 @@ install(TARGETS ${target_name}
 )
 
 if( BUILD_WCE_TESTING )
+  # common helper files for the testing
+  include_directories( ../helper )
+  file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "../helper/*.hpp" )
+  file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "../helper/*.cpp" )
+  LIST( APPEND test_src ${all_test_src} )
   include_directories( include )
-	file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" tst/units/*.cpp )
-	set( test_src ${all_test_src} )
-	CREATE_TEST_TARGETS_WCE( ${target_name} "${test_src}" "" )
+  file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" tst/units/*.cpp )
+  set( test_src ${all_test_src} )
+  CREATE_TEST_TARGETS_WCE( ${target_name} "${test_src}" "" )
 endif ()
 
 warning_level_update_wce()

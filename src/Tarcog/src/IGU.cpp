@@ -13,7 +13,6 @@
 #include "IGUGapLayer.hpp"
 #include "Surface.hpp"
 #include "IGUSolidDeflection.hpp"
-#include "IGUGapDeflection.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 #include "BaseShade.hpp"
 #include "Environment.hpp"
@@ -48,11 +47,7 @@ namespace Tarcog
                 addLayer(aLayer);
             }
 
-            if(t_IGU.m_DeflectionFromE1300Curves != nullptr)
-            {
-                m_DeflectionFromE1300Curves =
-                  std::make_unique<Deflection::DeflectionE1300>(*t_IGU.m_DeflectionFromE1300Curves);
-            }
+            m_DeflectionFromE1300Curves = t_IGU.m_DeflectionFromE1300Curves;
 
             return *this;
         }
@@ -120,7 +115,7 @@ namespace Tarcog
             }
             m_Tilt = t_Tilt;
 
-            if(m_DeflectionFromE1300Curves != nullptr)
+            if(m_DeflectionFromE1300Curves.has_value())
             {
                 m_DeflectionFromE1300Curves->setIGUTilt(t_Tilt);
             }
@@ -134,7 +129,7 @@ namespace Tarcog
             }
             m_Width = t_Width;
 
-            if(m_DeflectionFromE1300Curves != nullptr)
+            if(m_DeflectionFromE1300Curves.has_value())
             {
                 m_DeflectionFromE1300Curves->setDimensions(m_Width, m_Height);
             }
@@ -148,7 +143,7 @@ namespace Tarcog
             }
             m_Height = t_Height;
 
-            if(m_DeflectionFromE1300Curves != nullptr)
+            if(m_DeflectionFromE1300Curves.has_value())
             {
                 m_DeflectionFromE1300Curves->setDimensions(m_Width, m_Height);
             }
@@ -237,7 +232,7 @@ namespace Tarcog
             return aRadiosities;
         }
 
-        std::vector<double> CIGU::getMaxDeflections() const
+        std::vector<double> CIGU::getMaxLayerDeflections() const
         {
             std::vector<double> aMaxDeflections;
 
@@ -249,7 +244,7 @@ namespace Tarcog
             return aMaxDeflections;
         }
 
-        std::vector<double> CIGU::getMeanDeflections() const
+        std::vector<double> CIGU::getMeanLayerDeflections() const
         {
             std::vector<double> aMeanDeflections;
 
@@ -261,11 +256,47 @@ namespace Tarcog
             return aMeanDeflections;
         }
 
-        std::vector<double> CIGU::getPanesLoad() const
+        std::vector<double> CIGU::getMaxGapDeflections() const
+        {
+            std::vector<double> aMaxDeflections;
+
+            for(auto const & layer : getGapLayers())
+            {
+                aMaxDeflections.push_back(layer->getMaxDeflection());
+            }
+
+            return aMaxDeflections;
+        }
+
+        std::vector<double> CIGU::getMeanGapDeflections() const
+        {
+            std::vector<double> aMeanDeflections;
+
+            for(auto const & layer : getGapLayers())
+            {
+                aMeanDeflections.push_back(layer->getMeanDeflection());
+            }
+
+            return aMeanDeflections;
+        }
+
+        std::vector<double> CIGU::getGapPressures() const
+        {
+            std::vector<double> aPressures;
+
+            for(auto const & layer : getGapLayers())
+            {
+                aPressures.push_back(layer->getPressure());
+            }
+
+            return aPressures;
+        }
+
+        std::vector<double> CIGU::getPanesLoad()
         {
             std::vector<double> paneLoad(getSolidLayers().size());
 
-            if(m_DeflectionFromE1300Curves != nullptr)
+            if(m_DeflectionFromE1300Curves.has_value())
             {
                 paneLoad = m_DeflectionFromE1300Curves->results().paneLoad;
             }
@@ -365,13 +396,13 @@ namespace Tarcog
             }
 
             std::vector<Deflection::GapData> gapData;
-            for(const auto & gap : getGapLayers())
+            for(auto & gap : getGapLayers())
             {
+                gap->setSealedGapProperties(t_Tini, t_Pini);
                 gapData.emplace_back(gap->getThickness(), t_Tini, t_Pini);
             }
 
-            m_DeflectionFromE1300Curves =
-              std::make_unique<Deflection::DeflectionE1300>(m_Width, m_Height, layerData, gapData);
+            m_DeflectionFromE1300Curves = Deflection::DeflectionE1300(m_Width, m_Height, layerData, gapData);
 
             m_DeflectionFromE1300Curves->setIGUTilt(m_Tilt);
             m_DeflectionFromE1300Curves->setInteriorPressure(t_InsidePressure);
@@ -402,7 +433,7 @@ namespace Tarcog
             // In case user sets the deflection properties as pressure and temperauture and then
             // reset this back to measured deflection should delete calculator for the deflection
             // from E1300 curves.
-            m_DeflectionFromE1300Curves = nullptr;
+            m_DeflectionFromE1300Curves = std::nullopt;
 
             if(t_MeasuredDeflections.size() != getNumOfLayers() - 1)
             {
@@ -429,7 +460,7 @@ namespace Tarcog
 
         void CIGU::updateDeflectionState()
         {
-            if(m_DeflectionFromE1300Curves != nullptr)
+            if(m_DeflectionFromE1300Curves.has_value())
             {
                 const auto gapLayers{getGapLayers()};
                 std::vector<double> gapTemperatures(gapLayers.size());
@@ -585,13 +616,13 @@ namespace Tarcog
 
         void CIGU::clearDeflection()
         {
-            m_DeflectionFromE1300Curves = nullptr;
+            m_DeflectionFromE1300Curves = std::nullopt;
         }
 
         void CIGU::setAppliedLoad(std::vector<double> t_AppliedLoad)
         {
             m_DeflectionAppliedLoad = t_AppliedLoad;
-            if(m_DeflectionFromE1300Curves != nullptr)
+            if(m_DeflectionFromE1300Curves.has_value())
             {
                 m_DeflectionFromE1300Curves->setAppliedLoad(std::move(t_AppliedLoad));
             }

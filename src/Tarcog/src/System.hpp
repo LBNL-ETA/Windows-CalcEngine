@@ -29,10 +29,14 @@ namespace Tarcog
             [[nodiscard]] std::vector<double> getTemperatures(System t_System);
             [[nodiscard]] std::vector<double> getRadiosities(System t_System);
 
-            [[nodiscard]] std::vector<double> getMaxDeflections(System t_System);
-            [[nodiscard]] std::vector<double> getMeanDeflections(System t_System);
+            [[nodiscard]] std::vector<double> getMaxLayerDeflections(System t_System);
+            [[nodiscard]] std::vector<double> getMeanLayerDeflections(System t_System);
+            [[nodiscard]] std::vector<double> getMaxGapDeflections(System t_System);
+            [[nodiscard]] std::vector<double> getMeanGapDeflections(System t_System);
             [[nodiscard]] std::vector<double> getPanesLoad(System t_System);
             void setAppliedLoad(const std::vector<double> & load);
+
+            [[nodiscard]] std::vector<double> getGapPressures(System t_System);
 
             [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>>
               getSolidLayers(System t_System) const;

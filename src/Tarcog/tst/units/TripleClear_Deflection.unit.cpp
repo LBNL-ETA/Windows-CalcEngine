@@ -3,7 +3,8 @@
 #include <gtest/gtest.h>
 
 #include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+
+#include "vectorTesting.hpp"
 
 // Example of double clear window with inital guess for solution
 class TestTripleClearDeflection : public testing::Test
@@ -17,10 +18,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        const auto airTemperature{250};      // Kelvins
-        const auto airSpeed{5.5};            // meters per second
-        const auto tSky{255.15};             // Kelvins
-        const auto solarRadiation{783.0};
+        constexpr auto airTemperature{250};   // Kelvins
+        constexpr auto airSpeed{5.5};         // meters per second
+        constexpr auto tSky{255.15};          // Kelvins
+        constexpr auto solarRadiation{783.0};
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -31,7 +32,7 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        const auto roomTemperature{293.0};
+        constexpr auto roomTemperature{293.0};
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
@@ -39,8 +40,8 @@ protected:
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        const auto solidLayerThickness{0.003048}; // [m]
-        const auto solidLayerConductance{1.0};    // [W/m2K]
+        constexpr auto solidLayerThickness{0.003048};   // [m]
+        constexpr auto solidLayerConductance{1.0};      // [W/m2K]
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
@@ -54,32 +55,25 @@ protected:
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer3->setSolarAbsorptance(0.058234799653, solarRadiation);
 
-        const auto gapThickness1{0.006};
+        constexpr auto gapThickness1{0.006};
         const auto gapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness1);
         ASSERT_TRUE(gapLayer1 != nullptr);
 
-        const auto gapThickness2{0.025};
+        constexpr auto gapThickness2{0.025};
         const auto gapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness2);
         ASSERT_TRUE(gapLayer2 != nullptr);
 
-        const auto windowWidth{1.0};
-        const auto windowHeight{1.0};
+        constexpr auto windowWidth{1.0};
+        constexpr auto windowHeight{1.0};
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, gapLayer1, aSolidLayer2, gapLayer2, aSolidLayer3});
-
-        //aIGU.setDeflectionProperties(273, 101325);
-
-        // Alternative way of adding layers.
-        // aIGU.addLayer(aSolidLayer1);
-        // aIGU.addLayer(gapLayer);
-        // aIGU.addLayer(aSolidLayer2);
 
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
         m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
 
-        m_TarcogSystem->setDeflectionProperties(273, 101325);        
+        m_TarcogSystem->setDeflectionProperties(273, 101325);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
     }
 
@@ -107,22 +101,15 @@ TEST_F(TestTripleClearDeflection, Test1)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     auto Temperature = aSystem->getTemperatures(aRun);
-    std::vector correctTemperature = {253.145118, 253.399346, 265.491216, 265.745444, 281.162092, 281.416320};
-    ASSERT_EQ(correctTemperature.size(), Temperature.size());
-
-    for(auto i = 0u; i < correctTemperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
-    }
+    std::vector correctTemperature{
+      253.145128, 253.399356, 265.491273, 265.745502, 281.162057, 281.416285};
+    testVectors("U-value run temperatures", Temperature, correctTemperature, Tolerance);
 
     std::vector correctDeflection{-0.421986e-3, 0.265021e-3, 0.167762e-3};
-
-    auto deflection = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
-
-    for(auto i = 0u; i < correctDeflection.size(); ++i)
-    {
-        EXPECT_NEAR(correctDeflection[i], deflection[i], DeflectionTolerance);
-    }
+    testVectors("U-value run maximum deflection",
+                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                correctDeflection,
+                DeflectionTolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
     EXPECT_EQ(24u, numOfIter);
@@ -134,22 +121,15 @@ TEST_F(TestTripleClearDeflection, Test1)
     aRun = Tarcog::ISO15099::System::SHGC;
 
     Temperature = aSystem->getTemperatures(aRun);
-    correctTemperature = {257.435790, 257.952362, 276.186799, 276.492794, 289.163055, 289.308119};
-    ASSERT_EQ(correctTemperature.size(), Temperature.size());
-
-    for(auto i = 0u; i < correctTemperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
-    }
+    correctTemperature = {257.436181, 257.952788, 276.188735, 276.494764, 289.161417, 289.306516};
+    testVectors(
+      "SHGC run temperatures", aSystem->getTemperatures(aRun), correctTemperature, Tolerance);
 
     correctDeflection = {-0.421986e-3, 0.265021e-3, 0.167762e-3};
-
-    deflection = aSystem->getMaxDeflections(Tarcog::ISO15099::System::Uvalue);
-
-    for(auto i = 0u; i < correctDeflection.size(); ++i)
-    {
-        EXPECT_NEAR(correctDeflection[i], deflection[i], DeflectionTolerance);
-    }
+    testVectors("SHGC run maximum deflection",
+                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                correctDeflection,
+                DeflectionTolerance);
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
     EXPECT_EQ(27u, numOfIter);
@@ -158,11 +138,11 @@ TEST_F(TestTripleClearDeflection, Test1)
     /// General results
     //////////////////////////////////////////////////////////////////////
     const auto Uvalue = aSystem->getUValue();
-    EXPECT_NEAR(Uvalue, 1.9522982371191091, Tolerance);
+    EXPECT_NEAR(Uvalue, 1.952304, Tolerance);
 
     const auto SHGC = aSystem->getSHGC(0.598424255848);
-    EXPECT_NEAR(SHGC, 0.673282, Tolerance);
+    EXPECT_NEAR(SHGC, 0.673268, Tolerance);
 
     const auto relativeHeatGain = aSystem->relativeHeatGain(0.703296);
-    EXPECT_NEAR(relativeHeatGain, 579.484762, Tolerance);
+    EXPECT_NEAR(relativeHeatGain, 579.474468, Tolerance);
 }
