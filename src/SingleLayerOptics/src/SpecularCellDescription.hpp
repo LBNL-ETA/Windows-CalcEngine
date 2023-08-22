@@ -15,6 +15,7 @@ namespace SingleLayerOptics
     class CSpecularCellDescription : public ICellDescription
     {
     public:
+        virtual ~CSpecularCellDescription() = default;
         CSpecularCellDescription();
 
         double T_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);

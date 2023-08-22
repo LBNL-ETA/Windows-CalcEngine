@@ -75,8 +75,6 @@ protected:
         EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
           windowWidth, windowHeight, thickness_31111, openness};
-        EffectiveLayers::EffectiveOpenness effOpenness{
-          effectiveLayerPerforated.getEffectiveOpenness()};
         const auto effectiveThickness{effectiveLayerPerforated.effectiveThickness()};
         auto Ef = 0.640892;
         auto Eb = 0.623812;

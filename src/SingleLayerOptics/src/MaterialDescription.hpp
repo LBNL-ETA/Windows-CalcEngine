@@ -56,6 +56,7 @@ namespace SingleLayerOptics
     class CMaterial
     {
     public:
+        virtual ~CMaterial() = default;
         CMaterial(double minLambda, double maxLambda);
         explicit CMaterial(FenestrationCommon::Limits wavelengthRange);
 
@@ -125,6 +126,7 @@ namespace SingleLayerOptics
     class CMaterialSingleBand : public CMaterial
     {
     public:
+        virtual ~CMaterialSingleBand() = default;
         CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb);
 
         double
@@ -163,6 +165,7 @@ namespace SingleLayerOptics
     class CMaterialSingleBandBSDF : public CMaterial
     {
     public:
+        virtual ~CMaterialSingleBandBSDF() = default;
         CMaterialSingleBandBSDF(std::vector<std::vector<double>> const & t_Tf,
                                 std::vector<std::vector<double>> const & t_Tb,
                                 std::vector<std::vector<double>> const & t_Rf,
@@ -218,6 +221,7 @@ namespace SingleLayerOptics
     class IMaterialDualBand : public CMaterial
     {
     public:
+        virtual ~IMaterialDualBand() = default;
         IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
                           const std::shared_ptr<CMaterial> & solarRange);
 
@@ -321,6 +325,7 @@ namespace SingleLayerOptics
     class CMaterialSample : public CMaterial
     {
     public:
+        virtual ~CMaterialSample() = default;
         CMaterialSample(
           const std::shared_ptr<SpectralAveraging::CSpectralSample> & t_SpectralSample,
           double t_Thickness,
@@ -366,6 +371,7 @@ namespace SingleLayerOptics
     class CMaterialPhotovoltaicSample : public CMaterialSample
     {
     public:
+        virtual ~CMaterialPhotovoltaicSample() = default;
         CMaterialPhotovoltaicSample(
           const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
           double t_Thickness,

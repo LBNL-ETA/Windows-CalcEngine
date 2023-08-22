@@ -1,5 +1,4 @@
-#ifndef TARNONLINEARSOLVER_H
-#define TARNONLINEARSOLVER_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -8,9 +7,7 @@
 #include "HeatFlowBalance.hpp"
 #include "IGU.hpp"
 
-namespace Tarcog
-{
-    namespace ISO15099
+    namespace Tarcog::ISO15099
     {
         class CNonLinearSolver
         {
@@ -21,19 +18,18 @@ namespace Tarcog
             void setTolerance(double t_Tolerance);
 
             // returns number of iterations for current solution.
-            size_t getNumOfIterations() const;
+            [[nodiscard]] size_t getNumOfIterations() const;
 
             void solve();
 
-            double solutionTolerance() const;
-            bool isToleranceAchieved() const;
+            [[nodiscard]] double solutionTolerance() const;
+            [[nodiscard]] bool isToleranceAchieved() const;
 
         private:
-            double calculateTolerance(const std::vector<double> & t_Solution) const;
+            [[nodiscard]] double calculateTolerance(const std::vector<double> & t_Solution) const;
             void estimateNewState(const std::vector<double> & t_Solution);
 
             CIGU & m_IGU;
-            FenestrationCommon::CLinearSolver m_LinearSolver;
             CHeatFlowBalance m_QBalance;
             std::vector<double> m_IGUState;
             double m_Tolerance;
@@ -42,9 +38,4 @@ namespace Tarcog
             double m_SolutionTolerance;
         };
 
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
-
-
-#endif
+    } // namespace Tarcog::ISO15099

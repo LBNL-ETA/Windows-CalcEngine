@@ -8,6 +8,7 @@ namespace SingleLayerOptics
     class CWovenCellDescription : public ICellDescription
     {
     public:
+        virtual ~CWovenCellDescription() = default;
         CWovenCellDescription(const double t_Diameter, const double t_Spacing);
 
         double gamma() const;

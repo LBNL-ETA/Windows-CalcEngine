@@ -10,6 +10,7 @@ namespace Tarcog
         class SimpleIGU : public IIGUSystem
         {
         public:
+            virtual ~SimpleIGU() = default;
             SimpleIGU(double uValue, double shgc, double h);
 
             double getUValue() override;

@@ -10,6 +10,7 @@ namespace SingleLayerOptics
     class CFlatCellDescription : public ICellDescription
     {
     public:
+        virtual ~CFlatCellDescription() = default;
         CFlatCellDescription();
 
         double T_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);

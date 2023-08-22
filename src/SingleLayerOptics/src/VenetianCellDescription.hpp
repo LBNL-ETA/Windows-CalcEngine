@@ -22,6 +22,7 @@ namespace SingleLayerOptics
     class CVenetianCellDescription : public ICellDescription
     {
     public:
+        virtual ~CVenetianCellDescription() = default;
         CVenetianCellDescription(double t_SlatWidth,
                                  double t_SlatSpacing,
                                  double t_SlatTiltAngle,
