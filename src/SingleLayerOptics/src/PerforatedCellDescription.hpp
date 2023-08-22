@@ -21,6 +21,7 @@ namespace SingleLayerOptics
     class CCircularCellDescription : public CPerforatedCellDescription
     {
     public:
+        virtual ~CCircularCellDescription() = default;
         CCircularCellDescription(const double t_x,
                                  const double t_y,
                                  const double t_Thickness,
@@ -45,6 +46,7 @@ namespace SingleLayerOptics
     class CRectangularCellDescription : public CPerforatedCellDescription
     {
     public:
+        virtual ~CRectangularCellDescription() = default;
         CRectangularCellDescription(const double t_x,
                                     const double t_y,
                                     const double t_Thickness,

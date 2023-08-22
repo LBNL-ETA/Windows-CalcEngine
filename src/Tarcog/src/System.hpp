@@ -22,6 +22,7 @@ namespace Tarcog
         class CSystem : public IIGUSystem
         {
         public:
+            virtual ~CSystem() = default;
             CSystem(CIGU & t_IGU,
                     const std::shared_ptr<CEnvironment> & t_Indoor,
                     const std::shared_ptr<CEnvironment> & t_Outdoor);

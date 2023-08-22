@@ -79,7 +79,6 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionDifferentWidthAndHeight)
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
 
@@ -204,7 +203,6 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleClearNoLoad)
     def.setLoadTemperatures(loadTemperatures);
 
     const auto res{def.results()};
-    const auto error{res.error};
     const auto deflection{res.deflection};
     const auto panesLoad{res.paneLoad};
 
