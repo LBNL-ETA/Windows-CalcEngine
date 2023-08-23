@@ -388,6 +388,9 @@ namespace Tarcog
                                            const double t_InsidePressure,
                                            const double t_OutsidePressure)
         {
+            // m_DeflectionFromE1300Curves must be set when surfaces are in non-deflected state.
+            // Since user might have called IGU previously with different deflection properties
+            resetSurfaceDeflections();
             std::vector<Deflection::LayerData> layerData;
             for(const auto & layer : getSolidLayers())
             {
@@ -681,6 +684,17 @@ namespace Tarcog
                 LDefMax.insert(LDefMax.begin(), LDefNMax);
             }
             return LDefMax;
+        }
+
+        void CIGU::resetSurfaceDeflections()
+        {
+            for(auto const & aLayer : m_Layers)
+            {
+                if(std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer) != nullptr)
+                {
+                    std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer)->applyDeflection(0, 0);
+                }
+            }
         }
 
     }   // namespace ISO15099

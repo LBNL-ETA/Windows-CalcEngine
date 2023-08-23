@@ -107,6 +107,9 @@ namespace Tarcog
             double m_Height;   // meters
             double m_Tilt;     // degrees
 
+            // Reset deflection state of all surfaces back to zero.
+            void resetSurfaceDeflections();
+
             // Routines to calculate deflection coefficients
             [[nodiscard]] double Ldmean() const;
             [[nodiscard]] double Ldmax() const;
