@@ -51,8 +51,8 @@ namespace Tarcog
 
             [[nodiscard]] std::vector<double> getMaxLayerDeflections() const;
             [[nodiscard]] std::vector<double> getMeanLayerDeflections() const;
-            [[nodiscard]] std::vector<double> getMaxGapDeflections() const;
-            [[nodiscard]] std::vector<double> getMeanGapDeflections() const;
+            [[nodiscard]] std::vector<double> getMaxGapWidth() const;
+            [[nodiscard]] std::vector<double> getMeanGapWidth() const;
 
             [[nodiscard]] std::vector<double> getGapPressures() const;
 

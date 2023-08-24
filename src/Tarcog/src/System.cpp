@@ -44,16 +44,16 @@ namespace Tarcog
             return m_System.at(t_System)->getMeanLayerDeflections();
         }
 
-        std::vector<double> CSystem::getMaxGapDeflections(System t_System)
+        std::vector<double> CSystem::getMaxGapWidth(System t_System)
         {
             checkSolved();
-            return m_System.at(t_System)->getMaxGapDeflections();
+            return m_System.at(t_System)->getMaxGapWidth();
         }
 
-        std::vector<double> CSystem::getMeanGapDeflections(System t_System)
+        std::vector<double> CSystem::getMeanGapWidth(System t_System)
         {
             checkSolved();
-            return m_System.at(t_System)->getMeanGapDeflections();
+            return m_System.at(t_System)->getMeanGapWidth();
         }
 
         std::vector<double> CSystem::getPanesLoad(System t_System)

@@ -32,8 +32,8 @@ namespace Tarcog
 
             [[nodiscard]] std::vector<double> getMaxLayerDeflections(System t_System);
             [[nodiscard]] std::vector<double> getMeanLayerDeflections(System t_System);
-            [[nodiscard]] std::vector<double> getMaxGapDeflections(System t_System);
-            [[nodiscard]] std::vector<double> getMeanGapDeflections(System t_System);
+            [[nodiscard]] std::vector<double> getMaxGapWidth(System t_System);
+            [[nodiscard]] std::vector<double> getMeanGapWidth(System t_System);
             [[nodiscard]] std::vector<double> getPanesLoad(System t_System);
             void setAppliedLoad(const std::vector<double> & load);
 

@@ -92,11 +92,11 @@ TEST_F(DoubleClearDeflectionTPDefault, U_ValueRun)
     testVectors(
       "Mean layer deflection", correctMeanLayerDeflection, MeanLayerDeflection, Tolerance);
 
-    const auto MaxGapDeflection = tarcogSystem.getMaxGapDeflections();
+    const auto MaxGapDeflection = tarcogSystem.getMaxGapWidth();
     std::vector correctMaxGapDeflection{9.930646e-3};
     testVectors("Maximum gap deflection", correctMaxGapDeflection, MaxGapDeflection, 1e-8);
 
-    const auto MeanGapDeflection = tarcogSystem.getMeanGapDeflections();
+    const auto MeanGapDeflection = tarcogSystem.getMeanGapWidth();
     std::vector correctMeanGapDeflection{11.539846e-3};
     testVectors("Mean gap deflection", correctMeanGapDeflection, MeanGapDeflection, Tolerance);
 
@@ -192,11 +192,11 @@ TEST_F(DoubleClearDeflectionTPDefault, SHGC_ValueRun)
     testVectors(
       "Mean layer deflection", correctMeanLayerDeflection, MeanLayerDeflection, Tolerance);
 
-    const auto MaxGapDeflection = tarcogSystem.getMaxGapDeflections();
+    const auto MaxGapDeflection = tarcogSystem.getMaxGapWidth();
     std::vector correctMaxGapDeflection{0.013286};
     testVectors("Maximum gap deflection", correctMaxGapDeflection, MaxGapDeflection, Tolerance);
 
-    const auto MeanGapDeflection = tarcogSystem.getMeanGapDeflections();
+    const auto MeanGapDeflection = tarcogSystem.getMeanGapWidth();
     std::vector correctMeanGapDeflection{0.012945};
     testVectors("Mean gap deflection", correctMeanGapDeflection, MeanGapDeflection, Tolerance);
 

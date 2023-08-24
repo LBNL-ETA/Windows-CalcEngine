@@ -256,28 +256,28 @@ namespace Tarcog
             return aMeanDeflections;
         }
 
-        std::vector<double> CIGU::getMaxGapDeflections() const
+        std::vector<double> CIGU::getMaxGapWidth() const
         {
-            std::vector<double> aMaxDeflections;
+            std::vector<double> aMaxWidths;
 
             for(auto const & layer : getGapLayers())
             {
-                aMaxDeflections.push_back(layer->getMaxDeflection());
+                aMaxWidths.push_back(layer->getMaxDeflection());
             }
 
-            return aMaxDeflections;
+            return aMaxWidths;
         }
 
-        std::vector<double> CIGU::getMeanGapDeflections() const
+        std::vector<double> CIGU::getMeanGapWidth() const
         {
-            std::vector<double> aMeanDeflections;
+            std::vector<double> aMeanWidths;
 
             for(auto const & layer : getGapLayers())
             {
-                aMeanDeflections.push_back(layer->getMeanDeflection());
+                aMeanWidths.push_back(layer->getMeanDeflection());
             }
 
-            return aMeanDeflections;
+            return aMeanWidths;
         }
 
         std::vector<double> CIGU::getGapPressures() const

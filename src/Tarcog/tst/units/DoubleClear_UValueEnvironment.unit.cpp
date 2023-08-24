@@ -35,7 +35,7 @@ private:
     double windowHeight = 1.0;
     double tilt = 90.0;
 
-    std::unique_ptr<Tarcog::ISO15099::CSystem> tarcogSystem;
+    std::unique_ptr<Tarcog::ISO15099::CSystem> system;
 
     void SetUp() override
     {
@@ -64,13 +64,13 @@ private:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        tarcogSystem = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        system = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
     }
 
 public:
     Tarcog::ISO15099::CSystem & getSystem()
     {
-        return *tarcogSystem;
+        return *system;
     };
 };
 
@@ -200,4 +200,14 @@ TEST_F(TestDoubleClearUValueEnvironment, EnabledDeflection)
 
     const std::vector<double> correctPanesLoad{-55.34465653, 55.34465653};
     testVectors("Panes Load", correctPanesLoad, tarcogSystem.getPanesLoad(aRun), Tolerance);
+
+    const std::vector<double> correctMaxGapWidth{10.3183670e-3};
+    testVectors("Max Gap Width",
+                correctMaxGapWidth, tarcogSystem.getMaxGapWidth(aRun),
+                Tolerance);
+
+    const std::vector<double> correctMeanGapWidth{11.702272e-3};
+    testVectors("Mean Gap Width",
+                correctMeanGapWidth, tarcogSystem.getMeanGapWidth(aRun),
+                Tolerance);
 }
