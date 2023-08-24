@@ -70,7 +70,7 @@ protected:
                                                            transmittance1,
                                                            emissivity1,
                                                            transmittance1);
-        solidLayer1->setSolarAbsorptance(0.2, solarRadiation);
+        solidLayer1->setSolarHeatGain(0.2, solarRadiation);
         ASSERT_TRUE(solidLayer1 != nullptr);
 
         auto gapThickness = 0.01;
@@ -91,7 +91,7 @@ protected:
                                                            transmittance2,
                                                            emissivity2,
                                                            transmittance2);
-        solidLayer2->setSolarAbsorptance(0.2, solarRadiation);
+        solidLayer2->setSolarHeatGain(0.2, solarRadiation);
         ASSERT_TRUE(solidLayer2 != nullptr);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);

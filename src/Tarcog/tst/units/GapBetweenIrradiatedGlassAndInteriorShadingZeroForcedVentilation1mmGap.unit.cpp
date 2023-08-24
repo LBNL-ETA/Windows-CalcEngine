@@ -52,7 +52,7 @@ protected:
         const auto solidLayerConductance = 1.0;
         auto solidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        solidLayer->setSolarAbsorptance(0.04, solarRadiation);
+        solidLayer->setSolarHeatGain(0.04, solarRadiation);
         ASSERT_TRUE(solidLayer != nullptr);
 
         auto gapThickness = 0.001;
@@ -93,7 +93,7 @@ protected:
         auto Tirb = 0.257367;
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
           effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
-        shadeLayer->setSolarAbsorptance(0.35, solarRadiation);
+        shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);

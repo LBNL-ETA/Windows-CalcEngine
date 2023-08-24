@@ -51,8 +51,8 @@ namespace Tarcog
 
             [[nodiscard]] std::vector<double> getMaxLayerDeflections() const;
             [[nodiscard]] std::vector<double> getMeanLayerDeflections() const;
-            [[nodiscard]] std::vector<double> getMaxGapDeflections() const;
-            [[nodiscard]] std::vector<double> getMeanGapDeflections() const;
+            [[nodiscard]] std::vector<double> getMaxGapWidth() const;
+            [[nodiscard]] std::vector<double> getMeanGapWidth() const;
 
             [[nodiscard]] std::vector<double> getGapPressures() const;
 
@@ -106,6 +106,9 @@ namespace Tarcog
             double m_Width;    // meters
             double m_Height;   // meters
             double m_Tilt;     // degrees
+
+            // Reset deflection state of all surfaces back to zero.
+            void resetSurfaceDeflections();
 
             // Routines to calculate deflection coefficients
             [[nodiscard]] double Ldmean() const;

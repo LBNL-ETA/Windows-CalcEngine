@@ -67,7 +67,7 @@ protected:
         auto aSolidLayer = std::make_shared<Tarcog::ISO15099::CIGUSolidLayer>(
           solidLayerThickness, solidLayerConductance, frontSurface, backSurface);
         ASSERT_TRUE(aSolidLayer != nullptr);
-        aSolidLayer->setSolarAbsorptance(0.094189159572, solarRadiation);
+        aSolidLayer->setSolarHeatGain(0.094189159572, solarRadiation);
 
         const auto windowWidth = 1.0;
         const auto windowHeight = 1.0;

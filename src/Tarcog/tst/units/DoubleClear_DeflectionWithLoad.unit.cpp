@@ -48,10 +48,10 @@ TEST_F(TestDoubleClearDeflectionWithLoad, U_ValueRun)
     constexpr auto solidLayerConductance{1.0};      // [W/m2K]
 
     auto aSolidLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-    aSolidLayer1->setSolarAbsorptance(0.099839858711, solarRadiation);
+    aSolidLayer1->setSolarHeatGain(0.099839858711, solarRadiation);
 
     auto aSolidLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-    aSolidLayer2->setSolarAbsorptance(0.076627746224, solarRadiation);
+    aSolidLayer2->setSolarHeatGain(0.076627746224, solarRadiation);
 
     constexpr auto gapThickness1{0.006};
     const auto gapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness1);

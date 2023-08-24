@@ -256,28 +256,28 @@ namespace Tarcog
             return aMeanDeflections;
         }
 
-        std::vector<double> CIGU::getMaxGapDeflections() const
+        std::vector<double> CIGU::getMaxGapWidth() const
         {
-            std::vector<double> aMaxDeflections;
+            std::vector<double> aMaxWidths;
 
             for(auto const & layer : getGapLayers())
             {
-                aMaxDeflections.push_back(layer->getMaxDeflection());
+                aMaxWidths.push_back(layer->getMaxDeflection());
             }
 
-            return aMaxDeflections;
+            return aMaxWidths;
         }
 
-        std::vector<double> CIGU::getMeanGapDeflections() const
+        std::vector<double> CIGU::getMeanGapWidth() const
         {
-            std::vector<double> aMeanDeflections;
+            std::vector<double> aMeanWidths;
 
             for(auto const & layer : getGapLayers())
             {
-                aMeanDeflections.push_back(layer->getMeanDeflection());
+                aMeanWidths.push_back(layer->getMeanDeflection());
             }
 
-            return aMeanDeflections;
+            return aMeanWidths;
         }
 
         std::vector<double> CIGU::getGapPressures() const
@@ -388,6 +388,9 @@ namespace Tarcog
                                            const double t_InsidePressure,
                                            const double t_OutsidePressure)
         {
+            // m_DeflectionFromE1300Curves must be set when surfaces are in non-deflected state.
+            // Since user might have called IGU previously with different deflection properties
+            resetSurfaceDeflections();
             std::vector<Deflection::LayerData> layerData;
             for(const auto & layer : getSolidLayers())
             {
@@ -610,7 +613,7 @@ namespace Tarcog
             }
             for(size_t i = 0; i < solidLayers.size(); ++i)
             {
-                solidLayers[i]->setSolarAbsorptance(absorptances[i], solarRadiation);
+                solidLayers[i]->setSolarHeatGain(absorptances[i], solarRadiation);
             }
         }
 
@@ -681,6 +684,17 @@ namespace Tarcog
                 LDefMax.insert(LDefMax.begin(), LDefNMax);
             }
             return LDefMax;
+        }
+
+        void CIGU::resetSurfaceDeflections()
+        {
+            for(auto const & aLayer : m_Layers)
+            {
+                if(std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer) != nullptr)
+                {
+                    std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer)->applyDeflection(0, 0);
+                }
+            }
         }
 
     }   // namespace ISO15099

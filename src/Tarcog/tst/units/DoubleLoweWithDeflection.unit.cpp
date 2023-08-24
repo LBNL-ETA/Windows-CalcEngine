@@ -52,7 +52,7 @@ protected:
                                                             backEmissivity1,
                                                             tIR1);
 
-        layer1->setSolarAbsorptance(0.194422408938, solarRadiation);
+        layer1->setSolarHeatGain(0.194422408938, solarRadiation);
         ASSERT_TRUE(layer1 != nullptr);
 
         const auto gapThickness{0.0127};
@@ -64,7 +64,7 @@ protected:
         const auto layer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness2, solidLayerConductance2);
 
-        layer2->setSolarAbsorptance(0.054760526866, solarRadiation);
+        layer2->setSolarHeatGain(0.054760526866, solarRadiation);
 
         const auto iguWidth{1.0};
         const auto iguHeight{1.0};

@@ -86,7 +86,7 @@ protected:
         // shadeLayerConductance);
 
         // From unit test
-        aLayer1->setSolarAbsorptance(0.030609361, solarRadiation);
+        aLayer1->setSolarHeatGain(0.030609361, solarRadiation);
 
         auto gapThickness = 0.0127;
         auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
@@ -98,7 +98,7 @@ protected:
         ASSERT_TRUE(aLayer2 != nullptr);
 
         // From unit test
-        aLayer2->setSolarAbsorptance(0.08669346, solarRadiation);
+        aLayer2->setSolarHeatGain(0.08669346, solarRadiation);
 
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);

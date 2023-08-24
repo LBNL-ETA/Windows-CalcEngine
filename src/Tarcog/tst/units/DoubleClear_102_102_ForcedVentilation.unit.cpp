@@ -223,11 +223,11 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     constexpr auto nfrcSolarRadiation{783.0};                                // [W/m2]
     constexpr auto solarAbsorptanceCoefficientLayer1{0.09649835037305263};   // [-]
     auto aSolidLayer1{createSolidLayer102()};
-    aSolidLayer1->setSolarAbsorptance(solarAbsorptanceCoefficientLayer1, nfrcSolarRadiation);
+    aSolidLayer1->setSolarHeatGain(solarAbsorptanceCoefficientLayer1, nfrcSolarRadiation);
 
     constexpr auto solarAbsorptanceCoefficientLayer2{0.07226476969576598};   // [-]
     auto aSolidLayer2{createSolidLayer102()};
-    aSolidLayer2->setSolarAbsorptance(solarAbsorptanceCoefficientLayer2, nfrcSolarRadiation);
+    aSolidLayer2->setSolarHeatGain(solarAbsorptanceCoefficientLayer2, nfrcSolarRadiation);
     auto forcedGapLayer{createForcedVentilationGap()};
 
     constexpr auto windowWidth = 1.0;    // [m]

@@ -122,14 +122,14 @@ namespace Tarcog
             return m_IGU.getMeanLayerDeflections();
         }
 
-        std::vector<double> CSingleSystem::getMaxGapDeflections() const
+        std::vector<double> CSingleSystem::getMaxGapWidth() const
         {
-            return m_IGU.getMaxGapDeflections();
+            return m_IGU.getMaxGapWidth();
         }
 
-        std::vector<double> CSingleSystem::getMeanGapDeflections() const
+        std::vector<double> CSingleSystem::getMeanGapWidth() const
         {
-            return m_IGU.getMeanGapDeflections();
+            return m_IGU.getMeanGapWidth();
         }
 
         std::vector<double> CSingleSystem::getPanesLoad()
