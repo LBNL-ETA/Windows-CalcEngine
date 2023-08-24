@@ -114,7 +114,7 @@ namespace Tarcog
             resetCalculated();
         }
 
-        void CIGUSolidLayer::setSolarAbsorptance(double const t_SolarAbsorptance,
+        void CIGUSolidLayer::setSolarHeatGain(double const t_SolarAbsorptance,
                                                  const double t_SolarRadiation)
         {
             m_SolarAbsorptance = t_SolarAbsorptance;

@@ -39,7 +39,7 @@ protected:
 
         auto aSolidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer->setSolarAbsorptance(0.0914, solarRadiation);
+        aSolidLayer->setSolarHeatGain(0.0914, solarRadiation);
 
         auto windowWidth = 2.0;
         auto windowHeight = 2.0;

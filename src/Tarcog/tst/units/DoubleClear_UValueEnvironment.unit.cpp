@@ -49,11 +49,11 @@ private:
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer1->setSolarAbsorptance(0.096498350373052627, solarRadiation);
+        aSolidLayer1->setSolarHeatGain(0.096498350373052627, solarRadiation);
 
         auto aSolidLayer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer2->setSolarAbsorptance(0.072264769695765979, solarRadiation);
+        aSolidLayer2->setSolarHeatGain(0.072264769695765979, solarRadiation);
 
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gapLayer != nullptr);

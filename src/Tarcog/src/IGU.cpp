@@ -613,7 +613,7 @@ namespace Tarcog
             }
             for(size_t i = 0; i < solidLayers.size(); ++i)
             {
-                solidLayers[i]->setSolarAbsorptance(absorptances[i], solarRadiation);
+                solidLayers[i]->setSolarHeatGain(absorptances[i], solarRadiation);
             }
         }
 

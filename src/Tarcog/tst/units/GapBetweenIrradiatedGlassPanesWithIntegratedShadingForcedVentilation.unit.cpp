@@ -48,11 +48,11 @@ protected:
         auto solidLayerConductance = 1.0;
 
         auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        layer1->setSolarAbsorptance(0.03, solarRadiation);
+        layer1->setSolarHeatGain(0.03, solarRadiation);
         ASSERT_TRUE(layer1 != nullptr);
 
         auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        layer2->setSolarAbsorptance(0.03, solarRadiation);
+        layer2->setSolarHeatGain(0.03, solarRadiation);
         ASSERT_TRUE(layer2 != nullptr);
 
         auto shadeLayerThickness = 0.01;
@@ -68,7 +68,7 @@ protected:
         EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effOpenness);
-        shadeLayer->setSolarAbsorptance(0.35, solarRadiation);
+        shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 
         const auto gapThickness = 0.0127;
