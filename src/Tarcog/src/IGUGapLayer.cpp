@@ -18,15 +18,13 @@ namespace Tarcog
     namespace ISO15099
     {
         CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure) :
-            CBaseIGULayer(t_Thickness),
-            CGasLayer(t_Pressure)
+            CBaseIGULayer(t_Thickness), CGasLayer(t_Pressure)
         {}
 
         CIGUGapLayer::CIGUGapLayer(double const t_Thickness,
                                    double const t_Pressure,
                                    const Gases::CGas & t_Gas) :
-            CBaseIGULayer(t_Thickness),
-            CGasLayer(t_Pressure, t_Gas)
+            CBaseIGULayer(t_Thickness), CGasLayer(t_Pressure, t_Gas)
         {}
 
         void CIGUGapLayer::connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer)
@@ -95,7 +93,7 @@ namespace Tarcog
             {
                 throw std::runtime_error("Gap thickness is set to zero.");
             }
-            return m_Height / getThickness();
+            return getHeight() / getThickness();
         }
 
         double CIGUGapLayer::convectiveH()
@@ -108,7 +106,7 @@ namespace Tarcog
             const auto aProperties = m_Gas.getGasProperties();
             if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
             {
-                m_ConductiveConvectiveCoeff = nusseltNumber.calculate(m_Tilt, Ra, Asp)
+                m_ConductiveConvectiveCoeff = nusseltNumber.calculate(getTilt(), Ra, Asp)
                                               * aProperties.m_ThermalConductivity / getThickness();
             }
             else
@@ -145,9 +143,9 @@ namespace Tarcog
         {
             if(m_SealedGapProperties.has_value())
             {
-                auto Vini = m_Width * m_Height * m_Thickness;
+                auto Vini = getArea() * m_Thickness;
                 auto modThickness = getThickness();
-                auto Vgap = m_Width * m_Height * modThickness;
+                auto Vgap = getArea() * modThickness;
                 return m_SealedGapProperties->pressure * Vini * layerTemperature()
                        / (m_SealedGapProperties->temperature * Vgap);
             }
@@ -157,7 +155,7 @@ namespace Tarcog
         double CIGUGapLayer::getMaxDeflection() const
         {
             return m_Thickness + getSurface(Side::Front)->getMaxDeflection()
-                          - getSurface(Side::Back)->getMaxDeflection();
+                   - getSurface(Side::Back)->getMaxDeflection();
         }
 
         double CIGUGapLayer::getMeanDeflection() const

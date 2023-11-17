@@ -27,7 +27,13 @@ namespace Tarcog
             virtual void setHeight(double t_Height) final;
             virtual void setTilt(double t_Tilt) final;
 
-        protected:
+            [[nodiscard]] double getWidth() const;
+            [[nodiscard]] double getHeight() const;
+            [[nodiscard]] double getTilt() const;
+
+            [[nodiscard]] double getArea() const;
+
+        private:
             double m_Width;
             double m_Height;
             double m_Tilt;
@@ -54,8 +60,6 @@ namespace Tarcog
             virtual void calculateLayerHeatFlow() final;
             virtual void calculateRadiationFlow() = 0;
             virtual void calculateConvectionOrConductionFlow() = 0;
-
-        protected:
             bool areSurfacesInitalized() const;
 
             std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;

@@ -42,6 +42,26 @@ namespace Tarcog
             resetCalculated();
         }
 
+        double CLayerGeometry::getWidth() const
+        {
+            return m_Width;
+        }
+
+        double CLayerGeometry::getHeight() const
+        {
+            return m_Height;
+        }
+
+        double CLayerGeometry::getTilt() const
+        {
+            return m_Tilt;
+        }
+
+        double CLayerGeometry::getArea() const
+        {
+            return m_Width * m_Height;
+        }
+
         //////////////////////////////////////////////////////////////////////////
         ///      CLayerHeatFlow
         //////////////////////////////////////////////////////////////////////////
