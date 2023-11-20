@@ -40,7 +40,7 @@ namespace Tarcog
 
             double inletTemperature();
             double outletTemperature();
-            double layerTemperature() override;
+            double averageSurfaceTemperature() override;
 
             void setFlowGeometry(double t_Ain, double t_Aout);
 

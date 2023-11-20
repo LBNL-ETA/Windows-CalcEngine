@@ -179,10 +179,10 @@ namespace Tarcog
             for(auto & layer : getSolidLayers())
             {
                 // State must be filled in this exact order.
-                aState.push_back(layer->getTemperature(Side::Front));
+                aState.push_back(layer->getSurfaceTemperature(Side::Front));
                 aState.push_back(layer->J(Side::Front));
                 aState.push_back(layer->J(Side::Back));
-                aState.push_back(layer->getTemperature(Side::Back));
+                aState.push_back(layer->getSurfaceTemperature(Side::Back));
             }
 
             return aState;
@@ -210,7 +210,7 @@ namespace Tarcog
             {
                 for(auto aSide : FenestrationCommon::EnumSide())
                 {
-                    aTemperatures.push_back(layer->getTemperature(aSide));
+                    aTemperatures.push_back(layer->getSurfaceTemperature(aSide));
                 }
             }
 

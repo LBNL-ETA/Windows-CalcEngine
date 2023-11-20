@@ -17,7 +17,7 @@ namespace Tarcog::ISO15099
         explicit CBaseIGULayer(double t_Thickness);
 
         double getThickness() const override;
-        double getTemperature(FenestrationCommon::Side t_Position) const;
+        double getSurfaceTemperature(FenestrationCommon::Side t_Position) const;
         double J(FenestrationCommon::Side t_Position) const;
         virtual double getMaxDeflection() const = 0;
         virtual double getMeanDeflection() const = 0;
@@ -27,7 +27,7 @@ namespace Tarcog::ISO15099
         double getEffectiveThermalConductivity();
 
     protected:
-        virtual double layerTemperature();
+        virtual double averageSurfaceTemperature();
 
         double m_Thickness;
     };

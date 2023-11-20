@@ -13,9 +13,9 @@ namespace Tarcog
         CBaseIGULayer::CBaseIGULayer(double const t_Thickness) : m_Thickness(t_Thickness)
         {}
 
-        double CBaseIGULayer::layerTemperature()
+        double CBaseIGULayer::averageSurfaceTemperature()
         {
-            return (getTemperature(Side::Front) + getTemperature(Side::Back)) / 2;
+            return (getSurfaceTemperature(Side::Front) + getSurfaceTemperature(Side::Back)) / 2;
         }
 
         double CBaseIGULayer::getThickness() const
@@ -24,7 +24,7 @@ namespace Tarcog
                    - getSurface(Side::Back)->getMeanDeflection();
         }
 
-        double CBaseIGULayer::getTemperature(Side const t_Position) const
+        double CBaseIGULayer::getSurfaceTemperature(FenestrationCommon::Side t_Position) const
         {
             return getSurface(t_Position)->getTemperature();
         }

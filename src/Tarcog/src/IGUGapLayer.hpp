@@ -29,7 +29,7 @@ namespace Tarcog
 
             void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
-            double layerTemperature() override;
+            double averageSurfaceTemperature() override;
 
             double averageTemperature() const;
 

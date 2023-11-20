@@ -57,7 +57,7 @@ namespace Tarcog
             return m_State.outletTemperature;
         }
 
-        double CIGUVentilatedGapLayer::layerTemperature()
+        double CIGUVentilatedGapLayer::averageSurfaceTemperature()
         {
             assert(m_Height != 0);
             const auto cHeight = characteristicHeight();
@@ -76,7 +76,7 @@ namespace Tarcog
         {
             m_State.inletTemperature = inletTemperature;
             resetCalculated();
-            m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
+            m_Gas.setTemperatureAndPressure(averageSurfaceTemperature(), m_Pressure);
         }
 
         void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
@@ -85,14 +85,14 @@ namespace Tarcog
             m_State.inletTemperature = t_inTemperature;
             m_State.outletTemperature = t_outTemperature;
             resetCalculated();
-            m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
+            m_Gas.setTemperatureAndPressure(averageSurfaceTemperature(), m_Pressure);
         }
 
         void CIGUVentilatedGapLayer::setFlowSpeed(double const t_speed)
         {
             m_AirflowProperties.m_AirSpeed = t_speed;
             resetCalculated();
-            m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
+            m_Gas.setTemperatureAndPressure(averageSurfaceTemperature(), m_Pressure);
         }
 
         double CIGUVentilatedGapLayer::getDrivingPressure()
@@ -101,7 +101,7 @@ namespace Tarcog
             using ConstantsData::WCE_PI;
 
             const auto tiltAngle = WCE_PI / 180 * (m_Tilt - 90);
-            const auto gapTemperature = layerTemperature();
+            const auto gapTemperature = averageSurfaceTemperature();
             const auto aProperties = m_ReferenceGas.getGasProperties();
             const auto temperatureMultiplier = std::abs(gapTemperature - m_State.inletTemperature)
                                                / (gapTemperature * m_State.inletTemperature);
@@ -230,8 +230,8 @@ namespace Tarcog
         {
             VentilatedGapState result;
 
-            double tempGap1 = layerTemperature();
-            double tempGap2 = adjacentGap.layerTemperature();
+            double tempGap1 = averageSurfaceTemperature();
+            double tempGap2 = adjacentGap.averageSurfaceTemperature();
             double Tav1 = averageTemperature();
             double Tav2 = adjacentGap.averageTemperature();
 
@@ -273,17 +273,17 @@ namespace Tarcog
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
             size_t iterationStep = 0;
-            double TgapOut = layerTemperature();
+            double TgapOut = averageSurfaceTemperature();
             while(!converged)
             {
                 resetCalculated();
-                m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
+                m_Gas.setTemperatureAndPressure(averageSurfaceTemperature(), m_Pressure);
 
                 double TgapOutOld = TgapOut;
 
                 calculateOutletTemperatureFromAirFlow();
 
-                const auto tempGap = layerTemperature();
+                const auto tempGap = averageSurfaceTemperature();
 
                 TgapOut = RelaxationParameter * tempGap + (1 - RelaxationParameter) * TgapOutOld;
 
@@ -308,8 +308,8 @@ namespace Tarcog
         void CIGUVentilatedGapLayer::calculateThermallyDrivenAirflowWithAdjacentGap(
           CIGUVentilatedGapLayer & adjacentGap)
         {
-            double Tup = layerTemperature();
-            double Tdown = adjacentGap.layerTemperature();
+            double Tup = averageSurfaceTemperature();
+            double Tdown = adjacentGap.averageSurfaceTemperature();
             VentilatedGapState current{Tdown, Tup};
             double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
             bool converged = false;
@@ -317,8 +317,8 @@ namespace Tarcog
 
             while(!converged)
             {
-                setInletTemperature(adjacentGap.layerTemperature());
-                adjacentGap.setInletTemperature(layerTemperature());
+                setInletTemperature(adjacentGap.averageSurfaceTemperature());
+                adjacentGap.setInletTemperature(averageSurfaceTemperature());
 
                 VentilatedGapState previous{current};
 

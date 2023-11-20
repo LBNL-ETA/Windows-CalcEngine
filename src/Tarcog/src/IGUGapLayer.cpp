@@ -55,7 +55,7 @@ namespace Tarcog
             }
         }
 
-        double CIGUGapLayer::layerTemperature()
+        double CIGUGapLayer::averageSurfaceTemperature()
         {
             return averageTemperature();
         }
@@ -64,7 +64,7 @@ namespace Tarcog
         {
             using ConstantsData::GRAVITYCONSTANT;
 
-            const auto tGapTemperature = layerTemperature();
+            const auto tGapTemperature = averageSurfaceTemperature();
             const auto deltaTemp = std::abs(getSurface(Side::Back)->getTemperature()
                                             - getSurface(Side::Front)->getTemperature());
 
@@ -93,7 +93,7 @@ namespace Tarcog
 
         double CIGUGapLayer::convectiveH()
         {
-            const auto tGapTemperature = layerTemperature();
+            const auto tGapTemperature = averageSurfaceTemperature();
             m_Gas.setTemperatureAndPressure(tGapTemperature, getPressure());
             const auto Ra = calculateRayleighNumber();
             const auto Asp = aspectRatio();
@@ -118,7 +118,7 @@ namespace Tarcog
 
         double CIGUGapLayer::getGasTemperature()
         {
-            return layerTemperature();
+            return averageSurfaceTemperature();
         }
 
         double CIGUGapLayer::averageTemperature() const
@@ -141,7 +141,7 @@ namespace Tarcog
                 auto Vini = getArea() * m_Thickness;
                 auto modThickness = getThickness();
                 auto Vgap = getArea() * modThickness;
-                return m_SealedGapProperties->pressure * Vini * layerTemperature()
+                return m_SealedGapProperties->pressure * Vini * averageSurfaceTemperature()
                        / (m_SealedGapProperties->temperature * Vgap);
             }
             return m_Pressure;

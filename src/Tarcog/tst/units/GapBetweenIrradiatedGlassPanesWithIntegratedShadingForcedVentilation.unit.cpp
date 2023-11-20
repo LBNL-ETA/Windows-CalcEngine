@@ -151,8 +151,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(306.04014011835119, frontTemperature, 1e-4);
     EXPECT_NEAR(307.36367843102033, backTemperature, 1e-4);
 }
@@ -185,8 +185,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(334.87586844983286, frontTemperature, 1e-4);
     EXPECT_NEAR(334.87882619192641, backTemperature, 1e-4);
 }
@@ -200,8 +200,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(318.08669652857139, frontTemperature, 1e-4);
     EXPECT_NEAR(317.23853484124118, backTemperature, 1e-4);
 }

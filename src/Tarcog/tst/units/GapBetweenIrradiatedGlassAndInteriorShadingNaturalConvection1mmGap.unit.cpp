@@ -160,8 +160,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(309.64133477058732, frontTemperature, 1e-4);
     EXPECT_NEAR(310.29309127306482, backTemperature, 1e-4);
 }
@@ -175,9 +175,9 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, G
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
-    auto layerTemperature = aLayer->layerTemperature();
+    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
+    auto layerTemperature = aLayer->averageSurfaceTemperature();
     auto averageTemperature = aLayer->averageTemperature();
     EXPECT_NEAR(310.29309127306482, frontTemperature, 1e-4);
     EXPECT_NEAR(317.08493410641256, backTemperature, 1e-4);
@@ -195,8 +195,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(317.08493410641256, frontTemperature, 1e-4);
     EXPECT_NEAR(317.19026784285921, backTemperature, 1e-4);
 }
