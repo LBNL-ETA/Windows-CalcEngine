@@ -114,13 +114,9 @@ namespace Tarcog::ISO15099
         }
     }
 
-    void CLayerHeatFlow::initializeStateVariables()
-    {}
-
     void CLayerHeatFlow::resetCalculated()
     {
         m_IsCalculated = false;
-        initializeStateVariables();
     }
 
     void CLayerHeatFlow::setCalculated()

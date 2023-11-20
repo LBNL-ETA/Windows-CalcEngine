@@ -30,6 +30,7 @@ namespace Tarcog
             m_HCoefficientModel = t_BCModel;
             m_HInput = t_HCoeff;
             resetCalculated();
+            setGasPropertiesToInitial();
         }
 
         void CEnvironment::setEnvironmentIR(double const t_InfraRed)
@@ -37,12 +38,14 @@ namespace Tarcog
             setIRFromEnvironment(t_InfraRed);
             m_IRCalculatedOutside = true;
             resetCalculated();
+            setGasPropertiesToInitial();
         }
 
         void CEnvironment::setEmissivity(double const t_Emissivity)
         {
             m_Emissivity = t_Emissivity;
             resetCalculated();
+            setGasPropertiesToInitial();
         }
 
         double CEnvironment::getEnvironmentIR()
@@ -76,11 +79,6 @@ namespace Tarcog
         void CEnvironment::connectToIGULayer(std::shared_ptr<CBaseLayer> const &)
         {
             //
-        }
-
-        void CEnvironment::initializeStateVariables()
-        {
-            setGasPropertiesToInitial();
         }
 
         void CEnvironment::calculateRadiationFlow()

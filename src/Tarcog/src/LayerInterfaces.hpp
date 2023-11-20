@@ -37,7 +37,6 @@ namespace Tarcog::ISO15099
         virtual bool isCalculated() final;
 
     protected:
-        virtual void initializeStateVariables();
         virtual void calculateLayerHeatFlow() final;
         virtual void calculateRadiationFlow() = 0;
         virtual void calculateConvectionOrConductionFlow() = 0;

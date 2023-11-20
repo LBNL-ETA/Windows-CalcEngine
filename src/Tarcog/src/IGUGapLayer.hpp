@@ -37,7 +37,6 @@ namespace Tarcog
 
 
         protected:
-            void initializeStateVariables() override;
             void calculateConvectionOrConductionFlow() override;
 
         private:

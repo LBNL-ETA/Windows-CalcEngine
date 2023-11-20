@@ -36,7 +36,6 @@ namespace Tarcog
             virtual std::shared_ptr<CEnvironment> cloneEnvironment() const = 0;
 
         protected:
-            void initializeStateVariables() override;
             void calculateRadiationFlow() override;
             virtual double calculateIRFromVariables() = 0;
             virtual void setIRFromEnvironment(double t_IR) = 0;

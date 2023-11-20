@@ -33,11 +33,6 @@ namespace Tarcog
             m_Surface[Side::Back] = t_Layer->getSurface(Side::Front);
         }
 
-        void CIGUGapLayer::initializeStateVariables()
-        {
-            setGasPropertiesToInitial();
-        }
-
         void CIGUGapLayer::calculateConvectionOrConductionFlow()
         {
             checkNextLayer();
