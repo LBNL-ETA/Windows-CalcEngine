@@ -19,26 +19,6 @@ namespace Tarcog
 
         }
 
-        CEnvironment::CEnvironment(const CEnvironment & t_Environment) :
-            CBaseLayer(t_Environment),
-            CGasLayer(t_Environment)
-        {
-            operator=(t_Environment);
-        }
-
-        CEnvironment & CEnvironment::operator=(CEnvironment const & t_Environment)
-        {
-            CBaseLayer::operator=(t_Environment);
-            CGasLayer::operator=(t_Environment);
-            m_DirectSolarRadiation = t_Environment.m_DirectSolarRadiation;
-            m_Emissivity = t_Environment.m_Emissivity;
-            m_HInput = t_Environment.m_HInput;
-            m_HCoefficientModel = t_Environment.m_HCoefficientModel;
-            m_IRCalculatedOutside = t_Environment.m_IRCalculatedOutside;
-
-            return *this;
-        }
-
         CEnvironment::~CEnvironment()
         {
             tearDownConnections();

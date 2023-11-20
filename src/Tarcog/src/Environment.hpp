@@ -16,8 +16,6 @@ namespace Tarcog
             CEnvironment(double t_Pressure,
                          double t_AirSpeed,
                          AirHorizontalDirection t_AirDirection);
-            CEnvironment(const CEnvironment & t_Environment);
-            CEnvironment & operator=(const CEnvironment & t_Environment);
 
             ~CEnvironment();
 
