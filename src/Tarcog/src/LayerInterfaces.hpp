@@ -51,44 +51,4 @@ namespace Tarcog::ISO15099
         bool m_IsCalculated{false};
     };
 
-    // Properties of the gap at time of production
-    struct SealedGapProperties
-    {
-        SealedGapProperties(double t_Temperature, double t_Pressure);
-        double temperature;
-        double pressure;
-    };
-
-    class CGasLayer
-    {
-    public:
-        CGasLayer();
-        explicit CGasLayer(double t_Pressure);
-        CGasLayer(double t_Pressure,
-                  double t_AirSpeed,
-                  AirVerticalDirection t_AirVerticalDirection);
-        CGasLayer(double t_Pressure,
-                  double t_AirSpeed,
-                  AirHorizontalDirection t_AirHorizontalDirection);
-        CGasLayer(double t_Pressure, const Gases::CGas & t_Gas);
-
-        virtual double getPressure();
-
-        void setSealedGapProperties(double t_Temperature, double t_Pressure);
-
-        [[nodiscard]] bool isVentilationForced() const;
-
-    protected:
-        void setGasTemperature(double temperature);
-
-        double m_Pressure;
-        AirflowProperties m_AirflowProperties;
-
-        // Gap by default will not be considered to be sealed. If not sealed then
-        // pressure will be considered to be m_Pressure;
-        std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
-
-        Gases::CGas m_Gas;
-    };
-
 }   // namespace Tarcog::ISO15099

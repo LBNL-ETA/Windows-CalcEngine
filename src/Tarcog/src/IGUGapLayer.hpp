@@ -4,17 +4,23 @@
 #include "BaseIGULayer.hpp"
 #include "WCEGases.hpp"
 
-namespace Gases
-{
-    class CGas;
-}
-
 namespace Tarcog
 {
     double const ReferenceTemperature = 273.15;
 
     namespace ISO15099
     {
+        // Properties of the gap at time of production
+        struct SealedGapProperties
+        {
+            SealedGapProperties(double t_Temperature, double t_Pressure) :
+                temperature(t_Temperature), pressure(t_Pressure)
+            {}
+
+            double temperature;
+            double pressure;
+        };
+
         class CIGUGapLayer : public CBaseIGULayer
         {
         public:

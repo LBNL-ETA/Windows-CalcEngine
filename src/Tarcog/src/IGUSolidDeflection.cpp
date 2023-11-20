@@ -2,9 +2,9 @@
 #include <cmath>
 
 #include "IGUSolidDeflection.hpp"
-#include "WCECommon.hpp"
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
+#include "IGUGapLayer.hpp"
 
 using FenestrationCommon::Side;
 
@@ -55,8 +55,8 @@ namespace Tarcog
 
         double CIGUSolidLayerDeflection::pressureDifference() const
         {
-            auto P1 = std::dynamic_pointer_cast<CGasLayer>(m_NextLayer)->getPressure();
-            auto P2 = std::dynamic_pointer_cast<CGasLayer>(m_PreviousLayer)->getPressure();
+            auto P1 = std::dynamic_pointer_cast<CIGUGapLayer>(m_NextLayer)->getPressure();
+            auto P2 = std::dynamic_pointer_cast<CIGUGapLayer>(m_PreviousLayer)->getPressure();
             return P1 - P2;
         }
 
