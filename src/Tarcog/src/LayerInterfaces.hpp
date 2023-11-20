@@ -6,6 +6,8 @@
 #include "WCECommon.hpp"
 #include "WCEGases.hpp"
 
+#include "AirFlow.hpp"
+
 namespace FenestrationCommon
 {
     enum class Side;
@@ -49,37 +51,12 @@ namespace Tarcog::ISO15099
         bool m_IsCalculated{false};
     };
 
-    enum class AirVerticalDirection
-    {
-        None,
-        Up,
-        Down
-    };
-
-    enum class AirHorizontalDirection
-    {
-        None,
-        Leeward,
-        Windward
-    };
-
+    // Properties of the gap at time of production
     struct SealedGapProperties
     {
         SealedGapProperties(double t_Temperature, double t_Pressure);
         double temperature;
         double pressure;
-    };
-
-    struct AirflowProperties
-    {
-        AirflowProperties(double mAirSpeed,
-                          AirVerticalDirection mAirVerticalDirection,
-                          AirHorizontalDirection mAirHorizontalDirection,
-                          bool mIsVentilationForced);
-        double m_AirSpeed;
-        AirVerticalDirection m_AirVerticalDirection;
-        AirHorizontalDirection m_AirHorizontalDirection;
-        bool m_IsVentilationForced;
     };
 
     class CGasLayer

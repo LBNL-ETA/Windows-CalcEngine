@@ -1,5 +1,4 @@
-#ifndef TARENVIRONMENT_H
-#define TARENVIRONMENT_H
+#pragma once
 
 #include <memory>
 
@@ -46,7 +45,7 @@ namespace Tarcog
 
             double m_DirectSolarRadiation;
             double m_Emissivity;   // Emissivity from the environment
-            // double m_InfraredRadiation; // Infrared radiation from environment [W/m2]
+
             // Input convection coefficient which type depends on selected BC model [W/m2*K]
             double m_HInput;
             // Model used to calculate BC coefficient
@@ -59,5 +58,3 @@ namespace Tarcog
     }   // namespace ISO15099
 
 }   // namespace Tarcog
-
-#endif
