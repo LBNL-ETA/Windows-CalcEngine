@@ -35,7 +35,7 @@ namespace Tarcog
 
         void CIGUGapLayer::initializeStateVariables()
         {
-            CGasLayer::initializeStateVariables();
+            setGasPropertiesToInitial();
         }
 
         void CIGUGapLayer::calculateConvectionOrConductionFlow()

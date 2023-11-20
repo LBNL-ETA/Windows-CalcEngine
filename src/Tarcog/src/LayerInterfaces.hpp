@@ -32,9 +32,9 @@ namespace Tarcog::ISO15099
         virtual void setSurface(std::shared_ptr<Surface> t_Surface,
                                 FenestrationCommon::Side t_Position) final;
 
-        virtual void resetCalculated() final;   // to reset state to non-calculated
-        virtual void setCalculated() final;   // calculations are up to date and set state to valid state
-        virtual bool isCalculated() final;   // check if state have valid results
+        virtual void resetCalculated() final;
+        virtual void setCalculated() final;
+        virtual bool isCalculated() final;
 
     protected:
         virtual void initializeStateVariables();
@@ -93,7 +93,7 @@ namespace Tarcog::ISO15099
         virtual double getGasTemperature() = 0;
 
     protected:
-        void initializeStateVariables();
+        void setGasPropertiesToInitial();
 
         double m_Pressure;
         double m_AirSpeed;

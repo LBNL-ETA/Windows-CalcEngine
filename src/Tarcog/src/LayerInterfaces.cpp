@@ -201,7 +201,7 @@ namespace Tarcog::ISO15099
         return m_IsVentilationForced;
     }
 
-    void CGasLayer::initializeStateVariables()
+    void CGasLayer::setGasPropertiesToInitial()
     {
         m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
     }

@@ -80,7 +80,7 @@ namespace Tarcog
 
         void CEnvironment::initializeStateVariables()
         {
-            CGasLayer::initializeStateVariables();
+            setGasPropertiesToInitial();
         }
 
         void CEnvironment::calculateRadiationFlow()
