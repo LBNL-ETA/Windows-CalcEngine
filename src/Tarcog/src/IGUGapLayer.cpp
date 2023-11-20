@@ -93,7 +93,7 @@ namespace Tarcog
             {
                 throw std::runtime_error("Gap thickness is set to zero.");
             }
-            return getHeight() / getThickness();
+            return m_Height / getThickness();
         }
 
         double CIGUGapLayer::convectiveH()
@@ -106,7 +106,7 @@ namespace Tarcog
             const auto aProperties = m_Gas.getGasProperties();
             if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
             {
-                m_ConductiveConvectiveCoeff = nusseltNumber.calculate(getTilt(), Ra, Asp)
+                m_ConductiveConvectiveCoeff = nusseltNumber.calculate(m_Tilt, Ra, Asp)
                                               * aProperties.m_ThermalConductivity / getThickness();
             }
             else
@@ -129,7 +129,7 @@ namespace Tarcog
         double CIGUGapLayer::averageTemperature() const
         {
             double aveTemp = Gases::DefaultTemperature;
-            if(areSurfacesInitalized())
+            if(areSurfacesInitialized())
             {
                 aveTemp = (getSurface(Side::Front)->getTemperature()
                            + getSurface(Side::Back)->getTemperature())

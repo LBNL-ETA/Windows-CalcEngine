@@ -118,7 +118,7 @@ namespace Tarcog
                 assert(m_Surface.at(Side::Front) != nullptr);
                 assert(m_Surface.at(Side::Back) != nullptr);
 
-                const auto tiltRadians = getTilt() * WCE_PI / 180;
+                const auto tiltRadians = m_Tilt * WCE_PI / 180;
                 auto tMean =
                   getGasTemperature()
                   + 0.25 * (m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
@@ -128,17 +128,17 @@ namespace Tarcog
                   std::abs(m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
                 m_Gas.setTemperatureAndPressure(tMean, m_Pressure);
                 const auto aProperties = m_Gas.getGasProperties();
-                const auto gr = GRAVITYCONSTANT * pow(getHeight(), 3) * deltaTemp
+                const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
                                 * pow(aProperties.m_Density, 2)
                                 / (tMean * pow(aProperties.m_Viscosity, 2));
-                const auto RaCrit = 2.5e5 * pow(exp(0.72 * getTilt()) / sin(tiltRadians), 0.2);
+                const auto RaCrit = 2.5e5 * pow(exp(0.72 * m_Tilt) / sin(tiltRadians), 0.2);
                 const auto RaL = gr * aProperties.m_PrandlNumber;
                 auto Gnui = 0.0;
-                if((0.0 <= getTilt()) && (getTilt() < 15.0))
+                if((0.0 <= m_Tilt) && (m_Tilt < 15.0))
                 {
                     Gnui = 0.13 * pow(RaL, 1 / 3.0);
                 }
-                else if((15.0 <= getTilt()) && (getTilt() <= 90.0))
+                else if((15.0 <= m_Tilt) && (m_Tilt <= 90.0))
                 {
                     if(RaL <= RaCrit)
                     {
@@ -150,15 +150,15 @@ namespace Tarcog
                                + 0.56 * pow(RaCrit * sin(tiltRadians), 0.25);
                     }
                 }
-                else if((90.0 < getTilt()) && (getTilt() <= 179.0))
+                else if((90.0 < m_Tilt) && (m_Tilt <= 179.0))
                 {
                     Gnui = 0.56 * pow(RaL * sin(tiltRadians), 0.25);
                 }
-                else if((179.0 < getTilt()) && (getTilt() <= 180.0))
+                else if((179.0 < m_Tilt) && (m_Tilt <= 180.0))
                 {
                     Gnui = 0.58 * pow(RaL, 1 / 3.0);
                 }
-                m_ConductiveConvectiveCoeff = Gnui * aProperties.m_ThermalConductivity / getHeight();
+                m_ConductiveConvectiveCoeff = Gnui * aProperties.m_ThermalConductivity / m_Height;
             }
         }
 

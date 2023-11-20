@@ -63,7 +63,7 @@ namespace Tarcog
             const auto cHeight = characteristicHeight();
             const auto avTemp = averageTemperature();
             return avTemp
-                   - (cHeight / getHeight()) * (m_State.outletTemperature - m_State.inletTemperature);
+                   - (cHeight / m_Height) * (m_State.outletTemperature - m_State.inletTemperature);
         }
 
         void CIGUVentilatedGapLayer::setFlowGeometry(double const t_Ain, double const t_Aout)
@@ -97,12 +97,12 @@ namespace Tarcog
             using ConstantsData::GRAVITYCONSTANT;
             using ConstantsData::WCE_PI;
 
-            const auto tiltAngle = WCE_PI / 180 * (getTilt() - 90);
+            const auto tiltAngle = WCE_PI / 180 * (m_Tilt - 90);
             const auto gapTemperature = layerTemperature();
             const auto aProperties = m_ReferenceGas.getGasProperties();
             const auto temperatureMultiplier = std::abs(gapTemperature - m_State.inletTemperature)
                                                / (gapTemperature * m_State.inletTemperature);
-            return aProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * getHeight()
+            return aProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
                    * std::abs(cos(tiltAngle)) * temperatureMultiplier;
         }
 
@@ -115,7 +115,7 @@ namespace Tarcog
         double CIGUVentilatedGapLayer::hagenPressureTerm()
         {
             const auto aGasProperties = m_Gas.getGasProperties();
-            return 12 * aGasProperties.m_Viscosity * getHeight() / pow(getThickness(), 2);
+            return 12 * aGasProperties.m_Viscosity * m_Height / pow(getThickness(), 2);
         }
 
         double CIGUVentilatedGapLayer::pressureLossTerm()
@@ -127,7 +127,7 @@ namespace Tarcog
         double CIGUVentilatedGapLayer::betaCoeff()
         {
             calculateLayerHeatFlow();
-            return exp(-getHeight() / characteristicHeight());
+            return exp(-m_Height / characteristicHeight());
         }
 
         void CIGUVentilatedGapLayer::smoothEnergyGain(double const qv1, double const qv2)
@@ -168,7 +168,7 @@ namespace Tarcog
 
             if(!FenestrationCommon::isEqual(t_A, 0))
             {
-                impedance = pow(getWidth() * getThickness() / (0.6 * t_A) - 1, 2);
+                impedance = pow(m_Width * getThickness() / (0.6 * t_A) - 1, 2);
             }
 
             return impedance;
@@ -179,7 +179,7 @@ namespace Tarcog
             const auto aProperties = m_Gas.getGasProperties();
             m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat * m_AirSpeed
                               * getThickness()
-                              * (m_State.inletTemperature - m_State.outletTemperature) / getHeight();
+                              * (m_State.inletTemperature - m_State.outletTemperature) / m_Height;
         }
 
         double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeed()

@@ -12,121 +12,98 @@ namespace FenestrationCommon
     enum class Side;
 }
 
-namespace Tarcog
+
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    class Surface;
+
+    class CLayerHeatFlow : public virtual FenestrationCommon::CState
     {
-        class Surface;
+    public:
+        CLayerHeatFlow();
 
-        class CLayerGeometry : public virtual FenestrationCommon::CState
-        {
-        public:
-            CLayerGeometry();
+        CLayerHeatFlow(const CLayerHeatFlow & t_Layer);
+        CLayerHeatFlow & operator=(const CLayerHeatFlow & t_Layer);
+        virtual double getHeatFlow() final;
+        virtual double getGainFlow() final;
+        virtual double getConductionConvectionCoefficient() final;
+        virtual double getRadiationFlow();
+        virtual double getConvectionConductionFlow() final;
+        virtual std::shared_ptr<Surface>
+          getSurface(FenestrationCommon::Side t_Position) const final;
+        virtual void setSurface(std::shared_ptr<Surface> t_Surface,
+                                FenestrationCommon::Side t_Position) final;
 
-            virtual void setWidth(double t_Width) final;
-            virtual void setHeight(double t_Height) final;
-            virtual void setTilt(double t_Tilt) final;
+    protected:
+        virtual void calculateLayerHeatFlow() final;
+        virtual void calculateRadiationFlow() = 0;
+        virtual void calculateConvectionOrConductionFlow() = 0;
+        [[nodiscard]] bool areSurfacesInitialized() const;
 
-            [[nodiscard]] double getWidth() const;
-            [[nodiscard]] double getHeight() const;
-            [[nodiscard]] double getTilt() const;
+        std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;
+        double m_ConductiveConvectiveCoeff;
+        double m_LayerGainFlow;
+    };
 
-            [[nodiscard]] double getArea() const;
+    enum class AirVerticalDirection
+    {
+        None,
+        Up,
+        Down
+    };
 
-        private:
-            double m_Width;
-            double m_Height;
-            double m_Tilt;
-        };
+    enum class AirHorizontalDirection
+    {
+        None,
+        Leeward,
+        Windward
+    };
 
-        class CLayerHeatFlow : public virtual FenestrationCommon::CState
-        {
-        public:
-            CLayerHeatFlow();
+    struct SealedGapProperties
+    {
+        SealedGapProperties(double t_Temperature, double t_Pressure);
+        double temperature;
+        double pressure;
+    };
 
-            CLayerHeatFlow(const CLayerHeatFlow & t_Layer);
-            CLayerHeatFlow & operator=(const CLayerHeatFlow & t_Layer);
-            virtual double getHeatFlow() final;
-            virtual double getGainFlow() final;
-            virtual double getConductionConvectionCoefficient() final;
-            virtual double getRadiationFlow();
-            virtual double getConvectionConductionFlow() final;
-            virtual std::shared_ptr<Surface>
-              getSurface(FenestrationCommon::Side t_Position) const final;
-            virtual void setSurface(std::shared_ptr<Surface> t_Surface,
-                                    FenestrationCommon::Side t_Position) final;
+    class CGasLayer : public virtual FenestrationCommon::CState
+    {
+    public:
+        CGasLayer();
+        explicit CGasLayer(double t_Pressure);
+        CGasLayer(double t_Pressure,
+                  double t_AirSpeed,
+                  AirVerticalDirection t_AirVerticalDirection);
+        CGasLayer(double t_Pressure,
+                  double t_AirSpeed,
+                  AirHorizontalDirection t_AirHorizontalDirection);
+        CGasLayer(double t_Pressure, const Gases::CGas & t_Gas);
 
-        protected:
-            virtual void calculateLayerHeatFlow() final;
-            virtual void calculateRadiationFlow() = 0;
-            virtual void calculateConvectionOrConductionFlow() = 0;
-            bool areSurfacesInitalized() const;
+        virtual double getPressure();
 
-            std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;
-            double m_ConductiveConvectiveCoeff;
-            double m_LayerGainFlow;
-        };
+        void setSealedGapProperties(double t_Temperature, double t_Pressure);
 
-        enum class AirVerticalDirection
-        {
-            None,
-            Up,
-            Down
-        };
+        [[nodiscard]] bool isVentilationForced() const;
 
-        enum class AirHorizontalDirection
-        {
-            None,
-            Leeward,
-            Windward
-        };
+        virtual double getGasTemperature() = 0;
 
-        struct SealedGapProperties
-        {
-            SealedGapProperties(double t_Temperature, double t_Pressure);
-            double temperature;
-            double pressure;
-        };
+    protected:
+        void initializeStateVariables() override;
 
-        class CGasLayer : public virtual FenestrationCommon::CState
-        {
-        public:
-            CGasLayer();
-            explicit CGasLayer(double t_Pressure);
-            CGasLayer(double t_Pressure,
-                      double t_AirSpeed,
-                      AirVerticalDirection t_AirVerticalDirection);
-            CGasLayer(double t_Pressure,
-                      double t_AirSpeed,
-                      AirHorizontalDirection t_AirHorizontalDirection);
-            CGasLayer(double t_Pressure, const Gases::CGas & t_Gas);
+        double m_Pressure;
+        double m_AirSpeed;
+        AirVerticalDirection m_AirVerticalDirection;
+        AirHorizontalDirection m_AirHorizontalDirection;
+        bool m_IsVentilationForced;
 
-            virtual double getPressure();
+        // Gap by default will not be considered to be sealed. If not sealed then
+        // pressure will be considered to be m_Pressure;
+        std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
 
-            void setSealedGapProperties(double t_Temperature, double t_Pressure);
+        Gases::CGas m_Gas;
+    };
 
-            [[nodiscard]] bool isVentilationForced() const;
+}   // namespace Tarcog::ISO15099
 
-            virtual double getGasTemperature() = 0;
-
-        protected:
-            void initializeStateVariables() override;
-
-            double m_Pressure;
-            double m_AirSpeed;
-            AirVerticalDirection m_AirVerticalDirection;
-            AirHorizontalDirection m_AirHorizontalDirection;
-            bool m_IsVentilationForced;
-
-            // Gap by default will not be considered to be sealed. If not sealed then
-            // pressure will be considered to be m_Pressure;
-            std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
-
-            Gases::CGas m_Gas;
-        };
-
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
 
 #endif

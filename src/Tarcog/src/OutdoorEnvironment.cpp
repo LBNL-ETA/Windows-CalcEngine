@@ -61,7 +61,7 @@ namespace Tarcog
             {
                 using ConstantsData::WCE_PI;
 
-                auto fSky = (1 + cos(getTilt() * WCE_PI / 180)) / 2;
+                auto fSky = (1 + cos(m_Tilt * WCE_PI / 180)) / 2;
                 auto fGround = 1 - fSky;
                 auto eZero = fGround + (1 - m_FractionOfClearSky) * fSky
                              + fSky * m_FractionOfClearSky * aEmissivity;

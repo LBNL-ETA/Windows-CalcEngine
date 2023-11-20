@@ -7,7 +7,6 @@ namespace Tarcog
     {
         CBaseLayer::CBaseLayer() :
             CState(),
-            CLayerGeometry(),
             CLayerHeatFlow(),
             m_PreviousLayer(nullptr),
             m_NextLayer(nullptr)
@@ -46,6 +45,26 @@ namespace Tarcog
         bool CBaseLayer::isPermeable() const
         {
             return false;
+        }
+
+        double CBaseLayer::getArea() const
+        {
+            return m_Width * m_Height;
+        }
+
+        void CBaseLayer::setWidth(const double width)
+        {
+            m_Width = width;
+        }
+
+        void CBaseLayer::setHeight(const double height)
+        {
+            m_Height = height;
+        }
+
+        void CBaseLayer::setTilt(double tilt)
+        {
+            m_Tilt = tilt;
         }
     }   // namespace ISO15099
 
