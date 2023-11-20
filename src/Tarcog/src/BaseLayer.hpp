@@ -1,9 +1,9 @@
-#ifndef BASELAYER_H
-#define BASELAYER_H
-
-#include "LayerInterfaces.hpp"
+#pragma once
 
 #include <memory>
+
+#include "LayerInterfaces.hpp"
+#include "TarcogConstants.hpp"
 
 namespace FenestrationCommon
 {
@@ -56,12 +56,10 @@ namespace Tarcog
 
             [[nodiscard]] double getArea() const;
 
-            double m_Width;
-            double m_Height;
-            double m_Tilt;
+            double m_Width{TarcogConstants::DEFAULT_WINDOW_WIDTH};
+            double m_Height{TarcogConstants::DEFAULT_WINDOW_HEIGHT};
+            double m_Tilt{TarcogConstants::DEFAULT_TILT};
         };
     }   // namespace ISO15099
 
 }   // namespace Tarcog
-
-#endif
