@@ -44,7 +44,7 @@ namespace Tarcog
             double aspectRatio() const;
             double convectiveH();
 
-            double getGasTemperature() override;
+            double getGasTemperature();
 
             void checkNextLayer() const;
         };

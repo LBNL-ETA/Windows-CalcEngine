@@ -182,9 +182,9 @@ namespace Tarcog::ISO15099
         return m_AirflowProperties.m_IsVentilationForced;
     }
 
-    void CGasLayer::setGasPropertiesToInitial()
+    void CGasLayer::setGasTemperature(double temperature)
     {
-        m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
+        m_Gas.setTemperatureAndPressure(temperature, m_Pressure);
     }
 
     AirflowProperties::AirflowProperties(double mAirSpeed,

@@ -30,7 +30,7 @@ namespace Tarcog
             m_HCoefficientModel = t_BCModel;
             m_HInput = t_HCoeff;
             resetCalculated();
-            setGasPropertiesToInitial();
+            setGasTemperature(getGasTemperature());
         }
 
         void CEnvironment::setEnvironmentIR(double const t_InfraRed)
@@ -38,14 +38,14 @@ namespace Tarcog
             setIRFromEnvironment(t_InfraRed);
             m_IRCalculatedOutside = true;
             resetCalculated();
-            setGasPropertiesToInitial();
+            setGasTemperature(getGasTemperature());
         }
 
         void CEnvironment::setEmissivity(double const t_Emissivity)
         {
             m_Emissivity = t_Emissivity;
             resetCalculated();
-            setGasPropertiesToInitial();
+            setGasTemperature(getGasTemperature());
         }
 
         double CEnvironment::getEnvironmentIR()

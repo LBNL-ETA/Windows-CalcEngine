@@ -101,10 +101,10 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] bool isVentilationForced() const;
 
-        virtual double getGasTemperature() = 0;
+        //virtual double getGasTemperature() = 0;
 
     protected:
-        void setGasPropertiesToInitial();
+        void setGasTemperature(double temperature);
 
         double m_Pressure;
         AirflowProperties m_AirflowProperties;
