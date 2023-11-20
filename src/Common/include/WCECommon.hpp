@@ -12,7 +12,6 @@
 #include "../src/MatrixSeries.hpp"
 #include "../src/Series.hpp"
 #include "../src/SquareMatrix.hpp"
-#include "../src/State.hpp"
 #include "../src/SurfaceCoating.hpp"
 #include "../src/WavelengthRange.hpp"
 #include "../src/PolynomialFit.hpp"

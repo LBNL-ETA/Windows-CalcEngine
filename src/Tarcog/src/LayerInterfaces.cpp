@@ -23,14 +23,13 @@ namespace Tarcog::ISO15099
         m_Surface[Side::Back] = nullptr;
     }
 
-    CLayerHeatFlow::CLayerHeatFlow(CLayerHeatFlow const & t_Layer) : CState(t_Layer)
+    CLayerHeatFlow::CLayerHeatFlow(CLayerHeatFlow const & t_Layer)
     {
         operator=(t_Layer);
     }
 
     CLayerHeatFlow & CLayerHeatFlow::operator=(CLayerHeatFlow const & t_Layer)
     {
-        this->CState::operator=(t_Layer);
         m_ConductiveConvectiveCoeff = t_Layer.m_ConductiveConvectiveCoeff;
         m_LayerGainFlow = t_Layer.m_LayerGainFlow;
         for(auto aSide : FenestrationCommon::EnumSide())
@@ -113,6 +112,25 @@ namespace Tarcog::ISO15099
         {
             resetCalculated();
         }
+    }
+
+    void CLayerHeatFlow::initializeStateVariables()
+    {}
+
+    void CLayerHeatFlow::resetCalculated()
+    {
+        m_IsCalculated = false;
+        initializeStateVariables();
+    }
+
+    void CLayerHeatFlow::setCalculated()
+    {
+        m_IsCalculated = true;
+    }
+
+    bool CLayerHeatFlow::isCalculated()
+    {
+        return m_IsCalculated;
     }
 
     SealedGapProperties::SealedGapProperties(double t_Temperature, double t_Pressure) :

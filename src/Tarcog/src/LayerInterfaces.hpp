@@ -1,5 +1,4 @@
-#ifndef LAYERINTERFACES_H
-#define LAYERINTERFACES_H
+#pragma once
 
 #include <memory>
 #include <map>
@@ -12,12 +11,11 @@ namespace FenestrationCommon
     enum class Side;
 }
 
-
 namespace Tarcog::ISO15099
 {
     class Surface;
 
-    class CLayerHeatFlow : public virtual FenestrationCommon::CState
+    class CLayerHeatFlow
     {
     public:
         CLayerHeatFlow();
@@ -34,7 +32,12 @@ namespace Tarcog::ISO15099
         virtual void setSurface(std::shared_ptr<Surface> t_Surface,
                                 FenestrationCommon::Side t_Position) final;
 
+        virtual void resetCalculated() final;   // to reset state to non-calculated
+        virtual void setCalculated() final;   // calculations are up to date and set state to valid state
+        virtual bool isCalculated() final;   // check if state have valid results
+
     protected:
+        virtual void initializeStateVariables();
         virtual void calculateLayerHeatFlow() final;
         virtual void calculateRadiationFlow() = 0;
         virtual void calculateConvectionOrConductionFlow() = 0;
@@ -43,6 +46,8 @@ namespace Tarcog::ISO15099
         std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;
         double m_ConductiveConvectiveCoeff;
         double m_LayerGainFlow;
+
+        bool m_IsCalculated{false};
     };
 
     enum class AirVerticalDirection
@@ -66,7 +71,7 @@ namespace Tarcog::ISO15099
         double pressure;
     };
 
-    class CGasLayer : public virtual FenestrationCommon::CState
+    class CGasLayer
     {
     public:
         CGasLayer();
@@ -88,7 +93,7 @@ namespace Tarcog::ISO15099
         virtual double getGasTemperature() = 0;
 
     protected:
-        void initializeStateVariables() override;
+        void initializeStateVariables();
 
         double m_Pressure;
         double m_AirSpeed;
@@ -104,6 +109,3 @@ namespace Tarcog::ISO15099
     };
 
 }   // namespace Tarcog::ISO15099
-
-
-#endif

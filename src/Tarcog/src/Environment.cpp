@@ -20,7 +20,6 @@ namespace Tarcog
         }
 
         CEnvironment::CEnvironment(const CEnvironment & t_Environment) :
-            CState(t_Environment),
             CBaseLayer(t_Environment),
             CGasLayer(t_Environment)
         {
@@ -29,7 +28,6 @@ namespace Tarcog
 
         CEnvironment & CEnvironment::operator=(CEnvironment const & t_Environment)
         {
-            CState::operator=(t_Environment);
             CBaseLayer::operator=(t_Environment);
             CGasLayer::operator=(t_Environment);
             m_DirectSolarRadiation = t_Environment.m_DirectSolarRadiation;

@@ -6,7 +6,6 @@ namespace Tarcog
     namespace ISO15099
     {
         CBaseLayer::CBaseLayer() :
-            CState(),
             CLayerHeatFlow(),
             m_PreviousLayer(nullptr),
             m_NextLayer(nullptr)

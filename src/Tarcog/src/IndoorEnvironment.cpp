@@ -27,7 +27,6 @@ namespace Tarcog
         }
 
         CIndoorEnvironment::CIndoorEnvironment(CIndoorEnvironment const & t_Indoor) :
-            CState(t_Indoor),
             CEnvironment(t_Indoor)
         {
             operator=(t_Indoor);
@@ -35,7 +34,6 @@ namespace Tarcog
 
         CIndoorEnvironment & CIndoorEnvironment::operator=(CIndoorEnvironment const & t_Environment)
         {
-            this->CState::operator=(t_Environment);
             this->CEnvironment::operator=(t_Environment);
             m_RoomRadiationTemperature = t_Environment.m_RoomRadiationTemperature;
 
