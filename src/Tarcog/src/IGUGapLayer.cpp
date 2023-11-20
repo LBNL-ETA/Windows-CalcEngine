@@ -18,13 +18,13 @@ namespace Tarcog
     namespace ISO15099
     {
         CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure) :
-            CBaseIGULayer(t_Thickness), CGasLayer(t_Pressure)
+            CBaseIGULayer(t_Thickness), m_Pressure(t_Pressure)
         {}
 
         CIGUGapLayer::CIGUGapLayer(double const t_Thickness,
                                    double const t_Pressure,
                                    const Gases::CGas & t_Gas) :
-            CBaseIGULayer(t_Thickness), CGasLayer(t_Pressure, t_Gas)
+            CBaseIGULayer(t_Thickness), m_Pressure(t_Pressure), m_Gas(t_Gas)
         {}
 
         void CIGUGapLayer::connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer)
@@ -161,6 +161,11 @@ namespace Tarcog
         std::shared_ptr<CBaseLayer> CIGUGapLayer::clone() const
         {
             return std::make_shared<CIGUGapLayer>(*this);
+        }
+
+        void CIGUGapLayer::setSealedGapProperties(double t_Temperature, double t_Pressure)
+        {
+            m_SealedGapProperties = SealedGapProperties(t_Temperature, t_Pressure);
         }
 
     }   // namespace ISO15099

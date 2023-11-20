@@ -1,5 +1,4 @@
-#ifndef TARIGUGAPLAYER_H
-#define TARIGUGAPLAYER_H
+#pragma once
 
 #include <memory>
 #include "BaseIGULayer.hpp"
@@ -16,7 +15,7 @@ namespace Tarcog
 
     namespace ISO15099
     {
-        class CIGUGapLayer : public CBaseIGULayer, public CGasLayer
+        class CIGUGapLayer : public CBaseIGULayer
         {
         public:
             CIGUGapLayer(double t_Thickness, double t_Pressure);
@@ -28,16 +27,26 @@ namespace Tarcog
 
             double averageTemperature() const;
 
-            double getPressure() override;
+            double getPressure();
 
             std::shared_ptr<CBaseLayer> clone() const override;
 
             double getMaxDeflection() const override;
             double getMeanDeflection() const override;
 
+            void setSealedGapProperties(double t_Temperature, double t_Pressure);
 
         protected:
             void calculateConvectionOrConductionFlow() override;
+
+            double m_Pressure;
+            AirflowProperties m_AirflowProperties;
+
+            // Gap by default will not be considered to be sealed. If not sealed then
+            // pressure will be considered to be m_Pressure;
+            std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
+
+            Gases::CGas m_Gas;
 
         private:
             double calculateRayleighNumber();
@@ -52,5 +61,3 @@ namespace Tarcog
     }   // namespace ISO15099
 
 }   // namespace Tarcog
-
-#endif

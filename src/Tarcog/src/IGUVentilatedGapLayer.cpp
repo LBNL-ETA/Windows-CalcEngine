@@ -76,7 +76,7 @@ namespace Tarcog
         {
             m_State.inletTemperature = inletTemperature;
             resetCalculated();
-            setGasTemperature(layerTemperature());
+            m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
         }
 
         void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
@@ -85,14 +85,14 @@ namespace Tarcog
             m_State.inletTemperature = t_inTemperature;
             m_State.outletTemperature = t_outTemperature;
             resetCalculated();
-            setGasTemperature(layerTemperature());
+            m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
         }
 
         void CIGUVentilatedGapLayer::setFlowSpeed(double const t_speed)
         {
             m_AirflowProperties.m_AirSpeed = t_speed;
             resetCalculated();
-            setGasTemperature(layerTemperature());
+            m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
         }
 
         double CIGUVentilatedGapLayer::getDrivingPressure()
@@ -277,7 +277,7 @@ namespace Tarcog
             while(!converged)
             {
                 resetCalculated();
-                setGasTemperature(layerTemperature());
+                m_Gas.setTemperatureAndPressure(layerTemperature(), m_Pressure);
 
                 double TgapOutOld = TgapOut;
 

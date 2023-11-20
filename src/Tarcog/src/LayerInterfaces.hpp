@@ -78,8 +78,6 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] bool isVentilationForced() const;
 
-        //virtual double getGasTemperature() = 0;
-
     protected:
         void setGasTemperature(double temperature);
 
