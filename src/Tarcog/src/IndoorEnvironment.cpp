@@ -104,9 +104,9 @@ namespace Tarcog
 
         void CIndoorEnvironment::calculateHc()
         {
-            if(m_AirSpeed > 0)
+            if(m_AirflowProperties.m_AirSpeed > 0)
             {
-                m_ConductiveConvectiveCoeff = 4 + 4 * m_AirSpeed;
+                m_ConductiveConvectiveCoeff = 4 + 4 * m_AirflowProperties.m_AirSpeed;
             }
             else
             {

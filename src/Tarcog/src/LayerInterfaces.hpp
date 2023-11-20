@@ -70,6 +70,18 @@ namespace Tarcog::ISO15099
         double pressure;
     };
 
+    struct AirflowProperties
+    {
+        AirflowProperties(double mAirSpeed,
+                          AirVerticalDirection mAirVerticalDirection,
+                          AirHorizontalDirection mAirHorizontalDirection,
+                          bool mIsVentilationForced);
+        double m_AirSpeed;
+        AirVerticalDirection m_AirVerticalDirection;
+        AirHorizontalDirection m_AirHorizontalDirection;
+        bool m_IsVentilationForced;
+    };
+
     class CGasLayer
     {
     public:
@@ -95,10 +107,7 @@ namespace Tarcog::ISO15099
         void setGasPropertiesToInitial();
 
         double m_Pressure;
-        double m_AirSpeed;
-        AirVerticalDirection m_AirVerticalDirection;
-        AirHorizontalDirection m_AirHorizontalDirection;
-        bool m_IsVentilationForced;
+        AirflowProperties m_AirflowProperties;
 
         // Gap by default will not be considered to be sealed. If not sealed then
         // pressure will be considered to be m_Pressure;

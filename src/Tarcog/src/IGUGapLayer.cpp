@@ -108,9 +108,9 @@ namespace Tarcog
             {   // vacuum state
                 m_ConductiveConvectiveCoeff = aProperties.m_ThermalConductivity;
             }
-            if(!FenestrationCommon::isEqual(m_AirSpeed, 0))
+            if(!FenestrationCommon::isEqual(m_AirflowProperties.m_AirSpeed, 0))
             {
-                m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirSpeed;
+                m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirflowProperties.m_AirSpeed;
             }
 
             return m_ConductiveConvectiveCoeff;

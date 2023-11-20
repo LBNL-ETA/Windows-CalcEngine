@@ -90,7 +90,7 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::setFlowSpeed(double const t_speed)
         {
-            m_AirSpeed = t_speed;
+            m_AirflowProperties.m_AirSpeed = t_speed;
             resetCalculated();
             setGasPropertiesToInitial();
         }
@@ -160,7 +160,7 @@ namespace Tarcog
             if(!FenestrationCommon::isEqual(m_ConductiveConvectiveCoeff, 0))
             {
                 cHeight = aProperties.m_Density * aProperties.m_SpecificHeat * getThickness()
-                          * m_AirSpeed / (4 * m_ConductiveConvectiveCoeff);
+                          * m_AirflowProperties.m_AirSpeed / (4 * m_ConductiveConvectiveCoeff);
             }
             return cHeight;
         }
@@ -180,8 +180,8 @@ namespace Tarcog
         void CIGUVentilatedGapLayer::ventilatedHeatGain()
         {
             const auto aProperties = m_Gas.getGasProperties();
-            m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat * m_AirSpeed
-                              * getThickness()
+            m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat
+                              * m_AirflowProperties.m_AirSpeed * getThickness()
                               * (m_State.inletTemperature - m_State.outletTemperature) / m_Height;
         }
 
@@ -196,8 +196,9 @@ namespace Tarcog
         void CIGUVentilatedGapLayer::calculateOutletTemperatureFromAirFlow()
         {
             // Always use forced ventilation if exists.
-            m_AirSpeed = m_ForcedVentilation.has_value() ? m_ForcedVentilation->speed
-                                                         : calculateThermallyDrivenSpeed();
+            m_AirflowProperties.m_AirSpeed = m_ForcedVentilation.has_value()
+                                               ? m_ForcedVentilation->speed
+                                               : calculateThermallyDrivenSpeed();
             double beta = betaCoeff();
             double alpha = 1 - beta;
 
@@ -215,9 +216,9 @@ namespace Tarcog
             double B2 = adjacentGap.hagenPressureTerm();
             double A = A1 + pow(ratio, 2) * A2;
             double B = B1 + ratio * B2;
-            m_AirSpeed =
+            m_AirflowProperties.m_AirSpeed =
               (sqrt(std::abs(pow(B, 2.0) + 4 * A * getDrivingPressure())) - B) / (2.0 * A);
-            return m_AirSpeed / ratio;
+            return m_AirflowProperties.m_AirSpeed / ratio;
         }
 
         VentilatedGapState

@@ -133,7 +133,7 @@ namespace Tarcog
 
         void COutdoorEnvironment::calculateHc()
         {
-            m_ConductiveConvectiveCoeff = 4 + 4 * m_AirSpeed;
+            m_ConductiveConvectiveCoeff = 4 + 4 * m_AirflowProperties.m_AirSpeed;
         }
 
         double COutdoorEnvironment::getHr()
