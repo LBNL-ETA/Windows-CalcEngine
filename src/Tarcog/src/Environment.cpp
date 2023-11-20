@@ -9,12 +9,13 @@ namespace Tarcog
         CEnvironment::CEnvironment(double t_Pressure,
                                    double t_AirSpeed,
                                    AirHorizontalDirection t_AirDirection) :
-            CGasLayer(t_Pressure, t_AirSpeed, t_AirDirection),
             m_DirectSolarRadiation(0),
             m_Emissivity(TarcogConstants::DEFAULT_ENV_EMISSIVITY),
             m_HInput(0),
             m_HCoefficientModel(BoundaryConditionsCoeffModel::CalculateH),
-            m_IRCalculatedOutside(false)
+            m_IRCalculatedOutside(false),
+            m_Pressure(t_Pressure),
+            m_AirflowProperties(t_AirSpeed, AirVerticalDirection::None, t_AirDirection, false)
         {
 
         }
@@ -30,7 +31,7 @@ namespace Tarcog
             m_HCoefficientModel = t_BCModel;
             m_HInput = t_HCoeff;
             resetCalculated();
-            setGasTemperature(getGasTemperature());
+            m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
         }
 
         void CEnvironment::setEnvironmentIR(double const t_InfraRed)
@@ -38,14 +39,14 @@ namespace Tarcog
             setIRFromEnvironment(t_InfraRed);
             m_IRCalculatedOutside = true;
             resetCalculated();
-            setGasTemperature(getGasTemperature());
+            m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
         }
 
         void CEnvironment::setEmissivity(double const t_Emissivity)
         {
             m_Emissivity = t_Emissivity;
             resetCalculated();
-            setGasTemperature(getGasTemperature());
+            m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
         }
 
         double CEnvironment::getEnvironmentIR()
@@ -89,6 +90,11 @@ namespace Tarcog
             {
                 setIRFromEnvironment(calculateIRFromVariables());
             }
+        }
+
+        double CEnvironment::getPressure() const
+        {
+            return m_Pressure;
         }
 
     }   // namespace ISO15099
