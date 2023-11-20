@@ -78,11 +78,10 @@ namespace Tarcog::ISO15099
 
         void calculateConvectionOrConductionFlow() override;
 
-        void calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
-                                    std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2);
+        void calcInBetweenShadeFlow(CIGUVentilatedGapLayer & t_Gap1,
+                                    CIGUVentilatedGapLayer & t_Gap2);
 
-        void calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
-                               std::shared_ptr<CIGUVentilatedGapLayer> t_Gap);
+        void calcEdgeShadeFlow(CEnvironment & t_Environment, CIGUVentilatedGapLayer & t_Gap);
 
         double equivalentConductivity(double t_Conductivity, double permeabilityFactor);
 
