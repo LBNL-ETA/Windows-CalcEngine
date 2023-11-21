@@ -40,7 +40,7 @@ namespace Tarcog
 
         double CIGUSolidLayerDeflection::flexuralRigidity() const
         {
-            return m_YoungsModulus * pow(m_Thickness, 3) / (12 * (1 - pow(m_PoisonRatio, 2)));
+            return m_YoungsModulus * pow(getBaseThickness(), 3) / (12 * (1 - pow(m_PoisonRatio, 2)));
         }
 
         std::shared_ptr<CBaseLayer> CIGUSolidLayerDeflection::clone() const

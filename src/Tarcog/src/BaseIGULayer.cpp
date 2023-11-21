@@ -18,6 +18,11 @@ using FenestrationCommon::Side;
                    - getSurface(Side::Back)->getMeanDeflection();
         }
 
+        double CBaseIGULayer::getBaseThickness() const
+        {
+            return m_Thickness;
+        }
+
         double CBaseIGULayer::getConductivity()
         {
             return getConductionConvectionCoefficient() * m_Thickness;

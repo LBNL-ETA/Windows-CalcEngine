@@ -48,7 +48,7 @@ namespace Tarcog
             auto aveCond = (cond1 + cond2) / 2;
 
             auto cond = 2 * aveCond * m_Radius / (pow(m_Spacing, 2));
-            cond *= 1 / (1 + 2 * m_Thickness * aveCond / (m_Conductivity * WCE_PI * m_Radius));
+            cond *= 1 / (1 + 2 * getBaseThickness() * aveCond / (m_Conductivity * WCE_PI * m_Radius));
 
             return cond;
         }

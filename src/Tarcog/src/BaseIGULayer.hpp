@@ -14,15 +14,17 @@ namespace Tarcog::ISO15099
     {
     public:
         explicit CBaseIGULayer(double t_Thickness);
+        virtual ~CBaseIGULayer() = default;
 
         double getThickness() const override;
+        virtual double getBaseThickness() const final;
         virtual double getMaxDeflection() const = 0;
         virtual double getMeanDeflection() const = 0;
 
         double getConductivity();
         double getEffectiveThermalConductivity();
 
-    protected:
+    private:
         double m_Thickness;
     };
 }   // namespace Tarcog::ISO15099
