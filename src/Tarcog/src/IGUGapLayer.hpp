@@ -5,6 +5,7 @@
 
 #include "BaseLayer.hpp"
 #include "DeflectionInterface.hpp"
+#include "AirFlow.hpp"
 
 namespace Tarcog
 {

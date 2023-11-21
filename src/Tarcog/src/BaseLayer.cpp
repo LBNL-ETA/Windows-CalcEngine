@@ -5,12 +5,35 @@
 
 namespace Tarcog::ISO15099
 {
-    CBaseLayer::CBaseLayer() : CLayerHeatFlow(), m_PreviousLayer(nullptr), m_NextLayer(nullptr)
+    CBaseLayer::CBaseLayer() : CLayerHeatFlow(), SurfacesManager()
     {}
 
     CBaseLayer::CBaseLayer(double thickness) :
-        CLayerHeatFlow(), m_Thickness(thickness), m_PreviousLayer(nullptr), m_NextLayer(nullptr)
+        CLayerHeatFlow(),
+        SurfacesManager(),
+        m_Thickness(thickness),
+        m_PreviousLayer(nullptr),
+        m_NextLayer(nullptr)
     {}
+
+    double CBaseLayer::getHeatFlow()
+    {
+        return getRadiationFlow() + getConvectionConductionFlow();
+    }
+
+    double CBaseLayer::getRadiationFlow()
+    {
+        calculateRadiationFlow();
+        return J(FenestrationCommon::Side::Back) - J(FenestrationCommon::Side::Front);
+    }
+
+    double CBaseLayer::getConvectionConductionFlow()
+    {
+        calculateLayerHeatFlow();
+        return (getSurfaceTemperature(FenestrationCommon::Side::Back)
+                - getSurfaceTemperature(FenestrationCommon::Side::Front))
+               * m_ConductiveConvectiveCoeff;
+    }
 
     std::shared_ptr<CBaseLayer> CBaseLayer::getPreviousLayer() const
     {
