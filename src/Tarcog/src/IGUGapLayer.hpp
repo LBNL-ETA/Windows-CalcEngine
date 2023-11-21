@@ -29,10 +29,6 @@ namespace Tarcog
 
             void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
-            double averageSurfaceTemperature() override;
-
-            double averageTemperature() const;
-
             double getPressure();
 
             std::shared_ptr<CBaseLayer> clone() const override;
@@ -58,8 +54,6 @@ namespace Tarcog
             double calculateRayleighNumber();
             double aspectRatio() const;
             double convectiveH();
-
-            double getGasTemperature();
 
             void checkNextLayer() const;
         };

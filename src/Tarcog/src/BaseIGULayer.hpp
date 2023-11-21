@@ -26,9 +26,10 @@ namespace Tarcog::ISO15099
 
         double getEffectiveThermalConductivity();
 
-    protected:
-        virtual double averageSurfaceTemperature();
+        virtual double averageLayerTemperature();
+        double averageSurfaceTemperature() const;
 
+    protected:
         double m_Thickness;
     };
 }   // namespace Tarcog::ISO15099

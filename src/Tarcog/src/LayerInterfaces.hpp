@@ -42,6 +42,7 @@ namespace Tarcog::ISO15099
         virtual void calculateLayerHeatFlow() final;
         virtual void calculateRadiationFlow() = 0;
         virtual void calculateConvectionOrConductionFlow() = 0;
+
         [[nodiscard]] bool areSurfacesInitialized() const;
 
         std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;

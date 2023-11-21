@@ -204,8 +204,8 @@ TEST_F(TestGapBetweenDarkGlassPanesForcedVentilationInsideAirWinterValidation, G
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
-    auto layerTemperature = aLayer->averageSurfaceTemperature();
-    auto averageTemperature = aLayer->averageTemperature();
+    auto layerTemperature = aLayer->averageLayerTemperature();
+    auto averageTemperature = aLayer->averageSurfaceTemperature();
     EXPECT_NEAR(281.39944906386245, frontTemperature, 1e-4);
     EXPECT_NEAR(292.40517817543264, backTemperature, 1e-4);
     EXPECT_NEAR(292.7187143602813, layerTemperature, 1e-4);

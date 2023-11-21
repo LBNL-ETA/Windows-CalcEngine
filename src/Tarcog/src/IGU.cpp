@@ -469,7 +469,7 @@ namespace Tarcog
                 std::vector<double> gapTemperatures(gapLayers.size());
                 for(size_t i = 0u; i < gapTemperatures.size(); ++i)
                 {
-                    gapTemperatures[i] = gapLayers[i]->averageTemperature();
+                    gapTemperatures[i] = gapLayers[i]->averageLayerTemperature();
                 }
                 m_DeflectionFromE1300Curves->setLoadTemperatures(gapTemperatures);
 

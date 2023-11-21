@@ -182,8 +182,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingZeroForcedVentilation1mmGa
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
-    auto layerTemperature = aLayer->averageSurfaceTemperature();
-    auto averageTemperature = aLayer->averageTemperature();
+    auto layerTemperature = aLayer->averageLayerTemperature();
+    auto averageTemperature = aLayer->averageSurfaceTemperature();
     EXPECT_NEAR(310.29427483885411, frontTemperature, 1e-4);
     EXPECT_NEAR(317.08724875308098, backTemperature, 1e-4);
     EXPECT_NEAR(313.69076179596755, layerTemperature, 1e-4);

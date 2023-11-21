@@ -13,9 +13,15 @@ namespace Tarcog
         CBaseIGULayer::CBaseIGULayer(double const t_Thickness) : m_Thickness(t_Thickness)
         {}
 
-        double CBaseIGULayer::averageSurfaceTemperature()
+        double CBaseIGULayer::averageLayerTemperature()
         {
-            return (getSurfaceTemperature(Side::Front) + getSurfaceTemperature(Side::Back)) / 2;
+            double aveTemp{273.15};
+            if(areSurfacesInitialized())
+            {
+                aveTemp = averageSurfaceTemperature();
+            }
+
+            return aveTemp;
         }
 
         double CBaseIGULayer::getThickness() const
@@ -44,6 +50,13 @@ namespace Tarcog
             return std::abs(getHeatFlow() * m_Thickness
                             / (m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()
                                - m_Surface.at(FenestrationCommon::Side::Back)->getTemperature()));
+        }
+
+        double CBaseIGULayer::averageSurfaceTemperature() const
+        {
+            return (getSurface(Side::Front)->getTemperature()
+                    + getSurface(Side::Back)->getTemperature())
+                   / 2;
         }
 
     }   // namespace ISO15099

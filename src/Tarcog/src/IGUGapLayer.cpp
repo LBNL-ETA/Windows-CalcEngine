@@ -55,16 +55,11 @@ namespace Tarcog
             }
         }
 
-        double CIGUGapLayer::averageSurfaceTemperature()
-        {
-            return averageTemperature();
-        }
-
         double CIGUGapLayer::calculateRayleighNumber()
         {
             using ConstantsData::GRAVITYCONSTANT;
 
-            const auto tGapTemperature = averageSurfaceTemperature();
+            const auto tGapTemperature = averageLayerTemperature();
             const auto deltaTemp = std::abs(getSurface(Side::Back)->getTemperature()
                                             - getSurface(Side::Front)->getTemperature());
 
@@ -93,7 +88,7 @@ namespace Tarcog
 
         double CIGUGapLayer::convectiveH()
         {
-            const auto tGapTemperature = averageSurfaceTemperature();
+            const auto tGapTemperature = averageLayerTemperature();
             m_Gas.setTemperatureAndPressure(tGapTemperature, getPressure());
             const auto Ra = calculateRayleighNumber();
             const auto Asp = aspectRatio();
@@ -116,24 +111,6 @@ namespace Tarcog
             return m_ConductiveConvectiveCoeff;
         }
 
-        double CIGUGapLayer::getGasTemperature()
-        {
-            return averageSurfaceTemperature();
-        }
-
-        double CIGUGapLayer::averageTemperature() const
-        {
-            double aveTemp = Gases::DefaultTemperature;
-            if(areSurfacesInitialized())
-            {
-                aveTemp = (getSurface(Side::Front)->getTemperature()
-                           + getSurface(Side::Back)->getTemperature())
-                          / 2;
-            }
-
-            return aveTemp;
-        }
-
         double CIGUGapLayer::getPressure()
         {
             if(m_SealedGapProperties.has_value())
@@ -141,7 +118,7 @@ namespace Tarcog
                 auto Vini = getArea() * m_Thickness;
                 auto modThickness = getThickness();
                 auto Vgap = getArea() * modThickness;
-                return m_SealedGapProperties->pressure * Vini * averageSurfaceTemperature()
+                return m_SealedGapProperties->pressure * Vini * averageLayerTemperature()
                        / (m_SealedGapProperties->temperature * Vgap);
             }
             return m_Pressure;
