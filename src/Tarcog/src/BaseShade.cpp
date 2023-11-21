@@ -58,7 +58,7 @@ namespace Tarcog::ISO15099
         return m_Atop + 0.5 * m_Abot * openingMultiplier();
     }
 
-    double CShadeOpenings::frontPorositiy() const
+    double CShadeOpenings::frontPorosity() const
     {
         return m_FrontPorosity;
     }
@@ -112,7 +112,7 @@ namespace Tarcog::ISO15099
         return m_ShadeOpenings.isOpen();
     }
 
-    void CIGUShadeLayer::setDominanthAirflowWidth()
+    void CIGUShadeLayer::setDominantAirflowWidth()
     {
         if(getPreviousLayer() != nullptr)
         {
@@ -126,9 +126,9 @@ namespace Tarcog::ISO15099
 
     void CIGUShadeLayer::calculateConvectionOrConductionFlow()
     {
-        setDominanthAirflowWidth();
+        setDominantAirflowWidth();
         m_Conductivity =
-          equivalentConductivity(m_MaterialConductivity, m_ShadeOpenings.frontPorositiy());
+          equivalentConductivity(m_MaterialConductivity, m_ShadeOpenings.frontPorosity());
         CIGUSolidLayer::calculateConvectionOrConductionFlow();
         assert(getNextLayer() != nullptr);
         assert(getPreviousLayer() != nullptr);

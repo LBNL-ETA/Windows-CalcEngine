@@ -35,7 +35,7 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double Aeq_bot() const;
         [[nodiscard]] double Aeq_top() const;
 
-        [[nodiscard]] double frontPorositiy() const;
+        [[nodiscard]] double frontPorosity() const;
 
         [[nodiscard]] bool isOpen() const;
 
@@ -74,7 +74,7 @@ namespace Tarcog::ISO15099
         bool isPermeable() const override;
 
     private:
-        void setDominanthAirflowWidth();
+        void setDominantAirflowWidth();
 
         void calculateConvectionOrConductionFlow() override;
 
