@@ -1,5 +1,4 @@
-#ifndef TARCOGCONSTANTS_H
-#define TARCOGCONSTANTS_H
+#pragma once
 
 namespace Tarcog
 {
@@ -7,6 +6,7 @@ namespace Tarcog
     {
         const double DEFAULT_WINDOW_WIDTH = 1;
         const double DEFAULT_WINDOW_HEIGHT = 1;
+        const double DEFAULT_LAYER_THICKNESS = std::numeric_limits<double>::max();
         const double DEFAULT_TILT = 90;
         const double DEFAULT_ENV_EMISSIVITY = 1;
         const double DEFAULT_FRACTION_OF_CLEAR_SKY = 1;
@@ -37,6 +37,3 @@ namespace Tarcog
     }                                      // namespace DeflectionConstants
 
 }   // namespace Tarcog
-
-
-#endif

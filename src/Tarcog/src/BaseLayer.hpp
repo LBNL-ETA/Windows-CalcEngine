@@ -21,6 +21,8 @@ namespace Tarcog::ISO15099
     {
     public:
         CBaseLayer();
+        explicit CBaseLayer(double thickness);
+        virtual ~CBaseLayer() = default;
 
         std::shared_ptr<CBaseLayer> getPreviousLayer() const;
         std::shared_ptr<CBaseLayer> getNextLayer() const;
@@ -29,7 +31,8 @@ namespace Tarcog::ISO15099
 
         void tearDownConnections();
 
-        virtual double getThickness() const;
+        double getThickness() const;
+        virtual double getBaseThickness() const final;
 
         // This is to determine if layer is porous and leaking air from gap to the surrounding
         // environment. Layer are non-porous by default.
@@ -41,9 +44,13 @@ namespace Tarcog::ISO15099
         //! main loop calculation.
         virtual void precalculateState(){};
 
+        double getConductivity();
+        double getEffectiveThermalConductivity();
+
         void setWidth(double width);
         void setHeight(double height);
         void setTilt(double tilt);
+        void setBaseThickness(double thickness);
 
     protected:
         void calculateRadiationFlow() override;
@@ -57,5 +64,6 @@ namespace Tarcog::ISO15099
         double m_Width{TarcogConstants::DEFAULT_WINDOW_WIDTH};
         double m_Height{TarcogConstants::DEFAULT_WINDOW_HEIGHT};
         double m_Tilt{TarcogConstants::DEFAULT_TILT};
+        double m_Thickness{TarcogConstants::DEFAULT_LAYER_THICKNESS};
     };
 }   // namespace Tarcog::ISO15099
