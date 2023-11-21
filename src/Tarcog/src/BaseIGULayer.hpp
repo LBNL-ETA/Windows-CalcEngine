@@ -1,5 +1,4 @@
-#ifndef BASEIGUTARCOGLAYER_H
-#define BASEIGUTARCOGLAYER_H
+#pragma once
 
 #include <memory>
 #include "BaseLayer.hpp"
@@ -27,6 +26,3 @@ namespace Tarcog::ISO15099
         double m_Thickness;
     };
 }   // namespace Tarcog::ISO15099
-
-
-#endif
