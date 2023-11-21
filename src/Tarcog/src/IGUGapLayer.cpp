@@ -60,8 +60,8 @@ namespace Tarcog
             using ConstantsData::GRAVITYCONSTANT;
 
             const auto tGapTemperature = averageLayerTemperature();
-            const auto deltaTemp = std::abs(getSurface(Side::Back)->getTemperature()
-                                            - getSurface(Side::Front)->getTemperature());
+            const auto deltaTemp =
+              std::abs(getSurfaceTemperature(Side::Back) - getSurfaceTemperature(Side::Front));
 
             const auto aProperties = m_Gas.getGasProperties();
 
@@ -105,7 +105,8 @@ namespace Tarcog
             }
             if(!FenestrationCommon::isEqual(m_AirflowProperties.m_AirSpeed, 0))
             {
-                m_ConductiveConvectiveCoeff = m_ConductiveConvectiveCoeff + 2 * m_AirflowProperties.m_AirSpeed;
+                m_ConductiveConvectiveCoeff =
+                  m_ConductiveConvectiveCoeff + 2 * m_AirflowProperties.m_AirSpeed;
             }
 
             return m_ConductiveConvectiveCoeff;

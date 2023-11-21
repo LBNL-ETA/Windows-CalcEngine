@@ -89,17 +89,6 @@ namespace Tarcog::ISO15099
         setCalculated();
     }
 
-    bool CLayerHeatFlow::areSurfacesInitialized() const
-    {
-        auto areInitialized = (m_Surface.size() == 2);
-        if(areInitialized)
-        {
-            areInitialized =
-              m_Surface.at(Side::Front) != nullptr && m_Surface.at(Side::Back) != nullptr;
-        }
-        return areInitialized;
-    }
-
     std::shared_ptr<Surface> CLayerHeatFlow::getSurface(Side const t_Position) const
     {
         return m_Surface.at(t_Position);
@@ -112,6 +101,26 @@ namespace Tarcog::ISO15099
         {
             resetCalculated();
         }
+    }
+
+    double CLayerHeatFlow::getSurfaceTemperature(FenestrationCommon::Side t_Position) const
+    {
+        return m_Surface.at(t_Position)->getTemperature();
+    }
+
+    double CLayerHeatFlow::J(Side const t_Position) const
+    {
+        return m_Surface.at(t_Position)->J();
+    }
+
+    double CLayerHeatFlow::averageLayerTemperature()
+    {
+        return averageSurfaceTemperature();
+    }
+
+    double CLayerHeatFlow::averageSurfaceTemperature() const
+    {
+        return (getSurfaceTemperature(Side::Front) + getSurfaceTemperature(Side::Back)) / 2;
     }
 
     void CLayerHeatFlow::resetCalculated()
