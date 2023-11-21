@@ -3,7 +3,7 @@
 
 #include "WCETarcog.hpp"
 
-using Tarcog::ISO15099::CBaseIGULayer;
+using Tarcog::ISO15099::CBaseLayer;
 using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 using Tarcog::ISO15099::CSingleSystem;
@@ -97,12 +97,12 @@ protected:
     }
 
 public:
-    [[nodiscard]] CBaseIGULayer * GetGap1() const
+    [[nodiscard]] CBaseLayer * GetGap1() const
     {
         return m_TarcogSystem->getGapLayers()[0].get();
     };
 
-    [[nodiscard]] CBaseIGULayer * GetGap2() const
+    [[nodiscard]] CBaseLayer * GetGap2() const
     {
         return m_TarcogSystem->getGapLayers()[1].get();
     };

@@ -1,15 +1,11 @@
 #include <cassert>
-#include <iostream>
 
 #include "HeatFlowBalance.hpp"
 #include "BaseLayer.hpp"
-#include "BaseIGULayer.hpp"
 #include "IGUSolidLayer.hpp"
 #include "IGU.hpp"
 #include "Environment.hpp"
 #include "Surface.hpp"
-#include "WCEGases.hpp"
-#include "WCECommon.hpp"
 
 
 using FenestrationCommon::Side;

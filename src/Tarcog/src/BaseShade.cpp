@@ -130,8 +130,8 @@ namespace Tarcog::ISO15099
         m_Conductivity =
           equivalentConductivity(m_MaterialConductivity, m_ShadeOpenings.frontPorositiy());
         CIGUSolidLayer::calculateConvectionOrConductionFlow();
-        assert(m_NextLayer != nullptr);
-        assert(m_PreviousLayer != nullptr);
+        assert(getNextLayer() != nullptr);
+        assert(getPreviousLayer() != nullptr);
 
         // This must be set here or gap will be constantly calling this routine back throughout
         // nextLayer property.

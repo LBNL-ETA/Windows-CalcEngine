@@ -22,7 +22,7 @@ namespace Tarcog
           double const t_Conductivity,
           std::shared_ptr<Tarcog::ISO15099::Surface> const & t_FrontSurface,
           std::shared_ptr<Tarcog::ISO15099::Surface> const & t_BackSurface) :
-            CBaseIGULayer(t_Thickness),
+            CBaseLayer(t_Thickness),
             m_Conductivity(t_Conductivity),
             m_SolarAbsorptance(0)
         {
@@ -44,7 +44,7 @@ namespace Tarcog
                                        double const t_FrontIRTransmittance,
                                        double const t_BackEmissivity,
                                        double const t_BackIRTransmittance) :
-            CBaseIGULayer(t_Thickness),
+            CBaseLayer(t_Thickness),
             m_Conductivity(t_Conductivity),
             m_SolarAbsorptance(0)
         {

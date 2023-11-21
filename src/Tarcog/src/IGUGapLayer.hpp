@@ -1,8 +1,10 @@
 #pragma once
 
 #include <memory>
-#include "BaseIGULayer.hpp"
 #include "WCEGases.hpp"
+
+#include "BaseLayer.hpp"
+#include "DeflectionInterface.hpp"
 
 namespace Tarcog
 {
@@ -21,7 +23,7 @@ namespace Tarcog
             double pressure;
         };
 
-        class CIGUGapLayer : public CBaseIGULayer
+        class CIGUGapLayer : public CBaseLayer, public Tarcog::Deflectable
         {
         public:
             CIGUGapLayer(double t_Thickness, double t_Pressure);

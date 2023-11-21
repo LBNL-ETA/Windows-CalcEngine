@@ -26,7 +26,7 @@ namespace Tarcog
             ~CIGU();
 
             void addLayer(const std::shared_ptr<CBaseLayer> & t_Layer);
-            void addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers);
+            void addLayers(const std::initializer_list<std::shared_ptr<CBaseLayer>> & layers);
 
             void setAbsorptances(const std::vector<double> & absorptances, double solarRadiation);
 
@@ -89,8 +89,8 @@ namespace Tarcog
 
         private:
             // Replaces layer in existing construction and keeps correct connections in linked list
-            void replaceLayer(const std::shared_ptr<CBaseIGULayer> & t_Original,
-                              const std::shared_ptr<CBaseIGULayer> & t_Replacement);
+            void replaceLayer(const std::shared_ptr<CBaseLayer> & t_Original,
+                              const std::shared_ptr<CBaseLayer> & t_Replacement);
 
             // Check if layer needs to be decorated with another object
             void checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer);

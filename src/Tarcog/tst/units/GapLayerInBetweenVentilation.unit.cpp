@@ -91,12 +91,12 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CBaseIGULayer> GetGap1() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CBaseLayer> GetGap1() const
     {
         return m_TarcogSystem->getGapLayers()[0];
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CBaseIGULayer> GetGap2() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CBaseLayer> GetGap2() const
     {
         return m_TarcogSystem->getGapLayers()[1];
     };

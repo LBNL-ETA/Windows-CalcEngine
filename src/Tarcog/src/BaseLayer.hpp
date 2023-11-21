@@ -31,7 +31,10 @@ namespace Tarcog::ISO15099
 
         void tearDownConnections();
 
+        // Thickness of the layer in current state (including deflection)
         double getThickness() const;
+
+        // Thickness of the layer in base state (without deflection)
         virtual double getBaseThickness() const final;
 
         // This is to determine if layer is porous and leaking air from gap to the surrounding
