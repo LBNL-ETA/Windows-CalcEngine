@@ -56,14 +56,15 @@ namespace Tarcog::ISO15099
         void calculateRadiationFlow() override;
         void calculateConvectionOrConductionFlow() override = 0;
 
-        std::shared_ptr<CBaseLayer> m_PreviousLayer;
-        std::shared_ptr<CBaseLayer> m_NextLayer;
-
         [[nodiscard]] double getSurfaceArea() const;
 
         double m_Width{TarcogConstants::DEFAULT_WINDOW_WIDTH};
         double m_Height{TarcogConstants::DEFAULT_WINDOW_HEIGHT};
         double m_Tilt{TarcogConstants::DEFAULT_TILT};
         double m_Thickness{TarcogConstants::DEFAULT_LAYER_THICKNESS};
+
+    private:
+        std::shared_ptr<CBaseLayer> m_PreviousLayer;
+        std::shared_ptr<CBaseLayer> m_NextLayer;
     };
 }   // namespace Tarcog::ISO15099

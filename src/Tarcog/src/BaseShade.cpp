@@ -114,13 +114,13 @@ namespace Tarcog::ISO15099
 
     void CIGUShadeLayer::setDominanthAirflowWidth()
     {
-        if(m_PreviousLayer != nullptr)
+        if(getPreviousLayer() != nullptr)
         {
-            m_ShadeOpenings.checkAndSetDominantWidth(m_PreviousLayer->getThickness());
+            m_ShadeOpenings.checkAndSetDominantWidth(getPreviousLayer()->getThickness());
         }
-        if(m_NextLayer != nullptr)
+        if(getNextLayer() != nullptr)
         {
-            m_ShadeOpenings.checkAndSetDominantWidth(m_NextLayer->getThickness());
+            m_ShadeOpenings.checkAndSetDominantWidth(getNextLayer()->getThickness());
         }
     }
 
@@ -137,25 +137,25 @@ namespace Tarcog::ISO15099
         // nextLayer property.
         setCalculated();
 
-        if(std::dynamic_pointer_cast<CIGUGapLayer>(m_PreviousLayer) != nullptr
-           && std::dynamic_pointer_cast<CIGUGapLayer>(m_NextLayer) != nullptr)
+        if(std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer()) != nullptr
+           && std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()) != nullptr)
         {
             auto previousGapLayer =
-              std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_PreviousLayer);
-            auto nextGapLayer = std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer);
+              std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer());
+            auto nextGapLayer = std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer());
             calcInBetweenShadeFlow(*previousGapLayer, *nextGapLayer);
         }
-        else if(std::dynamic_pointer_cast<CEnvironment>(m_PreviousLayer) != nullptr
-                && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer) != nullptr)
+        else if(std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()) != nullptr
+                && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer()) != nullptr)
         {
-            calcEdgeShadeFlow(*std::dynamic_pointer_cast<CEnvironment>(m_PreviousLayer),
-                              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_NextLayer));
+            calcEdgeShadeFlow(*std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()),
+                              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer()));
         }
-        else if(std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_PreviousLayer) != nullptr
-                && std::dynamic_pointer_cast<CEnvironment>(m_NextLayer) != nullptr)
+        else if(std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()) != nullptr
+                && std::dynamic_pointer_cast<CEnvironment>(getNextLayer()) != nullptr)
         {
-            calcEdgeShadeFlow(*std::dynamic_pointer_cast<CEnvironment>(m_NextLayer),
-                              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(m_PreviousLayer));
+            calcEdgeShadeFlow(*std::dynamic_pointer_cast<CEnvironment>(getNextLayer()),
+                              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()));
         }
     }
 

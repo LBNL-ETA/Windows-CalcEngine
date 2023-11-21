@@ -87,13 +87,13 @@ namespace Tarcog
         {
             setSurfaceState(t_Tf, t_Jf, Side::Front);
             setSurfaceState(t_Tb, t_Jb, Side::Back);
-            if(m_NextLayer != nullptr)
+            if(getNextLayer() != nullptr)
             {
-                m_NextLayer->resetCalculated();
+                getNextLayer()->resetCalculated();
             }
-            if(m_PreviousLayer != nullptr)
+            if(getPreviousLayer() != nullptr)
             {
-                m_PreviousLayer->resetCalculated();
+                getPreviousLayer()->resetCalculated();
             }
         }
 

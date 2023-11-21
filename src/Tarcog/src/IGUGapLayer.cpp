@@ -49,9 +49,9 @@ namespace Tarcog
 
         void CIGUGapLayer::checkNextLayer() const
         {
-            if(m_NextLayer != nullptr)
+            if(getNextLayer() != nullptr)
             {
-                m_NextLayer->getGainFlow();
+                getNextLayer()->getGainFlow();
             }
         }
 
