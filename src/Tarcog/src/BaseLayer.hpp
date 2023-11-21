@@ -4,12 +4,12 @@
 
 #include "LayerInterfaces.hpp"
 #include "TarcogConstants.hpp"
+#include "SurfacesManager.hpp"
 
 namespace FenestrationCommon
 {
     enum class Side;
 }
-
 
 namespace Tarcog::ISO15099
 {
@@ -17,7 +17,9 @@ namespace Tarcog::ISO15099
     // as well. It must contain base definition of 2D geometry (Width and Height) and definition
     // of heat flow that is divided in three categories (convection, conduction and radiation).
     // Every layer can contain only Conduction + Radiation or Convection + Radiation.
-    class CBaseLayer : public CLayerHeatFlow, public std::enable_shared_from_this<CBaseLayer>
+    class CBaseLayer : public CLayerHeatFlow,
+                       public SurfacesManager,
+                       public std::enable_shared_from_this<CBaseLayer>
     {
     public:
         CBaseLayer();
@@ -36,6 +38,10 @@ namespace Tarcog::ISO15099
 
         // Thickness of the layer in base state (without deflection)
         virtual double getBaseThickness() const final;
+
+        virtual double getHeatFlow() final;
+        virtual double getRadiationFlow();
+        virtual double getConvectionConductionFlow() final;
 
         // This is to determine if layer is porous and leaking air from gap to the surrounding
         // environment. Layer are non-porous by default.
@@ -67,7 +73,7 @@ namespace Tarcog::ISO15099
         double m_Thickness{TarcogConstants::DEFAULT_LAYER_THICKNESS};
 
     private:
-        std::shared_ptr<CBaseLayer> m_PreviousLayer;
-        std::shared_ptr<CBaseLayer> m_NextLayer;
+        std::shared_ptr<CBaseLayer> m_PreviousLayer{nullptr};
+        std::shared_ptr<CBaseLayer> m_NextLayer{nullptr};
     };
 }   // namespace Tarcog::ISO15099
