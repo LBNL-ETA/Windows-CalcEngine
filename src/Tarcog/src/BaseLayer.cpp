@@ -46,7 +46,7 @@ namespace Tarcog
             return false;
         }
 
-        double CBaseLayer::getArea() const
+        double CBaseLayer::getSurfaceArea() const
         {
             return m_Width * m_Height;
         }

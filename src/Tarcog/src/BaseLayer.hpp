@@ -10,56 +10,52 @@ namespace FenestrationCommon
     enum class Side;
 }
 
-namespace Tarcog
+
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    // Base description for any tarcog layer. This includes interior and exterior environments
+    // as well. It must contain base definition of 2D geometry (Width and Height) and definition
+    // of heat flow that is divided in three categories (convection, conduction and radiation).
+    // Every layer can contain only Conduction + Radiation or Convection + Radiation.
+    class CBaseLayer : public CLayerHeatFlow, public std::enable_shared_from_this<CBaseLayer>
     {
-        // Base description for any tarcog layer. This includes interior and exterior environments
-        // as well. It must contain base definition of 2D geometry (Width and Height) and definition
-        // of heat flow that is divided in three categories (convection, conduction and radiation).
-        // Every layer can contain only Conduction + Radiation or Convection + Radiation.
-        class CBaseLayer : public CLayerHeatFlow,
-                           public std::enable_shared_from_this<CBaseLayer>
-        {
-        public:
-            CBaseLayer();
+    public:
+        CBaseLayer();
 
-            std::shared_ptr<CBaseLayer> getPreviousLayer() const;
-            std::shared_ptr<CBaseLayer> getNextLayer() const;
+        std::shared_ptr<CBaseLayer> getPreviousLayer() const;
+        std::shared_ptr<CBaseLayer> getNextLayer() const;
 
-            virtual void connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer);
+        virtual void connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer);
 
-            void tearDownConnections();
+        void tearDownConnections();
 
-            virtual double getThickness() const;
+        virtual double getThickness() const;
 
-            // This is to determine if layer is porous and leaking air from gap to the surrounding
-            // environment. Layer are non-porous by default.
-            virtual bool isPermeable() const;
+        // This is to determine if layer is porous and leaking air from gap to the surrounding
+        // environment. Layer are non-porous by default.
+        virtual bool isPermeable() const;
 
-            virtual std::shared_ptr<CBaseLayer> clone() const = 0;
+        virtual std::shared_ptr<CBaseLayer> clone() const = 0;
 
-            //! Some of the layers will require pre-calculation to be done in order to perform
-            //! main loop calculation.
-            virtual void precalculateState() {};
+        //! Some of the layers will require pre-calculation to be done in order to perform
+        //! main loop calculation.
+        virtual void precalculateState(){};
 
-            void setWidth(double width);
-            void setHeight(double height);
-            void setTilt(double tilt);
+        void setWidth(double width);
+        void setHeight(double height);
+        void setTilt(double tilt);
 
-        protected:
-            void calculateRadiationFlow() override;
-            void calculateConvectionOrConductionFlow() override = 0;
+    protected:
+        void calculateRadiationFlow() override;
+        void calculateConvectionOrConductionFlow() override = 0;
 
-            std::shared_ptr<CBaseLayer> m_PreviousLayer;
-            std::shared_ptr<CBaseLayer> m_NextLayer;
+        std::shared_ptr<CBaseLayer> m_PreviousLayer;
+        std::shared_ptr<CBaseLayer> m_NextLayer;
 
-            [[nodiscard]] double getArea() const;
+        [[nodiscard]] double getSurfaceArea() const;
 
-            double m_Width{TarcogConstants::DEFAULT_WINDOW_WIDTH};
-            double m_Height{TarcogConstants::DEFAULT_WINDOW_HEIGHT};
-            double m_Tilt{TarcogConstants::DEFAULT_TILT};
-        };
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
+        double m_Width{TarcogConstants::DEFAULT_WINDOW_WIDTH};
+        double m_Height{TarcogConstants::DEFAULT_WINDOW_HEIGHT};
+        double m_Tilt{TarcogConstants::DEFAULT_TILT};
+    };
+}   // namespace Tarcog::ISO15099

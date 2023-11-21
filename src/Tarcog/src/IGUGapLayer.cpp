@@ -115,9 +115,9 @@ namespace Tarcog
         {
             if(m_SealedGapProperties.has_value())
             {
-                auto Vini = getArea() * m_Thickness;
+                auto Vini = getSurfaceArea() * m_Thickness;
                 auto modThickness = getThickness();
-                auto Vgap = getArea() * modThickness;
+                auto Vgap = getSurfaceArea() * modThickness;
                 return m_SealedGapProperties->pressure * Vini * averageLayerTemperature()
                        / (m_SealedGapProperties->temperature * Vgap);
             }

@@ -6,23 +6,11 @@
 
 using FenestrationCommon::Side;
 
-namespace Tarcog
-{
-    namespace ISO15099
+
+    namespace Tarcog::ISO15099
     {
         CBaseIGULayer::CBaseIGULayer(double const t_Thickness) : m_Thickness(t_Thickness)
         {}
-
-        double CBaseIGULayer::averageLayerTemperature()
-        {
-            double aveTemp{273.15};
-            if(areSurfacesInitialized())
-            {
-                aveTemp = averageSurfaceTemperature();
-            }
-
-            return aveTemp;
-        }
 
         double CBaseIGULayer::getThickness() const
         {
@@ -52,6 +40,11 @@ namespace Tarcog
                                - m_Surface.at(FenestrationCommon::Side::Back)->getTemperature()));
         }
 
+        double CBaseIGULayer::averageLayerTemperature()
+        {
+            return averageSurfaceTemperature();
+        }
+
         double CBaseIGULayer::averageSurfaceTemperature() const
         {
             return (getSurface(Side::Front)->getTemperature()
@@ -59,6 +52,6 @@ namespace Tarcog
                    / 2;
         }
 
-    }   // namespace ISO15099
+    } // namespace Tarcog::ISO15099
 
-}   // namespace Tarcog
+
