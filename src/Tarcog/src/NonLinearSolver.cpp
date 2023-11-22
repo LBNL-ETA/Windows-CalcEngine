@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include "WCECommon.hpp"
 
@@ -91,6 +92,8 @@ namespace Tarcog
 
                     m_IGU.setState(initialState);
                     m_IGUState = initialState;
+
+                    std::cout << "Relaxation parameter reduced to " << m_RelaxParam << std::endl;
                 }
 
                 iterate = achievedTolerance > m_Tolerance;
@@ -100,6 +103,7 @@ namespace Tarcog
                     iterate = false;
                 }
             }
+
             m_IGUState = bestSolution;
         }
 

@@ -1,7 +1,7 @@
-
 #include <cmath>
 #include <cassert>
 #include <stdexcept>
+#include <iostream>
 
 #include "WCEGases.hpp"
 #include "IGUVentilatedGapLayer.hpp"
@@ -285,7 +285,7 @@ namespace Tarcog
                             < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
 
                 ++iterationStep;
-                if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
+                if(iterationStep > IterationConstants::NUMBER_OF_STEPS_AIRFLOW)
                 {
                     RelaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
                     iterationStep = 0;
@@ -295,6 +295,8 @@ namespace Tarcog
                         throw std::runtime_error("Airflow iterations fail to converge. "
                                                  "Maximum number of iteration steps reached.");
                     }
+
+                    std::cout << "Relaxation parameter reduced to " << RelaxationParameter << std::endl;
                 }
             }
         }
