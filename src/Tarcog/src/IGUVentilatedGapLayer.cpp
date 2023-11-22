@@ -270,7 +270,8 @@ namespace Tarcog
             bool converged = false;
             size_t iterationStep = 0;
             double TgapOut = layerTemperature();
-            while(!converged)
+            bool minimumRelaxationAchieved{false};
+            while(!converged && !minimumRelaxationAchieved)
             {
                 resetCalculated();
                 double TgapOutOld = TgapOut;
@@ -289,14 +290,10 @@ namespace Tarcog
                 {
                     RelaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
                     iterationStep = 0;
-                    if(RelaxationParameter == IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+                    if(RelaxationParameter <= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
                     {
-                        converged = true;
-                        throw std::runtime_error("Airflow iterations fail to converge. "
-                                                 "Maximum number of iteration steps reached.");
+                        minimumRelaxationAchieved = true;
                     }
-
-                    std::cout << "Relaxation parameter reduced to " << RelaxationParameter << std::endl;
                 }
             }
         }

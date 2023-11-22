@@ -113,7 +113,7 @@ TEST_F(TestDoubleClear102_102_102_ForcedVentilation_HighSpeed, WinterSystem)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     auto Temperature = aSystem->getTemperatures(aRun);
-    std::vector correctTemperature = {263.818291, 264.593199, 285.521498, 285.704784};
+    std::vector correctTemperature = {263.818291, 264.593199, 285.521498, 285.704784, 0.0, 0.0};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)

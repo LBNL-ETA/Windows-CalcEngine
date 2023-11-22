@@ -92,8 +92,6 @@ namespace Tarcog
 
                     m_IGU.setState(initialState);
                     m_IGUState = initialState;
-
-                    std::cout << "Relaxation parameter reduced to " << m_RelaxParam << std::endl;
                 }
 
                 iterate = achievedTolerance > m_Tolerance;
