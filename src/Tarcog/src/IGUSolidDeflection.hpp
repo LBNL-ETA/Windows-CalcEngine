@@ -26,38 +26,10 @@ namespace Tarcog::ISO15099
         double youngsModulus() const override;
         double density() const override;
 
-    protected:
-        void calculateConvectionOrConductionFlow() override;
-        double pressureDifference() const;
-
     private:
         double m_YoungsModulus;
         double m_PoisonRatio;
         double m_Density;
-    };
-
-    ////////////////////////////////////////////////////////////////////////////
-    ////    CIGUDeflectionTempAndPressure
-    ////////////////////////////////////////////////////////////////////////////
-    class CIGUDeflectionTempAndPressure : public CIGUSolidLayerDeflection
-    {
-    public:
-        CIGUDeflectionTempAndPressure(
-          const std::shared_ptr<CIGUSolidLayerDeflection> & t_SolidLayer,
-          double t_MaxDeflectionCoeff,
-          double t_MeanDeflectionCoeff);
-
-        std::shared_ptr<CBaseLayer> clone() const override;
-
-    protected:
-        void calculateConvectionOrConductionFlow() override;
-
-    private:
-        double LdMean(double t_P, double t_D) const;
-        double LdMax(double t_P, double t_D) const;
-
-        double m_MaxCoeff;
-        double m_MeanCoeff;
     };
 
     ////////////////////////////////////////////////////////////////////////////

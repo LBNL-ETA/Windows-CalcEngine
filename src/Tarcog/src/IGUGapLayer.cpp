@@ -114,7 +114,7 @@ namespace Tarcog::ISO15099
     {
         if(m_SealedGapProperties.has_value())
         {
-            auto Vini = getSurfaceArea() * getBaseThickness();
+            auto Vini = getSurfaceArea() * m_Thickness;
             auto modThickness = getThickness();
             auto Vgap = getSurfaceArea() * modThickness;
             return m_SealedGapProperties->pressure * Vini * averageLayerTemperature()
@@ -125,7 +125,7 @@ namespace Tarcog::ISO15099
 
     double CIGUGapLayer::getMaxDeflection() const
     {
-        return getBaseThickness() + getSurface(Side::Front)->getMaxDeflection()
+        return m_Thickness + getSurface(Side::Front)->getMaxDeflection()
                - getSurface(Side::Back)->getMaxDeflection();
     }
 

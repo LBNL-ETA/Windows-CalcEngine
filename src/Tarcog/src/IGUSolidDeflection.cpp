@@ -33,14 +33,9 @@ namespace Tarcog
             m_Density(t_Density)
         {}
 
-        void CIGUSolidLayerDeflection::calculateConvectionOrConductionFlow()
-        {
-            CIGUSolidLayer::calculateConvectionOrConductionFlow();
-        }
-
         double CIGUSolidLayerDeflection::flexuralRigidity() const
         {
-            return m_YoungsModulus * pow(getBaseThickness(), 3) / (12 * (1 - pow(m_PoisonRatio, 2)));
+            return m_YoungsModulus * pow(m_Thickness, 3) / (12 * (1 - pow(m_PoisonRatio, 2)));
         }
 
         std::shared_ptr<CBaseLayer> CIGUSolidLayerDeflection::clone() const
@@ -53,13 +48,6 @@ namespace Tarcog
             return m_YoungsModulus;
         }
 
-        double CIGUSolidLayerDeflection::pressureDifference() const
-        {
-            auto P1 = std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer())->getPressure();
-            auto P2 = std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer())->getPressure();
-            return P1 - P2;
-        }
-
         bool CIGUSolidLayerDeflection::isDeflected() const
         {
             return true;
@@ -68,54 +56,6 @@ namespace Tarcog
         double CIGUSolidLayerDeflection::density() const
         {
             return m_Density;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ////    CIGUDeflectionTempAndPressure
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        CIGUDeflectionTempAndPressure::CIGUDeflectionTempAndPressure(
-          std::shared_ptr<CIGUSolidLayerDeflection> const & t_SolidLayer,
-          double const t_MaxDeflectionCoeff,
-          double const t_MeanDeflectionCoeff) :
-            CIGUSolidLayerDeflection(*t_SolidLayer),
-            m_MaxCoeff(t_MaxDeflectionCoeff),
-            m_MeanCoeff(t_MeanDeflectionCoeff)
-        {}
-
-        void CIGUDeflectionTempAndPressure::calculateConvectionOrConductionFlow()
-        {
-            CIGUSolidLayerDeflection::calculateConvectionOrConductionFlow();
-            // Relaxation parameter is low because that will make possible solution to converge.
-            // Instability in rest of equation is great if using higher relaxation parameter and
-            // it probaby does not matter what solver is used.
-            auto const RelaxationParamter = 0.005;
-
-            auto Dp = pressureDifference();
-            auto D = flexuralRigidity();
-            auto Ld = m_Surface[Side::Front]->getMeanDeflection();
-            Ld += LdMean(Dp, D) * RelaxationParamter;
-            auto Ldmax = m_Surface[Side::Front]->getMaxDeflection();
-            Ldmax += LdMax(Dp, D) * RelaxationParamter;
-            for(auto aSide : FenestrationCommon::EnumSide())
-            {
-                m_Surface[aSide]->applyDeflection(Ld, Ldmax);
-            }
-        }
-
-        double CIGUDeflectionTempAndPressure::LdMean(double const t_P, double const t_D) const
-        {
-            return m_MeanCoeff * t_P / t_D;
-        }
-
-        double CIGUDeflectionTempAndPressure::LdMax(double const t_P, double const t_D) const
-        {
-            return m_MaxCoeff * t_P / t_D;
-        }
-
-        std::shared_ptr<CBaseLayer> CIGUDeflectionTempAndPressure::clone() const
-        {
-            return std::make_shared<CIGUDeflectionTempAndPressure>(*this);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////

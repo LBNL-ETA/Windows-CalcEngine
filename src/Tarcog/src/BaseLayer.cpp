@@ -91,16 +91,6 @@ namespace Tarcog::ISO15099
         m_Tilt = tilt;
     }
 
-    void CBaseLayer::setBaseThickness(const double thickness)
-    {
-        m_Thickness = thickness;
-    }
-
-    double CBaseLayer::getBaseThickness() const
-    {
-        return m_Thickness;
-    }
-
     double CBaseLayer::getConductivity()
     {
         return getConductionConvectionCoefficient() * m_Thickness;

@@ -63,12 +63,12 @@ namespace Tarcog::ISO15099
 
     void CIGUSolidLayer::calculateConvectionOrConductionFlow()
     {
-        if(getBaseThickness() == 0)
+        if(m_Thickness == 0)
         {
             throw std::runtime_error("Solid layer thickness is set to zero.");
         }
 
-        m_ConductiveConvectiveCoeff = m_Conductivity / getBaseThickness();
+        m_ConductiveConvectiveCoeff = m_Conductivity / m_Thickness;
     }
 
     void CIGUSolidLayer::setLayerState(double const t_Tf,

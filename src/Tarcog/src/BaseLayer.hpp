@@ -36,9 +36,6 @@ namespace Tarcog::ISO15099
         //! Thickness of the layer in current state (including deflection)
         double getThickness() const;
 
-        //! Thickness of the layer in base state (without deflection)
-        virtual double getBaseThickness() const final;
-
         virtual double getHeatFlow() final;
         virtual double getRadiationFlow();
         virtual double getConvectionConductionFlow() final;
@@ -59,7 +56,6 @@ namespace Tarcog::ISO15099
         void setWidth(double width);
         void setHeight(double height);
         void setTilt(double tilt);
-        void setBaseThickness(double thickness);
 
     protected:
         void calculateRadiationFlow() override;
