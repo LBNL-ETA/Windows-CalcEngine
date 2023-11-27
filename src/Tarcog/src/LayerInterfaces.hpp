@@ -1,23 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <map>
-
-#include <WCECommon.hpp>
-#include <WCEGases.hpp>
-
-namespace FenestrationCommon
-{
-    enum class Side;
-}
-
 namespace Tarcog::ISO15099
 {
-    class Surface;
-
-    class CLayerHeatFlow
+    class HeatFlowLayer
     {
     public:
+        virtual void calculateLayerHeatFlow() final;
+
         virtual double getGainFlow() final;
         virtual double getConductionConvectionCoefficient() final;
 
@@ -26,7 +15,6 @@ namespace Tarcog::ISO15099
         virtual bool isCalculated() final;
 
     protected:
-        virtual void calculateLayerHeatFlow() final;
         virtual void calculateRadiationFlow() = 0;
         virtual void calculateConvectionOrConductionFlow() = 0;
 

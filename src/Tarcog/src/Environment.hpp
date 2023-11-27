@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <WCEGases.hpp>
+
 #include "EnvironmentConfigurations.hpp"
 #include "BaseLayer.hpp"
 #include "AirFlow.hpp"

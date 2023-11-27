@@ -3,10 +3,7 @@
 #include <map>
 #include <memory>
 
-namespace FenestrationCommon
-{
-    enum class Side;
-}
+#include <WCECommon.hpp>
 
 namespace Tarcog::ISO15099
 {

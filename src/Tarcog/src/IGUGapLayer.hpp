@@ -58,7 +58,7 @@ namespace Tarcog
             double aspectRatio() const;
             double convectiveH();
 
-            void checkNextLayer() const;
+            void calculateHeatFlowNextLayer() const;
         };
 
     }   // namespace ISO15099

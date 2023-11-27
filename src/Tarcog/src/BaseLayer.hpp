@@ -17,7 +17,7 @@ namespace Tarcog::ISO15099
     // as well. It must contain base definition of 2D geometry (Width and Height) and definition
     // of heat flow that is divided in three categories (convection, conduction and radiation).
     // Every layer can contain only Conduction + Radiation or Convection + Radiation.
-    class CBaseLayer : public CLayerHeatFlow,
+    class CBaseLayer : public HeatFlowLayer,
                        public SurfacesManager,
                        public std::enable_shared_from_this<CBaseLayer>
     {
