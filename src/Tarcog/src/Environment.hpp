@@ -6,11 +6,11 @@
 
 #include "EnvironmentConfigurations.hpp"
 #include "BaseLayer.hpp"
-#include "AirFlow.hpp"
+#include "GasSpecification.hpp"
 
 namespace Tarcog::ISO15099
 {
-    class CEnvironment : public Tarcog::ISO15099::CBaseLayer
+    class CEnvironment : public CBaseLayer
     {
     public:
         CEnvironment(double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection);
@@ -55,10 +55,7 @@ namespace Tarcog::ISO15099
         // Keep info if IR radiation is provided (calculated) outside
         bool m_IRCalculatedOutside;
 
-        double m_Pressure;
-        AirflowProperties m_AirflowProperties;
-
-        Gases::CGas m_Gas;
+        GasSpecification gasSpecification;
     };
 
 }   // namespace Tarcog::ISO15099

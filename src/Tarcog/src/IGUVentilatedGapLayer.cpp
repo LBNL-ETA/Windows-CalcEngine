@@ -24,8 +24,8 @@ namespace Tarcog::ISO15099
         m_Zin(0),
         m_Zout(0)
     {
-        m_ReferenceGas = m_Gas;
-        m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, m_Pressure);
+        m_ReferenceGas = gasSpecification.gas;
+        m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, gasSpecification.pressure);
     }
 
     CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
@@ -39,8 +39,8 @@ namespace Tarcog::ISO15099
         m_ForcedVentilation(
           ForcedVentilation(forcedVentilationInletSpeed, forcedVentilationInletTemperature))
     {
-        m_ReferenceGas = m_Gas;
-        m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, m_Pressure);
+        m_ReferenceGas = gasSpecification.gas;
+        m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, gasSpecification.pressure);
     }
 
     double CIGUVentilatedGapLayer::inletTemperature() const
@@ -72,7 +72,8 @@ namespace Tarcog::ISO15099
     {
         m_State.inletTemperature = inletTemperature;
         resetCalculated();
-        m_Gas.setTemperatureAndPressure(averageLayerTemperature(), m_Pressure);
+        gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
+                                                       gasSpecification.pressure);
     }
 
     void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
@@ -81,14 +82,16 @@ namespace Tarcog::ISO15099
         m_State.inletTemperature = t_inTemperature;
         m_State.outletTemperature = t_outTemperature;
         resetCalculated();
-        m_Gas.setTemperatureAndPressure(averageLayerTemperature(), m_Pressure);
+        gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
+                                                       gasSpecification.pressure);
     }
 
     void CIGUVentilatedGapLayer::setFlowSpeed(double const t_speed)
     {
-        m_AirflowProperties.m_AirSpeed = t_speed;
+        gasSpecification.airflowProperties.m_AirSpeed = t_speed;
         resetCalculated();
-        m_Gas.setTemperatureAndPressure(averageLayerTemperature(), m_Pressure);
+        gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
+                                                       gasSpecification.pressure);
     }
 
     double CIGUVentilatedGapLayer::getDrivingPressure()
@@ -107,19 +110,19 @@ namespace Tarcog::ISO15099
 
     double CIGUVentilatedGapLayer::bernoullyPressureTerm()
     {
-        const auto aGasProperties = m_Gas.getGasProperties();
+        const auto aGasProperties = gasSpecification.gas.getGasProperties();
         return 0.5 * aGasProperties.m_Density;
     }
 
     double CIGUVentilatedGapLayer::hagenPressureTerm()
     {
-        const auto aGasProperties = m_Gas.getGasProperties();
+        const auto aGasProperties = gasSpecification.gas.getGasProperties();
         return 12 * aGasProperties.m_Viscosity * m_Height / pow(getThickness(), 2);
     }
 
     double CIGUVentilatedGapLayer::pressureLossTerm()
     {
-        const auto aGasProperties = m_Gas.getGasProperties();
+        const auto aGasProperties = gasSpecification.gas.getGasProperties();
         return 0.5 * aGasProperties.m_Density * (m_Zin + m_Zout);
     }
 
@@ -150,13 +153,14 @@ namespace Tarcog::ISO15099
 
     double CIGUVentilatedGapLayer::characteristicHeight()
     {
-        const auto aProperties = m_Gas.getGasProperties();
+        const auto aProperties = gasSpecification.gas.getGasProperties();
         double cHeight = 0;
         // Characteristic height can only be calculated after initialization is performed
         if(!FenestrationCommon::isEqual(m_ConductiveConvectiveCoeff, 0))
         {
             cHeight = aProperties.m_Density * aProperties.m_SpecificHeat * getThickness()
-                      * m_AirflowProperties.m_AirSpeed / (4 * m_ConductiveConvectiveCoeff);
+                      * gasSpecification.airflowProperties.m_AirSpeed
+                      / (4 * m_ConductiveConvectiveCoeff);
         }
         return cHeight;
     }
@@ -175,9 +179,9 @@ namespace Tarcog::ISO15099
 
     void CIGUVentilatedGapLayer::ventilatedHeatGain()
     {
-        const auto aProperties = m_Gas.getGasProperties();
+        const auto aProperties = gasSpecification.gas.getGasProperties();
         m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat
-                          * m_AirflowProperties.m_AirSpeed * getThickness()
+                          * gasSpecification.airflowProperties.m_AirSpeed * getThickness()
                           * (m_State.inletTemperature - m_State.outletTemperature) / m_Height;
     }
 
@@ -192,13 +196,14 @@ namespace Tarcog::ISO15099
     void CIGUVentilatedGapLayer::calculateOutletTemperatureFromAirFlow()
     {
         // Always use forced ventilation if exists.
-        m_AirflowProperties.m_AirSpeed = m_ForcedVentilation.has_value()
-                                           ? m_ForcedVentilation->speed
-                                           : calculateThermallyDrivenSpeed();
+        gasSpecification.airflowProperties.m_AirSpeed = m_ForcedVentilation.has_value()
+                                                          ? m_ForcedVentilation->speed
+                                                          : calculateThermallyDrivenSpeed();
         double beta = betaCoeff();
         double alpha = 1 - beta;
 
-        m_State.outletTemperature = alpha * averageSurfaceTemperature() + beta * m_State.inletTemperature;
+        m_State.outletTemperature =
+          alpha * averageSurfaceTemperature() + beta * m_State.inletTemperature;
     }
 
     double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeedOfAdjacentGap(
@@ -211,9 +216,9 @@ namespace Tarcog::ISO15099
         double B2 = adjacentGap.hagenPressureTerm();
         double A = A1 + pow(ratio, 2) * A2;
         double B = B1 + ratio * B2;
-        m_AirflowProperties.m_AirSpeed =
+        gasSpecification.airflowProperties.m_AirSpeed =
           (sqrt(std::abs(pow(B, 2.0) + 4 * A * getDrivingPressure())) - B) / (2.0 * A);
-        return m_AirflowProperties.m_AirSpeed / ratio;
+        return gasSpecification.airflowProperties.m_AirSpeed / ratio;
     }
 
     VentilatedGapState
@@ -271,7 +276,8 @@ namespace Tarcog::ISO15099
         while(!converged)
         {
             resetCalculated();
-            m_Gas.setTemperatureAndPressure(averageLayerTemperature(), m_Pressure);
+            gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
+                                                           gasSpecification.pressure);
 
             double TgapOutOld = TgapOut;
 

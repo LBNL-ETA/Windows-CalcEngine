@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../src/AirFlow.hpp"
+#include "../src/GasSpecification.hpp"
 #include "../src/BaseLayer.hpp"
 #include "../src/BaseShade.hpp"
 #include "../src/DeflectionInterface.hpp"

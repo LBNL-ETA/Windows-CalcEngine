@@ -17,14 +17,19 @@ using FenestrationCommon::Side;
 namespace Tarcog::ISO15099
 {
     CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure) :
-        CBaseLayer(t_Thickness), m_Pressure(t_Pressure)
-    {}
+        CBaseLayer(t_Thickness)
+    {
+        gasSpecification.pressure = t_Pressure;
+    }
 
     CIGUGapLayer::CIGUGapLayer(double const t_Thickness,
                                double const t_Pressure,
                                const Gases::CGas & t_Gas) :
-        CBaseLayer(t_Thickness), m_Pressure(t_Pressure), m_Gas(t_Gas)
-    {}
+        CBaseLayer(t_Thickness)
+    {
+        gasSpecification.pressure = t_Pressure;
+        gasSpecification.gas = t_Gas;
+    }
 
     void CIGUGapLayer::connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer)
     {
@@ -62,7 +67,7 @@ namespace Tarcog::ISO15099
         const auto deltaTemp =
           std::abs(getSurfaceTemperature(Side::Back) - getSurfaceTemperature(Side::Front));
 
-        const auto aProperties = m_Gas.getGasProperties();
+        const auto aProperties = gasSpecification.gas.getGasProperties();
 
         double ra = 0;
         if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
@@ -87,11 +92,11 @@ namespace Tarcog::ISO15099
     double CIGUGapLayer::convectiveH()
     {
         const auto tGapTemperature = averageLayerTemperature();
-        m_Gas.setTemperatureAndPressure(tGapTemperature, getPressure());
+        gasSpecification.gas.setTemperatureAndPressure(tGapTemperature, getPressure());
         const auto Ra = calculateRayleighNumber();
         const auto Asp = aspectRatio();
         CNusseltNumber nusseltNumber{};
-        const auto aProperties = m_Gas.getGasProperties();
+        const auto aProperties = gasSpecification.gas.getGasProperties();
         if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
         {
             m_ConductiveConvectiveCoeff = nusseltNumber.calculate(m_Tilt, Ra, Asp)
@@ -101,10 +106,10 @@ namespace Tarcog::ISO15099
         {   // vacuum state
             m_ConductiveConvectiveCoeff = aProperties.m_ThermalConductivity;
         }
-        if(!FenestrationCommon::isEqual(m_AirflowProperties.m_AirSpeed, 0))
+        if(!FenestrationCommon::isEqual(gasSpecification.airflowProperties.m_AirSpeed, 0))
         {
             m_ConductiveConvectiveCoeff =
-              m_ConductiveConvectiveCoeff + 2 * m_AirflowProperties.m_AirSpeed;
+              m_ConductiveConvectiveCoeff + 2 * gasSpecification.airflowProperties.m_AirSpeed;
         }
 
         return m_ConductiveConvectiveCoeff;
@@ -120,7 +125,7 @@ namespace Tarcog::ISO15099
             return m_SealedGapProperties->pressure * Vini * averageLayerTemperature()
                    / (m_SealedGapProperties->temperature * Vgap);
         }
-        return m_Pressure;
+        return gasSpecification.pressure;
     }
 
     double CIGUGapLayer::getMaxDeflection() const

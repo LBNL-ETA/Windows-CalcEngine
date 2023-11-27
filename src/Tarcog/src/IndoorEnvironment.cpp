@@ -104,9 +104,9 @@ namespace Tarcog
 
         void CIndoorEnvironment::calculateHc()
         {
-            if(m_AirflowProperties.m_AirSpeed > 0)
+            if(gasSpecification.airflowProperties.m_AirSpeed > 0)
             {
-                m_ConductiveConvectiveCoeff = 4 + 4 * m_AirflowProperties.m_AirSpeed;
+                m_ConductiveConvectiveCoeff = 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
             }
             else
             {
@@ -124,8 +124,8 @@ namespace Tarcog
                     tMean = 0.1;
                 const auto deltaTemp =
                   std::abs(m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
-                m_Gas.setTemperatureAndPressure(tMean, m_Pressure);
-                const auto aProperties = m_Gas.getGasProperties();
+                gasSpecification.gas.setTemperatureAndPressure(tMean, gasSpecification.pressure);
+                const auto aProperties = gasSpecification.gas.getGasProperties();
                 const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
                                 * pow(aProperties.m_Density, 2)
                                 / (tMean * pow(aProperties.m_Viscosity, 2));

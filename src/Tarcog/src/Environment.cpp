@@ -11,10 +11,12 @@ namespace Tarcog::ISO15099
         m_Emissivity(TarcogConstants::DEFAULT_ENV_EMISSIVITY),
         m_HInput(0),
         m_HCoefficientModel(BoundaryConditionsCoeffModel::CalculateH),
-        m_IRCalculatedOutside(false),
-        m_Pressure(t_Pressure),
-        m_AirflowProperties(t_AirSpeed, AirVerticalDirection::None, t_AirDirection, false)
-    {}
+        m_IRCalculatedOutside(false)
+    {
+        gasSpecification.pressure = t_Pressure;
+        gasSpecification.airflowProperties =
+          AirflowProperties(t_AirSpeed, AirVerticalDirection::None, t_AirDirection, false);
+    }
 
     CEnvironment::~CEnvironment()
     {
@@ -27,7 +29,8 @@ namespace Tarcog::ISO15099
         m_HCoefficientModel = t_BCModel;
         m_HInput = t_HCoeff;
         resetCalculated();
-        m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
+        gasSpecification.gas.setTemperatureAndPressure(getGasTemperature(),
+                                                       gasSpecification.pressure);
     }
 
     void CEnvironment::setEnvironmentIR(double const t_InfraRed)
@@ -35,14 +38,16 @@ namespace Tarcog::ISO15099
         setIRFromEnvironment(t_InfraRed);
         m_IRCalculatedOutside = true;
         resetCalculated();
-        m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
+        gasSpecification.gas.setTemperatureAndPressure(getGasTemperature(),
+                                                       gasSpecification.pressure);
     }
 
     void CEnvironment::setEmissivity(double const t_Emissivity)
     {
         m_Emissivity = t_Emissivity;
         resetCalculated();
-        m_Gas.setTemperatureAndPressure(getGasTemperature(), m_Pressure);
+        gasSpecification.gas.setTemperatureAndPressure(getGasTemperature(),
+                                                       gasSpecification.pressure);
     }
 
     double CEnvironment::getEnvironmentIR()
@@ -90,7 +95,7 @@ namespace Tarcog::ISO15099
 
     double CEnvironment::getPressure() const
     {
-        return m_Pressure;
+        return gasSpecification.pressure;
     }
 
 }   // namespace Tarcog::ISO15099

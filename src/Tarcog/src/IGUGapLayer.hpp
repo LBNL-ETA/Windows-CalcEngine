@@ -1,11 +1,11 @@
 #pragma once
 
 #include <memory>
-#include "WCEGases.hpp"
+#include <WCEGases.hpp>
 
 #include "BaseLayer.hpp"
 #include "DeflectionInterface.hpp"
-#include "AirFlow.hpp"
+#include "GasSpecification.hpp"
 
 namespace Tarcog
 {
@@ -44,14 +44,11 @@ namespace Tarcog
         protected:
             void calculateConvectionOrConductionFlow() override;
 
-            double m_Pressure;
-            AirflowProperties m_AirflowProperties;
-
             // Gap by default will not be considered to be sealed. If not sealed then
             // pressure will be considered to be m_Pressure;
             std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
 
-            Gases::CGas m_Gas;
+            GasSpecification gasSpecification;
 
         private:
             double calculateRayleighNumber();
