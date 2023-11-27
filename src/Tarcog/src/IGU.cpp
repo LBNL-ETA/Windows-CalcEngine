@@ -417,7 +417,7 @@ namespace Tarcog::ISO15099
     // converted for the measured deflection
     CIGUSolidLayerDeflection convertToMeasuredDeflectionLayer(const CIGUSolidLayer & layer)
     {
-        if(auto deflectionLayer = dynamic_cast<const CIGUDeflectionMeasuread *>(&layer))
+        if(auto deflectionLayer = dynamic_cast<const CIGUDeflectionMeasured *>(&layer))
         {
             return *deflectionLayer;
         }
@@ -429,7 +429,7 @@ namespace Tarcog::ISO15099
 
     void CIGU::setDeflectionProperties(std::vector<double> const & t_MeasuredDeflections)
     {
-        // In case user sets the deflection properties as pressure and temperauture and then
+        // In case user sets the deflection properties as pressure and temperature and then
         // reset this back to measured deflection should delete calculator for the deflection
         // from E1300 curves.
         m_DeflectionFromE1300Curves = std::nullopt;
@@ -447,11 +447,11 @@ namespace Tarcog::ISO15099
         {
             auto LDefNMean = deflectionRatio * LDefMax[i];
             auto aLayer = getSolidLayers()[i];
-            if(dynamic_cast<CIGUDeflectionMeasuread *>(aLayer.get()) == nullptr)
+            if(dynamic_cast<CIGUDeflectionMeasured *>(aLayer.get()) == nullptr)
             {
                 auto aDefLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
                 aDefLayer =
-                  std::make_shared<CIGUDeflectionMeasuread>(aDefLayer, LDefNMean, LDefMax[i]);
+                  std::make_shared<CIGUDeflectionMeasured>(aDefLayer, LDefNMean, LDefMax[i]);
                 replaceLayer(aLayer, aDefLayer);
             }
         }

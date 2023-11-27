@@ -34,10 +34,10 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////    CIGUDeflectionMeasuread
     ////////////////////////////////////////////////////////////////////////////
-    class CIGUDeflectionMeasuread : public CIGUSolidLayerDeflection
+    class CIGUDeflectionMeasured : public CIGUSolidLayerDeflection
     {
     public:
-        CIGUDeflectionMeasuread(std::shared_ptr<CIGUSolidLayerDeflection> & t_Layer,
+        CIGUDeflectionMeasured(std::shared_ptr<CIGUSolidLayerDeflection> & t_Layer,
                                 const double t_MeanDeflection,
                                 const double t_MaxDeflection);
     };
