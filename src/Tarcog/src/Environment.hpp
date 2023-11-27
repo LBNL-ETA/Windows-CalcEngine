@@ -13,7 +13,7 @@ namespace Tarcog::ISO15099
     public:
         CEnvironment(double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection);
 
-        ~CEnvironment();
+        ~CEnvironment() override;
 
         void setHCoeffModel(BoundaryConditionsCoeffModel t_BCModel, double t_HCoeff = 0);
         void setEnvironmentIR(double t_InfraRed);

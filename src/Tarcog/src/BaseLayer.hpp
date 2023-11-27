@@ -33,18 +33,18 @@ namespace Tarcog::ISO15099
 
         void tearDownConnections();
 
-        // Thickness of the layer in current state (including deflection)
+        //! Thickness of the layer in current state (including deflection)
         double getThickness() const;
 
-        // Thickness of the layer in base state (without deflection)
+        //! Thickness of the layer in base state (without deflection)
         virtual double getBaseThickness() const final;
 
         virtual double getHeatFlow() final;
         virtual double getRadiationFlow();
         virtual double getConvectionConductionFlow() final;
 
-        // This is to determine if layer is porous and leaking air from gap to the surrounding
-        // environment. Layer are non-porous by default.
+        //! This is to determine if layer is porous and leaking air from gap to the surrounding
+        //! environment. Layer are non-porous by default.
         virtual bool isPermeable() const;
 
         virtual std::shared_ptr<CBaseLayer> clone() const = 0;
