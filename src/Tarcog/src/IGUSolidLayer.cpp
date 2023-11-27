@@ -120,16 +120,10 @@ namespace Tarcog::ISO15099
 
     void CIGUSolidLayer::applyDeflection(double meanDeflection, double maxDeflection)
     {
-        m_IsDeflected = true;
         for(auto aSide : FenestrationCommon::EnumSide())
         {
             m_Surface[aSide]->applyDeflection(meanDeflection, maxDeflection);
         }
-    }
-
-    bool CIGUSolidLayer::isDeflected() const
-    {
-        return m_IsDeflected;
     }
 
     double CIGUSolidLayer::youngsModulus() const

@@ -48,11 +48,6 @@ namespace Tarcog
             return m_YoungsModulus;
         }
 
-        bool CIGUSolidLayerDeflection::isDeflected() const
-        {
-            return true;
-        }
-
         double CIGUSolidLayerDeflection::density() const
         {
             return m_Density;

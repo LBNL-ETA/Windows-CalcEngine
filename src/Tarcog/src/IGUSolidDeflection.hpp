@@ -19,7 +19,6 @@ namespace Tarcog::ISO15099
                                  double t_Density);
 
         double flexuralRigidity() const;
-        bool isDeflected() const override;
 
         std::shared_ptr<CBaseLayer> clone() const override;
 

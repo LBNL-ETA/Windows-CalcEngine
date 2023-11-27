@@ -37,10 +37,8 @@ namespace Tarcog::ISO15099
         void setSolarRadiation(double t_SolarRadiation);
         void setSolarHeatGain(double t_SolarAbsorptance, double t_SolarRadiation);
 
-        // Radiation flow in solid layer should be eliminated
         double getRadiationFlow() override;
 
-        virtual bool isDeflected() const;
         virtual double youngsModulus() const;
 
         double getMaxDeflection() const override;
@@ -56,13 +54,10 @@ namespace Tarcog::ISO15099
         void calculateConvectionOrConductionFlow() override;
 
         double m_Conductivity;
-
     private:
         void setSurfaceState(double t_Temperature, double t_J, FenestrationCommon::Side t_Position);
 
         double m_SolarAbsorptance;
-
-        bool m_IsDeflected{false};
     };
 
 }   // namespace Tarcog::ISO15099
