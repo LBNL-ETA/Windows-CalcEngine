@@ -3,8 +3,8 @@
 #include <memory>
 #include <map>
 
-#include "WCECommon.hpp"
-#include "WCEGases.hpp"
+#include <WCECommon.hpp>
+#include <WCEGases.hpp>
 
 namespace FenestrationCommon
 {
@@ -32,6 +32,8 @@ namespace Tarcog::ISO15099
 
         double m_ConductiveConvectiveCoeff{0};
         double m_LayerGainFlow{0};
+
+    private:
         bool m_IsCalculated{false};
     };
 
