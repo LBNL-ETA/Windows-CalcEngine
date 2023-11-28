@@ -29,10 +29,9 @@ namespace Tarcog::ISO15099
 
     double CBaseLayer::getConvectionConductionFlow()
     {
-        calculateLayerHeatFlow();
         return (getSurfaceTemperature(FenestrationCommon::Side::Back)
                 - getSurfaceTemperature(FenestrationCommon::Side::Front))
-               * m_ConductiveConvectiveCoeff;
+               * getConductionConvectionCoefficient();;
     }
 
     std::shared_ptr<CBaseLayer> CBaseLayer::getPreviousLayer() const

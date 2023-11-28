@@ -49,7 +49,6 @@ namespace Tarcog::ISO15099
 
     double CEnvironment::getEnvironmentIR()
     {
-        calculateLayerHeatFlow();
         return getIRFromEnvironment();
     }
 

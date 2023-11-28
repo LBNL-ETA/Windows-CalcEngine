@@ -125,7 +125,6 @@ namespace Tarcog::ISO15099
 
     double CIGUVentilatedGapLayer::betaCoeff()
     {
-        calculateLayerHeatFlow();
         return exp(-m_Height / characteristicHeight());
     }
 
