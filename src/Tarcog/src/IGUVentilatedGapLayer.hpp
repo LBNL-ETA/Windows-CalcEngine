@@ -1,108 +1,101 @@
-#ifndef TARIGUVENTILATEDGAPLAYER_H
-#define TARIGUVENTILATEDGAPLAYER_H
+#pragma once
 
 #include <memory>
 
-#include "WCEGases.hpp"
+#include <WCEGases.hpp>
+
 #include "IGUGapLayer.hpp"
 
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    struct VentilatedGapState
     {
-        struct VentilatedGapState
-        {
-            VentilatedGapState() = default;
-            VentilatedGapState(double inletTemperature, double outletTemperature);
-            double inletTemperature{0};
-            double outletTemperature{0};
-        };
+        VentilatedGapState() = default;
+        VentilatedGapState(double inletTemperature, double outletTemperature);
+        double inletTemperature{0};
+        double outletTemperature{0};
+    };
 
-        //! @brief Storage for forced ventilation properties.
-        //!
-        //! @property speed - Speed at which air is flowing into the gap
-        //! @property temperature - Temperature at which air will be coming into the gap
-        struct ForcedVentilation
-        {
-            ForcedVentilation(double speed, double temperature);
-            double speed{0};
-            double temperature{0};
-        };
+    //! @brief Storage for forced ventilation properties.
+    //!
+    //! @property speed - Speed at which air is flowing into the gap
+    //! @property temperature - Temperature at which air will be coming into the gap
+    struct ForcedVentilation
+    {
+        ForcedVentilation(double speed, double temperature);
+        double speed{0};
+        double temperature{0};
+    };
 
-        class CIGUVentilatedGapLayer : public CIGUGapLayer
-        {
-        public:
-            explicit CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer);
-            CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
-                                   double forcedVentilationInletTemperature,
-                                   double forcedVentilationInletSpeed);
+    class CIGUVentilatedGapLayer : public CIGUGapLayer
+    {
+    public:
+        explicit CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer);
+        CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
+                               double forcedVentilationInletTemperature,
+                               double forcedVentilationInletSpeed);
 
-            double inletTemperature() const;
-            double outletTemperature() const;
-            double averageLayerTemperature() override;
+        double inletTemperature() const;
+        double outletTemperature() const;
+        double averageLayerTemperature() override;
 
-            void setFlowGeometry(double t_Ain, double t_Aout);
+        void setFlowGeometry(double t_Ain, double t_Aout);
 
-            void setInletTemperature(double inletTemperature);
+        void setInletTemperature(double inletTemperature);
 
-            void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
-            void setFlowSpeed(double t_speed);
+        void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
+        void setFlowSpeed(double t_speed);
 
-            void smoothEnergyGain(double qv1, double qv2);
+        void smoothEnergyGain(double qv1, double qv2);
 
-            // Calculates airflow properties of the gap given inletTemperature temperature. In case
-            // inletTemperature temperature is not give, class will use temperature provided in the
-            // gap constructor.
-            void calculateVentilatedAirflow(double inletTemperature);
+        // Calculates airflow properties of the gap given inletTemperature temperature. In case
+        // inletTemperature temperature is not give, class will use temperature provided in the
+        // gap constructor.
+        void calculateVentilatedAirflow(double inletTemperature);
 
-            void
-              calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+        void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
-            std::shared_ptr<CBaseLayer> clone() const override;
+        std::shared_ptr<CBaseLayer> clone() const override;
 
-        private:
-            void precalculateState() override;
-            void calculateOutletTemperatureFromAirFlow();
+    private:
+        void precalculateState() override;
+        void calculateOutletTemperatureFromAirFlow();
 
-            VentilatedGapState calculateInletAndOutletTemperaturesWithTheAdjecentGap(
-              CIGUVentilatedGapLayer & adjacentGap,
-              VentilatedGapState current,
-              VentilatedGapState previous,
-              double relaxationParameter);
+        VentilatedGapState calculateInletAndOutletTemperaturesWithTheAdjacentGap(
+          CIGUVentilatedGapLayer & adjacentGap,
+          VentilatedGapState current,
+          VentilatedGapState previous,
+          double relaxationParameter);
 
-            double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+        double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
-            double getDrivingPressure();
+        double getDrivingPressure();
 
-            double bernoullyPressureTerm();
-            double hagenPressureTerm();
-            double pressureLossTerm();
-            double betaCoeff();
-            void calculateConvectionOrConductionFlow() override;
-            double characteristicHeight();
-            double calcImpedance(double t_A) const;
-            void ventilatedHeatGain();
-            double calculateThermallyDrivenSpeed();
+        double bernoullyPressureTerm();
+        double hagenPressureTerm();
+        double pressureLossTerm();
+        double betaCoeff();
+        void calculateConvectionOrConductionFlow() override;
+        double characteristicHeight();
+        double calcImpedance(double t_A) const;
+        void ventilatedHeatGain();
+        double calculateThermallyDrivenSpeed();
 
-            void calculateHeatFlowNextLayer() const;
+        void calculateHeatFlowNextLayer() const;
 
-            std::shared_ptr<CIGUGapLayer> m_Layer;
-            Gases::CGas m_ReferenceGas;
+        std::shared_ptr<CIGUGapLayer> m_Layer;
+        Gases::CGas m_ReferenceGas;
 
-            VentilatedGapState m_State;
-            double m_Zin{0};
-            double m_Zout{0};
+        VentilatedGapState m_State;
+        double m_Zin{0};
+        double m_Zout{0};
 
-            //! Forced ventilation is stored as optional so that it can be decided if airflow
-            //! calculations will be either thermally driven or forced. Forced ventilation will be
-            //! used automatically if this value has been populated, otherwise, thermally driven is
-            //! assumed.
-            std::optional<ForcedVentilation> m_ForcedVentilation;
-        };
+        //! Forced ventilation is stored as optional so that it can be decided if airflow
+        //! calculations will be either thermally driven or forced. Forced ventilation will be
+        //! used automatically if this value has been populated, otherwise, thermally driven is
+        //! assumed.
+        std::optional<ForcedVentilation> m_ForcedVentilation;
+    };
 
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
-
-#endif
+}   // namespace Tarcog::ISO15099

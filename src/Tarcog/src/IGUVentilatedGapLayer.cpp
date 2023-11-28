@@ -229,7 +229,7 @@ namespace Tarcog::ISO15099
     }
 
     VentilatedGapState
-      CIGUVentilatedGapLayer::calculateInletAndOutletTemperaturesWithTheAdjecentGap(
+      CIGUVentilatedGapLayer::calculateInletAndOutletTemperaturesWithTheAdjacentGap(
         CIGUVentilatedGapLayer & adjacentGap,
         VentilatedGapState current,
         VentilatedGapState previous,
@@ -328,7 +328,7 @@ namespace Tarcog::ISO15099
 
             VentilatedGapState previous{current};
 
-            current = calculateInletAndOutletTemperaturesWithTheAdjecentGap(
+            current = calculateInletAndOutletTemperaturesWithTheAdjacentGap(
               adjacentGap, current, previous, RelaxationParameter);
 
             converged = std::abs(current.outletTemperature - previous.outletTemperature)
