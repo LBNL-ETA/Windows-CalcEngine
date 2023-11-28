@@ -92,7 +92,8 @@ namespace Tarcog::ISO15099
     double CIGUGapLayer::convectiveH()
     {
         const auto tGapTemperature = averageLayerTemperature();
-        gasSpecification.gas.setTemperatureAndPressure(tGapTemperature, getPressure());
+        gasSpecification.pressure = getPressure();
+        gasSpecification.setTemperature(tGapTemperature);
         const auto Ra = calculateRayleighNumber();
         const auto Asp = aspectRatio();
         CNusseltNumber nusseltNumber{};

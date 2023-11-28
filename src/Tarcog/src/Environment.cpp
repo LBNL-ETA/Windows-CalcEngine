@@ -29,8 +29,7 @@ namespace Tarcog::ISO15099
         m_HCoefficientModel = t_BCModel;
         m_HInput = t_HCoeff;
         resetCalculated();
-        gasSpecification.gas.setTemperatureAndPressure(getGasTemperature(),
-                                                       gasSpecification.pressure);
+        gasSpecification.setTemperature(getGasTemperature());
     }
 
     void CEnvironment::setEnvironmentIR(double const t_InfraRed)
@@ -38,16 +37,14 @@ namespace Tarcog::ISO15099
         setIRFromEnvironment(t_InfraRed);
         m_IRCalculatedOutside = true;
         resetCalculated();
-        gasSpecification.gas.setTemperatureAndPressure(getGasTemperature(),
-                                                       gasSpecification.pressure);
+        gasSpecification.setTemperature(getGasTemperature());
     }
 
     void CEnvironment::setEmissivity(double const t_Emissivity)
     {
         m_Emissivity = t_Emissivity;
         resetCalculated();
-        gasSpecification.gas.setTemperatureAndPressure(getGasTemperature(),
-                                                       gasSpecification.pressure);
+        gasSpecification.setTemperature(getGasTemperature());
     }
 
     double CEnvironment::getEnvironmentIR()

@@ -72,8 +72,7 @@ namespace Tarcog::ISO15099
     {
         m_State.inletTemperature = inletTemperature;
         resetCalculated();
-        gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
-                                                       gasSpecification.pressure);
+        gasSpecification.setTemperature(averageLayerTemperature());
     }
 
     void CIGUVentilatedGapLayer::setFlowTemperatures(double t_inTemperature,
@@ -82,16 +81,14 @@ namespace Tarcog::ISO15099
         m_State.inletTemperature = t_inTemperature;
         m_State.outletTemperature = t_outTemperature;
         resetCalculated();
-        gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
-                                                       gasSpecification.pressure);
+        gasSpecification.setTemperature(averageLayerTemperature());
     }
 
     void CIGUVentilatedGapLayer::setFlowSpeed(double const t_speed)
     {
         gasSpecification.airflowProperties.m_AirSpeed = t_speed;
         resetCalculated();
-        gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
-                                                       gasSpecification.pressure);
+        gasSpecification.setTemperature(averageLayerTemperature());
     }
 
     double CIGUVentilatedGapLayer::getDrivingPressure()
@@ -276,8 +273,7 @@ namespace Tarcog::ISO15099
         while(!converged)
         {
             resetCalculated();
-            gasSpecification.gas.setTemperatureAndPressure(averageLayerTemperature(),
-                                                           gasSpecification.pressure);
+            gasSpecification.setTemperature(averageLayerTemperature());
 
             double TgapOutOld = TgapOut;
 

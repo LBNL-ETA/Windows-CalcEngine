@@ -10,6 +10,8 @@ namespace Tarcog::ISO15099
     {
         GasSpecification() = default;
 
+        void setTemperature(double temperature);
+
         double pressure{Gases::DefaultPressure};
         AirflowProperties airflowProperties{};
 

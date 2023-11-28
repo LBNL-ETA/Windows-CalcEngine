@@ -124,7 +124,7 @@ namespace Tarcog
                     tMean = 0.1;
                 const auto deltaTemp =
                   std::abs(m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
-                gasSpecification.gas.setTemperatureAndPressure(tMean, gasSpecification.pressure);
+                gasSpecification.setTemperature(tMean);
                 const auto aProperties = gasSpecification.gas.getGasProperties();
                 const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
                                 * pow(aProperties.m_Density, 2)
