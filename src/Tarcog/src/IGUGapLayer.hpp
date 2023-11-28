@@ -54,8 +54,6 @@ namespace Tarcog
             double calculateRayleighNumber();
             double aspectRatio() const;
             double convectiveH();
-
-            void calculateHeatFlowNextLayer() const;
         };
 
     }   // namespace ISO15099

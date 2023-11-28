@@ -39,7 +39,6 @@ namespace Tarcog::ISO15099
 
     void CIGUGapLayer::calculateConvectionOrConductionFlow()
     {
-        calculateHeatFlowNextLayer();
         if(!isCalculated())
         {
             if(FenestrationCommon::isEqual(getThickness(), 0))
@@ -48,14 +47,6 @@ namespace Tarcog::ISO15099
             }
 
             convectiveH();
-        }
-    }
-
-    void CIGUGapLayer::calculateHeatFlowNextLayer() const
-    {
-        if(getNextLayer() != nullptr)
-        {
-            getNextLayer()->calculateLayerHeatFlow();
         }
     }
 

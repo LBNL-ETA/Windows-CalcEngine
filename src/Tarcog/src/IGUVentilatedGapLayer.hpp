@@ -85,6 +85,8 @@ namespace Tarcog
             void ventilatedHeatGain();
             double calculateThermallyDrivenSpeed();
 
+            void calculateHeatFlowNextLayer() const;
+
             std::shared_ptr<CIGUGapLayer> m_Layer;
             Gases::CGas m_ReferenceGas;
 

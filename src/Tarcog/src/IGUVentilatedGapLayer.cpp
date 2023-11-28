@@ -140,10 +140,21 @@ namespace Tarcog::ISO15099
 
     void CIGUVentilatedGapLayer::calculateConvectionOrConductionFlow()
     {
+        calculateHeatFlowNextLayer();
         CIGUGapLayer::calculateConvectionOrConductionFlow();
         if(!isCalculated())
         {
             ventilatedHeatGain();
+        }
+    }
+
+    void CIGUVentilatedGapLayer::calculateHeatFlowNextLayer() const
+    {
+        if(getNextLayer() != nullptr)
+        {
+            // In case of thermally driven calculations, it is necessary to initialize gaps around
+            // shading layer correctly and that initialization is performed by shading layer
+            getNextLayer()->calculateLayerHeatFlow();
         }
     }
 
