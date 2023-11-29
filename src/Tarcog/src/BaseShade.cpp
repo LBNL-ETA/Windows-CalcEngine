@@ -172,19 +172,16 @@ namespace Tarcog::ISO15099
                                            CIGUVentilatedGapLayer & t_Gap)
     {
         t_Gap.setFlowGeometry(m_ShadeOpenings.Aeq_bot(), m_ShadeOpenings.Aeq_top());
-        const auto environmentTemperature{t_Environment.getGasTemperature()};
 
-        t_Gap.calculateVentilatedAirflow(environmentTemperature);
+        t_Gap.calculateVentilatedAirflow(t_Environment.getGasTemperature());
     }
 
     double CIGUShadeLayer::equivalentConductivity(const double t_Conductivity,
                                                   const double permeabilityFactor)
     {
         const auto standardPressure{101325.0};   // Pa
-        const auto Tf{m_Surface.at(FenestrationCommon::Side::Front)->getTemperature()};
-        const auto Tb{m_Surface.at(FenestrationCommon::Side::Back)->getTemperature()};
         Gases::CGas air;
-        air.setTemperatureAndPressure((Tf + Tb) / 2, standardPressure);
+        air.setTemperatureAndPressure(averageSurfaceTemperature(), standardPressure);
         const auto airThermalConductivity = air.getGasProperties().m_ThermalConductivity;
         return airThermalConductivity * permeabilityFactor
                + (1 - permeabilityFactor) * t_Conductivity;
