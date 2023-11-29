@@ -16,6 +16,16 @@ using FenestrationCommon::Side;
 
 namespace Tarcog::ISO15099
 {
+    bool isVacuum(const double viscosity)
+    {
+        return FenestrationCommon::isEqual(viscosity, 0);
+    }
+
+    bool isStillAir(double airSpeed)
+    {
+        return FenestrationCommon::isEqual(airSpeed, 0);
+    }
+
     CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure) :
         CBaseLayer(t_Thickness)
     {
@@ -46,7 +56,7 @@ namespace Tarcog::ISO15099
                 throw std::runtime_error("Layer thickness is set to zero.");
             }
 
-            convectiveH();
+            m_ConductiveConvectiveCoeff = convectiveH();
         }
     }
 
@@ -78,33 +88,6 @@ namespace Tarcog::ISO15099
             throw std::runtime_error("Gap thickness is set to zero.");
         }
         return m_Height / getThickness();
-    }
-
-    double CIGUGapLayer::convectiveH()
-    {
-        const auto tGapTemperature = averageLayerTemperature();
-        gasSpecification.pressure = getPressure();
-        gasSpecification.setTemperature(tGapTemperature);
-        const auto Ra = calculateRayleighNumber();
-        const auto Asp = aspectRatio();
-        CNusseltNumber nusseltNumber{};
-        const auto aProperties = gasSpecification.gas.getGasProperties();
-        if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
-        {
-            m_ConductiveConvectiveCoeff = nusseltNumber.calculate(m_Tilt, Ra, Asp)
-                                          * aProperties.m_ThermalConductivity / getThickness();
-        }
-        else
-        {   // vacuum state
-            m_ConductiveConvectiveCoeff = aProperties.m_ThermalConductivity;
-        }
-        if(!FenestrationCommon::isEqual(gasSpecification.airflowProperties.m_AirSpeed, 0))
-        {
-            m_ConductiveConvectiveCoeff =
-              m_ConductiveConvectiveCoeff + 2 * gasSpecification.airflowProperties.m_AirSpeed;
-        }
-
-        return m_ConductiveConvectiveCoeff;
     }
 
     double CIGUGapLayer::getPressure()
@@ -139,6 +122,47 @@ namespace Tarcog::ISO15099
     void CIGUGapLayer::setSealedGapProperties(double t_Temperature, double t_Pressure)
     {
         m_SealedGapProperties = SealedGapProperties(t_Temperature, t_Pressure);
+    }
+
+    void CIGUGapLayer::updateGasSpecifications()
+    {
+        gasSpecification.pressure = getPressure();
+        gasSpecification.setTemperature(averageLayerTemperature());
+    }
+
+    double CIGUGapLayer::calculateConvectiveConductiveCoefficient()
+    {
+        auto gasProperties = gasSpecification.gas.getGasProperties();
+        if(!isVacuum(gasProperties.m_Viscosity))
+        {
+            CNusseltNumber nusseltNumber{};
+            return nusseltNumber.calculate(m_Tilt, calculateRayleighNumber(), aspectRatio())
+                   * gasProperties.m_ThermalConductivity / getThickness();
+        }
+        else
+        {
+            // Handle vacuum state
+            return gasProperties.m_ThermalConductivity;
+        }
+    }
+
+    double CIGUGapLayer::addAirflowEffect(const double convectiveCoefficient)
+    {
+        if(!isStillAir(gasSpecification.airflowProperties.m_AirSpeed))
+        {
+            return convectiveCoefficient + 2 * gasSpecification.airflowProperties.m_AirSpeed;
+        }
+        return convectiveCoefficient;
+    }
+
+    double CIGUGapLayer::convectiveH()
+    {
+        updateGasSpecifications();
+
+        auto coeff{calculateConvectiveConductiveCoefficient()};
+        coeff = addAirflowEffect(coeff);
+
+        return coeff;
     }
 
 }   // namespace Tarcog::ISO15099

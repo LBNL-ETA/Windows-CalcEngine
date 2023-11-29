@@ -24,6 +24,9 @@ namespace Tarcog
             double pressure;
         };
 
+        [[nodiscard]] bool isVacuum(double viscosity);
+        [[nodiscard]] bool isStillAir(double airSpeed);
+
         class CIGUGapLayer : public CBaseLayer, public Tarcog::Deflectable
         {
         public:
@@ -53,6 +56,10 @@ namespace Tarcog
         private:
             double calculateRayleighNumber();
             double aspectRatio() const;
+
+            void updateGasSpecifications();
+            [[nodiscard]] double calculateConvectiveConductiveCoefficient();
+            [[nodiscard]] double addAirflowEffect(double convectiveCoefficient);
             double convectiveH();
         };
 
