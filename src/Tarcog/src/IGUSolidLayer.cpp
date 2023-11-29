@@ -78,6 +78,7 @@ namespace Tarcog::ISO15099
     {
         setSurfaceState(t_Tf, t_Jf, Side::Front);
         setSurfaceState(t_Tb, t_Jb, Side::Back);
+        resetCalculated();
         if(getNextLayer() != nullptr)
         {
             getNextLayer()->resetCalculated();
@@ -86,17 +87,6 @@ namespace Tarcog::ISO15099
         {
             getPreviousLayer()->resetCalculated();
         }
-    }
-
-    void CIGUSolidLayer::setSurfaceState(double const t_Temperature,
-                                         double const t_J,
-                                         Side const t_Position)
-    {
-        std::shared_ptr<Surface> aSurface = m_Surface.at(t_Position);
-        aSurface->setTemperature(t_Temperature);
-        aSurface->setJ(t_J);
-
-        resetCalculated();
     }
 
     void CIGUSolidLayer::setSolarRadiation(double const t_SolarRadiation)
@@ -157,13 +147,9 @@ namespace Tarcog::ISO15099
         // Solid layers share surfaces, so actually asking for front surface of previous layer
         // will be actual incoming radiation to this surface layer. And vice versa for back
         // surface.
-        const auto frontIncomingRadiation{getPreviousLayer()->J(FenestrationCommon::Side::Front)};
-        const auto backIncomingRadiation{getNextLayer()->J(FenestrationCommon::Side::Back)};
 
-        const auto frontSurface{m_Surface.at(Side::Front)};
-
-        const auto tir{frontSurface->getTransmittance()};
-        const auto radiationFlow{tir * (backIncomingRadiation - frontIncomingRadiation)};
-        return radiationFlow;
+        return transmittance(Side::Front)
+               * (getNextLayer()->J(FenestrationCommon::Side::Back)
+                  - getPreviousLayer()->J(FenestrationCommon::Side::Front));
     }
 }   // namespace Tarcog::ISO15099

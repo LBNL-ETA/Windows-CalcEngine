@@ -23,7 +23,7 @@ namespace Tarcog
             m_RoomRadiationTemperature =
               t_AirTemperature;   // Radiation temperature is by default air
             m_Surface[Side::Back] = std::make_shared<Surface>(m_Emissivity, 0);
-            m_Surface.at(Side::Back)->setTemperature(t_AirTemperature);
+            getSurface(Side::Back)->setTemperature(t_AirTemperature);
         }
 
         CIndoorEnvironment::CIndoorEnvironment(CIndoorEnvironment const & t_Indoor) :
@@ -63,8 +63,7 @@ namespace Tarcog
 
         double CIndoorEnvironment::getGasTemperature()
         {
-            assert(m_Surface.at(Side::Back) != nullptr);
-            return m_Surface.at(Side::Back)->getTemperature();
+            return surfaceTemperature(Side::Back);
         }
 
         double CIndoorEnvironment::calculateIRFromVariables()
@@ -82,17 +81,14 @@ namespace Tarcog
         {
             using ConstantsData::GRAVITYCONSTANT;
 
-            assert(m_Surface.at(Side::Front) != nullptr);
-            assert(m_Surface.at(Side::Back) != nullptr);
-
             const auto tiltRadians{FenestrationCommon::radians(m_Tilt)};
             auto tMean =
               getGasTemperature()
-              + 0.25 * (m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
+              + 0.25 * (surfaceTemperature(Side::Front) - getGasTemperature());
             if(tMean < 0)
                 tMean = 0.1;
             const auto deltaTemp =
-              std::abs(m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
+              std::abs(surfaceTemperature(Side::Front) - getGasTemperature());
             gasSpecification.setTemperature(tMean);
             const auto aProperties = gasSpecification.gas.getGasProperties();
             const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
@@ -137,20 +133,17 @@ namespace Tarcog
 
         double CIndoorEnvironment::getHr()
         {
-            assert(m_Surface.at(Side::Front) != nullptr);
             return getRadiationFlow()
                    / (getRadiationTemperature() - surfaceTemperature(Side::Front));
         }
 
         void CIndoorEnvironment::setIRFromEnvironment(double const t_IR)
         {
-            assert(m_Surface.at(Side::Back) != nullptr);
             m_Surface.at(Side::Back)->setJ(t_IR);
         }
 
         double CIndoorEnvironment::getIRFromEnvironment() const
         {
-            assert(m_Surface.at(Side::Back) != nullptr);
             return J(Side::Back);
         }
 

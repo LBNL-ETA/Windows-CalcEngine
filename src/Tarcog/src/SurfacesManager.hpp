@@ -37,6 +37,8 @@ namespace Tarcog::ISO15099
         void initializeStart(FenestrationCommon::Side side, double temperature);
 
     protected:
+        void setSurfaceState(double t_Temperature, double t_J, FenestrationCommon::Side t_Position);
+
         std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface{
           {FenestrationCommon::Side::Front, nullptr}, {FenestrationCommon::Side::Back, nullptr}};
     };
