@@ -1,9 +1,10 @@
-#ifndef TARCOGQBALANCE_H
-#define TARCOGQBALANCE_H
+#pragma once
 
 #include <memory>
 #include <vector>
-#include "WCECommon.hpp"
+
+#include <WCECommon.hpp>
+
 #include "IGU.hpp"
 
 namespace FenestrationCommon
@@ -13,30 +14,25 @@ namespace FenestrationCommon
 
 }   // namespace FenestrationCommon
 
-namespace Tarcog
+
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    class CBaseLayer;
+
+    class CHeatFlowBalance
     {
-        class CBaseLayer;
+    public:
+        explicit CHeatFlowBalance(CIGU & t_IGU);
 
-        class CHeatFlowBalance
-        {
-        public:
-            explicit CHeatFlowBalance(CIGU & t_IGU);
+        std::vector<double> calcBalanceMatrix();
 
-            std::vector<double> calcBalanceMatrix();
+    private:
+        void buildCell(Tarcog::ISO15099::CBaseLayer & current, size_t t_Index);
 
-        private:
-            void buildCell(Tarcog::ISO15099::CBaseLayer & current, size_t t_Index);
+        FenestrationCommon::SquareMatrix m_MatrixA;
+        std::vector<double> m_VectorB;
 
-            FenestrationCommon::SquareMatrix m_MatrixA;
-            std::vector<double> m_VectorB;
+        CIGU & m_IGU;
+    };
 
-            CIGU & m_IGU;
-        };
-
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
-
-#endif
+}   // namespace Tarcog::ISO15099
