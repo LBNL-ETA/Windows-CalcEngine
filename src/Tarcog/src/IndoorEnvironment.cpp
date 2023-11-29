@@ -78,93 +78,93 @@ namespace Tarcog
             // CEnvironment::calculateConvectionOrConductionFlow();
             switch(m_HCoefficientModel)
             {
-                case BoundaryConditionsCoeffModel::CalculateH:
-                {
-                    calculateHc();
+                case BoundaryConditionsCoeffModel::CalculateH: {
+                    m_ConductiveConvectiveCoeff = calculateHc();
                     break;
                 }
-                case BoundaryConditionsCoeffModel::HPrescribed:
-                {
+                case BoundaryConditionsCoeffModel::HPrescribed: {
                     const auto hr = getHr();
                     m_ConductiveConvectiveCoeff = m_HInput - hr;
                     break;
                 }
-                case BoundaryConditionsCoeffModel::HcPrescribed:
-                {
+                case BoundaryConditionsCoeffModel::HcPrescribed: {
                     m_ConductiveConvectiveCoeff = m_HInput;
                     break;
                 }
-                default:
-                {
+                default: {
                     throw std::runtime_error(
                       "Incorrect definition for convection model (Indoor environment).");
                 }
             }
         }
 
-        void CIndoorEnvironment::calculateHc()
+        double CIndoorEnvironment::hcFromAirSpeed()
         {
-            if(gasSpecification.airflowProperties.m_AirSpeed > 0)
+            return 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
+        }
+
+        double CIndoorEnvironment::hcThermallyDriven()
+        {
+            using ConstantsData::GRAVITYCONSTANT;
+
+            assert(m_Surface.at(Side::Front) != nullptr);
+            assert(m_Surface.at(Side::Back) != nullptr);
+
+            const auto tiltRadians{FenestrationCommon::radians(m_Tilt)};
+            auto tMean =
+              getGasTemperature()
+              + 0.25 * (m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
+            if(tMean < 0)
+                tMean = 0.1;
+            const auto deltaTemp =
+              std::abs(m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
+            gasSpecification.setTemperature(tMean);
+            const auto aProperties = gasSpecification.gas.getGasProperties();
+            const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
+                            * pow(aProperties.m_Density, 2)
+                            / (tMean * pow(aProperties.m_Viscosity, 2));
+            const auto RaCrit = 2.5e5 * pow(exp(0.72 * m_Tilt) / sin(tiltRadians), 0.2);
+            const auto RaL = gr * aProperties.m_PrandlNumber;
+            auto Gnui = 0.0;
+            if((0.0 <= m_Tilt) && (m_Tilt < 15.0))
             {
-                m_ConductiveConvectiveCoeff = 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
+                Gnui = 0.13 * pow(RaL, 1 / 3.0);
             }
-            else
+            else if((15.0 <= m_Tilt) && (m_Tilt <= 90.0))
             {
-                using ConstantsData::GRAVITYCONSTANT;
-                using ConstantsData::WCE_PI;
-
-                assert(m_Surface.at(Side::Front) != nullptr);
-                assert(m_Surface.at(Side::Back) != nullptr);
-
-                const auto tiltRadians = m_Tilt * WCE_PI / 180;
-                auto tMean =
-                  getGasTemperature()
-                  + 0.25 * (m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
-                if(tMean < 0)
-                    tMean = 0.1;
-                const auto deltaTemp =
-                  std::abs(m_Surface.at(Side::Front)->getTemperature() - getGasTemperature());
-                gasSpecification.setTemperature(tMean);
-                const auto aProperties = gasSpecification.gas.getGasProperties();
-                const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp
-                                * pow(aProperties.m_Density, 2)
-                                / (tMean * pow(aProperties.m_Viscosity, 2));
-                const auto RaCrit = 2.5e5 * pow(exp(0.72 * m_Tilt) / sin(tiltRadians), 0.2);
-                const auto RaL = gr * aProperties.m_PrandlNumber;
-                auto Gnui = 0.0;
-                if((0.0 <= m_Tilt) && (m_Tilt < 15.0))
-                {
-                    Gnui = 0.13 * pow(RaL, 1 / 3.0);
-                }
-                else if((15.0 <= m_Tilt) && (m_Tilt <= 90.0))
-                {
-                    if(RaL <= RaCrit)
-                    {
-                        Gnui = 0.56 * pow(RaL * sin(tiltRadians), 0.25);
-                    }
-                    else
-                    {
-                        Gnui = 0.13 * (pow(RaL, 1 / 3.0) - pow(RaCrit, 1 / 3.0))
-                               + 0.56 * pow(RaCrit * sin(tiltRadians), 0.25);
-                    }
-                }
-                else if((90.0 < m_Tilt) && (m_Tilt <= 179.0))
+                if(RaL <= RaCrit)
                 {
                     Gnui = 0.56 * pow(RaL * sin(tiltRadians), 0.25);
                 }
-                else if((179.0 < m_Tilt) && (m_Tilt <= 180.0))
+                else
                 {
-                    Gnui = 0.58 * pow(RaL, 1 / 3.0);
+                    Gnui = 0.13 * (pow(RaL, 1 / 3.0) - pow(RaCrit, 1 / 3.0))
+                           + 0.56 * pow(RaCrit * sin(tiltRadians), 0.25);
                 }
-                m_ConductiveConvectiveCoeff = Gnui * aProperties.m_ThermalConductivity / m_Height;
             }
+            else if((90.0 < m_Tilt) && (m_Tilt <= 179.0))
+            {
+                Gnui = 0.56 * pow(RaL * sin(tiltRadians), 0.25);
+            }
+            else if((179.0 < m_Tilt) && (m_Tilt <= 180.0))
+            {
+                Gnui = 0.58 * pow(RaL, 1 / 3.0);
+            }
+            return Gnui * aProperties.m_ThermalConductivity / m_Height;
+        }
+
+        double CIndoorEnvironment::calculateHc()
+        {
+            return (gasSpecification.airflowProperties.m_AirSpeed > 0)
+                                            ? hcFromAirSpeed()
+                                            : hcThermallyDriven();
         }
 
         double CIndoorEnvironment::getHr()
         {
             assert(m_Surface.at(Side::Front) != nullptr);
             return getRadiationFlow()
-                   / (getRadiationTemperature() - m_Surface.at(Side::Front)->getTemperature());
+                   / (getRadiationTemperature() - getSurfaceTemperature(Side::Front));
         }
 
         void CIndoorEnvironment::setIRFromEnvironment(double const t_IR)
@@ -176,7 +176,7 @@ namespace Tarcog
         double CIndoorEnvironment::getIRFromEnvironment() const
         {
             assert(m_Surface.at(Side::Back) != nullptr);
-            return m_Surface.at(Side::Back)->J();
+            return J(Side::Back);
         }
 
         double CIndoorEnvironment::getRadiationTemperature() const

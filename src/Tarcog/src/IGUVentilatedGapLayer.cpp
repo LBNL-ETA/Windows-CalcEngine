@@ -17,16 +17,24 @@ namespace Tarcog::ISO15099
         speed(speed), temperature(temperature)
     {}
 
+    Gases::GasProperties getGasPropertiesAtReferenceTemperatureAndPressure(Gases::CGas & gas,
+                                                                           const double temperature,
+                                                                           const double pressure)
+    {
+        auto refGas{gas};
+        refGas.setTemperatureAndPressure(temperature, pressure);
+        return refGas.getGasProperties();
+    }
+
     CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(std::shared_ptr<CIGUGapLayer> const & t_Layer) :
         CIGUGapLayer(*t_Layer),
         m_Layer(t_Layer),
         m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
+        m_ReferenceGasProperties(getGasPropertiesAtReferenceTemperatureAndPressure(
+          gasSpecification.gas, ReferenceTemperature, gasSpecification.pressure)),
         m_Zin(0),
         m_Zout(0)
-    {
-        m_ReferenceGas = gasSpecification.gas;
-        m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, gasSpecification.pressure);
-    }
+    {}
 
     CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
                                                    double forcedVentilationInletTemperature,
@@ -34,24 +42,13 @@ namespace Tarcog::ISO15099
         CIGUGapLayer(*t_Layer),
         m_Layer(t_Layer),
         m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
+        m_ReferenceGasProperties(getGasPropertiesAtReferenceTemperatureAndPressure(
+          gasSpecification.gas, ReferenceTemperature, gasSpecification.pressure)),
         m_Zin(0),
         m_Zout(0),
         m_ForcedVentilation(
           ForcedVentilation(forcedVentilationInletSpeed, forcedVentilationInletTemperature))
-    {
-        m_ReferenceGas = gasSpecification.gas;
-        m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, gasSpecification.pressure);
-    }
-
-    double CIGUVentilatedGapLayer::inletTemperature() const
-    {
-        return m_State.inletTemperature;
-    }
-
-    double CIGUVentilatedGapLayer::outletTemperature() const
-    {
-        return m_State.outletTemperature;
-    }
+    {}
 
     double CIGUVentilatedGapLayer::averageLayerTemperature()
     {
@@ -94,14 +91,12 @@ namespace Tarcog::ISO15099
     double CIGUVentilatedGapLayer::getDrivingPressure()
     {
         using ConstantsData::GRAVITYCONSTANT;
-        using ConstantsData::WCE_PI;
 
-        const auto tiltAngle = WCE_PI / 180 * (m_Tilt - 90);
+        const auto tiltAngle = FenestrationCommon::radians(m_Tilt - 90);
         const auto gapTemperature = averageLayerTemperature();
-        const auto aProperties = m_ReferenceGas.getGasProperties();
         const auto temperatureMultiplier = std::abs(gapTemperature - m_State.inletTemperature)
                                            / (gapTemperature * m_State.inletTemperature);
-        return aProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
+        return m_ReferenceGasProperties.m_Density * ReferenceTemperature * GRAVITYCONSTANT * m_Height
                * std::abs(cos(tiltAngle)) * temperatureMultiplier;
     }
 
@@ -144,7 +139,7 @@ namespace Tarcog::ISO15099
         CIGUGapLayer::calculateConvectionOrConductionFlow();
         if(!isCalculated())
         {
-            ventilatedHeatGain();
+            m_LayerGainFlow = ventilatedHeatGain();
         }
     }
 
@@ -184,12 +179,12 @@ namespace Tarcog::ISO15099
         return impedance;
     }
 
-    void CIGUVentilatedGapLayer::ventilatedHeatGain()
+    double CIGUVentilatedGapLayer::ventilatedHeatGain()
     {
         const auto aProperties = gasSpecification.gas.getGasProperties();
-        m_LayerGainFlow = aProperties.m_Density * aProperties.m_SpecificHeat
-                          * gasSpecification.airflowProperties.m_AirSpeed * getThickness()
-                          * (m_State.inletTemperature - m_State.outletTemperature) / m_Height;
+        return aProperties.m_Density * aProperties.m_SpecificHeat
+               * gasSpecification.airflowProperties.m_AirSpeed * getThickness()
+               * (m_State.inletTemperature - m_State.outletTemperature) / m_Height;
     }
 
     double CIGUVentilatedGapLayer::calculateThermallyDrivenSpeed()

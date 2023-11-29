@@ -26,8 +26,10 @@ namespace Tarcog
             double calculateIRFromVariables() override;
             void calculateConvectionOrConductionFlow() override;
 
-            void calculateHc();
-            double getHr() override;
+            [[nodiscard]] double hcFromAirSpeed();
+            [[nodiscard]] double hcThermallyDriven();
+            [[nodiscard]] double calculateHc();
+            [[nodiscard]] double getHr() override;
 
             void setIRFromEnvironment(double t_IR) override;
             double getIRFromEnvironment() const override;

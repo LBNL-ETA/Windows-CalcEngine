@@ -31,6 +31,7 @@ namespace Tarcog
             m_Surface[Side::Front] = std::make_shared<Surface>();
             m_Surface.at(Side::Front)->setTemperature(t_AirTemperature);
             m_DirectSolarRadiation = t_DirectSolarRadiation;
+            setupCoefficientCalculators();
         }
 
         double COutdoorEnvironment::calculateIRFromVariables()
@@ -105,35 +106,21 @@ namespace Tarcog
 
         void COutdoorEnvironment::calculateConvectionOrConductionFlow()
         {
-            switch(m_HCoefficientModel)
+            auto it = coefficientCalculators.find(m_HCoefficientModel);
+            if(it != coefficientCalculators.end())
             {
-                case BoundaryConditionsCoeffModel::CalculateH:
-                {
-                    calculateHc();
-                    break;
-                }
-                case BoundaryConditionsCoeffModel::HPrescribed:
-                {
-                    auto hr = getHr();
-                    m_ConductiveConvectiveCoeff = m_HInput - hr;
-                    break;
-                }
-                case BoundaryConditionsCoeffModel::HcPrescribed:
-                {
-                    m_ConductiveConvectiveCoeff = m_HInput;
-                    break;
-                }
-                default:
-                {
-                    throw std::runtime_error(
-                      "Incorrect definition for convection model (Outdoor environment).");
-                }
+                m_ConductiveConvectiveCoeff = it->second();
+            }
+            else
+            {
+                throw std::runtime_error(
+                  "Incorrect definition for convection model (Outdoor environment).");
             }
         }
 
-        void COutdoorEnvironment::calculateHc()
+        double COutdoorEnvironment::calculateHc()
         {
-            m_ConductiveConvectiveCoeff = 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
+            return 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
         }
 
         double COutdoorEnvironment::getHr()
@@ -160,6 +147,19 @@ namespace Tarcog
         {
             assert(m_Surface.at(Side::Front) != nullptr);
             return m_Surface.at(Side::Front)->J();
+        }
+
+        void COutdoorEnvironment::setupCoefficientCalculators()
+        {
+            coefficientCalculators[BoundaryConditionsCoeffModel::CalculateH] = [this]() {
+                return calculateHc();
+            };
+            coefficientCalculators[BoundaryConditionsCoeffModel::HPrescribed] = [this]() {
+                return m_HInput - getHr();
+            };
+            coefficientCalculators[BoundaryConditionsCoeffModel::HcPrescribed] = [this]() {
+                return m_HInput;
+            };
         }
 
     }   // namespace ISO15099

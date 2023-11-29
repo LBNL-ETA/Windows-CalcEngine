@@ -36,8 +36,6 @@ namespace Tarcog::ISO15099
                                double forcedVentilationInletTemperature,
                                double forcedVentilationInletSpeed);
 
-        double inletTemperature() const;
-        double outletTemperature() const;
         double averageLayerTemperature() override;
 
         void setFlowGeometry(double t_Ain, double t_Aout);
@@ -79,13 +77,14 @@ namespace Tarcog::ISO15099
         void calculateConvectionOrConductionFlow() override;
         double characteristicHeight();
         double calcImpedance(double t_A) const;
-        void ventilatedHeatGain();
+        [[nodiscard]] double ventilatedHeatGain();
         double calculateThermallyDrivenSpeed();
 
         void calculateHeatFlowNextLayer() const;
 
         std::shared_ptr<CIGUGapLayer> m_Layer;
-        Gases::CGas m_ReferenceGas;
+
+        const Gases::GasProperties m_ReferenceGasProperties;
 
         VentilatedGapState m_State;
         double m_Zin{0};
