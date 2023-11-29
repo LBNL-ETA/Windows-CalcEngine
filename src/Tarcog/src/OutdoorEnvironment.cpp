@@ -1,12 +1,11 @@
 #include <cmath>
 #include <stdexcept>
-#include <cassert>
 
-#include "WCEGases.hpp"
+#include <WCEGases.hpp>
+
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
 #include "OutdoorEnvironment.hpp"
-#include "WCECommon.hpp"
 
 using FenestrationCommon::Side;
 
