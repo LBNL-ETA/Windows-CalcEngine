@@ -24,11 +24,10 @@ namespace Tarcog
         private:
             double getGasTemperature() override;
             double calculateIRFromVariables() override;
-            void calculateConvectionOrConductionFlow() override;
 
             [[nodiscard]] double hcFromAirSpeed();
             [[nodiscard]] double hcThermallyDriven();
-            [[nodiscard]] double calculateHc();
+            [[nodiscard]] double calculateHc() override;
             [[nodiscard]] double getHr() override;
 
             void setIRFromEnvironment(double t_IR) override;

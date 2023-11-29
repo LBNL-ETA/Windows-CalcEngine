@@ -73,31 +73,6 @@ namespace Tarcog
             return STEFANBOLTZMANN * m_Emissivity * pow(m_RoomRadiationTemperature, 4);
         }
 
-        void CIndoorEnvironment::calculateConvectionOrConductionFlow()
-        {
-            // CEnvironment::calculateConvectionOrConductionFlow();
-            switch(m_HCoefficientModel)
-            {
-                case BoundaryConditionsCoeffModel::CalculateH: {
-                    m_ConductiveConvectiveCoeff = calculateHc();
-                    break;
-                }
-                case BoundaryConditionsCoeffModel::HPrescribed: {
-                    const auto hr = getHr();
-                    m_ConductiveConvectiveCoeff = m_HInput - hr;
-                    break;
-                }
-                case BoundaryConditionsCoeffModel::HcPrescribed: {
-                    m_ConductiveConvectiveCoeff = m_HInput;
-                    break;
-                }
-                default: {
-                    throw std::runtime_error(
-                      "Incorrect definition for convection model (Indoor environment).");
-                }
-            }
-        }
-
         double CIndoorEnvironment::hcFromAirSpeed()
         {
             return 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;

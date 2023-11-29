@@ -39,9 +39,8 @@ namespace Tarcog::ISO15099
     private:
         double getGasTemperature() override;
         double calculateIRFromVariables() override;
-        void calculateConvectionOrConductionFlow() override;
 
-        double calculateHc();
+        double calculateHc() override;
         double getHr() override;
         double getRadiationTemperature() const override;
 
@@ -51,8 +50,5 @@ namespace Tarcog::ISO15099
         double m_Tsky;
         double m_FractionOfClearSky;
         SkyModel m_SkyModel;
-
-        void setupCoefficientCalculators();
-        std::map<BoundaryConditionsCoeffModel, std::function<double()>> coefficientCalculators;
     };
 }   // namespace Tarcog::ISO15099

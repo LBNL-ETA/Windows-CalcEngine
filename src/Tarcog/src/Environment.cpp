@@ -89,6 +89,30 @@ namespace Tarcog::ISO15099
         }
     }
 
+    void CEnvironment::calculateConvectionOrConductionFlow()
+    {
+        switch(m_HCoefficientModel)
+        {
+            case BoundaryConditionsCoeffModel::CalculateH: {
+                m_ConductiveConvectiveCoeff = calculateHc();
+                break;
+            }
+            case BoundaryConditionsCoeffModel::HPrescribed: {
+                const auto hr = getHr();
+                m_ConductiveConvectiveCoeff = m_HInput - hr;
+                break;
+            }
+            case BoundaryConditionsCoeffModel::HcPrescribed: {
+                m_ConductiveConvectiveCoeff = m_HInput;
+                break;
+            }
+            default: {
+                throw std::runtime_error(
+                  "Incorrect definition for convection model (Indoor/Outdoor environment).");
+            }
+        }
+    }
+
     double CEnvironment::getPressure() const
     {
         return gasSpecification.pressure;
