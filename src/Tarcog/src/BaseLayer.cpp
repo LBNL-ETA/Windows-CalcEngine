@@ -29,9 +29,9 @@ namespace Tarcog::ISO15099
 
     double CBaseLayer::getConvectionConductionFlow()
     {
-        return (getSurfaceTemperature(FenestrationCommon::Side::Back)
-                - getSurfaceTemperature(FenestrationCommon::Side::Front))
-               * getConductionConvectionCoefficient();;
+        return (surfaceTemperature(FenestrationCommon::Side::Back)
+                - surfaceTemperature(FenestrationCommon::Side::Front))
+               * getConductionConvectionCoefficient();
     }
 
     std::shared_ptr<CBaseLayer> CBaseLayer::getPreviousLayer() const
@@ -61,8 +61,8 @@ namespace Tarcog::ISO15099
 
     double CBaseLayer::getThickness() const
     {
-        return m_Thickness + getSurface(FenestrationCommon::Side::Front)->getMeanDeflection()
-               - getSurface(FenestrationCommon::Side::Back)->getMeanDeflection();
+        return m_Thickness + surfaceDeflectionMean(FenestrationCommon::Side::Front)
+               - surfaceDeflectionMean(FenestrationCommon::Side::Back);
     }
 
     bool CBaseLayer::isPermeable() const
@@ -98,7 +98,7 @@ namespace Tarcog::ISO15099
     double CBaseLayer::getEffectiveThermalConductivity()
     {
         return std::abs(getHeatFlow() * m_Thickness
-                        / (getSurfaceTemperature(FenestrationCommon::Side::Front)
-                           - getSurfaceTemperature(FenestrationCommon::Side::Back)));
+                        / (surfaceTemperature(FenestrationCommon::Side::Front)
+                           - surfaceTemperature(FenestrationCommon::Side::Back)));
     }
 }   // namespace Tarcog::ISO15099

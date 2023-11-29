@@ -86,23 +86,23 @@ TEST_F(TestTemperatureInitialGuess, Test1)
 
     auto layer = getLayer1();
 
-    auto temperature = layer->getSurfaceTemperature(Side::Front);
+    auto temperature = layer->surfaceTemperature(Side::Front);
     auto J = layer->J(Side::Front);
     EXPECT_NEAR(256.282733081615, temperature, 1e-6);
     EXPECT_NEAR(244.589307222020, J, 1e-6);
 
-    temperature = layer->getSurfaceTemperature(Side::Back);
+    temperature = layer->surfaceTemperature(Side::Back);
     J = layer->J(Side::Back);
     EXPECT_NEAR(262.756302643044, temperature, 1e-6);
     EXPECT_NEAR(270.254322031419, J, 1e-6);
 
     layer = getLayer2();
-    temperature = layer->getSurfaceTemperature(Side::Front);
+    temperature = layer->surfaceTemperature(Side::Front);
     J = layer->J(Side::Front);
     EXPECT_NEAR(276.349099622422, temperature, 1e-6);
     EXPECT_NEAR(330.668096601357, J, 1e-6);
 
-    temperature = layer->getSurfaceTemperature(Side::Back);
+    temperature = layer->surfaceTemperature(Side::Back);
     J = layer->J(Side::Back);
     EXPECT_NEAR(282.822669183851, temperature, 1e-6);
     EXPECT_NEAR(362.757956247504, J, 1e-6);

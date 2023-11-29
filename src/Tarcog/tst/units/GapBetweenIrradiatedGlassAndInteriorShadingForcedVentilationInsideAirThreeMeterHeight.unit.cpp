@@ -158,8 +158,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingForcedVentilationInsideAir
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(305.33843112508362, frontTemperature, 1e-4);
     EXPECT_NEAR(305.72081655473085, backTemperature, 1e-4);
 }
@@ -173,8 +173,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingForcedVentilationInsideAir
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
     auto layerTemperature = aLayer->averageLayerTemperature();
     auto averageTemperature = aLayer->averageSurfaceTemperature();
     EXPECT_NEAR(305.72081655473085, frontTemperature, 1e-4);
@@ -192,8 +192,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingForcedVentilationInsideAir
     // Airflow iterations are set to 1e-4 and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->getSurfaceTemperature(FenestrationCommon::Side::Back);
+    auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
+    auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(326.86352010579054, frontTemperature, 1e-4);
     EXPECT_NEAR(326.61372838866049, backTemperature, 1e-4);
 }

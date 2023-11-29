@@ -139,7 +139,7 @@ namespace Tarcog
         {
             assert(m_Surface.at(Side::Front) != nullptr);
             return getRadiationFlow()
-                   / (getRadiationTemperature() - getSurfaceTemperature(Side::Front));
+                   / (getRadiationTemperature() - surfaceTemperature(Side::Front));
         }
 
         void CIndoorEnvironment::setIRFromEnvironment(double const t_IR)

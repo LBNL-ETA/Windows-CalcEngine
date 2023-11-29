@@ -97,8 +97,7 @@ namespace Tarcog::ISO15099
 
     double COutdoorEnvironment::getGasTemperature()
     {
-        assert(m_Surface.at(Side::Front) != nullptr);
-        return m_Surface.at(Side::Front)->getTemperature();
+        return surfaceTemperature(Side::Front);
     }
 
     double COutdoorEnvironment::calculateHc()
@@ -111,13 +110,13 @@ namespace Tarcog::ISO15099
         assert(m_Surface.at(Side::Back) != nullptr);
         assert(m_Surface.at(Side::Front) != nullptr);
         return getRadiationFlow()
-               / (m_Surface.at(Side::Back)->getTemperature() - getRadiationTemperature());
+               / (surfaceTemperature(Side::Back) - getRadiationTemperature());
     }
 
     double COutdoorEnvironment::getRadiationTemperature() const
     {
         assert(m_Surface.at(Side::Front) != nullptr);
-        return pow(m_Surface.at(Side::Front)->J() / ConstantsData::STEFANBOLTZMANN, 0.25);
+        return pow(J(Side::Front) / ConstantsData::STEFANBOLTZMANN, 0.25);
     }
 
     void COutdoorEnvironment::setIRFromEnvironment(double const t_IR)
@@ -129,7 +128,7 @@ namespace Tarcog::ISO15099
     double COutdoorEnvironment::getIRFromEnvironment() const
     {
         assert(m_Surface.at(Side::Front) != nullptr);
-        return m_Surface.at(Side::Front)->J();
+        return J(Side::Front);
     }
 
 }   // namespace Tarcog::ISO15099

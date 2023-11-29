@@ -1,7 +1,5 @@
 #include <cmath>
 #include <stdexcept>
-#include <cassert>
-#include <iostream>
 
 #include <WCEGases.hpp>
 #include <WCECommon.hpp>
@@ -59,23 +57,20 @@ namespace Tarcog::ISO15099
 
     double CIGUGapLayer::calculateRayleighNumber()
     {
-        using ConstantsData::GRAVITYCONSTANT;
+        if(!FenestrationCommon::isVacuum(gasSpecification.pressure))
+        {
+            using ConstantsData::GRAVITYCONSTANT;
+            const auto aProperties = gasSpecification.gas.getGasProperties();
+            const auto deltaTemp =
+              std::abs(surfaceTemperature(Side::Back) - surfaceTemperature(Side::Front));
 
-        const auto tGapTemperature = averageLayerTemperature();
-        const auto deltaTemp =
-          std::abs(getSurfaceTemperature(Side::Back) - getSurfaceTemperature(Side::Front));
-
-        const auto aProperties = gasSpecification.gas.getGasProperties();
-
-        double ra = 0;
-        if(!FenestrationCommon::isEqual(aProperties.m_Viscosity, 0))
-        {   // if viscosity is zero then it is vacuum
-            ra = GRAVITYCONSTANT * pow(getThickness(), 3) * deltaTemp * aProperties.m_SpecificHeat
-                 * pow(aProperties.m_Density, 2)
-                 / (tGapTemperature * aProperties.m_Viscosity * aProperties.m_ThermalConductivity);
+            return GRAVITYCONSTANT * pow(getThickness(), 3) * deltaTemp * aProperties.m_SpecificHeat
+                   * pow(aProperties.m_Density, 2)
+                   / (averageLayerTemperature() * aProperties.m_Viscosity
+                      * aProperties.m_ThermalConductivity);
         }
 
-        return ra;
+        return 0;
     }
 
     double CIGUGapLayer::aspectRatio() const
@@ -102,8 +97,7 @@ namespace Tarcog::ISO15099
 
     double CIGUGapLayer::getMaxDeflection() const
     {
-        return m_Thickness + getSurface(Side::Front)->getMaxDeflection()
-               - getSurface(Side::Back)->getMaxDeflection();
+        return m_Thickness + surfaceDeflectionMax(Side::Front) - surfaceDeflectionMax(Side::Back);
     }
 
     double CIGUGapLayer::getMeanDeflection() const
@@ -136,11 +130,7 @@ namespace Tarcog::ISO15099
             return nusseltNumber.calculate(m_Tilt, calculateRayleighNumber(), aspectRatio())
                    * gasProperties.m_ThermalConductivity / getThickness();
         }
-        else
-        {
-            // Handle vacuum state
-            return gasProperties.m_ThermalConductivity;
-        }
+        return gasProperties.m_ThermalConductivity;
     }
 
     double CIGUGapLayer::addAirflowEffect(const double convectiveCoefficient)

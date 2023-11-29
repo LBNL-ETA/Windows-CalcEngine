@@ -134,16 +134,16 @@ namespace Tarcog::ISO15099
 
     double CIGUSolidLayer::getMaxDeflection() const
     {
-        assert(FenestrationCommon::isEqual(getSurface(Side::Front)->getMaxDeflection(),
-                                           getSurface(Side::Back)->getMaxDeflection()));
-        return getSurface(Side::Front)->getMaxDeflection();
+        assert(FenestrationCommon::isEqual(surfaceDeflectionMax(Side::Front),
+                                           surfaceDeflectionMax(Side::Back)));
+        return surfaceDeflectionMax(Side::Front);
     }
 
     double CIGUSolidLayer::getMeanDeflection() const
     {
-        assert(FenestrationCommon::isEqual(getSurface(Side::Front)->getMaxDeflection(),
-                                           getSurface(Side::Back)->getMaxDeflection()));
-        return getSurface(Side::Front)->getMeanDeflection();
+        assert(FenestrationCommon::isEqual(surfaceDeflectionMean(Side::Front),
+                                           surfaceDeflectionMean(Side::Back)));
+        return surfaceDeflectionMean(Side::Front);
     }
 
     double CIGUSolidLayer::density() const
@@ -157,10 +157,8 @@ namespace Tarcog::ISO15099
         // Solid layers share surfaces, so actually asking for front surface of previous layer
         // will be actual incoming radiation to this surface layer. And vice versa for back
         // surface.
-        const auto frontIncomingRadiation{
-          getPreviousLayer()->getSurface(FenestrationCommon::Side::Front)->J()};
-        const auto backIncomingRadiation{
-          getNextLayer()->getSurface(FenestrationCommon::Side::Back)->J()};
+        const auto frontIncomingRadiation{getPreviousLayer()->J(FenestrationCommon::Side::Front)};
+        const auto backIncomingRadiation{getNextLayer()->J(FenestrationCommon::Side::Back)};
 
         const auto frontSurface{m_Surface.at(Side::Front)};
 

@@ -36,7 +36,7 @@ namespace Tarcog::ISO15099
         m_Surface[t_Position] = t_Surface;
     }
 
-    double SurfacesManager::getSurfaceTemperature(FenestrationCommon::Side t_Position) const
+    double SurfacesManager::surfaceTemperature(FenestrationCommon::Side t_Position) const
     {
         return m_Surface.at(t_Position)->getTemperature();
     }
@@ -46,6 +46,16 @@ namespace Tarcog::ISO15099
         return m_Surface.at(t_Position)->J();
     }
 
+    double SurfacesManager::surfaceDeflectionMax(FenestrationCommon::Side side) const
+    {
+        return m_Surface.at(side)->getMaxDeflection();
+    }
+
+    double SurfacesManager::surfaceDeflectionMean(FenestrationCommon::Side side) const
+    {
+        return m_Surface.at(side)->getMeanDeflection();
+    }
+
     double SurfacesManager::averageLayerTemperature()
     {
         return averageSurfaceTemperature();
@@ -53,8 +63,28 @@ namespace Tarcog::ISO15099
 
     double SurfacesManager::averageSurfaceTemperature() const
     {
-        return (getSurfaceTemperature(FenestrationCommon::Side::Front)
-                + getSurfaceTemperature(FenestrationCommon::Side::Back))
+        return (surfaceTemperature(FenestrationCommon::Side::Front)
+                + surfaceTemperature(FenestrationCommon::Side::Back))
                / 2;
+    }
+
+    double SurfacesManager::emissivePowerTerm(FenestrationCommon::Side side) const
+    {
+        return m_Surface.at(side)->emissivePowerTerm();
+    }
+
+    double SurfacesManager::reflectance(FenestrationCommon::Side side) const
+    {
+        return m_Surface.at(side)->getReflectance();
+    }
+
+    double SurfacesManager::transmittance(FenestrationCommon::Side side) const
+    {
+        return m_Surface.at(side)->getTransmittance();
+    }
+
+    void SurfacesManager::initializeStart(FenestrationCommon::Side side, double temperature)
+    {
+        m_Surface.at(side)->initializeStart(temperature);
     }
 }   // namespace Tarcog::ISO15099

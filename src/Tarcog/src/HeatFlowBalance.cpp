@@ -32,7 +32,7 @@ namespace Tarcog
             return FenestrationCommon::CLinearSolver::solveSystem(m_MatrixA, m_VectorB);
         }
 
-        void CHeatFlowBalance::buildCell(Tarcog::ISO15099::CBaseLayer & t_Current,
+        void CHeatFlowBalance::buildCell(Tarcog::ISO15099::CBaseLayer & current,
                                          const size_t t_Index)
         {
             // Routine is used to build matrix "cell" around solid layer.
@@ -40,22 +40,16 @@ namespace Tarcog
             // first determine cell size
             size_t sP = 4 * t_Index;
 
-            auto next = t_Current.getNextLayer();
-            auto previous = t_Current.getPreviousLayer();
+            auto next = current.getNextLayer();
+            auto previous = current.getPreviousLayer();
 
             // First build base cell
-            double hgl = t_Current.getConductionConvectionCoefficient();
+            double hgl = current.getConductionConvectionCoefficient();
             const double hgap_prev = previous->getConductionConvectionCoefficient();
             const double hgap_next = next->getConductionConvectionCoefficient();
-            std::shared_ptr<Surface> frontSurface = t_Current.getSurface(Side::Front);
-            assert(frontSurface != nullptr);
-            const double emissPowerFront = frontSurface->emissivePowerTerm();
-            std::shared_ptr<Surface> backSurface = t_Current.getSurface(Side::Back);
-            assert(backSurface != nullptr);
-            const double emissPowerBack = backSurface->emissivePowerTerm();
             const double qv_prev = previous->getGainFlow();
             const double qv_next = next->getGainFlow();
-            const double solarRadiation = t_Current.getGainFlow();
+            const double solarRadiation = current.getGainFlow();
 
             // first row
             m_MatrixA(sP, sP) = hgap_prev + hgl;
@@ -64,12 +58,12 @@ namespace Tarcog
             m_VectorB[sP] += solarRadiation / 2 + qv_prev / 2;
 
             // second row
-            m_MatrixA(sP + 1, sP) = emissPowerFront;
+            m_MatrixA(sP + 1, sP) = current.emissivePowerTerm(Side::Front);
             m_MatrixA(sP + 1, sP + 1) = -1;
 
             // third row
             m_MatrixA(sP + 2, sP + 2) = -1;
-            m_MatrixA(sP + 2, sP + 3) = emissPowerBack;
+            m_MatrixA(sP + 2, sP + 3) = current.emissivePowerTerm(Side::Back);
 
             // fourth row
             m_MatrixA(sP + 3, sP) = hgl;
@@ -81,16 +75,16 @@ namespace Tarcog
             {
                 // first row
                 m_MatrixA(sP, sP - 1) = -hgap_prev;
-                m_MatrixA(sP, sP - 2) = frontSurface->getTransmittance() - 1;
+                m_MatrixA(sP, sP - 2) = current.transmittance(Side::Front) - 1;
 
                 // second row
-                m_MatrixA(sP + 1, sP - 2) = frontSurface->getReflectance();
+                m_MatrixA(sP + 1, sP - 2) = current.reflectance(Side::Front);
 
                 // third row
-                m_MatrixA(sP + 2, sP - 2) = frontSurface->getTransmittance();
+                m_MatrixA(sP + 2, sP - 2) = current.transmittance(Side::Front);
 
                 // fourth row
-                m_MatrixA(sP + 3, sP - 2) = frontSurface->getTransmittance();
+                m_MatrixA(sP + 3, sP - 2) = current.transmittance(Side::Front);
             }
             else
             {
@@ -100,26 +94,26 @@ namespace Tarcog
                   std::dynamic_pointer_cast<CEnvironment>(previous)->getGasTemperature();
 
                 m_VectorB[sP] += environmentRadiosity + hgap_prev * airTemperature
-                                 - environmentRadiosity * frontSurface->getTransmittance();
-                m_VectorB[sP + 1] += -frontSurface->getReflectance() * environmentRadiosity;
-                m_VectorB[sP + 2] += -frontSurface->getTransmittance() * environmentRadiosity;
-                m_VectorB[sP + 3] += -frontSurface->getTransmittance() * environmentRadiosity;
+                                 - environmentRadiosity * current.transmittance(Side::Front);
+                m_VectorB[sP + 1] += -current.reflectance(Side::Front) * environmentRadiosity;
+                m_VectorB[sP + 2] += -current.transmittance(Side::Front) * environmentRadiosity;
+                m_VectorB[sP + 3] += -current.transmittance(Side::Front) * environmentRadiosity;
             }
 
             if(std::dynamic_pointer_cast<CEnvironment>(next) == nullptr)
             {
                 // first row
-                m_MatrixA(sP, sP + 5) = -backSurface->getTransmittance();
+                m_MatrixA(sP, sP + 5) = -current.transmittance(Side::Back);
 
                 // second row
-                m_MatrixA(sP + 1, sP + 5) = backSurface->getTransmittance();
+                m_MatrixA(sP + 1, sP + 5) = current.transmittance(Side::Back);
 
                 // third row
-                m_MatrixA(sP + 2, sP + 5) = backSurface->getReflectance();
+                m_MatrixA(sP + 2, sP + 5) = current.reflectance(Side::Back);
 
                 // fourth row
                 m_MatrixA(sP + 3, sP + 4) = hgap_next;
-                m_MatrixA(sP + 3, sP + 5) = 1 - backSurface->getTransmittance();
+                m_MatrixA(sP + 3, sP + 5) = 1 - current.transmittance(Side::Back);
             }
             else
             {
@@ -128,11 +122,11 @@ namespace Tarcog
                 const double airTemperature =
                   std::dynamic_pointer_cast<CEnvironment>(next)->getGasTemperature();
 
-                m_VectorB[sP] += backSurface->getTransmittance() * environmentRadiosity;
-                m_VectorB[sP + 1] += -backSurface->getTransmittance() * environmentRadiosity;
-                m_VectorB[sP + 2] += -backSurface->getReflectance() * environmentRadiosity;
+                m_VectorB[sP] += current.transmittance(Side::Back) * environmentRadiosity;
+                m_VectorB[sP + 1] += -current.transmittance(Side::Back) * environmentRadiosity;
+                m_VectorB[sP + 2] += -current.reflectance(Side::Back) * environmentRadiosity;
                 m_VectorB[sP + 3] += -environmentRadiosity - hgap_next * airTemperature
-                                     + backSurface->getTransmittance() * environmentRadiosity;
+                                     + current.transmittance(Side::Back) * environmentRadiosity;
             }
         }
 

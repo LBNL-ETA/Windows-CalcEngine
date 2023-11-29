@@ -238,17 +238,15 @@ namespace Tarcog::ISO15099
 
         const auto aLayer = aLayers.front();
         auto currentXPosition = startX;
-        auto aSurface = aLayer->getSurface(Side::Front);
         auto curTemp = tOut + currentXPosition * deltaTemp;
 
-        aSurface->initializeStart(curTemp);
+        aLayer->initializeStart(Side::Front, curTemp);
 
         for(const auto & layer : aLayers)
         {
             currentXPosition += layer->getThickness();
             curTemp = tOut + currentXPosition * deltaTemp;
-            aSurface = layer->getSurface(Side::Back);
-            aSurface->initializeStart(curTemp);
+            layer->initializeStart(Side::Back, curTemp);
         }
     }
 
