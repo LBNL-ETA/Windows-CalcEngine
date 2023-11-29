@@ -3,12 +3,13 @@
 #include <cassert>
 #include <iostream>
 
+#include <WCEGases.hpp>
+#include <WCECommon.hpp>
+
 #include "BaseShade.hpp"
 #include "IGUGapLayer.hpp"
 #include "Surface.hpp"
 #include "NusseltNumber.hpp"
-#include "WCEGases.hpp"
-#include "WCECommon.hpp"
 
 
 using FenestrationCommon::Side;
@@ -16,10 +17,6 @@ using FenestrationCommon::Side;
 
 namespace Tarcog::ISO15099
 {
-    bool isVacuum(const double viscosity)
-    {
-        return FenestrationCommon::isEqual(viscosity, 0);
-    }
 
     bool isStillAir(double airSpeed)
     {
@@ -133,7 +130,7 @@ namespace Tarcog::ISO15099
     double CIGUGapLayer::calculateConvectiveConductiveCoefficient()
     {
         auto gasProperties = gasSpecification.gas.getGasProperties();
-        if(!isVacuum(gasProperties.m_Viscosity))
+        if(!FenestrationCommon::isVacuum(gasSpecification.pressure))
         {
             CNusseltNumber nusseltNumber{};
             return nusseltNumber.calculate(m_Tilt, calculateRayleighNumber(), aspectRatio())

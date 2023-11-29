@@ -24,7 +24,6 @@ namespace Tarcog
             double pressure;
         };
 
-        [[nodiscard]] bool isVacuum(double viscosity);
         [[nodiscard]] bool isStillAir(double airSpeed);
 
         class CIGUGapLayer : public CBaseLayer, public Tarcog::Deflectable
