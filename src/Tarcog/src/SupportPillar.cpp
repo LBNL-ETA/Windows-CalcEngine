@@ -131,4 +131,27 @@ namespace Tarcog::ISO15099
     {
         return std::sqrt(3) / 4 * m_PillarLength * m_PillarLength;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////  TriangularPillar
+    ////////////////////////////////////////////////////////////////////////////
+    PentagonPillar::PentagonPillar(const CIGUGapLayer & layer,
+                                   double length,
+                                   double materialConductivity,
+                                   const PillarCellSpacing & cell) :
+        SupportPillar(layer, materialConductivity, cell), m_PillarLength(length)
+    {}
+
+    std::shared_ptr<CBaseLayer> PentagonPillar::clone() const
+    {
+        return std::make_shared<PentagonPillar>(*this);
+    }
+
+    double PentagonPillar::areaOfContact()
+    {
+        return 5 * m_PillarLength * m_PillarLength
+               * std::pow(std::sin(36 * FenestrationCommon::WCE_PI / 180)
+                            / std::tan(36 * FenestrationCommon::WCE_PI / 180),
+                          2);
+    }
 }   // namespace Tarcog::ISO15099
