@@ -111,4 +111,24 @@ namespace Tarcog::ISO15099
     {
         return std::make_shared<RectangularPillar>(*this);
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////  TriangularPillar
+    ////////////////////////////////////////////////////////////////////////////
+    TriangularPillar::TriangularPillar(const CIGUGapLayer & layer,
+                                       double length,
+                                       double materialConductivity,
+                                       const PillarCellSpacing & cell) :
+        SupportPillar(layer, materialConductivity, cell), m_PillarLength(length)
+    {}
+
+    std::shared_ptr<CBaseLayer> TriangularPillar::clone() const
+    {
+        return std::make_shared<TriangularPillar>(*this);
+    }
+
+    double TriangularPillar::areaOfContact()
+    {
+        return std::sqrt(3) / 4 * m_PillarLength * m_PillarLength;
+    }
 }   // namespace Tarcog::ISO15099

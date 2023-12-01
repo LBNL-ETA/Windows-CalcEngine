@@ -169,4 +169,22 @@ namespace Tarcog::ISO15099
           *gap, length, width, materialConductivity, spacing);
     }
 
+    std::shared_ptr<CIGUGapLayer> Layers::triangularPillar(
+      double length, double height, double materialConductivity, double spacing, double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<TriangularPillar>(
+          *gap, length, materialConductivity, PillarCellSpacing{spacing, spacing});
+    }
+
+    std::shared_ptr<CIGUGapLayer> Layers::triangularPillar(double length,
+                                                           double height,
+                                                           double materialConductivity,
+                                                           const PillarCellSpacing & spacing,
+                                                           double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<TriangularPillar>(*gap, length, materialConductivity, spacing);
+    }
+
 }   // namespace Tarcog::ISO15099
