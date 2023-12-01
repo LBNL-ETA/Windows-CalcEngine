@@ -124,6 +124,19 @@ namespace Tarcog::ISO15099
                          double materialConductivity,
                          const Tarcog::ISO15099::PillarCellSpacing & spacing,
                          double pressure);
+
+        static std::shared_ptr<CIGUGapLayer> hexagonPillar(double length,
+                                                           double height,
+                                                           double materialConductivity,
+                                                           double spacing,
+                                                           double pressure);
+
+        static std::shared_ptr<CIGUGapLayer>
+          hexagonPillar(double length,
+                        double height,
+                        double materialConductivity,
+                        const Tarcog::ISO15099::PillarCellSpacing & spacing,
+                        double pressure);
     };
 
 }   // namespace Tarcog::ISO15099

@@ -133,7 +133,7 @@ namespace Tarcog::ISO15099
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    ////  TriangularPillar
+    ////  PentagonPillar
     ////////////////////////////////////////////////////////////////////////////
     PentagonPillar::PentagonPillar(const CIGUGapLayer & layer,
                                    double length,
@@ -150,6 +150,29 @@ namespace Tarcog::ISO15099
     double PentagonPillar::areaOfContact()
     {
         return 5 * m_PillarLength * m_PillarLength
+               * std::pow(std::sin(36 * FenestrationCommon::WCE_PI / 180)
+                            / std::tan(36 * FenestrationCommon::WCE_PI / 180),
+                          2);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////  HexagonPillar
+    ////////////////////////////////////////////////////////////////////////////
+    HexagonPillar::HexagonPillar(const CIGUGapLayer & layer,
+                                 double length,
+                                 double materialConductivity,
+                                 const PillarCellSpacing & cell) :
+        SupportPillar(layer, materialConductivity, cell), m_PillarLength(length)
+    {}
+
+    std::shared_ptr<CBaseLayer> HexagonPillar::clone() const
+    {
+        return std::make_shared<HexagonPillar>(*this);
+    }
+
+    double HexagonPillar::areaOfContact()
+    {
+        return 6 * m_PillarLength * m_PillarLength
                * std::pow(std::sin(36 * FenestrationCommon::WCE_PI / 180)
                             / std::tan(36 * FenestrationCommon::WCE_PI / 180),
                           2);

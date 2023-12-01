@@ -114,4 +114,20 @@ namespace Tarcog::ISO15099
         double m_PillarLength;
     };
 
+    class HexagonPillar : public SupportPillar
+    {
+    public:
+        HexagonPillar(const CIGUGapLayer & layer,
+                       double length,
+                       double materialConductivity,
+                       const PillarCellSpacing & cell);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        double areaOfContact() override;
+
+        double m_PillarLength;
+    };
+
 }   // namespace Tarcog::ISO15099
