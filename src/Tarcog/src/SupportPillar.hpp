@@ -50,4 +50,20 @@ namespace Tarcog::ISO15099
         double m_Radius;
     };
 
+    class SphericalPillar : public SupportPillar
+    {
+    public:
+        SphericalPillar(const CIGUGapLayer & layer,
+                        double radiusOfContact,
+                        double materialConductivity,
+                        const PillarCellSpacing & cell);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    protected:
+        double areaOfContact() override;
+
+        double m_RadiusOfContact;
+    };
+
 }   // namespace Tarcog::ISO15099

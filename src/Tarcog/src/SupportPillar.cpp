@@ -68,4 +68,24 @@ namespace Tarcog::ISO15099
     {
         return std::make_shared<CylindricalPillar>(*this);
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////  SphericalPillar
+    ////////////////////////////////////////////////////////////////////////////
+    SphericalPillar::SphericalPillar(const CIGUGapLayer & layer,
+                                     double radiusOfContact,
+                                     double materialConductivity,
+                                     const PillarCellSpacing & cell) :
+        SupportPillar(layer, materialConductivity, cell), m_RadiusOfContact(radiusOfContact)
+    {}
+
+    double SphericalPillar::areaOfContact()
+    {
+        return ConstantsData::WCE_PI * m_RadiusOfContact * m_RadiusOfContact;
+    }
+
+    std::shared_ptr<CBaseLayer> SphericalPillar::clone() const
+    {
+        return std::make_shared<SphericalPillar>(*this);
+    }
 }   // namespace Tarcog::ISO15099

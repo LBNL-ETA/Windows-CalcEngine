@@ -124,5 +124,25 @@ namespace Tarcog::ISO15099
         const auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
         return std::make_shared<CylindricalPillar>(*gap, radius, materialConductivity, spacing);
     }
+    std::shared_ptr<CIGUGapLayer> Layers::sphericalPillar(double radiusOfContact,
+                                                          double height,
+                                                          double materialConductivity,
+                                                          double spacing,
+                                                          double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<SphericalPillar>(
+          *gap, radiusOfContact, materialConductivity, PillarCellSpacing{spacing, spacing});
+    }
+    std::shared_ptr<CIGUGapLayer> Layers::sphericalPillar(double radiusOfContact,
+                                                          double height,
+                                                          double materialConductivity,
+                                                          const PillarCellSpacing & spacing,
+                                                          double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<SphericalPillar>(
+          *gap, radiusOfContact, materialConductivity, spacing);
+    }
 
 }   // namespace Tarcog::ISO15099
