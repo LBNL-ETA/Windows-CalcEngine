@@ -84,9 +84,9 @@ namespace Tarcog::ISO15099
 
         std::shared_ptr<CIGUGapLayer> m_Layer;
 
+        VentilatedGapState m_State;
         const Gases::GasProperties m_ReferenceGasProperties;
 
-        VentilatedGapState m_State;
         double m_Zin{0};
         double m_Zout{0};
 

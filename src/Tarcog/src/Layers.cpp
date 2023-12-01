@@ -145,4 +145,28 @@ namespace Tarcog::ISO15099
           *gap, radiusOfContact, materialConductivity, spacing);
     }
 
+    std::shared_ptr<CIGUGapLayer> Layers::rectangularPillar(double length,
+                                                            double width,
+                                                            double height,
+                                                            double materialConductivity,
+                                                            double spacing,
+                                                            double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<RectangularPillar>(
+          *gap, length, width, materialConductivity, PillarCellSpacing{spacing, spacing});
+    }
+
+    std::shared_ptr<CIGUGapLayer> Layers::rectangularPillar(double length,
+                                                            double width,
+                                                            double height,
+                                                            double materialConductivity,
+                                                            const PillarCellSpacing & spacing,
+                                                            double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<RectangularPillar>(
+          *gap, length, width, materialConductivity, spacing);
+    }
+
 }   // namespace Tarcog::ISO15099

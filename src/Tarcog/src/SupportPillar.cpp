@@ -88,4 +88,27 @@ namespace Tarcog::ISO15099
     {
         return std::make_shared<SphericalPillar>(*this);
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////  RectangularPillar
+    ////////////////////////////////////////////////////////////////////////////
+    RectangularPillar::RectangularPillar(const CIGUGapLayer & layer,
+                                         double length,
+                                         double width,
+                                         double materialConductivity,
+                                         const PillarCellSpacing & cell) :
+        SupportPillar(layer, materialConductivity, cell),
+        m_PillarLength(length),
+        m_PillarWidth(width)
+    {}
+
+    double RectangularPillar::areaOfContact()
+    {
+        return m_PillarWidth * m_PillarLength;
+    }
+
+    std::shared_ptr<CBaseLayer> RectangularPillar::clone() const
+    {
+        return std::make_shared<RectangularPillar>(*this);
+    }
 }   // namespace Tarcog::ISO15099

@@ -60,10 +60,28 @@ namespace Tarcog::ISO15099
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
-    protected:
+    private:
         double areaOfContact() override;
 
         double m_RadiusOfContact;
+    };
+
+    class RectangularPillar : public SupportPillar
+    {
+    public:
+        RectangularPillar(const CIGUGapLayer & layer,
+                          double length,
+                          double width,
+                          double materialConductivity,
+                          const PillarCellSpacing & cell);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        double areaOfContact() override;
+
+        double m_PillarLength;
+        double m_PillarWidth;
     };
 
 }   // namespace Tarcog::ISO15099

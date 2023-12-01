@@ -3,7 +3,7 @@
 
 #include <WCETarcog.hpp>
 
-class DoubleLowEVacuumSphericalPillar : public testing::Test
+class DoubleLowEVacuumRectangularPillar : public testing::Test
 {
 private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
@@ -60,13 +60,14 @@ protected:
                                                       TransmittanceIR);
 
         // Add support pillars
-        auto pillarHeight = 0.0001;
+        auto pillarLength = 0.1e-3;
+        auto pillarWidth = 0.1e-3;
+        auto pillarHeight = 0.1e-3;
         auto gapPressure = 0.1333;
         auto pillarConductivity = 999.0;
         auto pillarSpacing = 0.03;
-        auto radiusOfContact = 0.02e-3;
-        auto pillarGap = Tarcog::ISO15099::Layers::sphericalPillar(
-          radiusOfContact, pillarHeight, pillarConductivity, pillarSpacing, gapPressure);
+        auto pillarGap = Tarcog::ISO15099::Layers::rectangularPillar(
+          pillarLength, pillarWidth, pillarHeight, pillarConductivity, pillarSpacing, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 
@@ -91,10 +92,8 @@ public:
     }
 };
 
-TEST_F(DoubleLowEVacuumSphericalPillar, Test1)
+TEST_F(DoubleLowEVacuumRectangularPillar, Test1)
 {
-    SCOPED_TRACE("Begin Test: Double Low-E - vacuum with circular pillar support");
-
     constexpr auto tolerance = 1e-6;
 
     const auto aSystem = GetSystem();
@@ -102,7 +101,7 @@ TEST_F(DoubleLowEVacuumSphericalPillar, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {255.531834, 255.576388, 292.383682, 292.427818};
+    std::vector correctTemperature = {255.585708, 255.636551, 292.148614, 292.198978};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -111,7 +110,7 @@ TEST_F(DoubleLowEVacuumSphericalPillar, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {241.504667, 406.862834, 413.156270, 416.181824};
+    std::vector correctRadiosity = {241.675965, 405.599640, 411.836191, 415.092952};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -120,8 +119,8 @@ TEST_F(DoubleLowEVacuumSphericalPillar, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(36u, numOfIter);
+    EXPECT_EQ(34u, numOfIter);
 
     const auto uValue{aSystem->getUValue()};
-    EXPECT_NEAR(0.285606, uValue, tolerance);
+    EXPECT_NEAR(0.325915, uValue, tolerance);
 }
