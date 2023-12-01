@@ -1,40 +1,53 @@
-#ifndef SUPPORTPILLAR_H
-#define SUPPORTPILLAR_H
+#pragma once
 
 #include "IGUGapLayer.hpp"
 
-namespace Tarcog
+
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    //! Spacing between pillars
+    struct PillarCellSpacing
     {
-        class CSupportPillar : public CIGUGapLayer
-        {
-        public:
-            CSupportPillar(const CIGUGapLayer & t_Layer, double t_Conductivity);
+        PillarCellSpacing() = default;
+        PillarCellSpacing(double sx, double sy);
+        double Sx{0};
+        double Sy{0};
+    };
 
-        protected:
-            void calculateConvectionOrConductionFlow() override;
-            virtual double conductivityOfPillarArray() = 0;
-            double m_Conductivity;
-        };
+    class SupportPillar : public CIGUGapLayer
+    {
+    public:
+        SupportPillar(const CIGUGapLayer & layer,
+                      double materialConductivity,
+                      const PillarCellSpacing & cell);
 
-        class CCircularPillar : public CSupportPillar
-        {
-        public:
-            CCircularPillar(const CIGUGapLayer & t_Gap,
-                            double t_Conductivity,
-                            double t_Spacing,
-                            double t_Radius);
+    protected:
+        [[nodiscard]] virtual double areaOfContact() = 0;
 
-            std::shared_ptr<CBaseLayer> clone() const override;
+    private:
+        void calculateConvectionOrConductionFlow() override;
 
-        private:
-            double conductivityOfPillarArray() override;
-            double m_Spacing;
-            double m_Radius;
-        };
-    }   // namespace ISO15099
+        [[nodiscard]] double conductivityOfPillarArray();
+        [[nodiscard]] virtual double singlePillarThermalResistance();
 
-}   // namespace Tarcog
+        double m_MaterialConductivity;
+        double m_CellArea;
+    };
 
-#endif
+    class CylindricalPillar : public SupportPillar
+    {
+    public:
+        CylindricalPillar(const CIGUGapLayer & layer,
+                          double radius,
+                          double materialConductivity,
+                          const PillarCellSpacing & cell);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        double areaOfContact() override;
+
+        double m_Radius;
+    };
+
+}   // namespace Tarcog::ISO15099

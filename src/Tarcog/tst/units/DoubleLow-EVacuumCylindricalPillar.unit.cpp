@@ -3,7 +3,7 @@
 
 #include <WCETarcog.hpp>
 
-class DoubleLowEVacuumCircularPillar : public testing::Test
+class DoubleLowEVacuumCylindricalPillar : public testing::Test
 {
 private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
@@ -59,16 +59,14 @@ protected:
                                                       emissivityBackIR,
                                                       TransmittanceIR);
 
-        auto gapThickness = 0.0001;
-        auto gapPressure = 0.1333;
-        auto aGapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-
         // Add support pillars
+        auto pillarHeight = 0.0001;
+        auto gapPressure = 0.1333;
         auto pillarConductivity = 999.0;
         auto pillarSpacing = 0.03;
         auto pillarRadius = 0.0002;
-        auto pillarGap = Tarcog::ISO15099::Layers::addCircularPillar(
-          aGapLayer, pillarConductivity, pillarSpacing, pillarRadius);
+        auto pillarGap = Tarcog::ISO15099::Layers::cylindricalPillar(
+          pillarRadius, pillarHeight, pillarConductivity, pillarSpacing, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 
@@ -93,34 +91,37 @@ public:
     }
 };
 
-TEST_F(DoubleLowEVacuumCircularPillar, Test1)
+TEST_F(DoubleLowEVacuumCylindricalPillar, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Low-E - vacuum with circular pillar support");
 
-    constexpr auto Tolerance = 1e-6;
+    constexpr auto tolerance = 1e-6;
 
     const auto aSystem = GetSystem();
 
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {255.997063, 256.095933, 290.398479, 290.496419};
+    std::vector correctTemperature = {255.790183, 255.864896, 291.270346, 291.344356};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], tolerance);
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {242.987484, 396.293176, 402.108090, 407.071738};
+    std::vector correctRadiosity = {242.327100, 400.907840, 406.932341, 411.049022};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], tolerance);
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(26u, numOfIter);
+    EXPECT_EQ(28u, numOfIter);
+
+    const auto uValue{aSystem->getUValue()};
+    EXPECT_NEAR(0.478928, uValue, tolerance);
 }

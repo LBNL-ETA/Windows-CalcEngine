@@ -7,6 +7,7 @@
 #include "LayerInterfaces.hpp"
 #include "TarcogConstants.hpp"
 #include "BaseShade.hpp"
+#include "SupportPillar.hpp"
 
 
 namespace Tarcog::ISO15099
@@ -56,11 +57,19 @@ namespace Tarcog::ISO15099
                                double forcedVentilationAirSpeed,
                                double forcedVentilationAirTemperature);
 
+        //! All vacuum gaps will have Air by default. If needed, different gases can be added.
+        static std::shared_ptr<CIGUGapLayer> cylindricalPillar(double radius,
+                                                               double height,
+                                                               double materialConductivity,
+                                                               double spacing,
+                                                               double pressure);
+
         static std::shared_ptr<CIGUGapLayer>
-          addCircularPillar(const std::shared_ptr<CIGUGapLayer> & gap,
-                            double conductivity,
-                            double spacing,
-                            double radius);
+          cylindricalPillar(double radius,
+                            double height,
+                            double materialConductivity,
+                            const Tarcog::ISO15099::PillarCellSpacing & spacing,
+                            double pressure);
     };
 
 }   // namespace Tarcog::ISO15099

@@ -1,62 +1,71 @@
-
 #include <cmath>
 #include <memory>
 
-#include "WCETarcog.hpp"
+#include <WCECommon.hpp>
+
+#include "SupportPillar.hpp"
 
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    PillarCellSpacing::PillarCellSpacing(double sx, double sy) : Sx(sx), Sy(sy)
+    {}
+
+    double cellArea(PillarCellSpacing cell)
     {
-        ////////////////////////////////////////////////////////////////////////////
-        ////  CSupportPillar
-        ////////////////////////////////////////////////////////////////////////////
-        CSupportPillar::CSupportPillar(CIGUGapLayer const & t_Layer, double const t_Conductivity) :
-            CIGUGapLayer(t_Layer),
-            m_Conductivity(t_Conductivity)
-        {}
+        return cell.Sx * cell.Sy;
+    }
 
-        void CSupportPillar::calculateConvectionOrConductionFlow()
+    ////////////////////////////////////////////////////////////////////////////
+    ////  CSupportPillar
+    ////////////////////////////////////////////////////////////////////////////
+    SupportPillar::SupportPillar(const CIGUGapLayer & layer,
+                                 const double materialConductivity,
+                                 const PillarCellSpacing & cell) :
+        CIGUGapLayer(layer),
+        m_MaterialConductivity(materialConductivity),
+        m_CellArea(cellArea(cell))
+    {}
+
+    void SupportPillar::calculateConvectionOrConductionFlow()
+    {
+        CIGUGapLayer::calculateConvectionOrConductionFlow();
+        if(!isCalculated())
         {
-            CIGUGapLayer::calculateConvectionOrConductionFlow();
-            if(!isCalculated())
-            {
-                m_ConductiveConvectiveCoeff += conductivityOfPillarArray();
-            }
+            m_ConductiveConvectiveCoeff += conductivityOfPillarArray();
         }
+    }
 
-        ////////////////////////////////////////////////////////////////////////////
-        ////  CCircularPillar
-        ////////////////////////////////////////////////////////////////////////////
-        CCircularPillar::CCircularPillar(CIGUGapLayer const & t_Gap,
-                                         double const t_Conductivity,
-                                         double const t_Spacing,
-                                         double const t_Radius) :
-            CSupportPillar(t_Gap, t_Conductivity),
-            m_Spacing(t_Spacing),
-            m_Radius(t_Radius)
-        {}
+    double SupportPillar::singlePillarThermalResistance()
+    {
+        auto aveCond{(getPreviousLayer()->getConductivity() + getNextLayer()->getConductivity())
+                     / 2};
+        return ConstantsData::WCE_PI / (2 * aveCond * std::sqrt(areaOfContact()))
+               + m_Thickness / (m_MaterialConductivity * areaOfContact());
+    }
 
-        double CCircularPillar::conductivityOfPillarArray()
-        {
-            using ConstantsData::WCE_PI;
+    double SupportPillar::conductivityOfPillarArray()
+    {
+        return 1 / (m_CellArea * singlePillarThermalResistance());
+    }
 
-            auto cond1 = getPreviousLayer()->getConductivity();
-            auto cond2 = getNextLayer()->getConductivity();
-            auto aveCond = (cond1 + cond2) / 2;
+    ////////////////////////////////////////////////////////////////////////////
+    ////  CylindricalPillar
+    ////////////////////////////////////////////////////////////////////////////
+    CylindricalPillar::CylindricalPillar(const CIGUGapLayer & layer,
+                                         double radius,
+                                         double materialConductivity,
+                                         const PillarCellSpacing & cell) :
+        SupportPillar(layer, materialConductivity, cell), m_Radius(radius)
+    {}
 
-            auto cond = 2 * aveCond * m_Radius / (pow(m_Spacing, 2));
-            cond *= 1 / (1 + 2 * m_Thickness * aveCond / (m_Conductivity * WCE_PI * m_Radius));
+    double CylindricalPillar::areaOfContact()
+    {
+        return ConstantsData::WCE_PI * m_Radius * m_Radius;
+    }
 
-            return cond;
-        }
-
-        std::shared_ptr<Tarcog::ISO15099::CBaseLayer> CCircularPillar::clone() const
-        {
-            return std::make_shared<CCircularPillar>(*this);
-        }
-
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
+    std::shared_ptr<CBaseLayer> CylindricalPillar::clone() const
+    {
+        return std::make_shared<CylindricalPillar>(*this);
+    }
+}   // namespace Tarcog::ISO15099

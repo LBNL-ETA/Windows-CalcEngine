@@ -108,10 +108,21 @@ namespace Tarcog::ISO15099
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
 
-    std::shared_ptr<CIGUGapLayer> Layers::addCircularPillar(
-      const std::shared_ptr<CIGUGapLayer> & gap, double conductivity, double spacing, double radius)
+    std::shared_ptr<CIGUGapLayer> Layers::cylindricalPillar(
+      double radius, double height, double materialConductivity, double spacing, double pressure)
     {
-        return std::make_shared<CCircularPillar>(*gap, conductivity, spacing, radius);
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<CylindricalPillar>(
+          *gap, radius, materialConductivity, PillarCellSpacing{spacing, spacing});
+    }
+    std::shared_ptr<CIGUGapLayer> Layers::cylindricalPillar(double radius,
+                                                            double height,
+                                                            double materialConductivity,
+                                                            const PillarCellSpacing & spacing,
+                                                            double pressure)
+    {
+        const auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<CylindricalPillar>(*gap, radius, materialConductivity, spacing);
     }
 
 }   // namespace Tarcog::ISO15099
