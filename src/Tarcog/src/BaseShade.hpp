@@ -35,7 +35,7 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double Aeq_bot() const;
         [[nodiscard]] double Aeq_top() const;
 
-        [[nodiscard]] double frontPorositiy() const;
+        [[nodiscard]] double frontPorosity() const;
 
         [[nodiscard]] bool isOpen() const;
 
@@ -74,15 +74,14 @@ namespace Tarcog::ISO15099
         bool isPermeable() const override;
 
     private:
-        void setDominanthAirflowWidth();
+        void setDominantAirflowWidth();
 
         void calculateConvectionOrConductionFlow() override;
 
-        void calcInBetweenShadeFlow(std::shared_ptr<CIGUVentilatedGapLayer> t_Gap1,
-                                    std::shared_ptr<CIGUVentilatedGapLayer> t_Gap2);
+        void calcInBetweenShadeFlow(CIGUVentilatedGapLayer & t_Gap1,
+                                    CIGUVentilatedGapLayer & t_Gap2);
 
-        void calcEdgeShadeFlow(std::shared_ptr<CEnvironment> t_Environment,
-                               std::shared_ptr<CIGUVentilatedGapLayer> t_Gap);
+        void calcEdgeShadeFlow(CEnvironment & t_Environment, CIGUVentilatedGapLayer & t_Gap);
 
         double equivalentConductivity(double t_Conductivity, double permeabilityFactor);
 

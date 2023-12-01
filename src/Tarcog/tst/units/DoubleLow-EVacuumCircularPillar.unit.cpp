@@ -1,9 +1,7 @@
 #include <memory>
-#include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+#include <WCETarcog.hpp>
 
 class DoubleLowEVacuumCircularPillar : public testing::Test
 {
@@ -51,7 +49,7 @@ protected:
                                                       emissivityBackIR,
                                                       TransmittanceIR);
 
-        solidLayerThickness = 0.003962399904;
+        solidLayerThickness = 0.0039624;
         emissivityBackIR = 0.84;
 
         auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
@@ -78,11 +76,6 @@ protected:
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, pillarGap, layer2});
-
-        // Alternative way to add layers.
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(pillarGap);
-        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         /// System

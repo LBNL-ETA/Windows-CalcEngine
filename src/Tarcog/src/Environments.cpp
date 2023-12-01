@@ -2,9 +2,8 @@
 #include "OutdoorEnvironment.hpp"
 #include "IndoorEnvironment.hpp"
 
-namespace Tarcog
-{
-    namespace ISO15099
+
+    namespace Tarcog::ISO15099
     {
         std::shared_ptr<CIndoorEnvironment>
           Tarcog::ISO15099::Environments::indoor(double roomAirTemperature, double roomPressure)
@@ -31,5 +30,4 @@ namespace Tarcog
                                                          pressure,
                                                          fractionOfClearSky);
         }
-    }   // namespace ISO15099
-}   // namespace Tarcog
+    } // namespace Tarcog::ISO15099

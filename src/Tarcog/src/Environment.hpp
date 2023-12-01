@@ -1,64 +1,63 @@
-#ifndef TARENVIRONMENT_H
-#define TARENVIRONMENT_H
+#pragma once
 
 #include <memory>
 
+#include <WCEGases.hpp>
+
 #include "EnvironmentConfigurations.hpp"
 #include "BaseLayer.hpp"
+#include "GasSpecification.hpp"
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    class CEnvironment : public CBaseLayer
     {
-        class CEnvironment : public Tarcog::ISO15099::CBaseLayer, public CGasLayer
-        {
-        public:
-            CEnvironment(double t_Pressure,
-                         double t_AirSpeed,
-                         AirHorizontalDirection t_AirDirection);
-            CEnvironment(const CEnvironment & t_Environment);
-            CEnvironment & operator=(const CEnvironment & t_Environment);
+    public:
+        CEnvironment(double t_Pressure, double t_AirSpeed, AirHorizontalDirection t_AirDirection);
 
-            ~CEnvironment();
+        ~CEnvironment() override;
 
-            void setHCoeffModel(BoundaryConditionsCoeffModel t_BCModel, double t_HCoeff = 0);
-            void setEnvironmentIR(double t_InfraRed);
-            void setEmissivity(double t_Emissivity);
+        void setHCoeffModel(BoundaryConditionsCoeffModel t_BCModel, double t_HCoeff = 0);
+        void setEnvironmentIR(double t_InfraRed);
+        void setEmissivity(double t_Emissivity);
 
-            double getDirectSolarRadiation() const;
-            double getEnvironmentIR();
-            double getHc();
-            virtual double getHr() = 0;
+        double getDirectSolarRadiation() const;
+        double getEnvironmentIR();
+        double getHc();
+        virtual double calculateHc() = 0;
+        virtual double getHr() = 0;
 
-            double getAirTemperature();
-            double getAmbientTemperature();
+        double getAirTemperature();
+        double getAmbientTemperature();
 
-            virtual void connectToIGULayer(const std::shared_ptr<CBaseLayer> & t_IGULayer);
+        virtual void connectToIGULayer(const std::shared_ptr<CBaseLayer> & t_IGULayer);
 
-            virtual std::shared_ptr<CEnvironment> cloneEnvironment() const = 0;
+        virtual std::shared_ptr<CEnvironment> cloneEnvironment() const = 0;
 
-        protected:
-            void initializeStateVariables() override;
-            void calculateRadiationFlow() override;
-            virtual double calculateIRFromVariables() = 0;
-            virtual void setIRFromEnvironment(double t_IR) = 0;
-            virtual double getIRFromEnvironment() const = 0;
-            virtual double getRadiationTemperature() const = 0;
+        [[nodiscard]] double getPressure() const;
 
-            double m_DirectSolarRadiation;
-            double m_Emissivity;   // Emissivity from the environment
-            // double m_InfraredRadiation; // Infrared radiation from environment [W/m2]
-            // Input convection coefficient which type depends on selected BC model [W/m2*K]
-            double m_HInput;
-            // Model used to calculate BC coefficient
-            BoundaryConditionsCoeffModel m_HCoefficientModel;
+        virtual double getGasTemperature() = 0;
 
-            // Keep info if IR radiation is provided (calculated) outside
-            bool m_IRCalculatedOutside;
-        };
+    protected:
+        void calculateRadiationFlow() override;
+        void calculateConvectionOrConductionFlow() override;
+        virtual double calculateIRFromVariables() = 0;
+        virtual void setIRFromEnvironment(double t_IR) = 0;
+        virtual double getIRFromEnvironment() const = 0;
+        virtual double getRadiationTemperature() const = 0;
 
-    }   // namespace ISO15099
+        double m_DirectSolarRadiation;
+        double m_Emissivity;   // Emissivity from the environment
 
-}   // namespace Tarcog
+        // Input convection coefficient which type depends on selected BC model [W/m2*K]
+        double m_HInput;
+        // Model used to calculate BC coefficient
+        BoundaryConditionsCoeffModel m_HCoefficientModel;
 
-#endif
+        // Keep info if IR radiation is provided (calculated) outside
+        bool m_IRCalculatedOutside;
+
+        GasSpecification gasSpecification;
+    };
+
+}   // namespace Tarcog::ISO15099

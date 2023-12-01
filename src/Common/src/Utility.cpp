@@ -1,6 +1,8 @@
 #include <thread>
 #include <algorithm>
+
 #include "Utility.hpp"
+#include "Constants.hpp"
 
 namespace FenestrationCommon
 {
@@ -40,5 +42,10 @@ namespace FenestrationCommon
         //numberOfThreads = std::minimum(numberOfThreads, maxNumberOfThreads);
         static const size_t minNumberOfThreads{1u};
         return std::max(minNumberOfThreads, numberOfThreads);
+    }
+
+    bool isVacuum(double pressure)
+    {
+        return pressure <= ConstantsData::VACUUMPRESSURE;
     }
 }   // namespace FenestrationCommon

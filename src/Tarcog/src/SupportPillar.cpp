@@ -42,9 +42,8 @@ namespace Tarcog
         {
             using ConstantsData::WCE_PI;
 
-            auto cond1 =
-              std::dynamic_pointer_cast<CBaseIGULayer>(m_PreviousLayer)->getConductivity();
-            auto cond2 = std::dynamic_pointer_cast<CBaseIGULayer>(m_NextLayer)->getConductivity();
+            auto cond1 = getPreviousLayer()->getConductivity();
+            auto cond2 = getNextLayer()->getConductivity();
             auto aveCond = (cond1 + cond2) / 2;
 
             auto cond = 2 * aveCond * m_Radius / (pow(m_Spacing, 2));

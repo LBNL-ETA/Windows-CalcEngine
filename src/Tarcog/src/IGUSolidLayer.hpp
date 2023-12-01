@@ -1,75 +1,62 @@
-#ifndef TARIGUSOLIDLAYER_H
-#define TARIGUSOLIDLAYER_H
+#pragma once
 
 #include <memory>
-#include "BaseIGULayer.hpp"
+
+#include "BaseLayer.hpp"
+#include "DeflectionInterface.hpp"
 
 namespace FenestrationCommon
 {
     enum class Side;
 }
 
-namespace Tarcog
+
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    class CIGUSolidLayer : public CBaseLayer, public Tarcog::Deflectable
     {
-        class CIGUSolidLayer : public CBaseIGULayer
-        {
-        public:
-            CIGUSolidLayer(
-              double t_Thickness,
-              double t_Conductivity,
-              const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface = nullptr,
-              const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface = nullptr);
+    public:
+        CIGUSolidLayer(double t_Thickness,
+                       double t_Conductivity,
+                       const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface = nullptr,
+                       const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface = nullptr);
 
-            CIGUSolidLayer(double t_Thickness,
-                           double t_Conductivity,
-                           double t_FrontEmissivity,
-                           double t_FrontIRTransmittance,
-                           double t_BackEmissivity,
-                           double t_BackIRTransmittance);
+        CIGUSolidLayer(double t_Thickness,
+                       double t_Conductivity,
+                       double t_FrontEmissivity,
+                       double t_FrontIRTransmittance,
+                       double t_BackEmissivity,
+                       double t_BackIRTransmittance);
 
-            void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
+        void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
-            double getConductance() const;
-            double getSolarAbsorptance() const;
+        double getConductance() const;
+        double getSolarAbsorptance() const;
 
-            void setLayerState(double t_Tf, double t_Tb, double t_Jf, double t_Jb);
-            void setSolarRadiation(double t_SolarRadiation);
-            void setSolarHeatGain(double t_SolarAbsorptance, double t_SolarRadiation);
+        void setLayerState(double t_Tf, double t_Tb, double t_Jf, double t_Jb);
+        void setSolarRadiation(double t_SolarRadiation);
+        void setSolarHeatGain(double t_SolarAbsorptance, double t_SolarRadiation);
 
-            // Radiation flow in solid layer should be eliminated
-            double getRadiationFlow() override;
+        double getRadiationFlow() override;
 
-            virtual bool isDeflected() const;
-            virtual double youngsModulus() const;
+        virtual double youngsModulus() const;
 
-            double getMaxDeflection() const override;
-            double getMeanDeflection() const override;
+        double getMaxDeflection() const override;
+        double getMeanDeflection() const override;
 
-            virtual double density() const;
+        virtual double density() const;
 
-            std::shared_ptr<CBaseLayer> clone() const override;
+        std::shared_ptr<CBaseLayer> clone() const override;
 
-            void applyDeflection(double meanDeflection, double maxDeflection);
+        void applyDeflection(double meanDeflection, double maxDeflection);
 
-        protected:
-            void calculateConvectionOrConductionFlow() override;
+    protected:
+        void calculateConvectionOrConductionFlow() override;
 
-            double m_Conductivity;
+        double m_Conductivity;
+    private:
 
-        private:
-            void setSurfaceState(double t_Temperature,
-                                 double t_J,
-                                 FenestrationCommon::Side t_Position);
+        double m_SolarAbsorptance;
+    };
 
-            double m_SolarAbsorptance;
-
-            bool m_IsDeflected{false};
-        };
-
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
-
-#endif
+}   // namespace Tarcog::ISO15099

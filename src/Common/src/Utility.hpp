@@ -22,4 +22,6 @@ namespace FenestrationCommon
                && std::equal(lhs.begin(), lhs.end(),
                              rhs.begin());
     }
+
+    [[nodiscard]] bool isVacuum(double pressure);
 }

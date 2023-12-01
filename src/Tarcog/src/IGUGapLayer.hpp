@@ -1,14 +1,12 @@
-#ifndef TARIGUGAPLAYER_H
-#define TARIGUGAPLAYER_H
+#pragma once
 
 #include <memory>
-#include "BaseIGULayer.hpp"
-#include "WCEGases.hpp"
 
-namespace Gases
-{
-    class CGas;
-}
+#include <WCEGases.hpp>
+
+#include "BaseLayer.hpp"
+#include "DeflectionInterface.hpp"
+#include "GasSpecification.hpp"
 
 namespace Tarcog
 {
@@ -16,7 +14,20 @@ namespace Tarcog
 
     namespace ISO15099
     {
-        class CIGUGapLayer : public CBaseIGULayer, public CGasLayer
+        // Properties of the gap at time of production
+        struct SealedGapProperties
+        {
+            SealedGapProperties(double t_Temperature, double t_Pressure) :
+                temperature(t_Temperature), pressure(t_Pressure)
+            {}
+
+            double temperature;
+            double pressure;
+        };
+
+        [[nodiscard]] bool isStillAir(double airSpeed);
+
+        class CIGUGapLayer : public CBaseLayer, public Tarcog::Deflectable
         {
         public:
             CIGUGapLayer(double t_Thickness, double t_Pressure);
@@ -24,34 +35,34 @@ namespace Tarcog
 
             void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
-            double layerTemperature() override;
-
-            double averageTemperature() const;
-
-            double getPressure() override;
+            double getPressure();
 
             std::shared_ptr<CBaseLayer> clone() const override;
 
             double getMaxDeflection() const override;
             double getMeanDeflection() const override;
 
+            void setSealedGapProperties(double t_Temperature, double t_Pressure);
 
         protected:
-            void initializeStateVariables() override;
             void calculateConvectionOrConductionFlow() override;
+
+            // Gap by default will not be considered to be sealed. If not sealed then
+            // pressure will be considered to be m_Pressure;
+            std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
+
+            GasSpecification gasSpecification;
 
         private:
             double calculateRayleighNumber();
             double aspectRatio() const;
+
+            void updateGasSpecifications();
+            [[nodiscard]] double calculateConvectiveConductiveCoefficient();
+            [[nodiscard]] double addAirflowEffect(double convectiveCoefficient);
             double convectiveH();
-
-            double getGasTemperature() override;
-
-            void checkNextLayer() const;
         };
 
     }   // namespace ISO15099
 
 }   // namespace Tarcog
-
-#endif

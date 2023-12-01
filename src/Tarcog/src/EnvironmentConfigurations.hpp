@@ -1,20 +1,17 @@
 #pragma once
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    enum class BoundaryConditionsCoeffModel
     {
-        enum class BoundaryConditionsCoeffModel
-        {
-            CalculateH,
-            HPrescribed,
-            HcPrescribed
-        };
+        CalculateH,
+        HPrescribed,
+        HcPrescribed
+    };
 
-        enum class Environment
-        {
-            Indoor,
-            Outdoor
-        };
-    }   // namespace ISO15099
-}   // namespace Tarcog
+    enum class Environment
+    {
+        Indoor,
+        Outdoor
+    };
+}   // namespace Tarcog::ISO15099

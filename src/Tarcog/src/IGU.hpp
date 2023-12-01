@@ -5,125 +5,119 @@
 
 #include "DeflectionFromCurves.hpp"
 
-namespace Tarcog
+
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    enum class Environment;
+    class CIGUSolidLayer;
+    class CIGUGapLayer;
+    class CBaseLayer;
+
+
+    class CIGU
     {
-        enum class Environment;
-        class CBaseIGULayer;
-        class CIGUSolidLayer;
-        class CIGUGapLayer;
-        class CBaseLayer;
-        class CSurface;
+    public:
+        CIGU(double t_Width = 1, double t_Height = 1, double t_Tilt = 90);
+        CIGU(CIGU const & t_IGU);
+        CIGU & operator=(CIGU const & t_IGU);
+        ~CIGU();
 
+        void addLayer(const std::shared_ptr<CBaseLayer> & t_Layer);
+        void addLayers(const std::initializer_list<std::shared_ptr<CBaseLayer>> & layers);
 
-        class CIGU
-        {
-        public:
-            CIGU(double t_Width = 1, double t_Height = 1, double t_Tilt = 90);
-            CIGU(CIGU const & t_IGU);
-            CIGU & operator=(CIGU const & t_IGU);
-            ~CIGU();
+        void setAbsorptances(const std::vector<double> & absorptances, double solarRadiation);
 
-            void addLayer(const std::shared_ptr<CBaseLayer> & t_Layer);
-            void addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers);
+        [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
+        [[nodiscard]] std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
+        [[nodiscard]] std::vector<std::shared_ptr<CBaseLayer>> getLayers() const;
 
-            void setAbsorptances(const std::vector<double> & absorptances, double solarRadiation);
+        void setTilt(double t_Tilt);
+        void setWidth(double t_Width);
+        void setHeight(double t_Height);
 
-            [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>> getSolidLayers() const;
-            [[nodiscard]] std::vector<std::shared_ptr<CIGUGapLayer>> getGapLayers() const;
-            [[nodiscard]] std::vector<std::shared_ptr<CBaseLayer>> getLayers() const;
+        void setSolarRadiation(double t_SolarRadiation) const;
 
-            void setTilt(double t_Tilt);
-            void setWidth(double t_Width);
-            void setHeight(double t_Height);
+        [[nodiscard]] std::shared_ptr<CBaseLayer> getEnvironment(Environment t_Environment) const;
 
-            void setSolarRadiation(double t_SolarRadiation) const;
+        [[nodiscard]] std::vector<double> getState() const;
+        void setState(const std::vector<double> & t_State) const;
 
-            [[nodiscard]] std::shared_ptr<CBaseLayer>
-              getEnvironment(Environment t_Environment) const;
+        [[nodiscard]] std::vector<double> getTemperatures() const;
+        [[nodiscard]] std::vector<double> getRadiosities() const;
 
-            [[nodiscard]] std::vector<double> getState() const;
-            void setState(const std::vector<double> & t_State) const;
+        [[nodiscard]] std::vector<double> getMaxLayerDeflections() const;
+        [[nodiscard]] std::vector<double> getMeanLayerDeflections() const;
+        [[nodiscard]] std::vector<double> getMaxGapWidth() const;
+        [[nodiscard]] std::vector<double> getMeanGapWidth() const;
 
-            [[nodiscard]] std::vector<double> getTemperatures() const;
-            [[nodiscard]] std::vector<double> getRadiosities() const;
+        [[nodiscard]] std::vector<double> getGapPressures() const;
 
-            [[nodiscard]] std::vector<double> getMaxLayerDeflections() const;
-            [[nodiscard]] std::vector<double> getMeanLayerDeflections() const;
-            [[nodiscard]] std::vector<double> getMaxGapWidth() const;
-            [[nodiscard]] std::vector<double> getMeanGapWidth() const;
+        //! Function to return pressure difference on each of the layers when using deflection
+        //! model
+        [[nodiscard]] std::vector<double> getPanesLoad();
 
-            [[nodiscard]] std::vector<double> getGapPressures() const;
+        [[nodiscard]] double getTilt() const;
+        [[nodiscard]] double getWidth() const;
+        [[nodiscard]] double getHeight() const;
+        [[nodiscard]] double getThickness() const;
 
-            //! Function to return pressure difference on each of the layers when using deflection
-            //! model
-            [[nodiscard]] std::vector<double> getPanesLoad();
+        [[nodiscard]] size_t getNumOfLayers() const;
 
-            [[nodiscard]] double getTilt() const;
-            [[nodiscard]] double getWidth() const;
-            [[nodiscard]] double getHeight() const;
-            [[nodiscard]] double getThickness() const;
+        [[nodiscard]] double getVentilationFlow(Environment t_Environment) const;
 
-            [[nodiscard]] size_t getNumOfLayers() const;
+        void setInitialGuess(const std::vector<double> & t_Guess) const;
 
-            [[nodiscard]] double getVentilationFlow(Environment t_Environment) const;
+        void setDeflectionProperties(double t_Tini,
+                                     double t_Pini,
+                                     double t_InsidePressure = 101325,
+                                     double t_OutsidePressure = 101325);
 
-            void setInitialGuess(const std::vector<double> & t_Guess) const;
+        void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
 
-            void setDeflectionProperties(double t_Tini,
-                                         double t_Pini,
-                                         double t_InsidePressure = 101325,
-                                         double t_OutsidePressure = 101325);
+        void setAppliedLoad(std::vector<double> t_AppliedLoad);
 
-            void setDeflectionProperties(const std::vector<double> & t_MeasuredDeflections);
+        void clearDeflection();
 
-            void setAppliedLoad(std::vector<double> t_AppliedLoad);
+        //! Function that will update layers deflection states based on new temperature data
+        void updateDeflectionState();
 
-            void clearDeflection();
+        void precalculateLayerStates();
 
-            //! Function that will update layers deflection states based on new temperature data
-            void updateDeflectionState();
+    private:
+        // Replaces layer in existing construction and keeps correct connections in linked list
+        void replaceLayer(const std::shared_ptr<CBaseLayer> & t_Original,
+                          const std::shared_ptr<CBaseLayer> & t_Replacement);
 
-            void precalculateLayerStates();
+        // Check if layer needs to be decorated with another object
+        void checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer);
 
-        private:
-            // Replaces layer in existing construction and keeps correct connections in linked list
-            void replaceLayer(const std::shared_ptr<CBaseIGULayer> & t_Original,
-                              const std::shared_ptr<CBaseIGULayer> & t_Replacement);
+        [[nodiscard]] double
+          calculateDeflectionNumerator(const std::vector<double> & t_MeasuredDeflections) const;
+        [[nodiscard]] double calculateDeflectionDenominator() const;
+        [[nodiscard]] std::vector<double>
+          calculateLDefMax(const std::vector<double> & t_MeasuredDeflections) const;
 
-            // Check if layer needs to be decorated with another object
-            void checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer);
+        std::vector<std::shared_ptr<CBaseLayer>> m_Layers;
 
-            [[nodiscard]] double
-              calculateDeflectionNumerator(const std::vector<double> & t_MeasuredDeflections) const;
-            [[nodiscard]] double calculateDeflectionDenominator() const;
-            [[nodiscard]] std::vector<double>
-              calculateLDefMax(const std::vector<double> & t_MeasuredDeflections) const;
+        double m_Width;    // meters
+        double m_Height;   // meters
+        double m_Tilt;     // degrees
 
-            std::vector<std::shared_ptr<CBaseLayer>> m_Layers;
+        // Reset deflection state of all surfaces back to zero.
+        void resetSurfaceDeflections();
 
-            double m_Width;    // meters
-            double m_Height;   // meters
-            double m_Tilt;     // degrees
+        // Routines to calculate deflection coefficients
+        [[nodiscard]] double Ldmean() const;
+        [[nodiscard]] double Ldmax() const;
 
-            // Reset deflection state of all surfaces back to zero.
-            void resetSurfaceDeflections();
+        //! This is by default set to nullptr since deflection is not turn on by default.
+        //! Setting deflection properties will enable deflection calculations automatically.
+        std::optional<Deflection::DeflectionE1300> m_DeflectionFromE1300Curves{std::nullopt};
 
-            // Routines to calculate deflection coefficients
-            [[nodiscard]] double Ldmean() const;
-            [[nodiscard]] double Ldmax() const;
+        //! It is possible that user can set applied load before setting initial parameters for
+        //! the deflection in which case applied load will not be set automatically. This is
+        //! intermediate variable that keeps applied load so it can be applied later.
+        std::vector<double> m_DeflectionAppliedLoad;
+    };
 
-            //! This is by default set to nullptr since deflection is not turn on by default.
-            //! Setting deflection properties will enable deflection calculations automatically.
-            std::optional<Deflection::DeflectionE1300> m_DeflectionFromE1300Curves{std::nullopt};
-
-            //! It is possible that user can set applied load before setting initial parameters for
-            //! the deflection in which case applied load will not be set automatically. This is
-            //! intermediate variable that keeps applied load so it can be applied later.
-            std::vector<double> m_DeflectionAppliedLoad;
-        };
-
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
+}   // namespace Tarcog::ISO15099

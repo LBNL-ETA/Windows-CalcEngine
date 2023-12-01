@@ -91,12 +91,12 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CBaseIGULayer> GetGap1() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CBaseLayer> GetGap1() const
     {
         return m_TarcogSystem->getGapLayers()[0];
     };
 
-    std::shared_ptr<Tarcog::ISO15099::CBaseIGULayer> GetGap2() const
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CBaseLayer> GetGap2() const
     {
         return m_TarcogSystem->getGapLayers()[1];
     };
@@ -108,14 +108,12 @@ TEST_F(TestGapLayerInBetweenVentilation, VentilationFlow)
 
     auto aLayer = GetGap1();
 
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
-
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(34.909058114121649, gainEnergy, 1e-4);
+    EXPECT_NEAR(34.909799, gainEnergy, 1e-6);
 
     aLayer = GetGap2();
     ASSERT_TRUE(aLayer != nullptr);
     gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-34.909058114121649, gainEnergy, 1e-4);
+    EXPECT_NEAR(-34.909799, gainEnergy, 1e-6);
 }

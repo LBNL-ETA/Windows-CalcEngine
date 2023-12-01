@@ -1,167 +1,128 @@
-
 #include <cmath>
 #include <stdexcept>
-#include <cassert>
 
-#include "WCEGases.hpp"
+#include <WCEGases.hpp>
+
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
 #include "OutdoorEnvironment.hpp"
-#include "WCECommon.hpp"
 
 using FenestrationCommon::Side;
 
-namespace Tarcog
+
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    COutdoorEnvironment::COutdoorEnvironment(double t_AirTemperature,
+                                             double t_AirSpeed,
+                                             double t_DirectSolarRadiation,
+                                             AirHorizontalDirection t_AirDirection,
+                                             double t_SkyTemperature,
+                                             SkyModel t_Model,
+                                             double t_Pressure,
+                                             double t_FractionClearSky) :
+        CEnvironment(t_Pressure, t_AirSpeed, t_AirDirection),
+        m_Tsky(t_SkyTemperature),
+        m_FractionOfClearSky(t_FractionClearSky),
+        m_SkyModel(t_Model)
     {
-        COutdoorEnvironment::COutdoorEnvironment(double t_AirTemperature,
-                                                 double t_AirSpeed,
-                                                 double t_DirectSolarRadiation,
-                                                 AirHorizontalDirection t_AirDirection,
-                                                 double t_SkyTemperature,
-                                                 SkyModel t_Model,
-                                                 double t_Pressure,
-                                                 double t_FractionClearSky) :
-            CEnvironment(t_Pressure, t_AirSpeed, t_AirDirection),
-            m_Tsky(t_SkyTemperature),
-            m_FractionOfClearSky(t_FractionClearSky),
-            m_SkyModel(t_Model)
+        m_Surface[Side::Front] = std::make_shared<Surface>();
+        m_Surface.at(Side::Front)->setTemperature(t_AirTemperature);
+        m_DirectSolarRadiation = t_DirectSolarRadiation;
+    }
+
+    double COutdoorEnvironment::calculateIRFromVariables()
+    {
+        auto aEmissivity = 0.0;
+        switch(m_SkyModel)
         {
-            m_Surface[Side::Front] = std::make_shared<Surface>();
-            m_Surface.at(Side::Front)->setTemperature(t_AirTemperature);
-            m_DirectSolarRadiation = t_DirectSolarRadiation;
+            case SkyModel::AllSpecified:
+                aEmissivity = m_Emissivity * pow(m_Tsky, 4) / pow(getAirTemperature(), 4);
+                break;
+            case SkyModel::TSkySpecified:
+                aEmissivity = pow(m_Tsky, 4) / pow(getAirTemperature(), 4);
+                break;
+            case SkyModel::Swinbank:
+                aEmissivity = 5.31e-13 * pow(getAirTemperature(), 6)
+                              / (ConstantsData::STEFANBOLTZMANN * pow(getAirTemperature(), 4));
+                break;
+            default:
+                throw std::runtime_error("Incorrect sky model specified.");
         }
 
-        double COutdoorEnvironment::calculateIRFromVariables()
+        auto radiationTemperature = 0.0;
+        if(m_HCoefficientModel == BoundaryConditionsCoeffModel::HPrescribed)
         {
-            auto aEmissivity = 0.0;
-            switch(m_SkyModel)
-            {
-                case SkyModel::AllSpecified:
-                    aEmissivity = m_Emissivity * pow(m_Tsky, 4) / pow(getAirTemperature(), 4);
-                    break;
-                case SkyModel::TSkySpecified:
-                    aEmissivity = pow(m_Tsky, 4) / pow(getAirTemperature(), 4);
-                    break;
-                case SkyModel::Swinbank:
-                    aEmissivity = 5.31e-13 * pow(getAirTemperature(), 6)
-                                  / (ConstantsData::STEFANBOLTZMANN * pow(getAirTemperature(), 4));
-                    break;
-                default:
-                    throw std::runtime_error("Incorrect sky model specified.");
-            }
+            radiationTemperature = getAirTemperature();
+        }
+        else
+        {
+            using ConstantsData::WCE_PI;
 
-            auto radiationTemperature = 0.0;
-            if(m_HCoefficientModel == BoundaryConditionsCoeffModel::HPrescribed)
-            {
-                radiationTemperature = getAirTemperature();
-            }
-            else
-            {
-                using ConstantsData::WCE_PI;
-
-                auto fSky = (1 + cos(m_Tilt * WCE_PI / 180)) / 2;
-                auto fGround = 1 - fSky;
-                auto eZero = fGround + (1 - m_FractionOfClearSky) * fSky
-                             + fSky * m_FractionOfClearSky * aEmissivity;
-                radiationTemperature = getAirTemperature() * pow(eZero, 0.25);
-            }
-
-            return ConstantsData::STEFANBOLTZMANN * pow(radiationTemperature, 4);
+            auto fSky = (1 + cos(m_Tilt * WCE_PI / 180)) / 2;
+            auto fGround = 1 - fSky;
+            auto eZero = fGround + (1 - m_FractionOfClearSky) * fSky
+                         + fSky * m_FractionOfClearSky * aEmissivity;
+            radiationTemperature = getAirTemperature() * pow(eZero, 0.25);
         }
 
-        void COutdoorEnvironment::connectToIGULayer(std::shared_ptr<CBaseLayer> const & t_IGULayer)
-        {
-            this->connectToBackSide(t_IGULayer);
-            m_Surface[Side::Back] = t_IGULayer->getSurface(Side::Front);
-        }
+        return ConstantsData::STEFANBOLTZMANN * pow(radiationTemperature, 4);
+    }
 
-        std::shared_ptr<CBaseLayer> COutdoorEnvironment::clone() const
-        {
-            return cloneEnvironment();
-        }
+    void COutdoorEnvironment::connectToIGULayer(std::shared_ptr<CBaseLayer> const & t_IGULayer)
+    {
+        this->connectToBackSide(t_IGULayer);
+        m_Surface[Side::Back] = t_IGULayer->getSurface(Side::Front);
+    }
 
-        std::shared_ptr<CEnvironment> COutdoorEnvironment::cloneEnvironment() const
-        {
-            return std::make_shared<COutdoorEnvironment>(*this);
-        }
+    std::shared_ptr<CBaseLayer> COutdoorEnvironment::clone() const
+    {
+        return cloneEnvironment();
+    }
 
-        void COutdoorEnvironment::setSolarRadiation(double const t_SolarRadiation)
-        {
-            m_DirectSolarRadiation = t_SolarRadiation;
-        }
+    std::shared_ptr<CEnvironment> COutdoorEnvironment::cloneEnvironment() const
+    {
+        return std::make_shared<COutdoorEnvironment>(*this);
+    }
 
-        double COutdoorEnvironment::getSolarRadiation() const
-        {
-            return m_DirectSolarRadiation;
-        }
+    void COutdoorEnvironment::setSolarRadiation(double const t_SolarRadiation)
+    {
+        m_DirectSolarRadiation = t_SolarRadiation;
+    }
 
-        double COutdoorEnvironment::getGasTemperature()
-        {
-            assert(m_Surface.at(Side::Front) != nullptr);
-            return m_Surface.at(Side::Front)->getTemperature();
-        }
+    double COutdoorEnvironment::getSolarRadiation() const
+    {
+        return m_DirectSolarRadiation;
+    }
 
-        void COutdoorEnvironment::calculateConvectionOrConductionFlow()
-        {
-            switch(m_HCoefficientModel)
-            {
-                case BoundaryConditionsCoeffModel::CalculateH:
-                {
-                    calculateHc();
-                    break;
-                }
-                case BoundaryConditionsCoeffModel::HPrescribed:
-                {
-                    auto hr = getHr();
-                    m_ConductiveConvectiveCoeff = m_HInput - hr;
-                    break;
-                }
-                case BoundaryConditionsCoeffModel::HcPrescribed:
-                {
-                    m_ConductiveConvectiveCoeff = m_HInput;
-                    break;
-                }
-                default:
-                {
-                    throw std::runtime_error(
-                      "Incorrect definition for convection model (Outdoor environment).");
-                }
-            }
-        }
+    double COutdoorEnvironment::getGasTemperature()
+    {
+        return surfaceTemperature(Side::Front);
+    }
 
-        void COutdoorEnvironment::calculateHc()
-        {
-            m_ConductiveConvectiveCoeff = 4 + 4 * m_AirSpeed;
-        }
+    double COutdoorEnvironment::calculateHc()
+    {
+        return 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
+    }
 
-        double COutdoorEnvironment::getHr()
-        {
-            assert(m_Surface.at(Side::Back) != nullptr);
-            assert(m_Surface.at(Side::Front) != nullptr);
-            return getRadiationFlow()
-                   / (m_Surface.at(Side::Back)->getTemperature() - getRadiationTemperature());
-        }
+    double COutdoorEnvironment::getHr()
+    {
+        return getRadiationFlow()
+               / (surfaceTemperature(Side::Back) - getRadiationTemperature());
+    }
 
-        double COutdoorEnvironment::getRadiationTemperature() const
-        {
-            assert(m_Surface.at(Side::Front) != nullptr);
-            return pow(m_Surface.at(Side::Front)->J() / ConstantsData::STEFANBOLTZMANN, 0.25);
-        }
+    double COutdoorEnvironment::getRadiationTemperature() const
+    {
+        return pow(J(Side::Front) / ConstantsData::STEFANBOLTZMANN, 0.25);
+    }
 
-        void COutdoorEnvironment::setIRFromEnvironment(double const t_IR)
-        {
-            assert(m_Surface.at(Side::Front) != nullptr);
-            m_Surface.at(Side::Front)->setJ(t_IR);
-        }
+    void COutdoorEnvironment::setIRFromEnvironment(double const t_IR)
+    {
+        m_Surface.at(Side::Front)->setJ(t_IR);
+    }
 
-        double COutdoorEnvironment::getIRFromEnvironment() const
-        {
-            assert(m_Surface.at(Side::Front) != nullptr);
-            return m_Surface.at(Side::Front)->J();
-        }
+    double COutdoorEnvironment::getIRFromEnvironment() const
+    {
+        return J(Side::Front);
+    }
 
-    }   // namespace ISO15099
-
-}   // namespace Tarcog
+}   // namespace Tarcog::ISO15099
