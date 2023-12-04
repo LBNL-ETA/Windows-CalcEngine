@@ -100,7 +100,7 @@ TEST_F(DoubleLowEVacuumTriangularPillar, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {255.557273, 255.604797, 292.272457, 292.319534};
+    std::vector correctTemperature = {255.599342, 255.651776, 292.089401, 292.141343};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -109,7 +109,7 @@ TEST_F(DoubleLowEVacuumTriangularPillar, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {241.585541, 406.264744, 412.531259, 415.666263};
+    std::vector correctRadiosity = {241.719333, 405.281947, 411.504176, 414.819111};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -118,8 +118,8 @@ TEST_F(DoubleLowEVacuumTriangularPillar, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(35u, numOfIter);
+    EXPECT_EQ(33u, numOfIter);
 
     const auto uValue{aSystem->getUValue()};
-    EXPECT_NEAR(0.304640, uValue, tolerance);
+    EXPECT_NEAR(0.336116, uValue, tolerance);
 }

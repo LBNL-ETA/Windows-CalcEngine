@@ -39,7 +39,7 @@ protected:
 
         // Add support pillars
         auto pillarHeight = 0.2e-3;
-        auto pillarConductivity = 15.0;
+        auto pillarConductivity = 20.0;
         auto pillarSpacing = 0.02;
         auto pillarRadius = 0.25e-3;
         m_Gap = Tarcog::ISO15099::Layers::cylindricalPillar(
@@ -77,5 +77,5 @@ TEST_F(PillarArrayCylindrical, Test1)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.691981, heatFlow, tolerance);
+    EXPECT_NEAR(1.218959, heatFlow, tolerance);
 }

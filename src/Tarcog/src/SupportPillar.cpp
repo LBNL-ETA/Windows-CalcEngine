@@ -40,7 +40,8 @@ namespace Tarcog::ISO15099
     {
         auto aveCond{(getPreviousLayer()->getConductivity() + getNextLayer()->getConductivity())
                      / 2};
-        return ConstantsData::WCE_PI / (2 * aveCond * std::sqrt(areaOfContact()))
+        auto aoc{areaOfContact()};
+        return std::sqrt(ConstantsData::WCE_PI) / (2 * aveCond * std::sqrt(areaOfContact()))
                + m_Thickness / (m_MaterialConductivity * areaOfContact());
     }
 
