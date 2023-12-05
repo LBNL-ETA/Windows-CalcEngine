@@ -14,12 +14,12 @@ namespace Tarcog::ISO15099
         double Sy{0};
     };
 
-    class SupportPillar : public CIGUGapLayer
+    class UniversalSupportPillar : public CIGUGapLayer
     {
     public:
-        SupportPillar(const CIGUGapLayer & layer,
-                      double materialConductivity,
-                      const PillarCellSpacing & cell);
+        UniversalSupportPillar(const CIGUGapLayer & layer,
+                               double materialConductivity,
+                               const PillarCellSpacing & cell);
 
     protected:
         [[nodiscard]] virtual double areaOfContact() = 0;
@@ -34,7 +34,7 @@ namespace Tarcog::ISO15099
         double m_CellArea;
     };
 
-    class CylindricalPillar : public SupportPillar
+    class CylindricalPillar : public UniversalSupportPillar
     {
     public:
         CylindricalPillar(const CIGUGapLayer & layer,
@@ -50,7 +50,7 @@ namespace Tarcog::ISO15099
         double m_Radius;
     };
 
-    class SphericalPillar : public SupportPillar
+    class SphericalPillar : public UniversalSupportPillar
     {
     public:
         SphericalPillar(const CIGUGapLayer & layer,
@@ -66,7 +66,7 @@ namespace Tarcog::ISO15099
         double m_RadiusOfContact;
     };
 
-    class RectangularPillar : public SupportPillar
+    class RectangularPillar : public UniversalSupportPillar
     {
     public:
         RectangularPillar(const CIGUGapLayer & layer,
@@ -84,7 +84,7 @@ namespace Tarcog::ISO15099
         double m_PillarWidth;
     };
 
-    class TriangularPillar : public SupportPillar
+    class TriangularPillar : public UniversalSupportPillar
     {
     public:
         TriangularPillar(const CIGUGapLayer & layer,
@@ -98,7 +98,7 @@ namespace Tarcog::ISO15099
         double m_PillarLength;
     };
 
-    class PentagonPillar : public SupportPillar
+    class PentagonPillar : public UniversalSupportPillar
     {
     public:
         PentagonPillar(const CIGUGapLayer & layer,
@@ -114,13 +114,13 @@ namespace Tarcog::ISO15099
         double m_PillarLength;
     };
 
-    class HexagonPillar : public SupportPillar
+    class HexagonPillar : public UniversalSupportPillar
     {
     public:
         HexagonPillar(const CIGUGapLayer & layer,
-                       double length,
-                       double materialConductivity,
-                       const PillarCellSpacing & cell);
+                      double length,
+                      double materialConductivity,
+                      const PillarCellSpacing & cell);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
