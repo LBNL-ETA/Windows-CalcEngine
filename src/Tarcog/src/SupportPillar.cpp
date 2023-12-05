@@ -1,5 +1,7 @@
 #include <cmath>
 #include <memory>
+#include <unordered_map>
+#include <functional>
 
 #include <WCECommon.hpp>
 
@@ -8,6 +10,27 @@
 
 namespace Tarcog::ISO15099
 {
+
+    double cellArea(Tarcog::ISO15099::CellSpacingType type, double r)
+    {
+        static const std::unordered_map<CellSpacingType, std::function<double(double)>>
+          areaCalculators = {
+            {CellSpacingType::Square, [](double r) { return r * r; }},
+            {CellSpacingType::ShiftedSquare, [](double r) { return FenestrationCommon::nTagonArea(5, r); }},
+            {CellSpacingType::ShiftedRotatedSquare,
+             [] (double r){ return FenestrationCommon::nTagonArea(5, r); }},
+          };
+
+        auto it = areaCalculators.find(type);
+        if(it != areaCalculators.end())
+        {
+            return it->second(r);
+        }
+
+        return 0;
+    }
+
+
     double universalPillarThermalResistance(double glassConductivityHotSide,
                                             double glassConductivityColdSide,
                                             double pillarConductivity,

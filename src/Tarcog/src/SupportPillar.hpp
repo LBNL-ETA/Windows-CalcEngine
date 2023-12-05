@@ -5,6 +5,15 @@
 
 namespace Tarcog::ISO15099
 {
+    enum class CellSpacingType
+    {
+        Square,
+        ShiftedSquare,
+        ShiftedRotatedSquare
+    };
+
+    [[nodiscard]] double cellArea(CellSpacingType type, double r);
+
     class UniversalSupportPillar : public CIGUGapLayer
     {
     public:
