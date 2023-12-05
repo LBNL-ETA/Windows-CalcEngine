@@ -77,3 +77,80 @@ TEST_F(PillarArrayAnnulusCylinder, RadiusesVeryDifferent)
     const auto heatFlow = aGap->getConvectionConductionFlow();
     EXPECT_NEAR(1.217163, heatFlow, tolerance);
 }
+
+TEST_F(PillarArrayAnnulusCylinder, RadiusesSimilar)
+{
+    constexpr auto tolerance = 1e-6;
+    auto glass1Conductance = 1.0;           // [W/(m·K)]
+    auto glass2Conductance = 1.0;           // [W/(m·K)]
+    constexpr auto innerRadius = 0.21e-3;   // [m]
+    constexpr auto outerRadius = 0.25e-3;   // [m]
+
+    const auto aGap = createModel(innerRadius, outerRadius, glass1Conductance, glass2Conductance);
+
+    ASSERT_TRUE(aGap != nullptr);
+
+    const auto heatFlow = aGap->getConvectionConductionFlow();
+    EXPECT_NEAR(1.013254, heatFlow, tolerance);
+}
+
+TEST_F(PillarArrayAnnulusCylinder, DifferentGlassConductances)
+{
+    constexpr auto tolerance = 1e-6;
+    auto glass1Conductance = 1.0;           // [W/(m·K)]
+    auto glass2Conductance = 5.0;           // [W/(m·K)]
+    constexpr auto innerRadius = 0.21e-3;   // [m]
+    constexpr auto outerRadius = 0.25e-3;   // [m]
+
+    const auto aGap = createModel(innerRadius, outerRadius, glass1Conductance, glass2Conductance);
+
+    ASSERT_TRUE(aGap != nullptr);
+
+    const auto heatFlow = aGap->getConvectionConductionFlow();
+    EXPECT_NEAR(1.613343, heatFlow, tolerance);
+}
+
+TEST_F(PillarArrayAnnulusCylinder, InnerRadiusZero)
+{
+    constexpr auto tolerance = 1e-6;
+    auto glass1Conductance = 1.0;           // [W/(m·K)]
+    auto glass2Conductance = 1.0;           // [W/(m·K)]
+    constexpr auto innerRadius = 0.0;       // [m]
+    constexpr auto outerRadius = 0.25e-3;   // [m]
+
+    const auto aGap = createModel(innerRadius, outerRadius, glass1Conductance, glass2Conductance);
+
+    ASSERT_TRUE(aGap != nullptr);
+
+    const auto heatFlow = aGap->getConvectionConductionFlow();
+    EXPECT_NEAR(1.218959, heatFlow, tolerance);
+}
+
+TEST_F(PillarArrayAnnulusCylinder, IdenticalRadiuses)
+{
+    constexpr auto tolerance = 1e-6;
+    auto glass1Conductance = 1.0;           // [W/(m·K)]
+    auto glass2Conductance = 1.0;           // [W/(m·K)]
+    constexpr auto innerRadius = 0.25e-3;   // [m]
+    constexpr auto outerRadius = 0.25e-3;   // [m]
+
+    const auto aGap = createModel(innerRadius, outerRadius, glass1Conductance, glass2Conductance);
+
+    ASSERT_TRUE(aGap != nullptr);
+
+    const auto heatFlow = aGap->getConvectionConductionFlow();
+    EXPECT_NEAR(0.000392, heatFlow, tolerance);
+}
+
+TEST_F(PillarArrayAnnulusCylinder, ExceptionWhenInnerRadiusGreaterThanOuterRadius)
+{
+    auto glass1Conductance = 1.0;           // [W/(m·K)]
+    auto glass2Conductance = 1.0;           // [W/(m·K)]
+    constexpr auto innerRadius = 0.26e-3;   // [m] - Larger than outerRadius
+    constexpr auto outerRadius = 0.25e-3;   // [m]
+
+    // Expect the function to throw std::runtime_error when innerRadius is larger than outerRadius
+    EXPECT_THROW({
+        createModel(innerRadius, outerRadius, glass1Conductance, glass2Conductance);
+    }, std::runtime_error);
+}

@@ -367,14 +367,19 @@ namespace Tarcog::ISO15099
     ////  AnnulusCylinderPillar
     ////////////////////////////////////////////////////////////////////////////
     AnnulusCylinderPillar::AnnulusCylinderPillar(const CIGUGapLayer & layer,
-                                                 double innerRadius,
-                                                 double outerRadius,
-                                                 double materialConductivity,
-                                                 double cellArea) :
+                                                 const double innerRadius,
+                                                 const double outerRadius,
+                                                 const double materialConductivity,
+                                                 const double cellArea) :
         UniversalSupportPillar(layer, materialConductivity, cellArea),
         m_InnerRadius(innerRadius),
         m_OuterRadius(outerRadius)
-    {}
+    {
+        if(m_InnerRadius > m_OuterRadius)
+        {
+            throw std::runtime_error("Inner radius cannot be bigger than outer radius.");
+        }
+    }
 
     std::shared_ptr<CBaseLayer> AnnulusCylinderPillar::clone() const
     {
