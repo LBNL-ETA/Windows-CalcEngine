@@ -64,9 +64,9 @@ protected:
         auto pillarHeight = 0.1e-3;
         auto gapPressure = 0.1333;
         auto pillarConductivity = 999.0;
-        auto pillarSpacing = 0.03;
+        auto pillarArea = 0.03 * 0.03;
         auto pillarGap = Tarcog::ISO15099::Layers::pentagonPillar(
-          pillarLength, pillarHeight, pillarConductivity, pillarSpacing, gapPressure);
+          pillarLength, pillarHeight, pillarConductivity, pillarArea, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 

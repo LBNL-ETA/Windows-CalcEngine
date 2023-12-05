@@ -40,10 +40,10 @@ protected:
         // Add support pillars
         auto pillarHeight = 0.2e-3;
         auto pillarConductivity = 20.0;
-        auto pillarSpacing = 0.02;
+        auto pillarArea = 0.02 * 0.02;
         auto pillarRadius = 0.25e-3;
         m_Gap = Tarcog::ISO15099::Layers::cylindricalPillar(
-          pillarRadius, pillarHeight, pillarConductivity, pillarSpacing, gapPressure);
+          pillarRadius, pillarHeight, pillarConductivity, pillarArea, gapPressure);
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;

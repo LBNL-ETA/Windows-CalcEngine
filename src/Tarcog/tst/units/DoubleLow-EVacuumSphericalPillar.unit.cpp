@@ -63,10 +63,10 @@ protected:
         auto pillarHeight = 0.0001;
         auto gapPressure = 0.1333;
         auto pillarConductivity = 999.0;
-        auto pillarSpacing = 0.03;
+        auto pillarArea = 0.03 * 0.03;
         auto radiusOfContact = 0.02e-3;
         auto pillarGap = Tarcog::ISO15099::Layers::sphericalPillar(
-          radiusOfContact, pillarHeight, pillarConductivity, pillarSpacing, gapPressure);
+          radiusOfContact, pillarHeight, pillarConductivity, pillarArea, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 

@@ -108,119 +108,66 @@ namespace Tarcog::ISO15099
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
 
-    std::shared_ptr<CIGUGapLayer> Layers::cylindricalPillar(
-      double radius, double height, double materialConductivity, double spacing, double pressure)
-    {
-        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<CylindricalPillar>(
-          *gap, radius, materialConductivity, PillarCellSpacing{spacing, spacing});
-    }
     std::shared_ptr<CIGUGapLayer> Layers::cylindricalPillar(double radius,
                                                             double height,
                                                             double materialConductivity,
-                                                            const PillarCellSpacing & spacing,
+                                                            double spacingArea,
                                                             double pressure)
     {
-        const auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<CylindricalPillar>(*gap, radius, materialConductivity, spacing);
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<CylindricalPillar>(*gap, radius, materialConductivity, spacingArea);
     }
     std::shared_ptr<CIGUGapLayer> Layers::sphericalPillar(double radiusOfContact,
                                                           double height,
                                                           double materialConductivity,
-                                                          double spacing,
+                                                          double spacingArea,
                                                           double pressure)
     {
         auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
         return std::make_shared<SphericalPillar>(
-          *gap, radiusOfContact, materialConductivity, PillarCellSpacing{spacing, spacing});
-    }
-    std::shared_ptr<CIGUGapLayer> Layers::sphericalPillar(double radiusOfContact,
-                                                          double height,
-                                                          double materialConductivity,
-                                                          const PillarCellSpacing & spacing,
-                                                          double pressure)
-    {
-        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<SphericalPillar>(
-          *gap, radiusOfContact, materialConductivity, spacing);
+          *gap, radiusOfContact, materialConductivity, spacingArea);
     }
 
     std::shared_ptr<CIGUGapLayer> Layers::rectangularPillar(double length,
                                                             double width,
                                                             double height,
                                                             double materialConductivity,
-                                                            double spacing,
+                                                            double spacingArea,
                                                             double pressure)
     {
         auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
         return std::make_shared<RectangularPillar>(
-          *gap, length, width, materialConductivity, PillarCellSpacing{spacing, spacing});
-    }
-
-    std::shared_ptr<CIGUGapLayer> Layers::rectangularPillar(double length,
-                                                            double width,
-                                                            double height,
-                                                            double materialConductivity,
-                                                            const PillarCellSpacing & spacing,
-                                                            double pressure)
-    {
-        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<RectangularPillar>(
-          *gap, length, width, materialConductivity, spacing);
-    }
-
-    std::shared_ptr<CIGUGapLayer> Layers::triangularPillar(
-      double length, double height, double materialConductivity, double spacing, double pressure)
-    {
-        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<TriangularPillar>(
-          *gap, length, materialConductivity, PillarCellSpacing{spacing, spacing});
+          *gap, length, width, materialConductivity, spacingArea);
     }
 
     std::shared_ptr<CIGUGapLayer> Layers::triangularPillar(double length,
                                                            double height,
                                                            double materialConductivity,
-                                                           const PillarCellSpacing & spacing,
+                                                           double spacingArea,
                                                            double pressure)
     {
         auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<TriangularPillar>(*gap, length, materialConductivity, spacing);
-    }
-
-    std::shared_ptr<CIGUGapLayer> Layers::pentagonPillar(
-      double length, double height, double materialConductivity, double spacing, double pressure)
-    {
-        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<PentagonPillar>(
-          *gap, length, materialConductivity, PillarCellSpacing{spacing, spacing});
+        return std::make_shared<TriangularPillar>(*gap, length, materialConductivity, spacingArea);
     }
 
     std::shared_ptr<CIGUGapLayer> Layers::pentagonPillar(double length,
                                                          double height,
                                                          double materialConductivity,
-                                                         const PillarCellSpacing & spacing,
+                                                         double spacingArea,
                                                          double pressure)
     {
         auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<PentagonPillar>(*gap, length, materialConductivity, spacing);
-    }
-
-    std::shared_ptr<CIGUGapLayer> Layers::hexagonPillar(
-      double length, double height, double materialConductivity, double spacing, double pressure)
-    {
-        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<HexagonPillar>(
-          *gap, length, materialConductivity, PillarCellSpacing{spacing, spacing});
+        return std::make_shared<PentagonPillar>(*gap, length, materialConductivity, spacingArea);
     }
 
     std::shared_ptr<CIGUGapLayer> Layers::hexagonPillar(double length,
                                                         double height,
                                                         double materialConductivity,
-                                                        const PillarCellSpacing & spacing,
+                                                        double spacingArea,
                                                         double pressure)
     {
         auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
-        return std::make_shared<HexagonPillar>(*gap, length, materialConductivity, spacing);
+        return std::make_shared<HexagonPillar>(*gap, length, materialConductivity, spacingArea);
     }
 
 }   // namespace Tarcog::ISO15099

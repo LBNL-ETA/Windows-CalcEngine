@@ -63,10 +63,10 @@ protected:
         auto pillarHeight = 0.0001;
         auto gapPressure = 0.1333;
         auto pillarConductivity = 999.0;
-        auto pillarSpacing = 0.03;
+        auto pillarArea = 0.03 * 0.03;
         auto pillarRadius = 0.0002;
         auto pillarGap = Tarcog::ISO15099::Layers::cylindricalPillar(
-          pillarRadius, pillarHeight, pillarConductivity, pillarSpacing, gapPressure);
+          pillarRadius, pillarHeight, pillarConductivity, pillarArea, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 

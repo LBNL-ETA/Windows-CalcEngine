@@ -61,82 +61,39 @@ namespace Tarcog::ISO15099
         static std::shared_ptr<CIGUGapLayer> cylindricalPillar(double radius,
                                                                double height,
                                                                double materialConductivity,
-                                                               double spacing,
+                                                               double spacingArea,
                                                                double pressure);
-
-        static std::shared_ptr<CIGUGapLayer>
-          cylindricalPillar(double radius,
-                            double height,
-                            double materialConductivity,
-                            const Tarcog::ISO15099::PillarCellSpacing & spacing,
-                            double pressure);
 
         static std::shared_ptr<CIGUGapLayer> sphericalPillar(double radiusOfContact,
                                                              double height,
                                                              double materialConductivity,
-                                                             double spacing,
+                                                             double spacingArea,
                                                              double pressure);
-
-        static std::shared_ptr<CIGUGapLayer>
-          sphericalPillar(double radiusOfContact,
-                          double height,
-                          double materialConductivity,
-                          const Tarcog::ISO15099::PillarCellSpacing & spacing,
-                          double pressure);
 
         static std::shared_ptr<CIGUGapLayer> rectangularPillar(double length,
                                                                double width,
                                                                double height,
                                                                double materialConductivity,
-                                                               double spacing,
+                                                               double spacingArea,
                                                                double pressure);
-
-        static std::shared_ptr<CIGUGapLayer>
-          rectangularPillar(double length,
-                            double width,
-                            double height,
-                            double materialConductivity,
-                            const Tarcog::ISO15099::PillarCellSpacing & spacing,
-                            double pressure);
 
         static std::shared_ptr<CIGUGapLayer> triangularPillar(double length,
                                                               double height,
                                                               double materialConductivity,
-                                                              double spacing,
+                                                              double spacingArea,
                                                               double pressure);
-
-        static std::shared_ptr<CIGUGapLayer>
-          triangularPillar(double length,
-                           double height,
-                           double materialConductivity,
-                           const Tarcog::ISO15099::PillarCellSpacing & spacing,
-                           double pressure);
 
         static std::shared_ptr<CIGUGapLayer> pentagonPillar(double length,
                                                             double height,
                                                             double materialConductivity,
-                                                            double spacing,
+                                                            double spacingArea,
                                                             double pressure);
-
-        static std::shared_ptr<CIGUGapLayer>
-          pentagonPillar(double length,
-                         double height,
-                         double materialConductivity,
-                         const Tarcog::ISO15099::PillarCellSpacing & spacing,
-                         double pressure);
 
         static std::shared_ptr<CIGUGapLayer> hexagonPillar(double length,
                                                            double height,
                                                            double materialConductivity,
-                                                           double spacing,
+                                                           double spacingArea,
                                                            double pressure);
-
-        static std::shared_ptr<CIGUGapLayer>
-          hexagonPillar(double length,
-                        double height,
-                        double materialConductivity,
-                        const Tarcog::ISO15099::PillarCellSpacing & spacing,
-                        double pressure);
     };
 
 }   // namespace Tarcog::ISO15099
