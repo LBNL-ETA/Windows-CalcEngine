@@ -170,4 +170,40 @@ namespace Tarcog::ISO15099
         return std::make_shared<HexagonPillar>(*gap, length, materialConductivity, spacingArea);
     }
 
+    std::shared_ptr<CIGUGapLayer> Layers::linearBearingPillar(double length,
+                                                              double width,
+                                                              double height,
+                                                              double materialConductivity,
+                                                              double spacingArea,
+                                                              double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<LinearBearingPillar>(
+          *gap, length, width, materialConductivity, spacingArea);
+    }
+
+    std::shared_ptr<CIGUGapLayer> Layers::truncatedConePillar(double radius1,
+                                                              double radius2,
+                                                              double height,
+                                                              double materialConductivity,
+                                                              double spacingArea,
+                                                              double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<TruncatedConePillar>(
+          *gap, radius1, radius2, materialConductivity, spacingArea);
+    }
+
+    std::shared_ptr<CIGUGapLayer> Layers::annulusCylinderPillar(double innerRadius,
+                                                                double outerRadius,
+                                                                double height,
+                                                                double materialConductivity,
+                                                                double spacingArea,
+                                                                double pressure)
+    {
+        auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
+        return std::make_shared<AnnulusCylinderPillar>(
+          *gap, innerRadius, outerRadius, materialConductivity, spacingArea);
+    }
+
 }   // namespace Tarcog::ISO15099

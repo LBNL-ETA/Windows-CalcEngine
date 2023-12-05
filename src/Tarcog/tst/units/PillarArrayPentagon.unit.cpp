@@ -3,15 +3,11 @@
 
 #include <WCETarcog.hpp>
 
-class PillarArrayCylindrical : public testing::Test
+class PillarArrayPentagon : public testing::Test
 {
-private:
-    std::shared_ptr<Tarcog::ISO15099::CIGUGapLayer> m_Gap;
-
 protected:
-    void SetUp() override
-    {
-        /////////////////////////////////////////////////////////
+    static std::shared_ptr<Tarcog::ISO15099::CIGUGapLayer> createModel(double length)
+    {   /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
         auto layer1Thickness = 0.003;          // [m]
@@ -47,39 +43,35 @@ protected:
         auto pillarHeight = 0.2e-3;       // [m]
         auto pillarConductivity = 20.0;   // [W/(m·K)]
         auto pillarArea = 0.02 * 0.02;    // [m²]
-        auto pillarRadius = 0.25e-3;      // [m]
-        m_Gap = Tarcog::ISO15099::Layers::cylindricalPillar(
-          pillarRadius, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        auto gap = Tarcog::ISO15099::Layers::pentagonPillar(
+          length, pillarHeight, pillarConductivity, pillarArea, gapPressure);
 
         auto windowWidth = 1.0;    // [m]
         auto windowHeight = 1.0;   // [m]
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({layer1, m_Gap, layer2});
+        aIGU.addLayers({layer1, gap, layer2});
 
         // No real IGU calculations will be performed. One degree is set so we can obtain
         // conductivity of the pillar array
-        auto frontSurface{m_Gap->getSurface(FenestrationCommon::Side::Front)};
+        auto frontSurface{gap->getSurface(FenestrationCommon::Side::Front)};
         frontSurface->setTemperature(290);
 
-        auto backSurface{m_Gap->getSurface(FenestrationCommon::Side::Back)};
+        auto backSurface{gap->getSurface(FenestrationCommon::Side::Back)};
         backSurface->setTemperature(291);
-    }
 
-public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CIGUGapLayer> GetGap() const
-    {
-        return m_Gap;
+        return gap;
     }
 };
 
-TEST_F(PillarArrayCylindrical, Test1)
+TEST_F(PillarArrayPentagon, Test1)
 {
     constexpr auto tolerance = 1e-6;
+    constexpr auto length = 0.25e-3;   // [m]
 
-    const auto aGap = GetGap();
+    const auto aGap = createModel(length);
 
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(1.218959, heatFlow, tolerance);
+    EXPECT_NEAR(1.244730, heatFlow, tolerance);
 }

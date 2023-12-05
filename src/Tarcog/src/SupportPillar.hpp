@@ -8,18 +8,21 @@ namespace Tarcog::ISO15099
     class UniversalSupportPillar : public CIGUGapLayer
     {
     public:
+        ~UniversalSupportPillar() override = default;
         UniversalSupportPillar(const CIGUGapLayer & layer,
                                double materialConductivity,
                                double cellArea);
 
     protected:
         [[nodiscard]] virtual double areaOfContact() = 0;
+        [[nodiscard]] virtual double singlePillarThermalResistance();
+
+        [[nodiscard]] double materialConductivity() const;
 
     private:
         void calculateConvectionOrConductionFlow() override;
 
         [[nodiscard]] double conductivityOfPillarArray();
-        [[nodiscard]] virtual double singlePillarThermalResistance();
 
         double m_MaterialConductivity;
         double m_CellArea;
@@ -36,7 +39,7 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
-        double areaOfContact() override;
+        [[nodiscard]] double areaOfContact() override;
 
         double m_Radius;
     };
@@ -52,7 +55,7 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
-        double areaOfContact() override;
+        [[nodiscard]] double areaOfContact() override;
 
         double m_RadiusOfContact;
     };
@@ -69,7 +72,8 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
-        double areaOfContact() override;
+        [[nodiscard]] double areaOfContact() override;
+        [[nodiscard]] double singlePillarThermalResistance() override;
 
         double m_PillarLength;
         double m_PillarWidth;
@@ -85,7 +89,7 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
-        double areaOfContact() override;
+        [[nodiscard]] double areaOfContact() override;
         double m_PillarLength;
     };
 
@@ -100,7 +104,7 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
-        double areaOfContact() override;
+        [[nodiscard]] double areaOfContact() override;
 
         double m_PillarLength;
     };
@@ -116,9 +120,66 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
-        double areaOfContact() override;
+        [[nodiscard]] double areaOfContact() override;
 
         double m_PillarLength;
+    };
+
+    class LinearBearingPillar : public UniversalSupportPillar
+    {
+    public:
+        LinearBearingPillar(const CIGUGapLayer & layer,
+                            double length,
+                            double width,
+                            double materialConductivity,
+                            double cellArea);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+        [[nodiscard]] double singlePillarThermalResistance() override;
+
+        double m_PillarLength;
+        double m_PillarWidth;
+    };
+
+    class TruncatedConePillar : public UniversalSupportPillar
+    {
+    public:
+        TruncatedConePillar(const CIGUGapLayer & layer,
+                            double radius1,
+                            double radius2,
+                            double materialConductivity,
+                            double cellArea);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+        [[nodiscard]] double singlePillarThermalResistance() override;
+
+        double m_Radius1; // Radius at surface 1 (left)
+        double m_Radius2; // Radius at surface 2 (right)
+    };
+
+    class AnnulusCylinderPillar : public UniversalSupportPillar
+    {
+    public:
+        AnnulusCylinderPillar(const CIGUGapLayer & layer,
+                              double innerRadius,
+                              double outerRadius,
+                              double materialConductivity,
+                              double cellArea);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+        [[nodiscard]] double singlePillarThermalResistance() override;
+
+        double m_InnerRadius;
+        double m_OuterRadius;
     };
 
 }   // namespace Tarcog::ISO15099

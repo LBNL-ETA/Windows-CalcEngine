@@ -94,6 +94,28 @@ namespace Tarcog::ISO15099
                                                            double materialConductivity,
                                                            double spacingArea,
                                                            double pressure);
+
+
+        static std::shared_ptr<CIGUGapLayer> linearBearingPillar(double length,
+                                                                 double width,
+                                                                 double height,
+                                                                 double materialConductivity,
+                                                                 double spacingArea,
+                                                                 double pressure);
+
+        static std::shared_ptr<CIGUGapLayer> truncatedConePillar(double radius1,
+                                                                 double radius2,
+                                                                 double height,
+                                                                 double materialConductivity,
+                                                                 double spacingArea,
+                                                                 double pressure);
+
+        static std::shared_ptr<CIGUGapLayer> annulusCylinderPillar(double innerRadius,
+                                                                   double outerRadius,
+                                                                   double height,
+                                                                   double materialConductivity,
+                                                                   double spacingArea,
+                                                                   double pressure);
     };
 
 }   // namespace Tarcog::ISO15099
