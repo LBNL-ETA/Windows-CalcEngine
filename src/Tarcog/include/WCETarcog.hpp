@@ -21,6 +21,7 @@
 #include "../src/OutdoorEnvironment.hpp"
 #include "../src/SingleSystem.hpp"
 #include "../src/SupportPillar.hpp"
+#include "../src/SupportPillarMeasured.hpp"
 #include "../src/Surface.hpp"
 #include "../src/System.hpp"
 #include "../src/TarcogConstants.hpp"

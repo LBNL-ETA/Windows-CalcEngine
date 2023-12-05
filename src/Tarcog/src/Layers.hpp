@@ -8,6 +8,7 @@
 #include "TarcogConstants.hpp"
 #include "BaseShade.hpp"
 #include "SupportPillar.hpp"
+#include "SupportPillarMeasured.hpp"
 
 
 namespace Tarcog::ISO15099
@@ -116,6 +117,8 @@ namespace Tarcog::ISO15099
                                                                    double materialConductivity,
                                                                    double spacingArea,
                                                                    double pressure);
+
+        static std::shared_ptr<CIGUGapLayer> measuredPillar(const PillarMeasurement & pillar);
     };
 
 }   // namespace Tarcog::ISO15099

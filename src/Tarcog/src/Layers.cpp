@@ -5,6 +5,7 @@
 #include "BaseShade.hpp"
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
+#include "SupportPillarMeasured.hpp"
 #include "EffectiveOpenness.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 
@@ -204,6 +205,11 @@ namespace Tarcog::ISO15099
         auto gap{Tarcog::ISO15099::Layers::gap(height, pressure)};
         return std::make_shared<AnnulusCylinderPillar>(
           *gap, innerRadius, outerRadius, materialConductivity, spacingArea);
+    }
+
+    std::shared_ptr<CIGUGapLayer> Layers::measuredPillar(const PillarMeasurement & pillar)
+    {
+        return std::make_shared<SupportPillarMeasured>(pillar);
     }
 
 }   // namespace Tarcog::ISO15099

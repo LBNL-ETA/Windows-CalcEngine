@@ -6,7 +6,7 @@
 class TestVacuumCellArea : public testing::Test
 {
 protected:
-    static constexpr double tolerance = 1e-6; // Adjust tolerance as needed
+    static constexpr double tolerance = 1e-6;
 };
 
 using Tarcog::ISO15099::CellSpacingType;
