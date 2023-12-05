@@ -12,11 +12,9 @@ namespace Tarcog::ISO15099
     ////  CSupportPillar
     ////////////////////////////////////////////////////////////////////////////
     UniversalSupportPillar::UniversalSupportPillar(const CIGUGapLayer & layer,
-                                 double materialConductivity,
+                                                   double materialConductivity,
                                                    double cellArea) :
-        CIGUGapLayer(layer),
-        m_MaterialConductivity(materialConductivity),
-        m_CellArea(cellArea)
+        CIGUGapLayer(layer), m_MaterialConductivity(materialConductivity), m_CellArea(cellArea)
     {}
 
     void UniversalSupportPillar::calculateConvectionOrConductionFlow()
@@ -30,9 +28,13 @@ namespace Tarcog::ISO15099
 
     double UniversalSupportPillar::singlePillarThermalResistance()
     {
-        auto aveCond{(getPreviousLayer()->getConductivity() + getNextLayer()->getConductivity())
-                     / 2};
-        return std::sqrt(ConstantsData::WCE_PI) / (2 * aveCond * std::sqrt(areaOfContact()))
+        auto conductivityOneSide = [this](double glassConductivity) -> double {
+            return std::sqrt(ConstantsData::WCE_PI)
+                   / (4 * glassConductivity * std::sqrt(areaOfContact()));
+        };
+
+        return conductivityOneSide(getPreviousLayer()->getConductivity())
+               + conductivityOneSide(getNextLayer()->getConductivity())
                + m_Thickness / (m_MaterialConductivity * areaOfContact());
     }
 
@@ -68,7 +70,8 @@ namespace Tarcog::ISO15099
                                      double radiusOfContact,
                                      double materialConductivity,
                                      double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea), m_RadiusOfContact(radiusOfContact)
+        UniversalSupportPillar(layer, materialConductivity, cellArea),
+        m_RadiusOfContact(radiusOfContact)
     {}
 
     double SphericalPillar::areaOfContact()
