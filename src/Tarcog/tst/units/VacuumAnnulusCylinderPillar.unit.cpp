@@ -60,14 +60,17 @@ protected:
                                                       TransmittanceIR);
 
         // Add support pillars
-        auto innerRadius1 = 0.1e-3;
-        auto outerRadius2 = 0.2e-3;
-        auto pillarHeight = 0.1e-3;
-        auto gapPressure = 0.1333;
-        auto pillarConductivity = 999.0;
-        auto pillarArea = 0.03 * 0.03;
-        auto pillarGap = Tarcog::ISO15099::Layers::annulusCylinderPillar(
-          innerRadius1, outerRadius2, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        const auto innerRadius = 0.1e-3;
+        const auto outerRadius = 0.2e-3;
+        const auto pillarHeight = 0.1e-3;
+        const auto gapPressure = 0.1333;
+        const auto pillarConductivity = 999.0;
+        const auto pillarArea = 0.03 * 0.03;
+
+        Tarcog::ISO15099::AnnulusCylinderPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, innerRadius, outerRadius};
+
+        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 

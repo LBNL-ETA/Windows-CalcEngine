@@ -60,13 +60,19 @@ protected:
                                                       TransmittanceIR);
 
         // Add support pillars
-        auto pillarLength = 0.1e-3;
-        auto pillarHeight = 0.1e-3;
-        auto gapPressure = 0.1333;
-        auto pillarConductivity = 999.0;
-        auto pillarArea = 0.03 * 0.03;
-        auto pillarGap = Tarcog::ISO15099::Layers::hexagonPillar(
-          pillarLength, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        const auto pillarLength = 0.1e-3;
+        const auto pillarHeight = 0.1e-3;
+        const auto gapPressure = 0.1333;
+        const auto pillarConductivity = 999.0;
+        const auto pillarArea = 0.03 * 0.03;
+
+        Tarcog::ISO15099::PolygonalPillar pillar{pillarHeight,
+                                                 pillarConductivity,
+                                                 pillarArea,
+                                                 pillarLength,
+                                                 Tarcog::ISO15099::PolygonType::Hexagon};
+
+        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 
@@ -100,7 +106,8 @@ TEST_F(DoubleLowEVacuumHexagonPillar, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {255.78754395362569, 255.86194849865939, 291.281565, 291.355270};
+    std::vector correctTemperature = {
+      255.78754395362569, 255.86194849865939, 291.281565, 291.355270};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)

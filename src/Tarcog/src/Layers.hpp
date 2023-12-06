@@ -59,64 +59,26 @@ namespace Tarcog::ISO15099
                                double forcedVentilationAirTemperature);
 
         //! All vacuum gaps will have Air by default. If needed, different gases can be added.
-        static std::shared_ptr<CIGUGapLayer> cylindricalPillar(double radius,
-                                                               double height,
-                                                               double materialConductivity,
-                                                               double spacingArea,
-                                                               double pressure);
+        static std::shared_ptr<CIGUGapLayer> createPillar(const CylindricalPillar & pillar,
+                                                          double pressure);
 
-        static std::shared_ptr<CIGUGapLayer> sphericalPillar(double radiusOfContact,
-                                                             double height,
-                                                             double materialConductivity,
-                                                             double spacingArea,
-                                                             double pressure);
+        static std::shared_ptr<CIGUGapLayer> createPillar(const SphericalPillar & pillar,
+                                                          double pressure);
 
-        static std::shared_ptr<CIGUGapLayer> rectangularPillar(double length,
-                                                               double width,
-                                                               double height,
-                                                               double materialConductivity,
-                                                               double spacingArea,
-                                                               double pressure);
+        static std::shared_ptr<CIGUGapLayer> createPillar(const RectangularPillar & pillar,
+                                                          double pressure);
 
-        static std::shared_ptr<CIGUGapLayer> triangularPillar(double length,
-                                                              double height,
-                                                              double materialConductivity,
-                                                              double spacingArea,
-                                                              double pressure);
+        static std::shared_ptr<CIGUGapLayer> createPillar(const PolygonalPillar & pillar,
+                                                          double pressure);
 
-        static std::shared_ptr<CIGUGapLayer> pentagonPillar(double length,
-                                                            double height,
-                                                            double materialConductivity,
-                                                            double spacingArea,
-                                                            double pressure);
+        static std::shared_ptr<CIGUGapLayer> createPillar(const LinearBearingPillar & pillar,
+                                                          double pressure);
 
-        static std::shared_ptr<CIGUGapLayer> hexagonPillar(double length,
-                                                           double height,
-                                                           double materialConductivity,
-                                                           double spacingArea,
-                                                           double pressure);
+        static std::shared_ptr<CIGUGapLayer> createPillar(const TruncatedConePillar & pillar,
+                                                          double pressure);
 
-
-        static std::shared_ptr<CIGUGapLayer> linearBearingPillar(double length,
-                                                                 double width,
-                                                                 double height,
-                                                                 double materialConductivity,
-                                                                 double spacingArea,
-                                                                 double pressure);
-
-        static std::shared_ptr<CIGUGapLayer> truncatedConePillar(double radius1,
-                                                                 double radius2,
-                                                                 double height,
-                                                                 double materialConductivity,
-                                                                 double spacingArea,
-                                                                 double pressure);
-
-        static std::shared_ptr<CIGUGapLayer> annulusCylinderPillar(double innerRadius,
-                                                                   double outerRadius,
-                                                                   double height,
-                                                                   double materialConductivity,
-                                                                   double spacingArea,
-                                                                   double pressure);
+        static std::shared_ptr<CIGUGapLayer> createPillar(const AnnulusCylinderPillar & pillar,
+                                                          double pressure);
 
         static std::shared_ptr<CIGUGapLayer> measuredPillar(const PillarMeasurement & pillar);
     };

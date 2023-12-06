@@ -16,9 +16,10 @@ namespace Tarcog::ISO15099
         static const std::unordered_map<CellSpacingType, std::function<double(double)>>
           areaCalculators = {
             {CellSpacingType::Square, [](double r) { return r * r; }},
-            {CellSpacingType::ShiftedSquare, [](double r) { return FenestrationCommon::nTagonArea(5, r); }},
+            {CellSpacingType::ShiftedSquare,
+             [](double r) { return FenestrationCommon::nTagonArea(5, r); }},
             {CellSpacingType::ShiftedRotatedSquare,
-             [] (double r){ return FenestrationCommon::nTagonArea(5, r); }},
+             [](double r) { return FenestrationCommon::nTagonArea(5, r); }},
           };
 
         auto it = areaCalculators.find(type);
@@ -175,27 +176,33 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  CylindricalPillar
     ////////////////////////////////////////////////////////////////////////////
-    CylindricalPillar::CylindricalPillar(const CIGUGapLayer & layer,
+    CylindricalPillarLayer::CylindricalPillarLayer(const CIGUGapLayer & layer,
                                          double radius,
                                          double materialConductivity,
                                          double cellArea) :
         UniversalSupportPillar(layer, materialConductivity, cellArea), m_Radius(radius)
     {}
 
-    double CylindricalPillar::areaOfContact()
+    CylindricalPillarLayer::CylindricalPillarLayer(const CIGUGapLayer & layer,
+                                         const CylindricalPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_Radius(data.radius)
+    {}
+
+    double CylindricalPillarLayer::areaOfContact()
     {
         return ConstantsData::WCE_PI * m_Radius * m_Radius;
     }
 
-    std::shared_ptr<CBaseLayer> CylindricalPillar::clone() const
+    std::shared_ptr<CBaseLayer> CylindricalPillarLayer::clone() const
     {
-        return std::make_shared<CylindricalPillar>(*this);
+        return std::make_shared<CylindricalPillarLayer>(*this);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     ////  SphericalPillar
     ////////////////////////////////////////////////////////////////////////////
-    SphericalPillar::SphericalPillar(const CIGUGapLayer & layer,
+    SphericalPillarLayer::SphericalPillarLayer(const CIGUGapLayer & layer,
                                      double radiusOfContact,
                                      double materialConductivity,
                                      double cellArea) :
@@ -203,20 +210,20 @@ namespace Tarcog::ISO15099
         m_RadiusOfContact(radiusOfContact)
     {}
 
-    double SphericalPillar::areaOfContact()
+    double SphericalPillarLayer::areaOfContact()
     {
         return ConstantsData::WCE_PI * m_RadiusOfContact * m_RadiusOfContact;
     }
 
-    std::shared_ptr<CBaseLayer> SphericalPillar::clone() const
+    std::shared_ptr<CBaseLayer> SphericalPillarLayer::clone() const
     {
-        return std::make_shared<SphericalPillar>(*this);
+        return std::make_shared<SphericalPillarLayer>(*this);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     ////  RectangularPillar
     ////////////////////////////////////////////////////////////////////////////
-    RectangularPillar::RectangularPillar(const CIGUGapLayer & layer,
+    RectangularPillarLayer::RectangularPillarLayer(const CIGUGapLayer & layer,
                                          double length,
                                          double width,
                                          double materialConductivity,
@@ -226,17 +233,17 @@ namespace Tarcog::ISO15099
         m_PillarWidth(width)
     {}
 
-    double RectangularPillar::areaOfContact()
+    double RectangularPillarLayer::areaOfContact()
     {
         return m_PillarWidth * m_PillarLength;
     }
 
-    std::shared_ptr<CBaseLayer> RectangularPillar::clone() const
+    std::shared_ptr<CBaseLayer> RectangularPillarLayer::clone() const
     {
-        return std::make_shared<RectangularPillar>(*this);
+        return std::make_shared<RectangularPillarLayer>(*this);
     }
 
-    double RectangularPillar::singlePillarThermalResistance()
+    double RectangularPillarLayer::singlePillarThermalResistance()
     {
         if(std::max(m_PillarWidth, m_PillarLength) / std::min(m_PillarWidth, m_PillarLength) < 2)
         {
@@ -254,19 +261,19 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  TriangularPillar
     ////////////////////////////////////////////////////////////////////////////
-    TriangularPillar::TriangularPillar(const CIGUGapLayer & layer,
+    TriangularPillarLayer::TriangularPillarLayer(const CIGUGapLayer & layer,
                                        double length,
                                        double materialConductivity,
                                        double cellArea) :
         UniversalSupportPillar(layer, materialConductivity, cellArea), m_PillarLength(length)
     {}
 
-    std::shared_ptr<CBaseLayer> TriangularPillar::clone() const
+    std::shared_ptr<CBaseLayer> TriangularPillarLayer::clone() const
     {
-        return std::make_shared<TriangularPillar>(*this);
+        return std::make_shared<TriangularPillarLayer>(*this);
     }
 
-    double TriangularPillar::areaOfContact()
+    double TriangularPillarLayer::areaOfContact()
     {
         return std::sqrt(3) / 4 * m_PillarLength * m_PillarLength;
     }
@@ -274,19 +281,19 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  PentagonPillar
     ////////////////////////////////////////////////////////////////////////////
-    PentagonPillar::PentagonPillar(const CIGUGapLayer & layer,
+    PentagonPillarLayer::PentagonPillarLayer(const CIGUGapLayer & layer,
                                    double length,
                                    double materialConductivity,
                                    double cellArea) :
         UniversalSupportPillar(layer, materialConductivity, cellArea), m_PillarLength(length)
     {}
 
-    std::shared_ptr<CBaseLayer> PentagonPillar::clone() const
+    std::shared_ptr<CBaseLayer> PentagonPillarLayer::clone() const
     {
-        return std::make_shared<PentagonPillar>(*this);
+        return std::make_shared<PentagonPillarLayer>(*this);
     }
 
-    double PentagonPillar::areaOfContact()
+    double PentagonPillarLayer::areaOfContact()
     {
         return 5 * m_PillarLength * m_PillarLength
                * std::pow(std::sin(36 * FenestrationCommon::WCE_PI / 180)
@@ -297,19 +304,19 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  HexagonPillar
     ////////////////////////////////////////////////////////////////////////////
-    HexagonPillar::HexagonPillar(const CIGUGapLayer & layer,
+    HexagonPillarLayer::HexagonPillarLayer(const CIGUGapLayer & layer,
                                  double length,
                                  double materialConductivity,
                                  double cellArea) :
         UniversalSupportPillar(layer, materialConductivity, cellArea), m_PillarLength(length)
     {}
 
-    std::shared_ptr<CBaseLayer> HexagonPillar::clone() const
+    std::shared_ptr<CBaseLayer> HexagonPillarLayer::clone() const
     {
-        return std::make_shared<HexagonPillar>(*this);
+        return std::make_shared<HexagonPillarLayer>(*this);
     }
 
-    double HexagonPillar::areaOfContact()
+    double HexagonPillarLayer::areaOfContact()
     {
         return 6 * m_PillarLength * m_PillarLength
                * std::pow(std::sin(36 * FenestrationCommon::WCE_PI / 180)
@@ -320,7 +327,7 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  LinearBearingPillar
     ////////////////////////////////////////////////////////////////////////////
-    LinearBearingPillar::LinearBearingPillar(const CIGUGapLayer & layer,
+    LinearBearingPillarLayer::LinearBearingPillarLayer(const CIGUGapLayer & layer,
                                              double length,
                                              double width,
                                              double materialConductivity,
@@ -330,17 +337,17 @@ namespace Tarcog::ISO15099
         m_PillarWidth(width)
     {}
 
-    std::shared_ptr<CBaseLayer> LinearBearingPillar::clone() const
+    std::shared_ptr<CBaseLayer> LinearBearingPillarLayer::clone() const
     {
-        return std::make_shared<LinearBearingPillar>(*this);
+        return std::make_shared<LinearBearingPillarLayer>(*this);
     }
 
-    double LinearBearingPillar::areaOfContact()
+    double LinearBearingPillarLayer::areaOfContact()
     {
         return m_PillarLength * m_PillarWidth;
     }
 
-    double LinearBearingPillar::singlePillarThermalResistance()
+    double LinearBearingPillarLayer::singlePillarThermalResistance()
     {
         return linearBearingPillarThermalResistance(getPreviousLayer()->getConductivity(),
                                                     getNextLayer()->getConductivity(),
@@ -353,7 +360,7 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  TruncatedConePillar
     ////////////////////////////////////////////////////////////////////////////
-    TruncatedConePillar::TruncatedConePillar(const CIGUGapLayer & layer,
+    TruncatedConePillarLayer::TruncatedConePillarLayer(const CIGUGapLayer & layer,
                                              double radius1,
                                              double radius2,
                                              double materialConductivity,
@@ -363,17 +370,17 @@ namespace Tarcog::ISO15099
         m_Radius2(radius2)
     {}
 
-    std::shared_ptr<CBaseLayer> TruncatedConePillar::clone() const
+    std::shared_ptr<CBaseLayer> TruncatedConePillarLayer::clone() const
     {
-        return std::make_shared<TruncatedConePillar>(*this);
+        return std::make_shared<TruncatedConePillarLayer>(*this);
     }
 
-    double TruncatedConePillar::areaOfContact()
+    double TruncatedConePillarLayer::areaOfContact()
     {
         return 0;   // Not used in this case, so we will just return zero
     }
 
-    double TruncatedConePillar::singlePillarThermalResistance()
+    double TruncatedConePillarLayer::singlePillarThermalResistance()
     {
         auto rpGen = [](double GlassConductance, double radius) -> double {
             return 1 / (4 * GlassConductance * radius);
@@ -389,7 +396,7 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  AnnulusCylinderPillar
     ////////////////////////////////////////////////////////////////////////////
-    AnnulusCylinderPillar::AnnulusCylinderPillar(const CIGUGapLayer & layer,
+    AnnulusCylinderPillarLayer::AnnulusCylinderPillarLayer(const CIGUGapLayer & layer,
                                                  const double innerRadius,
                                                  const double outerRadius,
                                                  const double materialConductivity,
@@ -404,17 +411,17 @@ namespace Tarcog::ISO15099
         }
     }
 
-    std::shared_ptr<CBaseLayer> AnnulusCylinderPillar::clone() const
+    std::shared_ptr<CBaseLayer> AnnulusCylinderPillarLayer::clone() const
     {
-        return std::make_shared<AnnulusCylinderPillar>(*this);
+        return std::make_shared<AnnulusCylinderPillarLayer>(*this);
     }
 
-    double AnnulusCylinderPillar::areaOfContact()
+    double AnnulusCylinderPillarLayer::areaOfContact()
     {
         return 0;
     }
 
-    double AnnulusCylinderPillar::singlePillarThermalResistance()
+    double AnnulusCylinderPillarLayer::singlePillarThermalResistance()
     {
         return annulusCylinderPillarThermalResistance(getPreviousLayer()->getConductivity(),
                                                       getNextLayer()->getConductivity(),

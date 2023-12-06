@@ -60,14 +60,17 @@ protected:
                                                       TransmittanceIR);
 
         // Add support pillars
-        auto pillarRadius1 = 0.1e-3;
-        auto pillarRadius2 = 0.2e-3;
-        auto pillarHeight = 0.1e-3;
-        auto gapPressure = 0.1333;
-        auto pillarConductivity = 999.0;
-        auto pillarArea = 0.03 * 0.03;
-        auto pillarGap = Tarcog::ISO15099::Layers::truncatedConePillar(
-          pillarRadius1, pillarRadius2, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        const auto pillarRadius1 = 0.1e-3;
+        const auto pillarRadius2 = 0.2e-3;
+        const auto pillarHeight = 0.1e-3;
+        const auto gapPressure = 0.1333;
+        const auto pillarConductivity = 999.0;
+        const auto pillarArea = 0.03 * 0.03;
+
+        const Tarcog::ISO15099::TruncatedConePillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, pillarRadius1, pillarRadius2};
+
+        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 

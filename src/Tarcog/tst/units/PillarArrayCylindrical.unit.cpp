@@ -44,12 +44,15 @@ protected:
         auto gapPressure = 0.0;   // [Pa]
 
         // Add support pillars
-        auto pillarHeight = 0.2e-3;       // [m]
-        auto pillarConductivity = 20.0;   // [W/(m·K)]
-        auto pillarArea = 0.02 * 0.02;    // [m²]
-        auto pillarRadius = 0.25e-3;      // [m]
-        m_Gap = Tarcog::ISO15099::Layers::cylindricalPillar(
-          pillarRadius, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        const auto pillarHeight = 0.2e-3;       // [m]
+        const auto pillarConductivity = 20.0;   // [W/(m·K)]
+        const auto pillarArea = 0.02 * 0.02;    // [m²]
+        const auto pillarRadius = 0.25e-3;      // [m]
+
+
+        Tarcog::ISO15099::CylindricalPillar pillar{pillarHeight, pillarConductivity, pillarArea, pillarRadius};
+
+        m_Gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         auto windowWidth = 1.0;    // [m]
         auto windowHeight = 1.0;   // [m]

@@ -60,13 +60,15 @@ protected:
                                                       TransmittanceIR);
 
         // Add support pillars
-        auto pillarHeight = 0.0001;
-        auto gapPressure = 0.1333;
-        auto pillarConductivity = 999.0;
-        auto pillarArea = 0.03 * 0.03;
-        auto radiusOfContact = 0.02e-3;
-        auto pillarGap = Tarcog::ISO15099::Layers::sphericalPillar(
-          radiusOfContact, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        const auto pillarHeight = 0.0001;
+        const auto gapPressure = 0.1333;
+        const auto pillarConductivity = 999.0;
+        const auto pillarArea = 0.03 * 0.03;
+        const auto radiusOfContact = 0.02e-3;
+
+        Tarcog::ISO15099::SphericalPillar pillar{pillarHeight, pillarConductivity, pillarArea, radiusOfContact};
+
+        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         ASSERT_TRUE(pillarGap != nullptr);
 

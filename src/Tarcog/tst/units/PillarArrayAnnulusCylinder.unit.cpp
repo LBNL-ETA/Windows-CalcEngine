@@ -36,14 +36,17 @@ protected:
                                                       layer2TransmittanceIR);
 
         // setting pressure to zero will calculate conductivity of the pillar array
-        auto gapPressure = 0.0;   // [Pa]
+        const auto gapPressure = 0.0;   // [Pa]
 
         // Add support pillars
-        auto pillarHeight = 0.2e-3;       // [m]
-        auto pillarConductivity = 20.0;   // [W/(m·K)]
-        auto pillarArea = 0.02 * 0.02;    // [m²]
-        auto gap = Tarcog::ISO15099::Layers::annulusCylinderPillar(
-          innerRadius, outerRadius, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        const auto pillarHeight = 0.2e-3;       // [m]
+        const auto pillarConductivity = 20.0;   // [W/(m·K)]
+        const auto pillarArea = 0.02 * 0.02;    // [m²]
+
+        const Tarcog::ISO15099::AnnulusCylinderPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, innerRadius, outerRadius};
+
+        auto gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         auto windowWidth = 1.0;    // [m]
         auto windowHeight = 1.0;   // [m]
@@ -150,7 +153,6 @@ TEST_F(PillarArrayAnnulusCylinder, ExceptionWhenInnerRadiusGreaterThanOuterRadiu
     constexpr auto outerRadius = 0.25e-3;   // [m]
 
     // Expect the function to throw std::runtime_error when innerRadius is larger than outerRadius
-    EXPECT_THROW({
-        createModel(innerRadius, outerRadius, glass1Conductance, glass2Conductance);
-    }, std::runtime_error);
+    EXPECT_THROW({ createModel(innerRadius, outerRadius, glass1Conductance, glass2Conductance); },
+                 std::runtime_error);
 }

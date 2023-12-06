@@ -37,14 +37,16 @@ protected:
                                                       layer2TransmittanceIR);
 
         // setting pressure to zero will calculate conductivity of the pillar array
-        auto gapPressure = 0.0;   // [Pa]
+        const auto gapPressure = 0.0;   // [Pa]
 
         // Add support pillars
-        auto pillarHeight = 0.2e-3;       // [m]
-        auto pillarConductivity = 20.0;   // [W/(m·K)]
-        auto pillarArea = 0.02 * 0.02;    // [m²]
-        auto gap = Tarcog::ISO15099::Layers::sphericalPillar(
-          contactRadius, pillarHeight, pillarConductivity, pillarArea, gapPressure);
+        const auto pillarHeight = 0.2e-3;       // [m]
+        const auto pillarConductivity = 20.0;   // [W/(m·K)]
+        const auto pillarArea = 0.02 * 0.02;    // [m²]
+
+        Tarcog::ISO15099::SphericalPillar pillar{pillarHeight, pillarConductivity, pillarArea, contactRadius};
+
+        auto gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         auto windowWidth = 1.0;    // [m]
         auto windowHeight = 1.0;   // [m]

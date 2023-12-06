@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IGUGapLayer.hpp"
+#include "PillarData.hpp"
 
 
 namespace Tarcog::ISO15099
@@ -37,13 +38,15 @@ namespace Tarcog::ISO15099
         double m_CellArea;
     };
 
-    class CylindricalPillar : public UniversalSupportPillar
+    class CylindricalPillarLayer : public UniversalSupportPillar
     {
     public:
-        CylindricalPillar(const CIGUGapLayer & layer,
-                          double radius,
-                          double materialConductivity,
-                          double cellArea);
+        CylindricalPillarLayer(const CIGUGapLayer & layer,
+                               double radius,
+                               double materialConductivity,
+                               double cellArea);
+
+        CylindricalPillarLayer(const CIGUGapLayer & layer, const CylindricalPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -53,13 +56,13 @@ namespace Tarcog::ISO15099
         double m_Radius;
     };
 
-    class SphericalPillar : public UniversalSupportPillar
+    class SphericalPillarLayer : public UniversalSupportPillar
     {
     public:
-        SphericalPillar(const CIGUGapLayer & layer,
-                        double radiusOfContact,
-                        double materialConductivity,
-                        double cellArea);
+        SphericalPillarLayer(const CIGUGapLayer & layer,
+                             double radiusOfContact,
+                             double materialConductivity,
+                             double cellArea);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -69,14 +72,14 @@ namespace Tarcog::ISO15099
         double m_RadiusOfContact;
     };
 
-    class RectangularPillar : public UniversalSupportPillar
+    class RectangularPillarLayer : public UniversalSupportPillar
     {
     public:
-        RectangularPillar(const CIGUGapLayer & layer,
-                          double length,
-                          double width,
-                          double materialConductivity,
-                          double cellArea);
+        RectangularPillarLayer(const CIGUGapLayer & layer,
+                               double length,
+                               double width,
+                               double materialConductivity,
+                               double cellArea);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -88,98 +91,98 @@ namespace Tarcog::ISO15099
         double m_PillarWidth;
     };
 
-    class TriangularPillar : public UniversalSupportPillar
+    class TriangularPillarLayer : public UniversalSupportPillar
     {
     public:
-        TriangularPillar(const CIGUGapLayer & layer,
-                         double length,
-                         double materialConductivity,
-                         double cellArea);
-        std::shared_ptr<CBaseLayer> clone() const override;
-
-    private:
-        [[nodiscard]] double areaOfContact() override;
-        double m_PillarLength;
-    };
-
-    class PentagonPillar : public UniversalSupportPillar
-    {
-    public:
-        PentagonPillar(const CIGUGapLayer & layer,
-                       double length,
-                       double materialConductivity,
-                       double cellArea);
-
-        std::shared_ptr<CBaseLayer> clone() const override;
-
-    private:
-        [[nodiscard]] double areaOfContact() override;
-
-        double m_PillarLength;
-    };
-
-    class HexagonPillar : public UniversalSupportPillar
-    {
-    public:
-        HexagonPillar(const CIGUGapLayer & layer,
-                      double length,
-                      double materialConductivity,
-                      double cellArea);
-
-        std::shared_ptr<CBaseLayer> clone() const override;
-
-    private:
-        [[nodiscard]] double areaOfContact() override;
-
-        double m_PillarLength;
-    };
-
-    class LinearBearingPillar : public UniversalSupportPillar
-    {
-    public:
-        LinearBearingPillar(const CIGUGapLayer & layer,
-                            double length,
-                            double width,
-                            double materialConductivity,
-                            double cellArea);
-
-        std::shared_ptr<CBaseLayer> clone() const override;
-
-    private:
-        [[nodiscard]] double areaOfContact() override;
-        [[nodiscard]] double singlePillarThermalResistance() override;
-
-        double m_PillarLength;
-        double m_PillarWidth;
-    };
-
-    class TruncatedConePillar : public UniversalSupportPillar
-    {
-    public:
-        TruncatedConePillar(const CIGUGapLayer & layer,
-                            double radius1,
-                            double radius2,
-                            double materialConductivity,
-                            double cellArea);
-
-        std::shared_ptr<CBaseLayer> clone() const override;
-
-    private:
-        [[nodiscard]] double areaOfContact() override;
-        [[nodiscard]] double singlePillarThermalResistance() override;
-
-        double m_Radius1; // Radius at surface 1 (left)
-        double m_Radius2; // Radius at surface 2 (right)
-    };
-
-    class AnnulusCylinderPillar : public UniversalSupportPillar
-    {
-    public:
-        AnnulusCylinderPillar(const CIGUGapLayer & layer,
-                              double innerRadius,
-                              double outerRadius,
+        TriangularPillarLayer(const CIGUGapLayer & layer,
+                              double length,
                               double materialConductivity,
                               double cellArea);
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+        double m_PillarLength;
+    };
+
+    class PentagonPillarLayer : public UniversalSupportPillar
+    {
+    public:
+        PentagonPillarLayer(const CIGUGapLayer & layer,
+                            double length,
+                            double materialConductivity,
+                            double cellArea);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+
+        double m_PillarLength;
+    };
+
+    class HexagonPillarLayer : public UniversalSupportPillar
+    {
+    public:
+        HexagonPillarLayer(const CIGUGapLayer & layer,
+                           double length,
+                           double materialConductivity,
+                           double cellArea);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+
+        double m_PillarLength;
+    };
+
+    class LinearBearingPillarLayer : public UniversalSupportPillar
+    {
+    public:
+        LinearBearingPillarLayer(const CIGUGapLayer & layer,
+                                 double length,
+                                 double width,
+                                 double materialConductivity,
+                                 double cellArea);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+        [[nodiscard]] double singlePillarThermalResistance() override;
+
+        double m_PillarLength;
+        double m_PillarWidth;
+    };
+
+    class TruncatedConePillarLayer : public UniversalSupportPillar
+    {
+    public:
+        TruncatedConePillarLayer(const CIGUGapLayer & layer,
+                                 double radius1,
+                                 double radius2,
+                                 double materialConductivity,
+                                 double cellArea);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+        [[nodiscard]] double singlePillarThermalResistance() override;
+
+        double m_Radius1;   // Radius at surface 1 (left)
+        double m_Radius2;   // Radius at surface 2 (right)
+    };
+
+    class AnnulusCylinderPillarLayer : public UniversalSupportPillar
+    {
+    public:
+        AnnulusCylinderPillarLayer(const CIGUGapLayer & layer,
+                                   double innerRadius,
+                                   double outerRadius,
+                                   double materialConductivity,
+                                   double cellArea);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
