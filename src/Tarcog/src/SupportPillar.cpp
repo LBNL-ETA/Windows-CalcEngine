@@ -177,14 +177,7 @@ namespace Tarcog::ISO15099
     ////  CylindricalPillar
     ////////////////////////////////////////////////////////////////////////////
     CylindricalPillarLayer::CylindricalPillarLayer(const CIGUGapLayer & layer,
-                                         double radius,
-                                         double materialConductivity,
-                                         double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea), m_Radius(radius)
-    {}
-
-    CylindricalPillarLayer::CylindricalPillarLayer(const CIGUGapLayer & layer,
-                                         const CylindricalPillar & data) :
+                                                   const CylindricalPillar & data) :
         UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
         m_Radius(data.radius)
     {}
@@ -203,11 +196,9 @@ namespace Tarcog::ISO15099
     ////  SphericalPillar
     ////////////////////////////////////////////////////////////////////////////
     SphericalPillarLayer::SphericalPillarLayer(const CIGUGapLayer & layer,
-                                     double radiusOfContact,
-                                     double materialConductivity,
-                                     double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea),
-        m_RadiusOfContact(radiusOfContact)
+                                               const SphericalPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_RadiusOfContact(data.radiusOfContact)
     {}
 
     double SphericalPillarLayer::areaOfContact()
@@ -224,13 +215,10 @@ namespace Tarcog::ISO15099
     ////  RectangularPillar
     ////////////////////////////////////////////////////////////////////////////
     RectangularPillarLayer::RectangularPillarLayer(const CIGUGapLayer & layer,
-                                         double length,
-                                         double width,
-                                         double materialConductivity,
-                                         double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea),
-        m_PillarLength(length),
-        m_PillarWidth(width)
+                                                   const RectangularPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_PillarLength(data.length),
+        m_PillarWidth(data.width)
     {}
 
     double RectangularPillarLayer::areaOfContact()
@@ -262,10 +250,9 @@ namespace Tarcog::ISO15099
     ////  TriangularPillar
     ////////////////////////////////////////////////////////////////////////////
     TriangularPillarLayer::TriangularPillarLayer(const CIGUGapLayer & layer,
-                                       double length,
-                                       double materialConductivity,
-                                       double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea), m_PillarLength(length)
+                                                 const PolygonalPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_PillarLength(data.length)
     {}
 
     std::shared_ptr<CBaseLayer> TriangularPillarLayer::clone() const
@@ -282,10 +269,8 @@ namespace Tarcog::ISO15099
     ////  PentagonPillar
     ////////////////////////////////////////////////////////////////////////////
     PentagonPillarLayer::PentagonPillarLayer(const CIGUGapLayer & layer,
-                                   double length,
-                                   double materialConductivity,
-                                   double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea), m_PillarLength(length)
+                                             const PolygonalPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea), m_PillarLength(data.length)
     {}
 
     std::shared_ptr<CBaseLayer> PentagonPillarLayer::clone() const
@@ -304,11 +289,8 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  HexagonPillar
     ////////////////////////////////////////////////////////////////////////////
-    HexagonPillarLayer::HexagonPillarLayer(const CIGUGapLayer & layer,
-                                 double length,
-                                 double materialConductivity,
-                                 double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea), m_PillarLength(length)
+    HexagonPillarLayer::HexagonPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea), m_PillarLength(data.length)
     {}
 
     std::shared_ptr<CBaseLayer> HexagonPillarLayer::clone() const
@@ -328,13 +310,10 @@ namespace Tarcog::ISO15099
     ////  LinearBearingPillar
     ////////////////////////////////////////////////////////////////////////////
     LinearBearingPillarLayer::LinearBearingPillarLayer(const CIGUGapLayer & layer,
-                                             double length,
-                                             double width,
-                                             double materialConductivity,
-                                             double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea),
-        m_PillarLength(length),
-        m_PillarWidth(width)
+                                                       const LinearBearingPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_PillarLength(data.length),
+        m_PillarWidth(data.width)
     {}
 
     std::shared_ptr<CBaseLayer> LinearBearingPillarLayer::clone() const
@@ -361,13 +340,10 @@ namespace Tarcog::ISO15099
     ////  TruncatedConePillar
     ////////////////////////////////////////////////////////////////////////////
     TruncatedConePillarLayer::TruncatedConePillarLayer(const CIGUGapLayer & layer,
-                                             double radius1,
-                                             double radius2,
-                                             double materialConductivity,
-                                             double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea),
-        m_Radius1(radius1),
-        m_Radius2(radius2)
+                                                       const TruncatedConePillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_Radius1(data.radius1),
+        m_Radius2(data.radius2)
     {}
 
     std::shared_ptr<CBaseLayer> TruncatedConePillarLayer::clone() const
@@ -397,13 +373,10 @@ namespace Tarcog::ISO15099
     ////  AnnulusCylinderPillar
     ////////////////////////////////////////////////////////////////////////////
     AnnulusCylinderPillarLayer::AnnulusCylinderPillarLayer(const CIGUGapLayer & layer,
-                                                 const double innerRadius,
-                                                 const double outerRadius,
-                                                 const double materialConductivity,
-                                                 const double cellArea) :
-        UniversalSupportPillar(layer, materialConductivity, cellArea),
-        m_InnerRadius(innerRadius),
-        m_OuterRadius(outerRadius)
+                                                           const AnnulusCylinderPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_InnerRadius(data.innerRadius),
+        m_OuterRadius(data.outerRadius)
     {
         if(m_InnerRadius > m_OuterRadius)
         {

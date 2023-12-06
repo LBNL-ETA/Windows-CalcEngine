@@ -41,11 +41,6 @@ namespace Tarcog::ISO15099
     class CylindricalPillarLayer : public UniversalSupportPillar
     {
     public:
-        CylindricalPillarLayer(const CIGUGapLayer & layer,
-                               double radius,
-                               double materialConductivity,
-                               double cellArea);
-
         CylindricalPillarLayer(const CIGUGapLayer & layer, const CylindricalPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
@@ -59,10 +54,7 @@ namespace Tarcog::ISO15099
     class SphericalPillarLayer : public UniversalSupportPillar
     {
     public:
-        SphericalPillarLayer(const CIGUGapLayer & layer,
-                             double radiusOfContact,
-                             double materialConductivity,
-                             double cellArea);
+        SphericalPillarLayer(const CIGUGapLayer & layer, const SphericalPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -75,11 +67,7 @@ namespace Tarcog::ISO15099
     class RectangularPillarLayer : public UniversalSupportPillar
     {
     public:
-        RectangularPillarLayer(const CIGUGapLayer & layer,
-                               double length,
-                               double width,
-                               double materialConductivity,
-                               double cellArea);
+        RectangularPillarLayer(const CIGUGapLayer & layer, const RectangularPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -94,10 +82,8 @@ namespace Tarcog::ISO15099
     class TriangularPillarLayer : public UniversalSupportPillar
     {
     public:
-        TriangularPillarLayer(const CIGUGapLayer & layer,
-                              double length,
-                              double materialConductivity,
-                              double cellArea);
+        TriangularPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data);
+
         std::shared_ptr<CBaseLayer> clone() const override;
 
     private:
@@ -108,10 +94,7 @@ namespace Tarcog::ISO15099
     class PentagonPillarLayer : public UniversalSupportPillar
     {
     public:
-        PentagonPillarLayer(const CIGUGapLayer & layer,
-                            double length,
-                            double materialConductivity,
-                            double cellArea);
+        PentagonPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -124,10 +107,7 @@ namespace Tarcog::ISO15099
     class HexagonPillarLayer : public UniversalSupportPillar
     {
     public:
-        HexagonPillarLayer(const CIGUGapLayer & layer,
-                           double length,
-                           double materialConductivity,
-                           double cellArea);
+        HexagonPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -140,11 +120,7 @@ namespace Tarcog::ISO15099
     class LinearBearingPillarLayer : public UniversalSupportPillar
     {
     public:
-        LinearBearingPillarLayer(const CIGUGapLayer & layer,
-                                 double length,
-                                 double width,
-                                 double materialConductivity,
-                                 double cellArea);
+        LinearBearingPillarLayer(const CIGUGapLayer & layer, const LinearBearingPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -159,11 +135,7 @@ namespace Tarcog::ISO15099
     class TruncatedConePillarLayer : public UniversalSupportPillar
     {
     public:
-        TruncatedConePillarLayer(const CIGUGapLayer & layer,
-                                 double radius1,
-                                 double radius2,
-                                 double materialConductivity,
-                                 double cellArea);
+        TruncatedConePillarLayer(const CIGUGapLayer & layer, const TruncatedConePillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -178,11 +150,7 @@ namespace Tarcog::ISO15099
     class AnnulusCylinderPillarLayer : public UniversalSupportPillar
     {
     public:
-        AnnulusCylinderPillarLayer(const CIGUGapLayer & layer,
-                                   double innerRadius,
-                                   double outerRadius,
-                                   double materialConductivity,
-                                   double cellArea);
+        AnnulusCylinderPillarLayer(const CIGUGapLayer & layer, const AnnulusCylinderPillar & data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
