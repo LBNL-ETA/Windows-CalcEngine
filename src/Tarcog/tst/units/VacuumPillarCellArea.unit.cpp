@@ -14,9 +14,9 @@ using Tarcog::ISO15099::CellSpacingType;
 // Test case for CellSpacingType::Square
 TEST_F(TestVacuumCellArea, SquareCellType)
 {
-    double radius = 0.5; // Example radius
-    double expectedArea = radius * radius;
-    double calculatedArea = Tarcog::ISO15099::cellArea(CellSpacingType::Square, radius);
+    double sp = 0.5; // Example radius
+    double expectedArea = sp * sp;
+    double calculatedArea = Tarcog::ISO15099::cellArea(CellSpacingType::Square, sp);
 
     EXPECT_NEAR(expectedArea, calculatedArea, tolerance);
 }
@@ -24,9 +24,9 @@ TEST_F(TestVacuumCellArea, SquareCellType)
 // Test case for CellSpacingType::ShiftedSquare
 TEST_F(TestVacuumCellArea, ShiftedSquareCellType)
 {
-    double radius = 0.5; // Example radius
-    double expectedArea = FenestrationCommon::nTagonArea(5, radius);
-    double calculatedArea = Tarcog::ISO15099::cellArea(CellSpacingType::ShiftedSquare, radius);
+    double sp = 0.5; // Example radius
+    double expectedArea = FenestrationCommon::nTagonArea(5, sp);
+    double calculatedArea = Tarcog::ISO15099::cellArea(CellSpacingType::ShiftedSquare, sp);
 
     EXPECT_NEAR(expectedArea, calculatedArea, tolerance);
 }

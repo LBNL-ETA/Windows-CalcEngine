@@ -11,7 +11,7 @@
 namespace Tarcog::ISO15099
 {
 
-    double cellArea(Tarcog::ISO15099::CellSpacingType type, double r)
+    double cellArea(Tarcog::ISO15099::CellSpacingType type, double sp)
     {
         static const std::unordered_map<CellSpacingType, std::function<double(double)>>
           areaCalculators = {
@@ -25,7 +25,7 @@ namespace Tarcog::ISO15099
         auto it = areaCalculators.find(type);
         if(it != areaCalculators.end())
         {
-            return it->second(r);
+            return it->second(sp);
         }
 
         return 0;
@@ -270,7 +270,8 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     PentagonPillarLayer::PentagonPillarLayer(const CIGUGapLayer & layer,
                                              const PolygonalPillar & data) :
-        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea), m_PillarLength(data.length)
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_PillarLength(data.length)
     {}
 
     std::shared_ptr<CBaseLayer> PentagonPillarLayer::clone() const
@@ -289,8 +290,10 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  HexagonPillar
     ////////////////////////////////////////////////////////////////////////////
-    HexagonPillarLayer::HexagonPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data) :
-        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea), m_PillarLength(data.length)
+    HexagonPillarLayer::HexagonPillarLayer(const CIGUGapLayer & layer,
+                                           const PolygonalPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_PillarLength(data.length)
     {}
 
     std::shared_ptr<CBaseLayer> HexagonPillarLayer::clone() const

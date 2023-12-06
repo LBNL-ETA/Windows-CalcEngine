@@ -3,7 +3,7 @@
 
 #include <WCETarcog.hpp>
 
-class DoubleLowEVacuumPentagonPillar : public testing::Test
+class NFRC102_NFRC102_VacuumPentagonPillar : public testing::Test
 {
 private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
@@ -36,11 +36,11 @@ protected:
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.004;   // [m]
+        auto solidLayerThickness = 3.048e-3;   // [m]
         auto solidLayerConductance = 1.0;
         auto TransmittanceIR = 0.0;
         auto emissivityFrontIR = 0.84;
-        auto emissivityBackIR = 0.036749500781;
+        auto emissivityBackIR = 0.84;
 
         auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                       solidLayerConductance,
@@ -48,9 +48,6 @@ protected:
                                                       TransmittanceIR,
                                                       emissivityBackIR,
                                                       TransmittanceIR);
-
-        solidLayerThickness = 0.0039624;
-        emissivityBackIR = 0.84;
 
         auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                       solidLayerConductance,
@@ -97,7 +94,7 @@ public:
     }
 };
 
-TEST_F(DoubleLowEVacuumPentagonPillar, Test1)
+TEST_F(NFRC102_NFRC102_VacuumPentagonPillar, Test1)
 {
     constexpr auto tolerance = 1e-6;
 
@@ -106,7 +103,7 @@ TEST_F(DoubleLowEVacuumPentagonPillar, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {255.763578, 255.835185, 291.383562, 291.454495};
+    std::vector correctTemperature = {258.068481, 258.328400, 282.140452, 282.400371};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -115,7 +112,7 @@ TEST_F(DoubleLowEVacuumPentagonPillar, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {242.242290, 401.510204, 407.561991, 411.568188};
+    std::vector correctRadiosity = {249.688484, 267.220603, 344.542484, 370.814199};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -124,8 +121,8 @@ TEST_F(DoubleLowEVacuumPentagonPillar, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(28u, numOfIter);
+    EXPECT_EQ(35u, numOfIter);
 
     const auto uValue{aSystem->getUValue()};
-    EXPECT_NEAR(0.459016, uValue, tolerance);
+    EXPECT_NEAR(2.186546, uValue, tolerance);
 }

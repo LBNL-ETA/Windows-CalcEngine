@@ -13,7 +13,7 @@ namespace Tarcog::ISO15099
         ShiftedRotatedSquare
     };
 
-    [[nodiscard]] double cellArea(CellSpacingType type, double r);
+    [[nodiscard]] double cellArea(CellSpacingType type, double sp);
 
     class UniversalSupportPillar : public CIGUGapLayer
     {
