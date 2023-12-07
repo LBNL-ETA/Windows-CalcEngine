@@ -16,7 +16,7 @@ TEST_F(TestVacuumCellArea, SquareCellType)
 {
     double sp = 0.5; // Example radius
     double expectedArea = sp * sp;
-    double calculatedArea = Tarcog::ISO15099::cellArea(CellSpacingType::Square, sp);
+    double calculatedArea = Tarcog::ISO15099::pillarCellArea(CellSpacingType::Square, sp);
 
     EXPECT_NEAR(expectedArea, calculatedArea, tolerance);
 }
@@ -26,7 +26,7 @@ TEST_F(TestVacuumCellArea, ShiftedSquareCellType)
 {
     double sp = 0.5; // Example radius
     double expectedArea = FenestrationCommon::nTagonArea(5, sp);
-    double calculatedArea = Tarcog::ISO15099::cellArea(CellSpacingType::ShiftedSquare, sp);
+    double calculatedArea = Tarcog::ISO15099::pillarCellArea(CellSpacingType::ShiftedSquare, sp);
 
     EXPECT_NEAR(expectedArea, calculatedArea, tolerance);
 }
@@ -36,7 +36,8 @@ TEST_F(TestVacuumCellArea, ShiftedRotatedSquareCellType)
 {
     double radius = 0.5; // Example radius
     double expectedArea = FenestrationCommon::nTagonArea(5, radius);
-    double calculatedArea = Tarcog::ISO15099::cellArea(CellSpacingType::ShiftedRotatedSquare, radius);
+    double calculatedArea =
+      Tarcog::ISO15099::pillarCellArea(CellSpacingType::ShiftedRotatedSquare, radius);
 
     EXPECT_NEAR(expectedArea, calculatedArea, tolerance);
 }
@@ -45,7 +46,8 @@ TEST_F(TestVacuumCellArea, ShiftedRotatedSquareCellType)
 TEST_F(TestVacuumCellArea, InvalidCellType)
 {
     double radius = 0.5; // Example radius
-    double calculatedArea = Tarcog::ISO15099::cellArea(static_cast<Tarcog::ISO15099::CellSpacingType>(-1), radius); // Using an invalid enum value
+    double calculatedArea = Tarcog::ISO15099::pillarCellArea(
+      static_cast<Tarcog::ISO15099::CellSpacingType>(-1), radius); // Using an invalid enum value
 
     EXPECT_EQ(0, calculatedArea); // Assuming the function returns 0 for invalid types
 }

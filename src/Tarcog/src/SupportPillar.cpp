@@ -11,7 +11,7 @@
 namespace Tarcog::ISO15099
 {
 
-    double cellArea(Tarcog::ISO15099::CellSpacingType type, double sp)
+    double pillarCellArea(CellSpacingType type, double sp)
     {
         static const std::unordered_map<CellSpacingType, std::function<double(double)>>
           areaCalculators = {
@@ -79,9 +79,6 @@ namespace Tarcog::ISO15099
                                                 pillarHeight,
                                                 length * width);
     }
-
-#include <cmath>
-#include <algorithm>
 
     double annulusCylinderPillarThermalResistance(double glass1Conductivity,
                                                   double glass2Conductivity,
