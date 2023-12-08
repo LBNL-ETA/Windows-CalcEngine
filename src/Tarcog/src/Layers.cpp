@@ -171,7 +171,7 @@ namespace Tarcog::ISO15099
         return std::make_shared<AnnulusCylinderPillarLayer>(*gap, pillar);
     }
 
-    std::shared_ptr<CIGUGapLayer> Layers::measuredPillar(const PillarMeasurement & pillar)
+    std::shared_ptr<CIGUGapLayer> Layers::createPillar(const PillarMeasurement & pillar)
     {
         return std::make_shared<MeasuredPillarLayer>(pillar);
     }

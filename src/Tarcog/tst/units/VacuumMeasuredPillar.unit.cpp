@@ -61,7 +61,7 @@ protected:
         Tarcog::ISO15099::Glass glass2{0.005, 1.0, 0.8};
         Tarcog::ISO15099::PillarMeasurement pillar{0.012, 0.5, 300, 350, glass1, glass2};
 
-        auto pillarGap = Tarcog::ISO15099::Layers::measuredPillar(pillar);
+        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar);
 
         ASSERT_TRUE(pillarGap != nullptr);
 
