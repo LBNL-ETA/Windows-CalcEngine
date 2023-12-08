@@ -21,10 +21,10 @@ namespace Tarcog::ISO15099
         Glass glass2;
     };
 
-    class SupportPillarMeasured : public CIGUGapLayer
+    class MeasuredPillarLayer : public CIGUGapLayer
     {
     public:
-        explicit SupportPillarMeasured(const PillarMeasurement & pillar);
+        explicit MeasuredPillarLayer(const PillarMeasurement & pillar);
 
     private:
         void calculateConvectionOrConductionFlow() override;

@@ -173,7 +173,7 @@ namespace Tarcog::ISO15099
 
     std::shared_ptr<CIGUGapLayer> Layers::measuredPillar(const PillarMeasurement & pillar)
     {
-        return std::make_shared<SupportPillarMeasured>(pillar);
+        return std::make_shared<MeasuredPillarLayer>(pillar);
     }
 
 }   // namespace Tarcog::ISO15099

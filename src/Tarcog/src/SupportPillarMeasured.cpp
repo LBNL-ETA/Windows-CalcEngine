@@ -43,12 +43,12 @@ namespace Tarcog::ISO15099
     // Only because CIGUGapLayer needs it, otherwise for MeasuredSupportPillar it is not necessary
     constexpr auto defaultVacuumPressure{0.0};
 
-    SupportPillarMeasured::SupportPillarMeasured(const PillarMeasurement & pillar) :
+    MeasuredPillarLayer::MeasuredPillarLayer(const PillarMeasurement & pillar) :
         CIGUGapLayer(pillar.totalThickness - pillar.glass1.thickness - pillar.glass2.thickness, defaultVacuumPressure),
         m_MeasuredConductance(cStar(pillar))
     {}
 
-    void SupportPillarMeasured::calculateConvectionOrConductionFlow()
+    void MeasuredPillarLayer::calculateConvectionOrConductionFlow()
     {
         if(!isCalculated())
         {
