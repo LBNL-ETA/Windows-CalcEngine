@@ -23,6 +23,7 @@ target_link_libraries( ${target_name} ${LINK_TO_Gases} )
 
 # Install will be used by master projects to get information on destination of library files
 install(TARGETS ${target_name}
+  EXPORT CMakeExternalTargets
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib

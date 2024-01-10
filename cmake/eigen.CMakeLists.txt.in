@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.12)
+
+include(ExternalProject)
+
+project( eigen-download NONE )
+
+ExternalProject_Add(EigenExternal
+    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+    GIT_TAG "3.4.0"
+
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/eigen-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/eigen-build"
+
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    TEST_COMMAND ""
+    INSTALL_COMMAND ""
+
+    LOG_DOWNLOAD ON
+)

@@ -1,0 +1,20 @@
+# CMakeExternal CMake configuration file
+
+include(CMakeFindDependencyMacro)
+
+find_dependency(gtest REQUIRED NO_MODULE)
+# gflags and glog don't work well together as described in https://github.com/gflags/gflags/issues/306
+# We thus patch gflags with `./patches/gflags.patch` downloaded from https://github.com/gflags/gflags/commit/de5e60ae580dc69c1efce7f81a2e9965fd4bc71a.patch
+# which is the patch of the commit of the pull request https://github.com/gflags/gflags/pull/357
+# See `PATCH_COMMAND` in `./cmake/gflags.CMakeLists.txt.in`
+find_dependency(gflags REQUIRED NO_MODULE)
+find_dependency(glog REQUIRED NO_MODULE)
+find_dependency(blas REQUIRED NO_MODULE)
+find_dependency(lapack REQUIRED NO_MODULE)
+# TODO Add atlas. It doesn't come with cmake support though: https://github.com/math-atlas/math-atlas
+# find_dependency(atlas REQUIRED NO_MODULE)
+find_dependency(eigen REQUIRED NO_MODULE)
+# find_dependency(suitesparse REQUIRED NO_MODULE)
+find_dependency(ceres REQUIRED NO_MODULE)
+
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeExternalTargets.cmake")
