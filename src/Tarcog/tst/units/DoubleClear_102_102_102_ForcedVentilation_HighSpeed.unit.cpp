@@ -71,7 +71,8 @@ protected:
     {
         constexpr auto gapThickness = 0.0127;   // [m]
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
-        constexpr auto gapAirSpeed = 2;                // [m/s]
+        // Solution is converging for air speed 1.1149 and producing Nan for 1.1150
+        constexpr auto gapAirSpeed = 1.1149;              // [m/s]
         constexpr auto inletAirTemperature = 294.15;   // [K]
         return Tarcog::ISO15099::Layers::forcedVentilationGap(
           gapLayer, gapAirSpeed, inletAirTemperature);

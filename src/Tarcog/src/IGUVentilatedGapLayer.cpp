@@ -23,11 +23,11 @@ namespace Tarcog
           std::shared_ptr<CIGUGapLayer> const & t_Layer) :
             CIGUGapLayer(*t_Layer),
             m_Layer(t_Layer),
+            m_ReferenceGas(m_Gas),
             m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
             m_Zin(0),
             m_Zout(0)
         {
-            m_ReferenceGas = m_Gas;
             m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, m_Pressure);
         }
 
@@ -37,22 +37,22 @@ namespace Tarcog
           double forcedVentilationInletSpeed) :
             CIGUGapLayer(*t_Layer),
             m_Layer(t_Layer),
+            m_ReferenceGas(m_Gas),
             m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
             m_Zin(0),
             m_Zout(0),
             m_ForcedVentilation(
               ForcedVentilation(forcedVentilationInletSpeed, forcedVentilationInletTemperature))
         {
-            m_ReferenceGas = m_Gas;
             m_ReferenceGas.setTemperatureAndPressure(ReferenceTemperature, m_Pressure);
         }
 
-        double CIGUVentilatedGapLayer::inletTemperature()
+        double CIGUVentilatedGapLayer::inletTemperature() const
         {
             return m_State.inletTemperature;
         }
 
-        double CIGUVentilatedGapLayer::outletTemperature()
+        double CIGUVentilatedGapLayer::outletTemperature() const
         {
             return m_State.outletTemperature;
         }
@@ -327,7 +327,6 @@ namespace Tarcog
                 ++iterationStep;
                 if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
                 {
-                    converged = true;
                     throw std::runtime_error("Airflow iterations fail to converge. Maximum number "
                                              "of iteration steps reached.");
                 }

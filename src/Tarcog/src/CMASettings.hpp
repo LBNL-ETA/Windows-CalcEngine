@@ -40,7 +40,7 @@ namespace CMA
           insideSurfaceTemperature(double interiorRadiationFilmCoefficient) const;
         [[nodiscard]] double
           outsideSurfaceTemperature(double exteriorRadiationFilmCoefficient) const;
-        void caluculate();
+        void calculate();
 
         double m_Hci{0};
         double m_Hco{0};

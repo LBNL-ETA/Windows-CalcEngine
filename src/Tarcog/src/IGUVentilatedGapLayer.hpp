@@ -38,8 +38,8 @@ namespace Tarcog
                                    double forcedVentilationInletTemperature,
                                    double forcedVentilationInletSpeed);
 
-            double inletTemperature();
-            double outletTemperature();
+            double inletTemperature() const;
+            double outletTemperature() const;
             double layerTemperature() override;
 
             void setFlowGeometry(double t_Ain, double t_Aout);

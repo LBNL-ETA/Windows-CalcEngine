@@ -44,13 +44,13 @@ namespace CMA
     double CMABestWorstUFactors::uValue()
     {
         assert(m_InsideAirTemperature != m_OutsideAirTemperature);
-        caluculate();
+        calculate();
         return heatFlow(m_Hri, m_Hro) / (m_InsideAirTemperature - m_OutsideAirTemperature);
     }
 
     double CMABestWorstUFactors::hcout()
     {
-        caluculate();
+        calculate();
         return m_Hco;
     }
 
@@ -99,7 +99,7 @@ namespace CMA
                    / (m_Hco + exteriorRadiationFilmCoefficient);
     }
 
-    void CMABestWorstUFactors::caluculate()
+    void CMABestWorstUFactors::calculate()
     {
         if(!m_Calculated)
         {

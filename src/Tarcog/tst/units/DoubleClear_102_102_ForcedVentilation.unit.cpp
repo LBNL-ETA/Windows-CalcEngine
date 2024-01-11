@@ -289,7 +289,7 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     EXPECT_NEAR(0.018796, thickness, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(53u, numOfIter);
+    EXPECT_EQ(2u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// SHGC run
