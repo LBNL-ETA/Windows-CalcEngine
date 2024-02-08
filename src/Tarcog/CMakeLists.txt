@@ -18,8 +18,8 @@ LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP} )
 # Generates the static library from the SOURCES
 add_library( ${target_name} STATIC ${SOURCES} )
 
-target_link_libraries( ${target_name} ${LINK_TO_Common} )
-target_link_libraries( ${target_name} ${LINK_TO_Gases} )
+target_link_libraries( ${target_name} PUBLIC ${LINK_TO_Common} )
+target_link_libraries( ${target_name} PUBLIC ${LINK_TO_Gases} )
 
 # Install will be used by master projects to get information on destination of library files
 install(TARGETS ${target_name}

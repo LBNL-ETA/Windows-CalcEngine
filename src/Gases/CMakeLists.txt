@@ -15,7 +15,7 @@ LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP} )
 
 add_library( ${target_name} STATIC ${SOURCES} )
 
-target_link_libraries( ${target_name} ${LINK_TO_Common} )
+target_link_libraries( ${target_name} PUBLIC ${LINK_TO_Common} )
 
 # Install will be used by master projects to get information on destination of library files
 install(TARGETS ${target_name}
