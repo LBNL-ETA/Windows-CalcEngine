@@ -31,15 +31,21 @@ if( DOWNLOAD_GTEST STREQUAL ON ) # Do not need gtest since it will be processed 
 	# Add googletest directly to our build. This adds
 	# the following targets: gtest, gtest_main, gmock
 	# and gmock_main
-	add_subdirectory(
-		"${CMAKE_BINARY_DIR}/gtest-src"
-		"${CMAKE_BINARY_DIR}/gtest-build")
+	add_subdirectory( "${CMAKE_BINARY_DIR}/gtest-src" gtest-src EXCLUDE_FROM_ALL )
 
 	# Now simply link your own targets against gtest, gmock,
 	# etc. as appropriate
 	include_directories(
 		"${CMAKE_BINARY_DIR}/gtest-src/googletest/include"
 		"${CMAKE_BINARY_DIR}/gtest-src/googlemock/include")
+
+	# Keep the `CACHE` clean as suggested on
+	# https://cliutils.gitlab.io/modern-cmake/chapters/testing/googletest.html
+	mark_as_advanced(
+		BUILD_GMOCK BUILD_GTEST BUILD_SHARED_LIBS
+		gmock_build_tests gtest_build_samples gtest_build_tests
+		gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
+	)
 
 	message(STATUS "Subproject: Gflag...DONE")
 endif ()
@@ -69,9 +75,7 @@ set(GFLAGS_NAMESPACE "gflags")
 set(GFLAGS_INSTALL_STATIC_LIBS ON)
 set(GFLAGS_INSTALL_HEADERS ON)
 #set(GFLAGS_IS_SUBPROJECT TRUE)
-add_subdirectory(
-	"${CMAKE_BINARY_DIR}/gflags-src"
-	"${CMAKE_BINARY_DIR}/gflags-build")
+add_subdirectory( "${CMAKE_BINARY_DIR}/gflags-src" gflags-src EXCLUDE_FROM_ALL )
 include_directories( "${CMAKE_BINARY_DIR}/gflags-build/include" )
 message(STATUS "Subproject: Gflag...DONE")
 
@@ -97,9 +101,7 @@ if(result)
 endif()
 
 set(gflags_NAMESPACE "gflags" CACHE INTERNAL "Namespace for gflags")
-add_subdirectory(
-	"${CMAKE_BINARY_DIR}/glog-src"
-	"${CMAKE_BINARY_DIR}/glog-build")
+add_subdirectory( "${CMAKE_BINARY_DIR}/glog-src" glog-src EXCLUDE_FROM_ALL )
 include_directories( "${CMAKE_BINARY_DIR}/glog-build/include" )
 message(STATUS "Subproject: Glog...DONE")
 
@@ -125,9 +127,7 @@ if(result)
 endif()
 
 set(blas_NAMESPACE "blas" CACHE INTERNAL "Namespace for BLAS")
-add_subdirectory(
-	"${CMAKE_BINARY_DIR}/blas-src"
-	"${CMAKE_BINARY_DIR}/blas-build")
+add_subdirectory( "${CMAKE_BINARY_DIR}/blas-src" blas-src EXCLUDE_FROM_ALL )
 include_directories(
 	"${CMAKE_BINARY_DIR}/blas-src/include"
 	"${CMAKE_BINARY_DIR}/blas-build/include")
@@ -155,9 +155,7 @@ if(result)
 endif()
 
 set(lapack_NAMESPACE "lapack" CACHE INTERNAL "Namespace for LAPACK")
-add_subdirectory(
-	"${CMAKE_BINARY_DIR}/lapack-src"
-	"${CMAKE_BINARY_DIR}/lapack-build")
+add_subdirectory( "${CMAKE_BINARY_DIR}/lapack-src" lapack-src EXCLUDE_FROM_ALL )
 include_directories(
 	"${CMAKE_BINARY_DIR}/lapack-src/LAPACKE/include"
 	"${CMAKE_BINARY_DIR}/lapack-src/CBLAS/include"
@@ -186,9 +184,7 @@ if(result)
 endif()
 
 set(eigen_NAMESPACE "eigen" CACHE INTERNAL "Namespace for Eigen")
-add_subdirectory(
-	"${CMAKE_BINARY_DIR}/eigen-src"
-	"${CMAKE_BINARY_DIR}/eigen-build")
+add_subdirectory( "${CMAKE_BINARY_DIR}/eigen-src" eigen-src EXCLUDE_FROM_ALL )
 include_directories( "${CMAKE_BINARY_DIR}/eigen-src" )
 message(STATUS "Subproject: eigen...DONE")
 
@@ -214,9 +210,7 @@ message(STATUS "Subproject: eigen...DONE")
 # endif()
 #
 # set(suitesparse_NAMESPACE "suitesparse" CACHE INTERNAL "Namespace for SuiteSparse")
-# add_subdirectory(
-# 	"${CMAKE_BINARY_DIR}/suitesparse-src"
-# 	"${CMAKE_BINARY_DIR}/suitesparse-build")
+# add_subdirectory( "${CMAKE_BINARY_DIR}/suitesparse-src" suitesparse-src EXCLUDE_FROM_ALL )
 # message(STATUS "Subproject: suitesparse...DONE")
 
 ####################
@@ -246,9 +240,7 @@ set(ceres_NAMESPACE "ceres" CACHE INTERNAL "Namespace for Ceres Solver")
 # excluded](https://gitlab.com/libeigen/eigen/-/issues/1892). However, Ceres'
 # one can with `PROVIDE_UNINSTALL_TARGET`.
 set(PROVIDE_UNINSTALL_TARGET OFF)
-add_subdirectory(
-	"${CMAKE_BINARY_DIR}/ceres-src"
-	"${CMAKE_BINARY_DIR}/ceres-build")
+add_subdirectory( "${CMAKE_BINARY_DIR}/ceres-src" ceres-src EXCLUDE_FROM_ALL )
 include_directories(
 	"${CMAKE_BINARY_DIR}/ceres-src/include"
 	"${CMAKE_BINARY_DIR}/ceres-build/include")
