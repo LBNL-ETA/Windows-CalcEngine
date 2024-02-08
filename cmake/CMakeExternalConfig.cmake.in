@@ -1,6 +1,10 @@
 # CMakeExternal CMake configuration file
+# https://cliutils.gitlab.io/modern-cmake/chapters/install/installing.html
 
 include(CMakeFindDependencyMacro)
+
+# Capturing values from configure (optional)
+set(my-config-var @my-config-var@)
 
 find_dependency(gtest REQUIRED NO_MODULE)
 # gflags and glog don't work well together as described in https://github.com/gflags/gflags/issues/306
