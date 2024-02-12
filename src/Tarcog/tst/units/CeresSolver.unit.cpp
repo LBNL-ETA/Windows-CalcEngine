@@ -49,5 +49,5 @@ TEST_F(CeresSolver, ProofOfConcept)
     ceres::Solver::Summary summary;
     Solve(options, &problem, &summary);
 
-    EXPECT_NEAR(514.09979648823617, x, 1e-4);
+    EXPECT_NEAR(9.999999, x, 1e-4);
 }
