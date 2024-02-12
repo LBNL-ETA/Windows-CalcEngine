@@ -91,8 +91,8 @@ if( ${BUILD_WCE_OPTICAL} )
 endif()
 
 # ?
-include(CTest) # https://cliutils.gitlab.io/modern-cmake/chapters/testing.html
-include(GNUInstallDirs)
+# include(CTest) # https://cliutils.gitlab.io/modern-cmake/chapters/testing.html
+# include(GNUInstallDirs)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
