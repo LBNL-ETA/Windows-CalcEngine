@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.5)
+
+include(ExternalProject)
+
+project( lapack-download NONE )
+
+cmake_policy(SET CMP0077 NEW)
+
+ExternalProject_Add(lapackExternal
+    GIT_REPOSITORY https://github.com/Reference-LAPACK/lapack
+    GIT_TAG "v3.12.0"
+
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/lapack-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/lapack-build"
+
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    TEST_COMMAND ""
+
+    LOG_DOWNLOAD ON
+)

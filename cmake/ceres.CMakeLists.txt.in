@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.5)
+
+include(ExternalProject)
+
+project( ceres-solver-download NONE )
+
+ExternalProject_Add(CeresExternal
+    GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
+    GIT_TAG "2.2.0"
+
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/ceres-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/ceres-build"
+
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    TEST_COMMAND ""
+    INSTALL_COMMAND ""
+
+    LOG_DOWNLOAD ON
+
+    CMAKE_ARGS
+      -DCMAKE_C_FLAGS=-fPIC
+      -DCMAKE_CXX_FLAGS=-fPIC
+      -DBUILD_EXAMPLES=OFF
+      -DBUILD_TESTING=OFF
+      -DMINIGLOG=ON
+      -DMINIGLOG_MAX_LOG_LEVEL=-100
+      -DEIGEN_INCLUDE_PATH=${CMAKE_BINARY_DIR}/eigen-src
+      -DENABLE_PRECOMPILED_HEADERS=OFF
+)

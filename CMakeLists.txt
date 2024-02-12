@@ -1,5 +1,31 @@
 cmake_minimum_required(VERSION 3.5)
 
+# Require out-of-source builds as suggested on
+# https://cliutils.gitlab.io/modern-cmake/chapters/basics/structure.html
+file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
+if(EXISTS "${LOC_PATH}")
+    message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
+endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+# Use find_package everywhere, no-op if it's a target
+macro(find_package)
+	if(NOT TARGET ${ARGV0} AND NOT TARGET ${ARGV0}::${ARGV0})
+		_find_package(${ARGV})
+	else()
+		if(TARGET ${ARGV0}::${ARGV0})
+			get_target_property(TGT_VER ${ARGV0}::${ARGV0} VERSION)
+			set(TGT ${ARGV0}::${ARGV0})
+		else()
+			get_target_property(TGT_VER ${ARGV0} VERSION)
+			set(TGT ${ARGV0})
+		endif()
+		message(STATUS "Found ${ARGV0}: CMake Target ${TGT} (found version \"${TGT_VER}\")")
+		set(${ARGV0}_FOUND TRUE)
+	endif()
+endmacro()
+
 project(Windows-CalcEngine VERSION 1.0.33 LANGUAGES CXX)
 
 set(target_name ${PROJECT_NAME})
@@ -63,29 +89,11 @@ if( ${BUILD_WCE_OPTICAL} )
 	set( BUILD_WCE_VIEWER ON )
 endif()
 
-if( DOWNLOAD_GTEST STREQUAL ON ) # Do not need gtest since it will be processed by E+
-	# include(CMakeLists-GTest.txt)
-	configure_file(CMakeLists.txt.in ${CMAKE_CURRENT_BINARY_DIR}/googletest-download/CMakeLists.txt)
-	execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-  		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-	execute_process(COMMAND ${CMAKE_COMMAND} --build .
-  		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-  		
-  	# Prevent GoogleTest from overriding our compiler/linker options
-	# when building with Visual Studio
-	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
- 
-	# Add googletest directly to our build. This adds
-	# the following targets: gtest, gtest_main, gmock
-	# and gmock_main
-	add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
-    	${CMAKE_CURRENT_BINARY_DIR}/googletest-build)
- 
-	# Now simply link your own targets against gtest, gmock,
-	# etc. as appropriate
-  		
-    include_directories( ${CMAKE_CURRENT_BINARY_DIR}/googletest-src/include )
-endif ()
+set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Build Dependencies
+add_subdirectory(cmake)
 
 # foreach( _variableName ${SOURCES})
 #   message( STATUS "${_variableName}" )
