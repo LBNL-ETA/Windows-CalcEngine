@@ -3,9 +3,6 @@
 
 include(CMakeFindDependencyMacro)
 
-# Capturing values from configure (optional)
-set(my-config-var @my-config-var@)
-
 find_dependency(gtest REQUIRED NO_MODULE)
 # gflags and glog don't work well together as described in https://github.com/gflags/gflags/issues/306
 # We thus patch gflags with `./patches/gflags.patch` downloaded from https://github.com/gflags/gflags/commit/de5e60ae580dc69c1efce7f81a2e9965fd4bc71a.patch

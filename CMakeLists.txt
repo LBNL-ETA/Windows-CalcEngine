@@ -100,38 +100,38 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(cmake)
 
 # Install
-install(
-	EXPORT CMakeExternalTargets
-	NAMESPACE CMakeExternal::
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExternal
-	COMPONENT Devel)
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-	cmake/CMakeExternalConfig.cmake.in
-	"${PROJECT_BINARY_DIR}/CMakeExternalConfig.cmake"
-	INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExternal"
-	NO_SET_AND_CHECK_MACRO
-  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-write_basic_package_version_file(
-	"${PROJECT_BINARY_DIR}/CMakeExternalConfigVersion.cmake"
-	VERSION ${PACKAGE_VERSION}
-	COMPATIBILITY SameMajorVersion)
-install(
-	FILES
-	"${PROJECT_BINARY_DIR}/CMakeExternalConfig.cmake"
-	"${PROJECT_BINARY_DIR}/CMakeExternalConfigVersion.cmake"
-	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExternal"
-	COMPONENT Devel)
+#install(
+#	EXPORT CMakeExternalTargets
+#	NAMESPACE CMakeExternal::
+#	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExternal
+#	COMPONENT Devel)
+#include(CMakePackageConfigHelpers)
+#configure_package_config_file(
+#	cmake/CMakeExternalConfig.cmake.in
+#	"${PROJECT_BINARY_DIR}/CMakeExternalConfig.cmake"
+#	INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExternal"
+#	NO_SET_AND_CHECK_MACRO
+#  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+#write_basic_package_version_file(
+#	"${PROJECT_BINARY_DIR}/CMakeExternalConfigVersion.cmake"
+#	VERSION ${PACKAGE_VERSION}
+#	COMPATIBILITY SameMajorVersion)
+#install(
+#	FILES
+#	"${PROJECT_BINARY_DIR}/CMakeExternalConfig.cmake"
+#	"${PROJECT_BINARY_DIR}/CMakeExternalConfigVersion.cmake"
+#	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExternal"
+#	COMPONENT Devel)
 
 # TODO Can these includes be moved to `cmake/CMakeLists.txt`? And can they be tied to the Tarcog target with `target_include_directories`? https://gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1#forget-the-commands-add_compile_options-include_directories-link_directories-link_libraries warns against using `include_directories`, see also https://gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1#declare-include-directories-with-target_include_directories
-include_directories( "${CMAKE_BINARY_DIR}/gflags-build/include" )
-include_directories( "${CMAKE_BINARY_DIR}/glog-src/src" )
-include_directories( "${CMAKE_BINARY_DIR}/glog-build" )
-include_directories( "${CMAKE_BINARY_DIR}/blas-build/include" )
-include_directories( "${CMAKE_BINARY_DIR}/lapack-build/include" )
-include_directories( "${CMAKE_BINARY_DIR}/eigen-src" )
-include_directories( "${CMAKE_BINARY_DIR}/ceres-src/include" )
-include_directories( "${CMAKE_BINARY_DIR}/ceres-build/include" )
+#include_directories( "${CMAKE_BINARY_DIR}/gflags-build/include" )
+#include_directories( "${CMAKE_BINARY_DIR}/glog-src/src" )
+#include_directories( "${CMAKE_BINARY_DIR}/glog-build" )
+#include_directories( "${CMAKE_BINARY_DIR}/blas-build/include" )
+#include_directories( "${CMAKE_BINARY_DIR}/lapack-build/include" )
+#include_directories( "${CMAKE_BINARY_DIR}/eigen-src" )
+#include_directories( "${CMAKE_BINARY_DIR}/ceres-src/include" )
+#include_directories( "${CMAKE_BINARY_DIR}/ceres-build/include" )
 
 # foreach( _variableName ${SOURCES})
 #   message( STATUS "${_variableName}" )

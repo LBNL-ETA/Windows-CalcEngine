@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
+find_package(Ceres::ceres REQUIRED)
+
 set( target_name Tarcog )
 
 # first include header files of this project itself
@@ -20,11 +22,11 @@ add_library( ${target_name} STATIC ${SOURCES} )
 
 target_link_libraries( ${target_name} PUBLIC ${LINK_TO_Common} )
 target_link_libraries( ${target_name} PUBLIC ${LINK_TO_Gases} )
-target_link_libraries( ${target_name} PUBLIC Ceres::ceres )
+target_link_libraries( ${target_name} PRIVATE Ceres::ceres )
+target_include_directories( ${target_name} PUBLIC $<TARGET_PROPERTY:Ceres::ceres,INTERFACE_INCLUDE_DIRECTORIES> )
 
 # Install will be used by master projects to get information on destination of library files
 install(TARGETS ${target_name}
-  EXPORT CMakeExternalTargets
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
