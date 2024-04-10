@@ -35,6 +35,22 @@ namespace ThermalPermeability
             return rise;
         }
 
+        double calculateCurvature(const double t_Rise, const double t_SlatWidth)
+        {
+            double curvature = 0;
+
+            if(t_Rise > 0)
+            {
+                double aRise = t_Rise;
+                if(t_Rise > t_SlatWidth / 2)
+                {
+                    aRise = t_SlatWidth / 2;
+                }
+                curvature = (aRise * aRise + t_SlatWidth * t_SlatWidth / 4) / (2 * aRise);
+            }
+            return curvature;
+        }
+
         double openness(const double t_TiltAngle,
                         const double t_SlatSpacing,
                         const double t_MatThickness,
