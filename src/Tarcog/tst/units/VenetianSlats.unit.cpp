@@ -12,35 +12,44 @@ class TestVenetianSlats : public testing::Test
 
 TEST_F(TestVenetianSlats, RiseZeroCurvature)
 {
-    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateRise(0, 10), 1e-6);
+    constexpr double curvature = 0;
+    constexpr double slatWidth = 10;
+    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateRise(curvature, slatWidth), 1e-6);
 }
 
 TEST_F(TestVenetianSlats, RiseNegativeCurvature)
 {
-    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateRise(-10, 10), 1e-6);
+    constexpr double curvature = -10;
+    constexpr double slatWidth = 10;
+    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateRise(curvature, slatWidth), 1e-6);
 }
 
 TEST_F(TestVenetianSlats, RiseStandardCondition)
 {
-    double expectedRise = 5.0;
-    EXPECT_NEAR(expectedRise, ThermalPermeability::Venetian::calculateRise(5, 10), 1e-6);
+    constexpr double curvature = 5;
+    constexpr double slatWidth = 10;
+    EXPECT_NEAR(5.0, ThermalPermeability::Venetian::calculateRise(curvature, slatWidth), 1e-6);
 }
 
 TEST_F(TestVenetianSlats, CurvatureZeroRise)
 {
-    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateCurvature(0, 10), 1e-6);
+    constexpr double rise = 0;
+    constexpr double slatWidth = 10;
+    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateCurvature(rise, slatWidth), 1e-6);
 }
 
 TEST_F(TestVenetianSlats, CurvatureNegativeRise)
 {
-    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateCurvature(-10, 10), 1e-6);
+    constexpr double rise = -10;
+    constexpr double slatWidth = 10;
+    EXPECT_NEAR(0.0, ThermalPermeability::Venetian::calculateCurvature(rise, slatWidth), 1e-6);
 }
 
 TEST_F(TestVenetianSlats, CurvatureStandardCondition)
 {
-    double expectedCurvature = 6.25;
-    EXPECT_NEAR(
-      expectedCurvature, ThermalPermeability::Venetian::calculateCurvature(2.5, 10), 1e-6);
+    constexpr double rise = 2.5;
+    constexpr double slatWidth = 10;
+    EXPECT_NEAR(6.25, ThermalPermeability::Venetian::calculateCurvature(rise, slatWidth), 1e-6);
 }
 
 TEST_F(TestVenetianSlats, FunctionConsistencyCheck)
