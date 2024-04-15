@@ -79,5 +79,5 @@ TEST_F(PillarArrayHexagon, Test1)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(1.366431, heatFlow, tolerance);
+    EXPECT_NEAR(1.105776, heatFlow, tolerance);
 }

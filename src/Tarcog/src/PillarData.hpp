@@ -55,4 +55,11 @@ namespace Tarcog::ISO15099
         double innerRadius{0.25};
         double outerRadius{0.5};
     };
+
+    struct CShapedCylinderPillar : PillarData
+    {
+        double innerRadius{0.25};
+        double outerRadius{0.5};
+        double fractionCovered{0.35};
+    };
 }   // namespace Tarcog::ISO15099

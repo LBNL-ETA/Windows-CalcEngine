@@ -3,7 +3,7 @@
 
 #include <WCETarcog.hpp>
 
-class PillarArrayAnnulusCylinder : public testing::Test
+class PillarArrayCShapedCylinder : public testing::Test
 {
 protected:
     static std::shared_ptr<Tarcog::ISO15099::CIGUGapLayer>
@@ -42,9 +42,10 @@ protected:
         const auto pillarHeight = 0.2e-3;       // [m]
         const auto pillarConductivity = 20.0;   // [W/(m·K)]
         const auto pillarArea = 0.02 * 0.02;    // [m²]
+        const auto coverageFraction = 0.65;     // [-]
 
-        const Tarcog::ISO15099::AnnulusCylinderPillar pillar{
-          pillarHeight, pillarConductivity, pillarArea, innerRadius, outerRadius};
+        const Tarcog::ISO15099::CShapedCylinderPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, innerRadius, outerRadius, coverageFraction};
 
         auto gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
@@ -65,7 +66,7 @@ protected:
     }
 };
 
-TEST_F(PillarArrayAnnulusCylinder, RadiusesVeryDifferent)
+TEST_F(PillarArrayCShapedCylinder, RadiusesVeryDifferent)
 {
     constexpr auto tolerance = 1e-6;
     auto glass1Conductance = 1.0;           // [W/(m·K)]
@@ -78,10 +79,10 @@ TEST_F(PillarArrayAnnulusCylinder, RadiusesVeryDifferent)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(1.217163, heatFlow, tolerance);
+    EXPECT_NEAR(0.000328, heatFlow, tolerance);
 }
 
-TEST_F(PillarArrayAnnulusCylinder, RadiusesSimilar)
+TEST_F(PillarArrayCShapedCylinder, RadiusesSimilar)
 {
     constexpr auto tolerance = 1e-6;
     auto glass1Conductance = 1.0;           // [W/(m·K)]
@@ -94,10 +95,10 @@ TEST_F(PillarArrayAnnulusCylinder, RadiusesSimilar)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(1.013254, heatFlow, tolerance);
+    EXPECT_NEAR(0.000148, heatFlow, tolerance);
 }
 
-TEST_F(PillarArrayAnnulusCylinder, DifferentGlassConductances)
+TEST_F(PillarArrayCShapedCylinder, DifferentGlassConductances)
 {
     constexpr auto tolerance = 1e-6;
     auto glass1Conductance = 1.0;           // [W/(m·K)]
@@ -110,10 +111,10 @@ TEST_F(PillarArrayAnnulusCylinder, DifferentGlassConductances)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(1.613343, heatFlow, tolerance);
+    EXPECT_NEAR(0.000692, heatFlow, tolerance);
 }
 
-TEST_F(PillarArrayAnnulusCylinder, InnerRadiusZero)
+TEST_F(PillarArrayCShapedCylinder, InnerRadiusZero)
 {
     constexpr auto tolerance = 1e-6;
     auto glass1Conductance = 1.0;           // [W/(m·K)]
@@ -126,10 +127,10 @@ TEST_F(PillarArrayAnnulusCylinder, InnerRadiusZero)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(1.218959, heatFlow, tolerance);
+    EXPECT_NEAR(0.000336, heatFlow, tolerance);
 }
 
-TEST_F(PillarArrayAnnulusCylinder, IdenticalRadiuses)
+TEST_F(PillarArrayCShapedCylinder, IdenticalRadiuses)
 {
     constexpr auto tolerance = 1e-6;
     auto glass1Conductance = 1.0;           // [W/(m·K)]
@@ -142,5 +143,5 @@ TEST_F(PillarArrayAnnulusCylinder, IdenticalRadiuses)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.000392, heatFlow, tolerance);
+    EXPECT_NEAR(2.014773403605732e-10, heatFlow, tolerance);
 }

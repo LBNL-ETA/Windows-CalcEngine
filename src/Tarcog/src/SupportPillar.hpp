@@ -162,4 +162,21 @@ namespace Tarcog::ISO15099
         double m_OuterRadius;
     };
 
+    class CShapedCylinderPillarLayer : public UniversalSupportPillar
+    {
+    public:
+        CShapedCylinderPillarLayer(const CIGUGapLayer & layer, const CShapedCylinderPillar & data);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
+        [[nodiscard]] double areaOfContact() override;
+
+        [[nodiscard]] double singlePillarThermalResistance() override;
+
+        double m_InnerRadius;
+        double m_OuterRadius;
+        double m_FractionCovered;
+    };
+
 }   // namespace Tarcog::ISO15099

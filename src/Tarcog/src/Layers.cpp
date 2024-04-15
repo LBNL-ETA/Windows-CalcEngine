@@ -171,9 +171,13 @@ namespace Tarcog::ISO15099
         return std::make_shared<AnnulusCylinderPillarLayer>(*gap, pillar);
     }
 
+    std::shared_ptr<CIGUGapLayer> Layers::createPillar(const CShapedCylinderPillar &pillar, double pressure) {
+        auto gap{Tarcog::ISO15099::Layers::gap(pillar.height, pressure)};
+        return std::make_shared<CShapedCylinderPillarLayer>(*gap, pillar);
+    }
+
     std::shared_ptr<CIGUGapLayer> Layers::createPillar(const PillarMeasurement & pillar)
     {
         return std::make_shared<MeasuredPillarLayer>(pillar);
     }
-
 }   // namespace Tarcog::ISO15099

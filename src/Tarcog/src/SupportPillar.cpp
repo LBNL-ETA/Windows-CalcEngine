@@ -80,56 +80,49 @@ namespace Tarcog::ISO15099
                                                 length * width);
     }
 
-    double annulusCylinderPillarThermalResistance(double glass1Conductivity,
-                                                  double glass2Conductivity,
-                                                  double pillarConductivity,
-                                                  double height,
-                                                  double innerRadius,
-                                                  double outerRadius)
+    namespace Helper
     {
-        using FenestrationCommon::WCE_PI;
-
-        constexpr auto epsilon{1e-9};
-
-        if(innerRadius <= 0)
+        double rCS(const double kGlass, const double innerRadius, const double outerRadius)
         {
-            innerRadius = epsilon;
-        }
+            using FenestrationCommon::WCE_PI;
 
-        if(innerRadius >= outerRadius)
-        {
-            outerRadius = innerRadius + epsilon;
-        }
+            const auto eps{innerRadius / outerRadius};
 
-        double eps = innerRadius / outerRadius;
+            if((1 / eps) <= 1.1)
+            {
+                return 1 / (std::pow(WCE_PI, 2) * kGlass * outerRadius)
+                       * (std::log(16) + std::log((1 + eps) / (1 - eps))) / (1 + eps);
+            }
 
-        auto commonFunc = [height, pillarConductivity, innerRadius, outerRadius]() -> double {
-            return height
-                   / (pillarConductivity * WCE_PI
-                      * (std::pow(outerRadius, 2) - std::pow(innerRadius, 2)));
-        };
-
-        auto rc_smaller_or_equal_than_1_1 = [eps, outerRadius](double k_glass) -> double {
-            return 1 / (std::pow(WCE_PI, 2) * k_glass * outerRadius)
-                   * (std::log(16) + std::log((1 + eps) / (1 - eps))) / (1 + eps);
-        };
-
-        auto rc_bigger_than_1_1 = [eps, outerRadius](double k_glass) -> double {
-            double a = WCE_PI / (8 * k_glass * outerRadius);
+            double a = WCE_PI / (8 * kGlass * outerRadius);
             double b = std::acos(eps) + std::sqrt(1 - std::pow(eps, 2)) * std::atanh(eps);
             double c = 1 + (0.0143 * std::pow(std::tan(1.28 * eps), 3)) / eps;
 
             return a * (1 / (b * c));
-        };
-
-        if((1 / eps) <= 1.1)
-        {
-            return rc_smaller_or_equal_than_1_1(glass1Conductivity)
-                   + rc_smaller_or_equal_than_1_1(glass2Conductivity) + commonFunc();
         }
+    }   // namespace Helper
 
-        return rc_bigger_than_1_1(glass1Conductivity) + rc_bigger_than_1_1(glass2Conductivity)
-               + commonFunc();
+
+    double annulusCylinderPillarThermalResistance(const double pillarConductivity,
+                                                  const double height,
+                                                  double areaOfContact,
+                                                  double rcGlass1,
+                                                  double rcGlass2)
+    {
+        return rcGlass1 + rcGlass2 + height / (pillarConductivity * areaOfContact);
+    }
+
+    double cShapedCylinderPillarThermalResistance(double averageGlassConductivity,
+                                                  double coverageFraction,
+                                                  double pillarConductivity,
+                                                  double height,
+                                                  double areaOfContact,
+                                                  double rcGlass1,
+                                                  double rcGlass2)
+    {
+        return annulusCylinderPillarThermalResistance(
+                 pillarConductivity, height, areaOfContact, rcGlass1, rcGlass2)
+               / (averageGlassConductivity * std::sqrt(0.94 * coverageFraction * areaOfContact));
     }
 
 
@@ -278,10 +271,7 @@ namespace Tarcog::ISO15099
 
     double PentagonPillarLayer::areaOfContact()
     {
-        return 5 * m_PillarLength * m_PillarLength
-               * std::pow(std::sin(36 * FenestrationCommon::WCE_PI / 180)
-                            / std::tan(36 * FenestrationCommon::WCE_PI / 180),
-                          2);
+        return 5 * std::sqrt(3) / 4 * m_PillarLength * m_PillarLength;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -300,10 +290,7 @@ namespace Tarcog::ISO15099
 
     double HexagonPillarLayer::areaOfContact()
     {
-        return 6 * m_PillarLength * m_PillarLength
-               * std::pow(std::sin(36 * FenestrationCommon::WCE_PI / 180)
-                            / std::tan(36 * FenestrationCommon::WCE_PI / 180),
-                          2);
+        return 3 * std::sqrt(3) / 2 * m_PillarLength * m_PillarLength;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -372,17 +359,28 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  AnnulusCylinderPillar
     ////////////////////////////////////////////////////////////////////////////
+
+    namespace Helper
+    {
+        double adjustInnerRadius(const double innerRadius)
+        {
+            constexpr auto epsilon{1e-9};
+            return innerRadius > 0 ? innerRadius : epsilon;
+        }
+
+        double adjustOuterRadius(const double innerRadius, const double outerRadius)
+        {
+            constexpr auto epsilon{1e-9};
+            return innerRadius >= outerRadius ? innerRadius + epsilon : outerRadius;
+        }
+    }   // namespace Helper
+
     AnnulusCylinderPillarLayer::AnnulusCylinderPillarLayer(const CIGUGapLayer & layer,
                                                            const AnnulusCylinderPillar & data) :
         UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
-        m_InnerRadius(data.innerRadius),
-        m_OuterRadius(data.outerRadius)
-    {
-        if(m_InnerRadius > m_OuterRadius)
-        {
-            throw std::runtime_error("Inner radius cannot be bigger than outer radius.");
-        }
-    }
+        m_InnerRadius(Helper::adjustInnerRadius(data.innerRadius)),
+        m_OuterRadius(Helper::adjustOuterRadius(data.innerRadius, data.outerRadius))
+    {}
 
     std::shared_ptr<CBaseLayer> AnnulusCylinderPillarLayer::clone() const
     {
@@ -391,16 +389,49 @@ namespace Tarcog::ISO15099
 
     double AnnulusCylinderPillarLayer::areaOfContact()
     {
-        return 0;
+        return FenestrationCommon::WCE_PI
+               * (m_OuterRadius * m_OuterRadius - m_InnerRadius * m_InnerRadius);
     }
 
     double AnnulusCylinderPillarLayer::singlePillarThermalResistance()
     {
-        return annulusCylinderPillarThermalResistance(getPreviousLayer()->getConductivity(),
-                                                      getNextLayer()->getConductivity(),
-                                                      materialConductivity(),
-                                                      m_Thickness,
-                                                      m_InnerRadius,
-                                                      m_OuterRadius);
+        return annulusCylinderPillarThermalResistance(
+          materialConductivity(),
+          m_Thickness,
+          areaOfContact(),
+          Helper::rCS(getPreviousLayer()->getConductivity(), m_InnerRadius, m_OuterRadius),
+          Helper::rCS(getNextLayer()->getConductivity(), m_InnerRadius, m_OuterRadius));
+    }
+
+    CShapedCylinderPillarLayer::CShapedCylinderPillarLayer(const CIGUGapLayer & layer,
+                                                           const CShapedCylinderPillar & data) :
+        UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
+        m_InnerRadius(Helper::adjustInnerRadius(data.innerRadius)),
+        m_OuterRadius(Helper::adjustOuterRadius(data.innerRadius, data.outerRadius)),
+        m_FractionCovered(data.fractionCovered)
+    {}
+
+    std::shared_ptr<CBaseLayer> CShapedCylinderPillarLayer::clone() const
+    {
+        return std::make_shared<CShapedCylinderPillarLayer>(*this);
+    }
+
+    double CShapedCylinderPillarLayer::areaOfContact()
+    {
+        return FenestrationCommon::WCE_PI
+               * (m_OuterRadius * m_OuterRadius - m_InnerRadius * m_InnerRadius)
+               * m_FractionCovered;
+    }
+
+    double CShapedCylinderPillarLayer::singlePillarThermalResistance()
+    {
+        return cShapedCylinderPillarThermalResistance(
+          (getPreviousLayer()->getConductivity() + getNextLayer()->getConductivity()) / 2,
+          m_FractionCovered,
+          materialConductivity(),
+          m_Thickness,
+          areaOfContact(),
+          Helper::rCS(getPreviousLayer()->getConductivity(), m_InnerRadius, m_OuterRadius),
+          Helper::rCS(getNextLayer()->getConductivity(), m_InnerRadius, m_OuterRadius));
     }
 }   // namespace Tarcog::ISO15099
