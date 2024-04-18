@@ -79,7 +79,7 @@ TEST_F(PillarArrayCShapedCylinder, RadiusesVeryDifferent)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.000328, heatFlow, tolerance);
+    EXPECT_NEAR(0.938363, heatFlow, tolerance);
 }
 
 TEST_F(PillarArrayCShapedCylinder, RadiusesSimilar)
@@ -95,7 +95,7 @@ TEST_F(PillarArrayCShapedCylinder, RadiusesSimilar)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.000148, heatFlow, tolerance);
+    EXPECT_NEAR(0.763210, heatFlow, tolerance);
 }
 
 TEST_F(PillarArrayCShapedCylinder, DifferentGlassConductances)
@@ -111,7 +111,7 @@ TEST_F(PillarArrayCShapedCylinder, DifferentGlassConductances)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.000692, heatFlow, tolerance);
+    EXPECT_NEAR(1.189583, heatFlow, tolerance);
 }
 
 TEST_F(PillarArrayCShapedCylinder, InnerRadiusZero)
@@ -127,7 +127,7 @@ TEST_F(PillarArrayCShapedCylinder, InnerRadiusZero)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.000336, heatFlow, tolerance);
+    EXPECT_NEAR(0.940245, heatFlow, tolerance);
 }
 
 TEST_F(PillarArrayCShapedCylinder, IdenticalRadiuses)
@@ -143,5 +143,5 @@ TEST_F(PillarArrayCShapedCylinder, IdenticalRadiuses)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(2.014773403605732e-10, heatFlow, tolerance);
+    EXPECT_NEAR(0.000199, heatFlow, tolerance);
 }

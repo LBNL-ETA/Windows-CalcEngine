@@ -122,7 +122,7 @@ namespace Tarcog::ISO15099
     {
         return annulusCylinderPillarThermalResistance(
                  pillarConductivity, height, areaOfContact, rcGlass1, rcGlass2)
-               / (averageGlassConductivity * std::sqrt(0.94 * coverageFraction * areaOfContact));
+               / std::sqrt(0.94 * coverageFraction);
     }
 
 
