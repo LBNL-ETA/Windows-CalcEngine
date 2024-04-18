@@ -112,8 +112,7 @@ namespace Tarcog::ISO15099
         return rcGlass1 + rcGlass2 + height / (pillarConductivity * areaOfContact);
     }
 
-    double cShapedCylinderPillarThermalResistance(double averageGlassConductivity,
-                                                  double coverageFraction,
+    double cShapedCylinderPillarThermalResistance(double coverageFraction,
                                                   double pillarConductivity,
                                                   double height,
                                                   double areaOfContact,
@@ -426,7 +425,6 @@ namespace Tarcog::ISO15099
     double CShapedCylinderPillarLayer::singlePillarThermalResistance()
     {
         return cShapedCylinderPillarThermalResistance(
-          (getPreviousLayer()->getConductivity() + getNextLayer()->getConductivity()) / 2,
           m_FractionCovered,
           materialConductivity(),
           m_Thickness,
