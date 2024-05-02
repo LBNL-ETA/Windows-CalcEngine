@@ -77,7 +77,7 @@ TEST_F(PillarArrayTruncatedCone, RadiusesVeryDifferent)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.413160, heatFlow, tolerance);
+    EXPECT_NEAR(0.407069, heatFlow, tolerance);
 }
 
 TEST_F(PillarArrayTruncatedCone, RadiusesSimilar)
@@ -93,7 +93,7 @@ TEST_F(PillarArrayTruncatedCone, RadiusesSimilar)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(1.104897, heatFlow, tolerance);
+    EXPECT_NEAR(1.110791, heatFlow, tolerance);
 }
 
 TEST_F(PillarArrayTruncatedCone, GlassConductancesDifferent)
@@ -109,7 +109,7 @@ TEST_F(PillarArrayTruncatedCone, GlassConductancesDifferent)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.192649, heatFlow, tolerance);
+    EXPECT_NEAR(0.192828, heatFlow, tolerance);
 }
 
 TEST_F(PillarArrayTruncatedCone, GlassConductancesVeryDifferent)
@@ -125,5 +125,5 @@ TEST_F(PillarArrayTruncatedCone, GlassConductancesVeryDifferent)
     ASSERT_TRUE(aGap != nullptr);
 
     const auto heatFlow = aGap->getConvectionConductionFlow();
-    EXPECT_NEAR(0.207579, heatFlow, tolerance);
+    EXPECT_NEAR(0.207786, heatFlow, tolerance);
 }

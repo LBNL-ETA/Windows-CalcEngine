@@ -352,7 +352,7 @@ namespace Tarcog::ISO15099
 
         return rpGen(getPreviousLayer()->getConductivity(), m_Radius1)
                + rpGen(getNextLayer()->getConductivity(), m_Radius2)
-               + m_Thickness / (materialConductivity() * WCE_PI * std::pow(m_Radius1, 2));
+               + m_Thickness / (materialConductivity() * WCE_PI * std::pow((m_Radius1 + m_Radius2) / 2, 2));
     }
 
     ////////////////////////////////////////////////////////////////////////////
