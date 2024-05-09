@@ -17,9 +17,11 @@ namespace Tarcog::ISO15099
           areaCalculators = {
             {CellSpacingType::Square, [](double r) { return r * r; }},
             {CellSpacingType::ShiftedSquare,
-             [](double r) { return FenestrationCommon::nTagonArea(5, r); }},
+             [](double r) { return r * r; }},
             {CellSpacingType::ShiftedRotatedSquare,
-             [](double r) { return FenestrationCommon::nTagonArea(5, r); }},
+             [](double r) { return r * r; }},
+            {CellSpacingType::NumberOfPillarsPerArea,
+             [](double r) { return r * r; }}
           };
 
         auto it = areaCalculators.find(type);
