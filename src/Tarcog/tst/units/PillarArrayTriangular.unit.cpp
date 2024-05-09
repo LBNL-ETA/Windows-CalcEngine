@@ -44,11 +44,8 @@ protected:
         const auto pillarConductivity = 20.0;   // [W/(m·K)]
         const auto pillarArea = 0.02 * 0.02;    // [m²]
 
-        Tarcog::ISO15099::PolygonalPillar pillar{pillarHeight,
-                                                 pillarConductivity,
-                                                 pillarArea,
-                                                 length,
-                                                 Tarcog::ISO15099::PolygonType::Triangle};
+        Tarcog::ISO15099::TriangularPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, length};
 
         auto gap{Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure)};
 

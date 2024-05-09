@@ -63,11 +63,8 @@ protected:
         const auto pillarConductivity = 999.0;
         const auto pillarArea = 0.03 * 0.03;
 
-        Tarcog::ISO15099::PolygonalPillar pillar{pillarHeight,
-                                                 pillarConductivity,
-                                                 pillarArea,
-                                                 pillarLength,
-                                                 Tarcog::ISO15099::PolygonType::Pentagon};
+        Tarcog::ISO15099::PentagonPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, pillarLength};
 
         auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 

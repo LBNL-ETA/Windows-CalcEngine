@@ -68,8 +68,14 @@ namespace Tarcog::ISO15099
         static std::shared_ptr<CIGUGapLayer> createPillar(const RectangularPillar & pillar,
                                                           double pressure);
 
-        static std::shared_ptr<CIGUGapLayer> createPillar(const PolygonalPillar & pillar,
+        static std::shared_ptr<CIGUGapLayer> createPillar(const TriangularPillar & pillar,
                                                           double pressure);
+
+        static std::shared_ptr<CIGUGapLayer> createPillar(const PentagonPillar & pillar,
+                                                            double pressure);
+
+        static std::shared_ptr<CIGUGapLayer> createPillar(const HexagonPillar & pillar,
+                                                            double pressure);
 
         static std::shared_ptr<CIGUGapLayer> createPillar(const LinearBearingPillar & pillar,
                                                           double pressure);

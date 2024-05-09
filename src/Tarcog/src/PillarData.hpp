@@ -4,6 +4,7 @@ namespace Tarcog::ISO15099
 {
     enum class PolygonType
     {
+        None,
         Triangle,
         Pentagon,
         Hexagon
@@ -35,7 +36,50 @@ namespace Tarcog::ISO15099
     struct PolygonalPillar : PillarData
     {
         double length{0.5};
-        PolygonType type{PolygonType::Triangle};
+        PolygonType type{PolygonType::None};
+
+        PolygonalPillar(double height = 0.0,
+                        double conductivity = 0.0,
+                        double area = 0.0,
+                        double pillarLength = 0.5) :
+            PillarData{height, conductivity, area}, length{pillarLength}
+        {}
+    };
+
+    struct TriangularPillar : PolygonalPillar
+    {
+        TriangularPillar(double height = 0.0,
+                         double conductivity = 0.0,
+                         double area = 0.0,
+                         double length = 0.5) :
+            PolygonalPillar{height, conductivity, area, length}
+        {
+            type = PolygonType::Triangle;
+        }
+    };
+
+    struct PentagonPillar : PolygonalPillar
+    {
+        PentagonPillar(double height = 0.0,
+                       double conductivity = 0.0,
+                       double area = 0.0,
+                       double length = 0.5) :
+            PolygonalPillar{height, conductivity, area, length}
+        {
+            type = PolygonType::Pentagon;
+        }
+    };
+
+    struct HexagonPillar : PolygonalPillar
+    {
+        HexagonPillar(double height = 0.0,
+                      double conductivity = 0.0,
+                      double area = 0.0,
+                      double length = 0.5) :
+            PolygonalPillar{height, conductivity, area, length}
+        {
+            type = PolygonType::Hexagon;
+        }
     };
 
     struct LinearBearingPillar : PillarData

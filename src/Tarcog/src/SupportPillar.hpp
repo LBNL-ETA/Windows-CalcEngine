@@ -82,7 +82,7 @@ namespace Tarcog::ISO15099
     class TriangularPillarLayer : public UniversalSupportPillar
     {
     public:
-        TriangularPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data);
+        TriangularPillarLayer(const CIGUGapLayer & layer, const TriangularPillar &data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -94,7 +94,7 @@ namespace Tarcog::ISO15099
     class PentagonPillarLayer : public UniversalSupportPillar
     {
     public:
-        PentagonPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data);
+        PentagonPillarLayer(const CIGUGapLayer & layer, const PentagonPillar &data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -107,7 +107,7 @@ namespace Tarcog::ISO15099
     class HexagonPillarLayer : public UniversalSupportPillar
     {
     public:
-        HexagonPillarLayer(const CIGUGapLayer & layer, const PolygonalPillar & data);
+        HexagonPillarLayer(const CIGUGapLayer & layer, const HexagonPillar &data);
 
         std::shared_ptr<CBaseLayer> clone() const override;
 
