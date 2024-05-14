@@ -8,7 +8,11 @@ set(target_name ${PROJECT_NAME})
 
 set (CMAKE_CXX_STANDARD 17)
 
-add_definitions(-DMULTITHREADING)
+option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
+
+if(USE_PARALLEL_ALGORITHMS)
+    add_compile_definitions(USE_PARALLEL_ALGORITHMS)
+endif()
 
 include( cmake/WCEProjectMacros.cmake )
 include( cmake/WCEInternalUtils.cmake )

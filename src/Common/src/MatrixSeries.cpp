@@ -3,6 +3,9 @@
 
 #include <thread>
 #include <algorithm>
+#include <execution>
+
+#include <WCECommon.hpp>
 
 #include "MatrixSeries.hpp"
 #include "SquareMatrix.hpp"
@@ -123,13 +126,16 @@ namespace FenestrationCommon
 
     void CMatrixSeries::mMult(const std::vector<CSeries> & t_Series)
     {
-        size_t i = 0;
-        std::for_each(begin(m_Matrix), end(m_Matrix), [&](std::vector<CSeries> & row) mutable {
-            std::transform(begin(row), end(row), begin(row), [&](const CSeries & elem) {
-                return elem * t_Series[i];
-            });
-            ++i;
-        });
+        std::vector<size_t> indices(m_Matrix.size());
+        std::iota(begin(indices), end(indices), 0);
+
+        std::for_each(
+          FenestrationCommon::get_execution_policy(), begin(indices), end(indices), [&](size_t i) {
+              std::transform(begin(m_Matrix[i]),
+                             end(m_Matrix[i]),
+                             begin(m_Matrix[i]),
+                             [&](const CSeries & elem) { return elem * t_Series[i]; });
+          });
     }
 
     std::vector<CSeries> & CMatrixSeries::operator[](const size_t index)

@@ -35,7 +35,7 @@ namespace FenestrationCommon
     size_t getNumberOfThreads(size_t numberOfJobs)
     {
         size_t numberOfThreads{1u};
-#if MULTITHREADING
+#if USE_PARALLEL_ALGORITHMS
         numberOfThreads = std::min<size_t>(std::thread::hardware_concurrency(), static_cast<size_t>(numberOfJobs));
 #endif
         //static const size_t maxNumberOfThreads{32u};
