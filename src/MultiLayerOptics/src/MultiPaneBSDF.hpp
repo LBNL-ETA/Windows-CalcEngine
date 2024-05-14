@@ -192,16 +192,18 @@ namespace MultiLayerOptics
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
                                   const std::vector<double> & incomingSolar);
 
-        void calculateProperties(
-          FenestrationCommon::Side aSide,
-          double minLambda,
-          double maxLambda,
-          std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
-                   FenestrationCommon::SquareMatrix> & aResults);
+        FenestrationCommon::SquareMatrix
+          calculateProperties(FenestrationCommon::Side aSide,
+                              FenestrationCommon::PropertySimple aProperty,
+                              double minLambda,
+                              double maxLambda);
         void calculateJSC(FenestrationCommon::Side aSide, double minLambda, double maxLambda);
-        void
+        std::vector<std::vector<double>>
           calculateAbsorptance(FenestrationCommon::Side aSide, double minLambda, double maxLambda);
-        void calculateIncomingSolar(double minLambda, double maxLambda);
+        std::vector<double>
+          calculateIncomingSolar(const std::vector<FenestrationCommon::CSeries> & incomingSpectra,
+                                 double minLambda,
+                                 double maxLambda);
         void calculate(double minLambda, double maxLambda);
 
         void calcHemisphericalAbs(FenestrationCommon::Side t_Side);

@@ -95,26 +95,22 @@ namespace MultiLayerOptics
         return m_Results.DirDir(t_Side, t_Property, Index);
     }
 
-    void CMultiPaneBSDF::calculateProperties(
-      Side aSide,
-      const double minLambda,
-      const double maxLambda,
-      std::map<std::pair<Side, PropertySimple>, SquareMatrix> & aResults)
+    SquareMatrix CMultiPaneBSDF::calculateProperties(Side aSide,
+                                                     PropertySimple aProperty,
+                                                     const double minLambda,
+                                                     const double maxLambda)
     {
-        for(PropertySimple aProperty : FenestrationCommon::EnumPropertySimple())
+        CMatrixSeries aTot = m_EquivalentLayer.getTotal(aSide, aProperty);
+        if(m_SpectralIntegrationWavelengths.has_value())
         {
-            CMatrixSeries aTot = m_EquivalentLayer.getTotal(aSide, aProperty);
-            if(m_SpectralIntegrationWavelengths.has_value())
-            {
-                aTot.interpolate(m_SpectralIntegrationWavelengths.value());
-            }
-            aTot.mMult(m_IncomingSpectra);
-            aTot.integrate(m_CalculationProperties.m_IntegrationType,
-                           m_CalculationProperties.m_NormalizationCoefficient,
-                           m_SpectralIntegrationWavelengths);
-            aResults[{aSide, aProperty}] =
-              aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
+            aTot.interpolate(m_SpectralIntegrationWavelengths.value());
         }
+        aTot.mMult(m_IncomingSpectra);
+        aTot.integrate(m_CalculationProperties.m_IntegrationType,
+                       m_CalculationProperties.m_NormalizationCoefficient,
+                       m_SpectralIntegrationWavelengths);
+
+        return aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
     }
 
     void CMultiPaneBSDF::calculateJSC(Side aSide, const double minLambda, const double maxLambda)
@@ -138,9 +134,9 @@ namespace MultiLayerOptics
         m_AbsElectricity[aSide] = calcPVLayersElectricity(jscWithSolar, m_IncomingSolar);
     }
 
-    void CMultiPaneBSDF::calculateAbsorptance(Side aSide,
-                                              const double minLambda,
-                                              const double maxLambda)
+    std::vector<std::vector<double>> CMultiPaneBSDF::calculateAbsorptance(Side aSide,
+                                                                          const double minLambda,
+                                                                          const double maxLambda)
     {
         CMatrixSeries aTotalA = m_EquivalentLayer.getTotalA(aSide);
         if(m_SpectralIntegrationWavelengths.has_value())
@@ -151,20 +147,28 @@ namespace MultiLayerOptics
         aTotalA.integrate(m_CalculationProperties.m_IntegrationType,
                           m_CalculationProperties.m_NormalizationCoefficient,
                           m_SpectralIntegrationWavelengths);
-        m_Abs[aSide] = aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
+        return aTotalA.getSums(minLambda, maxLambda, m_IncomingSolar);
     }
 
-    void CMultiPaneBSDF::calculateIncomingSolar(const double minLambda, const double maxLambda)
+    std::vector<double> CMultiPaneBSDF::calculateIncomingSolar(
+      const std::vector<FenestrationCommon::CSeries> & incomingSpectra,
+      const double minLambda,
+      const double maxLambda)
     {
-        m_IncomingSolar.clear();
-        for(CSeries & aSpectra : m_IncomingSpectra)
-        {
-            CSeries iTotalSolar =
-              aSpectra.integrate(m_CalculationProperties.m_IntegrationType,
-                                 m_CalculationProperties.m_NormalizationCoefficient,
-                                 m_SpectralIntegrationWavelengths);
-            m_IncomingSolar.push_back(iTotalSolar.sum(minLambda, maxLambda));
-        }
+        std::vector<double> incomingSolar;
+        incomingSolar.reserve(incomingSpectra.size());
+        std::transform(begin(incomingSpectra),
+                       end(incomingSpectra),
+                       std::back_inserter(incomingSolar),
+                       [this, minLambda, maxLambda](const CSeries & aSpectra) {
+                           return aSpectra
+                             .integrate(m_CalculationProperties.m_IntegrationType,
+                                        m_CalculationProperties.m_NormalizationCoefficient,
+                                        m_SpectralIntegrationWavelengths)
+                             .sum(minLambda, maxLambda);
+                       });
+
+        return incomingSolar;
     }
 
     void CMultiPaneBSDF::calculate(const double minLambda, const double maxLambda)
@@ -174,14 +178,19 @@ namespace MultiLayerOptics
             return;
         }
 
-        calculateIncomingSolar(minLambda, maxLambda);
+        m_IncomingSolar = calculateIncomingSolar(m_IncomingSpectra, minLambda, maxLambda);
 
-        std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
         for(Side aSide : FenestrationCommon::EnumSide())
         {
-            calculateAbsorptance(aSide, minLambda, maxLambda);
+            m_Abs[aSide] = calculateAbsorptance(aSide, minLambda, maxLambda);
             calculateJSC(aSide, minLambda, maxLambda);
-            calculateProperties(aSide, minLambda, maxLambda, aResults);
+
+            std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
+            for(PropertySimple aProperty : FenestrationCommon::EnumPropertySimple())
+            {
+                aResults[{aSide, aProperty}] =
+                  calculateProperties(aSide, aProperty, minLambda, maxLambda);
+            }
 
             m_Results.setMatrices(aResults.at({aSide, PropertySimple::T}),
                                   aResults.at({aSide, PropertySimple::R}),
