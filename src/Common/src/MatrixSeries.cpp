@@ -148,30 +148,16 @@ namespace FenestrationCommon
         template<typename Function>
         void parallelProcess(const std::vector<std::vector<CSeries>> & matrix, Function && func)
         {
-            const auto numberOfThreads = FenestrationCommon::getNumberOfThreads(matrix.size());
-            const auto chunks =
-              FenestrationCommon::chunkIt(0u, matrix.size() - 1u, numberOfThreads);
+            auto exec_policy = get_execution_policy();
+            const size_t n = matrix.size();
 
-            std::vector<std::thread> workers;
-            workers.reserve(chunks.size());
+            std::vector<size_t> indices(n);
+            std::iota(indices.begin(), indices.end(), 0);
 
-            for(const auto & chunk : chunks)
-            {
-                workers.emplace_back([&, chunk]() {
-                    for(size_t i = chunk.start; i < chunk.end; ++i)
-                    {
-                        for(size_t j = 0u; j < matrix[i].size(); ++j)
-                        {
-                            func(i, j);
-                        }
-                    }
-                });
-            }
-
-            std::for_each(begin(workers), end(workers), [](std::thread & worker) {
-                if(worker.joinable())
+            std::for_each(exec_policy, indices.begin(), indices.end(), [&](size_t i) {
+                for(size_t j = 0; j < matrix[i].size(); ++j)
                 {
-                    worker.join();
+                    func(i, j);
                 }
             });
         }
