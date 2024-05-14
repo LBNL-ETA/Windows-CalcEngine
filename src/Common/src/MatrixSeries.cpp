@@ -187,10 +187,12 @@ namespace FenestrationCommon
             });
         }
 
-        for(auto & worker : workers)
-        {
-            worker.join();
-        }
+        std::for_each(begin(workers), end(workers), [](std::thread & worker) {
+            if(worker.joinable())
+            {
+                worker.join();
+            }
+        });
     }
 
     std::vector<std::vector<double>>
