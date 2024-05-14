@@ -197,7 +197,8 @@ namespace MultiLayerOptics
                               FenestrationCommon::PropertySimple aProperty,
                               double minLambda,
                               double maxLambda);
-        void calculateJSC(FenestrationCommon::Side aSide, double minLambda, double maxLambda);
+        std::vector<std::vector<double>>
+          calculateJSC(FenestrationCommon::Side aSide, double minLambda, double maxLambda);
         std::vector<std::vector<double>>
           calculateAbsorptance(FenestrationCommon::Side aSide, double minLambda, double maxLambda);
         std::vector<double>

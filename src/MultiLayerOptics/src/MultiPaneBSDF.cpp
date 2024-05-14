@@ -113,7 +113,7 @@ namespace MultiLayerOptics
         return aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
     }
 
-    void CMultiPaneBSDF::calculateJSC(Side aSide, const double minLambda, const double maxLambda)
+    std::vector<std::vector<double>> CMultiPaneBSDF::calculateJSC(Side aSide, const double minLambda, const double maxLambda)
     {
         CMatrixSeries jscTotal = m_EquivalentLayer.getTotalJSC(aSide);
         jscTotal.integrate(m_CalculationProperties.m_IntegrationType,
@@ -131,7 +131,7 @@ namespace MultiLayerOptics
             }
         }
 
-        m_AbsElectricity[aSide] = calcPVLayersElectricity(jscWithSolar, m_IncomingSolar);
+        return calcPVLayersElectricity(jscWithSolar, m_IncomingSolar);
     }
 
     std::vector<std::vector<double>> CMultiPaneBSDF::calculateAbsorptance(Side aSide,
@@ -183,7 +183,7 @@ namespace MultiLayerOptics
         for(Side aSide : FenestrationCommon::EnumSide())
         {
             m_Abs[aSide] = calculateAbsorptance(aSide, minLambda, maxLambda);
-            calculateJSC(aSide, minLambda, maxLambda);
+            m_AbsElectricity[aSide] = calculateJSC(aSide, minLambda, maxLambda);
 
             std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
             for(PropertySimple aProperty : FenestrationCommon::EnumPropertySimple())
@@ -195,8 +195,9 @@ namespace MultiLayerOptics
             m_Results.setMatrices(aResults.at({aSide, PropertySimple::T}),
                                   aResults.at({aSide, PropertySimple::R}),
                                   aSide);
-            m_Results.resetCalculatedResults();
         }
+
+        m_Results.resetCalculatedResults();
 
         for(const Side aSide : FenestrationCommon::EnumSide())
         {
