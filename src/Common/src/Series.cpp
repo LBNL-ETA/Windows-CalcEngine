@@ -206,7 +206,7 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    CSeries CSeries::operator*(const CSeries & other)
+    CSeries CSeries::operator*(const CSeries & other) const
     {
         CSeries newProperty;
 
