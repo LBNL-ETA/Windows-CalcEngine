@@ -124,6 +124,7 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
+        // Using STL parallelization here lead to twice slower unit test run on VM ubuntu
         const size_t n = m_CombinedLayerWavelengths.size();
         const auto numberOfThreads = FenestrationCommon::getNumberOfThreads(n);
         const auto chunks = FenestrationCommon::chunkIt(0u, n - 1u, numberOfThreads);
