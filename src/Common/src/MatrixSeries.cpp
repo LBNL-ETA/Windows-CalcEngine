@@ -146,10 +146,10 @@ namespace FenestrationCommon
         {
             FenestrationCommon::executeInParallel<size_t>(0, matrix.size() - 1, [&](size_t i) {
                 const auto & row = matrix[i];
-                for(size_t j = 0; j < row.size(); ++j)
-                {
+                std::for_each(begin(row), end(row), [&](const auto & elem) {
+                    size_t j = &elem - &row[0];
                     func(i, j);
-                }
+                });
             });
         }
     }   // namespace
