@@ -1,9 +1,7 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <thread>
 #include <algorithm>
-#include <execution>
 
 #include <WCECommon.hpp>
 
@@ -126,13 +124,13 @@ namespace FenestrationCommon
 
     void CMatrixSeries::mMult(const std::vector<CSeries> & t_Series)
     {
-        const auto policy{FenestrationCommon::get_execution_policy()};
-        // Using std::for_each with execution::par to parallelize the outer loop
-        std::for_each(policy, begin(m_Matrix), end(m_Matrix), [&](auto & row) {
-            // Transform each row element in parallel
-            std::transform(begin(row), end(row), begin(row), [&](const CSeries & elem) {
-                return elem * t_Series[&row - &m_Matrix[0]]; // Capture the correct index
-            });
+        const size_t n = m_Matrix.size();
+
+        FenestrationCommon::executeInParallel<size_t>(0u, n - 1u, [this, &t_Series](size_t i) {
+            std::transform(begin(m_Matrix[i]),
+                           end(m_Matrix[i]),
+                           begin(m_Matrix[i]),
+                           [&](const CSeries & elem) { return elem * t_Series[i]; });
         });
     }
 
@@ -146,15 +144,12 @@ namespace FenestrationCommon
         template<typename Function>
         void parallelProcess(const std::vector<std::vector<CSeries>> & matrix, Function && func)
         {
-            auto policy = FenestrationCommon::get_execution_policy();
-
-            std::for_each(policy, matrix.begin(), matrix.end(), [&](const auto & row) {
-                size_t i = &row - &matrix[0];
-
-                std::for_each(std::execution::seq, row.begin(), row.end(), [&](const auto & elem) {
-                    size_t j = &elem - &row[0];
+            FenestrationCommon::executeInParallel<size_t>(0, matrix.size() - 1, [&](size_t i) {
+                const auto & row = matrix[i];
+                for(size_t j = 0; j < row.size(); ++j)
+                {
                     func(i, j);
-                });
+                }
             });
         }
     }   // namespace
