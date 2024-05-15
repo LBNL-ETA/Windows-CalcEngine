@@ -12,15 +12,6 @@ namespace FenestrationCommon
         return (T(0) < val) - (val < T(0));
     }
 
-    inline auto get_execution_policy()
-    {
-#ifdef USE_PARALLEL_ALGORITHMS
-        return std::execution::par;
-#else
-        return std::execution::seq;
-#endif
-    }
-
     //////////////////////////////////////////////////////////////////////////
     // Side
     //////////////////////////////////////////////////////////////////////////
