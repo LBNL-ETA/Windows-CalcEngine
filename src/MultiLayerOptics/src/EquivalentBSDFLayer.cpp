@@ -103,17 +103,16 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculate()
     {
-        const size_t matrixSize = m_Lambda.size();
-        const size_t numberOfLayers = m_Layer.size();
-        const size_t seriesSize = m_CombinedLayerWavelengths.size();
-
         for(Side aSide : FenestrationCommon::EnumSide())
         {
-            m_TotA[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
-            m_TotJSC[aSide] = CMatrixSeries(numberOfLayers, matrixSize, seriesSize);
+            m_TotA[aSide] =
+              CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
+            m_TotJSC[aSide] =
+              CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
             for(PropertySimple aProperty : FenestrationCommon::EnumPropertySimple())
             {
-                m_Tot[{aSide, aProperty}] = CMatrixSeries(matrixSize, matrixSize, seriesSize);
+                m_Tot[{aSide, aProperty}] = CMatrixSeries(
+                  m_Lambda.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
             }
         }
 
@@ -124,81 +123,38 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
     {
-        const size_t n = m_CombinedLayerWavelengths.size();
+        FenestrationCommon::executeInParallel<size_t>(
+          0u, m_CombinedLayerWavelengths.size() - 1u, [this](size_t index) {
+              // Do not refactor auto layer variable out since calling
+              // getEquivalentLayerAtWavelength is calculation intensive and it will slow down the
+              // execution
+              auto layer{getEquivalentLayerAtWavelength(index)};
+              for(auto aSide : FenestrationCommon::EnumSide())
+              {
+                  for(size_t layerNumber = 0; layerNumber < m_Layer.size(); ++layerNumber)
+                  {
+                      m_TotA.at(aSide).setPropertiesAtIndex(
+                        index,
+                        layerNumber,
+                        m_CombinedLayerWavelengths[index],
+                        layer.getLayerAbsorptances(layerNumber + 1, aSide));
 
-        FenestrationCommon::executeInParallel<size_t>(0u, n - 1u, [this](size_t index) {
-            auto layer = getEquivalentLayerAtWavelength(index);
-            for(auto aSide : FenestrationCommon::EnumSide())
-            {
-                const auto numberOfLayers = m_Layer.size();
-                for(size_t layerNumber = 0; layerNumber < numberOfLayers; ++layerNumber)
-                {
-                    auto totA = layer.getLayerAbsorptances(layerNumber + 1, aSide);
-                    m_TotA.at(aSide).setPropertiesAtIndex(
-                      index, layerNumber, m_CombinedLayerWavelengths[index], totA);
-
-                    auto totJSC = layer.getLayerJSC(layerNumber + 1, aSide);
-                    m_TotJSC.at(aSide).setPropertiesAtIndex(
-                      index, layerNumber, m_CombinedLayerWavelengths[index], totJSC);
-                }
-                for(auto aProperty : FenestrationCommon::EnumPropertySimple())
-                {
-                    auto tot = layer.getProperty(aSide, aProperty);
-                    m_Tot.at({aSide, aProperty})
-                      .setPropertiesAtIndex(index, m_CombinedLayerWavelengths[index], tot);
-                }
-            }
-        });
+                      m_TotJSC.at(aSide).setPropertiesAtIndex(
+                        index,
+                        layerNumber,
+                        m_CombinedLayerWavelengths[index],
+                        layer.getLayerJSC(layerNumber + 1, aSide));
+                  }
+                  for(auto aProperty : FenestrationCommon::EnumPropertySimple())
+                  {
+                      m_Tot.at({aSide, aProperty})
+                        .setPropertiesAtIndex(index,
+                                              m_CombinedLayerWavelengths[index],
+                                              layer.getProperty(aSide, aProperty));
+                  }
+              }
+          });
     }
-
-    //void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
-    //{
-    //    // Using STL parallelization here lead to twice slower unit test run on VM ubuntu
-    //    const size_t n = m_CombinedLayerWavelengths.size();
-    //    const auto numberOfThreads = FenestrationCommon::getNumberOfThreads(n);
-    //    const auto chunks = FenestrationCommon::chunkIt(0u, n - 1u, numberOfThreads);
-//
-    //    std::vector<std::thread> workers;
-    //    workers.reserve(chunks.size());
-//
-    //    for(const auto & chunk : chunks)
-    //    {
-    //        workers.emplace_back([&, chunk]() {
-    //            for(size_t index = chunk.start; index < chunk.end; ++index)
-    //            {
-    //                auto layer = getEquivalentLayerAtWavelength(index);
-    //                for(auto aSide : FenestrationCommon::EnumSide())
-    //                {
-    //                    const auto numberOfLayers = m_Layer.size();
-    //                    for(size_t layerNumber = 0; layerNumber < numberOfLayers; ++layerNumber)
-    //                    {
-    //                        auto totA = layer.getLayerAbsorptances(layerNumber + 1, aSide);
-    //                        m_TotA.at(aSide).setPropertiesAtIndex(
-    //                          index, layerNumber, m_CombinedLayerWavelengths[index], totA);
-//
-    //                        auto totJSC = layer.getLayerJSC(layerNumber + 1, aSide);
-    //                        m_TotJSC.at(aSide).setPropertiesAtIndex(
-    //                          index, layerNumber, m_CombinedLayerWavelengths[index], totJSC);
-    //                    }
-    //                    for(auto aProperty : FenestrationCommon::EnumPropertySimple())
-    //                    {
-    //                        auto tot = layer.getProperty(aSide, aProperty);
-    //                        m_Tot.at({aSide, aProperty})
-    //                          .setPropertiesAtIndex(index, m_CombinedLayerWavelengths[index], tot);
-    //                    }
-    //                }
-    //            }
-    //        });
-    //    }
-//
-    //    for(auto & worker : workers)
-    //    {
-    //        if(worker.joinable())
-    //        {
-    //            worker.join();
-    //        }
-    //    }
-    //}
 
     CEquivalentBSDFLayerSingleBand
       CEquivalentBSDFLayer::getEquivalentLayerAtWavelength(size_t wavelengthIndex) const
