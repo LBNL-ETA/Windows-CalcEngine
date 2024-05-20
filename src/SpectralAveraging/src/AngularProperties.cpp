@@ -76,7 +76,7 @@ namespace SpectralAveraging
 
         if(!isEqual(m_StateAngle, t_Angle) || !isEqual(m_StateWavelength, t_Wavelength))
         {
-            if(!isEqual(m_Rho0, 0) && !isEqual(m_Transmittance0, 1.0))
+            if(!isEqual(m_Rho0, 0.0) && !isEqual(m_Transmittance0, 1.0))
             {
                 const auto aAngle = radians(t_Angle);
                 const auto aCosPhi = std::cos(aAngle);

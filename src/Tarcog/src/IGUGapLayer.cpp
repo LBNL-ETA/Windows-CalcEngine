@@ -18,7 +18,7 @@ namespace Tarcog::ISO15099
 
     bool isStillAir(double airSpeed)
     {
-        return FenestrationCommon::isEqual(airSpeed, 0);
+        return FenestrationCommon::isEqual(airSpeed, 0.0);
     }
 
     CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure) :
@@ -46,7 +46,7 @@ namespace Tarcog::ISO15099
     {
         if(!isCalculated())
         {
-            if(FenestrationCommon::isEqual(getThickness(), 0))
+            if(FenestrationCommon::isEqual(getThickness(), 0.0))
             {
                 throw std::runtime_error("Layer thickness is set to zero.");
             }
@@ -75,7 +75,7 @@ namespace Tarcog::ISO15099
 
     double CIGUGapLayer::aspectRatio() const
     {
-        if(FenestrationCommon::isEqual(getThickness(), 0))
+        if(FenestrationCommon::isEqual(getThickness(), 0.0))
         {
             throw std::runtime_error("Gap thickness is set to zero.");
         }

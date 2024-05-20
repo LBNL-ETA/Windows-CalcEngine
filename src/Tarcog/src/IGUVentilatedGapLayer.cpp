@@ -158,7 +158,7 @@ namespace Tarcog::ISO15099
         const auto aProperties = gasSpecification.gas.getGasProperties();
         double cHeight = 0;
         // Characteristic height can only be calculated after initialization is performed
-        if(!FenestrationCommon::isEqual(m_ConductiveConvectiveCoeff, 0))
+        if(!FenestrationCommon::isEqual(m_ConductiveConvectiveCoeff, 0.0))
         {
             cHeight = aProperties.m_Density * aProperties.m_SpecificHeat * getThickness()
                       * gasSpecification.airflowProperties.m_AirSpeed
@@ -171,7 +171,7 @@ namespace Tarcog::ISO15099
     {
         auto impedance = 0.0;
 
-        if(!FenestrationCommon::isEqual(t_A, 0))
+        if(!FenestrationCommon::isEqual(t_A, 0.0))
         {
             impedance = pow(m_Width * getThickness() / (0.6 * t_A) - 1, 2);
         }
