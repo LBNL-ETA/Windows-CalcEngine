@@ -49,7 +49,7 @@ namespace SingleLayerOptics
     size_t CVenetianCellDescription::numberOfSegments() const
     {
         // Two additional segments are for interior and exterior openness
-        return 2 + m_Top.numberOfSegments() + m_Bottom.numberOfSegments();
+        return 2 + m_Top.geometry().segments().size() + m_Bottom.geometry().segments().size();
     }
 
     double CVenetianCellDescription::segmentLength(const size_t Index) const
@@ -69,7 +69,7 @@ namespace SingleLayerOptics
         double slatSpacing = m_Top.slatSpacing();
         double slatTiltAngle = -m_Top.slatTiltAngle();
         double curvatureRadius = m_Top.curvatureRadius();
-        size_t m_NumOfSlatSegments = m_Top.numberOfSegments();
+        size_t m_NumOfSlatSegments = m_Top.geometry().segments().size();
 
         std::shared_ptr<CVenetianCellDescription> aBackwardCell =
           std::make_shared<CVenetianCellDescription>(

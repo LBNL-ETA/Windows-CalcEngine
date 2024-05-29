@@ -27,7 +27,6 @@ namespace SingleLayerOptics
         [[nodiscard]] double slatSpacing() const;
         [[nodiscard]] double slatTiltAngle() const;
         [[nodiscard]] double curvatureRadius() const;
-        [[nodiscard]] size_t numberOfSegments() const;
 
     private:
         void buildSlat(const FenestrationCommon::VenetianGeometry & t_Geometry,
@@ -35,8 +34,6 @@ namespace SingleLayerOptics
                        SegmentsDirection t_Direction);
 
         FenestrationCommon::VenetianGeometry m_VenetianGeometry;
-        size_t m_NumOfSlatSegments;
-        SegmentsDirection m_Direction;
 
         Viewer::CGeometry2D m_Geometry;
     };

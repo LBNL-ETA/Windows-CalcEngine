@@ -12,10 +12,10 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CVenetianSlat::CVenetianSlat(const VenetianGeometry &t_Geometry, size_t t_NumOfSegments,
-                                 SegmentsDirection t_Direction) : m_VenetianGeometry(t_Geometry),
-                                                                m_NumOfSlatSegments(t_NumOfSegments),
-                                                                m_Direction(t_Direction)
+    CVenetianSlat::CVenetianSlat(const VenetianGeometry & t_Geometry,
+                                 size_t t_NumOfSegments,
+                                 SegmentsDirection t_Direction) :
+        m_VenetianGeometry(t_Geometry)
     {
         buildSlat(t_Geometry, t_NumOfSegments, t_Direction);
     }
@@ -43,11 +43,6 @@ namespace SingleLayerOptics
     double CVenetianSlat::curvatureRadius() const
     {
         return m_VenetianGeometry.CurvatureRadius;
-    }
-
-    size_t CVenetianSlat::numberOfSegments() const
-    {
-        return m_NumOfSlatSegments;
     }
 
     void CVenetianSlat::buildSlat(const VenetianGeometry & t_Geometry,
