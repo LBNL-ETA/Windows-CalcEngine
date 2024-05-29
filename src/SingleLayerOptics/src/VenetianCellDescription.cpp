@@ -59,7 +59,7 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
     {
-        auto venetianGeometry{m_Top.getVenetianGeometry()};
+        auto venetianGeometry{m_VenetianGeometry};
         venetianGeometry.SlatTiltAngle = -venetianGeometry.SlatTiltAngle;
         size_t m_NumOfSlatSegments = m_Top.geometry().segments().size();
 
