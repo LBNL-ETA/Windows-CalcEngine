@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include <WCEViewer.hpp>
-#include <WCECommon.hpp>
 
 #include "VenetianSlat.hpp"
 
@@ -15,40 +14,26 @@ namespace SingleLayerOptics
     CVenetianSlat::CVenetianSlat(const VenetianGeometry & t_Geometry,
                                  size_t t_NumOfSegments,
                                  SegmentsDirection t_Direction) :
-        m_VenetianGeometry(t_Geometry)
-    {
-        buildSlat(t_Geometry, t_NumOfSegments, t_Direction);
-    }
+        m_VenetianGeometry(t_Geometry),
+        m_Geometry(buildSlat(t_Geometry, t_NumOfSegments, t_Direction))
+    {}
 
     CGeometry2D CVenetianSlat::geometry() const
     {
         return m_Geometry;
     }
 
-    double CVenetianSlat::slatWidth() const
+    FenestrationCommon::VenetianGeometry CVenetianSlat::getVenetianGeometry() const
     {
-        return m_VenetianGeometry.SlatWidth;
+        return m_VenetianGeometry;
     }
 
-    double CVenetianSlat::slatSpacing() const
+    Viewer::CGeometry2D CVenetianSlat::buildSlat(const VenetianGeometry & t_Geometry,
+                                                 const size_t t_NumOfSegments,
+                                                 const SegmentsDirection t_Direction)
     {
-        return m_VenetianGeometry.SlatSpacing;
-    }
+        Viewer::CGeometry2D aGeometry;
 
-    double CVenetianSlat::slatTiltAngle() const
-    {
-        return m_VenetianGeometry.SlatTiltAngle;
-    }
-
-    double CVenetianSlat::curvatureRadius() const
-    {
-        return m_VenetianGeometry.CurvatureRadius;
-    }
-
-    void CVenetianSlat::buildSlat(const VenetianGeometry & t_Geometry,
-                                  const size_t t_NumOfSegments,
-                                  const SegmentsDirection t_Direction)
-    {
         auto venetian{FenestrationCommon::adjustSlatTiltAngle(t_Geometry)};
 
         double radius = std::abs(venetian.CurvatureRadius);
@@ -107,7 +92,7 @@ namespace SingleLayerOptics
 
                 const auto endPoint{CPoint2D::createPointFromPolarCoordinates(nextTheta, radius)};
                 CViewSegment2D aSegment{startPoint, endPoint};
-                m_Geometry.appendSegment(aSegment);
+                aGeometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }
         }
@@ -144,7 +129,7 @@ namespace SingleLayerOptics
                 const auto endPoint{
                   CPoint2D::createPointFromPolarCoordinates(venetian.SlatTiltAngle, nextRadius)};
                 CViewSegment2D aSegment{startPoint, endPoint};
-                m_Geometry.appendSegment(aSegment);
+                aGeometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }
         }
@@ -153,13 +138,15 @@ namespace SingleLayerOptics
             throw std::runtime_error("Cannot create slat.");
         }
 
-        const CPoint2D aPoint{t_Direction == SegmentsDirection::Positive ? m_Geometry.firstPoint()
-                                                                         : m_Geometry.lastPoint()};
+        const CPoint2D aPoint{t_Direction == SegmentsDirection::Positive ? aGeometry.firstPoint()
+                                                                         : aGeometry.lastPoint()};
 
         translateX = -aPoint.x();
         translateY = -aPoint.y();
 
-        m_Geometry = m_Geometry.Translate(translateX, translateY + venetian.SlatSpacing);
+        aGeometry = aGeometry.Translate(translateX, translateY + venetian.SlatSpacing);
+
+        return aGeometry;
     }
 
 }   // namespace SingleLayerOptics

@@ -3,17 +3,11 @@
 #include <memory>
 #include <vector>
 
+#include <WCECommon.hpp>
 #include <WCEViewer.hpp>
 
 #include "CellDescription.hpp"
 #include "VenetianSlat.hpp"
-
-namespace FenestrationCommon
-{
-    class SquareMatrix;
-    enum class Side;
-
-}   // namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
@@ -23,10 +17,8 @@ namespace SingleLayerOptics
     {
     public:
         virtual ~CVenetianCellDescription() = default;
-        CVenetianCellDescription(double t_SlatWidth,
-                                 double t_SlatSpacing,
-                                 double t_SlatTiltAngle,
-                                 double t_CurvatureRadius,
+
+        CVenetianCellDescription(const FenestrationCommon::VenetianGeometry & t_Geometry,
                                  size_t t_NumOfSlatSegments);
 
         // Makes exact copy of cell description
@@ -47,20 +39,14 @@ namespace SingleLayerOptics
         double R_dir_dir(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;
 
-        [[nodiscard]] double slatWidth() const;
-        [[nodiscard]] double slatSpacing() const;
-        [[nodiscard]] double slatTiltAngle() const;
-        [[nodiscard]] double curvatureRadius() const;
+        [[nodiscard]] FenestrationCommon::VenetianGeometry getVenetianGeometry() const;
         [[nodiscard]] size_t numOfSegments() const;
 
         void preCalculateForProfileAngles(FenestrationCommon::Side side,
                                           const std::vector<double> & t_ProfileAngles);
 
     private:
-        double m_SlatWidth;
-        double m_SlatSpacing;
-        double m_SlatTiltAngle;
-        double m_CurvatureRadius;
+        FenestrationCommon::VenetianGeometry m_VenetianGeometry;
         size_t m_NumOfSegments;
 
         // Top and bottom slats of venetian cell

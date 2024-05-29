@@ -1,9 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCEViewer.hpp"
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
+#include <WCEViewer.hpp>
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
 
 
 using namespace SingleLayerOptics;
@@ -24,10 +24,12 @@ protected:
         const auto slatSpacing = 0.057150;   // m
         const auto slatTiltAngle = -55.000000;
         const auto curvatureRadius = 0.123967;
+        FenestrationCommon::VenetianGeometry geometry{
+          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
+
         size_t aNumOfSlats = 2;
 
-        m_Cell = std::make_shared<CVenetianCellDescription>(
-          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, aNumOfSlats);
+        m_Cell = std::make_shared<CVenetianCellDescription>(geometry, aNumOfSlats);
     }
 
 public:

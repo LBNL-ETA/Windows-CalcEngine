@@ -8,28 +8,22 @@
 
 namespace SingleLayerOptics
 {
-    CVenetianCellDescription::CVenetianCellDescription(const double t_SlatWidth,
-                                                       const double t_SlatSpacing,
-                                                       const double t_SlatTiltAngle,
-                                                       const double t_CurvatureRadius,
-                                                       const size_t t_NumOfSlatSegments) :
-        m_SlatWidth(t_SlatWidth),
-        m_SlatSpacing(t_SlatSpacing),
-        m_SlatTiltAngle(t_SlatTiltAngle),
-        m_CurvatureRadius(t_CurvatureRadius),
+    namespace Helper
+    {
+
+         FenestrationCommon::VenetianGeometry bottomGeometry(const FenestrationCommon::VenetianGeometry & t_Geometry) {
+             auto bottomGeometry{t_Geometry};
+             bottomGeometry.SlatSpacing = 0.0;
+             return bottomGeometry;
+         }
+    }
+
+    CVenetianCellDescription::CVenetianCellDescription(
+      const FenestrationCommon::VenetianGeometry & t_Geometry, size_t t_NumOfSlatSegments) :
+        m_VenetianGeometry(FenestrationCommon::adjustSlatTiltAngle(t_Geometry)),
         m_NumOfSegments(t_NumOfSlatSegments),
-        m_Top({t_SlatWidth,
-              t_SlatSpacing,
-              t_SlatTiltAngle,
-              t_CurvatureRadius},
-              t_NumOfSlatSegments,
-              SegmentsDirection::Positive),
-        m_Bottom({t_SlatWidth,
-                 0,
-                 t_SlatTiltAngle,
-                 t_CurvatureRadius},
-                 t_NumOfSlatSegments,
-                 SegmentsDirection::Negative)
+        m_Top(t_Geometry, t_NumOfSlatSegments, SegmentsDirection::Positive),
+        m_Bottom(Helper::bottomGeometry(t_Geometry), t_NumOfSlatSegments, SegmentsDirection::Negative)
     {
         Viewer::CViewSegment2D exteriorSegment(m_Bottom.geometry().lastPoint(),
                                                m_Top.geometry().firstPoint());
@@ -65,15 +59,12 @@ namespace SingleLayerOptics
 
     std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
     {
-        double slatWidth = m_Top.slatWidth();
-        double slatSpacing = m_Top.slatSpacing();
-        double slatTiltAngle = -m_Top.slatTiltAngle();
-        double curvatureRadius = m_Top.curvatureRadius();
+        auto venetianGeometry{m_Top.getVenetianGeometry()};
+        venetianGeometry.SlatTiltAngle = -venetianGeometry.SlatTiltAngle;
         size_t m_NumOfSlatSegments = m_Top.geometry().segments().size();
 
         std::shared_ptr<CVenetianCellDescription> aBackwardCell =
-          std::make_shared<CVenetianCellDescription>(
-            slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, m_NumOfSlatSegments);
+          std::make_shared<CVenetianCellDescription>(venetianGeometry, m_NumOfSlatSegments);
 
         if(!m_ProfileAngles.empty())
         {
@@ -110,24 +101,9 @@ namespace SingleLayerOptics
         return 0;
     }
 
-    double CVenetianCellDescription::slatWidth() const
+    FenestrationCommon::VenetianGeometry CVenetianCellDescription::getVenetianGeometry() const
     {
-        return m_SlatWidth;
-    }
-
-    double CVenetianCellDescription::slatSpacing() const
-    {
-        return m_SlatSpacing;
-    }
-
-    double CVenetianCellDescription::slatTiltAngle() const
-    {
-        return m_SlatTiltAngle;
-    }
-
-    double CVenetianCellDescription::curvatureRadius() const
-    {
-        return m_CurvatureRadius;
+        return m_VenetianGeometry;
     }
 
     size_t CVenetianCellDescription::numOfSegments() const

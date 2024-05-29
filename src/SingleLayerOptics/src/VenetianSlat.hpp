@@ -23,15 +23,13 @@ namespace SingleLayerOptics
         // Returns the geometry segments that are slats made of
         [[nodiscard]] Viewer::CGeometry2D geometry() const;
 
-        [[nodiscard]] double slatWidth() const;
-        [[nodiscard]] double slatSpacing() const;
-        [[nodiscard]] double slatTiltAngle() const;
-        [[nodiscard]] double curvatureRadius() const;
+        [[nodiscard]] FenestrationCommon::VenetianGeometry getVenetianGeometry() const;
 
     private:
-        void buildSlat(const FenestrationCommon::VenetianGeometry & t_Geometry,
-                       size_t t_NumOfSegments,
-                       SegmentsDirection t_Direction);
+        Viewer::CGeometry2D
+          buildSlat(const FenestrationCommon::VenetianGeometry & t_Geometry,
+                    size_t t_NumOfSegments,
+                    SegmentsDirection t_Direction);
 
         FenestrationCommon::VenetianGeometry m_VenetianGeometry;
 

@@ -85,9 +85,22 @@ namespace SingleLayerOptics
                                         DistributionMethod method,
                                         const bool isHorizontal)
     {
+        FenestrationCommon::VenetianGeometry geometry{
+          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
+        return getVenetianLayer(
+          t_Material, t_BSDF, geometry, numOfSlatSegments, method, isHorizontal);
+    }
+
+    std::shared_ptr<CBSDFLayer>
+      CBSDFLayerMaker::getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                        const BSDFHemisphere & t_BSDF,
+                                        const FenestrationCommon::VenetianGeometry & geometry,
+                                        size_t numOfSlatSegments,
+                                        DistributionMethod method,
+                                        bool isHorizontal)
+    {
         std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(
-            slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
+          std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
 
         const auto profileAnglesIncoming = t_BSDF.profileAngles(BSDFDirection::Incoming);
         std::dynamic_pointer_cast<CVenetianCellDescription>(aCellDescription)
@@ -189,10 +202,7 @@ namespace SingleLayerOptics
               std::dynamic_pointer_cast<CVenetianCellDescription>(t_Description)};
             m_Layer = getVenetianLayer(t_Material,
                                        t_BSDF,
-                                       description->slatWidth(),
-                                       description->slatSpacing(),
-                                       description->slatSpacing(),
-                                       description->curvatureRadius(),
+                                       description->getVenetianGeometry(),
                                        description->numberOfSegments(),
                                        t_Method,
                                        0);

@@ -1,8 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
 
 
 using namespace SingleLayerOptics;
@@ -23,14 +23,10 @@ protected:
         const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
-        const auto slatWidth = 0.076200;     // m
-        const auto slatSpacing = 0.057150;   // m
-        const auto slatTiltAngle = 55.000000;
-        const auto curvatureRadius = 0.123967;
+        const FenestrationCommon::VenetianGeometry geometry{0.076200, 0.057150, 55.000000, 0.123967};
         const size_t numOfSlatSegments = 2;
 
-        const auto aCellDescription = std::make_shared<CVenetianCellDescription>(
-          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
+        const auto aCellDescription = std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
 
         m_Cell = std::make_shared<CVenetianCell>(aMaterial, aCellDescription);
     }
