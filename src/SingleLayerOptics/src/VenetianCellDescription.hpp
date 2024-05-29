@@ -50,8 +50,8 @@ namespace SingleLayerOptics
         size_t m_NumOfSegments;
 
         // Top and bottom slats of venetian cell
-        CVenetianSlat m_Top;
-        CVenetianSlat m_Bottom;
+        Viewer::CGeometry2D m_Top;
+        Viewer::CGeometry2D m_Bottom;
 
         // Complete enclosure from venetian cell
         Viewer::CGeometry2D m_Geometry;

@@ -22,28 +22,28 @@ namespace SingleLayerOptics
       const FenestrationCommon::VenetianGeometry & t_Geometry, size_t t_NumOfSlatSegments) :
         m_VenetianGeometry(FenestrationCommon::adjustSlatTiltAngle(t_Geometry)),
         m_NumOfSegments(t_NumOfSlatSegments),
-        m_Top(t_Geometry, t_NumOfSlatSegments, SegmentsDirection::Positive),
-        m_Bottom(Helper::bottomGeometry(t_Geometry), t_NumOfSlatSegments, SegmentsDirection::Negative)
+        m_Top(buildViewerSlat(t_Geometry, t_NumOfSlatSegments, SegmentsDirection::Positive)),
+        m_Bottom(buildViewerSlat(Helper::bottomGeometry(t_Geometry), t_NumOfSlatSegments, SegmentsDirection::Negative))
     {
-        Viewer::CViewSegment2D exteriorSegment(m_Bottom.geometry().lastPoint(),
-                                               m_Top.geometry().firstPoint());
+        Viewer::CViewSegment2D exteriorSegment(m_Bottom.lastPoint(),
+                                               m_Top.firstPoint());
 
-        Viewer::CViewSegment2D interiorSegment(m_Top.geometry().lastPoint(),
-                                               m_Bottom.geometry().firstPoint());
+        Viewer::CViewSegment2D interiorSegment(m_Top.lastPoint(),
+                                               m_Bottom.firstPoint());
 
         m_Geometry.appendSegment(exteriorSegment);
-        m_Geometry.appendGeometry2D(m_Top.geometry());
+        m_Geometry.appendGeometry2D(m_Top);
         m_Geometry.appendSegment(interiorSegment);
-        m_Geometry.appendGeometry2D(m_Bottom.geometry());
+        m_Geometry.appendGeometry2D(m_Bottom);
 
-        m_BeamGeometry.appendGeometry2D(m_Top.geometry());
-        m_BeamGeometry.appendGeometry2D(m_Bottom.geometry());
+        m_BeamGeometry.appendGeometry2D(m_Top);
+        m_BeamGeometry.appendGeometry2D(m_Bottom);
     }
 
     size_t CVenetianCellDescription::numberOfSegments() const
     {
         // Two additional segments are for interior and exterior openness
-        return 2 + m_Top.geometry().segments().size() + m_Bottom.geometry().segments().size();
+        return 2 + m_Top.segments().size() + m_Bottom.segments().size();
     }
 
     double CVenetianCellDescription::segmentLength(const size_t Index) const
@@ -61,7 +61,7 @@ namespace SingleLayerOptics
     {
         auto venetianGeometry{m_VenetianGeometry};
         venetianGeometry.SlatTiltAngle = -venetianGeometry.SlatTiltAngle;
-        size_t m_NumOfSlatSegments = m_Top.geometry().segments().size();
+        size_t m_NumOfSlatSegments = m_Top.segments().size();
 
         std::shared_ptr<CVenetianCellDescription> aBackwardCell =
           std::make_shared<CVenetianCellDescription>(venetianGeometry, m_NumOfSlatSegments);

@@ -11,26 +11,9 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CVenetianSlat::CVenetianSlat(const VenetianGeometry & t_Geometry,
-                                 size_t t_NumOfSegments,
-                                 SegmentsDirection t_Direction) :
-        m_VenetianGeometry(t_Geometry),
-        m_Geometry(buildSlat(t_Geometry, t_NumOfSegments, t_Direction))
-    {}
-
-    CGeometry2D CVenetianSlat::geometry() const
-    {
-        return m_Geometry;
-    }
-
-    FenestrationCommon::VenetianGeometry CVenetianSlat::getVenetianGeometry() const
-    {
-        return m_VenetianGeometry;
-    }
-
-    Viewer::CGeometry2D CVenetianSlat::buildSlat(const VenetianGeometry & t_Geometry,
-                                                 const size_t t_NumOfSegments,
-                                                 const SegmentsDirection t_Direction)
+    Viewer::CGeometry2D buildViewerSlat(const FenestrationCommon::VenetianGeometry &t_Geometry,
+                                        size_t t_NumOfSegments,
+                                        SegmentsDirection t_Direction)
     {
         Viewer::CGeometry2D aGeometry;
 
