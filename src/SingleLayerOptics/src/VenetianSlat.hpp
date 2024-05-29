@@ -2,13 +2,8 @@
 
 #include <memory>
 
+#include <WCECommon.hpp>
 #include <WCEViewer.hpp>
-
-namespace Viewer
-{
-    class CSegment2D;
-
-}   // namespace Viewer
 
 namespace SingleLayerOptics
 {
@@ -21,10 +16,7 @@ namespace SingleLayerOptics
     class CVenetianSlat
     {
     public:
-        CVenetianSlat(double t_SlatWidth,
-                      double t_SlatSpacing,
-                      double t_SlatTiltAngle,
-                      double t_CurvatureRadius,
+        CVenetianSlat(const FenestrationCommon::VenetianGeometry & t_Geometry,
                       size_t t_NumOfSegments,
                       SegmentsDirection t_Direction);
 
@@ -38,12 +30,11 @@ namespace SingleLayerOptics
         [[nodiscard]] size_t numberOfSegments() const;
 
     private:
-        void buildSlat();
+        void buildSlat(const FenestrationCommon::VenetianGeometry & t_Geometry,
+                       size_t t_NumOfSegments,
+                       SegmentsDirection t_Direction);
 
-        double m_SlatWidth;
-        double m_SlatSpacing;
-        double m_SlatTiltAngle;
-        double m_CurvatureRadius;
+        FenestrationCommon::VenetianGeometry m_VenetianGeometry;
         size_t m_NumOfSlatSegments;
         SegmentsDirection m_Direction;
 
