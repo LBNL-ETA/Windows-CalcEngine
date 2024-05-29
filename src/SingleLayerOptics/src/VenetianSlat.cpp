@@ -13,11 +13,10 @@ namespace SingleLayerOptics
 {
     namespace Helper
     {
-        void createPolarSegments(Viewer::CGeometry2D & aGeometry,
-                                 const VenetianGeometry & venetian,
-                                 size_t t_NumOfSegments,
-                                 SegmentsDirection t_Direction,
-                                 double radius)
+        Viewer::CGeometry2D createPolarSegments(const VenetianGeometry & venetian,
+                                                size_t t_NumOfSegments,
+                                                SegmentsDirection t_Direction,
+                                                double radius)
         {
             using ConstantsData::WCE_PI;
 
@@ -41,22 +40,24 @@ namespace SingleLayerOptics
             double startTheta = t_Direction == SegmentsDirection::Positive ? theta2 : theta1;
 
             auto startPoint{CPoint2D::createPointFromPolarCoordinates(startTheta, radius)};
+
+            CGeometry2D aGeometry;
             for(size_t i = 1; i <= t_NumOfSegments; ++i)
             {
                 double nextTheta = t_Direction == SegmentsDirection::Positive
                                      ? startTheta - dTheta * i
                                      : startTheta + dTheta * i;
                 const auto endPoint{CPoint2D::createPointFromPolarCoordinates(nextTheta, radius)};
-                CViewSegment2D aSegment{startPoint, endPoint};
-                aGeometry.appendSegment(aSegment);
+                aGeometry.appendSegment({startPoint, endPoint});
                 startPoint = endPoint;
             }
+
+            return aGeometry;
         }
 
-        void createCartesianSegments(Viewer::CGeometry2D & aGeometry,
-                                     const VenetianGeometry & venetian,
-                                     size_t t_NumOfSegments,
-                                     SegmentsDirection t_Direction)
+        Viewer::CGeometry2D createCartesianSegments(const VenetianGeometry & venetian,
+                                                    size_t t_NumOfSegments,
+                                                    SegmentsDirection t_Direction)
         {
             double dWidth = venetian.SlatWidth / t_NumOfSegments;
             double startRadius =
@@ -64,6 +65,8 @@ namespace SingleLayerOptics
 
             auto startPoint{
               CPoint2D::createPointFromPolarCoordinates(venetian.SlatTiltAngle, startRadius)};
+
+            CGeometry2D aGeometry;
             for(size_t i = 1; i <= t_NumOfSegments; ++i)
             {
                 double nextRadius = t_Direction == SegmentsDirection::Positive
@@ -75,6 +78,8 @@ namespace SingleLayerOptics
                 aGeometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }
+
+            return aGeometry;
         }
 
         std::pair<double, double> calculateTranslation(const Viewer::CGeometry2D & aGeometry,
@@ -87,21 +92,20 @@ namespace SingleLayerOptics
         }
     }   // namespace Helper
 
-    Viewer::CGeometry2D buildViewerSlat(const VenetianGeometry & t_Geometry,
+    Viewer::CGeometry2D buildViewerSlat(const VenetianGeometry & venetian,
                                         size_t t_NumOfSegments,
                                         SegmentsDirection t_Direction)
     {
-        Viewer::CGeometry2D aGeometry;
-        auto venetian{adjustSlatTiltAngle(t_Geometry)};
         double radius = std::abs(venetian.CurvatureRadius);
 
+        Viewer::CGeometry2D aGeometry;
         if(radius > (venetian.SlatWidth / 2))
         {
-            Helper::createPolarSegments(aGeometry, venetian, t_NumOfSegments, t_Direction, radius);
+            aGeometry = Helper::createPolarSegments(venetian, t_NumOfSegments, t_Direction, radius);
         }
         else if(radius == 0)
         {
-            Helper::createCartesianSegments(aGeometry, venetian, t_NumOfSegments, t_Direction);
+            aGeometry = Helper::createCartesianSegments(venetian, t_NumOfSegments, t_Direction);
         }
         else
         {
