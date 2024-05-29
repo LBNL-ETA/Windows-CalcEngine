@@ -33,12 +33,14 @@ namespace SingleLayerOptics
                                                 size_t t_NumOfSegments,
                                                 SegmentsDirection t_Direction)
         {
-            auto [theta1, theta2]{calculateThetaBounds(venetian, calculateTheta(venetian, std::abs(venetian.CurvatureRadius)))};
+            auto [theta1, theta2]{calculateThetaBounds(
+              venetian, calculateTheta(venetian, std::abs(venetian.CurvatureRadius)))};
 
             double dTheta = (theta2 - theta1) / t_NumOfSegments;
             double startTheta = t_Direction == SegmentsDirection::Positive ? theta2 : theta1;
 
-            auto startPoint{CPoint2D::createPointFromPolarCoordinates(startTheta, std::abs(venetian.CurvatureRadius))};
+            auto startPoint{CPoint2D::createPointFromPolarCoordinates(
+              startTheta, std::abs(venetian.CurvatureRadius))};
 
             Viewer::CGeometry2D aGeometry;
             for(size_t i = 1u; i <= t_NumOfSegments; ++i)
@@ -46,7 +48,8 @@ namespace SingleLayerOptics
                 double nextTheta = t_Direction == SegmentsDirection::Positive
                                      ? startTheta - dTheta * i
                                      : startTheta + dTheta * i;
-                const auto endPoint{CPoint2D::createPointFromPolarCoordinates(nextTheta, std::abs(venetian.CurvatureRadius))};
+                const auto endPoint{CPoint2D::createPointFromPolarCoordinates(
+                  nextTheta, std::abs(venetian.CurvatureRadius))};
                 aGeometry.appendSegment({startPoint, endPoint});
                 startPoint = endPoint;
             }
@@ -54,28 +57,50 @@ namespace SingleLayerOptics
             return aGeometry;
         }
 
-        Viewer::CGeometry2D createCartesianSegments(const VenetianGeometry & venetian,
+        double getNextRadius(size_t segmentIndex,
+                             double dWidth,
+                             double slatWidth,
+                             SegmentsDirection direction)
+        {
+            return direction == SegmentsDirection::Positive ? segmentIndex * dWidth
+                                                            : slatWidth - segmentIndex * dWidth;
+        }
+
+        CPoint2D initializeStartPoint(const VenetianGeometry & venetian,
+                                      SegmentsDirection direction,
+                                      double dWidth,
+                                      size_t numSegments)
+        {
+            return CPoint2D::createPointFromPolarCoordinates(
+              venetian.SlatTiltAngle,
+              direction == SegmentsDirection::Positive ? 0 : dWidth * numSegments);
+        }
+
+        CViewSegment2D createSegment(const VenetianGeometry &venetian,
+                                     size_t segmentIndex,
+                                     const CPoint2D &startPoint,
+                                     double dWidth,
+                                     SegmentsDirection t_Direction)
+        {
+            const auto endPoint = CPoint2D::createPointFromPolarCoordinates(
+                venetian.SlatTiltAngle,
+                getNextRadius(segmentIndex, dWidth, venetian.SlatWidth, t_Direction));
+            return {startPoint, endPoint};
+        }
+
+         Viewer::CGeometry2D createCartesianSegments(const VenetianGeometry &venetian,
                                                     size_t t_NumOfSegments,
                                                     SegmentsDirection t_Direction)
         {
-            double dWidth = venetian.SlatWidth / t_NumOfSegments;
-            double startRadius =
-              t_Direction == SegmentsDirection::Positive ? 0 : dWidth * t_NumOfSegments;
+            double dWidth = venetian.SlatWidth / static_cast<double>(t_NumOfSegments);
+            CPoint2D startPoint = initializeStartPoint(venetian, t_Direction, dWidth, t_NumOfSegments);
 
-            auto startPoint{
-              CPoint2D::createPointFromPolarCoordinates(venetian.SlatTiltAngle, startRadius)};
-
-            CGeometry2D aGeometry;
+            Viewer::CGeometry2D aGeometry;
             for(size_t i = 1; i <= t_NumOfSegments; ++i)
             {
-                double nextRadius = t_Direction == SegmentsDirection::Positive
-                                      ? i * dWidth
-                                      : venetian.SlatWidth - i * dWidth;
-                const auto endPoint{
-                  CPoint2D::createPointFromPolarCoordinates(venetian.SlatTiltAngle, nextRadius)};
-                CViewSegment2D aSegment{startPoint, endPoint};
-                aGeometry.appendSegment(aSegment);
-                startPoint = endPoint;
+                auto segment = createSegment(venetian, i, startPoint, dWidth, t_Direction);
+                aGeometry.appendSegment(createSegment(venetian, i, startPoint, dWidth, t_Direction));
+                startPoint = segment.endPoint();
             }
 
             return aGeometry;
@@ -91,7 +116,7 @@ namespace SingleLayerOptics
         }
     }   // namespace Helper
 
-    Viewer::CGeometry2D buildViewerSlat(const VenetianGeometry &venetian,
+    Viewer::CGeometry2D buildViewerSlat(const VenetianGeometry & venetian,
                                         size_t t_NumOfSegments,
                                         SegmentsDirection t_Direction)
     {
@@ -118,14 +143,17 @@ namespace SingleLayerOptics
         // clang-format on
 
         Viewer::CGeometry2D aGeometry;
-        for (const auto& [condition, func] : conditionFunctionVector) {
-            if (condition(venetian)) {
+        for(const auto & [condition, func] : conditionFunctionVector)
+        {
+            if(condition(venetian))
+            {
                 aGeometry = func(venetian, t_NumOfSegments, t_Direction);
                 break;
             }
         }
 
-        if (aGeometry.segments().empty()) {
+        if(aGeometry.segments().empty())
+        {
             throw std::runtime_error("Cannot create slat.");
         }
 
