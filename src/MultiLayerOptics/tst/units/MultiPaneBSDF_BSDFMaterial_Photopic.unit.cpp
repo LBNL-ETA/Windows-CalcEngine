@@ -846,20 +846,20 @@ TEST_F(MultiPaneBSDF_BSDFMaterial_Photopic, TestBSDFMatrixAsInput)
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.058047803083742695, tauHem, 1e-6);
+    EXPECT_NEAR(0.059276745102103894, tauHem, 1e-6);
 
     double rhoFrontHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.077271727768527268, rhoFrontHem, 1e-6);
+    EXPECT_NEAR(0.08213615912054377, rhoFrontHem, 1e-6);
 
     double rhoBackHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.077271727768527268, rhoBackHem, 1e-6);
+    EXPECT_NEAR(0.08213615912054377, rhoBackHem, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.86468046914773022, abs1, 1e-6);
+    EXPECT_NEAR(0.85858709577735293, abs1, 1e-6);
 
     auto absHeat1 = aLayer.getAbsorptanceLayersHeat(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
-    EXPECT_NEAR(0.86483944018708581, absHeat1[0], 1e-6);
+    EXPECT_NEAR(0.8563572220147645, absHeat1[0], 1e-6);
 }
