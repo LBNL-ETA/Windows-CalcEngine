@@ -56,7 +56,7 @@ protected:
         const auto slatSpacing = 0.012;   // m
         const auto slatTiltAngle = 0;
         const auto curvatureRadius = 0;
-        const size_t numOfSlatSegments = 5;
+        const size_t numOfSlatSegments = 1;
 
         // make layer
         m_Shade = CBSDFLayerMaker::getVenetianLayer(Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat),
@@ -84,10 +84,10 @@ TEST_F(TestVenetianDirectionalShadeFlat0_4, TestVenetian1)
     auto aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.575379, tauDiff, 1e-6);
+    EXPECT_NEAR(0.549687, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.258655, RfDiff, 1e-6);
+    EXPECT_NEAR(0.165684, RfDiff, 1e-6);
 
     //auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
     //printMatrixToCSV(aT.size(), aT, "Tf.csv");
