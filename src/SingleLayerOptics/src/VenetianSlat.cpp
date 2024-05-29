@@ -11,20 +11,14 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    Viewer::CGeometry2D buildViewerSlat(const FenestrationCommon::VenetianGeometry &t_Geometry,
-                                        size_t t_NumOfSegments,
-                                        SegmentsDirection t_Direction)
+    namespace Helper
     {
-        Viewer::CGeometry2D aGeometry;
-
-        auto venetian{FenestrationCommon::adjustSlatTiltAngle(t_Geometry)};
-
-        double radius = std::abs(venetian.CurvatureRadius);
-        double translateX = 0;
-        double translateY = 0;
-
-        if(radius > (venetian.SlatWidth / 2))
-        {   // set properties in polar coordinate system
+        void createPolarSegments(Viewer::CGeometry2D & aGeometry,
+                                 const VenetianGeometry & venetian,
+                                 size_t t_NumOfSegments,
+                                 SegmentsDirection t_Direction,
+                                 double radius)
+        {
             using ConstantsData::WCE_PI;
 
             double theta = 2 * std::asin(venetian.SlatWidth / (2 * radius));
@@ -44,71 +38,37 @@ namespace SingleLayerOptics
             }
 
             double dTheta = (theta2 - theta1) / t_NumOfSegments;
-            double startTheta = 0;
-
-            if(t_Direction == SegmentsDirection::Positive)
-            {
-                startTheta = theta2;
-            }
-            else if(t_Direction == SegmentsDirection::Negative)
-            {
-                startTheta = theta1;
-            }
-            else
-            {
-                assert("Incorrect selection for slat segments directions.");
-            }
-
+            double startTheta = t_Direction == SegmentsDirection::Positive ? theta2 : theta1;
 
             auto startPoint{CPoint2D::createPointFromPolarCoordinates(startTheta, radius)};
             for(size_t i = 1; i <= t_NumOfSegments; ++i)
             {
-                double nextTheta = 0;
-                if(t_Direction == SegmentsDirection::Positive)
-                {
-                    nextTheta = startTheta - dTheta * i;
-                }
-                else if(t_Direction == SegmentsDirection::Negative)
-                {
-                    nextTheta = startTheta + dTheta * i;
-                }
-
+                double nextTheta = t_Direction == SegmentsDirection::Positive
+                                     ? startTheta - dTheta * i
+                                     : startTheta + dTheta * i;
                 const auto endPoint{CPoint2D::createPointFromPolarCoordinates(nextTheta, radius)};
                 CViewSegment2D aSegment{startPoint, endPoint};
                 aGeometry.appendSegment(aSegment);
                 startPoint = endPoint;
             }
         }
-        else if(radius == 0)
+
+        void createCartesianSegments(Viewer::CGeometry2D & aGeometry,
+                                     const VenetianGeometry & venetian,
+                                     size_t t_NumOfSegments,
+                                     SegmentsDirection t_Direction)
         {
             double dWidth = venetian.SlatWidth / t_NumOfSegments;
-            double startRadius = 0;
-            if(t_Direction == SegmentsDirection::Positive)
-            {
-                startRadius = 0;
-            }
-            else if(t_Direction == SegmentsDirection::Negative)
-            {
-                startRadius = dWidth * t_NumOfSegments;
-            }
-            else
-            {
-                assert("Incorrect selection for slat segments directions.");
-            }
+            double startRadius =
+              t_Direction == SegmentsDirection::Positive ? 0 : dWidth * t_NumOfSegments;
 
             auto startPoint{
               CPoint2D::createPointFromPolarCoordinates(venetian.SlatTiltAngle, startRadius)};
             for(size_t i = 1; i <= t_NumOfSegments; ++i)
             {
-                double nextRadius = 0;
-                if(t_Direction == SegmentsDirection::Positive)
-                {
-                    nextRadius = i * dWidth;
-                }
-                else if(t_Direction == SegmentsDirection::Negative)
-                {
-                    nextRadius = venetian.SlatWidth - i * dWidth;
-                }
+                double nextRadius = t_Direction == SegmentsDirection::Positive
+                                      ? i * dWidth
+                                      : venetian.SlatWidth - i * dWidth;
                 const auto endPoint{
                   CPoint2D::createPointFromPolarCoordinates(venetian.SlatTiltAngle, nextRadius)};
                 CViewSegment2D aSegment{startPoint, endPoint};
@@ -116,17 +76,39 @@ namespace SingleLayerOptics
                 startPoint = endPoint;
             }
         }
+
+        std::pair<double, double> calculateTranslation(const Viewer::CGeometry2D & aGeometry,
+                                                       SegmentsDirection t_Direction)
+        {
+            const CPoint2D aPoint{t_Direction == SegmentsDirection::Positive
+                                    ? aGeometry.firstPoint()
+                                    : aGeometry.lastPoint()};
+            return {-aPoint.x(), -aPoint.y()};
+        }
+    }   // namespace Helper
+
+    Viewer::CGeometry2D buildViewerSlat(const VenetianGeometry & t_Geometry,
+                                        size_t t_NumOfSegments,
+                                        SegmentsDirection t_Direction)
+    {
+        Viewer::CGeometry2D aGeometry;
+        auto venetian{adjustSlatTiltAngle(t_Geometry)};
+        double radius = std::abs(venetian.CurvatureRadius);
+
+        if(radius > (venetian.SlatWidth / 2))
+        {
+            Helper::createPolarSegments(aGeometry, venetian, t_NumOfSegments, t_Direction, radius);
+        }
+        else if(radius == 0)
+        {
+            Helper::createCartesianSegments(aGeometry, venetian, t_NumOfSegments, t_Direction);
+        }
         else
         {
             throw std::runtime_error("Cannot create slat.");
         }
 
-        const CPoint2D aPoint{t_Direction == SegmentsDirection::Positive ? aGeometry.firstPoint()
-                                                                         : aGeometry.lastPoint()};
-
-        translateX = -aPoint.x();
-        translateY = -aPoint.y();
-
+        auto [translateX, translateY] = Helper::calculateTranslation(aGeometry, t_Direction);
         aGeometry = aGeometry.Translate(translateX, translateY + venetian.SlatSpacing);
 
         return aGeometry;
