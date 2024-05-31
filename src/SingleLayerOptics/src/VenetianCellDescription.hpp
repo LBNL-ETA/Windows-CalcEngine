@@ -11,8 +11,6 @@
 
 namespace SingleLayerOptics
 {
-    class CVenetianSlat;
-
     class CVenetianCellDescription : public ICellDescription
     {
     public:
@@ -31,6 +29,9 @@ namespace SingleLayerOptics
 
         // view factor of the beam entering the cell with profile angle
         std::vector<Viewer::BeamViewFactor> beamViewFactors(double t_ProfileAngle,
+                                                            FenestrationCommon::Side t_Side);
+
+        std::vector<Viewer::BeamViewFactor> beamViewFactors(const CBeamDirection & t_Direction,
                                                             FenestrationCommon::Side t_Side);
 
         // Direct to direct component of the ray

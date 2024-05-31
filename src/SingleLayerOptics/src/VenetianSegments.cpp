@@ -78,12 +78,11 @@ namespace SingleLayerOptics
           m_Cell,
           t_OutgoingDirection,
           Side::Back,
-          m_Cell->beamViewFactors(-t_OutgoingDirection.profileAngle(), Side::Back));
+          m_Cell->beamViewFactors(t_OutgoingDirection, Side::Back));
 
         double aResult = 0;
 
         // Counting starts from one because this should exclude beam to beam energy.
-        // double totalSegmentsLength = 0;
         for(size_t i = 1; i < radiance.size(); ++i)
         {
             aResult +=
@@ -107,7 +106,7 @@ namespace SingleLayerOptics
           m_Cell,
           t_OutgoingDirection,
           Side::Front,
-          m_Cell->beamViewFactors(t_OutgoingDirection.profileAngle(), Side::Front));
+          m_Cell->beamViewFactors(t_OutgoingDirection, Side::Front));
 
         double aResult = 0;
 
@@ -156,7 +155,7 @@ namespace SingleLayerOptics
           beamVector(cell,
                      t_IncomingDirection,
                      Side::Front,
-                     cell->beamViewFactors(t_IncomingDirection.profileAngle(), Side::Front));
+                     cell->beamViewFactors(t_IncomingDirection, Side::Front));
 
         // Need to calculate irradiances based on current energy state. Need to do reordering
         // according to energy slat numbering

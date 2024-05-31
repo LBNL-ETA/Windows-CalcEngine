@@ -11,25 +11,26 @@ namespace SingleLayerOptics
     namespace Helper
     {
 
-         FenestrationCommon::VenetianGeometry bottomGeometry(const FenestrationCommon::VenetianGeometry & t_Geometry) {
-             auto bottomGeometry{t_Geometry};
-             bottomGeometry.SlatSpacing = 0.0;
-             return bottomGeometry;
-         }
-    }
+        FenestrationCommon::VenetianGeometry
+          bottomGeometry(const FenestrationCommon::VenetianGeometry & t_Geometry)
+        {
+            auto bottomGeometry{t_Geometry};
+            bottomGeometry.SlatSpacing = 0.0;
+            return bottomGeometry;
+        }
+    }   // namespace Helper
 
     CVenetianCellDescription::CVenetianCellDescription(
       const FenestrationCommon::VenetianGeometry & t_Geometry, size_t t_NumOfSlatSegments) :
         m_VenetianGeometry(FenestrationCommon::adjustSlatTiltAngle(t_Geometry)),
         m_NumOfSegments(t_NumOfSlatSegments),
         m_Top(buildViewerSlat(t_Geometry, t_NumOfSlatSegments, SegmentsDirection::Positive)),
-        m_Bottom(buildViewerSlat(Helper::bottomGeometry(t_Geometry), t_NumOfSlatSegments, SegmentsDirection::Negative))
+        m_Bottom(buildViewerSlat(
+          Helper::bottomGeometry(t_Geometry), t_NumOfSlatSegments, SegmentsDirection::Negative))
     {
-        Viewer::CViewSegment2D exteriorSegment(m_Bottom.lastPoint(),
-                                               m_Top.firstPoint());
+        Viewer::CViewSegment2D exteriorSegment(m_Bottom.lastPoint(), m_Top.firstPoint());
 
-        Viewer::CViewSegment2D interiorSegment(m_Top.lastPoint(),
-                                               m_Bottom.firstPoint());
+        Viewer::CViewSegment2D interiorSegment(m_Top.lastPoint(), m_Bottom.firstPoint());
 
         m_Geometry.appendSegment(exteriorSegment);
         m_Geometry.appendGeometry2D(m_Top);
@@ -88,11 +89,20 @@ namespace SingleLayerOptics
         return m_BeamGeometry.beamViewFactors(-t_ProfileAngle, t_Side);
     }
 
+    std::vector<Viewer::BeamViewFactor>
+      CVenetianCellDescription::beamViewFactors(const CBeamDirection & t_Direction,
+                                                FenestrationCommon::Side t_Side)
+    {
+        return beamViewFactors(t_Side == FenestrationCommon::Side::Front
+                                 ? t_Direction.profileAngle()
+                                 : -t_Direction.profileAngle(),
+                               t_Side);
+    }
+
     double CVenetianCellDescription::T_dir_dir(const FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction)
     {
-        const double aProfileAngle = t_Direction.profileAngle();
-        return m_BeamGeometry.directToDirect(-aProfileAngle, t_Side);
+        return m_BeamGeometry.directToDirect(-t_Direction.profileAngle(), t_Side);
     }
 
     double CVenetianCellDescription::R_dir_dir(const FenestrationCommon::Side,
