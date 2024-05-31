@@ -17,30 +17,51 @@ namespace SingleLayerOptics
     // SlatSegments
     ////////////////////////////////////////////////////////////////////
 
-    // Holds mappings for the slats. Used for mapping between view factors and energy matrix.
-    class SlatSegments
+    //! Holds mappings for the slats. Used for mapping between view factors and energy matrix
+    //! calculation. For more information about please refer to the Figure called "Segments of the
+    //! enclosure and their indexes" in the "Venetian Technical Documentation" document.
+    //!
+    //! @numberOfSegments Number of segments in the cell. The number of segments do not include the
+    //! entire enclosure but only the opening for the incoming beam plus one set of slats. If for
+    //! example venetian slat is divided into five segments, this number will be equal to six
+    //! (including that extra segment for the incoming beam).
+    //! @backSideMeshIndex In single slat enclosure the segments are numbered in the clockwise
+    //! direction. In case of single slat is divided into five segments, the total number of
+    //! segments in the enclosure will be equal to twelve (top segments, bottom segments and two
+    //! openings). This vector will contain indexes for the back side of the slat segments. In the
+    //! described this vector will contain the numbers (1, 2, 3, 4, 5).
+    //! @frontSideMeshIndex In single slat enclosure the segments are numbered in the clockwise
+    //! direction. In case of single slat is divided into five segments, the total number of
+    //! segments in the enclosure will be equal to twelve (top segments, bottom segments and two
+    //! openings). This vector will contain indexes for the front side of the slat segments. In
+    //! the described this vector will contain the numbers (11, 10, 9, 8, 7).
+    //! @slatsViewFactorsMatrix View factors matrix is valid for any incoming direction, it depends
+    //! on the geometry and will be calculated only once and stored into slatsViewFactorsMatrix
+    //! field. Please refer to the "Venetian Technical Documentation" document (Chapter called
+    //! Dif-Dif portion) for more information.
+    class SlatSegmentsMesh
     {
     public:
-        explicit SlatSegments(
+        explicit SlatSegmentsMesh(
           CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb);
-        SlatSegments() = default;
+        SlatSegmentsMesh() = default;
         size_t numberOfSegments{0u};
-        std::vector<size_t> b;
-        std::vector<size_t> f;
-        FenestrationCommon::SquareMatrix slatsEnergy;
+        std::vector<size_t> backSideMeshIndex;
+        std::vector<size_t> frontSideMeshIndex;
+        FenestrationCommon::SquareMatrix slatsViewFactorsMatrix;
 
     private:
         std::vector<size_t> formFrontSegmentsNumbering(size_t numberOfSegments);
         std::vector<size_t> formBackSegmentsNumbering(size_t numberOfSegments);
 
-        // Energy matrix is valid for any incoming direction. Depends on geometry and will be
-        // calculated only once and stored into m_Energy field
+        //! View factors matrix is valid for any incoming direction, it depends on the geometry and
+        //! will be calculated only once and stored into slatsViewFactorsMatrix field
         FenestrationCommon::SquareMatrix
-          formEnergyMatrix(FenestrationCommon::SquareMatrix && viewFactors,
-                           double Tf,
-                           double Tb,
-                           double Rf,
-                           double Rb);
+          formViewFactorsMatrix(FenestrationCommon::SquareMatrix && viewFactors,
+                                double Tf,
+                                double Tb,
+                                double Rf,
+                                double Rb);
     };
 
     // Keeping intermediate results for backward and forward directions.
@@ -67,10 +88,11 @@ namespace SingleLayerOptics
         double R_dif_dif();
 
     private:
-        //! Keeps information about beam view factor and percentage view. Incoming beam value is normalized to one.
+        //! Keeps information about beam view factor and percentage view. Incoming beam value is
+        //! normalized to one.
         //! @viewFactor Fraction of the incoming beam that slat is being hit with
-        //! @percentViewed Incoming beam will not always fully hit the slat. This is the percentage of the slat that
-        //! actually is being hit by the beam.
+        //! @percentViewed Incoming beam will not always fully hit the slat. This is the percentage
+        //! of the slat that actually is being hit by the beam.
         struct BeamSegmentView
         {
             BeamSegmentView() : viewFactor(0), percentViewed(0)
@@ -82,20 +104,20 @@ namespace SingleLayerOptics
         // Irradiances for given incoming direction
         std::vector<SegmentIrradiance>
           slatIrradiances(const CBeamDirection & t_IncomingDirection,
-                          const SlatSegments & slats,
+                          const SlatSegmentsMesh & slats,
                           const FenestrationCommon::SquareMatrix & energy);
 
         // Radiances for given incoming direction
         std::vector<double> slatRadiances(const CBeamDirection & t_IncomingDirection,
-                                          const SlatSegments & slats,
+                                          const SlatSegmentsMesh & slats,
                                           const FenestrationCommon::SquareMatrix & energy);
 
         // Creates diffuse to diffuse std::vector. Right hand side of the equation
-        std::vector<double> diffuseVector(const SlatSegments & slats,
+        std::vector<double> diffuseVector(const SlatSegmentsMesh & slats,
                                           FenestrationCommon::SquareMatrix && viewFactors);
 
-        //! Create beam view factors for given incoming direction and side. For details on what beam view factors are
-        //! see BeamSegmentView structure.
+        //! Create beam view factors for given incoming direction and side. For details on what beam
+        //! view factors are see BeamSegmentView structure.
         //! @param t_Direction Incoming direction of the beam.
         //! @param t_Side Side of the cell.
         //! @return Vector of beam view factors for each segment.
@@ -108,7 +130,7 @@ namespace SingleLayerOptics
         double m_Rf;
         double m_Rb;
 
-        SlatSegments m_SlatSegments;
+        SlatSegmentsMesh m_SlatSegments;
 
         std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
         std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
@@ -144,4 +166,4 @@ namespace SingleLayerOptics
 
         std::map<FenestrationCommon::Side, CVenetianCellEnergy> m_CellEnergy;
     };
-}
+}   // namespace SingleLayerOptics

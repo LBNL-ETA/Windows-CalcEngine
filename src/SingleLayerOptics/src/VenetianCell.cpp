@@ -287,15 +287,15 @@ namespace SingleLayerOptics
         return m_Energy.getCell(t_Side).R_dif_dif();
     }
 
-    SlatSegments::SlatSegments(
+    SlatSegmentsMesh::SlatSegmentsMesh(
       CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb) :
         numberOfSegments(static_cast<size_t>(cell.numberOfSegments() / 2)),
-        b(formBackSegmentsNumbering(numberOfSegments)),
-        f(formFrontSegmentsNumbering(numberOfSegments)),
-        slatsEnergy(formEnergyMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
+        backSideMeshIndex(formBackSegmentsNumbering(numberOfSegments)),
+        frontSideMeshIndex(formFrontSegmentsNumbering(numberOfSegments)),
+        slatsViewFactorsMatrix(formViewFactorsMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
     {}
 
-    std::vector<size_t> SlatSegments::formFrontSegmentsNumbering(size_t nSegments)
+    std::vector<size_t> SlatSegmentsMesh::formFrontSegmentsNumbering(size_t nSegments)
     {
         std::vector<size_t> frontSegments;
         frontSegments.reserve(nSegments);
@@ -306,7 +306,7 @@ namespace SingleLayerOptics
         return frontSegments;
     }
 
-    std::vector<size_t> SlatSegments::formBackSegmentsNumbering(size_t nSegments)
+    std::vector<size_t> SlatSegmentsMesh::formBackSegmentsNumbering(size_t nSegments)
     {
         std::vector<size_t> backSegments;
         backSegments.reserve(nSegments);
