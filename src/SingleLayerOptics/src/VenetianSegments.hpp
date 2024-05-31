@@ -1,5 +1,10 @@
 #pragma once
 
+namespace Viewer
+{
+    struct BeamViewFactor;
+}
+
 namespace SingleLayerOptics
 {
     class CVenetianCellDescription;
@@ -66,13 +71,14 @@ namespace SingleLayerOptics
 
         //! Create beam view factors for given incoming direction and side. For details on what beam
         //! view factors are see BeamSegmentView structure.
-        //! @param t_Direction Incoming direction of the beam.
+        //! @param t_IncomingDirection Incoming direction of the beam.
         //! @param t_Side Side of the cell.
         //! @return Vector of beam view factors for each segment.
         std::vector<BeamSegmentView>
           beamVector(const std::shared_ptr<CVenetianCellDescription> & cell,
-                     const CBeamDirection & t_Direction,
-                     FenestrationCommon::Side t_Side);
+                     const CBeamDirection & t_IncomingDirection,
+                     FenestrationCommon::Side t_Side,
+                     const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors);
 
         size_t numberOfSegments{0u};
         std::vector<size_t> backSideMeshIndex;
