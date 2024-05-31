@@ -31,8 +31,8 @@ namespace SingleLayerOptics
         std::vector<Viewer::BeamViewFactor> beamViewFactors(double t_ProfileAngle,
                                                             FenestrationCommon::Side t_Side);
 
-        std::vector<Viewer::BeamViewFactor> beamViewFactors(const CBeamDirection & t_Direction,
-                                                            FenestrationCommon::Side t_Side);
+        std::vector<Viewer::BeamViewFactor> beamViewFactors(FenestrationCommon::Side t_Side,
+                                                            const CBeamDirection & t_Direction);
 
         // Direct to direct component of the ray
         double T_dir_dir(FenestrationCommon::Side t_Side,

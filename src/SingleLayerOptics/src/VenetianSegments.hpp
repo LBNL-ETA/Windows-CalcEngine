@@ -75,10 +75,9 @@ namespace SingleLayerOptics
         //! @param t_Side Side of the cell.
         //! @return Vector of beam view factors for each segment.
         std::vector<BeamSegmentView>
-          beamVector(const std::shared_ptr<CVenetianCellDescription> & cell,
-                     const CBeamDirection & t_IncomingDirection,
-                     FenestrationCommon::Side t_Side,
-                     const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors);
+          beamVector(FenestrationCommon::Side t_Side,
+                     const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
+                     double T_dir_dir);
 
         size_t numberOfSegments{0u};
         std::vector<size_t> backSideMeshIndex;

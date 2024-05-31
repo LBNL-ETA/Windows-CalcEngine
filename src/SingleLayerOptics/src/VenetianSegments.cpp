@@ -74,11 +74,10 @@ namespace SingleLayerOptics
     {
         const auto radiance{slatRadiances(t_IncomingDirection, m_SlatSegmentsMesh)};
 
-        std::vector<BeamSegmentView> BVF = m_SlatSegmentsMesh.beamVector(
-          m_Cell,
-          t_OutgoingDirection,
-          Side::Back,
-          m_Cell->beamViewFactors(t_OutgoingDirection, Side::Back));
+        std::vector<BeamSegmentView> BVF =
+          m_SlatSegmentsMesh.beamVector(Side::Back,
+                                        m_Cell->beamViewFactors(Side::Back, t_OutgoingDirection),
+                                        m_Cell->T_dir_dir(Side::Back, t_OutgoingDirection));
 
         double aResult = 0;
 
@@ -102,11 +101,10 @@ namespace SingleLayerOptics
     {
         const auto radiance = slatRadiances(t_IncomingDirection, m_SlatSegmentsMesh);
 
-        std::vector<BeamSegmentView> BVF = m_SlatSegmentsMesh.beamVector(
-          m_Cell,
-          t_OutgoingDirection,
-          Side::Front,
-          m_Cell->beamViewFactors(t_OutgoingDirection, Side::Front));
+        std::vector<BeamSegmentView> BVF =
+          m_SlatSegmentsMesh.beamVector(Side::Front,
+                                        m_Cell->beamViewFactors(Side::Front, t_OutgoingDirection),
+                                        m_Cell->T_dir_dir(Side::Front, t_OutgoingDirection));
 
         double aResult = 0;
 
@@ -152,10 +150,9 @@ namespace SingleLayerOptics
 
         // Beam view factors with percentage view
         std::vector<BeamSegmentView> BVF =
-          beamVector(cell,
-                     t_IncomingDirection,
-                     Side::Front,
-                     cell->beamViewFactors(t_IncomingDirection, Side::Front));
+          beamVector(Side::Front,
+                     cell->beamViewFactors(Side::Front, t_IncomingDirection),
+                     cell->T_dir_dir(Side::Front, t_IncomingDirection));
 
         // Need to calculate irradiances based on current energy state. Need to do reordering
         // according to energy slat numbering
@@ -202,10 +199,9 @@ namespace SingleLayerOptics
     }
 
     std::vector<BeamSegmentView>
-      SlatSegmentsMesh::beamVector(const std::shared_ptr<CVenetianCellDescription> & cell,
-                                   const CBeamDirection & t_IncomingDirection,
-                                   const Side t_Side,
-                                   const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors)
+      SlatSegmentsMesh::beamVector(const Side t_Side,
+                                   const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
+                                   const double T_dir_dir)
     {
         std::vector<BeamSegmentView> B(2 * numberOfSegments);
         size_t index = 0;
@@ -229,7 +225,7 @@ namespace SingleLayerOptics
 
         const std::map<Side, size_t> sideIndex{{Side::Front, numberOfSegments}, {Side::Back, 0}};
 
-        B[sideIndex.at(t_Side)].viewFactor = cell->T_dir_dir(t_Side, t_IncomingDirection);
+        B[sideIndex.at(t_Side)].viewFactor = T_dir_dir;
 
         return B;
     }

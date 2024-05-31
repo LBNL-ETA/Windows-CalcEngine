@@ -90,8 +90,8 @@ namespace SingleLayerOptics
     }
 
     std::vector<Viewer::BeamViewFactor>
-      CVenetianCellDescription::beamViewFactors(const CBeamDirection & t_Direction,
-                                                FenestrationCommon::Side t_Side)
+      CVenetianCellDescription::beamViewFactors(FenestrationCommon::Side t_Side,
+                                                const CBeamDirection & t_Direction)
     {
         return beamViewFactors(t_Side == FenestrationCommon::Side::Front
                                  ? t_Direction.profileAngle()
