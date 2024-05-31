@@ -136,8 +136,7 @@ namespace SingleLayerOptics
 
         auto B{diffuseVector(m_SlatSegments, m_Cell->viewFactors())};
 
-        CLinearSolver aSolver;
-        std::vector<double> aSolution = aSolver.solveSystem(m_SlatSegments.slatsEnergy, B);
+        std::vector<double> aSolution = solveSystem(m_SlatSegments.slatsEnergy, B);
 
         return aSolution[numSeg - 1];
     }
@@ -146,8 +145,7 @@ namespace SingleLayerOptics
     {
         auto B{diffuseVector(m_SlatSegments, m_Cell->viewFactors())};
 
-        CLinearSolver aSolver;
-        std::vector<double> aSolution = aSolver.solveSystem(m_SlatSegments.slatsEnergy, B);
+        std::vector<double> aSolution = solveSystem(m_SlatSegments.slatsEnergy, B);
 
         return aSolution[m_SlatSegments.numberOfSegments];
     }
@@ -188,8 +186,7 @@ namespace SingleLayerOptics
             B.push_back(-BVF[index].viewFactor);
         }
 
-        CLinearSolver aSolver;
-        const auto aSolution{aSolver.solveSystem(energy, B)};
+        const auto aSolution{solveSystem(energy, B)};
 
         for(size_t i = 0; i <= numSeg; ++i)
         {
@@ -379,11 +376,9 @@ namespace SingleLayerOptics
         const auto profileAngle{t_Side == Side::Front ? t_Direction.profileAngle()
                                                       : -t_Direction.profileAngle()};
 
-        std::vector<Viewer::BeamViewFactor> beamVF = m_Cell->beamViewFactors(profileAngle, t_Side);
-
         std::vector<BeamSegmentView> B(2 * numSeg);
         size_t index = 0;
-        for(Viewer::BeamViewFactor & aVF : beamVF)
+        for(const Viewer::BeamViewFactor & aVF : m_Cell->beamViewFactors(profileAngle, t_Side))
         {
             if(aVF.enclosureIndex == 0)
             {   // Top
@@ -401,7 +396,7 @@ namespace SingleLayerOptics
             B[index].percentViewed = aVF.percentHit;
         }
 
-        std::map<Side, size_t> sideIndex{{Side::Front, numSeg}, {Side::Back, 0}};
+        const std::map<Side, size_t> sideIndex{{Side::Front, numSeg}, {Side::Back, 0}};
 
         B[sideIndex.at(t_Side)].viewFactor = m_Cell->T_dir_dir(t_Side, t_Direction);
 
