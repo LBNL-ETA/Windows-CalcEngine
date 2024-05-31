@@ -13,6 +13,19 @@ namespace SingleLayerOptics
         double E_b{0.0};
     };
 
+    //! Keeps information about beam view factor and percentage view. Incoming beam value is
+    //! normalized to one.
+    //! @viewFactor Fraction of the incoming beam that slat is being hit with
+    //! @percentViewed Incoming beam will not always fully hit the slat. This is the percentage
+    //! of the slat that actually is being hit by the beam.
+    struct BeamSegmentView
+    {
+        BeamSegmentView() : viewFactor(0), percentViewed(0)
+        {}
+        double viewFactor;
+        double percentViewed;
+    };
+
     ////////////////////////////////////////////////////////////////////
     // SlatSegments
     ////////////////////////////////////////////////////////////////////
@@ -45,6 +58,22 @@ namespace SingleLayerOptics
         explicit SlatSegmentsMesh(
           CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb);
         SlatSegmentsMesh() = default;
+
+        // Irradiances for given incoming direction
+        std::vector<SegmentIrradiance>
+          slatIrradiances(const std::shared_ptr<CVenetianCellDescription> & cell,
+                          const CBeamDirection & t_IncomingDirection);
+
+        //! Create beam view factors for given incoming direction and side. For details on what beam
+        //! view factors are see BeamSegmentView structure.
+        //! @param t_Direction Incoming direction of the beam.
+        //! @param t_Side Side of the cell.
+        //! @return Vector of beam view factors for each segment.
+        std::vector<BeamSegmentView>
+          beamVector(const std::shared_ptr<CVenetianCellDescription> & cell,
+                     const CBeamDirection & t_Direction,
+                     FenestrationCommon::Side t_Side);
+
         size_t numberOfSegments{0u};
         std::vector<size_t> backSideMeshIndex;
         std::vector<size_t> frontSideMeshIndex;
@@ -88,41 +117,13 @@ namespace SingleLayerOptics
         double R_dif_dif();
 
     private:
-        //! Keeps information about beam view factor and percentage view. Incoming beam value is
-        //! normalized to one.
-        //! @viewFactor Fraction of the incoming beam that slat is being hit with
-        //! @percentViewed Incoming beam will not always fully hit the slat. This is the percentage
-        //! of the slat that actually is being hit by the beam.
-        struct BeamSegmentView
-        {
-            BeamSegmentView() : viewFactor(0), percentViewed(0)
-            {}
-            double viewFactor;
-            double percentViewed;
-        };
-
-        // Irradiances for given incoming direction
-        std::vector<SegmentIrradiance>
-          slatIrradiances(const CBeamDirection & t_IncomingDirection,
-                          const SlatSegmentsMesh & slats,
-                          const FenestrationCommon::SquareMatrix & energy);
-
         // Radiances for given incoming direction
         std::vector<double> slatRadiances(const CBeamDirection & t_IncomingDirection,
-                                          const SlatSegmentsMesh & slats,
-                                          const FenestrationCommon::SquareMatrix & energy);
+                                          const SlatSegmentsMesh & slats);
 
         // Creates diffuse to diffuse std::vector. Right hand side of the equation
         std::vector<double> diffuseVector(const SlatSegmentsMesh & slats,
                                           FenestrationCommon::SquareMatrix && viewFactors);
-
-        //! Create beam view factors for given incoming direction and side. For details on what beam
-        //! view factors are see BeamSegmentView structure.
-        //! @param t_Direction Incoming direction of the beam.
-        //! @param t_Side Side of the cell.
-        //! @return Vector of beam view factors for each segment.
-        std::vector<BeamSegmentView> beamVector(const CBeamDirection & t_Direction,
-                                                FenestrationCommon::Side t_Side);
 
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         double m_Tf;
@@ -130,7 +131,7 @@ namespace SingleLayerOptics
         double m_Rf;
         double m_Rb;
 
-        SlatSegmentsMesh m_SlatSegments;
+        SlatSegmentsMesh m_SlatSegmentsMesh;
 
         std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
         std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
