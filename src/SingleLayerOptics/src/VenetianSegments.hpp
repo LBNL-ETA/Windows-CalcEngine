@@ -69,6 +69,12 @@ namespace SingleLayerOptics
           slatIrradiances(const std::shared_ptr<CVenetianCellDescription> & cell,
                           const CBeamDirection & t_IncomingDirection);
 
+
+
+        // Creates diffuse to diffuse std::vector. Right hand side of the equation
+        std::vector<double>
+          diffuseRadiosities(const FenestrationCommon::SquareMatrix & viewFactors);
+
         //! Create beam view factors for given incoming direction and side. For details on what beam
         //! view factors are see BeamSegmentView structure.
         //! @param t_IncomingDirection Incoming direction of the beam.
@@ -91,7 +97,7 @@ namespace SingleLayerOptics
         //! View factors matrix is valid for any incoming direction, it depends on the geometry and
         //! will be calculated only once and stored into slatsViewFactorsMatrix field
         FenestrationCommon::SquareMatrix
-          formViewFactorsMatrix(FenestrationCommon::SquareMatrix && viewFactors,
+          formIrradianceMatrix(FenestrationCommon::SquareMatrix && viewFactors,
                                 double Tf,
                                 double Tb,
                                 double Rf,
@@ -126,10 +132,6 @@ namespace SingleLayerOptics
         std::vector<double> slatRadiances(const CBeamDirection & t_IncomingDirection,
                                           const SlatSegmentsMesh & slats);
 
-        // Creates diffuse to diffuse std::vector. Right hand side of the equation
-        std::vector<double> diffuseVector(const SlatSegmentsMesh & slats,
-                                          FenestrationCommon::SquareMatrix && viewFactors);
-
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         double m_Tf;
         double m_Tb;
@@ -138,7 +140,7 @@ namespace SingleLayerOptics
 
         SlatSegmentsMesh m_SlatSegmentsMesh;
 
-        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
+        std::map<CBeamDirection, std::vector<SegmentIrradiance>> slatIrradiances;
         std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
     };
 

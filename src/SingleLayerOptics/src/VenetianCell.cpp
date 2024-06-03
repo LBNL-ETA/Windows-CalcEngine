@@ -292,7 +292,7 @@ namespace SingleLayerOptics
         numberOfSegments(static_cast<size_t>(cell.numberOfSegments() / 2)),
         backSideMeshIndex(formBackSegmentsNumbering(numberOfSegments)),
         frontSideMeshIndex(formFrontSegmentsNumbering(numberOfSegments)),
-        slatsViewFactorsMatrix(formViewFactorsMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
+        slatsViewFactorsMatrix(formIrradianceMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
     {}
 
     std::vector<size_t> SlatSegmentsMesh::formFrontSegmentsNumbering(size_t nSegments)
