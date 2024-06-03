@@ -285,109 +285,73 @@ namespace SingleLayerOptics
         return aRadiances;
     }
 
-    FenestrationCommon::SquareMatrix SlatSegmentsMesh::formIrradianceMatrix(
-      FenestrationCommon::SquareMatrix && viewFactors, double Tf, double Tb, double Rf, double Rb)
+    FenestrationCommon::SquareMatrix
+      SlatSegmentsMesh::formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
+                                             double Tf,
+                                             double Tb,
+                                             double Rf,
+                                             double Rb)
     {
         size_t numSeg = numberOfSegments;
-
-        // Create energy matrix
         SquareMatrix energy{2 * numSeg};
 
-        // Building upper left side of matrix
+        auto fillUpperLeft = [&](size_t i, size_t j) -> double {
+            if(i != numSeg - 1)
+            {
+                double value = viewFactors(backSideMeshIndex[i + 1], frontSideMeshIndex[j]) * Tf
+                               + viewFactors(frontSideMeshIndex[i], frontSideMeshIndex[j]) * Rf;
+                if(i == j)
+                {
+                    value -= 1;
+                }
+                return value;
+            }
+            return (i == j) ? -1.0 : 0.0;
+        };
+
+        auto fillLowerLeft = [&](size_t i, size_t j) -> double {
+            if(i != numSeg - 1)
+            {
+                return viewFactors(backSideMeshIndex[i + 1], backSideMeshIndex[j]) * Tf
+                       + viewFactors(frontSideMeshIndex[i], backSideMeshIndex[j]) * Rf;
+            }
+            return 0.0;
+        };
+
+        auto fillUpperRight = [&](size_t i, size_t j) -> double {
+            if(i != 0)
+            {
+                return viewFactors(frontSideMeshIndex[i - 1], frontSideMeshIndex[j]) * Tb
+                       + viewFactors(backSideMeshIndex[i], frontSideMeshIndex[j]) * Rb;
+            }
+            return 0.0;
+        };
+
+        auto fillLowerRight = [&](size_t i, size_t j) -> double {
+            if(i != 0)
+            {
+                double value = viewFactors(frontSideMeshIndex[i - 1], backSideMeshIndex[j]) * Tb
+                               + viewFactors(backSideMeshIndex[i], backSideMeshIndex[j]) * Rb;
+                if(i == j)
+                {
+                    value -= 1;
+                }
+                return value;
+            }
+            return (i == j) ? -1.0 : 0.0;
+        };
+
         for(size_t i = 0; i < numSeg; ++i)
         {
             for(size_t j = 0; j < numSeg; ++j)
             {
-                if(i != numSeg - 1)
-                {
-                    double value = viewFactors(backSideMeshIndex[i + 1], frontSideMeshIndex[j]) * Tf
-                                   + viewFactors(frontSideMeshIndex[i], frontSideMeshIndex[j]) * Rf;
-                    if(i == j)
-                    {
-                        value -= 1;
-                    }
-                    energy(j, i) = value;
-                }
-                else
-                {
-                    if(i != j)
-                    {
-                        energy(j, i) = 0;
-                    }
-                    else
-                    {
-                        energy(j, i) = -1;
-                    }
-                }
+                energy(j, i) = fillUpperLeft(i, j);
+                energy(j + numSeg, i) = fillLowerLeft(i, j);
+                energy(j, i + numSeg) = fillUpperRight(i, j);
+                energy(j + numSeg, i + numSeg) = fillLowerRight(i, j);
             }
         }
 
-        // Building lower left side of matrix
-        for(size_t i = 0; i < numSeg; ++i)
-        {
-            for(size_t j = 0; j < numSeg; ++j)
-            {
-                if(i != numSeg - 1)
-                {
-                    const double value =
-                      viewFactors(backSideMeshIndex[i + 1], backSideMeshIndex[j]) * Tf
-                      + viewFactors(frontSideMeshIndex[i], backSideMeshIndex[j]) * Rf;
-                    energy(j + numSeg, i) = value;
-                }
-                else
-                {
-                    energy(j + numSeg, i) = 0;
-                }
-            }
-        }
-
-        // Building upper right side of matrix
-        for(size_t i = 0; i < numSeg; ++i)
-        {
-            for(size_t j = 0; j < numSeg; ++j)
-            {
-                if(i != 0)
-                {
-                    const double value =
-                      viewFactors(frontSideMeshIndex[i - 1], frontSideMeshIndex[j]) * Tb
-                      + viewFactors(backSideMeshIndex[i], frontSideMeshIndex[j]) * Rb;
-                    energy(j, i + numSeg) = value;
-                }
-                else
-                {
-                    energy(j, i + numSeg) = 0;
-                }
-            }
-        }
-
-        // Building lower right side of matrix
-        for(size_t i = 0; i < numSeg; ++i)
-        {
-            for(size_t j = 0; j < numSeg; ++j)
-            {
-                if(i != 0)
-                {
-                    double value = viewFactors(frontSideMeshIndex[i - 1], backSideMeshIndex[j]) * Tb
-                                   + viewFactors(backSideMeshIndex[i], backSideMeshIndex[j]) * Rb;
-                    if(i == j)
-                    {
-                        value -= 1;
-                    }
-                    energy(j + numSeg, i + numSeg) = value;
-                }
-                else
-                {
-                    if(i != j)
-                    {
-                        energy(j + numSeg, i + numSeg) = 0;
-                    }
-                    else
-                    {
-                        energy(j + numSeg, i + numSeg) = -1;
-                    }
-                }
-            }
-        }
         return energy;
     }
 

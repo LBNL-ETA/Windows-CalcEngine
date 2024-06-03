@@ -97,7 +97,7 @@ namespace SingleLayerOptics
         //! View factors matrix is valid for any incoming direction, it depends on the geometry and
         //! will be calculated only once and stored into slatsViewFactorsMatrix field
         FenestrationCommon::SquareMatrix
-          formIrradianceMatrix(FenestrationCommon::SquareMatrix && viewFactors,
+          formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
                                 double Tf,
                                 double Tb,
                                 double Rf,
