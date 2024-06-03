@@ -110,6 +110,14 @@ namespace SingleLayerOptics
                       const SlatSegmentsMesh & mesh,
                       const CBeamDirection & t_IncomingDirection);
 
+    // Radiances for given incoming direction
+    std::vector<double> slatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
+                                      const SlatSegmentsMesh & slats,
+                                      double Tf,
+                                      double Rf,
+                                      double Tb,
+                                      double Rb);
+
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
     {
@@ -134,11 +142,6 @@ namespace SingleLayerOptics
         double R_dif_dif();
 
     private:
-        // Radiances for given incoming direction
-        std::vector<double> slatRadiances(const CBeamDirection & t_IncomingDirection,
-                                          const std::vector<SegmentIrradiance> & slatIrradiances,
-                                          const SlatSegmentsMesh & slats);
-
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         double m_Tf;
         double m_Tb;

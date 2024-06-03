@@ -80,8 +80,18 @@ namespace SingleLayerOptics
             m_SlatIrradiances[t_IncomingDirection] = irradiance;
         }
 
-        const auto radiance{slatRadiances(
-          t_IncomingDirection, m_SlatIrradiances.at(t_IncomingDirection), m_SlatSegmentsMesh)};
+        if(!m_SlatRadiances.count(t_IncomingDirection))
+        {
+            const auto radiance{slatRadiances(m_SlatIrradiances.at(t_IncomingDirection),
+                                              m_SlatSegmentsMesh,
+                                              m_Tf,
+                                              m_Rf,
+                                              m_Tb,
+                                              m_Rb)};
+            m_SlatRadiances[t_IncomingDirection] = radiance;
+        }
+
+        const auto & radiance = m_SlatRadiances.at(t_IncomingDirection);
 
         std::vector<BeamSegmentView> BVF =
           beamVector(Side::Back,
@@ -117,8 +127,18 @@ namespace SingleLayerOptics
             m_SlatIrradiances[t_IncomingDirection] = irradiance;
         }
 
-        const auto radiance = slatRadiances(
-          t_IncomingDirection, m_SlatIrradiances[t_IncomingDirection], m_SlatSegmentsMesh);
+        if(!m_SlatRadiances.count(t_IncomingDirection))
+        {
+            const auto radiance{slatRadiances(m_SlatIrradiances.at(t_IncomingDirection),
+                                              m_SlatSegmentsMesh,
+                                              m_Tf,
+                                              m_Rf,
+                                              m_Tb,
+                                              m_Rb)};
+            m_SlatRadiances[t_IncomingDirection] = radiance;
+        }
+
+        const auto & radiance = m_SlatRadiances[t_IncomingDirection];
 
         std::vector<BeamSegmentView> BVF =
           beamVector(Side::Front,
@@ -278,17 +298,13 @@ namespace SingleLayerOptics
         return B;
     }
 
-    std::vector<double>
-      CVenetianCellEnergy::slatRadiances(const CBeamDirection & t_IncomingDirection,
-                                         const std::vector<SegmentIrradiance> & slatIrradiances,
-                                         const SlatSegmentsMesh & slats)
+    std::vector<double> slatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
+                                      const SlatSegmentsMesh & slats,
+                                      double Tf,
+                                      double Rf,
+                                      double Tb,
+                                      double Rb)
     {
-        if(m_SlatRadiances.count(t_IncomingDirection))
-        {
-            return m_SlatRadiances.at(t_IncomingDirection);
-        }
-
-
         size_t numSlats = slatIrradiances.size();
         std::vector<double> aRadiances(2 * numSlats - 2);
         for(size_t i = 0; i < numSlats; ++i)
@@ -304,13 +320,11 @@ namespace SingleLayerOptics
             else
             {
                 aRadiances[slats.surfaceIndexes.backSideMeshIndex[i]] =
-                  m_Tf * slatIrradiances[i].E_f + m_Rb * slatIrradiances[i].E_b;
+                  Tf * slatIrradiances[i].E_f + Rb * slatIrradiances[i].E_b;
                 aRadiances[slats.surfaceIndexes.frontSideMeshIndex[i - 1]] =
-                  m_Tb * slatIrradiances[i].E_b + m_Rf * slatIrradiances[i].E_f;
+                  Tb * slatIrradiances[i].E_b + Rf * slatIrradiances[i].E_f;
             }
         }
-
-        m_SlatRadiances[t_IncomingDirection] = aRadiances;
 
         return aRadiances;
     }
