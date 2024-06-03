@@ -31,6 +31,12 @@ namespace SingleLayerOptics
         double percentViewed;
     };
 
+    struct SegmentIndexes
+    {
+        std::vector<size_t> backSideMeshIndex;
+        std::vector<size_t> frontSideMeshIndex;
+    };
+
     ////////////////////////////////////////////////////////////////////
     // SlatSegments
     ////////////////////////////////////////////////////////////////////
@@ -53,7 +59,7 @@ namespace SingleLayerOptics
     //! segments in the enclosure will be equal to twelve (top segments, bottom segments and two
     //! openings). This vector will contain indexes for the front side of the slat segments. In
     //! the described this vector will contain the numbers (11, 10, 9, 8, 7).
-    //! @slatsViewFactorsMatrix View factors matrix is valid for any incoming direction, it depends
+    //! @slatsRadiancesMatrix Slat radiances matrix is valid for diffuse to diffuse, it depends
     //! on the geometry and will be calculated only once and stored into slatsViewFactorsMatrix
     //! field. Please refer to the "Venetian Technical Documentation" document (Chapter called
     //! Dif-Dif portion) for more information.
@@ -64,31 +70,9 @@ namespace SingleLayerOptics
           CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb);
         SlatSegmentsMesh() = default;
 
-        // Irradiances for given incoming direction
-        std::vector<SegmentIrradiance>
-          slatIrradiances(const std::shared_ptr<CVenetianCellDescription> & cell,
-                          const CBeamDirection & t_IncomingDirection);
-
-
-
-        // Creates diffuse to diffuse std::vector. Right hand side of the equation
-        std::vector<double>
-          diffuseRadiosities(const FenestrationCommon::SquareMatrix & viewFactors);
-
-        //! Create beam view factors for given incoming direction and side. For details on what beam
-        //! view factors are see BeamSegmentView structure.
-        //! @param t_IncomingDirection Incoming direction of the beam.
-        //! @param t_Side Side of the cell.
-        //! @return Vector of beam view factors for each segment.
-        std::vector<BeamSegmentView>
-          beamVector(FenestrationCommon::Side t_Side,
-                     const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
-                     double T_dir_dir);
-
         size_t numberOfSegments{0u};
-        std::vector<size_t> backSideMeshIndex;
-        std::vector<size_t> frontSideMeshIndex;
-        FenestrationCommon::SquareMatrix slatsViewFactorsMatrix;
+        SegmentIndexes surfaceIndexes;
+        FenestrationCommon::SquareMatrix slatsRadiancesMatrix;
 
     private:
         std::vector<size_t> formFrontSegmentsNumbering(size_t numberOfSegments);
@@ -98,11 +82,33 @@ namespace SingleLayerOptics
         //! will be calculated only once and stored into slatsViewFactorsMatrix field
         FenestrationCommon::SquareMatrix
           formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
-                                double Tf,
-                                double Tb,
-                                double Rf,
-                                double Rb);
+                               double Tf,
+                               double Tb,
+                               double Rf,
+                               double Rb);
     };
+
+    // Creates diffuse to diffuse std::vector. Right hand side of the equation
+    std::vector<double> diffuseRadiosities(size_t numberOfSegments,
+                                           const SegmentIndexes & indexes,
+                                           const FenestrationCommon::SquareMatrix & viewFactors);
+
+    //! Create beam view factors for given incoming direction and side. For details on what beam
+    //! view factors are see BeamSegmentView structure.
+    //! @param t_IncomingDirection Incoming direction of the beam.
+    //! @param t_Side Side of the cell.
+    //! @return Vector of beam view factors for each segment.
+    std::vector<BeamSegmentView>
+      beamVector(FenestrationCommon::Side t_Side,
+                 size_t numberOfSegments,
+                 const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
+                 double T_dir_dir);
+
+    // Irradiances for given incoming direction
+    std::vector<SegmentIrradiance>
+      slatIrradiances(const std::shared_ptr<CVenetianCellDescription> & cell,
+                      const SlatSegmentsMesh & mesh,
+                      const CBeamDirection & t_IncomingDirection);
 
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
@@ -130,6 +136,7 @@ namespace SingleLayerOptics
     private:
         // Radiances for given incoming direction
         std::vector<double> slatRadiances(const CBeamDirection & t_IncomingDirection,
+                                          const std::vector<SegmentIrradiance> & slatIrradiances,
                                           const SlatSegmentsMesh & slats);
 
         std::shared_ptr<CVenetianCellDescription> m_Cell;
@@ -140,7 +147,7 @@ namespace SingleLayerOptics
 
         SlatSegmentsMesh m_SlatSegmentsMesh;
 
-        std::map<CBeamDirection, std::vector<SegmentIrradiance>> slatIrradiances;
+        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
         std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
     };
 

@@ -287,14 +287,6 @@ namespace SingleLayerOptics
         return m_Energy.getCell(t_Side).R_dif_dif();
     }
 
-    SlatSegmentsMesh::SlatSegmentsMesh(
-      CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb) :
-        numberOfSegments(static_cast<size_t>(cell.numberOfSegments() / 2)),
-        backSideMeshIndex(formBackSegmentsNumbering(numberOfSegments)),
-        frontSideMeshIndex(formFrontSegmentsNumbering(numberOfSegments)),
-        slatsViewFactorsMatrix(formIrradianceMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
-    {}
-
     std::vector<size_t> SlatSegmentsMesh::formFrontSegmentsNumbering(size_t nSegments)
     {
         std::vector<size_t> frontSegments;
