@@ -20,21 +20,15 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     ///  CVenetianCellEnergy
     ////////////////////////////////////////////////////////////////////////////////////////////
-    CVenetianCellEnergy::CVenetianCellEnergy() : m_Cell(nullptr), m_Tf(0), m_Tb(0), m_Rf(0), m_Rb(0)
+    CVenetianCellEnergy::CVenetianCellEnergy() : m_Cell(nullptr), m_LayerProperties({})
     {}
 
     CVenetianCellEnergy::CVenetianCellEnergy(
       const std::shared_ptr<CVenetianCellDescription> & t_Cell,
-      const double Tf,
-      const double Tb,
-      const double Rf,
-      const double Rb) :
+      const LayerProperties & properties) :
         m_Cell(t_Cell),
-        m_Tf(Tf),
-        m_Tb(Tb),
-        m_Rf(Rf),
-        m_Rb(Rb),
-        m_SlatSegmentsMesh(*m_Cell, m_Tf, m_Tb, m_Rf, m_Rb)
+        m_LayerProperties(properties),
+        m_SlatSegmentsMesh(*m_Cell, properties)
     {}
 
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_Direction)
@@ -84,10 +78,7 @@ namespace SingleLayerOptics
         {
             const auto radiance{slatRadiances(m_SlatIrradiances.at(t_IncomingDirection),
                                               m_SlatSegmentsMesh,
-                                              m_Tf,
-                                              m_Rf,
-                                              m_Tb,
-                                              m_Rb)};
+                                              m_LayerProperties)};
             m_SlatRadiances[t_IncomingDirection] = radiance;
         }
 
@@ -131,10 +122,7 @@ namespace SingleLayerOptics
         {
             const auto radiance{slatRadiances(m_SlatIrradiances.at(t_IncomingDirection),
                                               m_SlatSegmentsMesh,
-                                              m_Tf,
-                                              m_Rf,
-                                              m_Tb,
-                                              m_Rb)};
+                                              m_LayerProperties)};
             m_SlatRadiances[t_IncomingDirection] = radiance;
         }
 
@@ -185,12 +173,34 @@ namespace SingleLayerOptics
     }
 
     SlatSegmentsMesh::SlatSegmentsMesh(
-      CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb) :
+      CVenetianCellDescription & cell, const LayerProperties & properties) :
         numberOfSegments(static_cast<size_t>(cell.numberOfSegments() / 2)),
         surfaceIndexes{formBackSegmentsNumbering(numberOfSegments),
                        formFrontSegmentsNumbering(numberOfSegments)},
-        slatsRadiancesMatrix(formIrradianceMatrix(cell.viewFactors(), Tf, Tb, Rf, Rb))
+        slatsRadiancesMatrix(formIrradianceMatrix(cell.viewFactors(), properties))
     {}
+
+    std::vector<size_t> SlatSegmentsMesh::formFrontSegmentsNumbering(size_t nSegments)
+    {
+        std::vector<size_t> frontSegments;
+        frontSegments.reserve(nSegments);
+        for(size_t i = 0; i < nSegments; ++i)
+        {
+            frontSegments.push_back(2 * nSegments - 1 - i);
+        }
+        return frontSegments;
+    }
+
+    std::vector<size_t> SlatSegmentsMesh::formBackSegmentsNumbering(size_t nSegments)
+    {
+        std::vector<size_t> backSegments;
+        backSegments.reserve(nSegments);
+        for(size_t i = 0; i < nSegments; ++i)
+        {
+            backSegments.push_back(i);
+        }
+        return backSegments;
+    }
 
     std::vector<SegmentIrradiance>
       slatIrradiances(const std::shared_ptr<CVenetianCellDescription> & cell,
@@ -300,10 +310,7 @@ namespace SingleLayerOptics
 
     std::vector<double> slatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
                                       const SlatSegmentsMesh & slats,
-                                      double Tf,
-                                      double Rf,
-                                      double Tb,
-                                      double Rb)
+                                      const LayerProperties & properties)
     {
         size_t numSlats = slatIrradiances.size();
         std::vector<double> aRadiances(2 * numSlats - 2);
@@ -320,9 +327,9 @@ namespace SingleLayerOptics
             else
             {
                 aRadiances[slats.surfaceIndexes.backSideMeshIndex[i]] =
-                  Tf * slatIrradiances[i].E_f + Rb * slatIrradiances[i].E_b;
+                  properties.Tf * slatIrradiances[i].E_f + properties.Rb * slatIrradiances[i].E_b;
                 aRadiances[slats.surfaceIndexes.frontSideMeshIndex[i - 1]] =
-                  Tb * slatIrradiances[i].E_b + Rf * slatIrradiances[i].E_f;
+                  properties.Tb * slatIrradiances[i].E_b + properties.Rf * slatIrradiances[i].E_f;
             }
         }
 
@@ -331,10 +338,7 @@ namespace SingleLayerOptics
 
     FenestrationCommon::SquareMatrix
       SlatSegmentsMesh::formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
-                                             double Tf,
-                                             double Tb,
-                                             double Rf,
-                                             double Rb)
+                                             const LayerProperties & properties)
     {
         size_t numSeg = numberOfSegments;
         SquareMatrix energy{2 * numSeg};
@@ -344,10 +348,10 @@ namespace SingleLayerOptics
             {
                 double value = viewFactors(surfaceIndexes.backSideMeshIndex[i + 1],
                                            surfaceIndexes.frontSideMeshIndex[j])
-                                 * Tf
+                                 * properties.Tf
                                + viewFactors(surfaceIndexes.frontSideMeshIndex[i],
                                              surfaceIndexes.frontSideMeshIndex[j])
-                                   * Rf;
+                                   * properties.Rf;
                 if(i == j)
                 {
                     value -= 1;
@@ -362,10 +366,10 @@ namespace SingleLayerOptics
             {
                 return viewFactors(surfaceIndexes.backSideMeshIndex[i + 1],
                                    surfaceIndexes.backSideMeshIndex[j])
-                         * Tf
+                         * properties.Tf
                        + viewFactors(surfaceIndexes.frontSideMeshIndex[i],
                                      surfaceIndexes.backSideMeshIndex[j])
-                           * Rf;
+                           * properties.Rf;
             }
             return 0.0;
         };
@@ -375,10 +379,10 @@ namespace SingleLayerOptics
             {
                 return viewFactors(surfaceIndexes.frontSideMeshIndex[i - 1],
                                    surfaceIndexes.frontSideMeshIndex[j])
-                         * Tb
+                         * properties.Tb
                        + viewFactors(surfaceIndexes.backSideMeshIndex[i],
                                      surfaceIndexes.frontSideMeshIndex[j])
-                           * Rb;
+                           * properties.Rb;
             }
             return 0.0;
         };
@@ -388,10 +392,10 @@ namespace SingleLayerOptics
             {
                 double value = viewFactors(surfaceIndexes.frontSideMeshIndex[i - 1],
                                            surfaceIndexes.backSideMeshIndex[j])
-                                 * Tb
+                                 * properties.Tb
                                + viewFactors(surfaceIndexes.backSideMeshIndex[i],
                                              surfaceIndexes.backSideMeshIndex[j])
-                                   * Rb;
+                                   * properties.Rb;
                 if(i == j)
                 {
                     value -= 1;
@@ -426,22 +430,22 @@ namespace SingleLayerOptics
       const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
       const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
     {
-        double Tf = t_Material.getProperty(Property::T, Side::Front);
-        double Tb = t_Material.getProperty(Property::T, Side::Back);
-        double Rf = t_Material.getProperty(Property::R, Side::Front);
-        double Rb = t_Material.getProperty(Property::R, Side::Back);
-        createForwardAndBackward(Tf, Tb, Rf, Rb, t_ForwardFlowGeometry, t_BackwardFlowGeometry);
+        // clang-format off
+        createForwardAndBackward({t_Material.getProperty(Property::T, Side::Front),
+                                  t_Material.getProperty(Property::R, Side::Front),
+                                  t_Material.getProperty(Property::T, Side::Back),
+                                  t_Material.getProperty(Property::R, Side::Back)},
+                                    t_ForwardFlowGeometry,
+                                    t_BackwardFlowGeometry);
+        // clang-format on
     }
 
     CVenetianEnergy::CVenetianEnergy(
-      const double Tf,
-      const double Tb,
-      const double Rf,
-      const double Rb,
+      const LayerProperties & properties,
       const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
       const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
     {
-        createForwardAndBackward(Tf, Tb, Rf, Rb, t_ForwardFlowGeometry, t_BackwardFlowGeometry);
+        createForwardAndBackward(properties, t_ForwardFlowGeometry, t_BackwardFlowGeometry);
     }
 
     CVenetianCellEnergy & CVenetianEnergy::getCell(const Side t_Side)
@@ -450,16 +454,13 @@ namespace SingleLayerOptics
     }
 
     void CVenetianEnergy::createForwardAndBackward(
-      double Tf,
-      double Tb,
-      double Rf,
-      double Rb,
+      const LayerProperties & layerProperties,
       const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
       const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
     {
         assert(t_ForwardFlowGeometry != nullptr);
         assert(t_BackwardFlowGeometry != nullptr);
-        m_CellEnergy[Side::Front] = CVenetianCellEnergy(t_ForwardFlowGeometry, Tf, Tb, Rf, Rb);
-        m_CellEnergy[Side::Back] = CVenetianCellEnergy(t_BackwardFlowGeometry, Tf, Tb, Rf, Rb);
+        m_CellEnergy[Side::Front] = CVenetianCellEnergy(t_ForwardFlowGeometry, layerProperties);
+        m_CellEnergy[Side::Back] = CVenetianCellEnergy(t_BackwardFlowGeometry, layerProperties);
     }
 }   // namespace SingleLayerOptics

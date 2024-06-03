@@ -70,7 +70,7 @@ namespace SingleLayerOptics
                 double Rb = aMat[i].getProperty(Property::R, Side::Back);
 
                 m_EnergiesBand.emplace_back(
-                  Tf, Tb, Rf, Rb, venetianForwardGeometry, m_BackwardFlowCellDescription);
+                  LayerProperties{Tf, Rf, Tb, Rb}, venetianForwardGeometry, m_BackwardFlowCellDescription);
             }
         }
     }
@@ -285,27 +285,5 @@ namespace SingleLayerOptics
     double CVenetianCell::R_dif_dif(const Side t_Side)
     {
         return m_Energy.getCell(t_Side).R_dif_dif();
-    }
-
-    std::vector<size_t> SlatSegmentsMesh::formFrontSegmentsNumbering(size_t nSegments)
-    {
-        std::vector<size_t> frontSegments;
-        frontSegments.reserve(nSegments);
-        for(size_t i = 0; i < nSegments; ++i)
-        {
-            frontSegments.push_back(2 * nSegments - 1 - i);
-        }
-        return frontSegments;
-    }
-
-    std::vector<size_t> SlatSegmentsMesh::formBackSegmentsNumbering(size_t nSegments)
-    {
-        std::vector<size_t> backSegments;
-        backSegments.reserve(nSegments);
-        for(size_t i = 0; i < nSegments; ++i)
-        {
-            backSegments.push_back(i);
-        }
-        return backSegments;
     }
 }   // namespace SingleLayerOptics

@@ -37,6 +37,14 @@ namespace SingleLayerOptics
         std::vector<size_t> frontSideMeshIndex;
     };
 
+    struct LayerProperties
+    {
+        double Tf{0.0};
+        double Rf{0.0};
+        double Tb{0.0};
+        double Rb{0.0};
+    };
+
     ////////////////////////////////////////////////////////////////////
     // SlatSegments
     ////////////////////////////////////////////////////////////////////
@@ -67,7 +75,7 @@ namespace SingleLayerOptics
     {
     public:
         explicit SlatSegmentsMesh(
-          CVenetianCellDescription & cell, double Tf, double Tb, double Rf, double Rb);
+          CVenetianCellDescription & cell, const LayerProperties & layerProperties);
         SlatSegmentsMesh() = default;
 
         size_t numberOfSegments{0u};
@@ -82,10 +90,7 @@ namespace SingleLayerOptics
         //! will be calculated only once and stored into slatsViewFactorsMatrix field
         FenestrationCommon::SquareMatrix
           formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
-                               double Tf,
-                               double Tb,
-                               double Rf,
-                               double Rb);
+                               const LayerProperties & layerProperties);
     };
 
     // Creates diffuse to diffuse std::vector. Right hand side of the equation
@@ -113,10 +118,7 @@ namespace SingleLayerOptics
     // Radiances for given incoming direction
     std::vector<double> slatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
                                       const SlatSegmentsMesh & slats,
-                                      double Tf,
-                                      double Rf,
-                                      double Tb,
-                                      double Rb);
+                                      const LayerProperties & layerProperties);
 
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
@@ -124,10 +126,7 @@ namespace SingleLayerOptics
     public:
         CVenetianCellEnergy();
         CVenetianCellEnergy(const std::shared_ptr<CVenetianCellDescription> & t_Cell,
-                            double Tf,
-                            double Tb,
-                            double Rf,
-                            double Rb);
+                            const LayerProperties & layerProperties);
 
         double T_dir_dir(const CBeamDirection & t_Direction);
         double T_dir_dif(const CBeamDirection & t_Direction);
@@ -143,10 +142,7 @@ namespace SingleLayerOptics
 
     private:
         std::shared_ptr<CVenetianCellDescription> m_Cell;
-        double m_Tf;
-        double m_Tb;
-        double m_Rf;
-        double m_Rb;
+        LayerProperties m_LayerProperties;
 
         SlatSegmentsMesh m_SlatSegmentsMesh;
 
@@ -162,10 +158,7 @@ namespace SingleLayerOptics
                         const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
                         const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
 
-        CVenetianEnergy(double Tf,
-                        double Tb,
-                        double Rf,
-                        double Rb,
+        CVenetianEnergy(const LayerProperties & layerProperties,
                         const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
                         const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
 
@@ -175,10 +168,7 @@ namespace SingleLayerOptics
         // construction of forward and backward cells from both constructors have identical part of
         // the code
         void createForwardAndBackward(
-          double Tf,
-          double Tb,
-          double Rf,
-          double Rb,
+          const LayerProperties & layerProperties,
           const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
           const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
 
