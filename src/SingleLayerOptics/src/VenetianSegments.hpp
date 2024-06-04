@@ -74,23 +74,15 @@ namespace SingleLayerOptics
     class SlatSegmentsMesh
     {
     public:
-        explicit SlatSegmentsMesh(
-          CVenetianCellDescription & cell, const LayerProperties & layerProperties);
+        explicit SlatSegmentsMesh(CVenetianCellDescription & cell);
         SlatSegmentsMesh() = default;
 
         size_t numberOfSegments{0u};
         SegmentIndexes surfaceIndexes;
-        FenestrationCommon::SquareMatrix slatsRadiancesMatrix;
 
     private:
         std::vector<size_t> formFrontSegmentsNumbering(size_t numberOfSegments);
         std::vector<size_t> formBackSegmentsNumbering(size_t numberOfSegments);
-
-        //! View factors matrix is valid for any incoming direction, it depends on the geometry and
-        //! will be calculated only once and stored into slatsViewFactorsMatrix field
-        FenestrationCommon::SquareMatrix
-          formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
-                               const LayerProperties & layerProperties);
     };
 
     // Creates diffuse to diffuse std::vector. Right hand side of the equation
@@ -112,6 +104,7 @@ namespace SingleLayerOptics
     // Irradiances for given incoming direction
     std::vector<SegmentIrradiance>
       slatIrradiances(const std::shared_ptr<CVenetianCellDescription> & cell,
+                      const FenestrationCommon::SquareMatrix & radianceMatrix,
                       const SlatSegmentsMesh & mesh,
                       const CBeamDirection & t_IncomingDirection);
 
@@ -141,10 +134,18 @@ namespace SingleLayerOptics
         double R_dif_dif();
 
     private:
+        //! View factors matrix is valid for any incoming direction, it depends on the geometry and
+        //! will be calculated only once and stored into slatsViewFactorsMatrix field
+        FenestrationCommon::SquareMatrix
+          formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
+                               const LayerProperties & layerProperties);
+
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         LayerProperties m_LayerProperties;
 
         SlatSegmentsMesh m_SlatSegmentsMesh;
+
+        FenestrationCommon::SquareMatrix slatsRadiancesMatrix;
 
         std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
         std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
