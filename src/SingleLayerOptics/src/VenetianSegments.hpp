@@ -145,7 +145,10 @@ namespace SingleLayerOptics
 
         SlatSegmentsMesh m_SlatSegmentsMesh;
 
-        FenestrationCommon::SquareMatrix slatsRadiancesMatrix;
+        //! This matrix is precalculated for the diffuse to diffuse part of the calculation.
+        //! It is used to calculate the radiances for the slats and it is precalculated because it
+        //! saves time (around 10% faster for the unit tests run).
+        FenestrationCommon::SquareMatrix slatsDiffuseRadiancesMatrix;
 
         std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
         std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;

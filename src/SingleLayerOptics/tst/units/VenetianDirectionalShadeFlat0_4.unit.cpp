@@ -89,6 +89,6 @@ TEST_F(TestVenetianDirectionalShadeFlat0_4, TestVenetian1)
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.165684, RfDiff, 1e-6);
 
-    //auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
-    //printMatrixToCSV(aT.size(), aT, "Tf.csv");
+    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    printMatrixToCSV(aT.size(), aT, "Tf.csv");
 }

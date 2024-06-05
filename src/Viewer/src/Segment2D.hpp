@@ -33,6 +33,7 @@ namespace Viewer
         bool operator!=(CSegment2D const & rhs) const;
 
         [[nodiscard]] double length() const;
+        [[nodiscard]] double angle() const;
 
         // Calculates if segment intersects with passed t_Segment
         [[nodiscard]] bool
@@ -57,6 +58,7 @@ namespace Viewer
 
     private:
         double calculateLength(const CPoint2D & startPoint, const CPoint2D & endPoint);
+        double calculateAngle(const CPoint2D & startPoint, const CPoint2D & endPoint);
         CPoint2D calculateCenter(const CPoint2D & startPoint, const CPoint2D & endPoint);
 
         // Calculates intesection point between two lines made up of std::vector. Even if two
@@ -75,6 +77,7 @@ namespace Viewer
         [[nodiscard]] double coeffC() const;
 
         double m_Length;
+        double m_Angle{0.0};
     };
 
 }   // namespace Viewer

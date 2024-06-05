@@ -1,6 +1,8 @@
 #include <cmath>
 #include <algorithm>
 
+#include <WCECommon.hpp>
+
 #include "Segment2D.hpp"
 #include "ViewerConstants.hpp"
 
@@ -10,7 +12,8 @@ namespace Viewer
         m_StartPoint(t_StartPoint),
         m_EndPoint(t_EndPoint),
         m_CenterPoint(calculateCenter(m_StartPoint, m_EndPoint)),
-        m_Length(calculateLength(m_StartPoint, m_EndPoint))
+        m_Length(calculateLength(m_StartPoint, m_EndPoint)),
+        m_Angle(calculateAngle(m_StartPoint, m_EndPoint))
     {}
 
     CPoint2D CSegment2D::startPoint() const
@@ -41,6 +44,11 @@ namespace Viewer
     double CSegment2D::length() const
     {
         return m_Length;
+    }
+
+    double CSegment2D::angle() const
+    {
+        return m_Angle;
     }
 
     bool CSegment2D::intersectionWithSegment(const CSegment2D & t_Segment) const
@@ -107,6 +115,13 @@ namespace Viewer
         auto deltaX = endPoint.x() - startPoint.x();
         auto deltaY = endPoint.y() - startPoint.y();
         return std::sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
+    double CSegment2D::calculateAngle(const CPoint2D & startPoint, const CPoint2D & endPoint)
+    {
+        double dx = endPoint.x() - startPoint.x();
+        double dy = endPoint.y() - startPoint.y();
+        return FenestrationCommon::degrees(std::atan2(std::abs(dy), std::abs(dx)));
     }
 
     CPoint2D CSegment2D::calculateCenter(const CPoint2D & startPoint, const CPoint2D & endPoint)

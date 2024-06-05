@@ -17,28 +17,63 @@ protected:
 
 TEST_F(TestSegment2D, Segment2DTest1)
 {
-    SCOPED_TRACE("Begin Test: Segment 2D - length and normal (1).");
-
     CPoint2D aStartPoint{0, 0};
     CPoint2D aEndPoint{10, 0};
 
     CSegment2D aSegment = CSegment2D(aStartPoint, aEndPoint);
 
-    double length = aSegment.length();
+    const double length = aSegment.length();
 
     EXPECT_NEAR(10, length, 1e-6);
+
+    const auto angle = aSegment.angle();
+    EXPECT_NEAR(0, angle, 1e-6);
 }
 
 TEST_F(TestSegment2D, Segment2DTest2)
 {
-    SCOPED_TRACE("Begin Test: Segment 2D - length and normal (2).");
-
     CPoint2D aStartPoint{0, 0};
     CPoint2D aEndPoint{10, 10};
 
     CSegment2D aSegment = CSegment2D(aStartPoint, aEndPoint);
 
-    double length = aSegment.length();
+    const double length = aSegment.length();
 
     EXPECT_NEAR(14.14213562, length, 1e-6);
+
+    const auto angle = aSegment.angle();
+
+    EXPECT_NEAR(45, angle, 1e-6);
+}
+
+TEST_F(TestSegment2D, Segment2DTest3)
+{
+    CPoint2D aStartPoint{10, 10};
+    CPoint2D aEndPoint{0, 0};
+
+    CSegment2D aSegment = CSegment2D(aStartPoint, aEndPoint);
+
+    const double length = aSegment.length();
+
+    EXPECT_NEAR(14.14213562, length, 1e-6);
+
+    const auto angle = aSegment.angle();
+
+    EXPECT_NEAR(45, angle, 1e-6);
+}
+
+TEST_F(TestSegment2D, Segment2DTest4)
+{
+    CPoint2D aStartPoint{30, 30};
+    CPoint2D aEndPoint{10, 10};
+
+    CSegment2D aSegment = CSegment2D(aStartPoint, aEndPoint);
+
+    const double length = aSegment.length();
+
+    EXPECT_NEAR(28.284271, length, 1e-6);
+
+    const auto angle = aSegment.angle();
+
+    EXPECT_NEAR(45, angle, 1e-6);
 }

@@ -21,6 +21,8 @@ private:
         return Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
     }
 
+protected:
+
     static std::shared_ptr<CVenetianCellDescription> createCellDescription()
     {
         const auto slatWidth = 0.016;     // m
@@ -64,6 +66,19 @@ TEST_F(TestVenetianCellFlat0_3, DirectDirect)
     EXPECT_NEAR(0.566774, Tdir_dir, 1e-6);
 }
 
+TEST_F(TestVenetianCellFlat0_3, DirectionalViewFactors)
+{
+    auto aCell{createCellDescription()};
+
+    auto Theta{18.0};
+    auto Phi{270.0};
+    CBeamDirection incomingDirection = CBeamDirection(Theta, Phi);
+
+    const auto Tdir_hem{aCell->viewFactors(FenestrationCommon::Side::Front, incomingDirection)};
+
+    //EXPECT_NEAR(0.566774, Tdir_hem, 1e-6);
+}
+
 TEST_F(TestVenetianCellFlat0_3, DirectionalDiffuse)
 {
     auto & aCell{GetCell()};
@@ -74,7 +89,7 @@ TEST_F(TestVenetianCellFlat0_3, DirectionalDiffuse)
     auto Phi{270.0};
     CBeamDirection incomingDirection = CBeamDirection(Theta, Phi);
 
-    Theta = 18;
+    Theta = 36;
     Phi = 90;
     CBeamDirection outgoingDirection = CBeamDirection(Theta, Phi);
 

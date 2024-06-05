@@ -47,15 +47,30 @@ namespace SingleLayerOptics
         return 2 + m_Top.segments().size() + m_Bottom.segments().size();
     }
 
+    namespace Helper
+    {
+        template<typename Func>
+        double getSegmentProperty(const Viewer::CGeometry2D & geometry, size_t index, Func func)
+        {
+            const auto segments = geometry.segments();
+            if(index >= segments.size())
+            {
+                throw std::runtime_error("Incorrect index for venetian segment.");
+            }
+            const auto & segment = segments[index];
+            return (segment.*func)();
+        }
+    }   // namespace Helper
+
+
     double CVenetianCellDescription::segmentLength(const size_t Index) const
     {
-        const auto aSegments = m_Geometry.segments();
-        if(Index > aSegments.size())
-        {
-            throw std::runtime_error("Incorrect index for venetian segment.");
-        }
-        const auto aSegment = aSegments[Index];
-        return aSegment.length();
+        return Helper::getSegmentProperty(m_Geometry, Index, &Viewer::CSegment2D::length);
+    }
+
+    double CVenetianCellDescription::segmentAngle(size_t Index) const
+    {
+        return Helper::getSegmentProperty(m_Geometry, Index, &Viewer::CSegment2D::angle);
     }
 
     std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
@@ -80,6 +95,77 @@ namespace SingleLayerOptics
     FenestrationCommon::SquareMatrix CVenetianCellDescription::viewFactors()
     {
         return m_Geometry.viewFactors();
+    }
+
+    namespace Helper
+    {
+        std::vector<double> scaleForSegmentThatIsHit(const std::vector<BeamSegmentView> & v_f)
+        {
+            std::vector<double> result(v_f.size());
+
+            std::transform(std::begin(v_f),
+                           std::end(v_f),
+                           std::begin(result),
+                           [](BeamSegmentView vf) { return vf.viewFactor * vf.percentViewed; });
+
+            return result;
+        }
+
+        std::vector<double> visibleSegmentPercentage(const std::vector<BeamSegmentView> & v_f)
+        {
+            std::vector<double> result(v_f.size());
+
+            std::transform(std::begin(v_f),
+                           std::end(v_f),
+                           std::begin(result),
+                           [](BeamSegmentView vf) { return vf.percentViewed; });
+
+            return result;
+        }
+    }   // namespace Helper
+
+    std::vector<double>
+      CVenetianCellDescription::scaledViewFactors(FenestrationCommon::Side t_Side,
+                                                  const CBeamDirection & t_Direction)
+    {
+        // clang-format off
+        return Helper::scaleForSegmentThatIsHit(
+                                          beamViewFactorsToBeamSegmentViews(
+                                              numberOfSegments(),
+                                              t_Side,
+                                              t_Direction,
+                                              beamViewFactors(t_Side, t_Direction))
+                                          );
+        // clang-format on
+    }
+
+    std::vector<double>
+      CVenetianCellDescription::visibleSegmentFraction(FenestrationCommon::Side t_Side,
+                                                       const CBeamDirection & t_Direction)
+    {
+        // clang-format off
+        return Helper::visibleSegmentPercentage(
+                                          beamViewFactorsToBeamSegmentViews(
+                                              numberOfSegments(),
+                                              t_Side,
+                                              t_Direction,
+                                              beamViewFactors(t_Side, t_Direction))
+                                          );
+        // clang-format on
+    }
+
+    FenestrationCommon::SquareMatrix
+      CVenetianCellDescription::viewFactors(FenestrationCommon::Side t_Side,
+                                            const CBeamDirection & t_Direction)
+    {
+        const auto scaled_vf{scaledViewFactors(t_Side, t_Direction)};
+
+        auto diffuseVF{m_Geometry.viewFactors()};
+        for(int i = 0; i < scaled_vf.size(); ++i)
+        {
+            diffuseVF(0, i) = scaled_vf[i];
+        }
+        return diffuseVF;
     }
 
     std::vector<Viewer::BeamViewFactor>
@@ -126,6 +212,53 @@ namespace SingleLayerOptics
     {
         m_ProfileAngles[side] = t_ProfileAngles;
         m_BeamGeometry.precalculateForProfileAngles(side, t_ProfileAngles);
+    }
+
+    std::vector<BeamSegmentView> CVenetianCellDescription::beamViewFactorsToBeamSegmentViews(
+      const size_t numberOfSegments,
+      FenestrationCommon::Side t_Side,
+      const CBeamDirection & t_Direction,
+      const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors)
+    {
+        std::vector<BeamSegmentView> B(numberOfSegments);
+        size_t index = 0;
+        for(const Viewer::BeamViewFactor & aVF : t_BeamViewFactors)
+        {
+            if(aVF.enclosureIndex == 0)
+            {   // Top
+                index = aVF.segmentIndex + 1;
+            }
+            else if(aVF.enclosureIndex == 1)
+            {   // Bottom
+                index = static_cast<size_t>(numberOfSegments / 2) + 1u + aVF.segmentIndex;
+            }
+            else
+            {
+                assert("Incorrect value for enclosure. Cannot have more than three enclosures.");
+            }
+            B[index].viewFactor = aVF.value;
+            B[index].percentViewed = aVF.percentHit;
+        }
+
+        using FenestrationCommon::Side;
+        const std::map<Side, size_t> sideIndex{
+          {Side::Front, static_cast<size_t>(numberOfSegments / 2)}, {Side::Back, 0}};
+
+        B[sideIndex.at(t_Side)].viewFactor = T_dir_dir(t_Side, t_Direction);
+        B[sideIndex.at(t_Side)].percentViewed = T_dir_dir(t_Side, t_Direction);
+
+        return B;
+    }
+
+    double CVenetianCellDescription::getCellSpacing() const
+    {
+        if(m_Top.segments().size() == 0 || m_Bottom.segments().size() == 0)
+        {
+            return 0;
+        }
+
+        return m_Top.segments().front().startPoint().y()
+               - m_Bottom.segments().back().endPoint().y();
     }
 
 }   // namespace SingleLayerOptics
