@@ -90,20 +90,11 @@ namespace SingleLayerOptics
                                            const SegmentIndexes & indexes,
                                            const FenestrationCommon::SquareMatrix & viewFactors);
 
-    //! Create beam view factors for given incoming direction and side. For details on what beam
-    //! view factors are see BeamSegmentView structure.
-    //! @param t_IncomingDirection Incoming direction of the beam.
-    //! @param t_Side Side of the cell.
-    //! @return Vector of beam view factors for each segment.
-    std::vector<BeamSegmentView>
-      beamVector(FenestrationCommon::Side t_Side,
-                 size_t numberOfSegments,
-                 const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
-                 double T_dir_dir);
-
-    //! Function to recorder from segments numbering into view factors enclosure numbering
-    std::vector<double> segmentViewFactorsToEnclosureNumbering(
-      const std::vector<BeamSegmentView> & t_BeamViewFactors, const SlatSegmentsMesh & mesh);
+    //! Function to calculate view factors that are used in beam to diffuse calculations
+    std::vector<double> beamToDiffuseViewFactors(FenestrationCommon::Side t_Side,
+                                                 const CBeamDirection & t_IncomingDirection,
+                                                 CVenetianCellDescription & cell,
+                                                 const SlatSegmentsMesh & mesh);
 
     // Irradiances for given incoming direction
     std::vector<SegmentIrradiance>

@@ -42,15 +42,10 @@ namespace SingleLayerOptics
         if(!m_SlatIrradiances.count(t_Direction))
         {
             const auto diffuseViewFactors{
-              segmentViewFactorsToEnclosureNumbering(
-                  beamVector(Side::Front,
-                             m_SlatSegmentsMesh.numberOfSegments,
-                             m_Cell->beamViewFactors(Side::Front, t_Direction),
-                             m_Cell->T_dir_dir(Side::Front, t_Direction)),
-                         m_SlatSegmentsMesh)};
+              beamToDiffuseViewFactors(Side::Front, t_Direction, *m_Cell, m_SlatSegmentsMesh)};
 
-            const auto irradiance =
-              slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh, t_Direction);
+            const auto irradiance = slatIrradiances(
+              diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh, t_Direction);
             std::lock_guard<std::mutex> lock(irradianceMutex);
             m_SlatIrradiances[t_Direction] = irradiance;
         }
@@ -66,14 +61,9 @@ namespace SingleLayerOptics
         if(!m_SlatIrradiances.count(t_Direction))
         {
             const auto diffuseViewFactors{
-              segmentViewFactorsToEnclosureNumbering(
-                  beamVector(Side::Back,
-                             m_SlatSegmentsMesh.numberOfSegments,
-                             m_Cell->beamViewFactors(Side::Back, t_Direction),
-                             m_Cell->T_dir_dir(Side::Back, t_Direction)),
-                         m_SlatSegmentsMesh)};
-            const auto irradiance =
-              slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh, t_Direction);
+              beamToDiffuseViewFactors(Side::Back, t_Direction, *m_Cell, m_SlatSegmentsMesh)};
+            const auto irradiance = slatIrradiances(
+              diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh, t_Direction);
             std::lock_guard<std::mutex> lock(irradianceMutex);
             m_SlatIrradiances[t_Direction] = irradiance;
         }
@@ -86,24 +76,21 @@ namespace SingleLayerOptics
     {
         if(!m_SlatDirectionalIrradiances.count(t_IncomingDirection))
         {
-            //std::lock_guard<std::mutex> lock(irradianceMutex);
+            // std::lock_guard<std::mutex> lock(irradianceMutex);
             const auto irradianceMatrix{formIrradianceMatrix(
               m_Cell->viewFactors(Side::Front, t_IncomingDirection), m_LayerProperties)};
             const auto diffuseViewFactors{
-              segmentViewFactorsToEnclosureNumbering(
-                  beamVector(Side::Front,
-                             m_SlatSegmentsMesh.numberOfSegments,
-                             m_Cell->beamViewFactors(Side::Front, t_IncomingDirection),
-                             m_Cell->T_dir_dir(Side::Front, t_IncomingDirection)),
-                         m_SlatSegmentsMesh)};
-            m_SlatDirectionalIrradiances[t_IncomingDirection] =
-              slatIrradiances(diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh, t_IncomingDirection);
+              beamToDiffuseViewFactors(Side::Front, t_IncomingDirection, *m_Cell, m_SlatSegmentsMesh)};
+            m_SlatDirectionalIrradiances[t_IncomingDirection] = slatIrradiances(
+              diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh, t_IncomingDirection);
         }
 
         if(!m_SlatDirectionalRadiances.count(t_IncomingDirection))
         {
-            m_SlatDirectionalRadiances[t_IncomingDirection] = slatRadiances(
-              m_SlatDirectionalIrradiances.at(t_IncomingDirection), m_SlatSegmentsMesh, m_LayerProperties);
+            m_SlatDirectionalRadiances[t_IncomingDirection] =
+              slatRadiances(m_SlatDirectionalIrradiances.at(t_IncomingDirection),
+                            m_SlatSegmentsMesh,
+                            m_LayerProperties);
         }
 
         const auto & radiance = m_SlatDirectionalRadiances.at(t_IncomingDirection);
@@ -134,18 +121,13 @@ namespace SingleLayerOptics
     {
         if(!m_SlatDirectionalIrradiances.count(t_IncomingDirection))
         {
-            //std::lock_guard<std::mutex> lock(irradianceMutex);
+            // std::lock_guard<std::mutex> lock(irradianceMutex);
             const auto irradianceMatrix{formIrradianceMatrix(
               m_Cell->viewFactors(Side::Front, t_IncomingDirection), m_LayerProperties)};
             const auto diffuseViewFactors{
-              segmentViewFactorsToEnclosureNumbering(
-                  beamVector(Side::Front,
-                             m_SlatSegmentsMesh.numberOfSegments,
-                             m_Cell->beamViewFactors(Side::Front, t_IncomingDirection),
-                             m_Cell->T_dir_dir(Side::Front, t_IncomingDirection)),
-                         m_SlatSegmentsMesh)};
-            m_SlatDirectionalIrradiances[t_IncomingDirection] =
-              slatIrradiances(diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh, t_IncomingDirection);
+              beamToDiffuseViewFactors(Side::Back, t_IncomingDirection, *m_Cell, m_SlatSegmentsMesh)};
+            m_SlatDirectionalIrradiances[t_IncomingDirection] = slatIrradiances(
+              diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh, t_IncomingDirection);
         }
 
         if(!m_SlatDirectionalRadiances.count(t_IncomingDirection))
@@ -276,40 +258,6 @@ namespace SingleLayerOptics
         return B;
     }
 
-    std::vector<BeamSegmentView>
-      beamVector(const Side t_Side,
-                 const size_t numberOfSegments,
-                 const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
-                 const double T_dir_dir)
-    {
-        std::vector<BeamSegmentView> B(2 * numberOfSegments);
-        size_t index = 0;
-        for(const Viewer::BeamViewFactor & aVF : t_BeamViewFactors)
-        {
-            if(aVF.enclosureIndex == 0)
-            {   // Top
-                index = aVF.segmentIndex + 1;
-            }
-            else if(aVF.enclosureIndex == 1)
-            {   // Bottom
-                index = numberOfSegments + 1 + aVF.segmentIndex;
-            }
-            else
-            {
-                assert("Incorrect value for enclosure. Cannot have more than three enclosures.");
-            }
-            B[index].viewFactor = aVF.value;
-            B[index].percentViewed = aVF.percentHit;
-        }
-
-        const std::map<Side, size_t> sideIndex{{Side::Front, numberOfSegments}, {Side::Back, 0}};
-
-        B[sideIndex.at(t_Side)].viewFactor = T_dir_dir;
-        B[sideIndex.at(t_Side)].percentViewed = T_dir_dir;
-
-        return B;
-    }
-
     std::vector<double> slatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
                                       const SlatSegmentsMesh & slats,
                                       const LayerProperties & properties)
@@ -338,10 +286,56 @@ namespace SingleLayerOptics
         return aRadiances;
     }
 
-    std::vector<double>
-      segmentViewFactorsToEnclosureNumbering(const std::vector<BeamSegmentView> & t_BeamViewFactors,
-                                             const SlatSegmentsMesh & mesh)
+    namespace Helper
     {
+        std::vector<BeamSegmentView>
+          beamVector(const Side t_Side,
+                     const size_t numberOfSegments,
+                     const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
+                     const double T_dir_dir)
+        {
+            std::vector<BeamSegmentView> B(2 * numberOfSegments);
+            size_t index = 0;
+            for(const Viewer::BeamViewFactor & aVF : t_BeamViewFactors)
+            {
+                if(aVF.enclosureIndex == 0)
+                {   // Top
+                    index = aVF.segmentIndex + 1;
+                }
+                else if(aVF.enclosureIndex == 1)
+                {   // Bottom
+                    index = numberOfSegments + 1 + aVF.segmentIndex;
+                }
+                else
+                {
+                    assert(
+                      "Incorrect value for enclosure. Cannot have more than three enclosures.");
+                }
+                B[index].viewFactor = aVF.value;
+                B[index].percentViewed = aVF.percentHit;
+            }
+
+            const std::map<Side, size_t> sideIndex{{Side::Front, numberOfSegments},
+                                                   {Side::Back, 0}};
+
+            B[sideIndex.at(t_Side)].viewFactor = T_dir_dir;
+            B[sideIndex.at(t_Side)].percentViewed = T_dir_dir;
+
+            return B;
+        }
+    }   // namespace Helper
+
+    std::vector<double> beamToDiffuseViewFactors(const Side t_Side,
+                                                 const CBeamDirection & t_IncomingDirection,
+                                                 CVenetianCellDescription & cell,
+                                                 const SlatSegmentsMesh & mesh)
+    {
+        const auto BeamViewFactors{
+          Helper::beamVector(t_Side,
+                             mesh.numberOfSegments,
+                             cell.cellBeamViewFactors(t_Side, t_IncomingDirection),
+                             cell.T_dir_dir(t_Side, t_IncomingDirection))};
+
         std::vector<double> B;
         B.reserve(2 * mesh.numberOfSegments);
         for(size_t i = 0; i < 2 * mesh.numberOfSegments; ++i)
@@ -355,7 +349,7 @@ namespace SingleLayerOptics
             {
                 index = mesh.surfaceIndexes.backSideMeshIndex[i - mesh.numberOfSegments];
             }
-            B.push_back(-t_BeamViewFactors[index].viewFactor);
+            B.push_back(-BeamViewFactors[index].viewFactor);
         }
 
         return B;

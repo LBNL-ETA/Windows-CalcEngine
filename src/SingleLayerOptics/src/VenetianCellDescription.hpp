@@ -34,11 +34,11 @@ namespace SingleLayerOptics
                                                      const CBeamDirection & t_Direction);
 
         // view factor of the beam entering the cell with profile angle
-        std::vector<Viewer::BeamViewFactor> beamViewFactors(double t_ProfileAngle,
-                                                            FenestrationCommon::Side t_Side);
+        std::vector<Viewer::BeamViewFactor> cellBeamViewFactors(double t_ProfileAngle,
+                                                                FenestrationCommon::Side t_Side);
 
-        std::vector<Viewer::BeamViewFactor> beamViewFactors(FenestrationCommon::Side t_Side,
-                                                            const CBeamDirection & t_Direction);
+        std::vector<Viewer::BeamViewFactor> cellBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                                const CBeamDirection & t_Direction);
 
         //! Calculates corrected view factors for the given incoming beam direction
         std::vector<double> scaledBeamViewFactors(FenestrationCommon::Side t_Side,
