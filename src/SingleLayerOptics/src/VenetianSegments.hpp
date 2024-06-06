@@ -101,9 +101,13 @@ namespace SingleLayerOptics
                  const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors,
                  double T_dir_dir);
 
+    //! Function to recorder from segments numbering into view factors enclosure numbering
+    std::vector<double> segmentViewFactorsToEnclosureNumbering(
+      const std::vector<BeamSegmentView> & t_BeamViewFactors, const SlatSegmentsMesh & mesh);
+
     // Irradiances for given incoming direction
     std::vector<SegmentIrradiance>
-      slatIrradiances(const std::shared_ptr<CVenetianCellDescription> & cell,
+      slatIrradiances(const std::vector<double> & beamViewFactors,
                       const FenestrationCommon::SquareMatrix & radianceMatrix,
                       const SlatSegmentsMesh & mesh,
                       const CBeamDirection & t_IncomingDirection);
@@ -152,6 +156,9 @@ namespace SingleLayerOptics
 
         std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
         std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
+
+        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatDirectionalIrradiances;
+        std::map<CBeamDirection, std::vector<double>> m_SlatDirectionalRadiances;
     };
 
     class CVenetianEnergy

@@ -41,11 +41,11 @@ namespace SingleLayerOptics
                                                             const CBeamDirection & t_Direction);
 
         //! Calculates corrected view factors for the given incoming beam direction
-        std::vector<double> scaledViewFactors(FenestrationCommon::Side t_Side,
-                                              const CBeamDirection & t_Direction);
+        std::vector<double> scaledBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                  const CBeamDirection & t_Direction);
 
-        std::vector<double> visibleSegmentFraction(FenestrationCommon::Side t_Side,
-                                                   const CBeamDirection & t_Direction);
+        std::vector<double> visibleBeamSegmentFraction(FenestrationCommon::Side t_Side,
+                                                       const CBeamDirection & t_Direction);
 
         // Direct to direct component of the ray
         double T_dir_dir(FenestrationCommon::Side t_Side,

@@ -125,7 +125,7 @@ namespace SingleLayerOptics
     }   // namespace Helper
 
     std::vector<double>
-      CVenetianCellDescription::scaledViewFactors(FenestrationCommon::Side t_Side,
+      CVenetianCellDescription::scaledBeamViewFactors(FenestrationCommon::Side t_Side,
                                                   const CBeamDirection & t_Direction)
     {
         // clang-format off
@@ -140,7 +140,7 @@ namespace SingleLayerOptics
     }
 
     std::vector<double>
-      CVenetianCellDescription::visibleSegmentFraction(FenestrationCommon::Side t_Side,
+      CVenetianCellDescription::visibleBeamSegmentFraction(FenestrationCommon::Side t_Side,
                                                        const CBeamDirection & t_Direction)
     {
         // clang-format off
@@ -158,7 +158,7 @@ namespace SingleLayerOptics
       CVenetianCellDescription::viewFactors(FenestrationCommon::Side t_Side,
                                             const CBeamDirection & t_Direction)
     {
-        const auto scaled_vf{scaledViewFactors(t_Side, t_Direction)};
+        const auto scaled_vf{scaledBeamViewFactors(t_Side, t_Direction)};
 
         auto diffuseVF{m_Geometry.viewFactors()};
         for(int i = 0; i < scaled_vf.size(); ++i)
