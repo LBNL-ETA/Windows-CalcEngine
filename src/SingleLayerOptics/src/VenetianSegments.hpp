@@ -98,15 +98,16 @@ namespace SingleLayerOptics
 
     // Irradiances for given incoming direction
     std::vector<SegmentIrradiance>
-      slatIrradiances(const std::vector<double> & beamViewFactors,
-                      const FenestrationCommon::SquareMatrix & radianceMatrix,
-                      const SlatSegmentsMesh & mesh,
-                      const CBeamDirection & t_IncomingDirection);
+      directToDiffuseSlatIrradiances(const std::vector<double> & beamViewFactors,
+                                     const FenestrationCommon::SquareMatrix & radianceMatrix,
+                                     const SlatSegmentsMesh & mesh,
+                                     const CBeamDirection & t_IncomingDirection);
 
     // Radiances for given incoming direction
-    std::vector<double> slatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
-                                      const SlatSegmentsMesh & slats,
-                                      const LayerProperties & layerProperties);
+    std::vector<double>
+      directToDiffuseSlatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
+                                   const SlatSegmentsMesh & slats,
+                                   const LayerProperties & layerProperties);
 
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
@@ -145,11 +146,11 @@ namespace SingleLayerOptics
         //! saves time (around 10% faster for the unit tests run).
         FenestrationCommon::SquareMatrix slatsDiffuseRadiancesMatrix;
 
-        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatIrradiances;
-        std::map<CBeamDirection, std::vector<double>> m_SlatRadiances;
+        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_DirectToDiffuseSlatIrradiances;
+        std::map<CBeamDirection, std::vector<double>> m_DirectToDiffuseSlatRadiances;
 
-        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_SlatDirectionalIrradiances;
-        std::map<CBeamDirection, std::vector<double>> m_SlatDirectionalRadiances;
+        std::map<CBeamDirection, std::vector<SegmentIrradiance>> m_DirectToDirectSlatIrradiances;
+        std::map<CBeamDirection, std::vector<double>> m_DirectToDirectSlatRadiances;
     };
 
     class CVenetianEnergy
