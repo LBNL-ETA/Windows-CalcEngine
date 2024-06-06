@@ -86,7 +86,7 @@ namespace SingleLayerOptics
     {
         if(!m_SlatDirectionalIrradiances.count(t_IncomingDirection))
         {
-            // std::lock_guard<std::mutex> lock(irradianceMutex);
+            //std::lock_guard<std::mutex> lock(irradianceMutex);
             const auto irradianceMatrix{formIrradianceMatrix(
               m_Cell->viewFactors(Side::Front, t_IncomingDirection), m_LayerProperties)};
             const auto diffuseViewFactors{
@@ -103,7 +103,7 @@ namespace SingleLayerOptics
         if(!m_SlatDirectionalRadiances.count(t_IncomingDirection))
         {
             m_SlatDirectionalRadiances[t_IncomingDirection] = slatRadiances(
-              m_SlatIrradiances.at(t_IncomingDirection), m_SlatSegmentsMesh, m_LayerProperties);
+              m_SlatDirectionalIrradiances.at(t_IncomingDirection), m_SlatSegmentsMesh, m_LayerProperties);
         }
 
         const auto & radiance = m_SlatDirectionalRadiances.at(t_IncomingDirection);
@@ -134,7 +134,7 @@ namespace SingleLayerOptics
     {
         if(!m_SlatDirectionalIrradiances.count(t_IncomingDirection))
         {
-            // std::lock_guard<std::mutex> lock(irradianceMutex);
+            //std::lock_guard<std::mutex> lock(irradianceMutex);
             const auto irradianceMatrix{formIrradianceMatrix(
               m_Cell->viewFactors(Side::Front, t_IncomingDirection), m_LayerProperties)};
             const auto diffuseViewFactors{
