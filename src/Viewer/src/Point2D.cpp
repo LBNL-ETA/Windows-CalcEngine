@@ -37,7 +37,8 @@ namespace Viewer
 
     bool CPoint2D::operator==(CPoint2D const & rhs) const
     {
-        return m_x == rhs.m_x && m_y == rhs.m_y;
+        return FenestrationCommon::isEqual(m_x, rhs.m_x)
+               && FenestrationCommon::isEqual(m_y, rhs.m_y);
     }
 
     bool CPoint2D::operator!=(CPoint2D const & rhs) const
@@ -78,13 +79,13 @@ namespace Viewer
             const auto tanPhi = std::tan(radians(m_ProfileAngle));
             if(tanPhi > 0)
             {
-                isHigher = (t_Point1.x() - t_Point1.y() / tanPhi)
-                           < (t_Point2.x() - t_Point2.y() / tanPhi);
+                isHigher =
+                  (t_Point1.x() - t_Point1.y() / tanPhi) < (t_Point2.x() - t_Point2.y() / tanPhi);
             }
             else
             {
-                isHigher = (t_Point1.x() - t_Point1.y() / tanPhi)
-                           > (t_Point2.x() - t_Point2.y() / tanPhi);
+                isHigher =
+                  (t_Point1.x() - t_Point1.y() / tanPhi) > (t_Point2.x() - t_Point2.y() / tanPhi);
             }
         }
         else
@@ -93,5 +94,4 @@ namespace Viewer
         }
         return isHigher;
     }
-
 }   // namespace Viewer

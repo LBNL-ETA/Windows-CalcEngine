@@ -105,9 +105,29 @@ namespace Viewer
     // Translates segment for given coordinates
     CSegment2D CSegment2D::translate(double const t_x, double const t_y) const
     {
-        CPoint2D startPoint{m_StartPoint.x() + t_x, m_StartPoint.y() + t_y};
-        CPoint2D endPoint{m_EndPoint.x() + t_x, m_EndPoint.y() + t_y};
-        return {startPoint, endPoint};
+        return {{m_StartPoint.x() + t_x, m_StartPoint.y() + t_y},
+                {m_EndPoint.x() + t_x, m_EndPoint.y() + t_y}};
+    }
+
+    CPoint2D CSegment2D::surfaceUnitNormal() const
+    {
+        if(FenestrationCommon::isEqual(length(), 0.0))
+        {
+            return {0, 0};
+        }
+
+        const auto aX = m_EndPoint.x() - m_StartPoint.x();
+        const auto aY = m_EndPoint.y() - m_StartPoint.y();
+
+        // Calculate normals
+        auto normalX = -aY / length();
+        auto normalY = aX / length();
+
+        // Handle cases where segment is aligned with x or y axis
+        normalX = (aX == 0) ? ((aY > 0.0) ? 1.0 : -1.0) : normalX;
+        normalY = (aY == 0) ? ((aX > 0.0) ? -1.0 : 1.0) : normalY;
+
+        return {normalX, normalY};
     }
 
     double CSegment2D::calculateLength(const CPoint2D & startPoint, const CPoint2D & endPoint)

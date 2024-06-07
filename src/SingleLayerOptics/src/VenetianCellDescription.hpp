@@ -26,6 +26,11 @@ namespace SingleLayerOptics
         [[nodiscard]] double segmentLength(size_t Index) const;
         [[nodiscard]] double segmentAngle(size_t Index) const;
 
+        //! Function to calculate dot product of the segment with the given direction
+        //! @param Index - index of the segment
+        //! @param t_Direction - direction of the incoming beam
+        [[nodiscard]] double dotProduct(size_t Index, const CBeamDirection & t_Direction) const;
+
         // View factors of enclosure slats
         FenestrationCommon::SquareMatrix viewFactors();
 

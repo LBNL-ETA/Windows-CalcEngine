@@ -133,8 +133,15 @@ namespace SingleLayerOptics
         //! View factors matrix is valid for any incoming direction, it depends on the geometry and
         //! will be calculated only once and stored into slatsViewFactorsMatrix field
         FenestrationCommon::SquareMatrix
-          formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
-                               const LayerProperties & layerProperties);
+          formDirectToDiffuseIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
+                                              const LayerProperties & properties);
+
+        //! Function to calculate direct to direct slat irradiances needed for directional
+        //! calculations
+        std::vector<SegmentIrradiance>
+          directToDirectSlatIrradiances(const std::vector<Viewer::BeamViewFactor> & vf,
+                                        const SlatSegmentsMesh & mesh,
+                                        const LayerProperties & properties);
 
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         LayerProperties m_LayerProperties;

@@ -51,6 +51,8 @@ namespace Viewer
         // returns end point of the std::vector that starts at (0, 0)
         [[nodiscard]] CPoint2D intensity() const;
 
+        //! Calculates unit normal to the surface segment
+        [[nodiscard]] CPoint2D surfaceUnitNormal() const;
     protected:
         CPoint2D m_StartPoint;
         CPoint2D m_EndPoint;

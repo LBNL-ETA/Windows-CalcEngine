@@ -2,9 +2,11 @@
 #include <memory>
 #include <stdexcept>
 
+#include <WCECommon.hpp>
+#include <WCEViewer.hpp>
+
 #include "VenetianCellDescription.hpp"
 #include "BeamDirection.hpp"
-#include "WCECommon.hpp"
 
 namespace SingleLayerOptics
 {
@@ -49,16 +51,20 @@ namespace SingleLayerOptics
 
     namespace Helper
     {
-        template<typename Func>
-        double getSegmentProperty(const Viewer::CGeometry2D & geometry, size_t index, Func func)
+        const Viewer::CSegment2D & segment(const Viewer::CGeometry2D & geometry, size_t index)
         {
-            const auto segments = geometry.segments();
+            const auto & segments{geometry.segments()};
             if(index >= segments.size())
             {
                 throw std::runtime_error("Incorrect index for venetian segment.");
             }
-            const auto & segment = segments[index];
-            return (segment.*func)();
+            return segments[index];
+        }
+
+        template<typename Func>
+        double getSegmentProperty(const Viewer::CGeometry2D & geometry, size_t index, Func func)
+        {
+            return (Helper::segment(geometry, index).*func)();
         }
     }   // namespace Helper
 
@@ -71,6 +77,13 @@ namespace SingleLayerOptics
     double CVenetianCellDescription::segmentAngle(size_t Index) const
     {
         return Helper::getSegmentProperty(m_Geometry, Index, &Viewer::CSegment2D::angle);
+    }
+
+    double CVenetianCellDescription::dotProduct(size_t Index,
+                                                const CBeamDirection & t_Direction) const
+    {
+        const auto & segment{Helper::segment(m_Geometry, Index)};
+        return 0;
     }
 
     std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
