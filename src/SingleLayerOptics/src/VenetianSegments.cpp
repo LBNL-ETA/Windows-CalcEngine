@@ -29,8 +29,7 @@ namespace SingleLayerOptics
         m_Cell(t_Cell),
         m_LayerProperties(properties),
         m_SlatSegmentsMesh(*m_Cell),
-        slatsDiffuseRadiancesMatrix(
-          formDirectToDiffuseIrradianceMatrix(m_Cell->viewFactors(), m_LayerProperties))
+        slatsDiffuseRadiancesMatrix(formIrradianceMatrix(m_Cell->viewFactors(), m_LayerProperties))
     {}
 
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_Direction)
@@ -45,8 +44,8 @@ namespace SingleLayerOptics
             const auto diffuseViewFactors{
               beamToDiffuseViewFactors(Side::Front, t_Direction, *m_Cell, m_SlatSegmentsMesh)};
 
-            const auto irradiance = directToDiffuseSlatIrradiances(
-              diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh, t_Direction);
+            const auto irradiance =
+              slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh);
             std::lock_guard<std::mutex> lock(irradianceMutex);
             m_DirectToDiffuseSlatIrradiances[t_Direction] = irradiance;
         }
@@ -64,8 +63,8 @@ namespace SingleLayerOptics
         {
             const auto diffuseViewFactors{
               beamToDiffuseViewFactors(Side::Back, t_Direction, *m_Cell, m_SlatSegmentsMesh)};
-            const auto irradiance = directToDiffuseSlatIrradiances(
-              diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh, t_Direction);
+            const auto irradiance =
+              slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh);
             std::lock_guard<std::mutex> lock(irradianceMutex);
             m_DirectToDiffuseSlatIrradiances[t_Direction] = irradiance;
         }
@@ -79,24 +78,16 @@ namespace SingleLayerOptics
         if(!m_DirectToDirectSlatIrradiances.count(t_IncomingDirection))
         {
             // std::lock_guard<std::mutex> lock(irradianceMutex);
-            const auto directionalIrradiances{directToDirectSlatIrradiances(
-              m_Cell->cellBeamViewFactors(Side::Front, t_IncomingDirection),
-              m_SlatSegmentsMesh,
-              m_LayerProperties)};
-            const auto irradianceMatrix{formDirectToDiffuseIrradianceMatrix(
-              m_Cell->viewFactors(Side::Front, t_IncomingDirection), m_LayerProperties)};
-            const auto diffuseViewFactors{beamToDiffuseViewFactors(
-              Side::Front, t_IncomingDirection, *m_Cell, m_SlatSegmentsMesh)};
-            m_DirectToDirectSlatIrradiances[t_IncomingDirection] = directToDiffuseSlatIrradiances(
-              diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh, t_IncomingDirection);
+            m_DirectToDirectSlatIrradiances[t_IncomingDirection] =
+              directToDirectSlatIrradiances(t_IncomingDirection);
         }
 
         if(!m_DirectToDirectSlatRadiances.count(t_IncomingDirection))
         {
             m_DirectToDirectSlatRadiances[t_IncomingDirection] =
-              directToDiffuseSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
-                                           m_SlatSegmentsMesh,
-                                           m_LayerProperties);
+              directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
+                                         slatsDiffuseRadiancesMatrix,
+                                         m_LayerProperties);
         }
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
@@ -128,12 +119,12 @@ namespace SingleLayerOptics
         if(!m_DirectToDirectSlatIrradiances.count(t_IncomingDirection))
         {
             // std::lock_guard<std::mutex> lock(irradianceMutex);
-            const auto irradianceMatrix{formDirectToDiffuseIrradianceMatrix(
+            const auto irradianceMatrix{formIrradianceMatrix(
               m_Cell->viewFactors(Side::Front, t_IncomingDirection), m_LayerProperties)};
             const auto diffuseViewFactors{beamToDiffuseViewFactors(
               Side::Back, t_IncomingDirection, *m_Cell, m_SlatSegmentsMesh)};
-            m_DirectToDirectSlatIrradiances[t_IncomingDirection] = directToDiffuseSlatIrradiances(
-              diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh, t_IncomingDirection);
+            m_DirectToDirectSlatIrradiances[t_IncomingDirection] =
+              slatIrradiances(diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh);
         }
 
         if(!m_DirectToDirectSlatRadiances.count(t_IncomingDirection))
@@ -216,10 +207,9 @@ namespace SingleLayerOptics
     }
 
     std::vector<SegmentIrradiance>
-      directToDiffuseSlatIrradiances(const std::vector<double> & beamViewFactors,
-                                     const FenestrationCommon::SquareMatrix & radianceMatrix,
-                                     const SlatSegmentsMesh & mesh,
-                                     const CBeamDirection & t_IncomingDirection)
+      slatIrradiances(const std::vector<double> & beamViewFactors,
+                      const FenestrationCommon::SquareMatrix & radianceMatrix,
+                      const SlatSegmentsMesh & mesh)
     {
         auto B = beamViewFactors;
         const auto aSolution{solveSystem(radianceMatrix, B)};
@@ -248,6 +238,52 @@ namespace SingleLayerOptics
 
         return aIrradiances;
     }
+
+#include <vector>
+#include <algorithm>
+#include <functional>   // For std::bind
+
+    std::vector<double>
+      directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
+                                 const FenestrationCommon::SquareMatrix & radiancesMatrix,
+                                 const LayerProperties & properties)
+    {
+        // Forming left side of the equations for direct to direct radiances solution.
+        // Radiances matrix is already formed and used in several different places.
+        std::vector<double> rightSide;
+        rightSide.reserve(radiancesMatrix.size() + 2 * vector.size() + 2);
+
+        // Iterating through the vector forward
+        std::for_each(std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
+            rightSide.push_back(-properties.Tb * segment.E_b - properties.Rb * segment.E_f);
+        });
+
+        // Indoor is ignored and set to zero
+        rightSide.push_back(0);
+        rightSide.push_back(0);
+
+        // Iterating through the vector backward
+        std::for_each(
+          std::rbegin(vector), std::rend(vector), [&](const SegmentIrradiance & segment) {
+              rightSide.push_back(-properties.Tf * segment.E_f - properties.Rf * segment.E_b);
+          });
+
+        // Solve the system and get the solution vector
+        std::vector<double> solution = solveSystem(radiancesMatrix, rightSide);
+
+        // Assuming the solution vector has the two middle items at positions n and n+1
+        // Calculate n based on the initial size of vector
+        size_t n = vector.size();
+
+        // Remove the two middle items from the solution vector
+        if(solution.size() > n + 1)
+        {
+            solution.erase(solution.begin() + n, solution.begin() + n + 2);
+        }
+
+        return solution;
+    }
+
 
     std::vector<double> diffuseRadiosities(const size_t numberOfSegments,
                                            const SegmentIndexes & indexes,
@@ -362,7 +398,7 @@ namespace SingleLayerOptics
         return B;
     }
 
-    FenestrationCommon::SquareMatrix CVenetianCellEnergy::formDirectToDiffuseIrradianceMatrix(
+    FenestrationCommon::SquareMatrix CVenetianCellEnergy::formIrradianceMatrix(
       const FenestrationCommon::SquareMatrix & viewFactors, const LayerProperties & properties)
     {
         size_t numSeg = m_SlatSegmentsMesh.numberOfSegments;
@@ -446,13 +482,83 @@ namespace SingleLayerOptics
         return energy;
     }
 
-    std::vector<SegmentIrradiance> CVenetianCellEnergy::directToDirectSlatIrradiances(
-      const std::vector<Viewer::BeamViewFactor> & vf,
-      const SlatSegmentsMesh & mesh,
-      const LayerProperties & properties)
+    namespace Helper
     {
-        auto test{Helper::beamVector(Side::Front, mesh.numberOfSegments, vf, 0)};
-        return std::vector<SegmentIrradiance>();
+        //! Filtering BeamViewFactors by enclosure index and thus filtering it for upper and lower
+        //! slats
+        std::vector<Viewer::BeamViewFactor>
+          filterByEnclosureIndex(const std::vector<Viewer::BeamViewFactor> & vf,
+                                 SingleLayerOptics::SlatPosition slatPosition)
+        {
+            std::vector<Viewer::BeamViewFactor> filtered;
+            std::copy_if(vf.begin(),
+                         vf.end(),
+                         std::back_inserter(filtered),
+                         [slatPosition](const Viewer::BeamViewFactor & bvf) {
+                             return bvf.enclosureIndex == static_cast<size_t>(slatPosition);
+                         });
+            return filtered;
+        }
+
+        //! Calculates slat irradiances from the incoming beam
+        std::vector<double> slatIrradiancesFromBeam(const std::vector<Viewer::BeamViewFactor> & vf,
+                                                    const Viewer::CGeometry2D & slats,
+                                                    const CBeamDirection & t_IncomingDirection)
+        {
+            std::vector<double> result(slats.segments().size(),
+                                       0.0);   // Initialize result with zeros
+
+            const auto incomingUnitVector = t_IncomingDirection.unitVector();
+
+            for(const auto & aVF : vf)
+            {
+                if(aVF.segmentIndex < slats.segments().size())
+                {
+                    // Calculate irradiance and store it in the corresponding position
+                    result[aVF.segmentIndex] =
+                      aVF.percentHit
+                      * std::abs(slats.segments()[aVF.segmentIndex].surfaceUnitNormal().dotProduct(
+                        incomingUnitVector.endPoint()))
+                      / std::cos(FenestrationCommon::radians(t_IncomingDirection.profileAngle()));
+                }
+            }
+
+            return result;
+        }
+
+    }   // namespace Helper
+
+    std::vector<SegmentIrradiance>
+      CVenetianCellEnergy::directToDirectSlatIrradiances(const CBeamDirection & t_IncomingDirection)
+    {
+        using SingleLayerOptics::SlatPosition;
+        //! Irradiances are always calculated from the front side perspective
+        const auto vf{m_Cell->cellBeamViewFactors(Side::Front, t_IncomingDirection)};
+
+        const auto upperSlatIrradiances{Helper::slatIrradiancesFromBeam(
+          Helper::filterByEnclosureIndex(vf, SingleLayerOptics::SlatPosition::Top),
+          m_Cell->getSlats(SlatPosition::Top),
+          t_IncomingDirection)};
+
+        const auto lowerSlatIrradiances{Helper::slatIrradiancesFromBeam(
+          Helper::filterByEnclosureIndex(vf, SingleLayerOptics::SlatPosition::Bottom),
+          m_Cell->getSlats(SlatPosition::Bottom),
+          t_IncomingDirection)};
+
+        // They must be of the same size
+        assert(upperSlatIrradiances.size() == lowerSlatIrradiances.size());
+
+        // Ensure both vectors are of the same size
+        size_t size = upperSlatIrradiances.size();
+        std::vector<SegmentIrradiance> result(size);
+
+        // Fill the result vector
+        for(size_t i = 0; i < size; ++i)
+        {
+            result[i] = {upperSlatIrradiances[i], lowerSlatIrradiances[size - 1 - i]};
+        }
+
+        return result;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////

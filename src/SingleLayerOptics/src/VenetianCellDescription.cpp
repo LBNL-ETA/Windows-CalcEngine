@@ -274,4 +274,9 @@ namespace SingleLayerOptics
                - m_Bottom.segments().back().endPoint().y();
     }
 
+    const Viewer::CGeometry2D & CVenetianCellDescription::getSlats(SlatPosition position) const
+    {
+        return position == SlatPosition::Top ? m_Top : m_Bottom;
+    }
+
 }   // namespace SingleLayerOptics

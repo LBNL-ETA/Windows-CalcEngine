@@ -12,6 +12,12 @@
 
 namespace SingleLayerOptics
 {
+    enum class SlatPosition
+    {
+        Top = 0,
+        Bottom = 1
+    };
+
     class CVenetianCellDescription : public ICellDescription
     {
     public:
@@ -63,6 +69,8 @@ namespace SingleLayerOptics
 
         void preCalculateForProfileAngles(FenestrationCommon::Side side,
                                           const std::vector<double> & t_ProfileAngles);
+
+        [[nodiscard]] const Viewer::CGeometry2D & getSlats(SlatPosition position) const;
 
     private:
         std::vector<BeamSegmentView> beamViewFactorsToBeamSegmentViews(

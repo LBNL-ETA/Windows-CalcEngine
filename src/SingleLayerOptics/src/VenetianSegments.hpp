@@ -3,7 +3,8 @@
 namespace Viewer
 {
     struct BeamViewFactor;
-}
+    class CGeometry2D;
+}   // namespace Viewer
 
 namespace SingleLayerOptics
 {
@@ -98,10 +99,14 @@ namespace SingleLayerOptics
 
     // Irradiances for given incoming direction
     std::vector<SegmentIrradiance>
-      directToDiffuseSlatIrradiances(const std::vector<double> & beamViewFactors,
-                                     const FenestrationCommon::SquareMatrix & radianceMatrix,
-                                     const SlatSegmentsMesh & mesh,
-                                     const CBeamDirection & t_IncomingDirection);
+      slatIrradiances(const std::vector<double> & beamViewFactors,
+                      const FenestrationCommon::SquareMatrix & radianceMatrix,
+                      const SlatSegmentsMesh & mesh);
+
+    std::vector<double>
+      directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
+                                 const FenestrationCommon::SquareMatrix & radiancesMatrix,
+                                 const LayerProperties & properties);
 
     // Radiances for given incoming direction
     std::vector<double>
@@ -133,15 +138,17 @@ namespace SingleLayerOptics
         //! View factors matrix is valid for any incoming direction, it depends on the geometry and
         //! will be calculated only once and stored into slatsViewFactorsMatrix field
         FenestrationCommon::SquareMatrix
-          formDirectToDiffuseIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
-                                              const LayerProperties & properties);
+          formIrradianceMatrix(const FenestrationCommon::SquareMatrix & viewFactors,
+                               const LayerProperties & properties);
 
         //! Function to calculate direct to direct slat irradiances needed for directional
         //! calculations
+        //! @param t_IncomingDirection Incoming direction of the beam
+        //! @return std::vector of irradiances for each slat segment (Note that this does not
+        //! include inside and outside segments, meaning if number of slats mesh is 5 then size of
+        //! this vector will be 5)
         std::vector<SegmentIrradiance>
-          directToDirectSlatIrradiances(const std::vector<Viewer::BeamViewFactor> & vf,
-                                        const SlatSegmentsMesh & mesh,
-                                        const LayerProperties & properties);
+          directToDirectSlatIrradiances(const CBeamDirection & t_IncomingDirection);
 
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         LayerProperties m_LayerProperties;
