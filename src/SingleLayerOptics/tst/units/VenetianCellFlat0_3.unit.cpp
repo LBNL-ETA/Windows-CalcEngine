@@ -96,8 +96,8 @@ TEST_F(TestVenetianCellFlat0_3, DirectionalDiffuse)
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.071485, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.071485, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.050880, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.050880, Rdir_dif, 1e-6);
 }
 
 TEST_F(TestVenetianCellFlat0_3, DirectionalDiffuseBigIncomingAngle)
@@ -114,6 +114,6 @@ TEST_F(TestVenetianCellFlat0_3, DirectionalDiffuseBigIncomingAngle)
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.071485, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.071485, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.121237, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.121237, Rdir_dif, 1e-6);
 }

@@ -278,7 +278,7 @@ namespace SingleLayerOptics
 
     double CVenetianCellDescription::getCellSpacing() const
     {
-        if(m_Top.segments().size() == 0 || m_Bottom.segments().size() == 0)
+        if(m_Top.segments().empty() || m_Bottom.segments().empty())
         {
             return 0;
         }

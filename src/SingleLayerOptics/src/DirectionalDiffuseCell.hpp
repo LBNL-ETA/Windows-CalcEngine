@@ -27,28 +27,28 @@ namespace SingleLayerOptics
         // dir_dif and dir_dif_band functions are calculating portion of incoming beam that bounced
         // off material It does not include dir_dir portion of the beam that goes through cell (that
         // is calculated with dir_dir functions) (Simon)
-        virtual double T_dir_dif(const FenestrationCommon::Side t_Side,
+        virtual double T_dir_dif(FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_IncomingDirection,
                                  const CBeamDirection & t_OutgoingDirection);
 
-        virtual double R_dir_dif(const FenestrationCommon::Side t_Side,
+        virtual double R_dir_dif(FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_IncomingDirection,
                                  const CBeamDirection & t_OutgoingDirection);
 
-        virtual std::vector<double> T_dir_dif_band(const FenestrationCommon::Side t_Side,
+        virtual std::vector<double> T_dir_dif_band(FenestrationCommon::Side t_Side,
                                                    const CBeamDirection & t_IncomingDirection,
                                                    const CBeamDirection & t_OutgoingDirection);
 
-        virtual double T_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+        virtual double T_dir_dif_by_wavelength(FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_IncomingDirection,
                                                const CBeamDirection & t_OutgoingDirection,
                                                size_t wavelengthIndex);
 
-        virtual std::vector<double> R_dir_dif_band(const FenestrationCommon::Side t_Side,
+        virtual std::vector<double> R_dir_dif_band(FenestrationCommon::Side t_Side,
                                                    const CBeamDirection & t_IncomingDirection,
                                                    const CBeamDirection & t_OutgoingDirection);
 
-        virtual double R_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+        virtual double R_dir_dif_by_wavelength(FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_IncomingDirection,
                                                const CBeamDirection & t_OutgoingDirection,
                                                size_t wavelengthIndex);

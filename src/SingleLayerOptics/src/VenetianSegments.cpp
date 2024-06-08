@@ -77,7 +77,6 @@ namespace SingleLayerOptics
     {
         if(!m_DirectToDirectSlatIrradiances.count(t_IncomingDirection))
         {
-            // std::lock_guard<std::mutex> lock(irradianceMutex);
             m_DirectToDirectSlatIrradiances[t_IncomingDirection] =
               directToDirectSlatIrradiances(t_IncomingDirection);
         }
@@ -92,41 +91,7 @@ namespace SingleLayerOptics
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
 
-        const auto visibleFraction =
-          m_Cell->visibleBeamSegmentFractionSlatsOnly(Side::Back, t_OutgoingDirection);
-
-        const auto slats = m_Cell->getSlats();
-
-        double aResult = 0;
-        // Ensure all three vectors are of the same size
-        if(radiance.size() == visibleFraction.size() && radiance.size() == slats.size())
-        {
-            auto outgoingUnitVector{t_OutgoingDirection.unitVector()};
-
-            using FenestrationCommon::radians;
-
-            for(size_t i = 0; i < radiance.size(); ++i)
-            {
-                const auto & r = radiance[i];
-                const auto & vf = visibleFraction[i];
-                const auto & segment = slats[i];
-
-                auto testDot{
-                  std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()))};
-
-                aResult +=
-                  vf * r * segment.length()
-                  * std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));
-            }
-        }
-        else
-        {
-            throw std::runtime_error("Vectors are not of the same size");
-        }
-
-        return aResult
-               / (FenestrationCommon::WCE_PI * m_Cell->getCellSpacing()
-                  * std::cos(FenestrationCommon::radians(t_OutgoingDirection.profileAngle())));
+        return calculateOutgoingRadiance(Side::Front, t_OutgoingDirection, radiance);
     }
 
     double CVenetianCellEnergy::R_dir_dir(const CBeamDirection & t_IncomingDirection,
@@ -134,42 +99,48 @@ namespace SingleLayerOptics
     {
         if(!m_DirectToDirectSlatIrradiances.count(t_IncomingDirection))
         {
-            // std::lock_guard<std::mutex> lock(irradianceMutex);
-            const auto irradianceMatrix{formIrradianceMatrix(
-              m_Cell->viewFactors(Side::Front, t_IncomingDirection), m_LayerProperties)};
-            const auto diffuseViewFactors{beamToDiffuseViewFactors(
-              Side::Back, t_IncomingDirection, *m_Cell, m_SlatSegmentsMesh)};
             m_DirectToDirectSlatIrradiances[t_IncomingDirection] =
-              slatIrradiances(diffuseViewFactors, irradianceMatrix, m_SlatSegmentsMesh);
+              directToDirectSlatIrradiances(t_IncomingDirection);
         }
 
         if(!m_DirectToDirectSlatRadiances.count(t_IncomingDirection))
         {
             m_DirectToDirectSlatRadiances[t_IncomingDirection] =
-              directToDiffuseSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
-                                           m_SlatSegmentsMesh,
-                                           m_LayerProperties);
+              directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
+                                         slatsDiffuseRadiancesMatrix,
+                                         m_LayerProperties);
         }
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
 
+        return calculateOutgoingRadiance(Side::Back, t_OutgoingDirection, radiance);
+    }
+
+    double
+      CVenetianCellEnergy::calculateOutgoingRadiance(const FenestrationCommon::Side side,
+                                                     const CBeamDirection & t_OutgoingDirection,
+                                                     const std::vector<double> & slatRadiances)
+    {
         const auto visibleFraction =
-          m_Cell->visibleBeamSegmentFraction(Side::Front, t_OutgoingDirection);
+          m_Cell->visibleBeamSegmentFractionSlatsOnly(side, t_OutgoingDirection);
+
+        const auto slats = m_Cell->getSlats();
+
+        assert(slatRadiances.size() == visibleFraction.size() && slatRadiances.size() == slats.size());
+        auto outgoingUnitVector{t_OutgoingDirection.unitVector()};
 
         double aResult = 0;
-
-        using FenestrationCommon::radians;
-
-        for(size_t i = 1; i < radiance.size(); ++i)
+        for(size_t i = 0; i < slatRadiances.size(); ++i)
         {
-            aResult += visibleFraction[i] * radiance[i]
-                       * (std::cos(radians(m_Cell->segmentAngle(i)))
-                            * std::abs(std::tan(radians(t_OutgoingDirection.profileAngle())))
-                          - std::sin(radians(m_Cell->segmentAngle(i))))
-                       * m_Cell->segmentLength(i) / FenestrationCommon::WCE_PI;
+            const auto & segment = slats[i];
+
+            aResult += visibleFraction[i] * slatRadiances[i] * segment.length()
+                       * abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));
         }
 
-        return aResult / m_Cell->segmentLength(0);
+        return aResult
+               / (WCE_PI * m_Cell->getCellSpacing()
+                  * cos(radians(t_OutgoingDirection.profileAngle())));
     }
 
     double CVenetianCellEnergy::T_dif_dif()

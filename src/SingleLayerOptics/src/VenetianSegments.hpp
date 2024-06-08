@@ -154,6 +154,10 @@ namespace SingleLayerOptics
         std::vector<SegmentIrradiance>
           directToDirectSlatIrradiances(const CBeamDirection & t_IncomingDirection);
 
+        double calculateOutgoingRadiance(FenestrationCommon::Side side,
+                                         const CBeamDirection & t_OutgoingDirection,
+                                         const std::vector<double> & slatRadiances);
+
         std::shared_ptr<CVenetianCellDescription> m_Cell;
         LayerProperties m_LayerProperties;
 

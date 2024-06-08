@@ -329,39 +329,39 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional_n_Band_Material, TestBSDF1)
     CMultiPaneBSDF & aLayer = getLayer();
 
     const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.44536554406945233, tauDiff, 1e-6);
+    EXPECT_NEAR(0.39040447912219783, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.34849866229530069, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.081346841038713175, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.1484338930188, absDiff1, 1e-6);
+    EXPECT_NEAR(0.47745840238573878, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.057701900616446693, absDiff2, 1e-6);
+    EXPECT_NEAR(0.050790277453349929, absDiff2, 1e-6);
 
     const double theta = 0;
     const double phi = 0;
 
     const double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.51952442584354297, tauHem, 1e-6);
+    EXPECT_NEAR(0.48474773923246411, tauHem, 1e-6);
 
     const double tauDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.41549215928407501, tauDir, 1e-6);
+    EXPECT_NEAR(0.4142871458079016, tauDir, 1e-6);
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.33083431644105965, rhoHem, 1e-6);
+    EXPECT_NEAR(0.075941438123243721, rhoHem, 1e-6);
 
     const double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.025923716904274176, rhoDir, 1e-6);
+    EXPECT_NEAR(0.019480048289373025, rhoDir, 1e-6);
 
     const double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.090916320061772818, abs1, 1e-6);
+    EXPECT_NEAR(0.38456381613967494, abs1, 1e-6);
 
     const double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.058724937653624902, abs2, 1e-6);
+    EXPECT_NEAR(0.054747006504616808, abs2, 1e-6);
 }
