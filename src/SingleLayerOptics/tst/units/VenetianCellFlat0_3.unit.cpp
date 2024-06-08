@@ -31,7 +31,7 @@ protected:
         const auto curvatureRadius = 0;
         FenestrationCommon::VenetianGeometry geometry{
           slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
-        const size_t numOfSlatSegments = 1;
+        const size_t numOfSlatSegments = 3;
 
         return std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
     }

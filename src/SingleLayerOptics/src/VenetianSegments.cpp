@@ -91,7 +91,7 @@ namespace SingleLayerOptics
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
 
-        return calculateOutgoingRadiance(Side::Front, t_OutgoingDirection, radiance);
+        return calculateOutgoingRadiance(Side::Back, t_OutgoingDirection, radiance);
     }
 
     double CVenetianCellEnergy::R_dir_dir(const CBeamDirection & t_IncomingDirection,
@@ -113,7 +113,7 @@ namespace SingleLayerOptics
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
 
-        return calculateOutgoingRadiance(Side::Back, t_OutgoingDirection, radiance);
+        return calculateOutgoingRadiance(Side::Front, t_OutgoingDirection, radiance);
     }
 
     double
@@ -254,8 +254,13 @@ namespace SingleLayerOptics
         // Solve the system and get the solution vector
         std::vector<double> solution = solveSystem(radiancesMatrix, rightSide);
 
-        // Removing indoor side from the solution since it is invalid anyway (we set zeros)
         size_t n = vector.size();
+
+        // Reverse the first part of the solution vector
+        if (solution.size() > n)
+        {
+            std::reverse(solution.begin(), solution.begin() + n);
+        }
 
         // Remove the two middle items from the solution vector
         if(solution.size() > n + 1)

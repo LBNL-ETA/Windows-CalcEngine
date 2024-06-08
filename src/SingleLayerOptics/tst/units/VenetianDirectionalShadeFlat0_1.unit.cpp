@@ -63,16 +63,16 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
     BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.62815686543915794, tauDiff, 1e-6);
+    EXPECT_NEAR(0.55329584855741987, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.26606760038504212, RfDiff, 1e-6);
+    EXPECT_NEAR(0.34092861726678308, RfDiff, 1e-6);
 
     const double theta = 23;
     const double phi = 198;
 
     const double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.65530003675657189, tauHem, 1e-6);
+    EXPECT_NEAR(0.54432441274896237, tauHem, 1e-6);
 
     auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
@@ -80,12 +80,11 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
     const size_t size = aT.size();
 
     std::vector<double> correctT{
-      3.93441,  4.230955, 6.502014, 7.438862,  6.502014,  4.230955,  1.946733, 0.996723,  1.946733,
-      3.931406, 7.253509, 9.654657, 10.532058, 9.654657,  7.253509,  3.931406, 0.576396,  0.065378,
-      0.048215, 0.065378, 0.576396, 3.931406,  10.186359, 11.244577, 9.561371, 11.244577, 10.186359,
-      3.931406, 0.054978, 0.011951, 0.023431,  0.011951,  0.054978,  3.743404, 0.088039,  0.088039,
-      0.088039, 3.743404, 0.088039, 0.088039,  0.088039,
-    };
+      3.853753, 4.150298, 6.425614, 7.36672,   6.425614,  4.150298, 1.870334, 0.924581, 1.870334,
+      3.850749, 7.183496, 9.615871, 10.504625, 9.615871,  7.183496, 3.850749, 0.506383, 0.020037,
+      0.013944, 0.020037, 0.506383, 3.850749,  10.154553, 11.25115, 9.577312, 11.25115, 10.154553,
+      3.850749, 0.01626,  0.00771,  0.013944,  0.00771,   0.01626,  3.662747, 0.178554, 0.143667,
+      0.178554, 3.662747, 0.043409, 0.05395,   0.043409};
 
     EXPECT_EQ(correctT.size(), aT.size());
     for(size_t i = 0; i < size; ++i)
@@ -97,11 +96,11 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
     auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     std::vector<double> correctR{
-      0.044019, 0.044019, 0.041696, 0.039372, 0.041696, 0.044019, 0.041696, 0.039372, 0.041696,
-      0.044019, 0.03821,  0.026592, 0.020783, 0.026592, 0.03821,  0.044019, 0.03821,  0.020037,
-      0.013944, 0.020037, 0.03821,  0.044019, 0.023171, 0.018524, 0.039372, 0.018524, 0.023171,
-      0.044019, 0.01626,  0.00771,  0.013944, 0.00771,  0.01626,  0.044019, 0.178554, 0.143667,
-      0.178554, 0.044019, 0.043409, 0.05395,  0.043409};
+      0.124677, 0.124677, 0.118095, 0.111514, 0.118095, 0.124677, 0.118095, 0.111514, 0.118095,
+      0.124677, 0.108223, 0.065378, 0.048215, 0.065378, 0.108223, 0.124677, 0.108223, 0.065378,
+      0.048215, 0.065378, 0.108223, 0.124677, 0.054978, 0.011951, 0.023431, 0.011951, 0.054978,
+      0.124677, 0.054978, 0.011951, 0.023431, 0.011951, 0.054978, 0.124677, 0.088039, 0.088039,
+      0.088039, 0.124677, 0.088039, 0.088039, 0.088039};
 
     EXPECT_EQ(correctR.size(), aRf.size());
     for(size_t i = 0; i < size; ++i)
@@ -117,7 +116,7 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, AtWavelength)
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
 
-    const auto correct{0.39574919753135934};
+    const auto correct{0.37192019576813157};
     const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);

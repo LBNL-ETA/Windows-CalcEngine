@@ -91,8 +91,8 @@ TEST_F(TestVenetianCellCurved55_1, TestVenetian2)
     Tdir_dif = aCell->T_dir_dif(aSide, aDirection, outDirection);
     Rdir_dif = aCell->R_dir_dif(aSide, aDirection, outDirection);
 
-    EXPECT_NEAR(0.204070, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.074322, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.076019996725899625, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.20407014128751794, Rdir_dif, 1e-6);
 
     // Back side
     aSide = Side::Back;
