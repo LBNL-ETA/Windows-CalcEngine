@@ -93,24 +93,40 @@ namespace SingleLayerOptics
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
 
         const auto visibleFraction =
-          m_Cell->visibleBeamSegmentFraction(Side::Back, t_OutgoingDirection);
+          m_Cell->visibleBeamSegmentFractionSlatsOnly(Side::Back, t_OutgoingDirection);
+
+        const auto slats = m_Cell->getSlats();
 
         double aResult = 0;
-
-        using FenestrationCommon::radians;
-
-        for(size_t i = 1; i < radiance.size(); ++i)
+        // Ensure all three vectors are of the same size
+        if(radiance.size() == visibleFraction.size() && radiance.size() == slats.size())
         {
-            aResult += visibleFraction[i] * radiance[i]
-                       * (std::cos(radians(m_Cell->segmentAngle(i)))
-                            * std::abs(std::tan(radians(t_OutgoingDirection.profileAngle())))
-                          - std::sin(radians(m_Cell->segmentAngle(i))))
-                       * m_Cell->segmentLength(i) / FenestrationCommon::WCE_PI;
+            auto outgoingUnitVector{t_OutgoingDirection.unitVector()};
+
+            using FenestrationCommon::radians;
+
+            for(size_t i = 0; i < radiance.size(); ++i)
+            {
+                const auto & r = radiance[i];
+                const auto & vf = visibleFraction[i];
+                const auto & segment = slats[i];
+
+                auto testDot{
+                  std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()))};
+
+                aResult +=
+                  vf * r * segment.length()
+                  * std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));
+            }
+        }
+        else
+        {
+            throw std::runtime_error("Vectors are not of the same size");
         }
 
         return aResult
-               / (m_Cell->segmentLength(0)
-                  * std::cos(FenestrationCommon::radians(t_OutgoingDirection.theta())));
+               / (FenestrationCommon::WCE_PI * m_Cell->getCellSpacing()
+                  * std::cos(FenestrationCommon::radians(t_OutgoingDirection.profileAngle())));
     }
 
     double CVenetianCellEnergy::R_dir_dir(const CBeamDirection & t_IncomingDirection,
@@ -239,10 +255,6 @@ namespace SingleLayerOptics
         return aIrradiances;
     }
 
-#include <vector>
-#include <algorithm>
-#include <functional>   // For std::bind
-
     std::vector<double>
       directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
                                  const FenestrationCommon::SquareMatrix & radiancesMatrix,
@@ -271,8 +283,7 @@ namespace SingleLayerOptics
         // Solve the system and get the solution vector
         std::vector<double> solution = solveSystem(radiancesMatrix, rightSide);
 
-        // Assuming the solution vector has the two middle items at positions n and n+1
-        // Calculate n based on the initial size of vector
+        // Removing indoor side from the solution since it is invalid anyway (we set zeros)
         size_t n = vector.size();
 
         // Remove the two middle items from the solution vector

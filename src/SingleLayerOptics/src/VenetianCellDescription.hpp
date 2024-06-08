@@ -32,11 +32,6 @@ namespace SingleLayerOptics
         [[nodiscard]] double segmentLength(size_t Index) const;
         [[nodiscard]] double segmentAngle(size_t Index) const;
 
-        //! Function to calculate dot product of the segment with the given direction
-        //! @param Index - index of the segment
-        //! @param t_Direction - direction of the incoming beam
-        [[nodiscard]] double dotProduct(size_t Index, const CBeamDirection & t_Direction) const;
-
         // View factors of enclosure slats
         FenestrationCommon::SquareMatrix viewFactors();
 
@@ -55,8 +50,13 @@ namespace SingleLayerOptics
         std::vector<double> scaledBeamViewFactors(FenestrationCommon::Side t_Side,
                                                   const CBeamDirection & t_Direction);
 
+        //! Calculates segments that are visible for the beam including indoor and outdoor segments
         std::vector<double> visibleBeamSegmentFraction(FenestrationCommon::Side t_Side,
                                                        const CBeamDirection & t_Direction);
+
+        //! Calculates segments that are visible for the beam excluding indoor and outdoor segments
+        std::vector<double> visibleBeamSegmentFractionSlatsOnly(FenestrationCommon::Side t_Side,
+                                                                const CBeamDirection & t_Direction);
 
         // Direct to direct component of the ray
         double T_dir_dir(FenestrationCommon::Side t_Side,
@@ -72,14 +72,17 @@ namespace SingleLayerOptics
 
         [[nodiscard]] const Viewer::CGeometry2D & getSlats(SlatPosition position) const;
 
+        //! Return all slats in CW direction (No indoor and outdoor just venetian slats)
+        [[nodiscard]] std::vector<Viewer::CViewSegment2D> getSlats() const;
+
+        [[nodiscard]] double getCellSpacing() const;
+
     private:
         std::vector<BeamSegmentView> beamViewFactorsToBeamSegmentViews(
           size_t numberOfSegments,
           FenestrationCommon::Side t_Side,
           const CBeamDirection & t_Direction,
           const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors);
-
-        double getCellSpacing() const;
 
         FenestrationCommon::VenetianGeometry m_VenetianGeometry;
         size_t m_NumOfSegments;

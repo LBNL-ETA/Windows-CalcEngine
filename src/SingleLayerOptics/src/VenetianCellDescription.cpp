@@ -79,13 +79,6 @@ namespace SingleLayerOptics
         return Helper::getSegmentProperty(m_Geometry, Index, &Viewer::CSegment2D::angle);
     }
 
-    double CVenetianCellDescription::dotProduct(size_t Index,
-                                                const CBeamDirection & t_Direction) const
-    {
-        const auto & segment{Helper::segment(m_Geometry, Index)};
-        return 0;
-    }
-
     std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
     {
         auto venetianGeometry{m_VenetianGeometry};
@@ -165,6 +158,26 @@ namespace SingleLayerOptics
                                               cellBeamViewFactors(t_Side, t_Direction))
                                           );
         // clang-format on
+    }
+
+    std::vector<double> CVenetianCellDescription::visibleBeamSegmentFractionSlatsOnly(
+      FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction)
+    {
+        auto result = CVenetianCellDescription::visibleBeamSegmentFraction(t_Side, t_Direction);
+
+        // Ensure the result vector has the expected size
+        if(result.size() != 2 * m_NumOfSegments + 2)
+        {
+            throw std::runtime_error("Unexpected size of the result vector");
+        }
+
+        // Erase the first value
+        result.erase(result.begin());
+
+        // Erase the value after the first numberOfSegments values
+        result.erase(result.begin() + m_NumOfSegments);
+
+        return result;
     }
 
     FenestrationCommon::SquareMatrix
@@ -277,6 +290,20 @@ namespace SingleLayerOptics
     const Viewer::CGeometry2D & CVenetianCellDescription::getSlats(SlatPosition position) const
     {
         return position == SlatPosition::Top ? m_Top : m_Bottom;
+    }
+
+    std::vector<Viewer::CViewSegment2D> CVenetianCellDescription::getSlats() const
+    {
+        const auto upperSlats = getSlats(SlatPosition::Top);
+        const auto lowerSlats = getSlats(SlatPosition::Bottom);
+
+        std::vector<Viewer::CViewSegment2D> allSlats;
+        allSlats.reserve(upperSlats.segments().size() + lowerSlats.segments().size());
+
+        allSlats.insert(allSlats.end(), upperSlats.segments().begin(), upperSlats.segments().end());
+        allSlats.insert(allSlats.end(), lowerSlats.segments().begin(), lowerSlats.segments().end());
+
+        return allSlats;
     }
 
 }   // namespace SingleLayerOptics

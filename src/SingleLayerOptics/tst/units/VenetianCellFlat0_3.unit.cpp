@@ -31,7 +31,7 @@ protected:
         const auto curvatureRadius = 0;
         FenestrationCommon::VenetianGeometry geometry{
           slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
-        const size_t numOfSlatSegments = 2;
+        const size_t numOfSlatSegments = 1;
 
         return std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
     }
@@ -109,7 +109,7 @@ TEST_F(TestVenetianCellFlat0_3, DirectionalDiffuseBigIncomingAngle)
     // CBeamDirection (Theta, Phi)
     CBeamDirection incomingDirection = CBeamDirection({76.5, 270});
 
-    CBeamDirection outgoingDirection = CBeamDirection({36, 90});
+    CBeamDirection outgoingDirection = CBeamDirection({76.5, 90});
 
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);

@@ -114,6 +114,10 @@ namespace SingleLayerOptics
                                    const SlatSegmentsMesh & slats,
                                    const LayerProperties & layerProperties);
 
+    double radianceForOutgoingDirection(const CBeamDirection& t_OutgoingDirection,
+                                        const std::vector<double>& t_Radiances,
+                                        const std::vector<double> & percentageViews);
+
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
     {
