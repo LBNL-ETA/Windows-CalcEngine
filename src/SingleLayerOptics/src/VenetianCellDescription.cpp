@@ -187,7 +187,7 @@ namespace SingleLayerOptics
         const auto scaled_vf{scaledBeamViewFactors(t_Side, t_Direction)};
 
         auto diffuseVF{m_Geometry.viewFactors()};
-        for(int i = 0; i < scaled_vf.size(); ++i)
+        for(size_t i = 0u; i < scaled_vf.size(); ++i)
         {
             diffuseVF(0, i) = scaled_vf[i];
         }
