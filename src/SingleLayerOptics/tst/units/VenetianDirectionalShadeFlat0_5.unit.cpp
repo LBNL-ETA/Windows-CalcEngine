@@ -1,14 +1,12 @@
 #include <memory>
 #include <gtest/gtest.h>
-#include <fstream>
 
 #include <WCESingleLayerOptics.hpp>
-#include <WCECommon.hpp>
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 
-class TestVenetianDirectionalShadeFlat0_4 : public testing::Test
+class TestVenetianDirectionalShadeFlat0_5 : public testing::Test
 {
 private:
     std::shared_ptr<CBSDFLayer> m_Shade;
@@ -26,7 +24,7 @@ protected:
         const auto slatSpacing = 0.012;   // m
         const auto slatTiltAngle = 0;
         const auto curvatureRadius = 0;
-        const size_t numOfSlatSegments = 1;
+        const size_t numOfSlatSegments = 2;
 
         // make layer
         m_Shade =
@@ -48,15 +46,15 @@ public:
     };
 };
 
-TEST_F(TestVenetianDirectionalShadeFlat0_4, TestVenetian1)
+TEST_F(TestVenetianDirectionalShadeFlat0_5, TestVenetian1)
 {
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     auto aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.616849, tauDiff, 1e-6);
+    EXPECT_NEAR(0.592936, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.232846, RfDiff, 1e-6);
+    EXPECT_NEAR(0.256758, RfDiff, 1e-6);
 }

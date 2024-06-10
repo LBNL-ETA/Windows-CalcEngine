@@ -329,39 +329,39 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional_n_Band_Material, TestBSDF1)
     CMultiPaneBSDF & aLayer = getLayer();
 
     const double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.35664395314798009, tauDiff, 1e-6);
+    EXPECT_NEAR(0.358468, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.098702145536978508, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.108058, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.4981545549963794, absDiff1, 1e-6);
+    EXPECT_NEAR(0.486681, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.046499346318660692, absDiff2, 1e-6);
+    EXPECT_NEAR(0.046793, absDiff2, 1e-6);
 
     const double theta = 0;
     const double phi = 0;
 
     const double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.44623515149695664, tauHem, 1e-6);
+    EXPECT_NEAR(0.456740, tauHem, 1e-6);
 
     const double tauDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.41258270109352246, tauDir, 1e-6);
+    EXPECT_NEAR(0.413389, tauDir, 1e-6);
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.089544604036500372, rhoHem, 1e-6);
+    EXPECT_NEAR(0.115956, rhoHem, 1e-6);
 
     const double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.019838092262594809, rhoDir, 1e-6);
+    EXPECT_NEAR(0.020656, rhoDir, 1e-6);
 
     const double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.41420589708254185, abs1, 1e-6);
+    EXPECT_NEAR(0.376309, abs1, 1e-6);
 
     const double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.050014347384000887, abs2, 1e-6);
+    EXPECT_NEAR(0.050995, abs2, 1e-6);
 }

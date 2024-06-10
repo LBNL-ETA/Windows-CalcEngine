@@ -86,7 +86,8 @@ namespace SingleLayerOptics
             m_DirectToDirectSlatRadiances[t_IncomingDirection] =
               directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
                                          slatsDiffuseRadiancesMatrix,
-                                         m_LayerProperties);
+                                         m_LayerProperties,
+                                         t_IncomingDirection.profileAngle() > 0.0);
         }
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
@@ -108,7 +109,8 @@ namespace SingleLayerOptics
             m_DirectToDirectSlatRadiances[t_IncomingDirection] =
               directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
                                          slatsDiffuseRadiancesMatrix,
-                                         m_LayerProperties);
+                                         m_LayerProperties,
+                                         t_IncomingDirection.profileAngle() > 0.0);
         }
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
@@ -126,7 +128,8 @@ namespace SingleLayerOptics
 
         const auto slats = m_Cell->getSlats();
 
-        assert(slatRadiances.size() == visibleFraction.size() && slatRadiances.size() == slats.size());
+        assert(slatRadiances.size() == visibleFraction.size()
+               && slatRadiances.size() == slats.size());
         auto outgoingUnitVector{t_OutgoingDirection.unitVector()};
 
         double aResult = 0;
@@ -134,8 +137,9 @@ namespace SingleLayerOptics
         {
             const auto & segment = slats[i];
 
-            aResult += visibleFraction[i] * slatRadiances[i] * segment.length()
-                       * std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));
+            aResult +=
+              visibleFraction[i] * slatRadiances[i] * segment.length()
+              * std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));
         }
 
         return aResult
@@ -229,7 +233,8 @@ namespace SingleLayerOptics
     std::vector<double>
       directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
                                  const FenestrationCommon::SquareMatrix & radiancesMatrix,
-                                 const LayerProperties & properties)
+                                 const LayerProperties & properties,
+                                 const bool incomingDirectionPositive)
     {
         // Forming left side of the equations for direct to direct radiances solution.
         // Radiances matrix is already formed and used in several different places.
@@ -238,7 +243,7 @@ namespace SingleLayerOptics
 
         // Iterating through the vector forward
         std::for_each(std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
-            rightSide.push_back(-properties.Tb * segment.E_b - properties.Rb * segment.E_f);
+            rightSide.push_back(-properties.Tb * segment.E_f - properties.Rb * segment.E_b);
         });
 
         // Indoor is ignored and set to zero
@@ -248,7 +253,7 @@ namespace SingleLayerOptics
         // Iterating through the vector backward
         std::for_each(
           std::rbegin(vector), std::rend(vector), [&](const SegmentIrradiance & segment) {
-              rightSide.push_back(-properties.Tf * segment.E_f - properties.Rf * segment.E_b);
+              rightSide.push_back(-properties.Tf * segment.E_b - properties.Rf * segment.E_f);
           });
 
         // Solve the system and get the solution vector
@@ -256,16 +261,25 @@ namespace SingleLayerOptics
 
         size_t n = vector.size();
 
-        // Reverse the first part of the solution vector
-        if (solution.size() > n)
-        {
-            std::reverse(solution.begin(), solution.begin() + n);
-        }
-
         // Remove the two middle items from the solution vector
         if(solution.size() > n + 1)
         {
             solution.erase(solution.begin() + n, solution.begin() + n + 2);
+        }
+
+        // Conditionally reverse parts of the solution vector based on the direction
+        if(solution.size() > n)
+        {
+            if(incomingDirectionPositive)
+            {
+                // Reverse the second part of the vector
+                std::reverse(solution.begin() + n, solution.end());
+            }
+            else
+            {
+                // Reverse the first part of the vector
+                std::reverse(solution.begin(), solution.begin() + n);
+            }
         }
 
         return solution;
@@ -542,7 +556,7 @@ namespace SingleLayerOptics
         // Fill the result vector
         for(size_t i = 0; i < size; ++i)
         {
-            result[i] = {upperSlatIrradiances[i], lowerSlatIrradiances[size - 1 - i]};
+            result[i] = {lowerSlatIrradiances[i], upperSlatIrradiances[size - 1 - i]};
         }
 
         return result;
