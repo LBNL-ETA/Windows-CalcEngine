@@ -62,6 +62,6 @@ TEST_F(TestLinearSolver1, TestSolverException)
     {
         EXPECT_EQ(
           err.what(),
-          std::string("Matrix and vector for system of linear equations are not same size."));
+          std::string("Matrix and vector for system of linear equations are not the same size."));
     }
 }

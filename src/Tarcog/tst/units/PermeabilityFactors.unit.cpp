@@ -30,7 +30,7 @@ TEST_F(TestPermeabilityFactors, TestPerforatedCircularPermeability)
 {
     SCOPED_TRACE("Begin Test: Circular perforated layer thermal permeability.");
 
-    const auto perforatedType{ThermalPermeability::Perforated::Geometry::Circular};
+    const auto perforatedType{ThermalPermeability::Perforated::Type::Circular};
     const auto diameter{0.00635};   // m
     const auto xSpacing{0.01905};   // m
     const auto ySpacing{0.01905};   // m
@@ -49,7 +49,7 @@ TEST_F(TestPermeabilityFactors, TestPerforatedRectangularPermeability)
 {
     SCOPED_TRACE("Begin Test: Rectangular perforated layer thermal permeability.");
 
-    const auto perforatedType{ThermalPermeability::Perforated::Geometry::Rectangular};
+    const auto perforatedType{ThermalPermeability::Perforated::Type::Rectangular};
     const auto width{0.00635};      // m
     const auto height{0.00635};     // m
     const auto xSpacing{0.01905};   // m
@@ -65,7 +65,7 @@ TEST_F(TestPermeabilityFactors, TestPerforatedSquarePermeability)
 {
     SCOPED_TRACE("Begin Test: Square perforated layer thermal permeability.");
 
-    const auto perforatedType{ThermalPermeability::Perforated::Geometry::Square};
+    const auto perforatedType{ThermalPermeability::Perforated::Type::Square};
     const auto width{0.00635};      // m
     const auto xSpacing{0.01905};   // m
     const auto ySpacing{0.01905};   // m

@@ -53,7 +53,7 @@ protected:
           ThermalPermeability::Perforated::diameterToXYDimension(2 * radius)};
 
         const auto frontOpenness{ThermalPermeability::Perforated::openness(
-          ThermalPermeability::Perforated::Geometry::Circular,
+          ThermalPermeability::Perforated::Type::Circular,
           x,
           y,
           CellDimension.x,

@@ -83,22 +83,21 @@ namespace ThermalPermeability
         XYDimension::XYDimension(const double x, const double y) : x(x), y(y)
         {}
 
-        double openness(const Geometry t_Geometry,
+        double openness(const Type t_Type,
                         const double t_SpacingX,
                         const double t_SpacingY,
                         const double t_DimensionX,
                         const double t_DimensionY)
         {
             const auto cellArea{t_SpacingX * t_SpacingY};
-            std::map<Geometry, std::function<double(const double, const double)>> opennessFraction{
-              {Geometry::Circular, {[&](const double x, const double y) {
+            std::map<Type, std::function<double(const double, const double)>> opennessFraction{
+              {Type::Circular, {[&](const double x, const double y) {
                    return (x / 2) * (y / 2) * ConstantsData::WCE_PI / cellArea;
                }}},
-              {Geometry::Square,
-               {[&](const double x, const double y) { return x * y / cellArea; }}},
-              {Geometry::Rectangular,
+              {Type::Square, {[&](const double x, const double y) { return x * y / cellArea; }}},
+              {Type::Rectangular,
                {[&](const double x, const double y) { return x * y / cellArea; }}}};
-            return opennessFraction.at(t_Geometry)(t_DimensionX, t_DimensionY);
+            return opennessFraction.at(t_Type)(t_DimensionX, t_DimensionY);
         }
 
         XYDimension diameterToXYDimension(const double diameter)

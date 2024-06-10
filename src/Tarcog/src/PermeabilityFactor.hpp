@@ -19,7 +19,7 @@ namespace ThermalPermeability
 
     namespace Perforated
     {
-        enum class Geometry
+        enum class Type
         {
             Circular,
             Square,
@@ -35,7 +35,7 @@ namespace ThermalPermeability
 
         XYDimension diameterToXYDimension(double diameter);
 
-        double openness(Geometry t_Geometry,
+        double openness(Type t_Type,
                         double t_SpacingX,
                         double t_SpacingY,
                         double t_DimensionX,
