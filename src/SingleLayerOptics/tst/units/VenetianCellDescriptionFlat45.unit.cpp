@@ -24,10 +24,11 @@ protected:
         const auto slatSpacing = 0.010;   // m
         const auto slatTiltAngle = 45;
         const auto curvatureRadius = 0;
+        const FenestrationCommon::VenetianGeometry geometry{
+          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
         const size_t aNumOfSlats = 2;
 
-        m_Cell = std::make_shared<CVenetianCellDescription>(
-          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, aNumOfSlats);
+        m_Cell = std::make_shared<CVenetianCellDescription>(geometry, aNumOfSlats);
     }
 
 public:

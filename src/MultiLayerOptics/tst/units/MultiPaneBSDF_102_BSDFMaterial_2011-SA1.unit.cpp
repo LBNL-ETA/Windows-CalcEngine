@@ -1415,18 +1415,18 @@ TEST_F(MultiPaneBSDF_102_BSDFMaterial_2011_SA1, TestBSDFMatrixAsInput)
     EXPECT_NEAR(0.52469447798200541, rhoBackHem, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.13326587636977402, abs1, 1e-6);
+    EXPECT_NEAR(0.13326587636977405, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.36804088838464255, abs2, 1e-6);
 
     auto absHeatDirect = aLayer.getAbsorptanceLayersHeat(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Direct, 0, 0);
-    EXPECT_NEAR(0.13326587636977402, absHeatDirect[0], 1e-6);
+    EXPECT_NEAR(0.13326587636977405, absHeatDirect[0], 1e-6);
     EXPECT_NEAR(0.36804088838464255, absHeatDirect[1], 1e-6);
 
     auto absHeatDiffuse = aLayer.getAbsorptanceLayersHeat(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
-    EXPECT_NEAR(0.1423585687567171, absHeatDiffuse[0], 1e-6);
-    EXPECT_NEAR(0.30810470981349697, absHeatDiffuse[1], 1e-6);
+    EXPECT_NEAR(0.14235856875671704, absHeatDiffuse[0], 1e-6);
+    EXPECT_NEAR(0.30810470981349725, absHeatDiffuse[1], 1e-6);
 }

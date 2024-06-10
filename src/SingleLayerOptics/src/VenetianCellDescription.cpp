@@ -2,78 +2,91 @@
 #include <memory>
 #include <stdexcept>
 
+#include <WCECommon.hpp>
+#include <WCEViewer.hpp>
+
 #include "VenetianCellDescription.hpp"
 #include "BeamDirection.hpp"
-#include "WCECommon.hpp"
 
 namespace SingleLayerOptics
 {
-    CVenetianCellDescription::CVenetianCellDescription(const double t_SlatWidth,
-                                                       const double t_SlatSpacing,
-                                                       const double t_SlatTiltAngle,
-                                                       const double t_CurvatureRadius,
-                                                       const size_t t_NumOfSlatSegments) :
-        m_SlatWidth(t_SlatWidth),
-        m_SlatSpacing(t_SlatSpacing),
-        m_SlatTiltAngle(t_SlatTiltAngle),
-        m_CurvatureRadius(t_CurvatureRadius),
-        m_NumOfSegments(t_NumOfSlatSegments),
-        m_Top(t_SlatWidth,
-              t_SlatSpacing,
-              t_SlatTiltAngle,
-              t_CurvatureRadius,
-              t_NumOfSlatSegments,
-              SegmentsDirection::Positive),
-        m_Bottom(t_SlatWidth,
-                 0,
-                 t_SlatTiltAngle,
-                 t_CurvatureRadius,
-                 t_NumOfSlatSegments,
-                 SegmentsDirection::Negative)
+    namespace Helper
     {
-        Viewer::CViewSegment2D exteriorSegment(m_Bottom.geometry().lastPoint(),
-                                               m_Top.geometry().firstPoint());
 
-        Viewer::CViewSegment2D interiorSegment(m_Top.geometry().lastPoint(),
-                                               m_Bottom.geometry().firstPoint());
+        FenestrationCommon::VenetianGeometry
+          bottomGeometry(const FenestrationCommon::VenetianGeometry & t_Geometry)
+        {
+            auto bottomGeometry{t_Geometry};
+            bottomGeometry.SlatSpacing = 0.0;
+            return bottomGeometry;
+        }
+    }   // namespace Helper
+
+    CVenetianCellDescription::CVenetianCellDescription(
+      const FenestrationCommon::VenetianGeometry & t_Geometry, size_t t_NumOfSlatSegments) :
+        m_VenetianGeometry(FenestrationCommon::adjustSlatTiltAngle(t_Geometry)),
+        m_NumOfSegments(t_NumOfSlatSegments),
+        m_Top(buildViewerSlat(t_Geometry, t_NumOfSlatSegments, SegmentsDirection::Positive)),
+        m_Bottom(buildViewerSlat(
+          Helper::bottomGeometry(t_Geometry), t_NumOfSlatSegments, SegmentsDirection::Negative))
+    {
+        Viewer::CViewSegment2D exteriorSegment(m_Bottom.lastPoint(), m_Top.firstPoint());
+
+        Viewer::CViewSegment2D interiorSegment(m_Top.lastPoint(), m_Bottom.firstPoint());
 
         m_Geometry.appendSegment(exteriorSegment);
-        m_Geometry.appendGeometry2D(m_Top.geometry());
+        m_Geometry.appendGeometry2D(m_Top);
         m_Geometry.appendSegment(interiorSegment);
-        m_Geometry.appendGeometry2D(m_Bottom.geometry());
+        m_Geometry.appendGeometry2D(m_Bottom);
 
-        m_BeamGeometry.appendGeometry2D(m_Top.geometry());
-        m_BeamGeometry.appendGeometry2D(m_Bottom.geometry());
+        m_BeamGeometry.appendGeometry2D(m_Top);
+        m_BeamGeometry.appendGeometry2D(m_Bottom);
     }
 
     size_t CVenetianCellDescription::numberOfSegments() const
     {
         // Two additional segments are for interior and exterior openness
-        return 2 + m_Top.numberOfSegments() + m_Bottom.numberOfSegments();
+        return 2 + m_Top.segments().size() + m_Bottom.segments().size();
     }
+
+    namespace Helper
+    {
+        const Viewer::CSegment2D & segment(const Viewer::CGeometry2D & geometry, size_t index)
+        {
+            const auto & segments{geometry.segments()};
+            if(index >= segments.size())
+            {
+                throw std::runtime_error("Incorrect index for venetian segment.");
+            }
+            return segments[index];
+        }
+
+        template<typename Func>
+        double getSegmentProperty(const Viewer::CGeometry2D & geometry, size_t index, Func func)
+        {
+            return (Helper::segment(geometry, index).*func)();
+        }
+    }   // namespace Helper
+
 
     double CVenetianCellDescription::segmentLength(const size_t Index) const
     {
-        const auto aSegments = m_Geometry.segments();
-        if(Index > aSegments.size())
-        {
-            throw std::runtime_error("Incorrect index for venetian segment.");
-        }
-        const auto aSegment = aSegments[Index];
-        return aSegment.length();
+        return Helper::getSegmentProperty(m_Geometry, Index, &Viewer::CSegment2D::length);
+    }
+
+    double CVenetianCellDescription::segmentAngle(size_t Index) const
+    {
+        return Helper::getSegmentProperty(m_Geometry, Index, &Viewer::CSegment2D::angle);
     }
 
     std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
     {
-        double slatWidth = m_Top.slatWidth();
-        double slatSpacing = m_Top.slatSpacing();
-        double slatTiltAngle = -m_Top.slatTiltAngle();
-        double curvatureRadius = m_Top.curvatureRadius();
-        size_t m_NumOfSlatSegments = m_Top.numberOfSegments();
+        auto venetianGeometry{m_VenetianGeometry};
+        venetianGeometry.SlatTiltAngle = -venetianGeometry.SlatTiltAngle;
+        size_t m_NumOfSlatSegments = m_Top.segments().size();
 
         std::shared_ptr<CVenetianCellDescription> aBackwardCell =
-          std::make_shared<CVenetianCellDescription>(
-            slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, m_NumOfSlatSegments);
+          std::make_shared<CVenetianCellDescription>(venetianGeometry, m_NumOfSlatSegments);
 
         if(!m_ProfileAngles.empty())
         {
@@ -90,18 +103,118 @@ namespace SingleLayerOptics
         return m_Geometry.viewFactors();
     }
 
+    namespace Helper
+    {
+        std::vector<double> scaleForSegmentThatIsHit(const std::vector<BeamSegmentView> & v_f)
+        {
+            std::vector<double> result(v_f.size());
+
+            std::transform(std::begin(v_f),
+                           std::end(v_f),
+                           std::begin(result),
+                           [](BeamSegmentView vf) { return vf.viewFactor * vf.percentViewed; });
+
+            return result;
+        }
+
+        std::vector<double> visibleSegmentPercentage(const std::vector<BeamSegmentView> & v_f)
+        {
+            std::vector<double> result(v_f.size());
+
+            std::transform(std::begin(v_f),
+                           std::end(v_f),
+                           std::begin(result),
+                           [](BeamSegmentView vf) { return vf.percentViewed; });
+
+            return result;
+        }
+    }   // namespace Helper
+
+    std::vector<double>
+      CVenetianCellDescription::scaledBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                      const CBeamDirection & t_Direction)
+    {
+        // clang-format off
+        return Helper::scaleForSegmentThatIsHit(
+                                          beamViewFactorsToBeamSegmentViews(
+                                              numberOfSegments(),
+                                              t_Side,
+                                              t_Direction,
+                                              cellBeamViewFactors(t_Side, t_Direction))
+                                          );
+        // clang-format on
+    }
+
+    std::vector<double>
+      CVenetianCellDescription::visibleBeamSegmentFraction(FenestrationCommon::Side t_Side,
+                                                           const CBeamDirection & t_Direction)
+    {
+        // clang-format off
+        return Helper::visibleSegmentPercentage(
+                                          beamViewFactorsToBeamSegmentViews(
+                                              numberOfSegments(),
+                                              t_Side,
+                                              t_Direction,
+                                              cellBeamViewFactors(t_Side, t_Direction))
+                                          );
+        // clang-format on
+    }
+
+    std::vector<double> CVenetianCellDescription::visibleBeamSegmentFractionSlatsOnly(
+      FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction)
+    {
+        auto result = CVenetianCellDescription::visibleBeamSegmentFraction(t_Side, t_Direction);
+
+        // Ensure the result vector has the expected size
+        if(result.size() != 2 * m_NumOfSegments + 2)
+        {
+            throw std::runtime_error("Unexpected size of the result vector");
+        }
+
+        // Erase the first value
+        result.erase(result.begin());
+
+        // Erase the value after the first numberOfSegments values
+        result.erase(result.begin() + m_NumOfSegments);
+
+        return result;
+    }
+
+    FenestrationCommon::SquareMatrix
+      CVenetianCellDescription::viewFactors(FenestrationCommon::Side t_Side,
+                                            const CBeamDirection & t_Direction)
+    {
+        const auto scaled_vf{scaledBeamViewFactors(t_Side, t_Direction)};
+
+        auto diffuseVF{m_Geometry.viewFactors()};
+        for(size_t i = 0u; i < scaled_vf.size(); ++i)
+        {
+            diffuseVF(0, i) = scaled_vf[i];
+        }
+        return diffuseVF;
+    }
+
     std::vector<Viewer::BeamViewFactor>
-      CVenetianCellDescription::beamViewFactors(const double t_ProfileAngle,
-                                                const FenestrationCommon::Side t_Side)
+      CVenetianCellDescription::cellBeamViewFactors(double t_ProfileAngle,
+                                                    FenestrationCommon::Side t_Side)
     {
         return m_BeamGeometry.beamViewFactors(-t_ProfileAngle, t_Side);
+    }
+
+    std::vector<Viewer::BeamViewFactor>
+      CVenetianCellDescription::cellBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                    const CBeamDirection & t_Direction)
+    {
+        return cellBeamViewFactors(t_Side == FenestrationCommon::Side::Front
+                                     ? t_Direction.profileAngle()
+                                     : -t_Direction.profileAngle(),
+                                   t_Side);
     }
 
     double CVenetianCellDescription::T_dir_dir(const FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction)
     {
-        const double aProfileAngle = t_Direction.profileAngle();
-        return m_BeamGeometry.directToDirect(-aProfileAngle, t_Side);
+        return m_BeamGeometry.directToDirect(-t_Direction.profileAngle(), t_Side);
     }
 
     double CVenetianCellDescription::R_dir_dir(const FenestrationCommon::Side,
@@ -110,24 +223,9 @@ namespace SingleLayerOptics
         return 0;
     }
 
-    double CVenetianCellDescription::slatWidth() const
+    FenestrationCommon::VenetianGeometry CVenetianCellDescription::getVenetianGeometry() const
     {
-        return m_SlatWidth;
-    }
-
-    double CVenetianCellDescription::slatSpacing() const
-    {
-        return m_SlatSpacing;
-    }
-
-    double CVenetianCellDescription::slatTiltAngle() const
-    {
-        return m_SlatTiltAngle;
-    }
-
-    double CVenetianCellDescription::curvatureRadius() const
-    {
-        return m_CurvatureRadius;
+        return m_VenetianGeometry;
     }
 
     size_t CVenetianCellDescription::numOfSegments() const
@@ -140,6 +238,72 @@ namespace SingleLayerOptics
     {
         m_ProfileAngles[side] = t_ProfileAngles;
         m_BeamGeometry.precalculateForProfileAngles(side, t_ProfileAngles);
+    }
+
+    std::vector<BeamSegmentView> CVenetianCellDescription::beamViewFactorsToBeamSegmentViews(
+      const size_t numberOfSegments,
+      FenestrationCommon::Side t_Side,
+      const CBeamDirection & t_Direction,
+      const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors)
+    {
+        std::vector<BeamSegmentView> B(numberOfSegments);
+        size_t index = 0;
+        for(const Viewer::BeamViewFactor & aVF : t_BeamViewFactors)
+        {
+            if(aVF.enclosureIndex == 0)
+            {   // Top
+                index = aVF.segmentIndex + 1;
+            }
+            else if(aVF.enclosureIndex == 1)
+            {   // Bottom
+                index = static_cast<size_t>(numberOfSegments / 2) + 1u + aVF.segmentIndex;
+            }
+            else
+            {
+                assert("Incorrect value for enclosure. Cannot have more than three enclosures.");
+            }
+            B[index].viewFactor = aVF.value;
+            B[index].percentViewed = aVF.percentHit;
+        }
+
+        using FenestrationCommon::Side;
+        const std::map<Side, size_t> sideIndex{
+          {Side::Front, static_cast<size_t>(numberOfSegments / 2)}, {Side::Back, 0}};
+
+        B[sideIndex.at(t_Side)].viewFactor = T_dir_dir(t_Side, t_Direction);
+        B[sideIndex.at(t_Side)].percentViewed = T_dir_dir(t_Side, t_Direction);
+
+        return B;
+    }
+
+    double CVenetianCellDescription::getCellSpacing() const
+    {
+        if(m_Top.segments().empty() || m_Bottom.segments().empty())
+        {
+            return 0;
+        }
+
+        return m_Top.segments().front().startPoint().y()
+               - m_Bottom.segments().back().endPoint().y();
+    }
+
+    const Viewer::CGeometry2D & CVenetianCellDescription::getSlats(SlatPosition position) const
+    {
+        return position == SlatPosition::Top ? m_Top : m_Bottom;
+    }
+
+    std::vector<Viewer::CViewSegment2D> CVenetianCellDescription::getSlats() const
+    {
+        const auto upperSlats = getSlats(SlatPosition::Top);
+        const auto lowerSlats = getSlats(SlatPosition::Bottom);
+
+        std::vector<Viewer::CViewSegment2D> allSlats;
+        allSlats.reserve(upperSlats.segments().size() + lowerSlats.segments().size());
+
+        allSlats.insert(allSlats.end(), upperSlats.segments().begin(), upperSlats.segments().end());
+        allSlats.insert(allSlats.end(), lowerSlats.segments().begin(), lowerSlats.segments().end());
+
+        return allSlats;
     }
 
 }   // namespace SingleLayerOptics

@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include <WCEViewer.hpp>
+
 #include "WCESingleLayerOptics.hpp"
 
 using namespace SingleLayerOptics;
@@ -22,6 +24,10 @@ TEST_F(TestBeamDirection, TestBeamDirectionProfileAngle1)
 
     double profileAngle = aDirection.profileAngle();
     EXPECT_NEAR(0, profileAngle, 1e-6);
+
+    const auto unitVector = aDirection.unitVector();
+    const auto correctUnitVector = Viewer::CSegment2D({0, 0}, {1, 0});
+    EXPECT_TRUE(correctUnitVector == unitVector);
 }
 
 TEST_F(TestBeamDirection, TestBeamDirectionProfileAngle2)
@@ -32,6 +38,11 @@ TEST_F(TestBeamDirection, TestBeamDirectionProfileAngle2)
 
     double profileAngle = aDirection.profileAngle();
     EXPECT_NEAR(-18, profileAngle, 1e-6);
+
+    const auto unitVector{aDirection.unitVector()};
+    const auto correctUnitVector{
+      Viewer::CSegment2D({0, 0}, {0.95105651629515353, 0.3090169943749474})};
+    EXPECT_TRUE(correctUnitVector == unitVector);
 }
 
 TEST_F(TestBeamDirection, TestBeamDirectionProfileAngle3)
@@ -42,6 +53,10 @@ TEST_F(TestBeamDirection, TestBeamDirectionProfileAngle3)
 
     double profileAngle = aDirection.profileAngle();
     EXPECT_NEAR(18, profileAngle, 1e-6);
+
+    const auto unitVector{aDirection.unitVector()};
+    const Viewer::CSegment2D correctUnitVector{{0, 0}, {0.95105651629515353, -0.3090169943749474}};
+    EXPECT_TRUE(correctUnitVector == unitVector);
 }
 
 TEST_F(TestBeamDirection, TestBeamDirectionAssignment)

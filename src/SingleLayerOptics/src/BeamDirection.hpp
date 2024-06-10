@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <WCEViewer.hpp>
+
 namespace SingleLayerOptics
 {
     // Hold spherical point data for beam. Phi angle is measured in clockwise direction starting
@@ -30,6 +32,9 @@ namespace SingleLayerOptics
         [[nodiscard]] double Azimuth() const;
 
         [[nodiscard]] CBeamDirection rotate(double angle) const;
+
+        //! Returns unit vector to the direction of the beam
+        [[nodiscard]] Viewer::CSegment2D unitVector() const;
 
     private:
         void updateProfileAngle(double t_Theta, double t_Phi);
