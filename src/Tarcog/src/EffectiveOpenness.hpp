@@ -16,9 +16,9 @@ namespace EffectiveLayers
         double Dbot;
     };
 
-    //! \brief Effective openness of shading layer that is necessary for thermal calculations.
+    //! \brief Effective frontOpenness of shading layer that is necessary for thermal calculations.
     //!
-    //! Thermal openness of shading layer will not match physical openness and because of that some
+    //! Thermal frontOpenness of shading layer will not match physical frontOpenness and because of that some
     //! calculations are required.
     struct EffectiveOpenness
     {
@@ -45,7 +45,7 @@ namespace EffectiveLayers
         double C4;
     };
 
-    //! \brief Abstract class that will be used to inherit effective openness calculations for
+    //! \brief Abstract class that will be used to inherit effective frontOpenness calculations for
     //! different shade types
     class EffectiveLayer
     {
@@ -55,7 +55,7 @@ namespace EffectiveLayers
                        double height,
                        double thickness,
                        const ShadeOpenness & openness,
-                       Coefficients coefficients = {0.0, 0.0, 0.0, 0.0});
+                       const Coefficients & coefficients = {0.0, 0.0, 0.0, 0.0});
 
         virtual EffectiveOpenness getEffectiveOpenness() = 0;
 
@@ -80,7 +80,7 @@ namespace EffectiveLayers
                           const ShadeOpenness & openness,
                           double slatAngle,
                           double slatWidth,
-                          Coefficients coefficients);
+                          const Coefficients & coefficients);
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;

@@ -20,7 +20,7 @@ TEST_F(TestPermeabilityFactors, TestVenetianPermeability)
     const auto slatTiltAngle{0.0};
     const auto curvatureRadius{0.03313057};   // m
 
-    const auto permeabilityOpenness{ThermalPermeability::Venetian::openness(
+    const auto permeabilityOpenness{ThermalPermeability::Venetian::frontOpenness(
       slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
 
     EXPECT_NEAR(0.9921875, permeabilityOpenness, 1e-6);
@@ -34,13 +34,9 @@ TEST_F(TestPermeabilityFactors, TestPerforatedCircularPermeability)
     const auto diameter{0.00635};   // m
     const auto xSpacing{0.01905};   // m
     const auto ySpacing{0.01905};   // m
-    const auto CellDimension{ThermalPermeability::Perforated::diameterToXYDimension(diameter)};
 
-    EXPECT_NEAR(0.00635, CellDimension.x, 1e-6);
-    EXPECT_NEAR(0.00635, CellDimension.y, 1e-6);
-
-    const auto permeabilityOpenness{ThermalPermeability::Perforated::openness(
-      perforatedType, xSpacing, ySpacing, CellDimension.x, CellDimension.y)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::frontOpenness(
+      perforatedType, xSpacing, ySpacing, diameter, diameter)};
 
     EXPECT_NEAR(0.087266, permeabilityOpenness, 1e-6);
 }
@@ -55,8 +51,8 @@ TEST_F(TestPermeabilityFactors, TestPerforatedRectangularPermeability)
     const auto xSpacing{0.01905};   // m
     const auto ySpacing{0.01905};   // m
 
-    const auto permeabilityOpenness{
-      ThermalPermeability::Perforated::openness(perforatedType, xSpacing, ySpacing, width, height)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::frontOpenness(
+      perforatedType, xSpacing, ySpacing, width, height)};
 
     EXPECT_NEAR(0.111111, permeabilityOpenness, 1e-6);
 }
@@ -70,8 +66,8 @@ TEST_F(TestPermeabilityFactors, TestPerforatedSquarePermeability)
     const auto xSpacing{0.01905};   // m
     const auto ySpacing{0.01905};   // m
 
-    const auto permeabilityOpenness{
-      ThermalPermeability::Perforated::openness(perforatedType, xSpacing, ySpacing, width, width)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::frontOpenness(
+      perforatedType, xSpacing, ySpacing, width, width)};
 
     EXPECT_NEAR(0.111111, permeabilityOpenness, 1e-6);
 }
@@ -83,7 +79,7 @@ TEST_F(TestPermeabilityFactors, TestWovenPermeability)
     const auto diameter{0.001};   // m
     const auto spacing{0.002};    // m
 
-    const auto permeabilityOpenness{ThermalPermeability::Woven::openness(diameter, spacing)};
+    const auto permeabilityOpenness{ThermalPermeability::Woven::frontOpenness(diameter, spacing)};
 
     EXPECT_NEAR(0.25, permeabilityOpenness, 1e-6);
 }

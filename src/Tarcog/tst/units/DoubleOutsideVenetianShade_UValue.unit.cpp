@@ -48,7 +48,7 @@ protected:
         const auto curvatureRadius{0.0331305656433105};   // m
 
 
-        const auto frontOpenness{ThermalPermeability::Venetian::openness(
+        const auto frontOpenness{ThermalPermeability::Venetian::frontOpenness(
           slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
 
         const auto dl{0.0};

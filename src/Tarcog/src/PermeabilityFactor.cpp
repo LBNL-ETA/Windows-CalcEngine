@@ -51,7 +51,7 @@ namespace ThermalPermeability
             return curvature;
         }
 
-        double openness(const double t_TiltAngle,
+        double frontOpenness(const double t_TiltAngle,
                         const double t_SlatSpacing,
                         const double t_MatThickness,
                         const double t_SlatCurvature,
@@ -80,14 +80,11 @@ namespace ThermalPermeability
 
     namespace Perforated
     {
-        XYDimension::XYDimension(const double x, const double y) : x(x), y(y)
-        {}
-
-        double openness(const Type t_Type,
-                        const double t_SpacingX,
-                        const double t_SpacingY,
-                        const double t_DimensionX,
-                        const double t_DimensionY)
+        double frontOpenness(Type t_Type,
+                        double t_SpacingX,
+                        double t_SpacingY,
+                        double t_DimensionX,
+                        double t_DimensionY)
         {
             const auto cellArea{t_SpacingX * t_SpacingY};
             std::map<Type, std::function<double(const double, const double)>> opennessFraction{
@@ -99,16 +96,11 @@ namespace ThermalPermeability
                {[&](const double x, const double y) { return x * y / cellArea; }}}};
             return opennessFraction.at(t_Type)(t_DimensionX, t_DimensionY);
         }
-
-        XYDimension diameterToXYDimension(const double diameter)
-        {
-            return XYDimension{diameter, diameter};
-        }
     }   // namespace Perforated
 
     namespace Woven
     {
-        double openness(const double t_Diameter, const double t_Spacing)
+        double frontOpenness(const double t_Diameter, const double t_Spacing)
         {
             auto opennessFraction{(t_Spacing - t_Diameter) * (t_Spacing - t_Diameter)
                                   / (t_Spacing * t_Spacing)};

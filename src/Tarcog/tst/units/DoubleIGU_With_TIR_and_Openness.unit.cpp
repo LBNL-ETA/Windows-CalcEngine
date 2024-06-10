@@ -62,11 +62,9 @@ protected:
         EffectiveLayers::EffectiveLayerBSDF effectiveLayer{
           windowWidth, windowHeight, shadeLayerThickness, openness};
 
-        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
-
         auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
                                                         shadeLayerConductance,
-                                                        effOpenness,
+                                                        effectiveLayer.getEffectiveOpenness(),
                                                         emissivity,
                                                         tir,
                                                         emissivity,

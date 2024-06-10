@@ -20,11 +20,15 @@ protected:
         /////////////////////////////////////////////////////////
 
         auto outdoorAirTemperature = 298.15;   // Kelvins
-        auto outdoorAirSpeed = 2.75;                // meters per second
-        auto tSky = outdoorAirTemperature;                 // Kelvins
+        auto outdoorAirSpeed = 2.75;           // meters per second
+        auto tSky = outdoorAirTemperature;     // Kelvins
         auto solarRadiation = 1000.0;
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          outdoorAirTemperature, outdoorAirSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(outdoorAirTemperature,
+                                                  outdoorAirSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -39,7 +43,7 @@ protected:
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        
+
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
 
@@ -60,14 +64,9 @@ protected:
         const auto x = 0.00169;        // m
         const auto y = 0.00169;        // m
         const auto radius = 0.00058;   // m
-        const auto CellDimension{
-          ThermalPermeability::Perforated::diameterToXYDimension(2 * radius)};
-        const auto frontOpenness{ThermalPermeability::Perforated::openness(
-          ThermalPermeability::Perforated::Type::Circular,
-          x,
-          y,
-          CellDimension.x,
-          CellDimension.y)};
+
+        const auto frontOpenness{ThermalPermeability::Perforated::frontOpenness(
+          ThermalPermeability::Perforated::Type::Circular, x, y, 2 * radius, 2 * radius)};
         const auto dl{0.0};
         const auto dr{0.0};
         const auto dtop{0.0};
@@ -75,15 +74,19 @@ protected:
         EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
           windowWidth, windowHeight, thickness_31111, openness};
-        EffectiveLayers::EffectiveOpenness effOpenness{
-          effectiveLayerPerforated.getEffectiveOpenness()};
-        const auto effectiveThickness{effectiveLayerPerforated.effectiveThickness()};
+
         auto Ef = 0.640892;
         auto Eb = 0.623812;
         auto Tirf = 0.257367;
         auto Tirb = 0.257367;
-        auto shadeLayer = Tarcog::ISO15099::Layers::shading(
-          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+        auto shadeLayer =
+          Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.effectiveThickness(),
+                                            shadeLayerConductance,
+                                            effectiveLayerPerforated.getEffectiveOpenness(),
+                                            Ef,
+                                            Tirf,
+                                            Eb,
+                                            Tirb);
         shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 
@@ -93,7 +96,7 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        
+
         m_TarcogSystem = std::make_unique<CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
@@ -145,7 +148,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection, GainEne
     EXPECT_NEAR(-43.832687161547518, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection, FirstLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection,
+       FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
@@ -179,7 +183,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection, GapTemp
     EXPECT_NEAR(314.92605353007423, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection, SecondLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection,
+       SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
