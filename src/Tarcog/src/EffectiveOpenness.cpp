@@ -26,10 +26,11 @@ namespace EffectiveLayers
         FrontPorosity(frontPorosity)
     {}
 
-    bool EffectiveOpenness::isClosed() const
+    bool isClosed(const EffectiveOpenness & effectiveOpenness)
     {
-        return Ah == 0.0 && Al == 0.0 && Ar == 0.0 && Atop == 0.0 && Abot == 0.0
-               && FrontPorosity == 0.0;
+        return effectiveOpenness.Ah == 0.0 && effectiveOpenness.Al == 0.0
+               && effectiveOpenness.Ar == 0.0 && effectiveOpenness.Atop == 0.0
+               && effectiveOpenness.Abot == 0.0 && effectiveOpenness.FrontPorosity == 0.0;
     }
 
     EffectiveLayer::EffectiveLayer(double width,

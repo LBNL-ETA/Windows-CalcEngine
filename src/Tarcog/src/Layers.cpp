@@ -71,7 +71,7 @@ namespace Tarcog::ISO15099
                       double backEmissivity,
                       double backIRTransmittance)
     {
-        if(effectiveOpenness.isClosed())
+        if(isClosed(effectiveOpenness))
         {
             return solid(thickness,
                          conductivity,

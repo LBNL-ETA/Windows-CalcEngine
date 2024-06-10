@@ -24,7 +24,7 @@ namespace EffectiveLayers
     {
         EffectiveOpenness(
           double ah, double al, double ar, double atop, double abot, double frontPorosity);
-        bool isClosed() const;
+
         double Ah;
         double Al;
         double Ar;
@@ -33,6 +33,8 @@ namespace EffectiveLayers
         // Geometrical openness used to calculate equivalent layer conductivity
         double FrontPorosity;
     };
+
+    bool isClosed(const EffectiveOpenness & effectiveOpenness);
 
     struct Coefficients
     {
