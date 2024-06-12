@@ -18,8 +18,8 @@ namespace EffectiveLayers
 
     //! \brief Effective frontOpenness of shading layer that is necessary for thermal calculations.
     //!
-    //! Thermal frontOpenness of shading layer will not match physical frontOpenness and because of that some
-    //! calculations are required.
+    //! Thermal frontOpenness of shading layer will not match physical frontOpenness and because of
+    //! that some calculations are required.
     struct EffectiveOpenness
     {
         EffectiveOpenness(
@@ -77,9 +77,9 @@ namespace EffectiveLayers
         EffectiveVenetian(double width,
                           double height,
                           double thickness,
-                          const ShadeOpenness & openness,
                           double slatAngle,
                           double slatWidth,
+                          const ShadeOpenness & openness,
                           const Coefficients & coefficients);
 
         EffectiveOpenness getEffectiveOpenness() override;
@@ -101,15 +101,15 @@ namespace EffectiveLayers
                                     double SlatWidth);
     };
 
-    class EffectiveVerticalVenentian : public EffectiveVenetian
+    class EffectiveVerticalVenetian : public EffectiveVenetian
     {
     public:
-        EffectiveVerticalVenentian(double width,
-                                   double height,
-                                   double thickness,
-                                   const ShadeOpenness & openness,
-                                   double slatAngle,
-                                   double slatWidth);
+        EffectiveVerticalVenetian(double width,
+                                  double height,
+                                  double thickness,
+                                  const ShadeOpenness & openness,
+                                  double slatAngle,
+                                  double slatWidth);
     };
 
     //! \brief Used for effective calculations for Perforated, Woven, Diffuse shade and BSDF

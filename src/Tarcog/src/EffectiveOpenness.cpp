@@ -5,11 +5,7 @@
 namespace EffectiveLayers
 {
     ShadeOpenness::ShadeOpenness(double ah, double dl, double dr, double dtop, double dbot) :
-        Ah(ah),
-        Dl(dl),
-        Dr(dr),
-        Dtop(dtop),
-        Dbot(dbot)
+        Ah(ah), Dl(dl), Dr(dr), Dtop(dtop), Dbot(dbot)
     {}
 
     EffectiveOpenness::EffectiveOpenness(const double ah,
@@ -18,12 +14,7 @@ namespace EffectiveLayers
                                          const double atop,
                                          const double abot,
                                          const double frontPorosity) :
-        Ah(ah),
-        Al(al),
-        Ar(ar),
-        Atop(atop),
-        Abot(abot),
-        FrontPorosity(frontPorosity)
+        Ah(ah), Al(al), Ar(ar), Atop(atop), Abot(abot), FrontPorosity(frontPorosity)
     {}
 
     bool isClosed(const EffectiveOpenness & effectiveOpenness)
@@ -47,18 +38,15 @@ namespace EffectiveLayers
     {}
 
     Coefficients::Coefficients(double c1, double c2, double c3, double c4) :
-        C1(c1),
-        C2(c2),
-        C3(c3),
-        C4(c4)
+        C1(c1), C2(c2), C3(c3), C4(c4)
     {}
 
     EffectiveVenetian::EffectiveVenetian(double width,
                                          double height,
                                          double thickness,
-                                         const ShadeOpenness & openness,
                                          double slatAngle,
                                          double slatWidth,
+                                         const ShadeOpenness & openness,
                                          const Coefficients & coefficients) :
         EffectiveLayer(width, height, thickness, openness, coefficients),
         m_SlatAngleRad(slatAngle * 2.0 * ConstantsData::WCE_PI / 360.0),
@@ -94,23 +82,23 @@ namespace EffectiveLayers
                                                              double slatAngle,
                                                              double slatWidth) :
         EffectiveVenetian(
-          width, height, thickness, openness, slatAngle, slatWidth, {0.016, -0.63, 0.53, 0.043})
+          width, height, thickness, slatAngle, slatWidth, openness, {0.016, -0.63, 0.53, 0.043})
     {}
 
-    EffectiveVerticalVenentian::EffectiveVerticalVenentian(double width,
-                                                           double height,
-                                                           double thickness,
-                                                           const ShadeOpenness & openness,
-                                                           double slatAngle,
-                                                           double slatWidth) :
+    EffectiveVerticalVenetian::EffectiveVerticalVenetian(double width,
+                                                         double height,
+                                                         double thickness,
+                                                         const ShadeOpenness & openness,
+                                                         double slatAngle,
+                                                         double slatWidth) :
         EffectiveVenetian(
-          width, height, thickness, openness, slatAngle, slatWidth, {0.041, 0.0, 0.27, 0.012})
+          width, height, thickness, slatAngle, slatWidth, openness, {0.041, 0.0, 0.27, 0.012})
     {}
 
     EffectiveLayerCommonType::EffectiveLayerCommonType(double width,
-                                             double height,
-                                             double thickness,
-                                             const ShadeOpenness & openness) :
+                                                       double height,
+                                                       double thickness,
+                                                       const ShadeOpenness & openness) :
         EffectiveLayer(width, height, thickness, openness, {0.078, 1.2, 1.0, 1.0})
     {}
 
