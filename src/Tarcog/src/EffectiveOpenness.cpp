@@ -153,6 +153,7 @@ namespace EffectiveLayers
                                              const ShadeOpenness & openness) :
         EffectiveLayer(width, height, thickness, openness)
     {}
+
     EffectiveOpenness EffectiveLayerOther::getEffectiveOpenness()
     {
         return {m_ShadeOpenness.Ah,

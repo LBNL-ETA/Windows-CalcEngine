@@ -8,7 +8,7 @@ namespace ThermalPermeability
 
         double calculateRise(double t_Curvature, double t_SlatWidth);
 
-        double calculateCurvature(const double t_Rise, const double t_SlatWidth);
+        double calculateCurvature(double t_Rise, double t_SlatWidth);
 
         double frontOpenness(double t_TiltAngle,
                              double t_SlatSpacing,
