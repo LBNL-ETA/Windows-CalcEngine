@@ -44,7 +44,7 @@ namespace Gases
                                  m_GasProperties.m_Density);
     }
 
-    void CGasItem::flllVacuumPressureProperties()
+    void CGasItem::fillVacuumPressureProperties()
     {
         using ConstantsData::UNIVERSALGASCONSTANT;
         using ConstantsData::WCE_PI;
@@ -56,14 +56,14 @@ namespace Gases
         {
             throw std::runtime_error("Specific heat ratio of a gas cannot be equal to one.");
         }
-        auto const mWght = m_GasData.getMolecularWeight();
         auto B = alpha * (specificHeatRatio + 1) / (specificHeatRatio - 1);
-        B *= sqrt(UNIVERSALGASCONSTANT / (8 * WCE_PI * mWght * m_Temperature));
+        B *= sqrt(UNIVERSALGASCONSTANT / (8 * WCE_PI * m_GasData.getMolecularWeight() * m_Temperature));
         m_GasProperties.m_ThermalConductivity = B * m_Pressure;
         m_GasProperties.m_Viscosity = 0;
         m_GasProperties.m_SpecificHeat = 0;
-        m_GasProperties.m_MolecularWeight = mWght;
+        m_GasProperties.m_MolecularWeight = m_GasData.getMolecularWeight();
         m_GasProperties.m_Density = 0;
+        m_GasProperties.m_PrandlNumber = 0;
     }
 
     double CGasItem::fraction() const
@@ -93,15 +93,13 @@ namespace Gases
     {
         if(!m_GasProperties.m_PropertiesCalculated)
         {
-            auto aSettings = CGasSettings::instance();
-
-            if(m_Pressure > aSettings.getVacuumPressure())
+            if(m_Pressure > CGasSettings::instance().getVacuumPressure())
             {
                 fillStandardPressureProperites();
             }
             else
             {
-                flllVacuumPressureProperties();
+                fillVacuumPressureProperties();
             }
             m_GasProperties.m_PropertiesCalculated = true;
         }

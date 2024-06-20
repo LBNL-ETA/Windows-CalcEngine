@@ -35,7 +35,7 @@ namespace Gases
 
     private:
         void fillStandardPressureProperites();
-        void flllVacuumPressureProperties();
+        void fillVacuumPressureProperties();
         void resetCalculatedProperties();
         double m_Temperature{DefaultTemperature};   // unit in Kelvins
         double m_Pressure{DefaultPressure};         // unit in Pa

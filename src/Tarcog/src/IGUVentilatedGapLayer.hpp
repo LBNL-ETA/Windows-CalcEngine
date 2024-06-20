@@ -82,6 +82,8 @@ namespace Tarcog::ISO15099
 
         void calculateHeatFlowNextLayer() const;
 
+        double performIterationStep(double relaxationParameter, double & TgapOut);
+
         std::shared_ptr<CIGUGapLayer> m_Layer;
 
         VentilatedGapState m_State;
@@ -95,6 +97,11 @@ namespace Tarcog::ISO15099
         //! used automatically if this value has been populated, otherwise, thermally driven is
         //! assumed.
         std::optional<ForcedVentilation> m_ForcedVentilation;
+        bool isConverged(const VentilatedGapState & current, const VentilatedGapState & previous);
+        void adjustTemperatures(CIGUVentilatedGapLayer & adjacentGap);
+        void performIterationStep(CIGUVentilatedGapLayer & adjacentGap,
+                                  VentilatedGapState & current,
+                                  double RelaxationParameter);
     };
 
 }   // namespace Tarcog::ISO15099
