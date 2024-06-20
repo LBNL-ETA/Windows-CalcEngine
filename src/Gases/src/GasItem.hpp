@@ -9,7 +9,7 @@
 namespace Gases
 {
 
-    double const DefaultPressure = 101325;
+    double const DefaultPressure = 101325.0;
     double const DefaultTemperature = 273.15;
     double const DefaultFraction = 1.0;
     enum class GasDef;
@@ -34,8 +34,8 @@ namespace Gases
         [[nodiscard]] std::string name() const;
 
     private:
-        void fillStandardPressureProperites();
-        void fillVacuumPressureProperties();
+        [[nodiscard]] GasProperties fillStandardPressureProperties() const;
+        [[nodiscard]] GasProperties fillVacuumPressureProperties() const;
         void resetCalculatedProperties();
         double m_Temperature{DefaultTemperature};   // unit in Kelvins
         double m_Pressure{DefaultPressure};         // unit in Pa

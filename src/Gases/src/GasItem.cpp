@@ -23,48 +23,57 @@ namespace Gases
         m_Fraction(t_Fraction), m_GasData(t_GasData)
     {}
 
-    CGasItem::CGasItem(double aFraction, Gases::GasDef def) :
-        CGasItem(aFraction, getGasData(def))
+    CGasItem::CGasItem(double aFraction, Gases::GasDef def) : CGasItem(aFraction, getGasData(def))
     {}
 
-    void CGasItem::fillStandardPressureProperites()
+    GasProperties CGasItem::fillStandardPressureProperties() const
     {
         using ConstantsData::UNIVERSALGASCONSTANT;
-        m_GasProperties.m_ThermalConductivity =
-          m_GasData.getPropertyValue(CoeffType::cCond, m_Temperature);
-        m_GasProperties.m_Viscosity = m_GasData.getPropertyValue(CoeffType::cVisc, m_Temperature);
-        m_GasProperties.m_SpecificHeat = m_GasData.getPropertyValue(CoeffType::cCp, m_Temperature);
-        m_GasProperties.m_MolecularWeight = m_GasData.getMolecularWeight();
-        m_GasProperties.m_Density =
-          m_Pressure * m_GasProperties.m_MolecularWeight / (UNIVERSALGASCONSTANT * m_Temperature);
-        m_GasProperties.m_PrandlNumber =
-          calculatePrandtlNumber(m_GasProperties.m_ThermalConductivity,
-                                 m_GasProperties.m_SpecificHeat,
-                                 m_GasProperties.m_Viscosity,
-                                 m_GasProperties.m_Density);
+
+        return {
+          m_GasData.getPropertyValue(CoeffType::cCond, m_Temperature),   // m_ThermalConductivity
+          m_GasData.getPropertyValue(CoeffType::cVisc, m_Temperature),   // m_Viscosity
+          m_GasData.getPropertyValue(CoeffType::cCp, m_Temperature),     // m_SpecificHeat
+          m_Pressure * m_GasData.getMolecularWeight()
+            / (UNIVERSALGASCONSTANT * m_Temperature),   // m_Density
+          m_GasData.getMolecularWeight(),               // m_MolecularWeight
+          calculatePrandtlNumber(                       // m_PrandlNumber
+            m_GasData.getPropertyValue(CoeffType::cCond, m_Temperature),
+            m_GasData.getPropertyValue(CoeffType::cCp, m_Temperature),
+            m_GasData.getPropertyValue(CoeffType::cVisc, m_Temperature),
+            m_Pressure * m_GasData.getMolecularWeight() / (UNIVERSALGASCONSTANT * m_Temperature)),
+          true   // m_PropertiesCalculated
+        };
     }
 
-    void CGasItem::fillVacuumPressureProperties()
+    GasProperties CGasItem::fillVacuumPressureProperties() const
     {
         using ConstantsData::UNIVERSALGASCONSTANT;
         using ConstantsData::WCE_PI;
-        auto const alpha1 = 0.79;
-        auto const alpha2 = 0.79;
-        auto const alpha = alpha1 * alpha2 / (alpha2 + alpha1 * (1 - alpha2));
-        auto const specificHeatRatio = m_GasData.getSpecificHeatRatio();
+
+        const auto alpha1 = 0.79;
+        const auto alpha2 = 0.79;
+        const auto alpha = alpha1 * alpha2 / (alpha2 + alpha1 * (1 - alpha2));
+        const auto specificHeatRatio = m_GasData.getSpecificHeatRatio();
         if(specificHeatRatio == 1)
         {
             throw std::runtime_error("Specific heat ratio of a gas cannot be equal to one.");
         }
         auto B = alpha * (specificHeatRatio + 1) / (specificHeatRatio - 1);
-        B *= sqrt(UNIVERSALGASCONSTANT / (8 * WCE_PI * m_GasData.getMolecularWeight() * m_Temperature));
-        m_GasProperties.m_ThermalConductivity = B * m_Pressure;
-        m_GasProperties.m_Viscosity = 0;
-        m_GasProperties.m_SpecificHeat = 0;
-        m_GasProperties.m_MolecularWeight = m_GasData.getMolecularWeight();
-        m_GasProperties.m_Density = 0;
-        m_GasProperties.m_PrandlNumber = 0;
+        B *= sqrt(UNIVERSALGASCONSTANT
+                  / (8 * WCE_PI * m_GasData.getMolecularWeight() * m_Temperature));
+
+        return {
+          B * m_Pressure,                   // m_ThermalConductivity
+          0.0,                              // m_Viscosity
+          0.0,                              // m_SpecificHeat
+          0.0,                              // m_Density
+          m_GasData.getMolecularWeight(),   // m_MolecularWeight
+          0.0,                              // m_PrandlNumber
+          true                              // m_PropertiesCalculated
+        };
     }
+
 
     double CGasItem::fraction() const
     {
@@ -93,15 +102,9 @@ namespace Gases
     {
         if(!m_GasProperties.m_PropertiesCalculated)
         {
-            if(m_Pressure > CGasSettings::instance().getVacuumPressure())
-            {
-                fillStandardPressureProperites();
-            }
-            else
-            {
-                fillVacuumPressureProperties();
-            }
-            m_GasProperties.m_PropertiesCalculated = true;
+            m_GasProperties = (m_Pressure > CGasSettings::instance().getVacuumPressure())
+                                ? fillStandardPressureProperties()
+                                : fillVacuumPressureProperties();
         }
 
         return m_GasProperties;
