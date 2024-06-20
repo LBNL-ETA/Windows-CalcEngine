@@ -14,6 +14,18 @@ namespace Gases
     double const DefaultFraction = 1.0;
     enum class GasDef;
 
+    struct GasItemProperties
+    {
+        double temperature{DefaultTemperature};   // unit in Kelvins
+        double pressure{DefaultPressure};         // unit in Pa
+        double fraction{DefaultFraction};         // value between 0 and 1
+        GasProperties properties;
+        GasProperties fractionalProperties;
+        CGasData gasData;
+    };
+
+    bool operator==(GasItemProperties const & lhs, GasItemProperties const & rhs);
+
     class CGasItem
     {
     public:
@@ -37,12 +49,7 @@ namespace Gases
         [[nodiscard]] GasProperties fillStandardPressureProperties() const;
         [[nodiscard]] GasProperties fillVacuumPressureProperties() const;
         void resetCalculatedProperties();
-        double m_Temperature{DefaultTemperature};   // unit in Kelvins
-        double m_Pressure{DefaultPressure};         // unit in Pa
-        double m_Fraction{DefaultFraction};         // value between 0 and 1
-        GasProperties m_GasProperties;
-        GasProperties m_FractionalGasProperties;
-        CGasData m_GasData;
+        GasItemProperties m_Properties;
     };
 
 }   // namespace Gases
