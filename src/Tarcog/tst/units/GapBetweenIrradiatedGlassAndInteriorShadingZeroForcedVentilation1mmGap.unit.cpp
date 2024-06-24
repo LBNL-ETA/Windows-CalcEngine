@@ -69,14 +69,9 @@ protected:
         const auto x = 0.00169;        // m
         const auto y = 0.00169;        // m
         const auto radius = 0.00058;   // m
-        const auto CellDimension{
-          ThermalPermeability::Perforated::diameterToXYDimension(2 * radius)};
-        const auto frontOpenness{ThermalPermeability::Perforated::openness(
-          ThermalPermeability::Perforated::Geometry::Circular,
-          x,
-          y,
-          CellDimension.x,
-          CellDimension.y)};
+
+        const auto frontOpenness{ThermalPermeability::Perforated::frontOpenness(
+          ThermalPermeability::Perforated::Type::Circular, x, y, 2 * radius, 2 * radius)};
         const auto dl{0.0};
         const auto dr{0.0};
         const auto dtop{0.0};
@@ -84,15 +79,19 @@ protected:
         EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
           windowWidth, windowHeight, thickness_31111, openness};
-        EffectiveLayers::EffectiveOpenness effOpenness{
-          effectiveLayerPerforated.getEffectiveOpenness()};
-        const auto effectiveThickness{effectiveLayerPerforated.effectiveThickness()};
+
         auto Ef = 0.640892;
         auto Eb = 0.623812;
         auto Tirf = 0.257367;
         auto Tirb = 0.257367;
-        auto shadeLayer = Tarcog::ISO15099::Layers::shading(
-          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+        auto shadeLayer =
+          Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.effectiveThickness(),
+                                            shadeLayerConductance,
+                                            effectiveLayerPerforated.getEffectiveOpenness(),
+                                            Ef,
+                                            Tirf,
+                                            Eb,
+                                            Tirb);
         shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 

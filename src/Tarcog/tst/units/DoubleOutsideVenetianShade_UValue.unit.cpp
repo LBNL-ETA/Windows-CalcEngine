@@ -48,7 +48,7 @@ protected:
         const auto curvatureRadius{0.0331305656433105};   // m
 
 
-        const auto frontOpenness{ThermalPermeability::Venetian::openness(
+        const auto frontOpenness{ThermalPermeability::Venetian::frontOpenness(
           slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
 
         const auto dl{0.0};
@@ -64,17 +64,18 @@ protected:
         EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
           windowWidth, windowHeight, matThickness, openness, slatTiltAngle, slatWidth};
 
-        EffectiveLayers::EffectiveOpenness effOpenness{effectiveVenetian.getEffectiveOpenness()};
-
-        const auto effectiveThickness{effectiveVenetian.effectiveThickness()};
-
         auto Ef = 0.5564947806702053;
         auto Eb = 0.5564947806702053;
         auto Tirf = 0.42293224373137134;
         auto Tirb = 0.42293224373137134;
 
-        auto aLayer1 = Tarcog::ISO15099::Layers::shading(
-          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+        auto aLayer1 = Tarcog::ISO15099::Layers::shading(effectiveVenetian.effectiveThickness(),
+                                                         shadeLayerConductance,
+                                                         effectiveVenetian.getEffectiveOpenness(),
+                                                         Ef,
+                                                         Tirf,
+                                                         Eb,
+                                                         Tirb);
 
         // auto aLayer1 = Tarcog::ISO15099::Layers::solid(shadeLayerThickness,
         // shadeLayerConductance);

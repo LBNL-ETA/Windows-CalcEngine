@@ -153,9 +153,7 @@ namespace SingleLayerOptics
                                   m_SlatSegmentsMesh.surfaceIndexes,
                                   m_Cell->viewFactors())};
 
-        std::vector<double> aSolution = solveSystem(slatsDiffuseRadiancesMatrix, B);
-
-        return aSolution[m_SlatSegmentsMesh.numberOfSegments - 1];
+        return solveSystem(slatsDiffuseRadiancesMatrix, B)[m_SlatSegmentsMesh.numberOfSegments - 1];
     }
 
     double CVenetianCellEnergy::R_dif_dif()

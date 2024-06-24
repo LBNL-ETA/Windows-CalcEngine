@@ -35,7 +35,7 @@ namespace Tarcog::ISO15099
         static std::shared_ptr<CIGUSolidLayer>
           shading(double thickness,
                   double conductivity,
-                  EffectiveLayers::EffectiveOpenness effectiveOpenness =
+                  const EffectiveLayers::EffectiveOpenness & effectiveOpenness =
                     EffectiveLayers::EffectiveOpenness(0, 0, 0, 0, 0, 0),
                   double frontEmissivity = 0.84,
                   double frontIRTransmittance = 0.0,

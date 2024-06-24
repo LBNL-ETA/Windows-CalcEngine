@@ -49,15 +49,8 @@ protected:
         const auto y = 0.00169;        // m
         const auto radius = 0.00058;   // m
 
-        const auto CellDimension{
-          ThermalPermeability::Perforated::diameterToXYDimension(2 * radius)};
-
-        const auto frontOpenness{ThermalPermeability::Perforated::openness(
-          ThermalPermeability::Perforated::Geometry::Circular,
-          x,
-          y,
-          CellDimension.x,
-          CellDimension.y)};
+        const auto frontOpenness{ThermalPermeability::Perforated::frontOpenness(
+          ThermalPermeability::Perforated::Type::Circular, x, y, 2 * radius, 2 * radius)};
 
         const auto dl{0.0};
         const auto dr{0.0};
@@ -72,18 +65,19 @@ protected:
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
           windowWidth, windowHeight, thickness_31006, openness};
 
-        EffectiveLayers::EffectiveOpenness effOpenness{
-          effectiveLayerPerforated.getEffectiveOpenness()};
-
-        const auto effectiveThickness{effectiveLayerPerforated.effectiveThickness()};
-
         const auto Ef = 0.752239525318;
         const auto Eb = 0.752239525318;
         const auto Tirf = 0.164178311825;
         const auto Tirb = 0.164178311825;
 
-        auto aLayer1 = Tarcog::ISO15099::Layers::shading(
-          effectiveThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+        auto aLayer1 =
+          Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.effectiveThickness(),
+                                            shadeLayerConductance,
+                                            effectiveLayerPerforated.getEffectiveOpenness(),
+                                            Ef,
+                                            Tirf,
+                                            Eb,
+                                            Tirb);
 
         aLayer1->setSolarHeatGain(0.324484854937, solarRadiation);
 

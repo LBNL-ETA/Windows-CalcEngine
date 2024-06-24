@@ -72,7 +72,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
 
     EffectiveLayers::ShadeOpenness openness{0.998224968, 0, 0, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveVerticalVenentian venetian{
+    EffectiveLayers::EffectiveVerticalVenetian venetian{
       width, height, materialThickness, openness, slatTiltAngle, slatWidth};
 
     const auto effectiveThickness{venetian.effectiveThickness()};
@@ -99,7 +99,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
 
     EffectiveLayers::ShadeOpenness openness{0.998224966, 0, 0, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveVerticalVenentian venetian{
+    EffectiveLayers::EffectiveVerticalVenetian venetian{
       width, height, materialThickness, openness, slatTiltAngle, slatWidth};
 
     const auto effectiveThickness{venetian.effectiveThickness()};

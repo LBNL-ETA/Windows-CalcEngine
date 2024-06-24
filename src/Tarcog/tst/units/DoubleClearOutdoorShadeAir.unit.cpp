@@ -57,10 +57,8 @@ protected:
         EffectiveLayers::EffectiveLayerOther effectiveLayer{
           windowWidth, windowHeight, shadeLayerThickness, openness};
 
-        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
-
         auto layer1 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effOpenness);
+          shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
 
         ASSERT_TRUE(layer1 != nullptr);
 

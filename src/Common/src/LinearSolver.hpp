@@ -6,5 +6,5 @@ namespace FenestrationCommon
 {
     class SquareMatrix;
 
-    std::vector<double> solveSystem(SquareMatrix t_MatrixA, std::vector<double> & t_VectorB);
+    std::vector<double> solveSystem(const SquareMatrix& t_MatrixA, const std::vector<double> & t_VectorB);
 }   // namespace FenestrationCommon

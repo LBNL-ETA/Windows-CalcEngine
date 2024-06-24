@@ -62,12 +62,13 @@ protected:
         auto Aleft = 0.1;
         auto Aright = 0.1;
         auto Afront = 0.2;
+
         EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
         EffectiveLayers::EffectiveLayerOther effectiveLayer{
           windowWidth, windowHeight, shadeLayerThickness, openness};
-        EffectiveLayers::EffectiveOpenness effOpenness{effectiveLayer.getEffectiveOpenness()};
+
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effOpenness);
+          shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
         shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 

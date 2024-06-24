@@ -65,13 +65,13 @@ namespace Tarcog::ISO15099
     std::shared_ptr<CIGUSolidLayer>
       Layers::shading(double thickness,
                       double conductivity,
-                      EffectiveLayers::EffectiveOpenness effectiveOpenness,
+                      const EffectiveLayers::EffectiveOpenness & effectiveOpenness,
                       double frontEmissivity,
                       double frontIRTransmittance,
                       double backEmissivity,
                       double backIRTransmittance)
     {
-        if(effectiveOpenness.isClosed())
+        if(isClosed(effectiveOpenness))
         {
             return solid(thickness,
                          conductivity,
