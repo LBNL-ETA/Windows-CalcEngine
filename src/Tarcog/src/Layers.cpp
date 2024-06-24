@@ -120,7 +120,8 @@ namespace Tarcog::ISO15099
     template<typename PillarType, typename PillarLayerType>
     std::shared_ptr<CIGUGapLayer> Layers::createPillar(const PillarType & pillar, double pressure)
     {
-        auto pillarGap = Tarcog::ISO15099::Layers::gap(pillar.height, pressure);
+        auto pillarGap =
+          Tarcog::ISO15099::Layers::gap(pillar.height, Helper::defaultVacuumMixture(), pressure);
         return std::make_shared<PillarLayerType>(*pillarGap, pillar);
     }
 

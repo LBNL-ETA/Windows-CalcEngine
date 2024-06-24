@@ -105,7 +105,7 @@ TEST_F(NFRC102_NFRC102_VacuumAnnulusCylinderPillar, Test1)
     const auto aSystem = GetSystem();
 
     const auto Temperature = aSystem.getTemperatures();
-    std::vector correctTemperature = {258.180713, 258.450647, 281.701988, 281.971922};
+    std::vector correctTemperature = {258.203956, 258.475964, 281.611256, 281.883264};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -114,7 +114,7 @@ TEST_F(NFRC102_NFRC102_VacuumAnnulusCylinderPillar, Test1)
     }
 
     const auto Radiosity = aSystem.getRadiosities();
-    std::vector correctRadiosity = {250.056193, 267.325588, 342.687664, 368.980171};
+    std::vector correctRadiosity = {250.132403, 267.347632, 342.304986, 368.601704};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -126,5 +126,5 @@ TEST_F(NFRC102_NFRC102_VacuumAnnulusCylinderPillar, Test1)
     EXPECT_EQ(31u, numOfIter);
 
     const auto uValue{aSystem.getUValue()};
-    EXPECT_NEAR(2.270796, uValue, tolerance);
+    EXPECT_NEAR(2.288245, uValue, tolerance);
 }
