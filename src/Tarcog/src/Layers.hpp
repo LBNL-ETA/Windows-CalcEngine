@@ -90,6 +90,10 @@ namespace Tarcog::ISO15099
                                                           double pressure);
 
         static std::shared_ptr<CIGUGapLayer> createPillar(const PillarMeasurement & pillar);
+
+    private:
+        template <typename PillarType, typename PillarLayerType>
+        static std::shared_ptr<CIGUGapLayer> createPillar(const PillarType& pillar, double pressure);
     };
 
 }   // namespace Tarcog::ISO15099

@@ -6,10 +6,15 @@
 class NFRC102_NFRC102_VacuumCylindricalPillar : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    Tarcog::ISO15099::CSingleSystem m_TarcogSystem{createTarcogSystem()};
 
 protected:
     void SetUp() override
+    {
+        m_TarcogSystem.solve();
+    }
+
+    static Tarcog::ISO15099::CSingleSystem createTarcogSystem()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -21,7 +26,7 @@ protected:
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        ASSERT_TRUE(Outdoor != nullptr);
+        if (Outdoor == nullptr) throw std::runtime_error("Failed to create Outdoor environment.");
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
@@ -31,7 +36,7 @@ protected:
         auto roomTemperature = 294.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-        ASSERT_TRUE(Indoor != nullptr);
+        if (Indoor == nullptr) throw std::runtime_error("Failed to create Indoor environment.");
 
         /////////////////////////////////////////////////////////
         /// IGU
@@ -67,7 +72,7 @@ protected:
 
         auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
-        ASSERT_TRUE(pillarGap != nullptr);
+        if (pillarGap == nullptr) throw std::runtime_error("Failed to create pillar gap.");
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
@@ -77,18 +82,17 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
-        ASSERT_TRUE(m_TarcogSystem != nullptr);
-
-        m_TarcogSystem->solve();
+        Tarcog::ISO15099::CSingleSystem tarcogSystem(aIGU, Indoor, Outdoor);
+        return tarcogSystem;
     }
 
 public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem& GetSystem()
     {
         return m_TarcogSystem;
     }
 };
+
 
 TEST_F(NFRC102_NFRC102_VacuumCylindricalPillar, Test1)
 {
@@ -98,10 +102,8 @@ TEST_F(NFRC102_NFRC102_VacuumCylindricalPillar, Test1)
 
     const auto aSystem = GetSystem();
 
-    ASSERT_TRUE(aSystem != nullptr);
-
-    const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {258.173196, 258.442460, 281.731337, 282.000600};
+    const auto Temperature = aSystem.getTemperatures();
+    std::vector correctTemperature = {258.184702, 258.454992, 281.686417, 281.956707};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -109,8 +111,8 @@ TEST_F(NFRC102_NFRC102_VacuumCylindricalPillar, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], tolerance);
     }
 
-    const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {250.031550, 267.318480, 342.811534, 369.102672};
+    const auto Radiosity = aSystem.getRadiosities();
+    std::vector correctRadiosity = {250.069270, 267.329363, 342.621961, 368.915193};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -118,9 +120,9 @@ TEST_F(NFRC102_NFRC102_VacuumCylindricalPillar, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], tolerance);
     }
 
-    const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(32u, numOfIter);
+    const auto numOfIter = aSystem.getNumberOfIterations();
+    EXPECT_EQ(31u, numOfIter);
 
-    const auto uValue{aSystem->getUValue()};
-    EXPECT_NEAR(2.265153, uValue, tolerance);
+    const auto uValue{aSystem.getUValue()};
+    EXPECT_NEAR(2.273790, uValue, tolerance);
 }

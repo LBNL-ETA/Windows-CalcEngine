@@ -59,8 +59,8 @@ namespace Gases
         using ConstantsData::UNIVERSALGASCONSTANT;
         using ConstantsData::WCE_PI;
 
-        const auto alpha1 = 0.79;
-        const auto alpha2 = 0.79;
+        const auto alpha1 = 0.89;
+        const auto alpha2 = 0.89;
         const auto alpha = alpha1 * alpha2 / (alpha2 + alpha1 * (1 - alpha2));
         const auto specificHeatRatio = m_Properties.gasData.getSpecificHeatRatio();
         if(specificHeatRatio == 1)
