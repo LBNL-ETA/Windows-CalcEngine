@@ -96,6 +96,9 @@ endif ()
 # endforeach()
 
 if( NOT ${SINGLE_PROJECT} )
+	if( ${BUILD_WCE_TESTING})
+		include_directories( src/helper )
+	endif()
   add_subdirectory( src )
 else()
   if( ${BUILD_WCE_COMMON} )
@@ -121,8 +124,6 @@ else()
   	file( GLOB SOURCES_HPP "src/Tarcog/src/*.hpp" )
   	LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
   endif()
-
-  message(${BUILD_WCE_OPTICAL})
   
   if( ${BUILD_WCE_OPTICAL} )
   	file( GLOB SOURCES_CPP "src/SpectralAveraging/src/*.cpp" )
@@ -161,7 +162,7 @@ else()
 	target_include_directories(${target_name} PUBLIC "src/SingleLayerOptics/include")
 	target_include_directories(${target_name} PUBLIC "src/MultiLayerOptics/include")
   endif()
-  
+
   if( BUILD_WCE_TESTING )
   	include_directories( src/helper )
 	if( ${BUILD_WCE_COMMON} )
