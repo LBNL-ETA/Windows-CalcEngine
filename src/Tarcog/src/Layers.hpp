@@ -54,23 +54,14 @@ namespace Tarcog::ISO15099
                                       double forcedVentilationAirTemperature);
 
         GapLayer createPillar(const CylindricalPillar & pillar, double pressure);
-
         GapLayer createPillar(const SphericalPillar & pillar, double pressure);
-
         GapLayer createPillar(const RectangularPillar & pillar, double pressure);
-
         GapLayer createPillar(const TriangularPillar & pillar, double pressure);
-
         GapLayer createPillar(const PentagonPillar & pillar, double pressure);
-
         GapLayer createPillar(const HexagonPillar & pillar, double pressure);
-
         GapLayer createPillar(const LinearBearingPillar & pillar, double pressure);
-
         GapLayer createPillar(const TruncatedConePillar & pillar, double pressure);
-
         GapLayer createPillar(const AnnulusCylinderPillar & pillar, double pressure);
-
         GapLayer createPillar(const CShapedCylinderPillar & pillar, double pressure);
 
         GapLayer createPillar(const PillarMeasurement & pillar);

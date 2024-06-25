@@ -35,10 +35,9 @@ namespace Tarcog::ISO15099::Layers
         return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
     }
 
-    GapLayer
-      forcedVentilationGap(const GapLayer & gap,
-                           double forcedVentilationAirSpeed,
-                           double forcedVentilationAirTemperature)
+    GapLayer forcedVentilationGap(const GapLayer & gap,
+                                  double forcedVentilationAirSpeed,
+                                  double forcedVentilationAirTemperature)
     {
         return std::make_shared<CIGUVentilatedGapLayer>(
           gap, forcedVentilationAirTemperature, forcedVentilationAirSpeed);
@@ -121,57 +120,27 @@ namespace Tarcog::ISO15099::Layers
         return std::make_shared<PillarLayerType>(*pillarGap, pillar);
     }
 
-    GapLayer createPillar(const CylindricalPillar & pillar, double pressure)
-    {
-        return createPillar<CylindricalPillar, CylindricalPillarLayer>(pillar, pressure);
+// Avoiding code duplication by using a macro. Since all the createPillar functions are identical
+// except for the types, we can use a macro to define them all at once.
+#define CREATE_PILLAR_FUNCTION(PillarType, PillarLayerType)                     \
+    GapLayer createPillar(const PillarType & pillar, double pressure)           \
+    {                                                                           \
+        return createPillar<PillarType, PillarLayerType>(pillar, pressure); \
     }
 
-    GapLayer createPillar(const SphericalPillar & pillar, double pressure)
-    {
-        return createPillar<SphericalPillar, SphericalPillarLayer>(pillar, pressure);
-    }
+    // Use the macro to define the functions
+    CREATE_PILLAR_FUNCTION(CylindricalPillar, CylindricalPillarLayer)
+    CREATE_PILLAR_FUNCTION(SphericalPillar, SphericalPillarLayer)
+    CREATE_PILLAR_FUNCTION(RectangularPillar, RectangularPillarLayer)
+    CREATE_PILLAR_FUNCTION(TriangularPillar, TriangularPillarLayer)
+    CREATE_PILLAR_FUNCTION(PentagonPillar, PentagonPillarLayer)
+    CREATE_PILLAR_FUNCTION(HexagonPillar, HexagonPillarLayer)
+    CREATE_PILLAR_FUNCTION(LinearBearingPillar, LinearBearingPillarLayer)
+    CREATE_PILLAR_FUNCTION(TruncatedConePillar, TruncatedConePillarLayer)
+    CREATE_PILLAR_FUNCTION(AnnulusCylinderPillar, AnnulusCylinderPillarLayer)
+    CREATE_PILLAR_FUNCTION(CShapedCylinderPillar, CShapedCylinderPillarLayer)
 
-    GapLayer createPillar(const RectangularPillar & pillar, double pressure)
-    {
-        return createPillar<RectangularPillar, RectangularPillarLayer>(pillar, pressure);
-    }
-
-    GapLayer createPillar(const TriangularPillar & pillar, double pressure)
-    {
-        return createPillar<TriangularPillar, TriangularPillarLayer>(pillar, pressure);
-    }
-
-    GapLayer createPillar(const PentagonPillar & pillar, double pressure)
-    {
-        return createPillar<PentagonPillar, PentagonPillarLayer>(pillar, pressure);
-    }
-
-    GapLayer createPillar(const HexagonPillar & pillar, double pressure)
-    {
-        return createPillar<HexagonPillar, HexagonPillarLayer>(pillar, pressure);
-    }
-
-    GapLayer createPillar(const LinearBearingPillar & pillar, double pressure)
-    {
-        return createPillar<LinearBearingPillar, LinearBearingPillarLayer>(pillar, pressure);
-    }
-
-    GapLayer createPillar(const TruncatedConePillar & pillar, double pressure)
-    {
-        return createPillar<TruncatedConePillar, TruncatedConePillarLayer>(pillar, pressure);
-    }
-
-    GapLayer createPillar(const AnnulusCylinderPillar & pillar,
-                                               double pressure)
-    {
-        return createPillar<AnnulusCylinderPillar, AnnulusCylinderPillarLayer>(pillar, pressure);
-    }
-
-    GapLayer createPillar(const CShapedCylinderPillar & pillar,
-                                               double pressure)
-    {
-        return createPillar<CShapedCylinderPillar, CShapedCylinderPillarLayer>(pillar, pressure);
-    }
+#undef CREATE_PILLAR_FUNCTION
 
     GapLayer createPillar(const PillarMeasurement & pillar)
     {
