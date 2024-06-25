@@ -26,7 +26,7 @@ namespace Tarcog::ISO15099
         return refGas.getGasProperties();
     }
 
-    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(std::shared_ptr<CIGUGapLayer> const & t_Layer) :
+    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(GapLayer const & t_Layer) :
         CIGUGapLayer(*t_Layer),
         m_Layer(t_Layer),
         m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
@@ -36,7 +36,7 @@ namespace Tarcog::ISO15099
         m_Zout(0)
     {}
 
-    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
+    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(const GapLayer & t_Layer,
                                                    double forcedVentilationInletTemperature,
                                                    double forcedVentilationInletSpeed) :
         CIGUGapLayer(*t_Layer),

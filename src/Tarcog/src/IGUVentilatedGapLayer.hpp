@@ -5,6 +5,7 @@
 #include <WCEGases.hpp>
 
 #include "IGUGapLayer.hpp"
+#include "LayerTypes.hpp"
 
 
 namespace Tarcog::ISO15099
@@ -31,8 +32,8 @@ namespace Tarcog::ISO15099
     class CIGUVentilatedGapLayer : public CIGUGapLayer
     {
     public:
-        explicit CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer);
-        CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
+        explicit CIGUVentilatedGapLayer(const GapLayer & t_Layer);
+        CIGUVentilatedGapLayer(const GapLayer & t_Layer,
                                double forcedVentilationInletTemperature,
                                double forcedVentilationInletSpeed);
 
@@ -84,7 +85,7 @@ namespace Tarcog::ISO15099
 
         double performIterationStep(double relaxationParameter, double & TgapOut);
 
-        std::shared_ptr<CIGUGapLayer> m_Layer;
+        GapLayer m_Layer;
 
         VentilatedGapState m_State;
         const Gases::GasProperties m_ReferenceGasProperties;
