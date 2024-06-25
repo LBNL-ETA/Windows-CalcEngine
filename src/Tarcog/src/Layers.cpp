@@ -11,7 +11,7 @@
 
 namespace Tarcog::ISO15099::Layers
 {
-    SolidLayer Layers::solid(double thickness, double conductivity)
+    SolidLayer solid(double thickness, double conductivity)
     {
         return solid(thickness, conductivity, 0.84, 0.0, 0.84, 0.0);
     }
@@ -40,7 +40,7 @@ namespace Tarcog::ISO15099::Layers
           thickness, pressure, gas, accommodation1, accommodation2);
     }
 
-    GapLayer Layers::gap(double thickness)
+    GapLayer gap(double thickness)
     {
         return gap(thickness,
                    ConstantsData::DEFAULT_GAP_PRESSURE,
@@ -49,7 +49,7 @@ namespace Tarcog::ISO15099::Layers
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
     }
 
-    GapLayer Layers::gap(double thickness, double pressure)
+    GapLayer gap(double thickness, double pressure)
     {
         return gap(thickness,
                    pressure,
@@ -58,7 +58,7 @@ namespace Tarcog::ISO15099::Layers
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
     }
 
-    GapLayer Layers::gap(double thickness, const Gases::CGas & gas)
+    GapLayer gap(double thickness, const Gases::CGas & gas)
     {
         return gap(thickness,
                    ConstantsData::DEFAULT_GAP_PRESSURE,
@@ -67,7 +67,7 @@ namespace Tarcog::ISO15099::Layers
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
     }
 
-    GapLayer Layers::gap(double thickness, double pressure, const Gases::CGas & gas)
+    GapLayer gap(double thickness, double pressure, const Gases::CGas & gas)
     {
         return gap(thickness,
                    pressure,
@@ -76,10 +76,8 @@ namespace Tarcog::ISO15099::Layers
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
     }
 
-    GapLayer Layers::gap(double thickness,
-                         const Gases::CGas & gas,
-                         double accommodation1,
-                         double accommodation2)
+    GapLayer
+      gap(double thickness, const Gases::CGas & gas, double accommodation1, double accommodation2)
     {
         return gap(
           thickness, ConstantsData::DEFAULT_GAP_PRESSURE, gas, accommodation1, accommodation2);
@@ -173,10 +171,15 @@ namespace Tarcog::ISO15099::Layers
 
 // Avoiding code duplication by using a macro. Since all the createPillar functions are identical
 // except for the types, we can use a macro to define them all at once.
-#define CREATE_PILLAR_FUNCTION(PillarType, PillarLayerType)                                    \
-    GapLayer createPillar(const PillarType & pillar, double pressure, const Gases::CGas & gas, const double accommodation1, const double accommodation2) \
-    {                                                                                          \
-        return createPillar<PillarType, PillarLayerType>(pillar, pressure, gas, accommodation1, accommodation2);               \
+#define CREATE_PILLAR_FUNCTION(PillarType, PillarLayerType)       \
+    GapLayer createPillar(const PillarType & pillar,              \
+                          double pressure,                        \
+                          const Gases::CGas & gas,                \
+                          const double accommodation1,            \
+                          const double accommodation2)            \
+    {                                                             \
+        return createPillar<PillarType, PillarLayerType>(         \
+          pillar, pressure, gas, accommodation1, accommodation2); \
     }
 
     CREATE_PILLAR_FUNCTION(CylindricalPillar, CylindricalPillarLayer)
