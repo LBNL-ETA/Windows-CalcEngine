@@ -9,15 +9,14 @@
 #include "EffectiveOpenness.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 
-
 namespace Tarcog::ISO15099::Layers
 {
-    std::shared_ptr<CIGUSolidLayer> solid(const double thickness,
-                                          const double conductivity,
-                                          const double frontEmissivity,
-                                          const double frontIRTransmittance,
-                                          const double backEmissivity,
-                                          const double backIRTransmittance)
+    SolidLayer solid(const double thickness,
+                     const double conductivity,
+                     const double frontEmissivity,
+                     const double frontIRTransmittance,
+                     const double backEmissivity,
+                     const double backIRTransmittance)
     {
         return std::make_shared<CIGUSolidLayer>(
           thickness,
@@ -45,8 +44,7 @@ namespace Tarcog::ISO15099::Layers
           gap, forcedVentilationAirTemperature, forcedVentilationAirSpeed);
     }
 
-    std::shared_ptr<CIGUSolidLayer> updateMaterialData(
-      const std::shared_ptr<CIGUSolidLayer> & layer, double density, double youngsModulus)
+    SolidLayer updateMaterialData(const SolidLayer & layer, double density, double youngsModulus)
     {
         // Deflection cannot be applied to shading layers
         if(std::dynamic_pointer_cast<CIGUShadeLayer>(layer) == nullptr)
@@ -61,14 +59,13 @@ namespace Tarcog::ISO15099::Layers
         }
     }
 
-    std::shared_ptr<CIGUSolidLayer>
-      shading(double thickness,
-              double conductivity,
-              const EffectiveLayers::EffectiveOpenness & effectiveOpenness,
-              double frontEmissivity,
-              double frontIRTransmittance,
-              double backEmissivity,
-              double backIRTransmittance)
+    SolidLayer shading(double thickness,
+                       double conductivity,
+                       const EffectiveLayers::EffectiveOpenness & effectiveOpenness,
+                       double frontEmissivity,
+                       double frontIRTransmittance,
+                       double backEmissivity,
+                       double backIRTransmittance)
     {
         if(isClosed(effectiveOpenness))
         {

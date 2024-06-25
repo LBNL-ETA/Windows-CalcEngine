@@ -91,7 +91,7 @@ namespace Tarcog::ISO15099
         m_MaterialConductivity(t_Conductivity)
     {}
 
-    CIGUShadeLayer::CIGUShadeLayer(const std::shared_ptr<CIGUSolidLayer> & t_Layer,
+    CIGUShadeLayer::CIGUShadeLayer(const SolidLayer & t_Layer,
                                    const CShadeOpenings & t_ShadeOpenings) :
         CIGUSolidLayer(*t_Layer),
         m_ShadeOpenings(t_ShadeOpenings),

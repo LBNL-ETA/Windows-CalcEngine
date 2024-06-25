@@ -10,7 +10,6 @@ namespace FenestrationCommon
     enum class Side;
 }
 
-
 namespace Tarcog::ISO15099
 {
     class CIGUSolidLayer : public CBaseLayer, public Tarcog::Deflectable
