@@ -10,10 +10,10 @@
 
 namespace Tarcog::ISO15099
 {
-    struct VentilatedGapState
+    struct VentilatedGapTemperatures
     {
-        VentilatedGapState() = default;
-        VentilatedGapState(double inletTemperature, double outletTemperature);
+        VentilatedGapTemperatures() = default;
+        VentilatedGapTemperatures(double inletTemperature, double outletTemperature);
         double inletTemperature{0};
         double outletTemperature{0};
     };
@@ -61,10 +61,10 @@ namespace Tarcog::ISO15099
         void precalculateState() override;
         void calculateOutletTemperatureFromAirFlow();
 
-        VentilatedGapState calculateInletAndOutletTemperaturesWithTheAdjacentGap(
+        VentilatedGapTemperatures calculateInletAndOutletTemperaturesWithTheAdjacentGap(
           CIGUVentilatedGapLayer & adjacentGap,
-          VentilatedGapState current,
-          VentilatedGapState previous,
+          VentilatedGapTemperatures current,
+          VentilatedGapTemperatures previous,
           double relaxationParameter);
 
         double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
@@ -87,7 +87,7 @@ namespace Tarcog::ISO15099
 
         GapLayer m_Layer;
 
-        VentilatedGapState m_State;
+        VentilatedGapTemperatures m_State;
         const Gases::GasProperties m_ReferenceGasProperties;
 
         double m_Zin{0};
@@ -98,10 +98,11 @@ namespace Tarcog::ISO15099
         //! used automatically if this value has been populated, otherwise, thermally driven is
         //! assumed.
         std::optional<ForcedVentilation> m_ForcedVentilation;
-        bool isConverged(const VentilatedGapState & current, const VentilatedGapState & previous);
+        bool isConverged(const VentilatedGapTemperatures & current,
+                         const VentilatedGapTemperatures & previous);
         void adjustTemperatures(CIGUVentilatedGapLayer & adjacentGap);
         void performIterationStep(CIGUVentilatedGapLayer & adjacentGap,
-                                  VentilatedGapState & current,
+                                  VentilatedGapTemperatures & current,
                                   double RelaxationParameter);
     };
 

@@ -35,7 +35,7 @@ namespace Tarcog::ISO15099::Layers
         return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
     }
 
-    std::shared_ptr<CIGUVentilatedGapLayer>
+    GapLayer
       forcedVentilationGap(const GapLayer & gap,
                            double forcedVentilationAirSpeed,
                            double forcedVentilationAirTemperature)

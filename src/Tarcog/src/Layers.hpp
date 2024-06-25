@@ -49,10 +49,9 @@ namespace Tarcog::ISO15099
         GapLayer gap(double thickness, double pressure = 101325);
         GapLayer gap(double thickness, const Gases::CGas & gas, double pressure = 101325);
 
-        std::shared_ptr<CIGUVentilatedGapLayer>
-          forcedVentilationGap(const GapLayer & gap,
-                               double forcedVentilationAirSpeed,
-                               double forcedVentilationAirTemperature);
+        GapLayer forcedVentilationGap(const GapLayer & gap,
+                                      double forcedVentilationAirSpeed,
+                                      double forcedVentilationAirTemperature);
 
         GapLayer createPillar(const CylindricalPillar & pillar, double pressure);
 
