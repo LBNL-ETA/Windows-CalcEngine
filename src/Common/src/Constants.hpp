@@ -18,6 +18,8 @@ namespace ConstantsData
     static const double wavelengthErrorTolerance = 1e-6;
     static const double ELECTRON_CHARGE = 1.502e-19;
     static const double EOGHeight = 0.0635;   // meters
+    static const double DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT = 0.89;
+    static const double DEFAULT_GAP_PRESSURE = 101325;
 
     //! Default ratio used in scaling of the materials that are defined only with solar and visible
     //! range.

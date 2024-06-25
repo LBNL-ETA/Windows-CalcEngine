@@ -19,12 +19,14 @@ namespace Tarcog::ISO15099
 
     namespace Layers
     {
+        SolidLayer solid(double thickness, double conductivity);
+
         SolidLayer solid(double thickness,
                          double conductivity,
-                         double frontEmissivity = 0.84,
-                         double frontIRTransmittance = 0.0,
-                         double backEmissivity = 0.84,
-                         double backIRTransmittance = 0.0);
+                         double frontEmissivity,
+                         double frontIRTransmittance,
+                         double backEmissivity,
+                         double backIRTransmittance);
 
         SolidLayer updateMaterialData(const SolidLayer & layer,
                                       double density = MaterialConstants::GLASSDENSITY,
@@ -46,23 +48,90 @@ namespace Tarcog::ISO15099
                                double backEmissivity = 0.84,
                                double backIRTransmittance = 0.0);
 
-        GapLayer gap(double thickness, double pressure = 101325);
-        GapLayer gap(double thickness, const Gases::CGas & gas, double pressure = 101325);
+        //! This is complete function to create all necessary data for a gap layer. All subsequent
+        //! functions are using this function with the default values for the missing parameters.
+        GapLayer gap(double thickness,
+                     double pressure,
+                     const Gases::CGas & gas,
+                     double accommodation1,
+                     double accommodation2);
+
+        GapLayer gap(double thickness);
+        GapLayer gap(double thickness, double pressure);
+        GapLayer gap(double thickness, const Gases::CGas & gas);
+        GapLayer gap(double thickness, double pressure, const Gases::CGas & gas);
+        GapLayer gap(double thickness,
+                     const Gases::CGas & gas,
+                     double accommodation1,
+                     double accommodation2);
+
 
         GapLayer forcedVentilationGap(const GapLayer & gap,
                                       double forcedVentilationAirSpeed,
                                       double forcedVentilationAirTemperature);
 
-        GapLayer createPillar(const CylindricalPillar & pillar, double pressure);
-        GapLayer createPillar(const SphericalPillar & pillar, double pressure);
-        GapLayer createPillar(const RectangularPillar & pillar, double pressure);
-        GapLayer createPillar(const TriangularPillar & pillar, double pressure);
-        GapLayer createPillar(const PentagonPillar & pillar, double pressure);
-        GapLayer createPillar(const HexagonPillar & pillar, double pressure);
-        GapLayer createPillar(const LinearBearingPillar & pillar, double pressure);
-        GapLayer createPillar(const TruncatedConePillar & pillar, double pressure);
-        GapLayer createPillar(const AnnulusCylinderPillar & pillar, double pressure);
-        GapLayer createPillar(const CShapedCylinderPillar & pillar, double pressure);
+        Gases::CGas defaultVacuumMixture();
+
+        GapLayer createPillar(
+          const CylindricalPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const SphericalPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const RectangularPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const TriangularPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const PentagonPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const HexagonPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const LinearBearingPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const TruncatedConePillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const AnnulusCylinderPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+        GapLayer createPillar(
+          const CShapedCylinderPillar & pillar,
+          double pressure,
+          const Gases::CGas & gas = defaultVacuumMixture(),
+          double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+          double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
 
         GapLayer createPillar(const PillarMeasurement & pillar);
     };   // namespace Layers

@@ -55,7 +55,8 @@ protected:
                                                             solidLayer2191Conductance,
                                                             emissivityFront2191,
                                                             tirFront2191,
-                                                            emissivityBack2191);
+                                                            emissivityBack2191,
+                                                            tirFront2191);
 
         auto aSolidLayer2 =
           Tarcog::ISO15099::Layers::solid(solidLayer102Thickness, solidLayer102Conductance);

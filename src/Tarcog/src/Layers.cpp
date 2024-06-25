@@ -11,6 +11,11 @@
 
 namespace Tarcog::ISO15099::Layers
 {
+    SolidLayer Layers::solid(double thickness, double conductivity)
+    {
+        return solid(thickness, conductivity, 0.84, 0.0, 0.84, 0.0);
+    }
+
     SolidLayer solid(const double thickness,
                      const double conductivity,
                      const double frontEmissivity,
@@ -25,14 +30,59 @@ namespace Tarcog::ISO15099::Layers
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
 
-    GapLayer gap(const double thickness, const double pressure)
+    GapLayer gap(double thickness,
+                 double pressure,
+                 const Gases::CGas & gas,
+                 double accommodation1,
+                 double accommodation2)
     {
-        return std::make_shared<CIGUGapLayer>(thickness, pressure);
+        return std::make_shared<CIGUGapLayer>(
+          thickness, pressure, gas, accommodation1, accommodation2);
     }
 
-    GapLayer gap(double thickness, const Gases::CGas & gas, double pressure)
+    GapLayer Layers::gap(double thickness)
     {
-        return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
+        return gap(thickness,
+                   ConstantsData::DEFAULT_GAP_PRESSURE,
+                   Gases::CGas(),
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+    }
+
+    GapLayer Layers::gap(double thickness, double pressure)
+    {
+        return gap(thickness,
+                   pressure,
+                   Gases::CGas(),
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+    }
+
+    GapLayer Layers::gap(double thickness, const Gases::CGas & gas)
+    {
+        return gap(thickness,
+                   ConstantsData::DEFAULT_GAP_PRESSURE,
+                   gas,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+    }
+
+    GapLayer Layers::gap(double thickness, double pressure, const Gases::CGas & gas)
+    {
+        return gap(thickness,
+                   pressure,
+                   gas,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+    }
+
+    GapLayer Layers::gap(double thickness,
+                         const Gases::CGas & gas,
+                         double accommodation1,
+                         double accommodation2)
+    {
+        return gap(
+          thickness, ConstantsData::DEFAULT_GAP_PRESSURE, gas, accommodation1, accommodation2);
     }
 
     GapLayer forcedVentilationGap(const GapLayer & gap,
@@ -104,31 +154,31 @@ namespace Tarcog::ISO15099::Layers
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
 
-    namespace Helper
+    Gases::CGas defaultVacuumMixture()
     {
-        Gases::CGas defaultVacuumMixture()
-        {
-            return Gases::CGas{std::vector<Gases::CGasItem>{{1.0, Gases::GasDef::VacuumMixture}}};
-        }
-    }   // namespace Helper
+        return Gases::CGas{std::vector<Gases::CGasItem>{{1.0, Gases::GasDef::VacuumMixture}}};
+    }
 
     template<typename PillarType, typename PillarLayerType>
-    GapLayer createPillar(const PillarType & pillar, double pressure)
+    GapLayer createPillar(const PillarType & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
     {
-        auto pillarGap =
-          Tarcog::ISO15099::Layers::gap(pillar.height, Helper::defaultVacuumMixture(), pressure);
+        auto pillarGap = Tarcog::ISO15099::Layers::gap(
+          pillar.height, pressure, gas, accommodation1, accommodation2);
         return std::make_shared<PillarLayerType>(*pillarGap, pillar);
     }
 
 // Avoiding code duplication by using a macro. Since all the createPillar functions are identical
 // except for the types, we can use a macro to define them all at once.
-#define CREATE_PILLAR_FUNCTION(PillarType, PillarLayerType)                     \
-    GapLayer createPillar(const PillarType & pillar, double pressure)           \
-    {                                                                           \
-        return createPillar<PillarType, PillarLayerType>(pillar, pressure); \
+#define CREATE_PILLAR_FUNCTION(PillarType, PillarLayerType)                                    \
+    GapLayer createPillar(const PillarType & pillar, double pressure, const Gases::CGas & gas, const double accommodation1, const double accommodation2) \
+    {                                                                                          \
+        return createPillar<PillarType, PillarLayerType>(pillar, pressure, gas, accommodation1, accommodation2);               \
     }
 
-    // Use the macro to define the functions
     CREATE_PILLAR_FUNCTION(CylindricalPillar, CylindricalPillarLayer)
     CREATE_PILLAR_FUNCTION(SphericalPillar, SphericalPillarLayer)
     CREATE_PILLAR_FUNCTION(RectangularPillar, RectangularPillarLayer)

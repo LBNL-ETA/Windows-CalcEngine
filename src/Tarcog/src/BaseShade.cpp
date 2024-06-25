@@ -99,7 +99,8 @@ namespace Tarcog::ISO15099
     {}
 
     CIGUShadeLayer::CIGUShadeLayer(double t_Thickness, double t_Conductivity) :
-        CIGUSolidLayer(t_Thickness, t_Conductivity), m_MaterialConductivity(t_Conductivity)
+        CIGUSolidLayer(t_Thickness, t_Conductivity, nullptr, nullptr),
+        m_MaterialConductivity(t_Conductivity)
     {}
 
     std::shared_ptr<CBaseLayer> CIGUShadeLayer::clone() const
@@ -154,8 +155,9 @@ namespace Tarcog::ISO15099
         else if(std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()) != nullptr
                 && std::dynamic_pointer_cast<CEnvironment>(getNextLayer()) != nullptr)
         {
-            calcEdgeShadeFlow(*std::dynamic_pointer_cast<CEnvironment>(getNextLayer()),
-                              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()));
+            calcEdgeShadeFlow(
+              *std::dynamic_pointer_cast<CEnvironment>(getNextLayer()),
+              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()));
         }
     }
 
