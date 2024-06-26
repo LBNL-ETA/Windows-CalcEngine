@@ -3,7 +3,7 @@
 
 #include <WCETarcog.hpp>
 
-class NFRC102_NFRC102_VacuumTriangularPillar : public testing::Test
+class NFRC102_NFRC102_VacuumCustomAccommodation : public testing::Test
 {
 private:
     Tarcog::ISO15099::CSingleSystem m_TarcogSystem{createTarcogSystem()};
@@ -64,16 +64,17 @@ protected:
                                                       TransmittanceIR);
 
         // Add support pillars
-        const auto pillarLength = 0.1e-3;
-        const auto pillarHeight = 0.1e-3;
+        const auto pillarHeight = 0.0001;
         const auto gapPressure = 0.1333;
         const auto pillarConductivity = 999.0;
         const auto pillarArea = 0.03 * 0.03;
+        const auto pillarRadius = 0.0002;
 
-        Tarcog::ISO15099::TriangularPillar pillar{
-          pillarHeight, pillarConductivity, pillarArea, pillarLength};
+        Tarcog::ISO15099::CylindricalPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, pillarRadius};
 
-        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
+        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(
+          pillar, gapPressure, Tarcog::ISO15099::Layers::defaultVacuumMixture(), 0.5, 0.5);
 
         if(pillarGap == nullptr)
             throw std::runtime_error("Failed to create pillar gap.");
@@ -97,23 +98,25 @@ public:
     }
 };
 
-TEST_F(NFRC102_NFRC102_VacuumTriangularPillar, Test1)
+
+TEST_F(NFRC102_NFRC102_VacuumCustomAccommodation, Test1)
 {
+    SCOPED_TRACE("Begin Test: Double Low-E - vacuum with circular pillar support");
+
     constexpr auto tolerance = 1e-6;
 
     const auto aSystem = GetSystem();
 
     const auto Temperature = aSystem.getTemperatures();
-    std::vector correctTemperature = {258.033780, 258.290603, 282.276140, 282.532963};
+    std::vector<double> correctTemperature = {258.158140, 258.426059, 281.790131, 282.058051};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
-
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
         EXPECT_NEAR(correctTemperature[i], Temperature[i], tolerance);
     }
 
     const auto Radiosity = aSystem.getRadiosities();
-    std::vector correctRadiosity = {249.574889, 267.188636, 345.118335, 371.383468};
+    std::vector<double> correctRadiosity = {249.982197, 267.304277, 343.059799, 369.348184};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -122,8 +125,8 @@ TEST_F(NFRC102_NFRC102_VacuumTriangularPillar, Test1)
     }
 
     const auto numOfIter = aSystem.getNumberOfIterations();
-    EXPECT_EQ(37u, numOfIter);
+    EXPECT_EQ(32u, numOfIter);
 
     const auto uValue{aSystem.getUValue()};
-    EXPECT_NEAR(2.160500, uValue, tolerance);
+    EXPECT_NEAR(2.253850, uValue, tolerance);
 }

@@ -32,6 +32,11 @@ namespace Tarcog
         public:
             CIGUGapLayer(double t_Thickness, double t_Pressure);
             CIGUGapLayer(double t_Thickness, double t_Pressure, const Gases::CGas & t_Gas);
+            CIGUGapLayer(double t_Thickness,
+                         double t_Pressure,
+                         const Gases::CGas & t_Gas,
+                         double t_AccommodationCoefficient1,
+                         double t_AccommodationCoefficient2);
 
             void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
@@ -61,6 +66,11 @@ namespace Tarcog
             [[nodiscard]] double calculateConvectiveConductiveCoefficient();
             [[nodiscard]] double addAirflowEffect(double convectiveCoefficient);
             double convectiveH();
+
+            double m_AccommodationCoefficient1{
+              ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
+            double m_AccommodationCoefficient2{
+              ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
         };
 
     }   // namespace ISO15099

@@ -54,13 +54,12 @@ namespace Gases
         };
     }
 
-    GasProperties CGasItem::fillVacuumPressureProperties() const
+    GasProperties CGasItem::fillVacuumPressureProperties(const double alpha1,
+                                                         const double alpha2) const
     {
         using ConstantsData::UNIVERSALGASCONSTANT;
         using ConstantsData::WCE_PI;
 
-        const auto alpha1 = 0.79;
-        const auto alpha2 = 0.79;
         const auto alpha = alpha1 * alpha2 / (alpha2 + alpha1 * (1 - alpha2));
         const auto specificHeatRatio = m_Properties.gasData.getSpecificHeatRatio();
         if(specificHeatRatio == 1)
@@ -107,24 +106,24 @@ namespace Gases
         resetCalculatedProperties();
     }
 
-    GasProperties CGasItem::getGasProperties()
+    GasProperties CGasItem::getGasProperties(const double alpha1, const double alpha2)
     {
         if(!m_Properties.properties.m_PropertiesCalculated)
         {
             m_Properties.properties =
               (m_Properties.pressure > CGasSettings::instance().getVacuumPressure())
                 ? fillStandardPressureProperties()
-                : fillVacuumPressureProperties();
+                : fillVacuumPressureProperties(alpha1, alpha2);
         }
 
         return m_Properties.properties;
     }
 
-    GasProperties CGasItem::getFractionalGasProperties()
+    GasProperties CGasItem::getFractionalGasProperties(const double alpha1, const double alpha2)
     {
         if(!m_Properties.fractionalProperties.m_PropertiesCalculated)
         {
-            auto itemGasProperties = getGasProperties();
+            auto itemGasProperties = getGasProperties(alpha1, alpha2);
 
             // update for fractional data
             m_Properties.fractionalProperties.m_ThermalConductivity =

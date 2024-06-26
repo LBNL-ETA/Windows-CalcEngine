@@ -10,7 +10,7 @@ using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 
-class TestSpecularLayer_102 : public testing::Test
+class TestSpecularLayerDualBand_102 : public testing::Test
 {
 protected:
     virtual void SetUp()
@@ -52,7 +52,7 @@ protected:
     }
 };
 
-TEST_F(TestSpecularLayer_102, TestSpecularDualBandSingleLayer1)
+TEST_F(TestSpecularLayerDualBand_102, TestSpecularDualBandSingleLayer1)
 {
     SCOPED_TRACE("Begin Test: Scattering Specular Layer with Dual Band Material.");
 

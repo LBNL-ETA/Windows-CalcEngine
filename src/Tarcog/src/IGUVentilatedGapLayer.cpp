@@ -9,7 +9,7 @@
 
 namespace Tarcog::ISO15099
 {
-    VentilatedGapState::VentilatedGapState(double inletTemperature, double outletTemperature) :
+    VentilatedGapTemperatures::VentilatedGapTemperatures(double inletTemperature, double outletTemperature) :
         inletTemperature(inletTemperature), outletTemperature(outletTemperature)
     {}
 
@@ -26,7 +26,7 @@ namespace Tarcog::ISO15099
         return refGas.getGasProperties();
     }
 
-    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(std::shared_ptr<CIGUGapLayer> const & t_Layer) :
+    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(GapLayer const & t_Layer) :
         CIGUGapLayer(*t_Layer),
         m_Layer(t_Layer),
         m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
@@ -36,7 +36,7 @@ namespace Tarcog::ISO15099
         m_Zout(0)
     {}
 
-    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
+    CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(const GapLayer & t_Layer,
                                                    double forcedVentilationInletTemperature,
                                                    double forcedVentilationInletSpeed) :
         CIGUGapLayer(*t_Layer),
@@ -217,14 +217,14 @@ namespace Tarcog::ISO15099
         return gasSpecification.airflowProperties.m_AirSpeed / ratio;
     }
 
-    VentilatedGapState
+    VentilatedGapTemperatures
       CIGUVentilatedGapLayer::calculateInletAndOutletTemperaturesWithTheAdjacentGap(
         CIGUVentilatedGapLayer & adjacentGap,
-        VentilatedGapState current,
-        VentilatedGapState previous,
+        VentilatedGapTemperatures current,
+        VentilatedGapTemperatures previous,
         const double relaxationParameter)
     {
-        VentilatedGapState result;
+        VentilatedGapTemperatures result;
 
         const double Tav1{averageSurfaceTemperature()};
         const double Tav2{adjacentGap.averageSurfaceTemperature()};
@@ -320,8 +320,8 @@ namespace Tarcog::ISO15099
     }
 
 
-    bool CIGUVentilatedGapLayer::isConverged(const VentilatedGapState & current,
-                                             const VentilatedGapState & previous)
+    bool CIGUVentilatedGapLayer::isConverged(const VentilatedGapTemperatures & current,
+                                             const VentilatedGapTemperatures & previous)
     {
         bool outletTempConverged = std::abs(current.outletTemperature - previous.outletTemperature)
                                    < IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW;
@@ -337,10 +337,10 @@ namespace Tarcog::ISO15099
     }
 
     void CIGUVentilatedGapLayer::performIterationStep(CIGUVentilatedGapLayer & adjacentGap,
-                                                      VentilatedGapState & current,
+                                                      VentilatedGapTemperatures & current,
                                                       double RelaxationParameter)
     {
-        VentilatedGapState previous{current};
+        VentilatedGapTemperatures previous{current};
         current = calculateInletAndOutletTemperaturesWithTheAdjacentGap(
           adjacentGap, current, previous, RelaxationParameter);
     }
@@ -350,7 +350,7 @@ namespace Tarcog::ISO15099
     {
         double Tup = averageLayerTemperature();
         double Tdown = adjacentGap.averageLayerTemperature();
-        VentilatedGapState current{Tdown, Tup};
+        VentilatedGapTemperatures current{Tdown, Tup};
         auto previous = current;
         double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
         bool converged = false;

@@ -12,6 +12,7 @@ namespace Gases
     double const DefaultPressure = 101325.0;
     double const DefaultTemperature = 273.15;
     double const DefaultFraction = 1.0;
+    constexpr double DefaultSurfaceAccommodation = 0.89;
     enum class GasDef;
 
     struct GasItemProperties
@@ -38,8 +39,9 @@ namespace Gases
         void setPressure(double t_Pressure);
         [[nodiscard]] double fraction() const;
         [[nodiscard]] CGasData gasData() const;
-        [[nodiscard]] GasProperties getFractionalGasProperties();
-        [[nodiscard]] GasProperties getGasProperties();
+        [[nodiscard]] GasProperties getFractionalGasProperties(double alpha1, double alpha2);
+        [[nodiscard]] GasProperties getGasProperties(double alpha1 = DefaultSurfaceAccommodation,
+                                                     double alpha2 = DefaultSurfaceAccommodation);
         bool operator==(CGasItem const & rhs) const;
         bool operator!=(CGasItem const & rhs) const;
 
@@ -47,7 +49,7 @@ namespace Gases
 
     private:
         [[nodiscard]] GasProperties fillStandardPressureProperties() const;
-        [[nodiscard]] GasProperties fillVacuumPressureProperties() const;
+        [[nodiscard]] GasProperties fillVacuumPressureProperties(double alpha1, double alpha2) const;
         void resetCalculatedProperties();
         GasItemProperties m_Properties;
     };

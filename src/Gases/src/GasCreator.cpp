@@ -41,6 +41,16 @@ namespace Gases
              {1.5834e+02, 0.0, 0.0},        // Specific heat coefficients
              {4.538e-04, 1.723e-05, 0.0},   // Conductivity coefficients
              {1.069e-6, 7.414e-8, 0.0}      // Viscosity coefficients
+           }},
+          // To be used in vacuum calculations.
+          {GasDef::VacuumMixture,
+           {
+             "VacuumMixture",
+             21.15,             // Molecular weight
+             1.33,              // Specific heat ratio
+             {0.0, 0.0, 0.0},   // Specific heat coefficients
+             {0.0, 0.0, 0.0},   // Conductivity coefficients
+             {0.0, 0.0, 0.0}    // Viscosity coefficients
            }}};
         return gasDataMap.at(gasDef);
     }

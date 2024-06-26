@@ -36,6 +36,19 @@ namespace Tarcog::ISO15099
         gasSpecification.gas = t_Gas;
     }
 
+    CIGUGapLayer::CIGUGapLayer(double t_Thickness,
+                               double t_Pressure,
+                               const Gases::CGas & t_Gas,
+                               double t_AccommodationCoefficient1,
+                               double t_AccommodationCoefficient2) :
+        CBaseLayer(t_Thickness),
+        m_AccommodationCoefficient1(t_AccommodationCoefficient1),
+        m_AccommodationCoefficient2(t_AccommodationCoefficient2)
+    {
+        gasSpecification.pressure = t_Pressure;
+        gasSpecification.gas = t_Gas;
+    }
+
     void CIGUGapLayer::connectToBackSide(std::shared_ptr<CBaseLayer> const & t_Layer)
     {
         CBaseLayer::connectToBackSide(t_Layer);
@@ -123,7 +136,8 @@ namespace Tarcog::ISO15099
 
     double CIGUGapLayer::calculateConvectiveConductiveCoefficient()
     {
-        auto gasProperties = gasSpecification.gas.getGasProperties();
+        auto gasProperties = gasSpecification.gas.getGasProperties(m_AccommodationCoefficient1,
+                                                                   m_AccommodationCoefficient2);
         if(!FenestrationCommon::isVacuum(gasSpecification.pressure))
         {
             CNusseltNumber nusseltNumber{};

@@ -8,10 +8,15 @@
 class DoubleLowEVacuumNoPillar : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    Tarcog::ISO15099::CSingleSystem m_TarcogSystem{createTarcogSystem()};
 
 protected:
     void SetUp() override
+    {
+        m_TarcogSystem.solve();
+    }
+
+    static Tarcog::ISO15099::CSingleSystem createTarcogSystem()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -23,7 +28,7 @@ protected:
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        ASSERT_TRUE(Outdoor != nullptr);
+        if (Outdoor == nullptr) throw std::runtime_error("Failed to create Outdoor environment.");
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
@@ -33,7 +38,7 @@ protected:
         auto roomTemperature = 294.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-        ASSERT_TRUE(Indoor != nullptr);
+        if (Indoor == nullptr) throw std::runtime_error("Failed to create Indoor environment.");
 
         /////////////////////////////////////////////////////////
         /// IGU
@@ -64,29 +69,22 @@ protected:
         auto gapThickness = 0.0001;
         auto gapPressure = 0.1333;
         auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        ASSERT_TRUE(m_GapLayer != nullptr);
+        if (m_GapLayer == nullptr) throw std::runtime_error("Failed to create gap layer.");
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, m_GapLayer, layer2});
 
-        // Alternative way of adding layers.
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(m_GapLayer);
-        // aIGU.addLayer(layer2);
-
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
-        ASSERT_TRUE(m_TarcogSystem != nullptr);
-
-        m_TarcogSystem->solve();
+        Tarcog::ISO15099::CSingleSystem tarcogSystem(aIGU, Indoor, Outdoor);
+        return tarcogSystem;
     }
 
 public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem& GetSystem()
     {
         return m_TarcogSystem;
     }
@@ -100,10 +98,8 @@ TEST_F(DoubleLowEVacuumNoPillar, Test1)
 
     auto aSystem = GetSystem();
 
-    ASSERT_TRUE(aSystem != nullptr);
-
-    const auto Temperature = aSystem->getTemperatures();
-    const std::vector correctTemperature{255.501938, 255.543003, 292.514948, 292.555627};
+    const auto Temperature = aSystem.getTemperatures();
+    const std::vector correctTemperature{255.530983, 255.575438, 292.387411, 292.431448};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -111,8 +107,8 @@ TEST_F(DoubleLowEVacuumNoPillar, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
     }
 
-    const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity{241.409657, 407.569595, 413.894817, 416.791085};
+    const auto Radiosity = aSystem.getRadiosities();
+    std::vector correctRadiosity{241.501961, 406.882895, 413.177234, 416.199118};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -120,6 +116,6 @@ TEST_F(DoubleLowEVacuumNoPillar, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
     }
 
-    const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(37u, numOfIter);
+    const auto numOfIter = aSystem.getNumberOfIterations();
+    EXPECT_EQ(36u, numOfIter);
 }

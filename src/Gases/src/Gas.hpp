@@ -20,8 +20,10 @@ namespace Gases
         void addGasItem(double percent, Gases::GasDef def);
         void addGasItems(const std::vector<CGasItem> & gases);
         double totalPercent() const;
-        GasProperties getSimpleGasProperties();
-        GasProperties getGasProperties();
+        GasProperties getSimpleGasProperties(double alpha1 = DefaultSurfaceAccommodation,
+                                             double alpha2 = DefaultSurfaceAccommodation);
+        GasProperties getGasProperties(double alpha1 = DefaultSurfaceAccommodation,
+                                       double alpha2 = DefaultSurfaceAccommodation);
         void setTemperatureAndPressure(double t_Temperature, double t_Pressure);
 
         [[nodiscard]] std::vector<CGasItem> gasItems() const;
@@ -31,8 +33,8 @@ namespace Gases
         bool operator!=(CGas const & t_Gas) const;
 
     private:
-        GasProperties getStandardPressureGasProperties();
-        GasProperties getVacuumPressureGasProperties();
+        GasProperties getStandardPressureGasProperties(double alpha1, double alpha2);
+        GasProperties getVacuumPressureGasProperties(double alpha1, double alpha2);
 
         [[nodiscard]] double viscTwoGases(GasProperties const & t_Gas1Properties,
                                           GasProperties const & t_Gas2Properties) const;

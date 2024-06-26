@@ -6,10 +6,15 @@
 class NFRC102_NFRC102_VacuumHexagonPillar : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    Tarcog::ISO15099::CSingleSystem m_TarcogSystem{createTarcogSystem()};
 
 protected:
     void SetUp() override
+    {
+        m_TarcogSystem.solve();
+    }
+
+    static Tarcog::ISO15099::CSingleSystem createTarcogSystem()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -21,7 +26,8 @@ protected:
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        ASSERT_TRUE(Outdoor != nullptr);
+        if(Outdoor == nullptr)
+            throw std::runtime_error("Failed to create Outdoor environment.");
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
@@ -31,7 +37,8 @@ protected:
         auto roomTemperature = 294.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-        ASSERT_TRUE(Indoor != nullptr);
+        if(Indoor == nullptr)
+            throw std::runtime_error("Failed to create Indoor environment.");
 
         /////////////////////////////////////////////////////////
         /// IGU
@@ -68,7 +75,8 @@ protected:
 
         auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
-        ASSERT_TRUE(pillarGap != nullptr);
+        if(pillarGap == nullptr)
+            throw std::runtime_error("Failed to create pillar gap.");
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
@@ -78,14 +86,12 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
-        ASSERT_TRUE(m_TarcogSystem != nullptr);
-
-        m_TarcogSystem->solve();
+        Tarcog::ISO15099::CSingleSystem tarcogSystem(aIGU, Indoor, Outdoor);
+        return tarcogSystem;
     }
 
 public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem & GetSystem()
     {
         return m_TarcogSystem;
     }
@@ -97,10 +103,8 @@ TEST_F(NFRC102_NFRC102_VacuumHexagonPillar, Test1)
 
     const auto aSystem = GetSystem();
 
-    ASSERT_TRUE(aSystem != nullptr);
-
-    const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {258.056300, 258.315132, 282.188077, 282.446909};
+    const auto Temperature = aSystem.getTemperatures();
+    std::vector correctTemperature = {258.092694, 258.354774, 282.045810, 282.307889};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -108,8 +112,8 @@ TEST_F(NFRC102_NFRC102_VacuumHexagonPillar, Test1)
         EXPECT_NEAR(correctTemperature[i], Temperature[i], tolerance);
     }
 
-    const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {249.648603, 267.209355, 344.744502, 371.013915};
+    const auto Radiosity = aSystem.getRadiosities();
+    std::vector correctRadiosity = {249.767773, 267.243046, 344.141347, 370.417611};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -117,9 +121,9 @@ TEST_F(NFRC102_NFRC102_VacuumHexagonPillar, Test1)
         EXPECT_NEAR(correctRadiosity[i], Radiosity[i], tolerance);
     }
 
-    const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(36u, numOfIter);
+    const auto numOfIter = aSystem.getNumberOfIterations();
+    EXPECT_EQ(34u, numOfIter);
 
-    const auto uValue{aSystem->getUValue()};
-    EXPECT_NEAR(2.177403, uValue, tolerance);
+    const auto uValue{aSystem.getUValue()};
+    EXPECT_NEAR(2.204721, uValue, tolerance);
 }
