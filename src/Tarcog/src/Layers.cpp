@@ -5,18 +5,23 @@
 #include "BaseShade.hpp"
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
+#include "SupportPillarMeasured.hpp"
 #include "EffectiveOpenness.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 
-
-namespace Tarcog::ISO15099
+namespace Tarcog::ISO15099::Layers
 {
-    std::shared_ptr<CIGUSolidLayer> Layers::solid(const double thickness,
-                                                  const double conductivity,
-                                                  const double frontEmissivity,
-                                                  const double frontIRTransmittance,
-                                                  const double backEmissivity,
-                                                  const double backIRTransmittance)
+    SolidLayer solid(double thickness, double conductivity)
+    {
+        return solid(thickness, conductivity, 0.84, 0.0, 0.84, 0.0);
+    }
+
+    SolidLayer solid(const double thickness,
+                     const double conductivity,
+                     const double frontEmissivity,
+                     const double frontIRTransmittance,
+                     const double backEmissivity,
+                     const double backIRTransmittance)
     {
         return std::make_shared<CIGUSolidLayer>(
           thickness,
@@ -25,28 +30,68 @@ namespace Tarcog::ISO15099
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
 
-    std::shared_ptr<CIGUGapLayer> Layers::gap(const double thickness, const double pressure)
+    GapLayer gap(double thickness,
+                 double pressure,
+                 const Gases::CGas & gas,
+                 double accommodation1,
+                 double accommodation2)
     {
-        return std::make_shared<CIGUGapLayer>(thickness, pressure);
+        return std::make_shared<CIGUGapLayer>(
+          thickness, pressure, gas, accommodation1, accommodation2);
     }
 
-    std::shared_ptr<CIGUGapLayer>
-      Layers::gap(double thickness, const Gases::CGas & gas, double pressure)
+    GapLayer gap(double thickness)
     {
-        return std::make_shared<CIGUGapLayer>(thickness, pressure, gas);
+        return gap(thickness,
+                   ConstantsData::DEFAULT_GAP_PRESSURE,
+                   Gases::CGas(),
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
     }
 
-    std::shared_ptr<CIGUVentilatedGapLayer>
-      Layers::forcedVentilationGap(const std::shared_ptr<CIGUGapLayer> & gap,
-                                   double forcedVentilationAirSpeed,
-                                   double forcedVentilationAirTemperature)
+    GapLayer gap(double thickness, double pressure)
+    {
+        return gap(thickness,
+                   pressure,
+                   Gases::CGas(),
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+    }
+
+    GapLayer gap(double thickness, const Gases::CGas & gas)
+    {
+        return gap(thickness,
+                   ConstantsData::DEFAULT_GAP_PRESSURE,
+                   gas,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+    }
+
+    GapLayer gap(double thickness, double pressure, const Gases::CGas & gas)
+    {
+        return gap(thickness,
+                   pressure,
+                   gas,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+    }
+
+    GapLayer
+      gap(double thickness, const Gases::CGas & gas, double accommodation1, double accommodation2)
+    {
+        return gap(
+          thickness, ConstantsData::DEFAULT_GAP_PRESSURE, gas, accommodation1, accommodation2);
+    }
+
+    GapLayer forcedVentilationGap(const GapLayer & gap,
+                                  double forcedVentilationAirSpeed,
+                                  double forcedVentilationAirTemperature)
     {
         return std::make_shared<CIGUVentilatedGapLayer>(
           gap, forcedVentilationAirTemperature, forcedVentilationAirSpeed);
     }
 
-    std::shared_ptr<CIGUSolidLayer> Layers::updateMaterialData(
-      const std::shared_ptr<CIGUSolidLayer> & layer, double density, double youngsModulus)
+    SolidLayer updateMaterialData(const SolidLayer & layer, double density, double youngsModulus)
     {
         // Deflection cannot be applied to shading layers
         if(std::dynamic_pointer_cast<CIGUShadeLayer>(layer) == nullptr)
@@ -61,16 +106,15 @@ namespace Tarcog::ISO15099
         }
     }
 
-    std::shared_ptr<CIGUSolidLayer>
-      Layers::shading(double thickness,
-                      double conductivity,
-                      EffectiveLayers::EffectiveOpenness effectiveOpenness,
-                      double frontEmissivity,
-                      double frontIRTransmittance,
-                      double backEmissivity,
-                      double backIRTransmittance)
+    SolidLayer shading(double thickness,
+                       double conductivity,
+                       const EffectiveLayers::EffectiveOpenness & effectiveOpenness,
+                       double frontEmissivity,
+                       double frontIRTransmittance,
+                       double backEmissivity,
+                       double backIRTransmittance)
     {
-        if(effectiveOpenness.isClosed())
+        if(isClosed(effectiveOpenness))
         {
             return solid(thickness,
                          conductivity,
@@ -93,12 +137,12 @@ namespace Tarcog::ISO15099
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
 
-    std::shared_ptr<CIGUShadeLayer> Layers::sealedLayer(double thickness,
-                                                        double conductivity,
-                                                        double frontEmissivity,
-                                                        double frontIRTransmittance,
-                                                        double backEmissivity,
-                                                        double backIRTransmittance)
+    ShadeLayer sealedLayer(double thickness,
+                           double conductivity,
+                           double frontEmissivity,
+                           double frontIRTransmittance,
+                           double backEmissivity,
+                           double backIRTransmittance)
     {
         return std::make_shared<CIGUShadeLayer>(
           thickness,
@@ -108,10 +152,51 @@ namespace Tarcog::ISO15099
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
 
-    std::shared_ptr<CIGUGapLayer> Layers::addCircularPillar(
-      const std::shared_ptr<CIGUGapLayer> & gap, double conductivity, double spacing, double radius)
+    Gases::CGas defaultVacuumMixture()
     {
-        return std::make_shared<CCircularPillar>(*gap, conductivity, spacing, radius);
+        return Gases::CGas{std::vector<Gases::CGasItem>{{1.0, Gases::GasDef::VacuumMixture}}};
     }
 
-}   // namespace Tarcog::ISO15099
+    template<typename PillarType, typename PillarLayerType>
+    GapLayer createPillar(const PillarType & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        auto pillarGap = Tarcog::ISO15099::Layers::gap(
+          pillar.height, pressure, gas, accommodation1, accommodation2);
+        return std::make_shared<PillarLayerType>(*pillarGap, pillar);
+    }
+
+// Avoiding code duplication by using a macro. Since all the createPillar functions are identical
+// except for the types, we can use a macro to define them all at once.
+#define CREATE_PILLAR_FUNCTION(PillarType, PillarLayerType)       \
+    GapLayer createPillar(const PillarType & pillar,              \
+                          double pressure,                        \
+                          const Gases::CGas & gas,                \
+                          const double accommodation1,            \
+                          const double accommodation2)            \
+    {                                                             \
+        return createPillar<PillarType, PillarLayerType>(         \
+          pillar, pressure, gas, accommodation1, accommodation2); \
+    }
+
+    CREATE_PILLAR_FUNCTION(CylindricalPillar, CylindricalPillarLayer)
+    CREATE_PILLAR_FUNCTION(SphericalPillar, SphericalPillarLayer)
+    CREATE_PILLAR_FUNCTION(RectangularPillar, RectangularPillarLayer)
+    CREATE_PILLAR_FUNCTION(TriangularPillar, TriangularPillarLayer)
+    CREATE_PILLAR_FUNCTION(PentagonPillar, PentagonPillarLayer)
+    CREATE_PILLAR_FUNCTION(HexagonPillar, HexagonPillarLayer)
+    CREATE_PILLAR_FUNCTION(LinearBearingPillar, LinearBearingPillarLayer)
+    CREATE_PILLAR_FUNCTION(TruncatedConePillar, TruncatedConePillarLayer)
+    CREATE_PILLAR_FUNCTION(AnnulusCylinderPillar, AnnulusCylinderPillarLayer)
+    CREATE_PILLAR_FUNCTION(CShapedCylinderPillar, CShapedCylinderPillarLayer)
+
+#undef CREATE_PILLAR_FUNCTION
+
+    GapLayer createPillar(const PillarMeasurement & pillar)
+    {
+        return std::make_shared<MeasuredPillarLayer>(pillar);
+    }
+}   // namespace Tarcog::ISO15099::Layers

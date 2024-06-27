@@ -5,14 +5,15 @@
 #include <WCEGases.hpp>
 
 #include "IGUGapLayer.hpp"
+#include "LayerTypes.hpp"
 
 
 namespace Tarcog::ISO15099
 {
-    struct VentilatedGapState
+    struct VentilatedGapTemperatures
     {
-        VentilatedGapState() = default;
-        VentilatedGapState(double inletTemperature, double outletTemperature);
+        VentilatedGapTemperatures() = default;
+        VentilatedGapTemperatures(double inletTemperature, double outletTemperature);
         double inletTemperature{0};
         double outletTemperature{0};
     };
@@ -31,8 +32,8 @@ namespace Tarcog::ISO15099
     class CIGUVentilatedGapLayer : public CIGUGapLayer
     {
     public:
-        explicit CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer);
-        CIGUVentilatedGapLayer(const std::shared_ptr<CIGUGapLayer> & t_Layer,
+        explicit CIGUVentilatedGapLayer(const GapLayer & t_Layer);
+        CIGUVentilatedGapLayer(const GapLayer & t_Layer,
                                double forcedVentilationInletTemperature,
                                double forcedVentilationInletSpeed);
 
@@ -60,10 +61,10 @@ namespace Tarcog::ISO15099
         void precalculateState() override;
         void calculateOutletTemperatureFromAirFlow();
 
-        VentilatedGapState calculateInletAndOutletTemperaturesWithTheAdjacentGap(
+        VentilatedGapTemperatures calculateInletAndOutletTemperaturesWithTheAdjacentGap(
           CIGUVentilatedGapLayer & adjacentGap,
-          VentilatedGapState current,
-          VentilatedGapState previous,
+          VentilatedGapTemperatures current,
+          VentilatedGapTemperatures previous,
           double relaxationParameter);
 
         double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
@@ -82,11 +83,13 @@ namespace Tarcog::ISO15099
 
         void calculateHeatFlowNextLayer() const;
 
-        std::shared_ptr<CIGUGapLayer> m_Layer;
+        double performIterationStep(double relaxationParameter, double & TgapOut);
 
+        GapLayer m_Layer;
+
+        VentilatedGapTemperatures m_State;
         const Gases::GasProperties m_ReferenceGasProperties;
 
-        VentilatedGapState m_State;
         double m_Zin{0};
         double m_Zout{0};
 
@@ -95,6 +98,12 @@ namespace Tarcog::ISO15099
         //! used automatically if this value has been populated, otherwise, thermally driven is
         //! assumed.
         std::optional<ForcedVentilation> m_ForcedVentilation;
+        bool isConverged(const VentilatedGapTemperatures & current,
+                         const VentilatedGapTemperatures & previous);
+        void adjustTemperatures(CIGUVentilatedGapLayer & adjacentGap);
+        void performIterationStep(CIGUVentilatedGapLayer & adjacentGap,
+                                  VentilatedGapTemperatures & current,
+                                  double RelaxationParameter);
     };
 
 }   // namespace Tarcog::ISO15099

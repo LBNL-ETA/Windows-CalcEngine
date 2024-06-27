@@ -19,8 +19,7 @@ namespace SingleLayerOptics
     }
 
     CBeamDirection::CBeamDirection(const double t_Theta, const double t_Phi) :
-        m_Theta(t_Theta),
-        m_Phi(t_Phi)
+        m_Theta(t_Theta), m_Phi(t_Phi)
     {
         if(t_Theta < 0)
         {
@@ -97,12 +96,6 @@ namespace SingleLayerOptics
         return aAzimuth;
     }
 
-    void CBeamDirection::updateProfileAngle(const double t_Theta, const double t_Phi)
-    {
-        m_ProfileAngle = -std::atan(std::sin(radians(t_Phi)) * std::tan(radians(t_Theta)));
-        m_ProfileAngle = degrees(m_ProfileAngle);
-    }
-
     CBeamDirection CBeamDirection::rotate(const double angle) const
     {
         return {m_Theta, m_Phi + angle};
@@ -112,6 +105,19 @@ namespace SingleLayerOptics
     {
         return m_Theta < t_SphericalPoint.m_Theta
                || (m_Theta == t_SphericalPoint.m_Theta && m_Phi < t_SphericalPoint.m_Phi);
+    }
+
+    Viewer::CSegment2D CBeamDirection::unitVector() const
+    {
+        return {{0, 0},
+                {std::cos(FenestrationCommon::radians(-profileAngle())),
+                 std::sin(FenestrationCommon::radians(-profileAngle()))}};
+    }
+
+    void CBeamDirection::updateProfileAngle(const double t_Theta, const double t_Phi)
+    {
+        m_ProfileAngle = -std::atan(std::sin(radians(t_Phi)) * std::tan(radians(t_Theta)));
+        m_ProfileAngle = degrees(m_ProfileAngle);
     }
 
 }   // namespace SingleLayerOptics

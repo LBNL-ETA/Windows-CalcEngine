@@ -63,134 +63,60 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
     BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.44649813630049223, tauDiff, 1e-6);
+    EXPECT_NEAR(0.55329584855741987, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.28386835793952669, RfDiff, 1e-6);
+    EXPECT_NEAR(0.34092861726678308, RfDiff, 1e-6);
 
     const double theta = 23;
     const double phi = 198;
 
     const double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.42987405997685452, tauHem, 1e-6);
+    EXPECT_NEAR(0.54432441274896237, tauHem, 1e-6);
 
     auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
 
-    std::vector<double> correctResults;
-    correctResults.push_back(3.8537531201195208);
-    correctResults.push_back(4.1502982467458276);
-    correctResults.push_back(6.4100346243744326);
-    correctResults.push_back(7.3474092442895333);
-    correctResults.push_back(6.4100346243744326);
-    correctResults.push_back(4.1502982467458276);
-    correctResults.push_back(1.8952091768254709);
-    correctResults.push_back(0.9624818646186141);
-    correctResults.push_back(1.8952091768254709);
-    correctResults.push_back(3.8507492805553354);
-    correctResults.push_back(7.1631325677152899);
-    correctResults.push_back(9.5953311156279479);
-    correctResults.push_back(10.487134124145857);
-    correctResults.push_back(9.5953311156279479);
-    correctResults.push_back(7.1631325677152899);
-    correctResults.push_back(3.8507492805553367);
-    correctResults.push_back(0.5499842626659959);
-    correctResults.push_back(0.076422070782678389);
-    correctResults.push_back(0.072113581483518790);
-    correctResults.push_back(0.076422070782678389);
-    correctResults.push_back(0.54998426266599365);
-    correctResults.push_back(3.8507492805553394);
-    correctResults.push_back(10.135661402447086);
-    correctResults.push_back(11.234248057098451);
-    correctResults.push_back(9.5441761716221478);
-    correctResults.push_back(11.234248057098451);
-    correctResults.push_back(10.135661402447086);
-    correctResults.push_back(3.8507492805553412);
-    correctResults.push_back(0.073751825599575688);
-    correctResults.push_back(0.056801188075067718);
-    correctResults.push_back(0.052393583794556338);
-    correctResults.push_back(0.056801188075067677);
-    correctResults.push_back(0.073751825599575660);
-    correctResults.push_back(3.6627476023802092);
-    correctResults.push_back(0.064003709245804577);
-    correctResults.push_back(0.039335031220287420);
-    correctResults.push_back(0.064003709245804577);
-    correctResults.push_back(3.6627476023802141);
-    correctResults.push_back(0.031558258087563060);
-    correctResults.push_back(0.024104538133300955);
-    correctResults.push_back(0.031558258087563032);
+    std::vector<double> correctT{
+      3.853753, 4.150298, 6.425614, 7.36672,   6.425614,  4.150298, 1.870334, 0.924581, 1.870334,
+      3.850749, 7.183496, 9.615871, 10.504625, 9.615871,  7.183496, 3.850749, 0.506383, 0.020037,
+      0.013944, 0.020037, 0.506383, 3.850749,  10.154553, 11.25115, 9.577312, 11.25115, 10.154553,
+      3.850749, 0.01626,  0.00771,  0.013944,  0.00771,   0.01626,  3.662747, 0.178554, 0.143667,
+      0.178554, 3.662747, 0.043409, 0.05395,   0.043409};
 
-    EXPECT_EQ(correctResults.size(), aT.size());
+    EXPECT_EQ(correctT.size(), aT.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-5);
+        EXPECT_NEAR(correctT[i], aT(i, i), 1e-5);
     }
 
     // Front reflectance
     auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
+    std::vector<double> correctR{
+      0.124677, 0.124677, 0.118095, 0.111514, 0.118095, 0.124677, 0.118095, 0.111514, 0.118095,
+      0.124677, 0.108223, 0.065378, 0.048215, 0.065378, 0.108223, 0.124677, 0.108223, 0.065378,
+      0.048215, 0.065378, 0.108223, 0.124677, 0.054978, 0.011951, 0.023431, 0.011951, 0.054978,
+      0.124677, 0.054978, 0.011951, 0.023431, 0.011951, 0.054978, 0.124677, 0.088039, 0.088039,
+      0.088039, 0.124677, 0.088039, 0.088039, 0.088039};
 
-    correctResults.push_back(0.12467701187757886);
-    correctResults.push_back(0.12467701187757886);
-    correctResults.push_back(0.11809576069675247);
-    correctResults.push_back(0.11151450951592602);
-    correctResults.push_back(0.11809576069675243);
-    correctResults.push_back(0.12467701187757889);
-    correctResults.push_back(0.11809576069675248);
-    correctResults.push_back(0.11151450951592602);
-    correctResults.push_back(0.11809576069675248);
-    correctResults.push_back(0.12467701187757886);
-    correctResults.push_back(0.10822388392551284);
-    correctResults.push_back(0.056751264415241136);
-    correctResults.push_back(0.039493797495131787);
-    correctResults.push_back(0.056751264415241136);
-    correctResults.push_back(0.10822388392551285);
-    correctResults.push_back(0.12467701187757889);
-    correctResults.push_back(0.10822388392551291);
-    correctResults.push_back(0.065378671009513112);
-    correctResults.push_back(0.048215999889970981);
-    correctResults.push_back(0.065378671009513042);
-    correctResults.push_back(0.10822388392551284);
-    correctResults.push_back(0.12467701187757886);
-    correctResults.push_back(0.046055713210097007);
-    correctResults.push_back(0.0077108503397755159);
-    correctResults.push_back(0.013944144090848406);
-    correctResults.push_back(0.0077108503397755150);
-    correctResults.push_back(0.046055713210097007);
-    correctResults.push_back(0.12467701187757892);
-    correctResults.push_back(0.054978145293713886);
-    correctResults.push_back(0.011951549151406803);
-    correctResults.push_back(0.023431122989891869);
-    correctResults.push_back(0.011951549151406849);
-    correctResults.push_back(0.054978145293713775);
-    correctResults.push_back(0.12467701187757879);
-    correctResults.push_back(0.031558258087563046);
-    correctResults.push_back(0.024104538133300962);
-    correctResults.push_back(0.031558258087563046);
-    correctResults.push_back(0.12467701187757896);
-    correctResults.push_back(0.064003709245804660);
-    correctResults.push_back(0.039335031220287427);
-    correctResults.push_back(0.064003709245804577);
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
+    EXPECT_EQ(correctR.size(), aRf.size());
     for(size_t i = 0; i < size; ++i)
     {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
+        EXPECT_NEAR(correctR[i], aRf(i, i), 1e-5);
     }
 }
 
 TEST_F(TestVenetianDirectionalShadeFlat0_1, AtWavelength)
 {
-
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
 
-    const auto correct{0.446498};
+    const auto correct{0.37192019576813157};
     const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);

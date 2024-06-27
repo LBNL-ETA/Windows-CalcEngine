@@ -3,13 +3,18 @@
 
 #include <WCETarcog.hpp>
 
-class DoubleLowEVacuumCircularPillar : public testing::Test
+class NFRC102_NFRC102_VacuumTriangularPillar : public testing::Test
 {
 private:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
+    Tarcog::ISO15099::CSingleSystem m_TarcogSystem{createTarcogSystem()};
 
 protected:
     void SetUp() override
+    {
+        m_TarcogSystem.solve();
+    }
+
+    static Tarcog::ISO15099::CSingleSystem createTarcogSystem()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -21,7 +26,8 @@ protected:
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        ASSERT_TRUE(Outdoor != nullptr);
+        if(Outdoor == nullptr)
+            throw std::runtime_error("Failed to create Outdoor environment.");
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
@@ -31,16 +37,17 @@ protected:
         auto roomTemperature = 294.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-        ASSERT_TRUE(Indoor != nullptr);
+        if(Indoor == nullptr)
+            throw std::runtime_error("Failed to create Indoor environment.");
 
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.004;   // [m]
+        auto solidLayerThickness = 3.048e-3;   // [m]
         auto solidLayerConductance = 1.0;
         auto TransmittanceIR = 0.0;
         auto emissivityFrontIR = 0.84;
-        auto emissivityBackIR = 0.036749500781;
+        auto emissivityBackIR = 0.84;
 
         auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                       solidLayerConductance,
@@ -49,9 +56,6 @@ protected:
                                                       emissivityBackIR,
                                                       TransmittanceIR);
 
-        solidLayerThickness = 0.0039624;
-        emissivityBackIR = 0.84;
-
         auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
                                                       solidLayerConductance,
                                                       emissivityFrontIR,
@@ -59,18 +63,20 @@ protected:
                                                       emissivityBackIR,
                                                       TransmittanceIR);
 
-        auto gapThickness = 0.0001;
-        auto gapPressure = 0.1333;
-        auto aGapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-
         // Add support pillars
-        auto pillarConductivity = 999.0;
-        auto pillarSpacing = 0.03;
-        auto pillarRadius = 0.0002;
-        auto pillarGap = Tarcog::ISO15099::Layers::addCircularPillar(
-          aGapLayer, pillarConductivity, pillarSpacing, pillarRadius);
+        const auto pillarLength = 0.1e-3;
+        const auto pillarHeight = 0.1e-3;
+        const auto gapPressure = 0.1333;
+        const auto pillarConductivity = 999.0;
+        const auto pillarArea = 0.03 * 0.03;
 
-        ASSERT_TRUE(pillarGap != nullptr);
+        Tarcog::ISO15099::TriangularPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, pillarLength};
+
+        auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
+
+        if(pillarGap == nullptr)
+            throw std::runtime_error("Failed to create pillar gap.");
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
@@ -80,47 +86,44 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_shared<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
-        ASSERT_TRUE(m_TarcogSystem != nullptr);
-
-        m_TarcogSystem->solve();
+        Tarcog::ISO15099::CSingleSystem tarcogSystem(aIGU, Indoor, Outdoor);
+        return tarcogSystem;
     }
 
 public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem & GetSystem()
     {
         return m_TarcogSystem;
     }
 };
 
-TEST_F(DoubleLowEVacuumCircularPillar, Test1)
+TEST_F(NFRC102_NFRC102_VacuumTriangularPillar, Test1)
 {
-    SCOPED_TRACE("Begin Test: Double Low-E - vacuum with circular pillar support");
-
-    constexpr auto Tolerance = 1e-6;
+    constexpr auto tolerance = 1e-6;
 
     const auto aSystem = GetSystem();
 
-    ASSERT_TRUE(aSystem != nullptr);
-
-    const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {255.997063, 256.095933, 290.398479, 290.496419};
+    const auto Temperature = aSystem.getTemperatures();
+    std::vector correctTemperature = {258.033780, 258.290603, 282.276140, 282.532963};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
+        EXPECT_NEAR(correctTemperature[i], Temperature[i], tolerance);
     }
 
-    const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {242.987484, 396.293176, 402.108090, 407.071738};
+    const auto Radiosity = aSystem.getRadiosities();
+    std::vector correctRadiosity = {249.574889, 267.188636, 345.118335, 371.383468};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
     {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
+        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], tolerance);
     }
 
-    const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(26u, numOfIter);
+    const auto numOfIter = aSystem.getNumberOfIterations();
+    EXPECT_EQ(37u, numOfIter);
+
+    const auto uValue{aSystem.getUValue()};
+    EXPECT_NEAR(2.160500, uValue, tolerance);
 }

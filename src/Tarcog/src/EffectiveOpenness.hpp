@@ -16,23 +16,25 @@ namespace EffectiveLayers
         double Dbot;
     };
 
-    //! \brief Effective openness of shading layer that is necessary for thermal calculations.
+    //! \brief Effective frontOpenness of shading layer that is necessary for thermal calculations.
     //!
-    //! Thermal openness of shading layer will not match physical openness and because of that some
-    //! calculations are required.
+    //! Thermal frontOpenness of shading layer will not match physical frontOpenness and because of
+    //! that some calculations are required.
     struct EffectiveOpenness
     {
         EffectiveOpenness(
           double ah, double al, double ar, double atop, double abot, double frontPorosity);
-        bool isClosed() const;
+
         double Ah;
         double Al;
         double Ar;
         double Atop;
         double Abot;
-        double
-          FrontPorosity;   // Geometrical openness used to calculate equivalent layer conductivity
+        // Geometrical openness used to calculate equivalent layer conductivity
+        double FrontPorosity;
     };
+
+    bool isClosed(const EffectiveOpenness & effectiveOpenness);
 
     struct Coefficients
     {
@@ -43,7 +45,7 @@ namespace EffectiveLayers
         double C4;
     };
 
-    //! \brief Abstract class that will be used to inherit effective openness calculations for
+    //! \brief Abstract class that will be used to inherit effective frontOpenness calculations for
     //! different shade types
     class EffectiveLayer
     {
@@ -53,7 +55,7 @@ namespace EffectiveLayers
                        double height,
                        double thickness,
                        const ShadeOpenness & openness,
-                       Coefficients coefficients = {0.0, 0.0, 0.0, 0.0});
+                       const Coefficients & coefficients = {0.0, 0.0, 0.0, 0.0});
 
         virtual EffectiveOpenness getEffectiveOpenness() = 0;
 
@@ -75,10 +77,10 @@ namespace EffectiveLayers
         EffectiveVenetian(double width,
                           double height,
                           double thickness,
-                          const ShadeOpenness & openness,
                           double slatAngle,
                           double slatWidth,
-                          Coefficients coefficients);
+                          const ShadeOpenness & openness,
+                          const Coefficients & coefficients);
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;
@@ -99,31 +101,31 @@ namespace EffectiveLayers
                                     double SlatWidth);
     };
 
-    class EffectiveVerticalVenentian : public EffectiveVenetian
+    class EffectiveVerticalVenetian : public EffectiveVenetian
     {
     public:
-        EffectiveVerticalVenentian(double width,
-                                   double height,
-                                   double thickness,
-                                   const ShadeOpenness & openness,
-                                   double slatAngle,
-                                   double slatWidth);
+        EffectiveVerticalVenetian(double width,
+                                  double height,
+                                  double thickness,
+                                  const ShadeOpenness & openness,
+                                  double slatAngle,
+                                  double slatWidth);
     };
 
     //! \brief Used for effective calculations for Perforated, Woven, Diffuse shade and BSDF
-    class EffectiveLayerType1 : public EffectiveLayer
+    class EffectiveLayerCommonType : public EffectiveLayer
     {
     public:
-        EffectiveLayerType1(double width,
-                            double height,
-                            double thickness,
-                            const ShadeOpenness & openness);
+        EffectiveLayerCommonType(double width,
+                                 double height,
+                                 double thickness,
+                                 const ShadeOpenness & openness);
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;
     };
 
-    class EffectiveLayerPerforated : public EffectiveLayerType1
+    class EffectiveLayerPerforated : public EffectiveLayerCommonType
     {
     public:
         EffectiveLayerPerforated(double width,
@@ -132,7 +134,7 @@ namespace EffectiveLayers
                                  const ShadeOpenness & openness);
     };
 
-    class EffectiveLayerDiffuse : public EffectiveLayerType1
+    class EffectiveLayerDiffuse : public EffectiveLayerCommonType
     {
     public:
         EffectiveLayerDiffuse(double width,
@@ -141,7 +143,7 @@ namespace EffectiveLayers
                               const ShadeOpenness & openness);
     };
 
-    class EffectiveLayerWoven : public EffectiveLayerType1
+    class EffectiveLayerWoven : public EffectiveLayerCommonType
     {
     public:
         EffectiveLayerWoven(double width,
@@ -150,7 +152,7 @@ namespace EffectiveLayers
                             const ShadeOpenness & openness);
     };
 
-    class EffectiveLayerBSDF : public EffectiveLayerType1
+    class EffectiveLayerBSDF : public EffectiveLayerCommonType
     {
     public:
         EffectiveLayerBSDF(double width,
@@ -170,5 +172,4 @@ namespace EffectiveLayers
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;
     };
-
 }   // namespace EffectiveLayers

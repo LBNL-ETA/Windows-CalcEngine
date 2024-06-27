@@ -49,10 +49,8 @@ namespace SingleLayerOptics
             const double aTau = aCell->T_dir_dif(aSide, incomingDirection, jDirection);
             const double aRho = aCell->R_dir_dif(aSide, incomingDirection, jDirection);
 
-            tau(outgoingDirectionIndex, incomingDirectionIndex) +=
-              aTau * diffuseDistributionScalar(outgoingDirectionIndex);
-            Rho(outgoingDirectionIndex, incomingDirectionIndex) +=
-              aRho * diffuseDistributionScalar(outgoingDirectionIndex);
+            tau(outgoingDirectionIndex, incomingDirectionIndex) += aTau;
+            Rho(outgoingDirectionIndex, incomingDirectionIndex) += aRho;
         }
     }
 

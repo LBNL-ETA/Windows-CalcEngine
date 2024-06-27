@@ -3,43 +3,60 @@
 #include <memory>
 #include <vector>
 
+#include <WCECommon.hpp>
 #include <WCEViewer.hpp>
 
 #include "CellDescription.hpp"
 #include "VenetianSlat.hpp"
-
-namespace FenestrationCommon
-{
-    class SquareMatrix;
-    enum class Side;
-
-}   // namespace FenestrationCommon
+#include "VenetianSegments.hpp"
 
 namespace SingleLayerOptics
 {
-    class CVenetianSlat;
+    enum class SlatPosition
+    {
+        Top = 0,
+        Bottom = 1
+    };
 
     class CVenetianCellDescription : public ICellDescription
     {
     public:
         virtual ~CVenetianCellDescription() = default;
-        CVenetianCellDescription(double t_SlatWidth,
-                                 double t_SlatSpacing,
-                                 double t_SlatTiltAngle,
-                                 double t_CurvatureRadius,
+
+        CVenetianCellDescription(const FenestrationCommon::VenetianGeometry & t_Geometry,
                                  size_t t_NumOfSlatSegments);
 
         // Makes exact copy of cell description
         [[nodiscard]] std::shared_ptr<CVenetianCellDescription> getBackwardFlowCell() const;
         [[nodiscard]] size_t numberOfSegments() const;
         [[nodiscard]] double segmentLength(size_t Index) const;
+        [[nodiscard]] double segmentAngle(size_t Index) const;
 
         // View factors of enclosure slats
         FenestrationCommon::SquareMatrix viewFactors();
 
+        //! Calculates view factors for given profile angle
+        FenestrationCommon::SquareMatrix viewFactors(FenestrationCommon::Side t_Side,
+                                                     const CBeamDirection & t_Direction);
+
         // view factor of the beam entering the cell with profile angle
-        std::vector<Viewer::BeamViewFactor> beamViewFactors(double t_ProfileAngle,
-                                                            FenestrationCommon::Side t_Side);
+        std::vector<Viewer::BeamViewFactor> cellBeamViewFactors(double t_ProfileAngle,
+                                                                FenestrationCommon::Side t_Side);
+
+        std::vector<Viewer::BeamViewFactor> cellBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                                const CBeamDirection & t_Direction);
+
+        //! Calculates corrected view factors for the given incoming beam direction
+        std::vector<double> scaledBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                  const CBeamDirection & t_Direction);
+
+        //! Calculates segments that are visible for the beam including indoor and outdoor segments
+        std::vector<double> visibleBeamSegmentFraction(FenestrationCommon::Side t_Side,
+                                                       const CBeamDirection & t_Direction);
+
+        //! Calculates segments that are visible for the beam excluding indoor and outdoor segments
+        std::vector<double> visibleBeamSegmentFractionSlatsOnly(FenestrationCommon::Side t_Side,
+                                                                const CBeamDirection & t_Direction);
 
         // Direct to direct component of the ray
         double T_dir_dir(FenestrationCommon::Side t_Side,
@@ -47,25 +64,32 @@ namespace SingleLayerOptics
         double R_dir_dir(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;
 
-        [[nodiscard]] double slatWidth() const;
-        [[nodiscard]] double slatSpacing() const;
-        [[nodiscard]] double slatTiltAngle() const;
-        [[nodiscard]] double curvatureRadius() const;
+        [[nodiscard]] FenestrationCommon::VenetianGeometry getVenetianGeometry() const;
         [[nodiscard]] size_t numOfSegments() const;
 
         void preCalculateForProfileAngles(FenestrationCommon::Side side,
                                           const std::vector<double> & t_ProfileAngles);
 
+        [[nodiscard]] const Viewer::CGeometry2D & getSlats(SlatPosition position) const;
+
+        //! Return all slats in CW direction (No indoor and outdoor just venetian slats)
+        [[nodiscard]] std::vector<Viewer::CViewSegment2D> getSlats() const;
+
+        [[nodiscard]] double getCellSpacing() const;
+
     private:
-        double m_SlatWidth;
-        double m_SlatSpacing;
-        double m_SlatTiltAngle;
-        double m_CurvatureRadius;
+        std::vector<BeamSegmentView> beamViewFactorsToBeamSegmentViews(
+          size_t numberOfSegments,
+          FenestrationCommon::Side t_Side,
+          const CBeamDirection & t_Direction,
+          const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors);
+
+        FenestrationCommon::VenetianGeometry m_VenetianGeometry;
         size_t m_NumOfSegments;
 
         // Top and bottom slats of venetian cell
-        CVenetianSlat m_Top;
-        CVenetianSlat m_Bottom;
+        Viewer::CGeometry2D m_Top;
+        Viewer::CGeometry2D m_Bottom;
 
         // Complete enclosure from venetian cell
         Viewer::CGeometry2D m_Geometry;

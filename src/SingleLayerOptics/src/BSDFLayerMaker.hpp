@@ -4,6 +4,11 @@
 
 #include "PhotovoltaicProperties.hpp"
 
+namespace FenestrationCommon
+{
+    struct VenetianGeometry;
+}
+
 namespace SingleLayerOptics
 {
     enum class DistributionMethod
@@ -58,6 +63,14 @@ namespace SingleLayerOptics
                            size_t numOfSlatSegments,
                            DistributionMethod method = DistributionMethod::DirectionalDiffuse,
                            bool isHorizontal = true);
+
+        static std::shared_ptr<CBSDFLayer>
+            getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
+            const BSDFHemisphere & t_BSDF,
+            const FenestrationCommon::VenetianGeometry & geometry,
+            size_t numOfSlatSegments,
+            DistributionMethod method = DistributionMethod::DirectionalDiffuse,
+            bool isHorizontal = true);
 
         static std::shared_ptr<CBSDFLayer>
           getPerfectlyDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,

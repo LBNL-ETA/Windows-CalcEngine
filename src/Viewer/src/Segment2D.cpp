@@ -1,6 +1,8 @@
 #include <cmath>
 #include <algorithm>
 
+#include <WCECommon.hpp>
+
 #include "Segment2D.hpp"
 #include "ViewerConstants.hpp"
 
@@ -10,7 +12,8 @@ namespace Viewer
         m_StartPoint(t_StartPoint),
         m_EndPoint(t_EndPoint),
         m_CenterPoint(calculateCenter(m_StartPoint, m_EndPoint)),
-        m_Length(calculateLength(m_StartPoint, m_EndPoint))
+        m_Length(calculateLength(m_StartPoint, m_EndPoint)),
+        m_Angle(calculateAngle(m_StartPoint, m_EndPoint))
     {}
 
     CPoint2D CSegment2D::startPoint() const
@@ -41,6 +44,11 @@ namespace Viewer
     double CSegment2D::length() const
     {
         return m_Length;
+    }
+
+    double CSegment2D::angle() const
+    {
+        return m_Angle;
     }
 
     bool CSegment2D::intersectionWithSegment(const CSegment2D & t_Segment) const
@@ -97,9 +105,29 @@ namespace Viewer
     // Translates segment for given coordinates
     CSegment2D CSegment2D::translate(double const t_x, double const t_y) const
     {
-        CPoint2D startPoint{m_StartPoint.x() + t_x, m_StartPoint.y() + t_y};
-        CPoint2D endPoint{m_EndPoint.x() + t_x, m_EndPoint.y() + t_y};
-        return {startPoint, endPoint};
+        return {{m_StartPoint.x() + t_x, m_StartPoint.y() + t_y},
+                {m_EndPoint.x() + t_x, m_EndPoint.y() + t_y}};
+    }
+
+    CPoint2D CSegment2D::surfaceUnitNormal() const
+    {
+        if(FenestrationCommon::isEqual(length(), 0.0))
+        {
+            return {0, 0};
+        }
+
+        const auto aX = m_EndPoint.x() - m_StartPoint.x();
+        const auto aY = m_EndPoint.y() - m_StartPoint.y();
+
+        // Calculate normals
+        auto normalX = -aY / length();
+        auto normalY = aX / length();
+
+        // Handle cases where segment is aligned with x or y axis
+        normalX = (aX == 0) ? ((aY > 0.0) ? 1.0 : -1.0) : normalX;
+        normalY = (aY == 0) ? ((aX > 0.0) ? -1.0 : 1.0) : normalY;
+
+        return {normalX, normalY};
     }
 
     double CSegment2D::calculateLength(const CPoint2D & startPoint, const CPoint2D & endPoint)
@@ -107,6 +135,13 @@ namespace Viewer
         auto deltaX = endPoint.x() - startPoint.x();
         auto deltaY = endPoint.y() - startPoint.y();
         return std::sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
+    double CSegment2D::calculateAngle(const CPoint2D & startPoint, const CPoint2D & endPoint)
+    {
+        double dx = endPoint.x() - startPoint.x();
+        double dy = endPoint.y() - startPoint.y();
+        return FenestrationCommon::degrees(std::atan2(std::abs(dy), std::abs(dx)));
     }
 
     CPoint2D CSegment2D::calculateCenter(const CPoint2D & startPoint, const CPoint2D & endPoint)

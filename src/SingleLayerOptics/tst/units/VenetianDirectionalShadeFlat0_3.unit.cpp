@@ -63,115 +63,39 @@ TEST_F(TestVenetianDirectionalShadeFlat0_3, TestVenetian1)
     auto aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.48775116654942097, tauDiff, 1e-6);
+    EXPECT_NEAR(0.50867495442994748, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.22509839868274970, RfDiff, 1e-6);
+    EXPECT_NEAR(0.22828908995601985, RfDiff, 1e-6);
 
     auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
-    // Test only diagonal of transmittance matrix
-    size_t size = aT.size();
+    std::vector<double> correctT{
+      13.007242, 14.019711, 8.879333, 6.75793,   8.879333, 14.019711, 8.879333,  6.75793,  8.879333,
+      12.996986, 5.47603,   0.098804, 0.103304,  0.098804, 5.47603,   12.996986, 5.47603,  0.098804,
+      0.103304,  0.098804,  5.47603,  12.996986, 0.101199, 0.102473,  0.101186,  0.102473, 0.101199,
+      12.996986, 0.101199,  0.102473, 0.101186,  0.102473, 0.101199,  12.355109, 0.127734, 0.13675,
+      0.127734,  12.355109, 0.127734, 0.13675,   0.127734};
 
-    std::vector<double> correctResults;
-    correctResults.push_back(13.00724272523622500);
-    correctResults.push_back(14.01971111841941000);
-    correctResults.push_back(8.879333707559864000);
-    correctResults.push_back(6.757930491107369900);
-    correctResults.push_back(8.879333707559864000);
-    correctResults.push_back(14.01971111841941000);
-    correctResults.push_back(8.879333707559864000);
-    correctResults.push_back(6.757930491107371700);
-    correctResults.push_back(8.879333707559864000);
-    correctResults.push_back(12.99698697545699000);
-    correctResults.push_back(5.476030728175789600);
-    correctResults.push_back(0.098218010371277989);
-    correctResults.push_back(0.095832434781168180);
-    correctResults.push_back(0.098218010371277989);
-    correctResults.push_back(5.476030728175789600);
-    correctResults.push_back(12.99698697545699000);
-    correctResults.push_back(5.476030728175789600);
-    correctResults.push_back(0.098218010371277989);
-    correctResults.push_back(0.095832434781168138);
-    correctResults.push_back(0.098218010371277989);
-    correctResults.push_back(5.476030728175789600);
-    correctResults.push_back(12.99698697545700400);
-    correctResults.push_back(0.094990521299407105);
-    correctResults.push_back(0.062476409862337726);
-    correctResults.push_back(0.052827014930858306);
-    correctResults.push_back(0.062476409862337726);
-    correctResults.push_back(0.094990521299407105);
-    correctResults.push_back(12.99698697545700400);
-    correctResults.push_back(0.094990521299407105);
-    correctResults.push_back(0.062476409862337781);
-    correctResults.push_back(0.052827014930858347);
-    correctResults.push_back(0.062476409862337781);
-    correctResults.push_back(0.094990521299407105);
-    correctResults.push_back(12.35510909608257400);
-    correctResults.push_back(0.034092954478813497);
-    correctResults.push_back(0.026306763651200261);
-    correctResults.push_back(0.034092954478813497);
-    correctResults.push_back(12.35510909608257400);
-    correctResults.push_back(0.034092954478813518);
-    correctResults.push_back(0.026306763651200268);
-    correctResults.push_back(0.034092954478813518);
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < size; ++i)
+    EXPECT_EQ(correctT.size(), aT.size());
+    for(size_t i = 0; i < aT.size(); ++i)
     {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
+        EXPECT_NEAR(correctT[i], aT(i, i), 1e-6);
     }
 
     // Front reflectance
     auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
-    correctResults.clear();
+    std::vector<double> correctR{
+      0,        0,        0.013333, 0.026667, 0.013333, 0,        0.013333, 0.026667, 0.013333,
+      0,        0.033334, 0.098802, 0.102213, 0.098802, 0.033334, 0,        0.033334, 0.098802,
+      0.102213, 0.098802, 0.033334, 0,        0.100776, 0.097083, 0.093999, 0.097083, 0.100776,
+      0,        0.100776, 0.097083, 0.093999, 0.097083, 0.100776, 0,        0.094803, 0.095402,
+      0.094803, 0,        0.094803, 0.095402, 0.094803};
 
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.013333908639926589);
-    correctResults.push_back(0.026667817279853189);
-    correctResults.push_back(0.013333908639926589);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.013333908639926589);
-    correctResults.push_back(0.026667817279853193);
-    correctResults.push_back(0.013333908639926589);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.033334771599816487);
-    correctResults.push_back(0.098232428791164006);
-    correctResults.push_back(0.101397330494051680);
-    correctResults.push_back(0.098232428791164006);
-    correctResults.push_back(0.033334771599816487);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.033334771599816487);
-    correctResults.push_back(0.098232428791163950);
-    correctResults.push_back(0.101397330494051680);
-    correctResults.push_back(0.098232428791163950);
-    correctResults.push_back(0.033334771599816487);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.097542640608995437);
-    correctResults.push_back(0.116785354563414950);
-    correctResults.push_back(0.125238941198961200);
-    correctResults.push_back(0.116785354563414950);
-    correctResults.push_back(0.097542640608995437);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.097542640608995465);
-    correctResults.push_back(0.116785354563414910);
-    correctResults.push_back(0.125238941198961260);
-    correctResults.push_back(0.116785354563414910);
-    correctResults.push_back(0.097542640608995465);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.180352627561802150);
-    correctResults.push_back(0.147864609583900520);
-    correctResults.push_back(0.180352627561802150);
-    correctResults.push_back(0.000000000000000000);
-    correctResults.push_back(0.180352627561802200);
-    correctResults.push_back(0.147864609583900520);
-    correctResults.push_back(0.180352627561802200);
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-    for(size_t i = 0; i < size; ++i)
+    EXPECT_EQ(correctR.size(), aRf.size());
+    for(size_t i = 0; i < aRf.size(); ++i)
     {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-6);
+        EXPECT_NEAR(correctR[i], aRf(i, i), 1e-6);
     }
 }

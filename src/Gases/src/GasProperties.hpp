@@ -39,6 +39,13 @@ namespace Gases
     {
         GasProperties() = default;
         GasProperties(GasProperties const & t_GasProperties);
+        GasProperties(double t_ThermalConductivity,
+                      double t_Viscosity,
+                      double t_SpecificHeat,
+                      double t_Density,
+                      double t_MolecularWeight,
+                      double t_PrandlNumber,
+                      bool t_PropertiesCalculated);
 
         GasProperties & operator+(const GasProperties & t_A);
         GasProperties & operator+=(const GasProperties & t_A);

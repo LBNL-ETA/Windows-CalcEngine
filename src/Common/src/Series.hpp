@@ -58,7 +58,7 @@ namespace FenestrationCommon
         //! Function will work only if two spectral properties have identical wavelengths. Otherwise
         //! runtime error will be thrown. If two spectral properites do not have same wavelength
         //! range, then interpolation function should be called.
-        CSeries operator*(const CSeries & other);
+        CSeries operator*(const CSeries & other) const;
 
         //! \brief Subtraction of values in spectral properties that have same wavelength.
         //!

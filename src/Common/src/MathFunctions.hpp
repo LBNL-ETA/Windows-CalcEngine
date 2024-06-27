@@ -21,10 +21,11 @@ namespace FenestrationCommon
         return r * 180 / WCE_PI;
     }
 
-    //! Test if two values are withing float tolerance defined in FenestrationCommon constants
-    inline bool isEqual(const double val1, const double val2)
+    template <typename T>
+    inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type
+    isEqual(const T val1, const T val2, const T tolerance = static_cast<T>(ConstantsData::floatErrorTolerance))
     {
-        return std::abs(val1 - val2) < ConstantsData::floatErrorTolerance;
+        return std::abs(val1 - val2) < tolerance;
     }
 
     struct TR
@@ -38,8 +39,8 @@ namespace FenestrationCommon
         TR tr{T, R};
         if(T + R > 1)
         {
-            // Brackets around std::maximum are necessary because this fails when included in MFC files
-            // that uses Windows.h
+            // Brackets around std::maximum are necessary because this fails when included in MFC
+            // files that uses Windows.h
             const auto RTMax = (std::max)(T, R);
             if(isEqual(RTMax, R))
             {
@@ -64,7 +65,25 @@ namespace FenestrationCommon
         return y1 + delta;
     }
 
-    template <typename T>
+
+    //! Calculates the area of a polygon with n equal sides.
+    //! Here, 'radius' refers to the distance from the center of the polygon
+    //! to one of its vertices. This interpretation aligns with the radius of
+    //! the circumscribed circle of the polygon.
+    //!
+    //! Note: The formula used is specialized for polygons defined in this way
+    //! and may differ from standard formulas for regular polygons.
+    //! @param nSides The number of sides of the polygon.
+    //! @param radius The radius of the circumscribed circle, measured from the
+    //!               center of the polygon to a vertex.
+    //! @return The area of the polygon calculated based on the radius.
+    inline double nTagonArea(const size_t nSides, const double radius)
+    {
+        return 0.5 * nSides * std::pow(radius, 2) * std::sin(2 * WCE_PI / nSides);
+    }
+
+
+    template<typename T>
     std::string to_string_with_precision(const T a_value, const int n = 6)
     {
         std::ostringstream out;
@@ -85,8 +104,7 @@ namespace FenestrationCommon
 
         std::vector<T> result(v1.size());
 
-        std::transform(
-          v1.begin(), v1.end(), v2.begin(), result.begin(), std::multiplies<T>());
+        std::transform(v1.begin(), v1.end(), v2.begin(), result.begin(), std::multiplies<T>());
 
         return result;
     }

@@ -17,8 +17,7 @@ namespace SingleLayerOptics
     /////////////////////////////////////////////////////////////////
 
     BSDFDefinition::BSDFDefinition(const double t_Theta, const size_t t_NumOfPhis) :
-        m_Theta(t_Theta),
-        m_NumOfPhis(t_NumOfPhis)
+        m_Theta(t_Theta), m_NumOfPhis(t_NumOfPhis)
     {}
 
     double BSDFDefinition::theta() const
@@ -101,8 +100,11 @@ namespace SingleLayerOptics
                                                           const size_t nPhis,
                                                           double currentPhi)
     {
-        return (t_Side == BSDFDirection::Outgoing && nPhis != 1) ? currentPhi + 180 : currentPhi;
+        double correctedPhi =
+          (t_Side == BSDFDirection::Outgoing && nPhis != 1) ? currentPhi + 180 : currentPhi;
+        return (correctedPhi > 360) ? correctedPhi - 360 : correctedPhi;
     }
+
 
     size_t BSDFDirections::size() const
     {

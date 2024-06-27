@@ -1,5 +1,7 @@
 #pragma once
 
+#include <execution>
+
 #include "EnumerationTemplate.hpp"
 
 namespace FenestrationCommon

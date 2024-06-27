@@ -28,11 +28,12 @@ protected:
         const auto slatSpacing = 0.012;   // m
         const auto slatTiltAngle = 0;
         const auto curvatureRadius = 0;
+        const FenestrationCommon::VenetianGeometry geometry{
+          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
         const size_t numOfSlatSegments = 5;
 
-        std::shared_ptr<CVenetianCellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(
-            slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
+        auto aCellDescription =
+          std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
 
         m_Cell = std::make_shared<CVenetianCell>(aMaterial, aCellDescription);
     }

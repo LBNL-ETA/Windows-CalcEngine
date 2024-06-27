@@ -8,7 +8,11 @@ set(target_name ${PROJECT_NAME})
 
 set (CMAKE_CXX_STANDARD 17)
 
-add_definitions(-DMULTITHREADING)
+option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
+
+if(USE_PARALLEL_ALGORITHMS)
+    add_compile_definitions(USE_PARALLEL_ALGORITHMS)
+endif()
 
 include( cmake/WCEProjectMacros.cmake )
 include( cmake/WCEInternalUtils.cmake )
@@ -92,9 +96,12 @@ endif ()
 # endforeach()
 
 if( NOT ${SINGLE_PROJECT} )
+	if( ${BUILD_WCE_TESTING})
+		include_directories( src/helper )
+	endif()
   add_subdirectory( src )
 else()
-	if( ${BUILD_WCE_COMMON} )
+  if( ${BUILD_WCE_COMMON} )
   	file( GLOB SOURCES_CPP "src/Common/src/*.cpp" )
   	file( GLOB SOURCES_HPP "src/Common/src/*.hpp" )
   	LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
@@ -155,9 +162,9 @@ else()
 	target_include_directories(${target_name} PUBLIC "src/SingleLayerOptics/include")
 	target_include_directories(${target_name} PUBLIC "src/MultiLayerOptics/include")
   endif()
-  
+
   if( BUILD_WCE_TESTING )
-  
+  	include_directories( src/helper )
 	if( ${BUILD_WCE_COMMON} )
   		include_directories( src/Common/include )
   		file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Common/tst/units/*.cpp" )
@@ -187,18 +194,18 @@ else()
     
     if( ${BUILD_WCE_OPTICAL} )
       include_directories( src/SpectralAveraging/include )  	
-      file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/SpectralAveraging/tst/*.cpp" )
-      LIST( REMOVE_ITEM all_test_src "src/SpectralAveraging/tst/main.cpp")
+      file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/SpectralAveraging/tst/units/*.cpp" )
+      LIST( REMOVE_ITEM all_test_src "src/SpectralAveraging/tst/units/main.cpp")
       LIST( APPEND test_src ${all_test_src} )
       
       include_directories( src/SingleLayerOptics/include )
-      file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/SingleLayerOptics/tst/*.cpp" )
-      LIST( REMOVE_ITEM all_test_src "src/SingleLayerOptics/tst/main.cpp")
+      file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/SingleLayerOptics/tst/units/*.cpp" )
+      LIST( REMOVE_ITEM all_test_src "src/SingleLayerOptics/tst/units/main.cpp")
       LIST( APPEND test_src ${all_test_src} )
       
       include_directories( src/MultiLayerOptics/include )
-      file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/MultiLayerOptics/tst/*.cpp" )
-      LIST( REMOVE_ITEM all_test_src "src/MultiLayerOptics/tst/main.cpp")
+      file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/MultiLayerOptics/tst/units/*.cpp" )
+      LIST( REMOVE_ITEM all_test_src "src/MultiLayerOptics/tst/units/main.cpp")
       LIST( APPEND test_src ${all_test_src} )
     endif()
     

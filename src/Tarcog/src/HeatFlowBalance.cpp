@@ -24,7 +24,7 @@ namespace Tarcog::ISO15099
         {
             buildCell(*aSolidLayers[i], i);
         }
-        return FenestrationCommon::CLinearSolver::solveSystem(m_MatrixA, m_VectorB);
+        return FenestrationCommon::solveSystem(m_MatrixA, m_VectorB);
     }
 
     double getConductionConvectionCoefficient(const std::shared_ptr<CBaseLayer> & layer)

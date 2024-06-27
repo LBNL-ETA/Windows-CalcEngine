@@ -97,6 +97,21 @@ namespace Gases
         equal = equal && m_PropertiesCalculated == t_A.m_PropertiesCalculated;
         return equal;
     }
+    GasProperties::GasProperties(double t_ThermalConductivity,
+                                 double t_Viscosity,
+                                 double t_SpecificHeat,
+                                 double t_Density,
+                                 double t_MolecularWeight,
+                                 double t_PrandlNumber,
+                                 bool t_PropertiesCalculated) :
+        m_ThermalConductivity(t_ThermalConductivity),
+        m_Viscosity(t_Viscosity),
+        m_SpecificHeat(t_SpecificHeat),
+        m_Density(t_Density),
+        m_MolecularWeight(t_MolecularWeight),
+        m_PrandlNumber(t_PrandlNumber),
+        m_PropertiesCalculated(t_PropertiesCalculated)
+    {}
 
     double calculatePrandtlNumber(double thermalConductivity,
                                   double specificHeat,

@@ -32,7 +32,7 @@ namespace SingleLayerOptics
 
     double AngleLimits::delta() const
     {
-        return m_High - m_Low;
+        return m_High > m_Low ? m_High - m_Low : m_High + (360 - m_Low);
     }
 
     bool AngleLimits::isInLimits(const double t_Angle) const

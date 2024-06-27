@@ -56,9 +56,9 @@ namespace MultiLayerOptics
                                     size_t Index);
 
         std::vector<double> AbsElectricity(double minLambda,
-                                             double maxLambda,
-                                             FenestrationCommon::Side t_Side,
-                                             size_t Index);
+                                           double maxLambda,
+                                           FenestrationCommon::Side t_Side,
+                                           size_t Index);
 
         std::vector<double> getAbsorptanceLayers(double minLambda,
                                                  double maxLambda,
@@ -180,7 +180,8 @@ namespace MultiLayerOptics
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
-        void setCalculationProperties(const SingleLayerOptics::CalculationProperties & calcProperties) override;
+        void setCalculationProperties(
+          const SingleLayerOptics::CalculationProperties & calcProperties) override;
 
     protected:
         explicit CMultiPaneBSDF(
@@ -191,6 +192,19 @@ namespace MultiLayerOptics
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
                                   const std::vector<double> & incomingSolar);
 
+        FenestrationCommon::SquareMatrix
+          calculateProperties(FenestrationCommon::Side aSide,
+                              FenestrationCommon::PropertySimple aProperty,
+                              double minLambda,
+                              double maxLambda);
+        std::vector<std::vector<double>>
+          calculateJSC(FenestrationCommon::Side aSide, double minLambda, double maxLambda);
+        std::vector<std::vector<double>>
+          calculateAbsorptance(FenestrationCommon::Side aSide, double minLambda, double maxLambda);
+        std::vector<double>
+          calculateIncomingSolar(const std::vector<FenestrationCommon::CSeries> & incomingSpectra,
+                                 double minLambda,
+                                 double maxLambda);
         void calculate(double minLambda, double maxLambda);
 
         void calcHemisphericalAbs(FenestrationCommon::Side t_Side);
@@ -226,8 +240,8 @@ namespace MultiLayerOptics
 
         SingleLayerOptics::BSDFDirections m_BSDFDirections;
 
-        // These are wavelength used only for the spectral integration separately from wavelengths in
-        // matrices calculations. Matrices wavelengths will be used only if this is not provided.
+        // These are wavelength used only for the spectral integration separately from wavelengths
+        // in matrices calculations. Matrices wavelengths will be used only if this is not provided.
         std::optional<std::vector<double>> m_SpectralIntegrationWavelengths;
 
         SingleLayerOptics::CalculationProperties m_CalculationProperties;

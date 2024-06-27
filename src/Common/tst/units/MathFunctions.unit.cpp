@@ -43,3 +43,23 @@ TEST_F(MathFunctionsTest, DoubleToStringThreeDeimals)
     const std::string correct{"13.235"};
     EXPECT_EQ(correct, FenestrationCommon::to_string_with_precision(value, numberOfDecimals));
 }
+
+TEST_F(MathFunctionsTest, TriangleArea)
+{
+    EXPECT_NEAR(3 * std::sqrt(3) / 4, FenestrationCommon::nTagonArea(3, 1), 1e-6);
+}
+
+TEST_F(MathFunctionsTest, SquareArea)
+{
+    EXPECT_NEAR(2, FenestrationCommon::nTagonArea(4, 1), 1e-6);
+}
+
+TEST_F(MathFunctionsTest, PentagonArea)
+{
+    EXPECT_NEAR(2.377641, FenestrationCommon::nTagonArea(5, 1), 1e-6);
+}
+
+TEST_F(MathFunctionsTest, HexagonArea)
+{
+    EXPECT_NEAR(3 * std::sqrt(3) / 2, FenestrationCommon::nTagonArea(6, 1), 1e-6);
+}

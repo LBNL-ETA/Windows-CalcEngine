@@ -22,7 +22,7 @@ namespace SingleLayerOptics
     double modifyProperty(const double t_Range, const double t_Solar, const double t_Fraction)
     {
         // If t_fraction == 1 that means a dual-band material is evaluated only for partial range
-        if(isEqual(t_Fraction, 1))
+        if(isEqual(t_Fraction, 1.0))
         {
             return t_Range;
         }

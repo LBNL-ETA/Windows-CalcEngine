@@ -80,13 +80,11 @@ protected:
         const auto dr{0.0};
         const auto dtop{0.0};
         const auto dbot{0.0};
-        //const auto frontOpenness{0.9924940};
         const auto frontOpenness{0.9};
 
         EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
-
-        EffectiveLayers::EffectiveOpenness effOpenness{
-          frontOpenness, dl, dr, dtop, dbot, frontOpenness};
+        EffectiveLayers::EffectiveLayerOther effLayer{
+          windowWidth, windowHeight, shadeThickness, openness};
 
         //const auto Ef = 7.379264e-01;
         //const auto Eb = 7.437828e-01;
@@ -98,7 +96,7 @@ protected:
         const auto Tirb = 0;
 
         auto aLayer3 = Tarcog::ISO15099::Layers::shading(
-          shadeThickness, shadeLayerConductance, effOpenness, Ef, Tirf, Eb, Tirb);
+          shadeThickness, shadeLayerConductance, effLayer.getEffectiveOpenness(), Ef, Tirf, Eb, Tirb);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aLayer1, GapLayer1, aLayer2, GapLayer2, aLayer3});
@@ -128,12 +126,12 @@ TEST_F(TestTripleShadeInside_UValue, Test1)
 
     const auto systemKeff{
       aSystem->getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
-    EXPECT_NEAR(0.039691, systemKeff, 1e-6);
+    EXPECT_NEAR(0.039814, systemKeff, 1e-6);
 
     const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(1.196599, uval, 1e-6);
+    EXPECT_NEAR(1.195383, uval, 1e-6);
 
     const auto heatflow =
       aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(34.451676, heatflow, 1e-6);
+    EXPECT_NEAR(34.545727, heatflow, 1e-6);
 }

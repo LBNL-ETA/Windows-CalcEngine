@@ -9,7 +9,8 @@ namespace Gases
         Air,
         Argon,
         Krypton,
-        Xenon
+        Xenon,
+        VacuumMixture
     };
 
     CGasData getGasData(GasDef gasDef);

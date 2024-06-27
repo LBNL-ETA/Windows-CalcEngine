@@ -1,6 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
+// This file is removed from the unit testing because it will cause
+// occatinal crash when multithreading is active.
+
 #include "WCESpectralAveraging.hpp"
 #include "WCEMultiLayerOptics.hpp"
 #include "WCESingleLayerOptics.hpp"

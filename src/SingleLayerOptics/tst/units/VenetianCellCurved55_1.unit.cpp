@@ -1,8 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
 
 
 using namespace SingleLayerOptics;
@@ -23,14 +23,10 @@ protected:
         const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
-        const auto slatWidth = 0.076200;     // m
-        const auto slatSpacing = 0.057150;   // m
-        const auto slatTiltAngle = 55.000000;
-        const auto curvatureRadius = 0.123967;
+        const FenestrationCommon::VenetianGeometry geometry{0.076200, 0.057150, 55.000000, 0.123967};
         const size_t numOfSlatSegments = 2;
 
-        const auto aCellDescription = std::make_shared<CVenetianCellDescription>(
-          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
+        const auto aCellDescription = std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
 
         m_Cell = std::make_shared<CVenetianCell>(aMaterial, aCellDescription);
     }
@@ -95,8 +91,8 @@ TEST_F(TestVenetianCellCurved55_1, TestVenetian2)
     Tdir_dif = aCell->T_dir_dif(aSide, aDirection, outDirection);
     Rdir_dif = aCell->R_dir_dif(aSide, aDirection, outDirection);
 
-    EXPECT_NEAR(0.208083, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.582556, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.085068844915552735, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.19224309643794207, Rdir_dif, 1e-6);
 
     // Back side
     aSide = Side::Back;

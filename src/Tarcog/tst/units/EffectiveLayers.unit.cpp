@@ -72,7 +72,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
 
     EffectiveLayers::ShadeOpenness openness{0.998224968, 0, 0, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveVerticalVenentian venetian{
+    EffectiveLayers::EffectiveVerticalVenetian venetian{
       width, height, materialThickness, openness, slatTiltAngle, slatWidth};
 
     const auto effectiveThickness{venetian.effectiveThickness()};
@@ -99,7 +99,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
 
     EffectiveLayers::ShadeOpenness openness{0.998224966, 0, 0, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveVerticalVenentian venetian{
+    EffectiveLayers::EffectiveVerticalVenetian venetian{
       width, height, materialThickness, openness, slatTiltAngle, slatWidth};
 
     const auto effectiveThickness{venetian.effectiveThickness()};
@@ -161,4 +161,12 @@ TEST_F(TestEffectiveLayers, TestOtherShadingEffectiveOpenness)
     EXPECT_NEAR(0.0104, effectiveOpenness.Abot, 1e-8);
     EXPECT_NEAR(0.009, effectiveOpenness.Al, 1e-8);
     EXPECT_NEAR(0.0072, effectiveOpenness.Ar, 1e-8);
+}
+
+TEST_F(TestEffectiveLayers, RadiusFromRise)
+{
+    double curvature{23.88962765};
+    double slatWidth{14.8};
+    auto test{ThermalPermeability::Venetian::calculateRise(curvature, slatWidth)};
+    EXPECT_NEAR(1.175, test, 1e-6);
 }

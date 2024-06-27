@@ -28,11 +28,12 @@ protected:
         const auto slatSpacing = 0.010;   // m
         const auto slatTiltAngle = 0;
         const auto curvatureRadius = 0;
+        const FenestrationCommon::VenetianGeometry geometry{
+          slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
         const size_t numOfSlatSegments = 1;
 
         std::shared_ptr<CVenetianCellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(
-            slatWidth, slatSpacing, slatTiltAngle, curvatureRadius, numOfSlatSegments);
+          std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
 
         m_Cell = std::make_shared<CVenetianCell>(aMaterial, aCellDescription);
     }
@@ -63,6 +64,6 @@ TEST_F(TestVenetianCellFlat0_1, TestVenetian1)
     double Tdir_dif = aCell->T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell->R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.10711940268416009, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.10711940268416009, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.034097, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.034097, Rdir_dif, 1e-6);
 }

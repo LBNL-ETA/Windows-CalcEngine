@@ -1,5 +1,4 @@
-#ifndef LINEARSOLVER_H
-#define LINEARSOLVER_H
+#pragma once
 
 #include <vector>
 
@@ -7,14 +6,5 @@ namespace FenestrationCommon
 {
     class SquareMatrix;
 
-    class CLinearSolver
-    {
-    public:
-        static std::vector<double> solveSystem(SquareMatrix t_MatrixA,
-                                               std::vector<double> & t_VectorB);
-
-    private:
-    };
+    std::vector<double> solveSystem(const SquareMatrix& t_MatrixA, const std::vector<double> & t_VectorB);
 }   // namespace FenestrationCommon
-
-#endif

@@ -10,6 +10,7 @@
 #include "../src/LinearSolver.hpp"
 #include "../src/MathFunctions.hpp"
 #include "../src/MatrixSeries.hpp"
+#include "../src/Parallel.hpp"
 #include "../src/Series.hpp"
 #include "../src/SquareMatrix.hpp"
 #include "../src/SurfaceCoating.hpp"
@@ -21,3 +22,4 @@
 #include "../src/Table2D.hpp"
 #include "../src/Table2DInterpolators.hpp"
 #include "../src/Utility.hpp"
+#include "../src/Venetian.hpp"

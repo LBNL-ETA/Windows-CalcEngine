@@ -20,7 +20,7 @@ TEST_F(TestLinearSolver1, Test1)
 
     std::vector<double> aVector = {1, 3, 5};
 
-    auto aSolution = CLinearSolver::solveSystem(aMatrix, aVector);
+    auto aSolution = solveSystem(aMatrix, aVector);
 
     EXPECT_NEAR(3.0 / 10.0, aSolution[0], 1e-6);
     EXPECT_NEAR(2.0 / 5.0, aSolution[1], 1e-6);
@@ -38,7 +38,7 @@ TEST_F(TestLinearSolver1, Test2)
 
     std::vector<double> aVector = {3163.241853, -73.479324, -67.913411, -1070.271453};
 
-    auto aSolution = CLinearSolver::solveSystem(aMatrix, aVector);
+    auto aSolution = solveSystem(aMatrix, aVector);
 
     EXPECT_NEAR(303.040746, aSolution[0], 1e-6);
     EXPECT_NEAR(461.535283, aSolution[1], 1e-6);
@@ -56,12 +56,12 @@ TEST_F(TestLinearSolver1, TestSolverException)
 
     try
     {
-        auto aSolution = CLinearSolver::solveSystem(aMatrix, aVector);
+        auto aSolution = solveSystem(aMatrix, aVector);
     }
     catch(const std::runtime_error & err)
     {
         EXPECT_EQ(
           err.what(),
-          std::string("Matrix and vector for system of linear equations are not same size."));
+          std::string("Matrix and vector for system of linear equations are not the same size."));
     }
 }
