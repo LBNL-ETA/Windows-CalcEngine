@@ -134,6 +134,6 @@ namespace Tarcog::ISO15099
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
 
         GapLayer createPillar(const PillarMeasurement & pillar);
-    };   // namespace Layers
+    }   // namespace Layers
 
 }   // namespace Tarcog::ISO15099
