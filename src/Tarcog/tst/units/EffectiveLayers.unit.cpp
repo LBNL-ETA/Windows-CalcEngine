@@ -3,14 +3,7 @@
 
 #include <WCETarcog.hpp>
 
-class TestEffectiveLayers : public testing::Test
-{
-protected:
-    void SetUp() override
-    {}
-};
-
-TEST_F(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
+TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
 {
     SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
 
@@ -33,7 +26,7 @@ TEST_F(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
     EXPECT_NEAR(1.592911e-2, effectiveOpenness.Ah, 1e-8);
 }
 
-TEST_F(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpenness)
+TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpenness)
 {
     SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
 
@@ -60,7 +53,7 @@ TEST_F(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpe
     EXPECT_NEAR(0, effectiveOpenness.Ar, 1e-8);
 }
 
-TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenness)
+TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenness)
 {
     SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
 
@@ -87,7 +80,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
     EXPECT_NEAR(0, effectiveOpenness.Ar, 1e-8);
 }
 
-TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenness45Deg)
+TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenness45Deg)
 {
     SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
 
@@ -114,7 +107,7 @@ TEST_F(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenn
     EXPECT_NEAR(0, effectiveOpenness.Ar, 1e-8);
 }
 
-TEST_F(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
+TEST(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
 {
     SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
 
@@ -139,7 +132,7 @@ TEST_F(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
     EXPECT_NEAR(7.2e-3, effectiveOpenness.Ar, 1e-8);
 }
 
-TEST_F(TestEffectiveLayers, TestOtherShadingEffectiveOpenness)
+TEST(TestEffectiveLayers, TestOtherShadingEffectiveOpenness)
 {
     SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
 
@@ -163,7 +156,7 @@ TEST_F(TestEffectiveLayers, TestOtherShadingEffectiveOpenness)
     EXPECT_NEAR(0.0072, effectiveOpenness.Ar, 1e-8);
 }
 
-TEST_F(TestEffectiveLayers, RadiusFromRise)
+TEST(TestEffectiveLayers, RadiusFromRise)
 {
     double curvature{23.88962765};
     double slatWidth{14.8};
