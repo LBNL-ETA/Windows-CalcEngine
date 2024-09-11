@@ -77,11 +77,8 @@ namespace ThermalPermeability
 
             // Compute the openness factor
             auto opennessFactor =
-              1.0
-              - (matThickness * slatArcLength)
-                  / ((slatArcLength * adjustedCosPhi
-                      + matThickness * std::sin(FenestrationCommon::radians(effectiveSlatAngle)))
-                     * (slatSpacing + matThickness));
+              1.0 - (matThickness * slatArcLength) / ((slatArcLength * adjustedCosPhi +
+              matThickness * std::sin(FenestrationCommon::radians(effectiveSlatAngle))) * (slatSpacing + matThickness));
 
             // Ensure openness factor is non-negative
             if(opennessFactor < 0)
