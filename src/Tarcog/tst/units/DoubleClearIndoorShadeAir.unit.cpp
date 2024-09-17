@@ -51,13 +51,15 @@ protected:
         auto dleft = 0.1;
         auto dright = 0.1;
         auto Afront = 0.2;
+        auto PermeabilityFactor = 0.2;
+
         EffectiveLayers::ShadeOpenness openness{Afront, dleft, dright, dtop, dbot};
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
 
         EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness};
+          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
 
         auto layer3 = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());

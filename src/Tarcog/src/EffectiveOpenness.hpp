@@ -31,7 +31,7 @@ namespace EffectiveLayers
         double Atop;
         double Abot;
         // Geometrical openness used to calculate equivalent layer conductivity
-        double FrontPorosity;
+        double PermeabilityFactor;
     };
 
     bool isClosed(const EffectiveOpenness & effectiveOpenness);
@@ -55,7 +55,8 @@ namespace EffectiveLayers
                        double height,
                        double thickness,
                        const ShadeOpenness & openness,
-                       const Coefficients & coefficients = {0.0, 0.0, 0.0, 0.0});
+                       const Coefficients & coefficients = {0.0, 0.0, 0.0, 0.0},
+                       double permeabilityFactor = 0.0);
 
         virtual EffectiveOpenness getEffectiveOpenness() = 0;
 
@@ -69,6 +70,8 @@ namespace EffectiveLayers
         ShadeOpenness m_ShadeOpenness;
 
         Coefficients coefficients;
+
+        double m_PermeabilityFactor;
     };
 
     class EffectiveVenetian : public EffectiveLayer
@@ -167,7 +170,8 @@ namespace EffectiveLayers
         EffectiveLayerOther(double width,
                             double height,
                             double thickness,
-                            const ShadeOpenness & openness);
+                            const ShadeOpenness & openness,
+                            double permeabilityFactor);
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;

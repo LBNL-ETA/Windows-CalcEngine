@@ -14,27 +14,29 @@ namespace EffectiveLayers
                                          const double atop,
                                          const double abot,
                                          const double frontPorosity) :
-        Ah(ah), Al(al), Ar(ar), Atop(atop), Abot(abot), FrontPorosity(frontPorosity)
+        Ah(ah), Al(al), Ar(ar), Atop(atop), Abot(abot), PermeabilityFactor(frontPorosity)
     {}
 
     bool isClosed(const EffectiveOpenness & effectiveOpenness)
     {
         return effectiveOpenness.Ah == 0.0 && effectiveOpenness.Al == 0.0
                && effectiveOpenness.Ar == 0.0 && effectiveOpenness.Atop == 0.0
-               && effectiveOpenness.Abot == 0.0 && effectiveOpenness.FrontPorosity == 0.0;
+               && effectiveOpenness.Abot == 0.0 && effectiveOpenness.PermeabilityFactor == 0.0;
     }
 
     EffectiveLayer::EffectiveLayer(double width,
                                    double height,
                                    double thickness,
                                    const ShadeOpenness & openness,
-                                   const Coefficients & coefficients) :
+                                   const Coefficients & coefficients,
+                                   double permeabilityFactor) :
         m_Width(width),
         m_Height(height),
         m_Thickness(thickness),
         m_ShadeOpenness(
           openness.Ah * width * height, openness.Dl, openness.Dr, openness.Dtop, openness.Dbot),
-        coefficients{coefficients}
+        coefficients(coefficients),
+        m_PermeabilityFactor(permeabilityFactor)
     {}
 
     Coefficients::Coefficients(double c1, double c2, double c3, double c4) :
@@ -150,8 +152,9 @@ namespace EffectiveLayers
     EffectiveLayerOther::EffectiveLayerOther(double width,
                                              double height,
                                              double thickness,
-                                             const ShadeOpenness & openness) :
-        EffectiveLayer(width, height, thickness, openness)
+                                             const ShadeOpenness & openness,
+                                             double permeabilityFactor) :
+        EffectiveLayer(width, height, thickness, openness, Coefficients(0, 0, 0, 0), permeabilityFactor)
     {}
 
     EffectiveOpenness EffectiveLayerOther::getEffectiveOpenness()
@@ -161,7 +164,7 @@ namespace EffectiveLayers
                 m_ShadeOpenness.Dr * m_Height,
                 m_ShadeOpenness.Dtop * m_Width,
                 m_ShadeOpenness.Dbot * m_Width,
-                m_ShadeOpenness.Ah};
+                m_PermeabilityFactor};
     }
 
     double EffectiveLayerOther::effectiveThickness()

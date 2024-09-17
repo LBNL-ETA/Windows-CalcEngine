@@ -142,7 +142,10 @@ TEST(TestEffectiveLayers, TestOtherShadingEffectiveOpenness)
 
     EffectiveLayers::ShadeOpenness openness{0.087265995, 0.005, 0.004, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveLayerOther perforated{width, height, materialThickness, openness};
+    constexpr double PermeabilityFactor{0.0};
+
+    EffectiveLayers::EffectiveLayerOther perforated{
+      width, height, materialThickness, openness, PermeabilityFactor};
 
     const auto effectiveThickness{perforated.effectiveThickness()};
 

@@ -81,10 +81,11 @@ protected:
         const auto dtop{0.0};
         const auto dbot{0.0};
         const auto frontOpenness{0.9};
+        const auto PermeabilityFactor = 0.9;
 
         EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerOther effLayer{
-          windowWidth, windowHeight, shadeThickness, openness};
+          windowWidth, windowHeight, shadeThickness, openness, PermeabilityFactor};
 
         //const auto Ef = 7.379264e-01;
         //const auto Eb = 7.437828e-01;

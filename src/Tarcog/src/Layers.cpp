@@ -132,7 +132,7 @@ namespace Tarcog::ISO15099::Layers
                          effectiveOpenness.Al,
                          effectiveOpenness.Ar,
                          effectiveOpenness.Ah,
-                         effectiveOpenness.FrontPorosity),
+                         effectiveOpenness.PermeabilityFactor),
           std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }
