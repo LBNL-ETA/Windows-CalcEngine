@@ -105,9 +105,9 @@ protected:
     }
 
 public:
-    Tarcog::ISO15099::CSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSystem & GetSystem() const
     {
-        return m_TarcogSystem.get();
+        return *m_TarcogSystem;
     };
 };
 
@@ -115,19 +115,19 @@ TEST_F(TestTripleShadeInside_UValue, Test1)
 {
     SCOPED_TRACE("Begin Test: Outside venetian shade.");
 
-    const auto aSystem = GetSystem();
+    auto & aSystem = GetSystem();
 
     auto effectiveLayerConductivities{
-      aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
+      aSystem.getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
 
     const auto systemKeff{
-      aSystem->getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
+      aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
     EXPECT_NEAR(0.039813, systemKeff, 1e-6);
 
-    const auto uval = aSystem->getUValue();
+    const auto uval = aSystem.getUValue();
     EXPECT_NEAR(1.195377, uval, 1e-6);
 
     const auto heatflow =
-      aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
+      aSystem.getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(34.545165, heatflow, 1e-6);
 }
