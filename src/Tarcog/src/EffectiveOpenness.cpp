@@ -97,14 +97,12 @@ namespace EffectiveLayers
           width, height, thickness, slatAngle, slatWidth, openness, {0.041, 0.0, 0.27, 0.012})
     {}
 
-    EffectiveLayerCommonType::EffectiveLayerCommonType(double width,
-                                                       double height,
-                                                       double thickness,
-                                                       const ShadeOpenness & openness) :
+    EffectiveLayerLinearPermeability::EffectiveLayerLinearPermeability(
+      double width, double height, double thickness, const ShadeOpenness & openness) :
         EffectiveLayer(width, height, thickness, openness, {0.078, 1.2, 1.0, 1.0})
     {}
 
-    EffectiveOpenness EffectiveLayerCommonType::getEffectiveOpenness()
+    EffectiveOpenness EffectiveLayerLinearPermeability::getEffectiveOpenness()
     {
         const auto area{m_Width * m_Height};
         const auto Ah_eff{area * coefficients.C1
@@ -116,6 +114,32 @@ namespace EffectiveLayers
         return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_ShadeOpenness.Ah / area};
     }
 
+    double EffectiveLayerLinearPermeability::effectiveThickness()
+    {
+        return m_Thickness;
+    }
+
+    EffectiveLayerCommonType::EffectiveLayerCommonType(double width,
+                                                       double height,
+                                                       double thickness,
+                                                       const ShadeOpenness & openness,
+                                                       double permeabilityFactor) :
+        EffectiveLayer(
+          width, height, thickness, openness, {0.078, 1.2, 1.0, 1.0}, permeabilityFactor)
+    {}
+
+    EffectiveOpenness EffectiveLayerCommonType::getEffectiveOpenness()
+    {
+        const auto area{m_Width * m_Height};
+        const auto Ah_eff{area * coefficients.C1
+                          * (std::pow(m_ShadeOpenness.Ah / area, coefficients.C2))};
+        const auto Al_eff{m_ShadeOpenness.Dl * m_Height * coefficients.C3};
+        const auto Ar_eff{m_ShadeOpenness.Dr * m_Height * coefficients.C3};
+        const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width * coefficients.C4};
+        const auto Abop_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
+        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_PermeabilityFactor};
+    }
+
     double EffectiveLayerCommonType::effectiveThickness()
     {
         return m_Thickness;
@@ -125,28 +149,30 @@ namespace EffectiveLayers
                                                        double height,
                                                        double thickness,
                                                        const ShadeOpenness & openness) :
-        EffectiveLayerCommonType(width, height, thickness, openness)
+        EffectiveLayerLinearPermeability(width, height, thickness, openness)
     {}
 
     EffectiveLayerDiffuse::EffectiveLayerDiffuse(double width,
                                                  double height,
                                                  double thickness,
-                                                 const ShadeOpenness & openness) :
-        EffectiveLayerCommonType(width, height, thickness, openness)
+                                                 const ShadeOpenness & openness,
+                                                 double permeabilityFactor) :
+        EffectiveLayerCommonType(width, height, thickness, openness, permeabilityFactor)
     {}
 
     EffectiveLayerWoven::EffectiveLayerWoven(double width,
                                              double height,
                                              double thickness,
                                              const ShadeOpenness & openness) :
-        EffectiveLayerCommonType(width, height, thickness, openness)
+        EffectiveLayerLinearPermeability(width, height, thickness, openness)
     {}
 
     EffectiveLayerBSDF::EffectiveLayerBSDF(double width,
                                            double height,
                                            double thickness,
-                                           const ShadeOpenness & openness) :
-        EffectiveLayerCommonType(width, height, thickness, openness)
+                                           const ShadeOpenness & openness,
+                                           double permeabilityFactor) :
+        EffectiveLayerCommonType(width, height, thickness, openness, permeabilityFactor)
     {}
 
     EffectiveLayerOther::EffectiveLayerOther(double width,
@@ -154,7 +180,8 @@ namespace EffectiveLayers
                                              double thickness,
                                              const ShadeOpenness & openness,
                                              double permeabilityFactor) :
-        EffectiveLayer(width, height, thickness, openness, Coefficients(0, 0, 0, 0), permeabilityFactor)
+        EffectiveLayer(
+          width, height, thickness, openness, Coefficients(0, 0, 0, 0), permeabilityFactor)
     {}
 
     EffectiveOpenness EffectiveLayerOther::getEffectiveOpenness()

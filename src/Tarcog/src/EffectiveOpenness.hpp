@@ -115,11 +115,11 @@ namespace EffectiveLayers
                                   double slatWidth);
     };
 
-    //! \brief Used for effective calculations for Perforated, Woven, Diffuse shade and BSDF
-    class EffectiveLayerCommonType : public EffectiveLayer
+    //! \brief Used for effective calculations where permeability is linear with frontOpenness Ah
+    class EffectiveLayerLinearPermeability : public EffectiveLayer
     {
     public:
-        EffectiveLayerCommonType(double width,
+        EffectiveLayerLinearPermeability(double width,
                                  double height,
                                  double thickness,
                                  const ShadeOpenness & openness);
@@ -128,7 +128,20 @@ namespace EffectiveLayers
         double effectiveThickness() override;
     };
 
-    class EffectiveLayerPerforated : public EffectiveLayerCommonType
+    class EffectiveLayerCommonType : public EffectiveLayer
+    {
+    public:
+        EffectiveLayerCommonType(double width,
+                                 double height,
+                                 double thickness,
+                                 const ShadeOpenness & openness,
+                                 double permeabilityFactor);
+
+        EffectiveOpenness getEffectiveOpenness() override;
+        double effectiveThickness() override;
+    };
+
+    class EffectiveLayerPerforated : public EffectiveLayerLinearPermeability
     {
     public:
         EffectiveLayerPerforated(double width,
@@ -143,10 +156,11 @@ namespace EffectiveLayers
         EffectiveLayerDiffuse(double width,
                               double height,
                               double thickness,
-                              const ShadeOpenness & openness);
+                              const ShadeOpenness & openness,
+                              double permeabilityFactor);
     };
 
-    class EffectiveLayerWoven : public EffectiveLayerCommonType
+    class EffectiveLayerWoven : public EffectiveLayerLinearPermeability
     {
     public:
         EffectiveLayerWoven(double width,
@@ -161,7 +175,8 @@ namespace EffectiveLayers
         EffectiveLayerBSDF(double width,
                            double height,
                            double thickness,
-                           const ShadeOpenness & openness);
+                           const ShadeOpenness & openness,
+                           double permeabilityFactor);
     };
 
     class EffectiveLayerOther : public EffectiveLayer
