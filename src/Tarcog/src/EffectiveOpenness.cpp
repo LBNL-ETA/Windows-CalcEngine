@@ -113,7 +113,7 @@ namespace EffectiveLayers
         const auto Ar_eff{m_ShadeOpenness.Dr * m_Height * coefficients.C3};
         const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width * coefficients.C4};
         const auto Abop_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
-        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_ShadeOpenness.Ah};
+        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_ShadeOpenness.Ah / area};
     }
 
     double EffectiveLayerCommonType::effectiveThickness()
