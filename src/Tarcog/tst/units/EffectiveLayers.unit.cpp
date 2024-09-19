@@ -23,7 +23,7 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
     EXPECT_NEAR(6.364e-4, effectiveThickness, 1e-9);
 
     const auto effectiveOpenness{venetian.getEffectiveOpenness()};
-    EXPECT_NEAR(1.592911e-2, effectiveOpenness.Ah, 1e-8);
+    EXPECT_NEAR(1.592911e-2, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
 }
 
 TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpenness)
@@ -46,7 +46,7 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpenn
     EXPECT_NEAR(6.364e-4, effectiveThickness, 1e-9);
 
     const auto effectiveOpenness{venetian.getEffectiveOpenness()};
-    EXPECT_NEAR(3.727412206e-2, effectiveOpenness.Ah, 1e-8);
+    EXPECT_NEAR(3.727412206e-2, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
     EXPECT_NEAR(1.3e-2, effectiveOpenness.Atop, 1e-8);
     EXPECT_NEAR(1.04e-2, effectiveOpenness.Abot, 1e-8);
     EXPECT_NEAR(0, effectiveOpenness.Al, 1e-8);
@@ -73,7 +73,7 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     EXPECT_NEAR(9.144e-4, effectiveThickness, 1e-9);
 
     const auto effectiveOpenness{venetian.getEffectiveOpenness()};
-    EXPECT_NEAR(9.589398567e-2, effectiveOpenness.Ah, 1e-8);
+    EXPECT_NEAR(9.589398567e-2, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
     EXPECT_NEAR(1.3e-2, effectiveOpenness.Atop, 1e-8);
     EXPECT_NEAR(1.04e-2, effectiveOpenness.Abot, 1e-8);
     EXPECT_NEAR(0, effectiveOpenness.Al, 1e-8);
@@ -100,7 +100,7 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     EXPECT_NEAR(6.474269e-4, effectiveThickness, 1e-9);
 
     const auto effectiveOpenness{venetian.getEffectiveOpenness()};
-    EXPECT_NEAR(9.589398567e-2, effectiveOpenness.Ah, 1e-8);
+    EXPECT_NEAR(9.589398567e-2, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
     EXPECT_NEAR(1.3e-2, effectiveOpenness.Atop, 1e-8);
     EXPECT_NEAR(1.04e-2, effectiveOpenness.Abot, 1e-8);
     EXPECT_NEAR(0, effectiveOpenness.Al, 1e-8);
@@ -125,7 +125,7 @@ TEST(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
     EXPECT_NEAR(6e-4, effectiveThickness, 1e-9);
 
     const auto effectiveOpenness{perforated.getEffectiveOpenness()};
-    EXPECT_NEAR(9.779677e-3, effectiveOpenness.Ah, 1e-8);
+    EXPECT_NEAR(9.779677e-3, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
     EXPECT_NEAR(13.0e-3, effectiveOpenness.Atop, 1e-8);
     EXPECT_NEAR(10.4e-3, effectiveOpenness.Abot, 1e-8);
     EXPECT_NEAR(9.0e-3, effectiveOpenness.Al, 1e-8);
@@ -152,7 +152,7 @@ TEST(TestEffectiveLayers, TestOtherShadingEffectiveOpenness)
     EXPECT_NEAR(6e-4, effectiveThickness, 1e-9);
 
     const auto effectiveOpenness{perforated.getEffectiveOpenness()};
-    EXPECT_NEAR(0.2042024283, effectiveOpenness.Ah, 1e-8);
+    EXPECT_NEAR(0.2042024283, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
     EXPECT_NEAR(0.013, effectiveOpenness.Atop, 1e-8);
     EXPECT_NEAR(0.0104, effectiveOpenness.Abot, 1e-8);
     EXPECT_NEAR(0.009, effectiveOpenness.Al, 1e-8);

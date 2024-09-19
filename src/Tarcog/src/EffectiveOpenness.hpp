@@ -18,17 +18,25 @@ namespace EffectiveLayers
 
     //! \brief Effective frontOpenness of shading layer that is necessary for thermal calculations.
     //!
-    //! Thermal frontOpenness of shading layer will not match physical frontOpenness and because of
-    //! that some calculations are required.
+    //!
     struct EffectiveOpenness
     {
-        EffectiveOpenness(
-          double ah, double al, double ar, double atop, double abot, double frontPorosity);
+        EffectiveOpenness(double effectiveFrontThermalOpennessArea,
+                          double al,
+                          double ar,
+                          double atop,
+                          double abot,
+                          double frontPorosity);
 
-        double Ah;
+        //!< Effective openness of the layer for thermal calculations between the gaps
+        double EffectiveFrontThermalOpennessArea;
+        //!< Area of the left side openness where the air is flowing between the gaps
         double Al;
+        //!< Area of the right side openness where the air is flowing between the gaps
         double Ar;
+        //!< Area of the top side openness where the air is flowing between the gaps
         double Atop;
+        //!< Area of the bottom side openness where the air is flowing between the gaps
         double Abot;
         // Geometrical openness used to calculate equivalent layer conductivity
         double PermeabilityFactor;
@@ -120,9 +128,9 @@ namespace EffectiveLayers
     {
     public:
         EffectiveLayerLinearPermeability(double width,
-                                 double height,
-                                 double thickness,
-                                 const ShadeOpenness & openness);
+                                         double height,
+                                         double thickness,
+                                         const ShadeOpenness & openness);
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;

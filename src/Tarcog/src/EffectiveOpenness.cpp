@@ -8,20 +8,26 @@ namespace EffectiveLayers
         Ah(ah), Dl(dl), Dr(dr), Dtop(dtop), Dbot(dbot)
     {}
 
-    EffectiveOpenness::EffectiveOpenness(const double ah,
+    EffectiveOpenness::EffectiveOpenness(const double effectiveFrontThermalOpennessArea,
                                          const double al,
                                          const double ar,
                                          const double atop,
                                          const double abot,
                                          const double frontPorosity) :
-        Ah(ah), Al(al), Ar(ar), Atop(atop), Abot(abot), PermeabilityFactor(frontPorosity)
+        EffectiveFrontThermalOpennessArea(effectiveFrontThermalOpennessArea),
+        Al(al),
+        Ar(ar),
+        Atop(atop),
+        Abot(abot),
+        PermeabilityFactor(frontPorosity)
     {}
 
     bool isClosed(const EffectiveOpenness & effectiveOpenness)
     {
-        return effectiveOpenness.Ah == 0.0 && effectiveOpenness.Al == 0.0
-               && effectiveOpenness.Ar == 0.0 && effectiveOpenness.Atop == 0.0
-               && effectiveOpenness.Abot == 0.0 && effectiveOpenness.PermeabilityFactor == 0.0;
+        return effectiveOpenness.EffectiveFrontThermalOpennessArea == 0.0
+               && effectiveOpenness.Al == 0.0 && effectiveOpenness.Ar == 0.0
+               && effectiveOpenness.Atop == 0.0 && effectiveOpenness.Abot == 0.0
+               && effectiveOpenness.PermeabilityFactor == 0.0;
     }
 
     EffectiveLayer::EffectiveLayer(double width,
