@@ -80,16 +80,13 @@ protected:
         const auto dr{0.0};
         const auto dtop{0.0};
         const auto dbot{0.0};
-        const auto frontOpenness{0.9};
+        const auto frontOpenness{0.9}; // m2
+        const auto PermeabilityFactor = 0.3; // fraction
 
         EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerOther effLayer{
-          windowWidth, windowHeight, shadeThickness, openness};
+          windowWidth, windowHeight, shadeThickness, openness, PermeabilityFactor};
 
-        //const auto Ef = 7.379264e-01;
-        //const auto Eb = 7.437828e-01;
-        //const auto Tirf = 2.124426e-01;
-        //const auto Tirb = 2.124426e-01;
         const auto Ef = 0.9;
         const auto Eb = 0.9;
         const auto Tirf = 0;
@@ -104,14 +101,13 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSystem>(
-          new Tarcog::ISO15099::CSystem(aIGU, Indoor, Outdoor));
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
     }
 
 public:
-    Tarcog::ISO15099::CSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSystem & GetSystem() const
     {
-        return m_TarcogSystem.get();
+        return *m_TarcogSystem;
     };
 };
 
@@ -119,19 +115,19 @@ TEST_F(TestTripleShadeInside_UValue, Test1)
 {
     SCOPED_TRACE("Begin Test: Outside venetian shade.");
 
-    const auto aSystem = GetSystem();
+    auto & aSystem = GetSystem();
 
     auto effectiveLayerConductivities{
-      aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
+      aSystem.getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
 
     const auto systemKeff{
-      aSystem->getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
-    EXPECT_NEAR(0.039814, systemKeff, 1e-6);
+      aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
+    EXPECT_NEAR(0.039813, systemKeff, 1e-6);
 
-    const auto uval = aSystem->getUValue();
-    EXPECT_NEAR(1.195383, uval, 1e-6);
+    const auto uval = aSystem.getUValue();
+    EXPECT_NEAR(1.195377, uval, 1e-6);
 
     const auto heatflow =
-      aSystem->getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(34.545727, heatflow, 1e-6);
+      aSystem.getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
+    EXPECT_NEAR(34.545165, heatflow, 1e-6);
 }

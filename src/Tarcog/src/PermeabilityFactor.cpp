@@ -51,40 +51,51 @@ namespace ThermalPermeability
             return curvature;
         }
 
-        double frontOpenness(const double t_TiltAngle,
-                        const double t_SlatSpacing,
-                        const double t_MatThickness,
-                        const double t_SlatCurvature,
-                        const double t_SlatWidth)
+        double frontOpenness(const double tiltAngle,
+                             const double slatSpacing,
+                             const double matThickness,
+                             const double slatCurvature,
+                             const double slatWidth)
         {
-            const auto aRise{calculateRise(t_SlatCurvature, t_SlatWidth)};
-            const auto h{aRise > 1e-6 ? aRise : 1e-6};
-            const auto temp{h + pow(t_SlatWidth, 2) / (4 * h)};
-            const auto Ls{asin(t_SlatWidth / temp) * temp};
-            const auto angleMax{maxAngle(t_SlatSpacing, t_MatThickness)};
-            const auto slatAngle{std::fmin(std::abs(t_TiltAngle), angleMax)};
+            // Calculate rise based on slat curvature and width
+            const auto rise = calculateRise(slatCurvature, slatWidth);
+            const auto effectiveRise = (rise > 1e-6) ? rise : 1e-6;
 
-            double cosPhi = std::cos(slatAngle * ConstantsData::WCE_PI / 180);
-            double sinPhi = std::sin(std::abs(slatAngle) * ConstantsData::WCE_PI / 180);
-            if((slatAngle == 90) || (slatAngle == -90))
-                cosPhi = 0;
-            auto opennessFactor{
-              1
-              - (t_MatThickness * Ls)
-                  / ((Ls * cosPhi + t_MatThickness * sinPhi) * (t_SlatSpacing + t_MatThickness))};
+            // Calculate the length of slat arc (Ls)
+            const auto temp = effectiveRise + pow(slatWidth, 2) / (4 * effectiveRise);
+            const auto slatArcLength = asin(slatWidth / temp) * temp;
+
+            // Determine the maximum allowable angle and the effective slat angle
+            const auto effectiveSlatAngle =
+              std::fmin(std::abs(tiltAngle), maxAngle(slatSpacing, matThickness));
+
+            // Handle special cases where slat angle is 90 degrees
+            const double adjustedCosPhi =
+              (effectiveSlatAngle == 90 || effectiveSlatAngle == -90)
+                ? 0
+                : std::cos(FenestrationCommon::radians(effectiveSlatAngle));
+
+            // Compute the openness factor
+            auto opennessFactor =
+              1.0 - (matThickness * slatArcLength) / ((slatArcLength * adjustedCosPhi +
+              matThickness * std::sin(FenestrationCommon::radians(effectiveSlatAngle))) * (slatSpacing + matThickness));
+
+            // Ensure openness factor is non-negative
             if(opennessFactor < 0)
                 opennessFactor = 0;
+
             return opennessFactor;
         }
+
     }   // namespace Venetian
 
     namespace Perforated
     {
         double frontOpenness(Type t_Type,
-                        double t_SpacingX,
-                        double t_SpacingY,
-                        double t_DimensionX,
-                        double t_DimensionY)
+                             double t_SpacingX,
+                             double t_SpacingY,
+                             double t_DimensionX,
+                             double t_DimensionY)
         {
             const auto cellArea{t_SpacingX * t_SpacingY};
             std::map<Type, std::function<double(const double, const double)>> opennessFraction{

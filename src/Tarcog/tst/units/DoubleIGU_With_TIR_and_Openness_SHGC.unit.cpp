@@ -53,6 +53,7 @@ protected:
         auto dleft = 0.0;
         auto dright = 0.0;
         auto Afront = 0.049855;
+        auto PermeabilityFactor = 0.049855;
 
         EffectiveLayers::ShadeOpenness openness{Afront, dleft, dright, dtop, dbot};
 
@@ -60,7 +61,7 @@ protected:
         double windowHeight = 1;
 
         EffectiveLayers::EffectiveLayerBSDF effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness};
+          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
 
         auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
                                                         shadeLayerConductance,

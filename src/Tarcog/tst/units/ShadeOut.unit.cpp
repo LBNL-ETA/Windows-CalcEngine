@@ -48,6 +48,7 @@ protected:
         auto Aleft = 0.0;
         auto Aright = 0.0;
         auto Afront = 0.5;
+        auto PermeabilityFactor = 0.99;
 
         EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
 
@@ -55,11 +56,13 @@ protected:
         double windowHeight = 1;
 
         EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness};
+          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
+
+        auto effectiveThermal = effectiveLayer.getEffectiveOpenness();
 
         auto layer1 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
                                                         shadeLayerConductance,
-                                                        effectiveLayer.getEffectiveOpenness(),
+                                                        effectiveThermal,
                                                         emissivity,
                                                         transmittance,
                                                         emissivity,
@@ -118,7 +121,7 @@ TEST_F(TestShadeOut, Test1)
     const auto aSystem = GetSystem();
 
     const auto Temperature = aSystem->getTemperatures();
-    const std::vector correctTemperature{256.991898, 256.992301, 269.666385, 270.128448};
+    const std::vector correctTemperature{256.98924905242745, 257.00908910176321, 269.67211159465268, 270.13404194545456};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -127,7 +130,7 @@ TEST_F(TestShadeOut, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    const std::vector correctRadiosity{249.992982, 250.921614, 292.000161, 419.703062};
+    const std::vector correctRadiosity{249.98676196927647, 250.97825831600656, 292.03061975484945, 419.70403266542121};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
