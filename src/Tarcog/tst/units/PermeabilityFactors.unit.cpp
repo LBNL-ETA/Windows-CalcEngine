@@ -26,6 +26,22 @@ TEST_F(TestPermeabilityFactors, TestVenetianPermeability)
     EXPECT_NEAR(0.9921875, permeabilityOpenness, 1e-6);
 }
 
+TEST_F(TestPermeabilityFactors, TestVenetianPermeability1)
+{
+    SCOPED_TRACE("Begin Test: Venetian layer thermal permeability.");
+
+    const auto matThickness{0.0029};   // m
+    const auto slatWidth{0.0508};      // m
+    const auto slatSpacing{0.0432};    // m
+    const auto slatTiltAngle{0.0};
+    const auto curvatureRadius{0.0};   // m
+
+    const auto permeabilityOpenness{ThermalPermeability::Venetian::frontOpenness(
+      slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
+
+    EXPECT_NEAR(0.937093, permeabilityOpenness, 1e-6);
+}
+
 TEST_F(TestPermeabilityFactors, TestPerforatedCircularPermeability)
 {
     SCOPED_TRACE("Begin Test: Circular perforated layer thermal permeability.");

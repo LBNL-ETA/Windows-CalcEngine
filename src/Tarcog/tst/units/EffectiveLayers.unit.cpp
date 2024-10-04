@@ -9,9 +9,32 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
 
     const auto width{1.0};                  // m
     const auto height{1.0};                 // m
-    const auto materialThickness{0.0001};   // m
+    const auto materialThickness{0.0029};   // m
     const auto slatTiltAngle{0.0};
-    const auto slatWidth{0.0148};   // m
+    const auto slatWidth{0.0508};   // m
+
+    EffectiveLayers::ShadeOpenness openness{0.937093, 0, 0, 0, 0};
+
+    EffectiveLayers::EffectiveHorizontalVenetian venetian{
+      width, height, materialThickness, openness, slatTiltAngle, slatWidth};
+
+    const auto effectiveThickness{venetian.effectiveThickness()};
+
+    EXPECT_NEAR(0.0021843999999999995, effectiveThickness, 1e-9);
+
+    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    EXPECT_NEAR(0.015458409591817657, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
+}
+
+TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer1)
+{
+    SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
+
+    const auto width{1.0};                  // m
+    const auto height{1.0};                 // m
+    const auto materialThickness{0.0029};   // m
+    const auto slatTiltAngle{0.0};
+    const auto slatWidth{0.0508};   // m
 
     EffectiveLayers::ShadeOpenness openness{0.991657018661499, 0, 0, 0, 0};
 
