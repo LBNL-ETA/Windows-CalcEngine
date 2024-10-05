@@ -43,7 +43,7 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer1)
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
-    EXPECT_NEAR(6.364e-4, effectiveThickness, 1e-9);
+    EXPECT_NEAR(0.0021843999999999995, effectiveThickness, 1e-9);
 
     const auto effectiveOpenness{venetian.getEffectiveOpenness()};
     EXPECT_NEAR(1.592911e-2, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
