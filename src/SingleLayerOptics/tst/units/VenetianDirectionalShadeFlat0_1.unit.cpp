@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 
 #include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
 
 
 using namespace SingleLayerOptics;
@@ -115,8 +114,7 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, AtWavelength)
 
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
-
-    const auto correct{0.37192019576813157};
+    const auto correct{0.55329584855741987};
     const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);

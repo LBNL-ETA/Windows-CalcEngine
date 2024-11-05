@@ -77,6 +77,10 @@ namespace SingleLayerOptics
                                    const BSDFHemisphere & t_BSDF);
 
         static std::shared_ptr<CBSDFLayer>
+          getHomogeneousDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                     const BSDFHemisphere & t_BSDF);
+
+        static std::shared_ptr<CBSDFLayer>
           getDirectionalDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                      const BSDFHemisphere & t_BSDF);
 
