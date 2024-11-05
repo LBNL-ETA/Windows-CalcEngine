@@ -23,7 +23,7 @@ namespace
                               const std::string & expectedCsvFileTransmittance,
                               const std::string & expectedCsvFileReflectance)
     {
-        constexpr bool updateResults{true};
+        constexpr bool updateResults{false};
 
         // Create material with specified properties
         auto material = SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
