@@ -11,6 +11,23 @@
 // it under anonymous namespace
 namespace
 {
+    void processMatrix(SingleLayerOptics::BSDFIntegrator & results,
+                       FenestrationCommon::Side side,
+                       FenestrationCommon::PropertySimple property,
+                       const std::string & expectedCsvFile,
+                       bool updateExpectedResults)
+    {
+        const auto & matrix = results.getMatrix(side, property);
+
+        if(updateExpectedResults)
+        {
+            Helper::writeVectorToCSV(matrix.getMatrix(), expectedCsvFile);
+        }
+
+        const auto correctResults = Helper::readVectorFromCSV(expectedCsvFile);
+        Helper::compareMatrices(correctResults, matrix.getMatrix());
+    }
+
     // Helper function to set up and test a configuration
     void runVenetianLayerTest(double Tmat,
                               double Rfmat,
@@ -20,9 +37,11 @@ namespace
                               double slatTiltAngle,
                               double curvatureRadius,
                               size_t numOfSlatSegments,
-                              const std::string & expectedCsvFileTransmittance,
-                              const std::string & expectedCsvFileReflectance,
-                              const bool updateResults = false)
+                              const std::string & expectedCsvFrontTransmittanceFile,
+                              const std::string & expectedCsvFrontReflectanceFile,
+                              const std::string & expectedCsvBackTransmittanceFile,
+                              const std::string & expectedCsvBackReflectanceFile,
+                              const bool updateExpectedResults = false)
     {
         // Create material with specified properties
         auto material = SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
@@ -43,32 +62,30 @@ namespace
           SingleLayerOptics::DistributionMethod::DirectionalDiffuse);
 
         auto results = shade->getResults();
-        auto frontTransmittanceMatrix =
-          results.getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
 
-        if(updateResults)
-        {
-            Helper::writeVectorToCSV(frontTransmittanceMatrix.getMatrix(),
-                                     expectedCsvFileTransmittance);
-        }
+        processMatrix(results,
+                      FenestrationCommon::Side::Front,
+                      FenestrationCommon::PropertySimple::T,
+                      expectedCsvFrontTransmittanceFile,
+                      updateExpectedResults);
 
-        // Load expected results from CSV and compare
-        const auto correctResults = Helper::readVectorFromCSV(expectedCsvFileTransmittance);
-        Helper::compareMatrices(correctResults, frontTransmittanceMatrix.getMatrix());
+        processMatrix(results,
+                      FenestrationCommon::Side::Front,
+                      FenestrationCommon::PropertySimple::R,
+                      expectedCsvFrontReflectanceFile,
+                      updateExpectedResults);
 
-        auto frontReflectanceMatrix =
-          results.getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R);
+        processMatrix(results,
+                      FenestrationCommon::Side::Back,
+                      FenestrationCommon::PropertySimple::T,
+                      expectedCsvBackTransmittanceFile,
+                      updateExpectedResults);
 
-        if(updateResults)
-        {
-            Helper::writeVectorToCSV(frontReflectanceMatrix.getMatrix(),
-                                     expectedCsvFileReflectance);
-        }
-
-        // Load expected results from CSV and compare
-        const auto correctResultsReflectance =
-          Helper::readVectorFromCSV(expectedCsvFileReflectance);
-        Helper::compareMatrices(correctResultsReflectance, frontReflectanceMatrix.getMatrix());
+        processMatrix(results,
+                      FenestrationCommon::Side::Back,
+                      FenestrationCommon::PropertySimple::R,
+                      expectedCsvBackReflectanceFile,
+                      updateExpectedResults);
     }
 
     double calculateCurvature(const double t_Rise, const double t_SlatWidth)
@@ -88,13 +105,8 @@ namespace
     }
 }   // namespace
 
-class TestVenetianDirectionalMatrix : public ::testing::Test
-{
-    // Test fixture - no specific setup needed here as each test uses the helper function
-};
-
 // clang-format off
-TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_Rise0)
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_Rise0)
  {
     SCOPED_TRACE("Testing Venetian layer with T=0, R=0.1, Slat=0, Rise=0 configuration.");
     runVenetianLayerTest(
@@ -103,11 +115,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_Rise0)
         1,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Rise0)
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Rise0)
  {
     SCOPED_TRACE("Testing Venetian layer with T=0, R=0.1, Slat=0, nSegments=5, Rise=0 configuration.");
     runVenetianLayerTest(
@@ -116,11 +130,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Ri
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat45_nSegments1_Rise0)
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat45_nSegments1_Rise0)
  {
     SCOPED_TRACE("Testing Venetian layer with T=0, R=0.1, Slat=45, nSegments=1, Rise=0 configuration.");
     runVenetianLayerTest(
@@ -129,11 +145,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat45_nSegments1_R
         1,                    // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0_R=0.1_Slat=45_nSegments=1_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0_R=0.1_Slat=45_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0_R=0.1_Slat=45_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0_R=0.1_Slat=45_nSegments=1_Rise=0.csv", // Expected results
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration2_T0_R0_15_Slat45_nSegments1_Rise0)
+TEST(TestVenetianDirectionalMatrix, Configuration2_T0_R0_15_Slat45_nSegments1_Rise0)
 {
     SCOPED_TRACE("Testing Venetian layer with T=0, R=0.15, Slat=45, nSegments=1, Rise=0 configuration.");
     runVenetianLayerTest(
@@ -142,11 +160,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration2_T0_R0_15_Slat45_nSegments1_
         1,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration3_T0_R0_2_Slat30_nSegments5_Rise0)
+TEST(TestVenetianDirectionalMatrix, Configuration3_T0_R0_2_Slat30_nSegments5_Rise0)
 {
     SCOPED_TRACE("Testing Venetian layer with T=0, R=0.2, Slat=30, nSegments5, Rise=0 configuration.");
     runVenetianLayerTest(
@@ -155,11 +175,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration3_T0_R0_2_Slat30_nSegments5_R
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Rise3)
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Rise3)
  {
     SCOPED_TRACE("Testing Venetian layer with T=0, R=0.1, Slat=0, nSegments=5, Rise=3 configuration.");
     runVenetianLayerTest(
@@ -168,11 +190,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Ri
         5,                                                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration2_T0_R0_15_Slat45_nSegments5_Rise5)
+TEST(TestVenetianDirectionalMatrix, Configuration2_T0_R0_15_Slat45_nSegments5_Rise5)
 {
     SCOPED_TRACE("Testing Venetian layer with T=0, R=0.15, Slat=45, nSegments=5, Rise=5 configuration.");
     runVenetianLayerTest(
@@ -181,11 +205,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration2_T0_R0_15_Slat45_nSegments5_
         5,                                                      // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments5_Rise0)
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments5_Rise0)
  {
     SCOPED_TRACE("Testing Venetian layer with T=0.1, R=0.1, Slat=0, nSegments=5, Rise=0 configuration.");
     runVenetianLayerTest(
@@ -194,11 +220,13 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments5_
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         true
     );
 }
 
-TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_7_Slat0_nSegments5_Rise0)
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_7_Slat0_nSegments5_Rise0)
  {
     SCOPED_TRACE("Testing Venetian layer with T=0.1, R=0.1, Slat=0, nSegments=5, Rise=0 configuration.");
     runVenetianLayerTest(
@@ -207,10 +235,10 @@ TEST_F(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_7_Slat0_nSegments5_
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         true
     );
 }
 //clang-format on
-
-// Add more configurations as needed
 

@@ -364,7 +364,7 @@ namespace Viewer
     CViewSegment2D CDirect2DRays::createSubBeam(CPoint2D const & t_Point,
                                                 double const t_ProfileAngle) const
     {
-        auto const deltaX = 10.0;
+        auto const deltaX = 100.0;
         auto const tanPhi = std::tan(radians(t_ProfileAngle));
         auto yStart = t_Point.y() - t_Point.x() * tanPhi;
         auto yEnd = yStart + deltaX * tanPhi;

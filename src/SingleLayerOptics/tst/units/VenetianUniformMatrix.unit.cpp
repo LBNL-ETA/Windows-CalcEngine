@@ -11,6 +11,23 @@
 // it under anonymous namespace
 namespace
 {
+    void processMatrix(SingleLayerOptics::BSDFIntegrator & results,
+                       FenestrationCommon::Side side,
+                       FenestrationCommon::PropertySimple property,
+                       const std::string & expectedCsvFile,
+                       bool updateExpectedResults)
+    {
+        const auto & matrix = results.getMatrix(side, property);
+
+        if(updateExpectedResults)
+        {
+            Helper::writeVectorToCSV(matrix.getMatrix(), expectedCsvFile);
+        }
+
+        const auto correctResults = Helper::readVectorFromCSV(expectedCsvFile);
+        Helper::compareMatrices(correctResults, matrix.getMatrix());
+    }
+
     // Helper function to set up and test a configuration
     void runVenetianLayerTest(double Tmat,
                               double Rfmat,
@@ -20,8 +37,10 @@ namespace
                               double slatTiltAngle,
                               double curvatureRadius,
                               size_t numOfSlatSegments,
-                              const std::string & expectedCsvTransmittanceFile,
-                              const std::string & expectedCsvReflectanceFile,
+                              const std::string & expectedCsvFrontTransmittanceFile,
+                              const std::string & expectedCsvFrontReflectanceFile,
+                              const std::string & expectedCsvBackTransmittanceFile,
+                              const std::string & expectedCsvBackReflectanceFile,
                               const bool updateExpectedResults = false)
     {
         // Create material with specified properties
@@ -43,31 +62,30 @@ namespace
           SingleLayerOptics::DistributionMethod::UniformDiffuse);
 
         auto results = shade->getResults();
-        auto frontTransmittanceMatrix =
-          results.getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
 
-        if(updateExpectedResults)
-        {
-            Helper::writeVectorToCSV(frontTransmittanceMatrix.getMatrix(),
-                                     expectedCsvTransmittanceFile);
-        }
+        processMatrix(results,
+                      FenestrationCommon::Side::Front,
+                      FenestrationCommon::PropertySimple::T,
+                      expectedCsvFrontTransmittanceFile,
+                      updateExpectedResults);
 
-        // Load expected results from CSV and compare
-        const auto correctResults = Helper::readVectorFromCSV(expectedCsvTransmittanceFile);
-        Helper::compareMatrices(correctResults, frontTransmittanceMatrix.getMatrix());
+        processMatrix(results,
+                      FenestrationCommon::Side::Front,
+                      FenestrationCommon::PropertySimple::R,
+                      expectedCsvFrontReflectanceFile,
+                      updateExpectedResults);
 
-        auto frontReflectanceMatrix =
-          results.getMatrix(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R);
+        processMatrix(results,
+                      FenestrationCommon::Side::Back,
+                      FenestrationCommon::PropertySimple::T,
+                      expectedCsvBackTransmittanceFile,
+                      updateExpectedResults);
 
-        if(updateExpectedResults)
-        {
-            Helper::writeVectorToCSV(frontReflectanceMatrix.getMatrix(),
-                                     expectedCsvReflectanceFile);
-        }
-
-        // Load expected results from CSV and compare
-        const auto correctResultsReflectance = Helper::readVectorFromCSV(expectedCsvReflectanceFile);
-        Helper::compareMatrices(correctResultsReflectance, frontReflectanceMatrix.getMatrix());
+        processMatrix(results,
+                      FenestrationCommon::Side::Back,
+                      FenestrationCommon::PropertySimple::R,
+                      expectedCsvBackReflectanceFile,
+                      updateExpectedResults);
     }
 
     double calculateCurvature(const double t_Rise, const double t_SlatWidth)
@@ -102,6 +120,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration1_T0_R0_1_Slat0_nSegments1_Rise0)
         1,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
         true
     );
 }
@@ -115,6 +135,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Rise0)
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         true
     );
 }
@@ -128,6 +150,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration2_T0_R0_15_Slat45_nSegments1_Rise
         1,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.15_Slat=45_nSegments=1_Rise=0.csv",
         true
     );
 }
@@ -141,6 +165,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration3_T0_R0_2_Slat30_nSegments5_Rise0
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.2_Slat=30_nSegments=5_Rise=0.csv",
         true
     );
 }
@@ -154,6 +180,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Rise3)
         5,                                                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv", // Expected results
         true
     );
 }
@@ -167,6 +195,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration2_T0_R0_15_Slat45_nSegments5_Rise
         5,                                                      // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
         true
     );
 }
@@ -180,6 +210,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments5_Rise
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         true
     );
 }
@@ -193,6 +225,8 @@ TEST_F(TestVenetianUniformMatrix, Configuration1_T0_1_R0_7_Slat0_nSegments5_Rise
         5,                     // Number of slat segments
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTf_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0.1_R=0.7_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         true
     );
 }
