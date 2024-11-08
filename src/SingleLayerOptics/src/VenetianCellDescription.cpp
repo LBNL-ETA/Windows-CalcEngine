@@ -150,7 +150,8 @@ namespace SingleLayerOptics
                                                            const CBeamDirection & t_Direction)
     {
         // clang-format off
-        const auto bvf{cellBeamViewFactors(t_Side, t_Direction)};
+        auto bvf{cellBeamViewFactors(t_Side, t_Direction)};
+
         return Helper::visibleSegmentPercentage(
                                           beamViewFactorsToBeamSegmentViews(
                                               numberOfSegments(),
@@ -199,9 +200,7 @@ namespace SingleLayerOptics
       CVenetianCellDescription::cellBeamViewFactors(double t_ProfileAngle,
                                                     FenestrationCommon::Side t_Side)
     {
-        const auto profileAngle{t_Side == FenestrationCommon::Side::Front ? t_ProfileAngle
-                                                                          : -t_ProfileAngle};
-        return m_BeamGeometry.beamViewFactors(-profileAngle, t_Side);
+        return m_BeamGeometry.beamViewFactors(-t_ProfileAngle, t_Side);
     }
 
     std::vector<Viewer::BeamViewFactor>
