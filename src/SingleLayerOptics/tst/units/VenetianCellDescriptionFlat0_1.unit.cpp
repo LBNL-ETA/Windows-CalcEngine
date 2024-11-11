@@ -9,7 +9,7 @@ namespace
     {
         const auto slatWidth = 0.016;     // m
         const auto slatSpacing = 0.012;   // m
-        const auto slatTiltAngle = 45;
+        const auto slatTiltAngle = 0;
         const auto curvatureRadius = 0;
         FenestrationCommon::VenetianGeometry geometry{
           slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
@@ -19,7 +19,7 @@ namespace
     }
 }   // namespace
 
-TEST(TestVenetianCellDescriptionFlat45_2, BeamViewFactorsFrontIncoming18)
+TEST(TestVenetianDescriptionFlat0_1, BeamViewFactorsFrontIncoming18)
 {
     auto aCell{createCellDescription()};
 
@@ -29,11 +29,11 @@ TEST(TestVenetianCellDescriptionFlat45_2, BeamViewFactorsFrontIncoming18)
 
     EXPECT_EQ(1u, vfs[0].enclosureIndex);
     EXPECT_EQ(0u, vfs[0].segmentIndex);
-    EXPECT_NEAR(1.0, vfs[0].value, 1e-6);
-    EXPECT_NEAR(0.800547, vfs[0].percentHit, 1e-6);
+    EXPECT_NEAR(0.433226, vfs[0].value, 1e-6);
+    EXPECT_NEAR(1.0, vfs[0].percentHit, 1e-6);
 }
 
-TEST(TestVenetianCellDescriptionFlat45_2, BeamViewFactorsBackIncoming18)
+TEST(TestVenetianDescriptionFlat0_1, BeamViewFactorsBackIncoming18)
 {
     auto aCell{createCellDescription()};
 
@@ -43,6 +43,6 @@ TEST(TestVenetianCellDescriptionFlat45_2, BeamViewFactorsBackIncoming18)
 
     EXPECT_EQ(0u, vfs[0].enclosureIndex);
     EXPECT_EQ(0u, vfs[0].segmentIndex);
-    EXPECT_NEAR(1.0, vfs[0].value, 1e-6);
-    EXPECT_NEAR(0.800547, vfs[0].percentHit, 1e-6);
+    EXPECT_NEAR(0.43322626164387507, vfs[0].value, 1e-6);
+    EXPECT_NEAR(1.0, vfs[0].percentHit, 1e-6);
 }
