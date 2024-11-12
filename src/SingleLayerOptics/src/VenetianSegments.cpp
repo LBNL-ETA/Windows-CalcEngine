@@ -8,6 +8,7 @@
 
 #include "VenetianCellDescription.hpp"
 #include "BeamDirection.hpp"
+#include "BSDFDirections.hpp"
 #include "MaterialDescription.hpp"
 
 namespace SingleLayerOptics
@@ -118,19 +119,39 @@ namespace SingleLayerOptics
         return calculateOutgoingRadiance(Side::Front, t_OutgoingDirection, radiance);
     }
 
+    namespace Helper
+    {
+        // In case of outgoing front and incoming back, unit vector need to be inversed.
+        Viewer::CSegment2D unitVector(const CBeamDirection & t_Direction,
+                                      const BSDFDirection t_BSDFDirection,
+                                      const Side t_Side)
+        {
+            auto result = t_Direction.unitVector();
+            if(t_BSDFDirection == BSDFDirection::Outgoing
+                 && t_Side == FenestrationCommon::Side::Front
+               || t_BSDFDirection == BSDFDirection::Incoming
+                    && t_Side == FenestrationCommon::Side::Back)
+            {
+                result = Viewer::CSegment2D(result.startPoint(),
+                                            {-result.endPoint().x(), result.endPoint().y()});
+            }
+            return result;
+        }
+    }   // namespace Helper
+
     double
       CVenetianCellEnergy::calculateOutgoingRadiance(const FenestrationCommon::Side side,
                                                      const CBeamDirection & t_OutgoingDirection,
                                                      const std::vector<double> & slatRadiances)
     {
-        const auto visibleFraction =
-          m_Cell->visibleBeamSegmentFractionSlatsOnly(side, t_OutgoingDirection);
+        const auto visibleFraction = m_Cell->visibleBeamSegmentFractionSlatsOnly(
+          side, BSDFDirection::Outgoing, t_OutgoingDirection);
 
         const auto slats = m_Cell->getSlats();
 
         assert(slatRadiances.size() == visibleFraction.size()
                && slatRadiances.size() == slats.size());
-        auto outgoingUnitVector{t_OutgoingDirection.unitVector()};
+        auto outgoingUnitVector{Helper::unitVector(t_OutgoingDirection, BSDFDirection::Outgoing, side)};
 
         double aResult = 0;
         for(size_t i = 0; i < slatRadiances.size(); ++i)
@@ -372,11 +393,11 @@ namespace SingleLayerOptics
                                                  CVenetianCellDescription & cell,
                                                  const SlatSegmentsMesh & mesh)
     {
-        const auto BeamViewFactors{
-          Helper::beamVector(t_Side,
-                             mesh.numberOfSegments,
-                             cell.cellBeamViewFactors(t_Side, t_IncomingDirection),
-                             cell.T_dir_dir(t_Side, t_IncomingDirection))};
+        const auto BeamViewFactors{Helper::beamVector(
+          t_Side,
+          mesh.numberOfSegments,
+          cell.cellBeamViewFactors(t_Side, BSDFDirection::Incoming, t_IncomingDirection),
+          cell.T_dir_dir(t_Side, t_IncomingDirection))};
 
         std::vector<double> B;
         B.reserve(2 * mesh.numberOfSegments);
@@ -532,7 +553,8 @@ namespace SingleLayerOptics
     {
         using SingleLayerOptics::SlatPosition;
         //! Irradiances are always calculated from the front side perspective
-        const auto vf{m_Cell->cellBeamViewFactors(Side::Front, t_IncomingDirection)};
+        const auto vf{
+          m_Cell->cellBeamViewFactors(Side::Front, BSDFDirection::Incoming, t_IncomingDirection)};
 
         const auto upperSlatIrradiances{Helper::slatIrradiancesFromBeam(
           Helper::filterByEnclosureIndex(vf, SingleLayerOptics::SlatPosition::Top),

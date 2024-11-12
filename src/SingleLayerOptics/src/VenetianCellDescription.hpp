@@ -9,6 +9,7 @@
 #include "CellDescription.hpp"
 #include "VenetianSlat.hpp"
 #include "VenetianSegments.hpp"
+#include "BSDFDirections.hpp"
 
 namespace SingleLayerOptics
 {
@@ -37,25 +38,31 @@ namespace SingleLayerOptics
 
         //! Calculates view factors for given profile angle
         FenestrationCommon::SquareMatrix viewFactors(FenestrationCommon::Side t_Side,
+                                                     BSDFDirection t_BeamDirection,
                                                      const CBeamDirection & t_Direction);
 
         // view factor of the beam entering the cell with profile angle
         std::vector<Viewer::BeamViewFactor> cellBeamViewFactors(double t_ProfileAngle,
-                                                                FenestrationCommon::Side t_Side);
+                                                                FenestrationCommon::Side t_Side,
+                                                                BSDFDirection t_Direction);
 
         std::vector<Viewer::BeamViewFactor> cellBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                                BSDFDirection t_BeamDirection,
                                                                 const CBeamDirection & t_Direction);
 
         //! Calculates corrected view factors for the given incoming beam direction
         std::vector<double> scaledBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                  BSDFDirection t_BeamDirection,
                                                   const CBeamDirection & t_Direction);
 
         //! Calculates segments that are visible for the beam including indoor and outdoor segments
         std::vector<double> visibleBeamSegmentFraction(FenestrationCommon::Side t_Side,
+                                                       BSDFDirection t_BeamDirection,
                                                        const CBeamDirection & t_Direction);
 
         //! Calculates segments that are visible for the beam excluding indoor and outdoor segments
         std::vector<double> visibleBeamSegmentFractionSlatsOnly(FenestrationCommon::Side t_Side,
+                                                                BSDFDirection t_BeamDirection,
                                                                 const CBeamDirection & t_Direction);
 
         // Direct to direct component of the ray

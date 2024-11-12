@@ -22,7 +22,6 @@ private:
     }
 
 protected:
-
     static std::shared_ptr<CVenetianCellDescription> createCellDescription()
     {
         const auto slatWidth = 0.016;     // m
@@ -37,7 +36,7 @@ protected:
     }
 
 public:
-    CVenetianCell& GetCell()
+    CVenetianCell & GetCell()
     {
         return m_Cell;
     };
@@ -74,9 +73,11 @@ TEST_F(TestVenetianCellFlat0_3, DirectionalViewFactors)
     auto Phi{270.0};
     CBeamDirection incomingDirection = CBeamDirection(Theta, Phi);
 
-    const auto Tdir_hem{aCell->viewFactors(FenestrationCommon::Side::Front, incomingDirection)};
+    const auto Tdir_hem{aCell->viewFactors(FenestrationCommon::Side::Front,
+                                           SingleLayerOptics::BSDFDirection::Incoming,
+                                           incomingDirection)};
 
-    //EXPECT_NEAR(0.566774, Tdir_hem, 1e-6);
+    // EXPECT_NEAR(0.566774, Tdir_hem, 1e-6);
 }
 
 TEST_F(TestVenetianCellFlat0_3, DirectionalDiffuse)

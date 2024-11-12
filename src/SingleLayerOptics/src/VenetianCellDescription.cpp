@@ -12,7 +12,6 @@ namespace SingleLayerOptics
 {
     namespace Helper
     {
-
         FenestrationCommon::VenetianGeometry
           bottomGeometry(const FenestrationCommon::VenetianGeometry & t_Geometry)
         {
@@ -132,6 +131,7 @@ namespace SingleLayerOptics
 
     std::vector<double>
       CVenetianCellDescription::scaledBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                      BSDFDirection t_BeamDirection,
                                                       const CBeamDirection & t_Direction)
     {
         // clang-format off
@@ -140,17 +140,18 @@ namespace SingleLayerOptics
                                               numberOfSegments(),
                                               t_Side,
                                               t_Direction,
-                                              cellBeamViewFactors(t_Side, t_Direction))
+                                              cellBeamViewFactors(t_Side, t_BeamDirection, t_Direction))
                                           );
         // clang-format on
     }
 
     std::vector<double>
       CVenetianCellDescription::visibleBeamSegmentFraction(FenestrationCommon::Side t_Side,
+                                                           BSDFDirection t_BeamDirection,
                                                            const CBeamDirection & t_Direction)
     {
         // clang-format off
-        auto bvf{cellBeamViewFactors(t_Side, t_Direction)};
+        auto bvf{cellBeamViewFactors(t_Side, t_BeamDirection, t_Direction)};
 
         return Helper::visibleSegmentPercentage(
                                           beamViewFactorsToBeamSegmentViews(
@@ -163,9 +164,12 @@ namespace SingleLayerOptics
     }
 
     std::vector<double> CVenetianCellDescription::visibleBeamSegmentFractionSlatsOnly(
-      FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction)
+      FenestrationCommon::Side t_Side,
+      BSDFDirection t_BeamDirection,
+      const CBeamDirection & t_Direction)
     {
-        auto result = CVenetianCellDescription::visibleBeamSegmentFraction(t_Side, t_Direction);
+        auto result = CVenetianCellDescription::visibleBeamSegmentFraction(
+          t_Side, t_BeamDirection, t_Direction);
 
         // Ensure the result vector has the expected size
         if(result.size() != 2 * m_NumOfSegments + 2)
@@ -184,9 +188,10 @@ namespace SingleLayerOptics
 
     FenestrationCommon::SquareMatrix
       CVenetianCellDescription::viewFactors(FenestrationCommon::Side t_Side,
+                                            BSDFDirection t_BeamDirection,
                                             const CBeamDirection & t_Direction)
     {
-        const auto scaled_vf{scaledBeamViewFactors(t_Side, t_Direction)};
+        const auto scaled_vf{scaledBeamViewFactors(t_Side, t_BeamDirection, t_Direction)};
 
         auto diffuseVF{m_Geometry.viewFactors()};
         for(size_t i = 0u; i < scaled_vf.size(); ++i)
@@ -196,18 +201,30 @@ namespace SingleLayerOptics
         return diffuseVF;
     }
 
-    std::vector<Viewer::BeamViewFactor>
-      CVenetianCellDescription::cellBeamViewFactors(double t_ProfileAngle,
-                                                    FenestrationCommon::Side t_Side)
+    std::vector<Viewer::BeamViewFactor> CVenetianCellDescription::cellBeamViewFactors(
+      double t_ProfileAngle, FenestrationCommon::Side t_Side, const BSDFDirection t_Direction)
     {
-        return m_BeamGeometry.beamViewFactors(-t_ProfileAngle, t_Side);
+        // Define a map of conditions for reverting the angle
+        static const std::map<std::pair<BSDFDirection, FenestrationCommon::Side>, bool> revertMap = {
+          {{BSDFDirection::Incoming, FenestrationCommon::Side::Front}, true},
+          {{BSDFDirection::Outgoing, FenestrationCommon::Side::Back}, true},
+          {{BSDFDirection::Incoming, FenestrationCommon::Side::Back}, false},
+          {{BSDFDirection::Outgoing, FenestrationCommon::Side::Front}, false}
+        };
+
+        // Check if the current (t_Direction, t_Side) combination should revert the angle
+        const bool shouldRevertAngle = revertMap.at({t_Direction, t_Side});
+        const auto profileAngle = shouldRevertAngle ? -t_ProfileAngle : t_ProfileAngle;
+
+        return m_BeamGeometry.beamViewFactors(profileAngle, t_Side);
     }
 
     std::vector<Viewer::BeamViewFactor>
       CVenetianCellDescription::cellBeamViewFactors(FenestrationCommon::Side t_Side,
+                                                    BSDFDirection t_BeamDirection,
                                                     const CBeamDirection & t_Direction)
     {
-        return cellBeamViewFactors(t_Direction.profileAngle(), t_Side);
+        return cellBeamViewFactors(t_Direction.profileAngle(), t_Side, t_BeamDirection);
     }
 
     double CVenetianCellDescription::T_dir_dir(const FenestrationCommon::Side t_Side,
