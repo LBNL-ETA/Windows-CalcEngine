@@ -256,6 +256,36 @@ TEST(TestVenetianDirectionalMatrix, Configuration2_T0_R0_15_Slat45_nSegments5_Ri
     );
 }
 
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments1_Rise0)
+ {
+    SCOPED_TRACE("Testing Venetian layer with T=0.1, R=0.1, Slat=0, nSegments=1, Rise=0 configuration.");
+    runVenetianLayerTest(
+        0.1, 0.1, 0.1,         // Material properties
+        0.016, 0.012, 0, 0,    // Geometry properties
+        1,                     // Number of slat segments
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0.1_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0.1_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0.1_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0.1_R=0.1_Slat=0_nSegments=1_Rise=0.csv", // Expected results
+        true
+    );
+}
+
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments2_Rise0)
+ {
+    SCOPED_TRACE("Testing Venetian layer with T=0.1, R=0.1, Slat=0, nSegments=2, Rise=0 configuration.");
+    runVenetianLayerTest(
+        0.1, 0.1, 0.1,         // Material properties
+        0.016, 0.012, 0, 0,    // Geometry properties
+        2,                     // Number of slat segments
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0.1_R=0.1_Slat=0_nSegments=2_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0.1_R=0.1_Slat=0_nSegments=2_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0.1_R=0.1_Slat=0_nSegments=2_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0.1_R=0.1_Slat=0_nSegments=2_Rise=0.csv", // Expected results
+        true
+    );
+}
+
 TEST(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments5_Rise0)
  {
     SCOPED_TRACE("Testing Venetian layer with T=0.1, R=0.1, Slat=0, nSegments=5, Rise=0 configuration.");
@@ -267,6 +297,21 @@ TEST(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_1_Slat0_nSegments5_Ri
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
         TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0.1_R=0.1_Slat=0_nSegments=5_Rise=0.csv", // Expected results
+        true
+    );
+}
+
+TEST(TestVenetianDirectionalMatrix, Configuration1_T0_1_R0_7_Slat0_nSegments2_Rise0)
+ {
+    SCOPED_TRACE("Testing Venetian layer with T=0.1, R=0.7, Slat=0, nSegments=2, Rise=0 configuration.");
+    runVenetianLayerTest(
+        0.1, 0.7, 0.7,         // Material properties
+        0.016, 0.012, 0, 0,    // Geometry properties
+        2,                     // Number of slat segments
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTf_T=0.1_R=0.7_Slat=0_nSegments=2_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRf_T=0.1_R=0.7_Slat=0_nSegments=2_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixTb_T=0.1_R=0.7_Slat=0_nSegments=2_Rise=0.csv", // Expected results
+        TEST_DATA_DIR "/data/TestVenetianDirectionalMatrixRb_T=0.1_R=0.7_Slat=0_nSegments=2_Rise=0.csv", // Expected results
         true
     );
 }

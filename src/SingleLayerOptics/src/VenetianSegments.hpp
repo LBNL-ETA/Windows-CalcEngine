@@ -106,8 +106,7 @@ namespace SingleLayerOptics
     std::vector<double>
       directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
                                  const FenestrationCommon::SquareMatrix & radiancesMatrix,
-                                 const LayerProperties & properties,
-                                 bool incomingDirectionPositive);
+                                 const LayerProperties & properties);
 
     // Radiances for given incoming direction
     std::vector<double>

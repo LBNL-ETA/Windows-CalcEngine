@@ -87,8 +87,7 @@ namespace SingleLayerOptics
             m_DirectToDirectSlatRadiances[t_IncomingDirection] =
               directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
                                          slatsDiffuseRadiancesMatrix,
-                                         m_LayerProperties,
-                                         t_IncomingDirection.profileAngle() > 0.0);
+                                         m_LayerProperties);
         }
 
         // Radiance results always CW starting from the left segment on the upper slat
@@ -111,8 +110,7 @@ namespace SingleLayerOptics
             m_DirectToDirectSlatRadiances[t_IncomingDirection] =
               directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
                                          slatsDiffuseRadiancesMatrix,
-                                         m_LayerProperties,
-                                         t_IncomingDirection.profileAngle() > 0.0);
+                                         m_LayerProperties);
         }
 
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
@@ -159,12 +157,6 @@ namespace SingleLayerOptics
         for(size_t i = 0; i < slatRadiances.size(); ++i)
         {
             const auto & segment = slats[i];
-
-            // TODO: Remove after debugging
-            auto testVisibleFraction = visibleFraction[i];
-            auto testSlatRadiances = slatRadiances[i];
-            auto testLength = segment.length();
-            auto testDotProduct = segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint());
 
             aResult +=
               visibleFraction[i] * slatRadiances[i] * segment.length()
@@ -260,8 +252,7 @@ namespace SingleLayerOptics
     std::vector<double>
       directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
                                  const FenestrationCommon::SquareMatrix & radiancesMatrix,
-                                 const LayerProperties & properties,
-                                 const bool incomingDirectionPositive)
+                                 const LayerProperties & properties)
     {
         // Forming left side of the equations for direct to direct radiances solution.
         // Radiances matrix is already formed and used in several different places.
@@ -270,7 +261,7 @@ namespace SingleLayerOptics
 
         // Iterating through the vector backward
         std::for_each(
-          std::rbegin(vector), std::rend(vector), [&](const SegmentIrradiance & segment) {
+          std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
               rightSide.push_back(-properties.Tb * segment.E_b - properties.Rf * segment.E_f);
           });
 
@@ -299,15 +290,6 @@ namespace SingleLayerOptics
         std::rotate(solution.begin(), mid, solution.end());
 
         std::reverse(mid, solution.end());
-
-        // Reverse radiances based on the incoming direction
-        //if(incomingDirectionPositive)
-        //{
-        //    std::reverse(mid, solution.end());
-        //} else
-        //{
-        //    std::reverse(solution.begin(), mid);
-        //}
 
         return solution;
     }
@@ -584,7 +566,7 @@ namespace SingleLayerOptics
         // Fill the result vector
         for(size_t i = 0; i < size; ++i)
         {
-            result[i] = {lowerSlatIrradiances[i], upperSlatIrradiances[i]};
+            result[i] = {lowerSlatIrradiances[size - i - 1], upperSlatIrradiances[i]};
         }
 
         return result;
