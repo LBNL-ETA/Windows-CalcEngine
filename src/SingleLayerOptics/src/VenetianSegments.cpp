@@ -92,7 +92,7 @@ namespace SingleLayerOptics
         }
 
         // Radiance results always CW starting from the left segment on the upper slat
-        const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
+        const auto radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
 
         return calculateOutgoingRadiance(Side::Back, t_OutgoingDirection, radiance);
     }
@@ -298,14 +298,16 @@ namespace SingleLayerOptics
         auto mid = solution.begin() + solution.size() / 2;
         std::rotate(solution.begin(), mid, solution.end());
 
+        std::reverse(mid, solution.end());
+
         // Reverse radiances based on the incoming direction
-        if(incomingDirectionPositive)
-        {
-            std::reverse(mid, solution.end());
-        } else
-        {
-            std::reverse(solution.begin(), mid);
-        }
+        //if(incomingDirectionPositive)
+        //{
+        //    std::reverse(mid, solution.end());
+        //} else
+        //{
+        //    std::reverse(solution.begin(), mid);
+        //}
 
         return solution;
     }
@@ -582,7 +584,7 @@ namespace SingleLayerOptics
         // Fill the result vector
         for(size_t i = 0; i < size; ++i)
         {
-            result[i] = {lowerSlatIrradiances[i], upperSlatIrradiances[size - 1 - i]};
+            result[i] = {lowerSlatIrradiances[i], upperSlatIrradiances[i]};
         }
 
         return result;
