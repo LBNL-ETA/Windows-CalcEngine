@@ -91,6 +91,7 @@ namespace SingleLayerOptics
                                          t_IncomingDirection.profileAngle() > 0.0);
         }
 
+        // Radiance results always CW starting from the left segment on the upper slat
         const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
 
         return calculateOutgoingRadiance(Side::Back, t_OutgoingDirection, radiance);
@@ -151,12 +152,19 @@ namespace SingleLayerOptics
 
         assert(slatRadiances.size() == visibleFraction.size()
                && slatRadiances.size() == slats.size());
-        auto outgoingUnitVector{Helper::unitVector(t_OutgoingDirection, BSDFDirection::Outgoing, side)};
+        auto outgoingUnitVector{
+          Helper::unitVector(t_OutgoingDirection, BSDFDirection::Outgoing, side)};
 
         double aResult = 0;
         for(size_t i = 0; i < slatRadiances.size(); ++i)
         {
             const auto & segment = slats[i];
+
+            // TODO: Remove after debugging
+            auto testVisibleFraction = visibleFraction[i];
+            auto testSlatRadiances = slatRadiances[i];
+            auto testLength = segment.length();
+            auto testDotProduct = segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint());
 
             aResult +=
               visibleFraction[i] * slatRadiances[i] * segment.length()
@@ -260,20 +268,20 @@ namespace SingleLayerOptics
         std::vector<double> rightSide;
         rightSide.reserve(radiancesMatrix.size() + 2 * vector.size() + 2);
 
-        // Iterating through the vector forward
-        std::for_each(std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
-            rightSide.push_back(-properties.Tb * segment.E_f - properties.Rb * segment.E_b);
-        });
+        // Iterating through the vector backward
+        std::for_each(
+          std::rbegin(vector), std::rend(vector), [&](const SegmentIrradiance & segment) {
+              rightSide.push_back(-properties.Tb * segment.E_b - properties.Rf * segment.E_f);
+          });
 
         // Indoor is ignored and set to zero
         rightSide.push_back(0);
         rightSide.push_back(0);
 
-        // Iterating through the vector backward
-        std::for_each(
-          std::rbegin(vector), std::rend(vector), [&](const SegmentIrradiance & segment) {
-              rightSide.push_back(-properties.Tf * segment.E_b - properties.Rf * segment.E_f);
-          });
+        // Iterating through the vector forward
+        std::for_each(std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
+            rightSide.push_back(-properties.Tf * segment.E_f - properties.Rb * segment.E_b);
+        });
 
         // Solve the system and get the solution vector
         std::vector<double> solution = solveSystem(radiancesMatrix, rightSide);
@@ -286,19 +294,17 @@ namespace SingleLayerOptics
             solution.erase(solution.begin() + n, solution.begin() + n + 2);
         }
 
-        // Conditionally reverse parts of the solution vector based on the direction
-        if(solution.size() > n)
+        // Switch the first and second halves of the solution
+        auto mid = solution.begin() + solution.size() / 2;
+        std::rotate(solution.begin(), mid, solution.end());
+
+        // Reverse radiances based on the incoming direction
+        if(incomingDirectionPositive)
         {
-            if(incomingDirectionPositive)
-            {
-                // Reverse the second part of the vector
-                std::reverse(solution.begin() + n, solution.end());
-            }
-            else
-            {
-                // Reverse the first part of the vector
-                std::reverse(solution.begin(), solution.begin() + n);
-            }
+            std::reverse(mid, solution.end());
+        } else
+        {
+            std::reverse(solution.begin(), mid);
         }
 
         return solution;

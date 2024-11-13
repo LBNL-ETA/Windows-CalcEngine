@@ -132,7 +132,6 @@ namespace SingleLayerOptics
     double CDirectionalDiffuseBSDFLayer::diffuseDistributionScalar(size_t, size_t)
     {
         return 1;
-        //return 1 / ConstantsData::WCE_PI;
     }
 
     CHomogeneousDiffuseBSDFLayer::CHomogeneousDiffuseBSDFLayer(
