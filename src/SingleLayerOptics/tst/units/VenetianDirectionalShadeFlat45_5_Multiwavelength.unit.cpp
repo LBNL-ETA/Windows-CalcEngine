@@ -4,10 +4,36 @@
 #include "WCECommon.hpp"
 #include "WCESingleLayerOptics.hpp"
 
+#include "csvHandlers.hpp"
+#include "matrixTesting.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
+
+namespace
+{
+    void processWavelength(int index, BSDFIntegrator & aResults, const std::string & test_data_dir)
+    {
+        // Front transmittance
+        const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+        const std::string file_path_t =
+          test_data_dir + "/data/TestVenetianDirectionalShadeFlat45_5_Multiwavelength_aT_wl"
+          + std::to_string(index + 1) + ".csv";
+
+        const auto correctT = Helper::readMatrixFromCSV(file_path_t);
+        Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
+
+        // Front reflectance
+        const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+        const std::string file_path_r =
+          test_data_dir + "/data/TestVenetianDirectionalShadeFlat45_5_Multiwavelength_aRf_wl"
+          + std::to_string(index + 1) + ".csv";
+
+        const auto correctR = Helper::readMatrixFromCSV(file_path_r);
+        Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
+    }
+}   // namespace
 
 class TestVenetianDirectionalShadeFlat45_5_Multiwavelength : public testing::Test
 {
@@ -15,7 +41,7 @@ private:
     std::shared_ptr<CBSDFLayer> m_Layer;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
         // Solar range material
         const auto Tsol = 0.1;
@@ -55,7 +81,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<CBSDFLayer> getLayer()
+    [[nodiscard]] std::shared_ptr<CBSDFLayer> getLayer()
     {
         return m_Layer;
     };
@@ -82,143 +108,8 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
 
     EXPECT_EQ(correctSize, aResults.size());
 
-    ///////////////////////////////////////////////////////////////////////
-    ///  Wavelength number 1
-    ///////////////////////////////////////////////////////////////////////
-
-    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
-
-    std::vector<double> correctResults{
-      0.765126, 0.82303,  3.858763, 5.115548, 3.858763, 0.82303,   0.018057, 0.016208,  0.018057,
-      0.764539, 5.213146, 8.4662,   9.65615,  8.4662,   5.213146,  0.764539, 0.015238,  0.008733,
-      0.006421, 0.008733, 0.015238, 0.764539, 9.187354, 10.653438, 8.403912, 10.653438, 9.187354,
-      0.764539, 0.007329, 0.003926, 0.0073,   0.003926, 0.007329,  0.727829, 0.087112,  0.076552,
-      0.087112, 0.727829, 0.022256, 0.025271, 0.022256};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < aT.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
-    }
-
-    // Front reflectance
-    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.062481, 0.062481, 0.050534, 0.044039, 0.050534, 0.062481, 0.051705,
-                      0.045641, 0.051705, 0.062481, 0.041453, 0.023803, 0.017463, 0.023803,
-                      0.041453, 0.062481, 0.043127, 0.025427, 0.018836, 0.025427, 0.043127,
-                      0.062481, 0.019953, 0.00258,  0.004763, 0.00258,  0.019953, 0.062481,
-                      0.02144,  0.00606,  0.012158, 0.00606,  0.02144,  0.062481, 0.015473,
-                      0.016219, 0.015473, 0.062481, 0.028455, 0.023923, 0.028455};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-    for(size_t i = 0; i < aRf.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-6);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    ///  Wavelength number 2
-    ///////////////////////////////////////////////////////////////////////
-
-    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
-
-    correctResults = {0.773301, 0.831205, 3.866507,  5.12286,  3.866507,  0.831205, 0.02364,
-                      0.021315, 0.02364,  0.772715,  5.220243, 8.471139,  9.66001,  8.471139,
-                      5.220243, 0.772715, 0.019807,  0.011125, 0.008304,  0.011125, 0.019807,
-                      0.772715, 9.191658, 10.656879, 8.411225, 10.656879, 9.191658, 0.772715,
-                      0.009411, 0.005181, 0.009987,  0.005181, 0.009411,  0.736005, 0.112693,
-                      0.117241, 0.112693, 0.736005,  0.038759, 0.062333,  0.038759};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < aT.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
-    }
-
-    // Front reflectance
-    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.052808, 0.052808, 0.042238, 0.036573, 0.042238, 0.052808, 0.043426,
-                      0.038201, 0.043426, 0.052808, 0.034369, 0.019507, 0.014249, 0.019507,
-                      0.034369, 0.052808, 0.036062, 0.021126, 0.015614, 0.021126, 0.036062,
-                      0.052808, 0.016309, 0.00468,  0.008954, 0.00468,  0.016309, 0.052808,
-                      0.017788, 0.006875, 0.013618, 0.006875, 0.017788, 0.052808, 0.010391,
-                      0.010503, 0.010391, 0.052808, 0.018264, 0.01511,  0.018264};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-    for(size_t i = 0; i < aRf.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-6);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    ///  Wavelength number 3
-    ///////////////////////////////////////////////////////////////////////
-
-    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
-
-    correctResults = {0.765126, 0.82303,  3.858763,  5.115548, 3.858763,  0.82303,  0.018057,
-                      0.016208, 0.018057, 0.764539,  5.213146, 8.4662,    9.65615,  8.4662,
-                      5.213146, 0.764539, 0.015238,  0.008733, 0.006421,  0.008733, 0.015238,
-                      0.764539, 9.187354, 10.653438, 8.403912, 10.653438, 9.187354, 0.764539,
-                      0.007329, 0.003926, 0.0073,    0.003926, 0.007329,  0.727829, 0.087112,
-                      0.076552, 0.087112, 0.727829,  0.022256, 0.025271,  0.022256};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < aT.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
-    }
-
-    // Front reflectance
-    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.062481, 0.062481, 0.050534, 0.044039, 0.050534, 0.062481, 0.051705,
-                      0.045641, 0.051705, 0.062481, 0.041453, 0.023803, 0.017463, 0.023803,
-                      0.041453, 0.062481, 0.043127, 0.025427, 0.018836, 0.025427, 0.043127,
-                      0.062481, 0.019953, 0.00258,  0.004763, 0.00258,  0.019953, 0.062481,
-                      0.02144,  0.00606,  0.012158, 0.00606,  0.02144,  0.062481, 0.015473,
-                      0.016219, 0.015473, 0.062481, 0.028455, 0.023923, 0.028455};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-    for(size_t i = 0; i < aRf.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-6);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    ///  Wavelength number 4
-    ///////////////////////////////////////////////////////////////////////
-
-    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
-
-    correctResults = {0.765126, 0.82303,  3.858763,  5.115548, 3.858763,  0.82303,  0.018057,
-                      0.016208, 0.018057, 0.764539,  5.213146, 8.4662,    9.65615,  8.4662,
-                      5.213146, 0.764539, 0.015238,  0.008733, 0.006421,  0.008733, 0.015238,
-                      0.764539, 9.187354, 10.653438, 8.403912, 10.653438, 9.187354, 0.764539,
-                      0.007329, 0.003926, 0.0073,    0.003926, 0.007329,  0.727829, 0.087112,
-                      0.076552, 0.087112, 0.727829,  0.022256, 0.025271,  0.022256};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < aT.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
-    }
-
-    // Front reflectance
-    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.062481, 0.062481, 0.050534, 0.044039, 0.050534, 0.062481, 0.051705,
-                      0.045641, 0.051705, 0.062481, 0.041453, 0.023803, 0.017463, 0.023803,
-                      0.041453, 0.062481, 0.043127, 0.025427, 0.018836, 0.025427, 0.043127,
-                      0.062481, 0.019953, 0.00258,  0.004763, 0.00258,  0.019953, 0.062481,
-                      0.02144,  0.00606,  0.012158, 0.00606,  0.02144,  0.062481, 0.015473,
-                      0.016219, 0.015473, 0.062481, 0.028455, 0.023923, 0.028455};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-    for(size_t i = 0; i < aRf.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-6);
-    }
+    processWavelength(0, aResults[0], TEST_DATA_DIR);
+    processWavelength(1, aResults[1], TEST_DATA_DIR);
+    processWavelength(2, aResults[2], TEST_DATA_DIR);
+    processWavelength(3, aResults[3], TEST_DATA_DIR);
 }

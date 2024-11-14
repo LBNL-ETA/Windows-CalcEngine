@@ -4,7 +4,7 @@
 
 namespace Helper
 {
-    void writeVectorToCSV(const std::vector<std::vector<double>> & data,
+    void writeMatrixToCSV(const std::vector<std::vector<double>> & data,
                           const std::string & filename)
     {
         std::ofstream file(filename);
@@ -30,7 +30,7 @@ namespace Helper
         file.close();
     }
 
-    std::vector<std::vector<double>> readVectorFromCSV(const std::string & filename)
+    std::vector<std::vector<double>> readMatrixFromCSV(const std::string & filename)
     {
         std::ifstream file(filename);
         if(!file.is_open())

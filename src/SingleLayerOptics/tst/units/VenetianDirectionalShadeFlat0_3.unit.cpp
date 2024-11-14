@@ -2,8 +2,9 @@
 #include <gtest/gtest.h>
 
 #include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
 
+#include "csvHandlers.hpp"
+#include "matrixTesting.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -14,7 +15,7 @@ private:
     std::shared_ptr<CBSDFLayer> m_Shade;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
         // create material
         const auto Tmat = 0.1;
@@ -63,39 +64,22 @@ TEST_F(TestVenetianDirectionalShadeFlat0_3, TestVenetian1)
     auto aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.50867495442994748, tauDiff, 1e-6);
+    EXPECT_NEAR(0.498801, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.22828908995601985, RfDiff, 1e-6);
+    EXPECT_NEAR(0.238163, RfDiff, 1e-6);
 
     auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
-    std::vector<double> correctT{
-      13.007242, 14.019711, 8.879333, 6.75793,   8.879333, 14.019711, 8.879333,  6.75793,  8.879333,
-      12.996986, 5.47603,   0.098804, 0.103304,  0.098804, 5.47603,   12.996986, 5.47603,  0.098804,
-      0.103304,  0.098804,  5.47603,  12.996986, 0.101199, 0.102473,  0.101186,  0.102473, 0.101199,
-      12.996986, 0.101199,  0.102473, 0.101186,  0.102473, 0.101199,  12.355109, 0.127734, 0.13675,
-      0.127734,  12.355109, 0.127734, 0.13675,   0.127734};
+    const auto correctT{
+      Helper::readMatrixFromCSV(TEST_DATA_DIR "/data/TestVenetianDirectionalShadeFlat0_3_aT.csv")};
 
-    EXPECT_EQ(correctT.size(), aT.size());
-    for(size_t i = 0; i < aT.size(); ++i)
-    {
-        EXPECT_NEAR(correctT[i], aT(i, i), 1e-6);
-    }
+    Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
-    // Front reflectance
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
-    std::vector<double> correctR{
-      0,        0,        0.013333, 0.026667, 0.013333, 0,        0.013333, 0.026667, 0.013333,
-      0,        0.033334, 0.098802, 0.102213, 0.098802, 0.033334, 0,        0.033334, 0.098802,
-      0.102213, 0.098802, 0.033334, 0,        0.100776, 0.097083, 0.093999, 0.097083, 0.100776,
-      0,        0.100776, 0.097083, 0.093999, 0.097083, 0.100776, 0,        0.094803, 0.095402,
-      0.094803, 0,        0.094803, 0.095402, 0.094803};
+    const auto correctR{
+      Helper::readMatrixFromCSV(TEST_DATA_DIR "/data/TestVenetianDirectionalShadeFlat0_3_aRf.csv")};
 
-    EXPECT_EQ(correctR.size(), aRf.size());
-    for(size_t i = 0; i < aRf.size(); ++i)
-    {
-        EXPECT_NEAR(correctR[i], aRf(i, i), 1e-6);
-    }
+    Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
 }

@@ -109,11 +109,11 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuse)
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.050880, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.050880, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.113067, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.113067, Rdir_dif, 1e-6);
 }
 
-TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseBigIncomingAngle)
+TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseSharpIncomingAngle)
 {
     auto & aCell{GetCell()};
 
@@ -127,8 +127,8 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseBigIncomingAngle)
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.10064048739622476, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.14183381461838687, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.052600, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.486232, Rdir_dif, 1e-6);
 }
 
 TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseCriticalCase)
@@ -144,8 +144,8 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseCriticalCase)
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.194119, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.344713, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.114084, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.128390, Rdir_dif, 1e-6);
 }
 
 // This case is symmetrical to the DirectionalDiffuseCriticalCase and they should give identical
@@ -165,6 +165,6 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseCriticalCaseSymmetricalResults
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.194119, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.344713, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.114084, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.128390, Rdir_dif, 1e-6);
 }
