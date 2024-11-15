@@ -276,35 +276,6 @@ namespace SingleLayerOptics
         return B;
     }
 
-    std::vector<double>
-      directToDiffuseSlatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
-                                   const SlatSegmentsMesh & slats,
-                                   const LayerProperties & properties)
-    {
-        size_t numSlats = slatIrradiances.size();
-        std::vector<double> aRadiances(2 * numSlats - 2);
-        for(size_t i = 0; i < numSlats; ++i)
-        {
-            if(i == 0)
-            {
-                aRadiances[slats.surfaceIndexes.backSideMeshIndex[i]] = 1;
-            }
-            else if(i == numSlats - 1)
-            {
-                aRadiances[slats.surfaceIndexes.frontSideMeshIndex[i - 1]] = slatIrradiances[i].E_f;
-            }
-            else
-            {
-                aRadiances[slats.surfaceIndexes.backSideMeshIndex[i]] =
-                  properties.Tf * slatIrradiances[i].E_f + properties.Rb * slatIrradiances[i].E_b;
-                aRadiances[slats.surfaceIndexes.frontSideMeshIndex[i - 1]] =
-                  properties.Tb * slatIrradiances[i].E_b + properties.Rf * slatIrradiances[i].E_f;
-            }
-        }
-
-        return aRadiances;
-    }
-
     namespace Helper
     {
         std::vector<BeamSegmentView>
