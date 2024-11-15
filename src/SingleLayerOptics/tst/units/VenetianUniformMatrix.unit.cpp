@@ -182,7 +182,7 @@ TEST_F(TestVenetianUniformMatrix, Configuration1_T0_R0_1_Slat0_nSegments5_Rise3)
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv",
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv",
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.1_Slat=0_nSegments=5_Rise=3.csv",
-        true
+        false
     );
 }
 
@@ -197,7 +197,7 @@ TEST_F(TestVenetianUniformMatrix, Configuration2_T0_R0_15_Slat45_nSegments5_Rise
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRf_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixTb_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
         TEST_DATA_DIR "/data/TestVenetianUniformMatrixRb_T=0_R=0.15_Slat=45_nSegments=5_Rise=5.csv",
-        true
+        false
     );
 }
 

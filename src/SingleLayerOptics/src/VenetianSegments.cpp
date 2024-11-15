@@ -120,7 +120,7 @@ namespace SingleLayerOptics
 
     namespace Helper
     {
-        // In case of outgoing front and incoming back, unit vector need to be inversed.
+        // In case of outgoing front and incoming back, unit vector need to be inverse.
         Viewer::CSegment2D unitVector(const CBeamDirection & t_Direction,
                                       const BSDFDirection t_BSDFDirection,
                                       const Side t_Side)
@@ -156,17 +156,9 @@ namespace SingleLayerOptics
         double aResult = 0;
         for(size_t i = 0; i < slatRadiances.size(); ++i)
         {
-            const auto & segment = slats[i];
-
-            auto testRadiance = slatRadiances[i];
-            auto testVisibleFraction = visibleFraction[i];
-            auto testLength = segment.length();
-            auto testSurfaceNormal = segment.surfaceUnitNormal();
-            auto testDotProduct = segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint());
-
             aResult +=
-              visibleFraction[i] * slatRadiances[i] * segment.length()
-              * std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));
+              visibleFraction[i] * slatRadiances[i] * slats[i].length()
+              * std::abs(slats[i].surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));
         }
 
         return aResult
