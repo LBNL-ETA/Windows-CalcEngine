@@ -158,6 +158,12 @@ namespace SingleLayerOptics
         {
             const auto & segment = slats[i];
 
+            auto testRadiance = slatRadiances[i];
+            auto testVisibleFraction = visibleFraction[i];
+            auto testLength = segment.length();
+            auto testSurfaceNormal = segment.surfaceUnitNormal();
+            auto testDotProduct = segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint());
+
             aResult +=
               visibleFraction[i] * slatRadiances[i] * segment.length()
               * std::abs(segment.surfaceUnitNormal().dotProduct(outgoingUnitVector.endPoint()));

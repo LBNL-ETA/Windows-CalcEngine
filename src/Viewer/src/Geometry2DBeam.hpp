@@ -39,6 +39,15 @@ namespace Viewer
     // CDirect2DBeam
     ////////////////////////////////////////////////////////////////////////////////////////
 
+    // This is enumerator that will indicate from which side beam is coming.
+    // It is important for the case of curved slats where beam algorithm will
+    // intersect multiple segments.
+    enum class BeamPosition
+    {
+        Inside,
+        Outside
+    };
+
     // Keeps information about single beam and segments that are intersected with it
     class CDirect2DBeam
     {
@@ -52,7 +61,7 @@ namespace Viewer
 
         // Check if passed segment is part of the beam
         [[nodiscard]] std::optional<CViewSegment2D>
-          getClosestCommonSegment(const CDirect2DBeam & t_Beam) const;
+          getClosestCommonSegment(const CDirect2DBeam & t_Beam, BeamPosition beamPosition) const;
 
         [[nodiscard]] double cosAngle(const CViewSegment2D & t_Segment) const;
 
@@ -85,7 +94,8 @@ namespace Viewer
         void checkSegment(const CViewSegment2D & t_Segment);
 
         // Return segment hit by the ray
-        [[nodiscard]] std::optional<CViewSegment2D> closestSegmentHit() const;
+        [[nodiscard]] std::optional<CViewSegment2D>
+          closestSegmentHit(BeamPosition beamPosition) const;
 
         [[nodiscard]] double cosAngle(const CViewSegment2D & t_Segment) const;
 
@@ -98,7 +108,7 @@ namespace Viewer
     // CDirect2DRayResult
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    long long int keyFromProfileAngle(double angle);
+    long long int keyFromProfileAngle(double angle, BeamPosition beamPosition);
 
     // Keeps result of beam ViewFactors. It is expensive operation to recalculate them every time
     // so this will just save results for the next call
@@ -137,12 +147,12 @@ namespace Viewer
         void appendGeometry2D(const CGeometry2D & t_Geometry2D);
 
         // Beam view factors for given profile angle
-        std::vector<BeamViewFactor> beamViewFactors(double t_ProfileAngle);
+        std::vector<BeamViewFactor> beamViewFactors(double t_ProfileAngle, BeamPosition beamPosition);
 
         // Direct to direct transmitted beam component
-        double directToDirect(double t_ProfileAngle);
+        double directToDirect(double t_ProfileAngle, BeamPosition beamPosition);
 
-        void precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles);
+        void precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles, BeamPosition beamPosition);
 
     private:
         struct RayBoundaries
@@ -156,7 +166,7 @@ namespace Viewer
             [[nodiscard]] bool isInRay(CPoint2D const & t_Point) const;
         };
 
-        CDirect2DRaysResult calculateAllProperties(double t_ProfileAngle);
+        CDirect2DRaysResult calculateAllProperties(double t_ProfileAngle, BeamPosition beamPosition);
 
         // Finds lower and upper ray of every enclosure in the system
         RayBoundaries findRayBoundaries(double t_ProfileAngle);
@@ -167,18 +177,19 @@ namespace Viewer
 
         // Calculate beam view factors
         CDirect2DRaysResult calculateBeamProperties(double t_ProfileAngle,
+                                                    BeamPosition beamPosition,
                                                     std::vector<CDirect2DRay> & rays);
 
 
         [[nodiscard]] CViewSegment2D createSubBeam(CPoint2D const & t_Point,
-                                                   const double t_ProfileAngle) const;
+                                                   double t_ProfileAngle) const;
 
         FenestrationCommon::Side m_Side;
 
         std::vector<CGeometry2D> m_Geometries2D;
 
         std::map<long long, CDirect2DRaysResult> m_RayResults;
-        void checkForProfileAngle(double t_ProfileAngle);
+        void checkForProfileAngle(double t_ProfileAngle, BeamPosition beamPosition);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////
