@@ -108,8 +108,8 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
 
     EXPECT_EQ(correctSize, aResults.size());
 
-    processWavelength(0, aResults[0], TEST_DATA_DIR);
-    processWavelength(1, aResults[1], TEST_DATA_DIR);
-    processWavelength(2, aResults[2], TEST_DATA_DIR);
-    processWavelength(3, aResults[3], TEST_DATA_DIR);
+    processWavelength(0, aResults[0], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(1, aResults[1], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(2, aResults[2], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(3, aResults[3], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
 }

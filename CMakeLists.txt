@@ -8,6 +8,8 @@ set(target_name ${PROJECT_NAME})
 
 set (CMAKE_CXX_STANDARD 17)
 
+# Add a new option to force single project compilation
+option(FORCE_SINGLE_PROJECT "Force compilation as a single project, regardless of parent" OFF)
 option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
 
 if(USE_PARALLEL_ALGORITHMS)
@@ -21,9 +23,14 @@ include( cmake/WCECompilerFlags.cmake )
 # google test will not be created by this project if this is not main project. Main project is expected to handle google test.
 get_directory_property(hasParent PARENT_DIRECTORY)
 
-if(hasParent)
+if(hasParent OR FORCE_SINGLE_PROJECT)
   set( BUILD_WCE_TESTING OFF )
   set( DOWNLOAD_GTEST OFF )
+
+  if(FORCE_SINGLE_PROJECT) # Tests are available for single project that does not have parent
+	set( BUILD_WCE_TESTING ON )
+	set( DOWNLOAD_GTEST ON )
+  endif()
   #if( BUILD_TESTING STREQUAL ON ) # EnergyPlus testing is ON
   #  set( BUILD_WCE_TESTING ON )
   #endif()
@@ -165,6 +172,10 @@ else()
 
   if( BUILD_WCE_TESTING )
   	include_directories( src/helper )
+  	# Collect helper files
+  	file( GLOB helper_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/helper/*.hpp" "src/helper/*.cpp")
+  	list( APPEND test_src ${helper_test_src} )
+
 	if( ${BUILD_WCE_COMMON} )
   		include_directories( src/Common/include )
   		file( GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Common/tst/units/*.cpp" )
@@ -210,6 +221,10 @@ else()
     endif()
     
     CREATE_TEST_TARGETS_WCE( ${target_name} "${test_src}" "" )
+
+    # Set test data directory
+  	set(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "${CMAKE_CURRENT_SOURCE_DIR}/src/SingleLayerOptics/tst")
+  	target_compile_definitions(${target_name}_tests PRIVATE TEST_DATA_DIR_SINGLE_LAYER_OPTICS="${TEST_DATA_DIR_SINGLE_LAYER_OPTICS}")
   endif()
   
 endif()

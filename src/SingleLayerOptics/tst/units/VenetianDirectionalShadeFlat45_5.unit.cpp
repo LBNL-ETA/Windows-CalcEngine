@@ -73,7 +73,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5, TestVenetian1)
     const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
     const auto correctT{Helper::readMatrixFromCSV(
-      TEST_DATA_DIR "/data/TestVenetianDirectionalShadeFlat45_5_aT.csv")};
+      TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat45_5_aT.csv")};
 
     Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
@@ -81,7 +81,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5, TestVenetian1)
     const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
     const auto correctR{Helper::readMatrixFromCSV(
-      TEST_DATA_DIR "/data/TestVenetianDirectionalShadeFlat45_5_aRf.csv")};
+      TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat45_5_aRf.csv")};
 
     Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
 }

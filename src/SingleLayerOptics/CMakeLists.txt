@@ -47,8 +47,8 @@ if( BUILD_WCE_TESTING )
   CREATE_TEST_TARGETS_WCE( ${target_name} "${test_src}" "" )
 
   # Set test data directory
-  set(TEST_DATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tst")
-  target_compile_definitions(${target_name}_tests PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
+  set(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "${CMAKE_CURRENT_SOURCE_DIR}/tst")
+  target_compile_definitions(${target_name}_tests PRIVATE TEST_DATA_DIR_SINGLE_LAYER_OPTICS="${TEST_DATA_DIR_SINGLE_LAYER_OPTICS}")
 endif()
 
 warning_level_update_wce()

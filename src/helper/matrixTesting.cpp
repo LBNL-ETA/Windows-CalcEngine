@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "matrixTesting.hpp"
 
 namespace Helper
