@@ -76,46 +76,15 @@ namespace SingleLayerOptics
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_IncomingDirection,
                                           const CBeamDirection & t_OutgoingDirection)
     {
-        if(!m_DirectToDirectSlatIrradiances.count(t_IncomingDirection))
-        {
-            m_DirectToDirectSlatIrradiances[t_IncomingDirection] =
-              directToDirectSlatIrradiances(t_IncomingDirection);
-        }
-
-        if(!m_DirectToDirectSlatRadiances.count(t_IncomingDirection))
-        {
-            m_DirectToDirectSlatRadiances[t_IncomingDirection] =
-              directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
-                                         slatsDiffuseRadiancesMatrix,
-                                         m_LayerProperties);
-        }
-
-        // Radiance results always CW starting from the left segment on the upper slat
-        const auto radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
-
-        return calculateOutgoingRadiance(Side::Back, t_OutgoingDirection, radiance);
+        return calculateOutgoingRadiance(
+          Side::Back, t_OutgoingDirection, directToDirectSlatRadiances(t_IncomingDirection));
     }
 
     double CVenetianCellEnergy::R_dir_dir(const CBeamDirection & t_IncomingDirection,
                                           const CBeamDirection & t_OutgoingDirection)
     {
-        if(!m_DirectToDirectSlatIrradiances.count(t_IncomingDirection))
-        {
-            m_DirectToDirectSlatIrradiances[t_IncomingDirection] =
-              directToDirectSlatIrradiances(t_IncomingDirection);
-        }
-
-        if(!m_DirectToDirectSlatRadiances.count(t_IncomingDirection))
-        {
-            m_DirectToDirectSlatRadiances[t_IncomingDirection] =
-              directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
-                                         slatsDiffuseRadiancesMatrix,
-                                         m_LayerProperties);
-        }
-
-        const auto & radiance = m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
-
-        return calculateOutgoingRadiance(Side::Front, t_OutgoingDirection, radiance);
+        return calculateOutgoingRadiance(
+          Side::Front, t_OutgoingDirection, directToDirectSlatRadiances(t_IncomingDirection));
     }
 
     namespace Helper
@@ -258,10 +227,9 @@ namespace SingleLayerOptics
         rightSide.reserve(radiancesMatrix.size() + 2 * vector.size() + 2);
 
         // Iterating through the vector backward
-        std::for_each(
-          std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
-              rightSide.push_back(-properties.Tb * segment.E_b - properties.Rf * segment.E_f);
-          });
+        std::for_each(std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
+            rightSide.push_back(-properties.Tb * segment.E_b - properties.Rf * segment.E_f);
+        });
 
         // Indoor is ignored and set to zero
         rightSide.push_back(0);
@@ -568,6 +536,27 @@ namespace SingleLayerOptics
         }
 
         return result;
+    }
+
+    std::vector<double>
+      CVenetianCellEnergy::directToDirectSlatRadiances(const CBeamDirection & t_IncomingDirection)
+    {
+        if(!m_DirectToDirectSlatIrradiances.count(t_IncomingDirection))
+        {
+            m_DirectToDirectSlatIrradiances[t_IncomingDirection] =
+              directToDirectSlatIrradiances(t_IncomingDirection);
+        }
+
+        if(!m_DirectToDirectSlatRadiances.count(t_IncomingDirection))
+        {
+            m_DirectToDirectSlatRadiances[t_IncomingDirection] =
+              directUniformSlatRadiances(m_DirectToDirectSlatIrradiances.at(t_IncomingDirection),
+                                         slatsDiffuseRadiancesMatrix,
+                                         m_LayerProperties);
+        }
+
+        // Radiance results always CW starting from the left segment on the upper slat
+        return m_DirectToDirectSlatRadiances.at(t_IncomingDirection);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
