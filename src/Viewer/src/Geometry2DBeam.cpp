@@ -56,29 +56,31 @@ namespace Viewer
     }
 
     std::optional<CViewSegment2D>
-      CDirect2DBeam::getClosestCommonSegment(const CDirect2DBeam & t_Beam) const
+      CDirect2DBeam::getClosestCommonSegment(const CDirect2DBeam & t_Beam,
+                                             const BeamPosition beamPosition) const
     {
         std::optional<CViewSegment2D> aSegment;
+
+        // Define the comparison function based on the beam position
+        auto compare = [beamPosition](double x1, double x2) {
+            return beamPosition == BeamPosition::Outside ? x1 > x2 : x1 < x2;
+        };
+
         for(const auto & thisSegment : m_Segments)
         {
             if(t_Beam.isSegmentIn(thisSegment))
             {
-                if(!aSegment.has_value())
+                if(!aSegment.has_value()
+                   || compare(aSegment->centerPoint().x(), thisSegment.centerPoint().x()))
                 {
                     aSegment = thisSegment;
-                }
-                else
-                {
-                    if(aSegment->centerPoint().x() > thisSegment.centerPoint().x())
-                    {
-                        aSegment = thisSegment;
-                    }
                 }
             }
         }
 
         return aSegment;
     }
+
 
     double CDirect2DBeam::cosAngle(const CViewSegment2D & t_Segment) const
     {
@@ -104,13 +106,11 @@ namespace Viewer
     ////////////////////////////////////////////////////////////////////////////////////////
 
     CDirect2DRay::CDirect2DRay(const CDirect2DBeam & t_Beam1, const CDirect2DBeam & t_Beam2) :
-        m_Beam1(t_Beam1),
-        m_Beam2(t_Beam2)
+        m_Beam1(t_Beam1), m_Beam2(t_Beam2)
     {}
 
     CDirect2DRay::CDirect2DRay(const CViewSegment2D & t_Ray1, const CViewSegment2D & t_Ray2) :
-        m_Beam1(t_Ray1),
-        m_Beam2(t_Ray2)
+        m_Beam1(t_Ray1), m_Beam2(t_Ray2)
     {}
 
     double CDirect2DRay::rayNormalHeight() const
@@ -125,9 +125,10 @@ namespace Viewer
     }
 
     // Return segment hit by the ray
-    std::optional<CViewSegment2D> CDirect2DRay::closestSegmentHit() const
+    std::optional<CViewSegment2D>
+      CDirect2DRay::closestSegmentHit(const BeamPosition beamPosition) const
     {
-        return m_Beam1.getClosestCommonSegment(m_Beam2);
+        return m_Beam1.getClosestCommonSegment(m_Beam2, beamPosition);
     }
 
     double CDirect2DRay::cosAngle(const CViewSegment2D & t_Segment) const
@@ -174,32 +175,36 @@ namespace Viewer
         m_Geometries2D.push_back(t_Geometry2D);
     }
 
-    std::vector<BeamViewFactor> CDirect2DRays::beamViewFactors(double const t_ProfileAngle)
+    std::vector<BeamViewFactor> CDirect2DRays::beamViewFactors(double const t_ProfileAngle,
+                                                               const BeamPosition beamPosition)
     {
-        checkForProfileAngle(t_ProfileAngle);
-        return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).beamViewFactors();
+        checkForProfileAngle(t_ProfileAngle, beamPosition);
+        return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle, beamPosition)).beamViewFactors();
     }
 
-    double CDirect2DRays::directToDirect(double const t_ProfileAngle)
+    double CDirect2DRays::directToDirect(double const t_ProfileAngle,
+                                         const BeamPosition beamPosition)
     {
-        checkForProfileAngle(t_ProfileAngle);
-        return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle)).directToDirect();
+        checkForProfileAngle(t_ProfileAngle, beamPosition);
+        return m_RayResults.at(keyFromProfileAngle(t_ProfileAngle, beamPosition)).directToDirect();
     }
 
-    void CDirect2DRays::checkForProfileAngle(const double t_ProfileAngle)
+    void CDirect2DRays::checkForProfileAngle(const double t_ProfileAngle,
+                                             const BeamPosition beamPosition)
     {   // Need to have this in case the profile angle is not precalculated
-        if(!m_RayResults.count(keyFromProfileAngle(t_ProfileAngle)))
+        if(!m_RayResults.count(keyFromProfileAngle(t_ProfileAngle, beamPosition)))
         {
-            m_RayResults[keyFromProfileAngle(t_ProfileAngle)] =
-              calculateAllProperties(t_ProfileAngle);
+            m_RayResults[keyFromProfileAngle(t_ProfileAngle, beamPosition)] =
+              calculateAllProperties(t_ProfileAngle, beamPosition);
         }
     }
 
-    CDirect2DRaysResult CDirect2DRays::calculateAllProperties(double const t_ProfileAngle)
+    CDirect2DRaysResult CDirect2DRays::calculateAllProperties(double const t_ProfileAngle,
+                                                              const BeamPosition beamPosition)
     {
         auto boundaries{findRayBoundaries(t_ProfileAngle)};
         auto rays{findInBetweenRays(t_ProfileAngle, boundaries)};
-        return calculateBeamProperties(t_ProfileAngle, rays);
+        return calculateBeamProperties(t_ProfileAngle, beamPosition, rays);
     }
 
     CDirect2DRays::RayBoundaries CDirect2DRays::findRayBoundaries(double const t_ProfileAngle)
@@ -286,9 +291,10 @@ namespace Viewer
     }
 
     CDirect2DRaysResult CDirect2DRays::calculateBeamProperties(double const t_ProfileAngle,
+                                                               const BeamPosition beamPosition,
                                                                std::vector<CDirect2DRay> & rays)
     {
-        // First check all segments and calculte total ray height
+        // First check all segments and calculate total ray height
         auto totalHeight = 0.0;
         for(auto & beamRay : rays)
         {
@@ -315,13 +321,13 @@ namespace Viewer
             auto projectedBeamHeight = beamRay.cosAngle(aNormalBeamDirection);
             auto viewFactor = 0.0;
             auto percentHit = 0.0;
-            auto closestSegment = beamRay.closestSegmentHit();
+            auto closestSegment = beamRay.closestSegmentHit(beamPosition);
             for(size_t e = 0; e < m_Geometries2D.size(); ++e)
             {
                 for(size_t s = 0; s < m_Geometries2D[e].segments().size(); ++s)
                 {
                     auto currentSegment = m_Geometries2D[e].segments()[s];
-                    if(currentSegment == beamRay.closestSegmentHit())
+                    if(currentSegment == beamRay.closestSegmentHit(beamPosition))
                     {
                         viewFactor = currentHeight / totalHeight;
                         projectedBeamHeight = projectedBeamHeight * currentHeight;
@@ -364,7 +370,7 @@ namespace Viewer
     CViewSegment2D CDirect2DRays::createSubBeam(CPoint2D const & t_Point,
                                                 double const t_ProfileAngle) const
     {
-        auto const deltaX = 10.0;
+        auto const deltaX = 100.0;
         auto const tanPhi = std::tan(radians(t_ProfileAngle));
         auto yStart = t_Point.y() - t_Point.x() * tanPhi;
         auto yEnd = yStart + deltaX * tanPhi;
@@ -374,11 +380,13 @@ namespace Viewer
         return {startPoint, endPoint};
     }
 
-    void CDirect2DRays::precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles)
+    void CDirect2DRays::precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles,
+                                                     const BeamPosition beamPosition)
     {
         for(const auto & angle : t_ProfileAngles)
         {
-            m_RayResults[keyFromProfileAngle(angle)] = calculateAllProperties(angle);
+            m_RayResults[keyFromProfileAngle(angle, beamPosition)] =
+              calculateAllProperties(angle, beamPosition);
         }
     }
 
@@ -403,23 +411,36 @@ namespace Viewer
     std::vector<BeamViewFactor> CGeometry2DBeam::beamViewFactors(double const t_ProfileAngle,
                                                                  Side const t_Side)
     {
-        return m_Ray.at(t_Side).beamViewFactors(t_ProfileAngle);
+        const BeamPosition beamPosition =
+          t_Side == Side::Front ? BeamPosition::Outside : BeamPosition::Inside;
+        return m_Ray.at(t_Side).beamViewFactors(t_ProfileAngle, beamPosition);
     }
 
     double CGeometry2DBeam::directToDirect(double const t_ProfileAngle, Side const t_Side)
     {
-        return m_Ray.at(t_Side).directToDirect(t_ProfileAngle);
+        const BeamPosition beamPosition =
+          t_Side == Side::Front ? BeamPosition::Outside : BeamPosition::Inside;
+        return m_Ray.at(t_Side).directToDirect(t_ProfileAngle, beamPosition);
     }
 
     void CGeometry2DBeam::precalculateForProfileAngles(FenestrationCommon::Side side,
                                                        const std::vector<double> & t_ProfileAngles)
     {
-        m_Ray.at(side).precalculateForProfileAngles(t_ProfileAngles);
+        const BeamPosition beamPosition =
+          side == Side::Front ? BeamPosition::Outside : BeamPosition::Inside;
+        m_Ray.at(side).precalculateForProfileAngles(t_ProfileAngles, beamPosition);
     }
 
-    long long int keyFromProfileAngle(double angle)
+    long long int keyFromProfileAngle(const double angle, const BeamPosition position)
     {
         constexpr auto precision{1e9};
-        return static_cast<long long>(angle * precision);
+        const auto angleKey = static_cast<long long>(angle * precision);
+
+        // Assign a unique multiplier for each direction
+        int positionKey = (position == BeamPosition::Inside) ? 1 : 2;
+
+        // Shift the angleKey to make space for positionKey and combine
+        return angleKey * 10 + positionKey;
     }
+
 }   // namespace Viewer

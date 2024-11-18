@@ -71,7 +71,9 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalViewFactors)
     auto Phi{270.0};
     CBeamDirection incomingDirection = CBeamDirection(Theta, Phi);
 
-    const auto Tdir_hem{aCell->viewFactors(FenestrationCommon::Side::Front, incomingDirection)};
+    const auto Tdir_hem{aCell->viewFactors(FenestrationCommon::Side::Front,
+                                           SingleLayerOptics::BSDFDirection::Incoming,
+                                           incomingDirection)};
 
     const std::vector<std::vector<double>> correct{
       {0, 0, 0, 0.321232, 0.216613, 0.216613},
@@ -107,11 +109,11 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuse)
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.050880, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.050880, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.113067, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.113067, Rdir_dif, 1e-6);
 }
 
-TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseBigIncomingAngle)
+TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseSharpIncomingAngle)
 {
     auto & aCell{GetCell()};
 
@@ -125,8 +127,8 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseBigIncomingAngle)
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.10064048739622476, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.14183381461838687, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.052600, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.486232, Rdir_dif, 1e-6);
 }
 
 TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseCriticalCase)
@@ -136,14 +138,14 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseCriticalCase)
     // Front side
     Side aSide = Side::Front;
     // CBeamDirection (Theta, Phi)
-    CBeamDirection incomingDirection = CBeamDirection({54, 240}); // incoming #30
-    CBeamDirection outgoingDirection = CBeamDirection({54, 300}); // outgoing #26
+    CBeamDirection incomingDirection = CBeamDirection({54, 240});   // incoming #30
+    CBeamDirection outgoingDirection = CBeamDirection({54, 300});   // outgoing #26
 
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.194119, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.344713, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.114084, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.128390, Rdir_dif, 1e-6);
 }
 
 // This case is symmetrical to the DirectionalDiffuseCriticalCase and they should give identical
@@ -157,12 +159,12 @@ TEST_F(TestVenetianCellFlat0_4, DirectionalDiffuseCriticalCaseSymmetricalResults
     Side aSide = Side::Front;
     // CBeamDirection (Theta, Phi)
 
-    CBeamDirection incomingDirection = CBeamDirection({54, 120}); // incoming #26
-    CBeamDirection outgoingDirection = CBeamDirection({54, 60}); // outgoing #30
+    CBeamDirection incomingDirection = CBeamDirection({54, 120});   // incoming #26
+    CBeamDirection outgoingDirection = CBeamDirection({54, 60});    // outgoing #30
 
     double Tdir_dif = aCell.T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell.R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.194119, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.344713, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.114084, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.128390, Rdir_dif, 1e-6);
 }

@@ -64,6 +64,6 @@ TEST_F(TestVenetianCellFlat0_1, TestVenetian1)
     double Tdir_dif = aCell->T_dir_dif(aSide, incomingDirection, outgoingDirection);
     double Rdir_dif = aCell->R_dir_dif(aSide, incomingDirection, outgoingDirection);
 
-    EXPECT_NEAR(0.034097, Tdir_dif, 1e-6);
-    EXPECT_NEAR(0.034097, Rdir_dif, 1e-6);
+    EXPECT_NEAR(0.0, Tdir_dif, 1e-6);
+    EXPECT_NEAR(0.0, Rdir_dif, 1e-6);
 }

@@ -49,8 +49,10 @@ namespace SingleLayerOptics
             const double aTau = aCell->T_dir_dif(aSide, incomingDirection, jDirection);
             const double aRho = aCell->R_dir_dif(aSide, incomingDirection, jDirection);
 
-            tau(outgoingDirectionIndex, incomingDirectionIndex) += aTau;
-            Rho(outgoingDirectionIndex, incomingDirectionIndex) += aRho;
+            tau(outgoingDirectionIndex, incomingDirectionIndex) +=
+              aTau * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
+            Rho(outgoingDirectionIndex, incomingDirectionIndex) +=
+              aRho * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
         }
     }
 
@@ -79,9 +81,11 @@ namespace SingleLayerOptics
                 auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
                 auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
                 tau(outgoingDirectionIndex, incomingDirectionIndex) +=
-                  aTau[j] * diffuseDistributionScalar(outgoingDirectionIndex);
+                  aTau[j]
+                  * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
                 rho(outgoingDirectionIndex, incomingDirectionIndex) +=
-                  Ref[j] * diffuseDistributionScalar(outgoingDirectionIndex);
+                  Ref[j]
+                  * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
             }
         }
     }
@@ -111,10 +115,11 @@ namespace SingleLayerOptics
 
             auto & tau = results.getMatrix(aSide, PropertySimple::T);
             auto & rho = results.getMatrix(aSide, PropertySimple::R);
+
             tau(outgoingDirectionIndex, incomingDirectionIndex) +=
-              aTau * diffuseDistributionScalar(outgoingDirectionIndex);
+              aTau * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
             rho(outgoingDirectionIndex, incomingDirectionIndex) +=
-              Ref * diffuseDistributionScalar(outgoingDirectionIndex);
+              Ref * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
         }
     }
 
@@ -124,9 +129,21 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
-    double CDirectionalDiffuseBSDFLayer::diffuseDistributionScalar(size_t)
+    double CDirectionalDiffuseBSDFLayer::diffuseDistributionScalar(size_t, size_t)
     {
-        return 1 / ConstantsData::WCE_PI;
+        return 1;
+    }
+
+    CHomogeneousDiffuseBSDFLayer::CHomogeneousDiffuseBSDFLayer(
+      const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+      const BSDFHemisphere & t_Hemisphere) :
+        CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
+    {}
+
+    double CHomogeneousDiffuseBSDFLayer::diffuseDistributionScalar(size_t incomingDirection, size_t)
+    {
+        const auto lambdas{m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
+        return 1 / (FenestrationCommon::WCE_PI - lambdas.at(incomingDirection));
     }
 
     CMatrixBSDFLayer::CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
@@ -134,7 +151,7 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
-    double CMatrixBSDFLayer::diffuseDistributionScalar(size_t outgoingDirection)
+    double CMatrixBSDFLayer::diffuseDistributionScalar(size_t, size_t outgoingDirection)
     {
         const auto lambdas{m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
         return 1 / lambdas.at(outgoingDirection);

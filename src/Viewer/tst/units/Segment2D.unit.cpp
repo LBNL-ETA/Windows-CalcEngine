@@ -30,7 +30,7 @@ TEST_F(TestSegment2D, Segment2DTest1)
     EXPECT_NEAR(0, angle, 1e-6);
 
     const auto surfaceNormal{aSegment.surfaceUnitNormal()};
-    const CPoint2D correctSurfaceNormal{0.0, -1.0};
+    const CPoint2D correctSurfaceNormal{0.0, 1.0};
 
     EXPECT_TRUE(correctSurfaceNormal == surfaceNormal);
 }
@@ -51,7 +51,7 @@ TEST_F(TestSegment2D, Segment2DTest2)
     EXPECT_NEAR(45, angle, 1e-6);
 
     const auto surfaceNormal{aSegment.surfaceUnitNormal()};
-    const CPoint2D correctSurfaceNormal{-0.7071067811865476, 0.7071067811865476};
+    const CPoint2D correctSurfaceNormal{0.7071067811865476, -0.7071067811865476};
 
     EXPECT_TRUE(correctSurfaceNormal == surfaceNormal);
 }
@@ -70,7 +70,7 @@ TEST_F(TestSegment2D, Segment2DTest3)
     EXPECT_NEAR(45, angle, 1e-6);
 
     const auto surfaceNormal{aSegment.surfaceUnitNormal()};
-    const CPoint2D correctSurfaceNormal{0.7071067811865476, -0.7071067811865476};
+    const CPoint2D correctSurfaceNormal{-0.7071067811865476, 0.7071067811865476};
 
     EXPECT_TRUE(correctSurfaceNormal == surfaceNormal);
 }
@@ -89,7 +89,7 @@ TEST_F(TestSegment2D, Segment2DTest4)
     EXPECT_NEAR(45, angle, 1e-6);
 
     const auto surfaceNormal{aSegment.surfaceUnitNormal()};
-    const CPoint2D correctSurfaceNormal{0.7071067811865476, -0.7071067811865476};
+    const CPoint2D correctSurfaceNormal{-0.7071067811865476, 0.7071067811865476};
 
     EXPECT_TRUE(correctSurfaceNormal == surfaceNormal);
 }

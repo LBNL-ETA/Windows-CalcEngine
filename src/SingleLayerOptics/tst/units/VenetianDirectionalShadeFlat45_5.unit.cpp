@@ -4,6 +4,8 @@
 #include "WCECommon.hpp"
 #include "WCESingleLayerOptics.hpp"
 
+#include "csvHandlers.hpp"
+#include "matrixTesting.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -14,7 +16,7 @@ private:
     std::shared_ptr<CBSDFLayer> m_Shade;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
         // create material
         const auto Tmat = 0.2;
@@ -63,40 +65,23 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5, TestVenetian1)
     BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.525207, tauDiff, 1e-6);
+    EXPECT_NEAR(0.386680, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.384905, RfDiff, 1e-6);
+    EXPECT_NEAR(0.3855669, RfDiff, 1e-6);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
 
-    std::vector<double> correctT{
-      0.836275, 0.894179, 3.926157, 5.179186, 3.926157, 0.894179, 0.074268, 0.066963, 0.074268,
-      0.835689, 5.274907, 8.509182, 9.689743, 8.509182, 5.274907, 0.835689, 0.062228, 0.03495,
-      0.026087, 0.03495,  0.062228, 0.835689, 9.224807, 10.68338, 8.467551, 10.68338, 9.224807,
-      0.835689, 0.029567, 0.016278, 0.031378, 0.016278, 0.029567, 0.798979, 0.354038, 0.368325,
-      0.354038, 0.798979, 0.121765, 0.195826, 0.121765};
+    const auto correctT{Helper::readMatrixFromCSV(
+      TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat45_5_aT.csv")};
 
-
-    EXPECT_EQ(correctT.size(), aT.size());
-    for(size_t i = 0; i < aT.size(); ++i)
-    {
-        EXPECT_NEAR(correctT[i], aT(i, i), 1e-6);
-    }
+    Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
     // Front reflectance
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
 
-    std::vector<double> correctR{
-      0.165903, 0.165903, 0.132696, 0.114899, 0.132696, 0.165903, 0.136429, 0.120012, 0.136429,
-      0.165903, 0.107974, 0.061285, 0.044767, 0.061285, 0.107974, 0.165903, 0.113293, 0.066369,
-      0.049053, 0.066369, 0.113293, 0.165903, 0.051239, 0.014704, 0.02813,  0.014704, 0.051239,
-      0.165903, 0.055884, 0.021599, 0.042784, 0.021599, 0.055884, 0.165903, 0.032645, 0.032998,
-      0.032645, 0.165903, 0.057379, 0.047471, 0.057379};
+    const auto correctR{Helper::readMatrixFromCSV(
+      TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat45_5_aRf.csv")};
 
-    EXPECT_EQ(correctR.size(), aRf.size());
-    for(size_t i = 0; i < aRf.size(); ++i)
-    {
-        EXPECT_NEAR(correctR[i], aRf(i, i), 1e-5);
-    }
+    Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
 }

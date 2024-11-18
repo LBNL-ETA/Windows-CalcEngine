@@ -106,18 +106,7 @@ namespace SingleLayerOptics
     std::vector<double>
       directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
                                  const FenestrationCommon::SquareMatrix & radiancesMatrix,
-                                 const LayerProperties & properties,
-                                 bool incomingDirectionPositive);
-
-    // Radiances for given incoming direction
-    std::vector<double>
-      directToDiffuseSlatRadiances(const std::vector<SegmentIrradiance> & slatIrradiances,
-                                   const SlatSegmentsMesh & slats,
-                                   const LayerProperties & layerProperties);
-
-    double radianceForOutgoingDirection(const CBeamDirection& t_OutgoingDirection,
-                                        const std::vector<double>& t_Radiances,
-                                        const std::vector<double> & percentageViews);
+                                 const LayerProperties & properties);
 
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
@@ -154,6 +143,8 @@ namespace SingleLayerOptics
         //! this vector will be 5)
         std::vector<SegmentIrradiance>
           directToDirectSlatIrradiances(const CBeamDirection & t_IncomingDirection);
+
+        std::vector<double> directToDirectSlatRadiances(const CBeamDirection & t_IncomingDirection);
 
         double calculateOutgoingRadiance(FenestrationCommon::Side side,
                                          const CBeamDirection & t_OutgoingDirection,

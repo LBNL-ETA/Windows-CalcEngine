@@ -116,8 +116,8 @@ namespace Viewer
             return {0, 0};
         }
 
-        const auto aX = m_EndPoint.x() - m_StartPoint.x();
-        const auto aY = m_EndPoint.y() - m_StartPoint.y();
+        const auto aX = m_StartPoint.x() - m_EndPoint.x();
+        const auto aY = m_StartPoint.y() - m_EndPoint.y();
 
         // Calculate normals
         auto normalX = -aY / length();

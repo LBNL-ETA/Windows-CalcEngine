@@ -34,10 +34,9 @@ namespace SingleLayerOptics
     ///  BSDFDirections
     /////////////////////////////////////////////////////////////////
 
-    BSDFDirections::BSDFDirections(const std::vector<BSDFDefinition> & t_Definitions,
-                                   const BSDFDirection t_Side) :
+    BSDFDirections::BSDFDirections(const std::vector<BSDFDefinition> & t_Definitions) :
         m_Patches(createBSDFPatches(
-          t_Side, getThetaAngles(t_Definitions), getNumberOfPhiAngles(t_Definitions))),
+          getThetaAngles(t_Definitions), getNumberOfPhiAngles(t_Definitions))),
         m_LambdaVector(getLambdaVector(m_Patches)),
         m_LambdaMatrix(setLambdaMatrix(m_LambdaVector))
     {}
@@ -65,8 +64,7 @@ namespace SingleLayerOptics
     }
 
     std::vector<CBSDFPatch>
-      BSDFDirections::createBSDFPatches(const BSDFDirection & t_Side,
-                                        const std::vector<double> & thetaAngles,
+      BSDFDirections::createBSDFPatches(const std::vector<double> & thetaAngles,
                                         const std::vector<size_t> & numPhiAngles)
     {
         std::vector<CBSDFPatch> patches;
@@ -82,10 +80,10 @@ namespace SingleLayerOptics
             const auto nPhis = numPhiAngles[thetaIndex - 1];
             CPhiLimits phiAngles(nPhis);
             auto phiLimits = phiAngles.getPhiLimits();
-            auto lowerPhi{correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[0])};
+            auto lowerPhi{correctPhiForOutgoingDirection(phiLimits[0])};
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
-                const auto upperPhi = correctPhiForOutgoingDireciton(t_Side, nPhis, phiLimits[j]);
+                const auto upperPhi = correctPhiForOutgoingDirection(phiLimits[j]);
                 AngleLimits currentPhiLimits(lowerPhi, upperPhi);
                 patches.emplace_back(currentThetaLimits, currentPhiLimits);
                 lowerPhi = upperPhi;
@@ -96,13 +94,9 @@ namespace SingleLayerOptics
         return patches;
     }
 
-    double BSDFDirections::correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
-                                                          const size_t nPhis,
-                                                          double currentPhi)
+    double BSDFDirections::correctPhiForOutgoingDirection(double currentPhi)
     {
-        double correctedPhi =
-          (t_Side == BSDFDirection::Outgoing && nPhis != 1) ? currentPhi + 180 : currentPhi;
-        return (correctedPhi > 360) ? correctedPhi - 360 : correctedPhi;
+        return (currentPhi > 360) ? currentPhi - 360 : currentPhi;
     }
 
 
@@ -222,8 +216,8 @@ namespace SingleLayerOptics
     std::map<BSDFDirection, BSDFDirections>
       BSDFHemisphere::generateBSDFDirections(const std::vector<BSDFDefinition> & t_Definitions)
     {
-        return {{BSDFDirection::Incoming, BSDFDirections(t_Definitions, BSDFDirection::Incoming)},
-                {BSDFDirection::Outgoing, BSDFDirections(t_Definitions, BSDFDirection::Outgoing)}};
+        return {{BSDFDirection::Incoming, BSDFDirections(t_Definitions)},
+                {BSDFDirection::Outgoing, BSDFDirections(t_Definitions)}};
     }
 
     std::vector<double> BSDFHemisphere::profileAngles(BSDFDirection t_Side) const

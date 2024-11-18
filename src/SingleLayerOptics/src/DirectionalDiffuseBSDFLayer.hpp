@@ -31,7 +31,7 @@ namespace SingleLayerOptics
                                                   size_t wavelengthIndex,
                                                   BSDFIntegrator & results) override;
 
-        virtual double diffuseDistributionScalar(size_t outgoingDirection) = 0;
+        virtual double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) = 0;
     };
 
     class CDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer
@@ -41,7 +41,17 @@ namespace SingleLayerOptics
                                      const BSDFHemisphere & t_Hemisphere);
 
     protected:
-        double diffuseDistributionScalar(size_t outgoingDirection) override;
+        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
+    };
+
+    class CHomogeneousDiffuseBSDFLayer : public CDirectionalBSDFLayer
+    {
+    public:
+        CHomogeneousDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+                                     const BSDFHemisphere & t_Hemisphere);
+
+    protected:
+        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
     };
 
     class CMatrixBSDFLayer : public CDirectionalBSDFLayer
@@ -51,7 +61,7 @@ namespace SingleLayerOptics
                          const BSDFHemisphere & t_Hemisphere);
 
     protected:
-        double diffuseDistributionScalar(size_t outgoingDirection) override;
+        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
     };
 
 }   // namespace SingleLayerOptics

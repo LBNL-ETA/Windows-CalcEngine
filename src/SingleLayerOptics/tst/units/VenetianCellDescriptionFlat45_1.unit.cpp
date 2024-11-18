@@ -3,14 +3,13 @@
 
 #include "WCEViewer.hpp"
 #include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
 
 
 using namespace SingleLayerOptics;
 using namespace Viewer;
 using namespace FenestrationCommon;
 
-class TestVenetianCellDescriptionFlat45 : public testing::Test
+class TestVenetianCellDescriptionFlat45_1 : public testing::Test
 {
 private:
     std::shared_ptr<CVenetianCellDescription> m_Cell;
@@ -39,7 +38,7 @@ public:
     // size_t numOfSlats() { return m_NumOfSlats; };
 };
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian1)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian1)
 {
     SCOPED_TRACE("Begin Test: Venetian cell (Flat, 45 degrees slats) - View Factors.");
 
@@ -66,7 +65,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian1)
     }
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian2)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian2)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (0, 0).");
@@ -80,7 +79,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian2)
     EXPECT_NEAR(0, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian3)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian3)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (45, 90).");
@@ -94,7 +93,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian3)
     EXPECT_NEAR(1, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian4)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian4)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (76.5, 90).");
@@ -108,7 +107,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian4)
     EXPECT_NEAR(0, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian5)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian5)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (76.5, 45).");
@@ -122,7 +121,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian5)
     EXPECT_NEAR(0, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian6)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian6)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 90).");
@@ -136,7 +135,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian6)
     EXPECT_NEAR(0.46771558343367653, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian7)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian7)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 60).");
@@ -150,7 +149,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian7)
     EXPECT_NEAR(0.72849686418372972, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian8)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian8)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 90).");
@@ -164,7 +163,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian8)
     EXPECT_NEAR(0.61327273437110064, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian9)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian9)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (54, 30).");
@@ -178,7 +177,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian9)
     EXPECT_NEAR(0.55903542711488330, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian10)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian10)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 60).");
@@ -192,7 +191,7 @@ TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian10)
     EXPECT_NEAR(0.47561567265428234, Tdir_dir, 1e-6);
 }
 
-TEST_F(TestVenetianCellDescriptionFlat45, TestVenetian11)
+TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian11)
 {
     SCOPED_TRACE(
       "Begin Test: Venetian cell (Flat, 45 degrees slats) - Direct-direct component (36, 30).");

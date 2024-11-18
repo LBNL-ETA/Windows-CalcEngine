@@ -10,7 +10,6 @@
 
 namespace SingleLayerOptics
 {
-
     class BSDFDefinition
     {
     public:
@@ -46,7 +45,7 @@ namespace SingleLayerOptics
     {
     public:
         BSDFDirections() = default;
-        BSDFDirections(const std::vector<BSDFDefinition> & t_Definitions, BSDFDirection t_Side);
+        explicit BSDFDirections(const std::vector<BSDFDefinition> & t_Definitions);
         [[nodiscard]] size_t size() const;
         const CBSDFPatch & operator[](size_t Index) const;
         std::vector<CBSDFPatch>::iterator begin();
@@ -66,19 +65,17 @@ namespace SingleLayerOptics
 
         //! Function that will create angle limits based on patch index.
         AngleLimits createAngleLimits(double lowerAngle, double upperAngle, size_t patchIndex);
-        static double correctPhiForOutgoingDireciton(const BSDFDirection & t_Side,
-                                            const size_t nPhis,
-                                            double currentPhi) ;
-        std::vector<CBSDFPatch> createBSDFPatches(const BSDFDirection & t_Side,
-                               const std::vector<double> & thetaAngles,
-                               const std::vector<size_t> & numPhiAngles);
+        static double correctPhiForOutgoingDirection(double currentPhi);
+        std::vector<CBSDFPatch> createBSDFPatches(const std::vector<double> & thetaAngles,
+                                                  const std::vector<size_t> & numPhiAngles);
         static std::vector<double>
-          getThetaAngles(const std::vector<BSDFDefinition> & t_Definitions) ;
+          getThetaAngles(const std::vector<BSDFDefinition> & t_Definitions);
         static std::vector<size_t>
-          getNumberOfPhiAngles(const std::vector<BSDFDefinition> & t_Definitions) ;
+          getNumberOfPhiAngles(const std::vector<BSDFDefinition> & t_Definitions);
 
         static std::vector<double> getLambdaVector(std::vector<CBSDFPatch> patches);
-        static FenestrationCommon::SquareMatrix setLambdaMatrix(const std::vector<double> & lambdas);
+        static FenestrationCommon::SquareMatrix
+          setLambdaMatrix(const std::vector<double> & lambdas);
     };
 
     enum class BSDFBasis
@@ -108,7 +105,8 @@ namespace SingleLayerOptics
         explicit BSDFHemisphere(const std::vector<BSDFDefinition> & t_Definitions);
 
         std::map<BSDFDirection, BSDFDirections> m_Directions;
-        static std::map<BSDFDirection, BSDFDirections> generateBSDFDirections(const std::vector<BSDFDefinition> & t_Definitions);
+        static std::map<BSDFDirection, BSDFDirections>
+          generateBSDFDirections(const std::vector<BSDFDefinition> & t_Definitions);
     };
 
 }   // namespace SingleLayerOptics
