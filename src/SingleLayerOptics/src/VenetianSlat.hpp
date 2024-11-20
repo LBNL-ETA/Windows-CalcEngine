@@ -13,7 +13,7 @@ namespace SingleLayerOptics
         Negative
     };
 
-    Viewer::CGeometry2D buildViewerSlat(const FenestrationCommon::VenetianGeometry & t_Geometry,
+    Viewer::CGeometry2D buildViewerSlat(const FenestrationCommon::Venetian::Geometry & t_Geometry,
                                         size_t t_NumOfSegments,
                                         SegmentsDirection t_Direction);
 }   // namespace SingleLayerOptics

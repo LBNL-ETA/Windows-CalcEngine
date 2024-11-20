@@ -14,12 +14,12 @@ namespace SingleLayerOptics
 {
     namespace Helper
     {
-        double calculateTheta(const VenetianGeometry & venetian, double radius)
+        double calculateTheta(const Venetian::Geometry & venetian, double radius)
         {
             return 2 * std::asin(venetian.SlatWidth / (2 * radius));
         }
 
-        std::pair<double, double> calculateThetaBounds(const VenetianGeometry & venetian,
+        std::pair<double, double> calculateThetaBounds(const Venetian::Geometry & venetian,
                                                        double theta)
         {
             using ConstantsData::WCE_PI;
@@ -29,7 +29,7 @@ namespace SingleLayerOptics
                             + radians(venetian.SlatTiltAngle) + theta / 2)};
         }
 
-        Viewer::CGeometry2D createPolarSegments(const VenetianGeometry & venetian,
+        Viewer::CGeometry2D createPolarSegments(const Venetian::Geometry & venetian,
                                                 size_t t_NumOfSegments,
                                                 SegmentsDirection t_Direction)
         {
@@ -66,7 +66,7 @@ namespace SingleLayerOptics
                                                             : slatWidth - segmentIndex * dWidth;
         }
 
-        CPoint2D initializeStartPoint(const VenetianGeometry & venetian,
+        CPoint2D initializeStartPoint(const Venetian::Geometry & venetian,
                                       SegmentsDirection direction,
                                       double dWidth,
                                       size_t numSegments)
@@ -76,7 +76,7 @@ namespace SingleLayerOptics
               direction == SegmentsDirection::Positive ? 0 : dWidth * numSegments);
         }
 
-        CViewSegment2D createSegment(const VenetianGeometry &venetian,
+        CViewSegment2D createSegment(const Venetian::Geometry &venetian,
                                      size_t segmentIndex,
                                      const CPoint2D &startPoint,
                                      double dWidth,
@@ -88,7 +88,7 @@ namespace SingleLayerOptics
             return {startPoint, endPoint};
         }
 
-         Viewer::CGeometry2D createCartesianSegments(const VenetianGeometry &venetian,
+         Viewer::CGeometry2D createCartesianSegments(const Venetian::Geometry &venetian,
                                                     size_t t_NumOfSegments,
                                                     SegmentsDirection t_Direction)
         {
@@ -116,24 +116,24 @@ namespace SingleLayerOptics
         }
     }   // namespace Helper
 
-    Viewer::CGeometry2D buildViewerSlat(const VenetianGeometry & venetian,
+    Viewer::CGeometry2D buildViewerSlat(const Venetian::Geometry & venetian,
                                         size_t t_NumOfSegments,
                                         SegmentsDirection t_Direction)
     {
         // clang-format off
         std::vector<std::pair<
-                std::function<bool(const VenetianGeometry &)>,
-                std::function<Viewer::CGeometry2D(const VenetianGeometry &, size_t, SegmentsDirection)>>
+                std::function<bool(const Venetian::Geometry &)>,
+                std::function<Viewer::CGeometry2D(const Venetian::Geometry &, size_t, SegmentsDirection)>>
         > conditionFunctionVector = {
             {
-                [](const VenetianGeometry &ven)
+                [](const Venetian::Geometry &ven)
                 {
                     return std::abs(ven.CurvatureRadius) > (ven.SlatWidth / 2);
                 },
                 Helper::createPolarSegments
             },
             {
-                [](const VenetianGeometry &ven)
+                [](const Venetian::Geometry &ven)
                 {
                     return std::abs(ven.CurvatureRadius) == 0;
                 },

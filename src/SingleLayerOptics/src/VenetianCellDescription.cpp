@@ -12,8 +12,8 @@ namespace SingleLayerOptics
 {
     namespace Helper
     {
-        FenestrationCommon::VenetianGeometry
-          bottomGeometry(const FenestrationCommon::VenetianGeometry & t_Geometry)
+        FenestrationCommon::Venetian::Geometry
+          bottomGeometry(const FenestrationCommon::Venetian::Geometry & t_Geometry)
         {
             auto bottomGeometry{t_Geometry};
             bottomGeometry.SlatSpacing = 0.0;
@@ -22,8 +22,8 @@ namespace SingleLayerOptics
     }   // namespace Helper
 
     CVenetianCellDescription::CVenetianCellDescription(
-      const FenestrationCommon::VenetianGeometry & t_Geometry, size_t t_NumOfSlatSegments) :
-        m_VenetianGeometry(FenestrationCommon::adjustSlatTiltAngle(t_Geometry)),
+      const FenestrationCommon::Venetian::Geometry & t_Geometry, size_t t_NumOfSlatSegments) :
+        m_VenetianGeometry(FenestrationCommon::Venetian::adjustSlatTiltAngle(t_Geometry)),
         m_NumOfSegments(t_NumOfSlatSegments),
         m_Top(buildViewerSlat(t_Geometry, t_NumOfSlatSegments, SegmentsDirection::Positive)),
         m_Bottom(buildViewerSlat(
@@ -239,7 +239,7 @@ namespace SingleLayerOptics
         return 0;
     }
 
-    FenestrationCommon::VenetianGeometry CVenetianCellDescription::getVenetianGeometry() const
+    FenestrationCommon::Venetian::Geometry CVenetianCellDescription::getVenetianGeometry() const
     {
         return m_VenetianGeometry;
     }

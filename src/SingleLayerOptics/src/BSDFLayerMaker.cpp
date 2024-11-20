@@ -85,7 +85,7 @@ namespace SingleLayerOptics
                                         DistributionMethod method,
                                         const bool isHorizontal)
     {
-        FenestrationCommon::VenetianGeometry geometry{
+        FenestrationCommon::Venetian::Geometry geometry{
           slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
         return getVenetianLayer(
           t_Material, t_BSDF, geometry, numOfSlatSegments, method, isHorizontal);
@@ -94,7 +94,7 @@ namespace SingleLayerOptics
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
                                         const BSDFHemisphere & t_BSDF,
-                                        const FenestrationCommon::VenetianGeometry & geometry,
+                                        const FenestrationCommon::Venetian::Geometry & geometry,
                                         size_t numOfSlatSegments,
                                         DistributionMethod method,
                                         bool isHorizontal)
