@@ -89,25 +89,25 @@ TEST_F(TestDoubleClearUValueEnvironment, StandardRun)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     std::vector correctTemperature = {258.791640, 259.116115, 279.323983, 279.648458};
-    testVectors("Temperature - Uvalue run",
-                correctTemperature,
-                tarcogSystem.getTemperatures(aRun),
-                Tolerance);
+    Helper::testVectors("Temperature - Uvalue run",
+                        correctTemperature,
+                        tarcogSystem.getTemperatures(aRun),
+                        Tolerance);
 
     std::vector correctSolidConductivities{1.0, 1.0};
-    testVectors("Solid Conductivities - Uvalue run",
-                correctSolidConductivities,
-                tarcogSystem.getSolidEffectiveLayerConductivities(aRun),
-                Tolerance);
+    Helper::testVectors("Solid Conductivities - Uvalue run",
+                        correctSolidConductivities,
+                        tarcogSystem.getSolidEffectiveLayerConductivities(aRun),
+                        Tolerance);
 
     std::vector correctGapConductivities{0.066904};
-    testVectors("Gap Conductivities - Uvalue run",
-                correctGapConductivities,
-                tarcogSystem.getGapEffectiveLayerConductivities(aRun),
-                Tolerance);
+    Helper::testVectors("Gap Conductivities - Uvalue run",
+                        correctGapConductivities,
+                        tarcogSystem.getGapEffectiveLayerConductivities(aRun),
+                        Tolerance);
 
     std::vector correctRadiosity = {252.066216, 267.938384, 332.786197, 359.178924};
-    testVectors(
+    Helper::testVectors(
       "Radiosity - Uvalue run", correctRadiosity, tarcogSystem.getRadiosities(aRun), Tolerance);
 
     auto effectiveSystemConductivity{tarcogSystem.getEffectiveSystemConductivity(aRun)};
@@ -126,23 +126,23 @@ TEST_F(TestDoubleClearUValueEnvironment, StandardRun)
     aRun = Tarcog::ISO15099::System::SHGC;
 
     correctTemperature = {261.920381, 262.408833, 284.753241, 285.038766};
-    testVectors(
+    Helper::testVectors(
       "Temperature - SHGC Run", correctTemperature, tarcogSystem.getTemperatures(aRun), Tolerance);
 
     correctSolidConductivities = {1.0, 1.0};
-    testVectors("Solid Conductivities - SHGC Run",
-                correctSolidConductivities,
-                tarcogSystem.getSolidEffectiveLayerConductivities(aRun),
-                Tolerance);
+    Helper::testVectors("Solid Conductivities - SHGC Run",
+                        correctSolidConductivities,
+                        tarcogSystem.getSolidEffectiveLayerConductivities(aRun),
+                        Tolerance);
 
     correctGapConductivities = {0.069446};
-    testVectors("Gap Conductivities - SHGC Run",
-                correctGapConductivities,
-                tarcogSystem.getGapEffectiveLayerConductivities(aRun),
-                Tolerance);
+    Helper::testVectors("Gap Conductivities - SHGC Run",
+                        correctGapConductivities,
+                        tarcogSystem.getGapEffectiveLayerConductivities(aRun),
+                        Tolerance);
 
     correctRadiosity = {262.585532, 283.163764, 358.428554, 382.293524};
-    testVectors(
+    Helper::testVectors(
       "Radiosity - SHGC Run", correctRadiosity, tarcogSystem.getRadiosities(aRun), Tolerance);
 
     effectiveSystemConductivity = tarcogSystem.getEffectiveSystemConductivity(aRun);
@@ -187,27 +187,25 @@ TEST_F(TestDoubleClearUValueEnvironment, EnabledDeflection)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     const std::vector<double> correctMaxLayersDeflection{-1.190817e-3, 1.190817e-3};
-    testVectors("Max Layer Deflection",
-                correctMaxLayersDeflection,
-                tarcogSystem.getMaxLayerDeflections(aRun),
-                Tolerance);
+    Helper::testVectors("Max Layer Deflection",
+                        correctMaxLayersDeflection,
+                        tarcogSystem.getMaxLayerDeflections(aRun),
+                        Tolerance);
 
     const std::vector<double> correctMeanLayersDeflection{-0.498864e-3, 0.498864e-3};
-    testVectors("Mean Layer Deflection",
-                correctMeanLayersDeflection,
-                tarcogSystem.getMeanLayerDeflections(aRun),
-                Tolerance);
+    Helper::testVectors("Mean Layer Deflection",
+                        correctMeanLayersDeflection,
+                        tarcogSystem.getMeanLayerDeflections(aRun),
+                        Tolerance);
 
     const std::vector<double> correctPanesLoad{-55.34465653, 55.34465653};
-    testVectors("Panes Load", correctPanesLoad, tarcogSystem.getPanesLoad(aRun), Tolerance);
+    Helper::testVectors("Panes Load", correctPanesLoad, tarcogSystem.getPanesLoad(aRun), Tolerance);
 
     const std::vector<double> correctMaxGapWidth{10.3183670e-3};
-    testVectors("Max Gap Width",
-                correctMaxGapWidth, tarcogSystem.getMaxGapWidth(aRun),
-                Tolerance);
+    Helper::testVectors(
+      "Max Gap Width", correctMaxGapWidth, tarcogSystem.getMaxGapWidth(aRun), Tolerance);
 
     const std::vector<double> correctMeanGapWidth{11.702272e-3};
-    testVectors("Mean Gap Width",
-                correctMeanGapWidth, tarcogSystem.getMeanGapWidth(aRun),
-                Tolerance);
+    Helper::testVectors(
+      "Mean Gap Width", correctMeanGapWidth, tarcogSystem.getMeanGapWidth(aRun), Tolerance);
 }

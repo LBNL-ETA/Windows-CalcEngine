@@ -1,9 +1,9 @@
 #include <memory>
-#include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+#include <WCETarcog.hpp>
+
+#include "vectorTesting.hpp"
 
 class TestDoubleClearOutdoorShadeAir : public testing::Test
 {
@@ -47,16 +47,15 @@ protected:
         auto dbot = 0.1;
         auto dleft = 0.1;
         auto dright = 0.1;
-        auto Afront = 0.2;
         auto PermeabilityFactor = 0.2;
 
-        EffectiveLayers::ShadeOpenness openness{Afront, dleft, dright, dtop, dbot};
+        EffectiveLayers::ShadeOpenness openness{dleft, dright, dtop, dbot};
 
         double windowWidth = 1;
         double windowHeight = 1;
 
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
+        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
 
         auto layer1 = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
@@ -77,13 +76,6 @@ protected:
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
-
-        // Alternative way of adding layers.
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(gap1);
-        // aIGU.addLayer(layer2);
-        // aIGU.addLayer(gap2);
-        // aIGU.addLayer(layer3);
 
         /////////////////////////////////////////////////////////
         // System
@@ -110,23 +102,17 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
     auto temperature = aSystem->getTemperatures();
     auto radiosity = aSystem->getRadiosities();
 
-    std::vector<double> correctTemp = {
-      256.970848, 256.975002, 269.380302, 269.824078, 284.016847, 284.460623};
-    std::vector<double> correctJ = {
-      246.117485, 254.320225, 291.476900, 309.960656, 359.489563, 380.678891};
+    const std::vector<double> correctTemp = {
+      256.947912, 256.952013, 269.280883, 269.726307, 283.977613, 284.423038};
+    const std::vector<double> correctJ = {
+      246.043352, 254.183208, 291.084956, 309.557246, 359.253818, 380.514114};
 
-    EXPECT_EQ(correctTemp.size(), temperature.size());
-    EXPECT_EQ(correctJ.size(), radiosity.size());
-
-    for(size_t i = 0; i < temperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemp[i], temperature[i], 1e-6);
-        EXPECT_NEAR(correctJ[i], radiosity[i], 1e-6);
-    }
+    Helper::testVectors("Temperature", correctTemp, temperature, 1e-6);
+    Helper::testVectors("Radiosity", correctJ, radiosity, 1e-6);
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(36u, numOfIter);
+    EXPECT_EQ(42u, numOfIter);
 
     const auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
-    EXPECT_NEAR(-24.485269, ventilatedFlow, 1e-6);
+    EXPECT_NEAR(-25.444198, ventilatedFlow, 1e-6);
 }

@@ -1,7 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCETarcog.hpp"
+#include <WCETarcog.hpp>
+
+#include "vectorTesting.hpp"
 
 class TestDoubleClearIndoorShadeAir : public testing::Test
 {
@@ -50,16 +52,15 @@ protected:
         auto dbot = 0.1;
         auto dleft = 0.1;
         auto dright = 0.1;
-        auto Afront = 0.2;
         auto PermeabilityFactor = 0.2;
 
-        EffectiveLayers::ShadeOpenness openness{Afront, dleft, dright, dtop, dbot};
+        EffectiveLayers::ShadeOpenness openness{dleft, dright, dtop, dbot};
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
 
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
+        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
 
         auto layer3 = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
@@ -103,25 +104,13 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
     const auto temperature = aSystem.getTemperatures();
     const auto radiosity = aSystem.getRadiosities();
 
-    std::vector correctTemp = {
-      258.240219, 258.756303, 276.282652, 276.798736, 288.170470, 288.174332};
-    std::vector correctJ = {
-      250.251349, 264.677378, 319.842529, 340.847167, 382.961347, 397.285043};
+    const std::vector correctTemp = {
+      258.263891, 258.783935, 276.426524, 276.946569, 288.264550, 288.268356};
+    const std::vector correctJ = {250.329019, 264.865975, 320.451170, 341.531072, 383.499870, 397.713907};
 
-    EXPECT_EQ(correctTemp.size(), temperature.size());
-    EXPECT_EQ(correctJ.size(), radiosity.size());
+    Helper::testVectors("Temperatures", correctTemp, temperature, Tolerance);
+    Helper::testVectors("Radiosities", correctJ, radiosity, Tolerance);
 
-    for(size_t i = 0; i < temperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemp[i], temperature[i], Tolerance);
-        EXPECT_NEAR(correctJ[i], radiosity[i], Tolerance);
-    }
-
-    // Removing this because it is causing different results on different machines
-    // See the issue regarding to this
-    //const auto numOfIter = aSystem.getNumberOfIterations();
-    //EXPECT_EQ(43u, numOfIter);
-    
     const auto ventilatedFlow = aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(40.879045167167362, ventilatedFlow, Tolerance);
+    EXPECT_NEAR(42.278080126434745, ventilatedFlow, Tolerance);
 }

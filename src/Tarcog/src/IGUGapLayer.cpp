@@ -166,4 +166,9 @@ namespace Tarcog::ISO15099
         return coeff;
     }
 
+    GasSpecification CIGUGapLayer::getGasSpecification() const
+    {
+        return gasSpecification;
+    }
+
 }   // namespace Tarcog::ISO15099

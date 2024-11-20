@@ -103,13 +103,13 @@ TEST_F(TestTripleClearDeflection, Test1)
     auto Temperature = aSystem->getTemperatures(aRun);
     std::vector correctTemperature{
       253.145128, 253.399356, 265.491273, 265.745502, 281.162057, 281.416285};
-    testVectors("U-value run temperatures", Temperature, correctTemperature, Tolerance);
+    Helper::testVectors("U-value run temperatures", Temperature, correctTemperature, Tolerance);
 
     std::vector correctDeflection{-0.421986e-3, 0.265021e-3, 0.167762e-3};
-    testVectors("U-value run maximum deflection",
-                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
-                correctDeflection,
-                DeflectionTolerance);
+    Helper::testVectors("U-value run maximum deflection",
+                        aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                        correctDeflection,
+                        DeflectionTolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
     EXPECT_EQ(24u, numOfIter);
@@ -122,14 +122,14 @@ TEST_F(TestTripleClearDeflection, Test1)
 
     Temperature = aSystem->getTemperatures(aRun);
     correctTemperature = {257.436181, 257.952788, 276.188735, 276.494764, 289.161417, 289.306516};
-    testVectors(
+    Helper::testVectors(
       "SHGC run temperatures", aSystem->getTemperatures(aRun), correctTemperature, Tolerance);
 
     correctDeflection = {-0.421986e-3, 0.265021e-3, 0.167762e-3};
-    testVectors("SHGC run maximum deflection",
-                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
-                correctDeflection,
-                DeflectionTolerance);
+    Helper::testVectors("SHGC run maximum deflection",
+                        aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                        correctDeflection,
+                        DeflectionTolerance);
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
     EXPECT_EQ(27u, numOfIter);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <WCECommon.hpp>
+
 namespace ThermalPermeability
 {
     namespace Venetian
@@ -10,31 +12,18 @@ namespace ThermalPermeability
 
         double calculateCurvature(double t_Rise, double t_SlatWidth);
 
-        double frontOpenness(double t_TiltAngle,
-                             double t_SlatSpacing,
-                             double t_MatThickness,
-                             double t_SlatCurvature,
-                             double t_SlatWidth);
+        double permeabilityFactor(double materialThickness,
+                                  const FenestrationCommon::Venetian::Geometry & geometry);
     }   // namespace Venetian
 
     namespace Perforated
     {
-        enum class Type
-        {
-            Circular,
-            Square,
-            Rectangular
-        };
 
-        double frontOpenness(Type t_Type,
-                             double t_SpacingX,
-                             double t_SpacingY,
-                             double t_DimensionX,
-                             double t_DimensionY);
+        double permeabilityFactor(const FenestrationCommon::Perforated::Geometry & geometry);
     }   // namespace Perforated
 
     namespace Woven
     {
-        double frontOpenness(double t_Diameter, double t_Spacing);
+        double permeabilityFactor(const FenestrationCommon::Woven::Geometry & geometry);
     }
 }   // namespace ThermalPermeability

@@ -1,10 +1,10 @@
 #include <memory>
-#include <stdexcept>
-#include <string>
 #include <gtest/gtest.h>
 
-#include "WCEGases.hpp"
-#include "WCETarcog.hpp"
+#include <WCEGases.hpp>
+#include <WCETarcog.hpp>
+
+#include "vectorTesting.hpp"
 
 class TestInBetweenShadeAirArgon : public testing::Test
 {
@@ -55,16 +55,15 @@ protected:
         auto Abot = 0.1;
         auto Aleft = 0.1;
         auto Aright = 0.1;
-        auto Afront = 0.2;
         auto PermeabilityFactor = 0.2;
 
-        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
+        EffectiveLayers::ShadeOpenness openness{Aleft, Aright, Atop, Abot};
 
         double windowWidth = 1;
         double windowHeight = 1;
 
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
+        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
 
         auto layer2 = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
@@ -103,15 +102,14 @@ protected:
         /////////////////////////////////////////////////////////
         /// System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
-          new Tarcog::ISO15099::CSingleSystem(aIGU, Indoor, Outdoor));
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
         ASSERT_TRUE(m_TarcogSystem != nullptr);
 
         m_TarcogSystem->solve();
     }
 
 public:
-    Tarcog::ISO15099::CSingleSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
     };
@@ -124,26 +122,15 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
     auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);
 
-    const auto Temperature = aSystem->getTemperatures();
-    std::vector<double> correctTemperature = {
-      257.730232, 258.161003, 271.864901, 271.869146, 284.326568, 284.757339};
-    ASSERT_EQ(correctTemperature.size(), Temperature.size());
+    const std::vector correctTemperature = {
+      257.741879, 258.174598, 271.844098, 271.848314, 284.280157, 284.712875};
+    Helper::testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), 1e-6);
 
-    for(auto i = 0u; i < correctTemperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], 1e-6);
-    }
+    const std::vector correctRadiosity = {
+      248.621154, 259.855407, 301.664078, 318.011918, 361.928573, 381.786481};
 
-    const auto Radiosity = aSystem->getRadiosities();
-    std::vector<double> correctRadiosity = {
-      248.583166, 259.822746, 301.738475, 318.127113, 362.150178, 381.982016};
-    ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
-
-    for(auto i = 0u; i < correctRadiosity.size(); ++i)
-    {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], 1e-6);
-    }
+    Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), 1e-6);
 
     auto numOfIter = GetSystem()->getNumberOfIterations();
-    EXPECT_EQ(26u, numOfIter);
+    EXPECT_EQ(27u, numOfIter);
 }

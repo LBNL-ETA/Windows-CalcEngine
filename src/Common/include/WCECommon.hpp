@@ -23,3 +23,5 @@
 #include "../src/Table2DInterpolators.hpp"
 #include "../src/Utility.hpp"
 #include "../src/Venetian.hpp"
+#include "../src/Perforated.hpp"
+#include "../src/Woven.hpp"

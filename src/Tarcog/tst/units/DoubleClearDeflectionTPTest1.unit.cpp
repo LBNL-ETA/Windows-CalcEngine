@@ -97,25 +97,27 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     /// Temperatures test
     ///////////////////////////////////////////////////////////////////////////////
     std::vector correctTemperature = {258.795861, 259.120713, 279.023351, 279.632449};
-    testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), Tolerance);
+    Helper::testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), Tolerance);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Radiosity test
     ///////////////////////////////////////////////////////////////////////////////
     std::vector correctRadiosity = {252.080153, 267.749407, 331.509846, 359.112232};
-    testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), Tolerance);
+    Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), Tolerance);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Max deflection test
     ///////////////////////////////////////////////////////////////////////////////
     std::vector<double> correctMaxDeflection = {-2.28568e-3, 0.483674e-3};
-    testVectors("Max deflection", correctMaxDeflection, aSystem->getMaxLayerDeflections(), 1e-8);
+    Helper::testVectors(
+      "Max deflection", correctMaxDeflection, aSystem->getMaxLayerDeflections(), 1e-8);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// Mean deflection test
     ///////////////////////////////////////////////////////////////////////////////
     std::vector correctMeanDeflection = {-0.957531e-3, 0.202624e-3};
-    testVectors("Mean deflection", correctMeanDeflection, aSystem->getMeanLayerDeflections(), 1e-8);
+    Helper::testVectors(
+      "Mean deflection", correctMeanDeflection, aSystem->getMeanLayerDeflections(), 1e-8);
 
     const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(25u, numOfIter);

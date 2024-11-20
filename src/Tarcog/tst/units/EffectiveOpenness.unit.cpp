@@ -9,23 +9,21 @@ TEST(TestEffectiveOpenness, Venetian0DegFrontOpenness)
     SCOPED_TRACE("Begin Test: Venetian blind effective openness calculations (slat tilt = 0 deg.");
 
     const auto materialThickness{0.0001};   // m
-    const auto slatTiltAngle{0.0};
-    const auto slatWidth{0.00125};   // m
-    const auto slatSpacing{0.001};   // m
-    const auto slatCurvature{0.0};
 
-    auto opennessFactor{ThermalPermeability::Venetian::frontOpenness(
-      slatTiltAngle, slatSpacing, materialThickness, slatCurvature, slatWidth)};
+    const FenestrationCommon::Venetian::Geometry geometry{0.00125, 0.001, 0.0, 0.0};
+
+    auto opennessFactor{
+      ThermalPermeability::Venetian::permeabilityFactor(materialThickness, geometry)};
 
     EXPECT_NEAR(0.909091, opennessFactor, 1e-6);
 
-    EffectiveLayers::ShadeOpenness openness{opennessFactor, 0, 0, 0, 0};
+    EffectiveLayers::ShadeOpenness openness{0, 0, 0, 0};
 
     const auto width{1.0};    // m
     const auto height{1.0};   // m
 
     EffectiveLayers::EffectiveHorizontalVenetian venetian{
-      width, height, materialThickness, openness, slatTiltAngle, slatWidth};
+      width, height, materialThickness, geometry, openness};
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
@@ -40,23 +38,21 @@ TEST(TestEffectiveOpenness, Venetian0DegFrontOpenness1)
     SCOPED_TRACE("Begin Test: Venetian blind effective openness calculations (slat tilt = 0 deg.");
 
     const auto materialThickness{0.0006};   // m
-    const auto slatTiltAngle{0.0};
-    const auto slatWidth{0.016};      // m
-    const auto slatSpacing{0.0114};   // m
-    const auto slatCurvature{0.0};
 
-    auto opennessFactor{ThermalPermeability::Venetian::frontOpenness(
-      slatTiltAngle, slatSpacing, materialThickness, slatCurvature, slatWidth)};
+    const FenestrationCommon::Venetian::Geometry geometry{0.016, 0.0114, 0.0, 0.0};
+
+    auto opennessFactor{
+      ThermalPermeability::Venetian::permeabilityFactor(materialThickness, geometry)};
 
     EXPECT_NEAR(0.95, opennessFactor, 1e-6);
 
-    EffectiveLayers::ShadeOpenness openness{opennessFactor, 0, 0, 0, 0};
+    EffectiveLayers::ShadeOpenness openness{0, 0, 0, 0};
 
     const auto width{1.0};    // m
     const auto height{1.0};   // m
 
     EffectiveLayers::EffectiveHorizontalVenetian venetian{
-      width, height, materialThickness, openness, slatTiltAngle, slatWidth};
+      width, height, materialThickness, geometry, openness};
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
@@ -71,23 +67,21 @@ TEST(TestEffectiveOpenness, Venetian45DegFrontOpenness1)
     SCOPED_TRACE("Begin Test: Venetian blind effective openness calculations (slat tilt = 0 deg.");
 
     const auto materialThickness{0.0006};   // m
-    const auto slatTiltAngle{45.0};
-    const auto slatWidth{0.016};      // m
-    const auto slatSpacing{0.0114};   // m
-    const auto slatCurvature{0.0};
 
-    auto opennessFactor{ThermalPermeability::Venetian::frontOpenness(
-      slatTiltAngle, slatSpacing, materialThickness, slatCurvature, slatWidth)};
+    const FenestrationCommon::Venetian::Geometry geometry{0.016, 0.0114, 45.0, 0.0};
+
+    auto opennessFactor{
+      ThermalPermeability::Venetian::permeabilityFactor(materialThickness, geometry)};
 
     EXPECT_NEAR(0.931845, opennessFactor, 1e-6);
 
-    EffectiveLayers::ShadeOpenness openness{opennessFactor, 0, 0, 0, 0};
+    EffectiveLayers::ShadeOpenness openness{0, 0, 0, 0};
 
     const auto width{1.0};    // m
     const auto height{1.0};   // m
 
     EffectiveLayers::EffectiveHorizontalVenetian venetian{
-      width, height, materialThickness, openness, slatTiltAngle, slatWidth};
+      width, height, materialThickness, geometry, openness};
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
@@ -102,27 +96,23 @@ TEST(TestEffectiveOpenness, Venetian0DegWithRise)
     SCOPED_TRACE("Begin Test: Venetian blind effective openness calculations (slat tilt = 0 deg.");
 
     const auto materialThickness{0.0006};   // m
-    const auto slatTiltAngle{0.0};          // deg
-    const auto slatWidth{0.016};            // m
-    const auto slatSpacing{0.0114};         // m
-    const auto slatRise{0.002};             // m
 
-    auto opennessFactor{ThermalPermeability::Venetian::frontOpenness(
-      slatTiltAngle,
-      slatSpacing,
-      materialThickness,
-      ThermalPermeability::Venetian::calculateCurvature(slatRise, slatWidth),
-      slatWidth)};
+
+    const FenestrationCommon::Venetian::Geometry geometry{
+      0.016, 0.0114, 0.0, ThermalPermeability::Venetian::calculateCurvature(0.002, 0.016)};
+
+    auto opennessFactor{
+      ThermalPermeability::Venetian::permeabilityFactor(materialThickness, geometry)};
 
     EXPECT_NEAR(0.95, opennessFactor, 1e-6);
 
-    EffectiveLayers::ShadeOpenness openness{opennessFactor, 0, 0, 0, 0};
+    EffectiveLayers::ShadeOpenness openness{0, 0, 0, 0};
 
     const auto width{1.0};    // m
     const auto height{1.0};   // m
 
     EffectiveLayers::EffectiveHorizontalVenetian venetian{
-      width, height, materialThickness, openness, slatTiltAngle, slatWidth};
+      width, height, materialThickness, geometry, openness};
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
