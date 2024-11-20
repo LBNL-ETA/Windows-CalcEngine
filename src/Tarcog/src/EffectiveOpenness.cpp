@@ -162,4 +162,29 @@ namespace EffectiveLayers
                              ThermalPermeability::Woven::permeabilityFactor(geometry),
                              openness)
     {}
+
+
+    EffectiveLayerUserDefined::EffectiveLayerUserDefined(double width,
+                                                         double height,
+                                                         double thickness,
+                                                         double permeabilityFactor,
+                                                         double effectiveFrontThermalOpennessArea,
+                                                         const ShadeOpenness & openness) :
+        EffectiveLayer(width, height, thickness, openness, {0, 0, 0, 0}, permeabilityFactor),
+        m_EffectiveFrontThermalOpennessArea(effectiveFrontThermalOpennessArea)
+    {}
+
+    EffectiveOpenness EffectiveLayerUserDefined::getEffectiveOpenness()
+    {
+        const auto Al_eff{m_ShadeOpenness.Dl * m_Height};
+        const auto Ar_eff{m_ShadeOpenness.Dr * m_Height};
+        const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width};
+        const auto Abop_eff{m_ShadeOpenness.Dbot * m_Width};
+        return {m_EffectiveFrontThermalOpennessArea, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_PermeabilityFactor};
+    }
+
+    double EffectiveLayerUserDefined::effectiveThickness()
+    {
+        return m_Thickness;
+    }
 }   // namespace EffectiveLayers

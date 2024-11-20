@@ -92,9 +92,9 @@ namespace EffectiveLayers
                        const Coefficients & coefficients = {0.0, 0.0, 0.0, 0.0},
                        double permeabilityFactor = 0.0);
 
-        virtual EffectiveOpenness getEffectiveOpenness() = 0;
+        [[nodiscard]] virtual EffectiveOpenness getEffectiveOpenness() = 0;
 
-        virtual double effectiveThickness() = 0;
+        [[nodiscard]] virtual double effectiveThickness() = 0;
 
         [[nodiscard]] double permeabilityFactor() const;
 
@@ -167,7 +167,7 @@ namespace EffectiveLayers
                                  double height,
                                  double thickness,
                                  const FenestrationCommon::Perforated::Geometry & geometry,
-                                 const ShadeOpenness & openness);
+                                 const ShadeOpenness & openness = {0, 0, 0, 0});
     };
 
     class EffectiveLayerWoven : public EffectiveLayerCommon
@@ -177,6 +177,23 @@ namespace EffectiveLayers
                             double height,
                             double thickness,
                             const FenestrationCommon::Woven::Geometry & geometry,
-                            const ShadeOpenness & openness);
+                            const ShadeOpenness & openness = {0, 0, 0, 0});
+    };
+
+    class EffectiveLayerUserDefined : public EffectiveLayer
+    {
+    public:
+        EffectiveLayerUserDefined(double width,
+                                  double height,
+                                  double thickness,
+                                  double permeabilityFactor = 0,
+                                  double effectiveFrontThermalOpennessArea = 0,
+                                  const ShadeOpenness & openness = {0, 0, 0, 0});
+
+        EffectiveOpenness getEffectiveOpenness() override;
+        double effectiveThickness() override;
+
+    private:
+        double m_EffectiveFrontThermalOpennessArea;
     };
 }   // namespace EffectiveLayers

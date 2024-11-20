@@ -4,5 +4,6 @@
 
 namespace StandardData
 {
-    FenestrationCommon::CSeries solarRadiationASTM_E891_87_Table1();
+    [[nodiscard]] std::vector<double> condensedSpectrumDefault();
+    [[nodiscard]] FenestrationCommon::CSeries solarRadiationASTM_E891_87_Table1();
 }   // namespace StandardData

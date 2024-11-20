@@ -2,6 +2,13 @@
 
 namespace StandardData
 {
+    std::vector<double> condensedSpectrumDefault()
+    {
+        const auto numberOfVisibleBands{5u};
+        const auto numberOfIRBands{10u};
+        return FenestrationCommon::generateSpectrum(numberOfVisibleBands, numberOfIRBands);
+    }
+
     FenestrationCommon::CSeries solarRadiationASTM_E891_87_Table1()
     {
         return {

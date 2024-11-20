@@ -22,10 +22,11 @@ namespace SingleLayerOptics
         std::optional<std::vector<double>> CommonWavelengths;
         std::optional<FenestrationCommon::CSeries> DetectorData;
 
-        FenestrationCommon::IntegrationType m_IntegrationType;
-        double m_NormalizationCoefficient;
+        FenestrationCommon::IntegrationType m_IntegrationType{
+          FenestrationCommon::IntegrationType::Trapezoidal};
+        double m_NormalizationCoefficient{1.0};
 
         [[nodiscard]] FenestrationCommon::CSeries scaledSolarRadiation() const;
-        bool isDetectorDataValid() const;
+        [[nodiscard]] bool isDetectorDataValid() const;
     };
-}   // namespace MultiLayerOptics
+}   // namespace SingleLayerOptics
