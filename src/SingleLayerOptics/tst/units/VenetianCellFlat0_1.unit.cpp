@@ -1,8 +1,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
+#include <WCESingleLayerOptics.hpp>
 
 
 using namespace SingleLayerOptics;

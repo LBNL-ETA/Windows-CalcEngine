@@ -1,7 +1,6 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include <WCESpectralAveraging.hpp>
 #include <WCEMultiLayerOptics.hpp>
 
 #include "standardData.hpp"
