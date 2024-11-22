@@ -100,6 +100,30 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     EXPECT_NEAR(0, effectiveOpenness.Ar, 1e-8);
 }
 
+TEST(TestEffectiveLayers, TestEffectiveLayerCommon) {
+    SCOPED_TRACE("Begin Test: Effective layer common.");
+
+    const auto width{1.0};                  // m
+    const auto height{1.0};                 // m
+    const auto materialThickness{0.0001};   // m
+
+    const auto permeabilityFactor{0.15};
+
+    EffectiveLayers::EffectiveLayerCommon common{
+        width, height, materialThickness, permeabilityFactor};
+
+    const auto effectiveThickness{common.effectiveThickness()};
+
+    EXPECT_NEAR(0.0001, effectiveThickness, 1e-6);
+
+    const auto effectiveOpenness{common.getEffectiveOpenness()};
+    EXPECT_NEAR(8.0057885183479893e-3, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
+    EXPECT_NEAR(0, effectiveOpenness.Atop, 1e-8);
+    EXPECT_NEAR(0, effectiveOpenness.Abot, 1e-8);
+    EXPECT_NEAR(0, effectiveOpenness.Al, 1e-8);
+    EXPECT_NEAR(0, effectiveOpenness.Ar, 1e-8);
+}
+
 TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpenness45Deg)
 {
     SCOPED_TRACE("Begin Test: Venetian horizontal effective layer properties.");
