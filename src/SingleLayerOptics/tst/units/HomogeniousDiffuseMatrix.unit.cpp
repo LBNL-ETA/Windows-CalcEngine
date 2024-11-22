@@ -28,23 +28,21 @@ namespace
     }
 
     // Helper function to set up and test a configuration
-    void runPerforatedLayerTest(const double Tmat,
-                                const double Rfmat,
-                                const double Rbmat,
-                                const double thickness,
-                                const std::string & expectedCsvFrontTransmittanceFile,
-                                const std::string & expectedCsvFrontReflectanceFile,
-                                const std::string & expectedCsvBackTransmittanceFile,
-                                const std::string & expectedCsvBackReflectanceFile,
-                                const bool updateExpectedResults = false)
+    void runLayerTest(const double Tmat,
+                      const double Rfmat,
+                      const double Rbmat,
+                      const std::string & expectedCsvFrontTransmittanceFile,
+                      const std::string & expectedCsvFrontReflectanceFile,
+                      const std::string & expectedCsvBackTransmittanceFile,
+                      const std::string & expectedCsvBackReflectanceFile,
+                      const bool updateExpectedResults = false)
     {
         auto material = SingleLayerOptics::Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         auto bsdf =
           SingleLayerOptics::BSDFHemisphere::create(SingleLayerOptics::BSDFBasis::Quarter);
 
-        auto shade = SingleLayerOptics::CBSDFLayerMaker::getCircularPerforatedLayer(
-          material, bsdf, xSpacing, ySpacing, thickness, diameter / 2.0);
+        auto shade = SingleLayerOptics::CBSDFLayerMaker::getHomogeneousDiffuseLayer(material, bsdf);
 
         auto results = shade->getResults();
 
@@ -77,14 +75,26 @@ namespace
 // clang-format off
 TEST(TestHomogeniousDiffuseMatrix, Configuration1)
  {
-    SCOPED_TRACE("Testing Perforated Circular layer with T=0, R=0.1, thickness=5, xSpacing=19.05, ySpacing=19.05, Diameter=6.35 configuration.");
-    runPerforatedLayerTest(
+    SCOPED_TRACE("Testing Perforated Circular layer with T=0, R=0.1 configuration.");
+    runLayerTest(
         0.0, 0.1, 0.1,        // Material properties
-        0.005, 0.01905, 0.01905, 0.00635,    // Geometry properties
-        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestPerforatedCircularMatrixTf_T=0_R=0.1_xSpacing=19.05_ySpacing=19.05_Diameter=6.35.csv",
-        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestPerforatedCircularMatrixRf_T=0_R=0.1_xSpacing=19.05_ySpacing=19.05_Diameter=6.35.csv",
-        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestPerforatedCircularMatrixTb_T=0_R=0.1_xSpacing=19.05_ySpacing=19.05_Diameter=6.35.csv",
-        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestPerforatedCircularMatrixRb_T=0_R=0.1_xSpacing=19.05_ySpacing=19.05_Diameter=6.35.csv",
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixTf_T=0_R=0.1.csv",
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixRf_T=0_R=0.1.csv",
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixTb_T=0_R=0.1.csv",
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixRb_T=0_R=0.1.csv",
+        false
+    );
+}
+
+TEST(TestHomogeniousDiffuseMatrix, Configuration2)
+{
+    SCOPED_TRACE("Testing Perforated Circular layer with T=0.7, R=0.1 configuration.");
+    runLayerTest(
+        0.7, 0.1, 0.1,        // Material properties
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixTf_T=0.7_R=0.1.csv",
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixRf_T=0.7_R=0.1.csv",
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixTb_T=0.7_R=0.1.csv",
+        TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestHomogeneousDiffuseMatrixRb_T=0.7_R=0.1.csv",
         false
     );
 }

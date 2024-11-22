@@ -410,7 +410,7 @@ namespace MultiLayerOptics
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const std::optional<std::vector<double>> & matrixWavelengths)
     {
-        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF(t_Layer, matrixWavelengths));
+        return std::make_unique<CMultiPaneBSDF>(t_Layer, matrixWavelengths);
     }
 
     double CMultiPaneBSDF::getPropertySimple(const double minLambda,
