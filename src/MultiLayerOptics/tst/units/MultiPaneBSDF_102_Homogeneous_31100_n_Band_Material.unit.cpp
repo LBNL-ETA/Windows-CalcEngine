@@ -48,7 +48,7 @@ public:
     CMultiPaneBSDF & getLayer()
     {
         return *m_Layer;
-    };
+    }
 };
 
 TEST_F(MultiPaneBSDF_102_Homogeneous_31100_n_Band_Material, TestBSDF1)

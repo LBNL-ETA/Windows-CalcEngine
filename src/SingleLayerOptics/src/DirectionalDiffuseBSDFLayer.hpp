@@ -1,5 +1,4 @@
-#ifndef DIRECTIONALDIFFUSEBSDFLAYER_H
-#define DIRECTIONALDIFFUSEBSDFLAYER_H
+#pragma once
 
 #include <memory>
 
@@ -30,6 +29,8 @@ namespace SingleLayerOptics
                                                   size_t incomingDirectionIndex,
                                                   size_t wavelengthIndex,
                                                   BSDFIntegrator & results) override;
+
+        std::vector<double> lambdas;
 
         virtual double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) = 0;
     };
@@ -65,5 +66,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-
-#endif
