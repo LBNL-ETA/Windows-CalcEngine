@@ -129,8 +129,8 @@ namespace EffectiveLayers
         const auto Al_eff{m_ShadeOpenness.Dl * m_Height * coefficients.C3};
         const auto Ar_eff{m_ShadeOpenness.Dr * m_Height * coefficients.C3};
         const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width * coefficients.C4};
-        const auto Abop_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
-        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_PermeabilityFactor};
+        const auto Abot_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
+        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abot_eff, m_PermeabilityFactor};
     }
 
     double EffectiveLayerCommon::effectiveThickness()
@@ -179,8 +179,8 @@ namespace EffectiveLayers
         const auto Al_eff{m_ShadeOpenness.Dl * m_Height};
         const auto Ar_eff{m_ShadeOpenness.Dr * m_Height};
         const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width};
-        const auto Abop_eff{m_ShadeOpenness.Dbot * m_Width};
-        return {m_EffectiveFrontThermalOpennessArea, Al_eff, Ar_eff, Atop_eff, Abop_eff, m_PermeabilityFactor};
+        const auto Abot_eff{m_ShadeOpenness.Dbot * m_Width};
+        return {m_EffectiveFrontThermalOpennessArea, Al_eff, Ar_eff, Atop_eff, Abot_eff, m_PermeabilityFactor};
     }
 
     double EffectiveLayerUserDefined::effectiveThickness()
