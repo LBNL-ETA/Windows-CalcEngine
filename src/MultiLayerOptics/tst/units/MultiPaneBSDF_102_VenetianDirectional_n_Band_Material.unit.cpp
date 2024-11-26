@@ -20,7 +20,7 @@ private:
     std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
         const auto solarRadiation{StandardData::solarRadiationASTM_E891_87_Table1()};
 
