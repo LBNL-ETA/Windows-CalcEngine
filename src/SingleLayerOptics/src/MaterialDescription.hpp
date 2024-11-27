@@ -1,10 +1,11 @@
-#ifndef MATERIALDESCRIPTION_H
-#define MATERIALDESCRIPTION_H
+#pragma once
 
 #include <memory>
 #include <vector>
 #include <map>
 #include <functional>
+#include <mutex>
+
 #include <WCESpectralAveraging.hpp>
 #include "BeamDirection.hpp"   //  Need to include rather than forward declare to default incoming and outgoing directions to CBeamDirection()
 #include "BSDFDirections.hpp"   //  Needed to have BSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF material was changed to hide members using the pimpl ideom.
@@ -457,5 +458,3 @@ namespace SingleLayerOptics
 
 
 }   // namespace SingleLayerOptics
-
-#endif
