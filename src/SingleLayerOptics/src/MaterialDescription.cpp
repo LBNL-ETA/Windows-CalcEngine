@@ -126,9 +126,7 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////
 
     CMaterial::CMaterial(const double minLambda, const double maxLambda) :
-        m_MinLambda(minLambda),
-        m_MaxLambda(maxLambda),
-        m_WavelengthsCalculated(false)
+        m_MinLambda(minLambda), m_MaxLambda(maxLambda), m_WavelengthsCalculated(false)
     {}
 
     CMaterial::CMaterial(FenestrationCommon::Limits wavelengthRange) :
@@ -456,13 +454,30 @@ namespace SingleLayerOptics
                                          const CBeamDirection & t_IncomingDirection,
                                          const CBeamDirection &) const
     {
+        CacheKey key{t_Property, t_Side, t_IncomingDirection.theta()};
+
+        std::lock_guard lock(m_CacheMutex);
+
+        // Check if the result is already cached
+        auto it = m_Cache.find(key);
+        if(it != m_Cache.end())
+        {
+            return it->second;
+        }
+
+        // Perform the calculation
         assert(m_AngularSample);
-        return m_AngularSample->getWavelengthProperties(
-          t_Property, t_Side, t_IncomingDirection.theta());
+        auto result =
+          m_AngularSample->getWavelengthProperties(t_Property, t_Side, t_IncomingDirection.theta());
+
+        // Store the result in the cache
+        m_Cache[key] = result;
+
+        return result;
     }
 
-    double CMaterialSample::getBandProperty(FenestrationCommon::Property t_Property,
-                                            FenestrationCommon::Side t_Side,
+    double CMaterialSample::getBandProperty(Property t_Property,
+                                            Side t_Side,
                                             size_t wavelengthIndex,
                                             const CBeamDirection & t_IncomingDirection,
                                             const CBeamDirection & t_OutgoingDirection) const
@@ -499,8 +514,7 @@ namespace SingleLayerOptics
       const std::shared_ptr<SpectralAveraging::CPhotovoltaicSample> & t_SpectralSample,
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type) :
-        CMaterialSample(t_SpectralSample, t_Thickness, t_Type),
-        m_PVSample(t_SpectralSample)
+        CMaterialSample(t_SpectralSample, t_Thickness, t_Type), m_PVSample(t_SpectralSample)
     {}
 
     FenestrationCommon::CSeries
@@ -515,8 +529,7 @@ namespace SingleLayerOptics
 
     CMaterialMeasured::CMaterialMeasured(
       const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements) :
-        CMaterial(t_Measurements->getWavelengthLimits()),
-        m_AngularMeasurements(t_Measurements)
+        CMaterial(t_Measurements->getWavelengthLimits()), m_AngularMeasurements(t_Measurements)
     {
         if(t_Measurements == nullptr)
         {

@@ -325,7 +325,7 @@ namespace SingleLayerOptics
     class CMaterialSample : public CMaterial
     {
     public:
-        virtual ~CMaterialSample() = default;
+        ~CMaterialSample() override = default;
         CMaterialSample(
           const std::shared_ptr<SpectralAveraging::CSpectralSample> & t_SpectralSample,
           double t_Thickness,
@@ -336,7 +336,7 @@ namespace SingleLayerOptics
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
-        double
+        [[nodiscard]] double
           getProperty(FenestrationCommon::Property t_Property,
                       FenestrationCommon::Side t_Side,
                       const CBeamDirection & t_IncomingDirection = CBeamDirection(),
@@ -363,6 +363,35 @@ namespace SingleLayerOptics
     protected:
         std::vector<double> calculateBandWavelengths() override;
         std::shared_ptr<SpectralAveraging::CAngularSpectralSample> m_AngularSample;
+
+    private:
+        // Nested CacheKey structure
+        struct CacheKey
+        {
+            FenestrationCommon::Property property;
+            FenestrationCommon::Side side;
+            double incomingTheta;
+
+            bool operator==(const CacheKey & other) const
+            {
+                return property == other.property && side == other.side
+                       && FenestrationCommon::isEqual(incomingTheta, other.incomingTheta);
+            }
+        };
+
+        // Hash specialization for CacheKey
+        struct CacheKeyHash
+        {
+            std::size_t operator()(const CacheKey & key) const
+            {
+                return std::hash<int>()(static_cast<int>(key.property))
+                       ^ (std::hash<int>()(static_cast<int>(key.side)) << 1)
+                       ^ (std::hash<double>()(key.incomingTheta) << 2);
+            }
+        };
+
+        mutable std::mutex m_CacheMutex;
+        mutable std::unordered_map<CacheKey, std::vector<double>, CacheKeyHash> m_Cache;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////
