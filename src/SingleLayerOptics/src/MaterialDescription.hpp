@@ -363,7 +363,7 @@ namespace SingleLayerOptics
 
     protected:
         std::vector<double> calculateBandWavelengths() override;
-        std::shared_ptr<SpectralAveraging::CAngularSpectralSample> m_AngularSample;
+        mutable SpectralAveraging::CAngularSpectralSample m_AngularSample;
 
     private:
         // Nested CacheKey structure

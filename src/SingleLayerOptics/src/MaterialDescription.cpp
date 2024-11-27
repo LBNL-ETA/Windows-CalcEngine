@@ -417,25 +417,23 @@ namespace SingleLayerOptics
       const std::shared_ptr<SpectralAveraging::CSpectralSample> & t_SpectralSample,
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type) :
-        CMaterial(t_SpectralSample->getWavelengthLimits())
+        CMaterial(t_SpectralSample->getWavelengthLimits()),
+        m_AngularSample(t_SpectralSample, t_Thickness, t_Type)
     {
         if(t_SpectralSample == nullptr)
         {
             throw std::runtime_error("Cannot create specular material from non-existing sample.");
         }
-
-        m_AngularSample =
-          std::make_shared<CAngularSpectralSample>(t_SpectralSample, t_Thickness, t_Type);
     }
 
     void CMaterialSample::setSourceData(CSeries & t_SourceData)
     {
-        m_AngularSample->setSourceData(t_SourceData);
+        m_AngularSample.setSourceData(t_SourceData);
     }
 
     void CMaterialSample::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
     {
-        m_AngularSample->setDetectorData(t_DetectorData);
+        m_AngularSample.setDetectorData(t_DetectorData);
     }
 
     double CMaterialSample::getProperty(const Property t_Property,
@@ -444,7 +442,7 @@ namespace SingleLayerOptics
                                         const CBeamDirection &) const
     {
         assert(m_AngularSample);
-        return m_AngularSample->getProperty(
+        return m_AngularSample.getProperty(
           m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
     }
 
@@ -468,7 +466,7 @@ namespace SingleLayerOptics
         // Perform the calculation
         assert(m_AngularSample);
         auto result =
-          m_AngularSample->getWavelengthProperties(t_Property, t_Side, t_IncomingDirection.theta());
+          m_AngularSample.getWavelengthProperties(t_Property, t_Side, t_IncomingDirection.theta());
 
         // Store the result in the cache
         m_Cache[key] = result;
@@ -489,7 +487,7 @@ namespace SingleLayerOptics
 
     std::vector<double> CMaterialSample::calculateBandWavelengths()
     {
-        return m_AngularSample->getBandWavelengths();
+        return m_AngularSample.getBandWavelengths();
     }
 
     void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
@@ -497,13 +495,13 @@ namespace SingleLayerOptics
         std::lock_guard<std::mutex> lock(materialSampleWL);
 
         CMaterial::setBandWavelengths(wavelengths);
-        m_AngularSample->setBandWavelengths(m_Wavelengths);
+        m_AngularSample.setBandWavelengths(m_Wavelengths);
         m_WavelengthsCalculated = true;
     }
 
     void CMaterialSample::Flipped(bool flipped)
     {
-        m_AngularSample->Flipped(flipped);
+        m_AngularSample.Flipped(flipped);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
