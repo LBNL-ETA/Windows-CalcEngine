@@ -20,9 +20,12 @@ matrix:
       osx_image: xcode12.5
       compiler: clang
       env: BUILD_TYPE=Release GSL_CXX_STANDARD=17
-      before_script:
-        - mkdir build && cd build
+      script:
+        - mkdir build
+        - cd build
         - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
+        - cmake --build . --config $BUILD_TYPE
+        - ctest -C $BUILD_TYPE
 
     ##########################################################################
     # GCC on Ubuntu
@@ -31,9 +34,12 @@ matrix:
       dist: focal
       compiler: gcc
       env: BUILD_TYPE=Release GSL_CXX_STANDARD=17
-      before_script:
-        - mkdir build && cd build
+      script:
+        - mkdir build
+        - cd build
         - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
+        - cmake --build . -- -j2
+        - ctest -C $BUILD_TYPE
 
     ##########################################################################
     # MSVC on Windows
