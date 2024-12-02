@@ -12,6 +12,8 @@ set (CMAKE_CXX_STANDARD 17)
 option(FORCE_SINGLE_PROJECT "Force compilation as a single project, regardless of parent" ON)
 option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
 
+message(STATUS "FORCE_SINGLE_PROJECT: ${FORCE_SINGLE_PROJECT}")
+
 if(USE_PARALLEL_ALGORITHMS)
     add_compile_definitions(USE_PARALLEL_ALGORITHMS)
 endif()
