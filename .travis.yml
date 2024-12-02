@@ -72,7 +72,7 @@ before_script:
   # Have CMake generate build files
   - cd "${TRAVIS_BUILD_DIR}"
   - mkdir build && cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
 
 script:
   # Build and run tests
