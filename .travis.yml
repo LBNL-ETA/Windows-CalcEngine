@@ -20,6 +20,9 @@ matrix:
       osx_image: xcode12.5
       compiler: clang
       env: BUILD_TYPE=Release GSL_CXX_STANDARD=17
+      before_script:
+        - mkdir build && cd build
+        - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
 
     ##########################################################################
     # GCC on Ubuntu
@@ -28,6 +31,9 @@ matrix:
       dist: focal
       compiler: gcc
       env: BUILD_TYPE=Release GSL_CXX_STANDARD=17
+      before_script:
+        - mkdir build && cd build
+        - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
 
     ##########################################################################
     # MSVC on Windows
@@ -41,7 +47,7 @@ matrix:
       script:
         - mkdir build
         - cd build
-        - cmake .. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD
+        - cmake .. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGSL_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
         - cmake --build . --config $BUILD_TYPE
         - ctest -C $BUILD_TYPE
 
