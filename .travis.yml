@@ -23,6 +23,7 @@ matrix:
       script:
         - mkdir build
         - cd build
+        - echo "Running cmake with: -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF"
         - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
         - cmake --build . --config $BUILD_TYPE
         - ctest -C $BUILD_TYPE
@@ -37,6 +38,7 @@ matrix:
       script:
         - mkdir build
         - cd build
+        - echo "Running cmake with: -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF"
         - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
         - cmake --build . -- -j2
         - ctest -C $BUILD_TYPE
@@ -53,6 +55,7 @@ matrix:
       script:
         - mkdir build
         - cd build
+        - echo "Running cmake with: -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF"
         - cmake .. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=$GSL_CXX_STANDARD -DFORCE_SINGLE_PROJECT=OFF
         - cmake --build . --config $BUILD_TYPE
         - ctest -C $BUILD_TYPE
