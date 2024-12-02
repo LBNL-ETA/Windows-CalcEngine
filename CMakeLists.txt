@@ -27,7 +27,7 @@ if(hasParent OR FORCE_SINGLE_PROJECT)
   set( BUILD_WCE_TESTING OFF )
   set( DOWNLOAD_GTEST OFF )
 
-  if(FORCE_SINGLE_PROJECT) # Tests are available for single project that does not have parent
+  if(FORCE_SINGLE_PROJECT AND NOT hasParent) # Tests are available for single project that does not have parent
 	set( BUILD_WCE_TESTING ON )
 	set( DOWNLOAD_GTEST ON )
   endif()
