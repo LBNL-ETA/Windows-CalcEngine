@@ -133,8 +133,10 @@ TEST_F(TestIndoorPermeableLayer, Test1)
     auto thickness{tarcogSystem.thickness(aRun)};
     EXPECT_NEAR(0.015848, thickness, Tolerance);
 
-    auto numOfIter = tarcogSystem.getNumberOfIterations(aRun);
-    EXPECT_EQ(25u, numOfIter);
+    // Number of iterations are different for different compilers. I have already explained that
+    // in the one of the issues in github repository (Different calculations values between mac and
+    // windows #146). auto numOfIter = tarcogSystem.getNumberOfIterations(aRun); EXPECT_EQ(25u,
+    // numOfIter);
 
     auto Uvalue = tarcogSystem.getUValue();
     EXPECT_NEAR(3.414354, Uvalue, Tolerance);
