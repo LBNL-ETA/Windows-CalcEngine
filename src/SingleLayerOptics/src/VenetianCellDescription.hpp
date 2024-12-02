@@ -24,7 +24,7 @@ namespace SingleLayerOptics
     public:
         virtual ~CVenetianCellDescription() = default;
 
-        CVenetianCellDescription(const FenestrationCommon::VenetianGeometry & t_Geometry,
+        CVenetianCellDescription(const FenestrationCommon::Venetian::Geometry & t_Geometry,
                                  size_t t_NumOfSlatSegments);
 
         // Makes exact copy of cell description
@@ -71,7 +71,7 @@ namespace SingleLayerOptics
         double R_dir_dir(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;
 
-        [[nodiscard]] FenestrationCommon::VenetianGeometry getVenetianGeometry() const;
+        [[nodiscard]] FenestrationCommon::Venetian::Geometry getVenetianGeometry() const;
         [[nodiscard]] size_t numOfSegments() const;
 
         void preCalculateForProfileAngles(FenestrationCommon::Side side,
@@ -91,7 +91,7 @@ namespace SingleLayerOptics
           const CBeamDirection & t_Direction,
           const std::vector<Viewer::BeamViewFactor> & t_BeamViewFactors);
 
-        FenestrationCommon::VenetianGeometry m_VenetianGeometry;
+        FenestrationCommon::Venetian::Geometry m_VenetianGeometry;
         size_t m_NumOfSegments;
 
         // Top and bottom slats of venetian cell

@@ -103,16 +103,16 @@ TEST_F(TestDoubleLoweEnvironmentWithDeflection, Test1)
     /// Deflection results
     ///////////////////////////////////////////////////////////////////////////////
     const std::vector correctMaxDeflectionU{-1.849876e-3, 0.343977e-3};
-    testVectors("Max deflection U-value run",
-                correctMaxDeflectionU,
-                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
-                DeflectionTolerance);
+    Helper::testVectors("Max deflection U-value run",
+                        correctMaxDeflectionU,
+                        aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                        DeflectionTolerance);
 
     const std::vector correctMaxDeflectionSHGC{-1.385198e-3, 0.252978e-3};
-    testVectors("Max deflection SHGC run",
-                correctMaxDeflectionSHGC,
-                aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::SHGC),
-                DeflectionTolerance);
+    Helper::testVectors("Max deflection SHGC run",
+                        correctMaxDeflectionSHGC,
+                        aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::SHGC),
+                        DeflectionTolerance);
 
     //////////////////////////////////////////////////////////////////////
     /// General results

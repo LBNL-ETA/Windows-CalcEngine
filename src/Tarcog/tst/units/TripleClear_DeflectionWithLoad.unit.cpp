@@ -18,9 +18,9 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        constexpr auto airTemperature{250};      // Kelvins
-        constexpr auto airSpeed{5.5};            // meters per second
-        constexpr auto tSky{255.15};             // Kelvins
+        constexpr auto airTemperature{250};   // Kelvins
+        constexpr auto airSpeed{5.5};         // meters per second
+        constexpr auto tSky{255.15};          // Kelvins
         constexpr auto solarRadiation{0.0};
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
@@ -40,8 +40,8 @@ protected:
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        constexpr auto solidLayerThickness{0.003048}; // [m]
-        constexpr auto solidLayerConductance{1.0};    // [W/m2K]
+        constexpr auto solidLayerThickness{0.003048};   // [m]
+        constexpr auto solidLayerConductance{1.0};      // [W/m2K]
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
@@ -101,10 +101,11 @@ TEST_F(TestTripleClearDeflectionWithLoad, Test1)
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     const auto Temperature = aSystem->getTemperatures(aRun);
-    const std::vector correctTemperature{253.442695, 253.723313, 266.443064, 266.723682, 280.000269, 280.280887};
-    testVectors("Surface temperatures", Temperature, correctTemperature, Tolerance);
+    const std::vector correctTemperature{
+      253.442695, 253.723313, 266.443064, 266.723682, 280.000269, 280.280887};
+    Helper::testVectors("Surface temperatures", Temperature, correctTemperature, Tolerance);
 
     const std::vector correctDeflection{22.808033e-3, 24.468037e-3, 63.330606e-3};
     const auto deflection = aSystem->getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue);
-    testVectors("Maximum deflection", deflection, correctDeflection, DeflectionTolerance);
+    Helper::testVectors("Maximum deflection", deflection, correctDeflection, DeflectionTolerance);
 }

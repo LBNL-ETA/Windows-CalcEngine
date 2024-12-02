@@ -49,16 +49,15 @@ protected:
         auto Abot = 0.1;
         auto Aleft = 0.1;
         auto Aright = 0.1;
-        auto Afront = 0.2;
-        auto PermeabilityFactor = 0.0;
+        auto PermeabilityFactor = 0.2;
 
-        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
+        EffectiveLayers::ShadeOpenness openness{Aleft, Aright, Atop, Abot};
 
         double windowWidth = 1;
         double windowHeight = 1;
 
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
+        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
 
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
@@ -74,13 +73,6 @@ protected:
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, shadeLayer, gap2, layer2});
-
-        // Alternative way of adding layers.
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(gap1);
-        // aIGU.addLayer(shadeLayer);
-        // aIGU.addLayer(gap2);
-        // aIGU.addLayer(layer2);
 
         /////////////////////////////////////////////////////////
         /// System
@@ -109,10 +101,10 @@ TEST_F(TestGapLayerInBetweenVentilation, VentilationFlow)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(34.909799, gainEnergy, 1e-6);
+    EXPECT_NEAR(36.064197, gainEnergy, 1e-6);
 
     aLayer = GetGap2();
     ASSERT_TRUE(aLayer != nullptr);
     gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-34.909799, gainEnergy, 1e-6);
+    EXPECT_NEAR(-36.064197, gainEnergy, 1e-6);
 }

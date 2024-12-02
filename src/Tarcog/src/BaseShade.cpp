@@ -178,14 +178,41 @@ namespace Tarcog::ISO15099
         t_Gap.calculateVentilatedAirflow(t_Environment.getGasTemperature());
     }
 
+    namespace Helper
+    {
+        std::optional<double> thermalConductivity(const double temperature,
+                                                  const CIGUGapLayer * layer)
+        {
+            if(layer != nullptr)
+            {
+                auto gasSpec{layer->getGasSpecification()};
+                gasSpec.setTemperature(temperature);
+                return gasSpec.gas.getGasProperties().m_ThermalConductivity;
+            }
+            return std::nullopt;
+        }
+
+        double effectiveGasConductivity(std::optional<double> gas1Cond,
+                                        std::optional<double> gas2Cond,
+                                        double defaultConductivity = 0.0)
+        {
+            auto average = [](double a, double b) { return (a + b) / 2.0; };
+
+            return gas1Cond && gas2Cond ? average(*gas1Cond, *gas2Cond)
+                                        : gas1Cond.value_or(gas2Cond.value_or(defaultConductivity));
+        }
+    }   // namespace Helper
+
     double CIGUShadeLayer::equivalentConductivity(const double t_Conductivity,
                                                   const double permeabilityFactor)
     {
-        const auto standardPressure{101325.0};   // Pa
-        Gases::CGas air;
-        air.setTemperatureAndPressure(averageSurfaceTemperature(), standardPressure);
-        const auto airThermalConductivity = air.getGasProperties().m_ThermalConductivity;
-        return airThermalConductivity * permeabilityFactor
+        auto previousLayer = std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer());
+        auto nextLayer = std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer());
+        auto gas1Cond =
+          Helper::thermalConductivity(averageSurfaceTemperature(), previousLayer.get());
+        auto gas2Cond = Helper::thermalConductivity(averageSurfaceTemperature(), nextLayer.get());
+
+        return Helper::effectiveGasConductivity(gas1Cond, gas2Cond) * permeabilityFactor
                + (1 - permeabilityFactor) * t_Conductivity;
     }
 }   // namespace Tarcog::ISO15099

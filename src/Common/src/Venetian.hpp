@@ -1,10 +1,10 @@
 #pragma once
 
-namespace FenestrationCommon
+namespace FenestrationCommon::Venetian
 {
     //! \brief Structure that holds geometry of venetian blind slats. To be used across different
     //! calculation modules
-    struct VenetianGeometry
+    struct Geometry
     {
         double SlatWidth{0.0};
         double SlatSpacing{0.0};
@@ -12,5 +12,5 @@ namespace FenestrationCommon
         double CurvatureRadius{0.0};
     };
 
-    VenetianGeometry adjustSlatTiltAngle(const VenetianGeometry & t_Geometry);
+    Geometry adjustSlatTiltAngle(const Geometry & t_Geometry);
 }   // namespace FenestrationCommon

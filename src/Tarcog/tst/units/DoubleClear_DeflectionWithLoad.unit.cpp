@@ -78,12 +78,12 @@ TEST_F(TestDoubleClearDeflectionWithLoad, U_ValueRun)
     constexpr auto aRun = Tarcog::ISO15099::System::Uvalue;
 
     const std::vector correctTemperature{292.076977, 291.610008, 272.796958, 272.329989};
-    testVectors(
+    Helper::testVectors(
       "U-value temperatures", correctTemperature, tarcogSystem.getTemperatures(aRun), Tolerance);
 
     const std::vector correctDeflection{-55.488195e-3, -54.644421e-3};
-    testVectors("U-value deflection",
-                correctDeflection,
-                tarcogSystem.getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
-                Tolerance);
+    Helper::testVectors("U-value deflection",
+                        correctDeflection,
+                        tarcogSystem.getMaxLayerDeflections(Tarcog::ISO15099::System::Uvalue),
+                        Tolerance);
 }

@@ -5,7 +5,6 @@
 
 #include "vectorTesting.hpp"
 
-// Example of double clear window with inital guess for solution
 class DoubleClear_UValueEnvironmentVenetianInside : public testing::Test
 {
 private:
@@ -15,7 +14,7 @@ private:
     double airTemperature = 255.15;   // Kelvins
     double airSpeed = 5.5;            // meters per second
     double tSky = 255.15;             // Kelvins
-    double solarRadiation = 789.0;
+    double solarRadiation = 0.0;
 
     /////////////////////////////////////////////////////////
     /// Indoor
@@ -57,29 +56,16 @@ private:
 
         // Venetian
         const auto matThickness{0.0029};   // m
-        const auto slatWidth{0.0508};      // m
-        const auto slatSpacing{0.0432};    // m
-        const auto slatTiltAngle{0.0};
-        const auto curvatureRadius{0.0};   // m
-
-        const auto frontOpenness{ThermalPermeability::Venetian::frontOpenness(
-          slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
-
-        const auto dl{0.0};
-        const auto dr{0.0};
-        const auto dtop{0.0};
-        const auto dbot{0.0};
-
-        EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
+        const FenestrationCommon::Venetian::Geometry venetianGeometry{0.0508, 0.012, 0.0, 0.0};
 
         EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          windowWidth, windowHeight, matThickness, openness, slatTiltAngle, slatWidth};
+          windowWidth, windowHeight, matThickness, venetianGeometry};
 
         // From window
-        auto Ef = 0.518577;
-        auto Eb = 0.518577;
-        auto Tirf = 0.42419052;
-        auto Tirb = 0.42419052;
+        auto Ef = 0.762609422207;
+        auto Eb = 0.762609422207;
+        auto Tirf = 0.224916040897;
+        auto Tirb = 0.224916040897;
 
         auto venetianLayer =
           Tarcog::ISO15099::Layers::shading(effectiveVenetian.effectiveThickness(),
@@ -125,57 +111,57 @@ TEST_F(DoubleClear_UValueEnvironmentVenetianInside, StandardRun)
 
     auto aRun = Tarcog::ISO15099::System::Uvalue;
 
-    std::vector correctTemperature = {258.17414338086746,
-                                      258.44349115078751,
-                                      275.66951214625334,
-                                      275.93885991617333,
-                                      286.31519503530762,
-                                      288.39614378854833};
-    testVectors("Temperature - Uvalue run",
-                correctTemperature,
-                tarcogSystem.getTemperatures(aRun),
-                Tolerance);
+    std::vector correctTemperature = {258.04303308701242,
+                                      258.30068157152357,
+                                      274.87318943566243,
+                                      275.13083792017358,
+                                      285.74307808549537,
+                                      287.8240450610885};
+    Helper::testVectors("Temperature - Uvalue run",
+                        correctTemperature,
+                        tarcogSystem.getTemperatures(aRun),
+                        Tolerance);
 
-    std::vector correctSolidConductivities{1.0, 1.0, 0.068902110279170703};
-    testVectors("Solid Conductivities - Uvalue run",
-                correctSolidConductivities,
-                tarcogSystem.getSolidEffectiveLayerConductivities(aRun),
-                Tolerance);
+    std::vector correctSolidConductivities{1.0, 1.0, 0.064723381535680649};
+    Helper::testVectors("Solid Conductivities - Uvalue run",
+                        correctSolidConductivities,
+                        tarcogSystem.getSolidEffectiveLayerConductivities(aRun),
+                        Tolerance);
 
-    std::vector correctGapConductivities{0.065150412563458326, 0.28274394167757577};
-    testVectors("Gap Conductivities - Uvalue run",
-                correctGapConductivities,
-                tarcogSystem.getGapEffectiveLayerConductivities(aRun),
-                Tolerance);
+    std::vector correctGapConductivities{0.064778086753446609, 0.26242346851182713};
+    Helper::testVectors("Gap Conductivities - Uvalue run",
+                        correctGapConductivities,
+                        tarcogSystem.getGapEffectiveLayerConductivities(aRun),
+                        Tolerance);
 
-    std::vector correctRadiosity = {250.03465513548156,
-                                    263.21661641584001,
-                                    317.15368152807775,
-                                    339.64734212131299,
-                                    397.07384888589741,
-                                    371.75872636176621};
-    testVectors(
+    std::vector correctRadiosity = {249.60517454445562,
+                                    262.2154667364166,
+                                    313.8292357698283,
+                                    334.95846689103632,
+                                    387.89324931163679,
+                                    377.3686622916473};
+    Helper::testVectors(
       "Radiosity - Uvalue run", correctRadiosity, tarcogSystem.getRadiosities(aRun), Tolerance);
 
     auto effectiveSystemConductivity{tarcogSystem.getEffectiveSystemConductivity(aRun)};
-    EXPECT_NEAR(0.12831633907950135, effectiveSystemConductivity, Tolerance);
+    EXPECT_NEAR(0.12232020362599783, effectiveSystemConductivity, Tolerance);
 
     auto thickness{tarcogSystem.thickness(aRun)};
-    EXPECT_NEAR(0.059080400000000005, thickness, Tolerance);
+    EXPECT_NEAR(0.0590804, thickness, Tolerance);
 
     auto numOfIter = tarcogSystem.getNumberOfIterations(aRun);
-    EXPECT_EQ(61u, numOfIter);
+    EXPECT_EQ(55u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results
     //////////////////////////////////////////////////////////////////////
     auto Uvalue = tarcogSystem.getUValue();
-    EXPECT_NEAR(Uvalue, 2.2658638693694613, Tolerance);
+    EXPECT_NEAR(Uvalue, 2.1674446838982129, Tolerance);
 
     constexpr double Tsol{0.703296};
     auto SHGC = tarcogSystem.getSHGC(Tsol);
-    EXPECT_NEAR(SHGC, 0.70329600000000003, Tolerance);
+    EXPECT_NEAR(SHGC, 0.0, Tolerance);
 
     auto relativeHeatGain = tarcogSystem.relativeHeatGain(Tsol);
-    EXPECT_NEAR(527.63927883472888, relativeHeatGain, Tolerance);
+    EXPECT_NEAR(16.86272, relativeHeatGain, Tolerance);
 }

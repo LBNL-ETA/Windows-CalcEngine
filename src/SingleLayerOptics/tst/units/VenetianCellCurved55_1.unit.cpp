@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 
 #include <WCESingleLayerOptics.hpp>
-#include <WCECommon.hpp>
 
 
 using namespace SingleLayerOptics;
@@ -23,7 +22,7 @@ protected:
         const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
-        const FenestrationCommon::VenetianGeometry geometry{0.076200, 0.057150, 55.000000, 0.123967};
+        const FenestrationCommon::Venetian::Geometry geometry{0.076200, 0.057150, 55.000000, 0.123967};
         const size_t numOfSlatSegments = 2;
 
         const auto aCellDescription = std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);

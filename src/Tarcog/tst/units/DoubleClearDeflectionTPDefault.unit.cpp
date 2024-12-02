@@ -81,32 +81,34 @@ TEST_F(DoubleClearDeflectionTPDefault, U_ValueRun)
 
     auto Radiosity = tarcogSystem.getRadiosities();
     std::vector correctRadiosity = {252.080153, 267.749407, 331.509846, 359.112232};
-    testVectors("Radiosity", correctRadiosity, Radiosity, Tolerance);
+    Helper::testVectors("Radiosity", correctRadiosity, Radiosity, Tolerance);
 
     const auto MaxLayerDeflection = tarcogSystem.getMaxLayerDeflections();
     std::vector correctMaxLayerDeflection{-2.285680e-3, 0.48367382e-3};
-    testVectors("Max layer deflection", correctMaxLayerDeflection, MaxLayerDeflection, 1e-8);
+    Helper::testVectors(
+      "Max layer deflection", correctMaxLayerDeflection, MaxLayerDeflection, 1e-8);
 
     const auto MeanLayerDeflection = tarcogSystem.getMeanLayerDeflections();
     std::vector correctMeanLayerDeflection{-0.957652e-3, 0.202669e-3};
-    testVectors(
+    Helper::testVectors(
       "Mean layer deflection", correctMeanLayerDeflection, MeanLayerDeflection, Tolerance);
 
     const auto MaxGapDeflection = tarcogSystem.getMaxGapWidth();
     std::vector correctMaxGapDeflection{9.930646e-3};
-    testVectors("Maximum gap deflection", correctMaxGapDeflection, MaxGapDeflection, 1e-8);
+    Helper::testVectors("Maximum gap deflection", correctMaxGapDeflection, MaxGapDeflection, 1e-8);
 
     const auto MeanGapDeflection = tarcogSystem.getMeanGapWidth();
     std::vector correctMeanGapDeflection{11.539846e-3};
-    testVectors("Mean gap deflection", correctMeanGapDeflection, MeanGapDeflection, Tolerance);
+    Helper::testVectors(
+      "Mean gap deflection", correctMeanGapDeflection, MeanGapDeflection, Tolerance);
 
     const auto GapPressure = tarcogSystem.getGapPressures();
     std::vector correctGapPressure{98976.323821};
-    testVectors("Gaps pressure", correctGapPressure, GapPressure, 1e-6);
+    Helper::testVectors("Gaps pressure", correctGapPressure, GapPressure, 1e-6);
 
     const auto loads = tarcogSystem.getPanesLoad();
     std::vector correctLoads{-143.261021, 143.261021};
-    testVectors("Panes load", correctLoads, loads, 1e-6);
+    Helper::testVectors("Panes load", correctLoads, loads, 1e-6);
 
     auto numOfIter = tarcogSystem.getNumberOfIterations();
     EXPECT_EQ(25u, numOfIter);
@@ -177,36 +179,39 @@ TEST_F(DoubleClearDeflectionTPDefault, SHGC_ValueRun)
 
     auto Temperature = tarcogSystem.getTemperatures();
     std::vector correctTemperature = {308.954315, 309.077572, 309.485922, 309.218194};
-    testVectors("Surface temperatures", correctTemperature, Temperature, Tolerance);
+    Helper::testVectors("Surface temperatures", correctTemperature, Temperature, Tolerance);
 
     auto Radiosity = tarcogSystem.getRadiosities();
     std::vector correctRadiosity = {512.583061, 517.782219, 519.766194, 506.137762};
-    testVectors("Radiosity", correctRadiosity, Radiosity, Tolerance);
+    Helper::testVectors("Radiosity", correctRadiosity, Radiosity, Tolerance);
 
     const auto MaxLayerDeflection = tarcogSystem.getMaxLayerDeflections();
     std::vector correctMaxLayerDeflection{0.505696e-3, -0.080251e-03};
-    testVectors("Max layer deflection", correctMaxLayerDeflection, MaxLayerDeflection, 1e-8);
+    Helper::testVectors(
+      "Max layer deflection", correctMaxLayerDeflection, MaxLayerDeflection, 1e-8);
 
     const auto MeanLayerDeflection = tarcogSystem.getMeanLayerDeflections();
     std::vector correctMeanLayerDeflection{0.211849e-3, -0.033619e-03};
-    testVectors(
+    Helper::testVectors(
       "Mean layer deflection", correctMeanLayerDeflection, MeanLayerDeflection, Tolerance);
 
     const auto MaxGapDeflection = tarcogSystem.getMaxGapWidth();
     std::vector correctMaxGapDeflection{0.013286};
-    testVectors("Maximum gap deflection", correctMaxGapDeflection, MaxGapDeflection, Tolerance);
+    Helper::testVectors(
+      "Maximum gap deflection", correctMaxGapDeflection, MaxGapDeflection, Tolerance);
 
     const auto MeanGapDeflection = tarcogSystem.getMeanGapWidth();
     std::vector correctMeanGapDeflection{0.012945};
-    testVectors("Mean gap deflection", correctMeanGapDeflection, MeanGapDeflection, Tolerance);
+    Helper::testVectors(
+      "Mean gap deflection", correctMeanGapDeflection, MeanGapDeflection, Tolerance);
 
     const auto GapPressure = tarcogSystem.getGapPressures();
     std::vector correctGapPressure{101414.318183};
-    testVectors("Gaps pressure", correctGapPressure, GapPressure, Tolerance);
+    Helper::testVectors("Gaps pressure", correctGapPressure, GapPressure, Tolerance);
 
     const auto loads = tarcogSystem.getPanesLoad();
     std::vector correctLoads{23.210613, -23.210613};
-    testVectors("Panes load", correctLoads, loads, Tolerance);
+    Helper::testVectors("Panes load", correctLoads, loads, Tolerance);
 
     auto numOfIter = tarcogSystem.getNumberOfIterations();
     EXPECT_EQ(26u, numOfIter);

@@ -21,8 +21,7 @@ namespace FenestrationCommon
     }
 
     CSeriesPoint::CSeriesPoint(double t_Wavelength, double t_Value) :
-        m_x(t_Wavelength),
-        m_Value(t_Value)
+        m_x(t_Wavelength), m_Value(t_Value)
     {}
 
     double CSeriesPoint::x() const
@@ -111,14 +110,13 @@ namespace FenestrationCommon
                                double normalizationCoefficient,
                                const std::optional<std::vector<double>> & integrationPoints) const
     {
-        const CIntegratorFactory aFactory = CIntegratorFactory();
-        const auto aIntegrator = aFactory.getIntegrator(t_IntegrationType);
-
         const auto series = integrationPoints.has_value()
                               ? interpolate(integrationPoints.value()).m_Series
                               : m_Series;
 
-        return aIntegrator->integrate(series, normalizationCoefficient);
+        return CIntegratorFactory()
+          .getIntegrator(t_IntegrationType)
+          ->integrate(series, normalizationCoefficient);
     }
 
     std::optional<CSeriesPoint> CSeries::findLower(double const t_Wavelength) const
@@ -296,26 +294,28 @@ namespace FenestrationCommon
         return newProperties;
     }
 
+    namespace Helper
+    {
+        template<typename Func>
+        std::vector<double> getArray(const CSeries & series, Func && extractor)
+        {
+            std::vector<double> aArray(series.size());
+            std::transform(
+              series.begin(), series.end(), aArray.begin(), std::forward<Func>(extractor));
+            return aArray;
+        }
+    }   // namespace Helper
+
     std::vector<double> CSeries::getXArray() const
     {
-        std::vector<double> aArray;
-        for(auto & spectralProperty : m_Series)
-        {
-            aArray.push_back(spectralProperty.x());
-        }
-
-        return aArray;
+        return Helper::getArray(*this,
+                                [](const auto & spectralProperty) { return spectralProperty.x(); });
     }
 
     std::vector<double> CSeries::getYArray() const
     {
-        std::vector<double> aArray;
-        for(auto & spectralProperty : m_Series)
-        {
-            aArray.push_back(spectralProperty.value());
-        }
-
-        return aArray;
+        return Helper::getArray(
+          *this, [](const auto & spectralProperty) { return spectralProperty.value(); });
     }
 
     double CSeries::sum(double const minLambda, double const maxLambda) const

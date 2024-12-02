@@ -61,12 +61,11 @@ protected:
         auto Abot = 0.1;
         auto Aleft = 0.1;
         auto Aright = 0.1;
-        auto Afront = 0.2;
         auto PermeabilityFactor = 0.2;
 
-        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
+        EffectiveLayers::ShadeOpenness openness{Aleft, Aright, Atop, Abot};
+        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
 
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
@@ -134,12 +133,12 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(3.734313, gainEnergy, 1e-6);
+    EXPECT_NEAR(3.787673, gainEnergy, 1e-6);
 
     aLayer = GetGap2();
     ASSERT_TRUE(aLayer != nullptr);
     gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-3.734313, gainEnergy, 1e-6);
+    EXPECT_NEAR(-3.787673, gainEnergy, 1e-6);
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation, FirstLayerSurfaceTemperatures)
@@ -153,8 +152,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(306.04014011835119, frontTemperature, 1e-4);
-    EXPECT_NEAR(307.36367843102033, backTemperature, 1e-4);
+    EXPECT_NEAR(306.040920, frontTemperature, 1e-4);
+    EXPECT_NEAR(307.364599, backTemperature, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation, SecondLayerSurfaceTemperatures)
@@ -166,8 +165,8 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(334.875464, frontTemperature, 1e-6);
-    EXPECT_NEAR(334.878421, backTemperature, 1e-6);
+    EXPECT_NEAR(334.871021, frontTemperature, 1e-6);
+    EXPECT_NEAR(334.873976, backTemperature, 1e-6);
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation, ThirdLayerSurfaceTemperatures)
@@ -179,6 +178,6 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
     ASSERT_TRUE(aLayer != nullptr);
     auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
     auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
-    EXPECT_NEAR(318.086476, frontTemperature, 1e-6);
-    EXPECT_NEAR(317.238326, backTemperature, 1e-6);
+    EXPECT_NEAR(318.084058, frontTemperature, 1e-6);
+    EXPECT_NEAR(317.236037, backTemperature, 1e-6);
 }

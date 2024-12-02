@@ -42,38 +42,28 @@ protected:
         auto shadeLayerConductance = 160.0;
 
         const auto matThickness{0.0001};   // m
-        const auto slatWidth{0.0148};      // m
-        const auto slatSpacing{0.0127};    // m
-        const auto slatTiltAngle{0.0};
-        const auto curvatureRadius{0.0331305656433105};   // m
 
-        const auto frontOpenness{ThermalPermeability::Venetian::frontOpenness(
-          slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
+        const FenestrationCommon::Venetian::Geometry geometry{
+          0.0148, 0.0127, 0.0, 0.0331305656433105};
 
         const auto dl{0.0};
         const auto dr{0.0};
         const auto dtop{0.0};
         const auto dbot{0.0};
 
-        EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
+        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
 
         EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          windowWidth, windowHeight, matThickness, openness, slatTiltAngle, slatWidth};
+          windowWidth, windowHeight, matThickness, geometry, openness};
 
         // From unit test
         auto Ef = 0.5564947806702053;
         auto Eb = 0.5564947806702053;
         auto Tirf = 0.42293224373137134;
         auto Tirb = 0.42293224373137134;
-
-        // from window
-        // auto Ef = 0.556472361088;
-        // auto Eb = 0.556472361088;
-        // auto Tirf = 0.422942101955;
-        // auto Tirb = 0.422942101955;
 
         auto aLayer1 = Tarcog::ISO15099::Layers::shading(effectiveVenetian.effectiveThickness(),
                                                          shadeLayerConductance,
@@ -82,9 +72,6 @@ protected:
                                                          Tirf,
                                                          Eb,
                                                          Tirb);
-
-        // auto aLayer1 = Tarcog::ISO15099::Layers::solid(shadeLayerThickness,
-        // shadeLayerConductance);
 
         // From unit test
         aLayer1->setSolarHeatGain(0.030609361, solarRadiation);

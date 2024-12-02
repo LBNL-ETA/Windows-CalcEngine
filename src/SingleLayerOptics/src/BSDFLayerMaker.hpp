@@ -4,9 +4,9 @@
 
 #include "PhotovoltaicProperties.hpp"
 
-namespace FenestrationCommon
+namespace FenestrationCommon::Venetian
 {
-    struct VenetianGeometry;
+    struct Geometry;
 }
 
 namespace SingleLayerOptics
@@ -67,7 +67,7 @@ namespace SingleLayerOptics
         static std::shared_ptr<CBSDFLayer>
             getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
             const BSDFHemisphere & t_BSDF,
-            const FenestrationCommon::VenetianGeometry & geometry,
+            const FenestrationCommon::Venetian::Geometry & geometry,
             size_t numOfSlatSegments,
             DistributionMethod method = DistributionMethod::DirectionalDiffuse,
             bool isHorizontal = true);

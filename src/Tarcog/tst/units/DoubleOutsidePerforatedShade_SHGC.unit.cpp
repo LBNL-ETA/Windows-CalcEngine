@@ -43,25 +43,26 @@ protected:
 
         // make cell geometry
         const auto thickness_31111{0.00023};
-        const auto x = 0.00169;        // m
-        const auto y = 0.00169;        // m
-        const auto radius = 0.00058;   // m
 
-        const auto frontOpenness{ThermalPermeability::Perforated::frontOpenness(
-          ThermalPermeability::Perforated::Type::Circular, x, y, 2 * radius, 2 * radius)};
+        const FenestrationCommon::Perforated::Geometry aGeometry{
+          FenestrationCommon::Perforated::Type::Circular, 0.00169, 0.00169, 0.00116, 0.00116};
 
         const auto dl{0.0};
         const auto dr{0.0};
         const auto dtop{0.0};
         const auto dbot{0.0};
 
-        EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
+        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
 
         auto windowWidth = 1.0;
         auto windowHeight = 1.0;
 
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
-          windowWidth, windowHeight, thickness_31111, openness};
+          windowWidth,
+          windowHeight,
+          thickness_31111,
+          aGeometry,
+          openness};
 
 
         auto Ef = 0.640892;

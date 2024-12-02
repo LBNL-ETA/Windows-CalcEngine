@@ -1,9 +1,9 @@
 #include <memory>
-#include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+#include <WCETarcog.hpp>
+
+#include "vectorTesting.hpp"
 
 class TestShadeOut : public testing::Test
 {
@@ -43,20 +43,13 @@ protected:
 
         auto shadeLayerThickness = 0.0006;
         auto shadeLayerConductance = 160.0;
-        auto Atop = 0.0;
-        auto Abot = 0.0;
-        auto Aleft = 0.0;
-        auto Aright = 0.0;
-        auto Afront = 0.5;
-        auto PermeabilityFactor = 0.99;
-
-        EffectiveLayers::ShadeOpenness openness{Afront, Aleft, Aright, Atop, Abot};
+        auto PermeabilityFactor = 0.5;
 
         double windowWidth = 1;
         double windowHeight = 1;
 
-        EffectiveLayers::EffectiveLayerOther effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, openness, PermeabilityFactor};
+        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
+          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor};
 
         auto effectiveThermal = effectiveLayer.getEffectiveOpenness();
 
@@ -91,16 +84,10 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap, layer2});
 
-        // Alternative way of adding layers.
-        // aIGU.addLayer(layer1);
-        // aIGU.addLayer(gap);
-        // aIGU.addLayer(layer2);
-
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::unique_ptr<Tarcog::ISO15099::CSingleSystem>(
-          new Tarcog::ISO15099::CSingleSystem(aIGU, Indoor, Outdoor));
+        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
 
         m_TarcogSystem->solve();
     }
@@ -120,21 +107,9 @@ TEST_F(TestShadeOut, Test1)
 
     const auto aSystem = GetSystem();
 
-    const auto Temperature = aSystem->getTemperatures();
-    const std::vector correctTemperature{256.98924905242745, 257.00908910176321, 269.67211159465268, 270.13404194545456};
-    ASSERT_EQ(correctTemperature.size(), Temperature.size());
+    const std::vector correctTemperature{257.039975, 257.040388, 269.858197, 270.315817};
+    Helper::testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), Tolerance);
 
-    for(auto i = 0u; i < correctTemperature.size(); ++i)
-    {
-        EXPECT_NEAR(correctTemperature[i], Temperature[i], Tolerance);
-    }
-
-    const auto Radiosity = aSystem->getRadiosities();
-    const std::vector correctRadiosity{249.98676196927647, 250.97825831600656, 292.03061975484945, 419.70403266542121};
-    ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
-
-    for(auto i = 0u; i < correctRadiosity.size(); ++i)
-    {
-        EXPECT_NEAR(correctRadiosity[i], Radiosity[i], Tolerance);
-    }
+    const std::vector correctRadiosity{250.203343, 251.145517, 292.753317, 419.735593};
+    Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), Tolerance);
 }

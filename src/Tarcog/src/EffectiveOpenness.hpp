@@ -2,23 +2,37 @@
 
 #include <map>
 
+#include <WCECommon.hpp>
+
+#include "PermeabilityFactor.hpp"
+
 namespace EffectiveLayers
 {
     //! \brief Structure to hold data about shading device opennes as it is defined from user point
     //! of view
     struct ShadeOpenness
     {
-        ShadeOpenness(double ah, double dl, double dr, double dtop, double dbot);
-        double Ah;
+        ShadeOpenness(double dl, double dr, double dtop, double dbot);
+
+        //! \var Dl
+        //! \brief Left side openness of the shading layer [m]
         double Dl;
+
+        //! \var Dr
+        //! \brief Right side openness of the shading layer [m]
         double Dr;
+
+        //! \var Dtop
+        //! \brief Top side openness of the shading layer [m]
         double Dtop;
+
+        //! \var Dbot
+        //! \brief Bottom side openness of the shading layer [m]
         double Dbot;
     };
 
-    //! \brief Effective frontOpenness of shading layer that is necessary for thermal calculations.
-    //!
-    //!
+    //! \brief Effective permeabilityFactor of shading layer that is necessary for thermal
+    //! calculations.
     struct EffectiveOpenness
     {
         EffectiveOpenness(double effectiveFrontThermalOpennessArea,
@@ -26,19 +40,31 @@ namespace EffectiveLayers
                           double ar,
                           double atop,
                           double abot,
-                          double frontPorosity);
+                          double permeabilityFactor);
 
-        //!< Effective openness of the layer for thermal calculations between the gaps
+        //! \var EffectiveFrontThermalOpennessArea
+        //! \brief Effective front thermal openness area used for in between gap (or environment
+        //! calculations) [m²]
         double EffectiveFrontThermalOpennessArea;
-        //!< Area of the left side openness where the air is flowing between the gaps
+
+        //! \var Al
+        //! \brief Area of the left side openness where the air is flowing between the gaps [m²]
         double Al;
-        //!< Area of the right side openness where the air is flowing between the gaps
+
+        //! \var Ar
+        //! \brief Area of the right side openness where the air is flowing between the gaps [m²]
         double Ar;
-        //!< Area of the top side openness where the air is flowing between the gaps
+
+        //! \var Atop
+        //! \brief Area of the top side openness where the air is flowing between the gaps [m²]
         double Atop;
-        //!< Area of the bottom side openness where the air is flowing between the gaps
+
+        //! \var Abot
+        //! \brief Area of the bottom side openness where the air is flowing between the gaps [m²]
         double Abot;
-        // Geometrical openness used to calculate equivalent layer conductivity
+
+        //! \var PermeabilityFactor
+        //! \brief Geometrical openness used to calculate equivalent layer conductivity
         double PermeabilityFactor;
     };
 
@@ -53,8 +79,8 @@ namespace EffectiveLayers
         double C4;
     };
 
-    //! \brief Abstract class that will be used to inherit effective frontOpenness calculations for
-    //! different shade types
+    //! \brief Abstract class that will be used to inherit effective permeabilityFactor calculations
+    //! for different shade types
     class EffectiveLayer
     {
     public:
@@ -66,9 +92,11 @@ namespace EffectiveLayers
                        const Coefficients & coefficients = {0.0, 0.0, 0.0, 0.0},
                        double permeabilityFactor = 0.0);
 
-        virtual EffectiveOpenness getEffectiveOpenness() = 0;
+        [[nodiscard]] virtual EffectiveOpenness getEffectiveOpenness() = 0;
 
-        virtual double effectiveThickness() = 0;
+        [[nodiscard]] virtual double effectiveThickness() = 0;
+
+        [[nodiscard]] double permeabilityFactor() const;
 
     protected:
         double m_Width;
@@ -88,17 +116,15 @@ namespace EffectiveLayers
         EffectiveVenetian(double width,
                           double height,
                           double thickness,
-                          double slatAngle,
-                          double slatWidth,
+                          const FenestrationCommon::Venetian::Geometry & geometry,
                           const ShadeOpenness & openness,
                           const Coefficients & coefficients);
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;
 
-    private:
-        double m_SlatAngleRad;
-        double m_SlatWidth;
+    protected:
+        FenestrationCommon::Venetian::Geometry m_Geometry;
     };
 
     class EffectiveHorizontalVenetian : public EffectiveVenetian
@@ -107,9 +133,8 @@ namespace EffectiveLayers
         EffectiveHorizontalVenetian(double width,
                                     double height,
                                     double thickness,
-                                    const ShadeOpenness & openness,
-                                    double slatAngle,
-                                    double SlatWidth);
+                                    const FenestrationCommon::Venetian::Geometry & geometry,
+                                    const ShadeOpenness & openness = {0, 0, 0, 0});
     };
 
     class EffectiveVerticalVenetian : public EffectiveVenetian
@@ -118,85 +143,57 @@ namespace EffectiveLayers
         EffectiveVerticalVenetian(double width,
                                   double height,
                                   double thickness,
-                                  const ShadeOpenness & openness,
-                                  double slatAngle,
-                                  double slatWidth);
+                                  const FenestrationCommon::Venetian::Geometry & geometry,
+                                  const ShadeOpenness & openness = {0, 0, 0, 0});
     };
 
-    //! \brief Used for effective calculations where permeability is linear with frontOpenness Ah
-    class EffectiveLayerLinearPermeability : public EffectiveLayer
+    class EffectiveLayerCommon : public EffectiveLayer
     {
     public:
-        EffectiveLayerLinearPermeability(double width,
-                                         double height,
-                                         double thickness,
-                                         const ShadeOpenness & openness);
+        EffectiveLayerCommon(double width,
+                             double height,
+                             double thickness,
+                             double permeabilityFactor = 0,
+                             const ShadeOpenness & openness = {0, 0, 0, 0});
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;
     };
 
-    class EffectiveLayerCommonType : public EffectiveLayer
-    {
-    public:
-        EffectiveLayerCommonType(double width,
-                                 double height,
-                                 double thickness,
-                                 const ShadeOpenness & openness,
-                                 double permeabilityFactor);
-
-        EffectiveOpenness getEffectiveOpenness() override;
-        double effectiveThickness() override;
-    };
-
-    class EffectiveLayerPerforated : public EffectiveLayerLinearPermeability
+    class EffectiveLayerPerforated : public EffectiveLayerCommon
     {
     public:
         EffectiveLayerPerforated(double width,
                                  double height,
                                  double thickness,
-                                 const ShadeOpenness & openness);
+                                 const FenestrationCommon::Perforated::Geometry & geometry,
+                                 const ShadeOpenness & openness = {0, 0, 0, 0});
     };
 
-    class EffectiveLayerDiffuse : public EffectiveLayerCommonType
-    {
-    public:
-        EffectiveLayerDiffuse(double width,
-                              double height,
-                              double thickness,
-                              const ShadeOpenness & openness,
-                              double permeabilityFactor);
-    };
-
-    class EffectiveLayerWoven : public EffectiveLayerLinearPermeability
+    class EffectiveLayerWoven : public EffectiveLayerCommon
     {
     public:
         EffectiveLayerWoven(double width,
                             double height,
                             double thickness,
-                            const ShadeOpenness & openness);
+                            const FenestrationCommon::Woven::Geometry & geometry,
+                            const ShadeOpenness & openness = {0, 0, 0, 0});
     };
 
-    class EffectiveLayerBSDF : public EffectiveLayerCommonType
+    class EffectiveLayerUserDefined : public EffectiveLayer
     {
     public:
-        EffectiveLayerBSDF(double width,
-                           double height,
-                           double thickness,
-                           const ShadeOpenness & openness,
-                           double permeabilityFactor);
-    };
-
-    class EffectiveLayerOther : public EffectiveLayer
-    {
-    public:
-        EffectiveLayerOther(double width,
-                            double height,
-                            double thickness,
-                            const ShadeOpenness & openness,
-                            double permeabilityFactor);
+        EffectiveLayerUserDefined(double width,
+                                  double height,
+                                  double thickness,
+                                  double permeabilityFactor = 0,
+                                  double effectiveFrontThermalOpennessArea = 0,
+                                  const ShadeOpenness & openness = {0, 0, 0, 0});
 
         EffectiveOpenness getEffectiveOpenness() override;
         double effectiveThickness() override;
+
+    private:
+        double m_EffectiveFrontThermalOpennessArea;
     };
 }   // namespace EffectiveLayers

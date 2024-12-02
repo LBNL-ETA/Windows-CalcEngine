@@ -51,23 +51,20 @@ namespace ThermalPermeability
             return curvature;
         }
 
-        double frontOpenness(const double tiltAngle,
-                             const double slatSpacing,
-                             const double matThickness,
-                             const double slatCurvature,
-                             const double slatWidth)
+        double permeabilityFactor(const double matThickness,
+                                  const FenestrationCommon::Venetian::Geometry & geometry)
         {
             // Calculate rise based on slat curvature and width
-            const auto rise = calculateRise(slatCurvature, slatWidth);
+            const auto rise = calculateRise(geometry.CurvatureRadius, geometry.SlatWidth);
             const auto effectiveRise = (rise > 1e-6) ? rise : 1e-6;
 
             // Calculate the length of slat arc (Ls)
-            const auto temp = effectiveRise + pow(slatWidth, 2) / (4 * effectiveRise);
-            const auto slatArcLength = asin(slatWidth / temp) * temp;
+            const auto temp = effectiveRise + pow(geometry.SlatWidth, 2) / (4 * effectiveRise);
+            const auto slatArcLength = asin(geometry.SlatWidth / temp) * temp;
 
             // Determine the maximum allowable angle and the effective slat angle
             const auto effectiveSlatAngle =
-              std::fmin(std::abs(tiltAngle), maxAngle(slatSpacing, matThickness));
+              std::fmin(std::abs(geometry.SlatTiltAngle), maxAngle(geometry.SlatSpacing, matThickness));
 
             // Handle special cases where slat angle is 90 degrees
             const double adjustedCosPhi =
@@ -77,8 +74,11 @@ namespace ThermalPermeability
 
             // Compute the openness factor
             auto opennessFactor =
-              1.0 - (matThickness * slatArcLength) / ((slatArcLength * adjustedCosPhi +
-              matThickness * std::sin(FenestrationCommon::radians(effectiveSlatAngle))) * (slatSpacing + matThickness));
+              1.0
+              - (matThickness * slatArcLength)
+                  / ((slatArcLength * adjustedCosPhi
+                      + matThickness * std::sin(FenestrationCommon::radians(effectiveSlatAngle)))
+                     * (geometry.SlatSpacing + matThickness));
 
             // Ensure openness factor is non-negative
             if(opennessFactor < 0)
@@ -91,30 +91,31 @@ namespace ThermalPermeability
 
     namespace Perforated
     {
-        double frontOpenness(Type t_Type,
-                             double t_SpacingX,
-                             double t_SpacingY,
-                             double t_DimensionX,
-                             double t_DimensionY)
+        double permeabilityFactor(const FenestrationCommon::Perforated::Geometry & geometry)
         {
-            const auto cellArea{t_SpacingX * t_SpacingY};
-            std::map<Type, std::function<double(const double, const double)>> opennessFraction{
-              {Type::Circular, {[&](const double x, const double y) {
-                   return (x / 2) * (y / 2) * ConstantsData::WCE_PI / cellArea;
-               }}},
-              {Type::Square, {[&](const double x, const double y) { return x * y / cellArea; }}},
-              {Type::Rectangular,
-               {[&](const double x, const double y) { return x * y / cellArea; }}}};
-            return opennessFraction.at(t_Type)(t_DimensionX, t_DimensionY);
+            const auto cellArea{geometry.SpacingX * geometry.SpacingY};
+            std::map<FenestrationCommon::Perforated::Type,
+                     std::function<double(const double, const double)>>
+              opennessFraction{
+                {FenestrationCommon::Perforated::Type::Circular,
+                 {[&](const double x, const double y) {
+                     return (x / 2) * (y / 2) * ConstantsData::WCE_PI / cellArea;
+                 }}},
+                {FenestrationCommon::Perforated::Type::Square,
+                 {[&](const double x, const double y) { return x * y / cellArea; }}},
+                {FenestrationCommon::Perforated::Type::Rectangular,
+                 {[&](const double x, const double y) { return x * y / cellArea; }}}};
+            return opennessFraction.at(geometry.type)(geometry.DimensionX, geometry.DimensionY);
         }
     }   // namespace Perforated
 
     namespace Woven
     {
-        double frontOpenness(const double t_Diameter, const double t_Spacing)
+        double permeabilityFactor(const FenestrationCommon::Woven::Geometry & geometry)
         {
-            auto opennessFraction{(t_Spacing - t_Diameter) * (t_Spacing - t_Diameter)
-                                  / (t_Spacing * t_Spacing)};
+            auto opennessFraction{(geometry.Spacing - geometry.Diameter)
+                                  * (geometry.Spacing - geometry.Diameter)
+                                  / (geometry.Spacing * geometry.Spacing)};
             if(opennessFraction < 0)
                 opennessFraction = 0;
             return opennessFraction;

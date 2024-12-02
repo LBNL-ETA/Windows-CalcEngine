@@ -80,12 +80,11 @@ protected:
         const auto dr{0.0};
         const auto dtop{0.0};
         const auto dbot{0.0};
-        const auto frontOpenness{0.9}; // m2
         const auto PermeabilityFactor = 0.3; // fraction
 
-        EffectiveLayers::ShadeOpenness openness{frontOpenness, dl, dr, dtop, dbot};
-        EffectiveLayers::EffectiveLayerOther effLayer{
-          windowWidth, windowHeight, shadeThickness, openness, PermeabilityFactor};
+        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
+        EffectiveLayers::EffectiveLayerCommon effLayer{
+          windowWidth, windowHeight, shadeThickness, PermeabilityFactor, openness};
 
         const auto Ef = 0.9;
         const auto Eb = 0.9;
@@ -122,12 +121,12 @@ TEST_F(TestTripleShadeInside_UValue, Test1)
 
     const auto systemKeff{
       aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
-    EXPECT_NEAR(0.039813, systemKeff, 1e-6);
+    EXPECT_NEAR(0.040152, systemKeff, 1e-6);
 
     const auto uval = aSystem.getUValue();
-    EXPECT_NEAR(1.195377, uval, 1e-6);
+    EXPECT_NEAR(1.191807, uval, 1e-6);
 
     const auto heatflow =
       aSystem.getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
-    EXPECT_NEAR(34.545165, heatflow, 1e-6);
+    EXPECT_NEAR(34.805390, heatflow, 1e-6);
 }

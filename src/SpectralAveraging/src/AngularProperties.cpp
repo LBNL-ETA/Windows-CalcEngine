@@ -84,7 +84,7 @@ namespace SpectralAveraging
                 const auto aCosPhiPrim = std::cos(std::asin(std::sin(aAngle) / n));
                 auto a = 0.0;
 
-                if(m_Transmittance0 > 0 && m_Rho0 > 0)
+                if(m_Transmittance0 > 0 && m_Rho0 > 0 && !FenestrationCommon::isEqual(m_Reflectance0, m_Rho0))
                 {
                     auto k = -t_Wavelength / (4 * WCE_PI * m_Thickness)
                              * std::log((m_Reflectance0 - m_Rho0) / (m_Transmittance0 * m_Rho0));

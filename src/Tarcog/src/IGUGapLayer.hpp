@@ -49,6 +49,11 @@ namespace Tarcog
 
             void setSealedGapProperties(double t_Temperature, double t_Pressure);
 
+            // Gas specification is needed for equivalent solid layer conductivity calculations
+            // In case gas is not air, but some other gas or gas mixture, then gas specification
+            // should be used to calculate the gas thermal conductivity.
+            [[nodiscard]] GasSpecification getGasSpecification() const;
+
         protected:
             void calculateConvectionOrConductionFlow() override;
 

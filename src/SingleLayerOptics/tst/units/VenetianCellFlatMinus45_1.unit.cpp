@@ -28,7 +28,7 @@ protected:
         const auto slatSpacing = 0.010;   // m
         const auto slatTiltAngle = -45;
         const auto curvatureRadius = 0;
-        const FenestrationCommon::VenetianGeometry geometry{
+        const FenestrationCommon::Venetian::Geometry geometry{
           slatWidth, slatSpacing, slatTiltAngle, curvatureRadius};
         const size_t numOfSlatSegments = 2;
 

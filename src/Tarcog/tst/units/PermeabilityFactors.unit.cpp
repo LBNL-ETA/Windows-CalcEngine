@@ -15,13 +15,11 @@ TEST_F(TestPermeabilityFactors, TestVenetianPermeability)
     SCOPED_TRACE("Begin Test: Venetian layer thermal permeability.");
 
     const auto matThickness{0.0001};   // m
-    const auto slatWidth{0.0148};      // m
-    const auto slatSpacing{0.0127};    // m
-    const auto slatTiltAngle{0.0};
-    const auto curvatureRadius{0.03313057};   // m
 
-    const auto permeabilityOpenness{ThermalPermeability::Venetian::frontOpenness(
-      slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
+    const FenestrationCommon::Venetian::Geometry geometry{0.0148, 0.0127, 0.0, 0.03313057};
+
+    const auto permeabilityOpenness{
+      ThermalPermeability::Venetian::permeabilityFactor(matThickness, geometry)};
 
     EXPECT_NEAR(0.9921875, permeabilityOpenness, 1e-6);
 }
@@ -31,13 +29,11 @@ TEST_F(TestPermeabilityFactors, TestVenetianPermeability1)
     SCOPED_TRACE("Begin Test: Venetian layer thermal permeability.");
 
     const auto matThickness{0.0029};   // m
-    const auto slatWidth{0.0508};      // m
-    const auto slatSpacing{0.0432};    // m
-    const auto slatTiltAngle{0.0};
-    const auto curvatureRadius{0.0};   // m
 
-    const auto permeabilityOpenness{ThermalPermeability::Venetian::frontOpenness(
-      slatTiltAngle, slatSpacing, matThickness, curvatureRadius, slatWidth)};
+    const FenestrationCommon::Venetian::Geometry geometry{0.0508, 0.0432, 0.0, 0.0};
+
+    const auto permeabilityOpenness{
+      ThermalPermeability::Venetian::permeabilityFactor(matThickness, geometry)};
 
     EXPECT_NEAR(0.937093, permeabilityOpenness, 1e-6);
 }
@@ -46,13 +42,11 @@ TEST_F(TestPermeabilityFactors, TestPerforatedCircularPermeability)
 {
     SCOPED_TRACE("Begin Test: Circular perforated layer thermal permeability.");
 
-    const auto perforatedType{ThermalPermeability::Perforated::Type::Circular};
-    const auto diameter{0.00635};   // m
-    const auto xSpacing{0.01905};   // m
-    const auto ySpacing{0.01905};   // m
+    const FenestrationCommon::Perforated::Geometry geometry{
+      FenestrationCommon::Perforated::Type::Circular, 0.01905, 0.01905, 0.00635, 0.00635};
 
-    const auto permeabilityOpenness{ThermalPermeability::Perforated::frontOpenness(
-      perforatedType, xSpacing, ySpacing, diameter, diameter)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(
+      geometry)};
 
     EXPECT_NEAR(0.087266, permeabilityOpenness, 1e-6);
 }
@@ -61,14 +55,11 @@ TEST_F(TestPermeabilityFactors, TestPerforatedRectangularPermeability)
 {
     SCOPED_TRACE("Begin Test: Rectangular perforated layer thermal permeability.");
 
-    const auto perforatedType{ThermalPermeability::Perforated::Type::Rectangular};
-    const auto width{0.00635};      // m
-    const auto height{0.00635};     // m
-    const auto xSpacing{0.01905};   // m
-    const auto ySpacing{0.01905};   // m
+    const FenestrationCommon::Perforated::Geometry geometry{
+      FenestrationCommon::Perforated::Type::Rectangular, 0.01905, 0.01905, 0.00635, 0.00635};
 
-    const auto permeabilityOpenness{ThermalPermeability::Perforated::frontOpenness(
-      perforatedType, xSpacing, ySpacing, width, height)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(
+      geometry)};
 
     EXPECT_NEAR(0.111111, permeabilityOpenness, 1e-6);
 }
@@ -77,13 +68,11 @@ TEST_F(TestPermeabilityFactors, TestPerforatedSquarePermeability)
 {
     SCOPED_TRACE("Begin Test: Square perforated layer thermal permeability.");
 
-    const auto perforatedType{ThermalPermeability::Perforated::Type::Square};
-    const auto width{0.00635};      // m
-    const auto xSpacing{0.01905};   // m
-    const auto ySpacing{0.01905};   // m
+    const FenestrationCommon::Perforated::Geometry geometry{
+      FenestrationCommon::Perforated::Type::Square, 0.01905, 0.01905, 0.00635, 0.00635};
 
-    const auto permeabilityOpenness{ThermalPermeability::Perforated::frontOpenness(
-      perforatedType, xSpacing, ySpacing, width, width)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(
+      geometry)};
 
     EXPECT_NEAR(0.111111, permeabilityOpenness, 1e-6);
 }
@@ -92,10 +81,10 @@ TEST_F(TestPermeabilityFactors, TestWovenPermeability)
 {
     SCOPED_TRACE("Begin Test: Woven layer thermal permeability.");
 
-    const auto diameter{0.001};   // m
-    const auto spacing{0.002};    // m
+    const FenestrationCommon::Woven::Geometry geometry{0.001, 0.002};
 
-    const auto permeabilityOpenness{ThermalPermeability::Woven::frontOpenness(diameter, spacing)};
+    const auto permeabilityOpenness{
+      ThermalPermeability::Woven::permeabilityFactor(geometry)};
 
     EXPECT_NEAR(0.25, permeabilityOpenness, 1e-6);
 }

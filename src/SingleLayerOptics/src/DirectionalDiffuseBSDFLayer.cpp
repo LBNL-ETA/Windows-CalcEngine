@@ -17,7 +17,8 @@ namespace SingleLayerOptics
     CDirectionalBSDFLayer::CDirectionalBSDFLayer(
       const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere) :
-        CBSDFLayer(t_Cell, t_Hemisphere)
+        CBSDFLayer(t_Cell, t_Hemisphere),
+        lambdas(t_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector())
     {}
 
     std::shared_ptr<CDirectionalDiffuseCell> CDirectionalBSDFLayer::cellAsDirectionalDiffuse() const
@@ -142,7 +143,6 @@ namespace SingleLayerOptics
 
     double CHomogeneousDiffuseBSDFLayer::diffuseDistributionScalar(size_t incomingDirection, size_t)
     {
-        const auto lambdas{m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
         return 1 / (FenestrationCommon::WCE_PI - lambdas.at(incomingDirection));
     }
 
@@ -153,7 +153,6 @@ namespace SingleLayerOptics
 
     double CMatrixBSDFLayer::diffuseDistributionScalar(size_t, size_t outgoingDirection)
     {
-        const auto lambdas{m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
         return 1 / lambdas.at(outgoingDirection);
     }
 }   // namespace SingleLayerOptics
