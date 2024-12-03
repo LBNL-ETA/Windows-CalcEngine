@@ -441,7 +441,6 @@ namespace SingleLayerOptics
                                         const CBeamDirection & t_IncomingDirection,
                                         const CBeamDirection &) const
     {
-        assert(m_AngularSample);
         return m_AngularSample.getProperty(
           m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
     }
@@ -464,7 +463,6 @@ namespace SingleLayerOptics
         }
 
         // Perform the calculation
-        assert(m_AngularSample);
         auto result =
           m_AngularSample.getWavelengthProperties(t_Property, t_Side, t_IncomingDirection.theta());
 
