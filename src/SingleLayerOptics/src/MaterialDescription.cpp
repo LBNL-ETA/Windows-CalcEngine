@@ -451,7 +451,10 @@ namespace SingleLayerOptics
                                          const CBeamDirection & t_IncomingDirection,
                                          const CBeamDirection &) const
     {
-        CacheKey key{t_Property, t_Side, t_IncomingDirection.theta()};
+        CacheKey key{t_Property,
+                     t_Side,
+                     t_IncomingDirection.theta(),
+                     m_AngularSample.getBandWavelengths().size()};
 
         std::lock_guard lock(m_CacheMutex);
 
