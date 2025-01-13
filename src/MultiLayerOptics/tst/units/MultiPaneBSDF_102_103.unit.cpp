@@ -103,10 +103,10 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     EXPECT_NEAR(0.130947, rhoHem, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.10364381087538396, abs1, 1e-6);
+    EXPECT_NEAR(0.103644, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.13372437711523896, abs2, 1e-6);
+    EXPECT_NEAR(0.133724, abs2, 1e-6);
 
     // Visible range
 
