@@ -1,5 +1,6 @@
 #include <thread>
 #include <algorithm>
+#include <iostream>
 
 #include "Utility.hpp"
 #include "Constants.hpp"
@@ -47,5 +48,10 @@ namespace FenestrationCommon
     bool isVacuum(double pressure)
     {
         return pressure <= ConstantsData::VACUUMPRESSURE;
+    }
+
+    void logMsg(std::string const & msg)
+    {
+        std::cerr << msg << std::endl;
     }
 }   // namespace FenestrationCommon

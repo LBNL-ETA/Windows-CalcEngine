@@ -30,16 +30,22 @@ namespace SingleLayerOptics
 
     const BSDFDirections & CBSDFLayer::getDirections(const BSDFDirection t_Side) const
     {
+        FenestrationCommon::logMsg("begin CBSDFLayer::getDirections");
         return m_BSDFHemisphere.getDirections(t_Side);
+        FenestrationCommon::logMsg("end CBSDFLayer::getDirections");
     }
 
     BSDFIntegrator CBSDFLayer::getResults()
     {
+        FenestrationCommon::logMsg("begin CBSDFLayer::getResults");
         if(!m_Calculated)
         {
+            FenestrationCommon::logMsg("in if(!m_Calculated)");
             calculate();
+            FenestrationCommon::logMsg("before m_Calculated = true");
             m_Calculated = true;
         }
+        FenestrationCommon::logMsg("end CBSDFLayer::getResults");
         return m_Results;
     }
 

@@ -27,10 +27,13 @@ namespace MultiLayerOptics
                                      : unionOfLayerWavelengths(m_Layer)),
         m_Calculated(false)
     {
+        FenestrationCommon::logMsg("begin CEquivalentBSDFLayer::CEquivalentBSDFLayer");
         for(const auto & layer : m_Layer)
         {
+            FenestrationCommon::logMsg("in for(const auto & layer : m_Layer)");
             layer->setBandWavelengths(m_CombinedLayerWavelengths);
         }
+        FenestrationCommon::logMsg("end CEquivalentBSDFLayer::CEquivalentBSDFLayer");
     }
 
     const SingleLayerOptics::BSDFDirections &
@@ -182,12 +185,16 @@ namespace MultiLayerOptics
     std::vector<double> CEquivalentBSDFLayer::unionOfLayerWavelengths(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer)
     {
+        FenestrationCommon::logMsg("begin CEquivalentBSDFLayer::unionOfLayerWavelengths");
         FenestrationCommon::CCommonWavelengths wl;
         for(const auto & layer : t_Layer)
         {
+            FenestrationCommon::logMsg("in for(const auto & layer : t_Layer)");
             wl.addWavelength(layer->getBandWavelengths());
         }
-
-        return wl.getCombinedWavelengths(FenestrationCommon::Combine::Interpolate);
+        FenestrationCommon::logMsg("before result = wl.getCombinedWavelengths");
+        auto result = wl.getCombinedWavelengths(FenestrationCommon::Combine::Interpolate);
+        FenestrationCommon::logMsg("end CEquivalentBSDFLayer::unionOfLayerWavelengths with result.size = " + std::to_string(result.size()));
+        return result;
     }
 }   // namespace MultiLayerOptics

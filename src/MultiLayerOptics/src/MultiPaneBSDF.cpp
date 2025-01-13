@@ -8,6 +8,7 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
+
 using FenestrationCommon::IntegrationType;
 using FenestrationCommon::Side;
 using FenestrationCommon::Property;
@@ -37,7 +38,16 @@ namespace MultiLayerOptics
         m_MaxLambdaCalculated(0),
         m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
     {
+        FenestrationCommon::logMsg("begin CMultiPaneBSDF::CMultiPaneBSDF");
+        FenestrationCommon::logMsg("matrixWavelengths.has_value() = "
+                                   + std::to_string(matrixWavelengths.has_value()));
+        if (matrixWavelengths.has_value())
+        {
+            FenestrationCommon::logMsg("matrixWavelengths.size() = "
+                                       + std::to_string(matrixWavelengths.value().size()));
+        }
         m_EquivalentLayer.calculate();
+        FenestrationCommon::logMsg("end CMultiPaneBSDF::CMultiPaneBSDF");
     }
 
     std::vector<std::vector<double>>

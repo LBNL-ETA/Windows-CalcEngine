@@ -24,4 +24,6 @@ namespace FenestrationCommon
     }
 
     [[nodiscard]] bool isVacuum(double pressure);
+
+    void logMsg(std::string const & msg);
 }

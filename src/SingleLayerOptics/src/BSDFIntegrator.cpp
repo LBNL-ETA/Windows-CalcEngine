@@ -13,14 +13,19 @@ namespace SingleLayerOptics
         m_DirectHemisphericalCalculated(false),
         m_DiffuseDiffuseCalculated(false)
     {
+        FenestrationCommon::logMsg("begin BSDFIntegrator::BSDFIntegrator(const BSDFDirections");
         for(auto t_Side : EnumSide())
         {
+            FenestrationCommon::logMsg("in for(auto t_Side : EnumSide())");
             for(auto t_Property : EnumPropertySimple())
             {
+                FenestrationCommon::logMsg("in for(auto t_Property : EnumPropertySimple())");
                 m_Matrix[std::make_pair(t_Side, t_Property)] = SquareMatrix(m_DimMatrices);
+                FenestrationCommon::logMsg("before m_DirectHemispherical[std::make_pair(t_Side, t_Property)]");
                 m_DirectHemispherical[std::make_pair(t_Side, t_Property)] = std::vector<double>(m_DimMatrices);
             }
         }
+        FenestrationCommon::logMsg("end BSDFIntegrator::BSDFIntegrator(const BSDFDirections");
     }
 
     double BSDFIntegrator::DiffDiff(const Side t_Side, const PropertySimple t_Property)
@@ -109,6 +114,7 @@ namespace SingleLayerOptics
 
     SquareMatrix BSDFIntegrator::lambdaMatrix() const
     {
+        FenestrationCommon::logMsg("BSDFIntegrator::lambdaMatrix()");
         return m_Directions.lambdaMatrix();
     }
 
