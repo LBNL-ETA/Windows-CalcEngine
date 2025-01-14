@@ -180,13 +180,15 @@ namespace MultiLayerOptics
 
         m_IncomingSolar = calculateIncomingSolar(m_IncomingSpectra, minLambda, maxLambda);
 
-        for(Side aSide : FenestrationCommon::EnumSide())
+        FenestrationCommon::EnumSide sides;
+        for(Side aSide : sides)
         {
             m_Abs[aSide] = calculateAbsorptance(aSide, minLambda, maxLambda);
             m_AbsElectricity[aSide] = calculateJSC(aSide, minLambda, maxLambda);
 
             std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
-            for(PropertySimple aProperty : FenestrationCommon::EnumPropertySimple())
+            FenestrationCommon::EnumPropertySimple properties;
+            for(PropertySimple aProperty : properties)
             {
                 aResults[{aSide, aProperty}] =
                   calculateProperties(aSide, aProperty, minLambda, maxLambda);
@@ -199,7 +201,7 @@ namespace MultiLayerOptics
 
         m_Results.resetCalculatedResults();
 
-        for(const Side aSide : FenestrationCommon::EnumSide())
+        for(Side aSide : sides)
         {
             calcHemisphericalAbs(aSide);
         }

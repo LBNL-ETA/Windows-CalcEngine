@@ -171,9 +171,10 @@ namespace CMA
 
     void CMAWindowSingleVision::setFrameTop(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameTop(frameData);
@@ -183,9 +184,10 @@ namespace CMA
 
     void CMAWindowSingleVision::setFrameBottom(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameBottom(frameData);
@@ -195,9 +197,10 @@ namespace CMA
 
     void CMAWindowSingleVision::setFrameLeft(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameLeft(frameData);
@@ -207,9 +210,10 @@ namespace CMA
 
     void CMAWindowSingleVision::setFrameRight(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameRight(frameData);
@@ -221,9 +225,10 @@ namespace CMA
                                             size_t nHorizontal,
                                             size_t nVertical)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption)
@@ -250,9 +255,10 @@ namespace CMA
 
     void CMAWindowDualVisionHorizontal::setFrameTopLeft(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameTopLeft(frameData);
@@ -262,9 +268,10 @@ namespace CMA
 
     void CMAWindowDualVisionHorizontal::setFrameTopRight(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameTopRight(frameData);
@@ -274,9 +281,10 @@ namespace CMA
 
     void CMAWindowDualVisionHorizontal::setFrameBottomLeft(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameBottomLeft(frameData);
@@ -286,9 +294,10 @@ namespace CMA
 
     void CMAWindowDualVisionHorizontal::setFrameBottomRight(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameBottomRight(frameData);
@@ -298,9 +307,10 @@ namespace CMA
 
     void CMAWindowDualVisionHorizontal::setFrameLeft(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameLeft(frameData);
@@ -310,9 +320,10 @@ namespace CMA
 
     void CMAWindowDualVisionHorizontal::setFrameRight(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameRight(frameData);
@@ -322,9 +333,10 @@ namespace CMA
 
     void CMAWindowDualVisionHorizontal::setFrameMeetingRail(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameMeetingRail(frameData);
@@ -336,9 +348,10 @@ namespace CMA
                                                     size_t nHorizontal,
                                                     size_t nVertical)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption)
@@ -434,9 +447,10 @@ namespace CMA
 
     void CMAWindowDualVisionVertical::setFrameTop(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameTop(frameData);
@@ -446,9 +460,10 @@ namespace CMA
 
     void CMAWindowDualVisionVertical::setFrameBottom(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameBottom(frameData);
@@ -458,9 +473,10 @@ namespace CMA
 
     void CMAWindowDualVisionVertical::setFrameTopLeft(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameTopLeft(frameData);
@@ -470,9 +486,10 @@ namespace CMA
 
     void CMAWindowDualVisionVertical::setFrameTopRight(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameTopRight(frameData);
@@ -482,9 +499,10 @@ namespace CMA
 
     void CMAWindowDualVisionVertical::setFrameBottomLeft(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameBottomLeft(frameData);
@@ -494,9 +512,10 @@ namespace CMA
 
     void CMAWindowDualVisionVertical::setFrameBottomRight(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameBottomRight(frameData);
@@ -506,9 +525,10 @@ namespace CMA
 
     void CMAWindowDualVisionVertical::setFrameMeetingRail(CMAFrame cmaFrameData)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption).at(glazingOption).setFrameMeetingRail(frameData);
@@ -520,9 +540,10 @@ namespace CMA
                                                   size_t nHorizontal,
                                                   size_t nVertical)
     {
-        for(auto spacerOption : EnumOption())
+        EnumOption options;
+        for(auto spacerOption : options)
         {
-            for(auto glazingOption : EnumOption())
+            for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
                 m_Window.at(spacerOption)

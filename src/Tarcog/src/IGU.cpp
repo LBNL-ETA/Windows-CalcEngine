@@ -50,7 +50,8 @@ namespace Tarcog::ISO15099
 
     CIGU::~CIGU()
     {
-        for(std::shared_ptr<CBaseLayer> layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(std::shared_ptr<CBaseLayer> layer : layers)
         {
             layer->tearDownConnections();
         }
@@ -147,7 +148,8 @@ namespace Tarcog::ISO15099
 
     void CIGU::setSolarRadiation(double const t_SolarRadiation) const
     {
-        for(auto & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
             layer->setSolarRadiation(t_SolarRadiation);
         }
@@ -172,7 +174,8 @@ namespace Tarcog::ISO15099
     {
         std::vector<double> aState;
 
-        for(auto & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
             // State must be filled in this exact order.
             aState.push_back(layer->surfaceTemperature(Side::Front));
@@ -187,7 +190,8 @@ namespace Tarcog::ISO15099
     void CIGU::setState(const std::vector<double> & t_State) const
     {
         size_t i = 0;
-        for(const auto & aLayer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(const auto & aLayer : layers)
         {
             const auto Tf = t_State[4 * i];
             const auto Jf = t_State[4 * i + 1];
@@ -202,9 +206,11 @@ namespace Tarcog::ISO15099
     {
         std::vector<double> aTemperatures;
 
-        for(auto const & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
-            for(auto aSide : FenestrationCommon::EnumSide())
+            FenestrationCommon::EnumSide sides;
+            for(auto aSide : sides)
             {
                 aTemperatures.push_back(layer->surfaceTemperature(aSide));
             }
@@ -217,9 +223,11 @@ namespace Tarcog::ISO15099
     {
         std::vector<double> aRadiosities;
 
-        for(auto const & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
-            for(auto aSide : FenestrationCommon::EnumSide())
+            FenestrationCommon::EnumSide sides;
+            for(auto aSide : sides)
             {
                 aRadiosities.push_back(layer->J(aSide));
             }
@@ -232,7 +240,8 @@ namespace Tarcog::ISO15099
     {
         std::vector<double> aMaxDeflections;
 
-        for(auto const & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
             aMaxDeflections.push_back(layer->getMaxDeflection());
         }
@@ -244,7 +253,8 @@ namespace Tarcog::ISO15099
     {
         std::vector<double> aMeanDeflections;
 
-        for(auto const & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
             aMeanDeflections.push_back(layer->getMeanDeflection());
         }
@@ -255,8 +265,8 @@ namespace Tarcog::ISO15099
     std::vector<double> CIGU::getMaxGapWidth() const
     {
         std::vector<double> aMaxWidths;
-
-        for(auto const & layer : getGapLayers())
+        auto gaps = getGapLayers();
+        for(auto const & layer : gaps)
         {
             aMaxWidths.push_back(layer->getMaxDeflection());
         }
@@ -268,7 +278,8 @@ namespace Tarcog::ISO15099
     {
         std::vector<double> aMeanWidths;
 
-        for(auto const & layer : getGapLayers())
+        auto gaps = getGapLayers();
+        for(auto const & layer : gaps)
         {
             aMeanWidths.push_back(layer->getMeanDeflection());
         }
@@ -280,7 +291,8 @@ namespace Tarcog::ISO15099
     {
         std::vector<double> aPressures;
 
-        for(auto const & layer : getGapLayers())
+        auto gaps = getGapLayers();
+        for(auto const & layer : gaps)
         {
             aPressures.push_back(layer->getPressure());
         }
@@ -367,9 +379,11 @@ namespace Tarcog::ISO15099
         else
         {
             size_t Index = 0;
-            for(auto & aLayer : getSolidLayers())
+            auto layers = getSolidLayers();
+            for(auto & aLayer : layers)
             {
-                for(auto aSide : FenestrationCommon::EnumSide())
+                FenestrationCommon::EnumSide sides;
+                for(auto aSide : sides)
                 {
                     aLayer->initializeStart(aSide, t_Guess[Index]);
                     ++Index;
@@ -387,13 +401,15 @@ namespace Tarcog::ISO15099
         // Since user might have called IGU previously with different deflection properties
         resetSurfaceDeflections();
         std::vector<Deflection::LayerData> layerData;
-        for(const auto & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
             layerData.emplace_back(layer->getThickness(), layer->density(), layer->youngsModulus());
         }
 
         std::vector<Deflection::GapData> gapData;
-        for(auto & gap : getGapLayers())
+        auto gaps = getGapLayers();
+        for(auto const & gap : gaps)
         {
             gap->setSealedGapProperties(t_Tini, t_Pini);
             gapData.emplace_back(gap->getThickness(), t_Tini, t_Pini);

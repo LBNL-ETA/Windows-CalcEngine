@@ -272,7 +272,8 @@ namespace Tarcog::ISO15099
     std::vector<double> CSingleSystem::getSolidEffectiveLayerConductivities() const
     {
         std::vector<double> results;
-        for(const auto & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
             results.emplace_back(layer->getEffectiveThermalConductivity());
         }
@@ -282,7 +283,8 @@ namespace Tarcog::ISO15099
     std::vector<double> CSingleSystem::getGapEffectiveLayerConductivities() const
     {
         std::vector<double> results;
-        for(const auto & layer : getGapLayers())
+        auto gaps = getGapLayers();
+        for(auto const & layer : gaps)
         {
             results.emplace_back(layer->getEffectiveThermalConductivity());
         }
@@ -299,11 +301,13 @@ namespace Tarcog::ISO15099
     double CSingleSystem::thickness() const
     {
         double thickness{0};
-        for(const auto & layer : getSolidLayers())
+        auto layers = getSolidLayers();
+        for(auto & layer : layers)
         {
             thickness += layer->getThickness();
         }
-        for(const auto & gap : getGapLayers())
+        auto gaps = getGapLayers();
+        for(auto const & gap : gaps)
         {
             thickness += gap->getThickness();
         }

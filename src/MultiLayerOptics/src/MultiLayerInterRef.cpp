@@ -157,12 +157,13 @@ namespace MultiLayerOptics
     {
         // Sum of previous two components. Total diffuse energy that gets off the surfaces.
         CSurfaceEnergy diffSum{};
-
-        for(EnergyFlow aEnergyFlow : EnumEnergyFlow())
+        EnumEnergyFlow energyFlows;
+        for(EnergyFlow aEnergyFlow : energyFlows)
         {
             for(size_t i = 1; i <= m_Layers.size(); ++i)
             {   // Layer indexing goes from one
-                for(Side aSide : EnumSide())
+                EnumSide sides;
+                for(Side aSide : sides)
                 {
                     Side oppSide = oppositeSide(aSide);
                     // Calculate diffuse energy from direct exterior/interior beam
@@ -212,7 +213,8 @@ namespace MultiLayerOptics
         CSurfaceEnergy aScatter{};
 
         // Calculate total energy scatterred from beam to diffuse
-        for(EnergyFlow aEnergyFlow : EnumEnergyFlow())
+        EnumEnergyFlow energyFlows;
+        for(EnergyFlow aEnergyFlow : energyFlows)
         {
             // In this case numbering goes through gas environments (gaps, interior and exterior)
             // becase we want to keep interreflectance calculations together
@@ -265,11 +267,13 @@ namespace MultiLayerOptics
     {
         for(size_t i = 0; i < m_Layers.size(); ++i)
         {
-            for(EnergyFlow aEnergyFlow : EnumEnergyFlow())
+            EnumEnergyFlow energyFlows;
+            for(EnergyFlow aEnergyFlow : energyFlows)
             {
                 double EnergyDirect = 0;
                 double EnergyDiffuse = 0;
-                for(Side aSide : EnumSide())
+                EnumSide sides;
+                for(Side aSide : sides)
                 {
                     const double Adir =
                       m_Layers[i].getAbsorptance(aSide, ScatteringSimple::Direct, t_Theta, t_Phi);

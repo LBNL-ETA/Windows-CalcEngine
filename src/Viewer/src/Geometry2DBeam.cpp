@@ -301,7 +301,8 @@ namespace Viewer
             totalHeight += beamRay.rayNormalHeight();
             for(const auto & aEnclosure : m_Geometries2D)
             {
-                for(const auto & aSegment : aEnclosure.segments())
+                auto segments = aEnclosure.segments();
+                for(const auto & aSegment : segments)
                 {
                     beamRay.checkSegment(aSegment);
                 }
