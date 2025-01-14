@@ -56,52 +56,94 @@ namespace SingleLayerOptics
 
     BSDFIntegrator CBSDFLayer::getResultsAtWavelength(size_t wavelengthIndex)
     {
+        FenestrationCommon::logMsg(
+          "begin CBSDFLayer::getResultsAtWavelength with wavelengthIndex = "
+          + std::to_string(wavelengthIndex));
         BSDFIntegrator results{m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)};
+        FenestrationCommon::logMsg("before calculate_dir_dir_wl");
         calculate_dir_dir_wl(wavelengthIndex, results);
+        FenestrationCommon::logMsg("before calculate_dir_dif_wv");
         calculate_dir_dif_wv(wavelengthIndex, results);
+        FenestrationCommon::logMsg(
+          "end CBSDFLayer::getResultsAtWavelength with wavelengthIndex = "
+          + std::to_string(wavelengthIndex));
         return results;
     }
 
     void CBSDFLayer::calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results)
     {
+        FenestrationCommon::logMsg(
+          "begin CBSDFLayer::calculate_dir_dir_wl with wavelengthIndex = "
+          + std::to_string(wavelengthIndex));
         for(Side aSide : EnumSide())
         {
+            FenestrationCommon::logMsg("in for(Side aSide : EnumSide())");
             const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
+            FenestrationCommon::logMsg("before size_t size = aDirections.size()");
             size_t size = aDirections.size();
+            FenestrationCommon::logMsg("size = " + std::to_string(size));
             for(size_t i = 0; i < size; ++i)
             {
+                FenestrationCommon::logMsg("in for(size_t i = 0; i < size; ++i) with i = " + std::to_string(i));
+                FenestrationCommon::logMsg("before const CBeamDirection aDirection");
                 const CBeamDirection aDirection = aDirections[i].centerPoint();
+                FenestrationCommon::logMsg("before const auto aTau =");
                 const auto aTau =
                   m_Cell->T_dir_dir_at_wavelength(aSide, aDirection, wavelengthIndex);
+                FenestrationCommon::logMsg("aTau = " + std::to_string(aTau));
+                FenestrationCommon::logMsg("before const auto aRho =");
                 const auto aRho =
                   m_Cell->R_dir_dir_at_wavelength(aSide, aDirection, wavelengthIndex);
+                FenestrationCommon::logMsg("aRho = " + std::to_string(aRho));
+                FenestrationCommon::logMsg("before double Lambda =");
                 double Lambda = aDirections[i].lambda();
-
+                FenestrationCommon::logMsg("Lambda = " + std::to_string(Lambda));
+                FenestrationCommon::logMsg("before auto & tau = results.getMatrix");
                 auto & tau = results.getMatrix(aSide, PropertySimple::T);
+                FenestrationCommon::logMsg("before auto & rho = results.getMatrix");
                 auto & rho = results.getMatrix(aSide, PropertySimple::R);
+                FenestrationCommon::logMsg("before tau(i, i) += aTau / Lambda;");
                 tau(i, i) += aTau / Lambda;
+                FenestrationCommon::logMsg("before rho(i, i) += aRho / Lambda;");
                 rho(i, i) += aRho / Lambda;
+                FenestrationCommon::logMsg("after rho(i, i) += aRho / Lambda;");
             }
         }
+        FenestrationCommon::logMsg("end CBSDFLayer::calculate_dir_dir_wl with wavelengthIndex = "
+                                   + std::to_string(wavelengthIndex));
     }
 
     void CBSDFLayer::calculate_dir_dif_wv(size_t wavelengthIndex, BSDFIntegrator & results)
     {
+        FenestrationCommon::logMsg("begin CBSDFLayer::calculate_dir_dif_wv with wavelengthIndex = "
+                                   + std::to_string(wavelengthIndex));
         for(Side aSide : EnumSide())
         {
+            FenestrationCommon::logMsg("in for(Side aSide : EnumSide())");
             const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
-
+            FenestrationCommon::logMsg("after const auto & aDirections");
             for(size_t directionIndex = 0; directionIndex < aDirections.size(); ++directionIndex)
             {
+                FenestrationCommon::logMsg("in for(size_t directionIndex = 0; directionIndex < aDirections.size(); ++directionIndex) with directionIndex = " + std::to_string(directionIndex));
                 const CBeamDirection aDirection = aDirections[directionIndex].centerPoint();
+                FenestrationCommon::logMsg("before calcDiffuseDistribution_byWavelength");
                 calcDiffuseDistribution_byWavelength(aSide, aDirection, directionIndex, wavelengthIndex, results);
+                FenestrationCommon::logMsg("after calcDiffuseDistribution_byWavelength");
             }
         }
+        FenestrationCommon::logMsg("end CBSDFLayer::calculate_dir_dif_wv with wavelengthIndex = "
+                                   + std::to_string(wavelengthIndex));
     }
 
     int CBSDFLayer::getBandIndex(const double t_Wavelength)
     {
-        return m_Cell->getBandIndex(t_Wavelength);
+        FenestrationCommon::logMsg("begin CBSDFLayer::getBandIndex with t_Wavelength = "
+                                   + std::to_string(t_Wavelength));
+        auto result = m_Cell->getBandIndex(t_Wavelength);
+        FenestrationCommon::logMsg("end CBSDFLayer::getBandIndex with t_Wavelength = "
+                                   + std::to_string(t_Wavelength)
+                                   + " result = " + std::to_string(result));
+        return result;
     }
 
     std::vector<double> CBSDFLayer::getBandWavelengths() const

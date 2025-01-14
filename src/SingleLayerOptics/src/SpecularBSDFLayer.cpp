@@ -44,6 +44,10 @@ namespace SingleLayerOptics
                                                                   BSDFIntegrator &)
     {
         // No diffusion in specular layers
+        FenestrationCommon::logMsg(
+          "begin CSpecularBSDFLayer::calcDiffuseDistribution_byWavelength");
+        FenestrationCommon::logMsg(
+          "end CSpecularBSDFLayer::calcDiffuseDistribution_byWavelength");
     }
 
 }   // namespace SingleLayerOptics

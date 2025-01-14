@@ -98,30 +98,42 @@ namespace SingleLayerOptics
       size_t wavelengthIndex,
       BSDFIntegrator & results)
     {
+        FenestrationCommon::logMsg("begin CDirectionalBSDFLayer::calcDiffuseDistribution_byWavelength");
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
-
+        FenestrationCommon::logMsg("before BSDFDirections oDirections = m_BSDFHemisphere.getDirections");
         const BSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
-
+        FenestrationCommon::logMsg("before size = oDirections.size()");
         size_t size = oDirections.size();
-
+        FenestrationCommon::logMsg("size = " + std::to_string(size));
         for(size_t outgoingDirectionIndex = 0; outgoingDirectionIndex < size;
             ++outgoingDirectionIndex)
         {
+            FenestrationCommon::logMsg(
+              "in for(size_t outgoingDirectionIndex = 0 with outgoingDirectionIndex = "
+              + std::to_string(outgoingDirectionIndex));
             const CBeamDirection oDirection = oDirections[outgoingDirectionIndex].centerPoint();
-
+            FenestrationCommon::logMsg("before aTau = aCell->T_dir_dif_by_wavelength");
             auto aTau =
               aCell->T_dir_dif_by_wavelength(aSide, incomingDirection, oDirection, wavelengthIndex);
+            FenestrationCommon::logMsg("before Ref = aCell->R_dir_dif_by_wavelength");
             auto Ref =
               aCell->R_dir_dif_by_wavelength(aSide, incomingDirection, oDirection, wavelengthIndex);
-
+            FenestrationCommon::logMsg("before auto & tau = results");
             auto & tau = results.getMatrix(aSide, PropertySimple::T);
+            FenestrationCommon::logMsg("before auto & rho = results.getMatrix");
             auto & rho = results.getMatrix(aSide, PropertySimple::R);
-
+            FenestrationCommon::logMsg("before tau(outgoingDirectionIndex, incomingDirectionIndex) +=");
             tau(outgoingDirectionIndex, incomingDirectionIndex) +=
               aTau * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
+            FenestrationCommon::logMsg(
+              "before rho(outgoingDirectionIndex, incomingDirectionIndex) +=");
             rho(outgoingDirectionIndex, incomingDirectionIndex) +=
               Ref * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
+            FenestrationCommon::logMsg(
+              "after rho(outgoingDirectionIndex, incomingDirectionIndex) +=");
         }
+        FenestrationCommon::logMsg(
+          "end CDirectionalBSDFLayer::calcDiffuseDistribution_byWavelength");
     }
 
     CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer(

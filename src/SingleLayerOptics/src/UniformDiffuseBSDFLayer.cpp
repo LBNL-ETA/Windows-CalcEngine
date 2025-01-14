@@ -85,23 +85,34 @@ namespace SingleLayerOptics
       size_t wavelengthIndex,
       BSDFIntegrator & results)
     {
+        FenestrationCommon::logMsg(
+          "begin CUniformDiffuseBSDFLayer::calcDiffuseDistribution_byWavelength");
         std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
-
+        FenestrationCommon::logMsg("before aTau = aCell->T_dir_dif_at_wavelength");
         const auto aTau = aCell->T_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
+        FenestrationCommon::logMsg("before Ref = aCell->R_dir_dif_at_wavelength");
         const auto Ref = aCell->R_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
-
+        FenestrationCommon::logMsg("before aDirections = m_BSDFHemisphere.getDirections");
         const BSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
+        FenestrationCommon::logMsg("before size = aDirections");
         size_t size = aDirections.size();
-
+        FenestrationCommon::logMsg("size = " + std::to_string(size));
         for(size_t i = 0; i < size; ++i)
         {
+            FenestrationCommon::logMsg("in for(size_t i = 0; i < size; ++i) with i = " + std::to_string(i));
             using ConstantsData::WCE_PI;
 
             auto & tau = results.getMatrix(aSide, PropertySimple::T);
+            FenestrationCommon::logMsg("before auto & rho = results.getMatrix");
             auto & rho = results.getMatrix(aSide, PropertySimple::R);
+            FenestrationCommon::logMsg("before tau(i, t_DirectionIndex) += aTau / WCE_PI");
             tau(i, t_DirectionIndex) += aTau / WCE_PI;
+            FenestrationCommon::logMsg("before rho(i, t_DirectionIndex) += Ref / WCE_PI");
             rho(i, t_DirectionIndex) += Ref / WCE_PI;
+            FenestrationCommon::logMsg("after rho(i, t_DirectionIndex) += Ref / WCE_PI");
         }
+        FenestrationCommon::logMsg(
+          "begin CUniformDiffuseBSDFLayer::calcDiffuseDistribution_byWavelength");
     }
 
 }   // namespace SingleLayerOptics
