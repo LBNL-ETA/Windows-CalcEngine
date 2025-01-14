@@ -297,7 +297,7 @@ namespace FenestrationCommon
     namespace Helper
     {
         template<typename Func>
-        std::vector<double> getArray(const CSeries & series, Func && extractor)
+        std::vector<double> getArray(CSeries series, Func && extractor)
         {
             std::vector<double> aArray(series.size());
             std::transform(
