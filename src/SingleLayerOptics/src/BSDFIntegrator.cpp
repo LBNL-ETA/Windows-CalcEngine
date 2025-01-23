@@ -170,7 +170,6 @@ namespace SingleLayerOptics
             const auto size = m_DirectHemispherical[{Side::Front, PropertySimple::T}].size();
             for(size_t i = 0; i < size; ++i)
             {
-                EnumSide sides;
                 for(auto t_Side : sides)
                 {
                     m_Abs.at(t_Side).push_back(1.0 - m_DirectHemispherical.at({t_Side, PropertySimple::T})[i]
