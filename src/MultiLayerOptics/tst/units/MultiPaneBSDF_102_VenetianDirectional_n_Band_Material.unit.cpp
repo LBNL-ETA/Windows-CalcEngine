@@ -38,8 +38,8 @@ protected:
           SpectralSample::WhiteVenetianBlindSlat_31100(), thickness, MaterialType::Monolithic);
 
         // make cell geometry
-        const auto slatWidth = 0.005;     // m
-        const auto slatSpacing = 0.007;   // m
+        const auto slatWidth = 0.05;     // m
+        const auto slatSpacing = 0.07;   // m
         const auto slatTiltAngle = 45;
         const auto curvatureRadius = 0.000;
         const size_t numOfSlatSegments = 5;

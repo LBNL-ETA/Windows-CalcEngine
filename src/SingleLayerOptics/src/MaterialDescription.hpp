@@ -372,10 +372,12 @@ namespace SingleLayerOptics
             FenestrationCommon::Property property;
             FenestrationCommon::Side side;
             double incomingTheta;
+            size_t numberOfWavelengths;
 
             bool operator==(const CacheKey & other) const
             {
                 return property == other.property && side == other.side
+                       && numberOfWavelengths == other.numberOfWavelengths
                        && FenestrationCommon::isEqual(incomingTheta, other.incomingTheta);
             }
         };
@@ -385,9 +387,20 @@ namespace SingleLayerOptics
         {
             std::size_t operator()(const CacheKey & key) const
             {
-                return std::hash<int>()(static_cast<int>(key.property))
-                       ^ (std::hash<int>()(static_cast<int>(key.side)) << 1)
-                       ^ (std::hash<double>()(key.incomingTheta) << 2);
+                // Use a robust way to combine hashes
+                size_t seed = 0;
+                hashCombine(seed, static_cast<int>(key.property));
+                hashCombine(seed, static_cast<int>(key.side));
+                hashCombine(seed, key.numberOfWavelengths);
+                hashCombine(seed, key.incomingTheta);
+                return seed;
+            }
+
+        private:
+            template<typename T>
+            void hashCombine(size_t & seed, const T & value) const
+            {
+                seed ^= std::hash<T>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
             }
         };
 

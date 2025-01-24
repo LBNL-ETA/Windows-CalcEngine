@@ -40,9 +40,11 @@ namespace SpectralAveraging
 
     CSpectralSampleData::CSpectralSampleData() : SampleData(), m_absCalculated(false)
     {
-        for(const auto & prop : EnumProperty())
+        EnumProperty props;
+        for(const auto & prop : props)
         {
-            for(const auto & side : EnumSide())
+            EnumSide sides;
+            for(const auto & side : sides)
             {
                 m_Property[std::make_pair(prop, side)] = CSeries();
             }
@@ -108,9 +110,11 @@ namespace SpectralAveraging
     // Interpolate current sample data to new wavelengths set
     void CSpectralSampleData::interpolate(std::vector<double> const & t_Wavelengths)
     {
-        for(const auto & prop : EnumProperty())
+        EnumProperty props;
+        for(const auto & prop : props)
         {
-            for(const auto & side : EnumSide())
+            EnumSide sides;
+            for(const auto & side : sides)
             {
                 m_Property[std::make_pair(prop, side)] =
                   m_Property.at(std::make_pair(prop, side)).interpolate(t_Wavelengths);
@@ -163,7 +167,8 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::cutExtraData(const double minLambda, const double maxLambda)
     {
-        for(const auto & side : EnumSide())
+        EnumSide sides;
+        for(const auto & side : sides)
         {
             m_Property.at(std::make_pair(Property::T, side)).cutExtraData(minLambda, maxLambda);
             m_Property.at(std::make_pair(Property::R, side)).cutExtraData(minLambda, maxLambda);
@@ -208,7 +213,8 @@ namespace SpectralAveraging
     void PhotovoltaicSampleData::cutExtraData(double minLambda, double maxLambda)
     {
         CSpectralSampleData::cutExtraData(minLambda, maxLambda);
-        for(const auto & side : EnumSide())
+        EnumSide sides;
+        for(const auto & side : sides)
         {
             m_EQE.at(side).cutExtraData(minLambda, maxLambda);
         }

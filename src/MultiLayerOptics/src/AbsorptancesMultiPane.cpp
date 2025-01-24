@@ -58,8 +58,8 @@ namespace MultiLayerOptics
     void CAbsorptancesMultiPane::calculateRTCoefficients()
     {
         const size_t size{m_T.size()};
-
-        for(const auto side : EnumSide())
+        EnumSide sides;
+        for(const auto side : sides)
         {
             const auto oppositeSide{FenestrationCommon::oppositeSide(side)};
 
@@ -96,8 +96,9 @@ namespace MultiLayerOptics
     {
         // Calculate normalized radiances
         const auto wv{m_T[0].getXArray()};
-
-        for(const auto side : EnumSide())
+        
+        EnumSide sides;
+        for(const auto side : sides)
         {
             const size_t size{m_rCoeffs.at(side).size()};
 
@@ -126,7 +127,8 @@ namespace MultiLayerOptics
 
     void CAbsorptancesMultiPane::calculateAbsorptances()
     {
-        for(const auto side : EnumSide())
+        EnumSide sides;
+        for(const auto side : sides)
         {
             const auto oppositeSide{FenestrationCommon::oppositeSide(side)};
             const size_t size{Iminus.at(side).size()};

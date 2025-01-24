@@ -59,7 +59,8 @@ namespace Tarcog::ISO15099
       const double t_MaxDeflection) :
         CIGUSolidLayerDeflection(*t_Layer)
     {
-        for(Side aSide : FenestrationCommon::EnumSide())
+        FenestrationCommon::EnumSide options;
+        for(Side aSide : options)
         {
             m_Surface[aSide]->applyDeflection(t_MeanDeflection, t_MaxDeflection);
         }

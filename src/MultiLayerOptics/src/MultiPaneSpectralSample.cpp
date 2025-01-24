@@ -50,7 +50,8 @@ namespace MultiLayerOptics
     {
         if(!m_StateCalculated)
         {
-            for(const auto side : EnumSide())
+            EnumSide sides;
+            for(const auto side : sides)
             {
                 CSpectralSample::calculateProperties(integrator, normalizationCoefficient);
                 if(std::dynamic_pointer_cast<CMultiPaneSampleData>(m_SampleData) != NULL)
@@ -95,7 +96,8 @@ namespace MultiLayerOptics
     void CMultiPaneSpectralSample::reset()
     {
         CSpectralSample::reset();
-        for(const auto side : EnumSide())
+        EnumSide sides;
+        for(const auto side : sides)
         {
             m_AbsorbedLayersSource.at(side).clear();
         }

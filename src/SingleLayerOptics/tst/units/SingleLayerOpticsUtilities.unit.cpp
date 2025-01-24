@@ -10,7 +10,8 @@ TEST_F(TestSingleLayerOpticsUtilities, BSDFDirectionEnumeration)
 {
     using SingleLayerOptics::BSDFDirection;
     std::vector<BSDFDirection> directions;
-    for(const auto & direction : SingleLayerOptics::EnumBSDFDirection())
+    SingleLayerOptics::EnumBSDFDirection dirs;
+    for(const auto & direction : dirs)
     {
         directions.emplace_back(direction);
     }
