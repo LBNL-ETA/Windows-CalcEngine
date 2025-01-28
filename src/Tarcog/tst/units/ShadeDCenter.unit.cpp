@@ -2,18 +2,17 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCEGases.hpp"
-#include "WCETarcog.hpp"
+#include <WCEGases.hpp>
+#include <WCETarcog.hpp>
 
-// Unit test contains airflow calculation for the window that is 2 x 2 meters
-
+// This test is used to compare two different approaches of generating gaps (thickness vs dcenter).
+// Results should remain the same.
 class TestShadeDCenter : public testing::Test
 {
-private:
     std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
 
 protected:
-    void SetUp() override
+    void SetUpSystem(const Tarcog::ISO15099::GapLayer & gapLayer)
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -48,9 +47,6 @@ protected:
         constexpr auto solidLayerConductance = 1.0;
         auto aLayer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
-        constexpr auto gapThickness = 0.0127;
-        auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
-
         const auto shadeLayerConductance = 5.0;
         const auto shadeThickness = 0.06;
 
@@ -58,7 +54,7 @@ protected:
         const auto dr{0.0};
         const auto dtop{0.0};
         const auto dbot{0.0};
-        const auto PermeabilityFactor = 0.3; // fraction
+        const auto PermeabilityFactor = 0.3;   // fraction
 
         EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerCommon effLayer{
@@ -69,11 +65,16 @@ protected:
         const auto Tirf = 0;
         const auto Tirb = 0;
 
-        auto shadeLayer = Tarcog::ISO15099::Layers::shading(
-          shadeThickness, shadeLayerConductance, effLayer.getEffectiveOpenness(), Ef, Tirf, Eb, Tirb);
+        auto shadeLayer = Tarcog::ISO15099::Layers::shading(shadeThickness,
+                                                            shadeLayerConductance,
+                                                            effLayer.getEffectiveOpenness(),
+                                                            Ef,
+                                                            Tirf,
+                                                            Eb,
+                                                            Tirb);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({aLayer1, GapLayer1, shadeLayer});
+        aIGU.addLayers({aLayer1, gapLayer, shadeLayer});
 
         /////////////////////////////////////////////////////////
         /// System
@@ -88,17 +89,50 @@ public:
     };
 };
 
-TEST_F(TestShadeDCenter, GapAsThickness)
+TEST_F(TestShadeDCenter, GapLayerAsThickness)
 {
-    SCOPED_TRACE("Begin Test: Gap constructed with thickness.");
+    SCOPED_TRACE("Begin Test: Gap entered as thickness.");
+
+    // Gap thickness is measured from surface-to-surface.
+    constexpr auto gapThickness = 0.0127;
+    auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
+
+    SetUpSystem(GapLayer1);
 
     auto & aSystem = GetSystem();
 
     auto effectiveLayerConductivities{
       aSystem.getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
 
-    const auto systemKeff{
-      aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
+    const auto systemKeff{aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
+    EXPECT_NEAR(0.311294, systemKeff, 1e-6);
+
+    const auto uval = aSystem.getUValue();
+    EXPECT_NEAR(4.021995, uval, 1e-6);
+
+    const auto heatflow =
+      aSystem.getHeatFlow(Tarcog::ISO15099::System::Uvalue, Tarcog::ISO15099::Environment::Indoor);
+    EXPECT_NEAR(85.917632, heatflow, 1e-6);
+}
+
+TEST_F(TestShadeDCenter, GapLayerAsDcenter)
+{
+    SCOPED_TRACE("Begin Test: Gap entered as dcenter.");
+
+    // In this case, gap is measured as distance from surface-to-center. In this case shade layer
+    // thickness is 0.06 m which makes dcenter 0.03 m bigger than gap thickness making gap thickness
+    // 0.0427 m.constexpr
+    constexpr auto gapThickness = 0.0427;
+    auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness, true);
+
+    SetUpSystem(GapLayer1);
+
+    auto & aSystem = GetSystem();
+
+    auto effectiveLayerConductivities{
+      aSystem.getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
+
+    const auto systemKeff{aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
     EXPECT_NEAR(0.311294, systemKeff, 1e-6);
 
     const auto uval = aSystem.getUValue();
