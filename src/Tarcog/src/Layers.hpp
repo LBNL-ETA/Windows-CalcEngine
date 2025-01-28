@@ -54,16 +54,21 @@ namespace Tarcog::ISO15099
                      double pressure,
                      const Gases::CGas & gas,
                      double accommodation1,
-                     double accommodation2);
+                     double accommodation2,
+                     bool t_isDCenterMeasured = false);
 
-        GapLayer gap(double thickness);
-        GapLayer gap(double thickness, double pressure);
-        GapLayer gap(double thickness, const Gases::CGas & gas);
-        GapLayer gap(double thickness, double pressure, const Gases::CGas & gas);
+        GapLayer gap(double thickness, bool t_isDCenterMeasured = false);
+        GapLayer gap(double thickness, double pressure, bool t_isDCenterMeasured = false);
+        GapLayer gap(double thickness, const Gases::CGas & gas, bool t_isDCenterMeasured = false);
+        GapLayer gap(double thickness,
+                     double pressure,
+                     const Gases::CGas & gas,
+                     bool t_isDCenterMeasured = false);
         GapLayer gap(double thickness,
                      const Gases::CGas & gas,
                      double accommodation1,
-                     double accommodation2);
+                     double accommodation2,
+                     bool t_isDCenterMeasured = false);
 
 
         GapLayer forcedVentilationGap(const GapLayer & gap,

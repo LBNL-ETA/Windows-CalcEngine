@@ -21,16 +21,16 @@ namespace Tarcog::ISO15099
         return FenestrationCommon::isEqual(airSpeed, 0.0);
     }
 
-    CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure) :
-        CBaseLayer(t_Thickness)
+    CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure, bool t_isDCenterMeasured) :
+        CBaseLayer(t_Thickness), m_isDCenterMeasured(t_isDCenterMeasured)
     {
         gasSpecification.pressure = t_Pressure;
     }
 
     CIGUGapLayer::CIGUGapLayer(double const t_Thickness,
                                double const t_Pressure,
-                               const Gases::CGas & t_Gas) :
-        CBaseLayer(t_Thickness)
+                               const Gases::CGas & t_Gas, bool t_isDCenterMeasured) :
+        CBaseLayer(t_Thickness), m_isDCenterMeasured(t_isDCenterMeasured)
     {
         gasSpecification.pressure = t_Pressure;
         gasSpecification.gas = t_Gas;
@@ -40,10 +40,11 @@ namespace Tarcog::ISO15099
                                double t_Pressure,
                                const Gases::CGas & t_Gas,
                                double t_AccommodationCoefficient1,
-                               double t_AccommodationCoefficient2) :
+                               double t_AccommodationCoefficient2, bool t_isDCenterMeasured) :
         CBaseLayer(t_Thickness),
         m_AccommodationCoefficient1(t_AccommodationCoefficient1),
-        m_AccommodationCoefficient2(t_AccommodationCoefficient2)
+        m_AccommodationCoefficient2(t_AccommodationCoefficient2),
+        m_isDCenterMeasured(t_isDCenterMeasured)
     {
         gasSpecification.pressure = t_Pressure;
         gasSpecification.gas = t_Gas;
@@ -106,6 +107,27 @@ namespace Tarcog::ISO15099
                    / (m_SealedGapProperties->temperature * Vgap);
         }
         return gasSpecification.pressure;
+    }
+    double CIGUGapLayer::getThickness() const
+    {
+        auto thickness = CBaseLayer::getThickness();
+        if(m_isDCenterMeasured)
+        {
+            auto previousLayer =
+              std::dynamic_pointer_cast<CIGUShadeLayer>(getPreviousLayer());
+            if(previousLayer)
+            {
+                thickness -= previousLayer->getThickness() / 2;
+            }
+            auto nextLayer =
+              std::dynamic_pointer_cast<CIGUShadeLayer>(getNextLayer());
+            if(nextLayer)
+            {
+                thickness -= nextLayer->getThickness() / 2;
+            }
+        }
+
+        return thickness;
     }
 
     double CIGUGapLayer::getMaxDeflection() const
