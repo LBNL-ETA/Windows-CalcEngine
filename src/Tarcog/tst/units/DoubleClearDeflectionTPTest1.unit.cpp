@@ -106,6 +106,22 @@ TEST_F(DoubleClearDeflectionTPTest1, Test1)
     Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), Tolerance);
 
     ///////////////////////////////////////////////////////////////////////////////
+    /// Heat flow
+    ///////////////////////////////////////////////////////////////////////////////
+    constexpr auto correctHeatFlow = 106.578839;
+    EXPECT_NEAR(
+      correctHeatFlow, aSystem->getHeatFlow(Tarcog::ISO15099::Environment::Indoor), Tolerance);
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// Effective thermal conductivity
+    ///////////////////////////////////////////////////////////////////////////////
+    std::vector correctEffectiveTC = {0.061796};
+    Helper::testVectors("Effective Thermal Conductivity",
+                        correctEffectiveTC,
+                        aSystem->getGapEffectiveLayerConductivities(),
+                        Tolerance);
+
+    ///////////////////////////////////////////////////////////////////////////////
     /// Max deflection test
     ///////////////////////////////////////////////////////////////////////////////
     std::vector<double> correctMaxDeflection = {-2.28568e-3, 0.483674e-3};

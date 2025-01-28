@@ -92,12 +92,12 @@ namespace Tarcog::ISO15099
 
     double CBaseLayer::getConductivity()
     {
-        return getConductionConvectionCoefficient() * m_Thickness;
+        return getConductionConvectionCoefficient() * getThickness();
     }
 
     double CBaseLayer::getEffectiveThermalConductivity()
     {
-        return std::abs(getHeatFlow() * m_Thickness
+        return std::abs(getHeatFlow() * getThickness()
                         / (surfaceTemperature(FenestrationCommon::Side::Front)
                            - surfaceTemperature(FenestrationCommon::Side::Back)));
     }
