@@ -90,7 +90,7 @@ namespace SingleLayerOptics
         std::shared_ptr<SpectralAveraging::CSpectralSample> getSpectralSample();
 
 
-        std::vector<double> getBandWavelengths();
+        const std::vector<double> & getBandWavelengths();
         virtual void setBandWavelengths(const std::vector<double> & wavelengths);
 
         size_t getBandSize();
