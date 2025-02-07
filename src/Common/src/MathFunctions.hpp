@@ -108,4 +108,5 @@ namespace FenestrationCommon
 
         return result;
     }
+
 }   // namespace FenestrationCommon

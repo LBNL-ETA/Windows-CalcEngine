@@ -63,8 +63,8 @@ namespace ThermalPermeability
             const auto slatArcLength = asin(geometry.SlatWidth / temp) * temp;
 
             // Determine the maximum allowable angle and the effective slat angle
-            const auto effectiveSlatAngle =
-              std::fmin(std::abs(geometry.SlatTiltAngle), maxAngle(geometry.SlatSpacing, matThickness));
+            const auto effectiveSlatAngle = std::fmin(std::abs(geometry.SlatTiltAngle),
+                                                      maxAngle(geometry.SlatSpacing, matThickness));
 
             // Handle special cases where slat angle is 90 degrees
             const double adjustedCosPhi =
@@ -122,4 +122,14 @@ namespace ThermalPermeability
         }
     }   // namespace Woven
 
+    double LouveredShutter::permeabilityFactor(
+      const FenestrationCommon::LouveredShutter::Geometry & geometry)
+    {
+        const auto tiltRadians{FenestrationCommon::radians(geometry.SlatAngle)};
+        const auto areaShade{geometry.SlatWidth * std::cos(tiltRadians)
+                             + geometry.SlatThickness * std::abs(std::sin(tiltRadians))};
+        return 1
+               - geometry.SlatWidth * geometry.SlatThickness
+                   / (areaShade * (geometry.SlatSpacing + geometry.SlatThickness));
+    }
 }   // namespace ThermalPermeability

@@ -8,6 +8,7 @@
 #include "../src/IntegratorStrategy.hpp"
 #include "../src/Interpolation2D.hpp"
 #include "../src/LinearSolver.hpp"
+#include "../src/LouveredShutter.hpp"
 #include "../src/MathFunctions.hpp"
 #include "../src/MatrixSeries.hpp"
 #include "../src/Parallel.hpp"

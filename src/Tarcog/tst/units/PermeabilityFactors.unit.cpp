@@ -45,8 +45,7 @@ TEST_F(TestPermeabilityFactors, TestPerforatedCircularPermeability)
     const FenestrationCommon::Perforated::Geometry geometry{
       FenestrationCommon::Perforated::Type::Circular, 0.01905, 0.01905, 0.00635, 0.00635};
 
-    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(
-      geometry)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(geometry)};
 
     EXPECT_NEAR(0.087266, permeabilityOpenness, 1e-6);
 }
@@ -58,8 +57,7 @@ TEST_F(TestPermeabilityFactors, TestPerforatedRectangularPermeability)
     const FenestrationCommon::Perforated::Geometry geometry{
       FenestrationCommon::Perforated::Type::Rectangular, 0.01905, 0.01905, 0.00635, 0.00635};
 
-    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(
-      geometry)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(geometry)};
 
     EXPECT_NEAR(0.111111, permeabilityOpenness, 1e-6);
 }
@@ -71,8 +69,7 @@ TEST_F(TestPermeabilityFactors, TestPerforatedSquarePermeability)
     const FenestrationCommon::Perforated::Geometry geometry{
       FenestrationCommon::Perforated::Type::Square, 0.01905, 0.01905, 0.00635, 0.00635};
 
-    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(
-      geometry)};
+    const auto permeabilityOpenness{ThermalPermeability::Perforated::permeabilityFactor(geometry)};
 
     EXPECT_NEAR(0.111111, permeabilityOpenness, 1e-6);
 }
@@ -83,8 +80,19 @@ TEST_F(TestPermeabilityFactors, TestWovenPermeability)
 
     const FenestrationCommon::Woven::Geometry geometry{0.001, 0.002};
 
-    const auto permeabilityOpenness{
-      ThermalPermeability::Woven::permeabilityFactor(geometry)};
+    const auto permeabilityOpenness{ThermalPermeability::Woven::permeabilityFactor(geometry)};
 
     EXPECT_NEAR(0.25, permeabilityOpenness, 1e-6);
+}
+
+TEST_F(TestPermeabilityFactors, TestLouveredShutterPermeability)
+{
+    SCOPED_TRACE("Begin Test: Louvered shutter thermal permeability.");
+
+    constexpr FenestrationCommon::LouveredShutter::Geometry geometry{0.0889, 0.01, 87, 0.0762};
+
+    const auto permeabilityOpenness{
+      ThermalPermeability::LouveredShutter::permeabilityFactor(geometry)};
+
+    EXPECT_NEAR(0.295494779044715, permeabilityOpenness, 1e-6);
 }

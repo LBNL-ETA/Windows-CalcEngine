@@ -26,4 +26,9 @@ namespace ThermalPermeability
     {
         double permeabilityFactor(const FenestrationCommon::Woven::Geometry & geometry);
     }
+
+    namespace LouveredShutter
+    {
+        double permeabilityFactor(const FenestrationCommon::LouveredShutter::Geometry & geometry);
+    }
 }   // namespace ThermalPermeability
