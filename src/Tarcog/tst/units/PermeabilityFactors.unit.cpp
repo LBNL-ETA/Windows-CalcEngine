@@ -94,5 +94,5 @@ TEST_F(TestPermeabilityFactors, TestLouveredShutterPermeability)
     const auto permeabilityOpenness{
       ThermalPermeability::LouveredShutter::permeabilityFactor(geometry)};
 
-    EXPECT_NEAR(0.295494779044715, permeabilityOpenness, 1e-6);
+    EXPECT_NEAR(0.295495, permeabilityOpenness, 1e-6);
 }

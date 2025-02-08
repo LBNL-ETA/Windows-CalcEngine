@@ -100,7 +100,8 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     EXPECT_NEAR(0, effectiveOpenness.Ar, 1e-8);
 }
 
-TEST(TestEffectiveLayers, TestEffectiveLayerCommon) {
+TEST(TestEffectiveLayers, TestEffectiveLayerCommon)
+{
     SCOPED_TRACE("Begin Test: Effective layer common.");
 
     const auto width{1.0};                  // m
@@ -110,7 +111,7 @@ TEST(TestEffectiveLayers, TestEffectiveLayerCommon) {
     const auto permeabilityFactor{0.15};
 
     EffectiveLayers::EffectiveLayerCommon common{
-        width, height, materialThickness, permeabilityFactor};
+      width, height, materialThickness, permeabilityFactor};
 
     const auto effectiveThickness{common.effectiveThickness()};
 
@@ -174,6 +175,24 @@ TEST(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
     EXPECT_NEAR(10.4e-3, effectiveOpenness.Abot, 1e-8);
     EXPECT_NEAR(9.0e-3, effectiveOpenness.Al, 1e-8);
     EXPECT_NEAR(7.2e-3, effectiveOpenness.Ar, 1e-8);
+}
+
+TEST(TestEffectiveLayer, TestLouveredShutterEffectiveOpenness)
+{
+    constexpr auto systemWidth{1.0};            // m
+    constexpr auto systemHeight{1.0};           // m
+    constexpr auto materialThickness{0.0006};   // m
+    FenestrationCommon::LouveredShutter::Geometry geometry{0.0889, 0.01, 87.0, 0.0762};
+    const EffectiveLayers::ShadeOpenness openness{0.0, 0.0, 0.0, 0.0};
+
+    EffectiveLayers::EffectiveLayerLouveredShutter louveredShutter{
+      systemWidth, systemHeight, materialThickness, geometry, openness};
+
+    EXPECT_NEAR(0.00179327, louveredShutter.effectiveThickness(), 1e-8);
+
+    const auto effectiveOpenness{louveredShutter.getEffectiveOpenness()};
+    EXPECT_NEAR(0.00464752, effectiveOpenness.EffectiveFrontThermalOpennessArea, 1e-8);
+    EXPECT_NEAR(0.295495, effectiveOpenness.PermeabilityFactor, 1e-6);
 }
 
 TEST(TestEffectiveLayers, RadiusFromRise)

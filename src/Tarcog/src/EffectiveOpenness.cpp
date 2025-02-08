@@ -138,6 +138,49 @@ namespace EffectiveLayers
         return m_Thickness;
     }
 
+    EffectiveLayerLouveredShutter::EffectiveLayerLouveredShutter(
+      double width,
+      double height,
+      double thickness,
+      const FenestrationCommon::LouveredShutter::Geometry & geometry,
+      const ShadeOpenness & openness) :
+        EffectiveLayer(width,
+                       height,
+                       thickness,
+                       openness,
+                       {1.385e-01, 8.805e-01, 0.0580255, 1.225e-01},
+                       ThermalPermeability::LouveredShutter::permeabilityFactor(geometry)),
+        m_Geometry(geometry)
+    {}
+
+    EffectiveOpenness EffectiveLayerLouveredShutter::getEffectiveOpenness()
+    {
+        const auto area{m_Width * m_Height};
+        const auto openness_factor{
+          std::max(0.0,
+                   1
+                     - std::pow(2 / FenestrationCommon::WCE_PI
+                                  * FenestrationCommon::radians(m_Geometry.SlatAngle),
+                                4))};
+        const auto Ah_eff{area * coefficients.C1
+                            * (std::pow(m_PermeabilityFactor * openness_factor, coefficients.C2))
+                          - coefficients.C3
+                              * std::cos(FenestrationCommon::radians(m_Geometry.SlatAngle))};
+        const auto Al_eff{m_ShadeOpenness.Dl * m_Height * coefficients.C3};
+        const auto Ar_eff{m_ShadeOpenness.Dr * m_Height * coefficients.C3};
+        const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width * coefficients.C4};
+        const auto Abot_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
+        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abot_eff, m_PermeabilityFactor};
+    }
+
+    double EffectiveLayerLouveredShutter::effectiveThickness()
+    {
+        return coefficients.C4
+               * (m_Geometry.SlatWidth * std::cos(FenestrationCommon::radians(m_Geometry.SlatAngle))
+                  + m_Geometry.SlatThickness
+                      * std::abs(std::sin(FenestrationCommon::radians(m_Geometry.SlatAngle))));
+    }
+
     EffectiveLayerPerforated::EffectiveLayerPerforated(
       double width,
       double height,
@@ -180,7 +223,12 @@ namespace EffectiveLayers
         const auto Ar_eff{m_ShadeOpenness.Dr * m_Height};
         const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width};
         const auto Abot_eff{m_ShadeOpenness.Dbot * m_Width};
-        return {m_EffectiveFrontThermalOpennessArea, Al_eff, Ar_eff, Atop_eff, Abot_eff, m_PermeabilityFactor};
+        return {m_EffectiveFrontThermalOpennessArea,
+                Al_eff,
+                Ar_eff,
+                Atop_eff,
+                Abot_eff,
+                m_PermeabilityFactor};
     }
 
     double EffectiveLayerUserDefined::effectiveThickness()

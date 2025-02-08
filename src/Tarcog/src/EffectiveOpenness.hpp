@@ -160,6 +160,23 @@ namespace EffectiveLayers
         double effectiveThickness() override;
     };
 
+    class EffectiveLayerLouveredShutter : public EffectiveLayer
+    {
+    public:
+        EffectiveLayerLouveredShutter(
+          double width,
+          double height,
+          double thickness,
+          const FenestrationCommon::LouveredShutter::Geometry & geometry,
+          const ShadeOpenness & openness = {0, 0, 0, 0});
+
+        [[nodiscard]] EffectiveOpenness getEffectiveOpenness() override;
+        [[nodiscard]] double effectiveThickness() override;
+
+    private:
+        FenestrationCommon::LouveredShutter::Geometry m_Geometry;
+    };
+
     class EffectiveLayerPerforated : public EffectiveLayerCommon
     {
     public:
