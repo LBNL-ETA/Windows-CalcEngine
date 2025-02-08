@@ -166,11 +166,9 @@ namespace EffectiveLayers
                             * (std::pow(m_PermeabilityFactor * openness_factor, coefficients.C2))
                           - coefficients.C3
                               * std::cos(FenestrationCommon::radians(m_Geometry.SlatAngle))};
-        const auto Al_eff{m_ShadeOpenness.Dl * m_Height * coefficients.C3};
-        const auto Ar_eff{m_ShadeOpenness.Dr * m_Height * coefficients.C3};
-        const auto Atop_eff{m_ShadeOpenness.Dtop * m_Width * coefficients.C4};
-        const auto Abot_eff{m_ShadeOpenness.Dbot * m_Width * coefficients.C4};
-        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abot_eff, m_PermeabilityFactor};
+
+        // Side opennings are forbidden for louvered shutters for now
+        return {Ah_eff, 0.0, 0.0, 0.0, 0.0, m_PermeabilityFactor};
     }
 
     double EffectiveLayerLouveredShutter::effectiveThickness()
