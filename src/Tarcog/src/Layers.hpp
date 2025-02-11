@@ -4,12 +4,9 @@
 #include <WCEGases.hpp>
 
 #include "EffectiveOpenness.hpp"
-#include "LayerInterfaces.hpp"
 #include "TarcogConstants.hpp"
-#include "BaseShade.hpp"
 #include "SupportPillar.hpp"
 #include "SupportPillarMeasured.hpp"
-#include "IGUSolidLayer.hpp"
 #include "LayerTypes.hpp"
 
 namespace Tarcog::ISO15099
