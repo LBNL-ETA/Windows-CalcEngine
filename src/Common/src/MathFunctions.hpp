@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 #include "Constants.hpp"
 

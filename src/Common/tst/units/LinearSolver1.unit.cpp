@@ -1,18 +1,11 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCECommon.hpp"
+#include <WCECommon.hpp>
 
 using namespace FenestrationCommon;
 
-class TestLinearSolver1 : public testing::Test
-{
-protected:
-    void SetUp() override
-    {}
-};
-
-TEST_F(TestLinearSolver1, Test1)
+TEST(TestLinearSolver1, Test1)
 {
     SCOPED_TRACE("Begin Test: Test Linear Solver (1) - Solving simple matrix.");
 
@@ -27,7 +20,7 @@ TEST_F(TestLinearSolver1, Test1)
     EXPECT_NEAR(0.0, aSolution[2], 1e-6);
 }
 
-TEST_F(TestLinearSolver1, Test2)
+TEST(TestLinearSolver1, Test2)
 {
     SCOPED_TRACE("Begin Test: Test Linear Solver (2) - Solving simple matrix.");
 
@@ -46,7 +39,7 @@ TEST_F(TestLinearSolver1, Test2)
     EXPECT_NEAR(303.040507, aSolution[3], 1e-6);
 }
 
-TEST_F(TestLinearSolver1, TestSolverException)
+TEST(TestLinearSolver1, TestSolverException)
 {
     SCOPED_TRACE("Begin Test: Test Linear Solver - Test exception.");
 

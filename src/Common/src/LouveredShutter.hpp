@@ -10,4 +10,7 @@ namespace FenestrationCommon::LouveredShutter
         double SlatAngle{0.0};
         double SlatSpacing{0.0};
     };
+
+    //! \brief Calculates geometrical thickness of venetian blind slats
+    [[nodiscard]] double thickness(const Geometry & t_Geometry);
 }   // namespace FenestrationCommon
