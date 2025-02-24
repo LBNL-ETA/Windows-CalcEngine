@@ -16,7 +16,6 @@ namespace FenestrationCommon::Venetian
 
     double thickness(const Geometry & t_Geometry)
     {
-        return t_Geometry.SlatWidth * std::cos(radians(t_Geometry.SlatTiltAngle))
-               + t_Geometry.SlatWidth * std::abs(std::sin(radians(t_Geometry.SlatTiltAngle)));
+        return t_Geometry.SlatWidth * std::cos(radians(t_Geometry.SlatTiltAngle));
     }
 }   // namespace FenestrationCommon::Venetian
