@@ -16,6 +16,7 @@
 #include "../src/IndoorEnvironment.hpp"
 #include "../src/LayerInterfaces.hpp"
 #include "../src/Layers.hpp"
+#include "../src/LayerTypes.hpp"
 #include "../src/NonLinearSolver.hpp"
 #include "../src/NusseltNumber.hpp"
 #include "../src/OutdoorEnvironment.hpp"

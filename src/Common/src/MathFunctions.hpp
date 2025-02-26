@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 #include "Constants.hpp"
 
@@ -108,4 +109,5 @@ namespace FenestrationCommon
 
         return result;
     }
+
 }   // namespace FenestrationCommon

@@ -1,6 +1,22 @@
 # Make sure expat is compiled as a static library
 # ADD_DEFINITIONS("-DXML_STATIC")
 
+include(CheckCXXCompilerFlag)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # Automatically detect number of available processors
+    include(ProcessorCount)
+    ProcessorCount(N)
+    if(NOT N EQUAL 0)
+        set(PARALLEL_COMPILE_JOBS ${N})
+    else()
+        set(PARALLEL_COMPILE_JOBS 4) # Fallback to 4 cores if detection fails
+    endif()
+    
+    # Set MAKEFLAGS for parallel compilation
+    set(CMAKE_BUILD_FLAGS "-j${PARALLEL_COMPILE_JOBS}" CACHE STRING "Number of parallel build jobs")
+endif()
+
 IF ( CMAKE_COMPILER_IS_GNUCXX OR "x${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" ) # g++/Clang
 	set(LINKER_FLAGS "")
 	mark_as_advanced(ENABLE_THREAD_SANITIZER ENABLE_ADDRESS_SANITIZER ENABLE_UNDEFINED_SANITIZER)

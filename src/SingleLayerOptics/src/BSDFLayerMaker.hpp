@@ -33,8 +33,8 @@ namespace SingleLayerOptics
 
         static std::shared_ptr<CBSDFLayer>
           getPhotovoltaicSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
-                               const BSDFHemisphere & t_BSDF,
-                               PVPowerPropertiesTable powerTable);
+                                       const BSDFHemisphere & t_BSDF,
+                                       PVPowerPropertiesTable powerTable);
 
         static std::shared_ptr<CBSDFLayer>
           getCircularPerforatedLayer(const std::shared_ptr<CMaterial> & t_Material,
@@ -65,12 +65,12 @@ namespace SingleLayerOptics
                            bool isHorizontal = true);
 
         static std::shared_ptr<CBSDFLayer>
-            getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
-            const BSDFHemisphere & t_BSDF,
-            const FenestrationCommon::Venetian::Geometry & geometry,
-            size_t numOfSlatSegments,
-            DistributionMethod method = DistributionMethod::DirectionalDiffuse,
-            bool isHorizontal = true);
+          getVenetianLayer(const std::shared_ptr<CMaterial> & t_Material,
+                           const BSDFHemisphere & t_BSDF,
+                           const FenestrationCommon::Venetian::Geometry & geometry,
+                           size_t numOfSlatSegments,
+                           DistributionMethod method = DistributionMethod::DirectionalDiffuse,
+                           bool isHorizontal = true);
 
         static std::shared_ptr<CBSDFLayer>
           getPerfectlyDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,

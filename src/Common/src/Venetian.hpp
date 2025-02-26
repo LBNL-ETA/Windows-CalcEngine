@@ -13,4 +13,7 @@ namespace FenestrationCommon::Venetian
     };
 
     Geometry adjustSlatTiltAngle(const Geometry & t_Geometry);
+
+    //! \brief Calculates geometrical thickness of venetian blind slats
+    [[nodiscard]] double thickness(const Geometry & t_Geometry);
 }   // namespace FenestrationCommon

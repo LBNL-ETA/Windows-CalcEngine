@@ -180,7 +180,7 @@ namespace SingleLayerOptics
         return std::make_shared<CSpectralSample>(aSampleData);
     }
 
-    std::vector<double> CMaterial::getBandWavelengths()
+    const std::vector<double> & CMaterial::getBandWavelengths()
     {
         std::lock_guard<std::mutex> lock(materialWL);
         if(!m_WavelengthsCalculated)

@@ -34,53 +34,66 @@ namespace Tarcog::ISO15099::Layers
                  double pressure,
                  const Gases::CGas & gas,
                  double accommodation1,
-                 double accommodation2)
+                 double accommodation2,
+                 bool t_isDCenterMeasured)
     {
         return std::make_shared<CIGUGapLayer>(
-          thickness, pressure, gas, accommodation1, accommodation2);
+          thickness, pressure, gas, accommodation1, accommodation2, t_isDCenterMeasured);
     }
 
-    GapLayer gap(double thickness)
+    GapLayer gap(double thickness, bool t_isDCenterMeasured)
     {
         return gap(thickness,
                    ConstantsData::DEFAULT_GAP_PRESSURE,
                    Gases::CGas(),
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
-                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   t_isDCenterMeasured);
     }
 
-    GapLayer gap(double thickness, double pressure)
+    GapLayer gap(double thickness, double pressure, bool t_isDCenterMeasured)
     {
         return gap(thickness,
                    pressure,
                    Gases::CGas(),
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
-                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   t_isDCenterMeasured);
     }
 
-    GapLayer gap(double thickness, const Gases::CGas & gas)
+    GapLayer gap(double thickness, const Gases::CGas & gas, bool t_isDCenterMeasured)
     {
         return gap(thickness,
                    ConstantsData::DEFAULT_GAP_PRESSURE,
                    gas,
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
-                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
-    }
-
-    GapLayer gap(double thickness, double pressure, const Gases::CGas & gas)
-    {
-        return gap(thickness,
-                   pressure,
-                   gas,
                    ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
-                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+                   t_isDCenterMeasured);
     }
 
     GapLayer
-      gap(double thickness, const Gases::CGas & gas, double accommodation1, double accommodation2)
+      gap(double thickness, double pressure, const Gases::CGas & gas, bool t_isDCenterMeasured)
     {
-        return gap(
-          thickness, ConstantsData::DEFAULT_GAP_PRESSURE, gas, accommodation1, accommodation2);
+        return gap(thickness,
+                   pressure,
+                   gas,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
+                   t_isDCenterMeasured);
+    }
+
+    GapLayer gap(double thickness,
+                 const Gases::CGas & gas,
+                 double accommodation1,
+                 double accommodation2,
+                 bool t_isDCenterMeasured)
+    {
+        return gap(thickness,
+                   ConstantsData::DEFAULT_GAP_PRESSURE,
+                   gas,
+                   accommodation1,
+                   accommodation2,
+                   t_isDCenterMeasured);
     }
 
     GapLayer forcedVentilationGap(const GapLayer & gap,

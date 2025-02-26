@@ -34,7 +34,7 @@ namespace Tarcog::ISO15099
         void tearDownConnections();
 
         //! Thickness of the layer in current state (including deflection)
-        double getThickness() const;
+        virtual double getThickness() const;
 
         virtual double getHeatFlow() final;
         virtual double getRadiationFlow();

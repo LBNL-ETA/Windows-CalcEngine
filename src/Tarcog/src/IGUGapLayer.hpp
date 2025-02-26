@@ -30,17 +30,23 @@ namespace Tarcog
         class CIGUGapLayer : public CBaseLayer, public Tarcog::Deflectable
         {
         public:
-            CIGUGapLayer(double t_Thickness, double t_Pressure);
-            CIGUGapLayer(double t_Thickness, double t_Pressure, const Gases::CGas & t_Gas);
+            CIGUGapLayer(double t_Thickness, double t_Pressure, bool t_isDCenterMeasured = false);
+            CIGUGapLayer(double t_Thickness,
+                         double t_Pressure,
+                         const Gases::CGas & t_Gas,
+                         bool t_isDCenterMeasured = false);
             CIGUGapLayer(double t_Thickness,
                          double t_Pressure,
                          const Gases::CGas & t_Gas,
                          double t_AccommodationCoefficient1,
-                         double t_AccommodationCoefficient2);
+                         double t_AccommodationCoefficient2,
+                         bool t_isDCenterMeasured = false);
 
             void connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer) override;
 
             double getPressure();
+
+            double getThickness() const override;
 
             std::shared_ptr<CBaseLayer> clone() const override;
 
@@ -76,6 +82,8 @@ namespace Tarcog
               ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
             double m_AccommodationCoefficient2{
               ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
+
+            bool m_isDCenterMeasured{false};
         };
 
     }   // namespace ISO15099
