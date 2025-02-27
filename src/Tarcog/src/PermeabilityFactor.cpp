@@ -124,15 +124,15 @@ namespace ThermalPermeability
 
     namespace LouveredShutter
     {
-        double permeabilityFactor(
-          const FenestrationCommon::LouveredShutter::Geometry & geometry)
+        double permeabilityFactor(const FenestrationCommon::LouveredShutter::Geometry & geometry)
         {
             const auto tiltRadians{FenestrationCommon::radians(geometry.SlatAngle)};
             const auto areaShade{geometry.SlatWidth * std::cos(tiltRadians)
                                  + geometry.SlatThickness * std::abs(std::sin(tiltRadians))};
-            return 1
-                   - geometry.SlatWidth * geometry.SlatThickness
-                       / (areaShade * (geometry.SlatSpacing + geometry.SlatThickness));
+            return std::max(0.0,
+                            1
+                              - geometry.SlatWidth * geometry.SlatThickness
+                                  / (areaShade * (geometry.SlatSpacing + geometry.SlatThickness)));
         }
-    }
+    }   // namespace LouveredShutter
 }   // namespace ThermalPermeability
