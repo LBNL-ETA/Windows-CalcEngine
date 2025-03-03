@@ -21,6 +21,15 @@ namespace Tarcog::ISO15099
         m_SurfaceProperties(
           std::make_unique<ConstantSurfaceProperties>(m_Emissivity, m_Transmittance))
     {
+        if(m_Emissivity < 0.0)
+        {
+            throw std::runtime_error("Emissivity must be greater than or equal to zero.");
+        }
+
+        if(m_Transmittance < 0.0)
+        {
+            throw std::runtime_error("Transmittance must be greater than or equal to zero.");
+        }
         calculateReflectance();
     }
 
