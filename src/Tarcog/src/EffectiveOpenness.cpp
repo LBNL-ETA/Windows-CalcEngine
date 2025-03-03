@@ -162,12 +162,13 @@ namespace EffectiveLayers
                      - std::pow(2 / FenestrationCommon::WCE_PI
                                   * FenestrationCommon::radians(m_Geometry.SlatAngle),
                                 4))};
-        const auto Ah_eff{area * coefficients.C1
-                            * (std::pow(m_PermeabilityFactor * openness_factor, coefficients.C2))
-                          - coefficients.C3
-                              * std::cos(FenestrationCommon::radians(m_Geometry.SlatAngle))};
+        const auto Ah_eff{std::max(
+          0.0,
+          area * coefficients.C1
+              * (std::pow(m_PermeabilityFactor * openness_factor, coefficients.C2))
+            - coefficients.C3 * std::cos(FenestrationCommon::radians(m_Geometry.SlatAngle)))};
 
-        // Side opennings are forbidden for louvered shutters for now
+        // Side openings are forbidden for louvered shutters for now
         return {Ah_eff, 0.0, 0.0, 0.0, 0.0, m_PermeabilityFactor};
     }
 
