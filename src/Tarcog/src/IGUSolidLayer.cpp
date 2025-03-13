@@ -25,6 +25,11 @@ namespace Tarcog::ISO15099
     {
         m_Surface[Side::Front] = t_FrontSurface;
         m_Surface[Side::Back] = t_BackSurface;
+
+        if(t_Conductivity < 0)
+        {
+            throw std::runtime_error("Conductivity must be positive");
+        }
     }
 
     CIGUSolidLayer::CIGUSolidLayer(double const t_Thickness,

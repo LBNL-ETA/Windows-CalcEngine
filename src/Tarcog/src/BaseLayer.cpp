@@ -11,10 +11,13 @@ namespace Tarcog::ISO15099
     CBaseLayer::CBaseLayer(double thickness) :
         HeatFlowLayer(),
         SurfacesManager(),
-        m_Thickness(thickness),
-        m_PreviousLayer(nullptr),
-        m_NextLayer(nullptr)
-    {}
+        m_Thickness(thickness)
+    {
+        if(thickness <= 0)
+        {
+            throw std::runtime_error("Thickness must be greater than zero.");
+        }
+    }
 
     double CBaseLayer::getHeatFlow()
     {
