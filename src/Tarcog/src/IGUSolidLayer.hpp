@@ -49,6 +49,8 @@ namespace Tarcog::ISO15099
 
         void applyDeflection(double meanDeflection, double maxDeflection);
 
+        void setConductivity(double t_Conductivity);
+
     protected:
         void calculateConvectionOrConductionFlow() override;
 

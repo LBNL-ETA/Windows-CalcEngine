@@ -118,6 +118,11 @@ namespace Tarcog::ISO15099
             m_Surface[aSide]->applyDeflection(meanDeflection, maxDeflection);
         }
     }
+    void CIGUSolidLayer::setConductivity(double t_Conductivity)
+    {
+        m_Conductivity = t_Conductivity;
+        resetCalculated();
+    }
 
     double CIGUSolidLayer::youngsModulus() const
     {

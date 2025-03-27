@@ -647,6 +647,36 @@ namespace Tarcog::ISO15099
             layer->precalculateState();
         }
     }
+    void CIGU::setSolidLayerConductivites(
+      const std::vector<double> & t_SolidLayerThermalConductivities)
+    {
+        auto solidLayer = getSolidLayers();
+
+        if(t_SolidLayerThermalConductivities.size() != getSolidLayers().size())
+        {
+            throw std::runtime_error(
+              "Number of solid layer thermal conductivities does not match number of solid layers.");
+        }
+
+        for(size_t i = 0; i < getSolidLayers().size(); ++i)
+        {
+            solidLayer[i]->setConductivity(t_SolidLayerThermalConductivities[i]);
+        }
+    }
+
+    void CIGU::setSolidLayerConductivity(size_t t_LayerIndex,
+                                                double t_SolidLayerThermalConductivity)
+    {
+        auto solidLayer = getSolidLayers();
+
+        if(t_LayerIndex >= getSolidLayers().size())
+        {
+            throw std::runtime_error(
+              "Layer index is out of range for solid layer thermal conductivities.");
+        }
+
+        solidLayer[t_LayerIndex]->setConductivity(t_SolidLayerThermalConductivity);
+    }
 
     double
       CIGU::calculateDeflectionNumerator(const std::vector<double> & t_MeasuredDeflections) const
