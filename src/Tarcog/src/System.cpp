@@ -260,4 +260,26 @@ namespace Tarcog::ISO15099
         m_Solved = false;
     }
 
+    void CSystem::setSolidLayerConductivities(
+      const std::vector<double> & t_SolidLayerThermalConductivities)
+    {
+        for(auto & [key, system] : m_System)
+        {
+            std::ignore = key;
+            system->setSolidLayerConductivities(t_SolidLayerThermalConductivities);
+        }
+        m_Solved = false;
+    }
+
+    void CSystem::setSolidLayerConductivity(size_t t_LayerIndex,
+                                            double t_SolidLayerThermalConductivity)
+    {
+        for(auto & [key, system] : m_System)
+        {
+            std::ignore = key;
+            system->setSolidLayerConductivity(t_LayerIndex, t_SolidLayerThermalConductivity);
+        }
+        m_Solved = false;
+    }
+
 }   // namespace Tarcog::ISO15099

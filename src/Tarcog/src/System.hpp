@@ -69,6 +69,11 @@ namespace Tarcog
             void setDeflectionProperties(const std::vector<double> & measuredGapWidths);
             void clearDeflection();
 
+            void setSolidLayerConductivities(
+              const std::vector<double> & t_SolidLayerThermalConductivities);
+            void setSolidLayerConductivity(size_t t_LayerIndex,
+                                           double t_SolidLayerThermalConductivity);
+
         private:
             void solve();
             void checkSolved();

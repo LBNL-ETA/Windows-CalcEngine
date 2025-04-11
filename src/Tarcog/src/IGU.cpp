@@ -647,7 +647,7 @@ namespace Tarcog::ISO15099
             layer->precalculateState();
         }
     }
-    void CIGU::setSolidLayerConductivites(
+    void CIGU::setSolidLayerConductivities(
       const std::vector<double> & t_SolidLayerThermalConductivities)
     {
         auto solidLayer = getSolidLayers();

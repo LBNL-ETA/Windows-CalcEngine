@@ -368,6 +368,18 @@ namespace Tarcog::ISO15099
         m_IGU.clearDeflection();
     }
 
+    void CSingleSystem::setSolidLayerConductivities(
+      const std::vector<double> & t_SolidLayerThermalConductivities)
+    {
+        m_IGU.setSolidLayerConductivities(t_SolidLayerThermalConductivities);
+    }
+
+    void CSingleSystem::setSolidLayerConductivity(size_t t_LayerIndex,
+                                                  double t_SolidLayerThermalConductivity)
+    {
+        m_IGU.setSolidLayerConductivity(t_LayerIndex, t_SolidLayerThermalConductivity);
+    }
+
     std::vector<double> CSingleSystem::getGapPressures() const
     {
         return m_IGU.getGapPressures();

@@ -92,6 +92,10 @@ namespace Tarcog::ISO15099
 
         void clearDeflection();
 
+        void
+          setSolidLayerConductivities(const std::vector<double> & t_SolidLayerThermalConductivities);
+        void setSolidLayerConductivity(size_t t_LayerIndex, double t_SolidLayerThermalConductivity);
+
     private:
         CIGU m_IGU;
         std::map<Environment, std::shared_ptr<CEnvironment>> m_Environment;
