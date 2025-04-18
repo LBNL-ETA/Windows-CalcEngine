@@ -1,5 +1,6 @@
 #include <memory>
 #include <vector>
+#include <ranges>
 #include <stdexcept>
 #include <cassert>
 
@@ -229,8 +230,8 @@ namespace Tarcog::ISO15099
     {
         auto const startX = 0.001;
         const auto thickness = m_IGU.getThickness() + startX + 0.01;
-        const auto tOut = m_Environment.at(Environment::Outdoor)->getGasTemperature();
-        const auto tInd = m_Environment.at(Environment::Indoor)->getGasTemperature();
+        const auto tOut = m_Environment.at(Environment::Outdoor)->getAirTemperature();
+        const auto tInd = m_Environment.at(Environment::Indoor)->getAirTemperature();
 
         const auto deltaTemp = (tInd - tOut) / thickness;
 
@@ -338,11 +339,9 @@ namespace Tarcog::ISO15099
 
     void CSingleSystem::setInteriorAndExteriorSurfacesHeight(double height)
     {
-        for(auto & [key, environment] : m_Environment)
-        {
-            std::ignore = key;
+        std::ranges::for_each(m_Environment | std::views::values, [height](auto &environment) {
             environment->setHeight(height);
-        }
+        });
     }
 
     void CSingleSystem::setDeflectionProperties(const double t_Tini, const double t_Pini)

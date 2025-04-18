@@ -20,7 +20,7 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CEnvironment> cloneEnvironment() const override;
 
     private:
-        double getGasTemperature() override;
+        double getAirTemperature() override;
         double calculateIRFromVariables() override;
 
         [[nodiscard]] double hcFromAirSpeed();

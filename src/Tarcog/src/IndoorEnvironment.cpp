@@ -52,7 +52,7 @@ namespace Tarcog::ISO15099
         return std::make_shared<CIndoorEnvironment>(*this);
     }
 
-    double CIndoorEnvironment::getGasTemperature()
+    double CIndoorEnvironment::getAirTemperature()
     {
         return surfaceTemperature(Side::Back);
     }
@@ -74,10 +74,10 @@ namespace Tarcog::ISO15099
 
         const auto tiltRadians{FenestrationCommon::radians(m_Tilt)};
         auto tMean =
-          getGasTemperature() + 0.25 * (surfaceTemperature(Side::Front) - getGasTemperature());
+          getAirTemperature() + 0.25 * (surfaceTemperature(Side::Front) - getAirTemperature());
         if(tMean < 0)
             tMean = 0.1;
-        const auto deltaTemp = std::abs(surfaceTemperature(Side::Front) - getGasTemperature());
+        const auto deltaTemp = std::abs(surfaceTemperature(Side::Front) - getAirTemperature());
         gasSpecification.setTemperature(tMean);
         const auto aProperties = gasSpecification.gas.getGasProperties();
         const auto gr = GRAVITYCONSTANT * pow(m_Height, 3) * deltaTemp

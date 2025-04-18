@@ -175,7 +175,7 @@ namespace Tarcog::ISO15099
     {
         t_Gap.setFlowGeometry(m_ShadeOpenings.Aeq_bot(), m_ShadeOpenings.Aeq_top());
 
-        t_Gap.calculateVentilatedAirflow(t_Environment.getGasTemperature());
+        t_Gap.calculateVentilatedAirflow(t_Environment.getAirTemperature());
     }
 
     namespace Helper
