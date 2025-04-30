@@ -1,5 +1,7 @@
 #include <map>
+
 #include <WCECommon.hpp>
+
 #include "Frame.hpp"
 
 namespace Tarcog::ISO15099
@@ -22,10 +24,6 @@ namespace Tarcog::ISO15099
         return frame.Absorptance * frame.UValue / hc * frame.ProjectedFrameDimension
                / frame.WettedLength;
     }
-
-    Frame::Frame(double length, FrameType frameType, FrameData frameData) :
-        length(length), frameType(frameType), frameData(frameData)
-    {}
 
     [[nodiscard]] double projectedArea(const Frame & frame)
     {

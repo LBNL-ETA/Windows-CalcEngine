@@ -1,8 +1,8 @@
-#include "WindowVision.hpp"
-
-#include "EnvironmentConfigurations.hpp"
-
 #include <ranges>
+#include <WCECommon.hpp>
+
+#include "WindowVision.hpp"
+#include "EnvironmentConfigurations.hpp"
 
 namespace Tarcog::ISO15099
 {
