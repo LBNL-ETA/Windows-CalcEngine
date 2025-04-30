@@ -295,7 +295,7 @@ namespace Tarcog::ISO15099
 
     void DualVisionHorizontal::setFrameMeetingRail(FrameData frameData)
     {
-        frameData.splitFrameWidth();
+        frameData = splitFrameWidth(frameData);
         m_Vision1.setFrameData(FramePosition::Right, frameData);
         m_Vision2.setFrameData(FramePosition::Left, frameData);
     }
@@ -377,7 +377,7 @@ namespace Tarcog::ISO15099
 
     void DualVisionVertical::setFrameMeetingRail(FrameData frameData)
     {
-        frameData.splitFrameWidth();
+        frameData = splitFrameWidth(frameData);
         m_Vision1.setFrameData(FramePosition::Bottom, frameData);
         m_Vision2.setFrameData(FramePosition::Top, frameData);
     }

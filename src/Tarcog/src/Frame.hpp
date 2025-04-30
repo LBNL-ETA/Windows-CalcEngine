@@ -14,7 +14,7 @@ namespace Tarcog::ISO15099
                   double projectedFrameDimension,
                   double wettedLength,
                   double absorptance = 0.3);
-        void splitFrameWidth();
+
         double UValue{0};
         double EdgeUValue{0};
         double ProjectedFrameDimension{0};
@@ -22,6 +22,8 @@ namespace Tarcog::ISO15099
         double Absorptance{0};
         [[nodiscard]] double shgc(double hc) const;
     };
+
+    [[nodiscard]] FrameData splitFrameWidth(const FrameData& frame);
 
     enum class FrameSide
     {

@@ -24,12 +24,6 @@ namespace Tarcog::ISO15099
         Absorptance(absorptance)
     {}
 
-    void FrameData::splitFrameWidth()
-    {
-        ProjectedFrameDimension = ProjectedFrameDimension / 2;
-        WettedLength = WettedLength / 2;
-    }
-
     double FrameData::shgc(double hc) const
     {
         if(hc == 0 || WettedLength == 0)
@@ -37,6 +31,15 @@ namespace Tarcog::ISO15099
             return 0;
         }
         return Absorptance * UValue / hc * ProjectedFrameDimension / WettedLength;
+    }
+
+    FrameData splitFrameWidth(const FrameData & frame)
+    {
+        auto result{frame};
+        result.ProjectedFrameDimension = result.ProjectedFrameDimension / 2;
+        result.WettedLength = result.WettedLength / 2;
+
+        return result;
     }
 
     Frame::Frame(double length, FrameType frameType, FrameData frameData) :
