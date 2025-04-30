@@ -67,7 +67,7 @@ namespace Tarcog::ISO15099
         for(const auto & [key, frame] : m_Frame)
         {
             std::ignore = key;
-            frameWeightedSHGC += frame.projectedArea() * frame.frameData().shgc(m_HExterior);
+            frameWeightedSHGC += frame.projectedArea() * ISO15099::shgc(frame.frameData(), m_HExterior);
         }
 
         const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
@@ -76,7 +76,7 @@ namespace Tarcog::ISO15099
         auto dividerWeightedSHGC{0.0};
         if(m_Divider.has_value())
         {
-            dividerWeightedSHGC += dividerArea() * m_Divider->shgc(m_HExterior);
+            dividerWeightedSHGC += dividerArea() * ISO15099::shgc(m_Divider.value(), m_HExterior);
         }
 
         return (COGWeightedSHGC + frameWeightedSHGC + dividerWeightedSHGC) / area();

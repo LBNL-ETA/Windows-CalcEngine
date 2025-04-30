@@ -20,10 +20,10 @@ namespace Tarcog::ISO15099
         double ProjectedFrameDimension{0};
         double WettedLength{0};
         double Absorptance{0};
-        [[nodiscard]] double shgc(double hc) const;
     };
 
     [[nodiscard]] FrameData splitFrameWidth(const FrameData& frame);
+    [[nodiscard]] double shgc(const FrameData& frame, double hc);
 
     enum class FrameSide
     {

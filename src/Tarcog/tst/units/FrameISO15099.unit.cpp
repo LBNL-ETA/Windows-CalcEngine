@@ -104,6 +104,6 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     const double wettedArea{frame.wettedArea()};
     EXPECT_NEAR(0.18, wettedArea, 1e-6);
 
-    const double frameSHGC{frameData.shgc(15)};
+    const double frameSHGC{shgc(frameData, 15)};
     EXPECT_NEAR(0.013333, frameSHGC, 1e-6);
 }

@@ -5,11 +5,7 @@
 namespace Tarcog::ISO15099
 {
     FrameData::FrameData() :
-        UValue(0),
-        EdgeUValue(0),
-        ProjectedFrameDimension(0),
-        WettedLength(0),
-        Absorptance(0)
+        UValue(0), EdgeUValue(0), ProjectedFrameDimension(0), WettedLength(0), Absorptance(0)
     {}
 
     FrameData::FrameData(double uValue,
@@ -24,15 +20,6 @@ namespace Tarcog::ISO15099
         Absorptance(absorptance)
     {}
 
-    double FrameData::shgc(double hc) const
-    {
-        if(hc == 0 || WettedLength == 0)
-        {
-            return 0;
-        }
-        return Absorptance * UValue / hc * ProjectedFrameDimension / WettedLength;
-    }
-
     FrameData splitFrameWidth(const FrameData & frame)
     {
         auto result{frame};
@@ -42,10 +29,18 @@ namespace Tarcog::ISO15099
         return result;
     }
 
+    double shgc(const FrameData & frame, double hc)
+    {
+        if(hc == 0 || frame.WettedLength == 0)
+        {
+            return 0;
+        }
+        return frame.Absorptance * frame.UValue / hc * frame.ProjectedFrameDimension
+               / frame.WettedLength;
+    }
+
     Frame::Frame(double length, FrameType frameType, FrameData frameData) :
-        m_Length(length),
-        m_FrameType(frameType),
-        m_FrameData(frameData)
+        m_Length(length), m_FrameType(frameType), m_FrameData(frameData)
     {}
 
     FrameType Frame::frameType() const
