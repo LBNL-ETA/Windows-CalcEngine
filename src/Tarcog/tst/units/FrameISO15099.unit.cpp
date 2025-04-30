@@ -33,10 +33,10 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameExterior)
     const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
     EXPECT_NEAR(0.18, projectedArea, 1e-6);
 
-    const double eogArea{frame.edgeOfGlassArea()};
+    const double eogArea{Tarcog::ISO15099::edgeOfGlassArea(frame)};
     EXPECT_NEAR(0.048783875, eogArea, 1e-6);
 
-    const double wettedArea{frame.wettedArea()};
+    const double wettedArea{Tarcog::ISO15099::wettedArea(frame)};
     EXPECT_NEAR(0.27, wettedArea, 1e-6);
 }
 
@@ -64,10 +64,10 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameInterior)
     const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
     EXPECT_NEAR(0.2, projectedArea, 1e-6);
 
-    const double eogArea{frame.edgeOfGlassArea()};
+    const double eogArea{Tarcog::ISO15099::edgeOfGlassArea(frame)};
     EXPECT_NEAR(0.0508, eogArea, 1e-6);
 
-    const double wettedArea{frame.wettedArea()};
+    const double wettedArea{Tarcog::ISO15099::wettedArea(frame)};
     EXPECT_NEAR(0.3, wettedArea, 1e-6);
 }
 
@@ -98,10 +98,10 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
     EXPECT_NEAR(0.12, projectedArea, 1e-6);
 
-    const double eogArea{frame.edgeOfGlassArea()};
+    const double eogArea{Tarcog::ISO15099::edgeOfGlassArea(frame)};
     EXPECT_NEAR(0.0300355, eogArea, 1e-6);
 
-    const double wettedArea{frame.wettedArea()};
+    const double wettedArea{Tarcog::ISO15099::wettedArea(frame)};
     EXPECT_NEAR(0.18, wettedArea, 1e-6);
 
     const double frameSHGC{shgc(frameData, 15)};

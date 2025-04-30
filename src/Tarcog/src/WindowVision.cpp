@@ -37,7 +37,8 @@ namespace Tarcog::ISO15099
         {
             std::ignore = key;
             frameWeightedUValue += projectedArea(frame) * frame.m_FrameData.UValue;
-            edgeOfGlassWeightedUValue += frame.edgeOfGlassArea() * frame.m_FrameData.EdgeUValue;
+            edgeOfGlassWeightedUValue +=
+              Tarcog::ISO15099::edgeOfGlassArea(frame) * frame.m_FrameData.EdgeUValue;
         }
 
         const auto COGWeightedUValue{m_IGUUvalue
@@ -69,7 +70,8 @@ namespace Tarcog::ISO15099
         for(const auto & [key, frame] : m_Frame)
         {
             std::ignore = key;
-            frameWeightedSHGC += projectedArea(frame) * ISO15099::shgc(frame.m_FrameData, m_HExterior);
+            frameWeightedSHGC +=
+              projectedArea(frame) * ISO15099::shgc(frame.m_FrameData, m_HExterior);
         }
 
         const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
@@ -187,25 +189,31 @@ namespace Tarcog::ISO15099
 
     void WindowVision::connectFrames()
     {
-        m_Frame.at(FramePosition::Top).m_Frame[FrameSide::Left]  = m_Frame.at(FramePosition::Right);
+        m_Frame.at(FramePosition::Top).m_Frame[FrameSide::Left] = m_Frame.at(FramePosition::Right);
         m_Frame.at(FramePosition::Top).m_Frame[FrameSide::Right] = m_Frame.at(FramePosition::Left);
 
-        m_Frame.at(FramePosition::Bottom).m_Frame[FrameSide::Right] = m_Frame.at(FramePosition::Right);
-        m_Frame.at(FramePosition::Bottom).m_Frame[FrameSide::Left]  = m_Frame.at(FramePosition::Left);
+        m_Frame.at(FramePosition::Bottom).m_Frame[FrameSide::Right] =
+          m_Frame.at(FramePosition::Right);
+        m_Frame.at(FramePosition::Bottom).m_Frame[FrameSide::Left] =
+          m_Frame.at(FramePosition::Left);
 
-        m_Frame.at(FramePosition::Left).m_Frame[FrameSide::Left]   = m_Frame.at(FramePosition::Top);
-        m_Frame.at(FramePosition::Left).m_Frame[FrameSide::Right]  = m_Frame.at(FramePosition::Bottom);
+        m_Frame.at(FramePosition::Left).m_Frame[FrameSide::Left] = m_Frame.at(FramePosition::Top);
+        m_Frame.at(FramePosition::Left).m_Frame[FrameSide::Right] =
+          m_Frame.at(FramePosition::Bottom);
 
-        m_Frame.at(FramePosition::Right).m_Frame[FrameSide::Left]  = m_Frame.at(FramePosition::Bottom);
+        m_Frame.at(FramePosition::Right).m_Frame[FrameSide::Left] =
+          m_Frame.at(FramePosition::Bottom);
         m_Frame.at(FramePosition::Right).m_Frame[FrameSide::Right] = m_Frame.at(FramePosition::Top);
     }
 
 
     void WindowVision::resizeIGU()
     {
-        const auto width{m_Width - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
+        const auto width{m_Width
+                         - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
                          - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension};
-        const auto height{m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
+        const auto height{m_Height
+                          - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
                           - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension};
         m_IGUSystem->setWidthAndHeight(width, height);
         m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
@@ -219,9 +227,9 @@ namespace Tarcog::ISO15099
 
         if(m_Divider.has_value())
         {
-            const auto dividersWidth{m_Width
-                                     - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
-                                     - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension};
+            const auto dividersWidth{
+              m_Width - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
+              - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension};
             const auto dividersHeight{
               m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
               - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension};
@@ -243,12 +251,14 @@ namespace Tarcog::ISO15099
 
         if(m_Divider.has_value())
         {
-            const auto eogWidth{m_Width - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
-                                - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension
-                                - 2 * ConstantsData::EOGHeight};
-            const auto eogHeight{m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
-                                 - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension
-                                 - 2 * ConstantsData::EOGHeight};
+            const auto eogWidth{
+              m_Width - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
+              - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension
+              - 2 * ConstantsData::EOGHeight};
+            const auto eogHeight{
+              m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
+              - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension
+              - 2 * ConstantsData::EOGHeight};
             const auto areaVertical{m_NumOfVerticalDividers * 2 * ConstantsData::EOGHeight
                                     * eogHeight};
             const auto areaHorizontal{m_NumOfHorizontalDividers * 2 * ConstantsData::EOGHeight
@@ -281,10 +291,9 @@ namespace Tarcog::ISO15099
     {
         auto area{0.0};
 
-        for(const auto & [key, frame] : m_Frame)
+        for(const auto & frame : m_Frame | std::views::values)
         {
-            std::ignore = key;
-            area += frame.edgeOfGlassArea();
+            area += ISO15099::edgeOfGlassArea(frame);
         }
 
         return area;

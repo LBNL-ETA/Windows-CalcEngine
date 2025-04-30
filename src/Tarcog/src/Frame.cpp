@@ -27,72 +27,7 @@ namespace Tarcog::ISO15099
         m_Length(length), m_FrameType(frameType), m_FrameData(frameData)
     {}
 
-    double Frame::wettedArea() const
-    {
-        auto area{m_Length * m_FrameData.WettedLength};
-
-        const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
-
-        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
-        {
-            area -= m_FrameData.WettedLength
-                    * m_Frame.at(FrameSide::Left)->m_FrameData.ProjectedFrameDimension * scaleFactor;
-        }
-
-        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
-        {
-            area -= m_FrameData.WettedLength
-                    * m_Frame.at(FrameSide::Right)->m_FrameData.ProjectedFrameDimension * scaleFactor;
-        }
-
-        return area;
-    }
-
-    double Frame::edgeOfGlassArea() const
-    {
-        auto length{m_Length};
-
-        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value())
-        {
-            length -= m_Frame.at(FrameSide::Left)->m_FrameData.ProjectedFrameDimension;
-            if(m_FrameType == FrameType::Interior)
-            {
-                length -= ConstantsData::EOGHeight;
-            }
-        }
-        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value())
-        {
-            length -= m_Frame.at(FrameSide::Right)->m_FrameData.ProjectedFrameDimension;
-            if(m_FrameType == FrameType::Interior)
-            {
-                length -= ConstantsData::EOGHeight;
-            }
-        }
-
-        auto area{length * ConstantsData::EOGHeight};
-
-        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior
-           && m_FrameType == FrameType::Exterior)
-        {
-            area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
-        }
-
-        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Right)->m_FrameType == FrameType::Exterior
-           && m_FrameType == FrameType::Exterior)
-        {
-            area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
-        }
-
-        area -= m_DividerArea * m_NumberOfDividers;
-
-        return area;
-    }
-
-    [[nodiscard]] double projectedArea(const Frame& frame)
+    [[nodiscard]] double projectedArea(const Frame & frame)
     {
         double area = frame.m_Length * frame.m_FrameData.ProjectedFrameDimension;
 
@@ -102,7 +37,7 @@ namespace Tarcog::ISO15099
             const auto it = frame.m_Frame.find(side);
             if(it != frame.m_Frame.end() && it->second.has_value())
             {
-                const Frame& neighbor = it->second.value();
+                const Frame & neighbor = it->second.value();
                 if(neighbor.m_FrameType == FrameType::Exterior)
                 {
                     area -= frame.m_FrameData.ProjectedFrameDimension
@@ -117,5 +52,71 @@ namespace Tarcog::ISO15099
         return area;
     }
 
+    [[nodiscard]] double wettedArea(const Frame & frame)
+    {
+        double area = frame.m_Length * frame.m_FrameData.WettedLength;
+
+        const double scaleFactor = frame.m_FrameType == FrameType::Interior ? 1.0 : 0.5;
+
+        const auto subtractSideArea = [&](FrameSide side) {
+            const auto it = frame.m_Frame.find(side);
+            if(it != frame.m_Frame.end() && it->second.has_value())
+            {
+                const Frame & neighbor = it->second.value();
+                if(neighbor.m_FrameType == FrameType::Exterior)
+                {
+                    area -= frame.m_FrameData.WettedLength
+                            * neighbor.m_FrameData.ProjectedFrameDimension * scaleFactor;
+                }
+            }
+        };
+
+        subtractSideArea(FrameSide::Left);
+        subtractSideArea(FrameSide::Right);
+
+        return area;
+    }
+
+    [[nodiscard]] double edgeOfGlassArea(const Frame& frame)
+    {
+        double length = frame.m_Length;
+
+        const auto adjustLengthForSide = [&](FrameSide side) {
+            const auto it = frame.m_Frame.find(side);
+            if(it != frame.m_Frame.end() && it->second.has_value())
+            {
+                const Frame& neighbor = it->second.value();
+                length -= neighbor.m_FrameData.ProjectedFrameDimension;
+                if(frame.m_FrameType == FrameType::Interior)
+                {
+                    length -= ConstantsData::EOGHeight;
+                }
+            }
+        };
+
+        adjustLengthForSide(FrameSide::Left);
+        adjustLengthForSide(FrameSide::Right);
+
+        double area = length * ConstantsData::EOGHeight;
+
+        const auto subtractCornerTriangle = [&](FrameSide side) {
+            const auto it = frame.m_Frame.find(side);
+            if(it != frame.m_Frame.end() && it->second.has_value())
+            {
+                const Frame& neighbor = it->second.value();
+                if(neighbor.m_FrameType == FrameType::Exterior && frame.m_FrameType == FrameType::Exterior)
+                {
+                    area -= (ConstantsData::EOGHeight * ConstantsData::EOGHeight) / 2.0;
+                }
+            }
+        };
+
+        subtractCornerTriangle(FrameSide::Left);
+        subtractCornerTriangle(FrameSide::Right);
+
+        area -= frame.m_DividerArea * static_cast<double>(frame.m_NumberOfDividers);
+
+        return area;
+    }
 
 }   // namespace Tarcog::ISO15099
