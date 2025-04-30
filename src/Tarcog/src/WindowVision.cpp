@@ -173,14 +173,14 @@ namespace Tarcog::ISO15099
 
     double WindowVision::getIGUWidth() const
     {
-        return m_Width - m_Frame.at(FramePosition::Left).projectedFrameDimension()
-               - m_Frame.at(FramePosition::Right).projectedFrameDimension();
+        return m_Width - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
+               - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension;
     }
 
     double WindowVision::getIGUHeight() const
     {
-        return m_Height - m_Frame.at(FramePosition::Top).projectedFrameDimension()
-               - m_Frame.at(FramePosition::Bottom).projectedFrameDimension();
+        return m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
+               - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension;
     }
 
     void WindowVision::connectFrames()
@@ -201,10 +201,10 @@ namespace Tarcog::ISO15099
 
     void WindowVision::resizeIGU()
     {
-        const auto width{m_Width - m_Frame.at(FramePosition::Left).projectedFrameDimension()
-                         - m_Frame.at(FramePosition::Right).projectedFrameDimension()};
-        const auto height{m_Height - m_Frame.at(FramePosition::Top).projectedFrameDimension()
-                          - m_Frame.at(FramePosition::Bottom).projectedFrameDimension()};
+        const auto width{m_Width - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
+                         - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension};
+        const auto height{m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
+                          - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension};
         m_IGUSystem->setWidthAndHeight(width, height);
         m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
         m_IGUUvalue = m_IGUSystem->getUValue();
@@ -218,11 +218,11 @@ namespace Tarcog::ISO15099
         if(m_Divider.has_value())
         {
             const auto dividersWidth{m_Width
-                                     - m_Frame.at(FramePosition::Left).projectedFrameDimension()
-                                     - m_Frame.at(FramePosition::Right).projectedFrameDimension()};
+                                     - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
+                                     - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension};
             const auto dividersHeight{
-              m_Height - m_Frame.at(FramePosition::Top).projectedFrameDimension()
-              - m_Frame.at(FramePosition::Bottom).projectedFrameDimension()};
+              m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
+              - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension};
             const auto areaVertical{m_NumOfVerticalDividers * dividersHeight
                                     * m_Divider->ProjectedFrameDimension};
             const auto areaHorizontal{m_NumOfHorizontalDividers * dividersWidth
@@ -241,11 +241,11 @@ namespace Tarcog::ISO15099
 
         if(m_Divider.has_value())
         {
-            const auto eogWidth{m_Width - m_Frame.at(FramePosition::Left).projectedFrameDimension()
-                                - m_Frame.at(FramePosition::Right).projectedFrameDimension()
+            const auto eogWidth{m_Width - m_Frame.at(FramePosition::Left).m_FrameData.ProjectedFrameDimension
+                                - m_Frame.at(FramePosition::Right).m_FrameData.ProjectedFrameDimension
                                 - 2 * ConstantsData::EOGHeight};
-            const auto eogHeight{m_Height - m_Frame.at(FramePosition::Top).projectedFrameDimension()
-                                 - m_Frame.at(FramePosition::Bottom).projectedFrameDimension()
+            const auto eogHeight{m_Height - m_Frame.at(FramePosition::Top).m_FrameData.ProjectedFrameDimension
+                                 - m_Frame.at(FramePosition::Bottom).m_FrameData.ProjectedFrameDimension
                                  - 2 * ConstantsData::EOGHeight};
             const auto areaVertical{m_NumOfVerticalDividers * 2 * ConstantsData::EOGHeight
                                     * eogHeight};

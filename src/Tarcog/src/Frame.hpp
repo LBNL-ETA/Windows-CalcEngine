@@ -43,7 +43,6 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double projectedArea() const;
         [[nodiscard]] double wettedArea() const;
         [[nodiscard]] double edgeOfGlassArea() const;
-        [[nodiscard]] double projectedFrameDimension() const;
 
         double m_Length;
         FrameType m_FrameType;

@@ -37,14 +37,14 @@ namespace Tarcog::ISO15099
            && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
+                    * m_Frame.at(FrameSide::Left)->m_FrameData.ProjectedFrameDimension * scaleFactor;
         }
 
         if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
            && m_Frame.at(FrameSide::Right)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
+                    * m_Frame.at(FrameSide::Right)->m_FrameData.ProjectedFrameDimension * scaleFactor;
         }
 
         return area;
@@ -60,14 +60,14 @@ namespace Tarcog::ISO15099
            && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.WettedLength
-                    * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
+                    * m_Frame.at(FrameSide::Left)->m_FrameData.ProjectedFrameDimension * scaleFactor;
         }
 
         if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
            && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.WettedLength
-                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
+                    * m_Frame.at(FrameSide::Right)->m_FrameData.ProjectedFrameDimension * scaleFactor;
         }
 
         return area;
@@ -79,7 +79,7 @@ namespace Tarcog::ISO15099
 
         if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value())
         {
-            length -= m_Frame.at(FrameSide::Left)->projectedFrameDimension();
+            length -= m_Frame.at(FrameSide::Left)->m_FrameData.ProjectedFrameDimension;
             if(m_FrameType == FrameType::Interior)
             {
                 length -= ConstantsData::EOGHeight;
@@ -87,7 +87,7 @@ namespace Tarcog::ISO15099
         }
         if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value())
         {
-            length -= m_Frame.at(FrameSide::Right)->projectedFrameDimension();
+            length -= m_Frame.at(FrameSide::Right)->m_FrameData.ProjectedFrameDimension;
             if(m_FrameType == FrameType::Interior)
             {
                 length -= ConstantsData::EOGHeight;
@@ -113,11 +113,6 @@ namespace Tarcog::ISO15099
         area -= m_DividerArea * m_NumberOfDividers;
 
         return area;
-    }
-
-    double Frame::projectedFrameDimension() const
-    {
-        return m_FrameData.ProjectedFrameDimension;
     }
 
 }   // namespace Tarcog::ISO15099
