@@ -4,18 +4,6 @@
 
 namespace Tarcog::ISO15099
 {
-    FrameData::FrameData(double uValue,
-                         double edgeUValue,
-                         double projectedFrameDimension,
-                         double wettedLength,
-                         double absorptance) :
-        UValue(uValue),
-        EdgeUValue(edgeUValue),
-        ProjectedFrameDimension(projectedFrameDimension),
-        WettedLength(wettedLength),
-        Absorptance(absorptance)
-    {}
-
     FrameData splitFrameWidth(const FrameData & frame)
     {
         auto result{frame};

@@ -8,18 +8,11 @@ namespace Tarcog::ISO15099
 {
     struct FrameData
     {
-        FrameData() = default;
-        FrameData(double uValue,
-                  double edgeUValue,
-                  double projectedFrameDimension,
-                  double wettedLength,
-                  double absorptance = 0.3);
-
         double UValue{0};
         double EdgeUValue{0};
         double ProjectedFrameDimension{0};
         double WettedLength{0};
-        double Absorptance{0};
+        double Absorptance{0.3};
     };
 
     [[nodiscard]] FrameData splitFrameWidth(const FrameData& frame);
