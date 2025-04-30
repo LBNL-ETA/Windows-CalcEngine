@@ -2,6 +2,8 @@
 
 #include "EnvironmentConfigurations.hpp"
 
+#include <ranges>
+
 namespace Tarcog::ISO15099
 {
     WindowVision::WindowVision(double width,
@@ -34,7 +36,7 @@ namespace Tarcog::ISO15099
         for(const auto & [key, frame] : m_Frame)
         {
             std::ignore = key;
-            frameWeightedUValue += frame.projectedArea() * frame.m_FrameData.UValue;
+            frameWeightedUValue += projectedArea(frame) * frame.m_FrameData.UValue;
             edgeOfGlassWeightedUValue += frame.edgeOfGlassArea() * frame.m_FrameData.EdgeUValue;
         }
 
@@ -67,7 +69,7 @@ namespace Tarcog::ISO15099
         for(const auto & [key, frame] : m_Frame)
         {
             std::ignore = key;
-            frameWeightedSHGC += frame.projectedArea() * ISO15099::shgc(frame.m_FrameData, m_HExterior);
+            frameWeightedSHGC += projectedArea(frame) * ISO15099::shgc(frame.m_FrameData, m_HExterior);
         }
 
         const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
@@ -267,9 +269,9 @@ namespace Tarcog::ISO15099
     {
         auto area{0.0};
 
-        for(const auto & system : m_Frame)
+        for(const auto & val : m_Frame | std::views::values)
         {
-            area += system.second.projectedArea();
+            area += projectedArea(val);
         }
 
         return area;

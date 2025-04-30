@@ -40,7 +40,6 @@ namespace Tarcog::ISO15099
               FrameType frameType = FrameType::Exterior,
               FrameData frameData = FrameData());
 
-        [[nodiscard]] double projectedArea() const;
         [[nodiscard]] double wettedArea() const;
         [[nodiscard]] double edgeOfGlassArea() const;
 
@@ -56,4 +55,6 @@ namespace Tarcog::ISO15099
         double m_DividerArea{0};
         size_t m_NumberOfDividers{0u};
     };
+
+    [[nodiscard]] double projectedArea(const Frame& frame);
 }   // namespace Tarcog::ISO15099

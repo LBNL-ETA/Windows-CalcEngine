@@ -27,29 +27,6 @@ namespace Tarcog::ISO15099
         m_Length(length), m_FrameType(frameType), m_FrameData(frameData)
     {}
 
-    double Frame::projectedArea() const
-    {
-        auto area{m_Length * m_FrameData.ProjectedFrameDimension};
-
-        const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
-
-        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
-        {
-            area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Left)->m_FrameData.ProjectedFrameDimension * scaleFactor;
-        }
-
-        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Right)->m_FrameType == FrameType::Exterior)
-        {
-            area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Right)->m_FrameData.ProjectedFrameDimension * scaleFactor;
-        }
-
-        return area;
-    }
-
     double Frame::wettedArea() const
     {
         auto area{m_Length * m_FrameData.WettedLength};
@@ -114,5 +91,31 @@ namespace Tarcog::ISO15099
 
         return area;
     }
+
+    [[nodiscard]] double projectedArea(const Frame& frame)
+    {
+        double area = frame.m_Length * frame.m_FrameData.ProjectedFrameDimension;
+
+        const double scaleFactor = frame.m_FrameType == FrameType::Interior ? 1.0 : 0.5;
+
+        const auto subtractSideArea = [&](FrameSide side) {
+            const auto it = frame.m_Frame.find(side);
+            if(it != frame.m_Frame.end() && it->second.has_value())
+            {
+                const Frame& neighbor = it->second.value();
+                if(neighbor.m_FrameType == FrameType::Exterior)
+                {
+                    area -= frame.m_FrameData.ProjectedFrameDimension
+                            * neighbor.m_FrameData.ProjectedFrameDimension * scaleFactor;
+                }
+            }
+        };
+
+        subtractSideArea(FrameSide::Left);
+        subtractSideArea(FrameSide::Right);
+
+        return area;
+    }
+
 
 }   // namespace Tarcog::ISO15099
