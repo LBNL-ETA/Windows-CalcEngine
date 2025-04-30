@@ -94,7 +94,7 @@ namespace Tarcog::ISO15099
         return m_DirectSolarRadiation;
     }
 
-    double COutdoorEnvironment::getGasTemperature()
+    double COutdoorEnvironment::getAirTemperature()
     {
         return surfaceTemperature(Side::Front);
     }

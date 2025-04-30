@@ -37,7 +37,7 @@ namespace Tarcog::ISO15099
         double getSolarRadiation() const;
 
     private:
-        double getGasTemperature() override;
+        double getAirTemperature() override;
         double calculateIRFromVariables() override;
 
         double calculateHc() override;

@@ -91,7 +91,7 @@ namespace Tarcog::ISO15099
       const Tarcog::ISO15099::CBaseLayer & solid)
     {
         double environmentRadiosity = previousEnvironment->getEnvironmentIR();
-        double airTemperature = previousEnvironment->getGasTemperature();
+        double airTemperature = previousEnvironment->getAirTemperature();
 
         m_VectorB[sP] += environmentRadiosity + hgap_prev * airTemperature
                          - environmentRadiosity * solid.transmittance(Side::Front);
@@ -125,7 +125,7 @@ namespace Tarcog::ISO15099
       const Tarcog::ISO15099::CBaseLayer & solid)
     {
         double environmentRadiosity = nextEnvironment->getEnvironmentIR();
-        double airTemperature = nextEnvironment->getGasTemperature();
+        double airTemperature = nextEnvironment->getAirTemperature();
 
         m_VectorB[sP] += solid.transmittance(Side::Back) * environmentRadiosity;
         m_VectorB[sP + 1] += -solid.transmittance(Side::Back) * environmentRadiosity;

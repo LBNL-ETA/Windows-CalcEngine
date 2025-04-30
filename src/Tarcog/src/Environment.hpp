@@ -27,7 +27,7 @@ namespace Tarcog::ISO15099
         virtual double calculateHc() = 0;
         virtual double getHr() = 0;
 
-        double getAirTemperature();
+        virtual double getAirTemperature() = 0;
         double getAmbientTemperature();
 
         virtual void connectToIGULayer(const std::shared_ptr<CBaseLayer> & t_IGULayer);
@@ -35,8 +35,6 @@ namespace Tarcog::ISO15099
         virtual std::shared_ptr<CEnvironment> cloneEnvironment() const = 0;
 
         [[nodiscard]] double getPressure() const;
-
-        virtual double getGasTemperature() = 0;
 
     protected:
         void calculateRadiationFlow() override;

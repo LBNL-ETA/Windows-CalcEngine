@@ -41,6 +41,16 @@ namespace Tarcog::ISO15099
 
         void setFlowGeometry(double t_Ain, double t_Aout);
 
+        void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
+
+        // Calculates airflow properties of the gap given inletTemperature temperature. In case
+        // inletTemperature temperature is not given, the function will use temperature provided in the
+        // gap constructor.
+        void calculateVentilatedAirflow(double inletTemperature);
+
+        std::shared_ptr<CBaseLayer> clone() const override;
+
+    private:
         void setInletTemperature(double inletTemperature);
 
         void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
@@ -48,16 +58,6 @@ namespace Tarcog::ISO15099
 
         void smoothEnergyGain(double qv1, double qv2);
 
-        // Calculates airflow properties of the gap given inletTemperature temperature. In case
-        // inletTemperature temperature is not give, class will use temperature provided in the
-        // gap constructor.
-        void calculateVentilatedAirflow(double inletTemperature);
-
-        void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
-
-        std::shared_ptr<CBaseLayer> clone() const override;
-
-    private:
         void precalculateState() override;
         void calculateOutletTemperatureFromAirFlow();
 
