@@ -28,7 +28,7 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameExterior)
     Tarcog::ISO15099::Frame leftFrame{
       frameLength, Tarcog::ISO15099::FrameType::Exterior, frameData};
 
-    frame.m_Frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
+    frame.frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
 
     const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
     EXPECT_NEAR(0.18, projectedArea, 1e-6);
@@ -59,7 +59,7 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameInterior)
     const Tarcog::ISO15099::Frame leftFrame{
       frameLength, Tarcog::ISO15099::FrameType::Interior, frameData};
 
-    frame.m_Frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
+    frame.frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
 
     const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
     EXPECT_NEAR(0.2, projectedArea, 1e-6);
@@ -92,8 +92,8 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     const Tarcog::ISO15099::Frame rightFrame{
       frameLength, Tarcog::ISO15099::FrameType::Exterior, frameData};
 
-    frame.m_Frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
-    frame.m_Frame[Tarcog::ISO15099::FrameSide::Right] = rightFrame;
+    frame.frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
+    frame.frame[Tarcog::ISO15099::FrameSide::Right] = rightFrame;
 
     const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
     EXPECT_NEAR(0.12, projectedArea, 1e-6);

@@ -40,17 +40,17 @@ namespace Tarcog::ISO15099
               FrameType frameType = FrameType::Exterior,
               FrameData frameData = FrameData());
 
-        double m_Length;
-        FrameType m_FrameType;
-        FrameData m_FrameData;
+        double length{0};
+        FrameType frameType{FrameType::Exterior};
+        FrameData frameData{};
 
         //! Keeping frame information on both sides of the frame. This is needed for geometry
         //! calculations. Optional must be used or infinite loop will be created withing Frame
         //! constructor (Frame calling itself over and over again)
-        std::map<FrameSide, std::optional<Frame>> m_Frame;
+        std::map<FrameSide, std::optional<Frame>> frame;
 
-        double m_DividerArea{0};
-        size_t m_NumberOfDividers{0u};
+        double dividerArea{0};
+        size_t numberOfDividers{0u};
     };
 
     [[nodiscard]] double projectedArea(const Frame& frame);

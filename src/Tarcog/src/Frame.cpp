@@ -24,24 +24,24 @@ namespace Tarcog::ISO15099
     }
 
     Frame::Frame(double length, FrameType frameType, FrameData frameData) :
-        m_Length(length), m_FrameType(frameType), m_FrameData(frameData)
+        length(length), frameType(frameType), frameData(frameData)
     {}
 
     [[nodiscard]] double projectedArea(const Frame & frame)
     {
-        double area = frame.m_Length * frame.m_FrameData.ProjectedFrameDimension;
+        double area = frame.length * frame.frameData.ProjectedFrameDimension;
 
-        const double scaleFactor = frame.m_FrameType == FrameType::Interior ? 1.0 : 0.5;
+        const double scaleFactor = frame.frameType == FrameType::Interior ? 1.0 : 0.5;
 
         const auto subtractSideArea = [&](FrameSide side) {
-            const auto it = frame.m_Frame.find(side);
-            if(it != frame.m_Frame.end() && it->second.has_value())
+            const auto it = frame.frame.find(side);
+            if(it != frame.frame.end() && it->second.has_value())
             {
                 const Frame & neighbor = it->second.value();
-                if(neighbor.m_FrameType == FrameType::Exterior)
+                if(neighbor.frameType == FrameType::Exterior)
                 {
-                    area -= frame.m_FrameData.ProjectedFrameDimension
-                            * neighbor.m_FrameData.ProjectedFrameDimension * scaleFactor;
+                    area -= frame.frameData.ProjectedFrameDimension
+                            * neighbor.frameData.ProjectedFrameDimension * scaleFactor;
                 }
             }
         };
@@ -54,19 +54,19 @@ namespace Tarcog::ISO15099
 
     [[nodiscard]] double wettedArea(const Frame & frame)
     {
-        double area = frame.m_Length * frame.m_FrameData.WettedLength;
+        double area = frame.length * frame.frameData.WettedLength;
 
-        const double scaleFactor = frame.m_FrameType == FrameType::Interior ? 1.0 : 0.5;
+        const double scaleFactor = frame.frameType == FrameType::Interior ? 1.0 : 0.5;
 
         const auto subtractSideArea = [&](FrameSide side) {
-            const auto it = frame.m_Frame.find(side);
-            if(it != frame.m_Frame.end() && it->second.has_value())
+            const auto it = frame.frame.find(side);
+            if(it != frame.frame.end() && it->second.has_value())
             {
                 const Frame & neighbor = it->second.value();
-                if(neighbor.m_FrameType == FrameType::Exterior)
+                if(neighbor.frameType == FrameType::Exterior)
                 {
-                    area -= frame.m_FrameData.WettedLength
-                            * neighbor.m_FrameData.ProjectedFrameDimension * scaleFactor;
+                    area -= frame.frameData.WettedLength
+                            * neighbor.frameData.ProjectedFrameDimension * scaleFactor;
                 }
             }
         };
@@ -79,15 +79,15 @@ namespace Tarcog::ISO15099
 
     [[nodiscard]] double edgeOfGlassArea(const Frame& frame)
     {
-        double length = frame.m_Length;
+        double length = frame.length;
 
         const auto adjustLengthForSide = [&](FrameSide side) {
-            const auto it = frame.m_Frame.find(side);
-            if(it != frame.m_Frame.end() && it->second.has_value())
+            const auto it = frame.frame.find(side);
+            if(it != frame.frame.end() && it->second.has_value())
             {
                 const Frame& neighbor = it->second.value();
-                length -= neighbor.m_FrameData.ProjectedFrameDimension;
-                if(frame.m_FrameType == FrameType::Interior)
+                length -= neighbor.frameData.ProjectedFrameDimension;
+                if(frame.frameType == FrameType::Interior)
                 {
                     length -= ConstantsData::EOGHeight;
                 }
@@ -100,11 +100,11 @@ namespace Tarcog::ISO15099
         double area = length * ConstantsData::EOGHeight;
 
         const auto subtractCornerTriangle = [&](FrameSide side) {
-            const auto it = frame.m_Frame.find(side);
-            if(it != frame.m_Frame.end() && it->second.has_value())
+            const auto it = frame.frame.find(side);
+            if(it != frame.frame.end() && it->second.has_value())
             {
                 const Frame& neighbor = it->second.value();
-                if(neighbor.m_FrameType == FrameType::Exterior && frame.m_FrameType == FrameType::Exterior)
+                if(neighbor.frameType == FrameType::Exterior && frame.frameType == FrameType::Exterior)
                 {
                     area -= (ConstantsData::EOGHeight * ConstantsData::EOGHeight) / 2.0;
                 }
@@ -114,7 +114,7 @@ namespace Tarcog::ISO15099
         subtractCornerTriangle(FrameSide::Left);
         subtractCornerTriangle(FrameSide::Right);
 
-        area -= frame.m_DividerArea * static_cast<double>(frame.m_NumberOfDividers);
+        area -= frame.dividerArea * static_cast<double>(frame.numberOfDividers);
 
         return area;
     }
