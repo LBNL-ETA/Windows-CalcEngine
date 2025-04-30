@@ -135,11 +135,6 @@ namespace Tarcog::ISO15099
         return m_FrameData.ProjectedFrameDimension;
     }
 
-    void Frame::assignFrame(Frame frame, FrameSide side)
-    {
-        m_Frame[side] = std::move(frame);
-    }
-
     void Frame::assignDividerArea(double area, size_t nDividers)
     {
         m_DividerArea = area;

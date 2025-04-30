@@ -185,26 +185,19 @@ namespace Tarcog::ISO15099
 
     void WindowVision::connectFrames()
     {
-        m_Frame.at(FramePosition::Top)
-          .assignFrame(m_Frame.at(FramePosition::Right), FrameSide::Left);
-        m_Frame.at(FramePosition::Top)
-          .assignFrame(m_Frame.at(FramePosition::Left), FrameSide::Right);
+        m_Frame.at(FramePosition::Top).m_Frame[FrameSide::Left]  = m_Frame.at(FramePosition::Right);
+        m_Frame.at(FramePosition::Top).m_Frame[FrameSide::Right] = m_Frame.at(FramePosition::Left);
 
-        m_Frame.at(FramePosition::Bottom)
-          .assignFrame(m_Frame.at(FramePosition::Right), FrameSide::Right);
-        m_Frame.at(FramePosition::Bottom)
-          .assignFrame(m_Frame.at(FramePosition::Left), FrameSide::Left);
+        m_Frame.at(FramePosition::Bottom).m_Frame[FrameSide::Right] = m_Frame.at(FramePosition::Right);
+        m_Frame.at(FramePosition::Bottom).m_Frame[FrameSide::Left]  = m_Frame.at(FramePosition::Left);
 
-        m_Frame.at(FramePosition::Left)
-          .assignFrame(m_Frame.at(FramePosition::Top), FrameSide::Left);
-        m_Frame.at(FramePosition::Left)
-          .assignFrame(m_Frame.at(FramePosition::Bottom), FrameSide::Right);
+        m_Frame.at(FramePosition::Left).m_Frame[FrameSide::Left]   = m_Frame.at(FramePosition::Top);
+        m_Frame.at(FramePosition::Left).m_Frame[FrameSide::Right]  = m_Frame.at(FramePosition::Bottom);
 
-        m_Frame.at(FramePosition::Right)
-          .assignFrame(m_Frame.at(FramePosition::Bottom), FrameSide::Left);
-        m_Frame.at(FramePosition::Right)
-          .assignFrame(m_Frame.at(FramePosition::Top), FrameSide::Right);
+        m_Frame.at(FramePosition::Right).m_Frame[FrameSide::Left]  = m_Frame.at(FramePosition::Bottom);
+        m_Frame.at(FramePosition::Right).m_Frame[FrameSide::Right] = m_Frame.at(FramePosition::Top);
     }
+
 
     void WindowVision::resizeIGU()
     {
