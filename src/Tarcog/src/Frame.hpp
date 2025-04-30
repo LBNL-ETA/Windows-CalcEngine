@@ -40,8 +40,6 @@ namespace Tarcog::ISO15099
               FrameType frameType = FrameType::Exterior,
               FrameData frameData = FrameData());
 
-        [[nodiscard]] FrameType frameType() const;
-
         [[nodiscard]] double projectedArea() const;
         [[nodiscard]] double wettedArea() const;
         void setFrameData(FrameData frameData);

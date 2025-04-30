@@ -27,26 +27,21 @@ namespace Tarcog::ISO15099
         m_Length(length), m_FrameType(frameType), m_FrameData(frameData)
     {}
 
-    FrameType Frame::frameType() const
-    {
-        return m_FrameType;
-    }
-
     double Frame::projectedArea() const
     {
         auto area{m_Length * m_FrameData.ProjectedFrameDimension};
 
         const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
+        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
+           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.ProjectedFrameDimension
                     * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
         }
 
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Right)->frameType() == FrameType::Exterior)
+        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
+           && m_Frame.at(FrameSide::Right)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.ProjectedFrameDimension
                     * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
@@ -61,15 +56,15 @@ namespace Tarcog::ISO15099
 
         const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
+        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
+           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.WettedLength
                     * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
         }
 
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
+        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
+           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior)
         {
             area -= m_FrameData.WettedLength
                     * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
@@ -92,7 +87,7 @@ namespace Tarcog::ISO15099
     {
         auto length{m_Length};
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value())
+        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value())
         {
             length -= m_Frame.at(FrameSide::Left)->projectedFrameDimension();
             if(m_FrameType == FrameType::Interior)
@@ -100,7 +95,7 @@ namespace Tarcog::ISO15099
                 length -= ConstantsData::EOGHeight;
             }
         }
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value())
+        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value())
         {
             length -= m_Frame.at(FrameSide::Right)->projectedFrameDimension();
             if(m_FrameType == FrameType::Interior)
@@ -111,15 +106,15 @@ namespace Tarcog::ISO15099
 
         auto area{length * ConstantsData::EOGHeight};
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior
+        if(m_Frame.contains(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
+           && m_Frame.at(FrameSide::Left)->m_FrameType == FrameType::Exterior
            && m_FrameType == FrameType::Exterior)
         {
             area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
         }
 
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Right)->frameType() == FrameType::Exterior
+        if(m_Frame.contains(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
+           && m_Frame.at(FrameSide::Right)->m_FrameType == FrameType::Exterior
            && m_FrameType == FrameType::Exterior)
         {
             area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
