@@ -32,16 +32,15 @@ namespace Tarcog::ISO15099
         const double scaleFactor = frame.frameType == FrameType::Interior ? 1.0 : 0.5;
 
         const auto subtractSideArea = [&](FrameSide side) {
-            const auto it = frame.frame.find(side);
-            if(it != frame.frame.end() && it->second.has_value())
-            {
-                const Frame & neighbor = it->second.value();
-                if(neighbor.frameType == FrameType::Exterior)
-                {
-                    area -= frame.frameData.ProjectedFrameDimension
-                            * neighbor.frameData.ProjectedFrameDimension * scaleFactor;
-                }
-            }
+            const auto & maybeNeighbor =
+              frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
+
+            if(!maybeNeighbor || maybeNeighbor->get().frameType != FrameType::Exterior)
+                return;
+
+            const auto & neighbor = maybeNeighbor->get();
+            area -= frame.frameData.ProjectedFrameDimension
+                    * neighbor.frameData.ProjectedFrameDimension * scaleFactor;
         };
 
         subtractSideArea(FrameSide::Left);
@@ -57,17 +56,17 @@ namespace Tarcog::ISO15099
         const double scaleFactor = frame.frameType == FrameType::Interior ? 1.0 : 0.5;
 
         const auto subtractSideArea = [&](FrameSide side) {
-            const auto it = frame.frame.find(side);
-            if(it != frame.frame.end() && it->second.has_value())
-            {
-                const Frame & neighbor = it->second.value();
-                if(neighbor.frameType == FrameType::Exterior)
-                {
-                    area -= frame.frameData.WettedLength
-                            * neighbor.frameData.ProjectedFrameDimension * scaleFactor;
-                }
-            }
+            const auto & maybeNeighbor =
+              frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
+
+            if(!maybeNeighbor || maybeNeighbor->get().frameType != FrameType::Exterior)
+                return;
+
+            const auto & neighbor = maybeNeighbor->get();
+            area -= frame.frameData.WettedLength * neighbor.frameData.ProjectedFrameDimension
+                    * scaleFactor;
         };
+
 
         subtractSideArea(FrameSide::Left);
         subtractSideArea(FrameSide::Right);
@@ -75,20 +74,23 @@ namespace Tarcog::ISO15099
         return area;
     }
 
-    [[nodiscard]] double edgeOfGlassArea(const Frame& frame)
+    [[nodiscard]] double edgeOfGlassArea(const Frame & frame)
     {
         double length = frame.length;
 
         const auto adjustLengthForSide = [&](FrameSide side) {
-            const auto it = frame.frame.find(side);
-            if(it != frame.frame.end() && it->second.has_value())
+            const auto & maybeNeighbor =
+              frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
+
+            if(!maybeNeighbor)
+                return;
+
+            const auto & neighbor = maybeNeighbor->get();
+            length -= neighbor.frameData.ProjectedFrameDimension;
+
+            if(frame.frameType == FrameType::Interior)
             {
-                const Frame& neighbor = it->second.value();
-                length -= neighbor.frameData.ProjectedFrameDimension;
-                if(frame.frameType == FrameType::Interior)
-                {
-                    length -= ConstantsData::EOGHeight;
-                }
+                length -= ConstantsData::EOGHeight;
             }
         };
 
@@ -101,8 +103,9 @@ namespace Tarcog::ISO15099
             const auto it = frame.frame.find(side);
             if(it != frame.frame.end() && it->second.has_value())
             {
-                const Frame& neighbor = it->second.value();
-                if(neighbor.frameType == FrameType::Exterior && frame.frameType == FrameType::Exterior)
+                const Frame & neighbor = it->second.value();
+                if(neighbor.frameType == FrameType::Exterior
+                   && frame.frameType == FrameType::Exterior)
                 {
                     area -= (ConstantsData::EOGHeight * ConstantsData::EOGHeight) / 2.0;
                 }
