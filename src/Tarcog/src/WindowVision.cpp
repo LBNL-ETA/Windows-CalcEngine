@@ -34,8 +34,8 @@ namespace Tarcog::ISO15099
         for(const auto & [key, frame] : m_Frame)
         {
             std::ignore = key;
-            frameWeightedUValue += frame.projectedArea() * frame.frameData().UValue;
-            edgeOfGlassWeightedUValue += frame.edgeOfGlassArea() * frame.frameData().EdgeUValue;
+            frameWeightedUValue += frame.projectedArea() * frame.m_FrameData.UValue;
+            edgeOfGlassWeightedUValue += frame.edgeOfGlassArea() * frame.m_FrameData.EdgeUValue;
         }
 
         const auto COGWeightedUValue{m_IGUUvalue
@@ -67,7 +67,7 @@ namespace Tarcog::ISO15099
         for(const auto & [key, frame] : m_Frame)
         {
             std::ignore = key;
-            frameWeightedSHGC += frame.projectedArea() * ISO15099::shgc(frame.frameData(), m_HExterior);
+            frameWeightedSHGC += frame.projectedArea() * ISO15099::shgc(frame.m_FrameData, m_HExterior);
         }
 
         const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
@@ -124,7 +124,7 @@ namespace Tarcog::ISO15099
 
     void WindowVision::setFrameData(FramePosition position, FrameData frameData)
     {
-        m_Frame.at(position).setFrameData(frameData);
+        m_Frame.at(position).m_FrameData = frameData;
 
         connectFrames();
         resizeIGU();

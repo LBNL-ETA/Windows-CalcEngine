@@ -42,8 +42,6 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double projectedArea() const;
         [[nodiscard]] double wettedArea() const;
-        void setFrameData(FrameData frameData);
-        [[nodiscard]] const FrameData & frameData() const;
         [[nodiscard]] double edgeOfGlassArea() const;
         [[nodiscard]] double projectedFrameDimension() const;
 
