@@ -45,9 +45,6 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double edgeOfGlassArea() const;
         [[nodiscard]] double projectedFrameDimension() const;
 
-        //! Divider area that will be subtracted from the frame
-        void assignDividerArea(double area, size_t nDividers);
-
         double m_Length;
         FrameType m_FrameType;
         FrameData m_FrameData;

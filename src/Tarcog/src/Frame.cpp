@@ -120,10 +120,4 @@ namespace Tarcog::ISO15099
         return m_FrameData.ProjectedFrameDimension;
     }
 
-    void Frame::assignDividerArea(double area, size_t nDividers)
-    {
-        m_DividerArea = area;
-        m_NumberOfDividers = nDividers;
-    }
-
 }   // namespace Tarcog::ISO15099

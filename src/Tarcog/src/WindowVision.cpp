@@ -156,8 +156,8 @@ namespace Tarcog::ISO15099
 
         for(auto & [key, frame] : m_Frame)
         {
-            frame.assignDividerArea(m_Divider->ProjectedFrameDimension * ConstantsData::EOGHeight,
-                                    numOfDivs.at(key));
+            frame.m_DividerArea = m_Divider->ProjectedFrameDimension * ConstantsData::EOGHeight;
+            frame.m_NumberOfDividers = numOfDivs.at(key);
         }
     }
 
