@@ -141,8 +141,4 @@ namespace Tarcog::ISO15099
         m_NumberOfDividers = nDividers;
     }
 
-    void Frame::setFrameType(const FrameType type)
-    {
-        m_FrameType = type;
-    }
 }   // namespace Tarcog::ISO15099

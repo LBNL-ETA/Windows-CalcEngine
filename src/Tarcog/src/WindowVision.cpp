@@ -134,9 +134,9 @@ namespace Tarcog::ISO15099
     {
         for(const auto & [position, type] : frameTypes)
         {
-            if(m_Frame.count(position) > 0u)
+            if(m_Frame.contains(position))
             {
-                m_Frame.at(position).setFrameType(type);
+                m_Frame.at(position).m_FrameType = type;
             }
         }
 

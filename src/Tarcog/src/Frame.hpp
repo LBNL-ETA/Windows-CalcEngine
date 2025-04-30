@@ -51,8 +51,7 @@ namespace Tarcog::ISO15099
 
         //! Divider area that will be subtracted from the frame
         void assignDividerArea(double area, size_t nDividers);
-        void setFrameType(FrameType type);
-        
+
         double m_Length;
         FrameType m_FrameType;
         FrameData m_FrameData;
