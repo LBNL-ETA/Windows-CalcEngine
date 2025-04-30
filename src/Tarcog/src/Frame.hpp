@@ -8,7 +8,7 @@ namespace Tarcog::ISO15099
 {
     struct FrameData
     {
-        FrameData();
+        FrameData() = default;
         FrameData(double uValue,
                   double edgeUValue,
                   double projectedFrameDimension,

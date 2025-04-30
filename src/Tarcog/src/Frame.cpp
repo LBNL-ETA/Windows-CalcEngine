@@ -4,10 +4,6 @@
 
 namespace Tarcog::ISO15099
 {
-    FrameData::FrameData() :
-        UValue(0), EdgeUValue(0), ProjectedFrameDimension(0), WettedLength(0), Absorptance(0)
-    {}
-
     FrameData::FrameData(double uValue,
                          double edgeUValue,
                          double projectedFrameDimension,
