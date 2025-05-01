@@ -67,7 +67,6 @@ namespace Tarcog::ISO15099
                     * scaleFactor;
         };
 
-
         subtractSideArea(FrameSide::Left);
         subtractSideArea(FrameSide::Right);
 
