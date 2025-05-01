@@ -2,6 +2,7 @@
 
 #include <map>
 #include <optional>
+#include <memory>
 
 #include "IGUConfigurations.hpp"
 #include "WholeWindowConfigurations.hpp"

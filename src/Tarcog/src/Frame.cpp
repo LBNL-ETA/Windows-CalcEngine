@@ -1,171 +1,122 @@
 #include <map>
+
 #include <WCECommon.hpp>
+
 #include "Frame.hpp"
 
 namespace Tarcog::ISO15099
 {
-    FrameData::FrameData() :
-        UValue(0),
-        EdgeUValue(0),
-        ProjectedFrameDimension(0),
-        WettedLength(0),
-        Absorptance(0)
-    {}
-
-    FrameData::FrameData(double uValue,
-                         double edgeUValue,
-                         double projectedFrameDimension,
-                         double wettedLength,
-                         double absorptance) :
-        UValue(uValue),
-        EdgeUValue(edgeUValue),
-        ProjectedFrameDimension(projectedFrameDimension),
-        WettedLength(wettedLength),
-        Absorptance(absorptance)
-    {}
-
-    void FrameData::splitFrameWidth()
+    FrameData splitFrameWidth(const FrameData & frame)
     {
-        ProjectedFrameDimension = ProjectedFrameDimension / 2;
-        WettedLength = WettedLength / 2;
+        auto result{frame};
+        result.ProjectedFrameDimension = result.ProjectedFrameDimension / 2;
+        result.WettedLength = result.WettedLength / 2;
+
+        return result;
     }
 
-    double FrameData::shgc(double hc) const
+    double shgc(const FrameData & frame, double hc)
     {
-        if(hc == 0 || WettedLength == 0)
+        if(hc == 0 || frame.WettedLength == 0)
         {
             return 0;
         }
-        return Absorptance * UValue / hc * ProjectedFrameDimension / WettedLength;
+        return frame.Absorptance * frame.UValue / hc * frame.ProjectedFrameDimension
+               / frame.WettedLength;
     }
 
-    Frame::Frame(double length, FrameType frameType, FrameData frameData) :
-        m_Length(length),
-        m_FrameType(frameType),
-        m_FrameData(frameData)
-    {}
-
-    FrameType Frame::frameType() const
+    [[nodiscard]] double projectedArea(const Frame & frame)
     {
-        return m_FrameType;
-    }
+        double area = frame.length * frame.frameData.ProjectedFrameDimension;
 
-    double Frame::projectedArea() const
-    {
-        auto area{m_Length * m_FrameData.ProjectedFrameDimension};
+        const double scaleFactor = frame.frameType == FrameType::Interior ? 1.0 : 0.5;
 
-        const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
+        const auto subtractSideArea = [&](FrameSide side) {
+            const auto & maybeNeighbor =
+              frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
-        {
-            area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
-        }
+            if(!maybeNeighbor || maybeNeighbor->get().frameType != FrameType::Exterior)
+                return;
 
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Right)->frameType() == FrameType::Exterior)
-        {
-            area -= m_FrameData.ProjectedFrameDimension
-                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
-        }
+            const auto & neighbor = maybeNeighbor->get();
+            area -= frame.frameData.ProjectedFrameDimension
+                    * neighbor.frameData.ProjectedFrameDimension * scaleFactor;
+        };
+
+        subtractSideArea(FrameSide::Left);
+        subtractSideArea(FrameSide::Right);
 
         return area;
     }
 
-    double Frame::wettedArea() const
+    [[nodiscard]] double wettedArea(const Frame & frame)
     {
-        auto area{m_Length * m_FrameData.WettedLength};
+        double area = frame.length * frame.frameData.WettedLength;
 
-        const auto scaleFactor{m_FrameType == FrameType::Interior ? 1.0 : 0.5};
+        const double scaleFactor = frame.frameType == FrameType::Interior ? 1.0 : 0.5;
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
-        {
-            area -= m_FrameData.WettedLength
-                    * m_Frame.at(FrameSide::Left)->projectedFrameDimension() * scaleFactor;
-        }
+        const auto subtractSideArea = [&](FrameSide side) {
+            const auto & maybeNeighbor =
+              frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
 
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior)
-        {
-            area -= m_FrameData.WettedLength
-                    * m_Frame.at(FrameSide::Right)->projectedFrameDimension() * scaleFactor;
-        }
+            if(!maybeNeighbor || maybeNeighbor->get().frameType != FrameType::Exterior)
+                return;
+
+            const auto & neighbor = maybeNeighbor->get();
+            area -= frame.frameData.WettedLength * neighbor.frameData.ProjectedFrameDimension
+                    * scaleFactor;
+        };
+
+        subtractSideArea(FrameSide::Left);
+        subtractSideArea(FrameSide::Right);
 
         return area;
     }
 
-    void Frame::setFrameData(FrameData frameData)
+    [[nodiscard]] double edgeOfGlassArea(const Frame & frame)
     {
-        m_FrameData = frameData;
-    }
+        double length = frame.length;
 
-    const FrameData & Frame::frameData() const
-    {
-        return m_FrameData;
-    }
+        const auto adjustLengthForSide = [&](FrameSide side) {
+            const auto & maybeNeighbor =
+              frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
 
-    double Frame::edgeOfGlassArea() const
-    {
-        auto length{m_Length};
+            if(!maybeNeighbor)
+                return;
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value())
-        {
-            length -= m_Frame.at(FrameSide::Left)->projectedFrameDimension();
-            if(m_FrameType == FrameType::Interior)
+            const auto & neighbor = maybeNeighbor->get();
+            length -= neighbor.frameData.ProjectedFrameDimension;
+
+            if(frame.frameType == FrameType::Interior)
             {
                 length -= ConstantsData::EOGHeight;
             }
-        }
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value())
-        {
-            length -= m_Frame.at(FrameSide::Right)->projectedFrameDimension();
-            if(m_FrameType == FrameType::Interior)
+        };
+
+        adjustLengthForSide(FrameSide::Left);
+        adjustLengthForSide(FrameSide::Right);
+
+        double area = length * ConstantsData::EOGHeight;
+
+        const auto subtractCornerTriangle = [&](FrameSide side) {
+            const auto it = frame.frame.find(side);
+            if(it != frame.frame.end() && it->second.has_value())
             {
-                length -= ConstantsData::EOGHeight;
+                const Frame & neighbor = it->second.value();
+                if(neighbor.frameType == FrameType::Exterior
+                   && frame.frameType == FrameType::Exterior)
+                {
+                    area -= (ConstantsData::EOGHeight * ConstantsData::EOGHeight) / 2.0;
+                }
             }
-        }
+        };
 
-        auto area{length * ConstantsData::EOGHeight};
+        subtractCornerTriangle(FrameSide::Left);
+        subtractCornerTriangle(FrameSide::Right);
 
-        if(m_Frame.count(FrameSide::Left) && m_Frame.at(FrameSide::Left).has_value()
-           && m_Frame.at(FrameSide::Left)->frameType() == FrameType::Exterior
-           && m_FrameType == FrameType::Exterior)
-        {
-            area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
-        }
-
-        if(m_Frame.count(FrameSide::Right) && m_Frame.at(FrameSide::Right).has_value()
-           && m_Frame.at(FrameSide::Right)->frameType() == FrameType::Exterior
-           && m_FrameType == FrameType::Exterior)
-        {
-            area -= ConstantsData::EOGHeight * ConstantsData::EOGHeight / 2;
-        }
-
-        area -= m_DividerArea * m_NumberOfDividers;
+        area -= frame.dividerArea * static_cast<double>(frame.numberOfDividers);
 
         return area;
     }
 
-    double Frame::projectedFrameDimension() const
-    {
-        return m_FrameData.ProjectedFrameDimension;
-    }
-
-    void Frame::assignFrame(Frame frame, FrameSide side)
-    {
-        m_Frame[side] = std::move(frame);
-    }
-
-    void Frame::assignDividerArea(double area, size_t nDividers)
-    {
-        m_DividerArea = area;
-        m_NumberOfDividers = nDividers;
-    }
-
-    void Frame::setFrameType(const FrameType type)
-    {
-        m_FrameType = type;
-    }
 }   // namespace Tarcog::ISO15099

@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Windows-CalcEngine VERSION 1.0.52 LANGUAGES CXX)
+project(Windows-CalcEngine VERSION 1.0.54 LANGUAGES CXX)
 
 set(target_name ${PROJECT_NAME})
-
-#set( target_name Windows-CalcEngine )
 
 set (CMAKE_CXX_STANDARD 20)
 
