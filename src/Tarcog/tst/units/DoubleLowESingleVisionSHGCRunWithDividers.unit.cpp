@@ -93,10 +93,10 @@ protected:
 
         m_Window = Tarcog::ISO15099::WindowSingleVision(windowWidth, windowHeight, tVis, tSol, igu);
 
-        m_Window.setFrameTop(frameData);
-        m_Window.setFrameBottom(frameData);
-        m_Window.setFrameLeft(frameData);
-        m_Window.setFrameRight(frameData);
+        m_Window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData);
+        m_Window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData);
+        m_Window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData);
+        m_Window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData);
 
         auto nVertical{2u};
         auto nHorizontal{3u};

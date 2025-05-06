@@ -177,7 +177,9 @@ namespace CMA
             for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameTop(frameData);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData);
             }
         }
     }
@@ -190,7 +192,9 @@ namespace CMA
             for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameBottom(frameData);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData);
             }
         }
     }
@@ -203,7 +207,9 @@ namespace CMA
             for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameLeft(frameData);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData);
             }
         }
     }
@@ -216,7 +222,9 @@ namespace CMA
             for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameRight(frameData);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData);
             }
         }
     }

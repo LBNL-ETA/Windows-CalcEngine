@@ -70,24 +70,17 @@ namespace Tarcog::ISO15099
         return vision.visionPercentage();
     }
 
-    void WindowSingleVision::setFrameTop(FrameData frameData)
+    void WindowSingleVision::setFrameData(SingleVisionFramePosition position,
+                                          const FrameData & frameData)
     {
-        vision.setFrameData(FramePosition::Top, frameData);
-    }
+        static const std::map<SingleVisionFramePosition, FramePosition> frameMap = {
+            {SingleVisionFramePosition::Top, FramePosition::Top},
+            {SingleVisionFramePosition::Bottom, FramePosition::Bottom},
+            {SingleVisionFramePosition::Left, FramePosition::Left},
+            {SingleVisionFramePosition::Right, FramePosition::Right}
+        };
 
-    void WindowSingleVision::setFrameBottom(FrameData frameData)
-    {
-        vision.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void WindowSingleVision::setFrameLeft(FrameData frameData)
-    {
-        vision.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void WindowSingleVision::setFrameRight(FrameData frameData)
-    {
-        vision.setFrameData(FramePosition::Right, frameData);
+        vision.setFrameData(frameMap.at(position), frameData);
     }
 
     void WindowSingleVision::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)

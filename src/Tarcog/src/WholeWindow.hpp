@@ -6,10 +6,17 @@
 
 namespace Tarcog::ISO15099
 {
+    enum class SingleVisionFramePosition
+    {
+        Top,
+        Bottom,
+        Left,
+        Right
+    };
+
     ////////////////////////////////////////////////
     /// WindowSingleVision
     ////////////////////////////////////////////////
-
     class WindowSingleVision : public IWindow
     {
     public:
@@ -33,10 +40,9 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double uValueCOGAverage() const override;
         [[nodiscard]] double shgcCOGAverage() const override;
 
-        void setFrameTop(FrameData frameData);
-        void setFrameBottom(FrameData frameData);
-        void setFrameLeft(FrameData frameData);
-        void setFrameRight(FrameData frameData);
+        // Alternative way to set frame data
+        void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
+
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
 

@@ -81,10 +81,10 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
 
-    window.setFrameTop(frameData);
-    window.setFrameBottom(frameData);
-    window.setFrameLeft(frameData);
-    window.setFrameRight(frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.799180, vt, 1e-6);
@@ -116,10 +116,10 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
 
     auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getCOG());
 
-    window.setFrameTop(frameData);
-    window.setFrameBottom(frameData);
-    window.setFrameLeft(frameData);
-    window.setFrameRight(frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData);
+    window.setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.799181, vt, 1e-6);
