@@ -91,17 +91,21 @@ protected:
         m_Window = Tarcog::ISO15099::DualVisionVertical(
           windowWidth, windowHeight, tVis, tSol, igu, tVis, tSol, igu);
 
-        m_Window.setFrameTop(frameData);
-        m_Window.setFrameBottom(frameData);
-        m_Window.setFrameTopLeft(frameData);
-        m_Window.setFrameTopRight(frameData);
-        m_Window.setFrameBottomLeft(frameData);
-        m_Window.setFrameBottomRight(frameData);
-        m_Window.setFrameMeetingRail(frameData);
+        using Tarcog::ISO15099::DualVerticalFramePosition;
+        m_Window.setFrameData({{DualVerticalFramePosition::Top, frameData},
+                               {DualVerticalFramePosition::Bottom, frameData},
+                               {DualVerticalFramePosition::TopLeft, frameData},
+                               {DualVerticalFramePosition::TopRight, frameData},
+                               {DualVerticalFramePosition::BottomLeft, frameData},
+                               {DualVerticalFramePosition::BottomRight, frameData},
+                               {DualVerticalFramePosition::MeetingRail, frameData}});
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::DualVisionVertical & getWindow() { return m_Window; }
+    [[nodiscard]] Tarcog::ISO15099::DualVisionVertical & getWindow()
+    {
+        return m_Window;
+    }
 };
 
 TEST_F(TestDoubleLowEVerticalSliderUFactorRun, Test1)

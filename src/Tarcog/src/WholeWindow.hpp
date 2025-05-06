@@ -161,6 +161,18 @@ namespace Tarcog::ISO15099
     /// DualVisionVertical
     ////////////////////////////////////////////////
 
+    enum class DualVerticalFramePosition {
+        Top,
+        Bottom,
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        MeetingRail
+    };
+
+    using DualVerticalFrameMap = std::map<DualVerticalFramePosition, FrameData>;
+
     //! Concrete implementation of dual vision vertical slider
     //! Vision1 is the vision on the top and Vision2 is the vision on the bottom.
     class DualVisionVertical : public WindowDualVision
@@ -182,13 +194,8 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double shgcCOGTop() const;
         [[nodiscard]] double shgcCOGBottom() const;
 
-        void setFrameTop(FrameData frameData);
-        void setFrameBottom(FrameData frameData);
-        void setFrameTopLeft(FrameData frameData);
-        void setFrameTopRight(FrameData frameData);
-        void setFrameBottomLeft(FrameData frameData);
-        void setFrameBottomRight(FrameData frameData);
-        void setFrameMeetingRail(FrameData frameData);
+        void setFrameData(DualVerticalFramePosition position, const FrameData & frameData);
+        void setFrameData(const DualVerticalFrameMap & frames);
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 

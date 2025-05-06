@@ -84,13 +84,15 @@ TEST_F(TestVerticalSliderWindow, PredefinedCOGValues)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
 
-    window.setFrameTop(frameData);
-    window.setFrameTopLeft(frameData);
-    window.setFrameTopRight(frameData);
-    window.setFrameMeetingRail(frameData);
-    window.setFrameBottomLeft(frameData);
-    window.setFrameBottomRight(frameData);
-    window.setFrameBottom(frameData);
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+    window.setFrameData({{DualVerticalFramePosition::Top, frameData},
+                         {DualVerticalFramePosition::TopLeft, frameData},
+                         {DualVerticalFramePosition::TopRight, frameData},
+                         {DualVerticalFramePosition::MeetingRail, frameData},
+                         {DualVerticalFramePosition::BottomLeft, frameData},
+                         {DualVerticalFramePosition::BottomRight, frameData},
+                         {DualVerticalFramePosition::Bottom, frameData}});
+
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.525054, vt, 1e-6);
@@ -123,13 +125,14 @@ TEST_F(TestVerticalSliderWindow, CalculatedCOG)
     auto window = Tarcog::ISO15099::DualVisionVertical(
       width, height, tVis, tSol, getCOG(), tVis, tSol, getCOG());
 
-    window.setFrameTop(frameData);
-    window.setFrameTopLeft(frameData);
-    window.setFrameTopRight(frameData);
-    window.setFrameMeetingRail(frameData);
-    window.setFrameBottomLeft(frameData);
-    window.setFrameBottomRight(frameData);
-    window.setFrameBottom(frameData);
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+    window.setFrameData({{DualVerticalFramePosition::Top, frameData},
+                         {DualVerticalFramePosition::TopLeft, frameData},
+                         {DualVerticalFramePosition::TopRight, frameData},
+                         {DualVerticalFramePosition::MeetingRail, frameData},
+                         {DualVerticalFramePosition::BottomLeft, frameData},
+                         {DualVerticalFramePosition::BottomRight, frameData},
+                         {DualVerticalFramePosition::Bottom, frameData}});
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.525054, vt, 1e-6);
@@ -214,13 +217,16 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
 
-    window.setFrameTop(topSill);
-    window.setFrameTopLeft(upperJamb);
-    window.setFrameTopRight(upperJamb);
-    window.setFrameMeetingRail(meetingRail);
-    window.setFrameBottomLeft(lowerJamb);
-    window.setFrameBottomRight(lowerJamb);
-    window.setFrameBottom(bottomSill);
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+
+    window.setFrameData({{DualVerticalFramePosition::Top, topSill},
+                         {DualVerticalFramePosition::TopLeft, upperJamb},
+                         {DualVerticalFramePosition::TopRight, upperJamb},
+                         {DualVerticalFramePosition::MeetingRail, meetingRail},
+                         {DualVerticalFramePosition::BottomLeft, lowerJamb},
+                         {DualVerticalFramePosition::BottomRight, lowerJamb},
+                         {DualVerticalFramePosition::Bottom, bottomSill}});
+
 
     const double VT0{window.vt()};
     EXPECT_NEAR(0.0, VT0, 1e-6);
@@ -242,13 +248,16 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
 
-    window.setFrameTop(topSill);
-    window.setFrameTopLeft(upperJamb);
-    window.setFrameTopRight(upperJamb);
-    window.setFrameMeetingRail(meetingRail);
-    window.setFrameBottomLeft(lowerJamb);
-    window.setFrameBottomRight(lowerJamb);
-    window.setFrameBottom(bottomSill);
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+
+    window.setFrameData({{DualVerticalFramePosition::Top, topSill},
+                         {DualVerticalFramePosition::TopLeft, upperJamb},
+                         {DualVerticalFramePosition::TopRight, upperJamb},
+                         {DualVerticalFramePosition::MeetingRail, meetingRail},
+                         {DualVerticalFramePosition::BottomLeft, lowerJamb},
+                         {DualVerticalFramePosition::BottomRight, lowerJamb},
+                         {DualVerticalFramePosition::Bottom, bottomSill}});
+
 
     const double VT1{window.vt()};
     EXPECT_NEAR(0.775483, VT1, 1e-6);
@@ -342,13 +351,16 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
 
-    window.setFrameTop(topSill);
-    window.setFrameTopLeft(upperJamb);
-    window.setFrameTopRight(upperJamb);
-    window.setFrameMeetingRail(meetingRail);
-    window.setFrameBottomLeft(lowerJamb);
-    window.setFrameBottomRight(lowerJamb);
-    window.setFrameBottom(bottomSill);
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+
+    window.setFrameData({{DualVerticalFramePosition::Top, topSill},
+                         {DualVerticalFramePosition::TopLeft, upperJamb},
+                         {DualVerticalFramePosition::TopRight, upperJamb},
+                         {DualVerticalFramePosition::MeetingRail, meetingRail},
+                         {DualVerticalFramePosition::BottomLeft, lowerJamb},
+                         {DualVerticalFramePosition::BottomRight, lowerJamb},
+                         {DualVerticalFramePosition::Bottom, bottomSill}});
+
     window.setDividers(divider, nHorizontal, nVertical);
 
     const double VT0{window.vt()};
@@ -371,13 +383,16 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
 
-    window.setFrameTop(topSill);
-    window.setFrameTopLeft(upperJamb);
-    window.setFrameTopRight(upperJamb);
-    window.setFrameMeetingRail(meetingRail);
-    window.setFrameBottomLeft(lowerJamb);
-    window.setFrameBottomRight(lowerJamb);
-    window.setFrameBottom(bottomSill);
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+
+    window.setFrameData({{DualVerticalFramePosition::Top, topSill},
+                         {DualVerticalFramePosition::TopLeft, upperJamb},
+                         {DualVerticalFramePosition::TopRight, upperJamb},
+                         {DualVerticalFramePosition::MeetingRail, meetingRail},
+                         {DualVerticalFramePosition::BottomLeft, lowerJamb},
+                         {DualVerticalFramePosition::BottomRight, lowerJamb},
+                         {DualVerticalFramePosition::Bottom, bottomSill}});
+
     window.setDividers(divider, nHorizontal, nVertical);
 
     const double VT1{window.vt()};

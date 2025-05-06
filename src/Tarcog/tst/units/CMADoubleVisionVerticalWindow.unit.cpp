@@ -60,13 +60,15 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMADualVerticalVision)
 
     auto window{CMA::CMAWindowDualVisionVertical(width, height)};
 
-    window.setFrameTop(cmaFrameHead);
-    window.setFrameBottom(cmaFrameSill);
-    window.setFrameTopLeft(cmaFrameJamb);
-    window.setFrameTopRight(cmaFrameJamb);
-    window.setFrameBottomLeft(cmaFrameJamb);
-    window.setFrameBottomRight(cmaFrameJamb);
-    window.setFrameMeetingRail(cmaFrameJamb);
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+    window.setFrameData({{DualVerticalFramePosition::Top, cmaFrameHead},
+                         {DualVerticalFramePosition::Bottom, cmaFrameSill},
+                         {DualVerticalFramePosition::TopLeft, cmaFrameJamb},
+                         {DualVerticalFramePosition::TopRight, cmaFrameJamb},
+                         {DualVerticalFramePosition::BottomLeft, cmaFrameJamb},
+                         {DualVerticalFramePosition::BottomRight, cmaFrameJamb},
+                         {DualVerticalFramePosition::MeetingRail, cmaFrameJamb}});
+
 
     const auto UvalueCOG{1.258};
     const auto SHGCCOG{0.341};

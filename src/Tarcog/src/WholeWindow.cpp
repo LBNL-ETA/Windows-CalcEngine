@@ -383,11 +383,53 @@ namespace Tarcog::ISO15099
         return shgcCOG2();
     }
 
-    void DualVisionVertical::setFrameMeetingRail(FrameData frameData)
+    void DualVisionVertical::setFrameData(DualVerticalFramePosition position,
+                                          const FrameData & frameData)
     {
-        frameData = splitFrameWidth(frameData);
-        m_Vision1.setFrameData(FramePosition::Bottom, frameData);
-        m_Vision2.setFrameData(FramePosition::Top, frameData);
+        switch(position)
+        {
+            case DualVerticalFramePosition::Top:
+                m_Vision1.setFrameData(FramePosition::Top, frameData);
+                break;
+
+            case DualVerticalFramePosition::Bottom:
+                m_Vision2.setFrameData(FramePosition::Bottom, frameData);
+                break;
+
+            case DualVerticalFramePosition::TopLeft:
+                m_Vision1.setFrameData(FramePosition::Left, frameData);
+                break;
+
+            case DualVerticalFramePosition::TopRight:
+                m_Vision1.setFrameData(FramePosition::Right, frameData);
+                break;
+
+            case DualVerticalFramePosition::BottomLeft:
+                m_Vision2.setFrameData(FramePosition::Left, frameData);
+                break;
+
+            case DualVerticalFramePosition::BottomRight:
+                m_Vision2.setFrameData(FramePosition::Right, frameData);
+                break;
+
+            case DualVerticalFramePosition::MeetingRail: {
+                FrameData split = splitFrameWidth(frameData);
+                m_Vision1.setFrameData(FramePosition::Bottom, split);
+                m_Vision2.setFrameData(FramePosition::Top, split);
+                break;
+            }
+
+            default:
+                throw std::invalid_argument("Invalid frame position");
+        }
+    }
+
+    void DualVisionVertical::setFrameData(const DualVerticalFrameMap & frames)
+    {
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void DualVisionVertical::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)
@@ -408,35 +450,5 @@ namespace Tarcog::ISO15099
                                                      size_t nVertical)
     {
         m_Vision2.setDividers(frameData, nHorizontal, nVertical);
-    }
-
-    void DualVisionVertical::setFrameBottomRight(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Right, frameData);
-    }
-
-    void DualVisionVertical::setFrameBottomLeft(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void DualVisionVertical::setFrameTopRight(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Right, frameData);
-    }
-
-    void DualVisionVertical::setFrameTopLeft(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void DualVisionVertical::setFrameBottom(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void DualVisionVertical::setFrameTop(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Top, frameData);
     }
 }   // namespace Tarcog::ISO15099
