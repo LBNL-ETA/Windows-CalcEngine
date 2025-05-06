@@ -3,9 +3,10 @@
 #include "WholeWindowConfigurations.hpp"
 #include "WindowVision.hpp"
 
-
 namespace Tarcog::ISO15099
 {
+    // Enum representing the positions of a single vision frame in a window.
+    // These positions include Top, Bottom, Left, and Right.
     enum class SingleVisionFramePosition
     {
         Top,
@@ -13,6 +14,10 @@ namespace Tarcog::ISO15099
         Left,
         Right
     };
+
+    // Alias for a map that associates a frame position with its corresponding frame data.
+    // This is used to store and manage frame data for each position in a single vision window.
+    using SingleVisionFrameMap = std::map<SingleVisionFramePosition, FrameData>;
 
     ////////////////////////////////////////////////
     /// WindowSingleVision
@@ -42,6 +47,7 @@ namespace Tarcog::ISO15099
 
         // Alternative way to set frame data
         void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
+        void setFrameData(const SingleVisionFrameMap& frames);
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 

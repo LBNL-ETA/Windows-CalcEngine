@@ -1,6 +1,8 @@
 #include "WholeWindow.hpp"
 
 #include <utility>
+#include <ranges>
+#include <algorithm>
 
 namespace Tarcog::ISO15099
 {
@@ -74,13 +76,20 @@ namespace Tarcog::ISO15099
                                           const FrameData & frameData)
     {
         static const std::map<SingleVisionFramePosition, FramePosition> frameMap = {
-            {SingleVisionFramePosition::Top, FramePosition::Top},
-            {SingleVisionFramePosition::Bottom, FramePosition::Bottom},
-            {SingleVisionFramePosition::Left, FramePosition::Left},
-            {SingleVisionFramePosition::Right, FramePosition::Right}
-        };
+          {SingleVisionFramePosition::Top, FramePosition::Top},
+          {SingleVisionFramePosition::Bottom, FramePosition::Bottom},
+          {SingleVisionFramePosition::Left, FramePosition::Left},
+          {SingleVisionFramePosition::Right, FramePosition::Right}};
 
         vision.setFrameData(frameMap.at(position), frameData);
+    }
+
+    void WindowSingleVision::setFrameData(const SingleVisionFrameMap & frames)
+    {
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void WindowSingleVision::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)
