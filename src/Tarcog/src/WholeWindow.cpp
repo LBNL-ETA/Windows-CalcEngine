@@ -3,6 +3,7 @@
 #include <utility>
 #include <ranges>
 #include <algorithm>
+#include <stdexcept>
 
 namespace Tarcog::ISO15099
 {
@@ -265,41 +266,46 @@ namespace Tarcog::ISO15099
         return shgcCOG2();
     }
 
-    void DualVisionHorizontal::setFrameTopLeft(FrameData frameData)
+    void DualVisionHorizontal::setFrameData(DualHorizontalFramePosition position,
+                                            const FrameData & frameData)
     {
-        m_Vision1.setFrameData(FramePosition::Top, frameData);
+        switch(position)
+        {
+            case DualHorizontalFramePosition::TopLeft:
+                m_Vision1.setFrameData(FramePosition::Top, frameData);
+                break;
+            case DualHorizontalFramePosition::TopRight:
+                m_Vision2.setFrameData(FramePosition::Top, frameData);
+                break;
+            case DualHorizontalFramePosition::BottomLeft:
+                m_Vision1.setFrameData(FramePosition::Bottom, frameData);
+                break;
+            case DualHorizontalFramePosition::BottomRight:
+                m_Vision2.setFrameData(FramePosition::Bottom, frameData);
+                break;
+            case DualHorizontalFramePosition::Left:
+                m_Vision1.setFrameData(FramePosition::Left, frameData);
+                break;
+            case DualHorizontalFramePosition::Right:
+                m_Vision2.setFrameData(FramePosition::Right, frameData);
+                break;
+            case DualHorizontalFramePosition::MeetingRail: {
+                FrameData split = splitFrameWidth(frameData);
+                m_Vision1.setFrameData(FramePosition::Right, split);
+                m_Vision2.setFrameData(FramePosition::Left, split);
+                break;
+            }
+            default:
+                throw std::invalid_argument("Invalid frame position");
+        }
     }
 
-    void DualVisionHorizontal::setFrameTopRight(FrameData frameData)
+    void DualVisionHorizontal::setFrameData(const DualHorizontalFrameMap & frames)
     {
-        m_Vision2.setFrameData(FramePosition::Top, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameBottomLeft(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameBottomRight(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameLeft(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameRight(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Right, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameMeetingRail(FrameData frameData)
-    {
-        frameData = splitFrameWidth(frameData);
-        m_Vision1.setFrameData(FramePosition::Right, frameData);
-        m_Vision2.setFrameData(FramePosition::Left, frameData);
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void

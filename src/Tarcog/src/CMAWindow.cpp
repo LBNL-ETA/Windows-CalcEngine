@@ -169,7 +169,8 @@ namespace CMA
         m_Window(createBestWorstWindows(width, height, 0.0, 0.0, bestUFactor, worstUFactor))
     {}
 
-    void CMAWindowSingleVision::setFrameTop(CMAFrame cmaFrameData)
+    void CMAWindowSingleVision::setFrameData(Tarcog::ISO15099::SingleVisionFramePosition position,
+                                             CMAFrame & cmaFrameData)
     {
         EnumOption options;
         for(auto spacerOption : options)
@@ -177,56 +178,17 @@ namespace CMA
             for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption)
-                  .at(glazingOption)
-                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData);
+                m_Window.at(spacerOption).at(glazingOption).setFrameData(position, frameData);
             }
         }
     }
 
-    void CMAWindowSingleVision::setFrameBottom(CMAFrame cmaFrameData)
+    void CMAWindowSingleVision::setFrameData(const SingleVisionFrameMap & frames)
     {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption)
-                  .at(glazingOption)
-                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData);
-            }
-        }
-    }
-
-    void CMAWindowSingleVision::setFrameLeft(CMAFrame cmaFrameData)
-    {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption)
-                  .at(glazingOption)
-                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData);
-            }
-        }
-    }
-
-    void CMAWindowSingleVision::setFrameRight(CMAFrame cmaFrameData)
-    {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption)
-                  .at(glazingOption)
-                  .setFrameData(Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData);
-            }
-        }
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void CMAWindowSingleVision::setDividers(CMAFrame cmaFrameData,
@@ -261,7 +223,8 @@ namespace CMA
         m_Window(createBestWorstWindows(width, height, 0.0, 0.0, bestUFactor, worstUFactor))
     {}
 
-    void CMAWindowDualVisionHorizontal::setFrameTopLeft(CMAFrame cmaFrameData)
+    void CMAWindowDualVisionHorizontal::setFrameData(
+      Tarcog::ISO15099::DualHorizontalFramePosition position, CMAFrame & cmaFrameData)
     {
         EnumOption options;
         for(auto spacerOption : options)
@@ -269,87 +232,17 @@ namespace CMA
             for(auto glazingOption : options)
             {
                 const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameTopLeft(frameData);
+                m_Window.at(spacerOption).at(glazingOption).setFrameData(position, frameData);
             }
         }
     }
 
-    void CMAWindowDualVisionHorizontal::setFrameTopRight(CMAFrame cmaFrameData)
+    void CMAWindowDualVisionHorizontal::setFrameData(const DualHorizontalFrameMap & frames)
     {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameTopRight(frameData);
-            }
-        }
-    }
-
-    void CMAWindowDualVisionHorizontal::setFrameBottomLeft(CMAFrame cmaFrameData)
-    {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameBottomLeft(frameData);
-            }
-        }
-    }
-
-    void CMAWindowDualVisionHorizontal::setFrameBottomRight(CMAFrame cmaFrameData)
-    {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameBottomRight(frameData);
-            }
-        }
-    }
-
-    void CMAWindowDualVisionHorizontal::setFrameLeft(CMAFrame cmaFrameData)
-    {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameLeft(frameData);
-            }
-        }
-    }
-
-    void CMAWindowDualVisionHorizontal::setFrameRight(CMAFrame cmaFrameData)
-    {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameRight(frameData);
-            }
-        }
-    }
-
-    void CMAWindowDualVisionHorizontal::setFrameMeetingRail(CMAFrame cmaFrameData)
-    {
-        EnumOption options;
-        for(auto spacerOption : options)
-        {
-            for(auto glazingOption : options)
-            {
-                const auto frameData = cmaFrameData.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption).at(glazingOption).setFrameMeetingRail(frameData);
-            }
-        }
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void CMAWindowDualVisionHorizontal::setDividers(CMAFrame cmaFrameData,

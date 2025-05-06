@@ -95,13 +95,15 @@ TEST_F(TestCMADoubleVisionHorizontalWindow, CMASingleVision)
 
     auto window{CMA::CMAWindowDualVisionHorizontal(width, height)};
 
-    window.setFrameTopLeft(cmaFrameHead);
-    window.setFrameTopRight(cmaFrameHead);
-    window.setFrameBottomLeft(cmaFrameSill);
-    window.setFrameBottomRight(cmaFrameSill);
-    window.setFrameLeft(cmaFrameJamb);
-    window.setFrameRight(cmaFrameJamb);
-    window.setFrameMeetingRail(cmaFrameJamb);
+    using Tarcog::ISO15099::DualHorizontalFramePosition;
+    window.setFrameData({{DualHorizontalFramePosition::TopLeft, cmaFrameHead},
+                         {DualHorizontalFramePosition::TopRight, cmaFrameHead},
+                         {DualHorizontalFramePosition::BottomLeft, cmaFrameSill},
+                         {DualHorizontalFramePosition::BottomRight, cmaFrameSill},
+                         {DualHorizontalFramePosition::Left, cmaFrameJamb},
+                         {DualHorizontalFramePosition::Right, cmaFrameJamb},
+                         {DualHorizontalFramePosition::MeetingRail, cmaFrameJamb}});
+
 
     const auto UvalueCOG{1.258};
     const auto SHGCCOG{0.341};

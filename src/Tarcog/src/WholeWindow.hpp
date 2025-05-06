@@ -115,6 +115,18 @@ namespace Tarcog::ISO15099
     /// DualVisionHorizontal
     ////////////////////////////////////////////////
 
+    enum class DualHorizontalFramePosition {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        Left,
+        Right,
+        MeetingRail
+    };
+
+    using DualHorizontalFrameMap = std::map<DualHorizontalFramePosition, FrameData>;
+
     //! Concrete implementation of dual vision horizontal slider
     //! Vision1 is the vision on the left side and Vision2 is the vision on the right side.
     class DualVisionHorizontal : public WindowDualVision
@@ -136,13 +148,8 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double shgcCOGLeft() const;
         [[nodiscard]] double shgcCOGRight() const;
 
-        void setFrameTopLeft(FrameData frameData);
-        void setFrameTopRight(FrameData frameData);
-        void setFrameBottomLeft(FrameData frameData);
-        void setFrameBottomRight(FrameData frameData);
-        void setFrameLeft(FrameData frameData);
-        void setFrameRight(FrameData frameData);
-        void setFrameMeetingRail(FrameData frameData);
+        void setFrameData(DualHorizontalFramePosition position, const FrameData & frameData);
+        void setFrameData(const DualHorizontalFrameMap & frames);
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
