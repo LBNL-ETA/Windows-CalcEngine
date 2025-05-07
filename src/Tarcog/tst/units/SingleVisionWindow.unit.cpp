@@ -132,3 +132,47 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
     const double windowSHGC{window.shgc()};
     EXPECT_NEAR(0.791895, windowSHGC, 1e-6);
 }
+
+TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
+{
+    SCOPED_TRACE("Begin Test: Mismatch detection for single vision window.");
+
+    // Frame expected IGU values
+    const double designUValue{5.575};
+    const double designThickness{0.006};  // deliberately smaller than real thickness
+    const double tightTolerance{0.001};   // very tight to guarantee mismatch
+
+    // Frame physical parameters
+    const double frameUValue{5.68};
+    const double edgeUValue{5.575};
+    const double projectedFrameDimension{0.05715};
+    const double wettedLength{0.05715};
+    const double absorptance{0.9};
+
+    // Add spec to frame data
+    Tarcog::ISO15099::FrameData frameData{
+        frameUValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    frameData.IGUData = Tarcog::ISO15099::IGUData{designUValue, designThickness};
+
+    // IGU under test (from getCOG) has different uValue and thickness
+    const auto width{2.0};
+    const auto height{2.0};
+    const auto tVis{0.899};
+    const auto tSol{0.8338};
+
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getCOG());
+
+    // Set tight tolerance to force mismatch
+    window.setUValueIGUTolerance(tightTolerance);
+    window.setThicknessIGUTolerance(tightTolerance);
+
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
+
+    const auto mismatch = window.iguMissmatch();
+    EXPECT_TRUE(mismatch.any());
+    EXPECT_TRUE(mismatch.uCenterMissmatch);
+    EXPECT_TRUE(mismatch.thicknessMissmatch);
+}

@@ -11,6 +11,13 @@
 
 namespace Tarcog::ISO15099
 {
+    //! Data structure for IGU error tolerance in WholeWindow calculations.
+    struct IGUErrorTolerance
+    {
+        double UCenter{0.25};
+        double Thickness{0.25e-3};
+    };
+
     class WindowVision : public IVision
     {
     public:
@@ -43,8 +50,13 @@ namespace Tarcog::ISO15099
 
         void setInteriorAndExteriorSurfaceHeight(double height);
 
+        void setUValueIGUTolerance(double uValue);
+        void setThicknessIGUTolerance(double thickness);
+
         [[nodiscard]] double getIGUWidth() const;
         [[nodiscard]] double getIGUHeight() const;
+
+        [[nodiscard]] IGUMismatch iguMissmatch() const override;
 
     private:
         //! Makes connection between frames for correct area calculations.
@@ -78,5 +90,7 @@ namespace Tarcog::ISO15099
         size_t m_NumOfVerticalDividers{0u};
         size_t m_NumOfHorizontalDividers{0u};
         std::optional<FrameData> m_Divider;
+
+        IGUErrorTolerance m_IGUErrorTolerance;
     };
 }   // namespace Tarcog::ISO15099

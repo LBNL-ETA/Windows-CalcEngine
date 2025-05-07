@@ -17,6 +17,7 @@ namespace Tarcog::ISO15099
         virtual double getUValue() = 0;
         virtual double getSHGC(double t_TotSol) = 0;
         virtual double getH(System system, Environment environment) const = 0;
+        virtual double thickness() const = 0;
         virtual void setWidth(double width) = 0;
         virtual void setHeight(double height) = 0;
         virtual void setTilt(double tilt) = 0;

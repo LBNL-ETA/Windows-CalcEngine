@@ -103,6 +103,21 @@ namespace Tarcog::ISO15099
         return {vision.getIGUWidth(), vision.getIGUHeight()};
     }
 
+    void WindowSingleVision::setUValueIGUTolerance(double uValue)
+    {
+        vision.setUValueIGUTolerance(uValue);
+    }
+
+    void WindowSingleVision::setThicknessIGUTolerance(double thickness)
+    {
+        vision.setThicknessIGUTolerance(thickness);
+    }
+
+    IGUMismatch WindowSingleVision::iguMissmatch() const
+    {
+        return vision.iguMissmatch();
+    }
+
     ////////////////////////////////////////////////
     /// WindowDualVision
     ////////////////////////////////////////////////
@@ -179,6 +194,29 @@ namespace Tarcog::ISO15099
     IGUDimensions WindowDualVision::getIGUDimensions() const
     {
         return {m_Vision1.getIGUWidth(), m_Vision1.getIGUHeight()};
+    }
+
+    void WindowDualVision::setUValueIGUTolerance(double uValue)
+    {
+        m_Vision1.setUValueIGUTolerance(uValue);
+        m_Vision2.setUValueIGUTolerance(uValue);
+    }
+
+    void WindowDualVision::setThicknessIGUTolerance(double thickness)
+    {
+        m_Vision1.setThicknessIGUTolerance(thickness);
+        m_Vision2.setThicknessIGUTolerance(thickness);
+    }
+
+    IGUMismatch WindowDualVision::iguMissmatch() const
+    {
+        const auto mismatch1 = m_Vision1.iguMissmatch();
+        const auto mismatch2 = m_Vision2.iguMissmatch();
+
+        return IGUMismatch{
+            .uCenterMissmatch    = mismatch1.uCenterMissmatch || mismatch2.uCenterMissmatch,
+            .thicknessMissmatch  = mismatch1.thicknessMissmatch || mismatch2.thicknessMissmatch
+        };
     }
 
     double WindowDualVision::visionPercentage() const

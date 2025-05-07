@@ -10,6 +10,19 @@ namespace Tarcog
         Right
     };
 
+    //! Data structure for IGU mismatch in WholeWindow calculations.
+    //! If any of the frames is not within the tolerance, the mismatch is set to true.
+    struct IGUMismatch
+    {
+        bool uCenterMissmatch{false};
+        bool thicknessMissmatch{false};
+
+        [[nodiscard]] bool any() const noexcept
+        {
+            return uCenterMissmatch || thicknessMissmatch;
+        }
+    };
+
     class IVision
     {
     public:
@@ -23,6 +36,8 @@ namespace Tarcog
         [[nodiscard]] virtual double visionPercentage() const = 0;
         [[nodiscard]] virtual double area() const = 0;
         [[nodiscard]] virtual double hc() const = 0;
+
+        [[nodiscard]] virtual IGUMismatch iguMissmatch() const = 0;
 
 
         virtual void setHc(double hc) = 0;
@@ -56,6 +71,11 @@ namespace Tarcog
         [[nodiscard]] virtual double shgcCOGAverage() const = 0;
 
         [[nodiscard]] virtual IGUDimensions getIGUDimensions() const = 0;
+
+        virtual void setUValueIGUTolerance(double uValue) = 0;
+        virtual void setThicknessIGUTolerance(double thickness) = 0;
+
+        [[nodiscard]] virtual IGUMismatch iguMissmatch() const = 0;
     };
 
 }   // namespace Tarcog

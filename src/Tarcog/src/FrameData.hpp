@@ -4,15 +4,27 @@
 
 namespace Tarcog::ISO15099
 {
-    struct FrameData
+    //! Data structure for Insulating Glass Unit (IGU) properties.
+    //! Contains thermal and physical characteristics of the glazing unit.
+    struct IGUData
     {
-        double UValue{0};
-        double EdgeUValue{0};
-        double ProjectedFrameDimension{0};
-        double WettedLength{0};
-        double Absorptance{0.3};
+        double UValue{0};     //! Thermal transmittance (U-value) of the IGU [W/(m²·K)]
+        double Thickness{0};  //! Total thickness of the IGU [m]
     };
 
+    //! Data structure for window frame properties.
+    //! Contains thermal, dimensional, and optical characteristics of a window frame.
+    struct FrameData
+    {
+        double UValue{0};                   //! Thermal transmittance of the frame [W/(m²·K)]
+        double EdgeUValue{0};               //! Thermal transmittance at the edge of glass [W/(m²·K)]
+        double ProjectedFrameDimension{0};  //! Projected width/dimension of the frame [m]
+        double WettedLength{0};             //! Length of frame in contact with other materials [m]
+        double Absorptance{0.3};            //! Solar absorptance of the frame (0-1)
+        std::optional<IGUData> IGUData{};     //! Optional data for the IGU associated with this frame
+    };
+
+    //! Each frame can have frame attached to either left or right side of it.
     enum class FrameSide
     {
         Left,
