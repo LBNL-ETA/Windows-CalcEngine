@@ -207,10 +207,10 @@ namespace Tarcog::ISO15099
         {
             IGUMismatch mismatch;
 
-            if(!frame.IGUData)
+            if(!frame.iguData)
                 return mismatch;
 
-            const auto & spec = *frame.IGUData;
+            const auto & spec = *frame.iguData;
 
             if(std::abs(igu.getUValue() - spec.UValue) > tol.UCenter)
             {

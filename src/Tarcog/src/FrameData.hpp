@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 
 namespace Tarcog::ISO15099
 {
@@ -21,7 +22,7 @@ namespace Tarcog::ISO15099
         double ProjectedFrameDimension{0};  //! Projected width/dimension of the frame [m]
         double WettedLength{0};             //! Length of frame in contact with other materials [m]
         double Absorptance{0.3};            //! Solar absorptance of the frame (0-1)
-        std::optional<IGUData> IGUData{};     //! Optional data for the IGU associated with this frame
+        std::optional<IGUData> iguData{};     //! Optional data for the IGU associated with this frame
     };
 
     //! Each frame can have frame attached to either left or right side of it.
@@ -49,7 +50,7 @@ namespace Tarcog::ISO15099
         //! Keeping frame information on both sides of the frame. This is needed for geometry
         //! calculations. Optional must be used or infinite loop will be created withing Frame
         //! constructor (Frame calling itself over and over again)
-        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame;
+        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame{};
 
         double dividerArea{0};
         size_t numberOfDividers{0u};

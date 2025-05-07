@@ -152,7 +152,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     // Add spec to frame data
     Tarcog::ISO15099::FrameData frameData{
         frameUValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
-    frameData.IGUData = Tarcog::ISO15099::IGUData{designUValue, designThickness};
+    frameData.iguData = Tarcog::ISO15099::IGUData{designUValue, designThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness
     const auto width{2.0};
