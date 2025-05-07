@@ -401,3 +401,54 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
     const double SHGC1{window.shgc()};
     EXPECT_NEAR(0.699113, SHGC1, 1e-6);
 }
+
+TEST_F(TestVerticalSliderWindow, IGUMismatchDetected)
+{
+    SCOPED_TRACE("Begin Test: Mismatch detection for dual vision vertical window.");
+
+    // Design IGU specs for frame (deliberately too strict)
+    const double designUValue = 1.667875;
+    const double designThickness = 0.003;  // real is 0.003048
+    const double tightTolerance = 0.00001;
+
+    // Frame data with expected IGU spec
+    Tarcog::ISO15099::FrameData frameData{
+        2.134059,   // uValue
+        2.251039,   // edgeUValue
+        0.050813,   // proj. dim
+        0.05633282, // wetted length
+        0.3,         // absorptance
+        Tarcog::ISO15099::IGUData{designUValue, designThickness}  // IGU data
+    };
+
+    // IGU that does *not* match spec (from getCOG)
+    const auto width = 1.2;
+    const auto height = 1.5;
+    const auto tVis = 0.638525;
+    const auto tSol = 0.3716;
+
+    auto window = Tarcog::ISO15099::DualVisionVertical(
+        width, height,
+        tVis, tSol, getCOG(),  // Vision 1
+        tVis, tSol, getCOG()); // Vision 2
+
+    window.setUValueIGUTolerance(tightTolerance);
+    window.setThicknessIGUTolerance(tightTolerance);
+
+    using Tarcog::ISO15099::DualVerticalFramePosition;
+
+    window.setFrameData({
+        {DualVerticalFramePosition::Top, frameData},
+        {DualVerticalFramePosition::TopLeft, frameData},
+        {DualVerticalFramePosition::TopRight, frameData},
+        {DualVerticalFramePosition::MeetingRail, frameData},
+        {DualVerticalFramePosition::BottomLeft, frameData},
+        {DualVerticalFramePosition::BottomRight, frameData},
+        {DualVerticalFramePosition::Bottom, frameData}
+    });
+
+    const auto mismatch = window.iguMissmatch();
+    EXPECT_TRUE(mismatch.any());
+    EXPECT_TRUE(mismatch.uCenterMissmatch);
+    EXPECT_TRUE(mismatch.thicknessMissmatch);
+}
