@@ -120,6 +120,16 @@ namespace SingleLayerOptics
         return m_Patches.end();
     }
 
+    std::vector<CBSDFPatch>::const_iterator BSDFDirections::begin() const
+    {
+        return m_Patches.begin();
+    }
+
+    std::vector<CBSDFPatch>::const_iterator BSDFDirections::end() const
+    {
+        return m_Patches.end();
+    }
+
     std::vector<double> BSDFDirections::lambdaVector() const
     {
         return m_LambdaVector;
