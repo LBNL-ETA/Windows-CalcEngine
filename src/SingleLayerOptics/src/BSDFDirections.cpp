@@ -84,8 +84,16 @@ namespace SingleLayerOptics
             for(size_t j = 1; j < phiLimits.size(); ++j)
             {
                 const auto upperPhi = correctPhiForOutgoingDirection(phiLimits[j]);
-                AngleLimits currentPhiLimits(lowerPhi, upperPhi);
-                patches.emplace_back(currentThetaLimits, currentPhiLimits);
+                if(thetaIndex == 1)
+                {
+                    AngleLimits currentPhiLimits(lowerPhi);
+                    patches.emplace_back(currentThetaLimits, currentPhiLimits);
+                } else
+                {
+                    AngleLimits currentPhiLimits(lowerPhi, upperPhi);
+                    patches.emplace_back(currentThetaLimits, currentPhiLimits);
+                }
+
                 lowerPhi = upperPhi;
             }
             lowerTheta = upperTheta;
