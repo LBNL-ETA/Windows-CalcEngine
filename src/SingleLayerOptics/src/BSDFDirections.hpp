@@ -51,6 +51,9 @@ namespace SingleLayerOptics
         std::vector<CBSDFPatch>::iterator begin();
         std::vector<CBSDFPatch>::iterator end();
 
+        [[nodiscard]] std::vector<CBSDFPatch>::const_iterator begin() const;
+        [[nodiscard]] std::vector<CBSDFPatch>::const_iterator end() const;
+
         [[nodiscard]] std::vector<double> lambdaVector() const;
         [[nodiscard]] std::vector<double> profileAngles() const;
         [[nodiscard]] const FenestrationCommon::SquareMatrix & lambdaMatrix() const;

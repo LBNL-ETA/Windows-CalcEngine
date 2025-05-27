@@ -91,17 +91,22 @@ protected:
         m_Window = Tarcog::ISO15099::DualVisionHorizontal(
           windowWidth, windowHeight, tVis, tSol, igu, tVis, tSol, igu);
 
-        m_Window.setFrameLeft(frameData);
-        m_Window.setFrameRight(frameData);
-        m_Window.setFrameBottomLeft(frameData);
-        m_Window.setFrameBottomRight(frameData);
-        m_Window.setFrameTopLeft(frameData);
-        m_Window.setFrameTopRight(frameData);
-        m_Window.setFrameMeetingRail(frameData);
+        using Tarcog::ISO15099::DualHorizontalFramePosition;
+
+        m_Window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
+                               {DualHorizontalFramePosition::Right, frameData},
+                               {DualHorizontalFramePosition::BottomLeft, frameData},
+                               {DualHorizontalFramePosition::BottomRight, frameData},
+                               {DualHorizontalFramePosition::TopLeft, frameData},
+                               {DualHorizontalFramePosition::TopRight, frameData},
+                               {DualHorizontalFramePosition::MeetingRail, frameData}});
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::DualVisionHorizontal & getWindow() { return m_Window; }
+    [[nodiscard]] Tarcog::ISO15099::DualVisionHorizontal & getWindow()
+    {
+        return m_Window;
+    }
 };
 
 TEST_F(TestDoubleLowEHorizontalSliderUFactorRun, Test1)

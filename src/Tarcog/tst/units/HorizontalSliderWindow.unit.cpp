@@ -82,13 +82,15 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
 
-    window.setFrameTopLeft(frameData);
-    window.setFrameTopRight(frameData);
-    window.setFrameMeetingRail(frameData);
-    window.setFrameLeft(frameData);
-    window.setFrameRight(frameData);
-    window.setFrameBottomLeft(frameData);
-    window.setFrameBottomRight(frameData);
+    using Tarcog::ISO15099::DualHorizontalFramePosition;
+
+    window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
+                         {DualHorizontalFramePosition::Right, frameData},
+                         {DualHorizontalFramePosition::BottomLeft, frameData},
+                         {DualHorizontalFramePosition::BottomRight, frameData},
+                         {DualHorizontalFramePosition::TopLeft, frameData},
+                         {DualHorizontalFramePosition::TopRight, frameData},
+                         {DualHorizontalFramePosition::MeetingRail, frameData}});
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.519647, vt, 1e-6);
@@ -121,13 +123,15 @@ TEST_F(TestHorizontalSliderWindow, CalculatedCOG)
     auto window = Tarcog::ISO15099::DualVisionHorizontal(
       width, height, tVis, tSol, getCOG(), tVis, tSol, getCOG());
 
-    window.setFrameTopLeft(frameData);
-    window.setFrameTopRight(frameData);
-    window.setFrameMeetingRail(frameData);
-    window.setFrameLeft(frameData);
-    window.setFrameRight(frameData);
-    window.setFrameBottomLeft(frameData);
-    window.setFrameBottomRight(frameData);
+    using Tarcog::ISO15099::DualHorizontalFramePosition;
+
+    window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
+                         {DualHorizontalFramePosition::Right, frameData},
+                         {DualHorizontalFramePosition::BottomLeft, frameData},
+                         {DualHorizontalFramePosition::BottomRight, frameData},
+                         {DualHorizontalFramePosition::TopLeft, frameData},
+                         {DualHorizontalFramePosition::TopRight, frameData},
+                         {DualHorizontalFramePosition::MeetingRail, frameData}});
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.519647, vt, 1e-6);

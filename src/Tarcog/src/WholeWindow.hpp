@@ -3,13 +3,25 @@
 #include "WholeWindowConfigurations.hpp"
 #include "WindowVision.hpp"
 
-
 namespace Tarcog::ISO15099
 {
+    // Enum representing the positions of a single vision frame in a window.
+    // These positions include Top, Bottom, Left, and Right.
+    enum class SingleVisionFramePosition
+    {
+        Top,
+        Bottom,
+        Left,
+        Right
+    };
+
+    // Alias for a map that associates a frame position with its corresponding frame data.
+    // This is used to store and manage frame data for each position in a single vision window.
+    using SingleVisionFrameMap = std::map<SingleVisionFramePosition, FrameData>;
+
     ////////////////////////////////////////////////
     /// WindowSingleVision
     ////////////////////////////////////////////////
-
     class WindowSingleVision : public IWindow
     {
     public:
@@ -33,14 +45,17 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double uValueCOGAverage() const override;
         [[nodiscard]] double shgcCOGAverage() const override;
 
-        void setFrameTop(FrameData frameData);
-        void setFrameBottom(FrameData frameData);
-        void setFrameLeft(FrameData frameData);
-        void setFrameRight(FrameData frameData);
+        void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
+        void setFrameData(const SingleVisionFrameMap& frames);
+
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
-
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
+
+        void setUValueIGUTolerance(double uValue) override;
+        void setThicknessIGUTolerance(double thickness) override;
+
+        [[nodiscard]] IGUMismatch iguMissmatch() const override;
 
     protected:
         [[nodiscard]] double visionPercentage() const override;
@@ -74,6 +89,11 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
+        void setUValueIGUTolerance(double uValue) override;
+        void setThicknessIGUTolerance(double thickness) override;
+
+        [[nodiscard]] IGUMismatch iguMissmatch() const override;
+
     protected:
         WindowDualVision(double width,
                          double height,
@@ -103,6 +123,18 @@ namespace Tarcog::ISO15099
     /// DualVisionHorizontal
     ////////////////////////////////////////////////
 
+    enum class DualHorizontalFramePosition {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        Left,
+        Right,
+        MeetingRail
+    };
+
+    using DualHorizontalFrameMap = std::map<DualHorizontalFramePosition, FrameData>;
+
     //! Concrete implementation of dual vision horizontal slider
     //! Vision1 is the vision on the left side and Vision2 is the vision on the right side.
     class DualVisionHorizontal : public WindowDualVision
@@ -124,13 +156,8 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double shgcCOGLeft() const;
         [[nodiscard]] double shgcCOGRight() const;
 
-        void setFrameTopLeft(FrameData frameData);
-        void setFrameTopRight(FrameData frameData);
-        void setFrameBottomLeft(FrameData frameData);
-        void setFrameBottomRight(FrameData frameData);
-        void setFrameLeft(FrameData frameData);
-        void setFrameRight(FrameData frameData);
-        void setFrameMeetingRail(FrameData frameData);
+        void setFrameData(DualHorizontalFramePosition position, const FrameData & frameData);
+        void setFrameData(const DualHorizontalFrameMap & frames);
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 
@@ -141,6 +168,18 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////
     /// DualVisionVertical
     ////////////////////////////////////////////////
+
+    enum class DualVerticalFramePosition {
+        Top,
+        Bottom,
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        MeetingRail
+    };
+
+    using DualVerticalFrameMap = std::map<DualVerticalFramePosition, FrameData>;
 
     //! Concrete implementation of dual vision vertical slider
     //! Vision1 is the vision on the top and Vision2 is the vision on the bottom.
@@ -163,13 +202,8 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double shgcCOGTop() const;
         [[nodiscard]] double shgcCOGBottom() const;
 
-        void setFrameTop(FrameData frameData);
-        void setFrameBottom(FrameData frameData);
-        void setFrameTopLeft(FrameData frameData);
-        void setFrameTopRight(FrameData frameData);
-        void setFrameBottomLeft(FrameData frameData);
-        void setFrameBottomRight(FrameData frameData);
-        void setFrameMeetingRail(FrameData frameData);
+        void setFrameData(DualVerticalFramePosition position, const FrameData & frameData);
+        void setFrameData(const DualVerticalFrameMap & frames);
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
 

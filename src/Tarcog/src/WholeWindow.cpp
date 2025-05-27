@@ -1,6 +1,9 @@
 #include "WholeWindow.hpp"
 
 #include <utility>
+#include <ranges>
+#include <algorithm>
+#include <stdexcept>
 
 namespace Tarcog::ISO15099
 {
@@ -70,24 +73,24 @@ namespace Tarcog::ISO15099
         return vision.visionPercentage();
     }
 
-    void WindowSingleVision::setFrameTop(FrameData frameData)
+    void WindowSingleVision::setFrameData(SingleVisionFramePosition position,
+                                          const FrameData & frameData)
     {
-        vision.setFrameData(FramePosition::Top, frameData);
+        static const std::map<SingleVisionFramePosition, FramePosition> frameMap = {
+          {SingleVisionFramePosition::Top, FramePosition::Top},
+          {SingleVisionFramePosition::Bottom, FramePosition::Bottom},
+          {SingleVisionFramePosition::Left, FramePosition::Left},
+          {SingleVisionFramePosition::Right, FramePosition::Right}};
+
+        vision.setFrameData(frameMap.at(position), frameData);
     }
 
-    void WindowSingleVision::setFrameBottom(FrameData frameData)
+    void WindowSingleVision::setFrameData(const SingleVisionFrameMap & frames)
     {
-        vision.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void WindowSingleVision::setFrameLeft(FrameData frameData)
-    {
-        vision.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void WindowSingleVision::setFrameRight(FrameData frameData)
-    {
-        vision.setFrameData(FramePosition::Right, frameData);
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void WindowSingleVision::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)
@@ -98,6 +101,21 @@ namespace Tarcog::ISO15099
     IGUDimensions WindowSingleVision::getIGUDimensions() const
     {
         return {vision.getIGUWidth(), vision.getIGUHeight()};
+    }
+
+    void WindowSingleVision::setUValueIGUTolerance(double uValue)
+    {
+        vision.setUValueIGUTolerance(uValue);
+    }
+
+    void WindowSingleVision::setThicknessIGUTolerance(double thickness)
+    {
+        vision.setThicknessIGUTolerance(thickness);
+    }
+
+    IGUMismatch WindowSingleVision::iguMissmatch() const
+    {
+        return vision.iguMissmatch();
     }
 
     ////////////////////////////////////////////////
@@ -176,6 +194,29 @@ namespace Tarcog::ISO15099
     IGUDimensions WindowDualVision::getIGUDimensions() const
     {
         return {m_Vision1.getIGUWidth(), m_Vision1.getIGUHeight()};
+    }
+
+    void WindowDualVision::setUValueIGUTolerance(double uValue)
+    {
+        m_Vision1.setUValueIGUTolerance(uValue);
+        m_Vision2.setUValueIGUTolerance(uValue);
+    }
+
+    void WindowDualVision::setThicknessIGUTolerance(double thickness)
+    {
+        m_Vision1.setThicknessIGUTolerance(thickness);
+        m_Vision2.setThicknessIGUTolerance(thickness);
+    }
+
+    IGUMismatch WindowDualVision::iguMissmatch() const
+    {
+        const auto mismatch1 = m_Vision1.iguMissmatch();
+        const auto mismatch2 = m_Vision2.iguMissmatch();
+
+        return IGUMismatch{
+            .uCenterMissmatch    = mismatch1.uCenterMissmatch || mismatch2.uCenterMissmatch,
+            .thicknessMissmatch  = mismatch1.thicknessMissmatch || mismatch2.thicknessMissmatch
+        };
     }
 
     double WindowDualVision::visionPercentage() const
@@ -263,41 +304,46 @@ namespace Tarcog::ISO15099
         return shgcCOG2();
     }
 
-    void DualVisionHorizontal::setFrameTopLeft(FrameData frameData)
+    void DualVisionHorizontal::setFrameData(DualHorizontalFramePosition position,
+                                            const FrameData & frameData)
     {
-        m_Vision1.setFrameData(FramePosition::Top, frameData);
+        switch(position)
+        {
+            case DualHorizontalFramePosition::TopLeft:
+                m_Vision1.setFrameData(FramePosition::Top, frameData);
+                break;
+            case DualHorizontalFramePosition::TopRight:
+                m_Vision2.setFrameData(FramePosition::Top, frameData);
+                break;
+            case DualHorizontalFramePosition::BottomLeft:
+                m_Vision1.setFrameData(FramePosition::Bottom, frameData);
+                break;
+            case DualHorizontalFramePosition::BottomRight:
+                m_Vision2.setFrameData(FramePosition::Bottom, frameData);
+                break;
+            case DualHorizontalFramePosition::Left:
+                m_Vision1.setFrameData(FramePosition::Left, frameData);
+                break;
+            case DualHorizontalFramePosition::Right:
+                m_Vision2.setFrameData(FramePosition::Right, frameData);
+                break;
+            case DualHorizontalFramePosition::MeetingRail: {
+                FrameData split = splitFrameWidth(frameData);
+                m_Vision1.setFrameData(FramePosition::Right, split);
+                m_Vision2.setFrameData(FramePosition::Left, split);
+                break;
+            }
+            default:
+                throw std::invalid_argument("Invalid frame position");
+        }
     }
 
-    void DualVisionHorizontal::setFrameTopRight(FrameData frameData)
+    void DualVisionHorizontal::setFrameData(const DualHorizontalFrameMap & frames)
     {
-        m_Vision2.setFrameData(FramePosition::Top, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameBottomLeft(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameBottomRight(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameLeft(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameRight(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Right, frameData);
-    }
-
-    void DualVisionHorizontal::setFrameMeetingRail(FrameData frameData)
-    {
-        frameData = splitFrameWidth(frameData);
-        m_Vision1.setFrameData(FramePosition::Right, frameData);
-        m_Vision2.setFrameData(FramePosition::Left, frameData);
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void
@@ -375,11 +421,53 @@ namespace Tarcog::ISO15099
         return shgcCOG2();
     }
 
-    void DualVisionVertical::setFrameMeetingRail(FrameData frameData)
+    void DualVisionVertical::setFrameData(DualVerticalFramePosition position,
+                                          const FrameData & frameData)
     {
-        frameData = splitFrameWidth(frameData);
-        m_Vision1.setFrameData(FramePosition::Bottom, frameData);
-        m_Vision2.setFrameData(FramePosition::Top, frameData);
+        switch(position)
+        {
+            case DualVerticalFramePosition::Top:
+                m_Vision1.setFrameData(FramePosition::Top, frameData);
+                break;
+
+            case DualVerticalFramePosition::Bottom:
+                m_Vision2.setFrameData(FramePosition::Bottom, frameData);
+                break;
+
+            case DualVerticalFramePosition::TopLeft:
+                m_Vision1.setFrameData(FramePosition::Left, frameData);
+                break;
+
+            case DualVerticalFramePosition::TopRight:
+                m_Vision1.setFrameData(FramePosition::Right, frameData);
+                break;
+
+            case DualVerticalFramePosition::BottomLeft:
+                m_Vision2.setFrameData(FramePosition::Left, frameData);
+                break;
+
+            case DualVerticalFramePosition::BottomRight:
+                m_Vision2.setFrameData(FramePosition::Right, frameData);
+                break;
+
+            case DualVerticalFramePosition::MeetingRail: {
+                FrameData split = splitFrameWidth(frameData);
+                m_Vision1.setFrameData(FramePosition::Bottom, split);
+                m_Vision2.setFrameData(FramePosition::Top, split);
+                break;
+            }
+
+            default:
+                throw std::invalid_argument("Invalid frame position");
+        }
+    }
+
+    void DualVisionVertical::setFrameData(const DualVerticalFrameMap & frames)
+    {
+        std::ranges::for_each(frames, [this](const auto & pair) {
+            auto [position, frameData] = pair;
+            setFrameData(position, frameData);
+        });
     }
 
     void DualVisionVertical::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)
@@ -400,35 +488,5 @@ namespace Tarcog::ISO15099
                                                      size_t nVertical)
     {
         m_Vision2.setDividers(frameData, nHorizontal, nVertical);
-    }
-
-    void DualVisionVertical::setFrameBottomRight(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Right, frameData);
-    }
-
-    void DualVisionVertical::setFrameBottomLeft(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void DualVisionVertical::setFrameTopRight(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Right, frameData);
-    }
-
-    void DualVisionVertical::setFrameTopLeft(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Left, frameData);
-    }
-
-    void DualVisionVertical::setFrameBottom(FrameData frameData)
-    {
-        m_Vision2.setFrameData(FramePosition::Bottom, frameData);
-    }
-
-    void DualVisionVertical::setFrameTop(FrameData frameData)
-    {
-        m_Vision1.setFrameData(FramePosition::Top, frameData);
     }
 }   // namespace Tarcog::ISO15099

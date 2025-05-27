@@ -175,6 +175,16 @@ namespace Tarcog::ISO15099
         m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
     }
 
+    void WindowVision::setUValueIGUTolerance(double uValue)
+    {
+        m_IGUErrorTolerance.UCenter = uValue;
+    }
+
+    void WindowVision::setThicknessIGUTolerance(double thickness)
+    {
+        m_IGUErrorTolerance.Thickness = thickness;
+    }
+
     double WindowVision::getIGUWidth() const
     {
         return m_Width - m_Frame.at(FramePosition::Left).frameData.ProjectedFrameDimension
@@ -187,6 +197,69 @@ namespace Tarcog::ISO15099
                - m_Frame.at(FramePosition::Bottom).frameData.ProjectedFrameDimension;
     }
 
+    namespace
+    {
+
+        IGUMismatch
+          checkFrameMismatch(const FrameData & frame,
+                             IIGUSystem & igu,   // Cannot be const because of lazy evaluation
+                             const IGUErrorTolerance & tol)
+        {
+            IGUMismatch mismatch;
+
+            if(!frame.iguData)
+                return mismatch;
+
+            const auto & spec = *frame.iguData;
+
+            if(std::abs(igu.getUValue() - spec.UValue) > tol.UCenter)
+            {
+                mismatch.uCenterMissmatch = true;
+            }
+
+            if(std::abs(igu.thickness() - spec.Thickness) > tol.Thickness)
+            {
+                mismatch.thicknessMissmatch = true;
+            }
+
+            return mismatch;
+        }
+
+    }   // namespace
+
+
+    IGUMismatch WindowVision::iguMissmatch() const
+    {
+        IGUMismatch result;
+
+        if(!m_IGUSystem)
+        {
+            return result;   // No IGU assigned ⇒ nothing to check
+        }
+
+        // Check all frame positions
+        for(const auto & frame : m_Frame | std::views::values)
+        {
+            const auto mismatch =
+              checkFrameMismatch(frame.frameData, *m_IGUSystem, m_IGUErrorTolerance);
+            result.uCenterMissmatch |= mismatch.uCenterMissmatch;
+            result.thicknessMissmatch |= mismatch.thicknessMissmatch;
+
+            if(result.any())
+                break;   // early out if both already true
+        }
+
+        // Check divider if set
+        if(m_Divider.has_value())
+        {
+            const auto mismatch = checkFrameMismatch(*m_Divider, *m_IGUSystem, m_IGUErrorTolerance);
+            result.uCenterMissmatch |= mismatch.uCenterMissmatch;
+            result.thicknessMissmatch |= mismatch.thicknessMissmatch;
+        }
+
+        return result;
+    }
+
     void WindowVision::connectFrames()
     {
         m_Frame.at(FramePosition::Top).frame[FrameSide::Left] = m_Frame.at(FramePosition::Right);
@@ -194,23 +267,19 @@ namespace Tarcog::ISO15099
 
         m_Frame.at(FramePosition::Bottom).frame[FrameSide::Right] =
           m_Frame.at(FramePosition::Right);
-        m_Frame.at(FramePosition::Bottom).frame[FrameSide::Left] =
-          m_Frame.at(FramePosition::Left);
+        m_Frame.at(FramePosition::Bottom).frame[FrameSide::Left] = m_Frame.at(FramePosition::Left);
 
         m_Frame.at(FramePosition::Left).frame[FrameSide::Left] = m_Frame.at(FramePosition::Top);
-        m_Frame.at(FramePosition::Left).frame[FrameSide::Right] =
-          m_Frame.at(FramePosition::Bottom);
+        m_Frame.at(FramePosition::Left).frame[FrameSide::Right] = m_Frame.at(FramePosition::Bottom);
 
-        m_Frame.at(FramePosition::Right).frame[FrameSide::Left] =
-          m_Frame.at(FramePosition::Bottom);
+        m_Frame.at(FramePosition::Right).frame[FrameSide::Left] = m_Frame.at(FramePosition::Bottom);
         m_Frame.at(FramePosition::Right).frame[FrameSide::Right] = m_Frame.at(FramePosition::Top);
     }
 
 
     void WindowVision::resizeIGU()
     {
-        const auto width{m_Width
-                         - m_Frame.at(FramePosition::Left).frameData.ProjectedFrameDimension
+        const auto width{m_Width - m_Frame.at(FramePosition::Left).frameData.ProjectedFrameDimension
                          - m_Frame.at(FramePosition::Right).frameData.ProjectedFrameDimension};
         const auto height{m_Height
                           - m_Frame.at(FramePosition::Top).frameData.ProjectedFrameDimension
@@ -251,10 +320,10 @@ namespace Tarcog::ISO15099
 
         if(m_Divider.has_value())
         {
-            const auto eogWidth{
-              m_Width - m_Frame.at(FramePosition::Left).frameData.ProjectedFrameDimension
-              - m_Frame.at(FramePosition::Right).frameData.ProjectedFrameDimension
-              - 2 * ConstantsData::EOGHeight};
+            const auto eogWidth{m_Width
+                                - m_Frame.at(FramePosition::Left).frameData.ProjectedFrameDimension
+                                - m_Frame.at(FramePosition::Right).frameData.ProjectedFrameDimension
+                                - 2 * ConstantsData::EOGHeight};
             const auto eogHeight{
               m_Height - m_Frame.at(FramePosition::Top).frameData.ProjectedFrameDimension
               - m_Frame.at(FramePosition::Bottom).frameData.ProjectedFrameDimension

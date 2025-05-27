@@ -60,10 +60,13 @@ TEST_F(TestCMASingleVisionWindow, CMASingleVision)
 
     auto window{CMA::CMAWindowSingleVision(width, height)};
 
-    window.setFrameTop(cmaFrameHead);
-    window.setFrameBottom(cmaFrameSill);
-    window.setFrameLeft(cmaFrameJamb);
-    window.setFrameRight(cmaFrameJamb);
+    using Tarcog::ISO15099::SingleVisionFramePosition;
+
+    window.setFrameData({{SingleVisionFramePosition::Top, cmaFrameHead},
+                         {SingleVisionFramePosition::Bottom, cmaFrameSill},
+                         {SingleVisionFramePosition::Left, cmaFrameJamb},
+                         {SingleVisionFramePosition::Right, cmaFrameJamb}});
+
 
     const auto UvalueCOG{1.258};
     const auto SHGCCOG{0.341};

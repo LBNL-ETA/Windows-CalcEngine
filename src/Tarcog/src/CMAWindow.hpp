@@ -56,6 +56,8 @@ namespace CMA
         BestWorst<double> m_Spacer;
     };
 
+    using SingleVisionFrameMap = std::map<Tarcog::ISO15099::SingleVisionFramePosition, CMAFrame>;
+
     //////////////////////////////////////////
     //  CMAWindowSingleVision
     //////////////////////////////////////////
@@ -70,10 +72,10 @@ namespace CMA
           CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
           CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
 
-        void setFrameTop(CMAFrame cmaFrameData);
-        void setFrameBottom(CMAFrame cmaFrameData);
-        void setFrameLeft(CMAFrame cmaFrameData);
-        void setFrameRight(CMAFrame cmaFrameData);
+        void setFrameData(Tarcog::ISO15099::SingleVisionFramePosition position,
+                          CMAFrame & cmaFrameData);
+        void setFrameData(const SingleVisionFrameMap & frames);
+
         void setDividers(CMAFrame frameData, size_t nHorizontal, size_t nVertical);
 
     private:
@@ -93,6 +95,9 @@ namespace CMA
         std::map<Option, std::map<Option, Tarcog::ISO15099::WindowSingleVision>> m_Window;
     };
 
+    using DualHorizontalFrameMap =
+      std::map<Tarcog::ISO15099::DualHorizontalFramePosition, CMAFrame>;
+
     //////////////////////////////////////////
     //  CMAWindowDualVisionHorizontal
     //////////////////////////////////////////
@@ -108,13 +113,9 @@ namespace CMA
           CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
           CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
 
-        void setFrameTopLeft(CMAFrame cmaFrameData);
-        void setFrameTopRight(CMAFrame cmaFrameData);
-        void setFrameBottomLeft(CMAFrame cmaFrameData);
-        void setFrameBottomRight(CMAFrame cmaFrameData);
-        void setFrameLeft(CMAFrame cmaFrameData);
-        void setFrameRight(CMAFrame cmaFrameData);
-        void setFrameMeetingRail(CMAFrame cmaFrameData);
+        void setFrameData(Tarcog::ISO15099::DualHorizontalFramePosition position,
+                          CMAFrame & cmaFrameData);
+        void setFrameData(const DualHorizontalFrameMap & frames);
 
         void setDividers(CMAFrame frameData, size_t nHorizontal, size_t nVertical);
 
@@ -134,6 +135,9 @@ namespace CMA
         std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionHorizontal>> m_Window;
     };
 
+    using DualVerticalFrameMap =
+      std::map<Tarcog::ISO15099::DualVerticalFramePosition, CMAFrame>;
+
     //////////////////////////////////////////
     //  CMAWindowDualVisionVertical
     //////////////////////////////////////////
@@ -149,13 +153,9 @@ namespace CMA
           CMABestWorstUFactors bestUFactor = CreateBestWorstUFactorOption(Option::Best),
           CMABestWorstUFactors worstUFactor = CreateBestWorstUFactorOption(Option::Worst));
 
-        void setFrameTop(CMAFrame cmaFrameData);
-        void setFrameBottom(CMAFrame cmaFrameData);
-        void setFrameTopLeft(CMAFrame cmaFrameData);
-        void setFrameTopRight(CMAFrame cmaFrameData);
-        void setFrameBottomLeft(CMAFrame cmaFrameData);
-        void setFrameBottomRight(CMAFrame cmaFrameData);
-        void setFrameMeetingRail(CMAFrame cmaFrameData);
+        void setFrameData(Tarcog::ISO15099::DualVerticalFramePosition position,
+                          CMAFrame & cmaFrameData);
+        void setFrameData(const DualVerticalFrameMap & frames);
 
         void setDividers(CMAFrame cmaFrameData, size_t nHorizontal, size_t nVertical);
 

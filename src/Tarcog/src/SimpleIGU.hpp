@@ -11,7 +11,7 @@ namespace Tarcog
         {
         public:
             virtual ~SimpleIGU() = default;
-            SimpleIGU(double uValue, double shgc, double h);
+            SimpleIGU(double uValue, double shgc, double h, double thickness = 0);
 
             double getUValue() override;
             double getSHGC(double t_TotSol) override;
@@ -23,10 +23,13 @@ namespace Tarcog
             void setWidthAndHeight(double width, double height) override;
             void setInteriorAndExteriorSurfacesHeight(double height) override;
 
+            double thickness() const override;
+
         private:
             double m_UValue;
             double m_SHGC;
             double m_H;
+            double m_Thickness{0};
         };
     }   // namespace ISO15099
 }   // namespace Tarcog

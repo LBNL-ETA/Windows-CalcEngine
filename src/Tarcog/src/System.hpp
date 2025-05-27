@@ -48,6 +48,7 @@ namespace Tarcog
               getGapEffectiveLayerConductivities(const System t_System);
             [[nodiscard]] double getEffectiveSystemConductivity(const System t_System);
             [[nodiscard]] double thickness(const System t_System) const;
+            [[nodiscard]] double thickness() const override;
 
             [[nodiscard]] double getHeatFlow(System t_System, Environment t_Environment);
             [[nodiscard]] double getUValue() override;

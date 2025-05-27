@@ -1,18 +1,31 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 
 namespace Tarcog::ISO15099
 {
-    struct FrameData
+    //! Data structure for Insulating Glass Unit (IGU) properties.
+    //! Contains thermal and physical characteristics of the glazing unit.
+    struct IGUData
     {
-        double UValue{0};
-        double EdgeUValue{0};
-        double ProjectedFrameDimension{0};
-        double WettedLength{0};
-        double Absorptance{0.3};
+        double UValue{0};     //! Thermal transmittance (U-value) of the IGU [W/(m²·K)]
+        double Thickness{0};  //! Total thickness of the IGU [m]
     };
 
+    //! Data structure for window frame properties.
+    //! Contains thermal, dimensional, and optical characteristics of a window frame.
+    struct FrameData
+    {
+        double UValue{0};                   //! Thermal transmittance of the frame [W/(m²·K)]
+        double EdgeUValue{0};               //! Thermal transmittance at the edge of glass [W/(m²·K)]
+        double ProjectedFrameDimension{0};  //! Projected width/dimension of the frame [m]
+        double WettedLength{0};             //! Length of frame in contact with other materials [m]
+        double Absorptance{0.3};            //! Solar absorptance of the frame (0-1)
+        std::optional<IGUData> iguData{};     //! Optional data for the IGU associated with this frame
+    };
+
+    //! Each frame can have frame attached to either left or right side of it.
     enum class FrameSide
     {
         Left,
@@ -37,7 +50,7 @@ namespace Tarcog::ISO15099
         //! Keeping frame information on both sides of the frame. This is needed for geometry
         //! calculations. Optional must be used or infinite loop will be created withing Frame
         //! constructor (Frame calling itself over and over again)
-        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame;
+        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame{};
 
         double dividerArea{0};
         size_t numberOfDividers{0u};
