@@ -127,7 +127,7 @@ namespace Tarcog::ISO15099
         }
         else
         {
-            std::runtime_error("Window tilt angle is out of range.");
+            throw std::runtime_error("Window tilt angle is out of range.");
         }
 
         return nusseltNumber->calculate(tiltRadians, t_Ra, t_Asp);
