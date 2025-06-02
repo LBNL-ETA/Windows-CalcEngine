@@ -57,28 +57,27 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
 {
     SCOPED_TRACE("Begin Test: Single vision window with predefined COG values.");
 
-    const double uValue{5.68};
-    const double edgeUValue{5.575};
-    const double projectedFrameDimension{0.05715};
-    const double wettedLength{0.05715};
-    const double absorptance{0.9};
+    constexpr double uValue{5.68};
+    constexpr double edgeUValue{5.575};
+    constexpr double projectedFrameDimension{0.05715};
+    constexpr double wettedLength{0.05715};
+    constexpr double absorptance{0.9};
 
-    const Tarcog::ISO15099::FrameData frameData{
-        .Class = std::nullopt,
-        .UValue = uValue,
-        .EdgeUValue = edgeUValue,
-        .ProjectedFrameDimension = projectedFrameDimension,
-        .WettedLength = wettedLength,
-        .Absorptance = absorptance
-    };
+    constexpr Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
+                                                    .UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
-    const auto width{2.0};
-    const auto height{2.0};
-    const auto iguUValue{5.575};
-    const auto shgc{0.86};
-    const auto tVis{0.899};
-    const auto tSol{0.8338};
-    const auto hout{20.42635};
+    constexpr auto width{2.0};
+    constexpr auto height{2.0};
+    constexpr auto iguUValue{5.575};
+    constexpr auto shgc{0.86};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+    constexpr auto hout{20.42635};
 
     auto window = Tarcog::ISO15099::WindowSingleVision(
       width,
@@ -107,25 +106,62 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
 {
     SCOPED_TRACE("Begin Test: Single vision window with calculated COG values.");
 
-    const double uValue{5.68};
-    const double edgeUValue{5.575};
-    const double projectedFrameDimension{0.05715};
-    const double wettedLength{0.05715};
-    const double absorptance{0.9};
+    constexpr double uValue{5.68};
+    constexpr double edgeUValue{5.575};
+    constexpr double projectedFrameDimension{0.05715};
+    constexpr double wettedLength{0.05715};
+    constexpr double absorptance{0.9};
 
-    const Tarcog::ISO15099::FrameData frameData{
-        .Class = std::nullopt,
-        .UValue = uValue,
-        .EdgeUValue = edgeUValue,
-        .ProjectedFrameDimension = projectedFrameDimension,
-        .WettedLength = wettedLength,
-        .Absorptance = absorptance
-    };
+    constexpr Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
+                                                    .UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
-    const auto width{2.0};
-    const auto height{2.0};
-    const auto tVis{0.899};
-    const auto tSol{0.8338};
+    constexpr auto width{2.0};
+    constexpr auto height{2.0};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getCOG());
+
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
+
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.799181, vt, 1e-6);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(5.255746, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.791895, windowSHGC, 1e-6);
+}
+
+TEST_F(TestSingleVisionWindow, GenericFrames)
+{
+    SCOPED_TRACE("Begin Test: Single vision window with calculated COG values.");
+
+    constexpr double projectedFrameDimension{0.05715};
+
+    //! This is class 1 generic frame (as defined in WINDOW database)
+    constexpr Tarcog::ISO15099::FrameData frameData{.Class = {{2.33, -0.01, 0.138, 0, 0}},
+                                                    .UValue = 5.68,
+                                                    .EdgeUValue = 0.0,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = projectedFrameDimension,
+                                                    .Absorptance = 0.9};
+
+    constexpr auto width{2.0};
+    constexpr auto height{2.0};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
 
     auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getCOG());
 
@@ -151,8 +187,8 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
 
     // Frame expected IGU values
     const double designUValue{5.575};
-    const double designThickness{0.006};  // deliberately smaller than real thickness
-    const double tightTolerance{0.001};   // very tight to guarantee mismatch
+    const double designThickness{0.006};   // deliberately smaller than real thickness
+    const double tightTolerance{0.001};    // very tight to guarantee mismatch
 
     // Frame physical parameters
     const double frameUValue{5.68};
@@ -162,14 +198,12 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     const double absorptance{0.9};
 
     // Add spec to frame data
-    Tarcog::ISO15099::FrameData frameData{
-        .Class = std::nullopt,
-        .UValue = frameUValue,
-        .EdgeUValue = edgeUValue,
-        .ProjectedFrameDimension = projectedFrameDimension,
-        .WettedLength = wettedLength,
-        .Absorptance = absorptance
-    };
+    Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
+                                          .UValue = frameUValue,
+                                          .EdgeUValue = edgeUValue,
+                                          .ProjectedFrameDimension = projectedFrameDimension,
+                                          .WettedLength = wettedLength,
+                                          .Absorptance = absorptance};
     frameData.iguData = Tarcog::ISO15099::IGUData{designUValue, designThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness

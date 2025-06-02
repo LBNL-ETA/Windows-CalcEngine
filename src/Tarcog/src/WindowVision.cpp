@@ -28,6 +28,51 @@ namespace Tarcog::ISO15099
         m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
     }
 
+    namespace Helper {
+
+        template<typename FrameIter>
+        double frameWeightedUValue(FrameIter begin, FrameIter end, double (*projectedArea)(const typename FrameIter::value_type&))
+        {
+            double sum = 0.0;
+            for(auto it = begin; it != end; ++it)
+                sum += projectedArea(*it) * it->second.frameData.UValue;
+            return sum;
+        }
+
+        template<typename FrameIter>
+        double edgeOfGlassWeightedUValue(
+            FrameIter begin, FrameIter end,
+            double uCenter,
+            double (*getGap)(const typename FrameIter::value_type&),
+            double (*edgeOfGlassArea)(const typename FrameIter::value_type&))
+        {
+            double sum = 0.0;
+            for(auto it = begin; it != end; ++it) {
+                const auto& frame = it->second;
+                double edgeU = Tarcog::ISO15099::frameEdgeUValue(frame.frameData, uCenter, getGap(*it));
+                sum += edgeOfGlassArea(*it) * edgeU;
+            }
+            return sum;
+        }
+
+        inline double cogWeightedUValue(double uCenter, double totalArea, double frameProjArea, double edgeArea, double dividerArea, double dividerEdgeArea)
+        {
+            return uCenter * (totalArea - frameProjArea - edgeArea - dividerArea - dividerEdgeArea);
+        }
+
+        inline double dividerWeightedUValue(double dividerArea, double dividerUValue)
+        {
+            return dividerArea * dividerUValue;
+        }
+
+        inline double dividerEdgeWeightedUValue(double dividerEdgeArea, double dividerEdgeUValue)
+        {
+            return dividerEdgeArea * dividerEdgeUValue;
+        }
+
+    } // namespace Helper
+
+
     double WindowVision::uValue() const
     {
         auto frameWeightedUValue{0.0};
