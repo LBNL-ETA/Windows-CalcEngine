@@ -10,7 +10,7 @@ protected:
     void SetUp() override
     {}
 
-    static std::shared_ptr<Tarcog::ISO15099::CSystem> getCOG()
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerCOGSHGC()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -40,6 +40,47 @@ protected:
         auto aSolidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer->setSolarHeatGain(0.0914, solarRadiation);
+
+        auto windowWidth = 2.0;
+        auto windowHeight = 2.0;
+        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
+        aIGU.addLayer(aSolidLayer);
+
+        /////////////////////////////////////////////////////////
+        // System
+        /////////////////////////////////////////////////////////
+        return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+    }
+
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerCOGUValue()
+    {
+        /////////////////////////////////////////////////////////
+        /// Outdoor
+        /////////////////////////////////////////////////////////
+        constexpr auto airTemperature = 255.15;   // Kelvins
+        constexpr auto airSpeed = 5.5;           // meters per second
+        constexpr auto tSky = 255.15;             // Kelvins
+        constexpr auto solarRadiation = 0.0;
+
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
+
+        /////////////////////////////////////////////////////////
+        /// Indoor
+        /////////////////////////////////////////////////////////
+
+        auto roomTemperature = 294.15;
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
+
+        /////////////////////////////////////////////////////////
+        // IGU
+        /////////////////////////////////////////////////////////
+        auto solidLayerThickness = 0.003048;   // [m]
+        auto solidLayerConductance = 1.0;
+
+        auto aSolidLayer =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
         auto windowWidth = 2.0;
         auto windowHeight = 2.0;
@@ -102,7 +143,7 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
     EXPECT_NEAR(0.792299, windowSHGC, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, CalculatedCOG)
+TEST_F(TestSingleVisionWindow, CalculatedSingleLayerCOG)
 {
     SCOPED_TRACE("Begin Test: Single vision window with calculated COG values.");
 
@@ -125,7 +166,7 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
     constexpr auto tVis{0.899};
     constexpr auto tSol{0.8338};
 
-    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getCOG());
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerCOGSHGC());
 
     window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
                          {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
@@ -143,7 +184,7 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
     EXPECT_NEAR(0.791895, windowSHGC, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, GenericFrames)
+TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerUValue)
 {
     SCOPED_TRACE("Begin Test: Single vision window with calculated COG values.");
 
@@ -158,12 +199,12 @@ TEST_F(TestSingleVisionWindow, GenericFrames)
                                                     .WettedLength = projectedFrameDimension,
                                                     .Absorptance = 0.9};
 
-    constexpr auto width{2.0};
-    constexpr auto height{2.0};
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
     constexpr auto tVis{0.899};
     constexpr auto tSol{0.8338};
 
-    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getCOG());
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerCOGUValue());
 
     window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
                          {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
@@ -172,13 +213,13 @@ TEST_F(TestSingleVisionWindow, GenericFrames)
 
 
     const double vt{window.vt()};
-    EXPECT_NEAR(0.799181, vt, 1e-6);
+    EXPECT_NEAR(0.751391, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(5.255746, uvalue, 1e-6);
+    EXPECT_NEAR(5.704964, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.791895, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.028638, windowSHGC, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
@@ -186,16 +227,16 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     SCOPED_TRACE("Begin Test: Mismatch detection for single vision window.");
 
     // Frame expected IGU values
-    const double designUValue{5.575};
-    const double designThickness{0.006};   // deliberately smaller than real thickness
-    const double tightTolerance{0.001};    // very tight to guarantee mismatch
+    constexpr double designUValue{5.575};
+    constexpr double designThickness{0.006};   // deliberately smaller than real thickness
+    constexpr double tightTolerance{0.001};    // very tight to guarantee mismatch
 
     // Frame physical parameters
-    const double frameUValue{5.68};
-    const double edgeUValue{5.575};
-    const double projectedFrameDimension{0.05715};
-    const double wettedLength{0.05715};
-    const double absorptance{0.9};
+    constexpr double frameUValue{5.68};
+    constexpr double edgeUValue{5.575};
+    constexpr double projectedFrameDimension{0.05715};
+    constexpr double wettedLength{0.05715};
+    constexpr double absorptance{0.9};
 
     // Add spec to frame data
     Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
@@ -207,12 +248,12 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     frameData.iguData = Tarcog::ISO15099::IGUData{designUValue, designThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness
-    const auto width{2.0};
-    const auto height{2.0};
-    const auto tVis{0.899};
-    const auto tSol{0.8338};
+    constexpr auto width{2.0};
+    constexpr auto height{2.0};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
 
-    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getCOG());
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerCOGSHGC());
 
     // Set tight tolerance to force mismatch
     window.setUValueIGUTolerance(tightTolerance);

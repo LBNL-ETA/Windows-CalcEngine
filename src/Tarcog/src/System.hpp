@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "IGUConfigurations.hpp"
+#include "IGUGapLayer.hpp"
 
 namespace Tarcog
 {
@@ -42,6 +43,9 @@ namespace Tarcog
             [[nodiscard]] std::vector<std::shared_ptr<CIGUSolidLayer>>
               getSolidLayers(System t_System) const;
 
+            [[nodiscard]] std::vector<std::shared_ptr<CIGUGapLayer>>
+              getGapLayers(System t_System) const;
+
             [[nodiscard]] std::vector<double>
               getSolidEffectiveLayerConductivities(const System t_System);
             [[nodiscard]] std::vector<double>
@@ -49,6 +53,8 @@ namespace Tarcog
             [[nodiscard]] double getEffectiveSystemConductivity(const System t_System);
             [[nodiscard]] double thickness(const System t_System) const;
             [[nodiscard]] double thickness() const override;
+            [[nodiscard]] std::vector<double> solidLayerThicknesses() const;
+            [[nodiscard]] std::vector<double> gapLayerThicknesses() const override;
 
             [[nodiscard]] double getHeatFlow(System t_System, Environment t_Environment);
             [[nodiscard]] double getUValue() override;

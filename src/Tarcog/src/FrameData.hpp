@@ -28,7 +28,7 @@ namespace Tarcog::ISO15099
         double ProjectedFrameDimension{0};  //! Projected width/dimension of the frame [m]
         double WettedLength{0};             //! Length of frame in contact with other materials [m]
         double Absorptance{0.3};            //! Solar absorptance of the frame (0-1)
-        std::optional<IGUData> iguData{};     //! Optional data for the IGU associated with this frame
+        std::optional<IGUData> iguData{};   //! Optional data for the IGU associated with this frame
     };
 
     //! Calculates frame edge uValue based on FrameData type

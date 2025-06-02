@@ -3,6 +3,7 @@
 
 #include "WindowVision.hpp"
 #include "EnvironmentConfigurations.hpp"
+#include "IGU.hpp"
 
 namespace Tarcog::ISO15099
 {
@@ -28,10 +29,13 @@ namespace Tarcog::ISO15099
         m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
     }
 
-    namespace Helper {
+    namespace Helper
+    {
 
         template<typename FrameIter>
-        double frameWeightedUValue(FrameIter begin, FrameIter end, double (*projectedArea)(const typename FrameIter::value_type&))
+        double frameWeightedUValue(FrameIter begin,
+                                   FrameIter end,
+                                   double (*projectedArea)(const typename FrameIter::value_type &))
         {
             double sum = 0.0;
             for(auto it = begin; it != end; ++it)
@@ -41,21 +45,29 @@ namespace Tarcog::ISO15099
 
         template<typename FrameIter>
         double edgeOfGlassWeightedUValue(
-            FrameIter begin, FrameIter end,
-            double uCenter,
-            double (*getGap)(const typename FrameIter::value_type&),
-            double (*edgeOfGlassArea)(const typename FrameIter::value_type&))
+          FrameIter begin,
+          FrameIter end,
+          double uCenter,
+          double (*getGap)(const typename FrameIter::value_type &),
+          double (*edgeOfGlassArea)(const typename FrameIter::value_type &))
         {
             double sum = 0.0;
-            for(auto it = begin; it != end; ++it) {
-                const auto& frame = it->second;
-                double edgeU = Tarcog::ISO15099::frameEdgeUValue(frame.frameData, uCenter, getGap(*it));
+            for(auto it = begin; it != end; ++it)
+            {
+                const auto & frame = it->second;
+                double edgeU =
+                  Tarcog::ISO15099::frameEdgeUValue(frame.frameData, uCenter, getGap(*it));
                 sum += edgeOfGlassArea(*it) * edgeU;
             }
             return sum;
         }
 
-        inline double cogWeightedUValue(double uCenter, double totalArea, double frameProjArea, double edgeArea, double dividerArea, double dividerEdgeArea)
+        inline double cogWeightedUValue(double uCenter,
+                                        double totalArea,
+                                        double frameProjArea,
+                                        double edgeArea,
+                                        double dividerArea,
+                                        double dividerEdgeArea)
         {
             return uCenter * (totalArea - frameProjArea - edgeArea - dividerArea - dividerEdgeArea);
         }
@@ -70,7 +82,24 @@ namespace Tarcog::ISO15099
             return dividerEdgeArea * dividerEdgeUValue;
         }
 
-    } // namespace Helper
+        inline double totalGapThickness(const IIGUSystem & igu)
+        {
+            const auto gapThicknesses{igu.gapLayerThicknesses()};
+            return std::accumulate(gapThicknesses.begin(), gapThicknesses.end(), 0.0);
+        }
+
+        inline double frameEdgeUValue(IIGUSystem & igu, const FrameData & frameData)
+        {
+            if(!frameData.Class)
+            {
+                return frameData.EdgeUValue;
+            }
+
+            return ISO15099::frameEdgeUValue(
+              frameData.Class.value(), igu.getUValue(), totalGapThickness(igu));
+        }
+
+    }   // namespace Helper
 
 
     double WindowVision::uValue() const
@@ -78,12 +107,11 @@ namespace Tarcog::ISO15099
         auto frameWeightedUValue{0.0};
         auto edgeOfGlassWeightedUValue{0.0};
 
-        for(const auto & [key, frame] : m_Frame)
+        for(const auto & frame : m_Frame | std::views::values)
         {
-            std::ignore = key;
             frameWeightedUValue += projectedArea(frame) * frame.frameData.UValue;
-            edgeOfGlassWeightedUValue +=
-              Tarcog::ISO15099::edgeOfGlassArea(frame) * frame.frameData.EdgeUValue;
+            edgeOfGlassWeightedUValue += Tarcog::ISO15099::edgeOfGlassArea(frame)
+                                         * Helper::frameEdgeUValue(*m_IGUSystem, frame.frameData);
         }
 
         const auto COGWeightedUValue{m_IGUUvalue
@@ -95,7 +123,8 @@ namespace Tarcog::ISO15099
         if(m_Divider.has_value())
         {
             dividerWeightedUValue += dividerArea() * m_Divider->UValue;
-            dividerWeightedEdgeUValue += dividerEdgeArea() * m_Divider->EdgeUValue;
+            dividerWeightedEdgeUValue +=
+              dividerEdgeArea() * Helper::frameEdgeUValue(*m_IGUSystem, *m_Divider);
         }
 
         return (COGWeightedUValue + frameWeightedUValue + edgeOfGlassWeightedUValue
