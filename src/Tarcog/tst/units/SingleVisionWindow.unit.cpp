@@ -63,8 +63,14 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
     const double wettedLength{0.05715};
     const double absorptance{0.9};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    const Tarcog::ISO15099::FrameData frameData{
+        .Class = std::nullopt,
+        .UValue = uValue,
+        .EdgeUValue = edgeUValue,
+        .ProjectedFrameDimension = projectedFrameDimension,
+        .WettedLength = wettedLength,
+        .Absorptance = absorptance
+    };
 
     const auto width{2.0};
     const auto height{2.0};
@@ -107,8 +113,14 @@ TEST_F(TestSingleVisionWindow, CalculatedCOG)
     const double wettedLength{0.05715};
     const double absorptance{0.9};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    const Tarcog::ISO15099::FrameData frameData{
+        .Class = std::nullopt,
+        .UValue = uValue,
+        .EdgeUValue = edgeUValue,
+        .ProjectedFrameDimension = projectedFrameDimension,
+        .WettedLength = wettedLength,
+        .Absorptance = absorptance
+    };
 
     const auto width{2.0};
     const auto height{2.0};
@@ -151,7 +163,13 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
 
     // Add spec to frame data
     Tarcog::ISO15099::FrameData frameData{
-        frameUValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+        .Class = std::nullopt,
+        .UValue = frameUValue,
+        .EdgeUValue = edgeUValue,
+        .ProjectedFrameDimension = projectedFrameDimension,
+        .WettedLength = wettedLength,
+        .Absorptance = absorptance
+    };
     frameData.iguData = Tarcog::ISO15099::IGUData{designUValue, designThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness

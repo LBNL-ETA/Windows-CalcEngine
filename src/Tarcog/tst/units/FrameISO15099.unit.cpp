@@ -19,8 +19,14 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameExterior)
     const double wettedLength{0.3};
     const double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    const Tarcog::ISO15099::FrameData frameData{
+        .Class = std::nullopt,
+        .UValue = uValue,
+        .EdgeUValue = edgeUValue,
+        .ProjectedFrameDimension = projectedFrameDimension,
+        .WettedLength = wettedLength,
+        .Absorptance = absorptance
+    };
 
     const double frameLength{1.0};
     Tarcog::ISO15099::Frame frame{frameLength, Tarcog::ISO15099::FrameType::Exterior, frameData};
@@ -50,8 +56,14 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameInterior)
     const double wettedLength{0.3};
     const double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    const Tarcog::ISO15099::FrameData frameData{
+        .Class = std::nullopt,
+        .UValue = uValue,
+        .EdgeUValue = edgeUValue,
+        .ProjectedFrameDimension = projectedFrameDimension,
+        .WettedLength = wettedLength,
+        .Absorptance = absorptance
+    };
 
     const double frameLength{1.0};
     Tarcog::ISO15099::Frame frame{frameLength, Tarcog::ISO15099::FrameType::Exterior, frameData};
@@ -81,8 +93,14 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     const double wettedLength{0.3};
     const double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    const Tarcog::ISO15099::FrameData frameData{
+        .Class = std::nullopt,
+        .UValue = uValue,
+        .EdgeUValue = edgeUValue,
+        .ProjectedFrameDimension = projectedFrameDimension,
+        .WettedLength = wettedLength,
+        .Absorptance = absorptance
+    };
 
     const double frameLength{1.0};
     Tarcog::ISO15099::Frame frame{frameLength, Tarcog::ISO15099::FrameType::Interior, frameData};

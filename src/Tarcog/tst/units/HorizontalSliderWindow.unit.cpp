@@ -61,8 +61,12 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
     const double wettedLength{0.05633282};
     const double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    const Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
+                                                .UValue = uValue,
+                                                .EdgeUValue = edgeUValue,
+                                                .ProjectedFrameDimension = projectedFrameDimension,
+                                                .WettedLength = wettedLength,
+                                                .Absorptance = absorptance};
 
     const auto width{1.2};
     const auto height{1.5};
@@ -112,8 +116,12 @@ TEST_F(TestHorizontalSliderWindow, CalculatedCOG)
     const double wettedLength{0.05633282};
     const double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    const Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
+                                                .UValue = uValue,
+                                                .EdgeUValue = edgeUValue,
+                                                .ProjectedFrameDimension = projectedFrameDimension,
+                                                .WettedLength = wettedLength,
+                                                .Absorptance = absorptance};
 
     const auto width{1.2};
     const auto height{1.5};

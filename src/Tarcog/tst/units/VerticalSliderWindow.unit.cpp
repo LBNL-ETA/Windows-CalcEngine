@@ -63,8 +63,12 @@ TEST_F(TestVerticalSliderWindow, PredefinedCOGValues)
     const double wettedLength{0.05633282};
     const double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
+                                          .UValue = uValue,
+                                          .EdgeUValue = edgeUValue,
+                                          .ProjectedFrameDimension = projectedFrameDimension,
+                                          .WettedLength = wettedLength,
+                                          .Absorptance = absorptance};
 
     const auto width{1.2};
     const auto height{1.5};
@@ -114,8 +118,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedCOG)
     const double wettedLength{0.05633282};
     const double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
+                                          .UValue = uValue,
+                                          .EdgeUValue = edgeUValue,
+                                          .ProjectedFrameDimension = projectedFrameDimension,
+                                          .WettedLength = wettedLength,
+                                          .Absorptance = absorptance};
 
     const auto width{1.2};
     const auto height{1.5};
@@ -155,8 +163,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01)
     double wettedLength{0.134467};
     double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData bottomSill{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData bottomSill{.Class = std::nullopt,
+                                           .UValue = uValue,
+                                           .EdgeUValue = edgeUValue,
+                                           .ProjectedFrameDimension = projectedFrameDimension,
+                                           .WettedLength = wettedLength,
+                                           .Absorptance = absorptance};
 
     // Top Sill
     uValue = 3.336;
@@ -165,8 +177,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01)
     wettedLength = 0.098926;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData topSill{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData topSill{.Class = std::nullopt,
+                                        .UValue = uValue,
+                                        .EdgeUValue = edgeUValue,
+                                        .ProjectedFrameDimension = projectedFrameDimension,
+                                        .WettedLength = wettedLength,
+                                        .Absorptance = absorptance};
 
     // Meeting rail
     uValue = 5.306;
@@ -175,8 +191,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01)
     wettedLength = 0.098123;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData meetingRail{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData meetingRail{.Class = std::nullopt,
+                                            .UValue = uValue,
+                                            .EdgeUValue = edgeUValue,
+                                            .ProjectedFrameDimension = projectedFrameDimension,
+                                            .WettedLength = wettedLength,
+                                            .Absorptance = absorptance};
 
     // Lower jamb
     uValue = 2.753;
@@ -185,8 +205,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01)
     wettedLength = 0.264335;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData lowerJamb{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData lowerJamb{.Class = std::nullopt,
+                                          .UValue = uValue,
+                                          .EdgeUValue = edgeUValue,
+                                          .ProjectedFrameDimension = projectedFrameDimension,
+                                          .WettedLength = wettedLength,
+                                          .Absorptance = absorptance};
 
     // Upper jamb
     uValue = 2.454;
@@ -195,8 +219,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01)
     wettedLength = 0.11389;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData upperJamb{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData upperJamb{.Class = std::nullopt,
+                                          .UValue = uValue,
+                                          .EdgeUValue = edgeUValue,
+                                          .ProjectedFrameDimension = projectedFrameDimension,
+                                          .WettedLength = wettedLength,
+                                          .Absorptance = absorptance};
 
     const auto width{1.2};
     const auto height{1.5};
@@ -277,8 +305,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
     double wettedLength{0.134467};
     double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData bottomSill{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData bottomSill{.Class = std::nullopt,
+                                           .UValue = uValue,
+                                           .EdgeUValue = edgeUValue,
+                                           .ProjectedFrameDimension = projectedFrameDimension,
+                                           .WettedLength = wettedLength,
+                                           .Absorptance = absorptance};
 
     // Top Sill
     uValue = 3.336;
@@ -287,8 +319,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
     wettedLength = 0.098926;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData topSill{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData topSill{.Class = std::nullopt,
+                                        .UValue = uValue,
+                                        .EdgeUValue = edgeUValue,
+                                        .ProjectedFrameDimension = projectedFrameDimension,
+                                        .WettedLength = wettedLength,
+                                        .Absorptance = absorptance};
 
     // Meeting rail
     uValue = 5.306;
@@ -297,8 +333,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
     wettedLength = 0.098123;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData meetingRail{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData meetingRail{.Class = std::nullopt,
+                                            .UValue = uValue,
+                                            .EdgeUValue = edgeUValue,
+                                            .ProjectedFrameDimension = projectedFrameDimension,
+                                            .WettedLength = wettedLength,
+                                            .Absorptance = absorptance};
 
     // Lower jamb
     uValue = 2.753;
@@ -307,8 +347,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
     wettedLength = 0.264335;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData lowerJamb{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData lowerJamb{.Class = std::nullopt,
+                                          .UValue = uValue,
+                                          .EdgeUValue = edgeUValue,
+                                          .ProjectedFrameDimension = projectedFrameDimension,
+                                          .WettedLength = wettedLength,
+                                          .Absorptance = absorptance};
 
     // Upper jamb
     uValue = 2.454;
@@ -317,8 +361,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
     wettedLength = 0.11389;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData upperJamb{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData upperJamb{.Class = std::nullopt,
+                                          .UValue = uValue,
+                                          .EdgeUValue = edgeUValue,
+                                          .ProjectedFrameDimension = projectedFrameDimension,
+                                          .WettedLength = wettedLength,
+                                          .Absorptance = absorptance};
 
     // Divider
     uValue = 2.2713050842285156;
@@ -327,8 +375,12 @@ TEST_F(TestVerticalSliderWindow, CalculatedSHGC01VT01GenericDividers)
     wettedLength = 0.01905;
     absorptance = 0.3;
 
-    Tarcog::ISO15099::FrameData divider{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    Tarcog::ISO15099::FrameData divider{.Class = std::nullopt,
+                                        .UValue = uValue,
+                                        .EdgeUValue = edgeUValue,
+                                        .ProjectedFrameDimension = projectedFrameDimension,
+                                        .WettedLength = wettedLength,
+                                        .Absorptance = absorptance};
 
     const auto width{1.2};
     const auto height{1.5};
@@ -408,17 +460,18 @@ TEST_F(TestVerticalSliderWindow, IGUMismatchDetected)
 
     // Design IGU specs for frame (deliberately too strict)
     const double designUValue = 1.667875;
-    const double designThickness = 0.003;  // real is 0.003048
+    const double designThickness = 0.003;   // real is 0.003048
     const double tightTolerance = 0.00001;
 
     // Frame data with expected IGU spec
     Tarcog::ISO15099::FrameData frameData{
-        2.134059,   // uValue
-        2.251039,   // edgeUValue
-        0.050813,   // proj. dim
-        0.05633282, // wetted length
-        0.3,         // absorptance
-        Tarcog::ISO15099::IGUData{designUValue, designThickness}  // IGU data
+        .Class = std::nullopt,
+        .UValue = 2.134059,
+        .EdgeUValue = 2.251039,
+        .ProjectedFrameDimension = 0.050813,
+        .WettedLength = 0.05633282,
+        .Absorptance = 0.3,
+        .iguData = Tarcog::ISO15099::IGUData{designUValue, designThickness}
     };
 
     // IGU that does *not* match spec (from getCOG)
@@ -427,25 +480,27 @@ TEST_F(TestVerticalSliderWindow, IGUMismatchDetected)
     const auto tVis = 0.638525;
     const auto tSol = 0.3716;
 
-    auto window = Tarcog::ISO15099::DualVisionVertical(
-        width, height,
-        tVis, tSol, getCOG(),  // Vision 1
-        tVis, tSol, getCOG()); // Vision 2
+    auto window = Tarcog::ISO15099::DualVisionVertical(width,
+                                                       height,
+                                                       tVis,
+                                                       tSol,
+                                                       getCOG(),   // Vision 1
+                                                       tVis,
+                                                       tSol,
+                                                       getCOG());   // Vision 2
 
     window.setUValueIGUTolerance(tightTolerance);
     window.setThicknessIGUTolerance(tightTolerance);
 
     using Tarcog::ISO15099::DualVerticalFramePosition;
 
-    window.setFrameData({
-        {DualVerticalFramePosition::Top, frameData},
-        {DualVerticalFramePosition::TopLeft, frameData},
-        {DualVerticalFramePosition::TopRight, frameData},
-        {DualVerticalFramePosition::MeetingRail, frameData},
-        {DualVerticalFramePosition::BottomLeft, frameData},
-        {DualVerticalFramePosition::BottomRight, frameData},
-        {DualVerticalFramePosition::Bottom, frameData}
-    });
+    window.setFrameData({{DualVerticalFramePosition::Top, frameData},
+                         {DualVerticalFramePosition::TopLeft, frameData},
+                         {DualVerticalFramePosition::TopRight, frameData},
+                         {DualVerticalFramePosition::MeetingRail, frameData},
+                         {DualVerticalFramePosition::BottomLeft, frameData},
+                         {DualVerticalFramePosition::BottomRight, frameData},
+                         {DualVerticalFramePosition::Bottom, frameData}});
 
     const auto mismatch = window.iguMissmatch();
     EXPECT_TRUE(mismatch.any());
