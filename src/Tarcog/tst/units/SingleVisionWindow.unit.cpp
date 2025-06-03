@@ -10,6 +10,41 @@ protected:
     void SetUp() override
     {}
 
+    //! Data are picked up from WINDOW database frame table (imported from THMZ file)
+    static Tarcog::ISO15099::FrameData sampleSill()
+    {
+        return {.Class = std::nullopt,
+                .UValue = 2.017913,
+                .EdgeUValue = 2.339592,
+                .ProjectedFrameDimension = 0.04287518,
+                .WettedLength = 0.05633283,
+                .Absorptance = 0.3};
+    }
+
+    static Tarcog::ISO15099::FrameData sampleHead()
+    {
+        return {
+            .Class = std::nullopt,
+            .UValue = 2.024318,
+            .EdgeUValue = 2.34355,
+            .ProjectedFrameDimension = 0.04287518,
+            .WettedLength = 0.05674332,
+            .Absorptance = 0.3
+        };
+    }
+
+    static Tarcog::ISO15099::FrameData sampleJamb()
+    {
+        return {
+            .Class = std::nullopt,
+            .UValue = 1.943306,
+            .EdgeUValue = 2.358972,
+            .ProjectedFrameDimension = 0.04287518,
+            .WettedLength = 0.04122826,
+            .Absorptance = 0.3
+        };
+    }
+
     static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerUValue()
     {
         /////////////////////////////////////////////////////////
@@ -189,21 +224,8 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
 
 TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
 {
-    SCOPED_TRACE("Uvalue environmental conditions (single layer).");
-
-    constexpr double uValue{5.68};
-    constexpr double edgeUValue{5.575};
-    constexpr double projectedFrameDimension{0.05715};
-    constexpr double wettedLength{0.05715};
-    constexpr double absorptance{0.9};
-
-    constexpr Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
-                                                    .UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    SCOPED_TRACE(
+      "Uvalue environmental conditions (single layer Sample-sill, sample-head and sample-jamb).");
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -213,39 +235,26 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValue());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
 
-
-    const double vt{window.vt()};
-    EXPECT_NEAR(0.751391, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(5.682655, uvalue, 1e-6);
+    EXPECT_NEAR(4.676005, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.028638, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.002301, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.787038, vt, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
 {
-    SCOPED_TRACE("SHGC environmental conditions (single layer).");
-
-    constexpr double uValue{5.68};
-    constexpr double edgeUValue{5.575};
-    constexpr double projectedFrameDimension{0.05715};
-    constexpr double wettedLength{0.05715};
-    constexpr double absorptance{0.9};
-
-    constexpr Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
-                                                    .UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    SCOPED_TRACE(
+      "Uvalue environmental conditions (single layer Sample-sill, sample-head and sample-jamb).");
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -255,20 +264,20 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
 
-
-    const double vt{window.vt()};
-    EXPECT_NEAR(0.751391, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(5.354337, uvalue, 1e-6);
+    EXPECT_NEAR(4.330241, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.759857, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.756163, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.787038, vt, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerUValue)

@@ -1,5 +1,5 @@
 #include <ranges>
-#include <numbers>
+#include <numeric>
 
 #include <WCECommon.hpp>
 
