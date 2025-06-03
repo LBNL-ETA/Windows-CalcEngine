@@ -134,6 +134,26 @@ namespace Tarcog::ISO15099
             );
         }
 
+        inline double dividerEdgeUValue(IIGUSystem& igu, const FrameData& dividerData)
+        {
+            if (std::holds_alternative<std::monostate>(dividerData.Class)) {
+                return dividerData.EdgeUValue;
+            }
+            return std::visit(
+                [&]<typename T0>(const T0& arg) -> double {
+                    using T = std::decay_t<T0>;
+                    if constexpr (std::is_same_v<T, GenericDivider>) {
+                        return ISO15099::dividerEdgeUValue(arg, igu.getUValue(), Helper::totalGapThickness(igu));
+                    } else {
+                        // Fallback (should not happen, maybe log or throw)
+                        return dividerData.EdgeUValue;
+                    }
+                },
+                dividerData.Class
+            );
+        }
+
+
     }   // namespace Helper
 
 
@@ -159,7 +179,7 @@ namespace Tarcog::ISO15099
         {
             dividerWeightedUValue += dividerArea() * Helper::dividerUValue(*m_IGUSystem, *m_Divider);
             dividerWeightedEdgeUValue +=
-              dividerEdgeArea() * Helper::frameEdgeUValue(*m_IGUSystem, *m_Divider);
+              dividerEdgeArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider);
         }
 
         return (COGWeightedUValue + frameWeightedUValue + edgeOfGlassWeightedUValue
