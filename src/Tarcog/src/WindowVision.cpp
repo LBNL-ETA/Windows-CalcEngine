@@ -33,37 +33,6 @@ namespace Tarcog::ISO15099
 
     namespace Helper
     {
-
-        template<typename FrameIter>
-        double frameWeightedUValue(FrameIter begin,
-                                   FrameIter end,
-                                   double (*projectedArea)(const typename FrameIter::value_type &))
-        {
-            double sum = 0.0;
-            for(auto it = begin; it != end; ++it)
-                sum += projectedArea(*it) * it->second.frameData.UValue;
-            return sum;
-        }
-
-        template<typename FrameIter>
-        double edgeOfGlassWeightedUValue(
-          FrameIter begin,
-          FrameIter end,
-          double uCenter,
-          double (*getGap)(const typename FrameIter::value_type &),
-          double (*edgeOfGlassArea)(const typename FrameIter::value_type &))
-        {
-            double sum = 0.0;
-            for(auto it = begin; it != end; ++it)
-            {
-                const auto & frame = it->second;
-                double edgeU =
-                  Tarcog::ISO15099::frameEdgeUValue(frame.frameData, uCenter, getGap(*it));
-                sum += edgeOfGlassArea(*it) * edgeU;
-            }
-            return sum;
-        }
-
         inline double cogWeightedUValue(double uCenter,
                                         double totalArea,
                                         double frameProjArea,
@@ -90,67 +59,80 @@ namespace Tarcog::ISO15099
             return std::accumulate(gapThicknesses.begin(), gapThicknesses.end(), 0.0);
         }
 
-        inline double frameEdgeUValue(IIGUSystem& igu, const FrameData& frameData)
+        inline double frameEdgeUValue(IIGUSystem & igu, const FrameData & frameData)
         {
-            if (std::holds_alternative<std::monostate>(frameData.Class)) {
+            if(std::holds_alternative<std::monostate>(frameData.Class))
+            {
                 return frameData.EdgeUValue;
             }
 
             return std::visit(
-                [&]<typename T0>(const T0& arg) -> double {
-                    using T = std::decay_t<T0>;
-                    if constexpr (std::is_same_v<T, GenericFrame>) {
-                        return ISO15099::frameEdgeUValue(arg, igu.getUValue(), totalGapThickness(igu));
-                    } else if constexpr (std::is_same_v<T, GenericDivider>) {
-                        return ISO15099::dividerEdgeUValue(arg, igu.getUValue(), totalGapThickness(igu));
-                    } else { // monostate, shouldn't get here
-                        return frameData.EdgeUValue;
-                    }
-                },
-                frameData.Class
-            );
+              [&]<typename T0>(const T0 & arg) -> double {
+                  using T = std::decay_t<T0>;
+                  if constexpr(std::is_same_v<T, GenericFrame>)
+                  {
+                      return ISO15099::frameEdgeUValue(
+                        arg, igu.getUValue(), totalGapThickness(igu));
+                  }
+                  else if constexpr(std::is_same_v<T, GenericDivider>)
+                  {
+                      return ISO15099::dividerEdgeUValue(
+                        arg, igu.getUValue(), totalGapThickness(igu));
+                  }
+                  else
+                  {   // monostate, shouldn't get here
+                      return frameData.EdgeUValue;
+                  }
+              },
+              frameData.Class);
         }
 
-        inline double dividerUValue(IIGUSystem& igu, const FrameData& frameData)
+        inline double dividerUValue(IIGUSystem & igu, const FrameData & frameData)
         {
             // Fast path: Not a generic divider, just return stored value
-            if (std::holds_alternative<std::monostate>(frameData.Class))
+            if(std::holds_alternative<std::monostate>(frameData.Class))
             {
                 return frameData.UValue;
             }
 
             // GenericDivider logic
             return std::visit(
-                [&]<typename T0>(const T0& arg) -> double {
-                    using T = std::decay_t<T0>;
-                    if constexpr (std::is_same_v<T, GenericDivider>) {
-                        return ISO15099::dividerUValue(
-                            arg, igu.getUValue(), Helper::totalGapThickness(igu));
-                    } else {
-                        return frameData.UValue;
-                    }
-                },
-                frameData.Class
-            );
+              [&]<typename T0>(const T0 & arg) -> double {
+                  using T = std::decay_t<T0>;
+                  if constexpr(std::is_same_v<T, GenericDivider>)
+                  {
+                      return ISO15099::dividerUValue(
+                        arg, igu.getUValue(), Helper::totalGapThickness(igu));
+                  }
+                  else
+                  {
+                      return frameData.UValue;
+                  }
+              },
+              frameData.Class);
         }
 
-        inline double dividerEdgeUValue(IIGUSystem& igu, const FrameData& dividerData)
+        inline double dividerEdgeUValue(IIGUSystem & igu, const FrameData & dividerData)
         {
-            if (std::holds_alternative<std::monostate>(dividerData.Class)) {
+            if(std::holds_alternative<std::monostate>(dividerData.Class))
+            {
                 return dividerData.EdgeUValue;
             }
             return std::visit(
-                [&]<typename T0>(const T0& arg) -> double {
-                    using T = std::decay_t<T0>;
-                    if constexpr (std::is_same_v<T, GenericDivider>) {
-                        return ISO15099::dividerEdgeUValue(arg, igu.getUValue(), Helper::totalGapThickness(igu));
-                    } else {
-                        // Fallback (should not happen, maybe log or throw)
-                        return dividerData.EdgeUValue;
-                    }
-                },
-                dividerData.Class
-            );
+              [&]<typename T0>(const T0 & arg) -> double {
+                  using T = std::decay_t<T0>;
+                  if constexpr(std::is_same_v<T, GenericDivider>)
+                  {
+                      return ISO15099::dividerEdgeUValue(
+                        arg, igu.getUValue(), Helper::totalGapThickness(igu));
+                  }
+                  else
+                  {
+                      // Fallback (should not happen, maybe log or throw)
+                      return dividerData.EdgeUValue;
+                  }
+              },
+              dividerData.Class);
         }
 
 
@@ -159,32 +141,34 @@ namespace Tarcog::ISO15099
 
     double WindowVision::uValue() const
     {
-        auto frameWeightedUValue{0.0};
-        auto edgeOfGlassWeightedUValue{0.0};
+        const auto frames = m_Frame | std::views::values;
 
-        for(const auto & frame : m_Frame | std::views::values)
-        {
-            frameWeightedUValue += projectedArea(frame) * frame.frameData.UValue;
-            edgeOfGlassWeightedUValue += Tarcog::ISO15099::edgeOfGlassArea(frame)
-                                         * Helper::frameEdgeUValue(*m_IGUSystem, frame.frameData);
-        }
+        // Frame U-value weighted sum
+        const double frameWU =
+          std::accumulate(frames.begin(), frames.end(), 0.0, [](double acc, const auto & frame) {
+              return acc + projectedArea(frame) * frame.frameData.UValue;
+          });
 
-        const auto COGWeightedUValue{m_IGUUvalue
-                                     * (area() - frameProjectedArea() - edgeOfGlassArea()
-                                        - dividerArea() - dividerEdgeArea())};
+        // Edge-of-glass weighted sum (functional style)
+        const double edgeWU = std::accumulate(
+          frames.begin(), frames.end(), 0.0, [this](double acc, const auto & frame) {
+              return acc
+                     + Tarcog::ISO15099::edgeOfGlassArea(frame)
+                         * Helper::frameEdgeUValue(*m_IGUSystem, frame.frameData);
+          });
 
-        auto dividerWeightedUValue{0.0};
-        auto dividerWeightedEdgeUValue{0.0};
-        if(m_Divider.has_value())
-        {
-            dividerWeightedUValue += dividerArea() * Helper::dividerUValue(*m_IGUSystem, *m_Divider);
-            dividerWeightedEdgeUValue +=
-              dividerEdgeArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider);
-        }
+        // COG weighted U-value
+        const double cogWU =
+          m_IGUUvalue
+          * (area() - frameProjectedArea() - edgeOfGlassArea() - dividerArea() - dividerEdgeArea());
 
-        return (COGWeightedUValue + frameWeightedUValue + edgeOfGlassWeightedUValue
-                + dividerWeightedUValue + dividerWeightedEdgeUValue)
-               / area();
+        // Divider contributions
+        const double divWU =
+          m_Divider ? dividerArea() * Helper::dividerUValue(*m_IGUSystem, *m_Divider) : 0.0;
+        const double divEdgeWU =
+          m_Divider ? dividerEdgeArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider) : 0.0;
+
+        return (cogWU + frameWU + edgeWU + divWU + divEdgeWU) / area();
     }
 
     double WindowVision::shgc() const
