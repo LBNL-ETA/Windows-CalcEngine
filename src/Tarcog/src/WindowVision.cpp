@@ -97,14 +97,37 @@ namespace Tarcog::ISO15099
             }
 
             return std::visit(
-                [&](const auto& arg) -> double {
-                    using T = std::decay_t<decltype(arg)>;
+                [&]<typename T0>(const T0& arg) -> double {
+                    using T = std::decay_t<T0>;
                     if constexpr (std::is_same_v<T, GenericFrame>) {
                         return ISO15099::frameEdgeUValue(arg, igu.getUValue(), totalGapThickness(igu));
                     } else if constexpr (std::is_same_v<T, GenericDivider>) {
                         return ISO15099::dividerEdgeUValue(arg, igu.getUValue(), totalGapThickness(igu));
                     } else { // monostate, shouldn't get here
                         return frameData.EdgeUValue;
+                    }
+                },
+                frameData.Class
+            );
+        }
+
+        inline double dividerUValue(IIGUSystem& igu, const FrameData& frameData)
+        {
+            // Fast path: Not a generic divider, just return stored value
+            if (std::holds_alternative<std::monostate>(frameData.Class))
+            {
+                return frameData.UValue;
+            }
+
+            // GenericDivider logic
+            return std::visit(
+                [&]<typename T0>(const T0& arg) -> double {
+                    using T = std::decay_t<T0>;
+                    if constexpr (std::is_same_v<T, GenericDivider>) {
+                        return ISO15099::dividerUValue(
+                            arg, igu.getUValue(), Helper::totalGapThickness(igu));
+                    } else {
+                        return frameData.UValue;
                     }
                 },
                 frameData.Class
@@ -134,7 +157,7 @@ namespace Tarcog::ISO15099
         auto dividerWeightedEdgeUValue{0.0};
         if(m_Divider.has_value())
         {
-            dividerWeightedUValue += dividerArea() * m_Divider->UValue;
+            dividerWeightedUValue += dividerArea() * Helper::dividerUValue(*m_IGUSystem, *m_Divider);
             dividerWeightedEdgeUValue +=
               dividerEdgeArea() * Helper::frameEdgeUValue(*m_IGUSystem, *m_Divider);
         }

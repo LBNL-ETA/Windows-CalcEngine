@@ -2,6 +2,13 @@
 
 namespace Tarcog::ISO15099
 {
+    double dividerUValue(const GenericDivider & divider, double uCenter, double gap)
+    {
+        const auto& c = divider.Divider;
+        const double x = gap * 1000.0;
+        return c[4] + c[5] * x + c[6] * x * x + c[7] * uCenter + c[8] * uCenter * uCenter;
+    }
+
     double frameEdgeUValue(const GenericFrame & c, double uCenter, double gap)
     {
         if(gap == 0)

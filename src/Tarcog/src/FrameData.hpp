@@ -40,6 +40,8 @@ namespace Tarcog::ISO15099
         std::variant<std::monostate, GenericFrame, GenericDivider> Class{};
     };
 
+    double dividerUValue(const GenericDivider& divider, double uCenter, double gap);
+
     //! Calculates frame edge uValue based on FrameData type
     double frameEdgeUValue(const GenericFrame & c, double uCenter, double gap);
     double dividerEdgeUValue(const GenericDivider & divider, double uCenter, double gap);
