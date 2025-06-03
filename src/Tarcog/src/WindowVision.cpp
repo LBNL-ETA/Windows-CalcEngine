@@ -1,4 +1,6 @@
 #include <ranges>
+#include <numbers>
+
 #include <WCECommon.hpp>
 
 #include "WindowVision.hpp"
@@ -141,9 +143,8 @@ namespace Tarcog::ISO15099
     {
         auto frameWeightedSHGC{0.0};
 
-        for(const auto & [key, frame] : m_Frame)
+        for(const auto & frame : m_Frame | std::views::values)
         {
-            std::ignore = key;
             frameWeightedSHGC +=
               projectedArea(frame) * ISO15099::shgc(frame.frameData, m_HExterior);
         }
