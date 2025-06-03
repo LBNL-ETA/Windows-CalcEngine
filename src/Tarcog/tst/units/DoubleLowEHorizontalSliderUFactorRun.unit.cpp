@@ -81,7 +81,6 @@ protected:
         const double absorptance{0.3};
 
         const Tarcog::ISO15099::FrameData frameData{
-            .Class = std::nullopt,
             .UValue = uValue,
             .EdgeUValue = edgeUValue,
             .ProjectedFrameDimension = projectedFrameDimension,

@@ -85,8 +85,7 @@ protected:
         const double wettedLength{0.05633282};
         const double absorptance{0.3};
 
-        const Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
-                                                    .UValue = uValue,
+        const Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
                                                     .EdgeUValue = edgeUValue,
                                                     .ProjectedFrameDimension =
                                                       projectedFrameDimension,

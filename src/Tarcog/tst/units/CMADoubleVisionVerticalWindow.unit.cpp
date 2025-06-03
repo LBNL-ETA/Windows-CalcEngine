@@ -13,26 +13,22 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMADualVerticalVision)
 {
     SCOPED_TRACE("Begin Test: CMA test for double vision vertical window.");
 
-    constexpr Tarcog::ISO15099::FrameData frameDataBestBestHead{.Class = std::nullopt,
-                                                                .UValue = 1.306919,
+    constexpr Tarcog::ISO15099::FrameData frameDataBestBestHead{.UValue = 1.306919,
                                                                 .EdgeUValue = 0.794668,
                                                                 .ProjectedFrameDimension =
                                                                   0.042875183,
                                                                 .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataBestWorstHead{.Class = std::nullopt,
-                                                                 .UValue = 1.65724,
+    constexpr Tarcog::ISO15099::FrameData frameDataBestWorstHead{.UValue = 1.65724,
                                                                  .EdgeUValue = 2.71409,
                                                                  .ProjectedFrameDimension =
                                                                    0.042875183,
                                                                  .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataWorstBestHead{.Class = std::nullopt,
-                                                                 .UValue = 2.27964,
+    constexpr Tarcog::ISO15099::FrameData frameDataWorstBestHead{.UValue = 2.27964,
                                                                  .EdgeUValue = 1.65214,
                                                                  .ProjectedFrameDimension =
                                                                    0.042875183,
                                                                  .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataWorstWorstHead{.Class = std::nullopt,
-                                                                  .UValue = 2.32377,
+    constexpr Tarcog::ISO15099::FrameData frameDataWorstWorstHead{.UValue = 2.32377,
                                                                   .EdgeUValue = 3.19643,
                                                                   .ProjectedFrameDimension =
                                                                     0.042875183,
@@ -43,26 +39,22 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMADualVerticalVision)
                                      frameDataWorstBestHead,
                                      frameDataWorstWorstHead};
 
-    constexpr Tarcog::ISO15099::FrameData frameDataBestBestJamb{.Class = std::nullopt,
-                                                                .UValue = 1.25968,
+    constexpr Tarcog::ISO15099::FrameData frameDataBestBestJamb{.UValue = 1.25968,
                                                                 .EdgeUValue = 0.76981,
                                                                 .ProjectedFrameDimension =
                                                                   0.042875183,
                                                                 .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataBestWorstJamb{.Class = std::nullopt,
-                                                                 .UValue = 1.62145,
+    constexpr Tarcog::ISO15099::FrameData frameDataBestWorstJamb{.UValue = 1.62145,
                                                                  .EdgeUValue = 2.70202,
                                                                  .ProjectedFrameDimension =
                                                                    0.042875183,
                                                                  .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataWorstBestJamb{.Class = std::nullopt,
-                                                                 .UValue = 2.26579,
+    constexpr Tarcog::ISO15099::FrameData frameDataWorstBestJamb{.UValue = 2.26579,
                                                                  .EdgeUValue = 1.64520,
                                                                  .ProjectedFrameDimension =
                                                                    0.042875183,
                                                                  .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataWorstWorstJamb{.Class = std::nullopt,
-                                                                  .UValue = 2.30879,
+    constexpr Tarcog::ISO15099::FrameData frameDataWorstWorstJamb{.UValue = 2.30879,
                                                                   .EdgeUValue = 3.18888,
                                                                   .ProjectedFrameDimension =
                                                                     0.042875183,
@@ -73,26 +65,22 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMADualVerticalVision)
                                      frameDataWorstBestJamb,
                                      frameDataWorstWorstJamb};
 
-    constexpr Tarcog::ISO15099::FrameData frameDataBestBestSill{.Class = std::nullopt,
-                                                                .UValue = 1.30474,
+    constexpr Tarcog::ISO15099::FrameData frameDataBestBestSill{.UValue = 1.30474,
                                                                 .EdgeUValue = 0.79449,
                                                                 .ProjectedFrameDimension =
                                                                   0.042875183,
                                                                 .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataBestWorstSill{.Class = std::nullopt,
-                                                                 .UValue = 1.64813,
+    constexpr Tarcog::ISO15099::FrameData frameDataBestWorstSill{.UValue = 1.64813,
                                                                  .EdgeUValue = 2.71240,
                                                                  .ProjectedFrameDimension =
                                                                    0.042875183,
                                                                  .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataWorstBestSill{.Class = std::nullopt,
-                                                                 .UValue = 2.27038,
+    constexpr Tarcog::ISO15099::FrameData frameDataWorstBestSill{.UValue = 2.27038,
                                                                  .EdgeUValue = 1.64528,
                                                                  .ProjectedFrameDimension =
                                                                    0.042875183,
                                                                  .WettedLength = 0.110605026};
-    constexpr Tarcog::ISO15099::FrameData frameDataWorstWorstSill{.Class = std::nullopt,
-                                                                  .UValue = 2.31302,
+    constexpr Tarcog::ISO15099::FrameData frameDataWorstWorstSill{.UValue = 2.31302,
                                                                   .EdgeUValue = 3.18880,
                                                                   .ProjectedFrameDimension =
                                                                     0.042875183,

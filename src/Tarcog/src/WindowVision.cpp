@@ -90,15 +90,25 @@ namespace Tarcog::ISO15099
             return std::accumulate(gapThicknesses.begin(), gapThicknesses.end(), 0.0);
         }
 
-        inline double frameEdgeUValue(IIGUSystem & igu, const FrameData & frameData)
+        inline double frameEdgeUValue(IIGUSystem& igu, const FrameData& frameData)
         {
-            if(!frameData.Class)
-            {
+            if (std::holds_alternative<std::monostate>(frameData.Class)) {
                 return frameData.EdgeUValue;
             }
 
-            return ISO15099::frameEdgeUValue(
-              frameData.Class.value(), igu.getUValue(), totalGapThickness(igu));
+            return std::visit(
+                [&](const auto& arg) -> double {
+                    using T = std::decay_t<decltype(arg)>;
+                    if constexpr (std::is_same_v<T, GenericFrame>) {
+                        return ISO15099::frameEdgeUValue(arg, igu.getUValue(), totalGapThickness(igu));
+                    } else if constexpr (std::is_same_v<T, GenericDivider>) {
+                        return ISO15099::dividerEdgeUValue(arg, igu.getUValue(), totalGapThickness(igu));
+                    } else { // monostate, shouldn't get here
+                        return frameData.EdgeUValue;
+                    }
+                },
+                frameData.Class
+            );
         }
 
     }   // namespace Helper

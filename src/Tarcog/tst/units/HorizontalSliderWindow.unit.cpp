@@ -55,26 +55,26 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
 {
     SCOPED_TRACE("Begin Test: Horizontal slider window predefined COG.");
 
-    const double uValue{2.134059};
-    const double edgeUValue{2.251039};
-    const double projectedFrameDimension{0.050813};
-    const double wettedLength{0.05633282};
-    const double absorptance{0.3};
+    constexpr double uValue{2.134059};
+    constexpr double edgeUValue{2.251039};
+    constexpr double projectedFrameDimension{0.050813};
+    constexpr double wettedLength{0.05633282};
+    constexpr double absorptance{0.3};
 
-    const Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
-                                                .UValue = uValue,
-                                                .EdgeUValue = edgeUValue,
-                                                .ProjectedFrameDimension = projectedFrameDimension,
-                                                .WettedLength = wettedLength,
-                                                .Absorptance = absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
-    const auto width{1.2};
-    const auto height{1.5};
-    const auto iguUValue{1.667875};
-    const auto shgc{0.430713};
-    const auto tVis{0.638525};
-    const auto tSol{0.3716};
-    const auto hcout{15.0};
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto iguUValue{1.667875};
+    constexpr auto shgc{0.430713};
+    constexpr auto tVis{0.638525};
+    constexpr auto tSol{0.3716};
+    constexpr auto hcout{15.0};
 
     auto window = Tarcog::ISO15099::DualVisionHorizontal(
       width,
@@ -110,23 +110,23 @@ TEST_F(TestHorizontalSliderWindow, CalculatedCOG)
 {
     SCOPED_TRACE("Begin Test: Horizontal slider window calculated COG.");
 
-    const double uValue{2.134059};
-    const double edgeUValue{2.251039};
-    const double projectedFrameDimension{0.050813};
-    const double wettedLength{0.05633282};
-    const double absorptance{0.3};
+    constexpr double uValue{2.134059};
+    constexpr double edgeUValue{2.251039};
+    constexpr double projectedFrameDimension{0.050813};
+    constexpr double wettedLength{0.05633282};
+    constexpr double absorptance{0.3};
 
-    const Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
-                                                .UValue = uValue,
-                                                .EdgeUValue = edgeUValue,
-                                                .ProjectedFrameDimension = projectedFrameDimension,
-                                                .WettedLength = wettedLength,
-                                                .Absorptance = absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
-    const auto width{1.2};
-    const auto height{1.5};
-    const auto tVis{0.638525};
-    const auto tSol{0.3716};
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.638525};
+    constexpr auto tSol{0.3716};
 
     auto window = Tarcog::ISO15099::DualVisionHorizontal(
       width, height, tVis, tSol, getCOG(), tVis, tSol, getCOG());

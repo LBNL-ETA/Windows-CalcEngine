@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <optional>
+#include <variant>
 #include <array>
 #include <map>
 
@@ -16,23 +17,32 @@ namespace Tarcog::ISO15099
     };
 
     //! Generic frame type will have edge of glass calculations based on coefficients
-    using FrameClass = std::array<double, 5>;
+    using GenericFrame = std::array<double, 5>;
+
+    //! GenericDivider calculations is used
+    struct GenericDivider
+    {
+        double GapMin{0};
+        double GapMax{0};
+        std::array<double, 8> Divider{};
+    };
 
     //! Data structure for window frame properties.
     //! Contains thermal, dimensional, and optical characteristics of a window frame.
     struct FrameData
     {
-        std::optional<FrameClass> Class{std::nullopt};
         double UValue{0};                   //! Thermal transmittance of the frame [W/(m²·K)]
         double EdgeUValue{0};               //! Thermal transmittance at the edge of glass [W/(m²·K)]
         double ProjectedFrameDimension{0};  //! Projected width/dimension of the frame [m]
         double WettedLength{0};             //! Length of frame in contact with other materials [m]
         double Absorptance{0.3};            //! Solar absorptance of the frame (0-1)
         std::optional<IGUData> iguData{};   //! Optional data for the IGU associated with this frame
+        std::variant<std::monostate, GenericFrame, GenericDivider> Class{};
     };
 
     //! Calculates frame edge uValue based on FrameData type
-    double frameEdgeUValue(const FrameClass & c, double uCenter, double gap);
+    double frameEdgeUValue(const GenericFrame & c, double uCenter, double gap);
+    double dividerEdgeUValue(const GenericDivider & divider, double uCenter, double gap);
 
     //! Each frame can have frame attached to either left or right side of it.
     enum class FrameSide

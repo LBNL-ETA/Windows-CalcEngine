@@ -13,8 +13,7 @@ protected:
     //! Data are picked up from WINDOW database frame table (imported from THMZ file)
     static Tarcog::ISO15099::FrameData sampleSill()
     {
-        return {.Class = std::nullopt,
-                .UValue = 2.017913,
+        return {.UValue = 2.017913,
                 .EdgeUValue = 2.339592,
                 .ProjectedFrameDimension = 0.04287518,
                 .WettedLength = 0.05633283,
@@ -23,8 +22,7 @@ protected:
 
     static Tarcog::ISO15099::FrameData sampleHead()
     {
-        return {.Class = std::nullopt,
-                .UValue = 2.024318,
+        return {.UValue = 2.024318,
                 .EdgeUValue = 2.34355,
                 .ProjectedFrameDimension = 0.04287518,
                 .WettedLength = 0.05674332,
@@ -33,8 +31,7 @@ protected:
 
     static Tarcog::ISO15099::FrameData sampleJamb()
     {
-        return {.Class = std::nullopt,
-                .UValue = 1.943306,
+        return {.UValue = 1.943306,
                 .EdgeUValue = 2.358972,
                 .ProjectedFrameDimension = 0.04287518,
                 .WettedLength = 0.04122826,
@@ -46,12 +43,13 @@ protected:
         constexpr double projectedFrameDimension{0.05715};
 
         //! This is class 1 generic frame (as defined in WINDOW database)
-        return {.Class = {{2.33, -0.01, 0.138, 0, 0}},
-                .UValue = 5.68,
+        return {.UValue = 5.68,
                 .EdgeUValue = 0.0,
                 .ProjectedFrameDimension = projectedFrameDimension,
                 .WettedLength = projectedFrameDimension,
-                .Absorptance = 0.9};
+                .Absorptance = 0.9,
+                .Class = Tarcog::ISO15099::GenericFrame{{2.33, -0.01, 0.138, 0, 0}}
+                };
     }
 
     static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerUValue()
@@ -240,8 +238,7 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
     constexpr double wettedLength{0.05715};
     constexpr double absorptance{0.9};
 
-    constexpr Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
-                                                    .UValue = uValue,
+    constexpr Tarcog::ISO15099::FrameData frameData{         .UValue = uValue,
                                                     .EdgeUValue = edgeUValue,
                                                     .ProjectedFrameDimension =
                                                       projectedFrameDimension,
@@ -520,8 +517,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     constexpr double absorptance{0.9};
 
     // Add spec to frame data
-    Tarcog::ISO15099::FrameData frameData{.Class = std::nullopt,
-                                          .UValue = frameUValue,
+    Tarcog::ISO15099::FrameData frameData{  .UValue = frameUValue,
                                           .EdgeUValue = edgeUValue,
                                           .ProjectedFrameDimension = projectedFrameDimension,
                                           .WettedLength = wettedLength,

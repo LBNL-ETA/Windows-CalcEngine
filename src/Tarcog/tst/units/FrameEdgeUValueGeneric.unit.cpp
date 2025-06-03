@@ -6,7 +6,7 @@ using namespace Tarcog::ISO15099;
 
 TEST(FrameEdgeUValue, ReturnsUCenterWhenGapIsZero)
 {
-    FrameClass frameClass = {1.0, 2.0, 3.0, 4.0, 5.0};
+    GenericFrame frameClass = {1.0, 2.0, 3.0, 4.0, 5.0};
     double uCenter = 1.5;
     double gap = 0.0;
 
@@ -17,7 +17,7 @@ TEST(FrameEdgeUValue, ReturnsUCenterWhenGapIsZero)
 
 TEST(FrameEdgeUValue, CalculatesCorrectValueForNonZeroGap)
 {
-    FrameClass frameClass = {1.0, 2.0, 3.0, 4.0, 5.0};
+    GenericFrame frameClass = {1.0, 2.0, 3.0, 4.0, 5.0};
     double uCenter = 1.5;
     double gap = 0.5;
 
@@ -28,7 +28,7 @@ TEST(FrameEdgeUValue, CalculatesCorrectValueForNonZeroGap)
 
 TEST(FrameEdgeUValue, HandlesNegativeGap)
 {
-    FrameClass frameClass = {1.0, 2.0, 3.0, 4.0, 5.0};
+    GenericFrame frameClass = {1.0, 2.0, 3.0, 4.0, 5.0};
     double uCenter = 1.5;
     double gap = -0.5;
 
