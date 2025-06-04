@@ -163,21 +163,6 @@ namespace Tarcog::ISO15099
         const double divEdgeWU =
           m_Divider ? dividerEdgeArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider) : 0.0;
 
-        auto visionAreaTest{area() - frameProjectedArea() - edgeOfGlassArea() - dividerArea()
-                            - dividerEdgeArea()};
-        auto divAreaTest{dividerArea()};
-        auto divEdgeAreaTest{dividerEdgeArea()};
-        std::map<FramePosition, double> frameAreasTest;
-        for(const auto & [position, frame] : m_Frame)
-        {
-            frameAreasTest[position] = projectedArea(frame);
-        }
-        std::map<FramePosition, double> edgeOfGlassAreasTest;
-        for(const auto & [position, frame] : m_Frame)
-        {
-            edgeOfGlassAreasTest[position] = Tarcog::ISO15099::edgeOfGlassArea(frame);
-        }
-
         return (cogWU + frameWU + edgeWU + divWU + divEdgeWU) / area();
     }
 
@@ -206,16 +191,9 @@ namespace Tarcog::ISO15099
         auto dividerWeightedSHGC{0.0};
         if(m_Divider.has_value())
         {
-            auto shgcTest = ISO15099::frameSHGC(
-                m_Divider->Absorptance,
-                m_Divider->UValue,
-                m_Divider->ProjectedFrameDimension,
-                m_Divider->WettedLength,
-                m_HExterior
-            );
             dividerWeightedSHGC += dividerArea() * ISO15099::frameSHGC(
                 m_Divider->Absorptance,
-                m_Divider->UValue,
+                Helper::dividerUValue(*m_IGUSystem, *m_Divider),
                 m_Divider->ProjectedFrameDimension,
                 m_Divider->WettedLength,
                 m_HExterior

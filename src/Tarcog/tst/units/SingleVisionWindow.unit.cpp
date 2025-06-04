@@ -430,7 +430,7 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerUValueWithDividers)
     EXPECT_NEAR(5.689011, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.0288763, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.036176, windowSHGC, 1e-6);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.712693, vt, 1e-6);
@@ -462,7 +462,7 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerSHGCWithDividers)
     EXPECT_NEAR(5.323107, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.723181, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.733646, windowSHGC, 1e-6);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.712693, vt, 1e-6);
@@ -600,7 +600,7 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithDividers)
     EXPECT_NEAR(3.530437, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.0289528, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.036204, windowSHGC, 1e-6);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.623190, vt, 1e-6);
@@ -630,7 +630,7 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithDividers)
     EXPECT_NEAR(3.635180, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.598462, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.608772, windowSHGC, 1e-6);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.623190, vt, 1e-6);
