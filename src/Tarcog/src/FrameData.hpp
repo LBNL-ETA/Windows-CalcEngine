@@ -19,12 +19,16 @@ namespace Tarcog::ISO15099
     //! Generic frame type will have edge of glass calculations based on coefficients
     using GenericFrame = std::array<double, 5>;
 
+    using DividerEdgePoly = std::array<double, 4>;
+    using DividerBodyPoly = std::array<double, 5>;
+
     //! GenericDivider calculations is used
     struct GenericDivider
     {
         double GapMin{0};
         double GapMax{0};
-        std::array<double, 8> Divider{};
+        DividerEdgePoly EdgePoly;
+        DividerBodyPoly BodyPoly;
     };
 
     //! Data structure for window frame properties.
@@ -40,11 +44,11 @@ namespace Tarcog::ISO15099
         std::variant<std::monostate, GenericFrame, GenericDivider> Class{};
     };
 
-    double dividerUValue(const GenericDivider& divider, double uCenter, double gap);
+    double dividerUValue(const DividerBodyPoly& poly, double uCenter, double gap);
 
     //! Calculates frame edge uValue based on FrameData type
     double frameEdgeUValue(const GenericFrame & c, double uCenter, double gap);
-    double dividerEdgeUValue(const GenericDivider & divider, double uCenter, double gap);
+    double dividerEdgeUValue(const DividerEdgePoly & poly, double uCenter, double gap);
 
     //! Each frame can have frame attached to either left or right side of it.
     enum class FrameSide

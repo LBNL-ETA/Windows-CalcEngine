@@ -77,36 +77,11 @@ namespace Tarcog::ISO15099
                   else if constexpr(std::is_same_v<T, GenericDivider>)
                   {
                       return ISO15099::dividerEdgeUValue(
-                        arg, igu.getUValue(), totalGapThickness(igu));
+                        arg.EdgePoly, igu.getUValue(), totalGapThickness(igu));
                   }
                   else
                   {   // monostate, shouldn't get here
                       return frameData.EdgeUValue;
-                  }
-              },
-              frameData.Class);
-        }
-
-        inline double dividerUValue(IIGUSystem & igu, const FrameData & frameData)
-        {
-            // Fast path: Not a generic divider, just return stored value
-            if(std::holds_alternative<std::monostate>(frameData.Class))
-            {
-                return frameData.UValue;
-            }
-
-            // GenericDivider logic
-            return std::visit(
-              [&]<typename T0>(const T0 & arg) -> double {
-                  using T = std::decay_t<T0>;
-                  if constexpr(std::is_same_v<T, GenericDivider>)
-                  {
-                      return ISO15099::dividerUValue(
-                        arg, igu.getUValue(), Helper::totalGapThickness(igu));
-                  }
-                  else
-                  {
-                      return frameData.UValue;
                   }
               },
               frameData.Class);
@@ -124,17 +99,37 @@ namespace Tarcog::ISO15099
                   if constexpr(std::is_same_v<T, GenericDivider>)
                   {
                       return ISO15099::dividerEdgeUValue(
-                        arg, igu.getUValue(), Helper::totalGapThickness(igu));
+                        arg.EdgePoly, igu.getUValue(), Helper::totalGapThickness(igu));
                   }
                   else
                   {
-                      // Fallback (should not happen, maybe log or throw)
                       return dividerData.EdgeUValue;
                   }
               },
               dividerData.Class);
         }
 
+        inline double dividerUValue(IIGUSystem & igu, const FrameData & dividerData)
+        {
+            if(std::holds_alternative<std::monostate>(dividerData.Class))
+            {
+                return dividerData.UValue;
+            }
+            return std::visit(
+              [&]<typename T0>(const T0 & arg) -> double {
+                  using T = std::decay_t<T0>;
+                  if constexpr(std::is_same_v<T, GenericDivider>)
+                  {
+                      return ISO15099::dividerUValue(
+                        arg.BodyPoly, igu.getUValue(), Helper::totalGapThickness(igu));
+                  }
+                  else
+                  {
+                      return dividerData.UValue;
+                  }
+              },
+              dividerData.Class);
+        }
 
     }   // namespace Helper
 
