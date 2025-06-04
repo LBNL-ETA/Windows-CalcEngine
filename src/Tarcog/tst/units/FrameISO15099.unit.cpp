@@ -116,6 +116,10 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     const double wettedArea{Tarcog::ISO15099::wettedArea(frame)};
     EXPECT_NEAR(0.18, wettedArea, 1e-6);
 
-    const double frameSHGC{shgc(frameData, 15)};
-    EXPECT_NEAR(0.013333, frameSHGC, 1e-6);
+    const double calculatedSHGC{Tarcog::ISO15099::frameSHGC(frameData.Absorptance,
+                                                            frameData.UValue,
+                                                            frameData.ProjectedFrameDimension,
+                                                            frameData.WettedLength,
+                                                            15)};
+    EXPECT_NEAR(0.013333, calculatedSHGC, 1e-6);
 }

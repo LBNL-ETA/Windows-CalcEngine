@@ -15,14 +15,17 @@ namespace Tarcog::ISO15099
         return result;
     }
 
-    double shgc(const FrameData & frame, double hc)
+    double frameSHGC(double absorptance,
+                     double uValue,
+                     double projectedFrameDimension,
+                     double wettedLength,
+                     double hc)
     {
-        if(hc == 0 || frame.WettedLength == 0)
+        if(hc == 0 || wettedLength == 0)
         {
             return 0;
         }
-        return frame.Absorptance * frame.UValue / hc * frame.ProjectedFrameDimension
-               / frame.WettedLength;
+        return absorptance * uValue / hc * projectedFrameDimension / wettedLength;
     }
 
     [[nodiscard]] double projectedArea(const Frame & frame)

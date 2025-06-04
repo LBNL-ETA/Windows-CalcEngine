@@ -48,8 +48,22 @@ protected:
                 .ProjectedFrameDimension = projectedFrameDimension,
                 .WettedLength = projectedFrameDimension,
                 .Absorptance = 0.9,
-                .Class = Tarcog::ISO15099::GenericFrame{{2.33, -0.01, 0.138, 0, 0}}
-                };
+                .Class = Tarcog::ISO15099::GenericFrame{{2.33, -0.01, 0.138, 0, 0}}};
+    }
+
+    static Tarcog::ISO15099::FrameData genericDividerAluminumHollow()
+    {
+        constexpr double projectedFrameDimension{0.01588};
+
+        // Data pulled from WINDOW database, record 1
+        return {.UValue = 0.18,
+                .EdgeUValue = 3.0,
+                .ProjectedFrameDimension = projectedFrameDimension,
+                .WettedLength = projectedFrameDimension,
+                .Absorptance = 0.9,
+                .Class = Tarcog::ISO15099::GenericDivider{
+                    .EdgePoly = {1.19, 0.0, 0.73, 0.009},
+                    .BodyPoly = {5.56, 0.0004, -0.00003, 0.042, -0.003}}};
     }
 
     static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerUValue()
@@ -238,7 +252,7 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
     constexpr double wettedLength{0.05715};
     constexpr double absorptance{0.9};
 
-    constexpr Tarcog::ISO15099::FrameData frameData{         .UValue = uValue,
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
                                                     .EdgeUValue = edgeUValue,
                                                     .ProjectedFrameDimension =
                                                       projectedFrameDimension,
@@ -390,6 +404,70 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerSHGC)
     EXPECT_NEAR(0.751391, vt, 1e-6);
 }
 
+TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerUValueWithDividers)
+{
+    SCOPED_TRACE("Generic frames with single clear with dividers (Winter run).");
+
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValue());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+
+    constexpr size_t nHorizontal{2u};
+    constexpr size_t nVertical{2u};
+    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(5.689011, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.0288763, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.712693, vt, 1e-6);
+}
+
+TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerSHGCWithDividers)
+{
+    SCOPED_TRACE("Generic frames with single clear (Summer run).");
+
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+
+    constexpr size_t nHorizontal{2u};
+    constexpr size_t nVertical{2u};
+    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(5.323107, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.723181, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.712693, vt, 1e-6);
+}
+
 TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerUValue)
 {
     SCOPED_TRACE("Begin Test: Single vision window with calculated COG values.");
@@ -402,11 +480,10 @@ TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerUValue)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValue());
 
-    window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(2.525314, uvalue, 1e-6);
@@ -428,11 +505,10 @@ TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerSHGC)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGC());
 
-    window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(2.631899, uvalue, 1e-6);
@@ -500,6 +576,66 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGC)
     EXPECT_NEAR(0.657029, vt, 1e-6);
 }
 
+TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithDividers)
+{
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.7861};
+    constexpr auto tSol{0.6069};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValue());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+
+    constexpr size_t nHorizontal{2u};
+    constexpr size_t nVertical{2u};
+    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(3.530437, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.0289528, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.623190, vt, 1e-6);
+}
+
+TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithDividers)
+{
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.7861};
+    constexpr auto tSol{0.6069};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGC());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+
+    constexpr size_t nHorizontal{2u};
+    constexpr size_t nVertical{2u};
+    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(3.635180, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.598462, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.623190, vt, 1e-6);
+}
+
 TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
 {
     SCOPED_TRACE("Begin Test: Mismatch detection for single vision window.");
@@ -517,7 +653,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     constexpr double absorptance{0.9};
 
     // Add spec to frame data
-    Tarcog::ISO15099::FrameData frameData{  .UValue = frameUValue,
+    Tarcog::ISO15099::FrameData frameData{.UValue = frameUValue,
                                           .EdgeUValue = edgeUValue,
                                           .ProjectedFrameDimension = projectedFrameDimension,
                                           .WettedLength = wettedLength,
