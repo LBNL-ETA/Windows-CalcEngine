@@ -138,13 +138,11 @@ namespace Tarcog::ISO15099
     {
         const auto frames = m_Frame | std::views::values;
 
-        // Frame U-value weighted sum
         const double frameWU =
           std::accumulate(frames.begin(), frames.end(), 0.0, [](double acc, const auto & frame) {
               return acc + projectedArea(frame) * frame.frameData.UValue;
           });
 
-        // Edge-of-glass weighted sum (functional style)
         const double edgeWU = std::accumulate(
           frames.begin(), frames.end(), 0.0, [this](double acc, const auto & frame) {
               return acc
@@ -178,11 +176,11 @@ namespace Tarcog::ISO15099
         for(const auto & frame : m_Frame | std::views::values)
         {
             frameWeightedSHGC += projectedArea(frame)
-                                 * ISO15099::frameSHGC(frame.frameData.Absorptance,
-                                                       frame.frameData.UValue,
-                                                       frame.frameData.ProjectedFrameDimension,
-                                                       frame.frameData.WettedLength,
-                                                       m_HExterior);
+                                 * frameSHGC(frame.frameData.Absorptance,
+                                             frame.frameData.UValue,
+                                             frame.frameData.ProjectedFrameDimension,
+                                             frame.frameData.WettedLength,
+                                             m_HExterior);
         }
 
         const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
@@ -191,13 +189,12 @@ namespace Tarcog::ISO15099
         auto dividerWeightedSHGC{0.0};
         if(m_Divider.has_value())
         {
-            dividerWeightedSHGC += dividerArea() * ISO15099::frameSHGC(
-                m_Divider->Absorptance,
-                Helper::dividerUValue(*m_IGUSystem, *m_Divider),
-                m_Divider->ProjectedFrameDimension,
-                m_Divider->WettedLength,
-                m_HExterior
-            );
+            dividerWeightedSHGC += dividerArea()
+                                   * frameSHGC(m_Divider->Absorptance,
+                                               Helper::dividerUValue(*m_IGUSystem, *m_Divider),
+                                               m_Divider->ProjectedFrameDimension,
+                                               m_Divider->WettedLength,
+                                               m_HExterior);
         }
 
         return (COGWeightedSHGC + frameWeightedSHGC + dividerWeightedSHGC) / area();
