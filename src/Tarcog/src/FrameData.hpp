@@ -25,8 +25,6 @@ namespace Tarcog::ISO15099
     //! GenericDivider calculations is used
     struct GenericDivider
     {
-        double GapMin{0};
-        double GapMax{0};
         DividerEdgePoly EdgePoly;
         DividerBodyPoly BodyPoly;
     };
