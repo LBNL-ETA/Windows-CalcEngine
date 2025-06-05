@@ -576,7 +576,7 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGC)
     EXPECT_NEAR(0.657029, vt, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithDividers)
+TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithFixedDividers)
 {
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -606,7 +606,7 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithDividers)
     EXPECT_NEAR(0.623190, vt, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithDividers)
+TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithFixedDividers)
 {
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -634,6 +634,62 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithDividers)
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.623190, vt, 1e-6);
+}
+
+TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithAutoDividers)
+{
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.7861};
+    constexpr auto tSol{0.6069};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValue());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+
+    window.setDividersAuto(genericDividerAluminumHollow());
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(3.709885, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.041930, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.597322, vt, 1e-6);
+}
+
+TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithAutoDividers)
+{
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.7861};
+    constexpr auto tSol{0.6069};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGC());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+
+    window.setDividersAuto(genericDividerAluminumHollow());
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(3.804730, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.593779, windowSHGC, 1e-6);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.597322, vt, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, IGUMismatchDetected)

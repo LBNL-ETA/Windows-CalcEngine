@@ -93,9 +93,14 @@ namespace Tarcog::ISO15099
         });
     }
 
-    void WindowSingleVision::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)
+    void WindowSingleVision::setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical)
     {
         vision.setDividers(frameData, nHorizontal, nVertical);
+    }
+
+    void WindowSingleVision::setDividersAuto(const FrameData & frameData)
+    {
+        vision.setDividersAuto(frameData);
     }
 
     IGUDimensions WindowSingleVision::getIGUDimensions() const
@@ -353,6 +358,12 @@ namespace Tarcog::ISO15099
         m_Vision2.setDividers(frameData, nHorizontal, nVertical);
     }
 
+    void DualVisionHorizontal::setDividersAuto(const FrameData & frameData)
+    {
+        m_Vision1.setDividersAuto(frameData);
+        m_Vision2.setDividersAuto(frameData);
+    }
+
     void DualVisionHorizontal::setDividersLeftVision(FrameData frameData,
                                                      size_t nHorizontal,
                                                      size_t nVertical)
@@ -360,11 +371,21 @@ namespace Tarcog::ISO15099
         m_Vision1.setDividers(frameData, nHorizontal, nVertical);
     }
 
+    void DualVisionHorizontal::setDividersLeftVisionAuto(const FrameData & frameData)
+    {
+        m_Vision1.setDividersAuto(frameData);
+    }
+
     void DualVisionHorizontal::setDividersRightVision(FrameData frameData,
                                                       size_t nHorizontal,
                                                       size_t nVertical)
     {
         m_Vision2.setDividers(frameData, nHorizontal, nVertical);
+    }
+
+    void DualVisionHorizontal::setDividersRightVisionAuto(const FrameData & frameData)
+    {
+        m_Vision2.setDividersAuto(frameData);
     }
 
     ////////////////////////////////////////////////
@@ -476,6 +497,12 @@ namespace Tarcog::ISO15099
         m_Vision2.setDividers(frameData, nHorizontal, nVertical);
     }
 
+    void DualVisionVertical::setDividersAuto(const FrameData & frameData)
+    {
+        m_Vision1.setDividersAuto(frameData);
+        m_Vision2.setDividersAuto(frameData);
+    }
+
     void DualVisionVertical::setDividersTopVision(FrameData frameData,
                                                   size_t nHorizontal,
                                                   size_t nVertical)
@@ -483,10 +510,20 @@ namespace Tarcog::ISO15099
         m_Vision1.setDividers(frameData, nHorizontal, nVertical);
     }
 
+    void DualVisionVertical::setDividersTopVisionAuto(const FrameData & frameData)
+    {
+        m_Vision1.setDividersAuto(frameData);
+    }
+
     void DualVisionVertical::setDividersBottomVision(FrameData frameData,
                                                      size_t nHorizontal,
                                                      size_t nVertical)
     {
         m_Vision2.setDividers(frameData, nHorizontal, nVertical);
+    }
+
+    void DualVisionVertical::setDividersBottomVisionAuto(const FrameData & frameData)
+    {
+        m_Vision2.setDividersAuto(frameData);
     }
 }   // namespace Tarcog::ISO15099

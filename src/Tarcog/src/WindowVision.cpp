@@ -279,6 +279,23 @@ namespace Tarcog::ISO15099
         }
     }
 
+    namespace Helper
+    {
+        inline std::pair<size_t, size_t> autoCalculateDividers(double width, double height)
+        {
+            int nHor = static_cast<int>(width / 0.305);
+            int nVer = static_cast<int>(height / 0.305);
+            return {static_cast<size_t>(std::max(0, nHor)), static_cast<size_t>(std::max(0, nVer))};
+        }
+    }   // namespace Helper
+
+
+    void WindowVision::setDividersAuto(const FrameData & divider)
+    {
+        auto [nHor, nVer] = Helper::autoCalculateDividers(m_Width, m_Height);
+        setDividers(divider, nHor, nVer);
+    }
+
     void WindowVision::setInteriorAndExteriorSurfaceHeight(const double height)
     {
         m_ExteriorSurfaceHeight = height;
