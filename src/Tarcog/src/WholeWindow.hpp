@@ -48,7 +48,8 @@ namespace Tarcog::ISO15099
         void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
         void setFrameData(const SingleVisionFrameMap& frames);
 
-        void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersAuto(const FrameData & frameData);
 
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
@@ -160,9 +161,12 @@ namespace Tarcog::ISO15099
         void setFrameData(const DualHorizontalFrameMap & frames);
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersAuto(const FrameData & frameData);
 
         void setDividersLeftVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersLeftVisionAuto(const FrameData & frameData);
         void setDividersRightVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersRightVisionAuto(const FrameData & frameData);
     };
 
     ////////////////////////////////////////////////
@@ -206,8 +210,11 @@ namespace Tarcog::ISO15099
         void setFrameData(const DualVerticalFrameMap & frames);
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersAuto(const FrameData & frameData);
 
         void setDividersTopVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersTopVisionAuto(const FrameData & frameData);
         void setDividersBottomVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersBottomVisionAuto(const FrameData & frameData);
     };
 }   // namespace Tarcog::ISO15099

@@ -84,8 +84,12 @@ protected:
         const double wettedLength{0.05633282};
         const double absorptance{0.3};
 
-        const Tarcog::ISO15099::FrameData frameData{
-          uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+        const Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
         const auto windowWidth{1.5};
         const auto windowHeight{1.2};
@@ -97,20 +101,20 @@ protected:
 
         using Tarcog::ISO15099::DualHorizontalFramePosition;
 
-        m_Window.setFrameData({
-            {DualHorizontalFramePosition::Left, frameData},
-            {DualHorizontalFramePosition::Right, frameData},
-            {DualHorizontalFramePosition::BottomLeft, frameData},
-            {DualHorizontalFramePosition::BottomRight, frameData},
-            {DualHorizontalFramePosition::TopLeft, frameData},
-            {DualHorizontalFramePosition::TopRight, frameData},
-            {DualHorizontalFramePosition::MeetingRail, frameData}
-        });
-
+        m_Window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
+                               {DualHorizontalFramePosition::Right, frameData},
+                               {DualHorizontalFramePosition::BottomLeft, frameData},
+                               {DualHorizontalFramePosition::BottomRight, frameData},
+                               {DualHorizontalFramePosition::TopLeft, frameData},
+                               {DualHorizontalFramePosition::TopRight, frameData},
+                               {DualHorizontalFramePosition::MeetingRail, frameData}});
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::DualVisionHorizontal & getWindow() { return m_Window; }
+    [[nodiscard]] Tarcog::ISO15099::DualVisionHorizontal & getWindow()
+    {
+        return m_Window;
+    }
 };
 
 TEST_F(TestDoubleLowEHorizontalSliderSHGCRun, Test1)

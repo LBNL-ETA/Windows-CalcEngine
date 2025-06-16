@@ -81,7 +81,12 @@ protected:
         const double absorptance{0.3};
 
         const Tarcog::ISO15099::FrameData frameData{
-          uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+            .UValue = uValue,
+            .EdgeUValue = edgeUValue,
+            .ProjectedFrameDimension = projectedFrameDimension,
+            .WettedLength = wettedLength,
+            .Absorptance = absorptance
+        };
 
         const auto windowWidth{1.5};
         const auto windowHeight{1.2};

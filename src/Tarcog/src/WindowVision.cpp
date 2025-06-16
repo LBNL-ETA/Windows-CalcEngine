@@ -1,8 +1,11 @@
 #include <ranges>
+#include <numeric>
+
 #include <WCECommon.hpp>
 
 #include "WindowVision.hpp"
 #include "EnvironmentConfigurations.hpp"
+#include "IGU.hpp"
 
 namespace Tarcog::ISO15099
 {
@@ -28,34 +31,137 @@ namespace Tarcog::ISO15099
         m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
     }
 
+    namespace Helper
+    {
+        inline double cogWeightedUValue(double uCenter,
+                                        double totalArea,
+                                        double frameProjArea,
+                                        double edgeArea,
+                                        double dividerArea,
+                                        double dividerEdgeArea)
+        {
+            return uCenter * (totalArea - frameProjArea - edgeArea - dividerArea - dividerEdgeArea);
+        }
+
+        inline double dividerWeightedUValue(double dividerArea, double dividerUValue)
+        {
+            return dividerArea * dividerUValue;
+        }
+
+        inline double dividerEdgeWeightedUValue(double dividerEdgeArea, double dividerEdgeUValue)
+        {
+            return dividerEdgeArea * dividerEdgeUValue;
+        }
+
+        inline double totalGapThickness(const IIGUSystem & igu)
+        {
+            const auto gapThicknesses{igu.gapLayerThicknesses()};
+            return std::accumulate(gapThicknesses.begin(), gapThicknesses.end(), 0.0);
+        }
+
+        inline double frameEdgeUValue(IIGUSystem & igu, const FrameData & frameData)
+        {
+            if(std::holds_alternative<std::monostate>(frameData.Class))
+            {
+                return frameData.EdgeUValue;
+            }
+
+            return std::visit(
+              [&]<typename T0>(const T0 & arg) -> double {
+                  using T = std::decay_t<T0>;
+                  if constexpr(std::is_same_v<T, GenericFrame>)
+                  {
+                      return ISO15099::frameEdgeUValue(
+                        arg, igu.getUValue(), totalGapThickness(igu));
+                  }
+                  else if constexpr(std::is_same_v<T, GenericDivider>)
+                  {
+                      return ISO15099::dividerEdgeUValue(
+                        arg.EdgePoly, igu.getUValue(), totalGapThickness(igu));
+                  }
+                  else
+                  {
+                      return frameData.EdgeUValue;
+                  }
+              },
+              frameData.Class);
+        }
+
+        inline double dividerEdgeUValue(IIGUSystem & igu, const FrameData & dividerData)
+        {
+            if(std::holds_alternative<std::monostate>(dividerData.Class))
+            {
+                return dividerData.EdgeUValue;
+            }
+            return std::visit(
+              [&]<typename T0>(const T0 & arg) -> double {
+                  using T = std::decay_t<T0>;
+                  if constexpr(std::is_same_v<T, GenericDivider>)
+                  {
+                      return ISO15099::dividerEdgeUValue(
+                        arg.EdgePoly, igu.getUValue(), Helper::totalGapThickness(igu));
+                  }
+                  else
+                  {
+                      return dividerData.EdgeUValue;
+                  }
+              },
+              dividerData.Class);
+        }
+
+        inline double dividerUValue(IIGUSystem & igu, const FrameData & dividerData)
+        {
+            if(std::holds_alternative<std::monostate>(dividerData.Class))
+            {
+                return dividerData.UValue;
+            }
+            return std::visit(
+              [&]<typename T0>(const T0 & arg) -> double {
+                  using T = std::decay_t<T0>;
+                  if constexpr(std::is_same_v<T, GenericDivider>)
+                  {
+                      return ISO15099::dividerUValue(
+                        arg.BodyPoly, igu.getUValue(), Helper::totalGapThickness(igu));
+                  }
+                  else
+                  {
+                      return dividerData.UValue;
+                  }
+              },
+              dividerData.Class);
+        }
+
+    }   // namespace Helper
+
+
     double WindowVision::uValue() const
     {
-        auto frameWeightedUValue{0.0};
-        auto edgeOfGlassWeightedUValue{0.0};
+        const auto frames = m_Frame | std::views::values;
 
-        for(const auto & [key, frame] : m_Frame)
-        {
-            std::ignore = key;
-            frameWeightedUValue += projectedArea(frame) * frame.frameData.UValue;
-            edgeOfGlassWeightedUValue +=
-              Tarcog::ISO15099::edgeOfGlassArea(frame) * frame.frameData.EdgeUValue;
-        }
+        const double frameWU =
+          std::accumulate(frames.begin(), frames.end(), 0.0, [](double acc, const auto & frame) {
+              return acc + projectedArea(frame) * frame.frameData.UValue;
+          });
 
-        const auto COGWeightedUValue{m_IGUUvalue
-                                     * (area() - frameProjectedArea() - edgeOfGlassArea()
-                                        - dividerArea() - dividerEdgeArea())};
+        const double edgeWU = std::accumulate(
+          frames.begin(), frames.end(), 0.0, [this](double acc, const auto & frame) {
+              return acc
+                     + Tarcog::ISO15099::edgeOfGlassArea(frame)
+                         * Helper::frameEdgeUValue(*m_IGUSystem, frame.frameData);
+          });
 
-        auto dividerWeightedUValue{0.0};
-        auto dividerWeightedEdgeUValue{0.0};
-        if(m_Divider.has_value())
-        {
-            dividerWeightedUValue += dividerArea() * m_Divider->UValue;
-            dividerWeightedEdgeUValue += dividerEdgeArea() * m_Divider->EdgeUValue;
-        }
+        // COG weighted U-value
+        const double cogWU =
+          m_IGUUvalue
+          * (area() - frameProjectedArea() - edgeOfGlassArea() - dividerArea() - dividerEdgeArea());
 
-        return (COGWeightedUValue + frameWeightedUValue + edgeOfGlassWeightedUValue
-                + dividerWeightedUValue + dividerWeightedEdgeUValue)
-               / area();
+        // Divider contributions
+        const double divWU =
+          m_Divider ? dividerArea() * Helper::dividerUValue(*m_IGUSystem, *m_Divider) : 0.0;
+        const double divEdgeWU =
+          m_Divider ? dividerEdgeArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider) : 0.0;
+
+        return (cogWU + frameWU + edgeWU + divWU + divEdgeWU) / area();
     }
 
     double WindowVision::shgc() const
@@ -67,11 +173,14 @@ namespace Tarcog::ISO15099
     {
         auto frameWeightedSHGC{0.0};
 
-        for(const auto & [key, frame] : m_Frame)
+        for(const auto & frame : m_Frame | std::views::values)
         {
-            std::ignore = key;
-            frameWeightedSHGC +=
-              projectedArea(frame) * ISO15099::shgc(frame.frameData, m_HExterior);
+            frameWeightedSHGC += projectedArea(frame)
+                                 * frameSHGC(frame.frameData.Absorptance,
+                                             frame.frameData.UValue,
+                                             frame.frameData.ProjectedFrameDimension,
+                                             frame.frameData.WettedLength,
+                                             m_HExterior);
         }
 
         const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
@@ -80,7 +189,12 @@ namespace Tarcog::ISO15099
         auto dividerWeightedSHGC{0.0};
         if(m_Divider.has_value())
         {
-            dividerWeightedSHGC += dividerArea() * ISO15099::shgc(m_Divider.value(), m_HExterior);
+            dividerWeightedSHGC += dividerArea()
+                                   * frameSHGC(m_Divider->Absorptance,
+                                               Helper::dividerUValue(*m_IGUSystem, *m_Divider),
+                                               m_Divider->ProjectedFrameDimension,
+                                               m_Divider->WettedLength,
+                                               m_HExterior);
         }
 
         return (COGWeightedSHGC + frameWeightedSHGC + dividerWeightedSHGC) / area();
@@ -163,6 +277,23 @@ namespace Tarcog::ISO15099
             frame.dividerArea = m_Divider->ProjectedFrameDimension * ConstantsData::EOGHeight;
             frame.numberOfDividers = numOfDivs.at(key);
         }
+    }
+
+    namespace Helper
+    {
+        inline std::pair<size_t, size_t> autoCalculateDividers(double width, double height)
+        {
+            int nHor = static_cast<int>(width / 0.305);
+            int nVer = static_cast<int>(height / 0.305);
+            return {static_cast<size_t>(std::max(0, nHor)), static_cast<size_t>(std::max(0, nVer))};
+        }
+    }   // namespace Helper
+
+
+    void WindowVision::setDividersAuto(const FrameData & divider)
+    {
+        auto [nHor, nVer] = Helper::autoCalculateDividers(m_Width, m_Height);
+        setDividers(divider, nHor, nVer);
     }
 
     void WindowVision::setInteriorAndExteriorSurfaceHeight(const double height)

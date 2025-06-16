@@ -2,6 +2,9 @@
 
 #include <functional>
 #include <optional>
+#include <variant>
+#include <array>
+#include <map>
 
 namespace Tarcog::ISO15099
 {
@@ -13,6 +16,19 @@ namespace Tarcog::ISO15099
         double Thickness{0};  //! Total thickness of the IGU [m]
     };
 
+    //! Generic frame type will have edge of glass calculations based on coefficients
+    using GenericFrame = std::array<double, 5>;
+
+    using DividerEdgePoly = std::array<double, 4>;
+    using DividerBodyPoly = std::array<double, 5>;
+
+    //! GenericDivider calculations is used
+    struct GenericDivider
+    {
+        DividerEdgePoly EdgePoly;
+        DividerBodyPoly BodyPoly;
+    };
+
     //! Data structure for window frame properties.
     //! Contains thermal, dimensional, and optical characteristics of a window frame.
     struct FrameData
@@ -22,8 +38,15 @@ namespace Tarcog::ISO15099
         double ProjectedFrameDimension{0};  //! Projected width/dimension of the frame [m]
         double WettedLength{0};             //! Length of frame in contact with other materials [m]
         double Absorptance{0.3};            //! Solar absorptance of the frame (0-1)
-        std::optional<IGUData> iguData{};     //! Optional data for the IGU associated with this frame
+        std::optional<IGUData> iguData{};   //! Optional data for the IGU associated with this frame
+        std::variant<std::monostate, GenericFrame, GenericDivider> Class{};
     };
+
+    double dividerUValue(const DividerBodyPoly& poly, double uCenter, double gap);
+
+    //! Calculates frame edge uValue based on FrameData type
+    double frameEdgeUValue(const GenericFrame & c, double uCenter, double gap);
+    double dividerEdgeUValue(const DividerEdgePoly & poly, double uCenter, double gap);
 
     //! Each frame can have frame attached to either left or right side of it.
     enum class FrameSide

@@ -47,6 +47,7 @@ namespace Tarcog::ISO15099
         void setFrameTypes(std::map<FramePosition, FrameType> frameTypes);
 
         void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
+        void setDividersAuto(const FrameData & divider);
 
         void setInteriorAndExteriorSurfaceHeight(double height);
 

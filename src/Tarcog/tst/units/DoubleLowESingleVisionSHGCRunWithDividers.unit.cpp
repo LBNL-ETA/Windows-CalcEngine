@@ -83,13 +83,17 @@ protected:
         const double wettedLength{0.05633282};
         const double absorptance{0.3};
 
-        Tarcog::ISO15099::FrameData frameData{
-          uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+        const Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
-        const auto windowWidth{1.2};
-        const auto windowHeight{1.5};
-        const auto tVis{0.6385};
-        const auto tSol{0.371589958668};
+        constexpr auto windowWidth{1.2};
+        constexpr auto windowHeight{1.5};
+        constexpr auto tVis{0.6385};
+        constexpr auto tSol{0.371589958668};
 
         m_Window = Tarcog::ISO15099::WindowSingleVision(windowWidth, windowHeight, tVis, tSol, igu);
 

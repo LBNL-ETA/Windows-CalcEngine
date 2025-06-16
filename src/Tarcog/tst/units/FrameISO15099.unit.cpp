@@ -13,14 +13,18 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameExterior)
 {
     SCOPED_TRACE("Begin Test: Left side frame exterior.");
 
-    const double uValue{1.0};
-    const double edgeUValue{1.0};
-    const double projectedFrameDimension{0.2};
-    const double wettedLength{0.3};
-    const double absorptance{0.3};
+    constexpr double uValue{1.0};
+    constexpr double edgeUValue{1.0};
+    constexpr double projectedFrameDimension{0.2};
+    constexpr double wettedLength{0.3};
+    constexpr double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
     const double frameLength{1.0};
     Tarcog::ISO15099::Frame frame{frameLength, Tarcog::ISO15099::FrameType::Exterior, frameData};
@@ -44,16 +48,20 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameInterior)
 {
     SCOPED_TRACE("Begin Test: Left side frame assigned.");
 
-    const double uValue{1.0};
-    const double edgeUValue{1.0};
-    const double projectedFrameDimension{0.2};
-    const double wettedLength{0.3};
-    const double absorptance{0.3};
+    constexpr double uValue{1.0};
+    constexpr double edgeUValue{1.0};
+    constexpr double projectedFrameDimension{0.2};
+    constexpr double wettedLength{0.3};
+    constexpr double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
-    const double frameLength{1.0};
+    constexpr double frameLength{1.0};
     Tarcog::ISO15099::Frame frame{frameLength, Tarcog::ISO15099::FrameType::Exterior, frameData};
 
     const Tarcog::ISO15099::Frame leftFrame{
@@ -75,16 +83,20 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
 {
     SCOPED_TRACE("Begin Test: Frame is interior and left and right frames are exterior.");
 
-    const double uValue{1.0};
-    const double edgeUValue{1.0};
-    const double projectedFrameDimension{0.2};
-    const double wettedLength{0.3};
-    const double absorptance{0.3};
+    constexpr double uValue{1.0};
+    constexpr double edgeUValue{1.0};
+    constexpr double projectedFrameDimension{0.2};
+    constexpr double wettedLength{0.3};
+    constexpr double absorptance{0.3};
 
-    Tarcog::ISO15099::FrameData frameData{
-      uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
-    const double frameLength{1.0};
+    constexpr double frameLength{1.0};
     Tarcog::ISO15099::Frame frame{frameLength, Tarcog::ISO15099::FrameType::Interior, frameData};
 
     const Tarcog::ISO15099::Frame leftFrame{
@@ -104,6 +116,10 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     const double wettedArea{Tarcog::ISO15099::wettedArea(frame)};
     EXPECT_NEAR(0.18, wettedArea, 1e-6);
 
-    const double frameSHGC{shgc(frameData, 15)};
-    EXPECT_NEAR(0.013333, frameSHGC, 1e-6);
+    const double calculatedSHGC{Tarcog::ISO15099::frameSHGC(frameData.Absorptance,
+                                                            frameData.UValue,
+                                                            frameData.ProjectedFrameDimension,
+                                                            frameData.WettedLength,
+                                                            15)};
+    EXPECT_NEAR(0.013333, calculatedSHGC, 1e-6);
 }

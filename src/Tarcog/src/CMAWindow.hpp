@@ -118,6 +118,7 @@ namespace CMA
         void setFrameData(const DualHorizontalFrameMap & frames);
 
         void setDividers(CMAFrame frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersAuto(CMAFrame divider);
 
     private:
         //! Single vision windows needs to create this structure, otherwise it will not work

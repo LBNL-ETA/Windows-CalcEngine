@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "EnvironmentConfigurations.hpp"
 
 
@@ -18,6 +20,7 @@ namespace Tarcog::ISO15099
         virtual double getSHGC(double t_TotSol) = 0;
         virtual double getH(System system, Environment environment) const = 0;
         virtual double thickness() const = 0;
+        virtual std::vector<double> gapLayerThicknesses() const = 0; // Needed for generic frames
         virtual void setWidth(double width) = 0;
         virtual void setHeight(double height) = 0;
         virtual void setTilt(double tilt) = 0;

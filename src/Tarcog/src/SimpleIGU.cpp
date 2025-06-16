@@ -1,9 +1,19 @@
 #include "SimpleIGU.hpp"
 
+#include <numeric>
+
 namespace Tarcog::ISO15099
 {
-    SimpleIGU::SimpleIGU(double uValue, double shgc, double h, double thickness) :
-        m_UValue(uValue), m_SHGC(shgc), m_H(h), m_Thickness(thickness)
+    SimpleIGU::SimpleIGU(double uValue,
+                         double shgc,
+                         double h,
+                         double thickness,
+                         std::vector<double> gapLayerThicknesses) :
+        m_UValue(uValue),
+        m_SHGC(shgc),
+        m_H(h),
+        m_Thickness(thickness),
+        m_gapLayerThicknesses(std::move(gapLayerThicknesses))
     {}
 
     double SimpleIGU::getUValue()
@@ -36,6 +46,11 @@ namespace Tarcog::ISO15099
     double SimpleIGU::thickness() const
     {
         return m_Thickness;
+    }
+
+    std::vector<double> SimpleIGU::gapLayerThicknesses() const
+    {
+        return m_gapLayerThicknesses;
     }
 
     void SimpleIGU::setTilt(double)

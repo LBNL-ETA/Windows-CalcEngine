@@ -1,6 +1,7 @@
 #include "System.hpp"
 #include "IGU.hpp"
 #include "Environment.hpp"
+#include "IGUSolidLayer.hpp"
 #include "SingleSystem.hpp"
 
 
@@ -82,6 +83,11 @@ namespace Tarcog::ISO15099
         return m_System.at(t_System)->getSolidLayers();
     }
 
+    std::vector<std::shared_ptr<CIGUGapLayer>> CSystem::getGapLayers(System t_System) const
+    {
+        return m_System.at(t_System)->getGapLayers();
+    }
+
     double CSystem::getHeatFlow(System const t_System, Environment const t_Environment)
     {
         checkSolved();
@@ -148,6 +154,29 @@ namespace Tarcog::ISO15099
     double CSystem::thickness() const
     {
         return thickness(System::Uvalue);
+    }
+
+    namespace Helper
+    {
+        template<typename LayerGetter>
+        std::vector<double> getLayerThicknesses(const CSystem * system, LayerGetter getter)
+        {
+            auto layers = (system->*getter)(System::Uvalue);
+            std::vector<double> result(layers.size());
+            std::ranges::transform(
+              layers, result.begin(), [](const auto & layer) { return layer->getThickness(); });
+            return result;
+        }
+    }   // namespace Helper
+
+    std::vector<double> CSystem::solidLayerThicknesses() const
+    {
+        return Helper::getLayerThicknesses(this, &CSystem::getSolidLayers);
+    }
+
+    std::vector<double> CSystem::gapLayerThicknesses() const
+    {
+        return Helper::getLayerThicknesses(this, &CSystem::getGapLayers);
     }
 
     double CSystem::relativeHeatGain(const double Tsol)

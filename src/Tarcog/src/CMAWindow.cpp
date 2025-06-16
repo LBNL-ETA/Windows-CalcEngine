@@ -262,6 +262,21 @@ namespace CMA
         }
     }
 
+    void CMAWindowDualVisionHorizontal::setDividersAuto(CMAFrame divider)
+    {
+        EnumOption options;
+        for(auto spacerOption : options)
+        {
+            for(auto glazingOption : options)
+            {
+                const auto frameData = divider.getFrame(spacerOption, glazingOption);
+                m_Window.at(spacerOption)
+                  .at(glazingOption)
+                  .setDividersAuto(frameData);
+            }
+        }
+    }
+
     std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionHorizontal>>
       CMAWindowDualVisionHorizontal::createBestWorstWindows(double width,
                                                             double height,

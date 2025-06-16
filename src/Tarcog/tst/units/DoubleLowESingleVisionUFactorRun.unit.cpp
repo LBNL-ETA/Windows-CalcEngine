@@ -80,8 +80,12 @@ protected:
         const double wettedLength{0.05633282};
         const double absorptance{0.3};
 
-        Tarcog::ISO15099::FrameData frameData{
-          uValue, edgeUValue, projectedFrameDimension, wettedLength, absorptance};
+        const Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
         const auto windowWidth{1.2};
         const auto windowHeight{1.5};
@@ -97,7 +101,10 @@ protected:
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::WindowSingleVision & getWindow() { return m_Window; }
+    [[nodiscard]] Tarcog::ISO15099::WindowSingleVision & getWindow()
+    {
+        return m_Window;
+    }
 };
 
 TEST_F(TestDoubleLowESingleVisionUFactorRun, Test1)
