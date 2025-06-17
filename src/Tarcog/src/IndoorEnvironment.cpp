@@ -65,7 +65,7 @@ namespace Tarcog::ISO15099
 
     double CIndoorEnvironment::hcFromAirSpeed()
     {
-        return 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
+        return 4 + 4 * gasSpecification.airflowProperties.airSpeed;
     }
 
     double CIndoorEnvironment::hcThermallyDriven()
@@ -114,7 +114,7 @@ namespace Tarcog::ISO15099
 
     double CIndoorEnvironment::calculateHc()
     {
-        return (gasSpecification.airflowProperties.m_AirSpeed > 0) ? hcFromAirSpeed()
+        return (gasSpecification.airflowProperties.airSpeed > 0) ? hcFromAirSpeed()
                                                                    : hcThermallyDriven();
     }
 
