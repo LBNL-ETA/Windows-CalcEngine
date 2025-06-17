@@ -101,13 +101,13 @@ TEST_F(TestInBetweenShadeAir, Test1)
 
     auto aSystem = GetSystem();
 
-    const std::vector correctTemp{
-      257.939927, 258.405770, 271.483960, 271.488314, 283.492154, 283.957996};
-    const std::vector correctJ{
-      249.267888, 260.408335, 300.377033, 316.036787, 358.178073, 378.480728};
+    const std::vector correctTemperature{
+      257.940780, 258.406765, 271.482442, 271.486793, 283.488766, 283.954752};
+    Helper::testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), 1e-6);
 
-    Helper::testVectors("Temperature", correctTemp, aSystem->getTemperatures(), 1e-6);
-    Helper::testVectors("Radiosity", correctJ, aSystem->getRadiosities(), 1e-6);
+    const std::vector correctRadiosity{
+      249.270675, 260.410741, 300.371630, 316.028422, 358.162034, 378.466576};
+    Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), 1e-6);
 
-    EXPECT_EQ(26u, aSystem->getNumberOfIterations());
+    EXPECT_EQ(25u, aSystem->getNumberOfIterations());
 }

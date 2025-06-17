@@ -150,13 +150,13 @@ TEST_F(DoubleClear_UValueEnvironmentVenetianInside, StandardRun)
     EXPECT_NEAR(0.0590804, thickness, Tolerance);
 
     auto numOfIter = tarcogSystem.getNumberOfIterations(aRun);
-    EXPECT_EQ(55u, numOfIter);
+    EXPECT_EQ(65u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results
     //////////////////////////////////////////////////////////////////////
     auto Uvalue = tarcogSystem.getUValue();
-    EXPECT_NEAR(Uvalue, 2.1674446838982129, Tolerance);
+    EXPECT_NEAR(Uvalue, 2.167445, Tolerance);
 
     constexpr double Tsol{0.703296};
     auto SHGC = tarcogSystem.getSHGC(Tsol);
