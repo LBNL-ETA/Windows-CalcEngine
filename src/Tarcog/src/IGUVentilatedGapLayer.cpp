@@ -9,14 +9,6 @@
 
 namespace Tarcog::ISO15099
 {
-    VentilatedGapTemperatures::VentilatedGapTemperatures(double inletTemperature, double outletTemperature) :
-        inletTemperature(inletTemperature), outletTemperature(outletTemperature)
-    {}
-
-    ForcedVentilation::ForcedVentilation(double speed, double temperature) :
-        speed(speed), temperature(temperature)
-    {}
-
     Gases::GasProperties getGasPropertiesAtReferenceTemperatureAndPressure(Gases::CGas & gas,
                                                                            const double temperature,
                                                                            const double pressure)
@@ -44,8 +36,6 @@ namespace Tarcog::ISO15099
         m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
         m_ReferenceGasProperties(getGasPropertiesAtReferenceTemperatureAndPressure(
           gasSpecification.gas, ReferenceTemperature, gasSpecification.pressure)),
-        m_Zin(0),
-        m_Zout(0),
         m_ForcedVentilation(
           ForcedVentilation(forcedVentilationInletSpeed, forcedVentilationInletTemperature))
     {}

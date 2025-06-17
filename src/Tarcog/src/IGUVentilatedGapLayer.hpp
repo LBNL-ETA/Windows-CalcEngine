@@ -12,8 +12,6 @@ namespace Tarcog::ISO15099
 {
     struct VentilatedGapTemperatures
     {
-        VentilatedGapTemperatures() = default;
-        VentilatedGapTemperatures(double inletTemperature, double outletTemperature);
         double inletTemperature{0};
         double outletTemperature{0};
     };
@@ -24,7 +22,6 @@ namespace Tarcog::ISO15099
     //! @property temperature - Temperature at which air will be coming into the gap
     struct ForcedVentilation
     {
-        ForcedVentilation(double speed, double temperature);
         double speed{0};
         double temperature{0};
     };
