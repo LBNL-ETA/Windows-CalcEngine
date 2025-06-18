@@ -15,7 +15,7 @@ namespace Tarcog::ISO15099
     {
         if(thickness <= 0)
         {
-            throw std::runtime_error("Thickness must be greater than zero.");
+            throw std::runtime_error("Layer thickness must be greater than zero.");
         }
     }
 
