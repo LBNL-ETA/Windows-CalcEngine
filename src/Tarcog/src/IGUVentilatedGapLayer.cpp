@@ -21,11 +21,9 @@ namespace Tarcog::ISO15099
     CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(GapLayer const & t_Layer) :
         CIGUGapLayer(*t_Layer),
         m_Layer(t_Layer),
-        m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
+        m_State{Gases::DefaultTemperature, Gases::DefaultTemperature},
         m_ReferenceGasProperties(getGasPropertiesAtReferenceTemperatureAndPressure(
-          gasSpecification.gas, ReferenceTemperature, gasSpecification.pressure)),
-        m_Zin(0),
-        m_Zout(0)
+          gasSpecification.gas, ReferenceTemperature, gasSpecification.pressure))
     {}
 
     CIGUVentilatedGapLayer::CIGUVentilatedGapLayer(const GapLayer & t_Layer,
@@ -33,11 +31,11 @@ namespace Tarcog::ISO15099
                                                    double forcedVentilationInletSpeed) :
         CIGUGapLayer(*t_Layer),
         m_Layer(t_Layer),
-        m_State(Gases::DefaultTemperature, Gases::DefaultTemperature),
+        m_State{.inletTemperature = Gases::DefaultTemperature,  .outletTemperature = Gases::DefaultTemperature},
         m_ReferenceGasProperties(getGasPropertiesAtReferenceTemperatureAndPressure(
           gasSpecification.gas, ReferenceTemperature, gasSpecification.pressure)),
         m_ForcedVentilation(
-          ForcedVentilation(forcedVentilationInletSpeed, forcedVentilationInletTemperature))
+          ForcedVentilation{forcedVentilationInletSpeed, forcedVentilationInletTemperature})
     {}
 
     double CIGUVentilatedGapLayer::averageLayerTemperature()
