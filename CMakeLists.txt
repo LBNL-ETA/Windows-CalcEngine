@@ -144,7 +144,8 @@ else()
   	LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
   endif()
   
-  add_library( ${target_name} STATIC ${SOURCES} )
+  add_library( ${target_name} STATIC ${SOURCES}
+		  src/Common/src/Callbacks.hpp)
   
   if( ${BUILD_WCE_COMMON} )
 	target_include_directories(${target_name} PUBLIC "src/Common/include")
