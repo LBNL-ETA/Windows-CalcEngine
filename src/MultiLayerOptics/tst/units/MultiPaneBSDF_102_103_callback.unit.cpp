@@ -47,12 +47,6 @@ protected:
 
         m_Layer = CMultiPaneBSDF::create({Layer_102, Layer_103}, std::nullopt, callback);
     }
-
-public:
-    CMultiPaneBSDF & getLayer()
-    {
-        return *m_Layer;
-    }
 };
 
 TEST_F(MultiPaneBSDF_102_103_callback, SolarAndVisibleRange)
