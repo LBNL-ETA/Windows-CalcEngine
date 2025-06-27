@@ -112,7 +112,7 @@ namespace Tarcog::ISO15099
 
     void Surface::calculateReflectance()
     {
-        constexpr double ε = 1e-12;
+        constexpr double ε = 1e-6;
 
         const double sum = m_Emissivity + m_Transmittance;
         if (sum > 1.0 + ε) {
