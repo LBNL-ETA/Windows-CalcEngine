@@ -171,9 +171,9 @@ namespace Tarcog::ISO15099
 
     double CIGUGapLayer::addAirflowEffect(const double convectiveCoefficient)
     {
-        if(!isStillAir(gasSpecification.airflowProperties.m_AirSpeed))
+        if(!isStillAir(gasSpecification.airflowProperties.airSpeed))
         {
-            return convectiveCoefficient + 2 * gasSpecification.airflowProperties.m_AirSpeed;
+            return convectiveCoefficient + 2 * gasSpecification.airflowProperties.airSpeed;
         }
         return convectiveCoefficient;
     }

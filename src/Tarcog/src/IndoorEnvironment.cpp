@@ -25,6 +25,11 @@ namespace Tarcog::ISO15099
 
     CIndoorEnvironment & CIndoorEnvironment::operator=(CIndoorEnvironment const & t_Environment)
     {
+        if(this == &t_Environment)
+        {
+            return *this;
+        }
+
         this->CEnvironment::operator=(t_Environment);
         m_RoomRadiationTemperature = t_Environment.m_RoomRadiationTemperature;
 
@@ -65,7 +70,7 @@ namespace Tarcog::ISO15099
 
     double CIndoorEnvironment::hcFromAirSpeed()
     {
-        return 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
+        return 4 + 4 * gasSpecification.airflowProperties.airSpeed;
     }
 
     double CIndoorEnvironment::hcThermallyDriven()
@@ -114,7 +119,7 @@ namespace Tarcog::ISO15099
 
     double CIndoorEnvironment::calculateHc()
     {
-        return (gasSpecification.airflowProperties.m_AirSpeed > 0) ? hcFromAirSpeed()
+        return (gasSpecification.airflowProperties.airSpeed > 0) ? hcFromAirSpeed()
                                                                    : hcThermallyDriven();
     }
 

@@ -101,7 +101,7 @@ namespace MultiLayerOptics
         return m_Layer.size();
     }
 
-    void CEquivalentBSDFLayer::calculate()
+    void CEquivalentBSDFLayer::calculate(const FenestrationCommon::ProgressCallback & callback)
     {
         FenestrationCommon::EnumSide sides;
         for(Side aSide : sides)
@@ -118,15 +118,18 @@ namespace MultiLayerOptics
             }
         }
 
-        calculateWavelengthByWavelengthProperties();
+        calculateWavelengthByWavelengthProperties(callback);
 
         m_Calculated = true;
     }
 
-    void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties()
+    void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties(
+      const FenestrationCommon::ProgressCallback & callback)
     {
         FenestrationCommon::executeInParallel<size_t>(
-          0u, m_CombinedLayerWavelengths.size() - 1u, [this](size_t index) {
+          0u,
+          m_CombinedLayerWavelengths.size() - 1u,
+          [this](size_t index) {
               // Do not refactor auto layer variable out since calling
               // getEquivalentLayerAtWavelength is calculation intensive and it will slow down the
               // execution
@@ -157,7 +160,8 @@ namespace MultiLayerOptics
                                               layer.getProperty(aSide, aProperty));
                   }
               }
-          });
+          },
+          callback);
     }
 
     CEquivalentBSDFLayerSingleBand

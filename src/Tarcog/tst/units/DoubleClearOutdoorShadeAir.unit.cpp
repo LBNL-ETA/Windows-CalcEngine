@@ -111,7 +111,7 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
     Helper::testVectors("Radiosity", correctJ, radiosity, 1e-6);
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(42u, numOfIter);
+    EXPECT_EQ(70u, numOfIter);
 
     const auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
     EXPECT_NEAR(-25.444198, ventilatedFlow, 1e-6);

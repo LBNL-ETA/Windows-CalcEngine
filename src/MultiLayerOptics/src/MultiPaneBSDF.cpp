@@ -29,7 +29,8 @@ namespace SingleLayerOptics
 namespace MultiLayerOptics
 {
     CMultiPaneBSDF::CMultiPaneBSDF(const std::vector<std::shared_ptr<CBSDFLayer>> & t_Layer,
-                                   const std::optional<std::vector<double>> & matrixWavelengths) :
+                                   const std::optional<std::vector<double>> & matrixWavelengths,
+                                   const FenestrationCommon::ProgressCallback & callback) :
         m_EquivalentLayer(t_Layer, matrixWavelengths),
         m_Results(t_Layer[0]->getDirections(BSDFDirection::Incoming)),
         m_Calculated(false),
@@ -37,7 +38,7 @@ namespace MultiLayerOptics
         m_MaxLambdaCalculated(0),
         m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
     {
-        m_EquivalentLayer.calculate();
+        m_EquivalentLayer.calculate(callback);
     }
 
     std::vector<std::vector<double>>
@@ -410,9 +411,10 @@ namespace MultiLayerOptics
 
     std::unique_ptr<CMultiPaneBSDF> CMultiPaneBSDF::create(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-      const std::optional<std::vector<double>> & matrixWavelengths)
+      const std::optional<std::vector<double>> & matrixWavelengths,
+      const FenestrationCommon::ProgressCallback & callback)
     {
-        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF(t_Layer, matrixWavelengths));
+        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF(t_Layer, matrixWavelengths, callback));
     }
 
     double CMultiPaneBSDF::getPropertySimple(const double minLambda,

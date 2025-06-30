@@ -38,9 +38,9 @@ namespace SingleLayerOptics
 
     private:
         void updateProfileAngle(double t_Theta, double t_Phi);
-        double m_Theta;
-        double m_Phi;
-        double m_ProfileAngle;
+        double m_Theta{0};
+        double m_Phi{0};
+        double m_ProfileAngle{0};
     };
 
 }   // namespace SingleLayerOptics

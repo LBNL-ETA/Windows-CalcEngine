@@ -33,9 +33,15 @@ namespace Tarcog::ISO15099
 
     CIGU & CIGU::operator=(CIGU const & t_IGU)
     {
+        if(this == &t_IGU)
+        {
+            return *this;
+        }
+
         m_Width = t_IGU.m_Width;
         m_Height = t_IGU.m_Height;
         m_Tilt = t_IGU.m_Tilt;
+
         m_Layers.clear();
         for(auto & layer : t_IGU.m_Layers)
         {

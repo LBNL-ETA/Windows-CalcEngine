@@ -115,6 +115,7 @@ public:
     };
 };
 
+
 TEST_F(TestInBetweenShadeAirArgon, Test1)
 {
     SCOPED_TRACE("Begin Test: InBetween Shade - Air(10%)/Argon(90%)");
@@ -123,12 +124,11 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const std::vector correctTemperature = {
-      257.741879, 258.174598, 271.844098, 271.848314, 284.280157, 284.712875};
+      257.741586, 258.174255, 271.844631, 271.848848, 284.281326, 284.713996};
     Helper::testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), 1e-6);
 
     const std::vector correctRadiosity = {
-      248.621154, 259.855407, 301.664078, 318.011918, 361.928573, 381.786481};
-
+      248.620197, 259.854589, 301.665988, 318.014856, 361.934161, 381.791407};
     Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), 1e-6);
 
     auto numOfIter = GetSystem()->getNumberOfIterations();

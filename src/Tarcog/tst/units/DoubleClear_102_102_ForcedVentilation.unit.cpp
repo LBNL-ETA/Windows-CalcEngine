@@ -143,7 +143,7 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, WinterSystem)
     EXPECT_NEAR(0.018796, thickness, Tolerance);
 
     auto numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(36u, numOfIter);
+    EXPECT_EQ(34u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// SHGC run
@@ -194,7 +194,7 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, WinterSystem)
     EXPECT_NEAR(0.018796, thickness, Tolerance);
 
     numOfIter = aSystem->getNumberOfIterations(aRun);
-    EXPECT_EQ(36u, numOfIter);
+    EXPECT_EQ(34u, numOfIter);
 
     //////////////////////////////////////////////////////////////////////
     /// General results

@@ -17,7 +17,8 @@ namespace MultiLayerOptics
     public:
         static std::unique_ptr<CMultiPaneBSDF>
           create(const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-                 const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
+                 const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt,
+                 const FenestrationCommon::ProgressCallback & callback = nullptr);
 
         // Whole matrix results
         FenestrationCommon::SquareMatrix getMatrix(double minLambda,
@@ -186,7 +187,8 @@ namespace MultiLayerOptics
     protected:
         explicit CMultiPaneBSDF(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-          const std::optional<std::vector<double>> & matrixWavelengths);
+          const std::optional<std::vector<double>> & matrixWavelengths,
+          const FenestrationCommon::ProgressCallback & callback = nullptr);
 
         std::vector<std::vector<double>>
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,

@@ -40,6 +40,11 @@ namespace Tarcog::ISO15099
 
     Surface & Surface::operator=(Surface const & t_Surface)
     {
+        if(this == &t_Surface)
+        {
+            return *this;
+        }
+
         m_Emissivity = t_Surface.m_Emissivity;
         m_Transmittance = t_Surface.m_Transmittance;
         m_Temperature = t_Surface.m_Temperature;
@@ -112,15 +117,17 @@ namespace Tarcog::ISO15099
 
     void Surface::calculateReflectance()
     {
-        if(m_Emissivity + m_Transmittance > 1)
+        constexpr double ε = 1e-6;
+
+        const double sum = m_Emissivity + m_Transmittance;
+        if(sum > 1.0 + ε)
         {
             throw std::runtime_error(
               "Sum of emittance and transmittance cannot be greater than one.");
         }
-        else
-        {
-            m_Reflectance = 1 - m_Emissivity - m_Transmittance;
-        }
+
+        // clamp so that tiny overshoots produce zero rather than a negative reflectance
+        m_Reflectance = std::max(0.0, 1.0 - sum);
     }
 
     void Surface::initializeStart(double const t_Temperature)

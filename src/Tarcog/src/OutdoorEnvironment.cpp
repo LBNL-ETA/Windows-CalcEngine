@@ -101,7 +101,7 @@ namespace Tarcog::ISO15099
 
     double COutdoorEnvironment::calculateHc()
     {
-        return 4 + 4 * gasSpecification.airflowProperties.m_AirSpeed;
+        return 4 + 4 * gasSpecification.airflowProperties.airSpeed;
     }
 
     double COutdoorEnvironment::getHr()

@@ -46,7 +46,7 @@ namespace MultiLayerOptics
         [[nodiscard]] std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & getLayers();
         [[nodiscard]] size_t numberOfLayers() const;
 
-        void calculate();
+        void calculate(const FenestrationCommon::ProgressCallback & callback = nullptr);
 
     private:
         [[nodiscard]] CEquivalentBSDFLayerSingleBand
@@ -78,7 +78,8 @@ namespace MultiLayerOptics
         std::vector<double> m_CombinedLayerWavelengths;
         bool m_Calculated;
 
-        void calculateWavelengthByWavelengthProperties();
+        void calculateWavelengthByWavelengthProperties(
+          const FenestrationCommon::ProgressCallback & callback = nullptr);
     };
 
 }   // namespace MultiLayerOptics

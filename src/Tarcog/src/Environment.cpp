@@ -15,7 +15,7 @@ namespace Tarcog::ISO15099
     {
         gasSpecification.pressure = t_Pressure;
         gasSpecification.airflowProperties =
-          AirflowProperties(t_AirSpeed, AirVerticalDirection::None, t_AirDirection, false);
+          AirflowProperties{t_AirSpeed, AirVerticalDirection::None, t_AirDirection, false};
     }
 
     CEnvironment::~CEnvironment()

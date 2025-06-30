@@ -68,6 +68,11 @@ namespace Tarcog::ISO15099
 
     CSingleSystem & CSingleSystem::operator=(CSingleSystem const & t_SingleSystem)
     {
+        if(this == &t_SingleSystem)
+        {
+            return *this;
+        }
+
         m_IGU = t_SingleSystem.m_IGU;
         m_Environment[Environment::Indoor] =
           t_SingleSystem.m_Environment.at(Environment::Indoor)->cloneEnvironment();

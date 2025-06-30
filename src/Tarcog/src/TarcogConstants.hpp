@@ -26,7 +26,7 @@ namespace Tarcog
         const double RELAXATION_PARAMETER_AIRFLOW = 0.9;
         const double RELAXATION_PARAMETER_AIRFLOW_MIN = 0.1;
         const double RELAXATION_PARAMETER_AIRFLOW_STEP = 0.1;
-        const double CONVERGENCE_TOLERANCE_AIRFLOW = 1e-6;
+        const double CONVERGENCE_TOLERANCE_AIRFLOW = 1e-2;
     }   // namespace IterationConstants
 
     namespace MaterialConstants

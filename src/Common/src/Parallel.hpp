@@ -5,15 +5,21 @@
 #include <algorithm>
 
 #include "Utility.hpp"
+#include "Callbacks.hpp"
 
 namespace FenestrationCommon
 {
     template<typename IndexType, typename Function>
-    void executeInParallel(IndexType start, IndexType end, Function && func)
+    void executeInParallel(IndexType start,
+                           IndexType end,
+                           Function && func,
+                           ProgressCallback progressCb = nullptr)
     {
-        const auto numberOfThreads = getNumberOfThreads(end - start + 1);
+        const IndexType total = end - start + 1;
+        const auto numberOfThreads = getNumberOfThreads(total);
         const auto chunks = chunkIt(start, end, numberOfThreads);
 
+        std::atomic<IndexType> progressCounter{0};
         std::vector<std::thread> workers;
         workers.reserve(chunks.size());
 
@@ -23,15 +29,22 @@ namespace FenestrationCommon
                 for(IndexType i = chunk.start; i < chunk.end; ++i)
                 {
                     func(i);
+
+                    if(progressCb)
+                    {
+                        IndexType current = ++progressCounter;
+                        progressCb(current, total);
+                    }
                 }
             });
         }
 
-        std::for_each(workers.begin(), workers.end(), [](std::thread & worker) {
+        for(auto & worker : workers)
+        {
             if(worker.joinable())
             {
                 worker.join();
             }
-        });
+        }
     }
 }   // namespace FenestrationCommon
