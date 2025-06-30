@@ -57,6 +57,11 @@ namespace Gases
 
     GasProperties & GasProperties::operator=(GasProperties const & t_A)
     {
+        if(this == &t_A)
+        {
+            return *this;
+        }
+
         m_ThermalConductivity = t_A.m_ThermalConductivity;
         m_Viscosity = t_A.m_Viscosity;
         m_SpecificHeat = t_A.m_SpecificHeat;

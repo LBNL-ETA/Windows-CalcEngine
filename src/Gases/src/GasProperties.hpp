@@ -26,12 +26,14 @@ namespace Gases
     };
 
     [[nodiscard]] double calculatePrandtlNumber(double thermalConductivity,
-                                               double specificHeat,
-                                               double viscosity,
-                                               double density);
+                                                double specificHeat,
+                                                double viscosity,
+                                                double density);
 
     [[nodiscard]] double lambdaPrim(double molecularWeight, double viscosity);
-    [[nodiscard]] double lambdaSecond(double molecularWeight, double viscosity, double thermalConductivity);
+    [[nodiscard]] double lambdaSecond(double molecularWeight,
+                                      double viscosity,
+                                      double thermalConductivity);
 
     struct GasProperties
     {
@@ -59,5 +61,4 @@ namespace Gases
 
         bool m_PropertiesCalculated{false};
     };
-
-}   // namespace Gases
+} // namespace Gases
