@@ -8,7 +8,7 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CBeamDirection::CBeamDirection() : m_Theta(0), m_Phi(0)
+    CBeamDirection::CBeamDirection()
     {
         updateProfileAngle(m_Theta, m_Phi);
     }
@@ -19,7 +19,8 @@ namespace SingleLayerOptics
     }
 
     CBeamDirection::CBeamDirection(const double t_Theta, const double t_Phi) :
-        m_Theta(t_Theta), m_Phi(t_Phi)
+        m_Theta(t_Theta),
+        m_Phi(t_Phi)
     {
         if(t_Theta < 0)
         {
@@ -50,6 +51,11 @@ namespace SingleLayerOptics
 
     CBeamDirection & CBeamDirection::operator=(const CBeamDirection & t_SphericalPoint)
     {
+        if(this == &t_SphericalPoint)
+        {
+            return *this;
+        }
+
         m_Theta = t_SphericalPoint.m_Theta;
         m_Phi = t_SphericalPoint.m_Phi;
         m_ProfileAngle = t_SphericalPoint.m_ProfileAngle;
@@ -119,5 +125,4 @@ namespace SingleLayerOptics
         m_ProfileAngle = -std::atan(std::sin(radians(t_Phi)) * std::tan(radians(t_Theta)));
         m_ProfileAngle = degrees(m_ProfileAngle);
     }
-
-}   // namespace SingleLayerOptics
+} // namespace SingleLayerOptics
