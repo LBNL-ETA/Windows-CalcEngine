@@ -12,31 +12,9 @@ namespace Gases
         m_A(t_A), m_B(t_B), m_C(t_C)
     {}
 
-    CIntCoeff::CIntCoeff() : m_A(0), m_B(0), m_C(0)
-    {}
-
     double CIntCoeff::interpolationValue(double const t_Temperature) const
     {
         return m_A + m_B * t_Temperature + m_C * pow(t_Temperature, 2);
-    }
-
-    CIntCoeff::CIntCoeff(CIntCoeff const & t_IntCoeff)
-    {
-        operator=(t_IntCoeff);
-    }
-
-    CIntCoeff & CIntCoeff::operator=(CIntCoeff const & t_IntCoeff)
-    {
-        if(this ==& t_IntCoeff)
-        {
-            return *this;
-        }
-
-        m_A = t_IntCoeff.m_A;
-        m_B = t_IntCoeff.m_B;
-        m_C = t_IntCoeff.m_C;
-
-        return *this;
     }
 
     bool CIntCoeff::operator==(const CIntCoeff & rhs) const

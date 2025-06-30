@@ -12,19 +12,17 @@ namespace Gases
     class CIntCoeff
     {
     public:
-        CIntCoeff();
+        CIntCoeff() = default;
         CIntCoeff(double t_A, double t_B, double t_C);
         [[nodiscard]] double interpolationValue(double t_Temperature) const;
-        CIntCoeff(CIntCoeff const & t_IntCoeff);
-        CIntCoeff & operator=(CIntCoeff const & t_IntCoeff);
 
         bool operator==(const CIntCoeff & rhs) const;
         bool operator!=(const CIntCoeff & rhs) const;
 
     private:
-        double m_A;
-        double m_B;
-        double m_C;
+        double m_A{0};
+        double m_B{0};
+        double m_C{0};
     };
 
     [[nodiscard]] double calculatePrandtlNumber(double thermalConductivity,
