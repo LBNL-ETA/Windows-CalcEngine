@@ -29,6 +29,11 @@ namespace SpectralAveraging
 
     CSample & CSample::operator=(const CSample & t_Sample)
     {
+        if(this == &t_Sample)
+        {
+            return *this;
+        }
+
         m_StateCalculated = t_Sample.m_StateCalculated;
         m_WavelengthSet = t_Sample.m_WavelengthSet;
         m_IncomingSource = t_Sample.m_IncomingSource;

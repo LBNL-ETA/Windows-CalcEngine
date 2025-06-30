@@ -35,6 +35,11 @@ namespace FenestrationCommon
 
     CMatrixSeries & CMatrixSeries::operator=(CMatrixSeries const & t_MatrixSeries)
     {
+        if(this == &t_MatrixSeries)
+        {
+            return *this;
+        }
+
         m_Size1 = t_MatrixSeries.m_Size1;
         m_Size2 = t_MatrixSeries.m_Size2;
         m_Matrix = std::vector<std::vector<CSeries>>(m_Size1);

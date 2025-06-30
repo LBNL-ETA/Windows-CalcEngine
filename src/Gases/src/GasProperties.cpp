@@ -27,6 +27,11 @@ namespace Gases
 
     CIntCoeff & CIntCoeff::operator=(CIntCoeff const & t_IntCoeff)
     {
+        if(this ==& t_IntCoeff)
+        {
+            return *this;
+        }
+
         m_A = t_IntCoeff.m_A;
         m_B = t_IntCoeff.m_B;
         m_C = t_IntCoeff.m_C;

@@ -46,6 +46,11 @@ namespace FenestrationCommon
 
     CSeriesPoint & CSeriesPoint::operator=(const CSeriesPoint & t_Property)
     {
+        if(this == &t_Property)
+        {
+            return *this;
+        }
+        
         m_x = t_Property.m_x;
         m_Value = t_Property.m_Value;
         return *this;
