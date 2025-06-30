@@ -25,6 +25,11 @@ namespace Tarcog::ISO15099
 
     CIndoorEnvironment & CIndoorEnvironment::operator=(CIndoorEnvironment const & t_Environment)
     {
+        if(this == &t_Environment)
+        {
+            return *this;
+        }
+
         this->CEnvironment::operator=(t_Environment);
         m_RoomRadiationTemperature = t_Environment.m_RoomRadiationTemperature;
 
