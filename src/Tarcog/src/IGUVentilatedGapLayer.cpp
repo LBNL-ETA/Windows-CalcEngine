@@ -31,7 +31,8 @@ namespace Tarcog::ISO15099
                                                    double forcedVentilationInletSpeed) :
         CIGUGapLayer(*t_Layer),
         m_Layer(t_Layer),
-        m_State{.inletTemperature = Gases::DefaultTemperature,  .outletTemperature = Gases::DefaultTemperature},
+        m_State{.inletTemperature = Gases::DefaultTemperature,
+                .outletTemperature = Gases::DefaultTemperature},
         m_ReferenceGasProperties(getGasPropertiesAtReferenceTemperatureAndPressure(
           gasSpecification.gas, ReferenceTemperature, gasSpecification.pressure)),
         m_ForcedVentilation(
@@ -183,8 +184,8 @@ namespace Tarcog::ISO15099
     {
         // Always use forced ventilation if exists.
         gasSpecification.airflowProperties.airSpeed = m_ForcedVentilation.has_value()
-                                                          ? m_ForcedVentilation->speed
-                                                          : calculateThermallyDrivenSpeed();
+                                                        ? m_ForcedVentilation->speed
+                                                        : calculateThermallyDrivenSpeed();
         const double beta{betaCoeff()};
         const double alpha{1 - beta};
 
@@ -258,15 +259,22 @@ namespace Tarcog::ISO15099
             return std::abs(TgapOut - TgapOutOld) < tolerance;
         }
 
-        void adjustRelaxationParameter(double & relaxationParameter, size_t & iterationStep)
+        struct RelaxationState
         {
-            relaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
-            iterationStep = 0;
-            if(relaxationParameter <= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+            double relaxationParameter;
+            double iterationStep;
+        };
+
+        RelaxationState adjustRelaxationParameter(RelaxationState state)
+        {
+            state.relaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
+            state.iterationStep = 0;
+            if(state.relaxationParameter <= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
             {
                 throw std::runtime_error("Airflow iterations fail to converge. "
                                          "Maximum number of iteration steps reached.");
             }
+            return state;
         }
 
     }   // namespace Helper
@@ -287,22 +295,22 @@ namespace Tarcog::ISO15099
     {
         setInletTemperature(inletTemperature);
 
-        double relaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
+        Helper::RelaxationState state{IterationConstants::RELAXATION_PARAMETER_AIRFLOW, 0};
+
         bool converged = false;
-        size_t iterationStep = 0;
         double TgapOut = averageLayerTemperature();
 
         while(!converged)
         {
-            const double TgapOutOld{performIterationStep(relaxationParameter, TgapOut)};
+            const double TgapOutOld{performIterationStep(state.relaxationParameter, TgapOut)};
 
             converged = Helper::isConverged(
               TgapOut, TgapOutOld, IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW);
 
-            ++iterationStep;
-            if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
+            ++state.iterationStep;
+            if(state.iterationStep > IterationConstants::NUMBER_OF_STEPS)
             {
-                Helper::adjustRelaxationParameter(relaxationParameter, iterationStep);
+                state = Helper::adjustRelaxationParameter(state);
             }
         }
     }
