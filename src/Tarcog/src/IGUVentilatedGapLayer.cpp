@@ -344,25 +344,23 @@ namespace Tarcog::ISO15099
     void CIGUVentilatedGapLayer::calculateThermallyDrivenAirflowWithAdjacentGap(
       CIGUVentilatedGapLayer & adjacentGap)
     {
-        double Tup = averageLayerTemperature();
-        double Tdown = adjacentGap.averageLayerTemperature();
-        VentilatedGapTemperatures current{Tdown, Tup};
+        VentilatedGapTemperatures current{.inletTemperature = adjacentGap.averageLayerTemperature(),
+                                          .outletTemperature = averageLayerTemperature()};
         auto previous = current;
-        double RelaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW;
+        Helper::RelaxationState state{IterationConstants::RELAXATION_PARAMETER_AIRFLOW, 0};
+
         bool converged = false;
-        size_t iterationStep = 0;
 
         while(!converged)
         {
             adjustTemperatures(adjacentGap);
-            performIterationStep(adjacentGap, current, RelaxationParameter);
+            performIterationStep(adjacentGap, current, state.relaxationParameter);
             converged = isConverged(current, previous);
 
-            ++iterationStep;
-            if(iterationStep > IterationConstants::NUMBER_OF_STEPS)
+            ++state.iterationStep;
+            if(state.iterationStep > IterationConstants::NUMBER_OF_STEPS)
             {
-                throw std::runtime_error("Airflow iterations fail to converge. Maximum number "
-                                         "of iteration steps reached.");
+                state = Helper::adjustRelaxationParameter(state);
             }
 
             const double qv1 = getGainFlow();
