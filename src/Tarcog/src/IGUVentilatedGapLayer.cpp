@@ -332,30 +332,29 @@ namespace Tarcog::ISO15099
         adjacentGap.setInletTemperature(averageLayerTemperature());
     }
 
-    void CIGUVentilatedGapLayer::performIterationStep(CIGUVentilatedGapLayer & adjacentGap,
-                                                      VentilatedGapTemperatures & current,
-                                                      double RelaxationParameter)
-    {
-        VentilatedGapTemperatures previous{current};
-        current = calculateInletAndOutletTemperaturesWithTheAdjacentGap(
-          adjacentGap, current, previous, RelaxationParameter);
-    }
-
     void CIGUVentilatedGapLayer::calculateThermallyDrivenAirflowWithAdjacentGap(
       CIGUVentilatedGapLayer & adjacentGap)
     {
         VentilatedGapTemperatures current{.inletTemperature = adjacentGap.averageLayerTemperature(),
                                           .outletTemperature = averageLayerTemperature()};
-        auto previous = current;
-        Helper::RelaxationState state{IterationConstants::RELAXATION_PARAMETER_AIRFLOW, 0};
 
-        bool converged = false;
+        Helper::RelaxationState state{.relaxationParameter =
+                                        IterationConstants::RELAXATION_PARAMETER_AIRFLOW,
+                                      .iterationStep = 0};
 
-        while(!converged)
-        {
+        auto iterationStep = [&]() -> bool {
             adjustTemperatures(adjacentGap);
-            performIterationStep(adjacentGap, current, state.relaxationParameter);
-            converged = isConverged(current, previous);
+            auto previous = current;
+            current = calculateInletAndOutletTemperaturesWithTheAdjacentGap(
+              adjacentGap, current, previous, state.relaxationParameter);
+
+
+            const double qv1 = getGainFlow();
+            const double qv2 = adjacentGap.getGainFlow();
+            smoothEnergyGain(qv1, qv2);
+            adjacentGap.smoothEnergyGain(qv1, qv2);
+
+            bool converged = isConverged(current, previous);
 
             ++state.iterationStep;
             if(state.iterationStep > IterationConstants::NUMBER_OF_STEPS)
@@ -363,14 +362,21 @@ namespace Tarcog::ISO15099
                 state = Helper::adjustRelaxationParameter(state);
             }
 
-            const double qv1 = getGainFlow();
-            const double qv2 = adjacentGap.getGainFlow();
-            smoothEnergyGain(qv1, qv2);
-            adjacentGap.smoothEnergyGain(qv1, qv2);
+            if(!converged)
+            {
+                previous = current;
+            }
 
-            previous = current;
+            return converged;
+        };
+
+        // very clear loop
+        while(!iterationStep())
+        {
+            // empty body; the lambda clearly describes iteration logic
         }
     }
+
 
     std::shared_ptr<CBaseLayer> CIGUVentilatedGapLayer::clone() const
     {

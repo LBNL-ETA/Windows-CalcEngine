@@ -98,9 +98,6 @@ namespace Tarcog::ISO15099
         bool isConverged(const VentilatedGapTemperatures & current,
                          const VentilatedGapTemperatures & previous);
         void adjustTemperatures(CIGUVentilatedGapLayer & adjacentGap);
-        void performIterationStep(CIGUVentilatedGapLayer & adjacentGap,
-                                  VentilatedGapTemperatures & current,
-                                  double RelaxationParameter);
     };
 
 }   // namespace Tarcog::ISO15099
