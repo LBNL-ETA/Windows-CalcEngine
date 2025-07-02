@@ -112,7 +112,7 @@ public:
     [[nodiscard]] Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
-    };
+    }
 };
 
 
@@ -124,11 +124,11 @@ TEST_F(TestInBetweenShadeAirArgon, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const std::vector correctTemperature = {
-      257.742577, 258.175413, 271.842849, 271.847062, 284.277375, 284.710210};
+      257.741586, 258.174255, 271.844631, 271.848848, 284.281326, 284.713996};
     Helper::testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), 1e-6);
 
     const std::vector correctRadiosity = {
-      248.623432, 259.857363, 301.659609, 318.005004, 361.915292, 381.774764};
+      248.620197, 259.854589, 301.665988, 318.014856, 361.934161, 381.791407};
     Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), 1e-6);
 
     auto numOfIter = GetSystem()->getNumberOfIterations();

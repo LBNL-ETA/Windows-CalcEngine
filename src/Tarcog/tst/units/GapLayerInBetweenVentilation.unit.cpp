@@ -93,6 +93,7 @@ public:
     };
 };
 
+
 TEST_F(TestGapLayerInBetweenVentilation, VentilationFlow)
 {
     SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Intial Airflow");
@@ -101,10 +102,10 @@ TEST_F(TestGapLayerInBetweenVentilation, VentilationFlow)
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(35.987730, gainEnergy, 1e-6);
+    EXPECT_NEAR(36.011065, gainEnergy, 1e-6);
 
     aLayer = GetGap2();
     ASSERT_TRUE(aLayer != nullptr);
     gainEnergy = aLayer->getGainFlow();
-    EXPECT_NEAR(-35.987730, gainEnergy, 1e-6);
+    EXPECT_NEAR(-36.011065, gainEnergy, 1e-6);
 }

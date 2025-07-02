@@ -6,6 +6,65 @@
 #include "IGUVentilatedGapLayer.hpp"
 #include "TarcogConstants.hpp"
 
+namespace Helper
+{
+
+    bool isConverged(double TgapOut, double TgapOutOld, double tolerance)
+    {
+        return std::abs(TgapOut - TgapOutOld) < tolerance;
+    }
+
+    struct RelaxationState
+    {
+        double relaxationParameter;
+        double iterationStep;
+    };
+
+    RelaxationState adjustRelaxationParameter(RelaxationState state)
+    {
+        state.relaxationParameter -= Tarcog::IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
+        state.iterationStep = 0;
+        if(state.relaxationParameter
+           <= Tarcog::IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+        {
+            throw std::runtime_error("Airflow iterations fail to converge. "
+                                     "Maximum number of iteration steps reached.");
+        }
+        return state;
+    }
+
+    template<typename State, typename StepFunction>
+    void iterateUntilConverged(State & state, double & lastDelta, StepFunction && step)
+    {
+        constexpr int maxSteps = Tarcog::IterationConstants::NUMBER_OF_STEPS;
+        constexpr double minRelax = Tarcog::IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN;
+
+        while(true)
+        {
+            const auto [newDelta, converged] = step(state);
+
+            if(newDelta > lastDelta && state.relaxationParameter > minRelax)
+            {
+                state.relaxationParameter = std::max(state.relaxationParameter * 0.5, minRelax);
+                state.iterationStep = 0;
+            }
+
+            lastDelta = newDelta;
+
+            ++state.iterationStep;
+            if(state.iterationStep > maxSteps)
+            {
+                state = Helper::adjustRelaxationParameter(state);
+            }
+
+            if(converged)
+            {
+                break;
+            }
+        }
+    }
+
+}   // namespace Helper
 
 namespace Tarcog::ISO15099
 {
@@ -268,34 +327,6 @@ namespace Tarcog::ISO15099
         return result;
     }
 
-
-    namespace Helper
-    {
-        bool isConverged(double TgapOut, double TgapOutOld, double tolerance)
-        {
-            return std::abs(TgapOut - TgapOutOld) < tolerance;
-        }
-
-        struct RelaxationState
-        {
-            double relaxationParameter;
-            double iterationStep;
-        };
-
-        RelaxationState adjustRelaxationParameter(RelaxationState state)
-        {
-            state.relaxationParameter -= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_STEP;
-            state.iterationStep = 0;
-            if(state.relaxationParameter <= IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
-            {
-                throw std::runtime_error("Airflow iterations fail to converge. "
-                                         "Maximum number of iteration steps reached.");
-            }
-            return state;
-        }
-
-    }   // namespace Helper
-
     double CIGUVentilatedGapLayer::performIterationStep(double relaxationParameter,
                                                         double & TgapOut)
     {
@@ -311,50 +342,24 @@ namespace Tarcog::ISO15099
     void CIGUVentilatedGapLayer::calculateVentilatedAirflow(double inletTemperature)
     {
         setInletTemperature(inletTemperature);
+        Helper::RelaxationState state{
+            .relaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW,
+            .iterationStep = 0};
 
-        Helper::RelaxationState state{IterationConstants::RELAXATION_PARAMETER_AIRFLOW, 0};
-
-        bool converged = false;
         double TgapOut = averageLayerTemperature();
-
         double lastDelta = std::numeric_limits<double>::max();
 
-        while(!converged)
-        {
-            const double TgapOutOld = performIterationStep(state.relaxationParameter, TgapOut);
+        auto step = [&](Helper::RelaxationState& s) -> std::pair<double, bool> {
+            const double TgapOutOld = performIterationStep(s.relaxationParameter, TgapOut);
 
-            // Compute convergence delta
             double delta = std::abs(TgapOut - TgapOutOld);
+            bool converged = Helper::isConverged(
+                TgapOut, TgapOutOld, IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW);
 
-            // 🔄 Early damping if diverging
-            if(delta > lastDelta
-               && state.relaxationParameter > IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
-            {
-                state.relaxationParameter =
-                  std::max(state.relaxationParameter * 0.5,
-                           IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN);
-                state.iterationStep = 0;
-            }
-            lastDelta = delta;
+            return {delta, converged};
+        };
 
-            // 🔐 Clamp temperature to physical range
-            TgapOut = std::clamp(TgapOut, 200.0, 400.0);
-
-            // 💥 Safety abort
-            if(std::isnan(TgapOut) || std::isinf(TgapOut))
-            {
-                throw std::runtime_error("Ventilated airflow iteration diverged: invalid TgapOut");
-            }
-
-            converged = Helper::isConverged(
-              TgapOut, TgapOutOld, IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW);
-
-            ++state.iterationStep;
-            if(state.iterationStep > IterationConstants::NUMBER_OF_STEPS)
-            {
-                state = Helper::adjustRelaxationParameter(state);
-            }
-        }
+        Helper::iterateUntilConverged(state, lastDelta, step);
     }
 
 
@@ -384,54 +389,27 @@ namespace Tarcog::ISO15099
                                         IterationConstants::RELAXATION_PARAMETER_AIRFLOW,
                                       .iterationStep = 0};
 
-        static double lastDelta = std::numeric_limits<double>::max();
+        double lastDelta = std::numeric_limits<double>::max();
 
-        auto iterationStep = [&]() -> bool {
+        auto step = [&](Helper::RelaxationState & s) -> std::pair<double, bool> {
             adjustTemperatures(adjacentGap);
             auto previous = current;
             current = calculateInletAndOutletTemperaturesWithTheAdjacentGap(
-              adjacentGap, current, previous, state.relaxationParameter);
+              adjacentGap, current, previous, s.relaxationParameter);
 
             double delta = std::abs(current.outletTemperature - previous.outletTemperature)
                            + std::abs(current.inletTemperature - previous.inletTemperature);
-
-            if(delta > lastDelta
-               && state.relaxationParameter > IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
-            {
-                state.relaxationParameter =
-                  std::max(state.relaxationParameter * 0.5,
-                           IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN);
-                state.iterationStep = 0;
-            }
-            lastDelta = delta;
-
 
             const double qv1 = getGainFlow();
             const double qv2 = adjacentGap.getGainFlow();
             smoothEnergyGain(qv1, qv2);
             adjacentGap.smoothEnergyGain(qv1, qv2);
 
-            bool converged = isConverged(current, previous);
-
-            ++state.iterationStep;
-            if(state.iterationStep > IterationConstants::NUMBER_OF_STEPS)
-            {
-                state = Helper::adjustRelaxationParameter(state);
-            }
-
-            if(!converged)
-            {
-                previous = current;
-            }
-
-            return converged;
+            const bool converged = isConverged(current, previous);
+            return {delta, converged};
         };
 
-        // very clear loop
-        while(!iterationStep())
-        {
-            // empty body; the lambda clearly describes iteration logic
-        }
+        Helper::iterateUntilConverged(state, lastDelta, step);
     }
 
 
