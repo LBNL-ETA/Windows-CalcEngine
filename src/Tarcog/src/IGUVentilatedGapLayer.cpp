@@ -34,33 +34,43 @@ namespace Helper
     }
 
     template<typename State, typename StepFunction>
-    void iterateUntilConverged(State & state, double & lastDelta, StepFunction && step)
+    void iterateUntilConverged(State & state, double & lastDelta, StepFunction && stepFn)
     {
-        constexpr int maxSteps = Tarcog::IterationConstants::NUMBER_OF_STEPS;
-        constexpr double minRelax = Tarcog::IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN;
+        constexpr double tinyDeltaThreshold = 0.01;
+        constexpr size_t maxTinyDeltas = 10;
+        constexpr size_t maxIterations = 50;
 
-        while(true)
+        size_t tinyDeltaCount = 0;
+        bool converged = false;
+
+        while(!converged)
         {
-            const auto [newDelta, converged] = step(state);
-
-            if(newDelta > lastDelta && state.relaxationParameter > minRelax)
-            {
-                state.relaxationParameter = std::max(state.relaxationParameter * 0.5, minRelax);
-                state.iterationStep = 0;
-            }
-
-            lastDelta = newDelta;
+            const auto [delta, justConverged] = stepFn(state);
+            converged = justConverged;
 
             ++state.iterationStep;
-            if(state.iterationStep > maxSteps)
+
+            if(delta < tinyDeltaThreshold)
             {
-                state = Helper::adjustRelaxationParameter(state);
+                ++tinyDeltaCount;
+            }
+            else
+            {
+                tinyDeltaCount = 0;
             }
 
-            if(converged)
+            if(state.iterationStep % Tarcog::IterationConstants::NUMBER_OF_STEPS == 0)
+            {
+                state = adjustRelaxationParameter(state);
+            }
+
+            // Emergency break to prevent infinite loop
+            if(state.iterationStep > maxIterations || tinyDeltaCount > maxTinyDeltas)
             {
                 break;
             }
+
+            lastDelta = delta;
         }
     }
 
@@ -342,19 +352,19 @@ namespace Tarcog::ISO15099
     void CIGUVentilatedGapLayer::calculateVentilatedAirflow(double inletTemperature)
     {
         setInletTemperature(inletTemperature);
-        Helper::RelaxationState state{
-            .relaxationParameter = IterationConstants::RELAXATION_PARAMETER_AIRFLOW,
-            .iterationStep = 0};
+        Helper::RelaxationState state{.relaxationParameter =
+                                        IterationConstants::RELAXATION_PARAMETER_AIRFLOW,
+                                      .iterationStep = 0};
 
         double TgapOut = averageLayerTemperature();
         double lastDelta = std::numeric_limits<double>::max();
 
-        auto step = [&](Helper::RelaxationState& s) -> std::pair<double, bool> {
+        auto step = [&](Helper::RelaxationState & s) -> std::pair<double, bool> {
             const double TgapOutOld = performIterationStep(s.relaxationParameter, TgapOut);
 
             double delta = std::abs(TgapOut - TgapOutOld);
             bool converged = Helper::isConverged(
-                TgapOut, TgapOutOld, IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW);
+              TgapOut, TgapOutOld, IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW);
 
             return {delta, converged};
         };
