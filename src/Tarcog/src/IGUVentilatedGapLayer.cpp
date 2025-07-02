@@ -215,42 +215,59 @@ namespace Tarcog::ISO15099
     {
         VentilatedGapTemperatures result;
 
-        const double Tav1{averageSurfaceTemperature()};
-        const double Tav2{adjacentGap.averageSurfaceTemperature()};
+        const double Tav1 = averageSurfaceTemperature();
+        const double Tav2 = adjacentGap.averageSurfaceTemperature();
 
         adjacentGap.setFlowSpeed(calculateThermallyDrivenSpeedOfAdjacentGap(adjacentGap));
 
         const double beta1 = betaCoeff();
         const double beta2 = adjacentGap.betaCoeff();
 
+        // Protect against near-zero denominator
+        const double denom = 1.0 - beta1 * beta2;
+        const double safeDenom = std::abs(denom) < 1e-4 ? (denom < 0.0 ? -1e-4 : 1e-4) : denom;
+
         // Calculate common expressions
-        const double commonOutletTemp{((1 - beta1) * Tav1 + beta1 * (1 - beta2) * Tav2)
-                                      / (1 - beta1 * beta2)};
-        const double commonInletTemp{(1 - beta2) * Tav2};
+        const double commonOutletTemp =
+          ((1 - beta1) * Tav1 + beta1 * (1 - beta2) * Tav2) / safeDenom;
+        const double commonInletTemp = (1 - beta2) * Tav2;
 
         // clang-format off
-        const bool isTav1Greater = averageLayerTemperature() > adjacentGap.averageLayerTemperature();
-        result.outletTemperature =
-          isTav1Greater ?
-          commonOutletTemp :
-          commonInletTemp + beta2 * current.inletTemperature;
+    const bool isTav1Greater = averageLayerTemperature() > adjacentGap.averageLayerTemperature();
+    result.outletTemperature =
+        isTav1Greater ?
+        commonOutletTemp :
+        commonInletTemp + beta2 * current.inletTemperature;
 
-        result.inletTemperature =
-          isTav1Greater ?
-          commonInletTemp + beta2 * current.outletTemperature :
-          commonOutletTemp;
+    result.inletTemperature =
+        isTav1Greater ?
+        commonInletTemp + beta2 * current.outletTemperature :
+        commonOutletTemp;
         // clang-format on
 
-        const auto Tup = relaxationParameter * result.outletTemperature
-                         + (1 - relaxationParameter) * previous.outletTemperature;
-        const auto Tdown = relaxationParameter * result.inletTemperature
-                           + (1 - relaxationParameter) * previous.inletTemperature;
+        // Weighted update
+        double Tup = relaxationParameter * result.outletTemperature
+                     + (1.0 - relaxationParameter) * previous.outletTemperature;
+
+        double Tdown = relaxationParameter * result.inletTemperature
+                       + (1.0 - relaxationParameter) * previous.inletTemperature;
+
+        // Clamp to physical range to avoid extreme feedback
+        auto clamp = [](double val, double minVal, double maxVal) {
+            return std::max(minVal, std::min(maxVal, val));
+        };
+
+        constexpr double Tmin = 200.0;
+        constexpr double Tmax = 400.0;
+        Tup = clamp(Tup, Tmin, Tmax);
+        Tdown = clamp(Tdown, Tmin, Tmax);
 
         setFlowTemperatures(Tup, Tdown);
         adjacentGap.setFlowTemperatures(Tdown, Tup);
 
         return result;
     }
+
 
     namespace Helper
     {
@@ -300,9 +317,34 @@ namespace Tarcog::ISO15099
         bool converged = false;
         double TgapOut = averageLayerTemperature();
 
+        double lastDelta = std::numeric_limits<double>::max();
+
         while(!converged)
         {
-            const double TgapOutOld{performIterationStep(state.relaxationParameter, TgapOut)};
+            const double TgapOutOld = performIterationStep(state.relaxationParameter, TgapOut);
+
+            // Compute convergence delta
+            double delta = std::abs(TgapOut - TgapOutOld);
+
+            // 🔄 Early damping if diverging
+            if(delta > lastDelta
+               && state.relaxationParameter > IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+            {
+                state.relaxationParameter =
+                  std::max(state.relaxationParameter * 0.5,
+                           IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN);
+                state.iterationStep = 0;
+            }
+            lastDelta = delta;
+
+            // 🔐 Clamp temperature to physical range
+            TgapOut = std::clamp(TgapOut, 200.0, 400.0);
+
+            // 💥 Safety abort
+            if(std::isnan(TgapOut) || std::isinf(TgapOut))
+            {
+                throw std::runtime_error("Ventilated airflow iteration diverged: invalid TgapOut");
+            }
 
             converged = Helper::isConverged(
               TgapOut, TgapOutOld, IterationConstants::CONVERGENCE_TOLERANCE_AIRFLOW);
@@ -351,14 +393,14 @@ namespace Tarcog::ISO15099
               adjacentGap, current, previous, state.relaxationParameter);
 
             double delta = std::abs(current.outletTemperature - previous.outletTemperature)
-                         + std::abs(current.inletTemperature - previous.inletTemperature);
+                           + std::abs(current.inletTemperature - previous.inletTemperature);
 
-            if (delta > lastDelta &&
-                state.relaxationParameter > IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+            if(delta > lastDelta
+               && state.relaxationParameter > IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
             {
-                state.relaxationParameter = std::max(
-                    state.relaxationParameter * 0.5,
-                    IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN);
+                state.relaxationParameter =
+                  std::max(state.relaxationParameter * 0.5,
+                           IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN);
                 state.iterationStep = 0;
             }
             lastDelta = delta;
