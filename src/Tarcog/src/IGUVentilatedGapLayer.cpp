@@ -17,7 +17,7 @@ namespace Helper
     struct RelaxationState
     {
         double relaxationParameter;
-        double iterationStep;
+        size_t iterationStep;
     };
 
     RelaxationState adjustRelaxationParameter(RelaxationState state)
