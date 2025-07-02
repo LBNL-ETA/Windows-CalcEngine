@@ -342,11 +342,26 @@ namespace Tarcog::ISO15099
                                         IterationConstants::RELAXATION_PARAMETER_AIRFLOW,
                                       .iterationStep = 0};
 
+        static double lastDelta = std::numeric_limits<double>::max();
+
         auto iterationStep = [&]() -> bool {
             adjustTemperatures(adjacentGap);
             auto previous = current;
             current = calculateInletAndOutletTemperaturesWithTheAdjacentGap(
               adjacentGap, current, previous, state.relaxationParameter);
+
+            double delta = std::abs(current.outletTemperature - previous.outletTemperature)
+                         + std::abs(current.inletTemperature - previous.inletTemperature);
+
+            if (delta > lastDelta &&
+                state.relaxationParameter > IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN)
+            {
+                state.relaxationParameter = std::max(
+                    state.relaxationParameter * 0.5,
+                    IterationConstants::RELAXATION_PARAMETER_AIRFLOW_MIN);
+                state.iterationStep = 0;
+            }
+            lastDelta = delta;
 
 
             const double qv1 = getGainFlow();
