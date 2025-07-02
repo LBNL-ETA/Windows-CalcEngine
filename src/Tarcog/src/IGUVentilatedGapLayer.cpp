@@ -36,18 +36,17 @@ namespace Helper
     template<typename State, typename StepFunction>
     void iterateUntilConverged(State & state, double & lastDelta, StepFunction && stepFn)
     {
-        constexpr double tinyDeltaThreshold = 0.01;
-        constexpr size_t maxTinyDeltas = 10;
-        constexpr size_t maxIterations = 50;
+        const double tinyDeltaThreshold = 0.01;
+        const size_t maxTinyDeltas = 10;
+        const size_t maxIterations = 100;
 
         size_t tinyDeltaCount = 0;
         bool converged = false;
 
         while(!converged)
         {
-            const auto [delta, justConverged] = stepFn(state);
+            auto [delta, justConverged] = stepFn(state);
             converged = justConverged;
-
             ++state.iterationStep;
 
             if(delta < tinyDeltaThreshold)
@@ -64,7 +63,7 @@ namespace Helper
                 state = adjustRelaxationParameter(state);
             }
 
-            // Emergency break to prevent infinite loop
+            // Emergency break
             if(state.iterationStep > maxIterations || tinyDeltaCount > maxTinyDeltas)
             {
                 break;
@@ -73,6 +72,7 @@ namespace Helper
             lastDelta = delta;
         }
     }
+
 
 }   // namespace Helper
 
