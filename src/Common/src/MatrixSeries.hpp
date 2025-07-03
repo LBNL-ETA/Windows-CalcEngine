@@ -1,8 +1,6 @@
-#ifndef SQUAREMATRIXSERIES_H
-#define SQUAREMATRIXSERIES_H
+#pragma once
 
 #include <vector>
-#include <memory>
 #include <optional>
 
 namespace FenestrationCommon
@@ -52,6 +50,8 @@ namespace FenestrationCommon
                                           double maxLambda,
                                           const std::vector<double> & t_ScaleValue);
 
+        [[nodiscard]] std::vector<SquareMatrix> seriesMatrices() const;
+
         [[nodiscard]] size_t size1() const;
         [[nodiscard]] size_t size2() const;
 
@@ -62,5 +62,3 @@ namespace FenestrationCommon
     };
 
 }   // namespace FenestrationCommon
-
-#endif

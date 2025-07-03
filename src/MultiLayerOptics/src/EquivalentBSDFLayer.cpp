@@ -81,6 +81,16 @@ namespace MultiLayerOptics
         return m_Tot.at({t_Side, t_Property});
     }
 
+    std::vector<FenestrationCommon::SquareMatrix>
+      CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySimple t_Property)
+    {
+        if(!m_Calculated)
+        {
+            calculate();
+        }
+        return m_Tot.at({t_Side, t_Property}).seriesMatrices();
+    }
+
     void CEquivalentBSDFLayer::setSolarRadiation(CSeries & t_SolarRadiation)
     {
         // Need to recreate wavelenght by wavelength layers

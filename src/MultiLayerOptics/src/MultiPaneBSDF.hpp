@@ -178,6 +178,12 @@ namespace MultiLayerOptics
 
         [[nodiscard]] std::vector<double> getWavelengths() const override;
 
+        [[nodiscard]] std::vector<FenestrationCommon::SquareMatrix>
+          getWavelengthMatrices(double minLambda,
+                                double maxLambda,
+                                FenestrationCommon::Side t_Side,
+                                FenestrationCommon::PropertySimple t_Property);
+
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
@@ -218,6 +224,11 @@ namespace MultiLayerOptics
                                                const std::vector<double> & absorptance);
 
         CEquivalentBSDFLayer m_EquivalentLayer;
+
+        // Wavelength matrices stored after calculation have been performed at given wavelengts
+        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+                 std::vector<FenestrationCommon::SquareMatrix>>
+          m_WavelengthMatrices;
 
         // Solar radiation for initialization
         FenestrationCommon::CSeries m_SolarRadiationInit;

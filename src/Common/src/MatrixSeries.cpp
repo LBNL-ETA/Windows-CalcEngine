@@ -212,6 +212,44 @@ namespace FenestrationCommon
         return Res;
     }
 
+    std::vector<SquareMatrix> CMatrixSeries::seriesMatrices() const
+    {
+        if(m_Matrix.empty() || m_Matrix[0].empty())
+        {
+            return {};
+        }
+
+        const size_t rows = m_Matrix.size();
+        const size_t cols = m_Matrix[0].size();
+
+        // Determine the max series size across all matrix elements
+        size_t seriesSize = 0;
+        for(const auto & row : m_Matrix)
+        {
+            for(const auto & series : row)
+            {
+                seriesSize = std::max(seriesSize, series.size());
+            }
+        }
+
+        std::vector result(seriesSize, SquareMatrix(rows));
+
+        for(size_t k = 0; k < seriesSize; ++k)
+        {
+            for(size_t i = 0; i < rows; ++i)
+            {
+                for(size_t j = 0; j < cols; ++j)
+                {
+                    const auto & series = m_Matrix[i][j];
+                    const double value = k < series.size() ? series[k].value() : 0.0;
+                    result[k](i, j) = value;
+                }
+            }
+        }
+
+        return result;
+    }
+
     size_t CMatrixSeries::size1() const
     {
         return m_Size1;

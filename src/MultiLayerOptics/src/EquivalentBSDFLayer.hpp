@@ -41,6 +41,10 @@ namespace MultiLayerOptics
         FenestrationCommon::CMatrixSeries getTotal(FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySimple t_Property);
 
+        [[nodiscard]] std::vector<FenestrationCommon::SquareMatrix>
+          getWavelengthMatrices(FenestrationCommon::Side t_Side,
+                                FenestrationCommon::PropertySimple t_Property);
+
         void setSolarRadiation(FenestrationCommon::CSeries & t_SolarRadiation);
 
         [[nodiscard]] std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & getLayers();
