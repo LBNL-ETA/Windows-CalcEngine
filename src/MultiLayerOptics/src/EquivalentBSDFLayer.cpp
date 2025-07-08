@@ -81,7 +81,7 @@ namespace MultiLayerOptics
         return m_Tot.at({t_Side, t_Property});
     }
 
-    std::vector<FenestrationCommon::SquareMatrix>
+    std::vector<FenestrationCommon::MatrixAtWavelength>
       CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySimple t_Property)
     {
         if(!m_Calculated)

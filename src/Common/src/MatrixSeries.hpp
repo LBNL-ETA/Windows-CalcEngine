@@ -3,11 +3,19 @@
 #include <vector>
 #include <optional>
 
+#include "SquareMatrix.hpp"
+
 namespace FenestrationCommon
 {
     class CSeries;
-    class SquareMatrix;
     enum class IntegrationType;
+
+
+    struct MatrixAtWavelength
+    {
+        double x;
+        SquareMatrix matrix;
+    };
 
     class CMatrixSeries
     {
@@ -50,7 +58,7 @@ namespace FenestrationCommon
                                           double maxLambda,
                                           const std::vector<double> & t_ScaleValue);
 
-        [[nodiscard]] std::vector<SquareMatrix> seriesMatrices() const;
+        [[nodiscard]] std::vector<MatrixAtWavelength> seriesMatrices() const;
 
         [[nodiscard]] size_t size1() const;
         [[nodiscard]] size_t size2() const;

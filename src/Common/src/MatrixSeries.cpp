@@ -6,10 +6,8 @@
 #include <WCECommon.hpp>
 
 #include "MatrixSeries.hpp"
-#include "SquareMatrix.hpp"
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
-#include "Utility.hpp"
 
 
 namespace FenestrationCommon
@@ -212,7 +210,7 @@ namespace FenestrationCommon
         return Res;
     }
 
-    std::vector<SquareMatrix> CMatrixSeries::seriesMatrices() const
+    std::vector<MatrixAtWavelength> CMatrixSeries::seriesMatrices() const
     {
         if(m_Matrix.empty() || m_Matrix[0].empty())
         {
@@ -232,19 +230,28 @@ namespace FenestrationCommon
             }
         }
 
-        std::vector result(seriesSize, SquareMatrix(rows));
+        std::vector<MatrixAtWavelength> result;
+        result.reserve(seriesSize);
 
         for(size_t k = 0; k < seriesSize; ++k)
         {
+            SquareMatrix mat(rows);
+            double wavelength = 0.0;
+            // Use the wavelength from the [0][0] element if available
+            if(k < m_Matrix[0][0].size())
+            {
+                wavelength = m_Matrix[0][0][k].x();
+            }
             for(size_t i = 0; i < rows; ++i)
             {
                 for(size_t j = 0; j < cols; ++j)
                 {
                     const auto & series = m_Matrix[i][j];
                     const double value = k < series.size() ? series[k].value() : 0.0;
-                    result[k](i, j) = value;
+                    mat(i, j) = value;
                 }
             }
+            result.push_back(MatrixAtWavelength{wavelength, mat});
         }
 
         return result;

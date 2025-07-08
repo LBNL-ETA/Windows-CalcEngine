@@ -178,7 +178,7 @@ namespace MultiLayerOptics
 
         [[nodiscard]] std::vector<double> getWavelengths() const override;
 
-        [[nodiscard]] std::vector<FenestrationCommon::SquareMatrix>
+        [[nodiscard]] std::vector<FenestrationCommon::MatrixAtWavelength>
           getWavelengthMatrices(double minLambda,
                                 double maxLambda,
                                 FenestrationCommon::Side t_Side,
@@ -227,7 +227,7 @@ namespace MultiLayerOptics
 
         // Wavelength matrices stored after calculation have been performed at given wavelengts
         std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
-                 std::vector<FenestrationCommon::SquareMatrix>>
+                 std::vector<FenestrationCommon::MatrixAtWavelength>>
           m_WavelengthMatrices;
 
         // Solar radiation for initialization

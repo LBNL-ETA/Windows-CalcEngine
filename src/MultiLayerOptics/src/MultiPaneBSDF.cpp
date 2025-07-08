@@ -452,10 +452,8 @@ namespace MultiLayerOptics
         return m_EquivalentLayer.getCommonWavelengths();
     }
 
-    std::vector<SquareMatrix> CMultiPaneBSDF::getWavelengthMatrices(double minLambda,
-                                                                    double maxLambda,
-                                                                    Side t_Side,
-                                                                    PropertySimple t_Property)
+    std::vector<FenestrationCommon::MatrixAtWavelength> CMultiPaneBSDF::getWavelengthMatrices(
+      double minLambda, double maxLambda, Side t_Side, PropertySimple t_Property)
     {
         calculate(minLambda, maxLambda);
         return m_WavelengthMatrices.at(std::make_pair(t_Side, t_Property));

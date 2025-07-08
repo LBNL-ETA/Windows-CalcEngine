@@ -41,7 +41,7 @@ namespace MultiLayerOptics
         FenestrationCommon::CMatrixSeries getTotal(FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySimple t_Property);
 
-        [[nodiscard]] std::vector<FenestrationCommon::SquareMatrix>
+        [[nodiscard]] std::vector<FenestrationCommon::MatrixAtWavelength>
           getWavelengthMatrices(FenestrationCommon::Side t_Side,
                                 FenestrationCommon::PropertySimple t_Property);
 
