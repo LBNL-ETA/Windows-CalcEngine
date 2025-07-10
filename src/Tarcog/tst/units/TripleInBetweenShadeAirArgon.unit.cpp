@@ -112,7 +112,7 @@ public:
     [[nodiscard]] Tarcog::ISO15099::CSingleSystem * GetSystem() const
     {
         return m_TarcogSystem.get();
-    };
+    }
 };
 
 

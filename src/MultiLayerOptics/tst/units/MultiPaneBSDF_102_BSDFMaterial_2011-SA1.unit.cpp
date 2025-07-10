@@ -1337,8 +1337,9 @@ protected:
 
         m_Layer = CMultiPaneBSDF::create({Layer_Glass, Layer_BSDF});
 
-        const SingleLayerOptics::CalculationProperties input{StandardData::solarRadiationASTM_E891_87_Table1(),
-                                                             StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
+        const SingleLayerOptics::CalculationProperties input{
+          StandardData::solarRadiationASTM_E891_87_Table1(),
+          StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 
@@ -1367,29 +1368,29 @@ TEST_F(MultiPaneBSDF_102_BSDFMaterial_2011_SA1, TestBSDFMatrixAsInput)
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.10274587422920742, tauHem, 1e-6);
+    EXPECT_NEAR(0.106180, tauHem, 1e-6);
 
     double rhoFrontHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.39667627828990587, rhoFrontHem, 1e-6);
+    EXPECT_NEAR(0.427940, rhoFrontHem, 1e-6);
 
     double rhoBackHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.52797861541401336, rhoBackHem, 1e-6);
+    EXPECT_NEAR(0.577782, rhoBackHem, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.13089163568660364, abs1, 1e-6);
+    EXPECT_NEAR(0.135546, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.3696862117942824, abs2, 1e-6);
+    EXPECT_NEAR(0.330334, abs2, 1e-6);
 
     auto absHeatDirect = aLayer.getAbsorptanceLayersHeat(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Direct, 0, 0);
-    EXPECT_NEAR(0.13089163568660364, absHeatDirect[0], 1e-6);
-    EXPECT_NEAR(0.3696862117942824, absHeatDirect[1], 1e-6);
+    EXPECT_NEAR(0.135546, absHeatDirect[0], 1e-6);
+    EXPECT_NEAR(0.330334, absHeatDirect[1], 1e-6);
 
     auto absHeatDiffuse = aLayer.getAbsorptanceLayersHeat(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
-    EXPECT_NEAR(0.14020136719133131, absHeatDiffuse[0], 1e-6);
-    EXPECT_NEAR(0.3093594762078502, absHeatDiffuse[1], 1e-6);
+    EXPECT_NEAR(0.140892, absHeatDiffuse[0], 1e-6);
+    EXPECT_NEAR(0.308305, absHeatDiffuse[1], 1e-6);
 }

@@ -26,13 +26,13 @@ namespace MultiLayerOptics
                                                    FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySimple t_Property);
 
-        double getPropertySimple(const double minLambda,
-                                 const double maxLambda,
-                                 const FenestrationCommon::PropertySimple t_Property,
-                                 const FenestrationCommon::Side t_Side,
-                                 const FenestrationCommon::Scattering t_Scattering,
-                                 const double t_Theta = 0,
-                                 const double t_Phi = 0) override;
+        double getPropertySimple(double minLambda,
+                                 double maxLambda,
+                                 FenestrationCommon::PropertySimple t_Property,
+                                 FenestrationCommon::Side t_Side,
+                                 FenestrationCommon::Scattering t_Scattering,
+                                 double t_Theta = 0,
+                                 double t_Phi = 0) override;
 
         double DirDir(double minLambda,
                       double maxLambda,
@@ -69,20 +69,20 @@ namespace MultiLayerOptics
                                                  double phi = 0) override;
 
         std::vector<double>
-          getAbsorptanceLayersHeat(const double minLambda,
-                                   const double maxLambda,
+          getAbsorptanceLayersHeat(double minLambda,
+                                   double maxLambda,
                                    FenestrationCommon::Side side,
                                    FenestrationCommon::ScatteringSimple scattering,
-                                   const double theta,
-                                   const double phi) override;
+                                   double theta,
+                                   double phi) override;
 
         std::vector<double>
-          getAbsorptanceLayersElectricity(const double minLambda,
-                                          const double maxLambda,
+          getAbsorptanceLayersElectricity(double minLambda,
+                                          double maxLambda,
                                           FenestrationCommon::Side side,
                                           FenestrationCommon::ScatteringSimple scattering,
-                                          const double theta,
-                                          const double phi) override;
+                                          double theta,
+                                          double phi) override;
 
         // Hemispherical results for every direction
         std::vector<double> DirHem(double minLambda,
@@ -178,6 +178,12 @@ namespace MultiLayerOptics
 
         [[nodiscard]] std::vector<double> getWavelengths() const override;
 
+        [[nodiscard]] std::vector<FenestrationCommon::MatrixAtWavelength>
+          getWavelengthMatrices(double minLambda,
+                                double maxLambda,
+                                FenestrationCommon::Side t_Side,
+                                FenestrationCommon::PropertySimple t_Property);
+
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
@@ -218,6 +224,11 @@ namespace MultiLayerOptics
                                                const std::vector<double> & absorptance);
 
         CEquivalentBSDFLayer m_EquivalentLayer;
+
+        // Wavelength matrices stored after calculation have been performed at given wavelengts
+        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+                 std::vector<FenestrationCommon::MatrixAtWavelength>>
+          m_WavelengthMatrices;
 
         // Solar radiation for initialization
         FenestrationCommon::CSeries m_SolarRadiationInit;

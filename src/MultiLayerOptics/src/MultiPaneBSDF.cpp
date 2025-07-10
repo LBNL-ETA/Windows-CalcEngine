@@ -106,6 +106,7 @@ namespace MultiLayerOptics
         {
             aTot.interpolate(m_SpectralIntegrationWavelengths.value());
         }
+        m_WavelengthMatrices[std::make_pair(aSide, aProperty)] = aTot.seriesMatrices();
         aTot.mMult(m_IncomingSpectra);
         aTot.integrate(m_CalculationProperties.m_IntegrationType,
                        m_CalculationProperties.m_NormalizationCoefficient,
@@ -114,7 +115,8 @@ namespace MultiLayerOptics
         return aTot.getSquaredMatrixSums(minLambda, maxLambda, m_IncomingSolar);
     }
 
-    std::vector<std::vector<double>> CMultiPaneBSDF::calculateJSC(Side aSide, const double minLambda, const double maxLambda)
+    std::vector<std::vector<double>>
+      CMultiPaneBSDF::calculateJSC(Side aSide, const double minLambda, const double maxLambda)
     {
         CMatrixSeries jscTotal = m_EquivalentLayer.getTotalJSC(aSide);
         jscTotal.integrate(m_CalculationProperties.m_IntegrationType,
@@ -414,7 +416,8 @@ namespace MultiLayerOptics
       const std::optional<std::vector<double>> & matrixWavelengths,
       const FenestrationCommon::ProgressCallback & callback)
     {
-        return std::unique_ptr<CMultiPaneBSDF>(new CMultiPaneBSDF(t_Layer, matrixWavelengths, callback));
+        return std::unique_ptr<CMultiPaneBSDF>(
+          new CMultiPaneBSDF(t_Layer, matrixWavelengths, callback));
     }
 
     double CMultiPaneBSDF::getPropertySimple(const double minLambda,
@@ -448,6 +451,14 @@ namespace MultiLayerOptics
     {
         return m_EquivalentLayer.getCommonWavelengths();
     }
+
+    std::vector<FenestrationCommon::MatrixAtWavelength> CMultiPaneBSDF::getWavelengthMatrices(
+      double minLambda, double maxLambda, Side t_Side, PropertySimple t_Property)
+    {
+        calculate(minLambda, maxLambda);
+        return m_WavelengthMatrices.at(std::make_pair(t_Side, t_Property));
+    }
+
     double CMultiPaneBSDF::getMinLambda() const
     {
         return m_EquivalentLayer.getMinLambda();

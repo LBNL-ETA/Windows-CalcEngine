@@ -6,10 +6,8 @@
 #include <WCECommon.hpp>
 
 #include "MatrixSeries.hpp"
-#include "SquareMatrix.hpp"
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
-#include "Utility.hpp"
 
 
 namespace FenestrationCommon
@@ -210,6 +208,53 @@ namespace FenestrationCommon
             }
         }
         return Res;
+    }
+
+    std::vector<MatrixAtWavelength> CMatrixSeries::seriesMatrices() const
+    {
+        if(m_Matrix.empty() || m_Matrix[0].empty())
+        {
+            return {};
+        }
+
+        const size_t rows = m_Matrix.size();
+        const size_t cols = m_Matrix[0].size();
+
+        // Determine the max series size across all matrix elements
+        size_t seriesSize = 0;
+        for(const auto & row : m_Matrix)
+        {
+            for(const auto & series : row)
+            {
+                seriesSize = std::max(seriesSize, series.size());
+            }
+        }
+
+        std::vector<MatrixAtWavelength> result;
+        result.reserve(seriesSize);
+
+        for(size_t k = 0; k < seriesSize; ++k)
+        {
+            SquareMatrix mat(rows);
+            double wavelength = 0.0;
+            // Use the wavelength from the [0][0] element if available
+            if(k < m_Matrix[0][0].size())
+            {
+                wavelength = m_Matrix[0][0][k].x();
+            }
+            for(size_t i = 0; i < rows; ++i)
+            {
+                for(size_t j = 0; j < cols; ++j)
+                {
+                    const auto & series = m_Matrix[i][j];
+                    const double value = k < series.size() ? series[k].value() : 0.0;
+                    mat(i, j) = value;
+                }
+            }
+            result.push_back(MatrixAtWavelength{wavelength, mat});
+        }
+
+        return result;
     }
 
     size_t CMatrixSeries::size1() const

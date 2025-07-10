@@ -662,7 +662,7 @@ namespace SingleLayerOptics
 
             auto lambda{m_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()};
 
-            const auto val = m_Property.at({t_Property, t_Side})[outgoingIdx][incomingIdx];
+            const auto val = m_Property.at({t_Property, t_Side})[incomingIdx][outgoingIdx];
 
             return val * lambda[outgoingIdx];
         }

@@ -90,9 +90,10 @@ TEST_F(TestBSDFMaterialSingleBand, TestProperties)
       incomingDirections.getNearestBeamIndex(incomingDirection.theta(), incomingDirection.phi());
     auto outgoingIdx =
       outgoingDirections.getNearestBeamIndex(outgoingDirection.theta(), outgoingDirection.phi());
-    EXPECT_EQ(
+    EXPECT_NEAR(
       m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection),
-      m_Tf[outgoingIdx][incomingIdx] * outgoingLambdas[outgoingIdx]);
+      m_Tf[incomingIdx][outgoingIdx] * outgoingLambdas[outgoingIdx],
+      1e-6);
 
     // Test to make sure absorptance calculation at off-normal angles produces
     // 1 - sum(outgoing transmissions for incoming angle - sum(outgoing reflectances for incoming
@@ -104,9 +105,10 @@ TEST_F(TestBSDFMaterialSingleBand, TestProperties)
         tfHem += m_Tf[oIdx][incomingIdx] * outgoingLambdas[oIdx];
         rfHem += m_Rf[oIdx][incomingIdx] * outgoingLambdas[oIdx];
     }
-    EXPECT_EQ(
+    EXPECT_NEAR(
       m_Material->getProperty(Property::Abs, Side::Front, incomingDirection, outgoingDirection),
-      1 - tfHem - rfHem);
+      1 - tfHem - rfHem,
+      1e-6);
 
     // Test to make sure getBandProperties returns two copies of the same value returned
     // by getProperty

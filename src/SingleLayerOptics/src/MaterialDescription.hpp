@@ -222,7 +222,7 @@ namespace SingleLayerOptics
     class IMaterialDualBand : public CMaterial
     {
     public:
-        virtual ~IMaterialDualBand() = default;
+        ~IMaterialDualBand() override = default;
         IMaterialDualBand(const std::shared_ptr<CMaterial> & visibleRange,
                           const std::shared_ptr<CMaterial> & solarRange);
 
@@ -230,7 +230,7 @@ namespace SingleLayerOptics
         void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
         void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
 
-        double
+        [[nodiscard]] double
           getProperty(FenestrationCommon::Property t_Property,
                       FenestrationCommon::Side t_Side,
                       const CBeamDirection & t_IncomingDirection = CBeamDirection(),
@@ -271,8 +271,6 @@ namespace SingleLayerOptics
         // double getModifiedProperty(double t_Range, double t_Solar, double t_Fraction) const;
 
         [[nodiscard]] std::shared_ptr<CMaterial> getMaterialFromWavelength(double wavelength) const;
-        [[nodiscard]] std::shared_ptr<CMaterial>
-          getMaterialFromWavelength(size_t wavelengthIndex) const;
 
         std::shared_ptr<CMaterial> m_MaterialSolarRange;
         std::shared_ptr<CMaterial> m_MaterialVisibleRange;
