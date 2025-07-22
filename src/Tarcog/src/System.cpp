@@ -259,6 +259,16 @@ namespace Tarcog::ISO15099
         }
     }
 
+    double CSystem::getHc(System sys, Environment environment) const
+    {
+        return m_System.at(sys)->getHc(environment);
+    }
+
+    double CSystem::getHr(System sys, Environment environment) const
+    {
+        return m_System.at(sys)->getHr(environment);
+    }
+
     double CSystem::getH(System sys, Environment environment) const
     {
         return m_System.at(sys)->getH(environment);

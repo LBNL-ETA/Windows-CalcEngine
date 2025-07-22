@@ -47,11 +47,11 @@ namespace Tarcog
               getGapLayers(System t_System) const;
 
             [[nodiscard]] std::vector<double>
-              getSolidEffectiveLayerConductivities(const System t_System);
+              getSolidEffectiveLayerConductivities(System t_System);
             [[nodiscard]] std::vector<double>
-              getGapEffectiveLayerConductivities(const System t_System);
+              getGapEffectiveLayerConductivities(System t_System);
             [[nodiscard]] double getEffectiveSystemConductivity(const System t_System);
-            [[nodiscard]] double thickness(const System t_System) const;
+            [[nodiscard]] double thickness(System t_System) const;
             [[nodiscard]] double thickness() const override;
             [[nodiscard]] std::vector<double> solidLayerThicknesses() const;
             [[nodiscard]] std::vector<double> gapLayerThicknesses() const override;
@@ -59,6 +59,8 @@ namespace Tarcog
             [[nodiscard]] double getHeatFlow(System t_System, Environment t_Environment);
             [[nodiscard]] double getUValue() override;
             [[nodiscard]] double getSHGC(double t_TotSol) override;
+            [[nodiscard]] double getHc(System sys, Environment environment) const override;
+            [[nodiscard]] double getHr(System sys, Environment environment) const override;
             [[nodiscard]] double getH(System sys, Environment environment) const override;
             [[nodiscard]] size_t getNumberOfIterations(System t_System);
 
