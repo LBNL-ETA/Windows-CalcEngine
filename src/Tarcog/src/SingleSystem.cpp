@@ -225,10 +225,11 @@ namespace Tarcog::ISO15099
         return m_NonLinearSolver->isToleranceAchieved();
     }
 
-    void CSingleSystem::solve() const
+    void CSingleSystem::solve()
     {
         assert(m_NonLinearSolver != nullptr);
         m_NonLinearSolver->solve();
+        m_ShadingModifiers = calculateShadingModifiers();
     }
 
     void CSingleSystem::initializeStartValues()
@@ -344,9 +345,8 @@ namespace Tarcog::ISO15099
 
     void CSingleSystem::setInteriorAndExteriorSurfacesHeight(double height)
     {
-        std::ranges::for_each(m_Environment | std::views::values, [height](auto &environment) {
-            environment->setHeight(height);
-        });
+        std::ranges::for_each(m_Environment | std::views::values,
+                              [height](auto & environment) { environment->setHeight(height); });
     }
 
     void CSingleSystem::setDeflectionProperties(const double t_Tini, const double t_Pini)
@@ -387,5 +387,50 @@ namespace Tarcog::ISO15099
     std::vector<double> CSingleSystem::getGapPressures() const
     {
         return m_IGU.getGapPressures();
+    }
+
+    ShadingModifiers CSingleSystem::calculateShadingModifiers()
+    {
+        ShadingModifiers shadingModifiers{
+          {Environment::Indoor, calculateInteriorShadingModifier()},
+          {Environment::Outdoor, calculateExteriorShadingModifier()},
+        };
+
+        return shadingModifiers;
+    }
+
+    ShadingModifier CSingleSystem::calculateInteriorShadingModifier()
+    {
+        ShadingModifier shadingModifier;
+
+        auto solidLayers = m_IGU.getSolidLayers();
+
+        if(solidLayers.back()->isPermeable())
+        {
+            // TODO:: Calculate here
+        }
+
+        return shadingModifier;
+    }
+
+    ShadingModifier CSingleSystem::calculateExteriorShadingModifier()
+    {
+        ShadingModifier shadingModifier;
+
+        auto solidLayers = m_IGU.getSolidLayers();
+        auto gapLayers{m_IGU.getGapLayers()};
+
+        if(solidLayers.front()->isPermeable() && solidLayers.size() > 1 && !gapLayers.empty())
+        {
+            auto shadingLayer{solidLayers.front()};
+            const auto Tout = m_Environment.at(Environment::Outdoor)->getAirTemperature();
+            const auto hcout = m_Environment.at(Environment::Outdoor)->getHc();
+            const auto qv = gapLayers[0]->getGainFlow();
+            const auto Tf1 = shadingLayer->getSurface(Side::Front)->getTemperature();
+            const auto Tb1 = shadingLayer->getSurface(Side::Back)->getTemperature();
+            auto nextLayer = solidLayers[1];
+        }
+
+        return shadingModifier;
     }
 }   // namespace Tarcog::ISO15099

@@ -6,6 +6,8 @@
 
 #include "IGU.hpp"
 
+#include "ShadingModifiers.hpp"
+
 
 namespace Tarcog::ISO15099
 {
@@ -74,7 +76,7 @@ namespace Tarcog::ISO15099
         void setSolarRadiation(double t_SolarRadiation);
         [[nodiscard]] double getSolarRadiation() const;
 
-        void solve() const;
+        void solve();
 
         [[nodiscard]] double thickness() const;
 
@@ -101,6 +103,12 @@ namespace Tarcog::ISO15099
         std::map<Environment, std::shared_ptr<CEnvironment>> m_Environment;
         std::shared_ptr<CNonLinearSolver> m_NonLinearSolver;
         void initializeStartValues();
+
+        [[nodiscard]] ShadingModifiers calculateShadingModifiers();
+        [[nodiscard]] ShadingModifier calculateInteriorShadingModifier();
+        [[nodiscard]] ShadingModifier calculateExteriorShadingModifier();
+
+        ShadingModifiers m_ShadingModifiers;
     };
 
 }   // namespace Tarcog::ISO15099
