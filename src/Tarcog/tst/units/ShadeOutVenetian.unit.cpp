@@ -5,43 +5,28 @@
 
 #include "vectorTesting.hpp"
 
-// This test is created to accommodate same test in WC so we can confirm the results (Shading material
-// is NFRC 31100 - White Venetian)
+// This test is created to accommodate same test in WC so we can confirm the results (Shading
+// material is NFRC 31100 - White Venetian)
 class TestShadeOutVenetian : public testing::Test
 {
-private:
-    std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
-
 protected:
-    void SetUp() override
+    static std::unique_ptr<Tarcog::ISO15099::CSingleSystem> buildDoubleLayerSystem()
     {
-        /////////////////////////////////////////////////////////
-        /// Outdoor
-        /////////////////////////////////////////////////////////
-        auto airTemperature = 255.15;   // Kelvins
-        auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;             // Kelvins
-        auto solarRadiation = 0.0;
-
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        ASSERT_TRUE(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
-
-        /////////////////////////////////////////////////////////
-        /// Indoor
-        /////////////////////////////////////////////////////////
+        using namespace Tarcog::ISO15099;
 
         auto roomTemperature = 294.15;
+        auto Indoor = Environments::indoor(roomTemperature);
+        assert(Indoor != nullptr);
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-        ASSERT_TRUE(Indoor != nullptr);
+        auto airTemperature = 255.15;
+        auto airSpeed = 5.5;
+        auto tSky = 255.15;
+        auto solarRadiation = 0.0;
+        auto Outdoor = Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, SkyModel::AllSpecified);
+        assert(Outdoor != nullptr);
+        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
-        /////////////////////////////////////////////////////////
-        /// IGU
-        /////////////////////////////////////////////////////////
-
-        // These values are taken from WC optical calculations
         auto emissivityFront = 0.52204944036998135;
         auto emissivityBack = 0.52204944036998102;
         auto transmittanceFront = 0.44074853220969445;
@@ -50,57 +35,58 @@ protected:
         auto materialThickness = 0.0001;
         auto materialConductance = 160.0;
 
-        double windowWidth = 1;
-        double windowHeight = 1;
-
         FenestrationCommon::Venetian::Geometry geometry{0.05, 0.07, 45, 0.00};
-
         EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          windowWidth, windowHeight, materialThickness, geometry};
+          1.0, 1.0, materialThickness, geometry};
 
-        auto layer1 = Tarcog::ISO15099::Layers::shading(effectiveVenetian.effectiveThickness(),
-                                                        materialConductance,
-                                                        effectiveVenetian.getEffectiveOpenness(),
-                                                        emissivityFront,
-                                                        transmittanceFront,
-                                                        emissivityBack,
-                                                        transmittanceBack);
+        auto shadingLayer = Layers::shading(effectiveVenetian.effectiveThickness(),
+                                            materialConductance,
+                                            effectiveVenetian.getEffectiveOpenness(),
+                                            emissivityFront,
+                                            transmittanceFront,
+                                            emissivityBack,
+                                            transmittanceBack);
+        assert(shadingLayer != nullptr);
 
-        ASSERT_TRUE(layer1 != nullptr);
+        auto solidLayer = Layers::solid(0.003048, 1.0, 0.84, 0.0, 0.84, 0.0);
+        auto gap = Layers::gap(0.0127);
 
-        const auto solidLayerThickness = 0.003048;   // [m]
-        const auto solidLayerConductance = 1.0;
-        const auto emissivity1 = 0.84;
-        const auto emissivity2 = 0.84;
-        const auto transmittance = 0.0;
+        CIGU igu{1.0, 1.0};
+        igu.addLayers({shadingLayer, gap, solidLayer});
 
-        auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness,
-                                                      solidLayerConductance,
-                                                      emissivity1,
-                                                      transmittance,
-                                                      emissivity2,
-                                                      transmittance);
-        ASSERT_TRUE(layer2 != nullptr);
-
-        auto gapThickness = 0.0127;
-        auto gap = Tarcog::ISO15099::Layers::gap(gapThickness);
-        ASSERT_TRUE(gap != nullptr);
-
-        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({layer1, gap, layer2});
-
-        /////////////////////////////////////////////////////////
-        // System
-        /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSingleSystem>(aIGU, Indoor, Outdoor);
-
-        m_TarcogSystem->solve();
+        auto system = std::make_unique<CSingleSystem>(igu, Indoor, Outdoor);
+        system->solve();
+        return system;
     }
 
-public:
-    [[nodiscard]] Tarcog::ISO15099::CSingleSystem * GetSystem() const
+    static std::unique_ptr<Tarcog::ISO15099::CSingleSystem>
+      buildSingleLayerSystemWithModifier(const Tarcog::ISO15099::ShadingModifier & modifier)
     {
-        return m_TarcogSystem.get();
+        using namespace Tarcog::ISO15099;
+
+        auto roomTemperature = 294.15;
+        auto Indoor = Environments::indoor(roomTemperature);
+        assert(Indoor != nullptr);
+
+        auto airTemperature = 255.15;
+        auto airSpeed = 5.5;
+        auto tSky = 255.15;
+        auto solarRadiation = 0.0;
+        auto Outdoor = Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, SkyModel::AllSpecified);
+        assert(Outdoor != nullptr);
+        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::HcPrescribed,
+                                modifier.hcRatio);
+
+        auto solidLayer = Layers::solid(0.003048, 1.0, modifier.emissivityRatio, 0.0, 0.84, 0.0);
+        assert(solidLayer != nullptr);
+
+        CIGU igu{1.0, 1.0};
+        igu.addLayers({solidLayer});
+
+        auto system = std::make_unique<CSingleSystem>(igu, Indoor, Outdoor);
+        system->solve();
+        return system;
     }
 };
 
@@ -110,13 +96,19 @@ TEST_F(TestShadeOutVenetian, Test1)
 
     constexpr auto Tolerance = 1e-6;
 
-    const auto aSystem = GetSystem();
+    const auto aDoubleSystem = buildDoubleLayerSystem();
 
-    EXPECT_NEAR(3.244674, aSystem->getUValue(), Tolerance);
+    EXPECT_NEAR(3.244674, aDoubleSystem->getUValue(), Tolerance);
 
     const std::vector correctTemperature{257.504498, 257.795556, 276.669580, 277.055281};
-    Helper::testVectors("Temperature", correctTemperature, aSystem->getTemperatures(), Tolerance);
+    Helper::testVectors("Temperature", correctTemperature, aDoubleSystem->getTemperatures(), Tolerance);
 
     const std::vector correctRadiosity{279.595282, 248.498982, 318.811755, 348.524663};
-    Helper::testVectors("Radiosity", correctRadiosity, aSystem->getRadiosities(), Tolerance);
+    Helper::testVectors("Radiosity", correctRadiosity, aDoubleSystem->getRadiosities(), Tolerance);
+
+    auto aModifier = aDoubleSystem->getShadingModifier(Tarcog::ISO15099::Environment::Outdoor);
+
+    const auto aSingleSystem = buildSingleLayerSystemWithModifier(aModifier);
+
+    EXPECT_NEAR(3.244674, aSingleSystem->getUValue(), Tolerance);
 }

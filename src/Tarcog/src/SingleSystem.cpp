@@ -384,6 +384,17 @@ namespace Tarcog::ISO15099
         m_IGU.setSolidLayerConductivity(t_LayerIndex, t_SolidLayerThermalConductivity);
     }
 
+    ShadingModifier CSingleSystem::getShadingModifier(Environment environment) const
+    {
+        auto it = m_ShadingModifiers.find(environment);
+        if(it != m_ShadingModifiers.end())
+        {
+            return it->second;
+        }
+
+        return {};
+    }
+
     std::vector<double> CSingleSystem::getGapPressures() const
     {
         return m_IGU.getGapPressures();
@@ -403,11 +414,26 @@ namespace Tarcog::ISO15099
     {
         ShadingModifier shadingModifier;
 
-        auto solidLayers = m_IGU.getSolidLayers();
-
-        if(solidLayers.back()->isPermeable())
+        const auto& solidLayers = m_IGU.getSolidLayers();
+        if(!solidLayers.empty() && solidLayers.back()->isPermeable())
         {
-            // TODO:: Calculate here
+            const auto shadingLayer = solidLayers.back();
+            const auto glassLayer = solidLayers.at(solidLayers.size() - 2);
+
+            const double Tind = m_Environment.at(Environment::Indoor)->getAirTemperature();
+            const double hcin = m_Environment.at(Environment::Indoor)->getHc();
+            const double Gin = m_Environment.at(Environment::Indoor)->J(Side::Front);
+
+            const double T_shade = shadingLayer->getSurface(Side::Back)->getTemperature();
+            const double T_glass = glassLayer->getSurface(Side::Back)->getTemperature();
+
+            const double R_shade = shadingLayer->getSurface(Side::Back)->J();
+            const double R_glass = glassLayer->getSurface(Side::Back)->J();
+
+            const double tau = shadingLayer->getSurface(Side::Back)->getTransmittance();
+
+            shadingModifier.hcRatio = computeHcRatio(hcin, Tind, T_shade, T_glass, 0);
+            shadingModifier.emissivityRatio = computeEmissivityRatio(0.84, R_shade, R_glass, T_glass, tau, tau, Gin);
         }
 
         return shadingModifier;
@@ -417,18 +443,29 @@ namespace Tarcog::ISO15099
     {
         ShadingModifier shadingModifier;
 
-        auto solidLayers = m_IGU.getSolidLayers();
-        auto gapLayers{m_IGU.getGapLayers()};
+        const auto& solidLayers = m_IGU.getSolidLayers();
+        const auto& gapLayers = m_IGU.getGapLayers();
 
-        if(solidLayers.front()->isPermeable() && solidLayers.size() > 1 && !gapLayers.empty())
+        if(!solidLayers.empty() && solidLayers.front()->isPermeable() &&
+           solidLayers.size() > 1 && !gapLayers.empty())
         {
-            auto shadingLayer{solidLayers.front()};
-            const auto Tout = m_Environment.at(Environment::Outdoor)->getAirTemperature();
-            const auto hcout = m_Environment.at(Environment::Outdoor)->getHc();
-            const auto qv = gapLayers[0]->getGainFlow();
-            const auto Tf1 = shadingLayer->getSurface(Side::Front)->getTemperature();
-            const auto Tb1 = shadingLayer->getSurface(Side::Back)->getTemperature();
-            auto nextLayer = solidLayers[1];
+            const auto shadingLayer = solidLayers.front();
+            const auto glassLayer = solidLayers[1];
+
+            const double Tout = m_Environment.at(Environment::Outdoor)->getAirTemperature();
+            const double hcout = m_Environment.at(Environment::Outdoor)->getHc();
+            const double Gout = m_Environment.at(Environment::Outdoor)->J(Side::Back);
+
+            const double T_shade = shadingLayer->getSurface(Side::Front)->getTemperature();
+            const double T_glass = shadingLayer->getSurface(Side::Back)->getTemperature();
+
+            const double R_shade = shadingLayer->getSurface(Side::Front)->J();
+            const double R_glass = shadingLayer->getSurface(Side::Back)->J();
+
+            const double tau = shadingLayer->getSurface(Side::Front)->getTransmittance();
+
+            shadingModifier.hcRatio = computeHcRatio(hcout, Tout, T_shade, T_glass, 0);
+            shadingModifier.emissivityRatio = computeEmissivityRatio(0.84, R_shade, R_glass, T_glass, tau, tau, Gout);
         }
 
         return shadingModifier;

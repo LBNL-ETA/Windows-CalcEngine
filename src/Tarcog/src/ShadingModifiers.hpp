@@ -1,7 +1,8 @@
 //! @brief Modifiers are calculated values used for IGUs with interior or exterior shading devices.
 //!
 //! These modifiers allow an IGU with a shade to behave thermally like an IGU without a shade,
-//! by adjusting surface properties such as emissivity and convective heat transfer coefficients (Hc).
+//! by adjusting surface properties such as emissivity and convective heat transfer coefficients
+//! (Hc).
 //!
 //! For example, in an IGU with two glass panes and a single shade (either interior or exterior),
 //! the modifiers provide ratio values that adjust the surface coefficients of the glass layers.
@@ -11,7 +12,6 @@
 //! These modifiers are intended for use in tools like THERM, which cannot import shading devices
 //! as explicit layers. In such cases, the shading layer is removed, and the remaining IGU layers
 //! are modified using these coefficients to replicate the shade's thermal effect.
-
 
 #pragma once
 
@@ -38,40 +38,52 @@ namespace Tarcog::ISO15099
     ///   - the environment and the shading surface, and
     ///   - the environment and the glass surface that originally faced the shade.
     ///
-    /// Formula:
-    ///   hc_new = hc_env * |(T_env - T_shade_to_env) / (T_env - T_glass_to_shade)|
+    /// The ventilated gap gain (qv) is subtracted or added depending on shade position.
     ///
-    /// If the denominator is zero (i.e., the glass surface temperature equals the
-    /// environment temperature), the function returns 1.0 to avoid division by zero.
+    /// Formula:
+    ///   hc_new = hc_env * (T_env - T_shade_to_env) / (T_env - T_glass_to_shade) ± qv / ΔT
     ///
     /// @param hc_env Convective coefficient between environment and shading surface (W/m²·K)
     /// @param T_env Air temperature of the environment (K)
     /// @param T_shade_to_env Temperature of the shading surface facing the environment (K)
     /// @param T_glass_to_shade Temperature of the glass surface that faced the shade (K)
+    /// @param qv Ventilated adjacent gap heat gain or loss (W/m²)
     /// @return Adjusted convective coefficient for the glass surface (W/m²·K)
     [[nodiscard]] double computeHcRatio(
-        double hc_env,
-        double T_env,
-        double T_shade_to_env,
-        double T_glass_to_shade
-    );
+      double hc_env, double T_env, double T_shade_to_env, double T_glass_to_shade, double qv);
 
-    /// Computes the adjusted surface emissivity for a glass layer after removing an adjacent shading device.
+    /// Computes the adjusted surface emissivity for a glass layer after removing an adjacent
+    /// shading device (either interior or exterior).
     ///
-    /// This function ensures that the radiative heat transfer remains the same after
-    /// removing the shading layer, by modifying the glass surface's emissivity.
+    /// This version accounts for whether the system had more than two layers. If the number of
+    /// layers was greater than 2, the radiosity from the previous layer (Rb or Rf) is used;
+    /// otherwise, the environmental irradiation is used directly (Gin or Gout).
     ///
-    /// Formula:
-    ///   ε_new = (R_shade_to_env + R_glass_to_shade * τ_shade) / (σ * T_glass_to_shade^4)
+    /// Formula (legacy FORTRAN style):
+    /// For exterior shade:
+    ///     temp = (nlayer > 2) ? Rf(3) : Gin
+    ///     ε_new = (Rf(1) - tir(3) * temp - (1 - tir(4)) * Gout) / (σ * Tf(2)^4 - Gout)
     ///
-    /// @param R_shade_to_env Radiosity of the shading surface facing the environment (W/m²)
-    /// @param R_glass_to_shade Radiosity of the glass surface facing the shade (W/m²)
-    /// @param T_glass_to_shade Temperature of the glass surface that faced the shade (K)
-    /// @param tau_shade IR transmittance of the shading layer (dimensionless, between 0 and 1)
-    /// @return Adjusted emissivity value to assign to the glass surface (dimensionless)
-    double computeEmissivityRatio(double R_shade_to_env,
-                                  double R_glass_to_shade,
-                                  double T_glass_to_shade,
-                                  double tau_shade);
+    /// For interior shade:
+    ///     temp = (nlayer > 2) ? Rb(nlayer - 2) : Gout
+    ///     ε_new = (Rb(nlayer) - tir(2*nlayer - 3) * temp - (1 - tir(2*nlayer - 2)) * Gin)
+    ///              / (σ * Tb(nlayer - 1)^4 - Gin)
+    ///
+    /// @param R_shade Surface radiosity of the shade (Rf(1) or Rb(nlayer)) [W/m²]
+    /// @param R_prev  Radiosity from the adjacent layer behind the shade (Rf(3) or Rb(nlayer-2)),
+    ///                or environment radiosity (Gin or Gout) [W/m²]
+    /// @param T_glass Temperature of the glass surface that will replace the shade [K]
+    /// @param tau_shade IR transmittance of the shade surface toward the glass (tir of the glass
+    /// surface) [–]
+    /// @param tau_opposite IR transmittance of the shade surface toward the environment [–]
+    /// @param G_env Irradiation from the environment (Gin or Gout) [W/m²]
+    /// @return Adjusted emissivity value for the glass surface [–]
+    double computeEmissivityRatio(double glassEmissivity,
+                                  double R_shade,
+                                  double R_prev,
+                                  double T_glass,
+                                  double tau_shade,
+                                  double tau_opposite,
+                                  double G_env);
 
 }   // namespace Tarcog::ISO15099

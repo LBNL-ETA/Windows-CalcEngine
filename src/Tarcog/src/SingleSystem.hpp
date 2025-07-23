@@ -98,6 +98,8 @@ namespace Tarcog::ISO15099
           setSolidLayerConductivities(const std::vector<double> & t_SolidLayerThermalConductivities);
         void setSolidLayerConductivity(size_t t_LayerIndex, double t_SolidLayerThermalConductivity);
 
+        ShadingModifier getShadingModifier(Tarcog::ISO15099::Environment environment) const;
+
     private:
         CIGU m_IGU;
         std::map<Environment, std::shared_ptr<CEnvironment>> m_Environment;
