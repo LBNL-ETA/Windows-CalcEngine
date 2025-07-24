@@ -417,7 +417,7 @@ namespace Tarcog::ISO15099
         const auto & solidLayers = m_IGU.getSolidLayers();
         const auto & gapLayers = m_IGU.getGapLayers();
 
-        if(solidLayers.size() > 1 && solidLayers.back()->isPermeable())
+        if(solidLayers.size() > 1 && solidLayers.back()->isPermeable() && !gapLayers.empty())
         {
             const auto shadingLayer = solidLayers.back();
             const auto glassLayer = solidLayers.at(solidLayers.size() - 2);
@@ -430,14 +430,14 @@ namespace Tarcog::ISO15099
             const double T_glass = glassLayer->getSurface(Side::Back)->getTemperature();
 
             const double R_shade = shadingLayer->getSurface(Side::Back)->J();
-            const double tau_back = shadingLayer->getSurface(Side::Back)->getTransmittance();
+            const double tau_back = glassLayer->getSurface(Side::Back)->getTransmittance();
             const double glass_emissivity = glassLayer->getSurface(Side::Back)->getEmissivity();
 
-            auto nextLayer = glassLayer->getPreviousLayer();
+            auto previousLayer = glassLayer->getPreviousLayer();
             double R_prev = 0;
-            if(nextLayer)
+            if(previousLayer)
             {
-                R_prev = nextLayer->getSurface(Side::Front)->J();
+                R_prev = previousLayer->getSurface(Side::Front)->J();
             }
 
             const double qv = gapLayers.back()->getGainFlow();
