@@ -106,9 +106,15 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CNonLinearSolver> m_NonLinearSolver;
         void initializeStartValues();
 
-        [[nodiscard]] ShadingModifiers calculateShadingModifiers();
-        [[nodiscard]] ShadingModifier calculateInteriorShadingModifier() const;
-        [[nodiscard]] ShadingModifier calculateExteriorShadingModifier() const;
+        // Helper enum use in evaluation of the shading modifiers
+        enum class ShadePosition
+        {
+            Interior,
+            Exterior
+        };
+
+        [[nodiscard]] ShadingModifier calculateShadingModifier(ShadePosition position) const;
+        [[nodiscard]] ShadingModifiers calculateShadingModifiers() const;
 
         ShadingModifiers m_ShadingModifiers;
     };
