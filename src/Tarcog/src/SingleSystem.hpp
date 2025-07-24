@@ -107,8 +107,8 @@ namespace Tarcog::ISO15099
         void initializeStartValues();
 
         [[nodiscard]] ShadingModifiers calculateShadingModifiers();
-        [[nodiscard]] ShadingModifier calculateInteriorShadingModifier();
-        [[nodiscard]] ShadingModifier calculateExteriorShadingModifier();
+        [[nodiscard]] ShadingModifier calculateInteriorShadingModifier() const;
+        [[nodiscard]] ShadingModifier calculateExteriorShadingModifier() const;
 
         ShadingModifiers m_ShadingModifiers;
     };

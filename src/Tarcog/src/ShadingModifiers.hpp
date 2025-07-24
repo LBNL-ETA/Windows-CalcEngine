@@ -48,7 +48,7 @@ namespace Tarcog::ISO15099
     /// @param T_shade_to_env Temperature of the shading surface facing the environment (K)
     /// @param T_glass_to_shade Temperature of the glass surface that faced the shade (K)
     /// @param qv Ventilated adjacent gap heat gain or loss (W/m²)
-    /// @return Adjusted convective coefficient for the glass surface (W/m²·K)
+    /// @return Ratio of new convection coefficient and old convection coefficient
     [[nodiscard]] double computeHcRatio(
       double hc_env, double T_env, double T_shade_to_env, double T_glass_to_shade, double qv);
 
@@ -73,17 +73,14 @@ namespace Tarcog::ISO15099
     /// @param R_prev  Radiosity from the adjacent layer behind the shade (Rf(3) or Rb(nlayer-2)),
     ///                or environment radiosity (Gin or Gout) [W/m²]
     /// @param T_glass Temperature of the glass surface that will replace the shade [K]
-    /// @param tau_shade IR transmittance of the shade surface toward the glass (tir of the glass
-    /// surface) [–]
-    /// @param tau_opposite IR transmittance of the shade surface toward the environment [–]
+    /// @param tau_glass IR transmittance of the glass adjecent to the shade
     /// @param G_env Irradiation from the environment (Gin or Gout) [W/m²]
-    /// @return Adjusted emissivity value for the glass surface [–]
+    /// @return Ratio of new emissivity to old emissivity [–]
     double computeEmissivityRatio(double glassEmissivity,
                                   double R_shade,
                                   double R_prev,
                                   double T_glass,
-                                  double tau_shade,
-                                  double tau_opposite,
+                                  double tau_glass,
                                   double G_env);
 
 }   // namespace Tarcog::ISO15099

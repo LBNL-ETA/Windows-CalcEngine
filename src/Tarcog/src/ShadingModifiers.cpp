@@ -27,13 +27,12 @@ namespace Tarcog::ISO15099
                                   double R_shade,
                                   double R_prev,
                                   double T_glass,
-                                  double tau_shade,
-                                  double tau_opposite,
+                                  double tau_glass,
                                   double G_env)
     {
         using namespace FenestrationCommon;
 
-        const double numerator = R_shade - tau_shade * R_prev - (1.0 - tau_opposite) * G_env;
+        const double numerator = R_shade - tau_glass * R_prev - (1.0 - tau_glass) * G_env;
         const double denominator = ConstantsData::STEFANBOLTZMANN * std::pow(T_glass, 4) - G_env;
 
         if(std::abs(denominator) < 1e-6)

@@ -410,62 +410,83 @@ namespace Tarcog::ISO15099
         return shadingModifiers;
     }
 
-    ShadingModifier CSingleSystem::calculateInteriorShadingModifier()
+    ShadingModifier CSingleSystem::calculateInteriorShadingModifier() const
     {
         ShadingModifier shadingModifier;
 
-        const auto& solidLayers = m_IGU.getSolidLayers();
-        if(!solidLayers.empty() && solidLayers.back()->isPermeable())
+        const auto & solidLayers = m_IGU.getSolidLayers();
+        const auto & gapLayers = m_IGU.getGapLayers();
+
+        if(solidLayers.size() > 1 && solidLayers.back()->isPermeable())
         {
             const auto shadingLayer = solidLayers.back();
             const auto glassLayer = solidLayers.at(solidLayers.size() - 2);
 
             const double Tind = m_Environment.at(Environment::Indoor)->getAirTemperature();
             const double hcin = m_Environment.at(Environment::Indoor)->getHc();
-            const double Gin = m_Environment.at(Environment::Indoor)->J(Side::Front);
+            const double Gin = m_Environment.at(Environment::Indoor)->J(Side::Back);
 
             const double T_shade = shadingLayer->getSurface(Side::Back)->getTemperature();
             const double T_glass = glassLayer->getSurface(Side::Back)->getTemperature();
 
             const double R_shade = shadingLayer->getSurface(Side::Back)->J();
-            const double R_glass = glassLayer->getSurface(Side::Back)->J();
+            const double tau_back = shadingLayer->getSurface(Side::Back)->getTransmittance();
+            const double glass_emissivity = glassLayer->getSurface(Side::Back)->getEmissivity();
 
-            const double tau = shadingLayer->getSurface(Side::Back)->getTransmittance();
+            auto nextLayer = glassLayer->getPreviousLayer();
+            double R_prev = 0;
+            if(nextLayer)
+            {
+                R_prev = nextLayer->getSurface(Side::Front)->J();
+            }
 
-            shadingModifier.hcRatio = computeHcRatio(hcin, Tind, T_shade, T_glass, 0);
-            shadingModifier.emissivityRatio = computeEmissivityRatio(0.84, R_shade, R_glass, T_glass, tau, tau, Gin);
+            const double qv = gapLayers.back()->getGainFlow();
+
+            shadingModifier.hcRatio = computeHcRatio(hcin, Tind, T_shade, T_glass, qv);
+            shadingModifier.emissivityRatio =
+              computeEmissivityRatio(glass_emissivity, R_shade, R_prev, T_glass, tau_back, Gin);
         }
 
         return shadingModifier;
     }
 
-    ShadingModifier CSingleSystem::calculateExteriorShadingModifier()
+    ShadingModifier CSingleSystem::calculateExteriorShadingModifier() const
     {
         ShadingModifier shadingModifier;
 
-        const auto& solidLayers = m_IGU.getSolidLayers();
-        const auto& gapLayers = m_IGU.getGapLayers();
+        const auto & solidLayers = m_IGU.getSolidLayers();
+        const auto & gapLayers = m_IGU.getGapLayers();
+        const auto temp = m_IGU.getTemperatures();
+        const auto radiosities = m_IGU.getRadiosities();
 
-        if(!solidLayers.empty() && solidLayers.front()->isPermeable() &&
-           solidLayers.size() > 1 && !gapLayers.empty())
+        if(solidLayers.size() > 1 && solidLayers.front()->isPermeable() && !gapLayers.empty())
         {
             const auto shadingLayer = solidLayers.front();
             const auto glassLayer = solidLayers[1];
 
             const double Tout = m_Environment.at(Environment::Outdoor)->getAirTemperature();
             const double hcout = m_Environment.at(Environment::Outdoor)->getHc();
-            const double Gout = m_Environment.at(Environment::Outdoor)->J(Side::Back);
+            const double Gout = m_Environment.at(Environment::Outdoor)->J(Side::Front);
 
             const double T_shade = shadingLayer->getSurface(Side::Front)->getTemperature();
-            const double T_glass = shadingLayer->getSurface(Side::Back)->getTemperature();
+            const double T_glass = glassLayer->getSurface(Side::Front)->getTemperature();
 
             const double R_shade = shadingLayer->getSurface(Side::Front)->J();
-            const double R_glass = shadingLayer->getSurface(Side::Back)->J();
+            const double tau_front = glassLayer->getSurface(Side::Front)->getTransmittance();
+            const double glass_emissivity = glassLayer->getSurface(Side::Front)->getEmissivity();
 
-            const double tau = shadingLayer->getSurface(Side::Front)->getTransmittance();
+            auto nextLayer = glassLayer->getNextLayer();
+            double R_prev = 0;
+            if(nextLayer)
+            {
+                R_prev = nextLayer->getSurface(Side::Back)->J();
+            }
 
-            shadingModifier.hcRatio = computeHcRatio(hcout, Tout, T_shade, T_glass, 0);
-            shadingModifier.emissivityRatio = computeEmissivityRatio(0.84, R_shade, R_glass, T_glass, tau, tau, Gout);
+            const double qv = gapLayers.front()->getGainFlow();
+
+            shadingModifier.hcRatio = computeHcRatio(hcout, Tout, T_shade, T_glass, qv);
+            shadingModifier.emissivityRatio =
+              computeEmissivityRatio(glass_emissivity, R_shade, R_prev, T_glass, tau_front, Gout);
         }
 
         return shadingModifier;
