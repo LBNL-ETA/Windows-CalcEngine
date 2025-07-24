@@ -326,4 +326,9 @@ namespace Tarcog::ISO15099
         m_Solved = false;
     }
 
+    ShadingModifier CSystem::getShadingModifier(System t_System, Environment env) const
+    {
+        return m_System.at(t_System)->getShadingModifier(env);
+    }
+
 }   // namespace Tarcog::ISO15099

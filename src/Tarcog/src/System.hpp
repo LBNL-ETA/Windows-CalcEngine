@@ -5,6 +5,7 @@
 #include <map>
 #include "IGUConfigurations.hpp"
 #include "IGUGapLayer.hpp"
+#include "ShadingModifiers.hpp"
 
 
 namespace Tarcog::ISO15099
@@ -78,6 +79,8 @@ namespace Tarcog::ISO15099
         void setSolidLayerConductivities(
           const std::vector<double> & t_SolidLayerThermalConductivities);
         void setSolidLayerConductivity(size_t t_LayerIndex, double t_SolidLayerThermalConductivity);
+
+        [[nodiscard]] ShadingModifier getShadingModifier(System t_System, Environment env) const;
 
     private:
         void solve();
