@@ -1,0 +1,19 @@
+Checks: >
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  readability-*,
+  bugprone-*,
+  -cppcoreguidelines-member-function-hidden
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: '.*'
+FormatStyle: file
+CheckOptions:
+  - key:             modernize-use-nullptr.NullMacros
+    value:           'NULL'
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
