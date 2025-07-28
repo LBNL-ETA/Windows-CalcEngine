@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "WCETarcog.hpp"
+#include <WCETarcog.hpp>
 
 class TestVerticalSliderWindow : public testing::Test
 {
@@ -15,10 +15,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 300.0;   // Kelvins
-        auto airSpeed = 5.5;           // meters per second
-        auto tSky = 270.0;             // Kelvins
-        auto solarRadiation = 789.0;
+        constexpr auto airTemperature = 300.0;   // Kelvins
+        constexpr auto airSpeed = 5.5;           // meters per second
+        constexpr auto tSky = 270.0;             // Kelvins
+        constexpr auto solarRadiation = 789.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -28,21 +28,21 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
 
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.003048;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.003048;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
 
         auto aSolidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         aSolidLayer->setSolarHeatGain(0.094189159572, solarRadiation);
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
+        constexpr auto windowWidth = 1.0;
+        constexpr auto windowHeight = 1.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer);
 
@@ -448,6 +448,7 @@ TEST_F(TestVerticalSliderWindow, IGUMismatchDetected)
     // Design IGU specs for frame (deliberately too strict)
     constexpr double designUValue = 1.667875;
     constexpr double designThickness = 0.003;   // real is 0.003048
+    constexpr double realThickness = 0.003048;
     constexpr double tightTolerance = 0.00001;
 
     // Frame data with expected IGU spec
@@ -487,7 +488,7 @@ TEST_F(TestVerticalSliderWindow, IGUMismatchDetected)
                          {DualVerticalFramePosition::BottomRight, frameData},
                          {DualVerticalFramePosition::Bottom, frameData}});
 
-    const auto mismatch = window.iguMissmatch();
+    const auto mismatch = window.iguMissmatch(realThickness, realThickness);
     EXPECT_TRUE(mismatch.any());
     EXPECT_TRUE(mismatch.uCenterMissmatch);
     EXPECT_TRUE(mismatch.thicknessMissmatch);

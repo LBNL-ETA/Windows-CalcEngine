@@ -6,7 +6,6 @@
 #include "WindowVision.hpp"
 #include "EnvironmentConfigurations.hpp"
 #include "IGU.hpp"
-#include "../../../cmake-build-release/googletest-src/googletest/src/gtest-internal-inl.h"
 
 namespace Tarcog::ISO15099
 {

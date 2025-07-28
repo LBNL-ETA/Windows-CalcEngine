@@ -1,8 +1,10 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Tarcog
 {
-    enum class FramePosition
+    enum class FramePosition : uint8_t
     {
         Top,
         Bottom,
