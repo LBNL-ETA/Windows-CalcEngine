@@ -37,7 +37,7 @@ namespace Tarcog
         [[nodiscard]] virtual double area() const = 0;
         [[nodiscard]] virtual double hc() const = 0;
 
-        [[nodiscard]] virtual IGUMismatch iguMissmatch() const = 0;
+        [[nodiscard]] virtual IGUMismatch iguMissmatch(double geometricalThickness) const = 0;
 
 
         virtual void setHc(double hc) = 0;

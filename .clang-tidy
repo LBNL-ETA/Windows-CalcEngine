@@ -6,6 +6,7 @@ Checks: >
   performance-*,
   readability-*,
   bugprone-*,
+  -bugprone-easily-swappable-parameters,
   -cppcoreguidelines-member-function-hidden
 
 WarningsAsErrors: ''

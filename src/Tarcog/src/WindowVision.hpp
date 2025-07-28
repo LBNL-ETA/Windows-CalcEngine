@@ -57,7 +57,7 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double getIGUWidth() const;
         [[nodiscard]] double getIGUHeight() const;
 
-        [[nodiscard]] IGUMismatch iguMissmatch() const override;
+        [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const override;
 
     private:
         //! Makes connection between frames for correct area calculations.

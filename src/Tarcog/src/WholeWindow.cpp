@@ -120,9 +120,9 @@ namespace Tarcog::ISO15099
         vision.setThicknessIGUTolerance(thickness);
     }
 
-    IGUMismatch WindowSingleVision::iguMissmatch() const
+    IGUMismatch WindowSingleVision::iguMissmatch(const double geometricalThickness) const
     {
-        return vision.iguMissmatch();
+        return vision.iguMissmatch(geometricalThickness);
     }
 
     ////////////////////////////////////////////////

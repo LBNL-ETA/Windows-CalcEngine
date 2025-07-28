@@ -56,7 +56,7 @@ namespace Tarcog::ISO15099
         void setUValueIGUTolerance(double uValue) override;
         void setThicknessIGUTolerance(double thickness) override;
 
-        [[nodiscard]] IGUMismatch iguMissmatch() const;
+        [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const;
 
     protected:
         [[nodiscard]] double visionPercentage() const override;
@@ -99,6 +99,18 @@ namespace Tarcog::ISO15099
             const auto hcavg = (vision1().hc() + vision2().hc()) / 2;
             vision1().setHc(hcavg);
             vision2().setHc(hcavg);
+        }
+
+        [[nodiscard]] IGUMismatch
+          aggregateVisionMismatches(const double geometricalThickness1,
+                                    const double geometricalThickness2) const
+        {
+            const auto mismatch1 = vision1().iguMissmatch(geometricalThickness1);
+            const auto mismatch2 = vision2().iguMissmatch(geometricalThickness2);
+
+            return {.uCenterMissmatch = mismatch1.uCenterMissmatch || mismatch2.uCenterMissmatch,
+                    .thicknessMissmatch =
+                      mismatch1.thicknessMissmatch || mismatch2.thicknessMissmatch};
         }
 
     public:
@@ -177,16 +189,6 @@ namespace Tarcog::ISO15099
             vision2().setThicknessIGUTolerance(thickness);
         }
 
-        [[nodiscard]] IGUMismatch iguMissmatch() const
-        {
-            const auto mismatch1 = vision1().iguMissmatch();
-            const auto mismatch2 = vision2().iguMissmatch();
-
-            return {.uCenterMissmatch = mismatch1.uCenterMissmatch || mismatch2.uCenterMissmatch,
-                    .thicknessMissmatch =
-                      mismatch1.thicknessMissmatch || mismatch2.thicknessMissmatch};
-        }
-
     protected:
         [[nodiscard]] double visionPercentage() const override
         {
@@ -245,6 +247,13 @@ namespace Tarcog::ISO15099
         void setDividersLeftVisionAuto(const FrameData & frameData);
         void setDividersRightVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
         void setDividersRightVisionAuto(const FrameData & frameData);
+
+        [[nodiscard]] IGUMismatch iguMissmatch(double leftGeometricalThickness,
+                                               double rightGeometricalThickness) const
+        {
+            return aggregateVisionMismatches(leftGeometricalThickness, rightGeometricalThickness);
+        }
+
 
         WindowVision & vision1() override
         {
@@ -319,6 +328,13 @@ namespace Tarcog::ISO15099
         void setDividersTopVisionAuto(const FrameData & frameData);
         void setDividersBottomVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
         void setDividersBottomVisionAuto(const FrameData & frameData);
+
+        [[nodiscard]] IGUMismatch iguMissmatch(double topGeometricalThickness,
+                                               double bottomGeometricalThickness) const
+        {
+            return aggregateVisionMismatches(topGeometricalThickness, bottomGeometricalThickness);
+        }
+
 
         // Required by CRTP base
         WindowVision & vision1() override
