@@ -1,0 +1,22 @@
+Checks: >
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  readability-*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-member-function-hidden,
+  -cppcoreguidelines-owning-memory.NonOwningRawPointer,
+  -cppcoreguidelines-owning-memory
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: '.*'
+FormatStyle: file
+CheckOptions:
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase

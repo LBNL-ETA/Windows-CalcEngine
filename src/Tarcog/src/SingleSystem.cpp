@@ -225,10 +225,11 @@ namespace Tarcog::ISO15099
         return m_NonLinearSolver->isToleranceAchieved();
     }
 
-    void CSingleSystem::solve() const
+    void CSingleSystem::solve()
     {
         assert(m_NonLinearSolver != nullptr);
         m_NonLinearSolver->solve();
+        m_ShadingModifiers = calculateShadingModifiers();
     }
 
     void CSingleSystem::initializeStartValues()
@@ -255,6 +256,7 @@ namespace Tarcog::ISO15099
             layer->initializeStart(Side::Back, curTemp);
         }
     }
+
 
     void CSingleSystem::setInitialGuess(const std::vector<double> & t_Temperatures) const
     {
@@ -344,9 +346,8 @@ namespace Tarcog::ISO15099
 
     void CSingleSystem::setInteriorAndExteriorSurfacesHeight(double height)
     {
-        std::ranges::for_each(m_Environment | std::views::values, [height](auto &environment) {
-            environment->setHeight(height);
-        });
+        std::ranges::for_each(m_Environment | std::views::values,
+                              [height](auto & environment) { environment->setHeight(height); });
     }
 
     void CSingleSystem::setDeflectionProperties(const double t_Tini, const double t_Pini)
@@ -384,8 +385,95 @@ namespace Tarcog::ISO15099
         m_IGU.setSolidLayerConductivity(t_LayerIndex, t_SolidLayerThermalConductivity);
     }
 
+    ShadingModifier CSingleSystem::getShadingModifier(Environment environment) const
+    {
+        auto it = m_ShadingModifiers.find(environment);
+        if(it != m_ShadingModifiers.end())
+        {
+            return it->second;
+        }
+
+        return {};
+    }
+
     std::vector<double> CSingleSystem::getGapPressures() const
     {
         return m_IGU.getGapPressures();
+    }
+
+    ShadingModifier CSingleSystem::calculateShadingModifier(ShadePosition position) const
+    {
+        ShadingModifier modifier;
+
+        const auto & solidLayers = m_IGU.getSolidLayers();
+        const auto & gapLayers = m_IGU.getGapLayers();
+
+        if(solidLayers.size() <= 1 || gapLayers.empty())
+            return modifier;
+
+        const bool isInterior = (position == ShadePosition::Interior);
+
+        auto getEnv = [&]() -> const auto & {
+            return m_Environment.at(isInterior ? Environment::Indoor : Environment::Outdoor);
+        };
+
+        auto getShadingLayer = [&]() -> const auto & {
+            return isInterior ? solidLayers.back() : solidLayers.front();
+        };
+
+        auto getGlassLayer = [&](const auto & shading) {
+            return (isInterior ? shading->getPreviousLayer()->getPreviousLayer()
+                               : shading->getNextLayer()->getNextLayer()).get();
+        };
+
+        auto getAdjacentLayer = [&](const auto * glass) {
+            return (isInterior ? glass->getPreviousLayer() : glass->getNextLayer()).get();
+        };
+
+        const auto & shadingLayer = getShadingLayer();
+        if(!shadingLayer->isPermeable())
+            return modifier;
+
+        const auto & glassLayer = getGlassLayer(shadingLayer);
+        if(!glassLayer)
+            return modifier;
+
+        const auto & env = getEnv();
+        const Side side = isInterior ? Side::Back : Side::Front;
+        const Side oppSide = isInterior ? Side::Front : Side::Back;
+
+        const double airTemp = env->getAirTemperature();
+        const double hc = env->getHc();
+        const double Genv = env->J(side);
+
+        const double T_shade = shadingLayer->getSurface(side)->getTemperature();
+        const double T_glass = glassLayer->getSurface(side)->getTemperature();
+
+        const double R_shade = shadingLayer->getSurface(side)->J();
+        const double tau = glassLayer->getSurface(side)->getTransmittance();
+        const double emissivity = glassLayer->getSurface(side)->getEmissivity();
+
+        double R_prev = 0;
+        if(const auto * adj = getAdjacentLayer(glassLayer))
+            R_prev = adj->getSurface(oppSide)->J();
+
+        const double qv =
+          isInterior ? gapLayers.back()->getGainFlow() : gapLayers.front()->getGainFlow();
+
+        modifier.hcRatio = computeHcRatio(hc, airTemp, T_shade, T_glass, qv);
+        modifier.emissivityRatio =
+          computeEmissivityRatio(emissivity, R_shade, R_prev, T_glass, tau, Genv);
+
+        return modifier;
+    }
+
+
+    ShadingModifiers CSingleSystem::calculateShadingModifiers() const
+    {
+        ShadingModifiers shadingModifiers{
+          {Environment::Indoor, calculateShadingModifier(ShadePosition::Interior)},
+          {Environment::Outdoor, calculateShadingModifier(ShadePosition::Exterior)}};
+
+        return shadingModifiers;
     }
 }   // namespace Tarcog::ISO15099

@@ -46,7 +46,7 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double shgcCOGAverage() const override;
 
         void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
-        void setFrameData(const SingleVisionFrameMap& frames);
+        void setFrameData(const SingleVisionFrameMap & frames);
 
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
@@ -56,7 +56,7 @@ namespace Tarcog::ISO15099
         void setUValueIGUTolerance(double uValue) override;
         void setThicknessIGUTolerance(double thickness) override;
 
-        [[nodiscard]] IGUMismatch iguMissmatch() const override;
+        [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const;
 
     protected:
         [[nodiscard]] double visionPercentage() const override;
@@ -66,65 +66,145 @@ namespace Tarcog::ISO15099
     };
 
     ////////////////////////////////////////////////
-    /// WindowDualVision
+    /// WindowDualVisionBase
     ////////////////////////////////////////////////
 
-    class WindowDualVision : public IWindow
+    template<typename Derived>
+    class WindowDualVisionBase : public IWindow
     {
-    public:
-        WindowDualVision() = default;
-
-        [[nodiscard]] double area() const override;
-        [[nodiscard]] double uValue() const override;
-        [[nodiscard]] double shgc() const override;
-        [[nodiscard]] double shgc(double tSol1, double tSol2) const;
-        //! Both vision areas have same solar transmittance
-        [[nodiscard]] double shgc(double tSol) const override;
-        [[nodiscard]] double vt() const override;
-        [[nodiscard]] double vt(double tVis1, double tVis2) const;
-        //! Both vision areas have same visible transmittance
-        [[nodiscard]] double vt(double tVis) const override;
-
-        [[nodiscard]] double uValueCOGAverage() const override;
-        [[nodiscard]] double shgcCOGAverage() const override;
-
-        [[nodiscard]] IGUDimensions getIGUDimensions() const override;
-
-        void setUValueIGUTolerance(double uValue) override;
-        void setThicknessIGUTolerance(double thickness) override;
-
-        [[nodiscard]] IGUMismatch iguMissmatch() const override;
+        WindowDualVisionBase() = default;
 
     protected:
-        WindowDualVision(double width,
-                         double height,
-                         double tvis1,
-                         double tsol1,
-                         std::shared_ptr<IIGUSystem> iguSystem1,
-                         double tvis2,
-                         double tsol2,
-                         std::shared_ptr<IIGUSystem> iguSystem2);
+        [[nodiscard]] virtual const WindowVision & vision1() const
+        {
+            return static_cast<const Derived &>(*this).vision1();
+        }
 
-        [[nodiscard]] double visionPercentage() const override;
+        [[nodiscard]] virtual const WindowVision & vision2() const
+        {
+            return static_cast<const Derived &>(*this).vision2();
+        }
 
-        [[nodiscard]] double uValueCOG1() const;
-        [[nodiscard]] double uValueCOG2() const;
-        [[nodiscard]] double shgcCOG1() const;
-        [[nodiscard]] double shgcCOG2() const;
+        virtual WindowVision & vision1()
+        {
+            return static_cast<Derived &>(*this).vision1();
+        }
+        virtual WindowVision & vision2()   // NOLINT(*-member-function-hidden)
+        {
+            return static_cast<Derived &>(*this).vision2();
+        }
 
-        WindowVision m_Vision1;
-        WindowVision m_Vision2;
+        void averageHc()
+        {
+            const auto hcavg = (vision1().hc() + vision2().hc()) / 2;
+            vision1().setHc(hcavg);
+            vision2().setHc(hcavg);
+        }
 
-    private:
-        //! Makes single convective film coefficient averaged over the both visions
-        void averageHc();
+        [[nodiscard]] IGUMismatch
+          aggregateVisionMismatches(const double geometricalThickness1,
+                                    const double geometricalThickness2) const
+        {
+            const auto mismatch1 = vision1().iguMissmatch(geometricalThickness1);
+            const auto mismatch2 = vision2().iguMissmatch(geometricalThickness2);
+
+            return {.uCenterMissmatch = mismatch1.uCenterMissmatch || mismatch2.uCenterMissmatch,
+                    .thicknessMissmatch =
+                      mismatch1.thicknessMissmatch || mismatch2.thicknessMissmatch};
+        }
+
+    public:
+        [[nodiscard]] double area() const override
+        {
+            return vision1().area() + vision2().area();
+        }
+
+        [[nodiscard]] double uValue() const override
+        {
+            return (vision1().uValue() * vision1().area() + vision2().uValue() * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] double shgc() const override
+        {
+            return (vision1().shgc() * vision1().area() + vision2().shgc() * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] double shgc(double tSol1, double tSol2) const
+        {
+            return (vision1().shgc(tSol1) * vision1().area()
+                    + vision2().shgc(tSol2) * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] double shgc(double tSol) const override
+        {
+            return shgc(tSol, tSol);
+        }
+
+        [[nodiscard]] double vt() const override
+        {
+            return (vision1().vt() * vision1().area() + vision2().vt() * vision2().area()) / area();
+        }
+
+        [[nodiscard]] double vt(double tVis1, double tVis2) const
+        {
+            return (vision1().vt(tVis1) * vision1().area() + vision2().vt(tVis2) * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] double vt(double tVis) const override
+        {
+            return vt(tVis, tVis);
+        }
+
+        [[nodiscard]] double uValueCOGAverage() const override
+        {
+            return (vision1().uValueCOG() * vision1().area()
+                    + vision2().uValueCOG() * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] double shgcCOGAverage() const override
+        {
+            return (vision1().shgcCOG() * vision1().area() + vision2().shgcCOG() * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] IGUDimensions getIGUDimensions() const override
+        {
+            return {vision1().getIGUWidth(), vision1().getIGUHeight()};
+        }
+
+        void setUValueIGUTolerance(double uValue) override
+        {
+            vision1().setUValueIGUTolerance(uValue);
+            vision2().setUValueIGUTolerance(uValue);
+        }
+
+        void setThicknessIGUTolerance(double thickness) override
+        {
+            vision1().setThicknessIGUTolerance(thickness);
+            vision2().setThicknessIGUTolerance(thickness);
+        }
+
+    protected:
+        [[nodiscard]] double visionPercentage() const override
+        {
+            return (vision1().visionPercentage() * vision1().area()
+                    + vision2().visionPercentage() * vision2().area())
+                   / area();
+        }
+        friend Derived;
     };
 
     ////////////////////////////////////////////////
     /// DualVisionHorizontal
     ////////////////////////////////////////////////
 
-    enum class DualHorizontalFramePosition {
+    enum class DualHorizontalFramePosition : uint8_t
+    {
         TopLeft,
         TopRight,
         BottomLeft,
@@ -138,7 +218,7 @@ namespace Tarcog::ISO15099
 
     //! Concrete implementation of dual vision horizontal slider
     //! Vision1 is the vision on the left side and Vision2 is the vision on the right side.
-    class DualVisionHorizontal : public WindowDualVision
+    class DualVisionHorizontal : public WindowDualVisionBase<DualVisionHorizontal>
     {
     public:
         DualVisionHorizontal() = default;
@@ -167,13 +247,45 @@ namespace Tarcog::ISO15099
         void setDividersLeftVisionAuto(const FrameData & frameData);
         void setDividersRightVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
         void setDividersRightVisionAuto(const FrameData & frameData);
+
+        [[nodiscard]] IGUMismatch iguMissmatch(double leftGeometricalThickness,
+                                               double rightGeometricalThickness) const
+        {
+            return aggregateVisionMismatches(leftGeometricalThickness, rightGeometricalThickness);
+        }
+
+
+        WindowVision & vision1() override
+        {
+            return m_LeftVision;
+        }
+
+        WindowVision & vision2() override
+        {
+            return m_RightVision;
+        }
+
+        [[nodiscard]] const WindowVision & vision1() const override
+        {
+            return m_LeftVision;
+        }
+
+        [[nodiscard]] const WindowVision & vision2() const override
+        {
+            return m_RightVision;
+        }
+
+    private:
+        WindowVision m_LeftVision;
+        WindowVision m_RightVision;
     };
 
     ////////////////////////////////////////////////
     /// DualVisionVertical
     ////////////////////////////////////////////////
 
-    enum class DualVerticalFramePosition {
+    enum class DualVerticalFramePosition : uint8_t
+    {
         Top,
         Bottom,
         TopLeft,
@@ -187,7 +299,7 @@ namespace Tarcog::ISO15099
 
     //! Concrete implementation of dual vision vertical slider
     //! Vision1 is the vision on the top and Vision2 is the vision on the bottom.
-    class DualVisionVertical : public WindowDualVision
+    class DualVisionVertical : public WindowDualVisionBase<DualVisionVertical>
     {
     public:
         DualVisionVertical() = default;
@@ -216,5 +328,38 @@ namespace Tarcog::ISO15099
         void setDividersTopVisionAuto(const FrameData & frameData);
         void setDividersBottomVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
         void setDividersBottomVisionAuto(const FrameData & frameData);
+
+        [[nodiscard]] IGUMismatch iguMissmatch(double topGeometricalThickness,
+                                               double bottomGeometricalThickness) const
+        {
+            return aggregateVisionMismatches(topGeometricalThickness, bottomGeometricalThickness);
+        }
+
+
+        // Required by CRTP base
+        WindowVision & vision1() override
+        {
+            return m_TopVision;
+        }
+
+        WindowVision & vision2() override
+        {
+            return m_BottomVision;
+        }
+
+        [[nodiscard]] const WindowVision & vision1() const override
+        {
+            return m_TopVision;
+        }
+
+        [[nodiscard]] const WindowVision & vision2() const override
+        {
+            return m_BottomVision;
+        }
+
+    private:
+        WindowVision m_TopVision;
+        WindowVision m_BottomVision;
     };
+
 }   // namespace Tarcog::ISO15099

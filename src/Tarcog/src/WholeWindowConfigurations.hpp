@@ -1,8 +1,10 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Tarcog
 {
-    enum class FramePosition
+    enum class FramePosition : uint8_t
     {
         Top,
         Bottom,
@@ -37,7 +39,7 @@ namespace Tarcog
         [[nodiscard]] virtual double area() const = 0;
         [[nodiscard]] virtual double hc() const = 0;
 
-        [[nodiscard]] virtual IGUMismatch iguMissmatch() const = 0;
+        [[nodiscard]] virtual IGUMismatch iguMissmatch(double geometricalThickness) const = 0;
 
 
         virtual void setHc(double hc) = 0;
@@ -74,8 +76,6 @@ namespace Tarcog
 
         virtual void setUValueIGUTolerance(double uValue) = 0;
         virtual void setThicknessIGUTolerance(double thickness) = 0;
-
-        [[nodiscard]] virtual IGUMismatch iguMissmatch() const = 0;
     };
 
 }   // namespace Tarcog

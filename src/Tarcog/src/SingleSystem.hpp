@@ -6,6 +6,8 @@
 
 #include "IGU.hpp"
 
+#include "ShadingModifiers.hpp"
+
 
 namespace Tarcog::ISO15099
 {
@@ -74,7 +76,7 @@ namespace Tarcog::ISO15099
         void setSolarRadiation(double t_SolarRadiation);
         [[nodiscard]] double getSolarRadiation() const;
 
-        void solve() const;
+        void solve();
 
         [[nodiscard]] double thickness() const;
 
@@ -96,11 +98,25 @@ namespace Tarcog::ISO15099
           setSolidLayerConductivities(const std::vector<double> & t_SolidLayerThermalConductivities);
         void setSolidLayerConductivity(size_t t_LayerIndex, double t_SolidLayerThermalConductivity);
 
+        ShadingModifier getShadingModifier(Tarcog::ISO15099::Environment environment) const;
+
     private:
         CIGU m_IGU;
         std::map<Environment, std::shared_ptr<CEnvironment>> m_Environment;
         std::shared_ptr<CNonLinearSolver> m_NonLinearSolver;
         void initializeStartValues();
+
+        // Helper enum use in evaluation of the shading modifiers
+        enum class ShadePosition
+        {
+            Interior,
+            Exterior
+        };
+
+        [[nodiscard]] ShadingModifier calculateShadingModifier(ShadePosition position) const;
+        [[nodiscard]] ShadingModifiers calculateShadingModifiers() const;
+
+        ShadingModifiers m_ShadingModifiers;
     };
 
 }   // namespace Tarcog::ISO15099

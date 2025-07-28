@@ -19,6 +19,8 @@ namespace Tarcog
 
             double getUValue() override;
             double getSHGC(double t_TotSol) override;
+            [[nodiscard]] double getHc(System system, Environment environment) const override;
+            [[nodiscard]] double getHr(System system, Environment environment) const override;
             [[nodiscard]] double getH(System system, Environment environment) const override;
 
             void setWidth(double width) override;

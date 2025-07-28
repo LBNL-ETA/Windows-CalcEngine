@@ -259,6 +259,16 @@ namespace Tarcog::ISO15099
         }
     }
 
+    double CSystem::getHc(System sys, Environment environment) const
+    {
+        return m_System.at(sys)->getHc(environment);
+    }
+
+    double CSystem::getHr(System sys, Environment environment) const
+    {
+        return m_System.at(sys)->getHr(environment);
+    }
+
     double CSystem::getH(System sys, Environment environment) const
     {
         return m_System.at(sys)->getH(environment);
@@ -314,6 +324,11 @@ namespace Tarcog::ISO15099
             system->setSolidLayerConductivity(t_LayerIndex, t_SolidLayerThermalConductivity);
         }
         m_Solved = false;
+    }
+
+    ShadingModifier CSystem::getShadingModifier(System t_System, Environment env) const
+    {
+        return m_System.at(t_System)->getShadingModifier(env);
     }
 
 }   // namespace Tarcog::ISO15099

@@ -10,6 +10,8 @@ protected:
     void SetUp() override
     {}
 
+    // NOLINTBEGIN
+
     //! Data are picked up from WINDOW database frame table (imported from THMZ file)
     static Tarcog::ISO15099::FrameData sampleSill()
     {
@@ -66,6 +68,8 @@ protected:
                     .BodyPoly = {5.56, 0.0004, -0.00003, 0.042, -0.003}}};
     }
 
+    // NOLINTEND
+
     static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerUValue()
     {
         /////////////////////////////////////////////////////////
@@ -83,20 +87,20 @@ protected:
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
 
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.003048;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.003048;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
 
         auto aSolidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
-        auto windowWidth = 2.0;
-        auto windowHeight = 2.0;
+        constexpr auto windowWidth = 2.0;
+        constexpr auto windowHeight = 2.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer);
 
@@ -111,10 +115,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 305.15;   // Kelvins
-        auto airSpeed = 2.75;           // meters per second
-        auto tSky = 305.15;             // Kelvins
-        auto solarRadiation = 783.0;
+        constexpr auto airTemperature = 305.15;   // Kelvins
+        constexpr auto airSpeed = 2.75;           // meters per second
+        constexpr auto tSky = 305.15;             // Kelvins
+        constexpr auto solarRadiation = 783.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -123,21 +127,22 @@ protected:
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
-        auto roomTemperature = 297.15;
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
+        constexpr auto roomTemperature = 297.15;
+        const auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
 
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.003048;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.003048;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
+        constexpr auto solarAbsorptance = 0.0914;
 
         auto aSolidLayer =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer->setSolarHeatGain(0.0914, solarRadiation);
+        aSolidLayer->setSolarHeatGain(solarAbsorptance, solarRadiation);
 
-        auto windowWidth = 2.0;
-        auto windowHeight = 2.0;
+        constexpr auto windowWidth = 2.0;
+        constexpr auto windowHeight = 2.0;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayer(aSolidLayer);
 
@@ -164,14 +169,14 @@ protected:
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
 
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.005715;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
@@ -182,8 +187,8 @@ protected:
         constexpr auto gapThickness = 0.012;
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
 
-        auto windowWidth = 1.2;
-        auto windowHeight = 1.5;
+        constexpr auto windowWidth = 1.2;
+        constexpr auto windowHeight = 1.5;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, gapLayer, aSolidLayer2});
 
@@ -198,10 +203,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 305.15;   // Kelvins
-        auto airSpeed = 2.75;           // meters per second
-        auto tSky = 305.15;             // Kelvins
-        auto solarRadiation = 783.0;
+        constexpr auto airTemperature = 305.15;   // Kelvins
+        constexpr auto airSpeed = 2.75;           // meters per second
+        constexpr auto tSky = 305.15;             // Kelvins
+        constexpr auto solarRadiation = 783.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -210,28 +215,30 @@ protected:
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
-        auto roomTemperature = 297.15;
+        constexpr auto roomTemperature = 297.15;
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
 
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.005715;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
+        constexpr auto solarAbsorptance1 = 0.166707709432;
+        constexpr auto solarAbsorptance2 = 0.112737670541;
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer1->setSolarHeatGain(0.166707709432, solarRadiation);
+        aSolidLayer1->setSolarHeatGain(solarAbsorptance1, solarRadiation);
 
         auto aSolidLayer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer2->setSolarHeatGain(0.112737670541, solarRadiation);
+        aSolidLayer2->setSolarHeatGain(solarAbsorptance2, solarRadiation);
 
         constexpr auto gapThickness = 0.012;
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
 
-        auto windowWidth = 1.2;
-        auto windowHeight = 1.5;
+        constexpr auto windowWidth = 1.2;
+        constexpr auto windowHeight = 1.5;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, gapLayer, aSolidLayer2});
 
@@ -422,8 +429,8 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerUValueWithDividers)
        {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
        {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
 
-    constexpr size_t nHorizontal{2u};
-    constexpr size_t nVertical{2u};
+    constexpr size_t nHorizontal{2};
+    constexpr size_t nVertical{2};
     window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
 
     const double uvalue{window.uValue()};
@@ -454,8 +461,8 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerSHGCWithDividers)
        {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
        {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
 
-    constexpr size_t nHorizontal{2u};
-    constexpr size_t nVertical{2u};
+    constexpr size_t nHorizontal{2};
+    constexpr size_t nVertical{2};
     window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
 
     const double uvalue{window.uValue()};
@@ -696,11 +703,6 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
 {
     SCOPED_TRACE("Begin Test: Mismatch detection for single vision window.");
 
-    // Frame expected IGU values
-    constexpr double designUValue{5.575};
-    constexpr double designThickness{0.006};   // deliberately smaller than real thickness
-    constexpr double tightTolerance{0.001};    // very tight to guarantee mismatch
-
     // Frame physical parameters
     constexpr double frameUValue{5.68};
     constexpr double edgeUValue{5.575};
@@ -708,13 +710,17 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     constexpr double wettedLength{0.05715};
     constexpr double absorptance{0.9};
 
+    // Frame expected IGU values
+    constexpr double designIGUFrameUValue{5.575};
+    constexpr double designIGUFrameThickness{0.006};   // deliberately smaller than real thickness
+
     // Add spec to frame data
     Tarcog::ISO15099::FrameData frameData{.UValue = frameUValue,
                                           .EdgeUValue = edgeUValue,
                                           .ProjectedFrameDimension = projectedFrameDimension,
                                           .WettedLength = wettedLength,
                                           .Absorptance = absorptance};
-    frameData.iguData = Tarcog::ISO15099::IGUData{designUValue, designThickness};
+    frameData.iguData = Tarcog::ISO15099::IGUData{designIGUFrameUValue, designIGUFrameThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness
     constexpr auto width{2.0};
@@ -726,6 +732,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
 
     // Set tight tolerance to force mismatch
+    constexpr double tightTolerance{0.0001};    // very tight to guarantee mismatch
     window.setUValueIGUTolerance(tightTolerance);
     window.setThicknessIGUTolerance(tightTolerance);
 
@@ -734,7 +741,11 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
                          {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
                          {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
 
-    const auto mismatch = window.iguMissmatch();
+    // We have to use geometrical thickness and not IGU thickness because that would represent
+    // thermal thickness
+    constexpr double iguThickness{0.005};
+
+    const auto mismatch = window.iguMissmatch(iguThickness);
     EXPECT_TRUE(mismatch.any());
     EXPECT_TRUE(mismatch.uCenterMissmatch);
     EXPECT_TRUE(mismatch.thicknessMissmatch);

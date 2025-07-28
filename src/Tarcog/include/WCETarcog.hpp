@@ -38,3 +38,4 @@
 #include "../src/CMASettings.hpp"
 #include "../src/DeflectionData.hpp"
 #include "../src/DeflectionFromCurves.hpp"
+#include "../src/ShadingModifiers.hpp"

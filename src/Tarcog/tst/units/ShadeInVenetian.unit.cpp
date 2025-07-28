@@ -6,8 +6,8 @@
 #include "vectorTesting.hpp"
 
 // This test is created to accommodate same test in WC so we can confirm the results (Shading
-// material is NFRC 31100 - White Venetian)
-class TestShadeOutVenetian : public testing::Test
+// material is White Venetian - NFRC 31100)
+class TestShadeInVenetian : public testing::Test
 {
 protected:
     static std::unique_ptr<Tarcog::ISO15099::CSingleSystem> buildDoubleLayerSystem()
@@ -52,7 +52,7 @@ protected:
         auto gap = Layers::gap(0.0127);
 
         CIGU igu{1.0, 1.0};
-        igu.addLayers({shadingLayer, gap, solidLayer});
+        igu.addLayers({solidLayer, gap, shadingLayer});
 
         auto system = std::make_unique<CSingleSystem>(igu, Indoor, Outdoor);
         system->solve();
@@ -66,6 +66,9 @@ protected:
 
         auto roomTemperature = 294.15;
         auto Indoor = Environments::indoor(roomTemperature);
+        constexpr auto calculatedHcFromDoubleRun{2.6612782178108558};
+        Indoor->setHCoeffModel(BoundaryConditionsCoeffModel::HcPrescribed,
+                               modifier.hcRatio * calculatedHcFromDoubleRun);
         assert(Indoor != nullptr);
 
         auto airTemperature = 255.15;
@@ -75,10 +78,10 @@ protected:
         auto Outdoor = Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, SkyModel::AllSpecified);
         assert(Outdoor != nullptr);
-        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::HcPrescribed, 26 * modifier.hcRatio);
+        Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
         auto solidLayer =
-          Layers::solid(0.003048, 1.0, modifier.emissivityRatio * 0.84, 0.0, 0.84, 0.0);
+          Layers::solid(0.003048, 1.0, 0.84, 0.0, modifier.emissivityRatio * 0.84, 0.0);
         assert(solidLayer != nullptr);
 
         CIGU igu{1.0, 1.0};
@@ -90,7 +93,7 @@ protected:
     }
 };
 
-TEST_F(TestShadeOutVenetian, Test1)
+TEST_F(TestShadeInVenetian, Test1)
 {
     SCOPED_TRACE("Begin Test: ShadeOutVenetian - U-value");
 
@@ -98,42 +101,39 @@ TEST_F(TestShadeOutVenetian, Test1)
 
     const auto aDoubleSystem = buildDoubleLayerSystem();
 
-    EXPECT_NEAR(3.244674, aDoubleSystem->getUValue(), Tolerance);
+    EXPECT_NEAR(4.586092, aDoubleSystem->getUValue(), Tolerance);
 
-    const std::vector correctTemperatureDouble{257.504498, 257.795556, 276.669580, 277.055281};
+    const std::vector correctTemperatureDouble{261.258561, 261.803719, 282.651541, 282.922999};
     Helper::testVectors("Temperatures with shading",
                         correctTemperatureDouble,
                         aDoubleSystem->getTemperatures(),
                         Tolerance);
 
-    const std::vector correctRadiosityDouble{279.595282, 248.498982, 318.811755, 348.524663};
+    const std::vector correctRadiosityDouble{260.328693, 285.599331, 386.624101, 331.314667};
     Helper::testVectors("Radiosities with shading",
                         correctRadiosityDouble,
                         aDoubleSystem->getRadiosities(),
                         Tolerance);
 
-    auto aModifier = aDoubleSystem->getShadingModifier(Tarcog::ISO15099::Environment::Outdoor);
+    auto aModifier = aDoubleSystem->getShadingModifier(Tarcog::ISO15099::Environment::Indoor);
 
-    EXPECT_NEAR(0.155924, aModifier.hcRatio, Tolerance);
-    EXPECT_NEAR(0.509054, aModifier.emissivityRatio, Tolerance);
+    EXPECT_NEAR(0.995714, aModifier.hcRatio, Tolerance);
+    EXPECT_NEAR(0.701355, aModifier.emissivityRatio, Tolerance);
 
-    // Now we are removing shading system and applying shading modifier equations which should
-    // lead to the same glass surface temperatures and radiosities
     const auto aSingleSystem = buildSingleLayerSystemWithModifier(aModifier);
 
-    EXPECT_NEAR(3.244674, aSingleSystem->getUValue(), Tolerance);
+    EXPECT_NEAR(4.586092, aSingleSystem->getUValue(), Tolerance);
 
-    // Temperatures of the glass layers should match temperatures of the glass layer in the double
-    // layer construction.
-    const std::vector correctTemperatureSingle{276.669580, 277.055281};
+    // Temperatures of the glass should perfectly match with temperatures of the glass from
+    // double layer run
+    const std::vector correctTemperatureSingle{261.258561, 261.803719};
     Helper::testVectors("Temperatures with shading modifier",
                         correctTemperatureSingle,
                         aSingleSystem->getTemperatures(),
                         Tolerance);
 
-    // Radiosities of the surfaces should match radiosities of the surfaces that are on
-    // the exterior and the interior side (first and last surface)
-    const std::vector correctRadiositySingle{279.595282, 348.524663};
+    // Radiosities should perfectly match first and last surface radiosity from the dual layer run
+    const std::vector correctRadiositySingle{260.328693, 331.314667};
     Helper::testVectors("Radiosities with shading modifier",
                         correctRadiositySingle,
                         aSingleSystem->getRadiosities(),

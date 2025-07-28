@@ -330,25 +330,20 @@ namespace Tarcog::ISO15099
 
     namespace
     {
-
-        IGUMismatch
-          checkFrameMismatch(const FrameData & frame,
-                             IIGUSystem & igu,   // Cannot be const because of lazy evaluation
-                             const IGUErrorTolerance & tol)
+        // Simple comparison between IGU data that frame used when it is calculated vs
+        // current IGU data
+        IGUMismatch checkFrameMismatch(const IGUData & frameData,
+                                       const IGUData & cogData,
+                                       const IGUErrorTolerance & tol)
         {
             IGUMismatch mismatch;
 
-            if(!frame.iguData)
-                return mismatch;
-
-            const auto & spec = *frame.iguData;
-
-            if(std::abs(igu.getUValue() - spec.UValue) > tol.UCenter)
+            if(std::abs(cogData.UValue - frameData.UValue) > tol.UCenter)
             {
                 mismatch.uCenterMissmatch = true;
             }
 
-            if(std::abs(igu.thickness() - spec.Thickness) > tol.Thickness)
+            if(std::abs(cogData.Thickness - frameData.Thickness) > tol.Thickness)
             {
                 mismatch.thicknessMissmatch = true;
             }
@@ -359,31 +354,45 @@ namespace Tarcog::ISO15099
     }   // namespace
 
 
-    IGUMismatch WindowVision::iguMissmatch() const
+    IGUMismatch WindowVision::iguMissmatch(const double geometricalThickness) const
     {
         IGUMismatch result;
 
         if(!m_IGUSystem)
-        {
             return result;   // No IGU assigned ⇒ nothing to check
-        }
 
-        // Check all frame positions
+        const IGUData reference{
+            .UValue = m_IGUSystem->getUValue(),
+            .Thickness = geometricalThickness
+        };
+
+        auto accumulateMismatch = [&](const std::optional<IGUData> & igu) {
+            if(!igu)
+                return IGUMismatch{};
+
+            return checkFrameMismatch(
+                IGUData{
+                    .UValue = igu->UValue,
+                    .Thickness = igu->Thickness
+                },
+                reference,
+                m_IGUErrorTolerance
+            );
+        };
+
         for(const auto & frame : m_Frame | std::views::values)
         {
-            const auto mismatch =
-              checkFrameMismatch(frame.frameData, *m_IGUSystem, m_IGUErrorTolerance);
+            const IGUMismatch mismatch = accumulateMismatch(frame.frameData.iguData);
             result.uCenterMissmatch |= mismatch.uCenterMissmatch;
             result.thicknessMissmatch |= mismatch.thicknessMissmatch;
 
             if(result.any())
-                break;   // early out if both already true
+                break;  // early out
         }
 
-        // Check divider if set
-        if(m_Divider.has_value())
+        if(m_Divider)
         {
-            const auto mismatch = checkFrameMismatch(*m_Divider, *m_IGUSystem, m_IGUErrorTolerance);
+            const IGUMismatch mismatch = accumulateMismatch(m_Divider->iguData);
             result.uCenterMissmatch |= mismatch.uCenterMissmatch;
             result.thicknessMissmatch |= mismatch.thicknessMissmatch;
         }

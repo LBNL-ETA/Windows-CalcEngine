@@ -18,6 +18,8 @@ namespace Tarcog::ISO15099
     public:
         virtual double getUValue() = 0;
         virtual double getSHGC(double t_TotSol) = 0;
+        virtual double getHc(System system, Environment environment) const = 0;
+        virtual double getHr(System system, Environment environment) const = 0;
         virtual double getH(System system, Environment environment) const = 0;
         virtual double thickness() const = 0;
         virtual std::vector<double> gapLayerThicknesses() const = 0; // Needed for generic frames

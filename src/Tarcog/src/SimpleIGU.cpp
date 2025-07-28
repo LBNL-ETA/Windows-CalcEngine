@@ -26,6 +26,16 @@ namespace Tarcog::ISO15099
         return m_SHGC;
     }
 
+    double SimpleIGU::getHc(System, Environment) const
+    {
+        return 0;
+    }
+
+    double SimpleIGU::getHr(System, Environment) const
+    {
+        return 0;
+    }
+
     double SimpleIGU::getH(System, Environment) const
     {
         return m_H;
