@@ -56,7 +56,7 @@ namespace Tarcog::ISO15099
         void setUValueIGUTolerance(double uValue) override;
         void setThicknessIGUTolerance(double thickness) override;
 
-        [[nodiscard]] IGUMismatch iguMissmatch() const override;
+        [[nodiscard]] IGUMismatch iguMissmatch() const;
 
     protected:
         [[nodiscard]] double visionPercentage() const override;
@@ -177,7 +177,7 @@ namespace Tarcog::ISO15099
             vision2().setThicknessIGUTolerance(thickness);
         }
 
-        [[nodiscard]] IGUMismatch iguMissmatch() const override
+        [[nodiscard]] IGUMismatch iguMissmatch() const
         {
             const auto mismatch1 = vision1().iguMissmatch();
             const auto mismatch2 = vision2().iguMissmatch();

@@ -74,8 +74,6 @@ namespace Tarcog
 
         virtual void setUValueIGUTolerance(double uValue) = 0;
         virtual void setThicknessIGUTolerance(double thickness) = 0;
-
-        [[nodiscard]] virtual IGUMismatch iguMissmatch() const = 0;
     };
 
 }   // namespace Tarcog
