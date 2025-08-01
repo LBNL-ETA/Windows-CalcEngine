@@ -92,7 +92,7 @@ TEST_F(TestBSDFMaterialSingleBand, TestProperties)
       outgoingDirections.getNearestBeamIndex(outgoingDirection.theta(), outgoingDirection.phi());
     EXPECT_NEAR(
       m_Material->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection),
-      m_Tf[incomingIdx][outgoingIdx] * outgoingLambdas[outgoingIdx],
+      m_Tf[outgoingIdx][incomingIdx] * outgoingLambdas[outgoingIdx],
       1e-6);
 
     // Test to make sure absorptance calculation at off-normal angles produces

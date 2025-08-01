@@ -125,10 +125,10 @@ namespace MultiLayerOptics
         auto jscSum = jscTotal.getSums(minLambda, maxLambda);
 
         std::vector<std::vector<double>> jscWithSolar;
-        for(size_t i = 0u; i < jscSum.size(); ++i)
+        for(size_t i = 0; i < jscSum.size(); ++i)
         {
             jscWithSolar.emplace_back();
-            for(size_t j = 0u; j < jscSum[i].size(); ++j)
+            for(size_t j = 0; j < jscSum[i].size(); ++j)
             {
                 jscWithSolar[i].push_back(jscSum[i][j] * m_IncomingSolar[i]);
             }
