@@ -340,8 +340,8 @@ namespace SingleLayerOptics
         return aResults;
     }
 
-    double IMaterialDualBand::getBandProperty(FenestrationCommon::Property t_Property,
-                                              FenestrationCommon::Side t_Side,
+    double IMaterialDualBand::getBandProperty(Property t_Property,
+                                              Side t_Side,
                                               size_t wavelengthIndex,
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection) const
@@ -352,7 +352,16 @@ namespace SingleLayerOptics
 
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
     {
-        m_Wavelengths = {0.3, 0.38, 0.78 + ConstantsData::VisibleRangeOffset, 2.5};
+        // Need to create small offsets on each side because spectral integration will create
+        // linear interpolation between two points thus creating incorrect values.
+        // Slopes are intentionally made to be just outside the visible range so
+        // they will not produce problems in the visible range itself
+        m_Wavelengths = {0.3,
+                         0.38 - ConstantsData::VisibleRangeOffset / 2,
+                         0.38 + ConstantsData::VisibleRangeOffset / 2,
+                         0.78 - ConstantsData::VisibleRangeOffset / 2,
+                         0.78 + ConstantsData::VisibleRangeOffset / 2,
+                         2.5};
         return m_Wavelengths;
     }
 
@@ -403,7 +412,9 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CMaterial> result;
 
-        FenestrationCommon::CWavelengthRange range{WavelengthRange::Visible};
+        CWavelengthRange range{WavelengthRange::Visible};
+
+        auto test{range.isInRange(wavelength)};
 
         return range.isInRange(wavelength) ? m_MaterialVisibleRange : m_MaterialScaledRange;
     }

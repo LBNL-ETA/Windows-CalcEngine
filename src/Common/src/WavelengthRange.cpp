@@ -44,7 +44,7 @@ namespace FenestrationCommon
     bool CWavelengthRange::isInRange(double value) const
     {
         return value >= (m_MinLambda - ConstantsData::floatErrorTolerance)
-               && value < (m_MaxLambda - ConstantsData::floatErrorTolerance);
+               && value <= (m_MaxLambda + ConstantsData::floatErrorTolerance);
     }
 
 }   // namespace FenestrationCommon
