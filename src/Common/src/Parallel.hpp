@@ -16,8 +16,7 @@ namespace FenestrationCommon
                            ProgressCallback progressCb = nullptr)
     {
         const IndexType total = end - start + 1;
-        // const auto numberOfThreads = getNumberOfThreads(total);
-        const auto numberOfThreads = 1;
+        const auto numberOfThreads = getNumberOfThreads(total);
         const auto chunks = chunkIt(start, end, numberOfThreads);
 
         std::atomic<IndexType> progressCounter{0};
