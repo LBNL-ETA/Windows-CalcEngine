@@ -22,6 +22,7 @@ namespace
           + std::to_string(index + 1) + ".csv";
 
         const auto correctT = Helper::readMatrixFromCSV(file_path_t);
+        //Helper::writeMatrixToCSV(aT.getMatrix(), file_path_t);
         Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
         // Front reflectance
@@ -31,6 +32,7 @@ namespace
           + std::to_string(index + 1) + ".csv";
 
         const auto correctR = Helper::readMatrixFromCSV(file_path_r);
+        //Helper::writeMatrixToCSV(aRf.getMatrix(), file_path_r);
         Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
     }
 }   // namespace
@@ -96,7 +98,7 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_Multiwavelength, TestVenetianMultiWa
     std::vector<BSDFIntegrator> aResults = aLayer->getWavelengthResults();
 
     const auto wavelengths{aLayer->getBandWavelengths()};
-    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780001, 2.5};
+    const std::vector<double> correctWavelengths{0.3, 0.379999, 0.380001, 0.779999, 0.780001, 2.5};
 
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
     for(size_t i = 0u; i < correctWavelengths.size(); ++i)

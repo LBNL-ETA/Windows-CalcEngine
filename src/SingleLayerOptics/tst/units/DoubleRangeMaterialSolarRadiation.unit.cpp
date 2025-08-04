@@ -92,22 +92,20 @@ TEST_F(TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties)
     EXPECT_NEAR(0.7, R, 1e-6);
 
     const auto wavelengths{aMaterial->getBandWavelengths()};
-    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
+    std::vector correctWavelengths{0.3, 0.379999, 0.380001, 0.779999, 0.780001, 2.5};
 
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
-
     for(size_t i = 0; i < correctWavelengths.size(); ++i)
     {
         EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
     }
-
     size_t size = correctWavelengths.size();
 
     const auto Transmittances = aMaterial->getBandProperties(Property::T, Side::Front);
 
     EXPECT_EQ(size, Transmittances.size());
 
-    std::vector<double> correctResults{0.000399, 0.2, 0.000399, 0.000399};
+    std::vector<double> correctResults{0.000399, 0.000399, 0.2, 0.2, 0.000399, 0.000399};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -118,7 +116,7 @@ TEST_F(TestDoubleRangeMaterialSolarRadiation, TestMaterialProperties)
 
     EXPECT_EQ(size, Reflectances.size());
 
-    correctResults = {0.799601, 0.6, 0.799601, 0.799601};
+    correctResults = {0.799601, 0.799601, 0.6, 0.6, 0.799601, 0.799601};
 
     for(size_t i = 0; i < size; ++i)
     {

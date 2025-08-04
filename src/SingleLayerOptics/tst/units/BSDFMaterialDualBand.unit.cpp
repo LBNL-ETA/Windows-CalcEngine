@@ -92,22 +92,14 @@ protected:
         m_TbVis = m_TfVis;
         m_RfVis = loadRfVis();
         m_RbVis = m_RfVis;
-        m_MaterialVis =
-          std::make_shared<CMaterialSingleBandBSDF>(m_TfVis,
-                                                    m_TbVis,
-                                                    m_RfVis,
-                                                    m_RbVis,
-                                                    m_Hemisphere);
+        m_MaterialVis = std::make_shared<CMaterialSingleBandBSDF>(
+          m_TfVis, m_TbVis, m_RfVis, m_RbVis, m_Hemisphere);
         m_TfSol = loadTfSol();
         m_TbSol = m_TfSol;
         m_RfSol = loadRfSol();
         m_RbSol = m_RfSol;
-        m_MaterialSol =
-          std::make_shared<CMaterialSingleBandBSDF>(m_TfSol,
-                                                    m_TbSol,
-                                                    m_RfSol,
-                                                    m_RbSol,
-                                                    m_Hemisphere);
+        m_MaterialSol = std::make_shared<CMaterialSingleBandBSDF>(
+          m_TfSol, m_TbSol, m_RfSol, m_RbSol, m_Hemisphere);
         m_Material = std::make_shared<CMaterialDualBandBSDF>(m_MaterialVis, m_MaterialSol);
         m_Material->createRangesFromRatio(ConstantsData::NIRRatio);
     }
@@ -139,18 +131,23 @@ TEST_F(TestBSDFMaterialDualBand, TestProperties)
       m_MaterialSol->getProperty(Property::T, Side::Front, incomingDirection, outgoingDirection));
 
     const auto wavelengths{m_Material->getBandWavelengths()};
-    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
+    const std::vector correctWavelengths{0.3, 0.379999, 0.380001, 0.779999, 0.780001, 2.5};
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
-    EXPECT_EQ(wavelengths, correctWavelengths);
+    for(size_t i = 0; i < wavelengths.size(); ++i)
+    {
+        EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
+    }
 
     // Test to make sure getBandProperties returns the correctly scaled values
     // for each of the calculated wavelength bands.
     auto bandProperties =
       m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection);
-    std::vector<double> expectedBandProperties{0.121977, 0.0416186, 0.121977, 0.121977};
+    // C++
+    const std::vector expectedBandProperties{
+        0.1219767, 0.1219767, 0.0416186, 0.0416186, 0.1219767, 0.1219767};
 
     EXPECT_EQ(bandProperties.size(), expectedBandProperties.size());
-    for(size_t i = 0u; i < expectedBandProperties.size(); ++i)
+    for(size_t i = 0U; i < expectedBandProperties.size(); ++i)
     {
         EXPECT_NEAR(expectedBandProperties[i], bandProperties[i], 1e-6);
     }
@@ -162,9 +159,9 @@ TEST_F(TestBSDFMaterialDualBand, TestPropertyAtWavelength)
     double phi = 0;
     CBeamDirection incomingDirection(theta, phi);
     CBeamDirection outgoingDirection(theta, phi);
-    size_t wavelengthIndex{1u};
+    size_t wavelengthIndex{1U};
 
-    const auto correct{0.0416186};
+    const auto correct{0.1219767};
     const auto result = m_Material->getBandProperty(
       Property::T, Side::Front, wavelengthIndex, incomingDirection, outgoingDirection);
 

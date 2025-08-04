@@ -357,10 +357,10 @@ namespace SingleLayerOptics
         // Slopes are intentionally made to be just outside the visible range so
         // they will not produce problems in the visible range itself
         m_Wavelengths = {0.3,
-                         0.38 - ConstantsData::VisibleRangeOffset / 2,
-                         0.38 + ConstantsData::VisibleRangeOffset / 2,
-                         0.78 - ConstantsData::VisibleRangeOffset / 2,
-                         0.78 + ConstantsData::VisibleRangeOffset / 2,
+                         0.38 - (ConstantsData::VisibleRangeOffset / 2),
+                         0.38 + (ConstantsData::VisibleRangeOffset / 2),
+                         0.78 - (ConstantsData::VisibleRangeOffset / 2),
+                         0.78 + (ConstantsData::VisibleRangeOffset / 2),
                          2.5};
         return m_Wavelengths;
     }
@@ -413,8 +413,6 @@ namespace SingleLayerOptics
         std::shared_ptr<CMaterial> result;
 
         CWavelengthRange range{WavelengthRange::Visible};
-
-        auto test{range.isInRange(wavelength)};
 
         return range.isInRange(wavelength) ? m_MaterialVisibleRange : m_MaterialScaledRange;
     }

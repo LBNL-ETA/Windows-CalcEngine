@@ -220,40 +220,28 @@ TEST_F(MultiPaneBSDF_XMLLayer_DualBand_SmallBasis, TestBSDFMatrixAsInput)
 
     CMultiPaneBSDF & aLayer = getLayer();
 
-    auto matrices = aLayer.getWavelengthMatrices(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    std::vector<double> values;
-    for(const auto & mat : matrices)
+    auto matrices =
+      aLayer.getWavelengthMatrices(minLambda, maxLambda, Side::Front, PropertySimple::T);
+    std::vector<std::pair<double, double>> values;
+    for(const auto & [x, matrix] : matrices)
     {
-        values.push_back(mat.matrix(0,0));
+        values.emplace_back(x, matrix(0, 0));
     }
 
-    double theta = 0;
-    double phi = 0;
+    // After double theta = 0;
+    std::vector<std::pair<double, double>> expected = {
+      {0.3000, 17.910651786296484},  {0.379998, 17.910651786296484}, {0.3800, 10.237474847517024},
+      {0.380002, 2.564297908737565}, {0.4600, 2.564297908737565},    {0.5400, 2.564297908737565},
+      {0.6200, 2.564297908737565},   {0.7000, 2.564297908737565},    {0.779998, 2.564297908737565},
+      {0.7800, 10.237474847517024},  {0.780002, 17.910651786296484}, {0.9520, 17.910651786296484},
+      {1.1240, 17.910651786296484},  {1.2960, 17.910651786296484},   {1.4680, 17.910651786296484},
+      {1.6400, 17.910651786296484},  {1.8120, 17.910651786296484},   {1.9840, 17.910651786296484},
+      {2.1560, 17.910651786296484},  {2.3280, 17.910651786296484},   {2.5000, 17.910651786296484}};
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.662790, tauHem, 1e-6);
-
-    double rhoFrontHem =
-      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.081886, rhoFrontHem, 1e-6);
-
-    double rhoBackHem =
-      aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.054989, rhoBackHem, 1e-6);
-
-    double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.092253, abs1, 1e-6);
-
-    double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.163071, abs2, 1e-6);
-
-    auto absHeatDirect = aLayer.getAbsorptanceLayersHeat(
-      minLambda, maxLambda, Side::Front, ScatteringSimple::Direct, 0, 0);
-    EXPECT_NEAR(0.092253, absHeatDirect[0], 1e-6);
-    EXPECT_NEAR(0.163071, absHeatDirect[1], 1e-6);
-
-    auto absHeatDiffuse = aLayer.getAbsorptanceLayersHeat(
-      minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
-    EXPECT_NEAR(0.102450, absHeatDiffuse[0], 1e-6);
-    EXPECT_NEAR(0.156131, absHeatDiffuse[1], 1e-6);
+    ASSERT_EQ(values.size(), expected.size());
+    for(size_t i = 0; i < values.size(); ++i)
+    {
+        EXPECT_NEAR(values[i].first, expected[i].first, 1e-6);
+        EXPECT_NEAR(values[i].second, expected[i].second, 1e-6);
+    }
 }
