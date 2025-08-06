@@ -6,22 +6,33 @@ namespace FenestrationCommon
     std::vector<double> generateSpectrum(size_t numOfVisibleBands, size_t numOfIRBands)
     {
         std::vector<double> result;
-        CWavelengthRange solarRange{WavelengthRange::Solar};
-        CWavelengthRange visRange{WavelengthRange::Visible};
-        const auto deltaVis = (visRange.maxLambda() - visRange.minLambda()) / numOfVisibleBands;
-        const auto deltaSolar = (solarRange.maxLambda() - visRange.maxLambda()) / numOfIRBands;
+        const CWavelengthRange solarRange{WavelengthRange::Solar};
+        const CWavelengthRange visRange{WavelengthRange::Visible};
+        const auto deltaVis =
+          (visRange.maxLambda() - visRange.minLambda()) / static_cast<double>(numOfVisibleBands);
+        const auto deltaSolar =
+          (solarRange.maxLambda() - visRange.maxLambda()) / static_cast<double>(numOfIRBands);
+
         result.emplace_back(solarRange.minLambda());
-        for(auto i = 0u; i < numOfVisibleBands; ++i)
+        result.emplace_back(visRange.minLambda() - ConstantsData::VisibleRangeOffset);
+        result.emplace_back(visRange.minLambda() + ConstantsData::VisibleRangeOffset);
+
+        for(auto i = 0U; i < numOfVisibleBands; ++i)
         {
-            result.emplace_back(visRange.minLambda() + i * deltaVis);
-        }
-        for(auto i = 0u; i < numOfIRBands; ++i)
-        {
-            result.emplace_back(visRange.maxLambda() + i * deltaSolar);
+            result.emplace_back(visRange.minLambda() + (i * deltaVis));
         }
 
+        result.emplace_back(visRange.maxLambda() - ConstantsData::VisibleRangeOffset);
+
+        for(auto i = 0U; i < numOfIRBands; ++i)
+        {
+            result.emplace_back(visRange.maxLambda() + (i * deltaSolar));
+        }
+
+        result.emplace_back(visRange.maxLambda() + ConstantsData::VisibleRangeOffset);
         result.emplace_back(solarRange.maxLambda());
 
+        std::ranges::sort(result);
         return result;
     }
 

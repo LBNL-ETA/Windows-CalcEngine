@@ -40,7 +40,7 @@ TEST_F(WavelengthRangeTest, Test3)
     CWavelengthRange aRange = CWavelengthRange(WavelengthRange::Visible);
 
     EXPECT_NEAR(0.38, aRange.minLambda(), 1e-6);
-    EXPECT_NEAR(0.780002, aRange.maxLambda(), 1e-6);
+    EXPECT_NEAR(0.78, aRange.maxLambda(), 1e-6);
 }
 
 TEST_F(WavelengthRangeTest, TestCondensedSpectrum)
@@ -52,23 +52,9 @@ TEST_F(WavelengthRangeTest, TestCondensedSpectrum)
 
     const auto condensendSpectrum{generateSpectrum(numOfVisibleBands, numOfIRBands)};
 
-    const std::vector correctSpectrum{0.3,
-                                      0.38,
-                                      0.46,
-                                      0.54,
-                                      0.620001,
-                                      0.700001,
-                                      0.780002,
-                                      0.9520018,
-                                      1.1240016,
-                                      1.29600139,
-                                      1.4680012,
-                                      1.64,
-                                      1.812,
-                                      1.984,
-                                      2.156,
-                                      2.328,
-                                      2.5};
+    const std::vector<double> correctSpectrum{0.3,   0.379998, 0.38,  0.380002, 0.46,  0.54,  0.62,
+                                              0.7,   0.779998, 0.78,  0.780002, 0.952, 1.124, 1.296,
+                                              1.468, 1.64,     1.812, 1.984,    2.156, 2.328, 2.5};
 
     EXPECT_EQ(condensendSpectrum.size(), correctSpectrum.size());
     for(size_t i = 0u; i < condensendSpectrum.size(); ++i)
@@ -139,7 +125,7 @@ TEST_F(WavelengthRangeTest, TestInVisibleRange_5)
     constexpr double wavelength{0.780001};
     CWavelengthRange range{WavelengthRange::Visible};
 
-    EXPECT_EQ(true, range.isInRange(wavelength));
+    EXPECT_EQ(false, range.isInRange(wavelength));
 }
 
 TEST_F(WavelengthRangeTest, TestInVisibleRange_6)

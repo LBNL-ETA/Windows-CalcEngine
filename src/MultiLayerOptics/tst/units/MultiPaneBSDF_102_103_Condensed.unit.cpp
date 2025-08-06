@@ -61,7 +61,7 @@ TEST_F(MultiPaneBSDF_102_103_Condensed, SolarAndVisibleRange)
     aLayer.setCalculationProperties(input);
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
-    EXPECT_NEAR(0.560895, tauDiff, 1e-6);
+    EXPECT_NEAR(0.560896, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
     EXPECT_NEAR(0.225316, rhoDiff, 1e-6);
@@ -76,10 +76,10 @@ TEST_F(MultiPaneBSDF_102_103_Condensed, SolarAndVisibleRange)
     double phi = 0;
 
     double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.672294, tauHem, 1e-6);
+    EXPECT_NEAR(0.672295, tauHem, 1e-6);
 
     double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
-    EXPECT_NEAR(0.672294, tauDir, 1e-6);
+    EXPECT_NEAR(0.672295, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
     EXPECT_NEAR(0.127319, rhoHem, 1e-6);

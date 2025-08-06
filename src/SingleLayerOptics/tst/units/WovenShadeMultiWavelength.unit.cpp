@@ -4,10 +4,54 @@
 #include "WCESingleLayerOptics.hpp"
 #include "WCECommon.hpp"
 
+#include "csvHandlers.hpp"
+#include "matrixTesting.hpp"
+
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
+
+namespace
+{
+    constexpr auto writeResults{false};
+    void processWavelength(int index,
+                           BSDFIntegrator & aResults,
+                           const std::string & test_data_dir)
+    {
+        // Front transmittance
+        const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+        const std::string file_path_t =
+          test_data_dir + "/data/TestWovenShadeMultiWavelength/aTf"
+          + std::to_string(index + 1) + ".csv";
+
+        if(writeResults)
+        {
+            Helper::writeMatrixToCSV(aT.getMatrix(), file_path_t);
+        }
+        else
+        {
+            const auto correctT = Helper::readMatrixFromCSV(file_path_t);
+            Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
+        }
+
+        // Front reflectance
+        const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+        const std::string file_path_r =
+          test_data_dir + "/data/TestWovenShadeMultiWavelength/aRf"
+          + std::to_string(index + 1) + ".csv";
+
+        if(writeResults)
+        {
+            Helper::writeMatrixToCSV(aRf.getMatrix(), file_path_r);
+        }
+        else
+        {
+            const auto correctR = Helper::readMatrixFromCSV(file_path_r);
+            Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
+        }
+    }
+}   // namespace
 
 class TestWovenShadeMultiWavelength : public testing::Test
 {
@@ -15,7 +59,7 @@ private:
     std::shared_ptr<CBSDFLayer> m_Layer;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
         // Solar range material
         const auto Tsol = 0.1;
@@ -57,11 +101,11 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
     auto aResults = aLayer->getWavelengthResults();
 
     const auto wavelengths{aLayer->getBandWavelengths()};
-    const std::vector<double> correctWavelengths{0.3, 0.38, 0.780002, 2.5};
+    const std::vector correctWavelengths{0.3, 0.379999, 0.380001, 0.779999, 0.780001, 2.5};
 
     EXPECT_EQ(wavelengths.size(), correctWavelengths.size());
 
-    for(size_t i = 0u; i < correctWavelengths.size(); ++i)
+    for(size_t i = 0U; i < correctWavelengths.size(); ++i)
     {
         EXPECT_NEAR(wavelengths[i], correctWavelengths[i], 1e-6);
     }
@@ -70,163 +114,12 @@ TEST_F(TestWovenShadeMultiWavelength, TestWovenMultiWavelength)
 
     EXPECT_EQ(correctSize, aResults.size());
 
-    std::vector<double> correctResults;
-
-    ///////////////////////////////////////////////////////////////////////
-    //  Wavelength number 1
-    ///////////////////////////////////////////////////////////////////////
-
-    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
-
-    // Test only diagonal of transmittance matrix
-    size_t size = aT.size();
-
-    correctResults = {5.786283, 6.076508, 6.075762, 6.060038, 6.075762, 6.076508, 6.075762,
-                      6.060038, 6.075762, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355,
-                      5.132581, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355, 5.132581,
-                      3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 3.786365,
-                      3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 0.03677,  0.013011,
-                      0.03677,  0.013011, 0.03677,  0.013011, 0.03677,  0.013011};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-5);
-    }
-
-    // Front reflectance
-    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
-                      0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,
-                      0.14151,  0.142351, 0.14151,  0.143861, 0.148459, 0.143861, 0.14151,
-                      0.145716, 0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.145716,
-                      0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.217877, 0.241636,
-                      0.217877, 0.241636, 0.217877, 0.241636, 0.217877, 0.241636};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    //  Wavelength number 2
-    ///////////////////////////////////////////////////////////////////////
-
-    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
-
-    // Test only diagonal of transmittance matrix
-    size = aT.size();
-
-    correctResults = {5.819182, 6.109986, 6.109241, 6.09359,  6.109241, 6.109986, 6.109241,
-                      6.09359,  6.109241, 5.141467, 5.166734, 5.043095, 4.831082, 5.043095,
-                      5.166734, 5.141467, 5.166734, 5.043095, 4.831082, 5.043095, 5.166734,
-                      3.821344, 4.010806, 3.425052, 1.392962, 3.425052, 4.010806, 3.821344,
-                      4.010806, 3.425052, 1.392962, 3.425052, 4.010806, 0.090127, 0.072878,
-                      0.090127, 0.072878, 0.090127, 0.072878, 0.090127, 0.072878};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-5);
-    }
-
-    // Front reflectance
-    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.103285, 0.105049, 0.105053, 0.105273, 0.105053, 0.105049, 0.105053,
-                      0.105273, 0.105053, 0.107984, 0.107356, 0.109122, 0.112568, 0.109122,
-                      0.107356, 0.107984, 0.107356, 0.109122, 0.112568, 0.109122, 0.107356,
-                      0.110737, 0.10643,  0.114139, 0.146597, 0.114139, 0.10643,  0.110737,
-                      0.10643,  0.114139, 0.146597, 0.114139, 0.10643,  0.16452,  0.181769,
-                      0.16452,  0.181769, 0.16452,  0.181769, 0.16452,  0.181769};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    //  Wavelength number 3
-    ///////////////////////////////////////////////////////////////////////
-
-    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
-
-    // Test only diagonal of transmittance matrix
-    size = aT.size();
-
-    correctResults = {5.786283, 6.076508, 6.075762, 6.060038, 6.075762, 6.076508, 6.075762,
-                      6.060038, 6.075762, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355,
-                      5.132581, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355, 5.132581,
-                      3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 3.786365,
-                      3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 0.03677,  0.013011,
-                      0.03677,  0.013011, 0.03677,  0.013011, 0.03677,  0.013011};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-5);
-    }
-
-    // Front reflectance
-    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
-                      0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,
-                      0.14151,  0.142351, 0.14151,  0.143861, 0.148459, 0.143861, 0.14151,
-                      0.145716, 0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.145716,
-                      0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.217877, 0.241636,
-                      0.217877, 0.241636, 0.217877, 0.241636, 0.217877, 0.241636};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    //  Wavelength number 4
-    ///////////////////////////////////////////////////////////////////////
-
-    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
-
-    // Test only diagonal of transmittance matrix
-    size = aT.size();
-
-    correctResults = {5.786283, 6.076508, 6.075762, 6.060038, 6.075762, 6.076508, 6.075762,
-                      6.060038, 6.075762, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355,
-                      5.132581, 5.1071,   5.132581, 5.008355, 4.795191, 5.008355, 5.132581,
-                      3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 3.786365,
-                      3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 0.03677,  0.013011,
-                      0.03677,  0.013011, 0.03677,  0.013011, 0.03677,  0.013011};
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-5);
-    }
-
-    // Front reflectance
-    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
-
-    correctResults = {0.136184, 0.138526, 0.138533, 0.138825, 0.138533, 0.138526, 0.138533,
-                      0.138825, 0.138533, 0.142351, 0.14151,  0.143861, 0.148459, 0.143861,
-                      0.14151,  0.142351, 0.14151,  0.143861, 0.148459, 0.143861, 0.14151,
-                      0.145716, 0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.145716,
-                      0.139948, 0.150205, 0.193505, 0.150205, 0.139948, 0.217877, 0.241636,
-                      0.217877, 0.241636, 0.217877, 0.241636, 0.217877, 0.241636};
-
-    EXPECT_EQ(correctResults.size(), aRf.size());
-    for(size_t i = 0; i < size; ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aRf(i, i), 1e-5);
-    }
+    processWavelength(0, aResults[0], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(1, aResults[1], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(2, aResults[2], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(3, aResults[3], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(4, aResults[4], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
+    processWavelength(5, aResults[5], TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
 }
 
 TEST_F(TestWovenShadeMultiWavelength, AtWavelength)
@@ -236,18 +129,5 @@ TEST_F(TestWovenShadeMultiWavelength, AtWavelength)
     constexpr size_t wavelengthIndex{3u};
     auto aResults = aLayer->getResultsAtWavelength(wavelengthIndex);
 
-    std::vector<double> correctResults = {
-      5.786283, 6.076508, 6.075762, 6.060038, 6.075762, 6.076508, 6.075762, 6.060038, 6.075762,
-      5.1071,   5.132581, 5.008355, 4.795191, 5.008355, 5.132581, 5.1071,   5.132581, 5.008355,
-      4.795191, 5.008355, 5.132581, 3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287,
-      3.786365, 3.977287, 3.388986, 1.346054, 3.388986, 3.977287, 0.03677,  0.013011, 0.03677,
-      0.013011, 0.03677,  0.013011, 0.03677,  0.013011};
-
-    const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
-
-    EXPECT_EQ(correctResults.size(), aT.size());
-    for(size_t i = 0; i < correctResults.size(); ++i)
-    {
-        EXPECT_NEAR(correctResults[i], aT(i, i), 1e-6);
-    }
+    processWavelength(3, aResults, TEST_DATA_DIR_SINGLE_LAYER_OPTICS);
 }

@@ -37,7 +37,7 @@ namespace FenestrationCommon
         const std::map<WavelengthRange, WavelengthRangeData> m_WavelengthRange{
           {WavelengthRange::IR, {5.0, 100.0}},
           {WavelengthRange::Solar, {0.3, 2.5}},
-          {WavelengthRange::Visible, {0.38, 0.78 + ConstantsData::VisibleRangeOffset}}};
+          {WavelengthRange::Visible, {0.38, 0.78}}};
     };   // namespace FenestrationCommon
 
 }   // namespace FenestrationCommon
