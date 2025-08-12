@@ -330,20 +330,32 @@ namespace Tarcog::ISO15099
 
     namespace
     {
-        // Simple comparison between IGU data that frame used when it is calculated vs
-        // current IGU data
+        struct Tol
+        {
+            double abs{0.0};   // absolute tolerance
+            double rel{0.0};   // fractional tolerance (0.0 means unused)
+        };
+
+        [[nodiscard]] inline bool nearlyEqual(double a, double b, Tol t)
+        {
+            const double scale = std::max(std::abs(a), std::abs(b));
+            return std::abs(a - b) <= t.abs + t.rel * scale;
+        }
+
         IGUMismatch checkFrameMismatch(const IGUData & frameData,
                                        const IGUData & cogData,
                                        const IGUErrorTolerance & tol)
         {
-            IGUMismatch mismatch;
+            IGUMismatch mismatch{};
 
-            if(std::abs(cogData.UValue - frameData.UValue) > tol.UCenter)
+
+            if(!nearlyEqual(cogData.UValue, frameData.UValue, Tol{.abs = tol.UCenter, .rel = 0.0}))
             {
                 mismatch.uCenterMissmatch = true;
             }
 
-            if(std::abs(cogData.Thickness - frameData.Thickness) > tol.Thickness)
+            if(!nearlyEqual(
+                 cogData.Thickness, frameData.Thickness, Tol{.abs = tol.Thickness, .rel = 0.0}))
             {
                 mismatch.thicknessMissmatch = true;
             }
@@ -361,23 +373,16 @@ namespace Tarcog::ISO15099
         if(!m_IGUSystem)
             return result;   // No IGU assigned ⇒ nothing to check
 
-        const IGUData reference{
-            .UValue = m_IGUSystem->getUValue(),
-            .Thickness = geometricalThickness
-        };
+        const IGUData reference{.UValue = m_IGUSystem->getUValue(),
+                                .Thickness = geometricalThickness};
 
         auto accumulateMismatch = [&](const std::optional<IGUData> & igu) {
             if(!igu)
                 return IGUMismatch{};
 
-            return checkFrameMismatch(
-                IGUData{
-                    .UValue = igu->UValue,
-                    .Thickness = igu->Thickness
-                },
-                reference,
-                m_IGUErrorTolerance
-            );
+            return checkFrameMismatch(IGUData{.UValue = igu->UValue, .Thickness = igu->Thickness},
+                                      reference,
+                                      m_IGUErrorTolerance);
         };
 
         for(const auto & frame : m_Frame | std::views::values)
@@ -387,7 +392,7 @@ namespace Tarcog::ISO15099
             result.thicknessMissmatch |= mismatch.thicknessMissmatch;
 
             if(result.any())
-                break;  // early out
+                break;   // early out
         }
 
         if(m_Divider)
