@@ -2,7 +2,7 @@
 #include <cassert>
 #include <utility>
 
-#include "MeasuredSampleData.hpp"
+#include "SpectralSampleData.hpp"
 #include "WCECommon.hpp"
 
 

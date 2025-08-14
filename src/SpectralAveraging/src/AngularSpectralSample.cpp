@@ -5,7 +5,7 @@
 #include <mutex>
 
 #include "AngularSpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
+#include "SpectralSampleData.hpp"
 #include "SpectralSample.hpp"
 #include "AngularProperties.hpp"
 #include "WCECommon.hpp"

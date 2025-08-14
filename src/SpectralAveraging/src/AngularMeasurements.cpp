@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "SpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
+#include "SpectralSampleData.hpp"
 #include "WCECommon.hpp"
 #include "AngularMeasurements.hpp"
 

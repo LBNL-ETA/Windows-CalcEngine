@@ -3,7 +3,7 @@
 #include <mutex>
 
 #include "SpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
+#include "SpectralSampleData.hpp"
 #include "WCECommon.hpp"
 
 std::mutex spectralSampleMutex;
