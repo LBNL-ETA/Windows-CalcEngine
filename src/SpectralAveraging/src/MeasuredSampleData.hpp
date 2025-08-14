@@ -52,9 +52,9 @@ namespace SpectralAveraging
     class CSpectralSampleData : public SampleData
     {
     public:
-        virtual ~CSpectralSampleData() = default;
+        ~CSpectralSampleData() override = default;
         CSpectralSampleData();
-        CSpectralSampleData(const std::vector<MeasuredRow> & tValues);
+        explicit CSpectralSampleData(const std::vector<MeasuredRow> & tValues);
 
         static std::shared_ptr<CSpectralSampleData>
           create(const std::vector<MeasuredRow> & tValues);
