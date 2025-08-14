@@ -41,7 +41,7 @@ protected:
         CSeries aSolarRadiation {StandardData::solarRadiationASTM_E891_87_Table1()};
 
         const auto aMeasurements = SpectralSample::NFRC_102();
-        
+
         double thickness = 3.048e-3;   // [m]
         MaterialType aType = MaterialType::Monolithic;
 

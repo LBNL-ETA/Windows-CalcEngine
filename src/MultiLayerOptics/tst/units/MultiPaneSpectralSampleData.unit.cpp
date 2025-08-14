@@ -21,41 +21,44 @@ protected:
         // This test (example) shows how to get multilayer sample data from two measurements.
         // Results are calculated at each wavelength
 
-        std::shared_ptr<CSpectralSampleData> sampleMeasurements1 =
-          std::make_shared<CSpectralSampleData>();
-        sampleMeasurements1->addRecord(0.330, 0.0857, 0.0560, 0.2646);
-        sampleMeasurements1->addRecord(0.335, 0.1280, 0.0623, 0.2664);
-        sampleMeasurements1->addRecord(0.340, 0.1707, 0.0719, 0.2668);
-        sampleMeasurements1->addRecord(0.345, 0.2125, 0.0840, 0.2680);
-        sampleMeasurements1->addRecord(0.350, 0.2536, 0.0990, 0.2706);
-        sampleMeasurements1->addRecord(0.355, 0.2953, 0.1165, 0.2735);
-        sampleMeasurements1->addRecord(0.360, 0.3370, 0.1365, 0.2773);
-        sampleMeasurements1->addRecord(0.365, 0.3774, 0.1579, 0.2809);
-        sampleMeasurements1->addRecord(0.370, 0.4125, 0.1773, 0.2829);
-        sampleMeasurements1->addRecord(0.375, 0.4414, 0.1931, 0.2836);
-        sampleMeasurements1->addRecord(0.380, 0.4671, 0.2074, 0.2827);
-        sampleMeasurements1->addRecord(0.385, 0.4953, 0.2244, 0.2814);
-        sampleMeasurements1->addRecord(0.390, 0.5229, 0.2415, 0.2801);
-        sampleMeasurements1->addRecord(0.395, 0.5455, 0.2553, 0.2781);
-        sampleMeasurements1->addRecord(0.400, 0.5630, 0.2651, 0.2757);
+        // sampleMeasurements1
+        const auto sampleMeasurements1 = CSpectralSampleData::create({
+          {0.330, 0.0857, 0.0857, 0.0560, 0.2646},
+          {0.335, 0.1280, 0.1280, 0.0623, 0.2664},
+          {0.340, 0.1707, 0.1707, 0.0719, 0.2668},
+          {0.345, 0.2125, 0.2125, 0.0840, 0.2680},
+          {0.350, 0.2536, 0.2536, 0.0990, 0.2706},
+          {0.355, 0.2953, 0.2953, 0.1165, 0.2735},
+          {0.360, 0.3370, 0.3370, 0.1365, 0.2773},
+          {0.365, 0.3774, 0.3774, 0.1579, 0.2809},
+          {0.370, 0.4125, 0.4125, 0.1773, 0.2829},
+          {0.375, 0.4414, 0.4414, 0.1931, 0.2836},
+          {0.380, 0.4671, 0.4671, 0.2074, 0.2827},
+          {0.385, 0.4953, 0.4953, 0.2244, 0.2814},
+          {0.390, 0.5229, 0.5229, 0.2415, 0.2801},
+          {0.395, 0.5455, 0.5455, 0.2553, 0.2781},
+          {0.400, 0.5630, 0.5630, 0.2651, 0.2757},
+        });
 
-        std::shared_ptr<CSpectralSampleData> sampleMeasurements2 =
-          std::make_shared<CSpectralSampleData>();
-        sampleMeasurements2->addRecord(0.330, 0.1600, 0.0450, 0.0470);
-        sampleMeasurements2->addRecord(0.335, 0.2940, 0.0490, 0.0500);
-        sampleMeasurements2->addRecord(0.340, 0.4370, 0.0550, 0.0560);
-        sampleMeasurements2->addRecord(0.345, 0.5660, 0.0620, 0.0620);
-        sampleMeasurements2->addRecord(0.350, 0.6710, 0.0690, 0.0690);
-        sampleMeasurements2->addRecord(0.355, 0.7440, 0.0740, 0.0740);
-        sampleMeasurements2->addRecord(0.360, 0.7930, 0.0780, 0.0780);
-        sampleMeasurements2->addRecord(0.365, 0.8220, 0.0800, 0.0800);
-        sampleMeasurements2->addRecord(0.370, 0.8320, 0.0810, 0.0810);
-        sampleMeasurements2->addRecord(0.375, 0.8190, 0.0800, 0.0800);
-        sampleMeasurements2->addRecord(0.380, 0.8090, 0.0790, 0.0790);
-        sampleMeasurements2->addRecord(0.385, 0.8290, 0.0800, 0.0800);
-        sampleMeasurements2->addRecord(0.390, 0.8530, 0.0820, 0.0820);
-        sampleMeasurements2->addRecord(0.395, 0.8680, 0.0830, 0.0830);
-        sampleMeasurements2->addRecord(0.400, 0.8750, 0.0830, 0.0830);
+        // sampleMeasurements2
+        const auto sampleMeasurements2 = CSpectralSampleData::create({
+          {0.330, 0.1600, 0.1600, 0.0450, 0.0470},
+          {0.335, 0.2940, 0.2940, 0.0490, 0.0500},
+          {0.340, 0.4370, 0.4370, 0.0550, 0.0560},
+          {0.345, 0.5660, 0.5660, 0.0620, 0.0620},
+          {0.350, 0.6710, 0.6710, 0.0690, 0.0690},
+          {0.355, 0.7440, 0.7440, 0.0740, 0.0740},
+          {0.360, 0.7930, 0.7930, 0.0780, 0.0780},
+          {0.365, 0.8220, 0.8220, 0.0800, 0.0800},
+          {0.370, 0.8320, 0.8320, 0.0810, 0.0810},
+          {0.375, 0.8190, 0.8190, 0.0800, 0.0800},
+          {0.380, 0.8090, 0.8090, 0.0790, 0.0790},
+          {0.385, 0.8290, 0.8290, 0.0800, 0.0800},
+          {0.390, 0.8530, 0.8530, 0.0820, 0.0820},
+          {0.395, 0.8680, 0.8680, 0.0830, 0.0830},
+          {0.400, 0.8750, 0.8750, 0.0830, 0.0830},
+        });
+
 
         m_MultiLayerOptics = std::make_shared<CMultiPaneSampleData>();
         m_MultiLayerOptics->addSample(sampleMeasurements1);
