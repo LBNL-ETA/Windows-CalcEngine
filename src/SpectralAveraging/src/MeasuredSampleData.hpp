@@ -31,7 +31,7 @@ namespace SpectralAveraging
     class SampleData
     {
     public:
-        SampleData();
+        SampleData() = default;
         virtual ~SampleData() = default;
 
         virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
@@ -40,11 +40,11 @@ namespace SpectralAveraging
 
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
-        [[nodiscard]] virtual bool Flipped() const final;
-        virtual void Filpped(bool t_Flipped) final;
+        [[nodiscard]] bool Flipped() const;
+        void Filpped(bool t_Flipped);
 
-    protected:
-        bool m_Flipped;
+    private:
+        bool m_Flipped{false};
     };
 
     ///////////////////////////////////////////////////////////////////////////

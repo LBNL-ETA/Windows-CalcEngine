@@ -21,9 +21,6 @@ namespace SpectralAveraging
     ////     SampleData
     ////////////////////////////////////////////////////////////////////////////
 
-    SampleData::SampleData() : m_Flipped(false)
-    {}
-
     bool SampleData::Flipped() const
     {
         return m_Flipped;
@@ -92,7 +89,7 @@ namespace SpectralAveraging
                                               FenestrationCommon::Side side)
     {
         calculateProperties();
-        auto aSide = FenestrationCommon::getSide(side, m_Flipped);
+        auto aSide = FenestrationCommon::getSide(side, Flipped());
         return m_Property.at(std::make_pair(prop, aSide));
     }
 
@@ -139,8 +136,8 @@ namespace SpectralAveraging
 
             for(size_t i = 0; i < wv.size(); ++i)
             {
-                auto RFrontSide = m_Flipped ? Side::Back : Side::Front;
-                auto RBackSide = m_Flipped ? Side::Front : Side::Back;
+                auto RFrontSide = Flipped() ? Side::Back : Side::Front;
+                auto RBackSide = Flipped() ? Side::Front : Side::Back;
                 auto value = 1 - m_Property.at(std::make_pair(Property::T, Side::Front))[i].value()
                              - m_Property.at(std::make_pair(Property::R, RFrontSide))[i].value();
                 m_Property.at(std::make_pair(Property::Abs, Side::Front)).addProperty(wv[i], value);
