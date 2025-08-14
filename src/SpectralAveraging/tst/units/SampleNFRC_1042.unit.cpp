@@ -13,7 +13,6 @@ using namespace FenestrationCommon;
 
 class TestSampleNFRC_1042 : public testing::Test
 {
-private:
     std::shared_ptr<CSpectralSample> m_Sample;
 
 protected:
