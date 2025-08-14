@@ -1,5 +1,4 @@
-#ifndef SPECTRALSAMPLEDATA_H
-#define SPECTRALSAMPLEDATA_H
+#pragma once
 
 #include <vector>
 #include <memory>
@@ -18,7 +17,6 @@ namespace SpectralAveraging
     ///////////////////////////////////////////////////////////////////////////
     struct MeasuredRow
     {
-        MeasuredRow(double wl, double t, double rf, double rb);
         double wavelength;
         double T;
         double Rf;
@@ -71,7 +69,7 @@ namespace SpectralAveraging
         FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
                                                  FenestrationCommon::Side side) override;
 
-        virtual std::vector<double> getWavelengths() const;
+        [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
         void interpolate(std::vector<double> const & t_Wavelengths) override;
 
@@ -117,7 +115,7 @@ namespace SpectralAveraging
     class PhotovoltaicSampleData : public CSpectralSampleData
     {
     public:
-        PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData);
+        explicit PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData);
         PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData,
                                const FenestrationCommon::CSeries & eqeValuesFront,
                                const FenestrationCommon::CSeries & eqeValuesBack);
@@ -132,4 +130,3 @@ namespace SpectralAveraging
 
 }   // namespace SpectralAveraging
 
-#endif
