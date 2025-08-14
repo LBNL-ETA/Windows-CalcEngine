@@ -40,7 +40,7 @@ namespace SpectralAveraging
 
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
-        virtual bool Flipped() const final;
+        [[nodiscard]] virtual bool Flipped() const final;
         virtual void Filpped(bool t_Flipped) final;
 
     protected:
@@ -68,14 +68,14 @@ namespace SpectralAveraging
                        double t_ReflectanceFront,
                        double t_ReflectanceBack);
 
-        virtual FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
-                                                         FenestrationCommon::Side side) override;
+        FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
+                                                 FenestrationCommon::Side side) override;
 
         virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
-        virtual void interpolate(std::vector<double> const & t_Wavelengths) override;
+        void interpolate(std::vector<double> const & t_Wavelengths) override;
 
-        virtual void cutExtraData(double minLambda, double maxLambda) override;
+        void cutExtraData(double minLambda, double maxLambda) override;
 
     protected:
         virtual void calculateProperties();
@@ -118,10 +118,9 @@ namespace SpectralAveraging
     {
     public:
         PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData);
-        PhotovoltaicSampleData(
-          const CSpectralSampleData & spectralSampleData,
-          const FenestrationCommon::CSeries & eqeValuesFront,
-          const FenestrationCommon::CSeries & eqeValuesBack);
+        PhotovoltaicSampleData(const CSpectralSampleData & spectralSampleData,
+                               const FenestrationCommon::CSeries & eqeValuesFront,
+                               const FenestrationCommon::CSeries & eqeValuesBack);
 
         void cutExtraData(double minLambda, double maxLambda) override;
 
