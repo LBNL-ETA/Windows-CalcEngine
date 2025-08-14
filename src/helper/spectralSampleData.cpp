@@ -123,6 +123,7 @@ namespace SpectralSample
            {2.400, 0.7660, 0.7660, 0.0640, 0.0640}, {2.450, 0.7570, 0.7570, 0.0640, 0.0640},
            {2.500, 0.7500, 0.7500, 0.0630, 0.0630}});
     }
+
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_1042()
     {
         return SpectralAveraging::CSpectralSampleData::create(
