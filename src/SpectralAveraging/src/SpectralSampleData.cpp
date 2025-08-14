@@ -68,9 +68,9 @@ namespace SpectralAveraging
         for(const auto & val : tValues)
         {
             m_Property.at(std::make_pair(Property::T, Side::Front))
-              .addProperty(val.wavelength, val.T);
+              .addProperty(val.wavelength, val.Tf);
             m_Property.at(std::make_pair(Property::T, Side::Back))
-              .addProperty(val.wavelength, val.T);
+              .addProperty(val.wavelength, val.Tb);
             m_Property.at(std::make_pair(Property::R, Side::Front))
               .addProperty(val.wavelength, val.Rf);
             m_Property.at(std::make_pair(Property::R, Side::Back))

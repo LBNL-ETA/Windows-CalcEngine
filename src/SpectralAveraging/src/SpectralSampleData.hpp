@@ -18,7 +18,8 @@ namespace SpectralAveraging
     struct MeasuredRow
     {
         double wavelength;
-        double T;
+        double Tf;
+        double Tb;
         double Rf;
         double Rb;
     };
