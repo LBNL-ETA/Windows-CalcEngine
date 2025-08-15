@@ -119,7 +119,6 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::calculateProperties()
     {
-
         if(!m_absCalculated)
         {
             m_Property.at(std::make_pair(Property::Abs, Side::Front)).clear();
@@ -147,7 +146,7 @@ namespace SpectralAveraging
     std::shared_ptr<CSpectralSampleData>
       CSpectralSampleData::create(const std::vector<MeasuredRow> & tValues)
     {
-        return std::shared_ptr<CSpectralSampleData>(new CSpectralSampleData(tValues));
+        return std::make_shared<CSpectralSampleData>(tValues);
     }
 
     std::shared_ptr<CSpectralSampleData> CSpectralSampleData::create()
