@@ -67,10 +67,11 @@ namespace SpectralAveraging
             auto rf2 = reflef2[i].value();
             auto rb1 = refleb1[i].value();
             auto rb2 = refleb2[i].value();
-            auto t = t1 + frac * (t2 - t1);
+            auto tf = t1 + frac * (t2 - t1);
+            auto tb = t2 + frac * (t1 - t2);
             auto rf = rf1 + frac * (rf2 - rf1);
             auto rb = rb1 + frac * (rb2 - rb1);
-            aData->addRecord(wl, t, rf, rb);
+            aData->addRecord(wl, tf, tb, rf, rb);
         }
         auto aSample = std::make_shared<CSpectralSample>(aData, t_Data1->getSourceData());
 

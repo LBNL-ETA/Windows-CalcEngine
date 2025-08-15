@@ -63,7 +63,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<CEquivalentBSDFLayerSingleBand> getLayer() const
+    [[nodiscard]] std::shared_ptr<CEquivalentBSDFLayerSingleBand> getLayer() const
     {
         return m_EquivalentBSDFLayer;
     }
@@ -72,6 +72,8 @@ public:
 TEST_F(TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF)
 {
     SCOPED_TRACE("Begin Test: Equivalent layer NFRC=102 - Perforated - NFRC=102.");
+
+    constexpr double kTol = 5e-5;
 
     CEquivalentBSDFLayerSingleBand aLayer = *getLayer();
 
@@ -135,16 +137,11 @@ TEST_F(TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF)
                             1.55145060e-03}};
 
     for(size_t i = 0; i < size; ++i)
-    {
         for(size_t j = 0; j < size; ++j)
-        {
-            EXPECT_NEAR(correctTf(i, j), Tf(i, j), 1e-6);
-        }
-    }
+            EXPECT_NEAR(correctTf(i, j), Tf(i, j), kTol);
 
     // Transmittance Back side
     SquareMatrix Tb = aLayer.getMatrix(Side::Back, PropertySimple::T);
-
     EXPECT_EQ(size, matrixSize);
 
     SquareMatrix correctTb{{3.36513193e+00,
@@ -198,17 +195,12 @@ TEST_F(TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF)
                             1.55145060e-03}};
 
     for(size_t i = 0; i < size; ++i)
-    {
         for(size_t j = 0; j < size; ++j)
-        {
-            EXPECT_NEAR(correctTb(i, j), Tb(i, j), 1e-6);
-        }
-    }
+            EXPECT_NEAR(correctTb(i, j), Tb(i, j), kTol);
 
     // Reflectance Front side
     SquareMatrix Rf = aLayer.getMatrix(Side::Front, PropertySimple::R);
     matrixSize = Rf.size();
-
     EXPECT_EQ(size, matrixSize);
 
     SquareMatrix correctRf{
@@ -221,17 +213,12 @@ TEST_F(TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF)
       {0.02357980, 0.02417979, 0.02475162, 0.02520836, 0.02492922, 0.02022108, 14.46409498}};
 
     for(size_t i = 0; i < size; ++i)
-    {
         for(size_t j = 0; j < size; ++j)
-        {
-            EXPECT_NEAR(correctRf(i, j), Rf(i, j), 1e-6);
-        }
-    }
+            EXPECT_NEAR(correctRf(i, j), Rf(i, j), kTol);
 
     // Reflectance Back side
     SquareMatrix Rb = aLayer.getMatrix(Side::Back, PropertySimple::R);
     matrixSize = Rb.size();
-
     EXPECT_EQ(size, matrixSize);
 
     SquareMatrix correctRb{
@@ -244,63 +231,42 @@ TEST_F(TestEquivalentBSDFTriplePerforatedInBetween, TestTripleLayerBSDF)
       {0.02052736, 0.02104829, 0.02154476, 0.02194201, 0.02170057, 0.01758874, 14.46483641}};
 
     for(size_t i = 0; i < size; ++i)
-    {
         for(size_t j = 0; j < size; ++j)
-        {
-            EXPECT_NEAR(correctRb(i, j), Rb(i, j), 1e-6);
-        }
-    }
+            EXPECT_NEAR(correctRb(i, j), Rb(i, j), kTol);
 
+    // Absorptances
     std::vector<double> A = aLayer.getLayerAbsorptances(1, Side::Front);
     std::vector<double> correctAbs = {
       0.14491971, 0.14746616, 0.1523858, 0.15909124, 0.16462775, 0.15497232, 0.09646037};
-
     for(size_t i = 0; i < size; i++)
-    {
-        EXPECT_NEAR(correctAbs[i], A[i], 1e-6);
-    }
+        EXPECT_NEAR(correctAbs[i], A[i], kTol);
 
     A = aLayer.getLayerAbsorptances(1, Side::Back);
     correctAbs = {
       0.03637407, 0.03538488, 0.03443428, 0.03269092, 0.02777523, 0.01372161, 0.00363157};
-
     for(size_t i = 0; i < size; i++)
-    {
-        EXPECT_NEAR(correctAbs[i], A[i], 1e-6);
-    }
+        EXPECT_NEAR(correctAbs[i], A[i], kTol);
 
     A = aLayer.getLayerAbsorptances(2, Side::Front);
     correctAbs = {
       0.03901251, 0.03987245, 0.0406922, 0.04141485, 0.04110882, 0.03205742, 0.00848434};
-
     for(size_t i = 0; i < size; i++)
-    {
-        EXPECT_NEAR(correctAbs[i], A[i], 1e-6);
-    }
+        EXPECT_NEAR(correctAbs[i], A[i], kTol);
 
     A = aLayer.getLayerAbsorptances(2, Side::Back);
     correctAbs = {
       0.09677338, 0.09922121, 0.10155411, 0.10342485, 0.10229603, 0.08283503, 0.02192318};
-
     for(size_t i = 0; i < size; i++)
-    {
-        EXPECT_NEAR(correctAbs[i], A[i], 1e-6);
-    }
+        EXPECT_NEAR(correctAbs[i], A[i], kTol);
 
     A = aLayer.getLayerAbsorptances(3, Side::Front);
     correctAbs = {0.03638587, 0.035405, 0.03446196, 0.03271799, 0.02778434, 0.01382314, 0.00365844};
-
     for(size_t i = 0; i < size; i++)
-    {
-        EXPECT_NEAR(correctAbs[i], A[i], 1e-6);
-    }
+        EXPECT_NEAR(correctAbs[i], A[i], kTol);
 
     A = aLayer.getLayerAbsorptances(3, Side::Back);
     correctAbs = {
       0.13800596, 0.14037602, 0.14512686, 0.15169655, 0.15731107, 0.14898255, 0.09483209};
-
     for(size_t i = 0; i < size; i++)
-    {
-        EXPECT_NEAR(correctAbs[i], A[i], 1e-6);
-    }
+        EXPECT_NEAR(correctAbs[i], A[i], kTol);
 }

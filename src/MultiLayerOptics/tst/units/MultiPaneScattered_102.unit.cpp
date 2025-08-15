@@ -208,7 +208,7 @@ TEST_F(MultiPaneScattered_102, TestSpecular2)
 
     double T_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
-    EXPECT_NEAR(0.752655, T_dif_dif, 1e-6);
+    EXPECT_NEAR(0.752677, T_dif_dif, 1e-6);
 
     double R_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi);
@@ -226,7 +226,7 @@ TEST_F(MultiPaneScattered_102, TestSpecular2)
     EXPECT_NEAR(0.091256, A_dir1, 1e-6);
 
     double A_dif1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Diffuse, theta, phi);
-    EXPECT_NEAR(0.101180, A_dif1, 1e-6);
+    EXPECT_NEAR(0.101157, A_dif1, 1e-6);
 }
 
 TEST_F(MultiPaneScattered_102, TestSpecular3)

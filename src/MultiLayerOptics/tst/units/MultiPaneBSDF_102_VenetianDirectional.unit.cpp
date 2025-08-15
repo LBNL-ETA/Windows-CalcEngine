@@ -187,10 +187,10 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional, TestBSDF1)
     EXPECT_NEAR(0.254143, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.496293, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.496301, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.147514, absDiff1, 1e-6);
+    EXPECT_NEAR(0.147507, absDiff1, 1e-6);
 
     double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
     EXPECT_NEAR(0.102049, absDiff2, 1e-6);
@@ -205,13 +205,13 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional, TestBSDF1)
     EXPECT_NEAR(0.050664, tauDir, 1e-6);
 
     double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.461462, rhoHem, 1e-6);
+    EXPECT_NEAR(0.461470, rhoHem, 1e-6);
 
     double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
     EXPECT_NEAR(0.080268, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.143105, abs1, 1e-6);
+    EXPECT_NEAR(0.143097, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.113342, abs2, 1e-6);
@@ -226,14 +226,15 @@ TEST_F(MultiPaneBSDF_102_VenetianDirectional, TestBSDF1)
     EXPECT_NEAR(0.097107, tauDir, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.461336, rhoHem, 1e-6);
+    EXPECT_NEAR(0.461345, rhoHem, 1e-6);
 
     rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
-    EXPECT_NEAR(0.172739, rhoDir, 1e-6);
+    EXPECT_NEAR(0.172740, rhoDir, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.150074, abs1, 1e-6);
+    EXPECT_NEAR(0.150066, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.111348, abs2, 1e-6);
 }
+

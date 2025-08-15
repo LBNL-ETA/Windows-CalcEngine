@@ -204,20 +204,20 @@ TEST_F(MultiPaneScattered_102_VenetianUniform, TestVenetianUniformDirectBeam)
 
     auto R_dir_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi);
-    EXPECT_NEAR(0.292565, R_dir_dif, 1e-6);
+    EXPECT_NEAR(0.292574, R_dir_dif, 1e-6);
 
     auto R_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
-    EXPECT_NEAR(0.379237, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.379244, R_dif_dif, 1e-6);
 
     auto A_dir1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Direct, theta, phi);
-    EXPECT_NEAR(0.130706, A_dir1, 1e-6);
+    EXPECT_NEAR(0.130697, A_dir1, 1e-6);
 
     auto A_dir2 = aLayer.getAbsorptanceLayer(2, aSide, ScatteringSimple::Direct, theta, phi);
     EXPECT_NEAR(0.254553, A_dir2, 1e-6);
 
     auto A_dif1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Diffuse, theta, phi);
-    EXPECT_NEAR(0.132652, A_dif1, 1e-6);
+    EXPECT_NEAR(0.132645, A_dif1, 1e-6);
 
     auto A_dif2 = aLayer.getAbsorptanceLayer(2, aSide, ScatteringSimple::Diffuse, theta, phi);
     EXPECT_NEAR(0.185401, A_dif2, 1e-6);
@@ -255,20 +255,20 @@ TEST_F(MultiPaneScattered_102_VenetianUniform, TestVenetianUniformAngledBeam25)
 
     auto R_dir_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi);
-    EXPECT_NEAR(0.292565, R_dir_dif, 1e-6);
+    EXPECT_NEAR(0.292574, R_dir_dif, 1e-6);
 
     auto R_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
-    EXPECT_NEAR(0.379237, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.379244, R_dif_dif, 1e-6);
 
     auto A_dir1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Direct, theta, phi);
-    EXPECT_NEAR(0.132265, A_dir1, 1e-6);
+    EXPECT_NEAR(0.132257, A_dir1, 1e-6);
 
     auto A_dir2 = aLayer.getAbsorptanceLayer(2, aSide, ScatteringSimple::Direct, theta, phi);
     EXPECT_NEAR(0.253701, A_dir2, 1e-6);
 
     auto A_dif1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Diffuse, theta, phi);
-    EXPECT_NEAR(0.132652, A_dif1, 1e-6);
+    EXPECT_NEAR(0.132645, A_dif1, 1e-6);
 
     auto A_dif2 = aLayer.getAbsorptanceLayer(2, aSide, ScatteringSimple::Diffuse, theta, phi);
     EXPECT_NEAR(0.185401, A_dif2, 1e-6);
@@ -306,20 +306,20 @@ TEST_F(MultiPaneScattered_102_VenetianUniform, TestVenetianUniformAngleBeam50)
 
     auto R_dir_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi);
-    EXPECT_NEAR(0.292565, R_dir_dif, 1e-6);
+    EXPECT_NEAR(0.292574, R_dir_dif, 1e-6);
 
     auto R_dif_dif = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
-    EXPECT_NEAR(0.379237, R_dif_dif, 1e-6);
+    EXPECT_NEAR(0.379244, R_dif_dif, 1e-6);
 
     auto A_dir1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Direct, theta, phi);
-    EXPECT_NEAR(0.141748, A_dir1, 1e-6);
+    EXPECT_NEAR(0.141740, A_dir1, 1e-6);
 
     auto A_dir2 = aLayer.getAbsorptanceLayer(2, aSide, ScatteringSimple::Direct, theta, phi);
     EXPECT_NEAR(0.243199, A_dir2, 1e-6);
 
     auto A_dif1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Diffuse, theta, phi);
-    EXPECT_NEAR(0.132652, A_dif1, 1e-6);
+    EXPECT_NEAR(0.132645, A_dif1, 1e-6);
 
     auto A_dif2 = aLayer.getAbsorptanceLayer(2, aSide, ScatteringSimple::Diffuse, theta, phi);
     EXPECT_NEAR(0.185401, A_dif2, 1e-6);

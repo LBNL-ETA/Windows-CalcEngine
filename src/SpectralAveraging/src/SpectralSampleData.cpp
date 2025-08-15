@@ -42,14 +42,15 @@ namespace SpectralAveraging
     }
 
     void CSpectralSampleData::addRecord(double const t_Wavelength,
-                                        double const t_Transmittance,
+                                        double const t_TransmittanceFront,
+                                        double const t_TransmittanceBack,
                                         double const t_ReflectanceFront,
                                         double const t_ReflectanceBack)
     {
         m_Property.at(std::make_pair(Property::T, Side::Front))
-          .addProperty(t_Wavelength, t_Transmittance);
+          .addProperty(t_Wavelength, t_TransmittanceFront);
         m_Property.at(std::make_pair(Property::T, Side::Back))
-          .addProperty(t_Wavelength, t_Transmittance);
+          .addProperty(t_Wavelength, t_TransmittanceBack);
         m_Property.at(std::make_pair(Property::R, Side::Front))
           .addProperty(t_Wavelength, t_ReflectanceFront);
         m_Property.at(std::make_pair(Property::R, Side::Back))

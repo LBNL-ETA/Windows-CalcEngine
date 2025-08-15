@@ -64,10 +64,10 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     EXPECT_NEAR(0.542341, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
-    EXPECT_NEAR(0.221229, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.221231, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.110653, absDiff1, 1e-6);
+    EXPECT_NEAR(0.110652, absDiff1, 1e-6);
 
     double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
     EXPECT_NEAR(0.125776, absDiff2, 1e-6);

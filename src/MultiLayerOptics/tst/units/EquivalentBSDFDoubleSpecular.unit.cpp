@@ -21,8 +21,8 @@ protected:
     virtual void SetUp()
     {
         // Create lambda matrix
-        const auto aBSDF = BSDFHemisphere::create(
-          {{0, 1}, {15, 1}, {30, 1}, {45, 1}, {60, 1}, {75, 1}, {86.25, 1}});
+        const auto aBSDF =
+          BSDFHemisphere::create({{0, 1}, {15, 1}, {30, 1}, {45, 1}, {60, 1}, {75, 1}, {86.25, 1}});
 
         // Full ASTM E891-87 Table 1
         CSeries aSolarRadiation(
@@ -169,12 +169,12 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     EXPECT_EQ(size, matrixSize);
 
     SquareMatrix correctTb{{13.06253965, 0, 0, 0, 0, 0, 0},
-                           {0, 1.71444156, 0, 0, 0, 0, 0},
-                           {0, 0, 0.97702447, 0, 0, 0, 0},
-                           {0, 0, 0, 0.8116755, 0, 0, 0},
-                           {0, 0, 0, 0, 0.81270464, 0, 0},
-                           {0, 0, 0, 0, 0, 0.807133, 0},
-                           {0, 0, 0, 0, 0, 0, 0.93569046}};
+                           {0, 1.714453, 0, 0, 0, 0, 0},
+                           {0, 0, 0.977050, 0, 0, 0, 0},
+                           {0, 0, 0, 0.811720, 0, 0, 0},
+                           {0, 0, 0, 0, 0.812780, 0, 0},
+                           {0, 0, 0, 0, 0, 0.807264, 0},
+                           {0, 0, 0, 0, 0, 0, 0.936161}};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -190,13 +190,13 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
 
     EXPECT_EQ(size, matrixSize);
 
-    SquareMatrix correctRf{{2.37511954, 0, 0, 0, 0, 0, 0},
-                           {0, 0.31243794, 0, 0, 0, 0, 0},
-                           {0, 0, 0.18384643, 0, 0, 0, 0},
-                           {0, 0, 0, 0.18130934, 0, 0, 0},
-                           {0, 0, 0, 0, 0.31941874, 0, 0},
-                           {0, 0, 0, 0, 0, 1.16016479, 0},
-                           {0, 0, 0, 0, 0, 0, 15.18285894}};
+    SquareMatrix correctRf{{2.375120, 0, 0, 0, 0, 0, 0},
+                           {0, 0.312438, 0, 0, 0, 0, 0},
+                           {0, 0, 0.183847, 0, 0, 0, 0},
+                           {0, 0, 0, 0.181311, 0, 0, 0},
+                           {0, 0, 0, 0, 0.319424, 0, 0},
+                           {0, 0, 0, 0, 0, 1.160188, 0},
+                           {0, 0, 0, 0, 0, 0, 15.183041}};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -212,13 +212,13 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
 
     EXPECT_EQ(size, matrixSize);
 
-    SquareMatrix correctRb{{2.37893449, 0, 0, 0, 0, 0, 0},
-                           {0, 0.31293973, 0, 0, 0, 0, 0},
-                           {0, 0, 0.18413636, 0, 0, 0, 0},
-                           {0, 0, 0, 0.18156261, 0, 0, 0},
-                           {0, 0, 0, 0, 0.31970889, 0, 0},
-                           {0, 0, 0, 0, 0, 1.16058387, 0},
-                           {0, 0, 0, 0, 0, 0, 15.18436907}};
+    SquareMatrix correctRb{{2.378934, 0, 0, 0, 0, 0, 0},
+                           {0, 0.312940, 0, 0, 0, 0, 0},
+                           {0, 0, 0.184137, 0, 0, 0, 0},
+                           {0, 0, 0, 0.181565, 0, 0, 0},
+                           {0, 0, 0, 0, 0.319714, 0, 0},
+                           {0, 0, 0, 0, 0, 1.160607, 0},
+                           {0, 0, 0, 0, 0, 0, 15.184551}};
 
     for(size_t i = 0; i < size; ++i)
     {
@@ -229,8 +229,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     std::vector<double> A = aLayer->getLayerAbsorptances(1, Side::Front);
-    std::vector<double> correctAbs = {
-      0.09710127, 0.09842101, 0.10243759, 0.10939515, 0.12006037, 0.13316094, 0.10745388};
+    std::vector correctAbs = {0.097101, 0.098421, 0.102437, 0.109394, 0.120057, 0.133151, 0.107444};
 
     for(size_t i = 0; i < size; i++)
     {
@@ -238,8 +237,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     A = aLayer->getLayerAbsorptances(1, Side::Back);
-    correctAbs = {
-      0.07651907, 0.07744642, 0.08001281, 0.0831037, 0.08263442, 0.06695159, 0.02979634};
+    correctAbs = {0.076519, 0.077444, 0.080005, 0.083088, 0.082612, 0.066930, 0.029791};
 
     for(size_t i = 0; i < size; i++)
     {
@@ -247,8 +245,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     A = aLayer->getLayerAbsorptances(2, Side::Front);
-    correctAbs = {
-      0.07661983, 0.07754706, 0.08011342, 0.08320488, 0.08273374, 0.0670302, 0.02982354};
+    correctAbs = {0.076620, 0.077547, 0.080113, 0.083205, 0.082734, 0.067030, 0.029824};
 
     for(size_t i = 0; i < size; i++)
     {
@@ -256,8 +253,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     A = aLayer->getLayerAbsorptances(2, Side::Back);
-    correctAbs = {
-      0.09699785, 0.09831765, 0.10233405, 0.1092904, 0.11995538, 0.13306917, 0.10740026};
+    correctAbs = {0.096998, 0.098315, 0.102323, 0.109268, 0.119921, 0.133028, 0.107370};
 
     for(size_t i = 0; i < size; i++)
     {

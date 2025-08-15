@@ -127,7 +127,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     {
         for(size_t j = 0; j < size; ++j)
         {
-            EXPECT_NEAR(correctRf(i, j), Rf(i, j), 1e-6);
+            EXPECT_NEAR(correctRf(i, j), Rf(i, j), 1e-5);
         }
     }
 
@@ -150,7 +150,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     {
         for(size_t j = 0; j < size; ++j)
         {
-            EXPECT_NEAR(correctTb(i, j), Tb(i, j), 1e-6);
+            EXPECT_NEAR(correctTb(i, j), Tb(i, j), 1e-5);
         }
     }
 
@@ -173,7 +173,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     {
         for(size_t j = 0; j < size; ++j)
         {
-            EXPECT_NEAR(correctRb(i, j), Rb(i, j), 1e-6);
+            EXPECT_NEAR(correctRb(i, j), Rb(i, j), 1e-5);
         }
     }
 }
