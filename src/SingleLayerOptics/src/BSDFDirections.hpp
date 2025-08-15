@@ -97,7 +97,7 @@ namespace SingleLayerOptics
 
         [[nodiscard]] const BSDFDirections & getDirections(BSDFDirection t_Side) const;
 
-        std::vector<double> profileAngles(BSDFDirection t_Side) const;
+        [[nodiscard]] std::vector<double> profileAngles(BSDFDirection t_Side) const;
 
     private:
         static const std::map<BSDFBasis, std::vector<BSDFDefinition>> bsdfDefinition;
