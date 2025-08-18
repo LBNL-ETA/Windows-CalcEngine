@@ -1,9 +1,11 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESpectralAveraging.hpp"
-#include "WCEMultiLayerOptics.hpp"
+#include <WCESpectralAveraging.hpp>
+#include <WCEMultiLayerOptics.hpp>
 
+#include "standardData.hpp"
+#include "spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -116,84 +118,86 @@ private:
     }
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
-        auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
+        constexpr auto thickness = 3.048e-3;   // [m]
+        auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Small);
 
         const auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
 
         // Venetian blind
-        const auto Tsol = 0.1;
-        const auto Rfsol = 0.7;
-        const auto Rbsol = 0.7;
+        constexpr auto Tsol = 0.1;
+        constexpr auto Rfsol = 0.7;
+        constexpr auto Rbsol = 0.7;
 
         // Visible range
-        const auto Tvis = 0.2;
-        const auto Rfvis = 0.6;
-        const auto Rbvis = 0.6;
+        constexpr auto Tvis = 0.2;
+        constexpr auto Rfvis = 0.6;
+        constexpr auto Rbvis = 0.6;
 
         const auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        const auto slatWidth = 0.016;     // m
-        const auto slatSpacing = 0.012;   // m
-        const auto slatTiltAngle = 45;
-        const auto curvatureRadius = 0.0;
-        const size_t numOfSlatSegments = 5;
+        constexpr auto slatWidth = 0.016;     // m
+        constexpr auto slatSpacing = 0.012;   // m
+        constexpr auto slatTiltAngle = 45;
+        constexpr auto curvatureRadius = 0.0;
+        constexpr size_t numOfSlatSegments = 5;
 
-        auto Layer_Venetian = CBSDFLayerMaker::getVenetianLayer(aMaterialVenetian,
-                                                                aBSDF,
-                                                                slatWidth,
-                                                                slatSpacing,
-                                                                slatTiltAngle,
-                                                                curvatureRadius,
-                                                                numOfSlatSegments,
-                                                                DistributionMethod::DirectionalDiffuse,
-                                                                false);
+        auto Layer_Venetian =
+          CBSDFLayerMaker::getVenetianLayer(aMaterialVenetian,
+                                            aBSDF,
+                                            slatWidth,
+                                            slatSpacing,
+                                            slatTiltAngle,
+                                            curvatureRadius,
+                                            numOfSlatSegments,
+                                            DistributionMethod::DirectionalDiffuse,
+                                            false);
 
-        const std::vector<double> condensed{0.3,
-                                            0.38,
-                                            0.46,
-                                            0.54,
-                                            0.62,
-                                            0.7,
-                                            0.78,
-                                            0.952,
-                                            1.124,
-                                            1.296,
-                                            1.468,
-                                            1.64,
-                                            1.812,
-                                            1.984,
-                                            2.156,
-                                            2.328,
-                                            2.5};
+        const std::vector condensed{0.3,
+                                    0.38,
+                                    0.46,
+                                    0.54,
+                                    0.62,
+                                    0.7,
+                                    0.78,
+                                    0.952,
+                                    1.124,
+                                    1.296,
+                                    1.468,
+                                    1.64,
+                                    1.812,
+                                    1.984,
+                                    2.156,
+                                    2.328,
+                                    2.5};
 
         m_Layer = CMultiPaneBSDF::create({Layer_102, Layer_Venetian}, condensed);
 
-        const CalculationProperties input{loadSolarRadiationFile(),
-                                          loadSolarRadiationFile().getXArray()};
+        const CalculationProperties input{
+          StandardData::solarRadiationASTM_E891_87_Table1(),
+          StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 
 public:
-    CMultiPaneBSDF & getLayer()
+    CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
-    };
+    }
 };
 
 TEST_F(MultiPaneBSDF_102_VenetianUniform_CondensedSpectrum, TestVenetianUniformBSDF)
 {
     SCOPED_TRACE("Begin Test: Specular and venetian uniform IGU - BSDF.");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiPaneBSDF & aLayer = getLayer();
 
@@ -251,4 +255,3 @@ TEST_F(MultiPaneBSDF_102_VenetianUniform_CondensedSpectrum, TestVenetianUniformB
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.111977, abs2, 1e-6);
 }
-
