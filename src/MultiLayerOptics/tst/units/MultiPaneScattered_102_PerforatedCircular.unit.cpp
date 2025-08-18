@@ -1,11 +1,13 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESpectralAveraging.hpp"
-#include "WCEMultiLayerOptics.hpp"
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
+#include <WCESpectralAveraging.hpp>
+#include <WCEMultiLayerOptics.hpp>
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
 
+#include "standardData.hpp"
+#include "spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -121,47 +123,45 @@ protected:
     void SetUp() override
     {
         // Create material from samples
-        auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
+        constexpr auto thickness1 = 3.048e-3;   // [m]
+        auto aMaterial_102 = Material::nBandMaterial(
+          SpectralSample::NFRC_102(), thickness1, MaterialType::Monolithic);
 
         // Setting circular perforated shade with double range material
-        const auto Tsol = 0.1;
-        const auto Rfsol = 0.7;
-        const auto Rbsol = 0.7;
+        constexpr auto Tsol = 0.1;
+        constexpr auto Rfsol = 0.7;
+        constexpr auto Rbsol = 0.7;
 
         // Visible range
-        const auto Tvis = 0.2;
-        const auto Rfvis = 0.6;
-        const auto Rbvis = 0.6;
+        constexpr auto Tvis = 0.2;
+        constexpr auto Rfvis = 0.6;
+        constexpr auto Rbvis = 0.6;
 
-        auto aMaterialPerforated = SingleLayerOptics::Material::dualBandMaterial(
+        auto aMaterialPerforated = Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        const auto x = 0.01905;         // m
-        const auto y = 0.01905;         // m
-        thickness = 0.005;              // m
-        const auto radius = 0.003175;   // m
+        constexpr auto x = 0.01905;         // m
+        constexpr auto y = 0.01905;         // m
+        constexpr auto thickness2 = 0.005;              // m
+        constexpr auto radius = 0.003175;   // m
 
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
         CScatteringLayer LayerPerforated = CScatteringLayer::createPerforatedCircularLayer(
-          aMaterialPerforated, x, y, thickness, radius);
-
+          aMaterialPerforated, x, y, thickness2, radius);
 
         // Equivalent BSDF layer
         m_Layer = CMultiLayerScattered::create(Layer102);
         m_Layer->addLayer(LayerPerforated);
 
-        CSeries solarRadiation{loadSolarRadiationFile()};
-        m_Layer->setSourceData(solarRadiation);
+        m_Layer->setSourceData(StandardData::solarRadiationASTM_E891_87_Table1());
     }
 
 public:
-    CMultiLayerScattered & getLayer() const
+    [[nodiscard]] CMultiLayerScattered & getLayer() const
     {
         return *m_Layer;
-    };
+    }
 };
 
 TEST_F(MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularDirectBeam)
@@ -169,14 +169,14 @@ TEST_F(MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularDirectBe
     SCOPED_TRACE(
       "Begin Test: Perforated circular layer - Scattering model front side (normal incidence).");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     auto & aLayer = getLayer();
 
-    auto aSide = Side::Front;
-    double theta = 0;
-    double phi = 0;
+    constexpr auto aSide = Side::Front;
+    constexpr double theta = 0;
+    constexpr double phi = 0;
 
     auto T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi);
@@ -228,14 +228,14 @@ TEST_F(MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularAngledBe
     SCOPED_TRACE(
       "Begin Test: Perforated circular layer - Scattering model back side (normal incidence).");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     auto & aLayer = getLayer();
 
-    auto aSide = Side::Front;
-    double theta = 25;
-    double phi = 0;
+    constexpr auto aSide = Side::Front;
+    constexpr double theta = 25;
+    constexpr double phi = 0;
 
     auto T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi);
@@ -284,14 +284,14 @@ TEST_F(MultiPaneScattered_102_PerforatedCircular, TestPerforatedCircularAngleBea
     SCOPED_TRACE(
       "Begin Test: Perforated circular layer - Scattering model front side (Theta = 50 deg).");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     auto & aLayer = getLayer();
 
-    auto aSide = Side::Front;
-    double theta = 50;
-    double phi = 0;
+    constexpr auto aSide = Side::Front;
+    constexpr double theta = 50;
+    constexpr double phi = 0;
 
     auto T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi);
