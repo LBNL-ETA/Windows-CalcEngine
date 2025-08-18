@@ -61,9 +61,13 @@ namespace SpectralAveraging
             auto aSourceData = t_SpectralSample->getSourceData();
 
 
-            const auto aT =
+            const auto aTf =
               aMeasuredData->properties(Property ::T, Side::Front).interpolate(aWavelengths);
-            assert(aT.size() == aWavelengths.size());
+            assert(aTf.size() == aWavelengths.size());
+
+            const auto aTb =
+              aMeasuredData->properties(Property ::T, Side::Back).interpolate(aWavelengths);
+            assert(aTb.size() == aWavelengths.size());
 
             const auto aRf =
               aMeasuredData->properties(Property::R, Side::Front).interpolate(aWavelengths);
@@ -73,34 +77,36 @@ namespace SpectralAveraging
               aMeasuredData->properties(Property::R, Side::Back).interpolate(aWavelengths);
             assert(aRb.size() == aWavelengths.size());
 
-            const auto lowLambda = 0.3;
-            const auto highLambda = 2.5;
+            constexpr auto lowLambda = 0.3;
+            constexpr auto highLambda = 2.5;
 
-            // TODO: Only one side is measured and it is considered that front properties are equal
-            // to back properties
-            const auto aTSolNorm =
+            const auto aTSolNormF =
               t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Front);
+            const auto aTSolNormB =
+              t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Back);
 
             for(size_t i = 0; i < aWavelengths.size(); ++i)
             {
                 const auto ww = aWavelengths[i] * 1e-6;
-                const auto T = aT[i].value();
+                const auto Tf = aTf[i].value();
+                const auto Tb = aTb[i].value();
                 const auto Rf = aRf[i].value();
                 const auto Rb = aRb[i].value();
 
                 const auto aSurfaceType = coatingType.at(t_Type);
 
-                auto aFrontFactory = CAngularPropertiesFactory(T, Rf, m_Thickness, aTSolNorm);
-                auto aBackFactory = CAngularPropertiesFactory(T, Rb, m_Thickness, aTSolNorm);
+                auto aFrontFactory = CAngularPropertiesFactory(Tf, Rf, m_Thickness, aTSolNormF);
+                auto aBackFactory = CAngularPropertiesFactory(Tb, Rb, m_Thickness, aTSolNormB);
 
                 auto aFrontProperties = aFrontFactory.getAngularProperties(aSurfaceType);
                 auto aBackProperties = aBackFactory.getAngularProperties(aSurfaceType);
 
-                const auto Tangle = aFrontProperties->transmittance(m_Angle, ww);
+                const auto Tfangle = aFrontProperties->transmittance(m_Angle, ww);
+                const auto Tbangle = aBackProperties->transmittance(m_Angle, ww);
                 const auto Rfangle = aFrontProperties->reflectance(m_Angle, ww);
                 const auto Rbangle = aBackProperties->reflectance(m_Angle, ww);
 
-                m_AngularData->addRecord(ww * 1e6, Tangle, Rfangle, Rbangle);
+                m_AngularData->addRecord(ww * 1e6, Tfangle, Tbangle, Rfangle, Rbangle);
             }
         }
         else

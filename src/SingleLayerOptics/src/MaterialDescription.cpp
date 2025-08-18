@@ -166,6 +166,7 @@ namespace SingleLayerOptics
     std::shared_ptr<CSpectralSample> CMaterial::getSpectralSample()
     {
         std::vector<double> Tf = getBandProperties(Property::T, Side::Front);
+        std::vector<double> Tb = getBandProperties(Property::T, Side::Back);
         std::vector<double> Rf = getBandProperties(Property::R, Side::Front);
         std::vector<double> Rb = getBandProperties(Property::R, Side::Back);
 
@@ -174,7 +175,7 @@ namespace SingleLayerOptics
         size_t size = getBandSize();
         for(size_t i = 0; i < size; ++i)
         {
-            aSampleData->addRecord(m_Wavelengths[i], Tf[i], Rf[i], Rb[i]);
+            aSampleData->addRecord(m_Wavelengths[i], Tf[i], Tb[i], Rf[i], Rb[i]);
         }
 
         return std::make_shared<CSpectralSample>(aSampleData);

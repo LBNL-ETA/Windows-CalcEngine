@@ -15,10 +15,12 @@ namespace SpectralAveraging
     ///////////////////////////////////////////////////////////////////////////
     /// MeasuredRow
     ///////////////////////////////////////////////////////////////////////////
+
     struct MeasuredRow
     {
         double wavelength;
-        double T;
+        double Tf;
+        double Tb;
         double Rf;
         double Rb;
     };
@@ -62,7 +64,8 @@ namespace SpectralAveraging
         static std::shared_ptr<CSpectralSampleData> create();
 
         void addRecord(double t_Wavelength,
-                       double t_Transmittance,
+                       double t_TransmittanceFront,
+                       double t_TransmittanceBack,
                        double t_ReflectanceFront,
                        double t_ReflectanceBack);
 

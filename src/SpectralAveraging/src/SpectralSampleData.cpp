@@ -42,14 +42,15 @@ namespace SpectralAveraging
     }
 
     void CSpectralSampleData::addRecord(double const t_Wavelength,
-                                        double const t_Transmittance,
+                                        double const t_TransmittanceFront,
+                                        double const t_TransmittanceBack,
                                         double const t_ReflectanceFront,
                                         double const t_ReflectanceBack)
     {
         m_Property.at(std::make_pair(Property::T, Side::Front))
-          .addProperty(t_Wavelength, t_Transmittance);
+          .addProperty(t_Wavelength, t_TransmittanceFront);
         m_Property.at(std::make_pair(Property::T, Side::Back))
-          .addProperty(t_Wavelength, t_Transmittance);
+          .addProperty(t_Wavelength, t_TransmittanceBack);
         m_Property.at(std::make_pair(Property::R, Side::Front))
           .addProperty(t_Wavelength, t_ReflectanceFront);
         m_Property.at(std::make_pair(Property::R, Side::Back))
@@ -68,9 +69,9 @@ namespace SpectralAveraging
         for(const auto & val : tValues)
         {
             m_Property.at(std::make_pair(Property::T, Side::Front))
-              .addProperty(val.wavelength, val.T);
+              .addProperty(val.wavelength, val.Tf);
             m_Property.at(std::make_pair(Property::T, Side::Back))
-              .addProperty(val.wavelength, val.T);
+              .addProperty(val.wavelength, val.Tb);
             m_Property.at(std::make_pair(Property::R, Side::Front))
               .addProperty(val.wavelength, val.Rf);
             m_Property.at(std::make_pair(Property::R, Side::Back))
@@ -119,7 +120,6 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::calculateProperties()
     {
-
         if(!m_absCalculated)
         {
             m_Property.at(std::make_pair(Property::Abs, Side::Front)).clear();
@@ -147,7 +147,7 @@ namespace SpectralAveraging
     std::shared_ptr<CSpectralSampleData>
       CSpectralSampleData::create(const std::vector<MeasuredRow> & tValues)
     {
-        return std::shared_ptr<CSpectralSampleData>(new CSpectralSampleData(tValues));
+        return std::make_shared<CSpectralSampleData>(tValues);
     }
 
     std::shared_ptr<CSpectralSampleData> CSpectralSampleData::create()
