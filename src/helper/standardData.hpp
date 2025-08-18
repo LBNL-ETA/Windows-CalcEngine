@@ -14,6 +14,10 @@ namespace StandardData
         // Full CIE Illuminant D651 nm ssp table (used for PHOTOPIC properties)
         [[nodiscard]] FenestrationCommon::CSeries solarRadiation();
         [[nodiscard]] FenestrationCommon::CSeries detectorData();
+
+        [[nodiscard]] FenestrationCommon::CSeries ASTM_E308_1964_X();
+        [[nodiscard]] FenestrationCommon::CSeries ASTM_E308_1964_Y();
+        [[nodiscard]] FenestrationCommon::CSeries ASTM_E308_1964_Z();
     }   // namespace Photopic
 
 }   // namespace StandardData

@@ -33,7 +33,7 @@ namespace SingleLayerOptics
                                            const CBeamDirection & t_Direction);
 
         [[nodiscard]] std::vector<double> getBandWavelengths() const;
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         [[nodiscard]] double getMinLambda() const;
         [[nodiscard]] double getMaxLambda() const;
