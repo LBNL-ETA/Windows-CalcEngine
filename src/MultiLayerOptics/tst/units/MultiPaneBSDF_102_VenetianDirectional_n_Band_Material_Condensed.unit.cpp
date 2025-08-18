@@ -37,7 +37,7 @@ protected:
         // Venetian blind material
         thickness = 0.0001;   // [m]
         auto aMaterialVenetian = SingleLayerOptics::Material::nBandMaterial(
-          SpectralSample::WhiteVenetianBlindSlat_31100(), thickness, MaterialType::Monolithic);
+          SpectralSample::NFRC_31100(), thickness, MaterialType::Monolithic);
 
 
         // make cell geometry

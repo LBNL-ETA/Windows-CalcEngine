@@ -1184,7 +1184,7 @@ namespace SpectralSample
         return aMeasurements_20243;
     }
 
-    std::shared_ptr<SpectralAveraging::CSpectralSampleData> WhiteVenetianBlindSlat_31100()
+    std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_31100()
     {
         return SpectralAveraging::CSpectralSampleData::create(
           {{0.3, {0, 0, 0.0703, 0.0703}, {0.0, 0.0, 0.0, 0.0}},
