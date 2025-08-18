@@ -23,7 +23,7 @@ class MultiPaneBSDF_102_VenetianDirectional : public testing::Test
 protected:
     virtual void SetUp()
     {
-        double thickness = 3.048e-3;   // [m]
+        constexpr double thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = Material::nBandMaterial(
           SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
@@ -33,24 +33,24 @@ protected:
 
         // Venetian blind material
         // Solar range
-        const auto Tsol = 0.1;
-        const auto Rfsol = 0.7;
-        const auto Rbsol = 0.7;
+        constexpr auto Tsol = 0.1;
+        constexpr auto Rfsol = 0.7;
+        constexpr auto Rbsol = 0.7;
 
         // Visible range
-        const auto Tvis = 0.2;
-        const auto Rfvis = 0.6;
-        const auto Rbvis = 0.6;
+        constexpr auto Tvis = 0.2;
+        constexpr auto Rfvis = 0.6;
+        constexpr auto Rbvis = 0.6;
 
         auto aMaterialVenetian = SingleLayerOptics::Material::dualBandMaterial(
           Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        const auto slatWidth = 0.016;     // m
-        const auto slatSpacing = 0.012;   // m
-        const auto slatTiltAngle = 45;
-        const auto curvatureRadius = 0.0;
-        size_t numOfSlatSegments = 5;
+        constexpr auto slatWidth = 0.016;     // m
+        constexpr auto slatSpacing = 0.012;   // m
+        constexpr auto slatTiltAngle = 45;
+        constexpr auto curvatureRadius = 0.0;
+        constexpr size_t numOfSlatSegments = 5;
 
         std::shared_ptr<CBSDFLayer> Layer_Venetian =
           CBSDFLayerMaker::getVenetianLayer(aMaterialVenetian,
