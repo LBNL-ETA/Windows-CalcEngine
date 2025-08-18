@@ -21,7 +21,7 @@ class MultiPaneBSDF_102_Woven : public testing::Test
     std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
         constexpr auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 =
