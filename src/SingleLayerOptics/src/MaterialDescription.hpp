@@ -61,8 +61,8 @@ namespace SingleLayerOptics
         CMaterial(double minLambda, double maxLambda);
         explicit CMaterial(FenestrationCommon::Limits wavelengthRange);
 
-        virtual void setSourceData(FenestrationCommon::CSeries &);
-        virtual void setDetectorData(FenestrationCommon::CSeries & t_DetectorData);
+        virtual void setSourceData(const FenestrationCommon::CSeries &);
+        virtual void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData);
 
         // Get certain material property over the entire range
         virtual double
@@ -227,8 +227,8 @@ namespace SingleLayerOptics
                           const std::shared_ptr<CMaterial> & solarRange);
 
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
-        void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
+        void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData) override;
 
         [[nodiscard]] double
           getProperty(FenestrationCommon::Property t_Property,
@@ -330,8 +330,8 @@ namespace SingleLayerOptics
           double t_Thickness,
           FenestrationCommon::MaterialType t_Type);
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
-        void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
+        void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
@@ -438,7 +438,7 @@ namespace SingleLayerOptics
         CMaterialMeasured(
           const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements);
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.

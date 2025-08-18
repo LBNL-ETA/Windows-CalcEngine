@@ -22,7 +22,7 @@ namespace SingleLayerOptics
         // This is not necessary before axisymmetry is introduced
     }
 
-    void CBSDFLayer::setSourceData(CSeries & t_SourceData)
+    void CBSDFLayer::setSourceData(const CSeries & t_SourceData)
     {
         m_Cell->setSourceData(t_SourceData);
         m_Calculated = false;

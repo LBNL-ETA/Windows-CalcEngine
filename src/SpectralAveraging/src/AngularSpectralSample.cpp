@@ -149,13 +149,13 @@ namespace SpectralAveraging
         m_Type(t_Type)
     {}
 
-    void CAngularSpectralSample::setSourceData(CSeries & t_SourceData)
+    void CAngularSpectralSample::setSourceData(const CSeries & t_SourceData)
     {
         m_SpectralSampleZero->setSourceData(t_SourceData);
         m_SpectralProperties.clear();
     }
 
-    void CAngularSpectralSample::setDetectorData(CSeries & t_DetectorData)
+    void CAngularSpectralSample::setDetectorData(const CSeries & t_DetectorData)
     {
         m_SpectralSampleZero->setDetectorData(t_DetectorData);
         m_SpectralProperties.clear();

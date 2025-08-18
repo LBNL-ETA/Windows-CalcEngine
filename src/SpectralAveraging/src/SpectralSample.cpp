@@ -63,7 +63,7 @@ namespace SpectralAveraging
         return m_SourceData;
     }
 
-    void CSample::setSourceData(CSeries & t_SourceData)
+    void CSample::setSourceData(const CSeries & t_SourceData)
     {
         m_SourceData = t_SourceData;
         reset();
