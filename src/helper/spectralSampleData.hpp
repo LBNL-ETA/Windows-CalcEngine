@@ -8,6 +8,7 @@ namespace SpectralSample
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_103();
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_1042();
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_20243();
+    std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_21515();
 
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_31100();
 
