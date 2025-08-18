@@ -1,11 +1,13 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESpectralAveraging.hpp"
-#include "WCEMultiLayerOptics.hpp"
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
+#include <WCESpectralAveraging.hpp>
+#include <WCEMultiLayerOptics.hpp>
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
 
+#include "standardData.hpp"
+#include "spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -19,7 +21,8 @@ class MultiPaneScattered_102_NonStandardSolar : public testing::Test
 private:
     std::unique_ptr<CMultiLayerScattered> m_Layer;
 
-    CSeries loadSolarRadiationFile()
+    // This solar radiation input is not standard. Do not replace it with one in StandardData
+    static CSeries loadSolarRadiationFile()
     {
         CSeries aSolarRadiation;
 
@@ -198,41 +201,40 @@ private:
     }
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
         // Create material from samples
-        auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-          loadSampleData_NFRC_102(), thickness, MaterialType::Monolithic);
+        constexpr auto thickness = 3.048e-3;   // [m]
+        auto aMaterial_102 = Material::nBandMaterial(
+          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
 
         // Equivalent BSDF layer
         m_Layer = CMultiLayerScattered::create(Layer102);
 
-        CSeries solarRadiation{loadSolarRadiationFile()};
-        m_Layer->setSourceData(solarRadiation);
+        m_Layer->setSourceData(loadSolarRadiationFile());
     }
 
 public:
     CMultiLayerScattered & getLayer()
     {
         return *m_Layer;
-    };
+    }
 };
 
 TEST_F(MultiPaneScattered_102_NonStandardSolar, TestSpecular1)
 {
     SCOPED_TRACE("Begin Test: Specular layer - Scattering model front side (normal incidence).");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiLayerScattered & aLayer = getLayer();
 
-    Side aSide = Side::Front;
-    double theta = 0;
-    double phi = 0;
+    constexpr Side aSide = Side::Front;
+    constexpr double theta = 0;
+    constexpr double phi = 0;
 
     double T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi);
@@ -269,14 +271,14 @@ TEST_F(MultiPaneScattered_102_NonStandardSolar, TestSpecular2)
 {
     SCOPED_TRACE("Begin Test: Specular layer - Scattering model back side (normal incidence).");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiLayerScattered & aLayer = getLayer();
 
-    Side aSide = Side::Back;
-    double theta = 0;
-    double phi = 0;
+    constexpr Side aSide = Side::Back;
+    constexpr double theta = 0;
+    constexpr double phi = 0;
 
     double T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi);
@@ -313,14 +315,14 @@ TEST_F(MultiPaneScattered_102_NonStandardSolar, TestSpecular3)
 {
     SCOPED_TRACE("Begin Test: Specular layer - Scattering model front side (Theta = 40 deg).");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiLayerScattered & aLayer = getLayer();
 
-    Side aSide = Side::Front;
-    double theta = 40;
-    double phi = 0;
+    constexpr Side aSide = Side::Front;
+    constexpr double theta = 40;
+    constexpr double phi = 0;
 
     double T_dir_dir = aLayer.getPropertySimple(
       minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi);
