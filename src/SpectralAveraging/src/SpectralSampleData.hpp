@@ -102,8 +102,9 @@ namespace SpectralAveraging
         virtual void calculateProperties();
         void reset();
 
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
+        std::map<
+          std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, MeasurementType>,
+          FenestrationCommon::CSeries>
           m_Property;
 
         bool m_absCalculated;

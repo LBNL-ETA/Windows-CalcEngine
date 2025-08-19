@@ -105,7 +105,8 @@ namespace MultiLayerOptics
             EnumSide sides;
             for(const auto side : sides)
             {
-                m_Property[std::make_pair(prop, side)] = aEqivalentLayer.getProperties(prop, side);
+                m_Property[std::make_tuple(prop, side, MeasurementType::Total)] =
+                  aEqivalentLayer.getProperties(prop, side);
             }
         }
 

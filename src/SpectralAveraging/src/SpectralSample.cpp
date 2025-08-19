@@ -277,7 +277,7 @@ namespace SpectralAveraging
         return m_Property.at(std::make_pair(t_Property, t_Side));
     }
 
-    void CSpectralSample::calculateProperties(FenestrationCommon::IntegrationType integrator,
+    void CSpectralSample::calculateProperties(IntegrationType integrator,
                                               double normalizationCoefficient)
     {
         std::ignore = integrator;
