@@ -162,8 +162,7 @@ namespace MultiLayerOptics
         {
             for(size_t i = 1; i <= m_Layers.size(); ++i)
             {   // Layer indexing goes from one
-                EnumSide sides;
-                for(Side aSide : sides)
+                for(Side aSide : sides())
                 {
                     Side oppSide = oppositeSide(aSide);
                     // Calculate diffuse energy from direct exterior/interior beam
@@ -272,8 +271,7 @@ namespace MultiLayerOptics
             {
                 double EnergyDirect = 0;
                 double EnergyDiffuse = 0;
-                EnumSide sides;
-                for(Side aSide : sides)
+                for(Side aSide : sides())
                 {
                     const double Adir =
                       m_Layers[i].getAbsorptance(aSide, ScatteringSimple::Direct, t_Theta, t_Phi);

@@ -1,9 +1,9 @@
 #include <array>
 #include <utility>
 
-#include "SpectralSampleData.hpp"
-#include "WCECommon.hpp"
+#include <WCECommon.hpp>
 
+#include "SpectralSampleData.hpp"
 
 using namespace FenestrationCommon;
 
@@ -50,10 +50,8 @@ namespace SpectralAveraging
 
     CSpectralSampleData::CSpectralSampleData() : SampleData(), m_absCalculated(false)
     {
-        EnumSide sides;
-
         // T/R for Direct, Diffuse, Total
-        for(const auto & side : sides)
+        for(const auto & side : sides())
         {
             for(auto m : kTRMeasurements)
             {
@@ -63,7 +61,7 @@ namespace SpectralAveraging
         }
 
         // Abs ONLY for Total
-        for(const auto & side : sides)
+        for(const auto & side : sides())
         {
             m_Property[key(Property::Abs, side, MeasurementType::Total)] = CSeries();
         }
@@ -83,6 +81,48 @@ namespace SpectralAveraging
           .addProperty(t_Wavelength, t_ReflectanceFront);
         m_Property.at(key(Property::R, Side::Back, MeasurementType::Total))
           .addProperty(t_Wavelength, t_ReflectanceBack);
+        reset();
+    }
+
+    void CSpectralSampleData::addRecord(double t_Wavelength,
+                                        const OpticalProperties & direct,
+                                        const OpticalProperties & diffuse)
+    {
+        // --- Direct ---
+        m_Property.at(key(Property::T, Side::Front, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Tf);
+        m_Property.at(key(Property::T, Side::Back, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Tb);
+        m_Property.at(key(Property::R, Side::Front, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Rf);
+        m_Property.at(key(Property::R, Side::Back, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Rb);
+
+        // --- Diffuse ---
+        m_Property.at(key(Property::T, Side::Front, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Tf);
+        m_Property.at(key(Property::T, Side::Back, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Tb);
+        m_Property.at(key(Property::R, Side::Front, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Rf);
+        m_Property.at(key(Property::R, Side::Back, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Rb);
+
+        const auto Tf_tot = clamp01(direct.Tf + diffuse.Tf);
+        const auto Tb_tot = clamp01(direct.Tb + diffuse.Tb);
+        const auto Rf_tot = clamp01(direct.Rf + diffuse.Rf);
+        const auto Rb_tot = clamp01(direct.Rb + diffuse.Rb);
+
+        m_Property.at(key(Property::T, Side::Front, MeasurementType::Total))
+          .addProperty(t_Wavelength, Tf_tot);
+        m_Property.at(key(Property::T, Side::Back, MeasurementType::Total))
+          .addProperty(t_Wavelength, Tb_tot);
+        m_Property.at(key(Property::R, Side::Front, MeasurementType::Total))
+          .addProperty(t_Wavelength, Rf_tot);
+        m_Property.at(key(Property::R, Side::Back, MeasurementType::Total))
+          .addProperty(t_Wavelength, Rb_tot);
+
+        // Invalidate absorptance — will be recomputed lazily
         reset();
     }
 
@@ -163,7 +203,7 @@ namespace SpectralAveraging
     void CSpectralSampleData::interpolate(std::vector<double> const & t_Wavelengths)
     {
         // T/R for all measurements
-        for(const auto & side : EnumSide())
+        for(const auto & side : sides())
         {
             for(auto m : kTRMeasurements)
             {
@@ -174,7 +214,7 @@ namespace SpectralAveraging
             }
         }
         // Abs only for Total
-        for(const auto & side : EnumSide())
+        for(const auto & side : sides())
         {
             m_Property[key(Property::Abs, side, MeasurementType::Total)] =
               m_Property.at(key(Property::Abs, side, MeasurementType::Total))
@@ -194,7 +234,7 @@ namespace SpectralAveraging
             return;
 
         // Clear Abs (Total only)
-        for(const auto & side : EnumSide())
+        for(const auto & side : sides())
         {
             m_Property.at(key(Property::Abs, side, MeasurementType::Total)).clear();
         }
@@ -257,7 +297,7 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::cutExtraData(const double minLambda, const double maxLambda)
     {
-        for(const auto & side : EnumSide())
+        for(const auto & side : sides())
         {
             for(auto m : kTRMeasurements)
             {
@@ -265,7 +305,7 @@ namespace SpectralAveraging
                 m_Property.at(key(Property::R, side, m)).cutExtraData(minLambda, maxLambda);
             }
         }
-        for(const auto & side : EnumSide())
+        for(const auto & side : sides())
         {
             m_Property.at(key(Property::Abs, side, MeasurementType::Total))
               .cutExtraData(minLambda, maxLambda);
@@ -287,33 +327,13 @@ namespace SpectralAveraging
         CSpectralSampleData(spectralSampleData),
         m_EQE{{Side::Front, eqeValuesFront}, {Side::Back, eqeValuesBack}}
     {
-        // const auto spectralWl{getWavelengths()};
-        // for(const auto side : EnumSide())
-        //{
-        //     m_EQE[side] = m_EQE.at(side).interpolate(spectralWl);
-        //     const auto eqeWavelengths{m_EQE.at(side).getXArray()};
-        //     if(spectralWl.size() != eqeWavelengths.size())
-        //     {
-        //         throw std::runtime_error("Measured spectral data do not have same amount of data
-        //         "
-        //                                  "as provided eqe values for the photovoltaic.");
-        //     }
-        //     for(size_t i = 0u; i < spectralWl.size(); ++i)
-        //     {
-        //         if(spectralWl[i] != eqeWavelengths[i])
-        //         {
-        //             throw std::runtime_error("Measured spectral wavelengths are not matching to "
-        //                                      "provided eqe photovoltaic wavelengths.");
-        //         }
-        //     }
-        // }
+
     }
 
     void PhotovoltaicSampleData::cutExtraData(double minLambda, double maxLambda)
     {
         CSpectralSampleData::cutExtraData(minLambda, maxLambda);
-        EnumSide sides;
-        for(const auto & side : sides)
+        for(const auto & side : sides())
         {
             m_EQE.at(side).cutExtraData(minLambda, maxLambda);
         }

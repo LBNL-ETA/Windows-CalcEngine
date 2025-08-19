@@ -183,8 +183,7 @@ namespace MultiLayerOptics
 
         m_IncomingSolar = calculateIncomingSolar(m_IncomingSpectra, minLambda, maxLambda);
 
-        FenestrationCommon::EnumSide sides;
-        for(Side aSide : sides)
+        for(Side aSide : FenestrationCommon::sides())
         {
             m_Abs[aSide] = calculateAbsorptance(aSide, minLambda, maxLambda);
             m_AbsElectricity[aSide] = calculateJSC(aSide, minLambda, maxLambda);
@@ -204,7 +203,7 @@ namespace MultiLayerOptics
 
         m_Results.resetCalculatedResults();
 
-        for(Side aSide : sides)
+        for(Side aSide : FenestrationCommon::sides())
         {
             calcHemisphericalAbs(aSide);
         }

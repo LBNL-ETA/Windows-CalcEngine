@@ -87,6 +87,10 @@ namespace SpectralAveraging
                        double t_ReflectanceFront,
                        double t_ReflectanceBack);
 
+        void addRecord(double t_Wavelength,
+                       const OpticalProperties & direct,
+                       const OpticalProperties & diffuse = OpticalProperties());
+
         FenestrationCommon::CSeries &
           properties(FenestrationCommon::Property prop,
                      FenestrationCommon::Side side,

@@ -102,16 +102,14 @@ namespace MultiLayerOptics
         EnumProperty properties;
         for(const auto & prop : properties)
         {
-            EnumSide sides;
-            for(const auto side : sides)
+            for(const auto side : sides())
             {
                 m_Property[std::make_tuple(prop, side, MeasurementType::Total)] =
                   aEqivalentLayer.getProperties(prop, side);
             }
         }
 
-        EnumSide sides;
-        for(const auto side : sides)
+        for(const auto side : sides())
         {
             m_LayerAbsorptances.at(side).clear();
             size_t size = aAbsorptances.numOfLayers();

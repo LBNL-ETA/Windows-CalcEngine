@@ -1,7 +1,7 @@
 #pragma once
 
-#include <execution>
 
+#include "EnumValues.hpp"
 #include "EnumerationTemplate.hpp"
 
 namespace FenestrationCommon
@@ -22,17 +22,16 @@ namespace FenestrationCommon
         Back
     };
 
-    class EnumSide : public Enum<Side>
-    {};
-
-    inline EnumSide::Iterator begin(EnumSide)
+    template<>
+    struct EnumBounds<Side>
     {
-        return EnumSide::Iterator(static_cast<int>(Side::Front));
-    }
+        static constexpr Side first = Side::Front;
+        static constexpr Side last = Side::Back;
+    };
 
-    inline EnumSide::Iterator end(EnumSide)
+    inline constexpr auto sides()
     {
-        return EnumSide::Iterator(static_cast<int>(Side::Back) + 1);
+        return enumValues<Side>();
     }
 
     //////////////////////////////////////////////////////////////////////////

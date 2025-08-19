@@ -40,8 +40,7 @@ namespace SpectralAveraging
         EnumProperty properties;
         for(const auto & prop : properties)
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : sides())
             {
                 m_EnergySource[std::make_pair(prop, side)] =
                   t_Sample.m_EnergySource.at(std::make_pair(prop, side));
@@ -160,8 +159,7 @@ namespace SpectralAveraging
         EnumProperty properties;
         for(const auto & prop : properties)
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : sides())
             {
                 m_EnergySource[std::make_pair(prop, side)] = CSeries();
             }
@@ -197,8 +195,7 @@ namespace SpectralAveraging
                 EnumProperty properties;
                 for(const auto & prop : properties)
                 {
-                    EnumSide sides;
-                    for(const auto & side : sides)
+                    for(const auto & side : sides())
                     {
                         m_EnergySource[std::make_pair(prop, side)] =
                           m_EnergySource.at(std::make_pair(prop, side))
@@ -227,8 +224,7 @@ namespace SpectralAveraging
         EnumProperty properties;
         for(const auto & prop : properties)
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : sides())
             {
                 m_Property[std::make_pair(prop, side)] = CSeries();
             }
@@ -246,8 +242,7 @@ namespace SpectralAveraging
         EnumProperty properties;
         for(const auto & prop : properties)
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : sides())
             {
                 m_Property[std::make_pair(prop, side)] = CSeries();
             }
@@ -285,8 +280,7 @@ namespace SpectralAveraging
         EnumProperty properties;
         for(const auto & prop : properties)
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : sides())
             {
                 m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
                 // No need to do interpolation if wavelength set is already from the data.
@@ -306,8 +300,7 @@ namespace SpectralAveraging
         // Calculation of energy balances
         for(const auto & prop : properties)
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : sides())
             {
                 m_EnergySource[std::make_pair(prop, side)] =
                   m_Property.at(std::make_pair(prop, side)) * m_IncomingSource;
@@ -325,8 +318,7 @@ namespace SpectralAveraging
             EnumProperty properties;
             for(const auto & prop : properties)
             {
-                EnumSide sides;
-                for(const auto & side : sides)
+                for(const auto & side : sides())
                 {
                     m_Property[{prop, side}] = m_SampleData->properties(prop, side);
                 }
@@ -366,8 +358,7 @@ namespace SpectralAveraging
                                              double normalizationCoefficient)
     {
         CSpectralSample::calculateProperties(integrator, normalizationCoefficient);
-        EnumSide sides;
-        for(const auto & side : sides)
+        for(const auto & side : sides())
         {
             CSeries eqe{getSample()->eqe(side)};
             eqe = eqe.interpolate(m_Wavelengths);
