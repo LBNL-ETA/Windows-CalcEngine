@@ -168,14 +168,14 @@ namespace SpectralAveraging
               .addProperty(val.wavelength, Rb_tot);
         }
 
-        reset();   // invalidate Abs; it will be built on demand
+        reset();
     }
 
     CSeries & CSpectralSampleData::properties(Property prop, Side side, MeasurementType type)
     {
         calculateProperties();
         if (prop == Property::Abs && type != MeasurementType::Total)
-            type = MeasurementType::Total;     // redirect
+            type = MeasurementType::Total;     // redirect for absorptance only
         auto aSide = getSide(side, Flipped());
         return m_Property.at(key(prop, aSide, type));
     }
