@@ -16,8 +16,7 @@ namespace MultiLayerOptics
     {
         for(Side t_Side : allSides())
         {
-            EnumEnergyFlow flows;
-            for(EnergyFlow t_EnergyFlow : flows)
+            for(EnergyFlow t_EnergyFlow : allEnergyFlow())
             {
                 m_IEnergy[std::make_pair(t_Side, t_EnergyFlow)] =
                   std::make_shared<std::vector<double>>();

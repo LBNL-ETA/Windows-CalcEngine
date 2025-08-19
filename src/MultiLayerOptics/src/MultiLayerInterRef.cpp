@@ -100,7 +100,7 @@ namespace MultiLayerOptics
             m_Energy[Scattering::DiffuseDiffuse] = m_DiffuseComponent.getSurfaceEnergy();
             m_Energy[Scattering::DirectDiffuse] = calcDirectToDiffuseComponent(t_Theta, t_Phi);
 
-            calculateAbsroptances(t_Theta, t_Phi);
+            calculateAbsorptances(t_Theta, t_Phi);
 
             m_StateCalculated = true;
             m_Theta = t_Theta;
@@ -157,8 +157,7 @@ namespace MultiLayerOptics
     {
         // Sum of previous two components. Total diffuse energy that gets off the surfaces.
         CSurfaceEnergy diffSum{};
-        EnumEnergyFlow energyFlows;
-        for(EnergyFlow aEnergyFlow : energyFlows)
+        for(EnergyFlow aEnergyFlow : allEnergyFlow())
         {
             for(size_t i = 1; i <= m_Layers.size(); ++i)
             {   // Layer indexing goes from one
@@ -211,12 +210,11 @@ namespace MultiLayerOptics
         // every surface and calculate total diffuse component that is incoming to every surface.
         CSurfaceEnergy aScatter{};
 
-        // Calculate total energy scatterred from beam to diffuse
-        EnumEnergyFlow energyFlows;
-        for(EnergyFlow aEnergyFlow : energyFlows)
+        // Calculate total energy scattered from beam to diffuse
+        for(EnergyFlow aEnergyFlow : allEnergyFlow())
         {
             // In this case numbering goes through gas environments (gaps, interior and exterior)
-            // becase we want to keep interreflectance calculations together
+            // because we want to keep inter-reflectance calculations together
             for(size_t i = 0; i <= m_Layers.size(); ++i)
             {
                 auto & fwdLayer = m_StackedLayers.at(Side::Front)[i];
@@ -262,12 +260,11 @@ namespace MultiLayerOptics
         return aScatter;
     }
 
-    void CInterRef::calculateAbsroptances(const double t_Theta, const double t_Phi)
+    void CInterRef::calculateAbsorptances(const double t_Theta, const double t_Phi)
     {
         for(size_t i = 0; i < m_Layers.size(); ++i)
         {
-            EnumEnergyFlow energyFlows;
-            for(EnergyFlow aEnergyFlow : energyFlows)
+            for(EnergyFlow aEnergyFlow : allEnergyFlow())
             {
                 double EnergyDirect = 0;
                 double EnergyDiffuse = 0;

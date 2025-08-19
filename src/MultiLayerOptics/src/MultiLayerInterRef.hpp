@@ -62,7 +62,7 @@ namespace MultiLayerOptics
         // Calculate direct to diffuse component at each surface
         CSurfaceEnergy calcDirectToDiffuseComponent(const double t_Theta, const double t_Phi);
 
-        void calculateAbsroptances(const double t_Theta, const double t_Phi);
+        void calculateAbsorptances(const double t_Theta, const double t_Phi);
 
         std::vector<SingleLayerOptics::CScatteringLayer> m_Layers;
 

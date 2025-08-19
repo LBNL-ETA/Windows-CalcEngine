@@ -156,21 +156,20 @@ namespace FenestrationCommon
         DirectHemispherical
     };
 
-    class EnumScattering : public Enum<Scattering>
-    {};
-
-    inline EnumScattering::Iterator begin(EnumScattering)
+    template<>
+    struct EnumBounds<Scattering>
     {
-        return EnumScattering::Iterator(static_cast<int>(Scattering::DirectDirect));
-    }
+        static constexpr auto first = Scattering::DirectDirect;
+        static constexpr auto last = Scattering::DirectHemispherical;
+    };
 
-    inline EnumScattering::Iterator end(EnumScattering)
+    constexpr auto allScattering()
     {
-        return EnumScattering::Iterator(static_cast<int>(Scattering::DiffuseDiffuse) + 1);
+        return enumValues<PropertySimple>();
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // ScatteringSimple
+    /// ScatteringSimple
     //////////////////////////////////////////////////////////////////////////
 
     enum class ScatteringSimple
@@ -179,21 +178,20 @@ namespace FenestrationCommon
         Diffuse
     };
 
-    class EnumScatteringSimple : public Enum<ScatteringSimple>
-    {};
-
-    inline EnumScatteringSimple::Iterator begin(EnumScatteringSimple)
+    template<>
+    struct EnumBounds<ScatteringSimple>
     {
-        return EnumScatteringSimple::Iterator(static_cast<int>(ScatteringSimple::Direct));
-    }
+        static constexpr auto first = ScatteringSimple::Direct;
+        static constexpr auto last = ScatteringSimple::Diffuse;
+    };
 
-    inline EnumScatteringSimple::Iterator end(EnumScatteringSimple)
+    constexpr auto allScatteringSimple()
     {
-        return EnumScatteringSimple::Iterator(static_cast<int>(ScatteringSimple::Diffuse) + 1);
+        return enumValues<ScatteringSimple>();
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // EnergyFlow
+    /// EnergyFlow
     //////////////////////////////////////////////////////////////////////////
 
     enum class EnergyFlow
@@ -202,17 +200,16 @@ namespace FenestrationCommon
         Backward
     };
 
-    class EnumEnergyFlow : public Enum<EnergyFlow>
-    {};
-
-    inline EnumEnergyFlow::Iterator begin(EnumEnergyFlow)
+    template<>
+    struct EnumBounds<EnergyFlow>
     {
-        return EnumEnergyFlow::Iterator(static_cast<int>(EnergyFlow::Forward));
-    }
+        static constexpr auto first = EnergyFlow::Forward;
+        static constexpr auto last = EnergyFlow::Backward;
+    };
 
-    inline EnumEnergyFlow::Iterator end(EnumEnergyFlow)
+    constexpr auto allEnergyFlow()
     {
-        return EnumEnergyFlow::Iterator(static_cast<int>(EnergyFlow::Backward) + 1);
+        return enumValues<EnergyFlow>();
     }
 
     inline EnergyFlow getFlowFromSide(const Side t_Side)
