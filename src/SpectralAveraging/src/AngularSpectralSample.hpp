@@ -1,6 +1,9 @@
 #ifndef ANGULARSPECTRALSAMPLE_H
 #define ANGULARSPECTRALSAMPLE_H
 
+#include "SpectralSampleData.hpp"
+
+
 #include <memory>
 #include <vector>
 
@@ -83,12 +86,14 @@ namespace SpectralAveraging
                            double maxLambda,
                            FenestrationCommon::Property t_Property,
                            FenestrationCommon::Side t_Side,
-                           double t_Angle);
+                           double t_Angle,
+                           MeasurementType mt = MeasurementType::Total);
 
         // Get property at each wavelength
         std::vector<double> getWavelengthProperties(FenestrationCommon::Property t_Property,
                                                     FenestrationCommon::Side t_Side,
-                                                    double t_Angle);
+                                                    double t_Angle,
+                                                    MeasurementType mt = MeasurementType::Total);
 
         std::vector<double> getBandWavelengths() const;
         void setBandWavelengths(const std::vector<double> & wavelengths);

@@ -1,8 +1,11 @@
-#ifndef SPECTRALSAMPLE_H
-#define SPECTRALSAMPLE_H
+#pragma once
+
+#include "SpectralSampleData.hpp"
+
 
 #include <memory>
 #include <vector>
+
 #include <WCECommon.hpp>
 
 namespace SpectralAveraging
@@ -50,12 +53,13 @@ namespace SpectralAveraging
         double getProperty(double minLambda,
                            double maxLambda,
                            FenestrationCommon::Property t_Property,
-                           FenestrationCommon::Side t_Side);
+                           FenestrationCommon::Side t_Side,
+                           MeasurementType mt = MeasurementType::Total);
 
         // Spectral properties over the wavelength range
-        FenestrationCommon::CSeries &
-          getEnergyProperties(FenestrationCommon::Property t_Property,
-                              FenestrationCommon::Side t_Side);
+        FenestrationCommon::CSeries & getEnergyProperties(FenestrationCommon::Property t_Property,
+                                                          FenestrationCommon::Side t_Side,
+                                                          MeasurementType mt = MeasurementType::Total);
 
         // Defining the source of wavelengths to be used with the sample. Wavelengths can be used
         // from measured sample, detector data or can be custom provided.
@@ -67,7 +71,8 @@ namespace SpectralAveraging
         double getEnergy(double minLambda,
                          double maxLambda,
                          FenestrationCommon::Property t_Property,
-                         FenestrationCommon::Side t_Side);
+                         FenestrationCommon::Side t_Side,
+                         MeasurementType mt = MeasurementType::Total);
 
         [[nodiscard]] std::vector<double> getWavelengths() const;
 
@@ -81,7 +86,7 @@ namespace SpectralAveraging
                                          double normalizationCoefficient) = 0;
 
         // It can be single or multiple samples. In any case this should be seen as single set of
-        // wavelengts
+        // wavelengths
         [[nodiscard]] virtual std::vector<double> getWavelengthsFromSample() const = 0;
 
         FenestrationCommon::CSeries m_SourceData;
@@ -92,8 +97,9 @@ namespace SpectralAveraging
 
         // Keep energy for current state of the sample. Energy is calculated for each wavelength.
         FenestrationCommon::CSeries m_IncomingSource;
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
+        std::map<
+          std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, MeasurementType>,
+          FenestrationCommon::CSeries>
           m_EnergySource;
 
         bool m_StateCalculated;
@@ -118,7 +124,8 @@ namespace SpectralAveraging
         // Returns property at each wavelength
         FenestrationCommon::CSeries
           getWavelengthsProperty(FenestrationCommon::Property t_Property,
-                                 FenestrationCommon::Side t_Side);
+                                 FenestrationCommon::Side t_Side,
+                                 MeasurementType mt = MeasurementType::Total);
 
         [[nodiscard]] std::vector<double> getWavelengthsFromSample() const override;
 
@@ -136,8 +143,9 @@ namespace SpectralAveraging
 
         std::shared_ptr<CSpectralSampleData> m_SampleData;
 
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
+        std::map<
+          std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, MeasurementType>,
+          FenestrationCommon::CSeries>
           m_Property;
     };
 
@@ -166,5 +174,3 @@ namespace SpectralAveraging
     };
 
 }   // namespace SpectralAveraging
-
-#endif

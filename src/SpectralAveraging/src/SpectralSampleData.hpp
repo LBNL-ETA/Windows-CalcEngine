@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <array>
+
 #include <WCECommon.hpp>
 
 namespace FenestrationCommon
@@ -22,6 +24,15 @@ namespace SpectralAveraging
         Diffuse,
         Total
     };
+
+    // T/R exist for all three
+    constexpr std::array<MeasurementType, 3> kTRMeasurements{
+        MeasurementType::Direct, MeasurementType::Diffuse, MeasurementType::Total};
+
+    inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s, MeasurementType m)
+    {
+        return std::make_tuple(p, s, m);
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     /// MeasuredRow

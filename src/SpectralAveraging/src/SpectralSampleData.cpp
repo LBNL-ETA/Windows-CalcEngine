@@ -11,17 +11,8 @@ namespace SpectralAveraging
 {
     namespace
     {
-        // T/R exist for all three
-        constexpr std::array<MeasurementType, 3> kTRMeasurements{
-          MeasurementType::Direct, MeasurementType::Diffuse, MeasurementType::Total};
-
         // Abs exists only for Total
         constexpr std::array<MeasurementType, 1> kAbsMeasurements{MeasurementType::Total};
-
-        auto key(Property p, Side s, MeasurementType m)
-        {
-            return std::make_tuple(p, s, m);
-        }
 
         // Data coming should already been checked. However, this is just additional prevention
         double clamp01(double v)
@@ -183,6 +174,8 @@ namespace SpectralAveraging
     CSeries & CSpectralSampleData::properties(Property prop, Side side, MeasurementType type)
     {
         calculateProperties();
+        if (prop == Property::Abs && type != MeasurementType::Total)
+            type = MeasurementType::Total;     // redirect
         auto aSide = getSide(side, Flipped());
         return m_Property.at(key(prop, aSide, type));
     }
