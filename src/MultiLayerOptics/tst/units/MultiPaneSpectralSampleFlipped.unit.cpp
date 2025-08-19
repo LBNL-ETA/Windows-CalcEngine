@@ -101,7 +101,7 @@ protected:
           {0.700, {0.8020, 0.8020, 0.0720, 0.0720}, {0.0, 0.0, 0.0, 0.0}},
         });
 
-        sampleMeasurements1->Filpped(true);
+        sampleMeasurements1->Flipped(true);
 
         std::shared_ptr<CMultiPaneSampleData> multiSample =
           std::make_shared<CMultiPaneSampleData>();

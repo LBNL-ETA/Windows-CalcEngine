@@ -343,7 +343,7 @@ namespace SpectralAveraging
 
     void CSpectralSample::Flipped(bool flipped)
     {
-        m_SampleData->Filpped(flipped);
+        m_SampleData->Flipped(flipped);
     }
 
     FenestrationCommon::Limits CSpectralSample::getWavelengthLimits() const

@@ -19,7 +19,7 @@ namespace SpectralAveraging
         return m_Flipped;
     }
 
-    void SampleData::Filpped(bool t_Flipped)
+    void SampleData::Flipped(bool t_Flipped)
     {
         m_Flipped = t_Flipped;
     }
@@ -79,11 +79,10 @@ namespace SpectralAveraging
         }
     }
 
-    CSeries & CSpectralSampleData::properties(FenestrationCommon::Property prop,
-                                              FenestrationCommon::Side side)
+    CSeries & CSpectralSampleData::properties(Property prop, Side side, MeasurementType type)
     {
         calculateProperties();
-        auto aSide = FenestrationCommon::getSide(side, Flipped());
+        auto aSide = getSide(side, Flipped());
         return m_Property.at(std::make_pair(prop, aSide));
     }
 

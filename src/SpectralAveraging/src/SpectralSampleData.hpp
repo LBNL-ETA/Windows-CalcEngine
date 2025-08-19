@@ -13,6 +13,17 @@ namespace FenestrationCommon
 namespace SpectralAveraging
 {
     ///////////////////////////////////////////////////////////////////////////
+    /// MeasurementType
+    ///////////////////////////////////////////////////////////////////////////
+
+    enum class MeasurementType
+    {
+        Direct,
+        Diffuse,
+        Total
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
     /// MeasuredRow
     ///////////////////////////////////////////////////////////////////////////
 
@@ -42,12 +53,13 @@ namespace SpectralAveraging
 
         virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
         virtual FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
-                                                         FenestrationCommon::Side side) = 0;
+                                                         FenestrationCommon::Side side,
+                                                         MeasurementType type) = 0;
 
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
         [[nodiscard]] bool Flipped() const;
-        void Filpped(bool t_Flipped);
+        void Flipped(bool t_Flipped);
 
     private:
         bool m_Flipped{false};
@@ -75,8 +87,10 @@ namespace SpectralAveraging
                        double t_ReflectanceFront,
                        double t_ReflectanceBack);
 
-        FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
-                                                 FenestrationCommon::Side side) override;
+        FenestrationCommon::CSeries &
+          properties(FenestrationCommon::Property prop,
+                     FenestrationCommon::Side side,
+                     MeasurementType type = MeasurementType::Total) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
@@ -138,4 +152,3 @@ namespace SpectralAveraging
     };
 
 }   // namespace SpectralAveraging
-
