@@ -119,8 +119,7 @@ namespace MultiLayerOptics
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
             m_TotJSC[aSide] =
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
-            FenestrationCommon::EnumPropertySimple properties;
-            for(PropertySimple aProperty : properties)
+            for(PropertySimple aProperty : FenestrationCommon::allPropertySimple())
             {
                 m_Tot[{aSide, aProperty}] = CMatrixSeries(
                   m_Lambda.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
@@ -159,8 +158,7 @@ namespace MultiLayerOptics
                         m_CombinedLayerWavelengths[index],
                         layer.getLayerJSC(layerNumber + 1, aSide));
                   }
-                  FenestrationCommon::EnumPropertySimple properties;
-                  for(auto aProperty : properties)
+                  for(auto aProperty : FenestrationCommon::allPropertySimple())
                   {
                       m_Tot.at({aSide, aProperty})
                         .setPropertiesAtIndex(index,

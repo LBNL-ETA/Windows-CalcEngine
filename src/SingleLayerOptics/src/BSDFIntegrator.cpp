@@ -15,8 +15,7 @@ namespace SingleLayerOptics
     {
         for(auto t_Side : allSides())
         {
-            EnumPropertySimple properties;
-            for(auto t_Property : properties)
+            for(auto t_Property : allPropertySimple())
             {
                 m_Matrix[std::make_pair(t_Side, t_Property)] = SquareMatrix(m_DimMatrices);
                 m_DirectHemispherical[std::make_pair(t_Side, t_Property)] = std::vector<double>(m_DimMatrices);
@@ -133,8 +132,7 @@ namespace SingleLayerOptics
         {
             for(auto t_Side : allSides())
             {
-                EnumPropertySimple properties;
-                for(auto t_PropertySimple : properties)
+                for(auto t_PropertySimple : allPropertySimple())
                 {
                     m_DiffDiff(t_Side, t_PropertySimple) =
                       integrate(getMatrix(t_Side, t_PropertySimple));
@@ -155,8 +153,7 @@ namespace SingleLayerOptics
         {
             for(auto t_Side : allSides())
             {
-                EnumPropertySimple properties;
-                for(PropertySimple t_PropertySimple : properties)
+                for(PropertySimple t_PropertySimple : allPropertySimple())
                 {
                     m_DirectHemispherical[{t_Side, t_PropertySimple}] =
                       m_Directions.lambdaVector() * m_Matrix.at({t_Side, t_PropertySimple});

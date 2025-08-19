@@ -189,8 +189,7 @@ namespace MultiLayerOptics
             m_AbsElectricity[aSide] = calculateJSC(aSide, minLambda, maxLambda);
 
             std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
-            FenestrationCommon::EnumPropertySimple properties;
-            for(PropertySimple aProperty : properties)
+            for(PropertySimple aProperty : FenestrationCommon::allPropertySimple())
             {
                 aResults[{aSide, aProperty}] =
                   calculateProperties(aSide, aProperty, minLambda, maxLambda);

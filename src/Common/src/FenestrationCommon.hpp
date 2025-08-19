@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "EnumValues.hpp"
 #include "EnumerationTemplate.hpp"
 
@@ -13,7 +12,7 @@ namespace FenestrationCommon
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // Side
+    /// Side
     //////////////////////////////////////////////////////////////////////////
 
     enum class Side
@@ -25,8 +24,8 @@ namespace FenestrationCommon
     template<>
     struct EnumBounds<Side>
     {
-        static constexpr Side first = Side::Front;
-        static constexpr Side last = Side::Back;
+        static constexpr auto first = Side::Front;
+        static constexpr auto last = Side::Back;
     };
 
     constexpr auto allSides()
@@ -35,7 +34,7 @@ namespace FenestrationCommon
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // Property
+    /// Property
     //////////////////////////////////////////////////////////////////////////
 
     enum class Property
@@ -48,8 +47,8 @@ namespace FenestrationCommon
     template<>
     struct EnumBounds<Property>
     {
-        static constexpr Property first = Property::T;
-        static constexpr Property last = Property::Abs;
+        static constexpr auto first = Property::T;
+        static constexpr auto last = Property::Abs;
     };
 
     constexpr auto allProperties()
@@ -73,7 +72,7 @@ namespace FenestrationCommon
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // WavelengthRange
+    /// WavelengthRange
     //////////////////////////////////////////////////////////////////////////
 
     enum class WavelengthRange
@@ -91,21 +90,20 @@ namespace FenestrationCommon
         double maximum;
     };
 
-    class EnumWavelengthRange : public Enum<WavelengthRange>
-    {};
-
-    inline EnumWavelengthRange::Iterator begin(EnumWavelengthRange)
+    template<>
+    struct EnumBounds<WavelengthRange>
     {
-        return EnumWavelengthRange::Iterator(static_cast<int>(WavelengthRange::Solar));
-    }
+        static constexpr auto first = WavelengthRange::Solar;
+        static constexpr auto last = WavelengthRange::IR;
+    };
 
-    inline EnumWavelengthRange::Iterator end(EnumWavelengthRange)
+    constexpr auto allWavelengthRanges()
     {
-        return EnumWavelengthRange::Iterator(static_cast<int>(WavelengthRange::IR) + 1);
+        return enumValues<WavelengthRange>();
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // PropertySimple
+    /// PropertySimple
     //////////////////////////////////////////////////////////////////////////
 
     // Short version of enum class Property is necessary because in optical routines it is quite
@@ -118,9 +116,21 @@ namespace FenestrationCommon
         R
     };
 
+    template<>
+    struct EnumBounds<PropertySimple>
+    {
+        static constexpr auto first = PropertySimple::T;
+        static constexpr auto last = PropertySimple::R;
+    };
+
+    constexpr auto allPropertySimple()
+    {
+        return enumValues<PropertySimple>();
+    }
+
     inline PropertySimple toPropertySimple(const Property prop)
     {
-        PropertySimple result{PropertySimple::T};
+        auto result{PropertySimple::T};
         if(prop == Property::R)
         {
             result = PropertySimple::R;
@@ -130,25 +140,12 @@ namespace FenestrationCommon
 
     inline Property toProperty(const PropertySimple prop)
     {
-        Property result{Property::T};
+        auto result{Property::T};
         if(prop == PropertySimple::R)
         {
             result = Property::R;
         }
         return result;
-    }
-
-    class EnumPropertySimple : public Enum<PropertySimple>
-    {};
-
-    inline EnumPropertySimple::Iterator begin(EnumPropertySimple)
-    {
-        return EnumPropertySimple::Iterator(static_cast<int>(PropertySimple::T));
-    }
-
-    inline EnumPropertySimple::Iterator end(EnumPropertySimple)
-    {
-        return EnumPropertySimple::Iterator(static_cast<int>(PropertySimple::R) + 1);
     }
 
     enum class Scattering
