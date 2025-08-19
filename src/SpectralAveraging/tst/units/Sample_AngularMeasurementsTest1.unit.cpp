@@ -21,10 +21,10 @@ class Sample_AngularMeasurementsTest1 : public testing::Test
         auto aSolarRadiation = StandardData::solarRadiationASTM_E891_87_Table1();
 
         auto aMeasurements40 = CSpectralSampleData::create({
-          {0.290, 0.10, 0.10, 0.1, 0.1},
-          {0.295, 0.15, 0.15, 0.099, 0.099},
-          {0.300, 0.20, 0.20, 0.098, 0.098},
-          {0.310, 0.25, 0.25, 0.097, 0.097},
+          {0.290, {0.10, 0.10, 0.1, 0.1}, {0.0, 0.0, 0.0, 0.0}},
+          {0.295, {0.15, 0.15, 0.099, 0.099}, {0.0, 0.0, 0.0, 0.0}},
+          {0.300, {0.20, 0.20, 0.098, 0.098}, {0.0, 0.0, 0.0, 0.0}},
+          {0.310, {0.25, 0.25, 0.097, 0.097}, {0.0, 0.0, 0.0, 0.0}},
         });
 
         auto aSample40 = std::make_shared<CSpectralSample>(aMeasurements40, aSolarRadiation);
@@ -38,10 +38,10 @@ class Sample_AngularMeasurementsTest1 : public testing::Test
         auto aSolarRadiation = StandardData::solarRadiationASTM_E891_87_Table1();
 
         auto aMeasurements50 = CSpectralSampleData::create({
-          {0.290, 0.15, 0.15, 0.1, 0.10},
-          {0.295, 0.20, 0.20, 0.098, 0.099},
-          {0.305, 0.25, 0.25, 0.097, 0.098},
-          {0.310, 0.30, 0.30, 0.096, 0.097},
+          {0.290, {0.15, 0.15, 0.1, 0.10}, {0.0, 0.0, 0.0, 0.0}},
+          {0.295, {0.20, 0.20, 0.098, 0.099}, {0.0, 0.0, 0.0, 0.0}},
+          {0.305, {0.25, 0.25, 0.097, 0.098}, {0.0, 0.0, 0.0, 0.0}},
+          {0.310, {0.30, 0.30, 0.096, 0.097}, {0.0, 0.0, 0.0, 0.0}},
         });
 
         auto aSample50 = std::make_shared<CSpectralSample>(aMeasurements50, aSolarRadiation);

@@ -16,13 +16,19 @@ namespace SpectralAveraging
     /// MeasuredRow
     ///////////////////////////////////////////////////////////////////////////
 
+    struct OpticalProperties
+    {
+        double Tf{0};
+        double Tb{0};
+        double Rf{0};
+        double Rb{0};
+    };
+
     struct MeasuredRow
     {
-        double wavelength;
-        double Tf;
-        double Tb;
-        double Rf;
-        double Rb;
+        double wavelength{0};
+        OpticalProperties direct;
+        OpticalProperties diffuse;
     };
 
     ///////////////////////////////////////////////////////////////////////////

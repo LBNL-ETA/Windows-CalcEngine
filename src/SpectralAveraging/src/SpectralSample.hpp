@@ -41,7 +41,7 @@ namespace SpectralAveraging
         // Gets source data. In case wavelengths are referenced to detector or custom
         // wavelength set, it will perform interpolation according to desired settings.
         FenestrationCommon::CSeries & getSourceData();
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         // Setting detector spectral properties for the sample
         void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData);

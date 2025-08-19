@@ -33,7 +33,7 @@ protected:
         // Venetian blind material
         thickness = 0.0001;   // [m]
         auto aMaterial = SingleLayerOptics::Material::nBandMaterial(
-          SpectralSample::WhiteVenetianBlindSlat_31100(), thickness, MaterialType::Monolithic);
+          SpectralSample::NFRC_31100(), thickness, MaterialType::Monolithic);
 
         std::shared_ptr<CBSDFLayer> Layer_Homogeneous =
           CBSDFLayerMaker::getHomogeneousDiffuseLayer(aMaterial, aBSDF);

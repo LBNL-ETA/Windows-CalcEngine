@@ -1,10 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESpectralAveraging.hpp"
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
-
+#include <WCESpectralAveraging.hpp>
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -13,24 +12,21 @@ using namespace SpectralAveraging;
 // Test of calculating BSDF matrices over the entire wavelength range
 class TestSpecularLayerMultiWavelength_102 : public testing::Test
 {
-private:
     std::shared_ptr<CBSDFLayer> m_Layer;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
-        // CSeries aSolarRadiation{
-        //  {0.3000, 0.0}, {0.3050, 3.4}, {0.3100, 15.6}, {0.3150, 41.1}, {0.3200, 71.2}};
-
-        const auto aMeasurements = CSpectralSampleData::create({{0.300, 0.0020, 0.0020, 0.0470, 0.0480},
-                                                                {0.305, 0.0030, 0.0030, 0.0470, 0.0480},
-                                                                {0.310, 0.0090, 0.0090, 0.0470, 0.0480},
-                                                                {0.315, 0.0350, 0.0350, 0.0470, 0.0480},
-                                                                {0.320, 0.1000, 0.1000, 0.0470, 0.0480}});
+        const auto aMeasurements = CSpectralSampleData::create(
+          {{0.300, {0.0020, 0.0020, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.305, {0.0030, 0.0030, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.310, {0.0090, 0.0090, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.315, {0.0350, 0.0350, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.320, {0.1000, 0.1000, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}}});
 
 
-        const auto thickness = 3.048e-3;   // [m]
-        const MaterialType aType = MaterialType::Monolithic;
+        constexpr auto thickness = 3.048e-3;   // [m]
+        constexpr MaterialType aType = MaterialType::Monolithic;
 
         const auto aMaterial = Material::nBandMaterial(aMeasurements, thickness, aType);
 
@@ -44,7 +40,7 @@ public:
     std::shared_ptr<CBSDFLayer> getLayer()
     {
         return m_Layer;
-    };
+    }
 };
 
 TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)

@@ -41,7 +41,7 @@ namespace SingleLayerOptics
                       const std::shared_ptr<ICellDescription> & t_Cell,
                       double rotation = 0);
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
 
         void setBandWavelengths(const std::vector<double> & wavelengths) override;
 

@@ -178,7 +178,7 @@ namespace SpectralAveraging
         return aAngular;
     }
 
-    void CAngularMeasurements::setSourceData(CSeries & t_SourceData)
+    void CAngularMeasurements::setSourceData(const CSeries & t_SourceData)
     {
         for(size_t i = 0; i < m_Measurements.size(); i++)
         {
@@ -188,7 +188,7 @@ namespace SpectralAveraging
         }
     }
 
-    FenestrationCommon::Limits CAngularMeasurements::getWavelengthLimits() const
+    Limits CAngularMeasurements::getWavelengthLimits() const
     {
         return {m_CommonWavelengths[0], m_CommonWavelengths[m_CommonWavelengths.size() - 1]};
     }

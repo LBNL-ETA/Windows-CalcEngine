@@ -75,7 +75,7 @@ namespace SingleLayerOptics
         m_BSDFLayer = aMaker.getLayer();
     }
 
-    void CScatteringLayer::setSourceData(CSeries & t_SourceData) const
+    void CScatteringLayer::setSourceData(const CSeries & t_SourceData) const
     {
         if(m_BSDFLayer != nullptr)
         {

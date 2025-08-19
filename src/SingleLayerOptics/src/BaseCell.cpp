@@ -20,7 +20,7 @@ namespace SingleLayerOptics
         m_CellRotation(rotation)
     {}
 
-    void CBaseCell::setSourceData(CSeries & t_SourceData)
+    void CBaseCell::setSourceData(const CSeries & t_SourceData)
     {
         m_Material->setSourceData(t_SourceData);
     }

@@ -75,7 +75,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void CVenetianCell::setSourceData(CSeries & t_SourceData)
+    void CVenetianCell::setSourceData(const CSeries & t_SourceData)
     {
         CBaseCell::setSourceData(t_SourceData);
         generateVenetianEnergy();

@@ -28,7 +28,7 @@ namespace SingleLayerOptics
                   const std::shared_ptr<ICellDescription> & t_CellDescription,
                   double rotation = 0);
 
-        virtual void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        virtual void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         // Direct to direct component of transmitted ray
         // These dir_dir and dir_dir_band functions are returning only direct portion of the

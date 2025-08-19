@@ -60,7 +60,7 @@ namespace MultiLayerOptics
         void addLayer(const SingleLayerOptics::CScatteringLayer & t_Layer,
                       FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back);
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         size_t getNumOfLayers() const;
 

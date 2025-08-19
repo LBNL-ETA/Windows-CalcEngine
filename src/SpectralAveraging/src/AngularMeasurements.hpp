@@ -60,7 +60,7 @@ namespace SpectralAveraging
         std::shared_ptr<CSingleAngularMeasurement> getMeasurements(double const t_Angle);
         // Note that previous function (getMeasurements) needs to do interpolation if user asks for
         // t_Angle that does not exist.So this is where you want to do your interpolation work
-        virtual void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        virtual void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         [[nodiscard]] FenestrationCommon::Limits getWavelengthLimits() const;
 

@@ -133,12 +133,12 @@ namespace SingleLayerOptics
         CMaterial(wavelengthRange.minimum, wavelengthRange.maximum)
     {}
 
-    void CMaterial::setSourceData(CSeries &)
+    void CMaterial::setSourceData(const CSeries &)
     {
         // Default material will not have source data
     }
 
-    void CMaterial::setDetectorData(FenestrationCommon::CSeries &)
+    void CMaterial::setDetectorData(const CSeries &)
     {
         // Default material will not have detector data
     }
@@ -302,14 +302,14 @@ namespace SingleLayerOptics
         m_MaterialVisibleRange(visibleRange)
     {}
 
-    void IMaterialDualBand::setSourceData(CSeries & t_SourceData)
+    void IMaterialDualBand::setSourceData(const CSeries & t_SourceData)
     {
         m_MaterialSolarRange->setSourceData(t_SourceData);
         m_MaterialVisibleRange->setSourceData(t_SourceData);
         createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, ConstantsData::NIRRatio);
     }
 
-    void IMaterialDualBand::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
+    void IMaterialDualBand::setDetectorData(const CSeries & t_DetectorData)
     {
         m_MaterialSolarRange->setDetectorData(t_DetectorData);
         m_MaterialVisibleRange->setDetectorData(t_DetectorData);
@@ -436,12 +436,12 @@ namespace SingleLayerOptics
         }
     }
 
-    void CMaterialSample::setSourceData(CSeries & t_SourceData)
+    void CMaterialSample::setSourceData(const CSeries & t_SourceData)
     {
         m_AngularSample.setSourceData(t_SourceData);
     }
 
-    void CMaterialSample::setDetectorData(FenestrationCommon::CSeries & t_DetectorData)
+    void CMaterialSample::setDetectorData(const CSeries & t_DetectorData)
     {
         m_AngularSample.setDetectorData(t_DetectorData);
     }
@@ -547,7 +547,7 @@ namespace SingleLayerOptics
         }
     }
 
-    void CMaterialMeasured::setSourceData(CSeries & t_SourceData)
+    void CMaterialMeasured::setSourceData(const CSeries & t_SourceData)
     {
         m_AngularMeasurements->setSourceData(t_SourceData);
     }
