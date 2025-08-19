@@ -123,7 +123,7 @@ namespace MultiLayerOptics
               std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
         m_EquivalentLayer = BSDFIntegrator(t_Layer);
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             m_A[aSide] = std::vector<std::vector<double>>();
             m_JSC[aSide] = std::vector<std::vector<double>>();
@@ -187,7 +187,7 @@ namespace MultiLayerOptics
               std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
         m_PropertiesCalculated = false;
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             m_A.at(aSide).clear();
             m_JSC.at(aSide).clear();
@@ -289,7 +289,7 @@ namespace MultiLayerOptics
     {
         for(size_t i = 0; i < numberOfLayers; i++)
         {
-            for(Side aSide : sides())
+            for(Side aSide : allSides())
             {
                 auto AbsFront{m_Layers[i].Abs(aSide)};
                 auto AbsBack{m_Layers[i].Abs(oppositeSide(aSide))};

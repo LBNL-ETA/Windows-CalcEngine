@@ -51,7 +51,7 @@ namespace SpectralAveraging
     CSpectralSampleData::CSpectralSampleData() : SampleData(), m_absCalculated(false)
     {
         // T/R for Direct, Diffuse, Total
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             for(auto m : kTRMeasurements)
             {
@@ -61,7 +61,7 @@ namespace SpectralAveraging
         }
 
         // Abs ONLY for Total
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             m_Property[key(Property::Abs, side, MeasurementType::Total)] = CSeries();
         }
@@ -203,7 +203,7 @@ namespace SpectralAveraging
     void CSpectralSampleData::interpolate(std::vector<double> const & t_Wavelengths)
     {
         // T/R for all measurements
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             for(auto m : kTRMeasurements)
             {
@@ -214,7 +214,7 @@ namespace SpectralAveraging
             }
         }
         // Abs only for Total
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             m_Property[key(Property::Abs, side, MeasurementType::Total)] =
               m_Property.at(key(Property::Abs, side, MeasurementType::Total))
@@ -234,7 +234,7 @@ namespace SpectralAveraging
             return;
 
         // Clear Abs (Total only)
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             m_Property.at(key(Property::Abs, side, MeasurementType::Total)).clear();
         }
@@ -297,7 +297,7 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::cutExtraData(const double minLambda, const double maxLambda)
     {
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             for(auto m : kTRMeasurements)
             {
@@ -305,7 +305,7 @@ namespace SpectralAveraging
                 m_Property.at(key(Property::R, side, m)).cutExtraData(minLambda, maxLambda);
             }
         }
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             m_Property.at(key(Property::Abs, side, MeasurementType::Total))
               .cutExtraData(minLambda, maxLambda);
@@ -333,7 +333,7 @@ namespace SpectralAveraging
     void PhotovoltaicSampleData::cutExtraData(double minLambda, double maxLambda)
     {
         CSpectralSampleData::cutExtraData(minLambda, maxLambda);
-        for(const auto & side : sides())
+        for(const auto & side : allSides())
         {
             m_EQE.at(side).cutExtraData(minLambda, maxLambda);
         }

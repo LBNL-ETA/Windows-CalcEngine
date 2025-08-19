@@ -112,7 +112,7 @@ namespace Tarcog::ISO15099
 
     void CIGUSolidLayer::applyDeflection(double meanDeflection, double maxDeflection)
     {
-        for(auto aSide : FenestrationCommon::sides())
+        for(auto aSide : FenestrationCommon::allSides())
         {
             m_Surface[aSide]->applyDeflection(meanDeflection, maxDeflection);
         }

@@ -13,7 +13,7 @@ namespace SingleLayerOptics
         m_DirectHemisphericalCalculated(false),
         m_DiffuseDiffuseCalculated(false)
     {
-        for(auto t_Side : sides())
+        for(auto t_Side : allSides())
         {
             EnumPropertySimple properties;
             for(auto t_Property : properties)
@@ -131,7 +131,7 @@ namespace SingleLayerOptics
     {
         if(!m_DiffuseDiffuseCalculated)
         {
-            for(auto t_Side : sides())
+            for(auto t_Side : allSides())
             {
                 EnumPropertySimple properties;
                 for(auto t_PropertySimple : properties)
@@ -153,7 +153,7 @@ namespace SingleLayerOptics
     {
         if(!m_DirectHemisphericalCalculated)
         {
-            for(auto t_Side : sides())
+            for(auto t_Side : allSides())
             {
                 EnumPropertySimple properties;
                 for(PropertySimple t_PropertySimple : properties)
@@ -167,7 +167,7 @@ namespace SingleLayerOptics
             const auto size = m_DirectHemispherical[{Side::Front, PropertySimple::T}].size();
             for(size_t i = 0; i < size; ++i)
             {
-                for(auto t_Side : sides())
+                for(auto t_Side : allSides())
                 {
                     m_Abs.at(t_Side).push_back(1.0 - m_DirectHemispherical.at({t_Side, PropertySimple::T})[i]
                                                - m_DirectHemispherical.at({t_Side, PropertySimple::R})[i]);

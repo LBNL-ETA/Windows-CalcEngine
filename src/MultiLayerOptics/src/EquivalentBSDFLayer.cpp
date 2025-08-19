@@ -113,7 +113,7 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculate(const FenestrationCommon::ProgressCallback & callback)
     {
-        for(Side aSide : FenestrationCommon::sides())
+        for(Side aSide : FenestrationCommon::allSides())
         {
             m_TotA[aSide] =
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
@@ -143,7 +143,7 @@ namespace MultiLayerOptics
               // getEquivalentLayerAtWavelength is calculation intensive and it will slow down the
               // execution
               auto layer{getEquivalentLayerAtWavelength(index)};
-              for(auto aSide : FenestrationCommon::sides())
+              for(auto aSide : FenestrationCommon::allSides())
               {
                   for(size_t layerNumber = 0; layerNumber < m_Layer.size(); ++layerNumber)
                   {

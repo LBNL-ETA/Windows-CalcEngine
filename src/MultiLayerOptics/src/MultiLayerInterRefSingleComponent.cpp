@@ -14,7 +14,7 @@ namespace MultiLayerOptics
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     CSurfaceEnergy::CSurfaceEnergy()
     {
-        for(Side t_Side : sides())
+        for(Side t_Side : allSides())
         {
             EnumEnergyFlow flows;
             for(EnergyFlow t_EnergyFlow : flows)
@@ -113,7 +113,7 @@ namespace MultiLayerOptics
         // Even if energy flow comes from one side, it still hits both sides of the layer and
         // this loop calculates energy absorbed at each side
         double absTot = 0;
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             absTot += m_Layers[Index - 1].getProperty(Property::Abs, aSide)
                       * getEnergyToSurface(Index, aSide, aFlow);

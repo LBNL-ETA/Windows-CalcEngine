@@ -58,7 +58,7 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results)
     {
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
             size_t size = aDirections.size();
@@ -81,7 +81,7 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::calculate_dir_dif_wv(size_t wavelengthIndex, BSDFIntegrator & results)
     {
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
 
@@ -110,7 +110,7 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::calc_dir_dir()
     {
-        for(Side t_Side : sides())
+        for(Side t_Side : allSides())
         {
             BSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
             size_t size = aDirections.size();
@@ -133,7 +133,7 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::calc_dir_dir_wv(std::vector<BSDFIntegrator> & results)
     {
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
             size_t size = aDirections.size();
@@ -157,7 +157,7 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::calc_dir_dif()
     {
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
 
@@ -172,7 +172,7 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::calc_dir_dif_wv(std::vector<BSDFIntegrator> & results)
     {
-        for(Side aSide : sides())
+        for(Side aSide : allSides())
         {
             const auto & aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
 

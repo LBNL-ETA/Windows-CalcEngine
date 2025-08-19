@@ -215,7 +215,7 @@ namespace Tarcog::ISO15099
         auto layers = getSolidLayers();
         for(auto & layer : layers)
         {
-            for(auto aSide : FenestrationCommon::sides())
+            for(auto aSide : FenestrationCommon::allSides())
             {
                 aTemperatures.push_back(layer->surfaceTemperature(aSide));
             }
@@ -231,7 +231,7 @@ namespace Tarcog::ISO15099
         auto layers = getSolidLayers();
         for(auto & layer : layers)
         {
-            for(auto aSide : FenestrationCommon::sides())
+            for(auto aSide : FenestrationCommon::allSides())
             {
                 aRadiosities.push_back(layer->J(aSide));
             }
@@ -386,7 +386,7 @@ namespace Tarcog::ISO15099
             auto layers = getSolidLayers();
             for(auto & aLayer : layers)
             {
-                for(auto aSide : FenestrationCommon::sides())
+                for(auto aSide : FenestrationCommon::allSides())
                 {
                     aLayer->initializeStart(aSide, t_Guess[Index]);
                     ++Index;

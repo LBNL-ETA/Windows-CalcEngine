@@ -29,7 +29,7 @@ namespace FenestrationCommon
         static constexpr Side last = Side::Back;
     };
 
-    inline constexpr auto sides()
+    constexpr auto allSides()
     {
         return enumValues<Side>();
     }
@@ -45,17 +45,16 @@ namespace FenestrationCommon
         Abs
     };
 
-    class EnumProperty : public Enum<Property>
-    {};
-
-    inline EnumProperty::Iterator begin(EnumProperty)
+    template<>
+    struct EnumBounds<Property>
     {
-        return EnumProperty::Iterator(static_cast<int>(Property::T));
-    }
+        static constexpr Property first = Property::T;
+        static constexpr Property last = Property::Abs;
+    };
 
-    inline EnumProperty::Iterator end(EnumProperty)
+    constexpr auto allProperties()
     {
-        return EnumProperty::Iterator(static_cast<int>(Property::Abs) + 1);
+        return enumValues<Property>();
     }
 
     inline Side oppositeSide(const Side t_Side)
