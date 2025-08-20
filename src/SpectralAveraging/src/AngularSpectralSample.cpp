@@ -82,7 +82,7 @@ namespace SpectralAveraging
 
 
             // TODO: This does not seem right since sample can require calculations on different
-            // specularity. It is probably that m_AngularData have to
+            // specularity.
             const auto aTSolNormF =
               t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Front);
             const auto aTSolNormB =

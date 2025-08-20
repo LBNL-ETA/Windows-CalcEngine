@@ -295,11 +295,7 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                for(const auto & mt : allMeasurements)
-                {
-                    m_EnergySource[{prop, side}] =
-                      m_Property.at(key(prop, side)) * m_IncomingSource;
-                }
+                m_EnergySource[{prop, side}] = m_Property.at(key(prop, side)) * m_IncomingSource;
             }
         }
     }
