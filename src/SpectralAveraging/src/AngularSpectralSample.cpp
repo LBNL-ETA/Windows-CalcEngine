@@ -58,9 +58,6 @@ namespace SpectralAveraging
 
         if(m_Angle != 0)
         {
-            auto aSourceData = t_SpectralSample->getSourceData();
-
-
             const auto aTf =
               aMeasuredData->properties(Property ::T, Side::Front).interpolate(aWavelengths);
             assert(aTf.size() == aWavelengths.size());
