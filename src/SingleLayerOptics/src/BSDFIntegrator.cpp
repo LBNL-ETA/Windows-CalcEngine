@@ -13,11 +13,9 @@ namespace SingleLayerOptics
         m_DirectHemisphericalCalculated(false),
         m_DiffuseDiffuseCalculated(false)
     {
-        EnumSide sides;
-        for(auto t_Side : sides)
+        for(auto t_Side : allSides())
         {
-            EnumPropertySimple properties;
-            for(auto t_Property : properties)
+            for(auto t_Property : allPropertySimple())
             {
                 m_Matrix[std::make_pair(t_Side, t_Property)] = SquareMatrix(m_DimMatrices);
                 m_DirectHemispherical[std::make_pair(t_Side, t_Property)] = std::vector<double>(m_DimMatrices);
@@ -132,11 +130,9 @@ namespace SingleLayerOptics
     {
         if(!m_DiffuseDiffuseCalculated)
         {
-            EnumSide sides;
-            for(auto t_Side : sides)
+            for(auto t_Side : allSides())
             {
-                EnumPropertySimple properties;
-                for(auto t_PropertySimple : properties)
+                for(auto t_PropertySimple : allPropertySimple())
                 {
                     m_DiffDiff(t_Side, t_PropertySimple) =
                       integrate(getMatrix(t_Side, t_PropertySimple));
@@ -155,11 +151,9 @@ namespace SingleLayerOptics
     {
         if(!m_DirectHemisphericalCalculated)
         {
-            EnumSide sides;
-            for(auto t_Side : sides)
+            for(auto t_Side : allSides())
             {
-                EnumPropertySimple properties;
-                for(PropertySimple t_PropertySimple : properties)
+                for(PropertySimple t_PropertySimple : allPropertySimple())
                 {
                     m_DirectHemispherical[{t_Side, t_PropertySimple}] =
                       m_Directions.lambdaVector() * m_Matrix.at({t_Side, t_PropertySimple});
@@ -170,7 +164,7 @@ namespace SingleLayerOptics
             const auto size = m_DirectHemispherical[{Side::Front, PropertySimple::T}].size();
             for(size_t i = 0; i < size; ++i)
             {
-                for(auto t_Side : sides)
+                for(auto t_Side : allSides())
                 {
                     m_Abs.at(t_Side).push_back(1.0 - m_DirectHemispherical.at({t_Side, PropertySimple::T})[i]
                                                - m_DirectHemispherical.at({t_Side, PropertySimple::R})[i]);

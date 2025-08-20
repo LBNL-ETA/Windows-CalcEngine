@@ -4,11 +4,12 @@
 #include <cmath>
 #include <mutex>
 
+#include <WCECommon.hpp>
+
 #include "AngularSpectralSample.hpp"
 #include "SpectralSampleData.hpp"
 #include "SpectralSample.hpp"
 #include "AngularProperties.hpp"
-#include "WCECommon.hpp"
 
 std::mutex findAngularSample;
 
@@ -25,8 +26,7 @@ namespace SpectralAveraging
       double const t_Angle,
       MaterialType const t_Type,
       double const t_Thickness) :
-        m_Angle(t_Angle),
-        m_Thickness(t_Thickness)
+        m_Angle(t_Angle), m_Thickness(t_Thickness)
     {
         m_AngularData = std::make_shared<CSpectralSampleData>();
         calculateAngularProperties(t_SpectralSample, t_Type);
@@ -80,6 +80,9 @@ namespace SpectralAveraging
             constexpr auto lowLambda = 0.3;
             constexpr auto highLambda = 2.5;
 
+
+            // TODO: This does not seem right since sample can require calculations on different
+            // specularity. It is probably that m_AngularData have to
             const auto aTSolNormF =
               t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Front);
             const auto aTSolNormB =
@@ -122,8 +125,7 @@ namespace SpectralAveraging
 
     CSpectralSampleAngle::CSpectralSampleAngle(std::shared_ptr<CSpectralSample> const & t_Sample,
                                                double const t_Angle) :
-        m_Sample(t_Sample),
-        m_Angle(t_Angle)
+        m_Sample(t_Sample), m_Angle(t_Angle)
     {}
 
     double CSpectralSampleAngle::angle() const
@@ -144,9 +146,7 @@ namespace SpectralAveraging
       std::shared_ptr<CSpectralSample> const & t_SpectralSample,
       double const t_Thickness,
       FenestrationCommon::MaterialType const t_Type) :
-        m_SpectralSampleZero(t_SpectralSample),
-        m_Thickness(t_Thickness),
-        m_Type(t_Type)
+        m_SpectralSampleZero(t_SpectralSample), m_Thickness(t_Thickness), m_Type(t_Type)
     {}
 
     void CAngularSpectralSample::setSourceData(const CSeries & t_SourceData)
@@ -175,7 +175,6 @@ namespace SpectralAveraging
                                                                         Side const t_Side,
                                                                         double const t_Angle)
     {
-
         auto aSample = findSpectralSample(t_Angle);
 
         auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
@@ -191,7 +190,7 @@ namespace SpectralAveraging
     void CAngularSpectralSample::setBandWavelengths(const std::vector<double> & wavelegths)
     {
         m_SpectralSampleZero->setWavelengths(WavelengthSet::Custom, wavelegths);
-        
+
         // All previous spectral properties are calculated with different wavelengths
         m_SpectralProperties.clear();
     }
@@ -227,9 +226,8 @@ namespace SpectralAveraging
             auto aAngularData =
               CAngularSpectralProperties(m_SpectralSampleZero, t_Angle, m_Type, m_Thickness);
 
-            aSample =
-              std::make_shared<CSpectralSample>(aAngularData.properties(),
-                                                m_SpectralSampleZero->getSourceData());
+            aSample = std::make_shared<CSpectralSample>(aAngularData.properties(),
+                                                        m_SpectralSampleZero->getSourceData());
             aSample->assignDetectorAndWavelengths(m_SpectralSampleZero);
             const auto aSpectralSampleAngle =
               std::make_shared<CSpectralSampleAngle>(aSample, t_Angle);

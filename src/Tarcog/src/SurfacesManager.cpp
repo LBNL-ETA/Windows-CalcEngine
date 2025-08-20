@@ -12,8 +12,7 @@ namespace Tarcog::ISO15099
 
     SurfacesManager & SurfacesManager::operator=(const SurfacesManager & t_Layer)
     {
-        FenestrationCommon::EnumSide sides;
-        for(auto aSide : sides)
+        for(auto aSide : FenestrationCommon::allSides())
         {
             const auto aSurface = t_Layer.m_Surface.at(aSide);
             if(aSurface != nullptr)

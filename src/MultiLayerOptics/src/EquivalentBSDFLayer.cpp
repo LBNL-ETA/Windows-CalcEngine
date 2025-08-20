@@ -113,15 +113,13 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculate(const FenestrationCommon::ProgressCallback & callback)
     {
-        FenestrationCommon::EnumSide sides;
-        for(Side aSide : sides)
+        for(Side aSide : FenestrationCommon::allSides())
         {
             m_TotA[aSide] =
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
             m_TotJSC[aSide] =
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
-            FenestrationCommon::EnumPropertySimple properties;
-            for(PropertySimple aProperty : properties)
+            for(PropertySimple aProperty : FenestrationCommon::allPropertySimple())
             {
                 m_Tot[{aSide, aProperty}] = CMatrixSeries(
                   m_Lambda.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
@@ -144,8 +142,7 @@ namespace MultiLayerOptics
               // getEquivalentLayerAtWavelength is calculation intensive and it will slow down the
               // execution
               auto layer{getEquivalentLayerAtWavelength(index)};
-              FenestrationCommon::EnumSide sides;
-              for(auto aSide : sides)
+              for(auto aSide : FenestrationCommon::allSides())
               {
                   for(size_t layerNumber = 0; layerNumber < m_Layer.size(); ++layerNumber)
                   {
@@ -161,8 +158,7 @@ namespace MultiLayerOptics
                         m_CombinedLayerWavelengths[index],
                         layer.getLayerJSC(layerNumber + 1, aSide));
                   }
-                  FenestrationCommon::EnumPropertySimple properties;
-                  for(auto aProperty : properties)
+                  for(auto aProperty : FenestrationCommon::allPropertySimple())
                   {
                       m_Tot.at({aSide, aProperty})
                         .setPropertiesAtIndex(index,

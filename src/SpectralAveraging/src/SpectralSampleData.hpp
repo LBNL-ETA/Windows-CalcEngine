@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <array>
+
 #include <WCECommon.hpp>
 
 namespace FenestrationCommon
@@ -12,6 +14,24 @@ namespace FenestrationCommon
 
 namespace SpectralAveraging
 {
+    ///////////////////////////////////////////////////////////////////////////
+    /// MeasurementType
+    ///////////////////////////////////////////////////////////////////////////
+
+    enum class MeasurementType
+    {
+        Direct,
+        Diffuse
+    };
+
+    constexpr std::array<MeasurementType, 2> allMeasurements{MeasurementType::Direct,
+                                                             MeasurementType::Diffuse};
+
+    inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s, MeasurementType m)
+    {
+        return std::make_tuple(p, s, m);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     /// MeasuredRow
     ///////////////////////////////////////////////////////////////////////////
@@ -47,7 +67,7 @@ namespace SpectralAveraging
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
         [[nodiscard]] bool Flipped() const;
-        void Filpped(bool t_Flipped);
+        void Flipped(bool t_Flipped);
 
     private:
         bool m_Flipped{false};
@@ -75,8 +95,13 @@ namespace SpectralAveraging
                        double t_ReflectanceFront,
                        double t_ReflectanceBack);
 
-        FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
-                                                 FenestrationCommon::Side side) override;
+        void addRecord(double t_Wavelength,
+                       const OpticalProperties & direct,
+                       const OpticalProperties & diffuse = OpticalProperties());
+
+        FenestrationCommon::CSeries &
+          properties(FenestrationCommon::Property prop,
+                     FenestrationCommon::Side side) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
@@ -88,8 +113,9 @@ namespace SpectralAveraging
         virtual void calculateProperties();
         void reset();
 
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
+        std::map<
+          std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, MeasurementType>,
+          FenestrationCommon::CSeries>
           m_Property;
 
         bool m_absCalculated;
@@ -138,4 +164,3 @@ namespace SpectralAveraging
     };
 
 }   // namespace SpectralAveraging
-

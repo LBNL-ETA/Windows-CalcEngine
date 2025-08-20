@@ -1,15 +1,23 @@
-#include <stdexcept>
-#include <cassert>
+#include <array>
 #include <utility>
 
-#include "SpectralSampleData.hpp"
-#include "WCECommon.hpp"
+#include <WCECommon.hpp>
 
+#include "SpectralSampleData.hpp"
 
 using namespace FenestrationCommon;
 
 namespace SpectralAveraging
 {
+    namespace
+    {
+        // Data coming should already been checked. However, this is just additional prevention
+        double clamp01(double v)
+        {
+            return std::min(1.0, std::max(0.0, v));
+        }
+    }   // namespace
+
     ////////////////////////////////////////////////////////////////////////////
     ////     SampleData
     ////////////////////////////////////////////////////////////////////////////
@@ -19,7 +27,7 @@ namespace SpectralAveraging
         return m_Flipped;
     }
 
-    void SampleData::Filpped(bool t_Flipped)
+    void SampleData::Flipped(bool t_Flipped)
     {
         m_Flipped = t_Flipped;
     }
@@ -30,13 +38,14 @@ namespace SpectralAveraging
 
     CSpectralSampleData::CSpectralSampleData() : SampleData(), m_absCalculated(false)
     {
-        EnumProperty props;
-        for(const auto & prop : props)
+        // T/R for Direct, Diffuse, Total
+        for(const auto & side : allSides())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(auto m : allMeasurements)
             {
-                m_Property[std::make_pair(prop, side)] = CSeries();
+                m_Property[key(Property::T, side, m)] = CSeries();
+                m_Property[key(Property::R, side, m)] = CSeries();
+                m_Property[key(Property::Abs, side, m)] = CSeries();
             }
         }
     }
@@ -47,14 +56,42 @@ namespace SpectralAveraging
                                         double const t_ReflectanceFront,
                                         double const t_ReflectanceBack)
     {
-        m_Property.at(std::make_pair(Property::T, Side::Front))
+        m_Property.at(key(Property::T, Side::Front, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_TransmittanceFront);
-        m_Property.at(std::make_pair(Property::T, Side::Back))
+        m_Property.at(key(Property::T, Side::Back, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_TransmittanceBack);
-        m_Property.at(std::make_pair(Property::R, Side::Front))
+        m_Property.at(key(Property::R, Side::Front, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_ReflectanceFront);
-        m_Property.at(std::make_pair(Property::R, Side::Back))
+        m_Property.at(key(Property::R, Side::Back, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_ReflectanceBack);
+        reset();
+    }
+
+    void CSpectralSampleData::addRecord(double t_Wavelength,
+                                        const OpticalProperties & direct,
+                                        const OpticalProperties & diffuse)
+    {
+        // --- Direct ---
+        m_Property.at(key(Property::T, Side::Front, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Tf);
+        m_Property.at(key(Property::T, Side::Back, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Tb);
+        m_Property.at(key(Property::R, Side::Front, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Rf);
+        m_Property.at(key(Property::R, Side::Back, MeasurementType::Direct))
+          .addProperty(t_Wavelength, direct.Rb);
+
+        // --- Diffuse ---
+        m_Property.at(key(Property::T, Side::Front, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Tf);
+        m_Property.at(key(Property::T, Side::Back, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Tb);
+        m_Property.at(key(Property::R, Side::Front, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Rf);
+        m_Property.at(key(Property::R, Side::Back, MeasurementType::Diffuse))
+          .addProperty(t_Wavelength, diffuse.Rb);
+
+        // Invalidate absorptance — will be recomputed lazily
         reset();
     }
 
@@ -62,55 +99,76 @@ namespace SpectralAveraging
     CSpectralSampleData::CSpectralSampleData(const std::vector<MeasuredRow> & tValues) :
         CSpectralSampleData()
     {
-        m_Property.at(std::make_pair(Property::T, Side::Front)).clear();
-        m_Property.at(std::make_pair(Property::T, Side::Back)).clear();
-        m_Property.at(std::make_pair(Property::R, Side::Front)).clear();
-        m_Property.at(std::make_pair(Property::R, Side::Back)).clear();
+        for(auto m : allMeasurements)
+        {
+            m_Property.at(key(Property::T, Side::Front, m)).clear();
+            m_Property.at(key(Property::T, Side::Back, m)).clear();
+            m_Property.at(key(Property::R, Side::Front, m)).clear();
+            m_Property.at(key(Property::R, Side::Back, m)).clear();
+        }
+
         for(const auto & val : tValues)
         {
-            m_Property.at(std::make_pair(Property::T, Side::Front))
+            // DIRECT
+            m_Property.at(key(Property::T, Side::Front, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Tf);
-            m_Property.at(std::make_pair(Property::T, Side::Back))
+            m_Property.at(key(Property::T, Side::Back, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Tb);
-            m_Property.at(std::make_pair(Property::R, Side::Front))
+            m_Property.at(key(Property::R, Side::Front, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Rf);
-            m_Property.at(std::make_pair(Property::R, Side::Back))
+            m_Property.at(key(Property::R, Side::Back, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Rb);
+
+            // DIFFUSE
+            m_Property.at(key(Property::T, Side::Front, MeasurementType::Diffuse))
+              .addProperty(val.wavelength, val.diffuse.Tf);
+            m_Property.at(key(Property::T, Side::Back, MeasurementType::Diffuse))
+              .addProperty(val.wavelength, val.diffuse.Tb);
+            m_Property.at(key(Property::R, Side::Front, MeasurementType::Diffuse))
+              .addProperty(val.wavelength, val.diffuse.Rf);
+            m_Property.at(key(Property::R, Side::Back, MeasurementType::Diffuse))
+              .addProperty(val.wavelength, val.diffuse.Rb);
         }
+
+        reset();
     }
 
-    CSeries & CSpectralSampleData::properties(FenestrationCommon::Property prop,
-                                              FenestrationCommon::Side side)
+    CSeries & CSpectralSampleData::properties(Property prop, Side side)
     {
         calculateProperties();
-        auto aSide = FenestrationCommon::getSide(side, Flipped());
-        return m_Property.at(std::make_pair(prop, aSide));
+        auto aSide = getSide(side, Flipped());
+        return m_Property.at(key(prop, aSide, MeasurementType::Direct));
     }
 
     std::vector<double> CSpectralSampleData::getWavelengths() const
     {
-        return m_Property.at(std::make_pair(Property::T, Side::Front)).getXArray();
+        const auto & s = m_Property.at(key(Property::T, Side::Front, MeasurementType::Direct));
+        return s.size() ? s.getXArray() : std::vector<double>{};
     }
 
-    FenestrationCommon::Limits CSpectralSampleData::getWavelengthLimits() const
+    Limits CSpectralSampleData::getWavelengthLimits() const
     {
-        const auto wl{getWavelengths()};
-        return {wl[0], wl[wl.size() - 1]};
+        const auto wl = getWavelengths();
+        return wl.empty() ? Limits{0.0, 0.0} : Limits{wl.front(), wl.back()};
     }
 
     // Interpolate current sample data to new wavelengths set
     void CSpectralSampleData::interpolate(std::vector<double> const & t_Wavelengths)
     {
-        EnumProperty props;
-        for(const auto & prop : props)
+        // T/R for all measurements
+        for(const auto & side : allSides())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(auto m : allMeasurements)
             {
-                m_Property[std::make_pair(prop, side)] =
-                  m_Property.at(std::make_pair(prop, side)).interpolate(t_Wavelengths);
+                m_Property[key(Property::T, side, m)] =
+                  m_Property.at(key(Property::T, side, m)).interpolate(t_Wavelengths);
+                m_Property[key(Property::R, side, m)] =
+                  m_Property.at(key(Property::R, side, m)).interpolate(t_Wavelengths);
+                m_Property[key(Property::Abs, side, m)] =
+                  m_Property.at(key(Property::Abs, side, m)).interpolate(t_Wavelengths);
             }
         }
+        reset();
     }
 
     void CSpectralSampleData::reset()
@@ -120,27 +178,58 @@ namespace SpectralAveraging
 
     void CSpectralSampleData::calculateProperties()
     {
-        if(!m_absCalculated)
+        if(m_absCalculated)
+            return;
+
+        // Clear Abs (Total only)
+        for(const auto & side : allSides())
         {
-            m_Property.at(std::make_pair(Property::Abs, Side::Front)).clear();
-            m_Property.at(std::make_pair(Property::Abs, Side::Back)).clear();
-
-            const auto wv = m_Property.at(std::make_pair(Property::T, Side::Front)).getXArray();
-
-            for(size_t i = 0; i < wv.size(); ++i)
-            {
-                auto RFrontSide = Flipped() ? Side::Back : Side::Front;
-                auto RBackSide = Flipped() ? Side::Front : Side::Back;
-                auto value = 1 - m_Property.at(std::make_pair(Property::T, Side::Front))[i].value()
-                             - m_Property.at(std::make_pair(Property::R, RFrontSide))[i].value();
-                m_Property.at(std::make_pair(Property::Abs, Side::Front)).addProperty(wv[i], value);
-
-                value = 1 - m_Property.at(std::make_pair(Property::T, Side::Back))[i].value()
-                        - m_Property.at(std::make_pair(Property::R, RBackSide))[i].value();
-                m_Property.at(std::make_pair(Property::Abs, Side::Back)).addProperty(wv[i], value);
-            }
-            m_absCalculated = true;
+            m_Property.at(key(Property::Abs, side, MeasurementType::Direct)).clear();
+            m_Property.at(key(Property::Abs, side, MeasurementType::Diffuse)).clear();
         }
+
+        // Use Total wavelength grid
+        const auto wv =
+          m_Property.at(key(Property::T, Side::Front, MeasurementType::Direct)).getXArray();
+
+        // Flip-aware sides for R selection
+        const auto RFrontSide = Flipped() ? Side::Back : Side::Front;
+        const auto RBackSide = Flipped() ? Side::Front : Side::Back;
+
+        const auto & T_F = m_Property.at(key(Property::T, Side::Front, MeasurementType::Direct));
+        const auto & T_B = m_Property.at(key(Property::T, Side::Back, MeasurementType::Direct));
+        const auto & R_F = m_Property.at(key(Property::R, RFrontSide, MeasurementType::Direct));
+        const auto & R_B = m_Property.at(key(Property::R, RBackSide, MeasurementType::Direct));
+
+        const size_t n = T_F.size();
+        if(!n)
+        {
+            m_absCalculated = true;
+            return;
+        }   // nothing to do
+
+        // (Optional) sanity: ensure alignment
+        if(T_B.size() != n || R_F.size() != n || R_B.size() != n)
+        {
+            throw std::runtime_error(
+              "CSpectralSampleData: Total series misaligned for Abs computation.");
+        }
+
+        auto & A_F = m_Property.at(key(Property::Abs, Side::Front, MeasurementType::Direct));
+        auto & A_B = m_Property.at(key(Property::Abs, Side::Back, MeasurementType::Direct));
+
+        for(size_t i = 0; i < n; ++i)
+        {
+            const double wl = wv[i];
+            const double t_f = clamp01(T_F[i].value());
+            const double t_b = clamp01(T_B[i].value());
+            const double r_f = clamp01(R_F[i].value());
+            const double r_b = clamp01(R_B[i].value());
+            A_F.addProperty(wl, clamp01(1.0 - t_f - r_f));
+            A_B.addProperty(wl, clamp01(1.0 - t_b - r_b));
+        }
+
+        m_absCalculated = true;
     }
 
 
@@ -152,17 +241,25 @@ namespace SpectralAveraging
 
     std::shared_ptr<CSpectralSampleData> CSpectralSampleData::create()
     {
-        return CSpectralSampleData::create({});
+        return create({});
     }
 
     void CSpectralSampleData::cutExtraData(const double minLambda, const double maxLambda)
     {
-        EnumSide sides;
-        for(const auto & side : sides)
+        for(const auto & side : allSides())
         {
-            m_Property.at(std::make_pair(Property::T, side)).cutExtraData(minLambda, maxLambda);
-            m_Property.at(std::make_pair(Property::R, side)).cutExtraData(minLambda, maxLambda);
+            for(auto m : allMeasurements)
+            {
+                m_Property.at(key(Property::T, side, m)).cutExtraData(minLambda, maxLambda);
+                m_Property.at(key(Property::R, side, m)).cutExtraData(minLambda, maxLambda);
+            }
         }
+        for(const auto & side : allSides())
+        {
+            m_Property.at(key(Property::Abs, side, MeasurementType::Direct))
+              .cutExtraData(minLambda, maxLambda);
+        }
+        reset();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -179,32 +276,13 @@ namespace SpectralAveraging
         CSpectralSampleData(spectralSampleData),
         m_EQE{{Side::Front, eqeValuesFront}, {Side::Back, eqeValuesBack}}
     {
-        //const auto spectralWl{getWavelengths()};
-        //for(const auto side : EnumSide())
-        //{
-        //    m_EQE[side] = m_EQE.at(side).interpolate(spectralWl);
-        //    const auto eqeWavelengths{m_EQE.at(side).getXArray()};
-        //    if(spectralWl.size() != eqeWavelengths.size())
-        //    {
-        //        throw std::runtime_error("Measured spectral data do not have same amount of data "
-        //                                 "as provided eqe values for the photovoltaic.");
-        //    }
-        //    for(size_t i = 0u; i < spectralWl.size(); ++i)
-        //    {
-        //        if(spectralWl[i] != eqeWavelengths[i])
-        //        {
-        //            throw std::runtime_error("Measured spectral wavelengths are not matching to "
-        //                                     "provided eqe photovoltaic wavelengths.");
-        //        }
-        //    }
-        //}
+
     }
 
     void PhotovoltaicSampleData::cutExtraData(double minLambda, double maxLambda)
     {
         CSpectralSampleData::cutExtraData(minLambda, maxLambda);
-        EnumSide sides;
-        for(const auto & side : sides)
+        for(const auto & side : allSides())
         {
             m_EQE.at(side).cutExtraData(minLambda, maxLambda);
         }

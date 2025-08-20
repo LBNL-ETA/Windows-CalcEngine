@@ -1,6 +1,9 @@
 #ifndef ANGULARSPECTRALSAMPLE_H
 #define ANGULARSPECTRALSAMPLE_H
 
+#include "SpectralSampleData.hpp"
+
+
 #include <memory>
 #include <vector>
 

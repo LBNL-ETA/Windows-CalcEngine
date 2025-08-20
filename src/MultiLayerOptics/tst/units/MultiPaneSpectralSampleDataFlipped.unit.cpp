@@ -54,7 +54,7 @@ protected:
           {0.400, {0.8750, 0.8750, 0.0830, 0.0830}, {0.0, 0.0, 0.0, 0.0}},
         });
 
-        sampleMeasurements1->Filpped(true);
+        sampleMeasurements1->Flipped(true);
 
         m_MultiLayerOptics = std::make_shared<CMultiPaneSampleData>();
         m_MultiLayerOptics->addSample(sampleMeasurements1);

@@ -1,10 +1,10 @@
 #include <stdexcept>
-#include <cassert>
 #include <mutex>
+
+#include <WCECommon.hpp>
 
 #include "SpectralSample.hpp"
 #include "SpectralSampleData.hpp"
-#include "WCECommon.hpp"
 
 std::mutex spectralSampleMutex;
 
@@ -37,14 +37,11 @@ namespace SpectralAveraging
         m_StateCalculated = t_Sample.m_StateCalculated;
         m_WavelengthSet = t_Sample.m_WavelengthSet;
         m_IncomingSource = t_Sample.m_IncomingSource;
-        EnumProperty properties;
-        for(const auto & prop : properties)
+        for(const auto & prop : allProperties())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : allSides())
             {
-                m_EnergySource[std::make_pair(prop, side)] =
-                  t_Sample.m_EnergySource.at(std::make_pair(prop, side));
+                m_EnergySource[{prop, side}] = t_Sample.m_EnergySource.at({prop, side});
             }
         }
 
@@ -115,7 +112,7 @@ namespace SpectralAveraging
                               Side const t_Side)
     {
         calculateState(IntegrationType::Trapezoidal, 1);
-        return m_EnergySource.at(std::make_pair(t_Property, t_Side)).sum(minLambda, maxLambda);
+        return m_EnergySource.at({t_Property, t_Side}).sum(minLambda, maxLambda);
     }
 
     std::vector<double> CSample::getWavelengths() const
@@ -136,16 +133,17 @@ namespace SpectralAveraging
         {
             auto incomingEnergy = m_IncomingSource.sum(minLambda, maxLambda);
             double propertyEnergy =
-              m_EnergySource.at(std::make_pair(t_Property, t_Side)).sum(minLambda, maxLambda);
+              m_EnergySource.at({t_Property, t_Side}).sum(minLambda, maxLambda);
             Prop = propertyEnergy / incomingEnergy;
         }
         return Prop;
     }
 
-    CSeries & CSample::getEnergyProperties(const Property t_Property, const Side t_Side)
+    CSeries &
+      CSample::getEnergyProperties(const Property t_Property, const Side t_Side)
     {
         calculateState(IntegrationType::Trapezoidal, 1);
-        return m_EnergySource.at(std::make_pair(t_Property, t_Side));
+        return m_EnergySource.at({t_Property, t_Side});
     }
 
     size_t CSample::getBandSize() const
@@ -157,13 +155,11 @@ namespace SpectralAveraging
     {
         m_StateCalculated = false;
         m_IncomingSource = CSeries();
-        EnumProperty properties;
-        for(const auto & prop : properties)
+        for(const auto & prop : allProperties())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : allSides())
             {
-                m_EnergySource[std::make_pair(prop, side)] = CSeries();
+                m_EnergySource[{prop, side}] = CSeries();
             }
         }
     }
@@ -194,14 +190,12 @@ namespace SpectralAveraging
                 calculateProperties(integrator, normalizationCoefficient);
 
                 m_IncomingSource = m_IncomingSource.integrate(integrator, normalizationCoefficient);
-                EnumProperty properties;
-                for(const auto & prop : properties)
+                for(const auto & prop : allProperties())
                 {
-                    EnumSide sides;
-                    for(const auto & side : sides)
+                    for(const auto & side : allSides())
                     {
-                        m_EnergySource[std::make_pair(prop, side)] =
-                          m_EnergySource.at(std::make_pair(prop, side))
+                        m_EnergySource[{prop, side}] =
+                          m_EnergySource.at({prop, side})
                             .integrate(integrator, normalizationCoefficient);
                     }
                 }
@@ -224,13 +218,14 @@ namespace SpectralAveraging
             throw std::runtime_error("Sample must have measured data.");
         }
 
-        EnumProperty properties;
-        for(const auto & prop : properties)
+        for(const auto & prop : allProperties())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : allSides())
             {
-                m_Property[std::make_pair(prop, side)] = CSeries();
+                for(const auto & mt : allMeasurements)
+                {
+                    m_Property[key(prop, side, mt)] = CSeries();
+                }
             }
         }
     }
@@ -243,13 +238,14 @@ namespace SpectralAveraging
             throw std::runtime_error("Sample must have measured data.");
         }
 
-        EnumProperty properties;
-        for(const auto & prop : properties)
+        for(const auto & prop : allProperties())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : allSides())
             {
-                m_Property[std::make_pair(prop, side)] = CSeries();
+                for(const auto & mt : allMeasurements)
+                {
+                    m_Property[{prop, side, mt}] = CSeries();
+                }
             }
         }
     }
@@ -266,34 +262,36 @@ namespace SpectralAveraging
         return m_SampleData->getWavelengths();
     }
 
-    CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property, const Side t_Side)
+    CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property,
+                                                    const Side t_Side)
     {
-        std::lock_guard<std::mutex> lock(spectralSampleMutex);
+        std::lock_guard lock(spectralSampleMutex);
         if(!m_StateCalculated)
         {
             calculateState(IntegrationType::Trapezoidal, 1);
         }
 
-        return m_Property.at(std::make_pair(t_Property, t_Side));
+        return m_Property.at(key(t_Property, t_Side, MeasurementType::Direct));
     }
 
-    void CSpectralSample::calculateProperties(FenestrationCommon::IntegrationType integrator,
+    void CSpectralSample::calculateProperties(IntegrationType integrator,
                                               double normalizationCoefficient)
     {
         std::ignore = integrator;
         std::ignore = normalizationCoefficient;
-        EnumProperty properties;
-        for(const auto & prop : properties)
+        for(const auto & prop : allProperties())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : allSides())
             {
-                m_Property[std::make_pair(prop, side)] = m_SampleData->properties(prop, side);
-                // No need to do interpolation if wavelength set is already from the data.
-                if(m_WavelengthSet != WavelengthSet::Data)
+                for(const auto & mt : allMeasurements)
                 {
-                    m_Property[std::make_pair(prop, side)] =
-                      m_Property[std::make_pair(prop, side)].interpolate(m_Wavelengths);
+                    m_Property[key(prop, side, mt)] = m_SampleData->properties(prop, side);
+                    // No need to do interpolation if wavelength set is already from the data.
+                    if(m_WavelengthSet != WavelengthSet::Data)
+                    {
+                        m_Property[key(prop, side, mt)] =
+                          m_Property[key(prop, side, mt)].interpolate(m_Wavelengths);
+                    }
                 }
             }
         }
@@ -304,31 +302,34 @@ namespace SpectralAveraging
         }
 
         // Calculation of energy balances
-        for(const auto & prop : properties)
+        for(const auto & prop : allProperties())
         {
-            EnumSide sides;
-            for(const auto & side : sides)
+            for(const auto & side : allSides())
             {
-                m_EnergySource[std::make_pair(prop, side)] =
-                  m_Property.at(std::make_pair(prop, side)) * m_IncomingSource;
+                for(const auto & mt : allMeasurements)
+                {
+                    m_EnergySource[{prop, side}] =
+                      m_Property.at(key(prop, side, mt)) * m_IncomingSource;
+                }
             }
         }
     }
 
-    void CSpectralSample::calculateState(FenestrationCommon::IntegrationType integrator,
+    void CSpectralSample::calculateState(IntegrationType integrator,
                                          double normalizationCoefficient)
     {
         CSample::calculateState(integrator, normalizationCoefficient);
 
         if(m_SourceData.size() == 0)
         {
-            EnumProperty properties;
-            for(const auto & prop : properties)
+            for(const auto & prop : allProperties())
             {
-                EnumSide sides;
-                for(const auto & side : sides)
+                for(const auto & side : allSides())
                 {
-                    m_Property[{prop, side}] = m_SampleData->properties(prop, side);
+                    for(const auto & mt : allMeasurements)
+                    {
+                        m_Property[{prop, side, mt}] = m_SampleData->properties(prop, side);
+                    }
                 }
             }
 
@@ -343,7 +344,7 @@ namespace SpectralAveraging
 
     void CSpectralSample::Flipped(bool flipped)
     {
-        m_SampleData->Filpped(flipped);
+        m_SampleData->Flipped(flipped);
     }
 
     FenestrationCommon::Limits CSpectralSample::getWavelengthLimits() const
@@ -366,8 +367,7 @@ namespace SpectralAveraging
                                              double normalizationCoefficient)
     {
         CSpectralSample::calculateProperties(integrator, normalizationCoefficient);
-        EnumSide sides;
-        for(const auto & side : sides)
+        for(const auto & side : allSides())
         {
             CSeries eqe{getSample()->eqe(side)};
             eqe = eqe.interpolate(m_Wavelengths);

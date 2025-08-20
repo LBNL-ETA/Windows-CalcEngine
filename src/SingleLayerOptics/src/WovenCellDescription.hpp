@@ -1,5 +1,4 @@
-#ifndef WOVENCELLDESCRIPTION_H
-#define WOVENCELLDESCRIPTION_H
+#pragma once
 
 #include "CellDescription.hpp"
 
@@ -30,5 +29,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

@@ -1,8 +1,11 @@
-#ifndef SPECTRALSAMPLE_H
-#define SPECTRALSAMPLE_H
+#pragma once
+
+#include "SpectralSampleData.hpp"
+
 
 #include <memory>
 #include <vector>
+
 #include <WCECommon.hpp>
 
 namespace SpectralAveraging
@@ -81,7 +84,7 @@ namespace SpectralAveraging
                                          double normalizationCoefficient) = 0;
 
         // It can be single or multiple samples. In any case this should be seen as single set of
-        // wavelengts
+        // wavelengths
         [[nodiscard]] virtual std::vector<double> getWavelengthsFromSample() const = 0;
 
         FenestrationCommon::CSeries m_SourceData;
@@ -136,8 +139,9 @@ namespace SpectralAveraging
 
         std::shared_ptr<CSpectralSampleData> m_SampleData;
 
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
+        std::map<
+          std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, MeasurementType>,
+          FenestrationCommon::CSeries>
           m_Property;
     };
 
@@ -166,5 +170,3 @@ namespace SpectralAveraging
     };
 
 }   // namespace SpectralAveraging
-
-#endif

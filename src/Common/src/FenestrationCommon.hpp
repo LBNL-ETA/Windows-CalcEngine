@@ -1,7 +1,6 @@
 #pragma once
 
-#include <execution>
-
+#include "EnumValues.hpp"
 #include "EnumerationTemplate.hpp"
 
 namespace FenestrationCommon
@@ -13,7 +12,7 @@ namespace FenestrationCommon
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // Side
+    /// Side
     //////////////////////////////////////////////////////////////////////////
 
     enum class Side
@@ -22,21 +21,20 @@ namespace FenestrationCommon
         Back
     };
 
-    class EnumSide : public Enum<Side>
-    {};
-
-    inline EnumSide::Iterator begin(EnumSide)
+    template<>
+    struct EnumBounds<Side>
     {
-        return EnumSide::Iterator(static_cast<int>(Side::Front));
-    }
+        static constexpr auto first = Side::Front;
+        static constexpr auto last = Side::Back;
+    };
 
-    inline EnumSide::Iterator end(EnumSide)
+    constexpr auto allSides()
     {
-        return EnumSide::Iterator(static_cast<int>(Side::Back) + 1);
+        return enumValues<Side>();
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // Property
+    /// Property
     //////////////////////////////////////////////////////////////////////////
 
     enum class Property
@@ -46,17 +44,16 @@ namespace FenestrationCommon
         Abs
     };
 
-    class EnumProperty : public Enum<Property>
-    {};
-
-    inline EnumProperty::Iterator begin(EnumProperty)
+    template<>
+    struct EnumBounds<Property>
     {
-        return EnumProperty::Iterator(static_cast<int>(Property::T));
-    }
+        static constexpr auto first = Property::T;
+        static constexpr auto last = Property::Abs;
+    };
 
-    inline EnumProperty::Iterator end(EnumProperty)
+    constexpr auto allProperties()
     {
-        return EnumProperty::Iterator(static_cast<int>(Property::Abs) + 1);
+        return enumValues<Property>();
     }
 
     inline Side oppositeSide(const Side t_Side)
@@ -75,7 +72,7 @@ namespace FenestrationCommon
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // WavelengthRange
+    /// WavelengthRange
     //////////////////////////////////////////////////////////////////////////
 
     enum class WavelengthRange
@@ -93,21 +90,20 @@ namespace FenestrationCommon
         double maximum;
     };
 
-    class EnumWavelengthRange : public Enum<WavelengthRange>
-    {};
-
-    inline EnumWavelengthRange::Iterator begin(EnumWavelengthRange)
+    template<>
+    struct EnumBounds<WavelengthRange>
     {
-        return EnumWavelengthRange::Iterator(static_cast<int>(WavelengthRange::Solar));
-    }
+        static constexpr auto first = WavelengthRange::Solar;
+        static constexpr auto last = WavelengthRange::IR;
+    };
 
-    inline EnumWavelengthRange::Iterator end(EnumWavelengthRange)
+    constexpr auto allWavelengthRanges()
     {
-        return EnumWavelengthRange::Iterator(static_cast<int>(WavelengthRange::IR) + 1);
+        return enumValues<WavelengthRange>();
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // PropertySimple
+    /// PropertySimple
     //////////////////////////////////////////////////////////////////////////
 
     // Short version of enum class Property is necessary because in optical routines it is quite
@@ -120,9 +116,21 @@ namespace FenestrationCommon
         R
     };
 
+    template<>
+    struct EnumBounds<PropertySimple>
+    {
+        static constexpr auto first = PropertySimple::T;
+        static constexpr auto last = PropertySimple::R;
+    };
+
+    constexpr auto allPropertySimple()
+    {
+        return enumValues<PropertySimple>();
+    }
+
     inline PropertySimple toPropertySimple(const Property prop)
     {
-        PropertySimple result{PropertySimple::T};
+        auto result{PropertySimple::T};
         if(prop == Property::R)
         {
             result = PropertySimple::R;
@@ -132,25 +140,12 @@ namespace FenestrationCommon
 
     inline Property toProperty(const PropertySimple prop)
     {
-        Property result{Property::T};
+        auto result{Property::T};
         if(prop == PropertySimple::R)
         {
             result = Property::R;
         }
         return result;
-    }
-
-    class EnumPropertySimple : public Enum<PropertySimple>
-    {};
-
-    inline EnumPropertySimple::Iterator begin(EnumPropertySimple)
-    {
-        return EnumPropertySimple::Iterator(static_cast<int>(PropertySimple::T));
-    }
-
-    inline EnumPropertySimple::Iterator end(EnumPropertySimple)
-    {
-        return EnumPropertySimple::Iterator(static_cast<int>(PropertySimple::R) + 1);
     }
 
     enum class Scattering
@@ -161,21 +156,20 @@ namespace FenestrationCommon
         DirectHemispherical
     };
 
-    class EnumScattering : public Enum<Scattering>
-    {};
-
-    inline EnumScattering::Iterator begin(EnumScattering)
+    template<>
+    struct EnumBounds<Scattering>
     {
-        return EnumScattering::Iterator(static_cast<int>(Scattering::DirectDirect));
-    }
+        static constexpr auto first = Scattering::DirectDirect;
+        static constexpr auto last = Scattering::DirectHemispherical;
+    };
 
-    inline EnumScattering::Iterator end(EnumScattering)
+    constexpr auto allScattering()
     {
-        return EnumScattering::Iterator(static_cast<int>(Scattering::DiffuseDiffuse) + 1);
+        return enumValues<PropertySimple>();
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // ScatteringSimple
+    /// ScatteringSimple
     //////////////////////////////////////////////////////////////////////////
 
     enum class ScatteringSimple
@@ -184,21 +178,20 @@ namespace FenestrationCommon
         Diffuse
     };
 
-    class EnumScatteringSimple : public Enum<ScatteringSimple>
-    {};
-
-    inline EnumScatteringSimple::Iterator begin(EnumScatteringSimple)
+    template<>
+    struct EnumBounds<ScatteringSimple>
     {
-        return EnumScatteringSimple::Iterator(static_cast<int>(ScatteringSimple::Direct));
-    }
+        static constexpr auto first = ScatteringSimple::Direct;
+        static constexpr auto last = ScatteringSimple::Diffuse;
+    };
 
-    inline EnumScatteringSimple::Iterator end(EnumScatteringSimple)
+    constexpr auto allScatteringSimple()
     {
-        return EnumScatteringSimple::Iterator(static_cast<int>(ScatteringSimple::Diffuse) + 1);
+        return enumValues<ScatteringSimple>();
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // EnergyFlow
+    /// EnergyFlow
     //////////////////////////////////////////////////////////////////////////
 
     enum class EnergyFlow
@@ -207,17 +200,16 @@ namespace FenestrationCommon
         Backward
     };
 
-    class EnumEnergyFlow : public Enum<EnergyFlow>
-    {};
-
-    inline EnumEnergyFlow::Iterator begin(EnumEnergyFlow)
+    template<>
+    struct EnumBounds<EnergyFlow>
     {
-        return EnumEnergyFlow::Iterator(static_cast<int>(EnergyFlow::Forward));
-    }
+        static constexpr auto first = EnergyFlow::Forward;
+        static constexpr auto last = EnergyFlow::Backward;
+    };
 
-    inline EnumEnergyFlow::Iterator end(EnumEnergyFlow)
+    constexpr auto allEnergyFlow()
     {
-        return EnumEnergyFlow::Iterator(static_cast<int>(EnergyFlow::Backward) + 1);
+        return enumValues<EnergyFlow>();
     }
 
     inline EnergyFlow getFlowFromSide(const Side t_Side)
