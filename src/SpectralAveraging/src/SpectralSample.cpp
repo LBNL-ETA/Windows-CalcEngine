@@ -41,11 +41,7 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                for(const auto & mt : kTRMeasurements)
-                {
-                    m_EnergySource[key(prop, side, mt)] =
-                      t_Sample.m_EnergySource.at(key(prop, side, mt));
-                }
+                m_EnergySource[{prop, side}] = t_Sample.m_EnergySource.at({prop, side});
             }
         }
 
@@ -113,11 +109,10 @@ namespace SpectralAveraging
     double CSample::getEnergy(double const minLambda,
                               double const maxLambda,
                               Property const t_Property,
-                              Side const t_Side,
-                              MeasurementType mt)
+                              Side const t_Side)
     {
         calculateState(IntegrationType::Trapezoidal, 1);
-        return m_EnergySource.at(key(t_Property, t_Side, mt)).sum(minLambda, maxLambda);
+        return m_EnergySource.at({t_Property, t_Side}).sum(minLambda, maxLambda);
     }
 
     std::vector<double> CSample::getWavelengths() const
@@ -128,8 +123,7 @@ namespace SpectralAveraging
     double CSample::getProperty(double const minLambda,
                                 double const maxLambda,
                                 Property const t_Property,
-                                Side const t_Side,
-                                MeasurementType mt)
+                                Side const t_Side)
     {
         calculateState(IntegrationType::Trapezoidal, 1);
         auto Prop = 0.0;
@@ -139,17 +133,17 @@ namespace SpectralAveraging
         {
             auto incomingEnergy = m_IncomingSource.sum(minLambda, maxLambda);
             double propertyEnergy =
-              m_EnergySource.at(key(t_Property, t_Side, mt)).sum(minLambda, maxLambda);
+              m_EnergySource.at({t_Property, t_Side}).sum(minLambda, maxLambda);
             Prop = propertyEnergy / incomingEnergy;
         }
         return Prop;
     }
 
     CSeries &
-      CSample::getEnergyProperties(const Property t_Property, const Side t_Side, MeasurementType mt)
+      CSample::getEnergyProperties(const Property t_Property, const Side t_Side)
     {
         calculateState(IntegrationType::Trapezoidal, 1);
-        return m_EnergySource.at(key(t_Property, t_Side, mt));
+        return m_EnergySource.at({t_Property, t_Side});
     }
 
     size_t CSample::getBandSize() const
@@ -165,10 +159,7 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                for(const auto & mt : kTRMeasurements)
-                {
-                    m_EnergySource[key(prop, side, mt)] = CSeries();
-                }
+                m_EnergySource[{prop, side}] = CSeries();
             }
         }
     }
@@ -203,12 +194,9 @@ namespace SpectralAveraging
                 {
                     for(const auto & side : allSides())
                     {
-                        for(const auto & mt : kTRMeasurements)
-                        {
-                            m_EnergySource[key(prop, side, mt)] =
-                              m_EnergySource.at(key(prop, side, mt))
-                                .integrate(integrator, normalizationCoefficient);
-                        }
+                        m_EnergySource[{prop, side}] =
+                          m_EnergySource.at({prop, side})
+                            .integrate(integrator, normalizationCoefficient);
                     }
                 }
 
@@ -234,7 +222,7 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                for(const auto & mt : kTRMeasurements)
+                for(const auto & mt : allMeasurements)
                 {
                     m_Property[key(prop, side, mt)] = CSeries();
                 }
@@ -254,9 +242,9 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                for(const auto & mt : kTRMeasurements)
+                for(const auto & mt : allMeasurements)
                 {
-                    m_Property[key(prop, side, mt)] = CSeries();
+                    m_Property[{prop, side, mt}] = CSeries();
                 }
             }
         }
@@ -275,8 +263,7 @@ namespace SpectralAveraging
     }
 
     CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property,
-                                                    const Side t_Side,
-                                                    MeasurementType mt)
+                                                    const Side t_Side)
     {
         std::lock_guard lock(spectralSampleMutex);
         if(!m_StateCalculated)
@@ -284,7 +271,7 @@ namespace SpectralAveraging
             calculateState(IntegrationType::Trapezoidal, 1);
         }
 
-        return m_Property.at(key(t_Property, t_Side, mt));
+        return m_Property.at(key(t_Property, t_Side, MeasurementType::Direct));
     }
 
     void CSpectralSample::calculateProperties(IntegrationType integrator,
@@ -296,9 +283,9 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                for(const auto & mt : kTRMeasurements)
+                for(const auto & mt : allMeasurements)
                 {
-                    m_Property[key(prop, side, mt)] = m_SampleData->properties(prop, side, mt);
+                    m_Property[key(prop, side, mt)] = m_SampleData->properties(prop, side);
                     // No need to do interpolation if wavelength set is already from the data.
                     if(m_WavelengthSet != WavelengthSet::Data)
                     {
@@ -319,16 +306,16 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                for(const auto & mt : kTRMeasurements)
+                for(const auto & mt : allMeasurements)
                 {
-                    m_EnergySource[key(prop, side, mt)] =
+                    m_EnergySource[{prop, side}] =
                       m_Property.at(key(prop, side, mt)) * m_IncomingSource;
                 }
             }
         }
     }
 
-    void CSpectralSample::calculateState(FenestrationCommon::IntegrationType integrator,
+    void CSpectralSample::calculateState(IntegrationType integrator,
                                          double normalizationCoefficient)
     {
         CSample::calculateState(integrator, normalizationCoefficient);
@@ -339,7 +326,7 @@ namespace SpectralAveraging
             {
                 for(const auto & side : allSides())
                 {
-                    for(const auto & mt : kTRMeasurements)
+                    for(const auto & mt : allMeasurements)
                     {
                         m_Property[{prop, side, mt}] = m_SampleData->properties(prop, side);
                     }

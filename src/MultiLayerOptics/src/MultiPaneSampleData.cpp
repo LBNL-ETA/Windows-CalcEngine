@@ -103,7 +103,7 @@ namespace MultiLayerOptics
         {
             for(const auto side : allSides())
             {
-                m_Property[std::make_tuple(prop, side, MeasurementType::Total)] =
+                m_Property[std::make_tuple(prop, side, MeasurementType::Direct)] =
                   aEqivalentLayer.getProperties(prop, side);
             }
         }

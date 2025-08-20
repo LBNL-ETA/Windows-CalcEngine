@@ -21,13 +21,11 @@ namespace SpectralAveraging
     enum class MeasurementType
     {
         Direct,
-        Diffuse,
-        Total
+        Diffuse
     };
 
-    // T/R exist for all three
-    constexpr std::array<MeasurementType, 3> kTRMeasurements{
-        MeasurementType::Direct, MeasurementType::Diffuse, MeasurementType::Total};
+    constexpr std::array<MeasurementType, 2> allMeasurements{MeasurementType::Direct,
+                                                             MeasurementType::Diffuse};
 
     inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s, MeasurementType m)
     {
@@ -64,8 +62,7 @@ namespace SpectralAveraging
 
         virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
         virtual FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
-                                                         FenestrationCommon::Side side,
-                                                         MeasurementType type) = 0;
+                                                         FenestrationCommon::Side side) = 0;
 
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
@@ -104,8 +101,7 @@ namespace SpectralAveraging
 
         FenestrationCommon::CSeries &
           properties(FenestrationCommon::Property prop,
-                     FenestrationCommon::Side side,
-                     MeasurementType type = MeasurementType::Total) override;
+                     FenestrationCommon::Side side) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;

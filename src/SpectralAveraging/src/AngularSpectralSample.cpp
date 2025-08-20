@@ -83,10 +83,10 @@ namespace SpectralAveraging
 
             // TODO: This does not seem right since sample can require calculations on different
             // specularity. It is probably that m_AngularData have to
-            const auto aTSolNormF = t_SpectralSample->getProperty(
-              lowLambda, highLambda, Property::T, Side::Front, MeasurementType::Total);
-            const auto aTSolNormB = t_SpectralSample->getProperty(
-              lowLambda, highLambda, Property::T, Side::Back, MeasurementType::Total);
+            const auto aTSolNormF =
+              t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Front);
+            const auto aTSolNormB =
+              t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Back);
 
             for(size_t i = 0; i < aWavelengths.size(); ++i)
             {
@@ -165,21 +165,19 @@ namespace SpectralAveraging
                                                double const maxLambda,
                                                Property const t_Property,
                                                Side const t_Side,
-                                               double const t_Angle,
-                                               MeasurementType mt)
+                                               double const t_Angle)
     {
         auto aSample = findSpectralSample(t_Angle);
-        return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side, mt);
+        return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side);
     }
 
     std::vector<double> CAngularSpectralSample::getWavelengthProperties(Property const t_Property,
                                                                         Side const t_Side,
-                                                                        double const t_Angle,
-                                                                        MeasurementType mt)
+                                                                        double const t_Angle)
     {
         auto aSample = findSpectralSample(t_Angle);
 
-        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side, mt);
+        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
 
         return aProperties.getYArray();
     }

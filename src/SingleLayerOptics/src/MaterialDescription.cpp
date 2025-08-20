@@ -451,12 +451,8 @@ namespace SingleLayerOptics
                                         const CBeamDirection & t_IncomingDirection,
                                         const CBeamDirection &) const
     {
-        return m_AngularSample.getProperty(m_MinLambda,
-                                           m_MaxLambda,
-                                           t_Property,
-                                           t_Side,
-                                           t_IncomingDirection.theta(),
-                                           MeasurementType::Total);
+        return m_AngularSample.getProperty(
+          m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
     }
 
     std::vector<double>
@@ -480,8 +476,8 @@ namespace SingleLayerOptics
         }
 
         // Perform the calculation
-        auto result = m_AngularSample.getWavelengthProperties(
-          t_Property, t_Side, t_IncomingDirection.theta(), MeasurementType::Total);
+        auto result =
+          m_AngularSample.getWavelengthProperties(t_Property, t_Side, t_IncomingDirection.theta());
 
         // Store the result in the cache
         m_Cache[key] = result;
@@ -565,8 +561,7 @@ namespace SingleLayerOptics
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
           m_AngularMeasurements->getMeasurements(t_IncomingDirection.theta());
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
-        return aSample->getProperty(
-          m_MinLambda, m_MaxLambda, t_Property, t_Side, MeasurementType::Total);
+        return aSample->getProperty(m_MinLambda, m_MaxLambda, t_Property, t_Side);
     }
 
 
@@ -580,8 +575,7 @@ namespace SingleLayerOptics
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
           m_AngularMeasurements->getMeasurements(t_IncomingDirection.theta());
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
-        auto aProperties =
-          aSample->getWavelengthsProperty(t_Property, t_Side, MeasurementType::Total);
+        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
 
         std::vector<double> aValues;
 
