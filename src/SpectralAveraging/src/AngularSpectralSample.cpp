@@ -82,7 +82,7 @@ namespace SpectralAveraging
 
 
             // TODO: This does not seem right since sample can require calculations on different
-            // specularity. It is probably that m_AngularData have to
+            // specularity.
             const auto aTSolNormF =
               t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Front);
             const auto aTSolNormB =
@@ -104,6 +104,7 @@ namespace SpectralAveraging
                 auto aFrontProperties = aFrontFactory.getAngularProperties(aSurfaceType);
                 auto aBackProperties = aBackFactory.getAngularProperties(aSurfaceType);
 
+                // TODO: Not clear if angular for diffuse are needed
                 const auto Tfangle = aFrontProperties->transmittance(m_Angle, ww);
                 const auto Tbangle = aBackProperties->transmittance(m_Angle, ww);
                 const auto Rfangle = aFrontProperties->reflectance(m_Angle, ww);

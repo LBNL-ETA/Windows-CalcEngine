@@ -56,9 +56,8 @@ namespace SpectralAveraging
                            FenestrationCommon::Side t_Side);
 
         // Spectral properties over the wavelength range
-        FenestrationCommon::CSeries &
-          getEnergyProperties(FenestrationCommon::Property t_Property,
-                              FenestrationCommon::Side t_Side);
+        FenestrationCommon::CSeries & getEnergyProperties(FenestrationCommon::Property t_Property,
+                                                          FenestrationCommon::Side t_Side);
 
         // Defining the source of wavelengths to be used with the sample. Wavelengths can be used
         // from measured sample, detector data or can be custom provided.
@@ -119,9 +118,8 @@ namespace SpectralAveraging
         std::shared_ptr<CSpectralSampleData> getMeasuredData();
 
         // Returns property at each wavelength
-        FenestrationCommon::CSeries
-          getWavelengthsProperty(FenestrationCommon::Property t_Property,
-                                 FenestrationCommon::Side t_Side);
+        FenestrationCommon::CSeries getWavelengthsProperty(FenestrationCommon::Property t_Property,
+                                                           FenestrationCommon::Side t_Side);
 
         [[nodiscard]] std::vector<double> getWavelengthsFromSample() const override;
 
@@ -139,9 +137,8 @@ namespace SpectralAveraging
 
         std::shared_ptr<CSpectralSampleData> m_SampleData;
 
-        std::map<
-          std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, MeasurementType>,
-          FenestrationCommon::CSeries>
+        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
+                 FenestrationCommon::CSeries>
           m_Property;
     };
 

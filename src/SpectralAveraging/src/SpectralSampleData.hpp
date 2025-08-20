@@ -27,9 +27,16 @@ namespace SpectralAveraging
     constexpr std::array<MeasurementType, 2> allMeasurements{MeasurementType::Direct,
                                                              MeasurementType::Diffuse};
 
-    inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s, MeasurementType m)
+    inline auto
+      key(FenestrationCommon::PropertySimple p, FenestrationCommon::Side s, MeasurementType m)
     {
         return std::make_tuple(p, s, m);
+    }
+
+    inline auto
+        key(FenestrationCommon::Property p, FenestrationCommon::Side s)
+    {
+        return std::make_pair(p, s);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -61,8 +68,8 @@ namespace SpectralAveraging
         virtual ~SampleData() = default;
 
         virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
-        virtual FenestrationCommon::CSeries & properties(FenestrationCommon::Property prop,
-                                                         FenestrationCommon::Side side) = 0;
+        virtual FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
+                                                       FenestrationCommon::Side side) = 0;
 
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
@@ -99,9 +106,8 @@ namespace SpectralAveraging
                        const OpticalProperties & direct,
                        const OpticalProperties & diffuse = OpticalProperties());
 
-        FenestrationCommon::CSeries &
-          properties(FenestrationCommon::Property prop,
-                     FenestrationCommon::Side side) override;
+        FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
+                                               FenestrationCommon::Side side) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
@@ -110,15 +116,10 @@ namespace SpectralAveraging
         void cutExtraData(double minLambda, double maxLambda) override;
 
     protected:
-        virtual void calculateProperties();
-        void reset();
-
         std::map<
-          std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, MeasurementType>,
+          std::tuple<FenestrationCommon::PropertySimple, FenestrationCommon::Side, MeasurementType>,
           FenestrationCommon::CSeries>
           m_Property;
-
-        bool m_absCalculated;
     };
 
     ///////////////////////////////////////////////////////////////////////////
