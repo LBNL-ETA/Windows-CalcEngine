@@ -44,10 +44,10 @@ namespace MultiLayerOptics
 
     void CMultiPaneSampleData::calculateProperties()
     {
-        if(!m_absCalculated)
+        if(!m_Calculated)
         {
             calculateEquivalentProperties();
-            m_absCalculated = true;
+            m_Calculated = true;
         }
     }
 
@@ -99,14 +99,15 @@ namespace MultiLayerOptics
                                    (*it)->properties(Property ::R, Side::Back));
         }
 
-        for(const auto & prop : allProperties())
-        {
-            for(const auto side : allSides())
-            {
-                m_Property[std::make_tuple(prop, side, MeasurementType::Direct)] =
-                  aEqivalentLayer.getProperties(prop, side);
-            }
-        }
+        // TODO: Check if this is necessary
+        //for(const auto & prop : allPropertySimple())
+        //{
+        //    for(const auto side : allSides())
+        //    {
+        //        m_Property[std::make_tuple(prop, side, MeasurementType::Direct)] =
+        //          aEqivalentLayer.getProperties(prop, side);
+        //    }
+        //}
 
         for(const auto side : allSides())
         {
