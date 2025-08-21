@@ -63,11 +63,11 @@ TEST_F(TestMultiLayer1, TestTripleLayerFront)
     Scattering aScattering = Scattering::DirectDirect;
 
     double Tf =
-      aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
+      aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::T, aSide, aScattering);
     EXPECT_NEAR(0.000486418, Tf, 1e-6);
 
     double Rf =
-      aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
+      aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::R, aSide, aScattering);
     EXPECT_NEAR(0.040339429, Rf, 1e-6);
 
     ///////////////////////////////////////////////
@@ -75,10 +75,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerFront)
     ///////////////////////////////////////////////
     aScattering = Scattering::DirectDiffuse;
 
-    Tf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
+    Tf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::T, aSide, aScattering);
     EXPECT_NEAR(0.190095209, Tf, 1e-6);
 
-    Rf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
+    Rf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::R, aSide, aScattering);
     EXPECT_NEAR(0.312631104, Rf, 1e-6);
 
     ///////////////////////////////////////////////
@@ -86,10 +86,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerFront)
     ///////////////////////////////////////////////
     aScattering = Scattering::DiffuseDiffuse;
 
-    Tf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
+    Tf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::T, aSide, aScattering);
     EXPECT_NEAR(0.167799034, Tf, 1e-6);
 
-    Rf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
+    Rf = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::R, aSide, aScattering);
     EXPECT_NEAR(0.692483233, Rf, 1e-6);
 }
 
@@ -110,11 +110,11 @@ TEST_F(TestMultiLayer1, TestTripleLayerBack)
     Scattering aScattering = Scattering::DirectDirect;
 
     double Tb =
-      aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
+      aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::T, aSide, aScattering);
     EXPECT_NEAR(0.002173682, Tb, 1e-6);
 
     double Rb =
-      aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
+      aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::R, aSide, aScattering);
     EXPECT_NEAR(0.250041102, Rb, 1e-6);
 
     ///////////////////////////////////////////////
@@ -122,10 +122,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerBack)
     ///////////////////////////////////////////////
     aScattering = Scattering::DirectDiffuse;
 
-    Tb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
+    Tb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::T, aSide, aScattering);
     EXPECT_NEAR(0.219867246, Tb, 1e-6);
 
-    Rb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
+    Rb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::R, aSide, aScattering);
     EXPECT_NEAR(0.316344401, Rb, 1e-6);
 
     ///////////////////////////////////////////////
@@ -133,10 +133,10 @@ TEST_F(TestMultiLayer1, TestTripleLayerBack)
     ///////////////////////////////////////////////
     aScattering = Scattering::DiffuseDiffuse;
 
-    Tb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::T, aSide, aScattering);
+    Tb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::T, aSide, aScattering);
     EXPECT_NEAR(0.284211597, Tb, 1e-6);
 
-    Rb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySimple::R, aSide, aScattering);
+    Rb = aLayer->getPropertySimple(minLambda, maxLambda, PropertySurface::R, aSide, aScattering);
     EXPECT_NEAR(0.395593248, Rb, 1e-6);
 }
 

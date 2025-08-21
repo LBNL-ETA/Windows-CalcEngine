@@ -83,7 +83,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     BSDFIntegrator aLayer = getDoubleLayer()->value();
 
     // Front transmittance
-    auto Tf = aLayer.getMatrix(Side::Front, PropertySimple::T);
+    auto Tf = aLayer.getMatrix(Side::Front, PropertySurface::T);
     size_t matrixSize = Tf.size();
 
     // Test matrix
@@ -109,7 +109,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Front reflectance
-    auto Rf = aLayer.getMatrix(Side::Front, PropertySimple::R);
+    auto Rf = aLayer.getMatrix(Side::Front, PropertySurface::R);
     matrixSize = Rf.size();
 
     EXPECT_EQ(size, matrixSize);
@@ -132,7 +132,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Back Transmittance
-    auto Tb = aLayer.getMatrix(Side::Back, PropertySimple::T);
+    auto Tb = aLayer.getMatrix(Side::Back, PropertySurface::T);
     matrixSize = Tb.size();
 
     EXPECT_EQ(size, matrixSize);
@@ -155,7 +155,7 @@ TEST_F(TestDoubleLayerBSDFPerforated, TestDoubleLayerBSDF)
     }
 
     // Back Reflectance
-    auto Rb = aLayer.getMatrix(Side::Back, PropertySimple::R);
+    auto Rb = aLayer.getMatrix(Side::Back, PropertySurface::R);
     matrixSize = Rb.size();
 
     EXPECT_EQ(size, matrixSize);

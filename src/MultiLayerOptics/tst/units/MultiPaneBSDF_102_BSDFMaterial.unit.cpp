@@ -108,10 +108,10 @@ TEST_F(MultiPaneBSDF_102_BSDFMaterial, TestBSDFMatrixAsInput)
 
     CMultiPaneBSDF & aLayer = getLayer();
 
-    double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::T);
+    double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.05860854, tauDiff, 1e-6);
 
-    double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySimple::R);
+    double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.44433841, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
@@ -123,21 +123,21 @@ TEST_F(MultiPaneBSDF_102_BSDFMaterial, TestBSDFMatrixAsInput)
     double theta = 0;
     double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.13169170, tauHem, 1e-6);
 
-    double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+    double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.06836489, tauDir, 1e-6);
 
     double rhoFrontHem =
-      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.40345532, rhoFrontHem, 1e-6);
 
     double rhoBackHem =
-      aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
+      aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.54623205, rhoBackHem, 1e-6);
 
-    double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+    double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.07926371, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
@@ -149,10 +149,10 @@ TEST_F(MultiPaneBSDF_102_BSDFMaterial, TestBSDFMatrixAsInput)
     theta = 45;
     phi = 78;
 
-    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.06301503, tauHem, 1e-6);
 
-    double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+    double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.40454995, rhoHem, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);

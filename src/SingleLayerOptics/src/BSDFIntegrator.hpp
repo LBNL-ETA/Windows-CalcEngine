@@ -12,7 +12,7 @@ namespace FenestrationCommon
 {
     class SquareMatrix;
     enum class Side;
-    enum class PropertySimple;
+    enum class PropertySurface;
 
 }   // namespace FenestrationCommon
 
@@ -30,10 +30,10 @@ namespace SingleLayerOptics
 
         // Result matrices
         FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
-                                                     FenestrationCommon::PropertySimple t_Property);
+                                                     FenestrationCommon::PropertySurface t_Property);
 
         [[nodiscard]] const FenestrationCommon::SquareMatrix &
-          at(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySimple t_Property) const;
+          at(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySurface t_Property) const;
 
         void setMatrices(const FenestrationCommon::SquareMatrix & t_Tau,
                          const FenestrationCommon::SquareMatrix & t_Rho,
@@ -41,28 +41,28 @@ namespace SingleLayerOptics
 
         // Direct-direct components
         [[nodiscard]] double DirDir(FenestrationCommon::Side t_Side,
-                                    FenestrationCommon::PropertySimple t_Property,
+                                    FenestrationCommon::PropertySurface t_Property,
                                     double t_Theta = 0,
                                     double t_Phi = 0) const;
         [[nodiscard]] double DirDir(FenestrationCommon::Side t_Side,
-                                    FenestrationCommon::PropertySimple t_Property,
+                                    FenestrationCommon::PropertySurface t_Property,
                                     size_t Index) const;
 
         // Directional hemispherical results for every direction in BSDF definition
         std::vector<double> DirHem(FenestrationCommon::Side t_Side,
-                                   FenestrationCommon::PropertySimple t_Property);
+                                   FenestrationCommon::PropertySurface t_Property);
         std::vector<double> Abs(FenestrationCommon::Side t_Side);
 
         // Directional hemispherical results for given Theta and Phi direction
         [[nodiscard]] double DirHem(FenestrationCommon::Side t_Side,
-                                    FenestrationCommon::PropertySimple t_Property,
+                                    FenestrationCommon::PropertySurface t_Property,
                                     double t_Theta,
                                     double t_Phi);
         [[nodiscard]] double Abs(FenestrationCommon::Side t_Side, double t_Theta, double t_Phi);
         [[nodiscard]] double Abs(FenestrationCommon::Side t_Side, size_t Index);
 
         [[nodiscard]] double DiffDiff(FenestrationCommon::Side t_Side,
-                                      FenestrationCommon::PropertySimple t_Property);
+                                      FenestrationCommon::PropertySurface t_Property);
 
         [[nodiscard]] double AbsDiffDiff(FenestrationCommon::Side t_Side);
 
@@ -83,12 +83,12 @@ namespace SingleLayerOptics
         void calcDiffuseDiffuse();
         void calcHemispherical();
 
-        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySurface>,
                  FenestrationCommon::SquareMatrix>
           m_Matrix;
 
         //! Direct-Hemispherical transmittance/reflectance (front/back) for each of the incoming directions
-        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySurface>,
                  std::vector<double>>
           m_DirectHemispherical;
 
@@ -98,7 +98,7 @@ namespace SingleLayerOptics
         bool m_DirectHemisphericalCalculated;
         bool m_DiffuseDiffuseCalculated;
         FenestrationCommon::
-          mmap<double, FenestrationCommon::Side, FenestrationCommon::PropertySimple>
+          mmap<double, FenestrationCommon::Side, FenestrationCommon::PropertySurface>
             m_DiffDiff;
     };
 

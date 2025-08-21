@@ -65,7 +65,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestTric
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
-      FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
+      FenestrationCommon::PropertySurface::T, aSide, FenestrationCommon::Scattering::DirectDirect);
     EXPECT_NEAR(70.406305498022462, T.X, 1e-6);
     EXPECT_NEAR(71.820821122822124, T.Y, 1e-6);
     EXPECT_NEAR(94.292998579387429, T.Z, 1e-6);
@@ -80,7 +80,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestTric
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
     SingleLayerOptics::Trichromatic T = aLayer->getTrichromatic(
-      FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
+      FenestrationCommon::PropertySurface::R, aSide, FenestrationCommon::Scattering::DirectDirect);
     EXPECT_NEAR(6.5758982835767874, T.X, 1e-6);
     EXPECT_NEAR(7.4806100470829309, T.Y, 1e-6);
     EXPECT_NEAR(11.453114017922104, T.Z, 1e-6);
@@ -95,7 +95,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestRGB_
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
     auto rgb = aLayer->getRGB(
-      FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
+      FenestrationCommon::PropertySurface::T, aSide, FenestrationCommon::Scattering::DirectDirect);
     EXPECT_EQ(242, rgb.R);
     EXPECT_EQ(241, rgb.G);
     EXPECT_EQ(255, rgb.B);
@@ -110,7 +110,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestRGB_
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
     auto rgb = aLayer->getRGB(
-      FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
+      FenestrationCommon::PropertySurface::R, aSide, FenestrationCommon::Scattering::DirectDirect);
     EXPECT_EQ(62, rgb.R);
     EXPECT_EQ(89, rgb.G);
     EXPECT_EQ(103, rgb.B);
@@ -125,7 +125,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestCIE_
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
     auto cie = aLayer->getCIE_Lab(
-      FenestrationCommon::PropertySimple::T, aSide, FenestrationCommon::Scattering::DirectDirect);
+      FenestrationCommon::PropertySurface::T, aSide, FenestrationCommon::Scattering::DirectDirect);
     EXPECT_NEAR(87.882273222125605, cie.L, 1e-6);
     EXPECT_NEAR(-3.0076116041811152, cie.a, 1e-6);
     EXPECT_NEAR(2.717350587299272, cie.b, 1e-6);
@@ -140,7 +140,7 @@ TEST_F(TestNFRC_5439_SB70XL_Colors_MultiPaneSpecular_CondensedSpectrum, TestCIE_
     FenestrationCommon::Side aSide = FenestrationCommon::Side::Front;
 
     auto cie = aLayer->getCIE_Lab(
-      FenestrationCommon::PropertySimple::R, aSide, FenestrationCommon::Scattering::DirectDirect);
+      FenestrationCommon::PropertySurface::R, aSide, FenestrationCommon::Scattering::DirectDirect);
     EXPECT_NEAR(32.87690091884874, cie.L, 1e-6);
     EXPECT_NEAR(-8.8825582067682536, cie.a, 1e-6);
     EXPECT_NEAR(-3.0846715755109333, cie.b, 1e-6);

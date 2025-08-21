@@ -174,7 +174,7 @@ namespace MultiLayerOptics
                     {
                         beamEnergy = curLayer.getPropertySimple(curLayer.getMinLambda(),
                                                                 curLayer.getMaxLambda(),
-                                                                PropertySimple::T,
+                                                                PropertySurface::T,
                                                                 oppSide,
                                                                 Scattering::DirectDiffuse,
                                                                 t_Theta,
@@ -185,7 +185,7 @@ namespace MultiLayerOptics
                     // interreflections in the gap or interior/exterior environments
                     double R = curLayer.getPropertySimple(curLayer.getMinLambda(),
                                                           curLayer.getMaxLambda(),
-                                                          PropertySimple::R,
+                                                          PropertySurface::R,
                                                           aSide,
                                                           Scattering::DirectDiffuse,
                                                           t_Theta,
@@ -231,14 +231,14 @@ namespace MultiLayerOptics
                 }
                 const double Rf_bkw = bkwLayer.getPropertySimple(bkwLayer.getMinLambda(),
                                                                  bkwLayer.getMaxLambda(),
-                                                                 PropertySimple::R,
+                                                                 PropertySurface::R,
                                                                  Side::Front,
                                                                  Scattering::DiffuseDiffuse,
                                                                  t_Theta,
                                                                  t_Phi);
                 const double Rb_fwd = fwdLayer.getPropertySimple(fwdLayer.getMinLambda(),
                                                                  fwdLayer.getMaxLambda(),
-                                                                 PropertySimple::R,
+                                                                 PropertySurface::R,
                                                                  Side::Back,
                                                                  Scattering::DiffuseDiffuse,
                                                                  t_Theta,

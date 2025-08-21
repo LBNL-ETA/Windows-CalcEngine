@@ -24,11 +24,11 @@ namespace MultiLayerOptics
         FenestrationCommon::SquareMatrix getMatrix(double minLambda,
                                                    double maxLambda,
                                                    FenestrationCommon::Side t_Side,
-                                                   FenestrationCommon::PropertySimple t_Property);
+                                                   FenestrationCommon::PropertySurface t_Property);
 
         double getPropertySimple(double minLambda,
                                  double maxLambda,
-                                 FenestrationCommon::PropertySimple t_Property,
+                                 FenestrationCommon::PropertySurface t_Property,
                                  FenestrationCommon::Side t_Side,
                                  FenestrationCommon::Scattering t_Scattering,
                                  double t_Theta = 0,
@@ -37,14 +37,14 @@ namespace MultiLayerOptics
         double DirDir(double minLambda,
                       double maxLambda,
                       FenestrationCommon::Side t_Side,
-                      FenestrationCommon::PropertySimple t_Property,
+                      FenestrationCommon::PropertySurface t_Property,
                       double t_Theta,
                       double t_Phi);
 
         double DirDir(double minLambda,
                       double maxLambda,
                       FenestrationCommon::Side t_Side,
-                      FenestrationCommon::PropertySimple t_Property,
+                      FenestrationCommon::PropertySurface t_Property,
                       size_t Index);
 
         // std::vector of layer by layer absorptances for each incoming direction
@@ -88,13 +88,13 @@ namespace MultiLayerOptics
         std::vector<double> DirHem(double minLambda,
                                    double maxLambda,
                                    FenestrationCommon::Side t_Side,
-                                   FenestrationCommon::PropertySimple t_Property);
+                                   FenestrationCommon::PropertySurface t_Property);
 
         // Directional hemispherical results for given Theta and Phi direction
         double DirHem(double minLambda,
                       double maxLambda,
                       FenestrationCommon::Side t_Side,
-                      FenestrationCommon::PropertySimple t_Property,
+                      FenestrationCommon::PropertySurface t_Property,
                       double t_Theta,
                       double t_Phi);
 
@@ -103,14 +103,14 @@ namespace MultiLayerOptics
         double DirDiff(double minLambda,
                        double maxLambda,
                        FenestrationCommon::Side t_Side,
-                       FenestrationCommon::PropertySimple t_Property,
+                       FenestrationCommon::PropertySurface t_Property,
                        double t_Theta,
                        double t_Phi);
 
         double DirHem(double minLambda,
                       double maxLambda,
                       FenestrationCommon::Side t_Side,
-                      FenestrationCommon::PropertySimple t_Property,
+                      FenestrationCommon::PropertySurface t_Property,
                       size_t Index);
 
         double Abs(double minLambda,
@@ -144,7 +144,7 @@ namespace MultiLayerOptics
         double DiffDiff(double minLambda,
                         double maxLambda,
                         FenestrationCommon::Side t_Side,
-                        FenestrationCommon::PropertySimple t_Property);
+                        FenestrationCommon::PropertySurface t_Property);
 
         double AbsDiff(double minLambda,
                        double maxLambda,
@@ -165,7 +165,7 @@ namespace MultiLayerOptics
         double energy(double minLambda,
                       double maxLambda,
                       FenestrationCommon::Side t_Side,
-                      FenestrationCommon::PropertySimple t_Property,
+                      FenestrationCommon::PropertySurface t_Property,
                       double t_Theta,
                       double t_Phi);
 
@@ -182,7 +182,7 @@ namespace MultiLayerOptics
           getWavelengthMatrices(double minLambda,
                                 double maxLambda,
                                 FenestrationCommon::Side t_Side,
-                                FenestrationCommon::PropertySimple t_Property);
+                                FenestrationCommon::PropertySurface t_Property);
 
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
@@ -202,7 +202,7 @@ namespace MultiLayerOptics
 
         FenestrationCommon::SquareMatrix
           calculateProperties(FenestrationCommon::Side aSide,
-                              FenestrationCommon::PropertySimple aProperty,
+                              FenestrationCommon::PropertySurface aProperty,
                               double minLambda,
                               double maxLambda);
         std::vector<std::vector<double>>
@@ -226,7 +226,7 @@ namespace MultiLayerOptics
         CEquivalentBSDFLayer m_EquivalentLayer;
 
         // Wavelength matrices stored after calculation have been performed at given wavelengts
-        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySurface>,
                  std::vector<FenestrationCommon::MatrixAtWavelength>>
           m_WavelengthMatrices;
 

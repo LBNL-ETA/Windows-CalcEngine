@@ -6,7 +6,7 @@
 namespace FenestrationCommon
 {
     enum class Property;
-    enum class PropertySimple;
+    enum class PropertySurface;
     enum class Scattering;
     enum class ScatteringSimple;
 
@@ -35,10 +35,10 @@ namespace SingleLayerOptics
                            const double R_dif_dif);
 
         // Simple property means only transmittance and reflectance
-        double getPropertySimple(const FenestrationCommon::PropertySimple t_Property,
+        double getPropertySimple(const FenestrationCommon::PropertySurface t_Property,
                                  const FenestrationCommon::Scattering t_Scattering) const;
 
-        void setPropertySimple(const FenestrationCommon::PropertySimple t_Property,
+        void setPropertySimple(const FenestrationCommon::PropertySurface t_Property,
                                const FenestrationCommon::Scattering t_Scattering,
                                const double value);
 
@@ -47,7 +47,7 @@ namespace SingleLayerOptics
         double getAbsorptance() const;
 
     private:
-        std::map<std::pair<FenestrationCommon::PropertySimple, FenestrationCommon::Scattering>,
+        std::map<std::pair<FenestrationCommon::PropertySurface, FenestrationCommon::Scattering>,
                  double>
           m_PropertySimple;
         std::map<FenestrationCommon::ScatteringSimple, double> m_Absorptance;

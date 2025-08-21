@@ -64,19 +64,19 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.484803, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.340929, RfDiff, 1e-6);
 
     const double theta = 23;
     const double phi = 198;
 
-    const double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
+    const double tauHem = aResults.DirHem(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.464709, tauHem, 1e-6);
 
-    const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    const auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     const auto correctT{
       Helper::readMatrixFromCSV(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_1_aT.csv")};
@@ -84,7 +84,7 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
     Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
     // Front reflectance
-    const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    const auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     const auto correctR{
       Helper::readMatrixFromCSV(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_1_aRf.csv")};
@@ -99,7 +99,7 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, AtWavelength)
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
     const auto correct{0.484803};
-    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySurface::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);
 }

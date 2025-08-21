@@ -210,7 +210,7 @@ public:
 TEST_F(MultiPaneBSDF_XMLLayer_DualBand_SmallBasis, TestBSDFMatrixAsInput)
 {
     using FenestrationCommon::Side;
-    using FenestrationCommon::PropertySimple;
+    using FenestrationCommon::PropertySurface;
     using FenestrationCommon::ScatteringSimple;
 
     SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
@@ -221,7 +221,7 @@ TEST_F(MultiPaneBSDF_XMLLayer_DualBand_SmallBasis, TestBSDFMatrixAsInput)
     CMultiPaneBSDF & aLayer = getLayer();
 
     auto matrices =
-      aLayer.getWavelengthMatrices(minLambda, maxLambda, Side::Front, PropertySimple::T);
+      aLayer.getWavelengthMatrices(minLambda, maxLambda, Side::Front, PropertySurface::T);
     std::vector<std::pair<double, double>> values;
     for(const auto & [x, matrix] : matrices)
     {

@@ -178,7 +178,6 @@ namespace SpectralAveraging
             {
                 m_IncomingSource = m_SourceData.interpolate(m_Wavelengths);
 
-
                 if(m_DetectorData.size() > 0)
                 {
                     const auto interpolatedDetector = m_DetectorData.interpolate(m_Wavelengths);

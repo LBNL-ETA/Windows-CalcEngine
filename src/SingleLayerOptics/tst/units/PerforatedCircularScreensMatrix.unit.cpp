@@ -12,7 +12,7 @@ namespace
 {
     void processMatrix(SingleLayerOptics::BSDFIntegrator & results,
                        FenestrationCommon::Side side,
-                       FenestrationCommon::PropertySimple property,
+                       FenestrationCommon::PropertySurface property,
                        const std::string & expectedCsvFile,
                        bool updateExpectedResults)
     {
@@ -53,25 +53,25 @@ namespace
 
         processMatrix(results,
                       FenestrationCommon::Side::Front,
-                      FenestrationCommon::PropertySimple::T,
+                      FenestrationCommon::PropertySurface::T,
                       expectedCsvFrontTransmittanceFile,
                       updateExpectedResults);
 
         processMatrix(results,
                       FenestrationCommon::Side::Front,
-                      FenestrationCommon::PropertySimple::R,
+                      FenestrationCommon::PropertySurface::R,
                       expectedCsvFrontReflectanceFile,
                       updateExpectedResults);
 
         processMatrix(results,
                       FenestrationCommon::Side::Back,
-                      FenestrationCommon::PropertySimple::T,
+                      FenestrationCommon::PropertySurface::T,
                       expectedCsvBackTransmittanceFile,
                       updateExpectedResults);
 
         processMatrix(results,
                       FenestrationCommon::Side::Back,
-                      FenestrationCommon::PropertySimple::R,
+                      FenestrationCommon::PropertySurface::R,
                       expectedCsvBackReflectanceFile,
                       updateExpectedResults);
     }

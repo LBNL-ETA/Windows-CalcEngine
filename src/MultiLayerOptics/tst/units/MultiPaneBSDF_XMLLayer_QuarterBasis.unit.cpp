@@ -280,7 +280,7 @@ public:
 TEST_F(MultiPaneBSDF_XMLLayer_QuarterBasis, TestBSDFMatrixAsInput)
 {
     using FenestrationCommon::Side;
-    using FenestrationCommon::PropertySimple;
+    using FenestrationCommon::PropertySurface;
     using FenestrationCommon::ScatteringSimple;
 
     SCOPED_TRACE("Begin Test: Specular layer - BSDF.");
@@ -293,15 +293,15 @@ TEST_F(MultiPaneBSDF_XMLLayer_QuarterBasis, TestBSDFMatrixAsInput)
     double theta = 0;
     double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::T, theta, phi);
+    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.793118, tauHem, 1e-6);
 
     double rhoFrontHem =
-      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySimple::R, theta, phi);
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.011190, rhoFrontHem, 1e-6);
 
     double rhoBackHem =
-      aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySimple::R, theta, phi);
+      aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.017118, rhoBackHem, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);

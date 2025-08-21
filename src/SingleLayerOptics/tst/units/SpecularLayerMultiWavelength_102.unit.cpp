@@ -59,7 +59,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -77,7 +77,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {
       0.61134,  0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508,
@@ -97,7 +97,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -115,7 +115,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.661507, 0.661507, 0.661507, 0.661507, 0.661507, 0.661507,
                       0.661507, 0.661507, 0.659001, 0.659001, 0.659001, 0.659001, 0.659001,
@@ -134,7 +134,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -152,7 +152,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.661498, 0.661498, 0.661498, 0.661498, 0.661498, 0.661498,
                       0.661498, 0.661498, 0.658976, 0.658976, 0.658976, 0.658976, 0.658976,
@@ -171,7 +171,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -189,7 +189,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.661398, 0.661398, 0.661398, 0.661398, 0.661398, 0.661398,
                       0.661398, 0.661398, 0.658665, 0.658665, 0.658665, 0.658665, 0.658665,
@@ -208,7 +208,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 5
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[4].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[4].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -226,7 +226,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[4].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[4].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.660889, 0.660889, 0.660889, 0.660889, 0.660889, 0.660889,
                       0.660889, 0.660889, 0.657004, 0.657004, 0.657004, 0.657004, 0.657004,

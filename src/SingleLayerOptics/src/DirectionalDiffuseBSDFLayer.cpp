@@ -35,8 +35,8 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
 
-        auto & tau = m_Results.getMatrix(aSide, PropertySimple::T);
-        auto & Rho = m_Results.getMatrix(aSide, PropertySimple::R);
+        auto & tau = m_Results.getMatrix(aSide, PropertySurface::T);
+        auto & Rho = m_Results.getMatrix(aSide, PropertySurface::R);
 
         const auto & jDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
 
@@ -79,8 +79,8 @@ namespace SingleLayerOptics
             const size_t numWV = aTau.size();
             for(size_t j = 0; j < numWV; ++j)
             {
-                auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
-                auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
+                auto & tau = results[j].getMatrix(aSide, PropertySurface::T);
+                auto & rho = results[j].getMatrix(aSide, PropertySurface::R);
                 tau(outgoingDirectionIndex, incomingDirectionIndex) +=
                   aTau[j]
                   * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
@@ -114,8 +114,8 @@ namespace SingleLayerOptics
             auto Ref =
               aCell->R_dir_dif_by_wavelength(aSide, incomingDirection, oDirection, wavelengthIndex);
 
-            auto & tau = results.getMatrix(aSide, PropertySimple::T);
-            auto & rho = results.getMatrix(aSide, PropertySimple::R);
+            auto & tau = results.getMatrix(aSide, PropertySurface::T);
+            auto & rho = results.getMatrix(aSide, PropertySurface::R);
 
             tau(outgoingDirectionIndex, incomingDirectionIndex) +=
               aTau * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);

@@ -92,7 +92,7 @@ namespace SingleLayerOptics
 
         double getPropertySimple(double minLambda,
                                  double maxLambda,
-                                 FenestrationCommon::PropertySimple t_Property,
+                                 FenestrationCommon::PropertySurface t_Property,
                                  FenestrationCommon::Side t_Side,
                                  FenestrationCommon::Scattering t_Scattering,
                                  double t_Theta = 0,

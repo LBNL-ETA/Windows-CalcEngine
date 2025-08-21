@@ -72,7 +72,7 @@ TEST_F(MultiPaneScattered_21515, TestSpecular1)
     for(const auto & theta : thetaAngles)
     {
         results.push_back(aLayer.getPropertySimple(
-          minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi));
+          minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi));
     }
 
 

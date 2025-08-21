@@ -588,18 +588,18 @@ TEST_F(TestSpecularAngularLayer_102, TestSpecular1)
 
     BSDFIntegrator aResults = aLayer->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.64541405979702648, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.272951100863078, RfDiff, 1e-6);
 
     constexpr double theta = 35;
     constexpr double phi = 58;
 
-    double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
+    double tauHem = aResults.DirHem(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.780630538026433, tauHem, 1e-6);
 
-    double tauDir = aResults.DirDir(Side::Front, PropertySimple::T, theta, phi);
+    double tauDir = aResults.DirDir(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.780630538026433, tauDir, 1e-6);
 }

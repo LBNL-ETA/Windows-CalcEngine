@@ -71,8 +71,8 @@ namespace SingleLayerOptics
                   m_Cell->R_dir_dir_at_wavelength(aSide, aDirection, wavelengthIndex);
                 double Lambda = aDirections[i].lambda();
 
-                auto & tau = results.getMatrix(aSide, PropertySimple::T);
-                auto & rho = results.getMatrix(aSide, PropertySimple::R);
+                auto & tau = results.getMatrix(aSide, PropertySurface::T);
+                auto & rho = results.getMatrix(aSide, PropertySurface::R);
                 tau(i, i) += aTau / Lambda;
                 rho(i, i) += aRho / Lambda;
             }
@@ -146,8 +146,8 @@ namespace SingleLayerOptics
                 size_t numWV = aTau.size();
                 for(size_t j = 0; j < numWV; ++j)
                 {
-                    auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
-                    auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
+                    auto & tau = results[j].getMatrix(aSide, PropertySurface::T);
+                    auto & rho = results[j].getMatrix(aSide, PropertySurface::R);
                     tau(i, i) += aTau[j] / Lambda;
                     rho(i, i) += aRho[j] / Lambda;
                 }

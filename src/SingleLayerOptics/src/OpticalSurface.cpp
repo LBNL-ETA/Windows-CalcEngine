@@ -49,28 +49,28 @@ namespace SingleLayerOptics
             R_dir_dif = 0;
         if(T_dir_dif != 0 && 1 == T_dir_dir)
             T_dir_dif = 0;
-        m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DirectDirect)] = T_dir_dir;
-        m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DirectDirect)] = R_dir_dir;
-        m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DirectDiffuse)] = T_dir_dif;
-        m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DirectDiffuse)] = R_dir_dif;
-        m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DirectHemispherical)] =
+        m_PropertySimple[std::make_pair(PropertySurface::T, Scattering::DirectDirect)] = T_dir_dir;
+        m_PropertySimple[std::make_pair(PropertySurface::R, Scattering::DirectDirect)] = R_dir_dir;
+        m_PropertySimple[std::make_pair(PropertySurface::T, Scattering::DirectDiffuse)] = T_dir_dif;
+        m_PropertySimple[std::make_pair(PropertySurface::R, Scattering::DirectDiffuse)] = R_dir_dif;
+        m_PropertySimple[std::make_pair(PropertySurface::T, Scattering::DirectHemispherical)] =
           T_dir_dif + T_dir_dir;
-        m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DirectHemispherical)] =
+        m_PropertySimple[std::make_pair(PropertySurface::R, Scattering::DirectHemispherical)] =
           R_dir_dif + R_dir_dir;
-        m_PropertySimple[std::make_pair(PropertySimple::T, Scattering::DiffuseDiffuse)] = T_dif_dif;
-        m_PropertySimple[std::make_pair(PropertySimple::R, Scattering::DiffuseDiffuse)] = R_dif_dif;
+        m_PropertySimple[std::make_pair(PropertySurface::T, Scattering::DiffuseDiffuse)] = T_dif_dif;
+        m_PropertySimple[std::make_pair(PropertySurface::R, Scattering::DiffuseDiffuse)] = R_dif_dif;
 
         m_Absorptance[ScatteringSimple::Direct] = 1 - T_dir_dir - T_dir_dif - R_dir_dir - R_dir_dif;
         m_Absorptance[ScatteringSimple::Diffuse] = 1 - T_dif_dif - R_dif_dif;
     }
 
-    double CScatteringSurface::getPropertySimple(const PropertySimple t_Property,
+    double CScatteringSurface::getPropertySimple(const PropertySurface t_Property,
                                                  const Scattering t_Scattering) const
     {
         return m_PropertySimple.at(std::make_pair(t_Property, t_Scattering));
     }
 
-    void CScatteringSurface::setPropertySimple(const PropertySimple t_Property,
+    void CScatteringSurface::setPropertySimple(const PropertySurface t_Property,
                                                const Scattering t_Scattering,
                                                const double value)
     {

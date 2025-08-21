@@ -110,7 +110,7 @@ namespace MultiLayerOptics
 
     double CMultiLayerScattered::getPropertySimple(const double,
                                                    const double,
-                                                   const PropertySimple t_Property,
+                                                   const PropertySurface t_Property,
                                                    const Side t_Side,
                                                    const Scattering t_Scattering,
                                                    const double t_Theta,

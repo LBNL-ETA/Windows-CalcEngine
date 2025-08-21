@@ -7,8 +7,14 @@
 #include <mutex>
 
 #include <WCESpectralAveraging.hpp>
-#include "BeamDirection.hpp"   //  Need to include rather than forward declare to default incoming and outgoing directions to CBeamDirection()
-#include "BSDFDirections.hpp"   //  Needed to have BSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF material was changed to hide members using the pimpl ideom.
+
+//  Need to include rather than forward declare to default incoming and outgoing directions to
+//  CBeamDirection()
+#include "BeamDirection.hpp"
+
+//  Needed to have BSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF
+//  material was changed to hide members using the pimpl idiom.
+#include "BSDFDirections.hpp"
 
 namespace FenestrationCommon
 {

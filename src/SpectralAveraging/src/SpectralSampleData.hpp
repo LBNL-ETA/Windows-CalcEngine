@@ -28,7 +28,7 @@ namespace SpectralAveraging
                                                              MeasurementType::Diffuse};
 
     inline auto
-      key(FenestrationCommon::PropertySimple p, FenestrationCommon::Side s, MeasurementType m)
+      key(FenestrationCommon::PropertySurface p, FenestrationCommon::Side s, MeasurementType m)
     {
         return std::make_tuple(p, s, m);
     }
@@ -130,7 +130,7 @@ namespace SpectralAveraging
 
     protected:
         std::map<
-          std::tuple<FenestrationCommon::PropertySimple, FenestrationCommon::Side, MeasurementType>,
+          std::tuple<FenestrationCommon::PropertySurface, FenestrationCommon::Side, MeasurementType>,
           FenestrationCommon::CSeries>
           m_Property;
     };

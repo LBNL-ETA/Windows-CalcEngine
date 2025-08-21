@@ -47,18 +47,18 @@ TEST_F(TestSpecularLayer_1042, TestSpecular1)
 
     auto aResults = aLayer->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.39638769241019578, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.4012138036375823, RfDiff, 1e-6);
 
     constexpr double theta = 37;
     constexpr double phi = 59;
 
-    const double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
+    const double tauHem = aResults.DirHem(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.43259306056506958, tauHem, 1e-6);
 
-    const double tauDir = aResults.DirDir(Side::Front, PropertySimple::T, theta, phi);
+    const double tauDir = aResults.DirDir(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.43259306056506958, tauDir, 1e-6);
 }

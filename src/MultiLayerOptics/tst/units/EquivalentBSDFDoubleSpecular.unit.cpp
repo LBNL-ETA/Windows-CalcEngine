@@ -59,7 +59,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     std::shared_ptr<CEquivalentBSDFLayerSingleBand> aLayer = getLayer();
 
     // Transmittance Front side
-    SquareMatrix Tf = aLayer->getMatrix(Side::Front, PropertySimple::T);
+    SquareMatrix Tf = aLayer->getMatrix(Side::Front, PropertySurface::T);
     size_t matrixSize = Tf.size();
 
     // Test matrix
@@ -84,7 +84,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     // Transmittance Back side
-    SquareMatrix Tb = aLayer->getMatrix(Side::Back, PropertySimple::T);
+    SquareMatrix Tb = aLayer->getMatrix(Side::Back, PropertySurface::T);
 
     EXPECT_EQ(size, matrixSize);
 
@@ -105,7 +105,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     // Reflectance Front side
-    SquareMatrix Rf = aLayer->getMatrix(Side::Front, PropertySimple::R);
+    SquareMatrix Rf = aLayer->getMatrix(Side::Front, PropertySurface::R);
     matrixSize = Rf.size();
 
     EXPECT_EQ(size, matrixSize);
@@ -127,7 +127,7 @@ TEST_F(TestEquivalentBSDFDoubleSpecular, TestDoubleLayerBSDF)
     }
 
     // Reflectance Back side
-    SquareMatrix Rb = aLayer->getMatrix(Side::Back, PropertySimple::R);
+    SquareMatrix Rb = aLayer->getMatrix(Side::Back, PropertySurface::R);
     matrixSize = Rb.size();
 
     EXPECT_EQ(size, matrixSize);
