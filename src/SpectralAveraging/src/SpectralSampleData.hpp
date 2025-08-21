@@ -58,6 +58,13 @@ namespace SpectralAveraging
         OpticalProperties diffuse;
     };
 
+    enum class PropertyType
+    {
+        Direct,
+        Diffuse,
+        Total
+    };
+
     ///////////////////////////////////////////////////////////////////////////
     /// SampleData
     ///////////////////////////////////////////////////////////////////////////
@@ -69,7 +76,8 @@ namespace SpectralAveraging
 
         virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
         virtual FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
-                                                       FenestrationCommon::Side side) = 0;
+                                                       FenestrationCommon::Side side,
+                                                       PropertyType type) = 0;
 
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
@@ -107,7 +115,8 @@ namespace SpectralAveraging
                        const OpticalProperties & diffuse = OpticalProperties());
 
         FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
-                                               FenestrationCommon::Side side) override;
+                                               FenestrationCommon::Side side,
+                                               PropertyType type = PropertyType::Total) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;

@@ -134,18 +134,22 @@ namespace SpectralAveraging
         }
     }
 
-    CSeries CSpectralSampleData::properties(Property prop, Side side)
+    CSeries CSpectralSampleData::properties(Property prop, Side side, PropertyType type)
     {
         auto aSide = getSide(side, Flipped());
         if(prop == Property::T || prop == Property::R)
         {
-            PropertySimple simpleProp =
+            const PropertySimple simpleProp =
               (prop == Property::T) ? PropertySimple::T : PropertySimple::R;
             const auto & direct = m_Property.at(key(simpleProp, aSide, MeasurementType::Direct));
             const auto & diffuse = m_Property.at(key(simpleProp, aSide, MeasurementType::Diffuse));
+            if(type == PropertyType::Direct)
+                return direct;
+            if(type == PropertyType::Diffuse)
+                return diffuse;
             return direct + diffuse;
         }
-        else if(prop == Property::Abs)
+        if(prop == Property::Abs)
         {
             const auto & tDirect =
               m_Property.at(key(PropertySimple::T, aSide, MeasurementType::Direct));
