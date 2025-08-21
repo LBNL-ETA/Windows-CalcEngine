@@ -169,23 +169,17 @@ namespace SpectralAveraging
             auto aAngle = radians(t_Angle);
             auto aCosPhi = std::cos(aAngle);
 
-            auto aCoefficients = CCoatingCoefficients();
+            const auto coating{m_Transmittance0 > 0.645 ? CoatingType::Clear : CoatingType::Bronze};
 
-            const auto coatingType{m_Transmittance0 > 0.645 ? CoatingType::Clear
-                                                            : CoatingType::Bronze};
-
-            auto TCoeff = aCoefficients.getCoefficients(CoatingProperty::T, coatingType);
-            auto RCoeff = aCoefficients.getCoefficients(CoatingProperty::R, coatingType);
-
-            assert(TCoeff != nullptr);
-            assert(RCoeff != nullptr);
-
-            auto tau = TCoeff->inerpolation(aCosPhi);
+            auto tau = CoatingCoefficients::getCoefficients(CoatingProperty::T, coating)
+                         .interpolation(aCosPhi);
             m_Transmittance = tau * m_Transmittance0;
-            auto rho = RCoeff->inerpolation(aCosPhi) - tau;
+            auto rho = CoatingCoefficients::getCoefficients(CoatingProperty::R, coating)
+                         .interpolation(aCosPhi)
+                       - tau;
             m_Reflectance = m_Reflectance0 * (1 - rho) + rho;
 
-            // Interpolation coefficients are not precise enought and this check is necessary
+            // Interpolation coefficients are not precise enough and this check is necessary
             if(m_Transmittance > 1)
             {
                 m_Transmittance = 1;
@@ -224,7 +218,7 @@ namespace SpectralAveraging
         C0(t_C0), C1(t_C1), C2(t_C2), C3(t_C3), C4(t_C4)
     {}
 
-    double Coefficients::inerpolation(double const t_Value) const
+    double Coefficients::interpolation(double const t_Value) const
     {
         return C0 + C1 * t_Value + C2 * std::pow(t_Value, 2) + C3 * std::pow(t_Value, 3)
                + C4 * std::pow(t_Value, 4);
@@ -234,26 +228,20 @@ namespace SpectralAveraging
     //  CCoatingCoefficients
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    CCoatingCoefficients::CCoatingCoefficients()
-    {}
-
-    std::shared_ptr<Coefficients>
-      CCoatingCoefficients::getCoefficients(CoatingProperty const t_Property,
-                                            CoatingType const t_Type) const
+    Coefficients CoatingCoefficients::getCoefficients(CoatingProperty const t_Property,
+                                                      CoatingType const t_Type)
     {
-        std::shared_ptr<Coefficients> aCoefficients = nullptr;
+        Coefficients aCoefficients;
         switch(t_Property)
         {
             case CoatingProperty::T:
                 switch(t_Type)
                 {
                     case CoatingType::Clear:
-                        aCoefficients =
-                          std::make_shared<Coefficients>(-0.0015, 3.355, -3.84, 1.46, 0.0288);
+                        aCoefficients = Coefficients(-0.0015, 3.355, -3.84, 1.46, 0.0288);
                         break;
                     case CoatingType::Bronze:
-                        aCoefficients =
-                          std::make_shared<Coefficients>(-0.002, 2.813, -2.341, -0.05725, 0.599);
+                        aCoefficients = Coefficients(-0.002, 2.813, -2.341, -0.05725, 0.599);
                         break;
                     default:
                         assert("Incorrect selection of type.");
@@ -264,12 +252,10 @@ namespace SpectralAveraging
                 switch(t_Type)
                 {
                     case CoatingType::Clear:
-                        aCoefficients =
-                          std::make_shared<Coefficients>(0.999, -0.563, 2.043, -2.532, 1.054);
+                        aCoefficients = Coefficients(0.999, -0.563, 2.043, -2.532, 1.054);
                         break;
                     case CoatingType::Bronze:
-                        aCoefficients =
-                          std::make_shared<Coefficients>(0.997, -1.868, 6.513, -7.862, 3.225);
+                        aCoefficients = Coefficients(0.997, -1.868, 6.513, -7.862, 3.225);
                         break;
                     default:
                         assert("Incorrect selection of type.");
@@ -280,8 +266,6 @@ namespace SpectralAveraging
                 assert("Incorrect selection of property.");
                 break;
         }
-
-        assert(aCoefficients != nullptr);
 
         return aCoefficients;
     }
