@@ -74,17 +74,6 @@ namespace SpectralAveraging
               aMeasuredData->properties(Property::R, Side::Back).interpolate(aWavelengths);
             assert(aRb.size() == aWavelengths.size());
 
-            constexpr auto lowLambda = 0.3;
-            constexpr auto highLambda = 2.5;
-
-
-            // TODO: This does not seem right since sample can require calculations on different
-            // specularity.
-            const auto aTSolNormF =
-              t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Front);
-            const auto aTSolNormB =
-              t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Back);
-
             for(size_t i = 0; i < aWavelengths.size(); ++i)
             {
                 const auto ww = aWavelengths[i] * 1e-6;
@@ -95,13 +84,12 @@ namespace SpectralAveraging
 
                 const auto aSurfaceType = coatingType.at(t_Type);
 
-                auto aFrontFactory = CAngularPropertiesFactory(Tf, Rf, m_Thickness, aTSolNormF);
-                auto aBackFactory = CAngularPropertiesFactory(Tb, Rb, m_Thickness, aTSolNormB);
+                auto aFrontFactory = CAngularPropertiesFactory(Tf, Rf, m_Thickness);
+                auto aBackFactory = CAngularPropertiesFactory(Tb, Rb, m_Thickness);
 
                 auto aFrontProperties = aFrontFactory.getAngularProperties(aSurfaceType);
                 auto aBackProperties = aBackFactory.getAngularProperties(aSurfaceType);
 
-                // TODO: Not clear if angular for diffuse are needed
                 const auto Tfangle = aFrontProperties->transmittance(m_Angle, ww);
                 const auto Tbangle = aBackProperties->transmittance(m_Angle, ww);
                 const auto Rfangle = aFrontProperties->reflectance(m_Angle, ww);

@@ -84,7 +84,8 @@ namespace SpectralAveraging
                 const auto aCosPhiPrim = std::cos(std::asin(std::sin(aAngle) / n));
                 auto a = 0.0;
 
-                if(m_Transmittance0 > 0 && m_Rho0 > 0 && !FenestrationCommon::isEqual(m_Reflectance0, m_Rho0))
+                if(m_Transmittance0 > 0 && m_Rho0 > 0
+                   && !FenestrationCommon::isEqual(m_Reflectance0, m_Rho0))
                 {
                     auto k = -t_Wavelength / (4 * WCE_PI * m_Thickness)
                              * std::log((m_Reflectance0 - m_Rho0) / (m_Transmittance0 * m_Rho0));
@@ -141,10 +142,8 @@ namespace SpectralAveraging
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     CAngularPropertiesCoated::CAngularPropertiesCoated(const double t_Transmittance,
-                                                       const double t_Reflectance,
-                                                       const double t_SolarTransmittance) :
-        CAngularProperties(t_Transmittance, t_Reflectance),
-        m_SolTransmittance0(t_SolarTransmittance)
+                                                       const double t_Reflectance) :
+        CAngularProperties(t_Transmittance, t_Reflectance)
     {}
 
     double CAngularPropertiesCoated::transmittance(double const t_Angle, double const t_Wavelength)
@@ -170,21 +169,13 @@ namespace SpectralAveraging
             auto aAngle = radians(t_Angle);
             auto aCosPhi = std::cos(aAngle);
 
-            std::shared_ptr<Coefficients> TCoeff = nullptr;
-            std::shared_ptr<Coefficients> RCoeff = nullptr;
-
             auto aCoefficients = CCoatingCoefficients();
 
-            if(m_SolTransmittance0 > 0.645)
-            {
-                TCoeff = aCoefficients.getCoefficients(CoatingProperty::T, CoatingType::Clear);
-                RCoeff = aCoefficients.getCoefficients(CoatingProperty::R, CoatingType::Clear);
-            }
-            else
-            {
-                TCoeff = aCoefficients.getCoefficients(CoatingProperty::T, CoatingType::Bronze);
-                RCoeff = aCoefficients.getCoefficients(CoatingProperty::R, CoatingType::Bronze);
-            }
+            const auto coatingType{m_Transmittance0 > 0.645 ? CoatingType::Clear
+                                                            : CoatingType::Bronze};
+
+            auto TCoeff = aCoefficients.getCoefficients(CoatingProperty::T, coatingType);
+            auto RCoeff = aCoefficients.getCoefficients(CoatingProperty::R, coatingType);
 
             assert(TCoeff != nullptr);
             assert(RCoeff != nullptr);
@@ -301,12 +292,8 @@ namespace SpectralAveraging
 
     CAngularPropertiesFactory::CAngularPropertiesFactory(double const t_Transmittance0,
                                                          double const t_Reflectance0,
-                                                         double const t_Thickness,
-                                                         double const t_SolarTransmittance) :
-        m_Thickness(t_Thickness),
-        m_Transmittance0(t_Transmittance0),
-        m_Reflectance0(t_Reflectance0),
-        m_SolarTransmittance0(t_SolarTransmittance)
+                                                         double const t_Thickness) :
+        m_Thickness(t_Thickness), m_Transmittance0(t_Transmittance0), m_Reflectance0(t_Reflectance0)
     {}
 
     std::shared_ptr<CAngularProperties>
@@ -316,8 +303,8 @@ namespace SpectralAveraging
         switch(t_SurfaceType)
         {
             case SurfaceType::Coated:
-                aProperties = std::make_shared<CAngularPropertiesCoated>(
-                  m_Transmittance0, m_Reflectance0, m_SolarTransmittance0);
+                aProperties =
+                  std::make_shared<CAngularPropertiesCoated>(m_Transmittance0, m_Reflectance0);
                 break;
             case SurfaceType::Uncoated:
                 aProperties = std::make_shared<CAngularPropertiesUncoated>(

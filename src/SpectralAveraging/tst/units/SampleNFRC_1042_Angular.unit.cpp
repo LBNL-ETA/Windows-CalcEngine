@@ -33,16 +33,17 @@ public:
     };
 };
 
+// C++
 TEST_F(TestSampleNFRC_1042_Angular, TestSampleProperties)
 {
-    auto lowLambda = 0.3;
-    auto highLambda = 2.5;
+    constexpr auto lowLambda = 0.3;
+    constexpr auto highLambda = 2.5;
 
-    auto thickness = 3.18e-3;   // [m]
+    constexpr auto thickness = 3.18e-3;   // [m]
 
-    auto layerType = MaterialType::Coated;
+    constexpr auto layerType = MaterialType::Coated;
 
-    auto angle = 70.0;
+    constexpr auto angle = 70.0;
 
     auto aMeasuredSample = getSample();
 
@@ -51,17 +52,17 @@ TEST_F(TestSampleNFRC_1042_Angular, TestSampleProperties)
 
     auto transmittance =
       angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
-    EXPECT_NEAR(0.312605, transmittance, 1e-6);
+    EXPECT_NEAR(0.32725843992015091, transmittance, 1e-6);
 
     auto reflectanceFront =
       angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
-    EXPECT_NEAR(0.460105, reflectanceFront, 1e-6);
+    EXPECT_NEAR(0.47199532372219816, reflectanceFront, 1e-6);
 
     auto reflectanceBack =
       angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
-    EXPECT_NEAR(0.491866, reflectanceBack, 1e-6);
+    EXPECT_NEAR(0.50459500870580498, reflectanceBack, 1e-6);
 
     auto absorptance =
       angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
-    EXPECT_NEAR(0.227290, absorptance, 1e-6);
+    EXPECT_NEAR(0.20074623635765163, absorptance, 1e-6);
 }
