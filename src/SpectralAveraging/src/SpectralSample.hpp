@@ -99,6 +99,10 @@ namespace SpectralAveraging
           m_EnergySource;
 
         bool m_StateCalculated;
+
+        FenestrationCommon::IntegrationType m_IntegrationType{
+          FenestrationCommon::IntegrationType::Trapezoidal};
+        double m_NormalizationCoefficient{1.0};
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
