@@ -25,7 +25,7 @@ protected:
           aMeasurements, StandardData::solarRadiationASTM_E891_87_Table1());
 
         auto thickness = 3e-3;   // [m]
-        auto layerType = MaterialType::Monolithic;
+        auto layerType = MaterialType::Coated;
 
         m_Sample = std::make_shared<CAngularSpectralSample>(aSample, thickness, layerType);
     }
@@ -64,29 +64,218 @@ TEST_F(TestDirectDiffuse_Angular, TestProperties0degrees)
     EXPECT_NEAR(0.2, absorptance, 1e-6);
 }
 
-TEST_F(TestDirectDiffuse_Angular, TestProperties50degrees)
+TEST_F(TestDirectDiffuse_Angular, TestProperties10degrees)
 {
-    constexpr auto angle = 50.0;
+    constexpr auto angle{10.0};
 
     auto angularSample = getSample();
 
     // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
 
     auto transmittance =
       angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
-    EXPECT_NEAR(0.31814747164539497, transmittance, 1e-6);
+    EXPECT_NEAR(0.301978, transmittance, 1e-6);
 
     auto reflectanceFront =
       angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
-    EXPECT_NEAR(0.48228836526994262, reflectanceFront, 1e-6);
+    EXPECT_NEAR(0.495871, reflectanceFront, 1e-6);
 
     auto reflectanceBack =
       angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
-    EXPECT_NEAR(0.48228836526994262, reflectanceBack, 1e-6);
+    EXPECT_NEAR(0.495871, reflectanceBack, 1e-6);
 
     auto absorptance =
       angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
-    EXPECT_NEAR(0.19956416308466268, absorptance, 1e-6);
+    EXPECT_NEAR(0.202150, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties20degrees)
+{
+    constexpr auto angle{20.0};
+
+    auto angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance =
+      angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
+    EXPECT_NEAR(0.298126, transmittance, 1e-6);
+
+    auto reflectanceFront =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
+    EXPECT_NEAR(0.495000, reflectanceFront, 1e-6);
+
+    auto reflectanceBack =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
+    EXPECT_NEAR(0.495000, reflectanceBack, 1e-6);
+
+    auto absorptance =
+      angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
+    EXPECT_NEAR(0.206874, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties30degrees)
+{
+    constexpr auto angle{30.0};
+
+    auto angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance =
+      angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
+    EXPECT_NEAR(0.293440, transmittance, 1e-6);
+
+    auto reflectanceFront =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
+    EXPECT_NEAR(0.496713, reflectanceFront, 1e-6);
+
+    auto reflectanceBack =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
+    EXPECT_NEAR(0.496713, reflectanceBack, 1e-6);
+
+    auto absorptance =
+      angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
+    EXPECT_NEAR(0.209847, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties40degrees)
+{
+    constexpr auto angle{40.0};
+
+    auto angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance =
+      angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
+    EXPECT_NEAR(0.287900, transmittance, 1e-6);
+
+    auto reflectanceFront =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
+    EXPECT_NEAR(0.502344, reflectanceFront, 1e-6);
+
+    auto reflectanceBack =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
+    EXPECT_NEAR(0.502344, reflectanceBack, 1e-6);
+
+    auto absorptance =
+      angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
+    EXPECT_NEAR(0.209757, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties50degrees)
+{
+    constexpr auto angle{50.0};
+
+    auto angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance =
+      angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
+    EXPECT_NEAR(0.277791, transmittance, 1e-6);
+
+    auto reflectanceFront =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
+    EXPECT_NEAR(0.511924, reflectanceFront, 1e-6);
+
+    auto reflectanceBack =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
+    EXPECT_NEAR(0.511924, reflectanceBack, 1e-6);
+
+    auto absorptance =
+      angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
+    EXPECT_NEAR(0.210285, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties60degrees)
+{
+    constexpr auto angle{60.0};
+
+    auto angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance =
+      angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
+    EXPECT_NEAR(0.254859, transmittance, 1e-6);
+
+    auto reflectanceFront =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
+    EXPECT_NEAR(0.530266, reflectanceFront, 1e-6);
+
+    auto reflectanceBack =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
+    EXPECT_NEAR(0.530266, reflectanceBack, 1e-6);
+
+    auto absorptance =
+      angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
+    EXPECT_NEAR(0.214875, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties70degrees)
+{
+    constexpr auto angle{70.0};
+
+    auto angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance =
+      angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
+    EXPECT_NEAR(0.207649, transmittance, 1e-6);
+
+    auto reflectanceFront =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
+    EXPECT_NEAR(0.578700, reflectanceFront, 1e-6);
+
+    auto reflectanceBack =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
+    EXPECT_NEAR(0.578700, reflectanceBack, 1e-6);
+
+    auto absorptance =
+      angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
+    EXPECT_NEAR(0.213651, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties82dot5degrees)
+{
+    constexpr auto angle{82.5};
+
+    auto angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance =
+      angularSample->getProperty(lowLambda, highLambda, Property::T, Side::Front, angle);
+    EXPECT_NEAR(0.097600, transmittance, 1e-6);
+
+    auto reflectanceFront =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Front, angle);
+    EXPECT_NEAR(0.761130, reflectanceFront, 1e-6);
+
+    auto reflectanceBack =
+      angularSample->getProperty(lowLambda, highLambda, Property::R, Side::Back, angle);
+    EXPECT_NEAR(0.761130, reflectanceBack, 1e-6);
+
+    auto absorptance =
+      angularSample->getProperty(lowLambda, highLambda, Property::Abs, Side::Front, angle);
+    EXPECT_NEAR(0.141270, absorptance, 1e-6);
 }

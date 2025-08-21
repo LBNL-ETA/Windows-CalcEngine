@@ -42,66 +42,95 @@ namespace SpectralAveraging
         return m_AngularData;
     }
 
+    inline double calcHaze(const double direct, const double diffuse, const double tol = 1e-8)
+    {
+        const double sum = direct + diffuse;
+        if(std::abs(sum) <= tol)
+        {
+            return 0.0;
+        }
+        return diffuse / sum;
+    }
+
     void CAngularSpectralProperties::calculateAngularProperties(
       std::shared_ptr<CSpectralSample> const & t_SpectralSample, MaterialType const t_Type)
     {
         assert(t_SpectralSample != nullptr);
 
-        auto aMeasuredData = t_SpectralSample->getMeasuredData();
-        auto aWavelengths = t_SpectralSample->getWavelengths();
+        auto md = t_SpectralSample->getMeasuredData();
+        auto wl = t_SpectralSample->getWavelengths();
 
         // Spectral sample is not initialized yet, use wavelengths from measured data instead.
-        if(aWavelengths.empty())
+        if(wl.empty())
         {
-            aWavelengths = aMeasuredData->getWavelengths();
+            wl = md->getWavelengths();
         }
 
         if(m_Angle != 0)
         {
-            const auto aTf =
-              aMeasuredData->properties(Property ::T, Side::Front).interpolate(aWavelengths);
-            assert(aTf.size() == aWavelengths.size());
+            const auto aTf = md->properties(Property ::T, Side::Front).interpolate(wl);
+            assert(aTf.size() == wl.size());
 
-            const auto aTb =
-              aMeasuredData->properties(Property ::T, Side::Back).interpolate(aWavelengths);
-            assert(aTb.size() == aWavelengths.size());
+            const auto aTb = md->properties(Property ::T, Side::Back).interpolate(wl);
+            assert(aTb.size() == wl.size());
 
-            const auto aRf =
-              aMeasuredData->properties(Property::R, Side::Front).interpolate(aWavelengths);
-            assert(aRf.size() == aWavelengths.size());
+            const auto aRf = md->properties(Property::R, Side::Front).interpolate(wl);
+            assert(aRf.size() == wl.size());
 
-            const auto aRb =
-              aMeasuredData->properties(Property::R, Side::Back).interpolate(aWavelengths);
-            assert(aRb.size() == aWavelengths.size());
+            const auto aRb = md->properties(Property::R, Side::Back).interpolate(wl);
+            assert(aRb.size() == wl.size());
 
-            for(size_t i = 0; i < aWavelengths.size(); ++i)
+            using PT = PropertyType;
+            // Direct/Diffuse (for haze only)
+            // clang-format off
+            const auto Tf_dir = md->properties(Property::T, Side::Front, PT::Direct).interpolate(wl);
+            const auto Tf_dif = md->properties(Property::T, Side::Front, PT::Diffuse).interpolate(wl);
+            const auto Tb_dir = md->properties(Property::T, Side::Back, PT::Direct).interpolate(wl);
+            const auto Tb_dif = md->properties(Property::T, Side::Back, PT::Diffuse).interpolate(wl);
+            const auto Rf_dir = md->properties(Property::R, Side::Front, PT::Direct).interpolate(wl);
+            const auto Rf_dif = md->properties(Property::R, Side::Front, PT::Diffuse).interpolate(wl);
+            const auto Rb_dir = md->properties(Property::R, Side::Back, PT::Direct).interpolate(wl);
+            const auto Rb_dif = md->properties(Property::R, Side::Back, PT::Diffuse).interpolate(wl);
+            // clang-format on
+
+            for(size_t i = 0; i < wl.size(); ++i)
             {
-                const auto ww = aWavelengths[i] * 1e-6;
-                const auto Tf = aTf[i].value();
-                const auto Tb = aTb[i].value();
-                const auto Rf = aRf[i].value();
-                const auto Rb = aRb[i].value();
-
                 const auto aSurfaceType = coatingType.at(t_Type);
 
-                auto aFrontFactory = CAngularPropertiesFactory(Tf, Rf, m_Thickness);
-                auto aBackFactory = CAngularPropertiesFactory(Tb, Rb, m_Thickness);
+                auto aFrontFactory =
+                  CAngularPropertiesFactory(aTf[i].value(), aRf[i].value(), m_Thickness);
+                auto aBackFactory =
+                  CAngularPropertiesFactory(aTb[i].value(), aRb[i].value(), m_Thickness);
 
-                auto aFrontProperties = aFrontFactory.getAngularProperties(aSurfaceType);
-                auto aBackProperties = aBackFactory.getAngularProperties(aSurfaceType);
+                const auto aFrontProperties = aFrontFactory.getAngularProperties(aSurfaceType);
+                const auto aBackProperties = aBackFactory.getAngularProperties(aSurfaceType);
+
+                const auto ww = wl[i] * 1e-6;
 
                 const auto Tfangle = aFrontProperties->transmittance(m_Angle, ww);
                 const auto Tbangle = aBackProperties->transmittance(m_Angle, ww);
                 const auto Rfangle = aFrontProperties->reflectance(m_Angle, ww);
                 const auto Rbangle = aBackProperties->reflectance(m_Angle, ww);
 
-                m_AngularData->addRecord(ww * 1e6, Tfangle, Tbangle, Rfangle, Rbangle);
+                OpticalProperties direct;
+                direct.Tf = (1 - calcHaze(Tf_dir[i].value(), Tf_dif[i].value())) * Tfangle;
+                direct.Tb = (1 - calcHaze(Tb_dir[i].value(), Tb_dif[i].value())) * Tbangle;
+                direct.Rf = (1 - calcHaze(Rf_dir[i].value(), Rf_dif[i].value())) * Rfangle;
+                direct.Rb = (1 - calcHaze(Rb_dir[i].value(), Rb_dif[i].value())) * Rbangle;
+
+                OpticalProperties diffuse;
+                diffuse.Tf = calcHaze(Tf_dir[i].value(), Tf_dif[i].value()) * Tfangle;
+                diffuse.Tb = calcHaze(Tb_dir[i].value(), Tb_dif[i].value()) * Tbangle;
+                diffuse.Rf = calcHaze(Rf_dir[i].value(), Rf_dif[i].value()) * Rfangle;
+                diffuse.Rb = calcHaze(Rb_dir[i].value(), Rb_dif[i].value()) * Rbangle;
+
+                m_AngularData->addRecord(ww * 1e6, direct, diffuse);
             }
         }
         else
         {
-            m_AngularData = aMeasuredData;
-            m_AngularData->interpolate(aWavelengths);
+            m_AngularData = md;
+            m_AngularData->interpolate(wl);
         }
     }
 

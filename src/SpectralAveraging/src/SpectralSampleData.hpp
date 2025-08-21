@@ -33,8 +33,7 @@ namespace SpectralAveraging
         return std::make_tuple(p, s, m);
     }
 
-    inline auto
-        key(FenestrationCommon::Property p, FenestrationCommon::Side s)
+    inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s)
     {
         return std::make_pair(p, s);
     }
@@ -79,6 +78,9 @@ namespace SpectralAveraging
                                                        FenestrationCommon::Side side,
                                                        PropertyType type) = 0;
 
+        FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
+                                               FenestrationCommon::Side side);
+
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
         [[nodiscard]] bool Flipped() const;
@@ -114,9 +116,11 @@ namespace SpectralAveraging
                        const OpticalProperties & direct,
                        const OpticalProperties & diffuse = OpticalProperties());
 
+        using SampleData::properties; // To unhide properties(prop, side) from base class
+
         FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                FenestrationCommon::Side side,
-                                               PropertyType type = PropertyType::Total) override;
+                                               PropertyType type) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
