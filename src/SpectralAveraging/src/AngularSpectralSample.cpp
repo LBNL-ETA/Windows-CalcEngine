@@ -80,7 +80,7 @@ namespace SpectralAveraging
             const auto aRb = md->properties(Property::R, Side::Back).interpolate(wl);
             assert(aRb.size() == wl.size());
 
-            using PT = PropertyType;
+            using PT = ScatteringType;
             // Direct/Diffuse (for haze only)
             // clang-format off
             const auto Tf_dir = md->properties(Property::T, Side::Front, PT::Direct).interpolate(wl);

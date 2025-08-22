@@ -14,9 +14,7 @@ namespace FenestrationCommon
 
 namespace SpectralAveraging
 {
-    ///////////////////////////////////////////////////////////////////////////
-    /// MeasurementType
-    ///////////////////////////////////////////////////////////////////////////
+    /// Optical measurement definitions
 
     enum class MeasurementType
     {
@@ -24,8 +22,7 @@ namespace SpectralAveraging
         Diffuse
     };
 
-    constexpr std::array<MeasurementType, 2> allMeasurements{MeasurementType::Direct,
-                                                             MeasurementType::Diffuse};
+    constexpr std::array allMeasurements{MeasurementType::Direct, MeasurementType::Diffuse};
 
     using MeasurementKey =
       std::tuple<FenestrationCommon::PropertySurface, FenestrationCommon::Side, MeasurementType>;
@@ -35,6 +32,28 @@ namespace SpectralAveraging
     {
         return std::make_tuple(p, s, m);
     }
+
+    /// Optical scattering definitions
+
+    enum class ScatteringType
+    {
+        Direct,
+        Diffuse,
+        Total
+    };
+
+    constexpr std::array allScatteringTypes{
+      ScatteringType::Direct, ScatteringType::Diffuse, ScatteringType::Total};
+
+    using ScatteringKey = std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, ScatteringType>;
+
+    inline auto
+      key(FenestrationCommon::Property p, FenestrationCommon::Side s, ScatteringType m)
+    {
+        return std::make_tuple(p, s, m);
+    }
+
+    /// General definition for property and side
 
     inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s)
     {
@@ -60,13 +79,6 @@ namespace SpectralAveraging
         OpticalProperties diffuse;
     };
 
-    enum class PropertyType
-    {
-        Direct,
-        Diffuse,
-        Total
-    };
-
     ///////////////////////////////////////////////////////////////////////////
     /// SampleData
     ///////////////////////////////////////////////////////////////////////////
@@ -79,7 +91,7 @@ namespace SpectralAveraging
         virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
         virtual FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                        FenestrationCommon::Side side,
-                                                       PropertyType type) = 0;
+                                                       ScatteringType type) = 0;
 
         FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                FenestrationCommon::Side side);
@@ -123,7 +135,7 @@ namespace SpectralAveraging
 
         FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                FenestrationCommon::Side side,
-                                               PropertyType type) override;
+                                               ScatteringType type) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
