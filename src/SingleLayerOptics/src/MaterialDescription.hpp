@@ -319,6 +319,12 @@ namespace SingleLayerOptics
                             double t_Fraction) override;
     };
 
+    /// Helper function to determine correct scattering type based on incoming and outgoing
+    /// directions
+
+    SpectralAveraging::ScatteringType scatter(const CBeamDirection & t_IncomingDirection,
+                                              const CBeamDirection & t_OutgoingDirection);
+
     //////////////////////////////////////////////////////////////////////////////////////////
     ///   CMaterialSample
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -376,13 +382,15 @@ namespace SingleLayerOptics
             FenestrationCommon::Property property;
             FenestrationCommon::Side side;
             double incomingTheta;
+            double outgoingTheta;
             size_t numberOfWavelengths;
 
             bool operator==(const CacheKey & other) const
             {
                 return property == other.property && side == other.side
                        && numberOfWavelengths == other.numberOfWavelengths
-                       && FenestrationCommon::isEqual(incomingTheta, other.incomingTheta);
+                       && FenestrationCommon::isEqual(incomingTheta, other.incomingTheta)
+                       && FenestrationCommon::isEqual(outgoingTheta, other.outgoingTheta);
             }
         };
 
@@ -397,6 +405,7 @@ namespace SingleLayerOptics
                 hashCombine(seed, static_cast<int>(key.side));
                 hashCombine(seed, key.numberOfWavelengths);
                 hashCombine(seed, key.incomingTheta);
+                hashCombine(seed, key.outgoingTheta);
                 return seed;
             }
 
