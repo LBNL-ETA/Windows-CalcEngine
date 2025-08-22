@@ -90,7 +90,8 @@ TEST_F(Sample_AngularMeasurementsTest1, TestProperties45degrees)
     // Now retrieve specific properties
 
     // Front transmittances
-    auto aTransmittances = aSample->getWavelengthsProperty(Property::T, Side::Front);
+    auto aTransmittances =
+      aSample->getWavelengthsProperty(Property::T, Side::Front, ScatteringType::Total);
 
     std::vector<double> correctT = {0.125, 0.175, 0.2125, 0.2375, 0.275};
 
@@ -103,7 +104,8 @@ TEST_F(Sample_AngularMeasurementsTest1, TestProperties45degrees)
     }
 
     // Front reflectances
-    auto aFReflectances = aSample->getWavelengthsProperty(Property::R, Side::Front);
+    auto aFReflectances =
+      aSample->getWavelengthsProperty(Property::R, Side::Front, ScatteringType::Total);
 
     std::vector<double> correctFR = {0.1, 0.0985, 0.09775, 0.09725, 0.0965};
 
@@ -116,7 +118,8 @@ TEST_F(Sample_AngularMeasurementsTest1, TestProperties45degrees)
     }
 
     // Back reflectances
-    auto aBReflectances = aSample->getWavelengthsProperty(Property::R, Side::Back);
+    auto aBReflectances =
+      aSample->getWavelengthsProperty(Property::R, Side::Back, ScatteringType::Total);
 
     std::vector<double> correctBR = {0.1, 0.099, 0.09825, 0.09775, 0.097};
 

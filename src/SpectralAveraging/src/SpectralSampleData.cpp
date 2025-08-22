@@ -22,9 +22,9 @@ namespace SpectralAveraging
     ////     SampleData
     ////////////////////////////////////////////////////////////////////////////
 
-    CSeries SampleData::properties(const Property prop, const Side side)
+    CSeries SampleData::properties(const Property prop, const Side side, const ScatteringType type)
     {
-        return properties(prop, side, ScatteringType::Total);
+        return properties(prop, side, type);
     }
 
     bool SampleData::Flipped() const

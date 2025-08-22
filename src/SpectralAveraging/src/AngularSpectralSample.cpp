@@ -68,16 +68,20 @@ namespace SpectralAveraging
 
         if(m_Angle != 0)
         {
-            const auto aTf = md->properties(Property ::T, Side::Front).interpolate(wl);
+            const auto aTf =
+              md->properties(Property ::T, Side::Front, ScatteringType::Total).interpolate(wl);
             assert(aTf.size() == wl.size());
 
-            const auto aTb = md->properties(Property ::T, Side::Back).interpolate(wl);
+            const auto aTb =
+              md->properties(Property ::T, Side::Back, ScatteringType::Total).interpolate(wl);
             assert(aTb.size() == wl.size());
 
-            const auto aRf = md->properties(Property::R, Side::Front).interpolate(wl);
+            const auto aRf =
+              md->properties(Property::R, Side::Front, ScatteringType::Total).interpolate(wl);
             assert(aRf.size() == wl.size());
 
-            const auto aRb = md->properties(Property::R, Side::Back).interpolate(wl);
+            const auto aRb =
+              md->properties(Property::R, Side::Back, ScatteringType::Total).interpolate(wl);
             assert(aRb.size() == wl.size());
 
             using PT = ScatteringType;
@@ -176,23 +180,25 @@ namespace SpectralAveraging
         m_SpectralProperties.clear();
     }
 
-    double CAngularSpectralSample::getProperty(double const minLambda,
-                                               double const maxLambda,
-                                               Property const t_Property,
-                                               Side const t_Side,
-                                               double const t_Angle)
+    double CAngularSpectralSample::getProperty(const double minLambda,
+                                               const double maxLambda,
+                                               const Property t_Property,
+                                               const Side t_Side,
+                                               const double t_Angle,
+                                               const ScatteringType t_Scatter)
     {
         auto aSample = findSpectralSample(t_Angle);
-        return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side);
+        return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side, t_Scatter);
     }
 
-    std::vector<double> CAngularSpectralSample::getWavelengthProperties(Property const t_Property,
-                                                                        Side const t_Side,
-                                                                        double const t_Angle)
+    std::vector<double> CAngularSpectralSample::getWavelengthProperties(const Property t_Property,
+                                                                        const Side t_Side,
+                                                                        const double t_Angle,
+                                                                        const ScatteringType t_Scatter)
     {
         auto aSample = findSpectralSample(t_Angle);
 
-        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
+        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side, t_Scatter);
 
         return aProperties.getYArray();
     }

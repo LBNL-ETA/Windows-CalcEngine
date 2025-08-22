@@ -49,9 +49,6 @@ namespace SpectralAveraging
                                                        FenestrationCommon::Side side,
                                                        ScatteringType type) = 0;
 
-        FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
-                                               FenestrationCommon::Side side);
-
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
         [[nodiscard]] bool Flipped() const;
@@ -86,8 +83,6 @@ namespace SpectralAveraging
         void addRecord(double t_Wavelength,
                        const OpticalProperties & direct,
                        const OpticalProperties & diffuse = OpticalProperties());
-
-        using SampleData::properties;   // To unhide properties(prop, side) from base class
 
         FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                FenestrationCommon::Side side,

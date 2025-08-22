@@ -210,30 +210,22 @@ namespace SpectralAveraging
             throw std::runtime_error("Sample must have measured data.");
         }
 
-        for(const auto & prop : allProperties())
-        {
-            for(const auto & side : allSides())
-            {
-                m_Property[key(prop, side)] = CSeries();
-            }
-        }
+        forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+            m_Property[key(prop, side, scatter)] = CSeries();
+        });
     }
 
     CSpectralSample::CSpectralSample(std::shared_ptr<CSpectralSampleData> const & t_SampleData) :
-        CSample(), m_SampleData(t_SampleData)
+        m_SampleData(t_SampleData)
     {
         if(t_SampleData == nullptr)
         {
             throw std::runtime_error("Sample must have measured data.");
         }
 
-        for(const auto & prop : allProperties())
-        {
-            for(const auto & side : allSides())
-            {
-                m_Property[{prop, side}] = CSeries();
-            }
-        }
+        forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+            m_Property[{prop, side, scatter}] = CSeries();
+        });
     }
 
     std::shared_ptr<CSpectralSampleData> CSpectralSample::getMeasuredData()
@@ -247,7 +239,9 @@ namespace SpectralAveraging
         return m_SampleData->getWavelengths();
     }
 
-    CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property, const Side t_Side)
+    CSeries CSpectralSample::getWavelengthsProperty(const Property t_Property,
+                                                    const Side t_Side,
+                                                    const ScatteringType t_Scatter)
     {
         std::lock_guard lock(spectralSampleMutex);
         if(!m_StateCalculated)
@@ -255,7 +249,7 @@ namespace SpectralAveraging
             calculateState(m_IntegrationType, m_NormalizationCoefficient);
         }
 
-        return m_Property.at(key(t_Property, t_Side));
+        return m_Property.at(key(t_Property, t_Side, t_Scatter));
     }
 
     void CSpectralSample::calculateProperties(IntegrationType integrator,
@@ -263,19 +257,16 @@ namespace SpectralAveraging
     {
         std::ignore = integrator;
         std::ignore = normalizationCoefficient;
-        for(const auto & prop : allProperties())
-        {
-            for(const auto & side : allSides())
+
+        forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+            m_Property[key(prop, side, scatter)] = m_SampleData->properties(prop, side, scatter);
+            // No need to do interpolation if wavelength set is already from the data.
+            if(m_WavelengthSet != WavelengthSet::Data)
             {
-                m_Property[key(prop, side)] = m_SampleData->properties(prop, side);
-                // No need to do interpolation if wavelength set is already from the data.
-                if(m_WavelengthSet != WavelengthSet::Data)
-                {
-                    m_Property[key(prop, side)] =
-                      m_Property[key(prop, side)].interpolate(m_Wavelengths);
-                }
+                m_Property[key(prop, side, scatter)] =
+                  m_Property[key(prop, side, scatter)].interpolate(m_Wavelengths);
             }
-        }
+        });
 
         if(m_WavelengthSet == WavelengthSet::Data)
         {
@@ -284,7 +275,7 @@ namespace SpectralAveraging
 
         forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
             m_EnergySource[{prop, side, scatter}] =
-              m_Property.at(key(prop, side)) * m_IncomingSource;
+              m_Property.at(key(prop, side, scatter)) * m_IncomingSource;
         });
     }
 
@@ -295,13 +286,10 @@ namespace SpectralAveraging
 
         if(m_SourceData.size() == 0)
         {
-            for(const auto & prop : allProperties())
-            {
-                for(const auto & side : allSides())
-                {
-                    m_Property[{prop, side}] = m_SampleData->properties(prop, side);
-                }
-            }
+            forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+                m_Property[key(prop, side, scatter)] =
+                  m_SampleData->properties(prop, side, scatter);
+            });
 
             m_StateCalculated = true;
         }

@@ -18,8 +18,7 @@ namespace SpectralAveraging
 
     CSingleAngularMeasurement::CSingleAngularMeasurement(
       std::shared_ptr<CSpectralSample> const & t_Data, double const t_Angle) :
-        m_Data(t_Data),
-        m_Angle(t_Angle)
+        m_Data(t_Data), m_Angle(t_Angle)
     {
         if(t_Data == nullptr)
         {
@@ -51,12 +50,18 @@ namespace SpectralAveraging
     {
         auto aData = std::make_shared<CSpectralSampleData>();
         auto wlv = t_Data1->getWavelengthsFromSample();
-        auto trans1 = t_Data1->getMeasuredData()->properties(Property ::T, Side::Front);
-        auto trans2 = t_Data2->getMeasuredData()->properties(Property ::T, Side::Front);
-        auto reflef1 = t_Data1->getMeasuredData()->properties(Property ::R, Side::Front);
-        auto reflef2 = t_Data2->getMeasuredData()->properties(Property ::R, Side::Front);
-        auto refleb1 = t_Data1->getMeasuredData()->properties(Property ::R, Side::Back);
-        auto refleb2 = t_Data2->getMeasuredData()->properties(Property ::R, Side::Back);
+        auto trans1 =
+          t_Data1->getMeasuredData()->properties(Property ::T, Side::Front, ScatteringType::Total);
+        auto trans2 =
+          t_Data2->getMeasuredData()->properties(Property ::T, Side::Front, ScatteringType::Total);
+        auto reflef1 =
+          t_Data1->getMeasuredData()->properties(Property ::R, Side::Front, ScatteringType::Total);
+        auto reflef2 =
+          t_Data2->getMeasuredData()->properties(Property ::R, Side::Front, ScatteringType::Total);
+        auto refleb1 =
+          t_Data1->getMeasuredData()->properties(Property ::R, Side::Back, ScatteringType::Total);
+        auto refleb2 =
+          t_Data2->getMeasuredData()->properties(Property ::R, Side::Back, ScatteringType::Total);
         auto frac = (t_Angle - t_Angle1) / (t_Angle2 - t_Angle1);
         for(size_t i = 0; i < wlv.size(); i++)
         {
@@ -96,8 +101,7 @@ namespace SpectralAveraging
     CAngularMeasurements::CAngularMeasurements(
       std::shared_ptr<CSingleAngularMeasurement> const & t_SignleMeasurement,
       std::vector<double> const & t_CommonWavelengths) :
-        m_SingleMeasurement(t_SignleMeasurement),
-        m_CommonWavelengths(t_CommonWavelengths)
+        m_SingleMeasurement(t_SignleMeasurement), m_CommonWavelengths(t_CommonWavelengths)
     {
         if(m_SingleMeasurement == nullptr)
         {
