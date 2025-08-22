@@ -27,6 +27,9 @@ namespace SpectralAveraging
     constexpr std::array<MeasurementType, 2> allMeasurements{MeasurementType::Direct,
                                                              MeasurementType::Diffuse};
 
+    using MeasurementKey =
+      std::tuple<FenestrationCommon::PropertySurface, FenestrationCommon::Side, MeasurementType>;
+
     inline auto
       key(FenestrationCommon::PropertySurface p, FenestrationCommon::Side s, MeasurementType m)
     {
@@ -116,7 +119,7 @@ namespace SpectralAveraging
                        const OpticalProperties & direct,
                        const OpticalProperties & diffuse = OpticalProperties());
 
-        using SampleData::properties; // To unhide properties(prop, side) from base class
+        using SampleData::properties;   // To unhide properties(prop, side) from base class
 
         FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                FenestrationCommon::Side side,
@@ -129,34 +132,8 @@ namespace SpectralAveraging
         void cutExtraData(double minLambda, double maxLambda) override;
 
     protected:
-        std::map<
-          std::tuple<FenestrationCommon::PropertySurface, FenestrationCommon::Side, MeasurementType>,
-          FenestrationCommon::CSeries>
-          m_Property;
+        std::map<MeasurementKey, FenestrationCommon::CSeries> m_Property;
     };
-
-    ///////////////////////////////////////////////////////////////////////////
-    /// PVM
-    ///////////////////////////////////////////////////////////////////////////
-    enum class PVM
-    {
-        JSC,
-        VOC,
-        FF
-    };
-
-    class EnumPVM : public FenestrationCommon::Enum<PVM>
-    {};
-
-    inline EnumPVM::Iterator begin(EnumPVM)
-    {
-        return EnumPVM::Iterator(static_cast<int>(PVM::JSC));
-    }
-
-    inline EnumPVM::Iterator end(EnumPVM)
-    {
-        return EnumPVM::Iterator(static_cast<int>(PVM::FF) + 1);
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     /// PhotovoltaicSampleData
