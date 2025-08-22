@@ -37,17 +37,11 @@ namespace SpectralAveraging
         m_StateCalculated = t_Sample.m_StateCalculated;
         m_WavelengthSet = t_Sample.m_WavelengthSet;
         m_IncomingSource = t_Sample.m_IncomingSource;
-        for(const auto & prop : allProperties())
-        {
-            for(const auto & side : allSides())
-            {
-                for(const auto & scatter : allScatteringTypes)
-                {
-                    m_EnergySource[{prop, side, scatter}] =
-                      t_Sample.m_EnergySource.at({prop, side, scatter});
-                }
-            }
-        }
+
+        forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+            m_EnergySource[{prop, side, scatter}] =
+              t_Sample.m_EnergySource.at({prop, side, scatter});
+        });
 
         return *this;
     }
@@ -161,16 +155,10 @@ namespace SpectralAveraging
     {
         m_StateCalculated = false;
         m_IncomingSource = CSeries();
-        for(const auto & prop : allProperties())
-        {
-            for(const auto & side : allSides())
-            {
-                for(const auto & scatter: allScatteringTypes)
-                {
-                    m_EnergySource[{prop, side, scatter}] = CSeries();
-                }
-            }
-        }
+
+        forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+            m_EnergySource[{prop, side, scatter}] = CSeries();
+        });
     }
 
     void CSample::calculateState(IntegrationType integrator, double normalizationCoefficient)
@@ -197,18 +185,12 @@ namespace SpectralAveraging
                 calculateProperties(integrator, normalizationCoefficient);
 
                 m_IncomingSource = m_IncomingSource.integrate(integrator, normalizationCoefficient);
-                for(const auto & prop : allProperties())
-                {
-                    for(const auto & side : allSides())
-                    {
-                        for(const auto & scatter: allScatteringTypes)
-                        {
-                            m_EnergySource[{prop, side, scatter}] =
-                              m_EnergySource.at({prop, side, scatter})
-                                .integrate(integrator, normalizationCoefficient);
-                        }
-                    }
-                }
+
+                forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+                    m_EnergySource[{prop, side, scatter}] =
+                      m_EnergySource.at({prop, side, scatter})
+                        .integrate(integrator, normalizationCoefficient);
+                });
 
                 m_StateCalculated = true;
             }
@@ -300,17 +282,10 @@ namespace SpectralAveraging
             m_Wavelengths = getWavelengthsFromSample();
         }
 
-        // Calculation of energy balances
-        for(const auto & prop : allProperties())
-        {
-            for(const auto & side : allSides())
-            {
-                for(const auto & scatter: allScatteringTypes)
-                {
-                    m_EnergySource[{prop, side, scatter}] = m_Property.at(key(prop, side)) * m_IncomingSource;
-                }
-            }
-        }
+        forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
+            m_EnergySource[{prop, side, scatter}] =
+              m_Property.at(key(prop, side)) * m_IncomingSource;
+        });
     }
 
     void CSpectralSample::calculateState(IntegrationType integrator,
@@ -342,7 +317,7 @@ namespace SpectralAveraging
         m_SampleData->Flipped(flipped);
     }
 
-    FenestrationCommon::Limits CSpectralSample::getWavelengthLimits() const
+    Limits CSpectralSample::getWavelengthLimits() const
     {
         return m_SampleData->getWavelengthLimits();
     }

@@ -33,7 +33,25 @@ namespace SpectralAveraging
         return std::make_tuple(p, s, m);
     }
 
+    /// Helper function to iterate through all possible combination since it is used often
+    template<typename Func>
+    void forEach_PropertySurface_Side_MeasurementType(Func && func)
+    {
+        for(const auto & prop : FenestrationCommon::allProperties())
+        {
+            for(const auto & side : FenestrationCommon::allSides())
+            {
+                for(const auto & scatter : allMeasurements)
+                {
+                    func(prop, side, scatter);
+                }
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////
     /// Optical scattering definitions
+    ///////////////////////////////////////////////////////////////
 
     enum class ScatteringType
     {
@@ -51,6 +69,22 @@ namespace SpectralAveraging
     inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s, ScatteringType m)
     {
         return std::make_tuple(p, s, m);
+    }
+
+    /// Helper function to iterate through all possible combination since it is used often
+    template<typename Func>
+    void forEach_Property_Side_Scatter(Func && func)
+    {
+        for(const auto & prop : FenestrationCommon::allProperties())
+        {
+            for(const auto & side : FenestrationCommon::allSides())
+            {
+                for(const auto & scatter : allScatteringTypes)
+                {
+                    func(prop, side, scatter);
+                }
+            }
+        }
     }
 
     /// General definition for property and side
