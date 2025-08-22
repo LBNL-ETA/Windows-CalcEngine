@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EnumValues.hpp"
-#include "EnumerationTemplate.hpp"
 
 namespace FenestrationCommon
 {
@@ -233,5 +232,4 @@ namespace FenestrationCommon
 
         return aResult;
     }
-
 }   // namespace FenestrationCommon

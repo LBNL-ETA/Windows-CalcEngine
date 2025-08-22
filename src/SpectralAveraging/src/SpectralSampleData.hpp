@@ -7,6 +7,8 @@
 
 #include <WCECommon.hpp>
 
+#include "SpectralSampleDataDefinitions.hpp"
+
 namespace FenestrationCommon
 {
     class CSeries;
@@ -14,30 +16,6 @@ namespace FenestrationCommon
 
 namespace SpectralAveraging
 {
-    ///////////////////////////////////////////////////////////////////////////
-    /// MeasurementType
-    ///////////////////////////////////////////////////////////////////////////
-
-    enum class MeasurementType
-    {
-        Direct,
-        Diffuse
-    };
-
-    constexpr std::array<MeasurementType, 2> allMeasurements{MeasurementType::Direct,
-                                                             MeasurementType::Diffuse};
-
-    inline auto
-      key(FenestrationCommon::PropertySurface p, FenestrationCommon::Side s, MeasurementType m)
-    {
-        return std::make_tuple(p, s, m);
-    }
-
-    inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s)
-    {
-        return std::make_pair(p, s);
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     /// MeasuredRow
     ///////////////////////////////////////////////////////////////////////////
@@ -57,13 +35,6 @@ namespace SpectralAveraging
         OpticalProperties diffuse;
     };
 
-    enum class PropertyType
-    {
-        Direct,
-        Diffuse,
-        Total
-    };
-
     ///////////////////////////////////////////////////////////////////////////
     /// SampleData
     ///////////////////////////////////////////////////////////////////////////
@@ -76,10 +47,7 @@ namespace SpectralAveraging
         virtual void interpolate(const std::vector<double> & t_Wavelengths) = 0;
         virtual FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                        FenestrationCommon::Side side,
-                                                       PropertyType type) = 0;
-
-        FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
-                                               FenestrationCommon::Side side);
+                                                       ScatteringType type) = 0;
 
         virtual void cutExtraData(double minLambda, double maxLambda) = 0;
 
@@ -116,11 +84,9 @@ namespace SpectralAveraging
                        const OpticalProperties & direct,
                        const OpticalProperties & diffuse = OpticalProperties());
 
-        using SampleData::properties; // To unhide properties(prop, side) from base class
-
         FenestrationCommon::CSeries properties(FenestrationCommon::Property prop,
                                                FenestrationCommon::Side side,
-                                               PropertyType type) override;
+                                               ScatteringType type) override;
 
         [[nodiscard]] virtual std::vector<double> getWavelengths() const;
         [[nodiscard]] virtual FenestrationCommon::Limits getWavelengthLimits() const;
@@ -129,34 +95,8 @@ namespace SpectralAveraging
         void cutExtraData(double minLambda, double maxLambda) override;
 
     protected:
-        std::map<
-          std::tuple<FenestrationCommon::PropertySurface, FenestrationCommon::Side, MeasurementType>,
-          FenestrationCommon::CSeries>
-          m_Property;
+        std::map<MeasurementKey, FenestrationCommon::CSeries> m_Property;
     };
-
-    ///////////////////////////////////////////////////////////////////////////
-    /// PVM
-    ///////////////////////////////////////////////////////////////////////////
-    enum class PVM
-    {
-        JSC,
-        VOC,
-        FF
-    };
-
-    class EnumPVM : public FenestrationCommon::Enum<PVM>
-    {};
-
-    inline EnumPVM::Iterator begin(EnumPVM)
-    {
-        return EnumPVM::Iterator(static_cast<int>(PVM::JSC));
-    }
-
-    inline EnumPVM::Iterator end(EnumPVM)
-    {
-        return EnumPVM::Iterator(static_cast<int>(PVM::FF) + 1);
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     /// PhotovoltaicSampleData

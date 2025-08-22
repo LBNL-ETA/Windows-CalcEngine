@@ -454,8 +454,12 @@ namespace SingleLayerOptics
         // TODO: getProperty from AngularSample need to understand whether it is returning
         // direct or diffuse component. Because of that, outgoing direction need to be included
         // here so that angular sample know if direct or diffuse part is needed.
-        return m_AngularSample.getProperty(
-          m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
+        return m_AngularSample.getProperty(m_MinLambda,
+                                           m_MaxLambda,
+                                           t_Property,
+                                           t_Side,
+                                           t_IncomingDirection.theta(),
+                                           ScatteringType::Total);
     }
 
     std::vector<double>
@@ -479,8 +483,8 @@ namespace SingleLayerOptics
         }
 
         // Perform the calculation
-        auto result =
-          m_AngularSample.getWavelengthProperties(t_Property, t_Side, t_IncomingDirection.theta());
+        auto result = m_AngularSample.getWavelengthProperties(
+          t_Property, t_Side, t_IncomingDirection.theta(), ScatteringType::Total);
 
         // Store the result in the cache
         m_Cache[key] = result;
@@ -578,7 +582,8 @@ namespace SingleLayerOptics
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
           m_AngularMeasurements->getMeasurements(t_IncomingDirection.theta());
         std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
-        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
+        auto aProperties =
+          aSample->getWavelengthsProperty(t_Property, t_Side, ScatteringType::Total);
 
         std::vector<double> aValues;
 

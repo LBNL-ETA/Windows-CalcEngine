@@ -86,12 +86,14 @@ namespace SpectralAveraging
                            double maxLambda,
                            FenestrationCommon::Property t_Property,
                            FenestrationCommon::Side t_Side,
-                           double t_Angle);
+                           double t_Angle,
+                           ScatteringType t_Scatter);
 
         // Get property at each wavelength
         std::vector<double> getWavelengthProperties(FenestrationCommon::Property t_Property,
                                                     FenestrationCommon::Side t_Side,
-                                                    double t_Angle);
+                                                    double t_Angle,
+                                                    ScatteringType t_Scatter);
 
         std::vector<double> getBandWavelengths() const;
         void setBandWavelengths(const std::vector<double> & wavelengths);
