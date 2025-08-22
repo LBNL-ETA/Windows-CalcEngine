@@ -53,11 +53,13 @@ namespace SpectralAveraging
         double getProperty(double minLambda,
                            double maxLambda,
                            FenestrationCommon::Property t_Property,
-                           FenestrationCommon::Side t_Side);
+                           FenestrationCommon::Side t_Side,
+                           ScatteringType t_ScatteringType = ScatteringType::Total);
 
         // Spectral properties over the wavelength range
         FenestrationCommon::CSeries & getEnergyProperties(FenestrationCommon::Property t_Property,
-                                                          FenestrationCommon::Side t_Side);
+                                                          FenestrationCommon::Side t_Side,
+                                                          ScatteringType t_ScatteringType);
 
         // Defining the source of wavelengths to be used with the sample. Wavelengths can be used
         // from measured sample, detector data or can be custom provided.
@@ -69,7 +71,8 @@ namespace SpectralAveraging
         double getEnergy(double minLambda,
                          double maxLambda,
                          FenestrationCommon::Property t_Property,
-                         FenestrationCommon::Side t_Side);
+                         FenestrationCommon::Side t_Side,
+                         ScatteringType t_ScatteringType);
 
         [[nodiscard]] std::vector<double> getWavelengths() const;
 
@@ -97,9 +100,7 @@ namespace SpectralAveraging
 
         // Keep energy for current state of the sample. Energy is calculated for each wavelength.
         FenestrationCommon::CSeries m_IncomingSource;
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
-          m_EnergySource;
+        std::map<ScatteringKey, FenestrationCommon::CSeries> m_EnergySource;
 
         bool m_StateCalculated;
 

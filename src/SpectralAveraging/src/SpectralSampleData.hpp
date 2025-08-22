@@ -45,10 +45,10 @@ namespace SpectralAveraging
     constexpr std::array allScatteringTypes{
       ScatteringType::Direct, ScatteringType::Diffuse, ScatteringType::Total};
 
-    using ScatteringKey = std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, ScatteringType>;
+    using ScatteringKey =
+      std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, ScatteringType>;
 
-    inline auto
-      key(FenestrationCommon::Property p, FenestrationCommon::Side s, ScatteringType m)
+    inline auto key(FenestrationCommon::Property p, FenestrationCommon::Side s, ScatteringType m)
     {
         return std::make_tuple(p, s, m);
     }

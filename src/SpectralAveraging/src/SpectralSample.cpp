@@ -41,7 +41,11 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                m_EnergySource[{prop, side}] = t_Sample.m_EnergySource.at({prop, side});
+                for(const auto & scatter : allScatteringTypes)
+                {
+                    m_EnergySource[{prop, side, scatter}] =
+                      t_Sample.m_EnergySource.at({prop, side, scatter});
+                }
             }
         }
 
@@ -105,13 +109,14 @@ namespace SpectralAveraging
         reset();
     }
 
-    double CSample::getEnergy(double const minLambda,
-                              double const maxLambda,
-                              Property const t_Property,
-                              Side const t_Side)
+    double CSample::getEnergy(const double minLambda,
+                              const double maxLambda,
+                              const Property t_Property,
+                              const Side t_Side,
+                              const ScatteringType t_ScatteringType)
     {
         calculateState(m_IntegrationType, m_NormalizationCoefficient);
-        return m_EnergySource.at({t_Property, t_Side}).sum(minLambda, maxLambda);
+        return m_EnergySource.at({t_Property, t_Side, t_ScatteringType}).sum(minLambda, maxLambda);
     }
 
     std::vector<double> CSample::getWavelengths() const
@@ -122,26 +127,29 @@ namespace SpectralAveraging
     double CSample::getProperty(double const minLambda,
                                 double const maxLambda,
                                 Property const t_Property,
-                                Side const t_Side)
+                                Side const t_Side,
+                                ScatteringType t_ScatteringType)
     {
         calculateState(m_IntegrationType, m_NormalizationCoefficient);
         auto Prop = 0.0;
         // Incoming energy can be calculated only if user has defined incoming source.
-        // Otherwise just assume zero property.
+        // Otherwise, just assume zero property.
         if(m_IncomingSource.size() > 0)
         {
             auto incomingEnergy = m_IncomingSource.sum(minLambda, maxLambda);
             double propertyEnergy =
-              m_EnergySource.at({t_Property, t_Side}).sum(minLambda, maxLambda);
+              m_EnergySource.at({t_Property, t_Side, t_ScatteringType}).sum(minLambda, maxLambda);
             Prop = propertyEnergy / incomingEnergy;
         }
         return Prop;
     }
 
-    CSeries & CSample::getEnergyProperties(const Property t_Property, const Side t_Side)
+    CSeries & CSample::getEnergyProperties(const Property t_Property,
+                                           const Side t_Side,
+                                           const ScatteringType t_ScatteringType)
     {
         calculateState(m_IntegrationType, m_NormalizationCoefficient);
-        return m_EnergySource.at({t_Property, t_Side});
+        return m_EnergySource.at({t_Property, t_Side, t_ScatteringType});
     }
 
     size_t CSample::getBandSize() const
@@ -157,13 +165,15 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                m_EnergySource[{prop, side}] = CSeries();
+                for(const auto & scatter: allScatteringTypes)
+                {
+                    m_EnergySource[{prop, side, scatter}] = CSeries();
+                }
             }
         }
     }
 
-    void CSample::calculateState(IntegrationType integrator,
-                                 double normalizationCoefficient)
+    void CSample::calculateState(IntegrationType integrator, double normalizationCoefficient)
     {
         if(!m_StateCalculated)
         {
@@ -191,9 +201,12 @@ namespace SpectralAveraging
                 {
                     for(const auto & side : allSides())
                     {
-                        m_EnergySource[{prop, side}] =
-                          m_EnergySource.at({prop, side})
-                            .integrate(integrator, normalizationCoefficient);
+                        for(const auto & scatter: allScatteringTypes)
+                        {
+                            m_EnergySource[{prop, side, scatter}] =
+                              m_EnergySource.at({prop, side, scatter})
+                                .integrate(integrator, normalizationCoefficient);
+                        }
                     }
                 }
 
@@ -292,7 +305,10 @@ namespace SpectralAveraging
         {
             for(const auto & side : allSides())
             {
-                m_EnergySource[{prop, side}] = m_Property.at(key(prop, side)) * m_IncomingSource;
+                for(const auto & scatter: allScatteringTypes)
+                {
+                    m_EnergySource[{prop, side, scatter}] = m_Property.at(key(prop, side)) * m_IncomingSource;
+                }
             }
         }
     }
