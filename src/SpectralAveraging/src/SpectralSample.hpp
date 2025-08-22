@@ -92,6 +92,9 @@ namespace SpectralAveraging
         std::vector<double> m_Wavelengths;
         WavelengthSet m_WavelengthSet;
 
+        // TODO: EnergySource now need to contain energy from diffuse, direct and total. This is
+        // needed in order to give correct answer to outgoing energy in certain direction
+
         // Keep energy for current state of the sample. Energy is calculated for each wavelength.
         FenestrationCommon::CSeries m_IncomingSource;
         std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
@@ -99,6 +102,10 @@ namespace SpectralAveraging
           m_EnergySource;
 
         bool m_StateCalculated;
+
+        FenestrationCommon::IntegrationType m_IntegrationType{
+          FenestrationCommon::IntegrationType::Trapezoidal};
+        double m_NormalizationCoefficient{1.0};
     };
 
     /////////////////////////////////////////////////////////////////////////////////////

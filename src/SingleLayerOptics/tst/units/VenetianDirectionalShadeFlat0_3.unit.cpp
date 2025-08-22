@@ -63,20 +63,20 @@ TEST_F(TestVenetianDirectionalShadeFlat0_3, TestVenetian1)
 
     auto aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.498801, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.238163, RfDiff, 1e-6);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     const auto correctT{
       Helper::readMatrixFromCSV(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_3_aT.csv")};
 
     Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
-    const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    const auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     const auto correctR{
       Helper::readMatrixFromCSV(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_3_aRf.csv")};

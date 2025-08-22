@@ -22,6 +22,11 @@ namespace SpectralAveraging
     ////     SampleData
     ////////////////////////////////////////////////////////////////////////////
 
+    CSeries SampleData::properties(const Property prop, const Side side)
+    {
+        return properties(prop, side, PropertyType::Total);
+    }
+
     bool SampleData::Flipped() const
     {
         return m_Flipped;
@@ -42,8 +47,8 @@ namespace SpectralAveraging
         {
             for(auto m : allMeasurements)
             {
-                m_Property[key(PropertySimple::T, side, m)] = CSeries();
-                m_Property[key(PropertySimple::R, side, m)] = CSeries();
+                m_Property[key(PropertySurface::T, side, m)] = CSeries();
+                m_Property[key(PropertySurface::R, side, m)] = CSeries();
             }
         }
     }
@@ -54,22 +59,22 @@ namespace SpectralAveraging
                                         double const t_ReflectanceFront,
                                         double const t_ReflectanceBack)
     {
-        m_Property.at(key(PropertySimple::T, Side::Front, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::T, Side::Front, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_TransmittanceFront);
-        m_Property.at(key(PropertySimple::T, Side::Back, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::T, Side::Back, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_TransmittanceBack);
-        m_Property.at(key(PropertySimple::R, Side::Front, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::R, Side::Front, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_ReflectanceFront);
-        m_Property.at(key(PropertySimple::R, Side::Back, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::R, Side::Back, MeasurementType::Direct))
           .addProperty(t_Wavelength, t_ReflectanceBack);
 
-        m_Property.at(key(PropertySimple::T, Side::Front, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::T, Side::Front, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, 0);
-        m_Property.at(key(PropertySimple::T, Side::Back, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::T, Side::Back, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, 0);
-        m_Property.at(key(PropertySimple::R, Side::Front, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::R, Side::Front, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, 0);
-        m_Property.at(key(PropertySimple::R, Side::Back, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::R, Side::Back, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, 0);
     }
 
@@ -78,23 +83,23 @@ namespace SpectralAveraging
                                         const OpticalProperties & diffuse)
     {
         // --- Direct ---
-        m_Property.at(key(PropertySimple::T, Side::Front, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::T, Side::Front, MeasurementType::Direct))
           .addProperty(t_Wavelength, direct.Tf);
-        m_Property.at(key(PropertySimple::T, Side::Back, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::T, Side::Back, MeasurementType::Direct))
           .addProperty(t_Wavelength, direct.Tb);
-        m_Property.at(key(PropertySimple::R, Side::Front, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::R, Side::Front, MeasurementType::Direct))
           .addProperty(t_Wavelength, direct.Rf);
-        m_Property.at(key(PropertySimple::R, Side::Back, MeasurementType::Direct))
+        m_Property.at(key(PropertySurface::R, Side::Back, MeasurementType::Direct))
           .addProperty(t_Wavelength, direct.Rb);
 
         // --- Diffuse ---
-        m_Property.at(key(PropertySimple::T, Side::Front, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::T, Side::Front, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, diffuse.Tf);
-        m_Property.at(key(PropertySimple::T, Side::Back, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::T, Side::Back, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, diffuse.Tb);
-        m_Property.at(key(PropertySimple::R, Side::Front, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::R, Side::Front, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, diffuse.Rf);
-        m_Property.at(key(PropertySimple::R, Side::Back, MeasurementType::Diffuse))
+        m_Property.at(key(PropertySurface::R, Side::Back, MeasurementType::Diffuse))
           .addProperty(t_Wavelength, diffuse.Rb);
     }
 
@@ -104,67 +109,76 @@ namespace SpectralAveraging
     {
         for(auto m : allMeasurements)
         {
-            m_Property.at(key(PropertySimple::T, Side::Front, m)).clear();
-            m_Property.at(key(PropertySimple::T, Side::Back, m)).clear();
-            m_Property.at(key(PropertySimple::R, Side::Front, m)).clear();
-            m_Property.at(key(PropertySimple::R, Side::Back, m)).clear();
+            m_Property.at(key(PropertySurface::T, Side::Front, m)).clear();
+            m_Property.at(key(PropertySurface::T, Side::Back, m)).clear();
+            m_Property.at(key(PropertySurface::R, Side::Front, m)).clear();
+            m_Property.at(key(PropertySurface::R, Side::Back, m)).clear();
         }
 
         for(const auto & val : tValues)
         {
             // DIRECT
-            m_Property.at(key(PropertySimple::T, Side::Front, MeasurementType::Direct))
+            m_Property.at(key(PropertySurface::T, Side::Front, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Tf);
-            m_Property.at(key(PropertySimple::T, Side::Back, MeasurementType::Direct))
+            m_Property.at(key(PropertySurface::T, Side::Back, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Tb);
-            m_Property.at(key(PropertySimple::R, Side::Front, MeasurementType::Direct))
+            m_Property.at(key(PropertySurface::R, Side::Front, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Rf);
-            m_Property.at(key(PropertySimple::R, Side::Back, MeasurementType::Direct))
+            m_Property.at(key(PropertySurface::R, Side::Back, MeasurementType::Direct))
               .addProperty(val.wavelength, val.direct.Rb);
 
             // DIFFUSE
-            m_Property.at(key(PropertySimple::T, Side::Front, MeasurementType::Diffuse))
+            m_Property.at(key(PropertySurface::T, Side::Front, MeasurementType::Diffuse))
               .addProperty(val.wavelength, val.diffuse.Tf);
-            m_Property.at(key(PropertySimple::T, Side::Back, MeasurementType::Diffuse))
+            m_Property.at(key(PropertySurface::T, Side::Back, MeasurementType::Diffuse))
               .addProperty(val.wavelength, val.diffuse.Tb);
-            m_Property.at(key(PropertySimple::R, Side::Front, MeasurementType::Diffuse))
+            m_Property.at(key(PropertySurface::R, Side::Front, MeasurementType::Diffuse))
               .addProperty(val.wavelength, val.diffuse.Rf);
-            m_Property.at(key(PropertySimple::R, Side::Back, MeasurementType::Diffuse))
+            m_Property.at(key(PropertySurface::R, Side::Back, MeasurementType::Diffuse))
               .addProperty(val.wavelength, val.diffuse.Rb);
         }
     }
 
-    CSeries CSpectralSampleData::properties(Property prop, Side side)
+    CSeries
+      CSpectralSampleData::properties(const Property prop, const Side side, const PropertyType type)
     {
         auto aSide = getSide(side, Flipped());
         if(prop == Property::T || prop == Property::R)
         {
-            PropertySimple simpleProp =
-              (prop == Property::T) ? PropertySimple::T : PropertySimple::R;
+            const PropertySurface simpleProp =
+              (prop == Property::T) ? PropertySurface::T : PropertySurface::R;
             const auto & direct = m_Property.at(key(simpleProp, aSide, MeasurementType::Direct));
             const auto & diffuse = m_Property.at(key(simpleProp, aSide, MeasurementType::Diffuse));
+            if(type == PropertyType::Direct)
+            {
+                return direct;
+            }
+            if(type == PropertyType::Diffuse)
+            {
+                return diffuse;
+            }
             return direct + diffuse;
         }
-        else if(prop == Property::Abs)
+        if(prop == Property::Abs)
         {
             const auto & tDirect =
-              m_Property.at(key(PropertySimple::T, aSide, MeasurementType::Direct));
+              m_Property.at(key(PropertySurface::T, aSide, MeasurementType::Direct));
             const auto & tDiffuse =
-              m_Property.at(key(PropertySimple::T, aSide, MeasurementType::Diffuse));
+              m_Property.at(key(PropertySurface::T, aSide, MeasurementType::Diffuse));
             const auto & rDirect =
-              m_Property.at(key(PropertySimple::R, aSide, MeasurementType::Direct));
+              m_Property.at(key(PropertySurface::R, aSide, MeasurementType::Direct));
             const auto & rDiffuse =
-              m_Property.at(key(PropertySimple::R, aSide, MeasurementType::Diffuse));
+              m_Property.at(key(PropertySurface::R, aSide, MeasurementType::Diffuse));
             return 1.0 - (tDirect + tDiffuse + rDirect + rDiffuse);
         }
 
-        return CSeries();
+        return {};
     }
 
     std::vector<double> CSpectralSampleData::getWavelengths() const
     {
         const auto & s =
-          m_Property.at(key(PropertySimple::T, Side::Front, MeasurementType::Direct));
+          m_Property.at(key(PropertySurface::T, Side::Front, MeasurementType::Direct));
         return s.size() ? s.getXArray() : std::vector<double>{};
     }
 
@@ -182,10 +196,10 @@ namespace SpectralAveraging
         {
             for(auto m : allMeasurements)
             {
-                m_Property[key(PropertySimple::T, side, m)] =
-                  m_Property.at(key(PropertySimple::T, side, m)).interpolate(t_Wavelengths);
-                m_Property[key(PropertySimple::R, side, m)] =
-                  m_Property.at(key(PropertySimple::R, side, m)).interpolate(t_Wavelengths);
+                m_Property[key(PropertySurface::T, side, m)] =
+                  m_Property.at(key(PropertySurface::T, side, m)).interpolate(t_Wavelengths);
+                m_Property[key(PropertySurface::R, side, m)] =
+                  m_Property.at(key(PropertySurface::R, side, m)).interpolate(t_Wavelengths);
             }
         }
     }
@@ -208,8 +222,8 @@ namespace SpectralAveraging
         {
             for(auto m : allMeasurements)
             {
-                m_Property.at(key(PropertySimple::T, side, m)).cutExtraData(minLambda, maxLambda);
-                m_Property.at(key(PropertySimple::R, side, m)).cutExtraData(minLambda, maxLambda);
+                m_Property.at(key(PropertySurface::T, side, m)).cutExtraData(minLambda, maxLambda);
+                m_Property.at(key(PropertySurface::R, side, m)).cutExtraData(minLambda, maxLambda);
             }
         }
     }

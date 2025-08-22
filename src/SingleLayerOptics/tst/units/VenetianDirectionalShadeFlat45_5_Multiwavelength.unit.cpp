@@ -16,7 +16,7 @@ namespace
     void processWavelength(int index, BSDFIntegrator & aResults, const std::string & test_data_dir)
     {
         // Front transmittance
-        const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+        const auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
         const std::string file_path_t =
           test_data_dir + "/data/TestVenetianDirectionalShadeFlat45_5_Multiwavelength_aT_wl"
           + std::to_string(index + 1) + ".csv";
@@ -26,7 +26,7 @@ namespace
         Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
         // Front reflectance
-        const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+        const auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
         const std::string file_path_r =
           test_data_dir + "/data/TestVenetianDirectionalShadeFlat45_5_Multiwavelength_aRf_wl"
           + std::to_string(index + 1) + ".csv";

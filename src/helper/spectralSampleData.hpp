@@ -20,4 +20,6 @@ namespace SpectralSample
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_31111();
 
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> NFRC_VE348();
+
+    std::shared_ptr<SpectralAveraging::CSpectralSampleData> DirectDiffuse();
 }

@@ -110,38 +110,38 @@ namespace FenestrationCommon
     // often the case when calculations are performed only over transmittance and reflectance. It is
     // also often the case when Transmittance and Reflectance have different structure from
     // absorptances.
-    enum class PropertySimple
+    enum class PropertySurface
     {
         T,
         R
     };
 
     template<>
-    struct EnumBounds<PropertySimple>
+    struct EnumBounds<PropertySurface>
     {
-        static constexpr auto first = PropertySimple::T;
-        static constexpr auto last = PropertySimple::R;
+        static constexpr auto first = PropertySurface::T;
+        static constexpr auto last = PropertySurface::R;
     };
 
     constexpr auto allPropertySimple()
     {
-        return enumValues<PropertySimple>();
+        return enumValues<PropertySurface>();
     }
 
-    inline PropertySimple toPropertySimple(const Property prop)
+    inline PropertySurface toPropertySimple(const Property prop)
     {
-        auto result{PropertySimple::T};
+        auto result{PropertySurface::T};
         if(prop == Property::R)
         {
-            result = PropertySimple::R;
+            result = PropertySurface::R;
         }
         return result;
     }
 
-    inline Property toProperty(const PropertySimple prop)
+    inline Property toProperty(const PropertySurface prop)
     {
         auto result{Property::T};
-        if(prop == PropertySimple::R)
+        if(prop == PropertySurface::R)
         {
             result = Property::R;
         }
@@ -165,7 +165,7 @@ namespace FenestrationCommon
 
     constexpr auto allScattering()
     {
-        return enumValues<PropertySimple>();
+        return enumValues<PropertySurface>();
     }
 
     //////////////////////////////////////////////////////////////////////////

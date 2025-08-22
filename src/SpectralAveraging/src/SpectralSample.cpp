@@ -55,8 +55,7 @@ namespace SpectralAveraging
 
     CSeries & CSample::getSourceData()
     {
-        calculateState(IntegrationType::Trapezoidal,
-                       1);   // must interpolate data to same wavelengths
+        calculateState(m_IntegrationType, m_NormalizationCoefficient);
         return m_SourceData;
     }
 
@@ -111,7 +110,7 @@ namespace SpectralAveraging
                               Property const t_Property,
                               Side const t_Side)
     {
-        calculateState(IntegrationType::Trapezoidal, 1);
+        calculateState(m_IntegrationType, m_NormalizationCoefficient);
         return m_EnergySource.at({t_Property, t_Side}).sum(minLambda, maxLambda);
     }
 
@@ -125,7 +124,7 @@ namespace SpectralAveraging
                                 Property const t_Property,
                                 Side const t_Side)
     {
-        calculateState(IntegrationType::Trapezoidal, 1);
+        calculateState(m_IntegrationType, m_NormalizationCoefficient);
         auto Prop = 0.0;
         // Incoming energy can be calculated only if user has defined incoming source.
         // Otherwise just assume zero property.
@@ -141,7 +140,7 @@ namespace SpectralAveraging
 
     CSeries & CSample::getEnergyProperties(const Property t_Property, const Side t_Side)
     {
-        calculateState(IntegrationType::Trapezoidal, 1);
+        calculateState(m_IntegrationType, m_NormalizationCoefficient);
         return m_EnergySource.at({t_Property, t_Side});
     }
 
@@ -163,7 +162,7 @@ namespace SpectralAveraging
         }
     }
 
-    void CSample::calculateState(FenestrationCommon::IntegrationType integrator,
+    void CSample::calculateState(IntegrationType integrator,
                                  double normalizationCoefficient)
     {
         if(!m_StateCalculated)
@@ -178,7 +177,6 @@ namespace SpectralAveraging
             if(m_SourceData.size() > 0)
             {
                 m_IncomingSource = m_SourceData.interpolate(m_Wavelengths);
-
 
                 if(m_DetectorData.size() > 0)
                 {
@@ -245,8 +243,7 @@ namespace SpectralAveraging
 
     std::shared_ptr<CSpectralSampleData> CSpectralSample::getMeasuredData()
     {
-        calculateState(IntegrationType::Trapezoidal,
-                       1);   // Interpolation is needed before returning the data
+        calculateState(m_IntegrationType, m_NormalizationCoefficient);
         return m_SampleData;
     }
 
@@ -260,7 +257,7 @@ namespace SpectralAveraging
         std::lock_guard lock(spectralSampleMutex);
         if(!m_StateCalculated)
         {
-            calculateState(IntegrationType::Trapezoidal, 1);
+            calculateState(m_IntegrationType, m_NormalizationCoefficient);
         }
 
         return m_Property.at(key(t_Property, t_Side));
@@ -345,7 +342,7 @@ namespace SpectralAveraging
         m_JcsPrime{{Side::Front, CSeries()}, {Side::Back, CSeries()}}
     {}
 
-    void CPhotovoltaicSample::calculateState(FenestrationCommon::IntegrationType integrator,
+    void CPhotovoltaicSample::calculateState(IntegrationType integrator,
                                              double normalizationCoefficient)
     {
         CSpectralSample::calculateProperties(integrator, normalizationCoefficient);
@@ -377,7 +374,7 @@ namespace SpectralAveraging
 
     CSeries CPhotovoltaicSample::jscPrime(const Side side)
     {
-        calculateState(IntegrationType::Trapezoidal, 1);
+        calculateState(m_IntegrationType, m_NormalizationCoefficient);
         return m_JcsPrime.at(side);
     }
 }   // namespace SpectralAveraging

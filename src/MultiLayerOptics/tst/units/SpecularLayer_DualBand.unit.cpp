@@ -79,7 +79,7 @@ TEST_F(TestSpecularLayerDualBand_102, TestSpecularDualBandSingleLayer1)
     const auto maxlambda{2.5};
 
     auto test{igu->getPropertySimple(
-      minLambda, maxlambda, PropertySimple::T, Side::Front, Scattering::DirectDirect)};
+      minLambda, maxlambda, PropertySurface::T, Side::Front, Scattering::DirectDirect)};
 
     EXPECT_NEAR(test, 0.6, 1e-6);
 }

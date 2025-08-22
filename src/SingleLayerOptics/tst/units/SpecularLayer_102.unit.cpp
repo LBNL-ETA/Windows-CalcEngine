@@ -46,22 +46,22 @@ TEST_F(TestSpecularLayer_102, TestSpecular1)
 
     auto aResults = aLayer->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.75265482876657230, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.14604173568524281, RfDiff, 1e-6);
 
     constexpr double theta = 35;
     constexpr double phi = 58;
 
-    const double tauHem = aResults.DirHem(Side::Front, PropertySimple::T, theta, phi);
+    const double tauHem = aResults.DirHem(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.82700480785360742, tauHem, 1e-6);
 
-    const double tauDir = aResults.DirDir(Side::Front, PropertySimple::T, theta, phi);
+    const double tauDir = aResults.DirDir(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.82700480785360742, tauDir, 1e-6);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
@@ -118,7 +118,7 @@ TEST_F(TestSpecularLayer_102, TestSpecular1)
     }
 
     // Front reflectance
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     calculatedResults.clear();
     correctResults = {
@@ -179,7 +179,7 @@ TEST_F(TestSpecularLayer_102, WavelengthByWavelengthResults)
     constexpr size_t wlIndex{5u};
     auto result = aLayer->getResultsAtWavelength(wlIndex);
 
-    const auto diffDiff = result.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+    const auto diffDiff = result.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySurface::T);
     constexpr auto correct{0.167105};
 
     EXPECT_NEAR(diffDiff, correct, 1e-6);

@@ -7,7 +7,7 @@
 
 namespace FenestrationCommon
 {
-    enum class PropertySimple;
+    enum class PropertySurface;
     enum class Side;
     enum class Scattering;
     enum class ScatteringSimple;
@@ -23,7 +23,7 @@ namespace SingleLayerOptics
 
         virtual double getPropertySimple(const double minLambda,
                                          const double maxLambda,
-                                         const FenestrationCommon::PropertySimple t_Property,
+                                         const FenestrationCommon::PropertySurface t_Property,
                                          const FenestrationCommon::Side t_Side,
                                          const FenestrationCommon::Scattering t_Scattering,
                                          const double t_Theta = 0,

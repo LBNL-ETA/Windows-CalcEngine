@@ -49,13 +49,13 @@ TEST_F(TestWovenShadeUniformMaterial, TestSolarProperties)
 
     auto aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.037033896815761802, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.096296610318422418, RfDiff, 1e-6);
 
-    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySurface::R);
     EXPECT_NEAR(0.096296610318422418, RbDiff, 1e-6);
 
     const double theta{0.0};

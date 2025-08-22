@@ -53,7 +53,7 @@ namespace SingleLayerOptics
     }
 
     Trichromatic
-      ColorProperties::getTrichromatic(const FenestrationCommon::PropertySimple t_Property,
+      ColorProperties::getTrichromatic(const FenestrationCommon::PropertySurface t_Property,
                                        const FenestrationCommon::Side t_Side,
                                        const FenestrationCommon::Scattering t_Scattering,
                                        double const t_Theta,
@@ -97,7 +97,7 @@ namespace SingleLayerOptics
         return Trichromatic(X, Y, Z);
     }
 
-    aRGB ColorProperties::getRGB(const FenestrationCommon::PropertySimple t_Property,
+    aRGB ColorProperties::getRGB(const FenestrationCommon::PropertySurface t_Property,
                                  const FenestrationCommon::Side t_Side,
                                  const FenestrationCommon::Scattering t_Scattering,
                                  double const t_Theta,
@@ -134,7 +134,7 @@ namespace SingleLayerOptics
         return aRGB(R, G, B);
     }
 
-    CIE_LAB ColorProperties::getCIE_Lab(const FenestrationCommon::PropertySimple t_Property,
+    CIE_LAB ColorProperties::getCIE_Lab(const FenestrationCommon::PropertySurface t_Property,
                                         const FenestrationCommon::Side t_Side,
                                         const FenestrationCommon::Scattering t_Scattering,
                                         double const t_Theta,

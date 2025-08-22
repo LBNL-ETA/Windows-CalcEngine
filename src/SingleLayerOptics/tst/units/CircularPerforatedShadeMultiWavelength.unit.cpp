@@ -78,7 +78,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     size_t size = aT.size();
@@ -103,7 +103,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySurface::R);
 
     calculatedResults.clear();
     correctResults = {0.18865, 0.19495, 0.19495, 0.19495, 0.19495, 0.19495, 0.19495,
@@ -128,7 +128,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -153,7 +153,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySurface::R);
 
     calculatedResults.clear();
     correctResults = {0.18865, 0.19495, 0.19495, 0.19495, 0.19495, 0.19495, 0.19495,
@@ -179,7 +179,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -206,7 +206,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySurface::R);
 
     calculatedResults.clear();
 
@@ -233,7 +233,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     //  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     size = aT.size();
@@ -260,7 +260,7 @@ TEST_F(TestCircularPerforatedShadeMultiWavelength, TestCircularPerforatedMultiWa
     }
 
     // Front reflectance
-    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySurface::R);
 
     calculatedResults.clear();
 

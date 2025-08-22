@@ -60,9 +60,9 @@ TEST_F(TestVenetianUniformShadeFlat0_2, TestDefaultA0Venetian)
 
     auto aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.397, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.019894, RfDiff, 1e-6);
 }

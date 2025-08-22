@@ -32,8 +32,8 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
 
-        auto & Tau = m_Results.getMatrix(aSide, PropertySimple::T);
-        auto & Rho = m_Results.getMatrix(aSide, PropertySimple::R);
+        auto & Tau = m_Results.getMatrix(aSide, PropertySurface::T);
+        auto & Rho = m_Results.getMatrix(aSide, PropertySurface::R);
 
         double aTau = aCell->T_dir_dif(aSide, t_Direction);
         double Ref = aCell->R_dir_dif(aSide, t_Direction);
@@ -70,8 +70,8 @@ namespace SingleLayerOptics
             {
                 using ConstantsData::WCE_PI;
 
-                auto & tau = results[j].getMatrix(aSide, PropertySimple::T);
-                auto & rho = results[j].getMatrix(aSide, PropertySimple::R);
+                auto & tau = results[j].getMatrix(aSide, PropertySurface::T);
+                auto & rho = results[j].getMatrix(aSide, PropertySurface::R);
                 tau(i, t_DirectionIndex) += aTau[j] / WCE_PI;
                 rho(i, t_DirectionIndex) += Ref[j] / WCE_PI;
             }
@@ -97,8 +97,8 @@ namespace SingleLayerOptics
         {
             using ConstantsData::WCE_PI;
 
-            auto & tau = results.getMatrix(aSide, PropertySimple::T);
-            auto & rho = results.getMatrix(aSide, PropertySimple::R);
+            auto & tau = results.getMatrix(aSide, PropertySurface::T);
+            auto & rho = results.getMatrix(aSide, PropertySurface::R);
             tau(i, t_DirectionIndex) += aTau / WCE_PI;
             rho(i, t_DirectionIndex) += Ref / WCE_PI;
         }

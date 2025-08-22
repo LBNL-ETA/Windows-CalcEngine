@@ -60,15 +60,15 @@ TEST_F(MultiPaneSpecular_102_103_CondensedSpectrum, TestAngle0)
     CMultiPaneSpecular aLayer = *getLayer();
 
     const double T = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+      minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.65096737306210839, T, 1e-6);
 
     const double Rf = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DirectDirect, angle, 0);
+      minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.12437233463533325, Rf, 1e-6);
 
     const double Rb = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DirectDirect, angle, 0);
+      minLambda, maxLambda, PropertySurface::R, Side::Back, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.11621576724154123, Rb, 1e-6);
 
     const std::vector AbsorptanceFront{aLayer.getAbsorptanceLayers(
@@ -98,14 +98,14 @@ TEST_F(MultiPaneSpecular_102_103_CondensedSpectrum, TestAngle0)
     EXPECT_NEAR(0.063851365359220133, AbsorptanceBack[1], 1e-6);
 
     const double Them = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+      minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.55134962796067644, Them, 1e-6);
 
     const double Rfhem = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+      minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.20101014299215508, Rfhem, 1e-6);
 
     const double Rbhem = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
+      minLambda, maxLambda, PropertySurface::R, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.18703361935727306, Rbhem, 1e-6);
 }

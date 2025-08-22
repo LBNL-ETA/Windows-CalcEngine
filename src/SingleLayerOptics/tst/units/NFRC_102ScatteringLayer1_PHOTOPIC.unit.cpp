@@ -46,27 +46,27 @@ TEST_F(TestNFRC102ScatteringLayer1_PHOTOPIC, Test1)
     constexpr Side aSide = Side::Front;
 
     double T_dir_dir = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect);
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.88392833946432292, T_dir_dir, 1e-6);
 
     double R_dir_dir = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect);
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.081491816754847721, R_dir_dir, 1e-6);
 
     double T_dir_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse);
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0, T_dir_dif, 1e-6);
 
     double R_dir_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse);
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
     double T_dif_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.80517620769857268, T_dif_dif, 1e-6);
 
     double R_dif_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.1559084672280428, R_dif_dif, 1e-6);
 
     double A_dir = aLayer.getAbsorptance(aSide, ScatteringSimple::Direct);

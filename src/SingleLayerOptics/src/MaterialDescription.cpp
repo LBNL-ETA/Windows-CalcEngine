@@ -451,6 +451,9 @@ namespace SingleLayerOptics
                                         const CBeamDirection & t_IncomingDirection,
                                         const CBeamDirection &) const
     {
+        // TODO: getProperty from AngularSample need to understand whether it is returning
+        // direct or diffuse component. Because of that, outgoing direction need to be included
+        // here so that angular sample know if direct or diffuse part is needed.
         return m_AngularSample.getProperty(
           m_MinLambda, m_MaxLambda, t_Property, t_Side, t_IncomingDirection.theta());
     }

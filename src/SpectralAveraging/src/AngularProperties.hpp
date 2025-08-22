@@ -56,17 +56,13 @@ namespace SpectralAveraging
     class CAngularPropertiesCoated : public CAngularProperties
     {
     public:
-        CAngularPropertiesCoated(double const t_Transmittance,
-                                 double const t_Reflectance,
-                                 double const t_SolTransmittance0);
+        CAngularPropertiesCoated(double t_Transmittance, double t_Reflectance);
 
-        double transmittance(double const t_Angle, double const t_Wavelength = 0) override;
-        double reflectance(double const t_Angle, double const t_Wavelength = 0) override;
+        double transmittance(double t_Angle, double t_Wavelength = 0) override;
+        double reflectance(double t_Angle, double t_Wavelength = 0) override;
 
     protected:
-        void checkStateProperties(const double t_Angle, const double t_Wavelength) override;
-
-        double m_SolTransmittance0;
+        void checkStateProperties(double t_Angle, double t_Wavelength) override;
     };
 
     enum class CoatingProperty
@@ -84,46 +80,42 @@ namespace SpectralAveraging
     class Coefficients
     {
     public:
-        Coefficients(double const t_C0,
-                     double const t_C1,
-                     double const t_C2,
-                     double const t_C3,
-                     double const t_C4);
-        double inerpolation(double const t_Value) const;
+        Coefficients() = default;
+        Coefficients(double t_C0,
+                     double t_C1,
+                     double t_C2,
+                     double t_C3,
+                     double t_C4);
+        [[nodiscard]] double interpolation(double t_Value) const;
 
     private:
-        double C0;
-        double C1;
-        double C2;
-        double C3;
-        double C4;
+        double C0{0};
+        double C1{0};
+        double C2{0};
+        double C3{0};
+        double C4{0};
     };
 
     // creates coating coefficients according to property and type.
-    class CCoatingCoefficients
+    namespace CoatingCoefficients
     {
-    public:
-        CCoatingCoefficients();
-        std::shared_ptr<Coefficients> getCoefficients(CoatingProperty const t_Property,
-                                                      CoatingType const t_Type) const;
+        [[nodiscard]] Coefficients getCoefficients(CoatingProperty t_Property, CoatingType t_Type);
     };
 
     class CAngularPropertiesFactory
     {
     public:
-        CAngularPropertiesFactory(double const t_Transmittance0,
-                                  double const t_Reflectance0,
-                                  double const t_Thickness = 0,
-                                  double const t_SolarTransmittance = 0);
+        CAngularPropertiesFactory(double t_Transmittance0,
+                                  double t_Reflectance0,
+                                  double t_Thickness = 0);
 
         std::shared_ptr<CAngularProperties>
-          getAngularProperties(FenestrationCommon::SurfaceType const t_SurfaceType);
+          getAngularProperties(FenestrationCommon::SurfaceType t_SurfaceType);
 
     private:
         double m_Thickness;
         double m_Transmittance0;
         double m_Reflectance0;
-        double m_SolarTransmittance0;
     };
 
 }   // namespace SpectralAveraging

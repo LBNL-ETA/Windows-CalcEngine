@@ -8,7 +8,7 @@
 
 using FenestrationCommon::CMatrixSeries;
 using FenestrationCommon::Side;
-using FenestrationCommon::PropertySimple;
+using FenestrationCommon::PropertySurface;
 using FenestrationCommon::CSeries;
 
 namespace MultiLayerOptics
@@ -72,7 +72,7 @@ namespace MultiLayerOptics
         return m_TotJSC.at(t_Side);
     }
 
-    CMatrixSeries CEquivalentBSDFLayer::getTotal(const Side t_Side, const PropertySimple t_Property)
+    CMatrixSeries CEquivalentBSDFLayer::getTotal(const Side t_Side, const PropertySurface t_Property)
     {
         if(!m_Calculated)
         {
@@ -82,7 +82,7 @@ namespace MultiLayerOptics
     }
 
     std::vector<FenestrationCommon::MatrixAtWavelength>
-      CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySimple t_Property)
+      CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySurface t_Property)
     {
         if(!m_Calculated)
         {
@@ -119,7 +119,7 @@ namespace MultiLayerOptics
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
             m_TotJSC[aSide] =
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
-            for(PropertySimple aProperty : FenestrationCommon::allPropertySimple())
+            for(PropertySurface aProperty : FenestrationCommon::allPropertySimple())
             {
                 m_Tot[{aSide, aProperty}] = CMatrixSeries(
                   m_Lambda.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());

@@ -10,7 +10,7 @@
 #include "spectralSampleData.hpp"
 
 using FenestrationCommon::CSeries;
-using FenestrationCommon::PropertySimple;
+using FenestrationCommon::PropertySurface;
 using FenestrationCommon::Side;
 using FenestrationCommon::Scattering;
 using SpectralAveraging::CSpectralSampleData;
@@ -1807,7 +1807,7 @@ TEST_F(Photovoltaic_DoublePane_Example1, Test1)
     auto aLayer = getLayer();
 
     const double T = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DirectDirect, angle, 0);
+      minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.2, T, 1e-6);
 
     const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);

@@ -11,7 +11,7 @@
 using FenestrationCommon::IntegrationType;
 using FenestrationCommon::Side;
 using FenestrationCommon::Property;
-using FenestrationCommon::PropertySimple;
+using FenestrationCommon::PropertySurface;
 using FenestrationCommon::Scattering;
 using FenestrationCommon::ScatteringSimple;
 using FenestrationCommon::SquareMatrix;
@@ -66,7 +66,7 @@ namespace MultiLayerOptics
     SquareMatrix CMultiPaneBSDF::getMatrix(const double minLambda,
                                            const double maxLambda,
                                            const Side t_Side,
-                                           const PropertySimple t_Property)
+                                           const PropertySurface t_Property)
     {
         calculate(minLambda, maxLambda);
 
@@ -76,7 +76,7 @@ namespace MultiLayerOptics
     double CMultiPaneBSDF::DirDir(const double minLambda,
                                   const double maxLambda,
                                   const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const double t_Theta,
                                   const double t_Phi)
     {
@@ -88,7 +88,7 @@ namespace MultiLayerOptics
     double CMultiPaneBSDF::DirDir(const double minLambda,
                                   const double maxLambda,
                                   const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const size_t Index)
     {
         calculate(minLambda, maxLambda);
@@ -97,7 +97,7 @@ namespace MultiLayerOptics
     }
 
     SquareMatrix CMultiPaneBSDF::calculateProperties(Side aSide,
-                                                     PropertySimple aProperty,
+                                                     PropertySurface aProperty,
                                                      const double minLambda,
                                                      const double maxLambda)
     {
@@ -188,15 +188,15 @@ namespace MultiLayerOptics
             m_Abs[aSide] = calculateAbsorptance(aSide, minLambda, maxLambda);
             m_AbsElectricity[aSide] = calculateJSC(aSide, minLambda, maxLambda);
 
-            std::map<std::pair<Side, PropertySimple>, SquareMatrix> aResults;
-            for(PropertySimple aProperty : FenestrationCommon::allPropertySimple())
+            std::map<std::pair<Side, PropertySurface>, SquareMatrix> aResults;
+            for(PropertySurface aProperty : FenestrationCommon::allPropertySimple())
             {
                 aResults[{aSide, aProperty}] =
                   calculateProperties(aSide, aProperty, minLambda, maxLambda);
             }
 
-            m_Results.setMatrices(aResults.at({aSide, PropertySimple::T}),
-                                  aResults.at({aSide, PropertySimple::R}),
+            m_Results.setMatrices(aResults.at({aSide, PropertySurface::T}),
+                                  aResults.at({aSide, PropertySurface::R}),
                                   aSide);
         }
 
@@ -277,7 +277,7 @@ namespace MultiLayerOptics
     std::vector<double> CMultiPaneBSDF::DirHem(const double minLambda,
                                                const double maxLambda,
                                                const Side t_Side,
-                                               const PropertySimple t_Property)
+                                               const PropertySurface t_Property)
     {
         calculate(minLambda, maxLambda);
         return m_Results.DirHem(t_Side, t_Property);
@@ -286,7 +286,7 @@ namespace MultiLayerOptics
     double CMultiPaneBSDF::DirHem(const double minLambda,
                                   const double maxLambda,
                                   const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const double t_Theta,
                                   const double t_Phi)
     {
@@ -297,7 +297,7 @@ namespace MultiLayerOptics
     double CMultiPaneBSDF::DirHem(const double minLambda,
                                   const double maxLambda,
                                   const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const size_t Index)
     {
         return DirHem(minLambda, maxLambda, t_Side, t_Property)[Index];
@@ -348,7 +348,7 @@ namespace MultiLayerOptics
     double CMultiPaneBSDF::DiffDiff(const double minLambda,
                                     const double maxLambda,
                                     const Side t_Side,
-                                    const PropertySimple t_Property)
+                                    const PropertySurface t_Property)
     {
         calculate(minLambda, maxLambda);
         return m_Results.DiffDiff(t_Side, t_Property);
@@ -384,7 +384,7 @@ namespace MultiLayerOptics
     double CMultiPaneBSDF::energy(const double minLambda,
                                   const double maxLambda,
                                   const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const double t_Theta,
                                   const double t_Phi)
     {
@@ -420,7 +420,7 @@ namespace MultiLayerOptics
 
     double CMultiPaneBSDF::getPropertySimple(const double minLambda,
                                              const double maxLambda,
-                                             const FenestrationCommon::PropertySimple t_Property,
+                                             const FenestrationCommon::PropertySurface t_Property,
                                              const FenestrationCommon::Side t_Side,
                                              const FenestrationCommon::Scattering t_Scattering,
                                              const double t_Theta,
@@ -451,7 +451,7 @@ namespace MultiLayerOptics
     }
 
     std::vector<FenestrationCommon::MatrixAtWavelength> CMultiPaneBSDF::getWavelengthMatrices(
-      double minLambda, double maxLambda, Side t_Side, PropertySimple t_Property)
+      double minLambda, double maxLambda, Side t_Side, PropertySurface t_Property)
     {
         calculate(minLambda, maxLambda);
         return m_WavelengthMatrices.at(std::make_pair(t_Side, t_Property));
@@ -560,7 +560,7 @@ namespace MultiLayerOptics
     double CMultiPaneBSDF::DirDiff(double minLambda,
                                    double maxLambda,
                                    FenestrationCommon::Side t_Side,
-                                   FenestrationCommon::PropertySimple t_Property,
+                                   FenestrationCommon::PropertySurface t_Property,
                                    double t_Theta,
                                    double t_Phi)
     {
