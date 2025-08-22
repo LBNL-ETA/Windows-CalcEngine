@@ -31,7 +31,7 @@ protected:
     }
 
 public:
-    std::shared_ptr<CAngularSpectralSample> getSample() const
+    [[nodiscard]] std::shared_ptr<CAngularSpectralSample> getSample() const
     {
         return m_Sample;
     }
@@ -61,6 +61,60 @@ TEST_F(TestDirectDiffuse_Angular, TestProperties0degrees)
 
     auto absorptance = angularSample->getProperty(
       lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
+    EXPECT_NEAR(0.2, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties0degreesDirect)
+{
+    constexpr auto angle{0.0};
+
+    std::shared_ptr<CAngularSpectralSample> angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance = angularSample->getProperty(
+      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Direct);
+    EXPECT_NEAR(0.1, transmittance, 1e-6);
+
+    auto reflectanceFront = angularSample->getProperty(
+      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Direct);
+    EXPECT_NEAR(0.2, reflectanceFront, 1e-6);
+
+    auto reflectanceBack = angularSample->getProperty(
+      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Direct);
+    EXPECT_NEAR(0.2, reflectanceBack, 1e-6);
+
+    auto absorptance = angularSample->getProperty(
+      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Direct);
+    EXPECT_NEAR(0.2, absorptance, 1e-6);
+}
+
+TEST_F(TestDirectDiffuse_Angular, TestProperties0degreesDiffuse)
+{
+    constexpr auto angle{0.0};
+
+    std::shared_ptr<CAngularSpectralSample> angularSample = getSample();
+
+    // SOLAR RANGE
+    constexpr auto lowLambda{0.3};
+    constexpr auto highLambda{2.5};
+
+    auto transmittance = angularSample->getProperty(
+      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Diffuse);
+    EXPECT_NEAR(0.2, transmittance, 1e-6);
+
+    auto reflectanceFront = angularSample->getProperty(
+      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Diffuse);
+    EXPECT_NEAR(0.3, reflectanceFront, 1e-6);
+
+    auto reflectanceBack = angularSample->getProperty(
+      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Diffuse);
+    EXPECT_NEAR(0.3, reflectanceBack, 1e-6);
+
+    auto absorptance = angularSample->getProperty(
+      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Diffuse);
     EXPECT_NEAR(0.2, absorptance, 1e-6);
 }
 
