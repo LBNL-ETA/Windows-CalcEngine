@@ -66,9 +66,9 @@ namespace SingleLayerOptics
             {
                 const CBeamDirection aDirection = aDirections[i].centerPoint();
                 const auto aTau =
-                  m_Cell->T_dir_dir_at_wavelength(aSide, aDirection, wavelengthIndex);
+                  m_Cell->T_dir_dir_band(aSide, aDirection)[wavelengthIndex];
                 const auto aRho =
-                  m_Cell->R_dir_dir_at_wavelength(aSide, aDirection, wavelengthIndex);
+                  m_Cell->R_dir_dir_band(aSide, aDirection)[wavelengthIndex];
                 double Lambda = aDirections[i].lambda();
 
                 auto & tau = results.getMatrix(aSide, PropertySurface::T);
