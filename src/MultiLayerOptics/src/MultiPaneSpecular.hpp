@@ -3,8 +3,9 @@
 #include <memory>
 #include <vector>
 
-#include "WCECommon.hpp"
-#include "WCESingleLayerOptics.hpp"
+#include <WCECommon.hpp>
+#include <WCESingleLayerOptics.hpp>
+
 #include "EquivalentLayerSingleComponentMW.hpp"
 #include "AbsorptancesMultiPane.hpp"
 
