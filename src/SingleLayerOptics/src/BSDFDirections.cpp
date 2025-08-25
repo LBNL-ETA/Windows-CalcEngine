@@ -221,7 +221,7 @@ namespace SingleLayerOptics
         return m_Directions.at(tDirection);
     }
 
-    BSDFHemisphere BSDFHemisphere::create(BSDFBasis t_Basis)
+    BSDFHemisphere BSDFHemisphere::create(const BSDFBasis t_Basis)
     {
         return BSDFHemisphere(t_Basis);
     }

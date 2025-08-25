@@ -64,13 +64,13 @@ TEST_F(MultiPaneBSDF_102_Homogeneous_31100_n_Band_Material, TestBSDF1)
     EXPECT_NEAR(0.0, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.255263, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.16256305390900724, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.113639, absDiff1, 1e-6);
+    EXPECT_NEAR(0.10273201254090114, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.631098, absDiff2, 1e-6);
+    EXPECT_NEAR(0.7347049335500917, absDiff2, 1e-6);
 
     const double theta = 0;
     const double phi = 0;

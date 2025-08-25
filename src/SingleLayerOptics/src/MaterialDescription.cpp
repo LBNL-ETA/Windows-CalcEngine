@@ -465,30 +465,12 @@ namespace SingleLayerOptics
                                          const CBeamDirection & t_IncomingDirection,
                                          const CBeamDirection & t_OutgoingDirection) const
     {
-        std::lock_guard lock(m_CacheMutex);
-
-        CacheKey key{t_Property,
-                     t_Side,
-                     t_IncomingDirection.theta(),
-                     t_OutgoingDirection.theta(),
-                     m_AngularSample.getBandWavelengths().size()};
-
-        // Check if the result is already cached
-        auto it = m_Cache.find(key);
-        if(it != m_Cache.end())
-        {
-            return it->second;
-        }
-
         // Perform the calculation
         auto result = m_AngularSample.getWavelengthProperties(
           t_Property,
           t_Side,
           t_IncomingDirection.theta(),
           scatter(t_IncomingDirection, t_OutgoingDirection));
-
-        // Store the result in the cache
-        m_Cache[key] = result;
 
         return result;
     }
