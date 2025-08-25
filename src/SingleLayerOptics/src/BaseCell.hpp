@@ -39,19 +39,19 @@ namespace SingleLayerOptics
         virtual double R_dir_dir(FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_Direction);
 
-        virtual std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
-                                                   const CBeamDirection & t_Direction);
-
         virtual double T_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex);
 
-        virtual std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
-                                                   const CBeamDirection & t_Direction);
-
         virtual double R_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex);
+
+        virtual std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
+                                                   const CBeamDirection & t_Direction);
+
+        virtual std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
+                                                   const CBeamDirection & t_Direction);
 
         std::vector<double> getBandWavelengths() const;
         virtual void setBandWavelengths(const std::vector<double> & wavelengths);
@@ -71,6 +71,10 @@ namespace SingleLayerOptics
 
         // This indicates cell rotation in phi angle
         double m_CellRotation;
+
+    private:
+        template<class F>
+        std::vector<double> makeBand(F && f);
     };
 }   // namespace SingleLayerOptics
 
