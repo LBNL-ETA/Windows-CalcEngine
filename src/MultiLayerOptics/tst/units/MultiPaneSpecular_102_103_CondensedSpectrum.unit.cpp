@@ -59,15 +59,15 @@ TEST_F(MultiPaneSpecular_102_103_CondensedSpectrum, TestAngle0)
 
     CMultiPaneSpecular aLayer = *getLayer();
 
-    const double T = aLayer.getPropertySimple(
+    const double T = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.65096737306210839, T, 1e-6);
 
-    const double Rf = aLayer.getPropertySimple(
+    const double Rf = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.12437233463533325, Rf, 1e-6);
 
-    const double Rb = aLayer.getPropertySimple(
+    const double Rb = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Back, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.11621576724154123, Rb, 1e-6);
 
@@ -97,15 +97,15 @@ TEST_F(MultiPaneSpecular_102_103_CondensedSpectrum, TestAngle0)
     EXPECT_NEAR(0.063851365359220133, AbsBack2, 1e-6);
     EXPECT_NEAR(0.063851365359220133, AbsorptanceBack[1], 1e-6);
 
-    const double Them = aLayer.getPropertySimple(
+    const double Them = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.55134962796067644, Them, 1e-6);
 
-    const double Rfhem = aLayer.getPropertySimple(
+    const double Rfhem = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.20101014299215508, Rfhem, 1e-6);
 
-    const double Rbhem = aLayer.getPropertySimple(
+    const double Rbhem = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.18703361935727306, Rbhem, 1e-6);
 }

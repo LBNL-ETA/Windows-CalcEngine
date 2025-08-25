@@ -62,27 +62,27 @@ TEST_F(MultiPaneScattered_102_103, TestSpecular1)
     constexpr double theta = 0;
     constexpr double phi = 0;
 
-    auto T_dir_dir = aLayer.getPropertySimple(
+    auto T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.645986, T_dir_dir, 1e-6);
 
-    auto T_dir_dif = aLayer.getPropertySimple(
+    auto T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.000000, T_dir_dif, 1e-6);
 
-    auto T_dif_dif = aLayer.getPropertySimple(
+    auto T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.528672, T_dif_dif, 1e-6);
 
-    auto R_dir_dir = aLayer.getPropertySimple(
+    auto R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.123728, R_dir_dir, 1e-6);
 
-    auto R_dir_dif = aLayer.getPropertySimple(
+    auto R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.000000, R_dir_dif, 1e-6);
 
-    auto R_dif_dif = aLayer.getPropertySimple(
+    auto R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.225850, R_dif_dif, 1e-6);
 
@@ -112,27 +112,27 @@ TEST_F(MultiPaneScattered_102_103, TestSpecular2)
     constexpr double theta = 0;
     constexpr double phi = 0;
 
-    auto T_dir_dir = aLayer.getPropertySimple(
+    auto T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.645986, T_dir_dir, 1e-6);
 
-    auto T_dir_dif = aLayer.getPropertySimple(
+    auto T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0, T_dir_dif, 1e-6);
 
-    auto T_dif_dif = aLayer.getPropertySimple(
+    auto T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.528672, T_dif_dif, 1e-6);
 
-    auto R_dir_dir = aLayer.getPropertySimple(
+    auto R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.123728, R_dir_dir, 1e-6);
 
-    auto R_dir_dif = aLayer.getPropertySimple(
+    auto R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
-    auto R_dif_dif = aLayer.getPropertySimple(
+    auto R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.225850, R_dif_dif, 1e-6);
 
@@ -162,27 +162,27 @@ TEST_F(MultiPaneScattered_102_103, TestSpecular3)
     constexpr double theta = 50;
     constexpr double phi = 0;
 
-    auto T_dir_dir = aLayer.getPropertySimple(
+    auto T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.584911, T_dir_dir, 1e-6);
 
-    auto T_dir_dif = aLayer.getPropertySimple(
+    auto T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0, T_dir_dif, 1e-6);
 
-    auto T_dif_dif = aLayer.getPropertySimple(
+    auto T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.528672, T_dif_dif, 1e-6);
 
-    auto R_dir_dir = aLayer.getPropertySimple(
+    auto R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.158654, R_dir_dir, 1e-6);
 
-    auto R_dir_dif = aLayer.getPropertySimple(
+    auto R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
-    auto R_dif_dif = aLayer.getPropertySimple(
+    auto R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.225850, R_dif_dif, 1e-6);
 

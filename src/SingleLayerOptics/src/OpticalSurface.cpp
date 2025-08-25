@@ -64,13 +64,13 @@ namespace SingleLayerOptics
         m_Absorptance[ScatteringSimple::Diffuse] = 1 - T_dif_dif - R_dif_dif;
     }
 
-    double CScatteringSurface::getPropertySimple(const PropertySurface t_Property,
+    double CScatteringSurface::getPropertySurface(const PropertySurface t_Property,
                                                  const Scattering t_Scattering) const
     {
         return m_PropertySimple.at(std::make_pair(t_Property, t_Scattering));
     }
 
-    void CScatteringSurface::setPropertySimple(const PropertySurface t_Property,
+    void CScatteringSurface::setPropertySurface(const PropertySurface t_Property,
                                                const Scattering t_Scattering,
                                                const double value)
     {

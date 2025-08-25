@@ -172,7 +172,7 @@ namespace MultiLayerOptics
                     if((aSide == Side::Front && aEnergyFlow == EnergyFlow::Backward)
                        || (aSide == Side::Back && aEnergyFlow == EnergyFlow::Forward))
                     {
-                        beamEnergy = curLayer.getPropertySimple(curLayer.getMinLambda(),
+                        beamEnergy = curLayer.getPropertySurface(curLayer.getMinLambda(),
                                                                 curLayer.getMaxLambda(),
                                                                 PropertySurface::T,
                                                                 oppSide,
@@ -183,7 +183,7 @@ namespace MultiLayerOptics
 
                     // Energy that gets converted to diffuse from beam that comes from
                     // interreflections in the gap or interior/exterior environments
-                    double R = curLayer.getPropertySimple(curLayer.getMinLambda(),
+                    double R = curLayer.getPropertySurface(curLayer.getMinLambda(),
                                                           curLayer.getMaxLambda(),
                                                           PropertySurface::R,
                                                           aSide,
@@ -229,14 +229,14 @@ namespace MultiLayerOptics
                 {
                     If = diffSum.IEnergy(i + 1, Side::Front, aEnergyFlow);
                 }
-                const double Rf_bkw = bkwLayer.getPropertySimple(bkwLayer.getMinLambda(),
+                const double Rf_bkw = bkwLayer.getPropertySurface(bkwLayer.getMinLambda(),
                                                                  bkwLayer.getMaxLambda(),
                                                                  PropertySurface::R,
                                                                  Side::Front,
                                                                  Scattering::DiffuseDiffuse,
                                                                  t_Theta,
                                                                  t_Phi);
-                const double Rb_fwd = fwdLayer.getPropertySimple(fwdLayer.getMinLambda(),
+                const double Rb_fwd = fwdLayer.getPropertySurface(fwdLayer.getMinLambda(),
                                                                  fwdLayer.getMaxLambda(),
                                                                  PropertySurface::R,
                                                                  Side::Back,

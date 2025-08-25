@@ -113,7 +113,7 @@ namespace SingleLayerOptics
         return m_Surface.at(t_Side);
     }
 
-    double CScatteringLayer::getPropertySimple(const double,
+    double CScatteringLayer::getPropertySurface(const double,
                                                const double,
                                                const PropertySurface t_Property,
                                                const Side t_Side,
@@ -123,7 +123,7 @@ namespace SingleLayerOptics
     {
         checkCurrentAngles(t_Theta, t_Phi);
         auto aSurface = getSurface(t_Side);
-        return aSurface.getPropertySimple(t_Property, t_Scattering);
+        return aSurface.getPropertySurface(t_Property, t_Scattering);
     }
 
     double CScatteringLayer::getAbsorptance(const Side t_Side,
@@ -160,28 +160,28 @@ namespace SingleLayerOptics
                                                      const double t_Theta,
                                                      const double t_Phi)
     {
-        double Tf = getPropertySimple(getMinLambda(),
+        double Tf = getPropertySurface(getMinLambda(),
                                       getMaxLambda(),
                                       PropertySurface::T,
                                       Side::Front,
                                       t_Scattering,
                                       t_Theta,
                                       t_Phi);
-        double Rf = getPropertySimple(getMinLambda(),
+        double Rf = getPropertySurface(getMinLambda(),
                                       getMaxLambda(),
                                       PropertySurface::R,
                                       Side::Front,
                                       t_Scattering,
                                       t_Theta,
                                       t_Phi);
-        double Tb = getPropertySimple(getMinLambda(),
+        double Tb = getPropertySurface(getMinLambda(),
                                       getMaxLambda(),
                                       PropertySurface::T,
                                       Side::Back,
                                       t_Scattering,
                                       t_Theta,
                                       t_Phi);
-        double Rb = getPropertySimple(getMinLambda(),
+        double Rb = getPropertySurface(getMinLambda(),
                                       getMaxLambda(),
                                       PropertySurface::R,
                                       Side::Back,
@@ -399,7 +399,7 @@ namespace SingleLayerOptics
     double CScatteringLayerIR::transmittance(Side t_Side)
     {
         CWavelengthRange wrIR{WavelengthRange::IR};
-        return m_Layer.getPropertySimple(wrIR.minLambda(),
+        return m_Layer.getPropertySurface(wrIR.minLambda(),
                                          wrIR.maxLambda(),
                                          PropertySurface::T,
                                          t_Side,

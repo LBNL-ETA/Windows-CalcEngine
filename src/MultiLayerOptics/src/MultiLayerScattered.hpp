@@ -64,7 +64,7 @@ namespace MultiLayerOptics
 
         size_t getNumOfLayers() const;
 
-        double getPropertySimple(double minLambda,
+        double getPropertySurface(double minLambda,
                                  double maxLambda,
                                  FenestrationCommon::PropertySurface t_Property,
                                  FenestrationCommon::Side t_Side,

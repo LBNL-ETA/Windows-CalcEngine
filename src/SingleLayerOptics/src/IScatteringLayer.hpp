@@ -21,7 +21,7 @@ namespace SingleLayerOptics
     public:
         virtual ~IScatteringLayer() = default;
 
-        virtual double getPropertySimple(const double minLambda,
+        virtual double getPropertySurface(const double minLambda,
                                          const double maxLambda,
                                          const FenestrationCommon::PropertySurface t_Property,
                                          const FenestrationCommon::Side t_Side,

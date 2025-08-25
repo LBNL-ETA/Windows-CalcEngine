@@ -45,27 +45,27 @@ TEST_F(TestNFRC102ScatteringLayer1, Test1)
 
     Side aSide = Side::Front;
 
-    double T_dir_dir = aLayer.getPropertySimple(
+    double T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.833807, T_dir_dir, 1e-6);
 
-    double R_dir_dir = aLayer.getPropertySimple(
+    double R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.074816, R_dir_dir, 1e-6);
 
-    double T_dir_dif = aLayer.getPropertySimple(
+    double T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0, T_dir_dif, 1e-6);
 
-    double R_dir_dif = aLayer.getPropertySimple(
+    double R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
-    double T_dif_dif = aLayer.getPropertySimple(
+    double T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.752655, T_dif_dif, 1e-6);
 
-    double R_dif_dif = aLayer.getPropertySimple(
+    double R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.146041, R_dif_dif, 1e-6);
 
@@ -89,27 +89,27 @@ TEST_F(TestNFRC102ScatteringLayer1, Test2)
     constexpr double Theta = 45;
     constexpr double Phi = 90;
 
-    double T_dir_dir = aLayer.getPropertySimple(
+    double T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, Theta, Phi);
     EXPECT_NEAR(0.809175, T_dir_dir, 1e-6);
 
-    double R_dir_dir = aLayer.getPropertySimple(
+    double R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, Theta, Phi);
     EXPECT_NEAR(0.088811, R_dir_dir, 1e-6);
 
-    double T_dir_dif = aLayer.getPropertySimple(
+    double T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, Theta, Phi);
     EXPECT_NEAR(0.008378, T_dir_dif, 1e-6);
 
-    double R_dir_dif = aLayer.getPropertySimple(
+    double R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, Theta, Phi);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
-    double T_dif_dif = aLayer.getPropertySimple(
+    double T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, Theta, Phi);
     EXPECT_NEAR(0.752655, T_dif_dif, 1e-6);
 
-    double R_dif_dif = aLayer.getPropertySimple(
+    double R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, Theta, Phi);
     EXPECT_NEAR(0.146042, R_dif_dif, 1e-6);
 
