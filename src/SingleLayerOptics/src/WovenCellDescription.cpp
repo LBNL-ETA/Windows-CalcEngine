@@ -52,11 +52,6 @@ namespace SingleLayerOptics
         return Tx(t_Direction) * Ty(t_Direction);
     }
 
-    double CWovenCellDescription::BeamR_dir_dir(const Side, const CBeamDirection &)
-    {
-        return 0;
-    }
-
     double CWovenCellDescription::Tx(const CBeamDirection & t_Direction)
     {
         using ConstantsData::WCE_PI;

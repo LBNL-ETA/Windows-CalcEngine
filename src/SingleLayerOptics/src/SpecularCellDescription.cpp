@@ -13,11 +13,6 @@ namespace SingleLayerOptics
         return 0;
     }
 
-    double CSpecularCellDescription::BeamR_dir_dir(const Side, const CBeamDirection &)
-    {
-        return 0;
-    }
-
     double CSpecularCellDescription::Rspecular(const Side, const CBeamDirection &)
     {
         return 0;

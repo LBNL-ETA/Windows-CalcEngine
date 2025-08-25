@@ -1,5 +1,4 @@
-#ifndef BASECELL_H
-#define BASECELL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -77,5 +76,3 @@ namespace SingleLayerOptics
         std::vector<double> makeBand(F && f);
     };
 }   // namespace SingleLayerOptics
-
-#endif
