@@ -61,13 +61,13 @@ namespace MultiLayerOptics
                  const std::optional<std::vector<double>> & matrixWavelengths = std::nullopt);
 
 
-        double getPropertySimple(double minLambda,
-                                 double maxLambda,
-                                 FenestrationCommon::PropertySurface t_Property,
-                                 FenestrationCommon::Side t_Side,
-                                 FenestrationCommon::Scattering t_Scattering,
-                                 double t_Theta = 0,
-                                 double t_Phi = 0) override;
+        double getPropertySurface(double minLambda,
+                                  double maxLambda,
+                                  FenestrationCommon::PropertySurface t_Property,
+                                  FenestrationCommon::Side t_Side,
+                                  FenestrationCommon::Scattering t_Scattering,
+                                  double t_Theta = 0,
+                                  double t_Phi = 0) override;
 
         [[nodiscard]] double getMinLambda() const override;
 

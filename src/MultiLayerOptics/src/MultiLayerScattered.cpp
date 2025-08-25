@@ -108,16 +108,16 @@ namespace MultiLayerOptics
         return m_Layers.size();
     }
 
-    double CMultiLayerScattered::getPropertySimple(const double,
-                                                   const double,
-                                                   const PropertySurface t_Property,
-                                                   const Side t_Side,
-                                                   const Scattering t_Scattering,
-                                                   const double t_Theta,
-                                                   const double t_Phi)
+    double CMultiLayerScattered::getPropertySurface(const double,
+                                                    const double,
+                                                    const PropertySurface t_Property,
+                                                    const Side t_Side,
+                                                    const Scattering t_Scattering,
+                                                    const double t_Theta,
+                                                    const double t_Phi)
     {
         calculateState(t_Theta, t_Phi);
-        return m_Layer->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        return m_Layer->getPropertySurface(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
     }
 
     double CMultiLayerScattered::getAbsorptanceLayer(const size_t Index,

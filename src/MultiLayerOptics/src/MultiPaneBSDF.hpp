@@ -26,7 +26,7 @@ namespace MultiLayerOptics
                                                    FenestrationCommon::Side t_Side,
                                                    FenestrationCommon::PropertySurface t_Property);
 
-        double getPropertySimple(double minLambda,
+        double getPropertySurface(double minLambda,
                                  double maxLambda,
                                  FenestrationCommon::PropertySurface t_Property,
                                  FenestrationCommon::Side t_Side,

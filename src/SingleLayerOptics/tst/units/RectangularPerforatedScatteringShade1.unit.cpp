@@ -37,12 +37,12 @@ TEST_F(TestRectangularPerforatedScatteringShade1, TestProperties)
     auto shade =
       CScatteringLayer::createPerforatedRectangularLayer(aMaterial, x, y, thickness, xHole, yHole);
 
-    const double tir = shade.getPropertySimple(
+    const double tir = shade.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
 
     EXPECT_NEAR(tir, 0.112482, 1e-6);
 
-    const double rir = shade.getPropertySimple(
+    const double rir = shade.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(rir, 0.394452, 1e-6);
 
@@ -74,12 +74,12 @@ TEST_F(TestRectangularPerforatedScatteringShade1, TestHighEmissivity)
     auto shade =
       CScatteringLayer::createPerforatedRectangularLayer(aMaterial, x, y, thickness, xHole, yHole);
 
-    const double tir = shade.getPropertySimple(
+    const double tir = shade.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
 
     EXPECT_NEAR(tir, 0.1, 1e-6);
 
-    const double rir = shade.getPropertySimple(
+    const double rir = shade.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(rir, 0.01, 1e-6);
 

@@ -1836,7 +1836,7 @@ TEST_F(Photovoltaic_SinglePane_Condensed, Test1)
 
     auto aLayer = getLayer();
 
-    const double T = aLayer.getPropertySimple(
+    const double T = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DirectDirect, angle, 0);
     EXPECT_NEAR(0.2, T, 1e-6);
 

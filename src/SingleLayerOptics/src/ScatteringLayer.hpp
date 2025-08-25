@@ -28,7 +28,7 @@ namespace SingleLayerOptics
 
     // Handles general case layer when properties can be direct, diffuse or combination between
     // these two.
-    class CScatteringLayer// : public IScatteringLayer
+    class CScatteringLayer   // : public IScatteringLayer
     {
     public:
         CScatteringLayer() = default;
@@ -90,13 +90,13 @@ namespace SingleLayerOptics
 
         CScatteringSurface & getSurface(FenestrationCommon::Side t_Side);
 
-        double getPropertySimple(double minLambda,
-                                 double maxLambda,
-                                 FenestrationCommon::PropertySurface t_Property,
-                                 FenestrationCommon::Side t_Side,
-                                 FenestrationCommon::Scattering t_Scattering,
-                                 double t_Theta = 0,
-                                 double t_Phi = 0);
+        double getPropertySurface(double minLambda,
+                                  double maxLambda,
+                                  FenestrationCommon::PropertySurface t_Property,
+                                  FenestrationCommon::Side t_Side,
+                                  FenestrationCommon::Scattering t_Scattering,
+                                  double t_Theta = 0,
+                                  double t_Phi = 0);
 
         double getAbsorptance(FenestrationCommon::Side t_Side,
                               FenestrationCommon::ScatteringSimple t_Scattering,
@@ -120,11 +120,11 @@ namespace SingleLayerOptics
 
         std::vector<double>
           getAbsorptanceLayersElectricity(double minLambda,
-                                    double maxLambda,
-                                    FenestrationCommon::Side side,
-                                    FenestrationCommon::ScatteringSimple scattering,
-                                    double theta,
-                                    double phi);
+                                          double maxLambda,
+                                          FenestrationCommon::Side side,
+                                          FenestrationCommon::ScatteringSimple scattering,
+                                          double theta,
+                                          double phi);
 
         CLayerSingleComponent getLayer(FenestrationCommon::Scattering t_Scattering,
                                        double t_Theta = 0,

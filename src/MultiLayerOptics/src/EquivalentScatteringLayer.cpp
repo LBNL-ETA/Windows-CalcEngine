@@ -38,65 +38,65 @@ namespace MultiLayerOptics
                                                            const double t_Phi) :
         m_Layer(CScatteringLayer(t_Layer))
     {
-        double Tf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::T,
-                                              Side::Front,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
-        double Rf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::R,
-                                              Side::Front,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
-        double Tb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::T,
-                                              Side::Back,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
-        double Rb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::R,
-                                              Side::Back,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
+        double Tf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::T,
+                                               Side::Front,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
+        double Rf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::R,
+                                               Side::Front,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
+        double Tb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::T,
+                                               Side::Back,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
+        double Rb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::R,
+                                               Side::Back,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
 
         m_BeamLayer = std::make_shared<CEquivalentLayerSingleComponent>(Tf, Rf, Tb, Rb);
 
-        Tf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::T,
-                                       Side::Front,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
-        Rf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::R,
-                                       Side::Front,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
-        Tb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::T,
-                                       Side::Back,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
-        Rb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::R,
-                                       Side::Back,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
+        Tf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::T,
+                                        Side::Front,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
+        Rf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::R,
+                                        Side::Front,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
+        Tb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::T,
+                                        Side::Back,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
+        Rb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::R,
+                                        Side::Back,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
 
         m_DiffuseLayer = std::make_shared<CEquivalentLayerSingleComponent>(Tf, Rf, Tb, Rb);
     }
@@ -145,19 +145,19 @@ namespace MultiLayerOptics
         }
     }
 
-    double CEquivalentScatteringLayer::getPropertySimple(const PropertySurface t_Property,
-                                                         const Side t_Side,
-                                                         const Scattering t_Scattering,
-                                                         const double t_Theta,
-                                                         const double t_Phi)
+    double CEquivalentScatteringLayer::getPropertySurface(const PropertySurface t_Property,
+                                                          const Side t_Side,
+                                                          const Scattering t_Scattering,
+                                                          const double t_Theta,
+                                                          const double t_Phi)
     {
-        return m_Layer.getPropertySimple(m_Layer.getMinLambda(),
-                                         m_Layer.getMaxLambda(),
-                                         t_Property,
-                                         t_Side,
-                                         t_Scattering,
-                                         t_Theta,
-                                         t_Phi);
+        return m_Layer.getPropertySurface(m_Layer.getMinLambda(),
+                                          m_Layer.getMaxLambda(),
+                                          t_Property,
+                                          t_Side,
+                                          t_Scattering,
+                                          t_Theta,
+                                          t_Phi);
     }
 
     CScatteringLayer CEquivalentScatteringLayer::getLayer() const
@@ -206,8 +206,8 @@ namespace MultiLayerOptics
                                                            const Scattering t_Scattering)
     {
         return 1
-               - t_First.getPropertySimple(PropertySurface::R, t_Scattering)
-                   * t_Second.getPropertySimple(PropertySurface::R, t_Scattering);
+               - t_First.getPropertySurface(PropertySurface::R, t_Scattering)
+                   * t_Second.getPropertySurface(PropertySurface::R, t_Scattering);
     }
 
     std::shared_ptr<SimpleResults>
@@ -222,27 +222,27 @@ namespace MultiLayerOptics
         double dirInterrefl = getInterreflectance(b1, f2, Scattering::DirectDirect);
 
 
-        double If1_dif_ray = f1.getPropertySimple(PropertySurface::R, Scattering::DirectDiffuse);
-        double Ib1_dif_ray = f1.getPropertySimple(PropertySurface::T, Scattering::DirectDiffuse);
+        double If1_dif_ray = f1.getPropertySurface(PropertySurface::R, Scattering::DirectDiffuse);
+        double Ib1_dif_ray = f1.getPropertySurface(PropertySurface::T, Scattering::DirectDiffuse);
 
         // Diffuse on surface from gap beam interreflections
         // First calculate direct beam that is incoming to surfaces b1 and f2
         double Incoming_f2_dir =
-          f1.getPropertySimple(PropertySurface::T, Scattering::DirectDirect) / dirInterrefl;
+          f1.getPropertySurface(PropertySurface::T, Scattering::DirectDirect) / dirInterrefl;
         double Incoming_b1_dir =
-          Incoming_f2_dir * f2.getPropertySimple(PropertySurface::R, Scattering::DirectDirect);
+          Incoming_f2_dir * f2.getPropertySurface(PropertySurface::R, Scattering::DirectDirect);
 
         // Each component is calculated by simple multiplication of incoming beam with direct to
         // diffuse property
         double If1_dif_inbm =
-          Incoming_b1_dir * b1.getPropertySimple(PropertySurface::T, Scattering::DirectDiffuse);
+          Incoming_b1_dir * b1.getPropertySurface(PropertySurface::T, Scattering::DirectDiffuse);
         double Ib1_dif_inbm =
-          Incoming_b1_dir * b1.getPropertySimple(PropertySurface::R, Scattering::DirectDiffuse);
+          Incoming_b1_dir * b1.getPropertySurface(PropertySurface::R, Scattering::DirectDiffuse);
 
         double If2_dif_inbm =
-          Incoming_f2_dir * f2.getPropertySimple(PropertySurface::R, Scattering::DirectDiffuse);
+          Incoming_f2_dir * f2.getPropertySurface(PropertySurface::R, Scattering::DirectDiffuse);
         double Ib2_dif_inbm =
-          Incoming_f2_dir * f2.getPropertySimple(PropertySurface::T, Scattering::DirectDiffuse);
+          Incoming_f2_dir * f2.getPropertySurface(PropertySurface::T, Scattering::DirectDiffuse);
 
         // Diffuse on surfaces from gap diffuse interreflections
         // First calculate diffuse components that are leaving surfaces in the gap
@@ -254,17 +254,17 @@ namespace MultiLayerOptics
 
         double I_fwd =
           (I_b1_dif
-           + I_f2_dif * b1.getPropertySimple(PropertySurface::R, Scattering::DiffuseDiffuse))
+           + I_f2_dif * b1.getPropertySurface(PropertySurface::R, Scattering::DiffuseDiffuse))
           / difInterrefl;
         double I_bck =
-          (I_b1_dif * f2.getPropertySimple(PropertySurface::R, Scattering::DiffuseDiffuse)
+          (I_b1_dif * f2.getPropertySurface(PropertySurface::R, Scattering::DiffuseDiffuse)
            + I_f2_dif)
           / difInterrefl;
 
         double If1_dif_dif =
-          I_bck * b1.getPropertySimple(PropertySurface::T, Scattering::DiffuseDiffuse);
+          I_bck * b1.getPropertySurface(PropertySurface::T, Scattering::DiffuseDiffuse);
         double Ib2_dif_dif =
-          I_fwd * f2.getPropertySimple(PropertySurface::T, Scattering::DiffuseDiffuse);
+          I_fwd * f2.getPropertySurface(PropertySurface::T, Scattering::DiffuseDiffuse);
 
         aResult->T = Ib2_dif_inbm + Ib2_dif_dif;
         aResult->R = If1_dif_ray + If1_dif_inbm + If1_dif_dif;
@@ -277,64 +277,64 @@ namespace MultiLayerOptics
                                                         const double t_Theta,
                                                         const double t_Phi) const
     {
-        double Tf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::T,
-                                              Side::Front,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
-        double Rf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::R,
-                                              Side::Front,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
-        double Tb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::T,
-                                              Side::Back,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
-        double Rb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                              t_Layer.getMaxLambda(),
-                                              PropertySurface::R,
-                                              Side::Back,
-                                              Scattering::DirectDirect,
-                                              t_Theta,
-                                              t_Phi);
+        double Tf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::T,
+                                               Side::Front,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
+        double Rf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::R,
+                                               Side::Front,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
+        double Tb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::T,
+                                               Side::Back,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
+        double Rb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                               t_Layer.getMaxLambda(),
+                                               PropertySurface::R,
+                                               Side::Back,
+                                               Scattering::DirectDirect,
+                                               t_Theta,
+                                               t_Phi);
         m_BeamLayer->addLayer(Tf, Rf, Tb, Rb, t_Side);
 
-        Tf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::T,
-                                       Side::Front,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
-        Rf = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::R,
-                                       Side::Front,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
-        Tb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::T,
-                                       Side::Back,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
-        Rb = t_Layer.getPropertySimple(t_Layer.getMinLambda(),
-                                       t_Layer.getMaxLambda(),
-                                       PropertySurface::R,
-                                       Side::Back,
-                                       Scattering::DiffuseDiffuse,
-                                       t_Theta,
-                                       t_Phi);
+        Tf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::T,
+                                        Side::Front,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
+        Rf = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::R,
+                                        Side::Front,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
+        Tb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::T,
+                                        Side::Back,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
+        Rb = t_Layer.getPropertySurface(t_Layer.getMinLambda(),
+                                        t_Layer.getMaxLambda(),
+                                        PropertySurface::R,
+                                        Side::Back,
+                                        Scattering::DiffuseDiffuse,
+                                        t_Theta,
+                                        t_Phi);
         m_DiffuseLayer->addLayer(Tf, Rf, Tb, Rb, t_Side);
     }
 

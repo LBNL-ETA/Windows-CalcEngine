@@ -35,12 +35,12 @@ namespace SingleLayerOptics
                            const double R_dif_dif);
 
         // Simple property means only transmittance and reflectance
-        double getPropertySimple(const FenestrationCommon::PropertySurface t_Property,
-                                 const FenestrationCommon::Scattering t_Scattering) const;
+        double getPropertySurface(const FenestrationCommon::PropertySurface t_Property,
+                                  const FenestrationCommon::Scattering t_Scattering) const;
 
-        void setPropertySimple(const FenestrationCommon::PropertySurface t_Property,
-                               const FenestrationCommon::Scattering t_Scattering,
-                               const double value);
+        void setPropertySurface(const FenestrationCommon::PropertySurface t_Property,
+                                const FenestrationCommon::Scattering t_Scattering,
+                                const double value);
 
         // In this case absroptance is different property from transmittance and reflectance
         double getAbsorptance(const FenestrationCommon::ScatteringSimple t_Scattering) const;

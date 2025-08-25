@@ -73,7 +73,7 @@ namespace MultiLayerOptics
           new CMultiPaneSpecular(layers, matrixWavelengths));
     }
 
-    double CMultiPaneSpecular::getPropertySimple(const double minLambda,
+    double CMultiPaneSpecular::getPropertySurface(const double minLambda,
                                                  const double maxLambda,
                                                  FenestrationCommon::PropertySurface t_Property,
                                                  FenestrationCommon::Side t_Side,

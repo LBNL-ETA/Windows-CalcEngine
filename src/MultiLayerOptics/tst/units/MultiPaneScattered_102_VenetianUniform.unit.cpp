@@ -88,27 +88,27 @@ TEST_F(MultiPaneScattered_102_VenetianUniform, TestVenetianUniformDirectBeam)
     constexpr double theta = 0;
     constexpr double phi = 0;
 
-    auto T_dir_dir = aLayer.getPropertySimple(
+    auto T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.047686, T_dir_dir, 1e-6);
 
-    auto T_dir_dif = aLayer.getPropertySimple(
+    auto T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.199672, T_dir_dif, 1e-6);
 
-    auto T_dif_dif = aLayer.getPropertySimple(
+    auto T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.302710, T_dif_dif, 1e-6);
 
-    auto R_dir_dir = aLayer.getPropertySimple(
+    auto R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.074817, R_dir_dir, 1e-6);
 
-    auto R_dir_dif = aLayer.getPropertySimple(
+    auto R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.292574, R_dir_dif, 1e-6);
 
-    auto R_dif_dif = aLayer.getPropertySimple(
+    auto R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.379244, R_dif_dif, 1e-6);
 
@@ -139,27 +139,27 @@ TEST_F(MultiPaneScattered_102_VenetianUniform, TestVenetianUniformAngledBeam25)
     constexpr double theta = 25;
     constexpr double phi = 0;
 
-    auto T_dir_dir = aLayer.getPropertySimple(
+    auto T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.047446, T_dir_dir, 1e-6);
 
-    auto T_dir_dif = aLayer.getPropertySimple(
+    auto T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.199672, T_dir_dif, 1e-6);
 
-    auto T_dif_dif = aLayer.getPropertySimple(
+    auto T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.302710, T_dif_dif, 1e-6);
 
-    auto R_dir_dir = aLayer.getPropertySimple(
+    auto R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.075583, R_dir_dir, 1e-6);
 
-    auto R_dir_dif = aLayer.getPropertySimple(
+    auto R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.292574, R_dir_dif, 1e-6);
 
-    auto R_dif_dif = aLayer.getPropertySimple(
+    auto R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.379244, R_dif_dif, 1e-6);
 
@@ -190,27 +190,27 @@ TEST_F(MultiPaneScattered_102_VenetianUniform, TestVenetianUniformAngleBeam50)
     constexpr double theta = 50;
     constexpr double phi = 0;
 
-    auto T_dir_dir = aLayer.getPropertySimple(
+    auto T_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.045559, T_dir_dir, 1e-6);
 
-    auto T_dir_dif = aLayer.getPropertySimple(
+    auto T_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.199672, T_dir_dif, 1e-6);
 
-    auto T_dif_dif = aLayer.getPropertySimple(
+    auto T_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.302710, T_dif_dif, 1e-6);
 
-    auto R_dir_dir = aLayer.getPropertySimple(
+    auto R_dir_dir = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.099211, R_dir_dir, 1e-6);
 
-    auto R_dir_dif = aLayer.getPropertySimple(
+    auto R_dir_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0.292574, R_dir_dif, 1e-6);
 
-    auto R_dif_dif = aLayer.getPropertySimple(
+    auto R_dif_dif = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.379244, R_dif_dif, 1e-6);
 

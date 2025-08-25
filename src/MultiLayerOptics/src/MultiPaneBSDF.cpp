@@ -418,7 +418,7 @@ namespace MultiLayerOptics
           new CMultiPaneBSDF(t_Layer, matrixWavelengths, callback));
     }
 
-    double CMultiPaneBSDF::getPropertySimple(const double minLambda,
+    double CMultiPaneBSDF::getPropertySurface(const double minLambda,
                                              const double maxLambda,
                                              const FenestrationCommon::PropertySurface t_Property,
                                              const FenestrationCommon::Side t_Side,
