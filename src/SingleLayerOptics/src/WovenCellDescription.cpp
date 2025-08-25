@@ -47,12 +47,12 @@ namespace SingleLayerOptics
         return std::acos(gamma());
     }
 
-    double CWovenCellDescription::T_dir_dir(const Side, const CBeamDirection & t_Direction)
+    double CWovenCellDescription::Beam_dir_dir(const Side, const CBeamDirection & t_Direction)
     {
         return Tx(t_Direction) * Ty(t_Direction);
     }
 
-    double CWovenCellDescription::R_dir_dir(const Side, const CBeamDirection &)
+    double CWovenCellDescription::BeamR_dir_dir(const Side, const CBeamDirection &)
     {
         return 0;
     }

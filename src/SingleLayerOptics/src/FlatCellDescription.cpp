@@ -7,12 +7,12 @@ namespace SingleLayerOptics
     CFlatCellDescription::CFlatCellDescription() : ICellDescription()
     {}
 
-    double CFlatCellDescription::T_dir_dir(const Side, const CBeamDirection &)
+    double CFlatCellDescription::Beam_dir_dir(const Side, const CBeamDirection &)
     {
         return 0;
     }
 
-    double CFlatCellDescription::R_dir_dir(const Side, const CBeamDirection &)
+    double CFlatCellDescription::BeamR_dir_dir(const Side, const CBeamDirection &)
     {
         return 0;
     }

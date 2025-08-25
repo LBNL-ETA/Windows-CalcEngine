@@ -8,12 +8,12 @@ namespace SingleLayerOptics
     CSpecularCellDescription::CSpecularCellDescription()
     {}
 
-    double CSpecularCellDescription::T_dir_dir(const Side, const CBeamDirection &)
+    double CSpecularCellDescription::Beam_dir_dir(const Side, const CBeamDirection &)
     {
         return 0;
     }
 
-    double CSpecularCellDescription::R_dir_dir(const Side, const CBeamDirection &)
+    double CSpecularCellDescription::BeamR_dir_dir(const Side, const CBeamDirection &)
     {
         return 0;
     }

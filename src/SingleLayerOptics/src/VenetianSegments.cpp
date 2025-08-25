@@ -35,7 +35,7 @@ namespace SingleLayerOptics
 
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_Direction)
     {
-        return m_Cell->T_dir_dir(Side::Front, t_Direction);
+        return m_Cell->Beam_dir_dir(Side::Front, t_Direction);
     }
 
     double CVenetianCellEnergy::T_dir_dif(const CBeamDirection & t_Direction)
@@ -324,7 +324,7 @@ namespace SingleLayerOptics
           t_Side,
           mesh.numberOfSegments,
           cell.cellBeamViewFactors(t_Side, BSDFDirection::Incoming, t_IncomingDirection),
-          cell.T_dir_dir(t_Side, t_IncomingDirection))};
+          cell.Beam_dir_dir(t_Side, t_IncomingDirection))};
 
         std::vector<double> B;
         B.reserve(2 * mesh.numberOfSegments);

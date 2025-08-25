@@ -29,18 +29,14 @@ namespace SingleLayerOptics
     {
         if(m_CellRotation != 0)
         {
-            return m_CellDescription->T_dir_dir(t_Side, t_Direction.rotate(m_CellRotation));
+            return m_CellDescription->Beam_dir_dir(t_Side, t_Direction.rotate(m_CellRotation));
         }
-        return m_CellDescription->T_dir_dir(t_Side, t_Direction);
+        return m_CellDescription->Beam_dir_dir(t_Side, t_Direction);
     }
 
-    double CBaseCell::R_dir_dir(const Side t_Side, const CBeamDirection & t_Direction)
+    double CBaseCell::R_dir_dir(const Side, const CBeamDirection &)
     {
-        if(m_CellRotation != 0)
-        {
-            return m_CellDescription->R_dir_dir(t_Side, t_Direction.rotate(m_CellRotation));
-        }
-        return m_CellDescription->R_dir_dir(t_Side, t_Direction);
+        return 0;
     }
 
     double CBaseCell::T_dir_dir_at_wavelength(const FenestrationCommon::Side t_Side,

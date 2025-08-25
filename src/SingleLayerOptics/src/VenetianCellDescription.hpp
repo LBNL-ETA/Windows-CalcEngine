@@ -66,9 +66,7 @@ namespace SingleLayerOptics
                                                                 const CBeamDirection & t_Direction);
 
         // Direct to direct component of the ray
-        double T_dir_dir(FenestrationCommon::Side t_Side,
-                         const CBeamDirection & t_Direction) override;
-        double R_dir_dir(FenestrationCommon::Side t_Side,
+        double Beam_dir_dir(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;
 
         [[nodiscard]] FenestrationCommon::Venetian::Geometry getVenetianGeometry() const;
