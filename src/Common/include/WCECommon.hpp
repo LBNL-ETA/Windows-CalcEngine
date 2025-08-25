@@ -28,3 +28,4 @@
 #include "../src/Venetian.hpp"
 #include "../src/Perforated.hpp"
 #include "../src/Woven.hpp"
+#include "../src/Zip.hpp"
