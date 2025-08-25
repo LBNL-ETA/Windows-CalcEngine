@@ -319,6 +319,12 @@ namespace SingleLayerOptics
                             double t_Fraction) override;
     };
 
+    /// Helper function to determine correct scattering type based on incoming and outgoing
+    /// directions
+
+    SpectralAveraging::ScatteringType scatter(const CBeamDirection & t_IncomingDirection,
+                                              const CBeamDirection & t_OutgoingDirection);
+
     //////////////////////////////////////////////////////////////////////////////////////////
     ///   CMaterialSample
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -368,48 +374,6 @@ namespace SingleLayerOptics
     protected:
         std::vector<double> calculateBandWavelengths() override;
         mutable SpectralAveraging::CAngularSpectralSample m_AngularSample;
-
-    private:
-        // Nested CacheKey structure
-        struct CacheKey
-        {
-            FenestrationCommon::Property property;
-            FenestrationCommon::Side side;
-            double incomingTheta;
-            size_t numberOfWavelengths;
-
-            bool operator==(const CacheKey & other) const
-            {
-                return property == other.property && side == other.side
-                       && numberOfWavelengths == other.numberOfWavelengths
-                       && FenestrationCommon::isEqual(incomingTheta, other.incomingTheta);
-            }
-        };
-
-        // Hash specialization for CacheKey
-        struct CacheKeyHash
-        {
-            std::size_t operator()(const CacheKey & key) const
-            {
-                // Use a robust way to combine hashes
-                size_t seed = 0;
-                hashCombine(seed, static_cast<int>(key.property));
-                hashCombine(seed, static_cast<int>(key.side));
-                hashCombine(seed, key.numberOfWavelengths);
-                hashCombine(seed, key.incomingTheta);
-                return seed;
-            }
-
-        private:
-            template<typename T>
-            void hashCombine(size_t & seed, const T & value) const
-            {
-                seed ^= std::hash<T>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-            }
-        };
-
-        mutable std::mutex m_CacheMutex;
-        mutable std::unordered_map<CacheKey, std::vector<double>, CacheKeyHash> m_Cache;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////

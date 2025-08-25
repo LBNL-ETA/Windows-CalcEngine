@@ -456,12 +456,12 @@ public:
         return m_Layer;
     }
 
-    std::shared_ptr<CAngularMeasurements> getMeasurements() const
+    [[nodiscard]] std::shared_ptr<CAngularMeasurements> getMeasurements() const
     {
         return m_Measurements;
     }
 
-    std::shared_ptr<CMaterial> getMaterials() const
+    [[nodiscard]] std::shared_ptr<CMaterial> getMaterials() const
     {
         return m_Material;
     }
@@ -472,13 +472,13 @@ TEST_F(TestSpecularAngularLayerProperty_102, TestSpecularAngular10degree)
     SCOPED_TRACE("Begin Test: Specular and Angular layer to compare optical properties at "
                  "different incident angles.");
 
-    CBeamDirection angle(10, 0);
+    CBeamDirection angle(10.0, 0);
 
     const std::shared_ptr<CMaterial> aMaterial = getMaterials();
 
-    const double trans = aMaterial->getProperty(Property::T, Side::Front, angle);
-    const double refleF = aMaterial->getProperty(Property::R, Side::Front, angle);
-    const double refleB = aMaterial->getProperty(Property::R, Side::Back, angle);
+    const double trans = aMaterial->getProperty(Property::T, Side::Front, angle, angle);
+    const double refleF = aMaterial->getProperty(Property::R, Side::Front, angle, angle);
+    const double refleB = aMaterial->getProperty(Property::R, Side::Back, angle, angle);
 
     EXPECT_NEAR(0.84356824495725335, trans, 1e-6);
     EXPECT_NEAR(0.074383187635746806, refleF, 1e-6);
@@ -494,10 +494,10 @@ TEST_F(TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree)
 
     const std::shared_ptr<CMaterial> aMaterial = getMaterials();
 
-    const double trans = aMaterial->getProperty(Property::T, Side::Front, angle);
-    const double refleF = aMaterial->getProperty(Property::R, Side::Front, angle);
-    const double refleB = aMaterial->getProperty(Property::R, Side::Back, angle);
-    std::vector<double> aTrans = aMaterial->getBandProperties(Property::T, Side::Front, angle);
+    const double trans = aMaterial->getProperty(Property::T, Side::Front, angle, angle);
+    const double refleF = aMaterial->getProperty(Property::R, Side::Front, angle, angle);
+    const double refleB = aMaterial->getProperty(Property::R, Side::Back, angle, angle);
+    std::vector<double> aTrans = aMaterial->getBandProperties(Property::T, Side::Front, angle, angle);
 
     EXPECT_NEAR(0.79636496475913876, trans, 1e-6);
     EXPECT_NEAR(0.11405492103460167, refleF, 1e-6);

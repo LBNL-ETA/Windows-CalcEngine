@@ -56,7 +56,7 @@ namespace SingleLayerOptics
         return results;
     }
 
-    void CBSDFLayer::calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results)
+    void CBSDFLayer::calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results) const
     {
         for(Side aSide : allSides())
         {

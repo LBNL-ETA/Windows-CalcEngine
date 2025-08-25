@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "BSDFLayer.hpp"
+#include "MaterialDirDifCell.hpp"
 
 namespace SingleLayerOptics
 {
@@ -32,7 +33,8 @@ namespace SingleLayerOptics
 
         std::vector<double> lambdas;
 
-        virtual double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) = 0;
+        virtual double diffuseDistributionScalar(size_t incomingDirection,
+                                                 size_t outgoingDirection) = 0;
     };
 
     class CDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer
@@ -42,7 +44,8 @@ namespace SingleLayerOptics
                                      const BSDFHemisphere & t_Hemisphere);
 
     protected:
-        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
+        double diffuseDistributionScalar(size_t incomingDirection,
+                                         size_t outgoingDirection) override;
     };
 
     class CHomogeneousDiffuseBSDFLayer : public CDirectionalBSDFLayer
@@ -52,7 +55,20 @@ namespace SingleLayerOptics
                                      const BSDFHemisphere & t_Hemisphere);
 
     protected:
-        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
+        double diffuseDistributionScalar(size_t incomingDirection,
+                                         size_t outgoingDirection) override;
+    };
+
+    class CMaterialDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer
+    {
+    public:
+        CMaterialDirectionalDiffuseBSDFLayer(
+          const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
+          const BSDFHemisphere & t_Hemisphere);
+
+    protected:
+        double diffuseDistributionScalar(size_t incomingDirection,
+                                         size_t outgoingDirection) override;
     };
 
     class CMatrixBSDFLayer : public CDirectionalBSDFLayer
@@ -62,7 +78,8 @@ namespace SingleLayerOptics
                          const BSDFHemisphere & t_Hemisphere);
 
     protected:
-        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
+        double diffuseDistributionScalar(size_t incomingDirection,
+                                         size_t outgoingDirection) override;
     };
 
 }   // namespace SingleLayerOptics

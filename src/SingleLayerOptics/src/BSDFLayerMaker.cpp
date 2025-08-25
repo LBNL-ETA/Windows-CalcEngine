@@ -17,6 +17,7 @@
 #include "WovenCellDescription.hpp"
 #include "WovenCell.hpp"
 #include "FlatCellDescription.hpp"
+#include "MaterialDirDifCell.hpp"
 #include "PhotovoltaicSpecularBSDFLayer.hpp"
 
 namespace SingleLayerOptics
@@ -28,6 +29,15 @@ namespace SingleLayerOptics
         auto aDescription = std::make_shared<CSpecularCellDescription>();
         auto aCell = std::make_shared<CSpecularCell>(t_Material, aDescription);
         return std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
+    }
+
+    std::shared_ptr<CBSDFLayer>
+      CBSDFLayerMaker::getDirDifLayer(const std::shared_ptr<CMaterial> & t_Material,
+                                      const BSDFHemisphere & t_BSDF)
+    {
+        auto aDescription = std::make_shared<CSpecularCellDescription>();
+        auto aCell = std::make_shared<CMaterialDirectionalDiffuseCell>(t_Material, aDescription);
+        return std::make_shared<CMaterialDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
     std::shared_ptr<CBSDFLayer>

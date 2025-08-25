@@ -32,6 +32,10 @@ namespace SingleLayerOptics
                            const BSDFHemisphere & t_BSDF);
 
         static std::shared_ptr<CBSDFLayer>
+          getDirDifLayer(const std::shared_ptr<CMaterial> & t_Material,
+                         const BSDFHemisphere & t_BSDF);
+
+        static std::shared_ptr<CBSDFLayer>
           getPhotovoltaicSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
                                        const BSDFHemisphere & t_BSDF,
                                        PVPowerPropertiesTable powerTable);

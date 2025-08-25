@@ -146,6 +146,17 @@ namespace SingleLayerOptics
         return 1 / (FenestrationCommon::WCE_PI - lambdas.at(incomingDirection));
     }
 
+    CMaterialDirectionalDiffuseBSDFLayer::CMaterialDirectionalDiffuseBSDFLayer(
+      const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
+      const BSDFHemisphere & t_Hemisphere) :
+        CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
+    {}
+
+    double CMaterialDirectionalDiffuseBSDFLayer::diffuseDistributionScalar(size_t, size_t)
+    {
+        return 1.0;
+    }
+
     CMatrixBSDFLayer::CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
                                        const BSDFHemisphere & t_Hemisphere) :
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)

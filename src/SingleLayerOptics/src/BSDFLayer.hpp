@@ -1,5 +1,4 @@
-#ifndef BASEBSDFLAYERMULTIWL_H
-#define BASEBSDFLAYERMULTIWL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -98,10 +97,8 @@ namespace SingleLayerOptics
         void calc_dir_dir_wv(std::vector<BSDFIntegrator> & results);
         void calc_dir_dif_wv(std::vector<BSDFIntegrator> & results);
 
-        void calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results);
+        void calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results) const;
         void calculate_dir_dif_wv(size_t wavelengthIndex, BSDFIntegrator & results);
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

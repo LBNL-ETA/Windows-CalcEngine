@@ -1,8 +1,9 @@
 #include <cassert>
 
+#include <WCECommon.hpp>
+
 #include "BaseCell.hpp"
 #include "CellDescription.hpp"
-#include "WCECommon.hpp"
 #include "MaterialDescription.hpp"
 
 using namespace FenestrationCommon;
@@ -15,9 +16,7 @@ namespace SingleLayerOptics
     CBaseCell::CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
                          const std::shared_ptr<ICellDescription> & t_CellDescription,
                          const double rotation) :
-        m_Material(t_Material),
-        m_CellDescription(t_CellDescription),
-        m_CellRotation(rotation)
+        m_Material(t_Material), m_CellDescription(t_CellDescription), m_CellRotation(rotation)
     {}
 
     void CBaseCell::setSourceData(const CSeries & t_SourceData)

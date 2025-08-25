@@ -449,45 +449,28 @@ namespace SingleLayerOptics
     double CMaterialSample::getProperty(const Property t_Property,
                                         const Side t_Side,
                                         const CBeamDirection & t_IncomingDirection,
-                                        const CBeamDirection &) const
+                                        const CBeamDirection & t_OutgoingDirection) const
     {
-        // TODO: getProperty from AngularSample need to understand whether it is returning
-        // direct or diffuse component. Because of that, outgoing direction need to be included
-        // here so that angular sample know if direct or diffuse part is needed.
         return m_AngularSample.getProperty(m_MinLambda,
                                            m_MaxLambda,
                                            t_Property,
                                            t_Side,
                                            t_IncomingDirection.theta(),
-                                           ScatteringType::Total);
+                                           scatter(t_IncomingDirection, t_OutgoingDirection));
     }
 
     std::vector<double>
       CMaterialSample::getBandProperties(const Property t_Property,
                                          const Side t_Side,
                                          const CBeamDirection & t_IncomingDirection,
-                                         const CBeamDirection &) const
+                                         const CBeamDirection & t_OutgoingDirection) const
     {
-        std::lock_guard lock(m_CacheMutex);
-
-        CacheKey key{t_Property,
-                     t_Side,
-                     t_IncomingDirection.theta(),
-                     m_AngularSample.getBandWavelengths().size()};
-
-        // Check if the result is already cached
-        auto it = m_Cache.find(key);
-        if(it != m_Cache.end())
-        {
-            return it->second;
-        }
-
         // Perform the calculation
         auto result = m_AngularSample.getWavelengthProperties(
-          t_Property, t_Side, t_IncomingDirection.theta(), ScatteringType::Total);
-
-        // Store the result in the cache
-        m_Cache[key] = result;
+          t_Property,
+          t_Side,
+          t_IncomingDirection.theta(),
+          scatter(t_IncomingDirection, t_OutgoingDirection));
 
         return result;
     }
@@ -506,6 +489,13 @@ namespace SingleLayerOptics
     std::vector<double> CMaterialSample::calculateBandWavelengths()
     {
         return m_AngularSample.getBandWavelengths();
+    }
+
+    ScatteringType scatter(const CBeamDirection & t_IncomingDirection,
+                           const CBeamDirection & t_OutgoingDirection)
+    {
+        return t_IncomingDirection == t_OutgoingDirection ? ScatteringType::Total
+                                                          : ScatteringType::Diffuse;
     }
 
     void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
@@ -562,13 +552,17 @@ namespace SingleLayerOptics
     double CMaterialMeasured::getProperty(const Property t_Property,
                                           const Side t_Side,
                                           const CBeamDirection & t_IncomingDirection,
-                                          const CBeamDirection &) const
+                                          const CBeamDirection & t_OutgoingDirection) const
     {
         assert(m_AngularMeasurements);
-        std::shared_ptr<CSingleAngularMeasurement> aAngular =
+        const std::shared_ptr<CSingleAngularMeasurement> aAngular =
           m_AngularMeasurements->getMeasurements(t_IncomingDirection.theta());
-        std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
-        return aSample->getProperty(m_MinLambda, m_MaxLambda, t_Property, t_Side);
+        const std::shared_ptr<CSpectralSample> aSample = aAngular->getData();
+        return aSample->getProperty(m_MinLambda,
+                                    m_MaxLambda,
+                                    t_Property,
+                                    t_Side,
+                                    scatter(t_IncomingDirection, t_OutgoingDirection));
     }
 
 
