@@ -4,12 +4,12 @@
 
 namespace SingleLayerOptics
 {
-    // Cell descritpion that needs to be used for perfect diffusers. Specular components are
+    // Cell description that needs to be used for perfect diffusers. Specular components are
     // set to zero
     class CFlatCellDescription : public ICellDescription
     {
     public:
-        virtual ~CFlatCellDescription() = default;
+        ~CFlatCellDescription() override = default;
         CFlatCellDescription() = default;
 
         double Beam_dir_dir(const FenestrationCommon::Side t_Side,
