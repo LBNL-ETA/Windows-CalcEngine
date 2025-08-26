@@ -18,8 +18,8 @@ namespace SingleLayerOptics
         virtual ~CSpecularCellDescription() = default;
         CSpecularCellDescription();
 
-        double T_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
-        double R_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_Direction) override;
         double Rspecular(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
     };
 

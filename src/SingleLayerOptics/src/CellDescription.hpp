@@ -20,9 +20,7 @@ namespace SingleLayerOptics
         virtual ~ICellDescription() = default;
         ICellDescription() = default;
 
-        virtual double T_dir_dir(const FenestrationCommon::Side t_Side,
-                                 const CBeamDirection & t_Direction) = 0;
-        virtual double R_dir_dir(const FenestrationCommon::Side t_Side,
+        virtual double Beam_dir_dir(const FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_Direction) = 0;
     };
 }   // namespace SingleLayerOptics

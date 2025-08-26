@@ -1,22 +1,19 @@
-#ifndef PERFECTDIFFUSECELLDESRIPTION_H
-#define PERFECTDIFFUSECELLDESRIPTION_H
+#pragma once
 
 #include "CellDescription.hpp"
 
 namespace SingleLayerOptics
 {
-    // Cell descritpion that needs to be used for perfect diffusers. Specular components are
+    // Cell description that needs to be used for perfect diffusers. Specular components are
     // set to zero
     class CFlatCellDescription : public ICellDescription
     {
     public:
-        virtual ~CFlatCellDescription() = default;
-        CFlatCellDescription();
+        ~CFlatCellDescription() override = default;
+        CFlatCellDescription() = default;
 
-        double T_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
-        double R_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_Direction) override;
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

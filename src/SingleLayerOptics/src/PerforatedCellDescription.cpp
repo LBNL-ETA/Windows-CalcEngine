@@ -18,11 +18,6 @@ namespace SingleLayerOptics
         m_Thickness(t_Thickness)
     {}
 
-    double CPerforatedCellDescription::R_dir_dir(const Side, const CBeamDirection &)
-    {
-        return 0;
-    }
-
     //////////////////////////////////////////////////////////////////////////////////////////////////
     // CCircularCellDescription
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +33,7 @@ namespace SingleLayerOptics
         m_Radius(t_Radius)
     {}
 
-    double CCircularCellDescription::T_dir_dir(const FenestrationCommon::Side,
+    double CCircularCellDescription::Beam_dir_dir(const FenestrationCommon::Side,
                                                const CBeamDirection & t_Direction)
     {
         return visibleAhole(t_Direction) / visibleAcell(t_Direction);
@@ -113,7 +108,7 @@ namespace SingleLayerOptics
         m_YHole(t_YHole)
     {}
 
-    double CRectangularCellDescription::T_dir_dir(const FenestrationCommon::Side,
+    double CRectangularCellDescription::Beam_dir_dir(const FenestrationCommon::Side,
                                                   const CBeamDirection & t_Direction)
     {
         return TransmittanceH(t_Direction) * TransmittanceV(t_Direction);

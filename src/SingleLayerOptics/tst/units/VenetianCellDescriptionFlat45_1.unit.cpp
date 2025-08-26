@@ -74,7 +74,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian2)
 
     CBeamDirection aDirection = CBeamDirection(0, 0);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0, Tdir_dir, 1e-6);
 }
@@ -88,7 +88,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian3)
 
     CBeamDirection aDirection = CBeamDirection(45, 90);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(1, Tdir_dir, 1e-6);
 }
@@ -102,7 +102,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian4)
 
     CBeamDirection aDirection = CBeamDirection(76.5, 90);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0, Tdir_dir, 1e-6);
 }
@@ -116,7 +116,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian5)
 
     CBeamDirection aDirection = CBeamDirection(76.5, 45);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0, Tdir_dir, 1e-6);
 }
@@ -130,7 +130,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian6)
 
     CBeamDirection aDirection = CBeamDirection(54, 90);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0.46771558343367653, Tdir_dir, 1e-6);
 }
@@ -144,7 +144,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian7)
 
     CBeamDirection aDirection = CBeamDirection(54, 60);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0.72849686418372972, Tdir_dir, 1e-6);
 }
@@ -158,7 +158,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian8)
 
     CBeamDirection aDirection = CBeamDirection(36, 90);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0.61327273437110064, Tdir_dir, 1e-6);
 }
@@ -172,7 +172,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian9)
 
     CBeamDirection aDirection = CBeamDirection(54, 30);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0.55903542711488330, Tdir_dir, 1e-6);
 }
@@ -186,7 +186,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian10)
 
     CBeamDirection aDirection = CBeamDirection(36, 60);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0.47561567265428234, Tdir_dir, 1e-6);
 }
@@ -200,7 +200,7 @@ TEST_F(TestVenetianCellDescriptionFlat45_1, TestVenetian11)
 
     CBeamDirection aDirection = CBeamDirection(36, 30);
 
-    double Tdir_dir = aCell->T_dir_dir(Side::Front, aDirection);
+    double Tdir_dir = aCell->Beam_dir_dir(Side::Front, aDirection);
 
     EXPECT_NEAR(0.099529586007794477, Tdir_dir, 1e-6);
 }
