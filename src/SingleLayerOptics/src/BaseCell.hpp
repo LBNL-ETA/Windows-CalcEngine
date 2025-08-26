@@ -60,7 +60,7 @@ namespace SingleLayerOptics
         double getMinLambda() const;
         double getMaxLambda() const;
 
-        void Flipped(bool flipped) const;
+        void Flipped(bool flipped);
 
         std::shared_ptr<CMaterial> getMaterial();
 
