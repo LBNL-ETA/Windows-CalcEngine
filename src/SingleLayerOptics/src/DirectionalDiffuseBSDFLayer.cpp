@@ -141,9 +141,9 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
-    double CHomogeneousDiffuseBSDFLayer::diffuseDistributionScalar(size_t incomingDirection, size_t)
+    double CHomogeneousDiffuseBSDFLayer::diffuseDistributionScalar(size_t, size_t outgoingDirection)
     {
-        return 1 / (FenestrationCommon::WCE_PI - lambdas.at(incomingDirection));
+        return 1 / (FenestrationCommon::WCE_PI - lambdas.at(outgoingDirection));
     }
 
     CMaterialDirectionalDiffuseBSDFLayer::CMaterialDirectionalDiffuseBSDFLayer(
