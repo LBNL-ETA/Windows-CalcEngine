@@ -44,22 +44,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties0degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.883647, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.080395, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.080395, reflectanceBack, 1e-6);
 }
@@ -73,22 +72,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties10degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.883411, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.080401, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.080401, reflectanceBack, 1e-6);
 }
@@ -102,22 +100,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties20degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.882397, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.080729, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.080729, reflectanceBack, 1e-6);
 }
@@ -131,22 +128,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties30degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.879453, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.082542, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.082542, reflectanceBack, 1e-6);
 }
@@ -160,22 +156,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties40degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.871710, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.088749, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.088750, reflectanceBack, 1e-6);
 }
@@ -189,22 +184,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties50degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.852261, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.106358, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.106358, reflectanceBack, 1e-6);
 }
@@ -218,22 +212,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties60degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.804351, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.152339, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.152339, reflectanceBack, 1e-6);
 }
@@ -247,22 +240,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties70degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.688205, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.266908, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.266908, reflectanceBack, 1e-6);
 }
@@ -276,22 +268,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties80degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.427264, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.527714, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.527714, reflectanceBack, 1e-6);
 }
@@ -305,22 +296,21 @@ TEST_F(TestSampleNFRC_103_Angular_Photopic, TestProperties90degrees)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
     // VISIBLE (PHOTOPIC) RANGE
     constexpr auto lowLambda = 0.38;
     constexpr auto highLambda = 0.78;
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(1, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(1, reflectanceBack, 1e-6);
 }

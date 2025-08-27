@@ -250,7 +250,7 @@ namespace SpectralAveraging
     std::shared_ptr<CSpectralSample>
       CAngularSpectralSample::findSpectralSample(double const t_Angle)
     {
-        std::lock_guard<std::mutex> lock(findAngularSample);
+        std::lock_guard lock(findAngularSample);
 
         std::shared_ptr<CSpectralSample> aSample = nullptr;
 
