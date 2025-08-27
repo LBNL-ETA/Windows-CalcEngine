@@ -1,6 +1,10 @@
+#include <mutex>
+
 #include "PhotovoltaicSpecularBSDFLayer.hpp"
 #include "MaterialDescription.hpp"
 #include "SpecularCell.hpp"
+
+std::mutex m_lockjscPrime;
 
 namespace SingleLayerOptics
 {
@@ -22,6 +26,7 @@ namespace SingleLayerOptics
     std::vector<std::vector<double>>
       PhotovoltaicSpecularBSDFLayer::jscPrime(FenestrationCommon::Side t_Side, const std::vector<double> & wavelengths) const
     {
+        std::lock_guard m_guard(m_lockjscPrime);
         std::vector<std::vector<double>> result;
         auto jscPrime{m_PVMaterial->jscPrime(t_Side)};
         if(jscPrime.size() != wavelengths.size())

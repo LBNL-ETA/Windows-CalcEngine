@@ -35,11 +35,11 @@ namespace SpectralAveraging
         virtual ~CSample() = default;
         explicit CSample(const FenestrationCommon::CSeries & t_SourceData);
         CSample();
-        CSample(const CSample & t_Sample);
-        CSample & operator=(CSample const & t_Sample);
+        CSample(const CSample & t_Sample) = default;
+        CSample & operator=(CSample const & t_Sample) = default;
 
         //! \brief Assigns detector and wavelengths from other sample.
-        void assignDetectorAndWavelengths(const std::shared_ptr<CSample> & t_Sample);
+        void assignDetectorAndWavelengths(const CSample & t_Sample);
 
         // Gets source data. In case wavelengths are referenced to detector or custom
         // wavelength set, it will perform interpolation according to desired settings.

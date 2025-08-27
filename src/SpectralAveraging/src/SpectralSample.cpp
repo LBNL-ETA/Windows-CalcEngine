@@ -27,30 +27,6 @@ namespace SpectralAveraging
         CSample::reset();
     }
 
-    CSample & CSample::operator=(const CSample & t_Sample)
-    {
-        if(this == &t_Sample)
-        {
-            return *this;
-        }
-
-        m_StateCalculated = t_Sample.m_StateCalculated;
-        m_WavelengthSet = t_Sample.m_WavelengthSet;
-        m_IncomingSource = t_Sample.m_IncomingSource;
-
-        forEach_Property_Side_Scatter([&](auto prop, auto side, auto scatter) {
-            m_EnergySource[{prop, side, scatter}] =
-              t_Sample.m_EnergySource.at({prop, side, scatter});
-        });
-
-        return *this;
-    }
-
-    CSample::CSample(const CSample & t_Sample)
-    {
-        operator=(t_Sample);
-    }
-
     CSeries & CSample::getSourceData()
     {
         calculateState(m_IntegrationType, m_NormalizationCoefficient);
@@ -69,11 +45,11 @@ namespace SpectralAveraging
         reset();
     }
 
-    void CSample::assignDetectorAndWavelengths(std::shared_ptr<CSample> const & t_Sample)
+    void CSample::assignDetectorAndWavelengths(const CSample & t_Sample)
     {
-        m_DetectorData = t_Sample->m_DetectorData;
-        m_Wavelengths = t_Sample->m_Wavelengths;
-        m_WavelengthSet = t_Sample->m_WavelengthSet;
+        m_DetectorData = t_Sample.m_DetectorData;
+        m_Wavelengths = t_Sample.m_Wavelengths;
+        m_WavelengthSet = t_Sample.m_WavelengthSet;
     }
 
     void CSample::setWavelengths(WavelengthSet const t_WavelengthSet,

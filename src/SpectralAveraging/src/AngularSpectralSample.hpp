@@ -5,6 +5,7 @@
 #include <mutex>
 
 #include "SpectralSampleData.hpp"
+#include "SpectralSample.hpp"
 
 namespace FenestrationCommon
 {
@@ -18,10 +19,6 @@ namespace FenestrationCommon
 
 namespace SpectralAveraging
 {
-    class CSpectralSampleData;
-
-    class CSpectralSample;
-
     ////////////////////////////////////////////////////////////////////////////////
     //  CAngularSpectralProperties
     ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +27,7 @@ namespace SpectralAveraging
     class CAngularSpectralProperties
     {
     public:
-        CAngularSpectralProperties(std::shared_ptr<CSpectralSample> const & t_SpectralSample,
+        CAngularSpectralProperties(CSpectralSample & t_SpectralSample,
                                    double const t_Angle,
                                    FenestrationCommon::MaterialType const t_Type,
                                    double const t_Thickness);
@@ -39,7 +36,7 @@ namespace SpectralAveraging
         std::shared_ptr<CSpectralSampleData> properties() const;
 
     private:
-        void calculateAngularProperties(std::shared_ptr<CSpectralSample> const & t_SpectralSample,
+        void calculateAngularProperties(CSpectralSample & t_SpectralSample,
                                         FenestrationCommon::MaterialType const t_Type);
 
         double m_Angle;
@@ -73,7 +70,7 @@ namespace SpectralAveraging
     class CAngularSpectralSample
     {
     public:
-        CAngularSpectralSample(const std::shared_ptr<CSpectralSample> & t_SpectralSample,
+        CAngularSpectralSample(const CSpectralSample & t_SpectralSample,
                                double t_Thickness,
                                FenestrationCommon::MaterialType t_Type);
 
@@ -105,7 +102,7 @@ namespace SpectralAveraging
 
     private:
         std::vector<CSpectralSampleAngle> m_SpectralProperties;
-        std::shared_ptr<CSpectralSample> m_SpectralSampleZero;   // spectral sample as zero degrees
+        CSpectralSample m_SpectralSampleZero;
         double m_Thickness;
         FenestrationCommon::MaterialType m_Type;
 

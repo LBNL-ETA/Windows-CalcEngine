@@ -12,24 +12,17 @@ using namespace FenestrationCommon;
 
 class TestSampleNFRC_103_Angular_Photopic : public testing::Test
 {
-    std::shared_ptr<CSpectralSample> m_Sample;
+    CSpectralSample m_Sample{SpectralSample::NFRC_103(), StandardData::Photopic::solarRadiation()};
 
 protected:
     void SetUp() override
     {
-        auto aSolarRadiation{StandardData::Photopic::solarRadiation()};
-        auto aWavelengths{StandardData::Photopic::wavelengthSetPhotopic()};
-        auto detectorData{StandardData::Photopic::detectorData()};
-        auto aMeasurements{SpectralSample::NFRC_103()};
-
-        m_Sample = std::make_shared<CSpectralSample>(aMeasurements, aSolarRadiation);
-        m_Sample->setDetectorData(detectorData);
-
-        m_Sample->setWavelengths(WavelengthSet::Custom, aWavelengths);
+        m_Sample.setDetectorData(StandardData::Photopic::detectorData());
+        m_Sample.setWavelengths(WavelengthSet::Custom, StandardData::Photopic::wavelengthSetPhotopic());
     }
 
 public:
-    std::shared_ptr<CSpectralSample> getSample() const
+    CSpectralSample getSample() const
     {
         return m_Sample;
     };

@@ -428,7 +428,7 @@ namespace SingleLayerOptics
       double t_Thickness,
       FenestrationCommon::MaterialType t_Type) :
         CMaterial(t_SpectralSample->getWavelengthLimits()),
-        m_AngularSample(t_SpectralSample, t_Thickness, t_Type)
+        m_AngularSample(*t_SpectralSample, t_Thickness, t_Type)
     {
         if(t_SpectralSample == nullptr)
         {

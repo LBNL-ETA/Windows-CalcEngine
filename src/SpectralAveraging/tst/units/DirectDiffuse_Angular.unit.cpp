@@ -15,23 +15,14 @@ using namespace FenestrationCommon;
 
 class TestDirectDiffuse_Angular : public ::testing::Test
 {
-    std::shared_ptr<CAngularSpectralSample> m_Sample;
-
-protected:
-    void SetUp() override
-    {
-        auto aMeasurements = SpectralSample::DirectDiffuse();
-        auto aSample = std::make_shared<CSpectralSample>(
-          aMeasurements, StandardData::solarRadiationASTM_E891_87_Table1());
-
-        constexpr auto thickness = 3e-3;   // [m]
-        constexpr auto layerType = MaterialType::Coated;
-
-        m_Sample = std::make_shared<CAngularSpectralSample>(aSample, thickness, layerType);
-    }
+    const double thickness{3e-3};
+    CAngularSpectralSample m_Sample{
+      {SpectralSample::DirectDiffuse(), StandardData::solarRadiationASTM_E891_87_Table1()},
+      thickness,
+      MaterialType::Coated};
 
 public:
-    [[nodiscard]] std::shared_ptr<CAngularSpectralSample> getSample() const
+    CAngularSpectralSample & getSample()
     {
         return m_Sample;
     }
@@ -56,19 +47,19 @@ TEST_P(TestDirectDiffuse_Angular_Param, PropertiesMatch)
     constexpr double highLambda = 2.5;
     constexpr double eps = 1e-6;
 
-    auto angularSample = getSample();
+    auto & angularSample{getSample()};
     const auto & c = GetParam();
 
     auto get = [&](Property p, Side s) {
-        return angularSample->getProperty(lowLambda, highLambda, p, s, c.angle, c.scatter);
+        return angularSample.getProperty(lowLambda, highLambda, p, s, c.angle, c.scatter);
     };
 
-    EXPECT_NEAR(c.Tf,   get(Property::T,   Side::Front), eps);
-    EXPECT_NEAR(c.Tb,   get(Property::T,   Side::Back),  eps);
-    EXPECT_NEAR(c.Rf,   get(Property::R,   Side::Front), eps);
-    EXPECT_NEAR(c.Rb,   get(Property::R,   Side::Back),  eps);
+    EXPECT_NEAR(c.Tf, get(Property::T, Side::Front), eps);
+    EXPECT_NEAR(c.Tb, get(Property::T, Side::Back), eps);
+    EXPECT_NEAR(c.Rf, get(Property::R, Side::Front), eps);
+    EXPECT_NEAR(c.Rb, get(Property::R, Side::Back), eps);
     EXPECT_NEAR(c.Absf, get(Property::Abs, Side::Front), eps);
-    EXPECT_NEAR(c.Absb, get(Property::Abs, Side::Back),  eps);
+    EXPECT_NEAR(c.Absb, get(Property::Abs, Side::Back), eps);
 }
 
 static std::string scatterName(ScatteringType s)
@@ -106,7 +97,7 @@ INSTANTIATE_TEST_SUITE_P(
   AngularProps,
   TestDirectDiffuse_Angular_Param,
   ::testing::Values(
-  // clang-format off
+    // clang-format off
     // ---- 0° ----                        Tf        Tb        Rf        Rb        Absf      Absb
     Case{0.0,  ScatteringType::Total,   0.300000, 0.300000, 0.500000, 0.500000, 0.200000, 0.200000},
     Case{0.0,  ScatteringType::Direct,  0.100000, 0.100000, 0.200000, 0.200000, 0.200000, 0.200000},
@@ -151,7 +142,6 @@ INSTANTIATE_TEST_SUITE_P(
     Case{82.5, ScatteringType::Total,   0.097600, 0.097600, 0.761130, 0.761130, 0.141270, 0.141270},
     Case{82.5, ScatteringType::Direct,  0.032533, 0.032533, 0.304452, 0.304452, 0.141270, 0.141270},
     Case{82.5, ScatteringType::Diffuse, 0.065067, 0.065067, 0.456678, 0.456678, 0.141270, 0.141270}
-  // clang-format on
-  ),
+    // clang-format on
+    ),
   nameFromParam);
-

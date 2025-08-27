@@ -7,29 +7,18 @@
 #include "standardData.hpp"
 #include "spectralSampleData.hpp"
 
-
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
 class TestSampleNFRC_1042_Angular : public testing::Test
 {
-    std::shared_ptr<CSpectralSample> m_Sample;
-
-protected:
-    void SetUp() override
-    {
-        auto aSolarRadiation = StandardData::solarRadiationASTM_E891_87_Table1();
-
-        auto aMeasurements = SpectralSample::NFRC_1042();
-
-        m_Sample = std::make_shared<CSpectralSample>(aMeasurements, aSolarRadiation);
-    }
+    CSpectralSample m_Sample{SpectralSample::NFRC_1042(), StandardData::solarRadiationASTM_E891_87_Table1()};
 
 public:
-    [[nodiscard]] std::shared_ptr<CSpectralSample> getSample() const
+    CSpectralSample & getSample()
     {
         return m_Sample;
-    };
+    }
 };
 
 // C++
@@ -46,22 +35,21 @@ TEST_F(TestSampleNFRC_1042_Angular, TestSampleProperties)
 
     auto aMeasuredSample = getSample();
 
-    auto angularSample =
-      std::make_shared<CAngularSpectralSample>(aMeasuredSample, thickness, layerType);
+    CAngularSpectralSample angularSample{aMeasuredSample, thickness, layerType};
 
-    auto transmittance = angularSample->getProperty(
+    auto transmittance = angularSample.getProperty(
       lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.327258, transmittance, 1e-6);
 
-    auto reflectanceFront = angularSample->getProperty(
+    auto reflectanceFront = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.471995, reflectanceFront, 1e-6);
 
-    auto reflectanceBack = angularSample->getProperty(
+    auto reflectanceBack = angularSample.getProperty(
       lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
     EXPECT_NEAR(0.504595, reflectanceBack, 1e-6);
 
-    auto absorptance = angularSample->getProperty(
+    auto absorptance = angularSample.getProperty(
       lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
     EXPECT_NEAR(0.200746, absorptance, 1e-6);
 }
