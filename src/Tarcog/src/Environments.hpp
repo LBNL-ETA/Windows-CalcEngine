@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "LayerInterfaces.hpp"
 #include "TarcogConstants.hpp"
 #include "AirFlow.hpp"
 
