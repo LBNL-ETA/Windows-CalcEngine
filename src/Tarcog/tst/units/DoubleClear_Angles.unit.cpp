@@ -1,5 +1,6 @@
 #include <memory>
 #include <optional>
+#include <iomanip>
 #include <sstream>
 #include <gtest/gtest.h>
 
@@ -82,10 +83,15 @@ namespace
     }
 
     // pretty param names like Tilt_90deg, Tilt_10deg
-    static auto tiltParamName = [](const ::testing::TestParamInfo<TiltCase> & info) {
+    auto tiltParamName = [](const ::testing::TestParamInfo<TiltCase> & info) {
         std::ostringstream os;
-        os << "Tilt_" << static_cast<int>(std::round(info.param.tilt_deg)) << "deg";
-        return os.str();
+        os.setf(std::ios::fixed);
+        os << "Tilt_" << std::setprecision(1) << info.param.tilt_deg << "deg";
+        auto s = os.str();
+        for(char & c : s)
+            if(c == '.')
+                c = '_';   // gtest-friendly
+        return s;
     };
 
     class TestDoubleClearAngles_Param : public ::testing::TestWithParam<TiltCase>
@@ -115,16 +121,22 @@ namespace
         }
     }
 
-    INSTANTIATE_TEST_SUITE_P(
-      DoubleClear_Tilts,
-      TestDoubleClearAngles_Param,
-      // clang-format off
+    // TODO: This clearly shows the bug at angle above 179 degrees
+    INSTANTIATE_TEST_SUITE_P(DoubleClear_Tilts,
+                             TestDoubleClearAngles_Param,
+                             // clang-format off
       ::testing::Values
       (
-          TiltCase{10.0, 3.899828},
-          TiltCase{90.0, 2.832772}
+          TiltCase{10.0,   3.899828},
+          TiltCase{15.0,   3.844879},
+          TiltCase{16.0,   3.842826},
+          TiltCase{89.0,   2.833360},
+          TiltCase{90.0,   2.832772},
+          TiltCase{178.0,  1.266671},
+          TiltCase{179.0,  1.070578},
+          TiltCase{179.3, 13.686557}
       ),
-      // clang-format on
-      tiltParamName);
+                             // clang-format on
+                             tiltParamName);
 
 }   // namespace
