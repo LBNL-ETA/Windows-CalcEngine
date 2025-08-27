@@ -1,11 +1,10 @@
-#ifndef ANGULARSPECTRALSAMPLE_H
-#define ANGULARSPECTRALSAMPLE_H
-
-#include "SpectralSampleData.hpp"
-
+#pragma once
 
 #include <memory>
 #include <vector>
+#include <mutex>
+
+#include "SpectralSampleData.hpp"
 
 namespace FenestrationCommon
 {
@@ -105,12 +104,41 @@ namespace SpectralAveraging
         std::shared_ptr<CSpectralSample> findSpectralSample(double t_Angle);
 
     private:
-        std::vector<std::shared_ptr<CSpectralSampleAngle>> m_SpectralProperties;
+        std::vector<CSpectralSampleAngle> m_SpectralProperties;
         std::shared_ptr<CSpectralSample> m_SpectralSampleZero;   // spectral sample as zero degrees
         double m_Thickness;
         FenestrationCommon::MaterialType m_Type;
+
+        // ---- Caching ----
+        struct CacheKey
+        {
+            FenestrationCommon::Property prop;
+            FenestrationCommon::Side side;
+            ScatteringType scatter;
+            const void * samplePtr;
+            bool operator==(const CacheKey & o) const noexcept
+            {
+                return prop == o.prop && side == o.side && scatter == o.scatter
+                       && samplePtr == o.samplePtr;
+            }
+        };
+
+        struct CacheKeyHash
+        {
+            size_t operator()(const CacheKey & k) const noexcept
+            {
+                auto h = std::hash<int>{}(static_cast<int>(k.prop));
+                h ^=
+                  (std::hash<int>{}(static_cast<int>(k.side)) + 0x9e3779b9 + (h << 6) + (h >> 2));
+                h ^= (std::hash<int>{}(static_cast<int>(k.scatter)) + 0x9e3779b9 + (h << 6)
+                      + (h >> 2));
+                h ^= (std::hash<const void *>{}(k.samplePtr) + 0x9e3779b9 + (h << 6) + (h >> 2));
+                return h;
+            }
+        };
+
+        mutable std::unordered_map<CacheKey, std::vector<double>, CacheKeyHash> m_wvlCache_;
+        mutable std::mutex m_wvlCacheMtx_;
     };
 
 }   // namespace SpectralAveraging
-
-#endif

@@ -191,16 +191,38 @@ namespace SpectralAveraging
         return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side, t_Scatter);
     }
 
-    std::vector<double> CAngularSpectralSample::getWavelengthProperties(const Property t_Property,
-                                                                        const Side t_Side,
-                                                                        const double t_Angle,
-                                                                        const ScatteringType t_Scatter)
+    std::vector<double>
+      CAngularSpectralSample::getWavelengthProperties(const Property t_Property,
+                                                      const Side t_Side,
+                                                      const double t_Angle,
+                                                      const ScatteringType t_Scatter)
     {
         auto aSample = findSpectralSample(t_Angle);
 
-        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side, t_Scatter);
+        // Angular functions are intensively called and for that reason it makes sense to
+        // cache the results.
+        const void * keyPtr = aSample.get();
 
-        return aProperties.getYArray();
+        CacheKey key{t_Property, t_Side, t_Scatter, keyPtr};
+
+        {
+            std::lock_guard lk(m_wvlCacheMtx_);
+            auto it = m_wvlCache_.find(key);
+            if(it != m_wvlCache_.end())
+            {
+                return it->second;
+            }
+        }
+
+        {
+            auto props = aSample->getWavelengthsProperty(t_Property, t_Side, t_Scatter).getYArray();
+            std::lock_guard lk(m_wvlCacheMtx_);
+            if(m_wvlCache_.size() > 256)
+                m_wvlCache_.clear();
+
+            auto [pos, _] = m_wvlCache_.emplace(key, std::move(props));
+            return pos->second;
+        }
     }
 
     std::vector<double> CAngularSpectralSample::getBandWavelengths() const
@@ -221,7 +243,7 @@ namespace SpectralAveraging
         m_SpectralSampleZero->Flipped(flipped);
         for(auto & val : m_SpectralProperties)
         {
-            val->sample()->Flipped(flipped);
+            val.sample()->Flipped(flipped);
         }
     }
 
@@ -232,15 +254,14 @@ namespace SpectralAveraging
 
         std::shared_ptr<CSpectralSample> aSample = nullptr;
 
-        const auto it = find_if(m_SpectralProperties.begin(),
-                                m_SpectralProperties.end(),
-                                [&t_Angle](std::shared_ptr<CSpectralSampleAngle> const & obj) {
-                                    return std::abs(obj->angle() - t_Angle) < 1e-6;
-                                });
+        const auto it = std::ranges::find_if(
+          m_SpectralProperties, [&t_Angle](CSpectralSampleAngle const & obj) {
+              return std::abs(obj.angle() - t_Angle) < 1e-6;
+          });
 
         if(it != m_SpectralProperties.end())
         {
-            aSample = (*it)->sample();
+            aSample = (*it).sample();
         }
         else
         {
@@ -250,9 +271,7 @@ namespace SpectralAveraging
             aSample = std::make_shared<CSpectralSample>(aAngularData.properties(),
                                                         m_SpectralSampleZero->getSourceData());
             aSample->assignDetectorAndWavelengths(m_SpectralSampleZero);
-            const auto aSpectralSampleAngle =
-              std::make_shared<CSpectralSampleAngle>(aSample, t_Angle);
-            m_SpectralProperties.push_back(aSpectralSampleAngle);
+            m_SpectralProperties.emplace_back(aSample, t_Angle);
         }
 
         return aSample;
