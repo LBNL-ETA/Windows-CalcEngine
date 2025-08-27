@@ -6,11 +6,13 @@
 
 #include "standardData.hpp"
 #include "spectralSampleData.hpp"
+#include "parametrics.hpp"
 
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;
 
-// Example (test case) of sample that calculates angular properties of single layer sample
+using TestUtil::AngleCase;
+using TestUtil::angleParamNames;
 
 class TestSampleNFRC_103_Angular : public testing::Test
 {
@@ -21,278 +23,95 @@ class TestSampleNFRC_103_Angular : public testing::Test
       MaterialType::Monolithic};
 
 public:
-    CAngularSpectralSample& getSample()
+    CAngularSpectralSample & getSample()
     {
         return m_Sample;
     }
 };
 
-TEST_F(TestSampleNFRC_103_Angular, TestProperties0degrees)
+// -------------------- Parameterized suite --------------------
+
+class TestSampleNFRC_103_Angular_Param : public TestSampleNFRC_103_Angular,
+                                         public ::testing::WithParamInterface<AngleCase>
+{};
+
+TEST_P(TestSampleNFRC_103_Angular_Param, PropertiesMatch_TotalScatter)
 {
-    auto angle = 0.0;
+    constexpr double lowLambda = 0.3;
+    constexpr double highLambda = 2.5;
+    constexpr double eps = 1e-6;
 
-    auto & angularSample{getSample()};
+    auto & angular{getSample()};
+    const auto & c{GetParam()};
 
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
+    auto get = [&](Property p, Side s) {
+        return angular.getProperty(lowLambda, highLambda, p, s, c.angle, c.scatter);
+    };
 
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.77068014770698934, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.069984173508366929, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.070250681323265077, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.15933567878464375, absorptance, 1e-6);
+    EXPECT_NEAR(c.Tf, get(Property::T, Side::Front), eps);
+    EXPECT_NEAR(c.Tb, get(Property::T, Side::Back), eps);
+    EXPECT_NEAR(c.Rf, get(Property::R, Side::Front), eps);
+    EXPECT_NEAR(c.Rb, get(Property::R, Side::Back), eps);
+    EXPECT_NEAR(c.Absf, get(Property::Abs, Side::Front), eps);
+    EXPECT_NEAR(c.Absb, get(Property::Abs, Side::Back), eps);
 }
 
-TEST_F(TestSampleNFRC_103_Angular, TestProperties10degrees)
-{
-    constexpr auto angle = 10.0;
+INSTANTIATE_TEST_SUITE_P(
+  AngularProps_NFRC103_Total,
+  TestSampleNFRC_103_Angular_Param,
+  ::testing::Values(
+    // clang-format off
+    // angle   scatter                              Tf        Tb        Rf        Rb        Absf      Absb
+        // ---- 0° ----
+        AngleCase{  0.0, ScatteringType::Total,   0.770680, 0.770680, 0.069984, 0.070251, 0.159336, 0.159069 },
+        AngleCase{  0.0, ScatteringType::Direct,  0.770680, 0.770680, 0.069984, 0.070251, 0.159336, 0.159069 },
+        AngleCase{  0.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.159336, 0.159069 },
 
-    auto & angularSample{getSample()};
+        // ---- 10° ----
+        AngleCase{ 10.0, ScatteringType::Total,   0.769803, 0.769807, 0.069951, 0.070217, 0.160246, 0.159976 },
+        AngleCase{ 10.0, ScatteringType::Direct,  0.769803, 0.769807, 0.069951, 0.070217, 0.160246, 0.159976 },
+        AngleCase{ 10.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.160246, 0.159976 },
 
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
+        // ---- 20° ----
+        AngleCase{ 20.0, ScatteringType::Total,   0.766911, 0.766927, 0.070136, 0.070402, 0.162953, 0.162671 },
+        AngleCase{ 20.0, ScatteringType::Direct,  0.766911, 0.766927, 0.070136, 0.070402, 0.162953, 0.162671 },
+        AngleCase{ 20.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.162953, 0.162671 },
 
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.76980319121439578, transmittance, 1e-6);
+        // ---- 30° ----
+        AngleCase{ 30.0, ScatteringType::Total,   0.761038, 0.761072, 0.071607, 0.071875, 0.167355, 0.167053 },
+        AngleCase{ 30.0, ScatteringType::Direct,  0.761038, 0.761072, 0.071607, 0.071875, 0.167355, 0.167053 },
+        AngleCase{ 30.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.167355, 0.167053 },
 
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.069950630413725984, reflectanceFront, 1e-6);
+        // ---- 40° ----
+        AngleCase{ 40.0, ScatteringType::Total,   0.749796, 0.749854, 0.077031, 0.077303, 0.173173, 0.172843 },
+        AngleCase{ 40.0, ScatteringType::Direct,  0.749796, 0.749854, 0.077031, 0.077303, 0.173173, 0.172843 },
+        AngleCase{ 40.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.173173, 0.172843 },
 
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.070217043956113862, reflectanceBack, 1e-6);
+        // ---- 50° ----
+        AngleCase{ 50.0, ScatteringType::Total,   0.727476, 0.727561, 0.092803, 0.093085, 0.179721, 0.179354 },
+        AngleCase{ 50.0, ScatteringType::Direct,  0.727476, 0.727561, 0.092803, 0.093085, 0.179721, 0.179354 },
+        AngleCase{ 50.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.179721, 0.179354 },
 
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.16024617837187857, absorptance, 1e-6);
-}
+        // ---- 60° ----
+        AngleCase{ 60.0, ScatteringType::Total,   0.680213, 0.680322, 0.134396, 0.134693, 0.185391, 0.184985 },
+        AngleCase{ 60.0, ScatteringType::Direct,  0.680213, 0.680322, 0.134396, 0.134693, 0.185391, 0.184985 },
+        AngleCase{ 60.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.185391, 0.184985 },
 
-TEST_F(TestSampleNFRC_103_Angular, TestProperties20degrees)
-{
-    constexpr auto angle = 20.0;
+        // ---- 70° ----
+        AngleCase{ 70.0, ScatteringType::Total,   0.574836, 0.574959, 0.238890, 0.239199, 0.186274, 0.185842 },
+        AngleCase{ 70.0, ScatteringType::Direct,  0.574836, 0.574959, 0.238890, 0.239199, 0.186274, 0.185842 },
+        AngleCase{ 70.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.186274, 0.185842 },
 
-    auto & angularSample{getSample()};
+        // ---- 80° ----
+        AngleCase{ 80.0, ScatteringType::Total,   0.345876, 0.345984, 0.483999, 0.484279, 0.170124, 0.169737 },
+        AngleCase{ 80.0, ScatteringType::Direct,  0.345876, 0.345984, 0.483999, 0.484279, 0.170124, 0.169737 },
+        AngleCase{ 80.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.170124, 0.169737 },
 
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
+        // ---- 90° ----
+        AngleCase{ 90.0, ScatteringType::Total,   0.000000, 0.000000, 1.000000, 1.000000, 0.000000, 0.000000 },
+        AngleCase{ 90.0, ScatteringType::Direct,  0.000000, 0.000000, 1.000000, 1.000000, 0.000000, 0.000000 },
+        AngleCase{ 90.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }
+    // clang-format on
+  ),
+  angleParamNames);
 
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.76691124365416619, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.070135520990238370, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.070401987567688062, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.16295323535559544, absorptance, 1e-6);
-}
-
-TEST_F(TestSampleNFRC_103_Angular, TestProperties30degrees)
-{
-    constexpr auto angle = 30.0;
-
-    auto & angularSample{getSample()};
-
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
-
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.76103766815923068, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.071607090478364152, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.071874821559627849, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.16735524136240523, absorptance, 1e-6);
-}
-
-TEST_F(TestSampleNFRC_103_Angular, TestProperties40degrees)
-{
-    constexpr auto angle = 40.0;
-
-    auto & angularSample{getSample()};
-
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
-
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.74979572701044594, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.077031089090913732, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.077303147565901148, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.17317318389864053, absorptance, 1e-6);
-}
-
-TEST_F(TestSampleNFRC_103_Angular, TestProperties50degrees)
-{
-    constexpr auto angle = 50.0;
-
-    auto & angularSample{getSample()};
-
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
-
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.72747576073993681, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.092802977512975046, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.093084622790465060, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.17972126174708844, absorptance, 1e-6);
-}
-
-TEST_F(TestSampleNFRC_103_Angular, TestProperties60degrees)
-{
-    constexpr auto angle = 60.0;
-
-    auto & angularSample{getSample()};
-
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
-
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.68021254285214183, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.13439623099689185, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.13469298221439049, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.18539122615096648, absorptance, 1e-6);
-}
-
-TEST_F(TestSampleNFRC_103_Angular, TestProperties70degrees)
-{
-    constexpr auto angle = 70.0;
-
-    auto & angularSample{getSample()};
-
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
-
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.57483609737842067, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.23889023227286083, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.23919930021548919, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.18627367034871853, absorptance, 1e-6);
-}
-
-TEST_F(TestSampleNFRC_103_Angular, TestProperties80degrees)
-{
-    constexpr auto angle = 80.0;
-
-    auto & angularSample{getSample()};
-
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
-
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.34587632310986616, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.48399936961291273, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.48427878594468138, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0.17012430727722111, absorptance, 1e-6);
-}
-
-TEST_F(TestSampleNFRC_103_Angular, TestProperties90degrees)
-{
-    constexpr auto angle = 90.0;
-
-    auto & angularSample{getSample()};
-
-    // SOLAR RANGE
-    constexpr auto lowLambda = 0.3;
-    constexpr auto highLambda = 2.5;
-
-    auto transmittance = angularSample.getProperty(
-      lowLambda, highLambda, Property::T, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0, transmittance, 1e-6);
-
-    auto reflectanceFront = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(1, reflectanceFront, 1e-6);
-
-    auto reflectanceBack = angularSample.getProperty(
-      lowLambda, highLambda, Property::R, Side::Back, angle, ScatteringType::Total);
-    EXPECT_NEAR(1, reflectanceBack, 1e-6);
-
-    auto absorptance = angularSample.getProperty(
-      lowLambda, highLambda, Property::Abs, Side::Front, angle, ScatteringType::Total);
-    EXPECT_NEAR(0., absorptance, 1e-6);
-}
