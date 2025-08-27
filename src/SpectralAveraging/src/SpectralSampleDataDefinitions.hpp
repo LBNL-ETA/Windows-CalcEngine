@@ -47,13 +47,20 @@ namespace SpectralAveraging
 
     enum class ScatteringType
     {
-        Direct,
+        Direct = 0,
         Diffuse,
         Total
     };
 
     constexpr std::array allScatteringTypes{
         ScatteringType::Direct, ScatteringType::Diffuse, ScatteringType::Total};
+
+    constexpr std::array scatteringTypeString{"Direct", "Diffuse", "Total"};
+
+    constexpr std::string_view scatterName(ScatteringType scatter)
+    {
+        return scatteringTypeString[static_cast<int>(scatter)];
+    }
 
     using ScatteringKey =
       std::tuple<FenestrationCommon::Property, FenestrationCommon::Side, ScatteringType>;

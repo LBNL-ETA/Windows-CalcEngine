@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 
+#include <WCESpectralAveraging.hpp>
 
 namespace TestUtil
 {
@@ -12,21 +13,6 @@ namespace TestUtil
         SpectralAveraging::ScatteringType scatter;
         double Tf, Tb, Rf, Rb, Absf, Absb;
     };
-
-    static std::string scatterName(SpectralAveraging::ScatteringType s)
-    {
-        switch(s)
-        {
-            case SpectralAveraging::ScatteringType::Direct:
-                return "Direct";
-            case SpectralAveraging::ScatteringType::Diffuse:
-                return "Diffuse";
-            case SpectralAveraging::ScatteringType::Total:
-                return "Total";
-            default:
-                return "Unknown";
-        }
-    }
 
     // Pretty param names like Angle_10deg, Angle_82_5deg, etc.
     static auto angleParamNames = [](const ::testing::TestParamInfo<AngleCase> & info) {
@@ -41,7 +27,7 @@ namespace TestUtil
         if(!a.empty() && a.back() == '_')
             a.pop_back();
 
-        os << scatterName(info.param.scatter) << "_" << (a.empty() ? "0" : a) << "deg";
+        os << SpectralAveraging::scatterName(info.param.scatter) << "_" << (a.empty() ? "0" : a) << "deg";
         return os.str();
     };
 }   // namespace Helper

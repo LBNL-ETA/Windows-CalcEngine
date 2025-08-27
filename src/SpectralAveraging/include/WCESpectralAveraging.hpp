@@ -7,3 +7,4 @@
 #include "../src/NIRRatio.hpp"
 #include "../src/SpectralSample.hpp"
 #include "../src/SpectrumFunctions.hpp"
+#include "../src/SpectralSampleDataDefinitions.hpp"
