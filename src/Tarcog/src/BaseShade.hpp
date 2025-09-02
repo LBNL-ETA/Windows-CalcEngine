@@ -44,7 +44,6 @@ namespace Tarcog::ISO15099
         void checkAndSetDominantWidth(double gapWidth);
 
     private:
-        void fixForValidity();
         [[nodiscard]] double openingMultiplier() const;
 
         double m_Atop{OPENING_TOLERANCE};
