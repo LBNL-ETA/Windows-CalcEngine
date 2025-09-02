@@ -46,8 +46,8 @@ namespace Tarcog::ISO15099
     private:
         [[nodiscard]] double openingMultiplier() const;
 
-        double m_Atop{OPENING_TOLERANCE};
-        double m_Abot{OPENING_TOLERANCE};
+        double m_Atop{0};
+        double m_Abot{0};
         double m_Aleft{0};
         double m_Aright{0};
         double m_Afront{0};
