@@ -1,8 +1,8 @@
-#ifndef INTEGRATIONSTRATEGY_H
-#define INTEGRATIONSTRATEGY_H
+#pragma once
 
 #include <memory>
 #include <vector>
+
 #include "Series.hpp"
 
 
@@ -82,5 +82,3 @@ namespace FenestrationCommon
     };
 
 }   // namespace FenestrationCommon
-
-#endif
