@@ -50,7 +50,7 @@ namespace FenestrationCommon
         {
             return *this;
         }
-        
+
         m_x = t_Property.m_x;
         m_Value = t_Property.m_Value;
         return *this;
@@ -118,7 +118,8 @@ namespace FenestrationCommon
     {
         auto integrator = CIntegratorFactory().getIntegrator(t_IntegrationType);
 
-        if (!integrationPoints) {
+        if(!integrationPoints)
+        {
             return integrator->integrate(m_Series, normalizationCoefficient);
         }
 
@@ -185,11 +186,14 @@ namespace FenestrationCommon
         out.m_Series.reserve(t_Wavelengths.size());
         if(size() != 0)
         {
-            for (double w : t_Wavelengths) {
+            for(double w : t_Wavelengths)
+            {
                 std::optional<CSeriesPoint> lower = findLower(w);
                 std::optional<CSeriesPoint> upper = findUpper(w);
-                if (!lower) lower = upper;
-                if (!upper) upper = lower;
+                if(!lower)
+                    lower = upper;
+                if(!upper)
+                    upper = lower;
                 out.addProperty(w, interpolate(lower.value(), upper.value(), w));
             }
         }
@@ -370,22 +374,14 @@ namespace FenestrationCommon
 
     void CSeries::cutExtraData(double minWavelength, double maxWavelength)
     {
-        std::vector<CSeriesPoint> result;
-        const auto eps = 1e-8;
-        for(const auto & val : m_Series)
-        {
-            if(val.x() > (minWavelength - eps) && val.x() < (maxWavelength + eps))
-            {
-                result.push_back(val);
-            }
-        }
-
-        m_Series.clear();
-
-        for(const auto & val : result)
-        {
-            m_Series.push_back(val);
-        }
+        constexpr double eps = 1e-8;
+        m_Series.erase(std::ranges::remove_if(m_Series,
+                                              [&](const CSeriesPoint & v) {
+                                                  return !(v.x() > (minWavelength - eps)
+                                                           && v.x() < (maxWavelength + eps));
+                                              })
+                         .begin(),
+                       m_Series.end());
     }
 
 }   // namespace FenestrationCommon
