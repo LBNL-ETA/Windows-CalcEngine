@@ -115,13 +115,16 @@ namespace FenestrationCommon
                                double normalizationCoefficient,
                                const std::optional<std::vector<double>> & integrationPoints) const
     {
-        const auto series = integrationPoints.has_value()
-                              ? interpolate(integrationPoints.value()).m_Series
-                              : m_Series;
+        auto integrator = CIntegratorFactory().getIntegrator(t_IntegrationType);
 
-        return CIntegratorFactory()
-          .getIntegrator(t_IntegrationType)
-          ->integrate(series, normalizationCoefficient);
+        // No interpolation: pass the existing vector by reference (no copy).
+        if (!integrationPoints) {
+            return integrator->integrate(m_Series, normalizationCoefficient);
+        }
+
+        // With interpolation: keep the temporary alive and pass a reference to its storage.
+        CSeries tmp = interpolate(*integrationPoints);
+        return integrator->integrate(tmp.m_Series, normalizationCoefficient);
     }
 
     std::optional<CSeriesPoint> CSeries::findLower(double const t_Wavelength) const
