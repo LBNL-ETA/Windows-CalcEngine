@@ -70,7 +70,7 @@ namespace FenestrationCommon
 
     CSeries::CSeries(const std::vector<std::pair<double, double>> & t_values)
     {
-        // m_Series.clear();
+        m_Series.reserve(t_values.size());
         for(auto & val : t_values)
         {
             m_Series.emplace_back(val.first, val.second);
@@ -79,7 +79,7 @@ namespace FenestrationCommon
 
     CSeries::CSeries(const std::initializer_list<std::pair<double, double>> & t_values)
     {
-        // m_Series.clear();
+        m_Series.reserve(t_values.size());
         for(const auto & val : t_values)
         {
             m_Series.emplace_back(val.first, val.second);
@@ -105,6 +105,7 @@ namespace FenestrationCommon
     void CSeries::setConstantValues(const std::vector<double> & t_Wavelengths, double const t_Value)
     {
         m_Series.clear();
+        m_Series.reserve(t_Wavelengths.size());
         for(auto it = t_Wavelengths.begin(); it < t_Wavelengths.end(); ++it)
         {
             addProperty((*it), t_Value);
@@ -112,17 +113,15 @@ namespace FenestrationCommon
     }
 
     CSeries CSeries::integrate(IntegrationType t_IntegrationType,
-                               double normalizationCoefficient,
+                               const double normalizationCoefficient,
                                const std::optional<std::vector<double>> & integrationPoints) const
     {
         auto integrator = CIntegratorFactory().getIntegrator(t_IntegrationType);
 
-        // No interpolation: pass the existing vector by reference (no copy).
         if (!integrationPoints) {
             return integrator->integrate(m_Series, normalizationCoefficient);
         }
 
-        // With interpolation: keep the temporary alive and pass a reference to its storage.
         CSeries tmp = interpolate(*integrationPoints);
         return integrator->integrate(tmp.m_Series, normalizationCoefficient);
     }
@@ -182,34 +181,19 @@ namespace FenestrationCommon
 
     CSeries CSeries::interpolate(const std::vector<double> & t_Wavelengths) const
     {
-        CSeries newProperties;
-
+        CSeries out;
+        out.m_Series.reserve(t_Wavelengths.size());
         if(size() != 0)
         {
-            std::optional<CSeriesPoint> lower;
-            std::optional<CSeriesPoint> upper;
-
-            for(double wavelength : t_Wavelengths)
-            {
-                lower = findLower(wavelength);
-                upper = findUpper(wavelength);
-
-                if(!lower.has_value())
-                {
-                    lower = upper;
-                }
-
-                if(!upper.has_value())
-                {
-                    upper = lower;
-                }
-
-                newProperties.addProperty(wavelength,
-                                          interpolate(lower.value(), upper.value(), wavelength));
+            for (double w : t_Wavelengths) {
+                std::optional<CSeriesPoint> lower = findLower(w);
+                std::optional<CSeriesPoint> upper = findUpper(w);
+                if (!lower) lower = upper;
+                if (!upper) upper = lower;
+                out.addProperty(w, interpolate(lower.value(), upper.value(), w));
             }
         }
-
-        return newProperties;
+        return out;
     }
 
     CSeries CSeries::operator*(const CSeries & other) const
