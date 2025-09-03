@@ -18,7 +18,7 @@ namespace Tarcog::ISO15099
 
     class CEnvironment;
 
-    auto const OPENING_TOLERANCE = 1e-6;
+    auto constexpr OPENING_TOLERANCE = 1e-6;
 
     class CShadeOpenings
     {
