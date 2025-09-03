@@ -9,15 +9,6 @@ using namespace FenestrationCommon;
 
 namespace SpectralAveraging
 {
-    namespace
-    {
-        // Data coming should already been checked. However, this is just additional prevention
-        double clamp01(double v)
-        {
-            return std::min(1.0, std::max(0.0, v));
-        }
-    }   // namespace
-
     ////////////////////////////////////////////////////////////////////////////
     ////     SampleData
     ////////////////////////////////////////////////////////////////////////////

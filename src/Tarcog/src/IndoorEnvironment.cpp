@@ -112,7 +112,7 @@ namespace Tarcog::ISO15099
         }
         else if((179.0 < m_Tilt) && (m_Tilt <= 180.0))
         {
-            Gnui = 0.58 * pow(RaL, 1 / 3.0);
+            Gnui = 0.58 * pow(RaL, 1 / 5.0);
         }
         return Gnui * aProperties.m_ThermalConductivity / m_Height;
     }

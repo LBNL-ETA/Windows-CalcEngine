@@ -134,7 +134,7 @@ namespace
           TiltCase{90.0,   2.832772},
           TiltCase{178.0,  1.266671},
           TiltCase{179.0,  1.070578},
-          TiltCase{179.3, 13.686557}
+          TiltCase{179.3,  1.050170}
       ),
                              // clang-format on
                              tiltParamName);
