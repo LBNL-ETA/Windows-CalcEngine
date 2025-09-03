@@ -1,15 +1,10 @@
-#ifndef INTEGRATIONSTRATEGY_H
-#define INTEGRATIONSTRATEGY_H
+#pragma once
 
-#include <memory>
-#include <vector>
 #include "Series.hpp"
 
+namespace FenestrationCommon {
 
-namespace FenestrationCommon
-{
-    enum class IntegrationType
-    {
+    enum class IntegrationType {
         Rectangular,
         RectangularCentroid,
         Trapezoidal,
@@ -18,70 +13,9 @@ namespace FenestrationCommon
         PreWeighted
     };
 
-    class ISeriesPoint;
+    // Single non-virtual entry point that does NOT expose m_Series
+    CSeries integrate(IntegrationType type,
+                      const CSeries& series,
+                      double normalizationCoeff = 1.0);
 
-    class CSeries;
-
-    class IIntegratorStrategy
-    {
-    public:
-        virtual ~IIntegratorStrategy() = default;
-        
-        virtual CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
-                                  double normalizationCoeff = 1) = 0;
-
-    protected:
-        double dX(double x1, double x2) const;
-    };
-
-    class CIntegratorRectangular : public IIntegratorStrategy
-    {
-    public:
-        CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
-                          double normalizationCoeff) override;
-    };
-
-    class CIntegratorRectangularCentroid : public IIntegratorStrategy
-    {
-    public:
-        CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
-                          double normalizationCoeff) override;
-    };
-
-    class CIntegratorTrapezoidal : public IIntegratorStrategy
-    {
-    public:
-        CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
-                          double normalizationCoeff) override;
-    };
-
-    class CIntegratorTrapezoidalA : public IIntegratorStrategy
-    {
-    public:
-        CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
-                          double normalizationCoeff) override;
-    };
-
-    class CIntegratorTrapezoidalB : public IIntegratorStrategy
-    {
-    public:
-        CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
-                          double normalizationCoeff) override;
-    };
-
-    class CIntegratorPreWeighted : public IIntegratorStrategy
-    {
-    public:
-        CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
-                          double normalizationCoeff) override;
-    };
-
-    class CIntegratorFactory
-    {
-    public:
-        std::unique_ptr<IIntegratorStrategy> getIntegrator(IntegrationType t_IntegratorType) const;
-    };
-
-}   // namespace FenestrationCommon
-
-#endif
+} // namespace FenestrationCommon

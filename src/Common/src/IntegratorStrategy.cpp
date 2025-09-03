@@ -1,166 +1,101 @@
+#include <cassert>
 #include "IntegratorStrategy.hpp"
 #include "Series.hpp"
-#include <cassert>
 
 namespace FenestrationCommon
 {
-    double IIntegratorStrategy::dX(double const x1, double const x2) const
+
+    static inline double delta(double x1, double x2)
     {
         return x2 - x1;
     }
 
-    CSeries
-      CIntegratorRectangular::integrate(const std::vector<CSeriesPoint> & t_Series,
-                                        double normalizationCoeff)
+    // Walk adjacent pairs; store contribution at the left x (w1).
+    // Works with any Series-like that has size() and operator[] returning CSeriesPoint.
+    template<class SeriesLike, class Compute>
+    static CSeries
+      integrate_pairs(const SeriesLike & s, double normalizationCoeff, Compute && compute)
     {
-        CSeries newProperties;
-        for(auto i = 1u; i < t_Series.size(); ++i)
-        {
-            const auto w1 = t_Series[i - 1].x();
-            const auto w2 = t_Series[i].x();
-            const auto y1 = t_Series[i - 1].value();
-            const auto deltaX = dX(w1, w2);
-            const auto value = y1 * deltaX;
-            newProperties.addProperty(w1, value / normalizationCoeff);
-        }
+        CSeries out;
+        const std::size_t n = s.size();
+        if(n < 2)
+            return out;
+        assert(normalizationCoeff != 0.0 && "normalizationCoeff must be non-zero");
 
-        return newProperties;
+        for(std::size_t i = 1; i < n; ++i)
+        {
+            const CSeriesPoint & L = s[i - 1];
+            const CSeriesPoint & R = s[i];
+
+            const double w1 = L.x();
+            const double dx = delta(w1, R.x());
+            const double y1 = L.value();
+            const double y2 = R.value();
+
+            const bool isFirst = (i == 1);
+            const bool isLast = (i == n - 1);
+
+            const double contrib = compute(y1, y2, dx, isFirst, isLast);
+            out.addProperty(w1, contrib / normalizationCoeff);
+        }
+        return out;
     }
 
-    CSeries CIntegratorRectangularCentroid::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
+    CSeries integrate(IntegrationType type, const CSeries & series, double normalizationCoeff)
     {
-        CSeries newProperties;
-        for(auto i = 1u; i < t_Series.size(); ++i)
-        {
-            const auto w1 = t_Series[i - 1].x();
-            const auto w2 = t_Series[i].x();
-            const auto y1 = t_Series[i - 1].value();
-            const auto diffX = (w2 - w1) / 2;
-            const auto deltaX = dX(w1 - diffX, w2 - diffX);
-            const auto value = y1 * deltaX;
-            newProperties.addProperty(w1, value / normalizationCoeff);
-        }
-
-        return newProperties;
-    }
-
-    CSeries
-      CIntegratorTrapezoidal::integrate(const std::vector<CSeriesPoint> & t_Series,
-                                        double normalizationCoeff)
-    {
-        CSeries newProperties;
-        for(auto i = 1u; i < t_Series.size(); ++i)
-        {
-            const auto w1 = t_Series[i - 1].x();
-            const auto w2 = t_Series[i].x();
-            const auto y1 = t_Series[i - 1].value();
-            const auto y2 = t_Series[i].value();
-            const auto deltaX = dX(w1, w2);
-            const auto yCenter = (y1 + y2) / 2;
-            const auto value = yCenter * deltaX;
-            newProperties.addProperty(w1, value / normalizationCoeff);
-        }
-
-        return newProperties;
-    }
-
-    /// TrapezoidalA integration insert additional items before and after first and
-    /// last wavelenghts Since WCE is working strictly within wavelengths,
-    /// contributions will be added to first and last segment
-    CSeries CIntegratorTrapezoidalA::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
-    {
-        CSeries newProperties;
-
-        for(auto i = 1u; i < t_Series.size(); ++i)
-        {
-            const auto w1 = t_Series[i - 1].x();
-            const auto w2 = t_Series[i].x();
-            const auto y1 = t_Series[i - 1].value();
-            const auto y2 = t_Series[i].value();
-            const auto deltaX = dX(w1, w2);
-            const auto yCenter = (y1 + y2) / 2;
-            auto value = yCenter * deltaX;
-            if(i == 1)
-            {
-                value += (y1 / 2) * deltaX;
-            }
-            if(i == t_Series.size() - 1)
-            {
-                value += (y2 / 2) * deltaX;
-            }
-            newProperties.addProperty(w1, value / normalizationCoeff);
-        }
-
-        return newProperties;
-    }
-
-    CSeries CIntegratorTrapezoidalB::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
-    {
-        CSeries newProperties;
-
-        for(auto i = 1u; i < t_Series.size(); ++i)
-        {
-            const auto w1 = t_Series[i - 1].x();
-            const auto w2 = t_Series[i].x();
-            const auto y1 = t_Series[i - 1].value();
-            const auto y2 = t_Series[i].value();
-            const auto deltaX = dX(w1, w2);
-            const auto yCenter = (y1 + y2) / 2;
-            auto value = yCenter * deltaX;
-            if(i == 1 || i == t_Series.size() - 1)
-            {
-                value += ((y1 + y2) / 4) * deltaX;
-            }
-            newProperties.addProperty(w1, value / normalizationCoeff);
-        }
-
-        return newProperties;
-    }
-
-    CSeries
-      CIntegratorPreWeighted::integrate(const std::vector<CSeriesPoint> & t_Series,
-                                        double normalizationCoeff)
-    {
-        CSeries newProperties;
-
-        for(auto i = 0u; i < t_Series.size(); ++i)
-        {
-            const auto y1 = t_Series[i].value();
-
-            newProperties.addProperty(1, y1 / normalizationCoeff);
-        }
-
-        return newProperties;
-    }
-
-    std::unique_ptr<IIntegratorStrategy>
-      CIntegratorFactory::getIntegrator(IntegrationType t_IntegratorType) const
-    {
-        std::unique_ptr<IIntegratorStrategy> aStrategy = nullptr;
-        switch(t_IntegratorType)
+        switch(type)
         {
             case IntegrationType::Rectangular:
-                aStrategy = std::make_unique<CIntegratorRectangular>();
-                break;
-            case IntegrationType::RectangularCentroid:
-                aStrategy = std::make_unique<CIntegratorRectangularCentroid>();
-                break;
+            case IntegrationType::RectangularCentroid:   // same with dx = x2 - x1
+                return integrate_pairs(
+                  series,
+                  normalizationCoeff,
+                  [](double y1, double /*y2*/, double dx, bool /*f*/, bool /*l*/) {
+                      return y1 * dx;
+                  });
+
             case IntegrationType::Trapezoidal:
-                aStrategy = std::make_unique<CIntegratorTrapezoidal>();
-                break;
+                return integrate_pairs(series,
+                                       normalizationCoeff,
+                                       [](double y1, double y2, double dx, bool /*f*/, bool /*l*/) {
+                                           return 0.5 * (y1 + y2) * dx;
+                                       });
+
             case IntegrationType::TrapezoidalA:
-                aStrategy = std::make_unique<CIntegratorTrapezoidalA>();
-                break;
+                return integrate_pairs(series,
+                                       normalizationCoeff,
+                                       [](double y1, double y2, double dx, bool first, bool last) {
+                                           double v = 0.5 * (y1 + y2) * dx;
+                                           if(first)
+                                               v += 0.5 * y1 * dx;
+                                           if(last)
+                                               v += 0.5 * y2 * dx;
+                                           return v;
+                                       });
+
             case IntegrationType::TrapezoidalB:
-                aStrategy = std::make_unique<CIntegratorTrapezoidalB>();
-                break;
-            case IntegrationType::PreWeighted:
-                aStrategy = std::make_unique<CIntegratorPreWeighted>();
-                break;
-            default:
-                assert("Irregular call of integration strategy.");
-                break;
+                return integrate_pairs(series,
+                                       normalizationCoeff,
+                                       [](double y1, double y2, double dx, bool first, bool last) {
+                                           double v = 0.5 * (y1 + y2) * dx;
+                                           if(first || last)
+                                               v += 0.25 * (y1 + y2) * dx;
+                                           return v;
+                                       });
+
+            case IntegrationType::PreWeighted: {
+                CSeries out;
+                assert(normalizationCoeff != 0.0 && "normalizationCoeff must be non-zero");
+                for(std::size_t i = 0; i < series.size(); ++i)
+                {
+                    out.addProperty(1.0, series[i].value() / normalizationCoeff);
+                }
+                return out;
+            }
         }
-        return aStrategy;
+
+        // To silence warnings; all enum cases covered.
+        return CSeries{};
     }
+
 }   // namespace FenestrationCommon
