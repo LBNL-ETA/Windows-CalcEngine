@@ -4,14 +4,13 @@
 
 namespace FenestrationCommon
 {
-    double IIntegratorStrategy::dX(double const x1, double const x2) const
+    double delta(double const x1, double const x2)
     {
         return x2 - x1;
     }
 
-    CSeries
-      CIntegratorRectangular::integrate(const std::vector<CSeriesPoint> & t_Series,
-                                        double normalizationCoeff)
+    CSeries CIntegratorRectangular::integrate(const std::vector<CSeriesPoint> & t_Series,
+                                              const double normalizationCoeff)
     {
         CSeries newProperties;
         for(auto i = 1u; i < t_Series.size(); ++i)
@@ -19,7 +18,7 @@ namespace FenestrationCommon
             const auto w1 = t_Series[i - 1].x();
             const auto w2 = t_Series[i].x();
             const auto y1 = t_Series[i - 1].value();
-            const auto deltaX = dX(w1, w2);
+            const auto deltaX = delta(w1, w2);
             const auto value = y1 * deltaX;
             newProperties.addProperty(w1, value / normalizationCoeff);
         }
@@ -27,7 +26,8 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    CSeries CIntegratorRectangularCentroid::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
+    CSeries CIntegratorRectangularCentroid::integrate(const std::vector<CSeriesPoint> & t_Series,
+                                                      const double normalizationCoeff)
     {
         CSeries newProperties;
         for(auto i = 1u; i < t_Series.size(); ++i)
@@ -36,7 +36,7 @@ namespace FenestrationCommon
             const auto w2 = t_Series[i].x();
             const auto y1 = t_Series[i - 1].value();
             const auto diffX = (w2 - w1) / 2;
-            const auto deltaX = dX(w1 - diffX, w2 - diffX);
+            const auto deltaX = delta(w1 - diffX, w2 - diffX);
             const auto value = y1 * deltaX;
             newProperties.addProperty(w1, value / normalizationCoeff);
         }
@@ -44,9 +44,8 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    CSeries
-      CIntegratorTrapezoidal::integrate(const std::vector<CSeriesPoint> & t_Series,
-                                        double normalizationCoeff)
+    CSeries CIntegratorTrapezoidal::integrate(const std::vector<CSeriesPoint> & t_Series,
+                                              const double normalizationCoeff)
     {
         CSeries newProperties;
         for(auto i = 1u; i < t_Series.size(); ++i)
@@ -55,7 +54,7 @@ namespace FenestrationCommon
             const auto w2 = t_Series[i].x();
             const auto y1 = t_Series[i - 1].value();
             const auto y2 = t_Series[i].value();
-            const auto deltaX = dX(w1, w2);
+            const auto deltaX = delta(w1, w2);
             const auto yCenter = (y1 + y2) / 2;
             const auto value = yCenter * deltaX;
             newProperties.addProperty(w1, value / normalizationCoeff);
@@ -67,7 +66,8 @@ namespace FenestrationCommon
     /// TrapezoidalA integration insert additional items before and after first and
     /// last wavelenghts Since WCE is working strictly within wavelengths,
     /// contributions will be added to first and last segment
-    CSeries CIntegratorTrapezoidalA::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
+    CSeries CIntegratorTrapezoidalA::integrate(const std::vector<CSeriesPoint> & t_Series,
+                                               const double normalizationCoeff)
     {
         CSeries newProperties;
 
@@ -77,7 +77,7 @@ namespace FenestrationCommon
             const auto w2 = t_Series[i].x();
             const auto y1 = t_Series[i - 1].value();
             const auto y2 = t_Series[i].value();
-            const auto deltaX = dX(w1, w2);
+            const auto deltaX = delta(w1, w2);
             const auto yCenter = (y1 + y2) / 2;
             auto value = yCenter * deltaX;
             if(i == 1)
@@ -94,7 +94,8 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    CSeries CIntegratorTrapezoidalB::integrate(const std::vector<CSeriesPoint> & t_Series, double normalizationCoeff)
+    CSeries CIntegratorTrapezoidalB::integrate(const std::vector<CSeriesPoint> & t_Series,
+                                               const double normalizationCoeff)
     {
         CSeries newProperties;
 
@@ -104,7 +105,7 @@ namespace FenestrationCommon
             const auto w2 = t_Series[i].x();
             const auto y1 = t_Series[i - 1].value();
             const auto y2 = t_Series[i].value();
-            const auto deltaX = dX(w1, w2);
+            const auto deltaX = delta(w1, w2);
             const auto yCenter = (y1 + y2) / 2;
             auto value = yCenter * deltaX;
             if(i == 1 || i == t_Series.size() - 1)
@@ -117,9 +118,8 @@ namespace FenestrationCommon
         return newProperties;
     }
 
-    CSeries
-      CIntegratorPreWeighted::integrate(const std::vector<CSeriesPoint> & t_Series,
-                                        double normalizationCoeff)
+    CSeries CIntegratorPreWeighted::integrate(const std::vector<CSeriesPoint> & t_Series,
+                                              const double normalizationCoeff)
     {
         CSeries newProperties;
 

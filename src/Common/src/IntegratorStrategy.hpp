@@ -22,6 +22,8 @@ namespace FenestrationCommon
 
     class CSeries;
 
+    double delta(double x1, double x2);
+
     class IIntegratorStrategy
     {
     public:
@@ -29,9 +31,6 @@ namespace FenestrationCommon
         
         virtual CSeries integrate(const std::vector<CSeriesPoint> & t_Series,
                                   double normalizationCoeff = 1) = 0;
-
-    protected:
-        double dX(double x1, double x2) const;
     };
 
     class CIntegratorRectangular : public IIntegratorStrategy
