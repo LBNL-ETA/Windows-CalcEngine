@@ -183,9 +183,9 @@ namespace SingleLayerOptics
 
     const std::vector<double> & CMaterial::getBandWavelengths()
     {
-        std::lock_guard<std::mutex> lock(materialWL);
         if(!m_WavelengthsCalculated)
         {
+            std::lock_guard lock(materialWL);
             m_Wavelengths = calculateBandWavelengths();
             m_WavelengthsCalculated = true;
         }
@@ -200,7 +200,7 @@ namespace SingleLayerOptics
 
     void CMaterial::setBandWavelengths(const std::vector<double> & wavelengths)
     {
-        std::lock_guard<std::mutex> lock(baseMaterialMutex);
+        std::lock_guard lock(baseMaterialMutex);
         m_Wavelengths = wavelengths;
         m_WavelengthsCalculated = true;
     }
@@ -383,9 +383,9 @@ namespace SingleLayerOptics
     {
         createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, t_Ratio);
 
-        std::lock_guard<std::mutex> lock(dualBandMaterialMutexRatio);
         if(!m_WavelengthsCalculated)
         {
+            std::lock_guard lock(dualBandMaterialMutexRatio);
             m_Wavelengths = calculateBandWavelengths();
             m_WavelengthsCalculated = true;
         }
@@ -395,9 +395,9 @@ namespace SingleLayerOptics
     {
         createNIRRange(m_MaterialVisibleRange, m_MaterialSolarRange, ConstantsData::NIRRatio);
 
-        std::lock_guard<std::mutex> lock(dualBandMaterialMutexRadiation);
         if(!m_WavelengthsCalculated)
         {
+            std::lock_guard lock(dualBandMaterialMutexRadiation);
             m_Wavelengths = calculateBandWavelengths();
             m_WavelengthsCalculated = true;
         }
@@ -500,7 +500,7 @@ namespace SingleLayerOptics
 
     void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
     {
-        std::lock_guard<std::mutex> lock(materialSampleWL);
+        std::lock_guard lock(materialSampleWL);
 
         CMaterial::setBandWavelengths(wavelengths);
         m_AngularSample.setBandWavelengths(m_Wavelengths);

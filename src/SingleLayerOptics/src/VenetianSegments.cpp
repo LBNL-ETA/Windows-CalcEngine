@@ -47,7 +47,7 @@ namespace SingleLayerOptics
 
             const auto irradiance =
               slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh);
-            std::lock_guard<std::mutex> lock(irradianceMutex);
+            std::lock_guard lock(irradianceMutex);
             m_DirectToDiffuseSlatIrradiances[t_Direction] = irradiance;
         }
 
@@ -66,7 +66,7 @@ namespace SingleLayerOptics
               beamToDiffuseViewFactors(Side::Back, t_Direction, *m_Cell, m_SlatSegmentsMesh)};
             const auto irradiance =
               slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh);
-            std::lock_guard<std::mutex> lock(irradianceMutex);
+            std::lock_guard lock(irradianceMutex);
             m_DirectToDiffuseSlatIrradiances[t_Direction] = irradiance;
         }
 
