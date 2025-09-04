@@ -106,6 +106,12 @@ namespace SpectralAveraging
         double m_Thickness;
         FenestrationCommon::MaterialType m_Type;
 
+        using SamplePtr = std::shared_ptr<CSpectralSample>;
+
+        [[nodiscard]] SamplePtr findUnlocked(double angle) const;
+
+        [[nodiscard]] SamplePtr makeSampleUnlocked(double angle);
+
         mutable std::shared_mutex m_propsMx;
         static constexpr double EPS = 1e-6;
     };

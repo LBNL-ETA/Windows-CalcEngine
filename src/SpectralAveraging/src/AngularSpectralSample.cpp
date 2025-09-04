@@ -224,38 +224,48 @@ namespace SpectralAveraging
     }
 
     std::shared_ptr<CSpectralSample>
-      CAngularSpectralSample::findSpectralSample(double const t_Angle)
+      CAngularSpectralSample::findSpectralSample(const double t_Angle)
     {
-        // 1) Readers can run concurrently (no behavior change)
+        // Fast read path
+        if (auto fast = [&]{
+                std::shared_lock rlk(m_propsMx);
+                return findUnlocked(t_Angle);
+            }(); fast)
         {
-            std::shared_lock rlk(m_propsMx);
-            auto it = std::ranges::find_if(m_SpectralProperties,
-                                           [t_Angle](CSpectralSampleAngle const & obj) {
-                                               return std::abs(obj.angle() - t_Angle) < EPS;
-                                           });
-            if(it != m_SpectralProperties.end())
-                return it->sample();
+            return fast;
         }
 
-        // 2) Writer path: serialize creation & append; preserve original order & EPS
+        // Slow write path (double-check under exclusive lock)
         std::unique_lock wlk(m_propsMx);
+        if (auto existing = findUnlocked(t_Angle)) {
+            return existing;
+        }
 
-        // Double-check under the write lock (another thread may have inserted meanwhile)
-        auto it =
-          std::ranges::find_if(m_SpectralProperties, [t_Angle](CSpectralSampleAngle const & obj) {
-              return std::abs(obj.angle() - t_Angle) < EPS;
-          });
-        if(it != m_SpectralProperties.end())
+        auto s = makeSampleUnlocked(t_Angle);
+        m_SpectralProperties.emplace_back(s, t_Angle);  // preserve append order
+        return s;
+    }
+
+    CAngularSpectralSample::SamplePtr CAngularSpectralSample::findUnlocked(double angle) const
+    {
+        const auto pred = [angle](const CSpectralSampleAngle & obj) {
+            return std::abs(obj.angle() - angle) < EPS;
+        };
+        if(auto it = std::ranges::find_if(m_SpectralProperties, pred);
+           it != m_SpectralProperties.end())
+        {
             return it->sample();
+        }
+        return {};
+    }
 
-        CAngularSpectralProperties props(m_SpectralSampleZero, t_Angle, m_Type, m_Thickness);
-        auto sample = std::make_shared<CSpectralSample>(props.properties(),
-                                                        m_SpectralSampleZero.getSourceData());
-        sample->assignDetectorAndWavelengths(m_SpectralSampleZero);
-
-        // Append (exactly like before)
-        m_SpectralProperties.emplace_back(sample, t_Angle);
-        return sample;
+    CAngularSpectralSample::SamplePtr CAngularSpectralSample::makeSampleUnlocked(double angle)
+    {
+        CAngularSpectralProperties props(m_SpectralSampleZero, angle, m_Type, m_Thickness);
+        auto s = std::make_shared<CSpectralSample>(props.properties(),
+                                                   m_SpectralSampleZero.getSourceData());
+        s->assignDetectorAndWavelengths(m_SpectralSampleZero);
+        return s;
     }
 
 }   // namespace SpectralAveraging
