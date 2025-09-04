@@ -56,7 +56,7 @@ namespace FenestrationCommon
 
         SquareMatrix getSquaredMatrixSums(double minLambda,
                                           double maxLambda,
-                                          const std::vector<double> & t_ScaleValue);
+                                          const std::vector<double> & t_ScaleValue) const;
 
         [[nodiscard]] std::vector<MatrixAtWavelength> seriesMatrices() const;
 

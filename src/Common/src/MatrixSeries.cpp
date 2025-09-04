@@ -141,10 +141,8 @@ namespace FenestrationCommon
         {
             FenestrationCommon::executeInParallel<size_t>(0, matrix.size() - 1, [&](size_t i) {
                 const auto & row = matrix[i];
-                std::for_each(begin(row), end(row), [&](const auto & elem) {
-                    size_t j = &elem - &row[0];
+                for(size_t j = 0; j < row.size(); ++j)
                     func(i, j);
-                });
             });
         }
     }   // namespace
@@ -171,21 +169,22 @@ namespace FenestrationCommon
                              const double maxLambda,
                              const std::vector<double> & t_ScaleValue) const
     {
-        std::vector<std::vector<double>> Result(m_Matrix.size());
-        for(size_t i = 0; i < m_Matrix.size(); ++i)
-        {
-            if(m_Matrix[i].size() != t_ScaleValue.size())
-            {
-                throw std::runtime_error(
-                  "Size of vector for scaling must be same as size of the matrix.");
-            }
+        const size_t rows = m_Matrix.size();
+        const size_t cols = rows ? m_Matrix[0].size() : 0;
 
-            for(size_t j = 0; j < m_Matrix[i].size(); ++j)
-            {
-                Result[i].push_back(m_Matrix[i][j].sum(minLambda, maxLambda) / t_ScaleValue[i]);
-            }
+        if(cols != t_ScaleValue.size())
+        {
+            throw std::runtime_error("Size of vector for scaling must match number of columns.");
         }
-        return Result;
+
+        std::vector<std::vector<double>> result(rows, std::vector<double>(cols));
+        for(size_t i = 0; i < rows; ++i)
+        {
+            const auto & row = m_Matrix[i];
+            for(size_t j = 0; j < cols; ++j)
+                result[i][j] = row[j].sum(minLambda, maxLambda) / t_ScaleValue[j];
+        }
+        return result;
     }
 
     std::vector<std::vector<double>> CMatrixSeries::getSums(const double minLambda,
@@ -196,18 +195,20 @@ namespace FenestrationCommon
 
     SquareMatrix CMatrixSeries::getSquaredMatrixSums(const double minLambda,
                                                      const double maxLambda,
-                                                     const std::vector<double> & t_ScaleValue)
+                                                     const std::vector<double> & t_ScaleValue) const
     {
-        assert(m_Matrix.size() == m_Matrix[0].size());
-        SquareMatrix Res(m_Matrix.size());
-        for(size_t i = 0; i < m_Matrix.size(); ++i)
+        const size_t n = m_Matrix.size();
+        assert(n == (m_Matrix.empty() ? 0 : m_Matrix[0].size()));   // must be square
+
+        SquareMatrix res(n);
+        for(size_t i = 0; i < n; ++i)
         {
-            for(size_t j = 0; j < m_Matrix[i].size(); ++j)
-            {
-                Res(i, j) = m_Matrix[i][j].sum(minLambda, maxLambda) / t_ScaleValue[i];
-            }
+            const double scale = t_ScaleValue.empty() ? 1.0 : t_ScaleValue[i];
+            const auto & row = m_Matrix[i];
+            for(size_t j = 0; j < n; ++j)
+                res(i, j) = row[j].sum(minLambda, maxLambda) / scale;
         }
-        return Res;
+        return res;
     }
 
     std::vector<MatrixAtWavelength> CMatrixSeries::seriesMatrices() const
