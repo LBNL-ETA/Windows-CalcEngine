@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <vector>
-#include <mutex>
+#include <shared_mutex>
 
 #include "SpectralSampleData.hpp"
 #include "SpectralSample.hpp"
@@ -105,6 +105,9 @@ namespace SpectralAveraging
         CSpectralSample m_SpectralSampleZero;
         double m_Thickness;
         FenestrationCommon::MaterialType m_Type;
+
+        mutable std::shared_mutex m_propsMx;
+        static constexpr double EPS = 1e-6;
     };
 
 }   // namespace SpectralAveraging
