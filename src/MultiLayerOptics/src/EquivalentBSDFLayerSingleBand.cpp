@@ -359,11 +359,8 @@ namespace MultiLayerOptics
                                                            const SquareMatrix & t_R,
                                                            const SquareMatrix & t_T) const
     {
-        const auto part2 = multiplyWithDiagonalMatrix(m_Lambda, t_R);
-        const auto part3 = multiplyWithDiagonalMatrix(m_Lambda, t_T);
-        auto part1 = t_InterRefl * part2;
-        part1 = part1 * part3;
-        return part1;
+        return t_InterRefl * multiplyWithDiagonalMatrix(m_Lambda, t_R)
+               * multiplyWithDiagonalMatrix(m_Lambda, t_T);
     }
 
 }   // namespace MultiLayerOptics
