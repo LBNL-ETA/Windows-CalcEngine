@@ -105,37 +105,6 @@ namespace SpectralAveraging
         CSpectralSample m_SpectralSampleZero;
         double m_Thickness;
         FenestrationCommon::MaterialType m_Type;
-
-        // ---- Caching ----
-        struct CacheKey
-        {
-            FenestrationCommon::Property prop;
-            FenestrationCommon::Side side;
-            ScatteringType scatter;
-            const void * samplePtr;
-            bool operator==(const CacheKey & o) const noexcept
-            {
-                return prop == o.prop && side == o.side && scatter == o.scatter
-                       && samplePtr == o.samplePtr;
-            }
-        };
-
-        struct CacheKeyHash
-        {
-            size_t operator()(const CacheKey & k) const noexcept
-            {
-                auto h = std::hash<int>{}(static_cast<int>(k.prop));
-                h ^=
-                  (std::hash<int>{}(static_cast<int>(k.side)) + 0x9e3779b9 + (h << 6) + (h >> 2));
-                h ^= (std::hash<int>{}(static_cast<int>(k.scatter)) + 0x9e3779b9 + (h << 6)
-                      + (h >> 2));
-                h ^= (std::hash<const void *>{}(k.samplePtr) + 0x9e3779b9 + (h << 6) + (h >> 2));
-                return h;
-            }
-        };
-
-        mutable std::unordered_map<CacheKey, std::vector<double>, CacheKeyHash> m_wvlCache_;
-        mutable std::mutex m_wvlCacheMtx_;
     };
 
 }   // namespace SpectralAveraging

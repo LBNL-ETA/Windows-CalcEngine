@@ -193,32 +193,12 @@ namespace SpectralAveraging
                                                       const double t_Angle,
                                                       const ScatteringType t_Scatter)
     {
-        auto aSample = findSpectralSample(t_Angle);
-
-        // Angular functions are intensively called and for that reason it makes sense to
-        // cache the results.
-        const void * keyPtr = aSample.get();
-
-        CacheKey key{t_Property, t_Side, t_Scatter, keyPtr};
-
+        const auto aSample = findSpectralSample(t_Angle);
+        if(aSample)
         {
-            std::lock_guard lk(m_wvlCacheMtx_);
-            auto it = m_wvlCache_.find(key);
-            if(it != m_wvlCache_.end())
-            {
-                return it->second;
-            }
+            return aSample->getWavelengthsProperty(t_Property, t_Side, t_Scatter).getYArray();
         }
-
-        {
-            auto props = aSample->getWavelengthsProperty(t_Property, t_Side, t_Scatter).getYArray();
-            std::lock_guard lk(m_wvlCacheMtx_);
-            if(m_wvlCache_.size() > 256)
-                m_wvlCache_.clear();
-
-            auto [pos, _] = m_wvlCache_.emplace(key, std::move(props));
-            return pos->second;
-        }
+        return {};
     }
 
     std::vector<double> CAngularSpectralSample::getBandWavelengths() const
