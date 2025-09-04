@@ -108,8 +108,9 @@ namespace SingleLayerOptics
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex)
     {
-        auto Tmaterial{CUniformDiffuseCell::T_dir_dif_band(t_Side, t_Direction)[wavelengthIndex]};
-        return Tmaterial + T_scatter_band(t_Side, t_Direction)[wavelengthIndex];
+        const double Tmaterial = CUniformDiffuseCell::T_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Tsct      = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        return Tmaterial + Tsct;
     }
 
     std::vector<double> CWovenCell::R_dir_dif_band(const Side t_Side,
@@ -129,9 +130,9 @@ namespace SingleLayerOptics
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex)
     {
-        auto RMaterial{CUniformDiffuseCell::R_dir_dif_band(t_Side, t_Direction)[wavelengthIndex]};
-        auto Tsct{T_scatter_band(t_Side, t_Direction)[wavelengthIndex]};
-        return RMaterial - Tsct;
+        const double Rmaterial = CUniformDiffuseCell::R_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Tsct      = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        return Rmaterial - Tsct;
     }
 
     std::shared_ptr<CWovenCellDescription> CWovenCell::getCellAsWoven() const
@@ -164,5 +165,13 @@ namespace SingleLayerOptics
             return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, r);
         });
         return result;
+    }
+
+    double CWovenCell::Tscatter_at_wavelength(Side t_Side,
+                                              const CBeamDirection & t_Direction,
+                                              size_t i) const
+    {
+        const auto& Rband = m_Material->getBandProperties(Property::R, oppositeSide(t_Side));
+        return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, Rband[i]);
     }
 }   // namespace SingleLayerOptics
