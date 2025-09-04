@@ -7,13 +7,11 @@
 namespace FenestrationCommon
 {
     SquareMatrix::SquareMatrix(const std::size_t tSize) :
-        m_size(tSize),
-        m_Matrix(tSize, std::vector<double>(tSize, 0))
+        m_size(tSize), m_Matrix(tSize, std::vector<double>(tSize, 0))
     {}
 
     SquareMatrix::SquareMatrix(const std::initializer_list<std::vector<double>> & tInput) :
-        m_size(tInput.size()),
-        m_Matrix(m_size, std::vector<double>(m_size, 0))
+        m_size(tInput.size()), m_Matrix(m_size, std::vector<double>(m_size, 0))
     {
         auto i = 0u;
         for(const auto & vec : tInput)
@@ -27,13 +25,11 @@ namespace FenestrationCommon
     }
 
     SquareMatrix::SquareMatrix(const std::vector<std::vector<double>> & tInput) :
-        m_size(tInput.size()),
-        m_Matrix(tInput)
+        m_size(tInput.size()), m_Matrix(tInput)
     {}
 
     SquareMatrix::SquareMatrix(const std::vector<std::vector<double>> && tInput) :
-        m_size(tInput.size()),
-        m_Matrix(tInput)
+        m_size(tInput.size()), m_Matrix(tInput)
     {}
 
     std::size_t SquareMatrix::size() const
@@ -43,7 +39,10 @@ namespace FenestrationCommon
 
     void SquareMatrix::setZeros()
     {
-        m_Matrix.assign(m_size, std::vector<double>(m_size, 0));
+        for(auto & row : m_Matrix)
+        {
+            std::fill(row.begin(), row.end(), 0.0);
+        }
     }
 
     void SquareMatrix::setIdentity()
@@ -239,85 +238,6 @@ namespace FenestrationCommon
         return index;
     }
 
-    SquareMatrix operator*(const SquareMatrix & first, const SquareMatrix & second)
-    {
-        if(first.size() != second.size())
-        {
-            throw std::runtime_error("Matrices must be identical in size.");
-        }
-
-        SquareMatrix aMatrix{first.size()};
-
-        for(size_t i = 0; i < aMatrix.size(); ++i)
-        {
-            for(size_t k = 0; k < aMatrix.size(); ++k)
-            {
-                for(size_t j = 0; j < aMatrix.size(); ++j)
-                {
-                    aMatrix(i, j) += first(i, k) * second(k, j);
-                }
-            }
-        }
-
-        return aMatrix;
-    }
-
-    SquareMatrix operator*=(SquareMatrix & first, const SquareMatrix & second)
-    {
-        first = first * second;
-        return first;
-    }
-
-    SquareMatrix operator+(const SquareMatrix & first, const SquareMatrix & second)
-    {
-        if(first.size() != second.size())
-        {
-            throw std::runtime_error("Matrices must be identical in size.");
-        }
-
-        SquareMatrix aMatrix{first.size()};
-        for(size_t i = 0; i < aMatrix.size(); ++i)
-        {
-            for(size_t j = 0; j < aMatrix.size(); ++j)
-            {
-                aMatrix(i, j) = first(i, j) + second(i, j);
-            }
-        }
-
-        return aMatrix;
-    }
-
-    SquareMatrix operator+=(SquareMatrix & first, const SquareMatrix & second)
-    {
-        first = first + second;
-        return first;
-    }
-
-    SquareMatrix operator-(const SquareMatrix & first, const SquareMatrix & second)
-    {
-        if(first.size() != second.size())
-        {
-            throw std::runtime_error("Matrices must be identical in size.");
-        }
-
-        SquareMatrix aMatrix(first.size());
-        for(size_t i = 0; i < aMatrix.size(); ++i)
-        {
-            for(size_t j = 0; j < aMatrix.size(); ++j)
-            {
-                aMatrix(i, j) = first(i, j) - second(i, j);
-            }
-        }
-
-        return aMatrix;
-    }
-
-    SquareMatrix operator-=(SquareMatrix & first, const SquareMatrix & second)
-    {
-        first = first - second;
-        return first;
-    }
-
     SquareMatrix SquareMatrix::mmultRows(const std::vector<double> & tInput)
     {
         if(m_size != tInput.size())
@@ -342,6 +262,131 @@ namespace FenestrationCommon
         return m_Matrix;
     }
 
+    SquareMatrix SquareMatrix::operator*(const SquareMatrix & rhs) const
+    {
+        if(m_size != rhs.m_size)
+            throw std::runtime_error("Matrices must be identical in size.");
+
+        SquareMatrix out{m_size};
+        // zero once; keep capacity
+        for(auto & row : out.m_Matrix)
+            std::fill(row.begin(), row.end(), 0.0);
+
+        const size_t N = m_size;
+        for(size_t i = 0; i < N; ++i)
+        {
+            auto & Ci = out.m_Matrix[i];     // result row
+            const auto & Ai = m_Matrix[i];   // A row
+            for(size_t k = 0; k < N; ++k)
+            {
+                const double aik = Ai[k];
+                const auto & Bk = rhs.m_Matrix[k];   // B row k
+                for(size_t j = 0; j < N; ++j)
+                    Ci[j] += aik * Bk[j];
+            }
+        }
+        return out;
+    }
+
+    SquareMatrix & SquareMatrix::operator*=(const SquareMatrix & rhs)
+    {
+        if(m_size != rhs.m_size)
+            throw std::runtime_error("Matrices must be identical in size.");
+
+        SquareMatrix out{m_size};
+        for(auto & row : out.m_Matrix)
+            std::fill(row.begin(), row.end(), 0.0);
+
+        const size_t N = m_size;
+        for(size_t i = 0; i < N; ++i)
+        {
+            auto & Ci = out.m_Matrix[i];
+            const auto & Ai = m_Matrix[i];
+            for(size_t k = 0; k < N; ++k)
+            {
+                const double aik = Ai[k];
+                const auto & Bk = rhs.m_Matrix[k];
+                for(size_t j = 0; j < N; ++j)
+                    Ci[j] += aik * Bk[j];
+            }
+        }
+        m_Matrix.swap(out.m_Matrix);   // avoid deep copy back
+        return *this;
+    }
+
+    SquareMatrix SquareMatrix::operator+(const SquareMatrix & rhs) const
+    {
+        if (m_size != rhs.m_size)
+            throw std::runtime_error("Matrices must be identical in size.");
+
+        SquareMatrix out{m_size};
+        for (size_t i = 0; i < m_size; ++i) {
+            auto&       ro = out.m_Matrix[i];
+            const auto& a  =  m_Matrix[i];
+            const auto& b  = rhs.m_Matrix[i];
+            ro.resize(m_size);
+            for (size_t j = 0; j < m_size; ++j) ro[j] = a[j] + b[j];
+        }
+        return out;
+    }
+
+    SquareMatrix & SquareMatrix::operator+=(const SquareMatrix & rhs)
+    {
+        if (m_size != rhs.m_size)
+            throw std::runtime_error("Matrices must be identical in size.");
+
+        for (size_t i = 0; i < m_size; ++i) {
+            auto&       a = m_Matrix[i];
+            const auto& b = rhs.m_Matrix[i];
+            for (size_t j = 0; j < m_size; ++j) a[j] += b[j];
+        }
+        return *this;
+    }
+
+    SquareMatrix SquareMatrix::operator-(const SquareMatrix & rhs) const
+    {
+        if (m_size != rhs.m_size)
+            throw std::runtime_error("Matrices must be identical in size.");
+
+        SquareMatrix out{m_size};
+        for (size_t i = 0; i < m_size; ++i) {
+            auto&       ro = out.m_Matrix[i];
+            const auto& a  =  m_Matrix[i];
+            const auto& b  = rhs.m_Matrix[i];
+            ro.resize(m_size);
+            for (size_t j = 0; j < m_size; ++j) ro[j] = a[j] - b[j];
+        }
+        return out;
+    }
+
+    SquareMatrix & SquareMatrix::operator-=(const SquareMatrix & rhs)
+    {
+        if (m_size != rhs.m_size)
+            throw std::runtime_error("Matrices must be identical in size.");
+
+        for (size_t i = 0; i < m_size; ++i) {
+            auto&       a = m_Matrix[i];
+            const auto& b = rhs.m_Matrix[i];
+            for (size_t j = 0; j < m_size; ++j) a[j] -= b[j];
+        }
+        return *this;
+    }
+
+    std::vector<double> SquareMatrix::operator*(const std::vector<double> & v) const
+    {
+        if (v.size() != m_size)
+            throw std::runtime_error("Vector and matrix do not have same size.");
+
+        std::vector<double> y(m_size, 0.0);
+        for (size_t i = 0; i < m_size; ++i) {
+            const auto& Mi = m_Matrix[i]; // row i
+            double sum = 0.0;
+            for (size_t j = 0; j < m_size; ++j)
+                sum += Mi[j] * v[j];
+            y[i] = sum;
+        }
+        return y;
+    }
 
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second)
     {
@@ -398,7 +443,7 @@ namespace FenestrationCommon
     }
 
     SquareMatrix multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
-                                                                const std::vector<double> & tInput)
+                                            const std::vector<double> & tInput)
     {
         SquareMatrix res{tInput.size()};
         for(auto i = 0u; i < tInput.size(); ++i)
