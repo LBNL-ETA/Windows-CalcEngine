@@ -74,43 +74,41 @@ namespace FenestrationCommon
 
     SquareMatrix SquareMatrix::inverse() const
     {
-        // return LU decomposed matrix of current matrix
-        auto aLu(LU());
+        const size_t n = m_size;
+        SquareMatrix inv(n);
 
-        // find the inverse
-        SquareMatrix invMat(m_size);
-        std::vector<double> d(m_size);
-        std::vector<double> y(m_size);
+        // 1) Factor once
+        const auto LU = this->LU();   // whatever your current LU() returns
 
-        const auto size(m_size - 1);
+        // 2) Scratch once (avoid reallocs per column)
+        std::vector<double> y(n), d(n);
 
-        for(auto m = 0u; m <= size; ++m)
+        // 3) Solve A * X = I, one RHS at a time (identity columns)
+        for(size_t col = 0; col < n; ++col)
         {
-            fill(d.begin(), d.end(), 0);
-            fill(y.begin(), y.end(), 0);
-            d[m] = 1;
-            for(auto i = 0; i <= int(size); ++i)
+            // d := e_col  (no need to materialize a full identity matrix)
+            std::fill(d.begin(), d.end(), 0.0);
+            d[col] = 1.0;
+
+            // Forward: L * y = d   (unit diagonal L)
+            for(size_t i = 0; i < n; ++i)
             {
-                double x = 0;
-                for(auto j = 0; j <= i - 1; ++j)
-                {
-                    x = x + aLu(size_t(i), size_t(j)) * y[j];
-                }
-                y[i] = (d[i] - x);
+                double s = d[i];
+                for(size_t j = 0; j < i; ++j)
+                    s -= LU(i, j) * y[j];
+                y[i] = s;
             }
 
-            for(auto i = int(size); i >= 0; --i)
+            // Back: U * x = y
+            for(int i = int(n) - 1; i >= 0; --i)
             {
-                auto x = 0.0;
-                for(auto j = i + 1; j <= int(size); ++j)
-                {
-                    x = x + aLu(size_t(i), size_t(j)) * invMat(size_t(j), size_t(m));
-                }
-                invMat(size_t(i), size_t(m)) = (y[i] - x) / aLu(size_t(i), size_t(i));
+                double s = y[size_t(i)];
+                for(size_t j = size_t(i) + 1; j < n; ++j)
+                    s -= LU(size_t(i), j) * inv(j, col);
+                inv(size_t(i), col) = s / LU(size_t(i), size_t(i));
             }
         }
-
-        return invMat;
+        return inv;
     }
 
     double SquareMatrix::operator()(const std::size_t i, const std::size_t j) const
