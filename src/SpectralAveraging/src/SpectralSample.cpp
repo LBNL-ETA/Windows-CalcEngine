@@ -219,9 +219,9 @@ namespace SpectralAveraging
                                                     const Side t_Side,
                                                     const ScatteringType t_Scatter)
     {
-        std::lock_guard lock(spectralSampleMutex);
         if(!m_StateCalculated)
         {
+            std::lock_guard lock(spectralSampleMutex);
             calculateState(m_IntegrationType, m_NormalizationCoefficient);
         }
 
