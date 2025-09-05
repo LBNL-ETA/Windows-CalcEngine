@@ -21,7 +21,7 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(
           const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
           const BSDFHemisphere & t_Hemisphere,
-          WeightFn weightFn = [](double) { return 1.0; });
+          WeightFn && weightFn = [](double) { return 1.0; });
 
     protected:
         CDirectionalDiffuseCell * cellAsDirectionalDiffuse() const;
@@ -47,6 +47,20 @@ namespace SingleLayerOptics
         std::vector<double> lambdas;
 
     private:
+        template<class F>
+        void for_each_outgoing_(F && f) const
+        {
+            const auto & dirs = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
+            const auto wght = weights();
+            const size_t M = dirs.size();
+            for(size_t out = 0; out < M; ++out)
+            {
+                const CBeamDirection oDir = dirs[out].centerPoint();
+                const double s = wght[out];
+                f(out, oDir, s);
+            }
+        }
+
         std::vector<double> m_weights;
         WeightFn m_weightsFunction;
     };
