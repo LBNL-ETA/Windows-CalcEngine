@@ -1,13 +1,11 @@
-
-#include <cmath>
 #include <cassert>
+#include <ranges>
 
 #include "DirectionalDiffuseBSDFLayer.hpp"
 #include "DirectionalDiffuseCell.hpp"
 #include "BSDFIntegrator.hpp"
 #include "BSDFDirections.hpp"
 #include "BeamDirection.hpp"
-#include "BSDFPatch.hpp"
 #include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
@@ -16,112 +14,79 @@ namespace SingleLayerOptics
 {
     CDirectionalBSDFLayer::CDirectionalBSDFLayer(
       const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-      const BSDFHemisphere & t_Hemisphere) :
+      const BSDFHemisphere & t_Hemisphere,
+      WeightFn && weightFn) :
         CBSDFLayer(t_Cell, t_Hemisphere),
-        lambdas(t_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector())
-    {}
+        lambdas(t_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()),
+        m_weights(lambdas.size(), 1.0)
+    {
+        if(weightFn)
+        {
+            std::ranges::transform(lambdas, m_weights.begin(), weightFn);
+        }
+    }
 
-    std::shared_ptr<CDirectionalDiffuseCell> CDirectionalBSDFLayer::cellAsDirectionalDiffuse() const
+    CDirectionalDiffuseCell * CDirectionalBSDFLayer::cellAsDirectionalDiffuse() const
     {
         std::shared_ptr<CDirectionalDiffuseCell> aCell =
           std::dynamic_pointer_cast<CDirectionalDiffuseCell>(m_Cell);
         assert(aCell != nullptr);
-        return aCell;
+        return aCell.get();
     }
 
-    void CDirectionalBSDFLayer::calcDiffuseDistribution(const Side aSide,
-                                                        const CBeamDirection & incomingDirection,
-                                                        const size_t incomingDirectionIndex)
+    void CDirectionalBSDFLayer::calcDiffuseDistribution(const Side side,
+                                                        const CBeamDirection & inDir,
+                                                        const size_t inIdx)
     {
-        std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
+        auto * cell = cellAsDirectionalDiffuse();
+        auto & tau = m_Results.getMatrix(side, PropertySurface::T);
+        auto & rho = m_Results.getMatrix(side, PropertySurface::R);
 
-        auto & tau = m_Results.getMatrix(aSide, PropertySurface::T);
-        auto & Rho = m_Results.getMatrix(aSide, PropertySurface::R);
-
-        const auto & jDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
-
-        size_t size = jDirections.size();
-
-        for(size_t outgoingDirectionIndex = 0; outgoingDirectionIndex < size;
-            ++outgoingDirectionIndex)
-        {
-            const CBeamDirection jDirection = jDirections[outgoingDirectionIndex].centerPoint();
-
-            const double aTau = aCell->T_dir_dif(aSide, incomingDirection, jDirection);
-            const double aRho = aCell->R_dir_dif(aSide, incomingDirection, jDirection);
-
-            tau(outgoingDirectionIndex, incomingDirectionIndex) +=
-              aTau * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
-            Rho(outgoingDirectionIndex, incomingDirectionIndex) +=
-              aRho * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
-        }
+        for_each_outgoing_([&](size_t out, const CBeamDirection & oDir, double s) {
+            const double T = cell->T_dir_dif(side, inDir, oDir);
+            const double R = cell->R_dir_dif(side, inDir, oDir);
+            tau(out, inIdx) += T * s;
+            rho(out, inIdx) += R * s;
+        });
     }
 
-    void CDirectionalBSDFLayer::calcDiffuseDistribution_wv(const Side aSide,
-                                                           const CBeamDirection & incomingDirection,
-                                                           const size_t incomingDirectionIndex,
+    void CDirectionalBSDFLayer::calcDiffuseDistribution_wv(const Side side,
+                                                           const CBeamDirection & inDir,
+                                                           const size_t inIdx,
                                                            std::vector<BSDFIntegrator> & results)
     {
-        std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
+        auto * cell = cellAsDirectionalDiffuse();
 
-        const BSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
-
-        size_t size = oDirections.size();
-
-        for(size_t outgoingDirectionIndex = 0; outgoingDirectionIndex < size;
-            ++outgoingDirectionIndex)
-        {
-            const CBeamDirection oDirection = oDirections[outgoingDirectionIndex].centerPoint();
-
-            auto aTau = aCell->T_dir_dif_band(aSide, incomingDirection, oDirection);
-            auto Ref = aCell->R_dir_dif_band(aSide, incomingDirection, oDirection);
-
-            const size_t numWV = aTau.size();
-            for(size_t j = 0; j < numWV; ++j)
+        for_each_outgoing_([&](size_t out, const CBeamDirection & oDir, double s) {
+            auto t = cell->T_dir_dif_band(side, inDir, oDir);
+            auto r = cell->R_dir_dif_band(side, inDir, oDir);
+            const size_t N = t.size();
+            for(size_t j = 0; j < N; ++j)
             {
-                auto & tau = results[j].getMatrix(aSide, PropertySurface::T);
-                auto & rho = results[j].getMatrix(aSide, PropertySurface::R);
-                tau(outgoingDirectionIndex, incomingDirectionIndex) +=
-                  aTau[j]
-                  * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
-                rho(outgoingDirectionIndex, incomingDirectionIndex) +=
-                  Ref[j]
-                  * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
+                auto & tau = results[j].getMatrix(side, PropertySurface::T);
+                auto & rho = results[j].getMatrix(side, PropertySurface::R);
+                tau(out, inIdx) += t[j] * s;
+                rho(out, inIdx) += r[j] * s;
             }
-        }
+        });
     }
 
-    void CDirectionalBSDFLayer::calcDiffuseDistribution_byWavelength(
-      const FenestrationCommon::Side aSide,
-      const CBeamDirection & incomingDirection,
-      const size_t incomingDirectionIndex,
-      size_t wavelengthIndex,
-      BSDFIntegrator & results)
+    void CDirectionalBSDFLayer::calcDiffuseDistribution_byWavelength(const Side side,
+                                                                     const CBeamDirection & inDir,
+                                                                     const size_t inIdx,
+                                                                     size_t wavelengthIndex,
+                                                                     BSDFIntegrator & res)
     {
-        std::shared_ptr<CDirectionalDiffuseCell> aCell = cellAsDirectionalDiffuse();
+        auto * cell = cellAsDirectionalDiffuse();
+        auto & tau = res.getMatrix(side, PropertySurface::T);
+        auto & rho = res.getMatrix(side, PropertySurface::R);
 
-        const BSDFDirections oDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
-
-        size_t size = oDirections.size();
-
-        for(size_t outgoingDirectionIndex = 0; outgoingDirectionIndex < size;
-            ++outgoingDirectionIndex)
-        {
-            const CBeamDirection oDirection = oDirections[outgoingDirectionIndex].centerPoint();
-
-            auto aTau =
-              aCell->T_dir_dif_by_wavelength(aSide, incomingDirection, oDirection, wavelengthIndex);
-            auto Ref =
-              aCell->R_dir_dif_by_wavelength(aSide, incomingDirection, oDirection, wavelengthIndex);
-
-            auto & tau = results.getMatrix(aSide, PropertySurface::T);
-            auto & rho = results.getMatrix(aSide, PropertySurface::R);
-
-            tau(outgoingDirectionIndex, incomingDirectionIndex) +=
-              aTau * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
-            rho(outgoingDirectionIndex, incomingDirectionIndex) +=
-              Ref * diffuseDistributionScalar(incomingDirectionIndex, outgoingDirectionIndex);
-        }
+        for_each_outgoing_([&](size_t out, const CBeamDirection & oDir, double s) {
+            const double T = cell->T_dir_dif_by_wavelength(side, inDir, oDir, wavelengthIndex);
+            const double R = cell->R_dir_dif_by_wavelength(side, inDir, oDir, wavelengthIndex);
+            tau(out, inIdx) += T * s;
+            rho(out, inIdx) += R * s;
+        });
     }
 
     CDirectionalDiffuseBSDFLayer::CDirectionalDiffuseBSDFLayer(
@@ -130,21 +95,11 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
-    double CDirectionalDiffuseBSDFLayer::diffuseDistributionScalar(size_t, size_t)
-    {
-        return 1;
-    }
-
     CHomogeneousDiffuseBSDFLayer::CHomogeneousDiffuseBSDFLayer(
       const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere) :
-        CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
+        CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / (WCE_PI - lam); })
     {}
-
-    double CHomogeneousDiffuseBSDFLayer::diffuseDistributionScalar(size_t, size_t outgoingDirection)
-    {
-        return 1 / (FenestrationCommon::WCE_PI - lambdas.at(outgoingDirection));
-    }
 
     CMaterialDirectionalDiffuseBSDFLayer::CMaterialDirectionalDiffuseBSDFLayer(
       const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
@@ -152,18 +107,8 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
-    double CMaterialDirectionalDiffuseBSDFLayer::diffuseDistributionScalar(size_t, size_t)
-    {
-        return 1.0;
-    }
-
     CMatrixBSDFLayer::CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
                                        const BSDFHemisphere & t_Hemisphere) :
-        CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
+        CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / lam; })
     {}
-
-    double CMatrixBSDFLayer::diffuseDistributionScalar(size_t, size_t outgoingDirection)
-    {
-        return 1 / lambdas.at(outgoingDirection);
-    }
 }   // namespace SingleLayerOptics
