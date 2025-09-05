@@ -3,10 +3,11 @@
 #include <cassert>
 #include <utility>
 
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
+
 #include "MultiPaneBSDF.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
 
 using FenestrationCommon::IntegrationType;
 using FenestrationCommon::Side;
@@ -33,9 +34,6 @@ namespace MultiLayerOptics
                                    const FenestrationCommon::ProgressCallback & callback) :
         m_EquivalentLayer(t_Layer, matrixWavelengths),
         m_Results(t_Layer[0]->getDirections(BSDFDirection::Incoming)),
-        m_Calculated(false),
-        m_MinLambdaCalculated(0),
-        m_MaxLambdaCalculated(0),
         m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
     {
         m_EquivalentLayer.calculate(callback);
@@ -176,7 +174,7 @@ namespace MultiLayerOptics
 
     void CMultiPaneBSDF::calculate(const double minLambda, const double maxLambda)
     {
-        if(m_Calculated && minLambda == m_MinLambdaCalculated && maxLambda == m_MaxLambdaCalculated)
+        if(sameRange(minLambda, maxLambda))
         {
             return;
         }
@@ -207,9 +205,7 @@ namespace MultiLayerOptics
             calcHemisphericalAbs(aSide);
         }
 
-        m_MinLambdaCalculated = minLambda;
-        m_MaxLambdaCalculated = maxLambda;
-        m_Calculated = true;
+        m_Range = Range{minLambda, maxLambda};
     }
 
     double CMultiPaneBSDF::integrateBSDFAbsorptance(const std::vector<double> & lambda,
@@ -219,6 +215,18 @@ namespace MultiLayerOptics
         using ConstantsData::WCE_PI;
         const auto mult{FenestrationCommon::mult<double>(lambda, absorptance)};
         return std::accumulate(mult.begin(), mult.end(), 0.0) / WCE_PI;
+    }
+
+    bool CMultiPaneBSDF::sameRange(double minLambda, double maxLambda) const
+    {
+        using FenestrationCommon::isEqual;
+        return m_Range && isEqual(m_Range->min, minLambda) && m_Range
+               && isEqual(m_Range->max, maxLambda);
+    }
+
+    void CMultiPaneBSDF::invalidate()
+    {
+        m_Range.reset();
     }
 
     void CMultiPaneBSDF::calcHemisphericalAbs(const Side t_Side)
@@ -419,12 +427,12 @@ namespace MultiLayerOptics
     }
 
     double CMultiPaneBSDF::getPropertySurface(const double minLambda,
-                                             const double maxLambda,
-                                             const FenestrationCommon::PropertySurface t_Property,
-                                             const FenestrationCommon::Side t_Side,
-                                             const FenestrationCommon::Scattering t_Scattering,
-                                             const double t_Theta,
-                                             const double t_Phi)
+                                              const double maxLambda,
+                                              const FenestrationCommon::PropertySurface t_Property,
+                                              const FenestrationCommon::Side t_Side,
+                                              const FenestrationCommon::Scattering t_Scattering,
+                                              const double t_Theta,
+                                              const double t_Phi)
     {
         double result{0};
         switch(t_Scattering)
@@ -480,7 +488,7 @@ namespace MultiLayerOptics
         }
         m_SpectralIntegrationWavelengths = calcProperties.CommonWavelengths;
 
-        m_Calculated = false;
+        invalidate();
     }
 
     std::vector<double>

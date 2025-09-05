@@ -39,8 +39,8 @@ namespace SingleLayerOptics
                                                         const size_t inIdx)
     {
         auto * cell = cellAsDirectionalDiffuse();
-        auto & tau = m_Results.getMatrix(side, PropertySurface::T);
-        auto & rho = m_Results.getMatrix(side, PropertySurface::R);
+        auto & tau = m_Results->getMatrix(side, PropertySurface::T);
+        auto & rho = m_Results->getMatrix(side, PropertySurface::R);
 
         for_each_outgoing_([&](size_t out, const CBeamDirection & oDir, double s) {
             const double T = cell->T_dir_dif(side, inDir, oDir);

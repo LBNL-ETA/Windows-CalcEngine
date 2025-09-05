@@ -32,8 +32,8 @@ namespace SingleLayerOptics
     {
         std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
 
-        auto & Tau = m_Results.getMatrix(aSide, PropertySurface::T);
-        auto & Rho = m_Results.getMatrix(aSide, PropertySurface::R);
+        auto & Tau = m_Results->getMatrix(aSide, PropertySurface::T);
+        auto & Rho = m_Results->getMatrix(aSide, PropertySurface::R);
 
         double aTau = aCell->T_dir_dif(aSide, t_Direction);
         double Ref = aCell->R_dir_dif(aSide, t_Direction);

@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <optional>
+
 #include <WCECommon.hpp>
 #include <WCESingleLayerOptics.hpp>
 
@@ -247,10 +249,6 @@ namespace MultiLayerOptics
         std::map<FenestrationCommon::Side, std::vector<double>> m_AbsHem;
         std::map<FenestrationCommon::Side, std::vector<double>> m_AbsHemElectricity;
 
-        bool m_Calculated;
-        double m_MinLambdaCalculated;
-        double m_MaxLambdaCalculated;
-
         SingleLayerOptics::BSDFDirections m_BSDFDirections;
 
         // These are wavelength used only for the spectral integration separately from wavelengths
@@ -258,6 +256,18 @@ namespace MultiLayerOptics
         std::optional<std::vector<double>> m_SpectralIntegrationWavelengths;
 
         SingleLayerOptics::CalculationProperties m_CalculationProperties;
+
+    private:
+        struct Range
+        {
+            double min;
+            double max;
+        };
+
+        std::optional<Range> m_Range;
+
+        bool sameRange(double minLambda, double maxLambda) const;
+        void invalidate();
     };
 
 }   // namespace MultiLayerOptics

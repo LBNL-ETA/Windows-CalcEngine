@@ -1,5 +1,4 @@
-#ifndef EQUIVALENTBSDFLAYERMULTIWL_H
-#define EQUIVALENTBSDFLAYERMULTIWL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -80,12 +79,12 @@ namespace MultiLayerOptics
         FenestrationCommon::SquareMatrix m_Lambda;
 
         std::vector<double> m_CombinedLayerWavelengths;
-        bool m_Calculated;
+
+        bool hasCache() const;
+        void invalidateCache();
 
         void calculateWavelengthByWavelengthProperties(
           const FenestrationCommon::ProgressCallback & callback = nullptr);
     };
 
 }   // namespace MultiLayerOptics
-
-#endif
