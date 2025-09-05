@@ -1,8 +1,3 @@
-
-#include <cmath>
-
-#include <thread>
-
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
 
@@ -14,7 +9,7 @@ using FenestrationCommon::CSeries;
 namespace MultiLayerOptics
 {
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
-        m_CombinedLayerWavelengths(t_CommonWavelengths), m_Calculated(false)
+        m_CombinedLayerWavelengths(t_CommonWavelengths)
     {}
 
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(
@@ -24,8 +19,7 @@ namespace MultiLayerOptics
         m_Lambda(m_Layer[0]->getResults().lambdaMatrix()),
         m_CombinedLayerWavelengths(matrixWavelengths.has_value()
                                      ? matrixWavelengths.value()
-                                     : unionOfLayerWavelengths(m_Layer)),
-        m_Calculated(false)
+                                     : unionOfLayerWavelengths(m_Layer))
     {
         for(const auto & layer : m_Layer)
         {
@@ -56,7 +50,7 @@ namespace MultiLayerOptics
 
     CMatrixSeries CEquivalentBSDFLayer::getTotalA(const Side t_Side)
     {
-        if(!m_Calculated)
+        if(!hasCache())
         {
             calculate();
         }
@@ -65,7 +59,7 @@ namespace MultiLayerOptics
 
     CMatrixSeries CEquivalentBSDFLayer::getTotalJSC(Side t_Side)
     {
-        if(!m_Calculated)
+        if(!hasCache())
         {
             calculate();
         }
@@ -75,7 +69,7 @@ namespace MultiLayerOptics
     CMatrixSeries CEquivalentBSDFLayer::getTotal(const Side t_Side,
                                                  const PropertySurface t_Property)
     {
-        if(!m_Calculated)
+        if(!hasCache())
         {
             calculate();
         }
@@ -85,7 +79,7 @@ namespace MultiLayerOptics
     std::vector<FenestrationCommon::MatrixAtWavelength>
       CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySurface t_Property)
     {
-        if(!m_Calculated)
+        if(!hasCache())
         {
             calculate();
         }
@@ -99,7 +93,7 @@ namespace MultiLayerOptics
         {
             aLayer->setSourceData(t_SolarRadiation);
         }
-        m_Calculated = false;
+        invalidateCache();
     }
 
     std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & CEquivalentBSDFLayer::getLayers()
@@ -128,8 +122,18 @@ namespace MultiLayerOptics
         }
 
         calculateWavelengthByWavelengthProperties(callback);
+    }
 
-        m_Calculated = true;
+    bool CEquivalentBSDFLayer::hasCache() const
+    {
+        return !m_Tot.empty();
+    }
+
+    void CEquivalentBSDFLayer::invalidateCache()
+    {
+        m_Tot.clear();
+        m_TotA.clear();
+        m_TotJSC.clear();
     }
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties(
