@@ -1,10 +1,11 @@
+#include <WCECommon.hpp>
+
 #include "BSDFLayer.hpp"
 #include "BaseCell.hpp"
 #include "BSDFDirections.hpp"
 #include "BSDFIntegrator.hpp"
 #include "MaterialDescription.hpp"
 #include "BSDFPatch.hpp"
-#include "WCECommon.hpp"
 #include "BeamDirection.hpp"
 
 using namespace FenestrationCommon;
@@ -15,8 +16,7 @@ namespace SingleLayerOptics
                            const BSDFHemisphere & t_Hemisphere) :
         m_BSDFHemisphere(t_Hemisphere),
         m_Cell(t_Cell),
-        m_Results(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming)),
-        m_Calculated(false)
+        m_Results(std::nullopt)
     {
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
@@ -25,7 +25,7 @@ namespace SingleLayerOptics
     void CBSDFLayer::setSourceData(const CSeries & t_SourceData)
     {
         m_Cell->setSourceData(t_SourceData);
-        m_Calculated = false;
+        invalidate();
     }
 
     const BSDFDirections & CBSDFLayer::getDirections(const BSDFDirection t_Side) const
@@ -35,12 +35,11 @@ namespace SingleLayerOptics
 
     BSDFIntegrator CBSDFLayer::getResults()
     {
-        if(!m_Calculated)
+        if(!m_Results)
         {
             calculate();
-            m_Calculated = true;
         }
-        return m_Results;
+        return m_Results.value();
     }
 
     std::vector<BSDFIntegrator> CBSDFLayer::getWavelengthResults()
@@ -93,6 +92,11 @@ namespace SingleLayerOptics
         }
     }
 
+    void CBSDFLayer::invalidate() noexcept
+    {
+        m_Results.reset();
+    }
+
     int CBSDFLayer::getBandIndex(const double t_Wavelength)
     {
         return m_Cell->getBandIndex(t_Wavelength);
@@ -127,7 +131,7 @@ namespace SingleLayerOptics
                 tau(i, i) += aTau / Lambda;
                 rho(i, i) += aRho / Lambda;
             }
-            m_Results.setMatrices(tau, rho, t_Side);
+            m_Results->setMatrices(tau, rho, t_Side);
         }
     }
 
@@ -187,6 +191,10 @@ namespace SingleLayerOptics
 
     void CBSDFLayer::calculate()
     {
+        if(!m_Results)
+        {
+            m_Results.emplace(m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
+        }
         calc_dir_dir();
         calc_dir_dif();
     }

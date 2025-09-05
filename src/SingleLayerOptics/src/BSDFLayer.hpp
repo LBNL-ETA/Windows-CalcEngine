@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <optional>
 
 #include "BSDFDirections.hpp"
 #include "BSDFIntegrator.hpp"
@@ -84,14 +85,11 @@ namespace SingleLayerOptics
 
         const BSDFHemisphere m_BSDFHemisphere;
         std::shared_ptr<CBaseCell> m_Cell;
-        BSDFIntegrator m_Results;
+        std::optional<BSDFIntegrator> m_Results;
 
     private:
         void calc_dir_dir();
         void calc_dir_dif();
-        // Keeps state of the object. Calculations are not done by default (in constructor)
-        // because they are time-consuming.
-        bool m_Calculated;
 
         // Calculation of results over each wavelength
         void calc_dir_dir_wv(std::vector<BSDFIntegrator> & results);
@@ -99,6 +97,8 @@ namespace SingleLayerOptics
 
         void calculate_dir_dir_wl(size_t wavelengthIndex, BSDFIntegrator & results) const;
         void calculate_dir_dif_wv(size_t wavelengthIndex, BSDFIntegrator & results);
+
+        void invalidate() noexcept;
     };
 
 }   // namespace SingleLayerOptics
