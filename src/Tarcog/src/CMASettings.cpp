@@ -12,7 +12,9 @@ namespace CMA
     ///////////////////////////////////////////////////
 
     CMABestWorstUFactors::CMABestWorstUFactors(double hci, double hco, double gapConductance) :
-        m_Hci(hci), m_Hco(hco), m_GapConductance(gapConductance)
+        m_Hci(hci),
+        m_Hco(hco),
+        m_GapConductance(gapConductance)
     {}
 
     CMABestWorstUFactors::CMABestWorstUFactors(double hci,
@@ -43,8 +45,7 @@ namespace CMA
     {
         assert(m_InsideAirTemperature != m_OutsideAirTemperature);
         caluculate();
-        return heatFlow(m_RadiativeFilm->hri, m_RadiativeFilm->hro)
-               / (m_InsideAirTemperature - m_OutsideAirTemperature);
+        return heatFlow(m_Hri, m_Hro) / (m_InsideAirTemperature - m_OutsideAirTemperature);
     }
 
     double CMABestWorstUFactors::hcout()
@@ -86,7 +87,7 @@ namespace CMA
       CMABestWorstUFactors::insideSurfaceTemperature(double interiorRadiationFilmCoefficient) const
     {
         return m_InsideAirTemperature
-               - heatFlow(interiorRadiationFilmCoefficient, m_RadiativeFilm->hro)
+               - heatFlow(interiorRadiationFilmCoefficient, m_Hro)
                    / (m_Hci + interiorRadiationFilmCoefficient);
     }
 
@@ -94,13 +95,13 @@ namespace CMA
       CMABestWorstUFactors::outsideSurfaceTemperature(double exteriorRadiationFilmCoefficient) const
     {
         return m_OutsideAirTemperature
-               + heatFlow(m_RadiativeFilm->hri, exteriorRadiationFilmCoefficient)
+               + heatFlow(m_Hri, exteriorRadiationFilmCoefficient)
                    / (m_Hco + exteriorRadiationFilmCoefficient);
     }
 
     void CMABestWorstUFactors::caluculate()
     {
-        if(!m_RadiativeFilm)
+        if(!m_Calculated)
         {
             double insideTemperature{0.25 * (m_InsideAirTemperature - m_OutsideAirTemperature)
                                      + m_OutsideAirTemperature};
@@ -122,7 +123,10 @@ namespace CMA
                                  std::abs(previousOutside - outsideTemperature));
             }
 
-            m_RadiativeFilm = RadiativeFilm{hri, hro};
+            m_Hri = hri;
+            m_Hro = hro;
+
+            m_Calculated = true;
         }
     }
 
@@ -130,11 +134,6 @@ namespace CMA
     //  CMABestUFactor
     ///////////////////////////////////////////////////
 
-
-    void CMABestWorstUFactors::invalidate() noexcept
-    {
-        m_RadiativeFilm.reset();
-    }
 
     CMABestWorstUFactors CreateBestWorstUFactorOption(Option option)
     {

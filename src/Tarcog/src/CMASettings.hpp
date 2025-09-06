@@ -1,7 +1,5 @@
 #pragma once
 
-#include <optional>
-
 #include "CMAInterface.hpp"
 
 namespace CMA
@@ -56,15 +54,11 @@ namespace CMA
         double m_InsideAirTemperature{21};
         double m_OutsideAirTemperature{-18};
 
-        struct RadiativeFilm
-        {
-            double hri;
-            double hro;
-        };
+        //! These two needs to be calculated through iterations
+        double m_Hri{0};
+        double m_Hro{0};
 
-        std::optional<RadiativeFilm> m_RadiativeFilm;
-
-        void invalidate() noexcept;
+        bool m_Calculated{false};
     };
 
     //! Creates built in values for CMA U-factors
