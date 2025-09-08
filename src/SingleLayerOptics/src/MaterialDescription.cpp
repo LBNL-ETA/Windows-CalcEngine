@@ -485,7 +485,6 @@ namespace SingleLayerOptics
           t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
     }
 
-
     std::vector<double> CMaterialSample::calculateBandWavelengths()
     {
         return m_AngularSample.getBandWavelengths();
@@ -494,7 +493,7 @@ namespace SingleLayerOptics
     ScatteringType scatter(const CBeamDirection & t_IncomingDirection,
                            const CBeamDirection & t_OutgoingDirection)
     {
-        return t_IncomingDirection == t_OutgoingDirection ? ScatteringType::Total
+        return t_IncomingDirection == t_OutgoingDirection ? ScatteringType::Direct
                                                           : ScatteringType::Diffuse;
     }
 
