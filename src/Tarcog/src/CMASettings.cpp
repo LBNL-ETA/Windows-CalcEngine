@@ -86,7 +86,7 @@ namespace CMA
       CMABestWorstUFactors::insideSurfaceTemperature(double interiorRadiationFilmCoefficient) const
     {
         return m_InsideAirTemperature
-               - heatFlow(interiorRadiationFilmCoefficient, m_RadiativeFilm->hro)
+               - heatFlow(interiorRadiationFilmCoefficient, m_RadiativeFilm.value_or(defaultFilm).hro)
                    / (m_Hci + interiorRadiationFilmCoefficient);
     }
 
@@ -94,7 +94,7 @@ namespace CMA
       CMABestWorstUFactors::outsideSurfaceTemperature(double exteriorRadiationFilmCoefficient) const
     {
         return m_OutsideAirTemperature
-               + heatFlow(m_RadiativeFilm->hri, exteriorRadiationFilmCoefficient)
+               + heatFlow(m_RadiativeFilm.value_or(defaultFilm).hri, exteriorRadiationFilmCoefficient)
                    / (m_Hco + exteriorRadiationFilmCoefficient);
     }
 
