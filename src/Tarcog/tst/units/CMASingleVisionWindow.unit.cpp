@@ -2,14 +2,7 @@
 
 #include "WCETarcog.hpp"
 
-class TestCMASingleVisionWindow : public testing::Test
-{
-protected:
-    void SetUp() override
-    {}
-};
-
-TEST_F(TestCMASingleVisionWindow, CMASingleVision)
+TEST(TestCMASingleVisionWindow, CMASingleVision)
 {
     SCOPED_TRACE("Begin Test: CMA test for single vision window.");
 
