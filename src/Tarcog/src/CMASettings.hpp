@@ -62,8 +62,9 @@ namespace CMA
             double hro;
         };
 
-        RadiativeFilm defaultFilm{0.0, 0.0};
         std::optional<RadiativeFilm> m_RadiativeFilm;
+
+        const RadiativeFilm& filmOrDefault_() const;
 
         void invalidate() noexcept;
     };
