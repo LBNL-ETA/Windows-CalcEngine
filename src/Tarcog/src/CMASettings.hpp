@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "CMAInterface.hpp"
 
 namespace CMA
@@ -32,18 +34,30 @@ namespace CMA
         [[nodiscard]] double hcout();
 
     private:
-        [[nodiscard]] double heatFlow(double interiorRadiationFilmCoefficient,
-                                      double exteriorRadiationFilmCoefficient) const;
+        struct Film
+        {
+            double inside{0};
+            double outside{0};
+        };
+
+        [[nodiscard]] double heatFlow() const;
         [[nodiscard]] double hrout(double surfaceTemperature) const;
         [[nodiscard]] double hrin(double surfaceTemperature) const;
-        [[nodiscard]] double
-          insideSurfaceTemperature(double interiorRadiationFilmCoefficient) const;
-        [[nodiscard]] double
-          outsideSurfaceTemperature(double exteriorRadiationFilmCoefficient) const;
-        void caluculate();
+        [[nodiscard]] double insideSurfaceTemperature() const;
+        [[nodiscard]] double outsideSurfaceTemperature() const;
 
-        double m_Hci{0};
-        double m_Hco{0};
+        void calculate();
+
+        Film m_convective;
+        std::optional<Film> m_radiative;
+
+        double hci() const { return m_convective.inside; }
+        double hco() const { return m_convective.outside; }
+        double hri() const { return m_radiative ? m_radiative->inside : 0.0; }
+        double hro() const { return m_radiative ? m_radiative->outside : 0.0; }
+        double ho() const {return hco() + hro();}
+        double hi() const {return hci() + hri();}
+
         double m_GapConductance{0};
         double m_InteriorGlassThickness{0.006};
         double m_InteriorGlassConductivity{1};
@@ -54,11 +68,7 @@ namespace CMA
         double m_InsideAirTemperature{21};
         double m_OutsideAirTemperature{-18};
 
-        //! These two needs to be calculated through iterations
-        double m_Hri{0};
-        double m_Hro{0};
-
-        bool m_Calculated{false};
+        void invalidate() noexcept;
     };
 
     //! Creates built in values for CMA U-factors

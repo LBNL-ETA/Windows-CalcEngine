@@ -12,9 +12,7 @@ namespace CMA
     ///////////////////////////////////////////////////
 
     CMABestWorstUFactors::CMABestWorstUFactors(double hci, double hco, double gapConductance) :
-        m_Hci(hci),
-        m_Hco(hco),
-        m_GapConductance(gapConductance)
+        m_convective(hci, hco), m_GapConductance(gapConductance)
     {}
 
     CMABestWorstUFactors::CMABestWorstUFactors(double hci,
@@ -28,8 +26,7 @@ namespace CMA
                                                double exteriorGlassSurfaceEmissivity,
                                                double insideAirTemperature,
                                                double outsideAirTemperature) :
-        m_Hci(hci),
-        m_Hco(hco),
+        m_convective(hci, hco),
         m_GapConductance(gapConductance),
         m_InteriorGlassThickness(interiorGlassThickness),
         m_InteriorGlassConductivity(interiorGlassConductivity),
@@ -44,27 +41,25 @@ namespace CMA
     double CMABestWorstUFactors::uValue()
     {
         assert(m_InsideAirTemperature != m_OutsideAirTemperature);
-        caluculate();
-        return heatFlow(m_Hri, m_Hro) / (m_InsideAirTemperature - m_OutsideAirTemperature);
+        calculate();
+        return heatFlow() / (m_InsideAirTemperature - m_OutsideAirTemperature);
     }
 
     double CMABestWorstUFactors::hcout()
     {
-        caluculate();
-        return m_Hco;
+        calculate();
+        return m_convective.outside;
     }
 
-    double CMABestWorstUFactors::heatFlow(const double interiorRadiationFilmCoefficient,
-                                          const double exteriorRadiationFilmCoefficient) const
+    double CMABestWorstUFactors::heatFlow() const
     {
-        const double deltaTemp{m_InsideAirTemperature - m_OutsideAirTemperature};
-        const double interiorGlassCond{m_InteriorGlassConductivity / m_InteriorGlassThickness};
-        const double exteriorGlassCond{m_ExteriorGlassConductivity / m_ExteriorGlassThickness};
+        const double deltaTemp = m_InsideAirTemperature - m_OutsideAirTemperature;
+        const double interiorGlassCond = m_InteriorGlassConductivity / m_InteriorGlassThickness;
+        const double exteriorGlassCond = m_ExteriorGlassConductivity / m_ExteriorGlassThickness;
 
         return deltaTemp
-               / (1 / interiorGlassCond + 1 / exteriorGlassCond + 1 / m_GapConductance
-                  + 1 / (m_Hci + interiorRadiationFilmCoefficient)
-                  + 1 / (m_Hco + exteriorRadiationFilmCoefficient));
+               / (1.0 / interiorGlassCond + 1.0 / exteriorGlassCond + 1.0 / m_GapConductance
+                  + 1.0 / hi() + 1.0 / ho());
     }
 
     double CMABestWorstUFactors::hrout(double surfaceTemperature) const
@@ -83,25 +78,19 @@ namespace CMA
                / (m_InsideAirTemperature - surfaceTemperature);
     }
 
-    double
-      CMABestWorstUFactors::insideSurfaceTemperature(double interiorRadiationFilmCoefficient) const
+    double CMABestWorstUFactors::insideSurfaceTemperature() const
     {
-        return m_InsideAirTemperature
-               - heatFlow(interiorRadiationFilmCoefficient, m_Hro)
-                   / (m_Hci + interiorRadiationFilmCoefficient);
+        return m_InsideAirTemperature - heatFlow() / hi();
     }
 
-    double
-      CMABestWorstUFactors::outsideSurfaceTemperature(double exteriorRadiationFilmCoefficient) const
+    double CMABestWorstUFactors::outsideSurfaceTemperature() const
     {
-        return m_OutsideAirTemperature
-               + heatFlow(m_Hri, exteriorRadiationFilmCoefficient)
-                   / (m_Hco + exteriorRadiationFilmCoefficient);
+        return m_OutsideAirTemperature + heatFlow() / ho();
     }
 
-    void CMABestWorstUFactors::caluculate()
+    void CMABestWorstUFactors::calculate()
     {
-        if(!m_Calculated)
+        if(!m_radiative)
         {
             double insideTemperature{0.25 * (m_InsideAirTemperature - m_OutsideAirTemperature)
                                      + m_OutsideAirTemperature};
@@ -110,23 +99,21 @@ namespace CMA
             double hri{hrin(insideTemperature)};
             double hro{hrout(outsideTemperature)};
             double error{std::numeric_limits<double>::max()};
-            const double errorTolerance{1e-2};
+            constexpr double errorTolerance{1e-4};
             while(error > errorTolerance)
             {
                 const double previousInside{insideTemperature};
-                insideTemperature = insideSurfaceTemperature(hri);
+                insideTemperature = insideSurfaceTemperature();
                 const double previousOutside{outsideTemperature};
-                outsideTemperature = outsideSurfaceTemperature(hro);
+                outsideTemperature = outsideSurfaceTemperature();
+
+                m_radiative = Film{hri, hro};
+
                 hri = hrin(insideTemperature);
                 hro = hrout(outsideTemperature);
                 error = std::max(std::abs(previousInside - insideTemperature),
                                  std::abs(previousOutside - outsideTemperature));
             }
-
-            m_Hri = hri;
-            m_Hro = hro;
-
-            m_Calculated = true;
         }
     }
 
@@ -134,6 +121,10 @@ namespace CMA
     //  CMABestUFactor
     ///////////////////////////////////////////////////
 
+    void CMABestWorstUFactors::invalidate() noexcept
+    {
+        m_radiative.reset();
+    }
 
     CMABestWorstUFactors CreateBestWorstUFactorOption(Option option)
     {
