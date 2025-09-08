@@ -12,7 +12,7 @@ namespace CMA
     ///////////////////////////////////////////////////
 
     CMABestWorstUFactors::CMABestWorstUFactors(double hci, double hco, double gapConductance) :
-        m_convective(hci, hco), m_GapConductance(gapConductance)
+        m_convective{hci, hco}, m_GapConductance(gapConductance)
     {}
 
     CMABestWorstUFactors::CMABestWorstUFactors(double hci,
@@ -26,7 +26,7 @@ namespace CMA
                                                double exteriorGlassSurfaceEmissivity,
                                                double insideAirTemperature,
                                                double outsideAirTemperature) :
-        m_convective(hci, hco),
+        m_convective{hci, hco},
         m_GapConductance(gapConductance),
         m_InteriorGlassThickness(interiorGlassThickness),
         m_InteriorGlassConductivity(interiorGlassConductivity),
