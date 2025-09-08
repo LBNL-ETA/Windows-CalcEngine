@@ -34,18 +34,27 @@ namespace CMA
         [[nodiscard]] double hcout();
 
     private:
-        [[nodiscard]] double heatFlow(double interiorRadiationFilmCoefficient,
-                                      double exteriorRadiationFilmCoefficient) const;
+        struct Film
+        {
+            double inside{0};
+            double outside{0};
+        };
+
+        struct FilmCoefficients
+        {
+            Film convective;
+            Film radiative;
+        };
+
+        [[nodiscard]] double heatFlow(const FilmCoefficients & film) const;
         [[nodiscard]] double hrout(double surfaceTemperature) const;
         [[nodiscard]] double hrin(double surfaceTemperature) const;
-        [[nodiscard]] double
-          insideSurfaceTemperature(double interiorRadiationFilmCoefficient) const;
-        [[nodiscard]] double
-          outsideSurfaceTemperature(double exteriorRadiationFilmCoefficient) const;
-        void caluculate();
+        [[nodiscard]] double insideSurfaceTemperature() const;
+        [[nodiscard]] double outsideSurfaceTemperature() const;
 
-        double m_Hci{0};
-        double m_Hco{0};
+        void calculate();
+
+        FilmCoefficients m_film;
         double m_GapConductance{0};
         double m_InteriorGlassThickness{0.006};
         double m_InteriorGlassConductivity{1};
@@ -56,15 +65,7 @@ namespace CMA
         double m_InsideAirTemperature{21};
         double m_OutsideAirTemperature{-18};
 
-        struct RadiativeFilm
-        {
-            double hri;
-            double hro;
-        };
-
-        std::optional<RadiativeFilm> m_RadiativeFilm;
-
-        const RadiativeFilm& filmOrDefault_() const;
+        bool m_Calculated{false};
 
         void invalidate() noexcept;
     };

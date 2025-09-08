@@ -114,7 +114,7 @@ TEST_F(TestCMADoubleVisionVerticalWindow, CMADualVerticalVision)
     EXPECT_NEAR(0.454171, vt, 1e-6);
 
     const double uvalue{window.uValue(UvalueCOG, spacerKeff)};
-    EXPECT_NEAR(1.511768, uvalue, 1e-6);
+    EXPECT_NEAR(1.511791, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc(SHGCCOG, spacerKeff)};
     EXPECT_NEAR(0.290800, windowSHGC, 1e-6);

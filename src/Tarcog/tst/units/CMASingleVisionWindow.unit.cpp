@@ -105,7 +105,7 @@ TEST(TestCMASingleVisionWindow, CMASingleVision)
     EXPECT_NEAR(0.468371, vt, 1e-6);
 
     const double uvalue{window.uValue(UvalueCOG, spacerKeff)};
-    EXPECT_NEAR(1.451714, uvalue, 1e-6);
+    EXPECT_NEAR(1.451730, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc(SHGCCOG, spacerKeff)};
     EXPECT_NEAR(0.299620, windowSHGC, 1e-6);
