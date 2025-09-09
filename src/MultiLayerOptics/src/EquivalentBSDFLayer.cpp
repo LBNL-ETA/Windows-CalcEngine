@@ -50,45 +50,33 @@ namespace MultiLayerOptics
 
     CMatrixSeries CEquivalentBSDFLayer::getTotalA(const Side t_Side)
     {
-        if(!hasCache())
-        {
-            calculate();
-        }
+        ensureCache();
         return m_TotA.at(t_Side);
     }
 
     CMatrixSeries CEquivalentBSDFLayer::getTotalJSC(Side t_Side)
     {
-        if(!hasCache())
-        {
-            calculate();
-        }
+        ensureCache();
         return m_TotJSC.at(t_Side);
     }
 
     CMatrixSeries CEquivalentBSDFLayer::getTotal(const Side t_Side,
                                                  const PropertySurface t_Property)
     {
-        if(!hasCache())
-        {
-            calculate();
-        }
+        ensureCache();
         return m_Tot.at({t_Side, t_Property});
     }
 
     std::vector<FenestrationCommon::MatrixAtWavelength>
       CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySurface t_Property)
     {
-        if(!hasCache())
-        {
-            calculate();
-        }
+        ensureCache();
         return m_Tot.at({t_Side, t_Property}).seriesMatrices();
     }
 
     void CEquivalentBSDFLayer::setSolarRadiation(CSeries & t_SolarRadiation)
     {
-        // Need to recreate wavelenght by wavelength layers
+        // Need to recreate wavelength by wavelength layers
         for(auto & aLayer : m_Layer)
         {
             aLayer->setSourceData(t_SolarRadiation);
@@ -127,6 +115,14 @@ namespace MultiLayerOptics
     bool CEquivalentBSDFLayer::hasCache() const
     {
         return !m_Tot.empty();
+    }
+
+    void CEquivalentBSDFLayer::ensureCache()
+    {
+        if(!hasCache())
+        {
+            calculate();
+        }
     }
 
     void CEquivalentBSDFLayer::invalidateCache()

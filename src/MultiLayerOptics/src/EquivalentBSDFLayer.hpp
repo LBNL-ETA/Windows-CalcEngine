@@ -81,6 +81,7 @@ namespace MultiLayerOptics
         std::vector<double> m_CombinedLayerWavelengths;
 
         bool hasCache() const;
+        void ensureCache();
         void invalidateCache();
 
         void calculateWavelengthByWavelengthProperties(

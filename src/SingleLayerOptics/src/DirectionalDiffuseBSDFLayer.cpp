@@ -104,7 +104,7 @@ namespace SingleLayerOptics
     CMaterialDirectionalDiffuseBSDFLayer::CMaterialDirectionalDiffuseBSDFLayer(
       const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere) :
-        CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
+        CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / (WCE_PI - lam); })
     {}
 
     CMatrixBSDFLayer::CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
