@@ -1,3 +1,4 @@
+// MultiPaneBSDF_102_Specular_vs_DirDiff.unit.cpp
 #include <memory>
 #include <gtest/gtest.h>
 
@@ -14,249 +15,220 @@ using namespace FenestrationCommon;
 using namespace SpectralAveraging;
 using namespace MultiLayerOptics;
 
-// This test is created simply to keep comparison between two different models that are using same
-// measurement sample
-
-class MultiPaneBSDF_102_Specular_vs_DirDiff : public testing::Test
+// -----------------------------------------------------------------------------
+// File-local helpers and data types (anonymous namespace = internal linkage)
+// -----------------------------------------------------------------------------
+namespace
 {
-    static std::unique_ptr<CMultiPaneBSDF> createSpecularLayer()
+
+    // Readable, file-local assertion helper (no macro needed)
+    inline void expectBothNear(
+      const std::string & label, double expected, double spec, double dirdif, double tol)
     {
-        auto thickness = 3.048e-3;
-        auto aMaterial_102 = Material::nBandMaterial(
-            SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
-        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
-        auto Layer_102_Specular = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
-        return CMultiPaneBSDF::create({Layer_102_Specular});
+        SCOPED_TRACE(::testing::Message() << label << " | expected=" << expected
+                                          << " | spec=" << spec << " | dirdif=" << dirdif);
+
+        EXPECT_NEAR(spec, expected, tol);
+        EXPECT_NEAR(dirdif, expected, tol);
+        EXPECT_NEAR(spec, dirdif, tol);
     }
 
-    static std::unique_ptr<CMultiPaneBSDF> createDirDifLayer()
+    // Named golden metrics
+    struct DirGold
     {
-        auto thickness = 3.048e-3;
-        auto aMaterial_102 = Material::nBandMaterial(
-            SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
-        const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
-        auto Layer_102_DirDif = CBSDFLayerMaker::getDirDifLayer(aMaterial_102, aBSDF);
-        return CMultiPaneBSDF::create({Layer_102_DirDif});
+        double T_dirHem;   // τ_dir→hem
+        double T_dirDir;   // τ_dir→dir
+        double R_dirHem;   // ρ_dir→hem
+        double R_dirDir;   // ρ_dir→dir
+        double Abs1_dir;   // Abs(layer=1) for given θ,φ
+    };
+
+    struct Gold
+    {
+        double T_diffDiff;   // τ_dif→dif
+        double R_diffDiff;   // ρ_dif→dif
+        double Abs1_diff;    // Abs_dif(layer=1)
+        DirGold at_0_0;      // θ=0°, φ=0°
+        DirGold at_45_78;    // θ=45°, φ=78°
+    };
+
+    struct RangeCfg
+    {
+        const char * name;
+        double minL;
+        double maxL;
+        CalculationProperties props;
+        Gold gold;
+    };
+
+}   // namespace
+
+// -----------------------------------------------------------------------------
+// Fixture
+// -----------------------------------------------------------------------------
+class MultiPaneBSDF_102_Specular_vs_DirDiff : public ::testing::Test
+{
+    static std::unique_ptr<CMultiPaneBSDF> makeSpecular()
+    {
+        constexpr double thickness = 3.048e-3;
+        auto mat =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        auto bsdf = BSDFHemisphere::create(BSDFBasis::Quarter);
+        auto lyr = CBSDFLayerMaker::getSpecularLayer(mat, bsdf);
+        return CMultiPaneBSDF::create({lyr});
+    }
+    static std::unique_ptr<CMultiPaneBSDF> makeDirectDiffuse()
+    {
+        constexpr double thickness = 3.048e-3;
+        auto mat =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        auto bsdf = BSDFHemisphere::create(BSDFBasis::Quarter);
+        auto lyr = CBSDFLayerMaker::getDirDifLayer(mat, bsdf);
+        return CMultiPaneBSDF::create({lyr});
     }
 
 public:
-    static CMultiPaneBSDF & getLayerSpecular()
+    static CMultiPaneBSDF & specular()
     {
-        static std::unique_ptr<CMultiPaneBSDF> layer = createSpecularLayer();
-        return *layer;
+        static auto L = makeSpecular();
+        return *L;
     }
-
-    static CMultiPaneBSDF & getLayerDirDif()
+    static CMultiPaneBSDF & directdiffuse()
     {
-        static std::unique_ptr<CMultiPaneBSDF> layer = createDirDifLayer();
-        return *layer;
+        static auto L = makeDirectDiffuse();
+        return *L;
     }
 };
 
-TEST_F(MultiPaneBSDF_102_Specular_vs_DirDiff, SolarAndVisibleRange_Specular)
+// -----------------------------------------------------------------------------
+// Test
+// -----------------------------------------------------------------------------
+TEST_F(MultiPaneBSDF_102_Specular_vs_DirDiff, ModelsMatchAndHitGoldenNumbers)
 {
-    CMultiPaneBSDF & aLayer = getLayerSpecular();
+    constexpr double tol = 1e-6;
+    const auto side = Side::Front;
 
-    // Solar range
-    double minLambda = 0.3;
-    double maxLambda = 2.5;
-
-    const CalculationProperties input{
+    // Build CalculationProperties used below
+    const CalculationProperties solarProps{
       StandardData::solarRadiationASTM_E891_87_Table1(),
       StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
-    aLayer.setCalculationProperties(input);
+    const CalculationProperties visProps{StandardData::Photopic::solarRadiation(),
+                                         StandardData::Photopic::wavelengthSetPhotopic(),
+                                         StandardData::Photopic::detectorData()};
 
-    auto T = aLayer.getMatrix(minLambda, maxLambda, Side::Front, PropertySurface::T);
+    // Ranges (C++20 designated initializers; follow declaration order)
+    RangeCfg ranges[] = {RangeCfg{.name = "Solar",
+                                  .minL = 0.30,
+                                  .maxL = 2.50,
+                                  .props = solarProps,
+                                  .gold = Gold{.T_diffDiff = 0.745404,
+                                               .R_diffDiff = 0.152995,
+                                               .Abs1_diff = 0.101601,
+                                               .at_0_0 = DirGold{.T_dirHem = 0.833843,
+                                                                 .T_dirDir = 0.833843,
+                                                                 .R_dirHem = 0.074761,
+                                                                 .R_dirDir = 0.074761,
+                                                                 .Abs1_dir = 0.091396},
+                                               .at_45_78 = DirGold{.T_dirHem = 0.822262,
+                                                                   .T_dirDir = 0.822262,
+                                                                   .R_dirHem = 0.079326,
+                                                                   .R_dirDir = 0.079326,
+                                                                   .Abs1_dir = 0.098413}}},
+                         RangeCfg{.name = "Visible",
+                                  .minL = 0.38,
+                                  .maxL = 0.78,
+                                  .props = visProps,
+                                  .gold = Gold{.T_diffDiff = 0.813555,
+                                               .R_diffDiff = 0.165793,
+                                               .Abs1_diff = 0.020652,
+                                               .at_0_0 = DirGold{.T_dirHem = 0.899260,
+                                                                 .T_dirDir = 0.899260,
+                                                                 .R_dirHem = 0.082563,
+                                                                 .R_dirDir = 0.082563,
+                                                                 .Abs1_dir = 0.018177},
+                                               .at_45_78 = DirGold{.T_dirHem = 0.892556,
+                                                                   .T_dirDir = 0.892556,
+                                                                   .R_dirHem = 0.087775,
+                                                                   .R_dirDir = 0.087775,
+                                                                   .Abs1_dir = 0.019669}}}};
 
-    double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
-    EXPECT_NEAR(0.745404, tauDiff, 1e-6);
+    for(const auto & r : ranges)
+    {
+        auto & A = specular();
+        auto & B = directdiffuse();
+        A.setCalculationProperties(r.props);
+        B.setCalculationProperties(r.props);
 
-    double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.152995, rhoDiff, 1e-6);
+        // ---- Diffuse–diffuse (angle-independent) -----------------------------------
+        {
+            const double tA = A.DiffDiff(r.minL, r.maxL, side, PropertySurface::T);
+            const double tB = B.DiffDiff(r.minL, r.maxL, side, PropertySurface::T);
+            expectBothNear(std::string(r.name) + " τ_dif→dif", r.gold.T_diffDiff, tA, tB, tol);
 
-    double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.101601, absDiff1, 1e-6);
+            const double rA = A.DiffDiff(r.minL, r.maxL, side, PropertySurface::R);
+            const double rB = B.DiffDiff(r.minL, r.maxL, side, PropertySurface::R);
+            expectBothNear(std::string(r.name) + " ρ_dif→dif", r.gold.R_diffDiff, rA, rB, tol);
 
-    double theta = 0;
-    double phi = 0;
+            const double aA = A.AbsDiff(r.minL, r.maxL, side, /*layer*/ 1);
+            const double aB = B.AbsDiff(r.minL, r.maxL, side, /*layer*/ 1);
+            expectBothNear(
+              std::string(r.name) + " Abs_dif(layer=1)", r.gold.Abs1_diff, aA, aB, tol);
+        }
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.833843, tauHem, 1e-6);
+        // ---- θ = 0°, φ = 0° --------------------------------------------------------
+        {
+            const double th = 0.0, ph = 0.0;
 
-    double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.833843, tauDir, 1e-6);
+            double vA = A.DirHem(r.minL, r.maxL, side, PropertySurface::T, th, ph);
+            double vB = B.DirHem(r.minL, r.maxL, side, PropertySurface::T, th, ph);
+            expectBothNear(
+              std::string(r.name) + " θ=0 φ=0 τ_dir→hem", r.gold.at_0_0.T_dirHem, vA, vB, tol);
 
-    double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.074761, rhoHem, 1e-6);
+            vA = A.DirDir(r.minL, r.maxL, side, PropertySurface::T, th, ph);
+            vB = B.DirDir(r.minL, r.maxL, side, PropertySurface::T, th, ph);
+            expectBothNear(
+              std::string(r.name) + " θ=0 φ=0 τ_dir→dir", r.gold.at_0_0.T_dirDir, vA, vB, tol);
 
-    double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.074761, rhoDir, 1e-6);
+            vA = A.DirHem(r.minL, r.maxL, side, PropertySurface::R, th, ph);
+            vB = B.DirHem(r.minL, r.maxL, side, PropertySurface::R, th, ph);
+            expectBothNear(
+              std::string(r.name) + " θ=0 φ=0 ρ_dir→hem", r.gold.at_0_0.R_dirHem, vA, vB, tol);
 
-    double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.091396, abs1, 1e-6);
+            vA = A.DirDir(r.minL, r.maxL, side, PropertySurface::R, th, ph);
+            vB = B.DirDir(r.minL, r.maxL, side, PropertySurface::R, th, ph);
+            expectBothNear(
+              std::string(r.name) + " θ=0 φ=0 ρ_dir→dir", r.gold.at_0_0.R_dirDir, vA, vB, tol);
 
-    theta = 45;
-    phi = 78;
+            vA = A.Abs(r.minL, r.maxL, side, /*layer*/ 1, th, ph);
+            vB = B.Abs(r.minL, r.maxL, side, /*layer*/ 1, th, ph);
+            expectBothNear(std::string(r.name) + " θ=0 φ=0 Abs_dir(layer=1)",
+                           r.gold.at_0_0.Abs1_dir,
+                           vA,
+                           vB,
+                           tol);
+        }
 
-    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.822262, tauHem, 1e-6);
+        // ---- θ = 45°, φ = 78° ------------------------------------------------------
+        {
+            const double th = 45.0, ph = 78.0;
 
-    rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.079326, rhoHem, 1e-6);
+            double vA = A.DirHem(r.minL, r.maxL, side, PropertySurface::T, th, ph);
+            double vB = B.DirHem(r.minL, r.maxL, side, PropertySurface::T, th, ph);
+            expectBothNear(
+              std::string(r.name) + " θ=45 φ=78 τ_dir→hem", r.gold.at_45_78.T_dirHem, vA, vB, tol);
 
-    abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.098413, abs1, 1e-6);
+            vA = A.DirHem(r.minL, r.maxL, side, PropertySurface::R, th, ph);
+            vB = B.DirHem(r.minL, r.maxL, side, PropertySurface::R, th, ph);
+            expectBothNear(
+              std::string(r.name) + " θ=45 φ=78 ρ_dir→hem", r.gold.at_45_78.R_dirHem, vA, vB, tol);
 
-    // Visible range
-
-    minLambda = 0.38;
-    maxLambda = 0.78;
-
-    const CalculationProperties inputVisible{StandardData::Photopic::solarRadiation(),
-                                             StandardData::Photopic::wavelengthSetPhotopic(),
-                                             StandardData::Photopic::detectorData()};
-    aLayer.setCalculationProperties(inputVisible);
-
-    tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
-    EXPECT_NEAR(0.813555, tauDiff, 1e-6);
-
-    rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.165793, rhoDiff, 1e-6);
-
-    absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.020652, absDiff1, 1e-6);
-
-    theta = 0;
-    phi = 0;
-
-    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.899260, tauHem, 1e-6);
-
-    tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.899260, tauDir, 1e-6);
-
-    rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.082563, rhoHem, 1e-6);
-
-    rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.082563, rhoDir, 1e-6);
-
-    abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.018177, abs1, 1e-6);
-
-    theta = 45;
-    phi = 78;
-
-    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.892556, tauHem, 1e-6);
-
-    rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.087775, rhoHem, 1e-6);
-
-    abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.019669, abs1, 1e-6);
-}
-
-TEST_F(MultiPaneBSDF_102_Specular_vs_DirDiff, SolarAndVisibleRange_DirDif)
-{
-    CMultiPaneBSDF & aLayer = getLayerDirDif();
-
-    // Solar range
-    double minLambda = 0.3;
-    double maxLambda = 2.5;
-
-    const CalculationProperties input{
-      StandardData::solarRadiationASTM_E891_87_Table1(),
-      StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
-    aLayer.setCalculationProperties(input);
-
-    auto T = aLayer.getMatrix(minLambda, maxLambda, Side::Front, PropertySurface::T);
-
-    double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
-    EXPECT_NEAR(0.745404, tauDiff, 1e-6);
-
-    double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.152995, rhoDiff, 1e-6);
-
-    double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.101601, absDiff1, 1e-6);
-
-    double theta = 0;
-    double phi = 0;
-
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.833843, tauHem, 1e-6);
-
-    double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.833843, tauDir, 1e-6);
-
-    double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.074761, rhoHem, 1e-6);
-
-    double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.074761, rhoDir, 1e-6);
-
-    double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.091396, abs1, 1e-6);
-
-    theta = 45;
-    phi = 78;
-
-    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.822262, tauHem, 1e-6);
-
-    rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.079326, rhoHem, 1e-6);
-
-    abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.098413, abs1, 1e-6);
-
-    // Visible range
-
-    minLambda = 0.38;
-    maxLambda = 0.78;
-
-    const CalculationProperties inputVisible{StandardData::Photopic::solarRadiation(),
-                                             StandardData::Photopic::wavelengthSetPhotopic(),
-                                             StandardData::Photopic::detectorData()};
-    aLayer.setCalculationProperties(inputVisible);
-
-    tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
-    EXPECT_NEAR(0.813555, tauDiff, 1e-6);
-
-    rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.165793, rhoDiff, 1e-6);
-
-    absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.020652, absDiff1, 1e-6);
-
-    theta = 0;
-    phi = 0;
-
-    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.899260, tauHem, 1e-6);
-
-    tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.899260, tauDir, 1e-6);
-
-    rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.082563, rhoHem, 1e-6);
-
-    rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.082563, rhoDir, 1e-6);
-
-    abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.018177, abs1, 1e-6);
-
-    theta = 45;
-    phi = 78;
-
-    tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.892556, tauHem, 1e-6);
-
-    rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.087775, rhoHem, 1e-6);
-
-    abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.019669, abs1, 1e-6);
+            vA = A.Abs(r.minL, r.maxL, side, /*layer*/ 1, th, ph);
+            vB = B.Abs(r.minL, r.maxL, side, /*layer*/ 1, th, ph);
+            expectBothNear(std::string(r.name) + " θ=45 φ=78 Abs_dir(layer=1)",
+                           r.gold.at_45_78.Abs1_dir,
+                           vA,
+                           vB,
+                           tol);
+        }
+    }
 }
