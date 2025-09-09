@@ -16,6 +16,8 @@ namespace SingleLayerOptics
         CSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
                            const BSDFHemisphere & t_Hemisphere);
 
+        bool isEmissivityPolynomialApplicable() const override;
+
     protected:
         [[nodiscard]] std::shared_ptr<CSpecularCell> cellAsSpecular() const;
         void calcDiffuseDistribution(FenestrationCommon::Side aSide,

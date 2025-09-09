@@ -95,6 +95,11 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
+    bool CDirectionalDiffuseBSDFLayer::isEmissivityPolynomialApplicable() const
+    {
+        return true;
+    }
+
     CHomogeneousDiffuseBSDFLayer::CHomogeneousDiffuseBSDFLayer(
       const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere) :

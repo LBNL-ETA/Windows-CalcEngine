@@ -214,6 +214,11 @@ namespace SingleLayerOptics
         return m_Cell;
     }
 
+    bool CBSDFLayer::isEmissivityPolynomialApplicable() const
+    {
+        return false;
+    }
+
     std::vector<std::vector<double>>
       CBSDFLayer::jscPrime(Side, const std::vector<double> & wavelengths) const
     {

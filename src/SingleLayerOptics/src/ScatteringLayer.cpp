@@ -9,6 +9,7 @@
 #include "BSDFDirections.hpp"
 #include "BSDFIntegrator.hpp"
 #include "BeamDirection.hpp"
+#include "DirectionalDiffuseBSDFLayer.hpp"
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
 #include "SpecularBSDFLayer.hpp"
@@ -114,12 +115,12 @@ namespace SingleLayerOptics
     }
 
     double CScatteringLayer::getPropertySurface(const double,
-                                               const double,
-                                               const PropertySurface t_Property,
-                                               const Side t_Side,
-                                               const Scattering t_Scattering,
-                                               const double t_Theta,
-                                               const double t_Phi)
+                                                const double,
+                                                const PropertySurface t_Property,
+                                                const Side t_Side,
+                                                const Scattering t_Scattering,
+                                                const double t_Theta,
+                                                const double t_Phi)
     {
         checkCurrentAngles(t_Theta, t_Phi);
         auto aSurface = getSurface(t_Side);
@@ -161,33 +162,33 @@ namespace SingleLayerOptics
                                                      const double t_Phi)
     {
         double Tf = getPropertySurface(getMinLambda(),
-                                      getMaxLambda(),
-                                      PropertySurface::T,
-                                      Side::Front,
-                                      t_Scattering,
-                                      t_Theta,
-                                      t_Phi);
+                                       getMaxLambda(),
+                                       PropertySurface::T,
+                                       Side::Front,
+                                       t_Scattering,
+                                       t_Theta,
+                                       t_Phi);
         double Rf = getPropertySurface(getMinLambda(),
-                                      getMaxLambda(),
-                                      PropertySurface::R,
-                                      Side::Front,
-                                      t_Scattering,
-                                      t_Theta,
-                                      t_Phi);
+                                       getMaxLambda(),
+                                       PropertySurface::R,
+                                       Side::Front,
+                                       t_Scattering,
+                                       t_Theta,
+                                       t_Phi);
         double Tb = getPropertySurface(getMinLambda(),
-                                      getMaxLambda(),
-                                      PropertySurface::T,
-                                      Side::Back,
-                                      t_Scattering,
-                                      t_Theta,
-                                      t_Phi);
+                                       getMaxLambda(),
+                                       PropertySurface::T,
+                                       Side::Back,
+                                       t_Scattering,
+                                       t_Theta,
+                                       t_Phi);
         double Rb = getPropertySurface(getMinLambda(),
-                                      getMaxLambda(),
-                                      PropertySurface::R,
-                                      Side::Back,
-                                      t_Scattering,
-                                      t_Theta,
-                                      t_Phi);
+                                       getMaxLambda(),
+                                       PropertySurface::R,
+                                       Side::Back,
+                                       t_Scattering,
+                                       t_Theta,
+                                       t_Phi);
         return CLayerSingleComponent(Tf, Rf, Tb, Rb);
     }
 
@@ -341,10 +342,10 @@ namespace SingleLayerOptics
 
     bool CScatteringLayer::canApplyEmissivityPolynomial() const
     {
-        return m_BSDFLayer != nullptr
-               && std::dynamic_pointer_cast<CSpecularBSDFLayer>(m_BSDFLayer) != nullptr
+        return m_BSDFLayer != nullptr && m_BSDFLayer->isEmissivityPolynomialApplicable()
                && m_BSDFLayer->getBandWavelengths().size() > 2;
     }
+
     std::vector<double>
       CScatteringLayer::getAbsorptanceLayersHeat(double minLambda,
                                                  double maxLambda,
@@ -400,10 +401,10 @@ namespace SingleLayerOptics
     {
         CWavelengthRange wrIR{WavelengthRange::IR};
         return m_Layer.getPropertySurface(wrIR.minLambda(),
-                                         wrIR.maxLambda(),
-                                         PropertySurface::T,
-                                         t_Side,
-                                         Scattering::DiffuseDiffuse);
+                                          wrIR.maxLambda(),
+                                          PropertySurface::T,
+                                          t_Side,
+                                          Scattering::DiffuseDiffuse);
     }
 
 }   // namespace SingleLayerOptics

@@ -51,6 +51,8 @@ namespace SingleLayerOptics
 
         std::shared_ptr<CBaseCell> getCell() const;
 
+        virtual bool isEmissivityPolynomialApplicable() const;
+
         [[nodiscard]] virtual std::vector<std::vector<double>> jscPrime(
             FenestrationCommon::Side t_Side,
             const std::vector<double> & wavelengths = std::vector<double>()) const;
