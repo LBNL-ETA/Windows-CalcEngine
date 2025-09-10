@@ -73,8 +73,6 @@ TEST_F(MultiPaneBSDF_Homogeneous_Dual_Band_Material, TestSolarRange)
     constexpr double theta = 0;
     constexpr double phi = 0;
 
-    auto T = aLayer.getMatrix(minLambda, maxLambda, Side::Front, PropertySurface::T);
-
     const double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.717971, tauHem, 1e-6);

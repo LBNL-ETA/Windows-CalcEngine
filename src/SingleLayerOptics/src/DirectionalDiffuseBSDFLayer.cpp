@@ -6,6 +6,7 @@
 #include "BSDFIntegrator.hpp"
 #include "BSDFDirections.hpp"
 #include "BeamDirection.hpp"
+#include "HomogeneousDiffuseCell.hpp"
 #include "WCECommon.hpp"
 
 using namespace FenestrationCommon;
@@ -101,7 +102,7 @@ namespace SingleLayerOptics
     }
 
     CHomogeneousDiffuseBSDFLayer::CHomogeneousDiffuseBSDFLayer(
-      const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+      const std::shared_ptr<CHomogeneousDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere) :
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / (WCE_PI - lam); })
     {}

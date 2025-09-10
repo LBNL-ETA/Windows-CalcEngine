@@ -6,6 +6,7 @@
 #include <span>
 
 #include "BSDFLayer.hpp"
+#include "HomogeneousDiffuseCell.hpp"
 #include "MaterialDirDifCell.hpp"
 
 namespace SingleLayerOptics
@@ -77,7 +78,7 @@ namespace SingleLayerOptics
     class CHomogeneousDiffuseBSDFLayer : public CDirectionalBSDFLayer
     {
     public:
-        CHomogeneousDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+        CHomogeneousDiffuseBSDFLayer(const std::shared_ptr<CHomogeneousDiffuseCell> & t_Cell,
                                      const BSDFHemisphere & t_Hemisphere);
     };
 

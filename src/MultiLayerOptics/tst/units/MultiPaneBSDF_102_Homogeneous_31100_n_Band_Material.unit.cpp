@@ -55,8 +55,8 @@ TEST_F(MultiPaneBSDF_102_Homogeneous_31100_n_Band_Material, TestBSDF1)
 {
     SCOPED_TRACE("Begin Test: Specular and homogeneous diffuse IGU - BSDF.");
 
-    const double minLambda = 0.3;
-    const double maxLambda = 2.5;
+    constexpr double minLambda = 0.3;
+    constexpr double maxLambda = 2.5;
 
     CMultiPaneBSDF & aLayer = getLayer();
 
@@ -64,13 +64,13 @@ TEST_F(MultiPaneBSDF_102_Homogeneous_31100_n_Band_Material, TestBSDF1)
     EXPECT_NEAR(0.0, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.16256305390900724, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.575239, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.10273201254090114, absDiff1, 1e-6);
+    EXPECT_NEAR(0.153296, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.7347049335500917, absDiff2, 1e-6);
+    EXPECT_NEAR(0.271466, absDiff2, 1e-6);
 
     const double theta = 0;
     const double phi = 0;
@@ -85,15 +85,16 @@ TEST_F(MultiPaneBSDF_102_Homogeneous_31100_n_Band_Material, TestBSDF1)
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.086839, rhoHem, 1e-6);
+    EXPECT_NEAR(0.564486, rhoHem, 1e-6);
 
     const double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.086839, rhoDir, 1e-6);
+    EXPECT_NEAR(0.088154, rhoDir, 1e-6);
 
     const double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.092602, abs1, 1e-6);
+    EXPECT_NEAR(0.151848, abs1, 1e-6);
 
     const double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.820559, abs2, 1e-6);
+    EXPECT_NEAR(0.283666, abs2, 1e-6);
+
 }
