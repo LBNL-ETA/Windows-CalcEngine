@@ -14,23 +14,21 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection)
     {
-        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
-        double materialT = m_Material->getProperty(
+        const double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        const double materialT = m_Material->getProperty(
           FenestrationCommon::Property::T, t_Side, t_IncomingDirection, t_OutgoingDirection);
-        double t = cellT + (1 - cellT) * materialT;
-        return t;
+        return cellT + (1 - cellT) * materialT;
     }
 
     double CDirectionalDiffuseCell::R_dir_dif(const FenestrationCommon::Side t_Side,
                                               const CBeamDirection & t_IncomingDirection,
                                               const CBeamDirection & t_OutgoingDirection)
     {
-        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
-        double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
-        double materialR = m_Material->getProperty(
+        const double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        const double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
+        const double materialR = m_Material->getProperty(
           FenestrationCommon::Property::R, t_Side, t_IncomingDirection, t_OutgoingDirection);
-        double r = cellR + (1 - cellT) * materialR;
-        return r;
+        return cellR + (1 - cellT) * materialR;
     }
 
     std::vector<double>

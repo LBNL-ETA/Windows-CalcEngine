@@ -256,34 +256,32 @@ namespace SingleLayerOptics
 
     double CMaterialSingleBand::getProperty(Property t_Property,
                                             Side t_Side,
-                                            const CBeamDirection &,
-                                            const CBeamDirection &) const
+                                            const CBeamDirection & in,
+                                            const CBeamDirection & out) const
     {
-        return m_Property.at(t_Side)->getProperty(t_Property);
+        return in == out ? m_Property.at(t_Side)->getProperty(t_Property) : 0.0;
     }
 
     std::vector<double> CMaterialSingleBand::getBandProperties(const Property t_Property,
                                                                const Side t_Side,
-                                                               const CBeamDirection &,
-                                                               const CBeamDirection &) const
+                                                               const CBeamDirection & in,
+                                                               const CBeamDirection & out) const
     {
         std::vector<double> aResult;
-        const auto prop{getProperty(t_Property, t_Side)};
+        const auto prop{in == out ? getProperty(t_Property, t_Side) : 0.0};
         aResult.push_back(prop);
         aResult.push_back(prop);
         return aResult;
     }
 
-    double CMaterialSingleBand::getBandProperty(FenestrationCommon::Property t_Property,
-                                                FenestrationCommon::Side t_Side,
+    double CMaterialSingleBand::getBandProperty(Property t_Property,
+                                                Side t_Side,
                                                 size_t wavelengthIndex,
-                                                const CBeamDirection & t_IncomingDirection,
-                                                const CBeamDirection & t_OutgoingDirection) const
+                                                const CBeamDirection & in,
+                                                const CBeamDirection & out) const
     {
         std::ignore = wavelengthIndex;
-        std::ignore = t_IncomingDirection;
-        std::ignore = t_OutgoingDirection;
-        return getProperty(t_Property, t_Side);
+        return in == out ? getProperty(t_Property, t_Side) : 0.0;
     }
 
     std::vector<double> CMaterialSingleBand::calculateBandWavelengths()
