@@ -15,6 +15,7 @@ class TestDirectDiffuseCell1 : public testing::Test
 protected:
     void SetUp() override
     {
+        // This is only direct part of the single band material
         constexpr auto Tfmat = 0.08;
         constexpr auto Tbmat = 0.08;
         constexpr auto Rfmat = 0.9;
@@ -71,8 +72,8 @@ TEST_F(TestDirectDiffuseCell1, TestNonNormalIncidence)
     EXPECT_NEAR(0.0, Tfdir_dir, 1e-6);
 
     const double Tfdir_dif = aCell->T_dir_dif(aSide, Incoming, Outgoing);
-    EXPECT_NEAR(0.08, Tfdir_dif, 1e-6);
+    EXPECT_NEAR(0.0, Tfdir_dif, 1e-6);
 
     const double Rfdir_dif = aCell->R_dir_dif(aSide, Incoming, Outgoing);
-    EXPECT_NEAR(0.9, Rfdir_dif, 1e-6);
+    EXPECT_NEAR(0.0, Rfdir_dif, 1e-6);
 }

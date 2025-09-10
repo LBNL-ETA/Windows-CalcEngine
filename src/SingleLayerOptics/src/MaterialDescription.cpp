@@ -250,8 +250,54 @@ namespace SingleLayerOptics
     CMaterialSingleBand::CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb) :
         CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
     {
-        m_Property[Side::Front] = std::make_shared<CSurface>(t_Tf, t_Rf);
-        m_Property[Side::Back] = std::make_shared<CSurface>(t_Tb, t_Rb);
+        using SS = ScatteringSimple;
+
+        // Direct (specular) surfaces
+        m_Property(FenestrationCommon::Side::Front, SS::Direct) =
+          std::make_shared<CSurface>(t_Tf, t_Rf);
+        m_Property(FenestrationCommon::Side::Back, SS::Direct) =
+          std::make_shared<CSurface>(t_Tb, t_Rb);
+
+        // Diffuse defaults (safe zero initialization)
+        m_Property(FenestrationCommon::Side::Front, SS::Diffuse) =
+          std::make_shared<CSurface>(0.0, 0.0);
+        m_Property(FenestrationCommon::Side::Back, SS::Diffuse) =
+          std::make_shared<CSurface>(0.0, 0.0);
+    }
+
+    CMaterialSingleBand::CMaterialSingleBand(MaterialSurfaceProperties properties) :
+        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
+    {
+        using SS = ScatteringSimple;
+
+        // Direct/specular surfaces from the passed-in values
+        m_Property(Side::Front, SS::Direct) =
+          std::make_shared<CSurface>(properties.front.T, properties.front.R);
+        m_Property(Side::Back, SS::Direct) =
+          std::make_shared<CSurface>(properties.back.T, properties.back.R);
+
+        // Diffuse entries default to 0 unless you later extend MaterialSurfaceProperties
+        m_Property(Side::Front, SS::Diffuse) = std::make_shared<CSurface>(0.0, 0.0);
+        m_Property(Side::Back, SS::Diffuse) = std::make_shared<CSurface>(0.0, 0.0);
+    }
+
+    CMaterialSingleBand::CMaterialSingleBand(MaterialSurfaceProperties direct,
+                                             MaterialSurfaceProperties diffuse) :
+        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
+    {
+        using SS = ScatteringSimple;
+
+        // Direct surfaces
+        m_Property(Side::Front, SS::Direct) =
+          std::make_shared<CSurface>(direct.front.T, direct.front.R);
+        m_Property(Side::Back, SS::Direct) =
+          std::make_shared<CSurface>(direct.back.T, direct.back.R);
+
+        // Diffuse surfaces
+        m_Property(Side::Front, SS::Diffuse) =
+          std::make_shared<CSurface>(diffuse.front.T, diffuse.front.R);
+        m_Property(Side::Back, SS::Diffuse) =
+          std::make_shared<CSurface>(diffuse.back.T, diffuse.back.R);
     }
 
     double CMaterialSingleBand::getProperty(Property t_Property,
@@ -260,7 +306,24 @@ namespace SingleLayerOptics
                                             const CBeamDirection & out,
                                             OutgoingAggregation t_Agg) const
     {
-        return in == out ? m_Property.at(t_Side)->getProperty(t_Property) : 0.0;
+        using SS = ScatteringSimple;
+
+        // pull both components; ctor guarantees they exist
+        auto & sDirect = *m_Property.at(t_Side, SS::Direct);
+        auto & sDiffuse = *m_Property.at(t_Side, SS::Diffuse);
+
+        if(t_Agg == OutgoingAggregation::Hemispherical)
+        {
+            // dir-hem: specular beam + diffuse hemispherical bucket
+            return sDirect.getProperty(t_Property) + sDiffuse.getProperty(t_Property);
+        }
+
+        // Beam-to-beam request
+        if(in == out)
+        {
+            return sDirect.getProperty(t_Property);   // dir-dir
+        }
+        return sDiffuse.getProperty(t_Property);   // dir-dif (single-band "bucket")
     }
 
     std::vector<double> CMaterialSingleBand::getBandProperties(const Property t_Property,

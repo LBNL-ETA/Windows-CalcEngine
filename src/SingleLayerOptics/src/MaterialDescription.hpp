@@ -40,6 +40,19 @@ namespace SpectralAveraging
 namespace SingleLayerOptics
 {
     class CSurface;
+    using SurfacePtr = std::shared_ptr<CSurface>;
+
+    struct MaterialSurface
+    {
+        double T;
+        double R;
+    };
+
+    struct MaterialSurfaceProperties
+    {
+        MaterialSurface front;
+        MaterialSurface back;
+    };
 
     enum class OutgoingAggregation
     {
@@ -55,7 +68,7 @@ namespace SingleLayerOptics
                            FenestrationCommon::Side t_Side) const;
 
     private:
-        std::map<FenestrationCommon::Side, std::shared_ptr<CSurface>> m_Surface;
+        std::map<FenestrationCommon::Side, SurfacePtr> m_Surface;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -143,6 +156,8 @@ namespace SingleLayerOptics
     public:
         virtual ~CMaterialSingleBand() = default;
         CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb);
+        CMaterialSingleBand(MaterialSurfaceProperties properties);
+        CMaterialSingleBand(MaterialSurfaceProperties direct, MaterialSurfaceProperties diffuse);
 
         double getProperty(FenestrationCommon::Property t_Property,
                            FenestrationCommon::Side t_Side,
@@ -169,7 +184,9 @@ namespace SingleLayerOptics
         std::vector<double> calculateBandWavelengths() override;
 
     protected:
-        std::map<FenestrationCommon::Side, std::shared_ptr<CSurface>> m_Property;
+        FenestrationCommon::
+          mmap<SurfacePtr, FenestrationCommon::Side, FenestrationCommon::ScatteringSimple>
+            m_Property;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////
