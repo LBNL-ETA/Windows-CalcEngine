@@ -113,6 +113,11 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / (WCE_PI - lam); })
     {}
 
+    bool CMaterialDirectionalDiffuseBSDFLayer::isEmissivityPolynomialApplicable() const
+    {
+        return true;
+    }
+
     CMatrixBSDFLayer::CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
                                        const BSDFHemisphere & t_Hemisphere) :
         CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / lam; })

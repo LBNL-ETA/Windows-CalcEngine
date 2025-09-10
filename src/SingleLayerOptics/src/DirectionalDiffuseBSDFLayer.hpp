@@ -88,6 +88,8 @@ namespace SingleLayerOptics
         CMaterialDirectionalDiffuseBSDFLayer(
           const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
           const BSDFHemisphere & t_Hemisphere);
+
+        bool isEmissivityPolynomialApplicable() const override;
     };
 
     class CMatrixBSDFLayer : public CDirectionalBSDFLayer
