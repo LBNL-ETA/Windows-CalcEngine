@@ -250,40 +250,104 @@ namespace SingleLayerOptics
     CMaterialSingleBand::CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb) :
         CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
     {
-        m_Property[Side::Front] = std::make_shared<CSurface>(t_Tf, t_Rf);
-        m_Property[Side::Back] = std::make_shared<CSurface>(t_Tb, t_Rb);
+        using SS = ScatteringSimple;
+
+        // Direct (specular) surfaces
+        m_Property(FenestrationCommon::Side::Front, SS::Direct) =
+          std::make_shared<CSurface>(t_Tf, t_Rf);
+        m_Property(FenestrationCommon::Side::Back, SS::Direct) =
+          std::make_shared<CSurface>(t_Tb, t_Rb);
+
+        // Diffuse defaults (safe zero initialization)
+        m_Property(FenestrationCommon::Side::Front, SS::Diffuse) =
+          std::make_shared<CSurface>(0.0, 0.0);
+        m_Property(FenestrationCommon::Side::Back, SS::Diffuse) =
+          std::make_shared<CSurface>(0.0, 0.0);
+    }
+
+    CMaterialSingleBand::CMaterialSingleBand(MaterialSurfaceProperties properties) :
+        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
+    {
+        using SS = ScatteringSimple;
+
+        // Direct/specular surfaces from the passed-in values
+        m_Property(Side::Front, SS::Direct) =
+          std::make_shared<CSurface>(properties.front.T, properties.front.R);
+        m_Property(Side::Back, SS::Direct) =
+          std::make_shared<CSurface>(properties.back.T, properties.back.R);
+
+        // Diffuse entries default to 0 unless you later extend MaterialSurfaceProperties
+        m_Property(Side::Front, SS::Diffuse) = std::make_shared<CSurface>(0.0, 0.0);
+        m_Property(Side::Back, SS::Diffuse) = std::make_shared<CSurface>(0.0, 0.0);
+    }
+
+    CMaterialSingleBand::CMaterialSingleBand(MaterialSurfaceProperties direct,
+                                             MaterialSurfaceProperties diffuse) :
+        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
+    {
+        using SS = ScatteringSimple;
+
+        // Direct surfaces
+        m_Property(Side::Front, SS::Direct) =
+          std::make_shared<CSurface>(direct.front.T, direct.front.R);
+        m_Property(Side::Back, SS::Direct) =
+          std::make_shared<CSurface>(direct.back.T, direct.back.R);
+
+        // Diffuse surfaces
+        m_Property(Side::Front, SS::Diffuse) =
+          std::make_shared<CSurface>(diffuse.front.T, diffuse.front.R);
+        m_Property(Side::Back, SS::Diffuse) =
+          std::make_shared<CSurface>(diffuse.back.T, diffuse.back.R);
     }
 
     double CMaterialSingleBand::getProperty(Property t_Property,
                                             Side t_Side,
-                                            const CBeamDirection &,
-                                            const CBeamDirection &) const
+                                            const CBeamDirection & in,
+                                            const CBeamDirection & out,
+                                            OutgoingAggregation t_Agg) const
     {
-        return m_Property.at(t_Side)->getProperty(t_Property);
+        using SS = ScatteringSimple;
+
+        // pull both components; ctor guarantees they exist
+        auto & sDirect = *m_Property.at(t_Side, SS::Direct);
+        auto & sDiffuse = *m_Property.at(t_Side, SS::Diffuse);
+
+        if(t_Agg == OutgoingAggregation::Hemispherical)
+        {
+            // dir-hem: specular beam + diffuse hemispherical bucket
+            return sDirect.getProperty(t_Property) + sDiffuse.getProperty(t_Property);
+        }
+
+        // Beam-to-beam request
+        if(in == out)
+        {
+            return sDirect.getProperty(t_Property);   // dir-dir
+        }
+        return sDiffuse.getProperty(t_Property);   // dir-dif (single-band "bucket")
     }
 
     std::vector<double> CMaterialSingleBand::getBandProperties(const Property t_Property,
                                                                const Side t_Side,
-                                                               const CBeamDirection &,
-                                                               const CBeamDirection &) const
+                                                               const CBeamDirection & in,
+                                                               const CBeamDirection & out,
+                                                               OutgoingAggregation t_Agg) const
     {
         std::vector<double> aResult;
-        const auto prop{getProperty(t_Property, t_Side)};
+        const auto prop{getProperty(t_Property, t_Side, in, out, t_Agg)};
         aResult.push_back(prop);
         aResult.push_back(prop);
         return aResult;
     }
 
-    double CMaterialSingleBand::getBandProperty(FenestrationCommon::Property t_Property,
-                                                FenestrationCommon::Side t_Side,
+    double CMaterialSingleBand::getBandProperty(Property t_Property,
+                                                Side t_Side,
                                                 size_t wavelengthIndex,
-                                                const CBeamDirection & t_IncomingDirection,
-                                                const CBeamDirection & t_OutgoingDirection) const
+                                                const CBeamDirection & in,
+                                                const CBeamDirection & out,
+                                                OutgoingAggregation t_Agg) const
     {
         std::ignore = wavelengthIndex;
-        std::ignore = t_IncomingDirection;
-        std::ignore = t_OutgoingDirection;
-        return getProperty(t_Property, t_Side);
+        return getProperty(t_Property, t_Side, in, out, t_Agg);
     }
 
     std::vector<double> CMaterialSingleBand::calculateBandWavelengths()
@@ -318,16 +382,17 @@ namespace SingleLayerOptics
     double IMaterialDualBand::getProperty(Property t_Property,
                                           Side t_Side,
                                           const CBeamDirection & t_Incoming,
-                                          const CBeamDirection & t_Outgoing) const
+                                          const CBeamDirection & t_Outgoing,
+                                          OutgoingAggregation t_Agg) const
     {
-        return m_MaterialSolarRange->getProperty(t_Property, t_Side, t_Incoming, t_Outgoing);
+        return m_MaterialSolarRange->getProperty(t_Property, t_Side, t_Incoming, t_Outgoing, t_Agg);
     }
 
-    std::vector<double>
-      IMaterialDualBand::getBandProperties(const Property t_Property,
-                                           const Side t_Side,
-                                           const CBeamDirection & t_Incoming,
-                                           const CBeamDirection & t_Outgoing) const
+    std::vector<double> IMaterialDualBand::getBandProperties(const Property t_Property,
+                                                             const Side t_Side,
+                                                             const CBeamDirection & t_Incoming,
+                                                             const CBeamDirection & t_Outgoing,
+                                                             OutgoingAggregation t_Agg) const
     {
         std::vector<double> aResults;
         aResults.reserve(m_Wavelengths.size());
@@ -335,7 +400,7 @@ namespace SingleLayerOptics
         for(const auto wl : m_Wavelengths)
         {
             aResults.emplace_back(getMaterialFromWavelength(wl)->getProperty(
-              t_Property, t_Side, t_Incoming, t_Outgoing));
+              t_Property, t_Side, t_Incoming, t_Outgoing, t_Agg));
         }
 
         return aResults;
@@ -345,10 +410,11 @@ namespace SingleLayerOptics
                                               Side t_Side,
                                               size_t wavelengthIndex,
                                               const CBeamDirection & t_IncomingDirection,
-                                              const CBeamDirection & t_OutgoingDirection) const
+                                              const CBeamDirection & t_OutgoingDirection,
+                                              OutgoingAggregation t_Agg) const
     {
         return getMaterialFromWavelength(m_Wavelengths[wavelengthIndex])
-          ->getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
+          ->getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection, t_Agg);
     }
 
     std::vector<double> IMaterialDualBand::calculateBandWavelengths()
@@ -449,28 +515,31 @@ namespace SingleLayerOptics
     double CMaterialSample::getProperty(const Property t_Property,
                                         const Side t_Side,
                                         const CBeamDirection & t_IncomingDirection,
-                                        const CBeamDirection & t_OutgoingDirection) const
+                                        const CBeamDirection & t_OutgoingDirection,
+                                        OutgoingAggregation t_Agg) const
     {
-        return m_AngularSample.getProperty(m_MinLambda,
-                                           m_MaxLambda,
-                                           t_Property,
-                                           t_Side,
-                                           t_IncomingDirection.theta(),
-                                           scatter(t_IncomingDirection, t_OutgoingDirection));
+        return m_AngularSample.getProperty(
+          m_MinLambda,
+          m_MaxLambda,
+          t_Property,
+          t_Side,
+          t_IncomingDirection.theta(),
+          scatter(t_IncomingDirection, t_OutgoingDirection, t_Agg));
     }
 
     std::vector<double>
       CMaterialSample::getBandProperties(const Property t_Property,
                                          const Side t_Side,
                                          const CBeamDirection & t_IncomingDirection,
-                                         const CBeamDirection & t_OutgoingDirection) const
+                                         const CBeamDirection & t_OutgoingDirection,
+                                         OutgoingAggregation t_Agg) const
     {
         // Perform the calculation
         auto result = m_AngularSample.getWavelengthProperties(
           t_Property,
           t_Side,
           t_IncomingDirection.theta(),
-          scatter(t_IncomingDirection, t_OutgoingDirection));
+          scatter(t_IncomingDirection, t_OutgoingDirection, t_Agg));
 
         return result;
     }
@@ -479,10 +548,11 @@ namespace SingleLayerOptics
                                             Side t_Side,
                                             size_t wavelengthIndex,
                                             const CBeamDirection & t_IncomingDirection,
-                                            const CBeamDirection & t_OutgoingDirection) const
+                                            const CBeamDirection & t_OutgoingDirection,
+                                            OutgoingAggregation t_Agg) const
     {
         return getBandProperties(
-          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection, t_Agg)[wavelengthIndex];
     }
 
     std::vector<double> CMaterialSample::calculateBandWavelengths()
@@ -491,10 +561,13 @@ namespace SingleLayerOptics
     }
 
     ScatteringType scatter(const CBeamDirection & t_IncomingDirection,
-                           const CBeamDirection & t_OutgoingDirection)
+                           const CBeamDirection & t_OutgoingDirection,
+                           OutgoingAggregation t_Agg)
     {
-        return t_IncomingDirection == t_OutgoingDirection ? ScatteringType::Direct
-                                                          : ScatteringType::Diffuse;
+        return t_Agg == OutgoingAggregation::Beam
+                 ? (t_IncomingDirection == t_OutgoingDirection ? ScatteringType::Direct
+                                                               : ScatteringType::Diffuse)
+                 : ScatteringType::Total;
     }
 
     void CMaterialSample::setBandWavelengths(const std::vector<double> & wavelengths)
@@ -551,7 +624,8 @@ namespace SingleLayerOptics
     double CMaterialMeasured::getProperty(const Property t_Property,
                                           const Side t_Side,
                                           const CBeamDirection & t_IncomingDirection,
-                                          const CBeamDirection & t_OutgoingDirection) const
+                                          const CBeamDirection & t_OutgoingDirection,
+                                          OutgoingAggregation t_Agg) const
     {
         assert(m_AngularMeasurements);
         const std::shared_ptr<CSingleAngularMeasurement> aAngular =
@@ -561,7 +635,7 @@ namespace SingleLayerOptics
                                     m_MaxLambda,
                                     t_Property,
                                     t_Side,
-                                    scatter(t_IncomingDirection, t_OutgoingDirection));
+                                    scatter(t_IncomingDirection, t_OutgoingDirection, t_Agg));
     }
 
 
@@ -569,7 +643,8 @@ namespace SingleLayerOptics
       CMaterialMeasured::getBandProperties(const Property t_Property,
                                            const Side t_Side,
                                            const CBeamDirection & t_IncomingDirection,
-                                           const CBeamDirection &) const
+                                           const CBeamDirection &,
+                                           OutgoingAggregation) const
     {
         assert(m_AngularMeasurements);
         std::shared_ptr<CSingleAngularMeasurement> aAngular =
@@ -595,10 +670,11 @@ namespace SingleLayerOptics
                                               FenestrationCommon::Side t_Side,
                                               size_t wavelengthIndex,
                                               const CBeamDirection & t_IncomingDirection,
-                                              const CBeamDirection & t_OutgoingDirection) const
+                                              const CBeamDirection & t_OutgoingDirection,
+                                              OutgoingAggregation t_Agg) const
     {
         return getBandProperties(
-          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection)[wavelengthIndex];
+          t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection, t_Agg)[wavelengthIndex];
     }
 
     std::vector<double> CMaterialMeasured::calculateBandWavelengths()
@@ -647,7 +723,8 @@ namespace SingleLayerOptics
     double CMaterialSingleBandBSDF::getProperty(FenestrationCommon::Property t_Property,
                                                 FenestrationCommon::Side t_Side,
                                                 const CBeamDirection & t_IncomingDirection,
-                                                const CBeamDirection & t_OutgoingDirection) const
+                                                const CBeamDirection & t_OutgoingDirection,
+                                                OutgoingAggregation) const
     {
         const auto incomingIdx =
           m_Hemisphere.getDirections(BSDFDirection::Incoming)
@@ -679,22 +756,24 @@ namespace SingleLayerOptics
       CMaterialSingleBandBSDF::getBandProperties(FenestrationCommon::Property t_Property,
                                                  FenestrationCommon::Side t_Side,
                                                  const CBeamDirection & t_IncomingDirection,
-                                                 const CBeamDirection & t_OutgoingDirection) const
+                                                 const CBeamDirection & t_OutgoingDirection,
+                                                 OutgoingAggregation t_Agg) const
     {
-        double value = getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
+        double value =
+          getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection, t_Agg);
         std::vector<double> bandProperties(m_Wavelengths.size(), value);
         return bandProperties;
     }
 
-    double
-      CMaterialSingleBandBSDF::getBandProperty(FenestrationCommon::Property t_Property,
-                                               FenestrationCommon::Side t_Side,
-                                               size_t wavelengthIndex,
-                                               const CBeamDirection & t_IncomingDirection,
-                                               const CBeamDirection & t_OutgoingDirection) const
+    double CMaterialSingleBandBSDF::getBandProperty(FenestrationCommon::Property t_Property,
+                                                    FenestrationCommon::Side t_Side,
+                                                    size_t wavelengthIndex,
+                                                    const CBeamDirection & t_IncomingDirection,
+                                                    const CBeamDirection & t_OutgoingDirection,
+                                                    OutgoingAggregation t_Agg) const
     {
         std::ignore = wavelengthIndex;
-        return getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection);
+        return getProperty(t_Property, t_Side, t_IncomingDirection, t_OutgoingDirection, t_Agg);
     }
 
     std::vector<std::vector<double>> const &

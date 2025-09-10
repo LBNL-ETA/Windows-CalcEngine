@@ -37,8 +37,7 @@ protected:
         constexpr auto Tvis = 0.6;
         constexpr auto Rvis = 0.2;
 
-        auto aMaterial = SingleLayerOptics::Material::dualBandMaterial(
-          Tsol, Tsol, Rsol, Rsol, Tvis, Tvis, Rvis, Rvis);
+        auto aMaterial = Material::dualBandMaterial(Tsol, Tsol, Rsol, Rsol, Tvis, Tvis, Rvis, Rvis);
 
         auto diffuseLayer = CBSDFLayerMaker::getHomogeneousDiffuseLayer(aMaterial, aBSDF);
 
@@ -51,7 +50,7 @@ protected:
     }
 
 public:
-    CMultiPaneBSDF & getLayer()
+    CMultiPaneBSDF & getLayer() const
     {
         return *m_Layer;
     }
@@ -67,8 +66,8 @@ TEST_F(MultiPaneBSDF_Homogeneous_Dual_Band_Material, TestSolarRange)
     CMultiPaneBSDF & aLayer = getLayer();
 
     const CalculationProperties input{
-        StandardData::solarRadiationASTM_E891_87_Table1(),
-        StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
+      StandardData::solarRadiationASTM_E891_87_Table1(),
+      StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
     aLayer.setCalculationProperties(input);
 
     constexpr double theta = 0;
