@@ -1,6 +1,11 @@
 #include "HomogeneousDiffuseCell.hpp"
 #include "MaterialDescription.hpp"
 
+// Important note for homogeneous diffuse cell is that no angular calculations should be performed
+// here which is why every function is creating CBeamDirection() that is defaulted to the normal
+// incidence. Additional parameter at the end is to tell material that direct hemispherical value is
+// required from it.
+
 namespace SingleLayerOptics
 {
     CHomogeneousDiffuseCell::CHomogeneousDiffuseCell(
@@ -12,43 +17,41 @@ namespace SingleLayerOptics
     {}
 
     double CHomogeneousDiffuseCell::T_dir_dif(const FenestrationCommon::Side t_Side,
-                                              const CBeamDirection & t_IncomingDirection,
-                                              const CBeamDirection & t_OutgoingDirection)
+                                              const CBeamDirection &,
+                                              const CBeamDirection &)
     {
-        const double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        const double cellT = CBaseCell::T_dir_dir(t_Side, CBeamDirection());
         const double materialT = m_Material->getProperty(FenestrationCommon::Property::T,
                                                          t_Side,
-                                                         t_IncomingDirection,
-                                                         t_OutgoingDirection,
+                                                         CBeamDirection(),
+                                                         CBeamDirection(),
                                                          OutgoingAggregation::Hemispherical);
         return cellT + (1 - cellT) * materialT;
     }
 
     double CHomogeneousDiffuseCell::R_dir_dif(const FenestrationCommon::Side t_Side,
-                                              const CBeamDirection & t_IncomingDirection,
-                                              const CBeamDirection & t_OutgoingDirection)
+                                              const CBeamDirection &,
+                                              const CBeamDirection &)
     {
-        const double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
-        const double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
+        const double cellT = CBaseCell::T_dir_dir(t_Side, CBeamDirection());
+        const double cellR = CBaseCell::R_dir_dir(t_Side, CBeamDirection());
         const double materialR = m_Material->getProperty(FenestrationCommon::Property::R,
                                                          t_Side,
-                                                         t_IncomingDirection,
-                                                         t_OutgoingDirection,
+                                                         CBeamDirection(),
+                                                         CBeamDirection(),
                                                          OutgoingAggregation::Hemispherical);
         return cellR + (1 - cellT) * materialR;
     }
 
-    std::vector<double>
-      CHomogeneousDiffuseCell::T_dir_dif_band(const FenestrationCommon::Side t_Side,
-                                              const CBeamDirection & t_IncomingDirection,
-                                              const CBeamDirection & t_OutgoingDirection)
+    std::vector<double> CHomogeneousDiffuseCell::T_dir_dif_band(
+      const FenestrationCommon::Side t_Side, const CBeamDirection &, const CBeamDirection &)
     {
-        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        double cellT = CBaseCell::T_dir_dir(t_Side, CBeamDirection());
 
         auto materialBandValues = m_Material->getBandProperties(FenestrationCommon::Property::T,
                                                                 t_Side,
-                                                                t_IncomingDirection,
-                                                                t_OutgoingDirection,
+                                                                CBeamDirection(),
+                                                                CBeamDirection(),
                                                                 OutgoingAggregation::Hemispherical);
 
         std::vector<double> result;
@@ -61,35 +64,32 @@ namespace SingleLayerOptics
         return result;
     }
 
-    double
-      CHomogeneousDiffuseCell::T_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
-                                                       const CBeamDirection & t_IncomingDirection,
-                                                       const CBeamDirection & t_OutgoingDirection,
-                                                       size_t wavelengthIndex)
+    double CHomogeneousDiffuseCell::T_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+                                                            const CBeamDirection &,
+                                                            const CBeamDirection &,
+                                                            size_t wavelengthIndex)
     {
-        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
+        double cellT = CBaseCell::T_dir_dir(t_Side, CBeamDirection());
         auto materialTransmittance =
           m_Material->getBandProperty(FenestrationCommon::Property::T,
                                       t_Side,
                                       wavelengthIndex,
-                                      t_IncomingDirection,
-                                      t_OutgoingDirection,
+                                      CBeamDirection(),
+                                      CBeamDirection(),
                                       OutgoingAggregation::Hemispherical);
         return cellT + (1 - cellT) * materialTransmittance;
     }
 
-    std::vector<double>
-      CHomogeneousDiffuseCell::R_dir_dif_band(const FenestrationCommon::Side t_Side,
-                                              const CBeamDirection & t_IncomingDirection,
-                                              const CBeamDirection & t_OutgoingDirection)
+    std::vector<double> CHomogeneousDiffuseCell::R_dir_dif_band(
+      const FenestrationCommon::Side t_Side, const CBeamDirection &, const CBeamDirection &)
     {
-        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
-        double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
+        double cellT = CBaseCell::T_dir_dir(t_Side, CBeamDirection());
+        double cellR = CBaseCell::R_dir_dir(t_Side, CBeamDirection());
 
         auto materialBandValues = m_Material->getBandProperties(FenestrationCommon::Property::R,
                                                                 t_Side,
-                                                                t_IncomingDirection,
-                                                                t_OutgoingDirection,
+                                                                CBeamDirection(),
+                                                                CBeamDirection(),
                                                                 OutgoingAggregation::Hemispherical);
 
         std::vector<double> result;
@@ -101,19 +101,18 @@ namespace SingleLayerOptics
 
         return result;
     }
-    double
-      CHomogeneousDiffuseCell::R_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
-                                                       const CBeamDirection & t_IncomingDirection,
-                                                       const CBeamDirection & t_OutgoingDirection,
-                                                       size_t wavelengthIndex)
+    double CHomogeneousDiffuseCell::R_dir_dif_by_wavelength(const FenestrationCommon::Side t_Side,
+                                                            const CBeamDirection &,
+                                                            const CBeamDirection &,
+                                                            size_t wavelengthIndex)
     {
-        double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
-        double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
+        double cellT = CBaseCell::T_dir_dir(t_Side, CBeamDirection());
+        double cellR = CBaseCell::R_dir_dir(t_Side, CBeamDirection());
         auto materialValue = m_Material->getBandProperty(FenestrationCommon::Property::R,
                                                          t_Side,
                                                          wavelengthIndex,
-                                                         t_IncomingDirection,
-                                                         t_OutgoingDirection,
+                                                         CBeamDirection(),
+                                                         CBeamDirection(),
                                                          OutgoingAggregation::Hemispherical);
         return cellR + (1 - cellT) * materialValue;
     }
